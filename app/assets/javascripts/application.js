@@ -1,4 +1,6 @@
+//= require jquery
 //= require twitter/bootstrap
+//= require ./bootstrap
 
 require([
   'contentful_client/client',
