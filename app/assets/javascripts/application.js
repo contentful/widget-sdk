@@ -1,6 +1,9 @@
 //= require jquery
 //= require twitter/bootstrap
 //= require ./bootstrap
+//= require angular-1.0.2
+
+define('angular', angular);
 
 require([
   'contentful_client/client',
