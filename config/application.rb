@@ -61,6 +61,9 @@ module Contentful
 
     # Enable the asset pipeline
     config.assets.enabled = true
+    
+    config.requirejs.amd_wrap_filter = [/contentful_client/]
+    config.requirejs.amd_wrap_template = "define(function(require,exports,module) {\n%s\n;});\n"
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'
