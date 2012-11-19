@@ -62,6 +62,10 @@ module Contentful
     # Enable the asset pipeline
     config.assets.enabled = true
 
+    if defined? ::HamlCoffeeAssets
+      config.hamlcoffee.placement = 'amd'
+    end
+
     config.requirejs.amd_wrap_filter = [/contentful_client/]
     config.requirejs.amd_wrap_template = "define(function(require,exports,module) {\n%s\n;});\n"
 

@@ -1,0 +1,38 @@
+!!!
+%html
+%head
+  %title Contentful
+
+  = stylesheet_link_tag    "application", :media => "all"
+  = requirejs_include_tag "application"
+  = csrf_meta_tags
+
+%body{"ng-controller" => "AppCtrl"}
+  .navbar.navbar-fixed-top
+    .navbar-inner
+      .container
+        %form.navbar-form.pull-left
+          %select{'ng-model' => 'bucket', 'ng-options' => "bucket.data.name for bucket in buckets"}
+        .pull-right        
+          %a.brand{:href => "#"} Contentful
+
+  .container-fluid
+    .row-fluid
+      .span2
+        %ul.nav.nav-list.bucket-nav
+          %li{'ng-class' => "{active: entitySection=='entryType'}"}
+            %a{'ng-click' => "entitySection='entryType'"} Content-Model
+          %li{'ng-class' => "{active: entitySection=='entry'}"}
+            %a{'ng-click' => "entitySection='entry'"} Content
+          %li
+            %a Content Delivery
+          %li
+            %a Workflows
+          %li
+            %a Apps
+      .span10.bucket-entity{'ng-view'=>''}
+        %ul{"ng-show" => "buckets.length"}
+          %li{"ng-repeat" => "bucket in buckets"}
+            ID: {{bucket.getId()}}
+            %br/
+            Name:{{bucket._primitiveRep.name}}

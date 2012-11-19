@@ -8,12 +8,15 @@ gem 'rails', '3.2.9'
 gem "therubyracer"
 gem "less-rails"
 gem "twitter-bootstrap-rails"
+gem "haml"
 
 gem "requirejs-rails", :git => "https://github.com/coderanger/requirejs-rails"
 
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
+  gem 'haml_coffee_assets'
+  gem 'execjs'
   gem 'sass-rails',   '~> 3.2.3'
   gem 'coffee-rails', '~> 3.2.1'
 

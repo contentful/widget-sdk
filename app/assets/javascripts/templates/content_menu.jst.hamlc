@@ -1,0 +1,5 @@
+%ul.nav.nav-pills
+  %li
+    %a Entries
+  %li
+    %a Media

@@ -6,9 +6,22 @@
 define('angular', angular);
 
 require([
-  'contentful_client/client',
-  'contentful_client/adapters/jquery',
-  ], function(Client, Adapter){
-  window.Client = Client;
-  window.Adapter = Adapter;
-})
+  'angular',
+  'controllers/app_controller'
+], function(angular){
+    'use strict';
+
+    angular.module('contentful', [
+      'services',
+      'controllers'
+    ], function($routeProvider, $locationProvider){
+      // $routeProvider.when('/buckets/:bucketId',{
+      //   template: 'bucket_overview',
+      //   
+      //   })
+      
+    });
+
+    angular.bootstrap(document, ['contentful'])
+});
+
