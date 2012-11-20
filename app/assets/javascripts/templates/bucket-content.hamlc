@@ -1,0 +1,34 @@
+.row.entries{'ng-controller' => 'ContentCtrl'}
+  .span2
+    %ul.nav.nav-pills
+      %li{'ng-class' => "{active: contentType=='entries'}"}
+        %a Entries
+      %li{'ng-class' => "{active: contentType=='media'}"}
+        %a Media
+        
+    %ul.nav.nav-list
+      %li
+        %a Drafts
+      %li
+        %a Published
+      %li
+        %a Archive
+      %li
+        %a Starred
+      %li
+        %a Created by me
+      
+      %li.nav-header Saved searches
+      
+      %li
+        %a Updated by me
+      %li
+        %a Large Rooms
+
+      %li.nav-header Labels?
+      
+      %li
+        %a Todo
+        
+  .span2
+    Entries-Content {{contentType}}

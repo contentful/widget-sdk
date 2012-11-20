@@ -12,7 +12,7 @@ define([
 
       $scope.$watch('buckets', function(buckets){
         if (buckets && buckets.length > 0) {
-          $scope.bucket = buckets.first;
+          $scope.bucket = buckets[0];
         }
       });
 

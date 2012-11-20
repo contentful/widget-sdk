@@ -16,23 +16,19 @@
         .pull-right        
           %a.brand{:href => "#"} Contentful
 
-  .container-fluid.main{'ng-controller' => 'BucketCtrl'}
+  .container-fluid.bucket-view{'ng-controller' => 'BucketCtrl'}
     .row-fluid
-      .span2
-        %ul.nav.nav-list.bucket-nav
+      .span2.bucket-nav
+        %ul.nav.nav-list
           %li{'ng-class' => "{active: entitySection=='entry_types'}"}
             %a{'ng-click' => "visitEntitySection('entry_types')"} Content-Model
-          %li{'ng-class' => "{active: entitySection=='entries'}"}
-            %a{'ng-click' => "visitEntitySection('entries')"} Content
+          %li{'ng-class' => "{active: entitySection=='content'}"}
+            %a{'ng-click' => "visitEntitySection('content')"} Content
           %li
             %a(href="/del") Content Delivery
           %li
             %a(href="/work") Workflows
           %li
             %a(ng-click="location.path('apps')") Apps
-      .span10.bucket-entity{'ng-view'=>''}
-        %ul{"ng-show" => "buckets.length"}
-          %li{"ng-repeat" => "bucket in buckets"}
-            ID: {{bucket.getId()}}
-            %br/
-            Name:{{bucket._primitiveRep.name}}
+      .span10.bucket-entities{'bind-template' => 'bucketEntityTemplate'}
+        leer
