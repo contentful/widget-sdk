@@ -1,0 +1,15 @@
+.entry-list
+  %table.table.table-striped
+    %thead
+      %tr
+        %th ID
+        %th Content type
+        %th Created at
+        %th Fields
+    %tbody
+      %tr(ng-repeat="entry in entries")
+        %td {{entry.data.meta.id}}
+        %td {{entry.data.meta.type}}({{entry.data.meta.entryType}})
+        %td {{entry.data.meta.createdAt}}
+        %td {{entry.data.fields}}
+        
