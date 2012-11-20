@@ -9,6 +9,9 @@ require([
           return scope.$eval(attrs.bindTemplate);
         },
         function(value) {
+          if (typeof value == 'function') {
+            value = value();
+          }
           element.html(value);
           $compile(element.contents())(scope);
         }

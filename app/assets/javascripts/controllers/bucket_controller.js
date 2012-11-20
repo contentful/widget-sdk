@@ -16,7 +16,7 @@ define([
 
     $scope.$watch('entitySection', function(section){
       if (section == 'content') {
-        $scope.bucketEntityTemplate = bucketContentTemplate();
+        $scope.bucketEntityTemplate = bucketContentTemplate;
       } else {
         $scope.bucketEntityTemplate = 'No Template for '+section;
       }

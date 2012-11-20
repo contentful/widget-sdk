@@ -2,33 +2,35 @@
   .span2
     %ul.nav.nav-pills
       %li{'ng-class' => "{active: contentType=='entries'}"}
-        %a Entries
+        %a{'ng-click' => "switchContentType('entries')"} Entries
       %li{'ng-class' => "{active: contentType=='media'}"}
-        %a Media
-        
-    %ul.nav.nav-list
-      %li
-        %a Drafts
-      %li
-        %a Published
-      %li
-        %a Archive
-      %li
-        %a Starred
-      %li
-        %a Created by me
+        %a{'ng-click' => "switchContentType('media')"} Media
+    
+    %div{'ng-switch' => 'contentType'}
+      %ul.nav.nav-list{'ng-switch-when' => 'entries'}
+        %li.divider
+        %li.disabled{'ng-class' => "{active: entrySection=='drafts'}"}
+          %a Drafts
+        %li{'ng-class' => "{active: entrySection=='published'}"}
+          %a Published
+        %li.disabled{'ng-class' => "{active: entrySection=='archive'}"}
+          %a Archive
+        %li.disabled{'ng-class' => "{active: entrySection=='starred'}"}
+          %a Starred
+        %li.disabled{'ng-class' => "{active: entrySection=='createdByMe'}"}
+          %a Created by me
       
-      %li.nav-header Saved searches
+        %li.nav-header Saved searches
       
-      %li
-        %a Updated by me
-      %li
-        %a Large Rooms
+        %li.disabled
+          %a Updated by me
+        %li.disabled
+          %a Large Rooms
 
-      %li.nav-header Labels?
+        %li.nav-header Labels?
       
-      %li
-        %a Todo
+        %li.disabled
+          %a Todo
         
   .span2
     Entries-Content {{contentType}}

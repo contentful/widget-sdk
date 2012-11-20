@@ -24,11 +24,11 @@
             %a{'ng-click' => "visitEntitySection('entry_types')"} Content-Model
           %li{'ng-class' => "{active: entitySection=='content'}"}
             %a{'ng-click' => "visitEntitySection('content')"} Content
-          %li
+          %li.disabled
             %a(href="/del") Content Delivery
-          %li
+          %li.disabled
             %a(href="/work") Workflows
-          %li
+          %li.disabled
             %a(ng-click="location.path('apps')") Apps
       .span10.bucket-entities{'bind-template' => 'bucketEntityTemplate'}
         leer
