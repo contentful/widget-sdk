@@ -20,18 +20,28 @@ define([
       if ($scope.contentType == 'entries' ) {
         if ($scope.entrySection == 'published') {
           $scope.contentTemplate = entryListTemplate;
-          $scope.bucket.getEntries(function(err, entries){
-            if (!err) {
-              $scope.$apply(function($scope){
-                console.log(entries)
-                $scope.entries = entries;
-              })
-            }
-          });
+          reloadEntries();
         }
       }
     }
 
+    function reloadEntries() {
+      if ($scope.bucket && $scope.contentType == 'entries') {
+        if ($scope.entrySection == 'published') {
+          $scope.bucket.getEntries(function(err, entries){
+            if (!err) {
+              $scope.$apply(function($scope){
+                $scope.entries = entries;
+              })
+            }
+          });
+        } else {
+          $scope.entries = [];
+        }
+      }
+    }
+
+    $scope.$watch('bucket', reloadEntries);
     $scope.$watch('contentType' , performNav);
     $scope.$watch('entrySection', performNav);
 

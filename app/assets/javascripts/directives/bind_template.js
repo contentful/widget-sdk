@@ -9,11 +9,15 @@ require([
           return scope.$eval(attrs.bindTemplate);
         },
         function(value) {
+          var oldScope, newScope;
+          if (oldScope = element.data('$scope')) oldScope.$destroy();
+          element.data('$scope', newScope = scope.$new());
+
           if (typeof value == 'function') {
             value = value();
           }
           element.html(value);
-          $compile(element.contents())(scope);
+          $compile(element.contents())(newScope);
         }
       );
     };
