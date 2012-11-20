@@ -1,0 +1,9 @@
+.row
+  .span2
+    %ul.nav.nav-pills
+      %li
+        %a Entries
+      %li
+        %a Media
+  .span2
+    Entries-Content

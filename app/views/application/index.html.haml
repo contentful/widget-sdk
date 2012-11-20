@@ -7,7 +7,7 @@
   = requirejs_include_tag "application"
   = csrf_meta_tags
 
-%body{"ng-controller" => "AppCtrl"}
+%body{"ng-controller" => "ClientCtrl"}
   .navbar.navbar-fixed-top
     .navbar-inner
       .container
@@ -16,20 +16,20 @@
         .pull-right        
           %a.brand{:href => "#"} Contentful
 
-  .container-fluid
+  .container-fluid.main{'ng-controller' => 'BucketCtrl'}
     .row-fluid
       .span2
         %ul.nav.nav-list.bucket-nav
-          %li{'ng-class' => "{active: entitySection=='entryType'}"}
-            %a{'ng-click' => "entitySection='entryType'"} Content-Model
-          %li{'ng-class' => "{active: entitySection=='entry'}"}
-            %a{'ng-click' => "entitySection='entry'"} Content
+          %li{'ng-class' => "{active: entitySection=='entry_types'}"}
+            %a{'ng-click' => "visitEntitySection('entry_types')"} Content-Model
+          %li{'ng-class' => "{active: entitySection=='entries'}"}
+            %a{'ng-click' => "visitEntitySection('entries')"} Content
           %li
-            %a Content Delivery
+            %a(href="/del") Content Delivery
           %li
-            %a Workflows
+            %a(href="/work") Workflows
           %li
-            %a Apps
+            %a(ng-click="location.path('apps')") Apps
       .span10.bucket-entity{'ng-view'=>''}
         %ul{"ng-show" => "buckets.length"}
           %li{"ng-repeat" => "bucket in buckets"}
