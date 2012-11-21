@@ -24,3 +24,5 @@ require([
 
   })
 })
+
+//TODO Rewrite as modification of https://github.com/angular/angular.js/blob/master/src/ng/directive/ngView.js
