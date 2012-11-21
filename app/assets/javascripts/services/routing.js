@@ -16,9 +16,9 @@ define([
         path += 'buckets/' + this.bucketId;
       }
       if (this.entitySection == 'entries') {
-        path += '/entries'
+        path += '/entries';
       } else if (this.entitySection == 'entry_types') {
-        path += '/entry_types'
+        path += '/entry_types';
       }
       return path;
     },
@@ -44,7 +44,7 @@ define([
       this.bucketId = current.params.bucketId;
       this.entitySection = current.$route.entity_section;
     }
-  }
+  };
 
   return services.service('routing', Routing);
 });

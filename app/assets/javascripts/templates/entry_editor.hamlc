@@ -1,1 +1,1 @@
-Editing {{entry.getId()}}
+%h2 Editing {{entry.getId()}}

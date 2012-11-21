@@ -1,9 +1,8 @@
 define([
   'controllers',
-  'lodash',
   'services/client',
   'controllers/bucket_controller'
-], function(controllers, _){
+], function(controllers){
   'use strict';
 
   return controllers.controller('ClientCtrl', function($scope, client) {
@@ -19,7 +18,7 @@ define([
       client.getBuckets(function(err, res){
         $scope.$apply(function($scope){
           $scope.buckets = res;
-        })
+        });
       });
 
     });

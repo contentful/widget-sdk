@@ -7,7 +7,7 @@ define([
 
   return controllers.controller('BucketContentCtrl', function($scope) {
     $scope.contentType = 'entries';
-    $scope.entrySection = 'all'
+    $scope.entrySection = 'all';
 
     $scope.editEntry = function(entry) {
       // $scope.emit('editEntry', entry);
@@ -26,7 +26,7 @@ define([
 
     $scope.pageContent = function(){
       return $scope.paginator.slice($scope.entries);
-    }
+    };
 
     $scope.$watch('entries.length', function(numEntries){
       $scope.paginator.numEntries = numEntries;
@@ -44,15 +44,16 @@ define([
     function reloadEntries() {
       if ($scope.bucket && $scope.contentType == 'entries') {
         $scope.entries = [];
+        var allEntries;
         if ($scope.entrySection == 'all') {
-          var allEntries = [];
+          allEntries = [];
           $scope.paginator.page = 0;
           $scope.bucket.getEntries(function(err, entries){
             if (err) return;
             allEntries = allEntries.concat(entries);
             $scope.$apply(function($scope){
               $scope.entries = allEntries;
-            })
+            });
           });
           // $scope.bucket.getDrafts(function(err, drafts){
           //   if (err) return;
@@ -61,14 +62,14 @@ define([
           //   })
           // });
         } else if ($scope.entrySection == 'published') {
-          var allEntries = [];
+          allEntries = [];
           $scope.paginator.page = 0;
           $scope.bucket.getEntries(function(err, entries){
             if (err) return;
             allEntries = allEntries.concat(entries);
             $scope.$apply(function($scope){
               $scope.entries = allEntries;
-            })
+            });
           });
         } else {
           $scope.entries = [];
@@ -79,10 +80,6 @@ define([
     $scope.$watch('bucket', reloadEntries);
     $scope.$watch('contentType' , performNav);
     $scope.$watch('entrySection', performNav);
-
-    $scope.log = function() {
-      console.log.apply(console, arguments);
-    }
 
   });
 });

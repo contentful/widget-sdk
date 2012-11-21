@@ -5,7 +5,7 @@ define([
 ], function(services, Client, Adapter){
   'use strict';
 
-  function ClientProvider(){
+  function ClientProvider() {
     var endpoint = null;
 
     this.endpoint = function(e) {
@@ -16,9 +16,9 @@ define([
       if (endpoint) {
         return new Client(new Adapter(endpoint));
       } else {
-        return new Client(new Adapter);
+        return new Client(new Adapter());
       }
-    }
+    };
   }
 
   return services.provider('client', ClientProvider);

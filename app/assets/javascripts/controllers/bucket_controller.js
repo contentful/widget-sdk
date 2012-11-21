@@ -1,6 +1,6 @@
 define([
   'controllers',
-], function(controllers, bucketContentTemplate){
+], function(controllers){
   'use strict';
 
   return controllers.controller('BucketCtrl', function($scope) {

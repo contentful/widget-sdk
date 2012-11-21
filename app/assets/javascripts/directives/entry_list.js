@@ -1,16 +1,17 @@
 require([
   'angular',
-  'directives',
   'templates/entry_list'
-], function(angular, directives, entryListTemplate){
+], function(angular, entryListTemplate){
   'use strict';
 
-  directives.directive('entryList', function(){
-    var entryListDirective = {
-      template: entryListTemplate(),
-      restrict: 'E',
-    };
+  return {
+    name: 'entryList',
+    factory: function(){
+      return {
+        template: entryListTemplate(),
+        restrict: 'E',
+      };
+    }
+  };
 
-    return entryListDirective;
-  });
-})
+});

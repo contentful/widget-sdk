@@ -1,22 +1,23 @@
 require([
   'angular',
-  'directives',
   'templates/bucket_content',
 
   'controllers/bucket_content_controller'
-], function(angular, directives, bucketContentTemplate){
+], function(angular, bucketContentTemplate){
   'use strict';
 
-  directives.directive('bucketContent', function(){
-    var bucketContentDirective = {
-      template: bucketContentTemplate(),
-      restrict: 'E',
-      scope: {
-        bucket: '=bucket'
-        },
-      controller: 'BucketContentCtrl',
-    };
+  return {
+    name: 'bucketContent',
+    factory: function(){
+      return {
+        template: bucketContentTemplate(),
+        restrict: 'E',
+        scope: {
+          bucket: '=bucket'
+          },
+        controller: 'BucketContentCtrl',
+      };
+    }
+  };
 
-    return bucketContentDirective;
-  });
-})
+});

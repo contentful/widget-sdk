@@ -9,10 +9,7 @@ require([
   'angular',
 
   'controllers/client_controller',
-  'directives/bucket_view',
-  'directives/bucket_content',
-  'directives/entry_list',
-  'directives/entry_editor'
+  'directives'
 ], function(angular){
     'use strict';
 
@@ -24,6 +21,5 @@ require([
       $locationProvider.html5Mode(true);
     });
 
-    angular.bootstrap(document, ['contentful'])
+    angular.bootstrap(document, ['contentful']);
 });
-

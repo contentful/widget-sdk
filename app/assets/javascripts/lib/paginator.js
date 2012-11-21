@@ -7,15 +7,15 @@ define([
     this.numEntries = numEntries || 0;
     this.page = 0;
     this.pageLength = 20;
-  };
+  }
 
   Paginator.prototype = {
     startIndex: function() {
-      return this.page * this.pageLength
+      return this.page * this.pageLength;
     },
 
     endIndex: function() {
-      return (this.page+1) * this.pageLength
+      return (this.page+1) * this.pageLength;
     },
 
     numPages: function() {
@@ -27,11 +27,11 @@ define([
     },
 
     atFirst: function() {
-      return this.page == 0;
+      return this.page === 0;
     },
 
     atLast: function() {
-      return this.page == this.numPages()-1
+      return this.page === this.numPages()-1;
     },
 
     pages: function() {
@@ -54,4 +54,4 @@ define([
   };
 
   return Paginator;
-})
+});
