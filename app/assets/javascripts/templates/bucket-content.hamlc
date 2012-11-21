@@ -9,10 +9,12 @@
     %div{'ng-switch' => 'contentType'}
       %ul.nav.nav-list{'ng-switch-when' => 'entries'}
         %li.divider
+        %li{'ng-class' => "{active: entrySection=='all'}"}
+          %a{'ng-click' => "switchEntrySection('all')"} All
         %li.disabled{'ng-class' => "{active: entrySection=='drafts'}"}
           %a Drafts
         %li{'ng-class' => "{active: entrySection=='published'}"}
-          %a Published
+          %a{'ng-click' => "switchEntrySection('published')"} Published
         %li.disabled{'ng-class' => "{active: entrySection=='archive'}"}
           %a Archive
         %li.disabled{'ng-class' => "{active: entrySection=='starred'}"}
