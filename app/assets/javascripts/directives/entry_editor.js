@@ -1,4 +1,4 @@
-require([
+define([
   'angular',
   'templates/entry_editor'
 ], function(angular, entryEditorTemplate){

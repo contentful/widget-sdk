@@ -1,4 +1,4 @@
-require([
+define([
   'angular',
   'templates/bucket_view',
 

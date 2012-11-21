@@ -1,4 +1,4 @@
-require([
+define([
   'angular',
   'templates/entry_list'
 ], function(angular, entryListTemplate){
