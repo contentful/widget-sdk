@@ -9,6 +9,10 @@ define([
     $scope.contentType = 'entries';
     $scope.entrySection = 'all'
 
+    $scope.editEntry = function(entry) {
+      // $scope.emit('editEntry', entry);
+      $scope.currentEditEntry = entry;
+    };
 
     $scope.switchContentType = function(type){
       $scope.contentType = type;

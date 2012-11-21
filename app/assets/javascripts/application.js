@@ -11,7 +11,8 @@ require([
   'controllers/client_controller',
   'directives/bucket_view',
   'directives/bucket_content',
-  'directives/entry_list'
+  'directives/entry_list',
+  'directives/entry_editor'
 ], function(angular){
     'use strict';
 

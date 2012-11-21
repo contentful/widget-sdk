@@ -29,7 +29,7 @@
         %td {{entry.getCreatedAt().toLocaleString('de')}}
         %td
         %td.edit
-          %a.btn(ng-click="log(entry)")
+          %a.btn(ng-click="editEntry(entry)")
             %i.icon-pencil
             Edit
           %a.btn.btn-danger
