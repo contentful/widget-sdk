@@ -5,7 +5,7 @@ define([
 ], function(controllers, entryListTemplate, Paginator){
   'use strict';
 
-  return controllers.controller('ContentCtrl', function($scope, client) {
+  return controllers.controller('BucketContentCtrl', function($scope) {
     $scope.contentType = 'entries';
     $scope.entrySection = 'all'
 

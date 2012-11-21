@@ -7,8 +7,11 @@ define('angular', angular);
 
 require([
   'angular',
+
   'controllers/client_controller',
-  'directives/bind_template'
+  'directives/bucket_view',
+  'directives/bucket_content',
+  'directives/entry_list'
 ], function(angular){
     'use strict';
 

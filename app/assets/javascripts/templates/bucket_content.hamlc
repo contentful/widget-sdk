@@ -1,4 +1,4 @@
-.row.entries{'ng-controller' => 'ContentCtrl'}
+.row.entries
   .span2
     %ul.nav.nav-pills
       %li{'ng-class' => "{active: contentType=='entries'}"}
@@ -33,6 +33,8 @@
       
         %li.disabled
           %a Todo
-        
-  .span8{'bind-template' => 'contentTemplate'}
-    Entries-Content {{contentType}}
+  
+  .span8(ng-switch="contentType")
+    %entry-list(ng-switch-when="entries")
+    %div(ng-switch-default="")
+      Unhandled case: contentType = {{contentType}}

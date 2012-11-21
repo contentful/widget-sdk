@@ -16,19 +16,4 @@
         .pull-right        
           %a.brand{:href => "#"} Contentful
 
-  .container-fluid.bucket-view{'ng-controller' => 'BucketCtrl'}
-    .row-fluid
-      .span2.bucket-nav
-        %ul.nav.nav-list
-          %li{'ng-class' => "{active: entitySection=='entry_types'}"}
-            %a{'ng-click' => "visitEntitySection('entry_types')"} Content-Model
-          %li{'ng-class' => "{active: entitySection=='content'}"}
-            %a{'ng-click' => "visitEntitySection('content')"} Content
-          %li.disabled
-            %a(href="/del") Content Delivery
-          %li.disabled
-            %a(href="/work") Workflows
-          %li.disabled
-            %a(ng-click="location.path('apps')") Apps
-      .span10.bucket-entities{'bind-template' => 'bucketEntityTemplate'}
-        leer
+  %bucket-view.container-fluid(bucket="bucket")
