@@ -1,4 +1,19 @@
 .entry-list
+
+  .row
+    %form.form-search.span6  
+      %input.input-medium.search-query.span8{:type => "text", :placeholder => "Enter searchterm"}/
+      %button.btn{:type => "submit"} Search
+    .pagination.span6
+      %ul.pull-right
+        %li(ng-class="{disabled: paginator.atFirst()}")
+          %a(ng-click="paginator.goPrev()") Prev
+        %li(ng-repeat="page in paginator.pages()" 
+          ng-class="{active: page == paginator.page}")
+          %a(ng-click="paginator.goTo(page)") {{page+1}}
+        %li(ng-class="{disabled: paginator.atLast()}")
+          %a(ng-click="paginator.goNext()") Next
+    
   %table.table.table-striped
     %thead
       %tr
@@ -6,10 +21,18 @@
         %th Content type
         %th Created at
         %th Fields
+        %th.edit Edit
     %tbody
-      %tr(ng-repeat="entry in entries")
-        %td {{entry.data.meta.id}}
+      %tr(ng-repeat="entry in pageContent()")
+        %td {{entry.getId()}}
         %td {{entry.data.meta.type}}({{entry.data.meta.entryType}})
-        %td {{entry.data.meta.createdAt}}
-        %td {{entry.data.fields}}
+        %td {{entry.getCreatedAt().toLocaleString('de')}}
+        %td
+        %td.edit
+          %a.btn(ng-click="log(entry)")
+            %i.icon-pencil
+            Edit
+          %a.btn.btn-danger
+            %i.icon-trash
+            Delete
         
