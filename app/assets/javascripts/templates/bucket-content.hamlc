@@ -34,5 +34,5 @@
         %li.disabled
           %a Todo
         
-  .span2{'bind-template' => 'contentTemplate'}
+  .span8{'bind-template' => 'contentTemplate'}
     Entries-Content {{contentType}}
