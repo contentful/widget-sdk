@@ -7,8 +7,6 @@ define([
   function Routing($location, $route) {
     this.$location = $location;
     this.$route = $route;
-
-    // this.parseLocation();
   }
 
   Routing.prototype = {
