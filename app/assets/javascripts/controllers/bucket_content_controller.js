@@ -1,8 +1,9 @@
 define([
   'controllers',
   'templates/entry_list',
-  'lib/paginator'
-], function(controllers, entryListTemplate, Paginator){
+  'lib/paginator',
+  'lodash'
+], function(controllers, entryListTemplate, Paginator, _){
   'use strict';
 
   return controllers.controller('BucketContentCtrl', function($scope) {
@@ -44,6 +45,21 @@ define([
       }
     }
 
+    function reloadEntryTypes(){
+      if ($scope.bucket && $scope.contentType == 'entries') {
+        $scope.bucket.getEntryTypes({order: 'name', limit: 1000}, function(err, entryTypes){
+          if (err) return;
+          $scope.$apply(function($scope){
+            var newET = {};
+            _(entryTypes).each(function(entryType){
+              newET[entryType.getId()] = entryType;
+            });
+            $scope.entryTypes = newET;
+          });
+        });
+      }
+    }
+
     function reloadEntries() {
       if ($scope.bucket && $scope.contentType == 'entries') {
         $scope.entries = [];
@@ -81,6 +97,7 @@ define([
     }
 
     $scope.$watch('bucket', reloadEntries);
+    $scope.$watch('bucket', reloadEntryTypes);
     $scope.$watch('contentType' , performNav);
     $scope.$watch('entrySection', performNav);
 
