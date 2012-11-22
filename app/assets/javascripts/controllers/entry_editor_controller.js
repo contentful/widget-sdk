@@ -7,14 +7,14 @@ define([
   'use strict';
 
   return controllers.controller('EntryEditorCtrl', function($scope, client) {
-    $scope.tempEntry = $scope.entry;
+    $scope.entry = $scope.originalEntry.clone();
 
     $scope.exitEditor = function(save){
       if (save) {
-        $scope.tempEntry.save(function(err, res){
+        $scope.entry.save(function(err, res){
           $scope.$apply(function($scope){
             if (!err) {
-              $scope.entry.writeBack($scope.tempEntry);
+              $scope.originalEntry.writeBack($scope.entry);
             } else {
               alert(err);
             }

@@ -1,12 +1,12 @@
-%h2 Editing {{tempEntry.getId()}}
+%h2 Editing {{entry.getId()}}
 
 %form
   %label Meta
-  %textarea {{tempEntry.data.sys}}
+  %textarea {{entry.data.sys}}
 
-  %div(ng-repeat="fieldName in stringFields(tempEntry.data.fields)")
+  %div(ng-repeat="fieldName in stringFields(entry.data.fields)")
     %label {{fieldName}}
-    %input(type="text" ng-model="tempEntry.data.fields[fieldName]['en-US']")
+    %input(type="text" ng-model="entry.data.fields[fieldName]['en-US']")
   
   .form-actions
     %button.btn.btn-primary(ng-click="exitEditor(true)") Save changes
