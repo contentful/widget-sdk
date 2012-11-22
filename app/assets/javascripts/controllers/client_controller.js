@@ -15,7 +15,7 @@ define([
         }
       });
 
-      client.getBuckets(function(err, res){
+      client.getBuckets({order: 'name'}, function(err, res){
         $scope.$apply(function($scope){
           $scope.buckets = res;
         });

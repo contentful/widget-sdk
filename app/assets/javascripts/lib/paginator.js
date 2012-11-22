@@ -44,12 +44,31 @@ define([
       this.page = page;
     },
 
+    sanitizePage: function() {
+      this.page = Math.floor(this.page);
+      if (this.numPages() <= this.page) {
+        this.page = this.numPages() - 1;
+      } else if (this.page < 0) {
+        this.page = 0;
+      }
+    },
+
     goNext: function(){
       if (!this.atLast()) this.page++;
     },
 
-    goPRev: function(){
+    goPrev: function(){
       if (!this.atFirst()) this.page--;
+    },
+
+    sizeCategory: function(smallThreshold, largeThreshold){
+      if (this.numPages() <= smallThreshold) {
+        return 'small';
+      } else if (this.numPages() <= largeThreshold){
+        return 'medium';
+      } else {
+        return 'large';
+      }
     }
   };
 

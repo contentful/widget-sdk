@@ -4,7 +4,9 @@ define([
   'directives/bucket_content',
   'directives/bucket_view',
   'directives/entry_editor',
-  'directives/entry_list'
+  'directives/entry_list',
+  'directives/model_onblur',
+  'directives/offset_by_one'
 ], function(angular){
   'use strict';
 

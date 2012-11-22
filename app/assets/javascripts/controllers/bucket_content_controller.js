@@ -10,8 +10,11 @@ define([
     $scope.entrySection = 'all';
 
     $scope.editEntry = function(entry) {
-      // $scope.emit('editEntry', entry);
       $scope.currentEditEntry = entry;
+      var stop = $scope.$on('exitEditor', function(event){
+        $scope.currentEditEntry = null;
+        stop();
+      });
     };
 
     $scope.switchContentType = function(type){
@@ -48,14 +51,14 @@ define([
         if ($scope.entrySection == 'all') {
           allEntries = [];
           $scope.paginator.page = 0;
-          $scope.bucket.getEntries(function(err, entries){
+          $scope.bucket.getEntries({order: 'sys.createdAt', limit: 1000}, function(err, entries){
             if (err) return;
             allEntries = allEntries.concat(entries);
             $scope.$apply(function($scope){
               $scope.entries = allEntries;
             });
           });
-          // $scope.bucket.getDrafts(function(err, drafts){
+          // $scope.bucket.getDrafts({order: 'sys.createdAt', limit: 1000}, function(err, drafts){
           //   if (err) return;
           //   $scope.$apply(function($scope){
           //     $scope.entries = $scope.entries.concat(drafts);
@@ -64,7 +67,7 @@ define([
         } else if ($scope.entrySection == 'published') {
           allEntries = [];
           $scope.paginator.page = 0;
-          $scope.bucket.getEntries(function(err, entries){
+          $scope.bucket.getEntries({order: 'sys.createdAt', limit: 1000}, function(err, entries){
             if (err) return;
             allEntries = allEntries.concat(entries);
             $scope.$apply(function($scope){

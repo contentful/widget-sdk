@@ -1,6 +1,8 @@
 define([
   'angular',
-  'templates/entry_editor'
+  'templates/entry_editor',
+
+  'controllers/entry_editor_controller'
 ], function(angular, entryEditorTemplate){
   'use strict';
 
@@ -12,7 +14,8 @@ define([
         restrict: 'E',
         scope: {
           entry: '=entry'
-        }
+        },
+        controller: 'EntryEditorCtrl'
       };
     }
   };
