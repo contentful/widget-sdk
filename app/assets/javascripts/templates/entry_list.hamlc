@@ -25,7 +25,7 @@
     %tbody
       %tr(ng-repeat="entry in pageContent()")
         %td {{entry.getId()}}
-        %td {{entry.data.meta.type}}({{entry.data.meta.entryType}})
+        %td {{entry.data.sys.type}}({{entry.data.sys.entryType}})
         %td {{entry.getCreatedAt().toLocaleString('de')}}
         %td
         %td.edit
