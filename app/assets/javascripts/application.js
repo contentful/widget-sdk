@@ -17,8 +17,9 @@ require([
       'services',
       'controllers',
       'directives'
-    ], function($locationProvider){
+    ], function($locationProvider, clientProvider){
       $locationProvider.html5Mode(true);
+      clientProvider.endpoint('http://localhost:3000');
     });
 
     angular.bootstrap(document, ['contentful']);
