@@ -29,7 +29,7 @@
       .pull-right.input-prepend.input-append.large-pagination(ng-switch-default="")
         %button.btn(ng-class="{disabled: paginator.atFirst()}" ng-click="paginator.goPrev()")
           Prev
-        %input.span2.pagenum(ng-model="paginator.page" type="text" ng-model-onblur="" offset-by-one="" ng-change="paginator.sanitizePage()")
+        %input.span2.pagenum(ng-model="paginator.page" type="text" ng-model-onblur="" offset-by-one="" ng-change="paginator.sanitizePage()" onclick="this.select();")
         %span.help-inline.pagenum
           of {{paginator.numPages()}}
         %button.btn(ng-class="{disabled: paginator.atLast()}" ng-click="paginator.goNext()")
