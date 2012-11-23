@@ -6,7 +6,8 @@ define([
   'directives/entry_editor',
   'directives/entry_list',
   'directives/model_onblur',
-  'directives/offset_by_one'
+  'directives/offset_by_one',
+  'directives/cf_field_editor',
 ], function(angular){
   'use strict';
 
