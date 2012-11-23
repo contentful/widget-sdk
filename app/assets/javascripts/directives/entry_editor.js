@@ -13,7 +13,8 @@ define([
         template: entryEditorTemplate(),
         restrict: 'E',
         scope: {
-          originalEntry: '=entry'
+          originalEntry: '=entry',
+          entryType: '='
         },
         controller: 'EntryEditorCtrl'
       };

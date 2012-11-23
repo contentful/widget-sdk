@@ -1,8 +1,9 @@
-%h2 Editing {{entry.getId()}}
+%h2 Editing {{entryType.data.name}}: {{entry.getId()}}
 
 %form
-  %label Meta
-  %textarea {{entry.data.sys}}
+  %div(ng-repeat="field in fields()")
+    %label {{field.name}}
+    %input(type="text" ng-model="entry.data.fields[field.id][locale]")
 
   %div(ng-repeat="fieldName in stringFields(entry.data.fields)")
     %label {{fieldName}}

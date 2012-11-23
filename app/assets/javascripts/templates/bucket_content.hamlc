@@ -1,6 +1,6 @@
 %ng-switch(on="!!currentEditEntry")
 
-  %entry-editor.row(entry="currentEditEntry" ng-switch-when="true")
+  %entry-editor.row(entry="currentEditEntry" entry-type="currentEntryType()" ng-switch-when="true")
 
   .row.entries(ng-switch-when="false")
     .span2

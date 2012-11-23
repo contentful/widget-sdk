@@ -18,6 +18,10 @@ define([
       });
     };
 
+    $scope.currentEntryType = function(){
+      return $scope.entryTypes[$scope.currentEditEntry.data.sys.entryType];
+    };
+
     $scope.switchContentType = function(type){
       $scope.contentType = type;
     };

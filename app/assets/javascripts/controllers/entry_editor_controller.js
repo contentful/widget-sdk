@@ -8,6 +8,7 @@ define([
 
   return controllers.controller('EntryEditorCtrl', function($scope, client) {
     $scope.entry = $scope.originalEntry.clone();
+    $scope.locale = 'en-US'
 
     $scope.exitEditor = function(save){
       if (save) {
@@ -34,6 +35,10 @@ define([
           return list;
         }
       }, []);
+    }
+
+    $scope.fields = function(){
+      return $scope.entryType.data.fields;
     }
 
   });
