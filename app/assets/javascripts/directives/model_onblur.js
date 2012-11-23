@@ -15,19 +15,25 @@ define([
 
           elm.unbind('input').unbind('keydown').unbind('change');
 
-          elm.bind("keydown keypress", function(event) {
-            if (event.which === 13) {
-              scope.$apply(function() {
-                ngModelCtrl.$setViewValue(elm.val());
-              });
-            }
-          });
+          var idleTimer;
 
-          elm.bind('blur', function() {
+          function submit(){
+            clearTimeout(idleTimer);
             scope.$apply(function() {
               ngModelCtrl.$setViewValue(elm.val());
             });
+          }
+
+          elm.bind("keydown keypress", function(event) {
+            if (event.which === 13) {
+              submit();
+            } else {
+              clearTimeout(idleTimer);
+              idleTimer = setTimeout(submit, 400);
+            }
           });
+
+          elm.bind('blur', submit);
         }
       };
     }
