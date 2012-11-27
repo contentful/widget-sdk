@@ -51,7 +51,7 @@ define([
 
     function reloadEntryTypes(){
       if ($scope.bucket && $scope.contentType == 'entries') {
-        $scope.bucket.getEntryTypes({order: 'name', limit: 1000}, function(err, entryTypes){
+        $scope.bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes){
           if (err) return;
           $scope.$apply(function($scope){
             var newET = {};
@@ -71,7 +71,7 @@ define([
         if ($scope.entrySection == 'all') {
           allEntries = [];
           $scope.paginator.page = 0;
-          $scope.bucket.getEntries({order: 'sys.createdAt', limit: 1000}, function(err, entries){
+          $scope.bucket.getEntries({order: 'sys.id', limit: 1000}, function(err, entries){
             if (err) return;
             allEntries = allEntries.concat(entries);
             $scope.$apply(function($scope){
@@ -87,7 +87,7 @@ define([
         } else if ($scope.entrySection == 'published') {
           allEntries = [];
           $scope.paginator.page = 0;
-          $scope.bucket.getEntries({order: 'sys.createdAt', limit: 1000}, function(err, entries){
+          $scope.bucket.getEntries({order: 'sys.id', limit: 1000}, function(err, entries){
             if (err) return;
             allEntries = allEntries.concat(entries);
             $scope.$apply(function($scope){

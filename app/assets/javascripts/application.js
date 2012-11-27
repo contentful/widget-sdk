@@ -2,6 +2,8 @@
 //= require twitter/bootstrap
 //= require ./bootstrap
 //= require angular-1.0.2
+//= require bcsocket-uncompressed.js
+//= require share/share.uncompressed.js
 
 define('angular', angular);
 
