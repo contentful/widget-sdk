@@ -4,8 +4,10 @@
 //= require angular-1.0.2
 //= require bcsocket-uncompressed.js
 //= require share/share.uncompressed.js
+//= require share/json.uncompressed.js
 
 define('angular', angular);
+define('sharejs', sharejs);
 
 require([
   'angular',

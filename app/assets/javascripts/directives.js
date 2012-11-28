@@ -8,6 +8,7 @@ define([
   'directives/model_onblur',
   'directives/offset_by_one',
   'directives/cf_field_editor',
+  'directives/ot_bind',
 ], function(angular){
   'use strict';
 

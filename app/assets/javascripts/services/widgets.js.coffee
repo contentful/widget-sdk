@@ -12,7 +12,7 @@ define [
     string:
       textField:
         name: "Single line text field"
-        template: """<input type="text" ng-model="value"/>"""
+        template: """<input type="text" ng-model="value" ot-bind="doc"/>"""
       textArea:
         name: "Multiline text field"
         template: """<textarea class="input-xxlarge" ng-model="value"></textarea>"""

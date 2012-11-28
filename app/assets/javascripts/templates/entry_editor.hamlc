@@ -3,7 +3,7 @@
 %form.form-horizontal(name="entryForm")
   .control-group(ng-repeat="field in fields()")
     %label.control-label {{field.name}}
-    %cf-field-editor.controls(value="entry.data.fields[field.id][locale]" type="field.type" editor="textField")
+    %cf-field-editor.controls(value="entry.data.fields[field.id][locale]" type="field.type" editor="textField" field-id="field.id" doc="doc" locale="locale")
 
   .form-actions
     %button.btn.btn-primary(ng-disabled="entryForm.$invalid" ng-click="exitEditor(true)") Save changes
