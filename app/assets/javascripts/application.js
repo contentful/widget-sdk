@@ -1,17 +1,34 @@
 //= require jquery
 //= require twitter/bootstrap
 //= require ./bootstrap
-//= require angular-1.0.2
-//= require bcsocket-uncompressed.js
-//= require share/share.uncompressed.js
-//= require share/json.uncompressed.js
 
-define('angular', angular);
-define('sharejs', sharejs);
+require.config({
+  paths: {
+    'angular': 'angular-1.0.2',
+    'sharejs': 'share/share.uncompressed',
+    'share/json': 'share/json.uncompressed'
+  },
+
+  shim: {
+    'angular': {
+      exports: 'angular'
+    },
+    'sharejs': {
+      deps: ['bcsocket-uncompressed'],
+      exports: 'sharejs'
+    },
+    'share/json': ['sharejs'],
+    'share/textarea': ['sharejs']
+  }
+
+});
 
 require([
   'angular',
 
+  'sharejs',
+  'share/json',
+  'share/textarea',
   'controllers/client_controller',
   'directives'
 ], function(angular){
