@@ -12,22 +12,22 @@ define [
     string:
       textField:
         name: "Single line text field"
-        template: """<input type="text" ng-model="value" ot-bind="doc"/>"""
+        template: """<input type="text" ng-model="value" ot-bind="text"/>"""
       textArea:
         name: "Multiline text field"
-        template: """<textarea class="input-xxlarge" ng-model="value"></textarea>"""
+        template: """<textarea class="input-xxlarge" ng-model="value" ot-bind="text"></textarea>"""
     text:
       textArea:
         name: "Multiline text field"
-        template: """<textarea class="input-xxlarge" ng-model="value"></textarea>"""
+        template: """<textarea class="input-xxlarge" ng-model="value" ot-bind="text"></textarea>"""
     boolean:
       radioButtons:
         name: "Boolean Checkbox"
-        template: """<label class="checkbox"><input type="checkbox" ng-model="value"/> <span ng-show="value">Yes</span><span ng-show="!value">No</span></label>"""
+        template: """<label class="checkbox"><input type="checkbox" ng-model="value" ot-bind="replace"/> <span ng-show="value">Yes</span><span ng-show="!value">No</span></label>"""
     json:
       jsonArea:
         name: "JSON Field"
-        template: """<textarea class="input-xxlarge" ng-model="value"></textarea>"""
+        template: """<textarea class="input-xxlarge" ng-model="value" ot-bind="replace"></textarea>"""
         link: (scope, elm, attr) ->
           controller = elm.find('textarea').inheritedData('$ngModelController')
           controller.$formatters.push (obj) -> JSON.stringify(obj)
@@ -42,7 +42,7 @@ define [
     float:
       textField:
         name: "Textfield for floats"
-        template: """<input type="number" ng-model="value"/>"""
+        template: """<input type="number" ng-model="value" ot-bind="replace"/>"""
       link: (scope, elm, attr) ->
         controller = elm.find('input').inheritedData('$ngModelController')
         controller.$parsers.unshift (viewValue) ->
@@ -56,7 +56,7 @@ define [
     integer:
       textField:
         name: "Textfield for integers"
-        template: """<input type="number" ng-pattern="/^\\-?\\d*$/" ng-model="value"/>"""
+        template: """<input type="number" ng-pattern="/^\\-?\\d*$/" ng-model="value" ot-bind="replace"/>"""
     
   displayWidgets =
     string:

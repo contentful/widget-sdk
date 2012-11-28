@@ -1,49 +1,51 @@
 define([
   'controllers',
   'lodash',
-  'sharejs',
 
+  'services/sharejs',
   'controllers/bucket_controller'
-], function(controllers, _, sharejs){
+], function(controllers, _){
   'use strict';
 
-  return controllers.controller('EntryEditorCtrl', function($scope, client) {
+  return controllers.controller('EntryEditorCtrl', function($scope, sharejs) {
     function toKey(sys) {
       var type = (sys.type === 'archivedEntry') ? 'entry' : sys.type;
       var parts = [type, sys.id];
       if (sys.bucket) parts.unshift('bucket', sys.bucket);
       return parts.join(':');
     }
-    // console.log($scope.originalEntry)
-    $scope.connection  = sharejs.open(toKey($scope.originalEntry.data.sys), 'json', 'http://localhost:8000/channel', function(err, doc) {
-      console.log("connection open", doc);
-      $scope.$apply(function(scope){
-        scope.doc = doc;
-      })
+
+    var shareCallbackSync = true;
+    sharejs.open(toKey($scope.originalEntry.data.sys), 'json', function(err, doc) {
+      if (!err) {
+        if (shareCallbackSync) {
+          $scope.doc = doc;
+        } else {
+          $scope.$apply(function(scope){
+            scope.doc = doc;
+          });
+        }
+      } else {
+        console.log('Error opening connection', err)
+      }
     });
+    shareCallbackSync = false;
 
     $scope.entry = $scope.originalEntry.clone();
     $scope.locale = 'en-US'
 
-    // _($scope.entryType.fields).each(function(field){
-    //   (function(fieldName){
-    //     $scope.watch(fieldName, function(value){
-    //       $scope.doc.at(fieldName).set(value);
-    //     })
-    //   })("entry.data.fields"+field+"['en-US']")
-    // })
-
-    $scope.sendOp = function(fieldId){
-      console.log("Sending Op for %s, %s", fieldId, $scope.locale);
-      var field = $scope.doc.at(['fields', fieldId, $scope.locale]);
-      field.set($scope.entry.data.fields[fieldId][$scope.locale]);
-    }
-
-    $scope.exitEditor = function(save){
+    $scope.exitEditor = function(){
+      var shareCallbackSync = true;
       $scope.doc.close(function(){
-        $scope.connection.disconnect();
-        $scope.$emit('exitEditor');
+        if (shareCallbackSync) {
+          $scope.$emit('exitEditor');
+        } else {
+          $scope.$apply(function(scope){
+            scope.$emit('exitEditor');
+          })
+        }
       })
+      shareCallbackSync = false;
     };
 
     $scope.stringFields = function(fields){

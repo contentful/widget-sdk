@@ -12,7 +12,6 @@ define([
       return {
         restrict: 'E',
         scope: {
-          // value:   '=',
           type:    '=',
           fieldId: '=',
           doc:     '=',
@@ -21,36 +20,40 @@ define([
         link: function(scope, elm, attr) {
           var widget = widgets.editor(scope.type, attr.editor);
 
-          scope.$watch(function(scope){
-            return scope.doc;
-          }, function(doc){
-            if (!doc) {
-              scope.subdoc   = null;
-              scope.fieldDoc = null;
-            } else {
-              scope.subdoc   = doc.at(['fields', scope.fieldId, scope.locale]);
-              scope.fieldDoc = doc.at(['fields', scope.fieldId]);
-            }
-          })
 
+          scope.getPath = function() {
+            return ['fields', this.fieldId, this.locale];
+          }
 
-          scope.$watch('fieldDoc', function(fieldDoc, old, scope){
-            if (old && scope.fieldDocListener) {
-              old.removeListener(scope.fieldDocListener);
-              scope.fieldDocListener = null;
+          scope.replaceValue = function(value) {
+            this.$broadcast('replaceValue', value);
+          }
+
+          scope.valueInitialized = false;
+
+          scope.$watch('doc', function(doc, old, scope){
+            if (old && scope.docListener) {
+              old.removeListener(scope.docListener);
+              scope.docListener = null;
             }
 
-            if (fieldDoc) {
-              scope.value = scope.subdoc.get();
-              scope.fieldDocListener = fieldDoc.on('replace', function(pos, was, now){
-                console.log("Replacing", pos, was, now);
-                scope.$apply(function(scope){
-                  scope.value = now;
-                })
+            if (doc) {
+              if (!scope.valueInitialized) {
+                var value = doc.getAt(scope.getPath());
+                scope.replaceValue(value);
+                scope.valueInitialized = true;
+              }
+
+              scope.docListener = doc.at(scope.getPath().slice(0,-1)).on('replace', function(position, was, now) {
+                if (position === scope.getPath().slice(-1)[0]) {
+                  // console.log('received replace at', position, was, now, scope.getPath().slice(-1)[0])
+                  scope.$apply(function(){
+                    scope.replaceValue(now);
+                  })
+                }
               })
-              console.log("subdoc adding listener", scope.fieldDocListener);
             }
-          })
+          });
 
           elm.html(widget.template + '<span class="help-inline">'+widget.name+'</span>');
           $compile(elm.contents())(scope);
