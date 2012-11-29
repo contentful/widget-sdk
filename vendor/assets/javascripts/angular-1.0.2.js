@@ -7690,6 +7690,8 @@ function $RootScopeProvider(){
                   watch = watchers[length];
                   // Most common watches are on primitives, in which case we can short
                   // circuit it with === operator, only when === fails do we use .equals
+                  //if (watch.exp.toString().match(/entryDoc/)) debugger;
+
                   if ((value = watch.get(current)) !== (last = watch.last) &&
                       !(watch.eq
                           ? equals(value, last)
