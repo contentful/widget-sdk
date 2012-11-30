@@ -18,7 +18,7 @@ require.config({
       exports: 'sharejs'
     },
     'share/json': ['sharejs'],
-    'share/textarea': ['sharejs']
+    'lib/bind_textarea': ['sharejs']
   }
 
 });
@@ -28,7 +28,7 @@ require([
 
   'sharejs',
   'share/json',
-  'share/textarea',
+  'lib/bind_textarea',
   'controllers/client_controller',
   'directives'
 ], function(angular){
