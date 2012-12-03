@@ -3,4 +3,4 @@
 	url = git@github.com:thriventures/client.git
 [submodule "vendor/ShareJS"]
 	path = vendor/ShareJS
-	url = git://github.com/josephg/ShareJS.git
+	url = git@github.com:thriventures/ShareJS.git
