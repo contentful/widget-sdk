@@ -1,13 +1,13 @@
 define([
   'controllers',
 
-  'services/sharejs_document',
+  'services/sharejs',
   'controllers/bucket_controller'
 ], function(controllers){
   'use strict';
 
-  return controllers.controller('EntryEditorCtrl', function($scope, SharejsDocument) {
-    SharejsDocument.open($scope.originalEntry, function(err, doc) {
+  return controllers.controller('EntryEditorCtrl', function($scope, ShareJS) {
+    ShareJS.open($scope.originalEntry, function(err, doc) {
       if (!err) {
         $scope.$apply(function(scope){
           scope.doc = doc.subdoc('fields');
