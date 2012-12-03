@@ -18,7 +18,6 @@ require.config({
       exports: 'sharejs'
     },
     'share/json': ['sharejs'],
-    'lib/bind_textarea': ['sharejs']
   }
 
 });
