@@ -19,6 +19,22 @@ define([
       });
     };
 
+    $scope.createEntry = function(entryType) {
+      $scope.bucket.createEntry({
+        sys: {
+          entryType: entryType.getId()
+        }
+      }, function(err, entry){
+        if (!err) {
+          $scope.$apply(function(scope){
+            scope.editEntry(entry);
+          });
+        } else {
+          console.log("Error creating entry", err);
+        }
+      });
+    };
+
     $scope.currentEntryType = function(){
       return $scope.entryTypes[$scope.currentEditEntry.data.sys.entryType];
     };
@@ -60,6 +76,7 @@ define([
               newET[entryType.getId()] = entryType;
             });
             $scope.entryTypes = newET;
+            $scope.entryTypeList = entryTypes;
           });
         });
       }

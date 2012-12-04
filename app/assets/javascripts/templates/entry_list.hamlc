@@ -1,19 +1,28 @@
 .entry-list
 
   .row
-    %form.form-search.span6  
+    %form.form-search.span4
       %input.input-medium.search-query.span8{:type => "text", :placeholder => "Enter searchterm"}/
       %button.btn{:type => "submit"} Search
-    %ng-switch.span6(on="paginator.sizeCategory(10, 30)")
+
+    .btn-group.span4
+      %a.btn.dropdown-toggle{"data-toggle" => "dropdown", :href => "#"}
+        Create Entry
+        %span.caret
+      %ul.dropdown-menu
+        %li(ng-repeat="entryType in entryTypeList")
+          %a(ng-click="createEntry(entryType)") {{entryType.data.name}}
+
+    %ng-switch.span4(on="paginator.sizeCategory(10, 30)")
       .pagination(ng-switch-when="small")
         %ul.pull-right
           %li(ng-class="{disabled: paginator.atFirst()}")
             %a(ng-click="paginator.goPrev()") Prev
-          %li(ng-repeat="page in paginator.pages()" 
+          %li(ng-repeat="page in paginator.pages()"
             ng-class="{active: page == paginator.page}")
             %a(ng-click="paginator.goTo(page)") {{page+1}}
           %li(ng-class="{disabled: paginator.atLast()}")
-            %a(ng-click="paginator.goNext()") Next      
+            %a(ng-click="paginator.goNext()") Next
       .btn-group.pull-right(ng-switch-when="medium")
         %button.btn(ng-class="{disabled: paginator.atFirst()}" ng-click="paginator.goPrev()")
           Prev
@@ -21,7 +30,7 @@
           Page {{paginator.page +1}}
           %span.caret
         %ul.dropdown-menu
-          %li(ng-repeat="page in paginator.pages()" 
+          %li(ng-repeat="page in paginator.pages()"
             ng-class="{active: page == paginator.page}")
             %a(ng-click="paginator.goTo(page)") Page {{page+1}}
         %button.btn(ng-class="{disabled: paginator.atLast()}" ng-click="paginator.goNext()")
@@ -34,7 +43,7 @@
           of {{paginator.numPages()}}
         %button.btn(ng-class="{disabled: paginator.atLast()}" ng-click="paginator.goNext()")
           Next
-      
+
   %table.table.table-striped
     %thead
       %tr
