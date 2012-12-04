@@ -13,7 +13,8 @@ define([
     $scope.editEntry = function(entry) {
       // TODO prevent against null entry
       $scope.currentEditEntry = entry;
-      var stop = $scope.$on('exitEditor', function(event){
+      var stop = $scope.$on('exitEditor', function(){
+        reloadEntries();
         $scope.currentEditEntry = null;
         stop();
       });
@@ -30,7 +31,7 @@ define([
             scope.editEntry(entry);
           });
         } else {
-          console.log("Error creating entry", err);
+          console.log('Error creating entry', err);
         }
       });
     };
@@ -49,22 +50,20 @@ define([
 
     $scope.paginator = new Paginator();
 
-    $scope.pageContent = function(){
-      return $scope.paginator.slice($scope.entries);
-    };
-
-    $scope.$watch('entries.length', function(numEntries){
-      $scope.paginator.numEntries = numEntries;
-    });
-
-    function performNav() {
-      if ($scope.contentType == 'entries' ) {
-        if ($scope.entrySection.match(/all|published/)) {
-          $scope.contentTemplate = entryListTemplate;
-          reloadEntries();
-        }
+    $scope.$watch(function pageParameters(scope){
+      return {
+        page: scope.paginator.page,
+        pageLength: scope.paginator.pageLength,
+        contentType: scope.contentType,
+        entrySection: scope.entrySection,
+        bucketId: (scope.bucket && scope.bucket.getId())
+      };
+    }, function(pageParameters, old, scope){
+      reloadEntries();
+      if (  pageParameters.bucketId !== old.bucketId || pageParameters.bucketId && !scope.entryTypes) {
+        reloadEntryTypes();
       }
-    }
+    }, true);
 
     function reloadEntryTypes(){
       if ($scope.bucket && $scope.contentType == 'entries') {
@@ -88,25 +87,27 @@ define([
         var allEntries;
         if ($scope.entrySection == 'all') {
           allEntries = [];
-          $scope.paginator.page = 0;
-          $scope.bucket.getEntries({order: 'sys.id', limit: 1000}, function(err, entries){
+          $scope.bucket.getEntries({
+            order: 'sys.id',
+            limit: $scope.paginator.pageLength,
+            skip: $scope.paginator.skipItems()
+          }, function(err, entries, sys){
             if (err) return;
+            $scope.paginator.numEntries = sys.total;
             allEntries = allEntries.concat(entries);
             $scope.$apply(function($scope){
               $scope.entries = allEntries;
             });
           });
-          // $scope.bucket.getDrafts({order: 'sys.createdAt', limit: 1000}, function(err, drafts){
-          //   if (err) return;
-          //   $scope.$apply(function($scope){
-          //     $scope.entries = $scope.entries.concat(drafts);
-          //   })
-          // });
         } else if ($scope.entrySection == 'published') {
           allEntries = [];
-          $scope.paginator.page = 0;
-          $scope.bucket.getEntries({order: 'sys.id', limit: 1000}, function(err, entries){
+          $scope.bucket.getEntries({
+            order: 'sys.id',
+            limit: $scope.paginator.pageLength,
+            skip: $scope.paginator.skipItems()
+          }, function(err, entries, sys){
             if (err) return;
+            $scope.paginator.numEntries = sys.total;
             allEntries = allEntries.concat(entries);
             $scope.$apply(function($scope){
               $scope.entries = allEntries;
@@ -127,12 +128,6 @@ define([
     //     $scope.editEntry(_($scope.entries).find(function(entry){return entry.data.sys.id === 'ha1agjmr0'}));
     //   }
     // })
-
-
-    $scope.$watch('bucket', reloadEntries);
-    $scope.$watch('bucket', reloadEntryTypes);
-    $scope.$watch('contentType' , performNav);
-    $scope.$watch('entrySection', performNav);
 
   });
 });

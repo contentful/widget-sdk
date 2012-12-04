@@ -5,6 +5,8 @@ define([
 
   function Paginator(numEntries) {
     this.numEntries = numEntries || 0;
+    // TODO: Provide method to update numEntries that adjusts the
+    // current Pagenumber if it becomes invalid
     this.page = 0;
     this.pageLength = 20;
   }
@@ -16,6 +18,10 @@ define([
 
     endIndex: function() {
       return (this.page+1) * this.pageLength;
+    },
+
+    skipItems: function() {
+      return (this.page) * this.pageLength;
     },
 
     numPages: function() {
