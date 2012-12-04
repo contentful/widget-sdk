@@ -63,6 +63,22 @@ define([
       });
     };
 
+    $scope.createEntry = function (entryType) {
+      $scope.bucket.createEntry({sys: {entryType: entryType.data.sys.id}}, function (err, entry) {
+        if (!err) {
+          $scope.$apply(function(scope){
+            scope.editEntry(entry);
+          });
+        } else {
+          console.log("Error", err);
+        }
+      });
+    };
+
+    $scope.$watch('entryTypes', function (entryTypes, old, scope) {
+      scope.tabList.setButton('Add Entry');
+    });
+
     $scope.currentEntryType = function(){
       return $scope.entryTypes[$scope.currentEditEntry.data.sys.entryType];
     };

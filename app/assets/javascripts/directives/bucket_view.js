@@ -13,8 +13,9 @@ define([
         template: bucketViewTemplate(),
         restrict: 'E',
         scope: {
-          bucket: '=bucket'
-          },
+          tabList: '=',
+          bucket: '='
+        },
         controller: 'BucketCtrl'
       };
     }

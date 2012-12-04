@@ -11,7 +11,7 @@
         %a(href="/work") Workflows
       %li.disabled
         %a(ng-click="location.path('apps')") Apps
-  .span10(ng-switch="section")
+  -#.span10(ng-switch="section")
     %bucket-content(ng-switch-when="content" bucket="bucket")
     %div(ng-switch-default="")
       Unhandled case: section = {{section}}
