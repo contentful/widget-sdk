@@ -23,7 +23,6 @@ define [
     doc.del commonStart, oldval.length - commonStart - commonEnd unless oldval.length == commonStart + commonEnd
     doc.insert commonStart, newval[commonStart ... newval.length - commonEnd] unless newval.length == commonStart + commonEnd
 
-  console.log "attaching textarea"
   sharejs.extendDoc 'attach_textarea', (elem) ->
     doc = this
     elem.value = @getText()
