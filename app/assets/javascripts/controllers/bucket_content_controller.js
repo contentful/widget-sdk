@@ -36,6 +36,16 @@ define([
       });
     };
 
+    $scope.deleteEntry = function (entry) {
+      entry.delete(function (err) {
+        if (!err) {
+          reloadEntries();
+        } else {
+          console.log('Error deleting entry', entry);
+        }
+      });
+    };
+
     $scope.currentEntryType = function(){
       return $scope.entryTypes[$scope.currentEditEntry.data.sys.entryType];
     };

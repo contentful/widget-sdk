@@ -62,6 +62,6 @@
           %a.btn(ng-click="editEntry(entry)")
             %i.icon-pencil
             Edit
-          %a.btn.btn-danger
+          %a.btn.btn-danger(ng-click="deleteEntry(entry)")
             %i.icon-trash
             Delete
