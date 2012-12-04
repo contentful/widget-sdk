@@ -46,6 +46,23 @@ define([
       });
     };
 
+    $scope.searchEntries = function (term) {
+      // TODO with an empty searchterm, behave as if showing the
+      // unfiltered list
+      $scope.bucket.getEntries({
+        'sys.id': term,
+        order: 'sys.id',
+        limit: $scope.paginator.pageLength,
+        skip: $scope.paginator.skipItems()
+      }, function (err, entries, sys) {
+        if (err) return;
+        $scope.paginator.numEntries = sys.total;
+        $scope.$apply(function($scope){
+          $scope.entries = entries;
+        });
+      });
+    };
+
     $scope.currentEntryType = function(){
       return $scope.entryTypes[$scope.currentEditEntry.data.sys.entryType];
     };
