@@ -6,31 +6,43 @@ define([
   return controllers.controller('BucketCtrl', function($scope) {
     $scope.section = null;
 
-    var currentTab = null;
-
-    function updateCurrentTab(section) {
-      var options = {
-        activate: function(){
-          $scope.section = section;
-        }
-      };
-      if (!currentTab) {
-        currentTab = $scope.tabList.add(section, options);
-      } else {
-        currentTab = currentTab.replace(section);
+    $scope.$watch('bucket', function(bucket, old, scope){
+      scope.tabList.closeAll();
+      if (bucket) {
+        var tab = scope.tabList.add({
+          viewType: 'bucket-content-entries',
+          params: {
+            bucketId: bucket.getId(),
+            list: 'all'
+          },
+          title: 'Entries',
+          button: {
+            title: 'Create Entry',
+            active: false
+          }
+        });
+        tab.activate();
       }
-      currentTab.activate();
-    }
+    });
 
     $scope.$watch('bucket', function(bucket){
       if (bucket) {
-        $scope.visitSection("content");
+        $scope.visitSection('content');
+      }
+    });
+
+    $scope.$on('tabBecameActive', function(event, tab){
+      if (tab.options.viewType === 'bucket-content-entries'){
+        $scope.section = 'content';
+        $scope.subsection = 'entries';
+        $scope.tabOptions = tab.options;
+      } else if (tab.options.viewType === 'bucket-content-media') {
+        $scope.tabOptions = tab.options;
       }
     });
 
     $scope.visitSection = function(section) {
       $scope.section = section;
-      updateCurrentTab(section);
     };
 
   });

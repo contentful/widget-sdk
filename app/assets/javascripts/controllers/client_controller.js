@@ -10,14 +10,10 @@ define([
   return controllers.controller('ClientCtrl', function($scope, client) {
       $scope.bucket  = null;
       $scope.buckets = [];
-      $scope.tabList = new TabList();
-      console.log("Setting Tablist")
+      $scope.tabList = new TabList($scope);
 
-      // TODO when switching buckets, close all tabs
-      
       $scope.$watch('buckets', function(buckets){
         if (buckets && buckets.length > 0) {
-          console.log("Setting bucket", buckets[0])
           $scope.bucket = buckets[0];
         }
       });

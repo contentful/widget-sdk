@@ -14,10 +14,8 @@
         %form.navbar-form.pull-left
           %select{'ng-model' => 'bucket', 'ng-options' => "bucket.data.name for bucket in buckets"}
         %ul.nav.nav-tabs
-          %li(ng-repeat="tabItem in tabList.items" ng-class="{active: tabItem.active}")
-            %a(ng-click="tabItem.activate()") {{tabItem.title}}
-        %button(ng-show="tabList.button" ng-click="tabList.button.callback()") {{tabList.button.title}}
-        .pull-right
-          %a.brand{:href => "#"} Contentful
+          %li(ng-repeat="tabItem in tabList.items" ng-class="{active: tabItem.active()}")
+            %a(ng-click="tabItem.activate()") {{tabItem.title()}}
+        %tablist-button(tab-list="tabList")
 
   %bucket-view.container-fluid(tab-list="tabList "bucket="bucket")

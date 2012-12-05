@@ -9,6 +9,7 @@ define([
   'directives/offset_by_one',
   'directives/cf_field_editor',
   'directives/ot_bind',
+  'directives/tablist_button'
 ], function(angular){
   'use strict';
 

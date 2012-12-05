@@ -13,7 +13,8 @@ define([
         template: bucketContentTemplate(),
         restrict: 'E',
         scope: {
-          bucket: '=bucket'
+          bucket: '=',
+          tabList: '='
           },
         controller: 'BucketContentCtrl',
       };

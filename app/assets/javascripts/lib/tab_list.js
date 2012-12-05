@@ -1,84 +1,123 @@
 define([
   'lodash'
 ], function(_){
-  function TabList() {
+  'use strict';
+
+  function TabList(scope) {
+    this.scope = scope;
     this.items = [];
     this.button = null;
+    this.current = null;
   }
 
   TabList.prototype = {
-    add: function(title, options){
-      var item = this.makeItem(title, options);
+    activate: function(item){
+      var event = this.scope.$broadcast('tabWantsActive', item);
+      if (!event.defaultPrevented){
+        this.current = item;
+        this.scope.$broadcast('tabBecameActive', item);
+      }
+    },
+
+    clickButton: function(value){
+      if (this.hasButton() && this.currentButton().active) {
+        this.scope.$broadcast('tabButtonClicked', this.currentButton(), value);
+      }
+    },
+
+    buttonActive: function(newState){
+      if (this.hasButton()){
+        if (newState !== undefined) {
+          this.currentButton().active = newState;
+        }
+        return this.currentButton().active;
+      }
+    },
+
+    buttonHasOptions: function() {
+      return this.hasButton() && !!this.currentButton().options;
+    },
+
+    currentButton: function() {
+      return this.current && this.current.options.button;
+    },
+
+    hasButton: function(){
+      return this.currentButton();
+    },
+
+    add: function(options){
+      var item = this.makeItem(options);
       this.items.push(item);
       return item;
     },
 
-    getActive: function () {
-      return _(this.items).find(function(item){
-        return item.active === true;
-      });
+    closeAll: function(){
+      this.items = [];
+      this.current = null;
     },
 
-    makeItem: function(title, options){
-      var item = new TabItem(title, options);
+    makeItem: function(options){
+      var item = new TabItem(options);
       item._list = this;
       return item;
     },
 
-    setButton: function(title, callback){
-      this.button = {title: title, callback: callback};
-    },
+    //setButton: function(title, callback){
+    //  this.button = {title: title, callback: callback};
+    //},
 
-    clearButton: function () {
-      this.button = null;
-    },
+    //clearButton: function () {
+    //  this.button = null;
+    //},
 
-    deactivateAll: function(){
-      for (var i = 0; i < this.items.length; i += 1) {
-        this.items[i].active = false;
-      }
-    },
-
-   removeItem: function (item) {
+   closeTab: function (item) {
      var index = _(this.items).indexOf(item);
+     if (this.current == item) this.current = null;
      this.items.splice(index,1);
    },
 
-   replaceItem: function(oldItem, newItem){
+   replaceTab: function(oldItem, newItem){
      var index = _(this.items).indexOf(oldItem);
      this.items.splice(index, 1, newItem);
+     if (this.current == oldItem) this.current = newItem;
+   },
+
+   currentViewType: function(){
+     if (this.current){
+       return this.current.options.viewType;
+     }
    }
 
   };
 
-  function TabItem(title, options) {
+  function TabItem(options) {
     if (options === undefined) options = {};
-    this.title = title;
     this.options = options;
-    this.active = false;
   }
 
   TabItem.prototype = {
-    activate: function (run) {
-      if (run === undefined) {
-        run = true;
-      }
-      if (run && typeof this.options.activate === 'function'){
-        this.options.activate();
-      }
-      this._list.deactivateAll();
-      this.active = true;
+    activate: function () {
+      this._list.activate(this);
     },
 
-    remove: function() {
+    active: function(){
+      return this._list.current == this;
+    },
+
+    title: function(){
+      return this.options.title;
+    },
+
+    close: function() {
       this._list.removeItem(this);
     },
 
-    replace: function(title, options){
-     var item = this._list.makeItem(title, options);
-     this._list.replaceItem(this, item);
-     return item;
-    }
+    //replace: function(title, options){
+    // var item = this._list.makeItem(title, options);
+    // this._list.replaceItem(this, item);
+    // return item;
+    //}
   };
   return TabList;
 });

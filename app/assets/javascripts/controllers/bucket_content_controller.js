@@ -49,6 +49,9 @@ define([
     $scope.searchEntries = function (term) {
       // TODO with an empty searchterm, behave as if showing the
       // unfiltered list
+      //
+      // Always just reload and use the searchterm as a filter if
+      // applicable
       $scope.bucket.getEntries({
         'sys.id': term,
         order: 'sys.id',
@@ -70,13 +73,25 @@ define([
             scope.editEntry(entry);
           });
         } else {
-          console.log("Error", err);
+          console.log('Error', err);
         }
       });
     };
 
     $scope.$watch('entryTypes', function (entryTypes, old, scope) {
-      scope.tabList.setButton('Add Entry');
+      if (scope.tabList.currentViewType() === 'bucket-content-entries') {
+        scope.tabList.currentButton().options = _(entryTypes).map(function(et){
+          return {
+            title: et.data.name,
+            value: et
+          };
+        });
+        scope.tabList.buttonActive(true);
+      }
+    });
+
+    $scope.$on('tabButtonClicked', function(event, button, entryType){
+      event.currentScope.createEntry(entryType);
     });
 
     $scope.currentEntryType = function(){

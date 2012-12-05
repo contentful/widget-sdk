@@ -1,19 +1,11 @@
 .entry-list
 
   .row
-    %form.form-search.span4(ng-submit="searchEntries(searchTerm)")
+    %form.form-search.span6(ng-submit="searchEntries(searchTerm)")
       %input.input-medium.search-query.span8(type="text" ng-model="searchTerm" placeholder="Enter searchterm")/
       %button.btn{:type => "submit"} Search
 
-    .btn-group.span4
-      %a.btn.dropdown-toggle{"data-toggle" => "dropdown", :href => "#"}
-        Create Entry
-        %span.caret
-      %ul.dropdown-menu
-        %li(ng-repeat="entryType in entryTypeList")
-          %a(ng-click="createEntry(entryType)") {{entryType.data.name}}
-
-    %ng-switch.span4(on="paginator.sizeCategory(10, 30)")
+    %ng-switch.span6(on="paginator.sizeCategory(10, 30)")
       .pagination(ng-switch-when="small")
         %ul.pull-right
           %li(ng-class="{disabled: paginator.atFirst()}")

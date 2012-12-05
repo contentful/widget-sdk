@@ -11,7 +11,7 @@
         %a(href="/work") Workflows
       %li.disabled
         %a(ng-click="location.path('apps')") Apps
-  -#.span10(ng-switch="section")
-    %bucket-content(ng-switch-when="content" bucket="bucket")
+  .span10(ng-switch="tabOptions.viewType")
+    %bucket-content(ng-switch-when="bucket-content-entries" bucket="bucket" tab-list="tabList")
     %div(ng-switch-default="")
-      Unhandled case: section = {{section}}
+      Unhandled case: viewType = {{tabOptions.viewType}}
