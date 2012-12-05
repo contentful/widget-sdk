@@ -130,6 +130,7 @@ define([
           allEntries = [];
           $scope.bucket.getEntries({
             order: 'sys.id',
+            'sys.publishedAt[gt]': 0,
             limit: $scope.paginator.pageLength,
             skip: $scope.paginator.skipItems()
           }, function(err, entries, sys){

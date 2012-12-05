@@ -28,6 +28,17 @@ define([
       });
     };
 
+    $scope.publish = function () {
+      var version = $scope.doc.version();
+      $scope.originalEntry.publish(version, function (err) {
+        if (err) {
+          window.alert('could not publish, version mismatch');
+          return;
+        }
+        window.alert('published');
+      });
+    };
+
     $scope.fields = function(){
       return $scope.entryType.data.fields;
     };
