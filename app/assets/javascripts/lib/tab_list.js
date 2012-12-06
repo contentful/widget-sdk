@@ -80,12 +80,18 @@ define([
    replaceTab: function(oldItem, newItem){
      var index = _(this.items).indexOf(oldItem);
      this.items.splice(index, 1, newItem);
-     if (this.current == oldItem) this.current = newItem;
+     if (this.current == oldItem) this.activate(newItem);
    },
 
    currentViewType: function(){
      if (this.current){
        return this.current.options.viewType;
+     }
+   },
+
+   currentParams: function(){
+     if (this.current){
+       return this.current.options.params;
      }
    }
 
@@ -113,11 +119,11 @@ define([
       this._list.removeItem(this);
     },
 
-    //replace: function(title, options){
-    // var item = this._list.makeItem(title, options);
-    // this._list.replaceItem(this, item);
-    // return item;
-    //}
+    replace: function(options){
+     var item = this._list.makeItem(options);
+     this._list.replaceTab(this, item);
+     return item;
+    }
   };
   return TabList;
 });

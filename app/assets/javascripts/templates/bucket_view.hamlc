@@ -1,17 +1,17 @@
 .row-fluid
   .span2.bucket-nav
     %ul.nav.nav-list
-      %li{'ng-class' => "{active: section=='entry_types'}"}
-        %a{'ng-click' => "visitSection('entry_types')"} Content-Model
-      %li{'ng-class' => "{active: section=='content'}"}
-        %a{'ng-click' => "visitSection('content')"} Content
+      %li{'ng-class' => "{active: tabList.currentViewType() == 'bucket-entryTypes'}"}
+        %a{'ng-click' => "visitView('bucket-entryTypes')"} Content-Model
+      %li{'ng-class' => "{active: tabList.currentViewType() == 'bucket-content'}"}
+        %a{'ng-click' => "visitView('bucket-content')"} Content
       %li.disabled
-        %a(href="/del") Content Delivery
+        %a Content Delivery
       %li.disabled
-        %a(href="/work") Workflows
+        %a Workflows
       %li.disabled
-        %a(ng-click="location.path('apps')") Apps
-  .span10(ng-switch="tabOptions.viewType")
-    %bucket-content(ng-switch-when="bucket-content-entries" bucket="bucket" tab-list="tabList")
+        %a Apps
+  .span10(ng-switch="tabList.currentViewType()")
+    %bucket-content(ng-switch-when="bucket-content" bucket="bucket" tab-list="tabList")
     %div(ng-switch-default="")
-      Unhandled case: viewType = {{tabOptions.viewType}}
+      Unhandled case: viewType = {{tabList.currentViewType()}}

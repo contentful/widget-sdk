@@ -79,7 +79,8 @@ define([
     };
 
     $scope.$watch('entryTypes', function (entryTypes, old, scope) {
-      if (scope.tabList.currentViewType() === 'bucket-content-entries') {
+      if (scope.tabList.currentViewType() === 'bucket-content' &&
+          scope.tabList.currentParams().contentType == 'entries') {
         scope.tabList.currentButton().options = _(entryTypes).map(function(et){
           return {
             title: et.data.name,
