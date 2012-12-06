@@ -45,7 +45,7 @@
         %th Fields
         %th.edit Edit
     %tbody
-      %tr(ng-repeat="entry in entries")
+      %tr(ng-repeat="entry in entries" ng-hide="entry.data.sys.deletedAt")
         %td {{entry.getId()}}
         %td {{entryTypes[entry.data.sys.entryType].data.name}}
         %td {{entry.getCreatedAt().toLocaleString('de')}}
