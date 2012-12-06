@@ -1,0 +1,33 @@
+%ng-switch.span6(on="size()")
+  .pagination(ng-switch-when="small")
+    %ul.pull-right
+      %li(ng-class="{disabled: paginator.atFirst()}")
+        %a(ng-click="paginator.goPrev()") Prev
+      %li(ng-repeat="page in paginator.pages()"
+        ng-class="{active: page == paginator.page}")
+        %a(ng-click="paginator.goTo(page)") {{page+1}}
+      %li(ng-class="{disabled: paginator.atLast()}")
+        %a(ng-click="paginator.goNext()") Next
+
+  .btn-group.pull-right(ng-switch-when="medium")
+    %button.btn(ng-class="{disabled: paginator.atFirst()}" ng-click="paginator.goPrev()")
+      Prev
+    %span.btn.dropdown-toggle.inner(data-toggle="dropdown")
+      Page {{paginator.page +1}}
+      %span.caret
+    %ul.dropdown-menu
+      %li(ng-repeat="page in paginator.pages()"
+        ng-class="{active: page == paginator.page}")
+        %a(ng-click="paginator.goTo(page)") Page {{page+1}}
+    %button.btn(ng-class="{disabled: paginator.atLast()}" ng-click="paginator.goNext()")
+      Next
+
+  .pull-right.input-prepend.input-append.large-pagination(ng-switch-default="")
+    %button.btn(ng-class="{disabled: paginator.atFirst()}" ng-click="paginator.goPrev()")
+      Prev
+    %input.span2.pagenum(ng-model="paginator.page" type="text" ng-model-onblur="" offset-by-one="" ng-change="paginator.sanitizePage()" onclick="this.select();")
+    %span.help-inline.pagenum
+      of {{paginator.numPages()}}
+    %button.btn(ng-class="{disabled: paginator.atLast()}" ng-click="paginator.goNext()")
+      Next
+

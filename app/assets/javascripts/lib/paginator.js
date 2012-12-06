@@ -65,17 +65,8 @@ define([
 
     goPrev: function(){
       if (!this.atFirst()) this.page--;
-    },
-
-    sizeCategory: function(smallThreshold, largeThreshold){
-      if (this.numPages() <= smallThreshold) {
-        return 'small';
-      } else if (this.numPages() <= largeThreshold){
-        return 'medium';
-      } else {
-        return 'large';
-      }
     }
+
   };
 
   return Paginator;
