@@ -7,30 +7,40 @@ define([
   'use strict';
 
   return controllers.controller('EntryEditorCtrl', function($scope, ShareJS) {
-    ShareJS.open($scope.originalEntry, function(err, doc) {
-      if (!err) {
-        $scope.$apply(function(scope){
-          scope.doc = doc.subdoc('fields');
-        });
-      } else {
-        console.log('Error opening connection', err);
-      }
-    });
+    $scope.$watch('tab.params.entry',     'entry=tab.params.entry');
+    $scope.$watch('tab.params.entryType', 'entryType=tab.params.entryType');
+    $scope.$watch('tab.params.bucket.data.locales.default', 'locale=tab.params.bucket.data.locales.default');
+    //$scope.$watch('tab.params', function(n, o, scope){debugger});
 
-    $scope.entry = $scope.originalEntry.clone();
-    $scope.locale = 'en-US';
+    $scope.$watch('entry', function(entry, old, scope){
+      if (!entry) return;
+      if (scope.shareJSstarted) {
+        console.log('Fatal error, shareJS started twice');
+      }
+
+      ShareJS.open(entry, function(err, doc) {
+        if (!err) {
+          scope.$apply(function(scope){
+            scope.doc = doc.subdoc('fields');
+          });
+        } else {
+          console.log('Error opening connection', err);
+        }
+      });
+      scope.shareJSstarted = true;
+    });
 
     $scope.exitEditor = function(){
       $scope.doc.close(function(){
         $scope.$apply(function(scope){
-          scope.$emit('exitEditor');
+          scope.tab.close();
         });
       });
     };
 
     $scope.publish = function () {
       var version = $scope.doc.version();
-      $scope.originalEntry.publish(version, function (err) {
+      $scope.entry.publish(version, function (err) {
         if (err) {
           window.alert('could not publish, version mismatch');
           return;
@@ -40,7 +50,14 @@ define([
     };
 
     $scope.fields = function(){
-      return $scope.entryType.data.fields;
+      if ($scope.entryType) {
+        return $scope.entryType.data.fields;
+      }
+    };
+
+    $scope.headline = function(){
+      var verb = $scope.tab.params.mode == 'edit' ? 'Editing' : 'Creating';
+      return verb + ' ' + $scope.entryType.data.name + ': ' + $scope.entry.getName();
     };
 
   });

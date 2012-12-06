@@ -10,14 +10,33 @@ define([
     $scope.contentType = 'entries';
     $scope.entrySection = 'all';
 
-    $scope.editEntry = function(entry) {
+    $scope.editEntry = function(entry, mode) {
+      if (mode === undefined) mode = 'edit';
       // TODO prevent against null entry
-      $scope.currentEditEntry = entry;
-      var stop = $scope.$on('exitEditor', function(){
-        reloadEntries();
-        $scope.currentEditEntry = null;
-        stop();
+      var editor = _($scope.tab.list.items).find(function(tab){
+        return (tab.viewType == 'entry-editor' && tab.params.entry.getId() == entry.getId());
       });
+      if (!editor) {
+        var entryType = $scope.entryTypes[entry.data.sys.entryType];
+        editor = $scope.tab.list.add({
+          viewType: 'entry-editor',
+          params: {
+            entry: entry,
+            entryType: entryType,
+            bucket: $scope.bucket,
+            mode: mode
+          },
+          button: $scope.tab.button,
+          title: (mode == 'edit' ? 'Edit ' : 'New ') + entryType.data.name
+        });
+        var stop = $scope.$on('tabClosed', function(event, tab){
+          if (tab == editor){
+            stop();
+            reloadEntries();
+          }
+        });
+      }
+      editor.activate();
     };
 
     $scope.createEntry = function(entryType) {
@@ -28,7 +47,7 @@ define([
       }, function(err, entry){
         if (!err) {
           $scope.$apply(function(scope){
-            scope.editEntry(entry);
+            scope.editEntry(entry, 'create');
           });
         } else {
           console.log('Error creating entry', err);
@@ -66,28 +85,15 @@ define([
       });
     };
 
-    $scope.createEntry = function (entryType) {
-      $scope.bucket.createEntry({sys: {entryType: entryType.data.sys.id}}, function (err, entry) {
-        if (!err) {
-          $scope.$apply(function(scope){
-            scope.editEntry(entry);
-          });
-        } else {
-          console.log('Error', err);
-        }
-      });
-    };
-
     $scope.$watch('entryTypes', function (entryTypes, old, scope) {
-      if (scope.tabList.currentViewType() === 'bucket-content' &&
-          scope.tabList.currentParams().contentType == 'entries') {
-        scope.tabList.currentButton().options = _(entryTypes).map(function(et){
+      if (scope.tab.params.contentType == 'entries') {
+        scope.tab.button.options = _(entryTypes).map(function(et){
           return {
             title: et.data.name,
             value: et
           };
         });
-        scope.tabList.buttonActive(true);
+        scope.tab.list.buttonActive(true);
       }
     });
 
@@ -95,16 +101,12 @@ define([
       event.currentScope.createEntry(entryType);
     });
 
-    $scope.currentEntryType = function(){
-      return $scope.entryTypes[$scope.currentEditEntry.data.sys.entryType];
-    };
-
     $scope.switchContentType = function(type){
-      $scope.contentType = type;
+      $scope.tab.params.contentType = type;
     };
 
-    $scope.switchEntrySection = function(section){
-      $scope.entrySection = section;
+    $scope.switchList = function(list){
+      $scope.tab.params.list = list;
     };
 
     $scope.paginator = new Paginator();
@@ -113,8 +115,8 @@ define([
       return {
         page: scope.paginator.page,
         pageLength: scope.paginator.pageLength,
-        contentType: scope.contentType,
-        entrySection: scope.entrySection,
+        contentType: scope.tab.params.contentType,
+        list: scope.tab.params.list,
         bucketId: (scope.bucket && scope.bucket.getId())
       };
     }, function(pageParameters, old, scope){
@@ -125,7 +127,7 @@ define([
     }, true);
 
     function reloadEntryTypes(){
-      if ($scope.bucket && $scope.contentType == 'entries') {
+      if ($scope.bucket && $scope.tab.params.contentType== 'entries') {
         $scope.bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes){
           if (err) return;
           $scope.$apply(function($scope){
@@ -141,10 +143,9 @@ define([
     }
 
     function reloadEntries() {
-      if ($scope.bucket && $scope.contentType == 'entries') {
-        $scope.entries = [];
+      if ($scope.bucket && $scope.tab.params.contentType == 'entries') {
         var allEntries;
-        if ($scope.entrySection == 'all') {
+        if ($scope.tab.params.list == 'all') {
           allEntries = [];
           $scope.bucket.getEntries({
             order: 'sys.id',
@@ -158,7 +159,7 @@ define([
               $scope.entries = allEntries;
             });
           });
-        } else if ($scope.entrySection == 'published') {
+        } else if ($scope.tab.params.list == 'published') {
           allEntries = [];
           $scope.bucket.getEntries({
             order: 'sys.id',

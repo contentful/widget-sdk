@@ -14,7 +14,7 @@ define([
         restrict: 'E',
         scope: {
           bucket: '=',
-          tabList: '='
+          tab: '='
           },
         controller: 'BucketContentCtrl',
       };

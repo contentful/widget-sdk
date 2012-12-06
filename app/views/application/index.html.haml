@@ -15,7 +15,7 @@
           %select{'ng-model' => 'bucket', 'ng-options' => "bucket.data.name for bucket in buckets"}
         %ul.nav.nav-tabs
           %li(ng-repeat="tabItem in tabList.items" ng-class="{active: tabItem.active()}")
-            %a(ng-click="tabItem.activate()") {{tabItem.title()}}
+            %a(ng-click="tabItem.activate()") {{tabItem.title}}
         %tablist-button(tab-list="tabList")
 
   %bucket-view.container-fluid(tab-list="tabList "bucket="bucket")

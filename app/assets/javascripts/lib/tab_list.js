@@ -39,7 +39,7 @@ define([
     },
 
     currentButton: function() {
-      return this.current && this.current.options.button;
+      return this.current && this.current.button;
     },
 
     hasButton: function(){
@@ -55,26 +55,38 @@ define([
     closeAll: function(){
       this.items = [];
       this.current = null;
+      // TODO close auf alle tabs aufrufen
     },
 
     makeItem: function(options){
       var item = new TabItem(options);
-      item._list = this;
+      item.list = this;
       return item;
     },
 
-    //setButton: function(title, callback){
-    //  this.button = {title: title, callback: callback};
-    //},
-
-    //clearButton: function () {
-    //  this.button = null;
-    //},
-
    closeTab: function (item) {
-     var index = _(this.items).indexOf(item);
-     if (this.current == item) this.current = null;
-     this.items.splice(index,1);
+      var event = this.scope.$broadcast('tabWantsClose', item);
+      if (!event.defaultPrevented){
+        var index = _(this.items).indexOf(item);
+        var newCurrent = false;
+
+        if (item.active()) {
+          if (this.items.length == 1) {
+            newCurrent = null;
+          } else if (0 < index) {
+            newCurrent = this.items[index-1];
+          } else {
+            newCurrent = this.items[index+1];
+          }
+        }
+
+        this.items.splice(index,1);
+        this.current = null;
+        this.scope.$broadcast('tabClosed', item);
+        if (newCurrent !== false) {
+          newCurrent.activate();
+        }
+      }
    },
 
    replaceTab: function(oldItem, newItem){
@@ -85,13 +97,13 @@ define([
 
    currentViewType: function(){
      if (this.current){
-       return this.current.options.viewType;
+       return this.current.viewType;
      }
    },
 
    currentParams: function(){
      if (this.current){
-       return this.current.options.params;
+       return this.current.params;
      }
    }
 
@@ -99,29 +111,32 @@ define([
 
   function TabItem(options) {
     if (options === undefined) options = {};
-    this.options = options;
+    this.viewType = options.viewType;
+    this.params   = options.params;
+    this.title    = options.title;
+    this.button   = options.button;
   }
 
   TabItem.prototype = {
     activate: function () {
-      this._list.activate(this);
+      this.list.activate(this);
     },
 
     active: function(){
-      return this._list.current == this;
+      return this.list.current == this;
     },
 
     title: function(){
-      return this.options.title;
+      return this.title;
     },
 
     close: function() {
-      this._list.removeItem(this);
+      this.list.closeTab(this);
     },
 
     replace: function(options){
-     var item = this._list.makeItem(options);
-     this._list.replaceTab(this, item);
+     var item = this.list.makeItem(options);
+     this.list.replaceTab(this, item);
      return item;
     }
   };

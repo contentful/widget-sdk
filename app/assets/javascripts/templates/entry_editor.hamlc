@@ -1,4 +1,4 @@
-%h2 Editing {{entryType.data.name}}: {{entry.getId()}}
+%h2 {{headline()}}
 
 %form.form-horizontal(name="entryForm")
   .control-group(ng-repeat="field in fields()")

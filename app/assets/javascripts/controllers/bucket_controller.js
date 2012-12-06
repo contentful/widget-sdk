@@ -14,15 +14,12 @@ define([
       }
     });
 
-    $scope.$on('tabBecameActive', function(event, tab){
-      if (tab.options.viewType === 'bucket-content'){
-        $scope.viewType = 'bucket-content';
-        $scope.contentType = tab.options.params.contentType;
-        $scope.tabOptions = tab.options;
-      } else if (tab.options.viewType === 'bucket-content-media') {
-        $scope.tabOptions = tab.options;
-      }
-    });
+    //$scope.$on('tabBecameActive', function(event, tab){
+    //  if (tab.viewType === 'bucket-content'){
+    //    $scope.viewType = 'bucket-content';
+    //    $scope.contentType = tab.params.contentType;
+    //  }
+    //});
 
     $scope.visitView = function(viewType) {
       var options;
