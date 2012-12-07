@@ -24,7 +24,7 @@ define [
       radioButtons:
         name: "Boolean Checkbox"
         template: """<label class="checkbox"><input type="checkbox" ng-model="value" ot-bind="replace"/> <span ng-show="value">Yes</span><span ng-show="!value">No</span></label>"""
-    json:
+    object:
       jsonArea:
         name: "JSON Field"
         template: """<textarea class="input-xxlarge" ng-model="value" ot-bind="replace"></textarea>"""
