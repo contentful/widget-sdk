@@ -1,6 +1,0 @@
-[submodule "vendor/contentful_client"]
-	path = vendor/contentful_client
-	url = git@github.com:thriventures/client.git
-[submodule "vendor/ShareJS"]
-	path = vendor/ShareJS
-	url = git@github.com:thriventures/ShareJS.git
