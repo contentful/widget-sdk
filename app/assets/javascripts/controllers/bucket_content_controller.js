@@ -182,13 +182,13 @@ define([
 
     // Development shorcut to quickly open an entry
 
-    // $scope.$watch(function($scope){
-    //   return !(_($scope.entries).isEmpty() || _($scope.entryTypes).isEmpty());
-    // }, function(dataReady){
-    //   if (dataReady) {
-    //     $scope.editEntry(_($scope.entries).find(function(entry){return entry.data.sys.id === 'ha1agjmr0'}));
-    //   }
-    // })
+    //$scope.$watch(function($scope){
+    //  return !(_($scope.entries).isEmpty() || _($scope.entryTypes).isEmpty());
+    //}, function(dataReady){
+    //  if (dataReady) {
+    //    $scope.editEntry($scope.entries[0]);
+    //  }
+    //});
 
   });
 });
