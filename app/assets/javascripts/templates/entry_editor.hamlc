@@ -1,16 +1,38 @@
 %h2 {{headline()}}
 
 %form.form-horizontal(name="entryForm")
-  .control-group(ng-repeat="field in fields()")
-    %label.control-label {{field.name}}
-    %cf-field-editor.controls(
-      doc="doc"
-      type="field.type"
-      editor="textField"
-      field-id="field.id"
-      locale="locale")
+  .row-fluid
+    .well.well-small.span3.pull-right.row-fluid
+      %h5.muted Publishing
+      %ng-switch(on="!!publishedAt()")
+        %div(ng-switch-when="true")
+          %table.table
+            %tr
+              %th Published at
+              %td {{publishedAt().toLocaleString('de-DE')}}
+            %tr
+              %th Version
+              %td {{publishedVersion()}}
+            %tr
+              %th Current
+              %td {{doc.version()}}
+          %button.span12.btn(ng-show="doc.version() > publishedVersion()+1" ng-disabled="entryForm.$invalid" ng-click="publish()") Republish
+          %br
+          %br
+          %button.span12.btn.btn-danger(ng-disabled="entryForm.$invalid" ng-click="unpublish()") Unpublish
+        %div(ng-switch-default="")
+          %p Not published yet
+          %button.span12.btn(ng-disabled="entryForm.$invalid" ng-click="publish()") Publish
+
+    .control-group.span8.pull-left(ng-repeat="field in fields()")
+      %label.control-label {{field.name}}
+      %cf-field-editor.controls(
+        doc="doc"
+        type="field.type"
+        editor="textField"
+        field-id="field.id"
+        locale="locale")
 
   .form-actions
     %button.btn.btn-primary(ng-disabled="entryForm.$invalid" ng-click="exitEditor()") Close
-    %button.btn(ng-disabled="entryForm.$invalid" ng-click="publish()") Publish
     
