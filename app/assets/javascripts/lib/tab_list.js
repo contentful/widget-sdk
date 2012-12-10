@@ -107,12 +107,19 @@ define([
      if (this.current){
        return this.current.params;
      }
+   },
+
+   currentSection: function(){
+     if (this.current){
+       return this.current.section;
+     }
    }
 
   };
 
   function TabItem(options) {
     if (options === undefined) options = {};
+    this.section  = options.section;
     this.viewType = options.viewType;
     this.params   = options.params;
     this.title    = options.title;

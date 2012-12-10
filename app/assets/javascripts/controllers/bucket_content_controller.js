@@ -20,6 +20,7 @@ define([
         var entryType = $scope.entryTypes[entry.data.sys.entryType];
         editor = $scope.tab.list.add({
           viewType: 'entry-editor',
+          section: 'content',
           params: {
             entry: entry,
             entryType: entryType,

@@ -3,9 +3,9 @@
     %ul.nav.nav-list
       // assign a section to every tab, matching link is selected here.
       // clicking on a highlighted link does nothing
-      %li{'ng-class' => "{active: tabList.currentViewType() == 'bucket-entryTypes'}"}
+      %li{'ng-class' => "{active: tabList.currentSection() == 'entryTypes'}"}
         %a{'ng-click' => "visitView('bucket-entryTypes')"} Content-Model
-      %li{'ng-class' => "{active: tabList.currentViewType() == 'bucket-content'}"}
+      %li{'ng-class' => "{active: tabList.currentSection() == 'content'}"}
         %a{'ng-click' => "visitView('bucket-content')"} Content
       %li.disabled
         %a Content Delivery

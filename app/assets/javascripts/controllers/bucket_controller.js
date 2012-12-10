@@ -14,18 +14,12 @@ define([
       }
     });
 
-    //$scope.$on('tabBecameActive', function(event, tab){
-    //  if (tab.viewType === 'bucket-content'){
-    //    $scope.viewType = 'bucket-content';
-    //    $scope.contentType = tab.params.contentType;
-    //  }
-    //});
-
     $scope.visitView = function(viewType) {
       var options;
       if (viewType == 'bucket-content'){
         options = {
           viewType: 'bucket-content',
+          section: 'content',
           params: {
             contentType: 'entries',
             bucketId: $scope.bucket.getId(),
@@ -41,6 +35,7 @@ define([
       } else if (viewType == 'bucket-entryTypes'){
         options = {
           viewType: 'bucket-entryTypes',
+          section: 'entryTypes',
           title: 'Content Model',
           button: {
             title: 'Create Content Type',
@@ -50,7 +45,12 @@ define([
         };
       }
       if ($scope.firstTab) {
-        $scope.firstTab = $scope.firstTab.replace(options);
+        if ($scope.firstTab.viewType != viewType){
+          $scope.firstTab = $scope.firstTab.replace(options);
+        }
+        if (!$scope.firstTab.active()){
+          $scope.firstTab.activate();
+        }
       } else {
         $scope.firstTab = $scope.tabList.add(options);
         $scope.firstTab.activate();
