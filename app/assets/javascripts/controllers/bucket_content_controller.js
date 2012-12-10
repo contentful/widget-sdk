@@ -65,6 +65,27 @@ define([
       });
     };
 
+
+    $scope.archiveEntry = function (entry) {
+      entry.archive(function (err) {
+        if (!err) {
+          reloadEntries();
+        } else {
+          console.log('Error archiving entry', entry);
+        }
+      });
+    };
+
+    $scope.unarchiveEntry = function (entry) {
+      entry.unarchive(function (err) {
+        if (!err) {
+          reloadEntries();
+        } else {
+          console.log('Error unarchiving entry', entry);
+        }
+      });
+    };
+
     $scope.searchEntries = function (term) {
       // TODO with an empty searchterm, behave as if showing the
       // unfiltered list
@@ -107,6 +128,19 @@ define([
 
     $scope.switchList = function(list){
       $scope.tab.params.list = list;
+    };
+
+    $scope.visibleInCurrentList = function(entry){
+      switch ($scope.tab.params.list) {
+        case 'all':
+          return !entry.data.sys.deletedAt && !entry.data.sys.archivedAt;
+        case 'published':
+          return entry.data.sys.publishedAt > 0;
+        case 'archived':
+          return entry.data.sys.archivedAt > 0;
+        default:
+          return true;
+      }
     };
 
     $scope.paginator = new Paginator();
@@ -164,6 +198,21 @@ define([
           $scope.bucket.getEntries({
             order: 'sys.id',
             'sys.publishedAt[gt]': 0,
+            limit: $scope.paginator.pageLength,
+            skip: $scope.paginator.skipItems()
+          }, function(err, entries, sys){
+            if (err) return;
+            $scope.paginator.numEntries = sys.total;
+            allEntries = allEntries.concat(entries);
+            $scope.$apply(function($scope){
+              $scope.entries = allEntries;
+            });
+          });
+        } else if ($scope.tab.params.list == 'archived') {
+          allEntries = [];
+          $scope.bucket.getEntries({
+            order: 'sys.id',
+            'sys.archivedAt[gt]': 0,
             limit: $scope.paginator.pageLength,
             skip: $scope.paginator.skipItems()
           }, function(err, entries, sys){

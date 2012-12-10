@@ -15,15 +15,21 @@
         %th Fields
         %th.edit Edit
     %tbody
-      %tr(ng-repeat="entry in entries" ng-hide="entry.data.sys.deletedAt")
+      %tr(ng-repeat="entry in entries" ng-show="visibleInCurrentList(entry)")
         %td {{entry.getId()}}
         %td {{entryTypes[entry.data.sys.entryType].data.name}}
         %td {{entry.getCreatedAt().toLocaleString('de')}}
         %td
         %td.edit
-          %a.btn(ng-click="editEntry(entry)")
+          %a.btn.btn-primary(ng-click="editEntry(entry)")
             %i.icon-pencil
             Edit
-          %a.btn.btn-danger(ng-click="deleteEntry(entry)")
+          %a.btn.btn-success(ng-click="unarchiveEntry(entry)" ng-show="entry.canUnarchive()")
+            %i.icon-repeat
+            Restore
+          %a.btn(ng-click="archiveEntry(entry)" ng-show="entry.canArchive()")
+            %i.icon-folder-close
+            Archive
+          %a.btn.btn-danger(ng-click="deleteEntry(entry)" ng-show="entry.canDelete()")
             %i.icon-trash
             Delete
