@@ -35,7 +35,8 @@ define([
           button: {
             title: 'Create Entry',
             active: false
-          }
+          },
+          canClose: false
         };
       } else if (viewType == 'bucket-entryTypes'){
         options = {
@@ -44,7 +45,8 @@ define([
           button: {
             title: 'Create Content Type',
             active: false
-          }
+          },
+          canClose: false
         };
       }
       if ($scope.firstTab) {

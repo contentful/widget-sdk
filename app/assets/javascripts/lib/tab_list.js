@@ -81,9 +81,11 @@ define([
         }
 
         this.items.splice(index,1);
-        this.current = null;
+        if (item.active()) {
+          this.current = null;
+        }
         this.scope.$broadcast('tabClosed', item);
-        if (newCurrent !== false) {
+        if (newCurrent !== false && newCurrent !== null) {
           newCurrent.activate();
         }
       }
@@ -115,10 +117,15 @@ define([
     this.params   = options.params;
     this.title    = options.title;
     this.button   = options.button;
+    if (options.canClose !== undefined) {
+      this._canClose = options.canClose;
+    } else {
+      this._canClose = true;
+    }
   }
 
   TabItem.prototype = {
-    activate: function () {
+    activate: function ($event) {
       this.list.activate(this);
     },
 
@@ -132,6 +139,15 @@ define([
 
     close: function() {
       this.list.closeTab(this);
+    },
+
+    closeAsync: function(){
+      var self = this;
+      setTimeout(function(){self.close();}, 1);
+    },
+
+    canClose: function(){
+      return this._canClose;
     },
 
     replace: function(options){
