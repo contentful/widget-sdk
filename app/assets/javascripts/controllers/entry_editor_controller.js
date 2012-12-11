@@ -10,7 +10,6 @@ define([
     $scope.$watch('tab.params.entry',     'entry=tab.params.entry');
     $scope.$watch('tab.params.entryType', 'entryType=tab.params.entryType');
     $scope.$watch('tab.params.bucket.data.locales.default', 'locale=tab.params.bucket.data.locales.default');
-    //$scope.$watch('tab.params', function(n, o, scope){debugger});
 
     $scope.$watch('entry', function(entry, old, scope){
       if (!entry) return;
