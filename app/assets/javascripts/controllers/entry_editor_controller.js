@@ -17,6 +17,8 @@ define([
         console.log('Fatal error, shareJS started twice');
       }
 
+      // TODO: This will currently fail horribly if the entry is replaced because everything is still bound
+      // to the old entry
       ShareJS.open(entry, function(err, doc) {
         if (!err) {
           scope.$apply(function(scope){
@@ -37,19 +39,36 @@ define([
       });
     };
 
+    $scope.$on('inputBlurred', function(event) {
+      event.stopPropagation();
+      event.currentScope.updateFromShareJSDoc();
+    });
+
+    $scope.updateFromShareJSDoc = function() {
+      this.entry.update(this.doc.parent().value());
+    };
+
     $scope.publish = function () {
       var version = $scope.doc.version();
       $scope.entry.publish(version, function (err) {
-        $scope.$apply(function(){
-          if (err) window.alert('could not publish, version mismatch');
+        $scope.$apply(function(scope){
+          if (err) {
+            window.alert('could not publish, version mismatch');
+          } else {
+            scope.updateFromShareJSDoc();
+          }
         });
       });
     };
 
     $scope.unpublish = function () {
       $scope.entry.unpublish(function (err) {
-        $scope.$apply(function(){
-          if (err) window.alert('Error');
+        $scope.$apply(function(scope){
+          if (err) {
+            window.alert('could not unpublish, version mismatch');
+          } else {
+            scope.updateFromShareJSDoc();
+          }
         });
       });
     };

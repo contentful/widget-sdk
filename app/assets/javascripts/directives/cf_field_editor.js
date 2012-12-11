@@ -1,9 +1,4 @@
-define([
-  'angular',
-  'templates/entry_list',
-
-  'services/widgets'
-], function(angular, entryListTemplate){
+define(function(){
   'use strict';
 
   return {
@@ -40,6 +35,9 @@ define([
           }
 
           elm.html(widget.template + '<span class="help-inline">'+widget.name+'</span>');
+          elm.on('blur', '*', function() {
+            scope.$emit('inputBlurred', scope.fieldId);
+          });
           $compile(elm.contents())(scope);
           if(typeof widget.link === 'function') {
             widget.link(scope, elm, attr);
