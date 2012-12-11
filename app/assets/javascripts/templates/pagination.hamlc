@@ -1,6 +1,6 @@
-%ng-switch.span6(on="size()")
-  .pagination(ng-switch-when="small")
-    %ul.pull-right
+%ng-switch(on="size()")
+  .pagination.pull-right(ng-switch-when="small")
+    %ul
       %li(ng-class="{disabled: paginator.atFirst()}")
         %a(ng-click="paginator.goPrev()") Prev
       %li(ng-repeat="page in paginator.pages()"

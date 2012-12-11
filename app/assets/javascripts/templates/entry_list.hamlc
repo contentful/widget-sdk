@@ -5,7 +5,9 @@
       %input.input-medium.search-query.span8(type="text" ng-model="searchTerm" placeholder="Enter searchterm")/
       %button.btn{:type => "submit"} Search
 
-    %pagination(paginator="paginator")
+    .span6.pagination-container
+      %pagination(paginator="paginator")
+      %img.list-spinner(src="/assets/ajax-loader.gif" ng-show="showLoadingIndicator")
   %table.table.table-striped
     %thead
       %tr

@@ -35,9 +35,16 @@ define([
     };
 
     $scope.$on('tabBecameActive', function(event, tab){
-      if (tab == event.currentScope.tab) {
+      var scope = event.currentScope;
+      if (tab == scope.tab) {
         console.log('Reloading entries');
         reloadEntries();
+        scope.showLoadingIndicator = true;
+        setTimeout(function() {
+          console.log('Reloading entries again');
+          reloadEntries();
+          scope.showLoadingIndicator = false;
+        }, 3000);
       }
     });
 
@@ -178,6 +185,8 @@ define([
       }
     }
 
+    // TODO put this mofo into the scope, try to eliminate all closures
+    // to the controller here
     function reloadEntries() {
       if ($scope.bucket && $scope.tab.params.contentType == 'entries') {
         var allEntries;
