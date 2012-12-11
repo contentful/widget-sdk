@@ -30,15 +30,16 @@ define([
           button: $scope.tab.button,
           title: (mode == 'edit' ? 'Edit ' : 'New ') + entryType.data.name
         });
-        var stop = $scope.$on('tabClosed', function(event, tab){
-          if (tab == editor){
-            stop();
-            reloadEntries();
-          }
-        });
       }
       editor.activate();
     };
+
+    $scope.$on('tabBecameActive', function(event, tab){
+      if (tab == event.currentScope.tab) {
+        console.log('Reloading entries');
+        reloadEntries();
+      }
+    });
 
     $scope.createEntry = function(entryType) {
       $scope.bucket.createEntry({
