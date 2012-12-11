@@ -102,7 +102,7 @@ define([
       // Always just reload and use the searchterm as a filter if
       // applicable
       $scope.bucket.getEntries({
-        'sys.id': term,
+        query: term,
         order: 'sys.id',
         limit: $scope.paginator.pageLength,
         skip: $scope.paginator.skipItems()
