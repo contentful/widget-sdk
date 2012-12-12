@@ -16,5 +16,6 @@
       %bucket-entry-types(ng-switch-when="bucket-entry-types" bucket="bucket" tab="tab")
       %bucket-content(ng-switch-when="bucket-content" bucket="bucket" tab="tab")
       %entry-editor(ng-switch-when="entry-editor" tab="tab")
+      %entry-type-editor(ng-switch-when="entry-type-editor" tab="tab")
       %div(ng-switch-default="")
         Unhandled case: viewType = {{tabList.currentViewType()}}

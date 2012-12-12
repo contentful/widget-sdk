@@ -11,7 +11,8 @@ define([
   'directives/ot_bind',
   'directives/tablist_button',
   'directives/pagination',
-  'directives/bucket_entry_types'
+  'directives/bucket_entry_types',
+  'directives/entry_type_editor'
 ], function(angular){
   'use strict';
 

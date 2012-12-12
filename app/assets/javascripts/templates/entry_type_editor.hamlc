@@ -1,0 +1,44 @@
+%h2 {{headline()}}
+
+%ng-switch.span10(on="entryTypePersisted()")
+  .row.well(ng-switch-when="false")
+    %form.form-horizontal(name="entryTypeIdForm")
+      .control-group
+        %label
+        .controls
+          %span.help-inline Please provide an ID for the new Content Type or leave empty to use a random one. The ID cannot be changed later.
+      .control-group
+        %label.control-label ID
+        .controls
+          .input-append
+            %input(type="text" ng-model="initialId.value" placeholder="(random)")
+            %span.add-on(ng-show="initialId.pending")
+              %img(src="/assets/ajax-loader.gif")
+            %span.add-on(ng-show="!initialId.pending && !initialId.error")
+              %i.icon-ok
+            %span.add-on(ng-show="!initialId.pending && initialId.error")
+              %i.icon-remove
+              {{initialId.error}}
+      .control-group
+        %label
+        .controls
+          %button.btn.btn-primary(ng-disabled="initialId.error" ng-click="createWithId(initialId.value)") Create
+          %button.btn(ng-click="exitEditor()") Abort
+      -#.control-group.span8.pull-left(ng-repeat="field in entryType.data.fields")
+        %label.control-label {{field.name}}
+        %cf-field-editor.controls(
+          doc="doc"
+          type="field.type"
+          editor="textField"
+          field-id="field.id"
+          locale="locale")
+  %form.form-horizontal.span10(name="entryTypeForm" ng-switch-default="")
+    .row
+      .control-group.span8
+        %label.control-label ID
+        .controls
+          %input.uneditable-input(type="text" disabled="true" value="{{entryType.getId()}}")
+    .form-actions
+      %button.btn.btn-primary(ng-disabled="entryForm.$invalid" ng-click="exitEditor()") Close
+    
+

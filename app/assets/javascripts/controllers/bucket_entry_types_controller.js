@@ -50,7 +50,6 @@ define([
       if ($scope.bucket) {
         $scope.bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes){
           if (err) return;
-          console.log('Reloaded EntryTypes', entryTypes);
           $scope.$apply(function($scope){
             $scope.entryTypes = entryTypes;
             $scope.tab.button.active=true;
