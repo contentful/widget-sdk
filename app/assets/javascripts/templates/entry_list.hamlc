@@ -1,5 +1,6 @@
 .entry-list
-
+  .row
+    %h2 Entries
   .row
     %form.form-search.span6(ng-submit="searchEntries(searchTerm)")
       %input.input-medium.search-query.span8(type="text" ng-model="searchTerm" placeholder="Enter searchterm")/
