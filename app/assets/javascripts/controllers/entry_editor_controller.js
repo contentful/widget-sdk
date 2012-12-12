@@ -48,6 +48,13 @@ define([
       this.entry.update(this.doc.parent().value());
     };
 
+    $scope.canPublish = function() {
+      if (!$scope.doc) return false;
+      return !$scope.doc.parent().subdoc(['sys', 'archivedAt']).peek();
+    };
+
+    //TODO: Same kind of controls for archiving/Don't allow editing at all for archived entries
+    
     $scope.publish = function () {
       var version = $scope.doc.version();
       $scope.entry.publish(version, function (err) {

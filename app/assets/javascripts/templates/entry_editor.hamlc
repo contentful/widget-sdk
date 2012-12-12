@@ -2,7 +2,7 @@
 
 %form.form-horizontal(name="entryForm")
   .row-fluid
-    .well.well-small.span3.pull-right.row-fluid
+    .well.well-small.span3.pull-right.row-fluid(ng-show="canPublish()")
       %h5.muted Publishing
       %ng-switch(on="!!publishedAt()")
         %div(ng-switch-when="true")
