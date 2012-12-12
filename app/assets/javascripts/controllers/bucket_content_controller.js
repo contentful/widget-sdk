@@ -14,6 +14,8 @@ define([
       if (mode === undefined) mode = 'edit';
       // TODO prevent against null entry
       var editor = _($scope.tab.list.items).find(function(tab){
+        // TODO Since we have the identitymap we can use identity check
+        // here:
         return (tab.viewType == 'entry-editor' && tab.params.entry.getId() == entry.getId());
       });
       if (!editor) {
@@ -124,11 +126,15 @@ define([
           };
         });
         scope.tab.list.buttonActive(true);
+      } else {
+        // Later when we have media replace button by "add media" button
       }
     });
 
     $scope.$on('tabButtonClicked', function(event, button, entryType){
-      event.currentScope.createEntry(entryType);
+      if (button == event.currentScope.tab.button) {
+        event.currentScope.createEntry(entryType);
+      }
     });
 
     $scope.switchContentType = function(type){

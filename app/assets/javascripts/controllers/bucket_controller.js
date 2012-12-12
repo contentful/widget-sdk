@@ -10,7 +10,7 @@ define([
       scope.tabList.closeAll();
       scope.firstTab = null;
       if (bucket) {
-        $scope.visitView('bucket-content');
+        $scope.visitView('bucket-entry-types');
       }
     });
 
@@ -32,9 +32,9 @@ define([
           },
           canClose: false
         };
-      } else if (viewType == 'bucket-entryTypes'){
+      } else if (viewType == 'bucket-entry-types'){
         options = {
-          viewType: 'bucket-entryTypes',
+          viewType: 'bucket-entry-types',
           section: 'entryTypes',
           title: 'Content Model',
           button: {

@@ -10,7 +10,8 @@ define([
   'directives/cf_field_editor',
   'directives/ot_bind',
   'directives/tablist_button',
-  'directives/pagination'
+  'directives/pagination',
+  'directives/bucket_entry_types'
 ], function(angular){
   'use strict';
 

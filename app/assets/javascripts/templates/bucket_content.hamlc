@@ -33,8 +33,7 @@
 
         %li.disabled
           %a Todo
-
-  .span8(ng-switch="tab.params.contentType")
+  .span8.offset1(ng-switch="tab.params.contentType")
     %entry-list(ng-switch-when="entries")
     %div(ng-switch-default="")
       Unhandled case: contentType = {{contentType}}

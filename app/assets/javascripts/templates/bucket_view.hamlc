@@ -1,10 +1,8 @@
 .row-fluid
   .span2.bucket-nav
     %ul.nav.nav-list
-      // assign a section to every tab, matching link is selected here.
-      // clicking on a highlighted link does nothing
       %li{'ng-class' => "{active: tabList.currentSection() == 'entryTypes'}"}
-        %a{'ng-click' => "visitView('bucket-entryTypes')"} Content-Model
+        %a{'ng-click' => "visitView('bucket-entry-types')"} Content-Model
       %li{'ng-class' => "{active: tabList.currentSection() == 'content'}"}
         %a{'ng-click' => "visitView('bucket-content')"} Content
       %li.disabled
@@ -15,6 +13,7 @@
         %a Apps
   .span10(ng-repeat="tab in tabList.items" ng-show="tab.active()")
     %ng-switch(on="tab.viewType")
+      %bucket-entry-types(ng-switch-when="bucket-entry-types" bucket="bucket" tab="tab")
       %bucket-content(ng-switch-when="bucket-content" bucket="bucket" tab="tab")
       %entry-editor(ng-switch-when="entry-editor" tab="tab")
       %div(ng-switch-default="")

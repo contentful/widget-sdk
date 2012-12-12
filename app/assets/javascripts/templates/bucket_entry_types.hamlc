@@ -1,0 +1,21 @@
+%h2 Content Model
+.span11
+  %table.table.table-striped
+    %thead
+      %tr
+        %th ID
+        %th Name
+        %th Fields
+        %th.edit Edit
+    %tbody
+      %tr(ng-repeat="entryType in entryTypes")
+        %td {{entryType.getId()}}
+        %td {{entryType.data.name}}
+        %td {{numFields(entryType)}}
+        %td.edit
+          %a.btn.btn-primary(ng-click="editEntryType(entryType)")
+            %i.icon-pencil
+            Edit
+          %a.btn.btn-danger(ng-click="deleteEntryType(entryType)")
+            %i.icon-trash
+            Delete
