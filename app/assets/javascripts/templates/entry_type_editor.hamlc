@@ -1,12 +1,48 @@
 %h2 {{headline()}}
 
-%form.form-horizontal.span10(name="entryTypeForm")
-  .row
-    .control-group.span8
-      %label.control-label ID
-      .controls
-        %input.uneditable-input(type="text" disabled="true" value="{{entryType.getId()}}")
+%form.form-horizontal(name="entryTypeForm")
+  .control-group
+    %label.control-label ID
+    .controls
+      %input.uneditable-input(type="text" disabled="true" value="{{entryType.getId()}}")
+  .control-group
+    %label.control-label Name
+    .controls
+      %input(type="text" ng-model="entryType.data.name" ot-bind-text="'name'" doc="doc")
+  .ccontrol-group
+    %label.control-label Fields
+    .controls.clearfix
+      %table.table.table-striped.span8.fields-list
+        %thead
+          %tr
+            %th
+            %th ID
+            %th Name
+            %th Type
+            %th
+        %tbody
+          %tr(ng-repeat="field in entryType.data.fields")
+            %td.reorder-handle.has-icon
+              %i.icon-align-justify
+            %td
+              %input.uneditable-input(disabled="true" type="text" value="{{field.id}}")
+            %td
+              %input(type="text" ng-model="field.name")
+            %td
+              %select{'ng-model' => 'field.type', 'ng-options' => "type for type in availableTypes"}
+            %td
+              %button.btn.btn-danger Delete
+          %tr
+            %td.has-icon
+              %i.icon-plus
+            %td
+              %input.uneditable-input(disabled="true" type="text" value="{{field.id}}")
+            %td
+              %input(type="text" ng-model="field.name")
+            %td
+              %select{'ng-model' => 'field.type', 'ng-options' => "type for type in availableTypes"}
+            %td
+              %button.btn.btn-success Add
   .form-actions
     %button.btn.btn-primary(ng-disabled="entryForm.$invalid" ng-click="exitEditor()") Close
-  
 

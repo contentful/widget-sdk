@@ -8,7 +8,37 @@ define([
   'use strict';
 
   return controllers.controller('EntryTypeEditorCtrl', function($scope, ShareJS) {
+    $scope.availableTypes = [
+      'array',
+      'boolean',
+      'date',
+      'integer',
+      'number',
+      'object',
+      'string'
+    ]; //TODO, later get this list from the validation.types object
+
     $scope.$watch('tab.params.entryType', 'entryType=tab.params.entryType');
+
+    $scope.$watch('entryType', function(entryType, old, scope){
+      if (!entryType) return;
+      if (scope.shareJSstarted) {
+        console.log('Fatal error, shareJS started twice');
+      }
+
+      // TODO: This will currently fail horribly if the entryType is replaced because everything is still bound
+      // to the old entryType
+      ShareJS.open(entryType, function(err, doc) {
+        if (!err) {
+          scope.$apply(function(scope){
+            scope.doc = doc;
+          });
+        } else {
+          console.log('Error opening connection', err);
+        }
+      });
+      scope.shareJSstarted = true;
+    });
 
 
     $scope.exitEditor = function(){
