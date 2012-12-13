@@ -32,6 +32,32 @@ define([
       editor.activate();
     };
 
+    $scope.createEntryType = function() {
+      var id = window.prompt('Please enter ID (only for development)');
+      var name;
+      if (!id || id === '') {
+        id = null;
+        name = 'Randomfoo';
+      } else {
+        name = id;
+      }
+
+      $scope.bucket.createEntryType({
+        sys: {
+          id: id
+        },
+        name: name
+      }, function(err, entryType){
+        if (!err) {
+          $scope.$apply(function(scope){
+            scope.editEntryType(entryType, 'create');
+          });
+        } else {
+          console.log('Error creating entryType', err);
+        }
+      });
+    };
+
     // TODO Tabbecame Active
 
     $scope.$on('tabButtonClicked', function(event, button){
