@@ -58,13 +58,38 @@ define([
       });
     };
 
-    // TODO Tabbecame Active
+    $scope.$on('tabBecameActive', function(event, tab){
+      var scope = event.currentScope;
+      if (tab == scope.tab) {
+        console.log('Reloading entryTypes');
+        scope.reloadEntryTypes();
+        scope.showLoadingIndicator = true;
+        setTimeout(function() {
+          console.log('Reloading entryTypes again');
+          scope.reloadEntryTypes();
+          scope.showLoadingIndicator = false;
+        }, 3000);
+      }
+    });
 
     $scope.$on('tabButtonClicked', function(event, button){
       if (button == event.currentScope.tab.button) {
         event.currentScope.createEntryType();
       }
     });
+    
+    $scope.deleteEntryType = function (entryType) {
+      window.alert('Not implemented server-side');
+      return;
+      entryType.delete(function (err) {
+        if (!err) {
+          this.reloadEntryTypes();
+        } else {
+          console.log('Error deleting entryType', entryType);
+        }
+      });
+    };
+
 
     $scope.numFields = function(entryType) {
       return _(entryType.data.fields).size();
