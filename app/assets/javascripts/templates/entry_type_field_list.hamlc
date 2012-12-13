@@ -1,0 +1,33 @@
+%table.table.table-striped.fields-list
+  %thead
+    %tr
+      %th
+      %th ID
+      %th Name
+      %th Type
+      %th
+  %tbody
+    %tr.existing-field
+      %td.reorder-handle.has-icon
+        %i.icon-align-justify
+      %td
+        %input.uneditable-input.field-id(disabled="true" type="text")
+      %td
+        %input.field-name(type="text")
+      %td
+        -#%select.field-type
+        %input.field-type(type="text")
+      %td
+        %button.btn.btn-danger Delete
+    %tr.new-field
+      %td.has-icon
+        %i.icon-plus
+      %td
+        %input.field-id(type="text")
+      %td
+        %input.field-name(type="text")
+      %td
+        %select.field-type
+      %td
+        %button.btn.btn-success Add
+

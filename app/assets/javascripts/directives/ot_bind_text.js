@@ -11,7 +11,6 @@ define(function(){
           path: '=otBindText'
         },
         link: function(scope, elm) {
-          // TODO should theoretically also bind to path
           scope.$watch('path', updateBinding);
           scope.$watch('doc',  updateBinding);
           
