@@ -1,9 +1,7 @@
-define([
-  'angular',
-  'templates/entry_list'
-], function(angular, entryListTemplate){
+define(function(){
   'use strict';
 
+  // Only for use inside cfFieldEditor
   return {
     name: 'otBind',
     factory: function() {
@@ -11,9 +9,8 @@ define([
         restrict: 'A',
         require: 'ngModel',
         link: function(scope, elm, attr, ngModelCtrl) {
-
           scope.$on('replaceValue', function(event, v){
-            scope.value = v;
+            event.currentScope.value = v;
           });
 
           if (attr.otBind === 'text') {
@@ -26,24 +23,25 @@ define([
               }
             });
           } else if (attr.otBind === 'replace'){
+            var stopReplaceListener;
             scope.$watch('doc', function(doc, old, scope){
-              if (old && scope.stopReplaceListener) {
-                scope.stopReplaceListener();
-                scope.stopReplaceListener = null;
+              if (old && stopReplaceListener) {
+                stopReplaceListener();
+                stopReplaceListener = null;
               }
 
               if (doc) {
                 scope.value = scope.doc.value();
-                scope.stopReplaceListener = doc.onReplace(function(was, now) {
+                stopReplaceListener = doc.onReplace(function() {
                   scope.$apply(function(){
                     scope.value = scope.doc.value();
                   });
                 });
 
                 ngModelCtrl.$viewChangeListeners.push(function(){
-                  scope.doc.set(ngModelCtrl.$modelValue, function(err, res){
-                    console.log("Set field to %s, err:%o, res:%o", ngModelCtrl.$modelValue, err, res);
-                  });
+                  scope.doc.set(ngModelCtrl.$modelValue/*, function(err, res){
+                    console.log('Set field to %s, err:%o, res:%o', ngModelCtrl.$modelValue, err, res);
+                  }*/);
                 });
               }
             });
