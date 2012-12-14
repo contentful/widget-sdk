@@ -22,12 +22,19 @@ define([
             var body = elm.find('tbody');
 
             function makeRow(field, index, doc){
-              var row = fieldTemplate.clone()
+              var row, nameDoc, typeDoc;
+              row = fieldTemplate.clone()
                 .find('.field-id').val(field.id).end()
                 .find('.field-name').val(field.name).end()
                 .find('.field-type').val(field.type).end();
-              doc.at(['fields', index, 'name']).attach_textarea(row.find('.field-name')[0]);
-              doc.at(['fields', index, 'type']).attach_textarea(row.find('.field-type')[0]);
+              (nameDoc = doc.at(['fields', index, 'name'])).attach_textarea(row.find('.field-name')[0]);
+              (typeDoc = doc.at(['fields', index, 'type'])).attach_textarea(row.find('.field-type')[0]);
+              row.data({
+                updateDocPaths: function(index) {
+                  nameDoc.path[1] = index;
+                  typeDoc.path[1] = index;
+                }
+              });
               return row;
             }
 
@@ -37,6 +44,12 @@ define([
                 items: '.existing-field',
                 handle: '.reorder-handle',
                 forcePlaceholderSize: true
+              });
+            }
+
+            function updateAllDocPaths(){
+              $(body.children('.existing-field')).each(function(index, elem) {
+                $(elem).data('updateDocPaths')(index);
               });
             }
 
@@ -54,6 +67,8 @@ define([
                 doc.at('fields').move(ui.oldIndex, ui.newIndex, function(err) {
                   if (err) {
                     $(ui.item).insertBefore(body.children().at(ui.oldIndex));
+                  } else {
+                    updateAllDocPaths();
                   }
                 });
               });
@@ -67,6 +82,15 @@ define([
                 } else {
                   item.insertBefore(other);
                 }
+                updateAllDocPaths();
+              });
+
+              // TODO:
+              // Entweder in dem attached doch den path ändrern (geht
+              // das nachträglich?) oder den Textarea Handler neu
+              // attachen, ODER textarea attachment neu schreiben
+              doc.at('fields').on('child op', function(path, op) {
+                console.log('child op', path, op);
               });
 
               // Deleting
