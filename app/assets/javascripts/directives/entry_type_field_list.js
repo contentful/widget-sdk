@@ -36,7 +36,6 @@ define([
               shareJSListeners = nameDoc.attach_textarea(row.find('.field-name')[0]);
               row.find('.field-type').change(function fieldTypeChangeHandler(event) {
                 var value = $(event.currentTarget).val();
-                console.log('change', value);
                 typeDoc.set(value, function(err) {
                   if (err) {
                     $(event.currentTarget).val(typeDoc.get());
@@ -104,10 +103,10 @@ define([
                 });
               });
               var moveListener = doc.at('fields').on('move', function(from, to){
-                console.log('moving', from, to);
+                //console.log('moving', from, to);
                 var item = $(body.children()[from]);
                 var other = $(body.children()[to]);
-                console.log('moving', item.find('.field-name').val(), other.find('.field-name').val());
+                //console.log('moving', item.find('.field-name').val(), other.find('.field-name').val());
                 if (from < to) {
                   item.insertAfter(other);
                 } else {
@@ -116,13 +115,10 @@ define([
                 updateAllDocPaths();
               });
 
-              // TODO:
-              // Entweder in dem attached doch den path ändrern (geht
-              // das nachträglich?) oder den Textarea Handler neu
-              // attachen, ODER textarea attachment neu schreiben
-              doc.at('fields').on('child op', function(path, op) {
-                console.log('child op', path, op);
-              });
+              // For debugging ShareJS Operations
+              //doc.at('fields').on('child op', function(path, op) {
+                //console.log('child op', path, op);
+              //});
 
               // Deleting
 
