@@ -17,7 +17,7 @@
       %td
         %select.field-type
       %td
-        %button.btn.btn-danger Delete
+        %button.delete-button.btn.btn-danger Delete
     %tr.new-field
       %td.has-icon
         %i.icon-plus
@@ -28,4 +28,4 @@
       %td
         %select.field-type
       %td
-        %button.btn.btn-success Add
+        %button.add-button.btn.btn-success Add

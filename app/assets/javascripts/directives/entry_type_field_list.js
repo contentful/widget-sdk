@@ -21,7 +21,7 @@ define([
             var fieldTemplate = elm.find('.existing-field').remove();
             var body = elm.find('tbody');
 
-            function makeRow(field, index, doc){
+            function makeRow(field, index, sjDoc){
               var row,
                   fieldDoc, nameDoc, typeDoc,
                   shareJSListeners;
@@ -29,9 +29,9 @@ define([
                 .find('.field-id').val(field.id).end()
                 .find('.field-name').val(field.name).end()
                 .find('.field-type').val(field.type).end();
-              fieldDoc = doc.at(['fields', index]);
-              nameDoc  = doc.at(['fields', index, 'name']);
-              typeDoc  = doc.at(['fields', index, 'type']);
+              fieldDoc = sjDoc.at(['fields', index]);
+              nameDoc  = sjDoc.at(['fields', index, 'name']);
+              typeDoc  = sjDoc.at(['fields', index, 'type']);
 
               shareJSListeners = nameDoc.attach_textarea(row.find('.field-name')[0]);
               row.find('.field-type').change(function fieldTypeChangeHandler(event) {
@@ -50,7 +50,11 @@ define([
 
               //TODO When the row is removed from DOM, kill the ShareJS handlers
               row.data({
-                shareJSListeners: shareJSListeners,
+                removeListeners: function() {
+                  _(shareJSListeners).each(function(l) {
+                    sjDoc.removeListener(l);
+                  });
+                },
                 updateDocPaths: function(index) {
                   fieldDoc.path[1] = index;
                   nameDoc.path[1]  = index;
@@ -58,6 +62,13 @@ define([
                 }
               });
               return row;
+            }
+
+            // TODO insertAt function
+
+            function removeRow($row) {
+              $row.data('removeListeners')();
+              $row.remove();
             }
 
             function toggleSortable() {
@@ -83,18 +94,41 @@ define([
               fieldTemplate.find('select').empty().append(options);
             });
 
+            function addButtonHandler(event) {
+              var field = {
+                id   : $('.new-field .field-id').val(),
+                name : $('.new-field .field-name').val(),
+                type : $('.new-field .field-type').val()
+              };
+
+              var fieldDoc = scope.doc.doc.at(['fields']);
+              var index = fieldDoc.get().length;
+
+              fieldDoc.insert(index, field, function(err) {
+                if (err) {
+                  window.alert('ShareJS says no');
+                } else {
+                  var row = makeRow(field, index, scope.doc.doc);
+                  body.find('.new-field')
+                    .find('input, select').val(null).end()
+                    .before(row);
+                  toggleSortable();
+                }
+              });
+            }
+
             //init
-            scope.$watch('doc.doc', function(doc, old, scope) {
+            scope.$watch('doc.doc', function(sjDoc, old, scope) {
               // TODO handle switch
-              if (!doc) return;
-              var fields = doc.getAt(['fields']);
-              var rows = _(fields).map(function(field, index) { return makeRow(field, index, doc); });
+              if (!sjDoc) return;
+              var fields = sjDoc.getAt(['fields']);
+              var rows = _(fields).map(function(field, index) { return makeRow(field, index, sjDoc); });
               body.prepend(rows);
 
               // Moving
               toggleSortable();
               body.on('sortupdate', function(e, ui) {
-                doc.at('fields').move(ui.oldIndex, ui.newIndex, function(err) {
+                sjDoc.at('fields').move(ui.oldIndex, ui.newIndex, function(err) {
                   if (err) {
                     $(ui.item).insertBefore(body.children().at(ui.oldIndex));
                   } else {
@@ -102,7 +136,7 @@ define([
                   }
                 });
               });
-              var moveListener = doc.at('fields').on('move', function(from, to){
+              var moveListener = sjDoc.at('fields').on('move', function(from, to){
                 //console.log('moving', from, to);
                 var item = $(body.children()[from]);
                 var other = $(body.children()[to]);
@@ -115,16 +149,28 @@ define([
                 updateAllDocPaths();
               });
 
-              // For debugging ShareJS Operations
-              //doc.at('fields').on('child op', function(path, op) {
-                //console.log('child op', path, op);
-              //});
-
               // Deleting
 
               // Adding
+              body.find('.add-button').click(addButtonHandler);
+              var addListener = sjDoc.at('fields').on('insert', function(position, field){
+                var row = makeRow(field, position, sjDoc);
+                var fields = sjDoc.getAt(['fields']);
+                if (fields.length === 0) {
+                  body.prepend(row);
+                } else {
+                  var other = $(body.children()[position]);
+                  row.insertBefore(other);
+                  toggleSortable();
+                }
+              });
 
-              // Type Change
+              // TODO remove moveListener, addListener on destruction
+              
+              // For debugging ShareJS Operations
+              //sjDoc.at('fields').on('child op', function(path, op) {
+                //console.log('child op', path, op);
+              //});
             });
 
           };
