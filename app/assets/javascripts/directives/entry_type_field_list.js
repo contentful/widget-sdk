@@ -22,17 +22,40 @@ define([
             var body = elm.find('tbody');
 
             function makeRow(field, index, doc){
-              var row, nameDoc, typeDoc;
+              var row,
+                  fieldDoc, nameDoc, typeDoc,
+                  shareJSListeners;
               row = fieldTemplate.clone()
                 .find('.field-id').val(field.id).end()
                 .find('.field-name').val(field.name).end()
                 .find('.field-type').val(field.type).end();
-              (nameDoc = doc.at(['fields', index, 'name'])).attach_textarea(row.find('.field-name')[0]);
-              (typeDoc = doc.at(['fields', index, 'type'])).attach_textarea(row.find('.field-type')[0]);
+              fieldDoc = doc.at(['fields', index]);
+              nameDoc  = doc.at(['fields', index, 'name']);
+              typeDoc  = doc.at(['fields', index, 'type']);
+
+              shareJSListeners = nameDoc.attach_textarea(row.find('.field-name')[0]);
+              row.find('.field-type').change(function fieldTypeChangeHandler(event) {
+                var value = $(event.currentTarget).val();
+                console.log('change', value);
+                typeDoc.set(value, function(err) {
+                  if (err) {
+                    $(event.currentTarget).val(typeDoc.get());
+                  }
+                });
+              });
+              shareJSListeners.push(fieldDoc.on('replace', function fieldDocReplaceHandler(position, was, now) {
+                if (position === 'type') {
+                  row.find('.field-type').val(now);
+                }
+              }));
+
+              //TODO When the row is removed from DOM, kill the ShareJS handlers
               row.data({
+                shareJSListeners: shareJSListeners,
                 updateDocPaths: function(index) {
-                  nameDoc.path[1] = index;
-                  typeDoc.path[1] = index;
+                  fieldDoc.path[1] = index;
+                  nameDoc.path[1]  = index;
+                  typeDoc.path[1]  = index;
                 }
               });
               return row;
@@ -52,6 +75,14 @@ define([
                 $(elem).data('updateDocPaths')(index);
               });
             }
+
+            scope.$watch('availableTypes', function updateSelectOptions(types) {
+              var options = _(types).map(function(type) {
+                return '<option value="'+type.value+'">'+type.name+'</option>';
+              }).join();
+              body.find('select').empty().append(options);
+              fieldTemplate.find('select').empty().append(options);
+            });
 
             //init
             scope.$watch('doc.doc', function(doc, old, scope) {

@@ -9,13 +9,15 @@ define([
 
   return controllers.controller('EntryTypeEditorCtrl', function($scope, ShareJS) {
     $scope.availableTypes = [
-      'array',
-      'boolean',
-      'date',
-      'integer',
-      'number',
-      'object',
-      'string'
+      {name: 'Text'          , value: 'text'    },
+      {name: 'Symbol'        , value: 'string'  },
+      {name: 'Integer'       , value: 'integer' },
+      {name: 'Floating-point', value: 'number'  },
+      {name: 'Yes/No'        , value: 'boolean' },
+      {name: 'List'          , value: 'array'   },
+      {name: 'Date/Time'     , value: 'date'    },
+      {name: 'Object'        , value: 'object'  },
+      {name: 'Location'      , value: 'location'},
     ]; //TODO, later get this list from the validation.types object
 
     $scope.$watch('tab.params.entryType', 'entryType=tab.params.entryType');

@@ -15,8 +15,7 @@
       %td
         %input.field-name(type="text")
       %td
-        -#%select.field-type
-        %input.field-type(type="text")
+        %select.field-type
       %td
         %button.btn.btn-danger Delete
     %tr.new-field
@@ -30,4 +29,3 @@
         %select.field-type
       %td
         %button.btn.btn-success Add
-

@@ -15,4 +15,3 @@
       %entry-type-field-list.span10
   .form-actions
     %button.btn.btn-primary(ng-disabled="entryForm.$invalid" ng-click="exitEditor()") Close
-
