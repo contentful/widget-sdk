@@ -1,5 +1,7 @@
 # This is a customized version of the textarea helper from ShareJS.
-# Does not steal focus
+# 
+# - Does not steal focus
+# - returns an array with the event listeners used for the attachment
 define [
   'sharejs'
   'share/json'
@@ -40,7 +42,7 @@ define [
       if document.activeElement == elem
         [elem.selectionStart, elem.selectionEnd] = newSelection
 
-    @on 'insert', (pos, text) ->
+    insertListener = @on 'insert', (pos, text) ->
       transformCursor = (cursor) ->
         if pos < cursor
           cursor + text.length
@@ -50,7 +52,7 @@ define [
       prevvalue = elem.value.replace /\r\n/g, '\n'
       replaceText prevvalue[...pos] + text + prevvalue[pos..], transformCursor
     
-    @on 'delete', (pos, text) ->
+    deleteListener = @on 'delete', (pos, text) ->
       transformCursor = (cursor) ->
         if pos < cursor
           cursor - Math.min(text.length, cursor - pos)
@@ -74,5 +76,7 @@ define [
         elem.addEventListener event, genOp, false
       else
         elem.attachEvent 'on'+event, genOp
+
+    return [insertListener, deleteListener]
 
 
