@@ -16,11 +16,11 @@ define(function(){
           
           function updateBinding(doc, old, scope){
             if (old) {
-              console.error('Rebinding otBindText');
+              //console.error('Rebinding otBindText');
             }
 
             if (scope.doc && scope.path) {
-              console.log('attaching text inpu', scope.doc, scope.path);
+              //console.log('attaching text inpu', scope.doc, scope.path);
               scope.doc.subdoc(scope.path).attachToTextInput(elm[0]);
             }
           }
