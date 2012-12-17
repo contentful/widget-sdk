@@ -50,9 +50,37 @@ define([
         });
       });
     };
+    
+    $scope.updateFromShareJSDoc = function() {
+      this.entryType.update(this.doc.value());
+    };
 
-    $scope.entryTypePersisted = function() {
-      return !!this.entryType.getId();
+    $scope.canPublish = function() {
+      if (!$scope.doc) return false;
+      return true;
+    };
+
+    $scope.publishedAt = function(){
+      if (!$scope.doc) return;
+      var val = $scope.doc.subdoc(['sys', 'publishedAt']).peek();
+      if (val) {
+        return new Date(val);
+      } else {
+        return undefined;
+      }
+    };
+
+    $scope.publish = function() {
+      var version = $scope.doc.version();
+      $scope.entryType.publish(version, function (err) {
+        $scope.$apply(function(scope){
+          if (err) {
+            window.alert('could not publish');
+          } else {
+            scope.updateFromShareJSDoc();
+          }
+        });
+      });
     };
 
     //$scope.$on('inputBlurred', function(event) {

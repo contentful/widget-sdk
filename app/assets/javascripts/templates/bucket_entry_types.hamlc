@@ -18,6 +18,6 @@
           %a.btn.btn-primary(ng-click="editEntryType(entryType)")
             %i.icon-pencil
             Edit
-          %a.btn.btn-danger(ng-click="deleteEntryType(entryType)")
+          %a.btn.btn-danger(ng-show="entryType.canDelete()" ng-click="deleteEntryType(entryType)")
             %i.icon-trash
             Delete

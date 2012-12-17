@@ -1,6 +1,24 @@
 %h2 {{headline()}}
 
 %form.form-horizontal(name="entryTypeForm")
+  .well.well-small.span3.pull-right.row-fluid(ng-show="canPublish()")
+    %h5.muted Publishing
+    %ng-switch(on="!!publishedAt()")
+      %div(ng-switch-when="true")
+        %table.table
+          %tr
+            %th Published at
+            %td {{publishedAt().toLocaleString('de-DE')}}
+          %tr
+            %th Version
+            %td {{publishedVersion()}}
+          %tr
+            %th Current
+            %td {{doc.version()}}
+        %button.span12.btn(ng-click="publish()") Republish
+      %div(ng-switch-default="")
+        %p Not published yet
+        %button.span12.btn(ng-disabled="entryForm.$invalid" ng-click="publish()") Publish
   .control-group
     %label.control-label ID
     .controls
