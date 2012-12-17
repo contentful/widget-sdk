@@ -42,11 +42,20 @@ define([
                   }
                 });
               });
+
               shareJSListeners.push(fieldDoc.on('replace', function fieldDocReplaceHandler(position, was, now) {
                 if (position === 'type') {
                   row.find('.field-type').val(now);
                 }
               }));
+
+              row.find('.delete-button').click(function() {
+                fieldDoc.remove(function(err) {
+                  if (!err) {
+                    removeRow(row);
+                  }
+                });
+              });
 
               //TODO When the row is removed from DOM, kill the ShareJS handlers
               row.data({
@@ -69,6 +78,7 @@ define([
             function removeRow($row) {
               $row.data('removeListeners')();
               $row.remove();
+              updateAllDocPaths();
             }
 
             function toggleSortable() {
@@ -111,7 +121,8 @@ define([
                   var row = makeRow(field, index, scope.doc.doc);
                   body.find('.new-field')
                     .find('input, select').val(null).end()
-                    .before(row);
+                    .before(row)
+                    .find('.field-id').focus();
                   toggleSortable();
                 }
               });
@@ -150,6 +161,10 @@ define([
               });
 
               // Deleting
+              var deleteListener = sjDoc.at('fields').on('delete', function(position, data) {
+                var $row = $(body.find('.existing-field')[position]);
+                removeRow($row);
+              });
 
               // Adding
               body.find('.add-button').click(addButtonHandler);
@@ -169,6 +184,9 @@ define([
               
               // For debugging ShareJS Operations
               //sjDoc.at('fields').on('child op', function(path, op) {
+                //console.log('child op', path, op);
+              //});
+              //sjDoc.on('remoteop', function(path, op) {
                 //console.log('child op', path, op);
               //});
             });
