@@ -46,6 +46,7 @@ define([
         sys: {
           id: id
         },
+        fields: [],
         name: name
       }, function(err, entryType){
         if (!err) {
