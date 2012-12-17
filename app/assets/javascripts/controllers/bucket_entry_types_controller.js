@@ -80,11 +80,12 @@ define([
     });
     
     $scope.deleteEntryType = function (entryType) {
-      window.alert('Not implemented server-side');
-      return;
       entryType.delete(function (err) {
         if (!err) {
-          this.reloadEntryTypes();
+          $scope.$apply(function(scope) {
+            var index = _(scope.entryTypes).indexOf(entryType);
+            scope.entryTypes.splice(index, 1);
+          });
         } else {
           console.log('Error deleting entryType', entryType);
         }
