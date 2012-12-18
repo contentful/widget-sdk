@@ -56,12 +56,12 @@ define([
             });
 
             function attachNameField(val, old, scope) {
-              if (old !== val) {
+              //if (old !== val) {
                 if (scope.cleanupTextArea){
                   scope.cleanupTextArea();
                   scope.cleanupTextArea = null;
                 }
-              }
+              //}
               if (scope.sjDoc && scope.index !== undefined && scope.index !== null) {
                 var nameDoc  = scope.sjDoc.at(['fields', scope.index, 'name']);
                 scope.cleanupTextArea = nameDoc.attach_textarea(elm.find('.field-name')[0]);
