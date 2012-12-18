@@ -34,14 +34,6 @@ define([
               typeDoc  = sjDoc.at(['fields', index, 'type']);
 
               shareJSListeners = nameDoc.attach_textarea(row.find('.field-name')[0]);
-              row.find('.field-type').change(function fieldTypeChangeHandler(event) {
-                var value = $(event.currentTarget).val();
-                typeDoc.set(value, function(err) {
-                  if (err) {
-                    $(event.currentTarget).val(typeDoc.get());
-                  }
-                });
-              });
 
               shareJSListeners.push(fieldDoc.on('replace', function fieldDocReplaceHandler(position, was, now) {
                 if (position === 'type') {
@@ -49,13 +41,30 @@ define([
                 }
               }));
 
-              row.find('.delete-button').click(function() {
-                fieldDoc.remove(function(err) {
-                  if (!err) {
-                    removeRow(row);
-                  }
+              //TODO: Make this toggleable for when the published version loading is slower than the shareJs connection creation
+              //      OR execute the init stuff only after the callback from getPublishedVersion has returned (hard to detect)
+              console.log('checking if field published', scope.publishedEntryType);
+              if (fieldPublished(field.id)){
+                row.find('.field-type').attr({disabled: true});
+                row.find('.delete-button').remove(); //TODO Replace by "hide" instead of remove
+              } else {
+                row.find('.field-type').change(function fieldTypeChangeHandler(event) {
+                  var value = $(event.currentTarget).val();
+                  typeDoc.set(value, function(err) {
+                    if (err) {
+                      $(event.currentTarget).val(typeDoc.get());
+                    }
+                  });
                 });
-              });
+
+                row.find('.delete-button').click(function() {
+                  fieldDoc.remove(function(err) {
+                    if (!err) {
+                      removeRow(row);
+                    }
+                  });
+                });
+              }
 
               //TODO When the row is removed from DOM, kill the ShareJS handlers
               row.data({
@@ -70,7 +79,18 @@ define([
                   typeDoc.path[1]  = index;
                 }
               });
+
               return row;
+            }
+
+            function fieldPublished(fieldId) {
+              try {
+                return _(scope.publishedEntryType.data.fields).any(function(field) {
+                  return field.id == fieldId;
+                });
+              } catch(e) {
+                return false;
+              }
             }
 
             // TODO insertAt function
@@ -104,7 +124,7 @@ define([
               fieldTemplate.find('select').empty().append(options);
             });
 
-            function addButtonHandler(event) {
+            function addButtonHandler() {
               var field = {
                 id   : $('.new-field .field-id').val(),
                 name : $('.new-field .field-name').val(),

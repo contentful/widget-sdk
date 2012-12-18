@@ -28,6 +28,8 @@ define([
         console.log('Fatal error, shareJS started twice');
       }
 
+      loadPublishedEntryType();
+
       // TODO: This will currently fail horribly if the entryType is replaced because everything is still bound
       // to the old entryType
       ShareJS.open(entryType, function(err, doc) {
@@ -42,6 +44,13 @@ define([
       scope.shareJSstarted = true;
     });
 
+    function loadPublishedEntryType() {
+      $scope.entryType.getPublishedVersion(function(err, publishedEntryType) {
+        $scope.$apply(function(scope) {
+          scope.publishedEntryType = publishedEntryType;
+        });
+      });
+    }
 
     $scope.exitEditor = function(){
       $scope.doc.close(function(){
