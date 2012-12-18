@@ -17,6 +17,6 @@
       %td
         %input.field-name(type="text")
       %td
-        %select.field-type
+        %select.field-type(ng-model="newType" ng-options="type.value as type.name for type in availableTypes")
       %td
         %button.add-button.btn.btn-success Add

@@ -15,6 +15,7 @@ define([
         scope: {
           sjDoc: '=',
           initialField: '=entryTypeFieldListRow',
+          publishedIds: '=',
           availableTypes: '=' //TODO Later the available types have to come from the validation library
         },
         compile: function(elem) {
@@ -27,12 +28,25 @@ define([
             scope.deletable = true;
             scope.field = _(scope.initialField).clone();
 
+            // TODO entweder die ShareJS ops selbst verarbeiten oder auf
+            // den snapshot binden
+
+            scope.$watch('publishedIds', function(ids, old, scope) {
+              if (ids)
+                scope.deletable = !_(ids).contains(scope.field.id);
+            });
+
             scope.$watch('sjDoc', function(sjDoc, old, scope) {
               if (old && old !== sjDoc) {
                 scope.field = null;
+                //old.removeListener(scope.childListener);
+                //scope.childListener = null;
               }
               if (sjDoc) {
                 scope.field = sjDoc.snapshot.fields[scope.index];
+                //scope.childListener = sjDoc.at(['fields', scope.index]).on('child op', function(path, op) {
+                  //console.log('child op',path, op);
+                //});
               }
             });
 
@@ -57,6 +71,7 @@ define([
               }
               if (sjDoc){
                 scope.typeWatcher = scope.$watch('field.type', function(type, old, scope) {
+                  if (type === old) return;
                   sjDoc.at(['fields', scope.index, 'type']).set(type, function(err) {
                     if (err) scope.$apply(function(scope) {
                         scope.field.type = old;
@@ -71,6 +86,52 @@ define([
                 });
               }
             });
+
+            scope.$watch('index', function linkIndex(index, old, scope) {
+              if (scope.nameDoc ) scope.nameDoc.path[1]  = index;
+              if (scope.fieldDoc) scope.fieldDoc.path[1] = index;
+            });
+
+            scope.enable = function() {
+              this.sjDoc.at(['fields', this.index, 'disabled']).set(false, function(err) {
+                if (!err) scope.$apply(function(scope) {
+                    scope.field.disabled = false;
+                  });
+              });
+            };
+            scope.disable = function() {
+              this.sjDoc.at(['fields', this.index, 'disabled']).set(true, function(err) {
+                if (!err) scope.$apply(function(scope) {
+                    scope.field.disabled = true;
+                  });
+              });
+            };
+            scope.$watch('fieldDoc', function(fieldDoc, old, scope) {
+              if (old && old !== fieldDoc) {
+                old.removeListener(scope.disabledListener);
+                scope.disabledListener = null;
+              }
+              if (fieldDoc) {
+                scope.disabledListener = fieldDoc.on('replace', function(position, was, now){
+                  if (position === 'disabled') scope.$apply(function(scope) {
+                      scope.field.disabled = now;
+                    });
+                });
+              }
+            });
+
+            scope.delete = function() {
+              var event = this.$emit('deleteField');
+              //if (!event.defaultPrevented) {
+                //this.$destroy();
+                //elm.remove();
+              //}
+            };
+
+            //scope.on('$destroy', function() {
+              //scope.cleanupTextArea();
+              //scope.sjDoc.removeListener(scope.typeListener);
+            //});
 
           };
         },
