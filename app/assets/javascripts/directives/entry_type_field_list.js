@@ -9,7 +9,7 @@ define([
 
   return {
     name: 'entryTypeFieldList',
-    factory: function() {
+    factory: function($compile) {
       return {
         restrict: 'E',
         template: template(),
@@ -153,8 +153,15 @@ define([
               // TODO handle switch
               if (!sjDoc) return;
               var fields = sjDoc.getAt(['fields']);
-              var rows = _(fields).map(function(field, index) { return makeRow(field, index, sjDoc); });
+              var rows = _(fields).map(function(field, index) {
+                //return makeRow(field, index, sjDoc);
+                //var node = $('<tr class="entry-type-field-list-row existing-field" sj-doc="doc.doc" initialField="entryType.fields['+index+']" availableTypes="availableTypes"/>')[0];
+                return '<tr class="existing-field" sj-doc="doc.doc" entry-type-field-list-row="entryType.data.fields['+index+']" available-types="availableTypes"/>';
+                //return $compile(node)(scope);
+              });
               body.prepend(rows);
+              $compile(body)(scope);
+              return;
 
               // Moving
               toggleSortable();

@@ -7,17 +7,8 @@
       %th Type
       %th
   %tbody
-    %tr.existing-field
-      %td.reorder-handle.has-icon
-        %i.icon-align-justify
-      %td
-        %input.uneditable-input.field-id(disabled="true" type="text")
-      %td
-        %input.field-name(type="text")
-      %td
-        %select.field-type
-      %td
-        %button.delete-button.btn.btn-danger Delete
+    %tr.existing-field(entry-type-field-list-row="")
+  %tfoot
     %tr.new-field
       %td.has-icon
         %i.icon-plus

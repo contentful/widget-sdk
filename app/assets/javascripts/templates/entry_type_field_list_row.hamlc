@@ -1,0 +1,13 @@
+%tr.existing-field
+  %td.reorder-handle.has-icon
+    %i.icon-align-justify
+  %td
+    %input.uneditable-input.field-id(disabled="true" type="text" value="{{field.id}}")
+  %td
+    %input.field-name(type="text" value="{{field.name}}")
+  %td
+    %select.field-type(ng-model="field.type" ng-options="type.value as type.name for type in availableTypes")
+  %td
+    %button.delete-button.btn.btn-danger(ng-show="deletable") Delete
+    %button.disable-button.btn.btn-danger(ng-show="!deletable && !field.disabled") Disable
+    %button.enable-button.btn.btn-danger(ng-show="deletable && field.disabled") Enable

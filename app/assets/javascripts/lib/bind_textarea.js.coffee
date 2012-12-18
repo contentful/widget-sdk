@@ -1,7 +1,7 @@
 # This is a customized version of the textarea helper from ShareJS.
 # 
 # - Does not steal focus
-# - returns an array with the event listeners used for the attachment
+# - returns a cleanup function that removes all eventhandlers again
 define [
   'sharejs'
   'share/json'
@@ -76,7 +76,14 @@ define [
         elem.addEventListener event, genOp, false
       else
         elem.attachEvent 'on'+event, genOp
+    
+    cleanup = ->
+      doc.removeListener insertListener
+      doc.removeListener deleteListener
+      for event in ['textInput', 'keydown', 'keyup', 'select', 'cut', 'paste']
+        if elem.removeEventListener
+          elem.removeEventListener event, genOp, false
+        else
+          elem.detachEvent 'on'+event, genOp
 
-    return [insertListener, deleteListener]
-
-
+    return cleanup

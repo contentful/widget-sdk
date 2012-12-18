@@ -14,7 +14,8 @@ define([
   'directives/pagination',
   'directives/bucket_entry_types',
   'directives/entry_type_editor',
-  'directives/entry_type_field_list'
+  'directives/entry_type_field_list',
+  'directives/entry_type_field_list_row'
 ], function(angular){
   'use strict';
 
