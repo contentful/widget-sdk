@@ -6,7 +6,7 @@
   %td
     %input.field-name(type="text" value="{{field.name}}")
   %td
-    %select.field-type(ng-model="field.type" ng-options="type.value as type.name for type in availableTypes")
+    %select.field-type(name="type" ng-model="field.type" ng-options="type.value as type.name for type in availableTypes")
   %td
     %button.delete-button.btn.btn-danger(ng-show="deletable") Delete
     %button.disable-button.btn.btn-danger(ng-show="!deletable && !field.disabled") Disable
