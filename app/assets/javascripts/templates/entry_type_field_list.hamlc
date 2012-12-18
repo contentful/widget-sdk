@@ -7,7 +7,6 @@
       %th Type
       %th
   %tbody
-    %tr.existing-field(entry-type-field-list-row="")
   %tfoot
     %tr.new-field
       %td.has-icon
