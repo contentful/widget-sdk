@@ -42,13 +42,16 @@ define([
               }
               if (sjDoc) {
                 scope.field = sjDoc.snapshot.fields[scope.index];
-                scope.childListener = sjDoc.at(['fields']).on('child op', function(path) {
-                  if (path[0] == scope.index){
-                    //console.log('child op',path, op);
-                    if (path[1] === 'disabled' || path[1] == 'type') {
+                console.log('installing child listener for', scope.index);
+                scope.childListener = sjDoc.at([]).on('child op', function(path, op) {
+                  if (path[0] === 'fields' && path[1] === scope.index) {
+                    //console.log('child op applying at', scope.index, path, op);
+                    if (path[2] === 'disabled' || path[2] == 'type') {
                       scope.$apply(function(scope) {
                         scope.field = sjDoc.snapshot.fields[scope.index];
                       });
+                    } else if (path.length == 2 && op.ld) {
+                      scope.$destroy();
                     }
                   }
                 });
@@ -101,17 +104,15 @@ define([
             };
 
             scope.delete = function() {
-              var event = this.$emit('deleteField');
-              //if (!event.defaultPrevented) {
-                //this.$destroy();
-                //elm.remove();
-              //}
+              this.sjDoc.at(['fields', this.index]).remove(function(err) {
+                if (!err) scope.$destroy();
+              });
             };
 
-            //scope.on('$destroy', function() {
-              //scope.cleanupTextArea();
-              //scope.sjDoc.removeListener(scope.typeListener);
-            //});
+            scope.$on('$destroy', function() {
+              if (scope.cleanupTextArea) scope.cleanupTextArea();
+              elm.remove();
+            });
 
           };
         },
