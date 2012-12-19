@@ -119,6 +119,9 @@ define([
 
     $scope.$watch('entryTypes', function (entryTypes, old, scope) {
       if (scope.tab.params.contentType == 'entries') {
+        entryTypes = _(entryTypes).filter(function(et) {
+          return et.data.sys.publishedAt && et.data.sys.publishedAt > 0;
+        });
         scope.tab.button.options = _(entryTypes).map(function(et){
           return {
             title: et.data.name,
