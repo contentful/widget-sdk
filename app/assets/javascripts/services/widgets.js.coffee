@@ -13,22 +13,30 @@ define [
       textField:
         name: "Single line text field"
         template: """<input type="text" ng-model="value" ot-bind="text"/>"""
-      textArea:
-        name: "Multiline text field"
-        template: """<textarea class="input-xxlarge" ng-model="value" ot-bind="text"></textarea>"""
     text:
       textArea:
         name: "Multiline text field"
         template: """<textarea class="input-xxlarge" ng-model="value" ot-bind="text"></textarea>"""
     boolean:
-      radioButtons:
+      checkBox:
         name: "Boolean Checkbox"
         template: """<label class="checkbox"><input type="checkbox" ng-model="value" ot-bind="replace"/> <span ng-show="value">Yes</span><span ng-show="!value">No</span></label>"""
+    date:
+      textField:
+        # TODO: Replace with Datepicker
+        name: "Date Field"
+        template: """<input type="text" ng-model="value" ot-bind="text"/>"""
+    array:
+      textField:
+        name: "Array field"
+        # TODO: This could be smarter with ShareJS but that's a ton of work
+        template: """<input type="text" ng-list="" ng-model="value" ot-bind="replace"/>"""
     object:
       jsonArea:
         name: "JSON Field"
         template: """<textarea class="input-xxlarge" ng-model="value" ot-bind="replace"></textarea>"""
         link: (scope, elm, attr) ->
+          # TODO proper modeController access
           controller = elm.find('textarea').inheritedData('$ngModelController')
           controller.$formatters.push (obj) -> JSON.stringify(obj)
           controller.$parsers.push (string) ->
@@ -39,20 +47,21 @@ define [
             catch e
               controller.$setValidity('json', false)
               return undefined
-    float:
+    number:
       textField:
         name: "Textfield for floats"
         template: """<input type="number" ng-model="value" ot-bind="replace"/>"""
-      link: (scope, elm, attr) ->
-        controller = elm.find('input').inheritedData('$ngModelController')
-        controller.$parsers.unshift (viewValue) ->
-          FLOAT_REGEXP = /^\-?\d+((\.|\,)\d+)?$/
-          if FLOAT_REGEXP.test(viewValue)
-            controller.$setValidity('float', true)
-            return parseFloat(viewValue.replace(',', '.'))
-          else
-            ctrl.$setValidity('float', false)
-            return undefined
+        link: (scope, elm, attr) ->
+          # TODO proper modeController access
+          controller = elm.find('input').inheritedData('$ngModelController')
+          controller.$parsers.unshift (viewValue) ->
+            FLOAT_REGEXP = /^\-?\d+((\.|\,)\d+)?$/
+            if FLOAT_REGEXP.test(viewValue)
+              controller.$setValidity('float', true)
+              return parseFloat(viewValue.replace(',', '.'))
+            else
+              ctrl.$setValidity('float', false)
+              return undefined
     integer:
       textField:
         name: "Textfield for integers"
