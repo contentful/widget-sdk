@@ -60,10 +60,6 @@ define([
       });
     };
     
-    $scope.updateFromShareJSDoc = function() {
-      this.entryType.update(this.doc.value());
-    };
-
     $scope.canPublish = function() {
       if (!$scope.doc) return false;
       return true;
@@ -81,11 +77,12 @@ define([
 
     $scope.publish = function() {
       var version = $scope.doc.version();
-      $scope.entryType.publish(version, function (err) {
+      $scope.entryType.publish(version, function (err, publishedEntryType) {
         $scope.$apply(function(scope){
           if (err) {
             window.alert('could not publish');
           } else {
+            scope.publishedEntryType = publishedEntryType;
             scope.updateFromShareJSDoc();
           }
         });
@@ -98,7 +95,8 @@ define([
     //});
 
     $scope.updateFromShareJSDoc = function() {
-      this.entryType.update(this.doc.value());
+      var data = this.doc.value();
+      this.entryType.update(data);
     };
 
     $scope.headline = function(){
