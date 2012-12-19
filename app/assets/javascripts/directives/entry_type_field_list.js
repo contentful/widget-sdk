@@ -25,16 +25,6 @@ define([
                 scope.publishedIds = _(et.data.fields).pluck('id');
             });
 
-            scope.$on('deleteField', function(event) {
-              console.log('delete Field', event);
-            });
-
-            function removeRow($row) {
-              $row.data('removeListeners')();
-              $row.remove();
-              updateAllDocPaths();
-            }
-
             function toggleSortable() {
               body.sortable('destroy');
               body.sortable({
@@ -45,17 +35,19 @@ define([
             }
 
             function updateAllDocPaths(){
-              $(body.children('.existing-field')).each(function(index, elem) {
-                $(elem).data('updateDocPaths')(index);
-              });
+              scope.$broadcast('orderChanged');
             }
 
+            function makeRow(index) {
+              return '<tr class="existing-field" sj-doc="doc.doc" entry-type-field-list-row="entryType.data.fields['+index+']" available-types="availableTypes" published-ids="publishedIds"/>';
+            }
 
-            function addButtonHandler() {
+            scope.addField = function() {
+              var scope = this;
               var field = {
-                id   : $('.new-field .field-id').val(),
-                name : $('.new-field .field-name').val(),
-                type : $('.new-field .field-type').val()
+                id   : scope.newId,
+                name : scope.newName,
+                type : scope.newType
               };
 
               var fieldDoc = scope.doc.doc.at(['fields']);
@@ -65,15 +57,17 @@ define([
                 if (err) {
                   window.alert('ShareJS says no');
                 } else {
-                  var row = makeRow(field, index, scope.doc.doc);
-                  body.find('.new-field')
-                    .find('input, select').val(null).end()
-                    .before(row)
-                    .find('.field-id').focus();
+                  var row = makeRow(index);
+                  scope.$apply(function(scope) {
+                    row = $compile(row)(scope);
+                    body.append(row);
+                    scope.newId = scope.newName = scope.newType = null;
+                  });
+                  body.find('.field-id').focus();
                   toggleSortable();
                 }
               });
-            }
+            };
 
             //init
             scope.$watch('doc.doc', function(sjDoc, old, scope) {
@@ -86,6 +80,24 @@ define([
               body.prepend(rows);
               $compile(body)(scope);
 
+              // Adding
+              var addListener = sjDoc.at('fields').on('insert', function(position){
+                var row = makeRow(position);
+                scope.$apply(function(scope) {
+                  row = $compile(row)(scope);
+                  var fields = sjDoc.getAt(['fields']);
+                  if (fields.length === 0 || fields.length-1 === position) {
+                    body.append(row);
+                  } else {
+                    var other = $(body.children()[position]);
+                    other.before(row);
+                  }
+                });
+                toggleSortable();
+                updateAllDocPaths();
+              });
+
+              return;
               // Moving
               toggleSortable();
               body.on('sortupdate', function(e, ui) {
@@ -108,27 +120,6 @@ define([
                   item.insertBefore(other);
                 }
                 updateAllDocPaths();
-              });
-              return;
-
-              // Deleting
-              var deleteListener = sjDoc.at('fields').on('delete', function(position, data) {
-                var $row = $(body.find('.existing-field')[position]);
-                removeRow($row);
-              });
-
-              // Adding
-              body.find('.add-button').click(addButtonHandler);
-              var addListener = sjDoc.at('fields').on('insert', function(position, field){
-                var row = makeRow(field, position, sjDoc);
-                var fields = sjDoc.getAt(['fields']);
-                if (fields.length === 0) {
-                  body.prepend(row);
-                } else {
-                  var other = $(body.children()[position]);
-                  row.insertBefore(other);
-                  toggleSortable();
-                }
               });
 
               // TODO remove moveListener, addListener on destruction

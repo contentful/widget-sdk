@@ -23,10 +23,14 @@ define([
           var templateNode = $(template());
           elem.html(templateNode.contents());
 
-          return function linkEntryTypeFieldListRow(scope, elm) {
+          return function linkEntryTypeFieldListRow(scope, elm, attrs) {
             scope.index = elm.index();
             scope.deletable = true;
             scope.field = _(scope.initialField).clone();
+
+            scope.$on('orderChanged', function(event) {
+              event.currentScope.index = elm.index();
+            });
 
             scope.$watch('publishedIds', function(ids, old, scope) {
               if (ids) {
