@@ -44,6 +44,8 @@ define([
       scope.shareJSstarted = true;
     });
 
+    // TODO right now we're not notified if another client publishes the entryType
+
     function loadPublishedEntryType() {
       $scope.entryType.getPublishedVersion(function(err, publishedEntryType) {
         $scope.$apply(function(scope) {
@@ -86,6 +88,7 @@ define([
             scope.updateFromShareJSDoc();
           }
         });
+        $scope.$broadcast('published');
       });
     };
 

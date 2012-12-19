@@ -24,6 +24,11 @@ define([
               if (et && et.data.fields)
                 scope.publishedIds = _(et.data.fields).pluck('id');
             });
+            scope.$on('published', function(event) {
+              event.currentScope.$apply(function(scope) {
+                scope.publishedIds = _(scope.publishedEntryType.data.fields).pluck('id');
+              });
+            });
 
             function toggleSortable() {
               body.sortable('destroy');
@@ -39,7 +44,7 @@ define([
             }
 
             function makeRow(index) {
-              return '<tr class="existing-field" sj-doc="doc.doc" entry-type-field-list-row="entryType.data.fields['+index+']" available-types="availableTypes" published-ids="publishedIds"/>';
+              return '<tr class="existing-field" sj-doc="doc.doc" entry-type-field-list-row="fieldSnapshot('+index+')" available-types="availableTypes" published-ids="publishedIds"/>';
             }
 
             scope.addField = function() {
@@ -63,10 +68,15 @@ define([
                     body.append(row);
                     scope.newId = scope.newName = scope.newType = null;
                   });
+                  scope.$broadcast('orderChanged');
                   body.find('.field-id').focus();
                   toggleSortable();
                 }
               });
+            };
+
+            scope.fieldSnapshot = function(index) {
+              return this.doc.doc.getAt(['fields', index]);
             };
 
             //init
@@ -75,7 +85,7 @@ define([
               if (!sjDoc) return;
               var fields = sjDoc.getAt(['fields']);
               var rows = _(fields).map(function(field, index) {
-                return '<tr class="existing-field" sj-doc="doc.doc" entry-type-field-list-row="entryType.data.fields['+index+']" available-types="availableTypes" published-ids="publishedIds"/>';
+                return '<tr class="existing-field" sj-doc="doc.doc" entry-type-field-list-row="fieldSnapshot('+index+')" available-types="availableTypes" published-ids="publishedIds"/>';
               });
               body.prepend(rows);
               $compile(body)(scope);

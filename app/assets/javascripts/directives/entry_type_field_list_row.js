@@ -62,6 +62,11 @@ define([
                 });
               }
             });
+            scope.$watch('index', function(index, old, scope) {
+              if (scope.sjDoc) {
+                scope.field = scope.sjDoc.snapshot.fields[scope.index];
+              } // else will be initialized in the sjDoc Watcher
+            });
 
             function attachNameField(val, old, scope) {
               //if (old !== val) {
