@@ -29,7 +29,9 @@ define([
             scope.field = _(scope.initialField).clone();
 
             scope.$on('orderChanged', function(event) {
-              event.currentScope.index = elm.index();
+              event.currentScope.$apply(function(scope) {
+                scope.index = elm.index();
+              });
             });
 
             scope.$watch('publishedIds', function(ids, old, scope) {
@@ -46,7 +48,6 @@ define([
               }
               if (sjDoc) {
                 scope.field = sjDoc.snapshot.fields[scope.index];
-                console.log('installing child listener for', scope.index);
                 scope.childListener = sjDoc.at([]).on('child op', function(path, op) {
                   if (path[0] === 'fields' && path[1] === scope.index) {
                     //console.log('child op applying at', scope.index, path, op);

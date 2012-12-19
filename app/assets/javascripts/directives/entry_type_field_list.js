@@ -97,13 +97,16 @@ define([
                 updateAllDocPaths();
               });
 
-              return;
               // Moving
               toggleSortable();
               body.on('sortupdate', function(e, ui) {
                 sjDoc.at('fields').move(ui.oldIndex, ui.newIndex, function(err) {
                   if (err) {
-                    $(ui.item).insertBefore(body.children().at(ui.oldIndex));
+                    if (ui.oldIndex < ui.newIndex){
+                      $(ui.item).insertBefore(body.children().at(ui.oldIndex));
+                    } else {
+                      $(ui.item).insertAfter(body.children().at(ui.oldIndex));
+                    }
                   } else {
                     updateAllDocPaths();
                   }
