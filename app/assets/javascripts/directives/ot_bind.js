@@ -9,41 +9,31 @@ define(function(){
         restrict: 'A',
         require: 'ngModel',
         link: function(scope, elm, attr, ngModelCtrl) {
-          scope.$on('replaceValue', function(event, v){
-            event.currentScope.value = v;
-          });
-
+          
           if (attr.otBind === 'text') {
-            scope.$watch('doc', function(doc, old, scope){
-              if (old) {
+            // TODO: Multiple otBind = text would overwrite each others
+            // detachTextField methods in the scope. (or maybe not
+            // because ngModel enforces new scope?)
+            scope.$watch('subdoc', function(subdoc, old, scope){
+              if (old && old !== subdoc) {
+                if (scope.detachTextField) {
+                  scope.detachTextField();
+                  scope.detachTextField = null;
+                }
               }
 
-              if (doc) {
-                doc.attachToTextInput(elm[0]);
+              if (subdoc) {
+                scope.detachTextField = subdoc.attach_textarea(elm[0]);
               }
             });
           } else if (attr.otBind === 'replace'){
-            var stopReplaceListener;
-            scope.$watch('doc', function(doc, old, scope){
-              if (old && stopReplaceListener) {
-                stopReplaceListener();
-                stopReplaceListener = null;
-              }
+            scope.$watch('value', function(val, old, scope) {
+              if (val === old) return;
+              scope.changeValue(val);
+            });
 
-              if (doc) {
-                scope.value = scope.doc.value();
-                stopReplaceListener = doc.onReplace(function() {
-                  scope.$apply(function(){
-                    scope.value = scope.doc.value();
-                  });
-                });
-
-                ngModelCtrl.$viewChangeListeners.push(function(){
-                  scope.doc.set(ngModelCtrl.$modelValue/*, function(err, res){
-                    console.log('Set field to %s, err:%o, res:%o', ngModelCtrl.$modelValue, err, res);
-                  }*/);
-                });
-              }
+            scope.$on('valueChanged', function(event, val) {
+              event.currentScope.value = val;
             });
           }
 
