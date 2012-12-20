@@ -29,9 +29,17 @@ define(function(){
           } else if (attr.otBind === 'replace'){
             scope.$watch('value', function(val, old, scope) {
               if (val === old) return;
+              if (scope.applyingRemoteChange) return;
               scope.changeValue(val);
-            });
+            }, true);
 
+            scope.$on('valueChanged', function(event, val) {
+              event.currentScope.value = val;
+            });
+          } else if (attr.otBind === 'model'){
+            ngModelCtrl.$viewChangeListeners.push(function(){
+              scope.changeValue(ngModelCtrl.$modelValue);
+            });
             scope.$on('valueChanged', function(event, val) {
               event.currentScope.value = val;
             });

@@ -25,7 +25,7 @@ define [
       textField:
         name: "Date Field"
         template: """
-          <input type="date" ng-model="date" ot-bind="text" class=""/>
+          <input type="date" ng-model="date" />
           <input type="text" ng-model="time" ng-pattern="/(0|\\d|0\\d|1\\d|2[0-3]):[0-5][\\d](:[0-5][\\d])?/"> 
           """
         link: (scope, elm, attr) ->
@@ -52,11 +52,11 @@ define [
       textField:
         name: "Array field"
         # TODO: This could be smarter with ShareJS but that's a ton of work
-        template: """<input type="text" ng-list="" ng-model="value" ot-bind="replace"/>"""
+        template: """<input type="text" ng-list="" ng-model="value" ot-bind="model"/>"""
     object:
       jsonArea:
         name: "JSON Field"
-        template: """<textarea class="input-xxlarge" ng-model="value" ot-bind="replace"></textarea>"""
+        template: """<textarea class="input-xxlarge" ng-model="value" ot-bind="model"></textarea>"""
         link: (scope, elm, attr) ->
           # TODO proper modeController access
           controller = elm.find('textarea').inheritedData('$ngModelController')
