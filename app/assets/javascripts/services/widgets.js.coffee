@@ -69,6 +69,65 @@ define [
             catch e
               controller.$setValidity('json', false)
               return undefined
+    location:
+      googlemap:
+        name: "Location Picker"
+        template: """
+          <div class="gmaps-container"></div>
+          <button class="btn">Remove</button>"""
+        link: (scope, elm, attr) ->
+          button = elm.find('button').hide()
+          window.map = map = new google.maps.Map elm.find('.gmaps-container')[0],
+            zoom: 6
+            center: new google.maps.LatLng(51.16, 10.45)
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+          marker = new google.maps.Marker
+            map: map
+            position: map.getCenter()
+            draggable: true
+            visible: true
+
+          setPosition = (latLng) ->
+            if latLng
+              pos =
+                lat: latLng.lat()
+                lon: latLng.lng()
+              scope.changeValue pos, (err) ->
+                console.log('changevalue callback')
+               #TODO Handle Failure
+            else
+              scope.changeValue null, (err) ->
+                console.log('changevalue callback')
+
+          google.maps.event.addListener map, 'click', (event) ->
+            unless marker.getVisible()
+              setPosition(event.latLng)
+              marker.setPosition(event.latLng)
+              marker.setVisible(true)
+              button.show()
+            return
+          button.click ->
+            if marker.getVisible()
+              marker.setVisible(false)
+              button.hide()
+              setPosition(null)
+
+          scope.$on 'valueChanged', (event, value) ->
+            console.log('value changed', event, value)
+            if value
+              latLng = new google.maps.LatLng(value.lat, value.lon)
+              marker.setPosition(latLng)
+              map.setCenter(latLng)
+              marker.setVisible(true)
+              button.show()
+            else
+              console.log('no value')
+              marker.setVisible(false)
+              button.hide()
+          google.maps.event.addListener marker, 'dragend', (event) ->
+            setPosition(event.latLng)
+          return
+
     number:
       textField:
         name: "Textfield for floats"
