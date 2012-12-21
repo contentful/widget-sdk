@@ -10,7 +10,7 @@ define([
       scope.tabList.closeAll();
       scope.firstTab = null;
       if (bucket) {
-        $scope.visitView('bucket-entry-types');
+        $scope.visitView('bucket-content');
       }
     });
 
