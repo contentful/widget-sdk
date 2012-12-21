@@ -7,7 +7,7 @@ define(function(){
     factory: function() {
       return {
         restrict: 'A',
-        require: 'ngModel',
+        require: '?ngModel',
         link: function(scope, elm, attr, ngModelCtrl) {
           
           if (attr.otBind === 'text') {
