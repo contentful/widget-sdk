@@ -23,7 +23,13 @@ define(function(){
               }
 
               if (subdoc) {
-                scope.detachTextField = subdoc.attach_textarea(elm[0]);
+                try {
+                  scope.detachTextField = subdoc.attach_textarea(elm[0]);
+                } catch(e) {
+                  scope.entryDoc.subdoc([scope.fieldId, scope.locale]).mkpath('', function() {
+                    scope.detachTextField = subdoc.attach_textarea(elm[0]);
+                  });
+                }
               }
             });
           } else if (attr.otBind === 'replace'){

@@ -9,7 +9,7 @@ define(function(){
         scope: {
           type:    '=',
           fieldId: '=',
-          entryDoc:'=doc',
+          entryDoc:'=doc', // TODO: entryDoc should be 'fieldsDoc'
           locale:  '=',
         },
         link: function(scope, elm, attr) {
@@ -39,7 +39,8 @@ define(function(){
           var stopInit = scope.$watch('subdoc', function(subdoc, old, scope) {
             if (subdoc) {
               try {
-                scope.$broadcast('valueChanged', subdoc.get());
+                var value = scope.entryDoc.subdoc([scope.fieldId, scope.locale]).value();
+                scope.$broadcast('valueChanged', value);
               } finally {
                 stopInit();
               }
@@ -60,7 +61,7 @@ define(function(){
 
           scope.changeValue = function(value, callback) {
             if (this.entryDoc) {
-              this.entryDoc.doc.at(['fields', this.fieldId, this.locale]).set(value, callback);
+              this.entryDoc.subdoc([this.fieldId, this.locale]).set(value, callback);
             } else {
               console.error('No doc to push %o to', value);
             }
