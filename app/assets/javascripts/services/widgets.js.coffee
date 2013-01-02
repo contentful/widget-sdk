@@ -93,11 +93,13 @@ define [
                 lat: latLng.lat()
                 lon: latLng.lng()
               scope.changeValue pos, (err) ->
-                console.log('changevalue callback')
-               #TODO Handle Failure
+                scope.$apply (scope) ->
+                  console.log('changevalue callback')
+                  #TODO Handle Failure
             else
               scope.changeValue null, (err) ->
-                console.log('changevalue callback')
+                scope.$apply (scope) ->
+                  console.log('changevalue callback')
 
           google.maps.event.addListener map, 'click', (event) ->
             unless marker.getVisible()
