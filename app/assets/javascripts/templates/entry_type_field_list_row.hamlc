@@ -6,8 +6,8 @@
   %td
     %input.field-name(type="text" value="{{field.name}}")
   %td
-    %select.field-type(name="type" ng-model="field.type" ng-options="type.value as type.name for type in availableTypes")
+    %select.field-type(name="type" ng-disabled="published" ng-model="field.type" ng-options="type.value as type.name for type in availableTypes")
   %td
-    %button.delete-button.btn.btn-danger(ng-show="deletable" ng-click="delete()") Delete
-    %button.disable-button.btn.btn-danger(ng-show="!deletable && !field.disabled" ng-click="disable()") Disable
-    %button.enable-button.btn(ng-show="!deletable && field.disabled" ng-click="enable()") Enable
+    %button.delete-button.btn.btn-danger(ng-show="!published" ng-click="delete()") Delete
+    %button.disable-button.btn.btn-danger(ng-show="published && !field.disabled" ng-click="disable()") Disable
+    %button.enable-button.btn(ng-show="published && field.disabled" ng-click="enable()") Enable

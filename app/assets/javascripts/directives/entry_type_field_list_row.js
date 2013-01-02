@@ -25,7 +25,7 @@ define([
 
           return function linkEntryTypeFieldListRow(scope, elm, attrs) {
             scope.index = elm.index();
-            scope.deletable = true;
+            scope.published = true;
             scope.field = _(scope.initialField).clone();
 
             scope.$on('orderChanged', function(event) {
@@ -36,7 +36,7 @@ define([
 
             scope.$watch('publishedIds', function(ids, old, scope) {
               if (ids) {
-                scope.deletable = !_(ids).contains(scope.field.id);
+                scope.published = _(ids).contains(scope.field.id);
               }
             });
 
