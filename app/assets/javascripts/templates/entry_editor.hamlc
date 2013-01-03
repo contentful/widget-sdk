@@ -31,7 +31,3 @@
       editor="textField"
       field-id="field.id"
       locale="locale")
-
-  .form-actions
-    %button.btn.btn-primary(ng-disabled="entryForm.$invalid" ng-click="exitEditor()") Close
-    
