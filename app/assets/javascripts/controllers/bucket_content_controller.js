@@ -40,11 +40,11 @@ define([
       var scope = event.currentScope;
       if (tab == scope.tab) {
         console.log('Reloading entries');
-        reloadEntries();
+        scope.reloadEntries();
         scope.showLoadingIndicator = true;
         setTimeout(function() {
           console.log('Reloading entries again');
-          reloadEntries();
+          scope.reloadEntries();
           scope.showLoadingIndicator = false;
         }, 3000);
       }
@@ -67,9 +67,10 @@ define([
     };
 
     $scope.deleteEntry = function (entry) {
+      var scope = this;
       entry.delete(function (err) {
         if (!err) {
-          reloadEntries();
+          scope.reloadEntries();
         } else {
           console.log('Error deleting entry', entry);
         }
@@ -78,9 +79,10 @@ define([
 
 
     $scope.archiveEntry = function (entry) {
+      var scope = this;
       entry.archive(function (err) {
         if (!err) {
-          reloadEntries();
+          scope.reloadEntries();
         } else {
           console.log('Error archiving entry', entry);
         }
@@ -88,9 +90,10 @@ define([
     };
 
     $scope.unarchiveEntry = function (entry) {
+      var scope = this;
       entry.unarchive(function (err) {
         if (!err) {
-          reloadEntries();
+          scope.reloadEntries();
         } else {
           console.log('Error unarchiving entry', entry);
         }
@@ -172,12 +175,13 @@ define([
         bucketId: (scope.bucket && scope.bucket.getId())
       };
     }, function(pageParameters, old, scope){
-      reloadEntries();
+      scope.reloadEntries();
       if (  pageParameters.bucketId !== old.bucketId || pageParameters.bucketId && !scope.entryTypes) {
         reloadEntryTypes();
       }
     }, true);
 
+    // TODO put function into scope
     function reloadEntryTypes(){
       if ($scope.bucket && $scope.tab.params.contentType== 'entries') {
         $scope.bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes){
@@ -194,60 +198,59 @@ define([
       }
     }
 
-    // TODO put this mofo into the scope, try to eliminate all closures
-    // to the controller here
-    function reloadEntries() {
-      if ($scope.bucket && $scope.tab.params.contentType == 'entries') {
+    $scope.reloadEntries = function() {
+      var scope = this;
+      if (this.bucket && this.tab.params.contentType == 'entries') {
         var allEntries;
-        if ($scope.tab.params.list == 'all') {
+        if (this.tab.params.list == 'all') {
           allEntries = [];
-          $scope.bucket.getEntries({
+          this.bucket.getEntries({
             order: 'sys.id',
-            limit: $scope.paginator.pageLength,
-            skip: $scope.paginator.skipItems()
+            limit: this.paginator.pageLength,
+            skip: this.paginator.skipItems()
           }, function(err, entries, sys){
             if (err) return;
-            $scope.paginator.numEntries = sys.total;
+            scope.paginator.numEntries = sys.total;
             allEntries = allEntries.concat(entries);
-            $scope.$apply(function($scope){
-              $scope.entries = allEntries;
+            scope.$apply(function(scope){
+              scope.entries = allEntries;
             });
           });
-        } else if ($scope.tab.params.list == 'published') {
+        } else if (this.tab.params.list == 'published') {
           allEntries = [];
-          $scope.bucket.getEntries({
+          this.bucket.getEntries({
             order: 'sys.id',
             'sys.publishedAt[gt]': 0,
-            limit: $scope.paginator.pageLength,
-            skip: $scope.paginator.skipItems()
+            limit: this.paginator.pageLength,
+            skip: this.paginator.skipItems()
           }, function(err, entries, sys){
             if (err) return;
-            $scope.paginator.numEntries = sys.total;
+            scope.paginator.numEntries = sys.total;
             allEntries = allEntries.concat(entries);
-            $scope.$apply(function($scope){
-              $scope.entries = allEntries;
+            scope.$apply(function(scope){
+              scope.entries = allEntries;
             });
           });
-        } else if ($scope.tab.params.list == 'archived') {
+        } else if (this.tab.params.list == 'archived') {
           allEntries = [];
-          $scope.bucket.getEntries({
+          this.bucket.getEntries({
             order: 'sys.id',
             'sys.archivedAt[gt]': 0,
-            limit: $scope.paginator.pageLength,
-            skip: $scope.paginator.skipItems()
+            limit: this.paginator.pageLength,
+            skip: this.paginator.skipItems()
           }, function(err, entries, sys){
             if (err) return;
-            $scope.paginator.numEntries = sys.total;
+            scope.paginator.numEntries = sys.total;
             allEntries = allEntries.concat(entries);
-            $scope.$apply(function($scope){
-              $scope.entries = allEntries;
+            scope.$apply(function(scope){
+              scope.entries = allEntries;
             });
           });
         } else {
-          $scope.entries = [];
+          this.entries = [];
         }
       }
-    }
+    };
 
     // Development shorcut to quickly open an entry
 
