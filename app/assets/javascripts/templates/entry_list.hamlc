@@ -20,7 +20,7 @@
       %tr(ng-repeat="entry in entries" ng-show="visibleInCurrentList(entry)")
         %td {{entry.getId()}}
         %td {{entryTypes[entry.data.sys.entryType].data.name}}
-        %td {{entry.getCreatedAt().toLocaleString('de')}}
+        %td(date-from="entry.data.sys.createdAt")
         %td
         %td.edit
           %a.btn.btn-primary(ng-click="editEntry(entry)")
