@@ -99,26 +99,18 @@ define([
         }
       });
     };
+    
+    $scope.search = {term: ''};
 
-    $scope.searchEntries = function (term) {
-      // TODO with an empty searchterm, behave as if showing the
-      // unfiltered list
-      //
-      // Always just reload and use the searchterm as a filter if
-      // applicable
-      $scope.bucket.getEntries({
-        query: term,
-        order: 'sys.id',
-        limit: $scope.paginator.pageLength,
-        skip: $scope.paginator.skipItems()
-      }, function (err, entries, sys) {
-        if (err) return;
-        $scope.paginator.numEntries = sys.total;
-        $scope.$apply(function($scope){
-          $scope.entries = entries;
-        });
+    $scope.$watch('search.term', function(n,o, scope) {
+      if (n !== o) scope.startSearch();
+    });
+
+    $scope.startSearch = _.debounce(function() {
+      $scope.$apply(function(scope) {
+        scope.reloadEntries();
       });
-    };
+    }, 700);
 
     $scope.$watch('entryTypes', function (entryTypes, old, scope) {
       if (scope.tab.params.contentType == 'entries') {
@@ -183,73 +175,52 @@ define([
 
     $scope.reloadEntryTypes = function(){
       var scope = this;
-      if (this.bucket && this.tab.params.contentType== 'entries') {
-        this.bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes){
-          if (err) return;
-          scope.$apply(function(scope){
-            var newET = {};
-            _(entryTypes).each(function(entryType){
-              newET[entryType.getId()] = entryType;
-            });
-            scope.entryTypes = newET;
-            scope.entryTypeList = entryTypes;
+      this.bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes){
+        if (err) return;
+        scope.$apply(function(scope){
+          var newET = {};
+          _(entryTypes).each(function(entryType){
+            newET[entryType.getId()] = entryType;
           });
+          scope.entryTypes = newET; // TODO We might not need this since the identityMap already performs the same function. We only need a way to look inside.
+          scope.entryTypeList = entryTypes;
         });
-      }
+      });
     };
 
     $scope.reloadEntries = function() {
+      if (this.reloadInProgress) return;
+
       var scope = this;
-      if (this.bucket && this.tab.params.contentType == 'entries') {
-        var allEntries;
-        if (this.tab.params.list == 'all') {
-          allEntries = [];
-          this.bucket.getEntries({
-            order: 'sys.id',
-            limit: this.paginator.pageLength,
-            skip: this.paginator.skipItems()
-          }, function(err, entries, sys){
-            if (err) return;
-            scope.paginator.numEntries = sys.total;
-            allEntries = allEntries.concat(entries);
-            scope.$apply(function(scope){
-              scope.entries = allEntries;
-            });
-          });
-        } else if (this.tab.params.list == 'published') {
-          allEntries = [];
-          this.bucket.getEntries({
-            order: 'sys.id',
-            'sys.publishedAt[gt]': 0,
-            limit: this.paginator.pageLength,
-            skip: this.paginator.skipItems()
-          }, function(err, entries, sys){
-            if (err) return;
-            scope.paginator.numEntries = sys.total;
-            allEntries = allEntries.concat(entries);
-            scope.$apply(function(scope){
-              scope.entries = allEntries;
-            });
-          });
-        } else if (this.tab.params.list == 'archived') {
-          allEntries = [];
-          this.bucket.getEntries({
-            order: 'sys.id',
-            'sys.archivedAt[gt]': 0,
-            limit: this.paginator.pageLength,
-            skip: this.paginator.skipItems()
-          }, function(err, entries, sys){
-            if (err) return;
-            scope.paginator.numEntries = sys.total;
-            allEntries = allEntries.concat(entries);
-            scope.$apply(function(scope){
-              scope.entries = allEntries;
-            });
-          });
-        } else {
-          this.entries = [];
-        }
+      var queryObject = {
+        order: '-sys.updatedAt',
+        limit: this.paginator.pageLenth,
+        skip: this.paginator.skipItems()
+      };
+
+      if (this.tab.params.list == 'all') {
+        // do nothing
+      } else if (this.tab.params.list == 'published') {
+        queryObject['sys.publishedAt[gt]'] = 0;
+      } else if (this.tab.params.list == 'archived') {
+        queryObject['sys.archivedAt[gt]'] = 0;
       }
+
+      if (this.search.term && 0 < this.search.term.length) {
+        queryObject.query = this.search.term;
+      }
+
+      this.reloadInProgress = true;
+      this.bucket.getEntries(queryObject, function(err, entries, sys) {
+        scope.reloadInProgress = false;
+        if (err) return;
+        scope.paginator.numEntries = sys.total;
+        scope.$apply(function(scope){
+          scope.entries = entries;
+        });
+      });
+
+      //if (this.bucket && this.tab.params.contentType == 'entries') {
     };
 
     // Development shorcut to quickly open an entry
