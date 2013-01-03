@@ -77,6 +77,11 @@ define([
       }
     };
 
+    $scope.publishedVersion = function() {
+      if (!$scope.doc) return;
+      return $scope.doc.subdoc(['sys', 'publishedVersion']).peek();
+    };
+
     $scope.publish = function() {
       var version = $scope.doc.version();
       $scope.entryType.publish(version, function (err, publishedEntryType) {
