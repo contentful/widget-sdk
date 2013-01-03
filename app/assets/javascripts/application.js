@@ -29,14 +29,16 @@ require([
   'share/json',
   'lib/bind_textarea',
   'controllers/client_controller',
-  'directives'
+  'directives',
+  'filters'
 ], function(angular){
     'use strict';
 
     angular.module('contentful', [
       'services',
       'controllers',
-      'directives'
+      'directives',
+      'filters'
     ], function($locationProvider, clientProvider){
       $locationProvider.html5Mode(true);
       clientProvider.endpoint('http://'+window.document.location.hostname+':3000');
