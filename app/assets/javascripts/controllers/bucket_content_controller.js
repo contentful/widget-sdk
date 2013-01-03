@@ -177,26 +177,26 @@ define([
     }, function(pageParameters, old, scope){
       scope.reloadEntries();
       if (  pageParameters.bucketId !== old.bucketId || pageParameters.bucketId && !scope.entryTypes) {
-        reloadEntryTypes();
+        scope.reloadEntryTypes();
       }
     }, true);
 
-    // TODO put function into scope
-    function reloadEntryTypes(){
-      if ($scope.bucket && $scope.tab.params.contentType== 'entries') {
-        $scope.bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes){
+    $scope.reloadEntryTypes = function(){
+      var scope = this;
+      if (this.bucket && this.tab.params.contentType== 'entries') {
+        this.bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes){
           if (err) return;
-          $scope.$apply(function($scope){
+          scope.$apply(function(scope){
             var newET = {};
             _(entryTypes).each(function(entryType){
               newET[entryType.getId()] = entryType;
             });
-            $scope.entryTypes = newET;
-            $scope.entryTypeList = entryTypes;
+            scope.entryTypes = newET;
+            scope.entryTypeList = entryTypes;
           });
         });
       }
-    }
+    };
 
     $scope.reloadEntries = function() {
       var scope = this;
