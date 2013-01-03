@@ -15,7 +15,8 @@ define([
   'directives/bucket_entry_types',
   'directives/entry_type_editor',
   'directives/entry_type_field_list',
-  'directives/entry_type_field_list_row'
+  'directives/entry_type_field_list_row',
+  'directives/date_from'
 ], function(angular){
   'use strict';
 

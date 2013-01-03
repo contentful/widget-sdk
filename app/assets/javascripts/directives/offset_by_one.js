@@ -1,7 +1,4 @@
-define([
-  'angular',
-  'templates/entry_list'
-], function(angular, entryListTemplate){
+define(function(){
   'use strict';
 
   return {
