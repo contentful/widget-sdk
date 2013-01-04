@@ -10,31 +10,31 @@ define([
       scope.tabList.closeAll();
       scope.firstTab = null;
       if (bucket) {
-        $scope.visitView('bucket-content');
+        $scope.visitView('entry-list');
       }
     });
 
     $scope.visitView = function(viewType) {
       var options;
-      if (viewType == 'bucket-content'){
+      if (viewType == 'entry-list'){
         options = {
-          viewType: 'bucket-content',
+          viewType: 'entry-list',
           section: 'content',
           params: {
             contentType: 'entries',
             bucketId: $scope.bucket.getId(),
             list: 'all'
           },
-          title: 'Content',
+          title: 'Entries',
           button: {
             title: 'Create Entry',
             active: false
           },
           canClose: false
         };
-      } else if (viewType == 'bucket-entry-types'){
+      } else if (viewType == 'entry-type-list'){
         options = {
-          viewType: 'bucket-entry-types',
+          viewType: 'entry-type-list',
           section: 'entryTypes',
           title: 'Content Model',
           button: {

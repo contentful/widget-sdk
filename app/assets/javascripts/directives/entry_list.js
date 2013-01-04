@@ -1,6 +1,8 @@
 define([
   'angular',
-  'templates/entry_list'
+  'templates/entry_list',
+
+  'controllers/entry_list_controller'
 ], function(angular, entryListTemplate){
   'use strict';
 
@@ -10,6 +12,11 @@ define([
       return {
         template: entryListTemplate(),
         restrict: 'E',
+        scope: {
+          bucket: '=',
+          tab: '='
+          },
+        controller: 'EntryListCtrl',
       };
     }
   };

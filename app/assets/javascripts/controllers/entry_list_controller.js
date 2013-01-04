@@ -1,12 +1,11 @@
 define([
   'controllers',
-  'templates/entry_list',
   'lib/paginator',
   'lodash'
-], function(controllers, entryListTemplate, Paginator, _){
+], function(controllers, Paginator, _){
   'use strict';
 
-  return controllers.controller('BucketContentCtrl', function($scope) {
+  return controllers.controller('EntryListCtrl', function($scope) {
     $scope.contentType = 'entries';
     $scope.entrySection = 'all';
 

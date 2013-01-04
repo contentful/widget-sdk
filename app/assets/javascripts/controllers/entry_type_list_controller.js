@@ -4,7 +4,7 @@ define([
 ], function(controllers, _){
   'use strict';
 
-  return controllers.controller('BucketEntryTypesCtrl', function($scope) {
+  return controllers.controller('EntryTypeListCtrl', function($scope) {
 
     $scope.createEntryType = function() {
       var entryType = this.bucket.createBlankEntryType();

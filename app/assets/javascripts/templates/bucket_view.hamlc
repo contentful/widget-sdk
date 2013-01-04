@@ -2,20 +2,21 @@
   .span2.bucket-nav
     %ul.nav.nav-list
       %li{'ng-class' => "{active: tabList.currentSection() == 'entryTypes'}"}
-        %a{'ng-click' => "visitView('bucket-entry-types')"} Content-Model
+        %a{'ng-click' => "visitView('entry-type-list')"} Content-Model
       %li{'ng-class' => "{active: tabList.currentSection() == 'content'}"}
-        %a{'ng-click' => "visitView('bucket-content')"} Content
+        %a{'ng-click' => "visitView('entry-list')"} Entries
+      %li.disabled
+        %a Media
       %li.disabled
         %a Content Delivery
       %li.disabled
         %a Workflows
       %li.disabled
         %a Apps
-  .span10(ng-repeat="tab in tabList.items" ng-show="tab.active()")
-    %ng-switch(on="tab.viewType")
-      %bucket-entry-types(ng-switch-when="bucket-entry-types" bucket="bucket" tab="tab")
-      %bucket-content(ng-switch-when="bucket-content" bucket="bucket" tab="tab")
-      %entry-editor(ng-switch-when="entry-editor" tab="tab")
-      %entry-type-editor(ng-switch-when="entry-type-editor" tab="tab")
-      %div(ng-switch-default="")
-        Unhandled case: viewType = {{tabList.currentViewType()}}
+  .tab-content.span10(ng-repeat="tab in tabList.items" ng-show="tab.active()" ng-switch="tab.viewType")
+    %entry-list(ng-switch-when="entry-list" bucket="bucket" tab="tab")
+    %entry-type-list(ng-switch-when="entry-type-list" bucket="bucket" tab="tab")
+    %entry-editor(ng-switch-when="entry-editor" tab="tab")
+    %entry-type-editor(ng-switch-when="entry-type-editor" tab="tab")
+    %div(ng-switch-default="")
+      Unhandled case: viewType = {{tabList.currentViewType()}}

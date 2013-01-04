@@ -1,37 +1,63 @@
-.entry-list
-  .row
-    %h2 Entries
-  .row
-    %form.form-search.span6
-      %input.input-medium.search-query.span8(type="text" ng-model="search.term" placeholder="Filter")/
+%h2
+  Entries
+.span11.row-fluid.entries
+  %ul.nav.nav-list.well.span2
+    %li(ng-class="{active: tab.params.list=='all'}")
+      %a(ng-click="switchList('all')") All
+    %li.disabled(ng-class="{active: entrySection=='drafts'}")
+      %a Drafts
+    %li(ng-class="{active: tab.params.list=='published'}")
+      %a(ng-click="switchList('published')") Published
+    %li(ng-class="{active: tab.params.list == 'archived'}")
+      %a(ng-click="switchList('archived')") Archived
+    %li.disabled(ng-class="{active: tab.params.list == 'starred'}")
+      %a Starred
+    %li.disabled(ng-class="{active: tab.params.list == 'createdByMe'}")
+      %a Created by me
 
-    .span6.pagination-container
-      %pagination(paginator="paginator")
-      %img.list-spinner(src="/assets/ajax-loader.gif" ng-show="showLoadingIndicator")
-  %table.table.table-striped
-    %thead
-      %tr
-        %th ID
-        %th Content type
-        %th Created at
-        %th Updated at
-        %th.edit Edit
-    %tbody
-      %tr(ng-repeat="entry in entries" ng-show="visibleInCurrentList(entry)")
-        %td {{entry.getId()}}
-        %td {{entryTypes[entry.data.sys.entryType].data.name}}
-        %td(date-from="entry.data.sys.createdAt")
-        %td(date-from="entry.data.sys.updatedAt")
-        %td.edit
-          %a.btn.btn-primary(ng-click="editEntry(entry)")
-            %i.icon-pencil
-            Edit
-          %a.btn.btn-success(ng-click="unarchiveEntry(entry)" ng-show="entry.canUnarchive()")
-            %i.icon-repeat
-            Restore
-          %a.btn(ng-click="archiveEntry(entry)" ng-show="entry.canArchive()")
-            %i.icon-folder-close
-            Archive
-          %a.btn.btn-danger(ng-click="deleteEntry(entry)" ng-show="entry.canDelete()")
-            %i.icon-trash
-            Delete
+    %li.nav-header Saved searches
+
+    %li.disabled
+      %a Updated by me
+    %li.disabled
+      %a Large Rooms
+
+    %li.nav-header Labels?
+
+    %li.disabled
+      %a Todo
+  .span10
+    .row-fluid
+      %form.form-search.span6
+        %input.input-medium.search-query.span8(type="text" ng-model="search.term" placeholder="Filter")/
+
+      .span6.pagination-container
+        %pagination(paginator="paginator")
+        %img.list-spinner(src="/assets/ajax-loader.gif" ng-show="showLoadingIndicator")
+    %table.table.table-striped
+      %thead
+        %tr
+          %th ID
+          %th Content type
+          %th Created at
+          %th Updated at
+          %th.edit Edit
+      %tbody
+        %tr(ng-repeat="entry in entries" ng-show="visibleInCurrentList(entry)")
+          %td {{entry.getId()}}
+          %td {{entryTypes[entry.data.sys.entryType].data.name}}
+          %td(date-from="entry.data.sys.createdAt")
+          %td(date-from="entry.data.sys.updatedAt")
+          %td.edit
+            %a.btn.btn-primary(ng-click="editEntry(entry)")
+              %i.icon-pencil
+              Edit
+            %a.btn.btn-success(ng-click="unarchiveEntry(entry)" ng-show="entry.canUnarchive()")
+              %i.icon-repeat
+              Restore
+            %a.btn(ng-click="archiveEntry(entry)" ng-show="entry.canArchive()")
+              %i.icon-folder-close
+              Archive
+            %a.btn.btn-danger(ng-click="deleteEntry(entry)" ng-show="entry.canDelete()")
+              %i.icon-trash
+              Delete
