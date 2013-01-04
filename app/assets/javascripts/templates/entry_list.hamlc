@@ -4,8 +4,6 @@
   %ul.nav.nav-list.well.span2
     %li(ng-class="{active: tab.params.list=='all'}")
       %a(ng-click="switchList('all')") All
-    %li.disabled(ng-class="{active: entrySection=='drafts'}")
-      %a Drafts
     %li(ng-class="{active: tab.params.list=='published'}")
       %a(ng-click="switchList('published')") Published
     %li(ng-class="{active: tab.params.list == 'archived'}")

@@ -3,7 +3,7 @@
     %ul.nav.nav-list
       %li{'ng-class' => "{active: tabList.currentSection() == 'entryTypes'}"}
         %a{'ng-click' => "visitView('entry-type-list')"} Content-Model
-      %li{'ng-class' => "{active: tabList.currentSection() == 'content'}"}
+      %li{'ng-class' => "{active: tabList.currentSection() == 'entries'}"}
         %a{'ng-click' => "visitView('entry-list')"} Entries
       %li.disabled
         %a Media

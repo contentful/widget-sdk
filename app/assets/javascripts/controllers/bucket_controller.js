@@ -1,14 +1,12 @@
 define([
-  'controllers'
-], function(controllers){
+  'controllers',
+  'lodash'
+], function(controllers, _){
   'use strict';
 
   return controllers.controller('BucketCtrl', function($scope) {
-    $scope.firstTab = null;
-
     $scope.$watch('bucket', function(bucket, old, scope){
       scope.tabList.closeAll();
-      scope.firstTab = null;
       if (bucket) {
         $scope.visitView('entry-list');
       }
@@ -19,9 +17,8 @@ define([
       if (viewType == 'entry-list'){
         options = {
           viewType: 'entry-list',
-          section: 'content',
+          section: 'entries',
           params: {
-            contentType: 'entries',
             bucketId: $scope.bucket.getId(),
             list: 'all'
           },
@@ -30,7 +27,7 @@ define([
             title: 'Create Entry',
             active: false
           },
-          canClose: false
+          canClose: true
         };
       } else if (viewType == 'entry-type-list'){
         options = {
@@ -41,20 +38,16 @@ define([
             title: 'Create Content Type',
             active: false
           },
-          canClose: false
+          canClose: true
         };
       }
-      if ($scope.firstTab) {
-        if ($scope.firstTab.viewType != viewType){
-          $scope.firstTab = $scope.firstTab.replace(options);
-        }
-        if (!$scope.firstTab.active()){
-          $scope.firstTab.activate();
-        }
-      } else {
-        $scope.firstTab = $scope.tabList.add(options);
-        $scope.firstTab.activate();
-      }
+
+      var tab = _($scope.tabList.items).find(function(tab) {
+        return tab.viewType === options.viewType;
+      });
+
+      tab = tab || $scope.tabList.add(options);
+      tab.activate();
     };
 
   });

@@ -154,7 +154,7 @@ define([
     },
 
     canClose: function(){
-      return this._canClose;
+      return this.list.items.length > 1 && this._canClose;
     },
 
     replace: function(options){
