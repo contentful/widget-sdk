@@ -14,8 +14,9 @@ define([
         restrict: 'E',
         scope: {
           bucket: '=',
+          bucketContext: '=',
           tab: '='
-          },
+        },
         controller: 'EntryTypeListCtrl',
       };
     }

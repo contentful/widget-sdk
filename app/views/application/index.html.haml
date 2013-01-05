@@ -19,6 +19,6 @@
             %a(ng-click="tabItem.activate($event)")
               {{tabItem.title}}
               %i.icon-remove-sign(ng-click="tabItem.closeAsync()" ng-show="tabItem.canClose()")
-        %tablist-button(tab-list="tabList")
+        %tablist-button(tab-list="tabList" bucket-context="bucketContext")
 
-  %bucket-view.container-fluid(tab-list="tabList "bucket="bucket")
+  %bucket-view.container-fluid(tab-list="tabList" bucket="bucket" bucket-context="bucketContext")

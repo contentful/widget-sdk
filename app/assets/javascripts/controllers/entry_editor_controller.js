@@ -1,22 +1,23 @@
 define([
   'controllers',
+  'lodash',
 
   'services/sharejs',
   'controllers/bucket_controller'
-], function(controllers){
+], function(controllers, _){
   'use strict';
 
   return controllers.controller('EntryEditorCtrl', function($scope, ShareJS) {
     $scope.$watch('tab.params.entry',     'entry=tab.params.entry');
-    $scope.$watch('tab.params.entryType', 'entryType=tab.params.entryType');
     $scope.$watch('tab.params.bucket.data.locales.default', 'locale=tab.params.bucket.data.locales.default');
 
     $scope.$watch('entry', function(entry, old, scope){
       if (!entry) return;
+      scope.entryType = scope.typeForEntry(entry);
+
       if (scope.shareJSstarted) {
         console.log('Fatal error, shareJS started twice');
       }
-
       // TODO: This will currently fail horribly if the entry is replaced because everything is still bound
       // to the old entry
       ShareJS.open(entry, function(err, doc) {
@@ -30,6 +31,12 @@ define([
       });
       scope.shareJSstarted = true;
     });
+
+    $scope.typeForEntry = function(entry) {
+      return _(this.bucketContext.entryTypes).find(function(et) {
+        return et.data.sys.id === entry.data.sys.entryType;
+      });
+    };
 
     $scope.exitEditor = function(){
       $scope.doc.close(function(){
@@ -56,6 +63,7 @@ define([
     //TODO: Same kind of controls for archiving/Don't allow editing at all for archived entries
     
     $scope.publish = function () {
+      // TODO notify TablistButton that the published EntryTypes have changed
       var version = $scope.doc.version();
       $scope.entry.publish(version, function (err) {
         $scope.$apply(function(scope){
@@ -69,6 +77,7 @@ define([
     };
 
     $scope.unpublish = function () {
+      // TODO notify TablistButton that the published EntryTypes have changed
       $scope.entry.unpublish(function (err) {
         $scope.$apply(function(scope){
           if (err) {

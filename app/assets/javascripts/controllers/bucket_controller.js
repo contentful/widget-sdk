@@ -12,6 +12,20 @@ define([
       }
     });
 
+    $scope.$watch('bucket', function(bucket, o, scope) {
+      // TODO we need to separately track published and unpublished EntryTypes
+      if (bucket) {
+        bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes) {
+          if (err) return;
+          scope.$apply(function(scope) {
+            scope.bucketContext.entryTypes = entryTypes;
+          });
+        });
+      } else {
+        scope.bucketContext.entryTypes = [];
+      }
+    });
+
     $scope.visitView = function(viewType) {
       var options;
       if (viewType == 'entry-list'){
@@ -23,10 +37,6 @@ define([
             list: 'all'
           },
           title: 'Entries',
-          button: {
-            title: 'Create Entry',
-            active: false
-          },
           canClose: true
         };
       } else if (viewType == 'entry-type-list'){
@@ -34,10 +44,6 @@ define([
           viewType: 'entry-type-list',
           section: 'entryTypes',
           title: 'Content Model',
-          button: {
-            title: 'Create Content Type',
-            active: false
-          },
           canClose: true
         };
       }

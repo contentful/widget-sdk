@@ -6,7 +6,6 @@ define([
   function TabList(scope) {
     this.scope = scope;
     this.items = [];
-    this.button = null;
     this.current = null;
   }
 
@@ -17,33 +16,6 @@ define([
         this.current = item;
         this.scope.$broadcast('tabBecameActive', item);
       }
-    },
-
-    clickButton: function(value){
-      if (this.hasButton() && this.currentButton().active) {
-        this.scope.$broadcast('tabButtonClicked', this.currentButton(), value);
-      }
-    },
-
-    buttonActive: function(newState){
-      if (this.hasButton()){
-        if (newState !== undefined) {
-          this.currentButton().active = newState;
-        }
-        return this.currentButton().active;
-      }
-    },
-
-    buttonHasOptions: function() {
-      return this.hasButton() && !!this.currentButton().options;
-    },
-
-    currentButton: function() {
-      return this.current && this.current.button;
-    },
-
-    hasButton: function(){
-      return this.currentButton();
     },
 
     add: function(options){
@@ -123,7 +95,6 @@ define([
     this.viewType = options.viewType;
     this.params   = options.params;
     this.title    = options.title;
-    this.button   = options.button;
     if (options.canClose !== undefined) {
       this._canClose = options.canClose;
     } else {
@@ -132,7 +103,7 @@ define([
   }
 
   TabItem.prototype = {
-    activate: function ($event) {
+    activate: function () {
       this.list.activate(this);
     },
 

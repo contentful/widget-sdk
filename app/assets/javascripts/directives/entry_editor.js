@@ -13,7 +13,8 @@ define([
         template: entryEditorTemplate(),
         restrict: 'E',
         scope: {
-          tab: '='
+          tab: '=',
+          bucketContext: '='
         },
         controller: 'EntryEditorCtrl'
       };

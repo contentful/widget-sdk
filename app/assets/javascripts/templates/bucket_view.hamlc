@@ -14,9 +14,9 @@
       %li.disabled
         %a Apps
   .tab-content.span10(ng-repeat="tab in tabList.items" ng-show="tab.active()" ng-switch="tab.viewType")
-    %entry-list(ng-switch-when="entry-list" bucket="bucket" tab="tab")
-    %entry-type-list(ng-switch-when="entry-type-list" bucket="bucket" tab="tab")
-    %entry-editor(ng-switch-when="entry-editor" tab="tab")
-    %entry-type-editor(ng-switch-when="entry-type-editor" tab="tab")
+    %entry-list(       ng-switch-when="entry-list"        bucket="bucket" tab="tab" bucket-context="bucketContext")
+    %entry-type-list(  ng-switch-when="entry-type-list"   bucket="bucket" tab="tab" bucket-context="bucketContext")
+    %entry-editor(     ng-switch-when="entry-editor"                      tab="tab" bucket-context="bucketContext")
+    %entry-type-editor(ng-switch-when="entry-type-editor"                 tab="tab" bucket-context="bucketContext")
     %div(ng-switch-default="")
       Unhandled case: viewType = {{tabList.currentViewType()}}

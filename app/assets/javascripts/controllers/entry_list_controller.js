@@ -18,18 +18,15 @@ define([
         return (tab.viewType == 'entry-editor' && tab.params.entry.getId() == entry.getId());
       });
       if (!editor) {
-        var entryType = $scope.entryTypes[entry.data.sys.entryType];
         editor = $scope.tab.list.add({
           viewType: 'entry-editor',
           section: 'entries',
           params: {
             entry: entry,
-            entryType: entryType,
             bucket: $scope.bucket,
             mode: mode
           },
-          button: $scope.tab.button,
-          title: (mode == 'edit' ? 'Edit ' : 'New ') + entryType.data.name
+          title: (mode == 'edit' ? 'Edit Entry' : 'New Entry')
         });
       }
       editor.activate();
@@ -49,21 +46,11 @@ define([
       }
     });
 
-    $scope.createEntry = function(entryType) {
-      $scope.bucket.createEntry({
-        sys: {
-          entryType: entryType.getId()
-        }
-      }, function(err, entry){
-        if (!err) {
-          $scope.$apply(function(scope){
-            scope.editEntry(entry, 'create');
-          });
-        } else {
-          console.log('Error creating entry', err);
-        }
-      });
-    };
+    $scope.$watch('bucketContext.entryTypes', function(entryTypes, old, scope) {
+      scope.entryTypes = _.object(_(entryTypes).map(function(et) {
+        return [et.data.sys.id, et];
+      })).valueOf();
+    });
 
     $scope.deleteEntry = function (entry) {
       var scope = this;
@@ -111,29 +98,6 @@ define([
       });
     }, 700);
 
-    $scope.$watch('entryTypes', function (entryTypes, old, scope) {
-      if (scope.tab.params.contentType == 'entries') {
-        entryTypes = _(entryTypes).filter(function(et) {
-          return et.data.sys.publishedAt && et.data.sys.publishedAt > 0;
-        });
-        scope.tab.button.options = _(entryTypes).map(function(et){
-          return {
-            title: et.data.name,
-            value: et
-          };
-        });
-        scope.tab.list.buttonActive(true);
-      } else {
-        // Later when we have media replace button by "add media" button
-      }
-    });
-
-    $scope.$on('tabButtonClicked', function(event, button, entryType){
-      if (button == event.currentScope.tab.button) {
-        event.currentScope.createEntry(entryType);
-      }
-    });
-
     $scope.switchContentType = function(type){
       $scope.tab.params.contentType = type;
     };
@@ -161,31 +125,12 @@ define([
       return {
         page: scope.paginator.page,
         pageLength: scope.paginator.pageLength,
-        contentType: scope.tab.params.contentType,
         list: scope.tab.params.list,
         bucketId: (scope.bucket && scope.bucket.getId())
       };
     }, function(pageParameters, old, scope){
       scope.reloadEntries();
-      if (  pageParameters.bucketId !== old.bucketId || pageParameters.bucketId && !scope.entryTypes) {
-        scope.reloadEntryTypes();
-      }
     }, true);
-
-    $scope.reloadEntryTypes = function(){
-      var scope = this;
-      this.bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes){
-        if (err) return;
-        scope.$apply(function(scope){
-          var newET = {};
-          _(entryTypes).each(function(entryType){
-            newET[entryType.getId()] = entryType;
-          });
-          scope.entryTypes = newET; // TODO We might not need this since the identityMap already performs the same function. We only need a way to look inside.
-          scope.entryTypeList = entryTypes;
-        });
-      });
-    };
 
     $scope.reloadEntries = function() {
       if (this.reloadInProgress) return;
@@ -218,8 +163,6 @@ define([
           scope.entries = entries;
         });
       });
-
-      //if (this.bucket && this.tab.params.contentType == 'entries') {
     };
 
     // Development shorcut to quickly open an entry

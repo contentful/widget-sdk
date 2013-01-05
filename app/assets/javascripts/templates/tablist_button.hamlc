@@ -1,15 +1,11 @@
-%ng-switch(on="tabList.buttonHasOptions()" ng-show="tabList.hasButton()")
-  .btn-group(ng-switch-when="true")
-    %a.btn.dropdown-toggle{"data-toggle" => "dropdown", :href => "#"}
-      %i.icon-plus-sign
-      {{tabList.currentButton().title}}
-      %span.caret
-    %ul.dropdown-menu
-      %li(ng-repeat="option in tabList.currentButton().options")
-        %a(ng-click="tabList.clickButton(option.value)") {{option.title}}
-
-  %button.btn(ng-switch-default="" ng-click="tabList.clickButton(tabList.currentButton().value)"
-    ng-class="{disabled: !tabList.buttonActive()}")
+.btn-group
+  %a.btn.dropdown-toggle{"data-toggle" => "dropdown", :href => "#"}
     %i.icon-plus-sign
-    {{tabList.currentButton().title}}
-
+    Create…
+    %span.caret
+  %ul.dropdown-menu
+    %li(ng-repeat="entryType in publishedEntryTypes")
+      %a(ng-click="createEntry(entryType)") {{entryType.data.name}}
+    %li.divider
+    %li
+      %a(ng-click="createEntryType()") EntryType

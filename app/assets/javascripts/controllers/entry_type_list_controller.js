@@ -5,7 +5,6 @@ define([
   'use strict';
 
   return controllers.controller('EntryTypeListCtrl', function($scope) {
-
     $scope.createEntryType = function() {
       var entryType = this.bucket.createBlankEntryType();
       this.editEntryType(entryType, 'create');
@@ -25,38 +24,10 @@ define([
             bucket: this.bucket,
             mode: mode
           },
-          button: this.tab.button,
           title: (mode == 'edit' ? 'Edit Content Type' : 'New Content Type')
         });
       }
       editor.activate();
-    };
-
-    $scope.createEntryType = function() {
-      var id = window.prompt('Please enter ID (only for development)');
-      var name;
-      if (!id || id === '') {
-        id = null;
-        name = 'Randomfoo';
-      } else {
-        name = id;
-      }
-
-      $scope.bucket.createEntryType({
-        sys: {
-          id: id
-        },
-        fields: [],
-        name: name
-      }, function(err, entryType){
-        if (!err) {
-          $scope.$apply(function(scope){
-            scope.editEntryType(entryType, 'create');
-          });
-        } else {
-          console.log('Error creating entryType', err);
-        }
-      });
     };
 
     $scope.$on('tabBecameActive', function(event, tab){
@@ -73,12 +44,6 @@ define([
       }
     });
 
-    $scope.$on('tabButtonClicked', function(event, button){
-      if (button == event.currentScope.tab.button) {
-        event.currentScope.createEntryType();
-      }
-    });
-    
     $scope.deleteEntryType = function (entryType) {
       entryType.delete(function (err) {
         if (!err) {
@@ -86,6 +51,7 @@ define([
             var index = _(scope.entryTypes).indexOf(entryType);
             scope.entryTypes.splice(index, 1);
           });
+          $scope.bucketContext.refreshEntryTypes($scope);
         } else {
           console.log('Error deleting entryType', entryType);
         }
@@ -105,7 +71,6 @@ define([
           if (err) return;
           $scope.$apply(function($scope){
             $scope.entryTypes = entryTypes;
-            $scope.tab.button.active=true;
           });
         });
       }
