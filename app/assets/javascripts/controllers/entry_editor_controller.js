@@ -83,7 +83,6 @@ define([
           if (err) {
             window.alert('could not unpublish, version mismatch');
           } else {
-            scope.bucketContext.refreshPublishedEntryTypes();
             scope.updateFromShareJSDoc();
           }
         });
@@ -105,14 +104,14 @@ define([
     };
 
     $scope.fields = function(){
-      if ($scope.entryType) {
-        return $scope.entryType.data.fields;
+      if (this.entryType) {
+        return this.entryType.data.fields;
       }
     };
 
     $scope.headline = function(){
-      var verb = $scope.tab.params.mode == 'edit' ? 'Editing' : 'Creating';
-      return verb + ' ' + $scope.entryType.data.name + ': ' + $scope.entry.getName();
+      var verb = this.tab.params.mode == 'edit' ? 'Editing' : 'Creating';
+      return verb + ' ' + this.entryType.data.name + ': ' + this.entry.getName();
     };
 
   });

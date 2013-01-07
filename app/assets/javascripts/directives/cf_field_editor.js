@@ -22,7 +22,7 @@ define(function(){
             }
 
             if (sjDoc){
-              scope.docListener = sjDoc.at(['fields']).on('child op', function(path, op) {
+              scope.docListener = sjDoc.at(['fields']).on('child op', function(path) {
                 if (path[0] == scope.fieldId && path[1] == scope.locale) {
                   //if (op.oi) {
                     //scope.$broadcast('valueReceived', op.oi);//value = op.oi;
