@@ -33,6 +33,12 @@ define([
       }
     };
 
+    $scope.$on('tabListButtonClicked', function(event, info) {
+      // Otherwise the broadcast would trigger this handler -> endless loop
+      if (event.targetScope === event.currentScope) return;
+      event.currentScope.$broadcast('tabListButtonClicked', info);
+    });
+
     // TODO move tablist into bucketContext
     $scope.tabList = new TabList($scope);
 
