@@ -19,7 +19,6 @@ define([
           section: 'entries',
           params: {
             entry: entry,
-            bucket: $scope.bucket,
             mode: 'edit'
           },
           title: 'Edit Entry'

@@ -9,7 +9,7 @@ define([
 
   return controllers.controller('EntryEditorCtrl', function($scope, ShareJS) {
     $scope.$watch('tab.params.entry',     'entry=tab.params.entry');
-    $scope.$watch('tab.params.bucket.data.locales.default', 'locale=tab.params.bucket.data.locales.default');
+    $scope.$watch('bucketContext.bucket.data.locales.default', 'locale=bucketContext.bucket.data.locales.default');
 
     $scope.$watch('entry', function(entry, old, scope){
       if (!entry) return;
