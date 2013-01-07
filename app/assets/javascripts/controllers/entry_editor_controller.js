@@ -20,15 +20,21 @@ define([
       }
       // TODO: This will currently fail horribly if the entry is replaced because everything is still bound
       // to the old entry
+      var sync = true;
       ShareJS.open(entry, function(err, doc) {
         if (!err) {
-          scope.$apply(function(scope){
+          if (sync) { // TODO the sync stuff is only necessary because the document is already open. Close doc at $destroy?
             scope.doc = doc.subdoc('fields');
-          });
+          } else {
+            scope.$apply(function(scope){
+              scope.doc = doc.subdoc('fields');
+            });
+          }
         } else {
           console.log('Error opening connection', err);
         }
       });
+      sync = false;
       scope.shareJSstarted = true;
     });
 
