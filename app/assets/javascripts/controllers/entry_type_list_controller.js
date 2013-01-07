@@ -6,7 +6,7 @@ define([
 
   return controllers.controller('EntryTypeListCtrl', function($scope) {
     $scope.createEntryType = function() {
-      var entryType = this.bucket.createBlankEntryType();
+      var entryType = this.bucketContext.bucket.createBlankEntryType();
       this.editEntryType(entryType, 'create');
     };
 
@@ -21,7 +21,7 @@ define([
           section: 'entryTypes',
           params: {
             entryType: entryType,
-            bucket: this.bucket,
+            bucket: this.bucketContext.bucket,
             mode: mode
           },
           title: (mode == 'edit' ? 'Edit Content Type' : 'New Content Type')
@@ -63,14 +63,15 @@ define([
       return _(entryType.data.fields).size();
     };
 
-    $scope.$watch('bucket', 'reloadEntryTypes()');
+    $scope.$watch('bucketContext.bucket', 'reloadEntryTypes()');
 
     $scope.reloadEntryTypes = function(){
-      if ($scope.bucket) {
-        $scope.bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes){
+      var scope = this;
+      if (this.bucketContext && this.bucketContext.bucket) {
+        this.bucketContext.bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes){
           if (err) return;
-          $scope.$apply(function($scope){
-            $scope.entryTypes = entryTypes;
+          scope.$apply(function(scope){
+            scope.entryTypes = entryTypes;
           });
         });
       }

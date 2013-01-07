@@ -13,7 +13,6 @@ define([
         template: entryTypeListTemplate(),
         restrict: 'E',
         scope: {
-          bucket: '=',
           bucketContext: '=',
           tab: '='
         },
