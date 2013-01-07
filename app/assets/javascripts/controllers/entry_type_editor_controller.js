@@ -94,6 +94,7 @@ define([
           }
         });
         $scope.$broadcast('published');
+        $scope.bucketContext.refreshEntryTypes();
       });
     };
 

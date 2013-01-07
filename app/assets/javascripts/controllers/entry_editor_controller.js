@@ -63,7 +63,6 @@ define([
     //TODO: Same kind of controls for archiving/Don't allow editing at all for archived entries
     
     $scope.publish = function () {
-      // TODO notify TablistButton that the published EntryTypes have changed
       var version = $scope.doc.version();
       $scope.entry.publish(version, function (err) {
         $scope.$apply(function(scope){
@@ -77,12 +76,12 @@ define([
     };
 
     $scope.unpublish = function () {
-      // TODO notify TablistButton that the published EntryTypes have changed
       $scope.entry.unpublish(function (err) {
         $scope.$apply(function(scope){
           if (err) {
             window.alert('could not unpublish, version mismatch');
           } else {
+            scope.bucketContext.refreshPublishedEntryTypes();
             scope.updateFromShareJSDoc();
           }
         });

@@ -27,9 +27,6 @@ define([
             });
           });
         });
-      },
-      refreshPublishedEntryTypes: function(scope) {
-        console.warn('refreshPublishedEntryTypes not yet implemented', scope);
       }
     };
 
