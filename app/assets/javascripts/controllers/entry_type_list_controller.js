@@ -10,8 +10,7 @@ define([
       this.editEntryType(entryType, 'create');
     };
 
-    $scope.editEntryType = function(entryType, mode) {
-      if (mode === undefined) mode = 'edit';
+    $scope.editEntryType = function(entryType) {
       var editor = _(this.tab.list.items).find(function(tab){
         return (tab.viewType == 'entry-type-editor' && tab.params.entryType == entryType);
       });
@@ -21,10 +20,9 @@ define([
           section: 'entryTypes',
           params: {
             entryType: entryType,
-            bucket: this.bucketContext.bucket,
-            mode: mode
+            mode: 'edit'
           },
-          title: (mode == 'edit' ? 'Edit Content Type' : 'New Content Type')
+          title: 'Edit Content Type'
         });
       }
       editor.activate();
