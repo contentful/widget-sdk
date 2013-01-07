@@ -13,7 +13,6 @@ define([
     $scope.buckets = [];
     $scope.bucketContext = {
       entryTypes: [],
-      publishedEntryTypes: [],
       refreshEntryTypes: function(scope) {
         var bucket = scope.bucket;
         var bucketContext = this;
@@ -21,10 +20,6 @@ define([
           if (err) return;
           scope.$apply(function() {
             bucketContext.entryTypes = entryTypes;
-            // TODO this needs to be a request to the public API really:
-            bucketContext.publishedEntryTypes = _(entryTypes).filter(function(et) {
-              return et.data.sys.publishedAt && et.data.sys.publishedAt > 0;
-            });
           });
         });
       }

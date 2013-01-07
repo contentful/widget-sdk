@@ -13,14 +13,8 @@ define([
     });
 
     $scope.$watch('bucket', function(bucket, o, scope) {
-      // TODO we need to separately track published and unpublished EntryTypes
       if (bucket) {
-        bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes) {
-          if (err) return;
-          scope.$apply(function(scope) {
-            scope.bucketContext.entryTypes = entryTypes;
-          });
-        });
+        scope.bucketContext.refreshEntryTypes(scope);
       } else {
         scope.bucketContext.entryTypes = [];
       }
