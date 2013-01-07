@@ -9,13 +9,13 @@ define(function(){
         scope: {
           type:    '=',
           fieldId: '=',
-          entryDoc:'=doc', // TODO: entryDoc should be 'fieldsDoc'
+          fieldsDoc:'=doc',
           locale:  '=',
         },
         link: function(scope, elm, attr) {
           var widget = widgets.editor(scope.type, attr.editor);
 
-          scope.$watch('entryDoc.doc', function updateDoc(sjDoc, old ,scope) {
+          scope.$watch('fieldsDoc.doc', function updateDoc(sjDoc, old ,scope) {
             if (old && old !== sjDoc) {
               old.removeListener(scope.docListener);
               scope.docListener = null;
@@ -39,7 +39,7 @@ define(function(){
           var stopInit = scope.$watch('subdoc', function(subdoc, old, scope) {
             if (subdoc) {
               try {
-                var value = scope.entryDoc.subdoc([scope.fieldId, scope.locale]).value();
+                var value = scope.fieldsDoc.subdoc([scope.fieldId, scope.locale]).value();
                 scope.$broadcast('valueChanged', value);
               } finally {
                 stopInit();
@@ -47,21 +47,21 @@ define(function(){
             }
           });
 
-          scope.$watch('entryDoc.doc', updateSubdoc);
+          scope.$watch('fieldsDoc.doc', updateSubdoc);
           scope.$watch('fieldId', updateSubdoc);
           scope.$watch('locale', updateSubdoc);
 
           function updateSubdoc(n,o,scope) {
-            if (scope.entryDoc && scope.entryDoc.doc && scope.fieldId && scope.locale) {
-              scope.subdoc = scope.entryDoc.doc.at(['fields', scope.fieldId, scope.locale]);
+            if (scope.fieldsDoc && scope.fieldsDoc.doc && scope.fieldId && scope.locale) {
+              scope.subdoc = scope.fieldsDoc.doc.at(['fields', scope.fieldId, scope.locale]);
             } else {
               scope.subdoc = null;
             }
           }
 
           scope.changeValue = function(value, callback) {
-            if (this.entryDoc) {
-              this.entryDoc.subdoc([this.fieldId, this.locale]).set(value, callback);
+            if (this.fieldsDoc) {
+              this.fieldsDoc.subdoc([this.fieldId, this.locale]).set(value, callback);
             } else {
               console.error('No doc to push %o to', value);
             }
