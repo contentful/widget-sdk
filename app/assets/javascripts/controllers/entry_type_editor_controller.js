@@ -100,7 +100,7 @@ define([
           }
         });
         $scope.$broadcast('published');
-        $scope.bucketContext.refreshEntryTypes();
+        $scope.bucketContext.refreshEntryTypes($scope);
       });
     };
 
