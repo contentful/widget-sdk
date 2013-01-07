@@ -9,9 +9,8 @@ define([
     $scope.contentType = 'entries';
     $scope.entrySection = 'all';
 
-    $scope.editEntry = function(entry, mode) {
-      if (mode === undefined) mode = 'edit';
       // TODO prevent against null entry
+    $scope.editEntry = function(entry) {
       var editor = _($scope.tab.list.items).find(function(tab){
         // TODO Since we have the identitymap we can use identity check
         // here:
@@ -24,9 +23,9 @@ define([
           params: {
             entry: entry,
             bucket: $scope.bucket,
-            mode: mode
+            mode: 'edit'
           },
-          title: (mode == 'edit' ? 'Edit Entry' : 'New Entry')
+          title: 'Edit Entry'
         });
       }
       editor.activate();
