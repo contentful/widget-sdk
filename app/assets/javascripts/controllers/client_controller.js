@@ -9,14 +9,13 @@ define([
   'use strict';
 
   return controllers.controller('ClientCtrl', function($scope, client) {
-    $scope.bucket  = null;
     $scope.buckets = [];
     $scope.bucketContext = {
+      bucket: null,
       entryTypes: [],
       refreshEntryTypes: function(scope) {
-        var bucket = scope.bucket;
         var bucketContext = this;
-        bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes) {
+        this.bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes) {
           if (err) return;
           scope.$apply(function() {
             bucketContext.entryTypes = entryTypes;
@@ -35,7 +34,9 @@ define([
 
     $scope.$watch('buckets', function(buckets){
       if (buckets && buckets.length > 0) {
-        $scope.bucket = buckets[0];
+        if (!_(buckets).contains($scope.bucketContext)) {
+          $scope.bucketContext.bucket = buckets[0];
+        }
       }
     });
 

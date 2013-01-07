@@ -122,7 +122,7 @@ define([
         page: scope.paginator.page,
         pageLength: scope.paginator.pageLength,
         list: scope.tab.params.list,
-        bucketId: (scope.bucket && scope.bucket.getId())
+        bucketId: (scope.bucketContext.bucket && scope.bucketContext.bucket.getId())
       };
     }, function(pageParameters, old, scope){
       scope.reloadEntries();
@@ -151,7 +151,7 @@ define([
       }
 
       this.reloadInProgress = true;
-      this.bucket.getEntries(queryObject, function(err, entries, sys) {
+      this.bucketContext.bucket.getEntries(queryObject, function(err, entries, sys) {
         scope.reloadInProgress = false;
         if (err) return;
         scope.paginator.numEntries = sys.total;

@@ -5,14 +5,14 @@ define([
   'use strict';
 
   return controllers.controller('BucketCtrl', function($scope) {
-    $scope.$watch('bucket', function(bucket, old, scope){
+    $scope.$watch('bucketContext.bucket', function(bucket, old, scope){
       scope.tabList.closeAll();
       if (bucket) {
         $scope.visitView('entry-list');
       }
     });
 
-    $scope.$watch('bucket', function(bucket, o, scope) {
+    $scope.$watch('bucketContext.bucket', function(bucket, o, scope) {
       if (bucket) {
         scope.bucketContext.refreshEntryTypes(scope);
       } else {
@@ -27,7 +27,7 @@ define([
           viewType: 'entry-list',
           section: 'entries',
           params: {
-            bucketId: $scope.bucket.getId(),
+            bucketId: $scope.bucketContext.bucket.getId(),
             list: 'all'
           },
           title: 'Entries',
@@ -62,7 +62,7 @@ define([
 
     $scope.createEntry = function(entryType) {
       var scope = this;
-      scope.bucket.createEntry({
+      scope.bucketContext.bucket.createEntry({
         sys: {
           entryType: entryType.getId()
         }
@@ -74,7 +74,7 @@ define([
               section: 'entries',
               params: {
                 entry: entry,
-                bucket: scope.bucket,
+                bucket: scope.bucketContext.bucket,
                 mode: 'create'
               },
               title: 'New Entry'
@@ -105,7 +105,7 @@ define([
           name: id
         };
       }
-      scope.bucket.createEntryType(data, function(err, entryType){
+      scope.bucketContext.bucket.createEntryType(data, function(err, entryType){
         if (!err) {
           scope.$apply(function(scope){
             scope.tabList.add({
@@ -113,7 +113,7 @@ define([
               section: 'entryTypes',
               params: {
                 entryType: entryType,
-                bucket: scope.bucket,
+                bucket: scope.bucketContext.bucket,
                 mode: 'create'
               },
               title: 'New Content Type'
