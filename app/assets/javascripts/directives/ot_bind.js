@@ -11,9 +11,6 @@ define(function(){
         link: function(scope, elm, attr, ngModelCtrl) {
           
           if (attr.otBind === 'text') {
-            // TODO: Multiple otBind = text would overwrite each others
-            // detachTextField methods in the scope. (or maybe not
-            // because ngModel enforces new scope?)
             scope.$watch('subdoc', function(subdoc, old, scope){
               if (old && old !== subdoc) {
                 if (scope.detachTextField) {

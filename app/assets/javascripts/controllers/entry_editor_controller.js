@@ -18,12 +18,10 @@ define([
       if (scope.shareJSstarted) {
         console.log('Fatal error, shareJS started twice');
       }
-      // TODO: This will currently fail horribly if the entry is replaced because everything is still bound
-      // to the old entry
       var sync = true;
       ShareJS.open(entry, function(err, doc) {
         if (!err) {
-          if (sync) { // TODO the sync stuff is only necessary because the document is already open. Close doc at $destroy?
+          if (sync) {
             scope.doc = doc.subdoc('fields');
           } else {
             scope.$apply(function(scope){
@@ -66,8 +64,6 @@ define([
       return !$scope.doc.parent().subdoc(['sys', 'archivedAt']).peek();
     };
 
-    //TODO: Same kind of controls for archiving/Don't allow editing at all for archived entries
-    
     $scope.publish = function () {
       var version = $scope.doc.version();
       $scope.entry.publish(version, function (err) {

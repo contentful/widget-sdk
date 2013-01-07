@@ -18,7 +18,7 @@ define([
       {name: 'Date/Time'     , value: 'date'    },
       {name: 'Object'        , value: 'object'  },
       {name: 'Location'      , value: 'location'},
-    ]; //TODO, later get this list from the validation.types object
+    ];
 
     $scope.$watch('tab.params.entryType', 'entryType=tab.params.entryType');
 
@@ -30,12 +30,10 @@ define([
 
       loadPublishedEntryType();
 
-      // TODO: This will currently fail horribly if the entryType is replaced because everything is still bound
-      // to the old entryType
       var sync = true;
       ShareJS.open(entryType, function(err, doc) {
         if (!err) {
-          if (sync) { // TODO the sync stuff is only necessary because the document is already open. Close doc at $destroy?
+          if (sync) {
             scope.doc = doc;
           } else {
             scope.$apply(function(scope){
@@ -49,8 +47,6 @@ define([
       sync = false;
       scope.shareJSstarted = true;
     });
-
-    // TODO right now we're not notified if another client publishes the entryType
 
     function loadPublishedEntryType() {
       $scope.entryType.getPublishedVersion(function(err, publishedEntryType) {

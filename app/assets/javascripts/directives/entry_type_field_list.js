@@ -81,7 +81,6 @@ define([
 
             //init
             scope.$watch('doc.doc', function(sjDoc, old, scope) {
-              // TODO handle switch
               if (!sjDoc) return;
               var fields = sjDoc.getAt(['fields']);
               var rows = _(fields).map(function(field, index) {
@@ -135,8 +134,6 @@ define([
                 updateAllDocPaths();
               });
 
-              // TODO remove moveListener, addListener on destruction
-              
               // For debugging ShareJS Operations
               //sjDoc.at('fields').on('child op', function(path, op) {
                 //console.log('child op', path, op);

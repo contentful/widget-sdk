@@ -9,11 +9,8 @@ define([
     $scope.contentType = 'entries';
     $scope.entrySection = 'all';
 
-      // TODO prevent against null entry
     $scope.editEntry = function(entry) {
       var editor = _($scope.tab.list.items).find(function(tab){
-        // TODO Since we have the identitymap we can use identity check
-        // here:
         return (tab.viewType == 'entry-editor' && tab.params.entry.getId() == entry.getId());
       });
       if (!editor) {

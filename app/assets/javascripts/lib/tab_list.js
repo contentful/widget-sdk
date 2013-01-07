@@ -27,7 +27,6 @@ define([
     closeAll: function(){
       this.items = [];
       this.current = null;
-      // TODO close auf alle tabs aufrufen
     },
 
     makeItem: function(options){

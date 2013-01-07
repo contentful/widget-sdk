@@ -31,7 +31,6 @@ define([
       event.currentScope.$broadcast('tabListButtonClicked', info);
     });
 
-    // TODO move tablist into bucketContext
     $scope.tabList = new TabList($scope);
 
     $scope.$watch('buckets', function(buckets){

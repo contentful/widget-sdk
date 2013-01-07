@@ -16,7 +16,7 @@ define([
           sjDoc: '=',
           initialField: '=entryTypeFieldListRow',
           publishedIds: '=',
-          availableTypes: '=' //TODO Later the available types have to come from the validation library
+          availableTypes: '='
         },
         compile: function(elem) {
           // custom compilation because templates appparently can't carry TR tags

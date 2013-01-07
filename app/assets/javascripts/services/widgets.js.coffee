@@ -6,8 +6,6 @@ define [
 ], (services, _) ->
   'use strict'
   
-  # TODO: Precompile widgets, make possibility for widgets to declare dependencies/custom directives
-  
   editWidgets =
     string:
       textField:
@@ -51,14 +49,12 @@ define [
     array:
       textField:
         name: "Array field"
-        # TODO: This could be smarter with ShareJS but that's a ton of work
         template: """<input type="text" ng-list="" ng-model="value" ot-bind="model"/>"""
     object:
       jsonArea:
         name: "JSON Field"
         template: """<textarea class="input-xxlarge" ng-model="value" ot-bind="model"></textarea>"""
         link: (scope, elm, attr) ->
-          # TODO proper modeController access
           controller = elm.find('textarea').inheritedData('$ngModelController')
           controller.$formatters.push (obj) -> JSON.stringify(obj)
           controller.$parsers.push (string) ->
@@ -95,7 +91,6 @@ define [
               scope.changeValue pos, (err) ->
                 scope.$apply (scope) ->
                   console.log('changevalue callback')
-                  #TODO Handle Failure
             else
               scope.changeValue null, (err) ->
                 scope.$apply (scope) ->
@@ -135,7 +130,6 @@ define [
         name: "Textfield for floats"
         template: """<input type="number" ng-model="value" ot-bind="replace"/>"""
         link: (scope, elm, attr) ->
-          # TODO proper modeController access
           controller = elm.find('input').inheritedData('$ngModelController')
           controller.$parsers.unshift (viewValue) ->
             FLOAT_REGEXP = /^\-?\d+((\.|\,)\d+)?$/
