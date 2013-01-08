@@ -10,7 +10,7 @@ define([
     $scope.entrySection = 'all';
 
     $scope.editEntry = function(entry) {
-      var editor = _($scope.tab.list.items).find(function(tab){
+      var editor = _.find($scope.tab.list.items, function(tab){
         return (tab.viewType == 'entry-editor' && tab.params.entry.getId() == entry.getId());
       });
       if (!editor) {
@@ -42,9 +42,9 @@ define([
     });
 
     $scope.$watch('bucketContext.entryTypes', function(entryTypes, old, scope) {
-      scope.entryTypes = _.object(_(entryTypes).map(function(et) {
+      scope.entryTypes = _(entryTypes).map(function(et) {
         return [et.data.sys.id, et];
-      })).valueOf();
+      }).object().valueOf();
     });
 
     $scope.deleteEntry = function (entry) {
@@ -163,7 +163,7 @@ define([
     // Development shorcut to quickly open an entry
 
     //$scope.$watch(function($scope){
-    //  return !(_($scope.entries).isEmpty() || _($scope.entryTypes).isEmpty());
+    //  return !(_.isEmpty($scope.entries) || _.isEmpty($scope.entryTypes));
     //}, function(dataReady){
     //  if (dataReady) {
     //    $scope.editEntry($scope.entries[0]);

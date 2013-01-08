@@ -19,7 +19,7 @@ define([
         link: function(scope) {
           scope.publishedEntryTypes = [];
           scope.$watch('bucketContext.entryTypes', function(n,o, scope) {
-            scope.publishedEntryTypes = _(n).filter(function(et) {
+            scope.publishedEntryTypes = _.filter(n, function(et) {
                 return et.data.sys.publishedAt && et.data.sys.publishedAt > 0;
             });
           });

@@ -39,7 +39,7 @@ define([
     },
 
     parseLocation: function(){
-      console.log(_(this.$route).keys());
+      console.log(_.keys(this.$route));
       var current = this.$route.current;
       this.bucketId = current.params.bucketId;
       this.entitySection = current.$route.entity_section;

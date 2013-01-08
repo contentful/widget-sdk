@@ -34,7 +34,7 @@ define([
 
     $scope.$watch('buckets', function(buckets){
       if (buckets && buckets.length > 0) {
-        if (!_(buckets).contains($scope.bucketContext)) {
+        if (!_.contains(buckets, $scope.bucketContext)) {
           $scope.bucketContext.bucket = buckets[0];
         }
       }

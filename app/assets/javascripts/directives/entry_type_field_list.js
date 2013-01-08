@@ -15,18 +15,18 @@ define([
         template: template(),
         replace: true,
         compile: function(tElement) {
-          _(tElement.context.classList).each(function(klass) { tElement.addClass(klass); });
+          _.each(tElement.context.classList, function(klass) { tElement.addClass(klass); });
           return function link(scope, elm) {
             scope.newType = 'text';
             var body = elm.find('tbody');
 
             scope.$watch('publishedEntryType', function(et, old, scope) {
               if (et && et.data.fields)
-                scope.publishedIds = _(et.data.fields).pluck('id');
+                scope.publishedIds = _.pluck(et.data.fields, 'id');
             });
             scope.$on('published', function(event) {
               event.currentScope.$apply(function(scope) {
-                scope.publishedIds = _(scope.publishedEntryType.data.fields).pluck('id');
+                scope.publishedIds = _.pluck(scope.publishedEntryType.data.fields, 'id');
               });
             });
 
@@ -83,7 +83,7 @@ define([
             scope.$watch('doc.doc', function(sjDoc, old, scope) {
               if (!sjDoc) return;
               var fields = sjDoc.getAt(['fields']);
-              var rows = _(fields).map(function(field, index) {
+              var rows = _.map(fields, function(field, index) {
                 return '<tr class="existing-field" sj-doc="doc.doc" entry-type-field-list-row="fieldSnapshot('+index+')" available-types="availableTypes" published-ids="publishedIds"/>';
               });
               body.prepend(rows);

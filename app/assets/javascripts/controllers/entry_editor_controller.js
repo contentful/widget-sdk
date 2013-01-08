@@ -37,7 +37,7 @@ define([
     });
 
     $scope.typeForEntry = function(entry) {
-      return _(this.bucketContext.entryTypes).find(function(et) {
+      return _.find(this.bucketContext.entryTypes, function(et) {
         return et.data.sys.id === entry.data.sys.entryType;
       });
     };

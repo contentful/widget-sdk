@@ -42,7 +42,7 @@ define([
         };
       }
 
-      var tab = _($scope.tabList.items).find(function(tab) {
+      var tab = _.find($scope.tabList.items, function(tab) {
         return tab.viewType === options.viewType;
       });
 

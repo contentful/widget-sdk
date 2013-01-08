@@ -38,7 +38,7 @@ define([
    closeTab: function (item) {
       var event = this.scope.$broadcast('tabWantsClose', item);
       if (!event.defaultPrevented){
-        var index = _(this.items).indexOf(item);
+        var index = _.indexOf(this.items, item);
         var newCurrent = false;
 
         if (item.active()) {
@@ -63,7 +63,7 @@ define([
    },
 
    replaceTab: function(oldItem, newItem){
-     var index = _(this.items).indexOf(oldItem);
+     var index = _.indexOf(this.items, oldItem);
      this.items.splice(index, 1, newItem);
      if (this.current == oldItem) this.activate(newItem);
    },

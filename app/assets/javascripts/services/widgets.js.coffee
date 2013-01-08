@@ -152,13 +152,13 @@ define [
   class WidgetBuilder
     editor:  (fieldType, widgetType) ->
       type = editWidgets[fieldType] ? editWidgets.string
-      type[widgetType] ? _(type).values()[0]
+      type[widgetType] ? _.values(type)[0]
     display: (fieldType, widgetType) ->
       type = editWidgets[fieldType] ? editWidgets.string
-      type[widgetType] ? _(type).values()[0]
+      type[widgetType] ? _.values(type)[0]
     availableEditWidgets: (fieldType) ->
-      _(editWidgets[fieldType]).keys()
+      _.keys(editWidgets[fieldType])
     availableDisplayWidgets: (fieldType) ->
-      _(displayWidgets[fieldType]).keys()
+      _.keys(displayWidgets[fieldType])
           
   services.service('widgets', WidgetBuilder);

@@ -46,7 +46,7 @@ define([
       entryType.delete(function (err) {
         if (!err) {
           $scope.$apply(function(scope) {
-            var index = _(scope.entryTypes).indexOf(entryType);
+            var index = _.indexOf(scope.entryTypes, entryType);
             scope.entryTypes.splice(index, 1);
           });
           $scope.bucketContext.refreshEntryTypes($scope);
@@ -58,7 +58,7 @@ define([
 
 
     $scope.numFields = function(entryType) {
-      return _(entryType.data.fields).size();
+      return _.size(entryType.data.fields);
     };
 
     $scope.$watch('bucketContext.bucket', 'reloadEntryTypes()');
