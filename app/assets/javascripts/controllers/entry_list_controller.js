@@ -31,11 +31,11 @@ define([
       var scope = event.currentScope;
       if (tab == scope.tab) {
         console.log('Reloading entries');
-        scope.reloadEntries();
+        scope.resetEntries();
         scope.showLoadingIndicator = true;
         setTimeout(function() {
           console.log('Reloading entries again');
-          scope.reloadEntries();
+          scope.resetEntries();
           scope.showLoadingIndicator = false;
         }, 3000);
       }
@@ -51,7 +51,7 @@ define([
       var scope = this;
       entry.delete(function (err) {
         if (!err) {
-          scope.reloadEntries();
+          scope.$apply(function() {}); // Trigger list filtering
         } else {
           console.log('Error deleting entry', entry);
         }
@@ -63,7 +63,7 @@ define([
       var scope = this;
       entry.archive(function (err) {
         if (!err) {
-          scope.reloadEntries();
+          scope.$apply(function() {}); // Trigger list filtering
         } else {
           console.log('Error archiving entry', entry);
         }
@@ -74,7 +74,7 @@ define([
       var scope = this;
       entry.unarchive(function (err) {
         if (!err) {
-          scope.reloadEntries();
+          scope.$apply(function() {}); // Trigger list filtering
         } else {
           console.log('Error unarchiving entry', entry);
         }
@@ -89,7 +89,8 @@ define([
 
     $scope.startSearch = _.debounce(function() {
       $scope.$apply(function(scope) {
-        scope.reloadEntries();
+        scope.paginator.page = 0;
+        scope.resetEntries();
       });
     }, 700);
 
@@ -124,16 +125,31 @@ define([
         bucketId: (scope.bucketContext.bucket && scope.bucketContext.bucket.getId())
       };
     }, function(pageParameters, old, scope){
-      scope.reloadEntries();
+      console.log('page params changed, reload in progress: %o', scope.reloadInProgress);
+      scope.resetEntries();
     }, true);
 
-    $scope.reloadEntries = function() {
-      if (this.reloadInProgress) return;
-
+    $scope.resetEntries = function() {
+      if (this.reloadInProgress || this.resetPaused) return;
+      console.log('resetting entries');
       var scope = this;
+
+      this.reloadInProgress = true;
+      this.bucketContext.bucket.getEntries(this.buildQuery(), function(err, entries, sys) {
+        scope.reloadInProgress = false;
+        console.log('done resetting entries');
+        if (err) return;
+        scope.paginator.numEntries = sys.total;
+        scope.$apply(function(scope){
+          scope.entries = entries;
+        });
+      });
+    };
+
+    $scope.buildQuery = function() {
       var queryObject = {
         order: '-sys.updatedAt',
-        limit: this.paginator.pageLenth,
+        limit: this.paginator.pageLength,
         skip: this.paginator.skipItems()
       };
 
@@ -149,15 +165,39 @@ define([
         queryObject.query = this.search.term;
       }
 
+      return queryObject;
+    };
+
+    $scope.pauseReset = function() {
+      if (this.resetPaused) return;
+      var scope = this;
+      this.resetPaused = true;
+      setTimeout(function() {
+        scope.resetPaused = false;
+      }, 500);
+    };
+
+    $scope.loadMore = function() {
+      if (this.reloadInProgress || this.resetPaused) return;
+      var scope = this;
+      this.paginator.page++;
       this.reloadInProgress = true;
-      this.bucketContext.bucket.getEntries(queryObject, function(err, entries, sys) {
+      this.pauseReset();
+      console.log('Starting to load more');
+      this.bucketContext.bucket.getEntries(this.buildQuery(), function(err, entries, sys) {
         scope.reloadInProgress = false;
-        if (err) return;
+        if (err) {
+          scope.paginator.page--;
+          return;
+        }
         scope.paginator.numEntries = sys.total;
+        console.log('Done loading more');
         scope.$apply(function(scope){
-          scope.entries = entries;
+          var args = [scope.entries.length, 0].concat(entries);
+          scope.entries.splice.apply(scope.entries, args);
         });
       });
+
     };
 
     // Development shorcut to quickly open an entry

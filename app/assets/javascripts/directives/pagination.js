@@ -16,8 +16,8 @@ define([
           //largeThreshold: '=large'
         },
         link: function(scope){
-          scope.smallThreshold = 10;
-          scope.largeThreshold = 30;
+          scope.smallThreshold = 0;
+          scope.largeThreshold = 0;
 
           scope.size = function (){
             if (scope.paginator.numPages() <= scope.smallThreshold) {

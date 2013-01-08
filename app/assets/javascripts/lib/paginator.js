@@ -6,7 +6,7 @@ define([
   function Paginator(numEntries) {
     this.numEntries = numEntries || 0;
     this.page = 0;
-    this.pageLength = 20;
+    this.pageLength = 12;
   }
 
   Paginator.prototype = {

@@ -19,6 +19,7 @@ define([
   'directives/ot_bind',
   'directives/ot_bind_text',
   'directives/pagination',
+  'directives/endless_container',
   'directives/date_from'
 ], function(angular){
   'use strict';
