@@ -13,16 +13,28 @@ define([
             'overflow-y': 'auto'
           });
 
-          var scrollHandler = _.debounce(function() {
+          var reloadInProgress;
+
+          var interval = setInterval(function() {
+            if (!elem.is(':visible')) return;
             var scrollBottom = elem.scrollTop() + elem.prop('clientHeight');
             //console.log('scrolling', scrollBottom);
             if (elem.prop('scrollHeight')-200 <= scrollBottom) {
-              //console.log('loading more');
-              scope.$eval(attr.atBottom);
+              reloadInProgress = true;
+              try {
+                //console.log('loading more');
+                scope.$eval(attr.atBottom);
+              } finally {
+                reloadInProgress = false;
+              }
             }
-          }, 150);
+          }, 400);
 
-          elem.scroll(scrollHandler);
+          scope.$on('$destroy', function() {
+            clearInterval(interval);
+            interval = 0;
+          });
+
         }
       };
     }
