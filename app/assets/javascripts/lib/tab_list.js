@@ -35,56 +35,56 @@ define([
       return item;
     },
 
-   closeTab: function (item) {
-      var event = this.scope.$broadcast('tabWantsClose', item);
-      if (!event.defaultPrevented){
-        var index = _.indexOf(this.items, item);
-        var newCurrent = false;
+    closeTab: function (item) {
+       var event = this.scope.$broadcast('tabWantsClose', item);
+       if (!event.defaultPrevented){
+         var index = _.indexOf(this.items, item);
+         var newCurrent = false;
 
-        if (item.active()) {
-          if (this.items.length == 1) {
-            newCurrent = null;
-          } else if (0 < index) {
-            newCurrent = this.items[index-1];
-          } else {
-            newCurrent = this.items[index+1];
-          }
-        }
+         if (item.active()) {
+           if (this.items.length == 1) {
+             newCurrent = null;
+           } else if (0 < index) {
+             newCurrent = this.items[index-1];
+           } else {
+             newCurrent = this.items[index+1];
+           }
+         }
 
-        this.items.splice(index,1);
-        if (item.active()) {
-          this.current = null;
-        }
-        this.scope.$broadcast('tabClosed', item);
-        if (newCurrent !== false && newCurrent !== null) {
-          newCurrent.activate();
-        }
+         this.items.splice(index,1);
+         if (item.active()) {
+           this.current = null;
+         }
+         this.scope.$broadcast('tabClosed', item);
+         if (newCurrent !== false && newCurrent !== null) {
+           newCurrent.activate();
+         }
+       }
+    },
+
+    replaceTab: function(oldItem, newItem){
+      var index = _.indexOf(this.items, oldItem);
+      this.items.splice(index, 1, newItem);
+      if (this.current == oldItem) this.activate(newItem);
+    },
+
+    currentViewType: function(){
+      if (this.current){
+        return this.current.viewType;
       }
-   },
+    },
 
-   replaceTab: function(oldItem, newItem){
-     var index = _.indexOf(this.items, oldItem);
-     this.items.splice(index, 1, newItem);
-     if (this.current == oldItem) this.activate(newItem);
-   },
+    currentParams: function(){
+      if (this.current){
+        return this.current.params;
+      }
+    },
 
-   currentViewType: function(){
-     if (this.current){
-       return this.current.viewType;
-     }
-   },
-
-   currentParams: function(){
-     if (this.current){
-       return this.current.params;
-     }
-   },
-
-   currentSection: function(){
-     if (this.current){
-       return this.current.section;
-     }
-   }
+    currentSection: function(){
+      if (this.current){
+        return this.current.section;
+      }
+    },
 
   };
 
