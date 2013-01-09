@@ -27,20 +27,6 @@ define([
       editor.activate();
     };
 
-    $scope.$on('tabBecameActive', function(event, tab){
-      var scope = event.currentScope;
-      if (tab == scope.tab) {
-        console.log('Reloading entries');
-        scope.resetEntries();
-        scope.showLoadingIndicator = true;
-        setTimeout(function() {
-          console.log('Reloading entries again');
-          scope.resetEntries();
-          scope.showLoadingIndicator = false;
-        }, 3000);
-      }
-    });
-
     $scope.$watch('bucketContext.entryTypes', function(entryTypes, old, scope) {
       scope.entryTypes = _(entryTypes).map(function(et) {
         return [et.data.sys.id, et];
@@ -99,7 +85,11 @@ define([
     };
 
     $scope.switchList = function(list){
-      $scope.tab.params.list = list;
+      if ($scope.tab.params.list == list) {
+        this.resetEntries();
+      } else {
+        this.tab.params.list = list;
+      }
     };
 
     $scope.visibleInCurrentList = function(entry){

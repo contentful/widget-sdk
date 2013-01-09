@@ -37,6 +37,13 @@ pagination,
 entry-list
   display: block
 
+.nav-list
+  i.icon-refresh
+    display: none
+  li.active:hover i.icon-refresh
+    display: inline-block
+    
+
 entry-editor,
 entry-type-editor
   display: block
@@ -56,8 +63,6 @@ entry-type-editor
 
 .list-spinner
   margin-left: 10px
-  //float: left
-  padding-top: 6px
 
 .reorder-handle
   cursor: ns-resize

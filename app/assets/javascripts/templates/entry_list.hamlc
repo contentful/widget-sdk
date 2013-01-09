@@ -3,15 +3,25 @@
 .span11.row-fluid.entries
   %ul.nav.nav-list.well.span2
     %li(ng-class="{active: tab.params.list=='all'}")
-      %a(ng-click="switchList('all')") All
+      %a(ng-click="switchList('all')")
+        All
+        %i.icon-refresh.pull-right
     %li(ng-class="{active: tab.params.list=='published'}")
-      %a(ng-click="switchList('published')") Published
+      %a(ng-click="switchList('published')")
+        Published
+        %i.icon-refresh.pull-right
     %li(ng-class="{active: tab.params.list == 'archived'}")
-      %a(ng-click="switchList('archived')") Archived
+      %a(ng-click="switchList('archived')")
+        Archived
+        %i.icon-refresh.pull-right
     %li.disabled(ng-class="{active: tab.params.list == 'starred'}")
-      %a Starred
+      %a
+        Starred
+        %i.icon-refresh.pull-right
     %li.disabled(ng-class="{active: tab.params.list == 'createdByMe'}")
-      %a Created by me
+      %a
+        Created by me
+        %i.icon-refresh.pull-right
 
     %li.nav-header Saved searches
 
@@ -28,10 +38,10 @@
     .row-fluid
       %form.form-search.span6
         %input.input-medium.search-query.span8(type="text" ng-model="search.term" placeholder="Filter")/
+        %img.list-spinner(src="/assets/ajax-loader.gif" ng-show="reloadInProgress")
 
       .span6.pagination-container
         %pagination(paginator="paginator")
-        %img.list-spinner(src="/assets/ajax-loader.gif" ng-show="showLoadingIndicator")
     .endless-container(at-bottom="loadMore()")
       %table.table.table-striped
         %thead
