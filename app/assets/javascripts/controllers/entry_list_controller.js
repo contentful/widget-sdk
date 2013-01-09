@@ -179,6 +179,7 @@ define([
 
     $scope.loadMore = function() {
       if (this.reloadInProgress || this.resetPaused) return;
+      if (this.paginator.atLast()) return;
       var scope = this;
       this.paginator.page++;
       this.reloadInProgress = true;
