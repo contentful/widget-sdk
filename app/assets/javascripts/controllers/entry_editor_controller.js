@@ -21,7 +21,7 @@ define([
       ShareJS.open(entry, function(err, doc) {
         if (!err) {
          scope.$apply(function(scope){
-            scope.doc = doc.subdoc('fields');
+            scope.doc = doc;
           });
         } else {
           console.log('Error opening connection', err);
@@ -50,16 +50,16 @@ define([
     });
 
     $scope.updateFromShareJSDoc = function() {
-      this.entry.update(this.doc.parent().value());
+      this.entry.update(this.doc.snapshot);
     };
 
     $scope.canPublish = function() {
       if (!$scope.doc) return false;
-      return !$scope.doc.parent().subdoc(['sys', 'archivedAt']).peek();
+      return !$scope.doc.getAt(['sys', 'archivedAt']);
     };
 
     $scope.publish = function () {
-      var version = $scope.doc.version();
+      var version = $scope.doc.version;
       $scope.entry.publish(version, function (err) {
         $scope.$apply(function(scope){
           if (err) {
@@ -84,12 +84,12 @@ define([
     };
 
     $scope.publishedVersion= function(){
-      return $scope.doc.parent().subdoc(['sys', 'publishedVersion']).peek();
+      return $scope.doc.getAt(['sys', 'publishedVersion']);
     };
 
     $scope.publishedAt = function(){
       if (!$scope.doc) return;
-      var val = $scope.doc.parent().subdoc(['sys', 'publishedAt']).peek();
+      var val = $scope.doc.getAt(['sys', 'publishedAt']);
       if (val) {
         return new Date(val);
       } else {

@@ -1,34 +1,36 @@
-define(function(){
+define([
+  'services/sharejs'
+], function(){
   'use strict';
 
   return {
     name: 'cfFieldEditor',
-    factory: function(widgets, $compile) {
+    factory: function(widgets, $compile, ShareJS) {
       return {
         restrict: 'E',
         scope: {
           type:    '=',
           fieldId: '=',
-          fieldsDoc:'=doc',
+          doc:'=',
           locale:  '=',
         },
         link: function(scope, elm, attr) {
           var widget = widgets.editor(scope.type, attr.editor);
 
-          scope.$watch('fieldsDoc.doc', function updateDoc(sjDoc, old ,scope) {
-            if (old && old !== sjDoc) {
+          scope.$watch('doc', function updateDoc(doc, old ,scope) {
+            if (old && old !== doc) {
               old.removeListener(scope.docListener);
               scope.docListener = null;
             }
 
-            if (sjDoc){
-              scope.docListener = sjDoc.at(['fields']).on('child op', function(path) {
+            if (doc){
+              scope.docListener = doc.at(['fields']).on('child op', function(path) {
                 if (path[0] == scope.fieldId && path[1] == scope.locale) {
                   //if (op.oi) {
                     //scope.$broadcast('valueReceived', op.oi);//value = op.oi;
                   //}
                   scope.$apply(function(scope) {
-                    scope.$broadcast('valueChanged', sjDoc.getAt(['fields', scope.fieldId, scope.locale]));
+                    scope.$broadcast('valueChanged', doc.getAt(['fields', scope.fieldId, scope.locale]));
                   });
                 }
               });
@@ -39,7 +41,7 @@ define(function(){
           var stopInit = scope.$watch('subdoc', function(subdoc, old, scope) {
             if (subdoc) {
               try {
-                var value = scope.fieldsDoc.subdoc([scope.fieldId, scope.locale]).value();
+                var value = ShareJS.peek(scope.doc, ['fields', scope.fieldId, scope.locale]);
                 scope.$broadcast('valueChanged', value);
               } finally {
                 stopInit();
@@ -47,21 +49,25 @@ define(function(){
             }
           });
 
-          scope.$watch('fieldsDoc.doc', updateSubdoc);
+          scope.$watch('doc', updateSubdoc);
           scope.$watch('fieldId', updateSubdoc);
           scope.$watch('locale', updateSubdoc);
 
           function updateSubdoc(n,o,scope) {
-            if (scope.fieldsDoc && scope.fieldsDoc.doc && scope.fieldId && scope.locale) {
-              scope.subdoc = scope.fieldsDoc.doc.at(['fields', scope.fieldId, scope.locale]);
+            if (scope.doc && scope.fieldId && scope.locale) {
+              scope.subdoc = scope.doc.at(['fields', scope.fieldId, scope.locale]);
             } else {
               scope.subdoc = null;
             }
           }
 
           scope.changeValue = function(value, callback) {
-            if (this.fieldsDoc) {
-              this.fieldsDoc.subdoc([this.fieldId, this.locale]).set(value, callback);
+            if (this.doc) {
+              try {
+                this.doc.setAt(['fields', this.fieldId, this.locale], value, callback);
+              } catch(e) {
+                ShareJS.mkpath(this.doc, ['fields', this.fieldId, this.locale], value, callback);
+              }
             } else {
               console.error('No doc to push %o to', value);
             }

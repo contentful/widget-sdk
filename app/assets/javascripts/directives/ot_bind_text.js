@@ -1,5 +1,7 @@
 define([
-  'lodash'
+  'lodash',
+
+  'services/sharejs'
 ], function(_){
   'use strict';
 
@@ -9,7 +11,7 @@ define([
     // document with a certain path
     //
     name: 'otBindText',
-    factory: function() {
+    factory: function(ShareJS) {
       return {
         restrict: 'A',
         scope: {
@@ -57,36 +59,15 @@ define([
           });
 
           scope.ensureStringAtPath = function(callback) {
-            if (!_.isString(this.doc.getAt(this.path))) {
+            if (!_.isString(ShareJS.peek(this.doc, this.path))) {
               var cb = function() {
                 this.$apply(callback);
               };
-              this.mkpath('', cb);
+              ShareJS.mkpath(this.doc, this.path, '', cb);
             } else {
               callback();
             }
           };
-
-          scope.mkpath = function(setValue, callback){
-            var parts = this.path.concat();
-            var doc = this.doc;
-            var value, tmp;
-
-            while(parts.length > 0) {
-              doc = doc.at(parts.shift());
-              if (!_.isPlainObject(doc.get())){
-                value = setValue;
-                while(parts.length > 0) {
-                  tmp = {};
-                  tmp[parts.pop()] = value;
-                  value = tmp;
-                }
-                doc.set(value, callback);
-                return;
-              }
-            }
-          };
-
 
         }
 

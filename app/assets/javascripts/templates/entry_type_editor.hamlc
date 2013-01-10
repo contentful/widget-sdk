@@ -14,8 +14,8 @@
             %td {{publishedVersion()}}
           %tr
             %th Current
-            %td {{doc.version()}}
-        %button.span12.btn(ng-show="doc.version() > publishedVersion()+1" ng-disabled="entryForm.$invalid" ng-click="publish()") Republish
+            %td {{doc.version}}
+        %button.span12.btn(ng-show="doc.version > publishedVersion()+1" ng-disabled="entryForm.$invalid" ng-click="publish()") Republish
       %div(ng-switch-default="")
         %p Not published yet
         %button.span12.btn(ng-disabled="entryForm.$invalid" ng-click="publish()") Publish
@@ -26,7 +26,7 @@
   .control-group
     %label.control-label Name
     .controls
-      %input(type="text" ng-model="entryType.data.name" ot-bind-text="namePath" doc="doc.doc")
+      %input(type="text" ng-model="entryType.data.name" ot-bind-text="namePath" doc="doc")
   .control-group
     %label.control-label Fields
     .controls.clearfix

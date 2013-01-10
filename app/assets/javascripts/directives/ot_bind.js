@@ -1,10 +1,14 @@
-define(function(){
+define([
+  'lodash',
+
+  'services/sharejs'
+], function(_){
   'use strict';
 
   // Only for use inside cfFieldEditor
   return {
     name: 'otBind',
-    factory: function() {
+    factory: function(ShareJS) {
       return {
         restrict: 'A',
         require: '?ngModel',
@@ -20,10 +24,10 @@ define(function(){
               }
 
               if (subdoc) {
-                try {
+                if (_.isString(ShareJS.peek(subdoc.doc, subdoc.path))) {
                   scope.detachTextField = subdoc.attach_textarea(elm[0]);
-                } catch(e) {
-                  scope.entryDoc.subdoc([scope.fieldId, scope.locale]).mkpath('', function() {
+                } else {
+                  ShareJS.mkpath(scope.doc, subdoc.path, '', function() {
                     scope.detachTextField = subdoc.attach_textarea(elm[0]);
                   });
                 }

@@ -13,7 +13,7 @@ define([
         //template: template(),
         //replace: true,
         scope: {
-          sjDoc: '=',
+          doc: '=',
           initialField: '=entryTypeFieldListRow',
           publishedIds: '=',
           availableTypes: '='
@@ -40,20 +40,20 @@ define([
               }
             });
 
-            scope.$watch('sjDoc', function(sjDoc, old, scope) {
-              if (old && old !== sjDoc) {
+            scope.$watch('doc', function(doc, old, scope) {
+              if (old && old !== doc) {
                 scope.field = null;
                 old.removeListener(scope.childListener);
                 scope.childListener = null;
               }
-              if (sjDoc) {
-                scope.field = sjDoc.snapshot.fields[scope.index];
-                scope.childListener = sjDoc.at([]).on('child op', function(path, op) {
+              if (doc) {
+                scope.field = doc.snapshot.fields[scope.index];
+                scope.childListener = doc.at([]).on('child op', function(path, op) {
                   if (path[0] === 'fields' && path[1] === scope.index) {
                     //console.log('child op applying at', scope.index, path, op);
                     if (path[2] === 'disabled' || path[2] == 'type') {
                       scope.$apply(function(scope) {
-                        scope.field = sjDoc.snapshot.fields[scope.index];
+                        scope.field = doc.snapshot.fields[scope.index];
                       });
                     } else if (path.length == 2 && op.ld) {
                       scope.$destroy();
@@ -63,9 +63,9 @@ define([
               }
             });
             scope.$watch('index', function(index, old, scope) {
-              if (scope.sjDoc) {
-                scope.field = scope.sjDoc.snapshot.fields[scope.index];
-              } // else will be initialized in the sjDoc Watcher
+              if (scope.doc) {
+                scope.field = scope.doc.snapshot.fields[scope.index];
+              } // else will be initialized in the doc Watcher
             });
 
             function attachNameField(val, old, scope) {
@@ -75,18 +75,18 @@ define([
                   scope.cleanupTextArea = null;
                 }
               //}
-              if (scope.sjDoc && scope.index !== undefined && scope.index !== null) {
-                var nameDoc  = scope.sjDoc.at(['fields', scope.index, 'name']);
+              if (scope.doc && scope.index !== undefined && scope.index !== null) {
+                var nameDoc  = scope.doc.at(['fields', scope.index, 'name']);
                 scope.cleanupTextArea = nameDoc.attach_textarea(elm.find('.field-name')[0]);
               }
             }
 
-            scope.$watch('sjDoc', attachNameField);
+            scope.$watch('doc', attachNameField);
             scope.$watch('index', attachNameField);
 
             scope.$watch('field.type', function(type, old, scope) {
               if (type === old) return;
-              scope.sjDoc.at(['fields', scope.index, 'type']).set(type, function(err) {
+              scope.doc.at(['fields', scope.index, 'type']).set(type, function(err) {
                 if (err) scope.$apply(function(scope) {
                     scope.field.type = old;
                   });
@@ -99,14 +99,14 @@ define([
             });
 
             scope.enable = function() {
-              this.sjDoc.at(['fields', this.index, 'disabled']).set(false, function(err) {
+              this.doc.at(['fields', this.index, 'disabled']).set(false, function(err) {
                 if (!err) scope.$apply(function(scope) {
                     scope.field.disabled = false;
                   });
               });
             };
             scope.disable = function() {
-              this.sjDoc.at(['fields', this.index, 'disabled']).set(true, function(err) {
+              this.doc.at(['fields', this.index, 'disabled']).set(true, function(err) {
                 if (!err) scope.$apply(function(scope) {
                     scope.field.disabled = true;
                   });
@@ -114,7 +114,7 @@ define([
             };
 
             scope.delete = function() {
-              this.sjDoc.at(['fields', this.index]).remove(function(err) {
+              this.doc.at(['fields', this.index]).remove(function(err) {
                 if (!err) scope.$destroy();
               });
             };

@@ -67,7 +67,7 @@ define([
 
     $scope.publishedAt = function(){
       if (!$scope.doc) return;
-      var val = $scope.doc.subdoc(['sys', 'publishedAt']).peek();
+      var val = $scope.doc.getAt(['sys', 'publishedAt']);
       if (val) {
         return new Date(val);
       } else {
@@ -77,11 +77,11 @@ define([
 
     $scope.publishedVersion = function() {
       if (!$scope.doc) return;
-      return $scope.doc.subdoc(['sys', 'publishedVersion']).peek();
+      return $scope.doc.getAt(['sys', 'publishedVersion']);
     };
 
     $scope.publish = function() {
-      var version = $scope.doc.version();
+      var version = $scope.doc.version;
       $scope.entryType.publish(version, function (err, publishedEntryType) {
         $scope.$apply(function(scope){
           if (err) {
@@ -102,7 +102,7 @@ define([
     //});
 
     $scope.updateFromShareJSDoc = function() {
-      var data = this.doc.value();
+      var data = this.doc.snapshot;
       this.entryType.update(data);
     };
 

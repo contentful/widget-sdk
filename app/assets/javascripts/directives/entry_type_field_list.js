@@ -44,7 +44,7 @@ define([
             }
 
             function makeRow(index) {
-              return '<tr class="existing-field" sj-doc="doc.doc" entry-type-field-list-row="fieldSnapshot('+index+')" available-types="availableTypes" published-ids="publishedIds"/>';
+              return '<tr class="existing-field" doc="doc" entry-type-field-list-row="fieldSnapshot('+index+')" available-types="availableTypes" published-ids="publishedIds"/>';
             }
 
             scope.addField = function() {
@@ -55,7 +55,7 @@ define([
                 type : scope.newType
               };
 
-              var fieldDoc = scope.doc.doc.at(['fields']);
+              var fieldDoc = scope.doc.at(['fields']);
               var index = fieldDoc.get().length;
 
               fieldDoc.insert(index, field, function(err) {
@@ -76,25 +76,25 @@ define([
             };
 
             scope.fieldSnapshot = function(index) {
-              return this.doc.doc.getAt(['fields', index]);
+              return this.doc.getAt(['fields', index]);
             };
 
             //init
-            scope.$watch('doc.doc', function(sjDoc, old, scope) {
-              if (!sjDoc) return;
-              var fields = sjDoc.getAt(['fields']);
+            scope.$watch('doc', function(doc, old, scope) {
+              if (!doc) return;
+              var fields = doc.getAt(['fields']);
               var rows = _.map(fields, function(field, index) {
-                return '<tr class="existing-field" sj-doc="doc.doc" entry-type-field-list-row="fieldSnapshot('+index+')" available-types="availableTypes" published-ids="publishedIds"/>';
+                return makeRow(index);
               });
               body.prepend(rows);
               $compile(body)(scope);
 
               // Adding
-              var addListener = sjDoc.at('fields').on('insert', function(position){
+              var addListener = doc.at('fields').on('insert', function(position){
                 var row = makeRow(position);
                 scope.$apply(function(scope) {
                   row = $compile(row)(scope);
-                  var fields = sjDoc.getAt(['fields']);
+                  var fields = doc.getAt(['fields']);
                   if (fields.length === 0 || fields.length-1 === position) {
                     body.append(row);
                   } else {
@@ -109,7 +109,7 @@ define([
               // Moving
               toggleSortable();
               body.on('sortupdate', function(e, ui) {
-                sjDoc.at('fields').move(ui.oldIndex, ui.newIndex, function(err) {
+                doc.at('fields').move(ui.oldIndex, ui.newIndex, function(err) {
                   if (err) {
                     if (ui.oldIndex < ui.newIndex){
                       $(ui.item).insertBefore(body.children().at(ui.oldIndex));
@@ -121,7 +121,7 @@ define([
                   }
                 });
               });
-              var moveListener = sjDoc.at('fields').on('move', function(from, to){
+              var moveListener = doc.at('fields').on('move', function(from, to){
                 //console.log('moving', from, to);
                 var item = $(body.children()[from]);
                 var other = $(body.children()[to]);
