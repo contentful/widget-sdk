@@ -34,6 +34,13 @@ define([
         if (!err) {
           scope.$apply(function(scope){
             scope.doc = doc;
+            scope.removeUpdateHandler = scope.doc.on('remoteop', function(op) {
+              scope.$apply(function(scope) {
+                scope.updateFromShareJSDoc();
+                // TODO Also update the publishedEntryType if a publishing action was received
+                // or there have been local changes
+              });
+            });
           });
         } else {
           console.log('Error opening connection', err);
@@ -88,7 +95,6 @@ define([
             window.alert('could not publish');
           } else {
             scope.publishedEntryType = publishedEntryType;
-            scope.updateFromShareJSDoc();
           }
         });
         $scope.$broadcast('published');
@@ -96,10 +102,13 @@ define([
       });
     };
 
-    //$scope.$on('inputBlurred', function(event) {
-      //event.stopPropagation();
-      //event.currentScope.updateFromShareJSDoc();
-    //});
+    $scope.$on('$destroy', function(event) {
+      var scope = event.currentScope;
+      if (scope.removeUpdateHandler) {
+        scope.removeUpdateHandler();
+        scope.removeUpdateHandler = null;
+      }
+    });
 
     $scope.updateFromShareJSDoc = function() {
       var data = this.doc.snapshot;
