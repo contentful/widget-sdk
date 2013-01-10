@@ -18,21 +18,15 @@ define([
       if (scope.shareJSstarted) {
         console.log('Fatal error, shareJS started twice');
       }
-      var sync = true;
       ShareJS.open(entry, function(err, doc) {
         if (!err) {
-          if (sync) {
+         scope.$apply(function(scope){
             scope.doc = doc.subdoc('fields');
-          } else {
-            scope.$apply(function(scope){
-              scope.doc = doc.subdoc('fields');
-            });
-          }
+          });
         } else {
           console.log('Error opening connection', err);
         }
       });
-      sync = false;
       scope.shareJSstarted = true;
     });
 
