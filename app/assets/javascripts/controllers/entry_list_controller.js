@@ -92,6 +92,8 @@ define([
           return !entry.data.sys.deletedAt && !entry.data.sys.archivedAt;
         case 'published':
           return entry.data.sys.publishedAt > 0;
+        case 'unpublished':
+          return !entry.data.sys.publishedAt;
         case 'archived':
           return entry.data.sys.archivedAt > 0;
         default:
@@ -138,6 +140,8 @@ define([
         // do nothing
       } else if (this.tab.params.list == 'published') {
         queryObject['sys.publishedAt[gt]'] = 0;
+      } else if (this.tab.params.list == 'unpublished') {
+        queryObject['sys.publishedAt[lt]'] = 1;
       } else if (this.tab.params.list == 'archived') {
         queryObject['sys.archivedAt[gt]'] = 0;
       }

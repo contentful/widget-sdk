@@ -10,6 +10,10 @@
       %a(ng-click="switchList('published')")
         Published
         %i.icon-refresh.pull-right
+    %li(ng-class="{active: tab.params.list=='unpublished'}")
+      %a(ng-click="switchList('unpublished')")
+        Not Published
+        %i.icon-refresh.pull-right
     %li(ng-class="{active: tab.params.list == 'archived'}")
       %a(ng-click="switchList('archived')")
         Archived
