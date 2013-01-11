@@ -31,6 +31,7 @@
     %label.control-label Title Field
     .controls
       %select.field-type(ng-model="entryType.data.displayName" ng-options="field.id as field.name for field in availableDisplayNameFields" ng-change="displayNameChanged()")
+        %option(value="") ID
   .control-group
     %label.control-label Fields
     .controls.clearfix

@@ -21,17 +21,11 @@ define([
             entry: entry,
             mode: 'edit'
           },
-          title: 'Edit Entry'
+          title: this.bucketContext.entryTitle(entry)
         });
       }
       editor.activate();
     };
-
-    $scope.$watch('bucketContext.entryTypes', function(entryTypes, old, scope) {
-      scope.entryTypes = _(entryTypes).map(function(et) {
-        return [et.data.sys.id, et];
-      }).object().valueOf();
-    });
 
     $scope.deleteEntry = function (entry) {
       var scope = this;
@@ -43,7 +37,6 @@ define([
         }
       });
     };
-
 
     $scope.archiveEntry = function (entry) {
       var scope = this;
@@ -66,6 +59,7 @@ define([
         }
       });
     };
+
     
     $scope.search = {term: ''};
 

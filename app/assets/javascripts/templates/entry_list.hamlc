@@ -46,15 +46,15 @@
       %table.table.table-striped
         %thead
           %tr
-            %th ID
+            %th Entry
             %th Content type
             %th Created at
             %th Updated at
             %th.edit Edit
         %tbody
           %tr(ng-repeat="entry in entries" ng-show="visibleInCurrentList(entry)")
-            %td {{entry.getId()}}
-            %td {{entryTypes[entry.data.sys.entryType].data.name}}
+            %td {{bucketContext.entryTitle(entry)}}
+            %td {{bucketContext.typeForEntry(entry).data.name}}
             %td(date-from="entry.data.sys.createdAt")
             %td(date-from="entry.data.sys.updatedAt")
             %td.edit

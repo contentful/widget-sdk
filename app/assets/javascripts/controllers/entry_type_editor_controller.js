@@ -79,6 +79,7 @@ define([
     });
 
     $scope.displayNameChanged = function() {
+      console.log('display Name changed', this.entryType.data.displayName);
       var scope = this;
       this.doc.setAt(['displayName'], this.entryType.data.displayName, function(err) {
         scope.$apply(function(scope) {

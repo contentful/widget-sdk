@@ -13,15 +13,35 @@ define([
     $scope.bucketContext = {
       bucket: null,
       entryTypes: [],
+      _entryTypesHash: {},
       refreshEntryTypes: function(scope) {
         var bucketContext = this;
         this.bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes) {
           if (err) return;
           scope.$apply(function() {
             bucketContext.entryTypes = entryTypes;
+            bucketContext._entryTypesHash = _(entryTypes).map(function(et) {
+              return [et.data.sys.id, et];
+            }).object().valueOf();
           });
         });
+      },
+      typeForEntry: function(entry) {
+        return this._entryTypesHash[entry.data.sys.entryType];
+      },
+      entryTitle: function(entry) {
+        try {
+          var displayNameField = this.typeForEntry(entry).data.displayName;
+          if (!displayNameField) {
+            return entry.data.sys.id;
+          } else {
+            return entry.data.fields[displayNameField][this.bucket.data.locales.default];
+          }
+        } catch (e) {
+          return entry.data.sys.id;
+        }
       }
+
     };
 
     $scope.$on('tabListButtonClicked', function(event, info) {

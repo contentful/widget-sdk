@@ -13,7 +13,6 @@ define([
 
     $scope.$watch('entry', function(entry, old, scope){
       if (!entry) return;
-      scope.entryType = scope.typeForEntry(entry);
 
       if (scope.shareJSstarted) {
         console.log('Fatal error, shareJS started twice');
@@ -30,12 +29,6 @@ define([
       scope.shareJSstarted = true;
     });
 
-    $scope.typeForEntry = function(entry) {
-      return _.find(this.bucketContext.entryTypes, function(et) {
-        return et.data.sys.id === entry.data.sys.entryType;
-      });
-    };
-
     $scope.exitEditor = function(){
       $scope.doc.close(function(){
         $scope.$apply(function(scope){
@@ -43,6 +36,10 @@ define([
         });
       });
     };
+
+    $scope.$watch('bucketContext.entryTitle(entry)', function(title, old, scope) {
+      scope.tab.title = title;
+    });
 
     $scope.$on('inputBlurred', function(event) {
       event.stopPropagation();
@@ -98,14 +95,15 @@ define([
     };
 
     $scope.fields = function(){
-      if (this.entryType) {
-        return this.entryType.data.fields;
+      var et = this.bucketContext.typeForEntry(this.entry);
+      if (et) {
+        return et.data.fields;
       }
     };
 
     $scope.headline = function(){
       var verb = this.tab.params.mode == 'edit' ? 'Editing' : 'Creating';
-      return verb + ' ' + this.entryType.data.name + ': ' + this.entry.getName();
+      return verb + ' ' + this.bucketContext.typeForEntry(this.entry).data.name + ': ' + this.bucketContext.entryTitle(this.entry);
     };
 
   });
