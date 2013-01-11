@@ -28,6 +28,8 @@ define([
       editor.activate();
     };
 
+    // TODO Use the global entryType list
+    // TODO reload instead when an entryTypeEditor(mode==create) Tab is closed?
     $scope.$on('tabBecameActive', function(event, tab){
       var scope = event.currentScope;
       if (tab == scope.tab) {
@@ -48,8 +50,8 @@ define([
           $scope.$apply(function(scope) {
             var index = _.indexOf(scope.entryTypes, entryType);
             scope.entryTypes.splice(index, 1);
+            scope.bucketContext.removeEntryType(entryType);
           });
-          $scope.bucketContext.refreshEntryTypes($scope);
         } else {
           console.log('Error deleting entryType', entryType);
         }

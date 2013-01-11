@@ -26,6 +26,10 @@ define([
           });
         });
       },
+      removeEntryType: function(entryType) {
+        var index = _.indexOf(this.entryTypes, entryType);
+        this.entryTypes.splice(index, 1);
+      },
       typeForEntry: function(entry) {
         return this._entryTypesHash[entry.data.sys.entryType];
       },
