@@ -28,6 +28,10 @@
     .controls
       %input(type="text" ng-model="entryType.data.name" ot-bind-text="namePath" doc="doc")
   .control-group
+    %label.control-label Title Field
+    .controls
+      %select.field-type(ng-model="entryType.data.displayName" ng-options="field.id as field.name for field in availableDisplayNameFields" ng-change="displayNameChanged()")
+  .control-group
     %label.control-label Fields
     .controls.clearfix
       %entry-type-field-list.span10

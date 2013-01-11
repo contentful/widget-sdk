@@ -34,7 +34,7 @@ define([
         if (!err) {
           scope.$apply(function(scope){
             scope.doc = doc;
-            scope.removeUpdateHandler = scope.doc.on('remoteop', function(op) {
+            scope.remoteOpListener = scope.doc.on('remoteop', function(op) {
               scope.$apply(function(scope) {
                 scope.updateFromShareJSDoc();
                 // TODO Also update the publishedEntryType if a publishing action was received
@@ -66,7 +66,29 @@ define([
         });
       });
     };
-    
+
+    $scope.$watch('entryType.data.fields', function(fields, old, scope) {
+      var availableFields = _(fields).filter(function(field) {
+        return field.type === 'text' || field.type === 'string';
+      }).sortBy('name').valueOf();
+
+      if (!_.isEqual(scope.availableDisplayNameFields, availableFields)) {
+        scope.availableDisplayNameFields = availableFields;
+        console.log('setting availablefields to %o  from %o ', availableFields, fields);
+      }
+    });
+
+    $scope.displayNameChanged = function() {
+      var scope = this;
+      this.doc.setAt(['displayName'], this.entryType.data.displayName, function(err) {
+        scope.$apply(function(scope) {
+          if (err) {
+            scope.entryType.data.displayName = scope.doc.snapshot.displayName;
+          }
+        });
+      });
+    };
+
     $scope.canPublish = function() {
       if (!$scope.doc) return false;
       return true;
@@ -104,9 +126,9 @@ define([
 
     $scope.$on('$destroy', function(event) {
       var scope = event.currentScope;
-      if (scope.removeUpdateHandler) {
-        scope.removeUpdateHandler();
-        scope.removeUpdateHandler = null;
+      if (scope.remoteOpListener) {
+        scope.doc.removeListener(scope.remoteOpListener);
+        scope.remoteOpListener = null;
       }
     });
 
