@@ -141,7 +141,7 @@ define([
       } else if (this.tab.params.list == 'published') {
         queryObject['sys.publishedAt[gt]'] = 0;
       } else if (this.tab.params.list == 'unpublished') {
-        queryObject['sys.publishedAt[lt]'] = 1;
+        queryObject['sys.publishedAt[exists]'] = false;
       } else if (this.tab.params.list == 'archived') {
         queryObject['sys.archivedAt[gt]'] = 0;
       }
