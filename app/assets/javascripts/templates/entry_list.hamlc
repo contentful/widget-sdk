@@ -51,7 +51,7 @@
 
       .span6.pagination-container
         %pagination(paginator="paginator")
-    .endless-container(at-bottom="loadMore()")
+    .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
       %table.table.table-striped
         %thead
           %tr

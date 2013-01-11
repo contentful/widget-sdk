@@ -28,6 +28,12 @@ define(function(){
             }
           }, 400);
 
+          scope.$watch(attr.numElements, function(numElements, old) {
+            if (numElements === 0 && old > 0) {
+              elem.prop('scrollTop', 0);
+            }
+          });
+
           scope.$on('$destroy', function() {
             clearInterval(interval);
             interval = 0;
