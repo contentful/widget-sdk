@@ -59,14 +59,6 @@ define([
       });
     }
 
-    $scope.exitEditor = function(){
-      $scope.doc.close(function(){
-        $scope.$apply(function(scope){
-          scope.tab.close();
-        });
-      });
-    };
-
     $scope.$watch('entryType.data.fields', function(fields, old, scope) {
       var availableFields = _(fields).filter(function(field) {
         return field.type === 'text' || field.type === 'string';
@@ -130,6 +122,9 @@ define([
       if (scope.remoteOpListener) {
         scope.doc.removeListener(scope.remoteOpListener);
         scope.remoteOpListener = null;
+      }
+      if (scope.tab.params.mode === 'create') {
+        scope.bucketContext.refreshEntryTypes(scope);
       }
     });
 
