@@ -115,19 +115,16 @@ define([
         bucketId: (scope.bucketContext.bucket && scope.bucketContext.bucket.getId())
       };
     }, function(pageParameters, old, scope){
-      console.log('page params changed, reload in progress: %o', scope.reloadInProgress);
       scope.resetEntries();
     }, true);
 
     $scope.resetEntries = function() {
       if (this.reloadInProgress || this.resetPaused) return;
-      console.log('resetting entries');
       var scope = this;
 
       this.reloadInProgress = true;
       this.bucketContext.bucket.getEntries(this.buildQuery(), function(err, entries, sys) {
         scope.reloadInProgress = false;
-        console.log('done resetting entries');
         if (err) return;
         scope.paginator.numEntries = sys.total;
         scope.$apply(function(scope){
@@ -174,7 +171,6 @@ define([
       this.paginator.page++;
       this.reloadInProgress = true;
       this.pauseReset();
-      console.log('Starting to load more');
       this.bucketContext.bucket.getEntries(this.buildQuery(), function(err, entries, sys) {
         scope.reloadInProgress = false;
         if (err) {
@@ -182,7 +178,6 @@ define([
           return;
         }
         scope.paginator.numEntries = sys.total;
-        console.log('Done loading more');
         scope.$apply(function(scope){
           var args = [scope.entries.length, 0].concat(entries);
           scope.entries.splice.apply(scope.entries, args);
