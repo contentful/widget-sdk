@@ -5,7 +5,6 @@
 
   = stylesheet_link_tag    "application", :media => "all"
   = requirejs_include_tag "application"
-  = javascript_include_tag 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDskFlzw1ujRovNWNG3K64EUsncYTbRPfM&sensor=false'
   = csrf_meta_tags
 
 %body{"ng-controller" => "ClientCtrl"}
@@ -22,3 +21,4 @@
         %tablist-button(tab-list="tabList" bucket-context="bucketContext")
 
   %bucket-view.container-fluid(tab-list="tabList" bucket-context="bucketContext")
+  = javascript_include_tag 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDskFlzw1ujRovNWNG3K64EUsncYTbRPfM&sensor=false'
