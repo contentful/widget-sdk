@@ -27,17 +27,22 @@
         Created by me
         %i.icon-refresh.pull-right
 
-    %li.nav-header Saved searches
+    %li.nav-header Content Types
+
+    %li(ng-class="{active: !tab.params.entryType}")
+      %a(ng-click="switchEntryType(null)")
+        All
+        %i.icon-refresh.pull-right
+    %li(ng-class="{active: tab.params.entryType==entryType.data.sys.id}" ng-repeat="entryType in bucketContext.entryTypes")
+      %a(ng-click="switchEntryType(entryType)")
+        {{entryType.data.name}}
+        %i.icon-refresh.pull-right
 
     %li.disabled
       %a Updated by me
     %li.disabled
       %a Large Rooms
 
-    %li.nav-header Labels?
-
-    %li.disabled
-      %a Todo
   .span10
     .row-fluid
       %form.form-search.span6

@@ -82,7 +82,21 @@ define([
       if ($scope.tab.params.list == list) {
         this.resetEntries();
       } else {
+        this.paginator.page = 0;
         this.tab.params.list = list;
+      }
+    };
+
+    $scope.switchEntryType = function(entryType){
+      if ($scope.tab.params.entryType == entryType) {
+        this.resetEntries();
+      } else {
+        this.paginator.page = 0;
+        if (entryType) {
+          this.tab.params.entryType = entryType.data.sys.id;
+        } else {
+          this.tab.params.entryType = null;
+        }
       }
     };
 
@@ -108,6 +122,7 @@ define([
         page: scope.paginator.page,
         pageLength: scope.paginator.pageLength,
         list: scope.tab.params.list,
+        entryType: scope.tab.params.entryType,
         bucketId: (scope.bucketContext.bucket && scope.bucketContext.bucket.getId())
       };
     }, function(pageParameters, old, scope){
@@ -144,6 +159,10 @@ define([
         queryObject['sys.publishedAt[exists]'] = false;
       } else if (this.tab.params.list == 'archived') {
         queryObject['sys.archivedAt[gt]'] = 0;
+      }
+
+      if (this.tab.params.entryType) {
+        queryObject['sys.entryType'] = this.tab.params.entryType;
       }
 
       if (this.search.term && 0 < this.search.term.length) {
