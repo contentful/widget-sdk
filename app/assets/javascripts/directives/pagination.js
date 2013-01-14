@@ -1,38 +1,28 @@
-define([
-  'angular',
-  'templates/pagination'
-], function(angular, paginationTemplate){
-  'use strict';
+'use strict';
 
+angular.module('contentful/directives').directive('pagination', function(){
   return {
-    name: 'pagination',
-    factory: function(){
-      return {
-        template: paginationTemplate(),
-        restrict: 'E',
-        scope: {
-          paginator: '=',
-          //smallThreshold: '=small',
-          //largeThreshold: '=large'
-        },
-        link: function(scope){
-          scope.smallThreshold = 0;
-          scope.largeThreshold = 0;
+    template: JST.pagination(),
+    restrict: 'E',
+    scope: {
+      paginator: '=',
+      //smallThreshold: '=small',
+      //largeThreshold: '=large'
+    },
+    link: function(scope){
+      scope.smallThreshold = 0;
+      scope.largeThreshold = 0;
 
-          scope.size = function (){
-            if (scope.paginator.numPages() <= scope.smallThreshold) {
-              return 'small';
-            } else if (scope.paginator.numPages() <= scope.largeThreshold){
-              return 'medium';
-            } else {
-              return 'large';
-            }
-          };
-
+      scope.size = function (){
+        if (scope.paginator.numPages() <= scope.smallThreshold) {
+          return 'small';
+        } else if (scope.paginator.numPages() <= scope.largeThreshold){
+          return 'medium';
+        } else {
+          return 'large';
         }
       };
+
     }
   };
-
 });
-

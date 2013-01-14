@@ -1,25 +1,13 @@
-define([
-  'angular',
-  'templates/entry_type_list',
+'use strict';
 
-  'controllers/entry_type_list_controller'
-], function(angular, entryTypeListTemplate){
-  'use strict';
-
+angular.module('contentful/directives').directive('entryTypeList', function(){
   return {
-    name: 'entryTypeList',
-    factory: function(){
-      return {
-        template: entryTypeListTemplate(),
-        restrict: 'E',
-        scope: {
-          bucketContext: '=',
-          tab: '='
-        },
-        controller: 'EntryTypeListCtrl',
-      };
-    }
+    template: JST.entry_type_list(),
+    restrict: 'E',
+    scope: {
+      bucketContext: '=',
+      tab: '='
+    },
+    controller: 'EntryTypeListCtrl',
   };
-
 });
-

@@ -1,7 +1,5 @@
-define([
-  'angular'
-], function(angular){
-  'use strict';
+//= require_self
+//= require_tree ./services
+'use strict';
 
-  return angular.module('services', []);
-});
+angular.module('contentful/services', []);

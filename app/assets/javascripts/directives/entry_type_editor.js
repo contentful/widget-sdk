@@ -1,25 +1,13 @@
-define([
-  'angular',
-  'templates/entry_type_editor',
+'use strict';
 
-  'controllers/entry_type_editor_controller'
-], function(angular, entryTypeEditorTemplate){
-  'use strict';
-
+angular.module('contentful/directives').directive('entryTypeEditor', function(){
   return {
-    name: 'entryTypeEditor',
-    factory: function(){
-      return {
-        template: entryTypeEditorTemplate(),
-        restrict: 'E',
-        scope: {
-          tab: '=',
-          bucketContext: '='
-        },
-        controller: 'EntryTypeEditorCtrl'
-      };
-    }
+    template: JST.entry_type_editor(),
+    restrict: 'E',
+    scope: {
+      tab: '=',
+      bucketContext: '='
+    },
+    controller: 'EntryTypeEditorCtrl'
   };
-
 });
-

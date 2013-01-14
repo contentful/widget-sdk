@@ -1,25 +1,20 @@
-define([
-  'services',
-  'contentful_client/client',
-  'contentful_client/adapters/jquery'
-], function(services, Client, Adapter){
-  'use strict';
+'use strict';
 
-  function ClientProvider() {
-    var endpoint = null;
+angular.module('contentful/services').provider('client', function ClientProvider() {
+  var endpoint = null;
 
-    this.endpoint = function(e) {
-      endpoint = e;
-    };
+  this.endpoint = function(e) {
+    endpoint = e;
+  };
 
-    this.$get = function() {
-      if (endpoint) {
-        return new Client(new Adapter(endpoint));
-      } else {
-        return new Client(new Adapter());
-      }
-    };
-  }
+  var Client = require('contentful_client/client');
+  var Adapter = require('contentful_client/adapters/jquery');
 
-  return services.provider('client', ClientProvider);
+  this.$get = function() {
+    if (endpoint) {
+      return new Client(new Adapter(endpoint));
+    } else {
+      return new Client(new Adapter());
+    }
+  };
 });

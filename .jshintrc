@@ -5,7 +5,11 @@
   "predef": [
     "assert",
     "refute",
-    "define"
+    "define",
+    "angular",
+    "_",
+    "JST",
+    "$"
   ],
   "browser": true,
   "quotmark": "single",

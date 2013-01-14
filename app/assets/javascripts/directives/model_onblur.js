@@ -1,42 +1,33 @@
-define([
-  'angular',
-  'templates/entry_list'
-], function(angular, entryListTemplate){
-  'use strict';
+'use strict';
 
+angular.module('contentful/directives').directive('ngModelOnblur', function() {
   return {
-    name: 'ngModelOnblur',
-    factory: function() {
-      return {
-        restrict: 'A',
-        require: 'ngModel',
-        link: function(scope, elm, attr, ngModelCtrl) {
-          if (attr.type === 'radio' || attr.type === 'checkbox') return;
+    restrict: 'A',
+    require: 'ngModel',
+    link: function(scope, elm, attr, ngModelCtrl) {
+      if (attr.type === 'radio' || attr.type === 'checkbox') return;
 
-          elm.unbind('input').unbind('keydown').unbind('change');
+      elm.unbind('input').unbind('keydown').unbind('change');
 
-          var idleTimer;
+      var idleTimer;
 
-          function submit(){
-            clearTimeout(idleTimer);
-            scope.$apply(function() {
-              ngModelCtrl.$setViewValue(elm.val());
-            });
-          }
+      function submit(){
+        clearTimeout(idleTimer);
+        scope.$apply(function() {
+          ngModelCtrl.$setViewValue(elm.val());
+        });
+      }
 
-          elm.bind("keydown keypress", function(event) {
-            if (event.which === 13) {
-              submit();
-            } else {
-              clearTimeout(idleTimer);
-              idleTimer = setTimeout(submit, 400);
-            }
-          });
-
-          elm.bind('blur', submit);
+      elm.bind('keydown keypress', function(event) {
+        if (event.which === 13) {
+          submit();
+        } else {
+          clearTimeout(idleTimer);
+          idleTimer = setTimeout(submit, 400);
         }
-      };
+      });
+
+      elm.bind('blur', submit);
     }
   };
-
 });

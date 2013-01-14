@@ -58,12 +58,14 @@ module Contentful
     # in your app. As such, your models will need to explicitly whitelist or blacklist accessible
     # parameters by using an attr_accessible or attr_protected declaration.
     # config.active_record.whitelist_attributes = true
+    
+    #config.assets.precompile += ["static.js"]
 
     # Enable the asset pipeline
     config.assets.enabled = true
 
     if defined? ::HamlCoffeeAssets
-      config.hamlcoffee.placement = 'amd'
+      config.hamlcoffee.placement = 'global'
     end
 
     config.requirejs.amd_wrap_filter = [/contentful_client/]

@@ -1,24 +1,13 @@
-define([
-  'angular',
-  'templates/bucket_view',
+'use strict';
 
-  'controllers/bucket_controller'
-], function(angular, bucketViewTemplate){
-  'use strict';
-
+angular.module('contentful/directives').directive('bucketView', function(){
   return {
-    name: 'bucketView',
-    factory: function(){
-      return {
-        template: bucketViewTemplate(),
-        restrict: 'E',
-        scope: {
-          tabList: '=',
-          bucketContext: '='
-        },
-        controller: 'BucketCtrl'
-      };
-    }
+    template: JST.bucket_view(),
+    restrict: 'E',
+    scope: {
+      tabList: '=',
+      bucketContext: '='
+    },
+    controller: 'BucketCtrl'
   };
-
 });
