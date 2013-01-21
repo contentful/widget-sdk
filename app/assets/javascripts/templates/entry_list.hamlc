@@ -1,81 +1,107 @@
-%h2
-  Entries
-.span11.row-fluid.entries
-  %ul.nav.nav-list.well.span2
-    %li(ng-class="{active: tab.params.list=='all'}")
-      %a(ng-click="switchList('all')")
-        All
-        %i.icon-refresh.pull-right
-    %li(ng-class="{active: tab.params.list=='published'}")
-      %a(ng-click="switchList('published')")
-        Published
-        %i.icon-refresh.pull-right
-    %li(ng-class="{active: tab.params.list=='unpublished'}")
-      %a(ng-click="switchList('unpublished')")
-        Not Published
-        %i.icon-refresh.pull-right
-    %li(ng-class="{active: tab.params.list == 'archived'}")
-      %a(ng-click="switchList('archived')")
-        Archived
-        %i.icon-refresh.pull-right
-    %li.disabled(ng-class="{active: tab.params.list == 'starred'}")
-      %a
-        Starred
-        %i.icon-refresh.pull-right
-    %li.disabled(ng-class="{active: tab.params.list == 'createdByMe'}")
-      %a
-        Created by me
-        %i.icon-refresh.pull-right
-
-    %li.nav-header Content Types
-
+%aside.left-nav
+  .wrapper
+    %header Entries
+    %ul.left-nav-list
+      %li(ng-class="{active: tab.params.list=='all'}")
+        %span(ng-click="switchList('all')")
+          All
+      %li(ng-class="{active: tab.params.list=='published'}")
+        %span(ng-click="switchList('published')")
+          Published
+      %li(ng-class="{active: tab.params.list=='unpublished'}")
+        %span(ng-click="switchList('unpublished')")
+          Not Published
+      %li(ng-class="{active: tab.params.list == 'archived'}")
+        %span(ng-click="switchList('archived')")
+          Archived
+      %li.disabled(ng-class="{active: tab.params.list == 'starred'}")
+        %span Starred
+      %li.disabled(ng-class="{active: tab.params.list == 'createdByMe'}")
+        %span Created by me
+        %small (3)
+    %header Content Types
     %li(ng-class="{active: !tab.params.entryType}")
-      %a(ng-click="switchEntryType(null)")
+      %span(ng-click="switchEntryType(null)")
         All
-        %i.icon-refresh.pull-right
     %li(ng-class="{active: tab.params.entryType==entryType.data.sys.id}" ng-repeat="entryType in bucketContext.entryTypes")
-      %a(ng-click="switchEntryType(entryType)")
+      %span(ng-click="switchEntryType(entryType)")
         {{entryType.data.name}}
-        %i.icon-refresh.pull-right
 
-    %li.disabled
-      %a Updated by me
-    %li.disabled
-      %a Large Rooms
-
-  .span10
-    .row-fluid
-      %form.form-search.span6
-        %input.input-medium.search-query.span8(type="text" ng-model="search.term" placeholder="Filter")/
-        %img.list-spinner(src="/assets/ajax-loader.gif" ng-show="reloadInProgress")
-
-      .span6.pagination-container
-        %pagination(paginator="paginator")
-    .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
-      %table.table.table-striped
-        %thead
-          %tr
-            %th Entry
-            %th Content type
-            %th Created at
-            %th Updated at
-            %th.edit Edit
-        %tbody
-          %tr(ng-repeat="entry in entries" ng-show="visibleInCurrentList(entry)")
-            %td {{bucketContext.entryTitle(entry)}}
-            %td {{bucketContext.typeForEntry(entry).data.name}}
-            %td(date-from="entry.data.sys.createdAt")
-            %td(date-from="entry.data.sys.updatedAt")
-            %td.edit
-              %a.btn.btn-primary(ng-click="editEntry(entry)")
-                %i.icon-pencil
-                Edit
-              %a.btn.btn-success(ng-click="unarchiveEntry(entry)" ng-show="entry.canUnarchive()")
-                %i.icon-repeat
-                Restore
-              %a.btn(ng-click="archiveEntry(entry)" ng-show="entry.canArchive()")
-                %i.icon-folder-close
-                Archive
-              %a.btn.btn-danger(ng-click="deleteEntry(entry)" ng-show="entry.canDelete()")
-                %i.icon-trash
-                Delete
+    %header Saved searches
+    %ul.left-nav-filters
+      %li
+        %i.ss-search
+        %span Updated by me
+      %li
+        %i.ss-search
+        %span Large rooms
+  %footer.left-nav-bottom
+    %span Import
+    %span Export
+%article.main.left-nav-active
+  .search-area
+    %form.search-field
+      .search-input
+        %ul.search-filters
+          %li
+            %span.search-filter-title US State:
+            %span.search-filter-value Florida
+            %i.ss-delete
+        %input(type="text" ng-model="search.term" placeholder="Add to search")
+        .search-options
+          %i.ss-search
+          %i.ss-dropdown
+          %ul
+            %li
+    .search-options-right   
+      .search-results-position
+        .track
+        .fill
+        .tip
+          %span.search-results-active 20
+          %span.search-results-total /67
+          .arrow-right
+          .arrow-right-border
+      .dropdown.search-view-options
+        %i.ss-columns
+        %i.ss-dropdown
+        %ul
+          %li
+      %img.list-spinner(src="/assets/ajax-loader.gif" ng-show="reloadInProgress")
+      
+  .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
+    %table.main-results
+      %thead
+        %tr
+          %th
+            %input(type="checkbox")
+          %th
+            %i.ss-star
+          %th
+            %label Content Type
+          %th
+            %label Name
+          %th
+            %label By
+          %th
+            %label Created
+          %th
+            %label Status
+      %tbody
+        %tr(ng-repeat="entry in entries" ng-show="visibleInCurrentList(entry)")
+          %td.main-results-input
+            %input(type="checkbox")
+          %td.main-results-star
+            -#%i.ss-star
+          %td.main-results-type
+            %span {{bucketContext.typeForEntry(entry).data.name}}
+          %td.main-results-name
+            %span {{bucketContext.entryTitle(entry)}}
+          %td.main-results-by
+            %span Peter Pan
+          %td.main-results-created
+            %span(date-from="entry.data.sys.updatedAt") 5 min ago
+          %td.main-results-status.draft
+            .draft-wrapper
+              %span Draft
+              .main-results-bar

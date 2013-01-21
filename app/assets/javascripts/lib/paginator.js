@@ -3,7 +3,7 @@
 function Paginator(numEntries) {
   this.numEntries = numEntries || 0;
   this.page = 0;
-  this.pageLength = 20;
+  this.pageLength = 40;
 }
 
 Paginator.prototype = {

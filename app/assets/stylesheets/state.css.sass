@@ -1,0 +1,154 @@
+/* --------------- */
+/* ---- STATE ---- */
+/* --------------- */
+
+/* GLOBAL */
+
+i.ss-delete:hover
+  color: $medium-gray
+  cursor: pointer
+.left-nav-active
+  width: 83%  
+
+
+/* PROJECT/USER BAR */
+
+.project:hover, .user:hover
+  cursor: pointer
+  color: $medium-gray
+  .ss-dropdown
+    color: $medium-gray
+
+  
+/* NAV BAR */
+
+.nav-bar
+  li:hover
+    color: white
+    cursor: pointer
+  li.active
+    color: white
+    background: #000000 /* Old browsers */
+    background: -moz-linear-gradient(top, #000000 0%, #191919 4%, #171717 100%) /* FF3.6+ */
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#000000), color-stop(4%,#191919), color-stop(100%,#171717)) /* Chrome,Safari4+ */
+    background: -webkit-linear-gradient(top, #000000 0%,#191919 4%,#171717 100%) /* Chrome10+,Safari5.1+ */
+    background: -o-linear-gradient(top, #000000 0%,#191919 4%,#171717 100%) /* Opera 11.10+ */
+    background: -ms-linear-gradient(top, #000000 0%,#191919 4%,#171717 100%) /* IE10+ */
+    background: linear-gradient(to bottom, #000000 0%,#191919 4%,#171717 100%) /* W3C */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#000000', endColorstr='#171717',GradientType=0 ) /* IE6-9 */ 
+    
+    
+/* ADD BUTTON */
+
+.add.button:hover
+  cursor: pointer
+  background: #61aae2
+  background: -moz-linear-gradient(top,  #61aae2 0%, #2787c6 100%)
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#61aae2), color-stop(100%,#2787c6))
+  background: -webkit-linear-gradient(top,  #61aae2 0%,#2787c6 100%)
+  background: -o-linear-gradient(top,  #61aae2 0%,#2787c6 100%)
+  background: -ms-linear-gradient(top,  #61aae2 0%,#2787c6 100%)
+  background: linear-gradient(to bottom,  #61aae2 0%,#2787c6 100%)
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#61aae2', endColorstr='#2787c6',GradientType=0 )
+.add.button:active
+  margin-top: .15em
+  @include box-shadow(0 0 0 transparent)
+  @include box-shadow(0 1px 2px rgba(0,0,0,0.1) inset)
+
+
+/* TABS */
+
+.tabs
+  li:hover
+    color: $dark-gray
+    cursor: pointer
+    @include box-shadow(0 .5em 1.5em rgba(255,255,255,0.4) inset)
+      
+
+/* LEFT NAV */
+
+.left-nav
+  li:hover
+    cursor: pointer
+    span
+      text-decoration: underline
+      cursor: pointer
+      color: $link-blue
+  .active
+    span
+      font-weight: 600
+      color: $dark-gray
+  .active:hover
+    span
+      text-decoration: none
+      cursor: auto
+      color: $dark-gray
+  .left-nav-bottom
+    span:hover
+      color: $link-blue
+      cursor: pointer
+      
+      
+/* SEARCH */
+
+.search-input
+  input:focus
+    opacity: 1
+    border: none
+    outline: none
+      
+      
+/* FILTER DROPDOWNS */
+
+.dropdown:hover, .search-options:hover 
+  cursor: pointer
+  @include box-shadow(0 .5em 1.5em rgba(255,255,255,0.6) inset)
+  
+
+/* MAIN RESULTS */
+
+.main-results
+  tbody
+    tr:hover
+      background-color: #fbfbfb
+      cursor: pointer
+  
+  
+/* MAIN RESULTS STATUS COLORS */
+
+.published
+  color: $green
+  .main-results-bar
+    background-color: $green
+    /* Not using the mixin because I need two box-shadows on this element */
+    -webkit-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $green
+    -moz-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $green
+    -ms-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $green
+    -o-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $green
+    box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $green
+
+.draft, .pending
+  color: $gold
+  .main-results-bar
+    background-color: $gold
+    /* Not using the mixin because I need two box-shadows on this element */
+    -webkit-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $gold
+    -moz-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $gold
+    -ms-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $gold
+    -o-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $gold
+    box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $gold
+    
+.archived
+  color: $red
+  .main-results-bar
+    background-color: $red
+    /* Not using the mixin because I need two box-shadows on this element */
+    -webkit-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $red
+    -moz-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $red
+    -ms-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $red
+    -o-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $red
+    box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $red
+      
+      
+      
+      

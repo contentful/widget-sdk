@@ -1,0 +1,263 @@
+/* ---------------- */
+/* ---- MODULE ---- */
+/* ---------------- */
+
+/* PROJECT */
+
+.project-name
+  font-size: 1.3em
+  margin-right: .8em
+.project, .user
+  line-height: 2.8em
+  padding-right: 5%
+  .ss-dropdown
+    color: $light-gray
+    position: relative
+    top: .2em
+.project
+  border-right: 1px solid #d5d5d5
+.user
+  
+  
+/* NAV TABS */
+
+.tabs > ul, .tabs > div
+  font-size: 1.3em
+
+
+/* NAV BAR */
+
+.nav-bar
+  background: #333333 /* Old browsers */
+  background: -moz-linear-gradient(top, #333333 0%, #434343 100%) /* FF3.6+ */
+  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#333333), color-stop(100%,#434343)) /* Chrome,Safari4+ */
+  background: -webkit-linear-gradient(top, #333333 0%,#434343 100%) /* Chrome10+,Safari5.1+ */
+  background: -o-linear-gradient(top, #333333 0%,#434343 100%) /* Opera 11.10+ */
+  background: -ms-linear-gradient(top, #333333 0%,#434343 100%) /* IE10+ */
+  background: linear-gradient(to bottom, #333333 0%,#434343 100%) /* W3C */
+  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#333333', endColorstr='#434343',GradientType=0 ) /* IE6-9 */
+  @include box-shadow(2px 0 1px rgba(0,0,0,0.15))
+  
+  .logo
+    @include box-shadow(0 1px 2px rgba(255,255,255,0.2) inset)
+    img
+      text-align: center
+  li
+    color: black
+    height: 5em
+    width: 5em
+    text-align: center
+    i
+      font-size: 2em
+      line-height: 2.75em
+      margin-top: 2.5em
+      @include text-shadow(0 1px 0 rgba(255,255,255,0.1))
+    i.ss-layout
+      font-size: 1.9em
+      line-height: 2.85em
+    border-bottom: 1px solid #222222
+    border-color: rgba(0,0,0,0.45)
+    @include box-shadow(0 1px 0 rgba(255,255,255,0.06))
+
+
+/* TABS */
+
+.tabs
+  li
+    padding: .8em 5%
+    color: $light-gray
+    background-color: $gray-background
+    border: 1px solid #d5d5d5
+    border-bottom-color: #e6e6e6
+    margin-bottom: -1px
+    @include rounded-corners(3px,3px,0,0)
+    i.ss-delete
+      margin-top: .2em
+      margin-right: -.4em
+      
+.add.button
+  @include blue-button
+  float: left
+  margin: .1em 0 0 .9em
+  i
+    float: left
+    margin: .1em .5em 0 0
+    font-size: .8em
+    color: #7dc7fb
+
+    
+/* TAB CONTENT */
+
+.left-nav
+  header
+    color: $light-gray
+    border-bottom: 1px solid $light-rule
+    margin-bottom: .8em
+    padding-bottom: .7em
+  li
+    font-size: 1.2em
+    line-height: 2em
+    span
+      color: $link-blue
+      line-height: 2em
+    small
+      font-size: .9em
+      color: $light-gray
+  .left-nav-list
+    margin-bottom: 3em
+    
+.left-nav-filters
+  i.ss-search
+    color: $light-gray
+    font-size: .8em
+    margin: 0 .2em 0 0
+  
+  
+/* SEARCH BAR */
+
+.search-input
+  border: 1px solid $lightest-gray
+  overflow: hidden
+  @include rounded-corners(20px,20px,20px,20px)
+  @include box-shadow(0 1px 3px rgba(0,0,0,0.1) inset)
+  input
+    border: none
+    font-size: 1.2em
+    padding: .5em .7em .4em
+    color: $dark-gray
+    opacity: 0.6
+    width: 50%
+    
+.search-filters li, .search-options
+  padding: .7em .7em .5em .8em
+  font-size: 1.2em
+  background-color: $gray-background
+  border-right: 1px solid $lightest-gray
+  @include box-shadow(0 1px 3px rgba(255,255,255,0.8) inset)
+  &:first-child
+    @include rounded-corners(20px,0,0,20px)
+    padding-left: 1.2em
+  .ss-delete
+    margin: 0 0 0 .6em
+    position: relative
+    top: .1em
+    
+.search-filter-title
+  color: $light-gray
+  
+.search-options
+  @include rounded-corners(0,20px,20px,0)
+  padding-right: .8em
+  border-right: none
+  border-left: 1px solid $lightest-gray
+  margin-top: -.1em
+  .ss-search
+    font-size: 1.1em
+    position: relative
+    top: .2em
+  .ss-dropdown
+    font-size: .6em
+    margin-left: .3em
+    color: $light-gray
+  
+.search-results-position
+  .track
+    background-color: $gray-background
+    width: .8em
+    height: 20em
+    @include box-shadow(1px 0 1px rgba(0,0,0,0.06) inset)
+    @include rounded-corners(2px,2px,2px,2px)
+    
+  /* The fill height needs to adjust with the scroll position */
+  .fill
+    height: 3em
+    width: .8em
+    background: #459cd9
+    background: -moz-linear-gradient(top, #459cd9 0%, #1e82c8 100%)
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#459cd9), color-stop(100%,#1e82c8))
+    background: -webkit-linear-gradient(top, #459cd9 0%,#1e82c8 100%)
+    background: -o-linear-gradient(top, #459cd9 0%,#1e82c8 100%)
+    background: -ms-linear-gradient(top, #459cd9 0%,#1e82c8 100%)
+    background: linear-gradient(to bottom, #459cd9 0%,#1e82c8 100%)
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#459cd9', endColorstr='#1e82c8',GradientType=0 )
+    @include rounded-corners(2px,2px,2px,2px)
+    
+  /* The top positioning needs to adjust with the size of the fill */
+  .tip
+    position: relative
+    top: 1.9em
+    right: 2em
+    .search-results-active
+      font-size: 1.2em
+      color: $dark-gray
+      font-weight: 700
+      
+
+/* MAIN TABLE OF CONTENT */
+
+.main-results
+  td, th
+    padding: .8em 0
+    vertical-align: middle
+    font-size: 1.2em
+    line-height: 1.8em
+  th
+    background-color: $gray-background
+    font-weight: normal
+    font-size: 1.1em
+    padding: .4em 0 .3em 0
+    color: $light-gray
+    @include box-shadow(0 1px 0 rgba(0,0,0,0.1) inset)
+    border-bottom: 1px solid #e1e1e1
+  th:first-child
+    padding-left: 1.4em
+    @include box-shadow(0 0 0 transparent)
+    @include box-shadow(1px 1px 0 rgba(0,0,0,0.1) inset)
+    @include rounded-corners(4px,0,0,0)
+  td:first-child
+    padding-left: 1.3em
+  th:last-child, td:last-child
+    text-align: right
+    padding-right: 2em
+  td:last-child
+    vertical-align: top
+    padding-top: 0 !important
+    padding-bottom: 0 !important
+  tbody
+    tr
+      border: 1px solid $light-rule
+      border-right: none
+  .ss-star
+    font-size: .8em
+    color: $gold
+.main-results-type, .main-results-by
+  color: $medium-gray
+.main-results-name
+  color: $dark-gray
+  font-weight: 600
+.main-results-created
+  color: $light-gray
+  font-size: 1.05em !important
+.draft-wrapper
+  span
+    padding: 1.25em 0
+    display: block
+    
+.main-results-status
+  text-transform: uppercase
+  color: $light-gray
+  font-size: 1em !important
+.main-results-bar
+  width: .8em
+  height: 100%
+  background-color: $light-gray  
+    
+    
+    
+    
+    
+      
+      
+
+  
+  

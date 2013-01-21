@@ -1,30 +1,28 @@
-.tabs
-  %ul.nav.nav-tabs
+%nav.nav-bar
+  .logo
+    %img(src="assets/logo.png")
+  %ul
+    %li(ng-class="{active: tabList.currentSection() == 'entryTypes'}")
+      %i.ss-layout(ng-click="visitView('entry-type-list')")
+    %li.active(ng-class="{active: tabList.currentSection() == 'entries'}")
+      %i.ss-layers(ng-click="visitView('entry-list')")
+    %li
+      %i.ss-picture
+    %li
+      %i.ss-cell
+%nav.tabs
+  %ul(ng-class="{'one-tab': tabList.items.length == 1}")
     %li(ng-repeat="tabItem in tabList.items" ng-class="{active: tabItem.active()}")
-      %a(ng-click="tabItem.activate($event)")
-        {{tabItem.title}}
-        %i.icon-remove-sign(ng-click="tabItem.closeAsync()" ng-show="tabItem.canClose()")
-  %tablist-button(tab-list="tabList" bucket-context="bucketContext")
-
-.row-fluid
-  .span2.bucket-nav
-    %ul.nav.nav-list
-      %li{'ng-class' => "{active: tabList.currentSection() == 'entryTypes'}"}
-        %a{'ng-click' => "visitView('entry-type-list')"} Content-Model
-      %li{'ng-class' => "{active: tabList.currentSection() == 'entries'}"}
-        %a{'ng-click' => "visitView('entry-list')"} Entries
-      %li.disabled
-        %a Media
-      %li.disabled
-        %a Content Delivery
-      %li.disabled
-        %a Workflows
-      %li.disabled
-        %a Apps
-  .tab-content.span10(ng-repeat="tab in tabList.items" ng-show="tab.active()" ng-switch="tab.viewType")
-    %entry-list(       ng-switch-when="entry-list"        tab="tab" bucket-context="bucketContext")
-    %entry-type-list(  ng-switch-when="entry-type-list"   tab="tab" bucket-context="bucketContext")
-    %entry-editor(     ng-switch-when="entry-editor"      tab="tab" bucket-context="bucketContext")
-    %entry-type-editor(ng-switch-when="entry-type-editor" tab="tab" bucket-context="bucketContext")
-    %div(ng-switch-default="")
-      Unhandled case: viewType = {{tabList.currentViewType()}}
+      %span.tab-title {{tabItem.title}}
+      %i.ss-delete(ng-click="tabItem.closeAsync()" ng-show="tabItem.canClose()")
+  .add.button
+    %i.ss-plus
+    %span Add
+  -#%tablist-button(tab-list="tabList" bucket-context="bucketContext")
+.tab-content(ng-repeat="tab in tabList.items" ng-show="tab.active()" ng-switch="tab.viewType")
+  %entry-list(       ng-switch-when="entry-list"        tab="tab" bucket-context="bucketContext")
+  %entry-type-list(  ng-switch-when="entry-type-list"   tab="tab" bucket-context="bucketContext")
+  %entry-editor(     ng-switch-when="entry-editor"      tab="tab" bucket-context="bucketContext")
+  %entry-type-editor(ng-switch-when="entry-type-editor" tab="tab" bucket-context="bucketContext")
+  %div(ng-switch-default="")
+    Unhandled case: viewType = {{tabList.currentViewType()}}

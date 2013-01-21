@@ -1,18 +1,20 @@
 !!!
 %html
-%head
   %title Contentful
-
-  = stylesheet_link_tag    "application", :media => "all"
+  = stylesheet_link_tag "application", :media => "all"
   = javascript_include_tag "static"
-  = requirejs_include_tag  "application"
+  = requirejs_include_tag "application"
   = csrf_meta_tags
+  %link(href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,700italic,400,700,600' rel='stylesheet' type='text/css')
 
-%body{"ng-controller" => "ClientCtrl"}
-  .navbar
-    .navbar-inner
-      .container
-        %form.navbar-form.pull-left
-          %select{'ng-model' => 'bucketContext.bucket', 'ng-options' => "bucket.data.name for bucket in buckets"}
-  %bucket-view.container-fluid(tab-list="tabList" bucket-context="bucketContext")
+%body
+  .client(ng-controller="ClientCtrl")
+    %nav.account
+      .project
+        %i.ss-dropdown        
+        %span.project-name {{bucketContext.bucket.data.name}}
+      .user
+        %img(src="assets/avatar.png")
+        %i.ss-dropdown
+    %bucket-view.container-fluid(tab-list="tabList" bucket-context="bucketContext")
   = javascript_include_tag 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDskFlzw1ujRovNWNG3K64EUsncYTbRPfM&sensor=false'

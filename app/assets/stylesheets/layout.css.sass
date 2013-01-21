@@ -1,0 +1,188 @@
+/* ---------------- */
+/* ---- LAYOUT ---- */
+/* ---------------- */
+
+/* ACCOUNT */
+
+.account
+  float: right
+  width: 14%
+  margin-right: 2em
+.project
+  float: left
+  width: 63%
+.user
+  float: right
+  position: relative
+  width: 21%
+  img
+    width: 50%
+    position: absolute
+    margin-top: .2em
+.project, .user
+  .ss-dropdown
+    float: right
+.project-name
+  float: right
+
+
+/* LEFT NAV */
+
+.nav-bar
+  position: fixed
+  top: 0
+  width: 5em
+  height: 100%
+  li
+    position: relative
+  .seperator
+    height: 1px
+    width: 100%
+    position: absolute
+    bottom: 0
+.logo
+  height: 5em
+  position: relative
+  img
+    position: absolute
+    top: 50%
+    left: 50%
+    margin-top: -25%
+    margin-left: -25%
+.left-nav-bottom
+  position: absolute
+  bottom: 1.6em
+  left: 2.3em
+  overflow: hidden
+  span
+    color: $light-gray
+    float: left
+    line-height: 1.3em
+    padding: .2em 0
+    &:first-child
+      margin-right: .6em
+      padding-right: .6em
+      border-right: 1px solid $lightest-gray
+.left-nav-bottom span
+  float:left      
+      
+
+/* TABS */
+
+.tabs
+  margin-left: 7em
+  margin-top: 1em
+  overflow: hidden
+  > ul, > div
+    float: left
+    font-size: 1.2em
+    i
+      font-size: .75em
+      float: right
+  ul.one-tab
+    width: 20%
+.one-tab
+  li
+    width: 90%
+    
+    
+/* TAB CONTENT */
+
+.tab-content
+  overflow: hidden
+  min-height: 70em
+  position: relative
+  clear: both
+  margin-left: 7em
+  margin-right: 2em
+  background-color: white
+  border: 1px solid #dbdbdb
+  border-color: rgba(0,0,0,0.17)
+  @include rounded-corners(0,2px,2px,2px)
+  
+.left-nav
+  float: left
+  width: 17%
+  .wrapper
+    padding: 3.3em 2.3em
+  
+  
+/* SEARCH BAR */
+
+.search-area
+  width: auto
+  overflow: hidden
+  padding-bottom: 2.4em
+.search-field
+  float: left
+  width: 85%
+  margin-top: 2.4em
+.search-filters, .search-view-options
+  float: left
+  li
+    float: left
+.search-options, .search-options-right, .search-results-position
+  float: right
+.search-options-right
+  width: 15%
+  position: relative
+.search-view-options
+  margin-left: 1.2em
+  margin-top: 2.2em
+.search-results-position
+  position: absolute
+  right: 0
+  top: 0
+  .track
+    position: absolute
+    right: 0
+  .fill
+    position: absolute
+    top: 0
+    right: 0  
+  
+  
+/* MAIN */
+
+.main
+  float: left
+  overflow: visible
+.main-results-wrapper
+  width: auto
+  height: 66.2em
+  overflow-y: scroll
+  margin-right: -1.5em
+  padding-right: 1.5em
+  @include box-shadow(-1px 1px 4px rgba(0,0,0,0.2) inset)
+  @include rounded-corners(4px,0,0,0)
+.main-results
+  width: 100%
+  float: right
+  th, td
+    text-align: left
+.draft-wrapper
+  position: relative
+.main-results-bar
+  position: absolute
+  right: -2em
+  height: 100%
+  top: 0
+  bottom: 0
+  
+  
+/* FOOTER FOR INSIDE SCROLL EFFECT */
+
+.footer
+  height: 1.5em
+  width: 100%
+  position: fixed
+  bottom: 0
+  background: image-url("bg.jpg")
+  
+  
+  
+  
+  
+  
+  
+  
