@@ -1,23 +1,32 @@
-%h2
-  Content Model
-  %img.list-spinner(src="/assets/ajax-loader.gif" ng-show="showLoadingIndicator")
-.span11
-  %table.table.table-striped
+%article.main.left-nav-active
+  %table.main-results
     %thead
       %tr
-        %th ID
-        %th Name
-        %th Fields
-        %th.edit Edit
+        %th
+          %input(type="checkbox")
+        %th
+          %label ID
+        %th
+          %label Name
+        %th
+          %label Fields
+        %th
+          %label Created
+        %th
+          %label Status
     %tbody
       %tr(ng-repeat="entryType in entryTypes")
-        %td {{entryType.getId()}}
-        %td {{entryType.data.name}}
-        %td {{numFields(entryType)}}
-        %td.edit
-          %a.btn.btn-primary(ng-click="editEntryType(entryType)")
-            %i.icon-pencil
-            Edit
-          %a.btn.btn-danger(ng-show="entryType.canDelete()" ng-click="deleteEntryType(entryType)")
-            %i.icon-trash
-            Delete
+        %td.main-results-input
+          %input(type="checkbox")
+        %td.main-results-type
+          %span {{entryType.getId()}}
+        %td.main-results-name
+          %span {{entryType.data.name}}
+        %td.main-results-by
+          %span {{numFields(entryType)}}
+        %td.main-results-created
+          %span(date-from="entryType.data.sys.updatedAt") 5 min ago
+        %td.main-results-status.draft
+          .draft-wrapper
+            %span Draft
+            .main-results-bar

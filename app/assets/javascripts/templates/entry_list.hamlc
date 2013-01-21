@@ -20,12 +20,13 @@
         %span Created by me
         %small (3)
     %header Content Types
-    %li(ng-class="{active: !tab.params.entryType}")
-      %span(ng-click="switchEntryType(null)")
-        All
-    %li(ng-class="{active: tab.params.entryType==entryType.data.sys.id}" ng-repeat="entryType in bucketContext.entryTypes")
-      %span(ng-click="switchEntryType(entryType)")
-        {{entryType.data.name}}
+    %ul.left-nav-list
+      %li(ng-class="{active: !tab.params.entryType}")
+        %span(ng-click="switchEntryType(null)")
+          All
+      %li(ng-class="{active: tab.params.entryType==entryType.data.sys.id}" ng-repeat="entryType in bucketContext.entryTypes")
+        %span(ng-click="switchEntryType(entryType)")
+          {{entryType.data.name}}
 
     %header Saved searches
     %ul.left-nav-filters
