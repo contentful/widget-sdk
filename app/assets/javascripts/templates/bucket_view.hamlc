@@ -1,3 +1,11 @@
+.tabs
+  %ul.nav.nav-tabs
+    %li(ng-repeat="tabItem in tabList.items" ng-class="{active: tabItem.active()}")
+      %a(ng-click="tabItem.activate($event)")
+        {{tabItem.title}}
+        %i.icon-remove-sign(ng-click="tabItem.closeAsync()" ng-show="tabItem.canClose()")
+  %tablist-button(tab-list="tabList" bucket-context="bucketContext")
+
 .row-fluid
   .span2.bucket-nav
     %ul.nav.nav-list

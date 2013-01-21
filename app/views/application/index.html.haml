@@ -14,12 +14,5 @@
       .container
         %form.navbar-form.pull-left
           %select{'ng-model' => 'bucketContext.bucket', 'ng-options' => "bucket.data.name for bucket in buckets"}
-        %ul.nav.nav-tabs
-          %li(ng-repeat="tabItem in tabList.items" ng-class="{active: tabItem.active()}")
-            %a(ng-click="tabItem.activate($event)")
-              {{tabItem.title}}
-              %i.icon-remove-sign(ng-click="tabItem.closeAsync()" ng-show="tabItem.canClose()")
-        %tablist-button(tab-list="tabList" bucket-context="bucketContext")
-
   %bucket-view.container-fluid(tab-list="tabList" bucket-context="bucketContext")
   = javascript_include_tag 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDskFlzw1ujRovNWNG3K64EUsncYTbRPfM&sensor=false'
