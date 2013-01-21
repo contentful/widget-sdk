@@ -58,8 +58,8 @@
         .track
         .fill
         .tip
-          %span.search-results-active 20
-          %span.search-results-total /67
+          %span.search-results-active {{paginator.page+1}}
+          %span.search-results-total /{{paginator.numPages()}}
           .arrow-right
           .arrow-right-border
       .dropdown.search-view-options
