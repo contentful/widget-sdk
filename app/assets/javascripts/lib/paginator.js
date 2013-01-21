@@ -41,6 +41,10 @@ Paginator.prototype = {
     return _.range(this.numPages());
   },
 
+  progress: function() {
+    return (this.page+1)/this.numPages();
+  },
+
   goTo: function(page){
     this.page = page;
   },
