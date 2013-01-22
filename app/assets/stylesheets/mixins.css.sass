@@ -53,3 +53,13 @@
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#459cd9', endColorstr='#1e82c8',GradientType=0 )
   @include rounded-corners(3px,3px,3px,3px)
   @include box-shadow(0 2px 1px rgba(0,0,0,0.08))
+
+// http://nicolasgallagher.com/micro-clearfix-hack/
+@mixin clearfix
+  &:before,
+  &:after
+    content: " "
+    display: table
+  &:after
+    clear: both
+    

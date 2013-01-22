@@ -22,13 +22,6 @@
     font-size: 1.3em
     margin-right: .8em
   
-  
-/* NAV TABS */
-
-.tab-list > ul, .tab-list > div
-  font-size: 1.3em
-
-
 /* NAV BAR */
 
 .nav-bar
@@ -67,24 +60,47 @@
 /* TABS */
 
 .tab-list
+  font-size: 1.3em
   li
     display: inline-block
-  li.tab
-    padding: .8em 1em
+    height: 2.7em
+  .tab
+    position: relative
+    //+experimental('box-sizing', 'border-box')
+    box-sizing: border-box
     color: $light-gray
+    font-weight: 600
     background-color: $gray-background
     border: 1px solid #d5d5d5
     border-bottom-color: #e6e6e6
-    margin-bottom: -1px
     @include rounded-corners(3px,3px,0,0)
-    i.ss-delete
-      margin-top: .2em
-      margin-right: -.4em
+    padding: .9em 1em
+    overflow: hidden
+    margin-right: 0.2em
+  i.ss-delete
+    position: absolute
+    top: 1.2em
+    right: .8em
+  .fade
+    position: absolute
+    top: 0
+    bottom: 0
+    right: 0
+    width: 2em
+    border-right: 1.5em solid $gray-background
+    @include box-shadow(-14px 0 14px rgba(243,243,243,1) inset)
+  .tab.active
+    color: $dark-gray
+    background: white
+    border-bottom: 0
     .fade
-      @include box-shadow(-14px 0 14px rgba(243,243,243,1) inset)
-  li.tab.active
-    .fade
+      border-right-color: white
       @include box-shadow(-14px 0 14px rgba(255,255,255,1) inset)
+  li:hover
+    color: $dark-gray
+    cursor: pointer
+    @include box-shadow(0 .5em 1.5em rgba(255,255,255,0.4) inset)
+
 .add.button
   @include blue-button
   margin: .1em 0 0 .7em
