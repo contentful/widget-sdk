@@ -24,28 +24,10 @@ angular.module('contentful/controllers').controller('EntryTypeListCtrl', functio
     editor.activate();
   };
 
-  // TODO Use the global entryType list
-  // TODO reload instead when an entryTypeEditor(mode==create) Tab is closed?
-  $scope.$on('tabBecameActive', function(event, tab){
-    var scope = event.currentScope;
-    if (tab == scope.tab) {
-      console.log('Reloading entryTypes');
-      scope.reloadEntryTypes();
-      scope.showLoadingIndicator = true;
-      setTimeout(function() {
-        console.log('Reloading entryTypes again');
-        scope.reloadEntryTypes();
-        scope.showLoadingIndicator = false;
-      }, 3000);
-    }
-  });
-
   $scope.deleteEntryType = function (entryType) {
     entryType.delete(function (err) {
       if (!err) {
         $scope.$apply(function(scope) {
-          var index = _.indexOf(scope.entryTypes, entryType);
-          scope.entryTypes.splice(index, 1);
           scope.bucketContext.removeEntryType(entryType);
         });
       } else {
@@ -54,23 +36,12 @@ angular.module('contentful/controllers').controller('EntryTypeListCtrl', functio
     });
   };
 
-
   $scope.numFields = function(entryType) {
     return _.size(entryType.data.fields);
   };
 
-  $scope.$watch('bucketContext.bucket', 'reloadEntryTypes()');
-
   $scope.reloadEntryTypes = function(){
-    var scope = this;
-    if (this.bucketContext && this.bucketContext.bucket) {
-      this.bucketContext.bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes){
-        if (err) return;
-        scope.$apply(function(scope){
-          scope.entryTypes = entryTypes;
-        });
-      });
-    }
+    if (this.bucketContext) this.bucketContext.refreshEntryTypes();
   };
 
 });
