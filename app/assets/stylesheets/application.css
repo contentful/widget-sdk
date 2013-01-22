@@ -10,6 +10,7 @@
  *
  *= require html5reset-1.6.1
  *= require ss-standard
+ *= require directives
  *= require_self
  *= require main
  */
