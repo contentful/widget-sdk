@@ -1,3 +1,5 @@
+/*global TabList:false*/
+
 'use strict';
 
 angular.module('contentful/controllers').controller('ClientCtrl', function ClientCtrl($scope, client) {
@@ -45,6 +47,10 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
     if (event.targetScope === event.currentScope) return;
     event.currentScope.$broadcast('tabListButtonClicked', info);
   });
+
+  $scope.selectBucket = function(bucket) {
+    this.bucketContext.bucket = bucket;
+  };
 
   $scope.tabList = new TabList($scope);
 

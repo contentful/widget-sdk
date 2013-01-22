@@ -10,11 +10,19 @@
 %body
   .client(ng-controller="ClientCtrl")
     %nav.account
-      .project
-        %i.ss-dropdown        
-        %span.project-name {{bucketContext.bucket.data.name}}
-      .user
-        %img(src="assets/avatar.png")
-        %i.ss-dropdown
+      .dropdown-btn.user(label="")
+        %a.btn.dropdown-toggle{"data-toggle" => "dropdown", :href => "#"}
+          %img(src="assets/avatar.png")
+          %i.ss-dropdown
+        .dropdown-menu
+          Hello User
+      .dropdown-btn.project
+        %a.btn.dropdown-toggle
+          %i.ss-dropdown
+          %span(ng-bind="bucketContext.bucket.data.name")
+        .dropdown-menu
+          %ul
+            %li(ng-repeat="bucket in buckets" ng-click="selectBucket(bucket)" dropdown-close="")
+              {{bucket.data.name}}
     %bucket-view.container-fluid(tab-list="tabList" bucket-context="bucketContext")
   = javascript_include_tag 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDskFlzw1ujRovNWNG3K64EUsncYTbRPfM&sensor=false'
