@@ -3,22 +3,20 @@
     %header Entries
     %ul.left-nav-list
       %li(ng-class="{active: tab.params.list=='all'}")
-        %span(ng-click="switchList('all')")
-          All
+        %span(ng-click="switchList('all')") All
+        %small(ng-show="counts.all != null") ({{counts.all}})
       %li(ng-class="{active: tab.params.list=='published'}")
-        %span(ng-click="switchList('published')")
-          Published
+        %span(ng-click="switchList('published')") Published
+        %small(ng-show="counts.published != null") ({{counts.published}})
       %li(ng-class="{active: tab.params.list=='unpublished'}")
-        %span(ng-click="switchList('unpublished')")
-          Not Published
+        %span(ng-click="switchList('unpublished')") Not Published
       %li(ng-class="{active: tab.params.list == 'archived'}")
-        %span(ng-click="switchList('archived')")
-          Archived
+        %span(ng-click="switchList('archived')") Archived
+        %small(ng-show="counts.archived != null") ({{counts.archived}})
       %li.disabled(ng-class="{active: tab.params.list == 'starred'}")
         %span Starred
       %li.disabled(ng-class="{active: tab.params.list == 'createdByMe'}")
         %span Created by me
-        %small (3)
     %header Content Types
     %ul.left-nav-list
       %li(ng-class="{active: !tab.params.entryType}")

@@ -199,6 +199,31 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
 
   };
 
+  $scope.counts = {};
+
+  $scope.loadCounts = function() {
+    var scope = this;
+    this.bucketContext.bucket.getEntries({limit: 0}, function(err, entries, sys) {
+      scope.$apply(function(scope) {
+        scope.counts['all'] = sys.total;
+      });
+    });
+    this.bucketContext.bucket.getEntries({limit: 0, 'sys.archivedAt[gt]': 0}, function(err, entries, sys) {
+      scope.$apply(function(scope) {
+        scope.counts['archived'] = sys.total;
+      });
+    });
+    this.bucketContext.bucket.getEntries({limit: 0, 'sys.publishedAt[gt]': 0}, function(err, entries, sys) {
+      scope.$apply(function(scope) {
+        scope.counts['published'] = sys.total;
+      });
+    });
+  };
+
+  $scope.$watch('bucketContext.bucket', 'loadCounts()');
+
+  $scope.loadCounts();
+
   // Development shorcut to quickly open an entry
 
   //$scope.$watch(function($scope){
