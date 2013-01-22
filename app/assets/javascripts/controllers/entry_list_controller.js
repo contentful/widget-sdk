@@ -222,8 +222,6 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
 
   $scope.$watch('bucketContext.bucket', 'loadCounts()');
 
-  $scope.loadCounts();
-
   // Development shorcut to quickly open an entry
 
   //$scope.$watch(function($scope){
