@@ -1,3 +1,5 @@
+/*global moment:false*/
+
 'use strict';
 
 angular.module('contentful/directives').directive('dateFrom', function() {
@@ -6,9 +8,12 @@ angular.module('contentful/directives').directive('dateFrom', function() {
     link: function(scope, element, attr) {
       scope.$watch(attr.dateFrom, function watchWithFilter(value) {
         if (value) {
-          element.text(new Date(value).toLocaleString('de'));
+          var m = moment(value);
+          element.attr('title', m.format('LLLL'));
+          element.text(m.fromNow());
         } else {
           element.text('');
+          element.attr('title', '');
         }
       });
     }
