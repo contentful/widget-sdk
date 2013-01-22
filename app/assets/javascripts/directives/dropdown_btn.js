@@ -48,7 +48,7 @@ angular.module('contentful/directives').directive('dropdownBtn', function() {
       };
 
       scope.$watch('isOpen', function(isOpen) {
-        var button = element.find('.dropdown-toggle');
+        var button = element;
         var content = element.find('.dropdown-menu');
         if (isOpen) {
           button.addClass('active');
