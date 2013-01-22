@@ -11,13 +11,15 @@
     %li
       %i.ss-cell
 %nav.tabs
-  %ul(ng-class="{'one-tab': tabList.items.length == 1}")
-    %li(ng-repeat="tabItem in tabList.items" ng-class="{active: tabItem.active()}")
+  %ul
+    %li.tab(style="width:22%" ng-repeat="tabItem in tabList.items" ng-class="{active: tabItem.active()}")
       %span.tab-title(ng-click="tabItem.activate()") {{tabItem.title}}
+      %em.fade
       %i.ss-delete(cf-click-local="tabItem.close()" ng-show="tabItem.canClose()")
-  .add.button
-    %i.ss-plus
-    %span Add
+    %li.add-btn
+      .add.button
+        %i.ss-plus
+        %span Add
   -#%tablist-button(tab-list="tabList" bucket-context="bucketContext")
 .tab-content(ng-repeat="tab in tabList.items" ng-show="tab.active()" ng-switch="tab.viewType")
   %entry-list(       ng-switch-when="entry-list"        tab="tab" bucket-context="bucketContext")

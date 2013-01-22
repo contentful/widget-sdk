@@ -52,9 +52,13 @@
     margin-left: -25%
 .left-nav-bottom
   position: absolute
-  bottom: 1.6em
+  background: white
+  bottom: 0
+  padding: 1em 0 1.6em
   left: 2.3em
   overflow: hidden
+  width: 13%
+  @include box-shadow(0 -4px 5px rgba(255,255,255,1))
   span
     color: $light-gray
     float: left
@@ -72,7 +76,7 @@
 
 .tabs
   margin-left: 7em
-  margin-top: 1em
+  margin-top: 1.1em
   overflow: hidden
   > ul, > div
     float: left
@@ -80,11 +84,25 @@
     i
       font-size: .75em
       float: right
-  ul.one-tab
-    width: 20%
-.one-tab
-  li
-    width: 90%
+  ul
+    width: 80%
+  li.tab
+    float: left
+    position: relative
+    margin-left: .4em
+    span
+      width: 90%
+      float: left
+      white-space: nowrap
+      overflow: hidden
+    .fade
+      position: absolute
+      width: 10%
+      height: 2.2em
+      top: .3em
+      right: 2em
+  li:first-child
+    margin-left: 0
     
     
 /* TAB CONTENT */
@@ -92,7 +110,7 @@
 .tab-content
   overflow: hidden
   position: absolute
-  top: 4.7em
+  top: 4.8em
   right: 0
   bottom: 1.8em
   left: 0
@@ -116,20 +134,24 @@
 .search-area
   width: auto
   overflow: hidden
-  padding-bottom: 2.4em
 .search-field
   float: left
-  width: 85%
+  width: 83%
   margin-top: 2.4em
-.search-filters, .search-view-options
+  margin-bottom: 2.4em
+.search-filters, .search-view-options, .loading
   float: left
   li
     float: left
 .search-options, .search-options-right, .search-results-position
   float: right
 .search-options-right
-  width: 15%
+  width: 17%
   position: relative
+  padding-bottom: 2.5em
+  .loading
+    margin-left: 1.1em
+    margin-top: 3.15em
 .search-view-options
   margin-left: 1.2em
   margin-top: 2.2em
@@ -137,13 +159,19 @@
   position: absolute
   right: 0
   top: 0
+  bottom: 0
   .track
     position: absolute
     right: 0
+    height: 100%
   .fill
     position: absolute
     top: 0
-    right: 0  
+    right: 0
+  .tip
+    position: absolute
+    margin-top: -1.1em
+    white-space: nowrap
   
   
 /* MAIN */
@@ -155,10 +183,6 @@
   width: auto
   height: 66.2em
   overflow-y: scroll
-  margin-right: -1.5em
-  padding-right: 1.5em
-  @include box-shadow(-1px 1px 4px rgba(0,0,0,0.2) inset)
-  @include rounded-corners(4px,0,0,0)
 .main-results
   width: 100%
   float: right

@@ -61,13 +61,14 @@
           %span.search-results-total /{{paginator.numPages()}}
           .arrow-right
           .arrow-right-border
-      .dropdown.search-view-options
-        %i.ss-columns
-        %i.ss-dropdown
-        %ul
-          %li
-      %img.list-spinner(src="/assets/ajax-loader.gif" ng-show="reloadInProgress")
-      
+      .dropdown-btn.search-view-options
+        %a.btn.dropdown-toggle
+          %i.ss-columns
+          %i.ss-dropdown
+        .dropdown-menu
+          Nothing to see here
+      .loading(ng-show="reloadInProgress")
+        %img(src="assets/ajax-loader.gif")
   .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
     %table.main-results
       %thead

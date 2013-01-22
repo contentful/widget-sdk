@@ -4,9 +4,6 @@
 
 /* PROJECT */
 
-.project-name
-  font-size: 1.3em
-  margin-right: .8em
 .project, .user
   line-height: 2.8em
   padding: .4em 5% .3em 5%
@@ -21,6 +18,9 @@
     text-decoration: none
 .project
   border-right: 1px solid #d5d5d5
+  span
+    font-size: 1.3em
+    margin-right: .8em
   
   
 /* NAV TABS */
@@ -67,8 +67,8 @@
 /* TABS */
 
 .tabs
-  li
-    padding: .8em 5%
+  li.tab
+    padding: .8em 1em
     color: $light-gray
     background-color: $gray-background
     border: 1px solid #d5d5d5
@@ -78,11 +78,16 @@
     i.ss-delete
       margin-top: .2em
       margin-right: -.4em
-      
+    .fade
+      @include box-shadow(-14px 0 14px rgba(243,243,243,1) inset)
+  li.tab.active
+    .fade
+      @include box-shadow(-14px 0 14px rgba(255,255,255,1) inset)
 .add.button
   @include blue-button
   float: left
-  margin: .1em 0 0 .9em
+  margin: .1em 0 0 .7em
+  font-size: .9em
   i
     float: left
     margin: .1em .5em 0 0
@@ -168,13 +173,12 @@
   .track
     background-color: $gray-background
     width: .8em
-    height: 20em
     @include box-shadow(1px 0 1px rgba(0,0,0,0.06) inset)
-    @include rounded-corners(2px,2px,2px,2px)
+    @include rounded-corners(0,2px,0,0)
     
-  /* The fill height needs to adjust with the scroll position */
+  /* The fill height needs to be the same % as the tip TOP */
   .fill
-    height: 3em
+    height: 36%
     width: .8em
     background: #459cd9
     background: -moz-linear-gradient(top, #459cd9 0%, #1e82c8 100%)
@@ -184,13 +188,12 @@
     background: -ms-linear-gradient(top, #459cd9 0%,#1e82c8 100%)
     background: linear-gradient(to bottom, #459cd9 0%,#1e82c8 100%)
     filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#459cd9', endColorstr='#1e82c8',GradientType=0 )
-    @include rounded-corners(2px,2px,2px,2px)
+    @include rounded-corners(0,2px,0,0)
     
-  /* The top positioning needs to adjust with the size of the fill */
+  /* The top positioning needs to be the same % as the fill HEIGHT */
   .tip
-    position: relative
-    top: 1.9em
-    right: 2em
+    right: 1.9em
+    top: 36%
     .search-results-active
       font-size: 1.2em
       color: $dark-gray
@@ -199,6 +202,10 @@
 
 /* MAIN TABLE OF CONTENT */
 
+.main-results-wrapper
+  margin-right: -1.5em
+  padding-right: 1.5em
+  @include rounded-corners(4px,0,0,0)
 .main-results
   td, th
     padding: .8em 0

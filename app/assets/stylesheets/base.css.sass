@@ -41,11 +41,17 @@ i.ss-delete
   font-size: .8em
   color: $lightest-gray
   @include text-shadow(0 1px 0 rgba(255,255,255,0.6))
+.loading
+  width: 3em
+  img
+    width: 50%
   
   
 /* FILTER DROPDOWNS */
 
-.dropdown
+.dropdown-btn a.btn
+  display: block
+.dropdown, .search-area .dropdown-btn
   padding: .6em .7em .5em .9em
   font-size: 1.1em
   background-color: $gray-background
@@ -72,7 +78,7 @@ i.ss-delete
   background: rgba(255,255,255,0.96)
   padding: 1.5em 2em
   @include box-shadow(0 1px 6px rgba(0,0,0,0.22))
-  @include rounded-corners(3px,0,3px,3px)    
+  @include rounded-corners(3px,0,3px,3px) 
   
   
 /* TOOLTIPS */

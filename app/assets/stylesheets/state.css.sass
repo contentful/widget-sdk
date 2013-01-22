@@ -73,7 +73,16 @@ i.ss-delete:hover
     color: $dark-gray
     cursor: pointer
     @include box-shadow(0 .5em 1.5em rgba(255,255,255,0.4) inset)
-      
+  li.active
+    color: $dark-gray
+    font-weight: 600
+    background: white
+    position: relative
+    padding-bottom: .75em
+    margin-bottom: .1em
+    border-bottom: 0
+    z-index: 999
+    @include box-shadow(0 2px 0 rgba(255,255,255,1))
 
 /* LEFT NAV */
 
@@ -110,10 +119,11 @@ i.ss-delete:hover
       
 /* FILTER DROPDOWNS */
 
-.dropdown:hover, .search-options:hover 
+.dropdown:hover, .dropdown-btn:hover, .search-options:hover 
   cursor: pointer
   @include box-shadow(0 .5em 1.5em rgba(255,255,255,0.6) inset)
-  
+.account .dropdown-btn:hover
+  @include box-shadow(0 0 0 transparent)
 
 /* MAIN RESULTS */
 
