@@ -10,10 +10,10 @@
       %i.ss-picture
     %li
       %i.ss-cell
-%nav.tabs
+%nav.tab-list
   %ul
-    %li.tab(style="width:22%" ng-repeat="tabItem in tabList.items" ng-class="{active: tabItem.active()}")
-      %span.tab-title(ng-click="tabItem.activate()") {{tabItem.title}}
+    %li.tab(ng-repeat="tabItem in tabList.items" ng-class="{active: tabItem.active()}" ng-click="tabItem.activate()")
+      %span.tab-title {{tabItem.title}}
       %em.fade
       %i.ss-delete(cf-click-local="tabItem.close()" ng-show="tabItem.canClose()")
     %li.add-btn

@@ -25,7 +25,7 @@
   
 /* NAV TABS */
 
-.tabs > ul, .tabs > div
+.tab-list > ul, .tab-list > div
   font-size: 1.3em
 
 
@@ -66,7 +66,9 @@
 
 /* TABS */
 
-.tabs
+.tab-list
+  li
+    display: inline-block
   li.tab
     padding: .8em 1em
     color: $light-gray
@@ -85,7 +87,6 @@
       @include box-shadow(-14px 0 14px rgba(255,255,255,1) inset)
 .add.button
   @include blue-button
-  float: left
   margin: .1em 0 0 .7em
   font-size: .9em
   i
