@@ -14,7 +14,7 @@
   %ul(ng-class="{'one-tab': tabList.items.length == 1}")
     %li(ng-repeat="tabItem in tabList.items" ng-class="{active: tabItem.active()}")
       %span.tab-title(ng-click="tabItem.activate()") {{tabItem.title}}
-      %i.ss-delete(ng-click="tabItem.closeAsync()" ng-show="tabItem.canClose()")
+      %i.ss-delete(cf-click-local="tabItem.close()" ng-show="tabItem.canClose()")
   .add.button
     %i.ss-plus
     %span Add

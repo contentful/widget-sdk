@@ -89,7 +89,7 @@
           %th
             %label Status
       %tbody
-        %tr(ng-repeat="entry in entries" ng-show="visibleInCurrentList(entry)")
+        %tr(ng-repeat="entry in entries" ng-show="visibleInCurrentList(entry)" cf-click-local="editEntry(entry)")
           %td.main-results-input
             %input(type="checkbox")
           %td.main-results-star

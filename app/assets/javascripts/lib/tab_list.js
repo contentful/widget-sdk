@@ -115,18 +115,6 @@ TabItem.prototype = {
     this.list.closeTab(this);
   },
 
-  closeAsync: function(){
-    // This is a workaround for a strange behavior when adding ngClick
-    // directives on nested elements (namely the close buttons in the
-    // tab)
-    var self = this;
-    setTimeout(function(){
-      self.list.scope.$apply(function() {
-        self.close();
-      });
-    }, 1);
-  },
-
   canClose: function(){
     return this.list.items.length > 1 && this._canClose;
   },

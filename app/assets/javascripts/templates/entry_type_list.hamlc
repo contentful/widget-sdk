@@ -15,7 +15,7 @@
         %th
           %label Status
     %tbody
-      %tr(ng-repeat="entryType in entryTypes")
+      %tr(ng-repeat="entryType in entryTypes" cf-click-local="editEntryType(entryType)")
         %td.main-results-input
           %input(type="checkbox")
         %td.main-results-type
