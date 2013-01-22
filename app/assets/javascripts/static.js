@@ -3,6 +3,8 @@
 //= require twitter/bootstrap
 //= require ./bootstrap
 //
+//= require moment-1.7.2
+//
 //= require bcsocket-uncompressed
 //= require share/share.uncompressed
 //= require share/json.uncompressed
