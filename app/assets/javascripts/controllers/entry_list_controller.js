@@ -1,3 +1,4 @@
+/*global Paginator:false*/
 'use strict';
 
 angular.module('contentful/controllers').controller('EntryListCtrl', function EntryListCtrl($scope) {
