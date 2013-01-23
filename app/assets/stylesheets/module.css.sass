@@ -63,20 +63,20 @@
   font-size: 1.3em
   li
     display: inline-block
-    height: 2.7em
+    height: $tab-height
   .tab
     position: relative
+    padding: .9em 1em
+    margin-right: 0.2em
+    overflow: hidden
     //+experimental('box-sizing', 'border-box')
     box-sizing: border-box
-    color: $light-gray
-    font-weight: 600
     background-color: $gray-background
     border: 1px solid #d5d5d5
     border-bottom-color: #e6e6e6
     @include rounded-corners(3px,3px,0,0)
-    padding: .9em 1em
-    overflow: hidden
-    margin-right: 0.2em
+    color: $light-gray
+    font-weight: 600
   i.ss-delete
     position: absolute
     top: 1.2em

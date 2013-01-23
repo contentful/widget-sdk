@@ -5,7 +5,6 @@ angular.module('contentful/directives').directive('dropdownBtn', function() {
     restrict: 'C',
     scope: {},
     transclude: true,
-    // No idea what's going on here, copied from ngTransclude:
     controller: function($transclude, $element) {
       $transclude(function(clone) {
         $element.append(clone);
