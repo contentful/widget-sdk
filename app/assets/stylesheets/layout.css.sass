@@ -2,6 +2,9 @@
 /* ---- LAYOUT ---- */
 /* ---------------- */
 
+$tab-top: 0.9em
+$tab-height: 2.7em
+
 /* ACCOUNT */
 
 .account
@@ -42,7 +45,7 @@
     position: absolute
     bottom: 0
 .logo
-  height: 5em
+  height: 4.8em
   position: relative
   img
     position: absolute
@@ -73,51 +76,21 @@
       
 
 /* TABS */
-
-$tab-height: 2.7em
-
 .tab-list
   position: absolute
-  top: 1.1em
+  top: $tab-top
   left: 5.4em
   right: 20%
   height: $tab-height
-  z-index: 5
   //outline: 1px dashed red
-  //overflow: hidden
-  //> ul, > div
-    float: left
-    font-size: 1.2em
-    i
-      font-size: .75em
-      float: right
-  ul
-    width: 90%
-  //li.tab
-    float: left
-    position: relative
-    margin-left: .4em
-    span
-      width: 90%
-      float: left
-      white-space: nowrap
-      overflow: hidden
-    .fade
-      position: absolute
-      width: 10%
-      height: 2.2em
-      top: .3em
-      right: 2em
-  //li:first-child
-    margin-left: 0
-    
+  z-index: 5
     
 /* TAB CONTENT */
 
 .tab-content
   overflow: hidden
   position: absolute
-  top: 4.8em
+  top: 4.6em
   right: 0
   bottom: 1.8em
   left: 0
@@ -128,73 +101,41 @@ $tab-height: 2.7em
   border: 1px solid #dbdbdb
   border-color: rgba(0,0,0,0.17)
   @include rounded-corners(0,2px,2px,2px)
-  
-.left-nav
-  float: left
-  width: 17%
-  .wrapper
-    padding: 3.3em 2.3em
-  
-  
-/* SEARCH BAR */
 
-.search-area
-  width: auto
-  overflow: hidden
-.search-field
+$left-nav-width: 17%
+.left-nav
+  +box-sizing('border-box')
   float: left
-  width: 83%
-  margin-top: 2.4em
-  margin-bottom: 2.4em
-.search-filters, .search-view-options, .loading
-  float: left
-  li
-    float: left
-.search-options, .search-options-right, .search-results-position
-  float: right
-.search-options-right
-  width: 17%
-  position: relative
-  padding-bottom: 2.5em
-  .loading
-    margin-left: 1.1em
-    margin-top: 3.15em
-.search-view-options
-  margin-left: 1.2em
-  margin-top: 2.2em
-.search-results-position
-  position: absolute
-  right: 0
-  top: 0
-  bottom: 0
-  .track
-    position: absolute
-    right: 0
-    height: 100%
-  .fill
-    position: absolute
-    top: 0
-    right: 0
-  .tip
-    position: absolute
-    margin-top: -1.1em
-    white-space: nowrap
-  
-  
+  width: $left-nav-width
+  padding: 3.3em 2.3em
+.left-nav-active
+  width: 100% - $left-nav-width  
+
 /* MAIN */
 
 .main
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  bottom: 0
   float: left
   overflow: visible
+.main.left-nav-active
+  left: $left-nav-width
 .main-results-wrapper
   width: auto
-  height: 66.2em
-  overflow-y: scroll
-.main-results
+.main-results, .main-header
   width: 100%
   float: right
   th, td
     text-align: left
+.main-header
+  position: relative
+  z-index: 998
+.main-results 
+  margin-top: -1px
+  overflow: scroll
 .draft-wrapper
   position: relative
 .main-results-bar
@@ -204,6 +145,22 @@ $tab-height: 2.7em
   top: 0
   bottom: 0
   
+.cell-select
+  width: 5%
+.cell-favorite
+  width: 5%
+.cell-type
+  width: 10%
+.cell-name
+  width: 35%
+.cell-by
+  width: 20%  
+.cell-created
+  width: 10%
+.cell-status
+  width: 15%
+
+
   
 /* FOOTER FOR INSIDE SCROLL EFFECT */
 
