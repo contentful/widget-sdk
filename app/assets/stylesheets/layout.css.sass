@@ -2,15 +2,17 @@
 /* ---- LAYOUT ---- */
 /* ---------------- */
 
-$tab-top: 0.9em
-$tab-height: 2.7em
-
 /* ACCOUNT */
 
+$tab-top: .9em
+$tab-height: 3.8em
+$main-left-spacing: 7em
+
 .account
-  float: right
+  position: absolute
   width: 16%
-  margin-right: 2em
+  right: 2em
+  top: $tab-top
 .project
   float: left
   width: 56%
@@ -76,15 +78,17 @@ $tab-height: 2.7em
       
 
 /* TABS */
+
 .tab-list
   position: absolute
   top: $tab-top
-  left: 5.4em
+  left: $main-left-spacing
   right: 20%
   height: $tab-height
-  //outline: 1px dashed red
   z-index: 5
-    
+  ul
+    width: 90%
+
 /* TAB CONTENT */
 
 .tab-content
@@ -95,7 +99,7 @@ $tab-height: 2.7em
   bottom: 1.8em
   left: 0
   clear: both
-  margin-left: 7em
+  margin-left: $main-left-spacing
   margin-right: 2em
   background-color: white
   border: 1px solid #dbdbdb
@@ -127,14 +131,16 @@ $left-nav-width: 17%
   width: auto
 .main-results, .main-header
   width: 100%
-  float: right
   th, td
     text-align: left
-.main-header
+.main-header-wrapper
   position: relative
+.main-header
   z-index: 998
+  position: absolute
+  left: 0
+  right: 0
 .main-results 
-  margin-top: -1px
   overflow: scroll
 .draft-wrapper
   position: relative

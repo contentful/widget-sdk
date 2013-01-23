@@ -6,14 +6,13 @@
 /* PROJECT */
 
 .project, .user
-  line-height: 2.8em
-  padding: .4em 5% .3em 5%
+  line-height: 2.7em
   border: 1px solid transparent
+  padding: .5em 1em .4em
   border-bottom: none
   .ss-dropdown
     color: $light-gray
     position: relative
-    top: .2em
   a
     color: $light-gray
     text-decoration: none
@@ -54,28 +53,30 @@
 /* TABS */
 
 .tab-list
-  font-size: 1.3em
-  ul
-    margin-right: 0
   li
     display: inline-block
     height: $tab-height
+    +box-sizing('border-box')
+    vertical-align: top
   .tab
     position: relative
-    padding: .9em 1em
     margin-right: 0.2em
+    padding: ($tab-height - 2.7em) 1.2em
     overflow: hidden
-    +box-sizing('border-box')
+    //+experimental('box-sizing', 'border-box')
     background-color: $gray-background
     border: 1px solid #d5d5d5
-    border-bottom-color: #e6e6e6
+    border-bottom-color: $lightest-gray
     @include rounded-corners(3px,3px,0,0)
     color: $light-gray
-    font-weight: 600
+    span
+      font-size: 1.3em
+      white-space: nowrap
   i.ss-delete
     position: absolute
     top: 1.2em
-    right: .8em
+    right: .9em
+    font-size: 1em
   .fade
     position: absolute
     top: 0
@@ -88,6 +89,7 @@
     color: $dark-gray
     background: white
     border-bottom: 0
+    font-weight: 600
     .fade
       border-right-color: white
       @include box-shadow(-14px 0 14px rgba(255,255,255,1) inset)
@@ -98,8 +100,8 @@
 
 .add.button
   @include blue-button
-  margin: .1em 0 0 .7em
-  font-size: .9em
+  margin: .1em 0 0 .3em
+  font-size: 1.2em
   i
     float: left
     margin: .1em .5em 0 0
@@ -274,7 +276,7 @@
 
 .main-results-wrapper
   position: absolute
-  top: 7.9em
+  top: 10.7em
   bottom: 0
   right: 0
   left: 0
@@ -286,6 +288,7 @@
     vertical-align: middle
     font-size: 1.2em
     line-height: 1.8em
+    white-space: nowrap
   th
     background-color: $gray-background
     font-weight: normal
@@ -315,6 +318,10 @@
   .ss-star
     font-size: .8em
     color: $gold
+.cell-select
+  input[type="checkbox"]
+    position: relative
+    top: -.2em
 .cell-type, .cell-by
   color: $medium-gray
 .cell-name
