@@ -141,10 +141,15 @@
 .search-area
   width: auto
   overflow: hidden
+  +box-sizing("border-box")
+  padding-left: 2em
+.left-nav-active .search-area
+  padding-left: 0
 .search-field
-  float: left
+  position: absolute
+  height: 3.2em
   width: 83%
-  margin-top: 2.4em
+  top: 2.4em
   margin-bottom: 2.4em
 .search-filters, .search-view-options, .loading
   float: left
@@ -152,9 +157,15 @@
     float: left
 .search-options, .search-options-right, .search-results-position
   float: right
+.search-options
+  position: absolute
+  top: 0
+  right: 0
+  height: 1.3em
 .search-options-right
   width: 17%
-  position: relative
+  right: 0
+  position: absolute
   padding-bottom: 2.5em
   .loading
     margin-left: 1.1em
@@ -196,7 +207,7 @@
     width: 50%
     
 .search-filters li, .search-options
-  padding: .7em .7em .5em .8em
+  padding: .6em .7em .5em .9em
   font-size: 1.2em
   background-color: $gray-background
   border-right: 1px solid $lightest-gray
@@ -215,13 +226,12 @@
 .search-options
   @include rounded-corners(0,20px,20px,0)
   padding-right: .8em
-  border-right: none
   border-left: 1px solid $lightest-gray
-  margin-top: -.1em
+  top: .1em
   .ss-search
     font-size: 1.1em
     position: relative
-    top: .2em
+    top: .1em
   .ss-dropdown
     font-size: .6em
     margin-left: .3em
@@ -301,7 +311,6 @@
     padding-left: 1.4em
     @include box-shadow(0 0 0 transparent)
     @include box-shadow(1px 1px 0 rgba(0,0,0,0.1) inset)
-    @include rounded-corners(4px,0,0,0)
   td:first-child
     padding-left: 1.3em
   th:last-child, td:last-child
@@ -318,6 +327,9 @@
   .ss-star
     font-size: .8em
     color: $gold
+.left-nav-active .main-header
+  th:first-child
+    @include rounded-corners(4px,0,0,0)
 .cell-select
   input[type="checkbox"]
     position: relative
@@ -335,7 +347,7 @@
     padding: 1.25em 0
     display: block
     
-.cell-status
+td.cell-status
   text-transform: uppercase
   color: $light-gray
   font-size: 1em !important

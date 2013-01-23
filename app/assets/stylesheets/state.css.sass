@@ -10,14 +10,14 @@ i.ss-delete:hover
 
 /* PROJECT/USER BAR */
 
-.project:hover, .user:hover
+.account .project:hover, .account .user:hover
   cursor: pointer
   color: $medium-gray
   a
     color: $dark-gray
   .ss-dropdown
     color: $dark-gray
-.project.active, .user.active
+.project.active, .user.active, .project:hover, .user:hover
   color: $light-gray
   background-color: $gray-background
   border: 1px solid #d5d5d5
@@ -88,8 +88,6 @@ i.ss-delete:hover
 .dropdown:hover, .dropdown-btn:hover, .search-options:hover 
   cursor: pointer
   @include box-shadow(0 .5em 1.5em rgba(255,255,255,0.6) inset)
-.account .dropdown-btn:hover
-  @include box-shadow(0 0 0 transparent)
 
 /* MAIN RESULTS */
 
