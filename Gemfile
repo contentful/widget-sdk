@@ -9,6 +9,7 @@ gem "therubyracer"
 gem "less-rails"
 gem "twitter-bootstrap-rails"
 gem "haml"
+gem "compass-rails"
 
 gem "requirejs-rails", :git => "https://github.com/coderanger/requirejs-rails"
 
