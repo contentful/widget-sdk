@@ -248,6 +248,7 @@
   .fill
     height: 36%
     width: .8em
+    +single-transition(height, 400ms, linear)
     background: #459cd9
     background: -moz-linear-gradient(top, #459cd9 0%, #1e82c8 100%)
     background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#459cd9), color-stop(100%,#1e82c8))
@@ -262,6 +263,7 @@
   .tip
     right: 1.9em
     top: 36%
+    +single-transition(top, 400ms, linear)
     .search-results-active
       font-size: 1.2em
       color: $dark-gray

@@ -1,0 +1,7 @@
+.track
+.fill
+.tip
+  %span.search-results-active {{paginator.page+1}}
+  %span.search-results-total /{{paginator.numPages()}}
+  .arrow-right
+  .arrow-right-border

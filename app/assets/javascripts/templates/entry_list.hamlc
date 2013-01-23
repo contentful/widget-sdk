@@ -53,14 +53,7 @@
           %ul
             %li
     .search-options-right   
-      .search-results-position
-        .track
-        .fill
-        .tip
-          %span.search-results-active {{paginator.page+1}}
-          %span.search-results-total /{{paginator.numPages()}}
-          .arrow-right
-          .arrow-right-border
+      .search-results-position(paginator="paginator")
       .dropdown-btn.search-view-options
         %a.btn.dropdown-toggle
           %i.ss-columns
