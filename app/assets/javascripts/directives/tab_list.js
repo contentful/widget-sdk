@@ -7,9 +7,9 @@ angular.module('contentful/directives').directive('tabList', function() {
 
       
       var settings = window.tabSettings = {
-        tabMaxWidth: 200,
-        tabBorder: 50,
-        percentFactor: 0.6,
+        tabMaxWidth: 225,
+        tabBorder: 20,
+        percentFactor: 0.95,
       };
 
       var recalc = function() {
@@ -20,17 +20,14 @@ angular.module('contentful/directives').directive('tabList', function() {
         } catch(e) {
           return;
         }
-        var addButtonWidth = element.find('.add-btn')[0].clientWidth + 20;
+        var addButtonWidth = element.find('.add-btn')[0].clientWidth+5;
         var addButtonPercentWidth = addButtonWidth/total*100;
-        var spaceForTabs = total-addButtonWidth-20;
-        console.log('recalc. totalWidth %o, numTabs %o, addButtonWidth %o %o, space remaining for tabs %o, space per tab %o', total, numTabs, addButtonWidth, addButtonPercentWidth, spaceForTabs, spaceForTabs/numTabs);
+        var spaceForTabs = total-addButtonWidth;
 
         if (settings.tabMaxWidth <= spaceForTabs/numTabs) {
-          console.log('fixed');
           element.find('.tab').css({width: ''+(settings.tabMaxWidth-settings.tabBorder)+'px'});
         } else {
-          console.log('relative');
-          var p = (100-addButtonPercentWidth)/numTabs - 1;
+          var p = (100-addButtonPercentWidth)/numTabs;
           element.find('.tab').css({width: ''+p*settings.percentFactor+'%'});
         }
       };
