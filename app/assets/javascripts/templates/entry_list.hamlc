@@ -69,39 +69,40 @@
           Nothing to see here
       .loading(ng-show="reloadInProgress")
         %img(src="assets/ajax-loader.gif")
+  %table.main-header
+    %thead
+      %tr
+        %th.cell-select
+          %input(type="checkbox")
+        %th.cell-favorite
+          %i.ss-star
+        %th.cell-type
+          %label Content Type
+        %th.cell-name
+          %label Name
+        %th.cell-by
+          %label By
+        %th.cell-created
+          %label Created
+        %th.cell-status
+          %label Status
   .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
     %table.main-results
-      %thead
-        %tr
-          %th
-            %input(type="checkbox")
-          %th
-            %i.ss-star
-          %th
-            %label Content Type
-          %th
-            %label Name
-          %th
-            %label By
-          %th
-            %label Created
-          %th
-            %label Status
       %tbody
         %tr(ng-repeat="entry in entries" ng-show="visibleInCurrentList(entry)" cf-click-local="editEntry(entry)")
-          %td.main-results-input
+          %td.cell-select
             %input(type="checkbox")
-          %td.main-results-star
+          %td.cell-favorite
             -#%i.ss-star
-          %td.main-results-type
+          %td.cell-type
             %span {{bucketContext.typeForEntry(entry).data.name}}
-          %td.main-results-name
+          %td.cell-name
             %span {{bucketContext.entryTitle(entry)}}
-          %td.main-results-by
+          %td.cell-by
             %span Peter Pan
-          %td.main-results-created
+          %td.cell-created
             %span(date-from="entry.data.sys.updatedAt") 5 min ago
-          %td.main-results-status.draft
+          %td.cell-status.draft
             .draft-wrapper
               %span Draft
               .main-results-bar

@@ -44,4 +44,12 @@ angular.module('contentful/controllers').controller('EntryTypeListCtrl', functio
     if (this.bucketContext) this.bucketContext.refreshEntryTypes();
   };
 
+  $scope.statusClass = function(entryType) {
+    if (entryType.data.sys.publishedAt) {
+      return 'published';
+    } else {
+      return 'draft';
+    }
+  };
+
 });

@@ -1,4 +1,4 @@
-%article.main.left-nav-active
+%article.main
   %table.main-results
     %thead
       %tr
@@ -16,17 +16,18 @@
           %label Status
     %tbody
       %tr(ng-repeat="entryType in bucketContext.entryTypes" cf-click-local="editEntryType(entryType)")
-        %td.main-results-input
+        %td.cell-select
           %input(type="checkbox")
-        %td.main-results-type
+        %td.cell-type
           %span {{entryType.getId()}}
-        %td.main-results-name
+        %td.cell-name
           %span {{entryType.data.name}}
-        %td.main-results-by
+        %td.cell-by
           %span {{numFields(entryType)}}
-        %td.main-results-created
+        %td.cell-created
           %span(date-from="entryType.data.sys.updatedAt") 5 min ago
-        %td.main-results-status.draft
+        %td.cell-status(ng-class="statusClass(entryType)")
           .draft-wrapper
-            %span Draft
+            %span(ng-hide="entryType.data.sys.publishedAt") Draft
+            %span(ng-show="entryType.data.sys.publishedAt") Published
             .main-results-bar
