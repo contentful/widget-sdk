@@ -2,64 +2,25 @@
 /* ---- MIXINS ---- */
 /* ---------------- */
 
-@mixin rounded-corners($top-left-radius,$top-right-radius,$bottom-right-radius,$bottom-left-radius)
-  -webkit-border-top-left-radius: $top-left-radius
-  -webkit-border-top-right-radius: $top-right-radius
-  -webkit-border-bottom-right-radius: $bottom-right-radius    
-  -webkit-border-bottom-left-radius: $bottom-left-radius
-  -moz-border-radius-topleft: $top-left-radius
-  -moz-border-radius-topright: $top-right-radius
-  -moz-border-radius-bottomright: $bottom-right-radius
-  -moz-border-radius-bottomleft: $bottom-left-radius
-  -ms-border-top-left-radius: $top-left-radius
-  -ms-border-top-right-radius: $top-right-radius
-  -ms-border-bottom-right-radius: $bottom-right-radius
-  -ms-border-bottom-left-radius: $bottom-left-radius
-  -o-border-top-left-radius: $top-left-radius
-  -o-border-top-right-radius: $top-right-radius
-  -o-border-bottom-right-radius: $bottom-right-radius
-  -o-border-bottom-left-radius: $bottom-left-radius
-  border-top-left-radius: $top-left-radius
-  border-top-right-radius: $top-right-radius
-  border-bottom-right-radius: $bottom-right-radius
-  border-bottom-left-radius: $bottom-left-radius
+@import "compass/css3/images"
+@import "compass/css3/border-radius"
+@import "compass/css3/box-shadow"
+@import "compass/css3/text-shadow"
 
-@mixin box-shadow($shadow)
-  -webkit-box-shadow: $shadow
-  -moz-box-shadow: $shadow
-  -ms-box-shadow: $shadow
-  -o-box-shadow: $shadow
-  box-shadow: $shadow
-  
-@mixin text-shadow($shadow)
-  -webkit-text-shadow: $shadow
-  -moz-text-shadow: $shadow
-  -ms-text-shadow: $shadow
-  -o-text-shadow: $shadow
-  text-shadow: $shadow
+=rounded-corners($tl, $tr, $bl, $br)
+  +border-radius($tl $tr $bl $br)
 
-@mixin blue-button
+=gradient($start, $stop)
+  background: $start
+  +filter-gradient($start, $stop)
+  +background-image(linear-gradient($start, $stop))
+
+=blue-button
   padding: .5em 1.1em .5em .8em
   font-size: 1.2em
   color: white
   font-weight: 600
-  background: #459cd9
-  background: -moz-linear-gradient(top, #459cd9 0%, #1e82c8 100%)
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,#459cd9), color-stop(100%,#1e82c8))
-  background: -webkit-linear-gradient(top, #459cd9 0%,#1e82c8 100%)
-  background: -o-linear-gradient(top, #459cd9 0%,#1e82c8 100%)
-  background: -ms-linear-gradient(top, #459cd9 0%,#1e82c8 100%)
-  background: linear-gradient(to bottom, #459cd9 0%,#1e82c8 100%)
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#459cd9', endColorstr='#1e82c8',GradientType=0 )
-  @include rounded-corners(3px,3px,3px,3px)
-  @include box-shadow(0 2px 1px rgba(0,0,0,0.08))
+  +gradient(#459cd9, #1e82c8)
+  +border-radius(3px 3px 3px 3px)
+  +box-shadow(0 2px 1px rgba(0,0,0,0.08))
 
-// http://nicolasgallagher.com/micro-clearfix-hack/
-@mixin clearfix
-  &:before,
-  &:after
-    content: " "
-    display: table
-  &:after
-    clear: both
-    
