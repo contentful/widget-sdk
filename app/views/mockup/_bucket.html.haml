@@ -1,0 +1,30 @@
+.bucket
+  %nav.nav-bar
+    .logo
+      %img(src="assets/logo.png")
+    %ul
+      %li
+        %i.ss-layout
+      %li.active
+        %i.ss-layers
+      %li
+        %i.ss-picture
+      %li
+        %i.ss-cell
+  %nav.tab-list
+    %ul
+      %li.tab(style="width:17.5%")
+        %span.tab-title New Recipe
+        %em.fade
+        %i.ss-delete
+      %li.tab.active(style="width:17.5%")
+        %span.tab-title Old Recipe Title
+        %em.fade
+        %i.ss-delete
+      %li.add-btn
+        .add.button
+          %i.ss-plus
+          %span Add
+  .tab-content
+    .entry-list
+      = render 'entry-list'
