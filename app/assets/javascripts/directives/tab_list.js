@@ -7,7 +7,7 @@ angular.module('contentful/directives').directive('tabList', function() {
 
       
       var settings = window.tabSettings = {
-        tabMaxWidth: 225,
+        tabMaxWidth: 0.215, //percent, matching up with nav-left
         tabBorder: 20,
         percentFactor: 0.95,
       };
@@ -24,8 +24,8 @@ angular.module('contentful/directives').directive('tabList', function() {
         var addButtonPercentWidth = addButtonWidth/total*100;
         var spaceForTabs = total-addButtonWidth;
 
-        if (settings.tabMaxWidth <= spaceForTabs/numTabs) {
-          element.find('.tab').css({width: ''+(settings.tabMaxWidth-settings.tabBorder)+'px'});
+        if (settings.tabMaxWidth <= 1/numTabs) {
+          element.find('.tab').css({width: ''});
         } else {
           var p = (100-addButtonPercentWidth)/numTabs;
           element.find('.tab').css({width: ''+p*settings.percentFactor+'%'});
