@@ -222,6 +222,16 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
 
   $scope.$watch('bucketContext.bucket', 'loadCounts()');
 
+  $scope.statusClass = function(entry){
+    if (entry.data.sys.publishedAt) {
+      return 'published';
+    } else if (entry.data.sys.archivedAt) {
+      return 'archived';
+    } else {
+      return 'draft';
+    }
+  };
+
   // Development shorcut to quickly open an entry
 
   //$scope.$watch(function($scope){

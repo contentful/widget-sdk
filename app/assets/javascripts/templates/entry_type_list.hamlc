@@ -28,6 +28,5 @@
           %span(date-from="entryType.data.sys.updatedAt") 5 min ago
         %td.cell-status(ng-class="statusClass(entryType)")
           .draft-wrapper
-            %span(ng-hide="entryType.data.sys.publishedAt") Draft
-            %span(ng-show="entryType.data.sys.publishedAt") Published
+            %span {{statusClass(entryType)}}
             .main-results-bar

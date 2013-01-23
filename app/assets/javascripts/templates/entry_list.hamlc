@@ -102,7 +102,7 @@
             %span Peter Pan
           %td.cell-created
             %span(date-from="entry.data.sys.updatedAt") 5 min ago
-          %td.cell-status.draft
+          %td.cell-status(ng-class="statusClass(entry)")
             .draft-wrapper
-              %span Draft
+              %span {{statusClass(entry)}}
               .main-results-bar
