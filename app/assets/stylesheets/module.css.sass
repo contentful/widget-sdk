@@ -141,6 +141,10 @@
 .search-area
   width: auto
   overflow: hidden
+  +box-sizing("border-box")
+  padding-left: 2em
+.left-nav-active .search-area
+  padding-left: 0
 .search-field
   float: left
   width: 83%
@@ -301,7 +305,6 @@
     padding-left: 1.4em
     @include box-shadow(0 0 0 transparent)
     @include box-shadow(1px 1px 0 rgba(0,0,0,0.1) inset)
-    @include rounded-corners(4px,0,0,0)
   td:first-child
     padding-left: 1.3em
   th:last-child, td:last-child
@@ -318,6 +321,9 @@
   .ss-star
     font-size: .8em
     color: $gold
+.left-nav-active .main-header
+  th:first-child
+    @include rounded-corners(4px,0,0,0)
 .cell-select
   input[type="checkbox"]
     position: relative
