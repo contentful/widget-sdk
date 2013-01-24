@@ -26,7 +26,7 @@
           %a.add.button.dropdown-toggle
             %i.ss-plus
             %span Add
-          .dropdown-menu.top-caret.left-aligned
+          -#.dropdown-menu.top-caret.left-aligned
             %ul
               %li Categories
               %li Features
@@ -40,4 +40,7 @@
               %li Entry Type
   .tab-content
     .entry-list
-      = render 'entry_editor'
+      = render 'entry-list'
+  .notification-wrapper
+    .notification.red-notification
+      %span New entry created

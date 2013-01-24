@@ -43,6 +43,9 @@
   li:hover
     cursor: pointer
     +blue-highlight
+    
+.dropdown-menu.top-caret, .dropdown-menu.bottom-caret, .dropdown-menu.left-caret, .dropdown-menu.right-caret
+  +border-radius(3px)
 
 .dropdown-menu.top-caret,
 .dropdown-menu.bottom-caret
@@ -50,12 +53,12 @@
     right: auto
     left: 0
     &:before
-      left: 0
+      left: $caret-size + 1em
   &.right-aligned
     right: 0
     left: auto
     &:before
-      right: 0
+      right: $caret-size + 1em
 
 .dropdown-menu.top-caret:before
   +caret
@@ -70,11 +73,13 @@
   +text-shadow(0px -2px 3px rgba(0,0,0,0.12)) 
   
 .dropdown-menu.left-caret:before
+  +caret
   content: "◃"
   left: - $caret-size - .2em
   +text-shadow(0px -2px 3px rgba(0,0,0,0.12))
   
 .dropdown-menu.right-caret:before
+  +caret
   content: "▹"
   right: - $caret-size - .2em
   +text-shadow(0px -2px 3px rgba(0,0,0,0.12))
@@ -101,17 +106,19 @@ $account-border-color: #d5d5d5
   .project
     float: right
     width: 70%
-    border-right: 1px solid $account-border-color
+    margin-right: -1px
     span
       font-size: 1.3em
       margin-right: .8em
     .dropdown-menu
       min-width: 100%
+    .dropdown-toggle
+      border-right: 1px solid $account-border-color
   .user
     float: right
     width: 30%
     img
-      width: 2em
+      width: 2.2em
       vertical-align: middle
   .user.active 
     padding-bottom: .4em
