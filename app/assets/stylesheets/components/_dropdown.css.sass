@@ -14,13 +14,37 @@
   min-width: 18em
   background: white
   background: rgba(255,255,255,0.96)
-  padding: 1em 0
-  @include box-shadow(0 2px 6px rgba(0,0,0,0.25))
-  @include rounded-corners(3px,0,3px,3px)
+  +box-shadow(0 2px 8px rgba(0,0,0,0.3))
+  +rounded-corners(3px,0,3px,3px)
+  ul
+    padding: 1em 0
   li // Regular lists in dropdown as an old-fashioned menu
-    padding: .3em 1.5em
+    padding: .3em 1.2em
   li:hover
     +blue-highlight
+
+.dropdown-menu.top-caret:before
+  +caret
+  content: "▴"
+  top: - $caret-size - .2em
+  +text-shadow(0px -2px 3px rgba(0,0,0,0.12))
+  
+.dropdown-menu.bottom-caret:before
+  +caret
+  content: "▾"
+  bottom: - $caret-size - .2em
+  +text-shadow(0px -2px 3px rgba(0,0,0,0.12)) 
+  
+.dropdown-menu.left-caret:before
+  content: "◃"
+  left: - $caret-size - .2em
+  +text-shadow(0px -2px 3px rgba(0,0,0,0.12))
+  
+.dropdown-menu.right-caret:before
+  content: "▹"
+  right: - $caret-size - .2em
+  +text-shadow(0px -2px 3px rgba(0,0,0,0.12))
+
 .dropdown-toggle
   display: block
   text-decoration: none
@@ -61,7 +85,7 @@
 // Concrete project and user buttons
 .account
   .project
-    float: left
+    float: right
     width: 56%
     border-right: 1px solid #d5d5d5
     span
@@ -100,3 +124,15 @@
     color: $light-gray
     top: 0
     
+    
+/* ADD BUTTON DROPDOWN */
+
+.tab-list .dropdown-menu 
+  li
+    display: block
+    height: auto
+    font-size: 1.1em
+  li:hover
+    +blue-highlight
+    color: white
+    +box-shadow(0 0 0 transparent)

@@ -25,7 +25,7 @@
         %a.add.button.dropdown-toggle{"data-toggle" => "dropdown", :href => "#"}
           %i.ss-plus
           %span Add
-      .dropdown-menu
+      .dropdown-menu.top-caret.left-aligned(style="left:392px; width: 18em")
         %ul
           %li Categories
           %li Features
@@ -34,6 +34,9 @@
           %li Promos
           %li Schedules
           %li Shows
+        .seperator
+        %ul
+          %li Entry Type
   .tab-content
     .entry-list
       = render 'entry-list'
