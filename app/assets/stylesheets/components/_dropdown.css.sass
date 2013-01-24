@@ -9,6 +9,20 @@
     //position: absolute
     //right: .2em
     float: right
+.dropdown-toggle
+  width: 100%
+  position: relative
+  color: $light-gray
+  display: block
+  text-decoration: none
+  cursor: pointer
+.dropdown-toggle:hover
+  color: black
+  @include box-shadow(0 .5em 1.5em rgba(255,255,255,0.6) inset)
+.active .dropdown-toggle
+  color: $dark-gray
+
+// Dropdown Menu base and general modifiers
 .dropdown-menu
   position: absolute
   right: 0
@@ -19,15 +33,29 @@
   min-width: 18em
   background: white
   background: rgba(255,255,255,0.96)
-  border: .1em solid #e2e2e2
+  border: .1em solid shade(#FFFFFF, 10)
   +box-shadow(0 2px 6px rgba(0,0,0,0.1))
   +rounded-corners(0,0,3px,3px)
   ul
     padding: 1em 0
-  li // Regular lists in dropdown as an old-fashioned menu
+  li
     padding: .3em 1.2em
   li:hover
+    cursor: pointer
     +blue-highlight
+
+.dropdown-menu.top-caret,
+.dropdown-menu.bottom-caret
+  &.left-aligned
+    right: auto
+    left: 0
+    &:before
+      left: 0
+  &.right-aligned
+    right: 0
+    left: auto
+    &:before
+      right: 0
 
 .dropdown-menu.top-caret:before
   +caret
@@ -50,19 +78,6 @@
   content: "▹"
   right: - $caret-size - .2em
   +text-shadow(0px -2px 3px rgba(0,0,0,0.12))
-
-.dropdown-toggle
-  width: 100%
-  position: relative
-  color: $light-gray
-  display: block
-  text-decoration: none
-  cursor: pointer
-.dropdown-toggle:hover
-  color: black
-  @include box-shadow(0 .5em 1.5em rgba(255,255,255,0.6) inset)
-.active .dropdown-toggle
-  color: $dark-gray
 
 // Tab-bar dropdown
 $account-border-color: #d5d5d5
@@ -123,12 +138,9 @@ $account-border-color: #d5d5d5
     
 /* ADD BUTTON DROPDOWN */
 
-.tab-list .dropdown-menu 
-  li
-    display: block
-    height: auto
-    font-size: 1.1em
-  li:hover
-    +blue-highlight
-    color: white
-    +box-shadow(0 0 0 transparent)
+.tab-list .add-btn
+  .dropdown-menu 
+    li
+      display: block
+      height: auto
+      font-size: 1.1em
