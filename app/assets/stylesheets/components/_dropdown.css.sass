@@ -106,17 +106,19 @@ $account-border-color: #d5d5d5
   .project
     float: right
     width: 70%
-    border-right: 1px solid $account-border-color
+    margin-right: -1px
     span
       font-size: 1.3em
       margin-right: .8em
     .dropdown-menu
       min-width: 100%
+    .dropdown-toggle
+      border-right: 1px solid $account-border-color
   .user
     float: right
     width: 30%
     img
-      width: 2em
+      width: 2.2em
       vertical-align: middle
   .user.active 
     padding-bottom: .4em
