@@ -17,11 +17,14 @@
   +filter-gradient($start, $stop)
   +background-image(linear-gradient($start, $stop))
 
-=blue-button
-  padding: .5em 1.1em .6em .8em
+=blue-highlight
   color: white
-  font-weight: 600
   +gradient(#459cd9, #1e82c8)
-  +border-radius(3px 3px 3px 3px)
-  +box-shadow(0 2px 1px rgba(0,0,0,0.08))
 
+.blue-button
+  +box-shadow(0 2px 1px rgba(0,0,0,0.08))
+  +blue-highlight
+  +border-radius(3px 3px 3px 3px)
+  font-weight: 600
+  padding: .5em 1.1em .6em .8em
+  
