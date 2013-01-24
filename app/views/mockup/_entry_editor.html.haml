@@ -1,0 +1,111 @@
+.editor-configuration
+  .dropdown-btn
+    %a.dropdown-toggle
+      Default-Interface
+    .dropdown-menu
+      …
+      …
+      …
+  .dropdown-btn
+    %a.dropdown-toggle
+      Language
+    .dropdown-menu
+      …
+      …
+      …
+
+.aux-panel
+  .meta
+    %table
+      %tr
+        %th Published at
+        %td 5 hours ago
+      %tr
+        %th Published Version
+        %td {{publishedVersion()}}
+      %tr
+        %th Current
+        %td {{doc.version}}
+    %div
+      %p Not published yet
+
+%form.form-horizontal(name="entryForm")
+  We might need two columns of fields next to each other (for
+  translators)
+  .field(data-field-type="string" data-field-widget="textField")
+    %label Stringfield
+    .editor
+      %input(type="text")
+    .hint
+      Hint to the user about the meaning of the field
+  .field(data-field-type="text" data-field-widget="textArea")
+    %label Textfield
+    .editor
+      %textarea
+    .hint
+      Hint to the user about the meaning of the field
+  .field(data-field-type="boolean" data-field-widget="checkBox")
+    %label Boolean
+    .editor
+      %label
+        %input(type="checkbox")
+        %span.yes Yes
+        %span.no No
+    .hint
+      Hint to the user about the meaning of the field
+  .field(data-field-type="date" data-field-widget="datePicker")
+    %label Date
+    .editor
+      Idea for a fitting widget?
+      We used jQuery-UI/Native Datepickers(not well supported) before
+      Maybe the Date Directive from http://angular-ui.github.com/ will
+      also do.
+  .field(data-field-type="date" data-field-widget="timePicker")
+    %label DateTime
+    .editor
+      Date with time
+  .field(data-field-type="array" data-field-widget="textField")
+    %label Array Field
+    .editor
+      %input(type="text")
+      Another simple text field, the magic happens in javascript,
+      splitting the values at the comma
+  .field(data-field-type="array" data-field-widget="checkBoxes")
+    %label Array Boxes
+    .editor
+      %label
+        %input(type="checkbox")
+        %span Labeltext
+      %label
+        %input(type="checkbox")
+        %span Labeltext
+      %label
+        %input(type="checkbox")
+        %span Labeltext
+      %label
+        %input(type="checkbox")
+        %span Labeltext
+      %label
+        %input(type="checkbox")
+        %span Labeltext
+  .field(data-field-type="location" data-field-widget="googlemap")
+    %label Location Picker
+    .editor
+      %iframe(width="425" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.de/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q=Berlin&amp;aq=&amp;sll=51.175806,10.454119&amp;sspn=8.654702,23.269043&amp;ie=UTF8&amp;hq=&amp;hnear=Berlin&amp;t=m&amp;ll=52.519146,13.406067&amp;spn=0.026114,0.072956&amp;z=13&amp;iwloc=A&amp;output=embed")
+      %input.coordinates(type="text")
+      %button.remove-location Remove
+  .field(data-field-type="number" data-field-widget="textField")
+    %label Number
+    .editor
+
+.action-bar
+  %button.publish
+  %button.unpublish
+  %button.delete
+  %button.archive
+  .save-status
+    All changes saved successfully
+  .other-users
+    Adam
+    Editordude
+    Bertram
