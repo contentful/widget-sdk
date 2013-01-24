@@ -38,11 +38,13 @@
             %span.search-filter-value Florida
             %i.ss-delete
         %input(type="text" placeholder="Add to search")
-        .search-options
-          %i.ss-search
-          %i.ss-dropdown
-          %ul
-            %li
+        .dropdown-btn.search-options
+          .dropdown-toggle
+            %i.ss-search
+            %i.ss-dropdown
+          -#.dropdown-menu
+            %ul
+              %li
     .search-options-right   
       .search-results-position
         .track
@@ -53,10 +55,12 @@
           .arrow-right
           .arrow-right-border
       .dropdown-btn.search-view-options
-        %i.ss-columns
-        %i.ss-dropdown
-        %ul
-          %li
+        .dropdown-toggle
+          %i.ss-columns
+          %i.ss-dropdown
+        -#.dropdown-menu
+          %ul
+            %li
       .loading(style="display:none")
         %img(src="assets/ajax-loader.gif")
   %table.main-header

@@ -153,7 +153,7 @@
     margin-top: 3.15em
 .search-view-options
   margin-left: 1.2em
-  margin-top: 2.2em
+  margin-top: 2.4em
 .search-results-position
   position: absolute
   right: 0
@@ -187,7 +187,9 @@
     opacity: 0.6
     width: 50%
     
-.search-filters li, .search-options
+.search-filters li,
+.search-options .dropdown-toggle
+  height: 1.3em
   padding: .6em .7em .5em .9em
   font-size: 1.2em
   background-color: $gray-background
@@ -204,20 +206,21 @@
 .search-filter-title
   color: $light-gray
   
-.search-options
+.search-area .dropdown-btn.search-options
   // TODO Isolate the dropdown aspects
-  @include rounded-corners(0,20px,20px,0)
-  padding-right: .8em
-  border-left: 1px solid $lightest-gray
-  top: .1em
-  .ss-search
-    font-size: 1.1em
-    position: relative
+  .dropdown-toggle
+    @include rounded-corners(0,20px,20px,0)
+    padding-right: .8em
+    border-left: 1px solid $lightest-gray
     top: .1em
-  .ss-dropdown
-    font-size: .6em
-    margin-left: .3em
-    color: $light-gray
+    .ss-search
+      font-size: 1.1em
+      position: relative
+      top: .1em
+    .ss-dropdown
+      font-size: .6em
+      margin-left: .3em
+      color: $light-gray
   
 .search-results-position
   .track

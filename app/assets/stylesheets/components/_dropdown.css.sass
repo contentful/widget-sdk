@@ -2,24 +2,7 @@
 .dropdown-btn
   .ss-dropdown
     font-size: .8em
-
-.dropdown-btn a.btn
-  display: block
-.dropdown, .search-area .dropdown-btn
-  padding: .6em .7em .5em .9em
-  font-size: 1.1em
-  background-color: $gray-background
-  border: 1px solid $lightest-gray
-  @include rounded-corners(3px,3px,3px,3px)
-  @include box-shadow(0 1px 3px rgba(255,255,255,0.8) inset)
-  i
-    position: relative
-    top: .15em
-  .ss-dropdown
-    font-size: .6em
-    margin-left: .4em
-    color: $light-gray
-    top: 0
+    float: right
 .dropdown-menu
   font-size: 1.1em
   line-height: 2.2em
@@ -33,28 +16,25 @@
   padding: 1em 0
   @include box-shadow(0 2px 6px rgba(0,0,0,0.25))
   @include rounded-corners(3px,0,3px,3px)
-  li
+  li // Regular lists in dropdown as an old-fashioned menu
     padding: .3em 1.5em
   li:hover
-    +blue-button
     padding: .3em 1.5em
     font-size: 1em
+    +blue-button
     +border-radius(0)
-    
+.dropdown-toggle
+  display: block
   
-/* FILTER DROPDOWNS */
-
-.dropdown:hover, .dropdown-btn:hover, .search-options:hover 
+.dropdown-btn:hover,
+.search-options:hover 
   cursor: pointer
   @include box-shadow(0 .5em 1.5em rgba(255,255,255,0.6) inset)
-
-  
 
 // Tab-bar dropdown
 .account
   .dropdown-btn
     .ss-dropdown
-      float: right
 
 // Concrete project and user buttons
 .account
@@ -77,7 +57,8 @@
 
 /* PROJECT */
 
-.project, .user
+.project,
+.user
   line-height: 2.7em
   border: 1px solid transparent
   padding: .5em 1em .4em
@@ -112,3 +93,23 @@
 .user.active 
   padding-bottom: .4em
 
+// Search-bar dropdown
+
+.search-area .dropdown-toggle
+  height: 1.5em
+  width: 2.3em
+  padding: .6em .7em .5em .9em
+  font-size: 1.1em
+  background-color: $gray-background
+  border: 1px solid $lightest-gray
+  @include rounded-corners(3px,3px,3px,3px)
+  @include box-shadow(0 1px 3px rgba(255,255,255,0.8) inset)
+  i
+    position: relative
+    top: .15em
+  .ss-dropdown
+    font-size: .6em
+    margin-left: .4em
+    color: $light-gray
+    top: 0
+    
