@@ -1,0 +1,41 @@
+// NOTIFICATIONS
+
+.notification
+  position: absolute
+  bottom: 1em
+  right: 1em
+  padding: 1.3em 1.8em
+  z-index: 10000
+  background: rgba($green,0.95)
+  +box-shadow(0 2px 8px rgba(0,0,0,0.4), 0 1px 1px rgba(255,255,255,0.2) inset)
+  +border-radius(4px)
+  border: 1px solid darken($green, 8%)
+  
+  -webkit-transition: all .7s ease-in-out
+  -moz-transition: all .7s ease-in-out
+  -o-transition: all .7s ease-in-out
+  transition: all .7s ease-in-out
+  
+  -webkit-transform: translate(0,10em)
+  -moz-transform: translate(0,10em)
+  -o-transform: translate(0,10em)
+  -ms-transform: translate(0,10em)
+  transform: translate(0,10em)
+  
+  span
+    color: white
+    font-size: 1.2em
+
+.notification.start
+  transform: translate(0,0)
+  -webkit-transform: translate(0,0)
+  -moz-transform: translate(0,0)
+  -o-transform: translate(0,0)
+  -ms-transform: translate(0,0)
+  
+.notification.end
+  transform: translate(20em,0)
+  -webkit-transform: translate(20em,0)
+  -moz-transform: translate(20em,0)
+  -o-transform: translate(20em,0)
+  -ms-transform: translate(20em,0)
