@@ -1,7 +1,5 @@
 //= require jquery
 //= require lodash
-//= require twitter/bootstrap
-//= require ./bootstrap
 //
 //= require moment-1.7.2
 //
