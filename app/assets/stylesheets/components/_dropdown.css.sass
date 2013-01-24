@@ -1,16 +1,17 @@
 // Dropdown base
 .dropdown-btn
+  position: relative
   .ss-dropdown
     font-size: .8em
     float: right
 .dropdown-menu
-  font-size: 1.1em
-  line-height: 2.2em
   position: absolute
   right: 0
   top: 3.4em
+  font-size: 1.1em
+  line-height: 2.2em
   z-index: 1000
-  min-width: 200px
+  min-width: 18em
   background: white
   background: rgba(255,255,255,0.96)
   padding: 1em 0
@@ -19,12 +20,12 @@
   li // Regular lists in dropdown as an old-fashioned menu
     padding: .3em 1.5em
   li:hover
-    padding: .3em 1.5em
-    font-size: 1em
     +blue-button
+    padding: .3em 1.5em
     +border-radius(0)
 .dropdown-toggle
   display: block
+  text-decoration: none
   
 .dropdown-btn:hover,
 .search-options:hover 
@@ -34,64 +35,52 @@
 // Tab-bar dropdown
 .account
   .dropdown-btn
+    float: right
+    line-height: 2.7em
+    border: 1px solid transparent
+    padding: .5em 1em .4em
+    border-bottom: none
+  .dropdown-btn:hover,
+  .dropdown-btn.active
+    color: $light-gray
+    background-color: $gray-background
+    border: 1px solid #d5d5d5
+    border-bottom-color: $lightest-gray
+    @include rounded-corners(3px,3px,0,0)
+  .dropdown-btn:hover
+    cursor: pointer
+    color: $medium-gray
+    a
+      color: $dark-gray
     .ss-dropdown
+      color: $dark-gray
+  .ss-dropdown
+    color: $light-gray
+    position: relative
+  .dropdown-toggle
+    color: $light-gray
 
 // Concrete project and user buttons
 .account
   .project
     float: left
     width: 56%
+    border-right: 1px solid #d5d5d5
+    span
+      font-size: 1.3em
+      margin-right: .8em
+    .dropdown-menu
+      min-width: 100%
   .user
     float: right
-    position: relative
     width: 20%
     margin-left: -1px
     img
       width: 36%
       position: absolute
       top: .6em
-  .project, .user
-    position: relative
-    float: right
-
-
-/* PROJECT */
-
-.project,
-.user
-  line-height: 2.7em
-  border: 1px solid transparent
-  padding: .5em 1em .4em
-  border-bottom: none
-  .ss-dropdown
-    color: $light-gray
-    position: relative
-  a
-    color: $light-gray
-    text-decoration: none
-.project
-  border-right: 1px solid #d5d5d5
-  span
-    font-size: 1.3em
-    margin-right: .8em
-  
-/* PROJECT/USER BAR */
-
-.account .project:hover, .account .user:hover
-  cursor: pointer
-  color: $medium-gray
-  a
-    color: $dark-gray
-  .ss-dropdown
-    color: $dark-gray
-.project.active, .user.active, .project:hover, .user:hover
-  color: $light-gray
-  background-color: $gray-background
-  border: 1px solid #d5d5d5
-  border-bottom-color: $lightest-gray
-  @include rounded-corners(3px,3px,0,0)
-.user.active 
-  padding-bottom: .4em
+  .user.active 
+    padding-bottom: .4em
 
 // Search-bar dropdown
 
