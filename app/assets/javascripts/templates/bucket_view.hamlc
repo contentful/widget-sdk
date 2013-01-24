@@ -16,11 +16,7 @@
       %span.tab-title {{tabItem.title}}
       %em.fade
       %i.ss-delete(cf-click-local="tabItem.close()" ng-show="tabItem.canClose()")
-    %li.add-btn
-      .add.button
-        %i.ss-plus
-        %span Add
-  -#%tablist-button(tab-list="tabList" bucket-context="bucketContext")
+    %li.tablist-button(tab-list="tabList" bucket-context="bucketContext")
 .tab-content(ng-repeat="tab in tabList.items" ng-show="tab.active()" ng-switch="tab.viewType")
   %entry-list(       ng-switch-when="entry-list"        tab="tab" bucket-context="bucketContext")
   %entry-type-list(  ng-switch-when="entry-type-list"   tab="tab" bucket-context="bucketContext")

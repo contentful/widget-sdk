@@ -3,7 +3,7 @@
 angular.module('contentful/directives').directive('tablistButton', function() {
   return {
     template: JST.tablist_button(),
-    restrict: 'E',
+    restrict: 'C',
     scope: {
       bucketContext: '='
     },

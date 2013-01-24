@@ -1,11 +1,11 @@
-.btn-group
-  %a.btn.dropdown-toggle{"data-toggle" => "dropdown", :href => "#"}
-    %i.icon-plus-sign
-    Create…
-    %span.caret
-  %ul.dropdown-menu
-    %li(ng-repeat="entryType in publishedEntryTypes")
-      %a(ng-click="createEntry(entryType)") {{entryType.data.name}}
-    %li.divider
-    %li
-      %a(ng-click="createEntryType()") EntryType
+.add-btn.dropdown-btn
+  %a.add.button.dropdown-toggle
+    %i.ss-plus
+    %span Add
+  .dropdown-menu.top-caret.left-aligned
+    %ul
+      %li(ng-repeat="entryType in publishedEntryTypes" ng-click="createEntry(entryType)" dropdown-close="")
+        {{entryType.data.name}}
+    .separator
+    %ul
+      %li(ng-click="createEntryType()" dropdown-close="") EntryType

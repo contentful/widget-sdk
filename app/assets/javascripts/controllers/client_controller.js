@@ -42,12 +42,6 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
 
   };
 
-  $scope.$on('tabListButtonClicked', function(event, info) {
-    // Otherwise the broadcast would trigger this handler -> endless loop
-    if (event.targetScope === event.currentScope) return;
-    event.currentScope.$broadcast('tabListButtonClicked', info);
-  });
-
   $scope.selectBucket = function(bucket) {
     this.bucketContext.bucket = bucket;
   };

@@ -20,14 +20,14 @@ angular.module('contentful/directives').directive('tabList', function() {
         } catch(e) {
           return;
         }
-        var addButtonWidth = element.find('.add-btn')[0].clientWidth+5;
-        var addButtonPercentWidth = addButtonWidth/total*100;
-        var spaceForTabs = total-addButtonWidth;
+        var tablistButtonWidth = element.find('.tablist-button')[0].clientWidth+5;
+        var tablistButtonPercentWidth = tablistButtonWidth/total*100;
+        var spaceForTabs = total-tablistButtonWidth;
 
         if (settings.tabMaxWidth <= 1/numTabs) {
           element.find('.tab').css({width: ''});
         } else {
-          var p = (100-addButtonPercentWidth)/numTabs;
+          var p = (100-tablistButtonPercentWidth)/numTabs;
           element.find('.tab').css({width: ''+p*settings.percentFactor+'%'});
         }
       };

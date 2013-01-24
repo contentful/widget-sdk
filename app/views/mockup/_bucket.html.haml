@@ -21,22 +21,23 @@
         %span.tab-title Old Recipe Title
         %em.fade
         %i.ss-delete
-      %li.add-btn.dropdown-btn
-        %a.add.button.dropdown-toggle{"data-toggle" => "dropdown", :href => "#"}
-          %i.ss-plus
-          %span Add
-        .dropdown-menu.top-caret.left-aligned
-          %ul
-            %li Categories
-            %li Features
-            %li Media
-            %li Projects
-            %li Promos
-            %li Schedules
-            %li Shows
-          .seperator
-          %ul
-            %li Entry Type
+      %li.tablist-button
+        .dropdown-btn
+          %a.add.button.dropdown-toggle
+            %i.ss-plus
+            %span Add
+          .dropdown-menu.top-caret.left-aligned
+            %ul
+              %li Categories
+              %li Features
+              %li Media
+              %li Projects
+              %li Promos
+              %li Schedules
+              %li Shows
+            .seperator
+            %ul
+              %li Entry Type
   .tab-content
     .entry-list
-      = render 'entry-list'
+      = render 'entry_editor'
