@@ -1,8 +1,14 @@
 // Dropdown base
 .dropdown-btn
+  +box-sizing(border-box)
+  *
+    +box-sizing(border-box)
   position: relative
   .ss-dropdown
     font-size: .8em
+    //position: absolute
+    //right: .2em
+    float: right
 .dropdown-menu
   position: absolute
   right: 0
@@ -14,13 +20,15 @@
   background: white
   background: rgba(255,255,255,0.96)
   padding: 1em 0
-  +box-shadow(0 2px 6px rgba(0,0,0,0.25))
-  +rounded-corners(3px,0,3px,3px)
+  border: .1em solid #e2e2e2
+  +box-shadow(0 2px 6px rgba(0,0,0,0.1))
+  +rounded-corners(0,0,3px,3px)
   li // Regular lists in dropdown as an old-fashioned menu
     padding: .3em 1.5em
   li:hover
     +blue-highlight
 .dropdown-toggle
+  width: 100%
   position: relative
   color: $light-gray
   display: block
@@ -29,28 +37,23 @@
 .dropdown-toggle:hover
   color: black
   @include box-shadow(0 .5em 1.5em rgba(255,255,255,0.6) inset)
-.dropdown-btn.active
-  .dropdown-toggle
-    color: $dark-gray
-.ss-dropdown
-  position: absolute
-  right: .2em
-//.dropdown-btn:hover,
-//.search-options:hover 
-  cursor: pointer
+.active .dropdown-toggle
+  color: $dark-gray
 
 // Tab-bar dropdown
+$account-border-color: #d5d5d5
+
 .account
-  .dropdown-btn
+  .dropdown-toggle
     float: right
     line-height: 2.7em
     border: 1px solid transparent
     padding: .5em 1em .4em
     border-bottom: none
-  .dropdown-btn:hover,
-  .dropdown-btn.active
+  .dropdown-toggle:hover,
+  .active .dropdown-toggle
     background-color: $gray-background
-    border: 1px solid #d5d5d5
+    border: 1px solid $account-border-color
     border-bottom-color: $lightest-gray
     @include rounded-corners(3px,3px,0,0)
 
@@ -58,8 +61,8 @@
 .account
   .project
     float: left
-    width: 56%
-    border-right: 1px solid #d5d5d5
+    width: 70%
+    border-right: 1px solid $account-border-color
     span
       font-size: 1.3em
       margin-right: .8em
@@ -67,9 +70,9 @@
       min-width: 100%
   .user
     float: right
-    width: 20%
+    width: 30%
     img
-      width: 36%
+      width: 2em
       vertical-align: middle
   .user.active 
     padding-bottom: .4em
