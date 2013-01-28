@@ -30,22 +30,25 @@
     %span Export
 %article.main.left-nav-active
   .search-area
-    %form.search-field
-      .search-input
-        %ul.search-filters
-          %li
-            %span.search-filter-title US State:
-            %span.search-filter-value Florida
-            %i.ss-delete
-        %input(type="text" placeholder="Add to search")
-        .dropdown-btn.search-options
-          .dropdown-toggle
-            %i.ss-search
-            %i.ss-dropdown
-          -#.dropdown-menu
-            %ul
-              %li
-    .search-options-right   
+    %form.search-field.with-filters
+      %ul.search-filters
+        %li
+          %span.search-filter-title US State:
+          %span.search-filter-value Florida
+          %i.ss-delete
+        %li
+          %span.search-filter-title US City:
+          %span.search-filter-value Miami
+          %i.ss-delete
+      %input(type="text" placeholder="Add to search")
+      .dropdown-btn.search-options
+        .dropdown-toggle
+          %i.ss-search
+          %i.ss-dropdown
+        .dropdown-menu
+          %ul
+            %li
+    -#.search-options-right   
       .search-results-position
         .track
         .fill
