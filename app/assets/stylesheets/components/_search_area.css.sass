@@ -8,6 +8,11 @@ $search-field-height: 32px
     +box-sizing("border-box")
   padding: ($search-area-height - $search-field-height)/2 0
 
+.search-area
+  .search-field,
+  .search-view-options
+    float: left
+
 .search-field
   position: relative
   width: 83%
@@ -58,6 +63,9 @@ $search-field-height: 32px
       margin: 0 0 0 6px
       position: relative
       top: .1em
+  .search-filter-title
+    color: $light-gray
+    
 
 .search-options
   float: right
@@ -78,18 +86,28 @@ $search-field-height: 32px
     top: 0.1em
     font-size: .6em
 
+.search-view-options
+  margin-left: 12px
+  .dropdown-toggle
+    line-height: $search-field-height - 2px
+    padding: 0 0.5em 0 1em
+    width: 40px
+    @extend %search-area-button
+    border: 1px solid $lightest-gray
+    +rounded-corners(3px, 3px, 3px, 3px)
+    .ss-columns,
+    .ss-dropdown
+      position: relative
+      top: 0.1em
+
+
+  //margin-top: 24px
 
 .loading
   float: left
-.search-options,
 .search-options-right,
 .search-results-position
   float: right
-//.search-options
-  position: absolute
-  top: 0
-  right: 0
-  height: 13px
 .search-options-right
   width: 17%
   right: 0
@@ -98,9 +116,6 @@ $search-field-height: 32px
   .loading
     margin-left: 11px
     margin-top: 31.5px
-.search-view-options
-  margin-left: 12px
-  margin-top: 24px
 .search-results-position
   position: absolute
   right: 0
@@ -118,14 +133,6 @@ $search-field-height: 32px
     position: absolute
     margin-top: -1.1em
     white-space: nowrap
-  
-/* SEARCH BAR */
-
-      
-    
-
-.search-filter-title
-  color: $light-gray
   
 //.search-results-position
   .track
@@ -158,6 +165,3 @@ $search-field-height: 32px
       font-size: 1.2em
       color: $dark-gray
       font-weight: 700
-
-// Search-bar dropdown
-
