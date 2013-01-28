@@ -1,0 +1,158 @@
+// Main result table
+.main-results-wrapper
+  position: absolute
+  top: 10.5em
+  bottom: 0
+  right: 0
+  left: 0
+  @include rounded-corners(4px,0,0,0)
+  overflow-y: auto
+.main-results,
+.main-header
+  td, th
+    padding: .8em 0
+    vertical-align: middle
+    font-size: 1.2em
+    line-height: 1.8em
+    white-space: nowrap
+  th
+    background-color: $gray-background
+    font-weight: normal
+    font-size: 1.1em
+    padding: .4em 0 .3em 0
+    color: $light-gray
+    @include box-shadow(0 1px 0 rgba(0,0,0,0.1) inset)
+    border-bottom: 1px solid #e1e1e1
+  th:first-child
+    padding-left: 1.4em
+    @include box-shadow(0 0 0 transparent)
+    @include box-shadow(1px 1px 0 rgba(0,0,0,0.1) inset)
+  td:first-child
+    padding-left: 1.3em
+  th:last-child, td:last-child
+    text-align: right
+    padding-right: 2em
+  td:last-child
+    vertical-align: top
+    padding-top: 0 !important
+    padding-bottom: 0 !important
+  tbody
+    tr
+      border: 1px solid $light-rule
+      border-right: none
+  .ss-star
+    font-size: .8em
+    color: $gold
+.left-nav-active .main-header
+  th:first-child
+    @include rounded-corners(4px,0,0,0)
+.cell-select
+  input[type="checkbox"]
+    position: relative
+    top: -.2em
+.cell-type,
+.cell-by
+  color: $medium-gray
+.cell-name
+  color: $dark-gray
+  font-weight: 600
+.cell-created
+  color: $light-gray
+  font-size: 1.05em !important
+.draft-wrapper
+  span
+    padding: 1.25em 0
+    display: block
+    
+td.cell-status
+  text-transform: uppercase
+  color: $light-gray
+  font-size: 1em !important
+.main-results-bar
+  width: .8em
+  height: 100%
+  background-color: $light-gray  
+
+
+.main-results-wrapper
+  width: auto
+.main-results, .main-header
+  width: 100%
+  th, td
+    text-align: left
+.main-header-wrapper
+  position: relative
+.main-header
+  z-index: 998
+  position: absolute
+  left: 0
+  right: 0
+  top: $search-area-height
+.main-results 
+  overflow: scroll
+.draft-wrapper
+  position: relative
+.main-results-bar
+  position: absolute
+  right: -2em
+  height: 100%
+  top: 0
+  bottom: 0
+  
+.cell-select
+  width: 5%
+.cell-favorite
+  width: 5%
+.cell-type
+  width: 13%
+.cell-name
+  width: 42%
+.cell-by
+  width: 15%  
+.cell-created
+  width: 10%
+.cell-status
+  width: 10%
+      
+/* MAIN RESULTS */
+
+.main-results
+  tbody
+    tr:hover
+      background-color: #fbfbfb
+      cursor: pointer
+
+/* MAIN RESULTS STATUS COLORS */
+
+td.published
+  color: $green
+  .main-results-bar
+    background-color: $green
+    /* Not using the mixin because I need two box-shadows on this element */
+    -webkit-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $green
+    -moz-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $green
+    -ms-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $green
+    -o-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $green
+    box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $green
+
+td.draft, td.pending
+  color: $gold
+  .main-results-bar
+    background-color: $gold
+    /* Not using the mixin because I need two box-shadows on this element */
+    -webkit-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $gold
+    -moz-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $gold
+    -ms-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $gold
+    -o-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $gold
+    box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $gold
+    
+td.archived
+  color: $red
+  .main-results-bar
+    background-color: $red
+    /* Not using the mixin because I need two box-shadows on this element */
+    -webkit-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $red
+    -moz-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $red
+    -ms-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $red
+    -o-box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $red
+    box-shadow: 0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $red
