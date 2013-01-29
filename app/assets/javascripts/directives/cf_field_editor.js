@@ -4,10 +4,11 @@ angular.module('contentful/directives').directive('cfFieldEditor', function(widg
   return {
     restrict: 'E',
     scope: {
-      type:    '=',
+      type: '=',
       fieldId: '=',
-      doc:'=',
-      locale:  '=',
+      doc: '=',
+      locale: '=',
+      bucketContext: '='
     },
     link: function(scope, elm, attr) {
       var widget = widgets.editor(scope.type, attr.editor);
@@ -31,7 +32,6 @@ angular.module('contentful/directives').directive('cfFieldEditor', function(widg
           });
         }
       });
-        
       
       var stopInit = scope.$watch('subdoc', function(subdoc, old, scope) {
         if (subdoc) {

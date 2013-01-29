@@ -30,4 +30,5 @@
       type="field.type"
       editor="textField"
       field-id="field.id"
-      locale="locale")
+      locale="locale"
+      bucket-context="bucketContext")
