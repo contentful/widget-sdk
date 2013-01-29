@@ -1,6 +1,8 @@
 //= require jquery
 //= require lodash
 //
+//= require jquery.ui.autocomplete
+//
 //= require moment-1.7.2
 //
 //= require bcsocket-uncompressed
