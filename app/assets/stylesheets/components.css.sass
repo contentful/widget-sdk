@@ -3,6 +3,7 @@
 @import "components/notification"
 @import "components/tip"
 @import "components/main_results"
+@import "components/modal"
 
 %blue-button
   +box-shadow(0 2px 1px rgba(0,0,0,0.08))
@@ -20,4 +21,18 @@
     +box-shadow(0 0 0 transparent)
     +box-shadow(0 1px 2px rgba(0,0,0,0.1) inset)
 
-
+%gray-button
+  background-color: $gray-background
+  border: 1px solid $lightest-gray
+  +box-shadow(0 1px 3px rgba(255,255,255,0.8) inset)
+  +rounded-corners(3px, 3px, 3px, 3px)
+  line-height: 1.8em
+  color: $medium-gray
+  &:hover
+    cursor: pointer
+    color: $dark-gray
+    border-color: $light-gray
+  &:active
+    margin-top: .15em
+    +box-shadow(0 0 0 transparent)
+    +box-shadow(0 1px 2px rgba(0,0,0,0.1) inset)
