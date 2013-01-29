@@ -24,5 +24,5 @@
           %ul
             %li(ng-repeat="bucket in buckets" ng-click="selectBucket(bucket)" dropdown-close="")
               {{bucket.data.name}}
-    %bucket-view.container-fluid(tab-list="tabList" bucket-context="bucketContext")
+    %bucket-view.container-fluid(bucket-context="bucketContext")
   = javascript_include_tag 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDskFlzw1ujRovNWNG3K64EUsncYTbRPfM&sensor=false'

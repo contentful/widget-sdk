@@ -2,9 +2,9 @@
   .logo
     %img(src="assets/logo.png")
   %ul
-    %li(ng-class="{active: tabList.currentSection() == 'entryTypes'}")
+    %li(ng-class="{active: bucketContext.tabList.currentSection() == 'entryTypes'}")
       %i.ss-layout(ng-click="visitView('entry-type-list')")
-    %li.active(ng-class="{active: tabList.currentSection() == 'entries'}")
+    %li.active(ng-class="{active: bucketContext.tabList.currentSection() == 'entries'}")
       %i.ss-layers(ng-click="visitView('entry-list')")
     %li
       %i.ss-picture
@@ -12,15 +12,15 @@
       %i.ss-cell
 %nav.tab-list
   %ul
-    %li.tab(ng-repeat="tabItem in tabList.items" ng-class="{active: tabItem.active()}" ng-click="tabItem.activate()")
+    %li.tab(ng-repeat="tabItem in bucketContext.tabList.items" ng-class="{active: tabItem.active()}" ng-click="tabItem.activate()")
       %span.tab-title {{tabItem.title}}
       %em.fade
       %i.ss-delete(cf-click-local="tabItem.close()" ng-show="tabItem.canClose()")
-    %li.tablist-button(tab-list="tabList" bucket-context="bucketContext")
-.tab-content(ng-repeat="tab in tabList.items" ng-show="tab.active()" ng-switch="tab.viewType")
+    %li.tablist-button(bucket-context="bucketContext")
+.tab-content(ng-repeat="tab in bucketContext.tabList.items" ng-show="tab.active()" ng-switch="tab.viewType")
   %entry-list(       ng-switch-when="entry-list"        tab="tab" bucket-context="bucketContext")
   %entry-type-list(  ng-switch-when="entry-type-list"   tab="tab" bucket-context="bucketContext")
   %entry-editor(     ng-switch-when="entry-editor"      tab="tab" bucket-context="bucketContext")
   %entry-type-editor(ng-switch-when="entry-type-editor" tab="tab" bucket-context="bucketContext")
   %div(ng-switch-default="")
-    Unhandled case: viewType = {{tabList.currentViewType()}}
+    Unhandled case: viewType = {{bucketContext.tabList.currentViewType()}}

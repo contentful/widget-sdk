@@ -5,6 +5,7 @@
 angular.module('contentful/controllers').controller('ClientCtrl', function ClientCtrl($scope, client) {
   $scope.buckets = [];
   $scope.bucketContext = {
+    tabList: new TabList($scope),
     bucket: null,
     entryTypes: [],
     _entryTypesHash: {},
@@ -45,8 +46,6 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
   $scope.selectBucket = function(bucket) {
     this.bucketContext.bucket = bucket;
   };
-
-  $scope.tabList = new TabList($scope);
 
   $scope.$watch('buckets', function(buckets){
     if (buckets && buckets.length > 0) {

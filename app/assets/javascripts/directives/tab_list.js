@@ -16,13 +16,13 @@ angular.module('contentful/directives').directive('tabList', function() {
         var total = element.prop('clientWidth');
         var numTabs;
         try {
-          numTabs = scope.tabList.items.length;
+          numTabs = scope.bucketContext.tabList.items.length;
         } catch(e) {
           return;
         }
         var tablistButtonWidth = element.find('.tablist-button')[0].clientWidth+5;
         var tablistButtonPercentWidth = tablistButtonWidth/total*100;
-        var spaceForTabs = total-tablistButtonWidth;
+        //var spaceForTabs = total-tablistButtonWidth;
 
         if (settings.tabMaxWidth <= 1/numTabs) {
           element.find('.tab').css({width: ''});
@@ -32,7 +32,7 @@ angular.module('contentful/directives').directive('tabList', function() {
         }
       };
 
-      scope.$watch('tabList.items.length', function(numItems) {
+      scope.$watch('bucketContext.tabList.items.length', function(numItems) {
         if (numItems > 0) recalc();
       });
 

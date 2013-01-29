@@ -2,7 +2,7 @@
 
 angular.module('contentful/controllers').controller('BucketCtrl', function BucketCtrl($scope) {
   $scope.$watch('bucketContext.bucket', function(bucket, old, scope){
-    scope.tabList.closeAll();
+    scope.bucketContext.tabList.closeAll();
     if (bucket) {
       $scope.visitView('entry-list');
     }
@@ -38,11 +38,11 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
       };
     }
 
-    var tab = _.find($scope.tabList.items, function(tab) {
+    var tab = _.find($scope.bucketContext.tabList.items, function(tab) {
       return tab.viewType === options.viewType;
     });
 
-    tab = tab || $scope.tabList.add(options);
+    tab = tab || $scope.bucketContext.tabList.add(options);
     tab.activate();
   };
 
@@ -65,7 +65,7 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
     }, function(err, entry){
       if (!err) {
         scope.$apply(function(scope){
-          scope.tabList.add({
+          scope.bucketContext.tabList.add({
             viewType: 'entry-editor',
             section: 'entries',
             params: {
@@ -104,7 +104,7 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
     scope.bucketContext.bucket.createEntryType(data, function(err, entryType){
       if (!err) {
         scope.$apply(function(scope){
-          scope.tabList.add({
+          scope.bucketContext.tabList.add({
             viewType: 'entry-type-editor',
             section: 'entryTypes',
             params: {
