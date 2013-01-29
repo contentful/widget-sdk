@@ -32,7 +32,7 @@ Paginator.prototype = {
   },
 
   atLast: function() {
-    return this.page === this.numPages()-1;
+    return this.page >= this.numPages()-1;
   },
 
   pages: function() {
