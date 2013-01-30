@@ -1,6 +1,7 @@
 //= require jquery
 //= require lodash
 //
+//= require jquery.sortable
 //= require jquery.ui.autocomplete
 //
 //= require moment-1.7.2
