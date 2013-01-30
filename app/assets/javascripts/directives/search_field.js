@@ -10,7 +10,7 @@
 
 // A version of ngClick that performs stopPropagation() and
 // preventDefault() to support nested click targets
-angular.module('contentful/directives').directive('searchField', function($parse){
+angular.module('contentful/directives').directive('searchField', function(){
 'use strict';
   return {
     restrict: 'C',
@@ -18,7 +18,7 @@ angular.module('contentful/directives').directive('searchField', function($parse
       onIdleUpdate: '=' // This value will be updated with the entered searchterm whenever the user stops typing
     },
     template: JST['search_field'](),
-    link: function(scope, element, attr) {
+    link: function(scope) {
       scope.search = {term: ''};
 
       scope.hasFilters = function() {
