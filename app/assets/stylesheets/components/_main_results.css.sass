@@ -1,5 +1,8 @@
 // Main result table
 
+// Layout
+.result-list
+  width: 100%
 // Layout (this is actually implementation stuff and should be
 // specified on the containing element)
 .main-header
@@ -7,9 +10,6 @@
   left: 0
   right: 0
   top: $search-area-height
-.main-results,
-.main-header
-  width: 100%
 .main-results-wrapper //main results wrapper shouldnt really be used because we are wrapping in a endless container which does the overflow part. the rest is positioning in the containing element
   position: absolute
   top: 10.5em
@@ -27,8 +27,7 @@
 
 // Font-sizes and colors for table
 
-.main-results,
-.main-header
+.result-list
   td,
   th
     text-align: left
@@ -83,7 +82,9 @@
     text-transform: uppercase
     color: $light-gray
     font-size: 1em
-  // status cell stuff
+
+// status cell stuff for main-results
+.result-list
   .draft-wrapper
     position: relative
     span
@@ -118,11 +119,13 @@
       
 // State variations
 
-.main-results
+.result-list
   tbody
     tr:hover
       background-color: #fbfbfb
       cursor: pointer
+
+// State variations for main-results
 
 td.published
   color: $green

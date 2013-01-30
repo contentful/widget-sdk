@@ -49,7 +49,7 @@
     .loading(ng-show="reloadInProgress")
       %img(src="assets/ajax-loader.gif")
     .search-results-position(paginator="paginator")
-  %table.main-header
+  %table.result-list.main-header
     %thead
       %tr
         %th.cell-select
@@ -67,7 +67,7 @@
         %th.cell-status
           %label Status
   .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
-    %table.main-results
+    %table.result-list.main-results
       %tbody
         %tr(ng-repeat="entry in entries" ng-show="visibleInCurrentList(entry)" cf-click-local="editEntry(entry)")
           %td.cell-select
