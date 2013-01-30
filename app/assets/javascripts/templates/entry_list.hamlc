@@ -39,13 +39,15 @@
     %span Export
 %article.main.left-nav-active
   .search-area
-    != JST['search_field'](context)
+    %form.search-field(on-idle-update="searchTerm")
     .dropdown-btn.search-view-options
       %a.btn.dropdown-toggle
         %i.ss-columns
         %i.ss-dropdown
       .dropdown-menu
         Nothing to see here
+    .loading(ng-show="reloadInProgress")
+      %img(src="assets/ajax-loader.gif")
     .search-results-position(paginator="paginator")
   %table.main-header
     %thead

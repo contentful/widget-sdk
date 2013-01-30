@@ -57,18 +57,13 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
   };
 
   
-  $scope.search = {term: ''};
+  $scope.searchTerm = '';
 
-  $scope.$watch('search.term', function(n,o, scope) {
-    if (n !== o) scope.startSearch();
+  $scope.$watch('searchTerm', function(n,o, scope) {
+    if (n === o) return;
+    scope.paginator.page = 0;
+    scope.resetEntries();
   });
-
-  $scope.startSearch = _.debounce(function() {
-    $scope.$apply(function(scope) {
-      scope.paginator.page = 0;
-      scope.resetEntries();
-    });
-  }, 700);
 
   $scope.switchContentType = function(type){
     $scope.tab.params.contentType = type;
@@ -161,8 +156,8 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
       queryObject['sys.entryType'] = this.tab.params.entryType;
     }
 
-    if (this.search.term && 0 < this.search.term.length) {
-      queryObject.query = this.search.term;
+    if (this.searchTerm && 0 < this.searchTerm.length) {
+      queryObject.query = this.searchTerm;
     }
 
     return queryObject;
