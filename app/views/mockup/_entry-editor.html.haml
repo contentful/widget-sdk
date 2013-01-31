@@ -76,6 +76,7 @@
       %label
         %input(type="radio")
         %span.yes Yes
+      %label
         %input(type="radio")
         %span.no No
       .hint.tip
@@ -92,7 +93,7 @@
   .field(data-field-type="date" data-field-widget="timePicker")
     %label DateTime
     .editor
-      Date with time
+      / Date with time
   .field(data-field-type="array" data-field-widget="textField")
     %label Array Field
     .editor
@@ -128,12 +129,14 @@
     .editor
 
 .action-bar
-  %button.publish
-  %button.unpublish
-  %button.delete
-  %button.archive
-  .save-status
-    All changes saved successfully
+  .button-set
+    %button.publish
+    %button.unpublish
+    %button.delete
+    %button.archive
+  .save-status.green
+    %i.ss-check
+    %span All changes saved successfully
   .other-users
     Adam
     Editordude

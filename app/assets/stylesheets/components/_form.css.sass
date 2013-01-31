@@ -41,8 +41,15 @@ $form-offset: 11px
     margin-left: $form-gutter
     opacity: 0
     &.tip
-      padding: .5em .8em
+      padding: .7em .9em
       +transition(opacity 0.3s ease-in-out)
   input[type="text"]:focus + .hint, textarea:focus + .hint
     opacity: 1
   .editor.boolean, .editor.array
+    label
+      width: auto
+      position: relative
+      top: -2px
+    span
+      position: relative
+      top: 2px
