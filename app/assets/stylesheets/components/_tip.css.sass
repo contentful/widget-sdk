@@ -1,7 +1,7 @@
 .tip
   background-color: $gray-background
-  border: 1px solid $lightest-gray
-  padding: .2em .6em
+  border: 1px solid lighten($lightest-gray, 1%)
+  padding: .1em .6em
   font-size: 1em
   position: absolute
   @include rounded-corners(3px,3px,3px,3px)
@@ -26,7 +26,7 @@
     height: 0
     border-top: 6px solid transparent
     border-bottom: 6px solid transparent
-    border-left: 6px solid $lightest-gray
+    border-left: 6px solid lighten($lightest-gray, 1%)
     position: absolute
     right: -6px
   .arrow-left
@@ -49,7 +49,7 @@
     height: 0
     border-top: 6px solid transparent
     border-bottom: 6px solid transparent
-    border-right: 6px solid $lightest-gray
+    border-right: 6px solid lighten($lightest-gray, 1%)
     position: absolute
     left: -6px
 

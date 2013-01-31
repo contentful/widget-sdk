@@ -1,10 +1,10 @@
 $form-gutter: 12px
-$form-offset: 11px
+$form-offset: 9px
 
 .field
   overflow: hidden
   margin-bottom: 1.5em
-  label, .editor, .hint
+  label, .editor, .hint, .error
     display: inline-block
     +box-sizing(border-box)
     color: $medium-gray
@@ -32,7 +32,7 @@ $form-offset: 11px
       &:focus
         background-color: white
         border-color: $link-blue
-  .hint
+  .hint, .error
     vertical-align: top
     max-width: 40%
     font-size: 1.2em
@@ -43,7 +43,18 @@ $form-offset: 11px
     &.tip
       padding: .7em .9em
       +transition(opacity 0.3s ease-in-out)
-  input[type="text"]:focus + .hint, textarea:focus + .hint
+  .error
+    &.tip
+      background: darken($red, 6%)
+      border: 1px solid darken($red, 16%)
+      color: white
+      +box-shadow(0 1px 1px rgba(255,255,255,0.25) inset)
+      .arrow-left
+        border-right-color: darken($red, 6%)
+      .arrow-left-border
+        border-right-color: darken($red, 16%)
+
+  input[type="text"]:focus + .hint, textarea:focus + .hint, input[type="text"]:focus + .error, textarea:focus + .error
     opacity: 1
   .editor.boolean, .editor.array
     label
