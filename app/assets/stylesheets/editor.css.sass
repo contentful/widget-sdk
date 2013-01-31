@@ -1,9 +1,6 @@
 $form-gutter: 15px
 $form-offset: 11px
 
-.entry-editor
-  padding: 2em 3em
-  overflow: auto
 .editor-configuration
   margin-top: 1em
   position: absolute
@@ -41,6 +38,7 @@ $form-offset: 11px
 form
   &.form-horizontal
     margin-top: 9em
+    overflow: auto
   .field
     overflow: hidden
     margin-bottom: 1.5em
@@ -53,10 +51,10 @@ form
       font-size: 1.2em
       vertical-align: top
       margin-top: $form-offset
-      width: 17%
+      width: 15%
       padding: 0 $form-gutter 0 0
     .editor
-      width: 68%
+      width: 70%
       position: relative
       input[type="text"], textarea
         padding: 8px
@@ -85,7 +83,20 @@ form
         +transition(opacity 0.3s ease-in-out)
     input[type="text"]:focus + .hint, textarea:focus + .hint
       opacity: 1
-
 .aux-panel
-  position: fixed
-  bottom: 2em
+  width: 20%
+  position: absolute
+  right: 0
+.action-bar
+  position: absolute
+  bottom: 0
+  left: 0
+  right: 0
+  padding: 2em
+  width: 100%
+  +box-sizing(border-box)
+  background-color: $lightest-gray
+
+
+
+
