@@ -8,6 +8,7 @@ angular.module('contentful/directives').directive('otBind', function(ShareJS) {
     link: function(scope, elm, attr, ngModelCtrl) {
       
       if (attr.otBind === 'text') {
+        // Use this on text inputs/textAreas
         scope.$watch('subdoc', function(subdoc, old, scope){
           if (old && old !== subdoc) {
             if (scope.detachTextField) {
@@ -27,9 +28,11 @@ angular.module('contentful/directives').directive('otBind', function(ShareJS) {
           }
         });
       } else if (attr.otBind === 'replace'){
+        // Use this if you want to simply replace values in your ShareJS
+        // document. Works by simply manipulating the `value` property
+        // in the scope (as established by cfFieldEditor)
         scope.$watch('value', function(val, old, scope) {
           if (val === old) return;
-          if (scope.applyingRemoteChange) return;
           scope.changeValue(val);
         }, true);
 
@@ -37,6 +40,8 @@ angular.module('contentful/directives').directive('otBind', function(ShareJS) {
           event.currentScope.value = val;
         });
       } else if (attr.otBind === 'model'){
+        // Use this if you want to bind an ngModelController to a
+        // ShareJS value
         ngModelCtrl.$viewChangeListeners.push(function(){
           scope.changeValue(ngModelCtrl.$modelValue);
         });
@@ -45,7 +50,7 @@ angular.module('contentful/directives').directive('otBind', function(ShareJS) {
         });
       }
 
-    } // END link function. YO DOG I HERD U LIKE CURLY BRACES
+    }
 
   };
 });
