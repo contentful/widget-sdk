@@ -1,18 +1,41 @@
 .editor-configuration
-  .dropdown-btn
-    %a.dropdown-toggle
-      Default-Interface
-    .dropdown-menu
-      …
-      …
-      …
-  .dropdown-btn
-    %a.dropdown-toggle
-      Language
-    .dropdown-menu
-      …
-      …
-      …
+  .editor-top-left
+    %h1
+      Old Recipe Title
+    .dropdown-btn
+      %a.btn.dropdown-toggle
+        %i.ss-dropdown
+        %span
+          Default-Interface
+      .dropdown-menu(style="display:none")
+        …
+        …
+        …
+    .dropdown-btn
+      %a.dropdown-toggle
+        %i.ss-dropdown
+        %span
+          Language
+      .dropdown-menu(style="display:none")
+        …
+        …
+        …
+  .editor-top-right
+    .dropdown-btn
+      %a.btn.dropdown-toggle
+        %i.ss-dropdown
+        %span
+          Meta
+      .dropdown-menu(style="display:none")
+        …
+        …
+        …
+      %a.btn
+        %span
+          Apps
+      %a.btn
+        %span
+          Events
 
 .aux-panel
   .meta
@@ -30,8 +53,7 @@
       %p Not published yet
 
 %form.form-horizontal(name="entryForm")
-  We might need two columns of fields next to each other (for
-  translators)
+  // We might need two columns of fields next to each other (for translators)
   .field(data-field-type="string" data-field-widget="textField")
     %label Stringfield
     .editor

@@ -1,11 +1,46 @@
-.entry-editor
-  padding: 2em 3em
-  overflow: auto
-
 $form-gutter: 15px
 $form-offset: 11px
 
+.entry-editor
+  padding: 2em 3em
+  overflow: auto
+.editor-configuration
+  margin-top: 1em
+  position: absolute
+  height: 6.4em
+  border-bottom: 1px solid $light-rule
+  left: 2.5em
+  right: 2.5em
+  top: 0
+  h1
+    font-size: 2em
+    display: inline-block
+    position: relative
+    top: 3px
+    margin-right: 20px
+    color: $dark-gray
+
+.editor-top-left, .editor-top-right
+  position: absolute
+  height: 4em
+  bottom: .2em
+.editor-top-left
+  .dropdown-toggle
+    width: auto
+    display: inline-block
+.editor-top-right
+  .btn
+    @extend .add.button
+    display: inline-block
+    padding: .6em 1em
+    &:active
+      margin-top: 0
+      position: relative
+      top: 1px
+
 form
+  &.form-horizontal
+    margin-top: 9em
   .field
     overflow: hidden
     margin-bottom: 1.5em
@@ -24,7 +59,7 @@ form
       width: 68%
       position: relative
       input[type="text"], textarea
-        padding: 10px
+        padding: 8px
         font-family: 'Open Sans', Arial, sans-serif
         font-size: 1.3em
         width: 60%
@@ -51,3 +86,6 @@ form
     input[type="text"]:focus + .hint, textarea:focus + .hint
       opacity: 1
 
+.aux-panel
+  position: fixed
+  bottom: 2em
