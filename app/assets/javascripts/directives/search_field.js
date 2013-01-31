@@ -21,20 +21,21 @@ angular.module('contentful/directives').directive('searchField', function(){
     link: function(scope) {
       scope.search = {term: ''};
 
+      scope.$watch('onIdleUpdate', function(newTerm, old, scope) {
+        scope.search.term = newTerm;
+      });
+
       scope.hasFilters = function() {
         return false;
       };
 
-      scope.$watch('search.term', function(n,o, scope) {
-        if (n !== o) scope.startSearch();
-      });
-
-      scope.startSearch = _.debounce(function() {
-        scope.$apply(function(scope) {
-          scope.onIdleUpdate = scope.search.term;
-        });
+      scope.userChange= _.debounce(function() {
+        if (scope.onIdleUpdate !== scope.search.term) {
+          scope.$apply(function(scope) {
+            scope.onIdleUpdate = scope.search.term;
+          });
+        }
       }, 700);
-
     }
   };
 });

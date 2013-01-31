@@ -3,7 +3,7 @@
     %span.search-filter-title US State:
     %span.search-filter-value Florida
     %i.ss-delete
-%input(type="text" ng-model="search.term" placeholder="Add to search")
+%input(type="text" ng-model="search.term" placeholder="Add to search" ng-change="userChange()")
 .dropdown-btn.search-options
   .dropdown-toggle
     %i.ss-search
