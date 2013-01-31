@@ -72,10 +72,11 @@
         .arrow-left-border
   .field(data-field-type="boolean" data-field-widget="checkBox")
     %label Boolean
-    .editor
+    .editor.boolean
       %label
-        %input(type="checkbox")
+        %input(type="radio")
         %span.yes Yes
+        %input(type="radio")
         %span.no No
       .hint.tip
         Hint to the user about the meaning of the field
@@ -84,10 +85,10 @@
   .field(data-field-type="date" data-field-widget="datePicker")
     %label Date
     .editor
-      Idea for a fitting widget?
-      We used jQuery-UI/Native Datepickers(not well supported) before
-      Maybe the Date Directive from http://angular-ui.github.com/ will
-      also do.
+      / Idea for a fitting widget?
+      / We used jQuery-UI/Native Datepickers(not well supported) before
+      / Maybe the Date Directive from http://angular-ui.github.com/ will
+      / also do.
   .field(data-field-type="date" data-field-widget="timePicker")
     %label DateTime
     .editor
@@ -96,11 +97,11 @@
     %label Array Field
     .editor
       %input(type="text")
-      Another simple text field, the magic happens in javascript,
-      splitting the values at the comma
+      / Another simple text field, the magic happens in javascript,
+      / splitting the values at the comma
   .field(data-field-type="array" data-field-widget="checkBoxes")
     %label Array Boxes
-    .editor
+    .editor.array
       %label
         %input(type="checkbox")
         %span Labeltext

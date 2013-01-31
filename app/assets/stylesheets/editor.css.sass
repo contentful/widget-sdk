@@ -1,6 +1,3 @@
-$form-gutter: 15px
-$form-offset: 11px
-
 .editor-configuration
   margin-top: 1em
   position: absolute
@@ -37,52 +34,8 @@ $form-offset: 11px
 
 form
   &.form-horizontal
-    margin-top: 9em
-    overflow: auto
-  .field
-    overflow: hidden
-    margin-bottom: 1.5em
-    label, .editor, .hint
-      display: inline-block
-      +box-sizing(border-box)
-      color: $medium-gray
-    label
-      text-align: right
-      font-size: 1.2em
-      vertical-align: top
-      margin-top: $form-offset
-      width: 15%
-      padding: 0 $form-gutter 0 0
-    .editor
-      width: 70%
-      position: relative
-      input[type="text"], textarea
-        padding: 8px
-        font-family: 'Open Sans', Arial, sans-serif
-        font-size: 1.3em
-        width: 60%
-        +box-sizing(border-box)
-        border: 1px solid $lightest-gray
-        +rounded-corners(3px,3px,3px,3px)
-        background-color: $gray-background
-        +box-shadow(0 1px 2px rgba(0,0,0,0.1) inset)
-        +transition(background-color 0.3s ease-in, border-color 0.3s ease-in)
-        &:focus
-          background-color: white
-          border-color: $link-blue
-    .hint
-      vertical-align: top
-      max-width: 40%
-      font-size: 1.2em
-      color: $medium-gray
-      padding: 0 0 0 $form-gutter
-      margin-left: $form-gutter
-      opacity: 0
-      &.tip
-        padding: .5em .8em
-        +transition(opacity 0.3s ease-in-out)
-    input[type="text"]:focus + .hint, textarea:focus + .hint
-      opacity: 1
+    margin-top: 10em
+
 .aux-panel
   width: 20%
   position: absolute
@@ -92,10 +45,14 @@ form
   bottom: 0
   left: 0
   right: 0
+  height: 50px
   padding: 2em
   width: 100%
   +box-sizing(border-box)
-  background-color: $lightest-gray
+  background-color: $gray-background
+  border-top: 1px solid $lightest-gray
+  border-top-color: rgba(0,0,0,0.1)
+  +box-shadow(0 -1px 4px rgba(0,0,0,0.07), 0 1px 1px rgba(255,255,255,0.8) inset)
 
 
 

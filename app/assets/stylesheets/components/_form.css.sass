@@ -1,0 +1,48 @@
+$form-gutter: 12px
+$form-offset: 11px
+
+.field
+  overflow: hidden
+  margin-bottom: 1.5em
+  label, .editor, .hint
+    display: inline-block
+    +box-sizing(border-box)
+    color: $medium-gray
+  label
+    text-align: right
+    font-size: 1.2em
+    vertical-align: top
+    margin-top: $form-offset
+    width: 17%
+    padding: 0 $form-gutter 0 0
+  .editor
+    width: 70%
+    position: relative
+    input[type="text"], textarea
+      padding: 7px
+      font-family: 'Open Sans', Arial, sans-serif
+      font-size: 1.3em
+      width: 57%
+      +box-sizing(border-box)
+      border: 1px solid $lightest-gray
+      +rounded-corners(3px,3px,3px,3px)
+      background-color: $gray-background
+      +box-shadow(0 1px 2px rgba(0,0,0,0.1) inset)
+      +transition(background-color 0.3s ease-in, border-color 0.3s ease-in)
+      &:focus
+        background-color: white
+        border-color: $link-blue
+  .hint
+    vertical-align: top
+    max-width: 40%
+    font-size: 1.2em
+    color: $medium-gray
+    padding: 0 0 0 $form-gutter
+    margin-left: $form-gutter
+    opacity: 0
+    &.tip
+      padding: .5em .8em
+      +transition(opacity 0.3s ease-in-out)
+  input[type="text"]:focus + .hint, textarea:focus + .hint
+    opacity: 1
+  .editor.boolean, .editor.array
