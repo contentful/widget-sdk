@@ -127,11 +127,12 @@ $account-border-color: #d5d5d5
 .editor-top-left
   .dropdown-btn
     display: inline-block
-    margin-right: -2px
+    margin-right: 5px
   .dropdown-toggle
     font-size: 1.2em
     padding: 6px 10px 6px 12px
-    border: 1px solid white
+    @include rounded-corners(3px,3px,3px,3px)
+    border: 1px solid $light-rule
     i
       margin-left: 8px
       margin-top: 1px
@@ -140,7 +141,6 @@ $account-border-color: #d5d5d5
     background-color: $gray-background
     border: 1px solid $account-border-color
     border-bottom-color: $lightest-gray
-    @include rounded-corners(3px,3px,3px,3px)
 
 .editor-top-right
   position: absolute
