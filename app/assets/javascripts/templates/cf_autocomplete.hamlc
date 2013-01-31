@@ -1,0 +1,29 @@
+Current Link:
+%a(ng-click="visitLink()") {{currentLinkDescription()}}
+%a(ng-click="removeLink()" ng-show="linkedEntry") Remove
+%a.add-new Add new
+
+-#!= JST['search_field'](context)
+.search-field(on-idle-update="searchTerm")
+.results(ng-show="entries.length > 0")
+  %table.result-list
+    %thead
+      %tr
+        %th.cell-type
+          %label Content Type
+        %th.cell-name
+          %label Name
+        %th.cell-by
+          %label By
+  .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
+    %table.result-list
+      %tbody
+        %tr(ng-repeat="entry in entries" cf-click-local="addEntry(entry)" ng-class="{selected: entry==entries[selectedItem]}")
+          %td.cell-type
+            %span {{bucketContext.typeForEntry(entry).data.name}}
+          %td.cell-name
+            %span {{bucketContext.entryTitle(entry)}}
+          %td.cell-by
+            %span Peter Pan
+
+

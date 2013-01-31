@@ -142,65 +142,7 @@ editWidgets =
   link:
     selector:
       name: "Link selector"
-      template: """
-        <div ot-bind="replace">
-          Current Link: <a ng-click="visitLink()">{{currentLinkDescription()}}</a>
-          <a ng-click="removeLink()" ng-show="linkedEntry">Remove</a>
-
-          <input type="text" ng-hide="linkedEntry">
-        </div>
-      """
-      link: (scope, element, attr) ->
-
-        entryTitle = (entry) ->
-          type = scope.bucketContext.typeForEntry(entry)
-          if type.data.displayName?
-            "#{type.data.name}: \"#{entry.data.fields[type.data.displayName][scope.locale]}\""
-          else
-            "#{type.data.name} #{entry.data.id}"
-
-        scope.setLink = (entry) ->
-          return unless entry?
-          link = sys:
-            type: "link"
-            linkType: "entry"
-            id: entry.getId()
-          scope.changeValue link, (err, res) ->
-            unless err?
-              scope.$apply -> scope.linkedEntry = entry
-        
-        scope.removeLink = ->
-          scope.changeValue null, (err, res) ->
-            unless err?
-              element.find('input').val('')
-              scope.$apply -> scope.linkedEntry = null
-
-        element.find('input').autocomplete
-          minLength: 3
-          source: (request, callback) ->
-            # TODO limit query to allowed entryTypes
-            scope.bucketContext.bucket.getEntries {query: request.term, limit: 100}, (err, entries) ->
-              entries = ({label: entryTitle(entry), entry: entry } for entry in entries)
-              callback(entries)
-          select: (event, ui) ->
-            scope.setLink(ui.item.entry)
-            return
-          appendTo: element
-
-        scope.$watch 'value.sys.id', (linkedId, old, scope) ->
-          if linkedId?
-            if scope.value.sys.linkType == 'entry'
-              scope.bucketContext.bucket.getEntry linkedId, (err, entry) ->
-                scope.$apply (scope) -> scope.linkedEntry = entry unless err?
-          else
-            scope.linkedEntry = null
-
-        scope.currentLinkDescription = ->
-          if scope.linkedEntry?
-            entryTitle(scope.linkedEntry)
-          else
-            "(nothing)"
-        
+      template: """<div cf-autocomplete="entry"/>"""
   
 displayWidgets =
   string:

@@ -1,0 +1,230 @@
+/*global Paginator:false*/
+angular.module('contentful/directives').directive('cfAutocomplete', function(){
+  'use strict';
+
+  return {
+    restrict: 'A',
+    template: JST['cf_autocomplete'],
+    link: function($scope, element, attr, modelCtrl) {
+      $scope.searchTerm = '';
+      $scope.paginator = new Paginator();
+      $scope.selectedItem = 0;
+
+      $scope.$watch('searchTerm', function(n,o, scope) {
+        if (n === o) return;
+        scope.paginator.page = 0;
+        $scope.selectedItem = 0;
+        scope.resetEntries();
+      });
+
+      $scope.resetEntries = function() {
+        if ($scope.reloadInProgress || $scope.resetPaused) return;
+
+        if (!$scope.searchTerm || $scope.searchTerm.length === 0) {
+          $scope.entries = [];
+          return;
+        }
+
+        $scope.reloadInProgress = true;
+        $scope.bucketContext.bucket.getEntries($scope.buildQuery(), function(err, entries, sys) {
+          $scope.reloadInProgress = false;
+          if (err) return;
+          $scope.paginator.numEntries = sys.total;
+          $scope.$apply(function(scope){
+            scope.selectedItem = 0;
+            scope.entries = entries;
+          });
+        });
+      };
+
+      $scope.buildQuery = function() {
+        var queryObject = {
+          order: '-sys.updatedAt',
+          limit: $scope.paginator.pageLength,
+          skip: $scope.paginator.skipItems()
+        };
+
+        //queryObject['sys.publishedAt[gt]'] = 0;
+
+        // TODO here, respect the type restriction of the link
+        //queryObject['sys.entryType'] = whatever
+
+        if ($scope.searchTerm && 0 < $scope.searchTerm.length) {
+          queryObject.query = $scope.searchTerm;
+        }
+
+        return queryObject;
+      };
+
+      $scope.pauseReset = function() {
+        if ($scope.resetPaused) return;
+        $scope.resetPaused = true;
+        setTimeout(function() {
+          $scope.resetPaused = false;
+        }, 500);
+      };
+
+      $scope.loadMore = function() {
+        if ($scope.reloadInProgress || $scope.resetPaused) return;
+        if ($scope.paginator.atLast()) return;
+        $scope.paginator.page++;
+        $scope.reloadInProgress = true;
+        $scope.pauseReset();
+        $scope.bucketContext.bucket.getEntries($scope.buildQuery(), function(err, entries, sys) {
+          $scope.reloadInProgress = false;
+          if (err) {
+            $scope.paginator.page--;
+            return;
+          }
+          $scope.paginator.numEntries = sys.total;
+          $scope.$apply(function(scope){
+            var args = [scope.entries.length, 0].concat(entries);
+            scope.entries.splice.apply(scope.entries, args);
+          });
+        });
+
+      };
+
+      var DOWN  = 40,
+          UP    = 38,
+          ENTER = 13,
+          ESC   = 27;
+
+      element.on('keydown', function(event) {
+        if (event.keyCode == DOWN){
+          $scope.selectNext();
+          $scope.$digest();
+          event.preventDefault();
+        } else if (event.keyCode == UP) {
+          $scope.selectPrevious();
+          $scope.$digest();
+          event.preventDefault();
+        }
+        if (event.keyCode == ENTER) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      });
+
+      element.on('keyup', function(event) {
+        if (event.keyCode == ESC) {
+          $scope.$apply(function(scope) {
+            scope.closePicker();
+          });
+          event.preventDefault();
+        } else if (event.keyCode == ENTER) {
+          $scope.$apply(function(scope) {
+            scope.pickSelected();
+          });
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      });
+
+      var scrollToSelected = function() {
+        var selected = element.find('.selected')[0];
+        var $container = element.find('.endless-container');
+
+        var above = selected.offsetTop <= $container.scrollTop();
+        if (above) {
+          selected.scrollIntoView(true);
+          return;
+        }
+
+        var below = $container.scrollTop() + $container.height()<= selected.offsetTop;
+        if (below) {
+          selected.scrollIntoView(false);
+        }
+      };
+
+      $scope.selectNext = function() {
+        $scope.selectedItem++;
+        _.defer(scrollToSelected);
+      };
+
+      $scope.selectPrevious = function() {
+        if (0 < $scope.selectedItem) $scope.selectedItem--;
+        _.defer(scrollToSelected);
+      };
+
+      $scope.closePicker = function() {
+        $scope.searchTerm = '';
+      };
+
+      $scope.pickSelected = function() {
+        var entry = $scope.entries[$scope.selectedItem];
+        var link = {
+          sys: {
+            type: 'link',
+            linkType: 'entry',
+            id: entry.getId()
+            }};
+        $scope.changeValue(link, function(err) {
+          console.log('callback from changeValue in %o with %o', $scope.fieldId, err);
+          if (!err) $scope.$apply(function(scope) {
+            scope.linkedEntry = entry;
+            scope.closePicker();
+          });
+        });
+      };
+
+      $scope.removeLink = function() {
+        return $scope.changeValue(null, function(err) {
+          if (!err) $scope.$apply(function(scope) {
+            scope.linkedEntry = null;
+          });
+        });
+      };
+
+      $scope.$on('valueChanged', function(event, value) {
+        console.log('got valuechange in %o: %o', $scope.fieldId, value);
+        var linkedId = value && value.sys && value.sys.id;
+        if(linkedId) {
+          if (value.sys.linkType == 'entry') {
+            $scope.bucketContext.bucket.getEntry(linkedId, function(err, entry) {
+              if (!err) $scope.$apply(function(scope) {
+                scope.linkedEntry = entry;
+              });
+            });
+          }
+        } else {
+          $scope.linkedEntry = null;
+        }
+      });
+
+      //$scope.$watch('value.sys.id', function(linkedId, old, scope) {
+        //console.log('value.sys.id for %o: %o -> %o', scope.fieldId, old, linkedId);
+        //if(linkedId) {
+          //if (scope.value.sys.linkType == 'entry') {
+            //scope.bucketContext.bucket.getEntry(linkedId, function(err, entry) {
+              //if (!err) scope.$apply(function(scope) {
+                //scope.linkedEntry = entry;
+              //});
+            //});
+          //}
+        //} else {
+          //scope.linkedEntry = null;
+        //}
+      //});
+      
+      $scope.currentLinkDescription = function() {
+        console.log('trying to render link description in %o for %o', $scope.fieldId, $scope.linkedEntry);
+        if ($scope.linkedEntry) {
+          return $scope.entryTitle($scope.linkedEntry);
+        } else {
+          return '(nothing)';
+        }
+      };
+
+      $scope.entryTitle = function(entry) {
+        var type = $scope.bucketContext.typeForEntry(entry);
+        if (type.data.displayName) {
+          return type.data.name + ': \"' + entry.data.fields[type.data.displayName][$scope.locale] + '\"';
+        } else {
+          return type.data.name + ' ' + entry.data.id;
+        }
+      };
+    }
+  };
+});
+

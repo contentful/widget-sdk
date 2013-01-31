@@ -1,0 +1,32 @@
+*[cf-autocomplete]
+  +box-sizing(border-box)
+  *
+    +box-sizing(border-box)
+  display: block
+  position: relative
+  width: 50%
+  .search-field
+  .results
+    position: absolute
+    left: 10px
+    top: 50px
+    right: 10px
+    z-index: 10
+    background-color: white
+    +box-shadow(0 2px 8px rgba(0,0,0, 0.4))
+    +rounded-corners(3px, 3px, 3px, 3px)
+    border-bottom: 1px solid $light-rule
+  .endless-container
+    max-height: 200px
+
+  .cell-type
+    width: 100px
+  .cell-name
+    width: auto
+    overflow: hidden
+    text-overflow: ellipsis
+  .cell-by
+    width: 100px
+
+  tr.selected
+    background-color: $result-list-highlight
