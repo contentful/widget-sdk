@@ -32,6 +32,8 @@
 
 // Font-sizes and colors for table
 
+$result-list-highlight: #fbfbfb
+
 .result-list
   td,
   th
@@ -48,7 +50,7 @@
     padding: .4em 0 .3em 0
     color: $light-gray
     +box-shadow(0 1px 0 rgba(0,0,0,0.1) inset)
-    border-bottom: 1px solid #e1e1e1
+    border-bottom: 1px solid $dark-rule
   th:first-child
     padding-left: 1.4em
     +box-shadow(0 0 0 transparent)
@@ -64,7 +66,7 @@
     padding-bottom: 0
   thead
     tr
-      border-right: 1px solid #e1e1e1
+      border-right: 1px solid $dark-rule
   tbody
     tr
       border: 1px solid $light-rule
@@ -130,7 +132,7 @@
 .result-list
   tbody
     tr:hover
-      background-color: #fbfbfb
+      background-color: $result-list-highlight
       cursor: pointer
 
 // State variations for main-results
