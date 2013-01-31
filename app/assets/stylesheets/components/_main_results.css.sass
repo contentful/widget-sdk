@@ -19,6 +19,11 @@
   +rounded-corners(4px,0,0,0)
   overflow-y: auto
 
+.result-list.main-results
+  tbody
+    tr
+      border-right: none
+
 // State Modifier for when used with left nav (kinda layout related)
 
 .left-nav-active .main-header
@@ -57,10 +62,13 @@
     vertical-align: top
     padding-top: 0
     padding-bottom: 0
+  thead
+    tr
+      border-right: 1px solid #e1e1e1
   tbody
     tr
       border: 1px solid $light-rule
-      border-right: none
+      //border-right: none
   .ss-star
     font-size: .8em
     color: $gold
