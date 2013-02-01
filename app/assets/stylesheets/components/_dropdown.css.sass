@@ -130,10 +130,11 @@ $account-border-color: #d5d5d5
     margin-right: 5px
   .dropdown-toggle
     font-size: 1.2em
-    padding: 6px 10px 6px 12px
+    padding: 6px 10px 5px 11px
     @include rounded-corners(3px,3px,3px,3px)
-    border: 1px solid $light-rule
+    border: 1px solid darken($light-rule, 1%)
     i
+      color: darken($lightest-gray, 6%)
       margin-left: 8px
       margin-top: 1px
   .dropdown-toggle:hover,
@@ -141,6 +142,8 @@ $account-border-color: #d5d5d5
     background-color: $gray-background
     border: 1px solid $account-border-color
     border-bottom-color: $lightest-gray
+    i
+      color: $dark-gray
 
 .editor-top-right
   position: absolute
@@ -148,6 +151,7 @@ $account-border-color: #d5d5d5
   width: auto
   .dropdown-toggle
     width: auto
+    margin-left: 5px
     padding-right: 1.8em !important
     i
       position: absolute 

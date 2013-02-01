@@ -23,8 +23,8 @@ button
     cursor: pointer
   &:active
     top: 1px
-    +box-shadow(0 1px 2px rgba(0,0,0,0.05) inset)
-    +gradient(darken($gray-background, 4%), darken($gray-background, 2%))
+    +box-shadow(0 1px 2px darken($gray-background, 5%) inset)
+    +gradient($gray-background, darken($gray-background, 2%))
 
 %blue-button
   +box-shadow(0 2px 1px rgba(0,0,0,0.08), 0 1px 1px lighten($blue, 7%) inset)
@@ -32,16 +32,17 @@ button
   border: 1px solid darken($blue, 6%)
   +border-radius(3px 3px 3px 3px)
   font-weight: 600
-  font-size: 1.1em
-  padding: .4em 1em .5em
-
+  font-size: 12px
+  padding: .4em 1.1em .5em
+  i
+    color: #7dc7fb
   &:hover
     cursor: pointer
     +gradient(lighten($blue, 5%), darken($blue, 6%))
   &:active
     margin-top: .1em
-    +box-shadow(0 1px 2px rgba(0,0,0,0.1) inset)
-    +gradient(darken($blue, 4%), darken($blue, 4%))
+    +box-shadow(0 1px 2px darken($blue, 5%) inset)
+    +gradient($blue, darken($blue, 4%))
 
 
 %gray-button
@@ -72,7 +73,7 @@ button
     +gradient(lighten($green, 5%), darken($green, 6%))
   &:active
     margin-top: .1em
-    +box-shadow(0 1px 2px rgba(0,0,0,0.1) inset)
-    +gradient(darken($green, 4%), darken($green, 4%))
+    +box-shadow(0 1px 2px darken($green, 5%) inset)
+    +gradient($green, darken($green, 4%))
 
 
