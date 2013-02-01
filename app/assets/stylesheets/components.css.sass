@@ -6,19 +6,21 @@
 @import "components/modal"
 @import "components/form"
 @import "components/action_bar"
+@import "components/button_set"
 
 
 %blue-button
-  +box-shadow(0 2px 1px rgba(0,0,0,0.08))
+  +box-shadow(0 2px 1px rgba(0,0,0,0.08), 0 1px 1px lighten($blue, 7%) inset)
   +blue-highlight
+  border: 1px solid darken($blue, 6%)
   +border-radius(3px 3px 3px 3px)
   font-weight: 600
   font-size: 1.1em
-  padding: .5em 1.1em .6em .8em
+  padding: .4em .8em .5em
 
   &:hover
     cursor: pointer
-    +gradient(#61aae2, #2787c6)
+    +gradient(lighten($blue, 5%), darken($blue, 10%))
   &:active
     margin-top: .15em
     +box-shadow(0 0 0 transparent)

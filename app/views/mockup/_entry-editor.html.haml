@@ -116,7 +116,7 @@
   .field(data-field-type="location" data-field-widget="googlemap")
     %label Location Picker
     .editor
-      %iframe(width="425" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.de/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q=Berlin&amp;aq=&amp;sll=51.175806,10.454119&amp;sspn=8.654702,23.269043&amp;ie=UTF8&amp;hq=&amp;hnear=Berlin&amp;t=m&amp;ll=52.519146,13.406067&amp;spn=0.026114,0.072956&amp;z=13&amp;iwloc=A&amp;output=embed")
+      //%iframe(width="425" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.de/maps?f=q&amp;source=s_q&amp;hl=en&amp;geocode=&amp;q=Berlin&amp;aq=&amp;sll=51.175806,10.454119&amp;sspn=8.654702,23.269043&amp;ie=UTF8&amp;hq=&amp;hnear=Berlin&amp;t=m&amp;ll=52.519146,13.406067&amp;spn=0.026114,0.072956&amp;z=13&amp;iwloc=A&amp;output=embed")
       %input.coordinates(type="text")
       %button.remove-location Remove
   .field(data-field-type="number" data-field-widget="textField")
@@ -125,10 +125,10 @@
 
 .action-bar
   .button-set
-    %button.publish
-    %button.unpublish
-    %button.delete
-    %button.archive
+    %button.delete Delete
+    %button.archive Archive
+    %button.unpublish Unpublish
+    %button.publish Publish
   .save-status.green
     %i.ss-check
     %span All changes saved successfully
