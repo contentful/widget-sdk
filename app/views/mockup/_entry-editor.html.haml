@@ -81,14 +81,22 @@
   .field(data-field-type="date" data-field-widget="datePicker")
     %label Date
     .editor
-      / Idea for a fitting widget?
-      / We used jQuery-UI/Native Datepickers(not well supported) before
-      / Maybe the Date Directive from http://angular-ui.github.com/ will
-      / also do.
+      %input.datepicker(type="text")
+      .hint.tip
+        Hint to the user about the meaning of the field
+        .arrow-left
+        .arrow-left-border
   .field(data-field-type="date" data-field-widget="timePicker")
     %label DateTime
     .editor
-      / Date with time
+      %input.datepicker(type="text")
+      %input.time(value="14:33")
+      .hint.tip
+        Hint to the user about the meaning of the field
+        .arrow-left
+        .arrow-left-border
+    :javascript
+      $('.datepicker').datepicker()
   .field(data-field-type="array" data-field-widget="textField")
     %label Array Field
     .editor
