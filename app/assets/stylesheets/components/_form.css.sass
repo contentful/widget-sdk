@@ -42,15 +42,23 @@ $form-offset: 11px
     opacity: 0
     &.tip
       padding: .7em .9em
+      background-color: white
+      background-color: rgba(255,255,255,0.95)
       +transition(opacity 0.3s ease-in-out)
+      border-color: darken($light-rule, 3%)
+      +box-shadow(0 1px 3px rgba(0,0,0,0.05))
+      .arrow-left
+        border-right-color: white
+      .arrow-left-border
+        border-right-color: darken($light-rule, 5%)
   .error
     &.tip
-      background: darken($red, 6%)
+      background: darken($red, 3%)
       border: 1px solid darken($red, 16%)
       color: white
       +box-shadow(0 1px 1px rgba(255,255,255,0.25) inset)
       .arrow-left
-        border-right-color: darken($red, 6%)
+        border-right-color: darken($red, 3%)
       .arrow-left-border
         border-right-color: darken($red, 16%)
 
