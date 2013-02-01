@@ -198,21 +198,24 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
 
   $scope.loadCounts = function() {
     var scope = this;
-    this.bucketContext.bucket.getEntries({limit: 0}, function(err, entries, sys) {
-      scope.$apply(function(scope) {
-        scope.counts['all'] = sys.total;
-      });
-    });
-    this.bucketContext.bucket.getEntries({limit: 0, 'sys.archivedAt[gt]': 0}, function(err, entries, sys) {
-      scope.$apply(function(scope) {
-        scope.counts['archived'] = sys.total;
-      });
-    });
-    this.bucketContext.bucket.getEntries({limit: 0, 'sys.publishedAt[gt]': 0}, function(err, entries, sys) {
-      scope.$apply(function(scope) {
-        scope.counts['published'] = sys.total;
-      });
-    });
+    var countRequests = {
+      'all'        : {},
+      'archived'   : {'sys.archivedAt[gt]'     : 0    },
+      'published'  : {'sys.publishedAt[gt]'    : 0    },
+      'unpublished': {'sys.publishedAt[exists]': false}
+    };
+
+    function updateCount(group) {
+      return function(err, entries, sys) {
+        scope.$apply(function(scope) {
+          scope.counts[group] = sys.total;
+        });
+      };
+    }
+
+    for (var group in countRequests) {
+      this.bucketContext.bucket.getEntries(countRequests[group], updateCount(group));
+    }
   };
 
   $scope.$watch('bucketContext.bucket', 'loadCounts()');

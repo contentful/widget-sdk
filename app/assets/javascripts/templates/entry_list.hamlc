@@ -10,6 +10,7 @@
         %small(ng-show="counts.published != null") ({{counts.published}})
       %li(ng-class="{active: tab.params.list=='unpublished'}")
         %span(ng-click="switchList('unpublished')") Not Published
+        %small(ng-show="counts.unpublished != null") ({{counts.unpublished}})
       %li(ng-class="{active: tab.params.list == 'archived'}")
         %span(ng-click="switchList('archived')") Archived
         %small(ng-show="counts.archived != null") ({{counts.archived}})
