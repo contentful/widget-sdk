@@ -16,6 +16,11 @@ $gold: #e6ae17
 $red: #f36d3f
 
 
+/* AVATAR SIZES */
+
+$avatar-width: 24px
+
+
 /* BASICS */
 
 body
@@ -44,3 +49,8 @@ i.ss-delete
 .separator
   height: 1px
   background: $light-rule
+.avatar, .account .user
+  img
+    width: $avatar-width
+    +border-radius(3px)
+
