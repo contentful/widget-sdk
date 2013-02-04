@@ -5,7 +5,7 @@
     +box-sizing(border-box)
   position: relative
   .ss-dropdown
-    font-size: .8em
+    font-size: 8px
     //position: absolute
     //right: .2em
     float: right
@@ -118,10 +118,46 @@ $account-border-color: #d5d5d5
     float: right
     width: 30%
     img
-      width: 2.2em
       vertical-align: middle
+      margin-top: -.4em
   .user.active 
     padding-bottom: .4em
+
+// Editor configuration
+.editor-top-left
+  .dropdown-btn
+    display: inline-block
+    margin-right: 5px
+  .dropdown-toggle
+    font-size: 1.2em
+    padding: 6px 10px 5px 11px
+    @include rounded-corners(3px,3px,3px,3px)
+    border: 1px solid darken($light-rule, 1%)
+    i
+      color: darken($lightest-gray, 6%)
+      margin-left: 8px
+      margin-top: 1px
+  .dropdown-toggle:hover,
+  .active .dropdown-toggle
+    background-color: $gray-background
+    border: 1px solid $account-border-color
+    border-bottom-color: $lightest-gray
+    i
+      color: $dark-gray
+
+.editor-top-right
+  position: absolute
+  right: 0
+  width: auto
+  .dropdown-toggle
+    width: auto
+    margin-left: 5px
+    padding-right: 1.8em !important
+    i
+      position: absolute 
+      font-size: 8px !important
+      top: 7px
+      right: 4px
 
 /* ADD BUTTON DROPDOWN */
 

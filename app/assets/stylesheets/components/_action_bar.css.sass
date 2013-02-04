@@ -1,0 +1,83 @@
+.action-bar
+  position: absolute
+  bottom: 0
+  left: 0
+  right: 0
+  padding: 4px 20px
+  height: 54px
+  width: 100%
+  +box-sizing(border-box)
+  background-color: $gray-background
+  border-top: 1px solid $lightest-gray
+  border-top-color: rgba(0,0,0,0.1)
+  +box-shadow(0 -1px 4px rgba(0,0,0,0.07), 0 1px 1px rgba(255,255,255,0.8) inset)
+
+  .save-status, .other-users, .button-set
+    display: inline-block
+    margin-top: .6em
+    padding: .6em 1em
+    +box-sizing(border-box)
+    float: right
+  .other-users
+    padding-right: 0
+  .button-set
+    margin-top: .6em 
+    padding: 0
+  .save-status
+    float: left
+    padding-left: 0
+    font-size: 1.2em
+    i
+      margin-right: 2px
+    &.green
+      i
+        color: $green
+        position: relative
+        top: 1px
+        +text-shadow(0 1px 0 rgba(255,255,255,0.8))
+  .other-users
+    display: inline-block
+    +box-sizing(border-box)
+    font-size: 1.1em
+    color: $light-gray
+    span, ul
+      display: inline-block
+      vertical-align: top
+    span
+      margin-top: 1px
+      margin-right: 5px
+    ul
+      margin-top: -4px
+    .avatar
+      display: inline-block
+      position: relative
+      margin-left: 3px
+      line-height: .5em
+      +border-radius(3px)
+      .tip
+        opacity: 0
+        top: -4.2em
+        line-height: 1em
+        padding: .5em .8em .6em
+        +transition(opacity 0.3s ease-in)
+        // Need to horizontally position the tip with JS
+      img 
+        opacity: .2
+        -webkit-filter: saturate(0%)
+        -moz-filter: saturate(0%)
+        -ms-filter: saturate(0%)
+        -o-filter: saturate(0%)
+        filter: saturate(0%)
+        +box-shadow(0 1px 2px rgba(0,0,0,0.3) inset, 0 1px 0 rgba(255,255,255,1))
+        +transition(opacity 0.3s ease-in)
+    .avatar:hover 
+      .tip
+        opacity: 1
+      img
+        opacity: 1
+        -webkit-filter: saturate(100%)
+        -moz-filter: saturate(100%)
+        -ms-filter: saturate(100%)
+        -o-filter: saturate(100%)
+        filter: saturate(100%)
+      

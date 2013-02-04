@@ -5,22 +5,54 @@
 @import "components/main_results"
 @import "components/modal"
 @import "components/cf_autocomplete"
+@import "components/form"
+@import "components/action_bar"
+@import "components/button_set"
 
-%blue-button
-  +box-shadow(0 2px 1px rgba(0,0,0,0.08))
-  +blue-highlight
-  +border-radius(3px 3px 3px 3px)
-  font-weight: 600
-  font-size: 1.1em
-  padding: .5em 1.1em .6em .8em
+button::-moz-focus-inner
+  border: 0
+  padding: 0
+  outline: 0
+
+button
+  -webkit-appearance: none
+  color: $medium-gray
+  display: inline-block
+  vertical-align: middle
+  position: relative
+  font-size: 1.2em
+  padding: .65em 1.2em
+  overflow: hidden
+  border: 1px solid darken($gray-background, 10%)
+  +border-radius(3px)
+  +gradient($gray-background, darken($gray-background, 4%))
+  +box-shadow(0 1px 1px rgba(255,255,255,0.8) inset, 0 2px 1px rgba(0,0,0,0.05)) 
 
   &:hover
     cursor: pointer
-    +gradient(#61aae2, #2787c6)
   &:active
-    margin-top: .15em
-    +box-shadow(0 0 0 transparent)
-    +box-shadow(0 1px 2px rgba(0,0,0,0.1) inset)
+    top: 1px
+    +box-shadow(0 1px 2px darken($gray-background, 5%) inset)
+    +gradient($gray-background, darken($gray-background, 2%))
+
+%blue-button
+  +box-shadow(0 2px 1px rgba(0,0,0,0.08), 0 1px 1px lighten($blue, 7%) inset)
+  +blue-highlight
+  border: 1px solid darken($blue, 6%)
+  +border-radius(3px 3px 3px 3px)
+  font-weight: 600
+  font-size: 12px
+  padding: .4em 1.1em .5em
+  i
+    color: #7dc7fb
+  &:hover
+    cursor: pointer
+    +gradient(lighten($blue, 5%), darken($blue, 6%))
+  &:active
+    margin-top: .1em
+    +box-shadow(0 1px 2px darken($blue, 5%) inset)
+    +gradient($blue, darken($blue, 4%))
+
 
 %gray-button
   background-color: $gray-background
@@ -29,11 +61,27 @@
   +rounded-corners(3px, 3px, 3px, 3px)
   line-height: 1.8em
   color: $medium-gray
+
   &:hover
     cursor: pointer
     color: $dark-gray
     border-color: $light-gray
   &:active
-    margin-top: .15em
+    margin-top: .1em
     +box-shadow(0 0 0 transparent)
     +box-shadow(0 1px 2px rgba(0,0,0,0.1) inset)
+
+%green-button
+  +green-highlight
+  font-weight: 600
+  border-color: darken($green, 10%)
+  +box-shadow(0 1px 1px lighten($green, 7%) inset, 0 2px 1px rgba(0,0,0,0.03))
+
+  &:hover
+    cursor: pointer
+    +gradient(lighten($green, 5%), darken($green, 6%))
+  &:active
+    +box-shadow(0 1px 2px darken($green, 5%) inset)
+    +gradient($green, darken($green, 4%))
+
+

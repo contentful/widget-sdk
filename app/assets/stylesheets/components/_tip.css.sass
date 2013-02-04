@@ -1,7 +1,7 @@
 .tip
   background-color: $gray-background
-  border: 1px solid $lightest-gray
-  padding: .2em .6em
+  border: 1px solid lighten($lightest-gray, 1%)
+  padding: .1em .6em
   font-size: 1em
   position: absolute
   @include rounded-corners(3px,3px,3px,3px)
@@ -9,16 +9,27 @@
   .arrow-right
     position: absolute
     top: 50%
-    margin-top: -4px
+    margin-top: -5px
     width: 0
     height: 0
-    border-top: 4px solid transparent
-    border-bottom: 4px solid transparent
-    border-left: 4px solid $gray-background
+    border-top: 5px solid transparent
+    border-bottom: 5px solid transparent
+    border-left: 5px solid $gray-background
     position: absolute
-    right: -4px
+    right: -5px
     z-index: 1
   .arrow-right-border
+    position: absolute
+    top: 50%
+    margin-top: -6px
+    width: 0
+    height: 0
+    border-top: 6px solid transparent
+    border-bottom: 6px solid transparent
+    border-left: 6px solid lighten($lightest-gray, 1%)
+    position: absolute
+    right: -6px
+  .arrow-left
     position: absolute
     top: 50%
     margin-top: -5px
@@ -26,9 +37,67 @@
     height: 0
     border-top: 5px solid transparent
     border-bottom: 5px solid transparent
-    border-left: 5px solid $lightest-gray
+    border-right: 5px solid $gray-background
     position: absolute
-    right: -5px
+    left: -5px
+    z-index: 1
+  .arrow-left-border
+    position: absolute
+    top: 50%
+    margin-top: -6px
+    width: 0
+    height: 0
+    border-top: 6px solid transparent
+    border-bottom: 6px solid transparent
+    border-right: 6px solid lighten($lightest-gray, 1%)
+    position: absolute
+    left: -6px
+  .arrow-up
+    position: absolute
+    left: 50%
+    margin-left: -5px
+    width: 0
+    height: 0
+    border-left: 5px solid transparent
+    border-right: 5px solid transparent
+    border-bottom: 5px solid $gray-background
+    position: absolute
+    top: -5px
+    z-index: 1
+  .arrow-up-border
+    position: absolute
+    left: 50%
+    margin-left: -6px
+    width: 0
+    height: 0
+    border-left: 6px solid transparent
+    border-right: 6px solid transparent
+    border-bottom: 6px solid lighten($lightest-gray, 1%)
+    position: absolute
+    top: -6px
+  .arrow-down
+    position: absolute
+    left: 50%
+    margin-left: -5px
+    width: 0
+    height: 0
+    border-left: 5px solid transparent
+    border-right: 5px solid transparent
+    border-top: 5px solid $gray-background
+    position: absolute
+    bottom: -5px
+    z-index: 1
+  .arrow-down-border
+    position: absolute
+    left: 50%
+    margin-left: -6px
+    width: 0
+    height: 0
+    border-left: 6px solid transparent
+    border-right: 6px solid transparent
+    border-top: 6px solid lighten($lightest-gray, 1%)
+    position: absolute
+    bottom: -6px
 
   
   

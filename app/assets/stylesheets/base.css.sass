@@ -12,15 +12,21 @@ $gray-background: #f3f3f3
 
 /* STATUS COLORS */
 
+$blue: #3e97d6
 $green: #33ca6c
 $gold: #e6ae17
-$red: #f36d3f
+$red: #f2602e
+
+
+/* AVATAR SIZES */
+
+$avatar-width: 27px
 
 
 /* BASICS */
 
 body
-  font-family: 'Open Sans', sans-serif
+  font-family: 'Open Sans', Arial, sans-serif
   font-size: 10px
   line-height: 1.5em
   color: $medium-gray
@@ -32,7 +38,6 @@ a
 .logo
   img
     width: 50%
-    
 i.ss-delete
   font-size: .8em
   color: $lightest-gray
@@ -45,3 +50,8 @@ i.ss-delete
 .separator
   height: 1px
   background: $light-rule
+.avatar, .account .user
+  img
+    width: $avatar-width
+    +border-radius(3px)
+
