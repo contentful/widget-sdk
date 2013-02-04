@@ -1,34 +1,105 @@
-%h2 {{headline()}}
+.editor-configuration
+  .editor-top-left
+    %h1
+      {{headline()}}
+    .dropdown-btn
+      %a.btn.dropdown-toggle
+        %i.ss-dropdown
+        %span Default-Interface
+      .dropdown-menu(style="display:none")
+        …
+        …
+        …
+    .dropdown-btn
+      %a.dropdown-toggle
+        %i.ss-dropdown
+        %span Language
+      .dropdown-menu(style="display:none")
+        …
+        …
+        …
+  .editor-top-right
+    .dropdown-btn
+      %a.btn.dropdown-toggle
+        %i.ss-dropdown
+        %span Meta
+      .dropdown-menu(style="display:none")
+        …
+        …
+        …
+      %a.btn
+        %span Apps
+      %a.btn
+        %span Events
+
+.aux-panel
+  .meta(ng-switch="!!publishedAt()")
+    %div(ng-switch-when="true")
+      %table
+        %tr
+          %th Published at
+          %td {{publishedAt().toLocaleString('de-DE')}}
+        %tr
+          %th Published Version
+          %td {{publishedVersion()}}
+        %tr
+          %th Current
+          %td {{doc.version}}
+    %div(ng-switch-default="")
+      %p Not published yet
 
 %form.form-horizontal(name="entryForm")
-  .well.well-small.span3.pull-right.row-fluid(ng-show="canPublish()")
-    %h5.muted Publishing
-    %ng-switch(on="!!publishedAt()")
-      %div(ng-switch-when="true")
-        %table.table
-          %tr
-            %th Published at
-            %td {{publishedAt().toLocaleString('de-DE')}}
-          %tr
-            %th Version
-            %td {{publishedVersion()}}
-          %tr
-            %th Current
-            %td {{doc.version}}
-        %button.span12.btn(ng-show="doc.version > publishedVersion()+1" ng-disabled="entryForm.$invalid" ng-click="publish()") Republish
-        %br
-        %br
-        %button.span12.btn.btn-danger(ng-disabled="entryForm.$invalid" ng-click="unpublish()") Unpublish
-      %div(ng-switch-default="")
-        %p Not published yet
-        %button.span12.btn(ng-disabled="entryForm.$invalid" ng-click="publish()") Publish
+  -#.field(data-field-type="string" data-field-widget="textField")
+    later generate these tags so they can be used in CSS
+  .field(ng-repeat="field in fields()")
+    %label {{field.name}}
+    .editor
+      %cf-field-editor.controls(
+        doc="doc"
+        type="field.type"
+        editor="textField"
+        field-id="field.id"
+        locale="locale"
+        bucket-context="bucketContext")
+      -#.hint.tip
+        Hint to the user about the meaning of the field
+        .arrow-left
+        .arrow-left-border
+      .error.tip
+        Error on the field entry
+        .arrow-left
+        .arrow-left-border
 
-  .control-group(ng-repeat="field in fields()")
-    %label.control-label {{field.name}}
-    %cf-field-editor.controls(
-      doc="doc"
-      type="field.type"
-      editor="textField"
-      field-id="field.id"
-      locale="locale"
-      bucket-context="bucketContext")
+.action-bar
+  .button-set
+    %button.delete(ng-show="entry.canDelete()") Delete
+    %button.archive(ng-show="entry.canArchive()") Archive
+    %button.unpublish(ng-show="entry.canUnpublish()") Unpublish
+    %button.publish(ng-show="entry.canPublish() && entry.canUnpublish()") Republish
+    %button.publish(ng-show="entry.canPublish() && !entry.canUnpublish()") Publish
+  -#.save-status.green
+    Not sure if we need this for now
+    %i.ss-check
+    %span All changes saved successfully
+  .other-users
+    %span 3 others online
+    %ul
+      %li.avatar
+        %img(src="assets/avatar-2.jpg")
+        .tip
+          Jan
+          .arrow-down
+          .arrow-down-border
+      %li.avatar
+        %img(src="assets/avatar-3.jpg")
+        .tip
+          Stephan
+          .arrow-down
+          .arrow-down-border
+      %li.avatar
+        %img(src="assets/avatar-4.jpg")
+        .tip
+          Chris
+          .arrow-down
+          .arrow-down-border
+
