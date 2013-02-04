@@ -68,7 +68,7 @@ angular.module('contentful/directives').directive('cfFieldEditor', function(widg
         }
       };
 
-      elm.html(widget.template + '<span class="help-inline">'+widget.name+'</span>');
+      elm.html(widget.template);
       elm.on('blur', '*', function() {
         scope.$emit('inputBlurred', scope.fieldId);
       });
