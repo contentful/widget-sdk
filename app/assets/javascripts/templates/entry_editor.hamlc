@@ -32,43 +32,44 @@
       %a.btn
         %span Events
 
-.aux-panel
-  .meta(ng-switch="!!publishedAt()")
-    %div(ng-switch-when="true")
-      %table
-        %tr
-          %th Published at
-          %td {{publishedAt().toLocaleString('de-DE')}}
-        %tr
-          %th Published Version
-          %td {{publishedVersion()}}
-        %tr
-          %th Current
-          %td {{doc.version}}
-    %div(ng-switch-default="")
-      %p Not published yet
+.editor-main
+  .aux-panel
+    .meta(ng-switch="!!publishedAt()")
+      %div(ng-switch-when="true")
+        %table
+          %tr
+            %th Published at
+            %td {{publishedAt().toLocaleString('de-DE')}}
+          %tr
+            %th Published Version
+            %td {{publishedVersion()}}
+          %tr
+            %th Current
+            %td {{doc.version}}
+      %div(ng-switch-default="")
+        %p Not published yet
 
-%form.form-horizontal(name="entryForm")
-  -#.field(data-field-type="string" data-field-widget="textField")
-    later generate these tags so they can be used in CSS
-  .field(ng-repeat="field in fields()")
-    %label {{field.name}}
-    .editor
-      %cf-field-editor.controls(
-        doc="doc"
-        type="field.type"
-        editor="textField"
-        field-id="field.id"
-        locale="locale"
-        bucket-context="bucketContext")
-      -#.hint.tip
-        Hint to the user about the meaning of the field
-        .arrow-left
-        .arrow-left-border
-      .error.tip
-        Error on the field entry
-        .arrow-left
-        .arrow-left-border
+  %form.form-horizontal(name="entryForm")
+    -#.field(data-field-type="string" data-field-widget="textField")
+      later generate these tags so they can be used in CSS
+    .field(ng-repeat="field in fields()")
+      %label {{field.name}}
+      .editor
+        %cf-field-editor.controls(
+          doc="doc"
+          type="field.type"
+          editor="textField"
+          field-id="field.id"
+          locale="locale"
+          bucket-context="bucketContext")
+        -#.hint.tip
+          Hint to the user about the meaning of the field
+          .arrow-left
+          .arrow-left-border
+        .error.tip
+          Error on the field entry
+          .arrow-left
+          .arrow-left-border
 
 .action-bar
   .button-set

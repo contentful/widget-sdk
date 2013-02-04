@@ -1,3 +1,20 @@
+$editor-configuration-height: 6.8em
+$editor-actions-height: 54px
+
+%entity-editor
+
+.entry-editor
+  @extend %entry-editor
+
+.editor-main
+  position: absolute
+  top: $editor-configuration-height + 1em
+  bottom: $editor-actions-height
+  left: 0
+  right: 0
+  padding-top: 1em
+  overflow-y: auto
+
 .editor-configuration
   margin-top: 1em
   position: absolute
@@ -36,14 +53,9 @@
       position: relative
       top: 1px
 
-form
-  &.form-horizontal
-    margin-top: 11em
-
 .aux-panel
   width: 20%
   position: absolute
-  top: 7.8em
   right: 0
   th
     text-align: left
