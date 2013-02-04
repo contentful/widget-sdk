@@ -5,7 +5,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(){
   return {
     restrict: 'A',
     template: JST['cf_autocomplete'],
-    link: function($scope, element, attr, modelCtrl) {
+    link: function($scope, element) {
       $scope.searchTerm = '';
       $scope.paginator = new Paginator();
       $scope.selectedItem = 0;
@@ -47,7 +47,8 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(){
         //queryObject['sys.publishedAt[gt]'] = 0;
 
         // TODO here, respect the type restriction of the link
-        //queryObject['sys.entryType'] = whatever
+        // queryObject['sys.entryType'] = whatever
+        // This can't be done without the constraints though
 
         if ($scope.searchTerm && 0 < $scope.searchTerm.length) {
           queryObject.query = $scope.searchTerm;
@@ -99,15 +100,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(){
           $scope.selectPrevious();
           $scope.$digest();
           event.preventDefault();
-        }
-        if (event.keyCode == ENTER) {
-          event.preventDefault();
-          event.stopPropagation();
-        }
-      });
-
-      element.on('keyup', function(event) {
-        if (event.keyCode == ESC) {
+        } else if (event.keyCode == ESC) {
           $scope.$apply(function(scope) {
             scope.closePicker();
           });
@@ -124,15 +117,11 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(){
       var scrollToSelected = function() {
         var selected = element.find('.selected')[0];
         var $container = element.find('.endless-container');
-
         var above = selected.offsetTop <= $container.scrollTop();
+        var below = $container.scrollTop() + $container.height()<= selected.offsetTop;
         if (above) {
           selected.scrollIntoView(true);
-          return;
-        }
-
-        var below = $container.scrollTop() + $container.height()<= selected.offsetTop;
-        if (below) {
+        } else if (below) {
           selected.scrollIntoView(false);
         }
       };
@@ -153,18 +142,8 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(){
 
       $scope.pickSelected = function() {
         var entry = $scope.entries[$scope.selectedItem];
-        var link = {
-          sys: {
-            type: 'link',
-            linkType: 'entry',
-            id: entry.getId()
-            }};
-        $scope.changeValue(link, function(err) {
-          console.log('callback from changeValue in %o with %o', $scope.fieldId, err);
-          if (!err) $scope.$apply(function(scope) {
-            scope.linkedEntry = entry;
-            scope.closePicker();
-          });
+        $scope.setLink(entry, function(err) {
+          if (!err) $scope.closePicker();
         });
       };
 
@@ -176,8 +155,77 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(){
         });
       };
 
+      $scope.setLink = function(entry, callback) {
+        var link = {
+          sys: {
+            type: 'link',
+            linkType: 'entry',
+            id: entry.getId()
+            }};
+        $scope.changeValue(link, function(err) {
+          $scope.$apply(function(scope) {
+            if (err) {
+              callback(err);
+            } else {
+              scope.linkedEntry = entry;
+              callback(null);
+            }
+          });
+        });
+      };
+
+      $scope.visitLink = function() {
+        var entry = $scope.linkedEntry;
+        var editor = _.find($scope.bucketContext.tabList.items, function(tab){
+          return (tab.viewType == 'entry-editor' && tab.params.entry.getId() == entry.getId());
+        });
+        if (!editor) {
+          editor = $scope.bucketContext.tabList.add({
+            viewType: 'entry-editor',
+            section: 'entries',
+            params: {
+              entry: entry,
+              mode: 'edit'
+            },
+            title: this.bucketContext.entryTitle(entry)
+          });
+        }
+        editor.activate();
+      };
+
+      $scope.addNew = function(entryType) {
+        $scope.bucketContext.bucket.createEntry({
+          sys: {
+            entryType: entryType.getId()
+          }
+        }, function(errCreate, entry){
+          if (errCreate) {
+            console.log('Error creating entry', errCreate);
+            return;
+          }
+          $scope.setLink(entry, function(errSetLink) {
+            if (errSetLink) {
+              console.log('Error linking entry', errSetLink);
+              entry.delete(function(errDelete) {
+                console.log('Error deleting entry', errDelete);
+              });
+              return;
+            }
+            $scope.bucketContext.tabList.add({
+              viewType: 'entry-editor',
+              section: 'entries',
+              params: {
+                entry: entry,
+                bucket: $scope.bucketContext.bucket,
+                mode: 'create'
+              },
+              title: 'New Entry'
+            }).activate();
+          });
+        });
+      };
+
       $scope.$on('valueChanged', function(event, value) {
-        console.log('got valuechange in %o: %o', $scope.fieldId, value);
         var linkedId = value && value.sys && value.sys.id;
         if(linkedId) {
           if (value.sys.linkType == 'entry') {
@@ -192,23 +240,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(){
         }
       });
 
-      //$scope.$watch('value.sys.id', function(linkedId, old, scope) {
-        //console.log('value.sys.id for %o: %o -> %o', scope.fieldId, old, linkedId);
-        //if(linkedId) {
-          //if (scope.value.sys.linkType == 'entry') {
-            //scope.bucketContext.bucket.getEntry(linkedId, function(err, entry) {
-              //if (!err) scope.$apply(function(scope) {
-                //scope.linkedEntry = entry;
-              //});
-            //});
-          //}
-        //} else {
-          //scope.linkedEntry = null;
-        //}
-      //});
-      
       $scope.currentLinkDescription = function() {
-        console.log('trying to render link description in %o for %o', $scope.fieldId, $scope.linkedEntry);
         if ($scope.linkedEntry) {
           return $scope.entryTitle($scope.linkedEntry);
         } else {
@@ -219,7 +251,12 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(){
       $scope.entryTitle = function(entry) {
         var type = $scope.bucketContext.typeForEntry(entry);
         if (type.data.displayName) {
-          return type.data.name + ': \"' + entry.data.fields[type.data.displayName][$scope.locale] + '\"';
+          var hasDisplayName = entry.data.fields[type.data.displayName][$scope.locale];
+          if (hasDisplayName) {
+            return type.data.name + ': \"' + entry.data.fields[type.data.displayName][$scope.locale] + '\"';
+          } else {
+            return type.data.name + ': ' + entry.data.id;
+          }
         } else {
           return type.data.name + ' ' + entry.data.id;
         }

@@ -1,7 +1,11 @@
 Current Link:
 %a(ng-click="visitLink()") {{currentLinkDescription()}}
 %a(ng-click="removeLink()" ng-show="linkedEntry") Remove
-%a.add-new Add new
+.dropdown-btn
+  %a.dropdown-toggle.add-new(ng-click="addNew()") Add new
+  %a.dropdown-menu
+    %ul
+      %li(ng-repeat="entryType in bucketContext.entryTypes" ng-click="addNew(entryType)" dropdown-close="") {{entryType.data.name}}
 
 -#!= JST['search_field'](context)
 .search-field(on-idle-update="searchTerm")
