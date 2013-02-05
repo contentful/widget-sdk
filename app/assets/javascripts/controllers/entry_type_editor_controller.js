@@ -57,8 +57,8 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
       return field.type === 'text' || field.type === 'string';
     }).sortBy('name').valueOf();
 
-    if (!_.isEqual(scope.availableDisplayNameFields, availableFields)) {
-      scope.availableDisplayNameFields = availableFields;
+    if (!_.isEqual(scope.availableDisplayFields, availableFields)) {
+      scope.availableDisplayFields = availableFields;
       console.log('setting availablefields to %o  from %o ', availableFields, fields);
     }
   });
