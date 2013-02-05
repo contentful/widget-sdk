@@ -3,21 +3,6 @@
 // Layout
 .result-list
   width: 100%
-// Layout (this is actually implementation stuff and should be
-// specified on the containing element)
-.main-header
-  position: absolute
-  left: 0
-  right: 0
-  top: $search-area-height
-.main-results-wrapper //main results wrapper shouldnt really be used because we are wrapping in a endless container which does the overflow part. the rest is positioning in the containing element
-  position: absolute
-  top: 10.5em
-  bottom: 0
-  right: 0
-  left: 0
-  +rounded-corners(4px,0,0,0)
-  overflow-y: auto
 
 .result-list.main-results
   tbody
@@ -26,7 +11,7 @@
 
 // State Modifier for when used with left nav (kinda layout related)
 
-.left-nav-active .main-header
+.with-left-nav .main-header
   th:first-child
     +rounded-corners(4px,0,0,0)
 

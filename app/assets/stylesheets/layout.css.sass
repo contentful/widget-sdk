@@ -44,26 +44,6 @@ $tab-actions-height: 54px
     left: 50%
     margin-top: -25%
     margin-left: -25%
-.left-nav-bottom
-  position: absolute
-  background: white
-  bottom: 0
-  padding: 1em 0 1.6em
-  left: 2.3em
-  overflow: hidden
-  width: 13%
-  @include box-shadow(0 -4px 5px rgba(255,255,255,1))
-  span
-    color: $light-gray
-    float: left
-    line-height: 1.3em
-    padding: .2em 0
-    &:first-child
-      margin-right: .6em
-      padding-right: .6em
-      border-right: 1px solid $lightest-gray
-.left-nav-bottom span
-  float:left      
       
 
 /* TABS */
@@ -99,7 +79,8 @@ $left-nav-width: 17%
 .left-nav
   position: absolute
   left: 0
-  height: 100%
+  top: 0
+  bottom: 0
   width: $left-nav-width
 .with-left-nav
   position: absolute
@@ -107,19 +88,6 @@ $left-nav-width: 17%
   right: 0
   height: 100%
   //width: 100.1% - $left-nav-width  
-
-// Main content area of a tab
-
-//.main
-  position: absolute
-  top: 0
-  left: -1px
-  right: 0
-  bottom: 0
-  float: left
-  overflow: visible
-//.main.left-nav-active
-  left: $left-nav-width
 
 // Footer in tab content
 

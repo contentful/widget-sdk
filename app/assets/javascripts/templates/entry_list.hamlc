@@ -1,4 +1,4 @@
-%aside.left-nav
+.left-nav
   .wrapper
     %header Entries
     %ul.left-nav-list
