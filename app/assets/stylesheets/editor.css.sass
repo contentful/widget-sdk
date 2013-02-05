@@ -1,28 +1,13 @@
-$editor-configuration-height: 6.8em
-$editor-actions-height: 54px
-
 %entity-editor
+  .tab-main
+    padding: 1em 0
 
 .entry-editor
-  @extend %entry-editor
-
-.editor-main
-  position: absolute
-  top: $editor-configuration-height + 1em
-  bottom: $editor-actions-height
-  left: 0
-  right: 0
-  padding-top: 1em
-  overflow-y: auto
+  @extend %entity-editor
 
 .editor-configuration
-  margin-top: 1em
-  position: absolute
-  height: 6.8em
-  border-bottom: 1px solid $light-rule
-  left: 2.5em
-  right: 2.5em
-  top: 0
+  padding-top: 10px
+  padding: 10px 25px 0
   h1
     font-size: 2em
     display: inline-block
@@ -32,15 +17,18 @@ $editor-actions-height: 54px
     margin-right: 20px
     color: $dark-gray
 
-.editor-top-left, .editor-top-right
+.editor-top-left,
+.editor-top-right
   position: absolute
-  height: 4em
-  bottom: .2em
+  height: 40px
+  bottom: 2px
 .editor-top-left
   .dropdown-toggle
     width: auto
     display: inline-block
+    border-color: $dark-rule
 .editor-top-right
+  right: 25px
   .btn
     @extend %blue-button
     display: inline-block

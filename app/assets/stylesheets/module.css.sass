@@ -40,7 +40,7 @@
     padding: ($tab-height - 2.7em) 1.2em
     overflow: hidden
     //+experimental('box-sizing', 'border-box')
-    background-color: $gray-background
+    background-color: $page-background
     border: 1px solid #d5d5d5
     border-bottom-color: $lightest-gray
     @include rounded-corners(3px,3px,0,0)
@@ -59,16 +59,16 @@
     bottom: 0
     right: 0
     width: 2em
-    border-right: 1.5em solid $gray-background
-    @include box-shadow(-14px 0 14px rgba(243,243,243,1) inset)
+    border-right: 1.5em solid $page-background
+    @include box-shadow(-14px 0 14px rgba($page-background,1) inset)
   .tab.active
     color: $dark-gray
-    background: white
+    background: $gray-background
     border-bottom: 0
     font-weight: 600
     .fade
-      border-right-color: white
-      @include box-shadow(-14px 0 14px rgba(255,255,255,1) inset)
+      border-right-color: $gray-background
+      @include box-shadow(-14px 0 14px rgba($gray-background,1) inset)
   .tab:hover
     color: $dark-gray
     cursor: pointer
@@ -126,6 +126,41 @@
       color: $light-gray
       line-height: 1em
       margin-left: .3em
+
+.tab-header
+  position: absolute
+  +box-sizing(border-box)
+  left: 0
+  right: 0
+  top: 0
+  height: $tab-header-height
+  +border-radius(3px 3px 0 0)
+.tab-main
+  position: absolute
+  +box-sizing(border-box)
+  left: 0
+  right: 0
+  top: $tab-header-height
+  bottom: $tab-actions-height
+  overflow-y: auto
+.tab-actions
+  position: absolute
+  +box-sizing(border-box)
+  left: 0
+  right: 0
+  bottom: 0
+  height: $tab-actions-height
+
+.tab-header
+  border-bottom: 1px solid $lightest-gray
+  background-color: $gray-background
+  +box-shadow(0 1px 4px rgba(0,0,0,0.07), 0 -1px 1px rgba(255,255,255,0.8) inset)
+.tab-actions
+  border-top: 1px solid $lightest-gray
+  background-color: $gray-background
+  +box-shadow(0 -1px 4px rgba(0,0,0,0.07), 0 1px 1px rgba(255,255,255,0.8) inset)
+  
+.tab-actions
 
 .entry-list,
 .entrytype-list
