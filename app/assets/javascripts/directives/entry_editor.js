@@ -3,7 +3,7 @@
 angular.module('contentful/directives').directive('entryEditor', function(){
   return {
     template: JST.entry_editor(),
-    restrict: 'E',
+    restrict: 'C',
     scope: {
       tab: '=',
       bucketContext: '='
