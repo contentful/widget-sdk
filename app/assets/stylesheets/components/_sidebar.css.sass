@@ -1,0 +1,40 @@
+$aux-padding: 1.8em
+
+.aux-panel
+  width: 20%
+  position: absolute
+  top: 80px
+  right: 0
+  padding: 1.5em 0
+  +box-sizing(border-box)
+  +border-radius(0 0 0 4px)
+  border-left: 1px solid $light-rule
+  border-bottom: 1px solid $light-rule
+  header
+    padding: 0 $aux-padding 1.1em
+    margin-bottom: 1em
+    border-bottom: 1px solid $light-rule
+    span
+      font-weight: 600
+      color: $dark-gray
+      font-size: 1.2em
+    .close
+      position: absolute
+      right: 15px
+    i
+      color: $lightest-gray
+      font-size: 10px
+  article
+    padding: 0 $aux-padding
+    color: $light-gray
+  table 
+    width: 100%
+    td, th
+      text-align: left
+      font-weight: normal
+      font-size: 1.1em
+      padding: 4px 0
+    td
+      text-align: right
+      padding-left: 1em
+      font-size: 1em
