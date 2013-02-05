@@ -5,42 +5,6 @@
 .entry-editor
   @extend %entity-editor
 
-.editor-configuration
-  padding-top: 10px
-  padding: 10px 25px 0
-  h1
-    font-size: 2em
-    display: inline-block
-    vertical-align: top
-    position: relative
-    top: 7px
-    margin-right: 20px
-    color: $dark-gray
-
-.editor-top-left,
-.editor-top-right
-  position: absolute
-  height: 40px
-  bottom: 2px
-.editor-top-left
-  .dropdown-toggle
-    width: auto
-    display: inline-block
-    border-color: $dark-rule
-.editor-top-right
-  right: 25px
-  .btn
-    @extend %blue-button
-    display: inline-block
-    margin: 2px 0 0 5px
-    i
-      top: 7px
-      right: 9px
-    &:active
-      margin-top: 0
-      position: relative
-      top: 1px
-
 .aux-panel
   width: 20%
   position: absolute
@@ -49,6 +13,70 @@
     text-align: left
 
 
+
+// Editor configuration
+.editor-top-left
+  display: inline-block
+  .dropdown-btn
+    display: inline-block
+    margin-right: 5px
+    vertical-align: middle
+  .dropdown-toggle
+    &, *
+      +box-sizing(border-box)
+    font-size: 1.2em
+    padding: 0 10px 0 11px
+    line-height: 32px
+    vertical-align: middle
+    @include rounded-corners(3px,3px,3px,3px)
+    border: 1px solid $lightest-gray
+    i
+      color: darken($lightest-gray, 6%)
+      margin-left: 8px
+      margin-top: 1px
+  .dropdown-toggle:hover,
+  .active .dropdown-toggle
+    background-color: $gray-background
+    border: 1px solid $account-border-color
+    border-bottom-color: $lightest-gray
+    i
+      color: $dark-gray
+
+.editor-top-right
+  float: right
+  height: 100%
+  &:before
+    // This is a fucking hack
+    // Since we want to float right, editor-top-right must be a block
+    // but that prevents us from aligning to the h1, so we need to
+    // insert another text element that simply serves as an alignment
+    // aid for vertical-align
+    display: inline-block
+    line-height: $tab-header-height - 2px
+    vertical-align: middle
+    content: '\2008' //zero width space
+  margin-right: 25px
+  .dropdown-btn
+    display: inline-block
+    margin-left: 5px
+    vertical-align: middle
+  .dropdown-toggle
+    @extend %blue-button
+    &, *
+      +box-sizing(border-box)
+    vertical-align: middle
+    margin: 2px 0 0 5px
+    padding-right: 1.8em 
+    i
+      position: absolute 
+      font-size: 8px
+      top: 7px
+      right: 9px
+  .btn
+    &:active
+      margin-top: 0
+      position: relative
+      top: 1px
 
 
 

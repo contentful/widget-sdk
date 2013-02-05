@@ -1,7 +1,7 @@
 .tab-header.editor-configuration
+  %h1
+    {{headline()}}
   .editor-top-left
-    %h1
-      {{headline()}}
     .dropdown-btn
       %a.btn.dropdown-toggle
         %i.ss-dropdown
@@ -27,9 +27,11 @@
         …
         …
         …
-      %a.btn
+    .dropdown-btn
+      %a.btn.dropdown-toggle
         %span Apps
-      %a.btn
+    .dropdown-btn
+      %a.btn.dropdown-toggle
         %span Events
 
 .tab-main

@@ -1,36 +1,8 @@
 .entry-list
-  %aside.left-nav
-    %header Entries
-    %ul.left-nav-list
-      %li.active
-        %span All
-      %li 
-        %span Drafts
-        %small (3)
-      %li 
-        %span Pending
-        %small (4)
-      %li
-        %span Published
-      %li
-        %span Archived
-      %li
-        %span Starred
-      %li
-        %span Created by me
-    %header Saved searches
-    %ul.left-nav-filters
-      %li
-        %i.ss-search
-        %span Updated by me
-      %li
-        %i.ss-search
-        %span Large rooms
-    %footer.left-nav-bottom
-      %span Import
-      %span Export
-  %article.main.left-nav-active
-    .search-area
+  .tab-header
+    .left-nav
+      %h1 Entries
+    .search-area.with-left-nav
       %form.search-field.with-filters
         %ul.search-filters
           %li
@@ -66,6 +38,38 @@
           %span.search-results-total /67
           .arrow-right
           .arrow-right-border
+  -#.tab-main
+    %aside.left-nav
+      %header Entries
+      %ul.left-nav-list
+        %li.active
+          %span All
+        %li 
+          %span Drafts
+          %small (3)
+        %li 
+          %span Pending
+          %small (4)
+        %li
+          %span Published
+        %li
+          %span Archived
+        %li
+          %span Starred
+        %li
+          %span Created by me
+      %header Saved searches
+      %ul.left-nav-filters
+        %li
+          %i.ss-search
+          %span Updated by me
+        %li
+          %i.ss-search
+          %span Large rooms
+      %footer.left-nav-bottom
+        %span Import
+        %span Export
+    %article.main.left-nav-active
     %table.result-list.main-header
       %thead
         %tr
@@ -171,3 +175,4 @@
                 .draft-wrapper
                   %span Published
                   .main-results-bar  
+  -#.tab-footer

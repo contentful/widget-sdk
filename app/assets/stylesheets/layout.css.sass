@@ -7,7 +7,6 @@ $main-left-spacing: 7em
 $tab-header-height: 78px
 $tab-actions-height: 54px
 
-
 .account
   position: absolute
   width: 16%
@@ -99,15 +98,20 @@ $tab-actions-height: 54px
 $left-nav-width: 17%
 .left-nav
   +box-sizing('border-box')
-  float: left
+  position: absolute
+  left: 0
+  height: 100%
   width: $left-nav-width
-  padding: 3.3em 2.3em
-.left-nav-active
-  width: 100.1% - $left-nav-width  
+.with-left-nav
+  position: absolute
+  left: $left-nav-width
+  right: 0
+  height: 100%
+  //width: 100.1% - $left-nav-width  
 
 // Main content area of a tab
 
-.main
+//.main
   position: absolute
   top: 0
   left: -1px
@@ -115,7 +119,7 @@ $left-nav-width: 17%
   bottom: 0
   float: left
   overflow: visible
-.main.left-nav-active
+//.main.left-nav-active
   left: $left-nav-width
 
 // Footer in tab content
