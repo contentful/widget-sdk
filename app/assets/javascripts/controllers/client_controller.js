@@ -30,11 +30,11 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
     },
     entryTitle: function(entry) {
       try {
-        var displayNameField = this.typeForEntry(entry).data.displayName;
-        if (!displayNameField) {
+        var displayField = this.typeForEntry(entry).data.displayField;
+        if (!displayField) {
           return entry.data.sys.id;
         } else {
-          return entry.data.fields[displayNameField][this.bucket.data.locales.default];
+          return entry.data.fields[displayField][this.bucket.data.locales.default];
         }
       } catch (e) {
         return entry.data.sys.id;

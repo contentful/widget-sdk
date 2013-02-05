@@ -63,13 +63,13 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
     }
   });
 
-  $scope.displayNameChanged = function() {
-    console.log('display Name changed', this.entryType.data.displayName);
+  $scope.displayFieldChanged = function() {
+    console.log('display field changed', this.entryType.data.displayField);
     var scope = this;
-    this.doc.setAt(['displayName'], this.entryType.data.displayName, function(err) {
+    this.doc.setAt(['displayField'], this.entryType.data.displayField, function(err) {
       scope.$apply(function(scope) {
         if (err) {
-          scope.entryType.data.displayName = scope.doc.snapshot.displayName;
+          scope.entryType.data.displayField = scope.doc.snapshot.displayField;
         }
       });
     });
