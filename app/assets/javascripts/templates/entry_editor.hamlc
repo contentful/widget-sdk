@@ -1,4 +1,4 @@
-.editor-configuration
+.tab-header.editor-configuration
   .editor-top-left
     %h1
       {{headline()}}
@@ -32,7 +32,7 @@
       %a.btn
         %span Events
 
-.editor-main
+.tab-main
   .aux-panel
     .meta(ng-switch="!!publishedAt()")
       %div(ng-switch-when="true")
@@ -71,7 +71,7 @@
           .arrow-left
           .arrow-left-border
 
-.action-bar
+.tab-actions
   .button-set
     %button.delete(ng-show="entry.canDelete()") Delete
     %button.archive(ng-show="entry.canArchive()") Archive
@@ -87,20 +87,22 @@
     %ul
       %li.avatar
         %img(src="assets/avatar-2.jpg")
-        .tip
-          Jan
-          .arrow-down
-          .arrow-down-border
+        .tip-container
+          .tip
+            Jan
+            .arrow-down
+            .arrow-down-border
       %li.avatar
         %img(src="assets/avatar-3.jpg")
-        .tip
-          Stephan
-          .arrow-down
-          .arrow-down-border
+        .tip-container
+          .tip
+            Stephan
+            .arrow-down
+            .arrow-down-border
       %li.avatar
         %img(src="assets/avatar-4.jpg")
-        .tip
-          Chris
-          .arrow-down
-          .arrow-down-border
-
+        .tip-container
+          .tip
+            Chris
+            .arrow-down
+            .arrow-down-border
