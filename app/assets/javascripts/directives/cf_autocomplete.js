@@ -1,5 +1,4 @@
-/*global Paginator:false*/
-angular.module('contentful/directives').directive('cfAutocomplete', function(){
+angular.module('contentful/directives').directive('cfAutocomplete', function(Paginator){
   'use strict';
 
   return {

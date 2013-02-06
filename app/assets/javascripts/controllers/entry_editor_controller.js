@@ -95,8 +95,8 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
   };
 
   $scope.headline = function(){
-    var verb = this.tab.params.mode == 'edit' ? 'Editing' : 'Creating';
-    return verb + ' ' + this.bucketContext.typeForEntry(this.entry).data.name + ': ' + this.bucketContext.entryTitle(this.entry);
+    var verb = this.tab.params.mode == 'edit' ? '' : 'Creating ';
+    return verb + this.bucketContext.typeForEntry(this.entry).data.name + ': ' + this.bucketContext.entryTitle(this.entry);
   };
 
 });

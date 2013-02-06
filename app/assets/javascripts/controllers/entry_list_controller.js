@@ -1,7 +1,6 @@
-/*global Paginator:false*/
 'use strict';
 
-angular.module('contentful/controllers').controller('EntryListCtrl', function EntryListCtrl($scope) {
+angular.module('contentful/controllers').controller('EntryListCtrl', function EntryListCtrl($scope, Paginator) {
   $scope.contentType = 'entries';
   $scope.entrySection = 'all';
 

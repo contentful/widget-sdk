@@ -8,6 +8,7 @@ require([
   'use strict';
 
   angular.module('contentful', [
+    'contentful/classes',
     'contentful/services',
     'contentful/controllers',
     'contentful/directives',

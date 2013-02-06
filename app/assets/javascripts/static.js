@@ -12,8 +12,6 @@
 //= require share/json.uncompressed
 //
 //= require lib/bind_textarea
-//= require lib/tab_list
-//= require lib/paginator
 //
 //= require hamlcoffee
 //= require_tree ./templates
@@ -23,3 +21,4 @@
 //= require controllers
 //= require filters
 //= require directives
+//= require classes
