@@ -15,7 +15,7 @@
           %tr
             %th Current
             %td {{doc.version}}
-        %button.span12.btn(ng-show="doc.version > publishedVersion()+1" ng-disabled="entryForm.$invalid" ng-click="publish()") Republish
+        %button.span12.btn(ng-show="doc.version > publishedVersion()" ng-disabled="entryForm.$invalid" ng-click="publish()") Republish
       %div(ng-switch-default="")
         %p Not published yet
         %button.span12.btn(ng-disabled="entryForm.$invalid" ng-click="publish()") Publish
