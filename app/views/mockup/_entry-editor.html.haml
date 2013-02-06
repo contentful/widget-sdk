@@ -38,18 +38,21 @@
   .tab-main
     .aux-panel
       .meta
-        %table
-          %tr
-            %th Published at
-            %td 5 hours ago
-          %tr
-            %th Published Version
-            %td {{publishedVersion()}}
-          %tr
-            %th Current
-            %td {{doc.version}}
-        %div
-          %p Not published yet
+        %header
+          %span Meta
+          %i.ss-delete
+        %article
+          %table
+            %tr
+              %th Last Save
+              %td 5 seconds ago
+            %tr
+              %th Published Version #
+              %td 14
+            %tr
+              %th Current #
+              %td 15
+          %div
 
     %form.form-horizontal(name="entryForm")
       // We might need two columns of fields next to each other (for translators)

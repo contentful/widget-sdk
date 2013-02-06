@@ -89,6 +89,30 @@ $left-nav-width: 17%
   height: 100%
   //width: 100.1% - $left-nav-width  
 
+$tab-main-margin-top: 20px
+
+.tab-header
+  position: absolute
+  left: 0
+  right: 0
+  top: 0
+  height: $tab-header-height
+  +border-radius(3px 3px 0 0)
+.tab-main
+  position: absolute
+  left: 0
+  right: 0
+  top: $tab-header-height
+  bottom: $tab-actions-height
+  margin-top: $tab-main-margin-top
+  overflow-y: auto
+.tab-actions
+  position: absolute
+  left: 0
+  right: 0
+  bottom: 0
+  height: $tab-actions-height
+
 // Footer in tab content
 
 .footer
