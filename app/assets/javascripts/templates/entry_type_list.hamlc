@@ -1,5 +1,7 @@
-%article.main
-  %table.main-results
+.tab-header
+  %h1 Content Model
+.tab-main
+  %table.result-list.main-header
     %thead
       %tr
         %th
@@ -14,19 +16,23 @@
           %label Created
         %th
           %label Status
-    %tbody
-      %tr(ng-repeat="entryType in bucketContext.entryTypes" cf-click-local="editEntryType(entryType)")
-        %td.cell-select
-          %input(type="checkbox")
-        %td.cell-type
-          %span {{entryType.getId()}}
-        %td.cell-name
-          %span {{entryType.data.name}}
-        %td.cell-by
-          %span {{numFields(entryType)}}
-        %td.cell-created
-          %span(date-from="entryType.data.sys.updatedAt") 5 min ago
-        %td.cell-status(ng-class="statusClass(entryType)")
-          .draft-wrapper
-            %span {{statusClass(entryType)}}
-            .main-results-bar
+  .main-results-wrapper
+    %table.result-list.main-results
+      %tbody
+        %tr(ng-repeat="entryType in bucketContext.entryTypes" cf-click-local="editEntryType(entryType)")
+          %td.cell-select
+            %input(type="checkbox")
+          %td.cell-type
+            %span {{entryType.getId()}}
+          %td.cell-name
+            %span {{entryType.data.name}}
+          %td.cell-by
+            %span {{numFields(entryType)}}
+          %td.cell-created
+            %span(date-from="entryType.data.sys.updatedAt") 5 min ago
+          %td.cell-status(ng-class="statusClass(entryType)")
+            .draft-wrapper
+              %span {{statusClass(entryType)}}
+              .main-results-bar
+.tab-actions
+  foobar
