@@ -46,6 +46,8 @@
     span
       font-size: 1.3em
       white-space: nowrap
+      display: block
+      overflow: hidden
   i.ss-delete
     position: absolute
     top: 1.2em
@@ -56,9 +58,8 @@
     top: 0
     bottom: 0
     right: 0
-    width: 2em
-    border-right: 1.5em solid $page-background
-    @include box-shadow(-14px 0 14px rgba($page-background,1) inset)
+    width: 5em
+    @include inactive-fade
   .tab.active
     color: $dark-gray
     background: $gray-background
@@ -66,8 +67,7 @@
     font-weight: 600
     @include gray-highlight
     .fade
-      border-right-color: $gray-background
-      @include box-shadow(-14px 0 14px rgba($gray-background,1) inset)
+      @include fade
   .tab:hover
     color: $dark-gray
     cursor: pointer
