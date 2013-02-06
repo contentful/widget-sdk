@@ -1,5 +1,19 @@
-.left-nav
-  .wrapper
+.tab-header
+  .left-nav
+    %h1 Entries
+  .search-area.with-left-nav
+    %form.search-field(on-idle-update="searchTerm")
+    .dropdown-btn.search-view-options
+      %a.btn.dropdown-toggle
+        %i.ss-columns
+        %i.ss-dropdown
+      .dropdown-menu
+        Nothing to see here
+    .loading(ng-show="reloadInProgress")
+      %img(src="assets/ajax-loader.gif")
+    .search-results-position(paginator="paginator")
+.tab-main
+  .left-nav
     %header Entries
     %ul.left-nav-list
       %li(ng-class="{active: tab.params.list=='all'}")
@@ -35,55 +49,46 @@
       %li
         %i.ss-search
         %span Large rooms
-  %footer.left-nav-bottom
-    %span Import
-    %span Export
-%article.main.left-nav-active
-  .search-area
-    %form.search-field(on-idle-update="searchTerm")
-    .dropdown-btn.search-view-options
-      %a.btn.dropdown-toggle
-        %i.ss-columns
-        %i.ss-dropdown
-      .dropdown-menu
-        Nothing to see here
-    .loading(ng-show="reloadInProgress")
-      %img(src="assets/ajax-loader.gif")
-    .search-results-position(paginator="paginator")
-  %table.result-list.main-header
-    %thead
-      %tr
-        %th.cell-select
-          %input(type="checkbox")
-        %th.cell-favorite
-          %i.ss-star
-        %th.cell-type
-          %label Content Type
-        %th.cell-name
-          %label Name
-        %th.cell-by
-          %label By
-        %th.cell-created
-          %label Created
-        %th.cell-status
-          %label Status
-  .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
-    %table.result-list.main-results
-      %tbody
-        %tr(ng-repeat="entry in entries" ng-show="visibleInCurrentList(entry)" cf-click-local="editEntry(entry)")
-          %td.cell-select
+    %footer.left-nav-bottom
+      %span Import
+      %span Export
+  .with-left-nav
+    %table.result-list.main-header
+      %thead
+        %tr
+          %th.cell-select
             %input(type="checkbox")
-          %td.cell-favorite
-            -#%i.ss-star
-          %td.cell-type
-            %span {{bucketContext.typeForEntry(entry).data.name}}
-          %td.cell-name
-            %span {{bucketContext.entryTitle(entry)}}
-          %td.cell-by
-            %span Peter Pan
-          %td.cell-created
-            %span(date-from="entry.data.sys.updatedAt") 5 min ago
-          %td.cell-status(ng-class="statusClass(entry)")
-            .draft-wrapper
-              %span {{statusClass(entry)}}
-              .main-results-bar
+          %th.cell-favorite
+            %i.ss-star
+          %th.cell-type
+            %label Content Type
+          %th.cell-name
+            %label Name
+          %th.cell-by
+            %label By
+          %th.cell-created
+            %label Created
+          %th.cell-status
+            %label Status
+    .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
+      %table.result-list.main-results
+        %tbody
+          %tr(ng-repeat="entry in entries" ng-show="visibleInCurrentList(entry)" cf-click-local="editEntry(entry)")
+            %td.cell-select
+              %input(type="checkbox")
+            %td.cell-favorite
+              -#%i.ss-star
+            %td.cell-type
+              %span {{bucketContext.typeForEntry(entry).data.name}}
+            %td.cell-name
+              %span {{bucketContext.entryTitle(entry)}}
+            %td.cell-by
+              %span Peter Pan
+            %td.cell-created
+              %span(date-from="entry.data.sys.updatedAt") 5 min ago
+            %td.cell-status(ng-class="statusClass(entry)")
+              .draft-wrapper
+                %span {{statusClass(entry)}}
+                .main-results-bar
+.tab-actions
+  foo
