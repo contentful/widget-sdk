@@ -46,7 +46,7 @@ $form-offset: 11px
       width: 8em !important
     .datepicker
       margin-right: 1%
-  .hint, .error
+  .hint
     vertical-align: top
     max-width: 40%
     font-size: 1.2em
@@ -66,22 +66,23 @@ $form-offset: 11px
       .arrow-left-border
         border-right-color: darken($light-rule, 5%)
   .error
-    &.tip
-      padding: .6em .9em
-      background: darken($red, 3%)
-      border: 1px solid darken($red, 16%)
-      color: white
-      +box-shadow(0 1px 1px rgba(255,255,255,0.25) inset)
+    font-size: 1.2em
+    padding: .6em .9em
+    background: darken($red, 3%)
+    border: 1px solid darken($red, 16%)
+    color: white
+    +box-shadow(0 1px 1px rgba(255,255,255,0.25) inset)
+    +border-radius(3px)
 
-      clear: both
-      display: block
-      max-width: 57% !important
-      position: static
-      margin: .3em 0 .2em 0
-      width: 57%
-      text-align: center
+    display: block
+    max-width: 57% !important
+    position: static
+    margin: .3em 0 .2em 0
+    width: 57%
+    text-align: center
+    +transition(opacity 0.3s ease-in-out)
 
-  input[type="text"]:focus + .hint, textarea:focus + .hint, input[type="text"]:focus + .error, textarea:focus + .error, input[type="number"]:focus + .hint, input[type="number"]:focus + .error
+  input[type="text"]:focus + .hint, textarea:focus + .hint, input[type="number"]:focus + .hint
     opacity: 1
   .editor.boolean, .editor.array
     label
