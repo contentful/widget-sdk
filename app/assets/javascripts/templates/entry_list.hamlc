@@ -16,17 +16,17 @@
   .left-nav
     %header Entries
     %ul.left-nav-list
-      %li(ng-class="{active: tab.params.list=='all'}")
-        %span(ng-click="switchList('all')") All
+      %li(ng-class="{active: tab.params.list=='all'}" ng-click="switchList('all')")
+        %span All
         %small(ng-show="counts.all != null") ({{counts.all}})
-      %li(ng-class="{active: tab.params.list=='published'}")
-        %span(ng-click="switchList('published')") Published
+      %li(ng-class="{active: tab.params.list=='published'}" ng-click="switchList('published')")
+        %span Published
         %small(ng-show="counts.published != null") ({{counts.published}})
-      %li(ng-class="{active: tab.params.list=='unpublished'}")
-        %span(ng-click="switchList('unpublished')") Not Published
+      %li(ng-class="{active: tab.params.list=='unpublished'}" ng-click="switchList('unpublished')")
+        %span Not Published
         %small(ng-show="counts.unpublished != null") ({{counts.unpublished}})
-      %li(ng-class="{active: tab.params.list == 'archived'}")
-        %span(ng-click="switchList('archived')") Archived
+      %li(ng-class="{active: tab.params.list == 'archived'}" ng-click="switchList('archived')")
+        %span Archived
         %small(ng-show="counts.archived != null") ({{counts.archived}})
       %li.disabled(ng-class="{active: tab.params.list == 'starred'}")
         %span Starred
@@ -34,12 +34,11 @@
         %span Created by me
     %header Content Types
     %ul.left-nav-list
-      %li(ng-class="{active: !tab.params.entryType}")
-        %span(ng-click="switchEntryType(null)")
+      %li(ng-class="{active: !tab.params.entryType}" ng-click="switchEntryType(null)")
+        %span
           All
-      %li(ng-class="{active: tab.params.entryType==entryType.data.sys.id}" ng-repeat="entryType in bucketContext.entryTypes")
-        %span(ng-click="switchEntryType(entryType)")
-          {{entryType.data.name}}
+      %li(ng-class="{active: tab.params.entryType==entryType.data.sys.id}" ng-repeat="entryType in bucketContext.entryTypes" ng-click="switchEntryType(entryType)")
+        %span {{entryType.data.name}}
 
     %header Saved searches
     %ul.left-nav-filters
