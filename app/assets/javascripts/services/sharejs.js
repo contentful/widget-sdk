@@ -1,6 +1,6 @@
-'use strict';
+angular.module('contentful/services').provider('ShareJS', function ShareJSProvider() {
+  'use strict';
 
-function ShareJSProvider() {
   var authentication = 'faketoken';
   var sharejs = require('contentful_client/sharejs');
   var url = document.location.protocol + '//' + document.location.hostname + ':8000/channel';
@@ -16,6 +16,4 @@ function ShareJSProvider() {
   this.$get = function() {
     return new sharejs.Client(url, authentication);
   };
-}
-
-angular.module('contentful/services').provider('ShareJS', ShareJSProvider);
+});
