@@ -2,9 +2,13 @@
   .logo
     %img(src="assets/logo.png")
   %ul
-    %li(ng-class="{section: bucketContext.tabList.currentSection() == 'entryTypes', 'section-index': bucketContext.tabList.currentViewType() == 'entry-type-list'}" ng-click="visitView('entry-type-list')")
+    %li(ng-class="{section: bucketContext.tabList.currentSection() == 'entryTypes',
+                  'section-index': bucketContext.tabList.currentViewType() == 'entry-type-list'}"
+        ng-click="visitView('entry-type-list')")
       %i.ss-layout
-    %li(ng-class="{section: bucketContext.tabList.currentSection() == 'entries', 'section-index': bucketContext.tabList.currentViewType() == 'entry-list'}" ng-click="visitView('entry-list')")
+    %li(ng-class="{section: bucketContext.tabList.currentSection() == 'entries',
+                  'section-index': bucketContext.tabList.currentViewType() == 'entry-list'}"
+        ng-click="visitView('entry-list')")
       %i.ss-layers
     %li
       %i.ss-picture
