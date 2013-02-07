@@ -34,23 +34,23 @@
       %a.btn.dropdown-toggle
         %span Events
 
-.tab-main
-  .aux-panel
-    .meta(ng-switch="!!publishedAt()")
-      %div(ng-switch-when="true")
-        %table
-          %tr
-            %th Published at
-            %td {{publishedAt().toLocaleString('de-DE')}}
-          %tr
-            %th Published Version
-            %td {{publishedVersion()}}
-          %tr
-            %th Current
-            %td {{doc.version}}
-      %div(ng-switch-default="")
-        %p Not published yet
+.aux-panel
+  .meta(ng-switch="!!publishedAt()")
+    %div(ng-switch-when="true")
+      %table
+        %tr
+          %th Published at
+          %td {{publishedAt().toLocaleString('de-DE')}}
+        %tr
+          %th Published Version
+          %td {{publishedVersion()}}
+        %tr
+          %th Current
+          %td {{doc.version}}
+    %div(ng-switch-default="")
+      %p Not published yet
 
+.tab-main
   %form.form-horizontal(name="entryForm")
     -#.field(data-field-type="string" data-field-widget="textField")
       later generate these tags so they can be used in CSS

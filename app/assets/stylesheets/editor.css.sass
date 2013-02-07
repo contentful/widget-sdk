@@ -1,10 +1,24 @@
 %entity-editor
-  .tab-main
-    margin-top: 0
-    padding-top: $tab-main-margin-top
+  // layout
+  .aux-panel
+    width: 20%
+    position: absolute
+    overflow-y: auto
+    top: $tab-header-height
+    bottom: $tab-actions-height
 
-.entry-editor
-  @extend %entity-editor
+  // normal mode
+  .aux-panel
+    display: none
+
+  // sidebar mode
+  &.with-sidebar,
+  & // <- this is only for development, remove it when we have a sidebar-switching mechanic
+    .tab-main
+      right: 20%
+    .aux-panel
+      display: block
+    
 
 // Editor configuration
 .editor-top-left
@@ -72,3 +86,6 @@
       margin-top: 0
       position: relative
       top: 1px
+
+.entry-editor
+  @extend %entity-editor
