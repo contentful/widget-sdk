@@ -18,7 +18,7 @@
         …
         …
         …
-  -#.editor-top-right
+  .editor-top-right
     .dropdown-btn
       %a.btn.dropdown-toggle
         %i.ss-dropdown
@@ -35,20 +35,25 @@
         %span Events
 
 .aux-panel
-  .meta(ng-switch="!!publishedAt()")
-    %div(ng-switch-when="true")
-      %table
+  .meta
+    %header
+      %span Meta
+      %i.ss-delete
+    %article(ng-switch="!!publishedAt()")
+      %table(ng-switch-when="true")
         %tr
-          %th Published at
-          %td {{publishedAt().toLocaleString('de-DE')}}
+          %th Last Save
+          %td XX seconds ago
         %tr
-          %th Published Version
+          %th Published Version #
           %td {{publishedVersion()}}
         %tr
-          %th Current
+          %th Current #
           %td {{doc.version}}
-    %div(ng-switch-default="")
-      %p Not published yet
+      %table(ng-switch-default="")
+        %tr
+          %th Last Save
+          %td XX seconds ago
 
 .tab-main
   %form.form-horizontal(name="entryForm")
