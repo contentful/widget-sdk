@@ -62,11 +62,13 @@
       .field(data-field-type="text" data-field-widget="textArea")
         %label Textfield
         .editor
-          %textarea
-          .error.tip
-            Error on the field entry
+          %textarea.error-input
+          .hint.tip
+            Hint to the user about the meaning of the field
             .arrow-left
             .arrow-left-border
+          .error.tip
+            Error on the field entry
       .field(data-field-type="boolean" data-field-widget="checkBox")
         %label Boolean
         .editor.boolean
@@ -146,7 +148,7 @@
             %button.remove-location Remove
       .field(data-field-type="number" data-field-widget="textField")
         %label Number
-        .editor.number
+        .editor.number.fit-two
           %input(type="number")
       .field(data-field-type="link" data-field-widget="autocomplete")
         %label Link
