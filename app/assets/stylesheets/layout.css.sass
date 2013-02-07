@@ -4,7 +4,7 @@ $tab-top: .9em
 $tab-height: 3.8em
 $main-left-spacing: 7em
 
-$tab-header-height: 78px
+$tab-header-height: 66px
 $tab-actions-height: 54px
 
 .account
@@ -20,6 +20,7 @@ $tab-actions-height: 54px
   left: 0
   right: 0
   z-index: 0
+  min-width: 1000px
 
 /* LEFT NAV */
 
@@ -102,7 +103,8 @@ $tab-main-margin-top: 20px
   position: absolute
   left: 0
   right: 0
-  top: $tab-header-height
+  top: $tab-header-height - 19px
+  padding: 30px 0
   bottom: $tab-actions-height
   margin-top: $tab-main-margin-top
   overflow-y: auto
