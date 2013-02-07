@@ -94,20 +94,27 @@
 /* TAB CONTENT */
 
 .left-nav
+  $padding: 8px
   header
     color: $light-gray
     border-bottom: 1px solid $light-rule
     margin-bottom: .8em
-    padding-bottom: .7em
+    padding: 0 $padding 7px
   li
     font-size: 1.2em
-    line-height: 2em
+    line-height: 25px
+    padding: 0 $padding
+    border: 1px solid transparent
     span
       color: $link-blue
       line-height: 2em
     small
       font-size: .9em
       color: $light-gray
+  li.active
+    border: 1px solid $dark-rule
+    +rounded-corners(3px, 3px, 3px, 3px)
+    background: $gray-background
   .left-nav-list
     margin-bottom: 3em
     
