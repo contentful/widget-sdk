@@ -150,51 +150,62 @@
           %input(type="number")
       .field(data-field-type="link" data-field-widget="autocomplete")
         %label Link
-        .editor(cf-autocomplete="123")
-          %ul.links
-            %li(ng-click="visitLink()")
-              Currently Linked Item Name
-              %i.ss-delete(ng-click="removeLink()" ng-show="linkedEntry")
-          // This button will create and immediately link a new entry so that it shows up in the ul above:
-          .dropdown-btn
-            %a.dropdown-toggle.add-new(ng-click="addNew()") Add new
-            -#%a.dropdown-menu
-              %ul
-                %li Link Type A
-                %li Link Type B
-                %li Link Type C
-          .search-field
-            %input(type="search" placeholder="Search for entries")
-            .dropdown-btn.search-options
-              .dropdown-toggle
-                %i.ss-search
-                %i.ss-dropdown
-              -#.dropdown-menu
-                %ul
-                  %li
-          // This is a presentation of the results that will pop up while typing
-          // User navigates with arrow keys, hitting enter adds results to the list of links above
-          .results(ng-show="entries.length > 0")
-            %table.result-list
-              %thead
-                %tr
-                  %th.cell-type
-                    %label Content Type
-                  %th.cell-name
-                    %label Name
-                  %th.cell-by
-                    %label By
-            .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
+        .editor
+          .div(cf-autocomplete="123")
+            %ul.links
+              %li(ng-click="visitLink()")
+                A linked item
+                %i.ss-delete(ng-click="removeLink()" ng-show="linkedEntry")
+              %li(ng-click="visitLink()")
+                Another linked item
+                %i.ss-delete(ng-click="removeLink()" ng-show="linkedEntry")
+            .controls
+              // This button will create and immediately link a new entry so that it shows up in the ul above:
+              // Clicking the button CAN open a dropdown menu like the add button in the tab-bar but it doesn't always
+              .dropdown-btn.add-new
+                %button.dropdown-toggle(ng-click="addNew()")
+                  New
+                  %i.ss-plus
+                -#%a.dropdown-menu
+                  %ul
+                    %li Link Type A
+                    %li Link Type B
+                    %li Link Type C
+              .search-field
+                %input(type="search" placeholder="Search for entries")
+                .dropdown-btn.search-options
+                  .dropdown-toggle
+                    %i.ss-search
+                    %i.ss-dropdown
+                  -#.dropdown-menu
+                    %ul
+                      %li
+            // This is a presentation of the results that will pop up while typing
+            // User navigates with arrow keys, hitting enter adds results to the list of links above
+            .results(ng-show="entries.length > 0")
               %table.result-list
-                %tbody
-                  - for i in [0..10]
-                    %tr{:class => i == 5 ? 'selected' : ''}
-                      %td.cell-type
-                        %span EntryType #{i}
-                      %td.cell-name
-                        %span Entry name #{i}
-                      %td.cell-by
-                        %span Peter Pan
+                %thead
+                  %tr
+                    %th.cell-type
+                      %label Content Type
+                    %th.cell-name
+                      %label Name
+                    %th.cell-by
+                      %label By
+              .endless-container(style="overflow-y: auto" at-bottom="loadMore()" num-elements="paginator.page")
+                // The overflow will later be controlled by javascript:
+                %table.result-list
+                  %tbody
+                    - 10.times do |i|
+                      %tr{:class => i == 3 ? 'selected' : ''}
+                        %td.cell-type
+                          %span EntryType #{i}
+                        %td.cell-name
+                          %span Entry name #{i}
+                        %td.cell-by
+                          %span Peter Pan
+      .div(style="margin-bottom: 300px")
+        // Maintain distance to bottom, otherwise the result list will float out of the form
 
   .tab-actions
     .button-set

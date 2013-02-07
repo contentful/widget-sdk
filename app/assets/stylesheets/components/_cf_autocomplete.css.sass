@@ -1,12 +1,19 @@
 *[cf-autocomplete]
   display: block
   position: relative
-  width: 50%
+  width: 57%
+  .controls
+    position: relatve
+    +pie-clearfix
   .search-field
+    margin-right: 70px
+  .add-new
+    float: right
   .results
     position: absolute
+    top: 65px
     left: 10px
-    top: 50px
+    margin-top: 5px
     right: 10px
     z-index: 10
     background-color: white
@@ -19,7 +26,6 @@
   .result-list:first-child
     +border-top-left-radius(3px)
     +border-top-right-radius(3px)
-
     
   th:first-child
     +border-top-left-radius(3px)
@@ -37,3 +43,11 @@
 
   tr.selected
     background-color: $result-list-highlight
+
+  .add-new
+    .dropdown-toggle
+      margin: 0
+      //@extend %gray-button
+      //display: inline-block
+      //height: 30px
+      //line-height: 30px
