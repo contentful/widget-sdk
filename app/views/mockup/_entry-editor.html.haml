@@ -128,6 +128,15 @@
         .editor
           %iframe(width="425" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.de/maps?f=q&source=s_q&hl=en&geocode=&q=Berlin&aq=&sll=51.175806,10.454119&sspn=8.654702,23.269043&ie=UTF8&hq=&hnear=Berlin&t=m&ll=52.519146,13.406067&spn=0.026114,0.072956&z=13&iwloc=A&output=embed")
           .sub-fields
+            .search-field
+              %input(type="search" placeholder="Search Address")
+              .dropdown-btn.search-options
+                .dropdown-toggle
+                  %i.ss-search
+                  %i.ss-dropdown
+                -#.dropdown-menu
+                  %ul
+                    %li
             %label.location-picker
               %input(type="text")
               %span Latitude
@@ -139,6 +148,53 @@
         %label Number
         .editor.number
           %input(type="number")
+      .field(data-field-type="link" data-field-widget="autocomplete")
+        %label Link
+        .editor(cf-autocomplete="123")
+          %ul.links
+            %li(ng-click="visitLink()")
+              Currently Linked Item Name
+              %i.ss-delete(ng-click="removeLink()" ng-show="linkedEntry")
+          // This button will create and immediately link a new entry so that it shows up in the ul above:
+          .dropdown-btn
+            %a.dropdown-toggle.add-new(ng-click="addNew()") Add new
+            -#%a.dropdown-menu
+              %ul
+                %li Link Type A
+                %li Link Type B
+                %li Link Type C
+          .search-field
+            %input(type="search" placeholder="Search for entries")
+            .dropdown-btn.search-options
+              .dropdown-toggle
+                %i.ss-search
+                %i.ss-dropdown
+              -#.dropdown-menu
+                %ul
+                  %li
+          // This is a presentation of the results that will pop up while typing
+          // User navigates with arrow keys, hitting enter adds results to the list of links above
+          .results(ng-show="entries.length > 0")
+            %table.result-list
+              %thead
+                %tr
+                  %th.cell-type
+                    %label Content Type
+                  %th.cell-name
+                    %label Name
+                  %th.cell-by
+                    %label By
+            .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
+              %table.result-list
+                %tbody
+                  - for i in [0..10]
+                    %tr{:class => i == 5 ? 'selected' : ''}
+                      %td.cell-type
+                        %span EntryType #{i}
+                      %td.cell-name
+                        %span Entry name #{i}
+                      %td.cell-by
+                        %span Peter Pan
 
   .tab-actions
     .button-set
