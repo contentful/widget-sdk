@@ -92,6 +92,7 @@ angular.module('contentful/classes').factory('TabList', function(){
     this.viewType = options.viewType;
     this.params   = options.params;
     this.title    = options.title;
+    this.hidden   = options.hidden;
     if (options.canClose !== undefined) {
       this._canClose = options.canClose;
     } else {

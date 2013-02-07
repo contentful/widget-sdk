@@ -22,6 +22,7 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
       options = {
         viewType: 'entry-list',
         section: 'entries',
+        hidden: true,
         params: {
           bucketId: $scope.bucketContext.bucket.getId(),
           list: 'all'
@@ -33,6 +34,7 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
       options = {
         viewType: 'entry-type-list',
         section: 'entryTypes',
+        hidden: true,
         title: 'Content Model',
         canClose: true
       };
