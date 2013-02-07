@@ -50,16 +50,23 @@
     display: inline-block
     margin-left: 5px
     vertical-align: middle
-  .dropdown-toggle
+  .dropdown-toggle, .btn
     @extend %blue-button
+    line-height: 2.5em
     vertical-align: middle
-    margin: 2px 0 0 5px
-    padding-right: 1.8em 
+    padding-top: 0
+    padding-bottom: 0
+    text-align: center
+    margin: 2px 0 0 0
+    display: block
+  .dropdown-toggle
+    padding-right: 1.8em
     i
       position: absolute 
       font-size: 8px
-      top: 7px
-      right: 9px
+      top: 2px
+      right: 10px
+      margin-left: 20px
   .btn
     &:active
       margin-top: 0

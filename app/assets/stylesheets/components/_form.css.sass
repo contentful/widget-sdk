@@ -19,6 +19,7 @@ $form-offset: 11px
     position: relative
     input[type="text"],
     input[type="number"],
+    input.time,
     textarea
       padding: 7px
       font-family: 'Open Sans', Arial, sans-serif
@@ -33,6 +34,10 @@ $form-offset: 11px
         background-color: white
         border-color: $link-blue
         outline: none
+    input.datepicker, input.time
+      width: 8em !important
+    .datepicker
+      margin-right: 1%
   .hint, .error
     vertical-align: top
     max-width: 40%

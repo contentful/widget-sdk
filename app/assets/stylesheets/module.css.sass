@@ -46,6 +46,8 @@
     span
       font-size: 1.3em
       white-space: nowrap
+      display: block
+      overflow: hidden
   i.ss-delete
     position: absolute
     top: 1.2em
@@ -56,21 +58,22 @@
     top: 0
     bottom: 0
     right: 0
-    width: 2em
-    border-right: 1.5em solid $page-background
-    @include box-shadow(-14px 0 14px rgba($page-background,1) inset)
+    width: 5em
+    @include inactive-fade
   .tab.active
     color: $dark-gray
     background: $gray-background
     border-bottom: 0
     font-weight: 600
+    @include gray-highlight
     .fade
-      border-right-color: $gray-background
-      @include box-shadow(-14px 0 14px rgba($gray-background,1) inset)
+      @include fade
   .tab:hover
     color: $dark-gray
     cursor: pointer
-    @include box-shadow(0 .5em 1.5em rgba(255,255,255,0.4) inset)
+    +box-shadow(0 8px 16px rgba(255,255,255,0.3) inset)
+  .tab.active:hover
+    @include gray-highlight
 
 .add.button
   @extend %blue-button
@@ -128,7 +131,7 @@
 .tab-header
   border-bottom: 1px solid $lightest-gray
   background-color: $gray-background
-  +box-shadow(0 1px 4px rgba(0,0,0,0.07), 0 -1px 1px rgba(255,255,255,0.8) inset)
+  +box-shadow(0 1px 4px rgba(0,0,0,0.07))
 .tab-actions
   border-top: 1px solid $lightest-gray
   background-color: $gray-background

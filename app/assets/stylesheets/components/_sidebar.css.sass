@@ -2,18 +2,22 @@ $aux-padding: 1.8em
 
 .aux-panel
   width: 20%
+  height: 100%
   position: absolute
   margin-top: -$tab-main-margin-top
+  background-color: white
   right: 0
-  padding: 1.5em 0
+  padding: 0
   +box-sizing(border-box)
-  +border-radius(0 0 0 4px)
-  border-left: 1px solid $light-rule
-  border-bottom: 1px solid $light-rule
+  // +border-radius(0 0 0 4px)
+  border-left: 1px solid lighten($lightest-gray, 7%)
+  // border-bottom: 1px solid lighten($lightest-gray, 1%)
+  // +box-shadow(0 1px 4px rgba(0,0,0,0.07), 0 0 4px rgba(255,255,255,1) inset)
+  +box-shadow(-1px 0 5px rgba(0,0,0,0.06), 0 0 4px rgba(255,255,255,1) inset)
   header
-    padding: 0 $aux-padding 1.1em
-    margin-bottom: 1em
-    border-bottom: 1px solid $light-rule
+    padding: 1.5em $aux-padding 1.1em
+    border-bottom: 1px solid lighten($lightest-gray, 9%)
+    @include gray-highlight
     span
       font-weight: 600
       color: $dark-gray
@@ -23,15 +27,16 @@ $aux-padding: 1.8em
       position: absolute
       right: 1.5em
   article
-    padding: 0 $aux-padding
+    padding: 1em $aux-padding 1.5em
     color: $light-gray
+    +box-shadow(0 1px 0 rgba(255,255,255,0.4) inset)
   table 
     width: 100%
     td, th
       text-align: left
       font-weight: normal
-      font-size: 1.1em
-      padding: 4px 0
+      font-size: 1em
+      padding: 3px 0
     td
       text-align: right
       padding-left: 1em
