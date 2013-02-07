@@ -127,11 +127,18 @@
         %label Location Picker
         .editor
           %iframe(width="425" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.de/maps?f=q&source=s_q&hl=en&geocode=&q=Berlin&aq=&sll=51.175806,10.454119&sspn=8.654702,23.269043&ie=UTF8&hq=&hnear=Berlin&t=m&ll=52.519146,13.406067&spn=0.026114,0.072956&z=13&iwloc=A&output=embed")
-          %input.coordinates(type="text")
-          %button.remove-location Remove
+          .sub-fields
+            %label.location-picker
+              %input(type="text")
+              %span Latitude
+            %label.location-picker
+              %input(type="text")
+              %span Longitude
+            %button.remove-location Remove
       .field(data-field-type="number" data-field-widget="textField")
         %label Number
-        .editor
+        .editor.number
+          %input(type="number")
 
   .tab-actions
     .button-set
