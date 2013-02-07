@@ -77,9 +77,9 @@
   .button-set
     %button.delete(ng-show="entry.canDelete()") Delete
     %button.archive(ng-show="entry.canArchive()") Archive
-    %button.unpublish(ng-show="entry.canUnpublish()") Unpublish
-    %button.publish(ng-show="entry.canPublish() && entry.canUnpublish()") Republish
-    %button.publish(ng-show="entry.canPublish() && !entry.canUnpublish()") Publish
+    %button.unpublish(ng-show="entry.canUnpublish()" ng-click="unpublish()") Unpublish
+    %button.publish(ng-show="entry.canPublish() && entry.canUnpublish()" ng-click="publish()") Republish
+    %button.publish(ng-show="entry.canPublish() && !entry.canUnpublish()" ng-click="publish()") Publish
   -#.save-status.green
     Not sure if we need this for now
     %i.ss-check
