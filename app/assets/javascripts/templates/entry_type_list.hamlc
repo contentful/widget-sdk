@@ -6,16 +6,11 @@
       %tr
         %th
           %input(type="checkbox")
-        %th
-          %label ID
-        %th
-          %label Name
-        %th
-          %label Fields
-        %th
-          %label Created
-        %th
-          %label Status
+        %th ID
+        %th Name
+        %th Fields
+        %th Created
+        %th Status
   .main-results-wrapper
     %table.result-list.main-results
       %tbody

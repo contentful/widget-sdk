@@ -59,16 +59,11 @@
             %input(type="checkbox")
           %th.cell-favorite
             %i.ss-star
-          %th.cell-type
-            %label Content Type
-          %th.cell-name
-            %label Name
-          %th.cell-by
-            %label By
-          %th.cell-created
-            %label Created
-          %th.cell-status
-            %label Status
+          %th.cell-type Content Type
+          %th.cell-name Name
+          %th.cell-by By
+          %th.cell-created Created
+          %th.cell-status Status
     .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
       %table.result-list.main-results
         %tbody
