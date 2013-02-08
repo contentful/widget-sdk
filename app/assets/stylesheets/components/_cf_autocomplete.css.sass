@@ -17,27 +17,31 @@
     right: 10px
     z-index: 10
     background-color: white
-    +box-shadow(0 2px 8px rgba(0,0,0, 0.4))
     +rounded-corners(3px, 3px, 3px, 3px)
-    border-bottom: 1px solid $light-rule
+    border: 1px solid $dark-rule
+    +box-shadow(0 2px 8px rgba(0,0,0, 0.4))
   .endless-container
     max-height: 200px
+    overflow-x: hidden
 
-  .result-list:first-child
-    +border-top-left-radius(3px)
-    +border-top-right-radius(3px)
-    
-  th:first-child
-    +border-top-left-radius(3px)
-  th:last-child
-    +border-top-right-radius(3px)
+  table
+    border: none // border provided by .results container
+    &.result-list:first-child
+      border-bottom: 1px solid $dark-rule
+  .endless-container
+    table
+      border: none
+      @extend %endless-result-list-body
 
   .cell-type
     width: 100px
   .cell-name
     width: auto
-    overflow: hidden
-    text-overflow: ellipsis
+    span
+      display: block
+      max-width: 200px
+      overflow-x: hidden
+      text-overflow: ellipsis
   .cell-by
     width: 100px
 

@@ -1,25 +1,60 @@
 // Main result table
 
-// Layout
+
+//TODO: Rename this file to something, making it clear that .result-table is a general style
+// Move main-result stuff to its own module
+
+// Layout for result-lists used in entity-lists-tabs:
 .result-list
   width: 100%
 
-.result-list.main-results
-  tbody
-    tr
-      border-right: none
+.result-list.main-results,
+.result-list.main-header
+  border-left: none
+  border-right: none
 
-// State Modifier for when used with left nav (kinda layout related)
+.main-results-wrapper
+  .main-results
+    @extend %endless-result-list-body
 
-.with-left-nav .main-header
-  th:first-child
-    +rounded-corners(4px,0,0,0)
+.with-left-nav
+  .main-header
+    +border-top-left-radius(3px)
+  .result-list
+    border-left: 1px solid $dark-rule
+  
 
 // Font-sizes and colors for table
 
 $result-list-highlight: #fbfbfb
 
+%endless-result-list-body
+  border-bottom: none
+  border-top: none
+
+%standalone-table
+  +border-radius(3px)
+  //thead
+    th:first-child
+      +border-top-left-radius(3px)
+    th:last-child
+      +border-top-right-radius(3px)
+  //tbody
+    th:first-child
+      +border-bottom-left-radius(3px)
+    th:last-child
+      +border-bottom-right-radius(3px)
+
 .result-list
+  // borders
+  border: 1px solid $dark-rule
+  tbody
+    td
+      border-bottom: 1px solid $dark-rule
+    tr:last-child
+      td
+        border-bottom: none
+
   td,
   th
     text-align: left
@@ -34,12 +69,8 @@ $result-list-highlight: #fbfbfb
     font-size: 1.1em
     padding: .4em 0 .3em 0
     color: $light-gray
-    +box-shadow(0 1px 0 rgba(0,0,0,0.1) inset)
-    border-bottom: 1px solid $dark-rule
   th:first-child
     padding-left: 1.4em
-    +box-shadow(0 0 0 transparent)
-    +box-shadow(1px 1px 0 rgba(0,0,0,0.1) inset)
   td:first-child
     padding-left: 1.3em
   th:last-child, td:last-child
@@ -119,16 +150,16 @@ td.published
   color: $green
   .main-results-bar
     background-color: $green
-    +box-shadow(0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $green)
+    //+box-shadow(0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $green)
 
 td.draft, td.pending
   color: $gold
   .main-results-bar
     background-color: $gold
-    +box-shadow(0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $gold)
+    //+box-shadow(0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $gold)
 
 td.archived
   color: $red
   .main-results-bar
     background-color: $red
-    +box-shadow(0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $red)
+    //+box-shadow(0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $red)
