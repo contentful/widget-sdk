@@ -73,10 +73,8 @@
           Hint to the user about the meaning of the field
           .arrow-left
           .arrow-left-border
-        .error.tip
+        -#.error
           Error on the field entry
-          .arrow-left
-          .arrow-left-border
 
 .tab-actions
   .button-set

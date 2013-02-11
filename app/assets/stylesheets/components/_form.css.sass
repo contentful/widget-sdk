@@ -82,7 +82,10 @@ $form-offset: 11px
     text-align: center
     +transition(opacity 0.3s ease-in-out)
 
-  input[type="text"]:focus + .hint, textarea:focus + .hint, input[type="number"]:focus + .hint
+  input[type="text"]:focus + .hint,
+  textarea:focus + .hint,
+  input[type="number"]:focus + .hint,
+  cf-field-editor:focus .hint
     opacity: 1
   .sub-fields
     width: 57%
