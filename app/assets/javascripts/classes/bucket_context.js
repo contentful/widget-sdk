@@ -35,7 +35,12 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
           if (!displayField) {
             return entry.data.sys.id;
           } else {
-            return entry.data.fields[displayField][this.bucket.data.locales.default];
+            var title = entry.data.fields[displayField][this.bucket.data.locales.default];
+            if (!title || title.match(/^\s*$/)) {
+              return entry.data.sys.id;
+            } else {
+              return title;
+            }
           }
         } catch (e) {
           return entry.data.sys.id;
