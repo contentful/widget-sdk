@@ -166,14 +166,14 @@
               // Clicking the button CAN open a dropdown menu like the add button in the tab-bar but it doesn't always
               .dropdown-btn.add-new
                 %button.dropdown-toggle(ng-click="addNew()")
-                  New
                   %i.ss-plus
+                  New
                 -#%a.dropdown-menu
                   %ul
                     %li Link Type A
                     %li Link Type B
                     %li Link Type C
-              .search-field
+              .search-field.btn-right-on
                 %input(type="search" placeholder="Search for entries")
                 .dropdown-btn.search-options
                   .dropdown-toggle
@@ -184,7 +184,7 @@
                       %li
             // This is a presentation of the results that will pop up while typing
             // User navigates with arrow keys, hitting enter adds results to the list of links above
-            .results(ng-show="entries.length > 0")
+            .results.btn-right-on.search-options-on(ng-show="entries.length > 0")
               %table.result-list
                 %thead
                   %tr

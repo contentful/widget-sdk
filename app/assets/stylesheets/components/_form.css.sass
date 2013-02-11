@@ -40,8 +40,8 @@ $form-offset: 11px
       width: 27%
       margin-right: 1%
     input[type="number"]
-      padding-top: 9px
-      padding-bottom: 9px
+      padding-top: 8px
+      padding-bottom: 8px
     input.datepicker, input.time
       width: 8em !important
     .datepicker
@@ -101,10 +101,49 @@ $form-offset: 11px
     button
       margin-top: 13px
 
+.controls
+  button.dropdown-toggle
+    color: $medium-gray
+    &:hover
+      color: $medium-gray
+    i
+      color: $light-gray
+      position: relative
+      font-size: .9em
+      top: 1px
+      left: -3px
+
+.editor 
+  .results
+    top: auto
+    margin-top: 0px
+    left: 16px
+  .results, .search-field
+    &.btn-right-on
+      margin-right: 90px
+      &.search-options-on
+        right: 44px
+
+.editor
+  .search-field
+    margin-top: 10px
+    height: 35px
+    input[type="search"]
+      width: 85%
+      padding: 0.6em 0.7em 0.5em
+    .dropdown-toggle
+      height: 33px
+      width: 44px
+      .ss-search
+        top: .25em
+      .ss-dropdown
+        top: .4em
+        right: .3em
+
 .field
   // Styling for specific types
   &[data-field-type=boolean] .editor,
-  &[data-field-type=array] .editor,
+  &[data-field-type=array] .editor
     label
       width: auto
       position: relative
@@ -112,3 +151,26 @@ $form-offset: 11px
     span
       position: relative
       top: 2px
+
+.field
+  &[data-field-type=link]
+    margin: 25px 0 15px
+    .links 
+      border-top: 1px solid $light-rule
+      margin-bottom: 1.5em
+      li
+        line-height: 1.5em
+        font-size: 1.3em
+        padding: 10px 7px
+        border-bottom: 1px solid $light-rule
+      .ss-delete
+        float: right
+        margin-top: 1px
+
+
+
+
+
+
+
+
