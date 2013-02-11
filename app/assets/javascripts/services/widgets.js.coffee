@@ -133,7 +133,7 @@ editWidgets =
             controller.$setValidity('float', true)
             return parseFloat(viewValue.replace(',', '.'))
           else
-            ctrl.$setValidity('float', false)
+            controller.$setValidity('float', false)
             return undefined
   integer:
     textField:
