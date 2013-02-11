@@ -84,14 +84,6 @@ $form-offset: 11px
 
   input[type="text"]:focus + .hint, textarea:focus + .hint, input[type="number"]:focus + .hint
     opacity: 1
-  .editor.boolean, .editor.array
-    label
-      width: auto
-      position: relative
-      top: -2px
-    span
-      position: relative
-      top: 2px
   .sub-fields
     width: 57%
     label
@@ -106,4 +98,14 @@ $form-offset: 11px
     button
       margin-top: 13px
 
-
+.field
+  // Styling for specific types
+  &[data-field-type=boolean] .editor,
+  &[data-field-type=array] .editor,
+    label
+      width: auto
+      position: relative
+      top: -2px
+    span
+      position: relative
+      top: 2px

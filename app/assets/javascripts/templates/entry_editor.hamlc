@@ -59,7 +59,7 @@
   %form.form-horizontal(name="entryForm")
     -#.field(data-field-type="string" data-field-widget="textField")
       later generate these tags so they can be used in CSS
-    .field(ng-repeat="field in fields()")
+    .field(ng-repeat="field in fields()" data-field-type="{{field.type}}")
       %label {{field.name}}
       .editor
         %cf-field-editor.controls(
