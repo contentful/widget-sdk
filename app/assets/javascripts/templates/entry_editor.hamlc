@@ -1,7 +1,7 @@
 .tab-header.editor-configuration
   %h1
     {{headline()}}
-  .editor-top-left
+  -#.editor-top-left
     .dropdown-btn
       %a.btn.dropdown-toggle
         %i.ss-dropdown
