@@ -241,25 +241,12 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
 
       $scope.currentLinkDescription = function() {
         if ($scope.linkedEntry) {
-          return $scope.entryTitle($scope.linkedEntry);
+          return $scope.bucketContext.entryTitle($scope.linkedEntry, $scope.locale);
         } else {
           return '(nothing)';
         }
       };
 
-      $scope.entryTitle = function(entry) {
-        var type = $scope.bucketContext.typeForEntry(entry);
-        if (type.data.displayName) {
-          var hasDisplayName = entry.data.fields[type.data.displayName][$scope.locale];
-          if (hasDisplayName) {
-            return type.data.name + ': \"' + entry.data.fields[type.data.displayName][$scope.locale] + '\"';
-          } else {
-            return type.data.name + ': ' + entry.data.id;
-          }
-        } else {
-          return type.data.name + ' ' + entry.data.id;
-        }
-      };
     }
   };
 });
