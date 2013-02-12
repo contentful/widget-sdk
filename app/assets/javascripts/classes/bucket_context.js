@@ -29,13 +29,15 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
       typeForEntry: function(entry) {
         return this._entryTypesHash[entry.data.sys.entryType];
       },
-      entryTitle: function(entry) {
+      entryTitle: function(entry, locale) {
+        locale = locale || this.bucket.data.locales.default;
+
         try {
           var displayField = this.typeForEntry(entry).data.displayField;
           if (!displayField) {
             return entry.data.sys.id;
           } else {
-            var title = entry.data.fields[displayField][this.bucket.data.locales.default];
+            var title = entry.data.fields[displayField][locale];
             if (!title || title.match(/^\s*$/)) {
               return entry.data.sys.id;
             } else {
