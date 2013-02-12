@@ -1,24 +1,25 @@
-Current Link:
-%a(ng-click="visitLink()") {{currentLinkDescription()}}
-%a(ng-click="removeLink()" ng-show="linkedEntry") Remove
-.dropdown-btn
-  %a.dropdown-toggle.add-new(ng-click="addNew()") Add new
-  %a.dropdown-menu
-    %ul
-      %li(ng-repeat="entryType in bucketContext.entryTypes" ng-click="addNew(entryType)" dropdown-close="") {{entryType.data.name}}
+%ul.links(ng-show="linkedEntry")
+  %li
+    %a(ng-click="visitLink()") {{currentLinkDescription()}}
+    %i.ss-delete(ng-click="removeLink()")
+.controls
+  .dropdown-btn.add-new
+    %button.dropdown-toggle
+      %i.ss-plus
+      New
+    %a.dropdown-menu
+      %ul
+        %li(ng-repeat="entryType in bucketContext.entryTypes" ng-click="addNew(entryType)" dropdown-close="") {{entryType.data.name}}
+  .search-field.btn-right-on(on-idle-update="searchTerm" placeholder="Search for entries")
+  
 
--#!= JST['search_field'](context)
-.search-field(on-idle-update="searchTerm")
-.results(ng-show="entries.length > 0")
+.results.btn-right-on.search-options-on(ng-show="entries.length > 0")
   %table.result-list
     %thead
       %tr
-        %th.cell-type
-          %label Content Type
-        %th.cell-name
-          %label Name
-        %th.cell-by
-          %label By
+        %th.cell-type Content Type
+        %th.cell-name Name
+        %th.cell-by By
   .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
     %table.result-list
       %tbody
