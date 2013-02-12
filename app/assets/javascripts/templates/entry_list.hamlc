@@ -2,7 +2,7 @@
   .left-nav
     %h1 Entries
   .search-area.with-left-nav
-    %form.search-field(on-idle-update="searchTerm")
+    %form.search-field(on-idle-update="searchTerm" placeholder="Search for entries")
     .dropdown-btn.search-view-options
       %a.btn.dropdown-toggle
         %i.ss-columns

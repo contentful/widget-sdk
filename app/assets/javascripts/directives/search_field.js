@@ -15,7 +15,8 @@ angular.module('contentful/directives').directive('searchField', function(){
   return {
     restrict: 'C',
     scope: {
-      onIdleUpdate: '=' // This value will be updated with the entered searchterm whenever the user stops typing
+      onIdleUpdate: '=', // This value will be updated with the entered searchterm whenever the user stops typing
+      placeholder: '@'
     },
     template: JST['search_field'](),
     link: function(scope) {
