@@ -63,3 +63,11 @@ i.ss-delete
     width: $avatar-width
     +border-radius(3px)
 
+// Overwrite some jQuery-UI stuff
+.ui-corner-all
+  +rounded-corners(3px, 3px, 3px, 3px)
+.ui-widget-header
+  background-image: none
+  background-color: $gray-background
+  color: $dark-gray
+  
