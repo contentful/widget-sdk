@@ -44,8 +44,7 @@ $form-offset: 11px
       padding-bottom: 8px
     input.datepicker, input.time
       width: 8em !important
-    .datepicker
-      margin-right: 1%
+
   .hint
     vertical-align: top
     max-width: 40%
@@ -91,6 +90,15 @@ $form-offset: 11px
     .gmaps-container
       width: 425px
       height: 250px
+  .ss-calendar,
+  .ss-clock
+    font-size: 14px
+    color: $light-gray
+    vertical-align: middle
+    pointer-events: none // http://stackoverflow.com/questions/3680429/click-through-a-div-to-underlying-elements
+    position: relative
+    left: -1.8em
+
   .sub-fields
     width: 57%
     label
