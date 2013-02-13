@@ -1,6 +1,7 @@
 source 'https://rubygems.org'
 
-gem 'rails', '3.2.9'
+gem 'rails', '3.2.12'
+gem 'json', '>= 1.7.7' # Explicit version requirement because security
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'
@@ -16,7 +17,7 @@ gem "requirejs-rails", :git => "https://github.com/coderanger/requirejs-rails"
 group :assets do
   gem 'haml_coffee_assets'
   gem 'execjs'
-  gem 'sass-rails',   '~> 3.2.3'
+  gem 'sass-rails',   '~> 3.2.6'
   gem 'coffee-rails', '~> 3.2.1'
 
   # See https://github.com/sstephenson/execjs#readme for more supported runtimes
