@@ -1,4 +1,11 @@
+// Modules that were loaded through static.js but are referenced by CommonJS modules
 define('sharejs', sharejs);
+define('jquery', [
+], function () {
+  /*global jQuery:false*/
+  'use strict';
+  return jQuery;
+});
 
 require([
   'contentful_client/client',
