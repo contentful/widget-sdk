@@ -5,15 +5,23 @@
     %li(ng-class="{section: bucketContext.tabList.currentSection() == 'entryTypes',
                   'section-index': bucketContext.tabList.currentViewType() == 'entry-type-list'}"
         ng-click="visitView('entry-type-list')")
-      %i.ss-layout
+      %i.ss-database
+      .hint.tip.nav-models
+        Content Model
     %li(ng-class="{section: bucketContext.tabList.currentSection() == 'entries',
                   'section-index': bucketContext.tabList.currentViewType() == 'entry-list'}"
         ng-click="visitView('entry-list')")
-      %i.ss-layers
+      %i.ss-file
+      .hint.tip.nav-models
+        Entries
     %li
-      %i.ss-picture
+      %i.ss-attach
+      .hint.tip.nav-models
+        Assets
     %li
-      %i.ss-cell
+      %i.ss-fork
+      .hint.tip.nav-models
+        Distribution
 %nav.tab-list
   %ul
     %li.tab(ng-repeat="tabItem in bucketContext.tabList.items" ng-class="{active: tabItem.active()}" ng-click="tabItem.activate()" ng-hide="tabItem.hidden")
