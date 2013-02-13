@@ -18,30 +18,7 @@ editWidgets =
   date:
     textField:
       name: "Date Field"
-      template: """
-        <input type="date" ng-model="date" />
-        <input type="text" ng-model="time" ng-pattern="/(0|\\d|0\\d|1\\d|2[0-3]):[0-5][\\d](:[0-5][\\d])?/"> 
-        """
-      link: (scope, elm, attr) ->
-        scope.setFromUnixtime = (ut) ->
-          dateTime = new Date(ut)
-          [@date, @time] = dateTime.toISOString().split(/T|\./)
-        scope.setFromUnixtime(Date.now())
-
-        dateController = elm.find('input[type=date]').inheritedData('$ngModelController')
-        timeController = elm.find('input[type=text]').inheritedData('$ngModelController')
-        changeHandler = ->
-          return unless dateController.$modelValue? && timeController.$modelValue?
-          dateAndTime = "#{dateController.$modelValue}-#{timeController.$modelValue}"
-          [year, month, day, hours, minutes, seconds] = dateAndTime.split(/-|:/).map((s) -> Number(s))
-          scope.changeValue Date.UTC(year, month-1, day, hours, minutes, seconds ?= 0)
-        dateController.$viewChangeListeners.push changeHandler
-        timeController.$viewChangeListeners.push changeHandler
-        scope.$on 'valueChanged', (event, value) ->
-          event.currentScope.setFromUnixtime(value)
-        elm.find('input[type=date]').change (event, bla) ->
-          val = elm.find('input[type=date]').val()
-          dateController.$setViewValue(val)
+      template: """<div class="cf-datetime-editor"/>"""
   array:
     textField:
       name: "Array field"
