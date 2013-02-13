@@ -26,14 +26,12 @@ angular.module('contentful/directives').directive('cfDatetimeEditor', function()
       dateController.$parsers.unshift(function(viewValue) {
         var raw = $.datepicker.parseDate(DATE_FORMAT, viewValue);
         var date = moment(raw).format(DATE_FORMAT_INTERNAL);
-        console.log('parsed date', viewValue, date);
         return date;
       });
 
       dateController.$formatters.push(function(modelValue) {
         var raw = moment(modelValue, DATE_FORMAT_INTERNAL).toDate();
         var date = $.datepicker.formatDate(DATE_FORMAT, raw);
-        console.log('filtered date', modelValue, date);
         return date;
       });
 
@@ -41,43 +39,32 @@ angular.module('contentful/directives').directive('cfDatetimeEditor', function()
         elm.find('.date').datepicker('setDate', dateController.$viewValue);
       };
       
-      scope.$watch('utcDate', function(date, old) {
-        console.log('date watcher', date, old);
-      });
-      scope.$watch('utcTime', function(time, old) {
-        console.log('time watcher', time, old);
-      });
-
       var changeHandler = function(){
         var date = dateController.$modelValue;
         var time = timeController.$modelValue;
-        console.log('changeHandler triggered', date, time);
         //if (!time || time.length == 0)
         // TODO handle case where Time isn't set or where nothing is set
         if (!(date && time) ) return;
 
         var dateAndTime = dateController.$modelValue+'T'+timeController.$modelValue;
         var dateTime = moment(dateAndTime);
-        console.log('sending changeValue %o -> %o', dateTime.format(), dateTime.utc().format());
         scope.changeValue(dateTime.utc().format());
       };
       dateController.$viewChangeListeners.push(changeHandler);
       timeController.$viewChangeListeners.push(changeHandler);
 
-      scope.setFromUnixtime = function(ut){
-        var dateTime = moment.utc(ut).local();
+      scope.setFromISO = function(iso){
+        var dateTime = moment.utc(iso).local();
         scope.localDate = dateTime.format(DATE_FORMAT_INTERNAL);
         if (dateTime.seconds()) {
           scope.localTime = dateTime.format('HH:mm:ss');
         } else {
           scope.localTime = dateTime.format('HH:mm');
         }
-
-        console.log('Setting from unixtime', ut, scope.localDate, scope.localTime);
       };
 
       scope.$on('valueChanged', function(event, value) {
-        event.currentScope.setFromUnixtime(value);
+        event.currentScope.setFromISO(value);
       });
     }
   };
