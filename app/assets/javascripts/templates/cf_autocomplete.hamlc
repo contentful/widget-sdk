@@ -1,3 +1,6 @@
+%ul.links(ng-hide="linkedEntry")
+  %li
+    (none)
 %ul.links(ng-show="linkedEntry")
   %li
     %a(ng-click="visitLink()") {{currentLinkDescription()}}

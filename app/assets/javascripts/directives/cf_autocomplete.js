@@ -85,12 +85,12 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
 
       };
 
-      var DOWN  = 40,
-          UP    = 38,
-          ENTER = 13,
-          ESC   = 27;
-
       element.on('keydown', function(event) {
+        var DOWN  = 40,
+            UP    = 38,
+            ENTER = 13,
+            ESC   = 27;
+
         if (event.keyCode == DOWN){
           $scope.selectNext();
           $scope.$digest();
@@ -126,8 +126,10 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
       };
 
       $scope.selectNext = function() {
-        $scope.selectedItem++;
-        _.defer(scrollToSelected);
+        if ($scope.selectedItem < $scope.paginator.numEntries-1) {
+          $scope.selectedItem++;
+          _.defer(scrollToSelected);
+        }
       };
 
       $scope.selectPrevious = function() {
@@ -141,9 +143,11 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
 
       $scope.pickSelected = function() {
         var entry = $scope.entries[$scope.selectedItem];
-        $scope.setLink(entry, function(err) {
-          if (!err) $scope.closePicker();
-        });
+        if (entry) {
+          $scope.setLink(entry, function(err) {
+            if (!err) $scope.closePicker();
+          });
+        }
       };
 
       $scope.removeLink = function() {
