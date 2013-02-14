@@ -9,22 +9,18 @@
     margin-right: 70px
   .add-new
     float: right
-  .results
-    font-size: 10px
-    position: absolute
-    top: 65px
-    left: 12px
-    margin-top: 5px
-    right: 12px
-    z-index: 10
-    background: white
-    background: rgba(255,255,255,0.96)
-    border: .1em solid shade(#FFFFFF, 10)
-    +box-shadow(0 2px 6px rgba(0,0,0,0.1))
-    +rounded-corners(0,0,3px,3px)
   .endless-container
     max-height: 200px
     overflow-x: hidden
+
+  .results,
+  .search-field
+    &.btn-right-on
+      margin-right: 90px
+      &.search-options-on
+        right: 44px
+  .result-list td:last-child
+    vertical-align: middle
 
   table
     border: none // border provided by .results container
@@ -46,9 +42,6 @@
       text-overflow: ellipsis
   .cell-by
     width: 100px
-
-  tr.selected
-    background-color: $result-list-highlight
 
   .add-new
     .dropdown-toggle

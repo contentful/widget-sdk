@@ -69,18 +69,22 @@ angular.module('contentful/directives').directive('cfLocationEditor', function()
         var latLng = locationController.$viewValue;
         if (latLng) {
           marker.setPosition(latLng);
-          map.setCenter(latLng);
+          map.panTo(latLng);
         }
       };
-      
+
       latController.$viewChangeListeners.push(triggerLocationWatchers);
       lonController.$viewChangeListeners.push(triggerLocationWatchers);
       latController.$viewChangeListeners.push(changeHandler);
       lonController.$viewChangeListeners.push(changeHandler);
 
-      scope.removeLocation = function() {
-        scope.location = null;
+      scope.updateLocation = function(location) {
+        scope.location = location;
         changeHandler();
+      };
+
+      scope.removeLocation = function() {
+        scope.updateLocation(null);
       };
 
       google.maps.event.addListener(map, 'click', function(event){
@@ -98,7 +102,121 @@ angular.module('contentful/directives').directive('cfLocationEditor', function()
       google.maps.event.addListener(marker, 'dragend', function(event){
         locationController.$setViewValue(event.latLng);
       });
-      
+
+      // Search Stuff /////////////////////////////////////////////////////////
+
+      scope.$watch('searchTerm', function(searchTerm, old, scope) {
+        if (searchTerm && searchTerm != old) {
+          var geocoder = new google.maps.Geocoder();
+          geocoder.geocode({
+            address: searchTerm
+          }, function(results) {
+            scope.$apply(function(scope) {
+              if (results.length == 1) {
+                scope.updateLocation({
+                  lat: results[0].geometry.location.lat(),
+                  lon: results[0].geometry.location.lng()
+                });
+                map.fitBounds(results[0].geometry.viewport);
+              } else {
+                scope.offerResults(results);
+              }
+            });
+          });
+        } else {
+          scope.results = [];
+          scope.selectedResult = 0;
+        }
+      });
+
+      scope.offerResults = function(rawResults) {
+        scope.selectedResult = 0;
+        scope.results = _.map(rawResults, function(result) {
+          return {
+            location: {
+              lat: result.geometry.location.lat(),
+              lon: result.geometry.location.lng()
+            },
+            viewport: result.geometry.viewport,
+            strippedLocation: {
+              lat: result.geometry.location.lat().toString().slice(0,8),
+              lon: result.geometry.location.lng().toString().slice(0,8)
+            },
+            address: result.formatted_address
+          };
+        });
+      };
+
+      elm.find('input[type=search], .results').on('keydown', function(event) {
+        var DOWN  = 40,
+            UP    = 38,
+            ENTER = 13,
+            ESC   = 27;
+
+        if (event.keyCode == DOWN){
+          scope.selectNext();
+          scope.$digest();
+          event.preventDefault();
+        } else if (event.keyCode == UP) {
+          scope.selectPrevious();
+          scope.$digest();
+          event.preventDefault();
+        } else if (event.keyCode == ESC) {
+          scope.$apply(function(scope) {
+            scope.closePicker();
+          });
+          event.preventDefault();
+        } else if (event.keyCode == ENTER) {
+          scope.$apply(function(scope) {
+            scope.pickSelected();
+          });
+          event.preventDefault();
+          event.stopPropagation();
+        }
+      });
+
+      var scrollToSelected = function() {
+        var selected = elm.find('.results .selected')[0];
+        var $container = elm.find('.results');
+        var above = selected.offsetTop <= $container.scrollTop();
+        var below = $container.scrollTop() + $container.height()<= selected.offsetTop;
+        if (above) {
+          selected.scrollIntoView(true);
+        } else if (below) {
+          selected.scrollIntoView(false);
+        }
+      };
+
+      scope.selectNext = function() {
+        if (scope.selectedResult < scope.results.length-1) {
+          scope.selectedResult++;
+          _.defer(scrollToSelected);
+        }
+      };
+
+      scope.selectPrevious = function() {
+        if (0 < scope.selectedResult) scope.selectedResult--;
+        _.defer(scrollToSelected);
+      };
+
+      scope.selectResult = function(result) {
+        scope.selectedResult = _.indexOf(scope.results, result);
+        scope.pickSelected();
+      };
+
+      scope.closePicker = function() {
+        scope.searchTerm = '';
+      };
+
+      scope.pickSelected = function() {
+        var result = scope.results[scope.selectedResult];
+        if (result) {
+          scope.updateLocation(result.location);
+          map.fitBounds(result.viewport);
+          scope.closePicker();
+        }
+      };
+
     }
   };
 });

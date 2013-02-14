@@ -102,6 +102,7 @@ $form-offset: 11px
 
   .sub-fields
     width: 57%
+    position: relative
     label
       width: 40%
       input, input[type="text"]
@@ -128,16 +129,44 @@ $form-offset: 11px
 
 .editor 
   .results
+    font-size: 10px
+    position: absolute
+    top: 65px
+    right: 44px
+    left: 12px
+    margin-top: 5px
+    z-index: 10
+    background: white
+    background: rgba(255,255,255,0.96)
+    border: .1em solid shade(#FFFFFF, 10)
+    +box-shadow(0 2px 6px rgba(0,0,0,0.1))
+    +rounded-corners(0,0,3px,3px)
+    .selected
+      background-color: $result-list-highlight
+  .results
     top: auto
     margin-top: 0px
     left: 16px
-  .results, .search-field
-    &.btn-right-on
-      margin-right: 90px
-      &.search-options-on
-        right: 44px
-  .result-list td:last-child
-    vertical-align: middle
+
+.cf-location-editor
+  .results
+    overflow-y: auto
+    max-height: 200px
+    li
+      padding: 5px 10px
+      border-bottom: 1px solid $light-rule
+      cursor: pointer
+      &:hover
+        background-color: $result-list-highlight
+    .address
+      display: block
+      font-size: 1.3em
+      margin-bottom: 4px
+    .lat,
+    .lon
+      display: inline-block
+      width: 12em
+      color: $light-gray
 
 .editor
   .search-field
