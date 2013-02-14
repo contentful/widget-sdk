@@ -1,0 +1,181 @@
+.entry-type-editor
+  .tab-header.editor-configuration
+    %h1
+      Entry Type
+    .editor-top-right
+      .dropdown-btn
+        %a.btn.active
+          %span Meta
+      .dropdown-btn
+        %a.btn
+          %span Apps
+      .dropdown-btn
+        %a.btn
+          %span Events
+
+  .aux-panel
+    .meta
+      %header
+        %span Meta
+        %i.ss-delete
+      %article
+        %table
+          %tr
+            %th Last Save
+            %td 5 seconds ago
+          %tr
+            %th Published Version #
+            %td 14
+          %tr
+            %th Current #
+            %td 15
+        %div
+
+  .tab-main
+    %form.form-horizontal(name="entryTypeForm")
+      // The .form-row corresponds to the .field in the entry editor, but since we're using
+      // the .field class for the actual list  of fields, these here have to be named differently
+      .form-row
+        %label Name
+        .editor
+          %input(type="text")
+      .form-row
+        %label Description
+        .editor
+          %textarea
+      .form-row
+        %label Display Field
+        .editor
+          %select
+            %option Name
+            %option Title
+      .form-row
+        %label Fields
+        .editor
+          .fields-header
+            .name Name
+            .identifier Identifier
+            .type Type
+            .localized Localized
+            .required Required
+            .validations Validations
+            .actions
+          %ul.fields
+            - 5.times do
+              %li.field
+                .drag-handle
+                .name
+                  %input(value="FooBar")
+                .identifier
+                  foo_bar
+                .type
+                  Text
+                .localized
+                  %i.ss-flag
+                .required
+                  %i.ss-check
+                .validations
+                  %i.ss-settings
+                .actions
+                  %i.activate.ss-write
+                  %i.deactivate.ss-writingdisabled
+                  %i.delete.ss-trash
+            %li.field.open
+              .drag-handle
+              .name
+                %input(value="FooBar")
+              .identifier
+                foo_bar
+              .type
+                Text
+              .localized
+                %i.ss-flag
+              .required
+                %i.ss-check
+              .validations
+                %i.ss-settings
+              .actions
+                %i.activate.ss-write
+                %i.deactivate.ss-writingdisabled
+                %i.delete.ss-trash
+              .configuration
+                %header Validations
+                // Not sure if header is the appropriate tag
+                %ul.validations
+                  %li
+                    .name Inclusion
+                    .options
+                      %input apple, orange, banana
+                    .action
+                      %i.remove.ss-delete
+                  %li
+                    .name Between
+                    .options
+                      %input.lower
+                      \-
+                      %input.upper
+                    .action
+                      %i.remove.ss-delete
+
+
+                
+          %ul.fields.new-field
+            %li.field
+              .drag-handle
+              .name
+                %input(value="FooBar")
+              .identifier
+                %input(value="foo_bar")
+              .type
+                %select
+                  %option Text
+                  %option Location
+                  %option …
+              .localized
+                %i.ss-flag
+              .required
+                %i.ss-check
+              .validations
+                %i.ss-settings
+              .actions
+                %i.delete.ss-plus
+
+
+  .tab-actions
+    // No need to touch these in the entry type editor
+    .button-set
+      %button.delete Delete
+      %button.archive Archive
+      %button.unpublish Unpublish
+      %button.publish Publish
+    .save-status.green
+      %i.ss-check
+      %span All changes saved successfully
+    .other-users
+      %span 3 others online
+      %ul
+        %li.avatar
+          %img(src="assets/avatar-2.jpg")
+          .tip-container
+            .tip
+              Jan
+              .arrow-down
+              .arrow-down-border
+        %li.avatar
+          %img(src="assets/avatar-3.jpg")
+          .tip-container
+            .tip
+              Stephan
+              .arrow-down
+              .arrow-down-border
+        %li.avatar
+          %img(src="assets/avatar-4.jpg")
+          .tip-container
+            .tip
+              Chris
+              .arrow-down
+              .arrow-down-border
+
+
+
+
