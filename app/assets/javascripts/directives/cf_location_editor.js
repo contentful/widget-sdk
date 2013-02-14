@@ -217,6 +217,8 @@ angular.module('contentful/directives').directive('cfLocationEditor', function()
         }
       };
 
+      // TODO Destroy cleanup
+
     }
   };
 });
