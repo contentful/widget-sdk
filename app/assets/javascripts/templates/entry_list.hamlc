@@ -56,7 +56,7 @@
       %thead
         %tr
           %th.cell-select
-            %input(type="checkbox")
+            %input(type="checkbox" cf-selection="")
           %th.cell-favorite
             %i.ss-star
           %th.cell-type Content Type
@@ -69,7 +69,7 @@
         %tbody
           %tr(ng-repeat="entry in entries" ng-show="visibleInCurrentList(entry)" cf-click-local="editEntry(entry)")
             %td.cell-select
-              %input(type="checkbox")
+              %input(type="checkbox" cf-selection="entry")
             %td.cell-favorite
               -#%i.ss-star
             %td.cell-type
@@ -85,4 +85,10 @@
                 %span {{statusClass(entry)}}
                 .main-results-bar
 .tab-actions
-  foo
+  .label {{selection.size()}} Entries selected
+  .button-set(ng-controller="EntryListActionsCtrl"   ng-hide="selection.isEmpty()")
+    %button.delete(   ng-click="deleteSelected()"    ng-show="tab.params.list == 'archived'") Delete
+    %button.archive(  ng-click="archiveSelected()"   ng-show="tab.params.list != 'archived'") Archive
+    %button.unarchive(ng-click="unarchiveSelected()" ng-show="tab.params.list == 'archived'") Restore
+    %button.unpublish(ng-click="unpublishSelected()") Unpublish
+    %button.publish(  ng-click="publishSelected()"  ) Publish

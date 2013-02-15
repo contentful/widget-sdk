@@ -1,8 +1,11 @@
 'use strict';
 
-angular.module('contentful/controllers').controller('EntryListCtrl', function EntryListCtrl($scope, Paginator) {
+angular.module('contentful/controllers').controller('EntryListCtrl', function EntryListCtrl($scope, Paginator, Selection) {
   $scope.contentType = 'entries';
   $scope.entrySection = 'all';
+
+  $scope.paginator = new Paginator();
+  $scope.selection = new Selection();
 
   $scope.editEntry = function(entry) {
     var editor = _.find($scope.tab.list.items, function(tab){
@@ -105,8 +108,6 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     }
   };
 
-  $scope.paginator = new Paginator();
-
   $scope.$watch(function pageParameters(scope){
     return {
       page: scope.paginator.page,
@@ -128,6 +129,7 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
       scope.reloadInProgress = false;
       if (err) return;
       scope.paginator.numEntries = sys.total;
+      scope.selection.switchBaseSet(sys.total);
       scope.$apply(function(scope){
         scope.entries = entries;
       });
@@ -185,6 +187,7 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
         return;
       }
       scope.paginator.numEntries = sys.total;
+      scope.selection.switchBaseSet(sys.total);
       scope.$apply(function(scope){
         var args = [scope.entries.length, 0].concat(entries);
         scope.entries.splice.apply(scope.entries, args);
@@ -227,6 +230,10 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     } else {
       return 'draft';
     }
+  };
+
+  $scope.toggleEntrySelection = function(entry) {
+    
   };
 
   // Development shorcut to quickly open an entry
