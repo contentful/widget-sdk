@@ -14,7 +14,11 @@ editWidgets =
   boolean:
     checkBox:
       name: "Boolean Checkbox"
-      template: """<label class="checkbox"><input type="checkbox" ng-model="value" ot-bind="replace"/> <span ng-show="value">Yes</span><span ng-show="!value">No</span></label>"""
+      #template: """<label class="checkbox"><input type="checkbox" ng-model="value" ot-bind="replace"/> <span ng-show="value">Yes</span><span ng-show="!value">No</span></label>"""
+      template: """
+        <label><input type="radio" ng-model="value" ng-value="true" ot-bind="replace"/><span class="yes">Yes</span></label>
+        <label><input type="radio" ng-model="value" ng-value="false"/><span class="no" >No</span ></label>
+      """
   date:
     textField:
       name: "Date Field"
