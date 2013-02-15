@@ -53,7 +53,12 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
     $scope.entry.publish(version, function (err) {
       $scope.$apply(function(scope){
         if (err) {
-          window.alert('could not publish, version mismatch');
+          console.log('publish error', err);
+          if (err.body.sys.id == 'validationFailed') {
+            window.alert('could not publish, validation failed');
+          } else {
+            window.alert('could not publish, version mismatch');
+          }
         } else {
           scope.updateFromShareJSDoc();
         }
