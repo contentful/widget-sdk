@@ -8,7 +8,8 @@ angular.module('contentful/directives').directive('cfFieldEditor', function(widg
       fieldId: '=',
       doc: '=',
       locale: '=',
-      bucketContext: '='
+      bucketContext: '=',
+      value: '='
     },
     link: function(scope, elm, attr) {
       var widget = widgets.editor(scope.type, attr.editor);
