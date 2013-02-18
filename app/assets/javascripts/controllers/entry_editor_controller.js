@@ -6,10 +6,6 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
 
   $scope.$watch('entry', function(entry, old, scope){
     if (!entry) return;
-
-    if (scope.shareJSstarted) {
-      console.log('Fatal error, shareJS started twice');
-    }
     ShareJS.open(entry, function(err, doc) {
       if (!err) {
        scope.$apply(function(scope){
@@ -19,16 +15,13 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
         console.log('Error opening connection', err);
       }
     });
-    scope.shareJSstarted = true;
   });
 
-  $scope.exitEditor = function(){
-    $scope.doc.close(function(){
-      $scope.$apply(function(scope){
-        scope.tab.close();
-      });
-    });
-  };
+  $scope.$on('tabClosed', function(event, tab) {
+    if (tab==event.currentScope.tab) {
+      event.currentScope.doc.close();
+    }
+  });
 
   $scope.$watch('bucketContext.entryTitle(entry)', function(title, old, scope) {
     scope.tab.title = title;
