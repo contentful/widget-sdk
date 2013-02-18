@@ -117,16 +117,33 @@
     .drag-handle
       width: 5%
       padding: 0
+      i 
+        color: $lightest-gray
       &:hover
         cursor: pointer
+    .localized
+      i
+        color: $blue
+    .required
+      i 
+        color: $green
+    .validations 
+      i
+        top: 0
+        text-align: center
+        @extend button 
+        padding: .25em .5em .15em
+    .name, .identifier
+      width: 20%
     .actions
       white-space: nowrap
     input
       border: 1px solid $lightest-gray
       height: 24px
-      padding: .5em
-      +border-radius(3px)
-      +box-shadow(0 1px 2px rgba(0,0,0,0.1) inset)
+      padding: .4em .5em .5em
+      width: 92%
+      +border-radius(2px)
+      +box-shadow(0 1px 2px rgba(0,0,0,0.07) inset)
       +transition(background-color 0.3s ease-in, border-color 0.3s ease-in)
       &:focus
         border-color: $link-blue
