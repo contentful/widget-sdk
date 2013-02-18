@@ -96,22 +96,31 @@
 .editor
   table.main-results
     +border-radius(3px 3px 0 0)
+    margin: 5px 0 0 0
     border: 1px solid $lightest-gray
-    width: auto
+    width: 100%
+    tr
+      &:hover
+        cursor: auto
     th 
       border-bottom: 1px solid $lightest-gray
       padding: .3em .8em
     td
       font-size: 1.2em
-      padding: .4em .8em
+      padding: .8em .8em
       white-space: normal
       &:first-child
         padding-left: 1.2em
       i
         position: relative
-        top: 2px
+        top: 3px
     .drag-handle
-      width: 30px
+      width: 5%
+      padding: 0
+      &:hover
+        cursor: pointer
+    .actions
+      white-space: nowrap
     input
       border: 1px solid $lightest-gray
       height: 24px
@@ -124,6 +133,25 @@
         outline: none
       &.error-input:focus
         border-color: darken($red, 10%)
+  .field.open
+    td
+      background-color: $gray-background
+      text-align: left
+      padding: 0 !important
+      +box-shadow(0 2px 1px rgba(0,0,0,0.05) inset)
+      header
+        color: $dark-gray
+        font-size: 1.1em
+        font-weight: 600
+        padding: .8em 1em
+        margin-top: -1px
+        border-top: 1px solid $lightest-gray
+        p
+          padding-bottom: .6em
+          border-bottom: 1px solid lighten($lightest-gray, 5%)
+      div
+        padding: 5px 10px
+
 
 .entry-editor
   @extend %entity-editor

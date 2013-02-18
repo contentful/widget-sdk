@@ -83,7 +83,7 @@
                       %i.activate.ss-write
                       %i.deactivate.ss-writingdisabled
                       %i.delete.ss-trash
-                %tr.field.open
+                %tr.field
                   %td.drag-handle
                     %i.ss-rows
                   %td.name
@@ -100,43 +100,47 @@
                     %i.activate.ss-write
                     %i.deactivate.ss-writingdisabled
                     %i.delete.ss-trash
-                %tr.validations-open
-                  %th
-                    Validations
-                  %td
-                    .name Inclusion
-                    .options
-                      %input apple, orange, banana
-                    .action
-                      %i.remove.ss-delete
-                  %td
-                    .name Between
-                    .options
-                      %input.lower
-                      \-
-                      %input.upper
-                    .action
-                      %i.remove.ss-delete
-                %table.fields.new-field
-                  %tr.field
-                    %td.drag-handle
-                    %td.name
-                      %input(value="FooBar")
-                    %td.identifier
-                      %input(value="foo_bar")
-                    %td.type
-                      %select
-                        %option Text
-                        %option Location
-                        %option …
-                    %td.localized
-                      %i.ss-flag
-                    %td.required
-                      %i.ss-check
-                    %td.validations
-                      %i.ss-settings
-                    %td.actions
-                      %i.delete.ss-plus
+                %tr.field.open
+                  %td(colspan="8")
+                    %ul.validations-open 
+                      %li
+                        %header
+                          %p Validations
+                        %div
+                          .name Inclusion
+                          .options
+                            %input apple, orange, banana
+                          .action
+                            %i.remove.ss-delete
+                        %div
+                          .name Between
+                          .options
+                            %input.lower
+                            \-
+                            %input.upper
+                          .action
+                            %i.remove.ss-delete
+
+                  %table.fields.new-field
+                    %tr.field
+                      %td.drag-handle
+                      %td.name
+                        %input(value="FooBar")
+                      %td.identifier
+                        %input(value="foo_bar")
+                      %td.type
+                        %select
+                          %option Text
+                          %option Location
+                          %option …
+                      %td.localized
+                        %i.ss-flag
+                      %td.required
+                        %i.ss-check
+                      %td.validations
+                        %i.ss-settings
+                      %td.actions
+                        %i.delete.ss-plus
 
 
   .tab-actions
