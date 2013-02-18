@@ -52,23 +52,23 @@
       .form-row.field
         %label Fields
         .editor
-          %table.result-list.main-header
-            %thead
-              %tr
-                %th.cell.drag-handle 
-                %th.cell.name Name
-                %th.cell.identifier Identifier
-                %th.cell.type Type
-                %th.cell.localized Localized
-                %th.cell.required Required
-                %th.cell.validations Validations
-                %th.cell.actions
           .main-results-wrapper
             %table.result-list.main-results
+              %thead
+                %tr
+                  %th.cell.drag-handle 
+                  %th.cell.name Name
+                  %th.cell.identifier Identifier
+                  %th.cell.type Type
+                  %th.cell.localized Localized
+                  %th.cell.required Required
+                  %th.cell.validations Validations
+                  %th.cell.actions
               %tbody
-                - 5.times do
+                - 4.times do
                   %tr.field
                     %td.drag-handle
+                      %i.ss-rows
                     %td.name
                       %input(value="FooBar")
                     %td.identifier foo_bar
@@ -83,40 +83,40 @@
                       %i.activate.ss-write
                       %i.deactivate.ss-writingdisabled
                       %i.delete.ss-trash
-                  %tr.field.open
-                    %td.drag-handle
-                    %td.name
-                      %input(value="FooBar")
-                    %td.identifier foo_bar
-                    %td.type Text
-                    %td.localized
-                      %i.ss-flag
-                    %td.required
-                      %i.ss-check
-                    %td.validations
-                      %i.ss-settings
-                    %td.actions
-                      %i.activate.ss-write
-                      %i.deactivate.ss-writingdisabled
-                      %i.delete.ss-trash
-                    %td.configuration
-                      %header Validations
-                      // Not sure if header is the appropriate tag
-                      %ul.validations
-                        %li
-                          .name Inclusion
-                          .options
-                            %input apple, orange, banana
-                          .action
-                            %i.remove.ss-delete
-                        %li
-                          .name Between
-                          .options
-                            %input.lower
-                            \-
-                            %input.upper
-                          .action
-                            %i.remove.ss-delete
+                %tr.field.open
+                  %td.drag-handle
+                    %i.ss-rows
+                  %td.name
+                    %input(value="FooBar")
+                  %td.identifier foo_bar
+                  %td.type Text
+                  %td.localized
+                    %i.ss-flag
+                  %td.required
+                    %i.ss-check
+                  %td.validations
+                    %i.ss-settings
+                  %td.actions
+                    %i.activate.ss-write
+                    %i.deactivate.ss-writingdisabled
+                    %i.delete.ss-trash
+                %tr.validations-open
+                  %th
+                    Validations
+                  %td
+                    .name Inclusion
+                    .options
+                      %input apple, orange, banana
+                    .action
+                      %i.remove.ss-delete
+                  %td
+                    .name Between
+                    .options
+                      %input.lower
+                      \-
+                      %input.upper
+                    .action
+                      %i.remove.ss-delete
                 %table.fields.new-field
                   %tr.field
                     %td.drag-handle
