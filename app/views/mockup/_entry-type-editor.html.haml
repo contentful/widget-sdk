@@ -35,110 +35,108 @@
     %form.form-horizontal(name="entryTypeForm")
       // The .form-row corresponds to the .field in the entry editor, but since we're using
       // the .field class for the actual list  of fields, these here have to be named differently
-      .form-row
+      .form-row.field
         %label Name
         .editor
           %input(type="text")
-      .form-row
+      .form-row.field
         %label Description
         .editor
           %textarea
-      .form-row
+      .form-row.field.select-field
         %label Display Field
         .editor
           %select
             %option Name
             %option Title
-      .form-row
+      .form-row.field
         %label Fields
         .editor
-          .fields-header
-            .name Name
-            .identifier Identifier
-            .type Type
-            .localized Localized
-            .required Required
-            .validations Validations
-            .actions
-          %ul.fields
-            - 5.times do
-              %li.field
-                .drag-handle
-                .name
-                  %input(value="FooBar")
-                .identifier
-                  foo_bar
-                .type
-                  Text
-                .localized
-                  %i.ss-flag
-                .required
-                  %i.ss-check
-                .validations
-                  %i.ss-settings
-                .actions
-                  %i.activate.ss-write
-                  %i.deactivate.ss-writingdisabled
-                  %i.delete.ss-trash
-            %li.field.open
-              .drag-handle
-              .name
-                %input(value="FooBar")
-              .identifier
-                foo_bar
-              .type
-                Text
-              .localized
-                %i.ss-flag
-              .required
-                %i.ss-check
-              .validations
-                %i.ss-settings
-              .actions
-                %i.activate.ss-write
-                %i.deactivate.ss-writingdisabled
-                %i.delete.ss-trash
-              .configuration
-                %header Validations
-                // Not sure if header is the appropriate tag
-                %ul.validations
-                  %li
-                    .name Inclusion
-                    .options
-                      %input apple, orange, banana
-                    .action
-                      %i.remove.ss-delete
-                  %li
-                    .name Between
-                    .options
-                      %input.lower
-                      \-
-                      %input.upper
-                    .action
-                      %i.remove.ss-delete
-
-
-                
-          %ul.fields.new-field
-            %li.field
-              .drag-handle
-              .name
-                %input(value="FooBar")
-              .identifier
-                %input(value="foo_bar")
-              .type
-                %select
-                  %option Text
-                  %option Location
-                  %option …
-              .localized
-                %i.ss-flag
-              .required
-                %i.ss-check
-              .validations
-                %i.ss-settings
-              .actions
-                %i.delete.ss-plus
+          %table.result-list.main-header
+            %thead
+              %tr
+                %th.cell.drag-handle 
+                %th.cell.name Name
+                %th.cell.identifier Identifier
+                %th.cell.type Type
+                %th.cell.localized Localized
+                %th.cell.required Required
+                %th.cell.validations Validations
+                %th.cell.actions
+          .main-results-wrapper
+            %table.result-list.main-results
+              %tbody
+                - 5.times do
+                  %tr.field
+                    %td.drag-handle
+                    %td.name
+                      %input(value="FooBar")
+                    %td.identifier foo_bar
+                    %td.type Text
+                    %td.localized
+                      %i.ss-flag
+                    %td.required
+                      %i.ss-check
+                    %td.validations
+                      %i.ss-settings
+                    %td.actions
+                      %i.activate.ss-write
+                      %i.deactivate.ss-writingdisabled
+                      %i.delete.ss-trash
+                  %tr.field.open
+                    %td.drag-handle
+                    %td.name
+                      %input(value="FooBar")
+                    %td.identifier foo_bar
+                    %td.type Text
+                    %td.localized
+                      %i.ss-flag
+                    %td.required
+                      %i.ss-check
+                    %td.validations
+                      %i.ss-settings
+                    %td.actions
+                      %i.activate.ss-write
+                      %i.deactivate.ss-writingdisabled
+                      %i.delete.ss-trash
+                    %td.configuration
+                      %header Validations
+                      // Not sure if header is the appropriate tag
+                      %ul.validations
+                        %li
+                          .name Inclusion
+                          .options
+                            %input apple, orange, banana
+                          .action
+                            %i.remove.ss-delete
+                        %li
+                          .name Between
+                          .options
+                            %input.lower
+                            \-
+                            %input.upper
+                          .action
+                            %i.remove.ss-delete
+                %table.fields.new-field
+                  %tr.field
+                    %td.drag-handle
+                    %td.name
+                      %input(value="FooBar")
+                    %td.identifier
+                      %input(value="foo_bar")
+                    %td.type
+                      %select
+                        %option Text
+                        %option Location
+                        %option …
+                    %td.localized
+                      %i.ss-flag
+                    %td.required
+                      %i.ss-check
+                    %td.validations
+                      %i.ss-settings
+                    %td.actions
+                      %i.delete.ss-plus
 
 
   .tab-actions
