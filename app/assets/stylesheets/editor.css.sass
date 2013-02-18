@@ -108,6 +108,7 @@
     td
       font-size: 1.2em
       padding: .8em .8em
+      position: relative
       white-space: normal
       &:first-child
         padding-left: 1.2em
@@ -127,21 +128,29 @@
     .required
       i 
         color: $green
-    .validations 
+    .validations, .actions
       i
         top: 0
         text-align: center
-        @extend button 
-        padding: .25em .5em .15em
+        @extend button
+        font-size: 1.1em
+        line-height: 2em !important
+        padding: .2em .6em 0
+        margin-left: .2em
+        &:first-child
+          margin-left: 0
     .name, .identifier
       width: 20%
     .actions
       white-space: nowrap
+      padding-right: 2em
+    .main-results-bar
+      right: 0
+      width: 6px
     input
       border: 1px solid $lightest-gray
       height: 24px
       padding: .4em .5em .5em
-      width: 92%
       +border-radius(2px)
       +box-shadow(0 1px 2px rgba(0,0,0,0.07) inset)
       +transition(background-color 0.3s ease-in, border-color 0.3s ease-in)
@@ -160,14 +169,39 @@
         color: $dark-gray
         font-size: 1.1em
         font-weight: 600
-        padding: .8em 1em
-        margin-top: -1px
-        border-top: 1px solid $lightest-gray
+        padding: 1em 1em .4em
         p
           padding-bottom: .6em
-          border-bottom: 1px solid lighten($lightest-gray, 5%)
-      div
-        padding: 5px 10px
+      li
+        display: table
+        width: 100%
+        border-top: 1px solid $lightest-gray
+        margin-top: -1px
+      div.section
+        padding: 1em 14px
+        display: table-row
+        &:first-child
+          border-top: 0px
+      .validations-open
+        .name, .options, .action
+          display: table-cell
+          padding: .6em 0
+          vertical-align: middle
+          border-top: 1px solid lighten($lightest-gray, 5%)
+        .name
+          padding-left: 1.2em
+        .action
+          text-align: right
+          padding-right: 1.9em
+          i
+            top: 0
+            text-align: center
+            @extend button 
+            font-size: 1.1em
+            line-height: 2em !important
+            padding: .2em .6em 0
+.new-field
+  margin: 2em 0
 
 
 .entry-editor
