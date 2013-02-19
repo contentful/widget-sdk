@@ -47,6 +47,7 @@ angular.module('contentful/directives').directive('cfFieldEditor', function(widg
         }
       });
 
+      scope.$watch('!!subdoc', 'editable=!!subdoc');
       scope.$watch('doc', updateSubdoc);
       scope.$watch('fieldId', updateSubdoc);
       scope.$watch('locale', updateSubdoc);

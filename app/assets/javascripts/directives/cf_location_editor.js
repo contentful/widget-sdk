@@ -37,6 +37,14 @@ angular.module('contentful/directives').directive('cfLocationEditor', function()
         });
       };
 
+      scope.$watch('editable', function(editable, old, scope) {
+        if (editable) {
+          marker.setDraggable(true);
+        } else {
+          marker.setDraggable(false);
+        }
+      });
+
       var triggerLocationWatchers = function() {
         // Dirty Hack to trigger watchers on scope.location to recognize
         // changed locations even though only nested properties were changed
@@ -87,7 +95,7 @@ angular.module('contentful/directives').directive('cfLocationEditor', function()
       };
 
       google.maps.event.addListener(map, 'click', function(event){
-        if (!scope.location) {
+        if (!scope.location && scope.editable) {
           marker.setPosition(event.latLng);
           locationController.$setViewValue(event.latLng);
         }

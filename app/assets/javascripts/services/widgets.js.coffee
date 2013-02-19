@@ -6,17 +6,17 @@ editWidgets =
   string:
     textField:
       name: "Single line text field"
-      template: """<input type="text" ng-model="value" ot-bind="text"/>"""
+      template: """<input type="text" ng-model="value" ot-bind="text" ng-disabled="!editable"/>"""
   text:
     textArea:
       name: "Multiline text field"
-      template: """<textarea class="input-xxlarge" ng-model="value" ot-bind="text"></textarea>"""
+      template: """<textarea class="input-xxlarge" ng-model="value" ot-bind="text" ng-disabled="!editable"></textarea>"""
   boolean:
     checkBox:
       name: "Boolean Checkbox"
       template: """
-        <label><input type="radio" ng-model="value" ng-value="true" ot-bind="model"/><span class="yes">Yes</span></label>
-        <label><input type="radio" ng-model="value" ng-value="false" ot-bind="model"/><span class="no" >No</span ></label>
+        <label><input type="radio" ng-model="value" ng-value="true" ot-bind="model" ng-disabled="!editable"/><span class="yes">Yes</span></label>
+        <label><input type="radio" ng-model="value" ng-value="false" ot-bind="model" ng-disabled="!editable"/><span class="no" >No</span ></label>
       """
   date:
     textField:
@@ -25,11 +25,11 @@ editWidgets =
   array:
     textField:
       name: "Array field"
-      template: """<input type="text" ng-list="" ng-model="value" ot-bind="model"/>"""
+      template: """<input type="text" ng-list="" ng-model="value" ot-bind="model" ng-disabled="!editable"/>"""
   object:
     jsonArea:
       name: "JSON Field"
-      template: """<textarea class="input-xxlarge" ng-model="value" ot-bind="model"></textarea>"""
+      template: """<textarea class="input-xxlarge" ng-model="value" ot-bind="model" ng-disabled="!editable"></textarea>"""
       link: (scope, elm, attr) ->
         controller = elm.find('textarea').inheritedData('$ngModelController')
         controller.$formatters.push (obj) -> JSON.stringify(obj)
@@ -49,7 +49,7 @@ editWidgets =
   number:
     textField:
       name: "Textfield for floats"
-      template: """<input type="number" ng-model="value" ot-bind="model"/>"""
+      template: """<input type="number" ng-model="value" ot-bind="model" ng-disabled="!editable"/>"""
       link: (scope, elm, attr) ->
         controller = elm.find('input').inheritedData('$ngModelController')
         controller.$parsers.unshift (viewValue) ->
@@ -63,7 +63,7 @@ editWidgets =
   integer:
     textField:
       name: "Textfield for integers"
-      template: """<input type="number" ng-pattern="/^\\-?\\d*$/" ng-model="value" ot-bind="model"/>"""
+      template: """<input type="number" ng-pattern="/^\\-?\\d*$/" ng-model="value" ot-bind="model" ng-disabled="!editable"/>"""
   link:
     selector:
       name: "Link selector"
