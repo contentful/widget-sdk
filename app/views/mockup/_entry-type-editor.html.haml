@@ -74,15 +74,12 @@
                     %td.identifier foo_bar
                     %td.type Text
                     %td.localized
-                      %i.ss-flag
                     %td.required
                       %i.ss-check
                     %td.validations
                       %i.ss-settings
                     %td.actions.published
-                      %i.activate.ss-write
                       %i.deactivate.ss-writingdisabled
-                      %i.delete.ss-trash
                       .main-results-bar
                 - 2.times do
                   %tr.field
@@ -95,13 +92,10 @@
                     %td.localized
                       %i.ss-flag
                     %td.required
-                      %i.ss-check
                     %td.validations
                       %i.ss-settings
                     %td.actions.draft
                       %i.activate.ss-write
-                      %i.deactivate.ss-writingdisabled
-                      %i.delete.ss-trash
                       .main-results-bar
                 %tr.field
                   %td.drag-handle
@@ -117,8 +111,6 @@
                   %td.validations
                     %i.ss-settings
                   %td.actions.archived
-                    %i.activate.ss-write
-                    %i.deactivate.ss-writingdisabled
                     %i.delete.ss-trash
                     .main-results-bar
                 %tr.field.open
@@ -144,7 +136,7 @@
 
                   %table.fields.new-field
                     %tr.field
-                      %td.drag-handle
+                      %td.drag-handle &nbsp;
                       %td.name
                         %input(value="FooBar")
                       %td.identifier
@@ -161,8 +153,8 @@
                       %td.validations
                         %i.ss-settings
                       %td.actions
-                        %i.delete.ss-plus
-
+                        %a.add.button.dropdown-toggle
+                          %i.ss-plus
 
   .tab-actions
     // No need to touch these in the entry type editor

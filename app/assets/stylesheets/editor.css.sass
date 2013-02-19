@@ -94,7 +94,7 @@
       top: 2px
 
 .editor
-  table.main-results
+  table.main-results, table.new-field
     +border-radius(3px 3px 0 0)
     margin: 5px 0 0 0
     border: 1px solid $lightest-gray
@@ -128,6 +128,7 @@
     .required
       i 
         color: $green
+        font-size: 1.1em
     .validations, .actions
       i
         top: 0
@@ -141,9 +142,15 @@
           margin-left: 0
     .name, .identifier
       width: 20%
+    .type
+      width: 15%
+    .validations
+      width: 10%
+      text-align: right
     .actions
       white-space: nowrap
       padding-right: 2em
+      width: 10%
     .main-results-bar
       right: 0
       width: 6px
@@ -163,7 +170,7 @@
     td
       background-color: $gray-background
       text-align: left
-      padding: 0 !important
+      padding: 0 0 1em 0 !important
       +box-shadow(0 2px 1px rgba(0,0,0,0.05) inset)
       header
         color: $dark-gray
@@ -200,8 +207,33 @@
             font-size: 1.1em
             line-height: 2em !important
             padding: .2em .6em 0
-.new-field
-  margin: 2em 0
+        input
+          width: auto
+
+.editor
+  table.new-field
+    margin: -1px 0 4em 0
+    +border-radius(0 0 3px 3px)
+    border: 1px solid $lightest-gray
+    width: 100%
+    td
+      vertical-align: middle
+    .add.button
+      font-size: 12px
+      float: right
+      margin: 0 -.1em 0 0
+      padding: .2em .65em 0
+      width: auto
+      i
+        color: white
+        padding: 0
+        margin: 0
+        border: none
+        background: none
+        +box-shadow(0 0 0 transparent)
+      &:active
+        i
+          top: 0
 
 
 .entry-editor
