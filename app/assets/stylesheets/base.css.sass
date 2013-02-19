@@ -76,6 +76,8 @@ i.ss-delete
 .copy
   +box-sizing(border-box)
   padding: 0 25px
+  // for better legibility at long line-lengths
+  max-width: 800px
   h1, h2, h3, h4, h5, h6
     color: $dark-gray
     line-height: 1.3em
@@ -91,13 +93,18 @@ i.ss-delete
     text-transform: uppercase
   h3
     font-size: 1.3em
+  hr
+    height: 1px
+    background-color: $light-rule
+    margin: 3em 0
+    border: none
   .help-text
     color: $light-gray
     font-style: italic
     font-size: 12px
     font-weight: normal
     margin-left: .5em
-  li, p
+  li, p, blockquote
     color: $medium-gray
     font-size: 1.3em
     line-height: 1.55em
@@ -112,6 +119,11 @@ i.ss-delete
   ol
     li
       list-style-type: lower-roman
+  blockquote
+    border-left: 4px solid $light-rule
+    padding-left: 20px
+    margin-top: 1em
+    font-style: italic
   b, strong
     color: $dark-gray
     font-weight: bold
