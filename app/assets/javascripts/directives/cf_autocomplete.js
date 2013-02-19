@@ -228,7 +228,8 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
         });
       };
 
-      $scope.$on('valueChanged', function(event, value) {
+
+      $scope.setLinkedEntryFromValue = function(value) {
         var linkedId = value && value.sys && value.sys.id;
         if(linkedId) {
           if (value.sys.linkType == 'entry') {
@@ -241,6 +242,11 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
         } else {
           $scope.linkedEntry = null;
         }
+      };
+      $scope.setLinkedEntryFromValue($scope.value);
+
+      $scope.$on('valueChanged', function(event, value) {
+        event.currentScope.setLinkedEntryFromValue(value);
       });
 
       $scope.currentLinkDescription = function() {
