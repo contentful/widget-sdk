@@ -5,7 +5,7 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
   $scope.$watch('bucketContext.bucket.data.locales.default', 'locale=bucketContext.bucket.data.locales.default');
 
   $scope.$watch('entry', function(entry, old, scope){
-    if (!entry) return;
+    if (!entry || entry.isArchived()) return; //TODO: watch isArchived status and adapt doc
     ShareJS.open(entry, function(err, doc) {
       if (!err) {
        scope.$apply(function(scope){
@@ -41,6 +41,12 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
   $scope.canPublish = function() {
     if (!$scope.doc) return false;
     return !$scope.doc.getAt(['sys', 'archivedAt']);
+  };
+
+  $scope.archive = function() {
+    $scope.entry.archive(function() {
+      $scope.$apply();
+    });
   };
 
   $scope.publish = function () {
