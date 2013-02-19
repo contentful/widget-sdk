@@ -71,4 +71,78 @@ i.ss-delete
   background-image: none
   background-color: $gray-background
   color: $dark-gray
+
+// Base typographical styles
+// .content needed on a parent so I can isolate styles on internal pages
+.copy
+  +box-sizing(border-box)
+  padding: 0 25px
+  // for better legibility at long line-lengths
+  max-width: 800px
+  h1, h2, h3, h4, h5, h6
+    color: $dark-gray
+    line-height: 1.3em
+    font-weight: bold
+    margin: 1.8em 0 .8em
+    &:first-child
+      margin-top: 0
+  h1
+    font-size: 2em
+    margin-bottom: .3em
+  h2
+    font-size: 1.4em
+    text-transform: uppercase
+  h3
+    font-size: 1.3em
+  hr
+    height: 1px
+    background-color: $light-rule
+    margin: 3em 0
+    border: none
+  .help-text
+    color: $light-gray
+    font-style: italic
+    font-size: 12px
+    font-weight: normal
+    margin-left: .5em
+  li, p, blockquote
+    color: $medium-gray
+    font-size: 1.3em
+    line-height: 1.55em
+    margin-bottom: 1em
+  ul, ol
+    margin: 2.4em 0 2.4em 1.7em
+    li 
+      margin-bottom: .5em
+  ul
+    li
+      list-style-type: square
+  ol
+    li
+      list-style-type: lower-roman
+  blockquote
+    border-left: 4px solid $light-rule
+    padding-left: 20px
+    margin-top: 1em
+    font-style: italic
+  b, strong
+    color: $dark-gray
+    font-weight: bold
+  a
+    color: $link-blue
+    text-decoration: underline
+    &:visited
+      color: darken($link-blue, 18%)
+    &:hover
+      color: darken($link-blue, 9%)
+
+
+
+
+
+
+
+
+
+
   
