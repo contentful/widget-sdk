@@ -14,10 +14,9 @@ editWidgets =
   boolean:
     checkBox:
       name: "Boolean Checkbox"
-      #template: """<label class="checkbox"><input type="checkbox" ng-model="value" ot-bind="replace"/> <span ng-show="value">Yes</span><span ng-show="!value">No</span></label>"""
       template: """
-        <label><input type="radio" ng-model="value" ng-value="true" ot-bind="replace"/><span class="yes">Yes</span></label>
-        <label><input type="radio" ng-model="value" ng-value="false"/><span class="no" >No</span ></label>
+        <label><input type="radio" ng-model="value" ng-value="true" ot-bind="model"/><span class="yes">Yes</span></label>
+        <label><input type="radio" ng-model="value" ng-value="false" ot-bind="model"/><span class="no" >No</span ></label>
       """
   date:
     textField:
@@ -50,7 +49,7 @@ editWidgets =
   number:
     textField:
       name: "Textfield for floats"
-      template: """<input type="number" ng-model="value" ot-bind="replace"/>"""
+      template: """<input type="number" ng-model="value" ot-bind="model"/>"""
       link: (scope, elm, attr) ->
         controller = elm.find('input').inheritedData('$ngModelController')
         controller.$parsers.unshift (viewValue) ->
@@ -64,7 +63,7 @@ editWidgets =
   integer:
     textField:
       name: "Textfield for integers"
-      template: """<input type="number" ng-pattern="/^\\-?\\d*$/" ng-model="value" ot-bind="replace"/>"""
+      template: """<input type="number" ng-pattern="/^\\-?\\d*$/" ng-model="value" ot-bind="model"/>"""
   link:
     selector:
       name: "Link selector"
