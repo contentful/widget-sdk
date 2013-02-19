@@ -19,7 +19,7 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
 
   $scope.$on('tabClosed', function(event, tab) {
     if (tab==event.currentScope.tab) {
-      event.currentScope.doc.close();
+      if (event.currentScope.doc) event.currentScope.doc.close();
     }
   });
 
@@ -33,7 +33,9 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
   });
 
   $scope.updateFromShareJSDoc = function() {
-    this.entry.update(this.doc.snapshot);
+    if (this.doc) {
+      this.entry.update(this.doc.snapshot);
+    }
   };
 
   $scope.canPublish = function() {
