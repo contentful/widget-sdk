@@ -6,7 +6,6 @@ angular.module('contentful/directives').directive('cfLocationEditor', function()
     restrict: 'C',
     template: JST['cf_location_editor'],
     link: function(scope, elm) {
-      scope.location = scope.value;
       scope.$watch('location', function(loc, old, scope) {
         console.log('location changed', loc, scope);
         marker.setVisible(!!loc);
@@ -95,7 +94,6 @@ angular.module('contentful/directives').directive('cfLocationEditor', function()
       });
 
       scope.$on('valueChanged', function(event, value){
-        console.log('value changed', event, value);
         scope.location = value;
       });
 

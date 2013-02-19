@@ -42,6 +42,8 @@ angular.module('contentful/directives').directive('cfFieldEditor', function(widg
           } finally {
             stopInit();
           }
+        } else {
+          scope.$broadcast('valueChanged', scope.value);
         }
       });
 

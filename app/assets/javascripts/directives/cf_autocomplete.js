@@ -243,7 +243,6 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
           $scope.linkedEntry = null;
         }
       };
-      $scope.setLinkedEntryFromValue($scope.value);
 
       $scope.$on('valueChanged', function(event, value) {
         event.currentScope.setLinkedEntryFromValue(value);

@@ -62,7 +62,6 @@ angular.module('contentful/directives').directive('cfDatetimeEditor', function()
           scope.localTime = dateTime.format('HH:mm');
         }
       };
-      scope.setFromISO(scope.value);
 
       scope.$on('valueChanged', function(event, value) {
         event.currentScope.setFromISO(value);
