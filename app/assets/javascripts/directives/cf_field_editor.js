@@ -13,6 +13,7 @@ angular.module('contentful/directives').directive('cfFieldEditor', function(widg
     },
     link: function(scope, elm, attr) {
       var widget = widgets.editor(scope.type, attr.editor);
+      scope.editable = !!scope.doc;
 
       scope.$watch('doc', function updateDoc(doc, old ,scope) {
         if (old && old !== doc) {
