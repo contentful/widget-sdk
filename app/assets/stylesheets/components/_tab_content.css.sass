@@ -1,0 +1,62 @@
+.left-nav
+  $padding: 8px
+  header
+    color: $light-gray
+    border-bottom: 1px solid $light-rule
+    margin-bottom: .8em
+    padding: 0 $padding 7px
+  li
+    font-size: 1.2em
+    line-height: 25px
+    padding: 0 $padding
+    border: 1px solid transparent
+    span
+      color: $link-blue
+      line-height: 2em
+    small
+      font-size: .9em
+      color: $light-gray
+  li.active
+    border: 1px solid $dark-rule
+    +rounded-corners(3px, 3px, 3px, 3px)
+    background: $gray-background
+  .left-nav-list
+    margin-bottom: 3em
+    
+.tab-header
+  border-bottom: 1px solid $lightest-gray
+  background-color: $gray-background
+  +box-shadow(0 1px 4px rgba(0,0,0,0.07))
+.tab-actions
+  border-top: 1px solid $lightest-gray
+  background-color: $gray-background
+  +box-shadow(0 -1px 4px rgba(0,0,0,0.07), 0 1px 1px rgba(255,255,255,0.8) inset)
+
+.tab-header
+  h1
+    display: inline-block
+    font-size: 2em
+    margin-right: 20px
+    color: $dark-gray
+    padding-left: 25px
+    line-height: $tab-header-height - 2px
+    vertical-align: middle
+
+// Variant to extend a container with to style its left nav in the style
+// that it has these filters
+.list-tab-view
+  .left-nav
+    @extend %blue-link-list
+    .active:hover:after
+      font-family: "SSStandard"
+      content: "↻"
+      font-size: .7em
+      color: $light-gray
+      line-height: 1em
+      margin-left: .3em
+  .left-nav-filters // TODO Rename saved-searches
+    i.ss-search
+      color: $light-gray
+      font-size: .8em
+      margin: 0 .2em 0 0
+    

@@ -1,0 +1,70 @@
+.tab-list
+  li
+    display: inline-block
+    height: $tab-height
+    vertical-align: top
+  .tab
+    position: relative
+    margin-right: 0.2em
+    padding: ($tab-height - 2.7em) 1.2em
+    overflow: hidden
+    background-color: $page-background
+    border: 1px solid #d5d5d5
+    border-bottom-color: $lightest-gray
+    @include rounded-corners(3px,3px,0,0)
+    color: $light-gray
+    span
+      font-size: 1.3em
+      white-space: nowrap
+      display: block
+      overflow: hidden
+  i.ss-delete
+    position: absolute
+    top: 1.2em
+    right: .9em
+    font-size: 1em
+  .fade
+    position: absolute
+    top: 0
+    bottom: 0
+    right: 0
+    width: 5em
+    @include inactive-fade
+  .tab.active
+    color: $dark-gray
+    background: $gray-background
+    border-bottom: 0
+    font-weight: 600
+    @include gray-highlight
+    .fade
+      @include fade
+  .tab:hover
+    color: $dark-gray
+    cursor: pointer
+    +box-shadow(0 8px 16px rgba(255,255,255,0.3) inset)
+  .tab.active:hover
+    @include gray-highlight
+
+/* ADD BUTTON DROPDOWN */
+
+.tablist-button
+  .dropdown-menu 
+    li
+      display: block
+      height: auto
+      font-size: 1.1em
+
+.add.button
+  @extend %blue-button
+  margin-top: .1em
+  margin-left: .2em
+  font-size: 1.2em
+  padding-left: .8em
+  padding-right: .95em
+  i
+    float: left
+    margin: .1em .5em 0 0
+    font-size: .8em
+    color: #7dc7fb
+  &:active
+    top: 1px

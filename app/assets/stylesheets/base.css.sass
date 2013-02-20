@@ -51,6 +51,9 @@ i.ss-delete
   font-size: .8em
   color: $lightest-gray
   @include text-shadow(0 1px 0 rgba(255,255,255,0.6))
+  &:hover
+    color: $medium-gray
+    cursor: pointer
 .loading
   width: 3em
   img
@@ -74,6 +77,7 @@ i.ss-delete
 
 // Base typographical styles
 // .content needed on a parent so I can isolate styles on internal pages
+// TODO this should not need to be wrapped in .copy
 .copy
   +box-sizing(border-box)
   padding: 0 25px
@@ -136,13 +140,23 @@ i.ss-delete
     &:hover
       color: darken($link-blue, 9%)
 
-
-
-
-
-
-
-
-
-
-  
+// Belongs in mixins, but has a backwards dependency on the color vars
+%blue-link-list
+  li:hover
+    cursor: pointer
+    span
+      text-decoration: underline
+      cursor: pointer
+      color: $link-blue
+  .active
+    span
+      font-weight: 600
+      color: $dark-gray
+  .active:hover
+    span
+      text-decoration: none
+      color: $dark-gray
+  .left-nav-bottom
+    span:hover
+      color: $link-blue
+      cursor: pointer

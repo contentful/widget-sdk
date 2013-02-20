@@ -1,0 +1,63 @@
+.nav-bar
+  +gradient(#333333, #434343)
+  +box-shadow(2px 0 1px rgba(0,0,0,0.15))
+  z-index: 1
+  .logo
+    @include box-shadow(0 1px 2px rgba(255,255,255,0.2) inset)
+    img
+      text-align: center
+  li
+    color: black
+    height: 5em
+    width: 5em
+    text-align: center
+    border-bottom: 1px solid #222222
+    border-color: rgba(0,0,0,0.45)
+    @include box-shadow(0 1px 0 rgba(255,255,255,0.06))
+    i
+      font-size: 2em
+      line-height: 2.75em
+      margin-top: 2.5em
+      @include text-shadow(0 1px 0 rgba(255,255,255,0.1))
+    i.ss-layout
+      font-size: 1.9em
+      line-height: 2.85em
+    .tip
+      opacity: 0
+      position: absolute
+      color: white
+      top: 9px
+      left: -200px
+      padding-top: .8em
+      padding-bottom: .8em
+      background-color: $dark-gray
+      background-color: rgba(50,50,50,0.95)
+      border: none
+      +box-shadow(0 0 0 transparent)
+      +transition(opacity .25s ease-in-out)
+    .nav-models
+      width: 108px
+    .nav-entries
+      width: 70px
+    .nav-media
+      width: 60px
+    .nav-ship
+      width: 60px
+  li:hover
+    .tip
+      opacity: 1
+      left: 58px
+
+.nav-bar
+  li:hover
+    color: white
+    cursor: pointer
+  li.section
+    color: $light-gray
+    +background-image(linear-gradient(#000000 0%, #191919 4%, #171717 100%))
+    +filter-gradient(#000000, #171717)
+  li.section-index
+    color: white
+    
+
+
