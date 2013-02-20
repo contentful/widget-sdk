@@ -3,8 +3,23 @@
 angular.module('contentful/controllers').controller('BucketCtrl', function BucketCtrl($scope) {
   $scope.$watch('bucketContext.bucket', function(bucket, old, scope){
     scope.bucketContext.tabList.closeAll();
+
     if (bucket) {
-      $scope.visitView('entry-list');
+      bucket.getEntryType('allfields', function(err, entryType) {
+        scope.$apply(function(scope) {
+          var editor = scope.bucketContext.tabList.add({
+            viewType: 'entry-type-editor',
+            section: 'entryTypes',
+            params: {
+              entryType: entryType,
+              mode: 'edit'
+            },
+            title: 'Edit Content Type'
+          });
+          editor.activate();
+        });
+      });
+      //$scope.visitView('entry-list');
     }
   });
 

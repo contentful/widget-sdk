@@ -1,0 +1,75 @@
+// Common styles for all kinds of editors
+
+%entity-editor
+  // Editor configuration
+  .editor-configuration
+    h1
+      max-width: 600px
+      overflow: hidden
+      white-space: nowrap
+      text-overflow: ellipsis
+  .editor-top-left
+    display: inline-block
+    .dropdown-btn
+      display: inline-block
+      margin-right: 5px
+      vertical-align: middle
+    .dropdown-toggle
+      font-size: 1.2em
+      padding: 0 10px 0 11px
+      line-height: 32px
+      vertical-align: middle
+      @include rounded-corners(3px,3px,3px,3px)
+      border: 1px solid $lightest-gray
+      i
+        color: darken($lightest-gray, 6%)
+        margin-left: 8px
+        margin-top: 1px
+    .dropdown-toggle:hover,
+    .active .dropdown-toggle
+      background-color: $gray-background
+      border: 1px solid $account-border-color
+      border-bottom-color: $lightest-gray
+      i
+        color: $dark-gray
+
+  .editor-top-right
+    float: right
+    height: 100%
+    &:before
+      // This is a fucking hack
+      // Since we want to float right, editor-top-right must be a block
+      // but that prevents us from aligning to the h1, so we need to
+      // insert another text element that simply serves as an alignment
+      // aid for vertical-align
+      display: inline-block
+      line-height: $tab-header-height - 2px
+      vertical-align: middle
+      content: '\2008' //zero width space
+    margin-right: 25px
+    .dropdown-btn
+      display: inline-block
+      margin-left: 5px
+      vertical-align: middle
+    .dropdown-toggle, .btn
+      @extend %blue-button
+      line-height: 2.5em
+      vertical-align: middle
+      padding-top: 0
+      padding-bottom: 0
+      text-align: center
+      margin: 2px 0 0 0
+      display: block
+    .dropdown-toggle
+      padding-right: 1.8em
+      i
+        position: absolute 
+        font-size: 8px
+        top: 2px
+        right: 10px
+        margin-left: 20px
+    .btn
+      &:active
+        margin-top: 0
+        position: relative
+        top: 2px

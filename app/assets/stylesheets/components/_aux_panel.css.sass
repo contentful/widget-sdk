@@ -1,0 +1,22 @@
+// layout
+.aux-panel
+  width: 20%
+  position: absolute
+  overflow-y: auto
+  top: $tab-header-height
+  bottom: $tab-actions-height
+
+// normal mode
+.aux-panel
+  display: none
+
+// sidebar mode
+*.with-sidebar, // TODO Replace by .with-aux-panel
+* // <- this is only for development, remove it when we have a sidebar-switching mechanic
+  .tab-main
+    right: 20%
+  .aux-panel
+    display: block
+  
+
+
