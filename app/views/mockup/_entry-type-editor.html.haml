@@ -35,126 +35,125 @@
     %form(name="entryTypeForm")
       // The .form-row corresponds to the .field in the entry editor, but since we're using
       // the .field class for the actual list  of fields, these here have to be named differently
-      .form-row.field
+      .form-field
         %label Name
         .editor
           %input(type="text")
-      .form-row.field
+      .form-field
         %label Description
         .editor
           %textarea
-      .form-row.field.select-field
+      .form-field.select-field
         %label Display Field
         .editor
           %select
             %option Name
             %option Title
-      .form-row.field
+      .form-field
         %label Fields
         .editor
-          .main-results-wrapper
-            %table.result-list.main-results
-              %thead
-                %tr
-                  %th.cell.drag-handle 
-                  %th.cell.name Name
-                  %th.cell.identifier Identifier
-                  %th.cell.type Type
-                  %th.cell.localized Localized
-                  %th.cell.required Required
-                  %th.cell.validations Validations
-                  %th.cell.actions
-              %tbody
-                - 2.times do
-                  %tr.field
-                    %td.drag-handle
-                      %i.ss-rows
-                    %td.name
-                      %input(value="FooBar")
-                    %td.identifier foo_bar
-                    %td.type Text
-                    %td.localized
-                    %td.required
-                      %i.ss-check
-                    %td.validations
-                      %i.ss-settings
-                    %td.actions.published
-                      %i.deactivate.ss-writingdisabled
-                      .main-results-bar
-                - 2.times do
-                  %tr.field
-                    %td.drag-handle
-                      %i.ss-rows
-                    %td.name
-                      %input(value="FooBar")
-                    %td.identifier foo_bar
-                    %td.type Text
-                    %td.localized
-                      %i.ss-flag
-                    %td.required
-                    %td.validations
-                      %i.ss-settings
-                    %td.actions.draft
-                      %i.activate.ss-write
-                      .main-results-bar
+          %table.result-list
+            %thead
+              %tr
+                %th.cell.drag-handle 
+                %th.cell.name Name
+                %th.cell.identifier Identifier
+                %th.cell.type Type
+                %th.cell.localized Localized
+                %th.cell.required Required
+                %th.cell.validations Validations
+                %th.cell.actions
+            %tbody
+              - 2.times do
                 %tr.field
                   %td.drag-handle
                     %i.ss-rows
                   %td.name
-                    %input(value="FooBar")
+                    %input(value="FooBar" type="text")
+                  %td.identifier foo_bar
+                  %td.type Text
+                  %td.localized
+                  %td.required
+                    %i.ss-check
+                  %td.validations
+                    %i.ss-settings
+                  %td.actions.published
+                    %i.deactivate.ss-writingdisabled
+                    .main-results-bar
+              - 2.times do
+                %tr.field
+                  %td.drag-handle
+                    %i.ss-rows
+                  %td.name
+                    %input(value="FooBar" type="text")
                   %td.identifier foo_bar
                   %td.type Text
                   %td.localized
                     %i.ss-flag
                   %td.required
-                    %i.ss-check
                   %td.validations
                     %i.ss-settings
-                  %td.actions.archived
-                    %i.delete.ss-trash
+                  %td.actions.draft
+                    %i.activate.ss-write
                     .main-results-bar
-                %tr.field.open
-                  %td(colspan="8")
-                    %ul.validations-open 
-                      %li
-                        %header
-                          %p Validations
-                        %div.section
-                          .name Inclusion
-                          .options
-                            %input apple, orange, banana
-                          .action
-                            %i.remove.ss-delete
-                        %div.section
-                          .name Between
-                          .options
-                            %input.lower
-                            \-
-                            %input.upper
-                          .action
-                            %i.remove.ss-delete
+              %tr.field
+                %td.drag-handle
+                  %i.ss-rows
+                %td.name
+                  %input(value="FooBar" type="text")
+                %td.identifier foo_bar
+                %td.type Text
+                %td.localized
+                  %i.ss-flag
+                %td.required
+                  %i.ss-check
+                %td.validations
+                  %i.ss-settings
+                %td.actions.archived
+                  %i.delete.ss-trash
+                  .main-results-bar
+              %tr.field.open
+                %td(colspan="8")
+                  %ul.validations-open 
+                    %li
+                      %header
+                        %p Validations
+                      %div.section
+                        .name Inclusion
+                        .options
+                          %input(type="text" value="apple, orange, banana")
+                        .action
+                          %i.remove.ss-delete
+                      %div.section
+                        .name Between
+                        .options
+                          %input.lower(type="text")
+                          \-
+                          %input.upper(type="text")
+                        .action
+                          %i.remove.ss-delete
 
-                  %table.fields.new-field
-                    %tr.field
-                      %td.drag-handle &nbsp;
-                      %td.name
-                        %input(value="FooBar")
-                      %td.identifier
-                        %input(value="foo_bar")
-                      %td.type
-                        %select
-                          %option Text
-                          %option Location
-                          %option …
-                      %td.localized
-                        %i.ss-flag
-                      %td.required
-                        %i.ss-check
-                      %td.validations
-                        %i.ss-settings
-                      %td.actions
-                        %a.add.button.dropdown-toggle
-                          %i.ss-plus
+                %table.result-list.new-field
+                  %tr.field
+                    %td.drag-handle &nbsp;
+                    %td.name
+                      %input(type="text" value="FooBar")
+                    %td.identifier
+                      %input(type="text" value="foo_bar")
+                    %td.type
+                      %select
+                        %option Text
+                        %option Location
+                        %option …
+                    %td.localized
+                      %i.ss-flag
+                    %td.required
+                      %i.ss-check
+                    %td.validations
+                      %i.ss-settings
+                    %td.actions
+                      %a.add.button.dropdown-toggle
+                        %i.ss-plus
 
   .tab-actions
     // No need to touch these in the entry type editor
