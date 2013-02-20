@@ -1,38 +1,88 @@
-%h2 {{headline()}}
+.tab-header.editor-configuration
+  %h1 {{headline()}}
+  .editor-top-right
+    .dropdown-btn
+      %a.btn.active
+        %span Meta
+    .dropdown-btn
+      %a.btn
+        %span Apps
+    .dropdown-btn
+      %a.btn
+        %span Events
 
-%form.form-horizontal(name="entryTypeForm")
-  .well.well-small.span3.pull-right.row-fluid(ng-show="canPublish()")
-    %h5.muted Publishing
-    %ng-switch(on="!!publishedAt()")
-      %div(ng-switch-when="true")
-        %table.table
-          %tr
-            %th Published at
-            %td {{publishedAt().toLocaleString('de-DE')}}
-          %tr
-            %th Version
-            %td {{publishedVersion()}}
-          %tr
-            %th Current
-            %td {{doc.version}}
-        %button.span12.btn(ng-show="doc.version > publishedVersion()" ng-disabled="entryForm.$invalid" ng-click="publish()") Republish
-      %div(ng-switch-default="")
-        %p Not published yet
-        %button.span12.btn(ng-disabled="entryForm.$invalid" ng-click="publish()") Publish
-  .control-group
-    %label.control-label ID
-    .controls
-      %input.uneditable-input(type="text" disabled="true" value="{{entryType.getId()}}")
-  .control-group
-    %label.control-label Name
-    .controls
-      %input(type="text" ng-model="entryType.data.name" ot-bind-text="namePath" doc="doc")
-  .control-group
-    %label.control-label Title Field
-    .controls
-      %select.field-type(ng-model="entryType.data.displayField" ng-options="field.id as field.name for field in availableDisplayFields" ng-change="displayFieldChanged()")
-        %option(value="") ID
-  .control-group
-    %label.control-label Fields
-    .controls.clearfix
-      %entry-type-field-list.span10
+.aux-panel
+  .meta
+    %header
+      %span Meta
+      %i.ss-delete
+    %article(ng-switch="!!publishedAt()")
+      %table(ng-switch-when="true")
+        %tr
+          %th Last Save
+          %td XX seconds ago
+        %tr
+          %th Published Version #
+          %td {{publishedVersion()}}
+        %tr
+          %th Current #
+          %td {{doc.version}}
+      %table(ng-switch-default="")
+        %tr
+          %th Last Save
+          %td XX seconds ago
+
+.tab-main
+  %form(name="entryTypeForm")
+    .form-row.field
+      %label Name
+      .editor
+        %input(type="text" ng-model="entryType.data.name" ot-bind-text="namePath" doc="doc")
+    .form-row.field
+      %label Description
+      .editor
+        %textarea(ng-model="entryType.data.description" ot-bind-text="namePath" doc="doc")
+    .form-row.field.select-field
+      %label Display Field
+      .editor
+        %select.field-type(ng-model="entryType.data.displayField" ng-options="field.id as field.name for field in availableDisplayFields" ng-change="displayFieldChanged()")
+          %option(value="") ID
+    .form-row.field
+      %label Fields
+      .editor.entry-type-field-list
+
+
+.tab-actions
+  // No need to touch these in the entry type editor
+  .button-set
+    %button.delete Delete
+    %button.archive Archive
+    %button.unpublish Unpublish
+    %button.publish Publish
+  .save-status.green
+    %i.ss-check
+    %span All changes saved successfully
+  .other-users
+    %span 3 others online
+    %ul
+      %li.avatar
+        %img(src="assets/avatar-2.jpg")
+        .tip-container
+          .tip
+            Jan
+            .arrow-down
+            .arrow-down-border
+      %li.avatar
+        %img(src="assets/avatar-3.jpg")
+        .tip-container
+          .tip
+            Stephan
+            .arrow-down
+            .arrow-down-border
+      %li.avatar
+        %img(src="assets/avatar-4.jpg")
+        .tip-container
+          .tip
+            Chris
+            .arrow-down
+            .arrow-down-border

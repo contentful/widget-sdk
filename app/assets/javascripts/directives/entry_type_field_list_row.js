@@ -70,7 +70,7 @@ angular.module('contentful/directives').directive('entryTypeFieldListRow', funct
           //}
           if (scope.doc && scope.index !== undefined && scope.index !== null) {
             var nameDoc  = scope.doc.at(['fields', scope.index, 'name']);
-            scope.cleanupTextArea = nameDoc.attach_textarea(elm.find('.field-name')[0]);
+            scope.cleanupTextArea = nameDoc.attach_textarea(elm.find('.name input')[0]);
           }
         }
 
