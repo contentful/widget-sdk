@@ -1,12 +1,5 @@
-// Main result table
-
-
-//TODO: Rename this file to something, making it clear that .result-table is a general style
-// Move main-result stuff to its own module
-
-// Layout for result-lists used in entity-lists-tabs:
-.result-list
-  width: 100%
+// main-results and main-header are used for tables in the entity
+// overviews
 
 .result-list.main-results,
 .result-list.main-header
@@ -23,85 +16,6 @@
   .result-list
     border-left: 1px solid $dark-rule
   
-
-// Font-sizes and colors for table
-
-$result-list-highlight: #fbfbfb
-
-%endless-result-list-body
-  border-bottom: none
-  border-top: none
-
-%standalone-table
-  +border-radius(3px)
-  //thead
-    th:first-child
-      +border-top-left-radius(3px)
-    th:last-child
-      +border-top-right-radius(3px)
-  //tbody
-    th:first-child
-      +border-bottom-left-radius(3px)
-    th:last-child
-      +border-bottom-right-radius(3px)
-
-.result-list
-  // borders
-  border: 1px solid $dark-rule
-  tbody
-    td
-      border-bottom: 1px solid $light-rule
-    tr:last-child
-      td
-        border-bottom: none
-
-  td,
-  th
-    text-align: left
-    padding: .8em 0
-    vertical-align: middle
-    font-size: 1.2em
-    line-height: 1.8em
-    white-space: nowrap
-  th
-    //background-color: $gray-background
-    font-weight: normal
-    font-size: 1.1em
-    padding: .4em 0 .3em 0
-    color: $light-gray
-  th:first-child
-    padding-left: 1.4em
-  td:first-child
-    padding-left: 1.3em
-  th:last-child, td:last-child
-    text-align: right
-    padding-right: 2em
-  td:last-child
-    vertical-align: top
-    padding-top: 0
-    padding-bottom: 0
-  .ss-star
-    font-size: .8em
-    color: $gold
-
-  .cell-select
-    input[type="checkbox"]
-      position: relative
-      top: -.2em
-  .cell-type,
-  .cell-by
-    color: $medium-gray
-  .cell-name
-    color: $dark-gray
-    font-weight: 600
-  .cell-created
-    color: $light-gray
-    font-size: 1.05em
-  td.cell-status
-    text-transform: uppercase
-    color: $light-gray
-    font-size: 1em
-
 // status cell stuff for main-results
 .result-list
   .draft-wrapper
@@ -118,31 +32,6 @@ $result-list-highlight: #fbfbfb
     width: .8em
     height: 100%
     background-color: $light-gray  
-
-// Cell widths
-
-.cell-select
-  width: 5%
-.cell-favorite
-  width: 5%
-.cell-type
-  width: 13%
-.cell-name
-  width: 42%
-.cell-by
-  width: 15%  
-.cell-created
-  width: 10%
-.cell-status
-  width: 10%
-      
-// State variations
-
-.result-list
-  tbody
-    tr:hover
-      background-color: $result-list-highlight
-      cursor: pointer
 
 // State variations for main-results
 
@@ -163,3 +52,11 @@ td.archived
   .main-results-bar
     background-color: $red
     //+box-shadow(0 0 2px rgba(0,0,0,0.2) inset, 0 1px 0 $red)
+
+// Widgets used IN the tables:
+.main-results,
+.main-header
+  .ss-star
+    font-size: .8em
+    color: $gold
+
