@@ -1,3 +1,153 @@
 .entry-type-editor
   @extend %entity-editor
 
+  .editor
+    table.main-results, table.new-field
+      +border-radius(3px 3px 0 0)
+      margin: 5px 0 0 0
+      border: 1px solid $lightest-gray
+      width: 100%
+      tr
+        &:hover
+          cursor: auto
+      th 
+        border-bottom: 1px solid $lightest-gray
+        padding: .3em .8em
+      td
+        font-size: 1.2em
+        padding: .8em .8em
+        position: relative
+        white-space: normal
+        &:first-child
+          padding-left: 1.2em
+        i
+          position: relative
+          top: 3px
+      .drag-handle
+        width: 5%
+        padding: 0
+        i 
+          color: $lightest-gray
+        &:hover
+          cursor: pointer
+      .localized
+        i
+          color: $blue
+      .required
+        i 
+          color: $green
+          font-size: 1.1em
+      .validations, .actions
+        i
+          top: 0
+          text-align: center
+          @extend button
+          font-size: 1.1em
+          line-height: 2em !important
+          padding: .2em .6em 0
+          margin-left: .2em
+          &:first-child
+            margin-left: 0
+      .name, .identifier
+        width: 20%
+      .type
+        width: 15%
+      .validations
+        width: 10%
+        text-align: right
+      .actions
+        white-space: nowrap
+        padding-right: 2em
+        width: 10%
+      .main-results-bar
+        right: 0
+        width: 6px
+      input
+        border: 1px solid $lightest-gray
+        height: 24px
+        padding: .4em .5em .5em
+        +border-radius(2px)
+        +box-shadow(0 1px 2px rgba(0,0,0,0.07) inset)
+        +transition(background-color 0.3s ease-in, border-color 0.3s ease-in)
+        &:focus
+          border-color: $link-blue
+          outline: none
+        &.error-input:focus
+          border-color: darken($red, 10%)
+    .field.open
+      td
+        background-color: $gray-background
+        text-align: left
+        padding: 0 0 1em 0 !important
+        +box-shadow(0 2px 1px rgba(0,0,0,0.05) inset)
+        header
+          color: $dark-gray
+          font-size: 1.1em
+          font-weight: 600
+          padding: 1em 1em .4em
+          p
+            padding-bottom: .6em
+        li
+          display: table
+          width: 100%
+          border-top: 1px solid $lightest-gray
+          margin-top: -1px
+        div.section
+          padding: 1em 14px
+          display: table-row
+          &:first-child
+            border-top: 0px
+        .validations-open
+          .name, .options, .action
+            display: table-cell
+            padding: .6em 0
+            vertical-align: middle
+            border-top: 1px solid lighten($lightest-gray, 5%)
+          .name
+            padding-left: 1.2em
+          .action
+            text-align: right
+            padding-right: 1.9em
+            i
+              top: 0
+              text-align: center
+              @extend button 
+              font-size: 1.1em
+              line-height: 2em !important
+              padding: .2em .6em 0
+          input
+            width: auto
+
+  .editor
+    table.new-field
+      margin: -1px 0 4em 0
+      +border-radius(0 0 3px 3px)
+      border: 1px solid $lightest-gray
+      width: 100%
+      td
+        vertical-align: middle
+      .add.button
+        font-size: 12px
+        float: right
+        margin: 0 -.1em 0 0
+        padding: .2em .65em 0
+        width: auto
+        i
+          color: white
+          padding: 0
+          margin: 0
+          border: none
+          background: none
+          +box-shadow(0 0 0 transparent)
+        &:active
+          i
+            top: 0
+
+
+  .entry-editor
+    @extend %entity-editor
+
+
+
+
+
