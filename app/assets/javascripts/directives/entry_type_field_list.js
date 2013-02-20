@@ -7,6 +7,28 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
     link: function link(scope, elm) {
       scope.newType = 'text';
       var body = elm.find('tbody').eq(0);
+      body.sortable({
+        handle: '.drag-handle',
+        start: function(event, ui) {
+          ui.item.startIndex = ui.item.index();
+        },
+        update: function(e, ui) {
+          var oldIndex = ui.item.startIndex;
+          var newIndex = ui.item.index();
+          delete ui.item.startIndex;
+          scope.doc.at('fields').move(oldIndex, newIndex, function(err) {
+            if (err) {
+              if (oldIndex < newIndex){
+                $(ui.item).insertBefore(body.children().at(oldIndex));
+              } else {
+                $(ui.item).insertAfter(body.children().at(oldIndex));
+              }
+            } else {
+              updateAllDocPaths();
+            }
+          });
+        }
+      });
 
       scope.$watch('publishedEntryType', function(et, old, scope) {
         if (et && et.data.fields)
@@ -18,13 +40,8 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
         });
       });
 
-      function toggleSortable() {
-        body.sortable('destroy');
-        body.sortable({
-          items: '.existing-field',
-          handle: '.reorder-handle',
-          forcePlaceholderSize: true
-        });
+      function refreshSortable() {
+        body.sortable('refresh');
       }
 
       function updateAllDocPaths(){
@@ -58,7 +75,7 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
             });
             scope.$broadcast('orderChanged');
             body.find('.field-id').focus();
-            toggleSortable();
+            refreshSortable();
           }
         });
       };
@@ -90,25 +107,11 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
               other.before(row);
             }
           });
-          toggleSortable();
+          refreshSortable();
           updateAllDocPaths();
         });
 
         // Moving
-        toggleSortable();
-        body.on('sortupdate', function(e, ui) {
-          doc.at('fields').move(ui.oldIndex, ui.newIndex, function(err) {
-            if (err) {
-              if (ui.oldIndex < ui.newIndex){
-                $(ui.item).insertBefore(body.children().at(ui.oldIndex));
-              } else {
-                $(ui.item).insertAfter(body.children().at(ui.oldIndex));
-              }
-            } else {
-              updateAllDocPaths();
-            }
-          });
-        });
         var moveListener = doc.at('fields').on('move', function(from, to){
           //console.log('moving', from, to);
           var item = $(body.children()[from]);
@@ -119,6 +122,7 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
           } else {
             item.insertBefore(other);
           }
+          refreshSortable();
           updateAllDocPaths();
         });
 

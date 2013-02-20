@@ -1,7 +1,7 @@
 //= require jquery
 //= require lodash
 //
-//= require jquery.sortable
+//= require jquery.ui.sortable
 //= require jquery.ui.autocomplete
 //= require jquery.ui.datepicker
 //
