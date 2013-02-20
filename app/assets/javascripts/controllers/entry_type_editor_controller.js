@@ -80,6 +80,20 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
     return true;
   };
 
+  $scope.delete = function () {
+    // TODO get user confirmation
+    $scope.entryType.delete(function (err) {
+      if (!err) {
+        $scope.$apply(function(scope) {
+          scope.tab.close();
+          scope.bucketContext.removeEntryType($scope.entryType);
+        });
+      } else {
+        console.log('Error deleting entryType', $scope.entryType);
+      }
+    });
+  };
+
   $scope.publishedAt = function(){
     if (!$scope.doc) return;
     var val = $scope.doc.getAt(['sys', 'publishedAt']);
