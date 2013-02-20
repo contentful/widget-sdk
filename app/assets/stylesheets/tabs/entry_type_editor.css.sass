@@ -2,9 +2,10 @@
   @extend %entity-editor
 
   .editor
-    table.main-results, table.new-field
-      +border-radius(3px 3px 0 0)
-      margin: 5px 0 0 0
+    &.entry-type-field-list
+      padding-top: 5px
+    table.result-list
+      @extend %standalone-table
       border: 1px solid $lightest-gray
       width: 100%
       tr
@@ -18,18 +19,18 @@
         padding: .8em .8em
         position: relative
         white-space: normal
-        &:first-child
-          padding-left: 1.2em
         i
           position: relative
           top: 3px
       .drag-handle
         width: 5%
-        padding: 0
+        padding-left: 1.2em
         i 
           color: $lightest-gray
-        &:hover
-          cursor: pointer
+        cursor: move
+        cursor: -webkit-grabbing
+        cursor: -moz-grab
+        cursor: -moz-grabbing
       .localized
         i
           color: $blue
@@ -48,7 +49,8 @@
           margin-left: .2em
           &:first-child
             margin-left: 0
-      .name, .identifier
+      .name,
+      .identifier
         width: 20%
       .type
         width: 15%
@@ -63,17 +65,13 @@
         right: 0
         width: 6px
       input
-        border: 1px solid $lightest-gray
+        font-size: 1em
         height: 24px
         padding: .4em .5em .5em
         +border-radius(2px)
-        +box-shadow(0 1px 2px rgba(0,0,0,0.07) inset)
-        +transition(background-color 0.3s ease-in, border-color 0.3s ease-in)
-        &:focus
-          border-color: $link-blue
-          outline: none
-        &.error-input:focus
-          border-color: darken($red, 10%)
+        width: 80%
+      select
+        width: 100%
     .field.open
       td
         background-color: $gray-background
@@ -120,8 +118,7 @@
 
   .editor
     table.new-field
-      margin: -1px 0 4em 0
-      +border-radius(0 0 3px 3px)
+      margin-top: 1em
       border: 1px solid $lightest-gray
       width: 100%
       td
@@ -142,12 +139,3 @@
         &:active
           i
             top: 0
-
-
-  .entry-editor
-    @extend %entity-editor
-
-
-
-
-

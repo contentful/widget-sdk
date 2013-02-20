@@ -2,7 +2,7 @@
   %td.drag-handle
     %i.ss-rows
   %td.name
-    %input
+    %input(type="text")
   %td.identifier {{field.id}}
   %td.type {{field.type}}
   %td.localized

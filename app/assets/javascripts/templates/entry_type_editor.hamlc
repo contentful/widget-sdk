@@ -34,20 +34,20 @@
 
 .tab-main
   %form(name="entryTypeForm")
-    .form-row.field
+    .form-field
       %label Name
       .editor
         %input(type="text" ng-model="entryType.data.name" ot-bind-text="namePath" doc="doc")
-    .form-row.field
+    .form-field
       %label Description
       .editor
         %textarea(ng-model="entryType.data.description" ot-bind-text="namePath" doc="doc")
-    .form-row.field.select-field
+    .form-field.select-field
       %label Display Field
       .editor
         %select.field-type(ng-model="entryType.data.displayField" ng-options="field.id as field.name for field in availableDisplayFields" ng-change="displayFieldChanged()")
           %option(value="") ID
-    .form-row.field
+    .form-field
       %label Fields
       .editor.entry-type-field-list
 

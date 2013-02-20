@@ -1,4 +1,4 @@
-%table.result-list.main-results
+%table.result-list
   %thead
     %tr
       %th.cell.drag-handle 
@@ -10,7 +10,7 @@
       %th.cell.validations Validations
       %th.cell.actions
   %tbody
-%table.fields.new-field
+%table.result-list.new-field
   %tr.field
     %td.drag-handle &nbsp;
     %td.name
