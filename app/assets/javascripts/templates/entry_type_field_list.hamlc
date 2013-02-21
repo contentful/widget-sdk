@@ -24,7 +24,6 @@
     %td.required
       %input(type="checkbox" ng-model="newRequired")
     %td.validations
-      %i.ss-settings
     %td.actions
       %a.add.button.dropdown-toggle
         %i.ss-plus(ng-click="addField()")
