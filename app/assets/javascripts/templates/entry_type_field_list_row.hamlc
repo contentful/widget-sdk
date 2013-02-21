@@ -5,9 +5,10 @@
     %input(type="text")
   %td.identifier {{field.id}}
   %td.type {{field.type}}
-  %td.localized
-  %td.required
-    %i.ss-check
+  %td.localized(cf-subdoc-editor="['fields', index, 'localized']" doc="doc" value="field.localized")
+    %input(type="checkbox" ng-model="value" ot-bind="model")
+  %td.required(cf-subdoc-editor="['fields', index, 'required']" doc="doc" value="field.required")
+    %input(type="checkbox" ng-model="value" ot-bind="model")
   %td.validations
     %i.ss-settings
   %td.actions(ng-class="{archived: !published, published: published && !field.disabled, draft: published && field.disabled}")

@@ -20,9 +20,9 @@
     %td.type
       %select(ng-model="newType" ng-options="type.value as type.name for type in availableTypes")
     %td.localized
-      %i.ss-flag
+      %input(type="checkbox" ng-model="newLocalized")
     %td.required
-      %i.ss-check
+      %input(type="checkbox" ng-model="newRequired")
     %td.validations
       %i.ss-settings
     %td.actions

@@ -57,7 +57,9 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
         var field = {
           id   : scope.newId,
           name : scope.newName,
-          type : scope.newType
+          type : scope.newType,
+          required: scope.newRequired,
+          localized: scope.newLocalized
         };
 
         var fieldDoc = scope.doc.at(['fields']);
