@@ -10,7 +10,7 @@
   %td.required(cf-subdoc-editor="['fields', index, 'required']" doc="doc" value="field.required")
     %input(type="checkbox" ng-model="value" ot-bind="model")
   %td.validations
-    %i.ss-settings
+    %i.ss-settings(ng-click="toggleValidations()")
   %td.actions(ng-class="{archived: !published, published: published && !field.disabled, draft: published && field.disabled}")
     %i.delete.ss-trash(ng-show="!published" ng-click="delete()")
     %i.deacticate.ss-write(ng-show="published && !field.disabled" ng-click="disable()")

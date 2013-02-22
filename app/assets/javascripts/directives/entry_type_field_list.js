@@ -9,19 +9,24 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
       var body = elm.find('tbody').eq(0);
       body.sortable({
         handle: '.drag-handle',
+        items: '.existing-field',
         start: function(event, ui) {
-          ui.item.startIndex = ui.item.index();
+          scope.$apply(function(scope) {
+            scope.closeAllValidations();
+          });
+          body.sortable('refresh');
+          ui.item.startIndex = ui.item.index('.existing-field');
         },
         update: function(e, ui) {
           var oldIndex = ui.item.startIndex;
-          var newIndex = ui.item.index();
+          var newIndex = ui.item.index('.existing-field');
           delete ui.item.startIndex;
           scope.doc.at('fields').move(oldIndex, newIndex, function(err) {
             if (err) {
               if (oldIndex < newIndex){
-                $(ui.item).insertBefore(body.children().at(oldIndex));
+                $(ui.item).insertBefore(body.children('.existing-field').at(oldIndex));
               } else {
-                $(ui.item).insertAfter(body.children().at(oldIndex));
+                $(ui.item).insertAfter(body.children('.existing-field').at(oldIndex));
               }
             } else {
               updateAllDocPaths();
@@ -29,6 +34,10 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
           });
         }
       });
+
+      scope.closeAllValidations =function() {
+        scope.$broadcast('closeAllValidations');
+      };
 
       scope.$watch('publishedEntryType', function(et, old, scope) {
         if (et && et.data.fields)
@@ -100,12 +109,13 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
         var addListener = doc.at('fields').on('insert', function(position){
           var row = makeRow(position);
           scope.$apply(function(scope) {
+            scope.closeAllValidations();
             row = $compile(row)(scope);
             var fields = doc.getAt(['fields']);
             if (fields.length === 0 || fields.length-1 === position) {
               body.append(row);
             } else {
-              var other = $(body.children()[position]);
+              var other = $(body.children('.existing-field')[position]);
               other.before(row);
             }
           });
@@ -116,8 +126,9 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
         // Moving
         var moveListener = doc.at('fields').on('move', function(from, to){
           //console.log('moving', from, to);
-          var item = $(body.children()[from]);
-          var other = $(body.children()[to]);
+          scope.closeAllValidations();
+          var item = $(body.children('.existing-field')[from]);
+          var other = $(body.children('.existing-field')[to]);
           //console.log('moving', item.find('.field-name').val(), other.find('.field-name').val());
           if (from < to) {
             item.insertAfter(other);

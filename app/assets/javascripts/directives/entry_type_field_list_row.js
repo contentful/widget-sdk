@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').directive('entryTypeFieldListRow', function() {
+angular.module('contentful/directives').directive('entryTypeFieldListRow', function($compile) {
   return {
     restrict: 'A',
     //template: template(),
@@ -23,7 +23,7 @@ angular.module('contentful/directives').directive('entryTypeFieldListRow', funct
 
         scope.$on('orderChanged', function(event) {
           event.currentScope.$apply(function(scope) {
-            scope.index = elm.index();
+            scope.index = elm.index('.existing-field');
           });
         });
 
@@ -104,6 +104,43 @@ angular.module('contentful/directives').directive('entryTypeFieldListRow', funct
                 scope.field.disabled = true;
               });
           });
+        };
+
+        scope.$on('closeAllValidations', function() {
+          scope.closeValidations();
+        });
+
+        scope.validationsOpen = function() {
+          return scope.validationsRow().length !== 0;
+        };
+
+        scope.validationsRow =  function() {
+          return elem.siblings('.open').filter(function() {
+            return $(this).scope().$parent === scope;
+          });
+        };
+
+        scope.closeValidations = function() {
+          if (scope.validationsOpen()) {
+            var validationsRow = scope.validationsRow();
+            var childScope = validationsRow.scope();
+            validationsRow.remove();
+            childScope.$destroy();
+          }
+        };
+
+        scope.openValidations = function() {
+          var validationsTemplate = $(JST['entry_type_field_validations']());
+          var editor = $compile(validationsTemplate)(scope.$new());
+          elem.after(editor);
+        };
+
+        scope.toggleValidations = function() {
+          if (scope.validationsOpen()) {
+            scope.closeValidations();
+          } else {
+            scope.openValidations();
+          }
         };
 
         scope.delete = function() {

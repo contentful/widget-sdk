@@ -1,0 +1,28 @@
+%tr.field.open
+  %td(colspan="8")
+    %ul.validations-open 
+      %li
+        %header
+          %p Validations
+        .section
+          .name Inclusion
+          .options
+            %input(type="text" value="apple, orange, banana")
+          .action
+            %i.remove.ss-delete
+        .section
+          .name Between
+          .options
+            %input.lower(type="text")
+            \-
+            %input.upper(type="text")
+          .action
+            %i.remove.ss-delete
+    -#%ul.validations-open
+      %li
+        %header
+          %p Validations
+        .section(ng-repeat="validation in field.validations")
+          .name {{validation}}
+          
+
