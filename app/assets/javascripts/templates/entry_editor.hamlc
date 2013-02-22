@@ -18,8 +18,8 @@
         …
         …
         …
-  .editor-top-right
-    .dropdown-btn
+  .editor-top-right<
+    .dropdown-btn>
       %a.btn.dropdown-toggle
         %i.ss-dropdown
         %span Meta
@@ -27,10 +27,10 @@
         …
         …
         …
-    .dropdown-btn
+    .dropdown-btn>
       %a.btn.dropdown-toggle
         %span Apps
-    .dropdown-btn
+    .dropdown-btn>
       %a.btn.dropdown-toggle
         %span Events
 

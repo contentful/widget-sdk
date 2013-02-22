@@ -49,9 +49,10 @@
     margin-right: 25px
     .dropdown-btn
       display: inline-block
-      margin-left: 5px
+      //margin-left: 5px
       vertical-align: middle
-    .dropdown-toggle, .btn
+    .dropdown-toggle,
+    .btn
       @extend %blue-button
       vertical-align: middle
       padding-top: 0
@@ -61,7 +62,9 @@
       display: block
       line-height: 1.5em
       padding-right: 1.8em
-    a.dropdown-toggle
+    a.dropdown-toggle,
+    a.btn
+      +border-radius(0)
       padding-right: 1.8em
       i
         position: absolute 
@@ -74,3 +77,12 @@
         margin-top: 0
         position: relative
         top: 2px
+
+    .dropdown-btn:first-child
+      .dropdown-toggle, .btn
+        +border-top-left-radius(3px)
+        +border-bottom-left-radius(3px)
+    .dropdown-btn:last-child
+      .dropdown-toggle, .btn
+        +border-top-right-radius(3px)
+        +border-bottom-right-radius(3px)

@@ -1,14 +1,19 @@
 .tab-header.editor-configuration
   %h1 {{headline()}}
-  .editor-top-right
-    .dropdown-btn
-      %a.btn.active
+  .editor-top-right<
+    .dropdown-btn>
+      %a.btn.dropdown-toggle
+        %i.ss-dropdown
         %span Meta
-    .dropdown-btn
-      %a.btn
+      .dropdown-menu(style="display:none")
+        …
+        …
+        …
+    .dropdown-btn>
+      %a.btn.dropdown-toggle
         %span Apps
-    .dropdown-btn
-      %a.btn
+    .dropdown-btn>
+      %a.btn.dropdown-toggle
         %span Events
 
 .aux-panel
