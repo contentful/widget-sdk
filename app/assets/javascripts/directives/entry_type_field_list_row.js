@@ -115,7 +115,7 @@ angular.module('contentful/directives').directive('entryTypeFieldListRow', funct
         };
 
         scope.validationsRow =  function() {
-          return elem.siblings('.open').filter(function() {
+          return elem.siblings('.field-validations').filter(function() {
             return $(this).scope().$parent === scope;
           });
         };
@@ -130,7 +130,7 @@ angular.module('contentful/directives').directive('entryTypeFieldListRow', funct
         };
 
         scope.openValidations = function() {
-          var validationsTemplate = $(JST['entry_type_field_validations']());
+          var validationsTemplate = $('<tr class="field-validations"></tr>');
           var editor = $compile(validationsTemplate)(scope.$new());
           elem.after(editor);
         };

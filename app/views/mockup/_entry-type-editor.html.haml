@@ -62,7 +62,7 @@
                 %th.cell.localized Localized
                 %th.cell.required Required
                 %th.cell.validations Validations
-                %th.cell.actions
+                %th.cell.action
             %tbody
               - 2.times do
                 %tr.field
@@ -76,9 +76,11 @@
                   %td.required
                     %i.ss-check
                   %td.validations
-                    %i.ss-settings
-                  %td.actions.published
-                    %i.deactivate.ss-writingdisabled
+                    %a.button
+                      %i.ss-settings
+                  %td.action.published
+                    %a.button.deactivate
+                      %i.ss-writingdisabled
                     .main-results-bar
               - 2.times do
                 %tr.field
@@ -92,9 +94,11 @@
                     %i.ss-flag
                   %td.required
                   %td.validations
-                    %i.ss-settings
-                  %td.actions.draft
-                    %i.activate.ss-write
+                    %a.button
+                      %i.ss-settings
+                  %td.action.draft
+                    %a.button.activate
+                      %i.ss-write
                     .main-results-bar
               %tr.field
                 %td.drag-handle
@@ -108,30 +112,66 @@
                 %td.required
                   %i.ss-check
                 %td.validations
-                  %i.ss-settings
-                %td.actions.archived
-                  %i.delete.ss-trash
+                  %a.button
+                    %i.ss-settings
+                %td.action.archived
+                  %a.button.delete
+                    %i.ss-trash
                   .main-results-bar
-              %tr.field.open
+
+              %tr.field-validations
                 %td(colspan="8")
                   %ul.validations-open 
                     %li
                       %header
                         %p Validations
                       .section
-                        .name Inclusion
+                        .name Size
                         .options
-                          %input(type="text" value="apple, orange, banana")
+                          %input(type="text" value="" placeholder="Minimum size")
+                          \-
+                          %input(type="text" value="" placeholder="Maximum size")
                         .action
-                          %i.remove.ss-delete
+                          %a.button.delete
+                            %i.ss-delete
                       .section
-                        .name Between
+                        .name One of
+                        .options
+                          %input(type="text" placeholder="apple,orange,banana")
+                          %span (separate allowed values by comma)
+                        .action
+                          %a.button.delete
+                            %i.ss-delete
+                      .section
+                        .name Range
+                        .options
+                          %input.lower(type="text" placeholder="Minimum value")
+                          \-
+                          %input.upper(type="text" placeholder="Maximum value")
+                        .action
+                          %a.button.delete
+                            %i.ss-delete
+                      .section
+                        .name Regular Expression
+                        .options
+                          %input.regexp(type="text")
+                          Flags:
+                          %input.flags(type="text")
+                        .action
+                          %a.button.delete
+                            %i.ss-delete
+                      .section
+                        .name
+                          %select
+                            %option Add new
+                            %option Foo
                         .options
                           %input.lower(type="text")
                           \-
                           %input.upper(type="text")
                         .action
-                          %i.remove.ss-delete
+                          %a.button.new
+                            %i.ss-plus
 
                 %table.result-list.new-field
                   %tr.field
@@ -150,9 +190,10 @@
                     %td.required
                       %i.ss-check
                     %td.validations
-                      %i.ss-settings
-                    %td.actions
-                      %a.add.button.dropdown-toggle
+                      %a.button
+                        %i.ss-settings
+                    %td.action
+                      %a.button.new
                         %i.ss-plus
 
   .tab-actions
