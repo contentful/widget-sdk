@@ -1,8 +1,10 @@
-angular.module('contentful/controllers').controller('ClientCtrl', function ClientCtrl($scope, client, BucketContext) {
+angular.module('contentful/controllers').controller('ClientCtrl', function ClientCtrl($scope, client, BucketContext, authentication, QueryLinkResolver) {
   'use strict';
 
   $scope.buckets = [];
   $scope.bucketContext = new BucketContext($scope);
+
+  $scope.user = null;
 
   $scope.selectBucket = function(bucket) {
     this.bucketContext.bucket = bucket;
@@ -16,10 +18,26 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
     }
   });
 
-  client.getBuckets({order: 'name'}, function(err, res){
-    $scope.$apply(function($scope){
-      $scope.buckets = res;
+  authentication.login();
+  client.persistenceContext.token = authentication.token;
+  authentication.getTokenLookup(function(tokenLookup) {
+
+    //$scope.user = tokenLookup;
+    tokenLookup = QueryLinkResolver.resolveQueryLinks(tokenLookup).items[0];
+    //var user = tokenLookup.user;
+    $scope.$apply(function(scope) {
+      scope.buckets = _.map(tokenLookup.buckets, function(bucketData) {
+        return client.wrapBucket(bucketData);
+      });
     });
+    
+    //client.getBuckets({order: 'name'}, function(err, res){
+      //$scope.$apply(function($scope){
+        //$scope.buckets = res;
+      //});
+    //});
   });
+
+
 
 });

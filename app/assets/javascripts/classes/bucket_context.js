@@ -30,7 +30,7 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
         return this._entryTypesHash[entry.data.sys.entryType];
       },
       entryTitle: function(entry, locale) {
-        locale = locale || this.bucket.data.locales.default;
+        locale = locale || this.bucket.getDefaultLocale();
 
         try {
           var displayField = this.typeForEntry(entry).data.displayField;
