@@ -1,0 +1,5 @@
+.tab-header(ng-hide="tab.params.fullscreen")
+  %h1 {{tab.title}}
+.iframe-container(ng-class="{'tab-main': !tab.params.fullscreen, fullscreen: tab.params.fullscreen}")<>
+  %iframe(src="{{tab.params.url}}" width="100%" height="100%")>
+.tab-actions

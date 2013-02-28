@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/controllers').controller('BucketCtrl', function BucketCtrl($scope) {
+angular.module('contentful/controllers').controller('BucketCtrl', function BucketCtrl($scope, authentication) {
   $scope.$watch('bucketContext.bucket', function(bucket, old, scope){
     scope.bucketContext.tabList.closeAll();
 
@@ -52,6 +52,16 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
         hidden: true,
         title: 'Content Model',
         canClose: true
+      };
+    } else if (viewType == 'bucket-settings'){
+      options = {
+        viewType: 'iframe',
+        section: 'bucketSettings',
+        params: {
+          url: authentication.endpoint + 'settings/buckets/'+$scope.bucketContext.bucket.getId()+'/edit',
+          fullscreen: false
+        },
+        title: 'Bucket Settings'
       };
     }
 

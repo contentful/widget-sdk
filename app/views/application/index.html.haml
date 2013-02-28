@@ -8,14 +8,19 @@
   %link(href='http://fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,700italic,400,700,600' rel='stylesheet' type='text/css')
 
 %body
-  .client(ng-controller="ClientCtrl")
+  .client(ng-controller="ClientCtrl" style="display: none" ng-show="user")
     %nav.account
       .dropdown-btn.user(label="")
         %a.btn.dropdown-toggle{"data-toggle" => "dropdown", :href => "#"}
-          %img(src="assets/avatar.png")
+          %img(src="https://secure.gravatar.com/avatar/{{user.gravatarHash}}?s=50&d=mm")
           %i.ss-dropdown
         .dropdown-menu
-          Hello User
+          %p
+            Logged in as {{user.firstName}} {{user.lastName}}
+          .separator
+          %ul
+            %li(ng-click="editProfile()" dropdown-close="") Edit Profile
+            %li(ng-click="logout()" dropdown-close="") Log out
       .dropdown-btn.project
         %a.btn.dropdown-toggle
           %i.ss-dropdown

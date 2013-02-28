@@ -18,24 +18,37 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
     }
   });
 
-  authentication.getTokenLookup(function(tokenLookup) {
+  $scope.logout = function() {
+    authentication.logout();
+  };
 
-    //$scope.user = tokenLookup;
-    tokenLookup = QueryLinkResolver.resolveQueryLinks(tokenLookup).items[0];
-    //var user = tokenLookup.user;
+  $scope.editProfile = function() {
+    var iframe = $scope.bucketContext.tabList.add({
+      viewType: 'iframe',
+      section: null,
+      params: {
+        url: authentication.profileUrl(),
+        fullscreen: false
+      },
+      title: 'Edit Profile'
+    });
+    iframe.activate();
+  };
+
+  authentication.getTokenLookup(function(tokenLookup) {
+    tokenLookup = QueryLinkResolver.resolveQueryLinks(tokenLookup)[0];
+    console.log('df ', tokenLookup);
     $scope.$apply(function(scope) {
+      scope.user = tokenLookup.user;
       scope.buckets = _.map(tokenLookup.buckets, function(bucketData) {
         return client.wrapBucket(bucketData);
       });
     });
-    
-    //client.getBuckets({order: 'name'}, function(err, res){
-      //$scope.$apply(function($scope){
-        //$scope.buckets = res;
-      //});
-    //});
   });
 
-
-
+  //client.getBuckets({order: 'name'}, function(err, res){
+    //$scope.$apply(function($scope){
+      //$scope.buckets = res;
+    //});
+  //});
 });
