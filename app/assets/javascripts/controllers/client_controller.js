@@ -18,8 +18,6 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
     }
   });
 
-  authentication.login();
-  client.persistenceContext.token = authentication.token;
   authentication.getTokenLookup(function(tokenLookup) {
 
     //$scope.user = tokenLookup;

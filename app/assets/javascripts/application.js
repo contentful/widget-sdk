@@ -24,6 +24,9 @@ require([
   ], function($locationProvider, clientProvider){
     $locationProvider.html5Mode(true);
     clientProvider.endpoint('http://'+window.document.location.hostname+':3000');
+  }).run(function(authentication, client) {
+    authentication.login();
+    client.persistenceContext.token = authentication.token;
   });
 
   angular.bootstrap(document, ['contentful']);
