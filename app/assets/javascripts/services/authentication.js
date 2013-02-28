@@ -1,5 +1,5 @@
 angular.module('contentful/services').provider('authentication', function AuthenticationProvider() {
-  /*global unescape escape*/
+  /*global moment*/
   'use strict';
 
   var endpoint = '//api.lvh.me:3002/';
@@ -13,30 +13,6 @@ angular.module('contentful/services').provider('authentication', function Authen
   }
 
   var helper = {
-    getCookie: function(c_name) {
-      var i, x, y, ARRcookies = document.cookie.split(';');
-      for (i=0; i<ARRcookies.length; i++) {
-        x = ARRcookies[i].substr(0,ARRcookies[i].indexOf('='));
-        y = ARRcookies[i].substr(ARRcookies[i].indexOf('=')+1);
-        x = x.replace(/^\s+|\s+$/g,'');
-        if (x == c_name) {
-          return unescape(y);
-        }
-      }
-    },
-
-    setCookie: function(c_name,value,exdays) {
-      // TODO replace with moment.js
-      var exdate=new Date();
-      exdate.setDate(exdate.getDate() + exdays);
-      var c_value=escape(value) + ((exdays===null) ? '' : '; expires='+exdate.toUTCString());
-      document.cookie=c_name + '=' + c_value;
-    },
-
-    deleteCookie: function(c_name) {
-      document.cookie = c_name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
-    },
-
     extractToken: function(hash) {
       var match = hash.match(/access_token=(\w+)/);
       return !!match && match[1];
@@ -46,13 +22,16 @@ angular.module('contentful/services').provider('authentication', function Authen
       /*jshint boss:true*/
       var token;
 
-      if (token = this.getCookie('token')) {
+      if (token = this.extractToken(document.location.hash)) {
+        window.location.replace('');
+        //history.pushState('', document.title, window.location.pathname+window.location.search);
+        $.cookies.set('token', token, {
+          expiresAt: moment().add('y', 1).toDate()
+        });
         return token;
       }
 
-      if (token = this.extractToken(document.location.hash)) {
-        window.location.replace("#");
-        this.setCookie('token', token, 365);
+      if (token = $.cookies.get('token')) {
         return token;
       }
 
@@ -71,8 +50,17 @@ angular.module('contentful/services').provider('authentication', function Authen
       }
     },
 
+    logout: function() {
+      $.cookies.del('token');
+      window.location = this.endpoint + 'logout';
+    },
+
     isLoggedIn: function() {
       return !!this.token;
+    },
+
+    profileUrl: function() {
+      return this.endpoint + 'profile/edit';
     },
 
     redirectToLogin: function() {

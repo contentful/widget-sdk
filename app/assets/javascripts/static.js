@@ -5,6 +5,8 @@
 //= require jquery.ui.autocomplete
 //= require jquery.ui.datepicker
 //
+//= require jquery.cookies.2.2.0
+//
 //= require moment-1.7.2
 //
 //= require bcsocket-uncompressed
