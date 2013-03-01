@@ -23,10 +23,10 @@ require([
     'contentful/filters'
   ], function($locationProvider, clientProvider){
     $locationProvider.html5Mode(true);
-    clientProvider.endpoint('http://'+window.document.location.hostname+':3000');
+    clientProvider.endpoint('http://api.lvh.me:8888');
   }).run(function(authentication, client) {
     authentication.login();
-    client.persistenceContext.token = authentication.token;
+    client.persistenceContext.adapter.token = authentication.token;
   });
 
   angular.bootstrap(document, ['contentful']);

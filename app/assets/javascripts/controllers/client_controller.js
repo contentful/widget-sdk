@@ -35,9 +35,10 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
     iframe.activate();
   };
 
+  // TODO initialize blank user so that you can at least log out when
+  // the getTokenLookup fails
   authentication.getTokenLookup(function(tokenLookup) {
     tokenLookup = QueryLinkResolver.resolveQueryLinks(tokenLookup)[0];
-    console.log('df ', tokenLookup);
     $scope.$apply(function(scope) {
       scope.user = tokenLookup.user;
       scope.buckets = _.map(tokenLookup.buckets, function(bucketData) {

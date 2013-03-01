@@ -87,7 +87,9 @@ angular.module('contentful/services').provider('authentication', function Authen
           success: function(data) {
             self.tokenLookup = data;
             callback(data);
-            console.log('got token lookup', data);
+          },
+          error: function() {
+            this.logout();
           }
         });
       }

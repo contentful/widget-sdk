@@ -11,10 +11,6 @@ angular.module('contentful/services').provider('client', function ClientProvider
   var Adapter = require('contentful_client/adapters/jquery');
 
   this.$get = function() {
-    if (endpoint) {
-      return new Client(new Adapter(endpoint));
-    } else {
-      return new Client(new Adapter());
-    }
+    return new Client(new Adapter(endpoint));
   };
 });
