@@ -125,11 +125,11 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     var scope = this;
 
     this.reloadInProgress = true;
-    this.bucketContext.bucket.getEntries(this.buildQuery(), function(err, entries, sys) {
+    this.bucketContext.bucket.getEntries(this.buildQuery(), function(err, entries, stats) {
       scope.reloadInProgress = false;
       if (err) return;
-      scope.paginator.numEntries = sys.total;
-      scope.selection.switchBaseSet(sys.total);
+      scope.paginator.numEntries = stats.total;
+      scope.selection.switchBaseSet(stats.total);
       scope.$apply(function(scope){
         scope.entries = entries;
       });
@@ -180,14 +180,14 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     this.paginator.page++;
     this.reloadInProgress = true;
     this.pauseReset();
-    this.bucketContext.bucket.getEntries(this.buildQuery(), function(err, entries, sys) {
+    this.bucketContext.bucket.getEntries(this.buildQuery(), function(err, entries, stats) {
       scope.reloadInProgress = false;
       if (err) {
         scope.paginator.page--;
         return;
       }
-      scope.paginator.numEntries = sys.total;
-      scope.selection.switchBaseSet(sys.total);
+      scope.paginator.numEntries = stats.total;
+      scope.selection.switchBaseSet(stats.total);
       scope.$apply(function(scope){
         var args = [scope.entries.length, 0].concat(entries);
         scope.entries.splice.apply(scope.entries, args);
@@ -208,9 +208,9 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     };
 
     function updateCount(group) {
-      return function(err, entries, sys) {
+      return function(err, entries, stats) {
         scope.$apply(function(scope) {
-          scope.counts[group] = sys.total;
+          scope.counts[group] = stats.total;
         });
       };
     }

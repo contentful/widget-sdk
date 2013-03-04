@@ -25,10 +25,10 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
         }
 
         $scope.reloadInProgress = true;
-        $scope.bucketContext.bucket.getEntries($scope.buildQuery(), function(err, entries, sys) {
+        $scope.bucketContext.bucket.getEntries($scope.buildQuery(), function(err, entries, stats) {
           $scope.reloadInProgress = false;
           if (err) return;
-          $scope.paginator.numEntries = sys.total;
+          $scope.paginator.numEntries = stats.total;
           $scope.$apply(function(scope){
             scope.selectedItem = 0;
             scope.entries = entries;
@@ -70,13 +70,13 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
         $scope.paginator.page++;
         $scope.reloadInProgress = true;
         $scope.pauseReset();
-        $scope.bucketContext.bucket.getEntries($scope.buildQuery(), function(err, entries, sys) {
+        $scope.bucketContext.bucket.getEntries($scope.buildQuery(), function(err, entries, stats) {
           $scope.reloadInProgress = false;
           if (err) {
             $scope.paginator.page--;
             return;
           }
-          $scope.paginator.numEntries = sys.total;
+          $scope.paginator.numEntries = stats.total;
           $scope.$apply(function(scope){
             var args = [scope.entries.length, 0].concat(entries);
             scope.entries.splice.apply(scope.entries, args);
