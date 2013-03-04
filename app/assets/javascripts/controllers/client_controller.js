@@ -22,6 +22,16 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
     authentication.logout();
   };
 
+  $scope.$on('iframeMessage', function (event, message) {
+    if (message.type === 'bucket' && message.action === 'update') {
+      _.extend($scope.bucketContext.bucket.data, message.resource);
+      //TODO this is pobably much too simplified, better look up correct
+      //bucket and check if the method of updating is correct
+    } else if (message.type === 'user' && message.action === 'update') {
+      _.extend($scope.user, message.resource);
+    }
+  });
+
   $scope.editProfile = function() {
     var options = {
       viewType: 'iframe',
