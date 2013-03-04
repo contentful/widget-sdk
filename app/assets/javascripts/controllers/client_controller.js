@@ -23,7 +23,7 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
   };
 
   $scope.editProfile = function() {
-    var iframe = $scope.bucketContext.tabList.add({
+    var options = {
       viewType: 'iframe',
       section: null,
       params: {
@@ -31,8 +31,13 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
         fullscreen: false
       },
       title: 'Edit Profile'
+    };
+
+    var tab = _.find($scope.bucketContext.tabList.items, function(tab) {
+      return tab.viewType === options.viewType && tab.section === options.section;
     });
-    iframe.activate();
+    tab = tab || $scope.bucketContext.tabList.add(options);
+    tab.activate();
   };
 
   // TODO initialize blank user so that you can at least log out when

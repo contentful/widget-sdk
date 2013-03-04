@@ -66,7 +66,7 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
     }
 
     var tab = _.find($scope.bucketContext.tabList.items, function(tab) {
-      return tab.viewType === options.viewType;
+      return tab.viewType === options.viewType && tab.section === options.section;
     });
 
     tab = tab || $scope.bucketContext.tabList.add(options);
