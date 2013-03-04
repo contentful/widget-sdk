@@ -43,6 +43,7 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
       title: 'Edit Profile'
     };
 
+    // TODO This is a pattern that repeats and should be extracted
     var tab = _.find($scope.bucketContext.tabList.items, function(tab) {
       return tab.viewType === options.viewType && tab.section === options.section;
     });
