@@ -60,7 +60,7 @@ angular.module('contentful/services').provider('authentication', function Authen
     },
 
     profileUrl: function() {
-      return this.endpoint + 'profile/edit';
+      return this.endpoint + 'profile/user/edit';
     },
 
     redirectToLogin: function() {
