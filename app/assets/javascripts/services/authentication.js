@@ -23,7 +23,7 @@ angular.module('contentful/services').provider('authentication', function Authen
       var token;
 
       if (token = this.extractToken(document.location.hash)) {
-        window.location.replace('');
+        window.location.hash='';
         //history.pushState('', document.title, window.location.pathname+window.location.search);
         $.cookies.set('token', token, {
           expiresAt: moment().add('y', 1).toDate()
@@ -64,13 +64,13 @@ angular.module('contentful/services').provider('authentication', function Authen
     },
 
     redirectToLogin: function() {
-     var params = $.param({
-       response_type: 'token',
-       client_id: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-       redirect_uri: window.location.protocol + '//' + window.location.host + '/',
-       scope: 'private_manage'
-     });
-     window.location = this.endpoint + 'oauth/authorize?' + params;
+      var params = $.param({
+        response_type: 'token',
+        client_id: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
+        redirect_uri: window.location.protocol + '//' + window.location.host + '/',
+        scope: 'private_manage'
+      });
+      window.location = this.endpoint + 'oauth/authorize?' + params;
     },
 
     getTokenLookup: function(callback) {
@@ -89,7 +89,7 @@ angular.module('contentful/services').provider('authentication', function Authen
             callback(data);
           },
           error: function() {
-            this.logout();
+            self.logout();
           }
         });
       }
