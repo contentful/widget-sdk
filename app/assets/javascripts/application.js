@@ -11,7 +11,9 @@ require([
   'contentful_client/client',
   'contentful_client/query_link_resolver',
   'contentful_client/adapters/jquery',
-  'contentful_client/sharejs'
+  'contentful_client/sharejs',
+  'worf',
+  'spock'
 ], function(){
   'use strict';
 
