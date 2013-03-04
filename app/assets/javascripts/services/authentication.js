@@ -2,14 +2,17 @@ angular.module('contentful/services').provider('authentication', function Authen
   /*global moment*/
   'use strict';
 
+  var worf = require('worf');
+
   var endpoint = '//api.lvh.me:3002/';
 
   this.endpoint = function(e) {
     endpoint = e;
   };
 
-  function Authentication(endpoint){
+  function Authentication(endpoint, QueryLinkResolver){
     this.endpoint = endpoint;
+    this.QueryLinkResolver = QueryLinkResolver;
   }
 
   var helper = {
@@ -85,8 +88,9 @@ angular.module('contentful/services').provider('authentication', function Authen
           },
           dataType: 'json',
           success: function(data) {
-            self.tokenLookup = data;
-            callback(data);
+            self.tokenLookup = self.QueryLinkResolver.resolveQueryLinks(data)[0];
+            self.auth = worf(self.tokenLookup);
+            callback(self.tokenLookup);
           },
           error: function() {
             self.logout();
@@ -96,8 +100,8 @@ angular.module('contentful/services').provider('authentication', function Authen
     }
   };
 
-  this.$get = function(){
-    return new Authentication(endpoint);
+  this.$get = function(QueryLinkResolver){
+    return new Authentication(endpoint, QueryLinkResolver);
   };
 
 });
