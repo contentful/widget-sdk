@@ -13,7 +13,7 @@ require([
   'contentful_client/adapters/jquery',
   'contentful_client/sharejs',
   'worf',
-  'spock'
+  'validation/lib/validation',
 ], function(){
   'use strict';
 
