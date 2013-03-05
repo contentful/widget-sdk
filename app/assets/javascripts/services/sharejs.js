@@ -2,7 +2,7 @@ angular.module('contentful/services').provider('ShareJS', function ShareJSProvid
   'use strict';
 
   var token;
-  var sharejs = require('contentful_client/sharejs');
+  var ShareJSHelper = UserInterface.client.ShareJSHelper;
   var url = document.location.protocol + '//' + document.location.hostname + ':8000/channel';
 
   this.token= function(e) {
@@ -20,6 +20,6 @@ angular.module('contentful/services').provider('ShareJS', function ShareJSProvid
     } else {
       _token = client.persistenceContext.adapter.token;
     }
-    return new sharejs.Client(url, _token);
+    return new ShareJSHelper.Client(sharejs, url, _token);
   };
 });

@@ -59,8 +59,6 @@ module Contentful
     # parameters by using an attr_accessible or attr_protected declaration.
     # config.active_record.whitelist_attributes = true
     
-    #config.assets.precompile += ["static.js"]
-
     # Enable the asset pipeline
     config.assets.enabled = true
 
@@ -68,8 +66,7 @@ module Contentful
       config.hamlcoffee.placement = 'global'
     end
 
-    config.requirejs.amd_wrap_filter = [/contentful_client/, /worf/, /spock/, /validation\/lib/]
-    config.requirejs.amd_wrap_template = "define(function(require,exports,module) {\n%s\n;});\n"
+    config.assets.precompile = [ Proc.new{ |path| !File.extname(path) == '.css' }, /(?:\/|\\|\A)application\.(css|js)$/ ]
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'

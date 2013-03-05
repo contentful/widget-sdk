@@ -1,10 +1,3 @@
-GIT
-  remote: https://github.com/coderanger/requirejs-rails
-  revision: 603ca5b977d4cbf32b69311c2f7117d270682a39
-  specs:
-    requirejs-rails (0.9.0)
-      railties (>= 3.1.1, < 3.3)
-
 GEM
   remote: https://rubygems.org/
   specs:
@@ -46,12 +39,20 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.4.0)
+    columnize (0.3.6)
     compass (0.12.2)
       chunky_png (~> 1.2)
       fssm (>= 0.2.7)
       sass (~> 3.1)
     compass-rails (1.0.3)
       compass (>= 0.12.2, < 0.14)
+    debugger (1.2.2)
+      columnize (>= 0.3.1)
+      debugger-linecache (~> 1.1.1)
+      debugger-ruby_core_source (~> 1.1.5)
+    debugger-linecache (1.1.2)
+      debugger-ruby_core_source (>= 1.1.1)
+    debugger-ruby_core_source (1.1.5)
     em-websocket (0.4.0)
       eventmachine (>= 0.12.9)
       http_parser.rb (~> 0.5.3)
@@ -157,6 +158,7 @@ PLATFORMS
 DEPENDENCIES
   coffee-rails (~> 3.2.1)
   compass-rails
+  debugger
   execjs
   guard-livereload
   haml
@@ -166,7 +168,6 @@ DEPENDENCIES
   json (>= 1.7.7)
   rails (= 3.2.12)
   rb-fsevent (~> 0.9.1)
-  requirejs-rails!
   sass-rails (~> 3.2.6)
   therubyracer
   uglifier (>= 1.0.3)

@@ -10,8 +10,6 @@ gem "therubyracer"
 gem "haml"
 gem "compass-rails"
 
-gem "requirejs-rails", :git => "https://github.com/coderanger/requirejs-rails"
-
 # Gems used only for assets and not required
 # in production environments by default.
 group :assets do
@@ -47,4 +45,4 @@ end
 # gem 'capistrano'
 
 # To use debugger
-# gem 'debugger'
+ gem 'debugger'

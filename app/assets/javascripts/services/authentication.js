@@ -2,8 +2,6 @@ angular.module('contentful/services').provider('authentication', function Authen
   /*global moment*/
   'use strict';
 
-  var worf = require('worf');
-
   var endpoint = '//api.lvh.me:3002/';
 
   this.endpoint = function(e) {
@@ -89,7 +87,7 @@ angular.module('contentful/services').provider('authentication', function Authen
           dataType: 'json',
           success: function(data) {
             self.tokenLookup = self.QueryLinkResolver.resolveQueryLinks(data)[0];
-            self.auth = worf(self.tokenLookup);
+            self.auth = UserInterface.worf(self.tokenLookup);
             callback(self.tokenLookup);
           },
           error: function() {
