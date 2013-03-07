@@ -4,10 +4,7 @@ angular.module('contentful/directives').directive('fieldValidations', function()
   return {
     restrict: 'C',
     template: JST['field_validations'](),
-    controller: 'FieldValidationsCtrl',
-    link: function(scope, elem, attr) {
-
-    }
+    controller: 'FieldValidationsCtrl'
   };
 
 });

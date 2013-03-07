@@ -48,6 +48,8 @@ angular.module('contentful/controllers').controller('EntryTypeFieldListRowCtrl',
     });
   });
 
+  // TODO this entire function is likely not needed because theres no nameDoc or fieldDoc created
+  // in any scope
   $scope.$watch('index', function linkIndex(index, old, scope) {
     if (scope.nameDoc ) scope.nameDoc.path[1]  = index;
     if (scope.fieldDoc) scope.fieldDoc.path[1] = index;
