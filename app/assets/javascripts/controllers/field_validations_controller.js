@@ -1,12 +1,12 @@
 angular.module('contentful/controllers').controller('FieldValidationsCtrl', function($scope) {
   'use strict';
 
-  $scope.availableValidations= [
-    {name: 'size'  , title: 'Size'},
-    {name: 'range' , title: 'Range'},
-    {name: 'regexp', title: 'Regular Expression'},
-    {name: 'in'    , title: 'One of'},
-  ];
+  $scope.availableValidations= {
+    size: 'Size',
+    range: 'Range',
+    regexp: 'Regular Expression',
+    in: 'One of'
+  };
 
   $scope.prepareNewValidation = function () {
     $scope.newValidation = {};
@@ -14,8 +14,35 @@ angular.module('contentful/controllers').controller('FieldValidationsCtrl', func
   };
 
   $scope.createValidation = function () {
-    $scope.field.validations = $scope.field.validations || [];
-    $scope.field.validations.push($scope.newValidation);
-    $scope.prepareNewValidation();
+    var fieldDoc = $scope.doc.at(['fields', $scope.index]);
+    var callback = function () {
+      $scope.$apply(function (scope) {
+        $scope.prepareNewValidation();
+      });
+    };
+
+    if (!fieldDoc.get().validations) {
+      fieldDoc.insert('validations', [$scope.newValidation], callback);
+    } else {
+      var validationsDoc = $scope.doc.at(['fields', $scope.index, 'validations']);
+      var numValidations = validationsDoc.get().length;
+      validationsDoc.insert(numValidations, $scope.newValidation, callback);
+    }
+  };
+
+  $scope.deleteValidation = function (validation) {
+    var validationIndex = _.indexOf($scope.validations(), validation);
+    $scope.doc.at(['fields', $scope.index, 'validations', validationIndex]).remove(function(){
+      $scope.$apply();
+    });
+
+  };
+
+  $scope.validations = function(){
+    return $scope.doc.getAt(['fields', $scope.index, 'validations']) || [];
+  };
+
+  $scope.validationType = function (validation) {
+    return _.keys(validation)[0];
   };
 });

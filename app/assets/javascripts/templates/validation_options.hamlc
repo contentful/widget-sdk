@@ -1,0 +1,18 @@
+%ng-switch(on="validationType(validation)")
+  %div(ng-switch-when="size")
+    %input(type="text" ng-model="validation.size.min" placeholder="Minimum size")
+    \-
+    %input(type="text" ng-model="validation.size.max" placeholder="Maximum size")
+  %div(ng-switch-when="range")
+    %input(type="text" ng-model="validation.range.min" placeholder="Minimum value")
+    \-
+    %input(type="text" ng-model="validation.range.max" placeholder="Maximum value")
+  %div(ng-switch-when="regexp")
+    %input.regexp(type="text" ng-model="validation.regexp.expression" placeholder="foo|bar[baz]")
+    %span Flags:
+    %input.flags(type="text" ng-model="validation.regexp.flags")
+  %div(ng-switch-when="in")
+    %input(type="text" ng-model="validation.in.values" ng-list="" placeholder="apple,orange,banana")
+    %span (separate allowed values by comma)
+  %div(ng-switch-default="")
+    Please select a type first

@@ -3,12 +3,11 @@
     %li
       %header
         %p Validations
-      -#.section
-        .name Inclusion
-        .options
-          %input(type="text" value="apple, orange, banana")
+      .section(ng-repeat="validation in validations()")
+        .name {{availableValidations[validationType(validation)]}}
+        .validation-options(validation="validation")
         .action
-          %a.button.delete
+          %a.button.delete(ng-click="deleteValidation(validation)")
             %i.remove.ss-delete
       -#.section
         .name Between
@@ -21,26 +20,9 @@
             %i.remove.ss-delete
       .section
         .name
-          %select(ng-model="newValidationType" ng-options="validation.name as validation.title for validation in availableValidations" ng-change="prepareNewValidation()")
+          %select(ng-model="newValidationType" ng-options="type as name for (type, name) in availableValidations" ng-change="prepareNewValidation()")
             %option(value="") Add new…
-        %ng-switch(on="newValidationType")
-          .options(ng-switch-when="size")
-            %input(type="text" ng-model="newValidation.size.min" placeholder="Minimum size")
-            \-
-            %input(type="text" ng-model="newValidation.size.max" placeholder="Maximum size")
-          .options(ng-switch-when="range")
-            %input(type="text" ng-model="newValidation.range.min" placeholder="Minimum value")
-            \-
-            %input(type="text" ng-model="newValidation.range.max" placeholder="Maximum value")
-          .options(ng-switch-when="regexp")
-            %input.regexp(type="text" ng-model="newValidation.regexp.expression" placeholder="foo|bar[baz]")
-            %span Flags:
-            %input.flags(type="text" ng-model="newValidation.regexp.flags")
-          .options(ng-switch-when="in")
-            %input(type="text" ng-model="newValidation.in.values" ng-list="" placeholder="apple,orange,banana")
-            %span (separate allowed values by comma)
-          .options(ng-switch-default="")
-            Please select a type first
+        .validation-options(validation="newValidation")
         .action
           %a.button.new(ng-click="createValidation()")
             %i.ss-plus
@@ -48,7 +30,5 @@
     %li
       %header
         %p Validations
-      .section(ng-repeat="validation in field.validations")
-        .name {{validation}}
         
 
