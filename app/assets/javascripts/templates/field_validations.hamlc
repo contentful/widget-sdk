@@ -3,14 +3,14 @@
     %li
       %header
         %p Validations
-      .section
+      -#.section
         .name Inclusion
         .options
           %input(type="text" value="apple, orange, banana")
         .action
           %a.button.delete
             %i.remove.ss-delete
-      .section
+      -#.section
         .name Between
         .options
           %input.lower(type="text")
@@ -19,6 +19,31 @@
         .action
           %a.button.delete
             %i.remove.ss-delete
+      .section
+        .name
+          %select(ng-model="newValidationType" ng-options="validation.name as validation.title for validation in availableValidations" ng-change="prepareNewValidation()")
+            %option(value="") Add new…
+        %ng-switch(on="newValidationType")
+          .options(ng-switch-when="size")
+            %input(type="text" ng-model="newValidation.size.min" placeholder="Minimum size")
+            \-
+            %input(type="text" ng-model="newValidation.size.max" placeholder="Maximum size")
+          .options(ng-switch-when="range")
+            %input(type="text" ng-model="newValidation.range.min" placeholder="Minimum value")
+            \-
+            %input(type="text" ng-model="newValidation.range.max" placeholder="Maximum value")
+          .options(ng-switch-when="regexp")
+            %input.regexp(type="text" ng-model="newValidation.regexp.expression" placeholder="foo|bar[baz]")
+            %span Flags:
+            %input.flags(type="text" ng-model="newValidation.regexp.flags")
+          .options(ng-switch-when="in")
+            %input(type="text" ng-model="newValidation.in.values" ng-list="" placeholder="apple,orange,banana")
+            %span (separate allowed values by comma)
+          .options(ng-switch-default="")
+            Please select a type first
+        .action
+          %a.button.new(ng-click="createValidation()")
+            %i.ss-plus
   -#%ul.validations-open
     %li
       %header
