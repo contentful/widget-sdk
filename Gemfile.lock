@@ -1,3 +1,10 @@
+GIT
+  remote: git://github.com/janv/sprockets-browserify.git
+  revision: 07bdf3f297d93165a5b521d2d4f47f20752c41f7
+  specs:
+    sprockets-browserify (0.0.1)
+      sprockets (~> 2.1)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -160,5 +167,6 @@ DEPENDENCIES
   rails (= 3.2.12)
   rb-fsevent (~> 0.9.1)
   sass-rails (~> 3.2.6)
+  sprockets-browserify!
   therubyracer
   uglifier (>= 1.0.3)
