@@ -42,8 +42,6 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
     scope.shareJSstarted = true;
   });
 
-  $scope.namePath = ['name'];
-
   function loadPublishedEntryType() {
     $scope.entryType.getPublishedVersion(function(err, publishedEntryType) {
       $scope.$apply(function(scope) {

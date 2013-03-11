@@ -1,7 +1,6 @@
 'use strict';
 
-// Only for use inside cfFieldEditor
-angular.module('contentful/directives').directive('otBind', function(ShareJS) {
+angular.module('contentful/directives').directive('otBind', function(ShareJS, subdocClient) {
   return {
     restrict: 'A',
     require: '?ngModel',
@@ -9,22 +8,30 @@ angular.module('contentful/directives').directive('otBind', function(ShareJS) {
       
       if (attr.otBind === 'text') {
         // Use this on text inputs/textAreas
+        subdocClient.provideSubdoc(scope);
         scope.$watch('subdoc', function(subdoc, old, scope){
-          if (old && old !== subdoc) {
-            if (scope.detachTextField) {
-              scope.detachTextField();
-              scope.detachTextField = null;
-            }
+          if (scope.detachTextField) {
+            scope.detachTextField();
+            scope.detachTextField = null;
           }
 
           if (subdoc) {
             if (_.isString(ShareJS.peek(subdoc.doc, subdoc.path))) {
+              //console.log('attaching textarea %o to %o', elm[0], subdoc.path);
               scope.detachTextField = subdoc.attach_textarea(elm[0]);
             } else {
               ShareJS.mkpath(scope.doc, subdoc.path, '', function() {
+                //console.log('attaching textarea %o to %o after mkPath', elm[0], subdoc.path, err);
                 scope.detachTextField = subdoc.attach_textarea(elm[0]);
               });
             }
+          }
+        });
+        scope.$on('$destroy', function (event) {
+          var scope = event.currentScope;
+          if (scope.detachTextField) {
+            scope.detachTextField();
+            scope.detachTextField = null;
           }
         });
       } else if (attr.otBind === 'model'){

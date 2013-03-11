@@ -5,9 +5,9 @@
     %input(type="text")
   %td.identifier {{field.id}}
   %td.type {{field.type}}
-  %td.localized(cf-subdoc-editor="['fields', index, 'localized']" doc="doc" value="field.localized")
+  %td.localized(cf-subdoc-editor="['fields', index, 'localized']" value="field.localized")
     %input(type="checkbox" ng-model="value" ot-bind="model")
-  %td.required(cf-subdoc-editor="['fields', index, 'required']" doc="doc" value="field.required")
+  %td.required(cf-subdoc-editor="['fields', index, 'required']" value="field.required")
     %input(type="checkbox" ng-model="value" ot-bind="model")
   %td.validations
     %a.button(ng-click="toggleValidations()")

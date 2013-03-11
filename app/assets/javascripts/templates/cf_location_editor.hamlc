@@ -16,5 +16,5 @@
   %label.location-picker
     %input.lon(type="text" ng-model="location.lon" ng-disabled="!editable")
     %span Longitude
-  %button.remove-location(ng-show="location && subdoc" ng-click="removeLocation()") Remove
+  %button.remove-location(ng-show="location && editable" ng-click="removeLocation()") Remove
 
