@@ -61,7 +61,7 @@ angular.module('contentful/services').provider('authentication', function Authen
     },
 
     profileUrl: function() {
-      return this.endpoint + 'profile/user/edit';
+      return this.endpoint + 'profile/user/edit?access_token='+this.token;
     },
 
     redirectToLogin: function() {
