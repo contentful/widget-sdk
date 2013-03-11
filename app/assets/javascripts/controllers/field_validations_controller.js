@@ -43,6 +43,6 @@ angular.module('contentful/controllers').controller('FieldValidationsCtrl', func
   };
 
   $scope.validationType = function (validation) {
-    return _.keys(validation)[0];
+    return _(validation).keys().filter(function(k) { return k !== '$$hashKey'; }).value()[0];
   };
 });
