@@ -2,14 +2,15 @@ angular.module('contentful/services').provider('authentication', function Authen
   /*global moment*/
   'use strict';
 
-  var endpoint = '//api.lvh.me:3002/';
+  var authApp  = '//lvh.me:3002/';
 
-  this.endpoint = function(e) {
-    endpoint = e;
+  this.authApp= function(e) {
+    authApp = e;
   };
 
-  function Authentication(endpoint, QueryLinkResolver){
-    this.endpoint = endpoint;
+  function Authentication(authApp, client, QueryLinkResolver){
+    this.authApp = authApp;
+    this.client = client;
     this.QueryLinkResolver = QueryLinkResolver;
   }
 
@@ -53,7 +54,7 @@ angular.module('contentful/services').provider('authentication', function Authen
 
     logout: function() {
       $.cookies.del('token');
-      window.location = this.endpoint + 'logout';
+      window.location = this.authApp + 'logout';
     },
 
     isLoggedIn: function() {
@@ -61,7 +62,7 @@ angular.module('contentful/services').provider('authentication', function Authen
     },
 
     profileUrl: function() {
-      return this.endpoint + 'profile/user/edit?access_token='+this.token;
+      return this.authApp + 'profile/user/edit?access_token='+this.token;
     },
 
     redirectToLogin: function() {
@@ -71,7 +72,7 @@ angular.module('contentful/services').provider('authentication', function Authen
         redirect_uri: window.location.protocol + '//' + window.location.host + '/',
         scope: 'private_manage'
       });
-      window.location = this.endpoint + 'oauth/authorize?' + params;
+      window.location = this.authApp + 'oauth/authorize?' + params;
     },
 
     getTokenLookup: function(callback) {
@@ -79,27 +80,22 @@ angular.module('contentful/services').provider('authentication', function Authen
       if (this.tokenLooukp) {
         _.defer(callback, this.tokenLooukp);
       } else {
-        $.ajax(this.endpoint+'token', {
-          headers: {
-            'Authorization': 'Bearer ' + self.token,
-            'Accept': 'application/vnd.contentful.v1+json'
-          },
-          dataType: 'json',
-          success: function(data) {
+        this.client.getTokenLookup(function (err, data) {
+          if (err) {
+            console.warn('Error during token lookup');
+            self.logout();
+          } else {
             self.tokenLookup = self.QueryLinkResolver.resolveQueryLinks(data)[0];
             self.auth = UserInterface.worf(self.tokenLookup);
             callback(self.tokenLookup);
-          },
-          error: function() {
-            self.logout();
           }
         });
       }
     }
   };
 
-  this.$get = function(QueryLinkResolver){
-    return new Authentication(endpoint, QueryLinkResolver);
+  this.$get = function(QueryLinkResolver, client){
+    return new Authentication(authApp, client, QueryLinkResolver);
   };
 
 });

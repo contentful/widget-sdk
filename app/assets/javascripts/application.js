@@ -35,10 +35,11 @@ angular.module('contentful', [
   'contentful/controllers',
   'contentful/directives',
   'contentful/filters'
-], function($locationProvider, clientProvider){
+], function($locationProvider, clientProvider, authenticationProvider){
   'use strict';
   $locationProvider.html5Mode(true);
   clientProvider.endpoint('http://api.lvh.me:8888');
+  authenticationProvider.authApp('//lvh.me:3002/');
 }).run(function(authentication, client) {
   'use strict';
   authentication.login();
