@@ -1,0 +1,3 @@
+%ul
+  %li(ng-repeat="error in errorMessages")
+    {{error | json}}

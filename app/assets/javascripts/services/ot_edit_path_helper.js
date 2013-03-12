@@ -64,7 +64,7 @@ angular.module('contentful/services').service('otEditPathHelper', function (Shar
       // creating a new subdoc
       function updateSubdoc(n,o,scope) {
         if (scope.doc && scope.path) {
-          console.log('setting subdoc', scope.doc, scope.path);
+          //console.log('setting subdoc', scope.doc, scope.path);
           scope.subdoc = scope.doc.at(scope.path);
         } else {
           scope.subdoc = null;

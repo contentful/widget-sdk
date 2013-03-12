@@ -4,7 +4,10 @@ $form-offset: 11px
 .form-field
   //overflow: hidden
   margin-bottom: 1.5em
-  label, .editor, .hint, .error
+  label,
+  .editor,
+  .hint,
+  .field-error-display
     display: inline-block
     color: $medium-gray
   label
@@ -70,7 +73,7 @@ $form-offset: 11px
         border-right-color: white
       .arrow-left-border
         border-right-color: darken($light-rule, 5%)
-  .error
+  .field-error-display
     font-size: 1.2em
     padding: .6em .9em
     background: darken($red, 3%)
