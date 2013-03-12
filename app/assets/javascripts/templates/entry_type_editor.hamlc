@@ -41,11 +41,11 @@
   %form(name="entryTypeForm")
     .form-field
       %label Name
-      .editor(cf-subdoc-editor="['name']")
+      .editor(ot-edit-path="['name']")
         %input(type="text" ng-model="entryType.data.name" ot-bind="text")
     -#.form-field
       %label Description
-      .editor(cf-subdoc-editor="['description']")
+      .editor(ot-edit-path="['description']")
         %textarea(ng-model="entryType.data.description" ot-bind="text")
     .form-field.select-field
       %label Display Field

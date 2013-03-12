@@ -60,6 +60,8 @@ angular.module('contentful/services').service('subdocClient', function (ShareJS)
       scope.$watch('doc', updateSubdoc);
       scope.$watch('path', updateSubdoc, true);
 
+      // TODO change it so that path changes manipulate the subdoc path instead of
+      // creating a new subdoc
       function updateSubdoc(n,o,scope) {
         if (scope.doc && scope.path) {
           console.log('setting subdoc', scope.doc, scope.path);
