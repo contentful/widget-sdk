@@ -3,20 +3,11 @@
     %li
       %header
         %p Validations
-      .section(ng-repeat="validation in validations()")
+      .section(ng-repeat="(validationIndex, validation) in validations()")
         .name {{availableValidations[validationType(validation)]}}
-        .validation-options(validation="validation")
+        .validation-options(validation="validation" doc="doc" validation-index="validationIndex" index="index")
         .action
           %a.button.delete(ng-click="deleteValidation(validation)")
-            %i.remove.ss-delete
-      -#.section
-        .name Between
-        .options
-          %input.lower(type="text")
-          \-
-          %input.upper(type="text")
-        .action
-          %a.button.delete
             %i.remove.ss-delete
       .section
         .name
@@ -26,9 +17,3 @@
         .action
           %a.button.new(ng-click="createValidation()")
             %i.ss-plus
-  -#%ul.validations-open
-    %li
-      %header
-        %p Validations
-        
-

@@ -17,7 +17,7 @@ angular.module('contentful/controllers').controller('FieldValidationsCtrl', func
     var fieldDoc = $scope.doc.at(['fields', $scope.index]);
     var callback = function () {
       $scope.$apply(function (scope) {
-        $scope.prepareNewValidation();
+        scope.prepareNewValidation();
       });
     };
 
