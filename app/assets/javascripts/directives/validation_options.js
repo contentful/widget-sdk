@@ -22,7 +22,9 @@ angular.module('contentful/directives').directive('validationOptions', function 
       otEditPathHelper.injectInto($scope);
 
       $scope.updateDoc = function () {
-        $scope.changeValue($scope.validation);
+        if ($scope.doc) {
+          $scope.changeValue($scope.validation);
+        }
       };
 
       $scope.$on('valueChanged', function (event, value) {

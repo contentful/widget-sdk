@@ -22,7 +22,7 @@ angular.module('contentful/controllers').controller('FieldValidationsCtrl', func
     };
 
     if (!fieldDoc.get().validations) {
-      fieldDoc.insert('validations', [$scope.newValidation], callback);
+      fieldDoc.at(['validations']).set([$scope.newValidation], callback);
     } else {
       var validationsDoc = $scope.doc.at(['fields', $scope.index, 'validations']);
       var numValidations = validationsDoc.get().length;
