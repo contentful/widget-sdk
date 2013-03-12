@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').directive('cfFieldEditor', function(widgets, $compile, subdocClient) {
+angular.module('contentful/directives').directive('cfFieldEditor', function(widgets, $compile, otEditPathHelper) {
   return {
     restrict: 'E',
     scope: {
@@ -18,7 +18,7 @@ angular.module('contentful/directives').directive('cfFieldEditor', function(widg
         scope.path = value;
       }, true);
 
-      subdocClient.injectInto(scope);
+      otEditPathHelper.injectInto(scope);
 
       // Widgets
       var widget = widgets.editor(scope.type, attr.editor);

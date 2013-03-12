@@ -1,8 +1,8 @@
 'use strict';
 
 // Opens new scope, binds 'path' to whatever the argument to ot-edit-path
-// evaluates to in the current scope and injects the subdocClient into the scope
-angular.module('contentful/directives').directive('otEditPath', function(subdocClient) {
+// evaluates to in the current scope and injects the otEditPathHelper into the scope
+angular.module('contentful/directives').directive('otEditPath', function(otEditPathHelper) {
 
   return {
     restrict: 'A',
@@ -15,7 +15,7 @@ angular.module('contentful/directives').directive('otEditPath', function(subdocC
         scope.path = path;
       }, true);
 
-      subdocClient.injectInto(scope);
+      otEditPathHelper.injectInto(scope);
     }
   };
 });

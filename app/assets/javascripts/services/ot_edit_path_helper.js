@@ -1,4 +1,4 @@
-angular.module('contentful/services').service('subdocClient', function (ShareJS) {
+angular.module('contentful/services').service('otEditPathHelper', function (ShareJS) {
   'use strict';
 
   // Require doc, path

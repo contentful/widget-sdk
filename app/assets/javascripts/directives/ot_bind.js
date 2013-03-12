@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').directive('otBind', function(ShareJS, subdocClient) {
+angular.module('contentful/directives').directive('otBind', function(ShareJS, otEditPathHelper) {
   return {
     restrict: 'A',
     require: '?ngModel',
@@ -8,7 +8,7 @@ angular.module('contentful/directives').directive('otBind', function(ShareJS, su
       
       if (attr.otBind === 'text') {
         // Use this on text inputs/textAreas
-        subdocClient.provideSubdoc(scope);
+        otEditPathHelper.provideSubdoc(scope);
         scope.$watch('subdoc', function(subdoc, old, scope){
           if (scope.detachTextField) {
             scope.detachTextField();
