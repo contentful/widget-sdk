@@ -25,6 +25,21 @@ angular.module('contentful/directives').directive('fieldErrorDisplay', function 
           } else {
             return 'Size must be smaller than ' + validation.max + '.';
           }
+        },
+        range: function (validation) {
+          if (_.isNumber(validation.min) && _.isNumber(validation.max)) {
+            return 'Must be between ' + validation.min + ' and ' + validation.max + '.';
+          } else if(_.isNumber(validation.min)) {
+            return 'Must be larger than ' + validation.min + '.';
+          } else {
+            return 'Must be smaller than ' + validation.max + '.';
+          }
+        },
+        regexp: function (validation) {
+          return 'Must match ' + validation.expression + '.';
+        },
+        in: function (validation) {
+          return 'Must be one of ' + validation.expected.join(', ') + '.';
         }
       };
 

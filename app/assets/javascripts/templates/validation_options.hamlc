@@ -12,7 +12,7 @@
     %span Flags:
     %input.flags(type="text" ng-model="validation.regexp.flags" ng-change="updateDoc()")
   %div(ng-switch-when="in")
-    %input(type="text" ng-model="validation.in.values" ng-list="" placeholder="apple,orange,banana" ng-change="updateDoc()")
+    %input(type="text" ng-model="validation.in" ng-list="" placeholder="apple,orange,banana" ng-change="updateDoc()")
     %span (separate allowed values by comma)
   %div(ng-switch-default="")
     Please select a type first {{validation | json}}
