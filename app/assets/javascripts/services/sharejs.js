@@ -20,6 +20,11 @@ angular.module('contentful/services').provider('ShareJS', function ShareJSProvid
     } else {
       _token = client.persistenceContext.adapter.token;
     }
-    return new ShareJSHelper.Client(sharejs, url, _token);
+    var c = new ShareJSHelper.Client(sharejs, url, _token);
+    // Monkey patch for better Angular compatiblity
+    c.connection.socket.send = function (message) {
+      return this.sendMap({JSON: angular.toJson(message)});
+    };
+    return c;
   };
 });
