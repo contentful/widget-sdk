@@ -51,13 +51,17 @@ angular.module('contentful/directives').directive('fieldErrorDisplay', function 
         }
       });
 
-      $scope.$watch('entry.data.fields[field.id][locale]', function (value, old, scope) {
-        // TODO Debounce this so we don't thrash while typing
-        scope.errorMessages = _(scope.validations).map(function (validation) {
+      $scope.validate = function (value) {
+        $scope.errorMessages = _($scope.validations).map(function (validation) {
           if (!validation.constraint.test(value)) {
             return messages[validation.name](validation);
           }
         }).compact().value();
+      };
+      $scope.validate = _.debounce($scope.validate, 400);
+
+      $scope.$watch('entry.data.fields[field.id][locale]', function (value, old, scope) {
+        scope.validate(value);
       }, true);
     }
   };
