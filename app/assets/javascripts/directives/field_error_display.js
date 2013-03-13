@@ -58,10 +58,14 @@ angular.module('contentful/directives').directive('fieldErrorDisplay', function 
           }
         }).compact().value();
       };
-      $scope.validate = _.debounce($scope.validate, 400);
+      $scope.validateLater = _.debounce(function (value) {
+        $scope.$apply(function (scope) {
+          scope.validate(value);
+        });
+      }, 400);
 
       $scope.$watch('entry.data.fields[field.id][locale]', function (value, old, scope) {
-        scope.validate(value);
+        scope.validateLater(value);
       }, true);
     }
   };
