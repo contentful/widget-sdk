@@ -9,9 +9,16 @@ angular.module('contentful/directives').directive('cfFieldEditor', function(widg
       doc: '=',
       locale: '=',
       bucketContext: '=',
-      value: '='
+      //value: '='
     },
     link: function(scope, elm, attr) {
+
+      scope.$watch(function (scope) {
+        return scope.$parent.$eval(attr.value);
+      }, function (val, old, scope) {
+        scope.value = val;
+      });
+
       scope.$watch(function(scope){
         return ['fields', scope.fieldId, scope.locale];
       }, function(value, old, scope){
