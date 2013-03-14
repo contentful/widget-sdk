@@ -38,7 +38,13 @@ angular.module('contentful/controllers').controller('FieldValidationsCtrl', func
 
   };
 
-  $scope.validations = function(){
+  $scope.$watch(function (scope) {
+    return scope.validationsFromDoc();
+  }, function (validations, old, scope) {
+    scope.validations = validations;
+  }, true);
+
+  $scope.validationsFromDoc = function(){
     return $scope.doc.getAt(['fields', $scope.index, 'validations']) || [];
   };
 

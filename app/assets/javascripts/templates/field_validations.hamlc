@@ -3,7 +3,7 @@
     %li
       %header
         %p Validations
-      .section(ng-repeat="(validationIndex, validation) in validations()")
+      .section(ng-repeat="(validationIndex, validation) in validations")
         .name {{availableValidations[validationType(validation)]}}
         .validation-options(validation="validation" doc="doc" validation-index="validationIndex" index="index")
         .action
