@@ -61,6 +61,7 @@ module Contentful
     
     # Enable the asset pipeline
     config.assets.enabled = true
+    config.assets.prefix = "/app"
 
     if defined? ::HamlCoffeeAssets
       config.hamlcoffee.placement = 'global'
