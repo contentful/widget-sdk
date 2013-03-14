@@ -1,8 +1,8 @@
-angular.module('contentful/services').provider('authentication', function AuthenticationProvider() {
+angular.module('contentful/services').provider('authentication', function AuthenticationProvider(environmentProvider) {
   /*global moment*/
   'use strict';
 
-  var authApp  = '//lvh.me:3002/';
+  var authApp  = '//'+environmentProvider.env.base_host+'/';
 
   this.authApp= function(e) {
     authApp = e;
