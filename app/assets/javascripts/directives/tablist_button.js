@@ -11,7 +11,7 @@ angular.module('contentful/directives').directive('tablistButton', function() {
       scope.publishedEntryTypes = [];
       scope.$watch('bucketContext.entryTypes', function(n,o, scope) {
         scope.publishedEntryTypes = _.filter(n, function(et) {
-            return et.data.sys.publishedAt && et.data.sys.publishedAt > 0;
+          return et.data.sys.publishedAt;
         });
       });
 
