@@ -1,4 +1,5 @@
 {
+  "asset_host_url": "//app.joistio.com",
   "fog": {
     "s3": {
       "options": {
