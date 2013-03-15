@@ -1,4 +1,4 @@
-angular.module('contentful/services').provider('environment', function () {
+angular.module('contentful/services').provider('environment', function() {
   'use strict';
 
   var env = <%= File.read(Rails.root + 'config' + 'environments' + Rails.env + 'config.json') %>;
