@@ -35,11 +35,12 @@ angular.module('contentful', [
   'contentful/controllers',
   'contentful/directives',
   'contentful/filters'
-], function($locationProvider, clientProvider, authenticationProvider){
+], function($locationProvider, clientProvider, authenticationProvider, environmentProvider){
   'use strict';
+  var env = environmentProvider.env;
   $locationProvider.html5Mode(true);
-  clientProvider.endpoint('http://api.lvh.me:8888');
-  authenticationProvider.authApp('//lvh.me:3002/');
+  clientProvider.endpoint('//'+env.api_host);
+  authenticationProvider.authApp('//'+env.base_host+'/');
 }).run(function(authentication, client) {
   'use strict';
   authentication.login();

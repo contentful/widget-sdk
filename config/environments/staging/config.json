@@ -1,0 +1,22 @@
+{
+  "base_host": "be.joistio.com:8888",
+  "api_host": "api.joistio.com:8888",
+  "app_host": "app.joistio.com:8888/",
+  "marketing_url": "http://static.joistio.com:8888/",
+  "asset_host": "app.joistio.com:8888",
+  "ot_host": "ot.joistio.com:8888",
+  "fog": {
+    "s3": {
+      "options": {
+        "provider": "AWS",
+        "aws_access_key_id": "AKIAIIESR5EOHHFGBBGQ",
+        "aws_secret_access_key": "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",
+        "region": "us-east-1"
+      },
+      "asset_sync": {
+        "bucket": "assets-development.contentful-test.com",
+        "region": "us-east-1"
+      }
+    }
+  }
+}

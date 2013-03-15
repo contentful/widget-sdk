@@ -1,9 +1,9 @@
-angular.module('contentful/services').provider('ShareJS', function ShareJSProvider() {
+angular.module('contentful/services').provider('ShareJS', function ShareJSProvider(environmentProvider) {
   'use strict';
 
   var token;
   var ShareJSHelper = UserInterface.client.ShareJSHelper;
-  var url = document.location.protocol + '//' + document.location.hostname + ':8000/channel';
+  var url = '//'+environmentProvider.env.ot_host+'/channel';
 
   this.token= function(e) {
     token = e;
