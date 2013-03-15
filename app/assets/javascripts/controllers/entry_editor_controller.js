@@ -2,7 +2,7 @@
 
 angular.module('contentful/controllers').controller('EntryEditorCtrl', function EntryEditorCtrl($scope, ShareJS) {
   $scope.$watch('tab.params.entry',     'entry=tab.params.entry');
-  $scope.$watch('bucketContext.bucket.getDefaultLocale()', 'locale=bucketContext.bucket.getDefaultLocale()');
+  $scope.$watch('bucketContext.bucket.getDefaultLocale().name', 'locale=bucketContext.bucket.getDefaultLocale().name');
 
   $scope.$watch('entry', function(entry, old, scope){
     if (!entry || entry.isArchived()) return; //TODO: watch isArchived status and adapt doc
