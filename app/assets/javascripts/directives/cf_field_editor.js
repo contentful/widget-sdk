@@ -32,7 +32,9 @@ angular.module('contentful/directives').directive('cfFieldEditor', function(widg
 
       elm.html(widget.template);
       elm.on('blur', '*', function() {
-        scope.$emit('inputBlurred', scope.fieldId);
+        scope.$apply(function (scope) {
+          scope.$emit('inputBlurred', scope.fieldId);
+        });
       });
       $compile(elm.contents())(scope);
       if(typeof widget.link === 'function') {
