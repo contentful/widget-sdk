@@ -10,28 +10,43 @@ angular.module('contentful/directives').directive('otBind', function(ShareJS, ot
         // Use this on text inputs/textAreas
         otEditPathHelper.provideSubdoc(scope);
         scope.$watch('subdoc', function(subdoc, old, scope){
-          if (scope.detachTextField) {
-            scope.detachTextField();
-            scope.detachTextField = null;
+          if (scope.unbindTextField) {
+            scope.unbindTextField();
+            scope.unbindTextField = null;
           }
 
           if (subdoc) {
+            var detachTextField, changeHandler;
             if (_.isString(ShareJS.peek(subdoc.doc, subdoc.path))) {
               //console.log('attaching textarea %o to %o', elm[0], subdoc.path);
-              scope.detachTextField = subdoc.attach_textarea(elm[0]);
+              detachTextField = subdoc.attach_textarea(elm[0]);
             } else {
               ShareJS.mkpath(scope.doc, subdoc.path, '', function() {
                 //console.log('attaching textarea %o to %o after mkPath', elm[0], subdoc.path, err);
-                scope.detachTextField = subdoc.attach_textarea(elm[0]);
+                detachTextField = subdoc.attach_textarea(elm[0]);
               });
             }
+
+            elm.on('keyup', changeHandler = _.debounce(function () {
+              //console.log('emitting textIdle');
+              scope.$apply(function (scope) {
+                scope.$emit('textIdle');
+              });
+            }, 300));
+
+            scope.unbindTextField = function () {
+              detachTextField();
+              detachTextField = null;
+              elm.off('keyup', changeHandler);
+              changeHandler = null;
+            };
           }
         });
         scope.$on('$destroy', function (event) {
           var scope = event.currentScope;
-          if (scope.detachTextField) {
-            scope.detachTextField();
-            scope.detachTextField = null;
+          if (scope.unbindTextField) {
+            scope.unbindTextField();
+            scope.unbindTextField = null;
           }
         });
       } else if (attr.otBind === 'model'){
