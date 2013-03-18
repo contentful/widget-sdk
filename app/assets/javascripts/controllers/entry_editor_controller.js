@@ -31,11 +31,25 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
     event.stopPropagation();
     event.currentScope.updateFromShareJSDoc();
   });
+  $scope.$on('textIdle', function(event) {
+    event.currentScope.updateFromShareJSDoc();
+  });
 
   $scope.updateFromShareJSDoc = function() {
     if (this.doc) {
       this.entry.update(this.doc.snapshot);
     }
+  };
+
+  $scope.formValid = function () {
+    if (!$scope.entryConstraint) {
+      var entryType = this.bucketContext.typeForEntry(this.entry);
+      var bucket = this.bucketContext.bucket;
+      $scope.entryConstraint = UserInterface.validation.EntryType.parse(entryType.data, bucket).entryConstraint;
+    }
+    var entry = $scope.doc ? $scope.doc.getAt([]) : $scope.entry.data;
+    var valid = $scope.entryConstraint.test(entry);
+    return valid;
   };
 
   $scope.canPublish = function() {
