@@ -8,7 +8,7 @@
     \-
     %input(type="number" ng-model="validation.range.max" placeholder="Maximum value" ng-change="updateDoc()")
   %div(ng-switch-when="regexp")
-    %input.regexp(type="text" ng-model="validation.regexp.expression" placeholder="foo|bar[baz]" ng-change="updateDoc()")
+    %input.regexp(type="text" ng-model="validation.regexp.pattern" placeholder="foo|bar[baz]" ng-change="updateDoc()")
     %span Flags:
     %input.flags(type="text" ng-model="validation.regexp.flags" ng-change="updateDoc()")
   %div(ng-switch-when="in")

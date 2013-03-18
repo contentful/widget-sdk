@@ -36,7 +36,7 @@ angular.module('contentful/directives').directive('fieldErrorDisplay', function 
           }
         },
         regexp: function (validation) {
-          return 'Must match ' + validation.expression + '.';
+          return 'Must match /' + validation.pattern + '/.';
         },
         in: function (validation) {
           return 'Must be one of ' + validation.expected.join(', ') + '.';

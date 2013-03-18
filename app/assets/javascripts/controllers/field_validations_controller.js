@@ -31,7 +31,7 @@ angular.module('contentful/controllers').controller('FieldValidationsCtrl', func
   };
 
   $scope.deleteValidation = function (validation) {
-    var validationIndex = _.indexOf($scope.validations(), validation);
+    var validationIndex = _.indexOf($scope.validations, validation);
     $scope.doc.at(['fields', $scope.index, 'validations', validationIndex]).remove(function(){
       $scope.$apply();
     });
