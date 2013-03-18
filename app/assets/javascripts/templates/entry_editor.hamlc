@@ -82,6 +82,7 @@
     %button.delete(ng-show="entry.canDelete()") Delete
     %button.archive(ng-show="entry.canArchive()" ng-click="archive()") Archive
     %button.unpublish(ng-show="entry.canUnpublish()" ng-click="unpublish()") Unpublish
+    -#TODO: Not showing the correct button yet:
     %button.publish(ng-show="formValid() && entry.canPublish() &&  entry.canUnpublish()" ng-click="publish()") Republish
     %button.publish(ng-show="formValid() && entry.canPublish() && !entry.canUnpublish()" ng-click="publish()") Publish
   -#.save-status.green
