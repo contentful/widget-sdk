@@ -72,18 +72,27 @@ angular.module('contentful/services').provider('authentication', function Authen
         redirect_uri: window.location.protocol + '//' + window.location.host + '/',
         scope: 'private_manage'
       });
+      this.redirectingToLogin = true;
       window.location = this.authApp + 'oauth/authorize?' + params;
     },
 
     getTokenLookup: function(callback) {
+      if (this.redirectingToLogin) {
+        console.log('redirection to login in process during getTokenLookup. Not executing');
+        return;
+      }
       var self= this;
       if (this.tokenLooukp) {
         _.defer(callback, this.tokenLooukp);
       } else {
         this.client.getTokenLookup(function (err, data) {
           if (err) {
-            console.warn('Error during token lookup');
-            self.logout();
+            console.warn('Error during token lookup', err, data);
+            if (environmentProvider.env === 'development') {
+              if (window.confirm('Error during token lookup, logout?')) self.logout();
+            } else {
+              self.logout();
+            }
           } else {
             self.tokenLookup = self.QueryLinkResolver.resolveQueryLinks(data)[0];
             self.auth = UserInterface.worf(self.tokenLookup);
