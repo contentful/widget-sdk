@@ -2,7 +2,7 @@ angular.module('contentful/services').provider('authentication', function Authen
   /*global moment*/
   'use strict';
 
-  var authApp  = '//'+environmentProvider.env.base_host+'/';
+  var authApp  = '//'+environmentProvider.settings.base_host+'/';
 
   this.authApp= function(e) {
     authApp = e;

@@ -3,7 +3,7 @@ angular.module('contentful/services').provider('ShareJS', function ShareJSProvid
 
   var token;
   var ShareJSHelper = UserInterface.client.ShareJSHelper;
-  var url = '//'+environmentProvider.env.ot_host+'/channel';
+  var url = '//'+environmentProvider.settings.ot_host+'/channel';
 
   this.token= function(e) {
     token = e;

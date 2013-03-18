@@ -37,7 +37,7 @@ angular.module('contentful', [
   'contentful/filters'
 ], function($locationProvider, clientProvider, authenticationProvider, environmentProvider){
   'use strict';
-  var env = environmentProvider.env;
+  var env = environmentProvider.settings;
   $locationProvider.html5Mode(true);
   clientProvider.endpoint('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');

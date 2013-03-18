@@ -1,10 +1,16 @@
 angular.module('contentful/services').provider('environment', function() {
   'use strict';
 
-  var env = <%= File.read(Rails.root + 'config' + 'environments' + Rails.env + 'config.json') %>;
+  var env      = '<%= Rails.env %>';
+  var settings = <%= File.read(Rails.root + 'config' + 'environments' + Rails.env + 'config.json') %>;
+
   this.env = env;
+  this.settings =settings ;
 
   this.$get = function () {
-    return env;
+    return {
+      env: env,
+      settings: settings
+    };
   };
 });
