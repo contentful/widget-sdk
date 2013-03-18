@@ -72,21 +72,21 @@
     %span 3 others online
     %ul
       %li.avatar
-        %img(src="assets/avatar-2.jpg")
+        %img(src="app/avatar-2.jpg")
         .tip-container
           .tip
             Jan
             .arrow-down
             .arrow-down-border
       %li.avatar
-        %img(src="assets/avatar-3.jpg")
+        %img(src="app/avatar-3.jpg")
         .tip-container
           .tip
             Stephan
             .arrow-down
             .arrow-down-border
       %li.avatar
-        %img(src="assets/avatar-4.jpg")
+        %img(src="app/avatar-4.jpg")
         .tip-container
           .tip
             Chris
