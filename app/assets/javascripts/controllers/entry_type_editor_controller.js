@@ -2,15 +2,16 @@
 
 angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', function EntryTypeEditorCtrl($scope, ShareJS) {
   $scope.availableTypes = [
-    {name: 'Text'          , value: 'text'    },
-    {name: 'Symbol'        , value: 'string'  },
-    {name: 'Integer'       , value: 'integer' },
-    {name: 'Floating-point', value: 'number'  },
-    {name: 'Yes/No'        , value: 'boolean' },
-    {name: 'List'          , value: 'array'   },
-    {name: 'Date/Time'     , value: 'date'    },
-    {name: 'Object'        , value: 'object'  },
-    {name: 'Location'      , value: 'location'},
+    {name: 'Text'           , value: {type: 'text'                            }},
+    {name: 'Symbol'         , value: {type: 'string'                          }},
+    {name: 'Integer'        , value: {type: 'integer'                         }},
+    {name: 'Floating-point' , value: {type: 'number'                          }},
+    {name: 'Yes/No'         , value: {type: 'boolean'                         }},
+    {name: 'Date/Time'      , value: {type: 'date'                            }},
+    {name: 'Object'         , value: {type: 'object'                          }},
+    {name: 'List of Entries', value: {type: 'array' , items: {type: 'link'  } }},
+    {name: 'List of Strings', value: {type: 'array' , items: {type: 'string'} }},
+    {name: 'Location'       , value: {type: 'location'                        }},
   ];
 
   $scope.$watch('tab.params.entryType', 'entryType=tab.params.entryType');

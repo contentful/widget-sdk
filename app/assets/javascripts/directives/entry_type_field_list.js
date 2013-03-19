@@ -66,10 +66,10 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
         var field = {
           id   : scope.newId,
           name : scope.newName,
-          type : scope.newType,
           required: scope.newRequired,
           localized: scope.newLocalized
         };
+        _.extend(field, scope.newType);
 
         var fieldDoc = scope.doc.at(['fields']);
         var index = fieldDoc.get().length;
