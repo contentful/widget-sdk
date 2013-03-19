@@ -14,9 +14,9 @@
   %tr.field
     %td.drag-handle &nbsp;
     %td.name
-      %input(ng-model="newId" type="text")
-    %td.identifier
       %input(ng-model="newName" type="text")
+    %td.identifier
+      %input(ng-model="newId" type="text")
     %td.type
       %select(ng-model="newType" ng-options="type.value as type.name for type in availableTypes")
     %td.localized
@@ -25,5 +25,5 @@
       %input(type="checkbox" ng-model="newRequired")
     %td.validations
     %td.action
-      %a.button.new
-        %i.ss-plus(ng-click="addField()")
+      %a.button.new(ng-click="addField()")
+        %i.ss-plus
