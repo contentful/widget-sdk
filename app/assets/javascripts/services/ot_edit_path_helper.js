@@ -19,7 +19,8 @@ angular.module('contentful/services').service('otEditPathHelper', function (Shar
 
         if (doc){
           scope.docListener = doc.at([]).on('child op', function(path) {
-            if (angular.equals(path, scope.path)) {
+            var pathPrefixMatches = angular.equals(path.slice(0,scope.path.length), scope.path);
+            if (pathPrefixMatches) {
               scope.$apply(function(scope) {
                 scope.$broadcast('valueChanged', doc.getAt(scope.path));
               });

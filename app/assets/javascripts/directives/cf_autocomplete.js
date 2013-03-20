@@ -1,13 +1,174 @@
-angular.module('contentful/directives').directive('cfAutocomplete', function(Paginator){
+angular.module('contentful/directives').directive('cfAutocomplete', function(Paginator, ShareJS){
   'use strict';
 
   return {
     restrict: 'A',
     template: JST['cf_autocomplete'],
-    link: function($scope, element) {
+    link: function($scope, element, attrs) {
+      // $scope.value              contains the Link/list of links
+      $scope.linkedEntries = []; //contains the linked Entry
+
+      $scope.removeLink = function(entry) {
+        if (attrs.cfAutocomplete === 'entry') {
+          return $scope.changeValue(null, function(err) {
+            if (!err) $scope.$apply(function(scope) {
+              scope.linkedEntries.length = 0;
+            });
+          });
+        } else {
+          var entryIndex = _.indexOf($scope.linkedEntries, entry);
+          $scope.doc.at($scope.path.concat(entryIndex)).remove(function (err) {
+            if (!err) $scope.$apply(function(scope) {
+              scope.linkedEntries.splice(entryIndex,1);
+            });
+          });
+        }
+      };
+
+      $scope.addLink = function(entry, callback) {
+        var link = {
+          sys: {
+            type: 'link',
+            linkType: 'entry',
+            id: entry.getId()
+          }
+        };
+        if (attrs.cfAutocomplete === 'entry') {
+          $scope.changeValue(link, function(err) {
+            $scope.$apply(function(scope) {
+              if (err) {
+                callback(err);
+              } else {
+                scope.linkedEntries.length = 1;
+                scope.linkedEntries[0] = entry;
+                callback(null);
+              }
+            });
+          });
+        } else {
+          if (_.isArray(ShareJS.peek($scope.doc, $scope.path))) {
+            $scope.doc.at($scope.path).push(link, function (err) {
+              $scope.$apply(function(scope) {
+                if (err) {
+                  callback(err);
+                } else {
+                  scope.linkedEntries.push(entry);
+                  callback(null);
+                }
+              });
+            });
+          } else {
+            ShareJS.mkpath($scope.doc, $scope.path, [link], function (err) {
+              $scope.$apply(function(scope) {
+                if (err) {
+                  callback(err);
+                } else {
+                  scope.linkedEntries = [entry];
+                  callback(null);
+                }
+              });
+            });
+          }
+        }
+
+      };
+
+      $scope.visitLink = function(entry) {
+        var editor = _.find($scope.bucketContext.tabList.items, function(tab){
+          return (tab.viewType == 'entry-editor' && tab.params.entry.getId() == entry.getId());
+        });
+        if (!editor) {
+          editor = $scope.bucketContext.tabList.add({
+            viewType: 'entry-editor',
+            section: 'entries',
+            params: {
+              entry: entry,
+              mode: 'edit'
+            },
+            title: this.bucketContext.entryTitle(entry)
+          });
+        }
+        editor.activate();
+      };
+
+      $scope.addNew = function(entryType) {
+        $scope.bucketContext.bucket.createEntry({
+          sys: {
+            entryType: entryType.getId()
+          }
+        }, function(errCreate, entry){
+          if (errCreate) {
+            console.log('Error creating entry', errCreate);
+            return;
+          }
+          $scope.addLink(entry, function(errSetLink) {
+            if (errSetLink) {
+              console.log('Error linking entry', errSetLink);
+              entry.delete(function(errDelete) {
+                console.log('Error deleting entry', errDelete);
+              });
+              return;
+            }
+            $scope.bucketContext.tabList.add({
+              viewType: 'entry-editor',
+              section: 'entries',
+              params: {
+                entry: entry,
+                bucket: $scope.bucketContext.bucket,
+                mode: 'create'
+              },
+              title: 'New Entry'
+            }).activate();
+          });
+        });
+      };
+
+      $scope.setLinkedEntriesFromValue = function(value) {
+        if (attrs.cfAutocomplete === 'entries') {
+          // TODO case where value is null? Shouldn't occur, but still...
+          var ids = _.map(value, function (link) { return link.sys.id; }).join(',');
+          $scope.bucketContext.bucket.getEntries({'sys.id[in]': ids}, function (err, entries) {
+            entries = _.reduce(entries, function (map, entry) {
+              map[entry.getId()] = entry;
+              return map;
+            }, {} );
+            entries = _.map(value, function (link) { return entries[link.sys.id]; });
+            $scope.$apply(function (scope) {
+              scope.linkedEntries.splice.apply(scope.linkedEntries, [0, scope.linkedEntries.length].concat(entries));
+            });
+          });
+        } else {
+          var linkedId = value && value.sys && value.sys.id;
+          if(linkedId) {
+            if (value.sys.linkType == 'entry') {
+              $scope.bucketContext.bucket.getEntry(linkedId, function(err, entry) {
+                if (!err) $scope.$apply(function(scope) {
+                  scope.linkedEntry = entry;
+                });
+              });
+            }
+          } else {
+            $scope.linkedEntry = [];
+          }
+        }
+
+      };
+
+      $scope.$on('valueChanged', function(event, value) {
+        event.currentScope.setLinkedEntriesFromValue(value);
+        if (event.currentScope.doc) console.log('value changed', event.currentScope.doc.snapshot);
+      });
+
+      $scope.linkDescription= function(entry) {
+        if (entry) {
+          return $scope.bucketContext.entryTitle(entry, $scope.locale);
+        } else {
+          return '(nothing)';
+        }
+      };
+
+      // Search ///////////////////////////////////////////////////////////////
       $scope.searchTerm = '';
-      $scope.paginator = new Paginator();
-      $scope.selectedItem = 0;
 
       $scope.$watch('searchTerm', function(n,o, scope) {
         if (n === o) return;
@@ -64,6 +225,10 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
         }, 500);
       };
 
+      // Display matches ///////////////////////////////////////////////////////
+      $scope.paginator = new Paginator();
+      $scope.selectedItem = 0;
+
       $scope.loadMore = function() {
         if ($scope.reloadInProgress || $scope.resetPaused) return;
         if ($scope.paginator.atLast()) return;
@@ -85,7 +250,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
 
       };
 
-      element.on('keydown', function(event) {
+      element.on('keydown', function navigateResultList(event) {
         var DOWN  = 40,
             UP    = 38,
             ENTER = 13,
@@ -144,115 +309,9 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
       $scope.pickSelected = function() {
         var entry = $scope.entries[$scope.selectedItem];
         if (entry) {
-          $scope.setLink(entry, function(err) {
+          $scope.addLink(entry, function(err) {
             if (!err) $scope.closePicker();
           });
-        }
-      };
-
-      $scope.removeLink = function() {
-        return $scope.changeValue(null, function(err) {
-          if (!err) $scope.$apply(function(scope) {
-            scope.linkedEntry = null;
-          });
-        });
-      };
-
-      $scope.setLink = function(entry, callback) {
-        var link = {
-          sys: {
-            type: 'link',
-            linkType: 'entry',
-            id: entry.getId()
-            }};
-        $scope.changeValue(link, function(err) {
-          $scope.$apply(function(scope) {
-            if (err) {
-              callback(err);
-            } else {
-              scope.linkedEntry = entry;
-              callback(null);
-            }
-          });
-        });
-      };
-
-      $scope.visitLink = function() {
-        var entry = $scope.linkedEntry;
-        var editor = _.find($scope.bucketContext.tabList.items, function(tab){
-          return (tab.viewType == 'entry-editor' && tab.params.entry.getId() == entry.getId());
-        });
-        if (!editor) {
-          editor = $scope.bucketContext.tabList.add({
-            viewType: 'entry-editor',
-            section: 'entries',
-            params: {
-              entry: entry,
-              mode: 'edit'
-            },
-            title: this.bucketContext.entryTitle(entry)
-          });
-        }
-        editor.activate();
-      };
-
-      $scope.addNew = function(entryType) {
-        $scope.bucketContext.bucket.createEntry({
-          sys: {
-            entryType: entryType.getId()
-          }
-        }, function(errCreate, entry){
-          if (errCreate) {
-            console.log('Error creating entry', errCreate);
-            return;
-          }
-          $scope.setLink(entry, function(errSetLink) {
-            if (errSetLink) {
-              console.log('Error linking entry', errSetLink);
-              entry.delete(function(errDelete) {
-                console.log('Error deleting entry', errDelete);
-              });
-              return;
-            }
-            $scope.bucketContext.tabList.add({
-              viewType: 'entry-editor',
-              section: 'entries',
-              params: {
-                entry: entry,
-                bucket: $scope.bucketContext.bucket,
-                mode: 'create'
-              },
-              title: 'New Entry'
-            }).activate();
-          });
-        });
-      };
-
-
-      $scope.setLinkedEntryFromValue = function(value) {
-        var linkedId = value && value.sys && value.sys.id;
-        if(linkedId) {
-          if (value.sys.linkType == 'entry') {
-            $scope.bucketContext.bucket.getEntry(linkedId, function(err, entry) {
-              if (!err) $scope.$apply(function(scope) {
-                scope.linkedEntry = entry;
-              });
-            });
-          }
-        } else {
-          $scope.linkedEntry = null;
-        }
-      };
-
-      $scope.$on('valueChanged', function(event, value) {
-        event.currentScope.setLinkedEntryFromValue(value);
-      });
-
-      $scope.currentLinkDescription = function() {
-        if ($scope.linkedEntry) {
-          return $scope.bucketContext.entryTitle($scope.linkedEntry, $scope.locale);
-        } else {
-          return '(nothing)';
         }
       };
 

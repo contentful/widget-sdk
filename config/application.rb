@@ -70,7 +70,7 @@ module Contentful
       config.hamlcoffee.placement = 'global'
     end
 
-    config.assets.precompile = [ Proc.new{ |path| !File.extname(path) == '.css' }, /(?:\/|\\|\A)application\.(css|js)$/ ]
+    config.assets.precompile = %w(*.png *.jpg *.woff *.ttf *.gif *.eot *.svg) + [Proc.new{ |path| !File.extname(path) == '.css' }, /(?:\/|\\|\A)application\.(css|js)$/]
 
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.0'

@@ -12,11 +12,12 @@
 
 @font-face {
   font-family: "SSStandard";
-  src: url('ss-standard.eot');
-  src: url('ss-standard.eot?#iefix') format('embedded-opentype'), 
-       url('ss-standard.woff') format('woff'), 
-       url('ss-standard.ttf')  format('truetype'),
-       url('ss-standard.svg#SSStandard') format('svg');
+
+  src: asset-url('ss-standard.eot', symbolset);
+  src: asset-url('ss-standard.eot?#iefix', symbolset) format('embedded-opentype'),
+       asset-url('ss-standard.woff', symbolset) format('woff'),
+       asset-url('ss-standard.ttf', symbolset)  format('truetype'),
+       asset-url('ss-standard.svg#SSStandard', symbolset) format('svg');
   font-weight: normal;
   font-style: normal;
 }
