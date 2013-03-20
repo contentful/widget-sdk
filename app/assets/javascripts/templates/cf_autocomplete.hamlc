@@ -1,10 +1,10 @@
-%ul.links(ng-hide="linkedEntry")
+%ul.links(ng-show="linkedEntries.length == 0")
   %li
     (none)
-%ul.links(ng-show="linkedEntry")
-  %li
-    %a(ng-click="visitLink()") {{currentLinkDescription()}}
-    %i.ss-delete(ng-click="removeLink()" ng-show="editable")
+%ul.links(ng-hide="linkedEntry.length == 0")
+  %li(ng-repeat="entry in linkedEntries")
+    %a(ng-click="visitLink(entry)") {{linkDescription(entry)}}
+    %i.ss-delete(ng-click="removeLink(entry)" ng-show="editable")
 .controls(ng-show="editable")
   .dropdown-btn.add-new
     %button.dropdown-toggle
