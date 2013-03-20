@@ -4,8 +4,7 @@ angular.module('contentful/directives').directive('cfFieldEditor', function(widg
   return {
     restrict: 'E',
     scope: {
-      type: '=',
-      fieldId: '=',
+      field: '=',
       doc: '=',
       locale: '=',
       bucketContext: '=',
@@ -20,7 +19,7 @@ angular.module('contentful/directives').directive('cfFieldEditor', function(widg
       });
 
       scope.$watch(function(scope){
-        return ['fields', scope.fieldId, scope.locale];
+        return ['fields', scope.field.id, scope.locale];
       }, function(value, old, scope){
         scope.path = value;
       }, true);
@@ -28,12 +27,12 @@ angular.module('contentful/directives').directive('cfFieldEditor', function(widg
       otEditPathHelper.injectInto(scope);
 
       // Widgets
-      var widget = widgets.editor(scope.type, attr.editor);
+      var widget = widgets.editor(scope.field.type, attr.editor);
 
       elm.html(widget.template);
       elm.on('blur', '*', function() {
         scope.$apply(function (scope) {
-          scope.$emit('inputBlurred', scope.fieldId);
+          scope.$emit('inputBlurred', scope.field.id);
         });
       });
       $compile(elm.contents())(scope);

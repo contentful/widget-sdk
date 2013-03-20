@@ -64,9 +64,8 @@
       .editor
         %cf-field-editor.controls(
           doc="doc"
-          type="field.type"
           editor="textField"
-          field-id="field.id"
+          field="field"
           locale="locale"
           bucket-context="bucketContext"
           value="entry.data.fields[field.id][locale]")
