@@ -11,7 +11,7 @@
     %nav.account
       .dropdown-btn.user(label="")
         %a.btn.dropdown-toggle{"data-toggle" => "dropdown", :href => "#"}
-          %img(src="https://secure.gravatar.com/avatar/{{user.gravatarHash}}?s=50&d=mm")
+          %img(ng-src="{{user.avatarUrl}}")
           %i.ss-dropdown
         .dropdown-menu
           %p
