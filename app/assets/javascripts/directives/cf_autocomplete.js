@@ -143,12 +143,13 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
             if (value.sys.linkType == 'entry') {
               $scope.bucketContext.bucket.getEntry(linkedId, function(err, entry) {
                 if (!err) $scope.$apply(function(scope) {
-                  scope.linkedEntry = entry;
+                  scope.linkedEntries.length = 1;
+                  scope.linkedEntries[0] = entry;
                 });
               });
             }
           } else {
-            $scope.linkedEntry = [];
+            $scope.linkedEntries = [];
           }
         }
 
@@ -156,7 +157,6 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
 
       $scope.$on('valueChanged', function(event, value) {
         event.currentScope.setLinkedEntriesFromValue(value);
-        if (event.currentScope.doc) console.log('value changed', event.currentScope.doc.snapshot);
       });
 
       $scope.linkDescription= function(entry) {
@@ -166,6 +166,9 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
           return '(nothing)';
         }
       };
+
+      // TODO: When integrating Media, refactor the actual search widget out of the directive,
+      // create a proper interface and then have different lists for the different types
 
       // Search ///////////////////////////////////////////////////////////////
       $scope.searchTerm = '';
