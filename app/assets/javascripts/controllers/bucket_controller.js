@@ -58,7 +58,7 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
         viewType: 'iframe',
         section: 'bucketSettings',
         params: {
-          url: authentication.authApp + 'settings/buckets/'+$scope.bucketContext.bucket.getId()+'/edit?access_token='+authentication.token,
+          url: authentication.bucketSettingsUrl($scope.bucketContext.bucket.getId()),
           fullscreen: false
         },
         title: 'Bucket Settings'

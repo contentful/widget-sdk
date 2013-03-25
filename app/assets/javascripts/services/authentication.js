@@ -65,6 +65,10 @@ angular.module('contentful/services').provider('authentication', function Authen
       return this.authApp + 'profile/user/edit?access_token='+this.token;
     },
 
+    bucketSettingsUrl: function (bucketId) {
+      return this.authApp + 'settings/buckets/'+bucketId+'/edit?access_token='+this.token;
+    },
+
     redirectToLogin: function() {
       var params = $.param({
         response_type: 'token',
@@ -94,13 +98,18 @@ angular.module('contentful/services').provider('authentication', function Authen
               self.logout();
             }
           } else {
-            self.tokenLookup = self.QueryLinkResolver.resolveQueryLinks(data)[0];
-            self.auth = UserInterface.worf(self.tokenLookup);
+            self.updateTokenLookup(data);
             callback(self.tokenLookup);
           }
         });
       }
+    },
+
+    updateTokenLookup: function (tokenLookup) {
+      this.tokenLookup = this.QueryLinkResolver.resolveQueryLinks(tokenLookup)[0];
+      this.auth = UserInterface.worf(this.tokenLookup);
     }
+
   };
 
   this.$get = function(QueryLinkResolver, client){

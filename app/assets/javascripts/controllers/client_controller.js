@@ -1,8 +1,9 @@
-angular.module('contentful/controllers').controller('ClientCtrl', function ClientCtrl($scope, client, BucketContext, authentication) {
+angular.module('contentful/controllers').controller('ClientCtrl', function ClientCtrl($scope, client, BucketContext, authentication, QueryLinkResolver) {
   'use strict';
 
   $scope.buckets = [];
   $scope.bucketContext = new BucketContext($scope);
+  $scope.tokenIdentityMap = new UserInterface.client.IdentityMap();
 
   $scope.user = null;
 
@@ -29,6 +30,12 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
       //bucket and check if the method of updating is correct
     } else if (message.type === 'user' && message.action === 'update') {
       _.extend($scope.user, message.resource);
+    } else if (message.token) {
+      authentication.updateTokenLookup(message.token);
+      $scope.user = authentication.tokenLookup.user;
+      $scope.updateBuckets(authentication.tokenLookup.buckets);
+    } else {
+      $scope.performTokenLookup();
     }
   });
 
@@ -51,16 +58,39 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
     tab.activate();
   };
 
-  // TODO initialize blank user so that you can at least log out when
-  // the getTokenLookup fails
-  authentication.getTokenLookup(function(tokenLookup) {
-    $scope.$apply(function(scope) {
-      scope.user = tokenLookup.user;
-      scope.buckets = _.map(tokenLookup.buckets, function(bucketData) {
-        return client.wrapBucket(bucketData);
+
+  $scope.performTokenLookup = function () {
+    // TODO initialize blank user so that you can at least log out when
+    // the getTokenLookup fails
+    authentication.getTokenLookup(function(tokenLookup) {
+      $scope.$apply(function(scope) {
+        scope.user = tokenLookup.user;
+        scope.updateBuckets(tokenLookup.buckets);
       });
     });
-  });
+  };
+
+  $scope.updateBuckets = function (rawBuckets) {
+    var newBucketList = _.map(rawBuckets, function (rawBucket) {
+      var existing = _.find($scope.buckets, function (existingBucket) {
+        return existingBucket.getId() == rawBucket.sys.id;
+      });
+      if (existing) {
+        existing.update(rawBucket);
+        return existing;
+      } else {
+        var bucket = client.wrapBucket(rawBucket);
+        bucket.save = function () { throw new Error('Saving bucket not allowed'); };
+        return bucket;
+      }
+    });
+    newBucketList.sort(function (a,b) {
+      return a.data.name.localeCompare(b.data.name);
+    });
+    $scope.buckets = newBucketList;
+  };
+
+  $scope.performTokenLookup();
 
   //client.getBuckets({order: 'name'}, function(err, res){
     //$scope.$apply(function($scope){

@@ -1,8 +1,8 @@
 .tab-header.editor-configuration
   %h1
     {{headline()}}
-  -#.editor-top-left
-    .dropdown-btn
+  .editor-top-left
+    -#.dropdown-btn
       %a.btn.dropdown-toggle
         %i.ss-dropdown
         %span Default-Interface
@@ -15,9 +15,13 @@
         %i.ss-dropdown
         %span Language
       .dropdown-menu(style="display:none")
-        …
-        …
-        …
+        %p
+          Default: {{bucketContext.bucket.getDefaultLocale().name}}
+        .separator
+        %ul
+          %li(ng-repeat="locale in bucketContext.bucket.getPublishLocales()" ng-click="selectSecondLocale(locale)")
+            {{locale.name}}
+
   .editor-top-right<
     .dropdown-btn>
       %a.btn.dropdown-toggle
