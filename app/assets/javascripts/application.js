@@ -34,7 +34,8 @@ angular.module('contentful', [
   'contentful/services',
   'contentful/controllers',
   'contentful/directives',
-  'contentful/filters'
+  'contentful/filters',
+  'contentful/user_interface'
 ], function($locationProvider, clientProvider, authenticationProvider, environmentProvider){
   'use strict';
   var env = environmentProvider.settings;
