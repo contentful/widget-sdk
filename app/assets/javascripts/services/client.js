@@ -1,13 +1,13 @@
-'use strict';
+angular.module('contentful/services').provider('client', function ClientProvider(contentfulClient) {
+  'use strict';
 
-angular.module('contentful/services').provider('client', function ClientProvider() {
   var endpoint = null;
 
   this.endpoint = function(e) {
     endpoint = e;
   };
 
-  var Client = UserInterface.client;
+  var Client = contentfulClient;
   var Adapter = Client.adapters.jquery;
 
   this.$get = function() {

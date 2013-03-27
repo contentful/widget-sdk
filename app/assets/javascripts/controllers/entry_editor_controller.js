@@ -1,6 +1,6 @@
-'use strict';
+angular.module('contentful/controllers').controller('EntryEditorCtrl', function EntryEditorCtrl($scope, ShareJS, validation) {
+  'use strict';
 
-angular.module('contentful/controllers').controller('EntryEditorCtrl', function EntryEditorCtrl($scope, ShareJS) {
   $scope.$watch('tab.params.entry',     'entry=tab.params.entry');
   $scope.$watch('bucketContext.bucket.getDefaultLocale().name', 'locale=bucketContext.bucket.getDefaultLocale().name');
 
@@ -45,7 +45,7 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
     if (!$scope.entryConstraint) {
       var entryType = this.bucketContext.typeForEntry(this.entry);
       var bucket = this.bucketContext.bucket;
-      $scope.entryConstraint = UserInterface.validation.EntryType.parse(entryType.data, bucket).entryConstraint;
+      $scope.entryConstraint = validation.EntryType.parse(entryType.data, bucket).entryConstraint;
     }
     var entry = $scope.doc ? $scope.doc.getAt([]) : $scope.entry.data;
     var valid = $scope.entryConstraint.test(entry);

@@ -1,4 +1,4 @@
-angular.module('contentful/classes').factory('QueryLinkResolver', function () {
+angular.module('contentful/classes').factory('QueryLinkResolver', function (contentfulClient) {
   'use strict';
-  return UserInterface.client.QueryLinkResolver;
+  return contentfulClient.QueryLinkResolver;
 });

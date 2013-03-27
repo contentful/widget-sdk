@@ -1,4 +1,4 @@
-angular.module('contentful/services').provider('authentication', function AuthenticationProvider(environmentProvider) {
+angular.module('contentful/services').provider('authentication', function AuthenticationProvider(environmentProvider, worf) {
   /*global moment*/
   'use strict';
 
@@ -107,7 +107,7 @@ angular.module('contentful/services').provider('authentication', function Authen
 
     updateTokenLookup: function (tokenLookup) {
       this.tokenLookup = this.QueryLinkResolver.resolveQueryLinks(tokenLookup)[0];
-      this.auth = UserInterface.worf(this.tokenLookup);
+      this.auth = worf(this.tokenLookup);
     }
 
   };

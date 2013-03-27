@@ -1,4 +1,4 @@
-angular.module('contentful/directives').directive('fieldErrorDisplay', function () {
+angular.module('contentful/directives').directive('fieldErrorDisplay', function (validation) {
   'use strict';
 
   return {
@@ -17,44 +17,44 @@ angular.module('contentful/directives').directive('fieldErrorDisplay', function 
       $scope.errorMessages = [];
 
       var messages = {
-        size: function (validation) {
-          if (_.isNumber(validation.min) && _.isNumber(validation.max)) {
-            return 'Size must be between ' + validation.min + ' and ' + validation.max + '.';
-          } else if(_.isNumber(validation.min)) {
-            return 'Size must be larger than ' + validation.min + '.';
+        size: function (v) {
+          if (_.isNumber(v.min) && _.isNumber(v.max)) {
+            return 'Size must be between ' + v.min + ' and ' + v.max + '.';
+          } else if(_.isNumber(v.min)) {
+            return 'Size must be larger than ' + v.min + '.';
           } else {
-            return 'Size must be smaller than ' + validation.max + '.';
+            return 'Size must be smaller than ' + v.max + '.';
           }
         },
-        range: function (validation) {
-          if (_.isNumber(validation.min) && _.isNumber(validation.max)) {
-            return 'Must be between ' + validation.min + ' and ' + validation.max + '.';
-          } else if(_.isNumber(validation.min)) {
-            return 'Must be larger than ' + validation.min + '.';
+        range: function (v) {
+          if (_.isNumber(v.min) && _.isNumber(v.max)) {
+            return 'Must be between ' + v.min + ' and ' + v.max + '.';
+          } else if(_.isNumber(v.min)) {
+            return 'Must be larger than ' + v.min + '.';
           } else {
-            return 'Must be smaller than ' + validation.max + '.';
+            return 'Must be smaller than ' + v.max + '.';
           }
         },
-        regexp: function (validation) {
-          return 'Must match /' + validation.pattern + '/.';
+        regexp: function (v) {
+          return 'Must match /' + v.pattern + '/.';
         },
-        in: function (validation) {
-          return 'Must be one of ' + validation.expected.join(', ') + '.';
+        'in': function (v) {
+          return 'Must be one of ' + v.expected.join(', ') + '.';
         }
       };
 
       $scope.$watch('field', function (field, old, scope) {
         if (field) {
-          scope.validations = UserInterface.validation.Field.parse(field).validations;
+          scope.validations = validation.Field.parse(field).validations;
         } else {
           scope.validations = [];
         }
       });
 
       $scope.validate = function (value) {
-        $scope.errorMessages = _($scope.validations).map(function (validation) {
-          if (!validation.constraint.test(value)) {
-            return messages[validation.name](validation);
+        $scope.errorMessages = _($scope.validations).map(function (v) {
+          if (!v.constraint.test(value)) {
+            return messages[v.name](validation);
           }
         }).compact().value();
       };
