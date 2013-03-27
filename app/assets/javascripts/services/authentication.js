@@ -1,17 +1,16 @@
-angular.module('contentful/services').provider('authentication', function AuthenticationProvider(environment, worf) {
+angular.module('contentful/services').provider('authentication', function AuthenticationProvider(environment, worf, contentfulClient) {
   /*global moment*/
   'use strict';
 
   var authApp  = '//'+environment.settings.base_host+'/';
+  var QueryLinkResolver = contentfulClient.QueryLinkResolver;
 
   this.authApp= function(e) {
     authApp = e;
   };
 
-  function Authentication(authApp, client, QueryLinkResolver){
-    this.authApp = authApp;
+  function Authentication(client){
     this.client = client;
-    this.QueryLinkResolver = QueryLinkResolver;
   }
 
   var helper = {
@@ -54,7 +53,7 @@ angular.module('contentful/services').provider('authentication', function Authen
 
     logout: function() {
       $.cookies.del('token');
-      window.location = this.authApp + 'logout';
+      window.location = authApp + 'logout';
     },
 
     isLoggedIn: function() {
@@ -62,11 +61,11 @@ angular.module('contentful/services').provider('authentication', function Authen
     },
 
     profileUrl: function() {
-      return this.authApp + 'profile/user/edit?access_token='+this.token;
+      return authApp + 'profile/user/edit?access_token='+this.token;
     },
 
     bucketSettingsUrl: function (bucketId) {
-      return this.authApp + 'settings/buckets/'+bucketId+'/edit?access_token='+this.token;
+      return authApp + 'settings/buckets/'+bucketId+'/edit?access_token='+this.token;
     },
 
     redirectToLogin: function() {
@@ -77,7 +76,7 @@ angular.module('contentful/services').provider('authentication', function Authen
         scope: 'private_manage'
       });
       this.redirectingToLogin = true;
-      window.location = this.authApp + 'oauth/authorize?' + params;
+      window.location = authApp + 'oauth/authorize?' + params;
     },
 
     getTokenLookup: function(callback) {
@@ -98,22 +97,33 @@ angular.module('contentful/services').provider('authentication', function Authen
               self.logout();
             }
           } else {
-            self.updateTokenLookup(data);
+            self.setTokenLookup(data);
             callback(self.tokenLookup);
           }
         });
       }
     },
 
-    updateTokenLookup: function (tokenLookup) {
-      this.tokenLookup = this.QueryLinkResolver.resolveQueryLinks(tokenLookup)[0];
+    setTokenLookup: function (tokenLookup) {
+      this._unresolvedTokenLookup = tokenLookup;
+      tokenLookup = angular.copy(tokenLookup);
+      this.tokenLookup = QueryLinkResolver.resolveQueryLinks(tokenLookup)[0];
       this.auth = worf(this.tokenLookup);
+    },
+
+    updateTokenLookup: function (resource) {
+      var resourceList = this._unresolvedTokenLookup.includes[resource.sys.type];
+      var index = _.findIndex(resourceList, function (existingResource) {
+        return existingResource.sys.id === resource.sys.id;
+      });
+      resourceList[index] = resource;
+      this.setTokenLookup(this._unresolvedTokenLookup);
     }
 
   };
 
-  this.$get = function(QueryLinkResolver, client){
-    return new Authentication(authApp, client, QueryLinkResolver);
+  this.$get = function(client){
+    return new Authentication(client);
   };
 
 });

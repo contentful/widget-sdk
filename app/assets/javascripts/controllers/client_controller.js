@@ -1,4 +1,4 @@
-angular.module('contentful/controllers').controller('ClientCtrl', function ClientCtrl($scope, client, BucketContext, authentication, QueryLinkResolver, contentfulClient) {
+angular.module('contentful/controllers').controller('ClientCtrl', function ClientCtrl($scope, client, BucketContext, authentication, contentfulClient) {
   'use strict';
 
   $scope.buckets = [];
@@ -30,13 +30,23 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
       //bucket and check if the method of updating is correct
     } else if (message.type === 'user' && message.action === 'update') {
       _.extend($scope.user, message.resource);
+    /*
+     * This does not work yet because when you mix relational databases and
+     * object graphs you're gonna have a bad time, mkay?
+     *
+    } else if (message.action !== 'delete') {
+      authentication.updateTokenLookup(message.resource);
+      $scope.user = authentication.tokenLookup.user;
+      $scope.updateBuckets(authentication.tokenLookup.buckets);
     } else if (message.token) {
-      authentication.updateTokenLookup(message.token);
+     */
+      authentication.setTokenLookup(message.token);
       $scope.user = authentication.tokenLookup.user;
       $scope.updateBuckets(authentication.tokenLookup.buckets);
     } else {
       $scope.performTokenLookup();
     }
+    // TODO Better handle deletes (should also work somehow without message.token)
   });
 
   $scope.editProfile = function() {
