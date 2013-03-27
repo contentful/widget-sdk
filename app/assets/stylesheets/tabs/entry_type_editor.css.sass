@@ -1,8 +1,10 @@
 .entry-type-editor
   @extend %entity-editor
+  .form-horizontal
+    width: 95%
 
-  .editor
-    &.entry-type-field-list
+  .form-controls
+    .entry-type-field-list
       padding-top: 5px
     table.result-list
       @extend %standalone-table
@@ -107,7 +109,7 @@
             border-color: $lightest-gray
             width: auto
 
-  .editor
+  .form-controls
     table.new-field
       margin-top: 1em
       border: 1px solid $lightest-gray
@@ -117,7 +119,7 @@
 
   // Buttons
 
-  .editor
+  .form-controls
     .action,
     .validations
       .button

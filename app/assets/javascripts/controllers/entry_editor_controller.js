@@ -41,6 +41,18 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
     }
   };
 
+  $scope.selectSecondLocale = function (l) {
+    $scope.secondLocale = l;
+  };
+
+  $scope.languageButtonLabel = function () {
+    if (!!$scope.secondLocale) {
+      return $scope.bucketContext.bucket.getDefaultLocale().name + '/' + $scope.secondLocale.name;
+    } else {
+      return 'Language';
+    }
+  };
+
   $scope.formValid = function () {
     if (!$scope.entryConstraint) {
       var entryType = this.bucketContext.typeForEntry(this.entry);

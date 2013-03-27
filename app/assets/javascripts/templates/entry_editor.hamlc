@@ -13,13 +13,14 @@
     .dropdown-btn
       %a.dropdown-toggle
         %i.ss-dropdown
-        %span Language
+        %span {{languageButtonLabel()}}
       .dropdown-menu(style="display:none")
         %p
           Default: {{bucketContext.bucket.getDefaultLocale().name}}
         .separator
         %ul
-          %li(ng-repeat="locale in bucketContext.bucket.getPublishLocales()" ng-click="selectSecondLocale(locale)")
+          %li(ng-click="selectSecondLocale(null)" dropdown-close="") (none)
+          %li(ng-repeat="locale in bucketContext.bucket.getPublishLocales()" ng-click="selectSecondLocale(locale)" dropdown-close="")
             {{locale.name}}
 
   .editor-top-right<
@@ -63,22 +64,40 @@
   %form.form-horizontal(name="entryForm")
     -#.field(data-field-type="string" data-field-widget="textField")
       later generate these tags so they can be used in CSS
-    .field(ng-repeat="field in fields()" data-field-type="{{field.type}}")
+    .form-field(ng-repeat="field in fields()" data-field-type="{{field.type}}")
       %label {{field.name}}
-      .editor
-        %cf-field-editor.controls(
-          doc="doc"
-          editor="textField"
-          field="field"
-          locale="locale"
-          bucket-context="bucketContext"
-          value="entry.data.fields[field.id][locale]")
-        -#.hint.tip
-          Hint to the user about the meaning of the field
-          .arrow-left
-          .arrow-left-border
-        .field-error-display
-          Error on the field entry
+      .form-controls
+        .locale
+          %cf-field-editor.controls(
+            doc="doc"
+            editor="textField"
+            field="field"
+            locale="locale"
+            bucket-context="bucketContext"
+            value="entry.data.fields[field.id][locale]")
+          -#.hint.tip
+            Hint to the user about the meaning of the field
+            .arrow-left
+            .arrow-left-border
+          .field-error-display
+            Error on the field entry
+        .locale(ng-switch="!!secondLocale")
+          .locale-label(ng-show="!!secondLocale") {{secondLocale.name}}
+          %div(ng-switch-when="true")
+            %cf-field-editor.controls(
+              doc="doc"
+              editor="textField"
+              field="field"
+              locale="secondLocale.name"
+              bucket-context="bucketContext"
+              value="entry.data.fields[field.id][secondLocale.name]")
+            -#.hint.tip
+              Hint to the user about the meaning of the field
+              .arrow-left
+              .arrow-left-border
+            .field-error-display
+              Error on the field entry
+          %div(ng-switch-default="")
 
 .tab-actions
   .button-set

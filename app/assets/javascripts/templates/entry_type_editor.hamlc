@@ -38,23 +38,24 @@
           %td XX seconds ago
 
 .tab-main
-  %form(name="entryTypeForm")
+  %form.form-horizontal(name="entryTypeForm")
     .form-field
       %label Name
-      .editor(ot-edit-path="['name']")
+      .form-controls(ot-edit-path="['name']")
         %input(type="text" ng-model="entryType.data.name" ot-bind="text")
     -#.form-field
       %label Description
-      .editor(ot-edit-path="['description']")
+      .form-controls(ot-edit-path="['description']")
         %textarea(ng-model="entryType.data.description" ot-bind="text")
     .form-field.select-field
       %label Display Field
-      .editor
+      .form-controls
         %select.field-type(ng-model="entryType.data.displayField" ng-options="field.id as field.name for field in availableDisplayFields" ng-change="displayFieldChanged()")
           %option(value="") ID
     .form-field
       %label Fields
-      .editor.entry-type-field-list
+      .form-controls
+        .entry-type-field-list
 
 
 .tab-actions

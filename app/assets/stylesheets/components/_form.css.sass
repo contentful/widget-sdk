@@ -1,25 +1,44 @@
 $form-gutter: 12px
 $form-offset: 11px
 
-.form-field
-  //overflow: hidden
-  margin-bottom: 1.5em
-  label,
-  .editor,
-  .hint,
-  .field-error-display
-    display: inline-block
-    color: $medium-gray
+// General form layout
+
+.form-horizontal
+  display: table
+  .form-field
+    display: table-row
+    > *
+      vertical-align: top
+      display: table-cell
+      //outline: 1px dashed silver
+
+// Form layout in context
+
+.form-horizontal
+  width: 100%
+  label
+    width: 17%
+  .form-controls
+    width: 80%
+
+// Margins and other styling
+
+.form-horizontal
+  border-spacing: 0 7.5px
+  color: $medium-gray
   label
     text-align: right
     font-size: 1.2em
-    vertical-align: top
-    margin-top: $form-offset
-    width: 17%
-    padding: 0 $form-gutter 0 0
-  .editor
-    width: 80%
+    padding: $form-offset $form-gutter $form-offset 0
+    //padding-right: $form-gutter
+  .locale
     position: relative
+  .locale-label
+    position: absolute
+    padding-top: $form-offset
+    left: -40px
+  // Individual controls
+  .form-controls
     input[type="text"],
     input[type="number"],
     input.time,
@@ -85,7 +104,7 @@ $form-offset: 11px
     display: block
     max-width: 57% !important
     position: static
-    margin: .3em 0 .2em 0
+    margin: 0 0 .4em 0
     width: 57%
     text-align: center
     +transition(opacity 0.3s ease-in-out)
@@ -124,10 +143,13 @@ $form-offset: 11px
       margin-top: 13px
 
 .select-field
-  margin-top: -4px
-  label
-    margin-top: 4px
+  .form-controls
+    padding-top: $form-offset
+    select
+      margin-top: -1px
+      
 
+// TODO Controls is too ambiguous, where is it actually used?
 .controls
   button.dropdown-toggle
     color: $medium-gray
@@ -140,7 +162,11 @@ $form-offset: 11px
       top: 1px
       left: -3px
 
-.editor 
+// Special styling for the different editor widgets
+// TODO Put in own file
+
+// TODO Where is this used? Locations? autocomplete?
+.form-field
   .results
     font-size: 10px
     position: absolute
@@ -175,7 +201,7 @@ $form-offset: 11px
       width: 12em
       color: $light-gray
 
-.editor
+.form-field
   .search-field
     margin-top: 10px
     height: 35px
@@ -193,8 +219,8 @@ $form-offset: 11px
 
 .form-field
   // Styling for specific types
-  &[data-field-type=boolean] .editor,
-  &[data-field-type=array] .editor
+  &[data-field-type=boolean] .form-controls,
+  &[data-field-type=array] .form-controls
     label
       width: auto
       position: relative
@@ -203,7 +229,7 @@ $form-offset: 11px
       position: relative
       top: 2px
 
-.field
+.form-field
   &[data-field-type=link]
     margin: 25px 0 15px
     .links 
