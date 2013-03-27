@@ -12,8 +12,8 @@ if (window) {
 
 if (angular) {
   angular.module('contentful/user_interface', []).
-    value('contentfulClient', UserInterface.client).
-    value('validation', UserInterface.validation).
-    value('worf', UserInterface.worf);
+    constant('contentfulClient', UserInterface.client).
+    constant('validation', UserInterface.validation).
+    constant('worf', UserInterface.worf);
 }
 
