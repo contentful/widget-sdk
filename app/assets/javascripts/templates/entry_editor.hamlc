@@ -68,7 +68,7 @@
       %label {{field.name}}
       .form-controls
         .locale
-          %cf-field-editor.controls(
+          %cf-field-editor(
             doc="doc"
             editor="textField"
             field="field"
@@ -84,7 +84,7 @@
         .locale(ng-switch="!!secondLocale")
           .locale-label(ng-show="!!secondLocale") {{secondLocale.name}}
           %div(ng-switch-when="true")
-            %cf-field-editor.controls(
+            %cf-field-editor(
               doc="doc"
               editor="textField"
               field="field"
