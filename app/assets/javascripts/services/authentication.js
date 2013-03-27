@@ -1,8 +1,8 @@
-angular.module('contentful/services').provider('authentication', function AuthenticationProvider(environmentProvider, worf) {
+angular.module('contentful/services').provider('authentication', function AuthenticationProvider(environment, worf) {
   /*global moment*/
   'use strict';
 
-  var authApp  = '//'+environmentProvider.settings.base_host+'/';
+  var authApp  = '//'+environment.settings.base_host+'/';
 
   this.authApp= function(e) {
     authApp = e;
@@ -92,7 +92,7 @@ angular.module('contentful/services').provider('authentication', function Authen
         this.client.getTokenLookup(function (err, data) {
           if (err) {
             console.warn('Error during token lookup', err, data);
-            if (environmentProvider.env === 'development') {
+            if (environment.env === 'development') {
               if (window.confirm('Error during token lookup, logout?')) self.logout();
             } else {
               self.logout();

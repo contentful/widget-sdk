@@ -19,6 +19,7 @@
 //= require_tree ./templates
 //
 //= require angular-1.0.4
+//= require environment
 //= require services
 //= require controllers
 //= require filters
@@ -30,15 +31,16 @@
 //= require_self
 
 angular.module('contentful', [
+  'contentful/environment',
   'contentful/classes',
   'contentful/user_interface',
   'contentful/services',
   'contentful/controllers',
   'contentful/directives',
   'contentful/filters'
-], function($locationProvider, clientProvider, authenticationProvider, environmentProvider){
+], function($locationProvider, clientProvider, authenticationProvider, environment){
   'use strict';
-  var env = environmentProvider.settings;
+  var env = environment.settings;
   $locationProvider.html5Mode(true);
   clientProvider.endpoint('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');

@@ -1,0 +1,4 @@
+angular.module('contentful/environment', []).constant('environment', {
+  env: '<%= Rails.env %>',
+  settings: <%= File.read(Rails.root + 'config' + 'environments' + Rails.env + 'config.json') %>
+});
