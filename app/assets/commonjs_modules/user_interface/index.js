@@ -6,10 +6,6 @@ var UserInterface = {
 
 module.exports = UserInterface;
 
-if (window) {
-  window.UserInterface = UserInterface;
-}
-
 if (angular) {
   angular.module('contentful/user_interface', []).
     constant('contentfulClient', UserInterface.client).
