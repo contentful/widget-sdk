@@ -154,7 +154,7 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     }
 
     if (this.tab.params.entryType) {
-      queryObject['sys.entryType'] = this.tab.params.entryType;
+      queryObject['sys.entryType.sys.id'] = this.tab.params.entryType;
     }
 
     if (this.searchTerm && 0 < this.searchTerm.length) {

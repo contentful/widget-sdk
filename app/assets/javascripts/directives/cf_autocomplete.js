@@ -210,7 +210,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
         //queryObject['sys.publishedAt[gt]'] = 0;
 
         // TODO here, respect the type restriction of the link
-        // queryObject['sys.entryType'] = whatever
+        // queryObject['sys.entryType.sys.id'] = whatever
         // This can't be done without the constraints though
 
         if ($scope.searchTerm && 0 < $scope.searchTerm.length) {

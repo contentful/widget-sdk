@@ -63,7 +63,7 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
         this.entryTypes.splice(index, 1);
       },
       typeForEntry: function(entry) {
-        return this._entryTypesHash[entry.data.sys.entryType];
+        return this._entryTypesHash[entry.getEntryTypeId()];
       },
       entryTitle: function(entry, localeName) {
         localeName = localeName || this.bucket.getDefaultLocale().name;
