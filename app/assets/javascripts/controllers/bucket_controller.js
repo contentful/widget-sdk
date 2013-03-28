@@ -23,12 +23,9 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
     }
   });
 
+  $scope.$watch('bucketContext.bucket.locales', 'bucketContext.refreshLocales()', true);
   $scope.$watch('bucketContext.bucket', function(bucket, o, scope) {
-    if (bucket) {
-      scope.bucketContext.refreshEntryTypes(scope);
-    } else {
-      scope.bucketContext.entryTypes = [];
-    }
+    scope.bucketContext.refreshEntryTypes(scope);
   });
 
   $scope.visitView = function(viewType) {

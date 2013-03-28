@@ -9,18 +9,35 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
       tabList: null,
       bucket: null,
       entryTypes: [],
+      publishLocales: [],
+      defaultLocale: null,
       _entryTypesHash: {},
+      refreshLocales: function () {
+        if (this.bucket) {
+          this.publishLocales = this.bucket.getPublishLocales();
+          this.defaultLocale  = this.bucket.getDefaultLocale();
+        } else {
+          this.publishLocales = [];
+          this.defaultLocale  = null;
+        }
+      },
       refreshEntryTypes: function(scope) {
-        var bucketContext = this;
-        this.bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes) {
-          if (err) return;
-          scope.$apply(function() {
-            bucketContext.entryTypes = entryTypes;
-            bucketContext._entryTypesHash = _(entryTypes).map(function(et) {
-              return [et.data.sys.id, et];
-            }).object().valueOf();
+        if (this.bucket) {
+          var bucketContext = this;
+          this.bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes) {
+            if (err) return;
+            scope.$apply(function() {
+              bucketContext.entryTypes = entryTypes;
+              bucketContext._entryTypesHash = _(entryTypes).map(function(et) {
+                return [et.data.sys.id, et];
+              }).object().valueOf();
+            });
           });
-        });
+        } else {
+          this.entryTypes = [];
+          this._entryTypesHash = {};
+          return;
+        }
       },
       removeEntryType: function(entryType) {
         var index = _.indexOf(this.entryTypes, entryType);
