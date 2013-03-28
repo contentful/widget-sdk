@@ -2,7 +2,6 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
   'use strict';
 
   $scope.$watch('tab.params.entry',     'entry=tab.params.entry');
-  $scope.$watch('bucketContext.bucket.getDefaultLocale().name', 'locale=bucketContext.bucket.getDefaultLocale().name');
 
   $scope.$watch('entry', function(entry, old, scope){
     if (!entry || entry.isArchived()) return; //TODO: watch isArchived status and adapt doc
@@ -38,18 +37,6 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
   $scope.updateFromShareJSDoc = function() {
     if (this.doc) {
       this.entry.update(this.doc.snapshot);
-    }
-  };
-
-  $scope.selectSecondLocale = function (l) {
-    $scope.secondLocale = l;
-  };
-
-  $scope.languageButtonLabel = function () {
-    if (!!$scope.secondLocale) {
-      return $scope.bucketContext.bucket.getDefaultLocale().name + '/' + $scope.secondLocale.name;
-    } else {
-      return 'Language';
     }
   };
 

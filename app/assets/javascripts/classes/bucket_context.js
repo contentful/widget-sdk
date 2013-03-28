@@ -8,19 +8,38 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
   BucketContext.prototype = {
       tabList: null,
       bucket: null,
+
       entryTypes: [],
+      _entryTypesHash: {},
+
       publishLocales: [],
       defaultLocale: null,
-      _entryTypesHash: {},
+      localesActive: {},
+      activeLocales: [],
+
       refreshLocales: function () {
         if (this.bucket) {
           this.publishLocales = this.bucket.getPublishLocales();
           this.defaultLocale  = this.bucket.getDefaultLocale();
+          this.localesActive[this.defaultLocale.name] = true;
         } else {
           this.publishLocales = [];
           this.defaultLocale  = null;
         }
+        this.refreshActiveLocales();
       },
+      refreshActiveLocales: function () {
+        var newLocaleStates = {}, newActiveLocales = [];
+        _.each(this.publishLocales, function (locale) {
+          if (this.localesActive[locale.name]) {
+            newLocaleStates[locale.name] = true;
+            newActiveLocales.push(locale);
+          }
+        }, this);
+        this.localesActive = newLocaleStates;
+        this.activeLocales = newActiveLocales;
+      },
+
       refreshEntryTypes: function(scope) {
         if (this.bucket) {
           var bucketContext = this;
