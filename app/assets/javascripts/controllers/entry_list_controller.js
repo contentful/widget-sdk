@@ -81,14 +81,14 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
   };
 
   $scope.switchEntryType = function(entryType){
-    if ($scope.tab.params.entryType == entryType) {
+    if ($scope.tab.params.entryTypeId == entryType) {
       this.resetEntries();
     } else {
       this.paginator.page = 0;
       if (entryType) {
-        this.tab.params.entryType = entryType.data.sys.id;
+        this.tab.params.entryTypeId = entryType.getId();
       } else {
-        this.tab.params.entryType = null;
+        this.tab.params.entryTypeId = null;
       }
     }
   };
@@ -113,7 +113,7 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
       page: scope.paginator.page,
       pageLength: scope.paginator.pageLength,
       list: scope.tab.params.list,
-      entryType: scope.tab.params.entryType,
+      entryTypeId: scope.tab.params.entryTypeId,
       bucketId: (scope.bucketContext.bucket && scope.bucketContext.bucket.getId())
     };
   }, function(pageParameters, old, scope){
@@ -153,8 +153,8 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
       queryObject['sys.archivedAt[gt]'] = 0;
     }
 
-    if (this.tab.params.entryType) {
-      queryObject['sys.entryType.sys.id'] = this.tab.params.entryType;
+    if (this.tab.params.entryTypeId) {
+      queryObject['sys.entryType.sys.id'] = this.tab.params.entryTypeId;
     }
 
     if (this.searchTerm && 0 < this.searchTerm.length) {
