@@ -36,12 +36,12 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
      *
     } else if (message.action !== 'delete') {
       authentication.updateTokenLookup(message.resource);
-      $scope.user = authentication.tokenLookup.user;
+      $scope.user = authentication.tokenLookup.sys.createdBy;
       $scope.updateBuckets(authentication.tokenLookup.buckets);
     } else if (message.token) {
      */
       authentication.setTokenLookup(message.token);
-      $scope.user = authentication.tokenLookup.user;
+      $scope.user = authentication.tokenLookup.sys.createdBy;
       $scope.updateBuckets(authentication.tokenLookup.buckets);
     } else {
       $scope.performTokenLookup();
@@ -74,7 +74,7 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
     // the getTokenLookup fails
     authentication.getTokenLookup(function(tokenLookup) {
       $scope.$apply(function(scope) {
-        scope.user = tokenLookup.user;
+        scope.user = tokenLookup.sys.createdBy;
         scope.updateBuckets(tokenLookup.buckets);
       });
     });
