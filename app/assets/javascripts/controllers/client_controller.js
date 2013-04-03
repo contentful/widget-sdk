@@ -8,14 +8,13 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
   $scope.user = null;
 
   $scope.selectBucket = function(bucket) {
-    this.bucketContext.bucket = bucket;
+    console.log('selectBucket', bucket);
+    $scope.bucketContext.bucket = bucket;
   };
 
   $scope.$watch('buckets', function(buckets){
     if (buckets && buckets.length > 0) {
-      if (!_.contains(buckets, $scope.bucketContext)) {
-        $scope.bucketContext.bucket = buckets[0];
-      }
+      if (!_.contains(buckets, $scope.bucketContext.bucket)) $scope.bucketContext.bucket = buckets[0];
     }
   });
 
@@ -69,13 +68,15 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
   };
 
 
-  $scope.performTokenLookup = function () {
+  $scope.performTokenLookup = function (callback) {
     // TODO initialize blank user so that you can at least log out when
     // the getTokenLookup fails
     authentication.getTokenLookup(function(tokenLookup) {
       $scope.$apply(function(scope) {
+        console.log('tokenLookup', tokenLookup);
         scope.user = tokenLookup.sys.createdBy;
         scope.updateBuckets(tokenLookup.buckets);
+        if (callback) callback(tokenLookup);
       });
     });
   };
@@ -98,6 +99,20 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
       return a.data.name.localeCompare(b.data.name);
     });
     $scope.buckets = newBucketList;
+  };
+
+  $scope.canCreateBucket = function () {
+    // For now it is impossible to determine if this is allowed
+    // TODO: Implement proper check as soon as the information is available
+    return true;
+  };
+
+  $scope.showCreateBucketDialog = function () {
+    $scope.displayCreateBucketDialog = true;
+  };
+
+  $scope.hideCreateBucketDialog = function () {
+    $scope.displayCreateBucketDialog = false;
   };
 
   $scope.performTokenLookup();

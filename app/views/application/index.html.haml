@@ -28,6 +28,9 @@
           %ul
             %li(ng-repeat="bucket in buckets" ng-click="selectBucket(bucket)" dropdown-close="")
               {{bucket.data.name}}
+            %li(ng-show="canCreateBucket(user)" ng-click="showCreateBucketDialog()" ng-class="{separator: buckets.length > 0}" dropdown-close="")
+              Create new bucket…
     %bucket-view.container-fluid(bucket-context="bucketContext")
+    .create-bucket-dialog(ng-show="displayCreateBucketDialog")
   = javascript_include_tag "application"
   = javascript_include_tag 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDskFlzw1ujRovNWNG3K64EUsncYTbRPfM&sensor=false'
