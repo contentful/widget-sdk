@@ -33,5 +33,5 @@
             %span {{bucketContext.entryTitle(entry)}}
           %td.cell-by
             %span Peter Pan
-
-
+    .loading(ng-show="reloadInProgress")
+      %img(src="app/ajax-loader.gif")

@@ -9,8 +9,6 @@
         %i.ss-dropdown
       .dropdown-menu
         Nothing to see here
-    .loading(ng-show="reloadInProgress")
-      %img(src="app/ajax-loader.gif")
     .search-results-position(paginator="paginator")
 .tab-main
   .left-nav
@@ -84,6 +82,8 @@
               .draft-wrapper
                 %span {{statusClass(entry)}}
                 .main-results-bar
+      .loading(ng-show="reloadInProgress")
+        %img(src="app/ajax-loader.gif")
 .tab-actions
   .label {{selection.size()}} Entries selected
   .button-set(ng-controller="EntryListActionsCtrl"   ng-hide="selection.isEmpty()")

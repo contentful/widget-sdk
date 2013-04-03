@@ -54,11 +54,21 @@ i.ss-delete
   &:hover
     color: $medium-gray
     cursor: pointer
+// Loading indicator
 .loading
-  width: 3em
+  width: 30px
   img
     width: 50%
     vertical-align: middle
+.endless-container
+  .loading
+    margin-left: auto
+    margin-right: auto
+    height: 50px
+    line-height: 50px
+    width: 40px
+    text-align: center
+
 .separator
   height: 1px
   background: $light-rule
