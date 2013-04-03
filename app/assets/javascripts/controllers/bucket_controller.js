@@ -83,11 +83,7 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
 
   $scope.createEntry = function(entryType) {
     var scope = this;
-    scope.bucketContext.bucket.createEntry({
-      sys: {
-        entryType: entryType.getId()
-      }
-    }, function(err, entry){
+    scope.bucketContext.bucket.createEntry(entryType.getId(), {}, function(err, entry){
       if (!err) {
         scope.$apply(function(scope){
           scope.bucketContext.tabList.add({

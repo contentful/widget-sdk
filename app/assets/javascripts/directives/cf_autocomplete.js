@@ -92,11 +92,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
       };
 
       $scope.addNew = function(entryType) {
-        $scope.bucketContext.bucket.createEntry({
-          sys: {
-            entryType: entryType.getId()
-          }
-        }, function(errCreate, entry){
+        $scope.bucketContext.bucket.createEntry(entryType.getId(), {}, function(errCreate, entry){
           if (errCreate) {
             console.log('Error creating entry', errCreate);
             return;
