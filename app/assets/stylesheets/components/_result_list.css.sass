@@ -31,6 +31,7 @@ $result-list-highlight: #fbfbfb
 // Main styles
 
 .result-list
+  table-layout: fixed
   // borders
   border: 1px solid $dark-rule
   tbody
@@ -49,6 +50,8 @@ $result-list-highlight: #fbfbfb
     font-size: 1.2em
     line-height: 1.8em
     white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
   th
     //background-color: $gray-background
     font-weight: normal
