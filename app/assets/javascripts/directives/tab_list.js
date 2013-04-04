@@ -16,7 +16,7 @@ angular.module('contentful/directives').directive('tabList', function() {
         var total = element.prop('clientWidth');
         var numTabs;
         try {
-          numTabs = scope.bucketContext.tabList.items.length;
+          numTabs = scope.bucketContext.tabList.numVisible();
         } catch(e) {
           return;
         }

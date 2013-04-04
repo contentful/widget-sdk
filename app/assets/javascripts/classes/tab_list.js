@@ -84,6 +84,12 @@ angular.module('contentful/classes').factory('TabList', function(){
       }
     },
 
+    numVisible: function () {
+      return _.foldl(this.items, function (sum, tab) {
+        return sum + (tab.hidden ? 0 : 1);
+      }, 0);
+    },
+
   };
 
   function TabItem(options) {
