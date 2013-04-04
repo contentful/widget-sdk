@@ -9,7 +9,7 @@
         %i.ss-dropdown
       .dropdown-menu
         Nothing to see here
-    .search-results-position(paginator="paginator")
+  .search-results-position(paginator="paginator")
 .tab-main
   .left-nav
     %header Entries
