@@ -8,4 +8,4 @@
         {{entryType.data.name}}
     .separator
     %ul
-      %li(ng-click="createEntryType()" dropdown-close="") EntryType
+      %li(ng-click="createEntryType()" dropdown-close="") Content Type
