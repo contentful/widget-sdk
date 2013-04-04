@@ -16,7 +16,7 @@
   .search-field(on-idle-update="searchTerm" placeholder="Search for entries")
   
 
-.results.btn-right-on.search-options-on(ng-show="entries.length > 0")
+.results.btn-right-on.search-options-on(ng-show="hasResults()")
   %table.result-list
     %thead
       %tr
@@ -26,7 +26,7 @@
   .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
     %table.result-list
       %tbody
-        %tr(ng-repeat="entry in entries" cf-click-local="addEntry(entry)" ng-class="{selected: entry==entries[selectedItem]}")
+        %tr(ng-repeat="entry in entries" cf-click-local="pick(entry)" ng-class="{selected: entry==entries[selectedItem]}")
           %td.cell-type
             %span {{bucketContext.typeForEntry(entry).data.name}}
           %td.cell-name

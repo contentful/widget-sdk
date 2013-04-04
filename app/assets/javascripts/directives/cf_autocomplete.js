@@ -256,22 +256,30 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
             ESC   = 27;
 
         if (event.keyCode == DOWN){
-          $scope.selectNext();
-          $scope.$digest();
+          if ($scope.hasResults()) {
+            $scope.selectNext();
+            $scope.$digest();
+          }
           event.preventDefault();
         } else if (event.keyCode == UP) {
-          $scope.selectPrevious();
-          $scope.$digest();
+          if ($scope.hasResults()) {
+            $scope.selectPrevious();
+            $scope.$digest();
+          }
           event.preventDefault();
         } else if (event.keyCode == ESC) {
-          $scope.$apply(function(scope) {
-            scope.closePicker();
-          });
-          event.preventDefault();
+          if ($scope.hasResults()) {
+            $scope.$apply(function(scope) {
+              scope.closePicker();
+            });
+            event.preventDefault();
+          }
         } else if (event.keyCode == ENTER) {
-          $scope.$apply(function(scope) {
-            scope.pickSelected();
-          });
+          if ($scope.hasResults()) {
+            $scope.$apply(function(scope) {
+              scope.pickSelected();
+            });
+          }
           event.preventDefault();
           event.stopPropagation();
         }
@@ -287,6 +295,10 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
         } else if (below) {
           selected.scrollIntoView(false);
         }
+      };
+
+      $scope.hasResults = function () {
+        return $scope.entries && $scope.entries.length > 0;
       };
 
       $scope.selectNext = function() {
@@ -305,13 +317,15 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
         $scope.searchTerm = '';
       };
 
+      $scope.pick = function (entry) {
+        $scope.addLink(entry, function(err) {
+          if (!err) $scope.closePicker();
+        });
+      };
+
       $scope.pickSelected = function() {
         var entry = $scope.entries[$scope.selectedItem];
-        if (entry) {
-          $scope.addLink(entry, function(err) {
-            if (!err) $scope.closePicker();
-          });
-        }
+        if (entry) $scope.pick(entry);
       };
 
     }
