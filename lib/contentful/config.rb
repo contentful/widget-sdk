@@ -22,10 +22,16 @@ module Contentful
     end
 
     def []=(key, value)
+      @data[key.to_sym] = configurize_value(value)
+    end
+
+    def configurize_value(value)
       if value.class == Hash
-        @data[key.to_sym] = Config.new(value)
+        Config.new(value)
+      elsif value.class == Array
+        value.map{|v| configurize_value(v)}
       else
-        @data[key.to_sym] = value
+        value
       end
     end
 
