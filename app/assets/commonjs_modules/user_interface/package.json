@@ -7,7 +7,7 @@
   "author": "",
   "license": "BSD",
   "dependencies": {
-    "contentful-client": "git+ssh://git@github.com:thriventures/client.git",
+    "contentful-client": "git+ssh://git@github.com:thriventures/client.git#v0.1.0",
     "worf": "git+ssh://git@github.com:thriventures/worf.git#v0.2.2",
     "validation": "git+ssh://git@github.com:thriventures/validation#v0.2.4"
   }
