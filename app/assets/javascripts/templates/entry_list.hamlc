@@ -2,13 +2,7 @@
   .left-nav
     %h1 Entries
   .search-area.with-left-nav
-    %form.search-field(on-idle-update="searchTerm" placeholder="Search for entries")
-    .dropdown-btn.search-view-options
-      %a.btn.dropdown-toggle
-        %i.ss-columns
-        %i.ss-dropdown
-      .dropdown-menu
-        Nothing to see here
+    %form.search-field(on-idle-update="searchTerm" placeholder="Type to search for entries")
   .search-results-position(paginator="paginator")
 .tab-main
   .left-nav
