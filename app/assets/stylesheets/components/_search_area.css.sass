@@ -17,16 +17,6 @@ $search-field-height: 32px
   .loading
     float: left
 
-.search-field
-  background: white
-  position: relative
-  height: $search-field-height
-  .search-filters,
-  .search-filters li
-    float: left
-  .search-options
-    float: right
-
 .search-view-options,
 .loading
   margin-left: 1em
@@ -34,9 +24,38 @@ $search-field-height: 32px
 .loading
   line-height: $search-field-height - 2px
 
+// Search Field Layout
+
+.search-field
+  display: table
+  table-layout: fixed
+  border-spacing: 0
+  position: relative
+  height: $search-field-height
+  .row
+    //outline: 1px red dashed
+    display: table-row
+    > *
+      display: table-cell
+      //outline: 1px blue dashed
+    .search-filters
+      //width: 10%
+    .input
+      //width: 20%
+      position: relative
+      input[type="search"]
+        position: absolute
+        width: 100%
+        height: 100%
+    .dropdown-btn
+      width: 40px
+
+
+
 // Search-Field Look
 
 .search-field
+  background: white
   border: 1px solid $lightest-gray
   +rounded-corners(20px,20px,20px,20px)
   +box-shadow(0 1px 3px rgba(0,0,0,0.1) inset)
@@ -45,10 +64,9 @@ $search-field-height: 32px
     -moz-appeareance: none
     border: none
     font-size: 1.2em
-    padding: .5em .7em .4em
+    padding: 0 .7em
     color: $dark-gray
     opacity: 0.6
-    width: 90%
     +rounded-corners(20px,20px,20px,20px)
   input:focus
     opacity: 1
@@ -91,12 +109,13 @@ $search-field-height: 32px
 
 // Search options look
 
-.search-options .dropdown-toggle
+.search-button
   @extend %search-field-button
   border-left: 1px solid $lightest-gray
   +rounded-corners(0, 20px, 20px, 0)
   width: 40px
-  height: $search-field-height - 2px
+  line-height: $search-field-height
+  height: 100%
   .ss-search
     font-size: 1.1em
     position: relative

@@ -3,10 +3,6 @@
 // category (async functions)
 //
 // For now, without categories, just an enter function or idle function
-//
-// What about the search options?
-//
-// TODO: Options to go without search-options dropdown
 
 // A version of ngClick that performs stopPropagation() and
 // preventDefault() to support nested click targets
