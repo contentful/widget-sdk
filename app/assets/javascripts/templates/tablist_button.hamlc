@@ -4,8 +4,7 @@
     %span Add
   .dropdown-menu.top-caret.left-aligned
     %ul
+      %li(ng-click="createEntryType()" dropdown-close="") Content Type
+    %ul(ng-show="publishedEntryTypes.length > 0")
       %li(ng-repeat="entryType in publishedEntryTypes" ng-click="createEntry(entryType)" dropdown-close="")
         {{entryType.data.name}}
-    .separator
-    %ul
-      %li(ng-click="createEntryType()" dropdown-close="") Content Type
