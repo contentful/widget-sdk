@@ -4,8 +4,6 @@
   %table.result-list.main-header
     %thead
       %tr
-        %th.cell-select
-          %input(type="checkbox")
         %th.cell-type ID
         %th.cell-name Name
         %th.cell-by Fields
@@ -15,8 +13,6 @@
     %table.result-list.main-results
       %tbody
         %tr(ng-repeat="entryType in bucketContext.entryTypes" cf-click-local="editEntryType(entryType)")
-          %td.cell-select
-            %input(type="checkbox")
           %td.cell-type
             %span {{entryType.getId()}}
           %td.cell-name
@@ -29,5 +25,3 @@
             .draft-wrapper
               %span {{statusClass(entryType)}}
               .main-results-bar
-.tab-actions
-  foobar
