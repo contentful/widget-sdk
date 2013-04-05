@@ -1,8 +1,9 @@
-angular.module('contentful/controllers').controller('EntryTypeFieldListRowCtrl', function ($scope) {
+angular.module('contentful/controllers').controller('EntryTypeFieldListRowCtrl', function ($scope, getFieldTypeName) {
   'use strict';
 
   $scope.published = true;
   $scope.field = _.clone($scope.initialField);
+  $scope.getFieldTypeName = getFieldTypeName;
 
   $scope.$watch('publishedIds', function(ids, old, scope) {
     if (ids) {
