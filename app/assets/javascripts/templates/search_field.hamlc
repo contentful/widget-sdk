@@ -6,10 +6,5 @@
       %i.ss-delete
   .input
     %input(type="search" ng-model="search.term" placeholder="{{placeholder}}" ng-change="userChange()")
-  .dropdown-btn
-    .dropdown-toggle.search-button
-      %i.ss-search
-      %i.ss-dropdown
-    .dropdown-menu
-      %ul
-        %li
+  .search-button
+    %i.ss-search
