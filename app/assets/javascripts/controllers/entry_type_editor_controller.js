@@ -11,7 +11,7 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
     {name: 'Object'         , value: {type: 'object'                          }},
     {name: 'List of Entries', value: {type: 'array' , items: {type: 'link'  } }},
     {name: 'List of Strings', value: {type: 'array' , items: {type: 'string'} }},
-    {name: 'Location'       , value: {type: 'location'                        }},
+    {name: 'Location'       , value: {type: 'location'                        }}
   ];
 
   $scope.$watch('tab.params.entryType', 'entryType=tab.params.entryType');

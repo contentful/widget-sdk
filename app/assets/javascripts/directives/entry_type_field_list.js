@@ -5,7 +5,7 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
     restrict: 'C',
     template: JST.entry_type_field_list(),
     link: function link(scope, elm) {
-      scope.newType = 'text';
+      scope.newType = scope.availableTypes[0].value;
       var body = elm.find('tbody').eq(0);
       body.sortable({
         handle: '.drag-handle',
