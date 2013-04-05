@@ -96,13 +96,13 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
   $scope.visibleInCurrentList = function(entry){
     switch ($scope.tab.params.list) {
       case 'all':
-        return !entry.data.sys.deletedAt && !entry.data.sys.archivedAt;
+        return !entry.isDeleted() && !entry.isArchived();
       case 'published':
-        return entry.data.sys.publishedAt > 0;
+        return entry.isPublished();
       case 'unpublished':
-        return !entry.data.sys.publishedAt;
+        return !entry.isPublished();
       case 'archived':
-        return entry.data.sys.archivedAt > 0;
+        return entry.isArchived();
       default:
         return true;
     }
@@ -223,9 +223,9 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
   $scope.$watch('bucketContext.bucket', 'loadCounts()');
 
   $scope.statusClass = function(entry){
-    if (entry.data.sys.publishedAt) {
+    if (entry.isPublished()) {
       return 'published';
-    } else if (entry.data.sys.archivedAt) {
+    } else if (entry.isArchived()) {
       return 'archived';
     } else {
       return 'draft';
