@@ -28,7 +28,7 @@ end
 gem 'jquery-rails'
 gem 'jquery-ui-rails'
 #gem 'sprockets-browserify', :path => '/Users/jan/development/rails_plugins/sprockets-browserify'
-gem 'sprockets-browserify', :git => 'git://github.com/janv/sprockets-browserify.git'
+gem 'sprockets-browserify'
 
 group :development do
   gem "guard-livereload"
