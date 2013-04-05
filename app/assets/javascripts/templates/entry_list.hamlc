@@ -50,7 +50,7 @@
         %tr
           %th.cell-select
             %input(type="checkbox" cf-selection="")
-          %th.cell-favorite
+          -#%th.cell-favorite
             %i.ss-star
           %th.cell-type Content Type
           %th.cell-name Name
@@ -63,8 +63,8 @@
           %tr(ng-repeat="entry in entries" ng-show="visibleInCurrentList(entry)" cf-click-local="editEntry(entry)")
             %td.cell-select
               %input(type="checkbox" cf-selection="entry")
-            %td.cell-favorite
-              -#%i.ss-star
+            -#%td.cell-favorite
+              %i.ss-star
             %td.cell-type
               %span {{bucketContext.typeForEntry(entry).data.name}}
             %td.cell-name
