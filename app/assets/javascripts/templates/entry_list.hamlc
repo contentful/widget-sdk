@@ -61,8 +61,8 @@
       %table.result-list.main-results
         %tbody
           %tr(ng-repeat="entry in entries" ng-show="visibleInCurrentList(entry)" cf-click-local="editEntry(entry)")
-            %td.cell-select
-              %input(type="checkbox" cf-selection="entry")
+            %td.cell-select(ng-click="selection.toggle(entry);$event.stopPropagation()")
+              %input(type="checkbox" cf-selection="entry")")
             -#%td.cell-favorite
               %i.ss-star
             %td.cell-type

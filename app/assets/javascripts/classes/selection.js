@@ -44,6 +44,14 @@ angular.module('contentful/classes').factory('Selection', function(){
       }
     },
 
+    toggle: function(entity) {
+      if (this.isSelected(entity)) {
+        this.remove(entity);
+      } else {
+        this.add(entity);
+      }
+    },
+
     isSelected: function(entity) {
       if (this.mode == Selection.INDIVIDUAL) {
         return !!this.entities[entity.getId()];
