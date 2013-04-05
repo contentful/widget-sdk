@@ -6,37 +6,27 @@ $search-field-height: 32px
 .search-area
   height: $search-area-height
   padding: ($search-area-height - $search-field-height)/2 0
-
-.search-area
-  .search-field
-    width: 83%
-
-.search-area
-  .search-field,
-  .search-view-options,
-  .loading
-    float: left
+  width: 100%
 
 .search-field
-  background: white
+  display: table
   position: relative
   height: $search-field-height
-  .search-filters,
-  .search-filters li
-    float: left
+  table-layout: auto
+  width: 100%
+  .input-column
+    display: table-cell
+  input
+    width: 100%
   .search-options
-    float: right
-
-.search-view-options,
-.loading
-  margin-left: 1em
-
-.loading
-  line-height: $search-field-height - 2px
+    display: table-cell
+    overflow: hidden
+    width: 40px
 
 // Search-Field Look
 
 .search-field
+  background: white
   border: 1px solid $lightest-gray
   +rounded-corners(20px,20px,20px,20px)
   +box-shadow(0 1px 3px rgba(0,0,0,0.1) inset)
@@ -48,7 +38,6 @@ $search-field-height: 32px
     padding: .5em .7em .4em
     color: $dark-gray
     opacity: 0.6
-    width: 90%
     +rounded-corners(20px,20px,20px,20px)
   input:focus
     opacity: 1

@@ -1,13 +1,6 @@
-%ul.search-filters(ng-show="hasFilters()")
-  %li
-    %span.search-filter-title US State:
-    %span.search-filter-value Florida
-    %i.ss-delete
-%input(type="search" ng-model="search.term" placeholder="{{placeholder}}" ng-change="userChange()")
-.dropdown-btn.search-options
-  .dropdown-toggle
-    %i.ss-search
-    %i.ss-dropdown
-  .dropdown-menu
-    %ul
-      %li
+.search-row(style="display: table-row")
+  .input-column
+    %input(type="search" ng-model="search.term" placeholder="{{placeholder}}" ng-change="userChange()")
+  .dropdown-btn.search-options
+    .dropdown-toggle
+      %i.ss-search
