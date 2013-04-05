@@ -77,13 +77,14 @@ angular.module('contentful/classes').factory('Selection', function(){
       }
     },
 
-    getSelected: function() {
+    getSelected: function(baseSet) {
       if (this.mode == Selection.ALL) {
         // TODO getSelected doesn't really make sense for ALL selection
         // Calls on the selected Items should not be made on members of
         // the selection anyways but the selection should be used to
         // generate URLs for mass-API calls
-        return [];
+        var self = this;
+        return _.filter(baseSet, function (entity) { return !self.entities[entity.getId()]; });
       } else {
         return _.values(this.entities);
       }
