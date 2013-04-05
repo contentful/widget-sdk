@@ -105,23 +105,11 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
 
   $scope.createEntryType = function() {
     var scope = this;
-    var id = window.prompt('Please enter ID (only for development)');
-    var data;
-    if (!id || id === '') {
-      data = {
-        sys: {},
-        fields: [],
-        name: 'Unnamed Content Type'
-      };
-    } else {
-      data = {
-        sys: {
-          id: id
-        },
-        fields: [],
-        name: id
-      };
-    }
+    var data = {
+      sys: {},
+      fields: [],
+      name: ''
+    };
     scope.bucketContext.bucket.createEntryType(data, function(err, entryType){
       if (!err) {
         scope.$apply(function(scope){
