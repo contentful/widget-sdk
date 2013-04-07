@@ -1,6 +1,7 @@
 %nav.nav-bar
   .logo
-    %img(src="app/logo.png")
+    -#%img(src="app/logo.png")
+    .cf-logo
   %ul
     %li(ng-class="{section: bucketContext.tabList.currentSection() == 'entryTypes',
                   'section-index': bucketContext.tabList.currentViewType() == 'entry-type-list'}"

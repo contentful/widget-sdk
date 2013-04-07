@@ -33,7 +33,7 @@ GEM
       activemodel
       fog
     builder (3.0.4)
-    chunky_png (1.2.7)
+    chunky_png (1.2.8)
     coderay (1.0.8)
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
@@ -42,10 +42,10 @@ GEM
       coffee-script-source
       execjs
     coffee-script-source (1.4.0)
-    compass (0.12.2)
+    compass (0.13.alpha.4)
       chunky_png (~> 1.2)
-      fssm (>= 0.2.7)
-      sass (~> 3.1)
+      listen (<= 0.9.9)
+      sass (~> 3.2.5)
     compass-rails (1.0.3)
       compass (>= 0.12.2, < 0.14)
     em-websocket (0.4.0)
@@ -67,7 +67,6 @@ GEM
       nokogiri (~> 1.5.0)
       ruby-hmac
     formatador (0.2.4)
-    fssm (0.2.9)
     guard (1.6.2)
       listen (>= 0.6.0)
       lumberjack (>= 1.0.2)
@@ -140,7 +139,7 @@ GEM
     rdoc (3.12.1)
       json (~> 1.4)
     ruby-hmac (0.4.0)
-    sass (3.2.3)
+    sass (3.2.7)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
       sass (>= 3.1.10)
@@ -172,6 +171,7 @@ PLATFORMS
 DEPENDENCIES
   asset_sync
   coffee-rails (~> 3.2.1)
+  compass (~> 0.13.alpha.4)
   compass-rails
   execjs
   guard-livereload

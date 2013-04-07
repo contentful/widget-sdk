@@ -8,6 +8,7 @@ gem 'json', '>= 1.7.7' # Explicit version requirement because security
 
 gem "therubyracer"
 gem "haml"
+gem "compass", "~> 0.13.alpha.4"
 gem "compass-rails"
 
 # Gems used only for assets and not required
