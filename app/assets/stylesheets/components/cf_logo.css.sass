@@ -12,17 +12,18 @@
     position: absolute
 
 .cf-logo.animate
+  $duration: 0.75s
   .logopart
     +animation-iteration-count(infinite)
     +animation-timing-function(linear)
     +animation-name(rotation)
   .logopart.blue
-    +animation-duration(2s)
+    +animation-duration(2 * $duration)
     +animation-direction(reverse)
   .logopart.red
-    +animation-duration(2s)
+    +animation-duration(2.5 * $duration)
   .logopart.yellow
-    +animation-duration(4s)
+    +animation-duration(4 * $duration)
 
 +keyframes(rotation)
   from

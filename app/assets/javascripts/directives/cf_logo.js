@@ -11,12 +11,13 @@ angular.module('contentful/directives').directive('cfLogo', function () {
         run = true;
       };
 
-      var stop = function () {
-        run = false;
-        element.find('.logopart.yellow').one('webkitAnimationIteration mozAnimationIteration animationIteration', function () {
-          if (run === false) stopImmediate();
-        });
-      };
+      // Not useful anymore because incongruent timings
+      //var stop = function () {
+        //run = false;
+        //element.find('.logopart.yellow').one('webkitAnimationIteration mozAnimationIteration animationIteration', function () {
+          //if (run === false) stopImmediate();
+        //});
+      //};
 
       var stopImmediate = function () {
         element.removeClass('animate');
@@ -24,7 +25,7 @@ angular.module('contentful/directives').directive('cfLogo', function () {
       };
 
       element.mouseover(start);
-      element.mouseout(stop);
+      element.mouseout(stopImmediate);
     }
   };
 });
