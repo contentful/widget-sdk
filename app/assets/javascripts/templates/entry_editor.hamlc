@@ -10,7 +10,7 @@
         …
         …
         …
-    .dropdown-btn
+    .dropdown-btn(ng-show="bucketContext.activeLocales.length > 1")
       %a.dropdown-toggle
         %i.ss-dropdown
         %span Languages
@@ -69,7 +69,7 @@
       %label {{field.name}}
       .form-controls
         .locale(ng-repeat="locale in bucketContext.activeLocales")
-          .locale-label {{locale.name}}
+          .locale-label(ng-show="bucketContext.activeLocales.length > 1") {{locale.name}}
           %cf-field-editor(
             doc="doc"
             editor="textField"
