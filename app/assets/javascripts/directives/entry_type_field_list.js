@@ -63,7 +63,6 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
       }
 
       scope.addField = function() {
-        var scope = this;
         var field = {
           id   : scope.newId,
           name : scope.newName,
@@ -83,7 +82,7 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
             scope.$apply(function(scope) {
               row = $compile(row)(scope);
               body.append(row);
-              scope.newId = scope.newName = null;;
+              scope.newId = scope.newName = null;
               scope.newType = defaultType.value;
             });
             scope.$broadcast('orderChanged');
