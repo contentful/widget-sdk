@@ -5,7 +5,8 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
     restrict: 'C',
     template: JST.entry_type_field_list(),
     link: function link(scope, elm) {
-      scope.newType = scope.availableTypes[0].value;
+      var defaultType = scope.availableTypes[0];
+      scope.newType = defaultType.value;
       var body = elm.find('tbody').eq(0);
       body.sortable({
         handle: '.drag-handle',
@@ -82,7 +83,8 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
             scope.$apply(function(scope) {
               row = $compile(row)(scope);
               body.append(row);
-              scope.newId = scope.newName = scope.newType = null;
+              scope.newId = scope.newName = null;;
+              scope.newType = defaultType.value;
             });
             scope.$broadcast('orderChanged');
             body.find('.field-id').focus();
