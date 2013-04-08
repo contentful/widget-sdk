@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').directive('entryTypeFieldList', function($compile) {
+angular.module('contentful/directives').directive('entryTypeFieldList', function($compile, toIdentifier) {
   return {
     restrict: 'C',
     template: JST.entry_type_field_list(),
@@ -94,6 +94,14 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
       scope.fieldSnapshot = function(index) {
         return this.doc.getAt(['fields', index]);
       };
+
+      scope.$watch('newName', function(name, previousName) {
+        if (scope.newId &&
+            previousName &&
+            scope.newId !== toIdentifier(previousName))
+          return;
+        scope.newId = name ? toIdentifier(name) : '';
+      });
 
       //init
       scope.$watch('doc', function(doc, old, scope) {
