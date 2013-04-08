@@ -1,7 +1,7 @@
 %table.result-list
   %thead
     %tr
-      %th.cell.drag-handle 
+      %th.cell.drag-handle
       %th.cell.name Name
       %th.cell.identifier Identifier
       %th.cell.type Type
