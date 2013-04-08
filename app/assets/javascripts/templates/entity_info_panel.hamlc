@@ -1,0 +1,46 @@
+%article
+  %table
+    %tr(ng-show="entryTypeName")
+      %th Content Type
+      %td {{entryTypeName}}
+    %tr
+      %th
+    %tr
+      %th Current version
+      %td {{doc.version}}
+    %tr
+      %th
+
+    %tbody
+      %tr
+        %th Created at
+        %td {{sys.createdAt}}
+      %tr
+        %th Created by
+        %td {{sys.createdBy.sys.id}}
+      %tr
+        %th
+
+    %tbody(ng-show="sys.archivedVersion")
+      %tr
+        %th Archived at
+        %td {{sys.archivedAt}}
+      %tr
+        %th Archived by
+        %td {{sys.archivedBy.sys.id}}
+      %tr
+        %th Archived version
+        %td {{sys.archivedVersion}}
+      %tr
+        %th
+
+    %tbody(ng-show="sys.publishedVersion")
+      %tr
+        %th Published at
+        %td {{sys.publishedAt}}
+      %tr
+        %th Published by
+        %td {{sys.publishedBy.sys.id}}
+      %tr
+        %th Published version
+        %td {{publishedVersion()}}

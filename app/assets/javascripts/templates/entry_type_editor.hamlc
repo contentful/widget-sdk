@@ -1,41 +1,10 @@
 .tab-header.editor-configuration
   %h1 {{headline()}}
-  .editor-top-right<
-    .dropdown-btn>
-      %a.btn.dropdown-toggle
-        %i.ss-dropdown
-        %span Meta
-      .dropdown-menu(style="display:none")
-        …
-        …
-        …
-    .dropdown-btn>
-      %a.btn.dropdown-toggle
-        %span Apps
-    .dropdown-btn>
-      %a.btn.dropdown-toggle
-        %span Events
 
 .aux-panel
-  .meta
-    %header
-      %span Meta
-      %i.ss-delete
-    %article(ng-switch="!!publishedAt()")
-      %table(ng-switch-when="true")
-        %tr
-          %th Last Save
-          %td XX seconds ago
-        %tr
-          %th Published Version #
-          %td {{publishedVersion()}}
-        %tr
-          %th Current #
-          %td {{doc.version}}
-      %table(ng-switch-default="")
-        %tr
-          %th Last Save
-          %td XX seconds ago
+  %header
+    %span Content Type Information
+  .entity-info-panel
 
 .tab-main
   .form-horizontal(name="entryTypeForm")

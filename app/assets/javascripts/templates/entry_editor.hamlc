@@ -24,7 +24,7 @@
               %input(type="checkbox" ng-model="bucketContext.localesActive[locale.name]")
               {{locale.name}}
 
-  .editor-top-right<
+  -#.editor-top-right<
     .dropdown-btn>
       %a.btn.dropdown-toggle
         %i.ss-dropdown
@@ -41,24 +41,9 @@
         %span Events
 
 .aux-panel
-  .meta
-    %header
-      %span Meta
-      %i.ss-delete
-    %article
-      %table
-        -#%tr
-          %th Last Save
-          %td XX seconds ago
-        %tr
-          %th Current Version
-          %td {{doc.version}}
-        %tr
-          %th Archived Version
-          %td {{archivedVersion()}}
-        %tr
-          %th Published Version
-          %td {{publishedVersion()}}
+  %header
+    %span Entry Information
+  .entity-info-panel
 
 .tab-main
   %form.form-horizontal(name="entryForm")
