@@ -95,7 +95,7 @@
     Not sure if we need this for now
     %i.ss-check
     %span All changes saved successfully
-  .other-users
+  -#.other-users
     %span 3 others online
     %ul
       %li.avatar
