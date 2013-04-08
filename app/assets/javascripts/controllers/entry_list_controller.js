@@ -24,42 +24,16 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     }
     editor.activate();
   };
-
-  $scope.deleteEntry = function (entry) {
-    var scope = this;
-    entry.delete(function (err) {
-      if (!err) {
-        scope.$apply(function() {}); // Trigger list filtering
-      } else {
-        console.log('Error deleting entry', entry);
-      }
-    });
-  };
-
-  $scope.archiveEntry = function (entry) {
-    var scope = this;
-    entry.archive(function (err) {
-      if (!err) {
-        scope.$apply(function() {}); // Trigger list filtering
-      } else {
-        console.log('Error archiving entry', entry);
-      }
-    });
-  };
-
-  $scope.unarchiveEntry = function (entry) {
-    var scope = this;
-    entry.unarchive(function (err) {
-      if (!err) {
-        scope.$apply(function() {}); // Trigger list filtering
-      } else {
-        console.log('Error unarchiving entry', entry);
-      }
-    });
-  };
-
   
   $scope.searchTerm = '';
+
+  $scope.$on('entityDeleted', function (event, entity) {
+    var scope = event.currentScope;
+    var index = _.indexOf(scope.entries, entity);
+    if (index > -1) {
+      scope.entries.splice(index, 1);
+    }
+  });
 
   $scope.$watch('searchTerm', function(n,o, scope) {
     if (n === o) return;

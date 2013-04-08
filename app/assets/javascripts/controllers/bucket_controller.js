@@ -81,6 +81,13 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
     }
   });
 
+  $scope.$on('entityDeleted', function (event, entity) {
+    var bucketScope = event.currentScope;
+    if (event.targetScope !== bucketScope) {
+      bucketScope.$broadcast('entityDeleted', entity);
+    }
+  });
+
   $scope.createEntry = function(entryType) {
     var scope = this;
     scope.bucketContext.bucket.createEntry(entryType.getId(), {}, function(err, entry){

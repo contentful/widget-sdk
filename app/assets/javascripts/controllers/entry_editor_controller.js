@@ -51,49 +51,12 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
     return valid;
   };
 
-  $scope.canPublish = function() {
-    if (!$scope.doc) return false;
-    return !$scope.doc.getAt(['sys', 'archivedAt']);
+  $scope.publishedVersion = function(){
+    if ($scope.doc) return $scope.doc.getAt(['sys', 'publishedVersion']) || '(none)';
   };
 
-  $scope.archive = function() {
-    $scope.entry.archive(function() {
-      $scope.$apply();
-    });
-  };
-
-  $scope.publish = function () {
-    var version = $scope.doc.version;
-    $scope.entry.publish(version, function (err) {
-      $scope.$apply(function(scope){
-        if (err) {
-          console.log('publish error', err);
-          if (err.body.sys.id == 'validationFailed') {
-            window.alert('could not publish, validation failed');
-          } else {
-            window.alert('could not publish, version mismatch');
-          }
-        } else {
-          scope.updateFromShareJSDoc();
-        }
-      });
-    });
-  };
-
-  $scope.unpublish = function () {
-    $scope.entry.unpublish(function (err) {
-      $scope.$apply(function(scope){
-        if (err) {
-          window.alert('could not unpublish, version mismatch');
-        } else {
-          scope.updateFromShareJSDoc();
-        }
-      });
-    });
-  };
-
-  $scope.publishedVersion= function(){
-    return $scope.doc.getAt(['sys', 'publishedVersion']);
+  $scope.archivedVersion = function(){
+    if ($scope.doc) return $scope.doc.getAt(['sys', 'archivedVersion']) || '(none)';
   };
 
   $scope.publishedAt = function(){

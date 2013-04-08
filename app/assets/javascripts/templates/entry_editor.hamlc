@@ -45,21 +45,20 @@
     %header
       %span Meta
       %i.ss-delete
-    %article(ng-switch="!!publishedAt()")
-      %table(ng-switch-when="true")
-        %tr
+    %article
+      %table
+        -#%tr
           %th Last Save
           %td XX seconds ago
         %tr
-          %th Published Version #
-          %td {{publishedVersion()}}
-        %tr
-          %th Current #
+          %th Current Version
           %td {{doc.version}}
-      %table(ng-switch-default="")
         %tr
-          %th Last Save
-          %td XX seconds ago
+          %th Archived Version
+          %td {{archivedVersion()}}
+        %tr
+          %th Published Version
+          %td {{publishedVersion()}}
 
 .tab-main
   %form.form-horizontal(name="entryForm")
@@ -84,14 +83,14 @@
           .field-error-display
             Error on the field entry
 
-.tab-actions
+.tab-actions(ng-controller="EntryActionsCtrl")
   .button-set
-    %button.delete(ng-show="entry.canDelete()") Delete
-    %button.archive(ng-show="entry.canArchive()" ng-click="archive()") Archive
-    %button.unpublish(ng-show="entry.canUnpublish()" ng-click="unpublish()") Unpublish
-    -#TODO: Not showing the correct button yet:
-    %button.publish(ng-show="formValid() && entry.canPublish() &&  entry.canUnpublish()" ng-click="publish()") Republish
-    %button.publish(ng-show="formValid() && entry.canPublish() && !entry.canUnpublish()" ng-click="publish()") Publish
+    %button.delete(   ng-show="canDelete()"    ng-click="delete()"   ) Delete
+    %button.archive(  ng-show="canArchive()"   ng-click="archive()"  ) Archive
+    %button.archive(  ng-show="canUnarchive()" ng-click="unarchive()") Unarchive
+    %button.unpublish(ng-show="canUnpublish()" ng-click="unpublish()") Unpublish
+    %button.publish(ng-show="formValid() && canPublish()" ng-click="publish()")
+      {{publishButtonLabel()}}
   -#.save-status.green
     Not sure if we need this for now
     %i.ss-check
