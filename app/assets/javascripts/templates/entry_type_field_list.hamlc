@@ -8,7 +8,7 @@
       %th.cell.localized Localized
       %th.cell.required Required
       %th.cell.validations Validations
-      %th.cell.actions Status
+      %th.cell.actions Editable
   %tbody
 %table.result-list.new-field
   %tr.field
