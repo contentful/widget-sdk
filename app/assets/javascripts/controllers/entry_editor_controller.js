@@ -72,7 +72,9 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
   $scope.fields = function(){
     var et = this.bucketContext.typeForEntry(this.entry);
     if (et) {
-      return et.data.fields;
+      return _.reject(et.data.fields, function(f) {
+        return f.disabled;
+      });
     }
   };
 
