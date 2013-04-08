@@ -10,20 +10,21 @@
       %th.cell.validations Validations
       %th.cell.actions Editable
   %tbody
-%table.result-list.new-field
-  %tr.field
-    %td.drag-handle &nbsp;
-    %td.name
-      %input(ng-model="newName" type="text")
-    %td.identifier
-      %input(ng-model="newId" type="text")
-    %td.type
-      %select(ng-model="newType" ng-options="type.value as type.name for type in availableTypes")
-    %td.localized
-      %input(type="checkbox" ng-model="newLocalized")
-    %td.required
-      %input(type="checkbox" ng-model="newRequired")
-    %td.validations
-    %td.action
-      %a.button.new(ng-click="addField()")
-        %i.ss-plus
+%form(name="newField")
+  %table.result-list.new-field
+    %tr.field
+      %td.drag-handle &nbsp;
+      %td.name
+        %input(ng-model="newName" type="text" required="")
+      %td.identifier
+        %input(ng-model="newId" type="text" required="")
+      %td.type
+        %select(ng-model="newType" ng-options="type.value as type.name for type in availableTypes")
+      %td.localized
+        %input(type="checkbox" ng-model="newLocalized")
+      %td.required
+        %input(type="checkbox" ng-model="newRequired")
+      %td.validations
+      %td.action
+        %button.button.new(ng-click="addField()" ng-disabled="newField.$invalid")
+          %i.ss-plus
