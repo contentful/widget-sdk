@@ -27,7 +27,6 @@ angular.module('contentful/directives').directive('dropdownBtn', function() {
 
       element.find('.dropdown-toggle').click(function(event) {
         event.preventDefault();
-        event.stopPropagation();
         scope.$apply(function(scope) {
           scope.toggle();
         });
