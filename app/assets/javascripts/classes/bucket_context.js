@@ -60,6 +60,7 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
       },
       removeEntryType: function(entryType) {
         var index = _.indexOf(this.entryTypes, entryType);
+        if (index === -1) return;
         this.entryTypes.splice(index, 1);
       },
       typeForEntry: function(entry) {
