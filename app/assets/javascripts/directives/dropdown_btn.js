@@ -32,7 +32,7 @@ angular.module('contentful/directives').directive('dropdownBtn', function() {
           scope.toggle();
         });
       });
-      
+
       var clickToCloseHandler = function(event) {
         var targetParents = $(event.target).parents();
         var inside = targetParents.index(element) !== -1;
