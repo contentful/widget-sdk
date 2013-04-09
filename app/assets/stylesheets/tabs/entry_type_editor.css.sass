@@ -10,6 +10,24 @@
       @extend %standalone-table
       border: 1px solid $lightest-gray
       width: 100%
+      // layout
+      //table-layout: fixed
+      tr
+        width: 100%
+      .drag-handle
+        width: 5%
+      .name,
+      .identifier
+        width: 20%
+      .type
+        width: 15%
+      .localized,
+      .required
+        width: 10%
+      .validations
+        width: 10%
+      .action
+        width: 10%
       tr
         &:hover
           cursor: auto
@@ -21,15 +39,8 @@
       td
         font-size: 1.2em
         padding: .8em .8em
-        position: relative
         white-space: normal
-      td.localized,
-      td.required
-        i
-          position: relative
-          top: 3px
       .drag-handle
-        width: 5%
         padding-left: 1.2em
         i 
           color: $lightest-gray
@@ -37,25 +48,12 @@
         cursor: -webkit-grabbing
         cursor: -moz-grab
         cursor: -moz-grabbing
-      .localized
-        i
-          color: $blue
-      .required
-        i 
-          color: $green
-          font-size: 1.1em
-      .name,
-      .identifier
-        width: 20%
-      .type
-        width: 15%
       .validations
-        width: 10%
         text-align: right
       .action
         white-space: nowrap
         padding-right: 2em
-        width: 10%
+        position: relative
       .main-results-bar
         right: 0
         width: 6px
