@@ -40,7 +40,7 @@
   .iframe-view(      ng-switch-when="iframe"            tab="tab" bucket-context="bucketContext")
   .entry-list(       ng-switch-when="entry-list"        tab="tab" bucket-context="bucketContext")
   .entry-type-list(  ng-switch-when="entry-type-list"   tab="tab" bucket-context="bucketContext")
-  .entry-editor(     ng-switch-when="entry-editor"      tab="tab" bucket-context="bucketContext")
-  .entry-type-editor(ng-switch-when="entry-type-editor" tab="tab" bucket-context="bucketContext")
+  .entry-editor(     ng-switch-when="entry-editor"      tab="tab" bucket-context="bucketContext" ot-doc-for="entry")
+  .entry-type-editor(ng-switch-when="entry-type-editor" tab="tab" bucket-context="bucketContext" ot-doc-for="entryType")
   %div(ng-switch-default="")
     Unhandled case: viewType = {{bucketContext.tabList.currentViewType()}}

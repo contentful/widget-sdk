@@ -5,34 +5,16 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
 
   $scope.$watch('tab.params.entryType', 'entryType=tab.params.entryType');
 
-  $scope.$watch('entryType', function(entryType, old, scope){
-    if (!entryType) return;
-    if (scope.shareJSstarted) {
-      console.log('Fatal error, shareJS started twice');
-    }
+  $scope.$watch('entryType', function(entryType){
+    if (entryType) loadPublishedEntryType();
+  });
 
-    loadPublishedEntryType();
-
-    ShareJS.open(entryType, function(err, doc) {
-      if (!err) {
-        scope.$apply(function(scope){
-          scope.doc = doc;
-          scope.remoteOpListener = scope.doc.on('remoteop', function(op) {
-            scope.$apply(function(scope) {
-              scope.updateFromShareJSDoc();
-              // TODO Also update the publishedEntryType if a publishing action was received
-              // or there have been local changes
-            });
-          });
-        });
-      } else {
-        console.log('Error opening connection', err);
-      }
-    });
-    scope.shareJSstarted = true;
+  $scope.$on('otRemoteOp', function (event) {
+    event.currentScope.updateFromShareJSDoc();
   });
 
   function loadPublishedEntryType() {
+    // TODO use list in bucketcontext
     $scope.entryType.getPublishedVersion(function(err, publishedEntryType) {
       $scope.$apply(function(scope) {
         scope.publishedEntryType = publishedEntryType;

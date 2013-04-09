@@ -2,18 +2,8 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
   'use strict';
 
   $scope.$watch('tab.params.entry',     'entry=tab.params.entry');
-
-  $scope.$watch('entry', function(entry, old, scope){
-    if (!entry || entry.isArchived()) return; //TODO: watch isArchived status and adapt doc
-    ShareJS.open(entry, function(err, doc) {
-      if (!err) {
-       scope.$apply(function(scope){
-          scope.doc = doc;
-        });
-      } else {
-        console.log('Error opening connection', err);
-      }
-    });
+  $scope.$watch('entry.isArchived()', function (archived, old, scope) {
+    scope.otDisabled = archived;
   });
 
   $scope.$on('tabClosed', function(event, tab) {
