@@ -11,6 +11,7 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
       body.sortable({
         handle: '.drag-handle',
         items: '.existing-field',
+        forceHelperSize: true,
         start: function(event, ui) {
           scope.$apply(function(scope) {
             scope.closeAllValidations();
