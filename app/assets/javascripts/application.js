@@ -26,6 +26,8 @@
 //= require directives
 //= require classes
 //
+//= require ng-time-relative
+//
 //= require user_interface
 //
 //= require_self
@@ -37,7 +39,8 @@ angular.module('contentful', [
   'contentful/services',
   'contentful/controllers',
   'contentful/directives',
-  'contentful/filters'
+  'contentful/filters',
+  'timeRelative'
 ], function($locationProvider, clientProvider, authenticationProvider, environment){
   'use strict';
   var env = environment.settings;

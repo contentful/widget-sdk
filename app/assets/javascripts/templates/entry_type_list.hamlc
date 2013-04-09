@@ -20,7 +20,7 @@
           %td.cell-by
             %span {{numFields(entryType)}}
           %td.cell-created
-            %span(date-from="entryType.data.sys.updatedAt") 5 min ago
+            %date.relative(datetime="{{entryType.data.sys.updatedAt}}")
           %td.cell-status(ng-class="statusClass(entryType)")
             .draft-wrapper
               %span {{statusClass(entryType)}}
