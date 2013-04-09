@@ -12,7 +12,7 @@
       New
     %a.dropdown-menu
       %ul
-        %li(ng-repeat="entryType in bucketContext.entryTypes" ng-click="addNew(entryType)" dropdown-close="") {{entryType.data.name}}
+        %li(ng-repeat="entryType in bucketContext.publishedEntryTypes" ng-click="addNew(entryType)" dropdown-close="") {{entryType.data.name}}
   .search-field(on-idle-update="searchTerm" placeholder="Search for entries")
   
 

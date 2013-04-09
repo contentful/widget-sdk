@@ -11,6 +11,7 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
 
       entryTypes: [],
       _entryTypesHash: {},
+      publishedEntryTypes: [],
 
       publishLocales: [],
       defaultLocale: null,
@@ -50,18 +51,26 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
               bucketContext._entryTypesHash = _(entryTypes).map(function(et) {
                 return [et.data.sys.id, et];
               }).object().valueOf();
+              bucketContext.refreshPublishedEntryTypes();
             });
           });
         } else {
           this.entryTypes = [];
           this._entryTypesHash = {};
+          this.publishedEntryTypes = [];
           return;
         }
+      },
+      refreshPublishedEntryTypes: function() {
+        this.publishedEntryTypes = _.filter(this.entryTypes, function(et) {
+          return et.data && et.data.sys.publishedAt;
+        });
       },
       removeEntryType: function(entryType) {
         var index = _.indexOf(this.entryTypes, entryType);
         if (index === -1) return;
         this.entryTypes.splice(index, 1);
+        this.refreshPublishedEntryTypes();
       },
       typeForEntry: function(entry) {
         return this._entryTypesHash[entry.getEntryTypeId()];
