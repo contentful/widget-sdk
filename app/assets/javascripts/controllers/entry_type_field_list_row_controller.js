@@ -1,8 +1,6 @@
 angular.module('contentful/controllers').controller('EntryTypeFieldListRowCtrl', function ($scope, getFieldTypeName) {
   'use strict';
 
-  $scope.published = true;
-  $scope.field = _.clone($scope.initialField);
   $scope.getFieldTypeName = getFieldTypeName;
 
   $scope.$watch('publishedIds', function(ids, old, scope) {
@@ -34,28 +32,6 @@ angular.module('contentful/controllers').controller('EntryTypeFieldListRowCtrl',
     }
   });
 
-  $scope.$watch('index', function(index, old, scope) {
-    if (scope.doc) {
-      scope.field = scope.doc.snapshot.fields[scope.index];
-    } // else will be initialized in the doc Watcher
-  });
-
-  $scope.$watch('field.type', function(type, old, scope) {
-    if (type === old) return;
-    scope.doc.at(['fields', scope.index, 'type']).set(type, function(err) {
-      if (err) scope.$apply(function(scope) {
-        scope.field.type = old;
-      });
-    });
-  });
-
-  // TODO this entire function is likely not needed because theres no nameDoc or fieldDoc created
-  // in any scope
-  $scope.$watch('index', function linkIndex(index, old, scope) {
-    if (scope.nameDoc ) scope.nameDoc.path[1]  = index;
-    if (scope.fieldDoc) scope.fieldDoc.path[1] = index;
-  });
-
   $scope.enable = function() {
     this.doc.at(['fields', this.index, 'disabled']).set(false, function(err) {
       if (!err) $scope.$apply(function(scope) {
@@ -72,9 +48,7 @@ angular.module('contentful/controllers').controller('EntryTypeFieldListRowCtrl',
   };
 
   $scope.delete = function() {
-    this.doc.at(['fields', this.index]).remove(function(err) {
-      if (!err) $scope.$destroy();
-    });
+    this.doc.at(['fields', this.index]).remove();
   };
 
 });

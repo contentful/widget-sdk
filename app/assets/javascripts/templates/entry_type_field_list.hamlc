@@ -10,7 +10,9 @@
       %th.cell.validations Validations
       %th.cell.actions Editable
   %tbody
-%form(name="newField")
+    %tr.existing-field.entry-type-field-list-row(index="index" ng-repeat="(index, field) in entryType.data.fields")
+    
+%form.new-field-form(name="newField")
   %table.result-list.new-field
     %tr.field
       %td.drag-handle &nbsp;

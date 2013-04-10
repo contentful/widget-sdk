@@ -57,7 +57,7 @@ angular.module('contentful/services').directive('otDocFor', function (ShareJS) {
       $scope.otUpdateEntity = function () {
         var entity = $scope.otGetEntity();
         if (entity && $scope.doc) {
-          console.log('otUpdateEntity did update', entity, $scope.doc);
+          console.log('otUpdateEntity did update', entity.data, $scope.doc.snapshot);
           entity.update($scope.doc.snapshot);
         } else {
           console.warn('otUpdateEntity did not update', entity, $scope.doc);
