@@ -76,16 +76,18 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
         return this._entryTypesHash[entry.getEntryTypeId()];
       },
       entryTitle: function(entry, localeName) {
+        var defaultTitle = 'Untitled';
+
         localeName = localeName || this.bucket.getDefaultLocale().name;
 
         try {
           var displayField = this.typeForEntry(entry).data.displayField;
           if (!displayField) {
-            return entry.data.sys.id;
+            return defaultTitle;
           } else {
             var title = entry.data.fields[displayField][localeName];
             if (!title || title.match(/^\s*$/)) {
-              return entry.data.sys.id;
+              return defaultTitle;
             } else {
               return title;
             }
