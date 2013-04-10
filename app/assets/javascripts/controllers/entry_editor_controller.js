@@ -18,17 +18,12 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
 
   $scope.$on('inputBlurred', function(event) {
     event.stopPropagation();
-    event.currentScope.updateFromShareJSDoc();
-  });
-  $scope.$on('textIdle', function(event) {
-    event.currentScope.updateFromShareJSDoc();
+    event.currentScope.otUpdateEntity();
   });
 
-  $scope.updateFromShareJSDoc = function() {
-    if (this.doc) {
-      this.entry.update(this.doc.snapshot);
-    }
-  };
+  $scope.$on('textIdle', function(event) {
+    event.currentScope.otUpdateEntity();
+  });
 
   $scope.formValid = function () {
     if (!$scope.entryConstraint) {

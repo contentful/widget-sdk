@@ -10,7 +10,7 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
   });
 
   $scope.$on('otRemoteOp', function (event) {
-    event.currentScope.updateFromShareJSDoc();
+    event.currentScope.otUpdateEntity();
   });
 
   function loadPublishedEntryType() {
@@ -104,11 +104,6 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
       scope.bucketContext.refreshEntryTypes(scope);
     }
   });
-
-  $scope.updateFromShareJSDoc = function() {
-    var data = this.doc.snapshot;
-    this.entryType.update(data);
-  };
 
   $scope.headline = function(){
     var verb = $scope.tab.params.mode == 'edit' ? 'Editing' : 'Creating';
