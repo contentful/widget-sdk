@@ -46,8 +46,7 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
   };
 
   $scope.canPublish = function() {
-    if (!$scope.doc) return false;
-    return true;
+    return !!$scope.doc;
   };
 
   $scope.delete = function () {
@@ -62,21 +61,6 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
         console.log('Error deleting entryType', $scope.entryType);
       }
     });
-  };
-
-  $scope.publishedAt = function(){
-    if (!$scope.doc) return;
-    var val = $scope.doc.getAt(['sys', 'publishedAt']);
-    if (val) {
-      return new Date(val);
-    } else {
-      return undefined;
-    }
-  };
-
-  $scope.publishedVersion = function() {
-    if (!$scope.doc) return;
-    return $scope.doc.getAt(['sys', 'publishedVersion']);
   };
 
   $scope.publish = function() {

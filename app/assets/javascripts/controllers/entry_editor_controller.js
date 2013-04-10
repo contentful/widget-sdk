@@ -36,14 +36,6 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
     return valid;
   };
 
-  $scope.publishedVersion = function(){
-    if ($scope.doc) return $scope.doc.getAt(['sys', 'publishedVersion']) || '(none)';
-  };
-
-  $scope.archivedVersion = function(){
-    if ($scope.doc) return $scope.doc.getAt(['sys', 'archivedVersion']) || '(none)';
-  };
-
   $scope.publishedAt = function(){
     if (!$scope.doc) return;
     var val = $scope.doc.getAt(['sys', 'publishedAt']);

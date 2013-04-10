@@ -43,4 +43,4 @@
         %td {{sys.publishedBy.sys.id}}
       %tr
         %th Published version
-        %td {{publishedVersion()}}
+        %td {{sys.publishedVersion}}
