@@ -1,9 +1,11 @@
-angular.module('contentful/controllers').controller('ClientCtrl', function ClientCtrl($scope, client, BucketContext, authentication, contentfulClient) {
+angular.module('contentful/controllers').controller('ClientCtrl', function ClientCtrl($scope, client, BucketContext, authentication, contentfulClient, notification) {
   'use strict';
 
   $scope.buckets = [];
   $scope.bucketContext = new BucketContext($scope);
   $scope.tokenIdentityMap = new contentfulClient.IdentityMap();
+
+  $scope.notification = notification;
 
   $scope.user = null;
 
