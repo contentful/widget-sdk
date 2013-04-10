@@ -4,12 +4,21 @@ angular.module('contentful/services').directive('otDocFor', function (ShareJS) {
   return {
     restrict: 'A',
     link: function (scope, elem, attr) {
+      scope.otGetEntity = function () {
+        return scope.$eval(attr['otDocFor']);
+      };
+    },
+
+    controller: function ($scope) {
       // TODO refactor all related files to use otDoc instead of doc
 
-      scope.$watch(function (scope) {
-        return !scope.otDisabled && scope.$eval(attr['otDocFor']);
+      var remoteOpListener;
+      $scope.otDisabled = false;
+
+      $scope.$watch(function (scope) {
+        return !scope.otDisabled && scope.otGetEntity();
       } , function (entity, old, scope) {
-        console.log('otDocFor watch %o old: %o new: %o', attr['otDocFor'], old, entity);
+        console.log('otDocFor watch entity old: %o new: %o', old, entity);
         if (entity) {
           ShareJS.open(entity, function(err, doc) {
             if (!err) {
@@ -29,20 +38,6 @@ angular.module('contentful/services').directive('otDocFor', function (ShareJS) {
         }
       });
 
-      scope.$on('$destroy', function (event) {
-        var scope = event.currentScope;
-        if (scope.doc) {
-          console.log('otDocFor Controller destroyed, removing listener');
-          scope.doc.close();
-          scope.doc = null;
-        }
-      });
-    },
-
-    controller: function ($scope) {
-      var remoteOpListener;
-      $scope.otDisabled = false;
-
       $scope.$watch('doc', function (doc, old, scope) {
         if (old) {
           console.log('otDocFor Controller watcher removing old listener %o from doc %o', remoteOpListener, old);
@@ -59,14 +54,27 @@ angular.module('contentful/services').directive('otDocFor', function (ShareJS) {
         }
       });
 
-      $scope.$on('destroy', function (event) {
+      $scope.otUpdateEntity = function () {
+        var entity = $scope.otGetEntity();
+        if (entity && $scope.doc) {
+          console.log('otUpdateEntity did update', entity, $scope.doc);
+          entity.update($scope.doc.snapshot);
+        } else {
+          console.warn('otUpdateEntity did not update', entity, $scope.doc);
+        }
+      };
+
+      $scope.$on('$destroy', function (event) {
         var scope = event.currentScope;
-        if(scope.doc) {
-          console.log('otDocFor Controller destroyed, removing listener');
+        if (scope.doc) {
+          console.log('otDocFor Controller destroyed, removing listener and doc');
           scope.doc.removeListener(remoteOpListener);
           remoteOpListener = null;
+          scope.doc.close();
+          scope.doc = null;
         }
       });
+
     }
   };
 });
