@@ -6,6 +6,11 @@
     %tr
       %th
     %tr
+      %th ID
+      %td {{sys.id}}
+    %tr
+      %th
+    %tr
       %th Current version
       %td {{doc.version}}
     %tr
