@@ -3,7 +3,7 @@ angular.module('contentful/directives').directive('cfLogo', function () {
 
   return {
     restrict: 'C',
-    template: '<img class="logopart yellow" src="/app/logo_yellow.png"/><img class="logopart blue" src="/app/logo_blue.png"/><img class="logopart red" src="/app/logo_red.png"/>',
+    template: '<div class="logopart yellow"/><div class="logopart blue"/><div class="logopart red"/>',
     link: function (scope, element) {
       var run;
       var start = function () {
