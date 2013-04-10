@@ -64,8 +64,7 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
   };
 
   $scope.publish = function() {
-    var version = $scope.doc.version;
-    $scope.entryType.publish(version, function (err, publishedEntryType) {
+    $scope.entryType.publish($scope.doc.version, function (err, publishedEntryType) {
       $scope.$apply(function(scope){
         if (err) {
           window.alert('could not publish');
@@ -77,17 +76,6 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
       $scope.bucketContext.refreshEntryTypes($scope);
     });
   };
-
-  $scope.$on('$destroy', function(event) {
-    var scope = event.currentScope;
-    if (scope.remoteOpListener) {
-      scope.doc.removeListener(scope.remoteOpListener);
-      scope.remoteOpListener = null;
-    }
-    if (scope.tab.params.mode === 'create') {
-      scope.bucketContext.refreshEntryTypes(scope);
-    }
-  });
 
   $scope.headline = function(){
     var verb = $scope.tab.params.mode == 'edit' ? 'Editing' : 'Creating';
