@@ -15,9 +15,9 @@ angular.module('contentful/controllers').controller('EntryActionsCtrl', function
     $scope.entry.delete(function (err, entry) {
       $scope.$apply(function (scope) {
         if (err) {
-          notification.error('Error deleting entry:' + err.body.sys.id);
+          notification.error('Error deleting entry (' + err.body.sys.id + ')');
         }else{
-          notification.info('Entry deleted');
+          notification.info('Entry successfully deleted');
           scope.$emit('entityDeleted', entry);
         }
       });
@@ -42,13 +42,12 @@ angular.module('contentful/controllers').controller('EntryActionsCtrl', function
   };
 
   $scope.archive = function() {
-    var version = $scope.doc.version;
     $scope.entry.archive(function(err) {
       $scope.$apply(function() {
         if (err)
-          notification.error('Error archiving entry: ' + err.body.sys.id);
+          notification.error('Error archiving entry (' + err.body.sys.id + ')');
         else
-          notification.info('Entry archived at version ' + version);
+          notification.info('Entry successfully archived');
       });
     });
   };
@@ -61,9 +60,9 @@ angular.module('contentful/controllers').controller('EntryActionsCtrl', function
     $scope.entry.unarchive(function(err) {
       $scope.$apply(function() {
         if (err)
-          notification.error('Error unarchiving entry: ' + err.body.sys.id);
+          notification.error('Error unarchiving entry (' + err.body.sys.id + ')');
         else
-          notification.info('Entry unarchived');
+          notification.info('Entry successfully unarchived');
       });
     });
   };
@@ -80,7 +79,7 @@ angular.module('contentful/controllers').controller('EntryActionsCtrl', function
         if (err) {
           notification.error('Error unpublishing entry (' + err.body.sys.id + ')');
         } else {
-          notification.info('Entry unpublished');
+          notification.info('Entry successfully unpublished');
           scope.updateFromShareJSDoc();
         }
       });
@@ -108,7 +107,7 @@ angular.module('contentful/controllers').controller('EntryActionsCtrl', function
             reason = 'Can only publish most recent version';
           notification.error('Error publishing entry: ' + reason);
         } else {
-          notification.info('Entry published at version ' + version);
+          notification.info('Entry successfully published');
           scope.updateFromShareJSDoc();
         }
       });
