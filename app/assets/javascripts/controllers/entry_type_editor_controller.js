@@ -40,6 +40,10 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
     });
   }
 
+  $scope.$watch('doc.snapshot.fields.length', function(length) {
+    $scope.hasFields = length > 0;
+  });
+
   $scope.$watch('entryType.data.fields', function(fields, old, scope) {
     var availableFields = _(fields).filter(function(field) {
       return field.type === 'text' || field.type === 'string';

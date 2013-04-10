@@ -5,11 +5,14 @@
       %th.cell.name Name
       %th.cell.identifier Identifier
       %th.cell.type Type
-      %th.cell.display Title
+      %th.cell.display
+        %span(ng-show="hasFields") Title
       %th.cell.localized Localized
       %th.cell.required Required
-      %th.cell.validations Validations
-      %th.cell.actions Editable
+      %th.cell.validations
+        %span(ng-show="hasFields") Validations
+      %th.cell.actions
+        %span(ng-show="hasFields") Editable
   %tbody
 %form(name="newField")
   %table.result-list.new-field
