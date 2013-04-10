@@ -36,9 +36,9 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
         }
       });
 
-      scope.closeAllValidations =function() {
-        scope.$broadcast('closeAllValidations');
-      };
+      //scope.closeAllValidations =function() {
+        //scope.$broadcast('closeAllValidations');
+      //};
 
     },
   };

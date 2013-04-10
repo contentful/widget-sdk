@@ -1,4 +1,4 @@
-angular.module('contentful/controllers').controller('EntryTypeFieldListRowCtrl', function ($scope, getFieldTypeName) {
+angular.module('contentful/controllers').controller('EntryTypeFieldSettingsCtrl', function ($scope, getFieldTypeName) {
   'use strict';
 
   $scope.getFieldTypeName = getFieldTypeName;
@@ -30,6 +30,10 @@ angular.module('contentful/controllers').controller('EntryTypeFieldListRowCtrl',
         }
       });
     }
+  });
+
+  $scope.$on('otRemoteOp', function (event, op) {
+    console.log('fieldListRowController received op', op, event);
   });
 
   $scope.enable = function() {

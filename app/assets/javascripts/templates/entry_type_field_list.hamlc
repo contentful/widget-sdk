@@ -12,7 +12,7 @@
   %tbody
     %tr.existing-field(ng-repeat="(index, field) in entryType.data.fields")
       %td(colspan="8")
-        .entry-type-field-list-row
+        .entry-type-field-settings
     
 %form.new-field-form(name="newField")
   %table.result-list.new-field

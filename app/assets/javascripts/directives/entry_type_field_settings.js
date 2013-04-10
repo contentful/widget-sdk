@@ -1,12 +1,13 @@
-angular.module('contentful/directives').directive('entryTypeFieldListRow', function($compile) {
+angular.module('contentful/directives').directive('entryTypeFieldSettings', function($compile) {
   'use strict';
 
   return {
     restrict: 'C',
-    template: JST['entry_type_field_list_row'](),
-    controller: 'EntryTypeFieldListRowCtrl',
+    template: JST['entry_type_field_settings'](),
+    controller: 'EntryTypeFieldSettingsCtrl',
 
-    link: function linkEntryTypeFieldListRow(scope, elm) {
+    link: function linkEntryTypeFieldSettings(scope, elm) {
+
       function attachNameField(val, old, scope) {
         if (scope.detachNameField){
           scope.detachNameField();
