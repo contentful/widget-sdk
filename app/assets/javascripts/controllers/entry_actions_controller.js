@@ -4,13 +4,6 @@ angular.module('contentful/controllers').controller('EntryActionsCtrl', function
   // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,
   // We can query the entry instead of reimplementing the checks heere
 
-  $scope.canDelete = function() {
-    if (!$scope.doc) return false;
-    var deletedAt  = $scope.doc.getAt(['sys', 'deletedAt']);
-    var archivedAt = $scope.doc.getAt(['sys', 'archivedAt']);
-    return archivedAt && !deletedAt;
-  };
-
   $scope.delete = function () {
     $scope.entry.delete(function (err, entry) {
       $scope.$apply(function (scope) {
@@ -30,34 +23,16 @@ angular.module('contentful/controllers').controller('EntryActionsCtrl', function
     }
   });
 
-  $scope.canArchive = function() {
-    if (!$scope.doc) return false;
-    var version = $scope.doc.version;
-    var archivedVersion  = $scope.doc.getAt(['sys', 'archivedVersion']);
-    var publishedVersion = $scope.doc.getAt(['sys', 'publishedVersion']);
-    return !publishedVersion && (!archivedVersion || version > archivedVersion);
-  };
-
   $scope.archive = function() {
     $scope.entry.archive(function() {
       $scope.$apply();
     });
   };
 
-  $scope.canUnarchive = function() {
-    return $scope.canDelete();
-  };
-
   $scope.unarchive = function() {
     $scope.entry.unarchive(function() {
       $scope.$apply();
     });
-  };
-
-  $scope.canUnpublish = function() {
-    if (!$scope.doc) return false;
-    var publishedVersion = $scope.doc.getAt(['sys', 'publishedVersion']);
-    return publishedVersion;
   };
 
   $scope.unpublish = function () {
@@ -75,9 +50,8 @@ angular.module('contentful/controllers').controller('EntryActionsCtrl', function
   $scope.canPublish = function() {
     if (!$scope.doc) return false;
     var version = $scope.doc.version;
-    var archivedVersion  = $scope.doc.getAt(['sys', 'archivedVersion']);
     var publishedVersion = $scope.doc.getAt(['sys', 'publishedVersion']);
-    return !archivedVersion && (!publishedVersion || version > publishedVersion);
+    return this.entry.canPublish() && (!publishedVersion || version > publishedVersion);
   };
 
   $scope.publish = function () {
