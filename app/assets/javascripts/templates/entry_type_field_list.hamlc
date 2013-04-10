@@ -5,6 +5,7 @@
       %th.cell.name Name
       %th.cell.identifier Identifier
       %th.cell.type Type
+      %th.cell.display Title
       %th.cell.localized Localized
       %th.cell.required Required
       %th.cell.validations Validations
@@ -20,6 +21,7 @@
         %input(ng-model="newId" type="text" required="")
       %td.type
         %select(ng-model="newType" ng-options="type.value as type.name for type in availableTypes")
+      %td.display &nbsp;
       %td.localized
         %input(type="checkbox" ng-model="newLocalized")
       %td.required
