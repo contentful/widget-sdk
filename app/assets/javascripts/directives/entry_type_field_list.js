@@ -54,6 +54,14 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
         });
       });
       
+      $scope.removeDisplayField = function () {
+        $scope.doc.at(['displayField']).set(null, function (err) {
+          if (!err) $scope.$apply(function (scope) {
+            scope.entryType.data.displayField = null;
+          });
+        });
+      };
+
     }
   };
 });

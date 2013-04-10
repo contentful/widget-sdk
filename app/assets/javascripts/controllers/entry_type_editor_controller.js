@@ -26,29 +26,6 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
     $scope.hasFields = length > 0;
   });
 
-  $scope.$watch('entryType.data.fields', function(fields, old, scope) {
-    var availableFields = _(fields).filter(function(field) {
-      return field.type === 'text' || field.type === 'string';
-    }).sortBy('name').valueOf();
-
-    if (!_.isEqual(scope.availableDisplayFields, availableFields)) {
-      scope.availableDisplayFields = availableFields;
-      //console.log('setting availablefields to %o  from %o ', availableFields, fields);
-    }
-  });
-
-  $scope.displayFieldChanged = function() {
-    console.log('display field changed', this.entryType.data.displayField);
-    var scope = this;
-    this.doc.setAt(['displayField'], this.entryType.data.displayField, function(err) {
-      scope.$apply(function(scope) {
-        if (err) {
-          scope.entryType.data.displayField = scope.doc.snapshot.displayField;
-        }
-      });
-    });
-  };
-
   $scope.canPublish = function() {
     return !!$scope.doc;
   };

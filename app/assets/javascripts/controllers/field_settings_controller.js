@@ -9,6 +9,10 @@ angular.module('contentful/controllers').controller('FieldSettingsCtrl', functio
     }
   });
 
+  $scope.displayEnabled = function (field) {
+    return field.type === 'string' || field.type === 'text';
+  };
+
   $scope.enable = function() {
     $scope.doc.at(['fields', this.index, 'disabled']).set(false, function(err) {
       if (!err) $scope.$apply(function(scope) {

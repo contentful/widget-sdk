@@ -6,6 +6,7 @@
       %th.cell.identifier Identifier
       %th.cell.type Type
       %th.cell.display
+        %a.remove(ng-show="hasFields" ng-click="removeDisplayField()") Reset
         %span(ng-show="hasFields") Title
       %th.cell.localized Localized
       %th.cell.required Required

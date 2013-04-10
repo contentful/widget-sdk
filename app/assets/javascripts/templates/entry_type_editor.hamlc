@@ -12,15 +12,6 @@
       %label Name
       .form-controls(ot-edit-path="['name']")
         %input(type="text" ng-model="entryType.data.name" ot-bind="text")
-    -#.form-field
-      %label Description
-      .form-controls(ot-edit-path="['description']")
-        %textarea(ng-model="entryType.data.description" ot-bind="text")
-    .form-field.select-field
-      %label Display Field
-      .form-controls
-        %select.field-type(ng-model="entryType.data.displayField" ng-options="field.id as field.name for field in availableDisplayFields" ng-change="displayFieldChanged()")
-          %option(value="") ID
     .form-field
       %label Fields
       .form-controls
