@@ -1,13 +1,12 @@
-angular.module('contentful/directives').directive('entryTypeFieldSettings', function() {
-  // TODO rename "fieldSettings"
+angular.module('contentful/directives').directive('fieldSettings', function() {
   'use strict';
 
   return {
     restrict: 'C',
-    template: JST['entry_type_field_settings'](),
-    controller: 'EntryTypeFieldSettingsCtrl',
+    template: JST['field_settings'](),
+    controller: 'FieldSettingsCtrl',
 
-    link: function linkEntryTypeFieldSettings(scope, elm) {
+    link: function linkFieldSettings(scope, elm) {
 
       function attachNameField(val, old, scope) {
         if (scope.detachNameField){

@@ -12,7 +12,7 @@
   %tbody
     %tr.existing-field(ng-repeat="(index, field) in entryType.data.fields")
       %td(colspan="8")
-        .entry-type-field-settings
+        .field-settings
         .field-validations(ng-show="showValidations")
     
 %form.new-field-form(name="newField")
