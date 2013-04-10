@@ -1,4 +1,5 @@
-angular.module('contentful/directives').directive('entryTypeFieldSettings', function($compile) {
+angular.module('contentful/directives').directive('entryTypeFieldSettings', function() {
+  // TODO rename "fieldSettings"
   'use strict';
 
   return {
@@ -27,40 +28,11 @@ angular.module('contentful/directives').directive('entryTypeFieldSettings', func
       });
 
       scope.$on('closeAllValidations', function() {
-        scope.closeValidations();
+        scope.showValidations = false;
       });
 
-      scope.validationsOpen = function() {
-        return scope.validationsRow().length !== 0;
-      };
-
-      scope.validationsRow =  function() {
-        return elm.siblings('.field-validations').filter(function() {
-          return $(this).scope().$parent === scope;
-        });
-      };
-
-      scope.closeValidations = function() {
-        if (scope.validationsOpen()) {
-          var validationsRow = scope.validationsRow();
-          var childScope = validationsRow.scope();
-          validationsRow.remove();
-          childScope.$destroy();
-        }
-      };
-
-      scope.openValidations = function() {
-        var validationsTemplate = $('<tr class="field-validations"></tr>');
-        var editor = $compile(validationsTemplate)(scope.$new());
-        elm.after(editor);
-      };
-
       scope.toggleValidations = function() {
-        if (scope.validationsOpen()) {
-          scope.closeValidations();
-        } else {
-          scope.openValidations();
-        }
+        scope.showValidations = !scope.showValidations;
       };
 
     },

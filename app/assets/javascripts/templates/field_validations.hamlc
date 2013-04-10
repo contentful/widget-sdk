@@ -1,19 +1,18 @@
-%td(colspan="8")
-  %ul.validations-open 
-    %li
-      %header
-        %p Validations
-      .section(ng-repeat="(validationIndex, validation) in validations")
-        .name {{availableValidations[validationType(validation)]}}
-        .validation-options(validation="validation" doc="doc" validation-index="validationIndex" index="index")
-        .action
-          %a.button.delete(ng-click="deleteValidation(validation)")
-            %i.remove.ss-delete
-      .section
-        .name
-          %select(ng-model="newValidationType" ng-options="type as name for (type, name) in availableValidations" ng-change="prepareNewValidation()")
-            %option(value="") Add new…
-        .validation-options(validation="newValidation")
-        .action
-          %a.button.new(ng-click="createValidation()")
-            %i.ss-plus
+%ul.validations-open 
+  %li
+    %header
+      %p Validations
+    .section(ng-repeat="(validationIndex, validation) in field.validations")
+      .name {{availableValidations[validationType(validation)]}}
+      .validation-options(validation="validation" doc="doc" validation-index="validationIndex" index="index")
+      .action
+        %a.button.delete(ng-click="deleteValidation(validation)")
+          %i.remove.ss-delete
+    .section
+      .name
+        %select(ng-model="newValidationType" ng-options="type as name for (type, name) in availableValidations" ng-change="prepareNewValidation()")
+          %option(value="") Add new…
+      .validation-options(validation="newValidation")
+      .action
+        %a.button.new(ng-click="createValidation()")
+          %i.ss-plus

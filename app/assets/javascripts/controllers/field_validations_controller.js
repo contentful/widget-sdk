@@ -38,16 +38,6 @@ angular.module('contentful/controllers').controller('FieldValidationsCtrl', func
 
   };
 
-  $scope.$watch(function (scope) {
-    return scope.validationsFromDoc();
-  }, function (validations, old, scope) {
-    scope.validations = validations;
-  }, true);
-
-  $scope.validationsFromDoc = function(){
-    return $scope.doc.getAt(['fields', $scope.index, 'validations']) || [];
-  };
-
   $scope.validationType = function (validation) {
     return _(validation).keys().filter(function(k) { return k !== '$$hashKey'; }).value()[0];
   };

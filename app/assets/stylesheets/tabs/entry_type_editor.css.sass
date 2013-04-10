@@ -36,7 +36,7 @@
         padding-right: 20px
 
       .entry-type-field-settings,
-      .new-field-row
+      .new-field-settings
         width: 100%
         display: table
         > * 
@@ -72,49 +72,47 @@
       select
         width: 100%
     .field-validations
-      td,
-      > *
-        background-color: $gray-background
-        text-align: left
-        padding: 0 0 1em 0 !important
-        +box-shadow(0 2px 1px rgba(0,0,0,0.05) inset)
-        header
-          color: $dark-gray
-          font-size: 1.1em
-          font-weight: 600
-          padding: 10px 10px 4px
-          p
-            padding-bottom: 6px
-        li
-          display: table
-          width: 100%
-          border-top: 1px solid $lightest-gray
-          margin-top: -1px
-        div.section
-          padding: 1em 14px
-          display: table-row
-          &:first-child
-            border-top: 0px
-        .validations-open
-          .name,
-          .validation-options,
-          .action
-            display: table-cell
-            padding: 6px 0
-            vertical-align: middle
-            border-top: 1px solid lighten($lightest-gray, 5%)
-          .name
-            padding-left: 12px
-            select
-              width: 85%
-          .action
-            text-align: right
-            padding-right: 19px
-          input[type=text],
-          input[type=number]
-            background-color: white
-            border-color: $lightest-gray
-            width: auto
+      background-color: $gray-background
+      text-align: left
+      padding: 0 0 1em 0 !important
+      +box-shadow(0 2px 1px rgba(0,0,0,0.05) inset)
+      header
+        color: $dark-gray
+        font-size: 1.1em
+        font-weight: 600
+        padding: 10px 10px 4px
+        p
+          padding-bottom: 6px
+      li
+        display: table
+        width: 100%
+        border-top: 1px solid $lightest-gray
+        margin-top: -1px
+      div.section
+        padding: 1em 14px
+        display: table-row
+        &:first-child
+          border-top: 0px
+      .validations-open
+        .name,
+        .validation-options,
+        .action
+          display: table-cell
+          padding: 6px 0
+          vertical-align: middle
+          border-top: 1px solid lighten($lightest-gray, 5%)
+        .name
+          padding-left: 12px
+          select
+            width: 85%
+        .action
+          text-align: right
+          padding-right: 19px
+        input[type=text],
+        input[type=number]
+          background-color: white
+          border-color: $lightest-gray
+          width: auto
 
   .form-controls
     table.new-field

@@ -13,12 +13,13 @@
     %tr.existing-field(ng-repeat="(index, field) in entryType.data.fields")
       %td(colspan="8")
         .entry-type-field-settings
+        .field-validations(ng-show="showValidations")
     
 %form.new-field-form(name="newField")
   %table.result-list.new-field
     %tr.field
       %td(colspan="8")
-        .new-field-row
+        .new-field-settings
           .drag-handle &nbsp;
           .name
             %input(ng-model="newName" type="text" required="")
