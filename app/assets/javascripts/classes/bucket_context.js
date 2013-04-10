@@ -11,6 +11,7 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
 
       entryTypes: [],
       _entryTypesHash: {},
+      publishedEntryTypes: [],
 
       publishLocales: [],
       defaultLocale: null,
@@ -50,32 +51,43 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
               bucketContext._entryTypesHash = _(entryTypes).map(function(et) {
                 return [et.data.sys.id, et];
               }).object().valueOf();
+              bucketContext.refreshPublishedEntryTypes();
             });
           });
         } else {
           this.entryTypes = [];
           this._entryTypesHash = {};
+          this.publishedEntryTypes = [];
           return;
         }
       },
+      refreshPublishedEntryTypes: function() {
+        this.publishedEntryTypes = _.filter(this.entryTypes, function(et) {
+          return et.data && et.data.sys.publishedAt;
+        });
+      },
       removeEntryType: function(entryType) {
         var index = _.indexOf(this.entryTypes, entryType);
+        if (index === -1) return;
         this.entryTypes.splice(index, 1);
+        this.refreshPublishedEntryTypes();
       },
       typeForEntry: function(entry) {
         return this._entryTypesHash[entry.getEntryTypeId()];
       },
       entryTitle: function(entry, localeName) {
+        var defaultTitle = 'Untitled';
+
         localeName = localeName || this.bucket.getDefaultLocale().name;
 
         try {
           var displayField = this.typeForEntry(entry).data.displayField;
           if (!displayField) {
-            return entry.data.sys.id;
+            return defaultTitle;
           } else {
             var title = entry.data.fields[displayField][localeName];
             if (!title || title.match(/^\s*$/)) {
-              return entry.data.sys.id;
+              return defaultTitle;
             } else {
               return title;
             }

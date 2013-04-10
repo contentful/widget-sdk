@@ -27,13 +27,12 @@ angular.module('contentful/directives').directive('dropdownBtn', function() {
 
       element.find('.dropdown-toggle').click(function(event) {
         event.preventDefault();
-        event.stopPropagation();
         scope.$apply(function(scope) {
           scope.toggle();
         });
       });
-      
-      var clickToCloseHandler = function(event) {
+
+      var closeOtherDropdowns = function(event) {
         var targetParents = $(event.target).parents();
         var inside = targetParents.index(element) !== -1;
         var on     = event.target === element[0];
@@ -52,11 +51,11 @@ angular.module('contentful/directives').directive('dropdownBtn', function() {
         if (isOpen) {
           button.addClass('active');
           content.show();
-          $(document).on('click', clickToCloseHandler);
+          $(document).on('click', closeOtherDropdowns);
         } else {
           button.removeClass('active');
           content.hide();
-          $(document).off('click', clickToCloseHandler);
+          $(document).off('click', closeOtherDropdowns);
         }
       });
     }

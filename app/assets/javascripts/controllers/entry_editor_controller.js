@@ -56,11 +56,7 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
   };
 
   $scope.headline = function(){
-    if (this.tab.params.mode == 'create') {
-      return 'Creating ' + this.bucketContext.typeForEntry(this.entry).data.name;
-    } else {
-      return this.bucketContext.entryTitle(this.entry);
-    }
+    return this.bucketContext.entryTitle(this.entry);
   };
 
 });

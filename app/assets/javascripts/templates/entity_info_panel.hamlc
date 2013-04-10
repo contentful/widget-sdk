@@ -6,6 +6,11 @@
     %tr
       %th
     %tr
+      %th ID
+      %td {{sys.id}}
+    %tr
+      %th
+    %tr
       %th Current version
       %td {{doc.version}}
     %tr
@@ -13,8 +18,9 @@
 
     %tbody
       %tr
-        %th Created at
-        %td {{sys.createdAt}}
+        %th Created
+        %td
+          %date.relative(datetime="{{sys.createdAt}}")
       %tr
         %th Created by
         %td {{sys.createdBy.sys.id}}
@@ -23,8 +29,9 @@
 
     %tbody(ng-show="sys.archivedVersion")
       %tr
-        %th Archived at
-        %td {{sys.archivedAt}}
+        %th Archived
+        %td
+          %date.relative(datetime="{{sys.archivedAt}}")
       %tr
         %th Archived by
         %td {{sys.archivedBy.sys.id}}
@@ -36,8 +43,9 @@
 
     %tbody(ng-show="sys.publishedVersion")
       %tr
-        %th Published at
-        %td {{sys.publishedAt}}
+        %th Published
+        %td
+          %date.relative(datetime="{{sys.publishedAt}}")
       %tr
         %th Published by
         %td {{sys.publishedBy.sys.id}}

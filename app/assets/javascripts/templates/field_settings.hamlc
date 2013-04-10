@@ -4,6 +4,8 @@
   %input(type="text")
 .identifier {{field.id}}
 .type {{getFieldTypeName(field)}}
+.display
+  %input(type="radio" name="displayField" ng-model="entryType.data.displayField" value="{{field.id}}" ng-change="displayFieldChanged()")
 .localized(ot-edit-path="['fields', index, 'localized']")
   %input(type="checkbox" ng-model="value" ot-bind="model")
 .required(ot-edit-path="['fields', index, 'required']")
