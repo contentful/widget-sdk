@@ -15,9 +15,10 @@ angular.module('contentful/controllers').controller('FieldValidationsCtrl', func
 
   $scope.createValidation = function () {
     var fieldDoc = $scope.doc.at(['fields', $scope.index]);
-    var callback = function () {
-      $scope.$apply(function (scope) {
+    var callback = function (err) {
+      if (!err) $scope.$apply(function (scope) {
         scope.prepareNewValidation();
+        scope.field.validations = scope.doc.snapshot.fields[scope.index].validations;
       });
     };
 
@@ -25,15 +26,16 @@ angular.module('contentful/controllers').controller('FieldValidationsCtrl', func
       fieldDoc.at(['validations']).set([$scope.newValidation], callback);
     } else {
       var validationsDoc = $scope.doc.at(['fields', $scope.index, 'validations']);
-      var numValidations = validationsDoc.get().length;
-      validationsDoc.insert(numValidations, $scope.newValidation, callback);
+      validationsDoc.push($scope.newValidation, callback);
     }
   };
 
   $scope.deleteValidation = function (validation) {
     var validationIndex = _.indexOf($scope.validations, validation);
-    $scope.doc.at(['fields', $scope.index, 'validations', validationIndex]).remove(function(){
-      $scope.$apply();
+    $scope.doc.at(['fields', $scope.index, 'validations', validationIndex]).remove(function(err){
+      if (!err) $scope.$apply(function (scope) {
+        scope.otUpdateEntity();
+      });
     });
 
   };
