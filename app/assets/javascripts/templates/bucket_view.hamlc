@@ -34,7 +34,8 @@
     %li.tab(ng-repeat="tabItem in bucketContext.tabList.items" ng-class="{active: tabItem.active()}" ng-click="tabItem.activate()" ng-hide="tabItem.hidden")
       %span.tab-title {{tabItem.title}}
       %em.fade
-      %i.ss-delete(cf-click-local="tabItem.close()" ng-show="tabItem.canClose()")
+      .close(cf-click-local="tabItem.close()" ng-show="tabItem.canClose()")
+        %i.ss-delete
     %li.tablist-button(bucket-context="bucketContext")
 .tab-content(ng-repeat="tab in bucketContext.tabList.items" ng-show="tab.active()" ng-switch="tab.viewType")
   .iframe-view(      ng-switch-when="iframe"            tab="tab" bucket-context="bucketContext")
