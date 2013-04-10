@@ -10,7 +10,7 @@ angular.module('contentful/controllers').controller('EntryTypeFieldSettingsCtrl'
   });
 
   $scope.enable = function() {
-    this.doc.at(['fields', this.index, 'disabled']).set(false, function(err) {
+    $scope.doc.at(['fields', this.index, 'disabled']).set(false, function(err) {
       if (!err) $scope.$apply(function(scope) {
         scope.field.disabled = false;
       });
@@ -18,7 +18,7 @@ angular.module('contentful/controllers').controller('EntryTypeFieldSettingsCtrl'
   };
 
   $scope.disable = function() {
-    this.doc.at(['fields', this.index, 'disabled']).set(true, function(err) {
+    $scope.doc.at(['fields', this.index, 'disabled']).set(true, function(err) {
       if (!err) $scope.$apply(function(scope) {
         scope.field.disabled = true;
       });
@@ -26,7 +26,11 @@ angular.module('contentful/controllers').controller('EntryTypeFieldSettingsCtrl'
   };
 
   $scope.delete = function() {
-    this.doc.at(['fields', this.index]).remove();
+    $scope.doc.at(['fields', $scope.index]).remove(function (err) {
+      if (!err) $scope.$apply(function(scope) {
+        scope.otUpdateEntity();
+      });
+    });
   };
 
 });

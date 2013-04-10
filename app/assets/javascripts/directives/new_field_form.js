@@ -34,6 +34,7 @@ angular.module('contentful/directives').directive('newFieldForm', function (avai
             $scope.$apply(function(scope) {
               scope.newId = scope.newName = null;
               scope.newType = defaultType.value;
+              scope.otUpdateEntity();
               scope.$broadcast('fieldAdded');
             });
           }
