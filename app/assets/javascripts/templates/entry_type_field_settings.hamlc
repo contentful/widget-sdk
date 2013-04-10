@@ -2,7 +2,6 @@
   %i.ss-rows
 .name
   %input(type="text")
-  {{index}}
 .identifier {{field.id}}
 .type {{getFieldTypeName(field)}}
 .localized(ot-edit-path="['fields', index, 'localized']")
