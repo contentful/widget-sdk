@@ -10,23 +10,27 @@
       %th.cell.validations Validations
       %th.cell.actions Editable
   %tbody
-    %tr.existing-field.entry-type-field-list-row(index="index" ng-repeat="(index, field) in entryType.data.fields")
+    %tr.existing-field(ng-repeat="(index, field) in entryType.data.fields")
+      %td(colspan="8")
+        .entry-type-field-list-row
     
 %form.new-field-form(name="newField")
   %table.result-list.new-field
     %tr.field
-      %td.drag-handle &nbsp;
-      %td.name
-        %input(ng-model="newName" type="text" required="")
-      %td.identifier
-        %input(ng-model="newId" type="text" required="")
-      %td.type
-        %select(ng-model="newType" ng-options="type.value as type.name for type in availableTypes")
-      %td.localized
-        %input(type="checkbox" ng-model="newLocalized")
-      %td.required
-        %input(type="checkbox" ng-model="newRequired")
-      %td.validations
-      %td.action
-        %button.button.new(ng-click="addField()" ng-disabled="newField.$invalid")
-          %i.ss-plus
+      %td(colspan="8")
+        .new-field-row
+          .drag-handle &nbsp;
+          .name
+            %input(ng-model="newName" type="text" required="")
+          .identifier
+            %input(ng-model="newId" type="text" required="")
+          .type
+            %select(ng-model="newType" ng-options="type.value as type.name for type in availableTypes")
+          .localized
+            %input(type="checkbox" ng-model="newLocalized")
+          .required
+            %input(type="checkbox" ng-model="newRequired")
+          .validations
+          .action
+            %button.button.new(ng-click="addField()" ng-disabled="newField.$invalid")
+              %i.ss-plus
