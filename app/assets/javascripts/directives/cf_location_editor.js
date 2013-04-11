@@ -1,5 +1,5 @@
 /*global google:false*/
-angular.module('contentful/directives').directive('cfLocationEditor', function(){
+angular.module('contentful/directives').directive('cfLocationEditor', function(cfSpinner){
   'use strict';
 
   return {
@@ -114,6 +114,7 @@ angular.module('contentful/directives').directive('cfLocationEditor', function()
       scope.$watch('searchTerm', function(searchTerm, old, scope) {
         if (searchTerm && searchTerm != old) {
           var geocoder = new google.maps.Geocoder();
+          //var stopSpin = cfSpinner.start();
           geocoder.geocode({
             address: searchTerm
           }, function(results) {
@@ -128,6 +129,7 @@ angular.module('contentful/directives').directive('cfLocationEditor', function()
                 scope.offerResults(results);
               }
             });
+            //stopSpin();
           });
         } else {
           scope.results = [];

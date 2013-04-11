@@ -6,7 +6,7 @@
 
 // A version of ngClick that performs stopPropagation() and
 // preventDefault() to support nested click targets
-angular.module('contentful/directives').directive('searchField', function(){
+angular.module('contentful/directives').directive('searchField', function(cfSpinner){
 'use strict';
   return {
     restrict: 'C',
@@ -25,14 +25,27 @@ angular.module('contentful/directives').directive('searchField', function(){
       scope.hasFilters = function() {
         return false;
       };
+      
+      var stopSpin;
 
-      scope.userChange= _.debounce(function() {
+      var userChangeStart = function () {
+        stopSpin = cfSpinner.start(700);
+      };
+
+      var userChangeStop = _.debounce(function() {
         if (scope.onIdleUpdate !== scope.search.term) {
           scope.$apply(function(scope) {
             scope.onIdleUpdate = scope.search.term;
           });
         }
+        stopSpin();
       }, 700);
+
+
+      scope.userChange = function () {
+        userChangeStart();
+        userChangeStop();
+      };
     }
   };
 });
