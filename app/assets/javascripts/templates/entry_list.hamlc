@@ -30,7 +30,7 @@
       %li(ng-class="{active: !tab.params.entryTypeId}" ng-click="switchEntryType(null)")
         %span
           All
-      %li(ng-class="{active: tab.params.entryTypeId==entryType.data.sys.id}" ng-repeat="entryType in bucketContext.entryTypes" ng-click="switchEntryType(entryType)")
+      %li(ng-class="{active: tab.params.entryTypeId==entryType.data.sys.id}" ng-repeat="entryType in bucketContext.publishedEntryTypes" ng-click="switchEntryType(entryType)")
         %span {{entryType.data.name}}
     -#
       %header Saved searches
