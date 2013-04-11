@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/controllers').controller('EntryListActionsCtrl', function EntryListCtrl($scope) {
+angular.module('contentful/controllers').controller('EntryListActionsCtrl', function EntryListCtrl($scope, notification) {
 
   var _cacheSelected;
 
@@ -31,10 +31,10 @@ angular.module('contentful/controllers').controller('EntryListActionsCtrl', func
     _.each(entries, callback);
   };
 
-  var makeApplyLater = function() {
+  var makeApplyLater = function(callback) {
     var num = $scope.selection.size();
     return _.after(num, function() {
-      $scope.$apply();
+      $scope.$apply(callback);
       //TODO adjust counts
     });
   };
@@ -63,7 +63,11 @@ angular.module('contentful/controllers').controller('EntryListActionsCtrl', func
     var applyLater = makeApplyLater();
     forAllEntries(function(entry) {
       entry.delete(function (err, entry) {
-        $scope.$emit('entityDeleted', entry);
+        if (err) {
+          notification.error('Error deleting entry (' + err.body.sys.id + ')');
+        } else {
+          $scope.$emit('entityDeleted', entry);
+        }
         applyLater();
       });
     });
