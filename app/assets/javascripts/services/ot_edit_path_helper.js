@@ -44,9 +44,12 @@ angular.module('contentful/services').service('otEditPathHelper', function (Shar
       });
 
       scope.changeValue = function(value, callback) {
+        //console.log('changing value %o -> %o in %o, %o', scope.doc.getAt(scope.path), value, scope.path, scope.doc);
         if (scope.doc) {
           try {
+            callback = callback || function(err){if (!err) scope.$apply();};
             scope.doc.setAt(scope.path, value, callback);
+            //console.log('changin value returned %o %o in doc %o version %o', err, data, scope.doc, scope.doc.version);
           } catch(e) {
             ShareJS.mkpath(scope.doc, scope.path, value, callback);
           }
