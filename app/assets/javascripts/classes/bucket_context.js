@@ -63,10 +63,8 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
       },
       refreshPublishedEntryTypes: function() {
         this.publishedEntryTypes = _(this.entryTypes)
-          .filter(function(et) {
-            return et.data && et.data.sys.publishedAt;
-          })
-          .sortBy('name')
+          .filter(function(et) { return et.data && et.data.sys.publishedAt; })
+          .sortBy(function(et) { return et.data.name.trim().toLowerCase(); })
           .value();
       },
       removeEntryType: function(entryType) {
