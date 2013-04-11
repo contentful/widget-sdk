@@ -9,9 +9,8 @@
 %body
   .client(ng-controller="ClientCtrl" style="display: none" ng-show="user")
     .notifications
-      .notification-wrapper.wat(class="{{message.severity}}" ng-repeat="message in notification.unseen()")
-        .notification
-          {{message.body}}
+      .notification(class="{{message.severity}}" ng-repeat="message in notification.unseen()")
+        {{message.body}}
     %nav.account
       .dropdown-btn.user(label="")
         %a.btn.dropdown-toggle{"data-toggle" => "dropdown", :href => "#"}
