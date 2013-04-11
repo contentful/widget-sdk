@@ -49,9 +49,8 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
       });
 
       $scope.$on('published', function(event) {
-        event.currentScope.$apply(function(scope) {
-          scope.publishedIds = _.pluck(scope.publishedEntryType.data.fields, 'id');
-        });
+        var scope = event.currentScope;
+        scope.publishedIds = _.pluck(scope.publishedEntryType.data.fields, 'id');
       });
       
       $scope.removeDisplayField = function () {

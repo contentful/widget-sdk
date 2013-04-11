@@ -51,10 +51,10 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
           window.alert('could not publish');
         } else {
           scope.publishedEntryType = publishedEntryType;
+          $scope.$broadcast('published');
+          $scope.bucketContext.refreshEntryTypes($scope);
         }
       });
-      $scope.$broadcast('published');
-      $scope.bucketContext.refreshEntryTypes($scope);
     });
   };
 
