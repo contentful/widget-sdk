@@ -30,9 +30,9 @@ angular.module('contentful/directives').directive('cfSelection', function(Select
             }
           } else {
             if (element.prop('checked')) {
-              scope.selection.selectAll();
+              scope.selection.addAll();
             } else {
-              scope.selection.deselectAll();
+              scope.selection.removeAll();
             }
           }
         });

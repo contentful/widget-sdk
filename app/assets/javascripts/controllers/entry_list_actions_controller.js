@@ -16,7 +16,7 @@ angular.module('contentful/controllers').controller('EntryListActionsCtrl', func
   };
 
   var clearSelection = function () {
-    $scope.selection.deselectAll();
+    $scope.selection.removeAll();
     _cacheSelected = null;
   };
 

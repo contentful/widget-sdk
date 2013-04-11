@@ -5,17 +5,17 @@ angular.module('contentful/classes').factory('Selection', function(){
     this.mode = Selection.INDIVIDUAL;
     this.entities = {};
   }
-  // TODO unify names select/add deselect/remove
+
   Selection.INDIVIDUAL = 'mode_individual';
   Selection.ALL = 'mode_all';
 
   Selection.prototype = {
-    selectAll: function() {
+    addAll: function() {
       this.mode = Selection.ALL;
       this.entities = {};
     },
 
-    deselectAll: function() {
+    removeAll: function() {
       this.mode = Selection.INDIVIDUAL;
       this.entities = {};
     },
@@ -65,7 +65,7 @@ angular.module('contentful/classes').factory('Selection', function(){
     },
 
     switchBaseSet: function(size) {
-      this.deselectAll();
+      this.removeAll();
       this.setBaseSize(size);
     },
 
