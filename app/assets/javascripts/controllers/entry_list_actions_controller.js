@@ -27,7 +27,7 @@ angular.module('contentful/controllers').controller('EntryListActionsCtrl', func
   };
 
   var forAllEntries = function(callback) {
-    var entries = $scope.selection.getSelected();
+    var entries = getSelected();
     _.each(entries, callback);
   };
 
