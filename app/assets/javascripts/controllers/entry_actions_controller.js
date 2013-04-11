@@ -55,7 +55,7 @@ angular.module('contentful/controllers').controller('EntryActionsCtrl', function
           notification.error('Error unpublishing entry (' + err.body.sys.id + ')');
         } else {
           notification.info('Entry successfully unpublished');
-          scope.updateFromShareJSDoc();
+          scope.otUpdateEntity();
         }
       });
     });
@@ -82,7 +82,7 @@ angular.module('contentful/controllers').controller('EntryActionsCtrl', function
           notification.error('Error publishing entry: ' + reason);
         } else {
           notification.info('Entry successfully published');
-          scope.updateFromShareJSDoc();
+          scope.otUpdateEntity();
         }
       });
     });
