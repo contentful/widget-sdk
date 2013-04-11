@@ -1,20 +1,18 @@
-How is the destroy DOM-vent used?
+Pivotal:
 
-Pagination as separate component
-Split out entryList controller from bucketContentController
+- Remove isolate scope on tabs
+  - move stuff from Bucketcontext to bucket scope
+  - split responsiblities into a LocalesManager and a entrytypesmanager
+- bucketBroadcast method to send events to all parts of the app
 
-
-
-
-Bucket manuell changen:
-- Bucket wählen
-- entitySection = 'entries'
-- URL updaten
-
-URL geparst:
-- ClientController.Bucket wählen
-- BucketController.entitysection wählen
-
-Section Tab gewählt:
-- BucketController.entitySection wählen
-- URL updaten
+restructure files by
+- tabs
+- shared components
+- services
+- ot
+- classes
+and organize into flat modules
+- contentful/environment
+- contentful/shared
+- contentful/main für alles
+- contentful als app

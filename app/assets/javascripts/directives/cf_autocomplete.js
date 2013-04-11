@@ -157,7 +157,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
 
       $scope.linkDescription= function(entry) {
         if (entry) {
-          return $scope.bucketContext.entryTitle(entry, $scope.locale);
+          return $scope.bucketContext.entryTitle(entry, $scope.locale.name);
         } else {
           return '(nothing)';
         }

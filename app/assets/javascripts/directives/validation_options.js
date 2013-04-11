@@ -5,12 +5,6 @@ angular.module('contentful/directives').directive('validationOptions', function 
     restrict: 'C',
     template: JST['validation_options'](),
     replace: true,
-    scope: {
-      validation: '=',
-      doc: '=',
-      validationIndex: '=',
-      index: '=',
-    },
     controller: function ($scope) {
       $scope.validationType = function (validation) {
         return _(validation).keys().filter(function(k) { return k !== '$$hashKey'; }).value()[0];

@@ -3,13 +3,6 @@
 angular.module('contentful/directives').directive('cfFieldEditor', function(widgets, $compile, otEditPathHelper) {
   return {
     restrict: 'E',
-    scope: {
-      field: '=',
-      doc: '=',
-      locale: '=localeName', // TODO rename the internal var to localeName as well, check dependencies
-      bucketContext: '=',
-      //value: '='
-    },
     link: function(scope, elm, attr) {
 
       scope.$watch(function (scope) {
@@ -19,7 +12,7 @@ angular.module('contentful/directives').directive('cfFieldEditor', function(widg
       });
 
       scope.$watch(function(scope){
-        return ['fields', scope.field.id, scope.locale];
+        return ['fields', scope.field.id, scope.locale.name];
       }, function(value, old, scope){
         scope.path = value;
       }, true);

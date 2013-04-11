@@ -4,9 +4,6 @@ angular.module('contentful/directives').directive('tablistButton', function() {
   return {
     template: JST.tablist_button(),
     restrict: 'C',
-    scope: {
-      bucketContext: '='
-    },
     link: function(scope) {
       scope.createEntry = function(entryType) {
         this.$emit('tabListButtonClicked', {

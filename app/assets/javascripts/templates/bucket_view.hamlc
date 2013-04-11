@@ -38,10 +38,10 @@
         %i.ss-delete
     %li.tablist-button(bucket-context="bucketContext")
 .tab-content(ng-repeat="tab in bucketContext.tabList.items" ng-show="tab.active()" ng-switch="tab.viewType")
-  .iframe-view(      ng-switch-when="iframe"            tab="tab" bucket-context="bucketContext")
-  .entry-list(       ng-switch-when="entry-list"        tab="tab" bucket-context="bucketContext")
-  .entry-type-list(  ng-switch-when="entry-type-list"   tab="tab" bucket-context="bucketContext")
-  .entry-editor(     ng-switch-when="entry-editor"      tab="tab" bucket-context="bucketContext" ot-doc-for="entry")
-  .entry-type-editor(ng-switch-when="entry-type-editor" tab="tab" bucket-context="bucketContext" ot-doc-for="entryType")
+  .iframe-view(      ng-switch-when="iframe"           )
+  .entry-list(       ng-switch-when="entry-list"       )
+  .entry-type-list(  ng-switch-when="entry-type-list"  )
+  .entry-editor(     ng-switch-when="entry-editor"      ot-doc-for="entry")
+  .entry-type-editor(ng-switch-when="entry-type-editor" ot-doc-for="entryType")
   %div(ng-switch-default="")
     Unhandled case: viewType = {{bucketContext.tabList.currentViewType()}}

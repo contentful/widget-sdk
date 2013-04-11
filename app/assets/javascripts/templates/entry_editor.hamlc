@@ -54,13 +54,7 @@
       .form-controls
         .locale(ng-repeat="locale in bucketContext.activeLocales")
           .locale-label(ng-show="bucketContext.activeLocales.length > 1") {{locale.name}}
-          %cf-field-editor(
-            doc="doc"
-            editor="textField"
-            field="field"
-            locale-name="locale.name"
-            bucket-context="bucketContext"
-            value="entry.data.fields[field.id][locale.name]")
+          %cf-field-editor
           -#.hint.tip
             Hint to the user about the meaning of the field
             .arrow-left
