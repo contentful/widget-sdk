@@ -7,6 +7,14 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
 
   $scope.notification = notification;
 
+  $scope.preferences = {
+    showAuxPanel: false,
+
+    toggleAuxPanel: function() {
+      $scope.preferences.showAuxPanel = !$scope.preferences.showAuxPanel;
+    }
+  };
+
   $scope.user = null;
 
   $scope.selectBucket = function(bucket) {
