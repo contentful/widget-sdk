@@ -36,13 +36,22 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
         }
       });
 
-      scope.closeAllValidations =function() {
-        scope.$broadcast('closeAllValidations');
-      };
-
     },
 
     controller: function EntryTypeFieldListCtrl($scope) {
+      var _showValidations = {};
+      $scope.showValidations = function(fieldId) {
+        return !!_showValidations[fieldId];
+      };
+
+      $scope.toggleValidations= function(fieldId) {
+        _showValidations[fieldId] = !_showValidations[fieldId];
+      };
+
+      $scope.closeAllValidations = function () {
+        _showValidations = {};
+      };
+
       $scope.$watch('publishedEntryType', function(et, old, scope) {
         if (et && et.data.fields)
           scope.publishedIds = _.pluck(et.data.fields, 'id');

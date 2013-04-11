@@ -18,7 +18,7 @@
     %tr.existing-field(ng-repeat="(index, field) in entryType.data.fields")
       %td(colspan="9")
         .field-settings
-        .field-validations(ng-show="showValidations")
+        .field-validations(ng-show="showValidations(field.id)")
     
 %form.new-field-form(name="newField")
   %table.result-list.new-field

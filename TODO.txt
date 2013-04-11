@@ -16,3 +16,10 @@ and organize into flat modules
 - contentful/shared
 - contentful/main für alles
 - contentful als app
+
+Readonly mode for EntryTypeeditor
+
+Spinner fertigmachen
+
+
+jquery-ui drag and drop durch was anderes ersetzen

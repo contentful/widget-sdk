@@ -15,4 +15,4 @@
     %input(type="text" ng-model="validation.in" ng-list="" placeholder="apple,orange,banana" ng-change="updateDoc()")
     %span (separate allowed values by comma)
   %div(ng-switch-default="")
-    Please select a type first {{validation | json}}
+    Please select a type first

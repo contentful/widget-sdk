@@ -4,15 +4,15 @@
       %p Validations
     .section(ng-repeat="(validationIndex, validation) in field.validations")
       .name {{availableValidations[validationType(validation)]}}
-      .validation-options(validation="validation" doc="doc" validation-index="validationIndex" index="index")
+      .validation-options
       .action
-        %a.button.delete(ng-click="deleteValidation(validation)")
+        %a.button.delete(ng-click="deleteValidation(validationIndex)")
           %i.remove.ss-delete
-    .section
+    .section(ng-controller="NewValidationCtrl")
       .name
         %select(ng-model="newValidationType" ng-options="type as name for (type, name) in availableValidations" ng-change="prepareNewValidation()")
           %option(value="") Add new…
-      .validation-options(validation="newValidation")
+      .validation-options
       .action
         %a.button.new(ng-click="createValidation()")
           %i.ss-plus

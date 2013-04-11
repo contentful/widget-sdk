@@ -25,15 +25,6 @@ angular.module('contentful/directives').directive('fieldSettings', function() {
       scope.$on('$destroy', function() {
         if (scope.detachNameField) scope.detachNameField();
       });
-
-      scope.$on('closeAllValidations', function() {
-        scope.showValidations = false;
-      });
-
-      scope.toggleValidations = function() {
-        scope.showValidations = !scope.showValidations;
-      };
-
     },
   };
 });

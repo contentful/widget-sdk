@@ -15,7 +15,7 @@
 .required(ot-edit-path="['fields', index, 'required']")
   %input(type="checkbox" ng-model="value" ot-bind="model")
 .validations
-  %a.button(ng-click="toggleValidations()")
+  %a.button(ng-click="toggleValidations(field.id)")
     %i.ss-settings
 .action(ng-class="{archived: !published, published: published && !field.disabled, draft: published && field.disabled}")
   %a.button.delete(ng-show="!published" ng-click="delete()")
