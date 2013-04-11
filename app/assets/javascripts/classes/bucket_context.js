@@ -93,7 +93,7 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
             }
           }
         } catch (e) {
-          return entry.data.sys.id;
+          return defaultTitle;
         }
       }
 
