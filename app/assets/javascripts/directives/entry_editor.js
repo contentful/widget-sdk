@@ -6,7 +6,8 @@ angular.module('contentful/directives').directive('entryEditor', function(){
     restrict: 'C',
     scope: {
       tab: '=',
-      bucketContext: '='
+      bucketContext: '=',
+      preferences: '='
     },
     controller: 'EntryEditorCtrl'
   };

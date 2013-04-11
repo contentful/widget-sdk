@@ -5,7 +5,8 @@ angular.module('contentful/directives').directive('bucketView', function(){
     template: JST.bucket_view(),
     restrict: 'E',
     scope: {
-      bucketContext: '='
+      bucketContext: '=',
+      preferences: '='
     },
     controller: 'BucketCtrl'
   };
