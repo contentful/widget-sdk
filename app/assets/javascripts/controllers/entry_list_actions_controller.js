@@ -15,6 +15,11 @@ angular.module('contentful/controllers').controller('EntryListActionsCtrl', func
     return _cacheSelected;
   };
 
+  var clearSelection = function () {
+    $scope.selection.deselectAll();
+    _cacheSelected = null;
+  };
+
   var every = function (predicate) {
     return _.every(getSelected(), function (entry) {
       return entry[predicate]();
@@ -26,7 +31,7 @@ angular.module('contentful/controllers').controller('EntryListActionsCtrl', func
     _.each(entries, callback);
   };
 
-  var makeAfterCallback = function() {
+  var makeApplyLater = function() {
     var num = $scope.selection.size();
     return _.after(num, function() {
       $scope.$apply();
@@ -35,17 +40,19 @@ angular.module('contentful/controllers').controller('EntryListActionsCtrl', func
   };
 
   var perform = function(method) {
-    var afterCallback = makeAfterCallback();
+    var applyLater = makeApplyLater();
     forAllEntries(function(entry) {
-      entry[method](afterCallback);
+      entry[method](applyLater);
     });
+    clearSelection();
   };
 
   $scope.publishSelected = function() {
-    var afterCallback = makeAfterCallback();
+    var applyLater = makeApplyLater();
     forAllEntries(function(entry) {
-      entry.publish(entry.data.sys.version, afterCallback);
+      entry.publish(entry.data.sys.version, applyLater);
     });
+    clearSelection();
   };
 
   $scope.unpublishSelected = function() {
@@ -53,7 +60,14 @@ angular.module('contentful/controllers').controller('EntryListActionsCtrl', func
   };
 
   $scope.deleteSelected = function() {
-    perform('delete');
+    var applyLater = makeApplyLater();
+    forAllEntries(function(entry) {
+      entry.delete(function (err, entry) {
+        $scope.$emit('entityDeleted', entry);
+        applyLater();
+      });
+    });
+    clearSelection();
   };
 
   $scope.archiveSelected = function() {

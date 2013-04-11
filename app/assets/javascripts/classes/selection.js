@@ -5,7 +5,7 @@ angular.module('contentful/classes').factory('Selection', function(){
     this.mode = Selection.INDIVIDUAL;
     this.entities = {};
   }
-
+  // TODO unify names select/add deselect/remove
   Selection.INDIVIDUAL = 'mode_individual';
   Selection.ALL = 'mode_all';
 
