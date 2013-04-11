@@ -24,8 +24,10 @@
               %input(type="checkbox" ng-model="bucketContext.localesActive[locale.name]")
               {{locale.name}}
 
-  -#.editor-top-right<
-    .dropdown-btn>
+  .editor-top-right
+    %button(ng-click="preferences.toggleAuxPanel()" ng-class="{active: preferences.showAuxPanel}")
+      Info
+    -#.dropdown-btn>
       %a.btn.dropdown-toggle
         %i.ss-dropdown
         %span Meta
@@ -33,14 +35,14 @@
         …
         …
         …
-    .dropdown-btn>
+    -#.dropdown-btn>
       %a.btn.dropdown-toggle
         %span Apps
-    .dropdown-btn>
+    -#.dropdown-btn>
       %a.btn.dropdown-toggle
         %span Events
 
-.aux-panel
+.aux-panel(ng-show="preferences.showAuxPanel")
   %header
     %span Entry Information
   .entity-info-panel
