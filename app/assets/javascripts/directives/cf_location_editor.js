@@ -30,9 +30,7 @@ angular.module('contentful/directives').directive('cfLocationEditor', function(c
 
       var changeHandler = function() {
         scope.changeValue(scope.location, function() {
-          scope.$apply(function() {
-            console.log('changevalue callback');
-          });
+          scope.$apply();
           //TODO handle failure
         });
       };
@@ -134,6 +132,7 @@ angular.module('contentful/directives').directive('cfLocationEditor', function(c
         } else {
           scope.results = [];
           scope.selectedResult = 0;
+          map.panTo(locationController.$viewValue);
         }
       });
 
@@ -153,6 +152,7 @@ angular.module('contentful/directives').directive('cfLocationEditor', function(c
             address: result.formatted_address
           };
         });
+        scope.movetoSelected();
       };
 
       elm.find('input[type=search], .results').on('keydown', function(event) {
@@ -163,10 +163,12 @@ angular.module('contentful/directives').directive('cfLocationEditor', function(c
 
         if (event.keyCode == DOWN){
           scope.selectNext();
+          scope.movetoSelected();
           scope.$digest();
           event.preventDefault();
         } else if (event.keyCode == UP) {
           scope.selectPrevious();
+          scope.movetoSelected();
           scope.$digest();
           event.preventDefault();
         } else if (event.keyCode == ESC) {
@@ -193,6 +195,11 @@ angular.module('contentful/directives').directive('cfLocationEditor', function(c
         } else if (below) {
           selected.scrollIntoView(false);
         }
+      };
+
+      scope.movetoSelected = function () {
+        var result = scope.results[scope.selectedResult];
+        map.fitBounds(result.viewport);
       };
 
       scope.selectNext = function() {
