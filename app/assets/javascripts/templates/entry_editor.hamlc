@@ -74,7 +74,7 @@
   .button-set
     %button.delete(   ng-show="entry.canDelete()"    ng-click="delete()"   ) Delete
     %button.archive(  ng-show="entry.canArchive()"   ng-click="archive()"  ) Archive
-    %button.archive(  ng-show="entry.canUnarchive()" ng-click="unarchive()") Restore
+    %button.archive(  ng-show="entry.canUnarchive()" ng-click="unarchive()") Unarchive
     %button.unpublish(ng-show="entry.canUnpublish()" ng-click="unpublish()") Unpublish
     %button.publish(ng-show="formValid() && canPublish()" ng-click="publish()")
       {{publishButtonLabel()}}
