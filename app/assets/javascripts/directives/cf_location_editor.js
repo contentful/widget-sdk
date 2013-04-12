@@ -1,5 +1,5 @@
 /*global google:false*/
-angular.module('contentful/directives').directive('cfLocationEditor', function(){
+angular.module('contentful/directives').directive('cfLocationEditor', function(cfSpinner){
   'use strict';
 
   return {
@@ -30,9 +30,7 @@ angular.module('contentful/directives').directive('cfLocationEditor', function()
 
       var changeHandler = function() {
         scope.changeValue(scope.location, function() {
-          scope.$apply(function() {
-            console.log('changevalue callback');
-          });
+          scope.$apply();
           //TODO handle failure
         });
       };
@@ -114,6 +112,7 @@ angular.module('contentful/directives').directive('cfLocationEditor', function()
       scope.$watch('searchTerm', function(searchTerm, old, scope) {
         if (searchTerm && searchTerm != old) {
           var geocoder = new google.maps.Geocoder();
+          var stopSpin = cfSpinner.start();
           geocoder.geocode({
             address: searchTerm
           }, function(results) {
@@ -128,10 +127,12 @@ angular.module('contentful/directives').directive('cfLocationEditor', function()
                 scope.offerResults(results);
               }
             });
+            stopSpin();
           });
         } else {
           scope.results = [];
           scope.selectedResult = 0;
+          map.panTo(locationController.$viewValue);
         }
       });
 
@@ -151,6 +152,7 @@ angular.module('contentful/directives').directive('cfLocationEditor', function()
             address: result.formatted_address
           };
         });
+        scope.movetoSelected();
       };
 
       elm.find('input[type=search], .results').on('keydown', function(event) {
@@ -161,10 +163,12 @@ angular.module('contentful/directives').directive('cfLocationEditor', function()
 
         if (event.keyCode == DOWN){
           scope.selectNext();
+          scope.movetoSelected();
           scope.$digest();
           event.preventDefault();
         } else if (event.keyCode == UP) {
           scope.selectPrevious();
+          scope.movetoSelected();
           scope.$digest();
           event.preventDefault();
         } else if (event.keyCode == ESC) {
@@ -191,6 +195,11 @@ angular.module('contentful/directives').directive('cfLocationEditor', function()
         } else if (below) {
           selected.scrollIntoView(false);
         }
+      };
+
+      scope.movetoSelected = function () {
+        var result = scope.results[scope.selectedResult];
+        map.fitBounds(result.viewport);
       };
 
       scope.selectNext = function() {

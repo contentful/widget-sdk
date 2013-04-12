@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/controllers').controller('EntryListCtrl', function EntryListCtrl($scope, Paginator, Selection) {
+angular.module('contentful/controllers').controller('EntryListCtrl', function EntryListCtrl($scope, Paginator, Selection, cfSpinner) {
   $scope.contentType = 'entries';
   $scope.entrySection = 'all';
 
@@ -99,6 +99,7 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     var scope = this;
 
     this.reloadInProgress = true;
+    var stopSpin = cfSpinner.start();
     this.bucketContext.bucket.getEntries(this.buildQuery(), function(err, entries, stats) {
       scope.reloadInProgress = false;
       if (err) return;
@@ -106,6 +107,7 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
       scope.selection.switchBaseSet(stats.total);
       scope.$apply(function(scope){
         scope.entries = entries;
+        stopSpin();
       });
     });
   };
@@ -154,10 +156,12 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     this.paginator.page++;
     this.reloadInProgress = true;
     this.pauseReset();
+    var stopSpin = cfSpinner.start();
     this.bucketContext.bucket.getEntries(this.buildQuery(), function(err, entries, stats) {
       scope.reloadInProgress = false;
       if (err) {
         scope.paginator.page--;
+        stopSpin();
         return;
       }
       scope.paginator.numEntries = stats.total;
@@ -165,6 +169,7 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
       scope.$apply(function(scope){
         var args = [scope.entries.length, 0].concat(entries);
         scope.entries.splice.apply(scope.entries, args);
+        stopSpin();
       });
     });
 

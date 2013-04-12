@@ -1,7 +1,11 @@
 .tab-header.editor-configuration
   %h1 {{headline()}}
 
-.aux-panel
+.editor-top-right
+  %button(ng-click="preferences.toggleAuxPanel()" ng-class="{active: preferences.showAuxPanel}")
+    Info
+
+.aux-panel(ng-show="preferences.showAuxPanel")
   %header
     %span Content Type Information
   .entity-info-panel

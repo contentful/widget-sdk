@@ -1,3 +1,5 @@
+Does the autocomplete table still look ok?
+
 Pivotal:
 
 - Remove isolate scope on tabs

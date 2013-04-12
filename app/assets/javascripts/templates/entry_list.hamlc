@@ -30,7 +30,7 @@
       %li(ng-class="{active: !tab.params.entryTypeId}" ng-click="switchEntryType(null)")
         %span
           All
-      %li(ng-class="{active: tab.params.entryTypeId==entryType.data.sys.id}" ng-repeat="entryType in bucketContext.entryTypes" ng-click="switchEntryType(entryType)")
+      %li(ng-class="{active: tab.params.entryTypeId==entryType.data.sys.id}" ng-repeat="entryType in bucketContext.publishedEntryTypes" ng-click="switchEntryType(entryType)")
         %span {{entryType.data.name}}
     -#
       %header Saved searches
@@ -84,6 +84,6 @@
   .button-set(ng-controller="EntryListActionsCtrl"   ng-hide="selection.isEmpty()")
     %button.delete(   ng-click="deleteSelected()"    ng-show="showDelete()") Delete
     %button.archive(  ng-click="archiveSelected()"   ng-show="showArchive()") Archive
-    %button.unarchive(ng-click="unarchiveSelected()" ng-show="showUnarchive()") Restore
+    %button.unarchive(ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
     %button.unpublish(ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
     %button.publish(  ng-click="publishSelected()"   ng-show="showPublish()") {{publishButtonName()}}

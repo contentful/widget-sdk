@@ -1,4 +1,4 @@
-angular.module('contentful/controllers').controller('ClientCtrl', function ClientCtrl($scope, client, BucketContext, authentication, contentfulClient, notification) {
+angular.module('contentful/controllers').controller('ClientCtrl', function ClientCtrl($scope, client, BucketContext, authentication, contentfulClient, notification, cfSpinner) {
   'use strict';
 
   $scope.buckets = [];
@@ -6,6 +6,14 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
   $scope.tokenIdentityMap = new contentfulClient.IdentityMap();
 
   $scope.notification = notification;
+
+  $scope.preferences = {
+    showAuxPanel: false,
+
+    toggleAuxPanel: function() {
+      $scope.preferences.showAuxPanel = !$scope.preferences.showAuxPanel;
+    }
+  };
 
   $scope.user = null;
 
@@ -44,6 +52,10 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
       authentication.setTokenLookup(message.token);
       $scope.user = authentication.tokenLookup.sys.createdBy;
       $scope.updateBuckets(authentication.tokenLookup.buckets);
+    } else if (message.type === 'flash') {
+      var level = message.resource.type;
+      if (!level.match(/info|error/)) level = 'info';
+      notification[level](message.resource.message);
     } else {
       $scope.performTokenLookup();
     }
@@ -58,7 +70,7 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
         url: authentication.profileUrl(),
         fullscreen: false
       },
-      title: 'Edit Profile'
+      title: 'Profile'
     };
 
     // TODO This is a pattern that repeats and should be extracted
@@ -73,6 +85,7 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
   $scope.performTokenLookup = function (callback) {
     // TODO initialize blank user so that you can at least log out when
     // the getTokenLookup fails
+    var stopSpinner = cfSpinner.start();
     authentication.getTokenLookup(function(tokenLookup) {
       $scope.$apply(function(scope) {
         console.log('tokenLookup', tokenLookup);
@@ -80,6 +93,7 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
         scope.updateBuckets(tokenLookup.buckets);
         if (callback) callback(tokenLookup);
       });
+      stopSpinner();
     });
   };
 

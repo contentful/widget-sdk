@@ -1,4 +1,4 @@
-angular.module('contentful/directives').directive('cfAutocomplete', function(Paginator, ShareJS){
+angular.module('contentful/directives').directive('cfAutocomplete', function(Paginator, ShareJS, cfSpinner){
   'use strict';
 
   return {
@@ -120,9 +120,11 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
       };
 
       $scope.setLinkedEntriesFromValue = function(value) {
+        var stopSpin;
         if (attrs.cfAutocomplete === 'entries') {
           // TODO case where value is null? Shouldn't occur, but still...
           var ids = _.map(value, function (link) { return link.sys.id; }).join(',');
+          stopSpin = cfSpinner.start();
           $scope.bucketContext.bucket.getEntries({'sys.id[in]': ids}, function (err, entries) {
             entries = _.reduce(entries, function (map, entry) {
               map[entry.getId()] = entry;
@@ -132,16 +134,19 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
             $scope.$apply(function (scope) {
               scope.linkedEntries.splice.apply(scope.linkedEntries, [0, scope.linkedEntries.length].concat(entries));
             });
+            stopSpin();
           });
         } else {
           var linkedId = value && value.sys && value.sys.id;
           if(linkedId) {
             if (value.sys.linkType == 'entry') {
+              stopSpin = cfSpinner.start();
               $scope.bucketContext.bucket.getEntry(linkedId, function(err, entry) {
                 if (!err) $scope.$apply(function(scope) {
                   scope.linkedEntries.length = 1;
                   scope.linkedEntries[0] = entry;
                 });
+                stopSpin();
               });
             }
           } else {
@@ -185,6 +190,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
         }
 
         $scope.reloadInProgress = true;
+        var stopSpin = cfSpinner.start();
         $scope.bucketContext.bucket.getEntries($scope.buildQuery(), function(err, entries, stats) {
           $scope.reloadInProgress = false;
           if (err) return;
@@ -192,6 +198,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
           $scope.$apply(function(scope){
             scope.selectedItem = 0;
             scope.entries = entries;
+            stopSpin();
           });
         });
       };
