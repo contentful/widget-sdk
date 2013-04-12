@@ -112,7 +112,7 @@ angular.module('contentful/directives').directive('cfLocationEditor', function(c
       scope.$watch('searchTerm', function(searchTerm, old, scope) {
         if (searchTerm && searchTerm != old) {
           var geocoder = new google.maps.Geocoder();
-          //var stopSpin = cfSpinner.start();
+          var stopSpin = cfSpinner.start();
           geocoder.geocode({
             address: searchTerm
           }, function(results) {
@@ -127,7 +127,7 @@ angular.module('contentful/directives').directive('cfLocationEditor', function(c
                 scope.offerResults(results);
               }
             });
-            //stopSpin();
+            stopSpin();
           });
         } else {
           scope.results = [];
