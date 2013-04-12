@@ -61,7 +61,7 @@ angular.module('contentful/services').provider('authentication', function Authen
     },
 
     profileUrl: function() {
-      return authApp + 'profile/user/edit?access_token='+this.token;
+      return authApp + 'profile/user?access_token='+this.token;
     },
 
     bucketSettingsUrl: function (bucketId) {

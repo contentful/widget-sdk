@@ -70,7 +70,7 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
         url: authentication.profileUrl(),
         fullscreen: false
       },
-      title: 'Edit Profile'
+      title: 'Profile'
     };
 
     // TODO This is a pattern that repeats and should be extracted
