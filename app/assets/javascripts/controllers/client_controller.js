@@ -52,6 +52,10 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
       authentication.setTokenLookup(message.token);
       $scope.user = authentication.tokenLookup.sys.createdBy;
       $scope.updateBuckets(authentication.tokenLookup.buckets);
+    } else if (message.type === 'flash') {
+      var level = message.resource.type;
+      if (!level.match(/info|error/)) level = 'info';
+      notification[level](message.resource.message);
     } else {
       $scope.performTokenLookup();
     }
