@@ -1,5 +1,22 @@
-angular.module('contentful/directives').directive('iframeView', function(){
+angular.module('contentful/directives').directive('iframeView', function($window, $rootScope){
   'use strict';
+
+  // Create IE + others compatible event handler
+  var eventMethod = $window.addEventListener ? 'addEventListener' : 'attachEvent';
+  var eventer = $window[eventMethod];
+  var messageEvent = eventMethod == 'attachEvent' ? 'onmessage' : 'message';
+
+  // Listen to message from child window
+  eventer(messageEvent, function(event) {
+    if (!event.origin.match(/(flinkly.com|joistio.com|contentful.com)(:\d+)?$/)) // important security check
+      return;
+
+    $rootScope.$apply(function (scope) {
+      scope.$broadcast('iframeMessage', event.data);
+    });
+
+  },false);
+
 
   return {
     template: JST['iframe_view'](),
@@ -7,28 +24,6 @@ angular.module('contentful/directives').directive('iframeView', function(){
     scope: {
       tab: '=',
       bucketContext: '='
-    },
-    //controller: 'IframeViewCtrl',
-    link: function (scope) {
-      // Create IE + others compatible event handler
-      var eventMethod = window.addEventListener ? 'addEventListener' : 'attachEvent';
-      var eventer = window[eventMethod];
-      var messageEvent = eventMethod == 'attachEvent' ? 'onmessage' : 'message';
-
-      // Listen to message from child window
-      eventer(messageEvent, function(event) {
-        //if (event.origin !== window.location.origin) // important security check
-          //return;
-
-        scope.$apply(function (scope) {
-          scope.$emit('iframeMessage', event.data);
-        });
-
-      },false);
-
-      //$(window).on('message', function (event) {
-      //  if (event.origin !== window.location.origin) return;
-      //});
     }
   };
 });
