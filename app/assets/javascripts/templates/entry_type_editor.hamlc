@@ -22,13 +22,12 @@
         .entry-type-field-list
 
 
-.tab-actions
+.tab-actions(ng-controller="EntryTypeActionsCtrl")
   .button-set
-    %button.delete(ng-show="entryType.canDelete()" ng-click="delete()") Delete
-    -#%button.archive(ng-show="entry.canArchive()" ng-click="archive()") Archive
-    -#%button.unpublish(ng-show="entry.canUnpublish()" ng-click="unpublish()") Unpublish
-    %button.publish(ng-show="canPublish() && entryType.data.sys.publishedAt" ng-click="publish()") Republish
-    %button.publish(ng-show="canPublish() && !entryType.data.sys.publishedAt" ng-click="publish()") Publish
+    %button.delete(   ng-show="entryType.canDelete()" ng-click="delete()")
+      Delete
+    %button.publish(  ng-disabled="!canPublish()"     ng-click="publish()")
+      {{publishButtonLabel()}}
   -#.save-status.green
     Not sure if we need this for now
     %i.ss-check
