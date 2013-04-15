@@ -42,7 +42,7 @@
       %a.btn.dropdown-toggle
         %span Events
 
-.aux-panel(ng-show="preferences.showAuxPanel")
+.aux-panel
   %header
     %span Entry Information
   .entity-info-panel

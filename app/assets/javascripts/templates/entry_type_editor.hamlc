@@ -5,7 +5,7 @@
   %button(ng-click="preferences.toggleAuxPanel()" ng-class="{active: preferences.showAuxPanel}")
     Info
 
-.aux-panel(ng-show="preferences.showAuxPanel")
+.aux-panel
   %header
     %span Content Type Information
   .entity-info-panel
