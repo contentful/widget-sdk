@@ -68,7 +68,7 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
       section: null,
       params: {
         url: authentication.profileUrl(),
-        fullscreen: false
+        fullscreen: true
       },
       title: 'Profile'
     };

@@ -57,7 +57,7 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
         section: 'bucketSettings',
         params: {
           url: authentication.bucketSettingsUrl($scope.bucketContext.bucket.getId()),
-          fullscreen: false
+          fullscreen: true
         },
         title: 'Settings'
       };
