@@ -25,9 +25,7 @@ angular.module('contentful/controllers').controller('SaveStatusCtrl', function (
 
   $scope.$watch(function (scope) {
     if (scope.doc) {
-      if (scope.editable === false) {
-        scope.saveStatus = 'not-allowed';
-      } else if (scope.saving) {
+      if (scope.saving) {
         scope.saveStatus = 'saving';
       } else {
         scope.saveStatus = 'saved';
