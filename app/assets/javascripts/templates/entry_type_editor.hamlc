@@ -28,10 +28,7 @@
       Delete
     %button.publish(  ng-disabled="!canPublish()"     ng-click="publish()")
       {{publishButtonLabel()}}
-  -#.save-status.green
-    Not sure if we need this for now
-    %i.ss-check
-    %span All changes saved successfully
+  .save-status
   -#.other-users
     %span 3 others online
     %ul

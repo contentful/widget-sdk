@@ -1,0 +1,8 @@
+%i.ss-check.saved
+%span.saved All changes saved successfully
+%i.ss-sync.saving
+%span.saving Saving…
+%i.ss-caution.not-allowed
+%span.not-allowed You're not allowed to edit this document
+%i.ss-alert.no-connection
+%span.no-connection Can't initialize editor due to connection problems
