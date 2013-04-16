@@ -1,11 +1,6 @@
 'use strict';
 
 angular.module('contentful/controllers').controller('EntryTypeListCtrl', function EntryTypeListCtrl($scope) {
-  $scope.createEntryType = function() {
-    var entryType = this.bucketContext.bucket.createBlankEntryType();
-    this.editEntryType(entryType, 'create');
-  };
-
   $scope.editEntryType = function(entryType) {
     var editor = _(this.tab.list.items).find(function(tab){
       return (tab.viewType == 'entry-type-editor' && tab.params.entryType == entryType);
