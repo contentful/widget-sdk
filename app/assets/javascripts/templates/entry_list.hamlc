@@ -10,16 +10,12 @@
     %ul.left-nav-list
       %li(ng-class="{active: tab.params.list=='all'}" ng-click="switchList('all')")
         %span All
-        %small(ng-show="counts.all != null") ({{counts.all}})
       %li(ng-class="{active: tab.params.list=='published'}" ng-click="switchList('published')")
         %span Published
-        %small(ng-show="counts.published != null") ({{counts.published}})
       %li(ng-class="{active: tab.params.list=='unpublished'}" ng-click="switchList('unpublished')")
         %span Not Published
-        %small(ng-show="counts.unpublished != null") ({{counts.unpublished}})
       %li(ng-class="{active: tab.params.list == 'archived'}" ng-click="switchList('archived')")
         %span Archived
-        %small(ng-show="counts.archived != null") ({{counts.archived}})
       -#
         %li.disabled(ng-class="{active: tab.params.list == 'starred'}")
           %span Starred
