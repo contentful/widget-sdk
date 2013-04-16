@@ -24,7 +24,7 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     }
     editor.activate();
   };
-  
+
   $scope.searchTerm = '';
 
   $scope.$on('entityDeleted', function (event, entity) {
@@ -211,9 +211,7 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     }
   };
 
-  $scope.toggleEntrySelection = function(entry) {
-    
-  };
+  $scope.toggleEntrySelection = function() {};
 
   // Development shorcut to quickly open an entry
 
