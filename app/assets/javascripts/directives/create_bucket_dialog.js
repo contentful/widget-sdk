@@ -12,7 +12,8 @@ angular.module('contentful/directives').directive('createBucketDialog', function
 
         $scope.createBucket = function () {
           var data = {name: $scope.newBucketData.name};
-          if ($scope.newBucketData.defaultLocale) data.defaultLocale = $scope.newBucketData.defaultLocale;
+          if ($scope.newBucketData.defaultLocale)
+            data.defaultLocale = $scope.newBucketData.defaultLocale;
           client.createBucket(data, function (err, newBucket) {
             console.log('new bucket', newBucket);
             $scope.performTokenLookup(function () {
@@ -25,7 +26,7 @@ angular.module('contentful/directives').directive('createBucketDialog', function
           });
         };
       },
-      link: function (scope, elem, attr) {
+      link: function (scope, elem) {
         //console.log('linking create bucket dialog');
         scope.$watch('displayCreateBucketDialog', function (display) {
           if (display) elem.find('input').eq(0).focus();
