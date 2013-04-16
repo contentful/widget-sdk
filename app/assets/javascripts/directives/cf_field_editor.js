@@ -6,7 +6,7 @@ angular.module('contentful/directives').directive('cfFieldEditor', function(widg
     scope: {
       field: '=',
       doc: '=',
-      locale: '=localeName', // TODO rename the internal var to localeName as well, check dependencies
+      locale: '=localeCode', // TODO rename the internal var to localeCode as well, check dependencies
       bucketContext: '=',
       //value: '='
     },
