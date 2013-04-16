@@ -13,7 +13,7 @@ angular.module('contentful/controllers').controller('EntryTypeListCtrl', functio
           entryType: entryType,
           mode: 'edit'
         },
-        title: 'Edit Content Type'
+        title: entryType.data.name || 'Untitled'
       });
     }
     editor.activate();
