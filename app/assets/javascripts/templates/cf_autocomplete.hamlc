@@ -1,6 +1,3 @@
-%ul.links(ng-show="linkedEntries.length == 0")
-  %li
-    (none)
 %ul.links(ng-hide="linkedEntries.length == 0")
   %li(ng-repeat="entry in linkedEntries")
     %a(ng-click="visitLink(entry)") {{linkDescription(entry)}}
