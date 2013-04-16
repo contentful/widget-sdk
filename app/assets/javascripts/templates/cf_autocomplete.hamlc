@@ -2,7 +2,7 @@
   %li(ng-repeat="entry in linkedEntries")
     %a(ng-click="visitLink(entry)") {{linkDescription(entry)}}
     %i.ss-delete(ng-click="removeLink(entry)" ng-show="editable")
-.controls(ng-show="editable")
+.controls(ng-show="editable && (linkedEntries.length == 0 || field.type == 'array')")
   .dropdown-btn.add-new
     %button.dropdown-toggle
       %i.ss-plus
