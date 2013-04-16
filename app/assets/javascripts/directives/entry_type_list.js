@@ -6,6 +6,7 @@ angular.module('contentful/directives').directive('entryTypeList', function(){
     restrict: 'C',
     scope: {
       bucketContext: '=',
+      createEntryType: '=',
       tab: '='
     },
     controller: 'EntryTypeListCtrl',

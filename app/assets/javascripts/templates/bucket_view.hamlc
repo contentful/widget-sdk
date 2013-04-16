@@ -40,7 +40,7 @@
 .tab-content(ng-repeat="tab in bucketContext.tabList.items" ng-show="tab.active()" ng-switch="tab.viewType")
   .iframe-view(      ng-switch-when="iframe"            tab="tab" bucket-context="bucketContext")
   .entry-list(       ng-switch-when="entry-list"        tab="tab" bucket-context="bucketContext")
-  .entry-type-list(  ng-switch-when="entry-type-list"   tab="tab" bucket-context="bucketContext")
+  .entry-type-list(  ng-switch-when="entry-type-list"   tab="tab" bucket-context="bucketContext" create-entry-type="createEntryType")
   .entry-editor(     ng-switch-when="entry-editor"      tab="tab" bucket-context="bucketContext" ot-doc-for="entry" preferences="preferences" ng-class="{'with-aux-panel': preferences.showAuxPanel}")
   .entry-type-editor(ng-switch-when="entry-type-editor" tab="tab" bucket-context="bucketContext" ot-doc-for="entryType" preferences="preferences" ng-class="{'with-aux-panel': preferences.showAuxPanel}")
   %div(ng-switch-default="")

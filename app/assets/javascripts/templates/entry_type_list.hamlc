@@ -1,7 +1,10 @@
 .tab-header
   %h1 Content Model
 .tab-main
-  %table.result-list.main-header
+  .create-content-type-advice(ng-show="empty")
+    %p Looks like you havent created any Content Types yet.
+    %button(ng-click="createEntryType()") Create Content Type
+  %table.result-list.main-header(ng-hide="empty")
     %thead
       %tr
         %th.cell-type ID
@@ -9,7 +12,7 @@
         %th.cell-by Fields
         %th.cell-created Created
         %th.cell-status Status
-  .main-results-wrapper
+  .main-results-wrapper(ng-hide="empty")
     %table.result-list.main-results
       %tbody
         %tr(ng-repeat="entryType in bucketContext.entryTypes" cf-click-local="editEntryType(entryType)")

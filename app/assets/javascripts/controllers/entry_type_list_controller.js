@@ -47,4 +47,8 @@ angular.module('contentful/controllers').controller('EntryTypeListCtrl', functio
     }
   };
 
+  $scope.$watch('bucketContext.entryTypes', function(l) {
+    $scope.empty = _.isEmpty(l);
+  });
+
 });
