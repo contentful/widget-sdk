@@ -6,5 +6,5 @@
     %ul
       %li(ng-click="createEntryType()" dropdown-close="") Content Type
     %ul(ng-show="bucketContext.publishedEntryTypes.length > 0")
-      %li(ng-repeat="entryType in bucketContext.publishedEntryTypes" ng-click="createEntry(entryType)" dropdown-close="")
+      %li(ng-repeat="(index, entryType) in bucketContext.publishedEntryTypes" ng-click="createEntry(entryType)" dropdown-close="" ng-class="{separator: index == 0}")
         {{entryType.data.name}}
