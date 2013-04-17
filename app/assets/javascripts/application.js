@@ -7,6 +7,8 @@
 //
 //= require jquery.cookies.2.2.0
 //
+//= require bootstrap-tooltip
+//
 //= require moment-1.7.2
 //
 //= require bcsocket-uncompressed
