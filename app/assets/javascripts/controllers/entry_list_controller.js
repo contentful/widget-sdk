@@ -45,25 +45,18 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     $scope.tab.params.contentType = type;
   };
 
-  $scope.switchList = function(list){
-    if ($scope.tab.params.list == list) {
-      this.resetEntries();
-    } else {
-      this.paginator.page = 0;
-      this.tab.params.list = list;
-    }
-  };
+  $scope.switchList = function(list, entryType){
+    var params = $scope.tab.params;
+    var shouldReset =
+      params.list == list &&
+      (!entryType || params.entryTypeId == entryType.getId());
 
-  $scope.switchEntryType = function(entryType){
-    if ($scope.tab.params.entryTypeId == entryType) {
+    if (shouldReset) {
       this.resetEntries();
     } else {
       this.paginator.page = 0;
-      if (entryType) {
-        this.tab.params.entryTypeId = entryType.getId();
-      } else {
-        this.tab.params.entryTypeId = null;
-      }
+      params.entryTypeId = entryType ? entryType.getId() : null;
+      params.list = list;
     }
   };
 
@@ -127,9 +120,7 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
       queryObject['sys.publishedAt'] = 0;
     } else if (this.tab.params.list == 'archived') {
       queryObject['sys.archivedAt[gt]'] = 0;
-    }
-
-    if (this.tab.params.entryTypeId) {
+    } else if (this.tab.params.list == 'entryType') {
       queryObject['sys.entryType.sys.id'] = this.tab.params.entryTypeId;
     }
 

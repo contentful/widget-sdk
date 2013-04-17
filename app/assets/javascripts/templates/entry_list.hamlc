@@ -6,13 +6,13 @@
   .search-results-position(paginator="paginator")
 .tab-main
   .left-nav
-    %header Entries
+    %header Status
     %ul.left-nav-list
-      %li(ng-class="{active: tab.params.list=='all'}" ng-click="switchList('all')")
+      %li(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
         %span All
-      %li(ng-class="{active: tab.params.list=='published'}" ng-click="switchList('published')")
+      %li(ng-class="{active: tab.params.list == 'published'}" ng-click="switchList('published')")
         %span Published
-      %li(ng-class="{active: tab.params.list=='unpublished'}" ng-click="switchList('unpublished')")
+      %li(ng-class="{active: tab.params.list == 'unpublished'}" ng-click="switchList('unpublished')")
         %span Not Published
       %li(ng-class="{active: tab.params.list == 'archived'}" ng-click="switchList('archived')")
         %span Archived
@@ -23,10 +23,9 @@
           %span Created by me
     %header Content Types
     %ul.left-nav-list
-      %li(ng-class="{active: !tab.params.entryTypeId}" ng-click="switchEntryType(null)")
-        %span
-          All
-      %li(ng-class="{active: tab.params.entryTypeId==entryType.data.sys.id}" ng-repeat="entryType in bucketContext.publishedEntryTypes" ng-click="switchEntryType(entryType)")
+      %li(ng-class="{active: tab.params.entryTypeId == entryType.data.sys.id}"
+          ng-repeat="entryType in bucketContext.publishedEntryTypes"
+          ng-click="switchList('entryType', entryType)")
         %span {{entryType.data.name}}
     -#
       %header Saved searches
