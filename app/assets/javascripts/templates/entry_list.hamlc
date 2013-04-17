@@ -53,6 +53,8 @@
           %th.cell-by By
           %th.cell-created Created
           %th.cell-status Status
+    .results-empty(ng-show="entries.length == 0")
+      No entries matching your selection.
     .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
       %table.result-list.main-results
         %tbody
