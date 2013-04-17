@@ -2,7 +2,8 @@
   %h1 {{headline()}}
 
 .editor-top-right
-  %button(ng-click="preferences.toggleAuxPanel()" ng-class="{active: preferences.showAuxPanel}")
+  %button(ng-click="preferences.toggleAuxPanel()"
+          ng-class="{active: preferences.showAuxPanel}")
     Info
 
 .aux-panel
