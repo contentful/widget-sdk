@@ -154,7 +154,6 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     if (this.paginator.atLast()) return;
     var scope = this;
     this.paginator.page++;
-    this.reloadInProgress = true;
     this.pauseReset();
     var stopSpin = cfSpinner.start();
     this.bucketContext.bucket.getEntries(this.buildQuery(), function(err, entries, stats) {
@@ -173,6 +172,9 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
       });
     });
 
+    scope.$apply(function(scope) {
+      scope.reloadInProgress = true;
+    });
   };
 
   $scope.statusClass = function(entry){
