@@ -124,7 +124,7 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     } else if (this.tab.params.list == 'published') {
       queryObject['sys.publishedAt[gt]'] = 0;
     } else if (this.tab.params.list == 'unpublished') {
-      queryObject['sys.publishedAt[exists]'] = false;
+      queryObject['sys.publishedAt'] = 0;
     } else if (this.tab.params.list == 'archived') {
       queryObject['sys.archivedAt[gt]'] = 0;
     }
