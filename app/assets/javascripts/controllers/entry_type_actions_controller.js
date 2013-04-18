@@ -33,7 +33,12 @@ angular.module('contentful/controllers').
     if (!$scope.doc) return false;
     var version = $scope.doc.version;
     var publishedVersion = $scope.doc.getAt(['sys', 'publishedVersion']);
-    return this.entryType.canPublish() && (!publishedVersion || version > publishedVersion);
+    var notPublishedYet = !publishedVersion;
+    var updatedSincePublishing = version > publishedVersion;
+    var hasFields = $scope.doc.getAt(['fields']).length > 0;
+    return this.entryType.canPublish() &&
+      (notPublishedYet || updatedSincePublishing) &&
+      hasFields;
   };
 
   $scope.publish = function () {
