@@ -71,16 +71,6 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
     tab.activate();
   };
 
-
-  $scope.$on('tabListButtonClicked', function(event, info) {
-    var scope = event.currentScope;
-    if (info.button === 'createEntry') {
-      scope.createEntry(info.entryType);
-    } else if (info.button === 'createEntryType') {
-      scope.createEntryType();
-    }
-  });
-
   $scope.$on('entityDeleted', function (event, entity) {
     var bucketScope = event.currentScope;
     if (event.targetScope !== bucketScope) {
