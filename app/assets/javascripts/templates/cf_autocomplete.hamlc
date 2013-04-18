@@ -10,7 +10,10 @@
     %a.dropdown-menu
       %ul
         %li(ng-repeat="entryType in bucketContext.publishedEntryTypes" ng-click="addNew(entryType)" dropdown-close="") {{entryType.data.name}}
-  .search-field(on-idle-update="searchTerm" placeholder="Search for entries")
+  .search-field(on-idle-update="searchTerm"
+                placeholder="Search for entries"
+                data-placement="top"
+                title="Search for existing entries")
 
 .results.btn-right-on.search-options-on(ng-show="hasResults()")
   %table.result-list
