@@ -3,32 +3,25 @@
 angular.module('contentful/directives').directive('dropdownBtn', function() {
   return {
     restrict: 'C',
-    scope: {},
-    transclude: true,
-    controller: function($transclude, $element) {
-      $transclude(function(clone) {
-        $element.append(clone);
-      });
-    },
     link: function(scope, element) {
-      scope.isOpen = false;
+      var isOpen = false;
 
-      scope.open = function() {
-        this.isOpen = true;
+      var open = function() {
+        isOpen = true;
       };
 
-      scope.close = function() {
-        this.isOpen = false;
+      var close = function() {
+        isOpen = false;
       };
 
-      scope.toggle = function() {
-        this.isOpen = !this.isOpen;
+      var toggle = function() {
+        isOpen = !isOpen;
       };
 
       element.find('.dropdown-toggle').click(function(event) {
         event.preventDefault();
-        scope.$apply(function(scope) {
-          scope.toggle();
+        scope.$apply(function() {
+          toggle();
         });
       });
 
@@ -40,12 +33,14 @@ angular.module('contentful/directives').directive('dropdownBtn', function() {
 
         var clickOnClose = inside && $(event.target).attr('dropdown-close') !== undefined;
 
-        if (clickOutside || clickOnClose) scope.$apply(function(scope) {
-          scope.close();
+        if (clickOutside || clickOnClose) scope.$apply(function() {
+          close();
         });
       };
 
-      scope.$watch('isOpen', function(isOpen) {
+      scope.$watch(function dropDownIsOpenWatcher(){
+        return isOpen;
+      }, function(isOpen) {
         var button = element;
         var content = element.find('.dropdown-menu');
         if (isOpen) {

@@ -239,7 +239,6 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
         if ($scope.reloadInProgress || $scope.resetPaused) return;
         if ($scope.paginator.atLast()) return;
         $scope.paginator.page++;
-        $scope.reloadInProgress = true;
         $scope.pauseReset();
         $scope.bucketContext.bucket.getEntries($scope.buildQuery(), function(err, entries, stats) {
           $scope.reloadInProgress = false;
@@ -254,6 +253,9 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
           });
         });
 
+        $scope.apply(function(scope) {
+          scope.reloadInProgress = true;
+        });
       };
 
       element.on('keydown', function navigateResultList(event) {

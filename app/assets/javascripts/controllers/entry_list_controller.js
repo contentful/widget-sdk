@@ -24,7 +24,7 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     }
     editor.activate();
   };
-  
+
   $scope.searchTerm = '';
 
   $scope.$on('entityDeleted', function (event, entity) {
@@ -45,25 +45,18 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     $scope.tab.params.contentType = type;
   };
 
-  $scope.switchList = function(list){
-    if ($scope.tab.params.list == list) {
-      this.resetEntries();
-    } else {
-      this.paginator.page = 0;
-      this.tab.params.list = list;
-    }
-  };
+  $scope.switchList = function(list, entryType){
+    var params = $scope.tab.params;
+    var shouldReset =
+      params.list == list &&
+      (!entryType || params.entryTypeId == entryType.getId());
 
-  $scope.switchEntryType = function(entryType){
-    if ($scope.tab.params.entryTypeId == entryType) {
+    if (shouldReset) {
       this.resetEntries();
     } else {
       this.paginator.page = 0;
-      if (entryType) {
-        this.tab.params.entryTypeId = entryType.getId();
-      } else {
-        this.tab.params.entryTypeId = null;
-      }
+      params.entryTypeId = entryType ? entryType.getId() : null;
+      params.list = list;
     }
   };
 
@@ -124,12 +117,10 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     } else if (this.tab.params.list == 'published') {
       queryObject['sys.publishedAt[gt]'] = 0;
     } else if (this.tab.params.list == 'unpublished') {
-      queryObject['sys.publishedAt[exists]'] = false;
+      queryObject['sys.publishedAt[exists]'] = 'false';
     } else if (this.tab.params.list == 'archived') {
       queryObject['sys.archivedAt[gt]'] = 0;
-    }
-
-    if (this.tab.params.entryTypeId) {
+    } else if (this.tab.params.list == 'entryType') {
       queryObject['sys.entryType.sys.id'] = this.tab.params.entryTypeId;
     }
 
@@ -154,7 +145,6 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     if (this.paginator.atLast()) return;
     var scope = this;
     this.paginator.page++;
-    this.reloadInProgress = true;
     this.pauseReset();
     var stopSpin = cfSpinner.start();
     this.bucketContext.bucket.getEntries(this.buildQuery(), function(err, entries, stats) {
@@ -173,33 +163,10 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
       });
     });
 
+    scope.$apply(function(scope) {
+      scope.reloadInProgress = true;
+    });
   };
-
-  $scope.counts = {};
-
-  $scope.loadCounts = function() {
-    var scope = this;
-    var countRequests = {
-      'all'        : {},
-      'archived'   : {'sys.archivedAt[gt]'     : 0    },
-      'published'  : {'sys.publishedAt[gt]'    : 0    },
-      'unpublished': {'sys.publishedAt[exists]': false}
-    };
-
-    function updateCount(group) {
-      return function(err, entries, stats) {
-        scope.$apply(function(scope) {
-          scope.counts[group] = stats.total;
-        });
-      };
-    }
-
-    for (var group in countRequests) {
-      this.bucketContext.bucket.getEntries(countRequests[group], updateCount(group));
-    }
-  };
-
-  $scope.$watch('bucketContext.bucket', 'loadCounts()');
 
   $scope.statusClass = function(entry){
     if (entry.isPublished()) {
@@ -211,9 +178,7 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     }
   };
 
-  $scope.toggleEntrySelection = function(entry) {
-    
-  };
+  $scope.toggleEntrySelection = function() {};
 
   // Development shorcut to quickly open an entry
 

@@ -10,7 +10,7 @@
         …
         …
         …
-    .dropdown-btn(ng-show="bucketContext.activeLocales.length > 1")
+    .dropdown-btn(ng-show="bucketContext.publishLocales.length > 1")
       %a.dropdown-toggle
         %i.ss-dropdown
         %span Languages
@@ -21,7 +21,7 @@
         %ul
           %li(ng-repeat="locale in bucketContext.publishLocales")
             %label
-              %input(type="checkbox" ng-model="bucketContext.localesActive[locale.name]")
+              %input(type="checkbox" ng-model="bucketContext.localesActive[locale.code]")
               {{locale.name}}
 
   .editor-top-right
@@ -42,7 +42,7 @@
       %a.btn.dropdown-toggle
         %span Events
 
-.aux-panel(ng-show="preferences.showAuxPanel")
+.aux-panel
   %header
     %span Entry Information
   .entity-info-panel
@@ -51,7 +51,7 @@
   %form.form-horizontal(name="entryForm")
     -#.field(data-field-type="string" data-field-widget="textField")
       later generate these tags so they can be used in CSS
-    .form-field(ng-repeat="field in fields()" data-field-type="{{field.type}}")
+    .form-field(ng-repeat="field in fields()" data-field-type="{{field.type}}" data-field-items-type="{{field.items.type}}")
       %label {{field.name}}
       .form-controls
         .locale(ng-repeat="locale in bucketContext.activeLocales")
@@ -72,10 +72,7 @@
     %button.unpublish(ng-show="entry.canUnpublish()" ng-click="unpublish()") Unpublish
     %button.publish(ng-show="formValid() && canPublish()" ng-click="publish()")
       {{publishButtonLabel()}}
-  -#.save-status.green
-    Not sure if we need this for now
-    %i.ss-check
-    %span All changes saved successfully
+  .save-status
   -#.other-users
     %span 3 others online
     %ul

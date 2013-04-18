@@ -207,7 +207,7 @@ $form-offset: 11px
 .form-field
   // Styling for specific types
   &[data-field-type=boolean] .form-controls,
-  &[data-field-type=array] .form-controls
+  &[data-field-type=array][data-field-items-type=string] .form-controls
     label
       width: auto
       position: relative
@@ -219,7 +219,8 @@ $form-offset: 11px
     padding-top: 10px
 
 .form-field
-  &[data-field-type=link]
+  &[data-field-type=link],
+  &[data-field-type=array][data-field-items-type=link]
     margin: 25px 0 15px
     .links 
       border-top: 1px solid $light-rule

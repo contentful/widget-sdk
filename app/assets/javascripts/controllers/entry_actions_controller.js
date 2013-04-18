@@ -4,13 +4,17 @@ angular.module('contentful/controllers').controller('EntryActionsCtrl', function
   // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,
   // We can query the entry instead of reimplementing the checks heere
 
+  function title() {
+    return '"' + $scope.bucketContext.entryTitle($scope.entry) + '"';
+  }
+
   $scope.delete = function () {
     $scope.entry.delete(function (err, entry) {
       $scope.$apply(function (scope) {
         if (err) {
-          notification.error('Error deleting entry (' + err.body.sys.id + ')');
+          notification.error('Error deleting entry');
         }else{
-          notification.info('Entry successfully deleted');
+          notification.info('Entry deleted successfully');
           scope.$emit('entityDeleted', entry);
         }
       });
@@ -30,9 +34,9 @@ angular.module('contentful/controllers').controller('EntryActionsCtrl', function
     $scope.entry.archive(function(err) {
       $scope.$apply(function() {
         if (err)
-          notification.error('Error archiving entry (' + err.body.sys.id + ')');
+          notification.error('Error archiving ' + title() + ' (' + err.body.sys.id + ')');
         else
-          notification.info('Entry successfully archived');
+          notification.info(title() + ' archived successfully');
       });
     });
   };
@@ -41,9 +45,9 @@ angular.module('contentful/controllers').controller('EntryActionsCtrl', function
     $scope.entry.unarchive(function(err) {
       $scope.$apply(function() {
         if (err)
-          notification.error('Error unarchiving entry (' + err.body.sys.id + ')');
+          notification.error('Error unarchiving ' + title + ' (' + err.body.sys.id + ')');
         else
-          notification.info('Entry successfully unarchived');
+          notification.info(title() + ' unarchived successfully');
       });
     });
   };
@@ -52,9 +56,9 @@ angular.module('contentful/controllers').controller('EntryActionsCtrl', function
     $scope.entry.unpublish(function (err) {
       $scope.$apply(function(scope){
         if (err) {
-          notification.error('Error unpublishing entry (' + err.body.sys.id + ')');
+          notification.error('Error unpublishing ' + title() + ' (' + err.body.sys.id + ')');
         } else {
-          notification.info('Entry successfully unpublished');
+          notification.info(title() + ' unpublished successfully');
           scope.otUpdateEntity();
         }
       });
@@ -79,9 +83,9 @@ angular.module('contentful/controllers').controller('EntryActionsCtrl', function
             reason = 'Validation failed';
           if (errorId === 'versionMismatch')
             reason = 'Can only publish most recent version';
-          notification.error('Error publishing entry: ' + reason);
+          notification.error('Error publishing ' + title() + ': ' + reason);
         } else {
-          notification.info('Entry successfully published');
+          notification.info(title() + ' published successfully');
           scope.otUpdateEntity();
         }
       });

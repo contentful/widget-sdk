@@ -1,11 +1,6 @@
 'use strict';
 
 angular.module('contentful/controllers').controller('EntryTypeListCtrl', function EntryTypeListCtrl($scope) {
-  $scope.createEntryType = function() {
-    var entryType = this.bucketContext.bucket.createBlankEntryType();
-    this.editEntryType(entryType, 'create');
-  };
-
   $scope.editEntryType = function(entryType) {
     var editor = _(this.tab.list.items).find(function(tab){
       return (tab.viewType == 'entry-type-editor' && tab.params.entryType == entryType);
@@ -18,7 +13,7 @@ angular.module('contentful/controllers').controller('EntryTypeListCtrl', functio
           entryType: entryType,
           mode: 'edit'
         },
-        title: 'Edit Content Type'
+        title: entryType.data.name || 'Untitled'
       });
     }
     editor.activate();
@@ -51,5 +46,9 @@ angular.module('contentful/controllers').controller('EntryTypeListCtrl', functio
       return 'draft';
     }
   };
+
+  $scope.$watch('bucketContext.entryTypes', function(l) {
+    $scope.empty = _.isEmpty(l);
+  });
 
 });

@@ -33,7 +33,7 @@ $result-list-highlight: #fbfbfb
 .result-list
   table-layout: fixed
   // borders
-  border: 1px solid $dark-rule
+  border: 0 solid $dark-rule
   tbody
     td
       border-bottom: 1px solid $light-rule
@@ -53,10 +53,12 @@ $result-list-highlight: #fbfbfb
     overflow: hidden
     text-overflow: ellipsis
   th
+    +box-shadow(0 2px 2px -1px rgba(0, 0, 0, .1))
     font-weight: normal
     font-size: 11px
     padding: 4px 0 3px 0
     color: $light-gray
+    text-transform: uppercase
   th:first-child,
   td:first-child
     padding-left: 13px

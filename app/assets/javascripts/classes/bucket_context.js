@@ -22,7 +22,7 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
         if (this.bucket) {
           this.publishLocales = this.bucket.getPublishLocales();
           this.defaultLocale  = this.bucket.getDefaultLocale();
-          this.localesActive[this.defaultLocale.name] = true;
+          this.localesActive[this.defaultLocale.code] = true;
         } else {
           this.publishLocales = [];
           this.defaultLocale  = null;
@@ -32,8 +32,8 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
       refreshActiveLocales: function () {
         var newLocaleStates = {}, newActiveLocales = [];
         _.each(this.publishLocales, function (locale) {
-          if (this.localesActive[locale.name]) {
-            newLocaleStates[locale.name] = true;
+          if (this.localesActive[locale.code]) {
+            newLocaleStates[locale.code] = true;
             newActiveLocales.push(locale);
           }
         }, this);
@@ -76,17 +76,17 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
       typeForEntry: function(entry) {
         return this._entryTypesHash[entry.getEntryTypeId()];
       },
-      entryTitle: function(entry, localeName) {
+      entryTitle: function(entry, localeCode) {
         var defaultTitle = 'Untitled';
 
-        localeName = localeName || this.bucket.getDefaultLocale().name;
+        localeCode = localeCode || this.bucket.getDefaultLocale().code;
 
         try {
           var displayField = this.typeForEntry(entry).data.displayField;
           if (!displayField) {
             return defaultTitle;
           } else {
-            var title = entry.data.fields[displayField][localeName];
+            var title = entry.data.fields[displayField][localeCode];
             if (!title || title.match(/^\s*$/)) {
               return defaultTitle;
             } else {
