@@ -3,14 +3,17 @@
     %a(ng-click="visitLink(entry)") {{linkDescription(entry)}}
     %i.ss-delete(ng-click="removeLink(entry)" ng-show="editable")
 .controls(ng-show="editable && (linkedEntries.length == 0 || field.type == 'array')")
-  .dropdown-btn.add-new
+  .dropdown-btn.add-new(title="Add new Entry" data-placement="left")
     %button.dropdown-toggle
       %i.ss-plus
       New
     %a.dropdown-menu
       %ul
         %li(ng-repeat="entryType in bucketContext.publishedEntryTypes" ng-click="addNew(entryType)" dropdown-close="") {{entryType.data.name}}
-  .search-field(on-idle-update="searchTerm" placeholder="Search for entries")
+  .search-field(on-idle-update="searchTerm"
+                placeholder="Search for entries"
+                data-placement="top"
+                title="Search for existing entries")
 
 .results.btn-right-on.search-options-on(ng-show="hasResults()")
   %table.result-list

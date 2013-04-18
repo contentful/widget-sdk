@@ -3,7 +3,9 @@
 
 .editor-top-right
   %button(ng-click="preferences.toggleAuxPanel()"
-          ng-class="{active: preferences.showAuxPanel}")
+          ng-class="{active: preferences.showAuxPanel}"
+          data-placement="left"
+          title="Toggle additional details")
     Info
 
 .aux-panel
@@ -25,9 +27,13 @@
 
 .tab-actions(ng-controller="EntryTypeActionsCtrl")
   .button-set
-    %button.delete(   ng-show="entryType.canDelete()" ng-click="delete()")
+    %button.delete(ng-show="entryType.canDelete()"
+                   ng-click="delete()"
+                   title="Delete this Content Type")
       Delete
-    %button.publish(  ng-disabled="!canPublish()"     ng-click="publish()")
+    %button.publish(ng-disabled="!canPublish()"
+                    ng-click="publish()"
+                    title="Make this Content Type available to editors")
       {{publishButtonLabel()}}
   .save-status
   -#.other-users
