@@ -6,7 +6,7 @@ angular.module('contentful/directives').
       restrict: 'A',
       link: function(scope, element, attr) {
         $(element).tooltip({
-          delay: {show: 500, hide: 100}
+          delay: {show: 100, hide: 100}
         });
 
         scope.$watch(attr.ngDisabled, function(disabled) {
