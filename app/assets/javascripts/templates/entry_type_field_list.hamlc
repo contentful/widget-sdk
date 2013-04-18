@@ -19,7 +19,7 @@
       %td(colspan="9")
         .field-settings
         .field-validations(ng-show="showValidations")
-    
+
 %form.new-field-form(name="newField")
   %table.result-list.new-field
     %tr.field
