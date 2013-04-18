@@ -25,7 +25,10 @@
               {{locale.name}}
 
   .editor-top-right
-    %button(ng-click="preferences.toggleAuxPanel()" ng-class="{active: preferences.showAuxPanel}")
+    %button(ng-click="preferences.toggleAuxPanel()"
+            ng-class="{active: preferences.showAuxPanel}"
+            title="Toggle additional details"
+            data-placement="left")
       Info
     -#.dropdown-btn>
       %a.btn.dropdown-toggle
@@ -72,11 +75,11 @@
 
 .tab-actions(ng-controller="EntryActionsCtrl")
   .button-set
-    %button.delete(   ng-show="entry.canDelete()"    ng-click="delete()"   ) Delete
-    %button.archive(  ng-show="entry.canArchive()"   ng-click="archive()"  ) Archive
-    %button.archive(  ng-show="entry.canUnarchive()" ng-click="unarchive()") Unarchive
-    %button.unpublish(ng-show="entry.canUnpublish()" ng-click="unpublish()") Unpublish
-    %button.publish(ng-show="formValid() && canPublish()" ng-click="publish()")
+    %button.delete(   ng-show="entry.canDelete()"    ng-click="delete()"       title="Permanently delete this Entry") Delete
+    %button.archive(  ng-show="entry.canArchive()"   ng-click="archive()"      title="Archive this Entry") Archive
+    %button.archive(  ng-show="entry.canUnarchive()" ng-click="unarchive()"    title="Unarchive this Entry") Unarchive
+    %button.unpublish(ng-show="entry.canUnpublish()" ng-click="unpublish()"    title="Unpublish this Entry") Unpublish
+    %button.publish(ng-show="formValid() && canPublish()" ng-click="publish()" title="Publish this Entry")
       {{publishButtonLabel()}}
   .save-status
   -#.other-users

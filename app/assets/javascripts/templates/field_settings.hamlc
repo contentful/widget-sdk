@@ -11,23 +11,32 @@
     ng-disabled="!displayEnabled(field)"
     ot-bind="model")
 .localized(ot-edit-path="['fields', index, 'localized']")
-  %input(type="checkbox" ng-model="value" ot-bind="model")
+  %input(type="checkbox" ng-model="value" ot-bind="model"
+         data-placement="left"
+         title="Content in this field is localized")
 .required(ot-edit-path="['fields', index, 'required']")
-  %input(type="checkbox" ng-model="value" ot-bind="model")
+  %input(type="checkbox" ng-model="value" ot-bind="model"
+         data-placement="left"
+         title="Make field mandatory")
 .validations
-  %a.button(ng-click="toggleValidations()")
+  %a.button(ng-click="toggleValidations()"
+            data-placement="left"
+            title="Validate content in this Field")
     %i.ss-settings
 .action(ng-class="{archived: !published, published: published && !field.disabled, draft: published && field.disabled}")
-  %a.button.delete(ng-show="!published" ng-click="delete()")
+  %a.button.delete(ng-show="!published"
+                   ng-click="delete()"
+                   data-placement="left"
+                   title="Delete this Field")
     %i.ss-trash
   %a.button.deactivate(ng-show="published && !field.disabled"
                        ng-click="disable()"
                        data-placement="left"
-                       title="Disable Field")
+                       title="Show this Field")
     %i.ss-check
   %a.button.activate(ng-show="published && field.disabled"
                      ng-click="enable()"
                      data-placement="left"
-                     title="Enable Field")
+                     title="Hide this Field")
     %i.ss-ban
   .main-results-bar
