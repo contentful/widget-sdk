@@ -39,5 +39,8 @@
             %input(type="checkbox" ng-model="newRequired")
           .validations
           .action
-            %button.button.new(ng-click="addField()" ng-disabled="newField.$invalid")
+            %button.button.new(ng-click="addField()"
+                               ng-disabled="newField.$invalid"
+                               title="Add this field"
+                               data-placement="left")
               %i.ss-plus
