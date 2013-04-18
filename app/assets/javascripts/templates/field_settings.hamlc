@@ -36,11 +36,11 @@
   %a.button.deactivate(ng-show="published && !field.disabled"
                        ng-click="disable()"
                        data-placement="left"
-                       title="Show this Field")
+                       title="Hide this Field")
     %i.ss-check
   %a.button.activate(ng-show="published && field.disabled"
                      ng-click="enable()"
                      data-placement="left"
-                     title="Hide this Field")
+                     title="Show this Field")
     %i.ss-ban
   .main-results-bar
