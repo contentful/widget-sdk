@@ -5,7 +5,9 @@ angular.module('contentful/directives').
     return {
       restrict: 'A',
       link: function(scope, element) {
-        $(element).tooltip();
+        $(element).tooltip({
+          delay: {show: 500, hide: 100}
+        });
       }
     };
   });
