@@ -25,7 +25,7 @@ angular.module('contentful/directives').directive('searchField', function(cfSpin
       scope.hasFilters = function() {
         return false;
       };
-      
+
       var stopSpin;
 
       var userChangeStart = function () {
