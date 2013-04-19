@@ -41,10 +41,6 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     scope.resetEntries();
   });
 
-  $scope.switchContentType = function(type){
-    $scope.tab.params.contentType = type;
-  };
-
   $scope.switchList = function(list, entryType){
     var params = $scope.tab.params;
     var shouldReset =
