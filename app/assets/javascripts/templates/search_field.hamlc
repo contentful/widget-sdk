@@ -1,4 +1,4 @@
-.row(ng-submit="update()")
+.row
   .input
     %input(type="search" ng-model="inner.term" placeholder="{{placeholder}}")
   .search-button(ng-click="update()")

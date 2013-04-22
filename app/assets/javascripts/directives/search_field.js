@@ -15,7 +15,6 @@ angular.module('contentful/directives').directive('searchField', function(){
     scope: {
       placeholder: '@',
       search: '='
-
     },
 
     link: function(scope, element, attr) {
@@ -43,6 +42,10 @@ angular.module('contentful/directives').directive('searchField', function(){
       $scope.update = function() {
         $scope.search.term = $scope.inner.term;
       };
+
+      $scope.$watch('search.term', function(term) {
+        $scope.inner.term = term;
+      });
     }
   };
 });
