@@ -2,7 +2,7 @@
   .left-nav
     %h1 Entries
   .search-area.with-left-nav
-    %form.search-field(on-idle-update="searchTerm" placeholder="Type to search for entries")
+    .search-field(search="search" placeholder="Search for entries")
   .search-results-position(paginator="paginator")
 .tab-main
   .left-nav

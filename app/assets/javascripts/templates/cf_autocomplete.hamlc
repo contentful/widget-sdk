@@ -9,8 +9,13 @@
       New
     %a.dropdown-menu
       %ul
-        %li(ng-repeat="entryType in bucketContext.publishedEntryTypes" ng-click="addNew(entryType)" dropdown-close="") {{entryType.data.name}}
-  .search-field(on-idle-update="searchTerm"
+        %li(ng-repeat="entryType in bucketContext.publishedEntryTypes"
+            ng-click="addNew(entryType)"
+            dropdown-close="")
+          {{entryType.data.name}}
+  .search-field(ng-submit="submit()"
+                search="search"
+                search-type-ahead=""
                 placeholder="Search for entries"
                 data-placement="top"
                 title="Search for existing entries")
@@ -25,7 +30,9 @@
   .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
     %table.result-list
       %tbody
-        %tr(ng-repeat="entry in entries" cf-click-local="pick(entry)" ng-class="{selected: entry==entries[selectedItem]}")
+        %tr(ng-repeat="entry in entries"
+            cf-click-local="pick(entry)"
+            ng-class="{selected: entry==entries[selectedItem]}")
           %td.cell-type
             %span {{bucketContext.typeForEntry(entry).data.name}}
           %td.cell-name

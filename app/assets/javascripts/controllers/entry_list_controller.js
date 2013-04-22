@@ -3,6 +3,9 @@
 angular.module('contentful/controllers').controller('EntryListCtrl', function EntryListCtrl($scope, Paginator, Selection, cfSpinner) {
   $scope.contentType = 'entries';
   $scope.entrySection = 'all';
+  $scope.search = {
+    term: ''
+  };
 
   $scope.paginator = new Paginator();
   $scope.selection = new Selection();
@@ -25,8 +28,6 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     editor.activate();
   };
 
-  $scope.searchTerm = '';
-
   $scope.$on('entityDeleted', function (event, entity) {
     var scope = event.currentScope;
     var index = _.indexOf(scope.entries, entity);
@@ -35,10 +36,9 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     }
   });
 
-  $scope.$watch('searchTerm', function(n,o, scope) {
-    if (n === o) return;
-    scope.paginator.page = 0;
-    scope.resetEntries();
+  $scope.$watch('search.term',  function () {
+    $scope.paginator.page = 0;
+    $scope.resetEntries();
   });
 
   $scope.switchList = function(list, entryType){
@@ -120,8 +120,8 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
       queryObject['sys.entryType.sys.id'] = this.tab.params.entryTypeId;
     }
 
-    if (this.searchTerm && 0 < this.searchTerm.length) {
-      queryObject.query = this.searchTerm;
+    if (!_.isEmpty(this.search.term)) {
+      queryObject.query = this.search.term;
     }
 
     return queryObject;
@@ -173,8 +173,6 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
       return 'draft';
     }
   };
-
-  $scope.toggleEntrySelection = function() {};
 
   // Development shorcut to quickly open an entry
 
