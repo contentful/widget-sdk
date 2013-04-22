@@ -36,12 +36,16 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     }
   });
 
-  $scope.$watch('search.term',  function () {
+  $scope.$watch('search.term',  function (term) {
+    if (term === null) return;
+    $scope.tab.params.list = 'all';
+    $scope.tab.params.entryTypeId = null;
     $scope.paginator.page = 0;
     $scope.resetEntries();
   });
 
   $scope.switchList = function(list, entryType){
+    $scope.search.term = null;
     var params = $scope.tab.params;
     var shouldReset =
       params.list == list &&
