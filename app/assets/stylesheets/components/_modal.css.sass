@@ -17,7 +17,7 @@
   margin: auto
   padding: 2em 2em
   +box-shadow(0 2px 6px rgba(0,0,0,0.1))
-    
+
 // Inner Styling
 .modal-dialog
   line-height: 1.5em
@@ -32,4 +32,9 @@
     margin-top: 1em
     text-align: right
     button
+      font-size: 12px
+      line-height: 2
+    button.cancel
       @extend %gray-button
+    button.confirm
+      @extend %blue-button

@@ -19,7 +19,7 @@
       %td(colspan="9")
         .field-settings
         .field-validations(ng-show="showValidations(field.id)")
-    
+
 %form.new-field-form(name="newField")
   %table.result-list.new-field
     %tr.field
@@ -27,17 +27,33 @@
         .new-field-settings
           .drag-handle &nbsp;
           .name
-            %input(ng-model="newName" type="text" required="")
+            %input(ng-model="newName" type="text" required=""
+                   title="Field title displayed to editors"
+                   data-placement="bottom")
           .identifier
-            %input(ng-model="newId" type="text" required="")
+            %input(ng-model="newId" type="text" required=""
+                   title="Field ID used in API"
+                   data-placement="bottom")
           .type
-            %select(ng-model="newType" ng-options="type.value as type.name for type in availableTypes")
+            %select(ng-model="newType"
+                    ng-options="type.value as type.name for type in availableTypes"
+                    title="Field data type"
+                    data-placement="bottom")
           .display &nbsp;
           .localized
-            %input(type="checkbox" ng-model="newLocalized")
+            %input(type="checkbox"
+                   ng-model="newLocalized"
+                   data-placement="left"
+                   title="Content in this field is localized")
           .required
-            %input(type="checkbox" ng-model="newRequired")
+            %input(type="checkbox"
+                   ng-model="newRequired"
+                   data-placement="left"
+                   title="Make field mandatory")
           .validations
           .action
-            %button.button.new(ng-click="addField()" ng-disabled="newField.$invalid")
+            %button.button.new(ng-click="addField()"
+                               ng-disabled="newField.$invalid"
+                               title="Add this field"
+                               data-placement="left")
               %i.ss-plus

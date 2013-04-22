@@ -41,7 +41,7 @@
   .iframe-view(      ng-switch-when="iframe"           )
   .entry-list(       ng-switch-when="entry-list"       )
   .entry-type-list(  ng-switch-when="entry-type-list"  )
-  .entry-editor(     ng-switch-when="entry-editor"      ot-doc-for="entry")
-  .entry-type-editor(ng-switch-when="entry-type-editor" ot-doc-for="entryType")
+  .entry-editor(     ng-switch-when="entry-editor"      ot-doc-for="entry" ng-class="{'with-aux-panel': preferences.showAuxPanel}")
+  .entry-type-editor(ng-switch-when="entry-type-editor" ot-doc-for="entryType" ng-class="{'with-aux-panel': preferences.showAuxPanel}")
   %div(ng-switch-default="")
     Unhandled case: viewType = {{bucketContext.tabList.currentViewType()}}

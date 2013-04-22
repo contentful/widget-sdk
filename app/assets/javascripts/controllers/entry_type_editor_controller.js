@@ -58,9 +58,12 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
     });
   };
 
-  $scope.headline = function(){
-    var verb = $scope.tab.params.mode == 'edit' ? 'Editing' : 'Creating';
-    return verb + ' Content Type';
+  $scope.headline = function() {
+    return this.entryType.data.name || 'Untitled';
   };
+
+  $scope.$watch('headline()', function(title) {
+    $scope.tab.title = title;
+  });
 
 });

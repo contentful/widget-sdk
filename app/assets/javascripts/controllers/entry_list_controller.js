@@ -3,6 +3,9 @@
 angular.module('contentful/controllers').controller('EntryListCtrl', function EntryListCtrl($scope, Paginator, Selection, cfSpinner) {
   $scope.contentType = 'entries';
   $scope.entrySection = 'all';
+  $scope.search = {
+    term: ''
+  };
 
   $scope.paginator = new Paginator();
   $scope.selection = new Selection();
@@ -24,8 +27,6 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     }
     editor.activate();
   };
-  
-  $scope.searchTerm = '';
 
   $scope.$on('entityDeleted', function (event, entity) {
     var scope = event.currentScope;
@@ -35,35 +36,27 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     }
   });
 
-  $scope.$watch('searchTerm', function(n,o, scope) {
-    if (n === o) return;
-    scope.paginator.page = 0;
-    scope.resetEntries();
+  $scope.$watch('search.term',  function (term) {
+    if (term === null) return;
+    $scope.tab.params.list = 'all';
+    $scope.tab.params.entryTypeId = null;
+    $scope.paginator.page = 0;
+    $scope.resetEntries();
   });
 
-  $scope.switchContentType = function(type){
-    $scope.tab.params.contentType = type;
-  };
+  $scope.switchList = function(list, entryType){
+    $scope.search.term = null;
+    var params = $scope.tab.params;
+    var shouldReset =
+      params.list == list &&
+      (!entryType || params.entryTypeId == entryType.getId());
 
-  $scope.switchList = function(list){
-    if ($scope.tab.params.list == list) {
+    if (shouldReset) {
       this.resetEntries();
     } else {
       this.paginator.page = 0;
-      this.tab.params.list = list;
-    }
-  };
-
-  $scope.switchEntryType = function(entryType){
-    if ($scope.tab.params.entryTypeId == entryType) {
-      this.resetEntries();
-    } else {
-      this.paginator.page = 0;
-      if (entryType) {
-        this.tab.params.entryTypeId = entryType.getId();
-      } else {
-        this.tab.params.entryTypeId = null;
-      }
+      params.entryTypeId = entryType ? entryType.getId() : null;
+      params.list = list;
     }
   };
 
@@ -124,17 +117,15 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     } else if (this.tab.params.list == 'published') {
       queryObject['sys.publishedAt[gt]'] = 0;
     } else if (this.tab.params.list == 'unpublished') {
-      queryObject['sys.publishedAt[exists]'] = false;
+      queryObject['sys.publishedAt[exists]'] = 'false';
     } else if (this.tab.params.list == 'archived') {
       queryObject['sys.archivedAt[gt]'] = 0;
-    }
-
-    if (this.tab.params.entryTypeId) {
+    } else if (this.tab.params.list == 'entryType') {
       queryObject['sys.entryType.sys.id'] = this.tab.params.entryTypeId;
     }
 
-    if (this.searchTerm && 0 < this.searchTerm.length) {
-      queryObject.query = this.searchTerm;
+    if (!_.isEmpty(this.search.term)) {
+      queryObject.query = this.search.term;
     }
 
     return queryObject;
@@ -154,7 +145,6 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     if (this.paginator.atLast()) return;
     var scope = this;
     this.paginator.page++;
-    this.reloadInProgress = true;
     this.pauseReset();
     var stopSpin = cfSpinner.start();
     this.bucketContext.bucket.getEntries(this.buildQuery(), function(err, entries, stats) {
@@ -173,33 +163,10 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
       });
     });
 
+    scope.$apply(function(scope) {
+      scope.reloadInProgress = true;
+    });
   };
-
-  $scope.counts = {};
-
-  $scope.loadCounts = function() {
-    var scope = this;
-    var countRequests = {
-      'all'        : {},
-      'archived'   : {'sys.archivedAt[gt]'     : 0    },
-      'published'  : {'sys.publishedAt[gt]'    : 0    },
-      'unpublished': {'sys.publishedAt[exists]': false}
-    };
-
-    function updateCount(group) {
-      return function(err, entries, stats) {
-        scope.$apply(function(scope) {
-          scope.counts[group] = stats.total;
-        });
-      };
-    }
-
-    for (var group in countRequests) {
-      this.bucketContext.bucket.getEntries(countRequests[group], updateCount(group));
-    }
-  };
-
-  $scope.$watch('bucketContext.bucket', 'loadCounts()');
 
   $scope.statusClass = function(entry){
     if (entry.isPublished()) {
@@ -209,10 +176,6 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     } else {
       return 'draft';
     }
-  };
-
-  $scope.toggleEntrySelection = function(entry) {
-    
   };
 
   // Development shorcut to quickly open an entry

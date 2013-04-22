@@ -1,3 +1,5 @@
+'use strict';
+
 // Search field should have the following interface:
 // list of categories, with autocomplete request and select function per
 // category (async functions)
@@ -6,46 +8,44 @@
 
 // A version of ngClick that performs stopPropagation() and
 // preventDefault() to support nested click targets
-angular.module('contentful/directives').directive('searchField', function(cfSpinner){
-'use strict';
+angular.module('contentful/directives').directive('searchField', function(){
   return {
     restrict: 'C',
-    scope: {
-      onIdleUpdate: '=', // This value will be updated with the entered searchterm whenever the user stops typing
-      placeholder: '@'
-    },
     template: JST['search_field'](),
-    link: function(scope) {
-      scope.search = {term: ''};
+    scope: {
+      placeholder: '@',
+      search: '='
+    },
 
-      scope.$watch('onIdleUpdate', function(newTerm, old, scope) {
-        scope.search.term = newTerm;
+    link: function(scope, element, attr) {
+      var typeAhead = 'searchTypeAhead' in attr;
+
+      function update() {
+        scope.update();
+        scope.$apply();
+      }
+
+      var debouncedUpdate = _.debounce(update, 300);
+
+      element.on('keydown', function(e) {
+        if (typeAhead) debouncedUpdate();
+        var pressedReturn = e.keyCode === 13;
+        if (!typeAhead && pressedReturn) update();
       });
+    },
 
-      scope.hasFilters = function() {
-        return false;
-      };
-      
-      var stopSpin;
-
-      var userChangeStart = function () {
-        stopSpin = cfSpinner.start(700);
+    controller: function($scope) {
+      $scope.inner = {
+        term: ''
       };
 
-      var userChangeStop = _.debounce(function() {
-        if (scope.onIdleUpdate !== scope.search.term) {
-          scope.$apply(function(scope) {
-            scope.onIdleUpdate = scope.search.term;
-          });
-        }
-        stopSpin();
-      }, 700);
-
-
-      scope.userChange = function () {
-        userChangeStart();
-        userChangeStop();
+      $scope.update = function() {
+        $scope.search.term = $scope.inner.term;
       };
+
+      $scope.$watch('search.term', function(term) {
+        $scope.inner.term = term;
+      });
     }
   };
 });

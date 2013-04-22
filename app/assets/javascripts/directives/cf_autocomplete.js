@@ -172,19 +172,20 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
       // create a proper interface and then have different lists for the different types
 
       // Search ///////////////////////////////////////////////////////////////
-      $scope.searchTerm = '';
+      $scope.search = {
+        term: ''
+      };
 
-      $scope.$watch('searchTerm', function(n,o, scope) {
-        if (n === o) return;
-        scope.paginator.page = 0;
+      $scope.$watch('search.term', function() {
+        $scope.paginator.page = 0;
         $scope.selectedItem = 0;
-        scope.resetEntries();
+        $scope.resetEntries();
       });
 
       $scope.resetEntries = function() {
         if ($scope.reloadInProgress || $scope.resetPaused) return;
 
-        if (!$scope.searchTerm || $scope.searchTerm.length === 0) {
+        if (!$scope.search.term || $scope.search.term.length === 0) {
           $scope.entries = [];
           return;
         }
@@ -216,8 +217,8 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
         // queryObject['sys.entryType.sys.id'] = whatever
         // This can't be done without the constraints though
 
-        if ($scope.searchTerm && 0 < $scope.searchTerm.length) {
-          queryObject.query = $scope.searchTerm;
+        if ($scope.search.term && 0 < $scope.search.term.length) {
+          queryObject.query = $scope.search.term;
         }
 
         return queryObject;
@@ -239,7 +240,6 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
         if ($scope.reloadInProgress || $scope.resetPaused) return;
         if ($scope.paginator.atLast()) return;
         $scope.paginator.page++;
-        $scope.reloadInProgress = true;
         $scope.pauseReset();
         $scope.bucketContext.bucket.getEntries($scope.buildQuery(), function(err, entries, stats) {
           $scope.reloadInProgress = false;
@@ -254,6 +254,9 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
           });
         });
 
+        $scope.apply(function(scope) {
+          scope.reloadInProgress = true;
+        });
       };
 
       element.on('keydown', function navigateResultList(event) {
@@ -321,7 +324,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
       };
 
       $scope.closePicker = function() {
-        $scope.searchTerm = '';
+        $scope.search.term = '';
       };
 
       $scope.pick = function (entry) {

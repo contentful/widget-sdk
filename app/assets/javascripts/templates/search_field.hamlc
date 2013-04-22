@@ -1,10 +1,5 @@
 .row
-  -#%ul.search-filters(ng-show="hasFilters()")
-    %li
-      %span.search-filter-title US State:
-      %span.search-filter-value Florida
-      %i.ss-delete
   .input
-    %input(type="search" ng-model="search.term" placeholder="{{placeholder}}" ng-change="userChange()")
-  .search-button
+    %input(type="search" ng-model="inner.term" placeholder="{{placeholder}}")
+  .search-button(ng-click="update()")
     %i.ss-search

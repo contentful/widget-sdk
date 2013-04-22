@@ -13,7 +13,7 @@ angular.module('contentful/directives').directive('cfFieldEditor', function(widg
       });
 
       scope.$watch(function(scope){
-        return ['fields', scope.field.id, scope.locale.name];
+        return ['fields', scope.field.id, scope.locale.code];
       }, function(value, old, scope){
         scope.path = value;
       }, true);

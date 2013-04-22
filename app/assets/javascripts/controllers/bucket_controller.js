@@ -57,7 +57,7 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
         section: 'bucketSettings',
         params: {
           url: authentication.bucketSettingsUrl($scope.bucketContext.bucket.getId()),
-          fullscreen: false
+          fullscreen: true
         },
         title: 'Settings'
       };
@@ -70,16 +70,6 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
     tab = tab || $scope.bucketContext.tabList.add(options);
     tab.activate();
   };
-
-
-  $scope.$on('tabListButtonClicked', function(event, info) {
-    var scope = event.currentScope;
-    if (info.button === 'createEntry') {
-      scope.createEntry(info.entryType);
-    } else if (info.button === 'createEntryType') {
-      scope.createEntryType();
-    }
-  });
 
   $scope.$on('entityDeleted', function (event, entity) {
     var bucketScope = event.currentScope;

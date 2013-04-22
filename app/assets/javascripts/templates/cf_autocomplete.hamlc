@@ -1,20 +1,24 @@
-%ul.links(ng-show="linkedEntries.length == 0")
-  %li
-    (none)
 %ul.links(ng-hide="linkedEntries.length == 0")
   %li(ng-repeat="entry in linkedEntries")
     %a(ng-click="visitLink(entry)") {{linkDescription(entry)}}
     %i.ss-delete(ng-click="removeLink(entry)" ng-show="editable")
-.controls(ng-show="editable")
-  .dropdown-btn.add-new
+.controls(ng-show="editable && (linkedEntries.length == 0 || field.type == 'array')")
+  .dropdown-btn.add-new(title="Add new Entry" data-placement="left")
     %button.dropdown-toggle
       %i.ss-plus
       New
     %a.dropdown-menu
       %ul
-        %li(ng-repeat="entryType in bucketContext.publishedEntryTypes" ng-click="addNew(entryType)" dropdown-close="") {{entryType.data.name}}
-  .search-field(on-idle-update="searchTerm" placeholder="Search for entries")
-  
+        %li(ng-repeat="entryType in bucketContext.publishedEntryTypes"
+            ng-click="addNew(entryType)"
+            dropdown-close="")
+          {{entryType.data.name}}
+  .search-field(ng-submit="submit()"
+                search="search"
+                search-type-ahead=""
+                placeholder="Search for entries"
+                data-placement="top"
+                title="Search for existing entries")
 
 .results.btn-right-on.search-options-on(ng-show="hasResults()")
   %table.result-list
@@ -26,7 +30,9 @@
   .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
     %table.result-list
       %tbody
-        %tr(ng-repeat="entry in entries" cf-click-local="pick(entry)" ng-class="{selected: entry==entries[selectedItem]}")
+        %tr(ng-repeat="entry in entries"
+            cf-click-local="pick(entry)"
+            ng-class="{selected: entry==entries[selectedItem]}")
           %td.cell-type
             %span {{bucketContext.typeForEntry(entry).data.name}}
           %td.cell-name
@@ -34,4 +40,3 @@
           %td.cell-by
             %span Peter Pan
     .loading(ng-show="reloadInProgress")
-      %img(src="app/ajax-loader.gif")
