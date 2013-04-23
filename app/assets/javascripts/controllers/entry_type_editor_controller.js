@@ -27,7 +27,7 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
   });
 
   $scope.canPublish = function() {
-    return !!$scope.doc;
+    return !!$scope.otDoc;
   };
 
   $scope.delete = function () {
@@ -45,7 +45,7 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
   };
 
   $scope.publish = function() {
-    $scope.entryType.publish($scope.doc.version, function (err, publishedEntryType) {
+    $scope.entryType.publish($scope.otDoc.version, function (err, publishedEntryType) {
       $scope.$apply(function(scope){
         if (err) {
           window.alert('could not publish');

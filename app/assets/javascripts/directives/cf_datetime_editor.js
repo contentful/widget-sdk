@@ -48,7 +48,7 @@ angular.module('contentful/directives').directive('cfDatetimeEditor', function()
 
         var dateAndTime = dateController.$modelValue+'T'+timeController.$modelValue;
         var dateTime = moment(dateAndTime);
-        scope.changeValue(dateTime.utc().format());
+        scope.otChangeValue(dateTime.utc().format());
       };
       dateController.$viewChangeListeners.push(changeHandler);
       timeController.$viewChangeListeners.push(changeHandler);
@@ -63,7 +63,7 @@ angular.module('contentful/directives').directive('cfDatetimeEditor', function()
         }
       };
 
-      scope.$on('valueChanged', function(event, value) {
+      scope.$on('otValueChanged', function(event, value) {
         event.currentScope.setFromISO(value);
       });
     }

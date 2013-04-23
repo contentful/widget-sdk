@@ -17,7 +17,7 @@ directive('validationOptions', function () {
 
       $scope.updateDoc = function () {
         if (angular.isDefined($scope.validationIndex)) {
-          var validationDoc = $scope.doc.at($scope.validationPath);
+          var validationDoc = $scope.otDoc.at($scope.validationPath);
           validationDoc.set($scope.validation, function () {
             $scope.$apply(function () {
               $scope.updateValidationsFromDoc();
@@ -41,11 +41,11 @@ controller('NewValidationCtrl', function ($scope) {
   };
 
   $scope.createValidation = function () {
-    var fieldDoc = $scope.doc.at(['fields', $scope.index]);
+    var fieldDoc = $scope.otDoc.at(['fields', $scope.index]);
     if (!fieldDoc.get().validations) {
       fieldDoc.at(['validations']).set([$scope.validation], callback);
     } else {
-      var validationsDoc = $scope.doc.at(['fields', $scope.index, 'validations']);
+      var validationsDoc = $scope.otDoc.at(['fields', $scope.index, 'validations']);
       validationsDoc.push($scope.validation, callback);
     }
 

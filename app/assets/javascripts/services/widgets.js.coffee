@@ -5,17 +5,17 @@ angular.module('contentful/services').service 'widgets', ($compile) ->
     string:
       textField:
         name: "Single line text field"
-        template: """<input type="text" ng-model="value" ot-bind="text" ng-disabled="!editable"/>"""
+        template: """<input type="text" ot-subdoc ot-bind-text ng-disabled="otDisabled"/>"""
     text:
       textArea:
         name: "Multiline text field"
-        template: """<textarea class="input-xxlarge" ng-model="value" ot-bind="text" ng-disabled="!editable"></textarea>"""
+        template: """<textarea class="input-xxlarge" ot-subdoc ot-bind-text ng-disabled="otDisabled"></textarea>"""
     boolean:
       checkBox:
         name: "Boolean Checkbox"
         template: """
-          <label><input type="radio" ng-model="value" ng-value="true" ot-bind="model" ng-disabled="!editable"/><span class="yes">Yes</span></label>
-          <label><input type="radio" ng-model="value" ng-value="false" ot-bind="model" ng-disabled="!editable"/><span class="no" >No</span ></label>
+          <label><input type="radio" ng-model="value" ng-value="true" ot-bind-model ng-disabled="otDisabled"/><span class="yes">Yes</span></label>
+          <label><input type="radio" ng-model="value" ng-value="false" ot-bind-model ng-disabled="otDisabled"/><span class="no" >No</span ></label>
         """
     date:
       textField:
@@ -30,13 +30,13 @@ angular.module('contentful/services').service 'widgets', ($compile) ->
           if itemType == 'link'
             template = $ """<div cf-autocomplete="entries"/>"""
           else if itemType == 'string'
-            template = $ """<input type="text" ng-list="" ng-model="value" ot-bind="model" ng-disabled="!editable"/>"""
+            template = $ """<input type="text" ng-list="" ng-model="value" ot-bind-model ng-disabled="otDisabled"/>"""
           template = $compile(template)(scope)
           elm.append template
     object:
       jsonArea:
         name: "JSON Field"
-        template: """<textarea class="input-xxlarge" ng-model="value" ot-bind="model" ng-disabled="!editable"></textarea>"""
+        template: """<textarea class="input-xxlarge" ng-model="value" ot-bind-model ng-disabled="otDisabled"></textarea>"""
         link: (scope, elm, attr) ->
           controller = elm.find('textarea').inheritedData('$ngModelController')
           controller.$formatters.push (obj) -> JSON.stringify(obj)
@@ -56,7 +56,7 @@ angular.module('contentful/services').service 'widgets', ($compile) ->
     number:
       textField:
         name: "Textfield for floats"
-        template: """<input type="number" ng-model="value" ot-bind="model" ng-disabled="!editable"/>"""
+        template: """<input type="number" ng-model="value" ot-bind-model ng-disabled="otDisabled"/>"""
         link: (scope, elm, attr) ->
           controller = elm.find('input').inheritedData('$ngModelController')
           controller.$parsers.unshift (viewValue) ->
@@ -70,7 +70,7 @@ angular.module('contentful/services').service 'widgets', ($compile) ->
     integer:
       textField:
         name: "Textfield for integers"
-        template: """<input type="number" ng-pattern="/^\\-?\\d*$/" ng-model="value" ot-bind="model" ng-disabled="!editable"/>"""
+        template: """<input type="number" ng-pattern="/^\\-?\\d*$/" ng-model="value" ot-bind-model ng-disabled="otDisabled"/>"""
     link:
       selector:
         name: "Link selector"

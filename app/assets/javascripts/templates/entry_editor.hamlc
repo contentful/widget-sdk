@@ -59,7 +59,7 @@
       .form-controls
         .locale(ng-repeat="locale in bucketContext.activeLocales")
           .locale-label(ng-show="bucketContext.activeLocales.length > 1") {{locale.name}}
-          .cf-field-editor.ot-edit-path
+          .cf-field-editor(ot-path="['fields', field.id, locale.code]")
           -#.hint.tip
             Hint to the user about the meaning of the field
             .arrow-left

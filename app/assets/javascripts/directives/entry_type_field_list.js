@@ -21,7 +21,7 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
           var oldIndex = ui.item.startIndex;
           var newIndex = ui.item.index('.existing-field');
           delete ui.item.startIndex;
-          scope.doc.at('fields').move(oldIndex, newIndex, function(err) {
+          scope.otDoc.at('fields').move(oldIndex, newIndex, function(err) {
             if (err) {
               // undo DOM move operation
               if (oldIndex < newIndex){
@@ -63,7 +63,7 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
       });
       
       $scope.removeDisplayField = function () {
-        $scope.doc.at(['displayField']).set(null, function (err) {
+        $scope.otDoc.at(['displayField']).set(null, function (err) {
           if (!err) $scope.$apply(function (scope) {
             scope.entryType.data.displayField = null;
           });

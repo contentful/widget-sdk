@@ -13,8 +13,8 @@ angular.module('contentful/directives').directive('fieldSettings', function() {
           scope.detachNameField();
           scope.detachNameField = null;
         }
-        if (scope.doc && scope.index !== undefined && scope.index !== null) {
-          var nameDoc  = scope.doc.at(['fields', scope.index, 'name']);
+        if (scope.otDoc && scope.index !== undefined && scope.index !== null) {
+          var nameDoc  = scope.otDoc.at(['fields', scope.index, 'name']);
           scope.detachNameField = nameDoc.attach_textarea(elm.find('.name input')[0]);
         }
       }
