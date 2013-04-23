@@ -12,7 +12,7 @@ angular.module('contentful/ot').directive('otSubdoc', function () {
         if (scope.otDoc && scope.otPath) {
           //console.log('setting otSubdoc', scope.otDoc, scope.otPath);
           var pathUpdated = n === scope.otPath;
-          if (pathUpdated && scope.otDoc) {
+          if (pathUpdated && scope.otSubdoc) {
             // if the path has been changed, manipulate path in subdoc
             $scope.otSubdoc.path =  angular.copy(scope.otPath);
           } else {
