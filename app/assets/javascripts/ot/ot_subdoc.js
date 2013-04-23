@@ -16,8 +16,8 @@ angular.module('contentful/ot').directive('otSubdoc', function () {
             // if the path has been changed, manipulate path in subdoc
             $scope.otSubdoc.path =  angular.clone(scope.otPath);
           } else {
-            // if the path has been replaced, replace subdoch
-            $scope.otSubdoc = scope.otSubdoc.at(scope.otPath);
+            // if the path has been replaced, replace subdoc
+            $scope.otSubdoc = scope.otDoc.at(scope.otPath);
           }
         } else {
           scope.otSubdoc = null;

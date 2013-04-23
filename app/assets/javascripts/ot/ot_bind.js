@@ -5,7 +5,8 @@ var otModule = angular.module('contentful/ot');
 otModule.directive('otBindText', function(ShareJS) {
   return {
     restrict: 'A',
-    require: ['^ngSubdoc', '?ngModel'],
+    priority: 400,
+    require: '^otSubdoc',
     link: function(scope, elm) {
       var unbindTextField;
 
@@ -20,7 +21,7 @@ otModule.directive('otBindText', function(ShareJS) {
           var changeHandler = _.debounce(function () {
             //console.log('emitting textIdle');
             scope.$apply(function (scope) {
-              scope.$emit('textIdle'); // TODO rename otTextIdle
+              scope.$emit('otTextIdle'); // TODO rename otTextIdle
             });
           }, 300);
 
@@ -48,7 +49,7 @@ otModule.directive('otBindText', function(ShareJS) {
           //console.log('attaching textarea %o to %o', elm[0], subdoc.path);
           detachTextField = subdoc.attach_textarea(element);
         } else {
-          ShareJS.mkpath(scope.doc, subdoc.path, '', function() {
+          ShareJS.mkpath(scope.otDoc, subdoc.path, '', function() {
             //console.log('attaching textarea %o to %o after mkPath', elm[0], subdoc.path, err);
             detachTextField = subdoc.attach_textarea(element);
           });
@@ -64,11 +65,12 @@ otModule.directive('otBindModel', function($parse) {
   return {
     restrict: 'A',
     require: ['ngModel', '^otPath'],
-    link: function(scope, elm, attr, ngModelCtrl) {
+    link: function(scope, elm, attr, controllers) {
+      var ngModelCtrl = controllers[0];
       var ngModelGet = $parse(attr['ngModel']),
           ngModelSet = ngModelGet.assign;
       ngModelCtrl.$viewChangeListeners.push(function(){
-        scope.changeValue(ngModelCtrl.$modelValue);
+        scope.otChangeValue(ngModelCtrl.$modelValue);
       });
       scope.$on('otValueChanged', function(event, path, val) {
         if (path === event.currentScope.otPath) ngModelSet(event.currentScope, val);
@@ -96,7 +98,7 @@ otModule.directive('otBindValue', function($parse) {
           setter = getter.assign;
       //
       scope.$watch(attr['otBindValue'], function(val, old, scope) {
-        scope.changeValue(val);
+        scope.otChangeValue(val);
       }, true);
 
       scope.$on('otValueChanged', function(event, path, val) {
