@@ -19,7 +19,7 @@ angular.module('contentful/ot').directive('otPath', function(ShareJS, cfSpinner)
         //if (isSubPath(op.p)) {
         if (angular.equals(op.p, scope.otPath)) {
           // TODO introduce ot-on-change attr that can be used to bind instead of the events
-          console.log('broadcasting otValueChanged');
+          //console.log('broadcasting otValueChanged', scope.otPath, scope.otDoc, scope.otDoc.getAt(op.p));
           scope.$broadcast('otValueChanged', scope.otPath, scope.otDoc.getAt(op.p));
         }
       });
