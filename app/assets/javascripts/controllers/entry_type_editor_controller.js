@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', function EntryTypeEditorCtrl($scope, ShareJS, availableFieldTypes) {
+angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', function EntryTypeEditorCtrl($scope, ShareJS, availableFieldTypes, notification) {
   $scope.availableTypes = availableFieldTypes;
 
   $scope.$watch('tab.params.entryType', 'entryType=tab.params.entryType');
@@ -9,6 +9,7 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
     if (entryType) loadPublishedEntryType();
   });
 
+  // TODO do something similar in entry editor
   $scope.$on('otRemoteOp', function (event) {
     event.currentScope.otUpdateEntity();
   });
@@ -39,6 +40,7 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
           scope.bucketContext.removeEntryType($scope.entryType);
         });
       } else {
+        notification.error('Could not delete content type');
         console.log('Error deleting entryType', $scope.entryType);
       }
     });
