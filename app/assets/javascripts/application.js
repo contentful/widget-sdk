@@ -27,6 +27,7 @@
 //= require filters
 //= require directives
 //= require classes
+//= require ot
 //
 //= require ng-time-relative
 //
@@ -39,6 +40,7 @@ angular.module('contentful', [
   'contentful/classes',
   'contentful/user_interface',
   'contentful/services',
+  'contentful/ot',
   'contentful/controllers',
   'contentful/directives',
   'contentful/filters',
