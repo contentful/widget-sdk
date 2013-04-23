@@ -88,7 +88,7 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
     var stopSpinner = cfSpinner.start();
     authentication.getTokenLookup(function(tokenLookup) {
       $scope.$apply(function(scope) {
-        console.log('tokenLookup', tokenLookup);
+        //console.log('tokenLookup', tokenLookup);
         scope.user = tokenLookup.sys.createdBy;
         scope.updateBuckets(tokenLookup.buckets);
         if (callback) callback(tokenLookup);

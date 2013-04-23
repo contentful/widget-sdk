@@ -25,7 +25,7 @@ angular.module('contentful/ot').directive('otPath', function(ShareJS, cfSpinner)
       });
 
       $scope.otChangeValue = function(value, callback) {
-        console.log('changing value %o -> %o in %o, %o', $scope.otDoc.getAt($scope.otPath), value, $scope.otPath, $scope.otDoc);
+        //console.log('changing value %o -> %o in %o, %o', $scope.otDoc.getAt($scope.otPath), value, $scope.otPath, $scope.otDoc);
         if ($scope.otDoc) {
           callback = callback || function(err){if (!err) $scope.$apply();};
           try {
@@ -34,7 +34,7 @@ angular.module('contentful/ot').directive('otPath', function(ShareJS, cfSpinner)
               callback.apply(this, arguments);
               stopSpin();
             });
-            console.log('changin value returned %o %o in doc %o version %o', err, data, scope.otDoc, scope.otDoc.version);
+            //console.log('changin value returned %o %o in doc %o version %o', err, data, scope.otDoc, scope.otDoc.version);
           } catch(e) {
             ShareJS.mkpath($scope.otDoc, $scope.otPath, value, function () {
               callback.apply(this, arguments);
@@ -52,7 +52,7 @@ angular.module('contentful/ot').directive('otPath', function(ShareJS, cfSpinner)
       function init(val, old, scope) {
         // dispatch initial otValueChanged
         if (scope.otPath && scope.otDoc) {
-          console.log('init path', scope.otPath, scope.otGetValue());
+          //console.log('init path', scope.otPath, scope.otGetValue());
           scope.$broadcast('otValueChanged', scope.otPath, scope.otGetValue());
         }
       }
