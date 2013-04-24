@@ -7,7 +7,6 @@
   %table.result-list.main-header(ng-hide="empty")
     %thead
       %tr
-        %th.cell-type ID
         %th.cell-name Name
         %th.cell-by Fields
         %th.cell-created Created
@@ -15,9 +14,8 @@
   .main-results-wrapper(ng-hide="empty")
     %table.result-list.main-results
       %tbody
-        %tr(ng-repeat="entryType in bucketContext.entryTypes" cf-click-local="editEntryType(entryType)")
-          %td.cell-type
-            %span {{entryType.getId()}}
+        %tr(ng-repeat="entryType in bucketContext.entryTypes"
+            cf-click-local="editEntryType(entryType)")
           %td.cell-name
             %span {{entryType.data.name}}
           %td.cell-by
