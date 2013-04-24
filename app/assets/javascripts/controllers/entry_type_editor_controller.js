@@ -9,7 +9,6 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
     if (entryType) loadPublishedEntryType();
   });
 
-  // TODO do something similar in entry editor
   $scope.$on('otRemoteOp', function (event) {
     event.currentScope.otUpdateEntity();
   });

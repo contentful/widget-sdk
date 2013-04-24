@@ -21,7 +21,7 @@ otModule.directive('otBindText', function(ShareJS) {
           var changeHandler = _.debounce(function () {
             //console.log('emitting textIdle');
             scope.$apply(function (scope) {
-              scope.$emit('otTextIdle'); // TODO rename otTextIdle
+              scope.$emit('otTextIdle');
             });
           }, 300);
 

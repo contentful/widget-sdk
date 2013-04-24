@@ -21,7 +21,7 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
     event.currentScope.otUpdateEntity();
   });
 
-  $scope.$on('textIdle', function(event) {
+  $scope.$on('otRemoteOp', function (event) {
     event.currentScope.otUpdateEntity();
   });
 

@@ -5,12 +5,15 @@ angular.module('contentful/directives').directive('cfFieldEditor', function(widg
     restrict: 'C',
     require: '^otPath',
     link: function(scope, elm, attr) {
-      scope.$on('otValueChanged', function (event, path, value) {
-        if (path === event.currentScope.otPath) event.currentScope.value = value;
-      });
-
       scope.$on('otTextIdle', function (event) {
         event.currentScope.otUpdateEntity();
+      });
+
+      // Write back local value changes to the entity
+      // Necessary because the widgets can't access the entry directly, only the value variable
+      scope.$watch('value', function (value, old, scope) {
+        if (value === old) return;
+        scope.entry[scope.field.id][scope.locale.code] = value;
       });
 
       var widget = widgets.editor(scope.field.type, attr.editor);
