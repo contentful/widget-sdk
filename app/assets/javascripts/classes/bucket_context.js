@@ -12,6 +12,7 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
       entryTypes: [],
       _entryTypesHash: {},
       publishedEntryTypes: [],
+      _publishedEntryTypesHash: {},
 
       publishLocales: [],
       defaultLocale: null,
@@ -62,10 +63,19 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
         }
       },
       refreshPublishedEntryTypes: function() {
-        this.publishedEntryTypes = _(this.entryTypes)
-          .filter(function(et) { return et.data && et.data.sys.publishedAt; })
-          .sortBy(function(et) { return et.data.name.trim().toLowerCase(); })
-          .value();
+        var self = this;
+        this.bucket.getPublishedEntryTypes(function (err, entryTypes) {
+          if (err) {
+            console.error('Could not get published entry types', err);
+          } else {
+            self.publishedEntryTypes = _(entryTypes)
+              .sortBy(function(et) { return et.data.name.trim().toLowerCase(); })
+              .value();
+            self._publishedEntryTypesHash = _(entryTypes).map(function(et) {
+              return [et.data.sys.id, et];
+            }).object().valueOf();
+          }
+        });
       },
       removeEntryType: function(entryType) {
         var index = _.indexOf(this.entryTypes, entryType);
@@ -76,13 +86,16 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
       typeForEntry: function(entry) {
         return this._entryTypesHash[entry.getEntryTypeId()];
       },
+      publishedTypeForEntry: function(entry) {
+        return this._publishedEntryTypesHash[entry.getEntryTypeId()];
+      },
       entryTitle: function(entry, localeCode) {
         var defaultTitle = 'Untitled';
 
         localeCode = localeCode || this.bucket.getDefaultLocale().code;
 
         try {
-          var displayField = this.typeForEntry(entry).data.displayField;
+          var displayField = this.publishedTypeForEntry(entry).data.displayField;
           if (!displayField) {
             return defaultTitle;
           } else {

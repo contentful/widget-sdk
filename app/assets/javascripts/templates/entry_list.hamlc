@@ -64,7 +64,7 @@
             -#%td.cell-favorite
               %i.ss-star
             %td.cell-type
-              %span {{bucketContext.typeForEntry(entry).data.name}}
+              %span {{bucketContext.publishedTypeForEntry(entry).data.name}}
             %td.cell-name
               %span {{bucketContext.entryTitle(entry)}}
             %td.cell-by

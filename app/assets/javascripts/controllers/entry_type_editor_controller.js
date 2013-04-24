@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', function EntryTypeEditorCtrl($scope, ShareJS, availableFieldTypes, notification) {
+angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', function EntryTypeEditorCtrl($scope, ShareJS, availableFieldTypes) {
   $scope.availableTypes = availableFieldTypes;
 
   $scope.$watch('tab.params.entryType', 'entryType=tab.params.entryType');
@@ -15,7 +15,6 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
   });
 
   function loadPublishedEntryType() {
-    // TODO use list in bucketcontext
     $scope.entryType.getPublishedVersion(function(err, publishedEntryType) {
       $scope.$apply(function(scope) {
         scope.publishedEntryType = publishedEntryType;
@@ -27,37 +26,13 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
     $scope.hasFields = length > 0;
   });
 
+  $scope.$watch('publishedEntryType.data.fields', function (fields, old, scope) {
+    scope.publishedIds = _.pluck(fields, 'id');
+    //console.log('refreshing publishedIds', scope.publishedIds);
+  });
+
   $scope.canPublish = function() {
     return !!$scope.otDoc;
-  };
-
-  $scope.delete = function () {
-    // TODO get user confirmation
-    $scope.entryType.delete(function (err) {
-      if (!err) {
-        $scope.$apply(function(scope) {
-          scope.tab.close();
-          scope.bucketContext.removeEntryType($scope.entryType);
-        });
-      } else {
-        notification.error('Could not delete content type');
-        console.log('Error deleting entryType', $scope.entryType);
-      }
-    });
-  };
-
-  $scope.publish = function() {
-    $scope.entryType.publish($scope.otDoc.version, function (err, publishedEntryType) {
-      $scope.$apply(function(scope){
-        if (err) {
-          window.alert('could not publish');
-        } else {
-          scope.publishedEntryType = publishedEntryType;
-          $scope.$broadcast('published');
-          $scope.bucketContext.refreshEntryTypes($scope);
-        }
-      });
-    });
   };
 
   $scope.headline = function() {

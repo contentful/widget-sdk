@@ -16,6 +16,7 @@ angular.module('contentful/controllers').
         if (err) return notification.error('Error deleting content type');
         notification.info('Content type deleted successfully');
         scope.$emit('entityDeleted', entryType);
+        scope.bucketContext.removeEntryType($scope.entryType);
       });
     });
   };
@@ -43,7 +44,7 @@ angular.module('contentful/controllers').
 
   $scope.publish = function () {
     var version = $scope.otDoc.version;
-    $scope.entryType.publish(version, function (err) {
+    $scope.entryType.publish(version, function (err, publishedEntryType) {
       $scope.$apply(function(scope){
         if (err) {
           var errorId = err.body.sys.id;
@@ -57,6 +58,10 @@ angular.module('contentful/controllers').
 
         notification.info(title() + ' published successfully');
         scope.otUpdateEntity();
+
+        //console.log('editor has published %o as %o', scope.entryType, publishedEntryType);
+        scope.publishedEntryType = publishedEntryType;
+        scope.bucketContext.refreshEntryTypes(scope);
       });
     });
   };

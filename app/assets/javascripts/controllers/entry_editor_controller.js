@@ -27,7 +27,7 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
 
   $scope.formValid = function () {
     if (!$scope.entryConstraint) {
-      var entryType = this.bucketContext.typeForEntry(this.entry);
+      var entryType = this.bucketContext.publishedTypeForEntry(this.entry);
       var bucket = this.bucketContext.bucket;
       $scope.entryConstraint = validation.EntryType.parse(entryType.data, bucket).entryConstraint;
     }
@@ -47,7 +47,7 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
   };
 
   $scope.fields = function(){
-    var et = this.bucketContext.typeForEntry(this.entry);
+    var et = this.bucketContext.publishedTypeForEntry(this.entry);
     if (et) {
       return _.reject(et.data.fields, function(f) {
         return f.disabled;

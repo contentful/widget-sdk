@@ -7,7 +7,7 @@ angular.module('contentful/directives').
       controller: function EntityInfoPanelCtrl($scope) {
         $scope.$watch('entry', function(entry) {
           if (!entry) return;
-          $scope.entryTypeName = $scope.bucketContext.typeForEntry(entry).data.name;
+          $scope.entryTypeName = $scope.bucketContext.publishedTypeForEntry(entry).data.name;
         });
 
         $scope.$watch('doc.snapshot.sys', function(sys) {

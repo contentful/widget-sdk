@@ -57,11 +57,6 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
           scope.publishedIds = _.pluck(et.data.fields, 'id');
       });
 
-      $scope.$on('published', function(event) {
-        var scope = event.currentScope;
-        scope.publishedIds = _.pluck(scope.publishedEntryType.data.fields, 'id');
-      });
-      
       $scope.removeDisplayField = function () {
         $scope.otDoc.at(['displayField']).set(null, function (err) {
           if (!err) $scope.$apply(function (scope) {
