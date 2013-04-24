@@ -45,7 +45,7 @@
       %thead
         %tr
           %th.cell-select
-            %input(type="checkbox" cf-selection="")
+            %input(type="checkbox" cf-selection="" ng-show="entries.length > 0")
           -#%th.cell-favorite
             %i.ss-star
           %th.cell-type Content Type
