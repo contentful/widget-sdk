@@ -10,7 +10,6 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
       bucket: null,
 
       entryTypes: [],
-      _entryTypesHash: {},
       publishedEntryTypes: [],
       _publishedEntryTypesHash: {},
 
@@ -49,16 +48,13 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
             if (err) return;
             scope.$apply(function() {
               bucketContext.entryTypes = entryTypes;
-              bucketContext._entryTypesHash = _(entryTypes).map(function(et) {
-                return [et.data.sys.id, et];
-              }).object().valueOf();
               bucketContext.refreshPublishedEntryTypes();
             });
           });
         } else {
           this.entryTypes = [];
-          this._entryTypesHash = {};
           this.publishedEntryTypes = [];
+          this._publishedEntryTypesHash = {};
           return;
         }
       },
@@ -82,9 +78,6 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
         if (index === -1) return;
         this.entryTypes.splice(index, 1);
         this.refreshPublishedEntryTypes();
-      },
-      typeForEntry: function(entry) {
-        return this._entryTypesHash[entry.getEntryTypeId()];
       },
       publishedTypeForEntry: function(entry) {
         return this._publishedEntryTypesHash[entry.getEntryTypeId()];
