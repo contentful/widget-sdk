@@ -33,14 +33,33 @@ angular.module('contentful/controllers').controller('EntryListActionsCtrl', func
 
   var makeApplyLater = function(callback) {
     var num = $scope.selection.size();
-    return _.after(num, function() {
-      $scope.$apply(callback);
-      //TODO adjust counts
-    });
+    var numCalled = 0;
+    var results = [];
+    return function(err) {
+      numCalled++;
+      results.push({
+        err: err,
+        rest: Array.prototype.slice.call(arguments, 1)
+      });
+      if (numCalled === num)
+        $scope.$apply(_.partial(callback, results));
+    };
   };
 
-  var perform = function(method) {
-    var applyLater = makeApplyLater();
+  function makeBatchResultsNotifier(word) {
+    return function(results) {
+      var hasFailed = function(r) { return r.err; };
+      var failed = _.filter(results, hasFailed);
+      var succeeded = _.reject(results, hasFailed);
+      if (succeeded.length > 0)
+        notification.info(succeeded.length + ' entries ' + word + ' successfully');
+      if (failed.length > 0)
+        notification.error(failed.length + ' entries could not be ' + word);
+    };
+  }
+
+  var perform = function(method, callback) {
+    var applyLater = makeApplyLater(callback);
     forAllEntries(function(entry) {
       entry[method](applyLater);
     });
@@ -48,7 +67,7 @@ angular.module('contentful/controllers').controller('EntryListActionsCtrl', func
   };
 
   $scope.publishSelected = function() {
-    var applyLater = makeApplyLater();
+    var applyLater = makeApplyLater(makeBatchResultsNotifier('published'));
     forAllEntries(function(entry) {
       entry.publish(entry.data.sys.version, applyLater);
     });
@@ -56,18 +75,14 @@ angular.module('contentful/controllers').controller('EntryListActionsCtrl', func
   };
 
   $scope.unpublishSelected = function() {
-    perform('unpublish');
+    perform('unpublish', makeBatchResultsNotifier('unpublished'));
   };
 
   $scope.deleteSelected = function() {
-    var applyLater = makeApplyLater();
+    var applyLater = makeApplyLater(makeBatchResultsNotifier('deleted'));
     forAllEntries(function(entry) {
       entry.delete(function (err, entry) {
-        if (err) {
-          notification.error('Error deleting entry (' + err.body.sys.id + ')');
-        } else {
-          $scope.$emit('entityDeleted', entry);
-        }
+        if (!err) $scope.$emit('entityDeleted', entry);
         applyLater();
       });
     });
@@ -75,11 +90,11 @@ angular.module('contentful/controllers').controller('EntryListActionsCtrl', func
   };
 
   $scope.archiveSelected = function() {
-    perform('archive');
+    perform('archive', makeBatchResultsNotifier('archived'));
   };
 
   $scope.unarchiveSelected = function() {
-    perform('unarchive');
+    perform('unarchive', makeBatchResultsNotifier('unarchived'));
   };
 
   $scope.showDelete = function () {
