@@ -1,4 +1,4 @@
-angular.module('contentful/classes').factory('BucketContext', function(TabList){
+angular.module('contentful/classes').factory('BucketContext', function(TabList, $rootScope){
   'use strict';
 
   function BucketContext(scope){
@@ -41,12 +41,12 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
         this.activeLocales = newActiveLocales;
       },
 
-      refreshEntryTypes: function(scope) {
+      refreshEntryTypes: function() {
         if (this.bucket) {
           var bucketContext = this;
           this.bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes) {
             if (err) return;
-            scope.$apply(function() {
+            $rootScope.$apply(function() {
               bucketContext.entryTypes = entryTypes;
               bucketContext.refreshPublishedEntryTypes();
             });
@@ -64,12 +64,14 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList){
           if (err) {
             console.error('Could not get published entry types', err);
           } else {
-            self.publishedEntryTypes = _(entryTypes)
-              .sortBy(function(et) { return et.data.name.trim().toLowerCase(); })
-              .value();
-            self._publishedEntryTypesHash = _(entryTypes).map(function(et) {
-              return [et.data.sys.id, et];
-            }).object().valueOf();
+            $rootScope.$apply(function () {
+              self.publishedEntryTypes = _(entryTypes)
+                .sortBy(function(et) { return et.data.name.trim().toLowerCase(); })
+                .value();
+              self._publishedEntryTypesHash = _(entryTypes).map(function(et) {
+                return [et.data.sys.id, et];
+              }).object().valueOf();
+            });
           }
         });
       },

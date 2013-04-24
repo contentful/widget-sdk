@@ -61,7 +61,7 @@ angular.module('contentful/controllers').
 
         //console.log('editor has published %o as %o', scope.entryType, publishedEntryType);
         scope.publishedEntryType = publishedEntryType;
-        scope.bucketContext.refreshEntryTypes(scope);
+        scope.bucketContext.refreshEntryTypes();
       });
     });
   };
