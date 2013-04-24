@@ -36,6 +36,9 @@ angular.module('contentful/directives').directive('endlessContainer', function()
         interval = 0;
       });
 
+      elem.on('scroll', function() {
+        elem.toggleClass('scrolled', elem.scrollTop() > 0)
+      });
     }
   };
 });
