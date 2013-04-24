@@ -10,7 +10,7 @@ angular.module('contentful/directives').
           $scope.entryTypeName = $scope.bucketContext.publishedTypeForEntry(entry).data.name;
         });
 
-        $scope.$watch('doc.snapshot.sys', function(sys) {
+        $scope.$watch('otDoc.snapshot.sys', function(sys) {
           $scope.sys = sys;
         });
       },
