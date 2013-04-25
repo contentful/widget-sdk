@@ -81,7 +81,7 @@ angular.module('contentful/classes').factory('Selection', function(){
       if (this.mode == Selection.ALL) {
         return false;
       } else {
-        return _.size(this.entities) <= 0;
+        return _.isEmpty(this.entities);
       }
     },
 

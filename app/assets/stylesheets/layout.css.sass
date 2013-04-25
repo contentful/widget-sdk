@@ -22,7 +22,7 @@ $tab-actions-height: 54px
   z-index: 0
   min-width: 1000px
 
-/* LEFT NAV */
+/* NAV-BAR */
 
 .nav-bar
   position: fixed
@@ -48,57 +48,3 @@ $tab-actions-height: 54px
   z-index: 1000
   .tab
     width: 21.5%
-
-/* TAB CONTENT */
-
-.tab-content
-  overflow: hidden
-  position: absolute
-  top: 4.6em
-  right: 0
-  bottom: 1.8em
-  left: 0
-  clear: both
-  margin-left: $main-left-spacing
-  margin-right: 2em
-  background-color: white
-  border: 1px solid #dbdbdb
-  border-color: rgba(0,0,0,0.17)
-  @include rounded-corners(0,2px,2px,2px)
-
-$left-nav-width: 17%
-.left-nav
-  position: absolute
-  left: 0
-  top: 0
-  bottom: 0
-  width: $left-nav-width
-.with-left-nav
-  position: absolute
-  left: $left-nav-width
-  right: 0
-  //width: 100.1% - $left-nav-width  
-
-$tab-main-margin-top: 28px
-
-.tab-header
-  position: absolute
-  left: 0
-  right: 0
-  top: 0
-  height: $tab-header-height
-  +border-radius(3px 3px 0 0)
-.tab-main
-  position: absolute
-  left: 0
-  right: 0
-  top: $tab-header-height
-  padding-top: $tab-main-margin-top
-  bottom: $tab-actions-height
-  overflow-y: auto
-.tab-actions
-  position: absolute
-  left: 0
-  right: 0
-  bottom: 0
-  height: $tab-actions-height
