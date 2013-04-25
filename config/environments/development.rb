@@ -6,6 +6,10 @@ Contentful::Application.configure do
   # since you don't have to restart the web server when you make code changes.
   config.cache_classes = false
 
+  if defined?(Uglifier)
+    config.assets.js_compressor = Uglifier.new(:mangle => false)
+  end
+
   # Log error messages when you accidentally call methods on nil.
   config.whiny_nils = true
 
@@ -22,10 +26,9 @@ Contentful::Application.configure do
   # Only use best-standards-support built into browsers
   config.action_dispatch.best_standards_support = :builtin
 
-
   # Do not compress assets
-  config.assets.compress = false
+  config.assets.compress = true
 
   # Expands the lines which load the assets
-  config.assets.debug = true
+  config.assets.debug = false
 end
