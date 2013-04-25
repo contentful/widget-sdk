@@ -21,7 +21,7 @@ Contentful::Application.configure do
   config.assets.digest = true
 
   if defined?(Uglifier)
-    config.assets.js_compressor = Uglifier.new(:mangle => false, :max_line_len => 200)
+    config.assets.js_compressor = Uglifier.new(:mangle => false, :output => {:max_line_len => 200})
   end
 
   # Defaults to nil and saved in location specified by config.assets.prefix
