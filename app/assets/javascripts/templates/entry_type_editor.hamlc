@@ -17,8 +17,8 @@
   .form-horizontal(name="entryTypeForm")
     .form-field
       %label Name
-      .form-controls(ot-edit-path="['name']")
-        %input(type="text" ng-model="entryType.data.name" ot-bind="text")
+      .form-controls(ot-path="['name']" ot-subdoc)
+        %input(type="text" ng-model="entryType.data.name" ot-bind-text="")
     .form-field
       %label Fields
       .form-controls

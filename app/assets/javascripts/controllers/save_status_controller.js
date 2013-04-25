@@ -5,7 +5,7 @@ angular.module('contentful/controllers').controller('SaveStatusCtrl', function (
 
   var detachHandlers;
 
-  $scope.$watch('doc', function (doc) {
+  $scope.$watch('otDoc', function (doc) {
     if (detachHandlers) detachHandlers();
 
     if (doc) {
@@ -15,16 +15,16 @@ angular.module('contentful/controllers').controller('SaveStatusCtrl', function (
       var _doc = doc;
 
       detachHandlers = function () {
-        _doc.removeEventListener(changeListener);
-        _doc.removeEventListener(remoteListener);
-        _doc.removeEventListener(ackListener);
+        _doc.removeListener(changeListener);
+        _doc.removeListener(remoteListener);
+        _doc.removeListener(ackListener);
         ackListener = changeListener = remoteListener = detachHandlers = _doc = null;
       };
     }
   });
 
   $scope.$watch(function (scope) {
-    if (scope.doc) {
+    if (scope.otDoc) {
       if (scope.saving) {
         scope.saveStatus = 'saving';
       } else {

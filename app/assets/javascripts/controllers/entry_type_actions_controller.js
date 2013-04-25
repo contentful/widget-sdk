@@ -16,6 +16,7 @@ angular.module('contentful/controllers').
         if (err) return notification.error('Error deleting content type');
         notification.info('Content type deleted successfully');
         scope.$emit('entityDeleted', entryType);
+        scope.bucketContext.removeEntryType($scope.entryType);
       });
     });
   };
@@ -30,20 +31,20 @@ angular.module('contentful/controllers').
   });
 
   $scope.canPublish = function() {
-    if (!$scope.doc) return false;
-    var version = $scope.doc.version;
-    var publishedVersion = $scope.doc.getAt(['sys', 'publishedVersion']);
+    if (!$scope.otDoc) return false;
+    var version = $scope.otDoc.version;
+    var publishedVersion = $scope.otDoc.getAt(['sys', 'publishedVersion']);
     var notPublishedYet = !publishedVersion;
     var updatedSincePublishing = version > publishedVersion;
-    var hasFields = $scope.doc.getAt(['fields']).length > 0;
+    var hasFields = $scope.otDoc.getAt(['fields']).length > 0;
     return this.entryType.canPublish() &&
       (notPublishedYet || updatedSincePublishing) &&
       hasFields;
   };
 
   $scope.publish = function () {
-    var version = $scope.doc.version;
-    $scope.entryType.publish(version, function (err) {
+    var version = $scope.otDoc.version;
+    $scope.entryType.publish(version, function (err, publishedEntryType) {
       $scope.$apply(function(scope){
         if (err) {
           var errorId = err.body.sys.id;
@@ -57,6 +58,10 @@ angular.module('contentful/controllers').
 
         notification.info(title() + ' published successfully');
         scope.otUpdateEntity();
+
+        //console.log('editor has published %o as %o', scope.entryType, publishedEntryType);
+        scope.publishedEntryType = publishedEntryType;
+        scope.bucketContext.refreshEntryTypes();
       });
     });
   };
@@ -64,7 +69,7 @@ angular.module('contentful/controllers').
   $scope.publishButtonLabel = function () {
     var publishedAt = null;
     try {
-      publishedAt = $scope.doc.getAt(['sys', 'publishedAt']);
+      publishedAt = $scope.otDoc.getAt(['sys', 'publishedAt']);
     } catch (e) { }
 
     if (publishedAt) {

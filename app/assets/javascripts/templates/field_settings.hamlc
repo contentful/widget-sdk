@@ -1,25 +1,25 @@
 .drag-handle
   %i.ss-rows
 .name
-  %input(type="text"
+  %input(ot-path="['fields', index, 'name']"
+         ot-subdoc ot-bind-text type="text"
          data-placement="right"
          title="Field title displayed to editors")
 .identifier {{field.id}}
 .type {{getFieldTypeName(field)}}
-.display(ot-edit-path="['displayField']")
+.display(ot-path="['displayField']")
   %input(type="radio" name="displayField"
     ng-model="entryType.data.displayField"
     value="{{field.id}}"
     ng-disabled="!displayEnabled(field)"
-    ot-bind="model"
-    data-placement="left"
+    ot-bind-model data-placement="left"
     title="Use as title in interface")
-.localized(ot-edit-path="['fields', index, 'localized']")
-  %input(type="checkbox" ng-model="value" ot-bind="model"
+.localized(ot-path="['fields', index, 'localized']")
+  %input(type="checkbox" ng-model="value" ot-bind-model
          data-placement="left"
          title="Content in this field is localized")
-.required(ot-edit-path="['fields', index, 'required']")
-  %input(type="checkbox" ng-model="value" ot-bind="model"
+.required(ot-path="['fields', index, 'required']")
+  %input(type="checkbox" ng-model="value" ot-bind-model
          data-placement="left"
          title="Make field mandatory")
 .validations

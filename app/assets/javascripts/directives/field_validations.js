@@ -13,7 +13,7 @@ angular.module('contentful/directives').directive('fieldValidations', function()
       };
 
       $scope.deleteValidation = function (validationIndex) {
-        $scope.doc.at(['fields', $scope.index, 'validations', validationIndex]).remove(function(err){
+        $scope.otDoc.at(['fields', $scope.index, 'validations', validationIndex]).remove(function(err){
           if (!err) $scope.$apply(function (scope) {
             scope.otUpdateEntity();
           });
@@ -26,7 +26,7 @@ angular.module('contentful/directives').directive('fieldValidations', function()
       };
 
       $scope.updateValidationsFromDoc = function () {
-        $scope.field.validations = $scope.doc.at(['fields', $scope.index, 'validations']).get();
+        $scope.field.validations = $scope.otDoc.at(['fields', $scope.index, 'validations']).get();
       };
     }
   };

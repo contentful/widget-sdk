@@ -1,8 +1,8 @@
 %ul.links(ng-hide="linkedEntries.length == 0")
   %li(ng-repeat="entry in linkedEntries")
     %a(ng-click="visitLink(entry)") {{linkDescription(entry)}}
-    %i.ss-delete(ng-click="removeLink(entry)" ng-show="editable")
-.controls(ng-show="editable && (linkedEntries.length == 0 || field.type == 'array')")
+    %i.ss-delete(ng-click="removeLink(entry)" ng-hide="otDisabled")
+.controls(ng-show="!otDisabled && (linkedEntries.length == 0 || field.type == 'array')")
   .dropdown-btn.add-new(title="Add new Entry" data-placement="left")
     %button.dropdown-toggle
       %i.ss-plus
@@ -34,7 +34,7 @@
             cf-click-local="pick(entry)"
             ng-class="{selected: entry==entries[selectedItem]}")
           %td.cell-type
-            %span {{bucketContext.typeForEntry(entry).data.name}}
+            %span {{bucketContext.publishedTypeForEntry(entry).data.name}}
           %td.cell-name
             %span {{bucketContext.entryTitle(entry)}}
           %td.cell-by

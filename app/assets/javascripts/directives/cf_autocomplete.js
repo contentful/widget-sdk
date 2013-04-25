@@ -10,14 +10,14 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
 
       $scope.removeLink = function(entry) {
         if (attrs.cfAutocomplete === 'entry') {
-          return $scope.changeValue(null, function(err) {
+          return $scope.otChangeValue(null, function(err) {
             if (!err) $scope.$apply(function(scope) {
               scope.linkedEntries.length = 0;
             });
           });
         } else {
           var entryIndex = _.indexOf($scope.linkedEntries, entry);
-          $scope.doc.at($scope.path.concat(entryIndex)).remove(function (err) {
+          $scope.otDoc.at($scope.otPath.concat(entryIndex)).remove(function (err) {
             if (!err) $scope.$apply(function(scope) {
               scope.linkedEntries.splice(entryIndex,1);
             });
@@ -34,7 +34,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
           }
         };
         if (attrs.cfAutocomplete === 'entry') {
-          $scope.changeValue(link, function(err) {
+          $scope.otChangeValue(link, function(err) {
             $scope.$apply(function(scope) {
               if (err) {
                 callback(err);
@@ -46,8 +46,8 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
             });
           });
         } else {
-          if (_.isArray(ShareJS.peek($scope.doc, $scope.path))) {
-            $scope.doc.at($scope.path).push(link, function (err) {
+          if (_.isArray(ShareJS.peek($scope.otDoc, $scope.otPath))) {
+            $scope.otDoc.at($scope.otPath).push(link, function (err) {
               $scope.$apply(function(scope) {
                 if (err) {
                   callback(err);
@@ -58,7 +58,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
               });
             });
           } else {
-            ShareJS.mkpath($scope.doc, $scope.path, [link], function (err) {
+            ShareJS.mkpath($scope.otDoc, $scope.otPath, [link], function (err) {
               $scope.$apply(function(scope) {
                 if (err) {
                   callback(err);
@@ -156,13 +156,13 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
 
       };
 
-      $scope.$on('valueChanged', function(event, value) {
-        event.currentScope.setLinkedEntriesFromValue(value);
+      $scope.$on('otValueChanged', function(event, path, value) {
+        if (path === event.currentScope.otPath) event.currentScope.setLinkedEntriesFromValue(value);
       });
 
       $scope.linkDescription= function(entry) {
         if (entry) {
-          return $scope.bucketContext.entryTitle(entry, $scope.locale.name);
+          return $scope.bucketContext.entryTitle(entry, $scope.locale.code);
         } else {
           return '(nothing)';
         }

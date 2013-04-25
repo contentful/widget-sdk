@@ -29,17 +29,17 @@ angular.module('contentful/directives').directive('cfLocationEditor', function(c
       });
 
       var changeHandler = function() {
-        scope.changeValue(scope.location, function() {
+        scope.otChangeValue(scope.location, function() {
           scope.$apply();
           //TODO handle failure
         });
       };
 
-      scope.$watch('editable', function(editable, old, scope) {
-        if (editable) {
-          marker.setDraggable(true);
-        } else {
+      scope.$watch('otDisabled', function(otDisabled) {
+        if (otDisabled) {
           marker.setDraggable(false);
+        } else {
+          marker.setDraggable(true);
         }
       });
 
@@ -93,14 +93,15 @@ angular.module('contentful/directives').directive('cfLocationEditor', function(c
       };
 
       google.maps.event.addListener(map, 'click', function(event){
-        if (!scope.location && scope.editable) {
+        if (!scope.location && !scope.otDisabled) {
           marker.setPosition(event.latLng);
           locationController.$setViewValue(event.latLng);
         }
       });
 
-      scope.$on('valueChanged', function(event, value){
-        scope.location = value;
+      scope.$on('otValueChanged', function(event, path, value){
+        console.log('location editor received valie changed', event, path, value);
+        if (path === event.currentScope.otPath) scope.location = value;
       });
 
       google.maps.event.addListener(marker, 'dragend', function(event){
@@ -129,7 +130,7 @@ angular.module('contentful/directives').directive('cfLocationEditor', function(c
             });
             stopSpin();
           });
-        } else {
+        } else if (searchTerm !== old) {
           scope.results = [];
           scope.selectedResult = 0;
           map.panTo(locationController.$viewValue);

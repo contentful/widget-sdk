@@ -25,7 +25,7 @@ angular.module('contentful/directives').directive('newFieldForm', function (avai
         };
         _.extend(field, $scope.newType);
 
-        var fieldDoc = $scope.doc.at(['fields']);
+        var fieldDoc = $scope.otDoc.at(['fields']);
 
         fieldDoc.push(field, function(err) {
           if (err) {

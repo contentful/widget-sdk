@@ -1,6 +1,6 @@
-angular.module('contentful/services').directive('otDocFor', function (ShareJS) {
-  'use strict';
+'use strict';
 
+angular.module('contentful/ot').directive('otDocFor', function (ShareJS) {
   return {
     restrict: 'A',
     link: function (scope, elem, attr) {
@@ -9,13 +9,11 @@ angular.module('contentful/services').directive('otDocFor', function (ShareJS) {
       };
     },
 
-    controller: function ($scope) {
-      // TODO refactor all related files to use otDoc instead of doc
-
+    controller: function OtDocForCtrl($scope) {
       var remoteOpListener;
       $scope.otDisabled = false;
 
-      $scope.$watch(function (scope) {
+      $scope.$watch(function otDocForEntityWatcher(scope) {
         return !scope.otDisabled && scope.otGetEntity();
       } , function (entity, old, scope) {
         //console.log('otDocFor watch entity old: %o new: %o', old, entity);
@@ -24,30 +22,32 @@ angular.module('contentful/services').directive('otDocFor', function (ShareJS) {
             if (!err) {
               scope.$apply(function(scope){
                 //console.log('otDocFor installing doc %o for entity %o', doc, entity);
-                scope.doc = doc;
+                scope.otDoc = doc;
               });
             } else {
               //console.log('otDocFor error opening docfor entity %o', entity);
             }
           });
         } else {
-          if (scope.doc) {
-            scope.doc.close();
-            scope.doc = null;
+          if (scope.otDoc) {
+            scope.otDoc.close();
+            scope.otDoc = null;
           }
         }
       });
 
-      $scope.$watch('doc', function (doc, old, scope) {
+      $scope.$watch('otDoc', function (otDoc, old, scope) {
         if (old) {
-          //console.log('otDocFor Controller watcher removing old listener %o from doc %o', remoteOpListener, old);
+          //console.log('otDocFor Controller watcher removing old listener %o from otDoc %o', remoteOpListener, old);
           old.removeListener(remoteOpListener);
-          scope.doc = null;
+          scope.otDoc = null;
         }
-        if (doc) {
-          remoteOpListener = doc.on('remoteop', function(op) {
+        if (otDoc) {
+          remoteOpListener = otDoc.on('remoteop', function(ops) {
             scope.$apply(function(scope) {
-              scope.$broadcast('otRemoteOp', op);
+              _.each(ops, function (op) {
+                scope.$broadcast('otRemoteOp', op);
+              });
             });
           });
           //console.log('otDocFor Controller watcher adding listener %o from doc %o', remoteOpListener, doc);
@@ -56,25 +56,26 @@ angular.module('contentful/services').directive('otDocFor', function (ShareJS) {
 
       $scope.otUpdateEntity = function () {
         var entity = $scope.otGetEntity();
-        if (entity && $scope.doc) {
-          //console.log('otUpdateEntity did update', entity.data, $scope.doc.snapshot);
-          entity.update($scope.doc.snapshot);
+        if (entity && $scope.otDoc) {
+          //console.log('otUpdateEntity did update', entity.data, $scope.otDoc.snapshot);
+          entity.update($scope.otDoc.snapshot);
         } else {
-          console.warn('otUpdateEntity did not update', entity, $scope.doc);
+          console.warn('otUpdateEntity did not update', entity, $scope.otDoc);
         }
       };
 
       $scope.$on('$destroy', function (event) {
         var scope = event.currentScope;
-        if (scope.doc) {
-          //console.log('otDocFor Controller destroyed, removing listener and doc');
-          scope.doc.removeListener(remoteOpListener);
+        if (scope.otDoc) {
+          //console.log('otDocFor Controller destroyed, removing listener and otDoc');
+          scope.otDoc.removeListener(remoteOpListener);
           remoteOpListener = null;
-          scope.doc.close();
-          scope.doc = null;
+          scope.otDoc.close();
+          scope.otDoc = null;
         }
       });
 
     }
+
   };
 });

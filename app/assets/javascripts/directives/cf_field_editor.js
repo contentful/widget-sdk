@@ -1,37 +1,25 @@
 'use strict';
 
-angular.module('contentful/directives').directive('cfFieldEditor', function(widgets, $compile, otEditPathHelper) {
+angular.module('contentful/directives').directive('cfFieldEditor', function(widgets, $compile) {
   return {
-    restrict: 'E',
+    restrict: 'C',
+    require: '^otPath',
     link: function(scope, elm, attr) {
-
-      scope.$watch(function (scope) {
-        return scope.$parent.$eval(attr.value);
-      }, function (val, old, scope) {
-        scope.value = val;
+      scope.$on('otTextIdle', function (event) {
+        event.currentScope.otUpdateEntity();
       });
 
-      scope.$watch(function(scope){
-        return ['fields', scope.field.id, scope.locale.code];
-      }, function(value, old, scope){
-        scope.path = value;
-      }, true);
+      // Write back local value changes to the entity
+      // Necessary because the widgets can't access the entry directly, only the value variable
+      scope.$watch('value', function (value, old, scope) {
+        if (value === old) return;
+        scope.entry[scope.field.id][scope.locale.code] = value;
+      });
 
-      otEditPathHelper.injectInto(scope);
-
-      // Widgets
       var widget = widgets.editor(scope.field.type, attr.editor);
-
       elm.html(widget.template);
-      elm.on('blur', '*', function() {
-        scope.$apply(function (scope) {
-          scope.$emit('inputBlurred', scope.field.id);
-        });
-      });
       $compile(elm.contents())(scope);
-      if(typeof widget.link === 'function') {
-        widget.link(scope, elm, attr);
-      }
+      if(typeof widget.link === 'function') widget.link(scope, elm, attr);
     }
   };
 });

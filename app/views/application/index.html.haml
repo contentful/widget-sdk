@@ -35,7 +35,7 @@
               {{bucket.data.name}}
             %li(ng-show="canCreateBucket(user)" ng-click="showCreateBucketDialog()" ng-class="{separator: buckets.length > 0}" dropdown-close="")
               Create Bucket
-    %bucket-view.container-fluid(ng-show="bucketContext.bucket")
+    %bucket-view(ng-show="bucketContext.bucket" ng-controller="TabViewCtrl")
     .create-bucket-advice(ng-show="buckets.length == 0")
       %p Nothing to see yet. Why don't you create a bucket?
       %button(ng-click="showCreateBucketDialog()") Create Bucket

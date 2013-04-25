@@ -1,0 +1,15 @@
+
+otDocFor="entity"
+  - watches otDisabled
+  - creates otDoc for entity
+  - povides otUpdateEntity to copy doc to entity
+  - provides remoteOp event
+
+otPath="path(optional)"
+  - provides changeValue-method and valueChanged-event for existing path
+
+otBind
+  - provides the editor interfaces for string and ngmodelctrl
+
+
+later hide doc entirely inside the controllers

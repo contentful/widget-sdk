@@ -14,7 +14,7 @@ angular.module('contentful/controllers').controller('FieldSettingsCtrl', functio
   };
 
   $scope.enable = function() {
-    $scope.doc.at(['fields', this.index, 'disabled']).set(false, function(err) {
+    $scope.otDoc.at(['fields', this.index, 'disabled']).set(false, function(err) {
       if (!err) $scope.$apply(function(scope) {
         scope.field.disabled = false;
       });
@@ -22,7 +22,7 @@ angular.module('contentful/controllers').controller('FieldSettingsCtrl', functio
   };
 
   $scope.disable = function() {
-    $scope.doc.at(['fields', this.index, 'disabled']).set(true, function(err) {
+    $scope.otDoc.at(['fields', this.index, 'disabled']).set(true, function(err) {
       if (!err) $scope.$apply(function(scope) {
         scope.field.disabled = true;
       });
@@ -30,7 +30,7 @@ angular.module('contentful/controllers').controller('FieldSettingsCtrl', functio
   };
 
   $scope.delete = function() {
-    $scope.doc.at(['fields', $scope.index]).remove(function (err) {
+    $scope.otDoc.at(['fields', $scope.index]).remove(function (err) {
       if (!err) $scope.$apply(function(scope) {
         scope.otUpdateEntity();
       });

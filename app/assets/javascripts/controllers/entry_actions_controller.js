@@ -66,14 +66,14 @@ angular.module('contentful/controllers').controller('EntryActionsCtrl', function
   };
 
   $scope.canPublish = function() {
-    if (!$scope.doc) return false;
-    var version = $scope.doc.version;
-    var publishedVersion = $scope.doc.getAt(['sys', 'publishedVersion']);
+    if (!$scope.otDoc) return false;
+    var version = $scope.otDoc.version;
+    var publishedVersion = $scope.otDoc.getAt(['sys', 'publishedVersion']);
     return this.entry.canPublish() && (!publishedVersion || version > publishedVersion);
   };
 
   $scope.publish = function () {
-    var version = $scope.doc.version;
+    var version = $scope.otDoc.version;
     $scope.entry.publish(version, function (err) {
       $scope.$apply(function(scope){
         if (err) {
@@ -95,7 +95,7 @@ angular.module('contentful/controllers').controller('EntryActionsCtrl', function
   $scope.publishButtonLabel = function () {
     var publishedAt = null;
     try {
-      publishedAt = $scope.doc.getAt(['sys', 'publishedAt']);
+      publishedAt = $scope.otDoc.getAt(['sys', 'publishedAt']);
     } catch (e) { }
 
     if (publishedAt) {
