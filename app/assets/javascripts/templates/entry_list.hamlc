@@ -10,10 +10,10 @@
     %ul.left-nav-list
       %li(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
         %span All
+      %li(ng-class="{active: tab.params.list == 'unpublished'}" ng-click="switchList('unpublished')")
+        %span Draft
       %li(ng-class="{active: tab.params.list == 'published'}" ng-click="switchList('published')")
         %span Published
-      %li(ng-class="{active: tab.params.list == 'unpublished'}" ng-click="switchList('unpublished')")
-        %span Not Published
       %li(ng-class="{active: tab.params.list == 'archived'}" ng-click="switchList('archived')")
         %span Archived
       -#
