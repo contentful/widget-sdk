@@ -75,7 +75,7 @@
               .draft-wrapper
                 %span {{statusClass(entry)}}
                 .main-results-bar
-      .loading(ng-show="reloadInProgress")
+      .loading(ng-hide="paginator.atLast()")
 .tab-actions
   .label {{selection.size()}} Entries selected
   .button-set(ng-controller="EntryListActionsCtrl"   ng-hide="selection.isEmpty()")
