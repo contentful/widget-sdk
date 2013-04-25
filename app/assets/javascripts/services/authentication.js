@@ -64,6 +64,10 @@ angular.module('contentful/services').provider('authentication', function Authen
       return authApp + 'profile/user?access_token='+this.token;
     },
 
+    supportUrl: function() {
+      return authApp + 'integrations/zendesk/login';
+    },
+
     bucketSettingsUrl: function (bucketId) {
       return authApp + 'settings/buckets/'+bucketId+'/edit?access_token='+this.token;
     },

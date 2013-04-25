@@ -22,6 +22,8 @@
           .separator
           %ul
             %li(ng-click="editProfile()" dropdown-close="") Edit Profile
+            %li
+              %a(href="{{supportUrl}}") Support
             %li(ng-click="logout()" dropdown-close="") Log out
       .dropdown-btn.project
         %a.btn.dropdown-toggle

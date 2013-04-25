@@ -32,6 +32,8 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
     authentication.logout();
   };
 
+  $scope.supportUrl = authentication.supportUrl();
+
   $scope.$on('iframeMessage', function (event, message) {
     if (message.type === 'bucket' && message.action === 'update') {
       _.extend($scope.bucketContext.bucket.data, message.resource);
