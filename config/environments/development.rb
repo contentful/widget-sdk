@@ -7,7 +7,7 @@ Contentful::Application.configure do
   config.cache_classes = false
 
   if defined?(Uglifier)
-    config.assets.js_compressor = Uglifier.new(:mangle => false)
+    config.assets.js_compressor = Uglifier.new(:mangle => false, :output => {:max_line_len => 200})
   end
 
   # Log error messages when you accidentally call methods on nil.
