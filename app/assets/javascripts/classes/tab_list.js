@@ -1,18 +1,17 @@
-angular.module('contentful/classes').factory('TabList', function(){
+angular.module('contentful/classes').factory('TabList', function($rootScope){
   'use strict';
 
-  function TabList(scope) {
-    this.scope = scope;
+  function TabList() {
     this.items = [];
     this.current = null;
   }
 
   TabList.prototype = {
     activate: function(item){
-      var event = this.scope.$broadcast('tabWantsActive', item);
+      var event = $rootScope.$broadcast('tabWantsActive', item);
       if (!event.defaultPrevented){
         this.current = item;
-        this.scope.$broadcast('tabBecameActive', item);
+        $rootScope.$broadcast('tabBecameActive', item);
       }
     },
 
@@ -34,7 +33,7 @@ angular.module('contentful/classes').factory('TabList', function(){
     },
 
     closeTab: function (item) {
-       var event = this.scope.$broadcast('tabWantsClose', item);
+       var event = $rootScope.$broadcast('tabWantsClose', item);
        if (!event.defaultPrevented){
          var index = _.indexOf(this.items, item);
          var newCurrent = false;
@@ -53,7 +52,7 @@ angular.module('contentful/classes').factory('TabList', function(){
          if (item.active()) {
            this.current = null;
          }
-         this.scope.$broadcast('tabClosed', item);
+         $rootScope.$broadcast('tabClosed', item);
          if (newCurrent !== false && newCurrent !== null) {
            newCurrent.activate();
          }

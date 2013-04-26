@@ -1,8 +1,9 @@
 angular.module('contentful/classes').factory('BucketContext', function(TabList, $rootScope){
   'use strict';
 
-  function BucketContext(scope){
-    this.tabList = new TabList(scope);
+  function BucketContext(bucket){
+    this.tabList = new TabList();
+    this.bucket = bucket;
   }
 
   BucketContext.prototype = {
@@ -66,6 +67,9 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList, 
           } else {
             $rootScope.$apply(function () {
               self.publishedEntryTypes = _(entryTypes)
+                // TODO this union will lead to problems if we ever allow deletion of published entry Types
+                // because entryTypes that entered the list once will never get out again
+                .union(self.publishedEntryTypes)
                 .sortBy(function(et) { return et.data.name.trim().toLowerCase(); })
                 .value();
               self._publishedEntryTypesHash = _(entryTypes).map(function(et) {
@@ -74,6 +78,11 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList, 
             });
           }
         });
+      },
+      registerPublishedEntryType: function (publishedEntryType) {
+        if (!_.contains(this.publishedEntryTypes, publishedEntryType)) {
+          this.publishedEntryTypes.push(publishedEntryType);
+        }
       },
       removeEntryType: function(entryType) {
         var index = _.indexOf(this.entryTypes, entryType);
