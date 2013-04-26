@@ -17,14 +17,13 @@
     %li
       %i.ss-attach
       .hint.tip.nav-models
-        Assets
+        Assets not available yet, coming soon
     %li(ng-class="{section: bucketContext.tabList.currentSection() == 'contentDelivery',
                    'section-index': bucketContext.tabList.currentViewType() == 'content-delivery'}"
         ng-click="visitView('content-delivery')")
       %i.ss-fork
       .hint.tip.nav-models
         Content Delivery
-  %ul.bottom(ng-show="bucketContext.bucket")
     %li(ng-class="{section: bucketContext.tabList.currentSection() == 'bucketSettings',
                   'section-index': bucketContext.tabList.currentSection() == 'bucketSettings'}"
         ng-click="visitView('bucket-settings')")
