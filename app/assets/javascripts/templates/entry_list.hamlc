@@ -51,7 +51,7 @@
           %th.cell-type Content Type
           %th.cell-name Name
           %th.cell-by By
-          %th.cell-created Created
+          %th.cell-updated Updated
           %th.cell-status Status
     .results-empty(ng-show="entries.length == 0")
       No entries matching your selection.
@@ -69,7 +69,7 @@
               %span {{bucketContext.entryTitle(entry)}}
             %td.cell-by
               %span Peter Pan
-            %td.cell-created
+            %td.cell-updated
               %date.relative(datetime="{{entry.data.sys.updatedAt}}")
             %td.cell-status(ng-class="statusClass(entry)")
               .draft-wrapper

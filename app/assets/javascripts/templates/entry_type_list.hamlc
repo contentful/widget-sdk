@@ -9,7 +9,7 @@
       %tr
         %th.cell-name Name
         %th.cell-by Fields
-        %th.cell-created Created
+        %th.cell-updated Updated
         %th.cell-status Status
   .main-results-wrapper(ng-hide="empty")
     %table.result-list.main-results
@@ -20,7 +20,7 @@
             %span {{entryType.data.name}}
           %td.cell-by
             %span {{numFields(entryType)}}
-          %td.cell-created
+          %td.cell-updated
             %date.relative(datetime="{{entryType.data.sys.updatedAt}}")
           %td.cell-status(ng-class="statusClass(entryType)")
             .draft-wrapper
