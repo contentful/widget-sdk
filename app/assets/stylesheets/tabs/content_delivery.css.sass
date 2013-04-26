@@ -1,0 +1,17 @@
+.content-delivery
+  @extend .list-tab-view
+
+  .result-list
+    tbody tr
+      @extend %tr-clickable
+    .cell-name
+      width: 30%
+    .cell-description
+      width: 50%
+    .cell-updated
+      width: 10%
+    .cell-by
+      width: 10%
+
+.create-api-key-advice
+  @extend %advice

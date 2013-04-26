@@ -1,0 +1,34 @@
+.tab-header
+  %h1 {{headline}}
+
+.aux-panel
+  %header
+    %span Entry Information
+  .entity-info-panel
+
+.tab-main
+  .ng-form.form-horizontal(name="apiKeyForm" submit="save()")
+    .form-field
+      %label Name
+      .form-controls
+        %input(type="text" ng-model="apiKey.data.name" required="" ng-disabled="!editable()")
+    .form-field
+      %label Description
+      .form-controls
+        %input(type="text" ng-model="apiKey.data.description" ng-disabled="!editable()")
+    .form-field(ng-show="apiKey.data.accessToken")
+      %label Access Token
+      .form-controls
+        %textarea(ng-model="apiKey.data.accessToken" ng-disabled="true")
+
+.tab-actions
+  .button-set
+    %button.delete(title="Permanently delete this API key"
+                   ng-click="delete()")
+      Delete
+    %button.save(title="Save this API key"
+                 ng-click="save()"
+                 ng-disabled="apiKeyForm.$invalid")
+      Save
+  .rest-save-status
+    Hit Save to save changes to this API Key.

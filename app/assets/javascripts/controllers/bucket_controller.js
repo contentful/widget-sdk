@@ -85,4 +85,17 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
     });
   };
 
+  $scope.createApiKey = function() {
+    var scope = this;
+    var apiKey = scope.bucketContext.bucket.createBlankApiKey();
+    scope.bucketContext.tabList.add({
+      viewType: 'api-key-editor',
+      section: 'contentDelivery',
+      params: {
+        apiKey: apiKey,
+        mode: 'create'
+      }
+    }).activate();
+  };
+
 });
