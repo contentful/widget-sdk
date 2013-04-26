@@ -41,14 +41,6 @@ angular.module('contentful/controllers').controller('TabViewCtrl', function ($sc
         title: 'Content Delivery',
         canClose: true
       };
-    } else if (viewType == 'api-key-editor') {
-      options = {
-        viewType: 'api-key-editor',
-        section: 'contentDelivery',
-        hidden: true,
-        title: 'API Key',
-        canClose: true
-      };
     }
 
     var tab = _.find($scope.bucketContext.tabList.items, function(tab) {
