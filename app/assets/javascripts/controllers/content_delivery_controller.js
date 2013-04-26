@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful/controllers').
-  controller('ContentDeliveryCtrl', function($scope) {
+  controller('ContentDeliveryCtrl', function($scope, $window) {
     $scope.refreshApiKeys = function() {
       $scope.bucketContext.bucket.getApiKeys(null, function(err, apiKeys) {
         $scope.$apply(function() {
@@ -45,5 +45,9 @@ angular.module('contentful/controllers').
         });
       }
       editor.activate();
+    };
+
+    $scope.openApiDocs = function() {
+      $window.open('https://developer.example.com/documentation/api');
     };
   });

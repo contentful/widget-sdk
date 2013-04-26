@@ -1,30 +1,36 @@
 .tab-header
-  %h1 Content Delivery / API Keys
+  %h1 Content Delivery
 
 .tab-main
 
-  .create-api-key-advice(ng-show="empty")
-    %p There are no API Keys yet.
-    %button(ng-click="createApiKey()") Create API Key
+  .left-nav
+    %ul
+      %li.api-keys API Keys
+      %li(ng-click="openApiDocs()") API Docs
 
-  %table.result-list.main-header(ng-hide="empty")
-    %thead
-      %tr
-        %th.cell-name Name
-        %th.cell-description Description
-        %th.cell-by By
-        %th.cell-updated Updated
+  .with-left-nav
+    .create-api-key-advice(ng-show="empty")
+      %p There are no API Keys yet.
+      %button(ng-click="createApiKey()") Create API Key
 
-  .main-results-wrapper(ng-hide="empty")
-    %table.result-list.main-results
-      %tbody
-        %tr(ng-repeat="apiKey in apiKeys"
-            cf-click-local="editApiKey(apiKey)")
-          %td.cell-name
-            %span {{apiKey.getName()}}
-          %td.cell-description
-            %span {{apiKey.data.description}}
-          %td.cell-by
-            %span Peter Pan
-          %td.cell-updated
-            %date.relative(datetime="{{apiKey.data.sys.updatedAt}}")
+    %table.result-list.main-header(ng-hide="empty")
+      %thead
+        %tr
+          %th.cell-name Name
+          %th.cell-description Description
+          %th.cell-by By
+          %th.cell-updated Updated
+
+    .main-results-wrapper(ng-hide="empty")
+      %table.result-list.main-results
+        %tbody
+          %tr(ng-repeat="apiKey in apiKeys"
+              cf-click-local="editApiKey(apiKey)")
+            %td.cell-name
+              %span {{apiKey.getName()}}
+            %td.cell-description
+              %span {{apiKey.data.description}}
+            %td.cell-by
+              %span Peter Pan
+            %td.cell-updated
+              %date.relative(datetime="{{apiKey.data.sys.updatedAt}}")
