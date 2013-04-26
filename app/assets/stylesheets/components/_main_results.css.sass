@@ -10,6 +10,14 @@
   .main-results
     @extend %endless-result-list-body
 
+// style changes for main-results, compared to regular result-list
+.main-results,
+.main-header
+  &.result-list
+    border: 0
+    th
+      text-transform: uppercase
+
 // status cell stuff for main-results
 .result-list
   .draft-wrapper

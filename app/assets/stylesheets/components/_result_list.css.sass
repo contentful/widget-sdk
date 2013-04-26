@@ -12,6 +12,7 @@ $result-list-highlight: #fbfbfb
 // Modifier extensions
 
 %endless-result-list-body
+  // The borders come from the container/main-header/tab-content instead
   border-bottom: none
   border-top: none
 
@@ -33,7 +34,10 @@ $result-list-highlight: #fbfbfb
 .result-list
   table-layout: fixed
   // borders
-  border: 0 solid $dark-rule
+  border: 1px solid $dark-rule
+  thead
+    th
+      border-bottom: 1px solid $dark-rule
   tbody
     td
       border-bottom: 1px solid $light-rule
@@ -53,12 +57,10 @@ $result-list-highlight: #fbfbfb
     overflow: hidden
     text-overflow: ellipsis
   th
-    border-bottom: 1px solid $light-rule
     font-weight: normal
     font-size: 11px
     padding: 4px 0 3px 0
     color: $light-gray
-    text-transform: uppercase
   th:first-child,
   td:first-child
     padding-left: 13px
