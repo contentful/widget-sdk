@@ -21,8 +21,9 @@ angular.module('contentful/directives').directive('searchField', function(){
       var typeAhead = 'searchTypeAhead' in attr;
 
       function update() {
-        scope.update();
-        scope.$apply();
+        scope.$apply(function (scope) {
+          scope.update();
+        });
       }
 
       var debouncedUpdate = _.debounce(update, 300);
@@ -40,12 +41,11 @@ angular.module('contentful/directives').directive('searchField', function(){
       };
 
       $scope.update = function() {
-        console.log('searchField updating', $scope.inner.term);
-        $scope.search.term = $scope.inner.term;
+        $scope.search = $scope.inner.term;
       };
 
-      $scope.$watch('search.term', function(term) {
-        $scope.inner.term = term;
+      $scope.$watch('search', function(search) {
+        $scope.inner.term = search;
       });
     }
   };

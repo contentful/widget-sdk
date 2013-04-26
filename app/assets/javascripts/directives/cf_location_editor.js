@@ -109,9 +109,7 @@ angular.module('contentful/directives').directive('cfLocationEditor', function(c
       });
 
       // Search Stuff /////////////////////////////////////////////////////////
-      scope.search = {term: ''};
-
-      scope.$watch('search.term', function(searchTerm, old, scope) {
+      scope.$watch('searchTerm', function(searchTerm, old, scope) {
         console.log('search term changed', searchTerm);
         if (searchTerm && searchTerm != old) {
           var geocoder = new google.maps.Geocoder();
@@ -223,7 +221,7 @@ angular.module('contentful/directives').directive('cfLocationEditor', function(c
       };
 
       scope.closePicker = function() {
-        scope.search.term = '';
+        scope.searchTerm = '';
       };
 
       scope.pickSelected = function() {

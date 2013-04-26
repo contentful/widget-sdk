@@ -172,11 +172,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
       // create a proper interface and then have different lists for the different types
 
       // Search ///////////////////////////////////////////////////////////////
-      $scope.search = {
-        term: ''
-      };
-
-      $scope.$watch('search.term', function() {
+      $scope.$watch('searchTerm', function() {
         $scope.paginator.page = 0;
         $scope.selectedItem = 0;
         $scope.resetEntries();
@@ -185,7 +181,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
       $scope.resetEntries = function() {
         if ($scope.reloadInProgress || $scope.resetPaused) return;
 
-        if (!$scope.search.term || $scope.search.term.length === 0) {
+        if (!$scope.searchTerm || $scope.searchTerm.length === 0) {
           $scope.entries = [];
           return;
         }
@@ -217,8 +213,8 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
         // queryObject['sys.entryType.sys.id'] = whatever
         // This can't be done without the constraints though
 
-        if ($scope.search.term && 0 < $scope.search.term.length) {
-          queryObject.query = $scope.search.term;
+        if ($scope.searchTerm && 0 < $scope.searchTerm.length) {
+          queryObject.query = $scope.searchTerm;
         }
 
         return queryObject;
@@ -324,7 +320,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
       };
 
       $scope.closePicker = function() {
-        $scope.search.term = '';
+        $scope.searchTerm = '';
       };
 
       $scope.pick = function (entry) {

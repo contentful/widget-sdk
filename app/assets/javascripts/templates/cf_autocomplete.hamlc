@@ -14,7 +14,7 @@
             dropdown-close="")
           {{entryType.data.name}}
   .search-field(ng-submit="submit()"
-                search="search"
+                search="searchTerm"
                 search-type-ahead=""
                 placeholder="Search for entries"
                 data-placement="top"

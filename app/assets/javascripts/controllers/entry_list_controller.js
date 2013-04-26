@@ -3,9 +3,6 @@
 angular.module('contentful/controllers').controller('EntryListCtrl', function EntryListCtrl($scope, Paginator, Selection, cfSpinner) {
   $scope.contentType = 'entries';
   $scope.entrySection = 'all';
-  $scope.search = {
-    term: ''
-  };
 
   $scope.paginator = new Paginator();
   $scope.selection = new Selection();
@@ -36,7 +33,7 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     }
   });
 
-  $scope.$watch('search.term',  function (term) {
+  $scope.$watch('searchTerm',  function (term) {
     if (term === null) return;
     $scope.tab.params.list = 'all';
     $scope.tab.params.entryTypeId = null;
@@ -45,7 +42,7 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
   });
 
   $scope.switchList = function(list, entryType){
-    $scope.search.term = null;
+    $scope.searchTerm = null;
     var params = $scope.tab.params;
     var shouldReset =
       params.list == list &&
@@ -124,8 +121,8 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
       queryObject['sys.entryType.sys.id'] = this.tab.params.entryTypeId;
     }
 
-    if (!_.isEmpty(this.search.term)) {
-      queryObject.query = this.search.term;
+    if (!_.isEmpty(this.searchTerm)) {
+      queryObject.query = this.searchTerm;
     }
 
     return queryObject;
