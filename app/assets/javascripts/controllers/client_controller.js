@@ -134,10 +134,4 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
   };
 
   $scope.performTokenLookup();
-
-  //client.getBuckets({order: 'name'}, function(err, res){
-    //$scope.$apply(function($scope){
-      //$scope.buckets = res;
-    //});
-  //});
 });
