@@ -5,7 +5,7 @@
 
   .left-nav
     %ul
-      %li.api-keys API Keys
+      %li.api-keys(ng-click="refreshApiKeys()") API Keys
       %li(ng-click="openApiDocs()") API Docs
 
   .with-left-nav
