@@ -24,7 +24,8 @@
 .tab-actions
   .button-set
     %button.delete(title="Permanently delete this API key"
-                   ng-click="delete()")
+                   ng-click="delete()"
+                   ng-show="apiKey.getId()")
       Delete
     %button.save(title="Save this API key"
                  ng-click="save()"
