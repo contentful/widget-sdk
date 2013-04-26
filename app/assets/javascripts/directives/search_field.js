@@ -40,6 +40,7 @@ angular.module('contentful/directives').directive('searchField', function(){
       };
 
       $scope.update = function() {
+        console.log('searchField updating', $scope.inner.term);
         $scope.search.term = $scope.inner.term;
       };
 

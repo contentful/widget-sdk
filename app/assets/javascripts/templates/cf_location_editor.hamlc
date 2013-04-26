@@ -2,7 +2,7 @@
 .gmaps-container(ng-model="location")
 .sub-fields
   .search(ng-hide="otDisabled")
-    .search-field(placeholder="Search Address" on-idle-update="searchTerm")
+    .search-field(placeholder="Search Address" search="search" search-type-ahead)
     .results.search-options-on(ng-show="results.length > 0")
       %ul
         %li(ng-repeat="result in results" ng-click="selectResult(result)" ng-class="{selected: result==results[selectedResult]}")
