@@ -5,9 +5,8 @@ angular.module('contentful/directives').
     return {
       restrict: 'C',
       controller: function EntityInfoPanelCtrl($scope) {
-        $scope.$watch('entry', function(entry) {
-          if (!entry) return;
-          $scope.entryTypeName = $scope.bucketContext.publishedTypeForEntry(entry).data.name;
+        $scope.$watch('entry && bucketContext.publishedTypeForEntry(entry).data.name', function(name, old, scope) {
+          scope.entryTypeName = name;
         });
 
         $scope.$watch('otDoc.snapshot.sys', function(sys) {
