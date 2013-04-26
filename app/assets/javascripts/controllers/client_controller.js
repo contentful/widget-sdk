@@ -2,7 +2,7 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
   'use strict';
 
   $scope.buckets = [];
-  $scope.bucketContext = new BucketContext($scope);
+  $scope.bucketContext = new BucketContext();
   $scope.tokenIdentityMap = new contentfulClient.IdentityMap();
 
   $scope.notification = notification;
@@ -19,7 +19,7 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
 
   $scope.selectBucket = function(bucket) {
     console.log('selectBucket', bucket);
-    $scope.bucketContext.bucket = bucket;
+    $scope.bucketContext = new BucketContext(bucket);
   };
 
   $scope.$watch('buckets', function(buckets){
