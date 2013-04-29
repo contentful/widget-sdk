@@ -4,6 +4,7 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList, 
   function BucketContext(bucket){
     this.tabList = new TabList();
     this.bucket = bucket;
+    this.refreshLocales();
   }
 
   BucketContext.prototype = {

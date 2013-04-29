@@ -23,7 +23,15 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
     }
   });
 
-  $scope.$watch('bucketContext.bucket.locales', 'bucketContext.refreshLocales()', true);
+  $scope.$watch(function (scope) {
+    if (scope.bucketContext && scope.bucketContext.bucket) {
+      return _.map(scope.bucketContext.bucket.getPublishLocales(),function (locale) {
+        return locale.code;
+      });
+    }
+  }, function (codes, old, scope) {
+    if (codes) scope.bucketContext.refreshLocales();
+  }, true);
   $scope.$watch('bucketContext.localesActive', 'bucketContext.refreshActiveLocales()', true);
   $scope.$watch('bucketContext.bucket', function(bucket, o, scope) {
     scope.bucketContext.refreshEntryTypes();
