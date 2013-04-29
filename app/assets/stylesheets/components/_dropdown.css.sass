@@ -38,7 +38,10 @@
     padding: .4em 1.2em
   li
     padding: .4em 1.2em
-    a:link
+    a
+      display: block
+    a:link,
+    a:visited
       color: $medium-gray
     label
       display: block
@@ -52,6 +55,8 @@
   li:hover
     cursor: pointer
     +blue-highlight
+    a:link
+      color: white
     
 .dropdown-menu.top-caret,
 .dropdown-menu.bottom-caret,
