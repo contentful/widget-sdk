@@ -14,12 +14,17 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
   });
 
   function loadPublishedEntryType() {
+    // TODO replace with lookup in registry inside bucketContext
     $scope.entryType.getPublishedVersion(function(err, publishedEntryType) {
       $scope.$apply(function(scope) {
         scope.publishedEntryType = publishedEntryType;
       });
     });
   }
+
+  $scope.updatePublishedEntryType = function (publishedEntryType) {
+    $scope.publishedEntryType = publishedEntryType;
+  };
 
   $scope.$watch('doc.snapshot.fields.length', function(length) {
     $scope.hasFields = length > 0;

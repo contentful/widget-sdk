@@ -72,7 +72,7 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList, 
                 .union(self.publishedEntryTypes)
                 .sortBy(function(et) { return et.data.name.trim().toLowerCase(); })
                 .value();
-              self._publishedEntryTypesHash = _(entryTypes).map(function(et) {
+              self._publishedEntryTypesHash = _(self.publishedEntryTypes).map(function(et) {
                 return [et.data.sys.id, et];
               }).object().valueOf();
             });
@@ -82,6 +82,7 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList, 
       registerPublishedEntryType: function (publishedEntryType) {
         if (!_.contains(this.publishedEntryTypes, publishedEntryType)) {
           this.publishedEntryTypes.push(publishedEntryType);
+          this._publishedEntryTypesHash[publishedEntryType.getId()] = publishedEntryType;
         }
       },
       removeEntryType: function(entryType) {

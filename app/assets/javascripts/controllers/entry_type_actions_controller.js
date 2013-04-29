@@ -57,10 +57,10 @@ angular.module('contentful/controllers').
         }
 
         notification.info(title() + ' published successfully');
-        scope.otUpdateEntity();
 
         //console.log('editor has published %o as %o', scope.entryType, publishedEntryType);
-        scope.publishedEntryType = publishedEntryType;
+        scope.updatePublishedEntryType(publishedEntryType);
+        scope.bucketContext.registerPublishedEntryType(publishedEntryType);
         scope.bucketContext.refreshEntryTypes();
       });
     });
