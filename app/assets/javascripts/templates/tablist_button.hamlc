@@ -12,3 +12,6 @@
         dropdown-close=""
         ng-class="{separator: index == 0}")
         {{entryType.data.name}}
+    %ul(ng-hide="bucketContext.publishedEntryTypes.length > 0")
+      %li.separator.hint(ng-click="createEntryType()" dropdown-close)
+        (Create and activate a Content Type before creating entries)
