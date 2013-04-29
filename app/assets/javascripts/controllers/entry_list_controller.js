@@ -116,7 +116,7 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     } else if (this.tab.params.list == 'unpublished') {
       queryObject['sys.publishedAt[exists]'] = 'false';
     } else if (this.tab.params.list == 'archived') {
-      queryObject['sys.archivedAt[gt]'] = 0;
+      queryObject['sys.archivedAt[exists]'] = 'true';
     } else if (this.tab.params.list == 'entryType') {
       queryObject['sys.entryType.sys.id'] = this.tab.params.entryTypeId;
     }
