@@ -112,7 +112,7 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
     if (this.tab.params.list == 'all') {
       // do nothing
     } else if (this.tab.params.list == 'published') {
-      queryObject['sys.publishedAt[gt]'] = 0;
+      queryObject['sys.publishedAt[exists]'] = 'true';
     } else if (this.tab.params.list == 'unpublished') {
       queryObject['sys.archivedAt[exists]'] = 'false';
       queryObject['sys.publishedAt[exists]'] = 'false';
