@@ -83,6 +83,7 @@ angular.module('contentful/classes').factory('BucketContext', function(TabList, 
         if (!_.contains(this.publishedEntryTypes, publishedEntryType)) {
           this.publishedEntryTypes.push(publishedEntryType);
           this._publishedEntryTypesHash[publishedEntryType.getId()] = publishedEntryType;
+          $rootScope.$broadcast('newEntryTypePublished', publishedEntryType);
         }
       },
       removeEntryType: function(entryType) {
