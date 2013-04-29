@@ -1,10 +1,9 @@
 angular.module('contentful/directives').directive('newFieldForm', function (availableFieldTypes, toIdentifier) {
   'use strict';
-  
+
   return {
     restrict: 'C',
     controller: function ($scope) {
-      
       var defaultType = availableFieldTypes[0];
       $scope.newType = defaultType.value;
 
