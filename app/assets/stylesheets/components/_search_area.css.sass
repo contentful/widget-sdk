@@ -30,10 +30,10 @@ $search-field-height: 32px
   display: table
   table-layout: fixed
   border-spacing: 0
-  position: relative
   height: $search-field-height
   .row
     //outline: 1px red dashed
+    height: $search-field-height
     display: table-row
     > *
       display: table-cell
@@ -42,9 +42,9 @@ $search-field-height: 32px
       //width: 10%
     .input
       //width: 20%
-      position: relative
+      //position: relative
       input[type="search"]
-        position: absolute
+        //position: absolute
         width: 100%
         height: 100%
 
@@ -60,7 +60,7 @@ $search-field-height: 32px
     -moz-appeareance: none
     border: none
     font-size: 1.2em
-    padding: 0 .7em
+    padding: 0 7px
     color: $dark-gray
     opacity: 0.6
     +rounded-corners(20px,20px,20px,20px)
@@ -90,7 +90,7 @@ $search-field-height: 32px
   @extend %search-area-button
   //height: $search-field-height
   padding: 0 7px 0 9px
-  font-size: 1.2em
+  font-size: 12px
 
 // Search filter buttons look
 
@@ -115,12 +115,9 @@ $search-field-height: 32px
   border-left: 1px solid $lightest-gray
   +rounded-corners(0, 20px, 20px, 0)
   width: 35px
-  line-height: $search-field-height
-  height: 100%
   .ss-search
-    font-size: 1.1em
     position: relative
-    top: .1em
+    top: 2px
 
 .search-view-options
   .dropdown-toggle
