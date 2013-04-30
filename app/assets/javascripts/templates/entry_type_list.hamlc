@@ -24,5 +24,5 @@
             %date.relative(datetime="{{entryType.data.sys.updatedAt}}")
           %td.cell-status(ng-class="statusClass(entryType)")
             .draft-wrapper
-              %span {{statusClass(entryType)}}
+              %span {{statusLabel(entryType)}}
               .main-results-bar

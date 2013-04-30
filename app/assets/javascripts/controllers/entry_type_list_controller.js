@@ -40,11 +40,11 @@ angular.module('contentful/controllers').controller('EntryTypeListCtrl', functio
   };
 
   $scope.statusClass = function(entryType) {
-    if (entryType.data.sys.publishedAt) {
-      return 'published';
-    } else {
-      return 'draft';
-    }
+    return entryType.data.sys.publishedAt ? 'published' : 'draft';
+  };
+
+  $scope.statusLabel = function(entryType) {
+    return entryType.data.sys.publishedAt ? 'active' : 'draft';
   };
 
   $scope.$watch('bucketContext.entryTypes', function(l) {
