@@ -1,11 +1,6 @@
 .tab-header
   %h1 {{headline}}
 
-.aux-panel
-  %header
-    %span Entry Information
-  .entity-info-panel
-
 .tab-main
   .ng-form.form-horizontal(name="apiKeyForm" submit="save()")
     .form-field
