@@ -73,9 +73,9 @@ angular.module('contentful/controllers').
     } catch (e) { }
 
     if (publishedAt) {
-      return 'Republish';
+      return 'Update';
     } else {
-      return 'Publish';
+      return 'Activate';
     }
   };
 
