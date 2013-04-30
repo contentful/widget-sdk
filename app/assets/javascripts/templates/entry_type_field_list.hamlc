@@ -28,10 +28,12 @@
           .drag-handle &nbsp;
           .name
             %input(ng-model="newName" type="text" required=""
+                   placeholder="e.g. Product Name"
                    title="Field title displayed to editors"
                    data-placement="bottom")
           .identifier
             %input(ng-model="newId" type="text" required=""
+                   placeholder="e.g. productName"
                    title="Field ID used in API"
                    data-placement="bottom")
           .type

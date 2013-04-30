@@ -18,7 +18,10 @@
     .form-field
       %label Name
       .form-controls(ot-path="['name']" ot-subdoc)
-        %input(type="text" ng-model="entryType.data.name" ot-bind-text="")
+        %input(type="text"
+               placeholder="Content Type Name (e.g. Product)"
+               ng-model="entryType.data.name"
+               ot-bind-text="")
     .form-field
       %label Fields
       .form-controls
