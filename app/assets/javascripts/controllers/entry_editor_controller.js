@@ -46,14 +46,30 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
     }
   };
 
-  $scope.fields = function(){
-    var et = this.bucketContext.publishedTypeForEntry(this.entry);
-    if (et) {
-      return _.reject(et.data.fields, function(f) {
-        return f.disabled;
-      });
-    }
-  };
+  $scope.$watch(function (scope) {
+    return _.pluck(scope.bucketContext.activeLocales, 'code');
+  }, updateFields, true);
+  $scope.$watch('bucketContext.bucket.getDefaultLocale()', updateFields);
+  $scope.$watch('bucketContext.publishedTypeForEntry(entry).data.fields', updateFields, true);
+  function updateFields(n, o ,scope) {
+    var et = scope.bucketContext.publishedTypeForEntry(scope.entry);
+    scope.fieldsWithLocales = _(et.data.fields).reduce(function (acc, field) {
+      if (!field.disabled) {
+        var locales;
+        if (field.localized) {
+          locales = scope.bucketContext.activeLocales;
+        } else {
+          locales = [scope.bucketContext.bucket.getDefaultLocale()];
+        }
+        acc.push({
+          field: field,
+          locales: locales
+        });
+      }
+      return acc;
+    }, []);
+  }
+
 
   $scope.headline = function(){
     return this.bucketContext.entryTitle(this.entry);

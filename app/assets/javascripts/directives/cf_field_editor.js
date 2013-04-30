@@ -20,6 +20,10 @@ angular.module('contentful/directives').directive('cfFieldEditor', function(widg
       elm.html(widget.template);
       $compile(elm.contents())(scope);
       if(typeof widget.link === 'function') widget.link(scope, elm, attr);
+    },
+    controller: function ($scope) {
+      $scope.field = $scope.fieldWithLocales.field;
+      $scope.$watch('fieldWithLocales', 'field=fieldWithLocales.field');
     }
   };
 });
