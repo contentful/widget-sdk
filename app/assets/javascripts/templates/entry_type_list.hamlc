@@ -1,5 +1,5 @@
 .tab-header
-  %h1 Content Model
+  %h1 Content Types
 .tab-main
   .create-content-type-advice(ng-show="empty")
     %p Looks like you havent created any Content Types yet.

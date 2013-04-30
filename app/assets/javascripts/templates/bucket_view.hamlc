@@ -7,7 +7,7 @@
         ng-click="visitView('entry-type-list')")
       %i.ss-database
       .hint.tip.nav-models
-        Content Model
+        Content Types
     %li(ng-class="{section: bucketContext.tabList.currentSection() == 'entries',
                   'section-index': bucketContext.tabList.currentViewType() == 'entry-list'}"
         ng-click="visitView('entry-list')")
