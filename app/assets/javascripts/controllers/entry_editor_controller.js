@@ -70,6 +70,12 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
     }, []);
   }
 
+  $scope.$watch('fieldsWithLocales', function (fieldsWithLocales, old, scope) {
+    scope.showLangSwitcher = _.some(fieldsWithLocales, function (fieldWithLocales) {
+      return fieldWithLocales.field.localized;
+    });
+  });
+
 
   $scope.headline = function(){
     return this.bucketContext.entryTitle(this.entry);
