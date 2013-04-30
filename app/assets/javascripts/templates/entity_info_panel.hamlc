@@ -12,7 +12,7 @@
       %th
     %tr
       %th Current version
-      %td {{doc.version}}
+      %td {{otDoc.version}}
     %tr
       %th
 
