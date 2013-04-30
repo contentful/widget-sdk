@@ -32,7 +32,9 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
     authentication.logout();
   };
 
-  $scope.supportUrl = authentication.supportUrl();
+  $scope.openSupport = function() {
+    window.open(authentication.supportUrl());
+  };
 
   $scope.$on('iframeMessage', function (event, message) {
     if (message.type === 'bucket' && message.action === 'update') {
