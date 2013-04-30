@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful/controllers').
-  controller('ContentDeliveryCtrl', function($scope, $window) {
+  controller('ContentDeliveryCtrl', function($scope, $window, environment) {
     $scope.refreshApiKeys = function() {
       $scope.bucketContext.bucket.getApiKeys(null, function(err, apiKeys) {
         $scope.$apply(function() {
@@ -48,6 +48,7 @@ angular.module('contentful/controllers').
     };
 
     $scope.openApiDocs = function() {
-      $window.open('https://developer.example.com/documentation/api');
+      var apiDocsUrl = environment.settings.marketing_url + '/developers/api';
+      $window.open(apiDocsUrl);
     };
   });
