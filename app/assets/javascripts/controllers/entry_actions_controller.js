@@ -69,7 +69,8 @@ angular.module('contentful/controllers').controller('EntryActionsCtrl', function
     if (!$scope.otDoc) return false;
     var version = $scope.otDoc.version;
     var publishedVersion = $scope.otDoc.getAt(['sys', 'publishedVersion']);
-    return this.entry.canPublish() && (!publishedVersion || version > publishedVersion);
+    var updatedSincePublishing = version !== publishedVersion + 1;
+    return this.entry.canPublish() && (!publishedVersion || updatedSincePublishing);
   };
 
   $scope.publish = function () {
