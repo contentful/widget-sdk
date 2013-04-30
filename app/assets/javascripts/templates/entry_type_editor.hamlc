@@ -4,8 +4,8 @@
 .editor-top-right
   %button(ng-click="preferences.toggleAuxPanel()"
           ng-class="{active: preferences.showAuxPanel}"
-          data-placement="left"
-          title="Toggle additional details")
+          tooltip-placement="left"
+          tooltip="Toggle additional details")
     Info
 
 .aux-panel
@@ -32,13 +32,14 @@
   .button-set
     %button.delete(ng-show="entryType.canDelete()"
                    ng-click="delete()"
-                   title="Delete this Content Type")
+                   tooltip="Delete this Content Type")
       Delete
     %button.publish(ng-disabled="!canPublish()"
                     ng-click="publish()"
-                    title="Make this Content Type available to editors")
+                    tooltip="Make this Content Type available to editors")
       {{publishButtonLabel()}}
-  .save-status
+  .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to create entries of this Content Type."
+               tooltip-placement="top")
   -#.other-users
     %span 3 others online
     %ul

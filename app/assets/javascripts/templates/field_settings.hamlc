@@ -3,8 +3,8 @@
 .name
   %input(ot-path="['fields', index, 'name']"
          ot-subdoc ot-bind-text type="text"
-         data-placement="right"
-         title="Field title displayed to editors")
+         tooltip-placement="right"
+         tooltip="Field title displayed to editors")
 .identifier {{field.id}}
 .type {{getFieldTypeName(field)}}
 .display(ot-path="['displayField']")
@@ -12,35 +12,35 @@
     ng-model="entryType.data.displayField"
     value="{{field.id}}"
     ng-disabled="!displayEnabled(field)"
-    ot-bind-model data-placement="left"
-    title="Use as title in interface")
+    ot-bind-model tooltip-placement="left"
+    tooltip="Use as title in interface")
 .localized(ot-path="['fields', index, 'localized']")
   %input(type="checkbox" ng-model="value" ot-bind-model
-         data-placement="left"
-         title="Content in this field is localized")
+         tooltip-placement="left"
+         tooltip="Content in this field is localized")
 .required(ot-path="['fields', index, 'required']")
   %input(type="checkbox" ng-model="value" ot-bind-model
-         data-placement="left"
-         title="Make field mandatory")
+         tooltip-placement="left"
+         tooltip="Make field mandatory")
 .validations
   %a.button(ng-click="toggleValidations(field.id)"
-            data-placement="left"
-            title="Validate content in this Field")
+            tooltip-placement="left"
+            tooltip="Validate content in this Field")
     %i.ss-settings
 .action(ng-class="{archived: !published, published: published && !field.disabled, draft: published && field.disabled}")
   %a.button.delete(ng-show="!published"
                    ng-click="delete()"
-                   data-placement="left"
-                   title="Delete this Field")
+                   tooltip-placement="left"
+                   tooltip="Delete this Field")
     %i.ss-trash
   %a.button.deactivate(ng-show="published && !field.disabled"
                        ng-click="disable()"
-                       data-placement="left"
-                       title="Hide this Field")
+                       tooltip-placement="left"
+                       tooltip="Hide this Field")
     %i.ss-check
   %a.button.activate(ng-show="published && field.disabled"
                      ng-click="enable()"
-                     data-placement="left"
-                     title="Show this Field")
+                     tooltip-placement="left"
+                     tooltip="Show this Field")
     %i.ss-ban
   .main-results-bar

@@ -3,7 +3,7 @@
     %a(ng-click="visitLink(entry)") {{linkDescription(entry)}}
     %i.ss-delete(ng-click="removeLink(entry)" ng-hide="otDisabled")
 .controls(ng-show="!otDisabled && (linkedEntries.length == 0 || field.type == 'array')")
-  .dropdown-btn.add-new(title="Add new Entry" data-placement="left")
+  .dropdown-btn.add-new(tooltip="Add new Entry" tooltip-placement="left")
     %button.dropdown-toggle
       %i.ss-plus
       New
@@ -17,8 +17,8 @@
                 search="searchTerm"
                 search-type-ahead=""
                 placeholder="Search for entries"
-                data-placement="top"
-                title="Search for existing entries")
+                tooltip-placement="top"
+                tooltip="Search for existing entries")
 
 .results.btn-right-on.search-options-on(ng-show="hasResults()")
   %table.result-list

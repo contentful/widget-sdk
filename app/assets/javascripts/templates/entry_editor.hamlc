@@ -27,8 +27,8 @@
   .editor-top-right
     %button(ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
-            title="Toggle additional details"
-            data-placement="left")
+            tooltip="Toggle additional details"
+            tooltip-placement="left")
       Info
     -#.dropdown-btn>
       %a.btn.dropdown-toggle
@@ -69,13 +69,14 @@
 
 .tab-actions(ng-controller="EntryActionsCtrl")
   .button-set
-    %button.delete(   ng-show="entry.canDelete()"    ng-click="delete()"       title="Permanently delete this Entry") Delete
-    %button.archive(  ng-show="entry.canArchive()"   ng-click="archive()"      title="Archive this Entry") Archive
-    %button.archive(  ng-show="entry.canUnarchive()" ng-click="unarchive()"    title="Unarchive this Entry") Unarchive
-    %button.unpublish(ng-show="entry.canUnpublish()" ng-click="unpublish()"    title="Unpublish this Entry") Unpublish
-    %button.publish(ng-show="formValid() && canPublish()" ng-click="publish()" title="Publish this Entry")
+    %button.delete(   ng-show="entry.canDelete()"    ng-click="delete()"       tooltip="Permanently delete this Entry") Delete
+    %button.archive(  ng-show="entry.canArchive()"   ng-click="archive()"      tooltip="Archive this Entry") Archive
+    %button.archive(  ng-show="entry.canUnarchive()" ng-click="unarchive()"    tooltip="Unarchive this Entry") Unarchive
+    %button.unpublish(ng-show="entry.canUnpublish()" ng-click="unpublish()"    tooltip="Unpublish this Entry") Unpublish
+    %button.publish(ng-show="formValid() && canPublish()" ng-click="publish()" tooltip="Publish this Entry")
       {{publishButtonLabel()}}
-  .save-status
+  .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
+               tooltip-placement="top")
   -#.other-users
     %span 3 others online
     %ul
