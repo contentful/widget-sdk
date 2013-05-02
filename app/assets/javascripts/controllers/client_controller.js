@@ -1,4 +1,4 @@
-angular.module('contentful/controllers').controller('ClientCtrl', function ClientCtrl($scope, client, BucketContext, authentication, contentfulClient, notification, cfSpinner) {
+angular.module('contentful/controllers').controller('ClientCtrl', function ClientCtrl($scope, client, BucketContext, authentication, contentfulClient, notification, cfSpinner, analytics) {
   'use strict';
 
   $scope.buckets = [];
@@ -94,6 +94,7 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
       $scope.$apply(function(scope) {
         //console.log('tokenLookup', tokenLookup);
         scope.user = tokenLookup.sys.createdBy;
+        analytics.login(scope.user);
         scope.updateBuckets(tokenLookup.buckets);
         if (callback) callback(tokenLookup);
       });

@@ -1,4 +1,4 @@
-angular.module('contentful/classes').factory('TabList', function($rootScope){
+angular.module('contentful/classes').factory('TabList', function($rootScope, analytics){
   'use strict';
 
   function TabList() {
@@ -11,6 +11,7 @@ angular.module('contentful/classes').factory('TabList', function($rootScope){
       var event = $rootScope.$broadcast('tabWantsActive', item);
       if (!event.defaultPrevented){
         this.current = item;
+        analytics.tabActivated(item);
         $rootScope.$broadcast('tabBecameActive', item);
       }
     },
@@ -18,6 +19,7 @@ angular.module('contentful/classes').factory('TabList', function($rootScope){
     add: function(options){
       var item = this.makeItem(options);
       this.items.push(item);
+      analytics.tabAdded(item);
       return item;
     },
 
@@ -53,6 +55,7 @@ angular.module('contentful/classes').factory('TabList', function($rootScope){
            this.current = null;
          }
          $rootScope.$broadcast('tabClosed', item);
+         analytics.tabClosed(item);
          if (newCurrent !== false && newCurrent !== null) {
            newCurrent.activate();
          }
