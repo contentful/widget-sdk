@@ -54,7 +54,7 @@ angular.module('contentful/directives').directive('fieldErrorDisplay', function 
       $scope.validate = function (value) {
         $scope.errorMessages = _($scope.validations).map(function (v) {
           if (!v.constraint.test(value)) {
-            return messages[v.name](validation);
+            return messages[v.name](v);
           }
         }).compact().value();
       };
