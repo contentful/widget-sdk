@@ -40,6 +40,9 @@ angular.module('contentful/directives').directive('fieldErrorDisplay', function 
         },
         'in': function (v) {
           return 'Must be one of ' + v.expected.join(', ') + '.';
+        },
+        present: function() {
+          return 'Required';
         }
       };
 
