@@ -12,6 +12,7 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
 
     toggleAuxPanel: function() {
       $scope.preferences.showAuxPanel = !$scope.preferences.showAuxPanel;
+      analytics.toggleAuxPanel($scope.preferences.showAuxPanel, $scope.bucketContext.tablist.current.viewType);
     }
   };
 

@@ -52,6 +52,7 @@ angular.module('contentful/services').provider('analytics', function (environmen
         analytics.track('Tab added', {
           viewType: tab.viewType,
         });
+        this._trackView(tab);
       },
       tabActivated: function (tab) {
         analytics.track('Tab activated', {
@@ -63,6 +64,42 @@ angular.module('contentful/services').provider('analytics', function (environmen
           viewType: tab.viewType,
         });
       },
+      addButtonClicked: function (action) {
+        this.track('AddButton', action, 'Click');
+      },
+      toggleAuxPanel: function (visible, viewType) {
+        var action = visible ? 'Open' : 'Close';
+        this.track('AuxPanel', action, 'Click', {viewType: viewType});
+      },
+      _trackView: function (tab) {
+        var t = tab.viewType;
+        if (t == 'entry-list') {
+          this.track('Entry', 'Index', 'View');
+        } else if (t == 'entry-type-list') {
+          this.track('EntryType', 'Index', 'View');
+        } else if (t == 'entry-editor') {
+          if (tab.params.mode == 'create') {
+            this.track('Entry', 'New', 'View');
+          } else {
+            this.track('Entry', 'Edit', 'View');
+          }
+        } else if (t == 'entry-type-editor') {
+          if (tab.params.mode == 'create') {
+            this.track('EntryType', 'New', 'View');
+          } else {
+            this.track('EntryType', 'Edit', 'View');
+          }
+        } else if (t == 'iframe') {
+          if (tab.params.url.match(/profile\/user/)) {
+            this.track('Profile', 'Show', 'View');
+          } else if (tab.params.url.match(/settings\/buckets/)){
+            this.track('Bucket', 'Settings', 'View');
+          }
+        }
+      },
+      track: function (type, action, info, data) {
+        analytics.track(type + ' ' + action + ' ' + info, data);
+      }
     };
   };
 });

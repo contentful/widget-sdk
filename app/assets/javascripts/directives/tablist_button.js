@@ -1,10 +1,16 @@
 'use strict';
 
-angular.module('contentful/directives').directive('tablistButton', function() {
+angular.module('contentful/directives').directive('tablistButton', function(analytics) {
   return {
     template: JST.tablist_button(),
     restrict: 'C',
     link: function (scope, elem) {
+      elem.find('.dropdown-toggle').click(function (event) {
+        if ($(event.currentTarget).hasClass('open')) {
+          analytics.addButtonClicked('Open');
+        }
+      });
+
       scope.$on('newEntryTypePublished', function (event, entryType) {
         var toggle = elem.find('.dropdown-toggle');
         toggle.tooltip({

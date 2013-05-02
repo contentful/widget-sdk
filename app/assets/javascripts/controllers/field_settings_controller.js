@@ -1,4 +1,4 @@
-angular.module('contentful/controllers').controller('FieldSettingsCtrl', function ($scope, getFieldTypeName) {
+angular.module('contentful/controllers').controller('FieldSettingsCtrl', function ($scope, getFieldTypeName, analytics) {
   'use strict';
 
   $scope.getFieldTypeName = getFieldTypeName;
@@ -17,6 +17,14 @@ angular.module('contentful/controllers').controller('FieldSettingsCtrl', functio
     $scope.otDoc.at(['fields', this.index, 'disabled']).set(false, function(err) {
       if (!err) $scope.$apply(function(scope) {
         scope.field.disabled = false;
+        analytics.track('EntryType', 'Field', 'Enable', {
+          name: scope.field.name,
+          id: scope.field.id,
+          type: scope.field.type,
+          subtype: scope.field.items ? scope.field.items.type : null,
+          localized: scope.field.localized,
+          required: scope.field.required
+        });
       });
     });
   };
@@ -25,6 +33,14 @@ angular.module('contentful/controllers').controller('FieldSettingsCtrl', functio
     $scope.otDoc.at(['fields', this.index, 'disabled']).set(true, function(err) {
       if (!err) $scope.$apply(function(scope) {
         scope.field.disabled = true;
+        analytics.track('EntryType', 'Field', 'Disable', {
+          name: scope.field.name,
+          id: scope.field.id,
+          type: scope.field.type,
+          subtype: scope.field.items ? scope.field.items.type : null,
+          localized: scope.field.localized,
+          required: scope.field.required
+        });
       });
     });
   };
@@ -32,6 +48,14 @@ angular.module('contentful/controllers').controller('FieldSettingsCtrl', functio
   $scope.delete = function() {
     $scope.otDoc.at(['fields', $scope.index]).remove(function (err) {
       if (!err) $scope.$apply(function(scope) {
+        analytics.track('EntryType', 'Field', 'Delete', {
+          name: scope.field.name,
+          id: scope.field.id,
+          type: scope.field.type,
+          subtype: scope.field.items ? scope.field.items.type : null,
+          localized: scope.field.localized,
+          required: scope.field.required
+        });
         scope.otUpdateEntity();
       });
     });

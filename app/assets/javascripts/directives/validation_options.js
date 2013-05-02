@@ -53,6 +53,7 @@ controller('NewValidationCtrl', function ($scope) {
       if (!err) $scope.$apply(function (scope) {
         scope.prepareNewValidation();
         scope.updateValidationsFromDoc();
+        arschnalytics.track('EntryType', 'Validations', 'Add');
       });
     }
   };
