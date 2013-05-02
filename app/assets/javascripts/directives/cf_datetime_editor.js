@@ -63,8 +63,8 @@ angular.module('contentful/directives').directive('cfDatetimeEditor', function()
         }
       };
 
-      scope.$on('otValueChanged', function(event, value) {
-        event.currentScope.setFromISO(value);
+      scope.$on('otValueChanged', function(event, path, value) {
+        if (path === event.currentScope.otPath) event.currentScope.setFromISO(value);
       });
     }
   };
