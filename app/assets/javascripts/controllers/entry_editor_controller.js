@@ -53,7 +53,7 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
   $scope.$watch('bucketContext.publishedTypeForEntry(entry).data.fields', updateFields, true);
   function updateFields(n, o ,scope) {
     var et = scope.bucketContext.publishedTypeForEntry(scope.entry);
-    scope.fieldsWithLocales = _(et.data.fields).reduce(function (acc, field) {
+    scope.fields = _(et.data.fields).reduce(function (acc, field) {
       if (!field.disabled) {
         var locales;
         if (field.localized) {
@@ -61,18 +61,23 @@ angular.module('contentful/controllers').controller('EntryEditorCtrl', function 
         } else {
           locales = [scope.bucketContext.bucket.getDefaultLocale()];
         }
-        acc.push({
-          field: field,
-          locales: locales
-        });
+        acc.push(inherit(field, locales));
       }
       return acc;
     }, []);
+
+    function inherit(source, locales){
+      var Clone = function () { };
+      Clone.prototype = source;
+      var clone = new Clone();
+      clone.locales = locales;
+      return clone;
+    }
   }
 
-  $scope.$watch('fieldsWithLocales', function (fieldsWithLocales, old, scope) {
-    scope.showLangSwitcher = _.some(fieldsWithLocales, function (fieldWithLocales) {
-      return fieldWithLocales.field.localized;
+  $scope.$watch('fields', function (fields, old, scope) {
+    scope.showLangSwitcher = _.some(fields, function (field) {
+      return field.localized;
     });
   });
 
