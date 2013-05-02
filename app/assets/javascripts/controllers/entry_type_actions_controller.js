@@ -70,7 +70,7 @@ angular.module('contentful/controllers').
   $scope.publishButtonLabel = function () {
     var publishedAt = null;
     try {
-      publishedAt = $scope.otDoc.getAt(['sys', 'publishedAt']);
+      publishedAt = $scope.entryType.data.sys.publishedAt;
     } catch (e) { }
 
     if (publishedAt) {
