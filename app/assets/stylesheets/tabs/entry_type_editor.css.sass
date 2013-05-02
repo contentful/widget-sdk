@@ -36,21 +36,12 @@
       th.actions
         padding-right: 20px
 
-      // Special code for removing displayField
-      th.display
-        position: relative
-        +transition(color 0.1s ease-out)
-        .remove
-          +transition(opacity 0.1s ease-in)
-          width: 100%
-          color: $light-gray
-          position: absolute
-          opacity: 0
-        &:hover
-          color: white
-          .remove
-            opacity: 1
+      // Adjustment for hint when list empty
+      .create-hint
+        p
+          padding-left: 8px
 
+      // Field settings
       .field-settings,
       .new-field-settings
         width: 100%
@@ -87,6 +78,8 @@
         width: 80%
       select
         width: 100%
+
+    // Validations
     .field-validations
       background-color: $gray-background
       text-align: left
@@ -129,6 +122,22 @@
           background-color: white
           border-color: $lightest-gray
           width: auto
+
+      // Special code for removing displayField
+      th.display
+        position: relative
+        +transition(color 0.1s ease-out)
+        .remove
+          +transition(opacity 0.1s ease-in)
+          width: 100%
+          color: $light-gray
+          position: absolute
+          opacity: 0
+        &:hover
+          color: white
+          .remove
+            opacity: 1
+
 
   .form-controls
     table.new-field

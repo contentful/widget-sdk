@@ -19,7 +19,14 @@
       %td(colspan="9")
         .field-settings
         .field-validations(ng-show="showValidations(field.id)")
+  %tfoot(ng-hide="entryType.data.fields.length > 0")
+    %tr.create-hint
+      %td
+      %td(colspan="8")
+        %p Please add fields below for the different kinds of information you want to store in your Content Type.
 
+
+%p Create a new Field:
 %form.new-field-form(name="newField")
   %table.result-list.new-field
     %tr.field

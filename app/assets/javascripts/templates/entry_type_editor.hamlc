@@ -23,6 +23,9 @@
                ng-model="entryType.data.name"
                ot-bind-text="")
     .form-field
+      %label 
+      .form-controls
+    .form-field
       %label Fields
       .form-controls
         .entry-type-field-list
