@@ -13,10 +13,13 @@ angular.module('contentful/directives').directive('cfFieldEditor', function(widg
       // Necessary because the widgets can't access the entry directly, only the value variable
       scope.$watch('value', function (value, old, scope) {
         if (value === old) return;
+        if (!scope.entry.data.fields) {
+          scope.entry.data.fields = {};
+        }
         if (!scope.entry.data.fields[scope.field.id]) {
           scope.entry.data.fields[scope.field.id] = {};
         }
-          scope.entry.data.fields[scope.field.id][scope.locale.code] = value;
+        scope.entry.data.fields[scope.field.id][scope.locale.code] = value;
       });
 
       var widget = widgets.editor(scope.field.type, attr.editor);
