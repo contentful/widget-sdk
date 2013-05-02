@@ -44,6 +44,7 @@ angular.module('contentful/controllers').
 
   $scope.publish = function () {
     var version = $scope.otDoc.version;
+    var verb = $scope.entryType.isPublished() ? 'updated' : 'activated';
     $scope.entryType.publish(version, function (err, publishedEntryType) {
       $scope.$apply(function(scope){
         if (err) {
@@ -56,7 +57,7 @@ angular.module('contentful/controllers').
           return notification.error('Error publishing ' + title() + ': ' + reason);
         }
 
-        notification.info(title() + ' published successfully');
+        notification.info(title() + ' ' + verb + ' successfully');
 
         //console.log('editor has published %o as %o', scope.entryType, publishedEntryType);
         scope.updatePublishedEntryType(publishedEntryType);
