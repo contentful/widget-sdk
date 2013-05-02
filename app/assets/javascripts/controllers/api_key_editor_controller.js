@@ -1,11 +1,21 @@
 'use strict';
 
 angular.module('contentful/controllers').
-  controller('ApiKeyEditorCtrl', function($scope, authentication, notification) {
+  controller('ApiKeyEditorCtrl', function($scope, authentication, environment, notification) {
     $scope.$watch('tab.params.apiKey', 'apiKey=tab.params.apiKey');
 
     $scope.$watch('apiKey.data.name', function(name) {
       $scope.headline = $scope.tab.title = name || 'Untitled';
+    });
+
+    $scope.$watch('apiKey.data.accessToken', function(accessToken) {
+      $scope.exampleUrl =
+        'http://' +
+        environment.settings.api_host.replace(/^api/, 'buckets') +
+        '/buckets/' +
+        $scope.bucketContext.bucket.getId() +
+        '/entries?access_token=' +
+        accessToken;
     });
 
     function title() {

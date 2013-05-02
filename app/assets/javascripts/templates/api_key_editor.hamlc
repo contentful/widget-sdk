@@ -11,11 +11,17 @@
       %label Description
       .form-controls
         %input(type="text" ng-model="apiKey.data.description" ng-disabled="!editable()")
-    .form-field(ng-show="apiKey.data.accessToken")
+    .form-field
       %label Access Token
-      .form-controls
-        %textarea(ng-model="apiKey.data.accessToken" ng-disabled="true")
-
+      .form-controls()
+        %textarea(ng-model="apiKey.data.accessToken" ng-disabled="true" ng-show="apiKey.data.accessToken")
+        %input(type="text" ng-hide="apiKey.data.accessToken" ng-disabled="true" value="Save this API Key to get generate an OAuth Access Token and access your data.")
+        %div(ng-show="apiKey.data.accessToken")
+          %a(href="{{exampleUrl}}" target="_blank") Access Published Entries
+          %span or via curl:
+          %pre
+            curl {{exampleUrl}}
+    
 .tab-actions
   .button-set
     %button.delete(tooltip="Permanently delete this API key"
