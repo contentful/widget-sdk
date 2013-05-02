@@ -21,9 +21,9 @@ angular.module('contentful/directives').directive('fieldErrorDisplay', function 
           if (_.isNumber(v.min) && _.isNumber(v.max)) {
             return 'Size must be between ' + v.min + ' and ' + v.max + '.';
           } else if(_.isNumber(v.min)) {
-            return 'Size must be larger than ' + v.min + '.';
+            return 'Size must be at least ' + v.min + '.';
           } else {
-            return 'Size must be smaller than ' + v.max + '.';
+            return 'Size must be at most ' + v.max + '.';
           }
         },
         range: function (v) {
