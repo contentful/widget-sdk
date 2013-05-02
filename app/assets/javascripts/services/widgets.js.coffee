@@ -31,8 +31,8 @@ angular.module('contentful/services').service 'widgets', ($compile) ->
             template = $ """<div cf-autocomplete="entries"/>"""
           else if itemType == 'string'
             template = $ """<input type="text" ng-list="" ng-model="value" ot-bind-model ng-disabled="otDisabled"/>"""
-          template = $compile(template)(scope)
-          elm.append template
+          template.appendTo(elm)
+          $compile(template)(scope)
     object:
       jsonArea:
         name: "JSON Field"
