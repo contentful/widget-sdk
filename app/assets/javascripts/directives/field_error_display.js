@@ -64,7 +64,7 @@ angular.module('contentful/directives').directive('fieldErrorDisplay', function 
         });
       }, 400);
 
-      $scope.$watch('entry.data.fields[field.id][locale.name]', function (value, old, scope) {
+      $scope.$watch('entry.data.fields[field.id][locale.code]', function (value, old, scope) {
         scope.validateLater(value);
       }, true);
     }
