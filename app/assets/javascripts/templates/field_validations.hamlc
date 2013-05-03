@@ -14,5 +14,5 @@
           %option(value="") Add new…
       .validation-options
       .action
-        %a.button.new(ng-click="createValidation()")
+        %button.button.new(ng-click="createValidation()" ng-disabled="!newValidationType")
           %i.ss-plus
