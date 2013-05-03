@@ -11,7 +11,7 @@ angular.module('contentful/controllers').
     $scope.$watch('apiKey.data.accessToken', function(accessToken) {
       $scope.exampleUrl =
         'http://' +
-        environment.settings.api_host.replace(/^api/, 'buckets') +
+        environment.settings.api_host.replace(/^api/, 'cdn') +
         '/buckets/' +
         $scope.bucketContext.bucket.getId() +
         '/entries?access_token=' +
