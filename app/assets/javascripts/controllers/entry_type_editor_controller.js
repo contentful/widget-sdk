@@ -26,7 +26,7 @@ angular.module('contentful/controllers').controller('EntryTypeEditorCtrl', funct
     $scope.publishedEntryType = publishedEntryType;
   };
 
-  $scope.$watch('doc.snapshot.fields.length', function(length) {
+  $scope.$watch('otDoc.snapshot.fields.length', function(length) {
     $scope.hasFields = length > 0;
   });
 

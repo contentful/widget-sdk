@@ -123,20 +123,23 @@
           border-color: $lightest-gray
           width: auto
 
-      // Special code for removing displayField
-      th.display
-        position: relative
-        +transition(color 0.1s ease-out)
-        .remove
-          +transition(opacity 0.1s ease-in)
-          width: 100%
-          color: $light-gray
-          position: absolute
-          opacity: 0
+    // Special code for removing displayField
+    th.display
+      position: relative
+      +transition(color 0.1s ease-out)
+      .remove
+        +transition(opacity 0.1s ease-in)
+        width: 100%
+        color: $light-gray
+        position: absolute
+        opacity: 0
+        z-index: -1
+      .resettable
         &:hover
           color: white
           .remove
             opacity: 1
+            z-index: 0
 
 
   .form-controls
