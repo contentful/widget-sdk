@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('contentful/controllers').controller('BucketCtrl', function BucketCtrl($scope) {
-  $scope.$watch('bucketContext.bucket', function(bucket, old, scope){
+  $scope.$watch('bucketContext', function(bucketContext, old, scope){
+    var bucket = bucketContext.bucket;
     scope.bucketContext.tabList.closeAll();
 
     if (bucket) {
@@ -33,7 +34,7 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
     if (codes) scope.bucketContext.refreshLocales();
   }, true);
   $scope.$watch('bucketContext.localesActive', 'bucketContext.refreshActiveLocales()', true);
-  $scope.$watch('bucketContext.bucket', function(bucket, o, scope) {
+  $scope.$watch('bucketContext', function(bucket, o, scope) {
     scope.bucketContext.refreshEntryTypes();
   });
 

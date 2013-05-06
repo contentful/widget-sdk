@@ -27,7 +27,7 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
 
   $scope.$watch('buckets', function(buckets){
     if (buckets && buckets.length > 0) {
-      if (!_.contains(buckets, $scope.bucketContext.bucket)) $scope.bucketContext.bucket = buckets[0];
+      if (!_.contains(buckets, $scope.bucketContext.bucket)) $scope.bucketContext= new BucketContext(buckets[0]);
     }
   });
 
