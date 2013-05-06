@@ -18,7 +18,9 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
   $scope.user = null;
 
   $scope.selectBucket = function(bucket) {
-    if ($scope.bucketContext &&
+    if (bucket &&
+        $scope.bucketContext &&
+        $scope.bucketContext.bucket &&
         $scope.bucketContext.bucket.getId() === bucket.getId()) return;
     $scope.bucketContext = new BucketContext(bucket);
   };
