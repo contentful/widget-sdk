@@ -38,7 +38,7 @@ angular.module('contentful/directives').directive('cfDatetimeEditor', function()
       dateController.$render = function() {
         elm.find('.date').datepicker('setDate', dateController.$viewValue);
       };
-      
+
       var changeHandler = function(){
         var date = dateController.$modelValue;
         var time = timeController.$modelValue;
