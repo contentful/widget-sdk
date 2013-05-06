@@ -51,4 +51,8 @@ angular.module('contentful/controllers').controller('EntryTypeListCtrl', functio
     $scope.empty = _.isEmpty(l);
   });
 
+  $scope.$on('tabBecameActive', function(event, tab) {
+    if (tab !== $scope.tab) return;
+    $scope.reloadEntryTypes();
+  });
 });

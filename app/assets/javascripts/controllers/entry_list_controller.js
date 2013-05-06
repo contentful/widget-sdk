@@ -186,4 +186,8 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
   //  }
   //});
 
+  $scope.$on('tabBecameActive', function(event, tab) {
+    if (tab !== $scope.tab) return;
+    $scope.resetEntries();
+  });
 });
