@@ -14,7 +14,7 @@
           .form-controls
             %input(type="text" ng-model="newBucketData.defaultLocale")
       .buttons
-        %button.cancel(ng-click="hideCreateBucketDialog()")
+        %button.cancel(type="button" ng-click="hideCreateBucketDialog()")
           Cancel
         %button.confirm(ng-click="submit()" ng-disabled="newBucketForm.$invalid")
           Create Bucket
