@@ -27,6 +27,7 @@ angular.module('contentful/controllers').controller('TabViewCtrl', function ($sc
       options = {
         viewType: 'iframe',
         section: 'bucketSettings',
+        hidden: true,
         params: {
           url: authentication.bucketSettingsUrl($scope.bucketContext.bucket.getId()),
           fullscreen: true
