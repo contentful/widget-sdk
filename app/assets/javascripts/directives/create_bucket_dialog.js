@@ -34,6 +34,10 @@ angular.module('contentful/directives').directive('createBucketDialog', function
         scope.$watch('displayCreateBucketDialog', function (display) {
           if (display) elem.find('input').eq(0).focus();
         });
+
+        elem.on('keyup', function(e) {
+          if (e.keyCode === 27) scope.$apply(scope.hideCreateBucketDialog());
+        });
       }
     };
 });
