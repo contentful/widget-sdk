@@ -46,6 +46,10 @@ angular.module('contentful/services').provider('analytics', function (environmen
           firstName: user.firstName,
           lastName:  user.lastName,
           plan: user.subscription.subscriptionPlan.name
+        }, {
+          intercom: {
+            user_hash: user.intercomUserHash
+          }
         });
       },
       tabAdded: function (tab) {
