@@ -10,6 +10,7 @@
         %th.cell-name Name
         %th.cell-by Fields
         %th.cell-updated Updated
+        %th.cell-by By
         %th.cell-status Status
   .main-results-wrapper(ng-hide="empty")
     %table.result-list.main-results
@@ -22,6 +23,9 @@
             %span {{numFields(entryType)}}
           %td.cell-updated
             %date.relative(datetime="{{entryType.data.sys.updatedAt}}")
+          %td.cell-by
+            %span.cf-user(link="entryType.data.sys.updatedBy" as="updater")
+              {{updater.getName()}}
           %td.cell-status(ng-class="statusClass(entryType)")
             .draft-wrapper
               %span {{statusLabel(entryType)}}

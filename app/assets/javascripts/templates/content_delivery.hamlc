@@ -31,6 +31,6 @@
             %td.cell-description
               %span {{apiKey.data.description}}
             %td.cell-by
-              %span Peter Pan
+              %span.cf-user(link="apiKey.data.sys.createdBy" as="creator") {{creator.getName()}}
             %td.cell-updated
               %date.relative(datetime="{{apiKey.data.sys.updatedAt}}")

@@ -50,8 +50,8 @@
             %i.ss-star
           %th.cell-type Content Type
           %th.cell-name Name
-          %th.cell-by By
           %th.cell-updated Updated
+          %th.cell-by By
           %th.cell-status Status
     .results-empty(ng-show="entries.length == 0")
       No entries matching your selection.
@@ -67,10 +67,10 @@
               %span {{bucketContext.publishedTypeForEntry(entry).data.name}}
             %td.cell-name
               %span {{bucketContext.entryTitle(entry)}}
-            %td.cell-by
-              %span Peter Pan
             %td.cell-updated
               %date.relative(datetime="{{entry.data.sys.updatedAt}}")
+            %td.cell-by
+              %span.cf-user(link="entry.data.sys.updatedBy" as="updater") {{updater.getName()}}
             %td.cell-status(ng-class="statusClass(entry)")
               .draft-wrapper
                 %span {{statusClass(entry)}}
