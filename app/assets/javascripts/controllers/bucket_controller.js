@@ -20,7 +20,13 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
           //editor.activate();
         //});
       //});
-      $scope.visitView('entry-list');
+
+      bucketContext.bucket.getPublishedEntryTypes(function(err, ets) {
+        if (_.isEmpty(ets))
+          $scope.visitView('entry-type-list');
+        else
+          $scope.visitView('entry-list');
+      });
     }
   });
 
