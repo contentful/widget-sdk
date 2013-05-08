@@ -38,5 +38,6 @@
           %td.cell-name
             %span {{bucketContext.entryTitle(entry)}}
           %td.cell-by
-            %span Peter Pan
+            %span.cf-user(link="entry.data.sys.updatedBy" as="updater")
+              {{updater.getName()}}
     .loading(ng-hide="paginator.atLast()")
