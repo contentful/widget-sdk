@@ -6,7 +6,7 @@ angular.module('contentful/directives').
       restrict: 'C',
       controller: function($scope, $attrs, userCache) {
         $scope.$watch($attrs.link, function(link) {
-          if (!link || $attrs.as) return;
+          if (!link || !$attrs.as) return;
           userCache.get($scope.bucketContext.bucket, link.sys.id, function(err, user) {
             if (err) return;
             $scope.$apply(function() {
