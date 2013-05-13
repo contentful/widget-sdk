@@ -8,7 +8,7 @@
   %link{:rel => "apple-touch-icon", :href => asset_path("favicons/apple_icon57x57.png"),    :type => "image/png"}
   %link{:rel => "apple-touch-icon", :href => asset_path("favicons/apple_icon72x72.png"),    :type => "image/png"}
   %link{:rel => "apple-touch-icon", :href => asset_path("favicons/apple_icon114x114.png"),  :type => "image/png"}
-  
+
   %link(href='//fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,700italic,400,700,600' rel='stylesheet' type='text/css')
 
 %body
@@ -39,6 +39,7 @@
               {{bucket.data.name}}
             %li(ng-show="canCreateBucket(user)" ng-click="showCreateBucketDialog()" ng-class="{separator: buckets.length > 0}" dropdown-close="")
               Create Bucket
+      %a#intercom.please-style-me(href="#")
     %bucket-view(ng-show="bucketContext.bucket" ng-controller="TabViewCtrl")
     .create-bucket-advice(ng-show="buckets.length == 0")
       %p Nothing to see yet. Why don't you create a bucket?
