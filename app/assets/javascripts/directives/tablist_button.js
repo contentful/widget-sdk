@@ -6,8 +6,11 @@ angular.module('contentful/directives').directive('tablistButton', function(anal
     restrict: 'C',
     link: function (scope, elem) {
       elem.find('.dropdown-toggle').click(function (event) {
-        if ($(event.currentTarget).hasClass('open')) {
-          analytics.addButtonClicked('Open');
+        if ($(event.currentTarget).parent().hasClass('active')) {
+          analytics.track('Clicked Add-Button', {
+            currentSection: scope.bucketContext.tabList.currentSection(),
+            currentViewType: scope.bucketContext.tabList.currentViewType()
+          });
         }
       });
 

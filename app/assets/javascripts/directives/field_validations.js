@@ -1,4 +1,4 @@
-angular.module('contentful/directives').directive('fieldValidations', function() {
+angular.module('contentful/directives').directive('fieldValidations', function(analytics) {
   'use strict';
 
   return {
@@ -13,9 +13,14 @@ angular.module('contentful/directives').directive('fieldValidations', function()
       };
 
       $scope.deleteValidation = function (validationIndex) {
+        var validation = $scope.field.validations[validationIndex];
         $scope.otDoc.at(['fields', $scope.index, 'validations', validationIndex]).remove(function(err){
           if (!err) $scope.$apply(function (scope) {
             scope.otUpdateEntity();
+            analytics.track('Deleted Validation', {
+              fieldId: scope.field.id,
+              validationType: $scope.validationType(validation)
+            });
           });
         });
 

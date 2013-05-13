@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/controllers').controller('EntryListCtrl', function EntryListCtrl($scope, Paginator, Selection, cfSpinner) {
+angular.module('contentful/controllers').controller('EntryListCtrl', function EntryListCtrl($scope, Paginator, Selection, cfSpinner, analytics) {
   $scope.contentType = 'entries';
   $scope.entrySection = 'all';
 
@@ -100,6 +100,7 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
         stopSpin();
       });
     });
+    analytics.track('Reloaded EntryList');
   };
 
   $scope.buildQuery = function() {
@@ -163,6 +164,7 @@ angular.module('contentful/controllers').controller('EntryListCtrl', function En
 
     scope.$apply(function(scope) {
       scope.reloadInProgress = true;
+      analytics.track('Scrolled EntryList');
     });
   };
 

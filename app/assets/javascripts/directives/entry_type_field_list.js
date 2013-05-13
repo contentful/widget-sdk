@@ -47,9 +47,7 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
       $scope.toggleValidations= function(fieldId) {
         _showValidations[fieldId] = !_showValidations[fieldId];
         if (_showValidations[fieldId]) {
-          analytics.track('EntryType', 'Validations', 'Open', {
-            id: fieldId
-          });
+          analytics.track('Opened Validations', { fieldId: fieldId });
         }
       };
 

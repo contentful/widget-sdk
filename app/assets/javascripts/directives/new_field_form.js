@@ -37,14 +37,7 @@ angular.module('contentful/directives').directive('newFieldForm', function (avai
               scope.newLocalized = false;
               scope.otUpdateEntity();
               scope.$broadcast('fieldAdded');
-              analytics.track('EntryType', 'Field', 'Add', {
-                name: field.name,
-                id: field.id,
-                type: field.type,
-                subtype: field.items ? field.items.type : null,
-                localized: field.localized,
-                required: field.required
-              });
+              analytics.modifiedEntryType('Modified EntryType', scope.entryType, field, 'add');
             });
           }
         });

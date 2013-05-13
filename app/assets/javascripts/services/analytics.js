@@ -49,56 +49,98 @@ angular.module('contentful/services').provider('analytics', function (environmen
         });
       },
       tabAdded: function (tab) {
-        analytics.track('Tab added', {
+        this.track('Opened Tab', {
           viewType: tab.viewType,
+          section: tab.section,
+          id: this._idFromTab(tab)
         });
         this._trackView(tab);
       },
-      tabActivated: function (tab) {
-        analytics.track('Tab activated', {
+      tabActivated: function (tab, oldTab) {
+        this.track('Switched Tab', {
           viewType: tab.viewType,
+          section: tab.section,
+          id: this._idFromTab(tab),
+          fromViewType: oldTab ? oldTab.viewType : null,
+          fromSection: oldTab ? oldTab.section : null
         });
+      },
+      modifiedEntryType: function (event, entryType, field, action) {
+        var data = {};
+        if (entryType) {
+          _.extend(data, {
+            entryTypeId: entryType.getId(),
+            entryTypeName: entryType.data.name
+          });
+        }
+        if (field) {
+          _.extend(data, {
+            fieldId: field.id,
+            fieldName: field.name,
+            fieldType: field.type,
+            fieldSubtype: field.items ? field.items.type : null,
+            fieldLocalized: field.localized,
+            fieldRequired: field.required
+          });
+        }
+        if (action) {
+          data.action = action;
+        }
+        this.track(event, data);
       },
       tabClosed: function (tab) {
-        analytics.track('Tab closed', {
+        this.track('Closed Tab', {
           viewType: tab.viewType,
+          section: tab.section,
+          id: this._idFromTab(tab)
         });
       },
-      addButtonClicked: function (action) {
-        this.track('AddButton', action, 'Click');
+      toggleAuxPanel: function (visible, tab) {
+        var action = visible ? 'Opened Aux-Panel' : 'Closed Aux-Panel';
+        this.track(action, {
+          currentSection: tab.section,
+          currentViewType: tab.viewType
+        });
       },
-      toggleAuxPanel: function (visible, viewType) {
-        var action = visible ? 'Open' : 'Close';
-        this.track('AuxPanel', action, 'Click', {viewType: viewType});
+      _idFromTab: function (tab) {
+        if (tab.viewType === 'entry-editor') {
+          return tab.params.entry.getId();
+        } else if (tab.viewType === 'entry-type-editor'){
+          return tab.params.entryType.getId();
+        }
       },
       _trackView: function (tab) {
         var t = tab.viewType;
         if (t == 'entry-list') {
-          this.track('Entry', 'Index', 'View');
+          this.track('Viewed Page', {
+            section: tab.section,
+            viewType: tab.viewType});
         } else if (t == 'entry-type-list') {
-          this.track('EntryType', 'Index', 'View');
+          this.track('Viewed Page', {
+            section: tab.section,
+            viewType: tab.viewType});
         } else if (t == 'entry-editor') {
-          if (tab.params.mode == 'create') {
-            this.track('Entry', 'New', 'View');
-          } else {
-            this.track('Entry', 'Edit', 'View');
-          }
+          this.track('Viewed Page', {
+            section: tab.section,
+            viewType: tab.viewType,
+            entryId: tab.params.entry.getId(),
+            mode: tab.params.mode});
         } else if (t == 'entry-type-editor') {
-          if (tab.params.mode == 'create') {
-            this.track('EntryType', 'New', 'View');
-          } else {
-            this.track('EntryType', 'Edit', 'View');
-          }
+          this.track('Viewed Page', {
+            section: tab.section,
+            viewType: tab.viewType,
+            entryId: tab.params.entryType.getId(),
+            mode: tab.params.mode});
         } else if (t == 'iframe') {
-          if (tab.params.url.match(/profile\/user/)) {
-            this.track('Profile', 'Show', 'View');
-          } else if (tab.params.url.match(/settings\/buckets/)){
-            this.track('Bucket', 'Settings', 'View');
-          }
+          var url = tab.params.url.replace(/access_token=(\w+)/, 'access_token=XXX');
+          this.track('Viewed Page', {
+            viewType: tab.viewType,
+            url: url});
         }
       },
-      track: function (type, action, info, data) {
-        analytics.track(type + ' ' + action + ' ' + info, data);
+      track: function (event, data) {
+        //analytics.track(event, data);
+        console.log('analytics.track', event, data);
       }
     };
   };

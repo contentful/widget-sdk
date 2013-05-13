@@ -12,17 +12,26 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
 
     toggleAuxPanel: function() {
       $scope.preferences.showAuxPanel = !$scope.preferences.showAuxPanel;
-      analytics.toggleAuxPanel($scope.preferences.showAuxPanel, $scope.bucketContext.tablist.current.viewType);
+      analytics.toggleAuxPanel($scope.preferences.showAuxPanel, $scope.bucketContext.tabList.current);
     }
   };
 
   $scope.user = null;
+
+  $scope.clickedBucketSwitcher = function () {
+    analytics.track('Clicked Bucket-Switcher');
+  };
 
   $scope.selectBucket = function(bucket) {
     if (bucket &&
         $scope.bucketContext &&
         $scope.bucketContext.bucket &&
         $scope.bucketContext.bucket.getId() === bucket.getId()) return;
+    
+    analytics.track('Switched Bucket', {
+      bucketId: bucket.data.sys.id,
+      bucketName: bucket.data.name
+    });
     $scope.bucketContext = new BucketContext(bucket);
   };
 
@@ -33,6 +42,7 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
   });
 
   $scope.logout = function() {
+    analytics.track('Clicked Logout');
     authentication.logout();
   };
 
@@ -70,6 +80,10 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
     // TODO Better handle deletes (should also work somehow without message.token)
   });
 
+  $scope.clickedProfileButton = function () {
+    analytics.track('Clicked Profile Button');
+  };
+
   $scope.editProfile = function() {
     var options = {
       viewType: 'iframe',
@@ -80,6 +94,8 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
       },
       title: 'Profile'
     };
+
+    analytics.track('Clicked Profile');
 
     // TODO This is a pattern that repeats and should be extracted
     var tab = _.find($scope.bucketContext.tabList.items, function(tab) {
@@ -134,6 +150,7 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
 
   $scope.showCreateBucketDialog = function () {
     $scope.displayCreateBucketDialog = true;
+    analytics.track('Clicked Create-Bucket');
   };
 
   $scope.hideCreateBucketDialog = function () {

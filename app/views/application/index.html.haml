@@ -18,7 +18,7 @@
         {{message.body}}
     %nav.account
       .dropdown-btn.user(label="")
-        %a.btn.dropdown-toggle
+        %a.btn.dropdown-toggle(ng-click="clickedProfileButton()")
           %img(ng-src="{{user.avatarUrl}}")
           %i.ss-dropdown
         .dropdown-menu
@@ -30,7 +30,7 @@
             %li(ng-click="openSupport()" dropdown-close="") Support
             %li(ng-click="logout()" dropdown-close="") Log out
       .dropdown-btn.project
-        %a.btn.dropdown-toggle
+        %a.btn.dropdown-toggle(ng-click="clickedBucketSwitcher()")
           %i.ss-dropdown
           %span(ng-bind="bucketContext.bucket.data.name")
         .dropdown-menu

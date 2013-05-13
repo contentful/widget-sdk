@@ -1,5 +1,5 @@
 %nav.nav-bar
-  .logo
+  .logo(ng-click="logoClicked()")
     .cf-logo
   %ul
     %li(ng-class="{section: bucketContext.tabList.currentSection() == 'entryTypes',
