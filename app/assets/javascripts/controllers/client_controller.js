@@ -22,22 +22,27 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
     analytics.track('Clicked Bucket-Switcher');
   };
 
+  function setBucket(bucket) {
+    analytics.setBucketData(bucket);
+    $scope.bucketContext = new BucketContext(bucket);
+  }
+
   $scope.selectBucket = function(bucket) {
     if (bucket &&
         $scope.bucketContext &&
         $scope.bucketContext.bucket &&
         $scope.bucketContext.bucket.getId() === bucket.getId()) return;
     
+    setBucket(bucket);
     analytics.track('Switched Bucket', {
       bucketId: bucket.data.sys.id,
       bucketName: bucket.data.name
     });
-    $scope.bucketContext = new BucketContext(bucket);
   };
 
   $scope.$watch('buckets', function(buckets){
     if (buckets && buckets.length > 0) {
-      if (!_.contains(buckets, $scope.bucketContext.bucket)) $scope.bucketContext= new BucketContext(buckets[0]);
+      if (!_.contains(buckets, $scope.bucketContext.bucket)) setBucket(buckets[0]);
     }
   });
 
@@ -112,7 +117,7 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
     var stopSpinner = cfSpinner.start();
     authentication.getTokenLookup(function(tokenLookup) {
       $scope.$apply(function(scope) {
-        //console.log('tokenLookup', tokenLookup);
+        console.log('tokenLookup', tokenLookup);
         scope.user = tokenLookup.sys.createdBy;
         analytics.login(scope.user);
         scope.updateBuckets(tokenLookup.buckets);

@@ -1,8 +1,10 @@
 'use strict';
 
 angular.module('contentful/services').provider('analytics', function (environment) {
+  /*global analytics*/
+
   // Create a queue, but don't obliterate an existing one!
-  var analytics = window.analytics = window.analytics || [];
+  window.analytics = window.analytics || [];
 
   // Define a method that will asynchronously load analytics.js from our CDN.
   analytics.load = function(apiKey) {
@@ -41,7 +43,11 @@ angular.module('contentful/services').provider('analytics', function (environmen
 
   this.$get = function () {
     return {
+      disable: function () {
+        this._disabled = true;
+      },
       login: function(user){
+        this.setUserData(user);
         analytics.identify(user.sys.id, {
           firstName: user.firstName,
           lastName:  user.lastName,
@@ -51,6 +57,28 @@ angular.module('contentful/services').provider('analytics', function (environmen
             user_hash: user.intercomUserHash
           }
         });
+        if (user.features.logAnalytics === false) {
+          this.disable();
+          return;
+        }
+      },
+      setUserData: function (user) {
+        this._userData = {
+          userSubscriptionKey:                    user.subscription.sys.id,
+          userSubscriptionState:                  user.subscription.state,
+          userSubscriptionInvoiceState:           user.subscription.invoiceState,
+          userSubscriptionSubscriptionPlanKey:    user.subscription.subscriptionPlan.sys.id,
+          userSubscriptionSubscriptionPlanName:   user.subscription.subscriptionPlan.name
+        };
+      },
+      setBucketData: function (bucket) {
+        this._bucketData = {
+          bucketSubscriptionKey:                  bucket.data.subscription.sys.id,
+          bucketSubscriptionState:                bucket.data.subscription.state,
+          bucketSubscriptionInvoiceState:         bucket.data.subscription.invoiceState,
+          bucketSubscriptionSubscriptionPlanKey:  bucket.data.subscription.subscriptionPlan.sys.id,
+          bucketSubscriptionSubscriptionPlanName: bucket.data.subscription.subscriptionPlan.name
+        };
       },
       tabAdded: function (tab) {
         this.track('Opened Tab', {
@@ -143,8 +171,10 @@ angular.module('contentful/services').provider('analytics', function (environmen
         }
       },
       track: function (event, data) {
-        //analytics.track(event, data);
-        console.log('analytics.track', event, data);
+        if (!this._disabled) {
+          analytics.track(event, _.merge({},data, this._userData, this._bucketData));
+        }
+        //console.log('analytics.track', event, data);
       }
     };
   };
