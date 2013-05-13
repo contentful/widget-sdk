@@ -23,7 +23,9 @@
           %date.relative(datetime="{{sys.createdAt}}")
       %tr
         %th Created by
-        %td {{sys.createdBy.sys.id}}
+        %td
+          %span.cf-user(link="sys.createdBy" as="creator")
+            {{creator.getName()}}
       %tr
         %th
 
@@ -48,7 +50,9 @@
           %date.relative(datetime="{{sys.publishedAt}}")
       %tr
         %th Published by
-        %td {{sys.publishedBy.sys.id}}
+        %td
+          %span.cf-user(link="sys.publishedBy" as="publisher")
+            {{publisher.getName()}}
       %tr
         %th Published version
         %td {{sys.publishedVersion}}

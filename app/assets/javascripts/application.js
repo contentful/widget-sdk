@@ -5,6 +5,7 @@
 //= require jquery.ui.autocomplete
 //= require jquery.ui.datepicker
 //
+//= require jquery.autosize
 //= require jquery.cookies.2.2.0
 //
 //= require bootstrap-tooltip
