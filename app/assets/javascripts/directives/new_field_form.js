@@ -5,7 +5,7 @@ angular.module('contentful/directives').directive('newFieldForm', function (avai
     restrict: 'C',
     controller: function ($scope) {
       var defaultType = availableFieldTypes[0];
-      $scope.newType = defaultType.value;
+      $scope.newType = defaultType;
 
       $scope.$watch('newName', function(name, previousName, scope) {
         if (scope.newId &&
@@ -22,7 +22,7 @@ angular.module('contentful/directives').directive('newFieldForm', function (avai
           required: $scope.newRequired,
           localized: $scope.newLocalized
         };
-        _.extend(field, $scope.newType);
+        _.extend(field, $scope.newType.value);
 
         var fieldDoc = $scope.otDoc.at(['fields']);
 
@@ -32,7 +32,7 @@ angular.module('contentful/directives').directive('newFieldForm', function (avai
           } else {
             $scope.$apply(function(scope) {
               scope.newId = scope.newName = null;
-              scope.newType = defaultType.value;
+              scope.newType = defaultType;
               scope.newRequired = false;
               scope.newLocalized = false;
               scope.otUpdateEntity();
@@ -40,6 +40,10 @@ angular.module('contentful/directives').directive('newFieldForm', function (avai
             });
           }
         });
+      };
+
+      $scope.selectType = function(type) {
+        $scope.newType = type;
       };
 
     },

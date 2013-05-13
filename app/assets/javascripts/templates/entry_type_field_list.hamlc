@@ -31,7 +31,7 @@
 %form.new-field-form(name="newField")
   %table.result-list.new-field
     %tr.field
-      %td(colspan="9")
+      %td(colspan="9" style="overflow: visible")
         .new-field-settings
           .drag-handle &nbsp;
           .name
@@ -45,10 +45,17 @@
                    tooltip="Field ID used in API"
                    tooltip-placement="bottom")
           .type
-            %select(ng-model="newType"
-                    ng-options="type.value as type.name for type in availableTypes"
-                    tooltip="Field data type"
-                    tooltip-placement="bottom")
+            .dropdown-btn
+              .dropdown-toggle
+                %i.ss-dropdown
+                {{newType.name}}
+              .dropdown-menu.left-aligned
+                %ul
+                  %li(ng-repeat="type in availableTypes"
+                      ng-click="selectType(type)"
+                      dropdown-close="")
+                    %span {{type.name}}
+                    %small {{type.description}}
           .display &nbsp;
           .localized
             %input(type="checkbox"
