@@ -1,5 +1,4 @@
 {
-  "es5": true,
   "globalstrict": true,
   "node": true,
   "predef": [
