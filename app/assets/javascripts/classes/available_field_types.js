@@ -1,16 +1,59 @@
 angular.module('contentful/classes').
   constant('availableFieldTypes', [
-    {name: 'Text'           , value: {type: 'text'                            }},
-    {name: 'Symbol'         , value: {type: 'string'                          }},
-    {name: 'Integer'        , value: {type: 'integer'                         }},
-    {name: 'Floating-point' , value: {type: 'number'                          }},
-    {name: 'Yes/No'         , value: {type: 'boolean'                         }},
-    {name: 'Date/Time'      , value: {type: 'date'                            }},
-    {name: 'Object'         , value: {type: 'object'                          }},
-    {name: 'Link to Entry'  , value: {type: 'link'                            }},
-    {name: 'List of Entries', value: {type: 'array' , items: {type: 'link'  } }},
-    {name: 'List of Strings', value: {type: 'array' , items: {type: 'string'} }},
-    {name: 'Location'       , value: {type: 'location'                        }}
+    {
+      name: 'Text',
+      description: 'Text description',
+      value: {type: 'text'}
+    },
+    {
+      name: 'Symbol',
+      description: 'Symbol description',
+      value: {type: 'string'}
+    },
+    {
+      name: 'Integer',
+      description: 'Integer description',
+      value: {type: 'integer'}},
+    {
+      name: 'Floating-point',
+      description: 'Floating-point description',
+      value: {type: 'number'}
+    },
+    {
+      name: 'Yes/No',
+      description: 'Yes/No description',
+      value: {type: 'boolean'}
+    },
+    {
+      name: 'Date/Time',
+      description: 'Date/Time description',
+      value: {type: 'date'}
+    },
+    {
+      name: 'Object',
+      description: 'Object description',
+      value: {type: 'object'}
+    },
+    {
+      name: 'Link to Entry',
+      description: 'Link to Entry description',
+      value: {type: 'link'}
+    },
+    {
+      name: 'List of Entries',
+      description: 'List of Entries description',
+      value: {type: 'array', items: {type: 'link'}}
+    },
+    {
+      name: 'List of Strings',
+      description: 'List of Strings description',
+      value: {type: 'array' , items: {type: 'string'}}
+    },
+    {
+      name: 'Location',
+      description: 'Location description',
+      value: {type: 'location'}
+    }
   ]).
   factory('getFieldTypeName', function(availableFieldTypes) {
     'use strict';
