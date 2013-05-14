@@ -19,6 +19,57 @@
 @import "components/advice"
 @import "components/tooltip"
 
+// Overwrite some jQuery-UI stuff
+.ui-corner-all
+  +rounded-corners(3px, 3px, 3px, 3px)
+.ui-widget-header
+  background-image: none
+  background-color: $gray-background
+  color: $dark-gray
+
+// Delete Icon
+// TODO move somewhere else, this makes absolutely no sense out of context
+i.ss-delete
+  font-size: 8px
+  color: $lightest-gray
+  @include text-shadow(0 1px 0 rgba(255,255,255,0.6))
+  &:hover
+    color: $medium-gray
+    cursor: pointer
+
+// Loading indicator
+.loading
+  background-image: asset-url('ajax-loader.gif', image)
+  background-position: center
+  background-repeat: no-repeat
+  background-size: 25px 25px
+  width: 30px
+  height: 30px
+  img
+    width: 50%
+    vertical-align: middle
+
+// Endless container
+.endless-container
+  .loading
+    margin: auto
+    height: 50px
+    text-align: center
+.endless-container.scrolled
+  +box-shadow(rgba(black, .1) 1px 4px 9px -6px inset)
+
+.separator
+  height: 1px
+  background: $light-rule
+
+// Avatars
+// TODO configure only .avatar here, mix into account.user
+.avatar,
+.account .user
+  img
+    width: $avatar-width
+    +border-radius(3px)
+
 button::-moz-focus-inner
   border: 0
   padding: 0
