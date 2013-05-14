@@ -154,18 +154,16 @@ $account-border-color: #d5d5d5
       top: 1px
       display: block
       font-style: normal
-      border: 2px solid $red
-      color: black
+      +blue-highlight
+      border: 2px solid white
       font-size: 12px
-      +box-shadow(0 8px 16px rgba(255,255,255,0.6) inset)
-      +gray-highlight
+      +box-shadow(1px 1px 4px rgba(0,0,0,0.6))
+      +text-shadow(0 -1px 0px black)
       text-align: center
       width: 25px
       height: 25px
       +border-radius(13px)
-      background: $lightest-gray
       &:hover
-        +box-shadow(0 8px 16px rgba(0,0,0,0.1) inset)
         background-color: white
       span
         position: relative
