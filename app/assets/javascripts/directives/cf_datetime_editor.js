@@ -49,6 +49,7 @@ angular.module('contentful/directives').directive('cfDatetimeEditor', function()
         var dateAndTime = dateController.$modelValue+'T'+timeController.$modelValue;
         var dateTime = moment(dateAndTime);
         scope.otChangeValue(dateTime.utc().format());
+        scope.otUpdateEntity();
       };
       dateController.$viewChangeListeners.push(changeHandler);
       timeController.$viewChangeListeners.push(changeHandler);
