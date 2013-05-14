@@ -42,7 +42,7 @@
   .iframe-view(      ng-switch-when="iframe"           )
   .entry-list(       ng-switch-when="entry-list"       )
   .entry-type-list(  ng-switch-when="entry-type-list"  )
-  .entry-editor.with-tab-actions(     ng-switch-when="entry-editor"      ot-doc-for="tab.params.entry" ng-class="{'with-aux-panel': preferences.showAuxPanel}")
+  .entry-editor.with-tab-actions(     ng-switch-when="entry-editor"      ot-doc-for="tab.params.entry" ng-class="{'with-aux-panel': preferences.showAuxPanel}" ot-doc-presence="")
   .entry-type-editor.with-tab-actions(ng-switch-when="entry-type-editor" ot-doc-for="tab.params.entryType" ng-class="{'with-aux-panel': preferences.showAuxPanel}")
   .content-delivery( ng-switch-when="content-delivery" )
   .api-key-editor.with-tab-actions(   ng-switch-when="api-key-editor")
