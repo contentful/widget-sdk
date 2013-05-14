@@ -40,6 +40,9 @@
             %li(ng-show="canCreateBucket(user)" ng-click="showCreateBucketDialog()" ng-class="{separator: buckets.length > 0}" dropdown-close="")
               Create Bucket
       %a#intercom.please-style-me(href="#")
+      -#%a#intercom.unread.ic_closing_modal(href="#")
+        %em.unread_counter
+          %span 1
     %bucket-view(ng-show="bucketContext.bucket" ng-controller="TabViewCtrl")
     .create-bucket-advice(ng-show="buckets.length == 0")
       %p Nothing to see yet. Why don't you create a bucket?
