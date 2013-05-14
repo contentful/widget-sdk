@@ -1,7 +1,5 @@
-angular.module('contentful/directives').
-directive('validationOptions', function () {
-  'use strict';
-
+'use strict';
+angular.module('contentful/directives').directive('validationOptions', function () {
   return {
     restrict: 'C',
     template: JST['validation_options'](),
@@ -28,33 +26,4 @@ directive('validationOptions', function () {
 
     }
   };
-
-}).
-controller('NewValidationCtrl', function ($scope) {
-  'use strict';
-
-  $scope.validation = null;
-
-  $scope.prepareNewValidation = function () {
-    $scope.validation = {};
-    $scope.validation[$scope.newValidationType] = {};
-  };
-
-  $scope.createValidation = function () {
-    var fieldDoc = $scope.otDoc.at(['fields', $scope.index]);
-    if (!fieldDoc.get().validations) {
-      fieldDoc.at(['validations']).set([$scope.validation], callback);
-    } else {
-      var validationsDoc = $scope.otDoc.at(['fields', $scope.index, 'validations']);
-      validationsDoc.push($scope.validation, callback);
-    }
-
-    function callback(err) {
-      if (!err) $scope.$apply(function (scope) {
-        scope.prepareNewValidation();
-        scope.updateValidationsFromDoc();
-      });
-    }
-  };
-
 });
