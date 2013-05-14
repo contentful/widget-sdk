@@ -48,7 +48,7 @@ $search-field-height: 32px
 .search-field
   background: white
   border: 1px solid $lightest-gray
-  +rounded-corners(20px,20px,20px,20px)
+  +border-radius(20px 20px 20px 20px)
   +box-shadow(0 1px 3px rgba(0,0,0,0.1) inset)
   input[type="search"]
     -webkit-appearance: none
@@ -58,7 +58,7 @@ $search-field-height: 32px
     padding: 0 7px
     color: $dark-gray
     opacity: 0.6
-    +rounded-corners(20px,20px,20px,20px)
+    +border-radius(20px 20px 20px 20px)
     &::-webkit-search-cancel-button
       display: none
   input:focus
@@ -94,7 +94,7 @@ $search-field-height: 32px
     @extend %search-field-button
     border-right: 1px solid $lightest-gray
     &:first-child
-      +rounded-corners(20px,0,0,20px)
+      +border-radius(20px 0 0 20px)
       padding-left: 15px
     .ss-delete
       margin: 0 0 0 6px
@@ -108,7 +108,7 @@ $search-field-height: 32px
 .search-button
   @extend %search-field-button
   border-left: 1px solid $lightest-gray
-  +rounded-corners(0, 20px, 20px, 0)
+  +border-radius(0 20px 20px 0)
   width: 35px
   .ss-search
     position: relative
@@ -120,7 +120,7 @@ $search-field-height: 32px
     padding: 0 5px 0 10px
     width: 40px
     border: 1px solid $lightest-gray
-    +rounded-corners(3px, 3px, 3px, 3px)
+    +border-radius(3px 3px 3px 3px)
     .ss-columns,
     .ss-dropdown
       position: relative
@@ -152,14 +152,14 @@ $search-field-height: 32px
     background-color: $gray-background
     width: 8px
     +box-shadow(1px 0 1px rgba(0,0,0,0.06) inset)
-    +rounded-corners(0,2px,0,0)
+    +border-radius(0 2px 0 0)
   
   .fill
     height: $position
     width: 8px
     +single-transition(height, 400ms, linear)
     +gradient(#459cd9, #1e82c8)
-    +rounded-corners(0,2px,0,0)
+    +border-radius(0 2px 0 0)
     
   .tip
     right: 19px

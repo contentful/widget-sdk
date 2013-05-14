@@ -21,7 +21,7 @@
 
 // Overwrite some jQuery-UI stuff
 .ui-corner-all
-  +rounded-corners(3px, 3px, 3px, 3px)
+  +border-radius(3px  3px  3px  3px)
 .ui-widget-header
   background-image: none
   background-color: $gray-background
@@ -32,7 +32,7 @@
 i.ss-delete
   font-size: 8px
   color: $lightest-gray
-  @include text-shadow(0 1px 0 rgba(255,255,255,0.6))
+  +text-shadow(0 1px 0 rgba(255,255,255,0.6))
   &:hover
     color: $medium-gray
     cursor: pointer
@@ -128,7 +128,7 @@ button
   background-color: $gray-background
   border: 1px solid $lightest-gray
   +gray-highlight
-  +rounded-corners(3px, 3px, 3px, 3px)
+  +border-radius(3px  3px  3px  3px)
   line-height: 18px
 
   &:hover

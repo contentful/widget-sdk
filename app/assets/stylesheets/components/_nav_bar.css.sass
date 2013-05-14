@@ -1,12 +1,12 @@
 .nav-bar
-  @include user-select(none)
+  +user-select(none)
   +gradient(#333333, #434343)
   +box-shadow(2px 0 1px rgba(0,0,0,0.15))
   z-index: 1
   // Separator below logo and each nav button
   .logo, li
     border-bottom: 1px solid rgba(0,0,0,0.45)
-    @include box-shadow(0 1px 0 rgba(255,255,255,0.06))
+    +box-shadow(0 1px 0 rgba(255,255,255,0.06))
   li
     color: $medium-gray
     height: 50px
@@ -16,7 +16,7 @@
       font-size: 20px
       line-height: 55px
       margin-top: 50px
-      @include text-shadow(0 1px 0 rgba(255,255,255,0.1))
+      +text-shadow(0 1px 0 rgba(255,255,255,0.1))
     i.ss-layout
       font-size: 19px
       line-height: 55px

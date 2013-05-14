@@ -15,7 +15,7 @@
   cursor: pointer
 .dropdown-toggle:hover
   color: black
-  @include box-shadow(0 5px 15px rgba(255,255,255,0.6) inset)
+  +box-shadow(0 5px 15px rgba(255,255,255,0.6) inset)
 .active .dropdown-toggle
   color: $dark-gray
 
@@ -41,7 +41,7 @@
   border: 1px solid shade(#FFFFFF, 10)
   padding: 4px 0
   +box-shadow(0 2px 6px rgba(0,0,0,0.1))
-  +rounded-corners(0,0,3px,3px)
+  +border-radius(0 0 3px 3px)
   p
     padding: .4em 1.2em
   li
@@ -108,4 +108,3 @@
   content: "▹"
   right: - $caret-size - 2px
   +text-shadow(0px -2px 3px rgba(0,0,0,0.12))
-

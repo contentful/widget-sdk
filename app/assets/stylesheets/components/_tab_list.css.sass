@@ -1,5 +1,5 @@
 .tab-list
-  @include user-select(none)
+  +user-select(none)
   li
     display: inline-block
     height: $tab-height
@@ -12,7 +12,7 @@
     background-color: $page-background
     border: 1px solid #d5d5d5
     border-bottom-color: $lightest-gray
-    @include rounded-corners(3px,3px,0,0)
+    +border-radius(3px 3px 0 0)
     color: $light-gray
     span
       font-size: 13px
@@ -39,21 +39,21 @@
     bottom: 0
     right: 0
     width: 50px
-    @include inactive-fade
+    +inactive-fade
   .tab.active
     color: $dark-gray
     background: $gray-background
     border-bottom: 0
     font-weight: 600
-    @include gray-highlight
+    +gray-highlight
     .fade
-      @include fade
+      +fade
   .tab:hover
     color: $dark-gray
     cursor: pointer
     +box-shadow(0 8px 16px rgba(255,255,255,0.3) inset)
   .tab.active:hover
-    @include gray-highlight
+    +gray-highlight
 
 /* ADD BUTTON DROPDOWN */
 
