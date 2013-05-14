@@ -31,7 +31,7 @@ $avatar-width: 27px
 
 body
   font-family: 'Open Sans', Arial, sans-serif
-  font-size: 10px
+  font-size: 12px
   line-height: 15px
   color: $medium-gray
   background: url(image_path("bg.jpg"))
@@ -51,6 +51,7 @@ i.ss-delete
   &:hover
     color: $medium-gray
     cursor: pointer
+
 // Loading indicator
 .loading
   background-image: asset-url('ajax-loader.gif', image)
@@ -58,16 +59,16 @@ i.ss-delete
   background-repeat: no-repeat
   background-size: 25px 25px
   width: 30px
+  height: 30px
   img
     width: 50%
     vertical-align: middle
+
+// Endless container
 .endless-container
   .loading
-    margin-left: auto
-    margin-right: auto
+    margin: auto
     height: 50px
-    line-height: 50px
-    width: 40px
     text-align: center
 .endless-container.scrolled
   +box-shadow(rgba(black, .1) 1px 4px 9px -6px inset)
@@ -75,7 +76,11 @@ i.ss-delete
 .separator
   height: 1px
   background: $light-rule
-.avatar, .account .user
+
+// Avatars
+// TODO configure only .avatar here, mix into account.user
+.avatar,
+.account .user
   img
     width: $avatar-width
     +border-radius(3px)
