@@ -43,9 +43,13 @@
   +box-shadow(0 2px 6px rgba(0,0,0,0.1))
   +border-radius(0 0 3px 3px)
   p
-    padding: .4em 1.2em
+    padding: 4px 12px
+  ul,
+  ol
+    +plain-list
   li
-    padding: .4em 1.2em
+    font-size: 11px
+    padding: 4px 12px
     a
       display: block
     a:link,
@@ -94,7 +98,7 @@
 .dropdown-menu.bottom-caret:before
   +caret
   content: "▾"
-  bottom: - $caret-size - 9px
+  bottom: - $caret-size - 6px
   +text-shadow(0px 2px 3px rgba(0,0,0,0.12)) 
   
 .dropdown-menu.left-caret:before
