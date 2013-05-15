@@ -8,6 +8,14 @@
 @import "compass/css3/user-interface"
 @import "compass/utilities/general/clearfix"
 
+=plain-list
+  margin: 0
+  padding: 0
+  > *
+    list-style-type: none
+    margin: 0
+    padding: 0
+
 =gradient($start, $stop)
   background: $start
   +filter-gradient($start, $stop)

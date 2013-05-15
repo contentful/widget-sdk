@@ -20,6 +20,13 @@ $green: #33ca6c
 $gold: #e6ae17
 $red: #f2602e
 
+// TAB AREA
+$tab-top: 9px
+$tab-height: 38px
+$main-left-spacing: 70px
+
+$tab-header-height: 66px
+$tab-actions-height: 54px
 
 /* AVATAR SIZES */
 
@@ -110,23 +117,3 @@ a
   &:hover
     color: darken($link-blue, 9%)
 
-// Belongs in mixins, but has a backwards dependency on the color vars
-%blue-link-list
-  li:hover
-    cursor: pointer
-    span
-      text-decoration: underline
-      cursor: pointer
-      color: $link-blue
-  .active
-    span
-      font-weight: 600
-      color: $dark-gray
-  .active:hover
-    span
-      text-decoration: none
-      color: $dark-gray
-  .left-nav-bottom
-    span:hover
-      color: $link-blue
-      cursor: pointer

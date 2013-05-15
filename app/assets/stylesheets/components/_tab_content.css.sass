@@ -1,5 +1,6 @@
 // Layout
 
+// TODO the layout stuff here should go into client style
 .tab-content
   overflow: hidden
   position: absolute
@@ -91,6 +92,8 @@ $tab-main-margin-top: 28px
 .left-nav
   margin-top: 4px
   $padding: 8px
+  ul
+    +plain-list
   header
     color: $medium-gray
     border-bottom: 1px solid $light-rule
@@ -114,7 +117,7 @@ $tab-main-margin-top: 28px
     +border-radius(3px  3px  3px  3px)
     background: $gray-background
   .left-nav-list
-    margin-bottom: 1em
+    margin-bottom: 10px
 
 .tab-header
   border-bottom: 1px solid $lightest-gray
@@ -138,13 +141,13 @@ $tab-main-margin-top: 28px
     .active:hover:after
       font-family: "SSStandard"
       content: "↻"
-      font-size: .7em
+      font-size: 7px
       color: $light-gray
-      line-height: 1em
-      margin-left: .3em
+      line-height: 10px
+      margin-left: 3px
   .left-nav-filters // TODO Rename saved-searches
     i.ss-search
       color: $light-gray
-      font-size: .8em
-      margin: 0 .2em 0 0
+      font-size: 8px
+      margin: 0 2px 0 0
     

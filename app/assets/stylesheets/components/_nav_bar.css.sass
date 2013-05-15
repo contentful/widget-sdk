@@ -1,10 +1,24 @@
 .nav-bar
+  // layout
+  ul
+    margin: 0
+  li
+    list-style-type: none
+    margin: 0
+    position: relative
+  .separator
+    height: 1px
+    width: 100%
+    position: absolute
+    bottom: 0
+  // styling
   +user-select(none)
   +gradient(#333333, #434343)
   +box-shadow(2px 0 1px rgba(0,0,0,0.15))
   z-index: 1
   // Separator below logo and each nav button
-  .logo, li
+  .logo,
+  li
     border-bottom: 1px solid rgba(0,0,0,0.45)
     +box-shadow(0 1px 0 rgba(255,255,255,0.06))
   li
