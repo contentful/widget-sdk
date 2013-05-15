@@ -1,17 +1,22 @@
-.tab-actions
+.tab-actions,
+%tab-actions-container
   border-top: 1px solid $lightest-gray
   background-color: $gray-background
   +box-shadow(0 -1px 4px rgba(0,0,0,0.07), 0 1px 1px rgba(255,255,255,0.8) inset)
 
-.tab-actions
-  $vertical-padding: 10px
-  $content-height: $tab-actions-height - (2 * $vertical-padding)
-  // -1 on top to make up for the border
-  padding: ($vertical-padding - 1) 20px $vertical-padding
+$tab-actions-vertical-padding: 10px
+$tab-actions-content-height: $tab-actions-height - (2 * $tab-actions-vertical-padding)
 
+.tab-actions,
+%tab-actions-padding
+  // -1 on top to make up for the border
+  padding: ($tab-actions-vertical-padding - 1) 20px $tab-actions-vertical-padding
+
+.tab-actions,
+%tab-action-inner-components
   // text label
   .label
-    line-height: $content-height
+    line-height: $tab-actions-content-height
     font-size: 12px
     float: left
 
@@ -19,7 +24,7 @@
   .save-status,
   .rest-save-status
     float: left
-    line-height: $content-height
+    line-height: $tab-actions-content-height
     font-size: 12px
     i
       margin-right: 2px
@@ -48,18 +53,18 @@
   // other users
   .other-users
     float: right
-    line-height: $content-height
+    line-height: $tab-actions-content-height
     font-size: 11px
     color: $light-gray
     ul
       display: inline-block
-      height: $content-height
+      height: $tab-actions-content-height
       vertical-align: middle
     span
       margin-right: 5px
     .avatar
       $image-size: 28px
-      height: $content-height
+      height: $tab-actions-content-height
       display: inline-block
       position: relative
       margin-left: 3px
@@ -99,5 +104,5 @@
   .button-set
     float: right
     button
-      height: $content-height
+      height: $tab-actions-content-height
       //line-height: $content-height/2

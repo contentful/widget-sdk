@@ -1,0 +1,77 @@
+// Forms
+.tab-iframe .formtastic
+  // remove list bullets
+  .inputs,
+  .actions
+    li
+      list-style-type: none
+      margin: 0
+    .input
+      margin-bottom: $form-spacing
+  li.input
+  .input
+    padding: 0
+    .label
+      width: 17%
+      text-align: right
+      padding: $form-offset $form-gutter $form-offset 0
+  .input div
+    padding-top: $form-offset
+  .input select
+    margin-top: $form-offset
+  .input input
+    margin-top: 2px
+  .input.boolean
+    padding-bottom: $form-offset
+  .input.boolean label
+    padding-left: 17%
+  
+  // Style form elements
+  .input
+    @extend .form-styled
+
+  // Make form actions look a little more like tab-actions
+  fieldset.actions
+    margin-top: $form-offset
+    @extend %tab-actions-padding
+    padding-right: 100% - 17% - 57%
+    height: $tab-actions-height
+    .action
+      display: inline-block
+    ol
+      float: right
+      button
+        height: $tab-actions-content-height
+    // Colors
+    border-top: 1px solid $lightest-gray
+    input[name="commit"]
+      @extend %blue-button
+
+.tab-iframe
+  // Make buttons look like buttons
+  input[type="submit"]
+    @extend button
+
+  // delete button
+  form.button_to
+    position: relative
+    top: -$tab-actions-height
+    height: $tab-actions-height
+    @extend %tab-actions-padding
+
+  // Add-Button
+  button,
+  .as-button
+    &.new-resource
+      @extend %blue-button
+    .ss-plus
+      position: relative
+      top: 1px
+      left: -2px
+      font-size: 10px
+      padding-right: 1px
+
+  // Main tables
+  .result-list.clickable
+    tr
+      @extend %tr-clickable

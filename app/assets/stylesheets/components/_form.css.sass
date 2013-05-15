@@ -1,5 +1,6 @@
 $form-gutter: 12px
 $form-offset: 11px
+$form-spacing: 7.5px
 
 // General form layout
 
@@ -31,7 +32,7 @@ $form-offset: 11px
 // Margins and other styling
 
 .form-horizontal
-  border-spacing: 0 7.5px
+  border-spacing: 0 $form-spacing
   color: $medium-gray
   label
     text-align: right
@@ -45,10 +46,13 @@ $form-offset: 11px
   input[type="text"],
   input[type="number"],
   input[type="email"],
+  input[type="tel"],
+  input[type="password"],
   input.time,
   textarea
     padding: 7px
     font-family: 'Open Sans', Arial, sans-serif
+    font-size: 12px
     width: 57%
     border: 1px solid $lightest-gray
     +border-radius(3px 3px 3px 3px)
@@ -253,11 +257,3 @@ $form-offset: 11px
       .ss-delete
         float: right
         margin-top: 1px
-
-
-
-
-
-
-
-
