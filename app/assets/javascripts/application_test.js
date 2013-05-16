@@ -26,6 +26,7 @@
 //= require environment
 //= require ng-time-relative
 //= require user_interface
+//= require contentful_mocks
 //
 //= require_tree ./jasmine_examples
 //
@@ -35,7 +36,8 @@ angular.module('contentful/test', [
   'contentful/environment',
   'timeRelative',
   'contentful/user_interface',
-  'contentful'
+  'contentful',
+  'contentful/mocks'
 ], function($locationProvider, clientProvider, authenticationProvider, environment){
   'use strict';
   var env = environment.settings;

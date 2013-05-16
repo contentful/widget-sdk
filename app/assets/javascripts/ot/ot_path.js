@@ -8,12 +8,12 @@ angular.module('contentful').directive('otPath', function(ShareJS, cfSpinner) {
     require: '^otDocFor',
     scope: true,
     link: function(scope, elem, attr) {
+      console.log('running linker');
       scope.$watch(attr['otPath'], function(otPath, old, scope) {
         scope.otPath = otPath;
       }, true);
     },
     controller: function OtPathCtrl($scope) {
-
       $scope.$on('otRemoteOp', function (event, op) {
         var scope = event.currentScope;
         //if (isSubPath(op.p)) {
