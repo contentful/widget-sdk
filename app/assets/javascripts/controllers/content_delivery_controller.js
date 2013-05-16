@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/controllers').
+angular.module('contentful').
   controller('ContentDeliveryCtrl', function($scope, $window, environment) {
     $scope.refreshApiKeys = function() {
       $scope.bucketContext.bucket.getApiKeys(null, function(err, apiKeys) {

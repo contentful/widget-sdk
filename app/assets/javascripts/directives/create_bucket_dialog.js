@@ -1,4 +1,4 @@
-angular.module('contentful/directives').directive('createBucketDialog', function (client) {
+angular.module('contentful').directive('createBucketDialog', function (client) {
     'use strict';
 
     return {

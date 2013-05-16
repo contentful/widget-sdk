@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').directive('tablistButton', function(analytics) {
+angular.module('contentful').directive('tablistButton', function(analytics) {
   return {
     template: JST.tablist_button(),
     restrict: 'C',

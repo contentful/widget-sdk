@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/controllers').controller('BucketCtrl', function BucketCtrl($scope, analytics) {
+angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope, analytics) {
   $scope.$watch('bucketContext', function(bucketContext, old, scope){
     var bucket = bucketContext.bucket;
     scope.bucketContext.tabList.closeAll();

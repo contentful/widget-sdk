@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/services').
+angular.module('contentful').
   service('notification', function() {
     return {
       messages: [],

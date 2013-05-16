@@ -1,6 +1,6 @@
 'use strict';
 
-var otModule = angular.module('contentful/ot');
+var otModule = angular.module('contentful');
 
 otModule.directive('otBindText', function(ShareJS) {
   return {

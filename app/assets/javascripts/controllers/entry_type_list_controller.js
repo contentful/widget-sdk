@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/controllers').controller('EntryTypeListCtrl', function EntryTypeListCtrl($scope) {
+angular.module('contentful').controller('EntryTypeListCtrl', function EntryTypeListCtrl($scope) {
   $scope.editEntryType = function(entryType) {
     var editor = _(this.tab.list.items).find(function(tab){
       return (tab.viewType == 'entry-type-editor' && tab.params.entryType == entryType);

@@ -1,4 +1,4 @@
-angular.module('contentful/directives').directive('fieldValidations', function(analytics) {
+angular.module('contentful').directive('fieldValidations', function(analytics) {
   'use strict';
 
   return {

@@ -1,4 +1,4 @@
-angular.module('contentful/services').provider('ShareJS', function ShareJSProvider(environment, contentfulClient) {
+angular.module('contentful').provider('ShareJS', function ShareJSProvider(environment, contentfulClient) {
   /*global sharejs*/
   'use strict';
 

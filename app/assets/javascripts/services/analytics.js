@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/services').provider('analytics', function (environment) {
+angular.module('contentful').provider('analytics', function (environment) {
   /*global analytics*/
 
   // Create a queue, but don't obliterate an existing one!

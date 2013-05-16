@@ -1,4 +1,4 @@
-angular.module('contentful/classes').factory('TabList', function($rootScope, analytics){
+angular.module('contentful').factory('TabList', function($rootScope, analytics){
   'use strict';
 
   function TabList() {

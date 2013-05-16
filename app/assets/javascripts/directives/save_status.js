@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').directive('saveStatus', function () {
+angular.module('contentful').directive('saveStatus', function () {
   return {
     restrict: 'C',
     template: JST['save_status'](),

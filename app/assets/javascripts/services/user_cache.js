@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful/services').
+angular.module('contentful').
   service('userCache', function UserCache($browser) {
     var cache = [];
     var inflight = false;

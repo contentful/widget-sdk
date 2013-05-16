@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').
+angular.module('contentful').
   directive('contentDelivery', function() {
     return {
       template: JST.content_delivery(),

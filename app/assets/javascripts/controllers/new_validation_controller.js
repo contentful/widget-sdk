@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/controllers').controller('NewValidationCtrl', function ($scope, analytics) {
+angular.module('contentful').controller('NewValidationCtrl', function ($scope, analytics) {
   $scope.validation = null;
 
   $scope.prepareNewValidation = function () {

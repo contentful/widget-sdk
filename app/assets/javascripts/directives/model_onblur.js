@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').directive('ngModelOnblur', function() {
+angular.module('contentful').directive('ngModelOnblur', function() {
   return {
     restrict: 'A',
     require: 'ngModel',

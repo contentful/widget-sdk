@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').directive('tabList', function() {
+angular.module('contentful').directive('tabList', function() {
   return {
     restrict: 'C',
     link: function(scope, element) {

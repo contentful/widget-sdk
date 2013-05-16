@@ -1,4 +1,4 @@
-angular.module('contentful/directives').directive('iframeView', function($window, $rootScope){
+angular.module('contentful').directive('iframeView', function($window, $rootScope){
   'use strict';
 
   // Create IE + others compatible event handler

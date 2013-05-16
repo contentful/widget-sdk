@@ -1,6 +1,6 @@
 'use strict';
 
-var filters = angular.module('contentful/filters', []);
+var filters = angular.module('contentful');
 
 filters.filter('dateTime', function() {
   return function(unixTime) {

@@ -1,4 +1,4 @@
-angular.module('contentful/services').provider('authentication', function AuthenticationProvider(environment, worf, contentfulClient) {
+angular.module('contentful').provider('authentication', function AuthenticationProvider(environment, worf, contentfulClient) {
   /*global moment*/
   'use strict';
 

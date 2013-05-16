@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/services').provider('$exceptionHandler', function () {
+angular.module('contentful').provider('$exceptionHandler', function () {
  this.$get = ['$log', function($log) {
     return function(exception, cause) {
       $log.error.apply($log, arguments);

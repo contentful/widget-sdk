@@ -1,4 +1,4 @@
-angular.module('contentful/directives').directive('cfLogo', function (cfSpinner) {
+angular.module('contentful').directive('cfLogo', function (cfSpinner) {
   'use strict';
 
   return {

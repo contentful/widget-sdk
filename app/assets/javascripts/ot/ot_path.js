@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/ot').directive('otPath', function(ShareJS, cfSpinner) {
+angular.module('contentful').directive('otPath', function(ShareJS, cfSpinner) {
 
   return {
     restrict: 'AC',

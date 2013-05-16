@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/controllers').controller('TabViewCtrl', function ($scope, authentication, analytics) {
+angular.module('contentful').controller('TabViewCtrl', function ($scope, authentication, analytics) {
   $scope.visitView = function(viewType) {
     var options;
     if (viewType == 'entry-list'){

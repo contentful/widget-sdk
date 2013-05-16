@@ -1,7 +1,7 @@
 /*global google:false*/
 'use strict';
 
-angular.module('contentful/directives').directive('cfLocationEditor', function(cfSpinner, notification){
+angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, notification){
   return {
     restrict: 'C',
     template: JST['cf_location_editor'],

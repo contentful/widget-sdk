@@ -1,4 +1,4 @@
-angular.module('contentful/directives').directive('newFieldForm', function (availableFieldTypes, toIdentifier, analytics) {
+angular.module('contentful').directive('newFieldForm', function (availableFieldTypes, toIdentifier, analytics) {
   'use strict';
 
   return {

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/controllers').controller('SaveStatusCtrl', function ($scope) {
+angular.module('contentful').controller('SaveStatusCtrl', function ($scope) {
   $scope.saveStatus = 'no_connection';
 
   var detachHandlers;

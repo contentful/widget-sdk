@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/controllers').controller('EntryListCtrl', function EntryListCtrl($scope, Paginator, Selection, cfSpinner, analytics) {
+angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl($scope, Paginator, Selection, cfSpinner, analytics) {
   $scope.contentType = 'entries';
   $scope.entrySection = 'all';
 

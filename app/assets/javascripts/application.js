@@ -22,32 +22,21 @@
 //= require_tree ./templates
 //
 //= require angular-1.0.4
+//= require contentful
 //= require environment
-//= require services
-//= require controllers
-//= require filters
-//= require directives
-//= require classes
-//= require ot
-//
 //= require ng-time-relative
-//
 //= require user_interface
+
 //
 //= require_tree ./jasmine_examples
 //
 //= require_self
 
-angular.module('contentful', [
+angular.module('contentful/app', [
   'contentful/environment',
-  'contentful/classes',
+  'timeRelative',
   'contentful/user_interface',
-  'contentful/services',
-  'contentful/ot',
-  'contentful/controllers',
-  'contentful/directives',
-  'contentful/filters',
-  'timeRelative'
+  'contentful'
 ], function($locationProvider, clientProvider, authenticationProvider, environment){
   'use strict';
   var env = environment.settings;
@@ -60,4 +49,4 @@ angular.module('contentful', [
   client.persistenceContext.adapter.token = authentication.token;
 });
 
-angular.bootstrap(document, ['contentful']);
+angular.bootstrap(document, ['contentful/app']);

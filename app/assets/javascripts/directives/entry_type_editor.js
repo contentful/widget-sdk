@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').directive('entryTypeEditor', function(){
+angular.module('contentful').directive('entryTypeEditor', function(){
   return {
     template: JST.entry_type_editor(),
     restrict: 'C',

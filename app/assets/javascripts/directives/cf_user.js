@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').
+angular.module('contentful').
   directive('cfUser', function() {
     return {
       restrict: 'C',

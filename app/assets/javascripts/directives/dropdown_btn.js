@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').directive('dropdownBtn', function() {
+angular.module('contentful').directive('dropdownBtn', function() {
   return {
     restrict: 'C',
     link: function(scope, element) {

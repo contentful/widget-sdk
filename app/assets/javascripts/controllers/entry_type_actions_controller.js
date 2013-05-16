@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/controllers').
+angular.module('contentful').
   controller('EntryTypeActionsCtrl', function EntryTypeActionsCtrl($scope, notification, analytics) {
 
   // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,

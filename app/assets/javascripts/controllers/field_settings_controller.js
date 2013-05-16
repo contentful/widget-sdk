@@ -1,4 +1,4 @@
-angular.module('contentful/controllers').controller('FieldSettingsCtrl', function ($scope, getFieldTypeName, analytics) {
+angular.module('contentful').controller('FieldSettingsCtrl', function ($scope, getFieldTypeName, analytics) {
   'use strict';
 
   $scope.getFieldTypeName = getFieldTypeName;

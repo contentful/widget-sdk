@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful/directives').directive('validationOptions', function () {
+angular.module('contentful').directive('validationOptions', function () {
   return {
     restrict: 'C',
     template: JST['validation_options'](),

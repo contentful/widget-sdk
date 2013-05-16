@@ -1,4 +1,4 @@
-angular.module('contentful/classes').factory('Selection', function(analytics){
+angular.module('contentful').factory('Selection', function(analytics){
   'use strict';
   
   function Selection() {

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').
+angular.module('contentful').
   directive('notification', function($timeout) {
     var durationAfterSeen = 3e3;
 

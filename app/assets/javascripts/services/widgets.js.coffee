@@ -1,4 +1,4 @@
-angular.module('contentful/services').service 'widgets', ($compile) ->
+angular.module('contentful').service 'widgets', ($compile) ->
   'use strict'
 
   editWidgets =

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/ot').directive('otDocFor', function (ShareJS) {
+angular.module('contentful').directive('otDocFor', function (ShareJS) {
   return {
     restrict: 'A',
     link: function (scope, elem, attr) {

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/ot').directive('otSubdoc', function () {
+angular.module('contentful').directive('otSubdoc', function () {
   return {
     restrict: 'AC',
     require: '^otDocFor',

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').directive('entryTypeFieldList', function(analytics) {
+angular.module('contentful').directive('entryTypeFieldList', function(analytics) {
   return {
     restrict: 'C',
     template: JST.entry_type_field_list(),

@@ -1,4 +1,4 @@
-angular.module('contentful/directives').directive('cfAutocomplete', function(Paginator, ShareJS, cfSpinner){
+angular.module('contentful').directive('cfAutocomplete', function(Paginator, ShareJS, cfSpinner){
   'use strict';
 
   return {

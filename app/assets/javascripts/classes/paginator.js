@@ -1,4 +1,4 @@
-angular.module('contentful/classes').factory('Paginator', function(){
+angular.module('contentful').factory('Paginator', function(){
   'use strict';
 
   function Paginator(numEntries) {

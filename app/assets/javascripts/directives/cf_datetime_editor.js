@@ -1,5 +1,5 @@
 /*global moment:false*/
-angular.module('contentful/directives').directive('cfDatetimeEditor', function(){
+angular.module('contentful').directive('cfDatetimeEditor', function(){
   'use strict';
 
   return {
