@@ -27,6 +27,8 @@
 //= require ng-time-relative
 //= require user_interface
 //
+//= require_tree ./jasmine_examples
+//
 //= require_self
 
 angular.module('contentful/app', [
@@ -40,10 +42,4 @@ angular.module('contentful/app', [
   $locationProvider.html5Mode(true);
   clientProvider.endpoint('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');
-}).run(function(authentication, client) {
-  'use strict';
-  authentication.login();
-  client.persistenceContext.adapter.token = authentication.token;
 });
-
-angular.bootstrap(document, ['contentful/app']);
