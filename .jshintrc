@@ -2,6 +2,12 @@
   "globalstrict": true,
   "node": true,
   "predef": [
+    "describe",
+    "beforeEach",
+    "it",
+    "inject",
+    "expect",
+    "spyOn",
     "assert",
     "refute",
     "define",

@@ -7,4 +7,4 @@
 //= require_tree ./ot
 //= require filters
 //
-angular.module('contentful', []);
+angular.module('contentful', ['contentful/environment']);

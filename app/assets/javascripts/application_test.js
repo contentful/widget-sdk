@@ -31,7 +31,7 @@
 //
 //= require_self
 
-angular.module('contentful/app', [
+angular.module('contentful/test', [
   'contentful/environment',
   'timeRelative',
   'contentful/user_interface',
