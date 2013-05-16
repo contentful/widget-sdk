@@ -34,6 +34,8 @@
 //
 //= require user_interface
 //
+//= require_tree ./jasmine_examples
+//
 //= require_self
 
 angular.module('contentful', [

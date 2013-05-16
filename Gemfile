@@ -31,9 +31,11 @@ gem 'jquery-ui-rails'
 #gem 'sprockets-browserify', :path => '/Users/jan/development/rails_plugins/sprockets-browserify'
 gem 'sprockets-browserify'
 
-group :development do
+group :development, :test do
   gem "guard-livereload"
   gem 'rb-fsevent', '~> 0.9.1', :require => false
+  gem "jasmine"
+  #gem 'debugger'
 end
 
 # To use ActiveModel has_secure_password
@@ -47,6 +49,3 @@ end
 
 # Deploy with Capistrano
 # gem 'capistrano'
-
-# gem 'debugger'
-# To use debugger
