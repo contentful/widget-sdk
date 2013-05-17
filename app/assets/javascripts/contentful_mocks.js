@@ -30,4 +30,8 @@ angular.module('contentful/mocks', []).provider('ShareJS', function () {
   this.$get = function () {
     return new FakeShareJSClient();
   };
+}).provider('analytics', function () {
+  this.$get = function () {
+    return {};
+  };
 });

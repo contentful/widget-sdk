@@ -4,6 +4,8 @@
   "predef": [
     "describe",
     "beforeEach",
+    "afterEach",
+    "jasmine",
     "it",
     "inject",
     "expect",

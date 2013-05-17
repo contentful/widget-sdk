@@ -9,7 +9,6 @@ describe('otPath', function() {
     inject(function ($compile, $rootScope, ShareJS) {
       $rootScope.$apply(function () {
         $rootScope.foo = 'FOO';
-        $rootScope.bar = 'BAR';
         $rootScope.entity = 'ENTITY';
         $rootScope.otDoc = {
           getAt: function () {
@@ -29,7 +28,7 @@ describe('otPath', function() {
     $log.assertEmpty();
   }));
 
-  it('should provide otPath', function() {
+  it('should provide otPath on the scope', function() {
     expect(scope.otPath).toLookEqual(['FOO', 'bar']);
   });
 
@@ -38,10 +37,9 @@ describe('otPath', function() {
   });
 
   describe('receiving otRemoteOp', function () {
-    var op = {p: []};
     describe('with the exact Path', function () {
+      var op = {p: ['FOO', 'bar']};
       it('should broadCast otValueChanged', function () {
-        op.p = ['FOO', 'bar'];
         spyOn(scope, '$broadcast');
         scope.$emit('otRemoteOp', op);
         expect(scope.$broadcast).toHaveBeenCalledWith('otValueChanged', scope.otPath, aValue);
@@ -49,13 +47,41 @@ describe('otPath', function() {
     });
 
     describe('with a different Path', function () {
+      var op = {p: ['FOO', 'bar2']};
       it('should not broadcast otValueChanged', function () {
-        op.p = ['FOO', 'bar2'];
         spyOn(scope, '$broadcast');
         scope.$emit('otRemoteOp', op);
         expect(scope.$broadcast).not.toHaveBeenCalled();
       });
       
+    });
+  });
+
+  describe('changing the value', function () {
+    describe('when the path is present in the otDoc', function () {
+      it('should set the value', function () {
+        scope.otDoc.setAt = function (path, value, callback) {
+          _.defer(callback, null);
+        };
+        spyOn(scope.otDoc, 'setAt');
+        scope.otChangeValue('bla');
+        expect(scope.otDoc.setAt).toHaveBeenCalled();
+        expect(scope.otDoc.setAt.mostRecentCall.args[0]).toEqual(scope.otPath);
+        expect(scope.otDoc.setAt.mostRecentCall.args[1]).toEqual('bla');
+      });
+    });
+    describe('when the path is not present in the otDoc', function () {
+      it('should mkpath the value', function () {
+        var mkpath;
+        inject(function (ShareJS) {
+          mkpath = ShareJS.mkpath = jasmine.createSpy('mkpath');
+        });
+        scope.otChangeValue('bla');
+        expect(mkpath).toHaveBeenCalled();
+        expect(mkpath.mostRecentCall.args[0]).toEqual(scope.otDoc);
+        expect(mkpath.mostRecentCall.args[1]).toEqual(scope.otPath);
+        expect(mkpath.mostRecentCall.args[2]).toEqual('bla');
+      });
     });
   });
 
