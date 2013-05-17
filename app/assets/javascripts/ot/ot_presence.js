@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/ot').
+angular.module('contentful').
 
   value('otPresenceConfig', {
     pingInterval: 10e3,
