@@ -19,6 +19,14 @@
 .active .dropdown-toggle
   color: $dark-gray
 
+%dropdown-select
+  .dropdown-toggle
+    border: 1px solid $lightest-gray
+    padding: 3px 5px
+    +border-radius(3px)
+    &:hover
+      border-color: $light-gray
+
 // Dropdown Menu base and general modifiers
 .dropdown-menu
   position: absolute
@@ -70,35 +78,35 @@
     right: auto
     left: 0
     &:before
-      left: $caret-size + 1em
+      left: $caret-size + 10px
   &.right-aligned
     right: 0
     left: auto
     &:before
-      right: $caret-size + 1em
+      right: $caret-size + 10px
 
 .dropdown-menu.top-caret:before
   +caret
   content: "▴"
-  top: - $caret-size - .2em
+  top: - $caret-size - 2px
   +text-shadow(0px -2px 3px rgba(0,0,0,0.12))
   
 .dropdown-menu.bottom-caret:before
   +caret
   content: "▾"
-  bottom: - $caret-size - .2em
-  +text-shadow(0px -2px 3px rgba(0,0,0,0.12)) 
+  bottom: - $caret-size - 9px
+  +text-shadow(0px 2px 3px rgba(0,0,0,0.12)) 
   
 .dropdown-menu.left-caret:before
   +caret
   content: "◃"
-  left: - $caret-size - .2em
+  left: - $caret-size - 2px
   +text-shadow(0px -2px 3px rgba(0,0,0,0.12))
   
 .dropdown-menu.right-caret:before
   +caret
   content: "▹"
-  right: - $caret-size - .2em
+  right: - $caret-size - 2px
   +text-shadow(0px -2px 3px rgba(0,0,0,0.12))
 
 // Tab-bar dropdown

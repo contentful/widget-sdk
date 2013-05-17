@@ -78,6 +78,33 @@
         width: 80%
       select
         width: 100%
+      .type
+        .dropdown-btn
+          @extend %dropdown-select
+          .dropdown-menu
+            width: 500px
+            top: auto
+            bottom: 35px
+        .dropdown-menu
+          padding: 0
+        // TODO Create a component for this:
+        ul
+          margin: 0 300px 0 0
+          border-right: 1px solid $lightest-gray
+        li:first-child
+          +border-radius(3px 0 0 0)
+        li:last-child
+          +border-radius(0 0 0 3px)
+        .description
+          position: absolute
+          color: $light-gray
+          display: none
+          left: 200px
+          top: 0
+          padding: 5px
+        li:hover
+          .description
+            display: block
 
     // Validations
     .field-validations
