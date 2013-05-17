@@ -31,7 +31,9 @@ angular.module('contentful').directive('dropdownBtn', function() {
         var on     = event.target === element[0];
         var clickOutside = !inside && !on;
 
-        var clickOnClose = inside && $(event.target).attr('dropdown-close') !== undefined;
+        var dropdownClose = $(event.target).attr('dropdown-close') !== undefined ||
+                            $(event.target).parents('[dropdown-close]').length > 0;
+        var clickOnClose = inside && dropdownClose;
 
         if (clickOutside || clickOnClose) scope.$apply(function() {
           close();
