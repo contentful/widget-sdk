@@ -57,7 +57,13 @@
     .form-field(ng-repeat="field in fields" data-field-type="{{field.type}}" data-field-items-type="{{field.items.type}}")
       %label {{field.name}}
       .form-controls
-        .locale(ng-repeat="locale in field.locales")
+        .locale(ng-repeat="locale in field.locales" ot-field-presence="['fields', field.id, locale.code]")
+          .field-collaborators
+            %ul
+              %li.avatar.cf-user(ng-repeat="link in fieldPresence.users"
+                                 link="link" as="user"
+                                 tooltip="{{user.getName()}}")
+                %img(ng-src="{{user.data.avatarUrl}}")
           .locale-label(ng-show="field.locales.length > 1") {{locale.name}}
           .cf-field-editor(ot-path="['fields', field.id, locale.code]")
           -#.hint.tip
@@ -77,27 +83,9 @@
       {{publishButtonLabel()}}
   .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
                tooltip-placement="top")
-  -#.other-users
-    %span 3 others online
+  .other-users
     %ul
-      %li.avatar
-        %img(src="app/avatar-2.jpg")
-        .tip-container
-          .tip
-            Jan
-            .arrow-down
-            .arrow-down-border
-      %li.avatar
-        %img(src="app/avatar-3.jpg")
-        .tip-container
-          .tip
-            Stephan
-            .arrow-down
-            .arrow-down-border
-      %li.avatar
-        %img(src="app/avatar-4.jpg")
-        .tip-container
-          .tip
-            Chris
-            .arrow-down
-            .arrow-down-border
+      %li.avatar.cf-user(ng-repeat="link in presence.users"
+                         link="link" as="user"
+                         tooltip="{{user.getName()}}")
+        %img(ng-src="{{user.data.avatarUrl}}")

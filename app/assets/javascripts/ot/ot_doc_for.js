@@ -3,19 +3,18 @@
 angular.module('contentful').directive('otDocFor', function () {
   return {
     restrict: 'A',
-    link: function (scope, elem, attr) {
-      scope.otGetEntity = function () {
-        return scope.$eval(attr['otDocFor']);
-      };
-    },
     controller: 'otDocForCtrl'
   };
-}).controller('otDocForCtrl', function OtDocForCtrl($scope, ShareJS) {
+}).controller('otDocForCtrl', function OtDocForCtrl($scope, $attrs, ShareJS) {
   var remoteOpListener;
   $scope.otDisabled = false;
 
+  function otGetEntity() {
+    return $scope.$eval($attrs.otDocFor);
+  }
+
   $scope.$watch(function otDocForEntityWatcher(scope) {
-    return !scope.otDisabled && scope.otGetEntity();
+    return !scope.otDisabled && otGetEntity();
   } , function (entity, old, scope) {
     //console.log('otDocFor watch entity old: %o new: %o', old, entity);
     if (entity) {
@@ -56,7 +55,7 @@ angular.module('contentful').directive('otDocFor', function () {
   });
 
   $scope.otUpdateEntity = function () {
-    var entity = $scope.otGetEntity();
+    var entity = otGetEntity();
     if (entity && $scope.otDoc) {
       //console.log('otUpdateEntity did update', entity.data, $scope.otDoc.snapshot);
       entity.update($scope.otDoc.snapshot);
