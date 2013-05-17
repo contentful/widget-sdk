@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/controllers').controller('BucketCtrl', function BucketCtrl($scope) {
+angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope, analytics) {
   $scope.$watch('bucketContext', function(bucketContext, old, scope){
     var bucket = bucketContext.bucket;
     scope.bucketContext.tabList.closeAll();
@@ -44,6 +44,10 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
     scope.bucketContext.refreshEntryTypes();
   });
 
+  $scope.logoClicked = function () {
+    analytics.track('Clicked Logo');
+  };
+
   $scope.$on('entityDeleted', function (event, entity) {
     var bucketScope = event.currentScope;
     if (event.targetScope !== bucketScope) {
@@ -70,6 +74,12 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
       } else {
         console.log('Error creating entry', err);
       }
+      analytics.track('Selected Add-Button', {
+        currentSection: scope.bucketContext.tabList.currentSection(),
+        currentViewType: scope.bucketContext.tabList.currentViewType(),
+        entityType: 'entry',
+        entitySubType: entryType.getId()
+      });
     });
   };
 
@@ -97,6 +107,11 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
       } else {
         console.log('Error creating entryType', err);
       }
+      analytics.track('Selected Add-Button', {
+        currentSection: scope.bucketContext.tabList.currentSection(),
+        currentViewType: scope.bucketContext.tabList.currentViewType(),
+        entityType: 'entryType'
+      });
     });
   };
 
@@ -111,6 +126,11 @@ angular.module('contentful/controllers').controller('BucketCtrl', function Bucke
         mode: 'create'
       }
     }).activate();
+    analytics.track('Selected Add-Button', {
+      currentSection: scope.bucketContext.tabList.currentSection(),
+      currentViewType: scope.bucketContext.tabList.currentViewType(),
+      entityType: 'apiKey'
+    });
   };
 
 });

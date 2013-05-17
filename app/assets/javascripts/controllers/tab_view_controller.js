@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/controllers').controller('TabViewCtrl', function ($scope, authentication) {
+angular.module('contentful').controller('TabViewCtrl', function ($scope, authentication, analytics) {
   $scope.visitView = function(viewType) {
     var options;
     if (viewType == 'entry-list'){
@@ -15,6 +15,7 @@ angular.module('contentful/controllers').controller('TabViewCtrl', function ($sc
         title: 'Entries',
         canClose: true
       };
+      analytics.track('Clicked "Entries"');
     } else if (viewType == 'entry-type-list'){
       options = {
         viewType: 'entry-type-list',
@@ -23,6 +24,7 @@ angular.module('contentful/controllers').controller('TabViewCtrl', function ($sc
         title: 'Content Model',
         canClose: true
       };
+      analytics.track('Clicked "Content Model"');
     } else if (viewType == 'bucket-settings'){
       options = {
         viewType: 'iframe',
@@ -34,6 +36,7 @@ angular.module('contentful/controllers').controller('TabViewCtrl', function ($sc
         },
         title: 'Settings'
       };
+      analytics.track('Clicked "Bucket Settings"');
     } else if (viewType == 'content-delivery') {
       options = {
         viewType: 'content-delivery',
@@ -42,6 +45,7 @@ angular.module('contentful/controllers').controller('TabViewCtrl', function ($sc
         title: 'Content Delivery',
         canClose: true
       };
+      analytics.track('Clicked "Content Delivery"');
     }
 
     var tab = _.find($scope.bucketContext.tabList.items, function(tab) {

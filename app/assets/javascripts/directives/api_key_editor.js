@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').
+angular.module('contentful').
   directive('apiKeyEditor', function() {
     return {
       template: JST.api_key_editor(),

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/controllers').
+angular.module('contentful').
   controller('ApiKeyEditorCtrl', function($scope, authentication, environment, notification) {
     $scope.$watch('tab.params.apiKey', 'apiKey=tab.params.apiKey');
 

@@ -1,4 +1,4 @@
-angular.module('contentful/directives').directive('fieldErrorDisplay', function (validation) {
+angular.module('contentful').directive('fieldErrorDisplay', function (validation) {
   'use strict';
 
   return {

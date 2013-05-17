@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('contentful/controllers').
-  controller('EntryTypeActionsCtrl', function EntryTypeActionsCtrl($scope, notification) {
+angular.module('contentful').
+  controller('EntryTypeActionsCtrl', function EntryTypeActionsCtrl($scope, notification, analytics) {
 
   // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,
   // We can query the entry instead of reimplementing the checks heere
@@ -58,6 +58,11 @@ angular.module('contentful/controllers').
         }
 
         notification.info(title() + ' ' + verb + ' successfully');
+        analytics.track('Published EntryType', {
+          entryTypeId: $scope.entryType.getId(),
+          entryTypeName: $scope.entryType.data.name,
+          version: version
+        });
 
         //console.log('editor has published %o as %o', scope.entryType, publishedEntryType);
         scope.updatePublishedEntryType(publishedEntryType);

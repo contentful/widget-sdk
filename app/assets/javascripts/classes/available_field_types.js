@@ -1,4 +1,4 @@
-angular.module('contentful/classes').
+angular.module('contentful').
   constant('availableFieldTypes', [
     {
       name: 'Text',

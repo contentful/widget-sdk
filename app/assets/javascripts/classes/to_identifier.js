@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/classes').
+angular.module('contentful').
   constant('toIdentifier', toIdentifier);
 
 function capitalize(string) {

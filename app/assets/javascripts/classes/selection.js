@@ -1,4 +1,4 @@
-angular.module('contentful/classes').factory('Selection', function(){
+angular.module('contentful').factory('Selection', function(analytics){
   'use strict';
   
   function Selection() {
@@ -34,6 +34,7 @@ angular.module('contentful/classes').factory('Selection', function(){
       } else {
         this._remove(entity);
       }
+      analytics.track('Selected Entity', {entity: entity.data.sys.type, id: entity.data.sys.id });
     },
 
     remove: function(entity) {
@@ -42,6 +43,7 @@ angular.module('contentful/classes').factory('Selection', function(){
       } else {
         this._add(entity);
       }
+      analytics.track('Deselected Entity', {entity: entity.data.sys.type, id: entity.data.sys.id });
     },
 
     toggle: function(entity) {

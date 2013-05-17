@@ -8,7 +8,7 @@
 
 // A version of ngClick that performs stopPropagation() and
 // preventDefault() to support nested click targets
-angular.module('contentful/directives').directive('searchField', function(){
+angular.module('contentful').directive('searchField', function(){
   return {
     restrict: 'C',
     template: JST['search_field'](),

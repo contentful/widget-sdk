@@ -1,4 +1,4 @@
-angular.module('contentful/directives').directive('cfSelection', function(Selection){
+angular.module('contentful').directive('cfSelection', function(Selection){
   'use strict';
 
   return {

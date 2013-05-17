@@ -1,4 +1,4 @@
-angular.module('contentful/services').factory('cfSpinner', function () {
+angular.module('contentful').factory('cfSpinner', function () {
   'use strict';
 
   var counter = 0;

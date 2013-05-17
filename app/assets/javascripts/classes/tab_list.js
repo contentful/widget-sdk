@@ -1,4 +1,4 @@
-angular.module('contentful/classes').factory('TabList', function($rootScope, analytics){
+angular.module('contentful').factory('TabList', function($rootScope, analytics){
   'use strict';
 
   function TabList() {
@@ -10,8 +10,8 @@ angular.module('contentful/classes').factory('TabList', function($rootScope, ana
     activate: function(item){
       var event = $rootScope.$broadcast('tabWantsActive', item);
       if (!event.defaultPrevented){
+        analytics.tabActivated(item, this.current);
         this.current = item;
-        analytics.tabActivated(item);
         $rootScope.$broadcast('tabBecameActive', item);
       }
     },

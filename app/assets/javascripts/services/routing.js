@@ -42,4 +42,4 @@ Routing.prototype = {
   }
 };
 
-angular.module('contentful/services').service('routing', Routing);
+angular.module('contentful').service('routing', Routing);

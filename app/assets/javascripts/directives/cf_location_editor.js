@@ -1,13 +1,13 @@
 /*global google:false*/
-angular.module('contentful/directives').directive('cfLocationEditor', function(cfSpinner){
-  'use strict';
+'use strict';
 
+angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, notification){
   return {
     restrict: 'C',
     template: JST['cf_location_editor'],
     link: function(scope, elm) {
       scope.$watch('location', function(loc, old, scope) {
-        console.log('location changed', loc, scope);
+        //console.log('location changed', loc, scope);
         marker.setVisible(!!loc);
       });
 
@@ -29,9 +29,14 @@ angular.module('contentful/directives').directive('cfLocationEditor', function(c
       });
 
       var changeHandler = function() {
-        scope.otChangeValue(scope.location, function() {
-          scope.$apply();
-          //TODO handle failure
+        scope.otChangeValue(scope.location, function(err) {
+          scope.$apply(function (scope) {
+            if (!err) {
+              scope.otUpdateEntity();
+            } else {
+              notification.error('Error updating location');
+            }
+          });
         });
       };
 
@@ -100,7 +105,7 @@ angular.module('contentful/directives').directive('cfLocationEditor', function(c
       });
 
       scope.$on('otValueChanged', function(event, path, value){
-        console.log('location editor received valie changed', event, path, value);
+        //console.log('location editor received valie changed', event, path, value);
         if (path === event.currentScope.otPath) scope.location = value;
       });
 
@@ -110,7 +115,7 @@ angular.module('contentful/directives').directive('cfLocationEditor', function(c
 
       // Search Stuff /////////////////////////////////////////////////////////
       scope.$watch('searchTerm', function(searchTerm, old, scope) {
-        console.log('search term changed', searchTerm);
+        //console.log('search term changed', searchTerm);
         if (searchTerm && searchTerm != old) {
           var geocoder = new google.maps.Geocoder();
           var stopSpin = cfSpinner.start();

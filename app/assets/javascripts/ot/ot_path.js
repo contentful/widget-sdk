@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/ot').directive('otPath', function(ShareJS, cfSpinner) {
+angular.module('contentful').directive('otPath', function(ShareJS, cfSpinner) {
 
   return {
     restrict: 'AC',
@@ -13,7 +13,6 @@ angular.module('contentful/ot').directive('otPath', function(ShareJS, cfSpinner)
       }, true);
     },
     controller: function OtPathCtrl($scope) {
-
       $scope.$on('otRemoteOp', function (event, op) {
         var scope = event.currentScope;
         //if (isSubPath(op.p)) {

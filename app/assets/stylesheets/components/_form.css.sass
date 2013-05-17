@@ -26,7 +26,7 @@ $form-offset: 11px
   .locale-label
     position: absolute
     padding-top: $form-offset
-    left: 60%
+    left: 58%
 
 // Margins and other styling
 
@@ -112,6 +112,20 @@ $form-offset: 11px
     width: 57%
     text-align: center
     +transition(opacity 0.3s ease-in-out)
+
+  .field-collaborators
+    position: absolute
+    padding-top: $form-offset
+    left: 62%
+    .avatar
+      $image-size: 28px
+      display: inline-block
+      position: relative
+      margin-left: 3px
+      +border-radius(3px)
+      img
+        height: $image-size
+        width: $image-size
 
   input[type="text"]:focus + .hint,
   textarea:focus + .hint,

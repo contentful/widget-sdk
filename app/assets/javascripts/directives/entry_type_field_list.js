@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').directive('entryTypeFieldList', function() {
+angular.module('contentful').directive('entryTypeFieldList', function(analytics) {
   return {
     restrict: 'C',
     template: JST.entry_type_field_list(),
@@ -46,6 +46,9 @@ angular.module('contentful/directives').directive('entryTypeFieldList', function
 
       $scope.toggleValidations= function(fieldId) {
         _showValidations[fieldId] = !_showValidations[fieldId];
+        if (_showValidations[fieldId]) {
+          analytics.track('Opened Validations', { fieldId: fieldId });
+        }
       };
 
       $scope.closeAllValidations = function () {

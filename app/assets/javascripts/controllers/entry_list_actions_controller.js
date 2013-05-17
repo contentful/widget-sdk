@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/controllers').controller('EntryListActionsCtrl', function EntryListCtrl($scope, notification) {
+angular.module('contentful').controller('EntryListActionsCtrl', function EntryListCtrl($scope, notification, analytics) {
 
   var _cacheSelected;
 
@@ -64,6 +64,7 @@ angular.module('contentful/controllers').controller('EntryListActionsCtrl', func
       entry[method](applyLater);
     });
     clearSelection();
+    analytics.track('Performed EntryList action', {action: method});
   };
 
   $scope.publishSelected = function() {
@@ -72,6 +73,7 @@ angular.module('contentful/controllers').controller('EntryListActionsCtrl', func
       entry.publish(entry.data.sys.version, applyLater);
     });
     clearSelection();
+    analytics.track('Performed EntryList action', {action: 'publish'});
   };
 
   $scope.unpublishSelected = function() {
@@ -87,6 +89,7 @@ angular.module('contentful/controllers').controller('EntryListActionsCtrl', func
       });
     });
     clearSelection();
+    analytics.track('Performed EntryList action', {action: 'delete'});
   };
 
   $scope.archiveSelected = function() {

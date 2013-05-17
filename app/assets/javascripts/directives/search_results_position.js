@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').directive('searchResultsPosition', function() {
+angular.module('contentful').directive('searchResultsPosition', function() {
   return {
     restrict: 'C',
     template: JST['search_results_position'],

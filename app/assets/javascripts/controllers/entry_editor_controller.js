@@ -1,4 +1,4 @@
-angular.module('contentful/controllers').controller('EntryEditorCtrl', function EntryEditorCtrl($scope, ShareJS, validation) {
+angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorCtrl($scope, ShareJS, validation) {
   'use strict';
 
   $scope.$watch('tab.params.entry', 'entry=tab.params.entry');

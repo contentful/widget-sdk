@@ -1,4 +1,4 @@
-angular.module('contentful/services').provider('client', function ClientProvider(contentfulClient) {
+angular.module('contentful').provider('client', function ClientProvider(contentfulClient) {
   'use strict';
 
   var endpoint = null;

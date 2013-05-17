@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').directive('cfFieldEditor', function(widgets, $compile) {
+angular.module('contentful').directive('cfFieldEditor', function(widgets, $compile) {
   return {
     restrict: 'C',
     require: '^otPath',

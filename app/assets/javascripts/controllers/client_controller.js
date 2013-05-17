@@ -1,4 +1,4 @@
-angular.module('contentful/controllers').controller('ClientCtrl', function ClientCtrl($scope, client, BucketContext, authentication, contentfulClient, notification, cfSpinner, analytics) {
+angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope, client, BucketContext, authentication, contentfulClient, notification, cfSpinner, analytics) {
   'use strict';
 
   $scope.buckets = [];
@@ -12,26 +12,42 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
 
     toggleAuxPanel: function() {
       $scope.preferences.showAuxPanel = !$scope.preferences.showAuxPanel;
+      analytics.toggleAuxPanel($scope.preferences.showAuxPanel, $scope.bucketContext.tabList.current);
     }
   };
 
   $scope.user = null;
+
+  $scope.clickedBucketSwitcher = function () {
+    analytics.track('Clicked Bucket-Switcher');
+  };
+
+  function setBucket(bucket) {
+    analytics.setBucketData(bucket);
+    $scope.bucketContext = new BucketContext(bucket);
+  }
 
   $scope.selectBucket = function(bucket) {
     if (bucket &&
         $scope.bucketContext &&
         $scope.bucketContext.bucket &&
         $scope.bucketContext.bucket.getId() === bucket.getId()) return;
-    $scope.bucketContext = new BucketContext(bucket);
+    
+    setBucket(bucket);
+    analytics.track('Switched Bucket', {
+      bucketId: bucket.data.sys.id,
+      bucketName: bucket.data.name
+    });
   };
 
   $scope.$watch('buckets', function(buckets){
     if (buckets && buckets.length > 0) {
-      if (!_.contains(buckets, $scope.bucketContext.bucket)) $scope.bucketContext= new BucketContext(buckets[0]);
+      if (!_.contains(buckets, $scope.bucketContext.bucket)) setBucket(buckets[0]);
     }
   });
 
   $scope.logout = function() {
+    analytics.track('Clicked Logout');
     authentication.logout();
   };
 
@@ -69,6 +85,10 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
     // TODO Better handle deletes (should also work somehow without message.token)
   });
 
+  $scope.clickedProfileButton = function () {
+    analytics.track('Clicked Profile Button');
+  };
+
   $scope.editProfile = function() {
     var options = {
       viewType: 'iframe',
@@ -79,6 +99,8 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
       },
       title: 'Profile'
     };
+
+    analytics.track('Clicked Profile');
 
     // TODO This is a pattern that repeats and should be extracted
     var tab = _.find($scope.bucketContext.tabList.items, function(tab) {
@@ -133,6 +155,7 @@ angular.module('contentful/controllers').controller('ClientCtrl', function Clien
 
   $scope.showCreateBucketDialog = function () {
     $scope.displayCreateBucketDialog = true;
+    analytics.track('Clicked Create-Bucket');
   };
 
   $scope.hideCreateBucketDialog = function () {

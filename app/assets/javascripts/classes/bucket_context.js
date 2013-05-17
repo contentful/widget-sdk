@@ -1,4 +1,4 @@
-angular.module('contentful/classes').factory('BucketContext', function(TabList, $rootScope){
+angular.module('contentful').factory('BucketContext', function(TabList, $rootScope){
   'use strict';
 
   function BucketContext(bucket){

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').directive('endlessContainer', function(){
+angular.module('contentful').directive('endlessContainer', function(){
   return {
     restrict: 'C',
     link: function(scope, elem, attr) {

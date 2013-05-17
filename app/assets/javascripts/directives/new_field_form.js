@@ -1,4 +1,4 @@
-angular.module('contentful/directives').directive('newFieldForm', function (availableFieldTypes, toIdentifier) {
+angular.module('contentful').directive('newFieldForm', function (availableFieldTypes, toIdentifier, analytics) {
   'use strict';
 
   return {
@@ -37,6 +37,7 @@ angular.module('contentful/directives').directive('newFieldForm', function (avai
               scope.newLocalized = false;
               scope.otUpdateEntity();
               scope.$broadcast('fieldAdded');
+              analytics.modifiedEntryType('Modified EntryType', scope.entryType, field, 'add');
             });
           }
         });

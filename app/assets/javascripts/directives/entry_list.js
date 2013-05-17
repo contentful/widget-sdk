@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').directive('entryList', function(){
+angular.module('contentful').directive('entryList', function(){
   return {
     template: JST.entry_list(),
     restrict: 'C',

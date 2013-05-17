@@ -1,4 +1,4 @@
-angular.module('contentful/directives').directive('cfAutocomplete', function(Paginator, ShareJS, cfSpinner){
+angular.module('contentful').directive('cfAutocomplete', function(Paginator, ShareJS, cfSpinner){
   'use strict';
 
   return {
@@ -13,6 +13,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
           return $scope.otChangeValue(null, function(err) {
             if (!err) $scope.$apply(function(scope) {
               scope.linkedEntries.length = 0;
+              scope.otUpdateEntity();
             });
           });
         } else {
@@ -20,6 +21,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
           $scope.otDoc.at($scope.otPath.concat(entryIndex)).remove(function (err) {
             if (!err) $scope.$apply(function(scope) {
               scope.linkedEntries.splice(entryIndex,1);
+              scope.otUpdateEntity();
             });
           });
         }
@@ -41,6 +43,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
               } else {
                 scope.linkedEntries.length = 1;
                 scope.linkedEntries[0] = entry;
+                scope.otUpdateEntity();
                 callback(null);
               }
             });
@@ -53,6 +56,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
                   callback(err);
                 } else {
                   scope.linkedEntries.push(entry);
+                  scope.otUpdateEntity();
                   callback(null);
                 }
               });
@@ -64,6 +68,7 @@ angular.module('contentful/directives').directive('cfAutocomplete', function(Pag
                   callback(err);
                 } else {
                   scope.linkedEntries = [entry];
+                  scope.otUpdateEntity();
                   callback(null);
                 }
               });

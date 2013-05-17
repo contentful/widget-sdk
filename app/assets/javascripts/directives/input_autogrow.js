@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful/directives').
+angular.module('contentful').
   directive('inputAutogrow', function() {
     return {
       restrict: 'C',

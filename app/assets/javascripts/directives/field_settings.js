@@ -1,4 +1,4 @@
-angular.module('contentful/directives').directive('fieldSettings', function() {
+angular.module('contentful').directive('fieldSettings', function() {
   'use strict';
 
   return {
