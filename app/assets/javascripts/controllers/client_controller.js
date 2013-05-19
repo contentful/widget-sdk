@@ -25,14 +25,16 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
   function setBucket(bucket) {
     analytics.setBucketData(bucket);
     $scope.bucketContext = new BucketContext(bucket);
-    routing.setBucket(bucket);
   }
 
+  $scope.getCurrentBucketId = function () {
+    return $scope.bucketContext &&
+           $scope.bucketContext.bucket &&
+           $scope.bucketContext.bucket.getId();
+  };
+
   $scope.selectBucket = function(bucket) {
-    if (bucket &&
-        $scope.bucketContext &&
-        $scope.bucketContext.bucket &&
-        $scope.bucketContext.bucket.getId() === bucket.getId()) return;
+    if (bucket && $scope.getCurrentBucketId() === bucket.getId()) return;
     
     setBucket(bucket);
     analytics.track('Switched Bucket', {
@@ -43,6 +45,15 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
 
   $scope.$on('tabBecameActive', function (event, tab) {
     routing.setTab(tab, event.currentScope.bucketContext.bucket);
+  });
+
+  $scope.$on('$routeChangeSuccess', function (event, route) {
+    if (route.params.bucketId != $scope.getCurrentBucketId()) {
+      var bucket = _.find($scope.buckets, function (bucket) {
+        return bucket.getId() == route.params.bucketId;
+      });
+      if (bucket) setBucket(bucket);
+    }
   });
 
   $scope.$watch('buckets', function(buckets){

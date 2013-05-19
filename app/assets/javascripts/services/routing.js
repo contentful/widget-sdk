@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').provider('routing', function ($routeProvider) {
-  $routeProvider.when('/buckets/:bucketId/', {viewType: null});
+  $routeProvider.when('/buckets/:bucketId', {viewType: null});
   $routeProvider.when('/buckets/:bucketId/entries', {viewType: 'entry-list'});
   $routeProvider.when('/buckets/:bucketId/entries/:entryId', {viewType: 'entry-editor'});
   $routeProvider.when('/buckets/:bucketId/entry_types', {viewType: 'entry-type-list'});

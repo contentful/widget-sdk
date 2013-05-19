@@ -5,12 +5,19 @@ angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope
     var bucket = bucketContext.bucket;
     scope.bucketContext.tabList.closeAll();
 
-    if (bucket) {
+    if (bucket) openRoute();
+  });
+
+  $scope.$on('$routeChangeSuccess', function () {
+    if ($scope.bucketContext.bucket && routing.getBucketId() == $scope.getCurrentBucketId()) openRoute();
+  });
+
+  function openRoute() {
       var route = routing.getRoute();
       if (route.viewType == 'entry-list')           $scope.visitView('entry-list');
       else if (route.viewType == 'entry-type-list') $scope.visitView('entry-type-list');
       else if (route.viewType == 'entry-editor')
-        bucketContext.bucket.getEntry(route.params.entryId, function (err, entry) {
+        $scope.bucketContext.bucket.getEntry(route.params.entryId, function (err, entry) {
           if (err) {
             $scope.visitView('entry-list');
           } else {
@@ -18,7 +25,7 @@ angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope
           }
         });
       else if (route.viewType == 'entry-type-editor')
-        bucketContext.bucket.getEntryType(route.params.entryTypeId, function (err, entryType) {
+        $scope.bucketContext.bucket.getEntryType(route.params.entryTypeId, function (err, entryType) {
           if (err) {
             $scope.visitView('entry-type-list');
           } else {
@@ -26,14 +33,13 @@ angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope
           }
         });
        else
-        bucketContext.bucket.getPublishedEntryTypes(function(err, ets) {
+        $scope.bucketContext.bucket.getPublishedEntryTypes(function(err, ets) {
           if (_.isEmpty(ets))
             $scope.visitView('entry-type-list');
           else
             $scope.visitView('entry-list');
         });
-    }
-  });
+  }
 
   $scope.$watch(function (scope) {
     if (scope.bucketContext && scope.bucketContext.bucket) {

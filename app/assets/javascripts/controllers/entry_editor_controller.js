@@ -29,7 +29,11 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     if (!$scope.entryConstraint) {
       var entryType = this.bucketContext.publishedTypeForEntry(this.entry);
       var bucket = this.bucketContext.bucket;
-      $scope.entryConstraint = validation.EntryType.parse(entryType.data, bucket).entryConstraint;
+      try {
+        $scope.entryConstraint = validation.EntryType.parse(entryType.data, bucket).entryConstraint;
+      } catch (e) {
+        return undefined;
+      }
     }
     var entry = $scope.otDoc ? $scope.otDoc.getAt([]) : $scope.entry.data;
     var valid = $scope.entryConstraint.test(entry);
@@ -53,6 +57,7 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
   $scope.$watch('bucketContext.publishedTypeForEntry(entry).data.fields', updateFields, true);
   function updateFields(n, o ,scope) {
     var et = scope.bucketContext.publishedTypeForEntry(scope.entry);
+    if (!et) return;
     scope.fields = _(et.data.fields).reduce(function (acc, field) {
       if (!field.disabled) {
         var locales;
