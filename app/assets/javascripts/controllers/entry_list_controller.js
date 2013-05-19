@@ -7,24 +7,6 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
   $scope.paginator = new Paginator();
   $scope.selection = new Selection();
 
-  $scope.editEntry = function(entry) {
-    var editor = _.find($scope.tab.list.items, function(tab){
-      return (tab.viewType == 'entry-editor' && tab.params.entry.getId() == entry.getId());
-    });
-    if (!editor) {
-      editor = $scope.tab.list.add({
-        viewType: 'entry-editor',
-        section: 'entries',
-        params: {
-          entry: entry,
-          mode: 'edit'
-        },
-        title: this.bucketContext.entryTitle(entry)
-      });
-    }
-    editor.activate();
-  };
-
   $scope.$on('entityDeleted', function (event, entity) {
     var scope = event.currentScope;
     var index = _.indexOf(scope.entries, entity);

@@ -1,45 +1,46 @@
 'use strict';
 
-function Routing($location, $route) {
-  this.$location = $location;
-  this.$route = $route;
-}
+angular.module('contentful').provider('routing', function ($routeProvider) {
+  $routeProvider.when('/buckets/:bucketId/', {viewType: null});
+  $routeProvider.when('/buckets/:bucketId/entries', {viewType: 'entry-list'});
+  $routeProvider.when('/buckets/:bucketId/entries/:entryId', {viewType: 'entry-editor'});
+  $routeProvider.when('/buckets/:bucketId/entry_types', {viewType: 'entry-type-list'});
+  $routeProvider.when('/buckets/:bucketId/entry_types/:entryTypeId', {viewType: 'entry-type-editor'});
+  $routeProvider.otherwise({bucketId: null});
 
-Routing.prototype = {
-  getPath: function(){
-    var path = '/';
-    if (this.bucketId) {
-      path += 'buckets/' + this.bucketId;
-    }
-    if (this.entitySection == 'entries') {
-      path += '/entries';
-    } else if (this.entitySection == 'entry_types') {
-      path += '/entry_types';
-    }
-    return path;
-  },
+  this.$get = function ($rootScope, $route, $location) {
+    function Routing(){}
 
-  visitBucketId : function(bucketId) {
-    this.bucketId = bucketId;
-    this.entitySection = null;
-    this.updateLocation();
-  },
+    Routing.prototype = {
+      getRoute: function(){
+        if(!$route.current) $route.reload();
+        return $route.current;
+      },
 
-  visitEntitySection : function(entitySection) {
-    this.entitySection = entitySection;
-    this.updateLocation();
-  },
+      getBucketId: function () {
+        return this.getRoute().params.bucketId;
+      },
 
-  updateLocation: function(){
-    this.$location.path(this.getPath());
-  },
+      setBucket: function (bucket) {
+        $location.path('/buckets/'+bucket.getId());
+      },
 
-  parseLocation: function(){
-    console.log(_.keys(this.$route));
-    var current = this.$route.current;
-    this.bucketId = current.params.bucketId;
-    this.entitySection = current.$route.entity_section;
-  }
-};
+      setTab: function (tab, bucket) {
+        var bucketId = bucket ? bucket.getId() : this.getBucketId();
+        var path = '/buckets/'+bucketId;
+        if (tab.viewType == 'entry-editor') {
+          path = path + '/entries/' + tab.params.entry.getId();
+        } else if (tab.viewType == 'entry-list') {
+          path = path + '/entries';
+        } else if (tab.viewType == 'entry-type-editor') {
+          path = path + '/entry_types/' + tab.params.entryType.getId();
+        } else if (tab.viewType == 'entry-type-list') {
+          path = path + '/entry_types';
+        }
+        $location.path(path);
+      }
+    };
 
-angular.module('contentful').service('routing', Routing);
+    return new Routing();
+  };
+});

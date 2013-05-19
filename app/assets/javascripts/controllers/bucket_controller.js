@@ -1,32 +1,37 @@
 'use strict';
 
-angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope, analytics) {
+angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope, analytics, routing) {
   $scope.$watch('bucketContext', function(bucketContext, old, scope){
     var bucket = bucketContext.bucket;
     scope.bucketContext.tabList.closeAll();
 
     if (bucket) {
-      //bucket.getEntryType('allfields', function(err, entryType) {
-        //scope.$apply(function(scope) {
-          //var editor = scope.bucketContext.tabList.add({
-            //viewType: 'entry-type-editor',
-            //section: 'entryTypes',
-            //params: {
-              //entryType: entryType,
-              //mode: 'edit'
-            //},
-            //title: 'Edit Content Type'
-          //});
-          //editor.activate();
-        //});
-      //});
-
-      bucketContext.bucket.getPublishedEntryTypes(function(err, ets) {
-        if (_.isEmpty(ets))
-          $scope.visitView('entry-type-list');
-        else
-          $scope.visitView('entry-list');
-      });
+      var route = routing.getRoute();
+      if (route.viewType == 'entry-list')           $scope.visitView('entry-list');
+      else if (route.viewType == 'entry-type-list') $scope.visitView('entry-type-list');
+      else if (route.viewType == 'entry-editor')
+        bucketContext.bucket.getEntry(route.params.entryId, function (err, entry) {
+          if (err) {
+            $scope.visitView('entry-list');
+          } else {
+            $scope.editEntry(entry);
+          }
+        });
+      else if (route.viewType == 'entry-type-editor')
+        bucketContext.bucket.getEntryType(route.params.entryTypeId, function (err, entryType) {
+          if (err) {
+            $scope.visitView('entry-type-list');
+          } else {
+            $scope.editEntryType(entryType);
+          }
+        });
+       else
+        bucketContext.bucket.getPublishedEntryTypes(function(err, ets) {
+          if (_.isEmpty(ets))
+            $scope.visitView('entry-type-list');
+          else
+            $scope.visitView('entry-list');
+        });
     }
   });
 

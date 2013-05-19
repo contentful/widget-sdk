@@ -1,4 +1,4 @@
-angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope, client, BucketContext, authentication, contentfulClient, notification, cfSpinner, analytics) {
+angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope, client, BucketContext, authentication, contentfulClient, notification, cfSpinner, analytics, routing) {
   'use strict';
 
   $scope.buckets = [];
@@ -25,6 +25,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
   function setBucket(bucket) {
     analytics.setBucketData(bucket);
     $scope.bucketContext = new BucketContext(bucket);
+    routing.setBucket(bucket);
   }
 
   $scope.selectBucket = function(bucket) {
@@ -40,9 +41,20 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
     });
   };
 
+  $scope.$on('tabBecameActive', function (event, tab) {
+    routing.setTab(tab, event.currentScope.bucketContext.bucket);
+  });
+
   $scope.$watch('buckets', function(buckets){
     if (buckets && buckets.length > 0) {
-      if (!_.contains(buckets, $scope.bucketContext.bucket)) setBucket(buckets[0]);
+      var initialBucket;
+      if (!$scope.bucket) {
+        var bucketIdFromRoute = routing.getBucketId();
+        initialBucket = _.find(buckets, function (bucket) {
+          return bucket.getId() == bucketIdFromRoute;
+        }) || buckets[0];
+      }
+      if (!_.contains(buckets, $scope.bucketContext.bucket)) setBucket(initialBucket);
     }
   });
 

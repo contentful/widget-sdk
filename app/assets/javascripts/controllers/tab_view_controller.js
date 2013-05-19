@@ -1,6 +1,51 @@
 'use strict';
 
-angular.module('contentful').controller('TabViewCtrl', function ($scope, authentication, analytics) {
+angular.module('contentful').controller('TabViewCtrl', function ($scope, authentication, analytics, routing) {
+  //$scope.visitInitialView = function (bucket) {
+    //var route = routing.getRoute();
+    //if (route.entryList) {
+      //$scope.visitView('entry-list');
+    //} else if (route.entryTypeList) {
+      //$scope.visitView('entry-type-list');
+    //}
+  //};
+
+  $scope.editEntry = function(entry) {
+    var editor = _.find($scope.bucketContext.tabList.items, function(tab){
+      return (tab.viewType == 'entry-editor' && tab.params.entry.getId() == entry.getId());
+    });
+    if (!editor) {
+      editor = $scope.bucketContext.tabList.add({
+        viewType: 'entry-editor',
+        section: 'entries',
+        params: {
+          entry: entry,
+          mode: 'edit'
+        },
+        title: $scope.bucketContext.entryTitle(entry)
+      });
+    }
+    editor.activate();
+  };
+
+  $scope.editEntryType = function(entryType) {
+    var editor = _($scope.bucketContext.tabList.items).find(function(tab){
+      return (tab.viewType == 'entry-type-editor' && tab.params.entryType == entryType);
+    });
+    if (!editor) {
+      editor = $scope.bucketContext.tabList.add({
+        viewType: 'entry-type-editor',
+        section: 'entryTypes',
+        params: {
+          entryType: entryType,
+          mode: 'edit'
+        },
+        title: entryType.data.name || 'Untitled'
+      });
+    }
+    editor.activate();
+  };
+
   $scope.visitView = function(viewType) {
     var options;
     if (viewType == 'entry-list'){
