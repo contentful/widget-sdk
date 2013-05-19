@@ -66,6 +66,13 @@ angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope
     }
   });
 
+  $scope.$on('tabClosed', function (event) {
+    var scope = event.currentScope;
+    if (scope.bucketContext.tabList.items.length === 0) {
+      $scope.visitView('entry-list');
+    }
+  });
+
   $scope.createEntry = function(entryType) {
     var scope = this;
     scope.bucketContext.bucket.createEntry(entryType.getId(), {}, function(err, entry){

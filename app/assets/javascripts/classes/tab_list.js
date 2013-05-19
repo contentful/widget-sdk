@@ -126,7 +126,7 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics){
     },
 
     canClose: function(){
-      return this.list.items.length > 1 && this._canClose;
+      return this._canClose;
     },
 
     replace: function(options){
