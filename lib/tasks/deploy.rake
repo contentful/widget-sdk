@@ -26,7 +26,7 @@ namespace :generate do
       :public => true,
       :acl => 'public-read',
       :body => '',
-      'x-amz-website-redirect-location' => "app/#{filename}"
+      'x-amz-website-redirect-location' => "/app/#{filename}"
     })
   end
 end
