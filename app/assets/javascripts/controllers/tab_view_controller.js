@@ -46,6 +46,15 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     editor.activate();
   };
 
+  $scope.findTabForRoute = function (route) {
+    return _.find($scope.bucketContext.tabList.items, function (tab) {
+      return tab.viewType == route.viewType &&
+             (!tab.params ||
+              tab.params.entryType && tab.params.entryType.getId() === route.params.entryTypeId ||
+              tab.params.entry     && tab.params.entry.getId()     === route.params.entryId);
+    });
+  };
+
   $scope.visitView = function(viewType) {
     var options;
     if (viewType == 'entry-list'){
