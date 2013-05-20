@@ -1,4 +1,6 @@
 namespace :generate do
+  task :all => [:index_page, :css_redirect]
+
   task :index_page => :environment do
     require 'rails/console/app'
     require 'rails/console/helpers'
