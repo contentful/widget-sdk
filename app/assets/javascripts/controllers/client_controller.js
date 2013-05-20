@@ -48,6 +48,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
   });
 
   $scope.$on('$routeChangeSuccess', function (event, route) {
+    if (routing.noNavigate) return;
     if (route.params.bucketId != $scope.getCurrentBucketId()) {
       var bucket = _.find($scope.buckets, function (bucket) {
         return bucket.getId() == route.params.bucketId;
