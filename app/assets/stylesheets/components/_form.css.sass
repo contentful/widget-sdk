@@ -39,44 +39,47 @@ $form-offset: 11px
     padding: $form-offset $form-gutter $form-offset 0
     //padding-right: $form-gutter
   // Individual controls
-  .form-controls
-    p
-      font-size: 12px
-      margin: 11px 0
-    input[type="text"],
-    input[type="number"],
-    input.time,
-    textarea
-      padding: 7px
-      font-family: 'Open Sans', Arial, sans-serif
-      font-size: 1.3em
-      width: 57%
-      border: 1px solid $lightest-gray
-      +rounded-corners(3px,3px,3px,3px)
-      background-color: $gray-background
-      +box-shadow(0 1px 2px rgba(0,0,0,0.1) inset)
-      +transition(background-color 0.3s ease-in, border-color 0.3s ease-in)
-      &[disabled]
-        background-color: white
-        border: none
-        +box-shadow(none)
-        +transition(none)
-      &:focus
-        background-color: white
-        border-color: $link-blue
-        outline: none
-      &.error-input:focus
-        border-color: darken($red, 10%)
-    &.fit-two input[type="text"], &.fit-two input[type="number"]
-      width: 27%
-      margin-right: 1%
-    input[type="number"]
-      padding-top: 8px
-      padding-bottom: 8px
-    input.date,
-    input.time
-      width: 8em !important
+.form-horizontal .form-controls,
+.form-styled
+  p
+    font-size: 12px
+    margin: 11px 0
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input.time,
+  textarea
+    padding: 7px
+    font-family: 'Open Sans', Arial, sans-serif
+    font-size: 1.3em
+    width: 57%
+    border: 1px solid $lightest-gray
+    +rounded-corners(3px,3px,3px,3px)
+    background-color: $gray-background
+    +box-shadow(0 1px 2px rgba(0,0,0,0.1) inset)
+    +transition(background-color 0.3s ease-in, border-color 0.3s ease-in)
+    &[disabled]
+      background-color: white
+      border: none
+      +box-shadow(none)
+      +transition(none)
+    &:focus
+      background-color: white
+      border-color: $link-blue
+      outline: none
+    &.error-input:focus
+      border-color: darken($red, 10%)
+  &.fit-two input[type="text"], &.fit-two input[type="number"]
+    width: 27%
+    margin-right: 1%
+  input[type="number"]
+    padding-top: 8px
+    padding-bottom: 8px
+  input.date,
+  input.time
+    width: 8em !important
 
+.form-horizontal
   .hint
     vertical-align: top
     max-width: 40%
