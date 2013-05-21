@@ -35,14 +35,12 @@ $form-offset: 11px
   color: $medium-gray
   label
     text-align: right
-    font-size: 12px
     padding: $form-offset $form-gutter $form-offset 0
     //padding-right: $form-gutter
   // Individual controls
 .form-horizontal .form-controls,
 .form-styled
   p
-    font-size: 12px
     margin: 11px 0
   input[type="text"],
   input[type="number"],
@@ -51,7 +49,6 @@ $form-offset: 11px
   textarea
     padding: 7px
     font-family: 'Open Sans', Arial, sans-serif
-    font-size: 13px
     width: 57%
     border: 1px solid $lightest-gray
     +border-radius(3px 3px 3px 3px)
@@ -83,7 +80,6 @@ $form-offset: 11px
   .hint
     vertical-align: top
     max-width: 40%
-    font-size: 12px
     color: $medium-gray
     padding: 0 0 0 $form-gutter
     margin-left: $form-gutter
@@ -100,7 +96,6 @@ $form-offset: 11px
       .arrow-left-border
         border-right-color: darken($light-rule, 5%)
   .field-error-display
-    font-size: 12px
     padding: .6em .9em
     background: darken($red, 3%)
     border: 1px solid darken($red, 16%)
@@ -126,9 +121,9 @@ $form-offset: 11px
       position: relative
       margin-left: 3px
       +border-radius(3px)
+      width: $image-size
       img
         height: $image-size
-        width: $image-size
 
   // TODO this does not work anymore, the position of the elements has changed
   input[type="text"]:focus + .hint,
@@ -154,10 +149,12 @@ $form-offset: 11px
     width: 57%
     position: relative
     label
+      display: block
+      float: left
       width: 40%
-      input, input[type="text"]
+      input,
+      input[type="text"]
         width: 100%
-        font-size: 13px
       span
         display: block
         margin-top: 5px
@@ -178,6 +175,8 @@ $form-offset: 11px
 // TODO Where is this used? Locations? autocomplete?
 .form-field
   .results
+    ul
+      +plain-list
     font-size: 10px
     position: absolute
     right: 44px
@@ -203,10 +202,10 @@ $form-offset: 11px
         background-color: $result-list-highlight
     .address
       display: block
-      font-size: 1.3em
       margin-bottom: 4px
     .lat,
     .lon
+      font-size: 0.8em
       display: inline-block
       width: 12em
       color: $light-gray
@@ -245,11 +244,10 @@ $form-offset: 11px
   &[data-field-type=array][data-field-items-type=link]
     margin: 25px 0 15px
     .links 
+      +plain-list
       border-top: 1px solid $light-rule
       margin-bottom: 15px
       li
-        line-height: 15px
-        font-size: 13px
         padding: 10px 7px
         border-bottom: 1px solid $light-rule
       .ss-delete
