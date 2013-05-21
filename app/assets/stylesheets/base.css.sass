@@ -32,7 +32,7 @@ $avatar-width: 27px
 body
   font-family: 'Open Sans', Arial, sans-serif
   font-size: 10px
-  line-height: 1.5em
+  line-height: 15px
   color: $medium-gray
   background: url(image_path("bg.jpg"))
   background-size: 200px 150px 
@@ -45,7 +45,7 @@ a
   color: $link-blue
   text-decoration: none
 i.ss-delete
-  font-size: .8em
+  font-size: 8px
   color: $lightest-gray
   @include text-shadow(0 1px 0 rgba(255,255,255,0.6))
   &:hover
@@ -122,12 +122,15 @@ i.ss-delete
     font-size: 12px
     font-weight: normal
     margin-left: .5em
-  li, p, blockquote
+  li,
+  p,
+  blockquote
     color: $medium-gray
     font-size: 1.3em
     line-height: 1.55em
     margin-bottom: 1em
-  ul, ol
+  ul,
+  ol
     margin: 2.4em 0 2.4em 1.7em
     li 
       margin-bottom: .5em

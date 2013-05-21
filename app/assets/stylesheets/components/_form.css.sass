@@ -35,7 +35,7 @@ $form-offset: 11px
   color: $medium-gray
   label
     text-align: right
-    font-size: 1.2em
+    font-size: 12px
     padding: $form-offset $form-gutter $form-offset 0
     //padding-right: $form-gutter
   // Individual controls
@@ -51,7 +51,7 @@ $form-offset: 11px
   textarea
     padding: 7px
     font-family: 'Open Sans', Arial, sans-serif
-    font-size: 1.3em
+    font-size: 13px
     width: 57%
     border: 1px solid $lightest-gray
     +rounded-corners(3px,3px,3px,3px)
@@ -77,13 +77,13 @@ $form-offset: 11px
     padding-bottom: 8px
   input.date,
   input.time
-    width: 8em !important
+    width: 105px !important
 
 .form-horizontal
   .hint
     vertical-align: top
     max-width: 40%
-    font-size: 1.2em
+    font-size: 12px
     color: $medium-gray
     padding: 0 0 0 $form-gutter
     margin-left: $form-gutter
@@ -100,7 +100,7 @@ $form-offset: 11px
       .arrow-left-border
         border-right-color: darken($light-rule, 5%)
   .field-error-display
-    font-size: 1.2em
+    font-size: 12px
     padding: .6em .9em
     background: darken($red, 3%)
     border: 1px solid darken($red, 16%)
@@ -111,7 +111,7 @@ $form-offset: 11px
     display: block
     max-width: 57% !important
     position: static
-    margin: 0 0 .4em 0
+    margin: 0 0 4px 0
     width: 57%
     text-align: center
     +transition(opacity 0.3s ease-in-out)
@@ -130,6 +130,7 @@ $form-offset: 11px
         height: $image-size
         width: $image-size
 
+  // TODO this does not work anymore, the position of the elements has changed
   input[type="text"]:focus + .hint,
   textarea:focus + .hint,
   input[type="number"]:focus + .hint,
@@ -146,7 +147,8 @@ $form-offset: 11px
     vertical-align: middle
     pointer-events: none // http://stackoverflow.com/questions/3680429/click-through-a-div-to-underlying-elements
     position: relative
-    left: -1.8em
+    left: -25px
+    top: 1px
 
   .sub-fields
     width: 57%
@@ -183,7 +185,7 @@ $form-offset: 11px
     z-index: 10
     background: white
     background: rgba(255,255,255,0.96)
-    border: .1em solid shade(#FFFFFF, 10)
+    border: 1px solid shade(#FFFFFF, 10)
     +box-shadow(0 2px 6px rgba(0,0,0,0.1))
     +rounded-corners(0,0,3px,3px)
     .selected
@@ -219,10 +221,10 @@ $form-offset: 11px
     //.dropdown-toggle
       height: 33px
       .ss-search
-        top: .25em
+        top: 2.5px
       .ss-dropdown
-        top: .4em
-        right: .3em
+        top: 4px
+        right: 3px
 
 .form-field
   // Styling for specific types
@@ -244,10 +246,10 @@ $form-offset: 11px
     margin: 25px 0 15px
     .links 
       border-top: 1px solid $light-rule
-      margin-bottom: 1.5em
+      margin-bottom: 15px
       li
-        line-height: 1.5em
-        font-size: 1.3em
+        line-height: 15px
+        font-size: 13px
         padding: 10px 7px
         border-bottom: 1px solid $light-rule
       .ss-delete
