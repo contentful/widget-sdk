@@ -51,6 +51,27 @@ i.ss-delete
     width: 50%
     vertical-align: middle
 
+// Main results filters
+.filter-list
+  +plain-list
+  margin-bottom: 10px
+  li
+    font-size: 12px
+    line-height: 25px
+    padding: 0 $left-nav-padding
+    border: 1px solid transparent
+    span
+      color: $link-blue
+      line-height: 24px
+    small
+      font-size: 9px
+      color: $light-gray
+  li.active
+    border: 1px solid $dark-rule
+    +border-radius(3px  3px  3px  3px)
+    background: $gray-background
+
+
 // Endless container
 .endless-container
   .loading

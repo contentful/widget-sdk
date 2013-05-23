@@ -89,35 +89,17 @@ $tab-main-margin-top: 28px
 
 // Look and Feel
 
+$left-nav-padding: 8px
 .left-nav
   margin-top: 4px
-  $padding: 8px
-  ul
-    +plain-list
+  padding: $left-nav-padding
   header
     color: $medium-gray
     border-bottom: 1px solid $light-rule
     margin-bottom: 8px
-    padding: 0 $padding 7px
+    padding: 0 $left-nav-padding 7px
     font-size: 11px
     text-transform: uppercase
-  li
-    font-size: 12px
-    line-height: 25px
-    padding: 0 $padding
-    border: 1px solid transparent
-    span
-      color: $link-blue
-      line-height: 24px
-    small
-      font-size: 9px
-      color: $light-gray
-  li.active
-    border: 1px solid $dark-rule
-    +border-radius(3px  3px  3px  3px)
-    background: $gray-background
-  .left-nav-list
-    margin-bottom: 10px
 
 .tab-header
   border-bottom: 1px solid $lightest-gray
