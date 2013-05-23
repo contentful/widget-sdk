@@ -148,3 +148,64 @@
       tr
         @extend %tr-clickable
 
+  // User profile page
+  $identity-image-size: 40px
+  $identity-well-padding: 10px
+  $identity-padding: 10px
+  $identity-image-padding: 10px
+  $identity-spacing: 10px
+  $identity-width: 140px
+  .user-details,
+  .identities
+    margin-top: 30px
+  %user-detail-image
+    height: $identity-image-size
+    width: $identity-image-size
+    float: left
+    margin-right: $identity-image-padding
+  .user-details
+    > img
+      @extend %user-detail-image
+      margin-bottom: 10px
+  .identity-well
+    border: 1px solid $dark-rule
+    +border-radius(3px)
+    +box-shadow(0 1px $identity-well-padding/2 $lightest-gray inset)
+    padding: $identity-well-padding
+    max-width: 2*$identity-well-padding + 3 * $identity-width + (3 - 1) * $identity-spacing
+    margin-bottom: 2 * $identity-well-padding
+  .identity,
+  .auth_provider
+    display: inline-block
+    width: $identity-width
+    height: $identity-image-size + 2 * $identity-padding
+    border: 1px solid $dark-rule
+    +border-radius(3px)
+    background-color: #EEE
+    padding: $identity-padding
+    position: relative
+    margin-right: $identity-spacing
+    .auth_provider_name
+      position: absolute
+      top: $identity-padding
+    img
+      @extend %user-detail-image
+    .uid
+      position: absolute
+      bottom: $identity-padding
+      left: $identity-padding + $identity-image-size + $identity-image-padding
+    .remove
+      position: absolute
+      top: $identity-padding
+      right: $identity-padding
+      opacity: 0
+      +transition(opacity 0.3s ease-in-out)
+  .identity:hover
+    .remove
+      opacity: 100
+  .auth_provider
+    color: inherit
+    +transition(box-shadow 0.1s ease-in-out)
+  .auth_provider:hover
+    +box-shadow(0 1px $identity-padding/2 $light-gray)
+
