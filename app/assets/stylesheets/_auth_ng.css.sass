@@ -61,19 +61,37 @@
   .input
     padding: 0
     .label
+      color: inherit
       width: 17%
       text-align: right
       padding: $form-offset $form-gutter $form-offset 0
-  .input div
+    input[type="checkbox"]
+      vertical-align: baseline
+    .inline-hints
+      margin-left: 17%
+  .input.info > div
     padding-top: $form-offset
-  .input select
+  .input > select
     margin-top: $form-offset
+  .fragment
+    padding-right: 10px
   .input input
     margin-top: 2px
   .input.boolean
+    padding-top: $form-offset
     padding-bottom: $form-offset
   .input.boolean label
     padding-left: 17%
+  .choices,
+  .fragments
+    .label label
+      position: static
+    .choices-group,
+    .fragments-group
+      padding-left: 17%
+      margin-bottom: 0
+      li
+        margin-top: $form-offset
   
   // Style form elements
   .input
