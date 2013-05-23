@@ -38,6 +38,7 @@
 // Adjust content padding
 .with-left-nav
   padding-left: 30px
+  padding-right: 30px
 
 // make sure to hide intercom in the frame
 #IModal,
@@ -124,7 +125,8 @@
   // Main tables
   .result-list
     @extend %result-list-border-bottom
-  .result-list.clickable
-    tbody tr
-      @extend %tr-clickable
+  .result-list
+    .clickable
+      tr
+        @extend %tr-clickable
 
