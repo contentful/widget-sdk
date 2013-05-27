@@ -1,10 +1,11 @@
 // Layout of inner components
 
 .nav-bar
-  position: fixed
+  position: absolute
   top: 0
   width: 50px
   height: 100%
+  z-index: 20
 
 .tab-list
   position: absolute
@@ -12,9 +13,12 @@
   left: $main-left-spacing
   right: 20%
   height: $tab-height
-  z-index: 1000
+  z-index: 10
   .tab
     width: 21.5%
+
+.tab-content
+  z-index: 0
 
 // Base styles
 a:link
