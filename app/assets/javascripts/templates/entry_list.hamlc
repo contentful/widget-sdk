@@ -7,7 +7,7 @@
 .tab-main
   .left-nav
     %header Status
-    %ul.left-nav-list
+    %ul.filter-list
       %li(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
         %span All
       %li(ng-class="{active: tab.params.list == 'unpublished'}" ng-click="switchList('unpublished')")
@@ -23,7 +23,7 @@
           %span Created by me
     %div(ng-show="bucketContext.publishedEntryTypes.length > 0")
       %header Content Types
-      %ul.left-nav-list
+      %ul.filter-list
         %li(ng-class="{active: tab.params.entryTypeId == entryType.data.sys.id}"
             ng-repeat="entryType in bucketContext.publishedEntryTypes"
             ng-click="switchList('entryType', entryType)")

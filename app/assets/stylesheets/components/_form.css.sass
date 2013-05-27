@@ -1,5 +1,6 @@
 $form-gutter: 12px
 $form-offset: 11px
+$form-spacing: 7.5px
 
 // General form layout
 
@@ -31,30 +32,30 @@ $form-offset: 11px
 // Margins and other styling
 
 .form-horizontal
-  border-spacing: 0 7.5px
+  border-spacing: 0 $form-spacing
   color: $medium-gray
   label
     text-align: right
-    font-size: 1.2em
     padding: $form-offset $form-gutter $form-offset 0
     //padding-right: $form-gutter
   // Individual controls
 .form-horizontal .form-controls,
 .form-styled
   p
-    font-size: 12px
     margin: 11px 0
   input[type="text"],
   input[type="number"],
   input[type="email"],
+  input[type="tel"],
+  input[type="password"],
   input.time,
   textarea
     padding: 7px
     font-family: 'Open Sans', Arial, sans-serif
-    font-size: 1.3em
+    font-size: 12px
     width: 57%
     border: 1px solid $lightest-gray
-    +rounded-corners(3px,3px,3px,3px)
+    +border-radius(3px 3px 3px 3px)
     background-color: $gray-background
     +box-shadow(0 1px 2px rgba(0,0,0,0.1) inset)
     +transition(background-color 0.3s ease-in, border-color 0.3s ease-in)
@@ -77,64 +78,64 @@ $form-offset: 11px
     padding-bottom: 8px
   input.date,
   input.time
-    width: 8em !important
+    width: 105px !important
 
-.form-horizontal
-  .hint
-    vertical-align: top
-    max-width: 40%
-    font-size: 1.2em
-    color: $medium-gray
-    padding: 0 0 0 $form-gutter
-    margin-left: $form-gutter
-    opacity: 0
-    &.tip
-      padding: .7em .9em
-      background-color: white
-      background-color: rgba(255,255,255,0.95)
-      +transition(opacity 0.3s ease-in-out)
-      border-color: darken($light-rule, 3%)
-      +box-shadow(0 1px 3px rgba(0,0,0,0.05))
-      .arrow-left
-        border-right-color: white
-      .arrow-left-border
-        border-right-color: darken($light-rule, 5%)
-  .field-error-display
-    font-size: 1.2em
-    padding: .6em .9em
-    background: darken($red, 3%)
-    border: 1px solid darken($red, 16%)
-    color: white
-    +box-shadow(0 1px 1px rgba(255,255,255,0.25) inset)
-    +border-radius(3px)
-
-    display: block
-    max-width: 57% !important
-    position: static
-    margin: 0 0 .4em 0
-    width: 57%
-    text-align: center
+.form-horizontal .hint, //deprecated selector, too lazy to change HTML now
+.form-hint
+  vertical-align: top
+  max-width: 40%
+  color: $medium-gray
+  padding: 0 0 0 $form-gutter
+  margin-left: $form-gutter
+  //opacity: 0
+  &.tip
+    padding: .7em .9em
+    background-color: white
+    background-color: rgba(255,255,255,0.95)
     +transition(opacity 0.3s ease-in-out)
+    border-color: darken($light-rule, 3%)
+    +box-shadow(0 1px 3px rgba(0,0,0,0.05))
+    .arrow-left
+      border-right-color: white
+    .arrow-left-border
+      border-right-color: darken($light-rule, 5%)
+// TODO this does not work anymore, the position of the elements has changed
+//input[type="text"]:focus + .hint,
+//textarea:focus + .hint,
+//input[type="number"]:focus + .hint,
+//cf-field-editor:focus .hint
+  //opacity: 1
 
-  .field-collaborators
-    position: absolute
-    padding-top: $form-offset
-    left: 62%
-    .avatar
-      $image-size: 28px
-      display: inline-block
-      position: relative
-      margin-left: 3px
-      +border-radius(3px)
-      img
-        height: $image-size
-        width: $image-size
+.field-error-display
+  padding: .6em .9em
+  background: darken($red, 3%)
+  border: 1px solid darken($red, 16%)
+  color: white
+  +box-shadow(0 1px 1px rgba(255,255,255,0.25) inset)
+  +border-radius(3px)
 
-  input[type="text"]:focus + .hint,
-  textarea:focus + .hint,
-  input[type="number"]:focus + .hint,
-  cf-field-editor:focus .hint
-    opacity: 1
+  display: block
+  max-width: 57% !important
+  position: static
+  margin: 0 0 4px 0
+  width: 57%
+  text-align: center
+  +transition(opacity 0.3s ease-in-out)
+
+.field-collaborators
+  position: absolute
+  padding-top: $form-offset
+  left: 62%
+  .avatar
+    $image-size: 28px
+    display: inline-block
+    position: relative
+    margin-left: 3px
+    +border-radius(3px)
+    width: $image-size
+    img
+      height: $image-size
+
   .cf-location-editor
     .gmaps-container
       width: 57%
@@ -146,16 +147,19 @@ $form-offset: 11px
     vertical-align: middle
     pointer-events: none // http://stackoverflow.com/questions/3680429/click-through-a-div-to-underlying-elements
     position: relative
-    left: -1.8em
+    left: -25px
+    top: 1px
 
   .sub-fields
     width: 57%
     position: relative
     label
+      display: block
+      float: left
       width: 40%
-      input, input[type="text"]
+      input,
+      input[type="text"]
         width: 100%
-        font-size: 13px
       span
         display: block
         margin-top: 5px
@@ -176,6 +180,8 @@ $form-offset: 11px
 // TODO Where is this used? Locations? autocomplete?
 .form-field
   .results
+    ul
+      +plain-list
     font-size: 10px
     position: absolute
     right: 44px
@@ -183,9 +189,9 @@ $form-offset: 11px
     z-index: 10
     background: white
     background: rgba(255,255,255,0.96)
-    border: .1em solid shade(#FFFFFF, 10)
+    border: 1px solid shade(#FFFFFF, 10)
     +box-shadow(0 2px 6px rgba(0,0,0,0.1))
-    +rounded-corners(0,0,3px,3px)
+    +border-radius(0 0 3px 3px)
     .selected
       background-color: $result-list-highlight
 
@@ -201,10 +207,10 @@ $form-offset: 11px
         background-color: $result-list-highlight
     .address
       display: block
-      font-size: 1.3em
       margin-bottom: 4px
     .lat,
     .lon
+      font-size: 0.8em
       display: inline-block
       width: 12em
       color: $light-gray
@@ -219,10 +225,10 @@ $form-offset: 11px
     //.dropdown-toggle
       height: 33px
       .ss-search
-        top: .25em
+        top: 2.5px
       .ss-dropdown
-        top: .4em
-        right: .3em
+        top: 4px
+        right: 3px
 
 .form-field
   // Styling for specific types
@@ -243,21 +249,12 @@ $form-offset: 11px
   &[data-field-type=array][data-field-items-type=link]
     margin: 25px 0 15px
     .links 
+      +plain-list
       border-top: 1px solid $light-rule
-      margin-bottom: 1.5em
+      margin-bottom: 15px
       li
-        line-height: 1.5em
-        font-size: 1.3em
         padding: 10px 7px
         border-bottom: 1px solid $light-rule
       .ss-delete
         float: right
         margin-top: 1px
-
-
-
-
-
-
-
-

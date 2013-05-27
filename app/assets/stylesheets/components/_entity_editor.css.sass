@@ -15,11 +15,11 @@
       margin-right: 5px
       vertical-align: middle
     .dropdown-toggle
-      font-size: 1.2em
+      font-size: 12px
       padding: 0 10px 0 11px
       line-height: 32px
       vertical-align: middle
-      @include rounded-corners(3px,3px,3px,3px)
+      +border-radius(3px 3px 3px 3px)
       border: 1px solid $lightest-gray
       i
         color: darken($lightest-gray, 6%)
@@ -28,7 +28,7 @@
     .dropdown-toggle:hover,
     .active .dropdown-toggle
       background-color: $gray-background
-      border: 1px solid $account-border-color
+      border: 1px solid $light-gray
       border-bottom-color: $lightest-gray
       i
         color: $dark-gray
@@ -60,12 +60,12 @@
       text-align: center
       margin: 2px 0 0 0
       display: block
-      line-height: 1.5em
-      padding-right: 1.8em
+      line-height: 15px
+      padding-right: 18px
     a.dropdown-toggle,
     a.btn
       +border-radius(0)
-      padding-right: 1.8em
+      padding-right: 18px
       i
         position: absolute 
         font-size: 8px
