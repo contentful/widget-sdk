@@ -2,8 +2,8 @@
 .tab-content.tab-iframe
   top: 0
   bottom: 0
-  margin-left: 0
-  margin-right: 0
+  left: 0
+  right: 0
   border: 0
 
 // Styling of the headline
@@ -61,6 +61,7 @@
   .input
     padding: 0
     .label
+      position: relative
       color: inherit
       width: 17%
       text-align: right
@@ -80,6 +81,8 @@
   .input.boolean
     padding-top: $form-offset
     padding-bottom: $form-offset
+    .tooltip.top
+      left: 17% !important
   .input.boolean label
     padding-left: 17%
   .choices,
