@@ -17,6 +17,13 @@ angular.module('contentful').directive('fieldErrorDisplay', function () {
       $scope.errorMessages = [];
 
       var messages = {
+        linkEntryType: function(v) {
+          var et = _.find($scope.bucketContext.publishedEntryTypes, function(et) {
+            return et.getId() === v.entryTypeId;
+          });
+          if (!et) return 'Invalid Content Type';
+          return 'Linked entry\'s Content Type must be ' + et.data.name + '.';
+        },
         size: function (v) {
           if (_.isNumber(v.min) && _.isNumber(v.max)) {
             return 'Size must be between ' + v.min + ' and ' + v.max + '.';
