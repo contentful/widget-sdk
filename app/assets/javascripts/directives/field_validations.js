@@ -7,9 +7,10 @@ angular.module('contentful').directive('fieldValidations', function(analytics) {
     controller: function($scope) {
       $scope.availableValidations= {
         size: 'Size',
-        range: 'Range',
+        range: 'Numerical Range',
         regexp: 'Regular Expression',
-        in: 'One of'
+        in: 'One of',
+        linkEntryType: 'Content Type'
       };
 
       $scope.deleteValidation = function (validationIndex) {

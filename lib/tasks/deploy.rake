@@ -1,4 +1,6 @@
 namespace :generate do
+  task :all => [:index_page, :css_redirect]
+
   task :index_page => :environment do
     require 'rails/console/app'
     require 'rails/console/helpers'
@@ -24,7 +26,7 @@ namespace :generate do
       :public => true,
       :acl => 'public-read',
       :body => '',
-      'x-amz-website-redirect-location' => "app/#{filename}"
+      'x-amz-website-redirect-location' => "/app/#{filename}"
     })
   end
 end

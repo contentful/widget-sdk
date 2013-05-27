@@ -1,4 +1,4 @@
-angular.module('contentful').directive('cfAutocomplete', function(Paginator, ShareJS, cfSpinner){
+angular.module('contentful').directive('cfAutocomplete', function(Paginator, ShareJS, cfSpinner, validation){
   'use strict';
 
   return {
@@ -214,9 +214,12 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
 
         //queryObject['sys.publishedAt[gt]'] = 0;
 
-        // TODO here, respect the type restriction of the link
-        // queryObject['sys.entryType.sys.id'] = whatever
-        // This can't be done without the constraints though
+        var linkEntryTypeValidation = _($scope.field.validations)
+          .map(validation.Validation.parse)
+          .where({name: 'linkEntryType'})
+          .first();
+        if (linkEntryTypeValidation)
+          queryObject['sys.entryType.sys.id'] = linkEntryTypeValidation.entryTypeId;
 
         if ($scope.searchTerm && 0 < $scope.searchTerm.length) {
           queryObject.query = $scope.searchTerm;

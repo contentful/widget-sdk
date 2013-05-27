@@ -1,6 +1,6 @@
-angular.module('contentful').directive('fieldErrorDisplay', function (validation) {
-  'use strict';
+'use strict';
 
+angular.module('contentful').directive('fieldErrorDisplay', function () {
   return {
     restrict: 'C',
     template: JST['field_error_display'],
@@ -17,6 +17,13 @@ angular.module('contentful').directive('fieldErrorDisplay', function (validation
       $scope.errorMessages = [];
 
       var messages = {
+        linkEntryType: function(v) {
+          var et = _.find($scope.bucketContext.publishedEntryTypes, function(et) {
+            return et.getId() === v.entryTypeId;
+          });
+          if (!et) return 'Invalid Content Type';
+          return 'Linked entry\'s Content Type must be ' + et.data.name + '.';
+        },
         size: function (v) {
           if (_.isNumber(v.min) && _.isNumber(v.max)) {
             return 'Size must be between ' + v.min + ' and ' + v.max + '.';
@@ -30,9 +37,9 @@ angular.module('contentful').directive('fieldErrorDisplay', function (validation
           if (_.isNumber(v.min) && _.isNumber(v.max)) {
             return 'Must be between ' + v.min + ' and ' + v.max + '.';
           } else if(_.isNumber(v.min)) {
-            return 'Must be larger than ' + v.min + '.';
+            return 'Must be at least ' + v.min + '.';
           } else {
-            return 'Must be smaller than ' + v.max + '.';
+            return 'Must be at most ' + v.max + '.';
           }
         },
         regexp: function (v) {
@@ -41,35 +48,26 @@ angular.module('contentful').directive('fieldErrorDisplay', function (validation
         'in': function (v) {
           return 'Must be one of ' + v.expected.join(', ') + '.';
         },
-        present: function() {
+        required: function() {
           return 'Required';
+        },
+        type: function(v) {
+          return 'Must be a(n) ' + v.type + '.';
         }
       };
 
-      $scope.$watch('field', function (field, old, scope) {
-        if (field) {
-          scope.validations = validation.Field.parse(field).validations;
-        } else {
-          scope.validations = [];
-        }
-      });
+      function toErrorMessage(error) {
+        if (!messages[error.name]) return 'Error: ' + error.name;
+        return messages[error.name](error);
+      }
 
-      $scope.validate = function (value) {
-        $scope.errorMessages = _($scope.validations).map(function (v) {
-          if (!v.constraint.test(value)) {
-            return messages[v.name](v);
-          }
-        }).compact().value();
-      };
-      $scope.validateLater = _.debounce(function (value) {
-        $scope.$apply(function (scope) {
-          scope.validate(value);
+      $scope.$watch('validationErrors', function(errors) {
+        var path = ['fields', $scope.field.id, $scope.locale.code];
+        var fieldErrors = _.filter(errors, function(error) {
+          return _.isEqual(error.path, path);
         });
-      }, 400);
-
-      $scope.$watch('entry.data.fields[field.id][locale.code]', function (value, old, scope) {
-        scope.validateLater(value);
-      }, true);
+        $scope.errorMessages = fieldErrors.map(toErrorMessage);
+      });
     }
   };
 });

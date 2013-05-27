@@ -9,7 +9,7 @@
   "dependencies": {
     "contentful-client": "git+ssh://git@github.com:thriventures/client.git",
     "worf": "git+ssh://git@github.com:thriventures/worf.git#v0.2.8",
-    "validation": "git+ssh://git@github.com:thriventures/validation#v0.3.1",
+    "validation": "git+ssh://git@github.com:thriventures/validation#v1.0.0-rc.2",
     "share": "git+ssh://git@github.com:thriventures/ShareJS.git"
   }
 }

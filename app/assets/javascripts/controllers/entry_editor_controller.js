@@ -1,6 +1,6 @@
-angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorCtrl($scope, ShareJS, validation) {
-  'use strict';
+'use strict';
 
+angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorCtrl($scope, ShareJS, validation) {
   $scope.$watch('tab.params.entry', 'entry=tab.params.entry');
   $scope.$watch('entry.isArchived()', function (archived, old, scope) {
     scope.otDisabled = !!archived;
@@ -25,20 +25,19 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     event.currentScope.otUpdateEntity();
   });
 
-  $scope.formValid = function () {
-    if (!$scope.entryConstraint) {
-      var entryType = this.bucketContext.publishedTypeForEntry(this.entry);
-      var bucket = this.bucketContext.bucket;
-      try {
-        $scope.entryConstraint = validation.EntryType.parse(entryType.data, bucket).entryConstraint;
-      } catch (e) {
-        return undefined;
-      }
-    }
-    var entry = $scope.otDoc ? $scope.otDoc.getAt([]) : $scope.entry.data;
-    var valid = $scope.entryConstraint.test(entry);
-    return valid;
-  };
+  $scope.$watch('bucketContext.publishedTypeForEntry(entry).data', function(data) {
+    if (!data) return;
+    var locales = $scope.bucketContext.bucket.getPublishLocales(); // TODO: watch this, too
+    $scope.entrySchema = validation.fromEntryType(data, locales);
+  });
+
+  $scope.$watch('entry.data', function(data) {
+    var schema = $scope.entrySchema;
+    if (!data || !schema) return;
+    var errors = schema.errors(_.omit(data, 'sys'));
+    $scope.validationErrors = errors;
+    $scope.valid = _.isEmpty(errors);
+  }, true);
 
   $scope.publishedAt = function(){
     if (!$scope.otDoc) return;
