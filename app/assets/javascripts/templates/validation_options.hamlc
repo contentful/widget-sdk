@@ -14,5 +14,8 @@
   %div(ng-switch-when="in")
     %input(type="text" ng-model="validation.in" ng-list="" placeholder="apple,orange,banana" ng-change="updateDoc()")
     %span (separate allowed values by comma)
+  %div(ng-switch-when="linkEntryType")
+    %select(ng-model="validation.linkEntryType"
+            ng-options="et.getId() as et.data.name for et in bucketContext.publishedEntryTypes" ng-change="updateDoc()")
   %div(ng-switch-default="")
     Please select a type first
