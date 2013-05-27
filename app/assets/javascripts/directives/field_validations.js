@@ -7,7 +7,7 @@ angular.module('contentful').directive('fieldValidations', function(analytics) {
     controller: function($scope) {
       $scope.availableValidations= {
         size: 'Size',
-        range: 'Range',
+        range: 'Numerical Range',
         regexp: 'Regular Expression',
         in: 'One of'
       };
