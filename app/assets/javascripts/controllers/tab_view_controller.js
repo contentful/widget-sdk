@@ -69,6 +69,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
       return tab.viewType == route.viewType &&
              (!tab.params ||
               tab.params.entryType && tab.params.entryType.getId() === route.params.entryTypeId ||
+              tab.params.apiKey    && tab.params.apiKey.getId()    === route.params.apiKeyId ||
               tab.params.entry     && tab.params.entry.getId()     === route.params.entryId);
     });
   };
