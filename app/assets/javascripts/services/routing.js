@@ -5,6 +5,8 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
   $routeProvider.when('/buckets/:bucketId/entries', {viewType: 'entry-list'});
   $routeProvider.when('/buckets/:bucketId/entries/:entryId', {viewType: 'entry-editor'});
   $routeProvider.when('/buckets/:bucketId/entry_types', {viewType: 'entry-type-list'});
+  $routeProvider.when('/buckets/:bucketId/api_keys', {viewType: 'content-delivery'});
+  $routeProvider.when('/buckets/:bucketId/api_keys/:apiKeyId', {viewType: 'api-key-editor'});
   $routeProvider.when('/buckets/:bucketId/entry_types/:entryTypeId', {viewType: 'entry-type-editor'});
   $routeProvider.otherwise({noBucket: true});
 
@@ -40,6 +42,10 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
           path = path + '/entry_types/' + tab.params.entryType.getId();
         } else if (tab.viewType == 'entry-type-list') {
           path = path + '/entry_types';
+        } else if (tab.viewType == 'content-delivery') {
+          path = path + '/api_keys';
+        } else if (tab.viewType == 'api-key-editor') {
+          path = path + '/api_keys' + tab.params.apiKey.getId();
         }
         $location.path(path);
       }

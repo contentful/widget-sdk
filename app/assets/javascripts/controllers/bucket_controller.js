@@ -36,6 +36,15 @@ angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope
             else     scope.editEntryType(entryType);
           });
         });
+      else if (route.viewType == 'content-delivery')
+        $scope.visitView('content-delivery');
+      else if (route.viewType == 'api-key-editor')
+        $scope.bucketContext.bucket.getApiKey(route.params.apiKeyId, function(err, apiKey) {
+          $scope.$apply(function (scope) {
+            if (err) scope.visitView('content-delivery');
+            else     scope.editApiKey(apiKey);
+          });
+        });
       else
         $scope.bucketContext.bucket.getPublishedEntryTypes(function(err, ets) {
           $scope.$apply(function (scope) {

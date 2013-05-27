@@ -46,6 +46,24 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     editor.activate();
   };
 
+  $scope.editApiKey = function(apiKey) {
+    var editor = _.find($scope.bucketContext.tabList.items, function(tab){
+      return (tab.viewType == 'api-key-editor' && tab.params.apiKey.getId() == apiKey.getId());
+    });
+    if (!editor) {
+      editor = $scope.bucketContext.tabList.add({
+        viewType: 'api-key-editor',
+        section: 'contentDelivery',
+        params: {
+          apiKey: apiKey,
+          mode: 'edit'
+        }
+      });
+    }
+    editor.activate();
+  };
+
+
   $scope.findTabForRoute = function (route) {
     return _.find($scope.bucketContext.tabList.items, function (tab) {
       return tab.viewType == route.viewType &&

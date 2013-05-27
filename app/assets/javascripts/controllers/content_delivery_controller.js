@@ -29,24 +29,6 @@ angular.module('contentful').
       $scope.refreshApiKeys();
     });
 
-    $scope.editApiKey = function(apiKey) {
-      var editor = _.find($scope.tab.list.items, function(tab){
-        return (tab.viewType == 'api-key-editor' &&
-                tab.params.apiKey.getId() == apiKey.getId());
-      });
-      if (!editor) {
-        editor = $scope.tab.list.add({
-          viewType: 'api-key-editor',
-          section: 'contentDelivery',
-          params: {
-            apiKey: apiKey,
-            mode: 'edit'
-          }
-        });
-      }
-      editor.activate();
-    };
-
     $scope.openApiDocs = function() {
       var apiDocsUrl = '//' + environment.settings.marketing_url + '/developers/api';
       $window.open(apiDocsUrl);
