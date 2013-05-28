@@ -30,8 +30,6 @@
 // Dropdown Menu base and general modifiers
 .dropdown-menu
   position: absolute
-  right: 0
-  top: 37px
   font-size: 11px
   line-height: 2.2em
   z-index: 1000
@@ -69,24 +67,17 @@
     a:link
       color: white
     
+// TODO why caret?
 .dropdown-menu.top-caret,
 .dropdown-menu.bottom-caret,
 .dropdown-menu.left-caret,
 .dropdown-menu.right-caret
   +border-radius(3px)
 
-.dropdown-menu.top-caret,
-.dropdown-menu.bottom-caret
-  &.left-aligned
-    right: auto
-    left: 0
-    &:before
-      left: $caret-size + 10px
-  &.right-aligned
-    right: 0
-    left: auto
-    &:before
-      right: $caret-size + 10px
+.dropdown-menu.left-aligned:before
+  left: $caret-size + 10px
+.dropdown-menu.right-aligned:before
+  right: $caret-size + 10px
 
 .dropdown-menu.top-caret:before
   +caret
@@ -103,11 +94,11 @@
 .dropdown-menu.left-caret:before
   +caret
   content: "◃"
-  left: - $caret-size - 2px
-  +text-shadow(0px -2px 3px rgba(0,0,0,0.12))
+  left: - $caret-size + 2px
+  +text-shadow(-2px 0px 3px rgba(0,0,0,0.12))
   
 .dropdown-menu.right-caret:before
   +caret
   content: "▹"
-  right: - $caret-size - 2px
-  +text-shadow(0px -2px 3px rgba(0,0,0,0.12))
+  right: - $caret-size + 2px
+  +text-shadow(2px 0px 3px rgba(0,0,0,0.12))

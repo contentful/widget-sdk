@@ -49,7 +49,7 @@
               .dropdown-toggle
                 %i.ss-dropdown
                 {{newType.name}}
-              .dropdown-menu.bottom-caret.left-aligned
+              .dropdown-menu
                 %ul
                   %li(ng-repeat="type in availableTypes"
                       ng-click="selectType(type)"

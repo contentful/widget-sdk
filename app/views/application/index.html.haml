@@ -21,7 +21,7 @@
         %a.btn.dropdown-toggle(ng-click="clickedProfileButton()")
           %img(ng-src="{{user.avatarUrl}}")
           %i.ss-dropdown
-        .dropdown-menu
+        .dropdown-menu.fixed-position
           %p
             Logged in as {{user.firstName}} {{user.lastName}}
           .separator
@@ -33,7 +33,7 @@
         %a.btn.dropdown-toggle(ng-click="clickedBucketSwitcher()")
           %i.ss-dropdown
           %span(ng-bind="bucketContext.bucket.data.name")
-        .dropdown-menu
+        .dropdown-menu.fixed-position
           %ul
             %li(ng-repeat="bucket in buckets" ng-click="selectBucket(bucket)" dropdown-close="")
               {{bucket.data.name}}
