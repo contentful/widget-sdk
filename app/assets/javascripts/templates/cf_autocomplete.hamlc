@@ -3,7 +3,16 @@
     %a(ng-click="visitLink(entry)") {{linkDescription(entry)}}
     %i.ss-delete(ng-click="removeLink(entry)" ng-hide="otDisabled")
 .controls(ng-show="!otDisabled && (linkedEntries.length == 0 || field.type == 'array')")
-  .dropdown-btn.add-new(tooltip="Add new Entry" tooltip-placement="left")
+  .add-new(ng-show="linkEntryType"
+           ng-click="addNew(linkEntryType)"
+           tooltip="Add new {{linkEntryType.data.name}} Entry"
+           tooltip-placement="left")
+    %button.with-link-entry-type
+      %i.ss-plus
+      New
+  .dropdown-btn.add-new(ng-hide="linkEntryType"
+                        tooltip="Add new Entry"
+                        tooltip-placement="left")
     %button.dropdown-toggle
       %i.ss-plus
       New
