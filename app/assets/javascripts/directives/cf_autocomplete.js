@@ -8,6 +8,17 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
       // $scope.value              contains the Link/list of links
       $scope.linkedEntries = []; //contains the linked Entry
 
+      var linkEntryTypeValidation = _($scope.field.validations)
+        .map(validation.Validation.parse)
+        .where({name: 'linkEntryType'})
+        .first();
+
+      if (linkEntryTypeValidation) {
+        $scope.linkEntryType = _.find($scope.bucketContext.publishedEntryTypes, function(et) {
+          return et.getId() == linkEntryTypeValidation.entryTypeId;
+        });
+      }
+
       $scope.removeLink = function(entry) {
         if (attrs.cfAutocomplete === 'entry') {
           return $scope.otChangeValue(null, function(err) {
@@ -214,12 +225,8 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
 
         //queryObject['sys.publishedAt[gt]'] = 0;
 
-        var linkEntryTypeValidation = _($scope.field.validations)
-          .map(validation.Validation.parse)
-          .where({name: 'linkEntryType'})
-          .first();
-        if (linkEntryTypeValidation)
-          queryObject['sys.entryType.sys.id'] = linkEntryTypeValidation.entryTypeId;
+        if ($scope.linkEntryType)
+          queryObject['sys.entryType.sys.id'] = $scope.linkEntryType.getId();
 
         if ($scope.searchTerm && 0 < $scope.searchTerm.length) {
           queryObject.query = $scope.searchTerm;
