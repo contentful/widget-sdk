@@ -45,7 +45,12 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
         } else if (tab.viewType == 'content-delivery') {
           path = path + '/api_keys';
         } else if (tab.viewType == 'api-key-editor') {
-          path = path + '/api_keys/' + tab.params.apiKey.getId();
+          var apiKeyId = tab.params.apiKey.getId();
+          if (apiKeyId) {
+            path = path + '/api_keys/' + apiKeyId;
+          } else {
+            path = path + '/api_keys';
+          }
         }
         $location.path(path);
       }
