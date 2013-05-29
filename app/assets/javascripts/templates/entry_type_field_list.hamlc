@@ -55,7 +55,7 @@
                       ng-click="selectType(type)"
                       dropdown-close="")
                     %span {{type.name}}
-                    .description {{type.description}}
+                    .entry-type-description
                   
           .display &nbsp;
           .localized

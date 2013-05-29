@@ -93,15 +93,20 @@
           +border-radius(3px 0 0 0)
         li:last-child
           +border-radius(0 0 0 3px)
-        .description
+        .entry-type-description
           position: absolute
           color: $light-gray
           display: none
           left: 200px
           top: 0
-          padding: 5px
+          padding: 10px
+          p
+            padding: 0
+          img
+            margin-top: 10px
+            width: 100%
         li:hover
-          .description
+          .entry-type-description
             display: block
 
     // Validations
