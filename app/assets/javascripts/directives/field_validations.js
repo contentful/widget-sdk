@@ -13,7 +13,7 @@ angular.module('contentful').directive('fieldValidations', function(analytics) {
         'linkEntryType': 'Content Type'
       };
 
-      $scope.validationListPath = function () {
+      function validationListPath () {
         var args = [].splice.call(arguments,0);
         if ($scope.field.type == 'array') {
           return _.flatten(['fields', $scope.index, 'items', 'validations'].concat(args));
@@ -30,10 +30,19 @@ angular.module('contentful').directive('fieldValidations', function(analytics) {
         }
       };
 
+      $scope.getValidationDoc = function (validationIndex) {
+        if (!angular.isDefined(validationIndex)) throw new Error('No validationIndex');
+        return $scope.otDoc.at(validationListPath(validationIndex));
+      };
+
+      $scope.getValidationListDoc = function () {
+        return $scope.otDoc.at(validationListPath());
+      };
+
       $scope.deleteValidation = function (validationIndex) {
-        var validation = $scope.validationList()[validationIndex];
-        $scope.otDoc.at($scope.validationListPath(validationIndex)).remove(function(err){
+        $scope.getValidationDoc(validationIndex).remove(function(err){
           if (!err) $scope.$apply(function (scope) {
+            var validation = $scope.validationList()[validationIndex];
             scope.otUpdateEntity();
             analytics.track('Deleted Validation', {
               fieldId: scope.field.id,
@@ -41,7 +50,6 @@ angular.module('contentful').directive('fieldValidations', function(analytics) {
             });
           });
         });
-
       };
 
       $scope.validationType = function (validation) {
@@ -50,9 +58,9 @@ angular.module('contentful').directive('fieldValidations', function(analytics) {
 
       $scope.updateValidationsFromDoc = function () {
         if ($scope.field.type == 'array') {
-          $scope.field.items.validations = $scope.otDoc.at($scope.validationListPath()).get();
+          $scope.field.items.validations = $scope.getValidationListDoc().get();
         } else {
-          $scope.field.validations = $scope.otDoc.at($scope.validationListPath()).get();
+          $scope.field.validations = $scope.getValidationListDoc().get();
         }
       };
     }
