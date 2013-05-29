@@ -79,6 +79,37 @@ $form-spacing: 7.5px
   input.date,
   input.time
     width: 105px !important
+  .cf-location-editor
+    .gmaps-container
+      width: 57%
+      height: 250px
+  .ss-calendar,
+  .ss-clock
+    font-size: 14px
+    color: $light-gray
+    vertical-align: middle
+    pointer-events: none // http://stackoverflow.com/questions/3680429/click-through-a-div-to-underlying-elements
+    position: relative
+    left: -25px
+    top: 1px
+
+  .sub-fields
+    width: 57%
+    position: relative
+    label
+      display: block
+      float: left
+      width: 40%
+      input,
+      input[type="text"]
+        width: 100%
+      span
+        display: block
+        margin-top: 5px
+        text-align: left
+    button
+      margin-top: 13px
+
 
 .form-horizontal .hint, //deprecated selector, too lazy to change HTML now
 .form-hint
@@ -135,37 +166,6 @@ $form-spacing: 7.5px
     width: $image-size
     img
       height: $image-size
-
-  .cf-location-editor
-    .gmaps-container
-      width: 57%
-      height: 250px
-  .ss-calendar,
-  .ss-clock
-    font-size: 14px
-    color: $light-gray
-    vertical-align: middle
-    pointer-events: none // http://stackoverflow.com/questions/3680429/click-through-a-div-to-underlying-elements
-    position: relative
-    left: -25px
-    top: 1px
-
-  .sub-fields
-    width: 57%
-    position: relative
-    label
-      display: block
-      float: left
-      width: 40%
-      input,
-      input[type="text"]
-        width: 100%
-      span
-        display: block
-        margin-top: 5px
-        text-align: left
-    button
-      margin-top: 13px
 
 .select-field
   .form-controls
