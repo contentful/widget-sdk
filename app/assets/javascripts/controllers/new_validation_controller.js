@@ -9,11 +9,11 @@ angular.module('contentful').controller('NewValidationCtrl', function ($scope, a
   };
 
   $scope.createValidation = function () {
-    var fieldDoc = $scope.otDoc.at(['fields', $scope.index]);
-    if (!fieldDoc.get().validations) {
-      fieldDoc.at(['validations']).set([$scope.validation], callback);
+    var validationListOwnerDoc = getValidationListOwnerDoc();
+    if (!validationListOwnerDoc.get().validations) {
+      validationListOwnerDoc.at(['validations']).set([$scope.validation], callback);
     } else {
-      var validationsDoc = $scope.otDoc.at(['fields', $scope.index, 'validations']);
+      var validationsDoc = $scope.otDoc.at($scope.validationListPath());
       validationsDoc.push($scope.validation, callback);
     }
 
@@ -26,6 +26,14 @@ angular.module('contentful').controller('NewValidationCtrl', function ($scope, a
           validationType: scope.validationType(scope.validation)
         });
       });
+    }
+
+    function getValidationListOwnerDoc() {
+      if ($scope.field.type == 'array') {
+        return $scope.otDoc.at(['fields', $scope.index, 'items']);
+      } else {
+        return $scope.otDoc.at(['fields', $scope.index]);
+      }
     }
   };
 

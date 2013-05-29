@@ -5,12 +5,8 @@ angular.module('contentful').directive('validationOptions', function () {
     template: JST['validation_options'](),
     replace: true,
     controller: function ValidationOptionsCtrl($scope) {
-      $scope.validationType = function (validation) {
-        return _(validation).keys().filter(function(k) { return k !== '$$hashKey'; }).value()[0];
-      };
-
       $scope.$watch('[index, validationIndex]', function (value, old, scope) {
-        scope.validationPath = ['fields', scope.index, 'validations', scope.validationIndex];
+        scope.validationPath = $scope.validationListPath(scope.validationIndex);
       }, true);
 
       $scope.updateDoc = function () {

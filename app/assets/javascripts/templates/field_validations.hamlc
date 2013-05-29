@@ -1,8 +1,10 @@
 %ul.validations-open 
   %li
     %header
-      %p Validations
-    .section(ng-repeat="(validationIndex, validation) in field.validations")
+      %p
+        Validations
+        %span(ng-show="field.type == 'array'") for items in the list
+    .section(ng-repeat="(validationIndex, validation) in validationList()")
       .name {{availableValidations[validationType(validation)]}}
       .validation-options
       .action
