@@ -1,14 +1,21 @@
 'use strict';
 
-angular.module('contentful').controller('TabViewCtrl', function ($scope, authentication, analytics, routing) {
-  //$scope.visitInitialView = function (bucket) {
-    //var route = routing.getRoute();
-    //if (route.entryList) {
-      //$scope.visitView('entry-list');
-    //} else if (route.entryTypeList) {
-      //$scope.visitView('entry-type-list');
-    //}
-  //};
+angular.module('contentful').controller('TabViewCtrl', function ($scope, authentication, analytics) {
+
+  $scope.$on('tabClosed', function (event, tab) {
+    var scope = event.currentScope;
+    if (scope.bucketContext.tabList.items.length === 0) {
+      $scope.visitView('entry-list');
+    } else if (tab.list.numVisible() === 0) {
+      if (tab.viewType == 'entry-editor') {
+        $scope.visitView('entry-list');
+      } else if (tab.viewType == 'entry-type-editor') {
+        $scope.visitView('entry-type-list');
+      } else if (tab.viewType == 'api-key-editor') {
+        $scope.visitView('content-delivery');
+      }
+    }
+  });
 
   $scope.editEntry = function(entry) {
     var editor = _.find($scope.bucketContext.tabList.items, function(tab){
