@@ -8,6 +8,7 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics){
 
   TabList.prototype = {
     activate: function(item){
+      if (item === this.current) return;
       var event = $rootScope.$broadcast('tabWantsActive', item);
       if (!event.defaultPrevented){
         analytics.tabActivated(item, this.current);

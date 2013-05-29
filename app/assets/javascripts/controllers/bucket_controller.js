@@ -16,9 +16,9 @@ angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope
   function openRoute() {
       var route = routing.getRoute();
       var tab = $scope.findTabForRoute(route);
-      if (tab) tab.activate();
-
-      if      (route.viewType == 'entry-list')
+      if (tab)
+        tab.activate();
+      else if      (route.viewType == 'entry-list')
         $scope.visitView('entry-list');
       else if (route.viewType == 'entry-editor')
         $scope.bucketContext.bucket.getEntry(route.params.entryId, function (err, entry) {
