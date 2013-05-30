@@ -31,14 +31,6 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     $scope.entrySchema = validation.fromEntryType(data, locales);
   });
 
-  $scope.$watch('entry.data', function(data) {
-    var schema = $scope.entrySchema;
-    if (!data || !schema) return;
-    var errors = schema.errors(_.omit(data, 'sys'));
-    $scope.validationErrors = errors;
-    $scope.valid = _.isEmpty(errors);
-  }, true);
-
   $scope.publishedAt = function(){
     if (!$scope.otDoc) return;
     var val = $scope.otDoc.getAt(['sys', 'publishedAt']);
