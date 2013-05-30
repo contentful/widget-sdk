@@ -37,9 +37,10 @@ angular.module('contentful').
     var notPublishedYet = !publishedVersion;
     var updatedSincePublishing = version !== publishedVersion + 1;
     var hasFields = $scope.otDoc.getAt(['fields']).length > 0;
-    return this.entryType.canPublish() &&
+    return $scope.entryType.canPublish() &&
       (notPublishedYet || updatedSincePublishing) &&
-      hasFields;
+      hasFields &&
+      $scope.entityValid;
   };
 
   $scope.publish = function () {

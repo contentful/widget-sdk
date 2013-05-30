@@ -49,6 +49,7 @@
     ot-doc-presence="")
   .entry-type-editor.with-tab-actions(ng-switch-when="entry-type-editor"
     ot-doc-for="tab.params.entryType"
+    cf-validate="tab.params.entryType"
     ng-class="{'with-aux-panel': preferences.showAuxPanel}")
   .content-delivery(ng-switch-when="content-delivery" )
   .api-key-editor.with-tab-actions(ng-switch-when="api-key-editor")
