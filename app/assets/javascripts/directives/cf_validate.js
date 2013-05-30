@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfValidate', function () {
+angular.module('contentful').directive('cfValidate', function (validation) {
   return {
     restrict: 'A',
     controller: function ($scope, $attrs) {
@@ -16,7 +16,19 @@ angular.module('contentful').directive('cfValidate', function () {
       }, true);
 
       function getSchema() {
-        return $scope.$eval($attrs.withSchema);
+        if ('withSchema' in $attrs) {
+          return $scope.$eval($attrs.withSchema);
+        } else {
+          var data = getData();
+          switch (data && data.sys && data.sys.type) {
+            case 'entryType':
+              return validation.schemas.EntryType;
+            case 'entry':
+              throw new Error('Validating Entries requires passing a schema in the "withSchema"-attribute.');
+            default:
+              return null;
+          }
+        }
       }
 
       function getData() {
@@ -27,8 +39,10 @@ angular.module('contentful').directive('cfValidate', function () {
       function validate(data, schema){
         if (!data || !schema) return;
         var errors = schema.errors(_.omit(data, 'sys'));
-        $scope.entityErrors = errors;
-        $scope.entityValid = _.isEmpty(errors);
+        $scope.entityErrors = _.reject(errors, function (error) {
+          return error.path[error.path.length-1] == '$$hashKey';
+        });
+        $scope.entityValid = _.isEmpty($scope.entityErrors);
       }
 
     }
