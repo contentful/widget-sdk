@@ -1,17 +1,24 @@
-angular.module('contentful').directive('fieldValidations', function(analytics) {
+angular.module('contentful').directive('fieldValidations', function(analytics, validation) {
   'use strict';
 
   return {
     restrict: 'C',
     template: JST['field_validations'](),
     controller: function($scope) {
-      $scope.availableValidations= {
+      var type = $scope.field.type === 'array' ?
+        $scope.field.items.type :
+        $scope.field.type;
+      var typeValidations = validation.Validation.perType[type];
+
+      $scope.availableValidations = _.pick({
         'size': 'Size',
         'range': 'Numerical Range',
         'regexp': 'Regular Expression',
         'in': 'One of',
         'linkEntryType': 'Content Type'
-      };
+      }, function(value, key) {
+        return _.contains(typeValidations, key);
+      });
 
       function validationListPath () {
         var args = [].splice.call(arguments,0);
