@@ -28,19 +28,19 @@
 
 
 %p Create a new Field:
-%form.new-field-form(name="newField")
+%form.new-field-form(name="newFieldForm" cf-validate="newField" with-schema="fieldSchema")
   %table.result-list.new-field
     %tr.field
       %td(colspan="9" style="overflow: visible")
         .new-field-settings
           .drag-handle &nbsp;
           .name
-            %input(ng-model="newName" type="text" required=""
+            %input(ng-model="newField.name" type="text" required=""
                    placeholder="e.g. Product Name"
                    tooltip="Field title displayed to editors"
                    tooltip-placement="bottom")
           .identifier
-            %input(ng-model="newId" type="text" required=""
+            %input(ng-model="newField.id" type="text" required=""
                    placeholder="e.g. productName"
                    tooltip="Field ID used in API"
                    tooltip-placement="bottom")
@@ -60,18 +60,18 @@
           .display &nbsp;
           .localized
             %input(type="checkbox"
-                   ng-model="newLocalized"
+                   ng-model="newField.localized"
                    tooltip-placement="left"
                    tooltip="Content in this field is localized")
           .required
             %input(type="checkbox"
-                   ng-model="newRequired"
+                   ng-model="newField.required"
                    tooltip-placement="left"
                    tooltip="Make field mandatory")
           .validations
           .action
             %button.button.new(ng-click="addField()"
-                               ng-disabled="newField.$invalid"
+                               ng-disabled="newFieldForm.$invalid"
                                tooltip="Add this field"
                                tooltip-placement="left")
               %i.ss-plus

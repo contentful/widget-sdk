@@ -1,7 +1,8 @@
 'use strict';
 
-angular.module('contentful').controller('EntryTypeEditorCtrl', function EntryTypeEditorCtrl($scope, ShareJS, availableFieldTypes) {
+angular.module('contentful').controller('EntryTypeEditorCtrl', function EntryTypeEditorCtrl($scope, ShareJS, availableFieldTypes, validation) {
   $scope.availableTypes = availableFieldTypes;
+  $scope.fieldSchema = validation(validation.schemas.EntryType.at(['fields']).items);
 
   $scope.$watch('tab.params.entryType', 'entryType=tab.params.entryType');
 

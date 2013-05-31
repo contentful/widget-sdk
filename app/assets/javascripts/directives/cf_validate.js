@@ -3,7 +3,9 @@
 angular.module('contentful').directive('cfValidate', function (validation) {
   return {
     restrict: 'A',
+    scope: true,
     controller: function ($scope, $attrs) {
+      $scope.validationResult = {};
 
       $scope.$watch(getSchema, function (schema) {
         var data = getData();
