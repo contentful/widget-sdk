@@ -8,7 +8,10 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
       // $scope.value              contains the Link/list of links
       $scope.linkedEntries = []; //contains the linked Entry
 
-      var linkEntryTypeValidation = _($scope.field.validations)
+      var validations = $scope.field.type === 'array' && $scope.field.items.validations ?
+        $scope.field.items.validations :
+        $scope.field.validations;
+      var linkEntryTypeValidation = _(validations)
         .map(validation.Validation.parse)
         .where({name: 'linkEntryType'})
         .first();
