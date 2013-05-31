@@ -53,7 +53,11 @@ angular.module('contentful').directive('validationErrorDisplay', function () {
           return 'Required';
         },
         type: function(v) {
-          return 'Must be a(n) ' + v.type + '.';
+          if (v.type.match(/^aio/)) {
+            return 'Must be an ' + v.type + '.';
+          } else {
+            return 'Must be a ' + v.type + '.';
+          }
         }
       };
 
