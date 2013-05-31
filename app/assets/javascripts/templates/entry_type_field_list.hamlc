@@ -39,11 +39,13 @@
                    placeholder="e.g. Product Name"
                    tooltip="Field title displayed to editors"
                    tooltip-placement="bottom")
+            .validation-error-display.form-inline-error(path="['name']")
           .identifier
             %input(ng-model="newField.id" type="text" required=""
                    placeholder="e.g. productName"
                    tooltip="Field ID used in API"
                    tooltip-placement="bottom")
+            .validation-error-display.form-inline-error(path="['id']")
           .type
             .dropdown-btn
               .dropdown-toggle

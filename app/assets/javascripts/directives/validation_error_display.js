@@ -4,6 +4,7 @@ angular.module('contentful').directive('validationErrorDisplay', function () {
   return {
     restrict: 'C',
     template: JST['validation_error_display'],
+    scope: true,
     link: function (scope, elem) {
       scope.$watch('errorMessages.length', function (numErrors) {
         if (0 < numErrors) {
