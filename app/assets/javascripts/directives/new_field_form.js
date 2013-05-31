@@ -55,7 +55,7 @@ angular.module('contentful').directive('newFieldForm', function (availableFieldT
 
     link: function (scope, elem) {
       scope.$on('fieldAdded', function () {
-        elem.find('.field-id').focus();
+        elem.find('input').eq(0).focus();
       });
     }
   };
