@@ -20,7 +20,7 @@ angular.module('contentful').directive('fieldValidations', function(analytics) {
         } else {
           return _.flatten(['fields', $scope.index, 'validations'].concat(args));
         }
-      };
+      }
 
       $scope.validationList = function () {
         if ($scope.field.type == 'array') {
