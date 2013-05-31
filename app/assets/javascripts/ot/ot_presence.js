@@ -3,8 +3,8 @@
 angular.module('contentful').
 
   value('otPresenceConfig', {
-    pingInterval: 10e3,
-    pingTimeout: 20e3
+    pingInterval: 60e3,
+    pingTimeout: 120e3
   }).
 
   directive('otDocPresence', function() {
