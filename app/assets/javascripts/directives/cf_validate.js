@@ -32,17 +32,20 @@ angular.module('contentful').directive('cfValidate', function (validation) {
       }
 
       function getData() {
-        var entity = $scope.$eval($attrs.cfValidate);
-        if (entity) return entity.data;
+        return $scope.$eval($attrs.cfValidate);
       }
 
       function validate(data, schema){
         if (!data || !schema) return;
-        var errors = schema.errors(_.omit(data, 'sys'));
-        $scope.entityErrors = _.reject(errors, function (error) {
+        var schemaErrors = schema.errors(_.omit(data, 'sys'));
+        var errors = _.reject(schemaErrors, function (error) {
           return error.path[error.path.length-1] == '$$hashKey';
         });
-        $scope.entityValid = _.isEmpty($scope.entityErrors);
+        var valid = _.isEmpty(errors);
+        $scope.validationResult = {
+          errors: errors,
+          valid:  valid
+        };
       }
 
     }

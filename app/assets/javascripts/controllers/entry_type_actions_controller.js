@@ -40,7 +40,7 @@ angular.module('contentful').
     return $scope.entryType.canPublish() &&
       (notPublishedYet || updatedSincePublishing) &&
       hasFields &&
-      $scope.entityValid;
+      $scope.validationResult.valid;
   };
 
   $scope.publish = function () {

@@ -61,7 +61,7 @@ angular.module('contentful').directive('fieldErrorDisplay', function () {
         return messages[error.name](error);
       }
 
-      $scope.$watch('entityErrors', function(errors) {
+      $scope.$watch('validationResult.errors', function(errors) {
         var path = ['fields', $scope.field.id, $scope.locale.code];
         var fieldErrors = _.filter(errors, function(error) {
           return _.isEqual(error.path, path);
