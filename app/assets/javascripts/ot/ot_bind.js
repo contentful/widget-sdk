@@ -21,7 +21,8 @@ otModule.directive('otBindText', function(ShareJS) {
           var changeHandler = _.debounce(function () {
             //console.log('emitting textIdle');
             scope.$apply(function (scope) {
-              scope.$emit('otTextIdle');
+              scope.$emit('otTextIdle', otSubdoc.path, otSubdoc.get());
+              // TODO make it so that the value is written back automatically and we don't have to implement this new every time
             });
           }, 300);
 

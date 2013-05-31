@@ -14,6 +14,12 @@ angular.module('contentful').controller('EntryTypeEditorCtrl', function EntryTyp
     event.currentScope.otUpdateEntity();
   });
 
+  $scope.$on('otTextIdle', function (event, path, value) {
+    if (path[0] == 'fields' && path[2] == 'name') {
+      event.currentScope.entryType.data.fields[path[1]].name = value;
+    }
+  });
+
   function loadPublishedEntryType() {
     // TODO replace with lookup in registry inside bucketContext
     $scope.entryType.getPublishedVersion(function(err, publishedEntryType) {
