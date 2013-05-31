@@ -1,9 +1,9 @@
 'use strict';
 
-angular.module('contentful').directive('formErrorDisplay', function () {
+angular.module('contentful').directive('validationErrorDisplay', function () {
   return {
     restrict: 'C',
-    template: JST['form_error_display'],
+    template: JST['validation_error_display'],
     link: function (scope, elem) {
       scope.$watch('errorMessages.length', function (numErrors) {
         if (0 < numErrors) {
@@ -13,7 +13,7 @@ angular.module('contentful').directive('formErrorDisplay', function () {
         }
       });
     },
-    controller: function FieldErrorDisplayCtrl($scope, $attrs) {
+    controller: function ValidationErrorDisplayCtrl($scope, $attrs) {
       $scope.errorMessages = [];
 
       var messages = {

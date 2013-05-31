@@ -70,7 +70,7 @@
             Hint to the user about the meaning of the field
             .arrow-left
             .arrow-left-border
-          .form-error-display(path="['fields', field.id, locale.code]")
+          .validation-error-display.form-box-error(path="['fields', field.id, locale.code]")
 
 .tab-actions(ng-controller="EntryActionsCtrl")
   .button-set
