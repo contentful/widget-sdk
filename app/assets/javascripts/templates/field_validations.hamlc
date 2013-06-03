@@ -9,11 +9,11 @@
     .action
       %a.button.delete(ng-click="deleteValidation(validationIndex)")
         %i.remove.ss-delete
-  .section(ng-controller="NewValidationCtrl")
+  .section(ng-controller="NewValidationCtrl" cf-validate="fieldWithNewValidation" with-schema="fieldSchema")
     .name
       %select(ng-model="newValidationType" ng-options="type as name for (type, name) in availableValidations" ng-change="prepareNewValidation()")
         %option(value="") Add new…
     .validation-options
     .action
-      %button.button.new(ng-click="createValidation()" ng-disabled="!newValidationType")
+      %button.button.new(ng-click="createValidation()" ng-disabled="!newValidationType || !validationResult.valid")
         %i.ss-plus
