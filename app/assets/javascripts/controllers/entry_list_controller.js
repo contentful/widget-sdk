@@ -96,9 +96,9 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
       // do nothing
     } else if (this.tab.params.list == 'published') {
       queryObject['sys.publishedAt[exists]'] = 'true';
-    } else if (this.tab.params.list == 'unpublished') {
+    } else if (this.tab.params.list == 'changed') {
       queryObject['sys.archivedAt[exists]'] = 'false';
-      queryObject['sys.publishedAt[exists]'] = 'false';
+      queryObject['changed'] = 'true';
     } else if (this.tab.params.list == 'archived') {
       queryObject['sys.archivedAt[exists]'] = 'true';
     } else if (this.tab.params.list == 'entryType') {

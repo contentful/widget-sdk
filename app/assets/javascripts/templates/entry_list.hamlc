@@ -10,7 +10,7 @@
     %ul.filter-list
       %li(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
         %span All
-      %li(ng-class="{active: tab.params.list == 'unpublished'}" ng-click="switchList('unpublished')")
+      %li(ng-class="{active: tab.params.list == 'changed'}" ng-click="switchList('changed')")
         %span Draft
       %li(ng-class="{active: tab.params.list == 'published'}" ng-click="switchList('published')")
         %span Published
