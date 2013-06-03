@@ -20,14 +20,14 @@ angular.module('contentful').directive('fieldValidations', function(analytics, v
         return _.contains(typeValidations, key);
       });
 
-      function validationListPath () {
+      $scope.validationListPath = function() {
         var args = [].splice.call(arguments,0);
         if ($scope.field.type == 'array') {
           return _.flatten(['fields', $scope.index, 'items', 'validations'].concat(args));
         } else {
           return _.flatten(['fields', $scope.index, 'validations'].concat(args));
         }
-      }
+      };
 
       $scope.validationList = function () {
         if ($scope.field.type == 'array') {
@@ -39,11 +39,11 @@ angular.module('contentful').directive('fieldValidations', function(analytics, v
 
       $scope.getValidationDoc = function (validationIndex) {
         if (!angular.isDefined(validationIndex)) throw new Error('No validationIndex');
-        return $scope.otDoc.at(validationListPath(validationIndex));
+        return $scope.otDoc.at($scope.validationListPath(validationIndex));
       };
 
       $scope.getValidationListDoc = function () {
-        return $scope.otDoc.at(validationListPath());
+        return $scope.otDoc.at($scope.validationListPath());
       };
 
       $scope.deleteValidation = function (validationIndex) {
