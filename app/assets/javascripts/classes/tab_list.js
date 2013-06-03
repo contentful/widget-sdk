@@ -57,7 +57,7 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics){
          }
          $rootScope.$broadcast('tabClosed', item);
          analytics.tabClosed(item);
-         if (newCurrent !== false && newCurrent !== null && this.current !== null) {
+         if (newCurrent !== false && newCurrent !== null && this.current === null) {
            newCurrent.activate();
          }
        }
