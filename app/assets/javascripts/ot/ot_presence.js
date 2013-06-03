@@ -3,8 +3,8 @@
 angular.module('contentful').
 
   value('otPresenceConfig', {
-    pingInterval: 60e3,
-    pingTimeout: 120e3
+    focusThrottle: 10e3,
+    pingTimeout: 60e3
   }).
 
   directive('otDocPresence', function() {
@@ -23,7 +23,7 @@ angular.module('contentful').
           otPresenceCtrl.focus(scope.otFieldPresenceId);
         }
 
-        element.find('input, textarea').on('focus', focus);
+        element.find('input, textarea').on('focus keydown', focus);
       },
 
       controller: function($scope, $attrs) {
@@ -93,18 +93,18 @@ function OtDocPresenceCtrl($scope, $timeout, otPresenceConfig) {
     });
   });
 
+  var lastId;
+  var lastFocus;
   this.focus = function(id) {
+    var now = new Date();
+    if (id === lastId && now - lastFocus < otPresenceConfig.focusThrottle) return;
+    lastId = id;
+    lastFocus = now;
     ownPresence.focus = id;
     var doc = $scope.otDoc;
     if (!doc) return;
     doc.shout(['focus', user, id]);
-  };
-
-  function ping() {
-    if (!$scope.otDoc) return;
-    $scope.otDoc.shout(['ping', user]);
-    removeTimedOutUsers();
-  }
+  }, otPresenceConfig.throttle;
 
   function removeTimedOutUsers() {
     var timedOutUsers = _(presence).map(function(p, u) {
@@ -119,12 +119,12 @@ function OtDocPresenceCtrl($scope, $timeout, otPresenceConfig) {
 
   }
 
-  function pingLater() {
-    ping();
-    timeout = $timeout(pingLater, otPresenceConfig.pingInterval);
+  function doLater() {
+    removeTimedOutUsers();
+    timeout = $timeout(doLater, otPresenceConfig.pingInterval);
   }
 
-  pingLater();
+  doLater();
 
   $scope.$on('$destroy', function() {
     $timeout.cancel(timeout);
