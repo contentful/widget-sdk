@@ -23,7 +23,7 @@
 
 
   %div(ng-switch-when="in")
-    %input(type="text" ng-model="validation.in" ng-list="" placeholder="apple,orange,banana" ng-change="updateDoc()")
+    %input(type="text" ng-model="validation.in" ng-list cf-list-identity-fix placeholder="apple,orange,banana" ng-change="updateDoc()")
     %span (separate allowed values by comma)
     .validation-error-display.form-inline-error(path="validationListPath(validationIndex)").form-inline-error
 
