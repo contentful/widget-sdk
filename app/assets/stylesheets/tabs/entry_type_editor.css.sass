@@ -121,36 +121,34 @@
         padding: 10px 10px 4px
         p
           padding-bottom: 6px
-      .validations-open > li
+      .sections
         display: table
         width: 100%
-        border-top: 1px solid $lightest-gray
-        margin-top: -1px
-      div.section
+        margin-bottom: 10px
+      .section
         padding: 1em 14px
         display: table-row
         &:first-child
           border-top: 0px
-      .validations-open
-        .name,
-        .validation-options,
-        .action
-          display: table-cell
-          padding: 6px 0
-          vertical-align: middle
-          border-top: 1px solid lighten($lightest-gray, 5%)
-        .name
-          padding-left: 12px
-          select
-            width: 85%
-        .action
-          text-align: right
-          padding-right: 19px
-        input[type=text],
-        input[type=number]
-          background-color: white
-          border-color: $lightest-gray
-          width: auto
+      .name,
+      .validation-options,
+      .action
+        display: table-cell
+        padding: 6px 0
+        vertical-align: middle
+        border-top: 1px solid lighten($lightest-gray, 5%)
+      .name
+        padding-left: 12px
+        select
+          width: 85%
+      .action
+        text-align: right
+        padding-right: 19px
+      input[type=text],
+      input[type=number]
+        background-color: white
+        border-color: $lightest-gray
+        width: auto
 
     // Special code for removing displayField
     th.display
