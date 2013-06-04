@@ -4,63 +4,63 @@
 
     %p
       Add any type of text, whether it is a whole book or just a title. You can add validations to constrain the length. Numbers added in this field will also be treated as strings of text. Search for words in the text.
-    %img(src="<%= image_path('entry_type/text.png') %>")
+    %img(src="<%= image_path('field_type/text.png') %>")
 
   %div(ng-switch-when="string")
     %h3 Short token of text
 
     %p
       Represent unbreakable tokens like a URL or currencies (USD or EUR). You can add validations like pattern matches. You can only search for the full token, you cannot search for parts of it.
-    %img(src="<%= image_path('entry_type/symbol.png') %>")
+    %img(src="<%= image_path('field_type/symbol.png') %>")
 
   %div(ng-switch-when="integer")
     %h3 Number without decimals
 
     %p
       Insert integer numbers (numbers without decimals). Use validations to constrain its ranges, specific values or number of characters if necessary.
-    %img(src="<%= image_path('entry_type/integer.png') %>")
+    %img(src="<%= image_path('field_type/integer.png') %>")
 
   %div(ng-switch-when="number")
     %h3 Decimal number
 
     %p
       Insert a number with as many decimal figures as needed. Use validations to constrain its ranges, values or number of characters if necessary.
-    %img(src="<%= image_path('entry_type/floating.png') %>")
+    %img(src="<%= image_path('field_type/floating.png') %>")
 
   %div(ng-switch-when="boolean")
     %h3 Yes or No value (boolean)
 
     %p
       Entering a Yes or a No (boolean) value can represent two opposite informations such as on/off, up/down, open/closed or naturally yes/no.
-    %img(src="<%= image_path('entry_type/boolean.png') %>")
+    %img(src="<%= image_path('field_type/boolean.png') %>")
 
   %div(ng-switch-when="date")
     %h3 Date with time of the day
 
     %p
       Specify a given date (dd/mm/yyyy) and time (hh:mm:ss). Like the start or end time of an event. When not needed, either the date or the time can be left blank.
-    %img(src="<%= image_path('entry_type/date.png') %>")
+    %img(src="<%= image_path('field_type/date.png') %>")
 
   %div(ng-switch-when="object")
     %h3 An embedded JSON object
 
     %p
       Add an arbitrary JSON structure that you can write and read through the API.
-    %img(src="<%= image_path('entry_type/jsonobject.png') %>")
+    %img(src="<%= image_path('field_type/jsonobject.png') %>")
 
   %div(ng-switch-when="link")
     %h3 A link to another entry
 
     %p
       Connect your current entry to another already existing entry previously created. You can create relations such as connecting one book to its author.
-    %img(src="<%= image_path('entry_type/linktoentry.png') %>")
+    %img(src="<%= image_path('field_type/linktoentry.png') %>")
 
   %div(ng-switch-when="location")
     %h3 Geographical coordinates of a location
 
     %p
       A place anywhere on this world. Locations can be added by their coordinates or by pointing the location directly on the map.
-    %img(src="<%= image_path('entry_type/location.png') %>")
+    %img(src="<%= image_path('field_type/location.png') %>")
 
   %div(ng-switch-when="array")
     %h3(ng-show="type.value.items.type == 'link'")
@@ -68,10 +68,10 @@
 
     %p(ng-show="type.value.items.type == 'link'")
       Connect your current entry to other already existing entries previously created. It works as the Link to Entry but it allows you to connect one entry to several other ones. An example is a book which has several authors.
-    %img(ng-show="type.value.items.type == 'link'" src="<%= image_path('entry_type/linkstoentries.png') %>")
+    %img(ng-show="type.value.items.type == 'link'" src="<%= image_path('field_type/linkstoentries.png') %>")
 
     %h3(ng-show="type.value.items.type == 'string'")
       One or many links to entries
     %p(ng-show="type.value.items.type == 'string'")
       Create a simple lists of text. It can be, for example, tags for a blog post. The list items are separated by commas.
-    %img(ng-show="type.value.items.type == 'string'" src="<%= image_path('entry_type/list.png') %>")
+    %img(ng-show="type.value.items.type == 'string'" src="<%= image_path('field_type/list.png') %>")

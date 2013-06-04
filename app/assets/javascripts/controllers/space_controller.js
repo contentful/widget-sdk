@@ -27,13 +27,13 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
             else     scope.editEntry(entry);
           });
         });
-      else if (route.viewType == 'entry-type-list')
-        $scope.visitView('entry-type-list');
-      else if (route.viewType == 'entry-type-editor')
-        $scope.spaceContext.space.getEntryType(route.params.entryTypeId, function (err, entryType) {
+      else if (route.viewType == 'content-type-list')
+        $scope.visitView('content-type-list');
+      else if (route.viewType == 'content-type-editor')
+        $scope.spaceContext.space.getContentType(route.params.contentTypeId, function (err, contentType) {
           $scope.$apply(function (scope) {
-            if (err) scope.visitView('entry-type-list');
-            else     scope.editEntryType(entryType);
+            if (err) scope.visitView('content-type-list');
+            else     scope.editContentType(contentType);
           });
         });
       else if (route.viewType == 'content-delivery')
@@ -46,9 +46,9 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
           });
         });
       else
-        $scope.spaceContext.space.getPublishedEntryTypes(function(err, ets) {
+        $scope.spaceContext.space.getPublishedContentTypes(function(err, ets) {
           $scope.$apply(function (scope) {
-            if (_.isEmpty(ets)) scope.visitView('entry-type-list');
+            if (_.isEmpty(ets)) scope.visitView('content-type-list');
             else                scope.visitView('entry-list');
           });
         });
@@ -65,7 +65,7 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
   }, true);
   $scope.$watch('spaceContext.localesActive', 'spaceContext.refreshActiveLocales()', true);
   $scope.$watch('spaceContext', function(space, o, scope) {
-    scope.spaceContext.refreshEntryTypes();
+    scope.spaceContext.refreshContentTypes();
   });
 
   $scope.logoClicked = function () {
@@ -79,9 +79,9 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
     }
   });
 
-  $scope.createEntry = function(entryType) {
+  $scope.createEntry = function(contentType) {
     var scope = this;
-    scope.spaceContext.space.createEntry(entryType.getId(), {}, function(err, entry){
+    scope.spaceContext.space.createEntry(contentType.getId(), {}, function(err, entry){
       if (!err) {
         scope.$apply(function(scope){
           scope.spaceContext.tabList.add({
@@ -102,26 +102,26 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
         currentSection: scope.spaceContext.tabList.currentSection(),
         currentViewType: scope.spaceContext.tabList.currentViewType(),
         entityType: 'entry',
-        entitySubType: entryType.getId()
+        entitySubType: contentType.getId()
       });
     });
   };
 
-  $scope.createEntryType = function() {
+  $scope.createContentType = function() {
     var scope = this;
     var data = {
       sys: {},
       fields: [],
       name: ''
     };
-    scope.spaceContext.space.createEntryType(data, function(err, entryType){
+    scope.spaceContext.space.createContentType(data, function(err, contentType){
       if (!err) {
         scope.$apply(function(scope){
           scope.spaceContext.tabList.add({
-            viewType: 'entry-type-editor',
-            section: 'entryTypes',
+            viewType: 'content-type-editor',
+            section: 'contentTypes',
             params: {
-              entryType: entryType,
+              contentType: contentType,
               space: scope.spaceContext.space,
               mode: 'create'
             },
@@ -129,12 +129,12 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
           }).activate();
         });
       } else {
-        console.log('Error creating entryType', err);
+        console.log('Error creating contentType', err);
       }
       analytics.track('Selected Add-Button', {
         currentSection: scope.spaceContext.tabList.currentSection(),
         currentViewType: scope.spaceContext.tabList.currentViewType(),
-        entityType: 'entryType'
+        entityType: 'contentType'
       });
     });
   };

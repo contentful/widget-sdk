@@ -14,13 +14,13 @@
   .entity-info-panel
 
 .tab-main
-  .form-horizontal(name="entryTypeForm")
+  .form-horizontal(name="contentTypeForm")
     .form-field
       %label Name
       .form-controls(ot-path="['name']" ot-subdoc)
         %input(type="text"
                placeholder="Content Type Name (e.g. Product)"
-               ng-model="entryType.data.name"
+               ng-model="contentType.data.name"
                ot-bind-text="")
         .validation-error-display.form-box-error(path="['name']")
     .form-field
@@ -29,12 +29,12 @@
     .form-field
       %label Fields
       .form-controls
-        .entry-type-field-list
+        .content-type-field-list
 
 
-.tab-actions(ng-controller="EntryTypeActionsCtrl")
+.tab-actions(ng-controller="ContentTypeActionsCtrl")
   .button-set
-    %button.delete(ng-show="entryType.canDelete()"
+    %button.delete(ng-show="contentType.canDelete()"
                    ng-click="delete()"
                    tooltip="Delete this Content Type")
       Delete

@@ -32,7 +32,7 @@ angular.module('contentful').directive('newFieldForm', function (availableFieldT
               resetNewField();
               scope.otUpdateEntity();
               scope.$broadcast('fieldAdded');
-              analytics.modifiedEntryType('Modified EntryType', scope.entryType, field, 'add');
+              analytics.modifiedContentType('Modified ContentType', scope.contentType, field, 'add');
             });
           }
         });

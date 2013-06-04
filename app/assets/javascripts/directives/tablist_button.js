@@ -14,12 +14,12 @@ angular.module('contentful').directive('tablistButton', function(analytics) {
         }
       });
 
-      scope.$on('newEntryTypePublished', function (event, entryType) {
+      scope.$on('newContentTypePublished', function (event, contentType) {
         var toggle = elem.find('.dropdown-toggle');
         toggle.tooltip({
           delay: {show: 100, hide: 100},
           trigger: 'manual',
-          title: 'You can now create a '+entryType.data.name+' Entry',
+          title: 'You can now create a '+contentType.data.name+' Entry',
           placement: 'right'
         });
         toggle.tooltip('show');

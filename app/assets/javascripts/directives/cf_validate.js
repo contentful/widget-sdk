@@ -23,8 +23,8 @@ angular.module('contentful').directive('cfValidate', function (validation) {
         } else {
           var data = getData();
           switch (data && data.sys && data.sys.type) {
-            case 'entryType':
-              return validation.schemas.EntryType;
+            case 'contentType':
+              return validation.schemas.ContentType;
             case 'entry':
               throw new Error('Validating Entries requires passing a schema in the "withSchema"-attribute.');
             default:

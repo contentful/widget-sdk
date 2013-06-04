@@ -28,9 +28,9 @@
     .validation-error-display.form-inline-error(path="validationListPath(validationIndex)").form-inline-error
 
 
-  %div(ng-switch-when="linkEntryType")
-    %select(ng-model="validation.linkEntryType"
-            ng-options="et.getId() as et.data.name for et in spaceContext.publishedEntryTypes" ng-change="updateDoc()")
+  %div(ng-switch-when="linkContentType")
+    %select(ng-model="validation.linkContentType"
+            ng-options="et.getId() as et.data.name for et in spaceContext.publishedContentTypes" ng-change="updateDoc()")
 
 
   %div(ng-switch-default="")

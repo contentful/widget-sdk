@@ -9,8 +9,8 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     } else if (tab.list.numVisible() === 0) {
       if (tab.viewType == 'entry-editor') {
         $scope.visitView('entry-list');
-      } else if (tab.viewType == 'entry-type-editor') {
-        $scope.visitView('entry-type-list');
+      } else if (tab.viewType == 'content-type-editor') {
+        $scope.visitView('content-type-list');
       } else if (tab.viewType == 'api-key-editor') {
         $scope.visitView('content-delivery');
       }
@@ -35,19 +35,19 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     editor.activate();
   };
 
-  $scope.editEntryType = function(entryType) {
+  $scope.editContentType = function(contentType) {
     var editor = _($scope.spaceContext.tabList.items).find(function(tab){
-      return (tab.viewType == 'entry-type-editor' && tab.params.entryType == entryType);
+      return (tab.viewType == 'content-type-editor' && tab.params.contentType == contentType);
     });
     if (!editor) {
       editor = $scope.spaceContext.tabList.add({
-        viewType: 'entry-type-editor',
-        section: 'entryTypes',
+        viewType: 'content-type-editor',
+        section: 'contentTypes',
         params: {
-          entryType: entryType,
+          contentType: contentType,
           mode: 'edit'
         },
-        title: entryType.data.name || 'Untitled'
+        title: contentType.data.name || 'Untitled'
       });
     }
     editor.activate();
@@ -75,7 +75,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     return _.find($scope.spaceContext.tabList.items, function (tab) {
       return tab.viewType == route.viewType &&
              (!tab.params ||
-              tab.params.entryType && tab.params.entryType.getId() === route.params.entryTypeId ||
+              tab.params.contentType && tab.params.contentType.getId() === route.params.contentTypeId ||
               tab.params.apiKey    && tab.params.apiKey.getId()    === route.params.apiKeyId ||
               tab.params.entry     && tab.params.entry.getId()     === route.params.entryId);
     });
@@ -96,10 +96,10 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
         canClose: true
       };
       analytics.track('Clicked "Entries"');
-    } else if (viewType == 'entry-type-list'){
+    } else if (viewType == 'content-type-list'){
       options = {
-        viewType: 'entry-type-list',
-        section: 'entryTypes',
+        viewType: 'content-type-list',
+        section: 'contentTypes',
         hidden: true,
         title: 'Content Model',
         canClose: true

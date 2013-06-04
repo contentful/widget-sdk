@@ -1,8 +1,8 @@
 %article
   %table
-    %tr(ng-show="entryTypeName")
+    %tr(ng-show="contentTypeName")
       %th Content Type
-      %td {{entryTypeName}}
+      %td {{contentTypeName}}
     %tr
       %th
     %tr

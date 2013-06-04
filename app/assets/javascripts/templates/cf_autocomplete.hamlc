@@ -3,14 +3,14 @@
     %a(ng-click="visitLink(entry)") {{linkDescription(entry)}}
     %i.ss-delete(ng-click="removeLink(entry)" ng-hide="otDisabled")
 .controls(ng-show="!otDisabled && (linkedEntries.length == 0 || field.type == 'array')")
-  .add-new(ng-show="linkEntryType"
-           ng-click="addNew(linkEntryType)"
-           tooltip="Add new {{linkEntryType.data.name}} Entry"
+  .add-new(ng-show="linkContentType"
+           ng-click="addNew(linkContentType)"
+           tooltip="Add new {{linkContentType.data.name}} Entry"
            tooltip-placement="left")
-    %button.with-link-entry-type
+    %button.with-link-content-type
       %i.ss-plus
       New
-  .dropdown-btn.add-new(ng-hide="linkEntryType"
+  .dropdown-btn.add-new(ng-hide="linkContentType"
                         tooltip="Add new Entry"
                         tooltip-placement="left")
     %button.dropdown-toggle
@@ -18,10 +18,10 @@
       New
     %a.dropdown-menu
       %ul
-        %li(ng-repeat="entryType in spaceContext.publishedEntryTypes"
-            ng-click="addNew(entryType)"
+        %li(ng-repeat="contentType in spaceContext.publishedContentTypes"
+            ng-click="addNew(contentType)"
             dropdown-close="")
-          {{entryType.data.name}}
+          {{contentType.data.name}}
   .search-field(ng-submit="submit()"
                 search="searchTerm"
                 search-type-ahead=""

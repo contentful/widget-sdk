@@ -20,16 +20,16 @@ describe('Routing service', function () {
         getDefaultLocale: function () {
           return {code: 'en-US'};
         },
-        getPublishedEntryTypes: function (callback) {
+        getPublishedContentTypes: function (callback) {
           _.defer(callback, null, [{}]);
         },
-        refreshPublishedEntryTypes: function () {
+        refreshPublishedContentTypes: function () {
           
         },
         getId: function () {
           return '123';
         },
-        getEntryTypes: function (params, callback) {
+        getContentTypes: function (params, callback) {
           _.defer(callback, null, []);
         }
       });

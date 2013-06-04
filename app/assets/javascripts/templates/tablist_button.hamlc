@@ -5,13 +5,13 @@
   .dropdown-menu.top-caret.left-aligned
     %ul
       %li(ng-click="createApiKey()" dropdown-close="") API Key
-      %li(ng-click="createEntryType()" dropdown-close="") Content Type
-    %ul(ng-show="spaceContext.publishedEntryTypes.length > 0")
-      %li(ng-repeat="(index, entryType) in spaceContext.publishedEntryTypes"
-        ng-click="createEntry(entryType)"
+      %li(ng-click="createContentType()" dropdown-close="") Content Type
+    %ul(ng-show="spaceContext.publishedContentTypes.length > 0")
+      %li(ng-repeat="(index, contentType) in spaceContext.publishedContentTypes"
+        ng-click="createEntry(contentType)"
         dropdown-close=""
         ng-class="{separator: index == 0}")
-        {{entryType.data.name}}
-    %ul(ng-hide="spaceContext.publishedEntryTypes.length > 0")
-      %li.separator.hint(ng-click="createEntryType()" dropdown-close)
+        {{contentType.data.name}}
+    %ul(ng-hide="spaceContext.publishedContentTypes.length > 0")
+      %li.separator.hint(ng-click="createContentType()" dropdown-close)
         (Create and activate a Content Type before creating entries)

@@ -28,7 +28,7 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
   $scope.$watch('spaceContext.publishedTypeForEntry(entry).data', function(data) {
     if (!data) return;
     var locales = $scope.spaceContext.space.getPublishLocales(); // TODO: watch this, too
-    $scope.entrySchema = validation.fromEntryType(data, locales);
+    $scope.entrySchema = validation.fromContentType(data, locales);
   });
 
   $scope.publishedAt = function(){

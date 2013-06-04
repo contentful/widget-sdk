@@ -2,9 +2,9 @@
   .logo(ng-click="logoClicked()")
     .cf-logo
   %ul
-    %li(ng-class="{section: spaceContext.tabList.currentSection() == 'entryTypes',
-                  'section-index': spaceContext.tabList.currentViewType() == 'entry-type-list'}"
-        ng-click="visitView('entry-type-list')")
+    %li(ng-class="{section: spaceContext.tabList.currentSection() == 'contentTypes',
+                  'section-index': spaceContext.tabList.currentViewType() == 'content-type-list'}"
+        ng-click="visitView('content-type-list')")
       %i.ss-database
       .hint.tip.nav-models
         Content Types
@@ -41,15 +41,15 @@
 .tab-content(ng-repeat="tab in spaceContext.tabList.items" ng-show="tab.active()" ng-switch="tab.viewType")
   .iframe-view(ng-switch-when="iframe")
   .entry-list(ng-switch-when="entry-list")
-  .entry-type-list(ng-switch-when="entry-type-list")
+  .content-type-list(ng-switch-when="content-type-list")
   .entry-editor.with-tab-actions(ng-switch-when="entry-editor"
     ot-doc-for="tab.params.entry"
     cf-validate="tab.params.entry.data" with-schema="entrySchema"
     ng-class="{'with-aux-panel': preferences.showAuxPanel}"
     ot-doc-presence="")
-  .entry-type-editor.with-tab-actions(ng-switch-when="entry-type-editor"
-    ot-doc-for="tab.params.entryType"
-    cf-validate="tab.params.entryType.data"
+  .content-type-editor.with-tab-actions(ng-switch-when="content-type-editor"
+    ot-doc-for="tab.params.contentType"
+    cf-validate="tab.params.contentType.data"
     ng-class="{'with-aux-panel': preferences.showAuxPanel}")
   .content-delivery(ng-switch-when="content-delivery" )
   .api-key-editor.with-tab-actions(ng-switch-when="api-key-editor")

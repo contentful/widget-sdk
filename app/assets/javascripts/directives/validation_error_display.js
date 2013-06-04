@@ -18,9 +18,9 @@ angular.module('contentful').directive('validationErrorDisplay', function () {
       $scope.errorMessages = [];
 
       var messages = {
-        linkEntryType: function(v) {
-          var et = _.find($scope.spaceContext.publishedEntryTypes, function(et) {
-            return et.getId() === v.entryTypeId;
+        linkContentType: function(v) {
+          var et = _.find($scope.spaceContext.publishedContentTypes, function(et) {
+            return et.getId() === v.contentTypeId;
           });
           if (!et) return 'Invalid Content Type';
           return 'Linked entry\'s Content Type must be ' + et.data.name + '.';

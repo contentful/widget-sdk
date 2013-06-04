@@ -11,9 +11,9 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
       tabList: null,
       space: null,
 
-      entryTypes: [],
-      publishedEntryTypes: [],
-      _publishedEntryTypesHash: {},
+      contentTypes: [],
+      publishedContentTypes: [],
+      _publishedContentTypesHash: {},
 
       publishLocales: [],
       defaultLocale: null,
@@ -43,58 +43,58 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
         this.activeLocales = newActiveLocales;
       },
 
-      refreshEntryTypes: function() {
+      refreshContentTypes: function() {
         if (this.space) {
           var spaceContext = this;
-          this.space.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes) {
+          this.space.getContentTypes({order: 'sys.id', limit: 1000}, function(err, contentTypes) {
             if (err) return;
             $rootScope.$apply(function() {
-              spaceContext.entryTypes = entryTypes;
-              spaceContext.refreshPublishedEntryTypes();
+              spaceContext.contentTypes = contentTypes;
+              spaceContext.refreshPublishedContentTypes();
             });
           });
         } else {
-          this.entryTypes = [];
-          this.publishedEntryTypes = [];
-          this._publishedEntryTypesHash = {};
+          this.contentTypes = [];
+          this.publishedContentTypes = [];
+          this._publishedContentTypesHash = {};
           return;
         }
       },
-      refreshPublishedEntryTypes: function() {
+      refreshPublishedContentTypes: function() {
         var self = this;
-        this.space.getPublishedEntryTypes(function (err, entryTypes) {
+        this.space.getPublishedContentTypes(function (err, contentTypes) {
           if (err) {
-            console.error('Could not get published entry types', err);
+            console.error('Could not get published content types', err);
           } else {
             $rootScope.$apply(function () {
-              self.publishedEntryTypes = _(entryTypes)
-                // TODO this union will lead to problems if we ever allow deletion of published entry Types
-                // because entryTypes that entered the list once will never get out again
-                .union(self.publishedEntryTypes)
+              self.publishedContentTypes = _(contentTypes)
+                // TODO this union will lead to problems if we ever allow deletion of published content Types
+                // because contentTypes that entered the list once will never get out again
+                .union(self.publishedContentTypes)
                 .sortBy(function(et) { return et.data.name.trim().toLowerCase(); })
                 .value();
-              self._publishedEntryTypesHash = _(self.publishedEntryTypes).map(function(et) {
+              self._publishedContentTypesHash = _(self.publishedContentTypes).map(function(et) {
                 return [et.data.sys.id, et];
               }).object().valueOf();
             });
           }
         });
       },
-      registerPublishedEntryType: function (publishedEntryType) {
-        if (!_.contains(this.publishedEntryTypes, publishedEntryType)) {
-          this.publishedEntryTypes.push(publishedEntryType);
-          this._publishedEntryTypesHash[publishedEntryType.getId()] = publishedEntryType;
-          $rootScope.$broadcast('newEntryTypePublished', publishedEntryType);
+      registerPublishedContentType: function (publishedContentType) {
+        if (!_.contains(this.publishedContentTypes, publishedContentType)) {
+          this.publishedContentTypes.push(publishedContentType);
+          this._publishedContentTypesHash[publishedContentType.getId()] = publishedContentType;
+          $rootScope.$broadcast('newContentTypePublished', publishedContentType);
         }
       },
-      removeEntryType: function(entryType) {
-        var index = _.indexOf(this.entryTypes, entryType);
+      removeContentType: function(contentType) {
+        var index = _.indexOf(this.contentTypes, contentType);
         if (index === -1) return;
-        this.entryTypes.splice(index, 1);
-        this.refreshPublishedEntryTypes();
+        this.contentTypes.splice(index, 1);
+        this.refreshPublishedContentTypes();
       },
       publishedTypeForEntry: function(entry) {
-        return this._publishedEntryTypesHash[entry.getEntryTypeId()];
+        return this._publishedContentTypesHash[entry.getContentTypeId()];
       },
       entryTitle: function(entry, localeCode) {
         var defaultTitle = 'Untitled';

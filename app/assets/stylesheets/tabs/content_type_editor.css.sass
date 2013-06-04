@@ -1,10 +1,10 @@
-.entry-type-editor
+.content-type-editor
   @extend %entity-editor
   .form-horizontal
     width: 95%
 
   .form-controls
-    .entry-type-field-list
+    .content-type-field-list
       padding-top: 5px
     table.result-list
       @extend %standalone-table
@@ -93,7 +93,7 @@
           +border-radius(3px 0 0 0)
         li:last-child
           +border-radius(0 0 0 3px)
-        .entry-type-description
+        .content-type-description
           position: absolute
           color: $light-gray
           display: none
@@ -106,7 +106,7 @@
             margin-top: 10px
             width: 100%
         li:hover
-          .entry-type-description
+          .content-type-description
             display: block
 
     // Validations

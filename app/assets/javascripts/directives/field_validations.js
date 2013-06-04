@@ -15,7 +15,7 @@ angular.module('contentful').directive('fieldValidations', function(analytics, v
         'range': 'Numerical Range',
         'regexp': 'Regular Expression',
         'in': 'One of',
-        'linkEntryType': 'Content Type'
+        'linkContentType': 'Content Type'
       }, function(value, key) {
         return _.contains(typeValidations, key);
       });

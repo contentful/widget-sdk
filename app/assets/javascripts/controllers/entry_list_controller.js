@@ -17,23 +17,23 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
   $scope.$watch('searchTerm',  function (term) {
     if (term === null) return;
     $scope.tab.params.list = 'all';
-    $scope.tab.params.entryTypeId = null;
+    $scope.tab.params.contentTypeId = null;
     $scope.paginator.page = 0;
     $scope.resetEntries();
   });
 
-  $scope.switchList = function(list, entryType){
+  $scope.switchList = function(list, contentType){
     $scope.searchTerm = null;
     var params = $scope.tab.params;
     var shouldReset =
       params.list == list &&
-      (!entryType || params.entryTypeId == entryType.getId());
+      (!contentType || params.contentTypeId == contentType.getId());
 
     if (shouldReset) {
       this.resetEntries();
     } else {
       this.paginator.page = 0;
-      params.entryTypeId = entryType ? entryType.getId() : null;
+      params.contentTypeId = contentType ? contentType.getId() : null;
       params.list = list;
     }
   };
@@ -58,7 +58,7 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
       page: scope.paginator.page,
       pageLength: scope.paginator.pageLength,
       list: scope.tab.params.list,
-      entryTypeId: scope.tab.params.entryTypeId,
+      contentTypeId: scope.tab.params.contentTypeId,
       spaceId: (scope.spaceContext.space && scope.spaceContext.space.getId())
     };
   }, function(pageParameters, old, scope){
@@ -100,8 +100,8 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
       queryObject['changed'] = 'true';
     } else if (this.tab.params.list == 'archived') {
       queryObject['sys.archivedAt[exists]'] = 'true';
-    } else if (this.tab.params.list == 'entryType') {
-      queryObject['sys.entryType.sys.id'] = this.tab.params.entryTypeId;
+    } else if (this.tab.params.list == 'contentType') {
+      queryObject['sys.contentType.sys.id'] = this.tab.params.contentTypeId;
     }
 
     if (!_.isEmpty(this.searchTerm)) {
@@ -162,7 +162,7 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
   // Development shorcut to quickly open an entry
 
   //$scope.$watch(function($scope){
-  //  return !(_.isEmpty($scope.entries) || _.isEmpty($scope.entryTypes));
+  //  return !(_.isEmpty($scope.entries) || _.isEmpty($scope.contentTypes));
   //}, function(dataReady){
   //  if (dataReady) {
   //    $scope.editEntry($scope.entries[0]);

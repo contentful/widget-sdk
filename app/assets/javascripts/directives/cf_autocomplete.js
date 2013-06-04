@@ -11,14 +11,14 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
       var validations = $scope.field.type === 'array' && $scope.field.items.validations ?
         $scope.field.items.validations :
         $scope.field.validations;
-      var linkEntryTypeValidation = _(validations)
+      var linkContentTypeValidation = _(validations)
         .map(validation.Validation.parse)
-        .where({name: 'linkEntryType'})
+        .where({name: 'linkContentType'})
         .first();
 
-      if (linkEntryTypeValidation) {
-        $scope.linkEntryType = _.find($scope.spaceContext.publishedEntryTypes, function(et) {
-          return et.getId() == linkEntryTypeValidation.entryTypeId;
+      if (linkContentTypeValidation) {
+        $scope.linkContentType = _.find($scope.spaceContext.publishedContentTypes, function(et) {
+          return et.getId() == linkContentTypeValidation.contentTypeId;
         });
       }
 
@@ -110,8 +110,8 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
         editor.activate();
       };
 
-      $scope.addNew = function(entryType) {
-        $scope.spaceContext.space.createEntry(entryType.getId(), {}, function(errCreate, entry){
+      $scope.addNew = function(contentType) {
+        $scope.spaceContext.space.createEntry(contentType.getId(), {}, function(errCreate, entry){
           if (errCreate) {
             console.log('Error creating entry', errCreate);
             return;
@@ -228,8 +228,8 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
 
         //queryObject['sys.publishedAt[gt]'] = 0;
 
-        if ($scope.linkEntryType)
-          queryObject['sys.entryType.sys.id'] = $scope.linkEntryType.getId();
+        if ($scope.linkContentType)
+          queryObject['sys.contentType.sys.id'] = $scope.linkContentType.getId();
 
         if ($scope.searchTerm && 0 < $scope.searchTerm.length) {
           queryObject.query = $scope.searchTerm;

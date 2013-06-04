@@ -10,7 +10,7 @@
 .type {{getFieldTypeName(field)}}
 .display(ot-path="['displayField']")
   %input(type="radio" name="displayField"
-    ng-model="entryType.data.displayField"
+    ng-model="contentType.data.displayField"
     value="{{field.id}}"
     ng-disabled="!displayEnabled(field)"
     ot-bind-model tooltip-placement="left"

@@ -21,13 +21,13 @@
           %span Starred
         %li.disabled(ng-class="{active: tab.params.list == 'createdByMe'}")
           %span Created by me
-    %div(ng-show="spaceContext.publishedEntryTypes.length > 0")
+    %div(ng-show="spaceContext.publishedContentTypes.length > 0")
       %header Content Types
       %ul.filter-list
-        %li(ng-class="{active: tab.params.entryTypeId == entryType.data.sys.id}"
-            ng-repeat="entryType in spaceContext.publishedEntryTypes"
-            ng-click="switchList('entryType', entryType)")
-          %span {{entryType.data.name}}
+        %li(ng-class="{active: tab.params.contentTypeId == contentType.data.sys.id}"
+            ng-repeat="contentType in spaceContext.publishedContentTypes"
+            ng-click="switchList('contentType', contentType)")
+          %span {{contentType.data.name}}
     -#
       %header Saved searches
       %ul.left-nav-filters

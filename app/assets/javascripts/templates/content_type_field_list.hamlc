@@ -6,7 +6,7 @@
       %th.cell.identifier Identifier
       %th.cell.type Type
       %th.cell.display
-        %div(ng-show="hasFields" ng-class="{resettable: entryType.data.displayField}")
+        %div(ng-show="hasFields" ng-class="{resettable: contentType.data.displayField}")
           %a.remove(ng-click="removeDisplayField()") Reset
           %span Title
       %th.cell.localized Localized
@@ -16,11 +16,11 @@
       %th.cell.actions
         %span(ng-show="hasFields") Editable
   %tbody
-    %tr.existing-field(ng-repeat="(index, field) in entryType.data.fields")
+    %tr.existing-field(ng-repeat="(index, field) in contentType.data.fields")
       %td(colspan="9")
         .field-settings
         .field-validations(ng-show="showValidations(field.id)")
-  %tfoot(ng-hide="entryType.data.fields.length > 0")
+  %tfoot(ng-hide="contentType.data.fields.length > 0")
     %tr.create-hint
       %td
       %td(colspan="8")
@@ -57,7 +57,7 @@
                       ng-click="selectType(type)"
                       dropdown-close="")
                     %span {{type.name}}
-                    .entry-type-description
+                    .content-type-description
                   
           .display &nbsp;
           .localized

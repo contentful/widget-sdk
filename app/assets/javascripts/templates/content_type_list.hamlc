@@ -3,7 +3,7 @@
 .tab-main
   .create-content-type-advice(ng-show="empty")
     %p Looks like you havent created any Content Types yet.
-    %button(ng-click="createEntryType()") Create Content Type
+    %button(ng-click="createContentType()") Create Content Type
   %table.result-list.main-header(ng-hide="empty")
     %thead
       %tr
@@ -15,18 +15,18 @@
   .main-results-wrapper(ng-hide="empty")
     %table.result-list.main-results
       %tbody
-        %tr(ng-repeat="entryType in spaceContext.entryTypes"
-            cf-click-local="editEntryType(entryType)")
+        %tr(ng-repeat="contentType in spaceContext.contentTypes"
+            cf-click-local="editContentType(contentType)")
           %td.cell-name
-            %span {{entryType.data.name}}
+            %span {{contentType.data.name}}
           %td.cell-by
-            %span {{numFields(entryType)}}
+            %span {{numFields(contentType)}}
           %td.cell-updated
-            %date.relative(datetime="{{entryType.data.sys.updatedAt}}")
+            %date.relative(datetime="{{contentType.data.sys.updatedAt}}")
           %td.cell-by
-            %span.cf-user(link="entryType.data.sys.updatedBy" as="updater")
+            %span.cf-user(link="contentType.data.sys.updatedBy" as="updater")
               {{updater.getName()}}
-          %td.cell-status(ng-class="statusClass(entryType)")
+          %td.cell-status(ng-class="statusClass(contentType)")
             .draft-wrapper
-              %span {{statusLabel(entryType)}}
+              %span {{statusLabel(contentType)}}
               .main-results-bar

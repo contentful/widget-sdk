@@ -97,12 +97,12 @@ angular.module('contentful').provider('analytics', function (environment) {
           fromSection: oldTab ? oldTab.section : null
         });
       },
-      modifiedEntryType: function (event, entryType, field, action) {
+      modifiedContentType: function (event, contentType, field, action) {
         var data = {};
-        if (entryType) {
+        if (contentType) {
           _.extend(data, {
-            entryTypeId: entryType.getId(),
-            entryTypeName: entryType.data.name
+            contentTypeId: contentType.getId(),
+            contentTypeName: contentType.data.name
           });
         }
         if (field) {
@@ -137,8 +137,8 @@ angular.module('contentful').provider('analytics', function (environment) {
       _idFromTab: function (tab) {
         if (tab.viewType === 'entry-editor') {
           return tab.params.entry.getId();
-        } else if (tab.viewType === 'entry-type-editor'){
-          return tab.params.entryType.getId();
+        } else if (tab.viewType === 'content-type-editor'){
+          return tab.params.contentType.getId();
         }
       },
       _trackView: function (tab) {
@@ -147,7 +147,7 @@ angular.module('contentful').provider('analytics', function (environment) {
           this.track('Viewed Page', {
             section: tab.section,
             viewType: tab.viewType});
-        } else if (t == 'entry-type-list') {
+        } else if (t == 'content-type-list') {
           this.track('Viewed Page', {
             section: tab.section,
             viewType: tab.viewType});
@@ -157,11 +157,11 @@ angular.module('contentful').provider('analytics', function (environment) {
             viewType: tab.viewType,
             entryId: tab.params.entry.getId(),
             mode: tab.params.mode});
-        } else if (t == 'entry-type-editor') {
+        } else if (t == 'content-type-editor') {
           this.track('Viewed Page', {
             section: tab.section,
             viewType: tab.viewType,
-            entryId: tab.params.entryType.getId(),
+            entryId: tab.params.contentType.getId(),
             mode: tab.params.mode});
         } else if (t == 'iframe') {
           var url = tab.params.url.replace(/access_token=(\w+)/, 'access_token=XXX');

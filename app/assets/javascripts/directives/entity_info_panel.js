@@ -6,7 +6,7 @@ angular.module('contentful').
       restrict: 'C',
       controller: function EntityInfoPanelCtrl($scope) {
         $scope.$watch('entry && spaceContext.publishedTypeForEntry(entry).data.name', function(name, old, scope) {
-          scope.entryTypeName = name;
+          scope.contentTypeName = name;
         });
 
         $scope.$watch('otDoc.snapshot.sys', function(sys) {
