@@ -40,11 +40,11 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
         });
       };
 
-      scope.$watch('otDisabled', function(otDisabled) {
-        if (otDisabled) {
-          marker.setDraggable(false);
-        } else {
+      scope.$watch('otEditable', function(otEditable) {
+        if (otEditable) {
           marker.setDraggable(true);
+        } else {
+          marker.setDraggable(false);
         }
       });
 
@@ -98,7 +98,7 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
       };
 
       google.maps.event.addListener(map, 'click', function(event){
-        if (!scope.location && !scope.otDisabled) {
+        if (!scope.location && scope.otEditable) {
           marker.setPosition(event.latLng);
           locationController.$setViewValue(event.latLng);
         }

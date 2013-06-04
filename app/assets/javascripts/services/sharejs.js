@@ -14,7 +14,7 @@ angular.module('contentful').provider('ShareJS', function ShareJSProvider(enviro
     url = e;
   };
 
-  this.$get = function(client) {
+  this.$get = function(client, $rootScope) {
     var _token;
     if (token) {
       _token = token;
@@ -26,6 +26,24 @@ angular.module('contentful').provider('ShareJS', function ShareJSProvider(enviro
     c.connection.socket.send = function (message) {
       return this.sendMap({JSON: angular.toJson(message)});
     };
+    c.connection.on('ok', function () {
+      //console.log('ShareJS connection ok', c.connection.state );
+      stateChangeHandler();
+    });
+    c.connection.on('error', function (e) {
+      //console.log('ShareJS connection error', c.connection.state, e);
+      stateChangeHandler(e);
+    });
+    c.connection.on('connect failed', function () {
+      //console.log('ShareJS connect failed', c.connection.state);
+      stateChangeHandler();
+    });
+
+    function stateChangeHandler(error) {
+      $rootScope.$apply(function (scope) {
+        scope.$broadcast('otConnectionStateChanged', c.connection.state, c.connection, error);
+      });
+    }
     return c;
   };
 });

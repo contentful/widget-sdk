@@ -35,6 +35,7 @@ angular.module('contentful').controller('SaveStatusCtrl', function ($scope) {
         scope.saveStatus = 'not-allowed';
       } else {
         scope.saveStatus = 'no-connection';
+        // TODO distinction between connecting and stopped according to sharejs connection state
       }
     }
   });
