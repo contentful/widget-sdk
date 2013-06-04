@@ -9,16 +9,17 @@ angular.module('contentful').controller('SaveStatusCtrl', function ($scope) {
     if (detachHandlers) detachHandlers();
 
     if (doc) {
-      var changeListener = doc.on('change',   function (op) { startSave('change'  , op); });
-      var remoteListener = doc.on('remoteop', function (op) { startSave('remoteop', op); });
-      var ackListener    = doc.on('change',   function () { stopSave(); });
+      doc.on('change',     changeHandler);
+      doc.on('remoteop', remoteopHandler);
+      doc.on('change',       stopHandler);
       var _doc = doc;
 
       detachHandlers = function () {
-        _doc.removeListener(changeListener);
-        _doc.removeListener(remoteListener);
-        _doc.removeListener(ackListener);
-        ackListener = changeListener = remoteListener = detachHandlers = _doc = null;
+        _doc.removeListener('change',      changeHandler);
+        _doc.removeListener('remoteop',  remoteopHandler);
+        _doc.removeListener('change',        stopHandler);
+        _doc = null;
+        detachHandlers = null;
       };
     }
   });
@@ -40,10 +41,6 @@ angular.module('contentful').controller('SaveStatusCtrl', function ($scope) {
     }
   });
 
-  $scope.$on('destroy', function () {
-    detachHandlers();
-  });
-
   var lastOp, saveStartTime, willBeSaving, willBeStopping;
 
   var stopImmediate = function () {
@@ -52,6 +49,26 @@ angular.module('contentful').controller('SaveStatusCtrl', function ($scope) {
     $scope.$digest();
   };
 
+  function changeHandler(op) {
+    startSave('change', op);
+  }
+
+  function remoteopHandler(op) {
+    startSave('remoteop', op);
+  }
+
+  function stopHandler() {
+    stopSave();
+  }
+
+  // A local or remote change triggers a 'change' event here
+  // op gets saved, time saved
+  // in the next tick, we set the saving flag to true
+  //
+  // else:
+  // if the change was caused remotely, not locally:
+  //  cancel setting the saving flag to true
+  //  reset save start time
   function startSave(event, op) {
     if (event === 'change') {
       lastOp = op;
@@ -67,10 +84,20 @@ angular.module('contentful').controller('SaveStatusCtrl', function ($scope) {
     }
   }
 
-  var stopSave = function () {
+  // gets called immediately when a change happens
+  // if the start of a saving process was recorded earlier,
+  //   determine how much time has passed
+  //   if more than 900 ms have passed, reset saving flag
+  //   if less than 900 ms have passed, retry again after the remaining time
+  // if no saving process has started yet
+  //   retry stopping in 900ms
+  function stopSave() {
     if (!saveStartTime) {
       clearTimeout(willBeStopping);
       willBeStopping = setTimeout(stopSave, 900);
+      // TODO is it really necessary to create this endless loop here?
+      //      won't the timout be triggered automatically again as soon
+      //      as the next change event comes in?
     } else {
       var now = new Date();
       var timePassed = now - saveStartTime;
@@ -81,5 +108,81 @@ angular.module('contentful').controller('SaveStatusCtrl', function ($scope) {
         willBeStopping = setTimeout(stopSave, 900 - timePassed);
       }
     }
-  };
+  }
+
+  $scope.$on('destroy', function () {
+    if (detachHandlers) detachHandlers();
+    clearTimeout(willBeSaving);
+    clearTimeout(willBeStopping);
+  });
+
+  // A bit more explanation (See bottom for TL;DR)
+  //
+  // Scenario 1: Local change
+  // - startSave gets called with 'change' and the op
+  //   - startTime, op gets recorded
+  //   - saving state is queued
+  // - stopSave is called
+  //   - 900ms haven't passed yet
+  //   - will try again in 900ms
+  // NEXT TICK
+  // - saving state is set to true
+  // 900ms later
+  // - stopSave is called
+  //   - resets saving state
+  //   - clears startTime
+  //
+  // Scenario 2: 2 Local changes
+  //
+  // - startSave gets called with 'change' and the op
+  //   - startTime, op gets recorded
+  //   - saving state is queued
+  // - stopSave is called
+  //   - 900ms haven't passed yet
+  //   - will try again in 900ms
+  // NEXT TICK
+  // - saving state is set to true
+  // At 200ms
+  // - startSave gets called with 'change' and the second op
+  //   - startTime is updated to 200ms later
+  //   - last op is recorded
+  //   - saving state is queued
+  // - stopSave get called with change and the second op
+  //   - 900ms haven't passed yet
+  //   - the timeout from the first op is stopped
+  //   - a new timeout is set from the upated saveStartTime
+  // NEXT TICK
+  // - saving state is set to true, again
+  // 900ms later
+  // - stopSave is called
+  //   - resets saving state
+  //   - clears startTime
+  //
+  // Scenario 3: Remote change
+  //
+  // - startSave gets called with 'change' and the op
+  //   - startTime, op gets recorded
+  //   - saving state is queued
+  // - stopSave is called
+  //   - 900ms haven't passed yet
+  //   - will try again in 900ms
+  // - startSave gets called with 'remoteOp' and the same op
+  //   - the queue for setting the saving state is cleared
+  //   - saveStartTime is cleared since we didn't actually start saving
+  // 900ms later
+  // - if, in the meantime no other actual saving operation was started
+  //   saveStarttime will be null
+  //   - we will try again in 900ms
+  //
+  // TL;DR
+  //
+  // stopSave
+  // So, every 900ms it tests wether we started a saving operation
+  // If we started a saving operation the timeout is extended so that it
+  // times out 900ms after the last operation
+  //
+  // startSave
+  // Determining wether a change was remote or local relies on the fact that
+  // within one tick a remote operating causes TWO events, "change" and "remoteOp"
+  // so, in startSave we wait for the remoteOp before actually doing anything.
 });
