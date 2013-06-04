@@ -71,13 +71,13 @@ angular.module('contentful').provider('analytics', function (environment) {
           userSubscriptionSubscriptionPlanName:   user.subscription.subscriptionPlan.name
         };
       },
-      setBucketData: function (bucket) {
-        this._bucketData = {
-          bucketSubscriptionKey:                  bucket.data.subscription.sys.id,
-          bucketSubscriptionState:                bucket.data.subscription.state,
-          bucketSubscriptionInvoiceState:         bucket.data.subscription.invoiceState,
-          bucketSubscriptionSubscriptionPlanKey:  bucket.data.subscription.subscriptionPlan.sys.id,
-          bucketSubscriptionSubscriptionPlanName: bucket.data.subscription.subscriptionPlan.name
+      setSpaceData: function (space) {
+        this._spaceData = {
+          spaceSubscriptionKey:                  space.data.subscription.sys.id,
+          spaceSubscriptionState:                space.data.subscription.state,
+          spaceSubscriptionInvoiceState:         space.data.subscription.invoiceState,
+          spaceSubscriptionSubscriptionPlanKey:  space.data.subscription.subscriptionPlan.sys.id,
+          spaceSubscriptionSubscriptionPlanName: space.data.subscription.subscriptionPlan.name
         };
       },
       tabAdded: function (tab) {
@@ -172,7 +172,7 @@ angular.module('contentful').provider('analytics', function (environment) {
       },
       track: function (event, data) {
         if (!this._disabled) {
-          analytics.track(event, _.merge({},data, this._userData, this._bucketData));
+          analytics.track(event, _.merge({},data, this._userData, this._spaceData));
         }
         //console.log('analytics.track', event, data);
       }

@@ -21,11 +21,11 @@
           %span Starred
         %li.disabled(ng-class="{active: tab.params.list == 'createdByMe'}")
           %span Created by me
-    %div(ng-show="bucketContext.publishedEntryTypes.length > 0")
+    %div(ng-show="spaceContext.publishedEntryTypes.length > 0")
       %header Content Types
       %ul.filter-list
         %li(ng-class="{active: tab.params.entryTypeId == entryType.data.sys.id}"
-            ng-repeat="entryType in bucketContext.publishedEntryTypes"
+            ng-repeat="entryType in spaceContext.publishedEntryTypes"
             ng-click="switchList('entryType', entryType)")
           %span {{entryType.data.name}}
     -#
@@ -64,9 +64,9 @@
             -#%td.cell-favorite
               %i.ss-star
             %td.cell-type
-              %span {{bucketContext.publishedTypeForEntry(entry).data.name}}
+              %span {{spaceContext.publishedTypeForEntry(entry).data.name}}
             %td.cell-name
-              %span {{bucketContext.entryTitle(entry)}}
+              %span {{spaceContext.entryTitle(entry)}}
             %td.cell-updated
               %date.relative(datetime="{{entry.data.sys.updatedAt}}")
             %td.cell-by

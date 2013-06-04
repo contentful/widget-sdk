@@ -9,11 +9,11 @@ describe('Routing service', function () {
     $log.assertEmpty();
   }));
 
-  describe('Bucket Controller', function () {
-    var bucketController;
-    beforeEach(inject(function ($controller, $rootScope, BucketContext) {
-      $rootScope.bucketContext = new BucketContext({
-        iAmABucket: true,
+  describe('Space Controller', function () {
+    var spaceController;
+    beforeEach(inject(function ($controller, $rootScope, SpaceContext) {
+      $rootScope.spaceContext = new SpaceContext({
+        iAmASpace: true,
         getPublishLocales: function () {
           return [];
         },
@@ -33,19 +33,19 @@ describe('Routing service', function () {
           _.defer(callback, null, []);
         }
       });
-      spyOn($rootScope.bucketContext.tabList, 'add').andReturn({
+      spyOn($rootScope.spaceContext.tabList, 'add').andReturn({
         activate: function () { }
       });
       $controller('TabViewCtrl', {$scope: $rootScope});
     }));
 
-    it('should visit the entryList if only the bucket was given', inject(function ($location, $rootScope, $controller) {
-      $location.path('/buckets/123');
+    it('should visit the entryList if only the space was given', inject(function ($location, $rootScope, $controller) {
+      $location.path('/spaces/123');
       $rootScope.$apply(); // Create route
 
       spyOn($rootScope, 'visitView');
       this.async(function (done) {
-        bucketController = $controller('BucketCtrl', {$scope: $rootScope});
+        spaceController = $controller('SpaceCtrl', {$scope: $rootScope});
         $rootScope.$apply(); // Trigger watcher initializing the Controller
         _.defer(function () { // Give callbacks a chance to return
           try {
@@ -61,11 +61,11 @@ describe('Routing service', function () {
 
   describe('Client Controller', function () {
     xit('should update the route when a tab is activated');
-    xit('should change the bucket if the route was changed to a different bucket');
+    xit('should change the space if the route was changed to a different space');
     xit('should honor route.noNavigate');
   });
 
-  describe('Bucket Controller', function () {
+  describe('Space Controller', function () {
     xit('should find an existing tab if the route was changed');
     xit('should open a tab if the route was changed');
     xit('should honor route.noNavigate');

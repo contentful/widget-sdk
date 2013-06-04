@@ -60,7 +60,7 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
       pageLength: scope.paginator.pageLength,
       list: scope.tab.params.list,
       entryTypeId: scope.tab.params.entryTypeId,
-      bucketId: (scope.bucketContext.bucket && scope.bucketContext.bucket.getId())
+      spaceId: (scope.spaceContext.space && scope.spaceContext.space.getId())
     };
   }, function(pageParameters, old, scope){
     scope.resetEntries();
@@ -72,7 +72,7 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
 
     this.reloadInProgress = true;
     var stopSpin = cfSpinner.start();
-    this.bucketContext.bucket.getEntries(this.buildQuery(), function(err, entries, stats) {
+    this.spaceContext.space.getEntries(this.buildQuery(), function(err, entries, stats) {
       scope.reloadInProgress = false;
       if (err) return;
       scope.paginator.numEntries = stats.total;
@@ -128,7 +128,7 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
     this.paginator.page++;
     this.pauseReset();
     var stopSpin = cfSpinner.start();
-    this.bucketContext.bucket.getEntries(this.buildQuery(), function(err, entries, stats) {
+    this.spaceContext.space.getEntries(this.buildQuery(), function(err, entries, stats) {
       scope.reloadInProgress = false;
       if (err) {
         scope.paginator.page--;

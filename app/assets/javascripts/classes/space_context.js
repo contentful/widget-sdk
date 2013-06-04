@@ -1,15 +1,15 @@
-angular.module('contentful').factory('BucketContext', function(TabList, $rootScope){
+angular.module('contentful').factory('SpaceContext', function(TabList, $rootScope){
   'use strict';
 
-  function BucketContext(bucket){
+  function SpaceContext(space){
     this.tabList = new TabList();
-    this.bucket = bucket;
+    this.space = space;
     this.refreshLocales();
   }
 
-  BucketContext.prototype = {
+  SpaceContext.prototype = {
       tabList: null,
-      bucket: null,
+      space: null,
 
       entryTypes: [],
       publishedEntryTypes: [],
@@ -21,9 +21,9 @@ angular.module('contentful').factory('BucketContext', function(TabList, $rootSco
       activeLocales: [],
 
       refreshLocales: function () {
-        if (this.bucket) {
-          this.publishLocales = this.bucket.getPublishLocales();
-          this.defaultLocale  = this.bucket.getDefaultLocale();
+        if (this.space) {
+          this.publishLocales = this.space.getPublishLocales();
+          this.defaultLocale  = this.space.getDefaultLocale();
           this.localesActive[this.defaultLocale.code] = true;
         } else {
           this.publishLocales = [];
@@ -44,13 +44,13 @@ angular.module('contentful').factory('BucketContext', function(TabList, $rootSco
       },
 
       refreshEntryTypes: function() {
-        if (this.bucket) {
-          var bucketContext = this;
-          this.bucket.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes) {
+        if (this.space) {
+          var spaceContext = this;
+          this.space.getEntryTypes({order: 'sys.id', limit: 1000}, function(err, entryTypes) {
             if (err) return;
             $rootScope.$apply(function() {
-              bucketContext.entryTypes = entryTypes;
-              bucketContext.refreshPublishedEntryTypes();
+              spaceContext.entryTypes = entryTypes;
+              spaceContext.refreshPublishedEntryTypes();
             });
           });
         } else {
@@ -62,7 +62,7 @@ angular.module('contentful').factory('BucketContext', function(TabList, $rootSco
       },
       refreshPublishedEntryTypes: function() {
         var self = this;
-        this.bucket.getPublishedEntryTypes(function (err, entryTypes) {
+        this.space.getPublishedEntryTypes(function (err, entryTypes) {
           if (err) {
             console.error('Could not get published entry types', err);
           } else {
@@ -99,7 +99,7 @@ angular.module('contentful').factory('BucketContext', function(TabList, $rootSco
       entryTitle: function(entry, localeCode) {
         var defaultTitle = 'Untitled';
 
-        localeCode = localeCode || this.bucket.getDefaultLocale().code;
+        localeCode = localeCode || this.space.getDefaultLocale().code;
 
         try {
           var displayField = this.publishedTypeForEntry(entry).data.displayField;
@@ -120,5 +120,5 @@ angular.module('contentful').factory('BucketContext', function(TabList, $rootSco
 
     };
 
-    return BucketContext;
+    return SpaceContext;
 });

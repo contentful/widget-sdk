@@ -1,14 +1,14 @@
 'use strict';
 
 angular.module('contentful').provider('routing', function ($routeProvider) {
-  $routeProvider.when('/buckets/:bucketId', {viewType: null, noNavigate: true});
-  $routeProvider.when('/buckets/:bucketId/entries', {viewType: 'entry-list'});
-  $routeProvider.when('/buckets/:bucketId/entries/:entryId', {viewType: 'entry-editor'});
-  $routeProvider.when('/buckets/:bucketId/entry_types', {viewType: 'entry-type-list'});
-  $routeProvider.when('/buckets/:bucketId/entry_types/:entryTypeId', {viewType: 'entry-type-editor'});
-  $routeProvider.when('/buckets/:bucketId/api_keys', {viewType: 'content-delivery'});
-  $routeProvider.when('/buckets/:bucketId/api_keys/:apiKeyId', {viewType: 'api-key-editor'});
-  $routeProvider.otherwise({noBucket: true});
+  $routeProvider.when('/spaces/:spaceId', {viewType: null, noNavigate: true});
+  $routeProvider.when('/spaces/:spaceId/entries', {viewType: 'entry-list'});
+  $routeProvider.when('/spaces/:spaceId/entries/:entryId', {viewType: 'entry-editor'});
+  $routeProvider.when('/spaces/:spaceId/entry_types', {viewType: 'entry-type-list'});
+  $routeProvider.when('/spaces/:spaceId/entry_types/:entryTypeId', {viewType: 'entry-type-editor'});
+  $routeProvider.when('/spaces/:spaceId/api_keys', {viewType: 'content-delivery'});
+  $routeProvider.when('/spaces/:spaceId/api_keys/:apiKeyId', {viewType: 'api-key-editor'});
+  $routeProvider.otherwise({noSpace: true});
 
   this.$get = function ($rootScope, $route, $location) {
     function Routing(){}
@@ -19,21 +19,21 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
         return $route.current;
       },
 
-      getBucketId: function () {
-        if (this.getRoute().noBucket) {
+      getSpaceId: function () {
+        if (this.getRoute().noSpace) {
           return null;
         } else {
-          return this.getRoute().params.bucketId;
+          return this.getRoute().params.spaceId;
         }
       },
 
-      setBucket: function (bucket) {
-        $location.path('/buckets/'+bucket.getId());
+      setSpace: function (space) {
+        $location.path('/spaces/'+space.getId());
       },
 
-      setTab: function (tab, bucket) {
-        var bucketId = bucket ? bucket.getId() : this.getBucketId();
-        var path = '/buckets/'+bucketId;
+      setTab: function (tab, space) {
+        var spaceId = space ? space.getId() : this.getSpaceId();
+        var path = '/spaces/'+spaceId;
         if (tab.viewType == 'entry-editor') {
           path = path + '/entries/' + tab.params.entry.getId();
         } else if (tab.viewType == 'entry-list') {

@@ -4,7 +4,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
 
   $scope.$on('tabClosed', function (event, tab) {
     var scope = event.currentScope;
-    if (scope.bucketContext.tabList.items.length === 0) {
+    if (scope.spaceContext.tabList.items.length === 0) {
       $scope.visitView('entry-list');
     } else if (tab.list.numVisible() === 0) {
       if (tab.viewType == 'entry-editor') {
@@ -18,29 +18,29 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
   });
 
   $scope.editEntry = function(entry) {
-    var editor = _.find($scope.bucketContext.tabList.items, function(tab){
+    var editor = _.find($scope.spaceContext.tabList.items, function(tab){
       return (tab.viewType == 'entry-editor' && tab.params.entry.getId() == entry.getId());
     });
     if (!editor) {
-      editor = $scope.bucketContext.tabList.add({
+      editor = $scope.spaceContext.tabList.add({
         viewType: 'entry-editor',
         section: 'entries',
         params: {
           entry: entry,
           mode: 'edit'
         },
-        title: $scope.bucketContext.entryTitle(entry)
+        title: $scope.spaceContext.entryTitle(entry)
       });
     }
     editor.activate();
   };
 
   $scope.editEntryType = function(entryType) {
-    var editor = _($scope.bucketContext.tabList.items).find(function(tab){
+    var editor = _($scope.spaceContext.tabList.items).find(function(tab){
       return (tab.viewType == 'entry-type-editor' && tab.params.entryType == entryType);
     });
     if (!editor) {
-      editor = $scope.bucketContext.tabList.add({
+      editor = $scope.spaceContext.tabList.add({
         viewType: 'entry-type-editor',
         section: 'entryTypes',
         params: {
@@ -54,11 +54,11 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
   };
 
   $scope.editApiKey = function(apiKey) {
-    var editor = _.find($scope.bucketContext.tabList.items, function(tab){
+    var editor = _.find($scope.spaceContext.tabList.items, function(tab){
       return (tab.viewType == 'api-key-editor' && tab.params.apiKey.getId() == apiKey.getId());
     });
     if (!editor) {
-      editor = $scope.bucketContext.tabList.add({
+      editor = $scope.spaceContext.tabList.add({
         viewType: 'api-key-editor',
         section: 'contentDelivery',
         params: {
@@ -72,7 +72,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
 
 
   $scope.findTabForRoute = function (route) {
-    return _.find($scope.bucketContext.tabList.items, function (tab) {
+    return _.find($scope.spaceContext.tabList.items, function (tab) {
       return tab.viewType == route.viewType &&
              (!tab.params ||
               tab.params.entryType && tab.params.entryType.getId() === route.params.entryTypeId ||
@@ -89,7 +89,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
         section: 'entries',
         hidden: true,
         params: {
-          bucketId: $scope.bucketContext.bucket.getId(),
+          spaceId: $scope.spaceContext.space.getId(),
           list: 'all'
         },
         title: 'Entries',
@@ -105,18 +105,18 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
         canClose: true
       };
       analytics.track('Clicked "Content Model"');
-    } else if (viewType == 'bucket-settings'){
+    } else if (viewType == 'space-settings'){
       options = {
         viewType: 'iframe',
-        section: 'bucketSettings',
+        section: 'spaceSettings',
         hidden: true,
         params: {
-          url: authentication.bucketSettingsUrl($scope.bucketContext.bucket.getId()),
+          url: authentication.spaceSettingsUrl($scope.spaceContext.space.getId()),
           fullscreen: true
         },
         title: 'Settings'
       };
-      analytics.track('Clicked "Bucket Settings"');
+      analytics.track('Clicked "Space Settings"');
     } else if (viewType == 'content-delivery') {
       options = {
         viewType: 'content-delivery',
@@ -128,11 +128,11 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
       analytics.track('Clicked "Content Delivery"');
     }
 
-    var tab = _.find($scope.bucketContext.tabList.items, function(tab) {
+    var tab = _.find($scope.spaceContext.tabList.items, function(tab) {
       return tab.viewType === options.viewType && tab.section === options.section;
     });
 
-    tab = tab || $scope.bucketContext.tabList.add(options);
+    tab = tab || $scope.spaceContext.tabList.add(options);
     tab.activate();
   };
 });

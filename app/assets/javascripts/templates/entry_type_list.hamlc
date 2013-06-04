@@ -15,7 +15,7 @@
   .main-results-wrapper(ng-hide="empty")
     %table.result-list.main-results
       %tbody
-        %tr(ng-repeat="entryType in bucketContext.entryTypes"
+        %tr(ng-repeat="entryType in spaceContext.entryTypes"
             cf-click-local="editEntryType(entryType)")
           %td.cell-name
             %span {{entryType.data.name}}

@@ -5,7 +5,7 @@ angular.module('contentful').
     return {
       restrict: 'C',
       controller: function EntityInfoPanelCtrl($scope) {
-        $scope.$watch('entry && bucketContext.publishedTypeForEntry(entry).data.name', function(name, old, scope) {
+        $scope.$watch('entry && spaceContext.publishedTypeForEntry(entry).data.name', function(name, old, scope) {
           scope.entryTypeName = name;
         });
 

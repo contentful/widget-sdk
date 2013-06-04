@@ -30,7 +30,7 @@
 
   %div(ng-switch-when="linkEntryType")
     %select(ng-model="validation.linkEntryType"
-            ng-options="et.getId() as et.data.name for et in bucketContext.publishedEntryTypes" ng-change="updateDoc()")
+            ng-options="et.getId() as et.data.name for et in spaceContext.publishedEntryTypes" ng-change="updateDoc()")
 
 
   %div(ng-switch-default="")

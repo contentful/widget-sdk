@@ -5,7 +5,7 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
   // We can query the entry instead of reimplementing the checks heere
 
   function title() {
-    return '"' + $scope.bucketContext.entryTitle($scope.entry) + '"';
+    return '"' + $scope.spaceContext.entryTitle($scope.entry) + '"';
   }
 
   $scope.delete = function () {

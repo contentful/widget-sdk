@@ -16,12 +16,12 @@
         %span Languages
       .dropdown-menu(style="display:none")
         %p
-          Default: {{bucketContext.bucket.getDefaultLocale().name}}
+          Default: {{spaceContext.space.getDefaultLocale().name}}
         .separator
         %ul
-          %li(ng-repeat="locale in bucketContext.publishLocales")
+          %li(ng-repeat="locale in spaceContext.publishLocales")
             %label
-              %input(type="checkbox" ng-model="bucketContext.localesActive[locale.code]")
+              %input(type="checkbox" ng-model="spaceContext.localesActive[locale.code]")
               {{locale.name}}
 
   .editor-top-right

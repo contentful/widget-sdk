@@ -68,8 +68,8 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       return authApp + 'integrations/zendesk/login';
     },
 
-    bucketSettingsUrl: function (bucketId) {
-      return authApp + 'settings/buckets/'+bucketId+'/edit?access_token='+this.token;
+    spaceSettingsUrl: function (spaceId) {
+      return authApp + 'settings/spaces/'+spaceId+'/edit?access_token='+this.token;
     },
 
     redirectToLogin: function() {

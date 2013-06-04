@@ -1,16 +1,16 @@
 'use strict';
 
-angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope, analytics, routing) {
-  $scope.$watch('bucketContext', function(bucketContext, old, scope){
-    var bucket = bucketContext.bucket;
-    scope.bucketContext.tabList.closeAll();
+angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, analytics, routing) {
+  $scope.$watch('spaceContext', function(spaceContext, old, scope){
+    var space = spaceContext.space;
+    scope.spaceContext.tabList.closeAll();
 
-    if (bucket) openRoute();
+    if (space) openRoute();
   });
 
   $scope.$on('$routeChangeSuccess', function (event, route) {
     if (route.noNavigate) return;
-    if ($scope.bucketContext.bucket && routing.getBucketId() == $scope.getCurrentBucketId()) openRoute();
+    if ($scope.spaceContext.space && routing.getSpaceId() == $scope.getCurrentSpaceId()) openRoute();
   });
 
   function openRoute() {
@@ -21,7 +21,7 @@ angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope
       else if      (route.viewType == 'entry-list')
         $scope.visitView('entry-list');
       else if (route.viewType == 'entry-editor')
-        $scope.bucketContext.bucket.getEntry(route.params.entryId, function (err, entry) {
+        $scope.spaceContext.space.getEntry(route.params.entryId, function (err, entry) {
           $scope.$apply(function (scope) {
             if (err) scope.visitView('entry-list');
             else     scope.editEntry(entry);
@@ -30,7 +30,7 @@ angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope
       else if (route.viewType == 'entry-type-list')
         $scope.visitView('entry-type-list');
       else if (route.viewType == 'entry-type-editor')
-        $scope.bucketContext.bucket.getEntryType(route.params.entryTypeId, function (err, entryType) {
+        $scope.spaceContext.space.getEntryType(route.params.entryTypeId, function (err, entryType) {
           $scope.$apply(function (scope) {
             if (err) scope.visitView('entry-type-list');
             else     scope.editEntryType(entryType);
@@ -39,14 +39,14 @@ angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope
       else if (route.viewType == 'content-delivery')
         $scope.visitView('content-delivery');
       else if (route.viewType == 'api-key-editor')
-        $scope.bucketContext.bucket.getApiKey(route.params.apiKeyId, function(err, apiKey) {
+        $scope.spaceContext.space.getApiKey(route.params.apiKeyId, function(err, apiKey) {
           $scope.$apply(function (scope) {
             if (err) scope.visitView('content-delivery');
             else     scope.editApiKey(apiKey);
           });
         });
       else
-        $scope.bucketContext.bucket.getPublishedEntryTypes(function(err, ets) {
+        $scope.spaceContext.space.getPublishedEntryTypes(function(err, ets) {
           $scope.$apply(function (scope) {
             if (_.isEmpty(ets)) scope.visitView('entry-type-list');
             else                scope.visitView('entry-list');
@@ -55,17 +55,17 @@ angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope
   }
 
   $scope.$watch(function (scope) {
-    if (scope.bucketContext && scope.bucketContext.bucket) {
-      return _.map(scope.bucketContext.bucket.getPublishLocales(),function (locale) {
+    if (scope.spaceContext && scope.spaceContext.space) {
+      return _.map(scope.spaceContext.space.getPublishLocales(),function (locale) {
         return locale.code;
       });
     }
   }, function (codes, old, scope) {
-    if (codes) scope.bucketContext.refreshLocales();
+    if (codes) scope.spaceContext.refreshLocales();
   }, true);
-  $scope.$watch('bucketContext.localesActive', 'bucketContext.refreshActiveLocales()', true);
-  $scope.$watch('bucketContext', function(bucket, o, scope) {
-    scope.bucketContext.refreshEntryTypes();
+  $scope.$watch('spaceContext.localesActive', 'spaceContext.refreshActiveLocales()', true);
+  $scope.$watch('spaceContext', function(space, o, scope) {
+    scope.spaceContext.refreshEntryTypes();
   });
 
   $scope.logoClicked = function () {
@@ -73,23 +73,23 @@ angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope
   };
 
   $scope.$on('entityDeleted', function (event, entity) {
-    var bucketScope = event.currentScope;
-    if (event.targetScope !== bucketScope) {
-      bucketScope.$broadcast('entityDeleted', entity);
+    var spaceScope = event.currentScope;
+    if (event.targetScope !== spaceScope) {
+      spaceScope.$broadcast('entityDeleted', entity);
     }
   });
 
   $scope.createEntry = function(entryType) {
     var scope = this;
-    scope.bucketContext.bucket.createEntry(entryType.getId(), {}, function(err, entry){
+    scope.spaceContext.space.createEntry(entryType.getId(), {}, function(err, entry){
       if (!err) {
         scope.$apply(function(scope){
-          scope.bucketContext.tabList.add({
+          scope.spaceContext.tabList.add({
             viewType: 'entry-editor',
             section: 'entries',
             params: {
               entry: entry,
-              bucket: scope.bucketContext.bucket,
+              space: scope.spaceContext.space,
               mode: 'create'
             },
             title: 'New Entry'
@@ -99,8 +99,8 @@ angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope
         console.log('Error creating entry', err);
       }
       analytics.track('Selected Add-Button', {
-        currentSection: scope.bucketContext.tabList.currentSection(),
-        currentViewType: scope.bucketContext.tabList.currentViewType(),
+        currentSection: scope.spaceContext.tabList.currentSection(),
+        currentViewType: scope.spaceContext.tabList.currentViewType(),
         entityType: 'entry',
         entitySubType: entryType.getId()
       });
@@ -114,15 +114,15 @@ angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope
       fields: [],
       name: ''
     };
-    scope.bucketContext.bucket.createEntryType(data, function(err, entryType){
+    scope.spaceContext.space.createEntryType(data, function(err, entryType){
       if (!err) {
         scope.$apply(function(scope){
-          scope.bucketContext.tabList.add({
+          scope.spaceContext.tabList.add({
             viewType: 'entry-type-editor',
             section: 'entryTypes',
             params: {
               entryType: entryType,
-              bucket: scope.bucketContext.bucket,
+              space: scope.spaceContext.space,
               mode: 'create'
             },
             title: 'New Content Type'
@@ -132,8 +132,8 @@ angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope
         console.log('Error creating entryType', err);
       }
       analytics.track('Selected Add-Button', {
-        currentSection: scope.bucketContext.tabList.currentSection(),
-        currentViewType: scope.bucketContext.tabList.currentViewType(),
+        currentSection: scope.spaceContext.tabList.currentSection(),
+        currentViewType: scope.spaceContext.tabList.currentViewType(),
         entityType: 'entryType'
       });
     });
@@ -141,8 +141,8 @@ angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope
 
   $scope.createApiKey = function() {
     var scope = this;
-    var apiKey = scope.bucketContext.bucket.createBlankApiKey();
-    scope.bucketContext.tabList.add({
+    var apiKey = scope.spaceContext.space.createBlankApiKey();
+    scope.spaceContext.tabList.add({
       viewType: 'api-key-editor',
       section: 'contentDelivery',
       params: {
@@ -151,8 +151,8 @@ angular.module('contentful').controller('BucketCtrl', function BucketCtrl($scope
       }
     }).activate();
     analytics.track('Selected Add-Button', {
-      currentSection: scope.bucketContext.tabList.currentSection(),
-      currentViewType: scope.bucketContext.tabList.currentViewType(),
+      currentSection: scope.spaceContext.tabList.currentSection(),
+      currentViewType: scope.spaceContext.tabList.currentViewType(),
       entityType: 'apiKey'
     });
   };

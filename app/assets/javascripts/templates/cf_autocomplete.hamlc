@@ -18,7 +18,7 @@
       New
     %a.dropdown-menu
       %ul
-        %li(ng-repeat="entryType in bucketContext.publishedEntryTypes"
+        %li(ng-repeat="entryType in spaceContext.publishedEntryTypes"
             ng-click="addNew(entryType)"
             dropdown-close="")
           {{entryType.data.name}}
@@ -43,9 +43,9 @@
             cf-click-local="pick(entry)"
             ng-class="{selected: entry==entries[selectedItem]}")
           %td.cell-type
-            %span {{bucketContext.publishedTypeForEntry(entry).data.name}}
+            %span {{spaceContext.publishedTypeForEntry(entry).data.name}}
           %td.cell-name
-            %span {{bucketContext.entryTitle(entry)}}
+            %span {{spaceContext.entryTitle(entry)}}
           %td.cell-by
             %span.cf-user(link="entry.data.sys.updatedBy" as="updater")
               {{updater.getName()}}

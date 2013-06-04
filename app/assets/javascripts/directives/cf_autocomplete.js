@@ -17,7 +17,7 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
         .first();
 
       if (linkEntryTypeValidation) {
-        $scope.linkEntryType = _.find($scope.bucketContext.publishedEntryTypes, function(et) {
+        $scope.linkEntryType = _.find($scope.spaceContext.publishedEntryTypes, function(et) {
           return et.getId() == linkEntryTypeValidation.entryTypeId;
         });
       }
@@ -93,25 +93,25 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
       };
 
       $scope.visitLink = function(entry) {
-        var editor = _.find($scope.bucketContext.tabList.items, function(tab){
+        var editor = _.find($scope.spaceContext.tabList.items, function(tab){
           return (tab.viewType == 'entry-editor' && tab.params.entry.getId() == entry.getId());
         });
         if (!editor) {
-          editor = $scope.bucketContext.tabList.add({
+          editor = $scope.spaceContext.tabList.add({
             viewType: 'entry-editor',
             section: 'entries',
             params: {
               entry: entry,
               mode: 'edit'
             },
-            title: this.bucketContext.entryTitle(entry)
+            title: this.spaceContext.entryTitle(entry)
           });
         }
         editor.activate();
       };
 
       $scope.addNew = function(entryType) {
-        $scope.bucketContext.bucket.createEntry(entryType.getId(), {}, function(errCreate, entry){
+        $scope.spaceContext.space.createEntry(entryType.getId(), {}, function(errCreate, entry){
           if (errCreate) {
             console.log('Error creating entry', errCreate);
             return;
@@ -124,12 +124,12 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
               });
               return;
             }
-            $scope.bucketContext.tabList.add({
+            $scope.spaceContext.tabList.add({
               viewType: 'entry-editor',
               section: 'entries',
               params: {
                 entry: entry,
-                bucket: $scope.bucketContext.bucket,
+                space: $scope.spaceContext.space,
                 mode: 'create'
               },
               title: 'New Entry'
@@ -144,7 +144,7 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
           // TODO case where value is null? Shouldn't occur, but still...
           var ids = _.map(value, function (link) { return link.sys.id; }).join(',');
           stopSpin = cfSpinner.start();
-          $scope.bucketContext.bucket.getEntries({'sys.id[in]': ids}, function (err, entries) {
+          $scope.spaceContext.space.getEntries({'sys.id[in]': ids}, function (err, entries) {
             entries = _.reduce(entries, function (map, entry) {
               map[entry.getId()] = entry;
               return map;
@@ -160,7 +160,7 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
           if(linkedId) {
             if (value.sys.linkType == 'entry') {
               stopSpin = cfSpinner.start();
-              $scope.bucketContext.bucket.getEntry(linkedId, function(err, entry) {
+              $scope.spaceContext.space.getEntry(linkedId, function(err, entry) {
                 if (!err) $scope.$apply(function(scope) {
                   scope.linkedEntries.length = 1;
                   scope.linkedEntries[0] = entry;
@@ -181,7 +181,7 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
 
       $scope.linkDescription= function(entry) {
         if (entry) {
-          return $scope.bucketContext.entryTitle(entry, $scope.locale.code);
+          return $scope.spaceContext.entryTitle(entry, $scope.locale.code);
         } else {
           return '(nothing)';
         }
@@ -207,7 +207,7 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
 
         $scope.reloadInProgress = true;
         var stopSpin = cfSpinner.start();
-        $scope.bucketContext.bucket.getEntries($scope.buildQuery(), function(err, entries, stats) {
+        $scope.spaceContext.space.getEntries($scope.buildQuery(), function(err, entries, stats) {
           $scope.reloadInProgress = false;
           if (err) return;
           $scope.paginator.numEntries = stats.total;
@@ -255,7 +255,7 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
         if ($scope.paginator.atLast()) return;
         $scope.paginator.page++;
         $scope.pauseReset();
-        $scope.bucketContext.bucket.getEntries($scope.buildQuery(), function(err, entries, stats) {
+        $scope.spaceContext.space.getEntries($scope.buildQuery(), function(err, entries, stats) {
           $scope.reloadInProgress = false;
           if (err) {
             $scope.paginator.page--;

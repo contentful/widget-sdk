@@ -21,7 +21,7 @@ angular.module('contentful').controller('EntryTypeEditorCtrl', function EntryTyp
   });
 
   function loadPublishedEntryType() {
-    // TODO replace with lookup in registry inside bucketContext
+    // TODO replace with lookup in registry inside spaceContext
     $scope.entryType.getPublishedVersion(function(err, publishedEntryType) {
       $scope.$apply(function(scope) {
         scope.publishedEntryType = publishedEntryType;

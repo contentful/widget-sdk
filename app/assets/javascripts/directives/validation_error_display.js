@@ -19,7 +19,7 @@ angular.module('contentful').directive('validationErrorDisplay', function () {
 
       var messages = {
         linkEntryType: function(v) {
-          var et = _.find($scope.bucketContext.publishedEntryTypes, function(et) {
+          var et = _.find($scope.spaceContext.publishedEntryTypes, function(et) {
             return et.getId() === v.entryTypeId;
           });
           if (!et) return 'Invalid Content Type';

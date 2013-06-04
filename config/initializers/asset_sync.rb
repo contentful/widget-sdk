@@ -7,7 +7,7 @@ if defined?(AssetSync)
     config.fog_provider = Contentful.config.fog.s3.options.provider
     config.aws_access_key_id = Contentful.config.fog.s3.options.aws_access_key_id
     config.aws_secret_access_key = Contentful.config.fog.s3.options.aws_secret_access_key
-    config.fog_directory = Contentful.config.fog.s3.asset_sync.bucket
+    config.fog_directory = Contentful.config.fog.s3.asset_sync.space
 
     # Increase upload performance by configuring your region
     config.fog_region = Contentful.config.fog.s3.asset_sync.region

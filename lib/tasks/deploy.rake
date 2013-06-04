@@ -21,7 +21,7 @@ namespace :generate do
     path = File.join(Rails.root, "public/app/manifest.yml")
     filename = YAML::load(File.open(path))["application.css"]
 
-    AssetSync.storage.bucket.files.create({
+    AssetSync.storage.space.files.create({
       :key => "app/application.css",
       :public => true,
       :acl => 'public-read',

@@ -5,7 +5,7 @@ angular.module('contentful').controller('EntryTypeListCtrl', function EntryTypeL
     entryType.delete(function (err) {
       if (!err) {
         $scope.$apply(function(scope) {
-          scope.bucketContext.removeEntryType(entryType);
+          scope.spaceContext.removeEntryType(entryType);
         });
       } else {
         console.log('Error deleting entryType', entryType);
@@ -18,7 +18,7 @@ angular.module('contentful').controller('EntryTypeListCtrl', function EntryTypeL
   };
 
   $scope.reloadEntryTypes = function(){
-    if (this.bucketContext) this.bucketContext.refreshEntryTypes();
+    if (this.spaceContext) this.spaceContext.refreshEntryTypes();
   };
 
   $scope.statusClass = function(entryType) {
@@ -29,7 +29,7 @@ angular.module('contentful').controller('EntryTypeListCtrl', function EntryTypeL
     return entryType.data.sys.publishedAt ? 'active' : 'draft';
   };
 
-  $scope.$watch('bucketContext.entryTypes', function(l) {
+  $scope.$watch('spaceContext.entryTypes', function(l) {
     $scope.empty = _.isEmpty(l);
   });
 

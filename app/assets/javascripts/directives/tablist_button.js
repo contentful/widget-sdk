@@ -8,8 +8,8 @@ angular.module('contentful').directive('tablistButton', function(analytics) {
       elem.find('.dropdown-toggle').click(function (event) {
         if ($(event.currentTarget).parent().hasClass('active')) {
           analytics.track('Clicked Add-Button', {
-            currentSection: scope.bucketContext.tabList.currentSection(),
-            currentViewType: scope.bucketContext.tabList.currentViewType()
+            currentSection: scope.spaceContext.tabList.currentSection(),
+            currentViewType: scope.spaceContext.tabList.currentViewType()
           });
         }
       });

@@ -3,7 +3,7 @@
 angular.module('contentful').
   controller('ContentDeliveryCtrl', function($scope, $window, environment) {
     $scope.refreshApiKeys = function() {
-      $scope.bucketContext.bucket.getApiKeys(null, function(err, apiKeys) {
+      $scope.spaceContext.space.getApiKeys(null, function(err, apiKeys) {
         $scope.$apply(function() {
           $scope.apiKeys = apiKeys;
         });

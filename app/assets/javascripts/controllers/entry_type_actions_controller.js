@@ -16,7 +16,7 @@ angular.module('contentful').
         if (err) return notification.error('Error deleting content type');
         notification.info('Content type deleted successfully');
         scope.$emit('entityDeleted', entryType);
-        scope.bucketContext.removeEntryType($scope.entryType);
+        scope.spaceContext.removeEntryType($scope.entryType);
       });
     });
   };
@@ -67,8 +67,8 @@ angular.module('contentful').
 
         //console.log('editor has published %o as %o', scope.entryType, publishedEntryType);
         scope.updatePublishedEntryType(publishedEntryType);
-        scope.bucketContext.registerPublishedEntryType(publishedEntryType);
-        scope.bucketContext.refreshEntryTypes();
+        scope.spaceContext.registerPublishedEntryType(publishedEntryType);
+        scope.spaceContext.refreshEntryTypes();
       });
     });
   };

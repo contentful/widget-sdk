@@ -16,7 +16,7 @@ angular.module('contentful').directive('tabList', function() {
         var total = element.prop('clientWidth');
         var numTabs;
         try {
-          numTabs = scope.bucketContext.tabList.numVisible();
+          numTabs = scope.spaceContext.tabList.numVisible();
         } catch(e) {
           return;
         }
@@ -32,7 +32,7 @@ angular.module('contentful').directive('tabList', function() {
         }
       };
 
-      scope.$watch('bucketContext.tabList.items.length', function(numItems) {
+      scope.$watch('spaceContext.tabList.items.length', function(numItems) {
         if (numItems > 0) recalc();
       });
 
