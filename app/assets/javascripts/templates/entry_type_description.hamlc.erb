@@ -1,4 +1,3 @@
-%h3 {{type.name}}
 %ng-switch(on="type.value.type")
   %div(ng-switch-when="text")
     %h3 Text of any length
@@ -64,13 +63,15 @@
     %img(src="<%= image_path('entry_type/location.png') %>")
 
   %div(ng-switch-when="array")
-    %h3 One or many links to entries
+    %h3(ng-show="type.value.items.type == 'link'")
+      One or many links to entries
 
     %p(ng-show="type.value.items.type == 'link'")
       Connect your current entry to other already existing entries previously created. It works as the Link to Entry but it allows you to connect one entry to several other ones. An example is a book which has several authors.
     %img(ng-show="type.value.items.type == 'link'" src="<%= image_path('entry_type/linkstoentries.png') %>")
 
-    %h3 One or many links to entries
+    %h3(ng-show="type.value.items.type == 'string'")
+      One or many links to entries
     %p(ng-show="type.value.items.type == 'string'")
       Create a simple lists of text. It can be, for example, tags for a blog post. The list items are separated by commas.
     %img(ng-show="type.value.items.type == 'string'" src="<%= image_path('entry_type/list.png') %>")
