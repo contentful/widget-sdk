@@ -8,7 +8,7 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
       // $scope.value              contains the Link/list of links
       $scope.linkedEntries = []; //contains the linked Entry
 
-      var validations = $scope.field.type === 'array' && $scope.field.items.validations ?
+      var validations = $scope.field.type === 'Array' && $scope.field.items.validations ?
         $scope.field.items.validations :
         $scope.field.validations;
       var linkContentTypeValidation = _(validations)
@@ -44,8 +44,8 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
       $scope.addLink = function(entry, callback) {
         var link = {
           sys: {
-            type: 'link',
-            linkType: 'entry',
+            type: 'Link',
+            linkType: 'Entry',
             id: entry.getId()
           }
         };

@@ -5,7 +5,7 @@ angular.module('contentful').directive('fieldValidations', function(analytics, v
     restrict: 'C',
     template: JST['field_validations'](),
     controller: function($scope) {
-      var type = $scope.field.type === 'array' ?
+      var type = $scope.field.type === 'Array' ?
         $scope.field.items.type :
         $scope.field.type;
       var typeValidations = validation.Validation.perType[type];
@@ -22,7 +22,7 @@ angular.module('contentful').directive('fieldValidations', function(analytics, v
 
       $scope.validationListPath = function() {
         var args = [].splice.call(arguments,0);
-        if ($scope.field.type == 'array') {
+        if ($scope.field.type == 'Array') {
           return _.flatten(['fields', $scope.index, 'items', 'validations'].concat(args));
         } else {
           return _.flatten(['fields', $scope.index, 'validations'].concat(args));
@@ -30,7 +30,7 @@ angular.module('contentful').directive('fieldValidations', function(analytics, v
       };
 
       $scope.validationList = function () {
-        if ($scope.field.type == 'array') {
+        if ($scope.field.type == 'Array') {
           return $scope.field.items.validations;
         } else {
           return $scope.field.validations;
@@ -64,7 +64,7 @@ angular.module('contentful').directive('fieldValidations', function(analytics, v
       };
 
       $scope.updateValidationsFromDoc = function () {
-        if ($scope.field.type == 'array') {
+        if ($scope.field.type == 'Array') {
           $scope.field.items.validations = $scope.getValidationListDoc().get();
         } else {
           $scope.field.validations = $scope.getValidationListDoc().get();

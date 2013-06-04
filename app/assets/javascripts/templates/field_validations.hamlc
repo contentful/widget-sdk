@@ -1,7 +1,7 @@
 %header
   %p
     Validations
-    %span(ng-show="field.type == 'array'") for items in the list
+    %span(ng-show="field.type == 'Array'") for items in the list
 .sections
   .section(ng-repeat="(validationIndex, validation) in validationList()")
     .name {{availableValidations[validationType(validation)]}}

@@ -11,7 +11,7 @@ angular.module('contentful').controller('NewValidationCtrl', function ($scope, a
 
   $scope.$watch('field', function (field, old, scope) {
     scope.fieldWithNewValidation = angular.copy(field);
-    if (field.type == 'array') {
+    if (field.type == 'Array') {
       scope.fieldWithNewValidation.items.validations = [];
       _validationListPath = ['items', 'validations', 0];
     } else {
@@ -22,7 +22,7 @@ angular.module('contentful').controller('NewValidationCtrl', function ($scope, a
 
   $scope.$watch('validation', function (validation, old, scope) {
     var validations;
-    if (scope.field.type == 'array') {
+    if (scope.field.type == 'Array') {
       validations = scope.fieldWithNewValidation.items.validations;
     } else {
       validations = scope.fieldWithNewValidation.validations;

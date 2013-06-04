@@ -2,38 +2,38 @@ angular.module('contentful').service 'widgets', ($compile) ->
   'use strict'
 
   editWidgets =
-    string:
+    String:
       textField:
         name: "Single line text field"
         template: """<input type="text" ot-subdoc ot-bind-text ng-disabled="otDisabled"/>"""
-    text:
+    Text:
       textArea:
         name: "Multiline text field"
         template: """<textarea class="input-autogrow input-xxlarge" ot-subdoc ot-bind-text ng-disabled="otDisabled"></textarea>"""
-    boolean:
+    Boolean:
       checkBox:
         name: "Boolean Checkbox"
         template: """
           <label><input type="radio" ng-model="value" ng-value="true" ot-bind-model ng-disabled="otDisabled"/><span class="yes">Yes</span></label>
           <label><input type="radio" ng-model="value" ng-value="false" ot-bind-model ng-disabled="otDisabled"/><span class="no" >No</span ></label>
         """
-    date:
+    Date:
       textField:
         name: "Date Field"
         template: """<div class="cf-datetime-editor"/>"""
-    array:
+    Array:
       default:
         name: "Default"
         template: ''
         link: (scope, elm, attr) ->
           itemType = scope.field.items?.type
-          if itemType == 'link'
+          if itemType == 'Link'
             template = $ """<div cf-autocomplete="entries"/>"""
-          else if itemType == 'string'
+          else if itemType == 'String'
             template = $ """<input type="text" ng-list="" ng-model="value" ot-bind-model ng-disabled="otDisabled"/>"""
           template.appendTo(elm)
           $compile(template)(scope)
-    object:
+    Object:
       jsonArea:
         name: "JSON Field"
         template: """<textarea class="input-xxlarge" ng-model="value" ot-bind-model ng-disabled="otDisabled"></textarea>"""
@@ -48,12 +48,12 @@ angular.module('contentful').service 'widgets', ($compile) ->
             catch e
               controller.$setValidity('json', false)
               return undefined
-    location:
+    Location:
       googlemap:
         name: "Location Picker"
         template: """<div class="cf-location-editor"></div>"""
 
-    number:
+    Number:
       textField:
         name: "Textfield for floats"
         template: """<input type="number" ng-model="value" ot-bind-model ng-disabled="otDisabled"/>"""
@@ -67,17 +67,17 @@ angular.module('contentful').service 'widgets', ($compile) ->
             else
               controller.$setValidity('float', false)
               return undefined
-    integer:
+    Integer:
       textField:
         name: "Textfield for integers"
         template: """<input type="number" ng-pattern="/^\\-?\\d*$/" ng-model="value" ot-bind-model ng-disabled="otDisabled"/>"""
-    link:
+    Link:
       selector:
         name: "Link selector"
         template: """<div cf-autocomplete="entry"/>"""
     
   displayWidgets =
-    string:
+    String:
       textField:
         template: "{{entry[fieldName]}}"
 

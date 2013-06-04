@@ -3,56 +3,56 @@ angular.module('contentful').
     {
       name: 'Text',
       description: 'Text description',
-      value: {type: 'text'}
+      value: {type: 'Text'}
     },
     {
       name: 'Symbol',
       description: 'Symbol description',
-      value: {type: 'string'}
+      value: {type: 'String'}
     },
     {
       name: 'Integer',
       description: 'Integer description',
-      value: {type: 'integer'}},
+      value: {type: 'Integer'}},
     {
       name: 'Floating-point',
       description: 'Floating-point description',
-      value: {type: 'number'}
+      value: {type: 'Number'}
     },
     {
       name: 'Yes/No',
       description: 'Yes/No description',
-      value: {type: 'boolean'}
+      value: {type: 'Boolean'}
     },
     {
       name: 'Date/Time',
       description: 'Date/Time description',
-      value: {type: 'date'}
+      value: {type: 'Date'}
     },
     {
       name: 'Object',
       description: 'Object description',
-      value: {type: 'object'}
+      value: {type: 'Object'}
     },
     {
       name: 'Link to Entry',
       description: 'Link to Entry description',
-      value: {type: 'link'}
+      value: {type: 'Link'}
     },
     {
       name: 'List of Entries',
       description: 'List of Entries description',
-      value: {type: 'array', items: {type: 'link'}}
+      value: {type: 'Array', items: {type: 'Link'}}
     },
     {
       name: 'List of Strings',
       description: 'List of Strings description',
-      value: {type: 'array' , items: {type: 'string'}}
+      value: {type: 'Array' , items: {type: 'String'}}
     },
     {
       name: 'Location',
       description: 'Location description',
-      value: {type: 'location'}
+      value: {type: 'Location'}
     }
   ]).
   factory('getFieldTypeName', function(availableFieldTypes) {

@@ -146,5 +146,5 @@ function presenceUsers(presence) {
 }
 
 function toUserLink(id) {
-  return {sys: {type: 'link', linkType: 'user', id: id}};
+  return {sys: {type: 'Link', linkType: 'User', id: id}};
 }
