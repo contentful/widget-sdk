@@ -33,12 +33,11 @@ angular.module('contentful').directive('otDocFor', function () {
     //console.log('otDocFor watch entity old: %o new: %o', old, entity);
     if (entity) {
       ShareJS.open(entity, function(err, doc) {
-        console.log('sharejs open callback returning', err, doc);
         scope.$apply(function(scope){
           if (!err) {
               //console.log('otDocFor installing doc %o for entity %o', doc.state, doc, entity);
               scope.otDoc = doc;
-              console.log('setting doc to %o (id: %o) in scope %o', doc.name, doc.snapshot.sys.id, scope.$id);
+              //console.log('setting doc to %o (id: %o) in scope %o', doc.name, doc.snapshot.sys.id, scope.$id);
           } else {
             scope.otDoc = null;
             //console.log('otDocFor error opening docfor entity %o', doc.state, doc, entity);
