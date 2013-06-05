@@ -128,7 +128,7 @@ function OtDocPresenceCtrl($scope, $timeout, otPresenceConfig) {
 
   function doLater() {
     removeTimedOutUsers();
-    timeout = $timeout(doLater, otPresenceConfig.pingInterval);
+    timeout = $timeout(doLater, otPresenceConfig.pingTimeout);
   }
 
   doLater();
