@@ -51,7 +51,7 @@ angular.module('contentful').service 'widgets', ($compile) ->
     location:
       googlemap:
         name: "Location Picker"
-        template: """<div class="cf-location-editor"></div>"""
+        template: """<div class="cf-location-editor" ng-model="fieldData.value"></div>"""
 
     number:
       textField:

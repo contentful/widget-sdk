@@ -1,15 +1,19 @@
 /*global google:false*/
 'use strict';
 
-angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, notification){
+angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, notification, $parse){
   return {
     restrict: 'C',
+    require: 'ngModel',
     template: JST['cf_location_editor'],
-    link: function(scope, elm) {
+    link: function(scope, elm, attr, ngModelCtrl) {
       scope.$watch('location', function(loc, old, scope) {
         //console.log('location changed', loc, scope);
         marker.setVisible(!!loc);
       });
+
+      var ngModelGet = $parse(attr.ngModel),
+          ngModelSet = ngModelGet.assign;
 
       var locationController = elm.find('.gmaps-container').controller('ngModel');
       var latController = elm.find('input.lat').controller('ngModel');
@@ -32,9 +36,10 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
         scope.otChangeValue(scope.location, function(err) {
           scope.$apply(function (scope) {
             if (!err) {
-              scope.otUpdateEntity();
+              ngModelCtrl.$setViewValue(scope.location);
             } else {
               notification.error('Error updating location');
+              scope.location = ngModelCtrl.$modelValue;
             }
           });
         });
@@ -47,6 +52,10 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
           marker.setDraggable(false);
         }
       });
+
+      ngModelCtrl.$render = function () {
+        scope.location = ngModelCtrl.$viewValue;
+      };
 
       var triggerLocationWatchers = function() {
         // Dirty Hack to trigger watchers on scope.location to recognize
@@ -106,7 +115,9 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
 
       scope.$on('otValueChanged', function(event, path, value){
         //console.log('location editor received valie changed', event, path, value);
-        if (path === event.currentScope.otPath) scope.location = value;
+        if (path === event.currentScope.otPath) {
+          ngModelSet(event.currentScope, value);
+        }
       });
 
       google.maps.event.addListener(marker, 'dragend', function(event){
