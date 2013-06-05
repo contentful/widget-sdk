@@ -54,7 +54,7 @@ function OtDocPresenceCtrl($scope, $timeout, otPresenceConfig) {
   }, true);
 
   function closedHandler() {
-    $scope.doc.shout(['close', user]);
+    $scope.otDoc.shout(['close', user]);
     $timeout.cancel(timeout);
   }
 
@@ -69,9 +69,9 @@ function OtDocPresenceCtrl($scope, $timeout, otPresenceConfig) {
 
       if (type === 'open') {
         if (ownPresence.focus)
-          scope.doc.shout(['focus', user, ownPresence.focus]);
+          scope.otDoc.shout(['focus', user, ownPresence.focus]);
         else
-          scope.doc.shout(['ping', user]);
+          scope.otDoc.shout(['ping', user]);
         presence[from] = {};
       }
 
