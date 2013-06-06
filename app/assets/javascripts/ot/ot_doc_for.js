@@ -82,8 +82,11 @@ angular.module('contentful').directive('otDocFor', function () {
       //console.log('otDocFor Controller destroyed, removing listener and otDoc');
       scope.otDoc.removeListener(remoteOpListener);
       remoteOpListener = null;
-      scope.otDoc.close();
-      scope.otDoc = null;
+      try {
+        scope.otDoc.close();
+      } finally {
+        scope.otDoc = null;
+      }
     }
   });
 
