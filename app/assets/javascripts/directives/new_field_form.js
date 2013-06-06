@@ -46,7 +46,7 @@ angular.module('contentful').directive('newFieldForm', function (availableFieldT
         $scope.newField = {
           id: null,
           name: null,
-          type: defaultType.value,
+          type: defaultType.value.type,
           required: false,
           localized: false
         };
