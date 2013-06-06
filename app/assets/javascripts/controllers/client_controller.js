@@ -103,6 +103,8 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
       var level = message.resource.type;
       if (!level.match(/info|error/)) level = 'info';
       notification[level](message.resource.message);
+    } else if (message.type === 'location') {
+      // ignore
     } else {
       $scope.performTokenLookup();
     }
