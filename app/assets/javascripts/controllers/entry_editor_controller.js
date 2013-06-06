@@ -45,15 +45,21 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     return _.pluck(scope.bucketContext.activeLocales, 'code');
   }, updateFields, true);
   $scope.$watch('bucketContext.bucket.getDefaultLocale()', updateFields);
+  $scope.$watch(function () { return errorPaths; }, updateFields);
   $scope.$watch('bucketContext.publishedTypeForEntry(entry).data.fields', updateFields, true);
+  var errorPaths = {};
   function updateFields(n, o ,scope) {
     var et = scope.bucketContext.publishedTypeForEntry(scope.entry);
     if (!et) return;
     scope.fields = _(et.data.fields).reduce(function (acc, field) {
-      if (!field.disabled) {
+      if (!field.disabled || errorPaths[field.id]) {
         var locales;
         if (field.localized) {
           locales = scope.bucketContext.activeLocales;
+          var errorLocales = _.map(errorPaths[field.id], function (code) {
+            return scope.bucketContext.getPublishLocale(code);
+          });
+          locales = _.union(locales, errorLocales);
         } else {
           locales = [scope.bucketContext.bucket.getDefaultLocale()];
         }
@@ -74,6 +80,18 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
   $scope.$watch('fields', function (fields, old, scope) {
     scope.showLangSwitcher = _.some(fields, function (field) {
       return field.localized;
+    });
+  });
+  
+  $scope.$watch('validationResult.errors', function (errors) {
+    errorPaths = {};
+    _.each(errors, function (error) {
+      if (error.path[0] !== 'fields') return;
+      var field  = error.path[1];
+      var locale = error.path[2];
+      errorPaths[field] = errorPaths[field] || [];
+      errorPaths[field].push(locale) ;
+      errorPaths[field] = _.unique(errorPaths[field], 'code');
     });
   });
 

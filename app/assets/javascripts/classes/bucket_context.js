@@ -42,6 +42,9 @@ angular.module('contentful').factory('BucketContext', function(TabList, $rootSco
         this.localesActive = newLocaleStates;
         this.activeLocales = newActiveLocales;
       },
+      getPublishLocale: function(code) {
+        return _.find(this.publishLocales, {'code': code});
+      },
 
       refreshEntryTypes: function() {
         if (this.bucket) {
