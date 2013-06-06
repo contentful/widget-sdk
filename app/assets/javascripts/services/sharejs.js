@@ -26,6 +26,8 @@ angular.module('contentful').provider('ShareJS', function ShareJSProvider(enviro
     c.connection.socket.send = function (message) {
       return this.sendMap({JSON: angular.toJson(message)});
     };
+
+    var oldState = null;
     c.connection.on('ok', function () {
       //console.log('ShareJS connection ok', c.connection.state );
       stateChangeHandler();
@@ -40,9 +42,12 @@ angular.module('contentful').provider('ShareJS', function ShareJSProvider(enviro
     });
 
     function stateChangeHandler(error) {
-      $rootScope.$apply(function (scope) {
-        scope.$broadcast('otConnectionStateChanged', c.connection.state, c.connection, error);
-      });
+      if (c.connection.state !== oldState) {
+        $rootScope.$apply(function (scope) {
+          scope.$broadcast('otConnectionStateChanged', c.connection.state, c.connection, error);
+        });
+        oldState = c.connection.state;
+      }
     }
     return c;
   };
