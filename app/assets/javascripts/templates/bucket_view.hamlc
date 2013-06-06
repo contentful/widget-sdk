@@ -44,7 +44,7 @@
   .entry-type-list(ng-switch-when="entry-type-list")
   .entry-editor.with-tab-actions(ng-switch-when="entry-editor"
     ot-doc-for="tab.params.entry"
-    cf-validate="tab.params.entry.data" with-schema="entrySchema"
+    cf-validate="tab.params.entry.data" with-schema="entrySchema" validate-manually=""
     ng-class="{'with-aux-panel': preferences.showAuxPanel}"
     ot-doc-presence="")
   .entry-type-editor.with-tab-actions(ng-switch-when="entry-type-editor"

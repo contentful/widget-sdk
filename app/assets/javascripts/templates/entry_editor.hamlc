@@ -78,7 +78,7 @@
     %button.archive(  ng-show="entry.canArchive()"   ng-click="archive()"      tooltip="Archive this Entry") Archive
     %button.archive(  ng-show="entry.canUnarchive()" ng-click="unarchive()"    tooltip="Unarchive this Entry") Unarchive
     %button.unpublish(ng-show="entry.canUnpublish()" ng-click="unpublish()"    tooltip="Unpublish this Entry") Unpublish
-    %button.publish(  ng-show="canPublish()"         ng-click="publish()"      tooltip="{{publishButtonLabel()}} this Entry" ng-disabled="!validationResult.valid")
+    %button.publish(  ng-show="canPublish()"         ng-click="publish()"      tooltip="{{publishButtonLabel()}} this Entry")
       {{publishButtonLabel()}}
   .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
                tooltip-placement="top")
