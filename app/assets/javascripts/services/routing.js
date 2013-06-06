@@ -20,7 +20,7 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
       },
 
       getBucketId: function () {
-        if (this.getRoute().noBucket) {
+        if (!this.getRoute() || this.getRoute().noBucket) {
           return null;
         } else {
           return this.getRoute().params.bucketId;
