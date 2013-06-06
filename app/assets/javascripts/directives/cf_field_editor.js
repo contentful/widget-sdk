@@ -23,11 +23,6 @@ angular.module('contentful').directive('cfFieldEditor', function(widgets, $compi
     restrict: 'C',
     require: '^otPath',
     link: function(scope, elm, attr) {
-      scope.$on('otTextIdle', function (event, path, value) {
-        console.log('entry editor textidle', path, value);
-        //event.currentScope.otUpdateEntity();
-      });
-
       // Write back local value changes to the entity
       // Necessary because the widgets can't access the entry directly, only the value variable
       scope.fieldData = {value: getExternal()};
