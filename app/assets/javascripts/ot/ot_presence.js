@@ -54,7 +54,8 @@ function OtDocPresenceCtrl($scope, $timeout, otPresenceConfig) {
   }, true);
 
   function closedHandler() {
-    $scope.otDoc.shout(['close', user]);
+    /*jshint validthis:true */
+    this.shout(['close', user]);
     $timeout.cancel(timeout);
   }
 
