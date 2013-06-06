@@ -57,17 +57,12 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
     }
   });
 
-  $scope.$watch('buckets', function(buckets){
-    if (buckets && buckets.length > 0) {
-      var initialBucket;
-      if (!$scope.bucket) {
-        var bucketIdFromRoute = routing.getBucketId();
-        initialBucket = _.find(buckets, function (bucket) {
-          return bucket.getId() == bucketIdFromRoute;
-        }) || buckets[0];
-      }
-      if (!_.contains(buckets, $scope.bucketContext.bucket)) setBucket(initialBucket);
-    }
+  $scope.$watch('buckets', function(buckets) {
+    if (_.contains(buckets, $scope.bucketContext.bucket)) return;
+    var bucketIdFromRoute = routing.getBucketId();
+    var initialBucket = _.find(buckets, function (bucket) {
+      return bucket.getId() == bucketIdFromRoute; }) || buckets[0];
+    setBucket(initialBucket);
   });
 
   $scope.logout = function() {
