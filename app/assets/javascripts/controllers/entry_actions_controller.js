@@ -75,8 +75,12 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
 
   $scope.publish = function () {
     var version = $scope.otDoc.version;
+    if (!$scope.validate()) {
+      notification.error('Error publishing ' + title() + ': ' + 'Validation failed');
+      return;
+    }
     $scope.entry.publish(version, function (err) {
-      $scope.$apply(function(scope){
+      $scope.$apply(function(){
         if (err) {
           var errorId = err.body.sys.id;
           var reason;
@@ -87,7 +91,6 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
           notification.error('Error publishing ' + title() + ': ' + reason);
         } else {
           notification.info(title() + ' published successfully');
-          scope.otUpdateEntity();
         }
       });
     });

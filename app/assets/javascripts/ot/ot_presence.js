@@ -53,44 +53,52 @@ function OtDocPresenceCtrl($scope, $timeout, otPresenceConfig) {
     };
   }, true);
 
-  $scope.$watch('otDoc', function(doc) {
+  function closedHandler() {
+    /*jshint validthis:true */
+    this.shout(['close', user]);
+    $timeout.cancel(timeout);
+  }
+
+  function shoutHandler(shout) {
+    $scope.$apply(function(scope) {
+      var type = shout[0];
+      var from = shout[1];
+
+      if (!presence[from]) presence[from] = {};
+
+      presence[from].shoutedAt = new Date();
+
+      if (type === 'open') {
+        if (ownPresence.focus)
+          scope.otDoc.shout(['focus', user, ownPresence.focus]);
+        else
+          scope.otDoc.shout(['ping', user]);
+        presence[from] = {};
+      }
+
+      if (type === 'ping') {}
+
+      if (type === 'focus') {
+        var id = shout[2];
+        presence[from].focus = id;
+      }
+
+      if (type === 'close')
+        delete presence[from];
+    });
+  }
+
+  $scope.$watch('otDoc', function(doc, old) {
+    if (old) {
+      old.removeListener('closed', closedHandler);
+      old.removeListener('shout', shoutHandler);
+    }
+
     if (!doc) return;
 
     doc.shout(['open', user]);
-
-    doc.on('closed', function() {
-      doc.shout(['close', user]);
-      $timeout.cancel(timeout);
-    });
-
-    doc.on('shout', function(shout) {
-      $scope.$apply(function() {
-        var type = shout[0];
-        var from = shout[1];
-
-        if (!presence[from]) presence[from] = {};
-
-        presence[from].shoutedAt = new Date();
-
-        if (type === 'open') {
-          if (ownPresence.focus)
-            doc.shout(['focus', user, ownPresence.focus]);
-          else
-            doc.shout(['ping', user]);
-          presence[from] = {};
-        }
-
-        if (type === 'ping') {}
-
-        if (type === 'focus') {
-          var id = shout[2];
-          presence[from].focus = id;
-        }
-
-        if (type === 'close')
-          delete presence[from];
-      });
-    });
+    doc.on('closed', closedHandler);
+    doc.on('shout', shoutHandler);
   });
 
   var lastId;
@@ -104,7 +112,7 @@ function OtDocPresenceCtrl($scope, $timeout, otPresenceConfig) {
     var doc = $scope.otDoc;
     if (!doc) return;
     doc.shout(['focus', user, id]);
-  }, otPresenceConfig.throttle;
+  };
 
   function removeTimedOutUsers() {
     var timedOutUsers = _(presence).map(function(p, u) {
@@ -121,13 +129,19 @@ function OtDocPresenceCtrl($scope, $timeout, otPresenceConfig) {
 
   function doLater() {
     removeTimedOutUsers();
-    timeout = $timeout(doLater, otPresenceConfig.pingInterval);
+    timeout = $timeout(doLater, otPresenceConfig.pingTimeout);
   }
 
   doLater();
 
-  $scope.$on('$destroy', function() {
+  $scope.$on('$destroy', function(event) {
+    var scope = event.currentScope;
     $timeout.cancel(timeout);
+    if (scope.otDoc) {
+      scope.otDoc.removeListener('closed', closedHandler);
+      scope.otDoc.removeListener('shout', shoutHandler);
+    }
+
   });
 }
 

@@ -42,6 +42,9 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
         this.localesActive = newLocaleStates;
         this.activeLocales = newActiveLocales;
       },
+      getPublishLocale: function(code) {
+        return _.find(this.publishLocales, {'code': code});
+      },
 
       refreshContentTypes: function() {
         if (this.space) {

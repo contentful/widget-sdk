@@ -1,12 +1,15 @@
-angular.module('contentful').directive('cfAutocomplete', function(Paginator, ShareJS, cfSpinner, validation){
+angular.module('contentful').directive('cfAutocomplete', function(Paginator, ShareJS, cfSpinner, validation, $parse, notification){
   'use strict';
 
   return {
     restrict: 'A',
+    require: 'ngModel',
     template: JST['cf_autocomplete'],
-    link: function($scope, element, attrs) {
-      // $scope.value              contains the Link/list of links
+    link: function($scope, element, attrs, ngModelCtrl) {
       $scope.linkedEntries = []; //contains the linked Entry
+
+      var ngModelGet = $parse(attrs.ngModel),
+          ngModelSet = ngModelGet.assign;
 
       var validations = $scope.field.type === 'Array' && $scope.field.items.validations ?
         $scope.field.items.validations :
@@ -25,9 +28,8 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
       $scope.removeLink = function(entry) {
         if (attrs.cfAutocomplete === 'entry') {
           return $scope.otChangeValue(null, function(err) {
-            if (!err) $scope.$apply(function(scope) {
-              scope.linkedEntries.length = 0;
-              scope.otUpdateEntity();
+            if (!err) $scope.$apply(function () {
+              ngModelCtrl.$setViewValue(null);
             });
           });
         } else {
@@ -35,7 +37,7 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
           $scope.otDoc.at($scope.otPath.concat(entryIndex)).remove(function (err) {
             if (!err) $scope.$apply(function(scope) {
               scope.linkedEntries.splice(entryIndex,1);
-              scope.otUpdateEntity();
+              ngModelCtrl.$setViewValue(linksFromEntries(scope.linkedEntries));
             });
           });
         }
@@ -55,9 +57,8 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
               if (err) {
                 callback(err);
               } else {
-                scope.linkedEntries.length = 1;
-                scope.linkedEntries[0] = entry;
-                scope.otUpdateEntity();
+                scope.linkedEntries = [entry];
+                ngModelCtrl.$setViewValue(linksFromEntries(scope.linkedEntries));
                 callback(null);
               }
             });
@@ -70,7 +71,7 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
                   callback(err);
                 } else {
                   scope.linkedEntries.push(entry);
-                  scope.otUpdateEntity();
+                  ngModelCtrl.$setViewValue(linksFromEntries(scope.linkedEntries));
                   callback(null);
                 }
               });
@@ -82,7 +83,7 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
                   callback(err);
                 } else {
                   scope.linkedEntries = [entry];
-                  scope.otUpdateEntity();
+                  ngModelCtrl.$setViewValue(linksFromEntries(scope.linkedEntries));
                   callback(null);
                 }
               });
@@ -92,53 +93,32 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
 
       };
 
-      $scope.visitLink = function(entry) {
-        var editor = _.find($scope.spaceContext.tabList.items, function(tab){
-          return (tab.viewType == 'entry-editor' && tab.params.entry.getId() == entry.getId());
-        });
-        if (!editor) {
-          editor = $scope.spaceContext.tabList.add({
-            viewType: 'entry-editor',
-            section: 'entries',
-            params: {
-              entry: entry,
-              mode: 'edit'
-            },
-            title: this.spaceContext.entryTitle(entry)
-          });
-        }
-        editor.activate();
-      };
-
       $scope.addNew = function(contentType) {
         $scope.spaceContext.space.createEntry(contentType.getId(), {}, function(errCreate, entry){
           if (errCreate) {
-            console.log('Error creating entry', errCreate);
-            return;
+            //console.log('Error creating entry', errCreate);
+            notification.error('Error creating entry');
+            throw new Error('Error creating entry in cfAutocomplete');
           }
           $scope.addLink(entry, function(errSetLink) {
             if (errSetLink) {
-              console.log('Error linking entry', errSetLink);
+              notification.error('Error linking entry');
+              //console.log('Error linking entry', errSetLink);
               entry.delete(function(errDelete) {
-                console.log('Error deleting entry', errDelete);
+                if (errDelete) {
+                  //console.log('Error deleting entry', errDelete);
+                  notification.error('Error deleting entry again');
+                  throw new Error('Error deleting entry in cfAutocomplete');
+                }
               });
-              return;
+              throw new Error('Error linking entry in cfAutocomplete');
             }
-            $scope.spaceContext.tabList.add({
-              viewType: 'entry-editor',
-              section: 'entries',
-              params: {
-                entry: entry,
-                space: $scope.spaceContext.space,
-                mode: 'create'
-              },
-              title: 'New Entry'
-            }).activate();
+            $scope.editEntry(entry);
           });
         });
       };
 
-      $scope.setLinkedEntriesFromValue = function(value) {
+      $scope.setLinkedEntriesFromValue = function entriesFromLinks(value) {
         var stopSpin;
         if (attrs.cfAutocomplete === 'entries') {
           // TODO case where value is null? Shouldn't occur, but still...
@@ -172,11 +152,29 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
             $scope.linkedEntries = [];
           }
         }
+      };
 
+      function linksFromEntries(entries) {
+        var list = _.map(entries, function (entry) {
+          return { sys: {
+            type: 'link',
+            linkType: 'entry',
+            id: entry.getId() } };
+        });
+
+        if (attrs.cfAutocomplete === 'entries') {
+          return list;
+        } else {
+          return list[0];
+        }
+      }
+
+      ngModelCtrl.$render = function () {
+        $scope.setLinkedEntriesFromValue(ngModelCtrl.$viewValue);
       };
 
       $scope.$on('otValueChanged', function(event, path, value) {
-        if (path === event.currentScope.otPath) event.currentScope.setLinkedEntriesFromValue(value);
+        if (path === event.currentScope.otPath) ngModelSet(event.currentScope, value);
       });
 
       $scope.linkDescription= function(entry) {

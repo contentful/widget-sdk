@@ -1,8 +1,8 @@
 %ul.links(ng-hide="linkedEntries.length == 0")
   %li(ng-repeat="entry in linkedEntries")
-    %a(ng-click="visitLink(entry)") {{linkDescription(entry)}}
-    %i.ss-delete(ng-click="removeLink(entry)" ng-hide="otDisabled")
-.controls(ng-show="!otDisabled && (linkedEntries.length == 0 || field.type == 'Array')")
+    %a(ng-click="editEntry(entry)") {{linkDescription(entry)}}
+    %i.ss-delete(ng-click="removeLink(entry)" ng-show="otEditable")
+.controls(ng-show="otEditable && (linkedEntries.length == 0 || field.type == 'Array')")
   .add-new(ng-show="linkContentType"
            ng-click="addNew(linkContentType)"
            tooltip="Add new {{linkContentType.data.name}} Entry"

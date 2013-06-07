@@ -57,17 +57,12 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
     }
   });
 
-  $scope.$watch('spaces', function(spaces){
-    if (spaces && spaces.length > 0) {
-      var initialSpace;
-      if (!$scope.space) {
-        var spaceIdFromRoute = routing.getSpaceId();
-        initialSpace = _.find(spaces, function (space) {
-          return space.getId() == spaceIdFromRoute;
-        }) || spaces[0];
-      }
-      if (!_.contains(spaces, $scope.spaceContext.space)) setSpace(initialSpace);
-    }
+  $scope.$watch('spaces', function(spaces) {
+    if (_.contains(spaces, $scope.spaceContext.space)) return;
+    var spaceIdFromRoute = routing.getSpaceId();
+    var initialSpace = _.find(spaces, function (space) {
+      return space.getId() == spaceIdFromRoute; }) || spaces[0];
+    setSpace(initialSpace);
   });
 
   $scope.logout = function() {
@@ -103,6 +98,8 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
       var level = message.resource.type;
       if (!level.match(/info|error/)) level = 'info';
       notification[level](message.resource.message);
+    } else if (message.type === 'location') {
+      // ignore
     } else {
       $scope.performTokenLookup();
     }

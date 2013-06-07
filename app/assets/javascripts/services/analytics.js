@@ -72,13 +72,17 @@ angular.module('contentful').provider('analytics', function (environment) {
         };
       },
       setSpaceData: function (space) {
-        this._spaceData = {
-          spaceSubscriptionKey:                  space.data.subscription.sys.id,
-          spaceSubscriptionState:                space.data.subscription.state,
-          spaceSubscriptionInvoiceState:         space.data.subscription.invoiceState,
-          spaceSubscriptionSubscriptionPlanKey:  space.data.subscription.subscriptionPlan.sys.id,
-          spaceSubscriptionSubscriptionPlanName: space.data.subscription.subscriptionPlan.name
-        };
+        if (space) {
+          this._spaceData = {
+            spaceSubscriptionKey:                  space.data.subscription.sys.id,
+            spaceSubscriptionState:                space.data.subscription.state,
+            spaceSubscriptionInvoiceState:         space.data.subscription.invoiceState,
+            spaceSubscriptionSubscriptionPlanKey:  space.data.subscription.subscriptionPlan.sys.id,
+            spaceSubscriptionSubscriptionPlanName: space.data.subscription.subscriptionPlan.name
+          };
+        } else {
+          this._spaceData = null;
+        }
       },
       tabAdded: function (tab) {
         this.track('Opened Tab', {

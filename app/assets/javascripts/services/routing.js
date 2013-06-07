@@ -20,7 +20,7 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
       },
 
       getSpaceId: function () {
-        if (this.getRoute().noSpace) {
+        if (!this.getRoute() || this.getRoute().noSpace) {
           return null;
         } else {
           return this.getRoute().params.spaceId;
