@@ -1,4 +1,12 @@
 angular.module('contentful/environment', []).constant('environment', {
   env: '<%= Rails.env %>',
   settings: <%= File.read(Rails.root + 'config' + 'environments' + Rails.env + 'config.json') %>
+
+}).config(function (environment) {
+  if (window.XDomainRequest) {
+    environment.settings.api_host = settings.app_host + '/api';
+    environment.settings.ot_host  = settings.app_host + '/ot';
+    //environment.settings.api_host = 'app.joistio.com:8888' + '/api';
+    //environment.settings.ot_host  = 'app.joistio.com:8888' + '/ot';
+  }
 });
