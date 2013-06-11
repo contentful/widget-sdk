@@ -24,6 +24,13 @@
                ot-bind-text="")
         .validation-error-display.form-box-error(path="['name']")
     .form-field
+      %label Description
+      .form-controls(ot-path="['description']" ot-subdoc)
+        %textarea(placeholder="Describe the purpose of entries using this Content Type"
+          ng-model="contentType.data.description"
+          ot-bind-text="")
+        .validation-error-display.form-box-error(path="['description']")
+    .form-field
       %label 
       .form-controls
     .form-field
