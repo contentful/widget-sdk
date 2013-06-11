@@ -80,6 +80,26 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
     perform('unpublish', makeBatchResultsNotifier('unpublished'));
   };
 
+  $scope.duplicateSelected = function() {
+    var notifier = makeBatchResultsNotifier('duplicated');
+    var applyLater = makeApplyLater(function (results) {
+      var successes = _(results).reject('err').pluck('rest').pluck('0').value();
+      $scope.entries.unshift.apply($scope.entries, successes);
+      notifier(results);
+    });
+    forAllEntries(function (entry) {
+      duplicate(entry, applyLater);
+    });
+    clearSelection();
+    analytics.track('Performed EntryList action', {action: 'duplicate'});
+
+    function duplicate(entry, callback) {
+      var contentType = entry.data.sys.contentType.sys.id;
+      var data = _.omit(entry.data, 'sys');
+      $scope.spaceContext.space.createEntry(contentType, data, callback);
+    }
+  };
+
   $scope.deleteSelected = function() {
     var applyLater = makeApplyLater(makeBatchResultsNotifier('deleted'));
     forAllEntries(function(entry) {

@@ -21,6 +21,22 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
     });
   };
 
+  $scope.duplicate = function() {
+    var contentType = $scope.entry.data.sys.contentType.sys.id;
+    var data = _.omit($scope.entry.data, 'sys');
+
+    $scope.spaceContext.space.createEntry(contentType, data, function(err, entry){
+      $scope.$apply(function (scope) {
+        if (!err) {
+          scope.editEntry(entry);
+        } else {
+          notification.error('Could not duplicate Entry');
+          //TODO sentry notification
+        }
+      });
+    });
+  };
+
   $scope.$on('entityDeleted', function (event, entry) {
     if (event.currentScope !== event.targetScope) {
       var scope = event.currentScope;
