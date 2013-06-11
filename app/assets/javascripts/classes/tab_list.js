@@ -24,7 +24,13 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics){
       return item;
     },
 
+    // TODO Unfortunate to not call closeTab or tab.close here, but
+    // closeTab might leave the tab open. we need to force the tabs close
     closeAll: function(){
+      _.each(this.items, function (tab) {
+        $rootScope.$broadcast('tabWantsClose', tab);
+        $rootScope.$broadcast('tabClosed'    , tab);
+      });
       this.items = [];
       this.current = null;
     },
