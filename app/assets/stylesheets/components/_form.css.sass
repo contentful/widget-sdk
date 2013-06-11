@@ -50,7 +50,9 @@ $form-spacing: 7.5px
   input[type="password"],
   input.time,
   textarea
+    margin: 0
     padding: 7px
+    padding-top: 9px
     font-family: 'Open Sans', Arial, sans-serif
     font-size: 12px
     width: 57%
@@ -230,20 +232,13 @@ $form-spacing: 7.5px
 .form-field
   .search-field
     width: 100%
-    margin-top: 10px
+    margin-top: 1px
     height: 35px
-    //.dropdown-toggle
-      height: 33px
-      .ss-search
-        top: 2.5px
-      .ss-dropdown
-        top: 4px
-        right: 3px
 
 .form-field
   // Styling for specific types
-  &[data-field-type=boolean] .form-controls,
-  &[data-field-type=array][data-field-items-type=string] .form-controls
+  &[data-field-type=Boolean] .form-controls,
+  &[data-field-type=Array][data-field-items-type=String] .form-controls
     label
       width: auto
       position: relative
@@ -251,12 +246,12 @@ $form-spacing: 7.5px
     span
       position: relative
       top: 2px
-  &[data-field-type=boolean] .form-controls
+  &[data-field-type=Boolean] .form-controls
     padding-top: 10px
 
 .form-field
-  &[data-field-type=link],
-  &[data-field-type=array][data-field-items-type=link]
+  &[data-field-type=Link],
+  &[data-field-type=Array][data-field-items-type=Link]
     margin: 25px 0 15px
     .links 
       +plain-list
