@@ -37,7 +37,7 @@ angular.module('contentful/app', [
 ], function($locationProvider, clientProvider, authenticationProvider, environment){
   'use strict';
   var env = environment.settings;
-  $locationProvider.html5Mode(!!window.pushState).hashPrefix('!');
+  $locationProvider.html5Mode(!!history.pushState).hashPrefix('!');
   clientProvider.endpoint('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');
 }).run(function(authentication, client) {
