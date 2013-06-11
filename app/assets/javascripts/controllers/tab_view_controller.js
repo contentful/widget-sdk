@@ -17,7 +17,8 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     }
   });
 
-  $scope.editEntry = function(entry) {
+  $scope.editEntry = function(entry, mode) {
+    mode = mode || 'edit';
     var editor = _.find($scope.spaceContext.tabList.items, function(tab){
       return (tab.viewType == 'entry-editor' && tab.params.entry.getId() == entry.getId());
     });
@@ -27,7 +28,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
         section: 'entries',
         params: {
           entry: entry,
-          mode: 'edit'
+          mode: mode
         },
         title: $scope.spaceContext.entryTitle(entry)
       });
@@ -35,7 +36,8 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     editor.activate();
   };
 
-  $scope.editContentType = function(contentType) {
+  $scope.editContentType = function(contentType, mode) {
+    mode = mode || 'edit';
     var editor = _($scope.spaceContext.tabList.items).find(function(tab){
       return (tab.viewType == 'content-type-editor' && tab.params.contentType == contentType);
     });
@@ -45,7 +47,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
         section: 'contentTypes',
         params: {
           contentType: contentType,
-          mode: 'edit'
+          mode: mode
         },
         title: contentType.data.name || 'Untitled'
       });

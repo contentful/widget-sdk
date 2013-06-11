@@ -113,7 +113,7 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
               });
               throw new Error('Error linking entry in cfAutocomplete');
             }
-            $scope.editEntry(entry);
+            $scope.editEntry(entry, 'create');
           });
         });
       };

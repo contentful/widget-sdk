@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, analytics, routing) {
+angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, analytics, routing, notification) {
   $scope.$watch('spaceContext', function(spaceContext, old, scope){
     var space = spaceContext.space;
     scope.spaceContext.tabList.closeAll();
@@ -82,22 +82,14 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
   $scope.createEntry = function(contentType) {
     var scope = this;
     scope.spaceContext.space.createEntry(contentType.getId(), {}, function(err, entry){
-      if (!err) {
-        scope.$apply(function(scope){
-          scope.spaceContext.tabList.add({
-            viewType: 'entry-editor',
-            section: 'entries',
-            params: {
-              entry: entry,
-              space: scope.spaceContext.space,
-              mode: 'create'
-            },
-            title: 'New Entry'
-          }).activate();
-        });
-      } else {
-        console.log('Error creating entry', err);
-      }
+      scope.$apply(function (scope) {
+        if (!err) {
+          scope.editEntry(entry, 'create');
+        } else {
+          notification.error('Could not create Entry');
+          //TODO sentry notification
+        }
+      });
       analytics.track('Selected Add-Button', {
         currentSection: scope.spaceContext.tabList.currentSection(),
         currentViewType: scope.spaceContext.tabList.currentViewType(),
@@ -115,22 +107,14 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
       name: ''
     };
     scope.spaceContext.space.createContentType(data, function(err, contentType){
-      if (!err) {
-        scope.$apply(function(scope){
-          scope.spaceContext.tabList.add({
-            viewType: 'content-type-editor',
-            section: 'contentTypes',
-            params: {
-              contentType: contentType,
-              space: scope.spaceContext.space,
-              mode: 'create'
-            },
-            title: 'New Content Type'
-          }).activate();
-        });
-      } else {
-        console.log('Error creating contentType', err);
-      }
+      scope.$apply(function (scope) {
+        if (!err) {
+          scope.editContentType(contentType, 'create');
+        } else {
+          notification.error('Could not create Content Type');
+          //TODO sentry notification
+        }
+      });
       analytics.track('Selected Add-Button', {
         currentSection: scope.spaceContext.tabList.currentSection(),
         currentViewType: scope.spaceContext.tabList.currentViewType(),
