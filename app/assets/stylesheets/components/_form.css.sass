@@ -82,7 +82,8 @@ $form-spacing: 7.5px
   input.time
     width: 105px !important
   .cf-location-editor
-    .gmaps-container
+    .gmaps-container,
+    .invalid-location-warning
       width: 57%
       height: 250px
   .ss-calendar,
@@ -208,6 +209,19 @@ $form-spacing: 7.5px
       background-color: $result-list-highlight
 
 .cf-location-editor
+  .invalid-location-warning
+    background-color: rgba(255,255,255,0.9)
+    text-align: center
+    position: absolute
+    top: 0
+    .text
+      width: 30%
+      margin: auto
+      margin-top: 110px
+      font-size: 12px
+      background-color: white
+      +box-shadow(0 0 20px 12px white)
+
   .results
     overflow-y: auto
     max-height: 200px

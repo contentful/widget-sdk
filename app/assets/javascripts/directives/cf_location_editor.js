@@ -9,7 +9,8 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
     link: function(scope, elm, attr, ngModelCtrl) {
       scope.$watch('location', function(loc, old, scope) {
         //console.log('location changed', loc, scope);
-        marker.setVisible(!!loc);
+        scope.locationValid = !angular.isObject(loc) || angular.isNumber(loc.lat) && angular.isNumber(loc.lon);
+        marker.setVisible(loc && scope.locationValid);
       });
 
       var ngModelGet = $parse(attr.ngModel),
@@ -85,6 +86,7 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
       locationController.$parsers.unshift(latLngParser);
       locationController.$formatters.push(locationFormatter);
       locationController.$render = function() {
+        if (!scope.locationValid) return;
         var latLng = locationController.$viewValue;
         if (latLng) {
           marker.setPosition(latLng);
