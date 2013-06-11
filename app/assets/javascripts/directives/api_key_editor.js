@@ -10,6 +10,7 @@ angular.module('contentful').
         elem.on('keydown', function(e) {
           if (e.keyCode === 13) scope.save();
         });
+        _.defer(function(){elem.find('input').eq(0).focus();});
       }
     };
   });
