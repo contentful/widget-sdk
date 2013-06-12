@@ -5,7 +5,7 @@
 .controls(ng-show="otEditable && (linkedEntries.length == 0 || field.type == 'Array')")
   .add-new(ng-show="linkContentType"
            ng-click="addNew(linkContentType)"
-           tooltip="Add new {{linkContentType.data.name}} Entry"
+           tooltip="Add new {{linkContentType.getName()}} Entry"
            tooltip-placement="left")
     %button.with-link-content-type
       %i.ss-plus
@@ -21,7 +21,7 @@
         %li(ng-repeat="contentType in spaceContext.publishedContentTypes"
             ng-click="addNew(contentType)"
             dropdown-close="")
-          {{contentType.data.name}}
+          {{contentType.getName()}}
   .search-field(ng-submit="submit()"
                 search="searchTerm"
                 search-type-ahead=""
@@ -43,7 +43,7 @@
             cf-click-local="pick(entry)"
             ng-class="{selected: entry==entries[selectedItem]}")
           %td.cell-type
-            %span {{spaceContext.publishedTypeForEntry(entry).data.name}}
+            %span {{spaceContext.publishedTypeForEntry(entry).getName()}}
           %td.cell-name
             %span {{spaceContext.entryTitle(entry)}}
           %td.cell-by

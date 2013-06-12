@@ -19,7 +19,7 @@ angular.module('contentful').directive('tablistButton', function(analytics) {
         toggle.tooltip({
           delay: {show: 100, hide: 100},
           trigger: 'manual',
-          title: 'You can now create a '+contentType.data.name+' Entry',
+          title: 'You can now create a '+contentType.getName()+' Entry',
           placement: 'right'
         });
         toggle.tooltip('show');

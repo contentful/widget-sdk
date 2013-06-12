@@ -49,7 +49,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
           contentType: contentType,
           mode: mode
         },
-        title: contentType.data.name || 'Untitled'
+        title: contentType.getName()
       });
     }
     editor.activate();

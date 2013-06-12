@@ -19,11 +19,11 @@ angular.module('contentful').directive('validationErrorDisplay', function () {
 
       var messages = {
         linkContentType: function(v) {
-          var et = _.find($scope.spaceContext.publishedContentTypes, function(et) {
-            return et.getId() === v.contentTypeId;
+          var ct = _.find($scope.spaceContext.publishedContentTypes, function(ct) {
+            return ct.getId() === v.contentTypeId;
           });
-          if (!et) return 'Invalid Content Type';
-          return 'Linked entry\'s Content Type must be ' + et.data.name + '.';
+          if (!ct) return 'Invalid Content Type';
+          return 'Linked entry\'s Content Type must be ' + ct.getName() + '.';
         },
         size: function (v) {
           if (_.isNumber(v.min) && _.isNumber(v.max)) {

@@ -74,10 +74,10 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
                 // TODO this union will lead to problems if we ever allow deletion of published content Types
                 // because contentTypes that entered the list once will never get out again
                 .union(self.publishedContentTypes)
-                .sortBy(function(et) { return et.data.name.trim().toLowerCase(); })
+                .sortBy(function(ct) { return ct.getName().trim().toLowerCase(); })
                 .value();
-              self._publishedContentTypesHash = _(self.publishedContentTypes).map(function(et) {
-                return [et.data.sys.id, et];
+              self._publishedContentTypesHash = _(self.publishedContentTypes).map(function(ct) {
+                return [ct.data.sys.id, ct];
               }).object().valueOf();
             });
           }

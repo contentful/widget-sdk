@@ -30,7 +30,7 @@
 
   %div(ng-switch-when="linkContentType")
     %select(ng-model="validation.linkContentType"
-            ng-options="et.getId() as et.data.name for et in spaceContext.publishedContentTypes" ng-change="updateDoc()")
+            ng-options="ct.getId() as ct.getName() for ct in spaceContext.publishedContentTypes" ng-change="updateDoc()")
 
 
   %div(ng-switch-default="")

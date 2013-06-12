@@ -106,7 +106,7 @@ angular.module('contentful').provider('analytics', function (environment) {
         if (contentType) {
           _.extend(data, {
             contentTypeId: contentType.getId(),
-            contentTypeName: contentType.data.name
+            contentTypeName: contentType.getName()
           });
         }
         if (field) {

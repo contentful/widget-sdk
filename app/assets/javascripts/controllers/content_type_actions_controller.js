@@ -7,7 +7,7 @@ angular.module('contentful').
   // We can query the entry instead of reimplementing the checks heere
 
   function title() {
-    return '"' + $scope.contentType.data.name + '"';
+    return '"' + $scope.contentType.getName()+ '"';
   }
 
   $scope.delete = function () {
@@ -61,7 +61,7 @@ angular.module('contentful').
         notification.info(title() + ' ' + verb + ' successfully');
         analytics.track('Published ContentType', {
           contentTypeId: $scope.contentType.getId(),
-          contentTypeName: $scope.contentType.data.name,
+          contentTypeName: $scope.contentType.getName(),
           version: version
         });
 
