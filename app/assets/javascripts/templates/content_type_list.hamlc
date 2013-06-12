@@ -8,7 +8,8 @@
     %thead
       %tr
         %th.cell-name Name
-        %th.cell-by Fields
+        %th.cell-description Description
+        %th.cell-num-fields Fields
         %th.cell-updated Updated
         %th.cell-by By
         %th.cell-status Status
@@ -19,7 +20,9 @@
             cf-click-local="editContentType(contentType)")
           %td.cell-name
             %span {{contentType.getName()}}
-          %td.cell-by
+          %td.cell-description
+            %span {{contentType.data.description}}
+          %td.cell-num-fields
             %span {{numFields(contentType)}}
           %td.cell-updated
             %date.relative(datetime="{{contentType.data.sys.updatedAt}}")

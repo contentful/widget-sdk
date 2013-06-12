@@ -4,6 +4,8 @@
       %th Content Type
       %td {{contentTypeName}}
     %tr
+      %td(colspan="2") {{contentTypeDescription}}
+    %tr
       %th
     %tr
       %th ID

@@ -9,6 +9,10 @@ angular.module('contentful').
           scope.contentTypeName = name;
         });
 
+        $scope.$watch('entry && spaceContext.publishedTypeForEntry(entry).data.description', function(description, old, scope) {
+          scope.contentTypeDescription = description;
+        });
+
         $scope.$watch('otDoc.snapshot.sys', function(sys) {
           $scope.sys = sys;
         });
