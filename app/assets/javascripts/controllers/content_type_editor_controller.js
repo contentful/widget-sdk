@@ -46,7 +46,7 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
     return !!$scope.otDoc;
   };
 
-  $scope.$watch('headline()', function(title) {
+  $scope.$watch('contentType.getName()', function(title) {
     $scope.tab.title = title;
   });
 
