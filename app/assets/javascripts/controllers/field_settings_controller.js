@@ -1,5 +1,7 @@
-angular.module('contentful').controller('FieldSettingsCtrl', function ($scope, getFieldTypeName, analytics) {
+angular.module('contentful').controller('FieldSettingsCtrl', function ($scope, getFieldTypeName, analytics, validation) {
   'use strict';
+
+  $scope.hasValidations = !_.isEmpty(validation.Validation.perType[$scope.field.type]);
 
   $scope.getFieldTypeName = getFieldTypeName;
 
