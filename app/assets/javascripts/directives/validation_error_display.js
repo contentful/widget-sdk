@@ -53,9 +53,9 @@ angular.module('contentful').directive('validationErrorDisplay', function () {
           return 'Required';
         },
         type: function(v) {
-          if (v.type == 'validation') {
+          if (v.type == 'Validation') {
             return v.details;
-          } else if (v.type.match(/^aeio/)) {
+          } else if (v.type.match(/^aeio/i)) {
             return 'Must be an ' + v.type + '.';
           } else {
             return 'Must be a ' + v.type + '.';
