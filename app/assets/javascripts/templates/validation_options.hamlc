@@ -16,9 +16,9 @@
 
 
   %div(ng-switch-when="regexp")
-    %input.regexp(type="text" ng-model="validation.regexp.pattern" placeholder="foo|bar[baz]" ng-change="updateDoc()")
+    %input.regexp(type="text" ng-model="validation.regexp.pattern" placeholder="foo|bar[baz]" ng-change="updateDoc()" ng-required="true")
     %span Flags:
-    %input.flags(type="text" ng-model="validation.regexp.flags" ng-change="updateDoc()")
+    %input.flags(type="text" ng-model="validation.regexp.flags" ng-change="updateDoc()" ng-required="true")
     .validation-error-display.form-inline-error(path="validationListPath(validationIndex)").form-inline-error
 
 
