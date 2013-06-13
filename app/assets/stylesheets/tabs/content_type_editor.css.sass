@@ -59,6 +59,13 @@
         cursor: -webkit-grabbing
         cursor: -moz-grab
         cursor: -moz-grabbing
+        // State change for disabled
+        &[disabled]
+          i
+            display: none
+          cursor: auto
+      th.drag-handle
+        cursor: auto
       .validations,
       .archived,
       .action
@@ -113,7 +120,7 @@
     .field-validations
       background-color: $gray-background
       text-align: left
-      +box-shadow(0 2px 1px rgba(0,0,0,0.05) inset)
+      +box-shadow(0 2px 1px rgba(0,0,0,0.05) inset, 0 -1px 1px rgba(0,0,0,0.05) inset)
       header
         color: $dark-gray
         font-size: 11px

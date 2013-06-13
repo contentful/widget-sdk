@@ -27,53 +27,54 @@
         %p Please add fields below for the different kinds of information you want to store in your Content Type.
 
 
-%p Create a new Field:
-%form.new-field-form(name="newFieldForm" cf-validate="newField" with-schema="fieldSchema")
-  %table.result-list.new-field
-    %tr.field
-      %td(colspan="9" style="overflow: visible")
-        .new-field-settings
-          .drag-handle &nbsp;
-          .name
-            %input(ng-model="newField.name" type="text" required=""
-                   placeholder="e.g. Product Name"
-                   tooltip="Field title displayed to editors"
-                   tooltip-placement="bottom")
-            .validation-error-display.form-inline-error(path="['name']")
-          .identifier
-            %input(ng-model="newField.id" type="text" required=""
-                   placeholder="e.g. productName"
-                   tooltip="Field ID used in API"
-                   tooltip-placement="bottom")
-            .validation-error-display.form-inline-error(path="['id']")
-          .type
-            .dropdown-btn
-              .dropdown-toggle
-                %i.ss-dropdown
-                {{newType.name}}
-              .dropdown-menu
-                %ul
-                  %li(ng-repeat="type in availableTypes"
-                      ng-click="selectType(type)"
-                      dropdown-close="")
-                    %span {{type.name}}
-                    .content-type-description
-                  
-          .display &nbsp;
-          .localized
-            %input(type="checkbox"
-                   ng-model="newField.localized"
-                   tooltip-placement="left"
-                   tooltip="Content in this field is localized")
-          .required
-            %input(type="checkbox"
-                   ng-model="newField.required"
-                   tooltip-placement="left"
-                   tooltip="Make field mandatory")
-          .validations
-          .action
-            %button.button.new(ng-click="addField()"
-                               ng-disabled="newFieldForm.$invalid"
-                               tooltip="Add this field"
-                               tooltip-placement="left")
-              %i.ss-plus
+%div(ng-show="otEditable")
+  %p Create a new Field:
+  %form.new-field-form(name="newFieldForm" cf-validate="newField" with-schema="fieldSchema")
+    %table.result-list.new-field
+      %tr.field
+        %td(colspan="9" style="overflow: visible")
+          .new-field-settings
+            .drag-handle &nbsp;
+            .name
+              %input(ng-model="newField.name" type="text" required=""
+                     placeholder="e.g. Product Name"
+                     tooltip="Field title displayed to editors"
+                     tooltip-placement="bottom")
+              .validation-error-display.form-inline-error(path="['name']")
+            .identifier
+              %input(ng-model="newField.id" type="text" required=""
+                     placeholder="e.g. productName"
+                     tooltip="Field ID used in API"
+                     tooltip-placement="bottom")
+              .validation-error-display.form-inline-error(path="['id']")
+            .type
+              .dropdown-btn
+                .dropdown-toggle
+                  %i.ss-dropdown
+                  {{newType.name}}
+                .dropdown-menu
+                  %ul
+                    %li(ng-repeat="type in availableTypes"
+                        ng-click="selectType(type)"
+                        dropdown-close="")
+                      %span {{type.name}}
+                      .content-type-description
+                    
+            .display &nbsp;
+            .localized
+              %input(type="checkbox"
+                     ng-model="newField.localized"
+                     tooltip-placement="left"
+                     tooltip="Content in this field is localized")
+            .required
+              %input(type="checkbox"
+                     ng-model="newField.required"
+                     tooltip-placement="left"
+                     tooltip="Make field mandatory")
+            .validations
+            .action
+              %button.button.new(ng-click="addField()"
+                                 ng-disabled="newFieldForm.$invalid"
+                                 tooltip="Add this field"
+                                 tooltip-placement="left")
+                %i.ss-plus

@@ -39,7 +39,7 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
     $scope.publishedContentType = publishedContentType;
   };
 
-  $scope.$watch('otDoc.snapshot.fields.length', function(length) {
+  $scope.$watch('contentType.data.fields.length', function(length) {
     $scope.hasFields = length > 0;
   });
 

@@ -1,7 +1,9 @@
-.drag-handle
+.drag-handle(ng-disabled="!otEditable")
   %i.ss-rows
 .name
-  %input(ot-path="['fields', index, 'name']"
+  %input(ng-model="field.name"
+         ng-disabled="!otEditable"
+         ot-path="['fields', index, 'name']"
          ot-subdoc ot-bind-text type="text"
          tooltip-placement="right"
          tooltip="Field title displayed to editors")
@@ -12,16 +14,18 @@
   %input(type="radio" name="displayField"
     ng-model="contentType.data.displayField"
     value="{{field.id}}"
-    ng-disabled="!displayEnabled(field)"
+    ng-disabled="!displayEnabled(field) || !otEditable"
     ot-bind-model tooltip-placement="left"
     tooltip="Use as title in interface")
 .localized(ot-path="['fields', index, 'localized']")
   %input(type="checkbox" ng-model="value" ot-bind-model
          tooltip-placement="left"
+         ng-disabled="!otEditable"
          tooltip="Content in this field is localized")
 .required(ot-path="['fields', index, 'required']")
   %input(type="checkbox" ng-model="value" ot-bind-model
          tooltip-placement="left"
+         ng-disabled="!otEditable"
          tooltip="Make field mandatory")
 .validations
   %a.button(ng-show="hasValidations"
@@ -41,12 +45,14 @@
                    tooltip="Delete this Field")
     %i.ss-trash
   %a.button.deactivate(ng-show="published && !field.disabled"
-                       ng-click="disable()"
+                       ng-disabled="!otEditable"
+                       ng-click="otEditable && disable()"
                        tooltip-placement="left"
                        tooltip="Hide this Field")
     %i.ss-check
   %a.button.activate(ng-show="published && field.disabled"
-                     ng-click="enable()"
+                     ng-disabled="!otEditable"
+                     ng-click="otEditable && enable()"
                      tooltip-placement="left"
                      tooltip="Show this Field")
     %i.ss-ban

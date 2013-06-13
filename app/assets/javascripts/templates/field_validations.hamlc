@@ -7,9 +7,9 @@
     .name {{availableValidations[validationType(validation)]}}
     .validation-options
     .action
-      %a.button.delete(ng-click="deleteValidation(validationIndex)")
+      %a.button.delete(ng-click="deleteValidation(validationIndex)" ng-show="otEditable")
         %i.remove.ss-delete
-  .section(ng-controller="NewValidationCtrl" cf-validate="fieldWithNewValidation" with-schema="fieldSchema")
+  .section(ng-controller="NewValidationCtrl" cf-validate="fieldWithNewValidation" with-schema="fieldSchema" ng-show="otEditable")
     .name
       %select(ng-model="newValidationType" ng-options="type as name for (type, name) in availableValidations" ng-change="prepareNewValidation()")
         %option(value="") Add new…

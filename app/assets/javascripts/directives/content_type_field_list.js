@@ -36,6 +36,14 @@ angular.module('contentful').directive('contentTypeFieldList', function(analytic
         }
       });
 
+      scope.$watch('otEditable', function (editable) {
+        if (editable) {
+          body.sortable('enable');
+        } else {
+          body.sortable('disable');
+        }
+      });
+
     },
 
     controller: function ContentTypeFieldListCtrl($scope) {

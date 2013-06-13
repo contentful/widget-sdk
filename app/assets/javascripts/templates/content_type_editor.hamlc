@@ -19,6 +19,7 @@
       %label Name
       .form-controls(ot-path="['name']" ot-subdoc)
         %input(type="text"
+               ng-disabled="!otEditable"
                placeholder="Content Type Name (e.g. Product)"
                ng-model="contentType.data.name"
                ot-bind-text="")
@@ -27,8 +28,9 @@
       %label Description
       .form-controls(ot-path="['description']" ot-subdoc)
         %textarea(placeholder="Describe the purpose of entries using this Content Type"
-          ng-model="contentType.data.description"
-          ot-bind-text="")
+                  ng-disabled="!otEditable"
+                  ng-model="contentType.data.description"
+                  ot-bind-text="")
         .validation-error-display.form-box-error(path="['description']")
     .form-field
       %label 
