@@ -21,7 +21,7 @@ angular.module('contentful').service 'widgets', ($compile) ->
       textField:
         name: "Date Field"
         Template: """<div class="cf-datetime-editor" ng-model="fieldData.value"/>"""
-    array:
+    Array:
       default:
         name: "Default"
         template: ''
