@@ -1,10 +1,16 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeEditorCtrl', function ContentTypeEditorCtrl($scope, ShareJS, availableFieldTypes, validation) {
+angular.module('contentful').controller('ContentTypeEditorCtrl', function ContentTypeEditorCtrl($scope, ShareJS, availableFieldTypes, validation, can) {
   $scope.availableTypes = availableFieldTypes;
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
 
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
+
+  $scope.$watch(function contentTypeEditorEnabledWatcher(scope) {
+    return can('update', scope.contentType);
+  }, function contentTypeEditorEnabledHandler(enabled, old, scope) {
+    scope.otDisabled = !enabled;
+  });
 
   $scope.$watch('contentType', function(contentType){
     if (contentType) loadPublishedContentType();

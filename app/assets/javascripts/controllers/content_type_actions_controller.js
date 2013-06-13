@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  controller('ContentTypeActionsCtrl', function ContentTypeActionsCtrl($scope, notification, analytics) {
+  controller('ContentTypeActionsCtrl', function ContentTypeActionsCtrl($scope, notification, analytics, can) {
 
   // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,
   // We can query the entry instead of reimplementing the checks heere
@@ -30,6 +30,10 @@ angular.module('contentful').
     }
   });
 
+  $scope.canDelete = function() {
+    return $scope.contentType.canDelete() && can('delete', $scope.contentType.data);
+  };
+
   $scope.canPublish = function() {
     if (!$scope.otDoc) return false;
     var version = $scope.otDoc.version;
@@ -40,6 +44,7 @@ angular.module('contentful').
     return $scope.contentType.canPublish() &&
       (notPublishedYet || updatedSincePublishing) &&
       hasFields &&
+      can('publish', $scope.contentType.data) &&
       $scope.validationResult.valid;
   };
 

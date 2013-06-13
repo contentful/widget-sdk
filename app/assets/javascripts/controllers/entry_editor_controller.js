@@ -2,9 +2,9 @@
 
 angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorCtrl($scope, ShareJS, validation, can) {
   $scope.$watch('tab.params.entry', 'entry=tab.params.entry');
-  $scope.$watch(function entryEditorDisabledWatcher(scope) {
+  $scope.$watch(function entryEditorEnabledWatcher(scope) {
     return !scope.entry.isArchived() && can('update', scope.entry.data);
-  }, function entryEditorDisabledHandler(enabled, old, scope) {
+  }, function entryEditorEnabledHandler(enabled, old, scope) {
     scope.otDisabled = !enabled;
   });
 
