@@ -138,7 +138,7 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
         } else {
           var linkedId = value && value.sys && value.sys.id;
           if(linkedId) {
-            if (value.sys.linkType == 'entry') {
+            if (value.sys.linkType == 'Entry') {
               stopSpin = cfSpinner.start();
               $scope.spaceContext.space.getEntry(linkedId, function(err, entry) {
                 if (!err) $scope.$apply(function(scope) {
