@@ -120,6 +120,10 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
     perform('unarchive', makeBatchResultsNotifier('unarchived'));
   };
 
+  $scope.showDuplicate = function () {
+    return $scope.can('create', 'Entry');
+  };
+
   $scope.showDelete = function () {
     return every('canDelete');
   };

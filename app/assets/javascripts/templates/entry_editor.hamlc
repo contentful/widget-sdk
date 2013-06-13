@@ -72,13 +72,12 @@
 
 .tab-actions(ng-controller="EntryActionsCtrl")
   .button-set
-    %button.delete(                                  ng-click="duplicate()"    tooltip="Duplicate this entry") Duplicate
-    %button.delete(   ng-show="entry.canDelete()"    ng-click="delete()"       tooltip="Permanently delete this Entry") Delete
-    %button.archive(  ng-show="entry.canArchive()"   ng-click="archive()"      tooltip="Archive this Entry") Archive
-    %button.archive(  ng-show="entry.canUnarchive()" ng-click="unarchive()"    tooltip="Unarchive this Entry") Unarchive
-    %button.unpublish(ng-show="entry.canUnpublish()" ng-click="unpublish()"    tooltip="Unpublish this Entry") Unpublish
-    %button.publish(  ng-show="canPublish()"         ng-click="publish()"      tooltip="{{publishButtonLabel()}} this Entry")
-      {{publishButtonLabel()}}
+    %button.delete(   ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this entry"               ) Duplicate
+    %button.delete(   ng-show="canDelete()"    ng-click="delete()"    tooltip="Permanently delete this Entry"      ) Delete
+    %button.archive(  ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry"                 ) Archive
+    %button.archive(  ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry"               ) Unarchive
+    %button.unpublish(ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry"               ) Unpublish
+    %button.publish(  ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Entry") {{publishButtonLabel()}}
   .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
                tooltip-placement="top")
   .other-users

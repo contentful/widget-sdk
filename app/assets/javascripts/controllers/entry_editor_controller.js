@@ -1,9 +1,11 @@
 'use strict';
 
-angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorCtrl($scope, ShareJS, validation) {
+angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorCtrl($scope, ShareJS, validation, can) {
   $scope.$watch('tab.params.entry', 'entry=tab.params.entry');
-  $scope.$watch('entry.isArchived()', function (archived, old, scope) {
-    scope.otDisabled = !!archived;
+  $scope.$watch(function entryEditorDisabledWatcher(scope) {
+    return !scope.entry.isArchived() && can('update', scope.entry.data);
+  }, function entryEditorDisabledHandler(enabled, old, scope) {
+    scope.otDisabled = !enabled;
   });
 
   $scope.$on('tabClosed', function(event, tab) {
