@@ -7,7 +7,7 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
 
   $scope.$watch(function contentTypeEditorEnabledWatcher(scope) {
-    return can('update', scope.contentType);
+    return scope.contentType && can('update', scope.contentType.data);
   }, function contentTypeEditorEnabledHandler(enabled, old, scope) {
     scope.otDisabled = !enabled;
   });
