@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, analytics, routing, notification) {
+angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, analytics, routing, notification, can) {
   $scope.$watch('spaceContext', function(spaceContext, old, scope){
     var space = spaceContext.space;
     scope.spaceContext.tabList.closeAll();
@@ -67,6 +67,8 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
   $scope.$watch('spaceContext', function(space, o, scope) {
     scope.spaceContext.refreshContentTypes();
   });
+
+  $scope.can = can;
 
   $scope.logoClicked = function () {
     analytics.track('Clicked Logo');

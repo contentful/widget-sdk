@@ -1,4 +1,4 @@
-angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope, client, SpaceContext, authentication, contentfulClient, notification, cfSpinner, analytics, routing) {
+angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope, client, SpaceContext, authentication, contentfulClient, notification, cfSpinner, analytics, routing, authorization) {
   'use strict';
 
   $scope.spaces = [];
@@ -22,8 +22,13 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
     analytics.track('Clicked Space-Switcher');
   };
 
+  $scope.$watch('spaceContext.space', function (space) {
+    authorization.setSpace(space);
+  });
+
   function setSpace(space) {
     analytics.setSpaceData(space);
+    authorization.setSpace(space);
     $scope.spaceContext = new SpaceContext(space);
   }
 
@@ -92,6 +97,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
     } else if (message.token) {
      */
       authentication.setTokenLookup(message.token);
+      authorization.setTokenLookup(message.token, $scope.spaceContext.space);
       $scope.user = authentication.tokenLookup.sys.createdBy;
       $scope.updateSpaces(authentication.tokenLookup.spaces);
     } else if (message.type === 'flash') {
@@ -140,6 +146,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
       $scope.$apply(function(scope) {
         //console.log('tokenLookup', tokenLookup);
         scope.user = tokenLookup.sys.createdBy;
+        authorization.setTokenLookup(tokenLookup);
         analytics.login(scope.user);
         scope.updateSpaces(tokenLookup.spaces);
         if (callback) callback(tokenLookup);
