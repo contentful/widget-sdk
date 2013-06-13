@@ -157,8 +157,8 @@ angular.module('contentful').directive('cfAutocomplete', function(Paginator, Sha
       function linksFromEntries(entries) {
         var list = _.map(entries, function (entry) {
           return { sys: {
-            type: 'link',
-            linkType: 'entry',
+            type: 'Link',
+            linkType: 'Entry',
             id: entry.getId() } };
         });
 
