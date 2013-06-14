@@ -13,7 +13,7 @@
       %th.cell.required Required
       %th.cell.validations
         %span(ng-show="hasFields") Validations
-      %th.cell.actions
+      %th.cell.action
         %span(ng-show="hasFields") Editable
   %tbody
     %tr.existing-field(ng-repeat="(index, field) in contentType.data.fields")
