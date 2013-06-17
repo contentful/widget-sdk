@@ -1,21 +1,23 @@
 .tab-list
-  @include user-select(none)
+  +user-select(none)
+  > ul
+    +plain-list
   li
     display: inline-block
     height: $tab-height
     vertical-align: top
   .tab
     position: relative
-    margin-right: 0.2em
-    padding: ($tab-height - 2.7em) 1.2em
+    margin-right: 2px
+    padding: ($tab-height - 27px) 12px
     overflow: hidden
     background-color: $page-background
     border: 1px solid #d5d5d5
     border-bottom-color: $lightest-gray
-    @include rounded-corners(3px,3px,0,0)
+    +border-radius(3px 3px 0 0)
     color: $light-gray
     span
-      font-size: 1.3em
+      font-size: 13px
       white-space: nowrap
       display: block
       overflow: hidden
@@ -30,30 +32,30 @@
         color: $medium-gray
   i.ss-delete
     position: absolute
-    top: 1.2em
-    right: .9em
-    font-size: 1em
+    top: 12px
+    right: 9px
+    font-size: 10px
   .fade
     position: absolute
     top: 0
     bottom: 0
     right: 0
-    width: 5em
-    @include inactive-fade
+    width: 50px
+    +inactive-fade
   .tab.active
     color: $dark-gray
     background: $gray-background
     border-bottom: 0
     font-weight: 600
-    @include gray-highlight
+    +gray-highlight
     .fade
-      @include fade
+      +fade
   .tab:hover
     color: $dark-gray
     cursor: pointer
     +box-shadow(0 8px 16px rgba(255,255,255,0.3) inset)
   .tab.active:hover
-    @include gray-highlight
+    +gray-highlight
 
 /* ADD BUTTON DROPDOWN */
 
@@ -62,21 +64,18 @@
     li
       display: block
       height: auto
-      font-size: 1.1em
+      font-size: 11px
   .tooltip.right
     width: 200px
 
 .add.button
   @extend %blue-button
-  margin-top: .1em
-  margin-left: .2em
-  font-size: 1.2em
-  padding-left: .8em
-  padding-right: .95em
+  margin-top: 1px
+  margin-left: 3px
   i
     float: left
-    margin: .1em .5em 0 0
-    font-size: .8em
+    margin: 2px 5px 0 0
+    font-size: 10px
     color: #7dc7fb
   &:active
     top: 1px

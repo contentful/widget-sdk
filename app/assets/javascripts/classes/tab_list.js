@@ -8,6 +8,7 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics){
 
   TabList.prototype = {
     activate: function(item){
+      if (item === this.current) return;
       var event = $rootScope.$broadcast('tabWantsActive', item);
       if (!event.defaultPrevented){
         analytics.tabActivated(item, this.current);
@@ -23,7 +24,13 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics){
       return item;
     },
 
+    // TODO Unfortunate to not call closeTab or tab.close here, but
+    // closeTab might leave the tab open. we need to force the tabs close
     closeAll: function(){
+      _.each(this.items, function (tab) {
+        $rootScope.$broadcast('tabWantsClose', tab);
+        $rootScope.$broadcast('tabClosed'    , tab);
+      });
       this.items = [];
       this.current = null;
     },
@@ -56,7 +63,7 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics){
          }
          $rootScope.$broadcast('tabClosed', item);
          analytics.tabClosed(item);
-         if (newCurrent !== false && newCurrent !== null) {
+         if (newCurrent !== false && newCurrent !== null && this.current === null) {
            newCurrent.activate();
          }
        }
@@ -126,7 +133,7 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics){
     },
 
     canClose: function(){
-      return this.list.items.length > 1 && this._canClose;
+      return this._canClose;
     },
 
     replace: function(options){

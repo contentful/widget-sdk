@@ -1,15 +1,19 @@
 /*global moment:false*/
-angular.module('contentful').directive('cfDatetimeEditor', function(){
+angular.module('contentful').directive('cfDatetimeEditor', function($parse){
   'use strict';
 
   return {
     restrict: 'C',
     template: JST['cf_datetime_editor'],
-    link: function(scope, elm) {
+    require: 'ngModel',
+    link: function(scope, elm, attr, ngModelCtrl) {
       // The format strings for datepicker and moment.js are different!
       var DATE_FORMAT = $.datepicker.ISO_8601; // datepicker format
       var DATE_FORMAT_INTERNAL = 'YYYY-MM-DD'; // moment.js format
       // Prefer datepicker localization, this is just a shortcut
+
+      var ngModelGet = $parse(attr.ngModel),
+          ngModelSet = ngModelGet.assign;
 
       var dateController = elm.find('.date').controller('ngModel');
       var timeController = elm.find('.time').controller('ngModel');
@@ -48,11 +52,22 @@ angular.module('contentful').directive('cfDatetimeEditor', function(){
 
         var dateAndTime = dateController.$modelValue+'T'+timeController.$modelValue;
         var dateTime = moment(dateAndTime);
-        scope.otChangeValue(dateTime.utc().format());
-        scope.otUpdateEntity();
+        scope.otChangeValue(dateTime.utc().format(), function (err) {
+          scope.$apply(function (scope) {
+            if (!err) {
+              ngModelCtrl.$setViewValue(dateTime.utc().format());
+            } else {
+              scope.setFromISO(ngModelCtrl.$modelValue);
+            }
+          });
+        });
       };
       dateController.$viewChangeListeners.push(changeHandler);
       timeController.$viewChangeListeners.push(changeHandler);
+
+      ngModelCtrl.$render = function () {
+        scope.setFromISO(ngModelCtrl.$viewValue);
+      };
 
       scope.setFromISO = function(iso){
         var dateTime = moment.utc(iso).local();
@@ -65,7 +80,9 @@ angular.module('contentful').directive('cfDatetimeEditor', function(){
       };
 
       scope.$on('otValueChanged', function(event, path, value) {
-        if (path === event.currentScope.otPath) event.currentScope.setFromISO(value);
+        if (path === event.currentScope.otPath) {
+          ngModelSet(event.currentScope, value);
+        }
       });
     }
   };

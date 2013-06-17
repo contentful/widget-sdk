@@ -71,14 +71,18 @@ angular.module('contentful').provider('analytics', function (environment) {
           userSubscriptionSubscriptionPlanName:   user.subscription.subscriptionPlan.name
         };
       },
-      setBucketData: function (bucket) {
-        this._bucketData = {
-          bucketSubscriptionKey:                  bucket.data.subscription.sys.id,
-          bucketSubscriptionState:                bucket.data.subscription.state,
-          bucketSubscriptionInvoiceState:         bucket.data.subscription.invoiceState,
-          bucketSubscriptionSubscriptionPlanKey:  bucket.data.subscription.subscriptionPlan.sys.id,
-          bucketSubscriptionSubscriptionPlanName: bucket.data.subscription.subscriptionPlan.name
-        };
+      setSpaceData: function (space) {
+        if (space) {
+          this._spaceData = {
+            spaceSubscriptionKey:                  space.data.subscription.sys.id,
+            spaceSubscriptionState:                space.data.subscription.state,
+            spaceSubscriptionInvoiceState:         space.data.subscription.invoiceState,
+            spaceSubscriptionSubscriptionPlanKey:  space.data.subscription.subscriptionPlan.sys.id,
+            spaceSubscriptionSubscriptionPlanName: space.data.subscription.subscriptionPlan.name
+          };
+        } else {
+          this._spaceData = null;
+        }
       },
       tabAdded: function (tab) {
         this.track('Opened Tab', {
@@ -97,12 +101,12 @@ angular.module('contentful').provider('analytics', function (environment) {
           fromSection: oldTab ? oldTab.section : null
         });
       },
-      modifiedEntryType: function (event, entryType, field, action) {
+      modifiedContentType: function (event, contentType, field, action) {
         var data = {};
-        if (entryType) {
+        if (contentType) {
           _.extend(data, {
-            entryTypeId: entryType.getId(),
-            entryTypeName: entryType.data.name
+            contentTypeId: contentType.getId(),
+            contentTypeName: contentType.getName()
           });
         }
         if (field) {
@@ -137,8 +141,8 @@ angular.module('contentful').provider('analytics', function (environment) {
       _idFromTab: function (tab) {
         if (tab.viewType === 'entry-editor') {
           return tab.params.entry.getId();
-        } else if (tab.viewType === 'entry-type-editor'){
-          return tab.params.entryType.getId();
+        } else if (tab.viewType === 'content-type-editor'){
+          return tab.params.contentType.getId();
         }
       },
       _trackView: function (tab) {
@@ -147,7 +151,7 @@ angular.module('contentful').provider('analytics', function (environment) {
           this.track('Viewed Page', {
             section: tab.section,
             viewType: tab.viewType});
-        } else if (t == 'entry-type-list') {
+        } else if (t == 'content-type-list') {
           this.track('Viewed Page', {
             section: tab.section,
             viewType: tab.viewType});
@@ -157,11 +161,11 @@ angular.module('contentful').provider('analytics', function (environment) {
             viewType: tab.viewType,
             entryId: tab.params.entry.getId(),
             mode: tab.params.mode});
-        } else if (t == 'entry-type-editor') {
+        } else if (t == 'content-type-editor') {
           this.track('Viewed Page', {
             section: tab.section,
             viewType: tab.viewType,
-            entryId: tab.params.entryType.getId(),
+            entryId: tab.params.contentType.getId(),
             mode: tab.params.mode});
         } else if (t == 'iframe') {
           var url = tab.params.url.replace(/access_token=(\w+)/, 'access_token=XXX');
@@ -172,7 +176,7 @@ angular.module('contentful').provider('analytics', function (environment) {
       },
       track: function (event, data) {
         if (!this._disabled) {
-          analytics.track(event, _.merge({},data, this._userData, this._bucketData));
+          analytics.track(event, _.merge({},data, this._userData, this._spaceData));
         }
         //console.log('analytics.track', event, data);
       }

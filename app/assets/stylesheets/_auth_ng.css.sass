@@ -1,0 +1,216 @@
+// Layout fixes for iframe
+.tab-content.tab-iframe
+  top: 0
+  bottom: 0
+  left: 0
+  right: 0
+  border: 0
+
+// Styling of the headline
+.tab-header a
+  color: $dark-gray
+  &:hover
+    color: $light-gray
+.header-separator
+  color: $lightest-gray
+
+// Sidebar
+.settings-panel
+  // Color
+  background-color: #fdfcfc
+  border-right: 1px solid $light-rule
+  a
+    color: #8d8c8c
+  .active a
+    color: #434343
+    font-weight: bold
+  // Layout
+  margin-top: 0
+  padding-top: 28px
+  padding-left: 25px
+  padding-right 25px
+  ul
+    margin-top: 0
+  li
+    font-size: 14px
+    line-height: 25px
+
+// Adjust content padding
+.tab-iframe .with-left-nav
+  padding-left: 30px
+  padding-right: 30px
+
+// make sure to hide intercom in the frame
+#IModal,
+#INotificationMessagesWrapper
+  display: none !important
+  z-index: -9999 !important
+  opacity: 0 !important
+
+// Forms
+.tab-iframe .formtastic
+  // remove list bullets
+  .inputs,
+  .actions
+    li
+      list-style-type: none
+      margin: 0
+    .input
+      margin-bottom: $form-spacing
+  li.input
+  .input
+    padding: 0
+    .label
+      position: relative
+      color: inherit
+      width: 17%
+      text-align: right
+      padding: $form-offset $form-gutter $form-offset 0
+    input[type="checkbox"]
+      vertical-align: baseline
+    .inline-hints
+      margin-left: 17%
+    .inline-errors
+      margin-left: 17%
+  .input.info > div
+    padding-top: $form-offset
+  .input > select
+    margin-top: $form-offset
+  .fragment
+    padding-right: 10px
+  .input input
+    margin-top: 2px
+  .input.boolean
+    padding-top: $form-offset
+    padding-bottom: $form-offset
+    .tooltip.top
+      left: 17% !important
+  .input.boolean label
+    padding-left: 17%
+  .choices,
+  .fragments
+    .label label
+      position: static
+    .choices-group,
+    .fragments-group
+      padding-left: 0
+      margin-bottom: 0
+      li
+        margin-top: $form-offset
+  
+  // Style form elements
+  .input
+    @extend .form-styled
+
+  // Make form actions look a little more like tab-actions
+  fieldset.actions
+    margin-top: $form-offset
+    @extend %tab-actions-padding
+    padding-right: 100% - 17% - 57%
+    height: $tab-actions-height
+    .action
+      display: inline-block
+    ol
+      float: right
+      button
+        height: $tab-actions-content-height
+    // Colors
+    border-top: 1px solid $lightest-gray
+    input[name="commit"]
+      @extend %blue-button
+
+// Different style fixes
+.tab-iframe
+  // Make buttons look like buttons
+  input[type="submit"]
+    @extend button
+
+  // delete button
+  form.button_to
+    position: relative
+    top: -$tab-actions-height
+    height: $tab-actions-height
+    @extend %tab-actions-padding
+
+  // Add-Button
+  button,
+  .as-button
+    &.new-resource
+      margin-top: 34px //result list tr-height
+      @extend %blue-button
+    .ss-plus
+      position: relative
+      top: 1px
+      left: -2px
+      font-size: 10px
+      padding-right: 1px
+
+  // Main tables
+  .result-list
+    @extend %result-list-border-bottom
+  .result-list
+    .clickable
+      tr
+        @extend %tr-clickable
+
+  // User profile page
+  $identity-image-size: 40px
+  $identity-well-padding: 10px
+  $identity-padding: 10px
+  $identity-image-padding: 10px
+  $identity-spacing: 10px
+  $identity-width: 140px
+  .user-details,
+  .identities
+    margin-bottom: 30px
+  %user-detail-image
+    height: $identity-image-size
+    width: $identity-image-size
+    float: left
+    margin-right: $identity-image-padding
+  .user-details
+    > img
+      @extend %user-detail-image
+      margin-bottom: 10px
+  .identity-well
+    //border: 1px solid $dark-rule
+    //+border-radius(3px)
+    //+box-shadow(0 1px $identity-well-padding/2 $lightest-gray inset)
+    //padding: $identity-well-padding
+    max-width: 2*$identity-well-padding + 3 * $identity-width + (3 - 1) * $identity-spacing
+    margin-bottom: 2 * $identity-well-padding
+  .identity,
+  .auth_provider
+    display: inline-block
+    width: $identity-width
+    height: $identity-image-size + 2 * $identity-padding
+    border: 1px solid $dark-rule
+    +border-radius(3px)
+    background-color: #EEE
+    padding: $identity-padding
+    position: relative
+    margin-right: $identity-spacing
+    img
+      @extend %user-detail-image
+    .uid,
+    .auth_provider_name
+      position: absolute
+      bottom: $identity-padding
+      left: $identity-padding + $identity-image-size + $identity-image-padding
+    .remove
+      .ss-delete
+        font-size: 1em
+      position: absolute
+      top: $identity-padding
+      right: $identity-padding
+      opacity: 0
+      +transition(opacity 0.1s ease-in-out)
+  .identity:hover
+    .remove
+      opacity: 100
+  .auth_provider
+    color: inherit
+    +transition(box-shadow 0.1s ease-in-out)
+  .auth_provider:hover
+    +box-shadow(0 1px $identity-padding/2 $light-gray)
+

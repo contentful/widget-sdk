@@ -3,4 +3,7 @@ class ApplicationController < ActionController::Base
 
   def index
   end
+
+  def styleguide
+  end
 end

@@ -1,0 +1,57 @@
+%nav.nav-bar
+  .logo(ng-click="logoClicked()")
+    .cf-logo
+  %ul
+    %li(ng-class="{section: spaceContext.tabList.currentSection() == 'contentTypes',
+                  'section-index': spaceContext.tabList.currentViewType() == 'content-type-list'}"
+        ng-click="visitView('content-type-list')")
+      %i.ss-database
+      .hint.tip.nav-models
+        Content Types
+    %li(ng-class="{section: spaceContext.tabList.currentSection() == 'entries',
+                  'section-index': spaceContext.tabList.currentViewType() == 'entry-list'}"
+        ng-click="visitView('entry-list')")
+      %i.ss-file
+      .hint.tip.nav-models
+        Entries
+    %li
+      %i.ss-attach
+      .hint.tip.nav-models
+        Assets not available yet, coming soon
+    %li(ng-class="{section: spaceContext.tabList.currentSection() == 'contentDelivery',
+                   'section-index': spaceContext.tabList.currentViewType() == 'content-delivery'}"
+        ng-click="visitView('content-delivery')")
+      %i.ss-fork
+      .hint.tip.nav-models
+        Content Delivery
+    %li(ng-class="{section: spaceContext.tabList.currentSection() == 'spaceSettings',
+                  'section-index': spaceContext.tabList.currentSection() == 'spaceSettings'}"
+        ng-click="visitView('space-settings')")
+      %i.ss-settings
+      .hint.tip.nav-models
+        Space Settings
+%nav.tab-list
+  %ul
+    %li.tab(ng-repeat="tabItem in spaceContext.tabList.items" ng-class="{active: tabItem.active()}" ng-click="tabItem.activate()" ng-hide="tabItem.hidden")
+      %span.tab-title {{tabItem.title}}
+      %em.fade
+      .close(cf-click-local="tabItem.close()" ng-show="tabItem.canClose()")
+        %i.ss-delete
+    %li.tablist-button(space-context="spaceContext")
+.tab-content(ng-repeat="tab in spaceContext.tabList.items" ng-show="tab.active()" ng-switch="tab.viewType")
+  .iframe-view(ng-switch-when="iframe")
+  .entry-list(ng-switch-when="entry-list")
+  .content-type-list(ng-switch-when="content-type-list")
+  .entry-editor.with-tab-actions(ng-switch-when="entry-editor"
+    ot-doc-for="tab.params.entry"
+    cf-validate="tab.params.entry.data" with-schema="entrySchema" validate-manually=""
+    ng-class="{'with-aux-panel': preferences.showAuxPanel}"
+    ot-doc-presence="")
+  .content-type-editor.with-tab-actions(ng-switch-when="content-type-editor"
+    ot-doc-for="tab.params.contentType"
+    cf-validate="tab.params.contentType.data"
+    ng-class="{'with-aux-panel': preferences.showAuxPanel}")
+  .content-delivery(ng-switch-when="content-delivery" )
+  .api-key-editor.with-tab-actions(ng-switch-when="api-key-editor")
+  %div(ng-switch-default="")
+    Unhandled case: viewType = {{spaceContext.tabList.currentViewType()}}

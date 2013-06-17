@@ -1,7 +1,10 @@
 -#%iframe(width="425" height="250" frameborder="0" scrolling="no" marginheight="0" marginwidth="0" src="https://maps.google.de/maps?f=q&source=s_q&hl=en&geocode=&q=Berlin&aq=&sll=51.175806,10.454119&sspn=8.654702,23.269043&ie=UTF8&hq=&hnear=Berlin&t=m&ll=52.519146,13.406067&spn=0.026114,0.072956&z=13&iwloc=A&output=embed")
 .gmaps-container(ng-model="location")
+.invalid-location-warning(ng-hide="locationValid")
+  .text
+    Corrupt location data!
 .sub-fields
-  .search(ng-hide="otDisabled")
+  .search(ng-show="otEditable")
     .search-field(placeholder="Search Address" search="searchTerm" search-type-ahead)
     .results.search-options-on(ng-show="results.length > 0")
       %ul
@@ -11,10 +14,10 @@
           %span.lon Lon: {{result.strippedLocation.lon}}
 
   %label.location-picker
-    %input.lat(type="text" ng-model="location.lat" ng-disabled="otDisabled")
+    %input.lat(type="text" ng-model="location.lat" ng-disabled="!otEditable")
     %span Latitude
   %label.location-picker
-    %input.lon(type="text" ng-model="location.lon" ng-disabled="otDisabled")
+    %input.lon(type="text" ng-model="location.lon" ng-disabled="!otEditable")
     %span Longitude
-  %button.remove-location(ng-show="location && !otDisabled" ng-click="removeLocation()") Remove
+  %button.remove-location(ng-show="location && otEditable" ng-click="removeLocation()") Remove
 

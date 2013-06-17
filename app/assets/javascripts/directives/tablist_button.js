@@ -8,18 +8,18 @@ angular.module('contentful').directive('tablistButton', function(analytics) {
       elem.find('.dropdown-toggle').click(function (event) {
         if ($(event.currentTarget).parent().hasClass('active')) {
           analytics.track('Clicked Add-Button', {
-            currentSection: scope.bucketContext.tabList.currentSection(),
-            currentViewType: scope.bucketContext.tabList.currentViewType()
+            currentSection: scope.spaceContext.tabList.currentSection(),
+            currentViewType: scope.spaceContext.tabList.currentViewType()
           });
         }
       });
 
-      scope.$on('newEntryTypePublished', function (event, entryType) {
+      scope.$on('newContentTypePublished', function (event, contentType) {
         var toggle = elem.find('.dropdown-toggle');
         toggle.tooltip({
           delay: {show: 100, hide: 100},
           trigger: 'manual',
-          title: 'You can now create a '+entryType.data.name+' Entry',
+          title: 'You can now create a '+contentType.getName()+' Entry',
           placement: 'right'
         });
         toggle.tooltip('show');

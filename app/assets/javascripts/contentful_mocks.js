@@ -32,6 +32,8 @@ angular.module('contentful/mocks', []).provider('ShareJS', function () {
   };
 }).provider('analytics', function () {
   this.$get = function () {
-    return {};
+    return {
+      track: function(){}
+    };
   };
 });

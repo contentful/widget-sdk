@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('contentful').controller('NewValidationCtrl', function ($scope, analytics) {
+  var _validationListPath;
   $scope.validation = null;
 
   $scope.prepareNewValidation = function () {
@@ -8,13 +9,38 @@ angular.module('contentful').controller('NewValidationCtrl', function ($scope, a
     $scope.validation[$scope.newValidationType] = {};
   };
 
-  $scope.createValidation = function () {
-    var fieldDoc = $scope.otDoc.at(['fields', $scope.index]);
-    if (!fieldDoc.get().validations) {
-      fieldDoc.at(['validations']).set([$scope.validation], callback);
+  $scope.$watch('field', function (field, old, scope) {
+    scope.fieldWithNewValidation = angular.copy(field);
+    if (field.type == 'Array') {
+      scope.fieldWithNewValidation.items.validations = [];
+      _validationListPath = ['items', 'validations', 0];
     } else {
-      var validationsDoc = $scope.otDoc.at(['fields', $scope.index, 'validations']);
-      validationsDoc.push($scope.validation, callback);
+      scope.fieldWithNewValidation.validations = [];
+      _validationListPath = ['validations', 0];
+    }
+  });
+
+  $scope.$watch('validation', function (validation, old, scope) {
+    var validations;
+    if (scope.field.type == 'Array') {
+      validations = scope.fieldWithNewValidation.items.validations;
+    } else {
+      validations = scope.fieldWithNewValidation.validations;
+    }
+    validations.length = 0;
+    validations.push(validation);
+  });
+
+  $scope.validationListPath = function () {
+    return _validationListPath;
+  };
+
+  $scope.createValidation = function () {
+    var listDoc = $scope.getValidationListDoc();
+    if (listDoc.get()) {
+      listDoc.push($scope.validation, callback);
+    } else {
+      listDoc.set([$scope.validation], callback);
     }
 
     function callback(err) {

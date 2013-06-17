@@ -12,8 +12,8 @@ angular.module('contentful').
       $scope.exampleUrl =
         'http://' +
         environment.settings.cdn_host +
-        '/buckets/' +
-        $scope.bucketContext.bucket.getId() +
+        '/spaces/' +
+        $scope.spaceContext.space.getId() +
         '/entries?access_token=' +
         accessToken;
     });

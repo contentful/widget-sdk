@@ -41,7 +41,7 @@ sharejs.extendDoc 'attach_textarea', (elem) ->
     if document.activeElement == elem
       [elem.selectionStart, elem.selectionEnd] = newSelection
 
-  insertListener = @on 'insert', (pos, text) ->
+  @on 'insert', insertListener = (pos, text) ->
     transformCursor = (cursor) ->
       if pos < cursor
         cursor + text.length
@@ -51,7 +51,7 @@ sharejs.extendDoc 'attach_textarea', (elem) ->
     prevvalue = elem.value.replace /\r\n/g, '\n'
     replaceText prevvalue[...pos] + text + prevvalue[pos..], transformCursor
   
-  deleteListener = @on 'delete', (pos, text) ->
+  @on 'delete', deleteListener = (pos, text) ->
     transformCursor = (cursor) ->
       if pos < cursor
         cursor - Math.min(text.length, cursor - pos)

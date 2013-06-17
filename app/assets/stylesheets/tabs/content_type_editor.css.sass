@@ -1,10 +1,10 @@
-.entry-type-editor
+.content-type-editor
   @extend %entity-editor
   .form-horizontal
     width: 95%
 
   .form-controls
-    .entry-type-field-list
+    .content-type-field-list
       padding-top: 5px
     table.result-list
       @extend %standalone-table
@@ -59,6 +59,13 @@
         cursor: -webkit-grabbing
         cursor: -moz-grab
         cursor: -moz-grabbing
+        // State change for disabled
+        &[disabled]
+          i
+            display: none
+          cursor: auto
+      th.drag-handle
+        cursor: auto
       .validations,
       .archived,
       .action
@@ -83,8 +90,6 @@
           @extend %dropdown-select
           .dropdown-menu
             width: 500px
-            top: auto
-            bottom: 35px
         .dropdown-menu
           padding: 0
         // TODO Create a component for this:
@@ -95,60 +100,62 @@
           +border-radius(3px 0 0 0)
         li:last-child
           +border-radius(0 0 0 3px)
-        .description
+        .content-type-description
           position: absolute
           color: $light-gray
           display: none
           left: 200px
           top: 0
-          padding: 5px
+          padding: 10px
+          p
+            padding: 0
+          img
+            margin-top: 10px
+            width: 100%
         li:hover
-          .description
+          .content-type-description
             display: block
 
     // Validations
     .field-validations
       background-color: $gray-background
       text-align: left
-      padding: 0 0 1em 0 !important
-      +box-shadow(0 2px 1px rgba(0,0,0,0.05) inset)
+      +box-shadow(0 2px 1px rgba(0,0,0,0.05) inset, 0 -1px 1px rgba(0,0,0,0.05) inset)
       header
         color: $dark-gray
-        font-size: 1.1em
+        font-size: 11px
         font-weight: 600
         padding: 10px 10px 4px
         p
           padding-bottom: 6px
-      li
+      .sections
         display: table
         width: 100%
-        border-top: 1px solid $lightest-gray
-        margin-top: -1px
-      div.section
+        margin-bottom: 10px
+      .section
         padding: 1em 14px
         display: table-row
         &:first-child
           border-top: 0px
-      .validations-open
-        .name,
-        .validation-options,
-        .action
-          display: table-cell
-          padding: 6px 0
-          vertical-align: middle
-          border-top: 1px solid lighten($lightest-gray, 5%)
-        .name
-          padding-left: 12px
-          select
-            width: 85%
-        .action
-          text-align: right
-          padding-right: 19px
-        input[type=text],
-        input[type=number]
-          background-color: white
-          border-color: $lightest-gray
-          width: auto
+      .name,
+      .validation-options,
+      .action
+        display: table-cell
+        padding: 6px 0
+        vertical-align: middle
+        border-top: 1px solid lighten($lightest-gray, 5%)
+      .name
+        padding-left: 12px
+        select
+          width: 85%
+      .action
+        text-align: right
+        padding-right: 19px
+      input[type=text],
+      input[type=number]
+        background-color: white
+        border-color: $lightest-gray
+        width: auto
 
     // Special code for removing displayField
     th.display
@@ -194,6 +201,10 @@
           line-height: 31px
         i.ss-delete
           font-size: 14px
+      // TODO replace link with buttons
+      .button[disabled]
+        i
+          color: $lightest-gray
       .button.new
         @extend %blue-button
         font-size: 13px

@@ -1,0 +1,55 @@
+.tab-header.editor-configuration
+  %h1 {{contentType.getName()}}
+
+  .editor-top-right
+    %button(ng-click="preferences.toggleAuxPanel()"
+            ng-class="{active: preferences.showAuxPanel}"
+            tooltip-placement="left"
+            tooltip="Toggle additional details")
+      Info
+
+.aux-panel
+  %header
+    %span Content Type Information
+  .entity-info-panel
+
+.tab-main
+  .form-horizontal(name="contentTypeForm")
+    .form-field
+      %label Name
+      .form-controls(ot-path="['name']" ot-subdoc)
+        %input(type="text"
+               ng-disabled="!otEditable"
+               placeholder="Content Type Name (e.g. Product)"
+               ng-model="contentType.data.name"
+               ot-bind-text="")
+        .validation-error-display.form-box-error(path="['name']")
+    .form-field
+      %label Description
+      .form-controls(ot-path="['description']" ot-subdoc)
+        %textarea(placeholder="Describe the purpose of entries using this Content Type"
+                  ng-disabled="!otEditable"
+                  ng-model="contentType.data.description"
+                  ot-bind-text="")
+        .validation-error-display.form-box-error(path="['description']")
+    .form-field
+      %label 
+      .form-controls
+    .form-field
+      %label Fields
+      .form-controls
+        .content-type-field-list
+
+
+.tab-actions(ng-controller="ContentTypeActionsCtrl")
+  .button-set
+    %button.delete(ng-show="canDelete()"
+                   ng-click="delete()"
+                   tooltip="Delete this Content Type")
+      Delete
+    %button.publish(ng-disabled="!canPublish()"
+                    ng-click="publish()"
+                    tooltip="Make this Content Type available to editors")
+      {{publishButtonLabel()}}
+  .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to create entries of this Content Type."
+               tooltip-placement="top")

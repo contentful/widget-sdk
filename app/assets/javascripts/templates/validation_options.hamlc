@@ -1,18 +1,37 @@
 %ng-switch(on="validationType(validation)")
+
+
   %div(ng-switch-when="size")
-    %input(type="number" ng-model="validation.size.min" placeholder="Minimum size" ng-change="updateDoc()")
+    %input(type="number" ng-model="validation.size.min" placeholder="Minimum size" ng-change="updateDoc()" ng-disabled="!otEditable")
     \-
-    %input(type="number" ng-model="validation.size.max" placeholder="Maximum size" ng-change="updateDoc()")
+    %input(type="number" ng-model="validation.size.max" placeholder="Maximum size" ng-change="updateDoc()" ng-disabled="!otEditable")
+    .validation-error-display.form-inline-error(path="validationListPath(validationIndex)").form-inline-error
+
+
   %div(ng-switch-when="range")
-    %input(type="number" ng-model="validation.range.min" placeholder="Minimum value" ng-change="updateDoc()")
+    %input(type="number" ng-model="validation.range.min" placeholder="Minimum value" ng-change="updateDoc()" ng-disabled="!otEditable")
     \-
-    %input(type="number" ng-model="validation.range.max" placeholder="Maximum value" ng-change="updateDoc()")
+    %input(type="number" ng-model="validation.range.max" placeholder="Maximum value" ng-change="updateDoc()" ng-disabled="!otEditable")
+    .validation-error-display.form-inline-error(path="validationListPath(validationIndex)").form-inline-error
+
+
   %div(ng-switch-when="regexp")
-    %input.regexp(type="text" ng-model="validation.regexp.pattern" placeholder="foo|bar[baz]" ng-change="updateDoc()")
+    %input.regexp(type="text" ng-model="validation.regexp.pattern" placeholder="foo|bar[baz]" ng-change="updateDoc()" ng-required="true" ng-disabled="!otEditable")
     %span Flags:
-    %input.flags(type="text" ng-model="validation.regexp.flags" ng-change="updateDoc()")
+    %input.flags(type="text" ng-model="validation.regexp.flags" ng-change="updateDoc()" ng-required="true" ng-disabled="!otEditable")
+    .validation-error-display.form-inline-error(path="validationListPath(validationIndex)").form-inline-error
+
+
   %div(ng-switch-when="in")
-    %input(type="text" ng-model="validation.in" ng-list="" placeholder="apple,orange,banana" ng-change="updateDoc()")
+    %input(type="text" ng-model="validation.in" ng-list cf-list-identity-fix placeholder="apple,orange,banana" ng-change="updateDoc()" ng-disabled="!otEditable")
     %span (separate allowed values by comma)
+    .validation-error-display.form-inline-error(path="validationListPath(validationIndex)").form-inline-error
+
+
+  %div(ng-switch-when="linkContentType")
+    %select(ng-model="validation.linkContentType"
+            ng-options="ct.getId() as ct.getName() for ct in spaceContext.publishedContentTypes" ng-change="updateDoc()" ng-disabled="!otEditable")
+
+
   %div(ng-switch-default="")
     Please select a type first

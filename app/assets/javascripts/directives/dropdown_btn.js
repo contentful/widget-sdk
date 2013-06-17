@@ -20,9 +20,24 @@ angular.module('contentful').directive('dropdownBtn', function() {
 
       element.find('.dropdown-toggle').click(function(event) {
         event.preventDefault();
-        scope.$apply(function() {
-          toggle();
-        });
+        scope.$apply(toggle);
+      });
+
+      scope.$watch(function dropDownIsOpenWatcher(){
+        return isOpen;
+      }, function(isOpen) {
+        var button = element;
+        var content = element.find('.dropdown-menu');
+        if (isOpen) {
+          button.addClass('active');
+          content.show();
+          repositionMenu();
+          $(document).on('click', closeOtherDropdowns);
+        } else {
+          button.removeClass('active');
+          content.hide();
+          $(document).off('click', closeOtherDropdowns);
+        }
       });
 
       var closeOtherDropdowns = function(event) {
@@ -40,21 +55,104 @@ angular.module('contentful').directive('dropdownBtn', function() {
         });
       };
 
-      scope.$watch(function dropDownIsOpenWatcher(){
-        return isOpen;
-      }, function(isOpen) {
-        var button = element;
-        var content = element.find('.dropdown-menu');
-        if (isOpen) {
-          button.addClass('active');
-          content.show();
-          $(document).on('click', closeOtherDropdowns);
-        } else {
-          button.removeClass('active');
-          content.hide();
-          $(document).off('click', closeOtherDropdowns);
+      function repositionMenu() {
+        if (skipPositioning()) return;
+        resetPosition();
+        element.find('.dropdown-menu').position(_.extend(getPositioning(),{
+          of: element.find('.dropdown-toggle'),
+          collision: 'flipfit',
+          using: applyPosition,
+          within: getMenuContainer()
+        }));
+      }
+
+      function resetPosition() {
+        element.find('.dropdown-menu').css({
+          top:    '',
+          bottom: '',
+          left:   '',
+          right:  ''
+        }).removeClass(function (index, oldClass) {
+          return _.filter(oldClass.split(' '), function (className) {
+            return className.match(/-caret$|-aligned$/);
+          }).join(' ');
+        });
+      }
+
+      function applyPosition(pos, info) {
+        var $menu = info.element.element;
+        //console.log('original position', pos, info);
+        var caretDirection = getCaretDirection(pos, info);
+        if (caretDirection == 'horizontal') {
+          $menu.addClass(info.vertical + '-caret ' + info.horizontal + '-aligned');
+          if (info.vertical == 'top') {
+            pos.top += 10;
+          } else {
+            pos.top -= 10;
+          }
+        } else if (caretDirection == 'vertical') {
+          $menu.addClass(info.horizontal + '-caret ' + info.vertical + '-aligned');
+          if (info.horizontal == 'left') {
+            pos.left += 10;
+          } else {
+            pos.left -= 10;
+          }
         }
-      });
+        //console.log('new position', pos, info);
+        $menu.css(pos);
+      }
+
+      function skipPositioning() {
+        return element.find('.dropdown-menu').hasClass('fixed-position');
+      }
+
+      function getPositioning() {
+        var position = element.find('.dropdown-menu').attr('position');
+        switch (position) {
+          case 'top':
+            return {
+              my: 'left bottom',
+              at: 'left top'
+            };
+          case 'right':
+            return {
+              my: 'left top',
+              at: 'right top'
+            };
+          case 'left':
+            return {
+              my: 'right top',
+              at: 'left top'
+            };
+          case 'bottom':
+          default:
+            return {
+              my: 'left top',
+              at: 'left bottom'
+            };
+        }
+      }
+
+      function getMenuContainer() {
+        var selector = element.find('.dropdown-menu').attr('container') || '.tab-main';
+        var container = element.parents(selector);
+        if (container.length !== 0) {
+          return container;
+        }
+      }
+
+      function getCaretDirection(pos, info) {
+        if (info.element.top + info.element.height <= info.target.top)
+          return 'horizontal'; // above
+        else if (info.target.top+info.target.height <= info.element.top)
+          return 'horizontal'; // below
+        else if (info.element.left+info.element.width <= info.target.left)
+          return 'vertical'; // left
+        else if (info.target.left+info.target.width <= info.element.left)
+          return 'vertical'; // right
+        else
+          return 'float';
+      }
     }
   };
 });

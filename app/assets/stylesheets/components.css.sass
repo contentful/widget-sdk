@@ -1,3 +1,5 @@
+@import "components/account"
+@import "components/space_view"
 @import "components/nav_bar"
 @import "components/tab_list"
 @import "components/tab_content"
@@ -19,6 +21,89 @@
 @import "components/advice"
 @import "components/tooltip"
 
+// Overwrite some jQuery-UI stuff
+.ui-corner-all
+  +border-radius(3px  3px  3px  3px)
+.ui-widget-header
+  background-image: none
+  background-color: $gray-background
+  color: $dark-gray
+
+// Delete Icon
+// TODO move somewhere else, this makes absolutely no sense out of context
+i.ss-delete
+  font-size: 8px
+  color: $lightest-gray
+  +text-shadow(0 1px 0 rgba(255,255,255,0.6))
+  &:hover
+    color: $medium-gray
+    cursor: pointer
+
+// Download Icon
+i.ss-download
+  position: relative
+  top: 0.2em
+
+.aligned-number 
+  min-width: 70px
+  text-align: right
+  display: block
+  max-width: 100px
+
+// Loading indicator
+.loading
+  background-image: asset-url('ajax-loader.gif', image)
+  background-position: center
+  background-repeat: no-repeat
+  background-size: 25px 25px
+  width: 30px
+  height: 30px
+  img
+    width: 50%
+    vertical-align: middle
+
+// Main results filters
+.filter-list
+  +plain-list
+  margin-bottom: 10px
+  li
+    font-size: 12px
+    line-height: 25px
+    padding: 0 $left-nav-padding
+    border: 1px solid transparent
+    span
+      color: $link-blue
+      line-height: 24px
+    small
+      font-size: 9px
+      color: $light-gray
+  li.active
+    border: 1px solid $dark-rule
+    +border-radius(3px  3px  3px  3px)
+    background: $gray-background
+
+
+// Endless container
+.endless-container
+  .loading
+    margin: auto
+    height: 50px
+    text-align: center
+.endless-container.scrolled
+  +box-shadow(rgba(black, .1) 1px 4px 9px -6px inset)
+
+.separator
+  height: 1px
+  background: $light-rule
+
+// Avatars
+// TODO configure only .avatar here, mix into account.user
+.avatar,
+.account .user
+  img
+    width: $avatar-width
+    +border-radius(3px)
+
 button::-moz-focus-inner
   border: 0
   padding: 0
@@ -26,12 +111,13 @@ button::-moz-focus-inner
 
 button
   -webkit-appearance: none
+  text-decoration: none
   color: $medium-gray
   display: inline-block
   vertical-align: middle
   position: relative
-  font-size: 1.2em
-  padding: .65em 1.2em
+  font-size: 12px
+  padding: 6.5px 12px
   overflow: hidden
   border: 1px solid darken($gray-background, 10%)
   +border-radius(3px)
@@ -49,6 +135,11 @@ button
     &:active
       top: 0px
 
+.as-button,
+  @extend button
+a.as-button
+  color: $medium-gray
+
 %blue-button
   +box-shadow(0 2px 1px rgba(0,0,0,0.08), 0 1px 1px lighten($blue, 7%) inset)
   +blue-highlight
@@ -56,7 +147,7 @@ button
   +border-radius(3px 3px 3px 3px)
   font-weight: 600
   font-size: 12px
-  padding: .4em 1.1em .5em
+  padding: 4px 11px 5px
   i
     color: #7dc7fb
   &:hover
@@ -77,8 +168,8 @@ button
   background-color: $gray-background
   border: 1px solid $lightest-gray
   +gray-highlight
-  +rounded-corners(3px, 3px, 3px, 3px)
-  line-height: 1.8em
+  +border-radius(3px  3px  3px  3px)
+  line-height: 18px
 
   &:hover
     cursor: pointer

@@ -6,7 +6,7 @@ angular.module('contentful').
     var pending = [];
 
     return {
-      get: function(bucket, id, callback) {
+      get: function(space, id, callback) {
         if (cache[id])
           return $browser.defer(function() {
             callback(null, cache[id]);
@@ -23,7 +23,7 @@ angular.module('contentful').
         if (inflight) return;
         inflight = true;
 
-        bucket.getUsers(null, function(err, users) {
+        space.getUsers(null, function(err, users) {
           _.forEach(users, function(user) {
             cache[user.getId()] = user;
           });

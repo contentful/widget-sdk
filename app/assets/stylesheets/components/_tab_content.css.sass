@@ -1,19 +1,10 @@
 // Layout
 
 .tab-content
-  overflow: hidden
-  position: absolute
-  top: 4.6em
-  right: 0
-  bottom: 1.8em
-  left: 0
-  clear: both
-  margin-left: $main-left-spacing
-  margin-right: 2em
   background-color: white
   border: 1px solid #dbdbdb
   border-color: rgba(0,0,0,0.17)
-  @include rounded-corners(0,2px,2px,2px)
+  +border-radius(0 2px 2px 2px)
 
 $left-nav-width: 17%
 .left-nav
@@ -88,49 +79,34 @@ $tab-main-margin-top: 28px
 
 // Look and Feel
 
+$left-nav-padding: 8px
 .left-nav
   margin-top: 4px
-  $padding: 8px
+  padding: $left-nav-padding
   header
     color: $medium-gray
     border-bottom: 1px solid $light-rule
-    margin-bottom: .8em
-    padding: 0 $padding 7px
+    margin-bottom: 8px
+    padding: 0 $left-nav-padding 7px
     font-size: 11px
     text-transform: uppercase
-  li
-    font-size: 1.2em
-    line-height: 25px
-    padding: 0 $padding
-    border: 1px solid transparent
-    span
-      color: $link-blue
-      line-height: 2em
-    small
-      font-size: .9em
-      color: $light-gray
-  li.active
-    border: 1px solid $dark-rule
-    +rounded-corners(3px, 3px, 3px, 3px)
-    background: $gray-background
-  .left-nav-list
-    margin-bottom: 1em
 
 .tab-header
   border-bottom: 1px solid $lightest-gray
   background-color: $gray-background
   +box-shadow(0 1px 4px rgba(0,0,0,0.07))
 .tab-header
+  z-index: 10
   h1
     display: inline-block
-    font-size: 2em
+    font-size: 20px
     margin-right: 20px
     color: $dark-gray
     padding-left: 25px
     line-height: $tab-header-height - 2px
     vertical-align: middle
 
-// Variant to extend a container with to style its left nav in the style
+// Variant to extend a container with, to style its left nav in the style
 // that it has these filters
 .list-tab-view
   .left-nav
@@ -138,13 +114,13 @@ $tab-main-margin-top: 28px
     .active:hover:after
       font-family: "SSStandard"
       content: "↻"
-      font-size: .7em
+      font-size: 7px
       color: $light-gray
-      line-height: 1em
-      margin-left: .3em
+      line-height: 10px
+      margin-left: 3px
   .left-nav-filters // TODO Rename saved-searches
     i.ss-search
       color: $light-gray
-      font-size: .8em
-      margin: 0 .2em 0 0
+      font-size: 8px
+      margin: 0 2px 0 0
     

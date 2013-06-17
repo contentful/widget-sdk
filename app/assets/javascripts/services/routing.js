@@ -1,45 +1,61 @@
 'use strict';
 
-function Routing($location, $route) {
-  this.$location = $location;
-  this.$route = $route;
-}
+angular.module('contentful').provider('routing', function ($routeProvider) {
+  $routeProvider.when('/spaces/:spaceId', {viewType: null, noNavigate: true});
+  $routeProvider.when('/spaces/:spaceId/entries', {viewType: 'entry-list'});
+  $routeProvider.when('/spaces/:spaceId/entries/:entryId', {viewType: 'entry-editor'});
+  $routeProvider.when('/spaces/:spaceId/content_types', {viewType: 'content-type-list'});
+  $routeProvider.when('/spaces/:spaceId/content_types/:contentTypeId', {viewType: 'content-type-editor'});
+  $routeProvider.when('/spaces/:spaceId/api_keys', {viewType: 'content-delivery'});
+  $routeProvider.when('/spaces/:spaceId/api_keys/:apiKeyId', {viewType: 'api-key-editor'});
+  $routeProvider.otherwise({noSpace: true});
 
-Routing.prototype = {
-  getPath: function(){
-    var path = '/';
-    if (this.bucketId) {
-      path += 'buckets/' + this.bucketId;
-    }
-    if (this.entitySection == 'entries') {
-      path += '/entries';
-    } else if (this.entitySection == 'entry_types') {
-      path += '/entry_types';
-    }
-    return path;
-  },
+  this.$get = function ($rootScope, $route, $location) {
+    function Routing(){}
 
-  visitBucketId : function(bucketId) {
-    this.bucketId = bucketId;
-    this.entitySection = null;
-    this.updateLocation();
-  },
+    Routing.prototype = {
+      getRoute: function(){
+        if(!$route.current) $route.reload();
+        return $route.current;
+      },
 
-  visitEntitySection : function(entitySection) {
-    this.entitySection = entitySection;
-    this.updateLocation();
-  },
+      getSpaceId: function () {
+        if (!this.getRoute() || this.getRoute().noSpace) {
+          return null;
+        } else {
+          return this.getRoute().params.spaceId;
+        }
+      },
 
-  updateLocation: function(){
-    this.$location.path(this.getPath());
-  },
+      setSpace: function (space) {
+        $location.path('/spaces/'+space.getId());
+      },
 
-  parseLocation: function(){
-    console.log(_.keys(this.$route));
-    var current = this.$route.current;
-    this.bucketId = current.params.bucketId;
-    this.entitySection = current.$route.entity_section;
-  }
-};
+      setTab: function (tab, space) {
+        var spaceId = space ? space.getId() : this.getSpaceId();
+        var path = '/spaces/'+spaceId;
+        if (tab.viewType == 'entry-editor') {
+          path = path + '/entries/' + tab.params.entry.getId();
+        } else if (tab.viewType == 'entry-list') {
+          path = path + '/entries';
+        } else if (tab.viewType == 'content-type-editor') {
+          path = path + '/content_types/' + tab.params.contentType.getId();
+        } else if (tab.viewType == 'content-type-list') {
+          path = path + '/content_types';
+        } else if (tab.viewType == 'content-delivery') {
+          path = path + '/api_keys';
+        } else if (tab.viewType == 'api-key-editor') {
+          var apiKeyId = tab.params.apiKey.getId();
+          if (apiKeyId) {
+            path = path + '/api_keys/' + apiKeyId;
+          } else {
+            path = path + '/api_keys';
+          }
+        }
+        $location.path(path);
+      }
+    };
 
-angular.module('contentful').service('routing', Routing);
+    return new Routing();
+  };
+});

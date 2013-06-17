@@ -1,4 +1,6 @@
 namespace :generate do
+  task :all => [:index_page, :css_redirect]
+
   task :index_page => :environment do
     require 'rails/console/app'
     require 'rails/console/helpers'
@@ -13,5 +15,18 @@ namespace :generate do
     else
       raise "Error generating index page #{response.inspect}"
     end
+  end
+
+  task :css_redirect => :environment do
+    path = File.join(Rails.root, "public/app/manifest.yml")
+    filename = YAML::load(File.open(path))["application.css"]
+
+    AssetSync.storage.bucket.files.create({
+      :key => "app/application.css",
+      :public => true,
+      :acl => 'public-read',
+      :body => '',
+      'x-amz-website-redirect-location' => "/app/#{filename}"
+    })
   end
 end

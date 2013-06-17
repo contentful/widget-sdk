@@ -1,43 +1,53 @@
 %ul.links(ng-hide="linkedEntries.length == 0")
   %li(ng-repeat="entry in linkedEntries")
-    %a(ng-click="visitLink(entry)") {{linkDescription(entry)}}
-    %i.ss-delete(ng-click="removeLink(entry)" ng-hide="otDisabled")
-.controls(ng-show="!otDisabled && (linkedEntries.length == 0 || field.type == 'array')")
-  .dropdown-btn.add-new(tooltip="Add new Entry" tooltip-placement="left")
-    %button.dropdown-toggle
-      %i.ss-plus
-      New
-    %a.dropdown-menu
-      %ul
-        %li(ng-repeat="entryType in bucketContext.publishedEntryTypes"
-            ng-click="addNew(entryType)"
-            dropdown-close="")
-          {{entryType.data.name}}
-  .search-field(ng-submit="submit()"
-                search="searchTerm"
-                search-type-ahead=""
-                placeholder="Search for entries"
-                tooltip-placement="top"
-                tooltip="Search for existing entries")
+    %a(ng-click="editEntry(entry)") {{linkDescription(entry)}}
+    %i.ss-delete(ng-click="removeLink(entry)" ng-show="otEditable")
+.cf-autocomplete-search(cf-autocomplete-result-list)
+  .controls(ng-show="otEditable && (linkedEntries.length == 0 || field.type == 'Array')")
+    .add-new(ng-show="linkContentType"
+             ng-click="addNew(linkContentType)"
+             tooltip="Add new {{linkContentType.getName()}} Entry"
+             tooltip-placement="left")
+      %button.with-link-content-type
+        %i.ss-plus
+        New
+    .dropdown-btn.add-new(ng-hide="linkContentType"
+                          tooltip="Add new Entry"
+                          tooltip-placement="left")
+      %button.dropdown-toggle
+        %i.ss-plus
+        New
+      %a.dropdown-menu
+        %ul
+          %li(ng-repeat="contentType in spaceContext.publishedContentTypes"
+              ng-click="addNew(contentType)"
+              dropdown-close="")
+            {{contentType.getName()}}
+    .search-field(ng-submit="submit()"
+                  search="searchTerm"
+                  search-type-ahead=""
+                  placeholder="Search for entries"
+                  tooltip-placement="top"
+                  tooltip="Search for existing entries")
 
-.results.btn-right-on.search-options-on(ng-show="hasResults()")
-  %table.result-list
-    %thead
-      %tr
-        %th.cell-type Content Type
-        %th.cell-name Name
-        %th.cell-by By
-  .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
+  .results.btn-right-on.search-options-on(ng-show="hasResults()")
     %table.result-list
-      %tbody
-        %tr(ng-repeat="entry in entries"
-            cf-click-local="pick(entry)"
-            ng-class="{selected: entry==entries[selectedItem]}")
-          %td.cell-type
-            %span {{bucketContext.publishedTypeForEntry(entry).data.name}}
-          %td.cell-name
-            %span {{bucketContext.entryTitle(entry)}}
-          %td.cell-by
-            %span.cf-user(link="entry.data.sys.updatedBy" as="updater")
-              {{updater.getName()}}
-    .loading(ng-hide="paginator.atLast()")
+      %thead
+        %tr
+          %th.cell-type Content Type
+          %th.cell-name Name
+          %th.cell-by By
+    .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
+      %table.result-list
+        %tbody
+          %tr(ng-repeat="entry in entries"
+              cf-click-local="pick(entry)"
+              ng-class="{selected: entry==entries[selectedItem]}")
+            %td.cell-type
+              %span {{spaceContext.publishedTypeForEntry(entry).getName()}}
+            %td.cell-name
+              %span {{spaceContext.entryTitle(entry)}}
+            %td.cell-by
+              %span.cf-user(link="entry.data.sys.updatedBy" as="updater")
+                {{updater.getName()}}
+      .loading(ng-hide="paginator.atLast()")

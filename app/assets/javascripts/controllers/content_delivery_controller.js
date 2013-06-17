@@ -3,7 +3,7 @@
 angular.module('contentful').
   controller('ContentDeliveryCtrl', function($scope, $window, environment) {
     $scope.refreshApiKeys = function() {
-      $scope.bucketContext.bucket.getApiKeys(null, function(err, apiKeys) {
+      $scope.spaceContext.space.getApiKeys(null, function(err, apiKeys) {
         $scope.$apply(function() {
           $scope.apiKeys = apiKeys;
         });
@@ -28,24 +28,6 @@ angular.module('contentful').
       if (tab !== $scope.tab) return;
       $scope.refreshApiKeys();
     });
-
-    $scope.editApiKey = function(apiKey) {
-      var editor = _.find($scope.tab.list.items, function(tab){
-        return (tab.viewType == 'api-key-editor' &&
-                tab.params.apiKey.getId() == apiKey.getId());
-      });
-      if (!editor) {
-        editor = $scope.tab.list.add({
-          viewType: 'api-key-editor',
-          section: 'contentDelivery',
-          params: {
-            apiKey: apiKey,
-            mode: 'edit'
-          }
-        });
-      }
-      editor.activate();
-    };
 
     $scope.openApiDocs = function() {
       var apiDocsUrl = '//' + environment.settings.marketing_url + '/developers/api';

@@ -1,4 +1,4 @@
-angular.module('contentful').directive('newFieldForm', function (availableFieldTypes, toIdentifier, analytics) {
+angular.module('contentful').directive('newFieldForm', function (availableFieldTypes, toIdentifier, analytics, notification) {
   'use strict';
 
   return {
@@ -6,38 +6,33 @@ angular.module('contentful').directive('newFieldForm', function (availableFieldT
     controller: function ($scope) {
       var defaultType = availableFieldTypes[0];
       $scope.newType = defaultType;
+      resetNewField();
 
-      $scope.$watch('newName', function(name, previousName, scope) {
-        if (scope.newId &&
+      $scope.$watch('newField.name', function(name, previousName, scope) {
+        if (scope.newField.id &&
             previousName &&
-            scope.newId !== toIdentifier(previousName))
+            scope.newField.id !== toIdentifier(previousName))
           return;
-        scope.newId = name ? toIdentifier(name) : '';
+        scope.newField.id = name ? toIdentifier(name) : '';
+      });
+
+      $scope.$watch('newType', function (newType, old, scope) {
+        _.extend(scope.newField, newType.value);
       });
 
       $scope.addField = function() {
-        var field = {
-          id   : $scope.newId,
-          name : $scope.newName,
-          required: $scope.newRequired,
-          localized: $scope.newLocalized
-        };
-        _.extend(field, $scope.newType.value);
-
         var fieldDoc = $scope.otDoc.at(['fields']);
 
-        fieldDoc.push(field, function(err) {
+        fieldDoc.push($scope.newField, function(err) {
           if (err) {
-            window.alert('ShareJS says no');
+            notification.error('Could not add field');
           } else {
             $scope.$apply(function(scope) {
-              scope.newId = scope.newName = null;
-              scope.newType = defaultType;
-              scope.newRequired = false;
-              scope.newLocalized = false;
+              var field = $scope.newField;
+              resetNewField();
               scope.otUpdateEntity();
               scope.$broadcast('fieldAdded');
-              analytics.modifiedEntryType('Modified EntryType', scope.entryType, field, 'add');
+              analytics.modifiedContentType('Modified ContentType', scope.contentType, field, 'add');
             });
           }
         });
@@ -47,11 +42,20 @@ angular.module('contentful').directive('newFieldForm', function (availableFieldT
         $scope.newType = type;
       };
 
+      function resetNewField() {
+        $scope.newField = {
+          id: null,
+          name: null,
+          type: defaultType.value.type,
+          required: false,
+          localized: false
+        };
+      }
     },
 
     link: function (scope, elem) {
       scope.$on('fieldAdded', function () {
-        elem.find('.field-id').focus();
+        elem.find('input').eq(0).focus();
       });
     }
   };

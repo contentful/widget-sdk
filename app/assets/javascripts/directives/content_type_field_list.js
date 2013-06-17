@@ -1,9 +1,9 @@
 'use strict';
 
-angular.module('contentful').directive('entryTypeFieldList', function(analytics) {
+angular.module('contentful').directive('contentTypeFieldList', function(analytics) {
   return {
     restrict: 'C',
-    template: JST.entry_type_field_list(),
+    template: JST.content_type_field_list(),
     link: function link(scope, elm) {
       var body = elm.find('tbody').eq(0);
       body.sortable({
@@ -36,9 +36,17 @@ angular.module('contentful').directive('entryTypeFieldList', function(analytics)
         }
       });
 
+      scope.$watch('otEditable', function (editable) {
+        if (editable) {
+          body.sortable('enable');
+        } else {
+          body.sortable('disable');
+        }
+      });
+
     },
 
-    controller: function EntryTypeFieldListCtrl($scope) {
+    controller: function ContentTypeFieldListCtrl($scope) {
       var _showValidations = {};
       $scope.showValidations = function(fieldId) {
         return !!_showValidations[fieldId];
@@ -55,7 +63,7 @@ angular.module('contentful').directive('entryTypeFieldList', function(analytics)
         _showValidations = {};
       };
 
-      $scope.$watch('publishedEntryType', function(et, old, scope) {
+      $scope.$watch('publishedContentType', function(et, old, scope) {
         if (et && et.data.fields)
           scope.publishedIds = _.pluck(et.data.fields, 'id');
       });
@@ -63,7 +71,7 @@ angular.module('contentful').directive('entryTypeFieldList', function(analytics)
       $scope.removeDisplayField = function () {
         $scope.otDoc.at(['displayField']).set(null, function (err) {
           if (!err) $scope.$apply(function (scope) {
-            scope.entryType.data.displayField = null;
+            scope.contentType.data.displayField = null;
           });
         });
       };

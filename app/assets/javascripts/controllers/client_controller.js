@@ -1,8 +1,8 @@
-angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope, client, BucketContext, authentication, contentfulClient, notification, cfSpinner, analytics) {
+angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope, client, SpaceContext, authentication, contentfulClient, notification, cfSpinner, analytics, routing, authorization) {
   'use strict';
 
-  $scope.buckets = [];
-  $scope.bucketContext = new BucketContext();
+  $scope.spaces = [];
+  $scope.spaceContext = new SpaceContext();
   $scope.tokenIdentityMap = new contentfulClient.IdentityMap();
 
   $scope.notification = notification;
@@ -12,38 +12,62 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
 
     toggleAuxPanel: function() {
       $scope.preferences.showAuxPanel = !$scope.preferences.showAuxPanel;
-      analytics.toggleAuxPanel($scope.preferences.showAuxPanel, $scope.bucketContext.tabList.current);
+      analytics.toggleAuxPanel($scope.preferences.showAuxPanel, $scope.spaceContext.tabList.current);
     }
   };
 
   $scope.user = null;
 
-  $scope.clickedBucketSwitcher = function () {
-    analytics.track('Clicked Bucket-Switcher');
+  $scope.clickedSpaceSwitcher = function () {
+    analytics.track('Clicked Space-Switcher');
   };
 
-  function setBucket(bucket) {
-    analytics.setBucketData(bucket);
-    $scope.bucketContext = new BucketContext(bucket);
+  $scope.$watch('spaceContext.space', function (space) {
+    authorization.setSpace(space);
+  });
+
+  function setSpace(space) {
+    analytics.setSpaceData(space);
+    authorization.setSpace(space);
+    $scope.spaceContext = new SpaceContext(space);
   }
 
-  $scope.selectBucket = function(bucket) {
-    if (bucket &&
-        $scope.bucketContext &&
-        $scope.bucketContext.bucket &&
-        $scope.bucketContext.bucket.getId() === bucket.getId()) return;
+  $scope.getCurrentSpaceId = function () {
+    return $scope.spaceContext &&
+           $scope.spaceContext.space &&
+           $scope.spaceContext.space.getId();
+  };
+
+  $scope.selectSpace = function(space) {
+    if (space && $scope.getCurrentSpaceId() === space.getId()) return;
     
-    setBucket(bucket);
-    analytics.track('Switched Bucket', {
-      bucketId: bucket.data.sys.id,
-      bucketName: bucket.data.name
+    setSpace(space);
+    analytics.track('Switched Space', {
+      spaceId: space.data.sys.id,
+      spaceName: space.data.name
     });
   };
 
-  $scope.$watch('buckets', function(buckets){
-    if (buckets && buckets.length > 0) {
-      if (!_.contains(buckets, $scope.bucketContext.bucket)) setBucket(buckets[0]);
+  $scope.$on('tabBecameActive', function (event, tab) {
+    routing.setTab(tab, event.currentScope.spaceContext.space);
+  });
+
+  $scope.$on('$routeChangeSuccess', function (event, route) {
+    if (route.noNavigate) return;
+    if (route.params.spaceId != $scope.getCurrentSpaceId()) {
+      var space = _.find($scope.spaces, function (space) {
+        return space.getId() == route.params.spaceId;
+      });
+      if (space) setSpace(space);
     }
+  });
+
+  $scope.$watch('spaces', function(spaces) {
+    if (_.contains(spaces, $scope.spaceContext.space)) return;
+    var spaceIdFromRoute = routing.getSpaceId();
+    var initialSpace = _.find(spaces, function (space) {
+      return space.getId() == spaceIdFromRoute; }) || spaces[0];
+    setSpace(initialSpace);
   });
 
   $scope.logout = function() {
@@ -56,10 +80,10 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
   };
 
   $scope.$on('iframeMessage', function (event, message) {
-    if (message.type === 'bucket' && message.action === 'update') {
-      _.extend($scope.bucketContext.bucket.data, message.resource);
+    if (message.type === 'space' && message.action === 'update') {
+      _.extend($scope.spaceContext.space.data, message.resource);
       //TODO this is pobably much too simplified, better look up correct
-      //bucket and check if the method of updating is correct
+      //space and check if the method of updating is correct
     } else if (message.type === 'user' && message.action === 'update') {
       _.extend($scope.user, message.resource);
     /*
@@ -69,16 +93,19 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
     } else if (message.action !== 'delete') {
       authentication.updateTokenLookup(message.resource);
       $scope.user = authentication.tokenLookup.sys.createdBy;
-      $scope.updateBuckets(authentication.tokenLookup.buckets);
+      $scope.updateSpaces(authentication.tokenLookup.spaces);
     } else if (message.token) {
      */
       authentication.setTokenLookup(message.token);
+      authorization.setTokenLookup(message.token, $scope.spaceContext.space);
       $scope.user = authentication.tokenLookup.sys.createdBy;
-      $scope.updateBuckets(authentication.tokenLookup.buckets);
+      $scope.updateSpaces(authentication.tokenLookup.spaces);
     } else if (message.type === 'flash') {
       var level = message.resource.type;
       if (!level.match(/info|error/)) level = 'info';
       notification[level](message.resource.message);
+    } else if (message.type === 'location') {
+      // ignore
     } else {
       $scope.performTokenLookup();
     }
@@ -103,10 +130,10 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
     analytics.track('Clicked Profile');
 
     // TODO This is a pattern that repeats and should be extracted
-    var tab = _.find($scope.bucketContext.tabList.items, function(tab) {
+    var tab = _.find($scope.spaceContext.tabList.items, function(tab) {
       return tab.viewType === options.viewType && tab.section === options.section;
     });
-    tab = tab || $scope.bucketContext.tabList.add(options);
+    tab = tab || $scope.spaceContext.tabList.add(options);
     tab.activate();
   };
 
@@ -119,47 +146,48 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
       $scope.$apply(function(scope) {
         //console.log('tokenLookup', tokenLookup);
         scope.user = tokenLookup.sys.createdBy;
+        authorization.setTokenLookup(tokenLookup);
         analytics.login(scope.user);
-        scope.updateBuckets(tokenLookup.buckets);
+        scope.updateSpaces(tokenLookup.spaces);
         if (callback) callback(tokenLookup);
       });
       stopSpinner();
     });
   };
 
-  $scope.updateBuckets = function (rawBuckets) {
-    var newBucketList = _.map(rawBuckets, function (rawBucket) {
-      var existing = _.find($scope.buckets, function (existingBucket) {
-        return existingBucket.getId() == rawBucket.sys.id;
+  $scope.updateSpaces = function (rawSpaces) {
+    var newSpaceList = _.map(rawSpaces, function (rawSpace) {
+      var existing = _.find($scope.spaces, function (existingSpace) {
+        return existingSpace.getId() == rawSpace.sys.id;
       });
       if (existing) {
-        existing.update(rawBucket);
+        existing.update(rawSpace);
         return existing;
       } else {
-        var bucket = client.wrapBucket(rawBucket);
-        bucket.save = function () { throw new Error('Saving bucket not allowed'); };
-        return bucket;
+        var space = client.wrapSpace(rawSpace);
+        space.save = function () { throw new Error('Saving space not allowed'); };
+        return space;
       }
     });
-    newBucketList.sort(function (a,b) {
+    newSpaceList.sort(function (a,b) {
       return a.data.name.localeCompare(b.data.name);
     });
-    $scope.buckets = newBucketList;
+    $scope.spaces = newSpaceList;
   };
 
-  $scope.canCreateBucket = function () {
+  $scope.canCreateSpace = function () {
     // For now it is impossible to determine if this is allowed
     // TODO: Implement proper check as soon as the information is available
     return true;
   };
 
-  $scope.showCreateBucketDialog = function () {
-    $scope.displayCreateBucketDialog = true;
-    analytics.track('Clicked Create-Bucket');
+  $scope.showCreateSpaceDialog = function () {
+    $scope.displayCreateSpaceDialog = true;
+    analytics.track('Clicked Create-Space');
   };
 
-  $scope.hideCreateBucketDialog = function () {
-    $scope.displayCreateBucketDialog = false;
+  $scope.hideCreateSpaceDialog = function () {
+    $scope.displayCreateSpaceDialog = false;
   };
 
   $scope.performTokenLookup();

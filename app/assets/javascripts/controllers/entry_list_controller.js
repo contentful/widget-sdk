@@ -1,29 +1,10 @@
 'use strict';
 
 angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl($scope, Paginator, Selection, cfSpinner, analytics) {
-  $scope.contentType = 'entries';
   $scope.entrySection = 'all';
 
   $scope.paginator = new Paginator();
   $scope.selection = new Selection();
-
-  $scope.editEntry = function(entry) {
-    var editor = _.find($scope.tab.list.items, function(tab){
-      return (tab.viewType == 'entry-editor' && tab.params.entry.getId() == entry.getId());
-    });
-    if (!editor) {
-      editor = $scope.tab.list.add({
-        viewType: 'entry-editor',
-        section: 'entries',
-        params: {
-          entry: entry,
-          mode: 'edit'
-        },
-        title: this.bucketContext.entryTitle(entry)
-      });
-    }
-    editor.activate();
-  };
 
   $scope.$on('entityDeleted', function (event, entity) {
     var scope = event.currentScope;
@@ -36,23 +17,23 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
   $scope.$watch('searchTerm',  function (term) {
     if (term === null) return;
     $scope.tab.params.list = 'all';
-    $scope.tab.params.entryTypeId = null;
+    $scope.tab.params.contentTypeId = null;
     $scope.paginator.page = 0;
     $scope.resetEntries();
   });
 
-  $scope.switchList = function(list, entryType){
+  $scope.switchList = function(list, contentType){
     $scope.searchTerm = null;
     var params = $scope.tab.params;
     var shouldReset =
       params.list == list &&
-      (!entryType || params.entryTypeId == entryType.getId());
+      (!contentType || params.contentTypeId == contentType.getId());
 
     if (shouldReset) {
       this.resetEntries();
     } else {
       this.paginator.page = 0;
-      params.entryTypeId = entryType ? entryType.getId() : null;
+      params.contentTypeId = contentType ? contentType.getId() : null;
       params.list = list;
     }
   };
@@ -77,8 +58,8 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
       page: scope.paginator.page,
       pageLength: scope.paginator.pageLength,
       list: scope.tab.params.list,
-      entryTypeId: scope.tab.params.entryTypeId,
-      bucketId: (scope.bucketContext.bucket && scope.bucketContext.bucket.getId())
+      contentTypeId: scope.tab.params.contentTypeId,
+      spaceId: (scope.spaceContext.space && scope.spaceContext.space.getId())
     };
   }, function(pageParameters, old, scope){
     scope.resetEntries();
@@ -90,7 +71,7 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
 
     this.reloadInProgress = true;
     var stopSpin = cfSpinner.start();
-    this.bucketContext.bucket.getEntries(this.buildQuery(), function(err, entries, stats) {
+    this.spaceContext.space.getEntries(this.buildQuery(), function(err, entries, stats) {
       scope.reloadInProgress = false;
       if (err) return;
       scope.paginator.numEntries = stats.total;
@@ -114,13 +95,13 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
       // do nothing
     } else if (this.tab.params.list == 'published') {
       queryObject['sys.publishedAt[exists]'] = 'true';
-    } else if (this.tab.params.list == 'unpublished') {
+    } else if (this.tab.params.list == 'changed') {
       queryObject['sys.archivedAt[exists]'] = 'false';
-      queryObject['sys.publishedAt[exists]'] = 'false';
+      queryObject['changed'] = 'true';
     } else if (this.tab.params.list == 'archived') {
       queryObject['sys.archivedAt[exists]'] = 'true';
-    } else if (this.tab.params.list == 'entryType') {
-      queryObject['sys.entryType.sys.id'] = this.tab.params.entryTypeId;
+    } else if (this.tab.params.list == 'contentType') {
+      queryObject['sys.contentType.sys.id'] = this.tab.params.contentTypeId;
     }
 
     if (!_.isEmpty(this.searchTerm)) {
@@ -146,7 +127,7 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
     this.paginator.page++;
     this.pauseReset();
     var stopSpin = cfSpinner.start();
-    this.bucketContext.bucket.getEntries(this.buildQuery(), function(err, entries, stats) {
+    this.spaceContext.space.getEntries(this.buildQuery(), function(err, entries, stats) {
       scope.reloadInProgress = false;
       if (err) {
         scope.paginator.page--;
@@ -181,7 +162,7 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
   // Development shorcut to quickly open an entry
 
   //$scope.$watch(function($scope){
-  //  return !(_.isEmpty($scope.entries) || _.isEmpty($scope.entryTypes));
+  //  return !(_.isEmpty($scope.entries) || _.isEmpty($scope.contentTypes));
   //}, function(dataReady){
   //  if (dataReady) {
   //    $scope.editEntry($scope.entries[0]);

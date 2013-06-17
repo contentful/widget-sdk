@@ -16,12 +16,12 @@
         %span Languages
       .dropdown-menu(style="display:none")
         %p
-          Default: {{bucketContext.bucket.getDefaultLocale().name}}
+          Default: {{spaceContext.space.getDefaultLocale().name}}
         .separator
         %ul
-          %li(ng-repeat="locale in bucketContext.publishLocales")
+          %li(ng-repeat="locale in spaceContext.publishLocales")
             %label
-              %input(type="checkbox" ng-model="bucketContext.localesActive[locale.code]")
+              %input(type="checkbox" ng-model="spaceContext.localesActive[locale.code]")
               {{locale.name}}
 
   .editor-top-right
@@ -52,8 +52,6 @@
 
 .tab-main
   %form.form-horizontal(name="entryForm")
-    -#.field(data-field-type="string" data-field-widget="textField")
-      later generate these tags so they can be used in CSS
     .form-field(ng-repeat="field in fields" data-field-type="{{field.type}}" data-field-items-type="{{field.items.type}}")
       %label {{field.name}}
       .form-controls
@@ -70,17 +68,16 @@
             Hint to the user about the meaning of the field
             .arrow-left
             .arrow-left-border
-          .field-error-display
-            Error on the field entry
+          .validation-error-display.form-box-error(path="['fields', field.id, locale.code]")
 
 .tab-actions(ng-controller="EntryActionsCtrl")
   .button-set
-    %button.delete(   ng-show="entry.canDelete()"    ng-click="delete()"       tooltip="Permanently delete this Entry") Delete
-    %button.archive(  ng-show="entry.canArchive()"   ng-click="archive()"      tooltip="Archive this Entry") Archive
-    %button.archive(  ng-show="entry.canUnarchive()" ng-click="unarchive()"    tooltip="Unarchive this Entry") Unarchive
-    %button.unpublish(ng-show="entry.canUnpublish()" ng-click="unpublish()"    tooltip="Unpublish this Entry") Unpublish
-    %button.publish(  ng-show="canPublish()"         ng-click="publish()"      tooltip="{{publishButtonLabel()}} this Entry" ng-disabled="!formValid()")
-      {{publishButtonLabel()}}
+    %button.delete(   ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this entry"               ) Duplicate
+    %button.delete(   ng-show="canDelete()"    ng-click="delete()"    tooltip="Permanently delete this Entry"      ) Delete
+    %button.archive(  ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry"                 ) Archive
+    %button.archive(  ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry"               ) Unarchive
+    %button.unpublish(ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry"               ) Unpublish
+    %button.publish(  ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Entry") {{publishButtonLabel()}}
   .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
                tooltip-placement="top")
   .other-users

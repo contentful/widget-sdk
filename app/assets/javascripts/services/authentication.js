@@ -68,8 +68,8 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       return authApp + 'integrations/zendesk/login';
     },
 
-    bucketSettingsUrl: function (bucketId) {
-      return authApp + 'settings/buckets/'+bucketId+'/edit?access_token='+this.token;
+    spaceSettingsUrl: function (spaceId) {
+      return authApp + 'settings/spaces/'+spaceId+'/edit?access_token='+this.token;
     },
 
     redirectToLogin: function() {
@@ -77,7 +77,7 @@ angular.module('contentful').provider('authentication', function AuthenticationP
         response_type: 'token',
         client_id: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
         redirect_uri: window.location.protocol + '//' + window.location.host + '/',
-        scope: 'private_manage'
+        scope: 'content_management_manage'
       });
       this.redirectingToLogin = true;
       window.location = authApp + 'oauth/authorize?' + params;

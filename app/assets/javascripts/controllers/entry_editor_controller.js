@@ -1,9 +1,11 @@
-angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorCtrl($scope, ShareJS, validation) {
-  'use strict';
+'use strict';
 
+angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorCtrl($scope, ShareJS, validation, can) {
   $scope.$watch('tab.params.entry', 'entry=tab.params.entry');
-  $scope.$watch('entry.isArchived()', function (archived, old, scope) {
-    scope.otDisabled = !!archived;
+  $scope.$watch(function entryEditorEnabledWatcher(scope) {
+    return !scope.entry.isArchived() && can('update', scope.entry.data);
+  }, function entryEditorEnabledHandler(enabled, old, scope) {
+    scope.otDisabled = !enabled;
   });
 
   $scope.$on('tabClosed', function(event, tab) {
@@ -12,7 +14,7 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     }
   });
 
-  $scope.$watch('bucketContext.entryTitle(entry)', function(title, old, scope) {
+  $scope.$watch('spaceContext.entryTitle(entry)', function(title, old, scope) {
     scope.tab.title = title;
   });
 
@@ -25,16 +27,11 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     event.currentScope.otUpdateEntity();
   });
 
-  $scope.formValid = function () {
-    if (!$scope.entryConstraint) {
-      var entryType = this.bucketContext.publishedTypeForEntry(this.entry);
-      var bucket = this.bucketContext.bucket;
-      $scope.entryConstraint = validation.EntryType.parse(entryType.data, bucket).entryConstraint;
-    }
-    var entry = $scope.otDoc ? $scope.otDoc.getAt([]) : $scope.entry.data;
-    var valid = $scope.entryConstraint.test(entry);
-    return valid;
-  };
+  $scope.$watch('spaceContext.publishedTypeForEntry(entry).data', function(data) {
+    if (!data) return;
+    var locales = $scope.spaceContext.space.getPublishLocales(); // TODO: watch this, too
+    $scope.entrySchema = validation.fromContentType(data, locales);
+  });
 
   $scope.publishedAt = function(){
     if (!$scope.otDoc) return;
@@ -47,19 +44,26 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
   };
 
   $scope.$watch(function (scope) {
-    return _.pluck(scope.bucketContext.activeLocales, 'code');
+    return _.pluck(scope.spaceContext.activeLocales, 'code');
   }, updateFields, true);
-  $scope.$watch('bucketContext.bucket.getDefaultLocale()', updateFields);
-  $scope.$watch('bucketContext.publishedTypeForEntry(entry).data.fields', updateFields, true);
+  $scope.$watch('spaceContext.space.getDefaultLocale()', updateFields);
+  $scope.$watch(function () { return errorPaths; }, updateFields);
+  $scope.$watch('spaceContext.publishedTypeForEntry(entry).data.fields', updateFields, true);
+  var errorPaths = {};
   function updateFields(n, o ,scope) {
-    var et = scope.bucketContext.publishedTypeForEntry(scope.entry);
+    var et = scope.spaceContext.publishedTypeForEntry(scope.entry);
+    if (!et) return;
     scope.fields = _(et.data.fields).reduce(function (acc, field) {
-      if (!field.disabled) {
+      if (!field.disabled || errorPaths[field.id]) {
         var locales;
         if (field.localized) {
-          locales = scope.bucketContext.activeLocales;
+          locales = scope.spaceContext.activeLocales;
+          var errorLocales = _.map(errorPaths[field.id], function (code) {
+            return scope.spaceContext.getPublishLocale(code);
+          });
+          locales = _.union(locales, errorLocales);
         } else {
-          locales = [scope.bucketContext.bucket.getDefaultLocale()];
+          locales = [scope.spaceContext.space.getDefaultLocale()];
         }
         acc.push(inherit(field, locales));
       }
@@ -80,10 +84,22 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
       return field.localized;
     });
   });
+  
+  $scope.$watch('validationResult.errors', function (errors) {
+    errorPaths = {};
+    _.each(errors, function (error) {
+      if (error.path[0] !== 'fields') return;
+      var field  = error.path[1];
+      var locale = error.path[2];
+      errorPaths[field] = errorPaths[field] || [];
+      errorPaths[field].push(locale) ;
+      errorPaths[field] = _.unique(errorPaths[field], 'code');
+    });
+  });
 
 
   $scope.headline = function(){
-    return this.bucketContext.entryTitle(this.entry);
+    return this.spaceContext.entryTitle(this.entry);
   };
 
 });

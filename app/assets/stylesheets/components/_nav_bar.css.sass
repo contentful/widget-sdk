@@ -1,33 +1,47 @@
 .nav-bar
-  @include user-select(none)
+  // layout
+  ul
+    margin: 0
+  li
+    list-style-type: none
+    margin: 0
+    position: relative
+  .separator
+    height: 1px
+    width: 100%
+    position: absolute
+    bottom: 0
+  // styling
+  +user-select(none)
   +gradient(#333333, #434343)
   +box-shadow(2px 0 1px rgba(0,0,0,0.15))
   z-index: 1
   // Separator below logo and each nav button
-  .logo, li
+  .logo,
+  li
     border-bottom: 1px solid rgba(0,0,0,0.45)
-    @include box-shadow(0 1px 0 rgba(255,255,255,0.06))
+    +box-shadow(0 1px 0 rgba(255,255,255,0.06))
   li
     color: $medium-gray
-    height: 5em
-    width: 5em
+    height: 50px
+    width: 50px
     text-align: center
     i
-      font-size: 2em
-      line-height: 2.75em
-      margin-top: 2.5em
-      @include text-shadow(0 1px 0 rgba(255,255,255,0.1))
+      font-size: 20px
+      line-height: 55px
+      margin-top: 50px
+      +text-shadow(0 1px 0 rgba(255,255,255,0.1))
     i.ss-layout
-      font-size: 1.9em
-      line-height: 2.85em
+      font-size: 19px
+      line-height: 55px
     .tip
       opacity: 0
       position: absolute
       color: white
       top: 9px
       left: -200px
-      padding-top: .8em
-      padding-bottom: .8em
+      padding-top: 8px
+      padding-bottom: 8px
       background-color: $dark-gray
       background-color: rgba(50,50,50,0.95)
       border: none

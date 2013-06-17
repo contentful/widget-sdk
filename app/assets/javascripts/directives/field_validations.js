@@ -1,21 +1,55 @@
-angular.module('contentful').directive('fieldValidations', function(analytics) {
+angular.module('contentful').directive('fieldValidations', function(analytics, validation) {
   'use strict';
 
   return {
     restrict: 'C',
     template: JST['field_validations'](),
     controller: function($scope) {
-      $scope.availableValidations= {
-        size: 'Size',
-        range: 'Range',
-        regexp: 'Regular Expression',
-        in: 'One of'
+      var type = $scope.field.type === 'Array' ?
+        $scope.field.items.type :
+        $scope.field.type;
+      var typeValidations = validation.Validation.perType[type];
+
+      $scope.availableValidations = _.pick({
+        'size': 'Size',
+        'range': 'Numerical Range',
+        'regexp': 'Regular Expression',
+        'in': 'One of',
+        'linkContentType': 'Content Type'
+      }, function(value, key) {
+        return _.contains(typeValidations, key);
+      });
+
+      $scope.validationListPath = function() {
+        var args = [].splice.call(arguments,0);
+        if ($scope.field.type == 'Array') {
+          return _.flatten(['fields', $scope.index, 'items', 'validations'].concat(args));
+        } else {
+          return _.flatten(['fields', $scope.index, 'validations'].concat(args));
+        }
+      };
+
+      $scope.validationList = function () {
+        if ($scope.field.type == 'Array') {
+          return $scope.field.items.validations;
+        } else {
+          return $scope.field.validations;
+        }
+      };
+
+      $scope.getValidationDoc = function (validationIndex) {
+        if (!angular.isDefined(validationIndex)) throw new Error('No validationIndex');
+        return $scope.otDoc.at($scope.validationListPath(validationIndex));
+      };
+
+      $scope.getValidationListDoc = function () {
+        return $scope.otDoc.at($scope.validationListPath());
       };
 
       $scope.deleteValidation = function (validationIndex) {
-        var validation = $scope.field.validations[validationIndex];
-        $scope.otDoc.at(['fields', $scope.index, 'validations', validationIndex]).remove(function(err){
+        $scope.getValidationDoc(validationIndex).remove(function(err){
           if (!err) $scope.$apply(function (scope) {
+            var validation = $scope.validationList()[validationIndex];
             scope.otUpdateEntity();
             analytics.track('Deleted Validation', {
               fieldId: scope.field.id,
@@ -23,7 +57,6 @@ angular.module('contentful').directive('fieldValidations', function(analytics) {
             });
           });
         });
-
       };
 
       $scope.validationType = function (validation) {
@@ -31,7 +64,11 @@ angular.module('contentful').directive('fieldValidations', function(analytics) {
       };
 
       $scope.updateValidationsFromDoc = function () {
-        $scope.field.validations = $scope.otDoc.at(['fields', $scope.index, 'validations']).get();
+        if ($scope.field.type == 'Array') {
+          $scope.field.items.validations = $scope.getValidationListDoc().get();
+        } else {
+          $scope.field.validations = $scope.getValidationListDoc().get();
+        }
       };
     }
   };

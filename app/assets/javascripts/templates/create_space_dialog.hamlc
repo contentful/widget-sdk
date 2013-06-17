@@ -1,0 +1,20 @@
+.modal-background
+  .modal-dialog
+    .title
+      Create Space
+
+    %form(name="newSpaceForm" ng-submit="createSpace()")
+      .form-horizontal
+        .form-field
+          %label Name
+          .form-controls
+            %input(type="text" ng-model="newSpaceData.name" required="")
+        .form-field
+          %label Locale
+          .form-controls
+            %input(type="text" ng-model="newSpaceData.defaultLocale")
+      .buttons
+        %button.cancel(type="button" ng-click="hideCreateSpaceDialog()")
+          Cancel
+        %button.confirm(ng-click="submit()" ng-disabled="newSpaceForm.$invalid")
+          Create Space

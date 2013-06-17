@@ -7,10 +7,10 @@
 .tab-main
   .left-nav
     %header Status
-    %ul.left-nav-list
+    %ul.filter-list
       %li(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
         %span All
-      %li(ng-class="{active: tab.params.list == 'unpublished'}" ng-click="switchList('unpublished')")
+      %li(ng-class="{active: tab.params.list == 'changed'}" ng-click="switchList('changed')")
         %span Draft
       %li(ng-class="{active: tab.params.list == 'published'}" ng-click="switchList('published')")
         %span Published
@@ -21,13 +21,13 @@
           %span Starred
         %li.disabled(ng-class="{active: tab.params.list == 'createdByMe'}")
           %span Created by me
-    %div(ng-show="bucketContext.publishedEntryTypes.length > 0")
+    %div(ng-show="spaceContext.publishedContentTypes.length > 0")
       %header Content Types
-      %ul.left-nav-list
-        %li(ng-class="{active: tab.params.entryTypeId == entryType.data.sys.id}"
-            ng-repeat="entryType in bucketContext.publishedEntryTypes"
-            ng-click="switchList('entryType', entryType)")
-          %span {{entryType.data.name}}
+      %ul.filter-list
+        %li(ng-class="{active: tab.params.contentTypeId == contentType.data.sys.id}"
+            ng-repeat="contentType in spaceContext.publishedContentTypes"
+            ng-click="switchList('contentType', contentType)")
+          %span {{contentType.getName()}}
     -#
       %header Saved searches
       %ul.left-nav-filters
@@ -64,9 +64,9 @@
             -#%td.cell-favorite
               %i.ss-star
             %td.cell-type
-              %span {{bucketContext.publishedTypeForEntry(entry).data.name}}
+              %span {{spaceContext.publishedTypeForEntry(entry).getName()}}
             %td.cell-name
-              %span {{bucketContext.entryTitle(entry)}}
+              %span {{spaceContext.entryTitle(entry)}}
             %td.cell-updated
               %date.relative(datetime="{{entry.data.sys.updatedAt}}")
             %td.cell-by
@@ -79,8 +79,9 @@
 .tab-actions
   .label {{selection.size()}} Entries selected
   .button-set(ng-controller="EntryListActionsCtrl"   ng-hide="selection.isEmpty()")
-    %button.delete(   ng-click="deleteSelected()"    ng-show="showDelete()") Delete
-    %button.archive(  ng-click="archiveSelected()"   ng-show="showArchive()") Archive
+    %button.delete(   ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
+    %button.delete(   ng-click="deleteSelected()"    ng-show="showDelete()"   ) Delete
+    %button.archive(  ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
     %button.unarchive(ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
     %button.unpublish(ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
-    %button.publish(  ng-click="publishSelected()"   ng-show="showPublish()") {{publishButtonName()}}
+    %button.publish(  ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}

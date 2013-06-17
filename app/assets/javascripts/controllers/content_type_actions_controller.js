@@ -1,34 +1,38 @@
 'use strict';
 
 angular.module('contentful').
-  controller('EntryTypeActionsCtrl', function EntryTypeActionsCtrl($scope, notification, analytics) {
+  controller('ContentTypeActionsCtrl', function ContentTypeActionsCtrl($scope, notification, analytics, can) {
 
   // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,
   // We can query the entry instead of reimplementing the checks heere
 
   function title() {
-    return '"' + $scope.entryType.data.name + '"';
+    return '"' + $scope.contentType.getName()+ '"';
   }
 
   $scope.delete = function () {
-    $scope.entryType.delete(function (err, entryType) {
+    $scope.contentType.delete(function (err, contentType) {
       $scope.$apply(function (scope) {
         if (err) return notification.error('Error deleting content type');
         notification.info('Content type deleted successfully');
-        scope.$emit('entityDeleted', entryType);
-        scope.bucketContext.removeEntryType($scope.entryType);
+        scope.$emit('entityDeleted', contentType);
+        scope.spaceContext.removeContentType($scope.contentType);
       });
     });
   };
 
-  $scope.$on('entityDeleted', function (event, entryType) {
+  $scope.$on('entityDeleted', function (event, contentType) {
     if (event.currentScope !== event.targetScope) {
       var scope = event.currentScope;
-      if (entryType === scope.entryType) {
+      if (contentType === scope.contentType) {
         scope.tab.close();
       }
     }
   });
+
+  $scope.canDelete = function() {
+    return $scope.contentType.canDelete() && can('delete', $scope.contentType.data);
+  };
 
   $scope.canPublish = function() {
     if (!$scope.otDoc) return false;
@@ -37,15 +41,17 @@ angular.module('contentful').
     var notPublishedYet = !publishedVersion;
     var updatedSincePublishing = version !== publishedVersion + 1;
     var hasFields = $scope.otDoc.getAt(['fields']).length > 0;
-    return this.entryType.canPublish() &&
+    return $scope.contentType.canPublish() &&
       (notPublishedYet || updatedSincePublishing) &&
-      hasFields;
+      hasFields &&
+      can('publish', $scope.contentType.data) &&
+      $scope.validationResult.valid;
   };
 
   $scope.publish = function () {
     var version = $scope.otDoc.version;
-    var verb = $scope.entryType.isPublished() ? 'updated' : 'activated';
-    $scope.entryType.publish(version, function (err, publishedEntryType) {
+    var verb = $scope.contentType.isPublished() ? 'updated' : 'activated';
+    $scope.contentType.publish(version, function (err, publishedContentType) {
       $scope.$apply(function(scope){
         if (err) {
           var errorId = err.body.sys.id;
@@ -58,16 +64,16 @@ angular.module('contentful').
         }
 
         notification.info(title() + ' ' + verb + ' successfully');
-        analytics.track('Published EntryType', {
-          entryTypeId: $scope.entryType.getId(),
-          entryTypeName: $scope.entryType.data.name,
+        analytics.track('Published ContentType', {
+          contentTypeId: $scope.contentType.getId(),
+          contentTypeName: $scope.contentType.getName(),
           version: version
         });
 
-        //console.log('editor has published %o as %o', scope.entryType, publishedEntryType);
-        scope.updatePublishedEntryType(publishedEntryType);
-        scope.bucketContext.registerPublishedEntryType(publishedEntryType);
-        scope.bucketContext.refreshEntryTypes();
+        //console.log('editor has published %o as %o', scope.contentType, publishedContentType);
+        scope.updatePublishedContentType(publishedContentType);
+        scope.spaceContext.registerPublishedContentType(publishedContentType);
+        scope.spaceContext.refreshContentTypes();
       });
     });
   };
@@ -75,7 +81,7 @@ angular.module('contentful').
   $scope.publishButtonLabel = function () {
     var publishedAt = null;
     try {
-      publishedAt = $scope.entryType.data.sys.publishedAt;
+      publishedAt = $scope.contentType.data.sys.publishedAt;
     } catch (e) { }
 
     if (publishedAt) {

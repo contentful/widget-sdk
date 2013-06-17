@@ -1,18 +1,19 @@
-%ul.validations-open 
-  %li
-    %header
-      %p Validations
-    .section(ng-repeat="(validationIndex, validation) in field.validations")
-      .name {{availableValidations[validationType(validation)]}}
-      .validation-options
-      .action
-        %a.button.delete(ng-click="deleteValidation(validationIndex)")
-          %i.remove.ss-delete
-    .section(ng-controller="NewValidationCtrl")
-      .name
-        %select(ng-model="newValidationType" ng-options="type as name for (type, name) in availableValidations" ng-change="prepareNewValidation()")
-          %option(value="") Add new…
-      .validation-options
-      .action
-        %button.button.new(ng-click="createValidation()" ng-disabled="!newValidationType")
-          %i.ss-plus
+%header
+  %p
+    Validations
+    %span(ng-show="field.type == 'Array'") for items in the list
+.sections
+  .section(ng-repeat="(validationIndex, validation) in validationList()")
+    .name {{availableValidations[validationType(validation)]}}
+    .validation-options
+    .action
+      %a.button.delete(ng-click="deleteValidation(validationIndex)" ng-show="otEditable")
+        %i.remove.ss-delete
+  .section(ng-controller="NewValidationCtrl" cf-validate="fieldWithNewValidation" with-schema="fieldSchema" ng-show="otEditable")
+    .name
+      %select(ng-model="newValidationType" ng-options="type as name for (type, name) in availableValidations" ng-change="prepareNewValidation()")
+        %option(value="") Add new…
+    .validation-options
+    .action
+      %button.button.new(ng-click="createValidation()" ng-disabled="!newValidationType || !validationResult.valid")
+        %i.ss-plus
