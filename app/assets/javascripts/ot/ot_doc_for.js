@@ -66,6 +66,14 @@ angular.module('contentful').directive('otDocFor', function () {
     scope.otEditable = !!otDoc;
   });
 
+  $scope.$watch('otEditable', function (editable, old, scope) {
+    if (editable) {
+      scope.$emit('otBecameEditable', otGetEntity());
+    } else {
+      scope.$emit('otBecameReadonly', otGetEntity());
+    }
+  });
+
   $scope.otUpdateEntity = function () {
     var entity = otGetEntity();
     if (entity && $scope.otDoc) {

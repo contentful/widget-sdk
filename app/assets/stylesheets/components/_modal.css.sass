@@ -1,21 +1,28 @@
-// Layout and Chrome
+// Layout
 .modal-background
   position: absolute
   top: 0
   bottom: 0
   left: 0
   right: 0
-  background-color: rgba(0, 0, 0, 0.2)
 
 .modal-dialog
   position: relative
   top: 250px
-  background-color: white
-  border: 1px solid $light-gray
-  +border-radius(3px 3px 3px 3px)
   width: 50%
   margin: auto
   padding: 20px 20px
+
+//Chrome
+.modal-background,
+#guiders_overlay
+  background-color: rgba(0, 0, 0, 0.2)
+
+.modal-dialog,
+.guider
+  background-color: white
+  border: 1px solid $light-gray
+  +border-radius(3px)
   +box-shadow(0 2px 6px rgba(0,0,0,0.1))
 
 // Inner Styling
@@ -38,3 +45,83 @@
       @extend %gray-button
     button.confirm
       @extend %blue-button
+
+
+
+.guider
+  border: 1px solid $dark-rule
+  z-index: 10
+  h1
+    margin-bottom: 1em
+.guiders_content
+  margin: 10px
+#guiders_overlay
+  position: absolute
+  top: 0
+  bottom: 0
+  left: 0
+  right: 0
+.guiders_arrow
+  position: absolute
+  font-family: 'SSStandard'
+  color: white
+  &:before
+    position: absolute
+.guiders_arrow_left
+  &:before
+    content: "◃"
+  left: - $caret-size
+  +text-shadow(-2px 0px 3px rgba(0,0,0,0.12))
+.guiders_arrow_up
+  &:before
+    content: "▴"
+  top: - $caret-size
+  +text-shadow(0px -2px 3px rgba(0,0,0,0.12))
+.guiders_arrow_down
+  &:before
+    content: "▾"
+  bottom: 2px
+  +text-shadow(0px 2px 3px rgba(0,0,0,0.12))
+
+#overview.guider
+  width: 600px
+  .tutorial-select-box,
+  .skip-tutorials
+    position: relative
+    border: 1px solid $light-rule
+    padding: 5px
+    cursor: pointer
+    background-color: lighten($lightest-gray, 12%)
+    &:hover
+      border-color: $dark-rule
+      background-color: lighten($lightest-gray, 10%)
+
+  .tutorial-select-box
+    margin: 1em 0
+    width: (600px - (2 * 10px)) / 3 - 10px
+    float: left
+    height: 200px
+    &.left,
+    &.middle
+      margin-right: 13px
+  .description
+    margin-top: 1em
+  .recommendation
+    margin-top: 1em
+  h2 
+    text-align: center
+    margin: .5em 0
+  .skip-tutorials
+    clear: left
+  .status
+    font-size: 120%
+    text-align: center
+    padding: 5px
+    position: absolute
+    bottom: 0
+    left: 0
+    right: 0
+  .status.done
+    color: darken($green, 5%)
+  .guiders_buttons_container
+    display: none

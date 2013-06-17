@@ -1,4 +1,4 @@
-angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope, client, SpaceContext, authentication, contentfulClient, notification, cfSpinner, analytics, routing, authorization) {
+angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope, client, SpaceContext, authentication, contentfulClient, notification, cfSpinner, analytics, routing, authorization, tutorial) {
   'use strict';
 
   $scope.spaces = [];
@@ -6,6 +6,10 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
   $scope.tokenIdentityMap = new contentfulClient.IdentityMap();
 
   $scope.notification = notification;
+
+  $scope.startTutorial = function () {
+    tutorial.start();
+  };
 
   $scope.preferences = {
     showAuxPanel: false,

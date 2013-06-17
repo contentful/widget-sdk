@@ -1,0 +1,46 @@
+%p 
+  We have prepared a few small tutorials to help you get started.
+.tutorial-select-box.left(ng-click="goto('contentTypeCreate1')")
+  %h2
+    Content Type
+  .description
+    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+    %p.recommendation
+      Recommended to Content Strategists
+  .status.done(ng-show="contentTypeDone")
+    Done!.
+    %br
+    Let's do it again.
+  .status(ng-hide="contentTypeDone")
+    Let's do it
+
+.tutorial-select-box.middle(ng-click="goto('entryCreate1')")
+  %h2
+    Entries
+  .description
+    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+    %p.recommendation
+      Recommended to Content Creators
+  .status(ng-show="entriesDone")
+    Done!.
+    %br
+    Let's do it again.
+  .status(ng-hide="entriesDone")
+    Let's do it
+
+.tutorial-select-box.right
+  %h2
+    Delivery
+  .description
+    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+    %p.recommendation
+      Recommended to Developers
+  .status(ng-show="deliveryDone")
+    Done!.
+    %br
+    Let's do it again.
+  .status(ng-hide="deliveryDone")
+    Let's do it
+
+.skip-tutorials
+  %h2(ng-click="abort()") STFU
