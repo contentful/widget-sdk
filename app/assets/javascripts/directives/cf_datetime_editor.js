@@ -29,7 +29,8 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse){
 
       dateController.$parsers.unshift(function(viewValue) {
         var raw = $.datepicker.parseDate(DATE_FORMAT, viewValue);
-        var date = moment(raw).format(DATE_FORMAT_INTERNAL);
+        var date = moment(raw);
+        date = date ? date.format(DATE_FORMAT_INTERNAL) : null;
         return date;
       });
 
