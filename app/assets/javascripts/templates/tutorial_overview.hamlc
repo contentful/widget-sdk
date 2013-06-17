@@ -14,18 +14,18 @@
   .status(ng-hide="contentTypeDone")
     Let's do it
 
-.tutorial-select-box.middle(ng-click="goto('entryCreate1')")
+.tutorial-select-box.middle(ng-click="goto('entrySeed')")
   %h2
     Entries
   .description
     Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
     %p.recommendation
       Recommended to Content Creators
-  .status(ng-show="entriesDone")
+  .status.done(ng-show="entryDone")
     Done!.
     %br
     Let's do it again.
-  .status(ng-hide="entriesDone")
+  .status(ng-hide="entryDone")
     Let's do it
 
 .tutorial-select-box.right
@@ -43,4 +43,4 @@
     Let's do it
 
 .skip-tutorials
-  %h2(ng-click="abort()") STFU
+  %h2(ng-click="abort()") I want to explore the app on my own.
