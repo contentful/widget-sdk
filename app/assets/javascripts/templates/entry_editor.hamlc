@@ -81,7 +81,10 @@
   .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
                tooltip-placement="top")
   .other-users
-    %ul
+    %span(ng-show="presence.users.length == 0"
+          tooltip="Edit collaboratively by inviting more users into your space. Go to Settings → Users → Invite New User to invite people.")
+      No other users online
+    %ul(ng-show="presence.users.length > 0")
       %li.avatar.cf-user(ng-repeat="link in presence.users"
                          link="link" as="user"
                          tooltip="{{user.getName()}}")
