@@ -8,6 +8,8 @@
 //= require jquery.autosize
 //= require jquery.cookies.2.2.0
 //
+//= require guiders-1.3.0
+//
 //= require bootstrap-tooltip
 //
 //= require moment-1.7.2

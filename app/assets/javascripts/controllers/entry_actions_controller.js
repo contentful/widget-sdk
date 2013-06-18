@@ -98,7 +98,7 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
   };
 
   $scope.canUnpublish = function () {
-    return $scope.entry.canDelete() && can('unpublish', $scope.entry.data);
+    return $scope.entry.canUnpublish() && can('unpublish', $scope.entry.data);
   };
 
   $scope.canPublish = function() {

@@ -6,7 +6,7 @@
     %ul
       %li(ng-click="createApiKey()" dropdown-close="") API Key
       %li(ng-click="createContentType()" dropdown-close="" ng-show="can('create', 'ContentType')") Content Type
-    %ul(ng-show="spaceContext.publishedContentTypes.length > 0" ng-show="can('create', 'Entry')")
+    %ul.content-types(ng-show="spaceContext.publishedContentTypes.length > 0" ng-show="can('create', 'Entry')")
       %li(ng-repeat="(index, contentType) in spaceContext.publishedContentTypes"
         ng-click="createEntry(contentType)"
         dropdown-close=""
