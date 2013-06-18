@@ -36,7 +36,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
 
       guiders.createGuider({
         id: 'overview',
-        title: 'Welcome to contentful',
+        title: 'Welcome to Contentful',
         //buttons: [{name: 'Next'}],
         button: [],
         description: JST['tutorial_overview'](),

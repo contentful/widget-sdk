@@ -1,46 +1,37 @@
 %p 
-  We have prepared a few small tutorials to help you get started.
+  We have prepared a few small tutorials to help you get started:
 .tutorial-select-box.left(ng-click="goto('contentTypeCreate1')")
   %h2
     Content Type
+  %i.ss-database.background-icon
   .description
-    Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-    %p.recommendation
-      Recommended to Content Strategists
+    Content Types represent frames where you can add which type of content can be added and validations to your data.  In this part of the tutorial we guide you through the interface until you have created three fields.
   .status.done(ng-show="contentTypeDone")
-    Done!.
-    %br
-    Let's do it again.
+    Done!. Do it again?
   .status(ng-hide="contentTypeDone")
-    Let's do it
+    Let's do it!
 
 .tutorial-select-box.middle(ng-click="goto('entrySeed')")
   %h2
     Entries
+  %i.ss-file.background-icon
   .description
-    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-    %p.recommendation
-      Recommended to Content Creators
+    Entries are the content itself. These entries depend on the fields created and their validations. In this part of the tutorial we guide you through the interface until you have added some content to one Content Type and published it correctly. 
   .status.done(ng-show="entryDone")
-    Done!.
-    %br
-    Let's do it again.
+    Done!. Do it again?
   .status(ng-hide="entryDone")
-    Let's do it
+    Let's do it!
 
 .tutorial-select-box.right(ng-click="goto('apiKeySeed')")
   %h2
     Delivery
+  %i.ss-fork.background-icon
   .description
-    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-    %p.recommendation
-      Recommended to Developers
+    Delivery is made with API Keys. These Keys are tokens used for authentication that have associated access rights to the API and information about the calling program, its developer or its user. This part of the tutorial covers the creation of an API Key on the UI. 
   .status.done(ng-show="apiKeyDone")
-    Done!.
-    %br
-    Let's do it again.
+    Done!. Do it again?
   .status(ng-hide="apiKeyDone")
-    Let's do it
+    Let's do it!
 
 .generate-example-data
   %h2(ng-click="generateExampleData()") I just want to play around with some example data.
