@@ -76,10 +76,13 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
   $scope.findTabForRoute = function (route) {
     return _.find($scope.spaceContext.tabList.items, function (tab) {
       return tab.viewType == route.viewType &&
-             (!tab.params ||
-              tab.params.contentType && tab.params.contentType.getId() === route.params.contentTypeId ||
-              tab.params.apiKey    && tab.params.apiKey.getId()    === route.params.apiKeyId ||
-              tab.params.entry     && tab.params.entry.getId()     === route.params.entryId);
+             (
+              !tab.params ||
+               tab.params.contentType && tab.params.contentType.getId() === route.params.contentTypeId ||
+               tab.params.apiKey    && tab.params.apiKey.getId()    === route.params.apiKeyId ||
+               tab.params.entry     && tab.params.entry.getId()     === route.params.entryId
+             ) ||
+             tab.section == 'spaceSettings' && route.viewType == 'space-settings';
     });
   };
 

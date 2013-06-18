@@ -8,6 +8,7 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
   $routeProvider.when('/spaces/:spaceId/content_types/:contentTypeId', {viewType: 'content-type-editor'});
   $routeProvider.when('/spaces/:spaceId/api_keys', {viewType: 'content-delivery'});
   $routeProvider.when('/spaces/:spaceId/api_keys/:apiKeyId', {viewType: 'api-key-editor'});
+  $routeProvider.when('/spaces/:spaceId/settings', {viewType: 'space-settings'});
   $routeProvider.otherwise({noSpace: true});
 
   this.$get = function ($rootScope, $route, $location) {
@@ -50,6 +51,10 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
             path = path + '/api_keys/' + apiKeyId;
           } else {
             path = path + '/api_keys';
+          }
+        } else if (tab.viewType == 'iframe') {
+          if (tab.section == 'spaceSettings') {
+            path = path + '/settings';
           }
         }
         $location.path(path);
