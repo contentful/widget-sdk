@@ -74,7 +74,13 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
 
 
   $scope.findTabForRoute = function (route) {
-    return _.find($scope.spaceContext.tabList.items, function (tab) {
+    var currentTab = $scope.spaceContext.tabList.current;
+    if (currentTab && tabMatches(currentTab))
+      return currentTab;
+    else
+      return _.find($scope.spaceContext.tabList.items, tabMatches);
+
+    function tabMatches(tab) {
       return tab.viewType == route.viewType &&
              (
               !tab.params ||
@@ -82,8 +88,13 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
                tab.params.apiKey    && tab.params.apiKey.getId()    === route.params.apiKeyId ||
                tab.params.entry     && tab.params.entry.getId()     === route.params.entryId
              ) ||
-             tab.section == 'spaceSettings' && route.viewType == 'space-settings';
-    });
+             tab.section == 'spaceSettings' ||
+             (
+               route.viewType == 'content-delivery' &&
+               tab.viewType == 'api-key-editor' &&
+               tab.params.apiKey.getId() === undefined
+             );
+    }
   };
 
   $scope.visitView = function(viewType) {
