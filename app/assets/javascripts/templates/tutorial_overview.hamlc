@@ -28,19 +28,21 @@
   .status(ng-hide="entryDone")
     Let's do it
 
-.tutorial-select-box.right
+.tutorial-select-box.right(ng-click="goto('apiKeySeed')")
   %h2
     Delivery
   .description
     Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
     %p.recommendation
       Recommended to Developers
-  .status(ng-show="deliveryDone")
+  .status(ng-show="apiKeyDone")
     Done!.
     %br
     Let's do it again.
-  .status(ng-hide="deliveryDone")
+  .status(ng-hide="apiKeyDone")
     Let's do it
 
+.generate-example-data
+  %h2(ng-click="generateExampleData()") I just want to play around with some example data.
 .skip-tutorials
-  %h2(ng-click="abort()") I want to explore the app on my own.
+  %h2(ng-click="abort()") Don't generate any data, I want to explore the app on my own.

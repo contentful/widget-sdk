@@ -78,6 +78,10 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         //}
       //});
 
+////////////////////////////////////////////////////////////////////////////////
+//   Content Types   ///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
       guiders.createGuider({
         id: 'contentTypeCreate1',
         title: 'Click here and add a new Content Type',
@@ -177,6 +181,10 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         overlay: true,
         buttons: [{name: 'Next'}]
       });
+ 
+////////////////////////////////////////////////////////////////////////////////
+//   Entries   /////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
       guiders.createGuider({
         id: 'entrySeed',
@@ -313,13 +321,105 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         buttons: [{name: 'Next'}]
       });
 
+////////////////////////////////////////////////////////////////////////////////
+//   API Key   /////////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+      guiders.createGuider({
+        id: 'apiKeySeed',
+        title: 'Preparing example data',
+        description: 'Please hang on',
+        next: 'apiKeyCreate1',
+        onShow: function () {
+          setTimeout(function () {
+            guiders.next();
+          }, 500);
+        }
+      });
+
+      guiders.createGuider({
+        id: 'apiKeyCreate1',
+        title: 'Click here and add a new API Key',
+        attachTo: '.tab-list .add.button',
+        position: '2',
+        description: 'To get data from the Content Delivery API, clients need to provide an access token.',
+        next: 'apiKeyCreate2',
+        onShow: function () {
+          $(this.attachTo).one('click', function () {
+            guiders.next();
+          });
+        }
+      });
+
+      guiders.createGuider({
+        id: 'apiKeyCreate2',
+        title: 'Click here and add a new API Key',
+        attachTo: '.tab-list .add-btn .dropdown-menu ul:first',
+        position: '2',
+        description: 'To get data from the Content Delivery API, clients need to provide an access token.',
+        next: 'apiKeyEdit',
+        onShow: function () {
+          $(this.attachTo).one('click', function () {
+            guiders.next();
+          });
+        }
+      });
+
+      guiders.createGuider({
+        id: 'apiKeyEdit',
+        title: 'Fill in Name and description',
+        attachTo: '.api-key-editor:visible input:first',
+        position: '2',
+        description: 'The simply help to identify the purpose of the API Key if you create multiple keys.',
+        next: 'apiKeySave',
+        onShow: function () {
+          var scope = $(this.attachTo).scope();
+          var d1 = scope.$watch(function (scope) {
+            return scope.apiKey &&
+              scope.apiKey.data &&
+              scope.apiKey.data.name && scope.apiKey.data.description;
+          }, function (done) {
+            if (done) {
+              d1();
+              guiders.next();
+            }
+          });
+        }
+      });
+
+      guiders.createGuider({
+        id: 'apiKeySave',
+        title: 'When you\'re done, save your API Key',
+        attachTo: '.api-key-editor:visible button.save',
+        offset: {top: 15, left: 0},
+        position: '1',
+        description: 'Afterwards the key can be used by clients.',
+        next: 'apiKeyDone',
+        onShow: function () {
+          var scope = $(this.attachTo).scope();
+          var d = scope.$watch('apiKey.data.accessToken', function (token) {
+            if (token) {
+              d();
+              tutorialScope.apiKeyDone = true;
+              guiders.next();
+            }
+          });
+        }
+      });
+
+      guiders.createGuider({
+        id: 'apiKeyDone',
+        title: 'Done!',
+        attachTo: '.api-key-editor:visible .curl-example',
+        position: 7,
+        description: 'Try accessing your content using this this API Key via CURL on the command line or by clicking the link.',
+        next: 'overview',
+        buttons: [{name: 'Next'}]
+      });
+
     }
 
   };
 
   return new Tutorial();
 });
-//.run(function (tutorial) {
-  //_.delay(tutorial.start, 10);
-  //window.guiders.show('overview');
-//});

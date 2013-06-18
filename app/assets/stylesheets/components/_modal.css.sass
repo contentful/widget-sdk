@@ -85,8 +85,11 @@
 
 #overview.guider
   width: 600px
+  .guiders_content
+    margin: 20px
   .tutorial-select-box,
-  .skip-tutorials
+  .skip-tutorials,
+  .generate-example-data
     position: relative
     border: 1px solid $light-rule
     padding: 5px
@@ -98,7 +101,7 @@
 
   .tutorial-select-box
     margin: 1em 0
-    width: (600px - (2 * 10px)) / 3 - 10px
+    width: (600px - (2 * 20px)) / 3 - 10px
     float: left
     height: 200px
     &.left,
@@ -111,8 +114,11 @@
   h2 
     text-align: center
     margin: .5em 0
-  .skip-tutorials
+  .skip-tutorials,
+  .generate-example-data
     clear: left
+  .generate-example-data
+    margin-bottom: 10px
   .status
     font-size: 120%
     text-align: center
