@@ -29,8 +29,14 @@ angular.module('contentful').controller('ContentTypeListCtrl', function ContentT
     return contentType.data.sys.publishedAt ? 'active' : 'draft';
   };
 
-  $scope.$watch('spaceContext.contentTypes', function(l) {
-    $scope.empty = _.isEmpty(l);
+  $scope.$watch(function (scope) {
+    if (scope.spaceContext.contentTypes) {
+      return scope.spaceContext.contentTypes.length;
+    } else {
+      return 0;
+    }
+  }, function (length) {
+    $scope.empty = length === 0;
   });
 
   $scope.$on('tabBecameActive', function(event, tab) {
