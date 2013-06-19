@@ -59,7 +59,7 @@
                         dropdown-close="")
                       %span {{type.name}}
                       .content-type-description
-                    
+
             .display &nbsp;
             .localized
               %input(type="checkbox"
