@@ -20,12 +20,6 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
     event.currentScope.otUpdateEntity();
   });
 
-  $scope.$on('otTextIdle', function (event, path, value) {
-    if (path[0] == 'fields' && path[2] == 'name') {
-      event.currentScope.contentType.data.fields[path[1]].name = value;
-    }
-  });
-
   function loadPublishedContentType() {
     // TODO replace with lookup in registry inside spaceContext
     $scope.contentType.getPublishedVersion(function(err, publishedContentType) {
