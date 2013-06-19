@@ -6,7 +6,7 @@
   .left-nav
     %ul
       %li.api-keys(ng-click="refreshApiKeys()") API Keys
-      %li(ng-click="openApiDocs()") API Docs
+      %li(ng-click="openApiDocs()") API Documentation
 
   .with-left-nav
     .create-api-key-advice(ng-show="empty")

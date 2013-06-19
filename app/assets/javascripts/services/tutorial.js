@@ -23,15 +23,20 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         guiders.hideAll();
       };
 
+      function contentTypeShape(contentType) {
+        return {
+          numText: _.countBy(contentType.data.fields, {type: 'Text'})['true'],
+          hasDate: _.any(contentType.data.fields, {type: 'Date'})
+        };
+      }
       function contentTypeValid(contentType) {
-        var numText     = _.countBy(contentType.data.fields, {type: 'Text'})['true'];
-        var hasDateTime = _.any(contentType.data.fields, {type: 'Date'});
-        return numText == 2 && hasDateTime;
+        var shape = contentTypeShape(contentType);
+        return shape.numText == 2 && shape.hasDate;
       }
 
       guiders.createGuider({
         id: 'overview',
-        title: 'Welcome to contentful',
+        title: 'Welcome to Contentful',
         //buttons: [{name: 'Next'}],
         button: [],
         description: JST['tutorial_overview'](),
@@ -127,13 +132,14 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         }
       });
 
+      var fieldScope = tutorialScope.$new();
       guiders.createGuider({
         id: 'contentTypeFields',
         title: 'Now add some fields with name',
         attachTo: '.tab-content:visible .new-field-form .button.new',
         offset: {top: -15, left: 0},
         position: '5',
-        description: 'Here you add the "placeholders" for your content. Add one text field called "Title", one text field called "Content" and one Date/Time field called "Timestamp". You can also add more fields if you like, a location for example.',
+        description: JST['tutorial_content_fields'](),
         next: 'contentTypeActivate',
         onShow: function () {
           var scope = $(this.attachTo).scope();
@@ -142,6 +148,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
           });
 
           var d2 = scope.$watch(function (scope) {
+            fieldScope.contentTypeShape = contentTypeShape(scope.contentType);
             return contentTypeValid(scope.contentType);
           }, function (done) {
             if (done) {
@@ -152,6 +159,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
           });
         }
       });
+      $compile(angular.element('.guider#contentTypeFields'))(fieldScope);
 
       guiders.createGuider({
         id: 'contentTypeActivate',

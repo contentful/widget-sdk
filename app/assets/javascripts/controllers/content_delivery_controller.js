@@ -30,7 +30,7 @@ angular.module('contentful').
     });
 
     $scope.openApiDocs = function() {
-      var apiDocsUrl = '//' + environment.settings.marketing_url + '/developers/api';
+      var apiDocsUrl = '//' + environment.settings.marketing_url + '/developers/documentation/content-delivery-api/';
       $window.open(apiDocsUrl);
     };
   });

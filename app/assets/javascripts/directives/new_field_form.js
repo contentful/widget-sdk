@@ -50,6 +50,8 @@ angular.module('contentful').directive('newFieldForm', function (availableFieldT
           required: false,
           localized: false
         };
+
+        $scope.newType = defaultType;
       }
     },
 

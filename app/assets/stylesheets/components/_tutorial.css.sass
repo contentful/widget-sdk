@@ -38,7 +38,7 @@
 //  Overview  //////////////////////////////////////////////////////////////////
 
 #overview.guider
-  width: 600px
+  width: 800px
   .guiders_content
     margin: 20px
   .tutorial-select-box,
@@ -55,16 +55,24 @@
 
   .tutorial-select-box
     margin: 1em 0
-    width: (600px - (2 * 20px)) / 3 - 10px
+    width: (800px - (2 * 22px) - (2 * 14px)) / 3
     float: left
-    height: 200px
+    height: 340px
+    padding: 10px
     &.left,
     &.middle
-      margin-right: 13px
+      margin-right: 14px
   .description
     margin-top: 1em
   .recommendation
     margin-top: 1em
+  .background-icon
+    display: block
+    line-height: 70px
+    color: lighten($lightest-gray, 2%)
+    font-size: 70px
+    text-align: center
+    margin-top: 30px
   h2 
     text-align: center
     margin: .5em 0
@@ -74,7 +82,7 @@
   .generate-example-data
     margin-bottom: 10px
   .status
-    font-size: 120%
+    font-size: 110%
     text-align: center
     padding: 5px
     position: absolute
@@ -86,3 +94,13 @@
   .guiders_buttons_container
     display: none
 
+.guider#contentTypeFields
+  li
+    i
+      color: $lightest-gray
+  li.done
+    color: $lightest-gray
+    strong
+      color: $lightest-gray
+    i
+      color: $green

@@ -82,8 +82,8 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
 
     function tabMatches(tab) {
       return tab.viewType == route.viewType &&
+             !tab.params ||
              (
-              !tab.params ||
                tab.params.contentType && tab.params.contentType.getId() === route.params.contentTypeId ||
                tab.params.apiKey    && tab.params.apiKey.getId()    === route.params.apiKeyId ||
                tab.params.entry     && tab.params.entry.getId()     === route.params.entryId
@@ -93,6 +93,10 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
                route.viewType == 'content-delivery' &&
                tab.viewType == 'api-key-editor' &&
                tab.params.apiKey.getId() === undefined
+             ) ||
+             (
+               route.viewType == 'entry-list' &&
+               tab.viewType   == 'entry-list'
              );
     }
   };
