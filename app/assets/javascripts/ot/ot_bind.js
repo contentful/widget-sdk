@@ -2,7 +2,7 @@
 
 var otModule = angular.module('contentful');
 
-otModule.directive('otBindText', function(ShareJS) {
+otModule.directive('otBindText', function(ShareJS, $sniffer) {
   return {
     restrict: 'A',
     priority: 400,
@@ -17,7 +17,12 @@ otModule.directive('otBindText', function(ShareJS) {
         }
 
         if (otSubdoc) {
+          var value = ShareJS.peek(otSubdoc.doc, otSubdoc.path);
           var detachTextField = attachTextField(otSubdoc, elm[0]);
+          if (value != ShareJS.peek(otSubdoc.doc, otSubdoc.path)) _.defer(function () {
+            elm.trigger($sniffer.hasEvent('input') ? 'input' : 'change');
+          });
+
           var changeHandler = _.debounce(function () {
             //console.log('emitting textIdle');
             scope.$apply(function (scope) {
@@ -25,6 +30,8 @@ otModule.directive('otBindText', function(ShareJS) {
             });
           }, 300);
 
+          // TODO: This here does not catch change/input events
+          // see https://github.com/angular/angular.js/blob/master/src/ng/directive/input.js#L411
           elm.on('keyup', changeHandler);
 
           scope.unbindTextField = function () {
