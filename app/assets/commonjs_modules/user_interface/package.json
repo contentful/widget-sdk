@@ -7,7 +7,7 @@
   "author": "",
   "license": "BSD",
   "dependencies": {
-    "contentful-client": "git+ssh://git@github.com:thriventures/client.git#v1.1.0",
+    "contentful-client": "git+ssh://git@github.com:thriventures/client.git#v1.1.1",
     "worf": "git+ssh://git@github.com:thriventures/worf.git#v1.0.0",
     "validation": "git+ssh://git@github.com:thriventures/validation#v1.1.2",
     "share": "git+ssh://git@github.com:thriventures/ShareJS.git"
