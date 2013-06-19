@@ -50,6 +50,7 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
   $scope.$watch(function () { return errorPaths; }, updateFields);
   $scope.$watch('spaceContext.publishedTypeForEntry(entry).data.fields', updateFields, true);
   var errorPaths = {};
+
   function updateFields(n, o ,scope) {
     var et = scope.spaceContext.publishedTypeForEntry(scope.entry);
     if (!et) return;
@@ -89,11 +90,11 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     errorPaths = {};
     _.each(errors, function (error) {
       if (error.path[0] !== 'fields') return;
-      var field  = error.path[1];
-      var locale = error.path[2];
+      var field      = error.path[1];
+      var localeCode = error.path[2];
       errorPaths[field] = errorPaths[field] || [];
-      errorPaths[field].push(locale) ;
-      errorPaths[field] = _.unique(errorPaths[field], 'code');
+      errorPaths[field].push(localeCode);
+      errorPaths[field] = _.unique(errorPaths[field]);
     });
   });
 
