@@ -122,8 +122,10 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
           var reason;
           if (errorId === 'validationFailed')
             reason = 'Validation failed';
-          if (errorId === 'versionMismatch')
+          else if (errorId === 'versionMismatch')
             reason = 'Can only publish most recent version';
+          else
+            reason = errorId;
           notification.error('Error publishing ' + title() + ': ' + reason);
         } else {
           notification.info(title() + ' published successfully');
