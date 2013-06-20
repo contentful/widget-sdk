@@ -12,7 +12,7 @@ angular.module('contentful').controller('FieldSettingsCtrl', function ($scope, g
   });
 
   $scope.displayEnabled = function (field) {
-    return field.type === 'String' || field.type === 'Text';
+    return field.type === 'Symbol' || field.type === 'Text';
   };
 
   $scope.enable = function() {

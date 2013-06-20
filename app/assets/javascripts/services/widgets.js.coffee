@@ -2,7 +2,7 @@ angular.module('contentful').service 'widgets', ($compile) ->
   'use strict'
 
   editWidgets =
-    String:
+    Symbol:
       textField:
         name: "Single line text field"
         template: """<input type="text" ng-model="fieldData.value" ot-subdoc ot-bind-text ng-disabled="!otEditable"/>"""
@@ -29,7 +29,7 @@ angular.module('contentful').service 'widgets', ($compile) ->
           itemType = scope.field.items?.type
           if itemType == 'Link'
             template = $ """<div cf-autocomplete="entries" ng-model="fieldData.value"/>"""
-          else if itemType == 'String'
+          else if itemType == 'Symbol'
             template = $ """<input type="text" ng-list="" cf-list-identity-fix ng-model="fieldData.value" ot-bind-model ng-disabled="!otEditable"/>"""
           template.appendTo(elm)
           $compile(template)(scope)
@@ -77,7 +77,7 @@ angular.module('contentful').service 'widgets', ($compile) ->
         template: """<div cf-autocomplete="entry" ng-model="fieldData.value"/>"""
     
   displayWidgets =
-    String:
+    Symbol:
       textField:
         template: "{{entry[fieldName]}}"
 
