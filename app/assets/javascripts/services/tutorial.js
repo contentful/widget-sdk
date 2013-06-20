@@ -408,7 +408,6 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
           var raw;
           tutorialExampledata.load().
           then(function createContentTypes(data) {
-            console.log('data', data);
             raw = data;
             return $q.all(_(data.contentTypes).reject(function (newContentType) {
               return !!_.find(tutorialScope.spaceContext.contentTypes, function (existingContentType) {
@@ -419,11 +418,9 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
               tutorialScope.spaceContext.space.createContentType(contentType, function (err, contentType) {
                 tutorialScope.$apply(function () {
                   if (err) return deferred.reject(err);
-                  console.log('done creating contentType', contentType);
                   contentType.publish(contentType.data.sys.version, function (err, contentType) {
                     tutorialScope.$apply(function () {
                       if (err) return deferred.reject(err);
-                      console.log('done publishing contentType', contentType);
                       deferred.resolve(contentType);
                     });
                   });
@@ -433,7 +430,6 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
             }).value());
           }).
           then(function (contentTypes) {
-            console.log('content types created and published', contentTypes);
             if (contentTypes.length > 0) {
               $timeout(function () {
                 tutorialScope.spaceContext.refreshContentTypes();
@@ -441,13 +437,11 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
             }
           }).
           then(function createEntries() {
-            console.log('creating entries');
             return $q.all(_.map(raw.entries, function (entry) {
               var deferred = $q.defer();
               tutorialScope.spaceContext.space.createEntry(entry.sys.contentType.sys.id, entry, function (err, entry) {
                 tutorialScope.$apply(function () {
                   if (err) return deferred.reject(err);
-                  console.log('done creating', entry);
                   deferred.resolve(entry);
                 });
               });
@@ -455,30 +449,23 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
             }));
           }).
           then(function (entries) {
-            console.log('waiting 3 seconds');
             return $timeout(function(){
-              console.log('done waiting');
               return entries;
             }, 3000);
           }).
           then(function publishEntries(entries) {
-            console.log('publishing entries');
             return $q.all(_.map(entries, function (entry) {
               var deferred = $q.defer();
               entry.publish(entry.data.sys.version, function (err, entry) {
                 tutorialScope.$apply(function () {
                   if (err) return deferred.reject(err);
-                  console.log('done publishing entry', entry);
                   deferred.resolve(entry);
                 });
               });
               return deferred.promise;
             }));
-          }, function (wat) {
-            console.log('wat', wat);
           }).
           then(function () {
-            console.log('done with entres', tutorialScope.$$phase);
             tutorialScope.visitView('entry-list');
             _.defer(function () {
               $('.tab-content .entry-list').scope().resetEntries();
