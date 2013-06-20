@@ -63,15 +63,16 @@
     %img(src="<%= image_path('field_type/location.png') %>")
 
   %div(ng-switch-when="Array")
-    %h3(ng-show="type.value.items.type == 'Link'")
-      One or many links to entries
+    %div(ng-show="type.value.items.type == 'Link'")
+      %h3
+        One or many links to entries
+      %p
+        Connect your current entry to other already existing entries previously created. It works as the Link to Entry but it allows you to connect one entry to several other ones. An example is a book which has several authors.
+      %img(src="<%= image_path('field_type/linkstoentries.png') %>")
 
-    %p(ng-show="type.value.items.type == 'Link'")
-      Connect your current entry to other already existing entries previously created. It works as the Link to Entry but it allows you to connect one entry to several other ones. An example is a book which has several authors.
-    %img(ng-show="type.value.items.type == 'Link'" src="<%= image_path('field_type/linkstoentries.png') %>")
-
-    %h3(ng-show="type.value.items.type == 'Symbol'")
-      One or many links to entries
-    %p(ng-show="type.value.items.type == 'Symbol'")
-      Create a simple lists of text. It can be, for example, tags for a blog post. The list items are separated by commas.
-    %img(ng-show="type.value.items.type == 'Symbol'" src="<%= image_path('field_type/list.png') %>")
+    %div(ng-show="type.value.items.type == 'Symbol'")
+      %h3
+        One or many separate words
+      %p
+        Create a simple lists of text. It can be, for example, tags for a blog post. The list items are separated by commas.
+      %img(src="<%= image_path('field_type/list.png') %>")
