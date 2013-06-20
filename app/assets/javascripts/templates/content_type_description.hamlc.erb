@@ -6,7 +6,7 @@
       Add any type of text, whether it is a whole book or just a title. You can add validations to constrain the length. Numbers added in this field will also be treated as strings of text. Search for words in the text.
     %img(src="<%= image_path('field_type/text.png') %>")
 
-  %div(ng-switch-when="String")
+  %div(ng-switch-when="Symbol")
     %h3 Short token of text
 
     %p
@@ -70,8 +70,8 @@
       Connect your current entry to other already existing entries previously created. It works as the Link to Entry but it allows you to connect one entry to several other ones. An example is a book which has several authors.
     %img(ng-show="type.value.items.type == 'Link'" src="<%= image_path('field_type/linkstoentries.png') %>")
 
-    %h3(ng-show="type.value.items.type == 'String'")
+    %h3(ng-show="type.value.items.type == 'Symbol'")
       One or many links to entries
-    %p(ng-show="type.value.items.type == 'String'")
+    %p(ng-show="type.value.items.type == 'Symbol'")
       Create a simple lists of text. It can be, for example, tags for a blog post. The list items are separated by commas.
-    %img(ng-show="type.value.items.type == 'String'" src="<%= image_path('field_type/list.png') %>")
+    %img(ng-show="type.value.items.type == 'Symbol'" src="<%= image_path('field_type/list.png') %>")

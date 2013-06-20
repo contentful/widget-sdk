@@ -8,7 +8,7 @@ angular.module('contentful').
     {
       name: 'Symbol',
       description: 'Symbol description',
-      value: {type: 'String'}
+      value: {type: 'Symbol'}
     },
     {
       name: 'Integer',
@@ -45,9 +45,9 @@ angular.module('contentful').
       value: {type: 'Array', items: {type: 'Link'}}
     },
     {
-      name: 'List of Strings',
-      description: 'List of Strings description',
-      value: {type: 'Array' , items: {type: 'String'}}
+      name: 'List of Symbols',
+      description: 'List of Symbols description',
+      value: {type: 'Array' , items: {type: 'Symbol'}}
     },
     {
       name: 'Location',
