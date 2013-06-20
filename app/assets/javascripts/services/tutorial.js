@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('tutorial', function ($compile, notification) {
+angular.module('contentful').factory('tutorial', function ($compile, notification, tutorialExampledata, $q, $timeout) {
   var guiders = window.guiders;
 
   function Tutorial() {}
@@ -14,6 +14,12 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
     initialize: function () {
       var spaceScope = angular.element('space-view').scope();
       var tutorialScope = spaceScope.$new();
+
+      tutorialScope.generateExampleData = function () {
+        $('.guider#overview').fadeOut('fast');
+        guiders.show('exampleDataSeed');
+      };
+
       tutorialScope.goto = function (id) {
         guiders.hideAll();
         guiders.show(id);
@@ -42,46 +48,10 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         description: JST['tutorial_overview'](),
         next: 'contentTypeCreate1',
         overlay: true,
-        width: '70%'
+        width: '70%',
+        xButton: true
       });
       $compile(angular.element('.guider#overview'))(tutorialScope);
-
-      //guiders.createGuider({
-        //id: 'contentTypeSeed',
-        //title: 'Creating example data',
-        //description: 'Blablabla',
-        //next: 'contentTypeCreate1',
-        //onShow: function () {
-          //var contentType = _.find(tutorialScope.spaceContext.publishedContentTypes, contentTypeValid);
-          //if (contentType) {
-            //contentType.unpublish(function (err) {
-              //tutorialScope.$apply(function (scope) {
-                //scope.spaceContext.tabList.closeAll();
-                //if (err) {
-                  //notification.error('Could not unpublish Content Type');
-                //} else {
-                  //contentType.delete(function (err) {
-                    //tutorialScope.$apply(function (scope) {
-                      //if (err) {
-                        //notification.error('Could not delete Content Type');
-                      //} else {
-                        //console.log('deleting');
-                        //scope.spaceContext.removeContentType(contentType);
-                        //scope.$emit('entityDeleted', contentType);
-                        //_.defer(function () { guiders.next(); });
-                      //}
-                    //});
-                  //});
-                //}
-              //});
-            //});
-          //} else {
-            //setTimeout(function () {
-              //guiders.next();
-            //}, 500);
-          //}
-        //}
-      //});
 
 ////////////////////////////////////////////////////////////////////////////////
 //   Content Types   ///////////////////////////////////////////////////////////
@@ -425,8 +395,108 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         buttons: [{name: 'Next'}]
       });
 
-    }
+////////////////////////////////////////////////////////////////////////////////
+//   Example Data   ////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
 
+      guiders.createGuider({
+        id: 'exampleDataSeed',
+        title: 'Generating example data',
+        description: 'Please hang on',
+        overlay: true,
+        onShow: function () {
+          var raw;
+          tutorialExampledata.load().
+          then(function createContentTypes(data) {
+            console.log('data', data);
+            raw = data;
+            return $q.all(_(data.contentTypes).reject(function (newContentType) {
+              return !!_.find(tutorialScope.spaceContext.contentTypes, function (existingContentType) {
+                return existingContentType.getId() == newContentType.sys.id;
+              });
+            }).map(function (contentType) {
+              var deferred = $q.defer();
+              tutorialScope.spaceContext.space.createContentType(contentType, function (err, contentType) {
+                tutorialScope.$apply(function () {
+                  if (err) return deferred.reject(err);
+                  console.log('done creating contentType', contentType);
+                  contentType.publish(contentType.data.sys.version, function (err, contentType) {
+                    tutorialScope.$apply(function () {
+                      if (err) return deferred.reject(err);
+                      console.log('done publishing contentType', contentType);
+                      deferred.resolve(contentType);
+                    });
+                  });
+                });
+              });
+              return deferred.promise;
+            }).value());
+          }).
+          then(function (contentTypes) {
+            console.log('content types created and published', contentTypes);
+            if (contentTypes.length > 0) {
+              $timeout(function () {
+                tutorialScope.spaceContext.refreshContentTypes();
+              }, 1000, false);
+            }
+          }).
+          then(function createEntries() {
+            console.log('creating entries');
+            return $q.all(_.map(raw.entries, function (entry) {
+              var deferred = $q.defer();
+              tutorialScope.spaceContext.space.createEntry(entry.sys.contentType.sys.id, entry, function (err, entry) {
+                tutorialScope.$apply(function () {
+                  if (err) return deferred.reject(err);
+                  console.log('done creating', entry);
+                  deferred.resolve(entry);
+                });
+              });
+              return deferred.promise;
+            }));
+          }).
+          then(function (entries) {
+            console.log('waiting 3 seconds');
+            return $timeout(function(){
+              console.log('done waiting');
+              return entries;
+            }, 3000);
+          }).
+          then(function publishEntries(entries) {
+            console.log('publishing entries');
+            return $q.all(_.map(entries, function (entry) {
+              var deferred = $q.defer();
+              entry.publish(entry.data.sys.version, function (err, entry) {
+                tutorialScope.$apply(function () {
+                  if (err) return deferred.reject(err);
+                  console.log('done publishing entry', entry);
+                  deferred.resolve(entry);
+                });
+              });
+              return deferred.promise;
+            }));
+          }, function (wat) {
+            console.log('wat', wat);
+          }).
+          then(function () {
+            console.log('done with entres', tutorialScope.$$phase);
+            tutorialScope.visitView('entry-list');
+            _.defer(function () {
+              $('.tab-content .entry-list').scope().resetEntries();
+            });
+            guiders.next();
+          });
+        },
+        next: 'exampleDataDone'
+      });
+
+      guiders.createGuider({
+        id: 'exampleDataDone',
+        title: 'Done!',
+        description: 'We created a couple of entries for you to toy with. Also check out the Content Types we created.',
+        attachTo: '.nav-bar ul',
+        position: 2
+      });
+    }
   };
 
   return new Tutorial();

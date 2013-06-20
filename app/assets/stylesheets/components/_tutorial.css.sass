@@ -11,6 +11,35 @@
 .guiders_content
   margin: 10px
 
+//  Close-Button  //////////////////////////////////////////////////////////////
+
+$close_size: 25px
+
+.guiders_close
+  position: absolute
+  top: $close_size / -2
+  right: $close_size / -2
+  width: $close_size
+  height: $close_size
+  //border: 1px solid red
+
+.guiders_x_button
+  background-color: black
+  border: 2px solid white
+  line-height: $close_size
+  +border-radius($close_size / 2)
+  text-align: center
+  font-size: $close_size / 2 - 1px
+  height: $close_size
+  width: $close_size
+  cursor: pointer
+  &:before
+    content: "␡"
+    font-family: "SSStandard"
+    font-weight: normal
+    color: white
+    position: relative
+
 //  Arrows  ////////////////////////////////////////////////////////////////////
 
 .guiders_arrow
