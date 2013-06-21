@@ -1,39 +1,35 @@
-%p 
-  We have prepared a few small tutorials to help you get started:
-.tutorial-select-box.left(ng-click="goto('contentTypeCreate1')")
-  %h2
+.tutorial-select-box.left
+  %h3
     Content Type
   %i.ss-database.background-icon
   .description
-    Content Types represent frames where you can add which type of content can be added and validations to your data.  In this part of the tutorial we guide you through the interface until you have created three fields.
-  .status.done(ng-show="contentTypeDone")
-    Done!. Do it again?
-  .status(ng-hide="contentTypeDone")
-    Let's do it!
+    Learn how to set up Content Types, which are the basis for all your Entries.
+  .buttons
+    %button.repeat(ng-show="contentTypeDone" ng-click="goto('contentTypeCreate1')")
+      Repeat Tutorial
+    %button.take(ng-hide="contentTypeDone" ng-click="goto('contentTypeCreate1')")
+      Take Tutorial
 
-.tutorial-select-box.middle(ng-click="goto('entrySeed')")
-  %h2
+.tutorial-select-box.middle
+  %h3
     Entries
   %i.ss-file.background-icon
   .description
-    Entries are the content itself. These entries depend on the fields created and their validations. In this part of the tutorial we guide you through the interface until you have added some content to one Content Type and published it correctly. 
-  .status.done(ng-show="entryDone")
-    Done!. Do it again?
-  .status(ng-hide="entryDone")
-    Let's do it!
+    An intro to day to day content management tasks.
+  .buttons
+    %button.repeat(ng-show="entryDone" ng-click="goto('entrySeed')")
+      Repeat Tutorial
+    %button.take(ng-hide="entryDone" ng-click="goto('entrySeed')")
+      Take Tutorial
 
-.tutorial-select-box.right(ng-click="goto('apiKeySeed')")
-  %h2
+.tutorial-select-box.right
+  %h3
     Delivery
   %i.ss-fork.background-icon
   .description
-    Delivery is made with API Keys. These Keys are tokens used for authentication that have associated access rights to the API and information about the calling program, its developer or its user. This part of the tutorial covers the creation of an API Key on the UI. 
-  .status.done(ng-show="apiKeyDone")
-    Done!. Do it again?
-  .status(ng-hide="apiKeyDone")
-    Let's do it!
-
-.generate-example-data
-  %h2(ng-click="generateExampleData()") I just want to play around with some example data.
-.skip-tutorials
-  %h2(ng-click="abort()") Don't generate any data, I want to explore the app on my own.
+    Learn how to configure distribution of content.
+  .buttons
+    %button.repeat(ng-show="apiKeyDone" ng-click="goto('apiKeySeed')")
+      Repeat Tutorial
+    %button.take(ng-hide="apiKeyDone" ng-click="goto('apiKeySeed')")
+      Take Tutorial

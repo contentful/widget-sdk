@@ -17,28 +17,24 @@ $close_size: 25px
 
 .guiders_close
   position: absolute
-  top: $close_size / -2
-  right: $close_size / -2
+  top:  $close_size / 2
+  right: $close_size / 2
   width: $close_size
   height: $close_size
-  //border: 1px solid red
+  //border: 1px sol
 
 .guiders_x_button
-  background-color: black
-  border: 2px solid white
+  color: $light-gray
   line-height: $close_size
-  +border-radius($close_size / 2)
   text-align: center
-  font-size: $close_size / 2 - 1px
+  font-size: $close_size
   height: $close_size
   width: $close_size
   cursor: pointer
+  &:hover
+    color: darken($light-gray, 20%)
   &:before
-    content: "␡"
-    font-family: "SSStandard"
-    font-weight: normal
-    color: white
-    position: relative
+    content: "×"
 
 //  Arrows  ////////////////////////////////////////////////////////////////////
 
@@ -67,61 +63,68 @@ $close_size: 25px
 //  Overview  //////////////////////////////////////////////////////////////////
 
 #overview.guider
-  width: 800px
+  $width: 700px
   .guiders_content
     margin: 20px
-  .tutorial-select-box,
-  .skip-tutorials,
-  .generate-example-data
-    position: relative
-    border: 1px solid $light-rule
-    padding: 5px
-    cursor: pointer
-    background-color: lighten($lightest-gray, 12%)
-    &:hover
-      border-color: $dark-rule
-      background-color: lighten($lightest-gray, 10%)
+  .guiders_title
+    text-align: center
+    margin: 1.5em 0
+  .guiders_description
+    margin: 0
+  .guiders_buttons_container
+    display: none
 
   .tutorial-select-box
-    margin: 1em 0
-    width: (800px - (2 * 22px) - (2 * 14px)) / 3
+    position: relative
+    border: 1px solid $dark-rule
+    +border-radius(3px)
+    background-color: white
+    margin-bottom: 20px
+    width: ($width - (2 * 22px) - (2 * 14px)) / 3
     float: left
-    height: 340px
-    padding: 10px
+    height: 300px
     &.left,
     &.middle
       margin-right: 14px
-  .description
-    margin-top: 1em
-  .recommendation
-    margin-top: 1em
+  h3 
+    font-size: 1.5em
+    text-align: center
+    padding: 1em 0
+    background-color: lighten($lightest-gray, 10%)
+    +border-radius(3px 3px 0 0)
+    border-bottom: 2px solid $dark-rule
+    border-top: 3px solid
+  .left h3
+    border-top-color: $blue
+  .middle h3
+    border-top-color: $gold
+  .right h3
+    border-top-color: $red
   .background-icon
     display: block
-    line-height: 70px
-    color: lighten($lightest-gray, 2%)
-    font-size: 70px
+    line-height: 60px
+    color: $light-gray
+    font-size: 60px
     text-align: center
     margin-top: 30px
-  h2 
-    text-align: center
-    margin: .5em 0
-  .skip-tutorials,
-  .generate-example-data
-    clear: left
-  .generate-example-data
-    margin-bottom: 10px
-  .status
-    font-size: 110%
-    text-align: center
-    padding: 5px
+  .description
+    margin: 1em
+  .buttons
     position: absolute
     bottom: 0
     left: 0
     right: 0
-  .status.done
-    color: darken($green, 5%)
-  .guiders_buttons_container
-    display: none
+    margin: 1em
+  .tutorial-select-box button
+    width: 100%
+    cursor: hover
+    &.take, &.repeat
+      padding: .75em inherit
+  button.repeat
+    @extend %gray-button
+  button.take
+    @extend %blue-button
+    line-height: 18px // Necessary because of some stupidity where the gray button has a line-height
 
 .guider#contentTypeFields
   li
