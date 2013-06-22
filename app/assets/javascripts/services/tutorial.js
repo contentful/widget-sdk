@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('tutorial', function ($compile, notification, tutorialExampledata, $q, $timeout) {
+angular.module('contentful').factory('tutorial', function ($compile, notification, tutorialExampledata, $q, $timeout, $rootScope) {
   var guiders = window.guiders;
 
   function Tutorial() {}
@@ -21,7 +21,10 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       };
 
       tutorialScope.goto = function (id) {
-        guiders.hideAll();
+        var current = guiders._guiderById(guiders._currentGuiderID);
+        var next    = guiders._guiderById(id);
+        var omitHidingOverlay = current.overlay && next.overlay;
+        guiders.hideAll(omitHidingOverlay);
         guiders.show(id);
       };
 
@@ -35,34 +38,89 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
           hasDate: _.any(contentType.data.fields, {type: 'Date'})
         };
       }
+
       function contentTypeValid(contentType) {
         var shape = contentTypeShape(contentType);
         return shape.numText == 2 && shape.hasDate;
       }
 
-      guiders.createGuider({
+      function createGuider(options) {
+        options = _.clone(options);
+        var template;
+        if (options.template) {
+          template = JST[options.template]();
+          options.description = template;
+        }
+
+        var parentScope = options.scope || tutorialScope;
+        var onShow = options.onShow;
+        var onHide = options.onHide;
+        options.onShow = function (guider) {
+          $rootScope.$evalAsync(function () {
+            guider.scope = parentScope.$new();
+            if (guider.attachTo) guider.attachScope = $(guider.attachTo).scope().$new();
+            if (onShow) onShow.call(guider, guider);
+          });
+          if (!$rootScope.$$phase) $rootScope.$apply();
+        };
+        options.onHide = function (guider) {
+          try {
+            if (onHide) onHide.call(guider, guider);
+            if (!$rootScope.$$phase) $rootScope.$apply();
+          } finally {
+            if (guider.attachScope) {
+              $rootScope.$evalAsync(function () {
+                guider.attachScope.$destroy();
+                delete guider.attachScope;
+              });
+            }
+            if (guider.scope) {
+              $rootScope.$evalAsync(function () {
+                guider.scope.$destroy();
+                delete guider.scope;
+              });
+            }
+          }
+        };
+        guiders.createGuider(options);
+        $compile(angular.element('.guider#'+options.id))(parentScope);
+      }
+
+      var repositionLater = _.throttle(function () {
+        guiders.reposition();
+      }, 50, true);
+
+      createGuider({
         id: 'overview',
         title: 'Take one of our tutorials',
         //buttons: [{name: 'Next'}],
         button: [],
-        description: JST['tutorial_overview'](),
+        template: 'tutorial_overview',
         next: 'contentTypeCreate1',
         overlay: true,
         width: '70%',
         xButton: true
       });
-      $compile(angular.element('.guider#overview'))(tutorialScope);
 
 ////////////////////////////////////////////////////////////////////////////////
 //   Content Types   ///////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-      guiders.createGuider({
+      createGuider({
+        id: 'contentTypeIntro',
+        title: 'Welcome to our Content Type tutorial!',
+        description: 'Content Types describe the structure of your content.  In this part of the tutorial we guide you through the interface until you have learned how to create a Content Type.',
+        overlay: true,
+        buttons: [{name: 'Next'}],
+        next: 'contentTypeCreate1'
+      });
+
+      createGuider({
         id: 'contentTypeCreate1',
-        title: 'Click here and add a new Content Type',
+        title: 'The Add menu has all you need',
+        description: 'By clicking on this button you can add Content Types, Entries and API Keys.',
         attachTo: '.tab-list .add.button',
         position: '2',
-        description: 'Content Types will be the managing pieces of your content.',
         next: 'contentTypeCreate2',
         onShow: function () {
           $(this.attachTo).one('click', function () {
@@ -71,12 +129,12 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         }
       });
 
-      guiders.createGuider({
+      createGuider({
         id: 'contentTypeCreate2',
-        title: 'Click here and add a new Content Type',
+        title: 'Now add a Content Type',
+        description: 'This will open the Content Type editor where you will add your fields.',
         attachTo: '.tab-list .add-btn .dropdown-menu ul:first li:last',
         position: '3',
-        description: 'Content Types will be the managing pieces of your content.',
         next: 'contentTypeName',
         onShow: function () {
           $(this.attachTo).one('click', function () {
@@ -88,78 +146,170 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         }
       });
 
-      guiders.createGuider({
+      createGuider({
         id: 'contentTypeName',
-        title: 'Now add a name and a description',
+        title: 'You need a name',
         attachTo: '.tab-content:visible [ng-model="contentType.data.name"]',
         position: '3',
-        description: 'This is the name of this type of entry. Call it "Blog Post" for now.',
-        next: 'contentTypeFields',
+        description: 'The name should describe generically which sort of content you will add. Recipe, Book, Restaurant and Quiz are examples of names you can use.',
+        next: 'contentTypeDescription',
+        buttons: [{name: 'Next'}],
+        onShow: function (guider) {
+          var d = guider.attachScope.$watch('contentType.data.name', function (name) {
+            if (name && name.length > 0) {
+              guiders.next();
+              d();
+            }
+          });
+        }
+      });
+
+      createGuider({
+        id: 'contentTypeDescription',
+        title: 'Describe it',
+        attachTo: '.tab-content:visible [ng-model="contentType.data.description"]',
+        position: '3',
+        description: 'Giving a description to your Content Type will help the people that edit the content to understand what content should go in there.',
+        next: 'contentTypeTitle',
+        buttons: [{name: 'Next'}],
+        onShow: function (guider) {
+          var d = guider.attachScope.$watch('contentType.data.description', function (description) {
+            if (description && description.length > 0) {
+              guiders.next();
+              d();
+            }
+          });
+        }
+      });
+
+      createGuider({
+        id: 'contentTypeTitle',
+        title: 'Lets add placeholders called fields.',
+        description: 'You will later insert content into these fields. Create a first one called <strong>Title</strong> with type <strong>Text</strong>.',
+        attachTo: '.tab-content:visible .new-field-form .button.new',
+        offset: {top: -15, left: 0},
+        position: '5',
+        next: 'contentTypeContent',
+        onShow: function (guider) {
+          guider.scope.$watch(repositionLater);
+          guider.scope.$watch(function () {
+            return _.find(guider.attachScope.contentType.data.fields, {name: 'Title', type: 'Text'});
+          }, function (has, old) {
+            if (has && !old) guiders.next();
+          });
+        }
+      });
+
+      createGuider({
+        id: 'contentTypeContent',
+        title: 'We need more information',
+        description: 'Add also a field called <strong>Content</strong> with type <strong>Text</strong>.',
+        attachTo: '.tab-content:visible .new-field-form .button.new',
+        offset: {top: -15, left: 0},
+        position: '5',
+        next: 'contentTypeDate',
+        onShow: function (guider) {
+          guider.scope.$watch(repositionLater);
+          guider.scope.$watch(function () {
+            return _.find(guider.attachScope.contentType.data.fields, {name: 'Content', type: 'Text'});
+          }, function (has, old) {
+            if (has && !old) guiders.next();
+          });
+        }
+      });
+
+      createGuider({
+        id: 'contentTypeDate',
+        title: 'When exactly?',
+        description: 'In many cases you will need a time or a date in your content. Create a field called <strong>Timestamp</strong> with the type <strong>Date/Time</strong>',
+        attachTo: '.tab-content:visible .new-field-form .button.new',
+        offset: {top: -15, left: 0},
+        position: '5',
+        next: 'contentTypeMore',
+        onShow: function (guider) {
+          guider.scope.$watch(repositionLater);
+          guider.scope.$watch(function () {
+            return _.find(guider.attachScope.contentType.data.fields, {name: 'Timestamp', type: 'Date'});
+          }, function (has, old) {
+            if (has && !old) guiders.next();
+          });
+        }
+      });
+
+      createGuider({
+        id: 'contentTypeMore',
+        title: 'Wait, there’s more!',
+        description: 'You can add as many fields as you want, activate or deactivate them and even add validations through the validations menu. Click Next when you\'re done:',
+        attachTo: '.tab-content:visible .new-field-form .button.new',
+        offset: {top: -15, left: 0},
+        position: '5',
+        next: 'contentTypeActivate',
+        buttons: [{name: 'Next'}],
+        onShow: function (guider) {
+          guider.scope.$watch(repositionLater);
+        }
+      });
+
+      createGuider({
+        id: 'contentTypeActivate',
+        title: 'Activate it!',
+        description: 'Every time you finish creating a Content Type, you must activate it to start adding entries with this type.',
+        attachTo: '.content-type-editor:visible button.publish',
+        offset: {top: 15, left: 0},
+        position: '1',
+        next: 'contentTypeList',
+        onShow: function (guider) {
+          guider.attachScope.$on('newContentTypePublished', function (event, contentType) {
+            var scope = event.currentScope;
+            if (contentType.getId() == scope.contentType.getId()) {
+              tutorialScope.contentTypeDone = true;
+              guiders.next();
+            }
+          });
+ 
+        }
+      });
+
+      guiders.createGuider({
+        id: 'contentTypeList',
+        title: 'Here is a list of your Content Types',
+        description: 'All your Content Types, whether activated or not, can be accessed and edited through this list. Click here to take a look.',
+        attachTo: '.nav-bar ul li:first',
+        position: '2',
+        next: 'contentTypeExamples',
         onShow: function () {
-          $(this.attachTo).one('blur', function () {
+          $(this.attachTo).one('click', function () {
             guiders.next();
           });
         }
       });
 
-      var fieldScope = tutorialScope.$new();
       guiders.createGuider({
-        id: 'contentTypeFields',
-        title: 'Now add some fields with name',
-        attachTo: '.tab-content:visible .new-field-form .button.new',
-        offset: {top: -15, left: 0},
-        position: '5',
-        description: JST['tutorial_content_fields'](),
-        next: 'contentTypeActivate',
-        onShow: function () {
-          var scope = $(this.attachTo).scope();
-          var d1 = scope.$watch('contentType.data.fields.length', function () {
-            _.defer(guiders.reposition);
-          });
-
-          var d2 = scope.$watch(function (scope) {
-            fieldScope.contentTypeShape = contentTypeShape(scope.contentType);
-            return contentTypeValid(scope.contentType);
-          }, function (done) {
-            if (done) {
-              d1();
-              d2();
-              guiders.next();
-            }
-          });
-        }
-      });
-      $compile(angular.element('.guider#contentTypeFields'))(fieldScope);
-
-      guiders.createGuider({
-        id: 'contentTypeActivate',
-        title: 'Now activate your Content Type',
-        attachTo: '.content-type-editor:visible button.publish',
-        offset: {top: 15, left: 0},
-        position: '1',
-        description: 'Activation makes the content type available for use.',
+        id: 'contentTypeExamples',
+        title: 'Want to see some examples?',
+        description: 'We can generate some Content Types for you so you get a better feeling of what you can do.',
         next: 'contentTypeDone',
-        onShow: function () {
-          var scope = $(this.attachTo).scope();
-          var d1 = scope.$on('newContentTypePublished', function (event, contentType) {
-            if (contentType.getId() == scope.contentType.getId()) {
-              d1();
-              tutorialScope.contentTypeDone = true;
+        buttons: [
+          {name: 'No, thanks', onclick: function () { guiders.next(); }},
+          {name: 'Yes, please', onclick: function () {
+            // TODO open "please stand by" here
+            tutorialExampledata.createContentTypes(tutorialScope.spaceContext).then(function () {
               guiders.next();
-            }
-          });
-        }
+            });
+          }}
+        ]
       });
 
       guiders.createGuider({
         id: 'contentTypeDone',
-        title: 'Done!',
-        description: 'You just created your first Content Type',
+        title: 'If you want to know more…',
+        description: 'If you need more information before starting to use Contentful, please check our <a href="http://support.contentful.com/home">Knowledge Base Pages</a>.',
         next: 'overview',
-        overlay: true,
-        buttons: [{name: 'Next'}]
+        buttons: [
+          {name: 'Back to overview', onclick: function () { guiders.next(); }}
+        ]
       });
- 
+
 ////////////////////////////////////////////////////////////////////////////////
 //   Entries   /////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -405,66 +555,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         description: 'Please hang on',
         overlay: true,
         onShow: function () {
-          var raw;
-          tutorialExampledata.load().
-          then(function createContentTypes(data) {
-            raw = data;
-            return $q.all(_(data.contentTypes).reject(function (newContentType) {
-              return !!_.find(tutorialScope.spaceContext.contentTypes, function (existingContentType) {
-                return existingContentType.getId() == newContentType.sys.id;
-              });
-            }).map(function (contentType) {
-              var deferred = $q.defer();
-              tutorialScope.spaceContext.space.createContentType(contentType, function (err, contentType) {
-                tutorialScope.$apply(function () {
-                  if (err) return deferred.reject(err);
-                  contentType.publish(contentType.data.sys.version, function (err, contentType) {
-                    tutorialScope.$apply(function () {
-                      if (err) return deferred.reject(err);
-                      deferred.resolve(contentType);
-                    });
-                  });
-                });
-              });
-              return deferred.promise;
-            }).value());
-          }).
-          then(function (contentTypes) {
-            if (contentTypes.length > 0) {
-              $timeout(function () {
-                tutorialScope.spaceContext.refreshContentTypes();
-              }, 1000, false);
-            }
-          }).
-          then(function createEntries() {
-            return $q.all(_.map(raw.entries, function (entry) {
-              var deferred = $q.defer();
-              tutorialScope.spaceContext.space.createEntry(entry.sys.contentType.sys.id, entry, function (err, entry) {
-                tutorialScope.$apply(function () {
-                  if (err) return deferred.reject(err);
-                  deferred.resolve(entry);
-                });
-              });
-              return deferred.promise;
-            }));
-          }).
-          then(function (entries) {
-            return $timeout(function(){
-              return entries;
-            }, 3000);
-          }).
-          then(function publishEntries(entries) {
-            return $q.all(_.map(entries, function (entry) {
-              var deferred = $q.defer();
-              entry.publish(entry.data.sys.version, function (err, entry) {
-                tutorialScope.$apply(function () {
-                  if (err) return deferred.reject(err);
-                  deferred.resolve(entry);
-                });
-              });
-              return deferred.promise;
-            }));
-          }).
+          tutorialExampledata.createEntriesWithContentTypes().
           then(function () {
             tutorialScope.visitView('entry-list');
             _.defer(function () {
