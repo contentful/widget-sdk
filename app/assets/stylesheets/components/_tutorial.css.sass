@@ -4,6 +4,7 @@
 .guider
   @extend %modal-dialog-chrome
   border: 1px solid $dark-rule
+  +box-shadow(0 2px 10px)
   z-index: 10
   h1
     margin-bottom: 1em
@@ -42,26 +43,28 @@ $close_size: 25px
 //  Arrows  ////////////////////////////////////////////////////////////////////
 
 .guiders_arrow
+  $caret-size: 15px
   position: absolute
   font-family: 'SSStandard'
   color: white
+  font-size: 20px
   &:before
     position: absolute
 .guiders_arrow_left
   &:before
     content: "◃"
   left: - $caret-size
-  +text-shadow(-2px 0px 3px rgba(0,0,0,0.12))
+  +text-shadow( -2px 0px 5px darken($dark-rule, 30%)) 
 .guiders_arrow_up
   &:before
     content: "▴"
-  top: - $caret-size
-  +text-shadow(0px -2px 3px rgba(0,0,0,0.12))
+  top: - $caret-size + 3px
+  +text-shadow( 0px -2px 5px darken($dark-rule, 30%)) 
 .guiders_arrow_down
   &:before
     content: "▾"
-  bottom: 2px
-  +text-shadow(0px 2px 3px rgba(0,0,0,0.12))
+  bottom: 1px
+  +text-shadow( 0 2px 5px darken($dark-rule, 30%)) 
 
 //  Overview  //////////////////////////////////////////////////////////////////
 
@@ -139,3 +142,11 @@ $close_size: 25px
       color: $lightest-gray
     i
       color: $green
+
+.guider#contentTypeExamples
+  .loading
+    margin: 2em auto
+  .buttons
+    text-align: center
+  button
+    @extend %blue-button

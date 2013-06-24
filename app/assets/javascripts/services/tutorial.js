@@ -2,6 +2,7 @@
 
 angular.module('contentful').factory('tutorial', function ($compile, notification, tutorialExampledata, $q, $timeout, $rootScope) {
   var guiders = window.guiders;
+  guiders._defaultSettings.buttons = null;
 
   function Tutorial() {}
 
@@ -26,6 +27,21 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         var omitHidingOverlay = current.overlay && next.overlay;
         guiders.hideAll(omitHidingOverlay);
         guiders.show(id);
+      };
+
+      tutorialScope.createExampleContentTypes = function () {
+        tutorialScope.standby = true;
+        tutorialExampledata.createContentTypes(tutorialScope.spaceContext).then(function () {
+          tutorialScope.standby = false;
+          guiders.next();
+        }, function (err) {
+          notification.error('Something went wrong:' + err);
+          tutorialScope.standby = false;
+        });
+      };
+
+      tutorialScope.next = function () {
+        guiders.next();
       };
 
       tutorialScope.abort = function () {
@@ -151,7 +167,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         title: 'You need a name',
         attachTo: '.tab-content:visible [ng-model="contentType.data.name"]',
         position: '3',
-        description: 'The name should describe generically which sort of content you will add. Recipe, Book, Restaurant and Quiz are examples of names you can use.',
+        description: 'The name should describe generically what this Content Type represents. <em>Recipe</em>, <em>Book</em>, <em>Restaurant</em> and <em>Quiz</em> are examples of names you can use.',
         next: 'contentTypeDescription',
         buttons: [{name: 'Next'}],
         onShow: function (guider) {
@@ -184,7 +200,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
 
       createGuider({
         id: 'contentTypeTitle',
-        title: 'Lets add placeholders called fields.',
+        title: 'Let\'s add some fields..',
         description: 'You will later insert content into these fields. Create a first one called <strong>Title</strong> with type <strong>Text</strong>.',
         attachTo: '.tab-content:visible .new-field-form .button.new',
         offset: {top: -15, left: 0},
@@ -221,10 +237,10 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         id: 'contentTypeDate',
         title: 'When exactly?',
-        description: 'In many cases you will need a time or a date in your content. Create a field called <strong>Timestamp</strong> with the type <strong>Date/Time</strong>',
-        attachTo: '.tab-content:visible .new-field-form .button.new',
-        offset: {top: -15, left: 0},
-        position: '5',
+        description: 'In many cases you will need a time or a date in your content. Create a field called <strong>Timestamp</strong> with the type <strong>Date/Time</strong><br>Enter the Name, change the type here, then click the Plus-button to add.',
+        attachTo: '.tab-content:visible .new-field-form .type',
+        offset: {top: 10, left: -15},
+        position: '1',
         next: 'contentTypeMore',
         onShow: function (guider) {
           guider.scope.$watch(repositionLater);
@@ -239,7 +255,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         id: 'contentTypeMore',
         title: 'Wait, there’s more!',
-        description: 'You can add as many fields as you want, activate or deactivate them and even add validations through the validations menu. Click Next when you\'re done:',
+        description: 'You can add as many fields as you want, activate or deactivate them and add validations through the validations menu. Click <em>Next</em> when you\'re done:',
         attachTo: '.tab-content:visible .new-field-form .button.new',
         offset: {top: -15, left: 0},
         position: '5',
@@ -253,7 +269,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         id: 'contentTypeActivate',
         title: 'Activate it!',
-        description: 'Every time you finish creating a Content Type, you must activate it to start adding entries with this type.',
+        description: 'Every time you finish creating a Content Type, you must activate it before you can create entries with this type.',
         attachTo: '.content-type-editor:visible button.publish',
         offset: {top: 15, left: 0},
         position: '1',
@@ -270,7 +286,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         }
       });
 
-      guiders.createGuider({
+      createGuider({
         id: 'contentTypeList',
         title: 'Here is a list of your Content Types',
         description: 'All your Content Types, whether activated or not, can be accessed and edited through this list. Click here to take a look.',
@@ -284,23 +300,14 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         }
       });
 
-      guiders.createGuider({
+      createGuider({
         id: 'contentTypeExamples',
-        title: 'Want to see some examples?',
-        description: 'We can generate some Content Types for you so you get a better feeling of what you can do.',
-        next: 'contentTypeDone',
-        buttons: [
-          {name: 'No, thanks', onclick: function () { guiders.next(); }},
-          {name: 'Yes, please', onclick: function () {
-            // TODO open "please stand by" here
-            tutorialExampledata.createContentTypes(tutorialScope.spaceContext).then(function () {
-              guiders.next();
-            });
-          }}
-        ]
+        title: 'Want to see some more examples?',
+        template: 'tutorial_content_type_examples',
+        next: 'contentTypeDone'
       });
 
-      guiders.createGuider({
+      createGuider({
         id: 'contentTypeDone',
         title: 'If you want to know more…',
         description: 'If you need more information before starting to use Contentful, please check our <a href="http://support.contentful.com/home">Knowledge Base Pages</a>.',
