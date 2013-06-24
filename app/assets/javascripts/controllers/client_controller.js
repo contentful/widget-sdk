@@ -150,7 +150,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
       $scope.$apply(function(scope) {
         //console.log('tokenLookup', tokenLookup);
         scope.user = tokenLookup.sys.createdBy;
-        authorization.setTokenLookup(tokenLookup);
+        authorization.setTokenLookup(tokenLookup, scope.spaceContext.space);
         analytics.login(scope.user);
         scope.updateSpaces(tokenLookup.spaces);
         if (callback) callback(tokenLookup);
