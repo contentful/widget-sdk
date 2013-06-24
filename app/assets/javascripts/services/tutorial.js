@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('tutorial', function ($compile, notification, tutorialExampledata, $q, $timeout, $rootScope) {
+angular.module('contentful').factory('tutorial', function ($compile, notification, tutorialExampledata, $q, $timeout, $rootScope, analytics) {
   var guiders = window.guiders;
   guiders._defaultSettings.buttons = null;
 
@@ -30,6 +30,9 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       };
 
       tutorialScope.createExampleContentTypes = function () {
+        analytics.track('Created tutorial example data', {
+          category: 'content-types'
+        });
         tutorialScope.standby = true;
         return tutorialExampledata.createContentTypes(tutorialScope.spaceContext).then(function () {
           tutorialScope.standby = false;
@@ -41,6 +44,9 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       };
 
       tutorialScope.createExampleEntries = function () {
+        analytics.track('Created tutorial example data', {
+          category: 'entries'
+        });
         tutorialScope.standby = true;
         return tutorialExampledata.createEntriesWithContentTypes(tutorialScope.spaceContext).
         then(function () {
@@ -55,7 +61,10 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         });
       };
 
-      tutorialScope.next = function () {
+      tutorialScope.skipExamples = function (category) {
+        analytics.track('Skipped tutorial example data', {
+          category: category
+        });
         guiders.next();
       };
 
@@ -75,6 +84,10 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         var onShow = options.onShow;
         var onHide = options.onHide;
         options.onShow = function (guider) {
+          analytics.track('Opened tutorial window', {
+            category: options.category,
+            id: options.id
+          });
           $rootScope.$evalAsync(function () {
             guider.scope = parentScope.$new();
             if (guider.attachTo) guider.attachScope = $(guider.attachTo).scope().$new();
@@ -109,7 +122,12 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         guiders.reposition();
       }, 50, true);
 
+////////////////////////////////////////////////////////////////////////////////
+//   Overview    ///////////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
       createGuider({
+        category: 'overview',
         id: 'overview',
         title: 'Take one of our tutorials',
         //buttons: [{name: 'Next'}],
@@ -126,6 +144,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
 ////////////////////////////////////////////////////////////////////////////////
 
       createGuider({
+        category: 'content-types',
         id: 'contentTypeIntro',
         title: 'Welcome to our Content Type tutorial!',
         description: 'Content Types describe the structure of your content.  In this part of the tutorial we guide you through the interface until you have learned how to create a Content Type.',
@@ -135,6 +154,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'content-types',
         id: 'contentTypeCreate1',
         title: 'The Add menu has all you need',
         description: 'By clicking on this button you can add Content Types, Entries and API Keys.',
@@ -149,6 +169,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'content-types',
         id: 'contentTypeCreate2',
         title: 'Now add a Content Type',
         description: 'This will open the Content Type editor where you will add your fields.',
@@ -166,6 +187,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'content-types',
         id: 'contentTypeName',
         title: 'You need a name',
         attachTo: '.tab-content:visible [ng-model="contentType.data.name"]',
@@ -184,6 +206,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'content-types',
         id: 'contentTypeDescription',
         title: 'Describe it',
         attachTo: '.tab-content:visible [ng-model="contentType.data.description"]',
@@ -202,6 +225,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'content-types',
         id: 'contentTypeTitle',
         title: 'Let\'s add some fields..',
         description: 'You will later insert content into these fields. Create a first one called <strong>Title</strong> with type <strong>Text</strong>.',
@@ -220,6 +244,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'content-types',
         id: 'contentTypeContent',
         title: 'We need more information',
         description: 'Add also a field called <strong>Content</strong> with type <strong>Text</strong>.',
@@ -238,6 +263,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'content-types',
         id: 'contentTypeDate',
         title: 'When exactly?',
         description: 'In many cases you will need a time or a date in your content. Create a field called <strong>Timestamp</strong> with the type <strong>Date/Time</strong><br>Enter the Name, change the type here, then click the Plus-button to add.',
@@ -256,6 +282,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'content-types',
         id: 'contentTypeMore',
         title: 'Wait, there’s more!',
         description: 'You can add as many fields as you want, activate or deactivate them and add validations through the validations menu. Click <em>Next</em> when you\'re done:',
@@ -270,6 +297,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'content-types',
         id: 'contentTypeActivate',
         title: 'Activate it!',
         description: 'Every time you finish creating a Content Type, you must activate it before you can create entries with this type.',
@@ -290,6 +318,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'content-types',
         id: 'contentTypeList',
         title: 'Here is a list of your Content Types',
         description: 'All your Content Types, whether activated or not, can be accessed and edited through this list. Click here to take a look.',
@@ -304,6 +333,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'content-types',
         id: 'contentTypeExamples',
         title: 'Want to see some more examples?',
         template: 'tutorial_content_type_examples',
@@ -311,6 +341,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'content-types',
         id: 'contentTypeDone',
         title: 'If you want to know more…',
         description: 'If you need more information before starting to use Contentful, please check our <a href="http://support.contentful.com/home">Knowledge Base Pages</a>.',
@@ -325,6 +356,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
 ////////////////////////////////////////////////////////////////////////////////
 
       createGuider({
+        category: 'entries',
         id: 'entryIntro',
         title: 'Great! Welcome to our Entries tutorial!',
         description: 'Entries contain to the content itself. They depend on the Content Types you create. In this tutorial we’ll guide you through the Entry editor.',
@@ -335,6 +367,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
 
 
       createGuider({
+        category: 'entries',
         id: 'entrySeed',
         title: 'Preparing example data',
         description: '<div class="loading"></div><div>Please hang on</div>',
@@ -345,6 +378,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'entries',
         id: 'entryCreate1',
         title: 'Click on the Add button!',
         description: 'This is a very important step: by clicking on this button you can add Content Types, Entries and API Keys.',
@@ -359,6 +393,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'entries',
         id: 'entryCreate2',
         title: 'Now add a Blog Post',
         description: 'This will open the Content Type editor where you will add your fields.',
@@ -376,6 +411,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'entries',
         id: 'entryContent',
         title: 'This is how you add content',
         description: 'All you have to do now is to add some content to the fields! Let us first get a brief look at the other parts of the editor.',
@@ -384,6 +420,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'entries',
         id: 'entrySave',
         title: 'Everything is safe with us',
         description: 'Our system <strong>automatically saves your data</strong> every time there’s a change. No need to press a save button. This status-bar indicates the state of the database connection.',
@@ -394,6 +431,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'entries',
         id: 'entryCollaboration',
         title: 'Working together',
         description: 'On Contentful you can work together with your team. On this bar you can see who’s editing the entry <strong>at the same time</strong>.',
@@ -404,6 +442,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'entries',
         id: 'entryPublish',
         title: 'Publish!',
         description: 'Your content is saved automatically, but to make it available for consumption you need to publish it. You can also unpublish previously published content.<br><br><strong>Edit your fields now in the form above, then click this button to publish the entry and proceed.</strong>',
@@ -421,6 +460,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'entries',
         id: 'entryList',
         title: 'Your Entries are here',
         description: 'Click on this button, it’ll take you to a <strong>list of all the Entries your team has created</strong>, regardless of whether they were published or are still drafts.',
@@ -435,13 +475,15 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'entries',
         id: 'entryExamples',
         title: 'Want to see some more examples?',
         template: 'tutorial_entry_examples',
         next: 'entryDone'
       });
 
-      guiders.createGuider({
+      createGuider({
+        category: 'entries',
         id: 'entryDone',
         title: 'More information about Contentful',
         description: 'If you need more information before starting to use Contentful, please check our <a href="http://support.contentful.com/home">Knowledge Base Pages</a>.',
@@ -455,6 +497,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
 ////////////////////////////////////////////////////////////////////////////////
 
       createGuider({
+        category: 'apiKeys',
         id: 'apiKeyIntro',
         title: 'We’re glad you took our Delivery Tutorial!',
         description: 'Content is accessible in your applications with API Keys. An API Key contains an access token which is used for authentication. In this tutorial we’ll teach you how to create one key for each app.',
@@ -464,6 +507,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'apiKeys',
         id: 'apiKeyCreate1',
         title: 'Adding starts here',
         attachTo: '.tab-list .add.button',
@@ -477,7 +521,8 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         }
       });
 
-      guiders.createGuider({
+      createGuider({
+        category: 'apiKeys',
         id: 'apiKeyCreate2',
         title: 'Select API Key',
         attachTo: '.tab-list .add-btn .dropdown-menu ul:first',
@@ -491,7 +536,8 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         }
       });
 
-      guiders.createGuider({
+      createGuider({
+        category: 'apiKeys',
         id: 'apiKeyEdit',
         title: 'Give it a name and a description',
         description: 'Name and describe the application you are distributing to. This will help telling the API Keys apart from each other.',
@@ -499,7 +545,8 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         next: 'apiKeySave'
       });
 
-      guiders.createGuider({
+      createGuider({
+        category: 'apiKeys',
         id: 'apiKeySave',
         title: 'When finished, save and generate',
         description: 'When you hit save, the API Key will be generated and ready to use by the app.',
@@ -519,7 +566,8 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         }
       });
 
-      guiders.createGuider({
+      createGuider({
+        category: 'apiKeys',
         id: 'apiKeyTest',
         title: 'This is your Api Keys Access Token',
         description: 'You can now authenticate your API calls with the access token and consume content from this Space.<br>Try accessing your content using this this token via CURL on the command line or by clicking the link.',
@@ -530,6 +578,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       createGuider({
+        category: 'apiKeys',
         id: 'apiKeyList',
         title: 'Here are your API Keys',
         description: 'Every time you create an API Key it appears on the list shown by this button.',
@@ -543,7 +592,8 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         }
       });
 
-      guiders.createGuider({
+      createGuider({
+        category: 'apiKeys',
         id: 'apiKeyDone',
         title: 'Learn more?',
         description: 'If you need more information before starting to use Contentful, please check our <a href="http://support.contentful.com/home">Knowledge Base Pages</a>.',
