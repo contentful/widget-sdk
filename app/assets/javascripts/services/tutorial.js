@@ -454,24 +454,21 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
 //   API Key   /////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-      guiders.createGuider({
-        id: 'apiKeySeed',
-        title: 'Preparing example data',
-        description: 'Please hang on',
+      createGuider({
+        id: 'apiKeyIntro',
+        title: 'We’re glad you took our Delivery Tutorial!',
+        description: 'Content is accessible in your applications with API Keys. An API Key contains an access token which is used for authentication. In this tutorial we’ll teach you how to create one key for each app.',
         next: 'apiKeyCreate1',
-        onShow: function () {
-          setTimeout(function () {
-            guiders.next();
-          }, 500);
-        }
+        overlay: true,
+        buttons: [{name: 'Next'}]
       });
 
-      guiders.createGuider({
+      createGuider({
         id: 'apiKeyCreate1',
-        title: 'Click here and add a new API Key',
+        title: 'Adding starts here',
         attachTo: '.tab-list .add.button',
         position: '2',
-        description: 'To get data from the Content Delivery API, clients need to provide an access token.',
+        description: 'Everything you need to add is in this menu: Content Types, Entries and API Keys.',
         next: 'apiKeyCreate2',
         onShow: function () {
           $(this.attachTo).one('click', function () {
@@ -482,10 +479,10 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
 
       guiders.createGuider({
         id: 'apiKeyCreate2',
-        title: 'Click here and add a new API Key',
+        title: 'Select API Key',
         attachTo: '.tab-list .add-btn .dropdown-menu ul:first',
         position: '2',
-        description: 'To get data from the Content Delivery API, clients need to provide an access token.',
+        description: 'One API Key corresponds to one channel of distribution. This will open the API Key screen.',
         next: 'apiKeyEdit',
         onShow: function () {
           $(this.attachTo).one('click', function () {
@@ -496,34 +493,20 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
 
       guiders.createGuider({
         id: 'apiKeyEdit',
-        title: 'Fill in Name and description',
-        attachTo: '.api-key-editor:visible input:first',
-        position: '2',
-        description: 'The simply help to identify the purpose of the API Key if you create multiple keys.',
-        next: 'apiKeySave',
-        onShow: function () {
-          var scope = $(this.attachTo).scope();
-          var d1 = scope.$watch(function (scope) {
-            return scope.apiKey &&
-              scope.apiKey.data &&
-              scope.apiKey.data.name && scope.apiKey.data.description;
-          }, function (done) {
-            if (done) {
-              d1();
-              guiders.next();
-            }
-          });
-        }
+        title: 'Give it a name and a description',
+        description: 'Name and describe the application you are distributing to. This will help telling the API Keys apart from each other.',
+        buttons: [{name: 'Next'}],
+        next: 'apiKeySave'
       });
 
       guiders.createGuider({
         id: 'apiKeySave',
-        title: 'When you\'re done, save your API Key',
+        title: 'When finished, save and generate',
+        description: 'When you hit save, the API Key will be generated and ready to use by the app.',
         attachTo: '.api-key-editor:visible button.save',
         offset: {top: 15, left: 0},
         position: '1',
-        description: 'Afterwards the key can be used by clients.',
-        next: 'apiKeyDone',
+        next: 'apiKeyTest',
         onShow: function () {
           var scope = $(this.attachTo).scope();
           var d = scope.$watch('apiKey.data.accessToken', function (token) {
@@ -537,44 +520,38 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       });
 
       guiders.createGuider({
-        id: 'apiKeyDone',
-        title: 'Done!',
+        id: 'apiKeyTest',
+        title: 'This is your Api Keys Access Token',
+        description: 'You can now authenticate your API calls with the access token and consume content from this Space.<br>Try accessing your content using this this token via CURL on the command line or by clicking the link.',
         attachTo: '.api-key-editor:visible .curl-example',
         position: 7,
-        description: 'Try accessing your content using this this API Key via CURL on the command line or by clicking the link.',
-        next: 'overview',
-      });
+        next: 'apiKeyList',
         buttons: [{name: 'Next'}]
+      });
 
-////////////////////////////////////////////////////////////////////////////////
-//   Example Data   ////////////////////////////////////////////////////////////
-////////////////////////////////////////////////////////////////////////////////
-
-      guiders.createGuider({
-        id: 'exampleDataSeed',
-        title: 'Generating example data',
-        description: 'Please hang on',
-        overlay: true,
+      createGuider({
+        id: 'apiKeyList',
+        title: 'Here are your API Keys',
+        description: 'Every time you create an API Key it appears on the list shown by this button.',
+        attachTo: '.nav-bar ul li[data-view-type=content-delivery]',
+        position: '2',
+        next: 'apiKeyDone',
         onShow: function () {
-          tutorialExampledata.createEntriesWithContentTypes().
-          then(function () {
-            tutorialScope.visitView('entry-list');
-            _.defer(function () {
-              $('.tab-content .entry-list').scope().resetEntries();
-            });
+          $(this.attachTo).one('click', function () {
             guiders.next();
           });
-        },
-        next: 'exampleDataDone'
+        }
       });
 
       guiders.createGuider({
-        id: 'exampleDataDone',
-        title: 'Done!',
-        description: 'We created a couple of entries for you to toy with. Also check out the Content Types we created.',
-        attachTo: '.nav-bar ul',
-        position: 2
+        id: 'apiKeyDone',
+        title: 'Learn more?',
+        description: 'If you need more information before starting to use Contentful, please check our <a href="http://support.contentful.com/home">Knowledge Base Pages</a>.',
+        overlay: true,
+        next: 'overview',
+        buttons: [{name: 'Next'}]
       });
+
     }
   };
 

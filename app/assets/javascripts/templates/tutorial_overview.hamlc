@@ -29,7 +29,7 @@
   .description
     Learn how to configure distribution of content.
   .buttons
-    %button.repeat(ng-show="apiKeyDone" ng-click="goto('apiKeySeed')")
+    %button.repeat(ng-show="apiKeyDone" ng-click="goto('apiKeyIntro')")
       Repeat Tutorial
-    %button.take(ng-hide="apiKeyDone" ng-click="goto('apiKeySeed')")
+    %button.take(ng-hide="apiKeyDone" ng-click="goto('apiKeyIntro')")
       Take Tutorial
