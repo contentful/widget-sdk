@@ -4,13 +4,15 @@
   %ul
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'contentTypes',
                   'section-index': spaceContext.tabList.currentViewType() == 'content-type-list'}"
-        ng-click="visitView('content-type-list')")
+        ng-click="visitView('content-type-list')"
+        data-view-type="content-type-list")
       %i.ss-database
       .hint.tip.nav-models
         Content Types
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'entries',
                   'section-index': spaceContext.tabList.currentViewType() == 'entry-list'}"
-        ng-click="visitView('entry-list')")
+        ng-click="visitView('entry-list')"
+        data-view-type="entry-list")
       %i.ss-file
       .hint.tip.nav-models
         Entries
@@ -20,13 +22,15 @@
         Assets not available yet, coming soon
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'contentDelivery',
                    'section-index': spaceContext.tabList.currentViewType() == 'content-delivery'}"
-        ng-click="visitView('content-delivery')")
+        ng-click="visitView('content-delivery')"
+        data-view-type="content-delivery")
       %i.ss-fork
       .hint.tip.nav-models
         Content Delivery
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'spaceSettings',
                   'section-index': spaceContext.tabList.currentSection() == 'spaceSettings'}"
-        ng-click="visitView('space-settings')")
+        ng-click="visitView('space-settings')"
+        data-view-type="space-settings")
       %i.ss-settings
       .hint.tip.nav-models
         Space Settings

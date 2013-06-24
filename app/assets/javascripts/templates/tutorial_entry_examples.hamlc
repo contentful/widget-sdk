@@ -1,0 +1,9 @@
+%div(ng-hide="standby")
+  Above, you see the Entry you just created.
+  We can generate some example data for you so you get a better feeling for the system. 
+  .buttons
+    %button(ng-click="createExampleEntries()") Yes, please
+    %button(ng-click="next()") No, thanks
+%div(ng-show="standby")
+  .loading
+  Please wait, we're generating the examples. This shouldn't take longer than a few seconds.

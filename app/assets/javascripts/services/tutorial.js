@@ -31,8 +31,23 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
 
       tutorialScope.createExampleContentTypes = function () {
         tutorialScope.standby = true;
-        tutorialExampledata.createContentTypes(tutorialScope.spaceContext).then(function () {
+        return tutorialExampledata.createContentTypes(tutorialScope.spaceContext).then(function () {
           tutorialScope.standby = false;
+          guiders.next();
+        }, function (err) {
+          notification.error('Something went wrong:' + err);
+          tutorialScope.standby = false;
+        });
+      };
+
+      tutorialScope.createExampleEntries = function () {
+        tutorialScope.standby = true;
+        return tutorialExampledata.createEntriesWithContentTypes(tutorialScope.spaceContext).
+        then(function () {
+          tutorialScope.standby = false;
+          if (tutorialScope.spaceContext.tabList.current.viewType == 'entry-list') {
+            $('.tab-content .entry-list').scope().resetEntries();
+          }
           guiders.next();
         }, function (err) {
           notification.error('Something went wrong:' + err);
@@ -47,18 +62,6 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       tutorialScope.abort = function () {
         guiders.hideAll();
       };
-
-      function contentTypeShape(contentType) {
-        return {
-          numText: _.countBy(contentType.data.fields, {type: 'Text'})['true'],
-          hasDate: _.any(contentType.data.fields, {type: 'Date'})
-        };
-      }
-
-      function contentTypeValid(contentType) {
-        var shape = contentTypeShape(contentType);
-        return shape.numText == 2 && shape.hasDate;
-      }
 
       function createGuider(options) {
         options = _.clone(options);
@@ -290,7 +293,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         id: 'contentTypeList',
         title: 'Here is a list of your Content Types',
         description: 'All your Content Types, whether activated or not, can be accessed and edited through this list. Click here to take a look.',
-        attachTo: '.nav-bar ul li:first',
+        attachTo: '.nav-bar ul li[data-view-type=content-type-list]',
         position: '2',
         next: 'contentTypeExamples',
         onShow: function () {
@@ -321,70 +324,32 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
 //   Entries   /////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
-      guiders.createGuider({
+      createGuider({
+        id: 'entryIntro',
+        title: 'Great! Welcome to our Entries tutorial!',
+        description: 'Entries contain to the content itself. They depend on the Content Types you create. In this tutorial we’ll guide you through the Entry editor.',
+        overlay: true,
+        buttons: [{name: 'Next'}],
+        next: 'entryCreate1'
+      });
+
+
+      createGuider({
         id: 'entrySeed',
         title: 'Preparing example data',
-        description: 'Please hang on',
+        description: '<div class="loading"></div><div>Please hang on</div>',
         next: 'entryCreate1',
-        onShow: function () {
-          var contentType = _.find(tutorialScope.spaceContext.publishedContentTypes, contentTypeValid);
-          if (!contentType) {
-            tutorialScope.spaceContext.space.createContentType({
-             'fields': [
-              {
-               'id': 'title',
-               'name': 'Title',
-               'type': 'Text',
-               'required': false,
-               'localized': false
-              },
-              {
-               'id': 'content',
-               'name': 'Content',
-               'type': 'Text',
-               'required': false,
-               'localized': false
-              },
-              {
-               'id': 'timestamp',
-               'name': 'Timestamp',
-               'type': 'Date',
-               'required': false,
-               'localized': false
-              }
-             ],
-             'name': 'Blog Post',
-             'sys': {
-              'id': 'blogpost'
-              },
-             'description': 'asdsa'
-            }, function (err, contentType) {
-              if (err) {
-                notification.error('Could not create content type');
-              } else {
-                contentType.publish(contentType.version, function (err, contentType) {
-                  tutorialScope.$apply(function (scope) {
-                    scope.spaceContext.registerPublishedContentType(contentType);
-                    scope.spaceContext.refreshContentTypes();
-                  });
-                  guiders.next();
-                });
-              }
-            });
-          } else {
-            setTimeout(function () {
-              guiders.next();
-            }, 500);
-          }
+        onShow: function (){
+          tutorialScope.createExampleContentTypes();
         }
       });
 
-      guiders.createGuider({
+      createGuider({
         id: 'entryCreate1',
-        title: 'Click here and add a new Blog Post',
+        title: 'Click on the Add button!',
+        description: 'This is a very important step: by clicking on this button you can add Content Types, Entries and API Keys.',
         attachTo: '.tab-list .add.button',
         position: '2',
-        description: '"Blog Post" is the Content Type you just created (if you didn\'t name it differently).',
         next: 'entryCreate2',
         onShow: function () {
           $(this.attachTo).one('click', function () {
@@ -393,12 +358,12 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         }
       });
 
-      guiders.createGuider({
+      createGuider({
         id: 'entryCreate2',
-        title: 'Click here and add a new Blog Post',
-        attachTo: '.tab-list .add-btn .dropdown-menu ul.content-types',
-        position: '2',
-        description: '"Blog Post" is the Content Type you just created (if you didn\'t name it differently).',
+        title: 'Now add a Blog Post',
+        description: 'This will open the Content Type editor where you will add your fields.',
+        attachTo: '.tab-list .add-btn .dropdown-menu ul.content-types li:first',
+        position: '3',
         next: 'entryContent',
         onShow: function () {
           $(this.attachTo).one('click', function () {
@@ -410,36 +375,44 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         }
       });
 
-      guiders.createGuider({
+      createGuider({
         id: 'entryContent',
-        title: 'Now fill all the fields you have',
-        attachTo: '.tab-content:visible textarea:first',
-        position: '2',
-        description: 'Here you can add your content, title, the timestamp and any other fields you have.',
-        buttons: [{
-          name: 'Close',
-          onclick: function () {
-            $('.guider#entryContent').fadeOut('fast');
-          }
-        }],
-        onShow: function () {
-          _.defer(guiders.show, 'entryPublish');
-        }
+        title: 'This is how you add content',
+        description: 'All you have to do now is to add some content to the fields! Let us first get a brief look at the other parts of the editor.',
+        buttons: [{ name: 'Next' }],
+        next: 'entrySave'
       });
 
-      guiders.createGuider({
+      createGuider({
+        id: 'entrySave',
+        title: 'Everything is safe with us',
+        description: 'Our system <strong>automatically saves your data</strong> every time there’s a change. No need to press a save button. This status-bar indicates the state of the database connection.',
+        attachTo: '.tab-content:visible .save-status',
+        position: 11,
+        buttons: [{ name: 'Next' }],
+        next: 'entryCollaboration'
+      });
+
+      createGuider({
+        id: 'entryCollaboration',
+        title: 'Working together',
+        description: 'On Contentful you can work together with your team. On this bar you can see who’s editing the entry <strong>at the same time</strong>.',
+        attachTo: '.tab-content:visible .other-users',
+        position: 11,
+        buttons: [{ name: 'Next' }],
+        next: 'entryPublish'
+      });
+
+      createGuider({
         id: 'entryPublish',
-        title: 'When you\'re done, publish your Blog Post',
-        attachTo: '.entry-editor:visible button.publish',
-        offset: {top: 15, left: 0},
-        position: '1',
-        description: 'Publishing makes an entry visible to public users of your content feed.',
-        next: 'entryDone',
-        onShow: function () {
-          var scope = $(this.attachTo).scope();
-          var d1 = scope.$watch('entry.isPublished()', function (published) {
+        title: 'Publish!',
+        description: 'Your content is saved automatically, but to make it available for consumption you need to publish it. You can also unpublish previously published content.<br><br><strong>Edit your fields now in the form above, then click this button to publish the entry and proceed.</strong>',
+        attachTo: '.tab-content:visible .publish',
+        position: 1,
+        next: 'entryList',
+        onShow: function (guider) {
+          guider.attachScope.$watch('entry.isPublished()', function (published) {
             if (published) {
-              d1();
               tutorialScope.entryDone = true;
               guiders.next();
             }
@@ -447,10 +420,31 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         }
       });
 
+      createGuider({
+        id: 'entryList',
+        title: 'Your Entries are here',
+        description: 'Click on this button, it’ll take you to a <strong>list of all the Entries your team has created</strong>, regardless of whether they were published or are still drafts.',
+        attachTo: '.nav-bar ul li[data-view-type=entry-list]',
+        position: '2',
+        next: 'entryExamples',
+        onShow: function () {
+          $(this.attachTo).one('click', function () {
+            guiders.next();
+          });
+        }
+      });
+
+      createGuider({
+        id: 'entryExamples',
+        title: 'Want to see some more examples?',
+        template: 'tutorial_entry_examples',
+        next: 'entryDone'
+      });
+
       guiders.createGuider({
         id: 'entryDone',
-        title: 'Done!',
-        description: 'You just published your first entry. In the next tutorial you will learn how to set up access to the public content feed for your Space.',
+        title: 'More information about Contentful',
+        description: 'If you need more information before starting to use Contentful, please check our <a href="http://support.contentful.com/home">Knowledge Base Pages</a>.',
         next: 'overview',
         overlay: true,
         buttons: [{name: 'Next'}]
@@ -549,8 +543,8 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         position: 7,
         description: 'Try accessing your content using this this API Key via CURL on the command line or by clicking the link.',
         next: 'overview',
-        buttons: [{name: 'Next'}]
       });
+        buttons: [{name: 'Next'}]
 
 ////////////////////////////////////////////////////////////////////////////////
 //   Example Data   ////////////////////////////////////////////////////////////

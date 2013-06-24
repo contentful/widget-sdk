@@ -17,9 +17,9 @@
   .description
     An intro to day to day content management tasks.
   .buttons
-    %button.repeat(ng-show="entryDone" ng-click="goto('entrySeed')")
+    %button.repeat(ng-show="entryDone" ng-click="goto('entryIntro')")
       Repeat Tutorial
-    %button.take(ng-hide="entryDone" ng-click="goto('entrySeed')")
+    %button.take(ng-hide="entryDone" ng-click="goto('entryIntro')")
       Take Tutorial
 
 .tutorial-select-box.right
