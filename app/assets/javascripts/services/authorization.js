@@ -27,6 +27,7 @@ angular.module('contentful').
       if (authorization.spaceContext)
         return authorization.spaceContext.can.apply(authorization.spaceContext, arguments);
       else
+        console.warn('"can" missing spaceContext');
         return false;
     };
   });
