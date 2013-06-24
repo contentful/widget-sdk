@@ -13,7 +13,6 @@
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'entries',
                   'section-index': spaceContext.tabList.currentViewType() == 'entry-list'}"
         ng-click="visitView('entry-list')"
-        ng-show="can('read', 'Entry')"
         data-view-type="entry-list")
       %i.ss-file
       .hint.tip.nav-models
