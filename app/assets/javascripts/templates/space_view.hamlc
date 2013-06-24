@@ -5,6 +5,7 @@
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'contentTypes',
                   'section-index': spaceContext.tabList.currentViewType() == 'content-type-list'}"
         ng-click="visitView('content-type-list')"
+        ng-show="can('read', 'ContentType')"
         data-view-type="content-type-list")
       %i.ss-database
       .hint.tip.nav-models
@@ -12,6 +13,7 @@
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'entries',
                   'section-index': spaceContext.tabList.currentViewType() == 'entry-list'}"
         ng-click="visitView('entry-list')"
+        ng-show="can('read', 'Entry')"
         data-view-type="entry-list")
       %i.ss-file
       .hint.tip.nav-models
@@ -23,6 +25,7 @@
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'contentDelivery',
                    'section-index': spaceContext.tabList.currentViewType() == 'content-delivery'}"
         ng-click="visitView('content-delivery')"
+        ng-show="can('update', 'ApiKey')"
         data-view-type="content-delivery")
       %i.ss-fork
       .hint.tip.nav-models
@@ -30,6 +33,7 @@
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'spaceSettings',
                   'section-index': spaceContext.tabList.currentSection() == 'spaceSettings'}"
         ng-click="visitView('space-settings')"
+        ng-show="can('update', 'Settings')"
         data-view-type="space-settings")
       %i.ss-settings
       .hint.tip.nav-models
