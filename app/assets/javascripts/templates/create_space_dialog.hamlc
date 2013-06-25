@@ -16,5 +16,5 @@
       .buttons
         %button.cancel(type="button" ng-click="hideCreateSpaceDialog()")
           Cancel
-        %button.confirm(ng-click="submit()" ng-disabled="newSpaceForm.$invalid")
+        %button.confirm(ng-click="submit()" ng-disabled="newSpaceForm.$invalid || lockSubmit")
           Create Space

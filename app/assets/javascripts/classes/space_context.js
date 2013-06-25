@@ -1,4 +1,4 @@
-angular.module('contentful').factory('SpaceContext', function(TabList, $rootScope){
+angular.module('contentful').factory('SpaceContext', function(TabList, $rootScope, $q){
   'use strict';
 
   function SpaceContext(space){
@@ -48,19 +48,22 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
 
       refreshContentTypes: function() {
         if (this.space) {
+          var deferred = $q.defer();
           var spaceContext = this;
           this.space.getContentTypes({order: 'sys.id', limit: 1000}, function(err, contentTypes) {
-            if (err) return;
             $rootScope.$apply(function() {
+              if (err) return deferred.reject(err);
               spaceContext.contentTypes = contentTypes;
               spaceContext.refreshPublishedContentTypes();
+              deferred.resolve(contentTypes);
             });
           });
+          return deferred.promise;
         } else {
           this.contentTypes = [];
           this.publishedContentTypes = [];
           this._publishedContentTypesHash = {};
-          return;
+          return $q.when(this.contentTypes);
         }
       },
       refreshPublishedContentTypes: function() {

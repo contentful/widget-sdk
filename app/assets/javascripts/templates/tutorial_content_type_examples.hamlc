@@ -1,0 +1,9 @@
+%div(ng-hide="standby")
+  Above, you see the Content Type you just created.
+  We can generate some more examples for you to get a better feeling of what you can do with them.
+  .buttons
+    %button(ng-click="createExampleContentTypes()") Yes, please
+    %button(ng-click="skipExamples('content-types')") No, thanks
+%div(ng-show="standby")
+  .loading
+  Please wait, we're generating the examples. This should not take longer than a few seconds.

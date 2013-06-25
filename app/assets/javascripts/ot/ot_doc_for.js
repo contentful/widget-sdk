@@ -3,6 +3,7 @@
 angular.module('contentful').directive('otDocFor', function () {
   return {
     restrict: 'A',
+    priority: -100,
     controller: 'otDocForCtrl'
   };
 }).controller('otDocForCtrl', function OtDocForCtrl($scope, $attrs, ShareJS) {
@@ -14,7 +15,7 @@ angular.module('contentful').directive('otDocFor', function () {
     });
   }
 
-  $scope.otDisabled = false; // set to true to prevent editing
+  $scope.otDisabled = true; // set to true to prevent editing
   $scope.otEditable = false; // indicates editability
 
   function otGetEntity() {
@@ -27,17 +28,25 @@ angular.module('contentful').directive('otDocFor', function () {
     scope.otConnected = connected;
   });
 
-  $scope.$watch(function otDocForEntityWatcher(scope) {
-    return !scope.otDisabled && scope.otConnected && otGetEntity();
+  function shouldDocBeOpen(scope) {
+    //console.log('otDocFor shouldDocBeOpen disabled %o, connected %o, entity %o', scope.otDisabled, scope.otConnected, otGetEntity() );
+    return !scope.otDisabled && scope.otConnected && !!otGetEntity();
+  }
+
+  $scope.$watch(function (scope) {
+    return shouldDocBeOpen(scope) ? otGetEntity() : false;
   } , function (entity, old, scope) {
-    //console.log('otDocFor watch entity old: %o new: %o', old, entity);
     if (entity) {
       ShareJS.open(entity, function(err, doc) {
         scope.$apply(function(scope){
           if (!err) {
-              //console.log('otDocFor installing doc %o for entity %o', doc.state, doc, entity);
-              scope.otDoc = doc;
-              //console.log('setting doc to %o (id: %o) in scope %o', doc.name, doc.snapshot.sys.id, scope.$id);
+              if (shouldDocBeOpen(scope)) {
+                //console.log('otDocFor installing doc %o for entity %o', doc.state, doc, entity);
+                scope.otDoc = doc;
+                //console.log('setting doc to %o (id: %o) in scope %o', doc.name, doc.snapshot.sys.id, scope.$id);
+              } else {
+                doc.close();
+              }
           } else {
             scope.otDoc = null;
             //console.log('otDocFor error opening docfor entity %o', doc.state, doc, entity);

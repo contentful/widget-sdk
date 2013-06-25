@@ -28,6 +28,7 @@ angular.module('contentful').directive('cfAutocomplete', function(){
       if (attrs.cfAutocomplete === 'entries') {
         var list = elem.find('ul.links').eq(0);
         list.sortable({
+          handle: '.drag-handle',
           forceHelperSize: true,
           start: function(event, ui) {
             list.sortable('refresh');

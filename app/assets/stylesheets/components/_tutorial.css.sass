@@ -4,95 +4,131 @@
 .guider
   @extend %modal-dialog-chrome
   border: 1px solid $dark-rule
+  +box-shadow(0 2px 10px)
   z-index: 10
   h1
     margin-bottom: 1em
 
 .guiders_content
-  margin: 10px
+  margin: 20px
+
+.guiders_button
+  padding-right: 1em
+
+//  Close-Button  //////////////////////////////////////////////////////////////
+
+$close_size: 25px
+
+.guiders_close
+  position: absolute
+  top:  $close_size / 2
+  right: $close_size / 2
+  width: $close_size
+  height: $close_size
+  //border: 1px sol
+
+.guiders_x_button
+  color: $light-gray
+  line-height: $close_size
+  text-align: center
+  font-size: $close_size
+  height: $close_size
+  width: $close_size
+  cursor: pointer
+  &:hover
+    color: darken($light-gray, 20%)
+  &:before
+    content: "×"
 
 //  Arrows  ////////////////////////////////////////////////////////////////////
 
 .guiders_arrow
+  $caret-size: 15px
   position: absolute
   font-family: 'SSStandard'
   color: white
+  font-size: 20px
   &:before
     position: absolute
 .guiders_arrow_left
   &:before
     content: "◃"
   left: - $caret-size
-  +text-shadow(-2px 0px 3px rgba(0,0,0,0.12))
+  +text-shadow( -2px 0px 5px darken($dark-rule, 30%)) 
 .guiders_arrow_up
   &:before
     content: "▴"
-  top: - $caret-size
-  +text-shadow(0px -2px 3px rgba(0,0,0,0.12))
+  top: - $caret-size + 3px
+  +text-shadow( 0px -2px 5px darken($dark-rule, 30%)) 
 .guiders_arrow_down
   &:before
     content: "▾"
-  bottom: 2px
-  +text-shadow(0px 2px 3px rgba(0,0,0,0.12))
+  bottom: 1px
+  +text-shadow( 0 2px 5px darken($dark-rule, 30%)) 
 
 //  Overview  //////////////////////////////////////////////////////////////////
 
 #overview.guider
-  width: 800px
-  .guiders_content
-    margin: 20px
-  .tutorial-select-box,
-  .skip-tutorials,
-  .generate-example-data
-    position: relative
-    border: 1px solid $light-rule
-    padding: 5px
-    cursor: pointer
-    background-color: lighten($lightest-gray, 12%)
-    &:hover
-      border-color: $dark-rule
-      background-color: lighten($lightest-gray, 10%)
+  $width: 700px
+  .guiders_title
+    text-align: center
+    margin: 1.5em 0
+  .guiders_description
+    margin: 0
+  .guiders_buttons_container
+    display: none
 
   .tutorial-select-box
-    margin: 1em 0
-    width: (800px - (2 * 22px) - (2 * 14px)) / 3
+    position: relative
+    border: 1px solid $dark-rule
+    +border-radius(3px)
+    background-color: white
+    margin-bottom: 20px
+    width: ($width - (2 * 22px) - (2 * 14px)) / 3
     float: left
-    height: 340px
-    padding: 10px
+    height: 300px
     &.left,
     &.middle
       margin-right: 14px
-  .description
-    margin-top: 1em
-  .recommendation
-    margin-top: 1em
+  h3 
+    font-size: 1.5em
+    text-align: center
+    padding: 1em 0
+    background-color: lighten($lightest-gray, 10%)
+    +border-radius(3px 3px 0 0)
+    border-bottom: 2px solid $dark-rule
+    border-top: 3px solid
+  .left h3
+    border-top-color: $blue
+  .middle h3
+    border-top-color: $gold
+  .right h3
+    border-top-color: $red
   .background-icon
     display: block
-    line-height: 70px
-    color: lighten($lightest-gray, 2%)
-    font-size: 70px
+    line-height: 60px
+    color: $light-gray
+    font-size: 60px
     text-align: center
     margin-top: 30px
-  h2 
-    text-align: center
-    margin: .5em 0
-  .skip-tutorials,
-  .generate-example-data
-    clear: left
-  .generate-example-data
-    margin-bottom: 10px
-  .status
-    font-size: 110%
-    text-align: center
-    padding: 5px
+  .description
+    margin: 1em
+  .buttons
     position: absolute
     bottom: 0
     left: 0
     right: 0
-  .status.done
-    color: darken($green, 5%)
-  .guiders_buttons_container
-    display: none
+    margin: 1em
+  .tutorial-select-box button
+    width: 100%
+    cursor: hover
+    &.take, &.repeat
+      padding: .75em inherit
+  button.repeat
+    @extend %gray-button
+  button.take
+    @extend %blue-button
+    line-height: 18px // Necessary because of some stupidity where the gray button has a line-height
 
 .guider#contentTypeFields
   li
@@ -104,3 +140,12 @@
       color: $lightest-gray
     i
       color: $green
+
+.guider#contentTypeExamples,
+.guider#entryExamples
+  .loading
+    margin: 2em auto
+  .buttons
+    text-align: center
+  button
+    @extend %blue-button

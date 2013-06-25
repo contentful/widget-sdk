@@ -41,6 +41,10 @@ angular.module('contentful').provider('analytics', function (environment) {
   // analytics integrations you've turned on for your account. Boosh!
   analytics.load(environment.settings.segment_io);
 
+  analytics.ready(function () { // analytics.js object
+    window.ga('set', 'anonymizeIp', true);
+  });
+
   this.$get = function () {
     return {
       disable: function () {

@@ -14,6 +14,15 @@
   .endless-container
     max-height: 200px
     overflow-x: hidden
+  .drag-handle
+    font-size: 10px
+    color: $lightest-gray
+    cursor: -webkit-grabbing
+    cursor: -moz-grab
+    cursor: -moz-grabbing
+    &[disabled]
+      cursor: auto
+    padding-right: 10px
 
   .results,
   .search-field

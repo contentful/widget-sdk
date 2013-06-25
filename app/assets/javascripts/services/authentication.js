@@ -1,4 +1,4 @@
-angular.module('contentful').provider('authentication', function AuthenticationProvider(environment, worf, contentfulClient) {
+angular.module('contentful').provider('authentication', function AuthenticationProvider(environment, contentfulClient) {
   /*global moment*/
   'use strict';
 
@@ -112,7 +112,6 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       this._unresolvedTokenLookup = tokenLookup;
       tokenLookup = angular.copy(tokenLookup);
       this.tokenLookup = QueryLinkResolver.resolveQueryLinks(tokenLookup)[0];
-      this.auth = worf(this.tokenLookup);
     },
 
     updateTokenLookup: function (resource) {
