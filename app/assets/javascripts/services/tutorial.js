@@ -16,11 +16,6 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       var spaceScope = angular.element('space-view').scope();
       var tutorialScope = spaceScope.$new();
 
-      tutorialScope.generateExampleData = function () {
-        $('.guider#overview').fadeOut('fast');
-        guiders.show('exampleDataSeed');
-      };
-
       tutorialScope.goto = function (id) {
         var current = guiders._guiderById(guiders._currentGuiderID);
         var next    = guiders._guiderById(id);
@@ -362,7 +357,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         description: 'Entries contain to the content itself. They depend on the Content Types you create. In this tutorial we’ll guide you through the Entry editor.',
         overlay: true,
         buttons: [{name: 'Next'}],
-        next: 'entryCreate1'
+        next: 'entrySeed'
       });
 
 
