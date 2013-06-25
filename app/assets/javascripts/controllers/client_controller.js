@@ -138,7 +138,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
       return tab.viewType === options.viewType && tab.section === options.section;
     });
     tab = tab || $scope.spaceContext.tabList.add(options);
-    tab.activate();
+    if (tab) tab.activate();
   };
 
 
@@ -194,5 +194,14 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
     $scope.displayCreateSpaceDialog = false;
   };
 
-  $scope.performTokenLookup();
+  $scope.performTokenLookup(function showTutorialIfNecessary() {
+    /*global moment*/
+    var now = moment();
+    var created = moment($scope.user.sys.createdAt);
+    var age = now.diff(created, 'days');
+    var seenTutorial = tutorial.getSeen();
+    if (age < 7 && !seenTutorial) {
+      tutorial.start();
+    }
+  });
 });

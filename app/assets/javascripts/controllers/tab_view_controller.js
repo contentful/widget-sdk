@@ -33,7 +33,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
         title: $scope.spaceContext.entryTitle(entry)
       });
     }
-    editor.activate();
+    if (editor) editor.activate();
   };
 
   $scope.editContentType = function(contentType, mode) {
@@ -52,7 +52,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
         title: contentType.getName()
       });
     }
-    editor.activate();
+    if (editor) editor.activate();
   };
 
   $scope.editApiKey = function(apiKey) {
@@ -69,7 +69,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
         }
       });
     }
-    editor.activate();
+    if (editor) editor.activate();
   };
 
 
@@ -153,6 +153,6 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     });
 
     tab = tab || $scope.spaceContext.tabList.add(options);
-    tab.activate();
+    if (tab) tab.activate();
   };
 });
