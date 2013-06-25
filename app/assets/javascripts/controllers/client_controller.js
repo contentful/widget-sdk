@@ -138,7 +138,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
       return tab.viewType === options.viewType && tab.section === options.section;
     });
     tab = tab || $scope.spaceContext.tabList.add(options);
-    tab.activate();
+    if (tab) tab.activate();
   };
 
 

@@ -130,14 +130,15 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
   $scope.createApiKey = function() {
     var scope = this;
     var apiKey = scope.spaceContext.space.createBlankApiKey();
-    scope.spaceContext.tabList.add({
+    var tab = scope.spaceContext.tabList.add({
       viewType: 'api-key-editor',
       section: 'contentDelivery',
       params: {
         apiKey: apiKey,
         mode: 'create'
       }
-    }).activate();
+    });
+    if (tab) tab.activate();
     analytics.track('Selected Add-Button', {
       currentSection: scope.spaceContext.tabList.currentSection(),
       currentViewType: scope.spaceContext.tabList.currentViewType(),
