@@ -7,8 +7,20 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
   function Tutorial() {}
 
   Tutorial.prototype = {
+    getSeen : function () {
+      return $.cookies.get('seenTutorial');
+    },
+
+    setSeen : function () {
+      /*global moment*/
+      return $.cookies.set('seenTutorial', true, {
+        expiresAt: moment().add('y', 1).toDate()
+      });
+    },
+
     start : function () {
       if (!this._initialized) this.initialize();
+      this.setSeen();
       guiders.hideAll();
       guiders.show('overview');
     },
