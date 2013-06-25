@@ -53,6 +53,18 @@ angular.module('contentful').directive('newFieldForm', function (availableFieldT
 
         $scope.newType = defaultType;
       }
+
+      $scope.$watch(function (scope) {
+        scope.idExists = _.find(scope.contentType.data.fields, function (field) {
+          return field.id == scope.newField.id;
+        });
+      });
+
+      $scope.$watch(function (scope) {
+        return scope.validationResult.valid && !scope.idExists;
+      }, function (valid, old, scope) {
+        scope.formValid = valid;
+      });
     },
 
     link: function (scope, elem) {

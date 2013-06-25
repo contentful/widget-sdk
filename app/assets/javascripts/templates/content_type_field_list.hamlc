@@ -47,6 +47,8 @@
                      tooltip="Field ID used in API"
                      tooltip-placement="bottom")
               .validation-error-display.form-inline-error(path="['id']")
+              .form-inline-error(ng-show="idExists")
+                ID already exists
             .type
               .dropdown-btn
                 .dropdown-toggle
@@ -74,7 +76,7 @@
             .validations
             .action
               %button.button.new(ng-click="addField()"
-                                 ng-disabled="newFieldForm.$invalid"
+                                 ng-disabled="!formValid"
                                  tooltip="Add this field"
                                  tooltip-placement="left")
                 %i.ss-plus
