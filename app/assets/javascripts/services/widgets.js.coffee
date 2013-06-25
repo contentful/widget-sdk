@@ -56,21 +56,17 @@ angular.module('contentful').service 'widgets', ($compile) ->
     Number:
       textField:
         name: "Textfield for floats"
-        template: """<input type="number" ng-model="fieldData.value" ot-bind-model ng-disabled="!otEditable"/>"""
+        template: """<input type="text" ng-model="fieldData.value" ot-bind-model ng-disabled="!otEditable"/>"""
         link: (scope, elm, attr) ->
           controller = elm.find('input').inheritedData('$ngModelController')
-          controller.$parsers.unshift (viewValue) ->
-            FLOAT_REGEXP = /^\-?\d+((\.|\,)\d+)?$/
-            if FLOAT_REGEXP.test(viewValue)
-              controller.$setValidity('float', true)
-              return parseFloat(viewValue.replace(',', '.'))
-            else
-              controller.$setValidity('float', false)
-              return undefined
+          controller.$parsers.unshift (viewValue) -> parseFloat(viewValue.replace(',', '.')) || undefined
     Integer:
       textField:
         name: "Textfield for integers"
-        template: """<input type="number" ng-pattern="/^\\-?\\d*$/" ng-model="fieldData.value" ot-bind-model ng-disabled="!otEditable"/>"""
+        template: """<input type="text" ng-pattern="/^\\-?\\d*$/" ng-model="fieldData.value" ot-bind-model ng-disabled="!otEditable"/>"""
+        link: (scope, elm, attr) ->
+          controller = elm.find('input').inheritedData('$ngModelController')
+          controller.$parsers.unshift (viewValue) -> parseInt(viewValue) || undefined
     Link:
       selector:
         name: "Link selector"
