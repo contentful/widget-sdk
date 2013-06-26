@@ -408,11 +408,9 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         position: '3',
         next: 'entryContent',
         onShow: function () {
-          $(this.attachTo).one('click', function () {
-            var d = spaceScope.$on('otBecameEditable', function () {
-              guiders.next();
-              d();
-            });
+          var d = spaceScope.$on('otBecameEditable', function () {
+            guiders.next();
+            d();
           });
         }
       });

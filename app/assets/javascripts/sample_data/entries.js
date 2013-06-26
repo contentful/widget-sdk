@@ -1,4 +1,4 @@
-{
+angular.module('contentful').constant('sampleEntries', {
   "sys": {
     "type": "Array"
   },
@@ -396,4 +396,10 @@
       }
     }
   ]
-}
+}).run(function (sampleEntries) {
+  _.each(sampleEntries.items, function (entry) {
+    _.each(entry.fields, function (data, name) {
+      entry.fields[name] = {'en-US': data};
+    });
+  })
+});
