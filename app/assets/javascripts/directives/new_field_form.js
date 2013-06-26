@@ -24,23 +24,34 @@ angular.module('contentful').directive('newFieldForm', function (availableFieldT
         var fieldDoc = $scope.otDoc.at(['fields']);
 
         fieldDoc.push($scope.newField, function(err) {
-          if (err) {
-            notification.error('Could not add field');
-          } else {
-            $scope.$apply(function(scope) {
-              var field = $scope.newField;
-              resetNewField();
-              scope.otUpdateEntity();
-              scope.$broadcast('fieldAdded');
-              analytics.modifiedContentType('Modified ContentType', scope.contentType, field, 'add');
-            });
-          }
+          $scope.$apply(function(scope) {
+            if (err) {
+              notification.error('Could not add field');
+            } else {
+                var field = $scope.newField;
+                initDisplayName(field);
+                resetNewField();
+                scope.otUpdateEntity();
+                scope.$broadcast('fieldAdded');
+                analytics.modifiedContentType('Modified ContentType', scope.contentType, field, 'add');
+            }
+          });
         });
       };
 
       $scope.selectType = function(type) {
         $scope.newType = type;
       };
+
+      function initDisplayName(field) {
+        if (!$scope.contentType.data.displayField && $scope.displayEnabled(field)) {
+          $scope.otDoc.setAt(['displayField'], field.id, function (err) {
+            if (!err) $scope.$apply(function (scope) {
+              scope.contentType.data.displayField = field.id;
+            });
+          });
+        }
+      }
 
       function resetNewField() {
         $scope.newField = {

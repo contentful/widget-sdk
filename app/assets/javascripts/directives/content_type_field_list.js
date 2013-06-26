@@ -63,6 +63,10 @@ angular.module('contentful').directive('contentTypeFieldList', function(analytic
         _showValidations = {};
       };
 
+      $scope.displayEnabled = function (field) {
+        return field.type === 'Symbol' || field.type === 'Text';
+      };
+
       $scope.$watch('publishedContentType', function(et, old, scope) {
         if (et && et.data.fields)
           scope.publishedIds = _.pluck(et.data.fields, 'id');
