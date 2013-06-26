@@ -24,6 +24,18 @@ Contentful::Application.configure do
 
   # Do not compress assets
   config.assets.compress = false
+  #config.assets.digest = true
+  #config.assets.compile = true
+
+  if defined?(Uglifier)
+    config.assets.js_compressor = Uglifier.new(
+      :output => {
+        :beautify => true,
+        :indent_level => 0
+      },
+      :mangle => false
+    )
+  end
 
   # Expands the lines which load the assets
   config.assets.debug = true
