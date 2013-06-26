@@ -1,5 +1,6 @@
 //= require_self
 //
+//= require_tree ./sample_data
 //= require_tree ./services
 //= require_tree ./controllers
 //= require_tree ./directives
