@@ -6,8 +6,8 @@ angular.module('contentful').factory('tutorialExampledata', function ($q, $http,
     load: function () {
       if (!promise) {
         promise = $q.all([
-          $http.get('//'+environment.settings.app_host + '/app/sample_data/content_types.json'),
-          $http.get('//'+environment.settings.app_host + '/app/sample_data/entries.json')]).
+          $http.get('//'+environment.settings.cdn_host + '/app/sample_data/content_types.json'),
+          $http.get('//'+environment.settings.cdn_host + '/app/sample_data/entries.json')]).
         then(function (response) {
           return {
             contentTypes: response[0].data.items,
