@@ -22,10 +22,12 @@ Contentful::Application.configure do
 
   if defined?(Uglifier)
     config.assets.js_compressor = Uglifier.new(
-      :mangle => false,
       :output => {
-        :preserve_line => true
-      })
+        :beautify => true,
+        :indent_level => 0
+      },
+      :mangle => false
+    )
   end
 
   # Defaults to nil and saved in location specified by config.assets.prefix
