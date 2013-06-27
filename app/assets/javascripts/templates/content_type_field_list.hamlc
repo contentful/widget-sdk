@@ -48,7 +48,7 @@
                      tooltip-placement="bottom")
               .validation-error-display.form-inline-error(path="['id']")
               .form-inline-error(ng-show="idExists")
-                ID already exists
+                Identifier already exists
             .type
               .dropdown-btn
                 .dropdown-toggle
