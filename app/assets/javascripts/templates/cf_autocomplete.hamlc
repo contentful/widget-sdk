@@ -1,7 +1,8 @@
 %ul.links(ng-hide="linkedEntries.length == 0")
   %li(ng-repeat="(index, entry) in linkedEntries")
     %i.ss-rows.drag-handle(ng-disabled="!otEditable" ng-hide="linkedEntries.length==1")
-    %a(ng-click="editEntry(entry)") {{linkDescription(entry)}}
+    %a(ng-click="editEntry(entry)" ng-show="entry && entry.data") {{linkDescription(entry)}}
+    %span(ng-hide="entry && entry.data") {{linkDescription(entry)}}
     %i.ss-delete(ng-click="removeLink(index, entry)" ng-show="otEditable")
 .cf-autocomplete-search(cf-autocomplete-result-list)
   .controls(ng-show="otEditable && (linkedEntries.length == 0 || field.type == 'Array')")
