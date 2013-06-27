@@ -17,7 +17,9 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
     toggleAuxPanel: function() {
       $scope.preferences.showAuxPanel = !$scope.preferences.showAuxPanel;
       analytics.toggleAuxPanel($scope.preferences.showAuxPanel, $scope.spaceContext.tabList.current);
-    }
+    },
+
+    showDisabledFields: false
   };
 
   $scope.user = null;
