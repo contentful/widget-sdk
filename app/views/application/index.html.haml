@@ -43,7 +43,9 @@
       %a#intercom(href="#")
     %space-view(ng-show="spaceContext.space" ng-controller="TabViewCtrl")
     .create-space-advice(ng-show="spaces.length == 0")
-      %p Nothing to see yet. Why don't you create a space?
+      %i.ss-folder.giant-icon
+      %header Nothing to see yet.
+      %p Why don't you create a space?
       %button(ng-click="showCreateSpaceDialog()") Create Space
     .create-space-dialog(ng-show="displayCreateSpaceDialog")
   = javascript_include_tag "application"

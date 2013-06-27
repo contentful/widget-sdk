@@ -111,6 +111,11 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
     return queryObject;
   };
 
+  $scope.hasQuery = function () {
+    var noQuery = $scope.tab.params.list == 'all' && _.isEmpty($scope.searchTerm);
+    return !noQuery;
+  };
+
   $scope.pauseReset = function() {
     if (this.resetPaused) return;
     var scope = this;

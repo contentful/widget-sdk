@@ -1,15 +1,6 @@
 .tab-header
   %h1 Content Types
 .tab-main
-  .create-content-type-advice(ng-show="empty")
-    %p Looks like you havent created any Content Types yet.
-    %button(ng-click="createContentType()") Create Content Type
-    %br
-    and start on your own or
-    %p
-    %button(ng-click="startTutorial()") Start the tutorial
-    %br
-    to learn how to use Contentful
   %table.result-list.main-header(ng-hide="empty")
     %thead
       %tr
@@ -39,3 +30,10 @@
             .draft-wrapper
               %span {{statusLabel(contentType)}}
               .main-results-bar
+  .create-content-type-advice(ng-show="empty")
+    %i.ss-database.giant-icon
+    %header You have no Content Types yet.
+    %p
+      Looks like you havent created any Content Types yet.
+    %button(ng-click="createContentType()")
+      Create Content Type

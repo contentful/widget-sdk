@@ -53,8 +53,7 @@
           %th.cell-updated Updated
           %th.cell-by By
           %th.cell-status Status
-    .results-empty(ng-show="entries.length == 0")
-      No entries matching your selection.
+
     .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
       %table.result-list.main-results
         %tbody
@@ -76,6 +75,19 @@
                 %span {{statusClass(entry)}}
                 .main-results-bar
       .loading(ng-hide="paginator.atLast()")
+    .results-empty(ng-show="entries.length == 0")
+      %div(ng-show="hasQuery()")
+        %i.ss-search.giant-icon
+        %header There are no matches to your search
+      %div(ng-show="!hasQuery()")
+        %i.ss-file.giant-icon
+        %header You have no Entries yet.
+        %p(ng-show="spaceContext.publishedContentTypes.length == 0")
+          To create an Entry, first create and activate a Content Type.
+        %button(ng-click="createContentType()" ng-show="spaceContext.publishedContentTypes.length == 0")
+          Create a Content Type
+        %p(ng-hide="spaceContext.publishedContentTypes.length == 0")
+          To create an Entry, use the Add-Button near the top of the screen.
 .tab-actions
   .label {{selection.size()}} Entries selected
   .button-set(ng-controller="EntryListActionsCtrl"   ng-hide="selection.isEmpty()")

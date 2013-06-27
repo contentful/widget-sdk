@@ -9,10 +9,6 @@
       %li(ng-click="openApiDocs()") API Documentation
 
   .with-left-nav
-    .create-api-key-advice(ng-show="empty")
-      %p There are no API Keys yet.
-      %button(ng-click="createApiKey()") Create API Key
-
     %table.result-list.main-header(ng-hide="empty")
       %thead
         %tr
@@ -34,3 +30,10 @@
               %span.cf-user(link="apiKey.data.sys.createdBy" as="creator") {{creator.getName()}}
             %td.cell-updated
               %date.relative(datetime="{{apiKey.data.sys.updatedAt}}")
+    .create-api-key-advice(ng-show="empty")
+      %i.ss-fork.giant-icon
+      %header There are no API Keys yet.
+      %p
+        Looks like you havent created any API Keys yet.
+      %button(ng-click="createApiKey()")
+        Create API Key
