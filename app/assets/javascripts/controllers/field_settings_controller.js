@@ -11,10 +11,6 @@ angular.module('contentful').controller('FieldSettingsCtrl', function ($scope, g
     }
   });
 
-  $scope.displayEnabled = function (field) {
-    return field.type === 'Symbol' || field.type === 'Text';
-  };
-
   $scope.enable = function() {
     $scope.otDoc.at(['fields', this.index, 'disabled']).set(false, function(err) {
       if (!err) $scope.$apply(function(scope) {
