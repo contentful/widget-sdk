@@ -34,6 +34,6 @@
     %i.ss-database.giant-icon
     %header You have no Content Types yet.
     %p
-      Looks like you havent created any Content Types yet.
+      Looks like you haven't created any Content Types yet.
     %button(ng-click="createContentType()")
       Create Content Type
