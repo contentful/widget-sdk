@@ -92,9 +92,15 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     _.each(errors, function (error) {
       if (error.path[0] !== 'fields') return;
       var field      = error.path[1];
-      var localeCode = error.path[2];
       errorPaths[field] = errorPaths[field] || [];
-      errorPaths[field].push(localeCode);
+
+      if (error.path.length == 2) {
+        var allCodes = _.pluck($scope.spaceContext.publishLocales, 'code');
+        errorPaths[field].push.apply(errorPaths[field], allCodes);
+      } else {
+        var localeCode = error.path[2];
+        errorPaths[field].push(localeCode);
+      }
       errorPaths[field] = _.unique(errorPaths[field]);
     });
   });

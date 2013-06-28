@@ -72,6 +72,7 @@
             .arrow-left
             .arrow-left-border
           .validation-error-display.form-box-error(path="['fields', field.id, locale.code]")
+        .validation-error-display.form-box-error(path="['fields', field.id]")
 
 .tab-actions(ng-controller="EntryActionsCtrl")
   .button-set
