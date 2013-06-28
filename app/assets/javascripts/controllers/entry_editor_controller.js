@@ -81,6 +81,12 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     }
   }
 
+  var firstValidate = $scope.$on('otBecameEditable', function (event) {
+    var scope = event.currentScope;
+    if (!_.isEmpty(scope.entry.data.fields)) scope.validate();
+    firstValidate();
+  });
+
   $scope.$watch('fields', function (fields, old, scope) {
     scope.showLangSwitcher = _.some(fields, function (field) {
       return field.localized;
