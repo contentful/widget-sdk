@@ -47,6 +47,7 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     return _.pluck(scope.spaceContext.activeLocales, 'code');
   }, updateFields, true);
   $scope.$watch('spaceContext.space.getDefaultLocale()', updateFields);
+  $scope.$watch('preferences.showDisabledFields', updateFields);
   $scope.$watch(function () { return errorPaths; }, updateFields);
   $scope.$watch('spaceContext.publishedTypeForEntry(entry).data.fields', updateFields, true);
   var errorPaths = {};
@@ -55,7 +56,7 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     var et = scope.spaceContext.publishedTypeForEntry(scope.entry);
     if (!et) return;
     scope.fields = _(et.data.fields).reduce(function (acc, field) {
-      if (!field.disabled || errorPaths[field.id]) {
+      if (!field.disabled || scope.preferences.showDisabledFields || errorPaths[field.id]) {
         var locales;
         if (field.localized) {
           locales = scope.spaceContext.activeLocales;

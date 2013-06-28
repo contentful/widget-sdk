@@ -10,19 +10,22 @@
         …
         …
         …
-    .dropdown-btn(ng-show="showLangSwitcher")
+    .dropdown-btn
       %a.dropdown-toggle
         %i.ss-dropdown
-        %span Languages
+        %span Show fields…
       .dropdown-menu(style="display:none")
-        %p
-          Default: {{spaceContext.space.getDefaultLocale().name}}
-        .separator
-        %ul
+        %ul(ng-show="showLangSwitcher")
           %li(ng-repeat="locale in spaceContext.publishLocales")
             %label
               %input(type="checkbox" ng-model="spaceContext.localesActive[locale.code]")
               {{locale.name}}
+              %span(ng-show="locale == spaceContext.space.getDefaultLocale()") (default)
+        %ul
+          %li(ng-class="{separator: showLangSwitcher}")
+            %label
+              %input(type="checkbox" ng-model="preferences.showDisabledFields")
+              Show disabled fields
 
   .editor-top-right
     %button(ng-click="preferences.toggleAuxPanel()"

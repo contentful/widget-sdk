@@ -17,7 +17,9 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
     toggleAuxPanel: function() {
       $scope.preferences.showAuxPanel = !$scope.preferences.showAuxPanel;
       analytics.toggleAuxPanel($scope.preferences.showAuxPanel, $scope.spaceContext.tabList.current);
-    }
+    },
+
+    showDisabledFields: false
   };
 
   $scope.user = null;
@@ -26,13 +28,23 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
     analytics.track('Clicked Space-Switcher');
   };
 
+  $scope.$watch(function () {
+    return authentication.tokenLookup;
+  }, function (tokenLookup, old, scope) {
+    if (tokenLookup) {
+      authorization.setTokenLookup(tokenLookup);
+      scope.$evalAsync(function (scope) {
+        authorization.setSpace(scope.spaceContext.space);
+      });
+    }
+  });
+
   $scope.$watch('spaceContext.space', function (space) {
     authorization.setSpace(space);
   });
 
   function setSpace(space) {
     analytics.setSpaceData(space);
-    authorization.setSpace(space);
     $scope.spaceContext = new SpaceContext(space);
   }
 
@@ -101,7 +113,6 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
     } else if (message.token) {
      */
       authentication.setTokenLookup(message.token);
-      authorization.setTokenLookup(message.token, $scope.spaceContext.space);
       $scope.user = authentication.tokenLookup.sys.createdBy;
       $scope.updateSpaces(authentication.tokenLookup.spaces);
     } else if (message.type === 'flash') {
@@ -150,7 +161,6 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
       $scope.$apply(function(scope) {
         //console.log('tokenLookup', tokenLookup);
         scope.user = tokenLookup.sys.createdBy;
-        authorization.setTokenLookup(tokenLookup, scope.spaceContext.space);
         analytics.login(scope.user);
         scope.updateSpaces(tokenLookup.spaces);
         if (callback) callback(tokenLookup);

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('TabViewCtrl', function ($scope, authentication, analytics) {
+angular.module('contentful').controller('TabViewCtrl', function ($scope, authentication, analytics, notification) {
 
   $scope.$on('tabClosed', function (event, tab) {
     var scope = event.currentScope;
@@ -18,6 +18,8 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
   });
 
   $scope.editEntry = function(entry, mode) {
+    if (! (entry && entry.data)) return notification.error('Can\'t open Entry');
+
     mode = mode || 'edit';
     var editor = _.find($scope.spaceContext.tabList.items, function(tab){
       return (tab.viewType == 'entry-editor' && tab.params.entry.getId() == entry.getId());
@@ -37,6 +39,8 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
   };
 
   $scope.editContentType = function(contentType, mode) {
+    if (! (contentType && contentType.data)) return notification.error('Can\'t open Content Type');
+
     mode = mode || 'edit';
     var editor = _($scope.spaceContext.tabList.items).find(function(tab){
       return (tab.viewType == 'content-type-editor' && tab.params.contentType == contentType);
@@ -56,6 +60,8 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
   };
 
   $scope.editApiKey = function(apiKey) {
+    if (! (apiKey && apiKey.data)) return notification.error('Can\'t open API Key');
+
     var editor = _.find($scope.spaceContext.tabList.items, function(tab){
       return (tab.viewType == 'api-key-editor' && tab.params.apiKey.getId() == apiKey.getId());
     });

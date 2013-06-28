@@ -26,14 +26,14 @@
             Logged in as {{user.firstName}} {{user.lastName}}
           .separator
           %ul
-            %li(ng-click="editProfile()" dropdown-close="") Edit Profile
+            %li(ng-click="editProfile()" dropdown-close="" ng-show="spaceContext.space") Edit Profile
+            %li(ng-click="startTutorial()" dropdown-close="" ng-show="spaceContext.space") Start Tutorial
             %li(ng-click="openSupport()" dropdown-close="") Support
-            %li(ng-click="startTutorial()" dropdown-close="") Tutorial
             %li(ng-click="logout()" dropdown-close="") Log out
       .dropdown-btn.project
         %a.btn.dropdown-toggle(ng-click="clickedSpaceSwitcher()")
           %i.ss-dropdown
-          %span(ng-bind="spaceContext.space.data.name")
+          %span(ng-bind="spaceContext.space.data.name || 'Spaces'")
         .dropdown-menu.fixed-position
           %ul
             %li(ng-repeat="space in spaces" ng-click="selectSpace(space)" dropdown-close="")
@@ -43,7 +43,9 @@
       %a#intercom(href="#")
     %space-view(ng-show="spaceContext.space" ng-controller="TabViewCtrl")
     .create-space-advice(ng-show="spaces.length == 0")
-      %p Nothing to see yet. Why don't you create a space?
+      %i.ss-folder.giant-icon
+      %header Nothing to see yet.
+      %p Why don't you create a space?
       %button(ng-click="showCreateSpaceDialog()") Create Space
     .create-space-dialog(ng-show="displayCreateSpaceDialog")
   = javascript_include_tag "application"

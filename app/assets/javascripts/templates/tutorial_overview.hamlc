@@ -27,7 +27,7 @@
     Delivery
   %i.ss-fork.background-icon
   .description
-    Learn how to configure distribution of content.
+    Learn how to configure the distribution of content.
   .buttons
     %button.repeat(ng-show="apiKeyDone" ng-click="goto('apiKeyIntro')")
       Repeat Tutorial
