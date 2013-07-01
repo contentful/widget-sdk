@@ -36,17 +36,19 @@
           .new-field-settings
             .drag-handle &nbsp;
             .name
-              %input(ng-model="newField.name" type="text" required=""
+              %input(name="newName"
+                     ng-model="newField.name" type="text" required=""
                      placeholder="e.g. Product Name"
                      tooltip="Field title displayed to editors"
                      tooltip-placement="bottom")
-              .validation-error-display.form-inline-error(path="['name']")
+              .validation-error-display.form-inline-error(path="['name']" ng-hide="newFieldForm.$pristine || noErrors")
             .identifier
-              %input(ng-model="newField.id" type="text" required=""
+              %input(name="newId"
+                     ng-model="newField.id" type="text" required=""
                      placeholder="e.g. productName"
                      tooltip="Field ID used in API"
                      tooltip-placement="bottom")
-              .validation-error-display.form-inline-error(path="['id']")
+              .validation-error-display.form-inline-error(path="['id']" ng-hide="newFieldForm.$pristine || noErrors")
               .form-inline-error(ng-show="idExists")
                 Identifier already exists
             .type

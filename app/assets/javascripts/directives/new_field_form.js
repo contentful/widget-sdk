@@ -63,6 +63,8 @@ angular.module('contentful').directive('newFieldForm', function (availableFieldT
         };
 
         $scope.newType = defaultType;
+        // TODO replace with proper setPristine call once we switched to Angular 1.1+
+        if ($scope.newFieldForm) $scope.newFieldForm.$pristine = true;
       }
 
       $scope.$watch(function (scope) {
