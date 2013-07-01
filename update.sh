@@ -2,7 +2,7 @@
 
 set -ev
 
-bundle install
+bundle install --no-color
 pushd ./app/assets/commonjs_modules/user_interface
 npm link worf
 npm link spock
