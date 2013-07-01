@@ -17,6 +17,10 @@ module Contentful
       end
     end
 
+    def delete(key)
+      @data.delete(key)
+    end
+
     def [](key)
       @data[key.to_sym]
     end
