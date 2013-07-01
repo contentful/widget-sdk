@@ -81,6 +81,12 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     }
   }
 
+  var firstValidate = $scope.$on('otBecameEditable', function (event) {
+    var scope = event.currentScope;
+    if (!_.isEmpty(scope.entry.data.fields)) scope.validate();
+    firstValidate();
+  });
+
   $scope.$watch('fields', function (fields, old, scope) {
     scope.showLangSwitcher = _.some(fields, function (field) {
       return field.localized;
@@ -89,12 +95,22 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
   
   $scope.$watch('validationResult.errors', function (errors) {
     errorPaths = {};
+    $scope.hasErrorOnFields = false;
+
     _.each(errors, function (error) {
       if (error.path[0] !== 'fields') return;
       var field      = error.path[1];
-      var localeCode = error.path[2];
       errorPaths[field] = errorPaths[field] || [];
-      errorPaths[field].push(localeCode);
+
+      if (error.path.length == 1 && error.path[0] == 'fields') {
+        $scope.hasErrorOnFields = error.path.length == 1 && error.path[0] == 'fields';
+      } else if (error.path.length == 2) {
+        var allCodes = _.pluck($scope.spaceContext.publishLocales, 'code');
+        errorPaths[field].push.apply(errorPaths[field], allCodes);
+      } else {
+        var localeCode = error.path[2];
+        errorPaths[field].push(localeCode);
+      }
       errorPaths[field] = _.unique(errorPaths[field]);
     });
   });

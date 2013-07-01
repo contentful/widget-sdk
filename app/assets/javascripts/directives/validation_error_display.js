@@ -49,8 +49,12 @@ angular.module('contentful').directive('validationErrorDisplay', function () {
         'in': function (v) {
           return 'Must be one of ' + v.expected.join(', ') + '.';
         },
-        required: function() {
-          return 'Required';
+        required: function(v) {
+          if (v.path.length == 1 && v.path[0] == 'fields') {
+            return 'All fields are empty. Please fill out some fields.';
+          } else {
+            return 'Required';
+          }
         },
         type: function(v) {
           if (v.type == 'Validation') {

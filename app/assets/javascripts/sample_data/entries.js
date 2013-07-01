@@ -75,15 +75,7 @@ angular.module('contentful').constant('sampleEntries', {
         "post": "I had that chance recently, as I sat down with Tim Ferriss, who just launched his massive new book, The 4-Hour Chef: The Simple Path to Cooking Like a Pro, Learning Anything, and Living the Good Life.\nTim spent some intense months learning how to do the thing that has kicked his butt for his entire life: cooking. He sucked at cooking, and decided to conquer it, and in the process shows us how to learn anything, from languages to sports to survival skills. The book teaches us how to cook, but more importantly, it teaches us the art and science of learning.\nSo I sat down with Tim to talk about learning, and asked questions submitted by Zen Habits readers the week before:\nWhat is your set protocol for when you catch yourself procrastinating?\nHow are we supposed to devote several months to learning when we have 9-5 job, family, etc?\nDo rules set us free? More specifically, is habit essential when trying to be productive?\nDo you know any secrets to self-imposed moderation? For alcohol, food, or anything really.\nLearning something new involves memory. How important is a good memory in learning? How can I improve my memory?\nWatch the video below, or download it here to watch on your iPad/iPhone or later on your computer.\nAnd when you’re done, check out Tim’s incredible book, The 4-Hour Chef.",
         "originalLink": "http://zenhabits.net/almost-anything/",
         "date": "2012-11-21T09:22:47+00:00",
-        "tags": [
-          {
-            "sys": {
-              "type": "Link",
-              "linkType": "Entry",
-              "id": "2PalPOShUkOM8cqUscmy0o"
-            }
-          }
-        ],
+        "tags": [ 'learning', 'tim ferris'],
         "relatesPosts": [
           {
             "sys": {

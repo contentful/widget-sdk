@@ -237,8 +237,11 @@ angular.module('contentful').constant('sampleContentTypes', {
           'id': 'title',
           'name': 'Title',
           'type': 'Text',
-          'required': false,
-          'localized': false
+          'required': true,
+          'localized': false,
+          'validations': [
+            {'size': {'min': 0, 'max': 200}}
+          ]
         },
         {
           'id': 'author',
@@ -251,7 +254,7 @@ angular.module('contentful').constant('sampleContentTypes', {
           'id': 'post',
           'name': 'Post',
           'type': 'Text',
-          'required': false,
+          'required': true,
           'localized': false
         },
         {
@@ -265,7 +268,7 @@ angular.module('contentful').constant('sampleContentTypes', {
           'id': 'date',
           'name': 'Date',
           'type': 'Date',
-          'required': false,
+          'required': true,
           'localized': false
         },
         {
@@ -275,7 +278,7 @@ angular.module('contentful').constant('sampleContentTypes', {
           'required': false,
           'localized': false,
           'items': {
-            'type': 'Link'
+            'type': 'Symbol'
           },
           'disabled': true
         },
@@ -286,7 +289,10 @@ angular.module('contentful').constant('sampleContentTypes', {
           'required': false,
           'localized': false,
           'items': {
-            'type': 'Link'
+            'type': 'Link',
+            'validations': [
+              {'linkContentType': '7rpL7xxWykaMkuoWicgiKC'}
+            ]
           }
         }
       ],

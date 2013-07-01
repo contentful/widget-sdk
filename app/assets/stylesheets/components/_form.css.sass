@@ -1,6 +1,9 @@
 $form-gutter: 12px
 $form-offset: 11px
 $form-spacing: 7.5px
+$form-labelwidth: 17%
+$form-controlwidth-outer: 80%
+$form-controlwidth-inner: 57%
 
 // General form layout
 
@@ -18,16 +21,16 @@ $form-spacing: 7.5px
 .form-horizontal
   width: 100%
   label
-    width: 17%
+    width: $form-labelwidth
   .form-controls
-    width: 80%
+    width: $form-controlwidth-outer
   // entry editor (& asset editor?)
   .locale
     position: relative
   .locale-label
     position: absolute
     padding-top: $form-offset
-    left: 58%
+    left: $form-controlwidth-inner + 1%
 
 // Margins and other styling
 
@@ -55,7 +58,7 @@ $form-spacing: 7.5px
     padding-top: 9px
     font-family: 'Open Sans', Arial, sans-serif
     font-size: 12px
-    width: 57%
+    width: $form-controlwidth-inner
     border: 1px solid $lightest-gray
     +border-radius(3px 3px 3px 3px)
     background-color: $gray-background
@@ -73,7 +76,7 @@ $form-spacing: 7.5px
     &.error-input:focus
       border-color: darken($red, 10%)
   &.fit-two input[type="text"], &.fit-two input[type="number"]
-    width: 27%
+    width: $form-controlwidth-inner / 2 - 2%
     margin-right: 1%
   input[type="number"]
     padding-top: 8px
@@ -84,7 +87,7 @@ $form-spacing: 7.5px
   .cf-location-editor
     .gmaps-container,
     .invalid-location-warning
-      width: 57%
+      width: $form-controlwidth-inner
       height: 250px
   .ss-calendar,
   .ss-clock
@@ -97,7 +100,7 @@ $form-spacing: 7.5px
     top: 1px
 
   .sub-fields
-    width: 57%
+    width: $form-controlwidth-inner
     position: relative
     label
       display: block

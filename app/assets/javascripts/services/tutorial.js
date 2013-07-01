@@ -79,6 +79,8 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         guiders.hideAll();
       };
 
+      var catGroups;
+
       function createGuider(options) {
         options = _.clone(options);
         var template;
@@ -90,9 +92,16 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         var parentScope = options.scope || tutorialScope;
         var onShow = options.onShow;
         var onHide = options.onHide;
+
+        catGroups = _.groupBy(guiders._guiders, 'category');
+
         options.onShow = function (guider) {
+          var catGroup = catGroups[options.category];
+          var position = _.indexOf(catGroup, guider) + 1;
           analytics.track('Opened tutorial window', {
             category: options.category,
+            step: position,
+            total: catGroup.length,
             id: options.id
           });
           $rootScope.$evalAsync(function () {
