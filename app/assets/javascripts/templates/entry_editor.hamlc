@@ -55,6 +55,10 @@
 
 .tab-main
   %form.form-horizontal(name="entryForm")
+    .form-field(ng-show="hasErrorOnFields")
+      %label
+      .form-controls
+        .validation-error-display.form-box-error(path="['fields']" ng-show="errorMessages.length > 0")
     .form-field(ng-repeat="field in fields" data-field-type="{{field.type}}" data-field-items-type="{{field.items.type}}")
       %label {{field.name}}
       .form-controls

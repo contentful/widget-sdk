@@ -95,12 +95,16 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
   
   $scope.$watch('validationResult.errors', function (errors) {
     errorPaths = {};
+    $scope.hasErrorOnFields = false;
+
     _.each(errors, function (error) {
       if (error.path[0] !== 'fields') return;
       var field      = error.path[1];
       errorPaths[field] = errorPaths[field] || [];
 
-      if (error.path.length == 2) {
+      if (error.path.length == 1 && error.path[0] == 'fields') {
+        $scope.hasErrorOnFields = error.path.length == 1 && error.path[0] == 'fields';
+      } else if (error.path.length == 2) {
         var allCodes = _.pluck($scope.spaceContext.publishLocales, 'code');
         errorPaths[field].push.apply(errorPaths[field], allCodes);
       } else {
