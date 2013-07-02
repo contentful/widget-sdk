@@ -1,4 +1,5 @@
-%input.date(type="text" value="2013-02-28" ng-model="localDate" ng-disabled="!otEditable")
+%input.date(type="text" ng-model="localDate" ng-disabled="!otEditable")
 %i.ss-calendar
 %input.time(type="text" ng-model="localTime" ng-pattern="/(0|\\d|0\\d|1\\d|2[0-3]):[0-5][\\d](:[0-5][\\d])?/" ng-disabled="!otEditable")
 %i.ss-clock
+%i.ss-alert.invalid-date(ng-show="dateInvalid" tooltip="You must provide a date" tooltip-placement="right")
