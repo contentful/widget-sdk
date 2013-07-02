@@ -39,7 +39,10 @@
         Space Settings
 %nav.tab-list
   %ul
-    %li.tab(ng-repeat="tabItem in spaceContext.tabList.items" ng-class="{active: tabItem.active()}" ng-click="tabItem.activate()" ng-hide="tabItem.hidden")
+    %li.tab(ng-repeat="tabItem in spaceContext.tabList.items"
+            ng-class="{active: tabItem.active(), dirty: tabItem.dirty}"
+            ng-click="tabItem.activate()"
+            ng-hide="tabItem.hidden")
       %span.tab-title {{tabItem.title}}
       %em.fade
       .close(cf-click-local="tabItem.close()" ng-show="tabItem.canClose()")

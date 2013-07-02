@@ -1,4 +1,4 @@
-angular.module('contentful').factory('TabList', function($rootScope, analytics){
+angular.module('contentful').factory('TabList', function($rootScope, analytics, modalDialog){
   'use strict';
 
   function TabList() {
@@ -50,32 +50,47 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics){
       return item;
     },
 
+    askToCloseTab: function (tab) {
+      var list = this;
+      if (tab.dirty) {
+        modalDialog.open({
+          title: 'Close Tab?',
+          message: 'You have unsaved/unpublished changes.',
+          scope: $rootScope
+        }).then(function () {
+          list.closeTab(tab);
+        });
+      } else {
+        this.closeTab(tab);
+      }
+    },
+
     closeTab: function (item) {
-       var event = $rootScope.$broadcast('tabWantsClose', item);
-       if (!event.defaultPrevented){
-         var index = _.indexOf(this.items, item);
-         var newCurrent = false;
+      var event = $rootScope.$broadcast('tabWantsClose', item);
+      if (!event.defaultPrevented){
+        var index = _.indexOf(this.items, item);
+        var newCurrent = false;
 
-         if (item.active()) {
-           if (this.items.length == 1) {
-             newCurrent = null;
-           } else if (0 < index) {
-             newCurrent = this.items[index-1];
-           } else {
-             newCurrent = this.items[index+1];
-           }
-         }
+        if (item.active()) {
+          if (this.items.length == 1) {
+            newCurrent = null;
+          } else if (0 < index) {
+            newCurrent = this.items[index-1];
+          } else {
+            newCurrent = this.items[index+1];
+          }
+        }
 
-         this.items.splice(index,1);
-         if (item.active()) {
-           this.current = null;
-         }
-         $rootScope.$broadcast('tabClosed', item);
-         analytics.tabClosed(item);
-         if (newCurrent !== false && newCurrent !== null && this.current === null) {
-           newCurrent.activate();
-         }
-       }
+        this.items.splice(index,1);
+        if (item.active()) {
+          this.current = null;
+        }
+        $rootScope.$broadcast('tabClosed', item);
+        analytics.tabClosed(item);
+        if (newCurrent !== false && newCurrent !== null && this.current === null) {
+          newCurrent.activate();
+        }
+      }
     },
 
     replaceTab: function(oldItem, newItem){
@@ -138,7 +153,7 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics){
     },
 
     close: function() {
-      this.list.closeTab(this);
+      this.list.askToCloseTab(this);
     },
 
     canClose: function(){
@@ -150,6 +165,7 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics){
      this.list.replaceTab(this, item);
      return item;
     }
+
   };
 
   return TabList;

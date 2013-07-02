@@ -20,6 +20,17 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
     event.currentScope.otUpdateEntity();
   });
 
+  $scope.$watch(function (scope) {
+    if (scope.otDoc && scope.contentType) {
+      return scope.otDoc.version > scope.contentType.data.sys.publishedVersion + 1;
+    } else {
+      return undefined;
+    }
+  }, function (modified, old, scope) {
+    if (modified !== undefined) scope.tab.dirty = modified;
+  });
+
+
   function loadPublishedContentType() {
     // TODO replace with lookup in registry inside spaceContext
     $scope.contentType.getPublishedVersion(function(err, publishedContentType) {

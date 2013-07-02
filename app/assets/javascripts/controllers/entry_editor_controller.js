@@ -44,6 +44,16 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
   };
 
   $scope.$watch(function (scope) {
+    if (scope.otDoc && scope.entry) {
+      return scope.otDoc.version > scope.entry.data.sys.publishedVersion + 1;
+    } else {
+      return undefined;
+    }
+  }, function (modified, old, scope) {
+    if (modified !== undefined) scope.tab.dirty = modified;
+  });
+
+  $scope.$watch(function (scope) {
     return _.pluck(scope.spaceContext.activeLocales, 'code');
   }, updateFields, true);
   $scope.$watch('spaceContext.space.getDefaultLocale()', updateFields);
