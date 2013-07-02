@@ -1,17 +1,8 @@
 .content-delivery
-  @extend .list-tab-view
-
   .left-nav
-    padding: 24px 20px 0
-    li.api-keys
-      color: black
-      font-weight: bold
-    li
-      font-size: 12px
-  .with-left-nav
-    top: $tab-main-margin-top
-    bottom: 0
-
+    @extend .link-list
+  .tab-main > *
+    @extend .expand-vertically
   .result-list
     tbody tr
       @extend %tr-clickable

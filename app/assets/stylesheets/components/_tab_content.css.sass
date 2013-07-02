@@ -18,6 +18,9 @@ $left-nav-width: 17%
   left: $left-nav-width
   right: 0
   //width: 100.1% - $left-nav-width  
+.expand-vertically
+  top: 0
+  bottom: 0
 
 $tab-main-margin-top: 28px
 
@@ -106,21 +109,42 @@ $left-nav-padding: 8px
     line-height: $tab-header-height - 2px
     vertical-align: middle
 
-// Variant to extend a container with, to style its left nav in the style
+// Variant to extend a left-nav, to style its left nav in the style
 // that it has these filters
 .list-tab-view
-  .left-nav
-    @extend %blue-link-list
-    .active:hover:after
-      font-family: "SSStandard"
-      content: "↻"
-      font-size: 7px
-      color: $light-gray
-      line-height: 10px
-      margin-left: 3px
-  .left-nav-filters // TODO Rename saved-searches
-    i.ss-search
-      color: $light-gray
-      font-size: 8px
-      margin: 0 2px 0 0
-    
+  @extend %blue-link-list
+  .active:hover:after
+    font-family: "SSStandard"
+    content: "↻"
+    font-size: 7px
+    color: $light-gray
+    line-height: 10px
+    margin-left: 3px
+.left-nav-filters // TODO Rename saved-searches
+  i.ss-search
+    color: $light-gray
+    font-size: 8px
+    margin: 0 2px 0 0
+  
+// Variant to extend a left-nav with to make its list contain bullet points,
+// give it a grey bg and borders
+.link-list
+  // Color
+  background-color: #fdfcfc
+  border-right: 1px solid $light-rule
+  a
+    color: #8d8c8c
+  .active a
+    color: #434343
+    font-weight: bold
+  // Layout
+  margin-top: 0
+  padding-top: 28px
+  padding-left: 25px
+  padding-right 25px
+  ul
+    margin-top: 0
+  li
+    font-size: 14px
+    line-height: 25px
+
