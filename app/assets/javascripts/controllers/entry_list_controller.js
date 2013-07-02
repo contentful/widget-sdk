@@ -156,7 +156,11 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
 
   $scope.statusClass = function(entry){
     if (entry.isPublished()) {
-      return 'published';
+      if (entry.hasUnpublishedChanges()) {
+        return 'updated';
+      } else {
+        return 'published';
+      }
     } else if (entry.isArchived()) {
       return 'archived';
     } else {
