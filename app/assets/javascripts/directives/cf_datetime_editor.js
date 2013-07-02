@@ -91,14 +91,8 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse){
       };
 
       scope.$watch(function () {
-        console.log('watching: %o, date: %o, time: %o', ngModelCtrl.$modelValue, dateController.$viewValue, timeController.$viewValue);
         return !ngModelCtrl.$modelValue && !_.isEmpty(timeController.$viewValue);
       }, function (invalid, old, scope) {
-        if (invalid) {
-          console.log('invalid model: %o, date: %o, time: %o', ngModelCtrl.$modelValue, dateController.$viewValue, timeController.$viewValue);
-        } else {
-          console.log('valid model: %o, date: %o, time: %o', ngModelCtrl.$modelValue, dateController.$viewValue, timeController.$viewValue);
-        }
         scope.dateInvalid = invalid;
       });
 
