@@ -21,6 +21,7 @@ angular.module('contentful').directive('otDocFor', function () {
   function otGetEntity() {
     return $scope.$eval($attrs.otDocFor);
   }
+  $scope.otGetEntity = otGetEntity;
 
   $scope.$watch(function () {
     return ShareJS.connection.state == 'ok';

@@ -7,6 +7,10 @@ angular.module('contentful').controller('SaveStatusCtrl', function ($scope) {
     if (scope.otDoc) {
       if (scope.saving) {
         scope.saveStatus = 'saving';
+      } else if(typeof scope.saving == 'undefined'){
+        scope.saveStatus = 'last-saved-at';
+        var updatedAt = scope.otGetEntity().data.sys.updatedAt;
+        scope.lastSavedAt = moment(updatedAt).fromNow();
       } else {
         scope.saveStatus = 'saved';
       }

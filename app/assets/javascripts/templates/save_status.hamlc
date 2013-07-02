@@ -1,3 +1,5 @@
+%i.ss-info.last-saved-at
+%span.last-saved-at Last change made {{lastSavedAt}}
 %i.ss-check.saved
 %span.saved All changes saved successfully
 %i.ss-sync.saving
