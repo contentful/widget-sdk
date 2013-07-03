@@ -3,7 +3,10 @@
 angular.module('contentful').factory('modalDialog', ['$compile', '$q', function ($compile, $q) {
 
   function Dialog(params) {
-    this.params = _.pick(params, 'title', 'message');
+    this.params = _.extend(
+      {template: 'modal_dialog'},
+      _.pick(params, 'title', 'message', 'template')
+    );
     this._deferred = $q.defer();
     this.promise = this._deferred.promise;
   }
@@ -11,7 +14,7 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', function 
   Dialog.prototype = {
     attach: function (scope) {
       var dialog = this;
-      this.domElement = $(JST['modal_dialog']()).appendTo('body');
+      this.domElement = $(JST[this.params.template]()).appendTo('body');
       scope.dialog = {
         cancel: function () { dialog.cancel(); },
         confirm: function () { dialog.confirm(); }
