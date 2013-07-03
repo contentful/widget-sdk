@@ -14,7 +14,7 @@
           .form-controls
             %input(type="text" ng-model="newSpaceData.defaultLocale")
       .buttons
-        %button.cancel(type="button" ng-click="hideCreateSpaceDialog()")
+        %button.cancel(type="button" ng-click="dialog.cancel()")
           Cancel
         %button.confirm(ng-click="submit()" ng-disabled="newSpaceForm.$invalid || lockSubmit")
           Create Space

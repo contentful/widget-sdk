@@ -23,7 +23,7 @@ angular.module('contentful').controller('createSpaceDialogCtrl', [
           if (err) {
             notification.error('Could not create Space.');
             scope.lockSubmit = false;
-            scope.hideCreateSpaceDialog();
+            scope.dialog.cancel();
             stopSpinner();
           } else {
             $scope.performTokenLookup(function () {
@@ -32,7 +32,7 @@ angular.module('contentful').controller('createSpaceDialogCtrl', [
               });
               scope.selectSpace(space);
               scope.lockSubmit = false;
-              scope.hideCreateSpaceDialog();
+              scope.dialog.confirm();
               resetNewSpaceData();
               stopSpinner();
             });
