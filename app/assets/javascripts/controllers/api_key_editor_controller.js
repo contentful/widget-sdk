@@ -4,6 +4,8 @@ angular.module('contentful').
   controller('ApiKeyEditorCtrl', function($scope, authentication, environment, notification) {
     $scope.$watch('tab.params.apiKey', 'apiKey=tab.params.apiKey');
 
+    $scope.tab.closingMessage = 'You have unsaved changes.';
+
     $scope.$watch('apiKey.data.name', function(name) {
       $scope.headline = $scope.tab.title = name || 'Untitled';
     });

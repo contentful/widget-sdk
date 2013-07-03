@@ -55,7 +55,7 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics, 
       if (tab.dirty) {
         modalDialog.open({
           title: 'Close Tab?',
-          message: 'You have unsaved/unpublished changes.',
+          message: tab.closingMessage,
           scope: $rootScope
         }).then(function () {
           list.closeTab(tab);

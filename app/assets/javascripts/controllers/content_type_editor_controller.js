@@ -12,6 +12,8 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
     scope.otDisabled = !enabled;
   });
 
+  $scope.tab.closingMessage = 'You have unpublished changes.';
+
   $scope.$watch('contentType', function(contentType){
     if (contentType) loadPublishedContentType();
   });

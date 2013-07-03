@@ -14,6 +14,8 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     }
   });
 
+  $scope.tab.closingMessage = 'You have unpublished changes.';
+
   $scope.$watch('spaceContext.entryTitle(entry)', function(title, old, scope) {
     scope.tab.title = title;
   });
