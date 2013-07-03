@@ -18,9 +18,13 @@
   @extend .link-list
 
 // Adjust content padding
-.tab-iframe .with-left-nav
-  padding-left: 30px
-  padding-right: 30px
+.tab-iframe
+  .left-nav
+    position: fixed
+    top: $tab-header-height
+  .with-left-nav
+    padding-left: 30px
+    padding-right: 30px
 
 // make sure to hide intercom in the frame
 .tab-iframe
@@ -177,9 +181,13 @@
       @extend %user-detail-image
     .uid,
     .auth_provider_name
+      word-break: break-all
       position: absolute
       bottom: $identity-padding
       left: $identity-padding + $identity-image-size + $identity-image-padding
+      right: $identity-padding
+      overflow: hidden
+      text-overflow: ellipsis
     .remove
       .ss-delete
         font-size: 1em
