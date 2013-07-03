@@ -18,6 +18,10 @@ angular.module('contentful').
         accessToken;
     });
 
+    $scope.$watch('apiKeyForm.$dirty', function (modified, old, scope) {
+      scope.tab.dirty = modified;
+    });
+
     function title() {
       return '"' + $scope.apiKey.getName() + '"';
     }
