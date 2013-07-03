@@ -50,7 +50,10 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
         if (this.space) {
           var deferred = $q.defer();
           var spaceContext = this;
-          this.space.getContentTypes({order: 'sys.id', limit: 1000}, function(err, contentTypes) {
+          this.space.getContentTypes({order: 'name', limit: 1000}, function(err, contentTypes) {
+            contentTypes.sort(function (a,b) {
+              return a.getName().localeCompare(b.getName());
+            });
             $rootScope.$apply(function() {
               if (err) return deferred.reject(err);
               spaceContext.contentTypes = contentTypes;
