@@ -1,5 +1,5 @@
 %i.ss-info.last-saved-at
-%span.last-saved-at Last change made {{lastSavedAt}}
+%span.last-saved-at Last change made <time relative datetime="{{lastSavedAt}}"></time>
 %i.ss-check.saved
 %span.saved All changes saved successfully
 %i.ss-sync.saving
