@@ -78,6 +78,8 @@ $form-controlwidth-inner: 57%
   &.fit-two input[type="text"], &.fit-two input[type="number"]
     width: $form-controlwidth-inner / 2 - 2%
     margin-right: 1%
+  textarea
+    display: block
   input[type="number"]
     padding-top: 8px
     padding-bottom: 8px
@@ -89,6 +91,10 @@ $form-controlwidth-inner: 57%
     .invalid-location-warning
       width: $form-controlwidth-inner
       height: 250px
+  .invalid-date
+    font-size: 14px
+    position: relative
+    top: 3px
   .ss-calendar,
   .ss-clock
     font-size: 14px
@@ -164,7 +170,7 @@ $form-controlwidth-inner: 57%
   display: block
   max-width: 57% !important
   position: static
-  margin: 0 0 4px 0
+  margin: 4px 0 4px 0
   width: 57%
   text-align: center
   +transition(opacity 0.3s ease-in-out)

@@ -1,4 +1,4 @@
-.modal-background
+.modal-background(ng-controller="createSpaceDialogCtrl")
   .modal-dialog
     .title
       Create Space
@@ -8,13 +8,13 @@
         .form-field
           %label Name
           .form-controls
-            %input(type="text" ng-model="newSpaceData.name" required="")
+            %input(type="text" name="name" ng-model="newSpaceData.name" required="")
         .form-field
           %label Locale
           .form-controls
-            %input(type="text" ng-model="newSpaceData.defaultLocale")
+            %input(type="text" name="locale" ng-model="newSpaceData.defaultLocale")
       .buttons
-        %button.cancel(type="button" ng-click="hideCreateSpaceDialog()")
+        %button.cancel(type="button" ng-click="dialog.cancel()")
           Cancel
         %button.confirm(ng-click="submit()" ng-disabled="newSpaceForm.$invalid || lockSubmit")
           Create Space

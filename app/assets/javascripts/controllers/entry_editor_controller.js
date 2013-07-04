@@ -14,6 +14,9 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     }
   });
 
+  $scope.tab.closingMessage = 'You have unpublished changes.';
+  $scope.tab.closingMessageDisplayType = 'tooltip';
+
   $scope.$watch('spaceContext.entryTitle(entry)', function(title, old, scope) {
     scope.tab.title = title;
   });
@@ -42,6 +45,16 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
       return undefined;
     }
   };
+
+  $scope.$watch(function (scope) {
+    if (scope.otDoc && scope.entry) {
+      return scope.otDoc.version > scope.entry.data.sys.publishedVersion + 1;
+    } else {
+      return undefined;
+    }
+  }, function (modified, old, scope) {
+    if (modified !== undefined) scope.tab.dirty = modified;
+  });
 
   $scope.$watch(function (scope) {
     return _.pluck(scope.spaceContext.activeLocales, 'code');

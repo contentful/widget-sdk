@@ -3,6 +3,34 @@
 angular.module('contentful').controller('SaveStatusCtrl', function ($scope) {
   $scope.saveStatus = 'no_connection';
 
+  $scope.$watch(function (scope) {
+    if (scope.otDoc) {
+      if (scope.saving) {
+        scope.saveStatus = 'saving';
+      } else if(typeof scope.saving == 'undefined'){
+        scope.saveStatus = 'last-saved-at';
+        var updatedAt = scope.otGetEntity().data.sys.updatedAt;
+        scope.lastSavedAt = updatedAt;
+      } else {
+        scope.saveStatus = 'saved';
+      }
+    } else {
+      if (scope.otDisabled) {
+        scope.saveStatus = 'not-allowed';
+      } else {
+        scope.saveStatus = 'no-connection';
+        // TODO distinction between connecting and stopped according to sharejs connection state
+      }
+    }
+  });
+
+////////////////////////////////////////////////////////////////////////////////
+//  Everything below is just to figure out from the ShareJS events when a
+//  saving is in progress. It does some weird magic with event timing to achieve
+//  both an actual detection of local changes vs. remote and some delay so that
+//  the state doesn't flicker too much
+////////////////////////////////////////////////////////////////////////////////
+
   var detachHandlers;
 
   $scope.$watch('otDoc', function (doc) {
@@ -21,23 +49,6 @@ angular.module('contentful').controller('SaveStatusCtrl', function ($scope) {
         _doc = null;
         detachHandlers = null;
       };
-    }
-  });
-
-  $scope.$watch(function (scope) {
-    if (scope.otDoc) {
-      if (scope.saving) {
-        scope.saveStatus = 'saving';
-      } else {
-        scope.saveStatus = 'saved';
-      }
-    } else {
-      if (scope.otDisabled) {
-        scope.saveStatus = 'not-allowed';
-      } else {
-        scope.saveStatus = 'no-connection';
-        // TODO distinction between connecting and stopped according to sharejs connection state
-      }
     }
   });
 

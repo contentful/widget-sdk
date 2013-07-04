@@ -22,11 +22,27 @@ angular.module('contentful').controller('ContentTypeListCtrl', function ContentT
   };
 
   $scope.statusClass = function(contentType) {
-    return contentType.data.sys.publishedAt ? 'published' : 'draft';
+    if (contentType.data.sys.publishedAt) {
+      if (contentType.hasUnpublishedChanges()) {
+        return 'updated';
+      } else {
+        return 'published';
+      }
+    } else {
+      return 'draft';
+    }
   };
 
   $scope.statusLabel = function(contentType) {
-    return contentType.data.sys.publishedAt ? 'active' : 'draft';
+    if (contentType.data.sys.publishedAt) {
+      if (contentType.hasUnpublishedChanges()) {
+        return 'updated';
+      } else {
+        return 'active';
+      }
+    } else {
+      return 'draft';
+    }
   };
 
   $scope.$watch(function (scope) {

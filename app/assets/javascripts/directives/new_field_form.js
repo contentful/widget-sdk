@@ -46,6 +46,9 @@ angular.module('contentful').directive('newFieldForm', function (availableFieldT
         };
         $scope.newType = defaultType;
         _.extend($scope.newField, $scope.newType.value);
+
+        // TODO replace with proper setPristine call once we switched to Angular 1.1+
+        if ($scope.newFieldForm) $scope.newFieldForm.$pristine = true;
       }
 
       $scope.addField = function() {

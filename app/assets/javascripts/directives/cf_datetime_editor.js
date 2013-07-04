@@ -18,6 +18,10 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse){
       var dateController = elm.find('.date').controller('ngModel');
       var timeController = elm.find('.time').controller('ngModel');
 
+      ngModelCtrl.$render = function () {
+        scope.setFromISO(ngModelCtrl.$modelValue);
+      };
+
       elm.find('.date').datepicker({
         dateFormat: DATE_FORMAT,
         onSelect: function(dateString) {
@@ -35,34 +39,35 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse){
       });
 
       dateController.$formatters.push(function(modelValue) {
-        var raw = moment(modelValue, DATE_FORMAT_INTERNAL).toDate();
-        var date = $.datepicker.formatDate(DATE_FORMAT, raw);
-        return date;
+        if (modelValue) {
+          var raw = moment(modelValue, DATE_FORMAT_INTERNAL).toDate();
+          var date = $.datepicker.formatDate(DATE_FORMAT, raw);
+          return date;
+        } else{
+          return null;
+        }
       });
 
       dateController.$render = function() {
         elm.find('.date').datepicker('setDate', dateController.$viewValue);
       };
 
-      var changeHandler = function(){
-        var date = dateController.$modelValue;
-        var time = timeController.$modelValue;
-        //if (!time || time.length == 0)
-        // TODO handle case where Time isn't set or where nothing is set
-        if (!(date && time) ) return;
+      function changeHandler() {
+        var date = scope.localDate;
+        var time = scope.localTime || '0:00';
+        var value = date ? moment(date+'T'+time).utc().format() : null;
 
-        var dateAndTime = dateController.$modelValue+'T'+timeController.$modelValue;
-        var dateTime = moment(dateAndTime);
-        scope.otChangeValue(dateTime.utc().format(), function (err) {
+        scope.otChangeValue(value, function (err) {
           scope.$apply(function (scope) {
             if (!err) {
-              ngModelCtrl.$setViewValue(dateTime.utc().format());
+              ngModelCtrl.$setViewValue(value);
             } else {
               scope.setFromISO(ngModelCtrl.$modelValue);
             }
           });
         });
-      };
+      }
+
       dateController.$viewChangeListeners.push(changeHandler);
       timeController.$viewChangeListeners.push(changeHandler);
 
@@ -71,14 +76,25 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse){
       };
 
       scope.setFromISO = function(iso){
-        var dateTime = moment.utc(iso).local();
-        scope.localDate = dateTime.format(DATE_FORMAT_INTERNAL);
-        if (dateTime.seconds()) {
-          scope.localTime = dateTime.format('HH:mm:ss');
+        if (_.isString(iso)) {
+          var dateTime = moment.utc(iso).local();
+          scope.localDate = dateTime.format(DATE_FORMAT_INTERNAL);
+          if (dateTime.seconds()) {
+            scope.localTime = dateTime.format('HH:mm:ss');
+          } else {
+            scope.localTime = dateTime.format('HH:mm');
+          }
         } else {
-          scope.localTime = dateTime.format('HH:mm');
+          scope.localDate = null;
+          scope.localTime = null;
         }
       };
+
+      scope.$watch(function () {
+        return !ngModelCtrl.$modelValue && !_.isEmpty(timeController.$viewValue);
+      }, function (invalid, old, scope) {
+        scope.dateInvalid = invalid;
+      });
 
       scope.$on('otValueChanged', function(event, path, value) {
         if (path === event.currentScope.otPath) {

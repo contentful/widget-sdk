@@ -1,0 +1,9 @@
+.modal-background
+  .modal-dialog
+    .title {{dialog.title}}
+    %p {{dialog.message}}
+    .buttons
+      %button.cancel(type="button" ng-click="dialog.cancel()")
+        {{dialog.cancelLabel}}
+      %button.confirm(ng-click="dialog.confirm()")
+        {{dialog.confirmLabel}}

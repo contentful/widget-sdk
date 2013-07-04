@@ -4,6 +4,9 @@ angular.module('contentful').
   controller('ApiKeyEditorCtrl', function($scope, authentication, environment, notification) {
     $scope.$watch('tab.params.apiKey', 'apiKey=tab.params.apiKey');
 
+    $scope.tab.closingMessage = 'You have unsaved changes.';
+    $scope.tab.closingMessageDisplayType = 'dialog';
+
     $scope.$watch('apiKey.data.name', function(name) {
       $scope.headline = $scope.tab.title = name || 'Untitled';
     });
@@ -16,6 +19,10 @@ angular.module('contentful').
         $scope.spaceContext.space.getId() +
         '/entries?access_token=' +
         accessToken;
+    });
+
+    $scope.$watch('apiKeyForm.$dirty', function (modified, old, scope) {
+      scope.tab.dirty = modified;
     });
 
     function title() {
@@ -50,6 +57,7 @@ angular.module('contentful').
       $scope.apiKey.save(function(err) {
         $scope.$apply(function() {
           if (err) return notification.error(t + ' could not be saved');
+          $scope.tab.dirty = false;
           notification.info(t + ' saved successfully');
         });
       });

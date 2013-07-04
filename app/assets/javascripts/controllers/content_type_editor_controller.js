@@ -12,6 +12,9 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
     scope.otDisabled = !enabled;
   });
 
+  $scope.tab.closingMessage = 'You have unpublished changes.';
+  $scope.tab.closingMessageDisplayType = 'tooltip';
+
   $scope.$watch('contentType', function(contentType){
     if (contentType) loadPublishedContentType();
   });
@@ -19,6 +22,17 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
   $scope.$on('otRemoteOp', function (event) {
     event.currentScope.otUpdateEntity();
   });
+
+  $scope.$watch(function (scope) {
+    if (scope.otDoc && scope.contentType) {
+      return scope.otDoc.version > scope.contentType.data.sys.publishedVersion + 1;
+    } else {
+      return undefined;
+    }
+  }, function (modified, old, scope) {
+    if (modified !== undefined) scope.tab.dirty = modified;
+  });
+
 
   function loadPublishedContentType() {
     // TODO replace with lookup in registry inside spaceContext

@@ -23,7 +23,7 @@
                placeholder="Content Type Name (e.g. Product)"
                ng-model="contentType.data.name"
                ot-bind-text="")
-        .validation-error-display.form-box-error(path="['name']")
+        .validation-error-display.form-box-error(path="['name']" ng-show="1 < otDoc.version && hasErrors")
     .form-field
       %label Description
       .form-controls(ot-path="['description']" ot-subdoc)

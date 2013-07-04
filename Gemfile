@@ -35,7 +35,13 @@ group :development, :test do
   gem "guard-livereload"
   gem 'rb-fsevent', '~> 0.9.1', :require => false
   gem "jasmine", :git => 'git://github.com/janv/jasmine-gem.git', :branch => 'patch-1'
-  #gem 'debugger'
+  gem 'debugger'
+end
+
+group :test do
+  gem 'rspec-rails'
+  gem 'selenium-webdriver'
+  gem 'capybara'
 end
 
 # To use ActiveModel has_secure_password

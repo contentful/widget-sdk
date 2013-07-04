@@ -5,8 +5,10 @@
 
   .left-nav
     %ul
-      %li.api-keys(ng-click="refreshApiKeys()") API Keys
-      %li(ng-click="openApiDocs()") API Documentation
+      %li.api-keys.active
+        %a(ng-click="refreshApiKeys()") API Keys
+      %li
+        %a(ng-click="openApiDocs()") API Documentation
 
   .with-left-nav
     %table.result-list.main-header(ng-hide="empty")

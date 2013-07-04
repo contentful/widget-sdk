@@ -1,4 +1,4 @@
-angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope, client, SpaceContext, authentication, contentfulClient, notification, cfSpinner, analytics, routing, authorization, tutorial) {
+angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope, client, SpaceContext, authentication, contentfulClient, notification, cfSpinner, analytics, routing, authorization, tutorial, modalDialog) {
   'use strict';
 
   $scope.spaces = [];
@@ -196,12 +196,11 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
   };
 
   $scope.showCreateSpaceDialog = function () {
-    $scope.displayCreateSpaceDialog = true;
+    modalDialog.open({
+      scope: $scope,
+      template: 'create_space_dialog'
+    });
     analytics.track('Clicked Create-Space');
-  };
-
-  $scope.hideCreateSpaceDialog = function () {
-    $scope.displayCreateSpaceDialog = false;
   };
 
   $scope.performTokenLookup(function showTutorialIfNecessary() {

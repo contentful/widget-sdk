@@ -3,14 +3,38 @@ return (function(e,t,n){function i(n,s){if(!t[n]){if(!e[n]){var o=typeof require
 'use strict';
 
 exports = module.exports = function(module) {
-  module.directive('relative', ['$timeout', 'moment', directive]);
+  module.
+
+    constant('timeRelativeConfig', {
+      calendar: {
+        en: {
+          lastDay : '[Yesterday], LT',
+          sameDay : '[Today], LT',
+          nextDay : '[Tomorrow], LT',
+          lastWeek : 'dddd, LT',
+          nextWeek : 'Next dddd, LT',
+          sameElse : 'MMMM D, YYYY'
+        }
+      }
+    }).
+
+    directive('relative', ['$timeout', 'moment', directive]).
+
+    run(function(moment, timeRelativeConfig) {
+      angular.forEach(timeRelativeConfig.calendar, function(translation, lang) {
+        moment.lang(lang, {calendar: translation});
+      });
+    });
 };
 
 exports.directive = directive;
 
 if (angular) {
   var mod = angular.module('timeRelative', []);
-  if (moment) mod.constant('moment', moment);
+  if (moment) {
+    mod.constant('moment', moment);
+    moment.lang('en', {});
+  }
   exports(mod);
 }
 
@@ -35,7 +59,14 @@ function directive($timeout, moment) {
           element.attr('title', date.format('LLLL'));
 
         function updateTime() {
-          element.text(date.from(to(), withoutSuffix));
+          element.text(diffString(date, to()));
+        }
+
+        function diffString(a, b) {
+          if (Math.abs(a.clone().startOf('day').diff(b, 'days', true)) < 1)
+            return a.from(b, withoutSuffix);
+          else
+            return a.calendar(b);
         }
 
         function updateLater() {
@@ -46,7 +77,7 @@ function directive($timeout, moment) {
         }
 
         function nextUpdateIn() {
-          var delta = moment().diff(date);
+          var delta = Math.abs(moment().diff(date));
           if (delta < 45e3) return 45e3 - delta;
           if (delta < 90e3) return 90e3 - delta;
           if (delta < 45 * 60e3) return 60e3 - (delta + 30e3) % 60e3;
@@ -63,7 +94,6 @@ function directive($timeout, moment) {
   };
 }
 
-},{}]},{},[1])
-//@ sourceMappingURL=data:application/json;base64,eyJ2ZXJzaW9uIjozLCJmaWxlIjoiZ2VuZXJhdGVkLmpzIiwic291cmNlcyI6WyIvVXNlcnMvc3RlcGhhbi9Db2RlL25nLXRpbWUtcmVsYXRpdmUvaW5kZXguanMiXSwibmFtZXMiOltdLCJtYXBwaW5ncyI6IjtBQUFBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQTtBQUNBO0FBQ0E7QUFDQSIsInNvdXJjZXNDb250ZW50IjpbIid1c2Ugc3RyaWN0JztcblxuZXhwb3J0cyA9IG1vZHVsZS5leHBvcnRzID0gZnVuY3Rpb24obW9kdWxlKSB7XG4gIG1vZHVsZS5kaXJlY3RpdmUoJ3JlbGF0aXZlJywgWyckdGltZW91dCcsICdtb21lbnQnLCBkaXJlY3RpdmVdKTtcbn07XG5cbmV4cG9ydHMuZGlyZWN0aXZlID0gZGlyZWN0aXZlO1xuXG5pZiAoYW5ndWxhcikge1xuICB2YXIgbW9kID0gYW5ndWxhci5tb2R1bGUoJ3RpbWVSZWxhdGl2ZScsIFtdKTtcbiAgaWYgKG1vbWVudCkgbW9kLmNvbnN0YW50KCdtb21lbnQnLCBtb21lbnQpO1xuICBleHBvcnRzKG1vZCk7XG59XG5cbmZ1bmN0aW9uIGRpcmVjdGl2ZSgkdGltZW91dCwgbW9tZW50KSB7XG4gIHJldHVybiB7XG4gICAgcmVzdHJpY3Q6ICdBQycsXG4gICAgc2NvcGU6IHtcbiAgICAgIGRhdGV0aW1lOiAnQCdcbiAgICB9LFxuICAgIGxpbms6IGZ1bmN0aW9uKHNjb3BlLCBlbGVtZW50LCBhdHRycykge1xuICAgICAgdmFyIHRpbWVvdXQ7XG5cbiAgICAgIHNjb3BlLiR3YXRjaCgnZGF0ZXRpbWUnLCBmdW5jdGlvbihkYXRlU3RyaW5nKSB7XG4gICAgICAgICR0aW1lb3V0LmNhbmNlbCh0aW1lb3V0KTtcblxuICAgICAgICB2YXIgZGF0ZSA9IG1vbWVudChkYXRlU3RyaW5nKTtcbiAgICAgICAgaWYgKCFkYXRlKSByZXR1cm47XG4gICAgICAgIHZhciB0byA9IGZ1bmN0aW9uKCkgeyByZXR1cm4gbW9tZW50KGF0dHJzLnRvKTsgfTtcbiAgICAgICAgdmFyIHdpdGhvdXRTdWZmaXggPSAnd2l0aG91dFN1ZmZpeCcgaW4gYXR0cnM7XG5cbiAgICAgICAgaWYgKCFhdHRycy50aXRsZSlcbiAgICAgICAgICBlbGVtZW50LmF0dHIoJ3RpdGxlJywgZGF0ZS5mb3JtYXQoJ0xMTEwnKSk7XG5cbiAgICAgICAgZnVuY3Rpb24gdXBkYXRlVGltZSgpIHtcbiAgICAgICAgICBlbGVtZW50LnRleHQoZGF0ZS5mcm9tKHRvKCksIHdpdGhvdXRTdWZmaXgpKTtcbiAgICAgICAgfVxuXG4gICAgICAgIGZ1bmN0aW9uIHVwZGF0ZUxhdGVyKCkge1xuICAgICAgICAgIHVwZGF0ZVRpbWUoKTtcbiAgICAgICAgICB0aW1lb3V0ID0gJHRpbWVvdXQoZnVuY3Rpb24oKSB7XG4gICAgICAgICAgICB1cGRhdGVMYXRlcigpO1xuICAgICAgICAgIH0sIG5leHRVcGRhdGVJbigpKTtcbiAgICAgICAgfVxuXG4gICAgICAgIGZ1bmN0aW9uIG5leHRVcGRhdGVJbigpIHtcbiAgICAgICAgICB2YXIgZGVsdGEgPSBtb21lbnQoKS5kaWZmKGRhdGUpO1xuICAgICAgICAgIGlmIChkZWx0YSA8IDQ1ZTMpIHJldHVybiA0NWUzIC0gZGVsdGE7XG4gICAgICAgICAgaWYgKGRlbHRhIDwgOTBlMykgcmV0dXJuIDkwZTMgLSBkZWx0YTtcbiAgICAgICAgICBpZiAoZGVsdGEgPCA0NSAqIDYwZTMpIHJldHVybiA2MGUzIC0gKGRlbHRhICsgMzBlMykgJSA2MGUzO1xuICAgICAgICAgIHJldHVybiAzNjYwZTMgLSBkZWx0YSAlIDM2MDBlMztcbiAgICAgICAgfVxuXG4gICAgICAgIGVsZW1lbnQuYmluZCgnJGRlc3Ryb3knLCBmdW5jdGlvbigpIHtcbiAgICAgICAgICAkdGltZW91dC5jYW5jZWwodGltZW91dCk7XG4gICAgICAgIH0pO1xuXG4gICAgICAgIHVwZGF0ZUxhdGVyKCk7XG4gICAgICB9KTtcbiAgICB9XG4gIH07XG59XG4iXX0=(1)
+},{}]},{},[1])(1)
 });
 ;

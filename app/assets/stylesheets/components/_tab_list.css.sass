@@ -10,13 +10,27 @@
     position: relative
     margin-right: 2px
     padding: ($tab-height - 27px) 12px
-    overflow: hidden
     background-color: $page-background
     border: 1px solid #d5d5d5
     border-bottom-color: $lightest-gray
     +border-radius(3px 3px 0 0)
     color: $light-gray
-    span
+    .tooltip
+      display: none !important
+    &.dirty
+      i.ss-delete
+        background-color: $blue
+        color: $blue
+        text-shadow: none
+        border-radius: 10px
+        font-size: 8px
+      &:hover
+        i.ss-delete
+          color: $blue
+      .tooltip
+        display: block !important
+        white-space: nowrap
+    .tab-title
       font-size: 13px
       white-space: nowrap
       display: block
@@ -30,26 +44,32 @@
     &:hover
       i.ss-delete
         color: $medium-gray
+    &.hide-tooltip
+      .tooltip
+        display: none !important
   i.ss-delete
     position: absolute
+    width: 12px
+    height: 12px
     top: 12px
-    right: 9px
+    right: 8px
     font-size: 10px
-  .fade
+    text-align: center
+  .fade-text
     position: absolute
     top: 0
     bottom: 0
     right: 0
     width: 50px
-    +inactive-fade
+    +fade-text-background($page-background)
   .tab.active
     color: $dark-gray
     background: $gray-background
     border-bottom: 0
     font-weight: 600
     +gray-highlight
-    .fade
-      +fade
+    .fade-text
+      +fade-text-background($gray-background)
   .tab:hover
     color: $dark-gray
     cursor: pointer
