@@ -36,7 +36,6 @@ $tab-main-margin-top: 28px
   left: 0
   right: 0
   top: $tab-header-height
-  padding-top: $tab-main-margin-top
   bottom: 0
   overflow-y: auto
 .tab-actions
@@ -84,7 +83,6 @@ $tab-main-margin-top: 28px
 
 $left-nav-padding: 8px
 .left-nav
-  margin-top: 4px
   padding: $left-nav-padding
   header
     color: $medium-gray
@@ -108,6 +106,12 @@ $left-nav-padding: 8px
     padding-left: 25px
     line-height: $tab-header-height - 2px
     vertical-align: middle
+
+.tab-workbench
+  padding-top: $tab-main-margin-top
+=tab-padding
+  padding-left: 30px
+  padding-right: 30px
 
 // Variant to extend a left-nav, to style its left nav in the style
 // that it has these filters
@@ -139,7 +143,7 @@ $left-nav-padding: 8px
     font-weight: bold
   // Layout
   margin-top: 0
-  padding-top: 28px
+  padding-top: $tab-main-margin-top
   padding-left: 25px
   padding-right 25px
   ul

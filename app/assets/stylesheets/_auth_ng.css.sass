@@ -23,8 +23,8 @@
     position: fixed
     top: $tab-header-height
   .with-left-nav
-    padding-left: 30px
-    padding-right: 30px
+    @extend .tab-workbench
+    +tab-padding
 
 // make sure to hide intercom in the frame
 .tab-iframe
