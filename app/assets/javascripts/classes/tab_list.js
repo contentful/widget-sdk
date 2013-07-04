@@ -55,6 +55,7 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics, 
       if (tab.dirty && tab.closingMessageDisplayType == 'dialog') {
         modalDialog.open({
           title: 'Close Tab?',
+          confirmLabel: 'Close Tab',
           message: tab.closingMessage,
           scope: $rootScope
         }).then(function () {

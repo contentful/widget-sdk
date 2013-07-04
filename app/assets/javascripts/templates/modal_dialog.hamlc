@@ -4,6 +4,6 @@
     %p {{dialog.message}}
     .buttons
       %button.cancel(type="button" ng-click="dialog.cancel()")
-        Cancel
+        {{dialog.cancelLabel}}
       %button.confirm(ng-click="dialog.confirm()")
-        OK
+        {{dialog.confirmLabel}}

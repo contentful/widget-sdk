@@ -6,8 +6,12 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', function 
 
   function Dialog(params) {
     this.params = _.extend(
-      {template: 'modal_dialog'},
-      _.pick(params, 'title', 'message', 'template')
+      {
+        template: 'modal_dialog',
+        cancelLabel: 'Cancel',
+        confirmLabel: 'OK'
+      },
+      _.pick(params, 'title', 'message', 'template', 'cancelLabel', 'confirmLabel')
     );
     this._deferred = $q.defer();
     this.promise = this._deferred.promise;
