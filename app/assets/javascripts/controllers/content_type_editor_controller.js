@@ -13,6 +13,7 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
   });
 
   $scope.tab.closingMessage = 'You have unpublished changes.';
+  $scope.tab.closingMessageDisplayType = 'tooltip';
 
   $scope.$watch('contentType', function(contentType){
     if (contentType) loadPublishedContentType();

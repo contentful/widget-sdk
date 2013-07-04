@@ -44,9 +44,12 @@
             ng-click="tabItem.activate()"
             ng-hide="tabItem.hidden")
       %span.tab-title {{tabItem.title}}
-      %em.fade
-      .close(cf-click-local="tabItem.close()" ng-show="tabItem.canClose()")
-        %i.ss-delete
+      %em.fade-text
+      .close(cf-click-local="tabItem.close()"
+             ng-show="tabItem.canClose()"
+             ng-class="{'hide-tooltip': tabItem.closingMessageDisplayType == 'dialog'}")
+        %i.ss-delete(tooltip="{{tabItem.closingMessage}}"
+                     tooltip-placement="bottom")
     %li.tablist-button(space-context="spaceContext")
 .tab-content(ng-repeat="tab in spaceContext.tabList.items" ng-show="tab.active()" ng-switch="tab.viewType")
   .iframe-view(ng-switch-when="iframe")

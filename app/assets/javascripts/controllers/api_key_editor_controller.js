@@ -5,6 +5,7 @@ angular.module('contentful').
     $scope.$watch('tab.params.apiKey', 'apiKey=tab.params.apiKey');
 
     $scope.tab.closingMessage = 'You have unsaved changes.';
+    $scope.tab.closingMessageDisplayType = 'dialog';
 
     $scope.$watch('apiKey.data.name', function(name) {
       $scope.headline = $scope.tab.title = name || 'Untitled';
