@@ -61,7 +61,7 @@
     bottom: 0
     right: 0
     width: 50px
-    +inactive-fade
+    +fade-text-background($page-background)
   .tab.active
     color: $dark-gray
     background: $gray-background
@@ -69,7 +69,7 @@
     font-weight: 600
     +gray-highlight
     .fade-text
-      +fade
+      +fade-text-background($gray-background)
   .tab:hover
     color: $dark-gray
     cursor: pointer

@@ -41,23 +41,8 @@
   color: $medium-gray
   +box-shadow(0 8px 16px rgba(255,255,255,0.6) inset)
 
-=fade
-  background: -moz-linear-gradient(left,  rgba(243,243,243,0) 0%, rgba(243,243,243,1) 50%, rgba(243,243,243,1) 100%)
-  background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(243,243,243,0)), color-stop(50%,rgba(243,243,243,1)), color-stop(100%,rgba(243,243,243,1)))
-  background: -webkit-linear-gradient(left,  rgba(243,243,243,0) 0%,rgba(243,243,243,1) 50%,rgba(243,243,243,1) 100%)
-  background: -o-linear-gradient(left,  rgba(243,243,243,0) 0%,rgba(243,243,243,1) 50%,rgba(243,243,243,1) 100%)
-  background: -ms-linear-gradient(left,  rgba(243,243,243,0) 0%,rgba(243,243,243,1) 50%,rgba(243,243,243,1) 100%)
-  background: linear-gradient(to right,  rgba(243,243,243,0) 0%,rgba(243,243,243,1) 50%,rgba(243,243,243,1) 100%)
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00f3f3f3', endColorstr='#f3f3f3',GradientType=1 )
-
-=inactive-fade
-  background: -moz-linear-gradient(left,  rgba(234,234,234,0) 0%, rgba(234,234,234,1) 50%, rgba(234,234,234,1) 100%)
-  background: -webkit-gradient(linear, left top, right top, color-stop(0%,rgba(234,234,234,0)), color-stop(50%,rgba(234,234,234,1)), color-stop(100%,rgba(234,234,234,1)))
-  background: -webkit-linear-gradient(left,  rgba(234,234,234,0) 0%,rgba(234,234,234,1) 50%,rgba(234,234,234,1) 100%)
-  background: -o-linear-gradient(left,  rgba(234,234,234,0) 0%,rgba(234,234,234,1) 50%,rgba(234,234,234,1) 100%)
-  background: -ms-linear-gradient(left,  rgba(234,234,234,0) 0%,rgba(234,234,234,1) 50%,rgba(234,234,234,1) 100%)
-  background: linear-gradient(to right,  rgba(234,234,234,0) 0%,rgba(234,234,234,1) 50%,rgba(234,234,234,1) 100%)
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#00eaeaea', endColorstr='#eaeaea',GradientType=1 )
+=fade-text-background($color)
+  +background-image(linear-gradient(left,  rgba($color, 0) 0%, $color 50%, $color 100%))
 
 
 $caret-size: 10px
