@@ -17,27 +17,11 @@ angular.module('contentful').directive('newFieldForm', function (availableFieldT
       });
 
       $scope.$watch('newType', function (newType, old, scope) {
+        if (old) _.each(old.value, function(val, key){
+          delete scope.newField[key];
+        });
         _.extend(scope.newField, newType.value);
       });
-
-      $scope.addField = function() {
-        var fieldDoc = $scope.otDoc.at(['fields']);
-
-        fieldDoc.push($scope.newField, function(err) {
-          $scope.$apply(function(scope) {
-            if (err) {
-              notification.error('Could not add field');
-            } else {
-                var field = $scope.newField;
-                initDisplayName(field);
-                resetNewField();
-                scope.otUpdateEntity();
-                scope.$broadcast('fieldAdded');
-                analytics.modifiedContentType('Modified ContentType', scope.contentType, field, 'add');
-            }
-          });
-        });
-      };
 
       $scope.selectType = function(type) {
         $scope.newType = type;
@@ -57,15 +41,34 @@ angular.module('contentful').directive('newFieldForm', function (availableFieldT
         $scope.newField = {
           id: null,
           name: null,
-          type: defaultType.value.type,
           required: false,
           localized: false
         };
-
         $scope.newType = defaultType;
+        _.extend($scope.newField, $scope.newType.value);
+
         // TODO replace with proper setPristine call once we switched to Angular 1.1+
         if ($scope.newFieldForm) $scope.newFieldForm.$pristine = true;
       }
+
+      $scope.addField = function() {
+        var fieldDoc = $scope.otDoc.at(['fields']);
+
+        fieldDoc.push($scope.newField, function(err) {
+          $scope.$apply(function(scope) {
+            if (err) {
+              notification.error('Could not add field');
+            } else {
+                var field = $scope.newField;
+                initDisplayName(field);
+                resetNewField();
+                scope.otUpdateEntity();
+                scope.$broadcast('fieldAdded');
+                analytics.modifiedContentType('Modified ContentType', scope.contentType, field, 'add');
+            }
+          });
+        });
+      };
 
       $scope.$watch(function (scope) {
         scope.idExists = _.find(scope.contentType.data.fields, function (field) {
