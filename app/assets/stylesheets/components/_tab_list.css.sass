@@ -17,7 +17,16 @@
     +border-radius(3px 3px 0 0)
     color: $light-gray
     &.dirty
-      border-top-color: $blue
+      i.ss-delete
+        background-color: $blue
+        color: $blue
+        text-shadow: none
+        border-radius: 10px
+        font-size: 8px
+      &:hover
+        i.ss-delete
+          color: $blue
+
     .tab-title
       font-size: 13px
       white-space: nowrap
@@ -34,9 +43,12 @@
         color: $medium-gray
   i.ss-delete
     position: absolute
+    width: 12px
+    height: 12px
     top: 12px
-    right: 9px
+    right: 8px
     font-size: 10px
+    text-align: center
   .fade
     position: absolute
     top: 0
