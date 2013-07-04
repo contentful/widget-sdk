@@ -57,6 +57,7 @@ angular.module('contentful').
       $scope.apiKey.save(function(err) {
         $scope.$apply(function() {
           if (err) return notification.error(t + ' could not be saved');
+          $scope.tab.dirty = false;
           notification.info(t + ' saved successfully');
         });
       });
