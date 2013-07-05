@@ -2,7 +2,7 @@
 
 describe('Entry list controller', function () {
 
-  var entryListCtrl, entryListActionsCtrl;
+  var entryListCtrl, entryActionsCtrl, entryListActionsCtrl;
   var scope, childScope;
   var removedEntry;
 
@@ -19,6 +19,9 @@ describe('Entry list controller', function () {
       entryListCtrl = $controller('EntryListCtrl', {$scope: scope});
       childScope = scope.$new();
       entryListActionsCtrl = $controller('EntryListActionsCtrl', {$scope: childScope});
+
+      scope.entry = removedEntry;
+      entryActionsCtrl = $controller('EntryActionsCtrl', {$scope: scope});
     });
   });
 
@@ -33,4 +36,13 @@ describe('Entry list controller', function () {
     expect(scope.entries[1].getId()).toEqual('entry3');
   });
 
+  it('handles an entityDeleted event from EntryActions controller', function () {
+    scope.delete();
+    expect(scope.entries.length).toEqual(2);
+    expect(scope.entries[0].getId()).toEqual('entry1');
+    expect(scope.entries[1].getId()).toEqual('entry3');
+  });
+
 });
+
+
