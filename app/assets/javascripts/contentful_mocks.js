@@ -1,5 +1,19 @@
 'use strict';
 
+window.createMockEntity = function (id) {
+  return {
+    getId: function () {
+      return id;
+    },
+    data: {
+      sys: {}
+    },
+    delete: function (fn) {
+      fn(null, this);
+    }
+  };
+};
+
 angular.module('contentful/mocks', []).provider('ShareJS', function () {
   function FakeShareJSClient() {
   }
@@ -27,3 +41,4 @@ angular.module('contentful/mocks', []).provider('ShareJS', function () {
     return new FakeShareJSClient();
   };
 });
+
