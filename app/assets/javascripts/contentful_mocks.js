@@ -16,12 +16,8 @@ angular.module('contentful/mocks', []).provider('ShareJS', function () {
   }
 
   FakeShareJSDoc.prototype = {
-    removeListener: function () {
-      
-    },
-    addListener: function () {
-      
-    }
+    removeListener: angular.noop,
+    addListener: angular.noop
   };
 
   this.token = function () { };
@@ -29,11 +25,5 @@ angular.module('contentful/mocks', []).provider('ShareJS', function () {
 
   this.$get = function () {
     return new FakeShareJSClient();
-  };
-}).provider('analytics', function () {
-  this.$get = function () {
-    return {
-      track: function(){}
-    };
   };
 });
