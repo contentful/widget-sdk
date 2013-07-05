@@ -21,7 +21,6 @@
 //= require lib/bind_textarea
 //
 //= require hamlcoffee
-//= require_tree ./templates
 //
 //= require angular-1.0.4
 //= require contentful

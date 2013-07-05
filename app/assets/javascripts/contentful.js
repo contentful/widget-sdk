@@ -2,7 +2,6 @@
 //
 //= require_tree ./classes
 //= require_tree ./components
-//= require_tree ./controllers
 //= require_tree ./directives
 //= require_tree ./ot
 //= require_tree ./services
