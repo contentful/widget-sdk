@@ -23,9 +23,7 @@ describe('Routing service', function () {
         getPublishedContentTypes: function (callback) {
           _.defer(callback, null, [{}]);
         },
-        refreshPublishedContentTypes: function () {
-          
-        },
+        refreshPublishedContentTypes: angular.noop,
         getId: function () {
           return '123';
         },
