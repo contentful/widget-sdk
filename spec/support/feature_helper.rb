@@ -6,6 +6,7 @@ module FeatureHelper
     rescue Capybara::ElementNotFound
       fill_in 'user_email', with: 'user@example.com'
       fill_in 'user_password', with: 'password'
+      check 'remember_me'
       click_button 'Sign In'
     end
     page.find('space-view')
@@ -29,8 +30,9 @@ module FeatureHelper
     within 'nav.account .project' do
       find('.dropdown-toggle').click
       begin
-        all('li').find{|li| li.text == 'TestSpace'}.click
-      catch Capybara::ElementNotFound
+        find('li', text: 'TestSpace').click
+      rescue Capybara::ElementNotFound
+        find('.dropdown-toggle').click
         return
       end
     end
@@ -46,11 +48,12 @@ module FeatureHelper
   end
 
   def create_test_space
-    within 'nav.account .project' do
-      find('.dropdown-toggle').click
-      all('li').last.click
-    end
-    within 'form[name=newSpaceForm]' do
+    find('.account .project .dropdown-toggle').click
+    begin
+      find('li', text: 'TestSpace').click
+      return
+    rescue Capybara::ElementNotFound
+      find('li', text: 'Create Space').click
       fill_in 'name', with: 'TestSpace'
       fill_in 'locale', with: 'en-US'
       click_button 'Create Space'
