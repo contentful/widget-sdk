@@ -20,6 +20,7 @@ feature 'Tutorial', js: true do
     click_link 'Next'
     find('.tablist-button .dropdown-toggle').click
     all('.tablist-button li', text: 'Content Type').first.click
+
     within('.tab-content', visible:true) do
       fill_in 'contentTypeName', with: 'Blog Post'
       fill_in 'contentTypeDescription', with: 'Foobar'
@@ -44,9 +45,12 @@ feature 'Tutorial', js: true do
 
     click_button 'Yes, please'
 
-    find('a', text: 'Back to overview')
-    all('.cell-name').should have(6).elements
+    using_wait_time 20 do
+      find('a', text: 'Back to overview')
+      all('.cell-name').should have(7).elements
+    end
 
     click_link 'Back to overview'
+    find('#overview .guiders_close').click
   end
 end

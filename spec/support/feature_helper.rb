@@ -9,6 +9,11 @@ module FeatureHelper
       check 'remember_me'
       click_button 'Sign In'
     end
+
+    begin
+      find('#overview .guiders_close', wait: 0.5).click
+    rescue Capybara::ElementNotFound
+    end
     page.find('space-view')
   end
 
@@ -30,7 +35,7 @@ module FeatureHelper
     within 'nav.account .project' do
       find('.dropdown-toggle').click
       begin
-        find('li', text: 'TestSpace').click
+        find('li', text: 'TestSpace', wait: 0.5).click
       rescue Capybara::ElementNotFound
         find('.dropdown-toggle').click
         return
@@ -45,12 +50,15 @@ module FeatureHelper
       all('a').find{|a| a[:'data-method'] == 'delete'}.click
       page.driver.browser.switch_to.alert.accept
     end
+    sleep 4
   end
 
   def create_test_space
     find('.account .project .dropdown-toggle').click
     begin
-      find('li', text: 'TestSpace').click
+      using_wait_time 0.5 do
+        find('li', text: 'TestSpace').click
+      end
       return
     rescue Capybara::ElementNotFound
       find('li', text: 'Create Space').click
@@ -58,5 +66,6 @@ module FeatureHelper
       fill_in 'locale', with: 'en-US'
       click_button 'Create Space'
     end
+    sleep 5
   end
 end
