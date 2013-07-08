@@ -22,15 +22,6 @@ angular.module('contentful').
     });
   };
 
-  $scope.$on('entityDeleted', function (event, contentType) {
-    if (event.currentScope !== event.targetScope) {
-      var scope = event.currentScope;
-      if (contentType === scope.contentType) {
-        scope.tab.close();
-      }
-    }
-  });
-
   $scope.canDelete = function() {
     return $scope.contentType.canDelete() && can('delete', $scope.contentType.data);
   };

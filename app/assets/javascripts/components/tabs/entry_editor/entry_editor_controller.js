@@ -26,6 +26,15 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     event.currentScope.otUpdateEntity();
   });
 
+  $scope.$on('entityDeleted', function (event, entry) {
+    if (event.currentScope !== event.targetScope) {
+      var scope = event.currentScope;
+      if (entry === scope.entry) {
+        scope.tab.close();
+      }
+    }
+  });
+
   $scope.$on('otRemoteOp', function (event) {
     event.currentScope.otUpdateEntity();
   });

@@ -19,6 +19,15 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
     if (contentType) loadPublishedContentType();
   });
 
+  $scope.$on('entityDeleted', function (event, contentType) {
+    if (event.currentScope !== event.targetScope) {
+      var scope = event.currentScope;
+      if (contentType === scope.contentType) {
+        scope.tab.close();
+      }
+    }
+  });
+
   $scope.$on('otRemoteOp', function (event) {
     event.currentScope.otUpdateEntity();
   });

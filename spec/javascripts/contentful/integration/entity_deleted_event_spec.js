@@ -2,7 +2,7 @@
 
 describe('Entry list controller', function () {
 
-  var spaceCtrl, entryListCtrl, entryActionsCtrl, entryListActionsCtrl;
+  var spaceCtrl, entryListCtrl, entryEditorCtrl, entryListActionsCtrl, entryActionsCtrl;
   var scope, childScope;
   var closeStub;
   var removedEntity;
@@ -24,12 +24,13 @@ describe('Entry list controller', function () {
         close: closeStub
       };
 
-      entryListCtrl = $controller('EntryListCtrl', {$scope: scope});
-
       // Space Controller necessary for space broadcast method
       spaceCtrl = $controller('SpaceCtrl', {$scope: scope});
 
+      entryListCtrl = $controller('EntryListCtrl', {$scope: scope});
+
       childScope = scope.$new();
+      entryEditorCtrl = $controller('EntryEditorCtrl', {$scope: childScope});
       entryListActionsCtrl = $controller('EntryListActionsCtrl', {$scope: childScope});
 
       entryActionsCtrl = $controller('EntryActionsCtrl', {$scope: childScope});
@@ -61,7 +62,7 @@ describe('Entry list controller', function () {
 
 describe('Content Type Actions controller', function () {
 
-  var spaceCtrl, contentTypeActionsCtrl;
+  var spaceCtrl, contentTypeEditorCtrl, contentTypeActionsCtrl;
   var removedEntity;
   var scope, childScope;
   var closeStub;
@@ -81,6 +82,7 @@ describe('Content Type Actions controller', function () {
         close: closeStub
       };
       childScope = scope.$new();
+      contentTypeEditorCtrl = $controller('ContentTypeEditorCtrl', {$scope: childScope});
       contentTypeActionsCtrl = $controller('ContentTypeActionsCtrl', {$scope: childScope});
     });
   });
