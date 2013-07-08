@@ -8,12 +8,6 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     scope.otDisabled = !enabled;
   });
 
-  $scope.$on('tabClosed', function(event, tab) {
-    if (tab==event.currentScope.tab) {
-      if (event.currentScope.otDoc) event.currentScope.otDoc.close();
-    }
-  });
-
   $scope.tab.closingMessage = 'You have unpublished changes.';
   $scope.tab.closingMessageDisplayType = 'tooltip';
 
