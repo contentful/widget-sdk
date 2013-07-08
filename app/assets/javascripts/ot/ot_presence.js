@@ -142,6 +142,7 @@ angular.module('contentful').
   directive('otFieldPresence', function() {
     return {
       require: '^otDocPresence',
+      controller: 'otFieldPresenceCtrl',
       link: function(scope, element, attrs, otPresenceCtrl) {
         function focus() {
           if (!scope.otFieldPresenceId) return;
@@ -149,17 +150,16 @@ angular.module('contentful').
         }
 
         element.find('input, textarea').on('focus keydown', focus);
-      },
-
-      controller: function($scope, $attrs) {
-        var unregister;
-        $scope.$watch($attrs.otFieldPresence, function(v) {
-          var id = $scope.otFieldPresenceId = v.join('.');
-          var fp = 'presence.fields["' + id + '"]';
-          if (unregister) unregister();
-          unregister = $scope.$watch(fp, 'fieldPresence=' + fp);
-        }, true);
       }
     };
-  });
+  }).
 
+  controller('otFieldPresenceCtrl', function($scope, $attrs) {
+    var unregister;
+    $scope.$watch($attrs.otFieldPresence, function(v) {
+      var id = $scope.otFieldPresenceId = v.join('.');
+      var fp = 'presence.fields["' + id + '"]';
+      if (unregister) unregister();
+      unregister = $scope.$watch(fp, 'fieldPresence=' + fp);
+    }, true);
+  });
