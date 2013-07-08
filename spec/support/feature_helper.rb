@@ -1,6 +1,21 @@
 module FeatureHelper
+  @@access_token = nil
+
+  def access_token
+    @@access_token
+  end
+
+  def access_token=(t)
+    @@access_token = t
+  end
+
   def ensure_login
-    visit '/'
+    if access_token
+      visit "/#access_token=#{access_token}"
+    else
+      visit "/"
+    end
+
     begin
       page.find('space-view')
     rescue Capybara::ElementNotFound
@@ -15,6 +30,7 @@ module FeatureHelper
     rescue Capybara::ElementNotFound
     end
     page.find('space-view')
+    self.access_token = page.evaluate_script('angular.element($("space-view")).injector().get("authentication").token')
   end
 
   def clear_cookies
