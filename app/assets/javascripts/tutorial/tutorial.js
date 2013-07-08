@@ -503,7 +503,9 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         description: 'If you need more information before starting to use Contentful, please check our <a href="http://support.contentful.com/home">Knowledge Base Pages</a>.',
         next: 'overview',
         overlay: true,
-        buttons: [{name: 'Next'}]
+        buttons: [
+          {name: 'Back to overview', onclick: function () { guiders.next(); }}
+        ]
       });
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -613,7 +615,10 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         description: 'If you need more information before starting to use Contentful, please check our <a href="http://support.contentful.com/home">Knowledge Base Pages</a>.',
         overlay: true,
         next: 'overview',
-        buttons: [{name: 'Next'}]
+        buttons: [
+          {name: 'Back to overview', onclick: function () { guiders.next(); }}
+        ]
+
       });
 
     }
