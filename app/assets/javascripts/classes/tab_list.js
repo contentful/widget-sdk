@@ -161,6 +161,10 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics, 
       return this._canClose;
     },
 
+    setHovering: function (state) {
+      this.hovered = state;
+    },
+
     replace: function(options){
      var item = this.list.makeItem(options);
      this.list.replaceTab(this, item);

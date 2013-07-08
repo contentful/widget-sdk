@@ -13,6 +13,7 @@
     "spyOn",
     "assert",
     "refute",
+    "sinon",
     "define",
     "angular",
     "_",

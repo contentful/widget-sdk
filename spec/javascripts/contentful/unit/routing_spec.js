@@ -23,9 +23,7 @@ describe('Routing service', function () {
         getPublishedContentTypes: function (callback) {
           _.defer(callback, null, [{}]);
         },
-        refreshPublishedContentTypes: function () {
-          
-        },
+        refreshPublishedContentTypes: angular.noop,
         getId: function () {
           return '123';
         },
@@ -39,7 +37,8 @@ describe('Routing service', function () {
       $controller('TabViewCtrl', {$scope: $rootScope});
     }));
 
-    it('should visit the entryList if only the space was given', inject(function ($location, $rootScope, $controller) {
+    it('should visit the entryList if only the space was given', inject(function ($location, $rootScope, $controller, routing) {
+      routing.getRoute(); // trigger routeProvider initialization
       $location.path('/spaces/123');
       $rootScope.$apply(); // Create route
 

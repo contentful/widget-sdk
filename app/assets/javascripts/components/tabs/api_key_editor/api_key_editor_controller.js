@@ -22,7 +22,7 @@ angular.module('contentful').
     });
 
     $scope.$watch('apiKeyForm.$dirty', function (modified, old, scope) {
-      scope.tab.dirty = modified;
+      scope.tab.dirty = !old && modified;
     });
 
     function title() {

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('EntryListActionsCtrl', function EntryListCtrl($scope, notification, analytics) {
+angular.module('contentful').controller('EntryListActionsCtrl', function EntryListActionsCtrl($scope, notification, analytics) {
 
   var _cacheSelected;
 

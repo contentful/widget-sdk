@@ -15,18 +15,10 @@
     border-bottom-color: $lightest-gray
     +border-radius(3px 3px 0 0)
     color: $light-gray
+    +box-shadow(0px -1px 3px $lightest-gray inset)
     .tooltip
       display: none !important
     &.dirty
-      i.ss-delete
-        background-color: $blue
-        color: $blue
-        text-shadow: none
-        border-radius: 10px
-        font-size: 8px
-      &:hover
-        i.ss-delete
-          color: $blue
       .tooltip
         display: block !important
         white-space: nowrap
@@ -47,14 +39,14 @@
     &.hide-tooltip
       .tooltip
         display: none !important
-  i.ss-delete
+  i.close-icon
     position: absolute
-    width: 12px
-    height: 12px
     top: 12px
-    right: 8px
+    right: 9px
     font-size: 10px
-    text-align: center
+  i.ss-record
+    color: $light-blue
+    font-size: 8px
   .fade-text
     position: absolute
     top: 0
@@ -70,6 +62,8 @@
     +gray-highlight
     .fade-text
       +fade-text-background($gray-background)
+    i.ss-record
+      color: $blue
   .tab:hover
     color: $dark-gray
     cursor: pointer

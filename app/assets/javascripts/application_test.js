@@ -8,6 +8,8 @@
 //= require jquery.autosize
 //= require jquery.cookies.2.2.0
 //
+//= require guiders-1.3.0
+//
 //= require bootstrap-tooltip
 //
 //= require moment-1.7.2
@@ -19,7 +21,6 @@
 //= require lib/bind_textarea
 //
 //= require hamlcoffee
-//= require_tree ./templates
 //
 //= require angular-1.0.4
 //= require contentful
@@ -27,8 +28,6 @@
 //= require ng-time-relative
 //= require user_interface
 //= require contentful_mocks
-//
-//= require_tree ./jasmine_examples
 //
 //= require_self
 
