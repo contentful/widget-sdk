@@ -18,6 +18,18 @@ window.createMockEntity = function (id) {
   };
 };
 
+window.createMockSpace = function (id) {
+  var entity = window.createMockEntity(id);
+  entity.getPublishLocales = function(){};
+  entity.getDefaultLocale  = function(){
+    return {
+      code: 'en'
+    };
+  };
+
+  return entity;
+};
+
 angular.module('contentful/mocks', []).provider('ShareJS', function () {
   function FakeShareJSClient() {
   }
