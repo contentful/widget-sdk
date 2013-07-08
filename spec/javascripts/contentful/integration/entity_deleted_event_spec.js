@@ -46,3 +46,39 @@ describe('Entry list controller', function () {
 });
 
 
+
+describe('Entry Actions controller', function () {
+
+  var entryListCtrl, entryActionsCtrl;
+  var scope, childScope;
+  var removedEntry;
+  var closeStub;
+
+  beforeEach(function () {
+    module('contentful/test');
+    inject(function ($rootScope, $controller) {
+      scope = $rootScope.$new();
+      removedEntry = window.createMockEntity('entry2');
+      entryListCtrl = $controller('EntryListCtrl', {$scope: scope});
+
+      closeStub = sinon.stub();
+      scope.entry = removedEntry;
+      scope.tab = {
+        close: closeStub
+      };
+      childScope = scope.$new();
+      entryActionsCtrl = $controller('EntryActionsCtrl', {$scope: childScope});
+    });
+  });
+
+  afterEach(function () {
+  });
+
+  it('handles an entityDeleted event from EntryList controller', function () {
+    scope.$broadcast('entityDeleted', removedEntry);
+    expect(closeStub.called).toBeTruthy();
+  });
+
+});
+
+
