@@ -11,11 +11,26 @@ feature 'Tutorial', js: true do
     remove_test_space
   end
 
-  scenario 'Run tutorial' do
+  def open_tutorial_overview
     within 'nav.account .user' do
       find('.dropdown-toggle').click
       find('li', text: 'Start Tutorial').click
     end
+  end
+
+  def close_tutorial_overview
+    find('#overview .guiders_close').click
+  end
+
+  def finish_tutorial
+    using_wait_time 20 do
+      find('a', text: 'Back to overview')
+      yield if block_given?
+    end
+    click_link 'Back to overview'
+  end
+
+  def run_content_type_tutorial
     find('.left.tutorial-select-box .take').click
     click_link 'Next'
     find('.tablist-button .dropdown-toggle').click
@@ -45,12 +60,15 @@ feature 'Tutorial', js: true do
 
     click_button 'Yes, please'
 
-    using_wait_time 20 do
-      find('a', text: 'Back to overview')
+    finish_tutorial do
       all('.cell-name').should have(7).elements
     end
-
-    click_link 'Back to overview'
-    find('#overview .guiders_close').click
   end
+
+  scenario 'Run tutorial' do
+    open_tutorial_overview
+    run_content_type_tutorial
+    close_tutorial_overview
+  end
+
 end
