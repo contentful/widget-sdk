@@ -76,13 +76,6 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
     analytics.track('Clicked Logo');
   };
 
-  $scope.$on('entityDeleted', function (event, entity) {
-    var spaceScope = event.currentScope;
-    if (event.targetScope !== spaceScope) {
-      spaceScope.$broadcast('entityDeleted', entity);
-    }
-  });
-
   $scope.broadcastFromSpace = function(event/*, args*/){
     var args = Array.prototype.slice.call(arguments, 1, arguments.length);
     $scope.$broadcast.apply($scope, [event].concat(args));
