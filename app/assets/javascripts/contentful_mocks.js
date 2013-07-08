@@ -5,6 +5,10 @@ window.createMockEntity = function (id) {
     getId: function () {
       return id;
     },
+    // mock for api keys
+    getName: function () {
+      return id;
+    },
     data: {
       sys: {}
     },

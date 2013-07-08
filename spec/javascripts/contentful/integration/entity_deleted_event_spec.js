@@ -96,3 +96,56 @@ describe('Content Type Actions controller', function () {
 });
 
 
+describe('Content Delivery controller', function () {
+
+  var spaceCtrl, contentDeliveryCtrl, apiKeyEditorCtrl;
+  var scope, childScope;
+  var closeStub, apiKeysStub;
+  var removedEntity;
+
+  beforeEach(function () {
+    module('contentful/test');
+    inject(function ($rootScope, $controller) {
+      scope = $rootScope.$new();
+      removedEntity = window.createMockEntity('apikey2');
+      var apiKeys = [
+        window.createMockEntity('apikey1'),
+        removedEntity,
+        window.createMockEntity('apikey3')
+      ];
+
+      apiKeysStub = sinon.stub();
+      apiKeysStub.callsArgWith(1, null, apiKeys);
+
+      scope.apiKey = removedEntity;
+      closeStub = sinon.stub();
+      scope.tab = {
+        close: closeStub
+      };
+      scope.spaceContext = {
+        space: {
+          getApiKeys: apiKeysStub
+        }
+      };
+
+      // Space Controller necessary for space broadcast method
+      spaceCtrl = $controller('SpaceCtrl', {$scope: scope});
+
+      contentDeliveryCtrl = $controller('ContentDeliveryCtrl', {$scope: scope});
+
+      childScope = scope.$new();
+      apiKeyEditorCtrl = $controller('ApiKeyEditorCtrl', {$scope: childScope});
+    });
+  });
+
+  afterEach(function () {
+  });
+
+  it('handles an entityDeleted event from ApiKeyEditor controller', function () {
+    childScope.delete();
+    expect(closeStub.called).toBeTruthy();
+    expect(scope.apiKeys.length).toEqual(2);
+  });
+
+});
+
