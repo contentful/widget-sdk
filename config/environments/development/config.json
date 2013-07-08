@@ -6,6 +6,11 @@
   "marketing_url": "http://static.joistio.com:8888",
   "asset_host": "static.joistio.com:8888",
   "ot_host": "ot.joistio.com:8888",
+  "filepicker": {
+    "api_key": "QGV4TMRPGovR9AIjMi6Az",
+    "policy": "eyJleHBpcnkiOjE1MzA5NzU3MDIsImNhbGwiOlsicGljayJdfQ==",
+    "signature": "e6f3e2c38a903f9669256cd8fb411d88fd989f4457303eba1971a5ec8a59b6a8"
+  },
   "fog": {
     "s3": {
       "options": {
