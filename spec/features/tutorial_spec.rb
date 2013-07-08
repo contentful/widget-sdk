@@ -65,9 +65,48 @@ feature 'Tutorial', js: true do
     end
   end
 
-  scenario 'Run tutorial' do
+  def run_entry_tutorial
+    find('.middle.tutorial-select-box .take').click
+    click_link 'Next'
+    using_wait_time 20 do
+      find('.guiders_title', text:'Click on the Add button!')
+    end
+    find('.tablist-button .dropdown-toggle').click
+    all('.tablist-button li', text: 'Blog Post').first.click
+
+    3.times do
+      click_link 'Next'
+    end
+
+    within('.tab-content', visible:true) do
+      all('textarea')[0..2].each do |ta|
+        ta.set('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.')
+      end
+      within '.cf-datetime-editor' do
+        find('.date').click
+        all('td[data-handler=selectDay] a')[5].click
+      end
+      click_button 'Publish'
+    end
+
+    find('.nav-bar li[data-view-type=entry-list]').first.click
+
+    click_button 'Yes, please'
+
+    finish_tutorial do
+      all('.cell-name').should have(11).elements
+    end
+  end
+
+  scenario 'Run Content Type tutorial' do
     open_tutorial_overview
     run_content_type_tutorial
+    close_tutorial_overview
+  end
+
+  scenario 'Run Entry tutorial' do
+    open_tutorial_overview
+    run_entry_tutorial
     close_tutorial_overview
   end
 
