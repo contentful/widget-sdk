@@ -17,6 +17,7 @@ describe('Entry list controller', function () {
         window.createMockEntity('entry3')
       ];
       entryListCtrl = $controller('EntryListCtrl', {$scope: scope});
+
       childScope = scope.$new();
       entryListActionsCtrl = $controller('EntryListActionsCtrl', {$scope: childScope});
 
@@ -61,8 +62,8 @@ describe('Entry Actions controller', function () {
       removedEntry = window.createMockEntity('entry2');
       entryListCtrl = $controller('EntryListCtrl', {$scope: scope});
 
-      closeStub = sinon.stub();
       scope.entry = removedEntry;
+      closeStub = sinon.stub();
       scope.tab = {
         close: closeStub
       };
@@ -75,6 +76,40 @@ describe('Entry Actions controller', function () {
   });
 
   it('handles an entityDeleted event from EntryList controller', function () {
+    scope.$broadcast('entityDeleted', removedEntry);
+    expect(closeStub.called).toBeTruthy();
+  });
+
+});
+
+
+describe('Content Type Actions controller', function () {
+
+  var contentTypeActionsCtrl;
+  var removedEntry;
+  var scope, childScope;
+  var closeStub;
+
+  beforeEach(function () {
+    module('contentful/test');
+    inject(function ($rootScope, $controller) {
+      scope = $rootScope.$new();
+      removedEntry = window.createMockEntity('content_type1');
+      scope.contentType = removedEntry;
+      closeStub = sinon.stub();
+      scope.tab = {
+        close: closeStub
+      };
+      childScope = scope.$new();
+      contentTypeActionsCtrl = $controller('ContentTypeActionsCtrl', {$scope: childScope});
+    });
+  });
+
+  afterEach(function () {
+  });
+
+  it('handles an entityDeleted event from ContentTypeActions controller', function () {
+    //scope.delete();
     scope.$broadcast('entityDeleted', removedEntry);
     expect(closeStub.called).toBeTruthy();
   });
