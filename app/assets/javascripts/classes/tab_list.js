@@ -114,7 +114,7 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics, 
       return _.foldl(this.items, function (sum, tab) {
         return sum + (tab.hidden ? 0 : 1);
       }, 0);
-    },
+    }
 
   };
 
