@@ -5,20 +5,20 @@ describe('Entry list controller', function () {
   var spaceCtrl, entryListCtrl, entryActionsCtrl, entryListActionsCtrl;
   var scope, childScope;
   var closeStub;
-  var removedEntry;
+  var removedEntity;
 
   beforeEach(function () {
     module('contentful/test');
     inject(function ($rootScope, $controller) {
       scope = $rootScope.$new();
-      removedEntry = window.createMockEntity('entry2');
+      removedEntity = window.createMockEntity('entry2');
       scope.entries = [
         window.createMockEntity('entry1'),
-        removedEntry,
+        removedEntity,
         window.createMockEntity('entry3')
       ];
 
-      scope.entry = removedEntry;
+      scope.entry = removedEntity;
       closeStub = sinon.stub();
       scope.tab = {
         close: closeStub
@@ -40,7 +40,7 @@ describe('Entry list controller', function () {
   });
 
   it('handles an entityDeleted event from EntryListActions controller', function () {
-    childScope.selection.toggle(removedEntry);
+    childScope.selection.toggle(removedEntity);
     childScope.deleteSelected();
     expect(scope.entries.length).toEqual(2);
     expect(scope.entries[0].getId()).toEqual('entry1');
@@ -62,7 +62,7 @@ describe('Entry list controller', function () {
 describe('Content Type Actions controller', function () {
 
   var spaceCtrl, contentTypeActionsCtrl;
-  var removedEntry;
+  var removedEntity;
   var scope, childScope;
   var closeStub;
 
@@ -70,8 +70,8 @@ describe('Content Type Actions controller', function () {
     module('contentful/test');
     inject(function ($rootScope, $controller) {
       scope = $rootScope.$new();
-      removedEntry = window.createMockEntity('content_type1');
-      scope.contentType = removedEntry;
+      removedEntity = window.createMockEntity('content_type1');
+      scope.contentType = removedEntity;
 
       // Space Controller sends entityDeleted events back down the scopes
       spaceCtrl = $controller('SpaceCtrl', {$scope: scope});
