@@ -39,7 +39,7 @@ angular.module('contentful').
         $scope.$apply(function() {
           if (err) return notification.error(t + ' could not be deleted');
           notification.info(t + ' deleted successfully');
-          $scope.$emit('entityDeleted', $scope.apiKey);
+          $scope.broadcastFromSpace('entityDeleted', $scope.apiKey);
         });
       });
     };

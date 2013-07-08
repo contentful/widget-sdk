@@ -15,7 +15,7 @@ angular.module('contentful').
       $scope.$apply(function (scope) {
         if (err) return notification.error('Error deleting content type');
         notification.info('Content type deleted successfully');
-        scope.$emit('entityDeleted', contentType);
+        scope.broadcastFromSpace('entityDeleted', contentType);
         // TODO this should happen automatically
         scope.spaceContext.removeContentType($scope.contentType);
       });

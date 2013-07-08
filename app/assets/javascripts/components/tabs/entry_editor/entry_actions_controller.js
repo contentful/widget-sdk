@@ -15,7 +15,7 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
           notification.error('Error deleting entry');
         }else{
           notification.info('Entry deleted successfully');
-          scope.$emit('entityDeleted', entry);
+          scope.broadcastFromSpace('entityDeleted', entry);
         }
       });
     });

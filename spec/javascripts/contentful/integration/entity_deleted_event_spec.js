@@ -26,7 +26,7 @@ describe('Entry list controller', function () {
 
       entryListCtrl = $controller('EntryListCtrl', {$scope: scope});
 
-      // Space Controller sends entityDeleted events back down the scopes
+      // Space Controller necessary for space broadcast method
       spaceCtrl = $controller('SpaceCtrl', {$scope: scope});
 
       childScope = scope.$new();
@@ -73,7 +73,7 @@ describe('Content Type Actions controller', function () {
       removedEntity = window.createMockEntity('content_type1');
       scope.contentType = removedEntity;
 
-      // Space Controller sends entityDeleted events back down the scopes
+      // Space Controller necessary for space broadcast method
       spaceCtrl = $controller('SpaceCtrl', {$scope: scope});
 
       closeStub = sinon.stub();

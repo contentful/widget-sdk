@@ -104,7 +104,7 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
     var applyLater = makeApplyLater(makeBatchResultsNotifier('deleted'));
     forAllEntries(function(entry) {
       entry.delete(function (err, entry) {
-        if (!err) $scope.$emit('entityDeleted', entry);
+        if (!err) $scope.broadcastFromSpace('entityDeleted', entry);
         applyLater();
       });
     });

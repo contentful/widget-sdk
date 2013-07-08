@@ -83,6 +83,11 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
     }
   });
 
+  $scope.broadcastFromSpace = function(event/*, args*/){
+    var args = Array.prototype.slice.call(arguments, 1, arguments.length);
+    $scope.$broadcast.apply($scope, [event].concat(args));
+  };
+
   $scope.createEntry = function(contentType) {
     var scope = this;
     scope.spaceContext.space.createEntry(contentType.getId(), {}, function(err, entry){
