@@ -17,6 +17,8 @@ angular.module('contentful').
         notification.info('Content type deleted successfully');
         scope.broadcastFromSpace('entityDeleted', contentType);
         // TODO this should happen automatically
+        // setup an event listener when the spaceContext instance is created
+        // on client controller or space context controller
         scope.spaceContext.removeContentType($scope.contentType);
       });
     });
