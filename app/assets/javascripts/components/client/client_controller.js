@@ -204,7 +204,9 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
     analytics.track('Clicked Create-Space');
   };
 
-  $scope.performTokenLookup();
+  $scope.initClient = function () {
+    $scope.performTokenLookup();
+  };
   
   function showTutorialIfNecessary() {
     /*global moment*/
