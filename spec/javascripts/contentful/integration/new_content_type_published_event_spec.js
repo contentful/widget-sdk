@@ -22,4 +22,26 @@ describe('The Space context', function () {
     expect(broadcastSpy.calledWith('newContentTypePublished')).toBeTruthy();
   });
 
+  it('fires and handles an event on the tablistButton directive', inject(function ($rootScope, $compile) {
+    var container = $('<div class="tablist-button" />');
+    var dropdownToggle = $('<div class="dropdown-toggle" />');
+    container.append(dropdownToggle);
+    container.appendTo($('body'));
+
+    var compiled = $compile(container);
+    compiled($rootScope.$new());
+
+    var tooltipSpy = sinon.spy($.fn, 'tooltip');
+    var oneSpy = sinon.spy($.fn, 'one');
+
+    spaceContext.registerPublishedContentType(window.createMockEntity('content'));
+
+    expect(tooltipSpy.calledTwice).toBeTruthy();
+    expect(oneSpy.called).toBeTruthy();
+
+    container.remove();
+    tooltipSpy.restore();
+    oneSpy.restore();
+  }));
+
 });
