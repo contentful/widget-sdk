@@ -76,9 +76,8 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
     analytics.track('Clicked Logo');
   };
 
-  $scope.broadcastFromSpace = function(event/*, args*/){
-    var args = Array.prototype.slice.call(arguments, 1, arguments.length);
-    $scope.$broadcast.apply($scope, [event].concat(args));
+  $scope.broadcastFromSpace = function(){
+    $scope.$broadcast.apply($scope, arguments);
   };
 
   $scope.createEntry = function(contentType) {
