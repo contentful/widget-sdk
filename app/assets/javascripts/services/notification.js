@@ -7,6 +7,9 @@ angular.module('contentful').
 
       error: function(body) {
         this._notify(body, 'error');
+        if (window.Raven) {
+          window.Raven.captureException(body);
+        }
       },
 
       info: function(body) {
