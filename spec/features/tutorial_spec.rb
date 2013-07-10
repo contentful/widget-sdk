@@ -33,8 +33,8 @@ feature 'Tutorial', js: true do
   def run_content_type_tutorial
     find('.left.tutorial-select-box .take').click
     click_link 'Next'
-    find('.tablist-button .dropdown-toggle').click
-    all('.tablist-button li', text: 'Content Type').first.click
+
+    add_button 'Content Type'
 
     within('.tab-content', visible:true) do
       fill_in 'contentTypeName', with: 'Blog Post'
@@ -56,7 +56,7 @@ feature 'Tutorial', js: true do
 
     find('.publish').click
 
-    all('.nav-bar li').first.click
+    nav_bar 'content-type-list'
 
     click_button 'Yes, please'
 
@@ -71,8 +71,8 @@ feature 'Tutorial', js: true do
     using_wait_time 20 do
       find('.guiders_title', text:'Click on the Add button!')
     end
-    find('.tablist-button .dropdown-toggle').click
-    all('.tablist-button li', text: 'Blog Post').first.click
+
+    add_button 'Blog Post'
 
     3.times do
       click_link 'Next'
@@ -85,7 +85,7 @@ feature 'Tutorial', js: true do
     all('td[data-handler=selectDay] a')[5].click
     click_button 'Publish'
 
-    find('.nav-bar li[data-view-type=entry-list]').click
+    nav_bar 'entry=list'
 
     click_button 'Yes, please'
 
@@ -97,8 +97,7 @@ feature 'Tutorial', js: true do
   def run_api_key_tutorial
     find('.right.tutorial-select-box .take').click
     click_link 'Next'
-    find('.tablist-button .dropdown-toggle').click
-    all('.tablist-button li', text: 'API Key').first.click
+    add_button 'API Key'
     click_link 'Next'
 
     within('.tab-content', visible:true) do
@@ -109,7 +108,7 @@ feature 'Tutorial', js: true do
 
     click_link 'Next'
 
-    find('.nav-bar li[data-view-type=content-delivery]').click
+    nav_bar 'content-delivery'
     finish_tutorial do
       all('td.cell-name').should have(1).element
     end

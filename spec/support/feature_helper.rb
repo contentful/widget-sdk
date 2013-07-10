@@ -84,4 +84,14 @@ module FeatureHelper
     end
     sleep 5
   end
+
+  def add_button(text)
+    find('.tablist-button .dropdown-toggle').click
+    find('.tablist-button li', text: text).click
+  end
+
+  def nav_bar(target)
+    find(".nav-bar li[data-view-type=#{target}]").click
+  end
+
 end
