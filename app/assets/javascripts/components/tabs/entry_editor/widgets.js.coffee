@@ -1,4 +1,5 @@
 angular.module('contentful').service 'widgets', ($compile) ->
+  # TODO Replace everything here with a template that switches on the fieldType
   'use strict'
 
   editWidgets =

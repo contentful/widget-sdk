@@ -67,11 +67,6 @@ angular.module('contentful').directive('contentTypeFieldList', function(analytic
         return field.type === 'Symbol' || field.type === 'Text';
       };
 
-      $scope.$watch('publishedContentType', function(et, old, scope) {
-        if (et && et.data.fields)
-          scope.publishedIds = _.pluck(et.data.fields, 'id');
-      });
-
       $scope.removeDisplayField = function () {
         $scope.otDoc.at(['displayField']).set(null, function (err) {
           if (!err) $scope.$apply(function (scope) {

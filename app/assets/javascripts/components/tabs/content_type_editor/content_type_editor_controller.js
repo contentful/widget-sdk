@@ -62,7 +62,6 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
 
   $scope.$watch('publishedContentType.data.fields', function (fields, old, scope) {
     scope.publishedIds = _.pluck(fields, 'id');
-    //console.log('refreshing publishedIds', scope.publishedIds);
   });
 
   $scope.canPublish = function() {

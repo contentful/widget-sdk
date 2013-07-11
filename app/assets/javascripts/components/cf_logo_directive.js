@@ -1,4 +1,4 @@
-angular.module('contentful').directive('cfLogo', function (cfSpinner) {
+angular.module('contentful').directive('cfLogo', ['cfSpinner', function (cfSpinner) {
   'use strict';
 
   return {
@@ -22,4 +22,4 @@ angular.module('contentful').directive('cfLogo', function (cfSpinner) {
       });
     }
   };
-});
+}]);

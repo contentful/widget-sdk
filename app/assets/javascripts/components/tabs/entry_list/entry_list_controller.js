@@ -53,6 +53,7 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
     }
   };
 
+  // TODO doesn't this make some of the resetEntries calls unnecessary?
   $scope.$watch(function pageParameters(scope){
     return {
       page: scope.paginator.page,
@@ -72,11 +73,11 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
     this.reloadInProgress = true;
     var stopSpin = cfSpinner.start();
     this.spaceContext.space.getEntries(this.buildQuery(), function(err, entries, stats) {
-      scope.reloadInProgress = false;
-      if (err) return;
-      scope.paginator.numEntries = stats.total;
-      scope.selection.switchBaseSet(stats.total);
       scope.$apply(function(scope){
+        scope.reloadInProgress = false;
+        if (err) return;
+        scope.paginator.numEntries = stats.total;
+        scope.selection.switchBaseSet(stats.total);
         scope.entries = entries;
         stopSpin();
       });
@@ -125,6 +126,9 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
     }, 500);
   };
 
+  // TODO unify the behavior between loadMore and resetEntries.
+  // Try to get rid of pausereset
+  // This is also used in cfAutocompleteResultList
   $scope.loadMore = function() {
     if (this.reloadInProgress || this.resetPaused) return;
     if (this.paginator.atLast()) return;
@@ -167,16 +171,6 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
       return 'draft';
     }
   };
-
-  // Development shorcut to quickly open an entry
-
-  //$scope.$watch(function($scope){
-  //  return !(_.isEmpty($scope.entries) || _.isEmpty($scope.contentTypes));
-  //}, function(dataReady){
-  //  if (dataReady) {
-  //    $scope.editEntry($scope.entries[0]);
-  //  }
-  //});
 
   $scope.$on('tabBecameActive', function(event, tab) {
     if (tab !== $scope.tab) return;

@@ -48,7 +48,6 @@ feature 'Tutorial', js: true do
 
       fill_in 'newName', with: 'Timestamp'
       find('.type .dropdown-toggle').click
-      #find('.type .li', text: 'Date/Time').click
       find(:xpath, ".//span[text()='Date/Time']/..").click
       find('.button.new').click
     end

@@ -15,11 +15,6 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     scope.tab.title = title;
   });
 
-  $scope.$on('inputBlurred', function(event) {
-    event.stopPropagation();
-    event.currentScope.otUpdateEntity();
-  });
-
   $scope.$on('entityDeleted', function (event, entry) {
     if (event.currentScope !== event.targetScope) {
       var scope = event.currentScope;
