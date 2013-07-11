@@ -46,7 +46,10 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
 
   $scope.$watch(function (scope) {
     if (scope.otDoc && scope.entry) {
-      return scope.otDoc.version > scope.entry.data.sys.publishedVersion + 1;
+      if (angular.isDefined(scope.entry.data.sys.publishedVersion))
+        return scope.otDoc.version > scope.entry.data.sys.publishedVersion + 1;
+      else
+        return true;
     } else {
       return undefined;
     }
