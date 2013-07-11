@@ -1,5 +1,5 @@
 module FeatureHelper
-  @@access_token = nil
+  @@access_token = File.exist?('tmp/spec_token') ? File.read('tmp/spec_token') : nil
 
   def access_token
     @@access_token
@@ -7,6 +7,7 @@ module FeatureHelper
 
   def access_token=(t)
     @@access_token = t
+    File.write('tmp/spec_token', t)
   end
 
   def ensure_login
@@ -19,10 +20,14 @@ module FeatureHelper
     begin
       page.find('space-view')
     rescue Capybara::ElementNotFound
+      visit 'http://be.joistio.com:8888/' if current_url == 'http://www.joistio.com:8888/'
       fill_in 'user_email', with: 'user@example.com'
       fill_in 'user_password', with: 'password'
       check 'remember_me'
       click_button 'Sign In'
+    rescue Selenium::WebDriver::Error::UnhandledAlertError
+      page.driver.browser.switch_to.alert.accept
+      retry
     end
 
     begin

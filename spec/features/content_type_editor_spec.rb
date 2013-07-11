@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 feature 'Content Type Editor', js: true do
+  include ContentTypeHelper
+
   before do
     ensure_login
     remove_test_space
@@ -11,17 +13,7 @@ feature 'Content Type Editor', js: true do
     remove_test_space
   end
 
-  def add_field(name, type, options={})
-    fill_in 'newName', with: name
-    fill_in 'newId'  , with: options[:id] if options[:id]
-    find('.type .dropdown-toggle').click
-    find(:xpath, ".//span[text()='#{type}']/..").click
-    find('input[ng-model="newField.localized"]').check if options[:localized]
-    find('input[ng-model="newField.required"]').check if options[:required]
-    find('.button.new').click
-  end
-
-  scenario 'Creating a new Content Type' do
+  scenario 'Creating a new Content Type with all possible field types' do
     add_button 'Content Type'
     fill_in 'contentTypeName', with: 'Test Content Type'
     fill_in 'contentTypeDescription', with: 'Test description'
@@ -35,10 +27,30 @@ feature 'Content Type Editor', js: true do
     nav_bar 'content-type-list'
     table = find('.main-results tbody')
     expect(table).to have_text 'Test Content Type'
-    sleep 5
   end
 
-  scenario 'Adding a field with different id'
+  scenario 'Adding a field with different id' do
+    add_button 'Content Type'
+    fill_in 'contentTypeName', with: 'Test Content Type'
+    fill_in 'contentTypeDescription', with: 'Test description'
+    add_field 'FooField', 'Object', id: 'fooId', required: true
+    click_button 'Activate'
+    expect(page).to have_selector('.notification.info')
+  end
 
-  scenario 'Adding validations to a field'
+  scenario 'Adding validations to a field' do
+    add_button 'Content Type'
+    fill_in 'contentTypeName', with: 'Test Content Type'
+    fill_in 'contentTypeDescription', with: 'Test description'
+    add_field 'Text', 'Text'
+    for_field 'text' do
+      find('.validations .button').click
+      find('[ng-model="newValidationType"] option[value=in]').select_option
+      find('.validation-options input').set('apple, banana')
+      find('.field-validations button').click
+      find('.validations .button').click
+    end
+    click_button 'Activate'
+    expect(page).to have_selector('.notification.info')
+  end
 end
