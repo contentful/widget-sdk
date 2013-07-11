@@ -9,12 +9,9 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics, 
   TabList.prototype = {
     activate: function(item){
       if (item === this.current) return;
-      var event = $rootScope.$broadcast('tabWantsActive', item);
-      if (!event.defaultPrevented){
-        analytics.tabActivated(item, this.current);
-        this.current = item;
-        $rootScope.$broadcast('tabBecameActive', item);
-      }
+      analytics.tabActivated(item, this.current);
+      this.current = item;
+      $rootScope.$broadcast('tabBecameActive', item);
     },
 
     add: function(options){
@@ -26,9 +23,8 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics, 
       return item;
     },
 
-    // TODO Unfortunate to not call closeTab or tab.close here, but
-    // closeTab might leave the tab open. we need to force the tabs close
     closeAll: function(){
+      // Not using closeTab because we want to skip the newCurrent and analytics parts
       this._closingAll = true;
       try {
         var items = this.items;
@@ -36,8 +32,7 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics, 
         this.items = [];
         this.current = null;
         _.each(items, function (tab) {
-          $rootScope.$broadcast('tabWantsClose', tab);
-          $rootScope.$broadcast('tabClosed'    , tab);
+          $rootScope.$broadcast('tabClosed', tab);
         });
       } finally {
         this._closingAll = false;
@@ -67,30 +62,27 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics, 
     },
 
     closeTab: function (item) {
-      var event = $rootScope.$broadcast('tabWantsClose', item);
-      if (!event.defaultPrevented){
-        var index = _.indexOf(this.items, item);
-        var newCurrent = false;
+      var index = _.indexOf(this.items, item);
+      var newCurrent = false;
 
-        if (item.active()) {
-          if (this.items.length == 1) {
-            newCurrent = null;
-          } else if (0 < index) {
-            newCurrent = this.items[index-1];
-          } else {
-            newCurrent = this.items[index+1];
-          }
+      if (item.active()) {
+        if (this.items.length == 1) {
+          newCurrent = null;
+        } else if (0 < index) {
+          newCurrent = this.items[index-1];
+        } else {
+          newCurrent = this.items[index+1];
         }
+      }
 
-        this.items.splice(index,1);
-        if (item.active()) {
-          this.current = null;
-        }
-        $rootScope.$broadcast('tabClosed', item);
-        analytics.tabClosed(item);
-        if (newCurrent !== false && newCurrent !== null && this.current === null) {
-          newCurrent.activate();
-        }
+      this.items.splice(index,1);
+      if (item.active()) {
+        this.current = null;
+      }
+      $rootScope.$broadcast('tabClosed', item);
+      analytics.tabClosed(item);
+      if (newCurrent !== false && newCurrent !== null && this.current === null) {
+        newCurrent.activate();
       }
     },
 
@@ -122,7 +114,7 @@ angular.module('contentful').factory('TabList', function($rootScope, analytics, 
       return _.foldl(this.items, function (sum, tab) {
         return sum + (tab.hidden ? 0 : 1);
       }, 0);
-    },
+    }
 
   };
 

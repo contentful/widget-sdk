@@ -1,22 +1,11 @@
 'use strict';
 
 angular.module('contentful').controller('ContentTypeListCtrl', function ContentTypeListCtrl($scope) {
-  $scope.deleteContentType = function (contentType) {
-    contentType.delete(function (err) {
-      if (!err) {
-        $scope.$apply(function(scope) {
-          scope.spaceContext.removeContentType(contentType);
-        });
-      } else {
-        console.log('Error deleting contentType', contentType);
-      }
-    });
-  };
-
   $scope.numFields = function(contentType) {
     return _.size(contentType.data.fields);
   };
 
+  // TODO should go into the spacecontextcontroller as soon as we have one
   $scope.reloadContentTypes = function(){
     if (this.spaceContext) this.spaceContext.refreshContentTypes();
   };

@@ -5,6 +5,10 @@ window.createMockEntity = function (id) {
     getId: function () {
       return id;
     },
+    // mock for api keys
+    getName: function () {
+      return id;
+    },
     data: {
       sys: {}
     },
@@ -12,6 +16,18 @@ window.createMockEntity = function (id) {
       fn(null, this);
     }
   };
+};
+
+window.createMockSpace = function (id) {
+  var entity = window.createMockEntity(id);
+  entity.getPublishLocales = function(){};
+  entity.getDefaultLocale  = function(){
+    return {
+      code: 'en'
+    };
+  };
+
+  return entity;
 };
 
 angular.module('contentful/mocks', []).provider('ShareJS', function () {

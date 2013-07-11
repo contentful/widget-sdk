@@ -2,26 +2,38 @@
 
 describe('Entry list controller', function () {
 
-  var entryListCtrl, entryActionsCtrl, entryListActionsCtrl;
+  var spaceCtrl, entryListCtrl, entryEditorCtrl, entryListActionsCtrl, entryActionsCtrl;
   var scope, childScope;
-  var removedEntry;
+  var closeStub;
+  var removedEntity;
 
   beforeEach(function () {
     module('contentful/test');
     inject(function ($rootScope, $controller) {
       scope = $rootScope.$new();
-      removedEntry = window.createMockEntity('entry2');
+      removedEntity = window.createMockEntity('entry2');
       scope.entries = [
         window.createMockEntity('entry1'),
-        removedEntry,
+        removedEntity,
         window.createMockEntity('entry3')
       ];
+
+      scope.entry = removedEntity;
+      closeStub = sinon.stub();
+      scope.tab = {
+        close: closeStub
+      };
+
+      // Space Controller necessary for space broadcast method
+      spaceCtrl = $controller('SpaceCtrl', {$scope: scope});
+
       entryListCtrl = $controller('EntryListCtrl', {$scope: scope});
+
       childScope = scope.$new();
+      entryEditorCtrl = $controller('EntryEditorCtrl', {$scope: childScope});
       entryListActionsCtrl = $controller('EntryListActionsCtrl', {$scope: childScope});
 
-      scope.entry = removedEntry;
-      entryActionsCtrl = $controller('EntryActionsCtrl', {$scope: scope});
+      entryActionsCtrl = $controller('EntryActionsCtrl', {$scope: childScope});
     });
   });
 
@@ -29,7 +41,7 @@ describe('Entry list controller', function () {
   });
 
   it('handles an entityDeleted event from EntryListActions controller', function () {
-    childScope.selection.toggle(removedEntry);
+    childScope.selection.toggle(removedEntity);
     childScope.deleteSelected();
     expect(scope.entries.length).toEqual(2);
     expect(scope.entries[0].getId()).toEqual('entry1');
@@ -37,7 +49,8 @@ describe('Entry list controller', function () {
   });
 
   it('handles an entityDeleted event from EntryActions controller', function () {
-    scope.delete();
+    childScope.delete();
+    expect(closeStub.called).toBeTruthy();
     expect(scope.entries.length).toEqual(2);
     expect(scope.entries[0].getId()).toEqual('entry1');
     expect(scope.entries[1].getId()).toEqual('entry3');
@@ -45,4 +58,96 @@ describe('Entry list controller', function () {
 
 });
 
+
+
+describe('Content Type Actions controller', function () {
+
+  var spaceCtrl, contentTypeEditorCtrl, contentTypeActionsCtrl;
+  var removedEntity;
+  var scope, childScope;
+  var closeStub;
+
+  beforeEach(function () {
+    module('contentful/test');
+    inject(function ($rootScope, $controller) {
+      scope = $rootScope.$new();
+      removedEntity = window.createMockEntity('content_type1');
+      scope.contentType = removedEntity;
+
+      // Space Controller necessary for space broadcast method
+      spaceCtrl = $controller('SpaceCtrl', {$scope: scope});
+
+      closeStub = sinon.stub();
+      scope.tab = {
+        close: closeStub
+      };
+      childScope = scope.$new();
+      contentTypeEditorCtrl = $controller('ContentTypeEditorCtrl', {$scope: childScope});
+      contentTypeActionsCtrl = $controller('ContentTypeActionsCtrl', {$scope: childScope});
+    });
+  });
+
+  afterEach(function () {
+  });
+
+  it('handles an entityDeleted event from ContentTypeActions controller', function () {
+    childScope.delete();
+    expect(closeStub.called).toBeTruthy();
+  });
+
+});
+
+
+describe('Content Delivery controller', function () {
+
+  var spaceCtrl, contentDeliveryCtrl, apiKeyEditorCtrl;
+  var scope, childScope;
+  var closeStub, apiKeysStub;
+  var removedEntity;
+
+  beforeEach(function () {
+    module('contentful/test');
+    inject(function ($rootScope, $controller) {
+      scope = $rootScope.$new();
+      removedEntity = window.createMockEntity('apikey2');
+      var apiKeys = [
+        window.createMockEntity('apikey1'),
+        removedEntity,
+        window.createMockEntity('apikey3')
+      ];
+
+      apiKeysStub = sinon.stub();
+      apiKeysStub.callsArgWith(1, null, apiKeys);
+
+      scope.apiKey = removedEntity;
+      closeStub = sinon.stub();
+      scope.tab = {
+        close: closeStub
+      };
+      scope.spaceContext = {
+        space: {
+          getApiKeys: apiKeysStub
+        }
+      };
+
+      // Space Controller necessary for space broadcast method
+      spaceCtrl = $controller('SpaceCtrl', {$scope: scope});
+
+      contentDeliveryCtrl = $controller('ContentDeliveryCtrl', {$scope: scope});
+
+      childScope = scope.$new();
+      apiKeyEditorCtrl = $controller('ApiKeyEditorCtrl', {$scope: childScope});
+    });
+  });
+
+  afterEach(function () {
+  });
+
+  it('handles an entityDeleted event from ApiKeyEditor controller', function () {
+    childScope.delete();
+    expect(closeStub.called).toBeTruthy();
+    expect(scope.apiKeys.length).toEqual(2);
+  });
+
+});
 

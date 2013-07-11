@@ -8,12 +8,6 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     scope.otDisabled = !enabled;
   });
 
-  $scope.$on('tabClosed', function(event, tab) {
-    if (tab==event.currentScope.tab) {
-      if (event.currentScope.otDoc) event.currentScope.otDoc.close();
-    }
-  });
-
   $scope.tab.closingMessage = 'You have unpublished changes.';
   $scope.tab.closingMessageDisplayType = 'tooltip';
 
@@ -21,9 +15,13 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     scope.tab.title = title;
   });
 
-  $scope.$on('inputBlurred', function(event) {
-    event.stopPropagation();
-    event.currentScope.otUpdateEntity();
+  $scope.$on('entityDeleted', function (event, entry) {
+    if (event.currentScope !== event.targetScope) {
+      var scope = event.currentScope;
+      if (entry === scope.entry) {
+        scope.tab.close();
+      }
+    }
   });
 
   $scope.$on('otRemoteOp', function (event) {
@@ -48,7 +46,10 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
 
   $scope.$watch(function (scope) {
     if (scope.otDoc && scope.entry) {
-      return scope.otDoc.version > scope.entry.data.sys.publishedVersion + 1;
+      if (angular.isDefined(scope.entry.data.sys.publishedVersion))
+        return scope.otDoc.version > scope.entry.data.sys.publishedVersion + 1;
+      else
+        return true;
     } else {
       return undefined;
     }

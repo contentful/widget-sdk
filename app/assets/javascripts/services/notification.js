@@ -7,6 +7,14 @@ angular.module('contentful').
 
       error: function(body) {
         this._notify(body, 'error');
+        if (window.Raven) {
+          window.Raven.captureMessage(body, {
+          logger: 'user_interface',
+          tags: {
+            type: 'error_message'
+          }
+        });
+        }
       },
 
       info: function(body) {

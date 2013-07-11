@@ -15,21 +15,14 @@ angular.module('contentful').
       $scope.$apply(function (scope) {
         if (err) return notification.error('Error deleting content type');
         notification.info('Content type deleted successfully');
-        scope.$emit('entityDeleted', contentType);
+        scope.broadcastFromSpace('entityDeleted', contentType);
         // TODO this should happen automatically
+        // setup an event listener when the spaceContext instance is created
+        // on client controller or space context controller
         scope.spaceContext.removeContentType($scope.contentType);
       });
     });
   };
-
-  $scope.$on('entityDeleted', function (event, contentType) {
-    if (event.currentScope !== event.targetScope) {
-      var scope = event.currentScope;
-      if (contentType === scope.contentType) {
-        scope.tab.close();
-      }
-    }
-  });
 
   $scope.canDelete = function() {
     return $scope.contentType.canDelete() && can('delete', $scope.contentType.data);

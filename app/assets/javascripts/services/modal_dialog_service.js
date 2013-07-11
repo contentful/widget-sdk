@@ -53,10 +53,12 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', function 
     },
 
     _cleanup: function () {
-      this.domElement.scope().$destroy();
-      this.domElement.remove();
-      $(window).off('keyup', this.handleKeys);
-      this.domElement = this.scope = null;
+      if(this.domElement){
+        this.domElement.scope().$destroy();
+        this.domElement.remove();
+        $(window).off('keyup', this.handleKeys);
+        this.domElement = this.scope = null;
+      }
     }
   };
 

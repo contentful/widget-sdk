@@ -83,11 +83,13 @@ angular.module('contentful').controller('cfAutocompleteCtrl', function ($scope, 
   };
 
   function saveEntryInCache(entry) {
-    if (entry) entriesCache[entry.getId()] = entry;
+    // TODO no need to check for entriesCache existence anymore after the Angular update
+    if (entry && entriesCache) entriesCache[entry.getId()] = entry;
   }
 
   function entryFromCache(id) {
-    return entriesCache[id];
+    // TODO no need to check for entriesCache existence anymore after the Angular update
+    return entriesCache ? entriesCache[id] : undefined;
   }
 
   function lookupEntries(scope, links) {

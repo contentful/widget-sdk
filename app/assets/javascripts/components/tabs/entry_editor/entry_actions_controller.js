@@ -15,7 +15,7 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
           notification.error('Error deleting entry');
         }else{
           notification.info('Entry deleted successfully');
-          scope.$emit('entityDeleted', entry);
+          scope.broadcastFromSpace('entityDeleted', entry);
         }
       });
     });
@@ -36,15 +36,6 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
       });
     });
   };
-
-  $scope.$on('entityDeleted', function (event, entry) {
-    if (event.currentScope !== event.targetScope) {
-      var scope = event.currentScope;
-      if (entry === scope.entry) {
-        scope.tab.close();
-      }
-    }
-  });
 
   $scope.archive = function() {
     $scope.entry.archive(function(err) {

@@ -163,6 +163,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
         scope.user = tokenLookup.sys.createdBy;
         analytics.login(scope.user);
         scope.updateSpaces(tokenLookup.spaces);
+        showTutorialIfNecessary();
         if (callback) callback(tokenLookup);
       });
       stopSpinner();
@@ -203,14 +204,18 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
     analytics.track('Clicked Create-Space');
   };
 
-  $scope.performTokenLookup(function showTutorialIfNecessary() {
+  $scope.initClient = function () {
+    $scope.performTokenLookup();
+  };
+  
+  function showTutorialIfNecessary() {
     /*global moment*/
     var now = moment();
     var created = moment($scope.user.sys.createdAt);
     var age = now.diff(created, 'days');
     var seenTutorial = tutorial.getSeen();
-    if (age < 7 && !seenTutorial) {
+    if (age < 7 && !seenTutorial && !_.isEmpty($scope.spaces)) {
       tutorial.start();
     }
-  });
+  }
 });

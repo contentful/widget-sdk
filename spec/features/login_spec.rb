@@ -2,7 +2,7 @@ require 'spec_helper'
 
 feature 'Logging in', js: true do
   before do
-    #clear_cookies
+    clear_cookies
     visit 'http://be.joistio.com:8888/logout'
   end
 

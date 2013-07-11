@@ -22,7 +22,8 @@
 //
 //= require hamlcoffee
 //
-//= require angular-1.0.4
+//= require angular-1.0.7
+// require angular-1.1.5
 //= require contentful
 //= require environment
 //= require ng-time-relative
