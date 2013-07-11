@@ -84,7 +84,7 @@ feature 'Tutorial', js: true do
     all('td[data-handler=selectDay] a')[5].click
     click_button 'Publish'
 
-    nav_bar 'entry=list'
+    nav_bar 'entry-list'
 
     click_button 'Yes, please'
 

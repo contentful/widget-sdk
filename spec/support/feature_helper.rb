@@ -87,11 +87,27 @@ module FeatureHelper
 
   def add_button(text)
     find('.tablist-button .dropdown-toggle').click
-    find('.tablist-button li', text: text).click
+    begin
+      find('.tablist-button li[ng-click]', text: text).click
+    rescue Capybara::Ambiguous
+      first('.tablist-button li[ng-click]', text: text).click
+    end
   end
 
   def nav_bar(target)
     find(".nav-bar li[data-view-type=#{target}]").click
+  end
+
+  def close_tab(title=nil)
+    if title
+      find(:xpath, "//*[@class='tab-title'][text()='#{title}']/../*[@class='close']").click
+    else
+      find('.tab-list .tab.active .close').click
+    end
+  end
+
+  def select_tab(title)
+    find(:xpath, "//*[@class='tab-title'][text()='#{title}']/..").click
   end
 
 end
