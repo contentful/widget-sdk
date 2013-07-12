@@ -1,6 +1,8 @@
 'use strict';
 
-angular.module('contentful').factory('sentry', ['$injector', '$window', 'authentication', function ($injector, $window, authentication) {
+angular.module('contentful').factory('sentry', [
+         '$injector', '$window', 'authentication', 'environment',
+function ($injector ,  $window ,  authentication,   environment) {
 
   function getRoute() { //avoiding circular dependency
     var routing = $injector.get('routing');
@@ -28,7 +30,8 @@ angular.module('contentful').factory('sentry', ['$injector', '$window', 'authent
 
     options = _(options);
     options.merge({tags: {
-      userId: authentication.getUser().sys.id
+      userId: authentication.getUser().sys.id,
+      git_revision: environment.settings.git_revision
     }});
     options.merge.apply(options, arguments);
     return options.value();

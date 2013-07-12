@@ -25,5 +25,6 @@
       }
     }
   },
-  "segment_io": "uwr64jkg06"
+  "segment_io": "uwr64jkg06",
+  "git_revision": "OVERRIDE_FROM_CONFIG_JSON"
 }
