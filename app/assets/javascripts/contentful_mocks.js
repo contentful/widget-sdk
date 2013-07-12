@@ -1,6 +1,6 @@
 'use strict';
 
-window.createMockEntity = function (id) {
+window.createMockEntity = function (id, contentType) {
   return {
     getId: function () {
       return id;
@@ -10,21 +10,37 @@ window.createMockEntity = function (id) {
       return id;
     },
     data: {
-      sys: {}
+      sys: {
+        id: id
+      },
+      displayField: 'title',
+      fields: {
+        title: {
+          'en-US': 'the title'
+        }
+      }
     },
     delete: function (fn) {
       fn(null, this);
+    },
+    getContentTypeId: function () {
+      return contentType;
     }
   };
 };
 
 window.createMockSpace = function (id) {
   var entity = window.createMockEntity(id);
-  entity.getPublishLocales = function(){};
+  entity.getPublishLocales = function(){
+    return [
+      {name: 'en-US', code: 'en-US'},
+      {name: 'en-GB', code: 'en-GB'},
+      {name: 'pt-PT', code: 'pt-PT'},
+      {name: 'pt-BR', code: 'pt-BR'}
+    ];
+  };
   entity.getDefaultLocale  = function(){
-    return {
-      code: 'en'
-    };
+    return {name: 'en-US', code: 'en-US'};
   };
 
   return entity;

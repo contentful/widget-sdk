@@ -31,6 +31,7 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
         }
         this.refreshActiveLocales();
       },
+
       refreshActiveLocales: function () {
         var newLocaleStates = {}, newActiveLocales = [];
         _.each(this.publishLocales, function (locale) {
@@ -42,6 +43,7 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
         this.localesActive = newLocaleStates;
         this.activeLocales = newActiveLocales;
       },
+
       getPublishLocale: function(code) {
         return _.find(this.publishLocales, {'code': code});
       },
@@ -51,14 +53,15 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
           var deferred = $q.defer();
           var spaceContext = this;
           this.space.getContentTypes({order: 'name', limit: 1000}, function(err, contentTypes) {
-            contentTypes.sort(function (a,b) {
-              return a.getName().localeCompare(b.getName());
-            });
             $rootScope.$apply(function() {
+              contentTypes.sort(function (a,b) {
+                return a.getName().localeCompare(b.getName());
+              });
               if (err) return deferred.reject(err);
               spaceContext.contentTypes = contentTypes;
-              spaceContext.refreshPublishedContentTypes();
-              deferred.resolve(contentTypes);
+              spaceContext.refreshPublishedContentTypes().then(function () {
+                deferred.resolve(contentTypes);
+              });
             });
           });
           return deferred.promise;
@@ -69,26 +72,32 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
           return $q.when(this.contentTypes);
         }
       },
+
       refreshPublishedContentTypes: function() {
+        var deferred = $q.defer();
         var self = this;
         this.space.getPublishedContentTypes(function (err, contentTypes) {
-          if (err) {
-            console.error('Could not get published content types', err);
-          } else {
-            $rootScope.$apply(function () {
-              self.publishedContentTypes = _(contentTypes)
-                // TODO this union will lead to problems if we ever allow deletion of published content Types
-                // because contentTypes that entered the list once will never get out again
-                .union(self.publishedContentTypes)
-                .sortBy(function(ct) { return ct.getName().trim().toLowerCase(); })
-                .value();
-              self._publishedContentTypesHash = _(self.publishedContentTypes).map(function(ct) {
-                return [ct.data.sys.id, ct];
-              }).object().valueOf();
-            });
-          }
+          $rootScope.$apply(function () {
+            if (err) {
+              console.error('Could not get published content types', err);
+              deferred.reject(err);
+            } else {
+                self.publishedContentTypes = _(contentTypes)
+                  // TODO this union will lead to problems if we ever allow deletion of published content Types
+                  // because contentTypes that entered the list once will never get out again
+                  .union(self.publishedContentTypes)
+                  .sortBy(function(ct) { return ct.getName().trim().toLowerCase(); })
+                  .value();
+                self._publishedContentTypesHash = _(self.publishedContentTypes).map(function(ct) {
+                  return [ct.data.sys.id, ct];
+                }).object().valueOf();
+                deferred.resolve(self.publishedContentTypes);
+            }
+          });
         });
+        return deferred.promise;
       },
+
       registerPublishedContentType: function (publishedContentType) {
         if (!_.contains(this.publishedContentTypes, publishedContentType)) {
           this.publishedContentTypes.push(publishedContentType);
@@ -96,15 +105,18 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
           $rootScope.$broadcast('newContentTypePublished', publishedContentType);
         }
       },
+
       removeContentType: function(contentType) {
         var index = _.indexOf(this.contentTypes, contentType);
         if (index === -1) return;
         this.contentTypes.splice(index, 1);
         this.refreshPublishedContentTypes();
       },
+
       publishedTypeForEntry: function(entry) {
         return this._publishedContentTypesHash[entry.getContentTypeId()];
       },
+
       entryTitle: function(entry, localeCode) {
         var defaultTitle = 'Untitled';
 
