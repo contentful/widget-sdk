@@ -96,17 +96,21 @@ angular.module('contentful').provider('authentication', function AuthenticationP
         this.client.getTokenLookup(function (err, data) {
           if (err) {
             console.warn('Error during token lookup', err, data);
-            if (environment.env === 'development') {
-              if (window.confirm('Error during token lookup, logout?')) self.logout();
-            } else {
-              self.logout();
-            }
+            //if (environment.env === 'development') {
+              //if (window.confirm('Error during token lookup, logout?')) self.logout();
+              //return;
+            //}
+            self.logout();
           } else {
             self.setTokenLookup(data);
             callback(self.tokenLookup);
           }
         });
       }
+    },
+
+    getUser: function () {
+      if (this.tokenLookup) return this.tokenLookup.sys.createdBy;
     },
 
     setTokenLookup: function (tokenLookup) {

@@ -1,0 +1,56 @@
+require 'spec_helper'
+
+feature 'Content Type Editor', js: true do
+  include ContentTypeHelper
+
+  before do
+    ensure_login
+    remove_test_space
+    create_test_space
+  end
+
+  after do
+    remove_test_space
+  end
+
+  scenario 'Creating a new Content Type with all possible field types' do
+    add_button 'Content Type'
+    fill_in 'contentTypeName', with: 'Test Content Type'
+    fill_in 'contentTypeDescription', with: 'Test description'
+    ["Text", "Symbol", "Integer", "Floating-point", "Yes/No",
+     "Date/Time", "Object", "Link to Entry", "List of Entries",
+     "List of Symbols", "Location"].each do |fieldType|
+       add_field fieldType+' Field', fieldType
+    end
+    click_button 'Activate'
+    close_tab
+    nav_bar 'content-type-list'
+    table = find('.main-results tbody')
+    expect(table).to have_text 'Test Content Type'
+  end
+
+  scenario 'Adding a field with different id' do
+    add_button 'Content Type'
+    fill_in 'contentTypeName', with: 'Test Content Type'
+    fill_in 'contentTypeDescription', with: 'Test description'
+    add_field 'FooField', 'Object', id: 'fooId', required: true
+    click_button 'Activate'
+    expect(page).to have_selector('.notification.info')
+  end
+
+  scenario 'Adding validations to a field' do
+    add_button 'Content Type'
+    fill_in 'contentTypeName', with: 'Test Content Type'
+    fill_in 'contentTypeDescription', with: 'Test description'
+    add_field 'Text', 'Text'
+    for_field 'text' do
+      find('.validations .button').click
+      find('[ng-model="newValidationType"] option[value=in]').select_option
+      find('.validation-options input').set('apple, banana')
+      find('.field-validations button').click
+      find('.validations .button').click
+    end
+    click_button 'Activate'
+    expect(page).to have_selector('.notification.info')
+  end
+end

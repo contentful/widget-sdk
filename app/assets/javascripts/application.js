@@ -36,12 +36,13 @@ angular.module('contentful/app', [
   'timeRelative',
   'contentful/user_interface',
   'contentful'
-], function($locationProvider, clientProvider, authenticationProvider, environment){
+], function($locationProvider, clientProvider, authenticationProvider, analyticsProvider, environment){
   'use strict';
   var env = environment.settings;
   $locationProvider.html5Mode(!!history.pushState).hashPrefix('!');
   clientProvider.endpoint('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');
+  //analyticsProvider.forceLoad();
 }).run(function(authentication, client) {
   'use strict';
   authentication.login();

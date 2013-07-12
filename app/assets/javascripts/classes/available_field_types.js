@@ -59,12 +59,12 @@ angular.module('contentful').
     'use strict';
 
     return function(field) {
-      return _.find(availableFieldTypes, function(availableFieldType) {
-        if (field.type !== availableFieldType.value.type)
-          return false;
-        if (field.items && field.items.type !== availableFieldType.value.items.type)
+      return _.result(_.find(availableFieldTypes, function(availableFieldType) {
+        if (!field ||
+            field.type !== availableFieldType.value.type ||
+            field && field.items && field.items.type !== availableFieldType.value.items.type)
           return false;
         return true;
-      }).name;
+      }), 'name');
     };
   });
