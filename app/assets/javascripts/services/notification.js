@@ -1,20 +1,13 @@
 'use strict';
 
 angular.module('contentful').
-  service('notification', function() {
+  service('notification', function(sentry) {
     return {
       messages: [],
 
       error: function(body) {
         this._notify(body, 'error');
-        if (window.Raven) {
-          window.Raven.captureMessage(body, {
-          logger: 'user_interface',
-          tags: {
-            type: 'error_message'
-          }
-        });
-        }
+        sentry.captureError(body);
       },
 
       info: function(body) {

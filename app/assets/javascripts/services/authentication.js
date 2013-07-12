@@ -109,6 +109,10 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       }
     },
 
+    getUser: function () {
+      if (this.tokenLookup) return this.tokenLookup.sys.createdBy;
+    },
+
     setTokenLookup: function (tokenLookup) {
       this._unresolvedTokenLookup = tokenLookup;
       tokenLookup = angular.copy(tokenLookup);
