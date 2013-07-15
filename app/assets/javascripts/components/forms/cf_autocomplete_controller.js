@@ -96,13 +96,17 @@ angular.module('contentful').controller('cfAutocompleteCtrl', function ($scope, 
     var lookup = $q.defer();
     var ids        = _.map(links, function (link) { return link.sys.id; });
     var missingIds = _.reject(ids, function (id) { return !!entryFromCache(id); });
-    scope.spaceContext.space.getEntries({'sys.id[in]': missingIds.join(',')}, function (err, entries) {
-      scope.$apply(function () {
-        if (err) return lookup.reject(err);
-        _.each(entries, saveEntryInCache);
-        lookup.resolve();
+    if(missingIds.length > 0){
+      scope.spaceContext.space.getEntries({'sys.id[in]': missingIds.join(',')}, function (err, entries) {
+        scope.$apply(function () {
+          if (err) return lookup.reject(err);
+          _.each(entries, saveEntryInCache);
+          lookup.resolve();
+        });
       });
-    });
+    } else {
+      lookup.resolve();
+    }
     return lookup.promise.then(function () {
       return _.map(ids, entryFromCache);
     });

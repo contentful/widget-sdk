@@ -33,7 +33,7 @@ describe('cf Autocomplete controller', function () {
     });
   });
 
-  it('adds a link for an entry', inject(function ($q) {
+  it('adds a link for an entry and updates linked entries', inject(function ($q) {
     this.async(function (done) {
       var addLinkDeferred = $q.defer();
       var callbackSpy = sinon.spy(function () {
@@ -45,7 +45,6 @@ describe('cf Autocomplete controller', function () {
       });
       var entry1 = window.createMockEntity('entry1');
 
-      getEntriesStub.callsArgWithAsync(1, null, []);
       attrs.cfAutocomplete = 'entry';
       scope.otChangeValue = sinon.stub();
       scope.otChangeValue.callsArg(1);
