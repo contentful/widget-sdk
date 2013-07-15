@@ -6,11 +6,10 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
     restrict: 'C',
     require: 'ngModel',
     template: JST['cf_location_editor'],
+    controller: 'cfLocationEditorCtrl',
     link: function(scope, elm, attr, ngModelCtrl) {
-      scope.$watch('location', function(loc, old, scope) {
-        //console.log('location changed', loc, scope);
-        scope.locationValid = !angular.isObject(loc) || angular.isNumber(loc.lat) && angular.isNumber(loc.lon);
-        marker.setVisible(loc && scope.locationValid);
+      scope.$watch('location && locationValid', function (showMarker) {
+        marker.setVisible(showMarker);
       });
 
       var ngModelGet = $parse(attr.ngModel),
@@ -94,6 +93,8 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
         }
       };
 
+      latController.$parsers.push(parseFloat);
+      lonController.$parsers.push(parseFloat);
       latController.$viewChangeListeners.push(triggerLocationWatchers);
       lonController.$viewChangeListeners.push(triggerLocationWatchers);
       latController.$viewChangeListeners.push(changeHandler);
@@ -127,77 +128,13 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
       });
 
       // Search Stuff /////////////////////////////////////////////////////////
-      scope.$watch('searchTerm', function(searchTerm, old, scope) {
-        //console.log('search term changed', searchTerm);
-        if (searchTerm && searchTerm != old) {
-          var geocoder = new google.maps.Geocoder();
-          var stopSpin = cfSpinner.start();
-          geocoder.geocode({
-            address: searchTerm
-          }, function(results) {
-            scope.$apply(function(scope) {
-              if (results.length == 1) {
-                scope.updateLocation({
-                  lat: results[0].geometry.location.lat(),
-                  lon: results[0].geometry.location.lng()
-                });
-                map.fitBounds(results[0].geometry.viewport);
-              } else {
-                scope.offerResults(results);
-              }
-            });
-            stopSpin();
-          });
-        } else if (searchTerm !== old) {
-          scope.results = [];
-          scope.selectedResult = null;
-          map.panTo(locationController.$viewValue);
-        }
-      });
 
-      scope.offerResults = function(rawResults) {
-        scope.results = _.map(rawResults, function(result) {
-          return {
-            location: {
-              lat: result.geometry.location.lat(),
-              lon: result.geometry.location.lng()
-            },
-            viewport: result.geometry.viewport,
-            strippedLocation: {
-              lat: result.geometry.location.lat().toString().slice(0,8),
-              lon: result.geometry.location.lng().toString().slice(0,8)
-            },
-            address: result.formatted_address
-          };
-        });
-        scope.selectedResult = scope.results[0];
-      };
-
-      scope.$watch('results', function (results) {
-        scope.selectedResult = results ? results[0] : null;
-      });
-
-      scope.$watch('selectedResult', function (result, old, scope) {
+      scope.$watch('selectedResult', function (result) {
         if (result) {
-          scope.moveMapToSelected();
+          moveMapToSelected();
           scrollToSelected();
         }
       });
-
-      scope.$on('searchResultSelected', function (event, index, result) {
-        scope.selectedResult = result;
-      });
-
-      scope.$on('searchResultPicked', function (event, index, result) {
-        scope.selectedResult = result;
-        scope.pickResult(result);
-      });
-
-      scope.pickResult = function(result) {
-        scope.updateLocation(result.location);
-        map.fitBounds(result.viewport);
-        scope.searchTerm = '';
-      };
 
       function scrollToSelected() {
         var selected = elm.find('.results .selected')[0];
@@ -212,12 +149,20 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
         }
       }
 
-      scope.moveMapToSelected = function () {
+      function moveMapToSelected() {
         var result = scope.selectedResult;
         map.fitBounds(result.viewport);
+      }
+
+      scope.pickResult = function(result) {
+        scope.updateLocation(result.location);
+        map.fitBounds(result.viewport);
+        scope.searchTerm = '';
       };
 
-      // TODO Destroy cleanup
+      scope.resetMapLocation = function () {
+        map.panTo(locationController.$viewValue);
+      };
 
     }
   };
