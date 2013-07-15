@@ -150,13 +150,12 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
           });
         } else if (searchTerm !== old) {
           scope.results = [];
-          scope.selectedResult = 0;
+          scope.selectedResult = null;
           map.panTo(locationController.$viewValue);
         }
       });
 
       scope.offerResults = function(rawResults) {
-        scope.selectedResult = 0;
         scope.results = _.map(rawResults, function(result) {
           return {
             location: {
@@ -171,41 +170,38 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
             address: result.formatted_address
           };
         });
-        scope.movetoSelected();
+        scope.selectedResult = scope.results[0];
       };
 
-      elm.find('input[type=search], .results').on('keydown', function(event) {
-        var DOWN  = 40,
-            UP    = 38,
-            ENTER = 13,
-            ESC   = 27;
+      scope.$watch('results', function (results) {
+        scope.selectedResult = results ? results[0] : null;
+      });
 
-        if (event.keyCode == DOWN){
-          scope.selectNext();
-          scope.movetoSelected();
-          scope.$digest();
-          event.preventDefault();
-        } else if (event.keyCode == UP) {
-          scope.selectPrevious();
-          scope.movetoSelected();
-          scope.$digest();
-          event.preventDefault();
-        } else if (event.keyCode == ESC) {
-          scope.$apply(function(scope) {
-            scope.closePicker();
-          });
-          event.preventDefault();
-        } else if (event.keyCode == ENTER) {
-          scope.$apply(function(scope) {
-            scope.pickSelected();
-          });
-          event.preventDefault();
-          event.stopPropagation();
+      scope.$watch('selectedResult', function (result, old, scope) {
+        if (result) {
+          scope.moveMapToSelected();
+          scrollToSelected();
         }
       });
 
-      var scrollToSelected = function() {
+      scope.$on('searchResultSelected', function (event, index, result) {
+        scope.selectedResult = result;
+      });
+
+      scope.$on('searchResultPicked', function (event, index, result) {
+        scope.selectedResult = result;
+        scope.pickResult(result);
+      });
+
+      scope.pickResult = function(result) {
+        scope.updateLocation(result.location);
+        map.fitBounds(result.viewport);
+        scope.searchTerm = '';
+      };
+
+      function scrollToSelected() {
         var selected = elm.find('.results .selected')[0];
+        if(!selected) return;
         var $container = elm.find('.results');
         var above = selected.offsetTop <= $container.scrollTop();
         var below = $container.scrollTop() + $container.height()<= selected.offsetTop;
@@ -214,41 +210,11 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
         } else if (below) {
           selected.scrollIntoView(false);
         }
-      };
+      }
 
-      scope.movetoSelected = function () {
-        var result = scope.results[scope.selectedResult];
+      scope.moveMapToSelected = function () {
+        var result = scope.selectedResult;
         map.fitBounds(result.viewport);
-      };
-
-      scope.selectNext = function() {
-        if (scope.selectedResult < scope.results.length-1) {
-          scope.selectedResult++;
-          _.defer(scrollToSelected);
-        }
-      };
-
-      scope.selectPrevious = function() {
-        if (0 < scope.selectedResult) scope.selectedResult--;
-        _.defer(scrollToSelected);
-      };
-
-      scope.selectResult = function(result) {
-        scope.selectedResult = _.indexOf(scope.results, result);
-        scope.pickSelected();
-      };
-
-      scope.closePicker = function() {
-        scope.searchTerm = '';
-      };
-
-      scope.pickSelected = function() {
-        var result = scope.results[scope.selectedResult];
-        if (result) {
-          scope.updateLocation(result.location);
-          map.fitBounds(result.viewport);
-          scope.closePicker();
-        }
       };
 
       // TODO Destroy cleanup

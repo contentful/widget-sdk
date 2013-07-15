@@ -3,15 +3,47 @@
 angular.module('contentful').directive('cfAutocompleteSearch', function(Paginator, cfSpinner, notification) {
   return {
     restrict: 'AC',
+    link: function (scope, element) {
+      scope.$watch('selectedItem', function () {
+        scrollToSelected();
+      });
+
+      function scrollToSelected(){
+        var selected = element.find('.selected')[0];
+        if (!selected) return;
+        var $container = element.find('.endless-container');
+        var above = selected.offsetTop <= $container.scrollTop();
+        var below = $container.scrollTop() + $container.height()<= selected.offsetTop;
+        if (above) {
+          selected.scrollIntoView(true);
+        } else if (below) {
+          selected.scrollIntoView(false);
+        }
+      }
+    },
     controller: function cfAutocompleteSearchCtrl($scope){
       $scope.paginator = new Paginator();
-      $scope.selectedItem = 0;
 
-      $scope.$watch('searchTerm', function() {
-        $scope.paginator.page = 0;
-        $scope.selectedItem = 0;
-        $scope.resetEntries();
+      $scope.$watch('searchTerm', function(term, old, scope) {
+        scope.resetEntries();
       });
+
+      $scope.$on('searchResultSelected', function (event, index, entry) {
+        event.currentScope.selectedEntry = entry;
+      });
+
+      $scope.$on('searchResultPicked', function (event, index, entry) {
+        event.currentScope.addLink(entry, function(err) {
+          if (err) event.preventDefault();
+        });
+      });
+
+      $scope.pick = function (entry) {
+        $scope.addLink(entry, function(err) {
+          if (!err) $scope.searchTerm = '';
+        });
+      };
+
 
       $scope.addNew = function(contentType) {
         $scope.spaceContext.space.createEntry(contentType.getId(), {}, function(errCreate, entry){
@@ -42,19 +74,21 @@ angular.module('contentful').directive('cfAutocompleteSearch', function(Paginato
         if ($scope.reloadInProgress || $scope.resetPaused) return;
 
         if (!$scope.searchTerm || $scope.searchTerm.length === 0) {
+          $scope.paginator.page = 0;
           $scope.entries = [];
+          $scope.selectedEntry = null;
           return;
         }
 
         $scope.reloadInProgress = true;
         var stopSpin = cfSpinner.start();
         $scope.spaceContext.space.getEntries(buildQuery(), function(err, entries, stats) {
-          $scope.reloadInProgress = false;
-          if (err) return;
-          $scope.paginator.numEntries = stats.total;
           $scope.$apply(function(scope){
-            scope.selectedItem = 0;
+            scope.reloadInProgress = false;
+            if (err) return;
+            scope.paginator.numEntries = stats.total;
             scope.entries = entries;
+            scope.selectedEntry = entries[0];
             stopSpin();
           });
         });
