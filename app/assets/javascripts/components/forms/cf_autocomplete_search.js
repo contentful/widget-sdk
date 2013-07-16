@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfAutocompleteSearch', function(Paginator, cfSpinner, notification) {
+angular.module('contentful').directive('cfAutocompleteSearch', function(Paginator, notification, PromisedLoader) {
   return {
     restrict: 'AC',
     link: function (scope, element) {
@@ -22,6 +22,9 @@ angular.module('contentful').directive('cfAutocompleteSearch', function(Paginato
       }
     },
     controller: function cfAutocompleteSearchCtrl($scope){
+
+      var entryLoader = new PromisedLoader();
+
       $scope.paginator = new Paginator();
 
       $scope.$watch('searchTerm', function(term, old, scope) {
@@ -71,57 +74,29 @@ angular.module('contentful').directive('cfAutocompleteSearch', function(Paginato
       };
 
       $scope.resetEntries = function() {
-        if ($scope.reloadInProgress || $scope.resetPaused) return;
-
-        if (!$scope.searchTerm || $scope.searchTerm.length === 0) {
+        if (_.empty($scope.searchTerm)) {
           $scope.paginator.page = 0;
           $scope.entries = [];
           $scope.selectedEntry = null;
-          return;
-        }
-
-        $scope.reloadInProgress = true;
-        var stopSpin = cfSpinner.start();
-        $scope.spaceContext.space.getEntries(buildQuery(), function(err, entries, stats) {
-          $scope.$apply(function(scope){
-            scope.reloadInProgress = false;
-            if (err) return;
-            scope.paginator.numEntries = stats.total;
-            scope.entries = entries;
-            scope.selectedEntry = entries[0];
-            stopSpin();
+        } else {
+          entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
+          then(function (entries) {
+            $scope.paginator.numEntries = entries.total;
+            $scope.entries = entries;
+            $scope.selectedEntry = entries[0];
           });
-        });
-      };
-
-      $scope.pauseReset = function() {
-        if ($scope.resetPaused) return;
-        $scope.resetPaused = true;
-        setTimeout(function() {
-          $scope.resetPaused = false;
-        }, 500);
+        }
       };
 
       $scope.loadMore = function() {
-        if ($scope.reloadInProgress || $scope.resetPaused) return;
         if ($scope.paginator.atLast()) return;
         $scope.paginator.page++;
-        $scope.pauseReset();
-        $scope.spaceContext.space.getEntries(buildQuery(), function(err, entries, stats) {
-          $scope.reloadInProgress = false;
-          if (err) {
-            $scope.paginator.page--;
-            return;
-          }
-          $scope.paginator.numEntries = stats.total;
-          $scope.$apply(function(scope){
-            var args = [scope.entries.length, 0].concat(entries);
-            scope.entries.splice.apply(scope.entries, args);
-          });
-        });
-
-        $scope.apply(function(scope) {
-          scope.reloadInProgress = true;
+        entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
+        then(function (entries) {
+          $scope.paginator.numEntries = entries.total;
+          $scope.entries.push.apply($scope.entries, entries);
+        }, function () {
+          $scope.paginator.page--;
         });
       };
 
