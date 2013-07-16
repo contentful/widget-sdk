@@ -2,7 +2,7 @@
 
 describe('cf Autocomplete controller', function () {
   var scope, attrs, $q;
-  var getEntriesStub, otDocPushStub, shareJSMock;
+  var getEntriesStub, otDocPushStub, removeStub, shareJSMock;
   var cfAutocompleteCtrl;
   var entry;
 
@@ -52,9 +52,13 @@ describe('cf Autocomplete controller', function () {
         at: sinon.stub()
       };
       otDocPushStub = sinon.stub();
+      removeStub = sinon.stub();
       scope.otDoc.at.returns({
-        push: otDocPushStub
+        push: otDocPushStub,
+        remove: removeStub
       });
+
+      scope.otPath = [];
 
       shareJSMock = {
         peek: sinon.stub(),
@@ -139,12 +143,6 @@ describe('cf Autocomplete controller', function () {
         scope.addLink(entry, callbackSpy);
       });
     });
-  });
-
-  describe('attaches another list of entries to an entry directive', function () {
-    beforeEach(function () {
-      attrs.cfAutocomplete = 'entries';
-    });
 
     it('adds an entry from a list', function () {
       this.async(function (done) {
@@ -164,6 +162,26 @@ describe('cf Autocomplete controller', function () {
           done();
         });
 
+        scope.addLink(entry, callbackSpy);
+      });
+    });
+
+    it('removes a link from an entry list', function () {
+      this.async(function (done) {
+        var addLinkDeferred = $q.defer();
+        var callbackSpy = makeCallbackSpy(addLinkDeferred);
+        var linkedEntriesDeferred = makeLinkedEntriesDeferred();
+        otDocPushStub.callsArgAsync(1);
+        shareJSMock.peek.returns([]);
+        removeStub.callsArgAsync(0);
+
+        $q.all([addLinkDeferred.promise, linkedEntriesDeferred.promise]).then(function () {
+          scope.removeLink(0, entry);
+          _.defer(function () {
+            expect(scope.links.length).toBe(0);
+            done();
+          });
+        });
         scope.addLink(entry, callbackSpy);
       });
     });
