@@ -2,16 +2,9 @@
 
 angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope, cfSpinner) {
 
-  // Replacing callbacks with scumbacks
-  // Promises to call you back but then doesn't
-  // Getting your hopes up again
-  // and again
-  var brokenPromise = {
-    then: doesnt
+  var noopPromise = {
+    then: function () { return noopPromise; }
   };
-  function doesnt(callback){
-    return brokenPromise;
-  }
 
   function PromisedLoader() {
     this.inProgress = false;
@@ -32,7 +25,7 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
     load: function (host, methodName /* args ... */) {
       var args = _.toArray(arguments).slice(2);
       var loader = this;
-      if (loader.inProgress || loader._throttle()) return brokenPromise;
+      if (loader.inProgress || loader._throttle()) return noopPromise;
 
       var deferred = $q.defer();
       var stopSpinner = cfSpinner.start();

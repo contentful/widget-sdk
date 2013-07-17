@@ -74,7 +74,7 @@ angular.module('contentful').directive('cfAutocompleteSearch', function(Paginato
       };
 
       $scope.resetEntries = function() {
-        if (_.empty($scope.searchTerm)) {
+        if (_.isEmpty($scope.searchTerm)) {
           $scope.paginator.page = 0;
           $scope.entries = [];
           $scope.selectedEntry = null;
