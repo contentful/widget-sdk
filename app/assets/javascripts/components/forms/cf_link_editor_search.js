@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfAutocompleteSearch', function(Paginator, notification, PromisedLoader) {
+angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator, notification, PromisedLoader) {
   return {
     restrict: 'AC',
     link: function (scope, element) {
@@ -21,7 +21,7 @@ angular.module('contentful').directive('cfAutocompleteSearch', function(Paginato
         }
       }
     },
-    controller: function cfAutocompleteSearchCtrl($scope){
+    controller: function cfLinkEditorSearchCtrl($scope){
 
       var entryLoader = new PromisedLoader();
 
@@ -53,7 +53,7 @@ angular.module('contentful').directive('cfAutocompleteSearch', function(Paginato
           if (errCreate) {
             //console.log('Error creating entry', errCreate);
             notification.error('Error creating entry');
-            throw new Error('Error creating entry in cfAutocomplete');
+            throw new Error('Error creating entry in cfLinkEditor');
           }
           $scope.addLink(entry, function(errSetLink) {
             if (errSetLink) {
@@ -63,10 +63,10 @@ angular.module('contentful').directive('cfAutocompleteSearch', function(Paginato
                 if (errDelete) {
                   //console.log('Error deleting entry', errDelete);
                   notification.error('Error deleting entry again');
-                  throw new Error('Error deleting entry in cfAutocomplete');
+                  throw new Error('Error deleting entry in cfLinkEditor');
                 }
               });
-              throw new Error('Error linking entry in cfAutocomplete');
+              throw new Error('Error linking entry in cfLinkEditor');
             }
             $scope.editEntry(entry, 'create');
           });

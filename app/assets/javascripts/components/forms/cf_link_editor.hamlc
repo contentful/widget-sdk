@@ -4,7 +4,7 @@
     %a(ng-click="editEntry(entry)" ng-show="entry && entry.data") {{linkDescription(entry)}}
     %span(ng-hide="entry && entry.data") {{linkDescription(entry)}}
     %i.ss-delete(ng-click="removeLink(index, entry)" ng-show="otEditable")
-.cf-autocomplete-search(cf-search-results="entries" search-term="searchTerm")
+.cf-link-editor-search(cf-search-results="entries" search-term="searchTerm")
   .controls(ng-show="otEditable && (linkedEntries.length == 0 || field.type == 'Array')")
     .add-new(ng-show="linkContentType"
              ng-click="addNew(linkContentType)"
