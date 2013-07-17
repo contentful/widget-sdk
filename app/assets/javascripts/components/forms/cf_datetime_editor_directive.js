@@ -58,13 +58,11 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse){
         var value = date ? moment(date+'T'+time).utc().format() : null;
 
         scope.otChangeValue(value, function (err) {
-          scope.$apply(function (scope) {
-            if (!err) {
-              ngModelCtrl.$setViewValue(value);
-            } else {
-              scope.setFromISO(ngModelCtrl.$modelValue);
-            }
-          });
+          if (!err) {
+            ngModelCtrl.$setViewValue(value);
+          } else {
+            scope.setFromISO(ngModelCtrl.$modelValue);
+          }
         });
       }
 

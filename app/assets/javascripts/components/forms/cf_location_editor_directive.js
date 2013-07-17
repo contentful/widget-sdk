@@ -34,14 +34,12 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
 
       var changeHandler = function() {
         scope.otChangeValue(scope.location, function(err) {
-          scope.$apply(function (scope) {
-            if (!err) {
-              ngModelCtrl.$setViewValue(scope.location);
-            } else {
-              notification.error('Error updating location');
-              scope.location = ngModelCtrl.$modelValue;
-            }
-          });
+          if (!err) {
+            ngModelCtrl.$setViewValue(scope.location);
+          } else {
+            notification.error('Error updating location');
+            scope.location = ngModelCtrl.$modelValue;
+          }
         });
       };
 

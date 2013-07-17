@@ -63,10 +63,9 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
   $scope.removeLink = function(index, entry) {
     if ($attrs.cfLinkEditor === 'entry') {
       return $scope.otChangeValue(null, function(err) {
-        if (!err) $scope.$apply(function (scope) {
-          scope.links.length = 0;
-          scope.updateModel();
-        });
+        if (err) return;
+        $scope.links.length = 0;
+        $scope.updateModel();
       });
     } else {
       // TODO solve this cleaner, with tombstones? It's bad to have dead entries lying around in the identitymap

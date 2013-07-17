@@ -26,18 +26,24 @@ angular.module('contentful').directive('otPath', function(ShareJS, cfSpinner) {
       $scope.otChangeValue = function(value, callback) {
         //console.log('changing value %o -> %o in %o, %o', $scope.otDoc.getAt($scope.otPath), value, $scope.otPath, $scope.otDoc);
         if ($scope.otDoc) {
-          callback = callback || function(err){if (!err) $scope.$apply();};
+          callback = callback || angular.noop;
           try {
             var stopSpin = cfSpinner.start();
             $scope.otDoc.setAt($scope.otPath, value, function () {
-              callback.apply(this, arguments);
-              stopSpin();
+              var callbackArgs = arguments;
+              $scope.$apply(function () {
+                callback.apply(undefined, callbackArgs);
+                stopSpin();
+              });
             });
             //console.log('changin value returned %o %o in doc %o version %o', err, data, scope.otDoc, scope.otDoc.version);
           } catch(e) {
             ShareJS.mkpath($scope.otDoc, $scope.otPath, value, function () {
-              callback.apply(this, arguments);
-              stopSpin();
+              var callbackArgs = arguments;
+              $scope.$apply(function () {
+                callback.apply(undefined, callbackArgs);
+                stopSpin();
+              });
             });
           }
         } else {
