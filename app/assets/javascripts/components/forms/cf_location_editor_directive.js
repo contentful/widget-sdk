@@ -132,20 +132,20 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
       scope.$watch('selectedResult', function (result) {
         if (result) {
           moveMapToSelected();
-          scrollToSelected();
+          _.defer(scrollToSelected);
         }
       });
 
       function scrollToSelected() {
-        var selected = elm.find('.results .selected')[0];
-        if(!selected) return;
+        var $selected = elm.find('.selected');
+        if ($selected.length === 0) return;
         var $container = elm.find('.results');
-        var above = selected.offsetTop <= $container.scrollTop();
-        var below = $container.scrollTop() + $container.height()<= selected.offsetTop;
+        var above = $selected.prop('offsetTop') <= $container.scrollTop();
+        var below = $container.scrollTop() + $container.height() <= $selected.prop('offsetTop');
         if (above) {
-          selected.scrollIntoView(true);
+          $container.scrollTop($selected.prop('offsetTop'));
         } else if (below) {
-          selected.scrollIntoView(false);
+          $container.scrollTop($selected.prop('offsetTop')-$container.height() + $selected.height());
         }
       }
 

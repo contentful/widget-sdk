@@ -4,20 +4,20 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
   return {
     restrict: 'AC',
     link: function (scope, element) {
-      scope.$watch('selectedItem', function () {
-        scrollToSelected();
+      scope.$watch('selectedEntry', function () {
+        _.defer(scrollToSelected);
       });
 
       function scrollToSelected(){
-        var selected = element.find('.selected')[0];
-        if (!selected) return;
+        var $selected = element.find('.selected');
+        if ($selected.length === 0) return;
         var $container = element.find('.endless-container');
-        var above = selected.offsetTop <= $container.scrollTop();
-        var below = $container.scrollTop() + $container.height()<= selected.offsetTop;
+        var above = $selected.prop('offsetTop') <= $container.scrollTop();
+        var below = $container.scrollTop() + $container.height() <= $selected.prop('offsetTop');
         if (above) {
-          selected.scrollIntoView(true);
+          $container.scrollTop($selected.prop('offsetTop'));
         } else if (below) {
-          selected.scrollIntoView(false);
+          $container.scrollTop($selected.prop('offsetTop')-$container.height() + $selected.height());
         }
       }
     },
