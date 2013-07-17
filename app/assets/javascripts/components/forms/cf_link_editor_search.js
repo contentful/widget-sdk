@@ -31,11 +31,11 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
         scope.resetEntries();
       });
 
-      $scope.$on('searchResultSelected', function (event, index, entry) {
+      $scope.$on('autocompleteResultSelected', function (event, index, entry) {
         event.currentScope.selectedEntry = entry;
       });
 
-      $scope.$on('searchResultPicked', function (event, index, entry) {
+      $scope.$on('autocompleteResultPicked', function (event, index, entry) {
         event.currentScope.addLink(entry, function(err) {
           if (err) event.preventDefault();
         });

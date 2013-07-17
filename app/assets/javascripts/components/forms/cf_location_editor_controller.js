@@ -50,11 +50,11 @@ angular.module('contentful').controller('cfLocationEditorCtrl', function ($scope
     scope.selectedResult = results ? results[0] : null;
   });
 
-  $scope.$on('searchResultSelected', function (event, index, result) {
+  $scope.$on('autocompleteResultSelected', function (event, index, result) {
     event.currentScope.selectedResult = result;
   });
 
-  $scope.$on('searchResultPicked', function (event, index, result) {
+  $scope.$on('autocompleteResultPicked', function (event, index, result) {
     var scope = event.currentScope;
     scope.selectedResult = result;
     scope.pickResult(result);
