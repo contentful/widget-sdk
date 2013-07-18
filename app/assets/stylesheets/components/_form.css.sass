@@ -52,6 +52,7 @@ $form-controlwidth-inner: 57%
   input[type="tel"],
   input[type="password"],
   input.time,
+  .select-box,
   textarea
     margin: 0
     padding: 7px
@@ -83,9 +84,18 @@ $form-controlwidth-inner: 57%
   input[type="number"]
     padding-top: 8px
     padding-bottom: 8px
+  .select-box
+    display: inline-block
+    position: relative
+    top: 2px
+    height: 35px
+    width: 115px
+    select
+      margin: 0
+      margin-top: -5px
   input.date,
   input.time
-    width: 105px !important
+    width: 105px
   .cf-location-editor
     .gmaps-container,
     .invalid-location-warning
@@ -96,7 +106,8 @@ $form-controlwidth-inner: 57%
     position: relative
     top: 3px
   .ss-calendar,
-  .ss-clock
+  .ss-clock,
+  .ss-globe
     font-size: 14px
     color: $light-gray
     vertical-align: middle
