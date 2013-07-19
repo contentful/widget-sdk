@@ -103,7 +103,7 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
   $scope.publish = function () {
     var version = $scope.otDoc.version;
     if (!$scope.validate()) {
-      notification.error('Error publishing ' + title() + ': ' + 'Validation failed');
+      notification.warn('Error publishing ' + title() + ': ' + 'Validation failed');
       return;
     }
     $scope.entry.publish(version, function (err) {
