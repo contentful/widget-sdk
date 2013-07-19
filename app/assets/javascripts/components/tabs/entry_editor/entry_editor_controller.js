@@ -49,7 +49,7 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
       if (angular.isDefined(scope.entry.data.sys.publishedVersion))
         return scope.otDoc.version > scope.entry.data.sys.publishedVersion + 1;
       else
-        return true;
+        return 'draft';
     } else {
       return undefined;
     }
