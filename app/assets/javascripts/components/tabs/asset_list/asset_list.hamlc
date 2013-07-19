@@ -1,0 +1,99 @@
+.tab-header
+  .left-nav
+    %h1 Assets
+  .search-area.with-left-nav
+    .search-field(search="searchTerm" placeholder="Search for assets")
+  .search-results-position(paginator="paginator")
+.tab-main
+  .left-nav
+    %header Status
+    %ul.filter-list
+      %li(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
+        %span All
+      %li(ng-class="{active: tab.params.list == 'changed'}" ng-click="switchList('changed')")
+        %span Changed
+      %li(ng-class="{active: tab.params.list == 'published'}" ng-click="switchList('published')")
+        %span Published
+      %li(ng-class="{active: tab.params.list == 'archived'}" ng-click="switchList('archived')")
+        %span Archived
+      -#
+        %li.disabled(ng-class="{active: tab.params.list == 'starred'}")
+          %span Starred
+        %li.disabled(ng-class="{active: tab.params.list == 'createdByMe'}")
+          %span Created by me
+    %div(ng-show="spaceContext.publishedContentTypes.length > 0")
+      %header Content Types
+      %ul.filter-list
+        %li(ng-class="{active: tab.params.contentTypeId == contentType.data.sys.id}"
+            ng-repeat="contentType in spaceContext.publishedContentTypes"
+            ng-click="switchList('contentType', contentType)")
+          %span {{contentType.getName()}}
+    -#
+      %header Saved searches
+      %ul.left-nav-filters
+        %li
+          %i.ss-search
+          %span Updated by me
+        %li
+          %i.ss-search
+          %span Large rooms
+      %footer.left-nav-bottom
+        %span Import
+        %span Export
+  .with-left-nav
+    %table.result-list.main-header
+      %thead
+        %tr
+          %th.cell-select
+            %input(type="checkbox" cf-selection="" ng-show="assets.length > 0")
+          -#%th.cell-favorite
+            %i.ss-star
+          %th.cell-type Content Type
+          %th.cell-name Name
+          %th.cell-updated Updated
+          %th.cell-by By
+          %th.cell-status Status
+
+    .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
+      %table.result-list.main-results
+        %tbody
+          %tr(ng-repeat="asset in assets" ng-show="visibleInCurrentList(asset)" cf-click-local="editAsset(asset)")
+            %td.cell-select(ng-click="selection.toggle(asset);$event.stopPropagation()")
+              %input(type="checkbox" cf-selection="asset")")
+            -#%td.cell-favorite
+              %i.ss-star
+            %td.cell-type
+              %span {{spaceContext.publishedTypeForAsset(asset).getName()}}
+            -#%td.cell-name
+              %span {{spaceContext.assetTitle(asset)}}
+            %td.cell-updated
+              %date.relative(datetime="{{asset.data.sys.updatedAt}}")
+            %td.cell-by
+              %span.cf-user(link="asset.data.sys.updatedBy" as="updater") {{updater.getName()}}
+            %td.cell-status(ng-class="statusClass(asset)")
+              .draft-wrapper
+                %span {{statusClass(asset)}}
+                .main-results-bar
+      .loading(ng-hide="paginator.atLast()")
+    .results-empty(ng-show="assets.length == 0")
+      %div(ng-show="hasQuery()")
+        %i.ss-search.giant-icon
+        %header There are no matches to your search
+      %div(ng-show="!hasQuery()")
+        %i.ss-file.giant-icon
+        %header You have no Assets yet.
+        %p(ng-show="spaceContext.publishedContentTypes.length == 0")
+          To create an Asset, first create and activate a Content Type.
+        %button(ng-click="createContentType()" ng-show="spaceContext.publishedContentTypes.length == 0")
+          Create a Content Type
+        %p(ng-hide="spaceContext.publishedContentTypes.length == 0")
+          To create an Asset, use the Add-Button near the top of the screen.
+.tab-actions
+  .label {{selection.size()}} Assets selected
+  .button-set(ng-controller="AssetListActionsCtrl"   ng-hide="selection.isEmpty()")
+    %button.delete(   ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
+    %button.delete(   ng-click="deleteSelected()"    ng-show="showDelete()"   ) Delete
+    %button.archive(  ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
+    %button.unarchive(ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
+    %button.unpublish(ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
+    %button.publish(  ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}

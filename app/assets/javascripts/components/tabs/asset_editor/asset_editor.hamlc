@@ -1,0 +1,99 @@
+.tab-header.editor-configuration
+  %h1
+    {{headline()}}
+  .editor-top-left
+    -#.dropdown-btn
+      %a.btn.dropdown-toggle
+        %i.ss-dropdown
+        %span Default-Interface
+      .dropdown-menu(style="display:none")
+        …
+        …
+        …
+    .dropdown-btn
+      %a.dropdown-toggle
+        %i.ss-dropdown
+        %span Show fields…
+      .dropdown-menu(style="display:none")
+        %ul(ng-show="showLangSwitcher")
+          %li(ng-repeat="locale in spaceContext.publishLocales")
+            %label
+              %input(type="checkbox" ng-model="spaceContext.localesActive[locale.code]")
+              {{locale.name}}
+              %span(ng-show="locale == spaceContext.space.getDefaultLocale()") (default)
+        %ul
+          %li(ng-class="{separator: showLangSwitcher}")
+            %label
+              %input(type="checkbox" ng-model="preferences.showDisabledFields")
+              Show disabled fields
+
+  .editor-top-right
+    %button(ng-click="preferences.toggleAuxPanel()"
+            ng-class="{active: preferences.showAuxPanel}"
+            tooltip="Toggle additional details"
+            tooltip-placement="left")
+      Info
+    -#.dropdown-btn>
+      %a.btn.dropdown-toggle
+        %i.ss-dropdown
+        %span Meta
+      .dropdown-menu(style="display:none")
+        …
+        …
+        …
+    -#.dropdown-btn>
+      %a.btn.dropdown-toggle
+        %span Apps
+    -#.dropdown-btn>
+      %a.btn.dropdown-toggle
+        %span Events
+
+.aux-panel
+  %header
+    %span Asset Information
+  .entity-info-panel
+
+.tab-main
+  %form.form-horizontal(name="assetForm")
+    .form-field(ng-show="hasErrorOnFields")
+      %label
+      .form-controls
+        .validation-error-display.form-box-error(path="['fields']" ng-show="errorMessages.length > 0")
+    .form-field(ng-repeat="field in fields" data-field-type="{{field.type}}" data-field-items-type="{{field.items.type}}")
+      %label {{field.name}}
+      .form-controls
+        .locale(ng-repeat="locale in field.locales" ot-field-presence="['fields', field.id, locale.code]")
+          .field-collaborators
+            %ul
+              %li.avatar.cf-user(ng-repeat="link in fieldPresence.users"
+                                 link="link" as="user"
+                                 tooltip="{{user.getName()}}")
+                %img(ng-src="{{user.data.avatarUrl}}")
+          .locale-label(ng-show="field.locales.length > 1") {{locale.name}}
+          .cf-field-editor(ot-path="['fields', field.id, locale.code]")
+          -#.hint.tip
+            Hint to the user about the meaning of the field
+            .arrow-left
+            .arrow-left-border
+          .validation-error-display.form-box-error(path="['fields', field.id, locale.code]")
+        .validation-error-display.form-box-error(path="['fields', field.id]")
+
+.tab-actions(ng-controller="AssetActionsCtrl")
+  .button-set
+    %button.delete(   ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this asset"               ) Duplicate
+    %button.delete(   ng-show="canDelete()"    ng-click="delete()"    tooltip="Permanently delete this Asset"      ) Delete
+    %button.archive(  ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
+    %button.archive(  ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
+    %button.unpublish(ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish
+    %button.publish(  ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Asset") {{publishButtonLabel()}}
+  .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
+               tooltip-placement="top")
+  .other-users
+    %span(ng-show="presence.users.length == 0"
+          tooltip="Edit collaboratively by inviting more users into your space. Go to Settings → Users → Invite New User to invite people.")
+      No other users online
+    %ul(ng-show="presence.users.length > 0")
+      %li.avatar.cf-user(ng-repeat="link in presence.users"
+                         link="link" as="user"
+                         tooltip="{{user.getName()}}")
+        %img(ng-src="{{user.data.avatarUrl}}")
