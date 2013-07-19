@@ -52,11 +52,11 @@ module FeatureHelper
     end
   end
 
-  def remove_test_space
+  def remove_test_space(name='TestSpace')
     within 'nav.account .project' do
       find('.dropdown-toggle').click
       begin
-        find('li', text: 'TestSpace', wait: 0.5).click
+        find('li', text: name, wait: 0.5).click
       rescue Capybara::ElementNotFound
         find('.dropdown-toggle').click
         return
@@ -87,11 +87,12 @@ module FeatureHelper
       fill_in 'locale', with: 'en-US'
       click_button 'Create Space'
     end
-    sleep 5
+    sleep 3
   end
 
   def add_button(text)
     find('.tablist-button .dropdown-toggle').click
+    sleep 2
     begin
       find('.tablist-button li[ng-click]', text: text).click
     rescue Capybara::Ambiguous
