@@ -110,6 +110,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     else
       return _.find($scope.spaceContext.tabList.items, tabMatches);
 
+    // TODO this can be split into one method per route and then moved into the individual routes
     function tabMatches(tab) {
       return tab.viewType == route.viewType &&
              (
@@ -128,8 +129,9 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
                tab.params.apiKey.getId() === undefined
              ) ||
              (
-               route.viewType == 'entry-list' &&
-               tab.viewType   == 'entry-list'
+               route.viewType == 'entry-list'        && tab.viewType   == 'entry-list' ||
+               route.viewType == 'asset-list'        && tab.viewType   == 'asset-list' ||
+               route.viewType == 'content-type-list' && tab.viewType   == 'content-type-list'
              );
     }
   };
