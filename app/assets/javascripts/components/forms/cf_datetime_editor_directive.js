@@ -1,5 +1,5 @@
 /*global moment:false*/
-angular.module('contentful').directive('cfDatetimeEditor', function($parse){
+angular.module('contentful').directive('cfDatetimeEditor', function($parse, zoneOffsets){
   'use strict';
 
   return {
@@ -17,6 +17,10 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse){
 
       var dateController = elm.find('.date').controller('ngModel');
       var timeController = elm.find('.time').controller('ngModel');
+      var zoneController = elm.find('.zone').controller('ngModel');
+
+      scope.timezones = zoneOffsets;
+      scope.tzOffset = moment().format('Z');
 
       ngModelCtrl.$render = function () {
         scope.setFromISO(ngModelCtrl.$modelValue);
@@ -54,22 +58,23 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse){
 
       function changeHandler() {
         var date = scope.localDate;
-        var time = scope.localTime || '0:00';
-        var value = date ? moment(date+'T'+time).utc().format() : null;
+        var time = scope.localTime || '00:00';
+        time = time.match(/^\d:/) ? '0'+time : time;
+        var zone = scope.tzOffset;
+        var value = date ? moment(date+'T'+time+zone).zone(zone).format() : null;
 
         scope.otChangeValue(value, function (err) {
-          scope.$apply(function (scope) {
-            if (!err) {
-              ngModelCtrl.$setViewValue(value);
-            } else {
-              scope.setFromISO(ngModelCtrl.$modelValue);
-            }
-          });
+          if (!err) {
+            ngModelCtrl.$setViewValue(value);
+          } else {
+            scope.setFromISO(ngModelCtrl.$modelValue);
+          }
         });
       }
 
       dateController.$viewChangeListeners.push(changeHandler);
       timeController.$viewChangeListeners.push(changeHandler);
+      zoneController.$viewChangeListeners.push(changeHandler);
 
       ngModelCtrl.$render = function () {
         scope.setFromISO(ngModelCtrl.$viewValue);
@@ -77,13 +82,14 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse){
 
       scope.setFromISO = function(iso){
         if (_.isString(iso)) {
-          var dateTime = moment.utc(iso).local();
+          var dateTime = hasTimezone(iso) ? moment(iso).zone(iso) : moment(iso);
           scope.localDate = dateTime.format(DATE_FORMAT_INTERNAL);
           if (dateTime.seconds()) {
             scope.localTime = dateTime.format('HH:mm:ss');
           } else {
             scope.localTime = dateTime.format('HH:mm');
           }
+          scope.tzOffset = dateTime.format('Z');
         } else {
           scope.localDate = null;
           scope.localTime = null;
@@ -101,6 +107,11 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse){
           ngModelSet(event.currentScope, value);
         }
       });
+
+      function hasTimezone(isoString) {
+        var parseTokenTimezone = /Z|[\+\-]\d\d:?\d\d/i; // +00:00 -00:00 +0000 -0000 or Z
+        return parseTokenTimezone.test(isoString);
+      }
     }
   };
 });

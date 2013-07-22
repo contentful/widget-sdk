@@ -22,8 +22,10 @@ feature 'Content Type Editor', js: true do
      "List of Symbols", "Location"].each do |fieldType|
        add_field fieldType+' Field', fieldType
     end
+    sleep 2
     click_button 'Activate'
     close_tab
+    nav_bar 'entry-list' # this should not be necessary, but somehow the list isn't refreshed
     nav_bar 'content-type-list'
     table = find('.main-results tbody')
     expect(table).to have_text 'Test Content Type'

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('cfAutocompleteCtrl', function ($scope, $parse, $attrs, validation, cfSpinner, ShareJS, $q) {
+angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $parse, $attrs, validation, cfSpinner, ShareJS, $q) {
   $scope.links = [];
   $scope.linkedEntries = [];
 
@@ -42,7 +42,7 @@ angular.module('contentful').controller('cfAutocompleteCtrl', function ($scope, 
     }
 
     saveEntryInCache(entry);
-    if ($attrs.cfAutocomplete === 'entry') {
+    if ($attrs.cfLinkEditor === 'entry') {
       $scope.otChangeValue(link, cb(function(scope){
         scope.links = [link];
       }));
@@ -61,12 +61,11 @@ angular.module('contentful').controller('cfAutocompleteCtrl', function ($scope, 
   };
 
   $scope.removeLink = function(index, entry) {
-    if ($attrs.cfAutocomplete === 'entry') {
+    if ($attrs.cfLinkEditor === 'entry') {
       return $scope.otChangeValue(null, function(err) {
-        if (!err) $scope.$apply(function (scope) {
-          scope.links.length = 0;
-          scope.updateModel();
-        });
+        if (err) return;
+        $scope.links.length = 0;
+        $scope.updateModel();
       });
     } else {
       // TODO solve this cleaner, with tombstones? It's bad to have dead entries lying around in the identitymap

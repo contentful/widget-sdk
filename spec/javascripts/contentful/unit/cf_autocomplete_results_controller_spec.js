@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfSearchResultsController', function () {
+describe('cfAutocompleteResultsController', function () {
   var controller, scope;
 
   beforeEach(module('contentful/test'));
@@ -9,9 +9,9 @@ describe('cfSearchResultsController', function () {
     scope = $rootScope;
     //$rootScope.results  = [1,2,3,4];
     //$rootScope.searchTerm = '';
-    controller = $controller('CfSearchResultsCtrl', {$scope: $rootScope});
-    controller.getSearchResults = $parse('results');
-    controller.setSearchTerm = $parse('searchTerm').assign;
+    controller = $controller('CfAutocompleteResultsCtrl', {$scope: $rootScope});
+    controller.getAutocompleteResults = $parse('results');
+    controller.setAutocompleteTerm = $parse('searchTerm').assign;
   }));
 
   it('should adjust selectedIndex, numResults', function () {
@@ -26,13 +26,13 @@ describe('cfSearchResultsController', function () {
     expect(controller.numResults).toBe(0);
   });
     
-  it('should set searchTerm to 0 when canceled', function () {
+  it('should set autocompleteTerm to 0 when canceled', function () {
     scope.searchTerm = 'foobar';
-    controller.cancelSearch();
+    controller.cancelAutocomplete();
     expect(scope.searchTerm).toBe('');
   });
 
-  it('should return the selected element from the searchResults in getSelected', function () {
+  it('should return the selected element from the autocompleteResults in getSelected', function () {
     scope.results = [1,2,3,4];
     scope.$apply();
     expect(controller.getSelectedResult()).toBe(1);
@@ -70,9 +70,9 @@ describe('cfSearchResultsController', function () {
     scope.$apply();
     spyOn(scope, '$broadcast');
     controller.selectNext();
-    expect(scope.$broadcast).toHaveBeenCalledWith('searchResultSelected', 1, 'b');
+    expect(scope.$broadcast).toHaveBeenCalledWith('autocompleteResultSelected', 1, 'b');
     controller.selectPrevious();
-    expect(scope.$broadcast).toHaveBeenCalledWith('searchResultSelected', 0, 'a');
+    expect(scope.$broadcast).toHaveBeenCalledWith('autocompleteResultSelected', 0, 'a');
   });
 
   it('should emit when picked', function () {
@@ -82,10 +82,10 @@ describe('cfSearchResultsController', function () {
       defaultPrevented: false
     });
     controller.pickSelected();
-    expect(scope.$emit).toHaveBeenCalledWith('searchResultPicked', 0, 'a');
+    expect(scope.$emit).toHaveBeenCalledWith('autocompleteResultPicked', 0, 'a');
   });
 
-  it('should cancel Search if not prevented after pick', function () {
+  it('should cancel Autocomplete if not prevented after pick', function () {
     scope.results = ['a', 'b', 'c'];
     scope.searchTerm = 'foobar';
     scope.$apply();
@@ -95,7 +95,7 @@ describe('cfSearchResultsController', function () {
     expect(scope.searchTerm).toBe('');
   });
 
-  it('should not cancel Search if prevented after pick', function () {
+  it('should not cancel Autocomplete if prevented after pick', function () {
     scope.results = ['a', 'b', 'c'];
     scope.searchTerm = 'foobar';
     scope.$apply();
@@ -105,7 +105,3 @@ describe('cfSearchResultsController', function () {
     expect(scope.searchTerm).toBe('foobar');
   });
 });
-
-// it should watch searchResults param
-// it should watch searchTerm param
-//

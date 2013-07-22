@@ -19,10 +19,14 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
     },
 
     start : function () {
-      if (!this._initialized) this.initialize();
-      this.setSeen();
-      guiders.hideAll();
-      guiders.show('overview');
+      var clientScope = angular.element('.client').scope();
+      var tutorial = this;
+      tutorialExampledata.switchToTutorialSpace(clientScope).then(function () {
+        if (!tutorial._initialized) tutorial.initialize();
+        tutorial.setSeen();
+        guiders.hideAll();
+        guiders.show('overview');
+      });
     },
     initialize: function () {
       var spaceScope = angular.element('space-view').scope();

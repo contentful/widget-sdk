@@ -3,12 +3,12 @@ require 'spec_helper'
 feature 'Tutorial', js: true do
   before do
     ensure_login
-    remove_test_space
-    create_test_space
+    remove_test_space 'Tutorial'
+    sleep 2
   end
 
   after do
-    remove_test_space
+    remove_test_space 'Tutorial'
   end
 
   def open_tutorial_overview
@@ -16,6 +16,7 @@ feature 'Tutorial', js: true do
       find('.dropdown-toggle').click
       find('li', text: 'Start Tutorial').click
     end
+    sleep 2
   end
 
   def close_tutorial_overview

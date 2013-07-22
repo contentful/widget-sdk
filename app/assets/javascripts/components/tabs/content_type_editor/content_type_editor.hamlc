@@ -24,7 +24,7 @@
                placeholder="Content Type Name (e.g. Product)"
                ng-model="contentType.data.name"
                ot-bind-text="")
-        .validation-error-display.form-box-error(path="['name']" ng-show="1 < otDoc.version && hasErrors")
+        .cf-validation-error-display.form-box-error(cf-error-path="['name']" ng-show="1 < otDoc.version && hasErrors")
     .form-field
       %label Description
       .form-controls(ot-path="['description']" ot-subdoc)
@@ -33,7 +33,7 @@
                   ng-disabled="!otEditable"
                   ng-model="contentType.data.description"
                   ot-bind-text="")
-        .validation-error-display.form-box-error(path="['description']")
+        .cf-validation-error-display.form-box-error(cf-error-path="['description']")
     .form-field
       %label 
       .form-controls

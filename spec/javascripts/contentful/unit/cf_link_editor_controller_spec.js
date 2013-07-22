@@ -1,9 +1,9 @@
 'use strict';
 
-describe('cf Autocomplete controller', function () {
+describe('cf LinkEditor controller', function () {
   var scope, attrs, $q;
   var getEntriesStub, otDocPushStub, removeStub, shareJSMock;
-  var cfAutocompleteCtrl;
+  var cfLinkEditorCtrl;
   var entry;
 
   function makeCallbackSpy(deferred){
@@ -69,7 +69,7 @@ describe('cf Autocomplete controller', function () {
 
       entry = window.createMockEntity('entry1');
 
-      cfAutocompleteCtrl = $controller('cfAutocompleteCtrl', {
+      cfLinkEditorCtrl = $controller('cfLinkEditorCtrl', {
         $scope: scope,
         $parse: $parse,
         $attrs: attrs,
@@ -80,7 +80,7 @@ describe('cf Autocomplete controller', function () {
 
   describe('attaches one entry to an entry directive', function () {
     beforeEach(function () {
-      attrs.cfAutocomplete = 'entry';
+      attrs.cfLinkEditor = 'entry';
       scope.otChangeValue = sinon.stub();
     });
 
@@ -118,7 +118,7 @@ describe('cf Autocomplete controller', function () {
 
   describe('attaches a list of entries to an entry directive', function () {
     beforeEach(function () {
-      attrs.cfAutocomplete = 'entries';
+      attrs.cfLinkEditor = 'entries';
     });
 
     it('adds an array of entries from a list', function () {

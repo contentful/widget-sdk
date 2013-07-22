@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('contentTypeFieldList', function(analytics) {
+angular.module('contentful').directive('contentTypeFieldList', function() {
   return {
     restrict: 'C',
     template: JST.content_type_field_list(),
@@ -45,36 +45,6 @@ angular.module('contentful').directive('contentTypeFieldList', function(analytic
       });
 
     },
-
-    controller: function ContentTypeFieldListCtrl($scope) {
-      var _showValidations = {};
-      $scope.showValidations = function(fieldId) {
-        return !!_showValidations[fieldId];
-      };
-
-      $scope.toggleValidations= function(fieldId) {
-        _showValidations[fieldId] = !_showValidations[fieldId];
-        if (_showValidations[fieldId]) {
-          analytics.track('Opened Validations', { fieldId: fieldId });
-        }
-      };
-
-      $scope.closeAllValidations = function () {
-        _showValidations = {};
-      };
-
-      $scope.displayEnabled = function (field) {
-        return field.type === 'Symbol' || field.type === 'Text';
-      };
-
-      $scope.removeDisplayField = function () {
-        $scope.otDoc.at(['displayField']).set(null, function (err) {
-          if (!err) $scope.$apply(function (scope) {
-            scope.contentType.data.displayField = null;
-          });
-        });
-      };
-
-    }
+    controller: 'ContentTypeFieldListCtrl'
   };
 });

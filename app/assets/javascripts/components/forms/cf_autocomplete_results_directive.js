@@ -1,17 +1,17 @@
 'use strict';
 
-angular.module('contentful').directive('cfSearchResults', function ($parse) {
+angular.module('contentful').directive('cfAutocompleteResults', function ($parse) {
   var DOWN  = 40,
       UP    = 38,
       ENTER = 13,
       ESC   = 27;
 
   return {
-    require: 'cfSearchResults',
-    controller: 'CfSearchResultsCtrl',
+    require: 'cfAutocompleteResults',
+    controller: 'CfAutocompleteResultsCtrl',
     link: function (scope, elem, attrs, controller) {
-      controller.getSearchResults = $parse(attrs.cfSearchResults);
-      controller.setSearchTerm = $parse(attrs.searchTerm).assign;
+      controller.getAutocompleteResults = $parse(attrs.cfAutocompleteResults);
+      controller.setAutocompleteTerm = $parse(attrs.autocompleteTerm).assign;
 
       var navigateResultList = function navigateResultList(event) {
         if (controller.numResults === 0) return;
@@ -22,7 +22,7 @@ angular.module('contentful').directive('cfSearchResults', function ($parse) {
           } else if (event.keyCode == UP) {
             controller.selectPrevious();
           } else if (event.keyCode == ESC) {
-            controller.cancelSearch();
+            controller.cancelAutocomplete();
           } else if (event.keyCode == ENTER) {
             controller.pickSelected();
           } else {
