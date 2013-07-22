@@ -46,4 +46,36 @@ describe('Validation Error Display Controller', function () {
       expect(scope.errorMessages[0]).toBe('Size must be at least 10.');
     });
   });
+
+  describe('Errors in items', function () {
+    beforeEach(function () {
+      attrs.cfErrorPath = '["foo", "bars", "*"]';
+      scope.entity = {
+        foo: {
+          bars: ['asdasd', 'asdasd','asdasd']
+        }
+      };
+      scope.validationResult.data = scope.entity;
+    });
+
+    it('should show regular errors', function () {
+      scope.validationResult.errors.push({
+        name: 'size',
+        path: ['foo', 'bars'],
+        min: 10
+      });
+      scope.$apply();
+      expect(scope.errorMessages[0]).toBe('Size must be at least 10.');
+    });
+
+    it('should show sub-errors', function () {
+      scope.validationResult.errors.push({
+        name: 'size',
+        path: ['foo', 'bars', 1],
+        min: 10
+      });
+      scope.$apply();
+      expect(scope.errorMessages[0]).toBe('Length must be at least 10.');
+    });
+  });
 });

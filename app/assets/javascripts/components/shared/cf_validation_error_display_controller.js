@@ -77,11 +77,20 @@ angular.module('contentful').controller('CfValidationErrorDisplayCtrl', function
     return object;
   }
 
+  function matches(errorPath, path) {
+    if (path[path.length-1] === '*') {
+      var prefixLen = path.length - 1;
+      return _.isEqual(errorPath.slice(0, prefixLen), path.slice(0, prefixLen));
+    } else {
+      return _.isEqual(errorPath, path);
+    }
+  }
+
   var unwatch = $scope.$watch('validationResult.errors', function(errors) {
     var path = $scope.$eval($attrs.cfErrorPath);
 
     var fieldErrors = _.filter(errors, function(error) {
-      return _.isEqual(error.path, path);
+      return matches(error.path, path);
     });
     $scope.errorMessages = fieldErrors.map(toErrorMessage);
   });

@@ -75,7 +75,7 @@
             Hint to the user about the meaning of the field
             .arrow-left
             .arrow-left-border
-          .cf-validation-error-display.form-box-error(cf-error-path="['fields', field.id, locale.code]")
+          .cf-validation-error-display.form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
         .cf-validation-error-display.form-box-error(cf-error-path="['fields', field.id]")
 
 .tab-actions(ng-controller="EntryActionsCtrl")
