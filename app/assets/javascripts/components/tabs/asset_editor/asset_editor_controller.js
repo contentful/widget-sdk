@@ -67,6 +67,8 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
   var errorPaths = {};
 
   function updateFields(n, o ,scope) {
+    // TODO reimplement this properly for assets
+    /*
     var et = scope.spaceContext.publishedTypeForAsset(scope.asset);
     if (!et) return;
     scope.fields = _(et.data.fields).reduce(function (acc, field) {
@@ -93,6 +95,7 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
       clone.locales = locales;
       return clone;
     }
+   */
   }
 
   var firstValidate = $scope.$on('otBecameEditable', function (event) {
@@ -131,7 +134,8 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
 
 
   $scope.headline = function(){
-    return this.spaceContext.assetTitle(this.asset);
+    // TODO show asset title instead
+    //return this.spaceContext.assetTitle(this.asset);
   };
 
 });

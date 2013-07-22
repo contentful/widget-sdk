@@ -82,12 +82,6 @@
       %div(ng-show="!hasQuery()")
         %i.ss-file.giant-icon
         %header You have no Assets yet.
-        %p(ng-show="spaceContext.publishedContentTypes.length == 0")
-          To create an Asset, first create and activate a Content Type.
-        %button(ng-click="createContentType()" ng-show="spaceContext.publishedContentTypes.length == 0")
-          Create a Content Type
-        %p(ng-hide="spaceContext.publishedContentTypes.length == 0")
-          To create an Asset, use the Add-Button near the top of the screen.
 .tab-actions
   .label {{selection.size()}} Assets selected
   .button-set(ng-controller="AssetListActionsCtrl"   ng-hide="selection.isEmpty()")
