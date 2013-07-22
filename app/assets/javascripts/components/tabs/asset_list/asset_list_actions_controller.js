@@ -94,9 +94,8 @@ angular.module('contentful').controller('AssetListActionsCtrl', function AssetLi
     analytics.track('Performed AssetList action', {action: 'duplicate'});
 
     function duplicate(asset, callback) {
-      var contentType = asset.data.sys.contentType.sys.id;
       var data = _.omit(asset.data, 'sys');
-      $scope.spaceContext.space.createAsset(contentType, data, callback);
+      $scope.spaceContext.space.createAsset(data, callback);
     }
   };
 

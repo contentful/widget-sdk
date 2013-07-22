@@ -17,23 +17,20 @@ angular.module('contentful').controller('AssetListCtrl', function AssetListCtrl(
   $scope.$watch('searchTerm',  function (term) {
     if (term === null) return;
     $scope.tab.params.list = 'all';
-    $scope.tab.params.contentTypeId = null;
     $scope.paginator.page = 0;
     $scope.resetAssets();
   });
 
-  $scope.switchList = function(list, contentType){
+  $scope.switchList = function(list){
     $scope.searchTerm = null;
     var params = $scope.tab.params;
     var shouldReset =
-      params.list == list &&
-      (!contentType || params.contentTypeId == contentType.getId());
+      params.list == list;
 
     if (shouldReset) {
       this.resetAssets();
     } else {
       this.paginator.page = 0;
-      params.contentTypeId = contentType ? contentType.getId() : null;
       params.list = list;
     }
   };
@@ -59,7 +56,6 @@ angular.module('contentful').controller('AssetListCtrl', function AssetListCtrl(
       page: scope.paginator.page,
       pageLength: scope.paginator.pageLength,
       list: scope.tab.params.list,
-      contentTypeId: scope.tab.params.contentTypeId,
       spaceId: (scope.spaceContext.space && scope.spaceContext.space.getId())
     };
   }, function(pageParameters, old, scope){
@@ -101,8 +97,6 @@ angular.module('contentful').controller('AssetListCtrl', function AssetListCtrl(
       queryObject['changed'] = 'true';
     } else if (this.tab.params.list == 'archived') {
       queryObject['sys.archivedAt[exists]'] = 'true';
-    } else if (this.tab.params.list == 'contentType') {
-      queryObject['sys.contentType.sys.id'] = this.tab.params.contentTypeId;
     }
 
     if (!_.isEmpty(this.searchTerm)) {

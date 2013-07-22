@@ -23,10 +23,9 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
   };
 
   $scope.duplicate = function() {
-    var contentType = $scope.asset.data.sys.contentType.sys.id;
     var data = _.omit($scope.asset.data, 'sys');
 
-    $scope.spaceContext.space.createAsset(contentType, data, function(err, asset){
+    $scope.spaceContext.space.createAsset(data, function(err, asset){
       $scope.$apply(function (scope) {
         if (!err) {
           scope.editAsset(asset);
