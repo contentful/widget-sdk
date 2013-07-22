@@ -1,6 +1,8 @@
 'use strict';
 
-angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl($scope, Paginator, Selection, cfSpinner, analytics) {
+angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl($scope, Paginator, Selection, analytics, PromisedLoader) {
+  var entryLoader = new PromisedLoader();
+
   $scope.entrySection = 'all';
 
   $scope.paginator = new Paginator();
@@ -67,95 +69,64 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
   }, true);
 
   $scope.resetEntries = function() {
-    if (this.reloadInProgress || this.resetPaused) return;
-    var scope = this;
-
-    this.reloadInProgress = true;
-    var stopSpin = cfSpinner.start();
-    this.spaceContext.space.getEntries(this.buildQuery(), function(err, entries, stats) {
-      scope.$apply(function(scope){
-        scope.reloadInProgress = false;
-        if (err) return;
-        scope.paginator.numEntries = stats.total;
-        scope.selection.switchBaseSet(stats.total);
-        scope.entries = entries;
-        stopSpin();
-      });
+    entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
+    then(function (entries) {
+      $scope.paginator.numEntries = entries.total;
+      $scope.selection.switchBaseSet(entries.total);
+      $scope.entries = entries;
+      analytics.track('Reloaded EntryList');
     });
-    analytics.track('Reloaded EntryList');
   };
 
-  $scope.buildQuery = function() {
+  function buildQuery() {
     var queryObject = {
       order: '-sys.updatedAt',
-      limit: this.paginator.pageLength,
-      skip: this.paginator.skipItems()
+      limit: $scope.paginator.pageLength,
+      skip: $scope.paginator.skipItems()
     };
 
-    if (this.tab.params.list == 'all') {
+    if ($scope.tab.params.list == 'all') {
       // do nothing
-    } else if (this.tab.params.list == 'published') {
+    } else if ($scope.tab.params.list == 'published') {
       queryObject['sys.publishedAt[exists]'] = 'true';
-    } else if (this.tab.params.list == 'changed') {
+    } else if ($scope.tab.params.list == 'changed') {
       queryObject['sys.archivedAt[exists]'] = 'false';
       queryObject['changed'] = 'true';
-    } else if (this.tab.params.list == 'archived') {
+    } else if ($scope.tab.params.list == 'archived') {
       queryObject['sys.archivedAt[exists]'] = 'true';
-    } else if (this.tab.params.list == 'contentType') {
-      queryObject['sys.contentType.sys.id'] = this.tab.params.contentTypeId;
+    } else if ($scope.tab.params.list == 'contentType') {
+      queryObject['sys.contentType.sys.id'] = $scope.tab.params.contentTypeId;
     }
 
-    if (!_.isEmpty(this.searchTerm)) {
-      queryObject.query = this.searchTerm;
+    if (!_.isEmpty($scope.searchTerm)) {
+      queryObject.query = $scope.searchTerm;
     }
 
     return queryObject;
-  };
+  }
 
   $scope.hasQuery = function () {
     var noQuery = $scope.tab.params.list == 'all' && _.isEmpty($scope.searchTerm);
     return !noQuery;
   };
 
-  $scope.pauseReset = function() {
-    if (this.resetPaused) return;
-    var scope = this;
-    this.resetPaused = true;
-    setTimeout(function() {
-      scope.resetPaused = false;
-    }, 500);
-  };
-
-  // TODO unify the behavior between loadMore and resetEntries.
-  // Try to get rid of pausereset
-  // This is also used in cfAutocompleteResultList
   $scope.loadMore = function() {
-    if (this.reloadInProgress || this.resetPaused) return;
     if (this.paginator.atLast()) return;
-    var scope = this;
-    this.paginator.page++;
-    this.pauseReset();
-    var stopSpin = cfSpinner.start();
-    this.spaceContext.space.getEntries(this.buildQuery(), function(err, entries, stats) {
-      scope.reloadInProgress = false;
-      if (err) {
-        scope.paginator.page--;
-        stopSpin();
-        return;
-      }
-      scope.paginator.numEntries = stats.total;
-      scope.selection.switchBaseSet(stats.total);
-      scope.$apply(function(scope){
-        var args = [scope.entries.length, 0].concat(entries);
-        scope.entries.splice.apply(scope.entries, args);
-        stopSpin();
-      });
+    $scope.paginator.page++;
+
+    if ($scope.paginator.atLast()) return;
+    $scope.paginator.page++;
+    entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
+    then(function (entries) {
+      $scope.paginator.numEntries = entries.total;
+      $scope.selection.switchBaseSet(entries.total);
+      $scope.entries.push.apply($scope.entries, entries);
+      console.log('added %o to %o', entries, $scope.entries);
+    }, function () {
+      $scope.paginator.page--;
     });
 
-    scope.$apply(function(scope) {
-      scope.reloadInProgress = true;
-      analytics.track('Scrolled EntryList');
-    });
+    analytics.track('Scrolled EntryList');
   };
 
   $scope.statusClass = function(entry){

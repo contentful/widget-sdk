@@ -6,11 +6,10 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
     restrict: 'C',
     require: 'ngModel',
     template: JST['cf_location_editor'],
+    controller: 'cfLocationEditorCtrl',
     link: function(scope, elm, attr, ngModelCtrl) {
-      scope.$watch('location', function(loc, old, scope) {
-        //console.log('location changed', loc, scope);
-        scope.locationValid = !angular.isObject(loc) || angular.isNumber(loc.lat) && angular.isNumber(loc.lon);
-        marker.setVisible(loc && scope.locationValid);
+      scope.$watch('location && locationValid', function (showMarker) {
+        marker.setVisible(showMarker);
       });
 
       var ngModelGet = $parse(attr.ngModel),
@@ -35,14 +34,12 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
 
       var changeHandler = function() {
         scope.otChangeValue(scope.location, function(err) {
-          scope.$apply(function (scope) {
-            if (!err) {
-              ngModelCtrl.$setViewValue(scope.location);
-            } else {
-              notification.error('Error updating location');
-              scope.location = ngModelCtrl.$modelValue;
-            }
-          });
+          if (!err) {
+            ngModelCtrl.$setViewValue(scope.location);
+          } else {
+            notification.error('Error updating location');
+            scope.location = ngModelCtrl.$modelValue;
+          }
         });
       };
 
@@ -94,6 +91,8 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
         }
       };
 
+      latController.$parsers.push(parseFloat);
+      lonController.$parsers.push(parseFloat);
       latController.$viewChangeListeners.push(triggerLocationWatchers);
       lonController.$viewChangeListeners.push(triggerLocationWatchers);
       latController.$viewChangeListeners.push(changeHandler);
@@ -127,131 +126,41 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
       });
 
       // Search Stuff /////////////////////////////////////////////////////////
-      scope.$watch('searchTerm', function(searchTerm, old, scope) {
-        //console.log('search term changed', searchTerm);
-        if (searchTerm && searchTerm != old) {
-          var geocoder = new google.maps.Geocoder();
-          var stopSpin = cfSpinner.start();
-          geocoder.geocode({
-            address: searchTerm
-          }, function(results) {
-            scope.$apply(function(scope) {
-              if (results.length == 1) {
-                scope.updateLocation({
-                  lat: results[0].geometry.location.lat(),
-                  lon: results[0].geometry.location.lng()
-                });
-                map.fitBounds(results[0].geometry.viewport);
-              } else {
-                scope.offerResults(results);
-              }
-            });
-            stopSpin();
-          });
-        } else if (searchTerm !== old) {
-          scope.results = [];
-          scope.selectedResult = 0;
-          map.panTo(locationController.$viewValue);
-        }
-      });
 
-      scope.offerResults = function(rawResults) {
-        scope.selectedResult = 0;
-        scope.results = _.map(rawResults, function(result) {
-          return {
-            location: {
-              lat: result.geometry.location.lat(),
-              lon: result.geometry.location.lng()
-            },
-            viewport: result.geometry.viewport,
-            strippedLocation: {
-              lat: result.geometry.location.lat().toString().slice(0,8),
-              lon: result.geometry.location.lng().toString().slice(0,8)
-            },
-            address: result.formatted_address
-          };
-        });
-        scope.movetoSelected();
-      };
-
-      elm.find('input[type=search], .results').on('keydown', function(event) {
-        var DOWN  = 40,
-            UP    = 38,
-            ENTER = 13,
-            ESC   = 27;
-
-        if (event.keyCode == DOWN){
-          scope.selectNext();
-          scope.movetoSelected();
-          scope.$digest();
-          event.preventDefault();
-        } else if (event.keyCode == UP) {
-          scope.selectPrevious();
-          scope.movetoSelected();
-          scope.$digest();
-          event.preventDefault();
-        } else if (event.keyCode == ESC) {
-          scope.$apply(function(scope) {
-            scope.closePicker();
-          });
-          event.preventDefault();
-        } else if (event.keyCode == ENTER) {
-          scope.$apply(function(scope) {
-            scope.pickSelected();
-          });
-          event.preventDefault();
-          event.stopPropagation();
-        }
-      });
-
-      var scrollToSelected = function() {
-        var selected = elm.find('.results .selected')[0];
-        var $container = elm.find('.results');
-        var above = selected.offsetTop <= $container.scrollTop();
-        var below = $container.scrollTop() + $container.height()<= selected.offsetTop;
-        if (above) {
-          selected.scrollIntoView(true);
-        } else if (below) {
-          selected.scrollIntoView(false);
-        }
-      };
-
-      scope.movetoSelected = function () {
-        var result = scope.results[scope.selectedResult];
-        map.fitBounds(result.viewport);
-      };
-
-      scope.selectNext = function() {
-        if (scope.selectedResult < scope.results.length-1) {
-          scope.selectedResult++;
+      scope.$watch('selectedResult', function (result) {
+        if (result) {
+          moveMapToSelected();
           _.defer(scrollToSelected);
         }
-      };
+      });
 
-      scope.selectPrevious = function() {
-        if (0 < scope.selectedResult) scope.selectedResult--;
-        _.defer(scrollToSelected);
-      };
+      function scrollToSelected() {
+        var $selected = elm.find('.selected');
+        if ($selected.length === 0) return;
+        var $container = elm.find('.results');
+        var above = $selected.prop('offsetTop') <= $container.scrollTop();
+        var below = $container.scrollTop() + $container.height() <= $selected.prop('offsetTop');
+        if (above) {
+          $container.scrollTop($selected.prop('offsetTop'));
+        } else if (below) {
+          $container.scrollTop($selected.prop('offsetTop')-$container.height() + $selected.height());
+        }
+      }
 
-      scope.selectResult = function(result) {
-        scope.selectedResult = _.indexOf(scope.results, result);
-        scope.pickSelected();
-      };
+      function moveMapToSelected() {
+        var result = scope.selectedResult;
+        map.fitBounds(result.viewport);
+      }
 
-      scope.closePicker = function() {
+      scope.pickResult = function(result) {
+        scope.updateLocation(result.location);
+        map.fitBounds(result.viewport);
         scope.searchTerm = '';
       };
 
-      scope.pickSelected = function() {
-        var result = scope.results[scope.selectedResult];
-        if (result) {
-          scope.updateLocation(result.location);
-          map.fitBounds(result.viewport);
-          scope.closePicker();
-        }
+      scope.resetMapLocation = function () {
+        map.panTo(locationController.$viewValue);
       };
-
-      // TODO Destroy cleanup
 
     }
   };

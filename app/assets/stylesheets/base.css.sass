@@ -113,8 +113,9 @@ b, strong
   color: $dark-gray
   font-weight: bold
 a
-  color: $link-blue
-  text-decoration: underline
+  &:link
+    color: $link-blue
+    text-decoration: underline
   &:visited
     color: darken($link-blue, 18%)
   &:hover

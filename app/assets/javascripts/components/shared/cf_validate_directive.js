@@ -52,13 +52,17 @@ angular.module('contentful').directive('cfValidate', function (validation) {
         });
         var valid = _.isEmpty(errors);
         $scope.validationResult = {
-          // Only for debugging:
-          //data: data,
-          //schema: schema,
+          data: data,
+          schema: schema,
           errors: errors,
           valid:  valid
         };
       }
+
+      $scope.$on('$destroy', function (event) {
+        var scope = event.currentScope;
+        scope.validationResult = {};
+      });
 
     }
   };

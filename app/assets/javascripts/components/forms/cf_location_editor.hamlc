@@ -3,12 +3,12 @@
 .invalid-location-warning(ng-hide="locationValid")
   .text
     Corrupt location data!
-.sub-fields
+.sub-fields(cf-autocomplete-results="results" autocomplete-term="searchTerm")
   .search(ng-show="otEditable")
     .search-field(placeholder="Search Address" search="searchTerm" search-type-ahead)
     .results.search-options-on(ng-show="results.length > 0")
       %ul
-        %li(ng-repeat="result in results" ng-click="selectResult(result)" ng-class="{selected: result==results[selectedResult]}")
+        %li(ng-repeat="result in results" ng-click="pickResult(result)" ng-class="{selected: result==selectedResult}")
           %span.address {{result.address}}
           %span.lat Lat: {{result.strippedLocation.lat}}
           %span.lon Lon: {{result.strippedLocation.lon}}

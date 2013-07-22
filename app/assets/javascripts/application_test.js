@@ -12,7 +12,7 @@
 //
 //= require bootstrap-tooltip
 //
-//= require moment-1.7.2
+//= require moment-2.1.0
 //
 //= require user_interface/node_modules/share/node_modules/browserchannel/dist/bcsocket-uncompressed
 //= require user_interface/node_modules/share/webclient/share.uncompressed

@@ -4,7 +4,7 @@
     %a(ng-click="editEntry(entry)" ng-show="entry && entry.data") {{linkDescription(entry)}}
     %span(ng-hide="entry && entry.data") {{linkDescription(entry)}}
     %i.ss-delete(ng-click="removeLink(index, entry)" ng-show="otEditable")
-.cf-autocomplete-search(cf-autocomplete-result-list)
+.cf-link-editor-search(cf-autocomplete-results="entries" autocomplete-term="searchTerm")
   .controls(ng-show="otEditable && (linkedEntries.length == 0 || field.type == 'Array')")
     .add-new(ng-show="linkContentType"
              ng-click="addNew(linkContentType)"
@@ -32,7 +32,7 @@
                   tooltip-placement="top"
                   tooltip="Search for existing entries")
 
-  .results.btn-right-on.search-options-on(ng-show="hasResults()")
+  .results.btn-right-on.search-options-on(ng-show="entries && entries.length > 0")
     %table.result-list
       %thead
         %tr
@@ -44,7 +44,7 @@
         %tbody
           %tr(ng-repeat="entry in entries"
               cf-click-local="pick(entry)"
-              ng-class="{selected: entry==entries[selectedItem]}")
+              ng-class="{selected: entry==selectedEntry}")
             %td.cell-type
               %span {{spaceContext.publishedTypeForEntry(entry).getName()}}
             %td.cell-name

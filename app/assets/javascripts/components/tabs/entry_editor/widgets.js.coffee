@@ -29,7 +29,7 @@ angular.module('contentful').service 'widgets', ($compile) ->
         link: (scope, elm, attr) ->
           itemType = scope.field.items?.type
           if itemType == 'Link'
-            template = $ """<div cf-autocomplete="entries" ng-model="fieldData.value"/>"""
+            template = $ """<div cf-link-editor="entries" ng-model="fieldData.value"/>"""
           else if itemType == 'Symbol'
             template = $ """<input type="text" ng-list="" cf-list-identity-fix ng-model="fieldData.value" ot-bind-model ng-disabled="!otEditable"/>"""
           template.appendTo(elm)
@@ -71,7 +71,7 @@ angular.module('contentful').service 'widgets', ($compile) ->
     Link:
       selector:
         name: "Link selector"
-        template: """<div cf-autocomplete="entry" ng-model="fieldData.value"/>"""
+        template: """<div cf-link-editor="entry" ng-model="fieldData.value"/>"""
     
   displayWidgets =
     Symbol:

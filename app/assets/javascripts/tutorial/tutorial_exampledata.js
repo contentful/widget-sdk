@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('tutorialExampledata', function ($q, $http, environment, $rootScope, $timeout, sampleEntries, sampleContentTypes) {
+angular.module('contentful').factory('tutorialExampledata', function ($q, $http, environment, $rootScope, $timeout, sampleEntries, sampleContentTypes, client, notification) {
   return {
     load: function () {
       var deferred = $q.defer();
@@ -18,6 +18,35 @@ angular.module('contentful').factory('tutorialExampledata', function ($q, $http,
       });
     },
       
+    switchToTutorialSpace: function (clientScope) {
+      var deferred = $q.defer();
+      var IS_TUTORIAL = /tutorial/i;
+      var tutorialSpace = _.find(clientScope.spaces, function (space) {
+        return space.data.membership.owner && IS_TUTORIAL.test(space.data.name);
+      });
+      if (tutorialSpace) {
+        clientScope.selectSpace(tutorialSpace);
+        deferred.resolve(tutorialSpace);
+      } else {
+        client.createSpace({name: 'Tutorial'}, function (err, newSpace) {
+          clientScope.$apply(function (scope) {
+            if (err) {
+              deferred.reject(err);
+            } else {
+              scope.performTokenLookup(function () {
+                var space = _.find(scope.spaces, function (space) {
+                  return space.getId() == newSpace.getId();
+                });
+                scope.selectSpace(space);
+                deferred.resolve(space);
+              });
+            }
+          });
+        });
+      }
+      return deferred.promise;
+    },
+
     createContentTypes: function (spaceContext) {
       //console.log('initial call to createContentTypes');
       return this.load().

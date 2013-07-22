@@ -1,10 +1,10 @@
-angular.module('contentful').directive('cfAutocomplete', function(){
+angular.module('contentful').directive('cfLinkEditor', function(){
   'use strict';
 
   return {
     restrict: 'A',
     require: 'ngModel',
-    template: JST['cf_autocomplete'],
+    template: JST['cf_link_editor'],
     link: function(scope, elem, attrs, ngModelCtrl) {
       ngModelCtrl.$render = function () {
         if (!angular.equals(ngModelCtrl.$viewValue, scope.links)) {
@@ -16,7 +16,7 @@ angular.module('contentful').directive('cfAutocomplete', function(){
         ngModelCtrl.$setViewValue(scope.links);
       };
 
-      if (attrs.cfAutocomplete !== 'entries') {
+      if (attrs.cfLinkEditor !== 'entries') {
         ngModelCtrl.$parsers.push(function (viewValue) {
           return viewValue ? viewValue[0] : null;
         });
@@ -25,7 +25,7 @@ angular.module('contentful').directive('cfAutocomplete', function(){
         });
       }
 
-      if (attrs.cfAutocomplete === 'entries') {
+      if (attrs.cfLinkEditor === 'entries') {
         var list = elem.find('ul.links').eq(0);
         list.sortable({
           handle: '.drag-handle',
@@ -55,7 +55,7 @@ angular.module('contentful').directive('cfAutocomplete', function(){
         });
       }
     },
-    controller: 'cfAutocompleteCtrl'
+    controller: 'cfLinkEditorCtrl'
   };
 });
 

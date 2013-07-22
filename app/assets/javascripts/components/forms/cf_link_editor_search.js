@@ -1,0 +1,119 @@
+'use strict';
+
+angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator, notification, PromisedLoader) {
+  return {
+    restrict: 'AC',
+    link: function (scope, element) {
+      scope.$watch('selectedEntry', function () {
+        _.defer(scrollToSelected);
+      });
+
+      function scrollToSelected(){
+        var $selected = element.find('.selected');
+        if ($selected.length === 0) return;
+        var $container = element.find('.endless-container');
+        var above = $selected.prop('offsetTop') <= $container.scrollTop();
+        var below = $container.scrollTop() + $container.height() <= $selected.prop('offsetTop');
+        if (above) {
+          $container.scrollTop($selected.prop('offsetTop'));
+        } else if (below) {
+          $container.scrollTop($selected.prop('offsetTop')-$container.height() + $selected.height());
+        }
+      }
+    },
+    controller: function cfLinkEditorSearchCtrl($scope){
+
+      var entryLoader = new PromisedLoader();
+
+      $scope.paginator = new Paginator();
+
+      $scope.$watch('searchTerm', function(term, old, scope) {
+        scope.resetEntries();
+      });
+
+      $scope.$on('autocompleteResultSelected', function (event, index, entry) {
+        event.currentScope.selectedEntry = entry;
+      });
+
+      $scope.$on('autocompleteResultPicked', function (event, index, entry) {
+        event.currentScope.addLink(entry, function(err) {
+          if (err) event.preventDefault();
+        });
+      });
+
+      $scope.pick = function (entry) {
+        $scope.addLink(entry, function(err) {
+          if (!err) $scope.searchTerm = '';
+        });
+      };
+
+
+      $scope.addNew = function(contentType) {
+        $scope.spaceContext.space.createEntry(contentType.getId(), {}, function(errCreate, entry){
+          if (errCreate) {
+            //console.log('Error creating entry', errCreate);
+            notification.error('Error creating entry');
+            throw new Error('Error creating entry in cfLinkEditor');
+          }
+          $scope.addLink(entry, function(errSetLink) {
+            if (errSetLink) {
+              notification.error('Error linking entry');
+              //console.log('Error linking entry', errSetLink);
+              entry.delete(function(errDelete) {
+                if (errDelete) {
+                  //console.log('Error deleting entry', errDelete);
+                  notification.error('Error deleting entry again');
+                  throw new Error('Error deleting entry in cfLinkEditor');
+                }
+              });
+              throw new Error('Error linking entry in cfLinkEditor');
+            }
+            $scope.editEntry(entry, 'create');
+          });
+        });
+      };
+
+      $scope.resetEntries = function() {
+        if (_.isEmpty($scope.searchTerm)) {
+          $scope.paginator.page = 0;
+          $scope.entries = [];
+          $scope.selectedEntry = null;
+        } else {
+          entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
+          then(function (entries) {
+            $scope.paginator.numEntries = entries.total;
+            $scope.entries = entries;
+            $scope.selectedEntry = entries[0];
+          });
+        }
+      };
+
+      $scope.loadMore = function() {
+        if ($scope.paginator.atLast()) return;
+        $scope.paginator.page++;
+        entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
+        then(function (entries) {
+          $scope.paginator.numEntries = entries.total;
+          $scope.entries.push.apply($scope.entries, entries);
+        }, function () {
+          $scope.paginator.page--;
+        });
+      };
+
+      function buildQuery() {
+        var queryObject = {
+          order: '-sys.updatedAt',
+          limit: $scope.paginator.pageLength,
+          skip: $scope.paginator.skipItems()
+        };
+
+        if ($scope.linkContentType)
+          queryObject['sys.contentType.sys.id'] = $scope.linkContentType.getId();
+        if ($scope.searchTerm && 0 < $scope.searchTerm.length)
+          queryObject.query = $scope.searchTerm;
+
+        return queryObject;
+      }
+
+    }};
+});
