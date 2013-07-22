@@ -50,7 +50,7 @@ angular.module('contentful').directive('validationErrorDisplay', function () {
           }
         },
         regexp: function (v) {
-          return 'Must match /' + v.pattern + '/.';
+          return 'Has an invalid format.';
         },
         'in': function (v) {
           return 'Must be one of ' + v.expected.join(', ') + '.';
