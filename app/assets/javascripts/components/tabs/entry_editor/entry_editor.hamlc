@@ -58,7 +58,7 @@
     .form-field(ng-show="hasErrorOnFields")
       %label
       .form-controls
-        .validation-error-display.form-box-error(path="['fields']" ng-show="errorMessages.length > 0")
+        .cf-validation-error-display.form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
     .form-field(ng-repeat="field in fields" data-field-type="{{field.type}}" data-field-items-type="{{field.items.type}}")
       %label {{field.name}}
       .form-controls
@@ -75,8 +75,8 @@
             Hint to the user about the meaning of the field
             .arrow-left
             .arrow-left-border
-          .validation-error-display.form-box-error(path="['fields', field.id, locale.code]")
-        .validation-error-display.form-box-error(path="['fields', field.id]")
+          .cf-validation-error-display.form-box-error(cf-error-path="['fields', field.id, locale.code]")
+        .cf-validation-error-display.form-box-error(cf-error-path="['fields', field.id]")
 
 .tab-actions(ng-controller="EntryActionsCtrl")
   .button-set

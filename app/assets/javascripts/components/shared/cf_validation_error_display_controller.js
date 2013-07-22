@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ValidationErrorDisplayCtrl', function ValidationErrorDisplayCtrl($scope, $attrs) {
+angular.module('contentful').controller('CfValidationErrorDisplayCtrl', function CfValidationErrorDisplayCtrl($scope, $attrs) {
   $scope.errorMessages = [];
 
   var messages = {
@@ -78,7 +78,7 @@ angular.module('contentful').controller('ValidationErrorDisplayCtrl', function V
   }
 
   var unwatch = $scope.$watch('validationResult.errors', function(errors) {
-    var path = $scope.$eval($attrs.path);
+    var path = $scope.$eval($attrs.cfErrorPath);
 
     var fieldErrors = _.filter(errors, function(error) {
       return _.isEqual(error.path, path);

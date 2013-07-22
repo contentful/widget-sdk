@@ -12,7 +12,7 @@ describe('Validation Error Display Controller', function () {
       errors : [],
       data: scope.entity
     };
-    controller = $controller('ValidationErrorDisplayCtrl', {
+    controller = $controller('CfValidationErrorDisplayCtrl', {
       $scope: $rootScope,
       $attrs: attrs = {}
     });
@@ -20,7 +20,7 @@ describe('Validation Error Display Controller', function () {
 
   describe('data-dependent message generation', function () {
     beforeEach(function () {
-      attrs.path = '["foo", "bar"]';
+      attrs.cfErrorPath = '["foo", "bar"]';
       scope.entity = {
         foo: {
           bar: 'asdasd'

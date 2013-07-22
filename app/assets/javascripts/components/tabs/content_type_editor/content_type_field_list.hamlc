@@ -41,14 +41,14 @@
                      placeholder="e.g. Product Name"
                      tooltip="Field title displayed to editors"
                      tooltip-placement="bottom")
-              .validation-error-display.form-inline-error(path="['name']" ng-hide="newFieldForm.$pristine || noErrors")
+              .cf-validation-error-display.form-inline-error(cf-error-path="['name']" ng-hide="newFieldForm.$pristine || noErrors")
             .identifier
               %input(name="newId"
                      ng-model="newField.id" type="text" required=""
                      placeholder="e.g. productName"
                      tooltip="Field ID used in API"
                      tooltip-placement="bottom")
-              .validation-error-display.form-inline-error(path="['id']" ng-hide="newFieldForm.$pristine || noErrors")
+              .cf-validation-error-display.form-inline-error(cf-error-path="['id']" ng-hide="newFieldForm.$pristine || noErrors")
               .form-inline-error(ng-show="idExists")
                 Identifier already exists
             .type

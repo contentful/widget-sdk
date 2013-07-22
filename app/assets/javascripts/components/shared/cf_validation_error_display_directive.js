@@ -1,9 +1,9 @@
 'use strict';
 
-angular.module('contentful').directive('validationErrorDisplay', function () {
+angular.module('contentful').directive('cfValidationErrorDisplay', function () {
   return {
     restrict: 'C',
-    template: JST['validation_error_display'],
+    template: JST['cf_validation_error_display'],
     scope: true,
     link: function (scope, elem, attrs) {
       scope.$watch('errorMessages.length', function (numErrors) {
@@ -20,6 +20,6 @@ angular.module('contentful').directive('validationErrorDisplay', function () {
         }
       });
     },
-    controller: 'ValidationErrorDisplayCtrl'
+    controller: 'CfValidationErrorDisplayCtrl'
   };
 });
