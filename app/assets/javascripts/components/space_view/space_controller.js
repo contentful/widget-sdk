@@ -27,6 +27,15 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
             else     scope.editEntry(entry);
           });
         });
+      else if (route.viewType == 'asset-list')
+        $scope.visitView('asset-list');
+      else if (route.viewType == 'asset-editor')
+        $scope.spaceContext.space.getAsset(route.params.assetId, function (err, asset) {
+          $scope.$apply(function (scope) {
+            if (err) scope.visitView('asset-list');
+            else     scope.editAsset(asset);
+          });
+        });
       else if (route.viewType == 'content-type-list')
         $scope.visitView('content-type-list');
       else if (route.viewType == 'content-type-editor')
