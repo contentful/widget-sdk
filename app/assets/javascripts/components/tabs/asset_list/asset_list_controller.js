@@ -21,6 +21,7 @@ angular.module('contentful').controller('AssetListCtrl', function AssetListCtrl(
     $scope.resetAssets();
   });
 
+  // TODO check if this necessary
   $scope.switchList = function(list){
     $scope.searchTerm = null;
     var params = $scope.tab.params;
@@ -35,6 +36,7 @@ angular.module('contentful').controller('AssetListCtrl', function AssetListCtrl(
     }
   };
 
+  // TODO check this works
   $scope.visibleInCurrentList = function(asset){
     switch ($scope.tab.params.list) {
       case 'all':

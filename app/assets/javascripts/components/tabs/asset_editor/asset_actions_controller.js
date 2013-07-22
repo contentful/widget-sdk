@@ -4,7 +4,6 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
   // TODO If we are sure that the data in the asset has been updated from the ShareJS doc,
   // We can query the asset instead of reimplementing the checks heere
 
-  // FIXME there's no asset title
   function title() {
     return '"' + $scope.spaceContext.assetTitle($scope.asset) + '"';
   }
@@ -51,7 +50,7 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
     $scope.asset.unarchive(function(err) {
       $scope.$apply(function() {
         if (err)
-          notification.error('Error unarchiving ' + title + ' (' + err.body.sys.id + ')');
+          notification.error('Error unarchiving ' + title() + ' (' + err.body.sys.id + ')');
         else
           notification.info(title() + ' unarchived successfully');
       });

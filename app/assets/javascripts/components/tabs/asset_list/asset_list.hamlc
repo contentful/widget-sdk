@@ -55,7 +55,7 @@
             -#%td.cell-favorite
               %i.ss-star
             %td.cell-name
-              -#%span {{spaceContext.assetTitle(asset)}}
+              %span {{spaceContext.assetTitle(asset)}}
             %td.cell-updated
               %date.relative(datetime="{{asset.data.sys.updatedAt}}")
             %td.cell-by

@@ -134,8 +134,7 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
 
 
   $scope.headline = function(){
-    // TODO show asset title instead
-    //return this.spaceContext.assetTitle(this.asset);
+    return this.spaceContext.assetTitle(this.asset);
   };
 
 });
