@@ -61,8 +61,8 @@
     %li.tablist-button(space-context="spaceContext")
 .tab-content(ng-repeat="tab in spaceContext.tabList.items" ng-show="tab.active()" ng-switch="tab.viewType")
   .iframe-view(ng-switch-when="iframe")
-  .entry-list(ng-switch-when="entry-list")
-  .asset-list(ng-switch-when="asset-list")
+  .entry-list.entity-list(ng-switch-when="entry-list")
+  .asset-list.entity-list(ng-switch-when="asset-list")
   .content-type-list(ng-switch-when="content-type-list")
   .entry-editor.with-tab-actions(ng-switch-when="entry-editor"
     ot-doc-for="tab.params.entry"
