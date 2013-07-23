@@ -2,51 +2,23 @@
   %h1
     {{headline()}}
   .editor-top-left
-    -#.dropdown-btn
-      %a.btn.dropdown-toggle
-        %i.ss-dropdown
-        %span Default-Interface
-      .dropdown-menu(style="display:none")
-        …
-        …
-        …
-    .dropdown-btn
+    .dropdown-btn(ng-show="showLangSwitcher")
       %a.dropdown-toggle
         %i.ss-dropdown
         %span Show fields…
       .dropdown-menu(style="display:none")
-        %ul(ng-show="showLangSwitcher")
+        %ul
           %li(ng-repeat="locale in spaceContext.publishLocales")
             %label
               %input(type="checkbox" ng-model="spaceContext.localesActive[locale.code]")
               {{locale.name}}
               %span(ng-show="locale == spaceContext.space.getDefaultLocale()") (default)
-        %ul
-          %li(ng-class="{separator: showLangSwitcher}")
-            %label
-              %input(type="checkbox" ng-model="preferences.showDisabledFields")
-              Show disabled fields
-
   .editor-top-right
     %button(ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
             tooltip-placement="left")
       Info
-    -#.dropdown-btn>
-      %a.btn.dropdown-toggle
-        %i.ss-dropdown
-        %span Meta
-      .dropdown-menu(style="display:none")
-        …
-        …
-        …
-    -#.dropdown-btn>
-      %a.btn.dropdown-toggle
-        %span Apps
-    -#.dropdown-btn>
-      %a.btn.dropdown-toggle
-        %span Events
 
 .aux-panel
   %header
@@ -55,28 +27,22 @@
 
 .tab-main
   %form.form-horizontal(name="assetForm")
-    .form-field(ng-show="hasErrorOnFields")
-      %label
+    .form-field
+      %label Title
       .form-controls
-        .validation-error-display.form-box-error(path="['fields']" ng-show="errorMessages.length > 0")
-    .form-field(ng-repeat="field in fields" data-field-type="{{field.type}}" data-field-items-type="{{field.items.type}}")
-      %label {{field.name}}
+        .locale(ng-repeat="locale in spaceContext.activeLocales")
+          .locale-label(ng-show="spaceContext.activeLocales > 1") {{locale.name}}
+          %input(type="text" ot-path="['fields', 'title', locale.code]" ot-subdoc ot-bind-text ng-model="asset.data.fields.title[locale.code]" ng-disabled="!otEditable")
+          .cf-validation-error-display.form-box-error(cf-error-path="['fields', 'title', locale.code]")
+        .cf-validation-error-display.form-box-error(cf-error-path="['fields', 'title']")
+    .form-field
+      %label Description
       .form-controls
-        .locale(ng-repeat="locale in field.locales" ot-field-presence="['fields', field.id, locale.code]")
-          .field-collaborators
-            %ul
-              %li.avatar.cf-user(ng-repeat="link in fieldPresence.users"
-                                 link="link" as="user"
-                                 tooltip="{{user.getName()}}")
-                %img(ng-src="{{user.data.avatarUrl}}")
-          .locale-label(ng-show="field.locales.length > 1") {{locale.name}}
-          .cf-field-editor(ot-path="['fields', field.id, locale.code]")
-          -#.hint.tip
-            Hint to the user about the meaning of the field
-            .arrow-left
-            .arrow-left-border
-          .validation-error-display.form-box-error(path="['fields', field.id, locale.code]")
-        .validation-error-display.form-box-error(path="['fields', field.id]")
+        .locale(ng-repeat="locale in spaceContext.activeLocales")
+          .locale-label(ng-show="spaceContext.activeLocales > 1") {{locale.name}}
+          %textarea(ot-path="['fields', 'description', locale.code]" ot-subdoc ot-bind-text ng-model="asset.data.fields.description[locale.code]" ng-disabled="!otEditable")
+          .cf-validation-error-display.form-box-error(cf-error-path="['fields', 'description', locale.code]")
+        .cf-validation-error-display.form-box-error(cf-error-path="['fields', 'description']")
 
 .tab-actions(ng-controller="AssetActionsCtrl")
   .button-set
