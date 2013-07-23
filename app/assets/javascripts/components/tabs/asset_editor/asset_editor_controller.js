@@ -119,7 +119,6 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
     //});
   //});
 
-
   $scope.headline = function(){
     return this.spaceContext.assetTitle(this.asset);
   };

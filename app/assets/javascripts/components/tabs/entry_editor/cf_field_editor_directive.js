@@ -6,11 +6,11 @@
 // var ngModelGet = $parse(attr.ngModel),
 //     ngModelSet = ngModelGet.assign;
 //
-//
 // changeHandler (widget value changed internally)
 //   ShareJS submit
 //    success: ngModelCtrl.$setViewValue(internal value)
 //    fail: reset internal value to ngModelCtr.$modelValue
+//          OR simply abort if nothing has been changed on the scope
 //
 // ngModelCtrl.$render
 //    set internal value to ngModelCtrl.$viewValue

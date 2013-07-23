@@ -43,6 +43,14 @@
           %textarea(ot-path="['fields', 'description', locale.code]" ot-subdoc ot-bind-text ng-model="asset.data.fields.description[locale.code]" ng-disabled="!otEditable")
           .cf-validation-error-display.form-box-error(cf-error-path="['fields', 'description', locale.code]")
         .cf-validation-error-display.form-box-error(cf-error-path="['fields', 'description']")
+    .form-field
+      %label File
+      .form-controls
+        .locale(ng-repeat="locale in spaceContext.activeLocales")
+          .locale-label(ng-show="spaceContext.activeLocales > 1") {{locale.name}}
+          .cf-file-editor(ng-model="asset.data.fields.file[locale.code]" ot-path="['fields', 'file', locale.code]")
+          .cf-validation-error-display.form-box-error(cf-error-path="['fields', 'file', locale.code, '*']")
+        .cf-validation-error-display.form-box-error(cf-error-path="['fields', 'file']")
 
 .tab-actions(ng-controller="AssetActionsCtrl")
   .button-set
