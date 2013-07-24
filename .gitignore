@@ -19,3 +19,4 @@ node_modules
 chromedriver.log
 libpeerconnection.log
 .tern-port
+npm-debug.log
