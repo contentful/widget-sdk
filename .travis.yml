@@ -2,6 +2,8 @@ language: ruby
 rvm:
   - 1.9.3
 bundler_args: --without development
+before_install:
+  - "./update.sh"
 before_script:
   - "rake jasmine JASMINE_PORT=8112 &"
   - "sleep 15"
