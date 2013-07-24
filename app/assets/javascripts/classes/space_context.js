@@ -54,10 +54,10 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
           var spaceContext = this;
           this.space.getContentTypes({order: 'name', limit: 1000}, function(err, contentTypes) {
             $rootScope.$apply(function() {
+              if (err) return deferred.reject(err);
               contentTypes.sort(function (a,b) {
                 return a.getName().localeCompare(b.getName());
               });
-              if (err) return deferred.reject(err);
               spaceContext.contentTypes = contentTypes;
               spaceContext.refreshPublishedContentTypes().then(function () {
                 deferred.resolve(contentTypes);
