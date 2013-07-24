@@ -3,7 +3,7 @@
 angular.module('contentful').provider('analytics', function (environment) {
   /*global analytics*/
 
-  var dontLoad = environment.env == 'development' ? true : false;
+  var dontLoad = environment.env.match(/development|test/) ? true : false;
 
   this.dontLoad = function () {
     dontLoad = true;
