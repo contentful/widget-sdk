@@ -31,11 +31,14 @@ gem 'jquery-ui-rails'
 #gem 'sprockets-browserify', :path => '/Users/jan/development/rails_plugins/sprockets-browserify'
 gem 'sprockets-browserify'
 
+group :development do
+  gem 'debugger'
+end
+
 group :development, :test do
   gem "guard-livereload"
   gem 'rb-fsevent', '~> 0.9.1', :require => false
   gem "jasmine", :git => 'git://github.com/janv/jasmine-gem.git', :branch => 'patch-1'
-  gem 'debugger'
 end
 
 group :test do
