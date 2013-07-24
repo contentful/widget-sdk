@@ -4,7 +4,7 @@ rvm:
 bundler_args: --without development
 before_script:
   - "rake jasmine JASMINE_PORT=8112 &"
-  - "sleep 4"
+  - "sleep 15"
 script: "./run_js_unit_tests.sh"
 branches:
   only:
