@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorCtrl($scope, ShareJS, validation, can, AssetContentType) {
+angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorCtrl($scope, ShareJS, validation, can, AssetContentType, notification) {
   $scope.$watch('tab.params.asset', 'asset=tab.params.asset');
   $scope.$watch(function assetEditorEnabledWatcher(scope) {
     return !scope.asset.isArchived() && can('update', scope.asset.data);
@@ -113,6 +113,15 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
         errorPaths[field].push(localeCode);
       }
       errorPaths[field] = _.unique(errorPaths[field]);
+    });
+  });
+
+  $scope.$on('fileUploaded', function (event, file) {
+    var localeCode = _($scope.asset.data.fields.file).keys().filter(function (localeCode) {
+      return $scope.asset.data.fields.file[localeCode] === file;
+    }).value();
+    $scope.asset.process($scope.otDoc.version, localeCode, function (err) {
+      if (err) notification.error('There has been a problem processing the asset.');
     });
   });
 

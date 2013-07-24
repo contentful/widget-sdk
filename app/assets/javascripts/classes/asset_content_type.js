@@ -12,8 +12,8 @@ angular.module('contentful').constant('AssetContentType', {
       disabled: false
     },
     {
-      id: 'title',
-      name: 'Title',
+      id: 'description',
+      name: 'Description',
       type: 'Text',
       localized: true,
       disabled: false
