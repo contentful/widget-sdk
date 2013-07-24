@@ -32,8 +32,12 @@ angular.module('contentful').controller('CfValidationErrorDisplayCtrl', function
         return 'Must be at most ' + v.max + '.';
       }
     },
-    regexp: function () {
-      return 'Has an invalid format.';
+    regexp: function (v) {
+      if (v.path[1] === 'file' && v.path[3] === 'url') {
+        return 'Has an invalid url';
+      } else {
+        return 'Has an invalid format.';
+      }
     },
     'in': function (v) {
       return 'Must be one of ' + v.expected.join(', ') + '.';

@@ -111,9 +111,9 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
         if (err) {
           var errorId = err.body.sys.id;
           var reason;
-          if (errorId === 'validationFailed')
+          if (errorId === 'ValidationFailed')
             reason = 'Validation failed';
-          else if (errorId === 'versionMismatch')
+          else if (errorId === 'VersionMismatch')
             reason = 'Can only publish most recent version';
           else
             reason = errorId;
