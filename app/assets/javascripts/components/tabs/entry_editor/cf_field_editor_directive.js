@@ -18,13 +18,15 @@
 // otValueChanged
 //   ngModelSet(scope, incomingValue)
 
-angular.module('contentful').directive('cfFieldEditor', function(widgets, $compile, $log) {
+angular.module('contentful').directive('cfFieldEditor', function(widgets, $compile, $log, $parse) {
   return {
     restrict: 'C',
     require: '^otPath',
     link: function(scope, elm, attr) {
       // Write back local value changes to the entity
       // Necessary because the widgets can't access the entry directly, only the value variable
+      var getEntity = $parse(attr.cfEditorEntity);
+
       scope.fieldData = {value: getExternal()};
       var oldValue = scope.fieldData.value;
 
@@ -45,7 +47,7 @@ angular.module('contentful').directive('cfFieldEditor', function(widgets, $compi
           // Both changed. shouldn't happen
           //$log.warn('External and internal value changed in cfFieldEditor', scope);
           external = oldValue = scope.fieldData.value;
-          scope.entry.data.fields[scope.field.id][scope.locale.code] = external;
+          setExternal(external);
         } else if (external !== oldValue) {
           // external changed, update internal
           scope.fieldData.value = oldValue = external;
@@ -58,24 +60,26 @@ angular.module('contentful').directive('cfFieldEditor', function(widgets, $compi
       });
 
       function setExternal(value) {
-        if (!scope.entry.data.fields) {
-          scope.entry.data.fields = {};
+        var entity = getEntity(scope);
+        if (!entity.data.fields) {
+          entity.data.fields = {};
         }
-        if (!scope.entry.data.fields[scope.field.id]) {
-          scope.entry.data.fields[scope.field.id] = {};
+        if (!entity.data.fields[scope.field.id]) {
+          entity.data.fields[scope.field.id] = {};
         }
-        scope.entry.data.fields[scope.field.id][scope.locale.code] = value;
+        entity.data.fields[scope.field.id][scope.locale.code] = value;
         return value;
       }
 
       function getExternal() {
-        if (!scope.entry.data.fields) {
+        var entity = getEntity(scope);
+        if (!entity.data.fields) {
           return undefined;
         }
-        if (!scope.entry.data.fields[scope.field.id]) {
+        if (!entity.data.fields[scope.field.id]) {
           return undefined;
         }
-        return scope.entry.data.fields[scope.field.id][scope.locale.code];
+        return entity.data.fields[scope.field.id][scope.locale.code];
       }
 
       var widget = widgets.editor(scope.field.type, attr.editor);

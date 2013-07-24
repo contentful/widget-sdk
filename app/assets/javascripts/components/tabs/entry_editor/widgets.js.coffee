@@ -72,7 +72,11 @@ angular.module('contentful').service 'widgets', ($compile) ->
       selector:
         name: "Link selector"
         template: """<div cf-link-editor="entry" ng-model="fieldData.value"/>"""
-    
+    File:
+      filepicker:
+        name: "Filepicker"
+        template: """<div class="cf-file-editor" ng-model="fieldData.value"></div>"""
+
   displayWidgets =
     Symbol:
       textField:

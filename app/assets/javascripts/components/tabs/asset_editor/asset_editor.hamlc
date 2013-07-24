@@ -27,30 +27,24 @@
 
 .tab-main
   %form.form-horizontal(name="assetForm")
-    .form-field
-      %label Title
+    .form-field(ng-show="hasErrorOnFields")
+      %label
       .form-controls
-        .locale(ng-repeat="locale in spaceContext.activeLocales")
-          .locale-label(ng-show="spaceContext.activeLocales > 1") {{locale.name}}
-          %input(type="text" ot-path="['fields', 'title', locale.code]" ot-subdoc ot-bind-text ng-model="asset.data.fields.title[locale.code]" ng-disabled="!otEditable")
-          .cf-validation-error-display.form-box-error(cf-error-path="['fields', 'title', locale.code]")
-        .cf-validation-error-display.form-box-error(cf-error-path="['fields', 'title']")
-    .form-field
-      %label Description
+        .cf-validation-error-display.form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
+    .form-field(ng-repeat="field in fields" data-field-type="{{field.type}}" data-field-items-type="{{field.items.type}}")
+      %label {{field.name}}
       .form-controls
-        .locale(ng-repeat="locale in spaceContext.activeLocales")
-          .locale-label(ng-show="spaceContext.activeLocales > 1") {{locale.name}}
-          %textarea(ot-path="['fields', 'description', locale.code]" ot-subdoc ot-bind-text ng-model="asset.data.fields.description[locale.code]" ng-disabled="!otEditable")
-          .cf-validation-error-display.form-box-error(cf-error-path="['fields', 'description', locale.code]")
-        .cf-validation-error-display.form-box-error(cf-error-path="['fields', 'description']")
-    .form-field
-      %label File
-      .form-controls
-        .locale(ng-repeat="locale in spaceContext.activeLocales")
-          .locale-label(ng-show="spaceContext.activeLocales > 1") {{locale.name}}
-          .cf-file-editor(ng-model="asset.data.fields.file[locale.code]" ot-path="['fields', 'file', locale.code]")
-          .cf-validation-error-display.form-box-error(cf-error-path="['fields', 'file', locale.code, '*']")
-        .cf-validation-error-display.form-box-error(cf-error-path="['fields', 'file']")
+        .locale(ng-repeat="locale in field.locales" ot-field-presence="['fields', field.id, locale.code]")
+          .field-collaborators
+            %ul
+              %li.avatar.cf-user(ng-repeat="link in fieldPresence.users"
+                                 link="link" as="user"
+                                 tooltip="{{user.getName()}}")
+                %img(ng-src="{{user.data.avatarUrl}}")
+          .locale-label(ng-show="field.locales.length > 1") {{locale.name}}
+          .cf-field-editor(ot-path="['fields', field.id, locale.code]" cf-editor-entity="asset")
+          .cf-validation-error-display.form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
+        .cf-validation-error-display.form-box-error(cf-error-path="['fields', field.id]")
 
 .tab-actions(ng-controller="AssetActionsCtrl")
   .button-set
