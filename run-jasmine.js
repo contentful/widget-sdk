@@ -59,12 +59,25 @@ page.open(system.args[1], function(status){
             });
         }, function(){
             var exitCode = page.evaluate(function(){
+                var ANSI = {}
+                ANSI.color_map = {
+                    "green" : 32,
+                    "red"   : 31
+                }
+
+                ANSI.colorize_text = function(text, color) {
+                  var color_code = this.color_map[color];
+                  return "\033[" + color_code + "m" + text + "\033[0m";
+                }
+ 
                 //console.log('');
                 //console.log(document.body.querySelector('.description').innerText);
                 var htmlReporter = document.body.querySelectorAll('#HTMLReporter')[0];
                 var trivialReporter = document.body.querySelectorAll('#TrivialReporter')[0];
                 if(!htmlReporter && !trivialReporter){
-                  console.log('The reporters failed to load. Maybe the tests didn\'t run at all?');
+                  console.log('\n\n'+
+                              ANSI.colorize_text('ERROR: The reporters failed to load. Maybe the tests didn\'t run at all?', 'red')+
+                              '\n\n');
                   return 1;
                 }
                 var list = document.body.querySelectorAll('.results > #details > .specDetail.failed');
