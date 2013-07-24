@@ -38,6 +38,7 @@ stylesheets:
 #   - helpers/**/*.js
 #
 helpers:
+  - phantomjs/**/*.js
   - helpers/**/*.js
 
 # spec_files
