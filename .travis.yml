@@ -3,7 +3,8 @@ rvm:
   - 1.9.3
 bundler_args: --without development
 before_install:
-  - "./update.sh"
+  - "cd ./app/assets/commonjs_modules/user_interface"
+  - "npm install"
 before_script:
   - "rake jasmine JASMINE_PORT=8112 &"
   - "sleep 15"
