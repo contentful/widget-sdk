@@ -51,7 +51,7 @@ page.onConsoleMessage = function(msg) {
 page.open(system.args[1], function(status){
     if (status !== "success") {
         console.log("Unable to access network");
-        phantom.exit();
+        phantom.exit(1);
     } else {
         waitFor(function(){
             return page.evaluate(function(){
@@ -61,6 +61,12 @@ page.open(system.args[1], function(status){
             var exitCode = page.evaluate(function(){
                 //console.log('');
                 //console.log(document.body.querySelector('.description').innerText);
+                var htmlReporter = document.body.querySelectorAll('#HTMLReporter')[0];
+                var trivialReporter = document.body.querySelectorAll('#TrivialReporter')[0];
+                if(!htmlReporter && !trivialReporter){
+                  console.log('The reporters failed to load. Maybe the tests didn\'t run at all?');
+                  return 1;
+                }
                 var list = document.body.querySelectorAll('.results > #details > .specDetail.failed');
                 if (list && list.length > 0) {
                   /*
