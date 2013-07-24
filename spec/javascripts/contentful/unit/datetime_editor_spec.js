@@ -1,7 +1,7 @@
 /*global moment*/
 'use strict';
 
-describe('DateTime Editor', function () {
+xdescribe('DateTime Editor', function () {
   var element, scope;
   beforeEach(module('contentful/test'));
 
