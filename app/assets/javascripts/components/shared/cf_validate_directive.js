@@ -47,6 +47,10 @@ angular.module('contentful').directive('cfValidate', function (validation) {
       function validate(data, schema){
         if (!data || !schema) return;
         var schemaErrors = schema.errors(_.omit(data, 'sys'));
+        $scope.setValidationResult(schemaErrors, data, schema);
+      }
+
+      $scope.setValidationResult = function (schemaErrors, data, schema) {
         var errors = _.reject(schemaErrors, function (error) {
           return error.path[error.path.length-1] == '$$hashKey';
         });
@@ -57,7 +61,8 @@ angular.module('contentful').directive('cfValidate', function (validation) {
           errors: errors,
           valid:  valid
         };
-      }
+        
+      };
 
       $scope.$on('$destroy', function (event) {
         var scope = event.currentScope;
