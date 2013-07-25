@@ -15,6 +15,8 @@ angular.module('contentful').directive('cfLinkEditor', function(){
       scope.linkMultiple = !!attrs.cfLinkEditor.match(/entries|assets/);
       scope.linkSingle   = !scope.linkMultiple;
       scope.linkType     = attrs.cfLinkEditor.match(/entr/) ? 'Entry' : 'Asset';
+      scope.fetchMethod  = scope.linkType === 'Entry' ? 'getEntries' : 'getAssets';
+
 
       scope.updateModel = function () {
         ngModelCtrl.$setViewValue(scope.links);

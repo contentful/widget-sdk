@@ -4,7 +4,7 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
   return {
     restrict: 'AC',
     link: function (scope, element) {
-      scope.$watch('selectedEntry', function () {
+      scope.$watch('selectedEntity', function () {
         _.defer(scrollToSelected);
       });
 
@@ -23,67 +23,67 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
     },
     controller: function cfLinkEditorSearchCtrl($scope){
 
-      var entryLoader = new PromisedLoader();
+      var entityLoader = new PromisedLoader();
 
       $scope.paginator = new Paginator();
 
       $scope.$watch('searchTerm', function(term, old, scope) {
-        scope.resetEntries();
+        scope.resetEntities();
       });
 
-      $scope.$on('autocompleteResultSelected', function (event, index, entry) {
-        event.currentScope.selectedEntry = entry;
+      $scope.$on('autocompleteResultSelected', function (event, index, entity) {
+        event.currentScope.selectedEntity = entity;
       });
 
-      $scope.$on('autocompleteResultPicked', function (event, index, entry) {
-        event.currentScope.addLink(entry, function(err) {
+      $scope.$on('autocompleteResultPicked', function (event, index, entity) {
+        event.currentScope.addLink(entity, function(err) {
           if (err) event.preventDefault();
         });
       });
 
-      $scope.pick = function (entry) {
-        $scope.addLink(entry, function(err) {
+      $scope.pick = function (entity) {
+        $scope.addLink(entity, function(err) {
           if (!err) $scope.searchTerm = '';
         });
       };
 
 
       $scope.addNew = function(contentType) {
-        $scope.spaceContext.space.createEntry(contentType.getId(), {}, function(errCreate, entry){
+        $scope.spaceContext.space.createEntity(contentType.getId(), {}, function(errCreate, entity){
           if (errCreate) {
-            //console.log('Error creating entry', errCreate);
-            notification.error('Error creating entry');
-            throw new Error('Error creating entry in cfLinkEditor');
+            //console.log('Error creating entity', errCreate);
+            notification.error('Error creating entity');
+            throw new Error('Error creating entity in cfLinkEditor');
           }
-          $scope.addLink(entry, function(errSetLink) {
+          $scope.addLink(entity, function(errSetLink) {
             if (errSetLink) {
-              notification.error('Error linking entry');
-              //console.log('Error linking entry', errSetLink);
-              entry.delete(function(errDelete) {
+              notification.error('Error linking entity');
+              //console.log('Error linking entity', errSetLink);
+              entity.delete(function(errDelete) {
                 if (errDelete) {
-                  //console.log('Error deleting entry', errDelete);
-                  notification.error('Error deleting entry again');
-                  throw new Error('Error deleting entry in cfLinkEditor');
+                  //console.log('Error deleting entity', errDelete);
+                  notification.error('Error deleting entity again');
+                  throw new Error('Error deleting entity in cfLinkEditor');
                 }
               });
-              throw new Error('Error linking entry in cfLinkEditor');
+              throw new Error('Error linking entity in cfLinkEditor');
             }
-            $scope.editEntry(entry, 'create');
+            $scope.editEntity(entity, 'create');
           });
         });
       };
 
-      $scope.resetEntries = function() {
+      $scope.resetEntities = function() {
         if (_.isEmpty($scope.searchTerm)) {
           $scope.paginator.page = 0;
-          $scope.entries = [];
-          $scope.selectedEntry = null;
+          $scope.entities = [];
+          $scope.selectedEntity = null;
         } else {
-          entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
-          then(function (entries) {
-            $scope.paginator.numEntries = entries.total;
-            $scope.entries = entries;
-            $scope.selectedEntry = entries[0];
+          entityLoader.load($scope.spaceContext.space, $scope.fetchMethod, buildQuery()).
+          then(function (entities) {
+            $scope.paginator.numEntries = entities.total;
+            $scope.entities = entities;
+            $scope.selectedEntity = entities[0];
           });
         }
       };
@@ -91,10 +91,10 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
       $scope.loadMore = function() {
         if ($scope.paginator.atLast()) return;
         $scope.paginator.page++;
-        entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
-        then(function (entries) {
-          $scope.paginator.numEntries = entries.total;
-          $scope.entries.push.apply($scope.entries, entries);
+        entityLoader.load($scope.spaceContext.space, $scope.fetchMethod, buildQuery()).
+        then(function (entities) {
+          $scope.paginator.numEntries = entities.total;
+          $scope.entities.push.apply($scope.entities, entities);
         }, function () {
           $scope.paginator.page--;
         });

@@ -29,7 +29,11 @@ angular.module('contentful').service 'widgets', ($compile) ->
         link: (scope, elm, attr) ->
           itemType = scope.field.items?.type
           if itemType == 'Link'
-            template = $ """<div cf-link-editor="entries" ng-model="fieldData.value"/>"""
+            linkType = scope.field.items.linkType
+            if linkType == 'Entry'
+              template = $ """<div cf-link-editor="entries" ng-model="fieldData.value"/>"""
+            else if linkType == 'Asset'
+              template = $ """<div cf-link-editor="assets" ng-model="fieldData.value"/>"""
           else if itemType == 'Symbol'
             template = $ """<input type="text" ng-list="" cf-list-identity-fix ng-model="fieldData.value" ot-bind-model ng-disabled="!otEditable"/>"""
           template.appendTo(elm)
@@ -71,7 +75,15 @@ angular.module('contentful').service 'widgets', ($compile) ->
     Link:
       selector:
         name: "Link selector"
-        template: """<div cf-link-editor="entry" ng-model="fieldData.value"/>"""
+        template: ''
+        link: (scope, elm, attr) ->
+          linkType = scope.field.linkType
+          if linkType == 'Entry'
+            template = $ """<div cf-link-editor="entry" ng-model="fieldData.value"/>"""
+          else if linkType == 'Asset'
+            template = $ """<div cf-link-editor="asset" ng-model="fieldData.value"/>"""
+          template.appendTo(elm)
+          $compile(template)(scope)
     File:
       filepicker:
         name: "Filepicker"
