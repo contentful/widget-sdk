@@ -28,8 +28,7 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
     event.currentScope.otUpdateEntity();
   });
 
-  // TODO not yet implemented
-  //$scope.assetSchema = validation.forAsset($scope.spaceContext.space.getPublishLocales());
+  $scope.assetSchema = validation.schemas.Asset($scope.spaceContext.space.getPublishLocales());
 
   $scope.publishedAt = function(){
     if (!$scope.otDoc) return;
@@ -90,9 +89,11 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
 
   var firstValidate = $scope.$on('otBecameEditable', function (event) {
     var scope = event.currentScope;
-    scope.validate();
+    if (!_.isEmpty(scope.asset.data.fields)) scope.validate();
     firstValidate();
   });
+
+  $scope.showLangSwitcher = $scope.spaceContext.space.getPublishLocales().length > 1;
 
   $scope.$watch('validationResult.errors', function (errors) {
     errorPaths = {};
@@ -106,8 +107,7 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
       if (error.path.length == 1 && error.path[0] == 'fields') {
         $scope.hasErrorOnFields = error.path.length == 1 && error.path[0] == 'fields';
       } else if (error.path.length == 2) {
-        var allCodes = _.pluck($scope.spaceContext.publishLocales, 'code');
-        errorPaths[field].push.apply(errorPaths[field], allCodes);
+        errorPaths[field].push($scope.spaceContext.space.getDefaultLocale().code);
       } else {
         var localeCode = error.path[2];
         errorPaths[field].push(localeCode);
@@ -124,6 +124,10 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
       if (err) notification.error('There has been a problem processing the asset.');
     });
   });
+
+  $scope.$watch('asset.data.fields.file', function (file, old, scope) {
+    scope.validate();
+  }, true);
 
   $scope.headline = function(){
     return this.spaceContext.assetTitle(this.asset);

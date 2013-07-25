@@ -100,20 +100,17 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
 
   $scope.publish = function () {
     var version = $scope.otDoc.version;
-    // TODO reactivate when we have the schema ready, also delete the line marked further down
-    //if (!$scope.validate()) {
-      //notification.error('Error publishing ' + title() + ': ' + 'Validation failed');
-      //return;
-    //}
+    if (!$scope.validate()) {
+      notification.error('Error publishing ' + title() + ': ' + 'Validation failed');
+      return;
+    }
     $scope.asset.publish(version, function (err) {
-      $scope.$apply(function(scope){
+      $scope.$apply(function(){
         if (err) {
           var errorId = err.body.sys.id;
           var reason;
           if (errorId === 'ValidationFailed') {
             reason = 'Validation failed';
-            // TODO remove this line if client-side validations work again
-            $scope.setValidationResult(err.body.details.errors, $scope.asset.data);
           } else if (errorId === 'VersionMismatch')
             reason = 'Can only publish most recent version';
           else

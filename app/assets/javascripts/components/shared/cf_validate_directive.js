@@ -32,6 +32,8 @@ angular.module('contentful').directive('cfValidate', function (validation) {
           switch (data && data.sys && data.sys.type) {
             case 'ContentType':
               return validation.schemas.ContentType;
+            case 'Asset':
+              throw new Error('Validating Assets requires passing a schema in the "withSchema"-attribute.');
             case 'Entry':
               throw new Error('Validating Entries requires passing a schema in the "withSchema"-attribute.');
             default:
@@ -46,7 +48,7 @@ angular.module('contentful').directive('cfValidate', function (validation) {
 
       function validate(data, schema){
         if (!data || !schema) return;
-        var schemaErrors = schema.errors(_.omit(data, 'sys'));
+        var schemaErrors = schema.errors(data);
         $scope.setValidationResult(schemaErrors, data, schema);
       }
 

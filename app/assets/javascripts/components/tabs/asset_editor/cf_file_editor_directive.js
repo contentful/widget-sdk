@@ -25,18 +25,19 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
       scope.uploadFile = function () {
         filepicker.pick().
         then(function (FPFile) {
-          console.log(FPFile);
           changeHandler(FPFile);
         }, function (FPError) {
           if (FPError.code !== 101) {
             // TODO handle error, sentry etc
             console.log(FPError);
           }
+          scope.validate();
         });
       };
 
       scope.deleteFile = function () {
         changeHandler(null);
+        scope.validate();
       };
 
       function changeHandler(FPFile) {
