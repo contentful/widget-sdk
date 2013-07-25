@@ -1,14 +1,21 @@
 %ng-switch(on="hasFile")
   %button(ng-switch-when="false" ng-click="uploadFile()") Upload File
   .file-info(ng-switch-default)
-    %button.delete-file(ng-click="deleteFile()") Delete file
-    %i.ss-attach
-    Filename: {{file.fileName}}
-    %br
-    Type: {{file.contentType}}
-    %br
-    %span(ng-show="status() == 'processing'")
-      Status: Processing
-    %span(ng-show="status() == 'ready'")
-      Status: Ready
+    %button.delete-file(ng-click="deleteFile()" ng-disabled="status() == 'processing'") Delete file
+    %div(ng-show="status() == 'processing'")
+      %i.ss-attach
+      Filename: {{file.fileName}}
+      %br
+      Type: {{file.contentType}}
+      Status: Processing…
+    %div(ng-show="status() == 'ready'")
+      %i.ss-attach(ng-show="!isImage()")
+      %img.thumbnail(ng-src="{{file.url}}?w=50&h=50" ng-show="isImage()")
+      %span Filename: {{file.fileName}}
+      %br
+      %span Type: {{file.contentType}}
+      %br
+      %span.url
+        URL:
+        %a(href="{{file.url}}" target="_blank") {{file.url}}
 

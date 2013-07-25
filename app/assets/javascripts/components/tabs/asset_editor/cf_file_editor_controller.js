@@ -18,4 +18,8 @@ angular.module('contentful').controller('CfFileEditorCtrl', function ($scope) {
     }
   };
 
+  $scope.isImage = function () {
+    return !!$scope.file.contentType.match(/image/);
+  };
+
 });

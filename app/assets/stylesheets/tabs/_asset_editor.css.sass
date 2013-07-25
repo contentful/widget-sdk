@@ -1,14 +1,24 @@
 .asset-editor
   @extend %entity-editor
 
+.cf-file-editor
+  +clearfix
 .file-info
   width: $form-controlwidth-inner
-  .ss-attach
+  .ss-attach,
+  .thumbnail
     display: block
     font-size: 50px
     line-height: 50px
-    padding-top: 10px
     padding-right: 10px
     float: left
+  .ss-attach
+    padding-top: 10px
   .delete-file
     float: right
+  .url
+    display: inline-block
+    width: 70%
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
