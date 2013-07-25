@@ -37,7 +37,7 @@ angular.module('contentful').
     {
       name: 'Link to Entry',
       description: 'Link to Entry description',
-      value: {type: 'Link'}
+      value: {type: 'Link', linkType: 'Entry'}
     },
     {
       name: 'Link to Asset',

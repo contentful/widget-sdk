@@ -30,38 +30,48 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
       linkType: 'Entry',
       id: entry.getId() }};
 
+    function wrapply(body) {
+      return function wrappedBody() {
+        var args = arguments,
+            self = this,
+            retval;
+        $scope.$apply(function () {
+          retval = body.apply(self, args);
+        });
+        return retval;
+      };
+    }
+
     function cb(updateFn) {
       return function (err) {
-        $scope.$apply(function(scope) {
-          if (err) return callback(err);
-          updateFn(scope);
-          scope.updateModel();
-          callback(null);
-        });
+        if (err) return callback(err);
+        updateFn($scope);
+        $scope.updateModel();
+        callback(null);
       };
     }
 
     saveEntryInCache(entry);
-    if ($attrs.cfLinkEditor === 'entry') {
+    if ($scope.linkSingle) {
       $scope.otChangeValue(link, cb(function(scope){
         scope.links = [link];
       }));
     } else {
       // TODO Build this pattern into mkpath
       if (_.isArray(ShareJS.peek($scope.otDoc, $scope.otPath))) {
-        $scope.otDoc.at($scope.otPath).push(link, cb(function(scope){
+        $scope.otDoc.at($scope.otPath).push(link, wrapply(cb(function(scope){
           scope.links.push(link);
-        }));
+        })));
       } else {
-        ShareJS.mkpath($scope.otDoc, $scope.otPath, [link], cb(function(scope){
+        ShareJS.mkpath($scope.otDoc, $scope.otPath, [link], wrapply(cb(function(scope){
           scope.links = [link];
-        }));
+        })));
       }
     }
   };
 
   $scope.removeLink = function(index, entry) {
-    if ($attrs.cfLinkEditor === 'entry') {
+    if ($scope.linkSingle) {
       return $scope.otChangeValue(null, function(err) {
         if (err) return;
         $scope.links.length = 0;
