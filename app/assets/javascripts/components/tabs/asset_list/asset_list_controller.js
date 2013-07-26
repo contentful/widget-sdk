@@ -36,7 +36,6 @@ angular.module('contentful').controller('AssetListCtrl', function AssetListCtrl(
     }
   };
 
-  // TODO check this works
   $scope.visibleInCurrentList = function(asset){
     switch ($scope.tab.params.list) {
       case 'all':
