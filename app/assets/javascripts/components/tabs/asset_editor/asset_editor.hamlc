@@ -48,7 +48,6 @@
 
 .tab-actions(ng-controller="AssetActionsCtrl")
   .button-set
-    %button.delete(   ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this asset"               ) Duplicate
     %button.delete(   ng-show="canDelete()"    ng-click="delete()"    tooltip="Permanently delete this Asset"      ) Delete
     %button.archive(  ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
     %button.archive(  ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive

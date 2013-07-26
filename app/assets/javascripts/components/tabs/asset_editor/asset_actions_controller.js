@@ -21,20 +21,6 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
     });
   };
 
-  $scope.duplicate = function() {
-    var data = _.omit($scope.asset.data, 'sys');
-
-    $scope.spaceContext.space.createAsset(data, function(err, asset){
-      $scope.$apply(function (scope) {
-        if (!err) {
-          scope.editAsset(asset);
-        } else {
-          notification.error('Could not duplicate Asset');
-        }
-      });
-    });
-  };
-
   $scope.archive = function() {
     $scope.asset.archive(function(err) {
       $scope.$apply(function() {
@@ -68,10 +54,6 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
         }
       });
     });
-  };
-
-  $scope.canDuplicate = function () {
-    return $scope.can('create', 'Asset');
   };
 
   $scope.canDelete = function () {
