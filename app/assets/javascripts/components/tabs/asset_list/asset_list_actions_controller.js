@@ -80,25 +80,6 @@ angular.module('contentful').controller('AssetListActionsCtrl', function AssetLi
     perform('unpublish', makeBatchResultsNotifier('unpublished'));
   };
 
-  $scope.duplicateSelected = function() {
-    var notifier = makeBatchResultsNotifier('duplicated');
-    var applyLater = makeApplyLater(function (results) {
-      $scope.assets.unshift.apply($scope.assets, successes);
-      var successes = _(results).reject('err').pluck('rest').pluck('0').value();
-      notifier(results);
-    });
-    forAllAssets(function (asset) {
-      duplicate(asset, applyLater);
-    });
-    clearSelection();
-    analytics.track('Performed AssetList action', {action: 'duplicate'});
-
-    function duplicate(asset, callback) {
-      var data = _.omit(asset.data, 'sys');
-      $scope.spaceContext.space.createAsset(data, callback);
-    }
-  };
-
   $scope.deleteSelected = function() {
     var applyLater = makeApplyLater(makeBatchResultsNotifier('deleted'));
     forAllAssets(function(asset) {
@@ -117,10 +98,6 @@ angular.module('contentful').controller('AssetListActionsCtrl', function AssetLi
 
   $scope.unarchiveSelected = function() {
     perform('unarchive', makeBatchResultsNotifier('unarchived'));
-  };
-
-  $scope.showDuplicate = function () {
-    return $scope.can('create', 'Asset');
   };
 
   $scope.showDelete = function () {

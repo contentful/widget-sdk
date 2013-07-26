@@ -75,7 +75,6 @@
 .tab-actions
   .label {{selection.size()}} Assets selected
   .button-set(ng-controller="AssetListActionsCtrl"   ng-hide="selection.isEmpty()")
-    %button.delete(   ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
     %button.delete(   ng-click="deleteSelected()"    ng-show="showDelete()"   ) Delete
     %button.archive(  ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
     %button.unarchive(ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
