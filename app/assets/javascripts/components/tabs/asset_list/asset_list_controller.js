@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('AssetListCtrl', function AssetListCtrl($scope, Paginator, Selection, cfSpinner, analytics) {
+angular.module('contentful').controller('AssetListCtrl', function AssetListCtrl($scope, $q, Paginator, Selection, cfSpinner, analytics) {
   $scope.assetSection = 'all';
 
   $scope.paginator = new Paginator();
@@ -14,6 +14,18 @@ angular.module('contentful').controller('AssetListCtrl', function AssetListCtrl(
     }
   });
 
+  $scope.$on('entityArchived', function (ev, asset) {
+    var assetId = asset.data.sys.id;
+    $scope.resetAssets().then(function () {
+      var assets = _.reject($scope.assets, function (asset) {
+        return asset.data.sys.id === assetId;
+      });
+      if($scope.assets.length !== assets.length) {
+        $scope.assets = assets;
+      }
+    });
+  });
+
   $scope.$watch('searchTerm',  function (term) {
     if (term === null) return;
     $scope.tab.params.list = 'all';
@@ -21,7 +33,6 @@ angular.module('contentful').controller('AssetListCtrl', function AssetListCtrl(
     $scope.resetAssets();
   });
 
-  // TODO check if this necessary
   $scope.switchList = function(list){
     $scope.searchTerm = null;
     var params = $scope.tab.params;
@@ -66,20 +77,23 @@ angular.module('contentful').controller('AssetListCtrl', function AssetListCtrl(
   $scope.resetAssets = function() {
     if (this.reloadInProgress || this.resetPaused) return;
     var scope = this;
+    var deferred = $q.defer();
 
     this.reloadInProgress = true;
     var stopSpin = cfSpinner.start();
     this.spaceContext.space.getAssets(this.buildQuery(), function(err, assets, stats) {
       scope.$apply(function(scope){
         scope.reloadInProgress = false;
-        if (err) return;
+        if (err) return deferred.reject();
         scope.paginator.numAssets = stats.total;
         scope.selection.switchBaseSet(stats.total);
         scope.assets = assets;
+        deferred.resolve();
         stopSpin();
       });
     });
     analytics.track('Reloaded AssetList');
+    return deferred.promise;
   };
 
   $scope.buildQuery = function() {
@@ -90,7 +104,7 @@ angular.module('contentful').controller('AssetListCtrl', function AssetListCtrl(
     };
 
     if (this.tab.params.list == 'all') {
-      // do nothing
+      queryObject['sys.archivedAt[exists]'] = 'false';
     } else if (this.tab.params.list == 'published') {
       queryObject['sys.publishedAt[exists]'] = 'true';
     } else if (this.tab.params.list == 'changed') {

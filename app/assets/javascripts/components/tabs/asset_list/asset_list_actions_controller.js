@@ -58,13 +58,16 @@ angular.module('contentful').controller('AssetListActionsCtrl', function AssetLi
     };
   }
 
-  var perform = function(method, callback) {
-    var applyLater = makeApplyLater(callback);
+  var perform = function(params) {
+    var applyLater = makeApplyLater(params.callback);
     forAllAssets(function(asset) {
-      asset[method](applyLater);
+      asset[params.method](function(err, asset){
+        if(!err && params.event) $scope.broadcastFromSpace(params.event, asset);
+        applyLater();
+      });
     });
     clearSelection();
-    analytics.track('Performed AssetList action', {action: method});
+    analytics.track('Performed AssetList action', {action: params.method});
   };
 
   $scope.publishSelected = function() {
@@ -77,27 +80,33 @@ angular.module('contentful').controller('AssetListActionsCtrl', function AssetLi
   };
 
   $scope.unpublishSelected = function() {
-    perform('unpublish', makeBatchResultsNotifier('unpublished'));
+    perform({
+      method: 'unpublish',
+      callback: makeBatchResultsNotifier('unpublished')
+    });
   };
 
   $scope.deleteSelected = function() {
-    var applyLater = makeApplyLater(makeBatchResultsNotifier('deleted'));
-    forAllAssets(function(asset) {
-      asset.delete(function (err, asset) {
-        if (!err) $scope.broadcastFromSpace('entityDeleted', asset);
-        applyLater();
-      });
+    perform({
+      method: 'delete',
+      callback: makeBatchResultsNotifier('deleted'),
+      event: 'entityDeleted'
     });
-    clearSelection();
-    analytics.track('Performed AssetList action', {action: 'delete'});
   };
 
   $scope.archiveSelected = function() {
-    perform('archive', makeBatchResultsNotifier('archived'));
+    perform({
+      method: 'archive',
+      callback: makeBatchResultsNotifier('archived'),
+      event: 'entityArchived'
+    });
   };
 
   $scope.unarchiveSelected = function() {
-    perform('unarchive', makeBatchResultsNotifier('unarchived'));
+    perform({
+      method: 'unarchive',
+      callback: makeBatchResultsNotifier('unarchived')
+    });
   };
 
   $scope.showDelete = function () {

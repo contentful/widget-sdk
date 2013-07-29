@@ -58,13 +58,16 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
     };
   }
 
-  var perform = function(method, callback) {
-    var applyLater = makeApplyLater(callback);
+  var perform = function(params) {
+    var applyLater = makeApplyLater(params.callback);
     forAllEntries(function(entry) {
-      entry[method](applyLater);
+      entry[params.method](function(err, entry){
+        if(!err && params.event) $scope.broadcastFromSpace(params.event, entry);
+        applyLater();
+      });
     });
     clearSelection();
-    analytics.track('Performed EntryList action', {action: method});
+    analytics.track('Performed EntryList action', {action: params.method});
   };
 
   $scope.publishSelected = function() {
@@ -77,7 +80,10 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
   };
 
   $scope.unpublishSelected = function() {
-    perform('unpublish', makeBatchResultsNotifier('unpublished'));
+    perform({
+      method: 'unpublish',
+      callback: makeBatchResultsNotifier('unpublished')
+    });
   };
 
   $scope.duplicateSelected = function() {
@@ -101,23 +107,27 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
   };
 
   $scope.deleteSelected = function() {
-    var applyLater = makeApplyLater(makeBatchResultsNotifier('deleted'));
-    forAllEntries(function(entry) {
-      entry.delete(function (err, entry) {
-        if (!err) $scope.broadcastFromSpace('entityDeleted', entry);
-        applyLater();
-      });
+    perform({
+      method: 'delete',
+      callback: makeBatchResultsNotifier('deleted'),
+      event: 'entityDeleted'
     });
-    clearSelection();
-    analytics.track('Performed EntryList action', {action: 'delete'});
   };
 
   $scope.archiveSelected = function() {
-    perform('archive', makeBatchResultsNotifier('archived'));
+    perform({
+      method: 'archive',
+      callback: makeBatchResultsNotifier('archived'),
+      event: 'entityArchived'
+    });
   };
 
   $scope.unarchiveSelected = function() {
-    perform('unarchive', makeBatchResultsNotifier('unarchived'));
+    perform({
+      method: 'unarchive',
+      callback: makeBatchResultsNotifier('unarchived')
+    });
+
   };
 
   $scope.showDuplicate = function () {
