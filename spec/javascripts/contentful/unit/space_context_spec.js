@@ -183,8 +183,6 @@ describe('SpaceContext class with a space', function () {
           });
         });
 
-
-
         it('fetched successfully but title is empty', function () {
           this.async(function (done) {
             entry.data.fields.title = '   ';
@@ -203,6 +201,38 @@ describe('SpaceContext class with a space', function () {
               done();
             });
           });
+        });
+
+      });
+
+      describe('gets an asset title', function () {
+        var asset;
+        beforeEach(function () {
+          asset = window.createMockEntity('entry1', 'contentType1');
+        });
+
+        it('fetched successfully', function () {
+          expect(spaceContext.assetTitle(asset)).toEqual('the title');
+        });
+
+        it('gets no title, falls back to default', function () {
+          asset.data = {fields: {}};
+          expect(spaceContext.assetTitle(asset)).toEqual('Untitled');
+        });
+
+        it('handles an exception, falls back to default', function () {
+          asset.data = {};
+          expect(spaceContext.assetTitle(asset)).toEqual('Untitled');
+        });
+
+        it('fetched successfully but title is empty', function () {
+          asset.data.fields.title = '   ';
+          expect(spaceContext.assetTitle(asset)).toEqual('Untitled');
+        });
+
+        it('fetched successfully but title doesn\'t exist', function () {
+          delete asset.data.fields.title;
+          expect(spaceContext.assetTitle(asset)).toEqual('Untitled');
         });
 
       });

@@ -1,16 +1,16 @@
 'use strict';
 
-angular.module('contentful').controller('EntryListActionsCtrl', function EntryListActionsCtrl($scope, notification, analytics) {
+angular.module('contentful').controller('AssetListActionsCtrl', function AssetListActionsCtrl($scope, notification, analytics) {
 
   var _cacheSelected;
 
-  // At the beginning of every digest cycle destroy the cache of selected entries
+  // At the beginning of every digest cycle destroy the cache of selected assets
   $scope.$watch(function () { _cacheSelected = null; });
 
   var getSelected = function () {
     // Memoize result of getSelected call for duration of cycle
     if (_cacheSelected === null || _cacheSelected === undefined) {
-      _cacheSelected = $scope.selection.getSelected($scope.entries);
+      _cacheSelected = $scope.selection.getSelected($scope.assets);
     }
     return _cacheSelected;
   };
@@ -21,14 +21,14 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
   };
 
   var every = function (predicate) {
-    return _.every(getSelected(), function (entry) {
-      return entry[predicate]();
+    return _.every(getSelected(), function (asset) {
+      return asset[predicate]();
     });
   };
 
-  var forAllEntries = function(callback) {
-    var entries = getSelected();
-    _.each(entries, callback);
+  var forAllAssets = function(callback) {
+    var assets = getSelected();
+    _.each(assets, callback);
   };
 
   var makeApplyLater = function(callback) {
@@ -52,31 +52,31 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
       var failed = _.filter(results, hasFailed);
       var succeeded = _.reject(results, hasFailed);
       if (succeeded.length > 0)
-        notification.info(succeeded.length + ' entries ' + word + ' successfully');
+        notification.info(succeeded.length + ' assets ' + word + ' successfully');
       if (failed.length > 0)
-        notification.error(failed.length + ' entries could not be ' + word);
+        notification.error(failed.length + ' assets could not be ' + word);
     };
   }
 
   var perform = function(params) {
     var applyLater = makeApplyLater(params.callback);
-    forAllEntries(function(entry) {
-      entry[params.method](function(err, entry){
-        if(!err && params.event) $scope.broadcastFromSpace(params.event, entry);
+    forAllAssets(function(asset) {
+      asset[params.method](function(err, asset){
+        if(!err && params.event) $scope.broadcastFromSpace(params.event, asset);
         applyLater();
       });
     });
     clearSelection();
-    analytics.track('Performed EntryList action', {action: params.method});
+    analytics.track('Performed AssetList action', {action: params.method});
   };
 
   $scope.publishSelected = function() {
     var applyLater = makeApplyLater(makeBatchResultsNotifier('published'));
-    forAllEntries(function(entry) {
-      entry.publish(entry.data.sys.version, applyLater);
+    forAllAssets(function(asset) {
+      asset.publish(asset.data.sys.version, applyLater);
     });
     clearSelection();
-    analytics.track('Performed EntryList action', {action: 'publish'});
+    analytics.track('Performed AssetList action', {action: 'publish'});
   };
 
   $scope.unpublishSelected = function() {
@@ -84,26 +84,6 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
       method: 'unpublish',
       callback: makeBatchResultsNotifier('unpublished')
     });
-  };
-
-  $scope.duplicateSelected = function() {
-    var notifier = makeBatchResultsNotifier('duplicated');
-    var applyLater = makeApplyLater(function (results) {
-      var successes = _(results).reject('err').pluck('rest').pluck('0').value();
-      $scope.entries.unshift.apply($scope.entries, successes);
-      notifier(results);
-    });
-    forAllEntries(function (entry) {
-      duplicate(entry, applyLater);
-    });
-    clearSelection();
-    analytics.track('Performed EntryList action', {action: 'duplicate'});
-
-    function duplicate(entry, callback) {
-      var contentType = entry.data.sys.contentType.sys.id;
-      var data = _.omit(entry.data, 'sys');
-      $scope.spaceContext.space.createEntry(contentType, data, callback);
-    }
   };
 
   $scope.deleteSelected = function() {
@@ -127,11 +107,6 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
       method: 'unarchive',
       callback: makeBatchResultsNotifier('unarchived')
     });
-
-  };
-
-  $scope.showDuplicate = function () {
-    return $scope.can('create', 'Entry');
   };
 
   $scope.showDelete = function () {
@@ -157,8 +132,8 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
   $scope.publishButtonName = function () {
     var published = 0;
     var unpublished = 0;
-    _.each(getSelected(), function (entry) {
-      if (entry.isPublished()) {
+    _.each(getSelected(), function (asset) {
+      if (asset.isPublished()) {
         published++;
       } else {
         unpublished++;

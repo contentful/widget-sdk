@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl($scope, Paginator, Selection, analytics, PromisedLoader) {
+angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl($scope, $q, Paginator, Selection, analytics, PromisedLoader) {
   var entryLoader = new PromisedLoader();
 
   $scope.entrySection = 'all';
@@ -14,6 +14,18 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
     if (index > -1) {
       scope.entries.splice(index, 1);
     }
+  });
+
+  $scope.$on('entityArchived', function (ev, entry) {
+    var entryId = entry.data.sys.id;
+    $scope.resetEntries().then(function () {
+      var entries = _.reject($scope.entries, function (entry) {
+        return entry.data.sys.id === entryId;
+      });
+      if($scope.entries.length !== entries.length) {
+        $scope.entries = entries;
+      }
+    });
   });
 
   $scope.$watch('searchTerm',  function (term) {
@@ -69,13 +81,16 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
   }, true);
 
   $scope.resetEntries = function() {
+    var deferred = $q.defer();
     entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
     then(function (entries) {
       $scope.paginator.numEntries = entries.total;
       $scope.selection.switchBaseSet(entries.total);
       $scope.entries = entries;
+      deferred.resolve();
       analytics.track('Reloaded EntryList');
     });
+    return deferred.promise;
   };
 
   function buildQuery() {
@@ -86,7 +101,7 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
     };
 
     if ($scope.tab.params.list == 'all') {
-      // do nothing
+      queryObject['sys.archivedAt[exists]'] = 'false';
     } else if ($scope.tab.params.list == 'published') {
       queryObject['sys.publishedAt[exists]'] = 'true';
     } else if ($scope.tab.params.list == 'changed') {

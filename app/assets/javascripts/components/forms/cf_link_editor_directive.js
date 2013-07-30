@@ -12,11 +12,17 @@ angular.module('contentful').directive('cfLinkEditor', function(){
         }
       };
 
+      scope.linkMultiple = !!attrs.cfLinkEditor.match(/entries|assets/);
+      scope.linkSingle   = !scope.linkMultiple;
+      scope.linkType     = attrs.cfLinkEditor.match(/entr/) ? 'Entry' : 'Asset';
+      scope.fetchMethod  = scope.linkType === 'Entry' ? 'getEntries' : 'getAssets';
+
+
       scope.updateModel = function () {
         ngModelCtrl.$setViewValue(scope.links);
       };
 
-      if (attrs.cfLinkEditor !== 'entries') {
+      if (scope.linkSingle) {
         ngModelCtrl.$parsers.push(function (viewValue) {
           return viewValue ? viewValue[0] : null;
         });
@@ -25,7 +31,7 @@ angular.module('contentful').directive('cfLinkEditor', function(){
         });
       }
 
-      if (attrs.cfLinkEditor === 'entries') {
+      if (scope.linkMultiple) {
         var list = elem.find('ul.links').eq(0);
         list.sortable({
           handle: '.drag-handle',

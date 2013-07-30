@@ -1,44 +1,28 @@
-angular.module('contentful').controller('EntryActionsCtrl', function EntryActionsCtrl($scope, notification, can) {
+angular.module('contentful').controller('AssetActionsCtrl', function AssetActionsCtrl($scope, notification, can) {
   'use strict';
 
-  // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,
-  // We can query the entry instead of reimplementing the checks heere
+  // TODO If we are sure that the data in the asset has been updated from the ShareJS doc,
+  // We can query the asset instead of reimplementing the checks heere
 
   function title() {
-    return '"' + $scope.spaceContext.entryTitle($scope.entry) + '"';
+    return '"' + $scope.spaceContext.assetTitle($scope.asset) + '"';
   }
 
   $scope.delete = function () {
-    $scope.entry.delete(function (err, entry) {
+    $scope.asset.delete(function (err, asset) {
       $scope.$apply(function (scope) {
         if (err) {
-          notification.error('Error deleting entry');
+          notification.error('Error deleting asset');
         }else{
-          notification.info('Entry deleted successfully');
-          scope.broadcastFromSpace('entityDeleted', entry);
-        }
-      });
-    });
-  };
-
-  $scope.duplicate = function() {
-    var contentType = $scope.entry.data.sys.contentType.sys.id;
-    var data = _.omit($scope.entry.data, 'sys');
-
-    $scope.spaceContext.space.createEntry(contentType, data, function(err, entry){
-      $scope.$apply(function (scope) {
-        if (!err) {
-          scope.editEntry(entry);
-        } else {
-          notification.error('Could not duplicate Entry');
-          //TODO sentry notification
+          notification.info('Asset deleted successfully');
+          scope.broadcastFromSpace('entityDeleted', asset);
         }
       });
     });
   };
 
   $scope.archive = function() {
-    $scope.entry.archive(function(err) {
+    $scope.asset.archive(function(err) {
       $scope.$apply(function() {
         if (err)
           notification.error('Error archiving ' + title() + ' (' + err.body.sys.id + ')');
@@ -49,10 +33,10 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
   };
 
   $scope.unarchive = function() {
-    $scope.entry.unarchive(function(err) {
+    $scope.asset.unarchive(function(err) {
       $scope.$apply(function() {
         if (err)
-          notification.error('Error unarchiving ' + title + ' (' + err.body.sys.id + ')');
+          notification.error('Error unarchiving ' + title() + ' (' + err.body.sys.id + ')');
         else
           notification.info(title() + ' unarchived successfully');
       });
@@ -60,7 +44,7 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
   };
 
   $scope.unpublish = function () {
-    $scope.entry.unpublish(function (err) {
+    $scope.asset.unpublish(function (err) {
       $scope.$apply(function(scope){
         if (err) {
           notification.error('Error unpublishing ' + title() + ' (' + err.body.sys.id + ')');
@@ -72,24 +56,20 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
     });
   };
 
-  $scope.canDuplicate = function () {
-    return $scope.can('create', 'Entry');
-  };
-
   $scope.canDelete = function () {
-    return $scope.entry.canDelete() && can('delete', $scope.entry.data);
+    return $scope.asset.canDelete() && can('delete', $scope.asset.data);
   };
 
   $scope.canArchive = function () {
-    return $scope.entry.canArchive() && can('archive', $scope.entry.data);
+    return $scope.asset.canArchive() && can('archive', $scope.asset.data);
   };
 
   $scope.canUnarchive = function () {
-    return $scope.entry.canUnarchive() && can('unarchive', $scope.entry.data);
+    return $scope.asset.canUnarchive() && can('unarchive', $scope.asset.data);
   };
 
   $scope.canUnpublish = function () {
-    return $scope.entry.canUnpublish() && can('unpublish', $scope.entry.data);
+    return $scope.asset.canUnpublish() && can('unpublish', $scope.asset.data);
   };
 
   $scope.canPublish = function() {
@@ -97,23 +77,23 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
     var version = $scope.otDoc.version;
     var publishedVersion = $scope.otDoc.getAt(['sys', 'publishedVersion']);
     var updatedSincePublishing = version !== publishedVersion + 1;
-    return this.entry.canPublish() && (!publishedVersion || updatedSincePublishing) && can('publish', $scope.entry.data);
+    return this.asset.canPublish() && (!publishedVersion || updatedSincePublishing) && can('publish', $scope.asset.data);
   };
 
   $scope.publish = function () {
     var version = $scope.otDoc.version;
     if (!$scope.validate()) {
-      notification.warn('Error publishing ' + title() + ': ' + 'Validation failed');
+      notification.error('Error publishing ' + title() + ': ' + 'Validation failed');
       return;
     }
-    $scope.entry.publish(version, function (err) {
+    $scope.asset.publish(version, function (err) {
       $scope.$apply(function(){
         if (err) {
           var errorId = err.body.sys.id;
           var reason;
-          if (errorId === 'ValidationFailed')
+          if (errorId === 'ValidationFailed') {
             reason = 'Validation failed';
-          else if (errorId === 'VersionMismatch')
+          } else if (errorId === 'VersionMismatch')
             reason = 'Can only publish most recent version';
           else
             reason = errorId;

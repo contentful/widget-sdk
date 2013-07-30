@@ -2,59 +2,31 @@
   %h1
     {{headline()}}
   .editor-top-left
-    -#.dropdown-btn
-      %a.btn.dropdown-toggle
-        %i.ss-dropdown
-        %span Default-Interface
-      .dropdown-menu(style="display:none")
-        …
-        …
-        …
-    .dropdown-btn
+    .dropdown-btn(ng-show="showLangSwitcher")
       %a.dropdown-toggle
         %i.ss-dropdown
         %span Show fields…
       .dropdown-menu(style="display:none")
-        %ul(ng-show="showLangSwitcher")
+        %ul
           %li(ng-repeat="locale in spaceContext.publishLocales")
             %label
               %input(type="checkbox" ng-model="spaceContext.localesActive[locale.code]")
               {{locale.name}}
               %span(ng-show="locale == spaceContext.space.getDefaultLocale()") (default)
-        %ul
-          %li(ng-class="{separator: showLangSwitcher}")
-            %label
-              %input(type="checkbox" ng-model="preferences.showDisabledFields")
-              Show disabled fields
-
   .editor-top-right
     %button(ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
             tooltip-placement="left")
       Info
-    -#.dropdown-btn>
-      %a.btn.dropdown-toggle
-        %i.ss-dropdown
-        %span Meta
-      .dropdown-menu(style="display:none")
-        …
-        …
-        …
-    -#.dropdown-btn>
-      %a.btn.dropdown-toggle
-        %span Apps
-    -#.dropdown-btn>
-      %a.btn.dropdown-toggle
-        %span Events
 
 .aux-panel
   %header
-    %span Entry Information
+    %span Asset Information
   .entity-info-panel
 
 .tab-main
-  %form.form-horizontal(name="entryForm")
+  %form.form-horizontal(name="assetForm")
     .form-field(ng-show="hasErrorOnFields")
       %label
       .form-controls
@@ -70,22 +42,17 @@
                                  tooltip="{{user.getName()}}")
                 %img(ng-src="{{user.data.avatarUrl}}")
           .locale-label(ng-show="field.locales.length > 1") {{locale.name}}
-          .cf-field-editor(ot-path="['fields', field.id, locale.code]" cf-editor-entity="entry")
-          -#.hint.tip
-            Hint to the user about the meaning of the field
-            .arrow-left
-            .arrow-left-border
+          .cf-field-editor(ot-path="['fields', field.id, locale.code]" cf-editor-entity="asset")
           .cf-validation-error-display.form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
         .cf-validation-error-display.form-box-error(cf-error-path="['fields', field.id]")
 
-.tab-actions(ng-controller="EntryActionsCtrl")
+.tab-actions(ng-controller="AssetActionsCtrl")
   .button-set
-    %button.delete(   ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this entry"               ) Duplicate
-    %button.delete(   ng-show="canDelete()"    ng-click="delete()"    tooltip="Permanently delete this Entry"      ) Delete
-    %button.archive(  ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry"                 ) Archive
-    %button.archive(  ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry"               ) Unarchive
-    %button.unpublish(ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry"               ) Unpublish
-    %button.publish(  ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Entry") {{publishButtonLabel()}}
+    %button.delete(   ng-show="canDelete()"    ng-click="delete()"    tooltip="Permanently delete this Asset"      ) Delete
+    %button.archive(  ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
+    %button.archive(  ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
+    %button.unpublish(ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish
+    %button.publish(  ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Asset") {{publishButtonLabel()}}
   .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
                tooltip-placement="top")
   .other-users

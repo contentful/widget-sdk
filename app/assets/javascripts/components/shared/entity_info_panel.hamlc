@@ -3,9 +3,9 @@
     %tr(ng-show="contentTypeName")
       %th Content Type
       %td {{contentTypeName}}
-    %tr
+    %tr(ng-show="contentTypeDescription")
       %td(colspan="2") {{contentTypeDescription}}
-    %tr
+    %tr(ng-show="contentTypeDescription")
       %th
     %tr
       %th ID
