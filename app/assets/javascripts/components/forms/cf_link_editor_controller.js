@@ -140,7 +140,7 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
     if (path === event.currentScope.otPath) ngModelSet(event.currentScope, value);
   });
 
-  $scope.linkDescription= function(entity) {
+  $scope.linkDescription = function(entity) {
     if (entity && entity.getId()) {
       return $scope.linkType === 'Entry' ?
         $scope.spaceContext.entryTitle(entity, $scope.locale.code) :
