@@ -53,7 +53,7 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
           if (errCreate) {
             //console.log('Error creating entry', errCreate);
             notification.error('Error creating entry');
-            throw new Error('Error creating entry in cfLinkEditor');
+            throw errCreate;
           }
           $scope.addLink(entry, function(errSetLink) {
             if (errSetLink) {
@@ -63,10 +63,10 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
                 if (errDelete) {
                   //console.log('Error deleting entry', errDelete);
                   notification.error('Error deleting entry again');
-                  throw new Error('Error deleting entry in cfLinkEditor');
+                  throw errDelete;
                 }
               });
-              throw new Error('Error linking entry in cfLinkEditor');
+              throw errSetLink;
             }
             $scope.editEntry(entry, 'create');
           });
