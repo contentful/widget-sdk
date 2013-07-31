@@ -49,26 +49,26 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
 
 
       $scope.addNew = function(contentType) {
-        $scope.spaceContext.space.createEntity(contentType.getId(), {}, function(errCreate, entity){
+        $scope.spaceContext.space.createEntry(contentType.getId(), {}, function(errCreate, entry){
           if (errCreate) {
-            //console.log('Error creating entity', errCreate);
-            notification.error('Error creating entity');
-            throw new Error('Error creating entity in cfLinkEditor');
+            //console.log('Error creating entry', errCreate);
+            notification.error('Error creating entry');
+            throw new Error('Error creating entry in cfLinkEditor');
           }
-          $scope.addLink(entity, function(errSetLink) {
+          $scope.addLink(entry, function(errSetLink) {
             if (errSetLink) {
-              notification.error('Error linking entity');
-              //console.log('Error linking entity', errSetLink);
-              entity.delete(function(errDelete) {
+              notification.error('Error linking entry');
+              //console.log('Error linking entry', errSetLink);
+              entry.delete(function(errDelete) {
                 if (errDelete) {
-                  //console.log('Error deleting entity', errDelete);
-                  notification.error('Error deleting entity again');
-                  throw new Error('Error deleting entity in cfLinkEditor');
+                  //console.log('Error deleting entry', errDelete);
+                  notification.error('Error deleting entry again');
+                  throw new Error('Error deleting entry in cfLinkEditor');
                 }
               });
-              throw new Error('Error linking entity in cfLinkEditor');
+              throw new Error('Error linking entry in cfLinkEditor');
             }
-            $scope.editEntity(entity, 'create');
+            $scope.editEntry(entry, 'create');
           });
         });
       };
