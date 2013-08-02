@@ -3,26 +3,39 @@
 angular.module('contentful').factory('mimetypeGroups', function () {
 
   var fileGroups = {
-    images: [
-      { ext: '.bm', type: 'image/bmp' },
-      { ext: '.bmp', type: 'image/bmp' },
-      { ext: '.bmp', type: 'image/x-windows-bmp' },
+    plaintext: [
+      { ext: '.log', type: 'text/plain' },
+      { ext: '.rt', type: 'text/richtext' },
+      { ext: '.rt', type: 'text/vnd.rn-realtext' },
+      { ext: '.rtf', type: 'application/rtf' },
+      { ext: '.rtf', type: 'application/x-rtf' },
+      { ext: '.rtf', type: 'text/richtext' },
+      { ext: '.rtx', type: 'application/rtf' },
+      { ext: '.rtx', type: 'text/richtext' },
+      { ext: '.text', type: 'application/plain' },
+      { ext: '.text', type: 'text/plain' },
+      { ext: '.txt', type: 'text/plain' },
+    ],
+    image: [
+      { ext: '.bm', type: 'image/bmp', preview: true },
+      { ext: '.bmp', type: 'image/bmp', preview: true },
+      { ext: '.bmp', type: 'image/x-windows-bmp', preview: true },
       { ext: '.fif', type: 'application/fractals' },
       { ext: '.fif', type: 'image/fif' },
-      { ext: '.gif', type: 'image/gif' },
+      { ext: '.gif', type: 'image/gif', preview: true },
       { ext: '.ico', type: 'image/x-icon' },
       { ext: '.ief', type: 'image/ief' },
       { ext: '.iefs', type: 'image/ief' },
       { ext: '.jfif', type: 'image/jpeg' },
       { ext: '.jfif', type: 'image/pjpeg' },
       { ext: '.jfif-tbnl', type: 'image/jpeg' },
-      { ext: '.jpe', type: 'image/jpeg' },
-      { ext: '.jpe', type: 'image/pjpeg' },
-      { ext: '.jpeg', type: 'image/jpeg' },
-      { ext: '.jpeg', type: 'image/pjpeg' },
-      { ext: '.jpg', type: 'image/jpeg' },
-      { ext: '.jpg', type: 'image/pjpeg' },
-      { ext: '.jps', type: 'image/x-jps' },
+      { ext: '.jpe', type: 'image/jpeg', preview: true },
+      { ext: '.jpe', type: 'image/pjpeg', preview: true },
+      { ext: '.jpeg', type: 'image/jpeg', preview: true },
+      { ext: '.jpeg', type: 'image/pjpeg', preview: true },
+      { ext: '.jpg', type: 'image/jpeg', preview: true },
+      { ext: '.jpg', type: 'image/pjpeg', preview: true },
+      { ext: '.jps', type: 'image/x-jps', preview: true },
       { ext: '.nap', type: 'image/naplps' },
       { ext: '.naplps', type: 'image/naplps' },
       { ext: '.nif', type: 'image/x-niff' },
@@ -32,23 +45,23 @@ angular.module('contentful').factory('mimetypeGroups', function () {
       { ext: '.pcx', type: 'image/x-pcx' },
       { ext: '.pic', type: 'image/pict' },
       { ext: '.pict', type: 'image/pict' },
-      { ext: '.png', type: 'image/png' },
+      { ext: '.png', type: 'image/png', preview: true },
       { ext: '.qif', type: 'image/x-quicktime' },
       { ext: '.qti', type: 'image/x-quicktime' },
       { ext: '.qtif', type: 'image/x-quicktime' },
       { ext: '.ras', type: 'image/cmu-raster' },
       { ext: '.ras', type: 'image/x-cmu-raster' },
       { ext: '.rast', type: 'image/cmu-raster' },
-      { ext: '.tif', type: 'image/tiff' },
-      { ext: '.tif', type: 'image/x-tiff' },
-      { ext: '.tiff', type: 'image/tiff' },
-      { ext: '.tiff', type: 'image/x-tiff' },
+      { ext: '.tif', type: 'image/tiff', preview: true },
+      { ext: '.tif', type: 'image/x-tiff', preview: true },
+      { ext: '.tiff', type: 'image/tiff', preview: true },
+      { ext: '.tiff', type: 'image/x-tiff', preview: true },
       { ext: '.xbm', type: 'image/x-xbitmap' },
       { ext: '.xbm', type: 'image/x-xbm' },
       { ext: '.xbm', type: 'image/xbm' },
       { ext: '.xpm', type: 'image/x-xpixmap' },
       { ext: '.xpm', type: 'image/xpm' },
-      { ext: '.x-png', type: 'image/png' },
+      { ext: '.x-png', type: 'image/png', preview: true },
       { ext: '.xwd', type: 'image/x-xwd' },
       { ext: '.xwd', type: 'image/x-xwindowdump' },
       { ext: '.psd', type: 'application/octet-stream' },
@@ -110,7 +123,14 @@ angular.module('contentful').factory('mimetypeGroups', function () {
       { ext: '.vql', type: 'audio/x-twinvq-plugin' },
       { ext: '.wav', type: 'audio/wav' },
       { ext: '.wav', type: 'audio/x-wav' },
-      { ext: '.xm', type: 'audio/xm' }
+      { ext: '.xm', type: 'audio/xm' },
+      { ext: '.aac', type: 'audio/aac' },
+      { ext: '.mp4', type: 'audio/mp4' },
+      { ext: '.m4a', type: 'audio/mp4' },
+      { ext: '.mp1', type: 'audio/mpeg' },
+      { ext: '.oga', type: 'audio/ogg' },
+      { ext: '.ogg', type: 'audio/ogg' },
+      { ext: '.webm', type: 'audio/webm' }
     ],
     video: [
       { ext: '.asf', type: 'video/x-ms-asf' },
@@ -156,9 +176,13 @@ angular.module('contentful').factory('mimetypeGroups', function () {
       { ext: '.vivo', type: 'video/vivo' },
       { ext: '.vivo', type: 'video/vnd.vivo' },
       { ext: '.xdr', type: 'video/x-amt-demorun' },
-      { ext: '.xmz', type: 'xgl/movie' }
+      { ext: '.xmz', type: 'xgl/movie' },
+      { ext: '.mp4', type: 'video/mp4' },
+      { ext: '.m4v', type: 'video/mp4' },
+      { ext: '.ogv', type: 'video/ogg' },
+      { ext: '.webm', type: 'video/webm' }
     ],
-    documents: [
+    document: [
       { ext: '.doc', type: 'application/msword' },
       { ext: '.dot', type: 'application/msword' },
       { ext: '.eps', type: 'application/postscript' },
@@ -222,10 +246,10 @@ angular.module('contentful').factory('mimetypeGroups', function () {
       { ext: '.xlw', type: 'application/x-excel' },
       { ext: '.xlw', type: 'application/x-msexcel' },
     ],
-    pdfdocuments: [
+    pdfdocument: [
       { ext: '.pdf', type: 'application/pdf' },
     ],
-    archives: [
+    archive: [
       { ext: '.arj', type: 'application/arj' },
       { ext: '.boz', type: 'application/x-bzip2' },
       { ext: '.bz', type: 'application/x-bzip' },
@@ -243,19 +267,6 @@ angular.module('contentful').factory('mimetypeGroups', function () {
       { ext: '.zip', type: 'application/x-zip-compressed' },
       { ext: '.zip', type: 'application/zip' },
       { ext: '.zip', type: 'multipart/x-zip' },
-    ],
-    plaintext: [
-      { ext: '.log', type: 'text/plain' },
-      { ext: '.rt', type: 'text/richtext' },
-      { ext: '.rt', type: 'text/vnd.rn-realtext' },
-      { ext: '.rtf', type: 'application/rtf' },
-      { ext: '.rtf', type: 'application/x-rtf' },
-      { ext: '.rtf', type: 'text/richtext' },
-      { ext: '.rtx', type: 'application/rtf' },
-      { ext: '.rtx', type: 'text/richtext' },
-      { ext: '.text', type: 'application/plain' },
-      { ext: '.text', type: 'text/plain' },
-      { ext: '.txt', type: 'text/plain' },
     ],
     code: [
       { ext: '.asp', type: 'text/asp' },
@@ -331,34 +342,35 @@ angular.module('contentful').factory('mimetypeGroups', function () {
   var extensionList = {};
   var mimetypeList = {};
   _.each(fileGroups, function (group, groupName) {
-    _.each(group, function (pair) {
+    _.each(group, function (typeDef) {
 
       addToGroupListBy({
-        type: pair.type,
+        type: typeDef.type,
+        preview: typeDef.preview,
         group: groupName
-      }, extensionList, pair.ext);
+      }, extensionList, typeDef.ext);
 
       addToGroupListBy({
-        ext: pair.ext,
+        ext: typeDef.ext,
+        preview: typeDef.preview,
         group: groupName
-      }, mimetypeList, pair.type);
+      }, mimetypeList, typeDef.type);
 
     });
   });
 
-  return {
-    getName: function (ext, type) {
-      ext = (ext && /^\./.test(ext)) ? ext : '.'+ext;
+  function lookupPropertyInLists(ext, type, property) {
+    ext = (ext && /^\./.test(ext)) ? ext : '.'+ext;
 
       if(ext){
         var extensions = extensionList[ext];
         if(type){
           var extByType = _.where(extensions, {type: type});
           if(extByType && extByType.length > 0){
-            return extByType[0].group;
+            return extByType[0][property];
           }
         } else if(extensions && extensions.length > 0) {
-          return extensions[0].group;
+          return extensions[0][property];
         }
       }
 
@@ -366,13 +378,30 @@ angular.module('contentful').factory('mimetypeGroups', function () {
         var types = mimetypeList[type];
         var typesByExt = _.where(types, {ext: ext});
         if(typesByExt && typesByExt.length > 0){
-          return typesByExt[0].group;
+          return typesByExt[0][property];
         } else if(types && types.length > 0){
-          return types[0].group;
+          return types[0][property];
         }
       }
 
-      return 'attachment';
+      return;
+  }
+
+
+  return {
+
+    getName: function (ext, type) {
+      var group = lookupPropertyInLists(ext, type, 'group');
+      return group ? group : 'attachment';
+    },
+
+    hasPreview: function (ext, type) {
+      return !!lookupPropertyInLists(ext, type, 'preview');
+    },
+
+    getGroupNames: function () {
+      return _.keys(fileGroups).concat(['attachment']);
     }
+
   };
 });

@@ -29,4 +29,14 @@ describe('Mimetype groups', function () {
     expect(mimetypeGroups.getName('random', 'random/random')).toBe('attachment');
   });
 
+  it('gets positive preview setting for a png file', function () {
+    expect(mimetypeGroups.hasPreview('png', 'image/png')).toBe(true);
+  });
+
+  it('gets negative preview setting for a js file', function () {
+    expect(mimetypeGroups.hasPreview('js', 'application/x-javascript')).toBe(false);
+  });
+
+
+
 });

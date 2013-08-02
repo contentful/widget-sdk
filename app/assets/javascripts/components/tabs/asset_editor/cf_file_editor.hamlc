@@ -9,8 +9,16 @@
       Type: {{file.contentType}}
       Status: Processing…
     %div(ng-show="status() == 'ready'")
-      %i.ss-attach(ng-show="!isImage()")
-      %img.thumbnail(ng-src="{{file.url}}?w=50&h=50" ng-show="isImage()")
+      %img.thumbnail(ng-src="{{file.url}}?w=50&h=50" ng-show="isImage() && hasPreview()")
+      %i.ss-picture(ng-show="isImage() && !hasPreview()")
+      %i.ss-video(ng-show="isAudio()")
+      %i.ss-music(ng-show="isVideo()")
+      %i.ss-write(ng-show="isDocument()")
+      %i.ss-write(ng-show="isPdfdocument()")
+      %i.ss-box(ng-show="isArchive()")
+      %i.ss-write(ng-show="isPlaintext()")
+      %i.ss-desktop(ng-show="isCode()")
+      %i.ss-attach(ng-show="isAttachment()")
       %span Filename: {{file.fileName}}
       %br
       %span Type: {{file.contentType}}
