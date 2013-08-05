@@ -362,29 +362,29 @@ angular.module('contentful').factory('mimetypeGroups', function () {
   function lookupPropertyInLists(ext, type, property) {
     ext = (ext && /^\./.test(ext)) ? ext : '.'+ext;
 
-      if(ext){
-        var extensions = extensionList[ext];
-        if(type){
-          var extByType = _.where(extensions, {type: type});
-          if(extByType && extByType.length > 0){
-            return extByType[0][property];
-          }
-        } else if(extensions && extensions.length > 0) {
-          return extensions[0][property];
-        }
+    if(type){
+      var types = mimetypeList[type];
+      var typesByExt = _.where(types, {ext: ext});
+      if(typesByExt && typesByExt.length > 0){
+        return typesByExt[0][property];
+      } else if(types && types.length > 0){
+        return types[0][property];
       }
+    }
 
+    if(ext){
+      var extensions = extensionList[ext];
       if(type){
-        var types = mimetypeList[type];
-        var typesByExt = _.where(types, {ext: ext});
-        if(typesByExt && typesByExt.length > 0){
-          return typesByExt[0][property];
-        } else if(types && types.length > 0){
-          return types[0][property];
+        var extByType = _.where(extensions, {type: type});
+        if(extByType && extByType.length > 0){
+          return extByType[0][property];
         }
+      } else if(extensions && extensions.length > 0) {
+        return extensions[0][property];
       }
+    }
 
-      return;
+    return;
   }
 
 
