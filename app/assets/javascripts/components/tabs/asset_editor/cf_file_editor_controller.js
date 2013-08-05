@@ -3,7 +3,8 @@
 angular.module('contentful').controller('CfFileEditorCtrl', function ($scope, mimetypeGroups) {
 
   function getExtension(fileName) {
-    return fileName.match(/\.\w+$/g);
+    var ext = fileName.match(/\.\w+$/g);
+    return ext && ext.length > 0 ? ext[0] : undefined;
   }
 
   function isInGroup(file, group){
