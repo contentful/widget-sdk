@@ -202,6 +202,14 @@ describe('cf LinkEditor controller', function () {
 
     it('and fetches them for caching', function () {
       this.async(function (done) {
+        scope.$watch('linkedEntities', function (newval, oldval) {
+          if(newval !== oldval){
+            expect(getEntriesStub.calledWith({'sys.id[in]': 'entry1'})).toBeTruthy();
+            expect(scope.linkedEntities.length).toBe(1);
+            done();
+          }
+        });
+
         scope.links = [
           {
             sys: {
@@ -211,14 +219,7 @@ describe('cf LinkEditor controller', function () {
             }
           }
         ];
-
-        scope.$watch('linkedEntities', function (newval, oldval) {
-          if(newval !== oldval){
-            expect(getEntriesStub.calledWith({'sys.id[in]': 'entry1'})).toBeTruthy();
-            expect(scope.linkedEntities.length).toBe(1);
-            done();
-          }
-        });
+        scope.$apply();
       });
     });
   });
