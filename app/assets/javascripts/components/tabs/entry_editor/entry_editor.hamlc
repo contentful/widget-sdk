@@ -59,10 +59,10 @@
       %label
       .form-controls
         .cf-validation-error-display.form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
-    .form-field(ng-repeat="field in fields" data-field-type="{{field.type}}" data-field-items-type="{{field.items.type}}")
+    .form-field(ng-repeat="field in fields" data-field-id="{{field.id}}" data-field-type="{{field.type}}" data-field-items-type="{{field.items.type}}")
       %label {{field.name}}
       .form-controls
-        .locale(ng-repeat="locale in field.locales" ot-field-presence="['fields', field.id, locale.code]")
+        .locale(ng-repeat="locale in field.locales" ot-field-presence="['fields', field.id, locale.code]" data-locale="{{locale.code}}")
           .field-collaborators
             %ul
               %li.avatar.cf-user(ng-repeat="link in fieldPresence.users"

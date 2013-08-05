@@ -290,6 +290,7 @@ angular.module('contentful').constant('sampleContentTypes', {
           'localized': false,
           'items': {
             'type': 'Link',
+            'linkType': 'Entry',
             'validations': [
               {'linkContentType': '7rpL7xxWykaMkuoWicgiKC'}
             ]
