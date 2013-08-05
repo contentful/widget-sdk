@@ -48,27 +48,64 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
       };
 
 
-      $scope.addNew = function(contentType) {
+      $scope.addNewEntry = function(contentType) {
         $scope.spaceContext.space.createEntry(contentType.getId(), {}, function(errCreate, entry){
-          if (errCreate) {
-            //console.log('Error creating entry', errCreate);
-            notification.error('Error creating entry');
-            throw errCreate;
-          }
-          $scope.addLink(entry, function(errSetLink) {
-            if (errSetLink) {
-              notification.error('Error linking entry');
-              //console.log('Error linking entry', errSetLink);
-              entry.delete(function(errDelete) {
-                if (errDelete) {
-                  //console.log('Error deleting entry', errDelete);
-                  notification.error('Error deleting entry again');
-                  throw errDelete;
+          $scope.$apply(function (scope) {
+            if (errCreate) {
+              //console.log('Error creating entry', errCreate);
+              notification.error('Error creating entry');
+              throw new Error(errCreate);
+            }
+            scope.addLink(entry, function(errSetLink) {
+              scope.$apply(function (scope) {
+                if (errSetLink) {
+                  notification.error('Error linking entry');
+                  //console.log('Error linking entry', errSetLink);
+                  entry.delete(function(errDelete) {
+                    scope.$apply(function () {
+                      if (errDelete) {
+                        //console.log('Error deleting entry', errDelete);
+                        notification.error('Error deleting entry again');
+                        throw new Error(errDelete);
+                      }
+                    });
+                  });
+                  throw new Error(errSetLink);
                 }
               });
-              throw errSetLink;
+              scope.editEntry(entry, 'create');
+            });
+          });
+        });
+      };
+
+      $scope.addNewAsset = function() {
+        $scope.spaceContext.space.createAsset({}, function(errCreate, asset){
+          $scope.$apply(function (scope) {
+            if (errCreate) {
+              //console.log('Error creating asset', errCreate);
+              notification.error('Error creating asset');
+              throw new Error(errCreate);
             }
-            $scope.editEntry(entry, 'create');
+            scope.addLink(asset, function(errSetLink) {
+              scope.$apply(function (scope) {
+                if (errSetLink) {
+                  notification.error('Error linking asset');
+                  //console.log('Error linking asset', errSetLink);
+                  asset.delete(function(errDelete) {
+                    scope.$apply(function () {
+                      if (errDelete) {
+                        //console.log('Error deleting asset', errDelete);
+                        notification.error('Error deleting asset again');
+                        throw new Error(errDelete);
+                      }
+                    });
+                  });
+                  throw new Error(errSetLink);
+                }
+              });
+              scope.editAsset(asset, 'create');
+            });
           });
         });
       };

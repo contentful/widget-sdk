@@ -6,14 +6,6 @@
     %i.ss-delete(ng-click="removeLink(index, entity)" ng-show="otEditable")
 .cf-link-editor-search(cf-autocomplete-results="entities" autocomplete-term="searchTerm")
   .controls(ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
-    // The .add-new here needs to go inside the linktype= entry branch
-    .add-new(ng-show="linkContentType"
-             ng-click="addNew(linkContentType)"
-             tooltip="Add new {{linkContentType.getName()}} {{linkType}}"
-             tooltip-placement="left")
-      %button.with-link-content-type
-        %i.ss-plus
-        New
     %ng-switch(on="linkType")
       .dropdown-btn.add-new(ng-switch-when="Entry"
                             ng-hide="linkContentType"
@@ -25,7 +17,7 @@
         %a.dropdown-menu
           %ul
             %li(ng-repeat="contentType in spaceContext.publishedContentTypes"
-                ng-click="addNew(contentType)"
+                ng-click="addNewEntry(contentType)"
                 dropdown-close="")
               {{contentType.getName()}}
       %button.add-new.with-link-content-type(ng-switch-default="" ng-click="addNewAsset()")
