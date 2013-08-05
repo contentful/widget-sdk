@@ -28,8 +28,7 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
           changeHandler(FPFile);
         }, function (FPError) {
           if (FPError.code !== 101) {
-            // TODO handle error, sentry etc
-            console.log(FPError);
+            throw new Error(FPError);
           }
           scope.validate();
         });
