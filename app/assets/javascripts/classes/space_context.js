@@ -117,7 +117,6 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
         return this._publishedContentTypesHash[entry.getContentTypeId()];
       },
 
-      // TODO remove and replace by localizedField
       entryTitle: function(entry, localeCode) {
         var defaultTitle = 'Untitled';
         localeCode = localeCode || this.space.getDefaultLocale().code;
@@ -139,7 +138,6 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
         }
       },
 
-      // TODO remove and replace by localizedField
       assetTitle: function (asset, localeCode) {
         var defaultTitle = 'Untitled';
         localeCode = localeCode || this.space.getDefaultLocale().code;
