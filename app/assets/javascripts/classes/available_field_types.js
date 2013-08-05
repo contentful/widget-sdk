@@ -42,7 +42,8 @@ angular.module('contentful').
     {
       name: 'Link to Asset',
       description: 'Link to Asset description',
-      value: {type: 'Link', linkType: 'Asset'}
+      value: {type: 'Link', linkType: 'Asset'},
+      featureFlagged: true
     },
     {
       name: 'List of Entries',
@@ -52,7 +53,8 @@ angular.module('contentful').
     {
       name: 'List of Assets',
       description: 'List of Assets description',
-      value: {type: 'Array', items: {type: 'Link', linkType: 'Asset'}}
+      value: {type: 'Array', items: {type: 'Link', linkType: 'Asset'}},
+      featureFlagged: true
     },
     {
       name: 'List of Symbols',

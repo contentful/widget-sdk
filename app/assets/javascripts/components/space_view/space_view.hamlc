@@ -17,13 +17,17 @@
       %i.ss-file
       .hint.tip.nav-models
         Entries
-    %li(ng-class="{section: spaceContext.tabList.currentSection() == 'assets',
+    %li(ng-show="user.features.showAssets" ng-class="{section: spaceContext.tabList.currentSection() == 'assets',
                    'section-index': spaceContext.tabList.currentViewType() == 'asset-list'}"
         ng-click="visitView('asset-list')"
         data-view-type="asset-list")
       %i.ss-attach
       .hint.tip.nav-models
         Assets
+    %li(ng-hide="user.features.showAssets")
+      %i.ss-attach
+      .hint.tip.nav-models
+        Assets not available yet, coming soon
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'contentDelivery',
                    'section-index': spaceContext.tabList.currentViewType() == 'content-delivery'}"
         ng-click="visitView('content-delivery')"
