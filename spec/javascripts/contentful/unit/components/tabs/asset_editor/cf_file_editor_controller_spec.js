@@ -1,6 +1,6 @@
 'use strict';
 
-describe('File editor controller', function () {
+xdescribe('File editor controller', function () {
 
   var cfFileEditorCtrl, mimetypeGroups, $rootScope;
 
