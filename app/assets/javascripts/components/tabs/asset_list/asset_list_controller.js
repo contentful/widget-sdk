@@ -1,6 +1,8 @@
 'use strict';
 
-angular.module('contentful').controller('AssetListCtrl', function AssetListCtrl($scope, $q, Paginator, Selection, cfSpinner, analytics) {
+angular.module('contentful').controller('AssetListCtrl', function AssetListCtrl($scope, $q, Paginator, Selection, PromisedLoader, analytics) {
+  var assetLoader = new PromisedLoader();
+
   $scope.assetSection = 'all';
 
   $scope.paginator = new Paginator();
@@ -75,96 +77,61 @@ angular.module('contentful').controller('AssetListCtrl', function AssetListCtrl(
   }, true);
 
   $scope.resetAssets = function() {
-    if (this.reloadInProgress || this.resetPaused) return;
-    var scope = this;
-    var deferred = $q.defer();
-
-    this.reloadInProgress = true;
-    var stopSpin = cfSpinner.start();
-    this.spaceContext.space.getAssets(this.buildQuery(), function(err, assets, stats) {
-      scope.$apply(function(scope){
-        scope.reloadInProgress = false;
-        if (err) return deferred.reject();
-        scope.paginator.numAssets = stats.total;
-        scope.selection.switchBaseSet(stats.total);
-        scope.assets = assets;
-        deferred.resolve();
-        stopSpin();
-      });
+    return assetLoader.load($scope.spaceContext.space, 'getAssets', buildQuery()).
+    then(function (assets) {
+      $scope.paginator.numEntries = assets.total;
+      $scope.selection.switchBaseSet(assets.total);
+      $scope.assets = assets;
+      analytics.track('Reloaded AssetList');
     });
-    analytics.track('Reloaded AssetList');
-    return deferred.promise;
   };
 
-  $scope.buildQuery = function() {
+  function buildQuery() {
     var queryObject = {
       order: '-sys.updatedAt',
-      limit: this.paginator.pageLength,
-      skip: this.paginator.skipItems()
+      limit: $scope.paginator.pageLength,
+      skip: $scope.paginator.skipItems()
     };
 
-    if (this.tab.params.list == 'all') {
+    if ($scope.tab.params.list == 'all') {
       queryObject['sys.archivedAt[exists]'] = 'false';
-    } else if (this.tab.params.list == 'published') {
+    } else if ($scope.tab.params.list == 'published') {
       queryObject['sys.publishedAt[exists]'] = 'true';
-    } else if (this.tab.params.list == 'changed') {
+    } else if ($scope.tab.params.list == 'changed') {
       queryObject['sys.archivedAt[exists]'] = 'false';
       queryObject['changed'] = 'true';
-    } else if (this.tab.params.list == 'archived') {
+    } else if ($scope.tab.params.list == 'archived') {
       queryObject['sys.archivedAt[exists]'] = 'true';
     }
 
-    if (!_.isEmpty(this.searchTerm)) {
-      queryObject.query = this.searchTerm;
+    if (!_.isEmpty($scope.searchTerm)) {
+      queryObject.query = $scope.searchTerm;
     }
 
     return queryObject;
-  };
+  }
 
   $scope.hasQuery = function () {
     var noQuery = $scope.tab.params.list == 'all' && _.isEmpty($scope.searchTerm);
     return !noQuery;
   };
 
-  $scope.pauseReset = function() {
-    if (this.resetPaused) return;
-    var scope = this;
-    this.resetPaused = true;
-    setTimeout(function() {
-      scope.resetPaused = false;
-    }, 500);
-  };
-
-  // TODO unify the behavior between loadMore and resetAssets.
-  // Try to get rid of pausereset
-  // This is also used in cfAutocompleteResultList
   $scope.loadMore = function() {
-    if (this.reloadInProgress || this.resetPaused) return;
     if (this.paginator.atLast()) return;
-    var scope = this;
-    this.paginator.page++;
-    this.pauseReset();
-    var stopSpin = cfSpinner.start();
-    this.spaceContext.space.getAssets(this.buildQuery(), function(err, assets, stats) {
-      scope.reloadInProgress = false;
-      if (err) {
-        scope.paginator.page--;
-        stopSpin();
-        return;
-      }
-      scope.paginator.numAssets = stats.total;
-      scope.selection.switchBaseSet(stats.total);
-      scope.$apply(function(scope){
-        var args = [scope.assets.length, 0].concat(assets);
-        scope.assets.splice.apply(scope.assets, args);
-        stopSpin();
-      });
+    $scope.paginator.page++;
+
+    if ($scope.paginator.atLast()) return;
+    $scope.paginator.page++;
+    assetLoader.load($scope.spaceContext.space, 'getAssets', buildQuery()).
+    then(function (assets) {
+      $scope.paginator.numEntries = assets.total;
+      $scope.selection.switchBaseSet(assets.total);
+      $scope.assets.push.apply($scope.assets, assets);
+    }, function () {
+      $scope.paginator.page--;
     });
 
-    scope.$apply(function(scope) {
-      scope.reloadInProgress = true;
-      analytics.track('Scrolled AssetList');
-    });
+    analytics.track('Scrolled AssetList');
   };
 
   $scope.statusClass = function(asset){

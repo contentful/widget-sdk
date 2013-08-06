@@ -81,16 +81,13 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
   }, true);
 
   $scope.resetEntries = function() {
-    var deferred = $q.defer();
-    entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
+    return entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
     then(function (entries) {
       $scope.paginator.numEntries = entries.total;
       $scope.selection.switchBaseSet(entries.total);
       $scope.entries = entries;
-      deferred.resolve();
       analytics.track('Reloaded EntryList');
     });
-    return deferred.promise;
   };
 
   function buildQuery() {
@@ -136,7 +133,6 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
       $scope.paginator.numEntries = entries.total;
       $scope.selection.switchBaseSet(entries.total);
       $scope.entries.push.apply($scope.entries, entries);
-      console.log('added %o to %o', entries, $scope.entries);
     }, function () {
       $scope.paginator.page--;
     });
