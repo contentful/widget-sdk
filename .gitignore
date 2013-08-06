@@ -18,3 +18,5 @@ node_modules
 .DS_Store
 chromedriver.log
 libpeerconnection.log
+.tern-port
+npm-debug.log

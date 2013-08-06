@@ -112,8 +112,19 @@ module FeatureHelper
     end
   end
 
+  def eval_scope(selector, expression)
+    page.execute_script %Q{$('#{selector.gsub("'", "\\\\'")}').scope().$eval('#{expression.gsub("'", "\\\\'")}')}
+  end
+
+  def apply_scope(selector)
+    page.execute_script %Q{$('#{selector.gsub("'", "\\\\'")}').scope().$apply()}
+  end
+
   def select_tab(title)
     find(:xpath, "//*[@class='tab-title'][text()='#{title}']/..").click
   end
 
+  def expect_success(string = 'published successfully')
+    find('.notification', text: string, wait: 10)
+  end
 end

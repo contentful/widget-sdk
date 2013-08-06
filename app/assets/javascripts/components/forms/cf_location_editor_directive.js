@@ -159,7 +159,9 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
       };
 
       scope.resetMapLocation = function () {
-        map.panTo(locationController.$viewValue);
+        if(locationController.$viewValue instanceof google.maps.LatLng){
+          map.panTo(locationController.$viewValue);
+        }
       };
 
     }

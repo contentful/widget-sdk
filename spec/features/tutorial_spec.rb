@@ -114,23 +114,23 @@ feature 'Tutorial', js: true do
     end
   end
 
-  scenario 'Run Content Type tutorial' do
-    open_tutorial_overview
-    run_content_type_tutorial
-    close_tutorial_overview
-  end
+  #scenario 'Run Content Type tutorial' do
+    #open_tutorial_overview
+    #run_content_type_tutorial
+    #close_tutorial_overview
+  #end
 
-  scenario 'Run Entry tutorial' do
-    open_tutorial_overview
-    run_entry_tutorial
-    close_tutorial_overview
-  end
+  #scenario 'Run Entry tutorial' do
+    #open_tutorial_overview
+    #run_entry_tutorial
+    #close_tutorial_overview
+  #end
 
-  scenario 'Run API Key tutorial' do
-    open_tutorial_overview
-    run_api_key_tutorial
-    close_tutorial_overview
-  end
+  #scenario 'Run API Key tutorial' do
+    #open_tutorial_overview
+    #run_api_key_tutorial
+    #close_tutorial_overview
+  #end
 
   scenario 'Run all Tutorials' do
     open_tutorial_overview

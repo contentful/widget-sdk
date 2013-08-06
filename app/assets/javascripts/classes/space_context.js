@@ -119,7 +119,6 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
 
       entryTitle: function(entry, localeCode) {
         var defaultTitle = 'Untitled';
-
         localeCode = localeCode || this.space.getDefaultLocale().code;
 
         try {
@@ -135,6 +134,22 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
             }
           }
         } catch (e) {
+          return defaultTitle;
+        }
+      },
+
+      assetTitle: function (asset, localeCode) {
+        var defaultTitle = 'Untitled';
+        localeCode = localeCode || this.space.getDefaultLocale().code;
+
+        try {
+          var title = asset.data.fields.title[localeCode];
+          if (!title || title.match(/^\s*$/)) {
+            return defaultTitle;
+          } else {
+            return title;
+          }
+        } catch(e) {
           return defaultTitle;
         }
       }

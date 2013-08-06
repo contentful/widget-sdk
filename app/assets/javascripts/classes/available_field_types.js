@@ -37,12 +37,24 @@ angular.module('contentful').
     {
       name: 'Link to Entry',
       description: 'Link to Entry description',
-      value: {type: 'Link'}
+      value: {type: 'Link', linkType: 'Entry'}
+    },
+    {
+      name: 'Link to Asset',
+      description: 'Link to Asset description',
+      value: {type: 'Link', linkType: 'Asset'},
+      featureFlagged: true
     },
     {
       name: 'List of Entries',
       description: 'List of Entries description',
-      value: {type: 'Array', items: {type: 'Link'}}
+      value: {type: 'Array', items: {type: 'Link', linkType: 'Entry'}}
+    },
+    {
+      name: 'List of Assets',
+      description: 'List of Assets description',
+      value: {type: 'Array', items: {type: 'Link', linkType: 'Asset'}},
+      featureFlagged: true
     },
     {
       name: 'List of Symbols',
@@ -62,7 +74,10 @@ angular.module('contentful').
       return _.result(_.find(availableFieldTypes, function(availableFieldType) {
         if (!field ||
             field.type !== availableFieldType.value.type ||
-            field && field.items && field.items.type !== availableFieldType.value.items.type)
+            field.type === 'Link' && field.linkType !== availableFieldType.value.linkType ||
+            field.items && field.items.type !== availableFieldType.value.items.type ||
+            field.type === 'Array' && field.items.type === 'Link' && field.items.linkType !== availableFieldType.value.items.linkType
+           )
           return false;
         return true;
       }), 'name');

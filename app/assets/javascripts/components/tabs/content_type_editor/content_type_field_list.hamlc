@@ -59,6 +59,7 @@
                 .dropdown-menu
                   %ul
                     %li(ng-repeat="type in availableTypes"
+                        ng-hide="!user.features.showAssets && type.featureFlagged"
                         ng-click="selectType(type)"
                         dropdown-close="")
                       %span {{type.name}}

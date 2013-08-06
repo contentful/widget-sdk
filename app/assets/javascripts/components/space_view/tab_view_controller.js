@@ -9,6 +9,8 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     } else if (tab.list.numVisible() === 0) {
       if (tab.viewType == 'entry-editor') {
         $scope.visitView('entry-list');
+      } else if (tab.viewType == 'asset-editor') {
+        $scope.visitView('asset-list');
       } else if (tab.viewType == 'content-type-editor') {
         $scope.visitView('content-type-list');
       } else if (tab.viewType == 'api-key-editor') {
@@ -37,6 +39,28 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     }
     if (editor) editor.activate();
   };
+
+
+  $scope.editAsset = function(asset, mode) {
+    if (! (asset && asset.data)) return notification.error('Can\'t open asset');
+
+    mode = mode || 'edit';
+    var editor = _.find($scope.spaceContext.tabList.items, function(tab){
+      return (tab.viewType == 'asset-editor' && tab.params.asset.getId() == asset.getId());
+    });
+    if (!editor) {
+      editor = $scope.spaceContext.tabList.add({
+        viewType: 'asset-editor',
+        section: 'assets',
+        params: {
+          asset: asset,
+          mode: mode
+        }
+      });
+    }
+    if (editor) editor.activate();
+  };
+
 
   $scope.editContentType = function(contentType, mode) {
     if (! (contentType && contentType.data)) return notification.error('Can\'t open Content Type');
@@ -86,6 +110,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     else
       return _.find($scope.spaceContext.tabList.items, tabMatches);
 
+    // TODO this can be split into one method per route and then moved into the individual routes
     function tabMatches(tab) {
       return tab.viewType == route.viewType &&
              (
@@ -93,6 +118,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
                (
                  tab.params.contentType && tab.params.contentType.getId() === route.params.contentTypeId ||
                  tab.params.apiKey      && tab.params.apiKey.getId()      === route.params.apiKeyId ||
+                 tab.params.asset       && tab.params.asset.getId()       === route.params.assetId ||
                  tab.params.entry       && tab.params.entry.getId()       === route.params.entryId
                )
              ) ||
@@ -103,8 +129,9 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
                tab.params.apiKey.getId() === undefined
              ) ||
              (
-               route.viewType == 'entry-list' &&
-               tab.viewType   == 'entry-list'
+               route.viewType == 'entry-list'        && tab.viewType   == 'entry-list' ||
+               route.viewType == 'asset-list'        && tab.viewType   == 'asset-list' ||
+               route.viewType == 'content-type-list' && tab.viewType   == 'content-type-list'
              );
     }
   };
@@ -124,6 +151,19 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
         canClose: true
       };
       analytics.track('Clicked "Entries"');
+    } else if (viewType == 'asset-list'){
+      options = {
+        viewType: 'asset-list',
+        section: 'assets',
+        hidden: true,
+        params: {
+          spaceId: $scope.spaceContext.space.getId(),
+          list: 'all'
+        },
+        title: 'Assets',
+        canClose: true
+      };
+      analytics.track('Clicked "Assets"');
     } else if (viewType == 'content-type-list'){
       options = {
         viewType: 'content-type-list',

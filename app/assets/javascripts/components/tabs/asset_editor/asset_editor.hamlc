@@ -1,0 +1,66 @@
+.tab-header.editor-configuration
+  %h1
+    {{headline()}}
+  .editor-top-left
+    .dropdown-btn(ng-show="showLangSwitcher")
+      %a.dropdown-toggle
+        %i.ss-dropdown
+        %span Show fields…
+      .dropdown-menu(style="display:none")
+        %ul
+          %li(ng-repeat="locale in spaceContext.publishLocales")
+            %label
+              %input(type="checkbox" ng-model="spaceContext.localesActive[locale.code]")
+              {{locale.name}}
+              %span(ng-show="locale == spaceContext.space.getDefaultLocale()") (default)
+  .editor-top-right
+    %button(ng-click="preferences.toggleAuxPanel()"
+            ng-class="{active: preferences.showAuxPanel}"
+            tooltip="Toggle additional details"
+            tooltip-placement="left")
+      Info
+
+.aux-panel
+  %header
+    %span Asset Information
+  .entity-info-panel
+
+.tab-main
+  %form.form-horizontal(name="assetForm")
+    .form-field(ng-show="hasErrorOnFields")
+      %label
+      .form-controls
+        .cf-validation-error-display.form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
+    .form-field(ng-repeat="field in fields" data-field-id="{{field.id}}" data-field-type="{{field.type}}" data-field-items-type="{{field.items.type}}")
+      %label {{field.name}}
+      .form-controls
+        .locale(ng-repeat="locale in field.locales" ot-field-presence="['fields', field.id, locale.code]" data-locale="{{locale.code}}")
+          .field-collaborators
+            %ul
+              %li.avatar.cf-user(ng-repeat="link in fieldPresence.users"
+                                 link="link" as="user"
+                                 tooltip="{{user.getName()}}")
+                %img(ng-src="{{user.data.avatarUrl}}")
+          .locale-label(ng-show="field.locales.length > 1") {{locale.name}}
+          .cf-field-editor(ot-path="['fields', field.id, locale.code]" cf-editor-entity="asset")
+          .cf-validation-error-display.form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
+        .cf-validation-error-display.form-box-error(cf-error-path="['fields', field.id]")
+
+.tab-actions(ng-controller="AssetActionsCtrl")
+  .button-set
+    %button.delete(   ng-show="canDelete()"    ng-click="delete()"    tooltip="Permanently delete this Asset"      ) Delete
+    %button.archive(  ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
+    %button.archive(  ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
+    %button.unpublish(ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish
+    %button.publish(  ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Asset") {{publishButtonLabel()}}
+  .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
+               tooltip-placement="top")
+  .other-users
+    %span(ng-show="presence.users.length == 0"
+          tooltip="Edit collaboratively by inviting more users into your space. Go to Settings → Users → Invite New User to invite people.")
+      No other users online
+    %ul(ng-show="presence.users.length > 0")
+      %li.avatar.cf-user(ng-repeat="link in presence.users"
+                         link="link" as="user"
+                         tooltip="{{user.getName()}}")
+        %img(ng-src="{{user.data.avatarUrl}}")

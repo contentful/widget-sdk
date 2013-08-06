@@ -193,7 +193,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         id: 'contentTypeCreate2',
         title: 'Now add a Content Type',
         description: 'This will open the Content Type editor where you will add your fields.',
-        attachTo: '.tab-list .add-btn .dropdown-menu ul:first li:last',
+        attachTo: '.tab-list .add-content-type',
         position: '3',
         next: 'contentTypeName',
         onShow: function () {

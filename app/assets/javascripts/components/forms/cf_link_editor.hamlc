@@ -1,55 +1,77 @@
-%ul.links(ng-hide="linkedEntries.length == 0")
-  %li(ng-repeat="(index, entry) in linkedEntries")
-    %i.ss-rows.drag-handle(ng-disabled="!otEditable" ng-hide="linkedEntries.length==1")
-    %a(ng-click="editEntry(entry)" ng-show="entry && entry.data") {{linkDescription(entry)}}
-    %span(ng-hide="entry && entry.data") {{linkDescription(entry)}}
-    %i.ss-delete(ng-click="removeLink(index, entry)" ng-show="otEditable")
-.cf-link-editor-search(cf-autocomplete-results="entries" autocomplete-term="searchTerm")
-  .controls(ng-show="otEditable && (linkedEntries.length == 0 || field.type == 'Array')")
-    .add-new(ng-show="linkContentType"
-             ng-click="addNew(linkContentType)"
-             tooltip="Add new {{linkContentType.getName()}} Entry"
-             tooltip-placement="left")
-      %button.with-link-content-type
+%ul.links(ng-hide="linkedEntities.length == 0")
+  %li(ng-repeat="(index, entity) in linkedEntities")
+    %i.ss-rows.drag-handle(ng-disabled="!otEditable" ng-hide="linkedEntities.length==1")
+    %a(ng-click="editEntity(entity)" ng-show="entity && entity.data") {{linkDescription(entity)}}
+    %span(ng-hide="entity && entity.data") {{linkDescription(entity)}}
+    %i.ss-delete(ng-click="removeLink(index, entity)" ng-show="otEditable")
+.cf-link-editor-search(cf-autocomplete-results="entities" autocomplete-term="searchTerm")
+  .controls(ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
+    %ng-switch(on="linkType")
+      .dropdown-btn.add-new(ng-switch-when="Entry"
+                            ng-hide="linkContentType"
+                            tooltip="Add new {{linkType}}"
+                            tooltip-placement="left")
+        %button.dropdown-toggle
+          %i.ss-plus
+          New
+        %a.dropdown-menu
+          %ul
+            %li(ng-repeat="contentType in spaceContext.publishedContentTypes"
+                ng-click="addNewEntry(contentType)"
+                dropdown-close="")
+              {{contentType.getName()}}
+      %button.add-new.with-link-content-type(ng-switch-default="" ng-click="addNewAsset()")
         %i.ss-plus
         New
-    .dropdown-btn.add-new(ng-hide="linkContentType"
-                          tooltip="Add new Entry"
-                          tooltip-placement="left")
-      %button.dropdown-toggle
-        %i.ss-plus
-        New
-      %a.dropdown-menu
-        %ul
-          %li(ng-repeat="contentType in spaceContext.publishedContentTypes"
-              ng-click="addNew(contentType)"
-              dropdown-close="")
-            {{contentType.getName()}}
     .search-field(ng-submit="submit()"
                   search="searchTerm"
                   search-type-ahead=""
-                  placeholder="Search for entries"
+                  placeholder="Search for {{linkType}}"
                   tooltip-placement="top"
-                  tooltip="Search for existing entries")
+                  tooltip="Search for existing {{linkType}}")
 
-  .results.btn-right-on.search-options-on(ng-show="entries && entries.length > 0")
-    %table.result-list
-      %thead
-        %tr
-          %th.cell-type Content Type
-          %th.cell-name Name
-          %th.cell-by By
-    .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
+  .results.btn-right-on.search-options-on(ng-show="entities && entities.length > 0" ng-switch="linkType")
+    %div(ng-switch-when="Entry")
       %table.result-list
-        %tbody
-          %tr(ng-repeat="entry in entries"
-              cf-click-local="pick(entry)"
-              ng-class="{selected: entry==selectedEntry}")
-            %td.cell-type
-              %span {{spaceContext.publishedTypeForEntry(entry).getName()}}
-            %td.cell-name
-              %span {{spaceContext.entryTitle(entry)}}
-            %td.cell-by
-              %span.cf-user(link="entry.data.sys.updatedBy" as="updater")
-                {{updater.getName()}}
-      .loading(ng-hide="paginator.atLast()")
+        %thead
+          %tr
+            %th.cell-type Content Type
+            %th.cell-name Name
+            %th.cell-by By
+      .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
+        %table.result-list
+          %tbody
+            %tr(ng-repeat="entity in entities"
+                cf-click-local="pick(entity)"
+                ng-class="{selected: entity==selectedEntity}")
+              %td.cell-type
+                %span {{spaceContext.publishedTypeForEntry(entity).getName()}}
+              %td.cell-name
+                %span {{spaceContext.entryTitle(entity)}}
+              %td.cell-by
+                %span.cf-user(link="entity.data.sys.updatedBy" as="updater")
+                  {{updater.getName()}}
+        .loading(ng-hide="paginator.atLast()")
+    %div(ng-switch-default)
+      %table.result-list
+        %thead
+          %tr
+            %th.cell-type Title
+            %th.cell-name Description
+            %th.cell-by By
+      .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
+        %table.result-list
+          %tbody
+            %tr(ng-repeat="entity in entities"
+                cf-click-local="pick(entity)"
+                ng-class="{selected: entity==selectedEntity}")
+              %td.cell-type
+                -#%span {{spaceContext.assetTitle(entity)}}
+                %span {{localizedField('entity.data.fields.title') || 'Untitled'}}
+              %td.cell-name
+                -# %span {{spaceContext.assetDescription(entity)}}
+                %span {{localizedField('entity.data.fields.description')}}
+              %td.cell-by
+                %span.cf-user(link="entity.data.sys.updatedBy" as="updater")
+                  {{updater.getName()}}
+        .loading(ng-hide="paginator.atLast()")

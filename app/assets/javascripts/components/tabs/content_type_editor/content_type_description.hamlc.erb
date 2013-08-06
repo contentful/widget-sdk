@@ -49,11 +49,19 @@
     %img(src="<%= image_path('field_type/jsonobject.png') %>")
 
   %div(ng-switch-when="Link")
-    %h3 A link to another entry
+    %div(ng-show="type.value.linkType == 'Entry'")
+      %h3
+        A link to another entry
+      %p
+        Connect your current entry to another already existing entry previously created. You can create relations such as connecting one book to its author.
+      %img(src="<%= image_path('field_type/linktoentry.png') %>")
 
-    %p
-      Connect your current entry to another already existing entry previously created. You can create relations such as connecting one book to its author.
-    %img(src="<%= image_path('field_type/linktoentry.png') %>")
+    %div(ng-show="type.value.linkType == 'Asset'")
+      %h3
+        A link to an asset
+      %p
+        Connect your current entry to an asset previously uploaded. You can use it to attach media assets to entries, such as a cover image to a book.
+      %img(src="<%= image_path('field_type/linkstoentries.png') %>")
 
   %div(ng-switch-when="Location")
     %h3 Geographical coordinates of a location
@@ -63,11 +71,18 @@
     %img(src="<%= image_path('field_type/location.png') %>")
 
   %div(ng-switch-when="Array")
-    %div(ng-show="type.value.items.type == 'Link'")
+    %div(ng-show="type.value.items.type == 'Link' && type.value.items.linkType == 'Entry'")
       %h3
         One or many links to entries
       %p
         Connect your current entry to other already existing entries previously created. It works as the Link to Entry but it allows you to connect one entry to several other ones. An example is a book which has several authors.
+      %img(src="<%= image_path('field_type/linkstoentries.png') %>")
+
+    %div(ng-show="type.value.items.type == 'Link' && type.value.items.linkType == 'Asset'")
+      %h3
+        One or many links to assets
+      %p
+        Connect your current entry to assets previously uploaded. It works as the Link to Asset but it allows you to connect one entry to several assets at once. An example is a gallery of pictures.
       %img(src="<%= image_path('field_type/linkstoentries.png') %>")
 
     %div(ng-show="type.value.items.type == 'Symbol'")

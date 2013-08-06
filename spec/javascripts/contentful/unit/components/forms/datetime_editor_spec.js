@@ -47,6 +47,8 @@ describe('DateTime Editor', function () {
     if (zone) expect(scope.timezones[element.find('.zone').val()]).toBe(zone);
   }
 
+  var localzone = moment().format('Z');
+
   it('should put the available timezones on the scope', function () {
     expect(_.isArray(scope.timezones)).toBe(true);
   });
@@ -86,18 +88,18 @@ describe('DateTime Editor', function () {
   it('should accepts different inputs', function () {
     // No time
     enter('2013-12-24');
-    expect(scope.fieldData.value).toBe('2013-12-24T00:00:00+02:00');
+    expect(scope.fieldData.value).toBe('2013-12-24T00:00:00'+localzone);
     // Time formats
     enter('2013-12-24', '1:23');
-    expect(scope.fieldData.value).toBe('2013-12-24T01:23:00+02:00');
+    expect(scope.fieldData.value).toBe('2013-12-24T01:23:00'+localzone);
     enter('2013-12-24', '01:23');
-    expect(scope.fieldData.value).toBe('2013-12-24T01:23:00+02:00');
+    expect(scope.fieldData.value).toBe('2013-12-24T01:23:00'+localzone);
     enter('2013-12-24', '1:23:45');
-    expect(scope.fieldData.value).toBe('2013-12-24T01:23:45+02:00');
+    expect(scope.fieldData.value).toBe('2013-12-24T01:23:45'+localzone);
     enter('2013-12-24', '01:23:45');
-    expect(scope.fieldData.value).toBe('2013-12-24T01:23:45+02:00');
+    expect(scope.fieldData.value).toBe('2013-12-24T01:23:45'+localzone);
     enter('2013-12-24', '   01:23:45   ');
-    expect(scope.fieldData.value).toBe('2013-12-24T01:23:45+02:00');
+    expect(scope.fieldData.value).toBe('2013-12-24T01:23:45'+localzone);
     // Timezones
     enter('2013-12-24', '01:23', '+05:00');
     expect(scope.fieldData.value).toBe('2013-12-24T01:23:00+05:00');
@@ -107,7 +109,7 @@ describe('DateTime Editor', function () {
 
   it('should assume null for invalid times', function () {
     enter('2013-12-24', 'c1:23');
-    expect(scope.fieldData.value).toBe('2013-12-24T00:00:00+02:00');
+    expect(scope.fieldData.value).toBe('2013-12-24T00:00:00'+localzone);
     enter('2013-12-24', '13', '-03:30');
     expect(scope.fieldData.value).toBe('2013-12-24T00:00:00-03:30');
     enter('2013-12-24', '-21:23', '+08:00');

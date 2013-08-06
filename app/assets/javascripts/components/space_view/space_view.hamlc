@@ -17,7 +17,14 @@
       %i.ss-file
       .hint.tip.nav-models
         Entries
-    %li
+    %li(ng-show="user.features.showAssets" ng-class="{section: spaceContext.tabList.currentSection() == 'assets',
+                   'section-index': spaceContext.tabList.currentViewType() == 'asset-list'}"
+        ng-click="visitView('asset-list')"
+        data-view-type="asset-list")
+      %i.ss-attach
+      .hint.tip.nav-models
+        Assets
+    %li(ng-hide="user.features.showAssets")
       %i.ss-attach
       .hint.tip.nav-models
         Assets not available yet, coming soon
@@ -58,11 +65,17 @@
     %li.tablist-button(space-context="spaceContext")
 .tab-content(ng-repeat="tab in spaceContext.tabList.items" ng-show="tab.active()" ng-switch="tab.viewType")
   .iframe-view(ng-switch-when="iframe")
-  .entry-list(ng-switch-when="entry-list")
+  .entry-list.entity-list(ng-switch-when="entry-list")
+  .asset-list.entity-list(ng-switch-when="asset-list")
   .content-type-list(ng-switch-when="content-type-list")
   .entry-editor.with-tab-actions(ng-switch-when="entry-editor"
     ot-doc-for="tab.params.entry"
     cf-validate="tab.params.entry.data" with-schema="entrySchema" validate-manually=""
+    ng-class="{'with-aux-panel': preferences.showAuxPanel}"
+    ot-doc-presence="")
+  .asset-editor.with-tab-actions(ng-switch-when="asset-editor"
+    ot-doc-for="tab.params.asset"
+    cf-validate="tab.params.asset.data" with-schema="assetSchema" validate-manually=""
     ng-class="{'with-aux-panel': preferences.showAuxPanel}"
     ot-doc-presence="")
   .content-type-editor.with-tab-actions(ng-switch-when="content-type-editor"

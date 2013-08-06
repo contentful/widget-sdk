@@ -18,13 +18,22 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
       var tab = $scope.findTabForRoute(route);
       if (tab)
         tab.activate();
-      else if      (route.viewType == 'entry-list')
+      else if (route.viewType == 'entry-list')
         $scope.visitView('entry-list');
       else if (route.viewType == 'entry-editor')
         $scope.spaceContext.space.getEntry(route.params.entryId, function (err, entry) {
           $scope.$apply(function (scope) {
             if (err) scope.visitView('entry-list');
             else     scope.editEntry(entry);
+          });
+        });
+      else if (route.viewType == 'asset-list')
+        $scope.visitView('asset-list');
+      else if (route.viewType == 'asset-editor')
+        $scope.spaceContext.space.getAsset(route.params.assetId, function (err, asset) {
+          $scope.$apply(function (scope) {
+            if (err) scope.visitView('asset-list');
+            else     scope.editAsset(asset);
           });
         });
       else if (route.viewType == 'content-type-list')
@@ -99,6 +108,35 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
       });
     });
   };
+
+
+  $scope.createAsset = function() {
+    var scope = this;
+    var data = {
+      sys: {
+        type: 'Asset'
+      },
+      fields: {}
+    };
+
+    scope.spaceContext.space.createAsset(data, function(err, asset){
+      scope.$apply(function (scope) {
+        if (!err) {
+          scope.editAsset(asset, 'create');
+        } else {
+          notification.error('Could not create Asset');
+          //TODO sentry notification
+        }
+      });
+      analytics.track('Selected Add-Button', {
+        currentSection: scope.spaceContext.tabList.currentSection(),
+        currentViewType: scope.spaceContext.tabList.currentViewType(),
+        entityType: 'asset',
+        entitySubType: asset.getId()
+      });
+    });
+  };
+
 
   $scope.createContentType = function() {
     var scope = this;
