@@ -126,7 +126,7 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
   });
 
   $scope.$watch('asset.data.fields.file', function (file, old, scope) {
-    scope.validate();
+    if (file !== old) scope.validate();
   }, true);
 
   $scope.headline = function(){
