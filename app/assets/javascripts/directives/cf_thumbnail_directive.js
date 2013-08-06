@@ -1,6 +1,23 @@
 'use strict';
 
 angular.module('contentful').directive('cfThumbnail', function () {
+  var iconMap = {
+    image: 'picture',
+    video: 'video',
+    audio: 'music',
+    document: 'write',
+    pdfdocument: 'write',
+    archive: 'box',
+    plaintext: 'write',
+    code: 'desktop',
+    attachment: 'attach'
+  };
+
+  function getExtension(fileName) {
+    var ext = fileName.match(/\.\w+$/g);
+    return ext && ext.length > 0 ? ext[0] : undefined;
+  }
+
   return {
     restrict: 'A',
     template: JST['cf_thumbnail'],
@@ -11,23 +28,14 @@ angular.module('contentful').directive('cfThumbnail', function () {
 
     controller: ['$scope', 'mimetypeGroups', function ($scope, mimetypeGroups) {
 
-      function getExtension(fileName) {
-        var ext = fileName.match(/\.\w+$/g);
-        return ext && ext.length > 0 ? ext[0] : undefined;
-      }
-
-      function isInGroup(file, group){
-        return group === mimetypeGroups.getName(
-          getExtension(file.fileName),
-          file.contentType
+      $scope.getIconName = function() {
+        var groupName = mimetypeGroups.getName(
+          getExtension($scope.file.fileName),
+          $scope.file.contentType
         );
-      }
 
-      _.each(mimetypeGroups.getGroupNames(), function (name) {
-        $scope['is'+ name.charAt(0).toUpperCase() + name.slice(1)] = function () {
-          return isInGroup($scope.file, name);
-        };
-      });
+        return 'ss-'+iconMap[groupName];
+      };
 
       $scope.hasPreview = function(){
         return mimetypeGroups.hasPreview(
