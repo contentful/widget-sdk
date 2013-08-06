@@ -16,18 +16,6 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
     }
   });
 
-  $scope.$on('entityArchived', function (ev, entry) {
-    var entryId = entry.data.sys.id;
-    $scope.resetEntries().then(function () {
-      var entries = _.reject($scope.entries, function (entry) {
-        return entry.data.sys.id === entryId;
-      });
-      if($scope.entries.length !== entries.length) {
-        $scope.entries = entries;
-      }
-    });
-  });
-
   $scope.$watch('searchTerm',  function (term) {
     if (term === null) return;
     $scope.tab.params.list = 'all';

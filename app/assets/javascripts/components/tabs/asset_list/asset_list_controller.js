@@ -16,18 +16,6 @@ angular.module('contentful').controller('AssetListCtrl', function AssetListCtrl(
     }
   });
 
-  $scope.$on('entityArchived', function (ev, asset) {
-    var assetId = asset.data.sys.id;
-    $scope.resetAssets().then(function () {
-      var assets = _.reject($scope.assets, function (asset) {
-        return asset.data.sys.id === assetId;
-      });
-      if($scope.assets.length !== assets.length) {
-        $scope.assets = assets;
-      }
-    });
-  });
-
   $scope.$watch('searchTerm',  function (term) {
     if (term === null) return;
     $scope.tab.params.list = 'all';

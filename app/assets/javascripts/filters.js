@@ -11,3 +11,7 @@ filters.filter('dateTime', function() {
     }
   };
 });
+
+filters.filter('isEmpty', function() {
+  return _.isEmpty;
+});
