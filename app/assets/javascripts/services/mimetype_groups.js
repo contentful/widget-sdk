@@ -182,24 +182,9 @@ angular.module('contentful').factory('mimetypeGroups', function () {
       { ext: '.ogv', type: 'video/ogg' },
       { ext: '.webm', type: 'video/webm' }
     ],
-    document: [
+    richtext: [
       { ext: '.doc', type: 'application/msword' },
       { ext: '.dot', type: 'application/msword' },
-      { ext: '.eps', type: 'application/postscript' },
-      { ext: '.pot', type: 'application/mspowerpoint' },
-      { ext: '.pot', type: 'application/vnd.ms-powerpoint' },
-      { ext: '.ppa', type: 'application/vnd.ms-powerpoint' },
-      { ext: '.pps', type: 'application/mspowerpoint' },
-      { ext: '.pps', type: 'application/vnd.ms-powerpoint' },
-      { ext: '.ppt', type: 'application/mspowerpoint' },
-      { ext: '.ppt', type: 'application/powerpoint' },
-      { ext: '.ppt', type: 'application/vnd.ms-powerpoint' },
-      { ext: '.ppt', type: 'application/x-mspowerpoint' },
-      { ext: '.ppz', type: 'application/mspowerpoint' },
-      { ext: '.pwz', type: 'application/vnd.ms-powerpoint' },
-      { ext: '.vsd', type: 'application/x-visio' },
-      { ext: '.vst', type: 'application/x-visio' },
-      { ext: '.vsw', type: 'application/x-visio' },
       { ext: '.w60', type: 'application/wordperfect6.0' },
       { ext: '.w61', type: 'application/wordperfect6.1' },
       { ext: '.w6w', type: 'application/msword' },
@@ -212,7 +197,22 @@ angular.module('contentful').factory('mimetypeGroups', function () {
       { ext: '.wpd', type: 'application/wordperfect' },
       { ext: '.wpd', type: 'application/x-wpwin' },
       { ext: '.wq1', type: 'application/x-lotus' },
-      { ext: '.wri', type: 'application/mswrite' },
+      { ext: '.wri', type: 'application/mswrite' }
+    ],
+    presentation: [
+      { ext: '.pot', type: 'application/mspowerpoint' },
+      { ext: '.pot', type: 'application/vnd.ms-powerpoint' },
+      { ext: '.ppa', type: 'application/vnd.ms-powerpoint' },
+      { ext: '.pps', type: 'application/mspowerpoint' },
+      { ext: '.pps', type: 'application/vnd.ms-powerpoint' },
+      { ext: '.ppt', type: 'application/mspowerpoint' },
+      { ext: '.ppt', type: 'application/powerpoint' },
+      { ext: '.ppt', type: 'application/vnd.ms-powerpoint' },
+      { ext: '.ppt', type: 'application/x-mspowerpoint' },
+      { ext: '.ppz', type: 'application/mspowerpoint' },
+      { ext: '.pwz', type: 'application/vnd.ms-powerpoint' }
+    ],
+    spreadsheet: [
       { ext: '.xl', type: 'application/excel' },
       { ext: '.xla', type: 'application/excel' },
       { ext: '.xla', type: 'application/x-excel' },
@@ -244,7 +244,7 @@ angular.module('contentful').factory('mimetypeGroups', function () {
       { ext: '.xlw', type: 'application/excel' },
       { ext: '.xlw', type: 'application/vnd.ms-excel' },
       { ext: '.xlw', type: 'application/x-excel' },
-      { ext: '.xlw', type: 'application/x-msexcel' },
+      { ext: '.xlw', type: 'application/x-msexcel' }
     ],
     pdfdocument: [
       { ext: '.pdf', type: 'application/pdf' },
@@ -266,7 +266,7 @@ angular.module('contentful').factory('mimetypeGroups', function () {
       { ext: '.zip', type: 'application/x-compressed' },
       { ext: '.zip', type: 'application/x-zip-compressed' },
       { ext: '.zip', type: 'application/zip' },
-      { ext: '.zip', type: 'multipart/x-zip' },
+      { ext: '.zip', type: 'multipart/x-zip' }
     ],
     code: [
       { ext: '.asp', type: 'text/asp' },
@@ -290,9 +290,6 @@ angular.module('contentful').factory('mimetypeGroups', function () {
       { ext: '.f90', type: 'text/x-fortran' },
       { ext: '.for', type: 'text/plain' },
       { ext: '.for', type: 'text/x-fortran' },
-      { ext: '.htm', type: 'text/html' },
-      { ext: '.html', type: 'text/html' },
-      { ext: '.htmls', type: 'text/html' },
       { ext: '.jav', type: 'text/plain' },
       { ext: '.jav', type: 'text/x-java-source' },
       { ext: '.java', type: 'text/plain' },
@@ -318,17 +315,22 @@ angular.module('contentful').factory('mimetypeGroups', function () {
       { ext: '.sh', type: 'application/x-sh' },
       { ext: '.sh', type: 'application/x-shar' },
       { ext: '.sh', type: 'text/x-script.sh' },
-      { ext: '.shtml', type: 'text/html' },
-      { ext: '.shtml', type: 'text/x-server-parsed-html' },
       { ext: '.tcl', type: 'application/x-tcl' },
       { ext: '.tcl', type: 'text/x-script.tcl' },
       { ext: '.tcsh', type: 'text/x-script.tcsh' },
       { ext: '.tex', type: 'application/x-tex' },
       { ext: '.texi', type: 'application/x-texinfo' },
       { ext: '.texinfo', type: 'application/x-texinfo' },
-      { ext: '.xml', type: 'application/xml' },
-      { ext: '.xml', type: 'text/xml' },
       { ext: '.zsh', type: 'text/x-script.zsh' }
+    ],
+    markup: [
+      { ext: '.htm', type: 'text/html' },
+      { ext: '.html', type: 'text/html' },
+      { ext: '.htmls', type: 'text/html' },
+      { ext: '.shtml', type: 'text/html' },
+      { ext: '.shtml', type: 'text/x-server-parsed-html' },
+      { ext: '.xml', type: 'application/xml' },
+      { ext: '.xml', type: 'text/xml' }
     ]
   };
 

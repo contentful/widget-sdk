@@ -1,15 +1,18 @@
 'use strict';
 
 angular.module('contentful').directive('cfThumbnail', function () {
-  var iconMap = {
+  var groupToIconMap = {
     image: 'image',
     video: 'video',
     audio: 'music',
-    document: 'richtext',
+    richtext: 'richtext',
+    presentation: 'presentation',
+    spreadsheet: 'spreadsheet',
     pdfdocument: 'pdf',
     archive: 'archive',
     plaintext: 'text',
     code: 'code',
+    markup: 'html',
     attachment: 'attach'
   };
 
@@ -34,7 +37,7 @@ angular.module('contentful').directive('cfThumbnail', function () {
           $scope.file.contentType
         );
 
-        return 'icon-'+iconMap[groupName];
+        return 'icon-'+groupToIconMap[groupName];
       };
 
       $scope.hasPreview = function(){
