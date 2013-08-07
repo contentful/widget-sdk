@@ -2,14 +2,14 @@
 
 angular.module('contentful').directive('cfThumbnail', function () {
   var iconMap = {
-    image: 'picture',
+    image: 'image',
     video: 'video',
     audio: 'music',
-    document: 'write',
-    pdfdocument: 'write',
-    archive: 'box',
-    plaintext: 'write',
-    code: 'desktop',
+    document: 'richtext',
+    pdfdocument: 'pdf',
+    archive: 'archive',
+    plaintext: 'text',
+    code: 'code',
     attachment: 'attach'
   };
 
@@ -34,7 +34,7 @@ angular.module('contentful').directive('cfThumbnail', function () {
           $scope.file.contentType
         );
 
-        return 'ss-'+iconMap[groupName];
+        return 'icon-'+iconMap[groupName];
       };
 
       $scope.hasPreview = function(){
