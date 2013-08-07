@@ -9,7 +9,7 @@
       Type: {{file.contentType}}
       Status: Processing…
     %div(ng-show="status() == 'ready'")
-      %span(cf-thumbnail="file" size="50" cf-file-preview)
+      %span(cf-thumbnail="file" size="50" cf-file-preview preview-size="fullscreen")
       %span Filename: {{file.fileName}}
       %br
       %span Type: {{file.contentType}}

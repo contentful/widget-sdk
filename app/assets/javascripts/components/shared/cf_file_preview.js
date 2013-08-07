@@ -5,29 +5,52 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
     scope: true,
     link: function (scope, elem, attrs) {
       var $preview;
-      var xOffset, yOffset, scale;
+      var xOffset, yOffset;
+      var maxWidth, maxHeight;
+      var windowWidth, windowHeight, windowGap = 100;
+      var fullscreen = attrs.previewSize == 'fullscreen';
 
-      elem.on('mousemove', mouseMoveHandler);
-      elem.on('mouseout', mouseOutHandler);
+      if (fullscreen) {
+        elem.on('click', showFullscreen);
+        windowWidth  = $(window).width();
+        windowHeight = $(window).height();
+        maxWidth  = windowWidth  - windowGap;
+        maxHeight = windowHeight - windowGap;
+      } else {
+        elem.on('mousemove', mouseMoveHandler);
+        elem.on('mouseout', mouseOutHandler);
+        maxWidth  = parseInt(attrs.previewSize, 10) || 200;
+        maxHeight = parseInt(attrs.previewSize, 10) || 200;
+      }
 
-      scope.$watch(function () {
-        return attrs.previewSize || 200;
-      }, function (previewSize) {
-        var aspect = scope.file.details.image.width / scope.file.details.image.height;
-        scale = 1 < aspect ?
-          scope.file.details.image.width  / previewSize :
-          scope.file.details.image.height / previewSize;
-      });
+      setDimensions();
 
       scope.$watch('file.details.image.width', function (fileWidth, old, scope) {
-        scope.width = Math.round(fileWidth / scale);
-        xOffset = Math.round(scope.width/2);
+        if (fullscreen) {
+          xOffset = (windowWidth - scope.width) / 2;
+        } else {
+          xOffset = Math.round(scope.width/2);
+        }
       });
 
       scope.$watch('file.details.image.height', function (fileHeight, old, scope) {
-        scope.height = Math.round(fileHeight / scale);
-        yOffset = 15 + scope.height;
+        if (fullscreen) {
+          yOffset = (windowHeight - scope.height) / 2;
+        } else {
+          yOffset = 15 + scope.height;
+        }
       });
+
+      function showFullscreen() {
+        makePreview();
+        _.defer(function () {
+          $(window).one('click', removePreview);
+        });
+        $preview.css({
+          top: yOffset,
+          left: xOffset
+        });
+      }
 
       function mouseMoveHandler(event) {
         makePreview();
@@ -53,6 +76,30 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
           $preview.remove();
           $preview = null;
         }
+        $(window).off('click', removePreview);
+      }
+
+      function setDimensions() {
+        var srcWidth = scope.file.details.image.width;
+        var srcHeight = scope.file.details.image.height;
+
+        var resizeWidth = srcWidth;
+        var resizeHeight = srcHeight;
+
+        var aspect = resizeWidth / resizeHeight;
+
+        if (resizeWidth > maxWidth) {
+            resizeWidth = maxWidth;
+            resizeHeight = resizeWidth / aspect;
+        }
+        if (resizeHeight > maxHeight) {
+            aspect = resizeWidth / resizeHeight;
+            resizeHeight = maxHeight;
+            resizeWidth = resizeHeight * aspect;
+        }
+
+        scope.width  = Math.round(resizeWidth);
+        scope.height = Math.round(resizeHeight);
       }
 
       scope.$on('$destroy', removePreview);
