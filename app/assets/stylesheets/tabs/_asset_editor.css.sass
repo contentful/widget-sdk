@@ -3,8 +3,44 @@
 
 .cf-file-editor
   +clearfix
+  margin-bottom: 10px
+.file-upload,
 .file-info
   width: $form-controlwidth-inner
+
+.file-info
+  position: relative
+  height: 250px
+
+.file-preview,
+.file-metadata
+  border: 1px solid $light-gray
+  +border-radius(3px)
+  position: absolute
+  top: 0
+  left: 0
+  bottom: 0
+  right: 200px
+
+.download-file
+  position: absolute
+  bottom: 10px
+  right: 210px
+
+.file-buttons
+  position: absolute
+  top: 0
+  right: 0
+  bottom: 0
+  width: 180px
+  button
+    text-align: center
+    width: 100%
+    margin-bottom: 10px
+
+
+  
+//
   i,
   .thumbnail
     display: block

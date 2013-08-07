@@ -12,6 +12,12 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
       var ngModelGet = $parse(attr.ngModel),
           ngModelSet = ngModelGet.assign;
 
+      scope.showMeta = false;
+
+      scope.toggleMeta = function () {
+        scope.showMeta = !scope.showMeta;
+      };
+
       ngModelCtrl.$render = function () {
         scope.file = ngModelCtrl.$viewValue;
       };
