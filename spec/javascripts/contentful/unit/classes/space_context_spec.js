@@ -237,6 +237,20 @@ describe('SpaceContext class with a space', function () {
 
       });
 
+      describe('gets a localized field', function () {
+        var asset;
+        beforeEach(function () {
+          asset = window.createMockEntity('entry1', 'contentType1');
+        });
+
+        it('fetched successfully', function () {
+          expect(spaceContext.localizedField(asset, 'data.fields.title')).toEqual('the title');
+        });
+
+      });
+
+
+
     });
 
   });

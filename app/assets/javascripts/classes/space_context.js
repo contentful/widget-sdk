@@ -1,4 +1,4 @@
-angular.module('contentful').factory('SpaceContext', function(TabList, $rootScope, $q){
+angular.module('contentful').factory('SpaceContext', function(TabList, $rootScope, $q, $parse){
   'use strict';
 
   function SpaceContext(space){
@@ -117,16 +117,23 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
         return this._publishedContentTypesHash[entry.getContentTypeId()];
       },
 
+      localizedField: function(entity, path, locale) {
+        var getField = $parse(path);
+        var field = getField(entity);
+        var defaultLocale = this.space.getDefaultLocale().code;
+        locale = locale || defaultLocale;
+        return (field && field[locale]) || field && field[defaultLocale];
+      },
+
       entryTitle: function(entry, localeCode) {
         var defaultTitle = 'Untitled';
-        localeCode = localeCode || this.space.getDefaultLocale().code;
 
         try {
           var displayField = this.publishedTypeForEntry(entry).data.displayField;
           if (!displayField) {
             return defaultTitle;
           } else {
-            var title = entry.data.fields[displayField][localeCode];
+            var title = this.localizedField(entry, 'data.fields.'+displayField, localeCode);
             if (!title || title.match(/^\s*$/)) {
               return defaultTitle;
             } else {
@@ -140,10 +147,9 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
 
       assetTitle: function (asset, localeCode) {
         var defaultTitle = 'Untitled';
-        localeCode = localeCode || this.space.getDefaultLocale().code;
 
         try {
-          var title = asset.data.fields.title[localeCode];
+          var title = this.localizedField(asset, 'data.fields.title', localeCode);
           if (!title || title.match(/^\s*$/)) {
             return defaultTitle;
           } else {

@@ -1,4 +1,4 @@
-angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope, client, SpaceContext, authentication, contentfulClient, notification, cfSpinner, analytics, routing, authorization, tutorial, modalDialog, $parse) {
+angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope, client, SpaceContext, authentication, contentfulClient, notification, cfSpinner, analytics, routing, authorization, tutorial, modalDialog) {
   'use strict';
 
   $scope.spaces = [];
@@ -208,13 +208,6 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
     $scope.performTokenLookup();
   };
 
-  $scope.localizedField = function(path, locale) {
-    var defaultLocale = $scope.spaceContext.space.getDefaultLocale().code;
-    locale = locale || defaultLocale;
-    var field = this.$eval(path);
-    return (field && field[locale]) || field && field[defaultLocale];
-  };
-  
   function showTutorialIfNecessary() {
     /*global moment*/
     var now = moment();

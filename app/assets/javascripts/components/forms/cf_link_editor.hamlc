@@ -66,11 +66,9 @@
                 cf-click-local="pick(entity)"
                 ng-class="{selected: entity==selectedEntity}")
               %td.cell-type
-                -#%span {{spaceContext.assetTitle(entity)}}
-                %span {{localizedField('entity.data.fields.title') || 'Untitled'}}
+                %span {{spaceContext.localizedField(entity, 'data.fields.title') || 'Untitled'}}
               %td.cell-name
-                -# %span {{spaceContext.assetDescription(entity)}}
-                %span {{localizedField('entity.data.fields.description')}}
+                %span {{spaceContext.localizedField(entity, 'data.fields.description')}}
               %td.cell-by
                 %span.cf-user(link="entity.data.sys.updatedBy" as="updater")
                   {{updater.getName()}}
