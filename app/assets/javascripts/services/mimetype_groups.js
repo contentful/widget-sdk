@@ -3,6 +3,9 @@
 angular.module('contentful').factory('mimetypeGroups', function () {
 
   var fileGroups = {
+    attachment: [
+      { ext: '.bin', type: 'application/octet-stream' },
+    ],
     plaintext: [
       { ext: '.log', type: 'text/plain' },
       { ext: '.rt', type: 'text/richtext' },
@@ -130,7 +133,8 @@ angular.module('contentful').factory('mimetypeGroups', function () {
       { ext: '.mp1', type: 'audio/mpeg' },
       { ext: '.oga', type: 'audio/ogg' },
       { ext: '.ogg', type: 'audio/ogg' },
-      { ext: '.webm', type: 'audio/webm' }
+      { ext: '.webm', type: 'audio/webm' },
+      { ext: '.aac', type: 'audio/x-aac' },
     ],
     video: [
       { ext: '.asf', type: 'video/x-ms-asf' },
@@ -180,7 +184,13 @@ angular.module('contentful').factory('mimetypeGroups', function () {
       { ext: '.mp4', type: 'video/mp4' },
       { ext: '.m4v', type: 'video/mp4' },
       { ext: '.ogv', type: 'video/ogg' },
-      { ext: '.webm', type: 'video/webm' }
+      { ext: '.webm', type: 'video/webm' },
+      { ext: '.3gp', type: 'video/3gpp' },
+      { ext: '.3g2', type: 'video/3gpp2' },
+      { ext: '.flv', type: 'video/x-flv' },
+      { ext: '.h261', type: 'video/h261' },
+      { ext: 'video/h263', type: '.h263 H.263' },
+      { ext: 'video/h264', type: '.h264 H.264' }
     ],
     richtext: [
       { ext: '.doc', type: 'application/msword' },
@@ -197,7 +207,16 @@ angular.module('contentful').factory('mimetypeGroups', function () {
       { ext: '.wpd', type: 'application/wordperfect' },
       { ext: '.wpd', type: 'application/x-wpwin' },
       { ext: '.wq1', type: 'application/x-lotus' },
-      { ext: '.wri', type: 'application/mswrite' }
+      { ext: '.wri', type: 'application/mswrite' },
+      { ext: '.docx', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' },
+      { ext: '.dotx', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.template' },
+      { ext: '.abw', type: 'application/x-abiword' },
+      { ext: '.odt', type: 'application/vnd.oasis.opendocument.text' },
+      { ext: '.sxw', type: 'application/vnd.sun.xml.writer' },
+      { ext: '.sxg', type: 'application/vnd.sun.xml.writer.global' },
+      { ext: '.stw', type: 'application/vnd.sun.xml.writer.template' },
+      { ext: '.pages', type: 'application/octet-stream' },
+      { ext: '.pages', type: 'application/x-iwork-pages-sffpages' }
     ],
     presentation: [
       { ext: '.pot', type: 'application/mspowerpoint' },
@@ -210,7 +229,17 @@ angular.module('contentful').factory('mimetypeGroups', function () {
       { ext: '.ppt', type: 'application/vnd.ms-powerpoint' },
       { ext: '.ppt', type: 'application/x-mspowerpoint' },
       { ext: '.ppz', type: 'application/mspowerpoint' },
-      { ext: '.pwz', type: 'application/vnd.ms-powerpoint' }
+      { ext: '.pwz', type: 'application/vnd.ms-powerpoint' },
+      { ext: '.pptx', type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation' },
+      { ext: '.sldx', type: 'application/vnd.openxmlformats-officedocument.presentationml.slide' },
+      { ext: '.ppsx', type: 'application/vnd.openxmlformats-officedocument.presentationml.slideshow' },
+      { ext: '.potx', type: 'application/vnd.openxmlformats-officedocument.presentationml.template' },
+      { ext: '.odp', type: 'application/vnd.oasis.opendocument.presentation' },
+      { ext: '.otp', type: 'application/vnd.oasis.opendocument.presentation-template' },
+      { ext: '.sxi', type: 'application/vnd.sun.xml.impress' },
+      { ext: '.sti', type: 'application/vnd.sun.xml.impress.template' },
+      { ext: '.key', type: 'application/octet-stream' },
+      { ext: '.key', type: 'application/x-iwork-keynote-sffkey' }
     ],
     spreadsheet: [
       { ext: '.xl', type: 'application/excel' },
@@ -244,7 +273,17 @@ angular.module('contentful').factory('mimetypeGroups', function () {
       { ext: '.xlw', type: 'application/excel' },
       { ext: '.xlw', type: 'application/vnd.ms-excel' },
       { ext: '.xlw', type: 'application/x-excel' },
-      { ext: '.xlw', type: 'application/x-msexcel' }
+      { ext: '.xlw', type: 'application/x-msexcel' },
+      { ext: '.xlsx', type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' },
+      { ext: '.xltx', type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.template' },
+      { ext: '.csv', type: 'text/csv' },
+      { ext: '.gnumeric', type: 'application/x-gnumeric' },
+      { ext: '.ods', type: 'application/vnd.oasis.opendocument.spreadsheet' },
+      { ext: '.ots', type: 'application/vnd.oasis.opendocument.spreadsheet-template' },
+      { ext: '.sxc', type: 'application/vnd.sun.xml.calc' },
+      { ext: '.stc', type: 'application/vnd.sun.xml.calc.template' },
+      { ext: '.numbers', type: 'application/octet-stream' },
+      { ext: '.numbers', type: 'application/x-iwork-numbers-sffnumbers' }
     ],
     pdfdocument: [
       { ext: '.pdf', type: 'application/pdf' },
@@ -266,7 +305,8 @@ angular.module('contentful').factory('mimetypeGroups', function () {
       { ext: '.zip', type: 'application/x-compressed' },
       { ext: '.zip', type: 'application/x-zip-compressed' },
       { ext: '.zip', type: 'application/zip' },
-      { ext: '.zip', type: 'multipart/x-zip' }
+      { ext: '.zip', type: 'multipart/x-zip' },
+      { ext: '.7z', type: 'application/x-7z-compressed' }
     ],
     code: [
       { ext: '.asp', type: 'text/asp' },

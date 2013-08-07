@@ -37,6 +37,16 @@ describe('Mimetype groups', function () {
     expect(mimetypeGroups.hasPreview('js', 'application/x-javascript')).toBe(false);
   });
 
+  it('gets group for a binary with wrong extension', function () {
+    expect(mimetypeGroups.getName('log', 'application/octet-stream')).toBe('attachment');
+  });
+
+  it('gets group for a binary with existing extension', function () {
+    expect(mimetypeGroups.getName('.pages', 'application/octet-stream')).toBe('richtext');
+  });
+
+
+
 
 
 });
