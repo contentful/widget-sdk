@@ -25,13 +25,18 @@ angular.module('contentful').factory('filepicker', function ($window, environmen
 
     d.setKey(environment.settings.filepicker.api_key);
 
+    var settings = {
+      policy: environment.settings.filepicker.policy,
+      signature: environment.settings.filepicker.signature
+    };
+
     return {
+      makeDropPane: function (dropPane, options) {
+        options = _.extend(settings, options);
+        return $window.filepicker.makeDropPane(dropPane, options);
+      },
       pick: function () {
         var deferred = $q.defer();
-        var settings = {
-          policy: environment.settings.filepicker.policy,
-          signature: environment.settings.filepicker.signature
-        };
 
         $window.filepicker.pick(settings, function(FPFile){
           $rootScope.$apply(function () {
