@@ -1,5 +1,5 @@
 .file-info
-  .file-preview(cf-file-xpreview='' preview-size="fullscreen")
+  .file-preview(cf-file-preview="file" preview-size="fullscreen")
     %div(cf-thumbnail="file" ng-show="file")
   .cf-file-drop(ng-show="!file")
   .file-metadata(ng-show="showMeta")

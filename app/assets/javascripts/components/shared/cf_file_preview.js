@@ -2,7 +2,9 @@
 
 angular.module('contentful').directive('cfFilePreview', function ($compile, $window) {
   return {
-    scope: true,
+    scope: {
+      file: '=cfFilePreview'
+    },
     link: function (scope, elem, attrs) {
       var $preview;
       var xOffset, yOffset;
@@ -23,7 +25,8 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
         maxHeight = parseInt(attrs.previewSize, 10) || 200;
       }
 
-      setDimensions();
+      if(scope.file && scope.file.details.image)
+        setDimensions();
 
       scope.$watch('file.details.image.width', function (fileWidth, old, scope) {
         if (fullscreen) {
