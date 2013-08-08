@@ -26,7 +26,7 @@ angular.module('contentful').directive('cfThumbnail', function () {
       var maxWidth, maxHeight;
 
       scope.$watch('file', function (file) {
-        if (file && file.details.image) {
+        if (file && file.details && file.details.image) {
           setDimensions(file.details.image.width, file.details.image.height);
         } else {
           setDimensions(0, 0);
