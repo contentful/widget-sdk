@@ -57,8 +57,11 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
 
       function mouseMoveHandler(event) {
         makePreview();
+        var vertOffset = event.pageY - yOffset;
+        if(vertOffset < 0)
+          vertOffset = event.pageY + 10;
         $preview.css({
-          top: event.pageY - yOffset,
+          top: vertOffset,
           left: event.pageX - xOffset
         });
       }
