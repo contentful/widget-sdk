@@ -2,14 +2,15 @@
   .file-upload(ng-switch-when="false")
     %button(ng-click="uploadFile()") Upload File
   .file-info(ng-switch-default)
-    %div.file-preview(ng-hide="showMeta" cf-thumbnail="file" size="50" cf-file-preview preview-size="fullscreen")
+    %div.file-preview(cf-file-preview='' preview-size="fullscreen")
+      %div(cf-thumbnail="file")
     %div.file-metadata(ng-show="showMeta")
       Filename: {{file.fileName}}
       %br
       Type: {{file.contentType}}
       // TODO image metadata
 
-    %a.as-button.download-file(ng-disabled="status() == 'processing'")
+    %a.as-button.download-file(href="{{file.url}}" target="_blank" ng-disabled="status() == 'processing'")
       %i.ss-download
     .file-buttons
       %button.show-metadata(ng-click="toggleMeta()") Show metadata

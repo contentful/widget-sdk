@@ -11,6 +11,13 @@
 .file-info
   position: relative
   height: 250px
+  *[cf-thumbnail]
+    position: absolute
+    top: 0
+    right: 0
+    left: 0
+    bottom: 0
+
 
 .file-preview,
 .file-metadata
@@ -22,10 +29,19 @@
   bottom: 0
   right: 200px
 
+.file-preview
+  text-align: center
+.file-metadata
+  background-color: rgba(255, 255, 255, 0.8)
+  padding: 10px
+
 .download-file
   position: absolute
   bottom: 10px
   right: 210px
+  &:active
+    top: auto
+    bottom: 9px
 
 .file-buttons
   position: absolute
