@@ -26,10 +26,10 @@ angular.module('contentful').directive('cfThumbnail', function () {
       var maxWidth, maxHeight;
 
       scope.$watch('file', function (file) {
-        if (file) {
+        if (file && file.details.image) {
           setDimensions(file.details.image.width, file.details.image.height);
         } else {
-          setDimensions(50, 50);
+          setDimensions(0, 0);
         }
       }, true);
 
