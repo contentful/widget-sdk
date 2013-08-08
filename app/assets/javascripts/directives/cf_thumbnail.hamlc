@@ -1,2 +1,2 @@
-%img.thumbnail(ng-src="{{file.url}}?w={{thumbnailSize}}&h={{thumbnailSize}}" ng-show="hasPreview()")
+%img.thumbnail(ng-src="{{file.url}}?w={{width}}&h={{height}}" ng-show="hasPreview()")
 %i(ng-show="!hasPreview()" ng-class="getIconName()")

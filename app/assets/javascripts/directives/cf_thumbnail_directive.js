@@ -24,9 +24,43 @@ angular.module('contentful').directive('cfThumbnail', function () {
   return {
     restrict: 'A',
     template: JST['cf_thumbnail'],
-
+    scope: {
+      file: '=cfThumbnail'
+    },
     link: function (scope, el, attrs) {
-      scope.thumbnailSize = attrs.size;
+      var maxWidth, maxHeight;
+
+     if (angular.isDefined(attrs.size)) {
+       maxWidth = maxHeight = attrs.size;
+     } else {
+       maxWidth  = el.width();
+       maxHeight = el.height();
+     }
+
+     setDimensions();
+
+     function setDimensions() {
+       var srcWidth = scope.file.details.image.width;
+       var srcHeight = scope.file.details.image.height;
+
+       var resizeWidth = srcWidth;
+       var resizeHeight = srcHeight;
+
+       var aspect = resizeWidth / resizeHeight;
+
+       if (resizeWidth > maxWidth) {
+           resizeWidth = maxWidth;
+           resizeHeight = resizeWidth / aspect;
+       }
+       if (resizeHeight > maxHeight) {
+           aspect = resizeWidth / resizeHeight;
+           resizeHeight = maxHeight;
+           resizeWidth = resizeHeight * aspect;
+       }
+
+       scope.width  = Math.round(resizeWidth);
+       scope.height = Math.round(resizeHeight);
+     }
     },
 
     controller: ['$scope', 'mimetypeGroups', function ($scope, mimetypeGroups) {
