@@ -25,53 +25,59 @@ angular.module('contentful').directive('cfThumbnail', function () {
     link: function (scope, el, attrs) {
       var maxWidth, maxHeight;
 
-     if (angular.isDefined(attrs.size)) {
-       maxWidth = maxHeight = attrs.size;
-     } else {
-       maxWidth  = el.width();
-       maxHeight = el.height();
-     }
+      scope.$watch('file', function (file) {
+        if (file) {
+          setDimensions(file.details.image.width, file.details.image.height);
+        } else {
+          setDimensions(50, 50);
+        }
+      }, true);
 
-     if(scope.file && scope.file.details.image)
-       setDimensions(scope.file.details.image);
+      if (angular.isDefined(attrs.size)) {
+        maxWidth = maxHeight = attrs.size;
+      } else {
+        maxWidth  = el.width();
+        maxHeight = el.height();
+      }
 
-     function setDimensions(image) {
-       var srcWidth = image.width;
-       var srcHeight = image.height;
+      function setDimensions(srcWidth, srcHeight) {
+        var resizeWidth = srcWidth;
+        var resizeHeight = srcHeight;
 
-       var resizeWidth = srcWidth;
-       var resizeHeight = srcHeight;
+        var aspect = resizeWidth / resizeHeight;
 
-       var aspect = resizeWidth / resizeHeight;
+        if (resizeWidth > maxWidth) {
+            resizeWidth = maxWidth;
+            resizeHeight = resizeWidth / aspect;
+        }
+        if (resizeHeight > maxHeight) {
+            aspect = resizeWidth / resizeHeight;
+            resizeHeight = maxHeight;
+            resizeWidth = resizeHeight * aspect;
+        }
 
-       if (resizeWidth > maxWidth) {
-           resizeWidth = maxWidth;
-           resizeHeight = resizeWidth / aspect;
-       }
-       if (resizeHeight > maxHeight) {
-           aspect = resizeWidth / resizeHeight;
-           resizeHeight = maxHeight;
-           resizeWidth = resizeHeight * aspect;
-       }
-
-       scope.width  = Math.round(resizeWidth);
-       scope.height = Math.round(resizeHeight);
-     }
+        scope.width  = Math.round(resizeWidth);
+        scope.height = Math.round(resizeHeight);
+      }
     },
 
     controller: ['$scope', 'mimetypeGroups', function ($scope, mimetypeGroups) {
 
       $scope.getIconName = function() {
-        var groupName = mimetypeGroups.getName(
-          mimetypeGroups.getExtension($scope.file.fileName),
-          $scope.file.contentType
-        );
+        if ($scope.file) {
+          var groupName = mimetypeGroups.getName(
+            mimetypeGroups.getExtension($scope.file.fileName),
+            $scope.file.contentType
+          );
 
-        return 'icon-'+groupToIconMap[groupName];
+          return 'icon-'+groupToIconMap[groupName];
+        } else {
+          return '';
+        }
       };
 
       $scope.hasPreview = function(){
-        return mimetypeGroups.hasPreview(
+        return $scope.file && mimetypeGroups.hasPreview(
           mimetypeGroups.getExtension($scope.file.fileName),
           $scope.file.contentType
         );
