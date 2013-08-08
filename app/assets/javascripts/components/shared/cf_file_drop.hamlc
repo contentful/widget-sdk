@@ -1,0 +1,6 @@
+.drag-me Drag File to Upload
+.drop-me(style="display: none") Drop File to Upload
+.progress(style="display: none")
+  .filename
+  .percent
+
