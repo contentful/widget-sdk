@@ -42,6 +42,8 @@
           -#%th.cell-favorite
             %i.ss-star
           %th.cell-name Name
+          %th.cell-preview Preview
+          %th.cell-type Type
           %th.cell-updated Updated
           %th.cell-by By
           %th.cell-status Status
@@ -56,6 +58,10 @@
               %i.ss-star
             %td.cell-name
               %span {{spaceContext.assetTitle(asset)}}
+            %td.cell-preview
+              %span(cf-thumbnail="spaceContext.localizedField(asset, 'data.fields.file')" size="50")
+            %td.cell-type
+              %span {{fileType(asset)}}
             %td.cell-updated
               %date.relative(datetime="{{asset.data.sys.updatedAt}}")
             %td.cell-by

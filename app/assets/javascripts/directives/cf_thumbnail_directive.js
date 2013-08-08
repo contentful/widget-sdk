@@ -16,11 +16,6 @@ angular.module('contentful').directive('cfThumbnail', function () {
     attachment: 'attach'
   };
 
-  function getExtension(fileName) {
-    var ext = fileName.match(/\.\w+$/g);
-    return ext && ext.length > 0 ? ext[0] : undefined;
-  }
-
   return {
     restrict: 'A',
     template: JST['cf_thumbnail'],
@@ -37,11 +32,12 @@ angular.module('contentful').directive('cfThumbnail', function () {
        maxHeight = el.height();
      }
 
-     setDimensions();
+     if(scope.file && scope.file.details.image)
+       setDimensions(scope.file.details.image);
 
-     function setDimensions() {
-       var srcWidth = scope.file.details.image.width;
-       var srcHeight = scope.file.details.image.height;
+     function setDimensions(image) {
+       var srcWidth = image.width;
+       var srcHeight = image.height;
 
        var resizeWidth = srcWidth;
        var resizeHeight = srcHeight;
@@ -67,7 +63,7 @@ angular.module('contentful').directive('cfThumbnail', function () {
 
       $scope.getIconName = function() {
         var groupName = mimetypeGroups.getName(
-          getExtension($scope.file.fileName),
+          mimetypeGroups.getExtension($scope.file.fileName),
           $scope.file.contentType
         );
 
@@ -76,7 +72,7 @@ angular.module('contentful').directive('cfThumbnail', function () {
 
       $scope.hasPreview = function(){
         return mimetypeGroups.hasPreview(
-          getExtension($scope.file.fileName),
+          mimetypeGroups.getExtension($scope.file.fileName),
           $scope.file.contentType
         );
       };

@@ -48,7 +48,7 @@
             %input(type="checkbox" cf-selection="" ng-show="entries.length > 0")
           -#%th.cell-favorite
             %i.ss-star
-          %th.cell-type Content Type
+          %th.cell-content-type Content Type
           %th.cell-name Name
           %th.cell-updated Updated
           %th.cell-by By
@@ -62,7 +62,7 @@
               %input(type="checkbox" cf-selection="entry")")
             -#%td.cell-favorite
               %i.ss-star
-            %td.cell-type
+            %td.cell-content-type
               %span {{spaceContext.publishedTypeForEntry(entry).getName()}}
             %td.cell-name
               %span {{spaceContext.entryTitle(entry)}}

@@ -2,6 +2,21 @@
 
 angular.module('contentful').factory('mimetypeGroups', function () {
 
+  var displayNames = {
+    attachment: 'Attachment',
+    plaintext: 'Plain text',
+    image: 'Image',
+    audio: 'Audio',
+    video: 'Video',
+    richtext: 'Rich text',
+    presentation: 'Presentation',
+    spreadsheet: 'Spreadsheet',
+    pdfdocument: 'PDF Document',
+    archive: 'Archive',
+    code: 'Code',
+    markup: 'Markup'
+  };
+
   var fileGroups = {
     attachment: [
       { ext: '.bin', type: 'application/octet-stream' },
@@ -432,9 +447,18 @@ angular.module('contentful').factory('mimetypeGroups', function () {
 
   return {
 
+    getExtension: function(fileName) {
+      var ext = fileName.match(/\.\w+$/g);
+      return ext && ext.length > 0 ? ext[0] : undefined;
+    },
+
     getName: function (ext, type) {
       var group = lookupPropertyInLists(ext, type, 'group');
       return group ? group : 'attachment';
+    },
+
+    getDisplayName: function (ext, type) {
+      return displayNames[this.getName(ext, type)];
     },
 
     hasPreview: function (ext, type) {
