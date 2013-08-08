@@ -3,10 +3,7 @@
 angular.module('contentful').controller('TabViewCtrl', function ($scope, authentication, analytics, notification) {
 
   $scope.$on('tabClosed', function (event, tab) {
-    var scope = event.currentScope;
-    if (scope.spaceContext.tabList.items.length === 0) {
-      $scope.visitView('entry-list');
-    } else if (tab.list.numVisible() === 0) {
+    if (tab.list.numVisible() === 0) {
       if (tab.viewType == 'entry-editor') {
         $scope.visitView('entry-list');
       } else if (tab.viewType == 'asset-editor') {
