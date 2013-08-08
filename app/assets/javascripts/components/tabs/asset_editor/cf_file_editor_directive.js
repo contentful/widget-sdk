@@ -45,6 +45,10 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
         scope.validate();
       };
 
+      scope.$on('cfFileDropped', function (event, FPFile) {
+        changeHandler(FPFile);
+      });
+
       function changeHandler(FPFile) {
         var file = FPFile ? {
          upload: FPFile.url,

@@ -1,8 +1,8 @@
 .file-info
-  %div.file-preview(cf-file-xpreview='' preview-size="fullscreen")
+  .file-preview(cf-file-xpreview='' preview-size="fullscreen")
     %div(cf-thumbnail="file" ng-show="file")
-    %span.drag-me(ng-hide="hasFile") Drag File to Upload
-  %div.file-metadata(ng-show="showMeta")
+  .cf-file-drop(ng-show="!file")
+  .file-metadata(ng-show="showMeta")
     Filename: {{file.fileName}}
     %br
     Type: {{file.contentType}}
