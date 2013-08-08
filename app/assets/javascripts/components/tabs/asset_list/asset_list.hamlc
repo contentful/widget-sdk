@@ -59,7 +59,7 @@
             %td.cell-name
               %span {{spaceContext.assetTitle(asset)}}
             %td.cell-preview
-              %span(cf-thumbnail="spaceContext.localizedField(asset, 'data.fields.file')" size="50")
+              %span(cf-thumbnail="spaceContext.localizedField(asset, 'data.fields.file')" size="30")
             %td.cell-type
               %span {{fileType(asset)}}
             %td.cell-updated
