@@ -63,6 +63,7 @@
               %span {{spaceContext.assetTitle(asset)}}
             %td.cell-type
               %span {{fileType(asset)}}
+              %span.extension {{fileExtension(asset)}}
             %td.cell-updated
               %date.relative(datetime="{{asset.data.sys.updatedAt}}")
             %td.cell-by

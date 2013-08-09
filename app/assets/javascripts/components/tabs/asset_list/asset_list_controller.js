@@ -145,8 +145,14 @@ angular.module('contentful').
         mimetypeGroups.getExtension(file.fileName),
         file.contentType
       );
-    else
-      return 'No file';
+    return '';
+  };
+
+  $scope.fileExtension = function (asset) {
+    var file = $scope.spaceContext.localizedField(asset, 'data.fields.file');
+    if(file)
+      return mimetypeGroups.getExtension(file.fileName).slice(1) || '';
+    return '';
   };
 
   $scope.$on('tabBecameActive', function(event, tab) {
