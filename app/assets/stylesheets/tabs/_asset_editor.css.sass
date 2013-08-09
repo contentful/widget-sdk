@@ -27,56 +27,54 @@
     top: 0
     left: 0
     bottom: 0
-    right: 200px
+    right: 0
 
   .file-preview
     text-align: center
+    overflow: hidden
     .icon
       font-size: 100px
       line-height: 250px
   .file-metadata
     background-color: rgba(255, 255, 255, 0.8)
     padding: 10px
+    th
+      text-align: left
+      padding-right: 1em
 
+  .file-spinner
+    position: absolute
+    top: 0
+    left: 0
+    right: 0
+    bottom: 0
+    background-image: asset-url('ajax-loader.gif', image)
+    background-position: center
+    background-repeat: no-repeat
+    background-size: 25px 25px
+    .status-text
+      text-align: center
+      padding-top: 150px
   .drag-me,
   .drop-me
     text-align: center
     line-height: 250px
 
-  .download-file
-    position: absolute
-    bottom: 10px
-    right: 210px
-    &:active
-      top: auto
-      bottom: 9px
-
   .file-buttons
     position: absolute
-    top: 0
-    right: 0
-    bottom: 0
-    width: 180px
+    right: 10px
+    bottom: 10px
+    left: 10px
+    opacity: 0
+    +transition(opacity 0.1s ease-in-out)
+    &.center
+      text-align: center
+      opacity: 1
     button
       text-align: center
-      width: 100%
-      margin-bottom: 10px
-
-
-  
-//
-  i,
-  .thumbnail
-    display: block
-    font-size: 50px
-    line-height: 50px
-    padding-right: 10px
-    float: left
-  .delete-file
-    float: right
-  .url
-    display: inline-block
-    width: 70%
-    white-space: nowrap
-    overflow: hidden
-    text-overflow: ellipsis
+      width: 40px
+      margin-top: 10px
+    .upload-button
+      width: auto
+  .file-info:hover .file-buttons
+    opacity: 1

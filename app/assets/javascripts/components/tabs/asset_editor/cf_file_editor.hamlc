@@ -1,16 +1,29 @@
 .file-info
   .file-preview(cf-file-preview="file" preview-size="fullscreen")
-    %div(cf-thumbnail="file" ng-show="file")
-  .cf-file-drop(ng-show="!file")
+    %div(cf-thumbnail="file" ng-show="file.url")
+  .file-spinner(ng-show="status() == 'processing'")
+    .status-text Processing…
+  -#.cf-file-drop(ng-show="!file")
   .file-metadata(ng-show="showMeta")
-    Filename: {{file.fileName}}
-    %br
-    Type: {{file.contentType}}
-    // TODO image metadata
+    %table
+      %tr
+        %th Filename
+        %td {{file.fileName}}
+      %tr
+        %th Type
+        %td {{file.contentType}}
+      %tr(ng-show="file.details.size")
+        %th Size
+        %td(title="{{file.details.size}} Bytes") {{file.details.size | fileSize}}
+      %tr(ng-show="file.details.image")
+        %th Dimensions
+        %td {{file.details.image.width}}&thinsp;&times;&thinsp;{{file.details.image.height}}&thinsp;px
 
-  %a.as-button.download-file(href="{{file.url}}" target="_blank" ng-disabled="status() == 'processing'" ng-show="hasFile")
-    %i.ss-download
-  .file-buttons
-    %button(ng-click="uploadFile()" ng-hide="hasFile") Upload File
-    %button.show-metadata(ng-click="toggleMeta()" ng-show="hasFile") Show metadata
-    %button.delete-file(ng-click="deleteFile()" ng-show="hasFile" ng-disabled="status() == 'processing'") Delete file
+  .file-buttons(ng-class="{center: !hasFile}")
+    %button.upload-button(ng-click="uploadFile()" ng-hide="hasFile") Upload File
+    %a.as-button.download-file(href="{{file.url}}" target="_blank" ng-show="status() == 'ready'")
+      %i.ss-download
+    %button.show-metadata(ng-click="toggleMeta()" ng-show="hasFile")
+      %i.ss-info
+    %button.delete-file(ng-click="deleteFile()" ng-show="hasFile")
+      %i.ss-trash
