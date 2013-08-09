@@ -16,8 +16,8 @@
         %tr
           %th.cell-name Name
           %th.cell-description Description
-          %th.cell-by By
           %th.cell-updated Updated
+          %th.cell-by By
 
     .main-results-wrapper(ng-hide="empty")
       %table.result-list.main-results
@@ -28,10 +28,10 @@
               %span {{apiKey.getName()}}
             %td.cell-description
               %span {{apiKey.data.description}}
-            %td.cell-by
-              %span.cf-user(link="apiKey.data.sys.createdBy" as="creator") {{creator.getName()}}
             %td.cell-updated
               %date.relative(datetime="{{apiKey.data.sys.updatedAt}}")
+            %td.cell-by
+              %span.cf-user(link="apiKey.data.sys.createdBy" as="creator") {{creator.getName()}}
     .create-api-key-advice(ng-show="empty")
       %i.ss-fork.giant-icon
       %header There are no API Keys yet.
