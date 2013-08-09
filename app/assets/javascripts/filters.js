@@ -28,3 +28,12 @@ filters.filter('fileSize', function () {
     return Math.max(fileSizeInBytes, 0.1).toFixed(1) + byteUnits[i];
   };
 });
+
+filters.filter('mimeGroup', function (mimetypeGroups) {
+  return function (file) {
+    if (file) return mimetypeGroups.getDisplayName(
+      mimetypeGroups.getExtension(file.fileName),
+      file.contentType
+    );
+  };
+});
