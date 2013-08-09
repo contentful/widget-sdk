@@ -11,13 +11,13 @@
         %td {{file.fileName}}
       %tr
         %th Type
-        %td {{file.contentType}}
+        %td(title="{{file.contentType}}") {{file | mimeGroup}}
       %tr(ng-show="file.details.size")
         %th Size
         %td(title="{{file.details.size}} Bytes") {{file.details.size | fileSize}}
       %tr(ng-show="file.details.image")
-        %th Dimensions
-        %td {{file.details.image.width}}&thinsp;&times;&thinsp;{{file.details.image.height}}&thinsp;px
+        %th Width<br>Height
+        %td {{file.details.image.width}}&thinsp;px<br>{{file.details.image.height}}&thinsp;px
 
   .file-buttons(ng-class="{center: !hasFile}")
     %button.upload-button(ng-click="uploadFile()" ng-hide="hasFile") Upload File
