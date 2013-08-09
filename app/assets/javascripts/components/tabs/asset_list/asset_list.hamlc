@@ -41,8 +41,8 @@
             %input(type="checkbox" cf-selection="" ng-show="assets.length > 0")
           -#%th.cell-favorite
             %i.ss-star
-          %th.cell-name Name
           %th.cell-preview Preview
+          %th.cell-name Name
           %th.cell-type Type
           %th.cell-updated Updated
           %th.cell-by By
@@ -56,11 +56,11 @@
               %input(type="checkbox" cf-selection="asset")")
             -#%td.cell-favorite
               %i.ss-star
-            %td.cell-name
-              %span {{spaceContext.assetTitle(asset)}}
             %td.cell-preview
               %div.file-preview(cf-file-preview="spaceContext.localizedField(asset, 'data.fields.file')" preview-size="400")
                 %span(cf-thumbnail="file" size="30")
+            %td.cell-name
+              %span {{spaceContext.assetTitle(asset)}}
             %td.cell-type
               %span {{fileType(asset)}}
             %td.cell-updated
