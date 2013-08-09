@@ -25,24 +25,20 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
         maxHeight = parseInt(attrs.previewSize, 10) || 200;
       }
 
-      if(scope.file && scope.file.details.image)
-        setDimensions();
+      // TODO Make responsive to resize events
 
-      scope.$watch('file.details.image.width', function (fileWidth, old, scope) {
-        if (fullscreen) {
-          xOffset = (windowWidth - scope.width) / 2;
-        } else {
-          xOffset = Math.round(scope.width/2);
+      scope.$watch('file', function (file, old, scope) {
+        if(file && file.details && file.details.image) {
+          setDimensions(file.details.image.width, file.details.image.height);
+          if (fullscreen) {
+            xOffset = (windowWidth - scope.width) / 2;
+            yOffset = (windowHeight - scope.height) / 2;
+          } else {
+            xOffset = Math.round(scope.width/2);
+            yOffset = 15 + scope.height;
+          }
         }
-      });
-
-      scope.$watch('file.details.image.height', function (fileHeight, old, scope) {
-        if (fullscreen) {
-          yOffset = (windowHeight - scope.height) / 2;
-        } else {
-          yOffset = 15 + scope.height;
-        }
-      });
+      }, true);
 
       function showFullscreen() {
         makePreview();
@@ -72,7 +68,7 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
 
       function makePreview() {
         if ($preview) return;
-        $preview = $compile('<img src="{{file.url}}?w={{width}}&h={{height}}" class="cf-file-preview" style="display:block; position: fixed; width: {{width}}px; height: {{height}}px; background: white">')(scope);
+        $preview = $compile('<img ng-src="{{file.url}}?w={{width}}&h={{height}}" class="cf-file-preview" style="display:block; position: fixed; width: {{width}}px; height: {{height}}px; background: white">')(scope);
         $preview.appendTo($window.document.body);
         scope.$digest();
       }
@@ -85,10 +81,7 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
         $(window).off('click', removePreview);
       }
 
-      function setDimensions() {
-        var srcWidth = scope.file.details.image.width;
-        var srcHeight = scope.file.details.image.height;
-
+      function setDimensions(srcWidth, srcHeight) {
         var resizeWidth = srcWidth;
         var resizeHeight = srcHeight;
 
