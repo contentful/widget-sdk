@@ -26,19 +26,19 @@ angular.module('contentful').directive('cfThumbnail', function () {
       var maxWidth, maxHeight;
 
       scope.$watch('file', function (file) {
+        if (angular.isDefined(attrs.size)) {
+          maxWidth = maxHeight = attrs.size;
+        } else {
+          maxWidth  = el.width();
+          maxHeight = el.height();
+        }
+
         if (file && file.details && file.details.image) {
           setDimensions(file.details.image.width, file.details.image.height);
         } else {
           setDimensions(0, 0);
         }
       }, true);
-
-      if (angular.isDefined(attrs.size)) {
-        maxWidth = maxHeight = attrs.size;
-      } else {
-        maxWidth  = el.width();
-        maxHeight = el.height();
-      }
 
       function setDimensions(srcWidth, srcHeight) {
         var resizeWidth = srcWidth;
