@@ -1,9 +1,14 @@
 %ul.links(ng-hide="linkedEntities.length == 0")
   %li(ng-repeat="(index, entity) in linkedEntities")
     %i.ss-rows.drag-handle(ng-disabled="!otEditable" ng-hide="linkedEntities.length==1")
-    %a(ng-click="editEntity(entity)" ng-show="entity && entity.data") {{linkDescription(entity)}}
-    %span(ng-hide="entity && entity.data") {{linkDescription(entity)}}
-    %i.ss-delete(ng-click="removeLink(index, entity)" ng-show="otEditable")
+    %ng-switch(on="linkType")
+      .cf-file-info(ng-switch-when="Asset"
+                    remove-link="removeLink(index, entity)"
+                    file="spaceContext.localizedField(entity, 'data.fields.file')")
+      %div(ng-switch-when="Entry")
+        %a(ng-click="editEntity(entity)" ng-show="entity && entity.data") {{linkDescription(entity)}}
+        %span(ng-hide="entity && entity.data") {{linkDescription(entity)}}
+        %i.ss-delete(ng-click="removeLink(index, entity)" ng-show="otEditable")
 .cf-link-editor-search(cf-autocomplete-results="entities" autocomplete-term="searchTerm")
   .controls(ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
     %ng-switch(on="linkType")
@@ -66,11 +71,9 @@
                 cf-click-local="pick(entity)"
                 ng-class="{selected: entity==selectedEntity}")
               %td.cell-type
-                -#%span {{spaceContext.assetTitle(entity)}}
-                %span {{localizedField('entity.data.fields.title') || 'Untitled'}}
+                %span {{spaceContext.localizedField(entity, 'data.fields.title') || 'Untitled'}}
               %td.cell-name
-                -# %span {{spaceContext.assetDescription(entity)}}
-                %span {{localizedField('entity.data.fields.description')}}
+                %span {{spaceContext.localizedField(entity, 'data.fields.description')}}
               %td.cell-by
                 %span.cf-user(link="entity.data.sys.updatedBy" as="updater")
                   {{updater.getName()}}

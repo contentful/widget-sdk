@@ -97,8 +97,7 @@ angular.module('contentful').controller('AssetListActionsCtrl', function AssetLi
   $scope.archiveSelected = function() {
     perform({
       method: 'archive',
-      callback: makeBatchResultsNotifier('archived'),
-      event: 'entityArchived'
+      callback: makeBatchResultsNotifier('archived')
     });
   };
 

@@ -41,7 +41,9 @@
             %input(type="checkbox" cf-selection="" ng-show="assets.length > 0")
           -#%th.cell-favorite
             %i.ss-star
+          %th.cell-preview Preview
           %th.cell-name Name
+          %th.cell-type Type
           %th.cell-updated Updated
           %th.cell-by By
           %th.cell-status Status
@@ -49,13 +51,19 @@
     .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
       %table.result-list.main-results
         %tbody
-          %tr(ng-repeat="asset in assets" ng-show="visibleInCurrentList(asset)" cf-click-local="editAsset(asset)")
+          %tr(ng-repeat="asset in visibleAssets = (assets | filter:visibleInCurrentList)" cf-click-local="editAsset(asset)")
             %td.cell-select(ng-click="selection.toggle(asset);$event.stopPropagation()")
               %input(type="checkbox" cf-selection="asset")")
             -#%td.cell-favorite
               %i.ss-star
+            %td.cell-preview
+              %div.file-preview(cf-file-preview="spaceContext.localizedField(asset, 'data.fields.file')" preview-size="400")
+                %span(cf-thumbnail="file" size="30")
             %td.cell-name
               %span {{spaceContext.assetTitle(asset)}}
+            %td.cell-type
+              %span {{fileType(asset)}}
+              %span.extension {{fileExtension(asset)}}
             %td.cell-updated
               %date.relative(datetime="{{asset.data.sys.updatedAt}}")
             %td.cell-by
@@ -65,12 +73,12 @@
                 %span {{statusClass(asset)}}
                 .main-results-bar
       .loading(ng-hide="paginator.atLast()")
-    .results-empty(ng-show="assets.length == 0")
+    .results-empty(ng-show="visibleAssets | isEmpty")
       %div(ng-show="hasQuery()")
         %i.ss-search.giant-icon
         %header There are no matches to your search
       %div(ng-show="!hasQuery()")
-        %i.ss-file.giant-icon
+        %i.ss-attach.giant-icon
         %header You have no Assets yet.
         %p To create an Asset, use the Add-Button near the top of the screen.
 

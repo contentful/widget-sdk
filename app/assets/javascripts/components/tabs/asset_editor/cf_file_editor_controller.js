@@ -1,18 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('CfFileEditorCtrl', function ($scope, mimetypeGroups) {
-
-  function getExtension(fileName) {
-    var ext = fileName.match(/\.\w+$/g);
-    return ext && ext.length > 0 ? ext[0] : undefined;
-  }
-
-  function isInGroup(file, group){
-    return group === mimetypeGroups.getName(
-      getExtension(file.fileName),
-      file.contentType
-    );
-  }
+angular.module('contentful').controller('CfFileEditorCtrl', function ($scope) {
 
   $scope.$watch('file', function (file, old, scope) {
     scope.hasFile = !!file;
@@ -22,26 +10,5 @@ angular.module('contentful').controller('CfFileEditorCtrl', function ($scope, mi
       scope.$emit('fileRemoved', old);
     }
   });
-
-  $scope.status = function () {
-    if ($scope.file.upload) {
-      return 'processing';
-    } else if ($scope.file.url) {
-      return 'ready';
-    }
-  };
-
-  _.each(mimetypeGroups.getGroupNames(), function (name) {
-    $scope['is'+ name.charAt(0).toUpperCase() + name.slice(1)] = function () {
-      return isInGroup($scope.file, name);
-    };
-  });
-
-  $scope.hasPreview = function(){
-    return mimetypeGroups.hasPreview(
-      getExtension($scope.file.fileName),
-      $scope.file.contentType
-    );
-  };
 
 });

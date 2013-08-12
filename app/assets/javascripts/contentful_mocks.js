@@ -17,8 +17,14 @@ window.createMockEntity = function (id, contentType) {
       fields: {
         title: {
           'en-US': 'the title'
+        },
+        file: {
+          'en-US': {
+            contentType: 'application/octet-stream',
+            fileName: 'file.psd'
+          }
         }
-      }
+      },
     },
     delete: function (fn) {
       fn(null, this);

@@ -45,6 +45,8 @@ angular.module('contentful').controller('CfValidationErrorDisplayCtrl', function
     required: function(v) {
       if (v.path.length == 1 && v.path[0] == 'fields') {
         return 'All fields are empty. Please fill out some fields.';
+      } else if (v.path.length == 4 && v.path[1] == 'file' && v.path[3] == 'url') {
+        return 'Cannot publish until processing has finished.';
       } else {
         return 'Required';
       }

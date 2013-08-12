@@ -16,18 +16,6 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
     }
   });
 
-  $scope.$on('entityArchived', function (ev, entry) {
-    var entryId = entry.data.sys.id;
-    $scope.resetEntries().then(function () {
-      var entries = _.reject($scope.entries, function (entry) {
-        return entry.data.sys.id === entryId;
-      });
-      if($scope.entries.length !== entries.length) {
-        $scope.entries = entries;
-      }
-    });
-  });
-
   $scope.$watch('searchTerm',  function (term) {
     if (term === null) return;
     $scope.tab.params.list = 'all';
@@ -81,16 +69,13 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
   }, true);
 
   $scope.resetEntries = function() {
-    var deferred = $q.defer();
-    entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
+    return entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
     then(function (entries) {
       $scope.paginator.numEntries = entries.total;
       $scope.selection.switchBaseSet(entries.total);
       $scope.entries = entries;
-      deferred.resolve();
       analytics.track('Reloaded EntryList');
     });
-    return deferred.promise;
   };
 
   function buildQuery() {
@@ -136,7 +121,6 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
       $scope.paginator.numEntries = entries.total;
       $scope.selection.switchBaseSet(entries.total);
       $scope.entries.push.apply($scope.entries, entries);
-      console.log('added %o to %o', entries, $scope.entries);
     }, function () {
       $scope.paginator.page--;
     });

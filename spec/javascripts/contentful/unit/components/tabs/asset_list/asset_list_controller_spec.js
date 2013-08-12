@@ -5,7 +5,8 @@ describe('Asset List Controller', function () {
 
   beforeEach(module('contentful/test'));
 
-  beforeEach(inject(function ($rootScope, $controller) {
+  beforeEach(inject(function ($rootScope, $controller, SpaceContext) {
+    $rootScope.spaceContext = new SpaceContext(window.createMockSpace());
     controller = $controller('AssetListCtrl', {$scope: $rootScope});
     scope = $rootScope;
   }));
@@ -54,5 +55,11 @@ describe('Asset List Controller', function () {
       expect(scope.visibleInCurrentList(asset)).toBe(false);
     });
   });
+
+  it('file type group is returned for an asset', function () {
+    var asset = window.createMockEntity('asset1');
+    expect(scope.fileType(asset)).toBe('Image');
+  });
+
 
 });
