@@ -1,9 +1,10 @@
-angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope, client, SpaceContext, authentication, contentfulClient, notification, cfSpinner, analytics, routing, authorization, tutorial, modalDialog) {
+angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
+    $scope, client, SpaceContext, authentication, notification, analytics,
+    routing, authorization, tutorial, modalDialog, presence) {
   'use strict';
 
   $scope.spaces = [];
   $scope.spaceContext = new SpaceContext();
-  $scope.tokenIdentityMap = new contentfulClient.IdentityMap();
 
   $scope.notification = notification;
 
@@ -156,7 +157,6 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
   $scope.performTokenLookup = function (callback) {
     // TODO initialize blank user so that you can at least log out when
     // the getTokenLookup fails
-    var stopSpinner = cfSpinner.start();
     authentication.getTokenLookup(function(tokenLookup) {
       $scope.$apply(function(scope) {
         //console.log('tokenLookup', tokenLookup);
@@ -166,7 +166,6 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
         showTutorialIfNecessary();
         if (callback) callback(tokenLookup);
       });
-      stopSpinner();
     });
   };
 
@@ -206,6 +205,9 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl($scope
 
   $scope.initClient = function () {
     $scope.performTokenLookup();
+    setInterval(function () {
+      if (presence.isActive()) $scope.performTokenLookup();
+    }, 5 * 60 * 1000);
   };
 
   function showTutorialIfNecessary() {
