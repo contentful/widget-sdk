@@ -11,14 +11,4 @@ angular.module('contentful').controller('CfFileEditorCtrl', function ($scope) {
     }
   });
 
-  $scope.status = function () {
-    if (!$scope.file) {
-      return 'missing';
-    } else if ($scope.file.upload) {
-      return 'processing';
-    } else if ($scope.file.url) {
-      return 'ready';
-    }
-  };
-
 });

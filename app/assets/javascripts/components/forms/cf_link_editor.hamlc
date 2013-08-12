@@ -1,9 +1,14 @@
 %ul.links(ng-hide="linkedEntities.length == 0")
   %li(ng-repeat="(index, entity) in linkedEntities")
     %i.ss-rows.drag-handle(ng-disabled="!otEditable" ng-hide="linkedEntities.length==1")
-    %a(ng-click="editEntity(entity)" ng-show="entity && entity.data") {{linkDescription(entity)}}
-    %span(ng-hide="entity && entity.data") {{linkDescription(entity)}}
-    %i.ss-delete(ng-click="removeLink(index, entity)" ng-show="otEditable")
+    %ng-switch(on="linkType")
+      .cf-file-info(ng-switch-when="Asset"
+                    remove-link="removeLink(index, entity)"
+                    file="spaceContext.localizedField(entity, 'data.fields.file')")
+      %div(ng-switch-when="Entry")
+        %a(ng-click="editEntity(entity)" ng-show="entity && entity.data") {{linkDescription(entity)}}
+        %span(ng-hide="entity && entity.data") {{linkDescription(entity)}}
+        %i.ss-delete(ng-click="removeLink(index, entity)" ng-show="otEditable")
 .cf-link-editor-search(cf-autocomplete-results="entities" autocomplete-term="searchTerm")
   .controls(ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
     %ng-switch(on="linkType")

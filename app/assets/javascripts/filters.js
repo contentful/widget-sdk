@@ -37,3 +37,21 @@ filters.filter('mimeGroup', function (mimetypeGroups) {
     );
   };
 });
+
+filters.filter('isFileMissing', function () {
+  return function (file) {
+    return !!file;
+  };
+});
+
+filters.filter('isFileProcessing', function () {
+  return function (file) {
+    return file && !!file.upload;
+  };
+});
+
+filters.filter('isFileReady', function () {
+  return function (file) {
+    return file && !!file.url;
+  };
+});
