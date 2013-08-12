@@ -21,8 +21,6 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
 
       scope.$watch('file', setSizes, true);
 
-
-
       function setSizes() {
         if(scope.file && scope.file.details && scope.file.details.image) {
           if (fullscreen) {
@@ -65,12 +63,22 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
         });
       }
 
+      function resizeHandler() {
+        setSizes();
+        $preview.css({
+          top: yOffset,
+          left: xOffset
+        });
+        scope.$digest();
+      }
+
       function mouseOutHandler() {
         removePreview();
       }
 
       function makePreview() {
         if ($preview) return;
+        angular.element($window).on('resize', resizeHandler);
         setSizes();
         $preview = $compile('<img ng-src="{{file.url}}?w={{width}}&h={{height}}" class="cf-file-preview" style="display:block; position: fixed; width: {{width}}px; height: {{height}}px; background: white">')(scope);
         $preview.appendTo($window.document.body);
@@ -82,7 +90,9 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
           $preview.remove();
           $preview = null;
         }
-        $(window).off('click', removePreview);
+        $($window).
+          off('click', removePreview).
+          off('resize', resizeHandler);
       }
 
       function setDimensions(srcWidth, srcHeight) {
