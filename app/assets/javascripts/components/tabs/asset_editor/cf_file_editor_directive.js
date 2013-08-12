@@ -4,7 +4,7 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
   return {
     restrict: 'C',
     require: ['ngModel', '^otPath'],
-    template: JST['cf_file_editor'],
+    template: JST['cf_file_info'],
     controller: 'CfFileEditorCtrl',
     link: function (scope, elem, attr, controllers) {
       var ngModelCtrl = controllers[0];
