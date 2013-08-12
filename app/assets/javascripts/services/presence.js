@@ -52,7 +52,6 @@ angular.module('contentful').factory('presence', function ($rootScope) {
   var lastActive = Date.now();
 
   var trackActivity = _.debounce(function() {
-    console.log('tracking');
     lastActive = Date.now();
   }, 1000 * 10);
 
