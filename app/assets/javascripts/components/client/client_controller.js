@@ -33,9 +33,9 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     return authentication.tokenLookup;
   }, function (tokenLookup, old, scope) {
     if (tokenLookup) {
-      authorization.setTokenLookup(tokenLookup);
+      // async because space is probably only updated after the next iteration
       scope.$evalAsync(function (scope) {
-        authorization.setSpace(scope.spaceContext.space);
+        authorization.setTokenLookup(tokenLookup, scope.spaceContext.space);
       });
     }
   });
