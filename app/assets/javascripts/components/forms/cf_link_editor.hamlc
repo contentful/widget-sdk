@@ -67,7 +67,8 @@
                 cf-click-local="pick(entity)"
                 ng-class="{selected: entity==selectedEntity}")
               %td.cell-preview(ng-init="file=spaceContext.localizedField(entity, 'data.fields.file')")
-                %p(cf-thumbnail="file" size="70" ng-show="file && file.url")
+                %p.file-preview(cf-file-preview="file" preview-size="400")
+                  %span(cf-thumbnail="file" size="70" ng-show="file && file.url")
               %td.cell-name
                 %p {{spaceContext.localizedField(entity, 'data.fields.title') || 'Untitled'}}
                 %p.lighter {{spaceContext.localizedField(entity, 'data.fields.description')}}
