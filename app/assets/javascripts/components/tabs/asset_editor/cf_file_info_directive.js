@@ -9,7 +9,6 @@ angular.module('contentful').directive('cfFileInfo', function () {
       removeLink: '&removeLink'
     },
     link: function (scope) {
-      // compatibility with cf_file_editor directive
       scope.hasFile = !!scope.file;
 
       // TODO maybe refactor this so we can combine both directives and dont duplicate code
