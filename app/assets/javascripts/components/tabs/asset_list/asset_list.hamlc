@@ -61,9 +61,9 @@
                 %span(cf-thumbnail="file" size="30")
             %td.cell-name
               %span {{spaceContext.assetTitle(asset)}}
-            %td.cell-type
-              %span {{fileType(asset)}}
-              %span.extension {{fileExtension(asset)}}
+            %td.cell-type(ng-init="file=spaceContext.localizedField(asset, 'data.fields.file')")
+              %span {{file|fileType}}
+              %span.extension {{file|fileExtension}}
             %td.cell-updated
               %date.relative(datetime="{{asset.data.sys.updatedAt}}")
             %td.cell-by

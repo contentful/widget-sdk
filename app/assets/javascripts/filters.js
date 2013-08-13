@@ -55,3 +55,23 @@ filters.filter('isFileReady', function () {
     return file && !!file.url;
   };
 });
+
+filters.filter('fileType', function (mimetypeGroups) {
+  return function (file) {
+    if(file)
+      return mimetypeGroups.getDisplayName(
+        mimetypeGroups.getExtension(file.fileName),
+        file.contentType
+      );
+    return '';
+  };
+});
+
+filters.filter('fileExtension', function (mimetypeGroups) {
+  return function (file) {
+    if(file)
+      return mimetypeGroups.getExtension(file.fileName).slice(1) || '';
+    return '';
+  };
+});
+

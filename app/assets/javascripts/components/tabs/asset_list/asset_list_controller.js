@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  controller('AssetListCtrl',function AssetListCtrl($scope, $q, Paginator, Selection, PromisedLoader, analytics, mimetypeGroups) {
+  controller('AssetListCtrl',function AssetListCtrl($scope, $q, Paginator, Selection, PromisedLoader, analytics) {
 
   var assetLoader = new PromisedLoader();
 
@@ -136,23 +136,6 @@ angular.module('contentful').
     } else {
       return 'draft';
     }
-  };
-
-  $scope.fileType = function (asset) {
-    var file = $scope.spaceContext.localizedField(asset, 'data.fields.file');
-    if(file)
-      return mimetypeGroups.getDisplayName(
-        mimetypeGroups.getExtension(file.fileName),
-        file.contentType
-      );
-    return '';
-  };
-
-  $scope.fileExtension = function (asset) {
-    var file = $scope.spaceContext.localizedField(asset, 'data.fields.file');
-    if(file)
-      return mimetypeGroups.getExtension(file.fileName).slice(1) || '';
-    return '';
   };
 
   $scope.$on('tabBecameActive', function(event, tab) {
