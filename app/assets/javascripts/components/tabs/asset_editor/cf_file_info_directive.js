@@ -11,7 +11,6 @@ angular.module('contentful').directive('cfFileInfo', function () {
     link: function (scope) {
       scope.hasFile = !!scope.file;
 
-      // TODO maybe refactor this so we can combine both directives and dont duplicate code
       scope.showMeta = false;
 
       scope.toggleMeta = function () {
