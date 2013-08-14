@@ -10,6 +10,7 @@ describe('Asset editor controller', function () {
     module('contentful/test');
     module(function ($provide) {
       canStub = sinon.stub();
+      // TODO maybe extract into
       $provide.value('can', canStub);
     });
 
@@ -62,6 +63,46 @@ describe('Asset editor controller', function () {
 
   });
 
+  describe('validation on publish', function () {
+    beforeEach(inject(function ($compile, $rootScope, $controller){
+      scope = $rootScope;
+      var locale = {
+        code: 'en-US',
+        contentDeliveryApi: true,
+        contentManagementApi: true,
+        'default': true,
+        name: 'en-US',
+        publish: true
+      };
+      var asset = {
+        data: {
+          fields: {},
+          sys: {publishedVersion: 1}
+        },
+        isArchived: sinon.stub().returns(false)
+      };
+      scope.spaceContext = {
+        activeLocales: sinon.stub().returns([locale]),
+        space: {
+          getPublishLocales: sinon.stub().returns([locale])
+        }
+      };
+      scope.tab = {
+        params: {
+          asset: asset
+        }
+      };
+      assetEditorCtrl = $controller('AssetEditorCtrl', {$scope: $rootScope});
+      scope.$digest();
+    }));
+
+    it('should validate if the published version has changed', function () {
+      scope.validate = sinon.spy();
+      scope.asset.data.sys.publishedVersion = 2;
+      scope.$digest();
+      expect(scope.validate.called).toBe(true);
+    });
+  });
 
   // TODO test dirty flag
 

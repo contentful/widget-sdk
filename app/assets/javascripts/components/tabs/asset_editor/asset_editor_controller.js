@@ -30,6 +30,7 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
 
   $scope.assetSchema = validation.schemas.Asset($scope.spaceContext.space.getPublishLocales());
 
+  // TODO This can probably be removed since we always keep the entity in sync
   $scope.publishedAt = function(){
     if (!$scope.otDoc) return;
     var val = $scope.otDoc.getAt(['sys', 'publishedAt']);
@@ -39,6 +40,10 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
       return undefined;
     }
   };
+
+  $scope.$watch('asset.data.sys.publishedVersion', function (publishedVersion, oldVersion, scope) {
+    if (publishedVersion > oldVersion) scope.validate();
+  });
 
   $scope.$watch(function (scope) {
     if (scope.otDoc && scope.asset) {
