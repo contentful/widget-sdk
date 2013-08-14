@@ -45,14 +45,14 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
             else     scope.editContentType(contentType);
           });
         });
-      else if (route.viewType == 'content-delivery')
-        $scope.visitView('content-delivery');
+      else if (route.viewType == 'api-key-list')
+        $scope.visitView('api-key-list');
       else if (route.viewType == 'space-settings')
         $scope.visitView('space-settings');
       else if (route.viewType == 'api-key-editor')
         $scope.spaceContext.space.getApiKey(route.params.apiKeyId, function(err, apiKey) {
           $scope.$apply(function (scope) {
-            if (err) scope.visitView('content-delivery');
+            if (err) scope.visitView('api-key-list');
             else     scope.editApiKey(apiKey);
           });
         });
@@ -167,7 +167,7 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
     var apiKey = scope.spaceContext.space.createBlankApiKey();
     var tab = scope.spaceContext.tabList.add({
       viewType: 'api-key-editor',
-      section: 'contentDelivery',
+      section: 'apiKeys',
       params: {
         apiKey: apiKey,
         mode: 'create'

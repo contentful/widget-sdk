@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  controller('ContentDeliveryCtrl', function($scope, $window, environment) {
+  controller('ApiKeyListCtrl', function($scope, $window, environment) {
     $scope.refreshApiKeys = function() {
       $scope.spaceContext.space.getApiKeys(null, function(err, apiKeys) {
         $scope.$apply(function() {

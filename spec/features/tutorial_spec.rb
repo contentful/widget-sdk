@@ -108,7 +108,7 @@ feature 'Tutorial', js: true do
 
     click_link 'Next'
 
-    nav_bar 'content-delivery'
+    nav_bar 'api-key-list'
     finish_tutorial do
       all('td.cell-name').should have(1).element
     end

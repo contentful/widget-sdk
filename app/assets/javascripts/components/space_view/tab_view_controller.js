@@ -11,7 +11,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
       } else if (tab.viewType == 'content-type-editor') {
         $scope.visitView('content-type-list');
       } else if (tab.viewType == 'api-key-editor') {
-        $scope.visitView('content-delivery');
+        $scope.visitView('api-key-list');
       }
     }
   });
@@ -89,7 +89,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     if (!editor) {
       editor = $scope.spaceContext.tabList.add({
         viewType: 'api-key-editor',
-        section: 'contentDelivery',
+        section: 'apiKeys',
         params: {
           apiKey: apiKey,
           mode: 'edit'
@@ -121,7 +121,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
              ) ||
              tab.section == 'spaceSettings' && route.viewType == 'space-settings'||
              (
-               route.viewType == 'content-delivery' &&
+               route.viewType == 'api-key-list' &&
                tab.viewType == 'api-key-editor' &&
                tab.params.apiKey.getId() === undefined
              ) ||
@@ -182,10 +182,10 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
         title: 'Settings'
       };
       analytics.track('Clicked "Space Settings"');
-    } else if (viewType == 'content-delivery') {
+    } else if (viewType == 'api-key-list') {
       options = {
-        viewType: 'content-delivery',
-        section: 'contentDelivery',
+        viewType: 'api-key-list',
+        section: 'apiKeys',
         hidden: true,
         title: 'Content Delivery',
         canClose: true

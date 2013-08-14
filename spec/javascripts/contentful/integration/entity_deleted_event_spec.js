@@ -98,9 +98,9 @@ describe('Content Type Actions controller', function () {
 });
 
 
-describe('Content Delivery controller', function () {
+describe('ApiKey List controller', function () {
 
-  var spaceCtrl, contentDeliveryCtrl, apiKeyEditorCtrl;
+  var spaceCtrl, apiKeyListCtrl, apiKeyEditorCtrl;
   var scope, childScope;
   var closeStub, apiKeysStub;
   var removedEntity;
@@ -133,7 +133,7 @@ describe('Content Delivery controller', function () {
       // Space Controller necessary for space broadcast method
       spaceCtrl = $controller('SpaceCtrl', {$scope: scope});
 
-      contentDeliveryCtrl = $controller('ContentDeliveryCtrl', {$scope: scope});
+      apiKeyListCtrl = $controller('ApiKeyListCtrl', {$scope: scope});
 
       childScope = scope.$new();
       apiKeyEditorCtrl = $controller('ApiKeyEditorCtrl', {$scope: childScope});

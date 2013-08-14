@@ -28,11 +28,11 @@
       %i.ss-attach
       .hint.tip.nav-models
         Assets not available yet, coming soon
-    %li(ng-class="{section: spaceContext.tabList.currentSection() == 'contentDelivery',
-                   'section-index': spaceContext.tabList.currentViewType() == 'content-delivery'}"
-        ng-click="visitView('content-delivery')"
+    %li(ng-class="{section: spaceContext.tabList.currentSection() == 'apiKeys',
+                   'section-index': spaceContext.tabList.currentViewType() == 'api-key-list'}"
+        ng-click="visitView('api-key-list')"
         ng-show="can('update', 'ApiKey')"
-        data-view-type="content-delivery")
+        data-view-type="api-key-list")
       %i.ss-fork
       .hint.tip.nav-models
         Content Delivery
@@ -82,7 +82,7 @@
     ot-doc-for="tab.params.contentType"
     cf-validate="tab.params.contentType.data"
     ng-class="{'with-aux-panel': preferences.showAuxPanel}")
-  .content-delivery(ng-switch-when="content-delivery" )
+  .api-key-list(ng-switch-when="api-key-list" )
   .api-key-editor.with-tab-actions(ng-switch-when="api-key-editor")
   %div(ng-switch-default="")
     Unhandled case: viewType = {{spaceContext.tabList.currentViewType()}}
