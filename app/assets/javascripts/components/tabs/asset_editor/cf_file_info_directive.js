@@ -6,7 +6,8 @@ angular.module('contentful').directive('cfFileInfo', function () {
     template: JST['cf_file_info'],
     scope: {
       file: '=file',
-      removeLink: '&removeLink'
+      removeLink: '&removeLink',
+      editEntity: '&editEntity'
     },
     link: function (scope) {
       scope.hasFile = !!scope.file;

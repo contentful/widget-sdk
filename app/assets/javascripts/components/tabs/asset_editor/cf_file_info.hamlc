@@ -24,6 +24,8 @@
 
   .file-buttons(ng-class="{vcenter: !hasFile && enableUpload, center: !hasFile && enableUpload}")
     %button.upload-button(ng-click="uploadFile()" ng-hide="hasFile || !enableUpload") Upload File
+    %button.go-to-asset(ng-click="editEntity()" ng-show="!enableUpload" tooltip="Go to asset")
+      %i.ss-action
     %a.as-button.download-file(href="{{file.url}}" target="_blank" ng-show="file|isFileReady" tooltip="Download file")
       %i.ss-download
     %button.show-metadata(ng-click="toggleMeta()" ng-show="hasFile" tooltip="Show file information")

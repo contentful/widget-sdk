@@ -4,6 +4,7 @@
     %ng-switch(on="linkType")
       .cf-file-info(ng-switch-when="Asset"
                     remove-link="removeLink(index, entity)"
+                    edit-entity="editEntity(entity)"
                     file="spaceContext.localizedField(entity, 'data.fields.file')")
       %div(ng-switch-when="Entry")
         %a(ng-click="editEntity(entity)" ng-show="entity && entity.data") {{linkDescription(entity)}}
