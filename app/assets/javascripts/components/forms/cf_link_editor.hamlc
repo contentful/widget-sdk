@@ -38,7 +38,7 @@
                   tooltip-placement="top"
                   tooltip="Search for existing {{linkType}}")
 
-  .results.search-options-on(ng-show="entities && entities.length > 0" ng-switch="linkType")
+  .results.search-options-on(ng-show="entities && entities.length > 0" ng-switch="linkType" cf-click-outside="searchTerm=''")
     %div(ng-switch-when="Entry")
       %table.result-list
         %thead
