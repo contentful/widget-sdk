@@ -58,7 +58,7 @@
         %thead
           %tr
             %th.cell-preview Preview
-            %th.cell-name Title/Description
+            %th.cell-name Title / Description
             %th.cell-by Type
       .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
         %table.result-list
