@@ -10,8 +10,6 @@ angular.module('contentful').directive('cfFileInfo', function () {
       editEntity: '&editEntity'
     },
     link: function (scope) {
-      scope.hasFile = !!scope.file;
-
       scope.showMeta = false;
 
       scope.toggleMeta = function () {
