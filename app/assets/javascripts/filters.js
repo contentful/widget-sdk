@@ -75,3 +75,21 @@ filters.filter('fileExtension', function (mimetypeGroups) {
   };
 });
 
+filters.filter('isFieldLink', function () {
+  return function (field) {
+    return field.type == 'Link' || field.type == 'Array' && field.items.type == 'Link';
+  };
+});
+
+filters.filter('isFieldBoolean', function () {
+  return function (field) {
+    return field.type == 'Boolean';
+  };
+});
+
+filters.filter('isFieldStringList', function () {
+  return function (field) {
+    return field.type == 'Array' && field.items.type == 'String';
+  };
+});
+

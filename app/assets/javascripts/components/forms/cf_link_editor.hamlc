@@ -1,5 +1,5 @@
 %ul.links(ng-hide="linkedEntities.length == 0")
-  %li(ng-repeat="(index, entity) in linkedEntities")
+  %li(ng-repeat="(index, entity) in linkedEntities" ng-class="{'no-border': linkType=='Asset'}")
     %i.ss-rows.drag-handle(ng-disabled="!otEditable"
                            ng-class="{'drag-file': linkType=='Asset'}"
                            ng-hide="linkedEntities.length==1")
