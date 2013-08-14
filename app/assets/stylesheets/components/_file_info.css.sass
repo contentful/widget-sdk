@@ -6,22 +6,14 @@
   .vcenter
     line-height: 250px
   *[cf-thumbnail]
-    position: absolute
-    top: 0
-    right: 0
-    left: 0
-    bottom: 0
+    +stretch
 
   .file-preview,
   .file-metadata,
   .cf-file-drop
     border: 1px solid $light-gray
     +border-radius(3px)
-    position: absolute
-    top: 0
-    left: 0
-    bottom: 0
-    right: 0
+    +stretch
 
   .file-preview
     +border-radius(3px 3px 3px 3px)
@@ -39,11 +31,7 @@
       padding-right: 1em
 
   .file-spinner
-    position: absolute
-    top: 0
-    left: 0
-    right: 0
-    bottom: 0
+    +stretch
     background-image: asset-url('ajax-loader.gif', image)
     background-position: center
     background-repeat: no-repeat
@@ -57,10 +45,7 @@
     line-height: 250px
 
   .file-buttons
-    position: absolute
-    right: 10px
-    bottom: 10px
-    left: 10px
+    +stretch(false, 10px, 10px, 10px)
     opacity: 0
     +transition(opacity 0.1s ease-in-out)
     &.center

@@ -8,10 +8,7 @@
   z-index: 20
 
 .tab-list
-  position: absolute
-  top: $tab-top
-  left: $main-left-spacing
-  right: 20%
+  +stretch($tab-top, 20%, false, $main-left-spacing)
   height: $tab-height
   z-index: 10
   .tab
