@@ -24,14 +24,6 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
     });
   }
 
-  $scope.editEntity = function (entity, mode) {
-    if($scope.linkType == 'Entry')
-      $scope.editEntry(entity, mode);
-    if($scope.linkType == 'Asset')
-      $scope.editAsset(entity, mode);
-  };
-
-
   $scope.addLink = function(entity, callback) {
     var link = { sys: {
       type: 'Link',

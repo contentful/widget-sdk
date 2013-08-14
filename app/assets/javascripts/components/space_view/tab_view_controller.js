@@ -16,6 +16,13 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     }
   });
 
+  $scope.editEntity = function (entity, mode) {
+    if(entity.data.sys.type == 'Entry')
+      $scope.editEntry(entity, mode);
+    if(entity.data.sys.type == 'Asset')
+      $scope.editAsset(entity, mode);
+  };
+
   $scope.editEntry = function(entry, mode) {
     if (! (entry && entry.data)) return notification.error('Can\'t open Entry');
 
