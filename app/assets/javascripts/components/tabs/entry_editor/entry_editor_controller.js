@@ -79,13 +79,13 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
         var locales;
         if (field.localized) {
           locales = scope.spaceContext.activeLocales;
-          var errorLocales = _.map(errorPaths[field.id], function (code) {
-            return scope.spaceContext.getPublishLocale(code);
-          });
-          locales = _.union(locales, errorLocales);
         } else {
           locales = [scope.spaceContext.space.getDefaultLocale()];
         }
+        var errorLocales = _.map(errorPaths[field.id], function (code) {
+          return scope.spaceContext.getPublishLocale(code);
+        });
+        locales = _.union(locales, errorLocales);
         acc.push(inherit(field, locales));
       }
       return acc;
