@@ -107,7 +107,16 @@ $tab-actions-content-height: $tab-actions-height - (2 * $tab-actions-vertical-pa
 
   // buttons
   .button-set
+    position: relative
     float: right
     button
       height: $tab-actions-content-height
-      //line-height: $content-height/2
+    .more-buttons
+      position: absolute
+      left: -25px
+      bottom: 50px
+      min-width: 110px
+      text-align: center
+      button
+        display: block
+        margin: 5px auto
