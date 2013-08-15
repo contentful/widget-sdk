@@ -19,6 +19,8 @@
         %th Width<br>Height
         %td {{file.details.image.width}}&thinsp;px<br>{{file.details.image.height}}&thinsp;px
 
+  .title-overlay(ng-hide="file || enableUpload")
+    {{title}}
   .no-file.center.vcenter(ng-hide="file || enableUpload")
     Asset has no file
 

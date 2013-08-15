@@ -33,6 +33,13 @@
       text-align: left
       padding-right: 1em
 
+  .title-overlay
+    opacity: 0
+    position: absolute
+    top: 15px
+    left: 10px
+    font-size: 20px
+
   .file-spinner
     +stretch
     background-image: asset-url('ajax-loader.gif', image)
@@ -70,5 +77,8 @@
       +text-shadow(0 1px 0 rgba(255,255,255,0.6))
 
 
-.file-info:hover .file-buttons
-  opacity: 1
+.file-info:hover
+  .file-buttons
+    opacity: 1
+  .title-overlay
+    opacity: 0.8
