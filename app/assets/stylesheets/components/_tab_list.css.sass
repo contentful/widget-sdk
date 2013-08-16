@@ -2,11 +2,14 @@
   +user-select(none)
   > ul
     +plain-list
+    +flexbox
   li
-    display: inline-block
+    display: block
     height: $tab-height
     vertical-align: top
   .tab
+    +flex(1)
+    max-width: 200px
     position: relative
     margin-right: 2px
     padding: ($tab-height - 27px) 12px
@@ -75,6 +78,8 @@
 /* ADD BUTTON DROPDOWN */
 
 .tablist-button
+  +flex(none)
+  width: 70px
   .dropdown-menu 
     li
       display: block
