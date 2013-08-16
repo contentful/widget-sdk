@@ -5,6 +5,7 @@ angular.module('contentful').
     return {
       restrict: 'A',
       link: function(scope, element, attrs) {
+        scope.disableTooltip = false;
         element = $(element);
         function destroy() {
           element.tooltip('destroy');
@@ -21,7 +22,7 @@ angular.module('contentful').
 
         attrs.$observe('tooltip', createTooltip);
 
-        scope.$watch(attrs.disableTooltip, disableHandler);
+        scope.$watch('disableTooltip', disableHandler);
         scope.$watch(attrs.ngDisabled, disableHandler);
 
         function disableHandler(disabled) {

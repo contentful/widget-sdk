@@ -1,9 +1,11 @@
 'use strict';
 
-angular.module('contentful').directive('dropdownBtn', function() {
+angular.module('contentful').directive('dropdownBtn', function($parse) {
   return {
     restrict: 'C',
-    link: function(scope, element) {
+    link: function(scope, element, attrs) {
+      var onClose = attrs.onClose ? $parse(attrs.onClose) : undefined;
+
       var isOpen = false;
 
       var open = function() {
@@ -12,10 +14,12 @@ angular.module('contentful').directive('dropdownBtn', function() {
 
       var close = function() {
         isOpen = false;
+        onClose(scope);
       };
 
       var toggle = function() {
         isOpen = !isOpen;
+        if(!isOpen) onClose(scope);
       };
 
       element.find('.dropdown-toggle').click(function(event) {
@@ -109,6 +113,11 @@ angular.module('contentful').directive('dropdownBtn', function() {
       function getPositioning() {
         var position = element.find('.dropdown-menu').attr('position');
         switch (position) {
+          case 'topcenter':
+            return {
+              my: 'center bottom',
+              at: 'center top'
+            };
           case 'top':
             return {
               my: 'left bottom',
