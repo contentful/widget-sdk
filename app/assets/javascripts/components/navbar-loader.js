@@ -4,6 +4,7 @@ angular.module('contentful').directive('navbarLoader', ['cfSpinner', function (c
   return {
     restrict: 'C',
     link: function (scope, element) {
+      element.hide();
       cfSpinner.setCallback(function (state) {
         if (state) {
           element.show();

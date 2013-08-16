@@ -11,8 +11,16 @@ describe('Asset editor controller', function () {
       fileObj = {fileName: 'file.jpg'};
       scope = $rootScope.$new();
       scope.tab = {};
+      var locale = {
+        code: 'en-US',
+        contentDeliveryApi: true,
+        contentManagementApi: true,
+        'default': true,
+        name: 'en-US',
+        publish: true
+      };
       var getPublishLocalesStub = sinon.stub();
-      getPublishLocalesStub.returns([]);
+      getPublishLocalesStub.returns([locale]);
       scope.spaceContext = { space: { getPublishLocales: getPublishLocalesStub } };
       scope.otDoc = {
         version: 123

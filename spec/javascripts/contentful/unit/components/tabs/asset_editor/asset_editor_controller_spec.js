@@ -18,8 +18,16 @@ describe('Asset editor controller', function () {
       scope = _$rootScope_;
 
       scope.tab = {};
+      var locale = {
+        code: 'en-US',
+        contentDeliveryApi: true,
+        contentManagementApi: true,
+        'default': true,
+        name: 'en-US',
+        publish: true
+      };
       getPublishLocalesStub = sinon.stub();
-      getPublishLocalesStub.returns([]);
+      getPublishLocalesStub.returns([locale]);
       assetTitleStub = sinon.stub();
       scope.spaceContext = {
         assetTitle: assetTitleStub,
