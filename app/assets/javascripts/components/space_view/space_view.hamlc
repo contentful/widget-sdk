@@ -44,6 +44,7 @@
       %i.ss-settings
       .hint.tip.nav-models
         Space Settings
+  .navbar-loader
 %nav.tab-list
   %ul
     %li.tab(ng-repeat="tabItem in spaceContext.tabList.items"

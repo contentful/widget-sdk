@@ -1,4 +1,4 @@
-%ul.links(ng-hide="linkedEntities.length == 0")
+%ul.links(ng-hide="linkedEntities.length == 0" ng-class="{'no-border': linkType=='Asset'}")
   %li(ng-repeat="(index, entity) in linkedEntities" ng-class="{'no-border': linkType=='Asset'}")
     %i.ss-rows.drag-handle(ng-disabled="!otEditable"
                            ng-class="{'drag-file': linkType=='Asset'}"
@@ -7,6 +7,7 @@
       .cf-file-info(ng-switch-when="Asset"
                     remove-link="removeLink(index, entity)"
                     edit-entity="editEntity(entity)"
+                    entity-title="spaceContext.localizedField(entity, 'data.fields.title')"
                     file="spaceContext.localizedField(entity, 'data.fields.file')")
       %div(ng-switch-when="Entry")
         %a(href="" ng-click="editEntity(entity)" ng-show="entity && entity.data") {{linkDescription(entity)}}
@@ -38,7 +39,7 @@
                   tooltip-placement="top"
                   tooltip="Search for existing {{linkType}}")
 
-  .results.search-options-on(ng-show="entities && entities.length > 0" ng-switch="linkType")
+  .results.search-options-on(ng-show="entities && entities.length > 0" ng-switch="linkType" cf-click-outside="searchTerm=''")
     %div(ng-switch-when="Entry")
       %table.result-list
         %thead

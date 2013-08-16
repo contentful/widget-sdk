@@ -6,12 +6,11 @@ angular.module('contentful').directive('cfFileInfo', function () {
     template: JST['cf_file_info'],
     scope: {
       file: '=file',
+      title: '=entityTitle',
       removeLink: '&removeLink',
       editEntity: '&editEntity'
     },
     link: function (scope) {
-      scope.hasFile = !!scope.file;
-
       scope.showMeta = false;
 
       scope.toggleMeta = function () {
