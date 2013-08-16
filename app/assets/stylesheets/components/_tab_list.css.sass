@@ -50,10 +50,7 @@
   i.ss-record.draft
     color: lighten($gold, 20%)
   .fade-text
-    position: absolute
-    top: 0
-    bottom: 2px
-    right: 0
+    +stretch(0, 0, 2px, false)
     width: 50px
     +fade-text-background($page-background)
   .tab.active

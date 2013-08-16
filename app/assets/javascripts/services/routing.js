@@ -8,7 +8,7 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
   $routeProvider.when('/spaces/:spaceId/assets/:assetId', {viewType: 'asset-editor'});
   $routeProvider.when('/spaces/:spaceId/content_types', {viewType: 'content-type-list'});
   $routeProvider.when('/spaces/:spaceId/content_types/:contentTypeId', {viewType: 'content-type-editor'});
-  $routeProvider.when('/spaces/:spaceId/api_keys', {viewType: 'content-delivery'});
+  $routeProvider.when('/spaces/:spaceId/api_keys', {viewType: 'api-key-list'});
   $routeProvider.when('/spaces/:spaceId/api_keys/:apiKeyId', {viewType: 'api-key-editor'});
   $routeProvider.when('/spaces/:spaceId/settings', {viewType: 'space-settings'});
   $routeProvider.otherwise({noSpace: true});
@@ -49,7 +49,7 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
           path = path + '/content_types/' + tab.params.contentType.getId();
         } else if (tab.viewType == 'content-type-list') {
           path = path + '/content_types';
-        } else if (tab.viewType == 'content-delivery') {
+        } else if (tab.viewType == 'api-key-list') {
           path = path + '/api_keys';
         } else if (tab.viewType == 'api-key-editor') {
           var apiKeyId = tab.params.apiKey.getId();

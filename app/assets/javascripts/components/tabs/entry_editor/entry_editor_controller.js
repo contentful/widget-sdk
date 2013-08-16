@@ -34,6 +34,7 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     $scope.entrySchema = validation.fromContentType(data, locales);
   });
 
+  // TODO This can probably be removed since we always keep the entity in sync
   $scope.publishedAt = function(){
     if (!$scope.otDoc) return;
     var val = $scope.otDoc.getAt(['sys', 'publishedAt']);
@@ -43,6 +44,10 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
       return undefined;
     }
   };
+
+  $scope.$watch('entry.data.sys.publishedVersion', function (publishedVersion, oldVersion, scope) {
+    if (publishedVersion > oldVersion) scope.validate();
+  });
 
   $scope.$watch(function (scope) {
     if (scope.otDoc && scope.entry) {

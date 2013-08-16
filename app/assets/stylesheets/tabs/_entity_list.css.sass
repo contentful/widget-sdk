@@ -2,16 +2,10 @@
   .left-nav
     @extend .tab-list-filters
   .main-header
-    position: absolute
-    left: 0
-    right: 0
-    top: 0
+    +stretch(0, 0, false, 0)
   .main-results-wrapper
-    position: absolute
+    +stretch(false, 0, 0, 0)
     top: 27px
-    bottom: 0
-    right: 0
-    left: 0
     overflow-y: auto
     .main-results
       border-left: none

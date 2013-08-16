@@ -211,9 +211,7 @@
     ul
       +plain-list
     font-size: 10px
-    position: absolute
-    right: 44px
-    left: 16px
+    +stretch-x(5px, 56px)
     z-index: 10
     background: white
     background: rgba(255,255,255,0.96)
@@ -240,6 +238,7 @@
   .results
     overflow-y: auto
     max-height: 200px
+    right: 37px
     li
       padding: 5px 10px
       border-bottom: 1px solid $light-rule
@@ -264,31 +263,27 @@
     margin-top: 1px
     height: 35px
 
-.form-field
-  // Styling for specific types
-  &[data-field-type=Boolean] .form-controls,
-  &[data-field-type=Array][data-field-items-type=String] .form-controls
-    label
-      width: auto
-      position: relative
-      top: -2px
-    span
-      position: relative
-      top: 2px
-  &[data-field-type=Boolean] .form-controls
-    padding-top: 10px
+.data-field-boolean .form-controls,
+.data-field-string-list .form-controls
+  label
+    width: auto
+    position: relative
+    top: -2px
+  span
+    position: relative
+    top: 2px
+.data-field-boolean .form-controls
+  padding-top: 10px
 
-.form-field
-  &[data-field-type=Link],
-  &[data-field-type=Array][data-field-items-type=Link]
-    margin: 25px 0 15px
-    .links 
-      +plain-list
-      border-top: 1px solid $light-rule
-      margin-bottom: 15px
-      li
-        padding: 10px 7px
-        border-bottom: 1px solid $light-rule
+.data-field-array
+  margin: 25px 0 15px
+  .links 
+    +plain-list
+    border-top: 1px solid $light-rule
+    margin-bottom: 15px
+    li
+      padding: 10px 7px
+      border-bottom: 1px solid $light-rule
   .ss-delete
     float: right
     margin-top: 1px

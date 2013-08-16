@@ -1,12 +1,15 @@
 %ul.links(ng-hide="linkedEntities.length == 0")
-  %li(ng-repeat="(index, entity) in linkedEntities")
-    %i.ss-rows.drag-handle(ng-disabled="!otEditable" ng-hide="linkedEntities.length==1")
+  %li(ng-repeat="(index, entity) in linkedEntities" ng-class="{'no-border': linkType=='Asset'}")
+    %i.ss-rows.drag-handle(ng-disabled="!otEditable"
+                           ng-class="{'drag-file': linkType=='Asset'}"
+                           ng-hide="linkedEntities.length==1")
     %ng-switch(on="linkType")
       .cf-file-info(ng-switch-when="Asset"
                     remove-link="removeLink(index, entity)"
+                    edit-entity="editEntity(entity)"
                     file="spaceContext.localizedField(entity, 'data.fields.file')")
       %div(ng-switch-when="Entry")
-        %a(ng-click="editEntity(entity)" ng-show="entity && entity.data") {{linkDescription(entity)}}
+        %a(href="" ng-click="editEntity(entity)" ng-show="entity && entity.data") {{linkDescription(entity)}}
         %span(ng-hide="entity && entity.data") {{linkDescription(entity)}}
         %i.ss-delete(ng-click="removeLink(index, entity)" ng-show="otEditable")
 .cf-link-editor-search(cf-autocomplete-results="entities" autocomplete-term="searchTerm")
@@ -35,46 +38,44 @@
                   tooltip-placement="top"
                   tooltip="Search for existing {{linkType}}")
 
-  .results.btn-right-on.search-options-on(ng-show="entities && entities.length > 0" ng-switch="linkType")
+  .results.search-options-on(ng-show="entities && entities.length > 0" ng-switch="linkType")
     %div(ng-switch-when="Entry")
       %table.result-list
         %thead
           %tr
-            %th.cell-type Content Type
+            %th.cell-content-type Content Type
             %th.cell-name Name
-            %th.cell-by By
       .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
         %table.result-list
           %tbody
             %tr(ng-repeat="entity in entities"
                 cf-click-local="pick(entity)"
                 ng-class="{selected: entity==selectedEntity}")
-              %td.cell-type
+              %td.cell-content-type
                 %span {{spaceContext.publishedTypeForEntry(entity).getName()}}
               %td.cell-name
                 %span {{spaceContext.entryTitle(entity)}}
-              %td.cell-by
-                %span.cf-user(link="entity.data.sys.updatedBy" as="updater")
-                  {{updater.getName()}}
         .loading(ng-hide="paginator.atLast()")
-    %div(ng-switch-default)
+    %div(ng-switch-when="Asset")
       %table.result-list
         %thead
           %tr
-            %th.cell-type Title
-            %th.cell-name Description
-            %th.cell-by By
+            %th.cell-preview Preview
+            %th.cell-name Title / Description
+            %th.cell-by Type
       .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
         %table.result-list
           %tbody
             %tr(ng-repeat="entity in entities"
                 cf-click-local="pick(entity)"
                 ng-class="{selected: entity==selectedEntity}")
-              %td.cell-type
-                %span {{spaceContext.localizedField(entity, 'data.fields.title') || 'Untitled'}}
+              %td.cell-preview(ng-init="file=spaceContext.localizedField(entity, 'data.fields.file')")
+                %p.file-preview(cf-file-preview="file" preview-size="400")
+                  %span(cf-thumbnail="file" size="70" ng-show="file && file.url")
               %td.cell-name
-                %span {{spaceContext.localizedField(entity, 'data.fields.description')}}
-              %td.cell-by
-                %span.cf-user(link="entity.data.sys.updatedBy" as="updater")
-                  {{updater.getName()}}
+                %p {{spaceContext.localizedField(entity, 'data.fields.title') || 'Untitled'}}
+                %p.lighter {{spaceContext.localizedField(entity, 'data.fields.description')}}
+              %td.cell-type
+                %p(ng-show="file && file.url") {{file|fileType}}
+                  %span.lighter {{file|fileExtension}}
         .loading(ng-hide="paginator.atLast()")

@@ -22,7 +22,7 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
       scope.$watch('file', setSizes, true);
 
       function setSizes() {
-        if(scope.file && scope.file.details && scope.file.details.image) {
+        if(isImage()) {
           if (fullscreen) {
             windowWidth  = $(window).width();
             windowHeight = $(window).height();
@@ -42,6 +42,7 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
       }
 
       function showFullscreen() {
+        if (!isImage()) return;
         makePreview();
         _.defer(function () {
           $(window).one('click', removePreview);
@@ -53,6 +54,7 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
       }
 
       function mouseMoveHandler(event) {
+        if (!isImage()) return;
         makePreview();
         var vertOffset = event.pageY - yOffset;
         if(vertOffset < 0)
@@ -113,6 +115,10 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
 
         scope.width  = Math.round(resizeWidth);
         scope.height = Math.round(resizeHeight);
+      }
+
+      function isImage() {
+        return !!(scope.file && scope.file.details && scope.file.details.image);
       }
 
       scope.$on('$destroy', removePreview);

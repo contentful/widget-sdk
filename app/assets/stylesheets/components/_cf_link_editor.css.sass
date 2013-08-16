@@ -23,15 +23,19 @@
     &[disabled]
       cursor: auto
     padding-right: 10px
+  .drag-file
+    position: absolute
+    top: 50%
+    left: 20px
+    font-size: 13px
+    z-index: 10
+  .no-border
+    border-bottom: none
 
-  .results,
-  .search-field
-    &.btn-right-on
-      margin-right: 90px
-      &.search-options-on
-        right: 44px
-  .result-list td:last-child
-    vertical-align: middle
+  .results
+    margin-right: 17%
+  .links li
+    position: relative
 
   table
     border: none // border provided by .results container
@@ -39,21 +43,32 @@
     table
       border: none
       @extend %endless-result-list-body
-  
+
   tr:hover
     background-color: $result-list-highlight
 
-  .cell-type
+  .cell-content-type, .cell-preview
     width: 100px
+  .cell-preview
+    p
+      margin: 0
   .cell-name
-    width: auto
-    span
-      display: block
+    width: 60%
+    vertical-align: top
+    p
       max-width: 200px
       overflow-x: hidden
       text-overflow: ellipsis
-  .cell-by
+      margin: 5px 0
+  .cell-by, .cell-type, .cell-type
+    color: $dark-gray
+  .lighter
+    color: $medium-gray
+    font-weight: normal
+  .cell-by, .cell-type
     width: 100px
+  .cell-type
+    vertical-align: top
 
   .add-new
     .dropdown-toggle
@@ -75,6 +90,3 @@
         font-size: 9px
         top: 1px
         left: -3px
-
-  .file-info
-    width: 100%

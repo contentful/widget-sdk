@@ -602,7 +602,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         id: 'apiKeyList',
         title: 'Here are your API Keys',
         description: 'Every time you create an API Key it appears on the list shown by this button.',
-        attachTo: '.nav-bar ul li[data-view-type=content-delivery]',
+        attachTo: '.nav-bar ul li[data-view-type=api-key-list]',
         position: '2',
         next: 'apiKeyDone',
         onShow: function () {

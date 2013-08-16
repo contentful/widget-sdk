@@ -31,7 +31,9 @@
       %label
       .form-controls
         .cf-validation-error-display.form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
-    .form-field(ng-repeat="field in fields" data-field-id="{{field.id}}" data-field-type="{{field.type}}" data-field-items-type="{{field.items.type}}")
+    .form-field(ng-repeat="field in fields"
+        data-field-id="{{field.id}}"
+        ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
       %label {{field.name}}
       .form-controls
         .locale(ng-repeat="locale in field.locales" ot-field-presence="['fields', field.id, locale.code]" data-locale="{{locale.code}}")

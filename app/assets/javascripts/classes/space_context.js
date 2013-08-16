@@ -91,6 +91,9 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
                 self._publishedContentTypesHash = _(self.publishedContentTypes).map(function(ct) {
                   return [ct.data.sys.id, ct];
                 }).object().valueOf();
+                _.each(self._publishedContentTypesHash, function (val, id) {
+                  self._publishedContentTypeIsMissing[id] = false;
+                });
                 deferred.resolve(self.publishedContentTypes);
             }
           });
@@ -113,8 +116,17 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
         this.refreshPublishedContentTypes();
       },
 
+      _publishedContentTypeIsMissing: {},
+
       publishedTypeForEntry: function(entry) {
-        return this._publishedContentTypesHash[entry.getContentTypeId()];
+        var contentTypeId = entry.getContentTypeId();
+        var contentType   = this._publishedContentTypesHash[contentTypeId];
+
+        if (!contentType && !this._publishedContentTypeIsMissing[contentTypeId]) {
+          this._publishedContentTypeIsMissing[contentTypeId] = true;
+          this.refreshContentTypes();
+        }
+        return contentType;
       },
 
       localizedField: function(entity, path, locale) {

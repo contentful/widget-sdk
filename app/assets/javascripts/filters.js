@@ -55,3 +55,41 @@ filters.filter('isFileReady', function () {
     return file && !!file.url;
   };
 });
+
+filters.filter('fileType', function (mimetypeGroups) {
+  return function (file) {
+    if(file)
+      return mimetypeGroups.getDisplayName(
+        mimetypeGroups.getExtension(file.fileName),
+        file.contentType
+      );
+    return '';
+  };
+});
+
+filters.filter('fileExtension', function (mimetypeGroups) {
+  return function (file) {
+    if(file)
+      return mimetypeGroups.getExtension(file.fileName).slice(1) || '';
+    return '';
+  };
+});
+
+filters.filter('isFieldLink', function () {
+  return function (field) {
+    return field.type == 'Link' || field.type == 'Array' && field.items.type == 'Link';
+  };
+});
+
+filters.filter('isFieldBoolean', function () {
+  return function (field) {
+    return field.type == 'Boolean';
+  };
+});
+
+filters.filter('isFieldStringList', function () {
+  return function (field) {
+    return field.type == 'Array' && field.items.type == 'String';
+  };
+});
+

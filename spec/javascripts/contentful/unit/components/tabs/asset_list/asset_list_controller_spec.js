@@ -56,10 +56,4 @@ describe('Asset List Controller', function () {
     });
   });
 
-  it('file type group is returned for an asset', function () {
-    var asset = window.createMockEntity('asset1');
-    expect(scope.fileType(asset)).toBe('Image');
-  });
-
-
 });

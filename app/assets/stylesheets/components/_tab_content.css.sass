@@ -10,39 +10,24 @@ $left-nav-width: 17%
 $tab-main-margin-top: 28px
 
 .left-nav
-  position: absolute
-  left: 0
-  top: 0
-  bottom: 0
+  +stretch
   width: $left-nav-width
 .with-left-nav
-  position: absolute
-  left: $left-nav-width
-  right: 0
+  +stretch-x($left-nav-width, 0)
   //width: 100.1% - $left-nav-width  
 .expand-vertically
   top: 0
   bottom: 0
 
 .tab-header
-  position: absolute
-  left: 0
-  right: 0
-  top: 0
+  +stretch(0, 0, false, 0)
   height: $tab-header-height
   +border-radius(3px 3px 0 0)
 .tab-main
-  position: absolute
-  left: 0
-  right: 0
-  top: $tab-header-height
-  bottom: 0
+  +stretch($tab-header-height, 0, 0, 0)
   overflow-y: auto
 .tab-actions
-  position: absolute
-  left: 0
-  right: 0
-  bottom: 0
+  +stretch(false, 0, 0, 0)
   height: $tab-actions-height
 .aux-panel
   width: 20%

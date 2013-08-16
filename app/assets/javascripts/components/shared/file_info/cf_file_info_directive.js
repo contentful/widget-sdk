@@ -6,13 +6,12 @@ angular.module('contentful').directive('cfFileInfo', function () {
     template: JST['cf_file_info'],
     scope: {
       file: '=file',
-      removeLink: '&removeLink'
+      removeLink: '&removeLink',
+      editEntity: '&editEntity'
     },
     link: function (scope) {
-      // compatibility with cf_file_editor directive
       scope.hasFile = !!scope.file;
 
-      // TODO maybe refactor this so we can combine both directives and dont duplicate code
       scope.showMeta = false;
 
       scope.toggleMeta = function () {

@@ -182,18 +182,14 @@
     .uid,
     .auth_provider_name
       word-break: break-all
-      position: absolute
-      bottom: $identity-padding
-      left: $identity-padding + $identity-image-size + $identity-image-padding
-      right: $identity-padding
+      $offset-left: $identity-padding + $identity-image-size + $identity-image-padding
+      +stretch(false, $identity-padding, $identity-padding, $offset-left)
       overflow: hidden
       text-overflow: ellipsis
     .remove
       .ss-delete
         font-size: 1em
-      position: absolute
-      top: $identity-padding
-      right: $identity-padding
+      +stretch($identity-padding, $identity-padding, false, false)
       opacity: 0
       +transition(opacity 0.1s ease-in-out)
   .identity:hover
