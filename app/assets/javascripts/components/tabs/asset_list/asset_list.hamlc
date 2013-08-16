@@ -85,8 +85,8 @@
 .tab-actions
   .label {{selection.size()}} Assets selected
   .button-set(ng-controller="AssetListActionsCtrl"   ng-hide="selection.isEmpty()")
-    %button.delete(   ng-click="deleteSelected()"    ng-show="showDelete()"   ) Delete
-    %button.archive(  ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
-    %button.unarchive(ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
-    %button.unpublish(ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
-    %button.publish(  ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}
+    %button.delete(   type="button" ng-click="deleteSelected()"    ng-show="showDelete()"   ) Delete
+    %button.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
+    %button.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
+    %button.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
+    %button.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}

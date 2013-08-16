@@ -35,5 +35,5 @@
     %header You have no Content Types yet.
     %p
       Looks like you haven't created any Content Types yet.
-    %button(ng-click="createContentType()")
+    %button(type="button" ng-click="createContentType()")
       Create Content Type

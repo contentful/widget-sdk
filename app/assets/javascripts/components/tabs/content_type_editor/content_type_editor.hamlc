@@ -2,7 +2,8 @@
   %h1 {{contentType.getName()}}
 
   .editor-top-right
-    %button(ng-click="preferences.toggleAuxPanel()"
+    %button(type="button"
+            ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip-placement="left"
             tooltip="Toggle additional details")
@@ -45,7 +46,8 @@
 
 .tab-actions(ng-controller="ContentTypeActionsCtrl")
   .button-set
-    %button.delete(ng-show="canDelete()"
+    %button.delete(type="button"
+                   ng-show="canDelete()"
                    ng-click="delete()"
                    tooltip="Delete this Content Type")
       Delete

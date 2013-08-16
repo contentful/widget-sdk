@@ -78,7 +78,8 @@
                      tooltip="Make field mandatory")
             .validations
             .action
-              %button.button.new(ng-click="addField()"
+              %button.button.new(type="button"
+                                 ng-click="addField()"
                                  ng-disabled="!formValid"
                                  tooltip="Add this field"
                                  tooltip-placement="left")

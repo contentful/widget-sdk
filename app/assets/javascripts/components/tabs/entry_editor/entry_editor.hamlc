@@ -20,7 +20,8 @@
               Show disabled fields
 
   .editor-top-right
-    %button(ng-click="preferences.toggleAuxPanel()"
+    %button(type="button"
+            ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
             tooltip-placement="left")
@@ -76,15 +77,15 @@
 
 .tab-actions(ng-controller="EntryActionsCtrl")
   .button-set
-    %button.more(ng-click="showMoreButtons=!showMoreButtons" disable-tooltip="showMoreButtons"  tooltip="More actions")
+    %button.more(type="button" ng-click="showMoreButtons=!showMoreButtons" disable-tooltip="showMoreButtons"  tooltip="More actions")
       More
     .more-buttons.dropdown-menu.bottom-caret(ng-show="showMoreButtons" cf-click-outside="showMoreButtons=false" cf-click-outside-ignore=".more")
-      %button.duplicate(ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this entry"               ) Duplicate
-      %button.delete(   ng-show="canDelete()"    ng-click="delete()"    tooltip="Permanently delete this Entry"      ) Delete
-    %button.archive(    ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry"                 ) Archive
-    %button.archive(    ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry"               ) Unarchive
-    %button.unpublish(  ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry"               ) Unpublish
-    %button.publish(    ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Entry") {{publishButtonLabel()}}
+      %button.duplicate(type="button" ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this entry"               ) Duplicate
+      %button.delete(   type="button" ng-show="canDelete()"    ng-click="delete()"    tooltip="Permanently delete this Entry"      ) Delete
+    %button.archive(    type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry"                 ) Archive
+    %button.archive(    type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry"               ) Unarchive
+    %button.unpublish(  type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry"               ) Unpublish
+    %button.publish(    type="submit" ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Entry") {{publishButtonLabel()}}
   .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
                tooltip-placement="top")
   .other-users
