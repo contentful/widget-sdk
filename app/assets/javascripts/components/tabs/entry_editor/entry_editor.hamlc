@@ -8,7 +8,7 @@
         %span Show fields…
       .dropdown-menu(style="display:none")
         %ul(ng-show="showLangSwitcher")
-          %li(ng-repeat="locale in spaceContext.publishLocales")
+          %li(ng-repeat="locale in spaceContext.publishLocales track by locale.code")
             %label
               %input(type="checkbox" ng-model="spaceContext.localesActive[locale.code]")
               {{locale.name}}
@@ -51,12 +51,14 @@
       %label
       .form-controls
         .cf-validation-error-display.form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
-    .form-field(ng-repeat="field in fields"
+    .form-field(ng-repeat="field in fields track by field.id"
         data-field-id="{{field.id}}"
+        data-field-type="{{field.type}}"
+        data-field-items-type="{{field.items.type}}"
         ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
       %label {{field.name}}
       .form-controls
-        .locale(ng-repeat="locale in field.locales" ot-field-presence="['fields', field.id, locale.code]" data-locale="{{locale.code}}")
+        .locale(ng-repeat="locale in field.locales track by locale.code" ot-field-presence="['fields', field.id, locale.code]" data-locale="{{locale.code}}")
           .field-collaborators
             %ul
               %li.avatar.cf-user(ng-repeat="link in fieldPresence.users"

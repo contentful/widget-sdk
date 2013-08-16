@@ -8,4 +8,4 @@
 //= require_tree ./tutorial
 //= require filters
 //
-angular.module('contentful', ['contentful/environment']);
+angular.module('contentful', ['contentful/environment', 'ngRoute']);
