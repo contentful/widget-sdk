@@ -45,7 +45,7 @@
       %thead
         %tr
           %th.cell-select
-            %input(type="checkbox" cf-selection="" ng-show="entries.length > 0")
+            %input(type="checkbox" cf-selection="" ng-show="entries.length > 0" tabindex="-1")
           -#%th.cell-favorite
             %i.ss-star
           %th.cell-content-type Content Type
@@ -59,7 +59,7 @@
         %tbody
           %tr(ng-repeat="entry in visibleEntries = (entries | filter:visibleInCurrentList)" cf-click-local="editEntry(entry)")
             %td.cell-select(ng-click="selection.toggle(entry);$event.stopPropagation()")
-              %input(type="checkbox" cf-selection="entry")")
+              %input(type="checkbox" cf-selection="entry" tabindex="-1")
             -#%td.cell-favorite
               %i.ss-star
             %td.cell-content-type
