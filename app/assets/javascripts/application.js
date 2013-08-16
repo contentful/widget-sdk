@@ -40,7 +40,7 @@ angular.module('contentful/app', [
   'use strict';
   var env = environment.settings;
   $locationProvider.html5Mode(!!history.pushState).hashPrefix('!');
-  $sceDelegateProvider.resourceUrlWhitelist([ /flinkly.com|joistio.com|contentful.com(:\d+)?(\/|$)/, 'self' ]);
+  $sceDelegateProvider.resourceUrlWhitelist([ /staticflinkly-thriventures\.netdna-ssl\.com|flinkly.com|joistio.com|contentful.com(:\d+)?(\/|$)/, 'self' ]);
   clientProvider.endpoint('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');
   //analyticsProvider.forceLoad();
