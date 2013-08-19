@@ -37,11 +37,6 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
     });
   };
 
-  $scope.resetActionsDropdown = function () {
-    $scope.showMoreButtons = false;
-    $scope.deleteConfirm = false;
-  };
-
   $scope.archive = function() {
     $scope.entry.archive(function(err) {
       $scope.$apply(function() {
