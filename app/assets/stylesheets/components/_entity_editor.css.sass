@@ -1,6 +1,28 @@
 // Common styles for all kinds of editors
 
 %entity-editor
+  .dropdown-btn
+    display: inline-block
+    margin-right: 5px
+    vertical-align: middle
+  .dropdown-toggle
+    font-size: 12px
+    padding: 0 10px 0 11px
+    line-height: 32px
+    vertical-align: middle
+    i
+      color: darken($lightest-gray, 6%)
+      margin-left: 8px
+      margin-top: 1px
+  .dropdown-toggle:hover,
+  .active .dropdown-toggle
+    color: $dark-gray
+    +box-shadow(none)
+    i
+      color: $dark-gray
+  .dropdown-menu
+    margin-left: 10px
+
   .tab-main
     @extend .tab-workbench
   // Editor configuration
@@ -12,29 +34,6 @@
       text-overflow: ellipsis
   .editor-top-left
     display: inline-block
-    .dropdown-btn
-      display: inline-block
-      margin-right: 5px
-      vertical-align: middle
-    .dropdown-toggle
-      font-size: 12px
-      padding: 0 10px 0 11px
-      line-height: 32px
-      vertical-align: middle
-      +border-radius(3px 3px 3px 3px)
-      border: 1px solid $lightest-gray
-      i
-        color: darken($lightest-gray, 6%)
-        margin-left: 8px
-        margin-top: 1px
-    .dropdown-toggle:hover,
-    .active .dropdown-toggle
-      background-color: $gray-background
-      border: 1px solid $light-gray
-      border-bottom-color: $lightest-gray
-      i
-        color: $dark-gray
-
   .editor-top-right //TODO better move this stuff to AUX-Panel
     float: right
     height: 100%

@@ -24,6 +24,9 @@
     &:hover
       border-color: $light-gray
 
+=dropdown-padding
+  padding: 4px 12px
+
 // Dropdown Menu base and general modifiers
 .dropdown-menu
   position: absolute
@@ -38,12 +41,12 @@
   +box-shadow(0 2px 6px rgba(0,0,0,0.1))
   +border-radius(0 0 3px 3px)
   p
-    padding: 4px 12px
+    +dropdown-padding
   ul,
   ol
     +plain-list
   li
-    padding: 4px 12px
+    +dropdown-padding
     a
       display: block
     a:link,

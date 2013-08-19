@@ -19,7 +19,7 @@ angular.module('contentful').directive('dropdownBtn', function($parse) {
 
       var toggle = function() {
         isOpen = !isOpen;
-        if(!isOpen) onClose(scope);
+        if(!isOpen && onClose) onClose(scope);
       };
 
       element.find('.dropdown-toggle').click(function(event) {

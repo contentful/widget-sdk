@@ -77,13 +77,15 @@
 
 .tab-actions(ng-controller="EntryActionsCtrl")
   .button-set
-    .dropdown-btn(type="button" on-close="deleteConfirm=false; disableTooltip=false")
-      %button.dropdown-toggle(type="button" tooltip="More actions" ng-click="disableTooltip=true")
+    .dropdown-btn(on-close="deleteConfirm=false; disableTooltip=false")
+      %a.dropdown-toggle(tooltip="More actions" ng-click="disableTooltip=true")
+        %i.ss-dropdown
         More
-      .dropdown-menu(position="topcenter")
-        %button.duplicate(type="button" ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this entry" dropdown-close) Duplicate
-        %button.delete-confirm(type="button" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss" dropdown-close) Are you sure?
-        %button.delete(type="button" ng-show="canDelete() && !deleteConfirm" ng-click="deleteConfirm=true" tooltip="Permanently delete this Entry") Delete
+      .dropdown-menu(position="top")
+        %ul
+          %li.duplicate(type="button" ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this entry" dropdown-close) Duplicate
+          %li.delete-confirm(type="button" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss" dropdown-close) Are you sure?
+          %li.delete(type="button" ng-show="canDelete() && !deleteConfirm" ng-click="deleteConfirm=true" tooltip="Permanently delete this Entry") Delete
     %button.archive(type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry") Archive
     %button.archive(type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry") Unarchive
     %button.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry") Unpublish
