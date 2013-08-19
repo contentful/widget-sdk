@@ -11,7 +11,9 @@
 
   %link(href='//fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,700italic,400,700,600' rel='stylesheet' type='text/css')
 
-%body
+  %style#disable-outlines
+
+%body.cf-clear-outlines
   .client.ng-hide(ng-controller="ClientCtrl" ng-init="initClient()" ng-show="user")
     .notifications
       .notification(class="{{message.severity}}" ng-repeat="message in notification.unseen()")
