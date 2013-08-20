@@ -14,7 +14,7 @@ angular.module('contentful').directive('dropdownBtn', function($parse) {
 
       var close = function() {
         isOpen = false;
-        onClose(scope);
+        if(onClose) onClose(scope);
       };
 
       var toggle = function() {
