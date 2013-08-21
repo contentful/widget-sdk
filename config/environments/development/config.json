@@ -8,8 +8,8 @@
   "ot_host": "ot.joistio.com:8888",
   "filepicker": {
     "api_key": "AQGV4TMRPGovR9AIjMi6Az",
-    "policy": "eyJleHBpcnkiOjE1MzM3MTc2MDUsImNhbGwiOlsicGljayJdfQ==",
-    "signature": "6e93784fe287dd4b38dd41742a6e60c6fd180abd1ea567c1469dd8d18b90f739"
+    "policy": "eyJleHBpcnkiOjE1MzQ3NTM0NjIsImNhbGwiOlsicGljayIsInN0b3JlIl19",
+    "signature": "abc143fa9ea5fe44c399343c5c6e44f3b46ca63d751a6be6396a2124edb62af7"
   },
   "fog": {
     "s3": {
