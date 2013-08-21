@@ -1,6 +1,7 @@
-.drag-me Drag File to Upload
-.drop-me(style="display: none") Drop File to Upload
-.progress(style="display: none")
-  .filename
-  .percent
+.drag-me.center(ng-show="state=='drag'")
+  Drag File to Upload
+.button-container.center(ng-show="state=='drag'" ng-transclude)
+.drop-me.center.vcenter(ng-show="state=='drop'") Drop File to Upload
+.progress.center.vcenter(ng-show="state=='progress'")
+  %p {{filename}} <br /> {{percentage}}
 

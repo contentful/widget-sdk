@@ -3,7 +3,6 @@
     .vcenter(cf-thumbnail="file" ng-show="file.url")
   .file-spinner(ng-show="file|isFileProcessing")
     .status-text Processing…
-  -#.cf-file-drop(ng-show="!file")
   .file-metadata(ng-show="showMeta")
     %table
       %tr
@@ -24,8 +23,7 @@
   .no-file.center.vcenter(ng-hide="file || enableUpload")
     Asset has no file
 
-  .file-buttons(ng-class="{vcenter: !file && enableUpload, center: !file && enableUpload}")
-    %button.upload-button(type="button" ng-click="uploadFile()" ng-hide="file || !enableUpload") Upload File
+  .file-buttons
     %button.go-to-asset(type="button" ng-click="editEntity()" ng-show="!enableUpload" tooltip="Go to asset")
       %i.ss-action
     %a.as-button.download-file(type="button" href="{{file.url}}" target="_blank" ng-show="file|isFileReady" tooltip="Download file")
@@ -36,3 +34,7 @@
       %i.ss-trash
     %button.remove-link(type="button" ng-show="removeLink" ng-click="removeLink()" tooltip="Remove link")
       %i.ss-delete
+
+  .cf-file-drop(ng-show="!file")
+    %button.upload-button(type="button" ng-click="uploadFile()" ng-hide="file || !enableUpload") Or Open File Picker
+
