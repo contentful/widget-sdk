@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('newFieldFormCtrl', function ($scope, availableFieldTypes, toIdentifier, analytics, notification) {
+angular.module('contentful').controller('newFieldFormCtrl', function ($scope, availableFieldTypes, toIdentifier, analytics, notification, assert) {
   var defaultType = availableFieldTypes[0];
   $scope.newType = defaultType;
   resetNewField();
@@ -69,7 +69,9 @@ angular.module('contentful').controller('newFieldFormCtrl', function ($scope, av
 
   $scope.$watch(function (scope) {
     scope.idExists = _.find(scope.contentType.data.fields, function (field) {
-      return field.id == scope.newField.id;
+      assert.path(field, 'id', 'Failed to get content type field id');
+      assert.scopePath(scope, 'newField.id', 'Failed to get content type new field id');
+      return field && scope.newField && field.id == scope.newField.id;
     });
   });
 
