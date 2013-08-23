@@ -41,7 +41,8 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   });
 
   $scope.$watch('spaceContext.space', function (space) {
-    authorization.setSpace(space);
+    if(space && authorization.authContext.hasSpace(space.getId()))
+      authorization.setSpace(space);
   });
 
   function setSpace(space) {
