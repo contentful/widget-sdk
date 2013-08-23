@@ -12,6 +12,7 @@ angular.module('contentful').controller('FieldSettingsCtrl', function ($scope, g
   });
 
   $scope.enable = function() {
+    if (!$scope.otDoc) return false;
     $scope.otDoc.at(['fields', this.index, 'disabled']).set(false, function(err) {
       if (!err) $scope.$apply(function(scope) {
         scope.field.disabled = false;
@@ -21,6 +22,7 @@ angular.module('contentful').controller('FieldSettingsCtrl', function ($scope, g
   };
 
   $scope.disable = function() {
+    if (!$scope.otDoc) return false;
     $scope.otDoc.at(['fields', this.index, 'disabled']).set(true, function(err) {
       if (!err) $scope.$apply(function(scope) {
         scope.field.disabled = true;
@@ -30,6 +32,7 @@ angular.module('contentful').controller('FieldSettingsCtrl', function ($scope, g
   };
 
   $scope.delete = function() {
+    if (!$scope.otDoc) return false;
     $scope.otDoc.at(['fields', $scope.index]).remove(function (err) {
       if (!err) $scope.$apply(function(scope) {
         analytics.modifiedContentType('Modified ContentType', scope.contentType, scope.field, 'delete');
