@@ -63,7 +63,12 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
           scope.links.push(link);
         })));
       } else {
-        ShareJS.mkpath($scope.otDoc, $scope.otPath, [link], wrapply(cb(function(scope){
+        ShareJS.mkpath({
+          doc: $scope.otDoc,
+          path: $scope.otPath,
+          types: $scope.otPathTypes,
+          value: [link]
+        }, wrapply(cb(function(scope){
           scope.links = [link];
         })));
       }

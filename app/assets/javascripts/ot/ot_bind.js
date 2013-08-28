@@ -97,7 +97,12 @@ otModule.directive('otBindText', function(ShareJS, $sniffer, $parse) {
 
       function makeAndAttach(subdoc){
         if (!_.isString(ShareJS.peek(subdoc.doc, subdoc.path))) {
-          ShareJS.mkpath(scope.otDoc, subdoc.path, '', function() {
+          ShareJS.mkpath({
+            doc: scope.otDoc,
+            path: subdoc.path,
+            types: subdoc.types,
+            value: ''
+          }, function() {
             //console.log('attaching textarea %o to %o after mkPath', elm[0], subdoc.path, err);
           });
         }
