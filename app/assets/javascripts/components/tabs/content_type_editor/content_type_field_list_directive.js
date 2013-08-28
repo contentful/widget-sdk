@@ -29,6 +29,7 @@ angular.module('contentful').directive('contentTypeFieldList', function() {
               } else {
                 $(ui.item).insertAfter(body.children('.existing-field').at(oldIndex));
               }
+              throw err;
             } else {
               scope.$apply('otUpdateEntity()');
             }
