@@ -78,9 +78,12 @@ describe('otPath', function() {
         });
         scope.otChangeValue('bla');
         expect(mkpath).toHaveBeenCalled();
-        expect(mkpath.mostRecentCall.args[0]).toEqual(scope.otDoc);
-        expect(mkpath.mostRecentCall.args[1]).toEqual(scope.otPath);
-        expect(mkpath.mostRecentCall.args[2]).toEqual('bla');
+        expect(mkpath.mostRecentCall.args[0]).toEqual({
+          doc: scope.otDoc,
+          path: scope.otPath,
+          types: undefined,
+          value: 'bla'
+        });
       });
     });
   });
