@@ -38,7 +38,7 @@
       %thead
         %tr
           %th.cell-select
-            %input(type="checkbox" cf-selection="" ng-show="assets.length > 0")
+            %input(type="checkbox" cf-selection="" ng-show="assets.length > 0" tabindex="-1")
           -#%th.cell-favorite
             %i.ss-star
           %th.cell-preview Preview
@@ -53,7 +53,7 @@
         %tbody
           %tr(ng-repeat="asset in visibleAssets = (assets | filter:visibleInCurrentList)" cf-click-local="editAsset(asset)")
             %td.cell-select(ng-click="selection.toggle(asset);$event.stopPropagation()")
-              %input(type="checkbox" cf-selection="asset")")
+              %input(type="checkbox" cf-selection="asset" tabindex="-1")
             -#%td.cell-favorite
               %i.ss-star
             %td.cell-preview(ng-init="file=spaceContext.localizedField(asset, 'data.fields.file')" ng-class="{'no-padding': (!!file)}")
@@ -85,8 +85,8 @@
 .tab-actions
   .label {{selection.size()}} Assets selected
   .button-set(ng-controller="AssetListActionsCtrl"   ng-hide="selection.isEmpty()")
-    %button.delete(   ng-click="deleteSelected()"    ng-show="showDelete()"   ) Delete
-    %button.archive(  ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
-    %button.unarchive(ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
-    %button.unpublish(ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
-    %button.publish(  ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}
+    %button.delete(   type="button" ng-click="deleteSelected()"    ng-show="showDelete()"   ) Delete
+    %button.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
+    %button.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
+    %button.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
+    %button.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}

@@ -11,6 +11,10 @@ angular.module('contentful').directive('otPath', function(ShareJS, cfSpinner) {
       scope.$watch(attr['otPath'], function(otPath, old, scope) {
         scope.otPath = otPath;
       }, true);
+      scope.$watch(attr['otPathTypes'], function(otPathTypes, old, scope) {
+        scope.otPathTypes = otPathTypes;
+      }, true);
+
     },
     controller: function OtPathCtrl($scope) {
       $scope.$on('otRemoteOp', function (event, op) {
@@ -38,7 +42,12 @@ angular.module('contentful').directive('otPath', function(ShareJS, cfSpinner) {
             });
             //console.log('changin value returned %o %o in doc %o version %o', err, data, scope.otDoc, scope.otDoc.version);
           } catch(e) {
-            ShareJS.mkpath($scope.otDoc, $scope.otPath, value, function () {
+            ShareJS.mkpath({
+              doc: $scope.otDoc,
+              path: $scope.otPath,
+              types: $scope.otPathTypes,
+              value: value
+            }, function () {
               var callbackArgs = arguments;
               $scope.$apply(function () {
                 callback.apply(undefined, callbackArgs);

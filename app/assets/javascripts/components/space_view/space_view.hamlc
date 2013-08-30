@@ -6,33 +6,33 @@
                   'section-index': spaceContext.tabList.currentViewType() == 'content-type-list'}"
         ng-click="visitView('content-type-list')"
         ng-show="can('read', 'ContentType')"
-        data-view-type="content-type-list")
+        data-view-type="content-type-list"
+        tabindex="0")
       %i.ss-database
       .hint.tip.nav-models
         Content Types
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'entries',
                   'section-index': spaceContext.tabList.currentViewType() == 'entry-list'}"
         ng-click="visitView('entry-list')"
-        data-view-type="entry-list")
+        data-view-type="entry-list"
+        tabindex="0")
       %i.ss-file
       .hint.tip.nav-models
         Entries
-    %li(ng-show="user.features.showAssets" ng-class="{section: spaceContext.tabList.currentSection() == 'assets',
-                   'section-index': spaceContext.tabList.currentViewType() == 'asset-list'}"
+    %li(ng-class="{section: spaceContext.tabList.currentSection() == 'assets',
+                 'section-index': spaceContext.tabList.currentViewType() == 'asset-list'}"
         ng-click="visitView('asset-list')"
-        data-view-type="asset-list")
+        data-view-type="asset-list"
+        tabindex="0")
       %i.ss-attach
       .hint.tip.nav-models
         Assets
-    %li(ng-hide="user.features.showAssets")
-      %i.ss-attach
-      .hint.tip.nav-models
-        Assets not available yet, coming soon
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'apiKeys',
                    'section-index': spaceContext.tabList.currentViewType() == 'api-key-list'}"
         ng-click="visitView('api-key-list')"
         ng-show="can('update', 'ApiKey')"
-        data-view-type="api-key-list")
+        data-view-type="api-key-list"
+        tabindex="0")
       %i.ss-fork
       .hint.tip.nav-models
         Content Delivery
@@ -40,7 +40,8 @@
                   'section-index': spaceContext.tabList.currentSection() == 'spaceSettings'}"
         ng-click="visitView('space-settings')"
         ng-show="can('update', 'Settings')"
-        data-view-type="space-settings")
+        data-view-type="space-settings"
+        tabindex="0")
       %i.ss-settings
       .hint.tip.nav-models
         Space Settings
@@ -50,7 +51,8 @@
     %li.tab(ng-repeat="tabItem in spaceContext.tabList.items"
             ng-class="{active: tabItem.active(), dirty: tabItem.dirty}"
             ng-click="tabItem.activate()"
-            ng-hide="tabItem.hidden")
+            ng-hide="tabItem.hidden"
+            tabindex="0")
       %span.tab-title {{tabItem.title}}
       %em.fade-text
       .close(cf-click-local="tabItem.close()"

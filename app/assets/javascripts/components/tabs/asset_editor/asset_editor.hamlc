@@ -14,7 +14,8 @@
               {{locale.name}}
               %span(ng-show="locale == spaceContext.space.getDefaultLocale()") (default)
   .editor-top-right
-    %button(ng-click="preferences.toggleAuxPanel()"
+    %button(type="button"
+            ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
             tooltip-placement="left")
@@ -50,11 +51,12 @@
 
 .tab-actions(ng-controller="AssetActionsCtrl")
   .button-set
-    %button.delete(   ng-show="canDelete()"    ng-click="delete()"    tooltip="Permanently delete this Asset"      ) Delete
-    %button.archive(  ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
-    %button.archive(  ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
-    %button.unpublish(ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish
-    %button.publish(  ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Asset") {{publishButtonLabel()}}
+    %button.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss") Are you sure?
+    %button.delete(   type="button" ng-show="canDelete() && !deleteConfirm" ng-click="deleteConfirm=true" tooltip="Permanently delete this Asset") Delete
+    %button.archive(  type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
+    %button.archive(  type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
+    %button.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish
+    %button.publish(  type="submit" ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Asset") {{publishButtonLabel()}}
   .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
                tooltip-placement="top")
   .other-users

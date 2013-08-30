@@ -4,6 +4,7 @@
   %input(ng-model="field.name"
          ng-disabled="!otEditable"
          ot-path="['fields', index, 'name']"
+         ot-path-types="['Array', 'Object', 'String']"
          ot-subdoc ot-bind-text type="text"
          tooltip-placement="right"
          tooltip="Field title displayed to editors")
@@ -17,12 +18,12 @@
     ng-disabled="!displayEnabled(field) || !otEditable"
     ot-bind-model tooltip-placement="left"
     tooltip="Use as title in interface")
-.localized(ot-path="['fields', index, 'localized']")
+.localized(ot-path="['fields', index, 'localized']" ot-path-types="['Array', 'Object', 'Boolean']")
   %input(type="checkbox" ng-model="value" ot-bind-model
          tooltip-placement="left"
          ng-disabled="!otEditable"
          tooltip="Content in this field is localized")
-.required(ot-path="['fields', index, 'required']")
+.required(ot-path="['fields', index, 'required']" ot-path-types="['Array', 'Object', 'Boolean']")
   %input(type="checkbox" ng-model="value" ot-bind-model
          tooltip-placement="left"
          ng-disabled="!otEditable"

@@ -15,12 +15,18 @@
         %i.ss-delete(ng-click="removeLink(index, entity)" ng-show="otEditable")
 .cf-link-editor-search(cf-autocomplete-results="entities" autocomplete-term="searchTerm")
   .controls(ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
+    .search-field(ng-submit="submit()"
+                  search="searchTerm"
+                  search-type-ahead=""
+                  placeholder="Search for {{linkType}}"
+                  tooltip-placement="top"
+                  tooltip="Search for existing {{linkType}}")
     %ng-switch(on="linkType")
       .dropdown-btn.add-new(ng-switch-when="Entry"
                             ng-hide="linkContentType"
                             tooltip="Add new {{linkType}}"
                             tooltip-placement="left")
-        %button.dropdown-toggle
+        %button.dropdown-toggle(type="button")
           %i.ss-plus
           New
         %a.dropdown-menu
@@ -29,15 +35,9 @@
                 ng-click="addNewEntry(contentType)"
                 dropdown-close="")
               {{contentType.getName()}}
-      %button.add-new.with-link-content-type(ng-switch-default="" ng-click="addNewAsset()")
+      %button.add-new.with-link-content-type(type="button" ng-switch-default="" ng-click="addNewAsset()")
         %i.ss-plus
         New
-    .search-field(ng-submit="submit()"
-                  search="searchTerm"
-                  search-type-ahead=""
-                  placeholder="Search for {{linkType}}"
-                  tooltip-placement="top"
-                  tooltip="Search for existing {{linkType}}")
 
   .results.search-options-on(ng-show="entities && entities.length > 0" ng-switch="linkType" cf-click-outside="searchTerm=''")
     %div(ng-switch-when="Entry")

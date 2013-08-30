@@ -8,6 +8,7 @@
 @import "compass/css3/user-interface"
 @import "compass/layout/stretching"
 @import "compass/utilities/general/clearfix"
+@import "flex"
 
 =plain-list
   margin: 0
@@ -45,6 +46,9 @@
 =fade-text-background($color)
   +background-image(linear-gradient(left,  rgba($color, 0) 0%, $color 50%, $color 100%))
 
+=focus-styles
+  outline: 1px dotted
+  outline: -webkit-focus-ring-color auto 5px
 
 $caret-size: 10px
 =caret

@@ -22,8 +22,8 @@
 //
 //= require hamlcoffee
 //
-//= require angular-1.0.7
-// require angular-1.1.5
+//= require angular
+//= require angular-route
 //= require contentful
 //= require environment
 //= require ng-time-relative
@@ -36,10 +36,11 @@ angular.module('contentful/app', [
   'timeRelative',
   'contentful/user_interface',
   'contentful'
-], function($locationProvider, clientProvider, authenticationProvider, analyticsProvider, environment){
+], function($locationProvider, clientProvider, authenticationProvider, analyticsProvider, environment, $sceDelegateProvider){
   'use strict';
   var env = environment.settings;
   $locationProvider.html5Mode(!!history.pushState).hashPrefix('!');
+  $sceDelegateProvider.resourceUrlWhitelist([ /staticflinkly-thriventures\.netdna-ssl\.com|flinkly.com|joistio.com|contentful.com(:\d+)?(\/|$)/, 'self' ]);
   clientProvider.endpoint('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');
   //analyticsProvider.forceLoad();

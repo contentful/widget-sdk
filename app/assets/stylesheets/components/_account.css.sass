@@ -21,12 +21,13 @@ $account-border-color: #d5d5d5
 
 // Concrete project and user buttons
 .account
+  +flexbox
   .dropdown-menu
     top: 37px
   .project
-    float: right
     width: 60%
-    margin-right: -1px
+    position: relative
+    left: 1px
     span
       margin-right: 11px
     .dropdown-menu
@@ -34,7 +35,6 @@ $account-border-color: #d5d5d5
     .dropdown-toggle
       border-right: 1px solid $account-border-color
   .user
-    float: right
     width: 30%
     img
       vertical-align: middle
@@ -48,6 +48,7 @@ $account-border-color: #d5d5d5
     //line-height: 27px
     //padding: 5px 10px 4px
     //float: right
+    float: left
     padding-right: 0
     padding-left: 0
     em

@@ -45,7 +45,7 @@
       %thead
         %tr
           %th.cell-select
-            %input(type="checkbox" cf-selection="" ng-show="entries.length > 0")
+            %input(type="checkbox" cf-selection="" ng-show="entries.length > 0" tabindex="-1")
           -#%th.cell-favorite
             %i.ss-star
           %th.cell-content-type Content Type
@@ -59,7 +59,7 @@
         %tbody
           %tr(ng-repeat="entry in visibleEntries = (entries | filter:visibleInCurrentList)" cf-click-local="editEntry(entry)")
             %td.cell-select(ng-click="selection.toggle(entry);$event.stopPropagation()")
-              %input(type="checkbox" cf-selection="entry")")
+              %input(type="checkbox" cf-selection="entry" tabindex="-1")
             -#%td.cell-favorite
               %i.ss-star
             %td.cell-content-type
@@ -84,16 +84,16 @@
         %header You have no Entries yet.
         %p(ng-show="spaceContext.publishedContentTypes.length == 0")
           To create an Entry, first create and activate a Content Type.
-        %button(ng-click="createContentType()" ng-show="spaceContext.publishedContentTypes.length == 0")
+        %button(type="button" ng-click="createContentType()" ng-show="spaceContext.publishedContentTypes.length == 0")
           Create a Content Type
         %p(ng-hide="spaceContext.publishedContentTypes.length == 0")
           To create an Entry, use the Add-Button near the top of the screen.
 .tab-actions
   .label {{selection.size()}} Entries selected
   .button-set(ng-controller="EntryListActionsCtrl"   ng-hide="selection.isEmpty()")
-    %button.delete(   ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
-    %button.delete(   ng-click="deleteSelected()"    ng-show="showDelete()"   ) Delete
-    %button.archive(  ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
-    %button.unarchive(ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
-    %button.unpublish(ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
-    %button.publish(  ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}
+    %button.delete(   type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
+    %button.delete(   type="button" ng-click="deleteSelected()"    ng-show="showDelete()"   ) Delete
+    %button.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
+    %button.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
+    %button.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
+    %button.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}

@@ -59,7 +59,6 @@
                 .dropdown-menu
                   %ul
                     %li(ng-repeat="type in availableTypes"
-                        ng-hide="!user.features.showAssets && type.featureFlagged"
                         ng-click="selectType(type)"
                         dropdown-close="")
                       %span {{type.name}}
@@ -78,7 +77,8 @@
                      tooltip="Make field mandatory")
             .validations
             .action
-              %button.button.new(ng-click="addField()"
+              %button.button.new(type="button"
+                                 ng-click="addField()"
                                  ng-disabled="!formValid"
                                  tooltip="Add this field"
                                  tooltip-placement="left")

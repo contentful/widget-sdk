@@ -13,7 +13,7 @@
 #
 # This algorithm is O(N), but I suspect you could speed it up somehow using regular expressions.
 applyChange = (doc, oldval, newval) ->
-  return if oldval == newval
+  return if oldval == newval or oldval is null
   commonStart = 0
   commonStart++ while oldval.charAt(commonStart) == newval.charAt(commonStart)
 

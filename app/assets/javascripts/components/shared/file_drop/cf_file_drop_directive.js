@@ -3,42 +3,40 @@
 angular.module('contentful').directive('cfFileDrop', function (filepicker, notification) {
   return {
     restrict: 'C',
+    transclude: true,
     template: JST['cf_file_drop'],
     link: function (scope, elem) {
+      scope.state = 'drag';
       filepicker.makeDropPane(elem[0], {
         multiple: false,
         dragEnter: function() {
-          elem.find('.drag-me').hide();
-          elem.find('.drop-me').show();
+          scope.$apply('state="drop"');
         },
         dragLeave: function() {
-          elem.find('.drag-me').show();
-          elem.find('.drop-me').hide();
+          scope.$apply('state="drag"');
         },
         onSuccess: function(InkBlobs) {
-          elem.find('.drag-me').show();
-          elem.find('.drop-me').hide();
-          elem.find('.progress').hide();
           scope.$apply(function () {
+            scope.state = 'drag';
             scope.$emit('cfFileDropped', InkBlobs[0]);
           });
         },
         onError: function(type, message) {
-          elem.find('.drag-me').show();
-          elem.find('.drop-me').hide();
-          elem.find('.progress').hide();
           scope.$apply(function () {
+            scope.state = 'drag';
             notification.error('Upload failed: ' + message );
           });
         },
         onStart: function (files) {
-          elem.find('.drag-me').hide();
-          elem.find('.drop-me').hide();
-          elem.find('.progress').show();
-          elem.find('.filename').html(files[0].name);
+          scope.$apply(function () {
+            scope.state = 'progress';
+            scope.filename = files[0].name;
+          });
         },
         onProgress: function(percentage) {
-          elem.find('.percent').html(percentage);
+          scope.$apply(function () {
+            scope.percentage = percentage;
+          });
         }
       });
     }

@@ -34,14 +34,15 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   }, function (tokenLookup, old, scope) {
     if (tokenLookup) {
       // async because space is probably only updated after the next iteration
-      scope.$evalAsync(function (scope) {
+      scope.$evalAsync(function () {
         authorization.setTokenLookup(tokenLookup, scope.spaceContext.space);
       });
     }
   });
 
   $scope.$watch('spaceContext.space', function (space) {
-    authorization.setSpace(space);
+    if(space && authorization.authContext.hasSpace(space.getId()))
+      authorization.setSpace(space);
   });
 
   function setSpace(space) {

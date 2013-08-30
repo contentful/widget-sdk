@@ -2,21 +2,13 @@
   %h1
     {{headline()}}
   .editor-top-left
-    -#.dropdown-btn
-      %a.btn.dropdown-toggle
-        %i.ss-dropdown
-        %span Default-Interface
-      .dropdown-menu(style="display:none")
-        …
-        …
-        …
     .dropdown-btn
       %a.dropdown-toggle
         %i.ss-dropdown
         %span Show fields…
       .dropdown-menu(style="display:none")
         %ul(ng-show="showLangSwitcher")
-          %li(ng-repeat="locale in spaceContext.publishLocales")
+          %li(ng-repeat="locale in spaceContext.publishLocales track by locale.code")
             %label
               %input(type="checkbox" ng-model="spaceContext.localesActive[locale.code]")
               {{locale.name}}
@@ -28,7 +20,8 @@
               Show disabled fields
 
   .editor-top-right
-    %button(ng-click="preferences.toggleAuxPanel()"
+    %button(type="button"
+            ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
             tooltip-placement="left")
@@ -59,12 +52,14 @@
       %label
       .form-controls
         .cf-validation-error-display.form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
-    .form-field(ng-repeat="field in fields"
+    .form-field(ng-repeat="field in fields track by field.id"
         data-field-id="{{field.id}}"
+        data-field-type="{{field.type}}"
+        data-field-items-type="{{field.items.type}}"
         ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
       %label {{field.name}}
       .form-controls
-        .locale(ng-repeat="locale in field.locales" ot-field-presence="['fields', field.id, locale.code]" data-locale="{{locale.code}}")
+        .locale(ng-repeat="locale in field.locales track by locale.code" ot-field-presence="['fields', field.id, locale.code]" data-locale="{{locale.code}}")
           .field-collaborators
             %ul
               %li.avatar.cf-user(ng-repeat="link in fieldPresence.users"
@@ -82,12 +77,19 @@
 
 .tab-actions(ng-controller="EntryActionsCtrl")
   .button-set
-    %button.delete(   ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this entry"               ) Duplicate
-    %button.delete(   ng-show="canDelete()"    ng-click="delete()"    tooltip="Permanently delete this Entry"      ) Delete
-    %button.archive(  ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry"                 ) Archive
-    %button.archive(  ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry"               ) Unarchive
-    %button.unpublish(ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry"               ) Unpublish
-    %button.publish(  ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Entry") {{publishButtonLabel()}}
+    .dropdown-btn(on-close="deleteConfirm=false; disableTooltip=false")
+      %a.dropdown-toggle(tooltip="More actions" ng-click="disableTooltip=true")
+        %i.ss-dropdown
+        More
+      .dropdown-menu(position="top")
+        %ul
+          %li.duplicate(type="button" ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this entry" dropdown-close) Duplicate
+          %li.delete-confirm(type="button" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss" dropdown-close) Are you sure?
+          %li.delete(type="button" ng-show="canDelete() && !deleteConfirm" ng-click="deleteConfirm=true" tooltip="Permanently delete this Entry") Delete
+    %button.archive(type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry") Archive
+    %button.archive(type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry") Unarchive
+    %button.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry") Unpublish
+    %button.publish(type="submit" ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Entry") {{publishButtonLabel()}}
   .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
                tooltip-placement="top")
   .other-users

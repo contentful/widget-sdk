@@ -55,7 +55,10 @@
       width: 60px
     .nav-ship
       width: 60px
-  li:hover
+  li:focus
+    +focus-styles
+  li:hover,
+  li:focus
     .tip
       opacity: 1
       left: 58px

@@ -12,7 +12,7 @@ angular.module('contentful').
         this.setSpace(space);
       },
       setSpace: function (space) {
-        if (space) {
+        if (space && this.authContext) {
           this.spaceContext = this.authContext.space(space.getId());
         } else {
           this.spaceContext = null;

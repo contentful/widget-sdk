@@ -5,22 +5,30 @@ angular.module('contentful').
     return {
       restrict: 'A',
       link: function(scope, element, attrs) {
+        scope.disableTooltip = false;
+        element = $(element);
         function destroy() {
-          $(element).tooltip('destroy');
+          element.tooltip('destroy');
         }
 
-        attrs.$observe('tooltip', function() {
+        function createTooltip() {
           destroy();
-          $(element).tooltip({
+          element.tooltip({
             delay: {show: 100, hide: 100},
             placement: attrs.tooltipPlacement,
             title: attrs.tooltip
           });
-        });
+        }
 
-        scope.$watch(attrs.ngDisabled, function(disabled) {
-          if (disabled) $(element).tooltip('hide');
-        });
+        attrs.$observe('tooltip', createTooltip);
+
+        scope.$watch('disableTooltip', disableHandler);
+        scope.$watch(attrs.ngDisabled, disableHandler);
+
+        function disableHandler(disabled) {
+          if(disabled) destroy();
+          if(!disabled) createTooltip();
+        }
 
         element.on('$destroy', destroy);
       }

@@ -37,5 +37,5 @@
       %header There are no API Keys yet.
       %p
         Looks like you haven't created any API Keys yet.
-      %button(ng-click="createApiKey()")
+      %button(type="button" ng-click="createApiKey()")
         Create API Key

@@ -156,7 +156,7 @@ describe('cf LinkEditor controller', function () {
         var callbackSpy = makeCallbackSpy(addLinkDeferred);
         var linkedEntitiesDeferred = makeLinkedEntitiesDeferred();
         shareJSMock.peek.returns({});
-        shareJSMock.mkpath.callsArgAsync(3);
+        shareJSMock.mkpath.callsArgAsync(1);
 
         $q.all([addLinkDeferred.promise, linkedEntitiesDeferred.promise]).then(function () {
           expect(scope.updateModel.called).toBeTruthy();

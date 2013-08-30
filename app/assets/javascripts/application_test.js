@@ -22,7 +22,8 @@
 //
 //= require hamlcoffee
 //
-//= require angular-1.0.7
+//= require angular
+//= require angular-route
 //= require contentful
 //= require environment
 //= require ng-time-relative
@@ -37,10 +38,11 @@ angular.module('contentful/test', [
   'contentful/user_interface',
   'contentful',
   'contentful/mocks'
-], function($locationProvider, clientProvider, authenticationProvider, environment){
+], function($locationProvider, clientProvider, authenticationProvider, environment, $sceDelegateProvider){
   'use strict';
   var env = environment.settings;
   $locationProvider.html5Mode(true);
+  $sceDelegateProvider.resourceUrlWhitelist([ /flinkly.com|joistio.com|contentful.com(:\d+)?(\/|$)/, 'self' ]);
   clientProvider.endpoint('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');
 });
