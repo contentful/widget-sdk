@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorCtrl($scope, ShareJS, validation, can, AssetContentType, notification) {
+angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorCtrl($scope, validation, can, AssetContentType, notification) {
   $scope.$watch('tab.params.asset', 'asset=tab.params.asset');
   $scope.$watch(function assetEditorEnabledWatcher(scope) {
     return !scope.asset.isArchived() && can('update', scope.asset.data);

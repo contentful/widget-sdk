@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorCtrl($scope, ShareJS, validation, can) {
+angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorCtrl($scope, validation, can) {
   $scope.$watch('tab.params.entry', 'entry=tab.params.entry');
   $scope.$watch(function entryEditorEnabledWatcher(scope) {
     return !scope.entry.isArchived() && can('update', scope.entry.data);
