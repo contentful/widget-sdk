@@ -90,9 +90,10 @@ otModule.directive('otBindText', function(ShareJS, $sniffer, $parse) {
 
       // TODO remove last remaining use of otTextIdle
 
-      scope.$watch('otSubdoc', function(otSubdoc){
-        if (!otSubdoc) detach();
-        else if (needsAttach()) attach();
+      scope.$watch('otSubdoc', function(){
+        //console.log('otBindText subdoc changed, reattaching');
+        if (needsDetach()) detach();
+        if (needsAttach()) attach();
       });
 
       scope.$on('$destroy', detach);
