@@ -15,6 +15,8 @@ angular.module('contentful').directive('otPath', function(ShareJS, cfSpinner) {
         scope.otPathTypes = otPathTypes;
       }, true);
 
+      scope.otPath = scope.$eval(attr['otPath']);
+      scope.otPathTypes = scope.$eval(attr['otPathTypes']);
     },
     controller: function OtPathCtrl($scope) {
       $scope.$on('otRemoteOp', function (event, op) {
