@@ -20,8 +20,8 @@
           %a(href="{{exampleUrl}}" target="_blank") Access Published Entries
           %span or via curl:
           %pre
-            curl {{exampleUrl}}
-    
+            curl {{exampleUrl|urlDisplay}}
+
 .tab-actions
   .button-set
     %button.delete(type="button"
