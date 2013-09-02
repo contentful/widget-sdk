@@ -83,7 +83,7 @@
         More
       .dropdown-menu(position="top")
         %ul
-          %li.duplicate(type="button" ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this entry" dropdown-close) Duplicate
+          %li.duplicate(type="button" ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this Entry" dropdown-close) Duplicate
           %li.delete-confirm(type="button" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss" dropdown-close) Are you sure?
           %li.delete(type="button" ng-show="canDelete() && !deleteConfirm" ng-click="deleteConfirm=true" tooltip="Permanently delete this Entry") Delete
     %button.archive(type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry") Archive

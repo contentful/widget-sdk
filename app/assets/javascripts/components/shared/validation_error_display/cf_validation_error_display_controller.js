@@ -9,7 +9,7 @@ angular.module('contentful').controller('CfValidationErrorDisplayCtrl', function
         return ct.getId() === v.contentTypeId;
       });
       if (!ct) return 'Invalid Content Type';
-      return 'Linked entry\'s Content Type must be ' + ct.getName() + '.';
+      return 'Linked Entry\'s Content Type must be ' + ct.getName() + '.';
     },
     size: function (v) {
       var data = getData(v);

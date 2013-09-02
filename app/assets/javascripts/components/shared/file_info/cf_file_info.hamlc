@@ -24,7 +24,7 @@
     Asset has no file
 
   .file-buttons
-    %button.go-to-asset(type="button" ng-click="editEntity()" ng-show="!enableUpload" tooltip="Go to asset")
+    %button.go-to-asset(type="button" ng-click="editEntity()" ng-show="!enableUpload" tooltip="Go to Asset")
       %i.ss-action
     %a.as-button.download-file(type="button" href="{{file.url}}" target="_blank" ng-show="file|isFileReady" tooltip="Download file")
       %i.ss-download

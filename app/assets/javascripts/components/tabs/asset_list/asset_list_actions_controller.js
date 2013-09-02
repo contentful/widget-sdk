@@ -52,9 +52,9 @@ angular.module('contentful').controller('AssetListActionsCtrl', function AssetLi
       var failed = _.filter(results, hasFailed);
       var succeeded = _.reject(results, hasFailed);
       if (succeeded.length > 0)
-        notification.info(succeeded.length + ' assets ' + word + ' successfully');
+        notification.info(succeeded.length + ' Assets ' + word + ' successfully');
       if (failed.length > 0)
-        notification.error(failed.length + ' assets could not be ' + word);
+        notification.error(failed.length + ' Assets could not be ' + word);
     };
   }
 

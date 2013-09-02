@@ -29,7 +29,7 @@
     .form-field
       %label Description
       .form-controls(ot-path="['description']" ot-subdoc)
-        %textarea(placeholder="Describe the purpose of entries using this Content Type"
+        %textarea(placeholder="Describe the purpose of Entries using this Content Type"
                   name="contentTypeDescription"
                   ng-disabled="!otEditable"
                   ng-model="contentType.data.description"
@@ -60,5 +60,5 @@
                     ng-click="publish()"
                     tooltip="Make this Content Type available to editors")
       {{publishButtonLabel()}}
-  .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to create entries of this Content Type."
+  .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to create Entries of this Content Type."
                tooltip-placement="top")

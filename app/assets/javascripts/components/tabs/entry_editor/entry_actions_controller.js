@@ -12,7 +12,7 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
     $scope.entry.delete(function (err, entry) {
       $scope.$apply(function (scope) {
         if (err) {
-          notification.error('Error deleting entry');
+          notification.error('Error deleting Entry');
         }else{
           notification.info('Entry deleted successfully');
           scope.broadcastFromSpace('entityDeleted', entry);

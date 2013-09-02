@@ -12,7 +12,7 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
     $scope.asset.delete(function (err, asset) {
       $scope.$apply(function (scope) {
         if (err) {
-          notification.error('Error deleting asset');
+          notification.error('Error deleting Asset');
         }else{
           notification.info('Asset deleted successfully');
           scope.broadcastFromSpace('entityDeleted', asset);

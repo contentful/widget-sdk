@@ -52,9 +52,9 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
       var failed = _.filter(results, hasFailed);
       var succeeded = _.reject(results, hasFailed);
       if (succeeded.length > 0)
-        notification.info(succeeded.length + ' entries ' + word + ' successfully');
+        notification.info(succeeded.length + ' Entries ' + word + ' successfully');
       if (failed.length > 0)
-        notification.error(failed.length + ' entries could not be ' + word);
+        notification.error(failed.length + ' Entries could not be ' + word);
     };
   }
 
