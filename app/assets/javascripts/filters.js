@@ -69,8 +69,10 @@ filters.filter('fileType', function (mimetypeGroups) {
 
 filters.filter('fileExtension', function (mimetypeGroups) {
   return function (file) {
-    if(file)
-      return mimetypeGroups.getExtension(file.fileName).slice(1) || '';
+    if(file){
+      var ext = mimetypeGroups.getExtension(file.fileName);
+      return ext ? ext.slice(1) : '';
+    }
     return '';
   };
 });

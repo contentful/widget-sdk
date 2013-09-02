@@ -26,7 +26,7 @@ otModule.directive('otBindText', function(ShareJS, $sniffer, $parse) {
       }
 
       function needsDetach() {
-        return !_.isString(ngModelCtrl.$modelValue) && unbindTextField;
+        return !_.isString(ngModelCtrl.$modelValue) && (!!unbindTextField);
       }
 
       function attach() {
@@ -46,11 +46,11 @@ otModule.directive('otBindText', function(ShareJS, $sniffer, $parse) {
 
       var originalRender = ngModelCtrl.$render;
       ngModelCtrl.$render = function () {
-        //console.log('original render', scope.$id, scope.otPath);
+        //console.log('calling original render on scope %o, path %o', scope.$id, scope.otPath);
         originalRender();
-        //console.log('render, needs attach?');
+        //console.log('render, needs attach?', needsAttach() ? 'true, attaching' : 'false');
         if (needsAttach()) return attach();
-        //console.log('render, needs detach?');
+        //console.log('render, needs detach?', needsDetach() ? 'true, detaching' : 'false');
         if (needsDetach()) return detach();
       };
 
@@ -66,21 +66,23 @@ otModule.directive('otBindText', function(ShareJS, $sniffer, $parse) {
 
       ngModelCtrl.$viewChangeListeners.push(function () {
         //var value = ngModelCtrl.$viewValue;
-        //console.log('viewChangeListender', ngModelCtrl.$viewValue);
-        //console.log('viewChangeListender,needs attach?');
+        //console.log('viewChangeListener triggered with', ngModelCtrl.$viewValue);
+        //console.log('viewChangeListener, needs attach?');
         if (needsAttach()) {
           attach();
-          //console.log('viewChangeListender, resetting val to', ngModelCtrl.$viewValue);
+          //console.log('viewChangeListener attached, resetting element value to modelCtrl.$viewValue', ngModelCtrl.$viewValue);
           elm.val(ngModelCtrl.$viewValue);
-          //console.log('viewChangeListender, trigger change');
+          //console.log('viewChangeListener, trigger change event on element');
           elm.trigger('change');
-        } else if (/*console.log('viewChangeListender, needs detach?'), */needsDetach()) {
+        //} else if (console.log('viewChangeListender, needs detach?', needsDetach()), needsDetach()) {
+        } else if (needsDetach()) {
           detach();
-          //console.log('viewChangeListender, otChangeValue to null');
+          //console.log('viewChangeListender detached, otChangeValue to null');
           // This needs to be deferred, because the OT change operation triggered by this keypress
           // is also deferred. If we would change the value to null now, some code in attach_textarea
           // would try to access null as a string in the next tick:
           _.defer(function () {
+            //console.log('deferred otChangeValue to null running now');
             scope.otChangeValue(null);
           });
         }
@@ -88,9 +90,10 @@ otModule.directive('otBindText', function(ShareJS, $sniffer, $parse) {
 
       // TODO remove last remaining use of otTextIdle
 
-      scope.$watch('otSubdoc', function(otSubdoc){
-        if (!otSubdoc) detach();
-        else if (needsAttach()) attach();
+      scope.$watch('otSubdoc', function(){
+        //console.log('otBindText subdoc changed, reattaching');
+        if (needsDetach()) detach();
+        if (needsAttach()) attach();
       });
 
       scope.$on('$destroy', detach);

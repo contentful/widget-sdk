@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeEditorCtrl', function ContentTypeEditorCtrl($scope, ShareJS, availableFieldTypes, validation, can) {
+angular.module('contentful').controller('ContentTypeEditorCtrl', function ContentTypeEditorCtrl($scope, availableFieldTypes, validation, can) {
   $scope.availableTypes = availableFieldTypes;
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
 

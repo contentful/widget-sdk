@@ -88,7 +88,7 @@ angular.module('contentful').directive('otDocFor', function () {
     var entity = otGetEntity();
     if (entity && $scope.otDoc) {
       //console.log('otUpdateEntity did update', entity.data, $scope.otDoc.snapshot);
-      entity.update($scope.otDoc.snapshot);
+      entity.update(_.cloneDeep($scope.otDoc.snapshot));
     } else {
       console.warn('otUpdateEntity did not update', entity, $scope.otDoc);
     }

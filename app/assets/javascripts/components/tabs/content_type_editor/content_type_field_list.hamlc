@@ -16,7 +16,7 @@
       %th.cell.action
         %span(ng-show="hasFields") Editable
   %tbody
-    %tr.existing-field(ng-repeat="(index, field) in contentType.data.fields")
+    %tr.existing-field(ng-repeat="(index, field) in contentType.data.fields track by field.id")
       %td(colspan="9")
         .field-settings
         .field-validations(ng-show="showValidations(field.id)")
@@ -58,7 +58,7 @@
                   {{newType.name}}
                 .dropdown-menu
                   %ul
-                    %li(ng-repeat="type in availableTypes"
+                    %li(ng-repeat="type in availableTypes track by type.name"
                         ng-click="selectType(type)"
                         dropdown-close="")
                       %span {{type.name}}
