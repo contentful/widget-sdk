@@ -6,31 +6,13 @@ describe('Entry Editor Controller', function () {
 
   beforeEach(inject(function ($compile, $rootScope, $controller, cfStub){
     scope = $rootScope;
-    var locale = cfStub.locale('en-US');
-    var contentType = {
-      data: {
-        fields: []
-      }
-    };
-    var entry = {
-      data: {
-        fields: {},
-        sys: {publishedVersion: 1}
-      },
-      isArchived: sinon.stub().returns(false)
-    };
-    scope.spaceContext = {
-      activeLocales: [locale],
-      publishedTypeForEntry: sinon.stub().returns(contentType),
-      space: {
-        getPublishLocales: sinon.stub().returns([locale])
-      }
-    };
-    scope.tab = {
-      params: {
-        entry: entry
-      }
-    };
+    var space = cfStub.space('testSpace');
+    var contentTypeData = cfStub.contentTypeData('testType');
+    scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
+    var entry = cfStub.entry(space, 'testEntry', 'testType', {}, {
+      sys: { publishedVersion: 1 }
+    });
+    scope.tab = { params: { entry: entry } };
     controller = $controller('EntryEditorCtrl', {$scope: $rootScope});
     scope.$digest();
   }));
@@ -54,42 +36,14 @@ describe('Entry Editor Controller', function () {
 
   beforeEach(inject(function ($compile, $rootScope, $controller, cfStub){
     scope = $rootScope;
-    var locales = [
-       cfStub.locale('en-US'),
-       cfStub.locale('de-DE', {'default': false})
-    ];
-    var contentType = {
-      data: {
-        fields: [
-          cfStub.field('localized'),
-          cfStub.field('nonlocalized', {localized: false})
-        ]
-      }
-    };
-    var entry = {
-      data: {
-        fields: {},
-        //sys: {publishedVersion: 1}
-      },
-      isArchived: sinon.stub().returns(false)
-    };
-    scope.spaceContext = {
-      activeLocales: [locales[0]],
-      publishedTypeForEntry: sinon.stub().returns(contentType),
-      getPublishLocale: function (code) {
-        return _.find(this.publishLocales, {'code': code});
-      },
-      publishLocales: locales,
-      space: {
-        getPublishLocales: sinon.stub().returns(locales),
-        getDefaultLocale: sinon.stub().returns(locales[0])
-      }
-    };
-    scope.tab = {
-      params: {
-        entry: entry
-      }
-    };
+    var space = cfStub.space('testSpace');
+    var contentTypeData = cfStub.contentTypeData('testType', [
+      cfStub.field('localized'),
+      cfStub.field('nonlocalized', {localized: false})
+    ]);
+    scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
+    var entry = cfStub.entry(space, 'testEntry', 'testType');
+    scope.tab = { params: { entry: entry } };
     controller = $controller('EntryEditorCtrl', {$scope: $rootScope});
     scope.validationResult = {
       errors: [

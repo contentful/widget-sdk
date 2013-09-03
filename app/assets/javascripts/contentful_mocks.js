@@ -2,7 +2,7 @@
 
 var mocks = angular.module('contentful/mocks', []);
 
-mocks.factory('cfStub', function (contentfulClient) {
+mocks.factory('cfStub', function (contentfulClient, SpaceContext, $rootScope) {
   var Client = contentfulClient;
   var Adapter = contentfulClient.adapters.testing;
   var adapter = new Adapter();
@@ -19,27 +19,36 @@ mocks.factory('cfStub', function (contentfulClient) {
     }, extensions);
   };
 
-  cfStub.space = function (id) {
+  cfStub.locales = function () {
+    return _.map(arguments, function (code, index) {
+      return cfStub.locale(code, {'default': index === 0});
+    });
+  };
+
+  cfStub.space = function (id, extension) {
     id = id || 'testSpace';
     var client = new Client(adapter);
     var testSpace;
     client.getSpace(id, function (err, space) {
       testSpace = space;
     });
-    adapter.respondWith(null, {
-      locales: [
-        cfStub.locale('en-US'),
-        cfStub.locale('de-DE', {'default': false}),
-        cfStub.locale('pt-PT', {'default': false}),
-        cfStub.locale('pt-BR', {'default': false})
-      ]
-    });
+    adapter.respondWith(null, _.merge({
+      sys: {
+        id: id
+      },
+      locales: cfStub.locales('en-US', 'de-DE')
+    }, extension));
     return testSpace;
   };
 
-  cfStub.contentTypeData = function (id, extensions) {
+  cfStub.contentTypeData = function (id, fields, extensions) {
+    fields = fields || [];
     return _.merge({
-      fields: []
+      fields: fields,
+      sys: {
+        id: id,
+        type: 'ContentType'
+      }
     }, extensions);
   };
 
@@ -51,6 +60,49 @@ mocks.factory('cfStub', function (contentfulClient) {
       'localized': true,
       'type': 'Text'
     }, extension);
+  };
+
+  cfStub.entry = function (space, id, contentTypeId, fields, extensions) {
+    fields = fields || {};
+    var entry;
+    space.getEntry(id, function (err, res) {
+      entry = res;
+    });
+    adapter.respondWith(null, _.merge({
+      fields: fields,
+      sys: {
+        id: id,
+        type: 'Entry',
+        contentType: {
+          sys: {
+            type: 'Link',
+            linkType: 'ContentType',
+            id: contentTypeId
+          }
+        }
+      }
+    }, extensions));
+    return entry;
+  };
+
+  cfStub.spaceContext = function (space, contentTypes) {
+    var spaceContext = new SpaceContext(space);
+    spaceContext.refreshContentTypes();
+    adapter.respondWith(null, {
+      sys: {
+        type: 'Array'
+      },
+      items: contentTypes,
+      total: contentTypes.length
+    });
+    adapter.respondWith(null, {
+      sys: {
+        type: 'Array'
+      },
+      items: contentTypes,
+      total: contentTypes.length
+    });
+    return spaceContext;
   };
 
   return cfStub;
