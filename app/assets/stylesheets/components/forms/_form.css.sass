@@ -27,105 +27,21 @@
     padding-top: $form-offset
     left: $form-controlwidth-inner + 1%
 
-
-.form-horizontal .form-controls,
-.form-styled
-  p
-    margin: 11px 0
-  input[type="text"],
-  input[type="number"],
-  input[type="email"],
-  input[type="tel"],
-  input[type="password"],
-  input.time,
-  .select-box,
-  textarea
-    display: block
-    margin: 0
-    padding: 7px
-    padding-top: 9px
-    font-family: 'Open Sans', Arial, sans-serif
-    font-size: 12px
-    width: $form-controlwidth-inner
-    border: 1px solid $lightest-gray
-    resize: vertical
-    +border-radius(3px 3px 3px 3px)
-    background-color: $gray-background
-    +box-shadow(0 1px 2px rgba(0,0,0,0.1) inset)
-    +transition(background-color 0.3s ease-in, border-color 0.3s ease-in)
-    &[disabled]
-      background-color: white
-      border: none
-      +box-shadow(none)
-      +transition(none)
-    &:focus
-      background-color: white
-      border-color: $link-blue
-      outline: none
-    &.error-input:focus
-      border-color: darken($red, 10%)
-
-  &.fit-two input[type="text"], &.fit-two input[type="number"]
-    width: $form-controlwidth-inner / 2 - 2%
-    margin-right: 1%
-
-  input[type="number"]
-    padding-top: 8px
-    padding-bottom: 8px
-
-  .select-box
+.field-collaborators
+  ul
+    +plain-list
+  position: absolute
+  padding-top: $form-offset
+  left: 62%
+  .avatar
+    $image-size: 28px
     display: inline-block
     position: relative
-    top: 2px
-    height: 35px
-    width: 115px
-    select
-      margin: 0
-      margin-top: -5px
-
-  input.date,
-  input.time
-    width: 105px
-  .cf-location-editor
-    margin-top: 13px
-    margin-bottom: 5px
-    .gmaps-container,
-    .invalid-location-warning
-      width: $form-controlwidth-inner
-      height: 250px
-  .invalid-date
-    font-size: 14px
-    position: relative
-    top: 3px
-
-  .ss-calendar,
-  .ss-clock,
-  .ss-globe
-    font-size: 14px
-    color: $light-gray
-    vertical-align: middle
-    pointer-events: none // http://stackoverflow.com/questions/3680429/click-through-a-div-to-underlying-elements
-    position: relative
-    left: -25px
-    top: 1px
-
-  .sub-fields
-    width: $form-controlwidth-inner
-    position: relative
-    label
-      display: block
-      float: left
-      width: 40%
-      input,
-      input[type="text"]
-        width: 100%
-      span
-        display: block
-        margin-top: 5px
-        text-align: left
-    button
-      margin-top: 13px
-
+    margin-left: 3px
+    +border-radius(3px)
+    width: $image-size
+    img
+      height: $image-size
 
 .cf-validation-error-display
   ul
@@ -155,25 +71,4 @@
   text-align: center
   +transition(opacity 0.3s ease-in-out)
 
-.field-collaborators
-  ul
-    +plain-list
-  position: absolute
-  padding-top: $form-offset
-  left: 62%
-  .avatar
-    $image-size: 28px
-    display: inline-block
-    position: relative
-    margin-left: 3px
-    +border-radius(3px)
-    width: $image-size
-    img
-      height: $image-size
-
-.select-field
-  .form-controls
-    padding-top: $form-offset
-    select
-      margin-top: -1px
 
