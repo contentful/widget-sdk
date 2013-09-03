@@ -1,19 +1,24 @@
 // General form layout
 .form-horizontal
   display: table
+  width: 100%
+  border-spacing: 0 $form-spacing
+  color: $medium-gray
+
   .form-field
     display: table-row
     > *
       vertical-align: top
       display: table-cell
 
-// Form layout in context
-.form-horizontal
-  width: 100%
   label
     width: $form-labelwidth
+    text-align: right
+    padding: $form-offset $form-gutter $form-offset 0
+
   .form-controls
     width: $form-controlwidth-outer
+
   // entry editor (& asset editor?)
   .locale
     position: relative
@@ -22,14 +27,7 @@
     padding-top: $form-offset
     left: $form-controlwidth-inner + 1%
 
-// Margins and other styling
-.form-horizontal
-  border-spacing: 0 $form-spacing
-  color: $medium-gray
-  label
-    text-align: right
-    padding: $form-offset $form-gutter $form-offset 0
-  // Individual controls
+
 .form-horizontal .form-controls,
 .form-styled
   p
@@ -66,12 +64,15 @@
       outline: none
     &.error-input:focus
       border-color: darken($red, 10%)
+
   &.fit-two input[type="text"], &.fit-two input[type="number"]
     width: $form-controlwidth-inner / 2 - 2%
     margin-right: 1%
+
   input[type="number"]
     padding-top: 8px
     padding-bottom: 8px
+
   .select-box
     display: inline-block
     position: relative
@@ -81,6 +82,7 @@
     select
       margin: 0
       margin-top: -5px
+
   input.date,
   input.time
     width: 105px
@@ -95,6 +97,7 @@
     font-size: 14px
     position: relative
     top: 3px
+
   .ss-calendar,
   .ss-clock,
   .ss-globe
@@ -146,6 +149,7 @@
 .cf-validation-error-display
   ul
     +plain-list
+
 .form-inline-error
   color: $red
   padding-top: .3em
@@ -153,6 +157,7 @@
   line-height: 1
   li
     margin-bottom: .3em
+
 .form-box-error
   padding: .6em .9em
   background: darken($red, 3%)
