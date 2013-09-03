@@ -39,7 +39,7 @@
       .form-controls
         .locale(ng-repeat="locale in field.locales" ot-field-presence="['fields', field.id, locale.code]" data-locale="{{locale.code}}")
           .field-collaborators
-            %ul
+            %ul.plain-list
               %li.avatar.cf-user(ng-repeat="link in fieldPresence.users"
                                  link="link" as="user"
                                  tooltip="{{user.getName()}}")
