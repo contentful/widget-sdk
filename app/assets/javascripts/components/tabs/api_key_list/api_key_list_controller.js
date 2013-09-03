@@ -2,6 +2,8 @@
 
 angular.module('contentful').
   controller('ApiKeyListCtrl', function($scope, $window, environment) {
+    $scope.marketingUrl = environment.settings.marketing_url;
+
     $scope.refreshApiKeys = function() {
       $scope.spaceContext.space.getApiKeys(null, function(err, apiKeys) {
         $scope.$apply(function() {
@@ -29,8 +31,4 @@ angular.module('contentful').
       $scope.refreshApiKeys();
     });
 
-    $scope.openApiDocs = function() {
-      var apiDocsUrl = '//' + environment.settings.marketing_url + '/developers/documentation/content-delivery-api/';
-      $window.open(apiDocsUrl);
-    };
   });

@@ -6,9 +6,9 @@
   .left-nav
     %ul
       %li.api-keys.active
-        %a(ng-click="refreshApiKeys()") API Keys
+        %a(href="" ng-click="refreshApiKeys()") API Keys
       %li
-        %a(ng-click="openApiDocs()") API Documentation
+        %a(href="//{{marketingUrl}}/developers/documentation/content-delivery-api/" target="_blank") API Documentation
 
   .with-left-nav
     %table.result-list.main-header(ng-hide="empty")
