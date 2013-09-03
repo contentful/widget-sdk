@@ -1,5 +1,4 @@
 // General form layout
-
 .form-horizontal
   display: table
   .form-field
@@ -7,10 +6,8 @@
     > *
       vertical-align: top
       display: table-cell
-      //outline: 1px dashed silver
 
 // Form layout in context
-
 .form-horizontal
   width: 100%
   label
@@ -26,14 +23,12 @@
     left: $form-controlwidth-inner + 1%
 
 // Margins and other styling
-
 .form-horizontal
   border-spacing: 0 $form-spacing
   color: $medium-gray
   label
     text-align: right
     padding: $form-offset $form-gutter $form-offset 0
-    //padding-right: $form-gutter
   // Individual controls
 .form-horizontal .form-controls,
 .form-styled
@@ -136,7 +131,6 @@
   color: $medium-gray
   padding: 0 0 0 $form-gutter
   margin-left: $form-gutter
-  //opacity: 0
   &.tip
     padding: .7em .9em
     background-color: white
@@ -148,12 +142,6 @@
       border-right-color: white
     .arrow-left-border
       border-right-color: darken($light-rule, 5%)
-// TODO this does not work anymore, the position of the elements has changed
-//input[type="text"]:focus + .hint,
-//textarea:focus + .hint,
-//input[type="number"]:focus + .hint,
-//cf-field-editor:focus .hint
-  //opacity: 1
 
 .cf-validation-error-display
   ul
@@ -202,7 +190,7 @@
     padding-top: $form-offset
     select
       margin-top: -1px
-      
+
 
 // Special styling for the different editor widgets
 // TODO Put in own file

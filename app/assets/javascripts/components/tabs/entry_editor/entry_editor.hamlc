@@ -26,20 +26,6 @@
             tooltip="Toggle additional details"
             tooltip-placement="left")
       Info
-    -#.dropdown-btn>
-      %a.btn.dropdown-toggle
-        %i.ss-dropdown
-        %span Meta
-      .dropdown-menu(style="display:none")
-        …
-        …
-        …
-    -#.dropdown-btn>
-      %a.btn.dropdown-toggle
-        %span Apps
-    -#.dropdown-btn>
-      %a.btn.dropdown-toggle
-        %span Events
 
 .aux-panel
   %header
@@ -68,10 +54,6 @@
                 %img(ng-src="{{user.data.avatarUrl}}")
           .locale-label(ng-show="field.locales.length > 1") {{locale.name}}
           .cf-field-editor(ot-path="['fields', field.id, locale.code]" cf-editor-entity="entry")
-          -#.hint.tip
-            Hint to the user about the meaning of the field
-            .arrow-left
-            .arrow-left-border
           .cf-validation-error-display.form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
         .cf-validation-error-display.form-box-error(cf-error-path="['fields', field.id]")
 
