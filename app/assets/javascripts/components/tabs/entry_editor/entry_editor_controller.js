@@ -112,6 +112,7 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     });
   });
   
+  // TODO move watcher upwards, before the updateFields
   $scope.$watch('validationResult.errors', function (errors) {
     var et = $scope.spaceContext.publishedTypeForEntry($scope.entry);
     errorPaths = {};
