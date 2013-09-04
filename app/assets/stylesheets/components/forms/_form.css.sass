@@ -13,24 +13,33 @@
 
   label
     width: $form-labelwidth
-    text-align: right
     padding: $form-offset $form-gutter $form-offset 0
+    text-align: right
 
   .form-controls
     width: $form-controlwidth-outer
 
-  // entry editor (& asset editor?)
   .locale
     position: relative
-  .locale-label
-    position: absolute
-    padding-top: $form-offset
-    left: $form-controlwidth-inner + 1%
+    clear: both
+
+$field-editor-width: 60%
+
+.cf-field-editor
+  float: left
+  width: $field-editor-width
+
+.locale-label
+  float: left
+  margin-left: $form-offset
+  padding-top: $form-offset
 
 .field-collaborators
-  position: absolute
-  padding-top: $form-offset
-  left: 62%
+  float: left
+  margin-left: $form-offset
+  padding-top: $form-offset/2
+  ul
+    margin: 0
   .avatar
     $image-size: 28px
     display: inline-block
@@ -50,18 +59,17 @@
     margin-bottom: .3em
 
 .form-box-error
-  padding: .6em .9em
+  float: left
+  display: block
+  position: static
+  text-align: center
+  padding: .6em $form-textarea-padding
   background: darken($red, 3%)
   border: 1px solid darken($red, 16%)
   color: white
   +box-shadow(0 1px 1px rgba(255,255,255,0.25) inset)
   +border-radius(3px)
-
-  display: block
-  max-width: 57% !important
-  position: static
   margin: 4px 0 4px 0
-  width: 57%
-  text-align: center
+  width: $field-editor-width
   +transition(opacity 0.3s ease-in-out)
 

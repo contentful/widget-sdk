@@ -12,7 +12,7 @@
   textarea
     display: block
     margin: 0
-    padding: 7px
+    padding: $form-textarea-padding
     padding-top: 9px
     font-family: 'Open Sans', Arial, sans-serif
     font-size: 12px
@@ -34,10 +34,6 @@
       outline: none
     &.error-input:focus
       border-color: darken($red, 10%)
-
-  &.fit-two input[type="text"], &.fit-two input[type="number"]
-    width: $form-controlwidth-inner / 2 - 2%
-    margin-right: 1%
 
   input[type="number"]
     padding-top: 8px
