@@ -19,21 +19,23 @@
     .form-field
       %label Name
       .form-controls(ot-path="['name']" ot-subdoc)
-        %input(type="text"
-               name="contentTypeName"
-               ng-disabled="!otEditable"
-               placeholder="Content Type Name (e.g. Product)"
-               ng-model="contentType.data.name"
-               ot-bind-text="")
+        .field-editor
+          %input(type="text"
+                 name="contentTypeName"
+                 ng-disabled="!otEditable"
+                 placeholder="Content Type Name (e.g. Product)"
+                 ng-model="contentType.data.name"
+                 ot-bind-text="")
         .cf-validation-error-display.form-box-error(cf-error-path="['name']" ng-show="1 < otDoc.version && hasErrors")
     .form-field
       %label Description
       .form-controls(ot-path="['description']" ot-subdoc)
-        %textarea(placeholder="Describe the purpose of Entries using this Content Type"
-                  name="contentTypeDescription"
-                  ng-disabled="!otEditable"
-                  ng-model="contentType.data.description"
-                  ot-bind-text="")
+        .field-editor
+          %textarea(placeholder="Describe the purpose of Entries using this Content Type"
+                    name="contentTypeDescription"
+                    ng-disabled="!otEditable"
+                    ng-model="contentType.data.description"
+                    ot-bind-text="")
         .cf-validation-error-display.form-box-error(cf-error-path="['description']")
     .form-field
       %label 
