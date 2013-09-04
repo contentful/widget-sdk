@@ -7,7 +7,8 @@ describe('otDocFor', function () {
   beforeEach(inject(function ($compile, $rootScope) {
     scope = $rootScope;
     $rootScope.otDoc = {
-      snapshot: {foo: 'bar'}
+      snapshot: {foo: 'bar', baz: {}, sys: {version: 100, updatedAt: 'foo'}},
+      version: 123
     };
     $rootScope.entity = {
       update: sinon.spy()
@@ -24,8 +25,18 @@ describe('otDocFor', function () {
     it('should update the entity with a copy of the snapshot', function () {
       scope.otUpdateEntity();
       expect(scope.entity.update.calledOnce);
-      expect(scope.entity.update.args[0][0]).toLookEqual(scope.otDoc.snapshot);
-      expect(scope.entity.update.args[0][0]).not.toBe(scope.otDoc.snapshot);
+      var data = scope.entity.update.args[0][0];
+      expect(data).not.toBe(scope.otDoc.snapshot);
+      expect(_.omit(data, 'sys')).toLookEqual(_.omit(scope.otDoc.snapshot, 'sys'));
+    });
+
+    it('should preserve version and updatedAt', function () {
+      /*global moment*/
+      scope.otUpdateEntity();
+      var iso = moment().toISOString();
+      var data = scope.entity.update.args[0][0];
+      expect(data.sys.version).toBe(123);
+      expect(data.sys.updatedAt).toBe(iso);
     });
   });
 

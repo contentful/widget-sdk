@@ -86,10 +86,14 @@ angular.module('contentful').directive('otDocFor', function () {
   });
 
   $scope.otUpdateEntity = function () {
+    /*global moment */
     var entity = otGetEntity();
     if (entity && $scope.otDoc) {
       //console.log('otUpdateEntity did update', entity.data, $scope.otDoc.snapshot);
-      entity.update(_.cloneDeep($scope.otDoc.snapshot));
+      var data = _.cloneDeep($scope.otDoc.snapshot);
+      data.sys.version = $scope.otDoc.version;
+      data.sys.updatedAt = moment().toISOString();
+      entity.update(data);
     } else {
       console.warn('otUpdateEntity did not update', entity, $scope.otDoc);
     }
