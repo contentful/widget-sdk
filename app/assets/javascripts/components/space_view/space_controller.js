@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, analytics, routing, notification, can) {
+angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, analytics, routing, notification, can, sentry) {
   $scope.$watch('spaceContext', function(spaceContext, old, scope){
     var space = spaceContext.space;
     scope.spaceContext.tabList.closeAll();
@@ -150,8 +150,13 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
         if (!err) {
           scope.editContentType(contentType, 'create');
         } else {
-          notification.error('Could not create Content Type');
-          //TODO sentry notification
+          notification.warn('Could not create Content Type');
+          sentry.captureError('Could not create Content Type', {
+            tags: {
+              type: 'server_error'
+            },
+            details: err
+          });
         }
       });
       analytics.track('Selected Add-Button', {
