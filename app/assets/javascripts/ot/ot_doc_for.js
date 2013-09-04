@@ -42,9 +42,10 @@ angular.module('contentful').directive('otDocFor', function () {
         scope.$apply(function(scope){
           if (!err) {
               if (shouldDocBeOpen(scope)) {
-                //console.log('otDocFor installing doc %o for entity %o', doc.state, doc, entity);
-                scope.otDoc = doc;
+                //console.log('otDocFor installing doc %o for entity %o', doc, entity);
                 //console.log('setting doc to %o (id: %o) in scope %o', doc.name, doc.snapshot.sys.id, scope.$id);
+                scope.otDoc = doc;
+                updateIfValid();
               } else {
                 doc.close();
               }
@@ -107,5 +108,12 @@ angular.module('contentful').directive('otDocFor', function () {
       }
     }
   });
+
+  function updateIfValid() {
+    // Sanity check to make sure there's actually something in the snapshot
+    if ($scope.$eval('otDoc.snapshot.sys.id')) {
+      $scope.otUpdateEntity();
+    }
+  }
 
 });

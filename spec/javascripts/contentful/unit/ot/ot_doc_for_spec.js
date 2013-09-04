@@ -28,4 +28,40 @@ describe('otDocFor', function () {
       expect(scope.entity.update.args[0][0]).not.toBe(scope.otDoc.snapshot);
     });
   });
+
+  describe('opening a ShareJS document', function () {
+    beforeEach(inject(function (){
+      scope.otDoc = null;
+      scope.otDisabled = false;
+      scope.otConnected = true;
+      scope.entity.data = {ding: 'dong', sys: {id: 'deadbeef', version: 1}};
+    }));
+
+    it('should immediately update the entity', function () {
+      this.async(function (done) {
+        spyOn(scope, 'otUpdateEntity');
+        scope.$watch('!!otDoc', function (hasDoc) {
+          if (hasDoc) {
+            expect(scope.otUpdateEntity).toHaveBeenCalled();
+            done();
+          }
+        });
+        scope.$digest();
+      });
+    });
+
+    it('should not immediately update the entity if the id is missing', function () {
+      delete scope.entity.data.sys.id;
+      this.async(function (done) {
+        spyOn(scope, 'otUpdateEntity');
+        scope.$watch('!!otDoc', function (hasDoc) {
+          if (hasDoc) {
+            expect(scope.otUpdateEntity).not.toHaveBeenCalled();
+            done();
+          }
+        });
+        scope.$digest();
+      });
+    });
+  });
 });
