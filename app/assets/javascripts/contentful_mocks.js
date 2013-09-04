@@ -2,7 +2,7 @@
 
 var mocks = angular.module('contentful/mocks', []);
 
-mocks.factory('cfStub', function (contentfulClient, SpaceContext, $rootScope) {
+mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
   var Client = contentfulClient;
   var Adapter = contentfulClient.adapters.testing;
   var adapter = new Adapter();
@@ -132,9 +132,9 @@ window.createMockEntity = function (id, contentType) {
             fileName: 'file.psd'
           }
         }
-      },
+      }
     },
-    delete: function (fn) {
+    'delete': function (fn) {
       fn(null, this);
     },
     getContentTypeId: function () {
@@ -167,17 +167,23 @@ mocks.provider('ShareJS', function () {
   FakeShareJSClient.prototype = {
     open: function (entity, callback) {
       _.defer(callback, null, new FakeShareJSDoc(entity));
+    },
+    connection: {
+      state: 'ok'
     }
   };
 
   function FakeShareJSDoc(entity) {
     this.entity = entity;
-    this.snapshot = entity.data;
+    this.snapshot = angular.copy(entity.data);
+    if (this.snapshot && this.snapshot.sys) delete this.snapshot.sys.version;
+    if (this.snapshot && this.snapshot.sys) delete this.snapshot.sys.updatedAt;
   }
 
   FakeShareJSDoc.prototype = {
     removeListener: angular.noop,
-    addListener: angular.noop
+    //addListener: angular.noop,
+    on: angular.noop
   };
 
   this.token = function () { };
