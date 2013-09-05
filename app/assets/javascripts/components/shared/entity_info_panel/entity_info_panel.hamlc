@@ -12,7 +12,7 @@
       %td {{sys.id}}
     %tr
       %th
-    %tr
+    %tr(ng-show="otDoc")
       %th Current version
       %td {{otDoc.version}}
     %tr
