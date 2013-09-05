@@ -14,6 +14,6 @@
         ng-click="createEntry(contentType)"
         dropdown-close="")
         {{contentType.getName()}}
-    %ul(ng-hide="spaceContext.publishedContentTypes.length > 0")
+    %ul.no-content-types(ng-hide="spaceContext.publishedContentTypes.length > 0")
       %li.hint(ng-click="createContentType()" dropdown-close)
         (Create and activate a Content Type before creating Entries)
