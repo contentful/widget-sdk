@@ -2,7 +2,9 @@
   %thead
     %tr
       %th.cell.drag-handle
-      %th.cell.name Name
+      %th.cell.name
+        Name
+        %sup *
       %th.cell.identifier Identifier
       %th.cell.type Type
       %th.cell.display

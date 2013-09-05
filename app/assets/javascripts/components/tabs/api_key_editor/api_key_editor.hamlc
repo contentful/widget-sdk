@@ -5,6 +5,7 @@
   .ng-form.form-horizontal(name="apiKeyForm" submit="save()")
     .form-field
       %label Name
+        %sup *
       .form-controls
         .field-editor
           %input(type="text" ng-model="apiKey.data.name" required="" ng-disabled="!editable()")

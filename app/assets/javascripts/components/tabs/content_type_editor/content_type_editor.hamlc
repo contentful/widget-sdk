@@ -17,7 +17,9 @@
 .tab-main
   .form-horizontal(name="contentTypeForm")
     .form-field
-      %label Name
+      %label
+        Name
+        %sup *
       .form-controls(ot-path="['name']" ot-subdoc)
         .field-editor
           %input(type="text"
