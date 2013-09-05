@@ -81,6 +81,8 @@
         %i.ss-attach.giant-icon
         %header You have no Assets yet.
         %p To create an Asset, use the Add-Button near the top of the screen.
+        %button(type="button" ng-click="createAsset()")
+          Create an Asset
 
 .tab-actions
   .label {{selection.size()}} Assets selected
