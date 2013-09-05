@@ -83,7 +83,7 @@
         %i.ss-file.giant-icon
         %header You have no Entries yet.
         %p(ng-show="spaceContext.publishedContentTypes.length == 0")
-          To create an Entry, first create and activate a Content Type.
+          Entries are your content itself. These depend on the field types you created in the Content Type editor.
         %button(type="button" ng-click="createContentType()" ng-show="spaceContext.publishedContentTypes.length == 0")
           Create a Content Type
         %p(ng-hide="spaceContext.publishedContentTypes.length == 0")

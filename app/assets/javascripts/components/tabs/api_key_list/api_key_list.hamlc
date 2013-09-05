@@ -35,7 +35,6 @@
     .create-api-key-advice(ng-show="empty")
       %i.ss-fork.giant-icon
       %header There are no API Keys yet.
-      %p
-        Looks like you haven't created any API Keys yet.
+      %p API Keys open the door to your content. One should be created for each application that accesses your content.
       %button(type="button" ng-click="createApiKey()")
         Create API Key

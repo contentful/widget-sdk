@@ -80,7 +80,7 @@
       %div(ng-show="!hasQuery()")
         %i.ss-attach.giant-icon
         %header You have no Assets yet.
-        %p To create an Asset, use the Add-Button near the top of the screen.
+        %p Assets are external documents that you can link to your Entries. They can be any file you wish, form sounds to images or videos to text documents.
         %button(type="button" ng-click="createAsset()")
           Create an Asset
 
