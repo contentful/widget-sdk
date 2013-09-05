@@ -32,7 +32,7 @@
             %li(ng-repeat="space in spaces" ng-click="selectSpace(space)" dropdown-close="")
               {{space.data.name}}
             %li(ng-show="canCreateSpace(user)" ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close="")
-              Create Space
+              + Create Space
       .dropdown-btn.user(label="")
         %a.btn.dropdown-toggle(ng-click="clickedProfileButton()" tabindex="0")
           %img(ng-src="{{user.avatarUrl}}")
