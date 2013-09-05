@@ -62,7 +62,7 @@ angular.module('contentful').factory('tutorialExampledata', function ($q, $http,
             $rootScope.$apply(function (scope) {
               if (err) return deferred.reject(err);
               //console.log('created', contentType);
-              contentType.publish(contentType.data.sys.version, function (err, contentType) {
+              contentType.publish(contentType.getVersion(), function (err, contentType) {
                 scope.$apply(function () {
                   if (err) return deferred.reject(err);
                   //console.log('published content type', contentType);
@@ -108,7 +108,7 @@ angular.module('contentful').factory('tutorialExampledata', function ($q, $http,
       then(function publishEntries(entries) {
         return $q.all(_.map(entries, function (entry) {
           var deferred = $q.defer();
-          entry.publish(entry.data.sys.version, function (err, entry) {
+          entry.publish(entry.getVersion(), function (err, entry) {
             $rootScope.$apply(function () {
               if (err) return deferred.reject(err);
               deferred.resolve(entry);
