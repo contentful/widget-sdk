@@ -24,6 +24,10 @@ angular.module('contentful').
     });
   };
 
+  $scope.canUnpublish = function() {
+    return $scope.contentType.canUnpublish() && can('unpublish', $scope.contentType.data);
+  };
+
   $scope.canDelete = function() {
     return $scope.contentType.canDelete() && can('delete', $scope.contentType.data);
   };
@@ -67,6 +71,29 @@ angular.module('contentful').
         //console.log('editor has published %o as %o', scope.contentType, publishedContentType);
         scope.updatePublishedContentType(publishedContentType);
         scope.spaceContext.registerPublishedContentType(publishedContentType);
+        scope.spaceContext.refreshContentTypes();
+      });
+    });
+  };
+
+  $scope.unpublish = function () {
+    $scope.contentType.unpublish(function (err, publishedContentType) {
+      $scope.$apply(function(scope){
+        if (err) {
+          var reason = err.body.message;
+          return notification.error('Error deactivating ' + title() + ': ' + reason);
+        }
+
+        notification.info(title() + ' deactivated successfully');
+        analytics.track('Unpublished ContentType', {
+          contentTypeId: $scope.contentType.getId(),
+          contentTypeName: $scope.contentType.getName(),
+          version: $scope.contentType.getVersion()
+        });
+
+        //console.log('editor has unpublished %o as %o', scope.contentType, publishedContentType);
+        scope.updatePublishedContentType(null);
+        scope.spaceContext.unregisterPublishedContentType(publishedContentType);
         scope.spaceContext.refreshContentTypes();
       });
     });

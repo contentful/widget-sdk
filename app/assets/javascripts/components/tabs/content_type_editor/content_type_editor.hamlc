@@ -47,6 +47,11 @@
 .tab-actions(ng-controller="ContentTypeActionsCtrl")
   .button-set
     %button.delete(type="button"
+                   ng-show="canUnpublish()"
+                   ng-click="unpublish()"
+                   tooltip="Deactivate this Content Type")
+      Deactivate
+    %button.delete(type="button"
                    ng-show="canDelete()"
                    ng-click="delete()"
                    tooltip="Delete this Content Type")
