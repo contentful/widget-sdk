@@ -83,7 +83,7 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
               deferred.reject(err);
             } else {
                 self.publishedContentTypes = _(contentTypes)
-                  .filter(function (ct) { return ct.isDeleted(); })
+                  .reject(function (ct) { return ct.isDeleted(); })
                   .union(self.publishedContentTypes)
                   .sortBy(function(ct) { return ct.getName().trim().toLowerCase(); })
                   .value();
