@@ -292,6 +292,7 @@ describe('SpaceContext resolving missing ContentTypes', function () {
         callback(null, [
           {
             getName: function(){return '';},
+            isDeleted: sinon.stub().returns(false),
             data: { sys: {id: 'foo'} }
           }
         ]);

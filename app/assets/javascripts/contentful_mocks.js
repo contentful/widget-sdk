@@ -137,6 +137,7 @@ window.createMockEntity = function (id, contentType) {
     'delete': function (fn) {
       fn(null, this);
     },
+    isDeleted: sinon.stub().returns(false),
     getContentTypeId: function () {
       return contentType;
     }
