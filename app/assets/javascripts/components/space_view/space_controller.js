@@ -151,12 +151,7 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
           scope.editContentType(contentType, 'create');
         } else {
           notification.warn('Could not create Content Type');
-          sentry.captureError('Could not create Content Type', {
-            tags: {
-              type: 'server_error'
-            },
-            details: err
-          });
+          sentry.captureServerError('Could not create Content Type', err);
         }
       });
       analytics.track('Selected Add-Button', {
