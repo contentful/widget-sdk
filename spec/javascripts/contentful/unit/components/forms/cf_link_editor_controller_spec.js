@@ -6,6 +6,7 @@ describe('cf LinkEditor controller', function () {
   var cfLinkEditorCtrl;
   var entry;
 
+  // A spy around a function that resolves the provided deferred in the next tick
   function makeCallbackSpy(deferred){
     return sinon.spy(function () {
       _.defer(function () {
@@ -16,14 +17,11 @@ describe('cf LinkEditor controller', function () {
     });
   }
 
+  // A deferred that resolves when the linkedEntities have changed
   function makeLinkedEntitiesDeferred() {
     var deferred = $q.defer();
     scope.$watch('linkedEntities', function () {
-      _.defer(function () {
-        scope.$apply(function () {
-          deferred.resolve();
-        });
-      });
+      deferred.resolve();
     });
     return deferred;
   }
