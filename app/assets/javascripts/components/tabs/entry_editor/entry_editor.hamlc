@@ -14,7 +14,7 @@
               {{locale.name}}
               %span(ng-show="locale == spaceContext.space.getDefaultLocale()") (default)
         %ul
-          %li(ng-class="{separator: showLangSwitcher}")
+          %li(ng-class="{'top-separator': showLangSwitcher}")
             %label
               %input(type="checkbox" ng-model="preferences.showDisabledFields")
               Show disabled fields
