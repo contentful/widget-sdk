@@ -142,6 +142,14 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         guiders.reposition();
       }, 50, true);
 
+
+      function watchForFieldType(guider, name, type) {
+        return function () {
+          return _.find(guider.attachScope.contentType.data.fields, {name: name, type: type}) ||
+                 _.find(guider.attachScope.contentType.data.fields, {name: name.toLowerCase(), type: type});
+        };
+      }
+
 ////////////////////////////////////////////////////////////////////////////////
 //   Overview    ///////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -255,11 +263,12 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         next: 'contentTypeContent',
         onShow: function (guider) {
           guider.scope.$watch(repositionLater);
-          guider.scope.$watch(function () {
-            return _.find(guider.attachScope.contentType.data.fields, {name: 'Title', type: 'Text'});
-          }, function (has, old) {
-            if (has && !old) guiders.next();
-          });
+          guider.scope.$watch(
+            watchForFieldType(guider, 'Title', 'Text'),
+          function (has, old) {
+              if (has && !old) guiders.next();
+            }
+          );
         }
       });
 
@@ -274,9 +283,9 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         next: 'contentTypeDate',
         onShow: function (guider) {
           guider.scope.$watch(repositionLater);
-          guider.scope.$watch(function () {
-            return _.find(guider.attachScope.contentType.data.fields, {name: 'Content', type: 'Text'});
-          }, function (has, old) {
+          guider.scope.$watch(
+            watchForFieldType(guider, 'Content', 'Text'),
+          function (has, old) {
             if (has && !old) guiders.next();
           });
         }
@@ -293,9 +302,9 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         next: 'contentTypeMore',
         onShow: function (guider) {
           guider.scope.$watch(repositionLater);
-          guider.scope.$watch(function () {
-            return _.find(guider.attachScope.contentType.data.fields, {name: 'Timestamp', type: 'Date'});
-          }, function (has, old) {
+          guider.scope.$watch(
+            watchForFieldType(guider, 'Timestamp', 'Date'),
+          function (has, old) {
             if (has && !old) guiders.next();
           });
         }
