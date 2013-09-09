@@ -112,25 +112,29 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     });
   });
   
+  // TODO move watcher upwards, before the updateFields
   $scope.$watch('validationResult.errors', function (errors) {
+    var et = $scope.spaceContext.publishedTypeForEntry($scope.entry);
     errorPaths = {};
     $scope.hasErrorOnFields = false;
 
     _.each(errors, function (error) {
       if (error.path[0] !== 'fields') return;
-      var field      = error.path[1];
-      errorPaths[field] = errorPaths[field] || [];
+      var fieldId      = error.path[1];
+      var field        = _.find(et.data.fields, {id: fieldId});
+      errorPaths[fieldId] = errorPaths[fieldId] || [];
 
       if (error.path.length == 1 && error.path[0] == 'fields') {
         $scope.hasErrorOnFields = error.path.length == 1 && error.path[0] == 'fields';
       } else if (error.path.length == 2) {
-        var allCodes = _.pluck($scope.spaceContext.publishLocales, 'code');
-        errorPaths[field].push.apply(errorPaths[field], allCodes);
+        var locales = field.localized ? $scope.spaceContext.publishLocales : [$scope.spaceContext.space.getDefaultLocale()];
+        var allCodes = _.pluck(locales, 'code');
+        errorPaths[fieldId].push.apply(errorPaths[fieldId], allCodes);
       } else {
         var localeCode = error.path[2];
-        errorPaths[field].push(localeCode);
+        errorPaths[fieldId].push(localeCode);
       }
-      errorPaths[field] = _.unique(errorPaths[field]);
+      errorPaths[fieldId] = _.unique(errorPaths[fieldId]);
     });
   });
 

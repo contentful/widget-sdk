@@ -133,7 +133,9 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
     } else {
       var stopSpinner = cfSpinner.start();
       lookupEntities(scope, links).then(function (entities) {
-        scope.linkedEntities = entities;
+        scope.linkedEntities = _.map(entities, function (entity) {
+          return Object.create(entity);
+        });
         stopSpinner();
       }, function () {
         stopSpinner();

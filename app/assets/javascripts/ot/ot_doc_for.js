@@ -42,9 +42,10 @@ angular.module('contentful').directive('otDocFor', function () {
         scope.$apply(function(scope){
           if (!err) {
               if (shouldDocBeOpen(scope)) {
-                //console.log('otDocFor installing doc %o for entity %o', doc.state, doc, entity);
-                scope.otDoc = doc;
+                //console.log('otDocFor installing doc %o for entity %o', doc, entity);
                 //console.log('setting doc to %o (id: %o) in scope %o', doc.name, doc.snapshot.sys.id, scope.$id);
+                scope.otDoc = doc;
+                updateIfValid();
               } else {
                 doc.close();
               }
@@ -85,10 +86,14 @@ angular.module('contentful').directive('otDocFor', function () {
   });
 
   $scope.otUpdateEntity = function () {
+    /*global moment */
     var entity = otGetEntity();
     if (entity && $scope.otDoc) {
       //console.log('otUpdateEntity did update', entity.data, $scope.otDoc.snapshot);
-      entity.update(_.cloneDeep($scope.otDoc.snapshot));
+      var data = _.cloneDeep($scope.otDoc.snapshot);
+      data.sys.version = $scope.otDoc.version;
+      data.sys.updatedAt = moment().toISOString();
+      entity.update(data);
     } else {
       console.warn('otUpdateEntity did not update', entity, $scope.otDoc);
     }
@@ -107,5 +112,12 @@ angular.module('contentful').directive('otDocFor', function () {
       }
     }
   });
+
+  function updateIfValid() {
+    // Sanity check to make sure there's actually something in the snapshot
+    if ($scope.$eval('otDoc.snapshot.sys.id')) {
+      $scope.otUpdateEntity();
+    }
+  }
 
 });

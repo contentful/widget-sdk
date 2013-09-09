@@ -73,7 +73,7 @@ angular.module('contentful').controller('AssetListActionsCtrl', function AssetLi
   $scope.publishSelected = function() {
     var applyLater = makeApplyLater(makeBatchResultsNotifier('published'));
     forAllAssets(function(asset) {
-      asset.publish(asset.data.sys.version, applyLater);
+      asset.publish(asset.getVersion(), applyLater);
     });
     clearSelection();
     analytics.track('Performed AssetList action', {action: 'publish'});

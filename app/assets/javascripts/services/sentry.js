@@ -56,6 +56,17 @@ function ($injector ,  $window ,  authentication,   environment) {
           }
         }, options));
       }
+    },
+
+    captureServerError: function (message, error, options) {
+      if ($window.Raven) {
+        $window.Raven.captureMessage(message, createOptions({
+          tags: {
+            type: 'server_error'
+          },
+          details: error
+        }, options));
+      }
     }
   };
 }]);

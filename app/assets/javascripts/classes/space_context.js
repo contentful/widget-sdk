@@ -83,8 +83,7 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
               deferred.reject(err);
             } else {
                 self.publishedContentTypes = _(contentTypes)
-                  // TODO this union will lead to problems if we ever allow deletion of published content Types
-                  // because contentTypes that entered the list once will never get out again
+                  .reject(function (ct) { return ct.isDeleted(); })
                   .union(self.publishedContentTypes)
                   .sortBy(function(ct) { return ct.getName().trim().toLowerCase(); })
                   .value();
@@ -107,6 +106,16 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
           this._publishedContentTypesHash[publishedContentType.getId()] = publishedContentType;
           $rootScope.$broadcast('newContentTypePublished', publishedContentType);
         }
+      },
+
+      unregisterPublishedContentType: function (publishedContentType) {
+        var index = _.indexOf(this.publishedContentTypes, publishedContentType);
+        if (index === -1) return;
+
+        this.publishedContentTypes.splice(index, 1);
+        this._publishedContentTypesHash = _.omit(this._publishedContentTypesHash, function (ct) {
+          return ct === publishedContentType;
+        });
       },
 
       removeContentType: function(contentType) {

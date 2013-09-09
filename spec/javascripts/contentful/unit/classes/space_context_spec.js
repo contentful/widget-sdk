@@ -105,13 +105,26 @@ describe('SpaceContext class with a space', function () {
         });
       });
 
-      it('has content types', function () {
+      it('merges context types from client and server together', function () {
         this.async(function (done) {
-          spaceContext.publishedContentTypes = [
-            contentType1
-          ];
+          spaceContext.publishedContentTypes = [ contentType1 ];
           spaceContext.refreshPublishedContentTypes().then(function () {
             expect(spaceContext.publishedContentTypes.length).toBe(2);
+            done();
+          });
+        });
+      });
+
+      it('does not include deleted published content Types', function () {
+        getPublishedContentTypesStub = sinon.stub();
+        getPublishedContentTypesStub.callsArgWithAsync(0, null, [
+          contentType1,
+          _.merge(contentType2, {isDeleted: sinon.stub().returns(true)})
+        ]);
+        this.async(function (done) {
+          spaceContext.refreshPublishedContentTypes().then(function () {
+            expect(spaceContext.publishedContentTypes.length).toBe(1);
+            expect(_.contains(spaceContext.publishedContentTypes, contentType2)).toBe(false);
             done();
           });
         });
@@ -200,6 +213,24 @@ describe('SpaceContext class with a space', function () {
               expect(spaceContext.entryTitle(entry)).toEqual('Untitled');
               done();
             });
+          });
+        });
+
+        describe('unregistering a published Content Type', function () {
+          beforeEach(function () {
+            spaceContext.unregisterPublishedContentType(contentType1);
+          });
+
+          it('should not be included in the list anymore', function () {
+            expect(_.contains(spaceContext.publishedContentTypes, contentType1)).toBe(false);
+          });
+          
+          it('should not be found by publishedTypeForEntry anymore', function () {
+            var entry = {
+              getContentTypeId: sinon.stub.returns('contentType1')
+            };
+            expect(spaceContext.publishedTypeForEntry(entry)).toBe(undefined);
+            expect(_.contains(spaceContext.publishedContentTypes, contentType1)).toBe(false);
           });
         });
 
@@ -292,6 +323,7 @@ describe('SpaceContext resolving missing ContentTypes', function () {
         callback(null, [
           {
             getName: function(){return '';},
+            isDeleted: sinon.stub().returns(false),
             data: { sys: {id: 'foo'} }
           }
         ]);

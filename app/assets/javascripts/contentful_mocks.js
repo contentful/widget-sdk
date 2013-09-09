@@ -1,5 +1,113 @@
 'use strict';
 
+var mocks = angular.module('contentful/mocks', []);
+
+mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
+  var Client = contentfulClient;
+  var Adapter = contentfulClient.adapters.testing;
+  var adapter = new Adapter();
+
+  var cfStub = {};
+  cfStub.locale = function (code, extensions) {
+    return _.extend({
+      code: code,
+      contentDeliveryApi: true,
+      contentManagementApi: true,
+      'default': true,
+      name: code,
+      publish: true
+    }, extensions);
+  };
+
+  cfStub.locales = function () {
+    return _.map(arguments, function (code, index) {
+      return cfStub.locale(code, {'default': index === 0});
+    });
+  };
+
+  cfStub.space = function (id, extension) {
+    id = id || 'testSpace';
+    var client = new Client(adapter);
+    var testSpace;
+    client.getSpace(id, function (err, space) {
+      testSpace = space;
+    });
+    adapter.respondWith(null, _.merge({
+      sys: {
+        id: id
+      },
+      locales: cfStub.locales('en-US', 'de-DE')
+    }, extension));
+    return testSpace;
+  };
+
+  cfStub.contentTypeData = function (id, fields, extensions) {
+    fields = fields || [];
+    return _.merge({
+      fields: fields,
+      sys: {
+        id: id,
+        type: 'ContentType'
+      }
+    }, extensions);
+  };
+
+  cfStub.field = function (id, extension) {
+    return _.extend({
+      'id': id,
+      'name': id,
+      'required': false,
+      'localized': true,
+      'type': 'Text'
+    }, extension);
+  };
+
+  cfStub.entry = function (space, id, contentTypeId, fields, extensions) {
+    fields = fields || {};
+    var entry;
+    space.getEntry(id, function (err, res) {
+      entry = res;
+    });
+    adapter.respondWith(null, _.merge({
+      fields: fields,
+      sys: {
+        id: id,
+        type: 'Entry',
+        contentType: {
+          sys: {
+            type: 'Link',
+            linkType: 'ContentType',
+            id: contentTypeId
+          }
+        }
+      }
+    }, extensions));
+    return entry;
+  };
+
+  cfStub.spaceContext = function (space, contentTypes) {
+    var spaceContext = new SpaceContext(space);
+    spaceContext.refreshContentTypes();
+    adapter.respondWith(null, {
+      sys: {
+        type: 'Array'
+      },
+      items: contentTypes,
+      total: contentTypes.length
+    });
+    adapter.respondWith(null, {
+      sys: {
+        type: 'Array'
+      },
+      items: contentTypes,
+      total: contentTypes.length
+    });
+    return spaceContext;
+  };
+
+  return cfStub;
+});
+
 window.createMockEntity = function (id, contentType) {
   return {
     getId: function () {
@@ -24,11 +132,12 @@ window.createMockEntity = function (id, contentType) {
             fileName: 'file.psd'
           }
         }
-      },
+      }
     },
-    delete: function (fn) {
+    'delete': function (fn) {
       fn(null, this);
     },
+    isDeleted: sinon.stub().returns(false),
     getContentTypeId: function () {
       return contentType;
     }
@@ -52,24 +161,30 @@ window.createMockSpace = function (id) {
   return entity;
 };
 
-angular.module('contentful/mocks', []).provider('ShareJS', function () {
+mocks.provider('ShareJS', function () {
   function FakeShareJSClient() {
   }
 
   FakeShareJSClient.prototype = {
     open: function (entity, callback) {
       _.defer(callback, null, new FakeShareJSDoc(entity));
+    },
+    connection: {
+      state: 'ok'
     }
   };
 
   function FakeShareJSDoc(entity) {
     this.entity = entity;
-    this.snapshot = entity.data;
+    this.snapshot = angular.copy(entity.data);
+    if (this.snapshot && this.snapshot.sys) delete this.snapshot.sys.version;
+    if (this.snapshot && this.snapshot.sys) delete this.snapshot.sys.updatedAt;
   }
 
   FakeShareJSDoc.prototype = {
     removeListener: angular.noop,
-    addListener: angular.noop
+    //addListener: angular.noop,
+    on: angular.noop
   };
 
   this.token = function () { };

@@ -73,7 +73,7 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
   $scope.publishSelected = function() {
     var applyLater = makeApplyLater(makeBatchResultsNotifier('published'));
     forAllEntries(function(entry) {
-      entry.publish(entry.data.sys.version, applyLater);
+      entry.publish(entry.getVersion(), applyLater);
     });
     clearSelection();
     analytics.track('Performed EntryList action', {action: 'publish'});
