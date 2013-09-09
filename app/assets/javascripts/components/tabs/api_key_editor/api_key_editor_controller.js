@@ -22,7 +22,7 @@ angular.module('contentful').
     });
 
     $scope.$watch('apiKeyForm.$dirty', function (modified, old, scope) {
-      scope.tab.dirty = !old && modified;
+      scope.tab.dirty = modified;
     });
 
     function title() {
@@ -57,7 +57,7 @@ angular.module('contentful').
       $scope.apiKey.save(function(err) {
         $scope.$apply(function() {
           if (err) return notification.error(t + ' could not be saved');
-          $scope.tab.dirty = false;
+          $scope.apiKeyForm.$setPristine();
           notification.info(t + ' saved successfully');
         });
       });
