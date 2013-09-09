@@ -49,7 +49,7 @@
       .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
         %table.result-list
           %tbody
-            %tr(ng-repeat="entity in entities"
+            %tr(ng-repeat="entity in entities track by entity.getId()"
                 cf-click-local="pick(entity)"
                 ng-class="{selected: entity==selectedEntity}")
               %td.cell-content-type
