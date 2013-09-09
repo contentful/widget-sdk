@@ -13,6 +13,9 @@
 
   %style#disable-outlines
 
+  :javascript
+    if (top != self) { top.location.replace(self.location.href); }
+
 %body.cf-clear-outlines
   .client.ng-hide(ng-controller="ClientCtrl" ng-init="initClient()" ng-show="user")
     .notifications
