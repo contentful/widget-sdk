@@ -4,7 +4,7 @@ feature 'Tutorial', js: true do
   before do
     ensure_login
     remove_test_space 'Tutorial'
-    sleep 2
+    create_test_space
   end
 
   after do
