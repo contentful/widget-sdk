@@ -66,9 +66,10 @@ module FeatureHelper
     within '.nav-bar' do
       all('li').last.click
     end
-
-    within_frame 0 do
-      all('a').find{|a| a[:'data-method'] == 'delete'}.click
+    
+    settings_frame = find 'iframe'
+    within_frame settings_frame do
+      find(:xpath, '//a[@data-method="delete"]').click
       page.driver.browser.switch_to.alert.accept
     end
     sleep 4
@@ -92,7 +93,7 @@ module FeatureHelper
 
   def add_button(text)
     find('.tablist-button .dropdown-toggle').click
-    sleep 2
+    #sleep 2
     begin
       find('.tablist-button li[ng-click]', text: text).click
     rescue Capybara::Ambiguous

@@ -15,6 +15,7 @@ feature 'Working with spaces', js: true do
       fill_in 'locale', with: 'en-US'
       click_button 'Create Space'
     end
+    page.has_no_css? 'form[name=newSpaceForm]'
     within '.nav-bar' do
       all('li').last.click
     end
