@@ -70,7 +70,6 @@ module FeatureHelper
     settings_frame = find 'iframe'
     within_frame settings_frame do
       find(:xpath, '//a[@data-method="delete"]').click
-      sleep 1
       page.driver.browser.switch_to.alert.accept
     end
     sleep 4
