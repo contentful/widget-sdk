@@ -129,7 +129,11 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
 
       publishedTypeForEntry: function(entry) {
         var contentTypeId = entry.getContentTypeId();
-        var contentType   = this._publishedContentTypesHash[contentTypeId];
+        return this.getPublishedContentType(contentTypeId);
+      },
+
+      getPublishedContentType: function (contentTypeId) {
+        var contentType = this._publishedContentTypesHash[contentTypeId];
 
         if (!contentType && !this._publishedContentTypeIsMissing[contentTypeId]) {
           this._publishedContentTypeIsMissing[contentTypeId] = true;

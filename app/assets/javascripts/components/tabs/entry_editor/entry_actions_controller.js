@@ -107,13 +107,14 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
       return;
     }
     $scope.entry.publish(version, function (err) {
-      $scope.$apply(function(){
+      $scope.$apply(function(scope){
         if (err) {
           var errorId = err.body.sys.id;
           var reason;
-          if (errorId === 'ValidationFailed')
+          if (errorId === 'ValidationFailed') {
             reason = 'Validation failed';
-          else if (errorId === 'VersionMismatch')
+            scope.setValidationErrors(err.body.details.errors);
+          } else if (errorId === 'VersionMismatch')
             reason = 'Can only publish most recent version';
           else
             reason = errorId;

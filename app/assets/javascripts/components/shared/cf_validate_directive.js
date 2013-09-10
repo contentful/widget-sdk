@@ -63,7 +63,14 @@ angular.module('contentful').directive('cfValidate', function (validation) {
           errors: errors,
           valid:  valid
         };
-        
+      };
+
+      $scope.setValidationErrors = function (schemaErrors) {
+        var data = getData();
+        var schema = getSchema();
+        if (!data || !schema) return;
+
+        $scope.setValidationResult(schemaErrors, data, schema);
       };
 
       $scope.$on('$destroy', function (event) {
