@@ -11,7 +11,7 @@ end
 
 Capybara.run_server = false
 Capybara.app_host = 'http://app.joistio.com:8888'
-Capybara.default_wait_time = 5
+Capybara.default_wait_time = 20
 #Capybara.javascript_driver = :selenium_chrome
 
 # Requires supporting ruby files with custom matchers and macros, etc,
