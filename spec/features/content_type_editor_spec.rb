@@ -53,7 +53,6 @@ feature 'Content Type Editor', js: true do
       find('.validations .button').click
     end
     click_button 'Activate'
-    sleep 1
     expect(page).to have_selector('.notification.info')
   end
 end
