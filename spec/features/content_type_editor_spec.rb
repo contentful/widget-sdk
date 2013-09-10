@@ -17,7 +17,7 @@ feature 'Content Type Editor', js: true do
     add_button 'Content Type'
     fill_in 'contentTypeName', with: 'Test Content Type'
     fill_in 'contentTypeDescription', with: 'Test description'
-    ["Text", "Symbol", "Integer", "Floating-point", "Yes/No",
+    ["Text", "Symbol", "Number", "Decimal Number", "Yes/No",
      "Date/Time", "Object", "Link to Entry", "List of Entries",
      "List of Symbols", "Location"].each do |fieldType|
        add_field fieldType+' Field', fieldType
