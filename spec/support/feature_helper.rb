@@ -34,8 +34,8 @@ module FeatureHelper
       find('#overview .guiders_close', wait: 0.5).click
     rescue Capybara::ElementNotFound
     end
-    page.find('space-view')
-    self.access_token = page.evaluate_script('angular.element($("space-view")).injector().get("authentication").token')
+    page.find('.client')
+    self.access_token = page.evaluate_script('angular.element($(".client")).injector().get("authentication").token')
   end
 
   def clear_cookies
