@@ -18,7 +18,7 @@ module FeatureHelper
     end
 
     begin
-      page.find('space-view')
+      page.find('.client')
     rescue Capybara::ElementNotFound
       visit 'http://be.joistio.com:8888/' if current_url == 'http://www.joistio.com:8888/'
       fill_in 'user_email', with: 'user@example.com'
