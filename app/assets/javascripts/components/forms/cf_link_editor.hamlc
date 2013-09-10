@@ -9,10 +9,11 @@
                     edit-entity="editEntity(entity)"
                     entity-title="spaceContext.localizedField(entity, 'data.fields.title')"
                     file="spaceContext.localizedField(entity, 'data.fields.file')")
-      %div(ng-switch-when="Entry")
+      %span(ng-switch-when="Entry")
         %a(href="" ng-click="editEntity(entity)" ng-show="entity && entity.data") {{linkDescription(entity)}}
         %span(ng-hide="entity && entity.data") {{linkDescription(entity)}}
         %i.ss-delete(ng-click="removeLink(index, entity)" ng-show="otEditable")
+
 .cf-link-editor-search(cf-autocomplete-results="entities" autocomplete-term="searchTerm")
   .controls(ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
     .search-field(ng-submit="submit()"
