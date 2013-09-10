@@ -11,11 +11,11 @@ angular.module('contentful').
       value: {type: 'Symbol'}
     },
     {
-      name: 'Integer',
+      name: 'Number',
       description: 'Integer description',
       value: {type: 'Integer'}},
     {
-      name: 'Floating-point',
+      name: 'Decimal Number',
       description: 'Floating-point description',
       value: {type: 'Number'}
     },
