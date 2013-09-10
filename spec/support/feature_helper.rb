@@ -86,7 +86,9 @@ module FeatureHelper
       find('li', text: 'Create Space').click
       fill_in 'name', with: 'TestSpace'
       fill_in 'locale', with: 'en-US'
-      click_button 'Create Space'
+      within ".modal-dialog" do
+        click_button 'Create Space'
+      end
     end
     sleep 3
   end
