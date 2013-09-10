@@ -52,6 +52,7 @@ feature 'Tutorial', js: true do
       find(:xpath, ".//span[text()='Date/Time']/..").click
       find('.button.new').click
     end
+    sleep 1
     click_link 'Next'
 
     find('.publish').click
