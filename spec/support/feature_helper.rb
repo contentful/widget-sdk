@@ -69,8 +69,8 @@ module FeatureHelper
 
     settings_frame = find 'iframe'
     within_frame settings_frame do
-      find(:xpath, '//a[@data-method="delete"]').click
       page.driver.browser.switch_to.alert.accept
+      click_link 'Delete Space'
     end
     sleep 4
   end
