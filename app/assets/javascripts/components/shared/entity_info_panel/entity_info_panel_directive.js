@@ -21,6 +21,14 @@ angular.module('contentful').
           $scope.sys = sys;
         });
 
+        $scope.entityVersion = function () {
+          if($scope.otDoc)
+            return $scope.otDoc.version;
+          if($scope.sys)
+            return $scope.sys.version;
+          return '';
+        };
+
       },
       template: JST['entity_info_panel']
     };

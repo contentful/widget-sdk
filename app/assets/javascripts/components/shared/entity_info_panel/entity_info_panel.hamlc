@@ -12,9 +12,9 @@
       %td {{sys.id}}
     %tr
       %th
-    %tr(ng-show="otDoc")
+    %tr
       %th Current version
-      %td {{otDoc.version}}
+      %td {{entityVersion()}}
     %tr
       %th
 
@@ -28,6 +28,19 @@
         %td
           %span.cf-user(link="sys.createdBy" as="creator")
             {{creator.getName()}}
+      %tr
+        %th
+
+    %tbody(ng-show="sys.updatedAt")
+      %tr
+        %th Updated
+        %td
+          %date.relative(datetime="{{sys.updatedAt}}")
+      %tr
+        %th Updated by
+        %td
+          %span.cf-user(link="sys.updatedBy" as="updater")
+            {{updater.getName()}}
       %tr
         %th
 
