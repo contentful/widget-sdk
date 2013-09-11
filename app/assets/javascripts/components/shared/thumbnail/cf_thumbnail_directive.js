@@ -25,20 +25,25 @@ angular.module('contentful').directive('cfThumbnail', function () {
     link: function (scope, el, attrs) {
       var maxWidth, maxHeight;
 
-      scope.$watch('file', function (file) {
-        if (angular.isDefined(attrs.size)) {
-          maxWidth = maxHeight = attrs.size;
-        } else {
+      if (typeof attrs.size === 'number') {
+        maxWidth = maxHeight = attrs.size;
+      } else {
+        scope.$watch(function () {
           maxWidth  = el.width();
           maxHeight = el.height();
-        }
+          return [maxWidth, maxHeight];
+        }, dimensionsChanged, true);
+      }
 
-        if (file && file.details && file.details.image) {
-          setDimensions(file.details.image.width, file.details.image.height);
+      scope.$watch('file', dimensionsChanged, true);
+
+      function dimensionsChanged() {
+        if (scope.file && scope.file.details && scope.file.details.image) {
+          setDimensions(scope.file.details.image.width, scope.file.details.image.height);
         } else {
           setDimensions(0, 0);
         }
-      }, true);
+      }
 
       function setDimensions(srcWidth, srcHeight) {
         var resizeWidth = srcWidth;
@@ -60,6 +65,7 @@ angular.module('contentful').directive('cfThumbnail', function () {
         scope.height = Math.round(resizeHeight);
       }
     },
+
 
     controller: ['$scope', 'mimetypeGroups', function ($scope, mimetypeGroups) {
 
