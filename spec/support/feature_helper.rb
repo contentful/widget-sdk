@@ -66,7 +66,7 @@ module FeatureHelper
     within '.nav-bar' do
       all('li').last.click
     end
-    
+
     settings_frame = find 'iframe'
     within_frame settings_frame do
       find(:xpath, '//a[@data-method="delete"]').click
