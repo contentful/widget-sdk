@@ -22,6 +22,9 @@ RSpec.configure do |config|
   config.infer_base_class_for_anonymous_controllers = false
   config.order = "random"
   config.include FeatureHelper
+  config.before(:each) do
+    Capybara.current_session.driver.browser.manage.window.resize_to(1440, 900)
+  end
 end
 
 def accept_browser_dialog
