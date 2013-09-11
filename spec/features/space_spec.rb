@@ -20,8 +20,8 @@ feature 'Working with spaces', js: true do
       all('li').last.click
     end
     within_frame 0 do
-      all('a').find{|a| a[:'data-method'] == 'delete'}.click
-      sleep 1
+      click_link 'Delete Space'
+      sleep 5
       page.driver.browser.switch_to.alert.accept
     end
     sleep 2
