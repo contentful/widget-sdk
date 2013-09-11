@@ -15,12 +15,16 @@ angular.module('contentful').directive('contentTypeFieldList', function() {
             scope.closeAllValidations();
           });
           body.sortable('refresh');
-          ui.item.startIndex = ui.item.index('.existing-field');
+          ui.item.startIndex = $('.existing-field', body).index(ui.item);
         },
         update: function(e, ui) {
           var oldIndex = ui.item.startIndex;
-          var newIndex = ui.item.index('.existing-field');
+          var newIndex = $('.existing-field', body).index(ui.item);
           delete ui.item.startIndex;
+          var itemsLength = body.find('.existing-field');
+          if(oldIndex < itemsLength || newIndex < itemsLength){
+            throw new Error('Sortable attempted to reorder unexisting indexes oldIndex '+oldIndex+' and newIndex'+newIndex);
+          }
           scope.otDoc.at('fields').move(oldIndex, newIndex, function(err) {
             if (err) {
               // undo DOM move operation
