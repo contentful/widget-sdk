@@ -23,3 +23,16 @@ RSpec.configure do |config|
   config.order = "random"
   config.include FeatureHelper
 end
+
+def accept_browser_dialog
+  wait = Selenium::WebDriver::Wait.new(:timeout => 30)
+  wait.until {
+    begin
+      page.driver.browser.switch_to.alert
+      true
+    rescue Selenium::WebDriver::Error::NoAlertPresentError
+      false
+    end
+  }
+  page.driver.browser.switch_to.alert.accept
+end
