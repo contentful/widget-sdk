@@ -48,7 +48,7 @@ feature 'Asset Editor', js: true do
     sleep 1
     nav_bar 'asset-list'
     table = find('.main-results tbody')
-    sleep 2
+    sleep 5
     expect(table).to have_text 'Bacon'
   end
 end
