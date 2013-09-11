@@ -82,8 +82,7 @@ feature 'Tutorial', js: true do
       ta.set('Lorem ipsum dolor sit amet')
     end
     find('.date').click
-    all('td[data-handler=selectDay]') # Prevent Capybara from not finding something to click on
-    all('td[data-handler=selectDay] a')[5].click
+    first('td[data-handler=selectDay] a').click
     click_button 'Publish'
 
     nav_bar 'entry-list'
