@@ -27,7 +27,7 @@
             tooltip-placement="left")
       Info
 
-.aux-panel
+.aux-panel(ng-show="preferences.showAuxPanel")
   %header
     %span Entry Information
   .entity-info-panel

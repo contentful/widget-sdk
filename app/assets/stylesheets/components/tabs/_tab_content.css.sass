@@ -29,26 +29,11 @@ $tab-main-margin-top: 28px
 .tab-actions
   +stretch(false, 0, 0, 0)
   height: $tab-actions-height
-.aux-panel
-  width: 20%
-  position: absolute
-  overflow-y: auto
-  top: $tab-header-height
-  bottom: 0
-
-// Aux Panel Layout
-
-// layout
-// normal mode
-.aux-panel
-  display: none
 
 // sidebar mode
 .with-aux-panel
   .tab-main
     right: 20%
-  .aux-panel
-    display: block
 
 // Tab Actions Layout
 
@@ -60,8 +45,7 @@ $tab-main-margin-top: 28px
 .with-tab-actions
   .tab-actions
     display: block
-  .tab-main,
-  .aux-panel
+  .tab-main
     bottom: $tab-actions-height
 
 // Look and Feel

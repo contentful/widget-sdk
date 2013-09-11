@@ -9,7 +9,7 @@
       Info
 
 
-.aux-panel
+.aux-panel(ng-show="preferences.showAuxPanel")
   %header
     %span API Key Information
   .entity-info-panel

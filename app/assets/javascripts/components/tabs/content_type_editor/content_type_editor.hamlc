@@ -9,7 +9,7 @@
             tooltip="Toggle additional details")
       Info
 
-.aux-panel
+.aux-panel(ng-show="preferences.showAuxPanel")
   %header
     %span Content Type Information
   .entity-info-panel
