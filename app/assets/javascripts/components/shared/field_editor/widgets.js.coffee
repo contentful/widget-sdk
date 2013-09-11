@@ -10,7 +10,7 @@ angular.module('contentful').service 'widgets', ($compile) ->
     Text:
       textArea:
         name: "Multiline text field"
-        template: """<textarea class="input-autogrow" ng-model="fieldData.value" input-xxlarge" ot-subdoc ot-bind-text ng-disabled="!otEditable"></textarea>"""
+        template: """<textarea cf-input-autogrow ng-model="fieldData.value" input-xxlarge" ot-subdoc ot-bind-text ng-disabled="!otEditable"></textarea>"""
     Boolean:
       checkBox:
         name: "Boolean Checkbox"

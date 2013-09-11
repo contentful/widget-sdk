@@ -1,4 +1,6 @@
 @import "components/*"
+@import "components/forms/*"
+@import "components/tabs/*"
 
 // Overwrite some jQuery-UI stuff
 .ui-corner-all
@@ -42,6 +44,9 @@ i.ss-download
     width: 50%
     vertical-align: middle
 
+.plain-list
+  +plain-list
+
 // Main results filters
 .filter-list
   +plain-list
@@ -71,10 +76,6 @@ i.ss-download
     text-align: center
 .endless-container.scrolled
   +box-shadow(rgba(black, .1) 1px 4px 9px -6px inset)
-
-.separator
-  height: 1px
-  background: $light-rule
 
 // Avatars
 // TODO configure only .avatar here, mix into account.user

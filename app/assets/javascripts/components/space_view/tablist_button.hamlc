@@ -3,16 +3,17 @@
     %i.ss-plus
     %span Add
   .dropdown-menu.top-caret.left-aligned
+    %h3.subtitle General
     %ul
       %li.add-api-key(ng-click="createApiKey()" dropdown-close="" ng-show="can('create', 'ApiKey')") API Key
       %li.add-asset(ng-click="createAsset()" dropdown-close="" ng-show="can('create', 'Asset')") Asset
-      %li.add-content-type(ng-click="createContentType()" dropdown-close="" ng-show="can('create', 'ContentType')") Content Type
+      %li.add-content-type.bottom-separator(ng-click="createContentType()" dropdown-close="" ng-show="can('create', 'ContentType')") Content Type
+    %h3.subtitle Entries
     %ul.content-types(ng-show="spaceContext.publishedContentTypes.length > 0" ng-show="can('create', 'Entry')")
       %li(ng-repeat="(index, contentType) in spaceContext.publishedContentTypes"
         ng-click="createEntry(contentType)"
-        dropdown-close=""
-        ng-class="{separator: index == 0}")
+        dropdown-close="")
         {{contentType.getName()}}
-    %ul(ng-hide="spaceContext.publishedContentTypes.length > 0")
-      %li.separator.hint(ng-click="createContentType()" dropdown-close)
-        (Create and activate a Content Type before creating entries)
+    %ul.highlight.no-content-types(ng-hide="spaceContext.publishedContentTypes.length > 0")
+      %li.hint(ng-click="createContentType()" dropdown-close)
+        (Create and activate a Content Type before creating Entries)

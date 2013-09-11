@@ -1,27 +1,45 @@
-.tab-header
+.tab-header.editor-configuration
   %h1 {{headline}}
+  .editor-top-right
+    %button(type="button"
+            ng-click="preferences.toggleAuxPanel()"
+            ng-class="{active: preferences.showAuxPanel}"
+            tooltip="Toggle additional details"
+            tooltip-placement="left")
+      Info
+
+
+.aux-panel(ng-show="preferences.showAuxPanel")
+  %header
+    %span API Key Information
+  .entity-info-panel
+
 
 .tab-main
   .ng-form.form-horizontal(name="apiKeyForm" submit="save()")
     .form-field
       %label Name
+        %sup *
       .form-controls
-        %input(type="text" ng-model="apiKey.data.name" required="" ng-disabled="!editable()")
+        .field-editor
+          %input(type="text" ng-model="apiKey.data.name" required="" ng-disabled="!editable()")
     .form-field
       %label Description
       .form-controls
-        %input(type="text" ng-model="apiKey.data.description" ng-disabled="!editable()")
+        .field-editor
+          %input(type="text" ng-model="apiKey.data.description" ng-disabled="!editable()")
     .form-field
       %label Access Token
       .form-controls()
-        %textarea(ng-model="apiKey.data.accessToken" ng-disabled="true" ng-show="apiKey.data.accessToken")
-        %input(type="text" ng-hide="apiKey.data.accessToken" ng-disabled="true" value="Save this API Key to get generate an OAuth Access Token and access your data.")
-        %div.curl-example(ng-show="apiKey.data.accessToken")
-          %a(href="{{exampleUrl}}" target="_blank") Access Published Entries
-          %span or via curl:
-          %pre
-            curl {{exampleUrl}}
-    
+        .field-editor
+          %textarea(ng-model="apiKey.data.accessToken" ng-disabled="true" ng-show="apiKey.data.accessToken")
+          %input(type="text" ng-hide="apiKey.data.accessToken" ng-disabled="true" value="Save this API Key to get generate an OAuth Access Token and access your data.")
+          %div.curl-example(ng-show="apiKey.data.accessToken")
+            %a(href="{{exampleUrl}}" target="_blank") Access Published Entries
+            %span or via curl:
+            %pre
+              curl {{exampleUrl|urlDisplay}}
+
 .tab-actions
   .button-set
     %button.delete(type="button"

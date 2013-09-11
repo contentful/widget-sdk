@@ -14,7 +14,7 @@
               {{locale.name}}
               %span(ng-show="locale == spaceContext.space.getDefaultLocale()") (default)
         %ul
-          %li(ng-class="{separator: showLangSwitcher}")
+          %li(ng-class="{'top-separator': showLangSwitcher}")
             %label
               %input(type="checkbox" ng-model="preferences.showDisabledFields")
               Show disabled fields
@@ -26,22 +26,8 @@
             tooltip="Toggle additional details"
             tooltip-placement="left")
       Info
-    -#.dropdown-btn>
-      %a.btn.dropdown-toggle
-        %i.ss-dropdown
-        %span Meta
-      .dropdown-menu(style="display:none")
-        …
-        …
-        …
-    -#.dropdown-btn>
-      %a.btn.dropdown-toggle
-        %span Apps
-    -#.dropdown-btn>
-      %a.btn.dropdown-toggle
-        %span Events
 
-.aux-panel
+.aux-panel(ng-show="preferences.showAuxPanel")
   %header
     %span Entry Information
   .entity-info-panel
@@ -57,21 +43,19 @@
         data-field-type="{{field.type}}"
         data-field-items-type="{{field.items.type}}"
         ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
-      %label {{field.name}}
+      %label
+        {{field.name}}
+        %sup(ng-show="field.required") *
       .form-controls
         .locale(ng-repeat="locale in field.locales track by locale.code" ot-field-presence="['fields', field.id, locale.code]" data-locale="{{locale.code}}")
+          .cf-field-editor(ot-path="['fields', field.id, locale.code]" cf-editor-entity="entry")
+          .locale-label(ng-show="field.locales.length > 1") {{locale.name}}
           .field-collaborators
-            %ul
+            %ul.field-list
               %li.avatar.cf-user(ng-repeat="link in fieldPresence.users"
                                  link="link" as="user"
                                  tooltip="{{user.getName()}}")
                 %img(ng-src="{{user.data.avatarUrl}}")
-          .locale-label(ng-show="field.locales.length > 1") {{locale.name}}
-          .cf-field-editor(ot-path="['fields', field.id, locale.code]" cf-editor-entity="entry")
-          -#.hint.tip
-            Hint to the user about the meaning of the field
-            .arrow-left
-            .arrow-left-border
           .cf-validation-error-display.form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
         .cf-validation-error-display.form-box-error(cf-error-path="['fields', field.id]")
 
@@ -83,7 +67,7 @@
         More
       .dropdown-menu(position="top")
         %ul
-          %li.duplicate(type="button" ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this entry" dropdown-close) Duplicate
+          %li.duplicate(type="button" ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this Entry" dropdown-close) Duplicate
           %li.delete-confirm(type="button" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss" dropdown-close) Are you sure?
           %li.delete(type="button" ng-show="canDelete() && !deleteConfirm" ng-click="deleteConfirm=true" tooltip="Permanently delete this Entry") Delete
     %button.archive(type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry") Archive

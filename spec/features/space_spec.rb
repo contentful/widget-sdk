@@ -15,12 +15,13 @@ feature 'Working with spaces', js: true do
       fill_in 'locale', with: 'en-US'
       click_button 'Create Space'
     end
+    page.has_no_css? 'form[name=newSpaceForm]'
     within '.nav-bar' do
       all('li').last.click
     end
     within_frame 0 do
-      all('a').find{|a| a[:'data-method'] == 'delete'}.click
-      page.driver.browser.switch_to.alert.accept
+      click_link 'Delete Space'
+      accept_browser_dialog
     end
     sleep 2
   end

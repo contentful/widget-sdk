@@ -473,7 +473,7 @@ angular.module('contentful').constant('sampleContentTypes', {
         'createdAt': '2013-06-19T09:08:13.328Z',
         'updatedAt': '2013-06-19T09:14:53.910Z'
       },
-      'description': 'One Restaurant Guide entry',
+      'description': 'One Restaurant Guide Entry',
       'displayField': 'name'
     }
   ]

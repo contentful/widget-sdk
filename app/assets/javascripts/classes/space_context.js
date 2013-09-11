@@ -79,7 +79,7 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
         this.space.getPublishedContentTypes(function (err, contentTypes) {
           $rootScope.$apply(function () {
             if (err) {
-              console.error('Could not get published content types', err);
+              console.error('Could not get published Content Types', err);
               deferred.reject(err);
             } else {
                 self.publishedContentTypes = _(contentTypes)
@@ -129,7 +129,11 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
 
       publishedTypeForEntry: function(entry) {
         var contentTypeId = entry.getContentTypeId();
-        var contentType   = this._publishedContentTypesHash[contentTypeId];
+        return this.getPublishedContentType(contentTypeId);
+      },
+
+      getPublishedContentType: function (contentTypeId) {
+        var contentType = this._publishedContentTypesHash[contentTypeId];
 
         if (!contentType && !this._publishedContentTypeIsMissing[contentTypeId]) {
           this._publishedContentTypeIsMissing[contentTypeId] = true;

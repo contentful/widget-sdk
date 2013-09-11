@@ -51,16 +51,16 @@
   %div(ng-switch-when="Link")
     %div(ng-show="type.value.linkType == 'Entry'")
       %h3
-        A link to another entry
+        A link to another Entry
       %p
-        Connect your current entry to another already existing entry previously created. You can create relations such as connecting one book to its author.
+        Connect your current Entry to another already existing Entry previously created. You can create relations such as connecting one book to its author.
       %img(src="<%= image_path('field_type/linktoentry.png') %>")
 
     %div(ng-show="type.value.linkType == 'Asset'")
       %h3
-        A link to an asset
+        A link to an Asset
       %p
-        Connect your current entry to an asset previously uploaded. You can use it to attach media assets to entries, such as a cover image to a book.
+        Connect your current Entry to an Asset previously uploaded. You can use it to attach media Assets to Entries, such as a cover image to a book.
       %img(src="<%= image_path('field_type/linkstoentries.png') %>")
 
   %div(ng-switch-when="Location")
@@ -73,16 +73,16 @@
   %div(ng-switch-when="Array")
     %div(ng-show="type.value.items.type == 'Link' && type.value.items.linkType == 'Entry'")
       %h3
-        One or many links to entries
+        One or many links to Entries
       %p
-        Connect your current entry to other already existing entries previously created. It works as the Link to Entry but it allows you to connect one entry to several other ones. An example is a book which has several authors.
+        Connect your current Entry to other already existing Entries previously created. It works as the Link to Entry but it allows you to connect one Entry to several other ones. An example is a book which has several authors.
       %img(src="<%= image_path('field_type/linkstoentries.png') %>")
 
     %div(ng-show="type.value.items.type == 'Link' && type.value.items.linkType == 'Asset'")
       %h3
-        One or many links to assets
+        One or many links to Assets
       %p
-        Connect your current entry to assets previously uploaded. It works as the Link to Asset but it allows you to connect one entry to several assets at once. An example is a gallery of pictures.
+        Connect your current Entry to Assets previously uploaded. It works as the Link to Asset but it allows you to connect one Entry to several Assets at once. An example is a gallery of pictures.
       %img(src="<%= image_path('field_type/linkstoentries.png') %>")
 
     %div(ng-show="type.value.items.type == 'Symbol'")

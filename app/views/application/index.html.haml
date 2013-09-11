@@ -13,6 +13,9 @@
 
   %style#disable-outlines
 
+  :javascript
+    if (top != self) { top.location.replace(self.location.href); }
+
 %body.cf-clear-outlines
   .client.ng-hide(ng-controller="ClientCtrl" ng-init="initClient()" ng-show="user")
     .notifications
@@ -28,8 +31,8 @@
           %ul
             %li(ng-repeat="space in spaces" ng-click="selectSpace(space)" dropdown-close="")
               {{space.data.name}}
-            %li(ng-show="canCreateSpace(user)" ng-click="showCreateSpaceDialog()" ng-class="{separator: spaces.length > 0}" dropdown-close="")
-              Create Space
+            %li.highlight(ng-show="canCreateSpace(user)" ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close="")
+              + Create Space
       .dropdown-btn.user(label="")
         %a.btn.dropdown-toggle(ng-click="clickedProfileButton()" tabindex="0")
           %img(ng-src="{{user.avatarUrl}}")

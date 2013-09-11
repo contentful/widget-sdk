@@ -88,6 +88,15 @@
   // Style form elements
   .input
     @extend .form-styled
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="password"],
+    input.time,
+    .select-box,
+    textarea
+      width: 57%
 
   // Make form actions look a little more like tab-actions
   fieldset.actions

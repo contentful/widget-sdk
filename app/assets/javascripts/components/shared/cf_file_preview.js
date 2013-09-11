@@ -45,7 +45,7 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
         if (!isImage()) return;
         makePreview();
         _.defer(function () {
-          $(window).one('click', removePreview);
+          $(document).one('click', removePreview);
         });
         $preview.css({
           top: yOffset,

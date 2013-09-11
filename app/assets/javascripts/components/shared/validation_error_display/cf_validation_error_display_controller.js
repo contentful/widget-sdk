@@ -5,11 +5,9 @@ angular.module('contentful').controller('CfValidationErrorDisplayCtrl', function
 
   var messages = {
     linkContentType: function(v) {
-      var ct = _.find($scope.spaceContext.publishedContentTypes, function(ct) {
-        return ct.getId() === v.contentTypeId;
-      });
+      var ct = $scope.spaceContext.getPublishedContentType(v.contentTypeId);
       if (!ct) return 'Invalid Content Type';
-      return 'Linked entry\'s Content Type must be ' + ct.getName() + '.';
+      return 'Linked Entry\'s Content Type must be ' + ct.getName() + '.';
     },
     size: function (v) {
       var data = getData(v);

@@ -46,7 +46,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
 
 
   $scope.editAsset = function(asset, mode) {
-    if (! (asset && asset.data)) return notification.error('Can\'t open asset');
+    if (!(asset && asset.data)) return notification.error('Can\'t open Asset');
 
     mode = mode || 'edit';
     var editor = _.find($scope.spaceContext.tabList.items, function(tab){

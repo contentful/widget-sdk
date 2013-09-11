@@ -6,11 +6,6 @@
     list-style-type: none
     margin: 0
     position: relative
-  .separator
-    height: 1px
-    width: 100%
-    position: absolute
-    bottom: 0
   // styling
   +user-select(none)
   +gradient(#333333, #434343)
@@ -62,6 +57,12 @@
     .tip
       opacity: 1
       left: 58px
+
+.outlines-enabled
+  .nav-bar
+    li:focus
+      .tip
+        opacity: 0
 
 .nav-bar
   li:hover

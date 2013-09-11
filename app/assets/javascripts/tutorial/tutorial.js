@@ -142,6 +142,14 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         guiders.reposition();
       }, 50, true);
 
+
+      function watchForFieldType(guider, name, type) {
+        return function () {
+          return _.find(guider.attachScope.contentType.data.fields, {name: name, type: type}) ||
+                 _.find(guider.attachScope.contentType.data.fields, {name: name.toLowerCase(), type: type});
+        };
+      }
+
 ////////////////////////////////////////////////////////////////////////////////
 //   Overview    ///////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
@@ -255,11 +263,12 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         next: 'contentTypeContent',
         onShow: function (guider) {
           guider.scope.$watch(repositionLater);
-          guider.scope.$watch(function () {
-            return _.find(guider.attachScope.contentType.data.fields, {name: 'Title', type: 'Text'});
-          }, function (has, old) {
-            if (has && !old) guiders.next();
-          });
+          guider.scope.$watch(
+            watchForFieldType(guider, 'Title', 'Text'),
+          function (has, old) {
+              if (has && !old) guiders.next();
+            }
+          );
         }
       });
 
@@ -274,9 +283,9 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         next: 'contentTypeDate',
         onShow: function (guider) {
           guider.scope.$watch(repositionLater);
-          guider.scope.$watch(function () {
-            return _.find(guider.attachScope.contentType.data.fields, {name: 'Content', type: 'Text'});
-          }, function (has, old) {
+          guider.scope.$watch(
+            watchForFieldType(guider, 'Content', 'Text'),
+          function (has, old) {
             if (has && !old) guiders.next();
           });
         }
@@ -293,9 +302,9 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         next: 'contentTypeMore',
         onShow: function (guider) {
           guider.scope.$watch(repositionLater);
-          guider.scope.$watch(function () {
-            return _.find(guider.attachScope.contentType.data.fields, {name: 'Timestamp', type: 'Date'});
-          }, function (has, old) {
+          guider.scope.$watch(
+            watchForFieldType(guider, 'Timestamp', 'Date'),
+          function (has, old) {
             if (has && !old) guiders.next();
           });
         }
@@ -320,7 +329,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'content-types',
         id: 'contentTypeActivate',
         title: 'Activate it!',
-        description: 'Every time you finish creating a Content Type, you must activate it before you can create entries with this type.',
+        description: 'Every time you finish creating a Content Type, you must activate it before you can create Entries with this type.',
         attachTo: '.content-type-editor:visible button.publish',
         offset: {top: 15, left: 0},
         position: '1',
@@ -452,7 +461,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'entries',
         id: 'entryCollaboration',
         title: 'Working together',
-        description: 'On Contentful you can work together with your team. On this bar you can see who’s editing the entry <strong>at the same time</strong>.',
+        description: 'On Contentful you can work together with your team. On this bar you can see who’s editing the Entry <strong>at the same time</strong>.',
         attachTo: '.tab-content:visible .other-users',
         position: 11,
         buttons: [{ name: 'Next' }],
@@ -463,7 +472,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'entries',
         id: 'entryPublish',
         title: 'Publish!',
-        description: 'Your content is saved automatically, but to make it available for consumption you need to publish it. You can also unpublish previously published content.<br><br><strong>Edit your fields now in the form above, then click this button to publish the entry and proceed.</strong>',
+        description: 'Your content is saved automatically, but to make it available for consumption you need to publish it. You can also unpublish previously published content.<br><br><strong>Edit your fields now in the form above, then click this button to publish the Entry and proceed.</strong>',
         attachTo: '.tab-content:visible .publish',
         position: 1,
         next: 'entryList',

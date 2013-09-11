@@ -1,0 +1,83 @@
+// General form layout
+.form-horizontal
+  display: table
+  width: 100%
+  border-spacing: 0 $form-spacing
+  color: $medium-gray
+
+  .form-field
+    display: table-row
+    > *
+      vertical-align: top
+      display: table-cell
+
+  label
+    width: $form-labelwidth
+    padding: $form-offset $form-gutter $form-offset 0
+    text-align: right
+
+  .form-controls
+    width: $form-controlwidth-outer
+
+  .locale
+    position: relative
+    clear: both
+
+$field-editor-width: 60%
+
+.cf-field-editor,
+.field-editor
+  float: left
+  width: $field-editor-width
+
+.locale-label
+  float: left
+  margin-left: $form-offset
+  padding-top: $form-offset
+
+.field-collaborators
+  float: left
+  margin-left: $form-offset
+  padding-top: $form-offset/2
+  ul
+    margin: 0
+  .avatar
+    $image-size: 28px
+    display: inline-block
+    position: relative
+    margin-left: 3px
+    +border-radius(3px)
+    width: $image-size
+    img
+      height: $image-size
+
+.form-inline-error
+  color: $red
+  padding-top: .3em
+  font-size: .8em
+  line-height: 1
+  li
+    margin-bottom: .3em
+
+.form-box-error
+  float: left
+  display: block
+  position: static
+  text-align: center
+  padding: .6em $form-textarea-padding
+  background: darken($red, 3%)
+  border: 1px solid darken($red, 16%)
+  color: white
+  +box-shadow(0 1px 1px rgba(255,255,255,0.25) inset)
+  +border-radius(3px)
+  margin: 4px 0 4px 0
+  width: $field-editor-width
+  +transition(opacity 0.3s ease-in-out)
+
+.with-aux-panel
+  .form-box-error,
+  .cf-field-editor,
+  .field-editor
+    width: $field-editor-width + 18%
+
+

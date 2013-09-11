@@ -20,7 +20,7 @@ angular.module('contentful').directive('tablistButton', function(analytics) {
           delay: {show: 100, hide: 100},
           trigger: 'manual',
           title: 'You can now create a '+contentType.getName()+' Entry',
-          placement: 'right'
+          placement: 'bottom'
         });
         toggle.tooltip('show');
         toggle.one('click', remove);

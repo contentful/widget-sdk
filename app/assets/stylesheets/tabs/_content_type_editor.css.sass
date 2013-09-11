@@ -83,6 +83,10 @@
         padding: 4px 5px 5px
         +border-radius(2px)
         width: 80%
+      input[type="checkbox"],
+      input[type="radio"]
+        height: 20px
+        width: 16px
       select
         width: 100%
       .type
@@ -106,12 +110,13 @@
           display: none
           left: 200px
           top: 0
-          padding: 10px
+          bottom: 0
+          padding: 20px 40px 10px 10px
           p
             padding: 0
           img
-            margin-top: 10px
-            width: 100%
+            position: absolute
+            bottom: 90px
         li:hover
           .content-type-description
             display: block

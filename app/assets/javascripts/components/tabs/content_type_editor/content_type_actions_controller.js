@@ -13,7 +13,7 @@ angular.module('contentful').
   $scope.delete = function () {
     $scope.contentType.delete(function (err, contentType) {
       $scope.$apply(function (scope) {
-        if (err) return notification.error('Error deleting content type');
+        if (err) return notification.error('Error deleting Content Type');
         notification.info('Content type deleted successfully');
         scope.broadcastFromSpace('entityDeleted', contentType);
         // TODO this should happen automatically

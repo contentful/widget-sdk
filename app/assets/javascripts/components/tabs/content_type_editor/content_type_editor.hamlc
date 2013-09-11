@@ -9,7 +9,7 @@
             tooltip="Toggle additional details")
       Info
 
-.aux-panel
+.aux-panel(ng-show="preferences.showAuxPanel")
   %header
     %span Content Type Information
   .entity-info-panel
@@ -17,23 +17,27 @@
 .tab-main
   .form-horizontal(name="contentTypeForm")
     .form-field
-      %label Name
+      %label
+        Name
+        %sup *
       .form-controls(ot-path="['name']" ot-subdoc)
-        %input(type="text"
-               name="contentTypeName"
-               ng-disabled="!otEditable"
-               placeholder="Content Type Name (e.g. Product)"
-               ng-model="contentType.data.name"
-               ot-bind-text="")
+        .field-editor
+          %input(type="text"
+                 name="contentTypeName"
+                 ng-disabled="!otEditable"
+                 placeholder="Content Type Name (e.g. Product)"
+                 ng-model="contentType.data.name"
+                 ot-bind-text="")
         .cf-validation-error-display.form-box-error(cf-error-path="['name']" ng-show="1 < otDoc.version && hasErrors")
     .form-field
       %label Description
       .form-controls(ot-path="['description']" ot-subdoc)
-        %textarea(placeholder="Describe the purpose of entries using this Content Type"
-                  name="contentTypeDescription"
-                  ng-disabled="!otEditable"
-                  ng-model="contentType.data.description"
-                  ot-bind-text="")
+        .field-editor
+          %textarea(placeholder="Describe the purpose of Entries using this Content Type"
+                    name="contentTypeDescription"
+                    ng-disabled="!otEditable"
+                    ng-model="contentType.data.description"
+                    ot-bind-text="")
         .cf-validation-error-display.form-box-error(cf-error-path="['description']")
     .form-field
       %label 
@@ -60,5 +64,5 @@
                     ng-click="publish()"
                     tooltip="Make this Content Type available to editors")
       {{publishButtonLabel()}}
-  .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to create entries of this Content Type."
+  .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to create Entries of this Content Type."
                tooltip-placement="top")

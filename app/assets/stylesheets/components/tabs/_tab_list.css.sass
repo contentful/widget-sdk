@@ -81,13 +81,28 @@
   +flex(none)
   width: 70px
   .dropdown-menu 
+    width: 210px
     li
       display: block
       height: auto
       font-size: 11px
-  .tooltip.right
+  .tooltip.bottom
     width: 200px
+  .no-content-types
+    background-color: $gray-background
+    color: $dark-gray
 
+.add-btn
+  .dropdown-menu
+    h3, li
+      padding: 6px 0
+    h3
+      margin-top: 8px
+      margin-bottom: 0px
+      padding-left: 12px
+    li
+      padding-left: 20px
+      padding-right: 4px
 .add.button
   @extend %blue-button
   margin-top: 1px

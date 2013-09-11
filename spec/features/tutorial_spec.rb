@@ -4,7 +4,7 @@ feature 'Tutorial', js: true do
   before do
     ensure_login
     remove_test_space 'Tutorial'
-    sleep 2
+    create_test_space
   end
 
   after do
@@ -82,7 +82,7 @@ feature 'Tutorial', js: true do
       ta.set('Lorem ipsum dolor sit amet')
     end
     find('.date').click
-    all('td[data-handler=selectDay] a')[5].click
+    first('td[data-handler=selectDay] a').click
     click_button 'Publish'
 
     nav_bar 'entry-list'

@@ -69,8 +69,8 @@ angular.module('contentful').controller('newFieldFormCtrl', function ($scope, av
 
   $scope.$watch(function (scope) {
     scope.idExists = _.find(scope.contentType.data.fields, function (field) {
-      assert.path(field, 'id', 'Failed to get content type field id');
-      assert.scopePath(scope, 'newField.id', 'Failed to get content type new field id');
+      assert.path(field, 'id', 'Failed to get Content Type field id');
+      assert.scopePath(scope, 'newField.id', 'Failed to get Content Type new field id');
       return field && scope.newField && field.id == scope.newField.id;
     });
   });

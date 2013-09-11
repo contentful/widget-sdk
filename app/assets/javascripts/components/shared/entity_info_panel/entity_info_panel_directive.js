@@ -16,6 +16,19 @@ angular.module('contentful').
         $scope.$watch('otDoc.snapshot.sys', function(sys) {
           $scope.sys = sys;
         });
+
+        $scope.$watch('apiKey.data.sys', function(sys) {
+          $scope.sys = sys;
+        });
+
+        $scope.entityVersion = function () {
+          if($scope.otDoc)
+            return $scope.otDoc.version;
+          if($scope.sys)
+            return $scope.sys.version;
+          return '';
+        };
+
       },
       template: JST['entity_info_panel']
     };

@@ -18,7 +18,7 @@ module FeatureHelper
     end
 
     begin
-      page.find('space-view')
+      page.find('.client')
     rescue Capybara::ElementNotFound
       visit 'http://be.joistio.com:8888/' if current_url == 'http://www.joistio.com:8888/'
       fill_in 'user_email', with: 'user@example.com'
@@ -34,8 +34,8 @@ module FeatureHelper
       find('#overview .guiders_close', wait: 0.5).click
     rescue Capybara::ElementNotFound
     end
-    page.find('space-view')
-    self.access_token = page.evaluate_script('angular.element($("space-view")).injector().get("authentication").token')
+    page.find('.client')
+    self.access_token = page.evaluate_script('angular.element($(".client")).injector().get("authentication").token')
   end
 
   def clear_cookies
@@ -67,9 +67,10 @@ module FeatureHelper
       all('li').last.click
     end
 
-    within_frame 0 do
-      all('a').find{|a| a[:'data-method'] == 'delete'}.click
-      page.driver.browser.switch_to.alert.accept
+    settings_frame = find 'iframe'
+    within_frame settings_frame do
+      click_link 'Delete Space'
+      accept_browser_dialog
     end
     sleep 4
   end
@@ -85,14 +86,16 @@ module FeatureHelper
       find('li', text: 'Create Space').click
       fill_in 'name', with: 'TestSpace'
       fill_in 'locale', with: 'en-US'
-      click_button 'Create Space'
+      within ".modal-dialog" do
+        click_button 'Create Space'
+      end
     end
     sleep 3
   end
 
   def add_button(text)
     find('.tablist-button .dropdown-toggle').click
-    sleep 2
+    #sleep 2
     begin
       find('.tablist-button li[ng-click]', text: text).click
     rescue Capybara::Ambiguous

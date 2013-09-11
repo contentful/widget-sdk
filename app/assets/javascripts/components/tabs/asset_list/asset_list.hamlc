@@ -2,7 +2,7 @@
   .left-nav
     %h1 Assets
   .search-area.with-left-nav
-    .search-field(search="searchTerm" placeholder="Search for assets")
+    .search-field(search="searchTerm" placeholder="Search for Assets")
   .search-results-position(paginator="paginator")
 .tab-main
   .left-nav
@@ -56,8 +56,8 @@
               %input(type="checkbox" cf-selection="asset" tabindex="-1")
             -#%td.cell-favorite
               %i.ss-star
-            %td.cell-preview(ng-init="file=spaceContext.localizedField(asset, 'data.fields.file')" ng-class="{'no-padding': (!!file)}")
-              %div.file-preview(cf-file-preview="file" preview-size="400")
+            %td.cell-preview(ng-class="{'no-padding': (!!file)}")
+              %div.file-preview(cf-file-preview="spaceContext.localizedField(asset, 'data.fields.file')" preview-size="400")
                 %span(cf-thumbnail="file" size="30")
             %td.cell-name
               %span {{spaceContext.assetTitle(asset)}}
@@ -80,7 +80,9 @@
       %div(ng-show="!hasQuery()")
         %i.ss-attach.giant-icon
         %header You have no Assets yet.
-        %p To create an Asset, use the Add-Button near the top of the screen.
+        %p Assets are external documents that you can link to your Entries. They can be any file you wish, form sounds to images or videos to text documents.
+        %button(type="button" ng-click="createAsset()")
+          Create an Asset
 
 .tab-actions
   .label {{selection.size()}} Assets selected

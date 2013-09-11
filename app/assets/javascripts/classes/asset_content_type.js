@@ -9,7 +9,8 @@ angular.module('contentful').constant('AssetContentType', {
       name: 'Title',
       type: 'Symbol',
       localized: true,
-      disabled: false
+      disabled: false,
+      required: true
     },
     {
       id: 'description',
@@ -23,7 +24,8 @@ angular.module('contentful').constant('AssetContentType', {
       name: 'File',
       type: 'File',
       localized: true,
-      disabled: false
+      disabled: false,
+      required: true
     }
   ]
 });
