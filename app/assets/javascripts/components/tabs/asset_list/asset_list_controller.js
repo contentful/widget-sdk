@@ -70,8 +70,8 @@ angular.module('contentful').
     return assetLoader.load($scope.spaceContext.space, 'getAssets', buildQuery()).
     then(function (assets) {
       $scope.paginator.numEntries = assets.total;
-      $scope.selection.switchBaseSet(assets.total);
       $scope.assets = assets;
+      $scope.selection.switchBaseSet($scope.assets.length);
       analytics.track('Reloaded AssetList');
     });
   };
@@ -115,8 +115,8 @@ angular.module('contentful').
     assetLoader.load($scope.spaceContext.space, 'getAssets', buildQuery()).
     then(function (assets) {
       $scope.paginator.numEntries = assets.total;
-      $scope.selection.switchBaseSet(assets.total);
       $scope.assets.push.apply($scope.assets, assets);
+      $scope.selection.setBaseSize($scope.entries.length);
     }, function () {
       $scope.paginator.page--;
     });

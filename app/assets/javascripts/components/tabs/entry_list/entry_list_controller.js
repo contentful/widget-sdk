@@ -72,8 +72,8 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
     return entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
     then(function (entries) {
       $scope.paginator.numEntries = entries.total;
-      $scope.selection.switchBaseSet(entries.total);
       $scope.entries = entries;
+      $scope.selection.switchBaseSet($scope.entries.length);
       analytics.track('Reloaded EntryList');
     });
   };
@@ -119,8 +119,8 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
     entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
     then(function (entries) {
       $scope.paginator.numEntries = entries.total;
-      $scope.selection.switchBaseSet(entries.total);
       $scope.entries.push.apply($scope.entries, entries);
+      $scope.selection.setBaseSize($scope.entries.length);
     }, function () {
       $scope.paginator.page--;
     });
