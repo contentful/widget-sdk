@@ -69,8 +69,8 @@ module FeatureHelper
 
     settings_frame = find 'iframe'
     within_frame settings_frame do
-      page.driver.browser.switch_to.alert.accept
       click_link 'Delete Space'
+      accept_browser_dialog
     end
     sleep 4
   end

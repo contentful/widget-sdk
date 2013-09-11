@@ -21,8 +21,7 @@ feature 'Working with spaces', js: true do
     end
     within_frame 0 do
       click_link 'Delete Space'
-      sleep 5
-      page.driver.browser.switch_to.alert.accept
+      accept_browser_dialog
     end
     sleep 2
   end
