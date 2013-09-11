@@ -21,6 +21,7 @@ feature 'Working with spaces', js: true do
     end
     within_frame 0 do
       all('a').find{|a| a[:'data-method'] == 'delete'}.click
+      sleep 1
       page.driver.browser.switch_to.alert.accept
     end
     sleep 2
