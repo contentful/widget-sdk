@@ -29,10 +29,10 @@ filters.filter('fileSize', function () {
   };
 });
 
-filters.filter('mimeGroup', function (mimetypeGroups) {
+filters.filter('mimeGroup', function (mimetype) {
   return function (file) {
-    if (file) return mimetypeGroups.getDisplayName(
-      mimetypeGroups.getExtension(file.fileName),
+    if (file) return mimetype.getGroupDisplayName(
+      mimetype.getExtension(file.fileName),
       file.contentType
     );
   };
@@ -56,21 +56,21 @@ filters.filter('isFileReady', function () {
   };
 });
 
-filters.filter('fileType', function (mimetypeGroups) {
+filters.filter('fileType', function (mimetype) {
   return function (file) {
     if(file)
-      return mimetypeGroups.getDisplayName(
-        mimetypeGroups.getExtension(file.fileName),
+      return mimetype.getGroupDisplayName(
+        mimetype.getExtension(file.fileName),
         file.contentType
       );
     return '';
   };
 });
 
-filters.filter('fileExtension', function (mimetypeGroups) {
+filters.filter('fileExtension', function (mimetype) {
   return function (file) {
     if(file){
-      var ext = mimetypeGroups.getExtension(file.fileName);
+      var ext = mimetype.getExtension(file.fileName);
       return ext ? ext.slice(1) : '';
     }
     return '';

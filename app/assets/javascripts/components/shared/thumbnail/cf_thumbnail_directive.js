@@ -67,12 +67,12 @@ angular.module('contentful').directive('cfThumbnail', function () {
     },
 
 
-    controller: ['$scope', 'mimetypeGroups', function ($scope, mimetypeGroups) {
+    controller: ['$scope', 'mimetype', function ($scope, mimetype) {
 
       $scope.getIconName = function() {
         if ($scope.file) {
-          var groupName = mimetypeGroups.getName(
-            mimetypeGroups.getExtension($scope.file.fileName),
+          var groupName = mimetype.getGroupName(
+            mimetype.getExtension($scope.file.fileName),
             $scope.file.contentType
           );
 
@@ -83,8 +83,8 @@ angular.module('contentful').directive('cfThumbnail', function () {
       };
 
       $scope.hasPreview = function(){
-        return $scope.file && mimetypeGroups.hasPreview(
-          mimetypeGroups.getExtension($scope.file.fileName),
+        return $scope.file && mimetype.hasPreview(
+          mimetype.getExtension($scope.file.fileName),
           $scope.file.contentType
         );
       };
