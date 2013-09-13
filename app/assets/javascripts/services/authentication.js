@@ -70,7 +70,7 @@ angular.module('contentful').provider('authentication', function AuthenticationP
     },
 
     spaceSettingsUrl: function (spaceId) {
-      return authApp + 'settings/spaces/'+spaceId+'/edit?access_token='+this.token;
+      return authApp + 'settings/spaces/'+spaceId;
     },
 
     redirectToLogin: function() {
