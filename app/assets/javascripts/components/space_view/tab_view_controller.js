@@ -140,10 +140,25 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     }
   };
 
+  $scope.visitSettings = function (pathSuffix) {
+    return findOrCreateTab({
+      viewType: 'iframe',
+      section: 'spaceSettings',
+      hidden: true,
+      params: {
+        mode: 'spaceSettings',
+        pathSuffix: pathSuffix,
+        fullscreen: true
+      },
+      title: 'Settings'
+    });
+  };
+
   $scope.visitView = function(viewType) {
     var options;
     if (viewType == 'entry-list'){
-      options = {
+      analytics.track('Clicked "Entries"');
+      return findOrCreateTab({
         viewType: 'entry-list',
         section: 'entries',
         hidden: true,
@@ -153,10 +168,10 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
         },
         title: 'Entries',
         canClose: true
-      };
-      analytics.track('Clicked "Entries"');
+      });
     } else if (viewType == 'asset-list'){
-      options = {
+      analytics.track('Clicked "Assets"');
+      return findOrCreateTab({
         viewType: 'asset-list',
         section: 'assets',
         hidden: true,
@@ -166,45 +181,41 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
         },
         title: 'Assets',
         canClose: true
-      };
-      analytics.track('Clicked "Assets"');
+      });
     } else if (viewType == 'content-type-list'){
-      options = {
+      analytics.track('Clicked "Content Model"');
+      return findOrCreateTab({
         viewType: 'content-type-list',
         section: 'contentTypes',
         hidden: true,
         title: 'Content Model',
         canClose: true
-      };
-      analytics.track('Clicked "Content Model"');
+      });
     } else if (viewType == 'space-settings'){
-      options = {
-        viewType: 'iframe',
-        section: 'spaceSettings',
-        hidden: true,
-        params: {
-          url: authentication.spaceSettingsUrl($scope.spaceContext.space.getId()),
-          fullscreen: true
-        },
-        title: 'Settings'
-      };
       analytics.track('Clicked "Space Settings"');
+      return this.visitSettings();
     } else if (viewType == 'api-key-list') {
-      options = {
+      analytics.track('Clicked "Content Delivery"');
+      return findOrCreateTab({
         viewType: 'api-key-list',
         section: 'apiKeys',
         hidden: true,
         title: 'Content Delivery',
         canClose: true
-      };
-      analytics.track('Clicked "Content Delivery"');
+      });
     }
 
+    return findOrCreateTab(options);
+  };
+
+  function findOrCreateTab(options) {
     var tab = _.find($scope.spaceContext.tabList.items, function(tab) {
       return tab.viewType === options.viewType && tab.section === options.section;
     });
 
     tab = tab || $scope.spaceContext.tabList.add(options);
     if (tab) tab.activate();
-  };
+
+    return tab;
+  }
 });

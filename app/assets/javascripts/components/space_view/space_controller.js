@@ -48,7 +48,7 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
       else if (route.viewType == 'api-key-list')
         $scope.visitView('api-key-list');
       else if (route.viewType == 'space-settings')
-        $scope.visitView('space-settings');
+        $scope.visitSettings(route.params.pathSuffix);
       else if (route.viewType == 'api-key-editor')
         $scope.spaceContext.space.getApiKey(route.params.apiKeyId, function(err, apiKey) {
           $scope.$apply(function (scope) {
