@@ -19,6 +19,7 @@ feature 'Working with spaces', js: true do
     within '.nav-bar' do
       all('li').last.click
     end
+    sleep 5
     within_frame 0 do
       click_link 'Delete Space'
       accept_browser_dialog
