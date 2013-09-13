@@ -61,7 +61,7 @@ angular.module('contentful').provider('authentication', function AuthenticationP
     },
 
     profileUrl: function() {
-      return authApp + 'profile/user?access_token='+this.token;
+      return authApp + 'profile';
     },
 
     supportUrl: function() {

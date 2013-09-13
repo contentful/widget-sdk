@@ -22,9 +22,8 @@ angular.module('contentful').directive('iframeView', function($window, $rootScop
     template: JST['iframe_view'](),
     restrict: 'C',
     link: function (scope, elem) {
-      //$('iframe', elem).attr('src', scope.tab.params.baseUrl + scope.tab.params.urlSuffix);
-
       var pathSuffix, pathChanged;
+
       if (scope.tab.params.mode === 'spaceSettings') { //Special mode for spaceSettings
         pathSuffix = scope.tab.params.pathSuffix || 'edit';
         scope.url = authentication.spaceSettingsUrl(scope.spaceContext.space.getId()) + '/' + pathSuffix + '?access_token='+authentication.token;
@@ -35,6 +34,10 @@ angular.module('contentful').directive('iframeView', function($window, $rootScop
       } else if (scope.tab.params.mode === 'profile') {
         pathSuffix = scope.tab.params.pathSuffix || 'edit';
         scope.url = authentication.profileUrl() + '/' + pathSuffix + '?access_token='+authentication.token;
+        pathChanged = function (path) {
+          scope.tab.params.pathSuffix = path.match(/profile\/(.*$)/)[1];
+          if (scope.tab.active()) routing.setTab(scope.tab);
+        };
       } else {
         scope.url = scope.tab.params.url;
       }

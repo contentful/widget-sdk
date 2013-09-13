@@ -134,12 +134,14 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     analytics.track('Clicked Profile Button');
   };
 
-  $scope.editProfile = function() {
+  $scope.editProfile = function(pathSuffix) {
+    pathSuffix = pathSuffix || 'user';
     var options = {
       viewType: 'iframe',
       section: null,
       params: {
-        url: authentication.profileUrl(),
+        mode: 'profile',
+        pathSuffix: pathSuffix,
         fullscreen: true
       },
       title: 'Profile'
@@ -149,7 +151,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
 
     // TODO This is a pattern that repeats and should be extracted
     var tab = _.find($scope.spaceContext.tabList.items, function(tab) {
-      return tab.viewType === options.viewType && tab.section === options.section;
+      return tab.params.mode == options.params.mode;
     });
     tab = tab || $scope.spaceContext.tabList.add(options);
     if (tab) tab.activate();

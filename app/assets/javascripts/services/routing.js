@@ -12,6 +12,8 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
   $routeProvider.when('/spaces/:spaceId/api_keys/:apiKeyId', {viewType: 'api-key-editor'});
   $routeProvider.when('/spaces/:spaceId/settings/:pathSuffix*', {viewType: 'space-settings'});
   $routeProvider.when('/spaces/:spaceId/settings', {viewType: 'space-settings'});
+  $routeProvider.when('/profile/:pathSuffix*', {viewType: 'profile'});
+  $routeProvider.when('/profile', {viewType: 'profile'});
   $routeProvider.otherwise({noSpace: true});
 
   this.$get = function ($rootScope, $route, $location) {
@@ -62,6 +64,9 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
         } else if (tab.viewType == 'iframe') {
           if (tab.params.mode === 'spaceSettings') {
             path = path + '/settings';
+            if (tab.params.pathSuffix) path = path + '/' + tab.params.pathSuffix;
+          } else if (tab.params.mode === 'profile') {
+            path = '/profile';
             if (tab.params.pathSuffix) path = path + '/' + tab.params.pathSuffix;
           }
         }
