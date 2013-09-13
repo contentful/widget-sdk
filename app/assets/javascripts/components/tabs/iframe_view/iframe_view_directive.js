@@ -12,7 +12,7 @@ angular.module('contentful').directive('iframeView', function($window, $rootScop
       return;
 
     $rootScope.$apply(function (scope) {
-      scope.$broadcast('iframeMessage', event.data);
+      scope.$broadcast('iframeMessage', event);
     });
 
   },false);

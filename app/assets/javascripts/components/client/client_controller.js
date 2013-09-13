@@ -97,7 +97,8 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     window.open(authentication.supportUrl());
   };
 
-  $scope.$on('iframeMessage', function (event, message) {
+  $scope.$on('iframeMessage', function (event, messageEvent) {
+    var message = messageEvent.data;
     if (message.type === 'space' && message.action === 'update') {
       _.extend($scope.spaceContext.space.data, message.resource);
       //TODO this is pobably much too simplified, better look up correct
