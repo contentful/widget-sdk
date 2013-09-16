@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Tutorial', js: true do
+feature 'Tutorial', js: true, non_ci: true do
   before do
     ensure_login
     remove_test_space 'Tutorial'

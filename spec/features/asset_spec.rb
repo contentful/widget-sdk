@@ -53,7 +53,7 @@ feature 'Asset Editor', js: true do
   end
 end
 
-feature 'Link Editor', js: true do
+feature 'Link Editor', js: true, non_ci: true do
   include EditorHelper
   include ContentTypeHelper
 
