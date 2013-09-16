@@ -2,10 +2,11 @@
 
 set -ev
 
+rm -rf tmp/cache
+
 bundle install --no-color
 pushd ./app/assets/commonjs_modules/user_interface
 
-rm -rf tmp/cache/*
 if [ "$CI" = "true" ]; then
   npm install
 else
