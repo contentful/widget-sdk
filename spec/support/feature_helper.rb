@@ -1,4 +1,8 @@
 module FeatureHelper
+  def self.included(feature)
+    feature.let(:space_id){page.evaluate_script "$('space-view').scope().spaceContext.space.getId()"}
+  end
+
   @@access_token = File.exist?('tmp/spec_token') ? File.read('tmp/spec_token') : nil
 
   def access_token
@@ -69,6 +73,7 @@ module FeatureHelper
 
     settings_frame = find 'iframe'
     within_frame settings_frame do
+      click_link 'Space'
       click_link 'Delete Space'
       accept_browser_dialog
     end
