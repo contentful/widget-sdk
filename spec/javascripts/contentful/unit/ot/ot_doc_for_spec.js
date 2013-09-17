@@ -32,11 +32,16 @@ describe('otDocFor', function () {
 
     it('should preserve version and updatedAt', function () {
       /*global moment*/
-      scope.otUpdateEntity();
-      var iso = moment().toISOString();
-      var data = scope.entity.update.args[0][0];
-      expect(data.sys.version).toBe(123);
-      expect(data.sys.updatedAt).toBe(iso);
+      var clock = sinon.useFakeTimers('Date');
+      try {
+        scope.otUpdateEntity();
+        var iso = moment().toISOString();
+        var data = scope.entity.update.args[0][0];
+        expect(data.sys.version).toBe(123);
+        expect(data.sys.updatedAt).toBe(iso);
+      } finally {
+        clock.restore();
+      }
     });
   });
 
