@@ -1,0 +1,56 @@
+%a.toggle-collapse(cf-click-local="toggleField(field)" ng-class="{open: isFieldOpen(field)}") ▶
+.display
+  %span.name {{field.name}}
+  .icons
+    %i.ss-text(tooltip="Field used as title"
+     ng-show="displayEnabled(field)"
+     ng-class="{enabled: isDisplayField(field)}")
+    %i.required-icon(tooltip="Field is required" ng-class="{enabled: field.required}") ✱
+    %i.ss-check(tooltip="Field has validations" ng-class="{enabled: hasValidations}")
+    %i.ss-globe(tooltip="Field is localized" ng-class="{enabled: field.localized}")
+%form.field-form(name="fieldForm")
+  %input(name="fieldName"
+         ng-model="field.name" type="text" required=""
+         ng-disabled="!otEditable"
+         ot-path="['fields', index, 'name']"
+         ot-path-types="['Array', 'Object', 'String']"
+         ot-subdoc ot-bind-text type="text"
+         placeholder="e.g. Product Name"
+         ng-change="updateFieldId()"
+         tooltip="Field title displayed to editors"
+         tooltip-placement="top")
+  .cf-validation-error-display.form-inline-error(cf-error-path="['name']" ng-hide="newFieldForm.$pristine || noErrors")
+  %input(name="fieldId"
+         ng-model="field.id" type="text" required=""
+         ng-disabled="published || !otEditable"
+         ot-path="['fields', index, 'id']"
+         ot-path-types="['Array', 'Object', 'String']"
+         ot-subdoc ot-bind-text type="text"
+         placeholder="e.g. productName"
+         tooltip="Field ID used in API"
+         tooltip-placement="top")
+  .cf-validation-error-display.form-inline-error(cf-error-path="['id']" ng-hide="newFieldForm.$pristine || noErrors")
+  .form-inline-error(ng-show="idExists")
+    Identifier already exists
+.cf-fieldtype-icon(field="field" show-tooltip="")
+  %i.ss-help
+.status(ng-class="{unpublished: !published, published: published && !field.disabled, disabled: published && field.disabled}")
+.field-details
+  %a.toggle-required(ng-click="toggle('required')" ng-class="{active: field.required}")
+    %i.required-icon ✱
+    {{field.required ? 'Required' : 'Require'}}
+  %a.toggle-validate(ng-click="openValidations()" ng-class="{active: hasValidations}")
+    %i.ss-check
+    {{hasValidations? 'Validated' : 'Validate'}}
+  %a.toggle-localized(ng-click="toggle('localized')" ng-class="{active: field.localized}")
+    %i.ss-globe
+    {{field.localized ? 'Localized' : 'Localize'}}
+  %a.toggle-title(ng-click="isDisplayField() ? null : setDisplayField(field)" ng-class="{active: isDisplayField()}" ng-show="displayEnabled()")
+    %i.ss-text
+    {{isDisplayField(field) ? 'Used as title' : 'Use as title'}}
+  %a.toggle-disabled(ng-click="toggle('disabled')" ng-class="{active: field.disabled}" ng-show="published")
+    {{field.disabled ? 'Enable Field' : 'Disable Field'}}
+  %a.toggle-disabled(ng-click="delete()" ng-hide="published")
+    Delete Field
+.drag-handle
+  %i.ss-rows

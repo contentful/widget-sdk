@@ -46,8 +46,28 @@
       %label Fields
       .form-controls
         .content-type-field-list
-
-
+        .dropdown-btn
+          .dropdown-toggle.add-field-button
+            %i.ss-plus
+            Add Field
+          .dropdown-menu.type-menu
+            %ul
+              %li.group
+                %h3 Single
+              %li.type(ng-repeat="type in availableTypes.Single track by type.name"
+                  ng-click="addField(type.value)"
+                  dropdown-close="")
+                .cf-fieldtype-icon(field="type.value")
+                %span {{type.name}}
+                .content-type-description
+              %li.group
+                %h3 Multiple
+              %li.type(ng-repeat="type in availableTypes.Multiple track by type.name"
+                  ng-click="addField(type.value)"
+                  dropdown-close="")
+                .cf-fieldtype-icon(field="type.value")
+                %span {{type.name}}
+                .content-type-description
 .tab-actions(ng-controller="ContentTypeActionsCtrl")
   .button-set
     %button.delete(type="button"

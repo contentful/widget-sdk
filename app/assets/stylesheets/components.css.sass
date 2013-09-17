@@ -205,3 +205,12 @@ a.as-button
   +green-highlight
   +colored-button($green)
 
+.toggle-collapse
+  display: inline-block
+  color: inherit
+  cursor: pointer
+  +transition(transform 0.1s ease-in-out)
+  &.open
+    +rotate(90deg)
+  &:hover
+    color: inherit

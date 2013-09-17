@@ -3,66 +3,80 @@ angular.module('contentful').
     {
       name: 'Text',
       description: 'Text description',
+      group: 'Single',
       value: {type: 'Text'}
     },
     {
       name: 'Symbol',
       description: 'Symbol description',
+      group: 'Single',
       value: {type: 'Symbol'}
     },
     {
       name: 'Number',
       description: 'Integer description',
-      value: {type: 'Integer'}},
+      group: 'Single',
+      value: {type: 'Integer'}
+    },
     {
       name: 'Decimal Number',
       description: 'Floating-point description',
+      group: 'Single',
       value: {type: 'Number'}
     },
     {
       name: 'Yes/No',
       description: 'Yes/No description',
+      group: 'Single',
       value: {type: 'Boolean'}
     },
     {
       name: 'Date/Time',
       description: 'Date/Time description',
+      group: 'Single',
       value: {type: 'Date'}
+    },
+    {
+      name: 'Location',
+      group: 'Single',
+      description: 'Location description',
+      value: {type: 'Location'}
     },
     {
       name: 'Object',
       description: 'Object description',
+      group: 'Single',
       value: {type: 'Object'}
     },
     {
       name: 'Link to Entry',
       description: 'Link to Entry description',
+      group: 'Single',
       value: {type: 'Link', linkType: 'Entry'}
     },
     {
       name: 'Link to Asset',
       description: 'Link to Asset description',
+      group: 'Single',
       value: {type: 'Link', linkType: 'Asset'}
     },
     {
       name: 'List of Entries',
       description: 'List of Entries description',
+      group: 'Multiple',
       value: {type: 'Array', items: {type: 'Link', linkType: 'Entry'}}
     },
     {
       name: 'List of Assets',
       description: 'List of Assets description',
+      group: 'Multiple',
       value: {type: 'Array', items: {type: 'Link', linkType: 'Asset'}}
     },
     {
       name: 'List of Symbols',
       description: 'List of Symbols description',
+      group: 'Multiple',
       value: {type: 'Array' , items: {type: 'Symbol'}}
-    },
-    {
-      name: 'Location',
-      description: 'Location description',
-      value: {type: 'Location'}
     }
   ]).
   factory('getFieldTypeName', function(availableFieldTypes) {

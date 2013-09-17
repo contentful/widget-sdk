@@ -63,6 +63,7 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', function 
   };
 
   return {
+    // Available params: template, cancelLabel, confirmLabel, title, message, scope
     open: function (params) {
       var dialog = new Dialog(params);
       dialog.attach(params.scope.$new());

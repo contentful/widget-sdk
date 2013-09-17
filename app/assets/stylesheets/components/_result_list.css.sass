@@ -33,6 +33,19 @@
 
 // Main styles
 
+%result-list-cell
+  line-height: 18px
+  font-size: 12px
+  vertical-align: middle
+  padding: 8px 0px
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis
+  text-align: left
+  &:first-child
+    padding-left: 13px
+  
+
 .result-list
   table-layout: fixed
   // borders
@@ -50,22 +63,12 @@
   // Font-sizing and margins
   td,
   th
-    text-align: left
-    padding: 8px 0px
-    vertical-align: middle
-    font-size: 12px
-    line-height: 18px
-    white-space: nowrap
-    overflow: hidden
-    text-overflow: ellipsis
+    @extend %result-list-cell
   th
     font-weight: normal
     font-size: 11px
     padding: 4px 0 3px 0
     color: $light-gray
-  th:first-child,
-  td:first-child
-    padding-left: 13px
 
   // Special Cell stylings
 

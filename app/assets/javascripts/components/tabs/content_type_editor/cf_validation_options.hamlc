@@ -1,0 +1,45 @@
+.dropdown-btn.validation-type-select
+  %button.dropdown-toggle
+    {{validationName(validation)}}
+  .dropdown-menu
+    %ul
+      %li(ng-repeat="(name, v) in availableValidations" ng-click="changeType(v)")
+        {{name}}
+%ng-switch(on="validationOptions.type")
+  %div(ng-switch-when="size")
+    %input(type="number" ng-model="validationOptions.params.min" placeholder="Minimum size" ng-change="validationOptionsUpdated()" ng-disabled="!otEditable")
+    \-
+    %input(type="number" ng-model="validationOptions.params.max" placeholder="Maximum size" ng-change="validationOptionsUpdated()" ng-disabled="!otEditable")
+    .cf-validation-error-display.form-inline-error(cf-error-path="validationListPath(validationIndex)").form-inline-error
+
+
+  %div(ng-switch-when="range")
+    %input(type="number" ng-model="validationOptions.params.min" placeholder="Minimum value" ng-change="validationOptionsUpdated()" ng-disabled="!otEditable")
+    \-
+    %input(type="number" ng-model="validationOptions.params.max" placeholder="Maximum value" ng-change="validationOptionsUpdated()" ng-disabled="!otEditable")
+    .cf-validation-error-display.form-inline-error(cf-error-path="validationListPath(validationIndex)").form-inline-error
+
+
+  %div(ng-switch-when="regexp")
+    %input.regexp(type="text" ng-model="validationOptions.params.pattern" placeholder="foo|bar[baz]" ng-change="validationOptionsUpdated()" ng-required="true" ng-disabled="!otEditable")
+    %span Flags:
+    %input.flags(type="text" ng-model="validationOptions.params.flags" ng-change="validationOptionsUpdated()" ng-required="true" ng-disabled="!otEditable")
+    .cf-validation-error-display.form-inline-error(cf-error-path="validationListPath(validationIndex)").form-inline-error
+
+
+  %div(ng-switch-when="in")
+    %input(type="text" ng-model="validationOptions.params" ng-list cf-list-identity-fix placeholder="apple,orange,banana" ng-change="validationOptionsUpdated()" ng-disabled="!otEditable")
+    %span (separate allowed values by comma)
+    .cf-validation-error-display.form-inline-error(cf-error-path="validationListPath(validationIndex)").form-inline-error
+
+
+  %div(ng-switch-when="linkContentType")
+    %select(ng-model="validationOptions.params"
+            ng-options="ct.getId() as ct.getName() for ct in spaceContext.publishedContentTypes" ng-change="validationOptionsUpdated()" ng-disabled="!otEditable")
+
+  %div(ng-switch-when="linkMimetypeGroup")
+    %select(ng-model="validationOptions.params"
+            ng-options="name as label for (name, label) in mimetypeGroups" ng-change="validationOptionsUpdated()" ng-disabled="!otEditable")
+
+  %div(ng-switch-default="")
+    Please select a type first
