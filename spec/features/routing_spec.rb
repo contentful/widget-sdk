@@ -13,27 +13,28 @@ feature 'Routing', js: true do
 
   scenario 'Opening pages from an external link' do
     visit '/profile'
-    find 'iframe'
-    within_frame 0 do
+    iframe = find('iframe')
+    within_frame iframe do
       page.should have_text 'USER DETAILS'
     end
 
     visit "/profile/billing_address/edit"
-    find 'iframe'
-    within_frame 0 do
+    iframe = find('iframe')
+    within_frame iframe do
       page.should have_text 'Postal code'
     end
 
     visit "/spaces/#{space_id}/settings/users/new"
-    find 'iframe'
-    within_frame 0 do
+    iframe = find('iframe')
+    within_frame iframe do
       page.find('input[name="commit"]')[:value].should eql('Invite New User')
     end
   end
   
   scenario 'Opening pages through internal links' do
     nav_bar 'space-settings'
-    within_frame 0 do
+    iframe = find('iframe')
+    within_frame iframe do
       click_link 'Users'
       click_link 'Invite New User'
     end
