@@ -31,7 +31,7 @@ feature 'Routing', js: true do
     end
   end
   
-  scenario 'Opening pages through internal links' do
+  scenario 'Opening pages through internal links', non_ci: true do
     nav_bar 'space-settings'
     iframe = find('iframe')
     within_frame iframe do
