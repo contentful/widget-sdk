@@ -135,4 +135,22 @@ module FeatureHelper
   def expect_success(string = 'published successfully')
     find('.notification', text: string, wait: 10)
   end
+
+  def eventually(options = {})
+    # From https://github.com/alexch/wrong/blob/master/lib/wrong/eventually.rb
+    timeout = options[:timeout] || Capybara.default_wait_time
+    delay = options[:delay] || 0.5
+    last_error = nil
+    begin_time = Time.now
+    while (Time.now - begin_time) < timeout
+      begin
+        value = yield
+        return value
+      rescue Exception => e
+        last_error = e
+        sleep delay
+      end
+    end
+    raise last_error
+  end
 end

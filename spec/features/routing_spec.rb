@@ -38,18 +38,18 @@ feature 'Routing', js: true do
       click_link 'Users'
       click_link 'Invite New User'
     end
-    current_path.should eql("/spaces/#{space_id}/settings/users/new")
+    eventually {current_path.should eql("/spaces/#{space_id}/settings/users/new")}
 
     find('.account .user .dropdown-toggle').click
     within('.account .user ') do
       first('li').click
     end
-    current_path.should eql("/profile/user")
+    eventually {current_path.should eql("/profile/user")}
 
     iframe = find('iframe')
     within_frame iframe do
       click_link 'Subscription'
     end
-    current_path.should eql("/profile/subscription")
+    eventually {current_path.should eql("/profile/subscription")}
   end
 end
