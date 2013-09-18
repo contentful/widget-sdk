@@ -55,6 +55,7 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
           this.space.getContentTypes({order: 'name', limit: 1000}, function(err, contentTypes) {
             $rootScope.$apply(function() {
               if (err) return deferred.reject(err);
+              contentTypes = _.reject(contentTypes, function (ct) { return ct.isDeleted(); });
               contentTypes.sort(function (a,b) {
                 return a.getName().localeCompare(b.getName());
               });

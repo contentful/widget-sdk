@@ -1,7 +1,7 @@
 language: ruby
 rvm:
   - 1.9.3
-bundler_args: --without development
+bundler_args: --without development --local
 before_install:
   - "pushd ./app/assets/commonjs_modules/user_interface"
   - "npm install"

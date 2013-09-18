@@ -97,7 +97,8 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     window.open(authentication.supportUrl());
   };
 
-  $scope.$on('iframeMessage', function (event, message) {
+  $scope.$on('iframeMessage', function (event, messageEvent) {
+    var message = messageEvent.data;
     if (message.type === 'space' && message.action === 'update') {
       _.extend($scope.spaceContext.space.data, message.resource);
       //TODO this is pobably much too simplified, better look up correct
@@ -133,12 +134,14 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     analytics.track('Clicked Profile Button');
   };
 
-  $scope.editProfile = function() {
+  $scope.editProfile = function(pathSuffix) {
+    pathSuffix = pathSuffix || 'user';
     var options = {
       viewType: 'iframe',
       section: null,
       params: {
-        url: authentication.profileUrl(),
+        mode: 'profile',
+        pathSuffix: pathSuffix,
         fullscreen: true
       },
       title: 'Profile'
@@ -148,7 +151,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
 
     // TODO This is a pattern that repeats and should be extracted
     var tab = _.find($scope.spaceContext.tabList.items, function(tab) {
-      return tab.viewType === options.viewType && tab.section === options.section;
+      return tab.params.mode == options.params.mode;
     });
     tab = tab || $scope.spaceContext.tabList.add(options);
     if (tab) tab.activate();
