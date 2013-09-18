@@ -13,16 +13,26 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
     $scope.field.items.validations :
     $scope.field.validations;
 
-  var linkContentTypeValidation = _(validations)
-    .map(validation.Validation.parse)
-    .where({name: 'linkContentType'})
-    .first();
+  $scope.$watch('linkType', function (linkType) {
+    var validationType;
+    if(linkType == 'Entry') validationType = 'linkContentType';
+    if(linkType == 'Asset') validationType = 'linkMimetypeGroup';
 
-  if (linkContentTypeValidation) {
-    $scope.linkContentType = _.find($scope.spaceContext.publishedContentTypes, function(et) {
-      return et.getId() == linkContentTypeValidation.contentTypeId;
-    });
-  }
+    var linkTypeValidation = _(validations)
+      .map(validation.Validation.parse)
+      .where({name: validationType})
+      .first();
+
+    if(linkTypeValidation){
+      if (linkType == 'Entry') {
+        $scope.linkContentType = _.find($scope.spaceContext.publishedContentTypes, function(et) {
+          return et.getId() == linkTypeValidation.contentTypeId;
+        });
+      } else if (linkType == 'Asset') {
+        $scope.linkMimetypeGroup = linkTypeValidation.mimetypeGroupName;
+      }
+    }
+  });
 
   $scope.addLink = function(entity, callback) {
     var link = { sys: {
@@ -161,7 +171,6 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
     entityCache =
     ngModelSet =
     ngModelGet =
-    validations =
-    linkContentTypeValidation = null;
+    validations = null;
   });
 });
