@@ -36,6 +36,9 @@
                 ng-click="addNewEntry(contentType)"
                 dropdown-close="")
               {{contentType.getName()}}
+      %button.add-new.with-link-content-type(type="button" ng-show="linkContentType" ng-click="addNewEntry(linkContentType)")
+        %i.ss-plus
+        New
       %button.add-new.with-link-content-type(type="button" ng-switch-default="" ng-click="addNewAsset()")
         %i.ss-plus
         New
