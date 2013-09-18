@@ -16,6 +16,13 @@
         %span Published
       %li(ng-class="{active: tab.params.list == 'archived'}" ng-click="switchList('archived')")
         %span Archived
+    %header File type
+    %ul.filter-list
+      %li(ng-repeat="(label, name) in mimetypeGroups"
+          ng-class="{active: tab.params.list == label}"
+          ng-click="switchList(label)")
+        %span {{name}}
+
       -#
         %li.disabled(ng-class="{active: tab.params.list == 'starred'}")
           %span Starred

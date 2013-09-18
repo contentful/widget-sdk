@@ -1,9 +1,11 @@
 'use strict';
 
 angular.module('contentful').
-  controller('AssetListCtrl',function AssetListCtrl($scope, $q, Paginator, Selection, PromisedLoader, analytics) {
+  controller('AssetListCtrl',function AssetListCtrl($scope, $q, Paginator, Selection, PromisedLoader, mimetype, analytics) {
 
   var assetLoader = new PromisedLoader();
+
+  $scope.mimetypeGroups = mimetype.groupDisplayNames;
 
   $scope.assetSection = 'all';
 
@@ -40,6 +42,18 @@ angular.module('contentful').
   };
 
   $scope.visibleInCurrentList = function(asset){
+    if($scope.tab.params.list in $scope.mimetypeGroups && $scope.tab.params.list !== 'attachment'){
+      var fields = asset.data.fields;
+      if(fields.file){
+        return _.some(fields.file, function (locale) {
+          return locale && mimetype.getGroupName(
+            mimetype.getExtension(locale.fileName),
+            locale.contentType
+          ) === $scope.tab.params.list;
+        });
+      }
+      return false;
+    }
     switch ($scope.tab.params.list) {
       case 'all':
         return !asset.isDeleted() && !asset.isArchived();
@@ -92,6 +106,8 @@ angular.module('contentful').
       queryObject['changed'] = 'true';
     } else if ($scope.tab.params.list == 'archived') {
       queryObject['sys.archivedAt[exists]'] = 'true';
+    } else if ($scope.tab.params.list in $scope.mimetypeGroups){
+      queryObject['mimetype_group'] = $scope.tab.params.list;
     }
 
     if (!_.isEmpty($scope.searchTerm)) {

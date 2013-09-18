@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator, notification, PromisedLoader) {
+angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator, notification, PromisedLoader, mimetype) {
   return {
     restrict: 'AC',
     link: function (scope, element) {
@@ -142,6 +142,9 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
 
         if ($scope.linkContentType)
           queryObject['sys.contentType.sys.id'] = $scope.linkContentType.getId();
+        if ($scope.linkMimetypeGroup){
+          queryObject['mimetype_group'] = $scope.linkMimetypeGroup;
+        }
         if ($scope.searchTerm && 0 < $scope.searchTerm.length)
           queryObject.query = $scope.searchTerm;
 
