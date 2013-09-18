@@ -184,10 +184,16 @@ angular.module('contentful').provider('analytics', function (environment) {
           entryId: tab.params.contentType.getId(),
           mode: tab.params.mode});
       } else if (t == 'iframe') {
-        var url = tab.params.url.replace(/access_token=(\w+)/, 'access_token=XXX');
+        var url;
+        if (tab.params.url) {
+          url = tab.params.url.replace(/access_token=(\w+)/, 'access_token=XXX');
+        }
         this.track('Viewed Page', {
           viewType: tab.viewType,
-          url: url});
+          url: url,
+          mode: tab.params.mode,
+          pathSuffix: tab.params.pathSuffix
+        });
       }
     },
     track: function (event, data) {
