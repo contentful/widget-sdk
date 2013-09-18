@@ -1,9 +1,12 @@
 'use strict';
 
-angular.module('contentful').controller('CfValidationErrorDisplayCtrl', function CfValidationErrorDisplayCtrl($scope, $attrs) {
+angular.module('contentful').controller('CfValidationErrorDisplayCtrl', function CfValidationErrorDisplayCtrl($scope, $attrs, mimetype) {
   $scope.errorMessages = [];
 
   var messages = {
+    linkMimetypeGroup: function (v) {
+      return 'Linked Asset file type must be ' + mimetype.groupDisplayNames[v.mimetypeGroupName] + '.';
+    },
     linkContentType: function(v) {
       var ct = $scope.spaceContext.getPublishedContentType(v.contentTypeId);
       if (!ct) return 'Invalid Content Type';
