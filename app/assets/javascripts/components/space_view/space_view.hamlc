@@ -2,6 +2,7 @@
   .logo(ng-click="logoClicked()")
     .cf-logo
   %ul
+    %li.tablist-button(space-context="spaceContext")
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'contentTypes',
                   'section-index': spaceContext.tabList.currentViewType() == 'content-type-list'}"
         ng-click="visitView('content-type-list')"
@@ -9,24 +10,21 @@
         data-view-type="content-type-list"
         tabindex="0")
       %i.ss-database
-      .hint.tip.nav-models
-        Content Types
+      Content Types
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'entries',
                   'section-index': spaceContext.tabList.currentViewType() == 'entry-list'}"
         ng-click="visitView('entry-list')"
         data-view-type="entry-list"
         tabindex="0")
       %i.ss-file
-      .hint.tip.nav-models
-        Entries
+      Entries
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'assets',
                  'section-index': spaceContext.tabList.currentViewType() == 'asset-list'}"
         ng-click="visitView('asset-list')"
         data-view-type="asset-list"
         tabindex="0")
       %i.ss-attach
-      .hint.tip.nav-models
-        Assets
+      Assets
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'apiKeys',
                    'section-index': spaceContext.tabList.currentViewType() == 'api-key-list'}"
         ng-click="visitView('api-key-list')"
@@ -34,8 +32,7 @@
         data-view-type="api-key-list"
         tabindex="0")
       %i.ss-fork
-      .hint.tip.nav-models
-        Content Delivery
+      Content Delivery
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'spaceSettings',
                   'section-index': spaceContext.tabList.currentSection() == 'spaceSettings'}"
         ng-click="visitView('space-settings')"
@@ -43,8 +40,7 @@
         data-view-type="space-settings"
         tabindex="0")
       %i.ss-settings
-      .hint.tip.nav-models
-        Space Settings
+      Space Settings
   .navbar-loader
 %nav.tab-list
   %ul
@@ -65,7 +61,6 @@
         %i.ss-record.close-icon(ng-show="tabItem.dirty && !tabItem.hovered"
                                 ng-class="{draft: tabItem.dirty == 'draft'}"
                                 ng-mouseover="tabItem.setHovering(true)")
-    %li.tablist-button(space-context="spaceContext")
 .tab-content(ng-repeat="tab in spaceContext.tabList.items" ng-show="tab.active()" ng-switch="tab.viewType")
   .iframe-view(ng-switch-when="iframe")
   .entry-list.entity-list(ng-switch-when="entry-list")

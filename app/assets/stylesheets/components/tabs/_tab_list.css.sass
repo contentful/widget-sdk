@@ -1,6 +1,8 @@
 .tab-list
-  +stretch($tab-top, 20%, false, $main-left-spacing)
+  width: 100%
+  //+stretch($tab-top, 20%, false, $main-left-spacing)
   height: $tab-height
+  +clearfix
   z-index: 10
   +user-select(none)
   > ul
@@ -79,44 +81,3 @@
   .tab.active:hover
     +gray-highlight
 
-/* ADD BUTTON DROPDOWN */
-
-.tablist-button
-  +flex(none)
-  width: 70px
-  .dropdown-menu 
-    width: 210px
-    li
-      display: block
-      height: auto
-      font-size: 11px
-  .tooltip.bottom
-    width: 200px
-  .no-content-types
-    background-color: $gray-background
-    color: $dark-gray
-
-.add-btn
-  .dropdown-menu
-    h3, li
-      padding: 6px 0
-    h3
-      margin-top: 8px
-      margin-bottom: 0px
-      padding-left: 12px
-    li
-      padding-left: 20px
-      padding-right: 4px
-.add.button
-  @extend %blue-button
-  margin-top: 1px
-  margin-left: 3px
-  i
-    float: left
-    margin: 2px 5px 0 0
-    font-size: 10px
-    color: #7dc7fb
-  &:active
-    top: 1px
-  &:focus
-    +focus-styles
