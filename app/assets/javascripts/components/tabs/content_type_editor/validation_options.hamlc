@@ -32,6 +32,10 @@
     %select(ng-model="validation.linkContentType"
             ng-options="ct.getId() as ct.getName() for ct in spaceContext.publishedContentTypes" ng-change="updateDoc()" ng-disabled="!otEditable")
 
+  %div(ng-switch-when="linkMimetypeGroup")
+    %select(ng-model="validation.linkMimetypeGroup"
+            ng-options="name as label for (name, label) in mimetypeGroups" ng-change="updateDoc()" ng-disabled="!otEditable")
+
 
   %div(ng-switch-default="")
     Please select a type first
