@@ -1,4 +1,7 @@
 .tab-list
+  +stretch($tab-top, 20%, false, $main-left-spacing)
+  height: $tab-height
+  z-index: 10
   +user-select(none)
   > ul
     +plain-list
@@ -8,6 +11,7 @@
     height: $tab-height
     vertical-align: top
   .tab
+    width: 21.5%
     +flex(1)
     max-width: 200px
     position: relative

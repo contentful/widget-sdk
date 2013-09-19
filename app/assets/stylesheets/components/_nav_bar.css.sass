@@ -1,5 +1,9 @@
 .nav-bar
-  // layout
+  position: absolute
+  top: 0
+  width: 50px
+  height: 100%
+  z-index: 20
   ul
     margin: 0
   li
@@ -57,14 +61,6 @@
     .tip
       opacity: 1
       left: 58px
-
-.outlines-enabled
-  .nav-bar
-    li:focus
-      .tip
-        opacity: 0
-
-.nav-bar
   li:hover
     color: white
     cursor: pointer
@@ -73,6 +69,15 @@
     +filter-gradient(#000000, #171717)
   li.section-index
     color: white
+  .bottom
+    position: absolute
+    bottom: 0
+
+.outlines-enabled
+  .nav-bar
+    li:focus
+      .tip
+        opacity: 0
 
 .navbar-loader
   position: absolute
@@ -82,8 +87,4 @@
   height: 50px
   background: image-url('navbar-loader.gif') center no-repeat
 
-.nav-bar
-  .bottom
-    position: absolute
-    bottom: 0
 
