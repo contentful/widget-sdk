@@ -1,6 +1,7 @@
+$nav-bar-height: 52px
 .nav-bar
   width: 100%
-  height: 52px
+  height: $nav-bar-height
   +clearfix
   +user-select(none)
   +gradient(#333333, #434343)
@@ -14,31 +15,25 @@
   // Separator below logo and each nav button
   .logo,
   li
-    border-bottom: 1px solid rgba(0,0,0,0.45)
-    +box-shadow(0 1px 0 rgba(255,255,255,0.06))
+    border-right: 1px solid rgba(0,0,0,0.45)
+    +box-shadow(0 0 1px rgba(255,255,255,0.2))
+    padding: 0 15px
   li
     position: relative
     float: left
+    display: inline-block
+    line-height: $nav-bar-height - 2px
     margin: 0
-    //height: 50px
-    //width: 50px
     list-style-type: none
-    color: $medium-gray
     text-align: center
+    color: $medium-gray
+    font-weight: 600
     i
-      font-size: 20px
-      line-height: 55px
-      margin-top: 50px
+      position: relative
+      top: 3px
+      margin-right: 5px
+      font-size: 15px
       +text-shadow(0 1px 0 rgba(255,255,255,0.1))
-    i.ss-layout
-      font-size: 19px
-      line-height: 55px
-    .nav-entries
-      width: 70px
-    .nav-media
-      width: 60px
-    .nav-ship
-      width: 60px
   li:focus
     +focus-styles
   li:hover,

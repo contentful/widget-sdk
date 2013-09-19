@@ -10,7 +10,7 @@
         data-view-type="content-type-list"
         tabindex="0")
       %i.ss-database
-      Content Types
+      Content Model
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'entries',
                   'section-index': spaceContext.tabList.currentViewType() == 'entry-list'}"
         ng-click="visitView('entry-list')"
