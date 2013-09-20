@@ -2,7 +2,6 @@ $nav-bar-height: 52px
 .nav-bar
   width: 100%
   height: $nav-bar-height
-  +clearfix
   +user-select(none)
   +gradient(#333333, #434343)
   +box-shadow(2px 0 1px rgba(0,0,0,0.15))
@@ -13,6 +12,9 @@ $nav-bar-height: 52px
   ul
     margin: 0
   // Separator below logo and each nav button
+  .logo
+    height: $nav-bar-height
+    overflow: hidden
   .logo,
   li
     border-right: 1px solid rgba(0,0,0,0.45)
@@ -22,7 +24,8 @@ $nav-bar-height: 52px
     position: relative
     float: left
     display: inline-block
-    line-height: $nav-bar-height - 2px
+    height: $nav-bar-height
+    line-height: $nav-bar-height
     margin: 0
     list-style-type: none
     text-align: center
