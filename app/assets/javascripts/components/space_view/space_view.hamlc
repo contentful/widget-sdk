@@ -54,10 +54,11 @@
       .close(cf-click-local="tabItem.close()"
              ng-show="tabItem.canClose()"
              ng-class="{'hide-tooltip': tabItem.closingMessageDisplayType == 'dialog'}")
-        %i.ss-delete.close-icon(ng-hide="tabItem.dirty && !tabItem.hovered"
+        %i.close-icon(ng-hide="tabItem.dirty && !tabItem.hovered"
                                 ng-mouseleave="tabItem.setHovering(false)"
                                 tooltip="{{tabItem.closingMessage}}"
                                 tooltip-placement="bottom")
+          &times;
         %i.ss-record.close-icon(ng-show="tabItem.dirty && !tabItem.hovered"
                                 ng-class="{draft: tabItem.dirty == 'draft'}"
                                 ng-mouseover="tabItem.setHovering(true)")

@@ -14,7 +14,7 @@
       %li.add-api-key(ng-click="createApiKey()" dropdown-close="" ng-show="can('create', 'ApiKey')")
         %i.ss-fork
         API Key
-    %ul.separator
+    %ul.separator.no-highlight
       %li
         %i.ss-file
         Entries
