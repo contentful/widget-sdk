@@ -1,23 +1,25 @@
-// Tab-bar dropdown
-$account-border-color: #d5d5d5
-
 .account
+  position: absolute
+  width: 20%
+  right: 0px
+  top: 0px
+  height: $nav-bar-height
   .dropdown-toggle
     width: 100%
+    height: $nav-bar-height
+    font-weight: 600
+    text-align: center
+    border-left: 1px solid rgba(0,0,0,0.45)
+    +box-shadow(0 0 1px rgba(255,255,255,0.2))
   .dropdown-toggle,
   #intercom
-    color: $dark-gray
     float: right
     line-height: 27px
-    border: 1px solid transparent
-    padding: 5px 10px 4px
+    padding: 14px 10px 0px
     border-bottom: none
-  .dropdown-toggle:hover,
-  .active .dropdown-toggle
-    background-color: $gray-background
-    border: 1px solid $account-border-color
-    border-bottom-color: $lightest-gray
-    +border-radius(3px 3px 0 0)
+  .dropdown-toggle:hover
+    color: white
+    +box-shadow(none)
 
 // Concrete project and user buttons
 .account
@@ -28,11 +30,9 @@ $account-border-color: #d5d5d5
     width: 70%
     position: relative
     left: 1px
-    span
-      margin-right: 11px
     .dropdown-menu
       min-width: 100%
-    .dropdown-toggle
+    //.dropdown-toggle
       border-right: 1px solid $account-border-color
   .user
     width: 30%
