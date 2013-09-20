@@ -3,7 +3,7 @@ $nav-bar-height: 52px
   width: 100%
   height: $nav-bar-height
   +user-select(none)
-  +gradient(#333333, #434343)
+  background: $dark-gray
   +box-shadow(2px 0 1px rgba(0,0,0,0.15))
   z-index: 20
   .logo,
@@ -15,8 +15,8 @@ $nav-bar-height: 52px
   .logo
     height: $nav-bar-height
     overflow: hidden
-  .logo,
-  li
+  li,
+  .logo
     border-right: 1px solid rgba(0,0,0,0.45)
     +box-shadow(0 0 1px rgba(255,255,255,0.2))
     padding: 0 15px

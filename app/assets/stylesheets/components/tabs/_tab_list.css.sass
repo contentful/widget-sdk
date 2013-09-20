@@ -1,30 +1,24 @@
 .tab-list
   width: 100%
-  //+stretch($tab-top, 20%, false, $main-left-spacing)
   height: $tab-height
-  +clearfix
   z-index: 10
+  +gradient(darken($medium-dark-gray, 10%), darken($medium-dark-gray, 5%))
   +user-select(none)
   > ul
     +plain-list
     +flexbox
-  li
+  .tab
     display: block
     height: $tab-height
     vertical-align: top
-  .tab
     width: 21.5%
     +flex(1)
     max-width: 200px
     position: relative
-    margin-right: 2px
-    padding: ($tab-height - 27px) 12px
-    background-color: $page-background
-    border: 1px solid #d5d5d5
-    border-bottom-color: $lightest-gray
-    +border-radius(3px 3px 0 0)
+    padding: ($tab-height - 23px) 18px
     color: $light-gray
-    +box-shadow(0px -1px 3px $lightest-gray inset)
+    border-right: 1px solid rgba(0,0,0,0.45)
+    +box-shadow(inset 0px 0 0px rgba(255,255,255,0.2), inset 1px 0 0px rgba(255,255,255,0.2))
     .tooltip
       display: none !important
     &.dirty
@@ -32,15 +26,31 @@
         display: block !important
         white-space: nowrap
     .tab-title
-      font-size: 13px
+      font-size: 12px
       white-space: nowrap
       display: block
       overflow: hidden
+  .fade-text
+    +stretch(0, 0, 2px, false)
+    width: 50px
+    +fade-text-background(darken($medium-dark-gray, 10%))
+  .tab.active
+    font-weight: 600
+    background: darken($dark-gray, 10%)
+    .fade-text
+      +fade-text-background(darken($dark-gray, 15%))
+    i.ss-record
+      color: $blue
+    i.ss-record.draft
+      color: $gold
+  .tab:hover
+    color: white
+    cursor: pointer
   .close
     position: absolute
     top: 0px
     right: 0px
-    height: 37px
+    height: $tab-height
     width: 30px
     &:hover
       i.ss-delete
@@ -50,7 +60,7 @@
         display: none !important
   i.close-icon
     position: absolute
-    top: 12px
+    top: 8px
     right: 9px
     font-size: 10px
   i.ss-record
@@ -58,26 +68,4 @@
     font-size: 8px
   i.ss-record.draft
     color: lighten($gold, 20%)
-  .fade-text
-    +stretch(0, 0, 2px, false)
-    width: 50px
-    +fade-text-background($page-background)
-  .tab.active
-    color: $dark-gray
-    background: $gray-background
-    border-bottom: 0
-    font-weight: 600
-    +gray-highlight
-    .fade-text
-      +fade-text-background($gray-background)
-    i.ss-record
-      color: $blue
-    i.ss-record.draft
-      color: $gold
-  .tab:hover
-    color: $dark-gray
-    cursor: pointer
-    +box-shadow(0 8px 16px rgba(255,255,255,0.3) inset)
-  .tab.active:hover
-    +gray-highlight
 
