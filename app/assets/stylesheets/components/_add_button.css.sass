@@ -1,17 +1,28 @@
-.tablist-button
-  +flex(none)
-  width: 70px
-  .dropdown-menu 
-    width: 210px
-    li
-      display: block
-      height: auto
-      font-size: 11px
-  .tooltip.bottom
-    width: 200px
-  .no-content-types
-    background-color: $gray-background
-    color: $dark-gray
+.nav-bar
+  .tablist-button
+    +blue-highlight
+    padding: 0
+    +flex(none)
+    .dropdown-menu 
+      width: 210px
+      li
+        display: block
+        height: auto
+    .tooltip.bottom
+      width: 200px
+    .no-content-types
+      background-color: $gray-background
+      color: $dark-gray
+  .add.button
+    color: white
+    padding: 2px 15px 0px
+    i
+      top: 0px
+      font-size: 10px
+    &:active
+      top: 1px
+    &:focus
+      +focus-styles
 
 .add-btn
   .dropdown-menu
@@ -24,16 +35,12 @@
     li
       padding-left: 20px
       padding-right: 4px
-.add.button
-  @extend %blue-button
-  margin-top: 1px
-  margin-left: 3px
-  i
-    float: left
-    margin: 2px 5px 0 0
-    font-size: 10px
-    color: #7dc7fb
-  &:active
-    top: 1px
-  &:focus
-    +focus-styles
+  .add.button
+    .ss-dropdown
+      float: none
+      margin-left: 10px
+      margin-right: 0px
+      top: 1px
+      font-size: 8px
+
+

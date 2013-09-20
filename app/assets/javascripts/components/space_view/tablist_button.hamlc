@@ -1,7 +1,8 @@
 .add-btn.dropdown-btn
   %a.add.button.dropdown-toggle(tabindex="0")
     %i.ss-plus
-    %span Add
+    Add
+    %i.ss-dropdown
   .dropdown-menu.top-caret.left-aligned
     %h3.subtitle General
     %ul
