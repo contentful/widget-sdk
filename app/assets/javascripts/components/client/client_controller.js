@@ -151,7 +151,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
 
     // TODO This is a pattern that repeats and should be extracted
     var tab = _.find($scope.spaceContext.tabList.items, function(tab) {
-      return tab.params.mode == options.params.mode;
+      return tab && tab.params && tab.params.mode == options.params.mode;
     });
     tab = tab || $scope.spaceContext.tabList.add(options);
     if (tab) tab.activate();
