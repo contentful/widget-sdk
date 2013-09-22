@@ -46,7 +46,7 @@
             %li(ng-click="startTutorial()" dropdown-close="" ng-show="spaceContext.space") Start Tutorial
             %li(ng-click="openSupport()" dropdown-close="") Support
             %li(ng-click="logout()" dropdown-close="") Log out
-    %space-view(ng-show="spaceContext.space" ng-controller="TabViewCtrl")
+    %space-view(ng-controller="TabViewCtrl")
     .create-space-advice(ng-show="spaces.length == 0")
       %i.ss-folder.giant-icon
       %header Nothing to see yet.

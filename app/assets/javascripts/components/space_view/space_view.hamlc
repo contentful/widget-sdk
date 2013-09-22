@@ -1,7 +1,7 @@
 %nav.nav-bar
   .logo(ng-click="logoClicked()")
     .cf-logo
-  %ul
+  %ul(ng-show="spaceContext.space")
     %li.tablist-button(space-context="spaceContext")
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'contentTypes',
                   'section-index': spaceContext.tabList.currentViewType() == 'content-type-list'}"
@@ -42,7 +42,7 @@
       %i.ss-settings
       Space Settings
   .navbar-loader
-%nav.tab-list
+%nav.tab-list(ng-show="spaceContext.space")
   %ul
     %li.tab(ng-repeat="tabItem in spaceContext.tabList.items"
             ng-class="{active: tabItem.active(), dirty: tabItem.dirty}"
@@ -62,7 +62,7 @@
         %i.ss-record.close-icon(ng-show="tabItem.dirty && !tabItem.hovered"
                                 ng-class="{draft: tabItem.dirty == 'draft'}"
                                 ng-mouseover="tabItem.setHovering(true)")
-.tab-content(ng-repeat="tab in spaceContext.tabList.items" ng-show="tab.active()" ng-switch="tab.viewType")
+.tab-content(ng-repeat="tab in spaceContext.tabList.items" ng-show="spaceContext.space && tab.active()" ng-switch="tab.viewType")
   .iframe-view(ng-switch-when="iframe")
   .entry-list.entity-list(ng-switch-when="entry-list")
   .asset-list.entity-list(ng-switch-when="asset-list")
