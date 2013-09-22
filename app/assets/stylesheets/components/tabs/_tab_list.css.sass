@@ -4,6 +4,11 @@
   z-index: 10
   +gradient(darken($medium-dark-gray, 10%), $medium-dark-gray)
   +user-select(none)
+  +transition(height 0.1s ease-in)
+  &.hidden
+    height: 0
+    .tab
+      height: 0
   > ul
     +plain-list
     +flexbox

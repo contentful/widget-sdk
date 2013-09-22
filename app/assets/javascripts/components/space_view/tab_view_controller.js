@@ -87,8 +87,8 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     if (editor) editor.activate();
   };
 
-  $scope.showTabBar = function () {
-    return !_.every($scope.spaceContext.tabList.items, function(item){ return item.hidden; });
+  $scope.hideTabBar = function () {
+    return _.every($scope.spaceContext.tabList.items, function(item){ return item.hidden; });
   };
 
   $scope.editApiKey = function(apiKey) {

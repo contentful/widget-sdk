@@ -42,7 +42,7 @@
       %i.ss-settings
       Space Settings
   .navbar-loader
-%nav.tab-list(ng-show="spaceContext.space && showTabBar()")
+%nav.tab-list(ng-show="spaceContext.space" ng-class="{hidden: hideTabBar()}")
   %ul
     %li.tab(ng-repeat="tabItem in spaceContext.tabList.items"
             ng-class="{active: tabItem.active(), dirty: tabItem.dirty}"
