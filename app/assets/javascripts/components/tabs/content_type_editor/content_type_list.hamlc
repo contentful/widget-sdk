@@ -34,5 +34,5 @@
     %i.ss-database.giant-icon
     %header You have no Content Types yet.
     %p Content Types work like stencils that define which Entries you can create within a specific Space.
-    %button.default-button(type="button" ng-click="createContentType()")
+    %button.default-button.primary-button(type="button" ng-click="createContentType()")
       Create Content Type
