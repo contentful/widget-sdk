@@ -9,5 +9,34 @@
   padding: $modal-dialog-padding
   background: $gray-background
 
-.create-validation-button
-  @extend %blue-button
+.empty-validations-advice
+  @extend %advice
+  position: static
+  margin: auto
+  margin-top: 80px
+
+.cf-validation-options
+  padding: 6px 0
+  border-bottom: 1px solid $dark-rule
+
+.validation-type-select
+  display: inline
+  .dropdown-toggle
+    width: 100px
+    height: 34px
+
+.validation-controls
+  display: inline-block
+  vertical-align: top
+  @extend %form-styled
+
+.cf-validation-options .validation-controls
+  input[type]
+    display: inline
+    width: auto
+
+.add-validation
+  margin-top: 1em
+
+.delete-validation
+  float: right

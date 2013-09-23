@@ -5,16 +5,21 @@
 
     .validation-list
       .cf-validation-options(ng-repeat="(validationIndex, validation) in validationList()" ng-model="validation")
-      .empty-validations(ng-hide="validationList().length > 0")
-        %h1 You have no validations yet
+      .empty-validations-advice(ng-hide="validationList().length > 0")
+        %i.ss-check.giant-icon
+        %header You have no Validations yet.
         %p
           Select Validations and narrow further what type of content should be added to your Fields.
-        %button.default-button.primary-button.create-validation-button
+        %button.default-button.primary-button(ng-click="addValidation()")
           Create Validation
+    %button.default-button.primary-button.add-validation(ng-click="addValidation()" ng-show="validationList().length > 0")
+      %i.ss-plus.button-icon
+      Add Validation
+
     .buttons
       %button.default-button.cancel(type="button" ng-click="dialog.cancel()")
-        {{dialog.cancelLabel}}
+        Close
 
-      %button.default-button.add-validation(ng-click="addValidation()")
+      -#%button.default-button.add-validation(ng-click="addValidation()")
         %i.ss-plus
         Add Validation

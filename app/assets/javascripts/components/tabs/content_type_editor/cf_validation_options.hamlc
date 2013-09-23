@@ -1,11 +1,12 @@
 .dropdown-btn.validation-type-select
   %button.flat-button.dropdown-toggle
+    %i.ss-dropdown.button-icon-right
     {{validationName(validation)}}
   .dropdown-menu
     %ul
       %li(ng-repeat="(name, v) in availableValidations" ng-click="changeType(v)")
         {{name}}
-%ng-switch(on="validationOptions.type")
+.validation-controls(ng-switch="validationOptions.type")
   %div(ng-switch-when="size")
     %input(type="number" ng-model="validationOptions.params.min" placeholder="Minimum size" ng-change="validationOptionsUpdated()" ng-disabled="!otEditable")
     \-
@@ -43,3 +44,6 @@
 
   %div(ng-switch-default="")
     Please select a type first
+
+%button.default-button.delete-validation(ng-click="deleteValidation(validationIndex)")
+  %i.ss-delete

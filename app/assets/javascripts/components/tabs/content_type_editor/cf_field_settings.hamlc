@@ -39,7 +39,7 @@
   %a.toggle-required(ng-click="toggle('required')" ng-class="{active: field.required}")
     %i.required-icon ✱
     {{field.required ? 'Required' : 'Require'}}
-  %a.toggle-validate(ng-click="openValidations()" ng-class="{active: hasValidations}")
+  %a.toggle-validate(ng-click="openValidations()" ng-class="{active: hasValidations}" ng-show="validationsAvailable")
     %i.ss-check
     {{hasValidations? 'Validated' : 'Validate'}}
   %a.toggle-localized(ng-click="toggle('localized')" ng-class="{active: field.localized}")

@@ -8,6 +8,15 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
     scope.hasValidations = !noValidations;
   });
 
+  $scope.$watch(function (scope) {
+    var f = scope.field;
+    var params = [f.type, f.linkType];
+    if (f.items) params.push(f.items.type, f.items.linkType);
+    return params;
+  }, function (typeParams, old, scope) {
+    scope.validationsAvailable = !_.isEmpty(validation.Validation.perType($scope.field));
+  }, true);
+
   $scope.getFieldTypeName = getFieldTypeName;
 
   $scope.displayEnabled = function () {
