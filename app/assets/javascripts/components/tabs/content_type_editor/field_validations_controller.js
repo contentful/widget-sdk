@@ -50,7 +50,7 @@ angular.module('contentful').controller('FieldValidationsController', function($
     $scope.getValidationDoc(validationIndex).remove(function(err){
       if (!err) $scope.$apply(function (scope) {
         var validation = $scope.validationList()[validationIndex];
-        scope.otUpdateEntity();
+        scope.validationList().splice(validationIndex, 1);
         analytics.track('Deleted Validation', {
           fieldId: scope.field.id,
           validationType: $scope.validationType(validation)
