@@ -9,12 +9,12 @@
         %h1 You have no validations yet
         %p
           Select Validations and narrow further what type of content should be added to your Fields.
-        %button.create-validation-button
+        %button.default-button.primary-button.create-validation-button
           Create Validation
     .buttons
-      %button.cancel(type="button" ng-click="dialog.cancel()")
+      %button.default-button.cancel(type="button" ng-click="dialog.cancel()")
         {{dialog.cancelLabel}}
 
-      %button.add-validation(ng-click="addValidation()")
+      %button.default-button.add-validation(ng-click="addValidation()")
         %i.ss-plus
         Add Validation

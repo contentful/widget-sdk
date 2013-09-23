@@ -2,7 +2,7 @@
   %h1 {{contentType.getName()}}
 
   .editor-top-right
-    %button(type="button"
+    %button.flat-button(type="button"
             ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip-placement="left"
@@ -47,8 +47,8 @@
       .form-controls
         .content-type-field-list
         .dropdown-btn
-          .dropdown-toggle.add-field-button
-            %i.ss-plus
+          .dropdown-toggle.add-field-button.default-button.primary-button
+            %i.ss-plus.button-icon
             Add Field
           .dropdown-menu.type-menu
             %ul
@@ -70,17 +70,17 @@
                 .content-type-description
 .tab-actions(ng-controller="ContentTypeActionsCtrl")
   .button-set
-    %button.delete(type="button"
+    %button.default-button.delete(type="button"
                    ng-show="canUnpublish()"
                    ng-click="unpublish()"
                    tooltip="Deactivate this Content Type")
       Deactivate
-    %button.delete(type="button"
+    %button.default-button.delete(type="button"
                    ng-show="canDelete()"
                    ng-click="delete()"
                    tooltip="Delete this Content Type")
       Delete
-    %button.publish(ng-disabled="!canPublish()"
+    %button.default-button.primary-button.publish(ng-disabled="!canPublish()"
                     ng-click="publish()"
                     tooltip="Make this Content Type available to editors")
       {{publishButtonLabel()}}

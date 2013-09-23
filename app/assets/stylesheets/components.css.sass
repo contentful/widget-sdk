@@ -46,11 +46,6 @@ i.ss-delete
     color: $medium-gray
     cursor: pointer
 
-// Download Icon
-i.ss-download
-  position: relative
-  top: 0.2em
-
 .aligned-number 
   min-width: 70px
   text-align: right
@@ -115,95 +110,102 @@ button::-moz-focus-inner
   padding: 0
   outline: 0
 
-button
+
+.base-button
   -webkit-appearance: none
+  font-size: 1em
   text-decoration: none
   color: $medium-gray
   display: inline-block
   vertical-align: middle
   position: relative
-  font-size: 12px
-  padding: 6.5px 12px
+  padding: 0.6em 1em
   overflow: hidden
-  border: 1px solid darken($gray-background, 10%)
   +border-radius(3px)
+  cursor: pointer
+  &:disabled,
+  &[disabled]
+    cursor: default
+
+a.base-button
+  color: inherit
+
+.default-button
+  @extend .base-button
+  border: 1px solid darken($gray-background, 10%)
   +gradient($gray-background, darken($gray-background, 4%))
   +box-shadow(0 1px 1px rgba(255,255,255,0.8) inset, 0 2px 1px rgba(0,0,0,0.05)) 
-
-  &:hover
-    cursor: pointer
-  &:active, &.active
+  &:active,
+  &.active
     top: 1px
     +box-shadow(0 1px 2px darken($gray-background, 5%) inset)
     +gradient($gray-background, darken($gray-background, 2%))
-  &:disabled
+  &:disabled,
+  &[disabled]
     opacity: 0.5
+    pointer: default
     &:active
       top: 0px
 
-.as-button,
-  @extend button
-a.as-button
-  color: $medium-gray
-
-%blue-button
-  +box-shadow(0 2px 1px rgba(0,0,0,0.08), 0 1px 1px lighten($blue, 7%) inset)
-  +blue-highlight
-  border: 1px solid darken($blue, 6%)
-  +border-radius(3px 3px 3px 3px)
-  font-weight: 600
-  font-size: 12px
-  padding: 4px 11px 5px
-  i
-    color: #7dc7fb
+.flat-button
+  @extend .base-button
+  background: inherit
+  border: 1px solid darken($dark-rule, 10)
   &:hover
-    cursor: pointer
-    +gradient(lighten($blue, 5%), darken($blue, 6%))
-  &:active
-    +box-shadow(0 1px 2px darken($blue, 5%) inset)
-    +gradient($blue, darken($blue, 4%))
-  &:disabled
-    &:hover
-      +blue-highlight
-    &:active
-      +box-shadow(0 2px 1px rgba(0,0,0,0.08), 0 1px 1px lighten($blue, 7%) inset)
-      +blue-highlight
+    border: 1px solid darken($dark-rule, 20)
+  &:active,
+  &.active
+    border: 1px solid darken($dark-rule, 30)
 
+.button-icon
+  // An Icon inside a button
+  position: relative
+  top: 1px
+  right: 2px
 
-%gray-button
-  background-color: $gray-background
-  border: 1px solid $lightest-gray
-  +gray-highlight
-  +border-radius(3px  3px  3px  3px)
-  line-height: 18px
+.button-icon-right
+  @extend .button-icon
+  float: right
+  right: 0
+  left: 3px
+  //font-size: 0.8em
 
-  &:hover
-    cursor: pointer
-    color: $dark-gray
-    border-color: $light-gray
-  &:active
-    +box-shadow(0 0 0 transparent)
-    +box-shadow(0 1px 2px rgba(0,0,0,0.1) inset)
+// Tweaks for specific icons
+.button-icon,
+.button-icon-right
+  &.ss-dropdown
+    font-size: 0.8em
+  &.ss-plus
+    font-size: 0.9em
 
 =colored-button($color)
   font-weight: 600
   border-color: darken($color, 10%)
   +box-shadow(0 1px 1px lighten($color, 7%) inset, 0 2px 1px rgba(0,0,0,0.03))
+  i
+    color: lighten($color, 40%)
+  &:not(:disabled),
+  &:not([disabled])
+    &:hover
+      +gradient(lighten($color, 5%), darken($color, 6%))
+    &:active
+      +box-shadow(0 1px 2px darken($color, 5%) inset)
+      +gradient($color, darken($color, 4%))
 
-  &:hover
-    cursor: pointer
-    +gradient(lighten($color, 5%), darken($color, 6%))
-  &:active
-    +box-shadow(0 1px 2px darken($color, 5%) inset)
-    +gradient($color, darken($color, 4%))
+.primary-button
+  &.default-button
+    +blue-highlight
+    +colored-button($blue)
 
-%red-button
-  +red-highlight
-  +colored-button($red)
-
-%green-button
-  +green-highlight
-  +colored-button($green)
+.red-button
+  &.default-button
+    +red-highlight
+    +colored-button($red)
+    
+.green-button
+  &.default-button
+    +green-highlight
+    +colored-button($green)
 
 .toggle-collapse
   display: inline-block

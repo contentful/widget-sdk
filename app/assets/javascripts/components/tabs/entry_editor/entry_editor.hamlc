@@ -3,8 +3,8 @@
     {{headline()}}
   .editor-top-left
     .dropdown-btn
-      %a.dropdown-toggle
-        %i.ss-dropdown
+      %a.flat-button.dropdown-toggle
+        %i.ss-dropdown.button-icon-right
         %span Show fields…
       .dropdown-menu(style="display:none")
         %ul(ng-show="showLangSwitcher")
@@ -20,7 +20,7 @@
               Show disabled fields
 
   .editor-top-right
-    %button(type="button"
+    %button.flat-button(type="button"
             ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
@@ -62,18 +62,18 @@
 .tab-actions(ng-controller="EntryActionsCtrl")
   .button-set
     .dropdown-btn(on-close="deleteConfirm=false; disableTooltip=false")
-      %a.dropdown-toggle(tooltip="More actions" ng-click="disableTooltip=true")
-        %i.ss-dropdown
+      %a.dropdown-toggle.flat-button(tooltip="More actions" ng-click="disableTooltip=true")
+        %i.ss-dropdown.button-icon-right
         More
       .dropdown-menu(position="top")
         %ul
           %li.duplicate(type="button" ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this Entry" dropdown-close) Duplicate
           %li.delete-confirm(type="button" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss" dropdown-close) Are you sure?
           %li.delete(type="button" ng-show="canDelete() && !deleteConfirm" ng-click="deleteConfirm=true" tooltip="Permanently delete this Entry") Delete
-    %button.archive(type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry") Archive
-    %button.archive(type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry") Unarchive
-    %button.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry") Unpublish
-    %button.publish(type="submit" ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Entry") {{publishButtonLabel()}}
+    %button.default-button.archive(type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry") Archive
+    %button.default-button.archive(type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry") Unarchive
+    %button.default-button.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry") Unpublish
+    %button.default-button.primary-button.publish(type="submit" ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Entry") {{publishButtonLabel()}}
   .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
                tooltip-placement="top")
   .other-users

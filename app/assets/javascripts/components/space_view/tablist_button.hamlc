@@ -1,8 +1,8 @@
 .add-btn.dropdown-btn
   %a.add.button.dropdown-toggle(tabindex="0")
-    %i.ss-plus
+    %i.ss-plus.button-icon
     Add
-    %i.ss-dropdown
+    %i.ss-dropdown.button-icon-right
   .dropdown-menu.top-caret.left-aligned
     %ul
       %li.add-content-type.bottom-separator(ng-click="createContentType()" dropdown-close="" ng-show="can('create', 'ContentType')")

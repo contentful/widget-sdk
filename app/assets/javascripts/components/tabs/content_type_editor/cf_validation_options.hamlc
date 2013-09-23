@@ -1,5 +1,5 @@
 .dropdown-btn.validation-type-select
-  %button.dropdown-toggle
+  %button.flat-button.dropdown-toggle
     {{validationName(validation)}}
   .dropdown-menu
     %ul

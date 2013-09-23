@@ -7,7 +7,7 @@
     .name {{availableValidations[validationType(validation)]}}
     .validation-options
     .action
-      %a.button.delete(ng-click="deleteValidation(validationIndex)" ng-show="otEditable")
+      %a.button.default-button.delete(ng-click="deleteValidation(validationIndex)" ng-show="otEditable")
         %i.remove.ss-delete
   .section(ng-controller="NewValidationCtrl" cf-validate="fieldWithNewValidation" with-schema="fieldSchema" ng-show="otEditable")
     .name
@@ -15,5 +15,5 @@
         %option(value="") Add new…
     .validation-options
     .action
-      %button.button.new(type="button" ng-click="createValidation()" ng-disabled="!newValidationType || !validationResult.valid")
+      %button.default-button.button.new(type="button" ng-click="createValidation()" ng-disabled="!newValidationType || !validationResult.valid")
         %i.ss-plus
