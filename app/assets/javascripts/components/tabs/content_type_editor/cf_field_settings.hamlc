@@ -1,6 +1,6 @@
 %a.toggle-collapse(cf-click-local="toggleField(field)" ng-class="{open: isFieldOpen(field)}") ▶
 .display
-  %span.name {{field.name || 'Untitled Field'}}
+  %span.name {{displayedFieldName()}}
   .icons
     %i.ss-text(tooltip="Field used as title"
      ng-show="displayEnabled(field)"

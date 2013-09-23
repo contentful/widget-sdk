@@ -27,6 +27,12 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
     return $scope.contentType.data.displayField === $scope.field.id;
   };
 
+  $scope.displayedFieldName = function () {
+    return _.isEmpty($scope.field.name) ?
+             _.isEmpty($scope.field.id) ?  'Untitled field' : 'ID: '+$scope.field.id
+           : $scope.field.name;
+  };
+
   $scope.$watch('publishedIds', function(ids, old, scope) {
     scope.published = scope.fieldIsPublished(scope.field);
   });
