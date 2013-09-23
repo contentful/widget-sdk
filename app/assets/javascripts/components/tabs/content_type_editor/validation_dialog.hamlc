@@ -5,7 +5,7 @@
 
     .validation-list
       .cf-validation-options(ng-repeat="(validationIndex, validation) in validationList()" ng-model="validation")
-      .empty-validations-advice(ng-hide="validationList().length > 0")
+      .advice(ng-hide="validationList().length > 0")
         %i.ss-check.giant-icon
         %header You have no Validations yet.
         %p

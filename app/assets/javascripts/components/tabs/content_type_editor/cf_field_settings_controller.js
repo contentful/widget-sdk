@@ -59,6 +59,26 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
     });
   }
 
+  $scope.changeFieldType = function (newType) {
+    if (!$scope.otDoc) return false;
+
+    var newField = _.extend({
+      name: $scope.field.name,
+      id: $scope.field.id
+    }, newType);
+
+    var subdoc = $scope.otDoc.at(['fields', $scope.index]);
+    subdoc.set(newField, function(err) {
+      $scope.$apply(function (scope) {
+        if (!err) {
+          scope.otUpdateEntity();
+        } else {
+          notification.error('Could not change type.');
+        }
+      });
+    });
+  };
+
   $scope.toggle = function(property) {
     assert.truthy(property, 'need a property to toggle');
     if (!$scope.otDoc) return false;

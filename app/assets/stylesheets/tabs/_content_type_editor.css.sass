@@ -70,16 +70,19 @@
     position: absolute
     top: $vertical-padding
     right: 150px
-  .cf-field-settings .cf-fieldtype-icon
+  .drag-handle
+    position: absolute
+    +stretch(0, 20px, 0, null)
+    line-height: $vertical-padding + $vertical-padding + 18px
+  .display .cf-fieldtype-icon,
+  button.cf-fieldtype-icon
     // external
     position: absolute
     top: 0
     right: 70px
     margin-top: 7px
-  .drag-handle
-    position: absolute
-    +stretch(0, 20px, 0, null)
-    line-height: $vertical-padding + $vertical-padding + 18px
+  .fieldtype-dropdown
+    position: static
   .status
     position: absolute
     top: 0
@@ -101,11 +104,13 @@
 
   // Open/closed Display-state visibility
   .field-form,
-  .field-details
+  .field-details,
+  .fieldtype-dropdown
     display: none
   .cf-field-settings.open
     .field-form,
-    .field-details
+    .field-details,
+    .fieldtype-dropdown
       display: block
     .display
       display: none
@@ -167,6 +172,14 @@
     i
       position: relative
       top: 1px
+  button.cf-fieldtype-icon:not([disabled])
+    width: 45px
+    padding-left: 13px
+    cursor: pointer
+    &:before
+      content: '▼'
+      position: absolute
+      left: 3px
 
   // Color variations for active fields
   .active
@@ -222,25 +235,15 @@
     padding-top: $vertical-padding
     padding-left: 25px
 
-  // Add-Button
+  // Advice/Add-Button
+  .advice
+    width: 60%
   .add-field-button
     margin-top: 1em
-    // This thing is tainted because of the styles applied in the beginning of _entity_editor.css
-    // I will now sin further to unfuck it visually:
-    //line-height: 24px
-    //padding-top: 5px
-    //i
-      position: relative
-      top: 2px
-  // Add-Button color fixes
-  //.dropdown-btn .add-field-button:hover,
-  //.dropdown-btn.active .add-field-button
-    color: white
-    i
-      color: #7dc7fb
 
   .type-menu
     width: 500px
+    white-space: normal
     padding: 0
     ul
       margin: 0 300px 0 0

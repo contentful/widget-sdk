@@ -45,29 +45,21 @@
     .form-field
       %label Fields
       .form-controls
-        .content-type-field-list
-        .dropdown-btn
-          .dropdown-toggle.add-field-button.default-button.primary-button
+        .content-type-field-list(ng-show="contentType.data.fields.length > 0")
+        .advice(ng-hide="contentType.data.fields.length > 0")
+          %i.ss-layout.giant-icon
+          %header You have no Fields yet
+          %p
+            Add Fields to configure which form inputs are available for your editors to work with.            
+          .dropdown-btn
+            %button.dropdown-toggle.default-button.primary-button
+              Create Field
+            .dropdown-menu.type-menu(select-type="addField(type)")
+        .dropdown-btn(ng-show="contentType.data.fields.length > 0")
+          %button.dropdown-toggle.add-field-button.default-button.primary-button
             %i.ss-plus.button-icon
             Add Field
-          .dropdown-menu.type-menu
-            %ul
-              %li.group
-                %h3 Single
-              %li.type(ng-repeat="type in availableTypes.Single track by type.name"
-                  ng-click="addField(type.value)"
-                  dropdown-close="")
-                .cf-fieldtype-icon(field="type.value")
-                %span {{type.name}}
-                .content-type-description
-              %li.group
-                %h3 Multiple
-              %li.type(ng-repeat="type in availableTypes.Multiple track by type.name"
-                  ng-click="addField(type.value)"
-                  dropdown-close="")
-                .cf-fieldtype-icon(field="type.value")
-                %span {{type.name}}
-                .content-type-description
+          .dropdown-menu.type-menu(select-type="addField(type)")
 .tab-actions(ng-controller="ContentTypeActionsCtrl")
   .button-set
     %button.default-button.delete(type="button"

@@ -23,6 +23,7 @@ angular.module('contentful').directive('dropdownBtn', function($parse) {
       };
 
       element.find('.dropdown-toggle').click(function(event) {
+        event.stopPropagation();
         event.preventDefault();
         scope.$apply(toggle);
       });
