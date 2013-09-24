@@ -37,7 +37,7 @@
     .form-field(ng-show="hasErrorOnFields")
       %label
       .form-controls
-        .cf-validation-error-display.form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
+        .cf-form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
     .form-field(ng-repeat="field in fields track by field.id"
         data-field-id="{{field.id}}"
         data-field-type="{{field.type}}"
@@ -56,8 +56,8 @@
                                  link="link" as="user"
                                  tooltip="{{user.getName()}}")
                 %img(ng-src="{{user.data.avatarUrl}}")
-          .cf-validation-error-display.form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
-        .cf-validation-error-display.form-box-error(cf-error-path="['fields', field.id]")
+          .cf-form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
+        .cf-form-box-error(cf-error-path="['fields', field.id]")
 
 .tab-actions(ng-controller="EntryActionsCtrl")
   .button-set

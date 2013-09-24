@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('contentful').directive('cfValidationErrorDisplay', function () {
+angular.module('contentful').directive('cfErrorPath', function () {
   return {
-    restrict: 'C',
-    template: JST['cf_validation_error_display'],
     scope: true,
-    link: function (scope, elem, attrs) {
+    controller: 'ErrorPathController',
+    require: 'cfErrorPath',
+    link: function (scope, elem, attrs, errorPathController) {
       scope.$watch('errorMessages.length', function (numErrors) {
         if (0 < numErrors) {
           scope.noErrors = false;
@@ -19,7 +19,6 @@ angular.module('contentful').directive('cfValidationErrorDisplay', function () {
           elem.hide();
         }
       });
-    },
-    controller: 'CfValidationErrorDisplayCtrl'
+    }
   };
 });
