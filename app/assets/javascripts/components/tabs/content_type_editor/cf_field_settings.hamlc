@@ -2,6 +2,7 @@
 .display
   %span.name {{displayedFieldName()}}
   .icons
+    %i.ss-alert.validation-alert(ng-show="validationResult.pathErrors.fields[index]" tooltip="This field has errors")
     %i.ss-text(tooltip="Field used as title"
      ng-show="displayEnabled(field)"
      ng-class="{enabled: isDisplayField(field)}")
@@ -48,6 +49,7 @@
   %a.toggle-validate(ng-click="openValidations()" ng-class="{active: hasValidations}" ng-show="validationsAvailable")
     %i.ss-check
     {{hasValidations? 'Validated' : 'Validate'}}
+    %i.ss-alert.validation-alert(ng-show="validationResult.pathErrors.fields[index].validations || validationResult.pathErrors.fields[index].items.validations" tooltip="There are errors in the validations")
   %a.toggle-localized(ng-click="toggle('localized')" ng-class="{active: field.localized}")
     %i.ss-globe
     {{field.localized ? 'Localized' : 'Localize'}}
