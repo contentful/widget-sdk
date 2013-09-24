@@ -22,7 +22,6 @@
          ng-change="updateFieldId()"
          tooltip="Field title displayed to editors"
          tooltip-placement="top")
-  .cf-validation-error-display.form-inline-error(cf-error-path="['name']" ng-hide="newFieldForm.$pristine || noErrors")
   %input(name="fieldId"
          ng-model="field.id" type="text" required=""
          ng-disabled="published || !otEditable"
@@ -32,9 +31,15 @@
          placeholder="e.g. productName"
          tooltip="Field ID used in API"
          tooltip-placement="top")
-  .cf-validation-error-display.form-inline-error(cf-error-path="['id']" ng-hide="newFieldForm.$pristine || noErrors")
-  .form-inline-error(ng-show="idExists")
-    Identifier already exists
+  .field-errors
+    %span(cf-error-path="['fields', index, 'name']" ng-hide="noErrors")
+      Name: {{errorMessages.join(' ')}}
+      %br
+    %span(cf-error-path="['fields', index, 'id']" ng-hide="noErrors")
+      Identifier: {{errorMessages.join(' ')}}
+    -#.cf-form-inline-error(ng-show="idExists")
+      TODO generate idExists Flag
+      Identifier already exists
 
 .dropdown-btn.fieldtype-dropdown
   %button.dropdown-toggle.flat-button.cf-fieldtype-icon(field="field" show-tooltip="" ng-disabled="published")
