@@ -2,6 +2,7 @@
   .modal-dialog
     .title
       Create Space
+    .close-button(ng-click="dialog.cancel()")
 
     %form(name="newSpaceForm" ng-submit="createSpace()")
       .form-horizontal
