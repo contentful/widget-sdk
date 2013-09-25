@@ -1,0 +1,3 @@
+%ul
+  %li(ng-repeat="(name, v) in availableValidations" ng-click="typeClicked(v)" dropdown-close)
+    {{name}}

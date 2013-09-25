@@ -1,5 +1,5 @@
 .modal-background.validation-dialog
-  .modal-dialog(ng-controller="FieldValidationsController")
+  .modal-dialog(ng-controller="FieldValidationDialogController")
     .title
       Validations for {{field.name}}
     .close-button(ng-click="dialog.cancel()")
@@ -10,11 +10,15 @@
         %header You have no Validations yet.
         %p
           Select Validations and narrow further what type of content should be added to your Fields.
-        %button.default-button.primary-button(ng-click="addValidation()")
-          Create Validation
+        .dropdown-btn
+          %button.default-button.primary-button.dropdown-toggle
+            Create Validation
+          .dropdown-menu(select-validation="addValidation(type)")
       .cf-validation-options(ng-repeat="(validationIndex, validation) in validationList()" ng-model="validation")
 
     .buttons(ng-show="validationList().length > 0")
-      %button.default-button.primary-button.add-validation(ng-click="addValidation()")
-        %i.ss-plus.button-icon
-        Add Validation
+      .dropdown-btn
+        %button.default-button.primary-button.dropdown-toggle
+          %i.ss-plus.button-icon
+          Add Validation
+        .dropdown-menu(select-validation="addValidation(type)")

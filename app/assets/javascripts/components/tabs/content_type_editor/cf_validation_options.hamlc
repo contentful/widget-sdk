@@ -2,10 +2,7 @@
   %button.flat-button.dropdown-toggle
     %i.ss-dropdown.button-icon-right
     {{validationName(validation)}}
-  .dropdown-menu
-    %ul
-      %li(ng-repeat="(name, v) in availableValidations" ng-click="changeType(v)" dropdown-close)
-        {{name}}
+  .dropdown-menu(select-validation="changeType(type)")
 .validation-controls(ng-switch="validationType(validation)")
   %div(ng-switch-when="size")
     %input(type="number" ng-model="validation.size.min" placeholder="Minimum size" ng-change="updateDoc()" ng-disabled="!otEditable")

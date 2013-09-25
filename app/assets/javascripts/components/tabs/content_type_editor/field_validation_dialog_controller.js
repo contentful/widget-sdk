@@ -1,24 +1,8 @@
 'use strict';
 
-angular.module('contentful').controller('FieldValidationsController', function($scope, analytics, validation, notification) {
-  var field = $scope.field.type === 'Array' ?
-    $scope.field.items:
-    $scope.field;
-  var typeValidations = validation.Validation.perType(field);
-
-  var validations = {
-    'Size': {size: {min: null, max: null}},
-    'Range': {range: {min: null, max: null}},
-    'Regular Expression': {regexp: {pattern: null, flags: null}},
-    'One of': {'in': null} ,
-    'Content Type': {linkContentType: null},
-    'File Type': {linkMimetypeGroup: null}
-  };
-
-  $scope.availableValidations = _.pick(validations, function(val) {
-    var key = validationType(val);
-    return _.contains(typeValidations, key);
-  });
+angular.module('contentful').controller('FieldValidationDialogController', function($scope, analytics, availableValidations, notification) {
+  $scope.validationType = availableValidations.type;
+  $scope.validationName = availableValidations.name;
 
   $scope.validationListPath = function() {
     var args = [].splice.call(arguments,0);
@@ -59,10 +43,7 @@ angular.module('contentful').controller('FieldValidationsController', function($
     });
   };
 
-  $scope.addValidation = function () {
-    var validation = _.find($scope.availableValidations);
-    if (!validation) return notification.info('No Validations available');
-
+  $scope.addValidation = function (validation) {
     var doc = $scope.getValidationListDoc();
     if (doc.get()) {
       doc.push(validation, function (err) {
@@ -87,9 +68,6 @@ angular.module('contentful').controller('FieldValidationsController', function($
     }
   };
 
-  $scope.validationType = validationType;
-  $scope.validationName = validationName;
-
   $scope.updateValidationsFromDoc = function () {
     if ($scope.field.type == 'Array') {
       $scope.field.items.validations = $scope.getValidationListDoc().get();
@@ -98,14 +76,4 @@ angular.module('contentful').controller('FieldValidationsController', function($
     }
   };
 
-  function validationType(validation) {
-    return _(validation).keys().filter(function(k) { return k !== '$$hashKey'; }).value()[0];
-  }
-
-  function validationName(validation) {
-    var type = validationType(validation);
-    return _(validations).findKey(function (val) {
-      return val.hasOwnProperty(type);
-    });
-  }
 });
