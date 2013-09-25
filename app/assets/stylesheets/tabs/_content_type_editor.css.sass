@@ -75,7 +75,7 @@
     +stretch(0, 20px, 0, null)
     line-height: $vertical-padding + $vertical-padding + 18px
   .display .cf-fieldtype-icon,
-  button.cf-fieldtype-icon
+  .dropdown-toggle.cf-fieldtype-icon
     // external
     position: absolute
     top: 0
@@ -179,7 +179,7 @@
     i
       position: relative
       top: 1px
-  button.cf-fieldtype-icon:not([disabled])
+  .dropdown-toggle.cf-fieldtype-icon:not([disabled])
     width: 45px
     padding-left: 13px
     cursor: pointer
@@ -222,14 +222,14 @@
   .toggle-title,
   .toggle-disabled
     cursor: pointer
-    padding-right: 20px
+    margin-right: 20px
   .field-details a.active
     color: $active-row-icon-active-color
     &:hover
       color: darken($active-row-icon-inactive-color, 30)
   .toggle-disabled
     display: block
-    padding-right: 50px
+    margin-right: 50px
     float: right
   .field-details
     .ss-check,
@@ -252,6 +252,13 @@
       text-align: left
   .add-field-button
     margin-top: 1em
+
+  // Tooltips
+  .tooltip
+    text-transform: none
+  .tooltip-inner
+    max-width: 500px
+
   .type-menu
     width: 500px
     white-space: normal

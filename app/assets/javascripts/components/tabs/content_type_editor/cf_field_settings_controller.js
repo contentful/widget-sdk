@@ -19,6 +19,26 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
 
   $scope.getFieldTypeName = getFieldTypeName;
 
+  $scope.statusTooltipText = function () {
+    if ($scope.published)
+      if ($scope.field.disabled)
+        return 'Disabled - this Field is not shown to editors by default.';
+      else
+        return 'Active - this Field is visible to editors.';
+    else
+      return 'New - this Field is new and the Content Type needs to be activated again to make it available for editors.';
+  };
+
+  $scope.statusClass = function () {
+    if ($scope.published)
+      if ($scope.field.disabled)
+        return 'disabled';
+      else
+        return 'published';
+    else
+      return 'unpublished';
+  };
+
   $scope.displayEnabled = function () {
     return $scope.field.type === 'Symbol' || $scope.field.type === 'Text';
   };

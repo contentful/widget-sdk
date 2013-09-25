@@ -2,14 +2,18 @@
 .display
   %span.name {{displayedFieldName()}}
   .icons
-    %i.ss-alert.validation-alert(ng-show="validationResult.pathErrors.fields[index]" tooltip="This field has errors")
+    %i.ss-alert.validation-alert(tooltip="This Field has errors"
+                                 ng-show="validationResult.pathErrors.fields[index]")
     %i.ss-text(tooltip="Field used as title"
-     ng-show="displayEnabled(field)"
-     ng-class="{enabled: isDisplayField(field)}")
-    %i.required-icon(tooltip="Field is required" ng-class="{enabled: field.required}") ✱
-    %i.ss-check(tooltip="Field has validations" ng-class="{enabled: hasValidations}")
-    %i.ss-globe(tooltip="Field is localized" ng-class="{enabled: field.localized}")
-  .cf-fieldtype-icon(field="field" show-tooltip="")
+               class="enabled"
+               ng-show="isDisplayField(field)")
+    %i.required-icon(tooltip="Field is required"
+                     ng-class="{enabled: field.required}") ✱
+    %i.ss-check(tooltip="Field has validations"
+                ng-class="{enabled: hasValidations}")
+    %i.ss-globe(tooltip="Field is localized"
+                ng-class="{enabled: field.localized}")
+  .cf-fieldtype-icon(field="field" show-tooltip)
     %i.ss-help
 %form.field-form(name="fieldForm")
   %input(name="fieldName"
@@ -42,26 +46,39 @@
       Identifier already exists
 
 .dropdown-btn.fieldtype-dropdown
-  %button.dropdown-toggle.flat-button.cf-fieldtype-icon(field="field" show-tooltip="" ng-disabled="published")
+  .dropdown-toggle.flat-button.cf-fieldtype-icon(field="field" show-tooltip="" ng-disabled="published")
     %i.ss-help
   .dropdown-menu.type-menu(select-type="changeFieldType(type)")
 
-.status(ng-class="{unpublished: !published, published: published && !field.disabled, disabled: published && field.disabled}")
+.status(ng-class="statusClass()" tooltip="{{statusTooltipText()}}")
 .field-details
-  %a.toggle-required(ng-click="toggle('required')" ng-class="{active: field.required}")
+  %a.toggle-required(ng-click="toggle('required')"
+                     ng-class="{active: field.required}"
+                     tooltip="Make Field mandatory when filling in content")
     %i.required-icon ✱
     {{field.required ? 'Required' : 'Require'}}
-  %a.toggle-validate(ng-click="openValidations()" ng-class="{active: hasValidations}" ng-show="validationsAvailable")
+  %a.toggle-validate(ng-click="openValidations()"
+                     ng-class="{active: hasValidations}"
+                     ng-show="validationsAvailable"
+                     tooltip="Add Validations to the content in this Field")
     %i.ss-check
     {{hasValidations? 'Validated' : 'Validate'}}
     %i.ss-alert.validation-alert(ng-show="validationResult.pathErrors.fields[index].validations || validationResult.pathErrors.fields[index].items.validations" tooltip="There are errors in the validations")
-  %a.toggle-localized(ng-click="toggle('localized')" ng-class="{active: field.localized}")
+  %a.toggle-localized(ng-click="toggle('localized')"
+                      ng-class="{active: field.localized}"
+                      tooltip="Translate the content in this Field to multiple languages")
     %i.ss-globe
     {{field.localized ? 'Localized' : 'Localize'}}
-  %a.toggle-title(ng-click="isDisplayField() ? null : setDisplayField(field)" ng-class="{active: isDisplayField()}" ng-show="displayEnabled()")
+  %a.toggle-title(ng-click="isDisplayField() ? null : setDisplayField(field)"
+                  ng-class="{active: isDisplayField()}"
+                  ng-show="displayEnabled()"
+                  tooltip="Use this Field as title of the Entry in the interface")
     %i.ss-text
     {{isDisplayField(field) ? 'Used as title' : 'Use as title'}}
-  %a.toggle-disabled(ng-click="toggle('disabled')" ng-class="{active: field.disabled}" ng-show="published")
+  %a.toggle-disabled(ng-click="toggle('disabled')"
+    ng-class="{active: field.disabled}"
+    ng-show="published"
+    tooltip="{{field.disabled ? 'Enable this field for editors' : 'Disable this field for editors'}}")
     {{field.disabled ? 'Enable Field' : 'Disable Field'}}
   %a.toggle-disabled(ng-click="delete()" ng-hide="published")
     Delete Field

@@ -33,7 +33,7 @@ angular.module('contentful').directive('cfFieldtypeIcon', function(getFieldTypeN
         return getFieldTypeName(field);
       }, function (fieldTypeName) {
         elem.html(nameTemplates[fieldTypeName] || '<i class="ss-help"></i>');
-        title = nameTemplates[fieldTypeName] ? fieldTypeName : 'Unknown Type';
+        title = nameTemplates[fieldTypeName] ? 'Field Type: ' + fieldTypeName : 'Unknown Type';
       });
 
       scope.$on('$destroy', function () {
