@@ -61,7 +61,7 @@
         A link to an Asset
       %p
         Connect your current Entry to an Asset previously uploaded. You can use it to attach media Assets to Entries, such as a cover image to a book.
-      %img(src="<%= image_path('field_type/linkstoentries.png') %>")
+      %img(src="<%= image_path('field_type/linktoasset.png') %>")
 
   %div(ng-switch-when="Location")
     %h3 Geographical coordinates of a location
@@ -83,7 +83,7 @@
         One or many links to Assets
       %p
         Connect your current Entry to Assets previously uploaded. It works as the Link to Asset but it allows you to connect one Entry to several Assets at once. An example is a gallery of pictures.
-      %img(src="<%= image_path('field_type/linkstoentries.png') %>")
+      %img(src="<%= image_path('field_type/linkstoassets.png') %>")
 
     %div(ng-show="type.value.items.type == 'Symbol'")
       %h3
