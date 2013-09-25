@@ -1,3 +1,4 @@
 .cf-field-settings(ng-repeat="(index, field) in contentType.data.fields track by fieldSortKey(field)"
   ng-class="{open: isFieldOpen(field), active: !field.disabled }"
+  ng-hide="field.disabled && !preferences.showDisabledFields"
   ng-click="fieldClicked(field)")

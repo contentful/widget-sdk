@@ -12,6 +12,7 @@ angular.module('contentful').directive('contentTypeFieldList', function() {
         axis: 'y',
         start: function(event, ui) {
           body.sortable('refresh');
+          scope.$apply('preferences.showDisabledFields = true');
           ui.item.startIndex = $('.cf-field-settings', body).index(ui.item);
         },
         update: function(e, ui) {

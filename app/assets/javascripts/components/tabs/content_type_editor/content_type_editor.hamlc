@@ -1,6 +1,17 @@
 .tab-header.editor-configuration
   %h1 {{contentType.getName()}}
 
+  .editor-top-left
+    .dropdown-btn
+      %a.flat-button.dropdown-toggle
+        %i.ss-dropdown.button-icon-right
+        %span View options…
+      .dropdown-menu
+        %ul
+          %li
+            %label
+              %input(type="checkbox" ng-model="preferences.showDisabledFields")
+              Show disabled fields
   .editor-top-right
     %button.flat-button(type="button"
             ng-click="preferences.toggleAuxPanel()"
