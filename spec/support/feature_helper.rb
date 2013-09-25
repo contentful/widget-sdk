@@ -153,4 +153,18 @@ module FeatureHelper
     end
     raise last_error
   end
+
+  def unscope
+    scopes = page.send(:scopes)
+    if scopes.length <= 1
+      yield
+    else
+      begin
+        scope = scopes.pop
+        yield
+      ensure
+        scopes.push(scope)
+      end
+    end
+  end
 end
