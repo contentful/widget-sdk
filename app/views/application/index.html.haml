@@ -27,7 +27,7 @@
         %a.btn.dropdown-toggle(ng-click="clickedSpaceSwitcher()" tabindex="0")
           %i.ss-dropdown
           %span(ng-bind="spaceContext.space.data.name || 'Spaces'")
-        .dropdown-menu.top-caret.left-aligned
+        .dropdown-menu.fixed-position.left-aligned
           %ul
             %li(ng-repeat="space in spaces" ng-click="selectSpace(space)" dropdown-close="")
               {{space.data.name}}
@@ -37,11 +37,10 @@
         %a.btn.dropdown-toggle(ng-click="clickedProfileButton()" tabindex="0")
           %i.ss-dropdown
           %img(ng-src="{{user.avatarUrl}}")
-        .dropdown-menu.top-caret.left-aligned
+        .dropdown-menu.fixed-position.left-aligned
           %p
             Logged in as {{user.firstName}} {{user.lastName}}
-          .separator
-          %ul
+          %ul.separator
             %li(ng-click="editProfile()" dropdown-close="" ng-show="spaceContext.space") Edit Profile
             %li(ng-click="startTutorial()" dropdown-close="" ng-show="spaceContext.space") Start Tutorial
             %li(ng-click="openSupport()" dropdown-close="") Support
