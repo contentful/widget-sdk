@@ -23,6 +23,7 @@
 //= require hamlcoffee
 //
 //= require angular
+//= require angular-animate
 //= require angular-route
 //= require contentful
 //= require environment
@@ -33,6 +34,7 @@
 //= require_self
 
 angular.module('contentful/test', [
+  'ngAnimate',
   'contentful/environment',
   'timeRelative',
   'contentful/user_interface',
