@@ -4,7 +4,7 @@
   +user-select(none)
   background: $dark-gray
   z-index: 20
-  +box-shadow(inset 0 0 1px rgba(255,255,255,0.2))
+  +box-shadow($nav-bar-box-shadow)
   .logo,
   ul
     float: left
@@ -18,7 +18,7 @@
   .logo
     height: $nav-bar-height
     border-right: 1px solid rgba(0,0,0,0.45)
-    +box-shadow(inset 0 0 1px rgba(255,255,255,0.2))
+    +box-shadow($nav-bar-box-shadow)
   li
     position: relative
     float: left
@@ -29,7 +29,7 @@
     list-style-type: none
     text-align: center
     color: $medium-gray
-    font-weight: 600
+    font-weight: $nav-bar-font-weight
     i
       position: relative
       top: 3px
