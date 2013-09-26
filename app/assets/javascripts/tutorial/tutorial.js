@@ -19,6 +19,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
     },
 
     start : function () {
+      return;
       var clientScope = angular.element('.client').scope();
       var tutorial = this;
       tutorialExampledata.switchToTutorialSpace(clientScope).then(function () {

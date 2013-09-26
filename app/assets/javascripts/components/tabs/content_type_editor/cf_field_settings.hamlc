@@ -26,9 +26,12 @@
          ng-change="updateFieldId()"
          tooltip="Field title displayed to editors"
          tooltip-placement="top")
+  %span.field-id-display(tooltip="Field ID used in API"
+         ng-if="published") {{field.id}}
   %input(name="fieldId"
+         ng-if="!published"
          ng-model="field.id" type="text" required=""
-         ng-disabled="published || !otEditable"
+         ng-disabled="!otEditable"
          ot-path="['fields', index, 'id']"
          ot-path-types="['Array', 'Object', 'String']"
          ot-subdoc ot-bind-text type="text"
