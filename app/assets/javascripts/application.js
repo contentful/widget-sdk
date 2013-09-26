@@ -39,7 +39,16 @@ angular.module('contentful/app', [
 ], function($locationProvider, clientProvider, authenticationProvider, analyticsProvider, environment, $sceDelegateProvider){
   'use strict';
   var env = environment.settings;
-  $locationProvider.html5Mode(!!history.pushState).hashPrefix('!');
+
+  if (!history.pushState) {
+    // Strip invalid hash so $location does not trip up
+    // when we call the page with #access_token=foo
+    if (window.location.hash.match(/^#(?:$|[^!])|^$/)) {
+      window.location.hash = '!/' + window.location.hash;
+    }
+  }
+
+  $locationProvider.html5Mode(true).hashPrefix('!');
   $sceDelegateProvider.resourceUrlWhitelist([ /staticflinkly-thriventures\.netdna-ssl\.com|flinkly.com|joistio.com|contentful.com(:\d+)?(\/|$)/, 'self' ]);
   clientProvider.endpoint('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');
