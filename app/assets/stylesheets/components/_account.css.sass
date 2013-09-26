@@ -1,22 +1,22 @@
 .account
   position: absolute
-  width: 20%
-  right: 0px
+  right: 20px
   top: 0px
   height: $nav-bar-height
   .dropdown-toggle
-    width: 100%
     height: $nav-bar-height
     font-weight: $nav-bar-font-weight
-    text-align: center
-    border-left: 1px solid rgba(0,0,0,0.45)
-    +box-shadow($nav-bar-box-shadow)
+    text-align: right
   .dropdown-toggle,
   #intercom
     float: right
     line-height: 27px
     padding: 10px 10px 0px
     border-bottom: none
+  .dropdown-toggle
+    i
+      margin-left: 10px
+      margin-top: 2px
   .dropdown-toggle:hover
     color: white
     +box-shadow(none)
@@ -29,13 +29,11 @@
   .dropdown-menu
     top: 37px
   .project
-    width: 70%
     position: relative
     left: 1px
     .dropdown-menu
       min-width: 100%
   .user
-    width: 30%
     img
       vertical-align: middle
       margin-top: -4px

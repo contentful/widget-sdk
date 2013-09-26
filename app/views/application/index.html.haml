@@ -35,8 +35,8 @@
               + Create Space
       .dropdown-btn.user(label="")
         %a.btn.dropdown-toggle(ng-click="clickedProfileButton()" tabindex="0")
-          %img(ng-src="{{user.avatarUrl}}")
           %i.ss-dropdown
+          %img(ng-src="{{user.avatarUrl}}")
         .dropdown-menu.top-caret.left-aligned
           %p
             Logged in as {{user.firstName}} {{user.lastName}}
