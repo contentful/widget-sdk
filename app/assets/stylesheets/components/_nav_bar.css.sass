@@ -3,8 +3,8 @@
   height: $nav-bar-height
   +user-select(none)
   background: $dark-gray
-  +box-shadow(2px 0 1px rgba(0,0,0,0.15))
   z-index: 20
+  +box-shadow($nav-bar-box-shadow)
   .logo,
   ul
     float: left
@@ -12,24 +12,24 @@
     margin: 0
   // Separator below logo and each nav button
   .logo
-    height: $nav-bar-height
+    padding: 0 25px 0 20px
     overflow: hidden
   li,
   .logo
+    height: $nav-bar-height
     border-right: 1px solid rgba(0,0,0,0.45)
-    +box-shadow(0 0 1px rgba(255,255,255,0.2))
-    padding: 0 15px
+    +box-shadow($nav-bar-box-shadow)
   li
     position: relative
     float: left
     display: inline-block
-    height: $nav-bar-height
     line-height: $nav-bar-height
+    padding: 0 15px
     margin: 0
     list-style-type: none
     text-align: center
     color: $medium-gray
-    font-weight: 600
+    font-weight: $nav-bar-font-weight
     i
       position: relative
       top: 3px

@@ -2,7 +2,7 @@
   width: 100%
   height: $tab-height
   z-index: 10
-  +gradient(darken($medium-dark-gray, 10%), $medium-dark-gray)
+  background: $medium-dark-gray
   +user-select(none)
   +transition(height 0.1s ease-in)
   &.hidden
@@ -21,9 +21,8 @@
     max-width: 200px
     position: relative
     padding: ($tab-height - 23px) 18px
-    color: $light-gray
-    border-right: 1px solid rgba(0,0,0,0.45)
-    +box-shadow(inset 0px 0 0px rgba(255,255,255,0.2), inset 1px 0 0px rgba(255,255,255,0.2))
+    color: $medium-gray
+    border-right: 1px solid $dark-gray
     .tooltip
       display: none !important
     &.dirty
@@ -38,11 +37,11 @@
   .fade-text
     +stretch(0, 0, 2px, false)
     width: 50px
-    +fade-text-background(darken($medium-dark-gray, 5%))
+    +fade-text-background(darken($medium-dark-gray, 0%))
   .tab.active
     font-weight: 400
     color: white
-    background: darken($dark-gray, 10%)
+    background: darken($dark-gray, 20%)
     .fade-text
       +fade-text-background(darken($dark-gray, 15%))
     i.close-icon
@@ -71,12 +70,13 @@
   i.close-icon
     opacity: 0
     position: absolute
-    top: 8px
+    top: 6px
     right: 9px
     font-size: 16px
     font-weight: normal
   i.ss-record
     opacity: 1
+    top: 8px
     color: $light-blue
     font-size: 8px
   i.ss-record.draft
