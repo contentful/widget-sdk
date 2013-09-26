@@ -41,7 +41,6 @@
         tabindex="0")
       %i.ss-settings
       Space Settings
-  .navbar-loader
 %nav.tab-list(ng-show="spaceContext.space" ng-class="{hidden: hideTabBar()}")
   %ul
     %li.tab(ng-repeat="tabItem in spaceContext.tabList.items"

@@ -22,6 +22,7 @@
       .notification(class="{{message.severity}}" ng-repeat="message in notification.unseen()")
         {{message.body}}
     %nav.account
+      .navbar-loader
       %a#intercom(href="#" tabindex="-1")
       .dropdown-btn.project
         %a.btn.dropdown-toggle(ng-click="clickedSpaceSwitcher()" tabindex="0")
