@@ -62,7 +62,10 @@
         %i.ss-record.close-icon(ng-show="tabItem.dirty && !tabItem.hovered"
                                 ng-class="{draft: tabItem.dirty == 'draft'}"
                                 ng-mouseover="tabItem.setHovering(true)")
-.tab-content(ng-repeat="tab in spaceContext.tabList.items" ng-show="spaceContext.space && tab.active()" ng-switch="tab.viewType")
+.tab-content(ng-repeat="tab in spaceContext.tabList.items"
+             ng-show="spaceContext.space && tab.active()"
+             ng-class="{'with-tab-bar': !hideTabBar()}"
+             ng-switch="tab.viewType")
   .iframe-view(ng-switch-when="iframe")
   .entry-list.entity-list(ng-switch-when="entry-list")
   .asset-list.entity-list(ng-switch-when="asset-list")
