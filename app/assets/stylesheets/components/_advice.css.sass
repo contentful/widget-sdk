@@ -1,4 +1,5 @@
 %advice
+  // TODO make simple class, extract positioning
   position: absolute
   left: 50%
   margin-left: -200px
@@ -24,3 +25,9 @@
   .giant-icon
     font-size: 125px
     color: $light-gray
+
+.advice
+  @extend %advice
+  position: static
+  margin: auto
+  padding-top: 80px

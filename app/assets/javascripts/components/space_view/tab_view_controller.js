@@ -87,6 +87,10 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     if (editor) editor.activate();
   };
 
+  $scope.hideTabBar = function () {
+    return _.every($scope.spaceContext.tabList.items, function(item){ return item.hidden; });
+  };
+
   $scope.editApiKey = function(apiKey) {
     if (! (apiKey && apiKey.data)) return notification.error('Can\'t open API Key');
 

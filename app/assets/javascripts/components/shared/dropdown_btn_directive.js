@@ -9,6 +9,7 @@ angular.module('contentful').directive('dropdownBtn', function($parse) {
       var isOpen = false;
 
       var open = function() {
+        if (isDisabled()) return;
         isOpen = true;
       };
 
@@ -18,8 +19,11 @@ angular.module('contentful').directive('dropdownBtn', function($parse) {
       };
 
       var toggle = function() {
-        isOpen = !isOpen;
-        if(!isOpen && onClose) onClose(scope);
+        if (isOpen) close(); else open();
+      };
+
+      var isDisabled = function () {
+        return element.find('.dropdown-toggle[disabled]').length > 0;
       };
 
       element.find('.dropdown-toggle').click(function(event) {

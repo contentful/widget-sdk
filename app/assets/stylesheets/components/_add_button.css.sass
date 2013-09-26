@@ -1,0 +1,50 @@
+.nav-bar
+  .dropdown-toggle:hover
+    +box-shadow(none)
+  .tablist-button
+    +blue-highlight
+    padding: 0
+    +flex(none)
+    +nav-bar-dropdowns
+    .dropdown-menu
+      width: 210px
+      margin-top: -3px
+      li
+        display: block
+        line-height: 40px
+        height: auto
+      ul,
+      li,
+      h3
+        text-align: left
+        width: 100%
+    .tooltip.bottom
+      width: 200px
+    .content-types
+      li
+        padding-left: 40px
+        font-weight: normal
+  .add.button
+    color: white
+    padding: 2px 10px 0px
+    i
+      top: 0px
+      margin: 0 auto
+      font-size: 14px
+      font-weight: normal
+    &:active
+      top: 1px
+    &:focus
+      +focus-styles
+
+.add-btn
+  height: $nav-bar-height
+  .add.button
+    .ss-dropdown
+      float: none
+      margin-left: 10px
+      margin-right: 0px
+  &.active
+    +box-shadow(inset 0px 0px 30px 30px rgba(0,0,0,0.3))
+
+

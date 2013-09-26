@@ -3,8 +3,9 @@
 angular.module('contentful').
   constant('toIdentifier', (function(){
     function toIdentifier(string) {
+      if (_.isEmpty(string)) return '';
       var words = splitIntoWords(string).map(stripInvalidChars);
-      if (_.isEmpty(words)) return;
+      if (_.isEmpty(words)) return '';
       var first = words[0].toLowerCase();
       var rest =  words.slice(1).map(capitalize);
       return cleanPrefix([first].concat(rest).join(''));

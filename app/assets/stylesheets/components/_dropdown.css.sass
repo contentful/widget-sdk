@@ -1,9 +1,6 @@
 // Dropdown base
 .dropdown-btn
   position: relative
-  .ss-dropdown
-    font-size: 8px
-    float: right
 .dropdown-toggle
   position: relative
   color: $light-gray
@@ -32,6 +29,7 @@ $separator-style: 1px solid $light-rule
 // Dropdown Menu base and general modifiers
 .dropdown-menu
   position: absolute
+  text-align: left
   font-size: 11px
   line-height: 2.2em
   z-index: 1000
@@ -76,6 +74,59 @@ $separator-style: 1px solid $light-rule
   .highlight
     font-weight: 600
 
+.dropdown-menu
+  .no-highlight
+    li:hover
+      background: none
+
+// For the wide type menus
+.type-menu
+  width: 500px
+  white-space: normal
+  padding: 0
+  ul
+    margin: 0 300px 0 0
+    min-height: 250px
+    border-right: 1px solid $lightest-gray
+  li:first-child
+    +border-radius(3px 0 0 0)
+  li:last-child
+    +border-radius(0 0 0 3px)
+  .content-type-description,
+  .validation-type-description
+    position: absolute
+    color: $light-gray
+    display: none
+    left: 200px
+    top: 0
+    bottom: 0
+    padding: 20px 40px 10px 10px
+    p
+      padding: 0
+    img
+      position: absolute
+      bottom: 70px
+  li:hover
+    .content-type-description,
+    .validation-type-description
+      display: block
+  li.group h3
+    margin-top: 8px
+    margin-bottom: 0
+  li.group:hover
+    background: white
+    cursor: default
+  li.type
+    padding-left: 20px
+  .cf-fieldtype-icon
+    font-size: 12px
+    margin-right: 5px
+    float: left
+  li:hover .cf-fieldtype-icon
+    color: white
+    border-color: white
+
+// Positioning/Caret stuff
 // TODO why caret?
 .dropdown-menu.top-caret,
 .dropdown-menu.bottom-caret,

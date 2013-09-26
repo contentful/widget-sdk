@@ -27,8 +27,8 @@
                             ng-hide="linkContentType"
                             tooltip="Add new {{linkType}}"
                             tooltip-placement="left")
-        %button.dropdown-toggle(type="button")
-          %i.ss-plus
+        %button.form-button.default-button.dropdown-toggle(type="button")
+          %i.ss-plus.button-icon
           New
         %a.dropdown-menu
           %ul
@@ -36,11 +36,11 @@
                 ng-click="addNewEntry(contentType)"
                 dropdown-close="")
               {{contentType.getName()}}
-      %button.add-new.with-link-content-type(type="button" ng-show="linkContentType" ng-click="addNewEntry(linkContentType)")
-        %i.ss-plus
+      %button.form-button.default-button.add-new.with-link-content-type(type="button" ng-show="linkContentType" ng-click="addNewEntry(linkContentType)")
+        %i.ss-plus.button-icon
         New
-      %button.add-new.with-link-content-type(type="button" ng-switch-default="" ng-click="addNewAsset()")
-        %i.ss-plus
+      %button.form-button.default-button.add-new.with-link-content-type(type="button" ng-switch-default="" ng-click="addNewAsset()")
+        %i.ss-plus.button-icon
         New
 
   .results.search-options-on(ng-show="entities && entities.length > 0" ng-switch="linkType" cf-click-outside="searchTerm=''")

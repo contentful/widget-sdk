@@ -24,17 +24,17 @@
     Asset has no file
 
   .file-buttons
-    %button.go-to-asset(type="button" ng-click="editEntity()" ng-show="!enableUpload" tooltip="Go to Asset")
+    %button.default-button.go-to-asset(type="button" ng-click="editEntity()" ng-show="!enableUpload" tooltip="Go to Asset")
       %i.ss-action
-    %a.as-button.download-file(type="button" href="{{file.url}}" target="_blank" ng-show="file|isFileReady" tooltip="Download file")
+    %a.default-button.download-file(type="button" href="{{file.url}}" target="_blank" ng-show="file|isFileReady" tooltip="Download file")
       %i.ss-download
-    %button.show-metadata(type="button" ng-click="toggleMeta()" ng-show="file" tooltip="Show file information")
+    %button.default-button.show-metadata(type="button" ng-click="toggleMeta()" ng-show="file" tooltip="Show file information")
       %i.ss-info
-    %button.delete-file(type="button" ng-show="deleteFile && file" ng-click="deleteFile()" tooltip="Delete file")
+    %button.default-button.delete-file(type="button" ng-show="deleteFile && file" ng-click="deleteFile()" tooltip="Delete file")
       %i.ss-trash
-    %button.remove-link(type="button" ng-show="removeLink" ng-click="removeLink()" tooltip="Remove link")
+    %button.default-button.remove-link(type="button" ng-show="removeLink" ng-click="removeLink()" tooltip="Remove link")
       %i.ss-delete
 
   .cf-file-drop(ng-show="!file && enableUpload")
-    %button.upload-button(type="button" ng-click="uploadFile()") Or Open File Picker
+    %button.default-button.upload-button(type="button" ng-click="uploadFile()") Or Open File Picker
 

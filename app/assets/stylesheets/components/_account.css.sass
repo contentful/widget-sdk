@@ -1,56 +1,59 @@
-// Tab-bar dropdown
-$account-border-color: #d5d5d5
-
 .account
+  position: absolute
+  right: 20px
+  top: 0px
+  height: $nav-bar-height
   .dropdown-toggle
-    width: 100%
+    height: $nav-bar-height
+    font-weight: $nav-bar-font-weight
+    text-align: right
   .dropdown-toggle,
   #intercom
-    color: $dark-gray
     float: right
     line-height: 27px
-    border: 1px solid transparent
-    padding: 5px 10px 4px
+    padding: 10px 10px 0px
     border-bottom: none
-  .dropdown-toggle:hover,
+  .dropdown-toggle
+    i
+      margin-left: 10px
+      margin-top: 2px
+  .dropdown-toggle:hover
+    color: white
+    +box-shadow(none)
   .active .dropdown-toggle
-    background-color: $gray-background
-    border: 1px solid $account-border-color
-    border-bottom-color: $lightest-gray
-    +border-radius(3px 3px 0 0)
+    color: white
 
 // Concrete project and user buttons
 .account
   +flexbox
+  +nav-bar-dropdowns
   .dropdown-menu
-    top: 37px
+    top: 45px
+    p
+      color: white
+      font-weight: 600
+      padding: 2px 12px 6px
+      margin-bottom: 0px
   .project
-    width: 70%
     position: relative
-    left: 1px
-    span
-      margin-right: 11px
+    margin-right: 10px
+    min-width: 120px
     .dropdown-menu
       min-width: 100%
-    .dropdown-toggle
-      border-right: 1px solid $account-border-color
   .user
-    width: 30%
     img
       vertical-align: middle
       margin-top: -4px
     .dropdown-menu
       right: 0
-  .user.active 
-    padding-bottom: 4px
+  .project.active,
+  .user.active
+    padding-top: 1px
+    background: darken($dark-gray, 10%)
 
   #intercom
-    //display: block
     display: none
     width: 10%
-    //line-height: 27px
-    //padding: 5px 10px 4px
-    //float: right
     float: left
     padding-right: 0
     padding-left: 0

@@ -87,7 +87,7 @@
   
   // Style form elements
   .input
-    @extend .form-styled
+    @extend %form-styled
     input[type="text"],
     input[type="number"],
     input[type="email"],
@@ -109,17 +109,19 @@
     ol
       float: right
       button
+        @extend .default-button
         height: $tab-actions-content-height
     // Colors
     border-top: 1px solid $lightest-gray
     input[name="commit"]
-      @extend %blue-button
+      @extend .default-button
+      @extend .primary-button
 
 // Different style fixes
 .tab-iframe
   // Make buttons look like buttons
   input[type="submit"]
-    @extend button
+    @extend .default-button
 
   // delete button
   form.button_to
@@ -129,17 +131,14 @@
     @extend %tab-actions-padding
 
   // Add-Button
+
   button,
-  .as-button
+  a.default-button
     &.new-resource
       margin-top: 34px //result list tr-height
-      @extend %blue-button
+      @extend .primary-button
     .ss-plus
-      position: relative
-      top: 1px
-      left: -2px
-      font-size: 10px
-      padding-right: 1px
+      @extend .button-icon
 
   // Main tables
   .result-list

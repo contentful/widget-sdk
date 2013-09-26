@@ -1,7 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeEditorCtrl', function ContentTypeEditorCtrl($scope, availableFieldTypes, validation, can) {
-  $scope.availableTypes = availableFieldTypes;
+angular.module('contentful').controller('ContentTypeEditorCtrl', function ContentTypeEditorCtrl($scope, validation, can, notification, analytics) {
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
 
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
@@ -71,5 +70,27 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
   $scope.$watch('contentType.getName()', function(title) {
     $scope.tab.title = title;
   });
+
+  $scope.addField = function(typeFieldTemplate) {
+    var fieldDoc = $scope.otDoc.at(['fields']);
+
+    var newField = _.extend({
+      name: '',
+      id: '',
+      type: 'String'
+    }, typeFieldTemplate);
+
+    fieldDoc.push(newField, function(err, ops) {
+      $scope.$apply(function(scope) {
+        if (err) {
+          notification.error('Could not add field');
+        } else {
+            scope.otUpdateEntity();
+            scope.$broadcast('fieldAdded', ops[0].p[1]);
+            analytics.modifiedContentType('Modified ContentType', scope.contentType, newField, 'add');
+        }
+      });
+    });
+  };
 
 });

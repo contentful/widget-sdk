@@ -1,39 +1,11 @@
-@import "compass/css3/transform"
-@import "compass/css3/animation"
-
 .cf-logo
-  margin: 12px auto
-  width: 25px
-  height: 25px
+  margin: 9px auto
+  width: 123px
+  height: 29px
   position: relative
-  .logopart
-    width: 25px
-    height: 25px
-    position: absolute
-    background-size: 25px
-    &.yellow
-      background-image: asset-url('logo_yellow.png', image)
-    &.red
-      background-image: asset-url('logo_red.png', image)
-    &.blue
-      background-image: asset-url('logo_blue.png', image)
+  background-image: asset-url('logo-label.png', image)
+  background-size: 123px 29px
 
-.cf-logo.animate
-  $duration: 0.75s
-  .logopart
-    +animation-iteration-count(infinite)
-    +animation-timing-function(linear)
-    +animation-name(rotation)
-  .logopart.blue
-    +animation-duration(2 * $duration)
-    +animation-direction(reverse)
-  .logopart.red
-    +animation-duration(2.5 * $duration)
-  .logopart.yellow
-    +animation-duration(4 * $duration)
-
-+keyframes(rotation)
-  from
-    +rotate(0deg)
-  to
-    +rotate(360deg)
+@media (min-device-pixel-ratio: 2), (min-resolution: 192dpi)
+  .cf-logo
+    background-image: asset-url('logo-label@2x.png', image)

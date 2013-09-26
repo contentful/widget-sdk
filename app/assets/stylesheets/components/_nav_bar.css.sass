@@ -1,55 +1,41 @@
 .nav-bar
-  // layout
+  width: 100%
+  height: $nav-bar-height
+  +user-select(none)
+  background: $dark-gray
+  z-index: 20
+  +box-shadow($nav-bar-box-shadow)
+  .logo,
+  ul
+    float: left
   ul
     margin: 0
-  li
-    list-style-type: none
-    margin: 0
-    position: relative
-  // styling
-  +user-select(none)
-  +gradient(#333333, #434343)
-  +box-shadow(2px 0 1px rgba(0,0,0,0.15))
-  z-index: 1
   // Separator below logo and each nav button
-  .logo,
+  .logo
+    padding: 0 25px 0 20px
+    overflow: hidden
+  li,
+  .logo
+    height: $nav-bar-height
+    border-right: 1px solid rgba(0,0,0,0.45)
+    +box-shadow($nav-bar-box-shadow)
   li
-    border-bottom: 1px solid rgba(0,0,0,0.45)
-    +box-shadow(0 1px 0 rgba(255,255,255,0.06))
-  li
-    color: $medium-gray
-    height: 50px
-    width: 50px
+    position: relative
+    float: left
+    display: inline-block
+    line-height: $nav-bar-height
+    padding: 0 15px
+    margin: 0
+    list-style-type: none
     text-align: center
+    color: $medium-gray
+    font-weight: $nav-bar-font-weight
     i
-      font-size: 20px
-      line-height: 55px
-      margin-top: 50px
+      position: relative
+      top: 3px
+      margin-right: 5px
+      font-size: 15px
       +text-shadow(0 1px 0 rgba(255,255,255,0.1))
-    i.ss-layout
-      font-size: 19px
-      line-height: 55px
-    .tip
-      opacity: 0
-      position: absolute
-      color: white
-      top: 9px
-      left: -200px
-      padding-top: 8px
-      padding-bottom: 8px
-      background-color: $dark-gray
-      background-color: rgba(50,50,50,0.95)
-      border: none
-      +box-shadow(0 0 0 transparent)
-      +transition(opacity .25s ease-in-out)
-    .nav-models
-      width: 108px
-    .nav-entries
-      width: 70px
-    .nav-media
-      width: 60px
-    .nav-ship
-      width: 60px
   li:focus
     +focus-styles
   li:hover,
@@ -57,14 +43,6 @@
     .tip
       opacity: 1
       left: 58px
-
-.outlines-enabled
-  .nav-bar
-    li:focus
-      .tip
-        opacity: 0
-
-.nav-bar
   li:hover
     color: white
     cursor: pointer
@@ -73,17 +51,19 @@
     +filter-gradient(#000000, #171717)
   li.section-index
     color: white
-
-.navbar-loader
-  position: absolute
-  bottom: 0
-  left: 0
-  right: 0
-  height: 50px
-  background: image-url('navbar-loader.gif') center no-repeat
-
-.nav-bar
   .bottom
     position: absolute
     bottom: 0
+
+.outlines-enabled
+  .nav-bar
+    li:focus
+      .tip
+        opacity: 0
+
+.navbar-loader
+  width: 50px
+  height: 50px
+  background: image-url('navbar-loader.gif') center no-repeat
+
 

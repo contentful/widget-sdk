@@ -6,6 +6,7 @@
 @import "compass/css3/filter"
 @import "compass/css3/opacity"
 @import "compass/css3/user-interface"
+@import "compass/css3/transform"
 @import "compass/layout/stretching"
 @import "compass/utilities/general/clearfix"
 @import "flex"
@@ -44,7 +45,7 @@
   +box-shadow(0 8px 16px rgba(255,255,255,0.6) inset)
 
 =fade-text-background($color)
-  +background-image(linear-gradient(left,  rgba($color, 0) 0%, $color 50%, $color 100%))
+  +background-image(linear-gradient(left, rgba($color, 0) 0%, $color 50%, $color 100%))
 
 =focus-styles
   outline: 1px dotted
@@ -81,3 +82,16 @@ $caret-size: 10px
   padding-left: 30px
   padding-right: 30px
 
+=nav-bar-dropdowns
+  .separator,
+  .dropdown-menu li.top-separator
+    border-top: 1px solid $medium-dark-gray
+  .dropdown-menu
+    border: none
+    background: darken($dark-gray, 10%)
+    li
+      color: white
+      border: none
+      +box-shadow(none)
+  .no-content-types
+    background: $dark-gray

@@ -1,7 +1,7 @@
 .tab-header.editor-configuration
   %h1 {{headline}}
   .editor-top-right
-    %button(type="button"
+    %button.flat-button(type="button"
             ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
@@ -42,12 +42,12 @@
 
 .tab-actions
   .button-set
-    %button.delete(type="button"
+    %button.default-button.delete(type="button"
                    tooltip="Permanently delete this API key"
                    ng-click="delete()"
                    ng-show="apiKey.getId()")
       Delete
-    %button.save(type="submit"
+    %button.default-button.primary-button.save(type="submit"
                  tooltip="Save this API key"
                  ng-click="save()"
                  ng-disabled="apiKeyForm.$invalid")

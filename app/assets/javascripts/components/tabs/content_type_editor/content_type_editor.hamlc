@@ -1,8 +1,19 @@
 .tab-header.editor-configuration
   %h1 {{contentType.getName()}}
 
+  .editor-top-left
+    .dropdown-btn
+      %a.flat-button.dropdown-toggle
+        %i.ss-dropdown.button-icon-right
+        %span View options…
+      .dropdown-menu
+        %ul
+          %li
+            %label
+              %input(type="checkbox" ng-model="preferences.showDisabledFields")
+              Show disabled fields
   .editor-top-right
-    %button(type="button"
+    %button.flat-button(type="button"
             ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip-placement="left"
@@ -28,7 +39,7 @@
                  placeholder="Content Type Name (e.g. Product)"
                  ng-model="contentType.data.name"
                  ot-bind-text="")
-        .cf-validation-error-display.form-box-error(cf-error-path="['name']" ng-show="1 < otDoc.version && hasErrors")
+        .cf-form-box-error(cf-error-path="['name']" ng-show="1 < otDoc.version && hasErrors")
     .form-field
       %label Description
       .form-controls(ot-path="['description']" ot-subdoc)
@@ -38,29 +49,41 @@
                     ng-disabled="!otEditable"
                     ng-model="contentType.data.description"
                     ot-bind-text="")
-        .cf-validation-error-display.form-box-error(cf-error-path="['description']")
+        .cf-form-box-error(cf-error-path="['description']")
     .form-field
       %label 
       .form-controls
     .form-field
       %label Fields
       .form-controls
-        .content-type-field-list
-
-
+        .content-type-field-list(ng-show="contentType.data.fields.length > 0")
+        .advice(ng-hide="contentType.data.fields.length > 0")
+          %i.ss-layout.giant-icon
+          %header You have no Fields yet
+          %p
+            Add Fields to configure which form inputs are available for your editors to work with.            
+          .dropdown-btn
+            %button.dropdown-toggle.default-button.primary-button
+              Create Field
+            .dropdown-menu.type-menu(select-type="addField(type)")
+        .dropdown-btn(ng-show="contentType.data.fields.length > 0")
+          %button.dropdown-toggle.add-field-button.default-button.primary-button
+            %i.ss-plus.button-icon
+            Add Field
+          .dropdown-menu.type-menu(select-type="addField(type)")
 .tab-actions(ng-controller="ContentTypeActionsCtrl")
   .button-set
-    %button.delete(type="button"
+    %button.default-button.delete(type="button"
                    ng-show="canUnpublish()"
                    ng-click="unpublish()"
                    tooltip="Deactivate this Content Type")
       Deactivate
-    %button.delete(type="button"
+    %button.default-button.delete(type="button"
                    ng-show="canDelete()"
                    ng-click="delete()"
                    tooltip="Delete this Content Type")
       Delete
-    %button.publish(ng-disabled="!canPublish()"
+    %button.default-button.primary-button.publish(ng-disabled="!canPublish()"
                     ng-click="publish()"
                     tooltip="Make this Content Type available to editors")
       {{publishButtonLabel()}}

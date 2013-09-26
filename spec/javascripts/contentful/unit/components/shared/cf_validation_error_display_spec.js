@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Validation Error Display Controller', function () {
+describe('ErrorPathController', function () {
   var controller, scope, attrs;
 
   beforeEach(module('contentful/test'));
@@ -12,7 +12,7 @@ describe('Validation Error Display Controller', function () {
       errors : [],
       data: scope.entity
     };
-    controller = $controller('CfValidationErrorDisplayCtrl', {
+    controller = $controller('ErrorPathController', {
       $scope: $rootScope,
       $attrs: attrs = {}
     });

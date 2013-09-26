@@ -3,8 +3,8 @@
     {{headline()}}
   .editor-top-left
     .dropdown-btn(ng-show="showLangSwitcher")
-      %a.dropdown-toggle
-        %i.ss-dropdown
+      %a.dropdown-toggle.flat-button
+        %i.ss-dropdown.button-icon-right
         %span Show fields…
       .dropdown-menu(style="display:none")
         %ul
@@ -14,7 +14,7 @@
               {{locale.name}}
               %span(ng-show="locale == spaceContext.space.getDefaultLocale()") (default)
   .editor-top-right
-    %button(type="button"
+    %button.flat-button(type="button"
             ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
@@ -31,7 +31,7 @@
     .form-field(ng-show="hasErrorOnFields")
       %label
       .form-controls
-        .cf-validation-error-display.form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
+        .cf-form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
     .form-field(ng-repeat="field in fields"
         data-field-id="{{field.id}}"
         ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
@@ -47,17 +47,17 @@
                                  link="link" as="user"
                                  tooltip="{{user.getName()}}")
                 %img(ng-src="{{user.data.avatarUrl}}")
-          .cf-validation-error-display.form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
-        .cf-validation-error-display.form-box-error(cf-error-path="['fields', field.id]")
+          .cf-form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
+        .cf-form-box-error(cf-error-path="['fields', field.id]")
 
 .tab-actions(ng-controller="AssetActionsCtrl")
   .button-set
-    %button.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss") Are you sure?
-    %button.delete(   type="button" ng-show="canDelete() && !deleteConfirm" ng-click="deleteConfirm=true" tooltip="Permanently delete this Asset") Delete
-    %button.archive(  type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
-    %button.archive(  type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
-    %button.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish
-    %button.publish(  type="submit" ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Asset") {{publishButtonLabel()}}
+    %button.default-button.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss") Are you sure?
+    %button.default-button.delete(   type="button" ng-show="canDelete() && !deleteConfirm" ng-click="deleteConfirm=true" tooltip="Permanently delete this Asset") Delete
+    %button.default-button.archive(  type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
+    %button.default-button.archive(  type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
+    %button.default-button.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish
+    %button.default-button.primary-button.publish(  type="submit" ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Asset") {{publishButtonLabel()}}
   .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
                tooltip-placement="top")
   .other-users

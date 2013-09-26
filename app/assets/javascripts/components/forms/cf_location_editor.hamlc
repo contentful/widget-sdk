@@ -19,5 +19,5 @@
   %label.location-picker
     %input.lon(type="text" ng-model="location.lon" ng-disabled="!otEditable")
     %span Longitude
-  %button.remove-location(type="button" ng-show="location && otEditable" ng-click="removeLocation()") Remove
+  %button.form-button.default-button.remove-location(type="button" ng-show="location && otEditable" ng-click="removeLocation()") Remove
 

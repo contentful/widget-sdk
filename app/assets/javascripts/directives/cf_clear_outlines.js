@@ -11,7 +11,8 @@ angular.module('contentful').directive('cfClearOutlines', ['$document', function
         $body.addClass('outlines-enabled');
         disableOutlines.html('*,*:focus{outline:none !important;}');
       });
-      $document.on('keydown', function () {
+      $document.on('keydown', function (ev) {
+        if(ev.metaKey) return;
         $body.removeClass('outlines-enabled');
         disableOutlines.html('');
       });

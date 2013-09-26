@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('CfValidationErrorDisplayCtrl', function CfValidationErrorDisplayCtrl($scope, $attrs, mimetype) {
+angular.module('contentful').controller('ErrorPathController', function ErrorPathController($scope, $attrs, mimetype) {
   $scope.errorMessages = [];
 
   var messages = {

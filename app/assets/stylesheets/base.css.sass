@@ -5,6 +5,7 @@
 $lightest-gray: #dadada
 $light-gray: #acacac
 $medium-gray: #858585
+$medium-dark-gray: #545454
 $dark-gray: #333333
 $link-blue: #1683d0
 $light-rule: #efefef
@@ -22,9 +23,10 @@ $gold: #e6ae17
 $red: #f2602e
 
 // TAB AREA
-$tab-top: 9px
-$tab-height: 38px
-$main-left-spacing: 70px
+$nav-bar-height: 45px
+$nav-bar-box-shadow: inset 0 0 1px rgba(255,255,255,0.2)
+$nav-bar-font-weight: 600
+$tab-height: 30px
 
 $tab-header-height: 66px
 $tab-actions-height: 54px
@@ -58,6 +60,10 @@ body
   background: url(image_path("bg.jpg"))
   background-size: 200px 150px 
   overflow: hidden
+button,
+input[type="submit"]
+  line-height: inherit
+  font-family: inherit
 
 table
   border-collapse: separate
@@ -65,13 +71,14 @@ table
 a
   color: $link-blue
   text-decoration: none
+  &:link
+    color: $link-blue
+    text-decoration: none
+  &:visited
+    color: darken($link-blue, 18%)
+  &:hover
+    color: darken($link-blue, 9%)
 
-// Base typographical styles
-// .content needed on a parent so I can isolate styles on internal pages
-// TODO this should not need to be wrapped in .copy
-.copy
-  padding: 0 25px
-  max-width: 800px
 h1, h2, h3, h4, h5, h6
   color: $dark-gray
   line-height: 1em
@@ -92,12 +99,8 @@ hr
   background-color: $light-rule
   margin: 30px 0
   border: none
-.help-text
-  color: $light-gray
-  font-style: italic
-  font-size: 12px
-  font-weight: normal
-  margin-left: 5px
+li
+  list-style-type: none
 li,
 p,
 blockquote
@@ -122,26 +125,5 @@ blockquote
 b, strong
   color: $dark-gray
   font-weight: bold
-a
-  &:link
-    color: $link-blue
-    text-decoration: underline
-  &:visited
-    color: darken($link-blue, 18%)
-  &:hover
-    color: darken($link-blue, 9%)
 
-// Angular
 
-.ng-hide
-  display: none
-
-// Adjust jQuery UI
-.ui-autocomplete
-  li
-    list-style-type: none
-html
-  .ui-menu-item
-    .ui-state-focus,
-    .ui-state-active
-      background-image: none

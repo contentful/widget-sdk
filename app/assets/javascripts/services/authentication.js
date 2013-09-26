@@ -4,6 +4,7 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
   var authApp  = '//'+environment.settings.base_host+'/';
   var QueryLinkResolver = contentfulClient.QueryLinkResolver;
+  var $location;
 
   this.authApp= function(e) {
     authApp = e;
@@ -23,9 +24,8 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       /*jshint boss:true*/
       var token;
 
-      if (token = this.extractToken(document.location.hash)) {
-        window.location.hash='';
-        //history.pushState('', document.title, window.location.pathname+window.location.search);
+      if (token = this.extractToken($location.hash())) {
+        $location.hash('');
         $.cookies.set('token', token, {
           expiresAt: moment().add('y', 1).toDate()
         });
@@ -130,7 +130,8 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
   };
 
-  this.$get = function(client){
+  this.$get = function(client, _$location_){
+    $location = _$location_;
     return new Authentication(client);
   };
 

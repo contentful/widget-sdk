@@ -1,224 +1,259 @@
 .content-type-editor
   @extend %entity-editor
-  .form-horizontal
-    width: 95%
 
-  .form-controls
-    .content-type-field-list
-      padding-top: 5px
-    table.result-list
-      @extend %standalone-table
-      border: 1px solid $lightest-gray
-      width: 100%
-      // layout
-      tr
-        width: 100%
-      .drag-handle
-        width: 5%
-      .name,
-      .identifier
-        width: 20%
-      .type
-        width: 14%
-      .display,
-      .localized,
-      .required
-        width: 7%
-      .validations
-        width: 10%
-      .action
-        width: 10%
-      th 
-        border-bottom: 1px solid $lightest-gray
-        padding: 3px 8px
-      td
-        padding: 0
-      th.actions
-        padding-right: 20px
+  $inactive-row-color: $lightest-gray
+  $active-row-color: darken($light-gray, 30)
 
-      // Adjustment for hint when list empty
-      .create-hint
-        p
-          padding-left: 8px
+  $active-row-icon-inactive-color: lighten($light-gray, 10)
+  $active-row-icon-active-color: darken($active-row-icon-inactive-color, 40)
 
-      // Field settings
-      .field-settings,
-      .new-field-settings
-        width: 100%
-        display: table
-        > * 
-          //outline: 1px red dashed
-          display: table-cell
-          padding: 8px 8px
-          white-space: normal
-      .drag-handle
-        padding-left: 12px
-        i 
-          color: $lightest-gray
-        cursor: move
-        cursor: -webkit-grabbing
-        cursor: -moz-grab
-        cursor: -moz-grabbing
-        // State change for disabled
-        &[disabled]
-          i
-            display: none
-          cursor: auto
-      th.drag-handle
-        cursor: auto
-      .validations,
-      .archived,
-      .action
-        text-align: right
-      .action
-        white-space: nowrap
-        padding-right: 20px
-        position: relative
-      .main-results-bar
-        right: 0
-        width: 6px
-      input
-        font-size: 10px
-        height: 24px
-        padding: 4px 5px 5px
-        +border-radius(2px)
-        width: 80%
-      input[type="checkbox"],
-      input[type="radio"]
-        height: 20px
-        width: 16px
-      select
-        width: 100%
-      .type
-        .dropdown-btn
-          @extend %dropdown-select
-          .dropdown-menu
-            width: 500px
-        .dropdown-menu
-          padding: 0
-        // TODO Create a component for this:
-        ul
-          margin: 0 300px 0 0
-          border-right: 1px solid $lightest-gray
-        li:first-child
-          +border-radius(3px 0 0 0)
-        li:last-child
-          +border-radius(0 0 0 3px)
-        .content-type-description
-          position: absolute
-          color: $light-gray
-          display: none
-          left: 200px
-          top: 0
-          bottom: 0
-          padding: 20px 40px 10px 10px
-          p
-            padding: 0
-          img
-            position: absolute
-            bottom: 90px
-        li:hover
-          .content-type-description
-            display: block
+  $inactive-row-icon-inactive-color: lighten($lightest-gray, 5)
+  $inactive-row-icon-active-color: darken($inactive-row-icon-inactive-color,  20)
 
-    // Validations
-    .field-validations
+  $vertical-padding: 10px
+
+  // Layout, positioning
+  .content-type-field-list
+    width: 60%
+    padding-top: 5px
+    border-bottom: 1px solid $light-rule
+    line-height: 18px
+
+  // Form style inside fields
+  .form-controls .content-type-field-list
+    // Override styles from form.css, needs this level of specificity to override
+    input[type="text"]
+      display: inline
+      width: auto
+      margin: auto
+      padding: 3px
+      &[disabled]
+        background-color: transparent
+      &[name="fieldId"]
+        border-width: 0
+        +box-shadow(none)
+        margin-left: 10px
+        color: $active-row-color
+      &[name="fieldId"]:focus
+        border-width: 1px
+        +box-shadow(0 1px 2px rgba(0,0,0,0.1) inset)
+      &[name="fieldName"],
+      &[name="fieldId"]:focus
+        color: $active-row-icon-active-color
+        background: white
+      &[name="fieldId"]:hover
+        border-width: 1px
+      &[name="fieldId"][disabled]:hover
+        border-width: 0
+      
+  // Layout for Field-row
+  .cf-field-settings
+    @extend %result-list-cell
+    color: $inactive-row-color
+    position: relative
+    overflow: visible
+    padding-left: 13px
+    padding-top: $vertical-padding
+    padding-bottom: $vertical-padding
+    border-top: 1px solid $light-rule
+    +legacy-pie-clearfix
+
+  // Positioning inside Field-row
+  .toggle-collapse
+    display: block
+    float: left
+  .display,
+  .field-form
+    float: left
+    margin-left: 10px
+  .icons
+    position: absolute
+    top: $vertical-padding
+    right: 150px
+  .drag-handle
+    position: absolute
+    +stretch(0, 20px, 0, null)
+    line-height: $vertical-padding + $vertical-padding + 18px
+  .display .cf-fieldtype-icon,
+  .dropdown-toggle.cf-fieldtype-icon
+    // external
+    position: absolute
+    top: 0
+    right: 70px
+    margin-top: 7px
+  .fieldtype-dropdown
+    position: static
+  .status
+    position: absolute
+    top: 0
+    right: 0
+    height: $vertical-padding + $vertical-padding + 18px
+    width: 6px
+
+  // Field settings Look and Feel
+  .cf-field-settings
+    background-color: white
+    &:hover
+      background-color: $result-list-highlight
+      cursor: pointer
+    &.open:hover
+      cursor: auto
       background-color: $gray-background
-      text-align: left
-      +box-shadow(0 2px 1px rgba(0,0,0,0.05) inset, 0 -1px 1px rgba(0,0,0,0.05) inset)
-      header
-        color: $dark-gray
-        font-size: 11px
-        font-weight: 600
-        padding: 10px 10px 4px
-        p
-          padding-bottom: 6px
-      .sections
-        display: table
-        width: 100%
-        margin-bottom: 10px
-      .section
-        padding: 1em 14px
-        display: table-row
-        &:first-child
-          border-top: 0px
-      .name,
-      .validation-options,
-      .action
-        display: table-cell
-        padding: 6px 0
-        vertical-align: middle
-        border-top: 1px solid lighten($lightest-gray, 5%)
-      .name
-        padding-left: 12px
-        select
-          width: 85%
-      .action
-        text-align: right
-        padding-right: 19px
-      input[type=text],
-      input[type=number]
-        background-color: white
-        border-color: $lightest-gray
-        width: auto
+  .toggle-collapse
+    color: $inactive-row-icon-inactive-color
 
-    // Special code for removing displayField
-    th.display
+  // Open/closed Display-state visibility
+  .field-form,
+  .field-details,
+  .fieldtype-dropdown
+    display: none
+  .cf-field-settings.open
+    .field-form,
+    .field-details,
+    .fieldtype-dropdown
+      display: block
+    .display
+      display: none
+
+  // Visual position adjustment for field form
+  .field-form
+    margin-top: -4px
+    margin-bottom: 7px
+
+  .field-errors
+    color: $red
+    font-size: 0.8em
+    
+
+  // Drag Handle Look and Feel
+  .drag-handle
+    cursor: move
+    cursor: -webkit-grabbing
+    cursor: -moz-grab
+    cursor: -moz-grabbing
+    opacity: 0.2
+  .cf-field-settings:hover .drag-handle
+    opacity: 1
+
+  // Colored Status-Bar at the end of the row
+  .status
+    &.published
+      background-color: $green
+    &.disabled
+      background-color: $gold
+    &.unpublished
+      background-color: $blue
+
+  // Icons
+  .icons
+    color: $inactive-row-icon-inactive-color
+    .ss-test,
+    .ss-check,
+    .ss-globe,
+    .required-icon
+      padding-left: 3px
+    .enabled
+      color: $inactive-row-icon-active-color
+  .required-icon
+    font-style: normal
+    font-size: 120%
+  .cf-fieldtype-icon
+    strong
+      color: inherit
+    // Adjust the color because <strong> makes the text appear darker
+    color: $inactive-row-color
+  .validation-alert
+    color: $red
+      
+  // Fieldtype icon
+  .cf-fieldtype-icon
+    // Look / internal
+    cursor: default
+    border: 1px solid $inactive-row-color
+    +border-radius(3px)
+    height: 18px + 2 * 3px
+    line-height: 18px
+    padding: 3px 0
+    width: 35px
+    text-align: center
+    i
       position: relative
-      +transition(color 0.1s ease-out)
-      .remove
-        +transition(opacity 0.1s ease-in)
-        width: 100%
-        color: $light-gray
-        position: absolute
-        opacity: 0
-        z-index: -1
-      .resettable
-        &:hover
-          color: white
-          .remove
-            opacity: 1
-            z-index: 0
+      top: 1px
+  .dropdown-toggle.cf-fieldtype-icon:not([disabled])
+    width: 45px
+    padding-left: 13px
+    cursor: pointer
+    &:before
+      content: '▼'
+      font-size: 0.8em
+      position: absolute
+      left: 3px
 
+  // Color variations for active fields
+  .active
+    color: $active-row-color
+  .active .icons
+    color: $active-row-icon-inactive-color
+    .enabled
+      color: $active-row-icon-active-color
+  .active .cf-fieldtype-icon
+    color: lighten($active-row-color, 10)
+    border-color: $active-row-color
 
-  .form-controls
-    table.new-field
-      margin-top: 10px
-      border: 1px solid $lightest-gray
-      width: 100%
-      td
-        vertical-align: middle
+  // Color varaitions for open fields
+  .open
+    background-color: $gray-background
+    color: $active-row-color
+  .open .icons
+    color: $active-row-icon-inactive-color
+    .enabled
+      color: $active-row-icon-active-color
+  .open .cf-fieldtype-icon
+    color: lighten($active-row-color, 10)
 
-  // Buttons
+  // Toggles
+  .field-details a
+    color: darken($active-row-icon-inactive-color, 10)
+    &:hover
+      color: darken($active-row-icon-inactive-color, 30)
+  .toggle-required,
+  .toggle-validate,
+  .toggle-localized,
+  .toggle-title,
+  .toggle-disabled
+    cursor: pointer
+    margin-right: 20px
+  .field-details a.active
+    color: $active-row-icon-active-color
+    &:hover
+      color: darken($active-row-icon-inactive-color, 30)
+  .toggle-disabled
+    display: block
+    margin-right: 50px
+    float: right
+  .field-details
+    .ss-check,
+    .ss-globe,
+    .ss-text
+      position: relative
+      top: 1px
+    text-transform: uppercase
+    font-size: 11px
+    clear: both
+    border-top: 1px solid $dark-rule
+    padding-top: $vertical-padding
+    padding-left: 25px
 
-  .form-controls
-    .action,
-    .validations
-      .button
-        @extend button
-        height: 30px
-        width: 30px
-        padding: 0
-        text-align: center
-        font-size: 13px
-        margin-left: 2px
-        i
-          line-height: 31px
-        i.ss-delete
-          font-size: 14px
-      // TODO replace link with buttons
-      .button[disabled]
-        i
-          color: $lightest-gray
-      .button.new
-        @extend %blue-button
-        font-size: 13px
-        font-weight: 400
-        padding: 0
-        padding-left: 1px
-        i
-          color: white
-          //+box-shadow(0 0 0 transparent)
-        &:active
-          margin-top: 0
-        
+  // Advice/Add-Button
+  .advice
+    width: 60%
+    margin: 0
+  .add-field-button
+    margin-top: 1em
+
+  // Tooltips
+  .tooltip
+    text-transform: none
+  .tooltip-inner
+    max-width: 500px
+

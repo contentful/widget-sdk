@@ -36,6 +36,10 @@ angular.module('contentful').service('assert', ['$parse', function($parse) {
     scopePath: function assertScopePath(scope, path, message) {
       assertObject(scope);
       if(isNotValid($parse(path)(scope))) throw makeException(path, message);
+    },
+
+    truthy: function (value, message) {
+      if(!value) throw makeException(value, message);
     }
   };
 }]);

@@ -2,6 +2,7 @@
   .modal-dialog
     .title
       Create Space
+    .close-button(ng-click="dialog.cancel()")
 
     %form(name="newSpaceForm" ng-submit="createSpace()")
       .form-horizontal
@@ -14,7 +15,7 @@
           .form-controls
             %input(type="text" name="locale" ng-model="newSpaceData.defaultLocale")
       .buttons
-        %button.cancel(type="button" ng-click="dialog.cancel()")
+        %button.default-button.cancel(type="button" ng-click="dialog.cancel()")
           Cancel
-        %button.confirm(ng-click="submit()" ng-disabled="newSpaceForm.$invalid || lockSubmit")
+        %button.default-button.primary-button.confirm(ng-click="submit()" ng-disabled="newSpaceForm.$invalid || lockSubmit")
           Create Space

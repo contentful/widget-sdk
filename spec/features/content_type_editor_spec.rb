@@ -45,12 +45,12 @@ feature 'Content Type Editor', js: true, non_ci: true do
     fill_in 'contentTypeName', with: 'Test Content Type'
     fill_in 'contentTypeDescription', with: 'Test description'
     add_field 'Text', 'Text'
-    for_field 'text' do
-      find('.validations .button').click
-      find('[ng-model="newValidationType"] option[value=in]').select_option
-      find('.validation-options input').set('apple, banana')
-      find('.field-validations button').click
-      find('.validations .button').click
+    for_field 'Text' do
+      in_validations do
+        add_validation 'Predefined Value' do
+          find('.cf-validation-options input').set('apple, banana')
+        end
+      end
     end
     click_button 'Activate'
     expect(page).to have_selector('.notification.info')

@@ -5,9 +5,9 @@
   .description
     Learn how to set up Content Types, which are the basis for all your Entries.
   .buttons
-    %button.repeat(type="button" ng-show="contentTypeDone" ng-click="goto('contentTypeIntro')")
+    %button.default-button.repeat(type="button" ng-show="contentTypeDone" ng-click="goto('contentTypeIntro')")
       Repeat Tutorial
-    %button.take(type="button" ng-hide="contentTypeDone" ng-click="goto('contentTypeIntro')")
+    %button.default-button.take(type="button" ng-hide="contentTypeDone" ng-click="goto('contentTypeIntro')")
       Take Tutorial
 
 .tutorial-select-box.middle
@@ -17,9 +17,9 @@
   .description
     An intro to day to day content management tasks.
   .buttons
-    %button.repeat(type="button" ng-show="entryDone" ng-click="goto('entryIntro')")
+    %button.default-button.repeat(type="button" ng-show="entryDone" ng-click="goto('entryIntro')")
       Repeat Tutorial
-    %button.take(type="button" ng-hide="entryDone" ng-click="goto('entryIntro')")
+    %button.default-button.take(type="button" ng-hide="entryDone" ng-click="goto('entryIntro')")
       Take Tutorial
 
 .tutorial-select-box.right
@@ -29,7 +29,7 @@
   .description
     Learn how to configure the distribution of content.
   .buttons
-    %button.repeat(type="button" ng-show="apiKeyDone" ng-click="goto('apiKeyIntro')")
+    %button.default-button.repeat(type="button" ng-show="apiKeyDone" ng-click="goto('apiKeyIntro')")
       Repeat Tutorial
-    %button.take(type="button" ng-hide="apiKeyDone" ng-click="goto('apiKeyIntro')")
+    %button.default-button.take(type="button" ng-hide="apiKeyDone" ng-click="goto('apiKeyIntro')")
       Take Tutorial
