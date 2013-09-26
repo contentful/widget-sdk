@@ -1,3 +1,6 @@
 %ul
-  %li(ng-repeat="(name, v) in availableValidations" ng-click="typeClicked(v)" dropdown-close)
-    {{name}}
+  %li.type(ng-repeat="(name, type) in availableValidations"
+      ng-click="typeClicked(type)"
+      dropdown-close="")
+    %span {{name}}
+    .validation-type-description()

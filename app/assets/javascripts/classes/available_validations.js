@@ -2,10 +2,10 @@
 
 angular.module('contentful').factory('availableValidations', function (validation) {
   var validations = {
-    'Size': {size: {min: null, max: null}},
-    'Range': {range: {min: null, max: null}},
+    'Length': {size: {min: null, max: null}},
+    'Numerical Range': {range: {min: null, max: null}},
     'Regular Expression': {regexp: {pattern: null, flags: null}},
-    'One of': {'in': null} ,
+    'Predefined Values': {'in': null} ,
     'Content Type': {linkContentType: null},
     'File Type': {linkMimetypeGroup: null}
   };

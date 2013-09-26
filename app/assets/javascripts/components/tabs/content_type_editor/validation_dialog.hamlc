@@ -13,7 +13,7 @@
         .dropdown-btn
           %button.default-button.primary-button.dropdown-toggle
             Create Validation
-          .dropdown-menu(select-validation="addValidation(type)")
+          .dropdown-menu.type-menu(select-validation="addValidation(type)")
       .cf-validation-options(ng-repeat="(validationIndex, validation) in validationList()" ng-model="validation")
 
     .buttons(ng-show="validationList().length > 0")
@@ -21,4 +21,4 @@
         %button.default-button.primary-button.dropdown-toggle
           %i.ss-plus.button-icon
           Add Validation
-        .dropdown-menu(select-validation="addValidation(type)")
+        .dropdown-menu.type-menu(select-validation="addValidation(type)")

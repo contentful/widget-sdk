@@ -25,19 +25,18 @@ module ContentTypeHelper
       find('.validation-dialog')
       within('.validation-dialog .modal-dialog') do
         yield
-        find('button.cancel').click
+        find('.close-button').click
       end
     end
   end
 
   def add_validation(name)
-    find('button', text: 'Validation').click
+    find('.dropdown-toggle', text:'Validation').click
+    find('.dropdown-menu li', text: name).click
     
     validation = all('.cf-validation-options').last
 
     within validation do
-      find('.dropdown-toggle').click
-      find('.dropdown-menu li', text: name).click
       yield
     end
   end

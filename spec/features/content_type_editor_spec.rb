@@ -47,7 +47,7 @@ feature 'Content Type Editor', js: true, non_ci: true do
     add_field 'Text', 'Text'
     for_field 'Text' do
       in_validations do
-        add_validation 'One of' do
+        add_validation 'Predefined Value' do
           find('.cf-validation-options input').set('apple, banana')
         end
       end
