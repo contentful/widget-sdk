@@ -108,6 +108,16 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
   return cfStub;
 });
 
+mocks.factory('PromisedLoader', function () {
+  function SpecPromisedLoader() {}
+  SpecPromisedLoader.prototype.load =
+  SpecPromisedLoader.loadSpy =
+    sinon.stub().returns({
+      then: sinon.stub()
+    });
+  return SpecPromisedLoader;
+});
+
 window.createMockEntity = function (id, contentType) {
   return {
     getId: function () {

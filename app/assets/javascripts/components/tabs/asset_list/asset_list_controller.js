@@ -123,9 +123,6 @@ angular.module('contentful').
   };
 
   $scope.loadMore = function() {
-    if (this.paginator.atLast()) return;
-    $scope.paginator.page++;
-
     if ($scope.paginator.atLast()) return;
     $scope.paginator.page++;
     assetLoader.load($scope.spaceContext.space, 'getAssets', buildQuery()).
