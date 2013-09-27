@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator, notification, PromisedLoader, mimetype) {
+angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator, notification, PromisedLoader) {
   return {
     restrict: 'AC',
     link: function (scope, element) {
@@ -60,7 +60,7 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
               if (errSetLink) {
                 notification.error('Error linking Entry');
                 //console.log('Error linking entry', errSetLink);
-                entry.delete(function(errDelete) {
+                entry['delete'](function(errDelete) {
                   scope.$apply(function () {
                     if (errDelete) {
                       //console.log('Error deleting entry', errDelete);
@@ -89,7 +89,7 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
               if (errSetLink) {
                 notification.error('Error linking Asset');
                 //console.log('Error linking asset', errSetLink);
-                asset.delete(function(errDelete) {
+                asset['delete'](function(errDelete) {
                   scope.$apply(function () {
                     if (errDelete) {
                       //console.log('Error deleting asset', errDelete);

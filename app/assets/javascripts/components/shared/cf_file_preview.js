@@ -79,7 +79,7 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
       }
 
       function makePreview() {
-        if ($preview || scope.width == 0 || scope.height == 0) return;
+        if ($preview || _.isEmpty(scope.width) || _.isEmpty(scope.height)) return;
         angular.element($window).on('resize', resizeHandler);
         setSizes();
         $preview = $compile('<img ng-src="{{file.url}}?w={{width}}&h={{height}}" class="cf-file-preview" style="display:block; position: fixed; width: {{width}}px; height: {{height}}px; background: white">')(scope);

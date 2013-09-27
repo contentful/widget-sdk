@@ -1,4 +1,7 @@
+'use strict';
+
 angular.module('contentful').constant('sampleEntries', {
+  /*jshint quotmark:false */
   "sys": {
     "type": "Array"
   },
@@ -393,5 +396,5 @@ angular.module('contentful').constant('sampleEntries', {
     _.each(entry.fields, function (data, name) {
       entry.fields[name] = {'en-US': data};
     });
-  })
+  });
 });

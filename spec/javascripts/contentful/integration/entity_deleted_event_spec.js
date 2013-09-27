@@ -49,7 +49,7 @@ describe('Entry list controller', function () {
   });
 
   it('handles an entityDeleted event from EntryActions controller', function () {
-    childScope.delete();
+    childScope['delete']();
     expect(closeStub.called).toBeTruthy();
     expect(scope.entries.length).toEqual(2);
     expect(scope.entries[0].getId()).toEqual('entry1');
@@ -91,7 +91,7 @@ describe('Content Type Actions controller', function () {
   });
 
   it('handles an entityDeleted event from ContentTypeActions controller', function () {
-    childScope.delete();
+    childScope['delete']();
     expect(closeStub.called).toBeTruthy();
   });
 
@@ -144,7 +144,7 @@ describe('ApiKey List controller', function () {
   });
 
   it('handles an entityDeleted event from ApiKeyEditor controller', function () {
-    childScope.delete();
+    childScope['delete']();
     expect(closeStub.called).toBeTruthy();
     expect(scope.apiKeys.length).toEqual(2);
   });

@@ -8,8 +8,8 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
     return '"' + $scope.spaceContext.entryTitle($scope.entry) + '"';
   }
 
-  $scope.delete = function () {
-    $scope.entry.delete(function (err, entry) {
+  $scope['delete'] = function () {
+    $scope.entry['delete'](function (err, entry) {
       $scope.$apply(function (scope) {
         if (err) {
           notification.error('Error deleting Entry');
