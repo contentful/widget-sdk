@@ -25,8 +25,8 @@ angular.module('contentful').directive('cfThumbnail', function () {
     link: function (scope, el, attrs) {
       var maxWidth, maxHeight;
 
-      if (typeof attrs.size === 'number') {
-        maxWidth = maxHeight = attrs.size;
+      if (parseInt(attrs.size, 10) > 0) {
+        maxWidth = maxHeight = parseInt(attrs.size, 10);
       } else {
         scope.$watch(function () {
           maxWidth  = el.width();
@@ -86,8 +86,12 @@ angular.module('contentful').directive('cfThumbnail', function () {
         return $scope.file && mimetype.hasPreview(
           mimetype.getExtension($scope.file.fileName),
           $scope.file.contentType
-        );
+        ) && hasDimensions();
       };
+
+      function hasDimensions () {
+        return 0 < $scope.width && 0 < $scope.height;
+      }
 
     }]
   };
