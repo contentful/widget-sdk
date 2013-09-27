@@ -55,4 +55,20 @@ describe('Entry List Controller', function () {
     });
   });
 
+  describe('loadMore', function () {
+    it('should work on the page before the last', function () {
+      // Regression test for https://www.pivotaltracker.com/story/show/57743532
+      var loadSpy;
+      inject(function (PromisedLoader) { loadSpy = PromisedLoader.loadSpy; });
+
+      scope.paginator.numEntries = 47;
+      scope.paginator.page = 0;
+      scope.spaceContext = {};
+      scope.tab = {params: {}};
+      scope.loadMore();
+      expect(loadSpy.called).toBe(true);
+
+    });
+  });
+
 });

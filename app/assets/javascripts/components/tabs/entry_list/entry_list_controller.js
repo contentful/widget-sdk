@@ -111,9 +111,6 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
   };
 
   $scope.loadMore = function() {
-    if (this.paginator.atLast()) return;
-    $scope.paginator.page++;
-
     if ($scope.paginator.atLast()) return;
     $scope.paginator.page++;
     entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
