@@ -16,8 +16,9 @@
 
   .file-preview,
   .file-metadata,
-  .cf-file-drop
-    background-color: white
+  .cf-file-drop,
+  .file-progress
+    background-color: $gray-background
     border: 1px solid $light-gray
     +border-radius(3px)
     +stretch
@@ -30,6 +31,7 @@
     .icon
       font-size: 100px
       line-height: 250px
+
   .file-metadata
     background-color: rgba(255, 255, 255, 0.8)
     padding: 10px
@@ -47,17 +49,18 @@
   .no-file
     +stretch
 
-  .file-spinner
-    +stretch
-    background-image: asset-url('ajax-loader.gif', image)
-    background-position: center
-    background-repeat: no-repeat
-    background-size: 25px 25px
-    .status-text
-      text-align: center
-      padding-top: 150px
-  .drag-me
+  .drag-me,
+  .drop-me,
+  .progress
+    font-size: 25px
+  .drop-me
+    background-color: $lightest-gray
+  .drag-me,
+  .progress
     line-height: 200px
+  .progress
+    .cf-progress-bar
+      margin: -70px 180px 0px
 
   .file-buttons
     +stretch(false, 10px, 10px, 10px)

@@ -1,8 +1,11 @@
 .file-info
-  .file-preview(cf-file-preview="file" preview-size="fullscreen")
+  .file-preview(ng-show="file && file.url" cf-file-preview="file" preview-size="fullscreen")
     .vcenter(cf-thumbnail="file" ng-show="file.url")
-  .file-spinner(ng-show="file|isFileProcessing")
-    .status-text Processing…
+
+  .file-progress.progress.center(ng-show="file|isFileProcessing")
+    %p Processing…
+    .cf-progress-bar.green(percentage=100)
+
   .file-metadata(ng-show="showMeta")
     %table
       %tr
