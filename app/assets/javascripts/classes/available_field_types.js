@@ -1,3 +1,5 @@
+'use strict';
+
 angular.module('contentful').
   constant('availableFieldTypes', [
     {
@@ -79,19 +81,23 @@ angular.module('contentful').
       value: {type: 'Array' , items: {type: 'Symbol'}}
     }
   ]).
-  factory('getFieldTypeName', function(availableFieldTypes) {
-    'use strict';
-
+  factory('getFieldTypeName', function(availableFieldTypes, fieldTypeEqual) {
     return function(field) {
       return _.result(_.find(availableFieldTypes, function(availableFieldType) {
-        if (!field ||
-            field.type !== availableFieldType.value.type ||
-            field.type === 'Link' && field.linkType !== availableFieldType.value.linkType ||
-            field.items && field.items.type !== availableFieldType.value.items.type ||
-            field.type === 'Array' && field.items.type === 'Link' && field.items.linkType !== availableFieldType.value.items.linkType
+        return fieldTypeEqual(field, availableFieldType.value);
+      }), 'name');
+    };
+  }).
+  factory('fieldTypeEqual', function () {
+    return function (fieldA, fieldB) {
+        if (!fieldA ||
+            !fieldB ||
+            fieldA.type !== fieldB.type ||
+            fieldA.type === 'Link' && fieldA.linkType !== fieldB.linkType ||
+            fieldA.items && fieldA.items.type !== fieldB.items.type ||
+            fieldA.type === 'Array' && fieldA.items.type === 'Link' && fieldA.items.linkType !== fieldB.items.linkType
            )
           return false;
         return true;
-      }), 'name');
     };
   });

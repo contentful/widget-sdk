@@ -33,9 +33,9 @@ angular.module('contentful').
       return true;
     };
 
-    $scope.delete = function() {
+    $scope['delete'] = function() {
       var t = title();
-      $scope.apiKey.delete(function(err) {
+      $scope.apiKey['delete'](function(err) {
         $scope.$apply(function() {
           if (err) return notification.error(t + ' could not be deleted');
           notification.info(t + ' deleted successfully');

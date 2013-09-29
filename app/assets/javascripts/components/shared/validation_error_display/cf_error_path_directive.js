@@ -5,7 +5,7 @@ angular.module('contentful').directive('cfErrorPath', function () {
     scope: true,
     controller: 'ErrorPathController',
     require: 'cfErrorPath',
-    link: function (scope, elem, attrs, errorPathController) {
+    link: function (scope, elem, attrs) {
       scope.$watch('errorMessages.length', function (numErrors) {
         if (0 < numErrors) {
           scope.noErrors = false;

@@ -40,5 +40,5 @@ angular.module('contentful').controller('createSpaceDialogCtrl', [
         });
       });
     };
-  },
+  }
 ]);

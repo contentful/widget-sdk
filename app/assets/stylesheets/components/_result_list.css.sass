@@ -126,12 +126,22 @@
     color: $light-gray
     font-size: 10px
   .cell-preview
+
     color: $medium-gray
 
 // State variations
-
 %tr-clickable
   &:hover
     background-color: $result-list-highlight
     cursor: pointer
 
+// Animations
+.result-list.animated
+  tr
+    &.ng-leave
+      +transition(all ease-in 0.3s)
+      opacity: 1
+      +transform(translateX(0))
+    &.ng-leave-active
+      opacity: 0
+      +transform(translateX(100%))

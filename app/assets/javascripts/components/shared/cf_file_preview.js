@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfFilePreview', function ($compile, $window) {
+angular.module('contentful').directive('cfFilePreview', function ($compile, $window, $document) {
   return {
     scope: {
       file: '=cfFilePreview'
@@ -45,7 +45,7 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
         if (!isImage()) return;
         makePreview();
         _.defer(function () {
-          $(document).one('click', removePreview);
+          $document.one('click', removePreview);
         });
         $preview.css({
           top: yOffset,
@@ -79,12 +79,14 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
       }
 
       function makePreview() {
-        if ($preview || scope.width == 0 || scope.height == 0) return;
-        angular.element($window).on('resize', resizeHandler);
+        if ($preview || isInvalid(scope.width) || isInvalid(scope.height)) return;
+        $($window).on('resize', resizeHandler);
         setSizes();
         $preview = $compile('<img ng-src="{{file.url}}?w={{width}}&h={{height}}" class="cf-file-preview" style="display:block; position: fixed; width: {{width}}px; height: {{height}}px; background: white">')(scope);
-        $preview.appendTo($window.document.body);
+        $document.find('body').append($preview);
         scope.$digest();
+
+        function isInvalid(n) { return typeof n !== 'number' ||  0 === n; }
       }
 
       function removePreview() {
@@ -92,9 +94,8 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
           $preview.remove();
           $preview = null;
         }
-        $($window).
-          off('click', removePreview).
-          off('resize', resizeHandler);
+        $document.off('click', removePreview);
+        $($window).off('resize', resizeHandler);
       }
 
       function setDimensions(srcWidth, srcHeight) {

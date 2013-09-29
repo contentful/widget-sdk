@@ -8,8 +8,8 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
     return '"' + $scope.spaceContext.assetTitle($scope.asset) + '"';
   }
 
-  $scope.delete = function () {
-    $scope.asset.delete(function (err, asset) {
+  $scope['delete'] = function () {
+    $scope.asset['delete'](function (err, asset) {
       $scope.$apply(function (scope) {
         if (err) {
           notification.error('Error deleting Asset');

@@ -24,16 +24,6 @@
     %nav.account
       .navbar-loader
       %a#intercom(href="#" tabindex="-1")
-      .dropdown-btn.project
-        %a.btn.dropdown-toggle(ng-click="clickedSpaceSwitcher()" tabindex="0")
-          %i.ss-dropdown.button-icon-right
-          %span(ng-bind="spaceContext.space.data.name || 'Spaces'")
-        .dropdown-menu.fixed-position.left-aligned
-          %ul
-            %li(ng-repeat="space in spaces" ng-click="selectSpace(space)" dropdown-close="")
-              {{space.data.name}}
-            %li.highlight(ng-show="canCreateSpace(user)" ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close="")
-              + Create Space
       .dropdown-btn.user(label="")
         %a.btn.dropdown-toggle(ng-click="clickedProfileButton()" tabindex="0")
           %i.ss-dropdown.button-icon-right
@@ -46,6 +36,16 @@
             -#%li(ng-click="startTutorial()" dropdown-close="" ng-show="spaceContext.space") Start Tutorial
             %li(ng-click="openSupport()" dropdown-close="") Support
             %li(ng-click="logout()" dropdown-close="") Log out
+      .dropdown-btn.project
+        %a.btn.dropdown-toggle(ng-click="clickedSpaceSwitcher()" tabindex="0")
+          %i.ss-dropdown.button-icon-right
+          %span(ng-bind="spaceContext.space.data.name || 'Spaces'")
+        .dropdown-menu.fixed-position.left-aligned
+          %ul
+            %li(ng-repeat="space in spaces" ng-click="selectSpace(space)" dropdown-close="")
+              {{space.data.name}}
+            %li.highlight(ng-show="canCreateSpace(user)" ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close="")
+              + Create Space
     %space-view(ng-controller="TabViewCtrl")
     .create-space-advice(ng-show="spaces.length == 0")
       %i.ss-folder.giant-icon

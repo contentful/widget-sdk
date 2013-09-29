@@ -23,21 +23,28 @@
          ot-path-types="['Array', 'Object', 'String']"
          ot-subdoc ot-bind-text type="text"
          placeholder="e.g. Product Name"
-         ng-change="updateFieldId()"
+         ng-change="nameToNewFieldId()"
          tooltip="Field title displayed to editors"
          tooltip-placement="top")
+  -#%button(ng-click="setNameAsId()")
+    %i.ss-right
   %span.field-id-display(tooltip="Field ID used in API"
          ng-if="published") {{field.id}}
-  %input(name="fieldId"
-         ng-if="!published"
-         ng-model="field.id" type="text" required=""
-         ng-disabled="!otEditable"
-         ot-path="['fields', index, 'id']"
-         ot-path-types="['Array', 'Object', 'String']"
-         ot-subdoc ot-bind-text type="text"
-         placeholder="e.g. productName"
-         tooltip="Field ID used in API"
-         tooltip-placement="top")
+  %span.field-id-form(ng-if="!published")
+    %input(name="newFieldIdInput"
+           new-field-id-input=""
+           required="true"
+           ng-model="newFieldId.value" type="text" required=""
+           ng-disabled="!otEditable"
+           placeholder="e.g. productName"
+           tooltip="Field ID used in API"
+           tooltip-placement="top")
+    -#%i.ss-check(tooltip="Field ID is ok" ng-show="newFieldId.isPristine()")
+    %i.ss-writingdisabled(tooltip="Field ID is already in use" ng-show="newFieldId.isInUse()")
+    %i.in-row-button.ss-check.flat-button(tooltip="Field ID has been changed but not yet saved. Click to save."
+      ng-show="newFieldId.canBeSaved()" ng-click="saveNewFieldId()")
+    %i.in-row-button.ss-replay(tooltip="Click to abort changing the ID" ng-click="newFieldId.value = field.id"
+      ng-hide="newFieldId.isPristine()")
   .field-errors
     %span(cf-error-path="['fields', index, 'name']" ng-hide="noErrors")
       Name: {{errorMessages.join(' ')}}

@@ -1,3 +1,5 @@
+'use strict';
+
 var UserInterface = {
   worf: require('worf'),
   validation: require('validation'),

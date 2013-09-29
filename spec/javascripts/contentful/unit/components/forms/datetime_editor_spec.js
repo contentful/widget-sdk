@@ -25,8 +25,13 @@ describe('DateTime Editor', function () {
   }));
 
   function enter(date, time, zone) {
-    if (date) element.find('.date').val(date).trigger('input').trigger('blur');
-    if (time) element.find('.time').val(time).trigger('input');
+    if (date) element.find('.date').val(date).
+        trigger('input').
+        trigger('change').
+        trigger('blur');
+    if (time) element.find('.time').val(time).
+        trigger('input').
+        trigger('change');
     if (zone) {
       var zoneIndex = _.indexOf(scope.timezones, zone);
       var $zone = element.find('.zone');
