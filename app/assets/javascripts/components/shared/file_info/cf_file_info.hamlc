@@ -1,6 +1,7 @@
 .file-info
   .file-preview(ng-show="file && file.url" cf-file-preview="file" preview-size="fullscreen")
     .vcenter(cf-thumbnail="file" ng-show="file.url")
+    .unpublished(ng-show="asset.canPublish()" tooltip-placement="right" tooltip="This asset hasn't been published")
 
   .file-progress.progress.center(ng-show="file|isFileProcessing")
     %p Processing…
