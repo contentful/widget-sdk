@@ -2,6 +2,6 @@
   Drag File to Upload
 .button-container.center(ng-show="state=='drag'" ng-transclude)
 .drop-me.center.vcenter(ng-show="state=='drop'") Drop File to Upload
-.progress.center.vcenter(ng-show="state=='progress'")
-  %p {{filename}} <br /> {{percentage}}
-
+.progress.center(ng-show="state=='progress'")
+  %p Uploading File
+  .cf-progress-bar.animate.nostripes.red
