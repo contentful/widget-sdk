@@ -95,7 +95,7 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       } else {
         this.client.getTokenLookup(function (err, data) {
           if (err) {
-            console.warn('Error during token lookup', err, data);
+            //console.warn('Error during token lookup', err, data);
             //if (environment.env === 'development') {
               //if (window.confirm('Error during token lookup, logout?')) self.logout();
               //return;

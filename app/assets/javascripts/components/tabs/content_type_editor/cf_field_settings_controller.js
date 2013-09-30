@@ -92,7 +92,7 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
     subdoc.set($scope.newFieldId.value, function(err) {
       $scope.$apply(function (scope) {
         if (err) {
-          notification.error('Error updating ID');
+          notification.serverError('Error updating ID', err);
         } else {
           scope.field.id = scope.newFieldId.value;
         }
@@ -120,7 +120,7 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
         if (!err) {
           scope.otUpdateEntity();
         } else {
-          notification.error('Could not change type.');
+          notification.serverError('Could not change type.', err);
         }
       });
     });
@@ -136,7 +136,7 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
           scope.field[property] = subdoc.get();
           analytics.modifiedContentType('Modified ContentType', scope.contentType, scope.field, 'toggled '+property);
         } else {
-          notification.error('Could not toggle "'+property+'"');
+          notification.serverError('Could not toggle "'+property+'"', err);
         }
       });
     });

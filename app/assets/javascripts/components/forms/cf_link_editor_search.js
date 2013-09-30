@@ -53,18 +53,18 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
           $scope.$apply(function (scope) {
             if (errCreate) {
               //console.log('Error creating entry', errCreate);
-              notification.error('Error creating Entry');
+              notification.serverError('Error creating Entry', errCreate);
               throw new Error(errCreate);
             }
             scope.addLink(entry, function(errSetLink) {
               if (errSetLink) {
-                notification.error('Error linking Entry');
+                notification.serverError('Error linking Entry', errSetLink);
                 //console.log('Error linking entry', errSetLink);
                 entry['delete'](function(errDelete) {
                   scope.$apply(function () {
                     if (errDelete) {
                       //console.log('Error deleting entry', errDelete);
-                      notification.error('Error deleting Entry again');
+                      notification.serverError('Error deleting Entry again', errDelete);
                       throw new Error(errDelete);
                     }
                   });
@@ -82,18 +82,18 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
           $scope.$apply(function (scope) {
             if (errCreate) {
               //console.log('Error creating asset', errCreate);
-              notification.error('Error creating Asset');
+              notification.serverError('Error creating Asset', errCreate);
               throw new Error(errCreate);
             }
             scope.addLink(asset, function(errSetLink) {
               if (errSetLink) {
-                notification.error('Error linking Asset');
+                notification.serverError('Error linking Asset', errSetLink);
                 //console.log('Error linking asset', errSetLink);
                 asset['delete'](function(errDelete) {
                   scope.$apply(function () {
                     if (errDelete) {
                       //console.log('Error deleting asset', errDelete);
-                      notification.error('Error deleting Asset again');
+                      notification.serverError('Error deleting Asset again', errDelete);
                       throw new Error(errDelete);
                     }
                   });

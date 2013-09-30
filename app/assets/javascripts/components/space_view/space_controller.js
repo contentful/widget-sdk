@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, analytics, routing, notification, can, sentry) {
+angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, analytics, routing, notification, can) {
   $scope.$watch('spaceContext', function(spaceContext, old, scope){
     var space = spaceContext.space;
     scope.spaceContext.tabList.closeAll();
@@ -98,8 +98,7 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
         if (!err) {
           scope.editEntry(entry, 'create');
         } else {
-          notification.error('Could not create Entry');
-          //TODO sentry notification
+          notification.serverError('Could not create Entry', err);
         }
       });
       analytics.track('Selected Add-Button', {
@@ -126,8 +125,7 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
         if (!err) {
           scope.editAsset(asset, 'create');
         } else {
-          notification.error('Could not create Asset');
-          //TODO sentry notification
+          notification.serverError('Could not create Asset', err);
         }
       });
       analytics.track('Selected Add-Button', {
@@ -152,8 +150,7 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
         if (!err) {
           scope.editContentType(contentType, 'create');
         } else {
-          notification.warn('Could not create Content Type');
-          sentry.captureServerError('Could not create Content Type', err);
+          notification.serverError('Could not create Content Type', err);
         }
       });
       analytics.track('Selected Add-Button', {

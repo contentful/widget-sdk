@@ -6,7 +6,7 @@ angular.module('contentful').directive('otDocFor', function () {
     priority: -100,
     controller: 'otDocForCtrl'
   };
-}).controller('otDocForCtrl', function OtDocForCtrl($scope, $attrs, ShareJS) {
+}).controller('otDocForCtrl', function OtDocForCtrl($scope, $attrs, ShareJS, sentry) {
   function remoteOpListener(ops) {
     $scope.$apply(function(scope) {
       _.each(ops, function (op) {
@@ -95,7 +95,7 @@ angular.module('contentful').directive('otDocFor', function () {
       data.sys.updatedAt = moment().toISOString();
       entity.update(data);
     } else {
-      console.warn('otUpdateEntity did not update', entity, $scope.otDoc);
+      sentry.captureError('otUpdateEntity did not update');
     }
   };
 

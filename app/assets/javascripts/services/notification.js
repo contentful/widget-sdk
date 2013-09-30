@@ -10,6 +10,11 @@ angular.module('contentful').
         sentry.captureError(body);
       },
 
+      serverError: function(message, body) {
+        this._notify(message, 'error');
+        sentry.captureServerError(body);
+      },
+
       warn: function(body) {
         this._notify(body, 'warn');
       },

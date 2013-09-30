@@ -62,7 +62,7 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
             scope.file = file;
             ngModelCtrl.$setViewValue(file);
           } else {
-            notification.error('There has been a problem saving the file');
+            notification.serverError('There has been a problem saving the file', err);
           }
         });
       }

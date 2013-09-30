@@ -31,7 +31,7 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
     event.currentScope.otUpdateEntity();
   });
 
-  $scope.$watch(function (scope) {
+  $scope.$watch(function contentTypeModifiedWatcher(scope) {
     if (scope.otDoc && scope.contentType) {
       return scope.otDoc.version > scope.contentType.data.sys.publishedVersion + 1;
     } else {
@@ -83,7 +83,7 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
     fieldDoc.push(newField, function(err, ops) {
       $scope.$apply(function(scope) {
         if (err) {
-          notification.error('Could not add field');
+          notification.serverError('Could not add field', err);
         } else {
             scope.otUpdateEntity();
             scope.$broadcast('fieldAdded', ops[0].p[1]);

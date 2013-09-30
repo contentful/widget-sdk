@@ -25,7 +25,7 @@ angular.module('contentful').directive('otEditor', function ($parse, notificatio
           if (!err) {
             ngModelCtrl.$setViewValue(value);
           } else {
-            notification.error('There has been a problem saving the change');
+            notification.serverError('There has been a problem saving the change', err);
           }
         });
       };

@@ -37,7 +37,7 @@ angular.module('contentful').
       var t = title();
       $scope.apiKey['delete'](function(err) {
         $scope.$apply(function() {
-          if (err) return notification.error(t + ' could not be deleted');
+          if (err) return notification.serverError(t + ' could not be deleted', err);
           notification.info(t + ' deleted successfully');
           $scope.broadcastFromSpace('entityDeleted', $scope.apiKey);
         });
@@ -56,7 +56,7 @@ angular.module('contentful').
       var t = title();
       $scope.apiKey.save(function(err) {
         $scope.$apply(function() {
-          if (err) return notification.error(t + ' could not be saved');
+          if (err) return notification.serverError(t + ' could not be saved', err);
           $scope.apiKeyForm.$setPristine();
           notification.info(t + ' saved successfully');
         });
