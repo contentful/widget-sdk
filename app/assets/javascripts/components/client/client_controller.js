@@ -1,9 +1,10 @@
+'use strict';
+
 angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     $scope, client, SpaceContext, authentication, notification, analytics,
     routing, authorization, tutorial, modalDialog, presence) {
-  'use strict';
 
-  $scope.spaces = [];
+  $scope.spaces = null;
   $scope.spaceContext = new SpaceContext();
 
   $scope.notification = notification;
@@ -59,33 +60,49 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   $scope.selectSpace = function(space) {
     if (space && $scope.getCurrentSpaceId() === space.getId()) return;
     
-    setSpace(space);
     analytics.track('Switched Space', {
       spaceId: space.data.sys.id,
       spaceName: space.data.name
     });
+    routing.gotoSpace(space);
   };
 
-  $scope.$on('tabBecameActive', function (event, tab) {
-    routing.setTab(tab, event.currentScope.spaceContext.space);
-  });
-
   $scope.$on('$routeChangeSuccess', function (event, route) {
-    if (route.noNavigate) return;
+    if ($scope.spaces === null) return;
+
+
     if (route.params.spaceId != $scope.getCurrentSpaceId()) {
       var space = _.find($scope.spaces, function (space) {
         return space.getId() == route.params.spaceId;
       });
       if (space) setSpace(space);
+      // TODO Else fehlermeldung und route für aktuellen Space wieder herstellen
     }
   });
 
-  $scope.$watch('spaces', function(spaces) {
-    if (_.contains(spaces, $scope.spaceContext.space)) return;
-    var spaceIdFromRoute = routing.getSpaceId();
-    var initialSpace = _.find(spaces, function (space) {
-      return space.getId() == spaceIdFromRoute; }) || spaces[0];
-    setSpace(initialSpace);
+  $scope.$watch('spaces', function(spaces, old, scope) {
+    var routeSpaceId = routing.getSpaceId();
+    var newSpace;
+
+    if (spaces === old) return; // $watch init
+    if (_.isEmpty(spaces)) return; // Empty Array, User has no Spaces
+    if (!routeSpaceId) { // no Space requested, pick first
+      newSpace = spaces[0];
+    } else {
+      newSpace = _.find(spaces, function (space) { return space.getId() == routeSpaceId; });
+      if (!newSpace) {
+        if (old === null) notification.error('Space not found');
+        newSpace = spaces[0];
+      }
+    }
+    if (newSpace != scope.spaceContext.space) {
+      // we need to change something
+      if (routeSpaceId != newSpace.getId()) { // trigger switch by chaning location
+        routing.gotoSpace(newSpace);
+      } else { // location is already correct, just load the space
+        setSpace(newSpace);
+      }
+    }
   });
 
   $scope.logout = function() {
@@ -215,7 +232,6 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   };
 
   function showTutorialIfNecessary() {
-    /*global moment*/
     var now = moment();
     var created = moment($scope.user.sys.createdAt);
     var age = now.diff(created, 'days');

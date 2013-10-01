@@ -1,4 +1,4 @@
-angular.module('contentful').factory('TabList', function($rootScope, analytics, modalDialog){
+angular.module('contentful').factory('TabList', function($rootScope, analytics, modalDialog, $document){
   'use strict';
 
   function TabList() {

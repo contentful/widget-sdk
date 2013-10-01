@@ -23,7 +23,7 @@
       %table.result-list.main-results
         %tbody
           %tr(ng-repeat="apiKey in apiKeys"
-              cf-click-local="editApiKey(apiKey)")
+              cf-click-local="navigator.apiKeyEditor(apiKey).goTo()")
             %td.cell-name
               %span {{apiKey.getName()}}
             %td.cell-description

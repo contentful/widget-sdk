@@ -29,7 +29,7 @@ angular.module('contentful').directive('iframeView', function($window, $rootScop
         scope.url = authentication.spaceSettingsUrl(scope.spaceContext.space.getId()) + '/' + pathSuffix + '?access_token='+authentication.token;
         pathChanged = function (path) {
           scope.tab.params.pathSuffix = path.match(/settings\/spaces\/\w+\/(.*$)/)[1];
-          if (scope.tab.active()) routing.setTab(scope.tab);
+          if (scope.tab.active()) routing.gotoTab(scope.tab);
         };
       } else if (scope.tab.params.mode === 'profile') {
         pathSuffix = scope.tab.params.pathSuffix || 'edit';

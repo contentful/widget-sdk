@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').provider('routing', function ($routeProvider) {
-  $routeProvider.when('/spaces/:spaceId', {viewType: null, noNavigate: true});
+  $routeProvider.when('/spaces/:spaceId', {viewType: null});
   $routeProvider.when('/spaces/:spaceId/entries', {viewType: 'entry-list'});
   $routeProvider.when('/spaces/:spaceId/entries/:entryId', {viewType: 'entry-editor'});
   $routeProvider.when('/spaces/:spaceId/assets', {viewType: 'asset-list'});
@@ -21,8 +21,11 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
 
     Routing.prototype = {
       getRoute: function(){
-        if(!$route.current) $route.reload();
         return $route.current;
+      },
+
+      getPath: function () {
+        return $location.path();
       },
 
       getSpaceId: function () {
@@ -33,11 +36,15 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
         }
       },
 
-      setSpace: function (space) {
-        $location.path('/spaces/'+space.getId());
+      gotoSpace: function (space) {
+        if (space) $location.path('/spaces/'+space.getId());
       },
 
-      setTab: function (tab, space) {
+      gotoTab : function (tab, space) {
+        $location.path(this.makeLocation(tab, space));
+      },
+
+      makeLocation: function (tab, space) {
         var spaceId = space ? space.getId() : this.getSpaceId();
         var path = '/spaces/'+spaceId;
         if (tab.viewType == 'entry-editor') {
@@ -70,7 +77,7 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
             if (tab.params.pathSuffix) path = path + '/' + tab.params.pathSuffix;
           }
         }
-        $location.path(path);
+        return path;
       }
     };
 

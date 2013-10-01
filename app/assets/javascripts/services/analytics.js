@@ -175,14 +175,12 @@ angular.module('contentful').provider('analytics', function (environment) {
         this.track('Viewed Page', {
           section: tab.section,
           viewType: tab.viewType,
-          entryId: tab.params.entry.getId(),
-          mode: tab.params.mode});
+          entryId: tab.params.entry.getId()});
       } else if (t == 'content-type-editor') {
         this.track('Viewed Page', {
           section: tab.section,
           viewType: tab.viewType,
-          entryId: tab.params.contentType.getId(),
-          mode: tab.params.mode});
+          entryId: tab.params.contentType.getId()});
       } else if (t == 'iframe') {
         var url;
         if (tab.params.url) {
