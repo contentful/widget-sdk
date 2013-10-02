@@ -71,7 +71,7 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
                 });
                 throw new Error(errSetLink);
               }
-              scope.editEntry(entry, 'create');
+              scope.navigator.entryEditor(entry).goTo();
             });
           });
         });
@@ -100,7 +100,7 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
                 });
                 throw new Error(errSetLink);
               }
-              scope.editAsset(asset, 'create');
+              scope.navigator.assetEditor(asset).goTo();
             });
           });
         });

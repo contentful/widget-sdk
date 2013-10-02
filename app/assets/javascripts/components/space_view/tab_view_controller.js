@@ -63,7 +63,8 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     _wrap: function (options) {
       return {
         open: function () { return findOrCreateTab(options); },
-        goTo: function () { routing.gotoTab(options, $scope.spaceContext.space); }
+        goTo: function () { routing.gotoTab(options, $scope.spaceContext.space); },
+        path: function () { return routing.makeLocation(options, $scope.spaceContext.space); }
       };
     },
     entityEditor:      function (entity) {
