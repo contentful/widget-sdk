@@ -10,6 +10,14 @@ angular.module('contentful').run(function($window, $rootScope, $sce){
   eventer(messageEvent, function(event) {
     $sce.getTrustedResourceUrl(event.origin); // important security check
 
+    if ($window.navigator.userAgent.match(/MSIE/)) {
+      event = {
+        data: JSON.parse(event.data),
+        origin: event.origin,
+        source: event.source
+      };
+    }
+
     $rootScope.$apply(function (scope) {
       scope.$broadcast('iframeMessage', event);
     });

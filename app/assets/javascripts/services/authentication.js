@@ -102,7 +102,9 @@ angular.module('contentful').provider('authentication', function AuthenticationP
             //}
             self.logout();
           } else {
-            self.setTokenLookup(data);
+            if (data !== undefined) { // Data === undefined is in cases of notmodified
+              self.setTokenLookup(data);
+            }
             callback(self.tokenLookup);
           }
         });
