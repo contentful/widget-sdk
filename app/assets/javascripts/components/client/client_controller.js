@@ -158,31 +158,6 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     $location.path('/profile' + '/' + pathSuffix);
   };
 
-  /*
-  $scope.openProfile = function(pathSuffix) {
-    pathSuffix = pathSuffix || 'user';
-    var options = {
-      viewType: 'iframe',
-      section: null,
-      params: {
-        mode: 'profile',
-        pathSuffix: pathSuffix,
-        fullscreen: true
-      },
-      title: 'Profile'
-    };
-
-    analytics.track('Clicked Profile');
-
-    // TODO This is a pattern that repeats and should be extracted
-    var tab = _.find($scope.spaceContext.tabList.items, function(tab) {
-      return tab && tab.params && tab.params.mode == options.params.mode;
-    });
-    tab = tab || $scope.spaceContext.tabList.add(options);
-    if (tab) tab.activate();
-  };
-  */
-
   $scope.performTokenLookup = function (callback) {
     // TODO initialize blank user so that you can at least log out when
     // the getTokenLookup fails
