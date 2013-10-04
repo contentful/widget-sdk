@@ -6,26 +6,29 @@ angular.module('contentful').directive('cfProfileView', function($window, $rootS
     scope: true,
     link: function (scope, elem) {
       scope.tab = {params: {fullscreen: true}};
+      elem.hide();
 
-      scope.$on('$routeChangeSuccess', function (event, route) {
-        update(route);
+      scope.$on('$routeChangeSuccess', function (event, route, previous) {
+        update(route, previous);
       });
 
       scope.$on('iframeMessage', function (event, messageEvent) {
         if (messageEvent.source !== $('iframe', elem)[0].contentWindow) return;
-        if (pathChanged) pathChanged(messageEvent.data.path);
+        pathChanged(messageEvent.data.path);
       });
 
-      function update(route) {
+      function update(route, previous) {
         if (route.viewType === 'profile') {
-          var pathSuffix = routing.getRoute().params.pathSuffix || 'user';
-          scope.url = authentication.profileUrl() + '/' + pathSuffix + '?access_token='+authentication.token;
+          if (!previous || previous.viewType !== 'profile') {
+            var pathSuffix = routing.getRoute().params.pathSuffix || 'user';
+            scope.url = scope.url || authentication.profileUrl() + '/' + pathSuffix + '?access_token='+authentication.token;
+          }
           elem.show();
         } else {
-          scope.url = '';
           elem.hide();
         }
       }
+
       function pathChanged(path) {
         var pathSuffix = path.match(/profile\/(.*$)/)[1];
         scope.goToProfile(pathSuffix);

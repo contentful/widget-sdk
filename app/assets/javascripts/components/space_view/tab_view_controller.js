@@ -18,7 +18,10 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
   });
 
   $scope.$on('$routeChangeSuccess', function () {
-    if ($scope.spaceContext.space && routing.getSpaceId() == $scope.getCurrentSpaceId()) openRoute();
+    if ($scope.spaceContext.space && routing.getSpaceId() == $scope.getCurrentSpaceId())
+      openRoute();
+    else
+      if ($scope.spaceContext) $scope.spaceContext.tabList.current = null;
   });
 
   function openRoute() {
