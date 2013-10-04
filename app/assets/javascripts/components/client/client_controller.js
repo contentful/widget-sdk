@@ -2,7 +2,7 @@
 
 angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     $scope, client, SpaceContext, authentication, notification, analytics,
-    routing, authorization, tutorial, modalDialog, presence) {
+    routing, authorization, tutorial, modalDialog, presence, $location) {
 
   $scope.spaces = null;
   $scope.spaceContext = new SpaceContext();
@@ -86,14 +86,16 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
 
     if (spaces === old) return; // $watch init
     if (_.isEmpty(spaces)) return; // Empty Array, User has no Spaces
-    if (!routeSpaceId) { // no Space requested, pick first
-      newSpace = spaces[0];
-    } else {
+    if (routeSpaceId) {
       newSpace = _.find(spaces, function (space) { return space.getId() == routeSpaceId; });
       if (!newSpace) {
         if (old === null) notification.error('Space not found');
         newSpace = spaces[0];
       }
+    } else if (routing.getRoute().root) { // no Space requested, pick first
+      newSpace = spaces[0];
+    } else {
+      return; // we don't want to see a space
     }
     if (newSpace != scope.spaceContext.space) {
       // we need to change something
@@ -151,7 +153,13 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     analytics.track('Clicked Profile Button');
   };
 
-  $scope.editProfile = function(pathSuffix) {
+  $scope.goToProfile = function (pathSuffix) {
+    pathSuffix = pathSuffix || 'user';
+    $location.path('/profile' + '/' + pathSuffix);
+  };
+
+  /*
+  $scope.openProfile = function(pathSuffix) {
     pathSuffix = pathSuffix || 'user';
     var options = {
       viewType: 'iframe',
@@ -173,7 +181,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     tab = tab || $scope.spaceContext.tabList.add(options);
     if (tab) tab.activate();
   };
-
+  */
 
   $scope.performTokenLookup = function (callback) {
     // TODO initialize blank user so that you can at least log out when

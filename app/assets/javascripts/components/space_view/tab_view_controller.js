@@ -39,8 +39,6 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
       $scope.spaceContext.space.getContentType(route.params.contentTypeId, handleFallback('contentTypeEditor', 'contentTypeList'));
     else if (route.viewType == 'api-key-editor')
       $scope.spaceContext.space.getApiKey(route.params.apiKeyId, handleFallback('apiKeyEditor', 'apiKeyList'));
-    //else if (route.viewType == 'profile') // TODO implement
-      //$scope.editProfile(route.params.pathSuffix);
     else
       $scope.spaceContext.space.getPublishedContentTypes(function(err, ets) {
         $scope.$apply(function (scope) {

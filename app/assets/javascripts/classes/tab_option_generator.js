@@ -107,20 +107,6 @@ angular.module('contentful').factory('TabOptionsGenerator', function () {
       };
     },
 
-    profile: function (pathSuffix) {
-      pathSuffix = pathSuffix || 'user';
-      return {
-        viewType: 'iframe',
-        section: null,
-        params: {
-          mode: 'profile',
-          pathSuffix: pathSuffix,
-          fullscreen: true
-        },
-        title: 'Profile'
-      };
-    },
-
     apiKeyList: function () {
       return {
         viewType: 'api-key-list',
