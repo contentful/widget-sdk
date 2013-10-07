@@ -58,6 +58,7 @@ angular.module('contentful').
         $scope.$apply(function() {
           if (err) return notification.serverError(t + ' could not be saved', err);
           $scope.apiKeyForm.$setPristine();
+          $scope.navigator.apiKeyEditor($scope.apiKey).goTo();
           notification.info(t + ' saved successfully');
         });
       });

@@ -53,7 +53,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     function handleFallback(defaultView, fallbackView){
       return function (err, obj) {
         $scope.$apply(function (scope) {
-          if (err) scope.navigator[fallbackView].goTo();
+          if (err) scope.navigator[fallbackView]().goTo();
           else     scope.navigator[defaultView](obj).open();
         });
       };
@@ -65,7 +65,12 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
       return {
         open: function () { return findOrCreateTab(options); },
         goTo: function () { routing.gotoTab(options, $scope.spaceContext.space); },
-        path: function () { return routing.makeLocation(options, $scope.spaceContext.space); }
+        path: function () { return routing.makeLocation(options, $scope.spaceContext.space); },
+        openAndGoTo: function () {
+          var tab = this.open();
+          this.goTo();
+          return tab;
+        }
       };
     },
     entityEditor:      function (entity) {

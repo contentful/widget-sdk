@@ -66,7 +66,7 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
           if (apiKeyId) {
             path = path + '/api_keys/' + apiKeyId;
           } else {
-            path = path + '/api_keys';
+            path = path + '/api_keys/new';
           }
         } else if (tab.viewType == 'iframe') {
           if (tab.params.mode === 'spaceSettings') {

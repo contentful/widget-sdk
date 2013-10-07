@@ -96,7 +96,7 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
   $scope.createApiKey = function() {
     var scope = this;
     var apiKey = scope.spaceContext.space.createBlankApiKey();
-    scope.navigator.apiKeyEditor(apiKey).goTo();
+    scope.navigator.apiKeyEditor(apiKey).openAndGoTo();
     analytics.track('Selected Add-Button', {
       currentSection: scope.spaceContext.tabList.currentSection(),
       currentViewType: scope.spaceContext.tabList.currentViewType(),
