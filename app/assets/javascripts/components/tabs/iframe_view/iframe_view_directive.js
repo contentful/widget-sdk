@@ -10,8 +10,11 @@ angular.module('contentful').directive('iframeView', function($window, $rootScop
         pathSuffix = scope.tab.params.pathSuffix || 'edit';
         scope.url = authentication.spaceSettingsUrl(scope.spaceContext.space.getId()) + '/' + pathSuffix + '?access_token='+authentication.token;
         pathChanged = function (path) {
-          scope.tab.params.pathSuffix = path.match(/settings\/spaces\/\w+\/(.*$)/)[1];
-          if (scope.tab.active()) routing.gotoTab(scope.tab);
+          var match = path.match(/settings\/spaces\/\w+\/(.*$)/);
+          if (match) {
+            scope.tab.params.pathSuffix = match[1];
+            if (scope.tab.active()) routing.goToTab(scope.tab);
+          }
         };
       } else {
         scope.url = scope.tab.params.url;
