@@ -6,11 +6,10 @@
     %ng-switch(on="linkType")
       .cf-file-info(ng-switch-when="Asset"
                     remove-link="removeLink(index, entity)"
-                    edit-entity="naviagor.entityEditor(entity).goTo()"
                     entity-title="spaceContext.localizedField(entity, 'data.fields.title')"
                     file="spaceContext.localizedField(entity, 'data.fields.file')")
       %span(ng-switch-when="Entry")
-        %a(href="" ng-click="naviagor.entityEditor(entity).goTo()" ng-show="entity && entity.data") {{linkDescription(entity)}}
+        %a(href="" ng-click="navigator.entityEditor(entity).goTo()" ng-show="entity && entity.data") {{linkDescription(entity)}}
         %span(ng-hide="entity && entity.data") {{linkDescription(entity)}}
         %i.ss-delete(ng-click="removeLink(index, entity)" ng-show="otEditable")
 
