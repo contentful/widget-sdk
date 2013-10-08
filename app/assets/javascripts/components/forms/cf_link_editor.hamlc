@@ -5,7 +5,6 @@
                            ng-hide="linkedEntities.length==1")
     %ng-switch(on="linkType")
       .cf-file-info(ng-switch-when="Asset"
-                    remove-link="removeLink(index, entity)"
                     entity-title="spaceContext.localizedField(entity, 'data.fields.title')"
                     file="spaceContext.localizedField(entity, 'data.fields.file')")
       %span(ng-switch-when="Entry")
@@ -74,7 +73,7 @@
                 cf-click-local="pick(entity)"
                 ng-class="{selected: entity==selectedEntity}")
               %td.cell-preview
-                %p.file-preview(cf-file-preview="spaceContext.localizedField(entity, 'data.fields.file')" preview-size="400")
+                %p.file-preview(cf-file-preview="" file="spaceContext.localizedField(entity, 'data.fields.file')" preview-size="400")
                   %span(cf-thumbnail="file" size="70" ng-show="file && file.url")
               %td.cell-name
                 %p {{spaceContext.localizedField(entity, 'data.fields.title') || 'Untitled'}}

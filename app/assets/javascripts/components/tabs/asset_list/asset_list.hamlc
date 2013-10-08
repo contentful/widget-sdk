@@ -64,7 +64,7 @@
             -#%td.cell-favorite
               %i.ss-star
             %td.cell-preview(ng-class="{'no-padding': (!!file)}")
-              %div.file-preview(cf-file-preview="spaceContext.localizedField(asset, 'data.fields.file')" preview-size="400")
+              %div.file-preview(cf-file-preview="" file="spaceContext.localizedField(asset, 'data.fields.file')" preview-size="400")
                 %span(cf-thumbnail="file" size="30")
             %td.cell-name
               %span {{spaceContext.assetTitle(asset)}}
