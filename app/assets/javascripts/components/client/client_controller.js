@@ -1,9 +1,10 @@
+'use strict';
+
 angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     $scope, client, SpaceContext, authentication, notification, analytics,
-    routing, authorization, tutorial, modalDialog, presence) {
-  'use strict';
+    routing, authorization, tutorial, modalDialog, presence, $location) {
 
-  $scope.spaces = [];
+  $scope.spaces = null;
   $scope.spaceContext = new SpaceContext();
 
   $scope.notification = notification;
@@ -59,33 +60,51 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   $scope.selectSpace = function(space) {
     if (space && $scope.getCurrentSpaceId() === space.getId()) return;
     
-    setSpace(space);
     analytics.track('Switched Space', {
       spaceId: space.data.sys.id,
       spaceName: space.data.name
     });
+    routing.gotoSpace(space);
   };
 
-  $scope.$on('tabBecameActive', function (event, tab) {
-    routing.setTab(tab, event.currentScope.spaceContext.space);
-  });
-
   $scope.$on('$routeChangeSuccess', function (event, route) {
-    if (route.noNavigate) return;
+    if ($scope.spaces === null) return;
+
+
     if (route.params.spaceId != $scope.getCurrentSpaceId()) {
       var space = _.find($scope.spaces, function (space) {
         return space.getId() == route.params.spaceId;
       });
       if (space) setSpace(space);
+      // TODO Else fehlermeldung und route für aktuellen Space wieder herstellen
     }
   });
 
-  $scope.$watch('spaces', function(spaces) {
-    if (_.contains(spaces, $scope.spaceContext.space)) return;
-    var spaceIdFromRoute = routing.getSpaceId();
-    var initialSpace = _.find(spaces, function (space) {
-      return space.getId() == spaceIdFromRoute; }) || spaces[0];
-    setSpace(initialSpace);
+  $scope.$watch('spaces', function(spaces, old, scope) {
+    var routeSpaceId = routing.getSpaceId();
+    var newSpace;
+
+    if (spaces === old) return; // $watch init
+    if (_.isEmpty(spaces)) return; // Empty Array, User has no Spaces
+    if (routeSpaceId) {
+      newSpace = _.find(spaces, function (space) { return space.getId() == routeSpaceId; });
+      if (!newSpace) {
+        if (old === null) notification.error('Space not found');
+        newSpace = spaces[0];
+      }
+    } else if (routing.getRoute().root) { // no Space requested, pick first
+      newSpace = spaces[0];
+    } else {
+      return; // we don't want to see a space
+    }
+    if (newSpace != scope.spaceContext.space) {
+      // we need to change something
+      if (routeSpaceId != newSpace.getId()) { // trigger switch by chaning location
+        routing.gotoSpace(newSpace);
+      } else { // location is already correct, just load the space
+        setSpace(newSpace);
+      }
+    }
   });
 
   $scope.logout = function() {
@@ -134,29 +153,10 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     analytics.track('Clicked Profile Button');
   };
 
-  $scope.editProfile = function(pathSuffix) {
+  $scope.goToProfile = function (pathSuffix) {
     pathSuffix = pathSuffix || 'user';
-    var options = {
-      viewType: 'iframe',
-      section: null,
-      params: {
-        mode: 'profile',
-        pathSuffix: pathSuffix,
-        fullscreen: true
-      },
-      title: 'Profile'
-    };
-
-    analytics.track('Clicked Profile');
-
-    // TODO This is a pattern that repeats and should be extracted
-    var tab = _.find($scope.spaceContext.tabList.items, function(tab) {
-      return tab && tab.params && tab.params.mode == options.params.mode;
-    });
-    tab = tab || $scope.spaceContext.tabList.add(options);
-    if (tab) tab.activate();
+    $location.path('/profile' + '/' + pathSuffix);
   };
-
 
   $scope.performTokenLookup = function (callback) {
     // TODO initialize blank user so that you can at least log out when
@@ -215,7 +215,6 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   };
 
   function showTutorialIfNecessary() {
-    /*global moment*/
     var now = moment();
     var created = moment($scope.user.sys.createdAt);
     var age = now.diff(created, 'days');

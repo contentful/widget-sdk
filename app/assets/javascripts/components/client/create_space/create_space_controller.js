@@ -21,7 +21,7 @@ angular.module('contentful').controller('createSpaceDialogCtrl', [
       client.createSpace(data, function (err, newSpace) {
         $scope.$apply(function (scope) {
           if (err) {
-            notification.error('Could not create Space.');
+            notification.serverError('Could not create Space.', err);
             scope.lockSubmit = false;
             scope.dialog.cancel();
             stopSpinner();

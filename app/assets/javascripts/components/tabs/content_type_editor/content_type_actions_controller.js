@@ -13,7 +13,7 @@ angular.module('contentful').
   $scope['delete'] = function () {
     $scope.contentType['delete'](function (err, contentType) {
       $scope.$apply(function (scope) {
-        if (err) return notification.error('Error deleting Content Type');
+        if (err) return notification.serverError('Error deleting Content Type', err);
         notification.info('Content type deleted successfully');
         scope.broadcastFromSpace('entityDeleted', contentType);
         // TODO this should happen automatically
@@ -58,7 +58,7 @@ angular.module('contentful').
             reason = 'Validation failed';
           if (errorId === 'versionMismatch')
             reason = 'Can only publish most recent version';
-          return notification.error('Error publishing ' + title() + ': ' + reason);
+          return notification.serverError('Error publishing ' + title() + ': ' + reason, err);
         }
 
         notification.info(title() + ' ' + verb + ' successfully');
@@ -81,7 +81,7 @@ angular.module('contentful').
       $scope.$apply(function(scope){
         if (err) {
           var reason = err.body.message;
-          return notification.error('Error deactivating ' + title() + ': ' + reason);
+          return notification.serverError('Error deactivating ' + title() + ': ' + reason, err);
         }
 
         notification.info(title() + ' deactivated successfully');

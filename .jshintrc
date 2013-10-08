@@ -21,7 +21,8 @@
     "angular",
     "_",
     "JST",
-    "$"
+    "$",
+    "moment"
   ],
   "browser": true,
   "quotmark": "single",

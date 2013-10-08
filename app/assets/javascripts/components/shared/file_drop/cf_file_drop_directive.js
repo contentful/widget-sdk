@@ -35,7 +35,7 @@ angular.module('contentful').directive('cfFileDrop', function (filepicker, notif
         },
         onProgress: function(percentage) {
           scope.$apply(function () {
-            scope.percentage = percentage;
+            scope.progressBarPercentage = percentage;
           });
         }
       });

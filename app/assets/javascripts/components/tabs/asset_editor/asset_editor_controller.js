@@ -126,7 +126,7 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
       return $scope.asset.data.fields.file[localeCode] === file;
     }).value();
     $scope.asset.process($scope.otDoc.version, localeCode, function (err) {
-      if (err) notification.error('There has been a problem processing the Asset.');
+      if (err) notification.serverError('There has been a problem processing the Asset.', err);
     });
   });
 

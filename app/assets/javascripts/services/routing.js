@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').provider('routing', function ($routeProvider) {
-  $routeProvider.when('/spaces/:spaceId', {viewType: null, noNavigate: true});
+  $routeProvider.when('/spaces/:spaceId', {viewType: null});
   $routeProvider.when('/spaces/:spaceId/entries', {viewType: 'entry-list'});
   $routeProvider.when('/spaces/:spaceId/entries/:entryId', {viewType: 'entry-editor'});
   $routeProvider.when('/spaces/:spaceId/assets', {viewType: 'asset-list'});
@@ -14,15 +14,18 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
   $routeProvider.when('/spaces/:spaceId/settings', {viewType: 'space-settings'});
   $routeProvider.when('/profile/:pathSuffix*', {viewType: 'profile'});
   $routeProvider.when('/profile', {viewType: 'profile'});
-  $routeProvider.otherwise({noSpace: true});
+  $routeProvider.otherwise({root: true});
 
   this.$get = function ($rootScope, $route, $location) {
     function Routing(){}
 
     Routing.prototype = {
       getRoute: function(){
-        if(!$route.current) $route.reload();
         return $route.current;
+      },
+
+      getPath: function () {
+        return $location.path();
       },
 
       getSpaceId: function () {
@@ -33,11 +36,15 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
         }
       },
 
-      setSpace: function (space) {
-        $location.path('/spaces/'+space.getId());
+      gotoSpace: function (space) {
+        if (space) $location.path('/spaces/'+space.getId());
       },
 
-      setTab: function (tab, space) {
+      gotoTab : function (tab, space) {
+        $location.path(this.makeLocation(tab, space));
+      },
+
+      makeLocation: function (tab, space) {
         var spaceId = space ? space.getId() : this.getSpaceId();
         var path = '/spaces/'+spaceId;
         if (tab.viewType == 'entry-editor') {
@@ -59,18 +66,15 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
           if (apiKeyId) {
             path = path + '/api_keys/' + apiKeyId;
           } else {
-            path = path + '/api_keys';
+            path = path + '/api_keys/new';
           }
         } else if (tab.viewType == 'iframe') {
           if (tab.params.mode === 'spaceSettings') {
             path = path + '/settings';
             if (tab.params.pathSuffix) path = path + '/' + tab.params.pathSuffix;
-          } else if (tab.params.mode === 'profile') {
-            path = '/profile';
-            if (tab.params.pathSuffix) path = path + '/' + tab.params.pathSuffix;
           }
         }
-        $location.path(path);
+        return path;
       }
     };
 

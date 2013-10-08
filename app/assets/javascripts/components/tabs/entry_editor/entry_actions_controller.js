@@ -12,7 +12,7 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
     $scope.entry['delete'](function (err, entry) {
       $scope.$apply(function (scope) {
         if (err) {
-          notification.error('Error deleting Entry');
+          notification.serverError('Error deleting Entry', err);
         }else{
           notification.info('Entry deleted successfully');
           scope.broadcastFromSpace('entityDeleted', entry);
@@ -28,10 +28,9 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
     $scope.spaceContext.space.createEntry(contentType, data, function(err, entry){
       $scope.$apply(function (scope) {
         if (!err) {
-          scope.editEntry(entry);
+          scope.navigator.entryEditor(entry).goTo();
         } else {
-          notification.error('Could not duplicate Entry');
-          //TODO sentry notification
+          notification.serverError('Could not duplicate Entry', err);
         }
       });
     });
@@ -41,7 +40,7 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
     $scope.entry.archive(function(err) {
       $scope.$apply(function() {
         if (err)
-          notification.error('Error archiving ' + title() + ' (' + err.body.sys.id + ')');
+          notification.serverError('Error archiving ' + title() + ' (' + err.body.sys.id + ')', err);
         else
           notification.info(title() + ' archived successfully');
       });
@@ -52,7 +51,7 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
     $scope.entry.unarchive(function(err) {
       $scope.$apply(function() {
         if (err)
-          notification.error('Error unarchiving ' + title + ' (' + err.body.sys.id + ')');
+          notification.serverError('Error unarchiving ' + title + ' (' + err.body.sys.id + ')', err);
         else
           notification.info(title() + ' unarchived successfully');
       });
@@ -63,7 +62,7 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
     $scope.entry.unpublish(function (err) {
       $scope.$apply(function(scope){
         if (err) {
-          notification.error('Error unpublishing ' + title() + ' (' + err.body.sys.id + ')');
+          notification.serverError('Error unpublishing ' + title() + ' (' + err.body.sys.id + ')', err);
         } else {
           notification.info(title() + ' unpublished successfully');
           scope.otUpdateEntity();
@@ -103,7 +102,7 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
   $scope.publish = function () {
     var version = $scope.otDoc.version;
     if (!$scope.validate()) {
-      notification.warn('Error publishing ' + title() + ': ' + 'Validation failed');
+      notification.error('Error publishing ' + title() + ': ' + 'Validation failed');
       return;
     }
     $scope.entry.publish(version, function (err) {
@@ -114,11 +113,12 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
           if (errorId === 'ValidationFailed') {
             reason = 'Validation failed';
             scope.setValidationErrors(err.body.details.errors);
-          } else if (errorId === 'VersionMismatch')
+          } else if (errorId === 'VersionMismatch') {
             reason = 'Can only publish most recent version';
-          else
+          } else {
             reason = errorId;
-          notification.error('Error publishing ' + title() + ': ' + reason);
+          }
+          notification.serverError('Error publishing ' + title() + ': ' + reason, err);
         } else {
           notification.info(title() + ' published successfully');
         }

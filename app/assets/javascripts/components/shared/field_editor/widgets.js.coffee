@@ -64,14 +64,14 @@ angular.module('contentful').service 'widgets', ($compile) ->
         template: """<input type="text" ng-model="fieldData.value" ot-bind-model ng-disabled="!otEditable"/>"""
         link: (scope, elm, attr) ->
           controller = elm.find('input').inheritedData('$ngModelController')
-          controller.$parsers.unshift (viewValue) -> parseFloat(viewValue.replace(',', '.')) || undefined
+          controller.$parsers.push (viewValue) -> parseFloat(viewValue.replace(',', '.'))
     Integer:
       textField:
         name: "Textfield for integers"
         template: """<input type="text" ng-pattern="/^\\-?\\d*$/" ng-model="fieldData.value" ot-bind-model ng-disabled="!otEditable"/>"""
         link: (scope, elm, attr) ->
           controller = elm.find('input').inheritedData('$ngModelController')
-          controller.$parsers.unshift (viewValue) -> parseInt(viewValue) || undefined
+          controller.$parsers.push (viewValue) -> parseInt(viewValue)
     Link:
       selector:
         name: "Link selector"

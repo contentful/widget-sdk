@@ -5,7 +5,7 @@
     %li.tablist-button(space-context="spaceContext")
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'contentTypes',
                   'section-index': spaceContext.tabList.currentViewType() == 'content-type-list'}"
-        ng-click="visitView('content-type-list')"
+        ng-click="goToView('content-type-list')"
         ng-show="can('read', 'ContentType')"
         data-view-type="content-type-list"
         tabindex="0")
@@ -13,21 +13,21 @@
       Content Model
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'entries',
                   'section-index': spaceContext.tabList.currentViewType() == 'entry-list'}"
-        ng-click="visitView('entry-list')"
+        ng-click="goToView('entry-list')"
         data-view-type="entry-list"
         tabindex="0")
       %i.ss-file
       Entries
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'assets',
                  'section-index': spaceContext.tabList.currentViewType() == 'asset-list'}"
-        ng-click="visitView('asset-list')"
+        ng-click="goToView('asset-list')"
         data-view-type="asset-list"
         tabindex="0")
       %i.ss-attach
       Assets
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'apiKeys',
                    'section-index': spaceContext.tabList.currentViewType() == 'api-key-list'}"
-        ng-click="visitView('api-key-list')"
+        ng-click="goToView('api-key-list')"
         ng-show="can('update', 'ApiKey')"
         data-view-type="api-key-list"
         tabindex="0")
@@ -35,7 +35,7 @@
       Content Delivery
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'spaceSettings',
                   'section-index': spaceContext.tabList.currentSection() == 'spaceSettings'}"
-        ng-click="visitView('space-settings')"
+        ng-click="goToView('space-settings')"
         ng-show="can('update', 'Settings')"
         data-view-type="space-settings"
         tabindex="0")
@@ -45,7 +45,7 @@
   %ul
     %li.tab(ng-repeat="tabItem in spaceContext.tabList.items"
             ng-class="{active: tabItem.active(), dirty: tabItem.dirty}"
-            ng-click="tabItem.activate()"
+            ng-click="gotoTab(tabItem)"
             ng-hide="tabItem.hidden"
             tabindex="0")
       %span.tab-title {{tabItem.title}}

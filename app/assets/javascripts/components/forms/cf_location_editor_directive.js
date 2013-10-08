@@ -37,7 +37,7 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
           if (!err) {
             ngModelCtrl.$setViewValue(scope.location);
           } else {
-            notification.error('Error updating location');
+            notification.serverError('Error updating location', err);
             scope.location = ngModelCtrl.$modelValue;
           }
         });

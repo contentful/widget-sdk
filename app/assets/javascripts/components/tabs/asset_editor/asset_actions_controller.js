@@ -12,7 +12,7 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
     $scope.asset['delete'](function (err, asset) {
       $scope.$apply(function (scope) {
         if (err) {
-          notification.error('Error deleting Asset');
+          notification.serverError('Error deleting Asset', err);
         }else{
           notification.info('Asset deleted successfully');
           scope.broadcastFromSpace('entityDeleted', asset);
@@ -25,7 +25,7 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
     $scope.asset.archive(function(err) {
       $scope.$apply(function() {
         if (err)
-          notification.error('Error archiving ' + title() + ' (' + err.body.sys.id + ')');
+          notification.serverError('Error archiving ' + title() + ' (' + err.body.sys.id + ')', err);
         else
           notification.info(title() + ' archived successfully');
       });
@@ -36,7 +36,7 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
     $scope.asset.unarchive(function(err) {
       $scope.$apply(function() {
         if (err)
-          notification.error('Error unarchiving ' + title() + ' (' + err.body.sys.id + ')');
+          notification.serverError('Error unarchiving ' + title() + ' (' + err.body.sys.id + ')', err);
         else
           notification.info(title() + ' unarchived successfully');
       });
@@ -47,7 +47,7 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
     $scope.asset.unpublish(function (err) {
       $scope.$apply(function(scope){
         if (err) {
-          notification.error('Error unpublishing ' + title() + ' (' + err.body.sys.id + ')');
+          notification.serverError('Error unpublishing ' + title() + ' (' + err.body.sys.id + ')', err);
         } else {
           notification.info(title() + ' unpublished successfully');
           scope.otUpdateEntity();
@@ -97,7 +97,7 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
             reason = 'Can only publish most recent version';
           else
             reason = errorId;
-          notification.error('Error publishing ' + title() + ': ' + reason);
+          notification.serverError('Error publishing ' + title() + ': ' + reason, err);
         } else {
           notification.info(title() + ' published successfully');
         }
