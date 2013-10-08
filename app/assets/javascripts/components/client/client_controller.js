@@ -64,7 +64,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
       spaceId: space.data.sys.id,
       spaceName: space.data.name
     });
-    routing.gotoSpace(space);
+    routing.goToSpace(space);
   };
 
   $scope.$on('$routeChangeSuccess', function (event, route) {
@@ -100,7 +100,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     if (newSpace != scope.spaceContext.space) {
       // we need to change something
       if (routeSpaceId != newSpace.getId()) { // trigger switch by chaning location
-        routing.gotoSpace(newSpace);
+        routing.goToSpace(newSpace);
       } else { // location is already correct, just load the space
         setSpace(newSpace);
       }
