@@ -30,20 +30,17 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     analytics.track('Clicked Space-Switcher');
   };
 
-  $scope.$watch(function () {
-    return authentication.tokenLookup;
-  }, function (tokenLookup, old, scope) {
-    if (tokenLookup) {
-      // async because space is probably only updated after the next iteration
-      scope.$evalAsync(function () {
-        authorization.setTokenLookup(tokenLookup, scope.spaceContext.space);
-      });
+  $scope.$watchCollection(function (scope) {
+    return {
+      space: scope.spaceContext.space,
+      tokenLookup: authentication.tokenLookup
+    };
+  }, function (c) {
+    if (c.tokenLookup){
+      authorization.setTokenLookup(c.tokenLookup);
+      if (c.space && authorization.authContext.hasSpace(c.space.getId()))
+        authorization.setSpace(c.space);
     }
-  });
-
-  $scope.$watch('spaceContext.space', function (space) {
-    if(space && authorization.authContext.hasSpace(space.getId()))
-      authorization.setSpace(space);
   });
 
   function setSpace(space) {
@@ -85,17 +82,21 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     var newSpace;
 
     if (spaces === old) return; // $watch init
-    if (_.isEmpty(spaces)) return; // Empty Array, User has no Spaces
     if (routeSpaceId) {
       newSpace = _.find(spaces, function (space) { return space.getId() == routeSpaceId; });
       if (!newSpace) {
-        if (old === null) notification.error('Space not found');
+        if (old === null) notification.error('Space does not exist or is unaccessable');
         newSpace = spaces[0];
       }
     } else if (routing.getRoute().root) { // no Space requested, pick first
       newSpace = spaces[0];
     } else {
-      return; // we don't want to see a space
+      return; // we don't want to see a space (but the profile or something else)
+    }
+
+    if (!newSpace) {
+      $location.path('/');
+      return;
     }
     if (newSpace != scope.spaceContext.space) {
       // we need to change something
