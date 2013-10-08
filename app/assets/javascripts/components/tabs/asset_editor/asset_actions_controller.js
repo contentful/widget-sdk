@@ -1,4 +1,4 @@
-angular.module('contentful').controller('AssetActionsCtrl', function AssetActionsCtrl($scope, notification, can) {
+angular.module('contentful').controller('AssetActionsCtrl', function AssetActionsCtrl($scope, notification) {
   'use strict';
 
   // TODO If we are sure that the data in the asset has been updated from the ShareJS doc,
@@ -54,30 +54,6 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
         }
       });
     });
-  };
-
-  $scope.canDelete = function () {
-    return $scope.asset.canDelete() && can('delete', $scope.asset.data);
-  };
-
-  $scope.canArchive = function () {
-    return $scope.asset.canArchive() && can('archive', $scope.asset.data);
-  };
-
-  $scope.canUnarchive = function () {
-    return $scope.asset.canUnarchive() && can('unarchive', $scope.asset.data);
-  };
-
-  $scope.canUnpublish = function () {
-    return $scope.asset.canUnpublish() && can('unpublish', $scope.asset.data);
-  };
-
-  $scope.canPublish = function() {
-    if (!$scope.otDoc) return false;
-    var version = $scope.otDoc.version;
-    var publishedVersion = $scope.otDoc.getAt(['sys', 'publishedVersion']);
-    var updatedSincePublishing = version !== publishedVersion + 1;
-    return this.asset.canPublish() && (!publishedVersion || updatedSincePublishing) && can('publish', $scope.asset.data);
   };
 
   $scope.publish = function () {
