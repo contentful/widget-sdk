@@ -8,7 +8,11 @@ angular.module('contentful').run(function($window, $rootScope, $sce){
 
   // Listen to message from child window
   eventer(messageEvent, function(event) {
-    $sce.getTrustedResourceUrl(event.origin); // important security check
+    try{
+      $sce.getTrustedResourceUrl(event.origin); // important security check
+    } catch (e) {
+      return;
+    }
 
     if ($window.navigator.userAgent.match(/MSIE/)) {
       event = {
