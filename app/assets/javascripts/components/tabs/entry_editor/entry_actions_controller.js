@@ -1,4 +1,4 @@
-angular.module('contentful').controller('EntryActionsCtrl', function EntryActionsCtrl($scope, notification, can) {
+angular.module('contentful').controller('EntryActionsCtrl', function EntryActionsCtrl($scope, notification) {
   'use strict';
 
   // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,
@@ -69,34 +69,6 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
         }
       });
     });
-  };
-
-  $scope.canDuplicate = function () {
-    return $scope.can('create', 'Entry');
-  };
-
-  $scope.canDelete = function () {
-    return $scope.entry.canDelete() && can('delete', $scope.entry.data);
-  };
-
-  $scope.canArchive = function () {
-    return $scope.entry.canArchive() && can('archive', $scope.entry.data);
-  };
-
-  $scope.canUnarchive = function () {
-    return $scope.entry.canUnarchive() && can('unarchive', $scope.entry.data);
-  };
-
-  $scope.canUnpublish = function () {
-    return $scope.entry.canUnpublish() && can('unpublish', $scope.entry.data);
-  };
-
-  $scope.canPublish = function() {
-    if (!$scope.otDoc) return false;
-    var version = $scope.otDoc.version;
-    var publishedVersion = $scope.otDoc.getAt(['sys', 'publishedVersion']);
-    var updatedSincePublishing = version !== publishedVersion + 1;
-    return this.entry.canPublish() && (!publishedVersion || updatedSincePublishing) && can('publish', $scope.entry.data);
   };
 
   $scope.publish = function () {

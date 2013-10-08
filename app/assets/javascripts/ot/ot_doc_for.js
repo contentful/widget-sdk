@@ -69,7 +69,7 @@ angular.module('contentful').directive('otDocFor', function () {
 
   $scope.$watch('otDoc', function (otDoc, old, scope) {
     if (old) {
-      old.removeListener('remoteOp', remoteOpListener);
+      old.removeListener('remoteop', remoteOpListener);
     }
     if (otDoc) {
       otDoc.on('remoteop', remoteOpListener);

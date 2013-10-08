@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorCtrl($scope, validation, can) {
+angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorCtrl($scope, validation, can, addCanMethods) {
   $scope.$watch('tab.params.entry', 'entry=tab.params.entry');
   $scope.$watch(function entryEditorEnabledWatcher(scope) {
     return !scope.entry.isArchived() && can('update', scope.entry.data);
@@ -33,6 +33,8 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     var locales = $scope.spaceContext.space.getPublishLocales(); // TODO: watch this, too
     $scope.entrySchema = validation.fromContentType(data, locales);
   });
+
+  addCanMethods($scope, 'entry');
 
   // TODO This can probably be removed since we always keep the entity in sync
   $scope.publishedAt = function(){

@@ -1,6 +1,7 @@
 .file-info
-  .file-preview(ng-show="file && file.url" cf-file-preview="file" preview-size="fullscreen")
+  .file-preview(cf-file-preview="" ng-show="file && file.url" preview-size="fullscreen")
     .vcenter(cf-thumbnail="file" ng-show="file.url")
+    .unpublished(ng-show="canPublish()" tooltip-placement="right" tooltip="This asset hasn't been published")
 
   .file-progress.progress.center(ng-show="file|isFileProcessing")
     %p Processing…
@@ -27,7 +28,7 @@
     Asset has no file
 
   .file-buttons
-    %button.default-button.go-to-asset(type="button" ng-click="naviagor.entityEditor(entity).goTo()" ng-show="!enableUpload" tooltip="Go to Asset")
+    %button.default-button.go-to-asset(type="button" ng-click="navigator.entityEditor(entity).goTo()" ng-show="!enableUpload" tooltip="Go to Asset")
       %i.ss-action
     %a.default-button.download-file(type="button" href="{{file.url}}" target="_blank" ng-show="file|isFileReady" tooltip="Download file")
       %i.ss-download

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  controller('ContentTypeActionsCtrl', function ContentTypeActionsCtrl($scope, notification, analytics, can) {
+  controller('ContentTypeActionsCtrl', function ContentTypeActionsCtrl($scope, notification, analytics) {
 
   // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,
   // We can query the entry instead of reimplementing the checks heere
@@ -22,28 +22,6 @@ angular.module('contentful').
         scope.spaceContext.removeContentType($scope.contentType);
       });
     });
-  };
-
-  $scope.canUnpublish = function() {
-    return $scope.contentType.canUnpublish() && can('unpublish', $scope.contentType.data);
-  };
-
-  $scope.canDelete = function() {
-    return $scope.contentType.canDelete() && can('delete', $scope.contentType.data);
-  };
-
-  $scope.canPublish = function() {
-    if (!$scope.otDoc) return false;
-    var version = $scope.otDoc.version;
-    var publishedVersion = $scope.otDoc.getAt(['sys', 'publishedVersion']);
-    var notPublishedYet = !publishedVersion;
-    var updatedSincePublishing = version !== publishedVersion + 1;
-    var hasFields = $scope.otDoc.getAt(['fields']).length > 0;
-    return $scope.contentType.canPublish() &&
-      (notPublishedYet || updatedSincePublishing) &&
-      hasFields &&
-      can('publish', $scope.contentType.data) &&
-      $scope.validationResult.valid;
   };
 
   $scope.publish = function () {

@@ -2,15 +2,20 @@
 
 angular.module('contentful').directive('cfFilePreview', function ($compile, $window, $document) {
   return {
-    scope: {
-      file: '=cfFilePreview'
-    },
+    scope: true,
     link: function (scope, elem, attrs) {
       var $preview;
       var xOffset, yOffset;
       var maxWidth, maxHeight;
       var windowWidth, windowHeight, windowGap = 100;
       var fullscreen = attrs.previewSize == 'fullscreen';
+
+      attrs.$observe('file', function (val) {
+        if(val) scope.file = scope.$eval(val);
+      });
+      attrs.$observe('asset', function (val) {
+        if(val) scope.asset = scope.$eval(val);
+      });
 
       if (fullscreen) {
         elem.on('click', showFullscreen);

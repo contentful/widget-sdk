@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeEditorCtrl', function ContentTypeEditorCtrl($scope, validation, can, notification, analytics) {
+angular.module('contentful').controller('ContentTypeEditorCtrl', function ContentTypeEditorCtrl($scope, validation, can, notification, analytics, addCanMethods) {
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
 
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
@@ -40,6 +40,23 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
   }, function (modified, old, scope) {
     if (modified !== undefined) scope.tab.dirty = modified;
   });
+
+  addCanMethods($scope, 'contentType', {
+    canPublish: function() {
+      if (!$scope.otDoc) return false;
+      var version = $scope.otDoc.version;
+      var publishedVersion = $scope.otDoc.getAt(['sys', 'publishedVersion']);
+      var notPublishedYet = !publishedVersion;
+      var updatedSincePublishing = version !== publishedVersion + 1;
+      var hasFields = $scope.otDoc.getAt(['fields']).length > 0;
+      return $scope.contentType.canPublish() &&
+        (notPublishedYet || updatedSincePublishing) &&
+        hasFields &&
+        can('publish', $scope.contentType.data) &&
+        $scope.validationResult.valid;
+    }
+  });
+
 
 
   function loadPublishedContentType() {

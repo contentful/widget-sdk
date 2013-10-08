@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorCtrl($scope, validation, can, AssetContentType, notification) {
+angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorCtrl($scope, validation, can, AssetContentType, notification, addCanMethods) {
   $scope.$watch('tab.params.asset', 'asset=tab.params.asset');
   $scope.$watch(function assetEditorEnabledWatcher(scope) {
     return !scope.asset.isArchived() && can('update', scope.asset.data);
@@ -27,6 +27,8 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
   $scope.$on('otRemoteOp', function (event) {
     event.currentScope.otUpdateEntity();
   });
+
+  addCanMethods($scope, 'asset');
 
   $scope.assetSchema = validation.schemas.Asset($scope.spaceContext.space.getPublishLocales());
 
