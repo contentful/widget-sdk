@@ -38,7 +38,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   }, function (c) {
     if (c.tokenLookup){
       authorization.setTokenLookup(c.tokenLookup);
-      if (c.space && authorization.authContext.hasSpace(c.space.getId()))
+      if (c.space && authorization.authContext && authorization.authContext.hasSpace(c.space.getId()))
         authorization.setSpace(c.space);
     }
   });
