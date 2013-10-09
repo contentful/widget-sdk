@@ -33,7 +33,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       var spaceScope = angular.element('space-view').scope();
       var tutorialScope = spaceScope.$new();
 
-      tutorialScope.goto = function (id) {
+      tutorialScope.goTo = function (id) {
         var current = guiders._guiderById(guiders._currentGuiderID);
         var next    = guiders._guiderById(id);
         var omitHidingOverlay = current.overlay && next.overlay;

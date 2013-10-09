@@ -36,11 +36,11 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
         }
       },
 
-      gotoSpace: function (space) {
+      goToSpace: function (space) {
         if (space) $location.path('/spaces/'+space.getId());
       },
 
-      gotoTab : function (tab, space) {
+      goToTab : function (tab, space) {
         $location.path(this.makeLocation(tab, space));
       },
 
