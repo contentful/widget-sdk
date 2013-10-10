@@ -43,7 +43,7 @@ angular.module('contentful').
 
   $scope.visibleInCurrentList = function(asset){
     if($scope.tab.params.list in $scope.mimetypeGroups && $scope.tab.params.list !== 'attachment'){
-      var fields = asset.data.fields;
+      var fields = asset.data && asset.data.fields;
       if(fields && fields.file){
         return _.some(fields.file, function (locale) {
           return locale && mimetype.getGroupName(
