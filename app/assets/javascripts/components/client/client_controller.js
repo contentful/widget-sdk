@@ -55,8 +55,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   };
 
   $scope.selectSpace = function(space) {
-    if (space && $scope.getCurrentSpaceId() === space.getId()) return;
-    
+    if (space && $scope.getCurrentSpaceId() === space.getId() || !space) return;
     analytics.track('Switched Space', {
       spaceId: space.getId(),
       spaceName: space.data.name
