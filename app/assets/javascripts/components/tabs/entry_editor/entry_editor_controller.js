@@ -129,7 +129,7 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
       if (error.path.length == 1 && error.path[0] == 'fields') {
         $scope.hasErrorOnFields = error.path.length == 1 && error.path[0] == 'fields';
       } else if (error.path.length == 2) {
-        var locales = field.localized ? $scope.spaceContext.publishLocales : [$scope.spaceContext.space.getDefaultLocale()];
+        var locales = (field && field.localized) ? $scope.spaceContext.publishLocales : [$scope.spaceContext.space.getDefaultLocale()];
         var allCodes = _.pluck(locales, 'code');
         errorPaths[fieldId].push.apply(errorPaths[fieldId], allCodes);
       } else {
