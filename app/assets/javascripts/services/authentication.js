@@ -1,4 +1,4 @@
-angular.module('contentful').provider('authentication', function AuthenticationProvider(environment, contentfulClient) {
+angular.module('contentful').provider('authentication', function AuthenticationProvider(environment, contentfulClient, sentry) {
   /*global moment*/
   'use strict';
 
@@ -86,16 +86,16 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
     getTokenLookup: function(callback) {
       if (this.redirectingToLogin) {
-        console.log('redirection to login in process during getTokenLookup. Not executing');
+        sentry.captureError('redirection to login in process during getTokenLookup. Not executing');
         return;
       }
-      var self= this;
+      var self = this;
       if (this.tokenLooukp) {
         _.defer(callback, this.tokenLooukp);
       } else {
         this.client.getTokenLookup(function (err, data) {
           if (err) {
-            console.warn('Error during token lookup', err, data);
+            sentry.captureError('Error during token lookup', err, data);
             //if (environment.env === 'development') {
               //if (window.confirm('Error during token lookup, logout?')) self.logout();
               //return;

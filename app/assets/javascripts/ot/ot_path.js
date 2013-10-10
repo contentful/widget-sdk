@@ -57,8 +57,8 @@ angular.module('contentful').directive('otPath', function(ShareJS, cfSpinner) {
               });
             });
           }
-        } else {
-          console.error('No otDoc to push %o to', value);
+        //} else {
+          //console.error('No otDoc to push %o to', value);
         }
       };
 
