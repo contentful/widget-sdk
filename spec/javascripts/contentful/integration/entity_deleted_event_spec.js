@@ -71,7 +71,7 @@ describe('Content Type Actions controller', function () {
     module('contentful/test');
     inject(function ($rootScope, $controller) {
       scope = $rootScope.$new();
-      removedEntity = window.createMockEntity('content_type1');
+      removedEntity = window.createMockEntity('content_type1', 'contentType');
       scope.contentType = removedEntity;
 
       // Space Controller necessary for space broadcast method

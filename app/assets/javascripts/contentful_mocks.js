@@ -118,7 +118,7 @@ mocks.factory('PromisedLoader', function () {
   return SpecPromisedLoader;
 });
 
-window.createMockEntity = function (id, contentType) {
+window.createMockEntity = function (id, contentType, entityType) {
   return {
     getId: function () {
       return id;
@@ -126,6 +126,12 @@ window.createMockEntity = function (id, contentType) {
     // mock for api keys
     getName: function () {
       return id;
+    },
+    getType: function () {
+      return entityType;
+    },
+    getPublishedVersion: function () {
+      return this.data.sys.publishedVersion;
     },
     data: {
       sys: {
@@ -147,7 +153,6 @@ window.createMockEntity = function (id, contentType) {
     'delete': function (fn) {
       fn(null, this);
     },
-    isDeleted: sinon.stub().returns(false),
     getContentTypeId: function () {
       return contentType;
     }
