@@ -47,14 +47,14 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     }
   };
 
-  $scope.$watch('entry.data.sys.publishedVersion', function (publishedVersion, oldVersion, scope) {
+  $scope.$watch('entry.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {
     if (publishedVersion > oldVersion) scope.validate();
   });
 
   $scope.$watch(function (scope) {
     if (scope.otDoc && scope.entry) {
-      if (angular.isDefined(scope.entry.data.sys.publishedVersion))
-        return scope.otDoc.version > scope.entry.data.sys.publishedVersion + 1;
+      if (angular.isDefined(scope.entry.getPublishedVersion()))
+        return scope.otDoc.version > scope.entry.getPublishedVersion() + 1;
       else
         return 'draft';
     } else {

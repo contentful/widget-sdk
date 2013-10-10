@@ -72,9 +72,9 @@
               %span {{file|fileType}}
               %span.extension {{file|fileExtension}}
             %td.cell-updated
-              %date.relative(datetime="{{asset.data.sys.updatedAt}}")
+              %date.relative(datetime="{{asset.getUpdatedAt()}}")
             %td.cell-by
-              %span.cf-user(link="asset.data.sys.updatedBy" as="updater") {{updater.getName()}}
+              %span.cf-user(link="asset.getUpdatedBy()" as="updater") {{updater.getName()}}
             %td.cell-status(ng-class="statusClass(asset)")
               .draft-wrapper
                 %span {{statusClass(asset)}}

@@ -80,7 +80,7 @@ angular.module('contentful').
   $scope.publishButtonLabel = function () {
     var publishedAt = null;
     try {
-      publishedAt = $scope.contentType.data.sys.publishedAt;
+      publishedAt = $scope.contentType.getPublishedAt();
     } catch (e) { }
 
     if (publishedAt) {

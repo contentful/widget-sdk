@@ -22,7 +22,7 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
   };
 
   $scope.duplicate = function() {
-    var contentType = $scope.entry.data.sys.contentType.sys.id;
+    var contentType = $scope.entry.getSys().contentType.sys.id;
     var data = _.omit($scope.entry.data, 'sys');
 
     $scope.spaceContext.space.createEntry(contentType, data, function(err, entry){

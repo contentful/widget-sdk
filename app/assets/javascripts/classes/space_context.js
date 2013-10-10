@@ -89,7 +89,7 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
                   .sortBy(function(ct) { return ct.getName().trim().toLowerCase(); })
                   .value();
                 self._publishedContentTypesHash = _(self.publishedContentTypes).map(function(ct) {
-                  return [ct.data.sys.id, ct];
+                  return [ct.getId(), ct];
                 }).object().valueOf();
                 _.each(self._publishedContentTypesHash, function (val, id) {
                   self._publishedContentTypeIsMissing[id] = false;

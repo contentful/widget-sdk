@@ -24,7 +24,7 @@
     %div(ng-show="spaceContext.publishedContentTypes.length > 0")
       %header Content Types
       %ul.filter-list
-        %li(ng-class="{active: tab.params.contentTypeId == contentType.data.sys.id}"
+        %li(ng-class="{active: tab.params.contentTypeId == contentType.getId()}"
             ng-repeat="contentType in spaceContext.publishedContentTypes"
             ng-click="switchList('contentType', contentType)")
           %span {{contentType.getName()}}
@@ -67,9 +67,9 @@
             %td.cell-name
               %span {{spaceContext.entryTitle(entry)}}
             %td.cell-updated
-              %date.relative(datetime="{{entry.data.sys.updatedAt}}")
+              %date.relative(datetime="{{entry.getUpdatedAt()}}")
             %td.cell-by
-              %span.cf-user(link="entry.data.sys.updatedBy" as="updater") {{updater.getName()}}
+              %span.cf-user(link="entry.getUpdatedBy()" as="updater") {{updater.getName()}}
             %td.cell-status(ng-class="statusClass(entry)")
               .draft-wrapper
                 %span {{statusClass(entry)}}

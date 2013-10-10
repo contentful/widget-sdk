@@ -58,7 +58,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     if (space && $scope.getCurrentSpaceId() === space.getId()) return;
     
     analytics.track('Switched Space', {
-      spaceId: space.data.sys.id,
+      spaceId: space.getId(),
       spaceName: space.data.name
     });
     routing.goToSpace(space);

@@ -43,14 +43,14 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
     }
   };
 
-  $scope.$watch('asset.data.sys.publishedVersion', function (publishedVersion, oldVersion, scope) {
+  $scope.$watch('asset.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {
     if (publishedVersion > oldVersion) scope.validate();
   });
 
   $scope.$watch(function (scope) {
     if (scope.otDoc && scope.asset) {
-      if (angular.isDefined(scope.asset.data.sys.publishedVersion))
-        return scope.otDoc.version > scope.asset.data.sys.publishedVersion + 1;
+      if (angular.isDefined(scope.asset.getPublishedVersion()))
+        return scope.otDoc.version > scope.asset.getPublishedVersion() + 1;
       else
         return 'draft';
     } else {

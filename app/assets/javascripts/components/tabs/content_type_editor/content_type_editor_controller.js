@@ -33,7 +33,7 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
 
   $scope.$watch(function contentTypeModifiedWatcher(scope) {
     if (scope.otDoc && scope.contentType) {
-      return scope.otDoc.version > scope.contentType.data.sys.publishedVersion + 1;
+      return scope.otDoc.version > scope.contentType.getPublishedVersion() + 1;
     } else {
       return undefined;
     }
@@ -58,10 +58,9 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
   });
 
 
-
   function loadPublishedContentType() {
     // TODO replace with lookup in registry inside spaceContext
-    $scope.contentType.getPublishedVersion(function(err, publishedContentType) {
+    $scope.contentType.getPublishedStatus(function(err, publishedContentType) {
       $scope.$apply(function(scope) {
         scope.publishedContentType = publishedContentType;
       });

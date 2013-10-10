@@ -91,6 +91,13 @@ angular.module('contentful').directive('otDocFor', function () {
     if (entity && $scope.otDoc) {
       //console.log('otUpdateEntity did update', entity.data, $scope.otDoc.snapshot);
       var data = _.cloneDeep($scope.otDoc.snapshot);
+      if(!data) {
+        throw new Error('Failed to update entity: data not available');
+      }
+      if(!data.sys) {
+        throw new Error('Failed to update entity: sys not available');
+      }
+
       data.sys.version = $scope.otDoc.version;
       data.sys.updatedAt = moment().toISOString();
       entity.update(data);

@@ -34,7 +34,7 @@ angular.module('contentful').factory('Selection', function(analytics){
       } else {
         this._remove(entity);
       }
-      analytics.track('Selected Entity', {entity: entity.data.sys.type, id: entity.data.sys.id });
+      analytics.track('Selected Entity', {entity: entity.getType(), id: entity.getId() });
     },
 
     remove: function(entity) {
@@ -43,7 +43,7 @@ angular.module('contentful').factory('Selection', function(analytics){
       } else {
         this._add(entity);
       }
-      analytics.track('Deselected Entity', {entity: entity.data.sys.type, id: entity.data.sys.id });
+      analytics.track('Deselected Entity', {entity: entity.getType(), id: entity.getId() });
     },
 
     toggle: function(entity) {
