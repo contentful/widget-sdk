@@ -65,7 +65,7 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
         currentSection: scope.spaceContext.tabList.currentSection(),
         currentViewType: scope.spaceContext.tabList.currentViewType(),
         entityType: 'asset',
-        entitySubType: asset.getId()
+        entitySubType: asset && asset.getId()
       });
     });
   };
