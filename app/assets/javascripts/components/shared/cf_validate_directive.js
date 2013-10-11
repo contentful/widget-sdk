@@ -66,6 +66,8 @@ angular.module('contentful').directive('cfValidate', function (validation) {
 
       $scope.setValidationResult = function (schemaErrors, data, schema) {
         var errors = _.reject(schemaErrors, function (error) {
+          assert.truthy(error, 'Validation error is undefined');
+          assert.path(error, 'path', 'Validation error path does not exist');
           return error.path[error.path.length-1] == '$$hashKey';
         });
         var valid = _.isEmpty(errors);
