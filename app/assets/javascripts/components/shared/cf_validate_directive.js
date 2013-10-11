@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfValidate', function (validation) {
+angular.module('contentful').directive('cfValidate', function (validation, assert) {
   return {
     restrict: 'A',
     scope: true,
