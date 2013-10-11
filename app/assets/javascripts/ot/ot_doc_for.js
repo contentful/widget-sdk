@@ -40,7 +40,15 @@ angular.module('contentful').directive('otDocFor', function () {
     if (entity) {
       ShareJS.open(entity, function(err, doc) {
         scope.$apply(function(scope){
-          if (!err) {
+          if(err || !doc){
+            scope.otDoc = null;
+            sentry.captureError('Failed to open sharejs doc', {
+              extra: {
+                entity: entity,
+                err: err
+              }
+            });
+          } else {
               if (shouldDocBeOpen(scope)) {
                 //console.log('otDocFor installing doc %o for entity %o', doc, entity);
                 //console.log('setting doc to %o (id: %o) in scope %o', doc.name, doc.snapshot.sys.id, scope.$id);
@@ -49,9 +57,6 @@ angular.module('contentful').directive('otDocFor', function () {
               } else {
                 doc.close();
               }
-          } else {
-            scope.otDoc = null;
-            //console.log('otDocFor error opening docfor entity %o', doc.state, doc, entity);
           }
         });
       });
