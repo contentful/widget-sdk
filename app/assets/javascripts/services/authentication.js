@@ -1,10 +1,11 @@
-angular.module('contentful').provider('authentication', function AuthenticationProvider(environment, contentfulClient, sentry) {
+angular.module('contentful').provider('authentication', function AuthenticationProvider(environment, contentfulClient) {
   /*global moment*/
   'use strict';
 
   var authApp  = '//'+environment.settings.base_host+'/';
   var QueryLinkResolver = contentfulClient.QueryLinkResolver;
   var $location;
+  var sentry;
 
   this.authApp= function(e) {
     authApp = e;
@@ -132,8 +133,9 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
   };
 
-  this.$get = function(client, _$location_){
+  this.$get = function(client, _$location_, _sentry_){
     $location = _$location_;
+    sentry = _sentry_;
     return new Authentication(client);
   };
 
