@@ -12,9 +12,9 @@ angular.module('contentful').directive('cfLinkEditor', function(){
         }
       };
 
-      scope.linkMultiple = !!attrs.cfLinkEditor.match(/entries|assets/);
+      scope.linkMultiple = !!attrs.linkMultiple;
       scope.linkSingle   = !scope.linkMultiple;
-      scope.linkType     = attrs.cfLinkEditor.match(/entr/) ? 'Entry' : 'Asset';
+      scope.linkType     = scope.$eval(attrs.cfLinkEditor);
       scope.fetchMethod  = scope.linkType === 'Entry' ? 'getEntries' : 'getAssets';
 
 

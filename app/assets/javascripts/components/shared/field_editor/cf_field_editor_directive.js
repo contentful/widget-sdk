@@ -18,10 +18,11 @@
 // otValueChanged
 //   ngModelSet(scope, incomingValue)
 
-angular.module('contentful').directive('cfFieldEditor', function(widgets, $compile, $log, $parse) {
+angular.module('contentful').directive('cfFieldEditor', function($compile, $log, $parse) {
   return {
     restrict: 'C',
     require: '^otPath',
+    template: JST['cf_field_editor'](),
     link: function(scope, elm, attr) {
       // Write back local value changes to the entity
       // Necessary because the widgets can't access the entry directly, only the value variable
@@ -81,11 +82,6 @@ angular.module('contentful').directive('cfFieldEditor', function(widgets, $compi
         }
         return entity.data.fields[scope.field.id][scope.locale.code];
       }
-
-      var widget = widgets.editor(scope.field.type, attr.editor);
-      elm.html(widget.template);
-      $compile(elm.contents())(scope);
-      if(typeof widget.link === 'function') widget.link(scope, elm, attr);
     }
   };
 });
