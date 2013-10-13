@@ -9,7 +9,7 @@ angular.module('contentful').directive('cfFileInfo', function () {
       attrs.$observe('file', function (val) {
         if(val) scope.file = scope.$eval(val);
       });
-      attrs.$observe('entityTitle', function (val) {
+      scope.$watch(attrs.entityTitle, function (val) {
         if(val) scope.title = val;
       });
 
