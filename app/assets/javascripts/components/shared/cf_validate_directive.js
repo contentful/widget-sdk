@@ -7,18 +7,6 @@ angular.module('contentful').directive('cfValidate', function (validation, asser
     controller: function ($scope, $attrs) {
       $scope.validationResult = {};
 
-      if (!angular.isDefined($attrs.validateManually)) {
-        $scope.$watch(getSchema, function (schema) {
-          var data = getData();
-          validate(data, schema);
-        });
-
-        $scope.$watch(getData, function(data) {
-          var schema = getSchema();
-          validate(data, schema);
-        }, true);
-      }
-
       $scope.validate = function () {
         validate(getData(), getSchema());
         return $scope.validationResult.valid;
