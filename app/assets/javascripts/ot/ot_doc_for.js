@@ -107,7 +107,12 @@ angular.module('contentful').directive('otDocFor', function () {
       data.sys.updatedAt = moment().toISOString();
       entity.update(data);
     } else {
-      sentry.captureError('otUpdateEntity did not update');
+      sentry.captureError('otUpdateEntity did not update', {
+        extra: {
+          entity: entity,
+          otDoc: $scope.otDoc
+        }
+      });
     }
   };
 
