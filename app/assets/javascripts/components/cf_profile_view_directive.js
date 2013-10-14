@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfProfileView', function($window, $rootScope, authentication, routing){
+angular.module('contentful').directive('cfProfileView', function($window, $rootScope, authentication, routing, sentry){
   return {
     template: JST['iframe_view'](),
     restrict: 'C',
@@ -14,7 +14,15 @@ angular.module('contentful').directive('cfProfileView', function($window, $rootS
 
       scope.$on('iframeMessage', function (event, messageEvent) {
         if (messageEvent.source !== $('iframe', elem)[0].contentWindow) return;
-        pathChanged(messageEvent.data.path);
+        if(messageEvent.data.path){
+          pathChanged(messageEvent.data.path);
+        } else {
+          sentry.captureError('iframeMessage path is not defined', {
+            extra: {
+              messageEvent: messageEvent
+            }
+          });
+        }
       });
 
       function update(route, previous) {
