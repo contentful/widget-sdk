@@ -2,20 +2,27 @@
 angular.module('contentful').directive('cfNumberEditor', function(){
   return {
     restrict: 'C',
-    template: '<input type="text" ng-model="fieldData.value" ot-bind-model ng-disabled="!otEditable">',
-    replace: true,
-    require: 'ngModel',
-    link: function(scope, elem, attr, ngModel){
+    template: '<input type="text" ng-model="fieldData.value" ot-bind-model ng-disabled="!otEditable"><i cf-field-alert="{{parseWarning}}" tooltip-placement="left"></i>',
+    link: function(scope, elem){
+      var ngModel = elem.find('input').controller('ngModel');
       ngModel.$parsers.push(function (viewValue) {
         var floatVal = parseFloat(viewValue, 10);
         var intVal   = parseInt(viewValue, 10);
+        var modelVal;
         if (scope.field.type === 'Integer' && floatVal !== intVal) {
           ngModel.$setValidity('integer', false);
         } else {
           ngModel.$setValidity('integer', true);
         }
-        return scope.field.type === 'Integer' ? intVal : floatVal;
+        modelVal = scope.field.type === 'Integer' ? intVal : floatVal;
+        if (modelVal.toString() !== viewValue) {
+          scope.parseWarning = 'Recognized value: ' + modelVal;
+        } else {
+          scope.parseWarning = '';
+        }
+        return modelVal;
       });
+
     }
   };
 });

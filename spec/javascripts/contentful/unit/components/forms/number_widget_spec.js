@@ -17,7 +17,7 @@ describe('Number widgets', function () {
     }));
 
     it('should generate 0', function () {
-      elem.val('0').trigger('input');
+      elem.find('input').val('0').trigger('input');
       scope.$apply();
       expect(scope.fieldData.value).toBe(0);
     });
@@ -30,7 +30,7 @@ describe('Number widgets', function () {
     }));
 
     it('should generate 0', function () {
-      elem.val('0').trigger('input');
+      elem.find('input').val('0').trigger('input');
       scope.$apply();
       expect(scope.fieldData.value).toBe(0);
     });

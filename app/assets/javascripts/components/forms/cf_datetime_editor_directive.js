@@ -97,9 +97,15 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse, zone
       };
 
       scope.$watch(function () {
-        return !ngModelCtrl.$modelValue && !_.isEmpty(timeController.$viewValue);
+        return !ngModelCtrl.$modelValue && !_.isEmpty(timeController.$modelValue);
       }, function (invalid, old, scope) {
         scope.dateInvalid = invalid;
+      });
+
+      scope.$watch(function () {
+        return timeController.$error.pattern;
+      }, function (invalid, old, scope) {
+        scope.timeInvalid = invalid;
       });
 
       scope.$on('otValueChanged', function(event, path, value) {
