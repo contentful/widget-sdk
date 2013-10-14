@@ -10,11 +10,11 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
       var windowWidth, windowHeight, windowGap = 100;
       var fullscreen = attrs.previewSize == 'fullscreen';
 
-      attrs.$observe('file', function (val) {
-        if(val) scope.file = scope.$eval(val);
+      scope.$watch(attrs.file, function (val) {
+        if(val) scope.file = val;
       });
-      attrs.$observe('asset', function (val) {
-        if(val) scope.asset = scope.$eval(val);
+      scope.$watch(attrs.asset, function (val) {
+        if(val) scope.asset = val;
       });
 
       if (fullscreen) {

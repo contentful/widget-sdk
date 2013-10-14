@@ -6,8 +6,8 @@ angular.module('contentful').directive('cfFileInfo', function () {
     template: JST['cf_file_info'],
     scope: true,
     link: function (scope, elem, attrs) {
-      attrs.$observe('file', function (val) {
-        if(val) scope.file = scope.$eval(val);
+      scope.$watch(attrs.file, function (val) {
+        if(val) scope.file = val;
       });
       scope.$watch(attrs.entityTitle, function (val) {
         if(val) scope.title = val;
