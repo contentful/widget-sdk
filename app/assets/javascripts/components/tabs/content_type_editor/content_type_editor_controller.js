@@ -52,8 +52,7 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
       return $scope.contentType.canPublish() &&
         (notPublishedYet || updatedSincePublishing) &&
         hasFields &&
-        can('publish', $scope.contentType.data) &&
-        $scope.validationResult.valid;
+        can('publish', $scope.contentType.data);
     }
   });
 
@@ -67,6 +66,14 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
     });
   }
 
+  var firstValidate = $scope.$on('otBecameEditable', function (event) {
+    var scope = event.currentScope;
+    if (!_.isEmpty(scope.contentType.data.fields)) scope.validate();
+    firstValidate();
+    firstValidate = null;
+  });
+
+
   $scope.updatePublishedContentType = function (publishedContentType) {
     $scope.publishedContentType = publishedContentType;
   };
@@ -78,10 +85,6 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
   $scope.$watch('publishedContentType.data.fields', function (fields, old, scope) {
     scope.publishedIds = _.pluck(fields, 'id');
   });
-
-  $scope.canPublish = function() {
-    return !!$scope.otDoc;
-  };
 
   $scope.$watch('contentType.getName()', function(title) {
     $scope.tab.title = title;

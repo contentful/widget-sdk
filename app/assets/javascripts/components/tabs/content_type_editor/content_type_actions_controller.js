@@ -27,6 +27,10 @@ angular.module('contentful').
   $scope.publish = function () {
     var version = $scope.otDoc.version;
     var verb = $scope.contentType.isPublished() ? 'updated' : 'activated';
+    if (!$scope.validate()) {
+      notification.error('Error activating ' + title() + ': ' + 'Validation failed');
+      return;
+    }
     $scope.contentType.publish(version, function (err, publishedContentType) {
       $scope.$apply(function(scope){
         if (err) {
@@ -34,9 +38,10 @@ angular.module('contentful').
           var reason = errorId;
           if (errorId === 'validationFailed')
             reason = 'Validation failed';
+            scope.setValidationErrors(err.body.details.errors);
           if (errorId === 'versionMismatch')
-            reason = 'Can only publish most recent version';
-          return notification.serverError('Error publishing ' + title() + ': ' + reason, err);
+            reason = 'Can only activate most recent version';
+          return notification.serverError('Error activating ' + title() + ': ' + reason, err);
         }
 
         notification.info(title() + ' ' + verb + ' successfully');
@@ -78,12 +83,7 @@ angular.module('contentful').
   };
 
   $scope.publishButtonLabel = function () {
-    var publishedAt = null;
-    try {
-      publishedAt = $scope.contentType.getPublishedAt();
-    } catch (e) { }
-
-    if (publishedAt) {
+    if ($scope.contentType && $scope.contentType.isPublished()) {
       return 'Update';
     } else {
       return 'Activate';

@@ -39,7 +39,7 @@
                  placeholder="Content Type Name (e.g. Product)"
                  ng-model="contentType.data.name"
                  ot-bind-text="")
-        .cf-form-box-error(cf-error-path="['name']" ng-show="1 < otDoc.version && hasErrors")
+        .cf-form-box-error(cf-error-path="['name']")
     .form-field
       %label Description
       .form-controls(ot-path="['description']" ot-subdoc)
@@ -71,6 +71,7 @@
             %i.ss-plus.button-icon
             Add Field
           .dropdown-menu.type-menu(select-type="addField(type)")
+        .cf-form-box-error(cf-error-path="['fields']")
 .tab-actions(ng-controller="ContentTypeActionsCtrl")
   .button-set
     %button.default-button.delete(type="button"
@@ -83,7 +84,7 @@
                    ng-click="delete()"
                    tooltip="Delete this Content Type")
       Delete
-    %button.default-button.primary-button.publish(ng-disabled="!canPublish()"
+    %button.default-button.primary-button.publish(
                     ng-click="publish()"
                     tooltip="Make this Content Type available to editors")
       {{publishButtonLabel()}}
