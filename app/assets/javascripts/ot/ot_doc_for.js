@@ -53,6 +53,7 @@ angular.module('contentful').directive('otDocFor', function () {
                 //console.log('otDocFor installing doc %o for entity %o', doc, entity);
                 //console.log('setting doc to %o (id: %o) in scope %o', doc.name, doc.snapshot.sys.id, scope.$id);
                 scope.otDoc = doc;
+                setVersionUpdater();
                 updateIfValid();
               } else {
                 doc.close();
@@ -94,7 +95,6 @@ angular.module('contentful').directive('otDocFor', function () {
     /*global moment */
     var entity = otGetEntity();
     if (entity && $scope.otDoc) {
-      //console.log('otUpdateEntity did update', entity.data, $scope.otDoc.snapshot);
       var data = _.cloneDeep($scope.otDoc.snapshot);
       if(!data) {
         throw new Error('Failed to update entity: data not available');
@@ -119,7 +119,6 @@ angular.module('contentful').directive('otDocFor', function () {
   $scope.$on('$destroy', function (event) {
     var scope = event.currentScope;
     if (scope.otDoc) {
-      //console.log('otDocFor Controller destroyed, removing listener and otDoc');
       scope.otDoc.removeListener(remoteOpListener);
       remoteOpListener = null;
       try {
@@ -135,6 +134,15 @@ angular.module('contentful').directive('otDocFor', function () {
     if ($scope.$eval('otDoc.snapshot.sys.id')) {
       $scope.otUpdateEntity();
     }
+  }
+
+  function updateHandler(){
+    $scope.otGetEntity().setVersion($scope.otDoc.version);
+  }
+
+  function setVersionUpdater() {
+    $scope.otDoc.on('acknowledge', updateHandler);
+    $scope.otDoc.on('remoteop', updateHandler);
   }
 
 });
