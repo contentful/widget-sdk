@@ -112,33 +112,11 @@ angular.module('contentful').constant('sampleContentTypes', {
     {
       'fields': [
         {
-          'id': 'title',
-          'name': 'Title',
-          'type': 'Text',
-          'required': true,
-          'localized': false
-        },
-        {
           'id': 'question',
           'name': 'Question',
           'type': 'Text',
           'required': true,
           'localized': false
-        },
-        {
-          'id': 'level',
-          'name': 'Level',
-          'type': 'Integer',
-          'required': true,
-          'localized': false,
-          'validations': [
-            {
-              'range': {
-                'min': 1,
-                'max': 15
-              }
-            }
-          ]
         },
         {
           'id': 'answer1',
@@ -158,52 +136,13 @@ angular.module('contentful').constant('sampleContentTypes', {
           'id': 'answer3',
           'name': 'Answer 3',
           'type': 'Text',
-          'required': true,
           'localized': false
         },
         {
           'id': 'answer4',
           'name': 'Answer 4',
           'type': 'Text',
-          'required': true,
           'localized': false
-        },
-        {
-          'id': 'tag',
-          'name': 'Tag',
-          'type': 'Symbol',
-          'required': true,
-          'localized': false,
-          'validations': [
-            {
-              'size': {
-                'min': 3,
-                'max': 11
-              }
-            }
-          ]
-        },
-        {
-          'id': 'prize',
-          'name': 'Prize',
-          'type': 'Number',
-          'required': false,
-          'localized': false
-        },
-        {
-          'id': 'currency',
-          'name': 'Currency',
-          'type': 'Symbol',
-          'required': false,
-          'localized': false,
-          'validations': [
-            {
-              'size': {
-                'min': 3,
-                'max': 3
-              }
-            }
-          ]
         },
         {
           'id': 'correctAnswer',
@@ -211,6 +150,14 @@ angular.module('contentful').constant('sampleContentTypes', {
           'type': 'Integer',
           'required': true,
           'localized': false
+        },
+        {
+          'id': 'image',
+          'name': 'Image',
+          'required': false,
+          'localized': false,
+          'type': 'Link',
+          'linkType': 'Asset'
         }
       ],
       'name': 'Quiz Question',

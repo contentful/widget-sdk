@@ -262,16 +262,11 @@ angular.module('contentful').constant('sampleEntries', {
         "locale": "en-US"
       },
       "fields": {
-        "title": "You don't know Jack question",
         "question": "If Elizabeth Taylor wanted to be buried next to her husbands, in how many pieces would she have to be scattered? ",
         "answer1": "6",
         "answer2": "8",
         "answer3": "9",
         "answer4": "16",
-        "tag": "Celebrities",
-        "currency": "USD",
-        "level": 3,
-        "prize": 1000,
         "correctAnswer": 2
       }
     },
@@ -299,16 +294,11 @@ angular.module('contentful').constant('sampleEntries', {
         "locale": "en-US"
       },
       "fields": {
-        "title": "Who wants to be a millionaire question",
         "question": "Which of the following is the largest?",
         "answer1": "A peanut",
         "answer2": "An elephant",
         "answer3": "The moon",
         "answer4": "A kettle",
-        "tag": "Simple",
-        "currency": "GBP",
-        "level": 10,
-        "prize": 1000000,
         "correctAnswer": 3
       }
     },

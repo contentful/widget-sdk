@@ -47,6 +47,7 @@
             ng-class="{active: tabItem.active(), dirty: tabItem.dirty}"
             ng-click="goToTab(tabItem)"
             ng-hide="tabItem.hidden"
+            data-view-type="{{tabItem.viewType}}"
             tabindex="0")
       %span.tab-title {{tabItem.title}}
       %em.fade-text

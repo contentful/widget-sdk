@@ -2,130 +2,232 @@
   @extend .modal-background
 
 .guider
-  @extend %modal-dialog-chrome
-  border: 1px solid $dark-rule
-  +box-shadow(0 2px 10px)
   z-index: 10
-  h1
-    margin-bottom: 1em
 
 .guiders_content
-  margin: 20px
+  @extend %modal-dialog-chrome
+  @extend %modal-dialog-content
+  padding: $modal-dialog-padding
+  margin: 0
+  position: relative
 
-.guiders_button
-  padding-right: 1em
+h1.guiders_title
+  @extend %modal-dialog-title
+
+.guiders_description
+  line-height: 1.5
+  margin-top: $modal-dialog-padding
 
 //  Close-Button  //////////////////////////////////////////////////////////////
 
 $close_size: 25px
 
-.guiders_close
-  position: absolute
-  top:  $close_size / 2
-  right: $close_size / 2
-  width: $close_size
-  height: $close_size
-  //border: 1px sol
-
 .guiders_x_button
-  color: $light-gray
-  line-height: $close_size
-  text-align: center
-  font-size: $close_size
-  height: $close_size
-  width: $close_size
-  cursor: pointer
-  &:hover
-    color: darken($light-gray, 20%)
-  &:before
-    content: "×"
+  @extend %modal-dialog-close-button
 
 //  Arrows  ////////////////////////////////////////////////////////////////////
 
+$guider-size: 10px
 .guiders_arrow
-  $caret-size: 15px
+  width: $guider-size
+  height: $guider-size
+  background-color: $gray-background
   position: absolute
-  font-family: 'SSStandard'
-  color: white
-  font-size: 20px
-  &:before
-    position: absolute
+  border-top: 1px solid $light-gray
+  border-left: 1px solid $light-gray
+  display: none
 .guiders_arrow_left
-  &:before
-    content: "◃"
-  left: - $caret-size
-  +text-shadow( -2px 0px 5px darken($dark-rule, 30%)) 
+  display: block
+  left: -$guider-size
+  +transform-origin(top, right)
+  +transform(rotate(-45deg))
+.guiders_arrow_right
+  display: block
+  right: -$guider-size
+  +transform-origin(bottom, left)
+  +transform(translateY(-10px) rotate(45deg + 90deg))
 .guiders_arrow_up
-  &:before
-    content: "▴"
-  top: - $caret-size + 3px
-  +text-shadow( 0px -2px 5px darken($dark-rule, 30%)) 
+  display: block
+  top: -$guider-size
+  +transform-origin(bottom, left)
+  +transform(rotate(45deg))
 .guiders_arrow_down
-  &:before
-    content: "▾"
-  bottom: 1px
-  +text-shadow( 0 2px 5px darken($dark-rule, 30%)) 
+  display: block
+  background-color: white
+  bottom: -$guider-size
+  +transform-origin(top, right)
+  +transform(translateX(-10px) rotate(-45deg - 90deg))
 
-//  Overview  //////////////////////////////////////////////////////////////////
+// Welcome /////////////////////////////////////////////////////////////////////
 
-#overview.guider
-  $width: 700px
-  .guiders_title
+$welcome-width: 900px
+$welcome-slide-width: 800px
+
+#welcome.guider
+  width: 900px
+  .guiders_content
+    height: 540px
+
+.welcome-slide
+  border-top: 1px solid $dark-rule
+  margin: -$modal-dialog-padding
+  margin-bottom: $modal-dialog-padding
+  font-size: 110%
+  +pie-clearfix
+
+// Move the title on top of the actual title element
+.welcome-title
+  @extend %modal-dialog-title
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  margin-top: 0
+  margin-left: 0
+  margin-right: 0
+  text-align: center
+  padding-bottom: 10px
+  font-size: 150%
+  font-weight: bold
+
+// Common Styles for left/right and center
+.welcome-header
+  font-size: 120%
+  font-weight: bold
+  margin-bottom: 1em
+  color: $dark-gray
+.welcome-image
+  background-size: 100%
+  background-repeat: no-repeat
+
+// Style-Adjustments for left/right
+.welcome-left,
+.welcome-right
+  width: 50%
+  padding: ($modal-dialog-padding / 2) (3 * $modal-dialog-padding)
+  margin: (1.5 * $modal-dialog-padding) 0
+  .welcome-image
+    width: 320px
+    height: 250px
+    margin-bottom: $modal-dialog-padding
+.welcome-left
+  float: left
+.welcome-right
+  float: right
+  border-left: 1px solid $dark-rule
+
+// Adjustments for center
+.welcome-center
+  .welcome-image
+    margin-bottom: 2 * $modal-dialog-padding
+  .welcome-header
     text-align: center
-    margin: 1.5em 0
-  .guiders_description
-    margin: 0
-  .guiders_buttons_container
-    display: none
+  .welcome-text
+    text-align: center
+    line-height: 1.5
+
+// Individual images
+.welcome-overview
+  .welcome-image
+    height: 300px
+    background-image: image_url('tutorial/gettingstarted.png')
+.welcome-structure
+  .welcome-left .welcome-image
+    background-image: image_url('tutorial/1.png')
+  .welcome-right .welcome-image
+    background-image: image_url('tutorial/2.png')
+.welcome-content
+  .welcome-left .welcome-image
+    background-image: image_url('tutorial/3.png')
+  .welcome-right .welcome-image
+    background-image: image_url('tutorial/4.png')
+.welcome-delivery
+  .welcome-image
+    height: 300px
+    background-image: image_url('tutorial/delivery.png')
+
+// Nav-Stuff
+.nav-bubbles
+  text-align: center
+  position: absolute
+  left: 0
+  right: 0
+  bottom: 1.5 * $modal-dialog-padding
+  .dot
+    color: $lightest-gray
+    padding: .5em
+    cursor: pointer
+  .dot.active
+    color: $light-gray
+    cursor: default
+.nav-left
+  left: 0
+.nav-right
+  right: 0
+.nav-left,
+.nav-right
+  position: absolute
+  top: 50px
+  bottom: 50px
+  width: 30px
+  cursor: pointer
+  &:hover
+    .nav-arrow-left,
+    .nav-arrow-right
+      border-color: $dark-gray
+.nav-arrow-left,
+.nav-arrow-right
+  position: absolute
+  top: 50%
+  width: 20px
+  height: 20px
+  border-top: 3px solid $light-gray
+  cursor: pointer
+.nav-arrow-right
+  +transform(rotate(45deg))
+  right: 20px
+  border-right: 3px solid $light-gray
+.nav-arrow-left
+  +transform(rotate(-45deg))
+  left: 20px
+  border-left: 3px solid $light-gray
+
+//  Tutorial-Boxes  //////////////////////////////////////////////////////////////////
+
+.tutorial-boxes
+  margin: 2*$modal-dialog-padding 3*$modal-dialog-padding $modal-dialog-padding
+  +pie-clearfix
 
   .tutorial-select-box
     position: relative
-    border: 1px solid $dark-rule
-    +border-radius(3px)
     background-color: white
-    margin-bottom: 20px
-    width: ($width - (2 * 22px) - (2 * 14px)) / 3
+    width: 33%
     float: left
     height: 300px
-    &.left,
-    &.middle
-      margin-right: 14px
-  h3 
-    font-size: 1.5em
-    text-align: center
-    padding: 1em 0
-    background-color: lighten($lightest-gray, 10%)
-    +border-radius(3px 3px 0 0)
-    border-bottom: 2px solid $dark-rule
-    border-top: 3px solid
-  .left h3
-    border-top-color: $blue
-  .middle h3
-    border-top-color: $gold
-  .right h3
-    border-top-color: $red
+    padding: ($modal-dialog-padding/2) (1.5 * $modal-dialog-padding)
+  .left,
+  .middle
+    border-right: 1px solid $light-rule
   .background-icon
     display: block
     line-height: 60px
     color: $light-gray
     font-size: 60px
     text-align: center
-    margin-top: 30px
+    margin-top: 3 * $modal-dialog-padding
   .description
     margin: 1em
   .buttons
-    +stretch(false, 0, 0, 0)
-    margin: 1em
+    +stretch(false, 1.5 * $modal-dialog-padding, $modal-dialog-padding, 1.5 * $modal-dialog-padding)
   .tutorial-select-box button
     width: 100%
     cursor: hover
     &.take, &.repeat
       padding: .75em inherit
-  button.repeat
-    @extend %gray-button
   button.take
-    @extend %blue-button
-    line-height: 18px // Necessary because of some stupidity where the gray button has a line-height
+    @extend .primary-button
+
+// Adjustments for specific guiders
 
 .guider#contentTypeFields
   li

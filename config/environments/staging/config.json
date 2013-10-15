@@ -1,23 +1,31 @@
 {
-  "base_host": "be.joistio.com:8888",
-  "api_host": "api.joistio.com:8888",
-  "app_host": "app.joistio.com:8888",
-  "marketing_url": "http://static.joistio.com:8888",
-  "asset_host": "app.joistio.com:8888",
-  "ot_host": "ot.joistio.com:8888",
+  "base_host": "be.flinkly.com",
+  "api_host": "api.flinkly.com",
+  "app_host": "app.flinkly.com",
+  "marketing_url": "//www.flinkly.com",
+  "asset_host": "staticflinkly-thriventures.netdna-ssl.com",
+  "cdn_host": "cdn.flinkly.com",
+  "ot_host": "ot.flinkly.com",
+  "segment_io": "2z8un4c6u4",
+  "intercom": {"secret":"13gvdwUHBfyDcRvq8WJQLwDkQTp4nZl5Dq5V2RmZ"},
+  "git_revision": "e1658431",
+  "filepicker": {
+    "api_key": "AhHWTqaWRiG08OT14xd5Qz",
+    "policy": "eyJleHBpcnkiOjE1MzQ3NTcwMjgsImNhbGwiOlsicGljayIsInN0b3JlIl19",
+    "signature": "7d05aaf92295dea900c7b85e3e4aa4b10c95d42c1a0ae449ab8aca554082f188"
+  },
   "fog": {
     "s3": {
       "options": {
         "provider": "AWS",
-        "aws_access_key_id": "AKIAIIESR5EOHHFGBBGQ",
-        "aws_secret_access_key": "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",
+        "aws_access_key_id": "xxx",
+        "aws_secret_access_key": "yyy",
         "region": "us-east-1"
       },
       "asset_sync": {
-        "bucket": "assets-development.contentful-test.com",
+        "bucket": "static.cdnorigin.flinkly.com",
         "region": "us-east-1"
       }
     }
-  },
-  "git_revision": "OVERRIDE_FROM_CONFIG_JSON"
+  }
 }
