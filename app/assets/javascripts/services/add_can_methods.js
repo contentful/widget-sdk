@@ -6,8 +6,7 @@ angular.module('contentful').factory('addCanMethods',
     function makePermissionAdder(scope, entityType, methodOverrides){
       methodOverrides = methodOverrides || {};
       return function addActionPermissions(){
-        var entity = scope[entityType],
-            otDoc = scope.otDoc;
+        var entity = scope[entityType];
 
         var permissionMethods = {
           canDuplicate: function () {
@@ -34,11 +33,7 @@ angular.module('contentful').factory('addCanMethods',
           },
 
           canPublish: function() {
-            if (!otDoc) return false;
-            var version = otDoc.version;
-            var publishedVersion = otDoc.getAt(['sys', 'publishedVersion']);
-            var updatedSincePublishing = version !== publishedVersion + 1;
-            return entity.canPublish() && (!publishedVersion || updatedSincePublishing) && can('publish', entity.data);
+            return entity.canPublish() && can('publish', entity.data);
           }
         };
 
@@ -55,7 +50,6 @@ angular.module('contentful').factory('addCanMethods',
     return function (scope, entityType, methodOverrides) {
       var addActionPermissions = makePermissionAdder.apply(null, arguments);
       scope.$watch(entityType, addActionPermissions);
-      scope.$watch('otDoc', addActionPermissions);
     };
   }]
 );
