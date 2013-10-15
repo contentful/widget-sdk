@@ -72,7 +72,7 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
   };
 
   $scope.publish = function () {
-    var version = $scope.otDoc.version;
+    var version = $scope.entry.getVersion();
     if (!$scope.validate()) {
       notification.error('Error publishing ' + title() + ': ' + 'Validation failed');
       return;
@@ -92,6 +92,7 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
           }
           notification.serverError('Error publishing ' + title() + ': ' + reason, err);
         } else {
+          scope.entry.setPublishedVersion(version);
           notification.info(title() + ' published successfully');
         }
       });

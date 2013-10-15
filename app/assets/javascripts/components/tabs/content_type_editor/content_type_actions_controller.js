@@ -25,7 +25,7 @@ angular.module('contentful').
   };
 
   $scope.publish = function () {
-    var version = $scope.otDoc.version;
+    var version = $scope.contentType.getVersion();
     var verb = $scope.contentType.isPublished() ? 'updated' : 'activated';
     if (!$scope.validate()) {
       notification.error('Error activating ' + title() + ': ' + 'Validation failed');
@@ -50,6 +50,7 @@ angular.module('contentful').
           contentTypeName: $scope.contentType.getName(),
           version: version
         });
+        scope.contentType.setPublishedVersion(version);
 
         //console.log('editor has published %o as %o', scope.contentType, publishedContentType);
         scope.updatePublishedContentType(publishedContentType);

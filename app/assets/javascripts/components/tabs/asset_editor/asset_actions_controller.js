@@ -57,13 +57,13 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
   };
 
   $scope.publish = function () {
-    var version = $scope.otDoc.version;
+    var version = $scope.asset.getVersion();
     if (!$scope.validate()) {
       notification.error('Error publishing ' + title() + ': ' + 'Validation failed');
       return;
     }
     $scope.asset.publish(version, function (err) {
-      $scope.$apply(function(){
+      $scope.$apply(function(scope){
         if (err) {
           var errorId = err.body.sys.id;
           var reason;
@@ -75,6 +75,7 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
             reason = errorId;
           notification.serverError('Error publishing ' + title() + ': ' + reason, err);
         } else {
+          scope.asset.setPublishedVersion(version);
           notification.info(title() + ' published successfully');
         }
       });
