@@ -3,17 +3,22 @@
   display: block
   position: relative
   width: $form-controlwidth-inner
+
   .controls
     position: relative
     +pie-clearfix
+
   .search-field
     width: 80%
     float: left
+
   .add-new
     float: right
+
   .endless-container
     max-height: 200px
     overflow-x: hidden
+
   .drag-handle
     font-size: 10px
     color: $lightest-gray
@@ -23,25 +28,40 @@
     &[disabled]
       cursor: auto
     padding-right: 10px
+
   .drag-file
     position: absolute
     top: 50%
     left: 20px
     font-size: 13px
     z-index: 10
+
   .asset-link
     border-top: none
     border-bottom: none
     li
       padding-right: 0px
 
+  .unpublished
+    position: absolute
+    right: 0
+    top: 0
+    bottom: 0
+    width: 6px
+    background: lighten($red, 10%)
+
+  .tooltip
+    width: 200px
+
   .results
     margin-right: 17%
+
   .links li
     position: relative
 
   table
     border: none // border provided by .results container
+
   .endless-container
     table
       border: none

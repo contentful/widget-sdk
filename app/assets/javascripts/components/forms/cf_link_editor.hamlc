@@ -11,6 +11,7 @@
         %a(href="" ng-click="navigator.entityEditor(entity).goTo()" ng-show="entity && entity.data") {{linkDescription(entity)}}
         %span(ng-hide="entity && entity.data") {{linkDescription(entity)}}
         %i.ss-delete(ng-click="removeLink(index, entity)" ng-show="otEditable")
+        .unpublished(ng-show="entity.canPublish()" tooltip-placement="right" tooltip="This entry hasn't been published")
 
 .cf-link-editor-search(cf-autocomplete-results="entities" autocomplete-term="searchTerm")
   .controls(ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
