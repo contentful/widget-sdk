@@ -5,9 +5,9 @@ angular.module('contentful').
     return {
       messages: [],
 
-      error: function(body) {
+      error: function(body, options) {
         this._notify(body, 'error');
-        sentry.captureError(body);
+        sentry.captureError(body, options);
       },
 
       serverError: function(message, body) {
