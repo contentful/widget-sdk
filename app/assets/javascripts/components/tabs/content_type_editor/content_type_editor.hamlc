@@ -85,6 +85,7 @@
                    tooltip="Delete this Content Type")
       Delete
     %button.default-button.primary-button.publish(
+                    ng-disabled="!canPublish()"
                     ng-click="publish()"
                     tooltip="Make this Content Type available to editors")
       {{publishButtonLabel()}}
