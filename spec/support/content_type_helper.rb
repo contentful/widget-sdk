@@ -4,7 +4,8 @@ module ContentTypeHelper
     find(:xpath, ".//span[text()='#{type}']/..").click
 
     fill_in 'fieldName', with: name
-    fill_in 'fieldId'  , with: options[:id] if options[:id]
+    fill_in 'newFieldIdInput'  , with: options[:id] if options[:id]
+    find('.field-id-form .ss-check').click
     find('.toggle-localized').click if options[:localized]
     find('.toggle-required').click if options[:required]
   end

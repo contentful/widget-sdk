@@ -74,8 +74,8 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
       };
     },
     entityEditor:      function (entity) {
-      if(entity.data.sys.type == 'Entry') return this.entryEditor(entity);
-      if(entity.data.sys.type == 'Asset') return this.assetEditor(entity);
+      if(entity.getType() == 'Entry') return this.entryEditor(entity);
+      if(entity.getType() == 'Asset') return this.assetEditor(entity);
     },
     entryEditor:       function (entity) { return this._wrap(gen.entryEditor(entity)); },
     assetEditor:       function (entity) { return this._wrap(gen.assetEditor(entity)); },

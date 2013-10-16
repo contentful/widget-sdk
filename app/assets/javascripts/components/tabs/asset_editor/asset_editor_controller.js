@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorCtrl($scope, validation, can, AssetContentType, notification) {
+angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorCtrl($scope, validation, can, AssetContentType, notification, addCanMethods) {
   $scope.$watch('tab.params.asset', 'asset=tab.params.asset');
   $scope.$watch(function assetEditorEnabledWatcher(scope) {
     return !scope.asset.isArchived() && can('update', scope.asset.data);
@@ -28,6 +28,8 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
     event.currentScope.otUpdateEntity();
   });
 
+  addCanMethods($scope, 'asset');
+
   $scope.assetSchema = validation.schemas.Asset($scope.spaceContext.space.getPublishLocales());
 
   // TODO This can probably be removed since we always keep the entity in sync
@@ -41,14 +43,14 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
     }
   };
 
-  $scope.$watch('asset.data.sys.publishedVersion', function (publishedVersion, oldVersion, scope) {
+  $scope.$watch('asset.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {
     if (publishedVersion > oldVersion) scope.validate();
   });
 
   $scope.$watch(function (scope) {
     if (scope.otDoc && scope.asset) {
-      if (angular.isDefined(scope.asset.data.sys.publishedVersion))
-        return scope.otDoc.version > scope.asset.data.sys.publishedVersion + 1;
+      if (angular.isDefined(scope.asset.getPublishedVersion()))
+        return scope.otDoc.version > scope.asset.getPublishedVersion() + 1;
       else
         return 'draft';
     } else {

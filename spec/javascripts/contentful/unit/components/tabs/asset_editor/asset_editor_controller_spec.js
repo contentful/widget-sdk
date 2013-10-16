@@ -82,13 +82,9 @@ describe('Asset editor controller', function () {
         name: 'en-US',
         publish: true
       };
-      var asset = {
-        data: {
-          fields: {},
-          sys: {publishedVersion: 1}
-        },
-        isArchived: sinon.stub().returns(false)
-      };
+      var asset = window.createMockEntity('123');
+      asset.data.sys.publishedVersion = 1;
+      asset.isArchived = sinon.stub().returns(false);
       scope.spaceContext = {
         activeLocales: sinon.stub().returns([locale]),
         space: {

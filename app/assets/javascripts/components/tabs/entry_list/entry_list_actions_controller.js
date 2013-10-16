@@ -100,7 +100,7 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
     analytics.track('Performed EntryList action', {action: 'duplicate'});
 
     function duplicate(entry, callback) {
-      var contentType = entry.data.sys.contentType.sys.id;
+      var contentType = entry.getSys().contentType.sys.id;
       var data = _.omit(entry.data, 'sys');
       $scope.spaceContext.space.createEntry(contentType, data, callback);
     }

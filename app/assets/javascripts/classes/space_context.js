@@ -1,4 +1,4 @@
-angular.module('contentful').factory('SpaceContext', function(TabList, $rootScope, $q, $parse){
+angular.module('contentful').factory('SpaceContext', function(TabList, $rootScope, $q, $parse, sentry){
   'use strict';
 
   function SpaceContext(space){
@@ -80,7 +80,7 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
         this.space.getPublishedContentTypes(function (err, contentTypes) {
           $rootScope.$apply(function () {
             if (err) {
-              console.error('Could not get published Content Types', err);
+              sentry.captureError('Could not get published Content Types');
               deferred.reject(err);
             } else {
                 self.publishedContentTypes = _(contentTypes)
@@ -89,7 +89,7 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
                   .sortBy(function(ct) { return ct.getName().trim().toLowerCase(); })
                   .value();
                 self._publishedContentTypesHash = _(self.publishedContentTypes).map(function(ct) {
-                  return [ct.data.sys.id, ct];
+                  return [ct.getId(), ct];
                 }).object().valueOf();
                 _.each(self._publishedContentTypesHash, function (val, id) {
                   self._publishedContentTypeIsMissing[id] = false;

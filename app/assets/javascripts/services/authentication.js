@@ -5,6 +5,7 @@ angular.module('contentful').provider('authentication', function AuthenticationP
   var authApp  = '//'+environment.settings.base_host+'/';
   var QueryLinkResolver = contentfulClient.QueryLinkResolver;
   var $location;
+  var sentry;
 
   this.authApp= function(e) {
     authApp = e;
@@ -86,16 +87,16 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
     getTokenLookup: function(callback) {
       if (this.redirectingToLogin) {
-        console.log('redirection to login in process during getTokenLookup. Not executing');
+        sentry.captureError('redirection to login in process during getTokenLookup. Not executing');
         return;
       }
-      var self= this;
+      var self = this;
       if (this.tokenLooukp) {
         _.defer(callback, this.tokenLooukp);
       } else {
         this.client.getTokenLookup(function (err, data) {
           if (err) {
-            console.warn('Error during token lookup', err, data);
+            sentry.captureError('Error during token lookup', err, data);
             //if (environment.env === 'development') {
               //if (window.confirm('Error during token lookup, logout?')) self.logout();
               //return;
@@ -132,8 +133,9 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
   };
 
-  this.$get = function(client, _$location_){
+  this.$get = function(client, _$location_, _sentry_){
     $location = _$location_;
+    sentry = _sentry_;
     return new Authentication(client);
   };
 

@@ -66,7 +66,9 @@ describe('SpaceContext class with a space', function () {
     var contentType1, contentType2;
     beforeEach(function () {
       contentType1 = window.createMockEntity('contentType1');
+      contentType1.isDeleted = sinon.stub().returns(false);
       contentType2 = window.createMockEntity('contentType2');
+      contentType2.isDeleted = sinon.stub().returns(false);
       getContentTypesStub = sinon.stub();
       getContentTypesStub.callsArgWithAsync(1, null, [
         contentType2,
@@ -323,6 +325,7 @@ describe('SpaceContext resolving missing ContentTypes', function () {
         callback(null, [
           {
             getName: function(){return '';},
+            getId: function () { return 'foo'; },
             isDeleted: sinon.stub().returns(false),
             data: { sys: {id: 'foo'} }
           }

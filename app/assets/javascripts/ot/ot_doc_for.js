@@ -40,18 +40,24 @@ angular.module('contentful').directive('otDocFor', function () {
     if (entity) {
       ShareJS.open(entity, function(err, doc) {
         scope.$apply(function(scope){
-          if (!err) {
+          if(err || !doc){
+            scope.otDoc = null;
+            sentry.captureError('Failed to open sharejs doc', {
+              extra: {
+                entity: entity,
+                err: err
+              }
+            });
+          } else {
               if (shouldDocBeOpen(scope)) {
                 //console.log('otDocFor installing doc %o for entity %o', doc, entity);
                 //console.log('setting doc to %o (id: %o) in scope %o', doc.name, doc.snapshot.sys.id, scope.$id);
                 scope.otDoc = doc;
+                setVersionUpdater();
                 updateIfValid();
               } else {
                 doc.close();
               }
-          } else {
-            scope.otDoc = null;
-            //console.log('otDocFor error opening docfor entity %o', doc.state, doc, entity);
           }
         });
       });
@@ -69,7 +75,7 @@ angular.module('contentful').directive('otDocFor', function () {
 
   $scope.$watch('otDoc', function (otDoc, old, scope) {
     if (old) {
-      old.removeListener('remoteOp', remoteOpListener);
+      old.removeListener('remoteop', remoteOpListener);
     }
     if (otDoc) {
       otDoc.on('remoteop', remoteOpListener);
@@ -89,20 +95,30 @@ angular.module('contentful').directive('otDocFor', function () {
     /*global moment */
     var entity = otGetEntity();
     if (entity && $scope.otDoc) {
-      //console.log('otUpdateEntity did update', entity.data, $scope.otDoc.snapshot);
       var data = _.cloneDeep($scope.otDoc.snapshot);
+      if(!data) {
+        throw new Error('Failed to update entity: data not available');
+      }
+      if(!data.sys) {
+        throw new Error('Failed to update entity: sys not available');
+      }
+
       data.sys.version = $scope.otDoc.version;
       data.sys.updatedAt = moment().toISOString();
       entity.update(data);
     } else {
-      sentry.captureError('otUpdateEntity did not update');
+      sentry.captureError('otUpdateEntity did not update', {
+        extra: {
+          entity: entity,
+          otDoc: $scope.otDoc
+        }
+      });
     }
   };
 
   $scope.$on('$destroy', function (event) {
     var scope = event.currentScope;
     if (scope.otDoc) {
-      //console.log('otDocFor Controller destroyed, removing listener and otDoc');
       scope.otDoc.removeListener(remoteOpListener);
       remoteOpListener = null;
       try {
@@ -118,6 +134,15 @@ angular.module('contentful').directive('otDocFor', function () {
     if ($scope.$eval('otDoc.snapshot.sys.id')) {
       $scope.otUpdateEntity();
     }
+  }
+
+  function updateHandler(){
+    $scope.otGetEntity().setVersion($scope.otDoc.version);
+  }
+
+  function setVersionUpdater() {
+    $scope.otDoc.on('acknowledge', updateHandler);
+    $scope.otDoc.on('remoteop', updateHandler);
   }
 
 });

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorCtrl($scope, validation, can) {
+angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorCtrl($scope, validation, can, addCanMethods) {
   $scope.$watch('tab.params.entry', 'entry=tab.params.entry');
   $scope.$watch(function entryEditorEnabledWatcher(scope) {
     return !scope.entry.isArchived() && can('update', scope.entry.data);
@@ -34,6 +34,8 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     $scope.entrySchema = validation.fromContentType(data, locales);
   });
 
+  addCanMethods($scope, 'entry');
+
   // TODO This can probably be removed since we always keep the entity in sync
   $scope.publishedAt = function(){
     if (!$scope.otDoc) return;
@@ -45,14 +47,14 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
     }
   };
 
-  $scope.$watch('entry.data.sys.publishedVersion', function (publishedVersion, oldVersion, scope) {
+  $scope.$watch('entry.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {
     if (publishedVersion > oldVersion) scope.validate();
   });
 
   $scope.$watch(function (scope) {
     if (scope.otDoc && scope.entry) {
-      if (angular.isDefined(scope.entry.data.sys.publishedVersion))
-        return scope.otDoc.version > scope.entry.data.sys.publishedVersion + 1;
+      if (angular.isDefined(scope.entry.getPublishedVersion()))
+        return scope.otDoc.version > scope.entry.getPublishedVersion() + 1;
       else
         return 'draft';
     } else {
@@ -127,7 +129,7 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
       if (error.path.length == 1 && error.path[0] == 'fields') {
         $scope.hasErrorOnFields = error.path.length == 1 && error.path[0] == 'fields';
       } else if (error.path.length == 2) {
-        var locales = field.localized ? $scope.spaceContext.publishLocales : [$scope.spaceContext.space.getDefaultLocale()];
+        var locales = (field && field.localized) ? $scope.spaceContext.publishLocales : [$scope.spaceContext.space.getDefaultLocale()];
         var allCodes = _.pluck(locales, 'code');
         errorPaths[fieldId].push.apply(errorPaths[fieldId], allCodes);
       } else {

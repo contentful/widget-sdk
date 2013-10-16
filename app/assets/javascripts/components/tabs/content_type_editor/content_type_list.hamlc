@@ -22,9 +22,9 @@
           %td.cell-num-fields
             %span {{numFields(contentType)}}
           %td.cell-updated
-            %date.relative(datetime="{{contentType.data.sys.updatedAt}}")
+            %date.relative(datetime="{{contentType.getUpdatedAt()}}")
           %td.cell-by
-            %span.cf-user(link="contentType.data.sys.updatedBy" as="updater")
+            %span.cf-user(link="contentType.getUpdatedBy()" as="updater")
               {{updater.getName()}}
           %td.cell-status(ng-class="statusClass(contentType)")
             .draft-wrapper

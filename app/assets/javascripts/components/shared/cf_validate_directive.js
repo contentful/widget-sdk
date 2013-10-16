@@ -1,23 +1,11 @@
 'use strict';
 
-angular.module('contentful').directive('cfValidate', function (validation) {
+angular.module('contentful').directive('cfValidate', function (validation, assert) {
   return {
     restrict: 'A',
     scope: true,
     controller: function ($scope, $attrs) {
       $scope.validationResult = {};
-
-      if (!angular.isDefined($attrs.validateManually)) {
-        $scope.$watch(getSchema, function (schema) {
-          var data = getData();
-          validate(data, schema);
-        });
-
-        $scope.$watch(getData, function(data) {
-          var schema = getSchema();
-          validate(data, schema);
-        }, true);
-      }
 
       $scope.validate = function () {
         validate(getData(), getSchema());
@@ -66,6 +54,8 @@ angular.module('contentful').directive('cfValidate', function (validation) {
 
       $scope.setValidationResult = function (schemaErrors, data, schema) {
         var errors = _.reject(schemaErrors, function (error) {
+          assert.truthy(error, 'Validation error is undefined');
+          assert.path(error, 'path', 'Validation error path does not exist');
           return error.path[error.path.length-1] == '$$hashKey';
         });
         var valid = _.isEmpty(errors);

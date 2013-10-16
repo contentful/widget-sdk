@@ -17,7 +17,7 @@ angular.module('contentful').
           $scope.sys = sys;
         });
 
-        $scope.$watch('apiKey.data.sys', function(sys) {
+        $scope.$watch('apiKey.getSys()', function(sys) {
           $scope.sys = sys;
         });
 

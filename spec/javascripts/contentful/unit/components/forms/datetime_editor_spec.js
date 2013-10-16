@@ -120,4 +120,16 @@ describe('DateTime Editor', function () {
     enter('2013-12-24', '-21:23', '+08:00');
     expect(scope.fieldData.value).toBe('2013-12-24T00:00:00+08:00');
   });
+
+  it('should warn about missing dates', function () {
+    enter(null, '3:00');
+    expect(scope.dateInvalid).toBe(true);
+  });
+
+  it('should warn about malformed time', function () {
+    enter('2011-01-01', '3:0');
+    expect(scope.timeInvalid).toBe(true);
+  });
+
+  //it('should warn about malformed times')
 });

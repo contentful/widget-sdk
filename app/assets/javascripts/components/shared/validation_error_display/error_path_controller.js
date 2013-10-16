@@ -15,6 +15,7 @@ angular.module('contentful').controller('ErrorPathController', function ErrorPat
     size: function (v) {
       var data = getData(v);
       var type = _.isString(data) ? 'Length' : 'Size';
+      if (getEntityType(v) === 'ContentType' && v.path[0] === 'fields') type = 'Number of fields';
 
       if (_.isNumber(v.min) && _.isNumber(v.max)) {
         return type + ' must be between ' + v.min + ' and ' + v.max + '.';
@@ -69,6 +70,11 @@ angular.module('contentful').controller('ErrorPathController', function ErrorPat
   }
 
   var NO_DATA = {};
+
+  function getEntityType(error) {
+    var object = $scope.validationResult.data;
+    return object && object.sys && object.sys.type;
+  }
 
   function getData(error) {
     var object = $scope.validationResult.data;

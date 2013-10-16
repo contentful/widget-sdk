@@ -24,7 +24,7 @@ feature 'Routing', js: true do
       page.should have_text 'Postal code'
     end
 
-    visit "/spaces/#{space_id}/settings/users/new"
+    visit "/spaces/#{tutorial_space_id}/settings/users/new"
     iframe = find('iframe')
     within_frame iframe do
       page.find('input[name="commit"]')[:value].should eql('Invite New User')

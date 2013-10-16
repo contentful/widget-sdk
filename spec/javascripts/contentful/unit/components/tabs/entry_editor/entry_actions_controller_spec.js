@@ -32,7 +32,8 @@ describe('Entry Actions Controller', function () {
         }
       };
       scope.entry = {
-        publish: sinon.stub().yields(error)
+        publish: sinon.stub().yields(error),
+        getVersion: sinon.stub().returns(20)
       };
     });
     

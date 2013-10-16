@@ -17,7 +17,8 @@
   .file-preview,
   .file-metadata,
   .cf-file-drop,
-  .file-progress
+  .file-progress,
+  .no-file
     background-color: $gray-background
     border: 1px solid $light-gray
     +border-radius(3px)
@@ -27,7 +28,6 @@
     +border-radius(3px 3px 3px 3px)
     +box-shadow(0 1px 2px rgba(0,0,0,0.1) inset)
     text-align: center
-    overflow: hidden
     .icon
       font-size: 100px
       line-height: 250px
@@ -45,9 +45,6 @@
     top: 15px
     left: 10px
     font-size: 20px
-
-  .no-file
-    +stretch
 
   .drag-me,
   .drop-me,

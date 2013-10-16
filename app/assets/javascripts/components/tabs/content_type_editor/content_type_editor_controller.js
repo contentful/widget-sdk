@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeEditorCtrl', function ContentTypeEditorCtrl($scope, validation, can, notification, analytics) {
+angular.module('contentful').controller('ContentTypeEditorCtrl', function ContentTypeEditorCtrl($scope, validation, can, notification, analytics, addCanMethods) {
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
 
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
@@ -33,7 +33,7 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
 
   $scope.$watch(function contentTypeModifiedWatcher(scope) {
     if (scope.otDoc && scope.contentType) {
-      return scope.otDoc.version > scope.contentType.data.sys.publishedVersion + 1;
+      return scope.otDoc.version > scope.contentType.getPublishedVersion() + 1;
     } else {
       return undefined;
     }
@@ -41,15 +41,38 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
     if (modified !== undefined) scope.tab.dirty = modified;
   });
 
+  addCanMethods($scope, 'contentType', {
+    canPublish: function() {
+      if (!$scope.otDoc) return false;
+      var version = $scope.otDoc.version;
+      var publishedVersion = $scope.otDoc.getAt(['sys', 'publishedVersion']);
+      var notPublishedYet = !publishedVersion;
+      var updatedSincePublishing = version !== publishedVersion + 1;
+      var hasFields = $scope.otDoc.getAt(['fields']).length > 0;
+      return $scope.contentType.canPublish() &&
+        (notPublishedYet || updatedSincePublishing) &&
+        hasFields &&
+        can('publish', $scope.contentType.data);
+    }
+  });
+
 
   function loadPublishedContentType() {
     // TODO replace with lookup in registry inside spaceContext
-    $scope.contentType.getPublishedVersion(function(err, publishedContentType) {
+    $scope.contentType.getPublishedStatus(function(err, publishedContentType) {
       $scope.$apply(function(scope) {
         scope.publishedContentType = publishedContentType;
       });
     });
   }
+
+  var firstValidate = $scope.$on('otBecameEditable', function (event) {
+    var scope = event.currentScope;
+    if (!_.isEmpty(scope.contentType.data.fields)) scope.validate();
+    firstValidate();
+    firstValidate = null;
+  });
+
 
   $scope.updatePublishedContentType = function (publishedContentType) {
     $scope.publishedContentType = publishedContentType;
@@ -62,10 +85,6 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
   $scope.$watch('publishedContentType.data.fields', function (fields, old, scope) {
     scope.publishedIds = _.pluck(fields, 'id');
   });
-
-  $scope.canPublish = function() {
-    return !!$scope.otDoc;
-  };
 
   $scope.$watch('contentType.getName()', function(title) {
     $scope.tab.title = title;

@@ -11,7 +11,7 @@ angular.module('contentful').controller('ContentTypeListCtrl', function ContentT
   };
 
   $scope.statusClass = function(contentType) {
-    if (contentType.data.sys.publishedAt) {
+    if (contentType.getPublishedAt()) {
       if (contentType.hasUnpublishedChanges()) {
         return 'updated';
       } else {
@@ -23,7 +23,7 @@ angular.module('contentful').controller('ContentTypeListCtrl', function ContentT
   };
 
   $scope.statusLabel = function(contentType) {
-    if (contentType.data.sys.publishedAt) {
+    if (contentType.getPublishedAt()) {
       if (contentType.hasUnpublishedChanges()) {
         return 'updated';
       } else {

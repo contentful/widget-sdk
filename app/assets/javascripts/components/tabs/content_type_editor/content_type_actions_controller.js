@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  controller('ContentTypeActionsCtrl', function ContentTypeActionsCtrl($scope, notification, analytics, can) {
+  controller('ContentTypeActionsCtrl', function ContentTypeActionsCtrl($scope, notification, analytics) {
 
   // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,
   // We can query the entry instead of reimplementing the checks heere
@@ -24,31 +24,13 @@ angular.module('contentful').
     });
   };
 
-  $scope.canUnpublish = function() {
-    return $scope.contentType.canUnpublish() && can('unpublish', $scope.contentType.data);
-  };
-
-  $scope.canDelete = function() {
-    return $scope.contentType.canDelete() && can('delete', $scope.contentType.data);
-  };
-
-  $scope.canPublish = function() {
-    if (!$scope.otDoc) return false;
-    var version = $scope.otDoc.version;
-    var publishedVersion = $scope.otDoc.getAt(['sys', 'publishedVersion']);
-    var notPublishedYet = !publishedVersion;
-    var updatedSincePublishing = version !== publishedVersion + 1;
-    var hasFields = $scope.otDoc.getAt(['fields']).length > 0;
-    return $scope.contentType.canPublish() &&
-      (notPublishedYet || updatedSincePublishing) &&
-      hasFields &&
-      can('publish', $scope.contentType.data) &&
-      $scope.validationResult.valid;
-  };
-
   $scope.publish = function () {
-    var version = $scope.otDoc.version;
+    var version = $scope.contentType.getVersion();
     var verb = $scope.contentType.isPublished() ? 'updated' : 'activated';
+    if (!$scope.validate()) {
+      notification.error('Error activating ' + title() + ': ' + 'Validation failed');
+      return;
+    }
     $scope.contentType.publish(version, function (err, publishedContentType) {
       $scope.$apply(function(scope){
         if (err) {
@@ -56,9 +38,10 @@ angular.module('contentful').
           var reason = errorId;
           if (errorId === 'validationFailed')
             reason = 'Validation failed';
+            scope.setValidationErrors(err.body.details.errors);
           if (errorId === 'versionMismatch')
-            reason = 'Can only publish most recent version';
-          return notification.serverError('Error publishing ' + title() + ': ' + reason, err);
+            reason = 'Can only activate most recent version';
+          return notification.serverError('Error activating ' + title() + ': ' + reason, err);
         }
 
         notification.info(title() + ' ' + verb + ' successfully');
@@ -67,6 +50,7 @@ angular.module('contentful').
           contentTypeName: $scope.contentType.getName(),
           version: version
         });
+        scope.contentType.setPublishedVersion(version);
 
         //console.log('editor has published %o as %o', scope.contentType, publishedContentType);
         scope.updatePublishedContentType(publishedContentType);
@@ -100,12 +84,7 @@ angular.module('contentful').
   };
 
   $scope.publishButtonLabel = function () {
-    var publishedAt = null;
-    try {
-      publishedAt = $scope.contentType.data.sys.publishedAt;
-    } catch (e) { }
-
-    if (publishedAt) {
+    if ($scope.contentType && $scope.contentType.isPublished()) {
       return 'Update';
     } else {
       return 'Activate';

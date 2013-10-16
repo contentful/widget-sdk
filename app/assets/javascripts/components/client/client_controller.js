@@ -38,7 +38,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   }, function (c) {
     if (c.tokenLookup){
       authorization.setTokenLookup(c.tokenLookup);
-      if (c.space && authorization.authContext.hasSpace(c.space.getId()))
+      if (c.space && authorization.authContext && authorization.authContext.hasSpace(c.space.getId()))
         authorization.setSpace(c.space);
     }
   });
@@ -55,10 +55,12 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   };
 
   $scope.selectSpace = function(space) {
+    if(!space){
+      return notification.error('Selected space does not exist');
+    }
     if (space && $scope.getCurrentSpaceId() === space.getId()) return;
-    
     analytics.track('Switched Space', {
-      spaceId: space.data.sys.id,
+      spaceId: space.getId(),
       spaceName: space.data.name
     });
     routing.goToSpace(space);

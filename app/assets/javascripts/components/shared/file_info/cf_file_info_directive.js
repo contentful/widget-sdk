@@ -4,13 +4,15 @@ angular.module('contentful').directive('cfFileInfo', function () {
   return {
     restrict: 'C',
     template: JST['cf_file_info'],
-    scope: {
-      file: '=file',
-      title: '=entityTitle',
-      removeLink: '&removeLink',
-      editEntity: '&editEntity'
-    },
-    link: function (scope) {
+    scope: true,
+    link: function (scope, elem, attrs) {
+      scope.$watch(attrs.file, function (val) {
+        if(val) scope.file = val;
+      });
+      scope.$watch(attrs.entityTitle, function (val) {
+        if(val) scope.title = val;
+      });
+
       scope.showMeta = false;
 
       scope.toggleMeta = function () {
