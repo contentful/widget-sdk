@@ -6,5 +6,5 @@
 .select-box.around-zone
   %select.zone(ng-model="tzOffset" ng-options="offset for offset in timezones" tooltip="Timezone")
 %i.ss-globe
-%i.ss-alert.invalid-date(ng-show="dateInvalid" tooltip="You must provide a date" tooltip-placement="right")
+%i.ss-alert.invalid-date(ng-show="dateInvalid" tooltip="You must provide a valid date" tooltip-placement="right")
 %i.ss-alert.invalid-time(ng-show="timeInvalid" tooltip="Time must be of format 0:00:00" tooltip-placement="right")
