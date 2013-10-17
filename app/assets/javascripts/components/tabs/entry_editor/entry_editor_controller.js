@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorCtrl($scope, validation, can, addCanMethods) {
+angular.module('contentful')
+  .controller('EntryEditorCtrl', function EntryEditorCtrl($scope, validation, can, addCanMethods, notification, stringifySafe) {
   $scope.$watch('tab.params.entry', 'entry=tab.params.entry');
   $scope.$watch(function entryEditorEnabledWatcher(scope) {
     return !scope.entry.isArchived() && can('update', scope.entry.data);
@@ -73,7 +74,7 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
   $scope.$watch('spaceContext.publishedTypeForEntry(entry).data.fields', updateFields, true);
   var errorPaths = {};
 
-  function updateFields(n, o ,scope) {
+  function updateFields(n, o, scope) {
     var et = scope.spaceContext.publishedTypeForEntry(scope.entry);
     if (!et) return;
     scope.fields = _(et.data.fields).reduce(function (acc, field) {
@@ -126,10 +127,21 @@ angular.module('contentful').controller('EntryEditorCtrl', function EntryEditorC
       var field        = _.find(et.data.fields, {id: fieldId});
       errorPaths[fieldId] = errorPaths[fieldId] || [];
 
+      if(!field){
+        return notification.error('An error has occurred and we\'ve been notified. Please refresh your browser.', {
+          extra: {
+            fieldId: fieldId,
+            fields: _.map(et.data.fields, function(val){return {id: val.id, type: val.type};}),
+            contentType: et.data.sys.id,
+            space: et.data.sys.space.sys.id
+          }
+        });
+      }
+
       if (error.path.length == 1 && error.path[0] == 'fields') {
         $scope.hasErrorOnFields = error.path.length == 1 && error.path[0] == 'fields';
       } else if (error.path.length == 2) {
-        var locales = (field && field.localized) ? $scope.spaceContext.publishLocales : [$scope.spaceContext.space.getDefaultLocale()];
+        var locales = field.localized ? $scope.spaceContext.publishLocales : [$scope.spaceContext.space.getDefaultLocale()];
         var allCodes = _.pluck(locales, 'code');
         errorPaths[fieldId].push.apply(errorPaths[fieldId], allCodes);
       } else {

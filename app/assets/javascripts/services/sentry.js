@@ -81,7 +81,9 @@ function ($injector ,  $window ,  environment, stringifySafe) {
           tags: {
             type: 'server_error'
           },
-          details: error
+          extra: {
+            error: error
+          }
         }, options));
       }
     }
