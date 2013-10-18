@@ -10,7 +10,7 @@
         %ul(ng-show="showLangSwitcher")
           %li(ng-repeat="locale in spaceContext.publishLocales track by locale.code")
             %label
-              %input(type="checkbox" ng-model="spaceContext.localesActive[locale.code]")
+              %input(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
               {{locale.name}}
               %span(ng-show="locale == spaceContext.space.getDefaultLocale()") (default)
         %ul
