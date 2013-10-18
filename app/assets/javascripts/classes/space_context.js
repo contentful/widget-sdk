@@ -17,14 +17,14 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
 
       publishLocales: [],
       defaultLocale: null,
-      localesActive: {},
+      localeStates: {},
       activeLocales: [],
 
       refreshLocales: function () {
         if (this.space) {
           this.publishLocales = this.space.getPublishLocales();
           this.defaultLocale  = this.space.getDefaultLocale();
-          this.localesActive[this.defaultLocale.code] = true;
+          this.localeStates[this.defaultLocale.code] = true;
         } else {
           this.publishLocales = [];
           this.defaultLocale  = null;
@@ -35,13 +35,13 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
       refreshActiveLocales: function () {
         var newLocaleStates = {}, newActiveLocales = [];
         _.each(this.publishLocales, function (locale) {
-          if (this.localesActive[locale.code]) {
+          if (this.localeStates[locale.code]) {
             newLocaleStates[locale.code] = true;
             newActiveLocales.push(locale);
           }
         }, this);
-        this.localesActive = newLocaleStates;
-        this.activeLocales = newActiveLocales;
+        this.localeStates = newLocaleStates;
+        this.activeLocales = _.uniq(newActiveLocales, function(locale){return locale.code;});
       },
 
       getPublishLocale: function(code) {

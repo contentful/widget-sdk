@@ -52,7 +52,7 @@ describe('SpaceContext class with a space', function () {
   });
 
   it('has active locales', function () {
-    expect(spaceContext.localesActive['en-US']).toBeTruthy();
+    expect(spaceContext.localeStates['en-US']).toBeTruthy();
     expect(_.isArray(spaceContext.activeLocales)).toBeTruthy();
     expect(spaceContext.activeLocales[0].code).toBeDefined();
   });
