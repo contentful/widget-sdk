@@ -36,7 +36,12 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse, zone
       });
 
       dateController.$parsers.unshift(function(viewValue) {
-        var raw = $.datepicker.parseDate(DATE_FORMAT, viewValue);
+        scope.dateInvalid = false;
+        try {
+          var raw = $.datepicker.parseDate(DATE_FORMAT, viewValue);
+        } catch(e) {
+          scope.dateInvalid = true;
+        }
         var date = moment(raw);
         date = date ? date.format(DATE_FORMAT_INTERNAL) : null;
         return date;

@@ -38,11 +38,16 @@ function ($injector ,  $window ,  environment, stringifySafe) {
     options.merge.apply(options, arguments);
     options = options.value();
     var charCount = 0;
-    var charPerKey;
+    var charPerKey, val;
     if(options.extra){
       for(var key in options.extra){
-        options.extra[key] = stringifySafe(options.extra[key]);
-        charCount += options.extra[key].length;
+        val = options.extra[key];
+        if(val) {
+          options.extra[key] = stringifySafe(val);
+          charCount += options.extra[key].length;
+        } else {
+          options.extra[key] = 'undefined or falsy value';
+        }
       }
       if(charCount > GET_MAX_LENGTH){
         charPerKey = _.parseInt(GET_MAX_LENGTH / _.keys(options.extra).length);
