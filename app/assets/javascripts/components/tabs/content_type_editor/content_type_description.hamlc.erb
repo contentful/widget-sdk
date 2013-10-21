@@ -3,91 +3,137 @@
     %h3 Text of any length
 
     %p
-      Add any type of text, whether it is a whole book or just a title. You can add validations to constrain the length. Numbers added in this field will also be treated as strings of text. Search for words in the text.
+      Add any type of longer form text that’s written by editors, usually including spaces. 
+      Enables you to search for words in the text but not exact matches for the entire text. 
+      Use Symbols for short tokens of text like URLs or tags (
+      %a(href="http://support.contentful.com/entries/28062416-What-s-the-difference-between-Text-and-Symbol-Fields-")>more information
+      ).
+    %ul
+      %li Blog post title
+      %li Product descriptions
+      %li Article bodies
     %img(src="<%= image_path('field_type/text.png') %>")
 
   %div(ng-switch-when="Symbol")
     %h3 Short token of text
 
     %p
-      Represent unbreakable tokens like a URL or currencies (USD or EUR). You can add validations like pattern matches. You can only search for the full token, you cannot search for parts of it.
+      Represent unbreakable and relatively short tokens of text, often made for machine consumption. You can only search for full Symbols, not parts of it like individual words.
+    %ul
+      %li URL
+      %li Tag
+      %li Postal code
+      %li Phone number
     %img(src="<%= image_path('field_type/symbol.png') %>")
 
   %div(ng-switch-when="Integer")
     %h3 Number without decimals
 
     %p
-      Insert integer numbers (numbers without decimals). Use validations to constrain its ranges, specific values or number of characters if necessary.
+      Insert numbers without decimals. Use validations to constrain the range or to only allow specific values.
+    %ul
+      %li Priority
+      %li Calorie count
+      %li Age
     %img(src="<%= image_path('field_type/integer.png') %>")
 
   %div(ng-switch-when="Number")
-    %h3 Decimal number
+    %h3 Number with decimals
 
     %p
-      Insert a number with as many decimal figures as needed. Use validations to constrain its ranges, values or number of characters if necessary.
+      Insert a number with as many decimal figures as needed. Use validations to constrain the ranges or to only allow specific values.
+    %ul
+      %li Weights
+      %li Temperatures
     %img(src="<%= image_path('field_type/floating.png') %>")
 
   %div(ng-switch-when="Boolean")
-    %h3 Yes or No value (boolean)
+    %h3 Boolean value
 
     %p
-      Entering a Yes or a No (boolean) value can represent two opposite informations such as on/off, up/down, open/closed or naturally yes/no.
+      Insert a boolean value with two choices: either yes or no.
+    %ul
+      %li Open
+      %li Vegetarian menu
     %img(src="<%= image_path('field_type/boolean.png') %>")
 
   %div(ng-switch-when="Date")
-    %h3 Date with time of the day
+    %h3 Date with time of day
 
     %p
-      Specify a given date (dd/mm/yyyy) and time (hh:mm:ss). Like the start or end time of an event. When not needed, either the date or the time can be left blank.
+      Specify a given date and time. Like the start or end time of an event. Either the date or the time can be left blank.
+    %ul
+      %li Event start time
+      %li Holiday date
     %img(src="<%= image_path('field_type/date.png') %>")
 
-  %div(ng-switch-when="Object")
-    %h3 An embedded JSON object
+  %div(ng-switch-when="Location")
+    %h3 Geographical coordinates
 
     %p
-      Add an arbitrary JSON structure that you can write and read through the API.
-    %img(src="<%= image_path('field_type/jsonobject.png') %>")
+      The latitude and longitude of any place. Locations can be added by entering their coordinates or by searching the location directly on a map.
+    %ul
+      %li Geographical location of a venue
+    %img(src="<%= image_path('field_type/location.png') %>")
 
   %div(ng-switch-when="Link")
     %div(ng-show="type.value.linkType == 'Entry'")
       %h3
-        A link to another Entry
+        Link to an Entry
       %p
-        Connect your current Entry to another already existing Entry previously created. You can create relations such as connecting one book to its author.
+        Connect your current Entry to another already existing Entry. You can create relationships such as connecting a book to its author.
+      %ul
+        %li Author
+        %li Category
       %img(src="<%= image_path('field_type/linktoentry.png') %>")
 
     %div(ng-show="type.value.linkType == 'Asset'")
       %h3
-        A link to an Asset
+        Link to an Asset
       %p
-        Connect your current Entry to an Asset previously uploaded. You can use it to attach media Assets to Entries, such as a cover image to a book.
+        Link a previously uploaded media file to this Entry or add a new one directly when editing.
+      %ul
+        %li Image
+        %li Attachment
+        %li Media of any kind
       %img(src="<%= image_path('field_type/linktoasset.png') %>")
 
-  %div(ng-switch-when="Location")
-    %h3 Geographical coordinates of a location
+  %div(ng-switch-when="Object")
+    %h3 Embedded JSON object
 
     %p
-      A place anywhere on this world. Locations can be added by their coordinates or by pointing the location directly on the map.
-    %img(src="<%= image_path('field_type/location.png') %>")
+      Add an arbitrary JSON structure that you can write and read through the API.
+    %ul
+      %li Custom data from another system
+    %img(src="<%= image_path('field_type/jsonobject.png') %>")
 
   %div(ng-switch-when="Array")
     %div(ng-show="type.value.items.type == 'Link' && type.value.items.linkType == 'Entry'")
       %h3
-        One or many links to Entries
+        Links to multiple Entries
       %p
-        Connect your current Entry to other already existing Entries previously created. It works as the Link to Entry but it allows you to connect one Entry to several other ones. An example is a book which has several authors.
+        Connect your current Entry to other already existing Entries. It works like the individual Entry but it allows you to connect more than one Entry.
+      %ul
+        %li Multiple authors
+        %li Multiple categories
       %img(src="<%= image_path('field_type/linkstoentries.png') %>")
 
     %div(ng-show="type.value.items.type == 'Link' && type.value.items.linkType == 'Asset'")
       %h3
-        One or many links to Assets
+        Links to multiple Assets
       %p
-        Connect your current Entry to Assets previously uploaded. It works as the Link to Asset but it allows you to connect one Entry to several Assets at once. An example is a gallery of pictures.
+        Link several previously uploaded media files to this Entry or add new ones directly when editing.
+      %ul
+        %li Multiple images
+        %li Multiple attachments
+        %li Multiple media files of any kind
       %img(src="<%= image_path('field_type/linkstoassets.png') %>")
 
     %div(ng-show="type.value.items.type == 'Symbol'")
       %h3
-        One or many separate words
+        List of multiple Symbols
       %p
-        Create a simple lists of text. It can be, for example, tags for a blog post. The list items are separated by commas.
+        Create a lists of multiple Symbols. It works like an individual Symbol but allows you to add more than one Symbol.
+      %ul
+        %li Multiple tags of a blog post
       %img(src="<%= image_path('field_type/list.png') %>")
