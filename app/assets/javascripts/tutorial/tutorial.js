@@ -653,9 +653,15 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         position: '2',
         next: 'entryAnswers',
         buttons: [{ name: 'Next', classString: 'default-button primary-button' }],
-        onShow: function () {
+        onShow: function (guider) {
           $(this.attachTo).focus();
-          // TODO auto advance
+          var d = this.attachScope.$watch('fieldData.value', _.debounce(function (value, old) {
+            if (value !== old) {
+              if (guiders._currentGuiderID === guider.id) guiders.next();
+              d();
+              d = null;
+            }
+          }, 2000));
         }
       });
 
@@ -668,9 +674,15 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         position: '2',
         next: 'entryAsset',
         buttons: [{ name: 'Next', classString: 'default-button primary-button' }],
-        onShow: function () {
+        onShow: function (guider) {
           $(this.attachTo).focus();
-          // TODO auto advance
+          var d = this.attachScope.$watch('entry.data.fields.correctAnswer[spaceContext.defaultLocale.code]', _.debounce(function (value, old) {
+            if (value !== old) {
+              if (guiders._currentGuiderID === guider.id) guiders.next();
+              d();
+              d = null;
+            }
+          }, 500));
         }
       });
 
@@ -700,7 +712,16 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         position: '2',
         next: 'assetUpload',
         buttons: [{ name: 'Next', classString: 'default-button primary-button' }],
-        // TODO auto advance
+        onShow: function (guider) {
+          $(this.attachTo).focus();
+          var d = this.attachScope.$watch('asset.data.fields.title[spaceContext.defaultLocale.code]', _.debounce(function (value, old) {
+            if (value !== old) {
+              if (guiders._currentGuiderID === guider.id) guiders.next();
+              d();
+              d = null;
+            }
+          }, 1000));
+        }
       });
 
       createGuider({
