@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeFieldListCtrl', function($scope, analytics, validation, HashMap, fieldTypeEqual) {
+angular.module('contentful').controller('ContentTypeFieldListCtrl', function($scope, analytics, validation, HashMap) {
   var _showValidations = {};
   var hashMap = new HashMap();
 
@@ -36,14 +36,8 @@ angular.module('contentful').controller('ContentTypeFieldListCtrl', function($sc
   };
 
   $scope.fieldIsPublished = function (field) {
-    return _.contains($scope.publishedIds, field.id) && fieldIsUnique(field);
+    return _.contains($scope.publishedIds, field.id);
   };
-
-  function fieldIsUnique(field){
-    return _.filter($scope.contentType.data.fields, function (pubField) {
-      return pubField.id === field.id && fieldTypeEqual(field, pubField);
-    }).length <= 1;
-  }
 
   $scope.closeAllFields = function () {
     openFieldKey = null;
