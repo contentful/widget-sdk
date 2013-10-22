@@ -22,43 +22,45 @@ $modal-dialog-padding: 20px
   border: 1px solid $light-gray
   +border-radius(3px)
   +box-shadow(0 2px 6px rgba(0,0,0,0.1))
-
-// Inner Styling
-.modal-dialog
   line-height: 15px
-  .text
-    font-size: 12px
-  .title
-    font-size: 14px
-    font-weight: 600
-    color: black
-    border-bottom: 1px solid $light-rule
-    margin: -$modal-dialog-padding
-    margin-bottom: 0
-    padding: $modal-dialog-padding
-    background: $gray-background
-  .close-button
-    color: $lightest-gray
-    cursor: pointer
-    font-weight: 200
-    &:hover
-      color: $light-gray
-    &:after
-      content: '×'
-      font-size: 30px
 
-    position: absolute
-    top: 0
-    right: 0
-    margin: $modal-dialog-padding
-  .dialog-content
-    margin: $modal-dialog-padding 0
-  .buttons
-    border-top: 1px solid $light-rule
-    margin-left: -$modal-dialog-padding
-    margin-right: -$modal-dialog-padding
-    padding-right: $modal-dialog-padding
-    padding-left: $modal-dialog-padding
-    padding-top: $modal-dialog-padding / 2
-    margin-top: $modal-dialog-padding / 2
-    text-align: right
+.modal-dialog .text,
+%modal-dialog-text
+  font-size: 12px
+.modal-dialog .title,
+%modal-dialog-title
+  font-size: 14px
+  font-weight: 600
+  color: black
+  border-bottom: 1px solid $light-rule
+  margin: -$modal-dialog-padding
+  margin-bottom: 0
+  padding: $modal-dialog-padding
+  background: $gray-background
+.modal-dialog .close-button,
+%modal-dialog-close-button
+  color: $lightest-gray
+  cursor: pointer
+  font-weight: 200
+  &:hover
+    color: $light-gray
+  &:after
+    content: '×'
+    font-size: 30px
+  position: absolute
+  top: 0
+  right: 0
+  margin: $modal-dialog-padding
+.modal-dialog .dialog-content,
+%modal-dialog-content
+  margin: $modal-dialog-padding 0
+.modal-dialog .buttons,
+%modal-dialog-buttons
+  border-top: 1px solid $light-rule
+  margin-left: -$modal-dialog-padding
+  margin-right: -$modal-dialog-padding
+  padding-right: $modal-dialog-padding
+  padding-left: $modal-dialog-padding
+  padding-top: $modal-dialog-padding / 2
+  margin-top: $modal-dialog-padding / 2
+  text-align: right

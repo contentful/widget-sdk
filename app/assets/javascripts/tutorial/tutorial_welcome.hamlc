@@ -1,0 +1,93 @@
+.cf-tutorial-welcome
+  .welcome-slide.welcome-overview(ng-show="currentSlide == 'overview'")
+    .welcome-title Welcome to Contentful!
+    .welcome-center
+      .welcome-image
+      .welcome-header Contentful in a nutshell
+      .welcome-text Let's take a quick look at how to create and publish your content in 3 simple steps
+       
+  .welcome-slide.welcome-structure(ng-show="currentSlide == 'structure'")
+    .welcome-title 1. Define your structure
+    .welcome-left
+      .welcome-image
+      .welcome-header Create Content Type
+      .welcome-text Let's take a quick look at how to create and publish your content in 3 simple steps.
+    .welcome-right
+      .welcome-image
+      .welcome-header Decide, Field by Field
+      .welcome-text No annoying templates. Decide how many and which Fields you want to fill later.
+       
+  .welcome-slide.welcome-content(ng-show="currentSlide == 'content'")
+    .welcome-title 2. Add your content
+    .welcome-left
+      .welcome-image
+      .welcome-header Add content to your Entries
+      .welcome-text Adding an Entry means actually entering your content in the Content Type you created previously.
+    .welcome-right
+      .welcome-image
+      .welcome-header Upload Assets
+      .welcome-text Upload media files of any kind, assign metadata to them and link them to your Entries.
+       
+  .welcome-slide.welcome-delivery(ng-show="currentSlide == 'delivery'")
+    .welcome-title 3. Deliver your content
+    .welcome-center
+      .welcome-image
+      .welcome-header Publish anywhere
+      .welcome-text Create an API Key for each platform and deliver your content anywhere you want.
+
+  .welcome-slide.welcome-tutorials(ng-show="currentSlide == 'tutorials'")
+    .welcome-title Need further support?
+    .welcome-center
+      .welcome-header
+      .tutorial-boxes
+        .tutorial-select-box.left
+          .welcome-header
+            Content Model
+          %i.ss-database.background-icon
+          .welcome-text
+            Learn how to set up Content Types, the basis for your Entries.
+          .buttons
+            %button.default-button.repeat(type="button" ng-show="contentTypeDone" ng-click="goTo('contentTypeIntro')")
+              Repeat Tutorial
+            %button.default-button.take(type="button" ng-hide="contentTypeDone" ng-click="goTo('contentTypeIntro')")
+              Take Tutorial
+
+        .tutorial-select-box.middle
+          .welcome-header
+            Managing Content
+          %i.ss-file.background-icon
+          .welcome-text
+            An intro to day to day content management tasks.
+          .buttons
+            %button.default-button.repeat(type="button" ng-show="entryDone" ng-click="goTo('entryIntro')")
+              Repeat Tutorial
+            %button.default-button.take(type="button" ng-hide="entryDone" ng-click="goTo('entryIntro')")
+              Take Tutorial
+
+        .tutorial-select-box.right
+          .welcome-header
+            Delivering Content
+          %i.ss-fork.background-icon
+          .welcome-text
+            Learn how to configure the distribution of content.
+          .buttons
+            %button.default-button.repeat(type="button" ng-show="apiKeyDone" ng-click="goTo('apiKeyIntro')")
+              Repeat Tutorial
+            %button.default-button.take(type="button" ng-hide="apiKeyDone" ng-click="goTo('apiKeyIntro')")
+              Take Tutorial
+
+      .welcome-text
+        These tutorials guide you through the most important steps towards publishing your content.
+      .welcome-text
+        %a(href="#" ng-click="abort()") I want to start using Contentful right away
+
+  .hide-x-button(ng-hide="atLastSlide()")
+
+  .nav-left(ng-hide="atFirstSlide()" ng-click="moveSlide(-1)")
+    .nav-arrow-left
+  .nav-right(ng-hide="atLastSlide()" ng-click="moveSlide(+1)")
+    .nav-arrow-right
+  .nav-bubbles
+    %i.ss-record.dot(ng-repeat="slide in slides"
+      ng-class="{active: slide == currentSlide}"
+      ng-click="setCurrent(slide)")

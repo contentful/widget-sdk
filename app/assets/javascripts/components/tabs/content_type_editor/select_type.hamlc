@@ -1,4 +1,4 @@
-%ul
+%ul.menu-list
   %li.group
     %h3 Single
   %li.type(ng-repeat="type in availableTypes.Single track by type.name"

@@ -3,6 +3,7 @@
 angular.module('contentful').factory('tutorial', function ($compile, notification, tutorialExampledata, $q, $timeout, $rootScope, analytics) {
   var guiders = window.guiders;
   guiders._defaultSettings.buttons = null;
+  guiders._arrowSize = 10;
 
   function Tutorial() {}
 
@@ -12,21 +13,19 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
     },
 
     setSeen : function () {
-      /*global moment*/
       return $.cookies.set('seenTutorial', true, {
         expiresAt: moment().add('y', 1).toDate()
       });
     },
 
     start : function () {
-      return;
       var clientScope = angular.element('.client').scope();
       var tutorial = this;
-      tutorialExampledata.switchToTutorialSpace(clientScope).then(function () {
+      return tutorialExampledata.switchToTutorialSpace(clientScope).then(function () {
         if (!tutorial._initialized) tutorial.initialize();
         tutorial.setSeen();
         guiders.hideAll();
-        guiders.show('overview');
+        guiders.show('welcome');
       });
     },
     initialize: function () {
@@ -144,28 +143,28 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       }, 50, true);
 
 
-      function watchForFieldType(guider, name, type) {
+      function watchForFieldType(guider, type) {
         return function () {
-          return _.find(guider.attachScope.contentType.data.fields, {name: name, type: type}) ||
-                 _.find(guider.attachScope.contentType.data.fields, {name: name.toLowerCase(), type: type});
+          return _.find(guider.attachScope.contentType.data.fields, {type: type});
         };
       }
 
 ////////////////////////////////////////////////////////////////////////////////
-//   Overview    ///////////////////////////////////////////////////////////////
+//   Welcome   /////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////////////////////
 
       createGuider({
-        category: 'overview',
-        id: 'overview',
-        title: 'Take one of our tutorials',
-        //buttons: [{name: 'Next'}],
-        button: [],
-        template: 'tutorial_overview',
+        category: 'welcome',
+        id: 'welcome',
+        title: 'Welcome onboard Contentful',
+        template: 'tutorial_welcome',
         next: 'contentTypeCreate1',
         overlay: true,
-        width: '70%',
-        xButton: true
+        width: '90%',
+        xButton: true,
+        onShow: function () {
+          repositionLater();
+        }
       });
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -175,20 +174,22 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         category: 'content-types',
         id: 'contentTypeIntro',
-        title: 'Welcome to our Content Type tutorial!',
-        description: 'Content Types describe the structure of your content.  In this part of the tutorial we guide you through the interface until you have learned how to create a Content Type.',
+        title: 'Welcome to our Content Model tutorial!',
+        description: '<p>Before anything else, you have to create your Content Types. All your Content Types are your <strong>Content Model</strong>.</p><p>This is like deciding which forms to use for cookies you’d like to bake.'+
+          ' Depending on what you’ll be baking, you’ll use a set of specific forms (Content Types) that will ultimately shape the dough (your content).</p>'+
+          ' <p>This first tutorial walks you through Content Types creation.</p>',
         overlay: true,
-        buttons: [{name: 'Next'}],
+        buttons: [{name: 'Next', classString: 'default-button primary-button'}],
         next: 'contentTypeCreate1'
       });
 
       createGuider({
         category: 'content-types',
         id: 'contentTypeCreate1',
-        title: 'The Add menu has all you need',
-        description: 'By clicking on this button you can add Content Types, Entries and API Keys.',
-        attachTo: '.tab-list .add.button',
-        position: '2',
+        title: 'Meet the mighty Add button',
+        description: '<p>One click on the Add button and you can add new Content Types, Entries and API Keys to your account.</p><p><strong>Click and see for yourself.</strong></p>',
+        attachTo: '.tablist-button',
+        position: '7',
         next: 'contentTypeCreate2',
         onShow: function () {
           $(this.attachTo).one('click', function () {
@@ -200,11 +201,11 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         category: 'content-types',
         id: 'contentTypeCreate2',
-        title: 'Now add a Content Type',
-        description: 'This will open the Content Type editor where you will add your fields.',
-        attachTo: '.tab-list .add-content-type',
-        position: '3',
-        next: 'contentTypeName',
+        title: 'Now add your Content Types',
+        description: '<p>One click here will put you right into the Content Type Editor, where you’ll be able to create your Content Type, adding Fields to it.</p><p>Note: you won’t be able to see the Entries option in the Add menu, before you create Content Types</p><p><strong>Take it to the next level, click on Content Types.</strong></p>',
+        attachTo: '.tablist-button .add-content-type',
+        position: '2',
+        next: 'contentTypeEditor',
         onShow: function () {
           $(this.attachTo).one('click', function () {
             var d = spaceScope.$on('otBecameEditable', function () {
@@ -217,35 +218,58 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
 
       createGuider({
         category: 'content-types',
+        id: 'contentTypeEditor',
+        title: 'Welcome to the Content Type editor. Let’s create your first Content Type',
+        description: '<p>A Content Type is like a cookie cutter: it shapes your dough (which in Contentful is your content). Once you\'ve shaped the cutter into whatever you want your cookies to look like, you can change the ingredients. The same is true of your content. Once you defined your Content Type, you can insert any fitting content and media.</p><p>This shaping will facilitate the distribution of your content onto multiple platforms later.</p><p>Put together, your Content Types, make up your Content Model.</p>',
+        next: 'contentTypeName',
+        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+      });
+
+      createGuider({
+        category: 'content-types',
         id: 'contentTypeName',
-        title: 'You need a name',
+        title: 'Name your Content Type',
         attachTo: '.tab-content:visible [ng-model="contentType.data.name"]',
-        position: '3',
-        description: 'The name should describe generically what this Content Type represents. <em>Recipe</em>, <em>Book</em>, <em>Restaurant</em> and <em>Quiz</em> are examples of names you can use.',
-        next: 'contentTypeDescription',
-        buttons: [{name: 'Next'}],
+        position: '2',
+        description: 'The best name for your Content Type is one that’s descriptive of the content it stores (e.g. Book, Quiz, Recipe). Let’s call this one <strong>Blog Post</strong>.',
+        next: 'contentTypeSaving',
+        buttons: [{name: 'Next', classString: 'default-button primary-button'}],
         onShow: function (guider) {
+          $(this.attachTo).focus();
           var d = guider.attachScope.$watch('contentType.data.name', function (name) {
-            if (name && name.length > 0) {
+            if (name && name.match(/blog post/i)) {
               guiders.next();
               d();
             }
           });
         }
       });
+
+      createGuider({
+        category: 'content-types',
+        id: 'contentTypeSaving',
+        title: 'That\'s peace of mind',
+        attachTo: '.tab-content:visible .save-status',
+        position: '11',
+        description: 'Each change that you make is automatically saved, so say goodbye to lost work.',
+        next: 'contentTypeDescription',
+        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+      });
+
 
       createGuider({
         category: 'content-types',
         id: 'contentTypeDescription',
         title: 'Describe it',
         attachTo: '.tab-content:visible [ng-model="contentType.data.description"]',
-        position: '3',
-        description: 'Giving a description to your Content Type will help the people that edit the content to understand what content should go in there.',
-        next: 'contentTypeTitle',
-        buttons: [{name: 'Next'}],
+        position: '2',
+        description: 'Your description will help other editors to understand which content belongs in this Content Type. We recommend you keep it concise and objective.',
+        next: 'contentTypeAddFields',
+        buttons: [{name: 'Next', classString: 'default-button primary-button'}],
         onShow: function (guider) {
+          $(this.attachTo).focus();
           var d = guider.attachScope.$watch('contentType.data.description', function (description) {
-            if (description && description.length > 0) {
+            if (description && description.length > 5) {
               guiders.next();
               d();
             }
@@ -255,83 +279,257 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
 
       createGuider({
         category: 'content-types',
-        id: 'contentTypeTitle',
-        title: 'Let\'s add some fields..',
-        description: 'You will later insert content into these fields. Create a first one called <strong>Title</strong> with type <strong>Text</strong>.',
-        attachTo: '.tab-content:visible .new-field-form .button.new',
-        offset: {top: -15, left: 0},
-        position: '5',
-        next: 'contentTypeContent',
+        id: 'contentTypeAddFields',
+        title: 'Populate with fields',
+        description: 'Let’s create your first Fields. You can add Fields which store content themselves or Fields that will attach other Entries or Assets to the Entry corresponding to this Content Type.',
+        attachTo: '.tab-content:visible [name="contentTypeForm"] .primary-button:visible',
+        position: '12',
+        next: 'contentTypeAddText',
+        onShow: function () {
+          $(this.attachTo).one('click', function () {
+            guiders.next();
+          });
+        }
+      });
+
+      createGuider({
+        category: 'content-types',
+        id: 'contentTypeAddText',
+        title: 'Select the Field Type',
+        description: 'There are several Field types you can choose from. Take a quick glance at all of them. For this example we will start with a title, so choose the <strong>Text</strong> type.',
+        attachTo: '.tab-content:visible .type-menu .type',
+        position: '10',
+        next: 'contentTypeEditText',
         onShow: function (guider) {
-          guider.scope.$watch(repositionLater);
-          guider.scope.$watch(
-            watchForFieldType(guider, 'Title', 'Text'),
-          function (has, old) {
-              if (has && !old) guiders.next();
+          guider.attachScope.$watch(watchForFieldType(guider, 'Text'), function (has, old) {
+            if (has && !old) guiders.next();
+          });
+        }
+      });
+
+      createGuider({
+        category: 'content-types',
+        id: 'contentTypeEditText',
+        title: 'Name and describe it',
+        description: 'Fields also need a name. For this example let’s name it <strong>Title</strong>. That’s the name content editors will see on the Entry Editor interface. The Field ID for the API will be created automatically. After the tutorial you’ll be able to create Fields to your heart’s content.',
+        attachTo: '.tab-content:visible .cf-field-settings *[name="fieldName"]',
+        position: '7',
+        next: 'contentTypeConfirmId',
+        onShow: function (guider) {
+          repositionLater();
+          $(this.attachTo).focus();
+          var d = guider.attachScope.$watch('field.name', function (name) {
+            if (name && name.match(/title/i)) {
+              guiders.next();
+              d();
             }
-          );
-        }
-      });
-
-      createGuider({
-        category: 'content-types',
-        id: 'contentTypeContent',
-        title: 'We need more information',
-        description: 'Add also a field called <strong>Content</strong> with type <strong>Text</strong>.',
-        attachTo: '.tab-content:visible .new-field-form .button.new',
-        offset: {top: -15, left: 0},
-        position: '5',
-        next: 'contentTypeDate',
-        onShow: function (guider) {
-          guider.scope.$watch(repositionLater);
-          guider.scope.$watch(
-            watchForFieldType(guider, 'Content', 'Text'),
-          function (has, old) {
-            if (has && !old) guiders.next();
           });
         }
       });
 
       createGuider({
         category: 'content-types',
-        id: 'contentTypeDate',
-        title: 'When exactly?',
-        description: 'In many cases you will need a time or a date in your content. Create a field called <strong>Timestamp</strong> with the type <strong>Date/Time</strong><br>Enter the Name, change the type here, then click the Plus-button to add.',
-        attachTo: '.tab-content:visible .new-field-form .type',
-        offset: {top: 10, left: -15},
+        id: 'contentTypeConfirmId',
+        title: 'Confirm the ID',
+        description: 'The ID is relevant for content delivery. Save is before you follow to the next Field.',
+        attachTo: '.tab-content:visible .field-id-form .ss-check',
         position: '1',
-        next: 'contentTypeMore',
+        next: 'contentTypeMoreOptions',
         onShow: function (guider) {
-          guider.scope.$watch(repositionLater);
-          guider.scope.$watch(
-            watchForFieldType(guider, 'Timestamp', 'Date'),
-          function (has, old) {
-            if (has && !old) guiders.next();
+          repositionLater();
+          var d = guider.attachScope.$watch('field.id', function (name, old) {
+            if (name && name !== old) {
+              guiders.next();
+              d();
+            }
           });
         }
       });
 
       createGuider({
         category: 'content-types',
-        id: 'contentTypeMore',
-        title: 'Wait, there’s more!',
-        description: 'You can add as many fields as you want, activate or deactivate them and add validations through the validations menu. Click <em>Next</em> when you\'re done:',
-        attachTo: '.tab-content:visible .new-field-form .button.new',
-        offset: {top: -15, left: 0},
-        position: '5',
-        next: 'contentTypeActivate',
-        buttons: [{name: 'Next'}],
+        id: 'contentTypeMoreOptions',
+        title: 'More content editing options',
+        description: 'The second row has more options for the field',
+        attachTo: '.tab-content:visible .field-details',
+        position: '2',
+        next: 'contentTypeRequire',
+        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+      });
+
+      createGuider({
+        category: 'content-types',
+        id: 'contentTypeRequire',
+        title: 'The Require option',
+        description: 'Forces users to enter something in this field. They cannot leave it empty.',
+        attachTo: '.tab-content:visible .field-details .toggle-required',
+        position: '6',
+        next: 'contentTypeValidate',
+        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+      });
+
+      createGuider({
+        category: 'content-types',
+        id: 'contentTypeValidate',
+        title: 'The Validations functionality',
+        description: 'Often times you need to ensure your content adheres to more specific rules. That is what validations are for. For each Field you can define rules that guarantee that editors can only enter valid content.',
+        attachTo: '.tab-content:visible .field-details .toggle-validate',
+        position: '6',
+        next: 'contentTypeLocalize',
+        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+      });
+
+      createGuider({
+        category: 'content-types',
+        id: 'contentTypeLocalize',
+        title: 'The Localize option',
+        description: 'That click will allow you to translate the content in this Field to several languages. You can set up languages in the Locales section of the Space Settings.',
+        attachTo: '.tab-content:visible .field-details .toggle-localized',
+        position: '6',
+        next: 'contentTypeTitleField',
+        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+      });
+
+      createGuider({
+        category: 'content-types',
+        id: 'contentTypeTitleField',
+        title: 'The Use as Title option',
+        description: 'Click it and turn a Field into your title in the interface. Logically enough, there can only be one per Content Type.',
+        attachTo: '.tab-content:visible .field-details .toggle-title',
+        position: '6',
+        next: 'contentTypeDelete',
+        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+      });
+
+      createGuider({
+        category: 'content-types',
+        id: 'contentTypeDelete',
+        title: 'The Delete option',
+        description: 'If your Field isn’t activated yet, you can either modify it or delete it. However, once the Field is activated it won’t be possible to change the type or delete it. You will be able, though, to disable it. If you need to modify any Field, you’ll first need to deactivate it.',
+        attachTo: '.tab-content:visible .field-details .toggle-disabled:visible',
+        position: '6',
+        next: 'contentTypeMoreFields',
+        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+      });
+
+      createGuider({
+        category: 'content-types',
+        id: 'contentTypeMoreFields',
+        title: 'More Fields!',
+        description: 'Now let’s populate with some more Fields. Add another <strong>Text Field</strong>, called <strong>Body</strong> (this will be the body of your Blog Post).',
+        attachTo: '.tab-content:visible .add-field-button',
+        position: '2',
+        next: 'contentTypeConfigBody',
         onShow: function (guider) {
-          guider.scope.$watch(repositionLater);
-        }
+          guider.scope.waitFor(function () {
+            return _.filter(guider.attachScope.contentType.data.fields, {type: 'Text'}).length >= 2;
+          }, function () {
+            guiders.next();
+          });
+        },
+      });
+
+      createGuider({
+        category: 'content-types',
+        id: 'contentTypeConfigBody',
+        title: 'More Fields!',
+        description: 'Give the Field a the title <strong>Body</strong>, and don\'t forget to confirm the ID',
+        attachTo: '.tab-content:visible .field-form:visible',
+        position: '6',
+        next: 'contentTypeAddTimestamp',
+        onShow: function (guider) {
+          repositionLater();
+          guider.scope.waitFor(function () {
+            return _.find(guider.attachScope.contentType.data.fields, {type: 'Text', name: 'Body', id: 'body'});
+          }, function () {
+            guiders.next();
+          });
+        },
+        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+      });
+
+      createGuider({
+        category: 'content-types',
+        id: 'contentTypeAddTimestamp',
+        title: 'More Fields!',
+        description: 'Often you’ll need a date and time for your content. Let’s do this: select <strong>Date/Time</strong> in the types selection and call your Field <strong>Timestamp</strong>.',
+        attachTo: '.tab-content:visible .add-field-button',
+        position: '2',
+        next: 'contentTypeConfigTimestamp',
+        onShow: function (guider) {
+          guider.scope.waitFor(function () {
+            return _.filter(guider.attachScope.contentType.data.fields, {type: 'Date'}).length >= 1;
+          }, function () {
+            guiders.next();
+          });
+        },
+      });
+
+      createGuider({
+        category: 'content-types',
+        id: 'contentTypeConfigTimestamp',
+        title: 'More Fields!',
+        description: 'Give the Field a the title <strong>Timestamp</strong>, and don\'t forget to confirm the ID',
+        attachTo: '.tab-content:visible .field-form:visible',
+        position: '6',
+        next: 'contentTypeAddAsset',
+        onShow: function (guider) {
+          repositionLater();
+          guider.scope.waitFor(function () {
+            return _.find(guider.attachScope.contentType.data.fields, {type: 'Date', name: 'Timestamp', id: 'timestamp'});
+          }, function () {
+            guiders.next();
+          });
+        },
+        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+      });
+
+      createGuider({
+        category: 'content-types',
+        id: 'contentTypeAddAsset',
+        title: 'Now, onto the Asset Field!',
+        description: 'The last type of Field to add: an Asset. Choose the <strong>Link toAsset</strong> Field from the menu and call it <strong>Image</strong>. That’s it, you can now upload images on your Blog Post.',
+        attachTo: '.tab-content:visible .add-field-button',
+        position: '2',
+        next: 'contentTypeConfigAsset',
+        onShow: function (guider) {
+          guider.scope.waitFor(function () {
+            return _.filter(guider.attachScope.contentType.data.fields, function (field) {
+              return field.type == 'Link' && field.linkType == 'Asset';
+            }).length >= 1;
+          }, function () {
+            guiders.next();
+          });
+        },
+      });
+
+      createGuider({
+        category: 'content-types',
+        id: 'contentTypeConfigAsset',
+        title: 'Now, onto the Asset Field!',
+        description: 'Give the Field a the title <strong>Image</strong>, and don\'t forget to confirm the ID. That’s it, you can now upload images on your Blog Post.',
+        attachTo: '.tab-content:visible .field-form:visible',
+        position: '6',
+        next: 'contentTypeActivate',
+        onShow: function (guider) {
+          repositionLater();
+          guider.scope.waitFor(function () {
+            return _.find(guider.attachScope.contentType.data.fields, function (field) {
+              return field.type == 'Link' && field.linkType == 'Asset' && field.name == 'Image' && field.id == 'image';
+            });
+          }, function () {
+            guiders.next();
+          });
+        },
+        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
       });
 
       createGuider({
         category: 'content-types',
         id: 'contentTypeActivate',
-        title: 'Activate it!',
-        description: 'Every time you finish creating a Content Type, you must activate it before you can create Entries with this type.',
-        attachTo: '.content-type-editor:visible button.publish',
+        title: 'Ready, steady, activate!',
+        description: 'Don’t forget to click the Activate button when you are done creating a Content Type. You need to activate it so that your editors can create Entries of that Content Type.',
+        attachTo: '.content-type-editor:visible .tab-actions .publish',
         offset: {top: 15, left: 0},
         position: '1',
         next: 'contentTypeList',
@@ -350,10 +548,10 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         category: 'content-types',
         id: 'contentTypeList',
-        title: 'Here is a list of your Content Types',
-        description: 'All your Content Types, whether activated or not, can be accessed and edited through this list. Click here to take a look.',
+        title: 'Your Content Types’ home',
+        description: 'Access and edit your Content Types anytime you want, whether they are activated or not. <strong>Click on the icon and take a look for yourself.</strong>',
         attachTo: '.nav-bar ul li[data-view-type=content-type-list]',
-        position: '2',
+        position: '7',
         next: 'contentTypeExamples',
         onShow: function () {
           $(this.attachTo).one('click', function () {
@@ -365,7 +563,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         category: 'content-types',
         id: 'contentTypeExamples',
-        title: 'Want to see some more examples?',
+        title: 'You defined your first Content Type!',
         template: 'tutorial_content_type_examples',
         next: 'contentTypeDone'
       });
@@ -373,11 +571,11 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         category: 'content-types',
         id: 'contentTypeDone',
-        title: 'If you want to know more…',
-        description: 'If you need more information before starting to use Contentful, please check our <a href="http://support.contentful.com/home">Knowledge Base Pages</a>.',
-        next: 'overview',
+        title: 'Round the clock infos',
+        description: 'Get more info on Contentful, features and functionalities any time of the day and night on our <a href="http://support.contentful.com/home">Knowledge Base Pages</a>.',
+        next: 'welcome',
         buttons: [
-          {name: 'Back to overview', onclick: function () { guiders.next(); }}
+          {name: 'Back to tutorials overview menu', onclick: function () { guiders.next(); }}
         ]
       });
 
@@ -388,10 +586,12 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         category: 'entries',
         id: 'entryIntro',
-        title: 'Great! Welcome to our Entries tutorial!',
-        description: 'Entries contain to the content itself. They depend on the Content Types you create. In this tutorial we’ll guide you through the Entry editor.',
+        title: 'Greetings! Let’s start the Entries & Assets tutorial',
+        description: '<p>The Entries are where your content will reside, live, stay put if you wish. Assets, are media that you add to your content, such as a picture, video or audio file.>/p><p>Your Entries and Assets depend on the Content Types we defined in the previous step of the tutorial.</p>',
         overlay: true,
-        buttons: [{name: 'Next'}],
+        buttons: [
+          {name: 'Discover the Entry Editor', onclick: function () { guiders.next(); }}
+        ],
         next: 'entrySeed'
       });
 
@@ -410,10 +610,10 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         category: 'entries',
         id: 'entryCreate1',
-        title: 'Click on the Add button!',
-        description: 'This is a very important step: by clicking on this button you can add Content Types, Entries and API Keys.',
-        attachTo: '.tab-list .add.button',
-        position: '2',
+        title: 'Meet the mighty Add button',
+        description: 'One click on the Add button and you can add new Content Types, Entries, Assets and API Keys to your space.',
+        attachTo: '.tablist-button',
+        position: '7',
         next: 'entryCreate2',
         onShow: function () {
           $(this.attachTo).one('click', function () {
@@ -425,10 +625,10 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         category: 'entries',
         id: 'entryCreate2',
-        title: 'Now add a Blog Post',
-        description: 'This will open the Content Type editor where you will add your fields.',
-        attachTo: '.tab-list .add-btn .dropdown-menu ul.content-types li:first',
-        position: '3',
+        title: 'Now add a Quiz Question',
+        description: 'Clicking on the chosen Content Type, <strong>Quiz Question</strong>, will open the Entry Editor, where you will be able to edit the content for a new Quiz.',
+        attachTo: '.tablist-button li[data-content-type-id="6Ku1uo32lqMYieci6ocUCs"]',
+        position: '2',
         next: 'entryContent',
         onShow: function () {
           var d = spaceScope.$on('otBecameEditable', function () {
@@ -441,9 +641,168 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         category: 'entries',
         id: 'entryContent',
-        title: 'This is how you add content',
-        description: 'All you have to do now is to add some content to the fields! Let us first get a brief look at the other parts of the editor.',
-        buttons: [{ name: 'Next' }],
+        title: 'This is the Entry editor',
+        description: 'Here you can’t add or edit Fields anymore. This Editor allows editors to focus on inserting content, according to the Content Type you created before.',
+        buttons: [{ name: 'Next', classString: 'default-button primary-button' }],
+        next: 'entryQuestion'
+      });
+
+      createGuider({
+        category: 'entries',
+        id: 'entryQuestion',
+        title: 'Ask a question',
+        description: 'Ask “Which CMS delivers content to web and native mobile applications?”',
+        attachTo: '.entry-editor:visible .form-field[data-field-id="question"] textarea',
+        position: '2',
+        next: 'entryAnswers',
+        buttons: [{ name: 'Next', classString: 'default-button primary-button' }],
+        onShow: function (guider) {
+          $(this.attachTo).focus();
+          var d = this.attachScope.$watch('fieldData.value', _.debounce(function (value, old) {
+            if (value !== old) {
+              if (guiders._currentGuiderID === guider.id) guiders.next();
+              d();
+              d = null;
+            }
+          }, 2000));
+        }
+      });
+
+      createGuider({
+        category: 'entries',
+        id: 'entryAnswers',
+        title: 'Add some answers',
+        description: '<p>Add the following answers to each <strong>Answer</strong> Field by order: Wordpress, Contentful, Drupal, Joomla.</p><p>In the <strong>Correct Answer</strong> Field, you can define which option number has the correct answer. <strong>Well, you know it’s number 2, right?',
+        attachTo: '.entry-editor:visible .form-field[data-field-id="answer1"] textarea',
+        position: '2',
+        next: 'entryAsset',
+        buttons: [{ name: 'Next', classString: 'default-button primary-button' }],
+        onShow: function (guider) {
+          $(this.attachTo).focus();
+          var d = this.attachScope.$watch('entry.data.fields.correctAnswer[spaceContext.defaultLocale.code]', _.debounce(function (value, old) {
+            if (value !== old) {
+              if (guiders._currentGuiderID === guider.id) guiders.next();
+              d();
+              d = null;
+            }
+          }, 500));
+        }
+      });
+
+      createGuider({
+        category: 'entries',
+        id: 'entryAsset',
+        title: 'Let\'s add your first asset',
+        description: '<p>By clicking the “New” button, you will open the Asset editor. Assets can also be created through the top add button independent from an Entry and then linked.</p><p>For now lets click on the “New” button and open the Asset editor right away.</p>',
+        attachTo: '.entry-editor:visible .form-field[data-field-id="image"] .add-new:visible',
+        position: '2',
+        next: 'assetTitle',
+        onShow: function () {
+          $(this.attachTo).one('click', function () {
+            spaceScope.one('otBecameEditable', function () {
+              guiders.next();
+            });
+          });
+        }
+      });
+
+      createGuider({
+        category: 'entries',
+        id: 'assetTitle',
+        title: 'Name and describe your Asset',
+        description: 'First, as you’ve probably noticed, you need to name your Asset. Let’s call it <strong>Quiz Picture</strong>. Then add a short description, to help other members of your team to work on it even if they haven’t created it themselves.',
+        attachTo: '.asset-editor:visible .form-field[data-field-id="title"] input',
+        position: '2',
+        next: 'assetUpload',
+        buttons: [{ name: 'Next', classString: 'default-button primary-button' }],
+        onShow: function (guider) {
+          $(this.attachTo).focus();
+          var d = this.attachScope.$watch('asset.data.fields.title[spaceContext.defaultLocale.code]', _.debounce(function (value, old) {
+            if (value !== old) {
+              if (guiders._currentGuiderID === guider.id) guiders.next();
+              d();
+              d = null;
+            }
+          }, 1000));
+        }
+      });
+
+      createGuider({
+        category: 'entries',
+        id: 'assetUpload',
+        title: 'Time to upload',
+        description: '<p>Finally, upload your file by either clicking “Open File Picker” or drag and drop the file from your computer.</p><p>For this tutorial, let’s open the File Picker.</p>',
+        attachTo: '.asset-editor:visible .upload-button',
+        position: '3',
+        next: 'assetPick',
+        onShow: function (guider) {
+          $(guider.attachTo).one('click', function () {
+            guiders.next();
+          });
+        }
+
+      });
+
+      createGuider({
+        category: 'entries',
+        id: 'assetPick',
+        title: 'Pick and choose',
+        description: '<p>There is quite a few types of Asset sources you can choose from in the File Picker.</p><p>Select <strong>Web Images and search for quiz</strong>. See the first colourful image? Select that one and click upload.</p>',
+        attachTo: '#filepicker_dialog_container',
+        position: 6,
+        next: 'assetPublish',
+        onShow: function (guider) {
+          $('#'+guider.id).css({'z-index': 100000});
+          var assetScope = $('.asset-editor:visible').scope();
+          guider.scope.waitFor(function () {
+            return assetScope.$eval('asset.data.fields.file[spaceContext.defaultLocale.code].url');
+          }, function () {
+            assetScope = null;
+            guiders.next();
+          });
+        }
+      });
+
+      createGuider({
+        category: 'entries',
+        id: 'assetPublish',
+        title: 'Are you ready?',
+        description: '<p>Publish your Asset to successfully display it later on any platform. If you choose to archive it, it will still be properly linked to the Entry but won’t be displayed with the exported content. You can publish it later at any given moment.</p><p><strong>For now, publish!</strong></p>',
+        attachTo: '.asset-editor:visible .publish',
+        position: 1,
+        next: 'entryOpenTab',
+        onShow: function (guider) {
+          guider.attachScope.waitFor('asset.isPublished()', function () {
+            guiders.next();
+          });
+        }
+      });
+
+      createGuider({
+        category: 'entries',
+        id: 'entryOpenTab',
+        title: 'Back to your Entry',
+        description: 'Every editor will open a new tab here. Go back to the Entry Editor to continue with the tutorial.',
+        attachTo: '.tab-list .tab[data-view-type="entry-editor"]:visible',
+        position: 7,
+        next: 'entryCollaboration',
+        onShow: function () {
+          spaceScope.one('tabBecameActive', function () {
+            setTimeout(function () {
+              guiders.next();
+            }, 500);
+          });
+        }
+      });
+
+      createGuider({
+        category: 'entries',
+        id: 'entryCollaboration',
+        title: 'Team effort',
+        description: 'Contentful makes working together easy. Multiple users, simultaneous editing. See who is currently working on the same Entry with you.',
+        attachTo: '.entry-editor:visible .other-users',
+        position: 12,
+        buttons: [{ name: 'Next', classString: 'default-button primary-button' }],
         next: 'entrySave'
       });
 
@@ -451,38 +810,25 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'entries',
         id: 'entrySave',
         title: 'Everything is safe with us',
-        description: 'Our system <strong>automatically saves your data</strong> every time there’s a change. No need to press a save button. This status-bar indicates the state of the database connection.',
-        attachTo: '.tab-content:visible .save-status',
+        description: 'We <strong>automatically save your data</strong> on every single change you make, regardless of the stage you are at. No need to frantically click save or worry about losing data. Look at the bottom bar to see the current save status.',
+        attachTo: '.entry-editor:visible .save-status',
         position: 11,
-        buttons: [{ name: 'Next' }],
-        next: 'entryCollaboration'
-      });
-
-      createGuider({
-        category: 'entries',
-        id: 'entryCollaboration',
-        title: 'Working together',
-        description: 'On Contentful you can work together with your team. On this bar you can see who’s editing the Entry <strong>at the same time</strong>.',
-        attachTo: '.tab-content:visible .other-users',
-        position: 11,
-        buttons: [{ name: 'Next' }],
+        buttons: [{ name: 'Next', classString: 'default-button primary-button' }],
         next: 'entryPublish'
       });
 
       createGuider({
         category: 'entries',
         id: 'entryPublish',
-        title: 'Publish!',
-        description: 'Your content is saved automatically, but to make it available for consumption you need to publish it. You can also unpublish previously published content.<br><br><strong>Edit your fields now in the form above, then click this button to publish the Entry and proceed.</strong>',
-        attachTo: '.tab-content:visible .publish',
+        title: 'Ready, steady, publish!',
+        description: 'When you feel ready for your audience to get your content, hit that button. Until that moment we will keep everything saved for you. We also give you an exit door and enable you to unpublish previously published content.',
+        attachTo: '.entry-editor:visible .publish',
         position: 1,
         next: 'entryList',
         onShow: function (guider) {
-          guider.attachScope.$watch('entry.isPublished()', function (published) {
-            if (published) {
-              tutorialScope.entryDone = true;
-              guiders.next();
-            }
+          guider.attachScope.waitFor('entry.isPublished()', function () {
+            tutorialScope.entryDone = true;
+            guiders.next();
           });
         }
       });
@@ -490,10 +836,10 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         category: 'entries',
         id: 'entryList',
-        title: 'Your Entries are here',
-        description: 'Click on this button, it’ll take you to a <strong>list of all the Entries your team has created</strong>, regardless of whether they were published or are still drafts.',
+        title: 'Your Entries and Assets',
+        description: '<p>By clicking Entries and Assets, you can see the respective lists. Both Assets and Entries will be listed regardless of whether they are published or still drafts.</p><p>Click on <strong>Entries</strong> now.</p>',
         attachTo: '.nav-bar ul li[data-view-type=entry-list]',
-        position: '2',
+        position: '6',
         next: 'entryExamples',
         onShow: function () {
           $(this.attachTo).one('click', function () {
@@ -505,7 +851,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         category: 'entries',
         id: 'entryExamples',
-        title: 'Want to see some more examples?',
+        title: 'You defined you first Entry and Asset',
         template: 'tutorial_entry_examples',
         next: 'entryDone'
       });
@@ -513,12 +859,12 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         category: 'entries',
         id: 'entryDone',
-        title: 'More information about Contentful',
-        description: 'If you need more information before starting to use Contentful, please check our <a href="http://support.contentful.com/home">Knowledge Base Pages</a>.',
-        next: 'overview',
+        title: 'Round the clock infos',
+        description: 'Get more info on Contentful, features and functionalities any time of the day and night on our <a href="http://support.contentful.com/home">Knowledge Base Pages</a>.',
+        next: 'welcome',
         overlay: true,
         buttons: [
-          {name: 'Back to overview', onclick: function () { guiders.next(); }}
+          {name: 'Back to tutorials overview menu', onclick: function () { guiders.next(); }}
         ]
       });
 
@@ -529,20 +875,20 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         category: 'apiKeys',
         id: 'apiKeyIntro',
-        title: 'We’re glad you took our Delivery Tutorial!',
-        description: 'Content is accessible in your applications with API Keys. An API Key contains an access token which is used for authentication. In this tutorial we’ll teach you how to create one key for each app.',
+        title: 'One step away from flying solo!',
+        description: '<p>Once you created your Content Model, got it populated with Entries and Assets, you should get it to your users. Your content is distributed onto your apps through API Keys. The API is like your 60’s phone operator connecting your content and your app.</p><p>In this tutorial you’ll learn how to create an API Key for each one of your distribution platforms (app, website, etc).</p>',
         next: 'apiKeyCreate1',
         overlay: true,
-        buttons: [{name: 'Next'}]
+        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
       });
 
       createGuider({
         category: 'apiKeys',
         id: 'apiKeyCreate1',
-        title: 'Adding starts here',
-        attachTo: '.tab-list .add.button',
-        position: '2',
-        description: 'Everything you need to add is in this menu: Content Types, Entries and API Keys.',
+        title: 'One more click onto the Add button',
+        attachTo: '.tablist-button',
+        position: '7',
+        description: '<p>This time we’ll use it to create an API Key. Now, you’ve seen all the Add button can do.</p><p><strong>Click the Add button</strong></p>',
         next: 'apiKeyCreate2',
         onShow: function () {
           $(this.attachTo).one('click', function () {
@@ -554,8 +900,8 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         category: 'apiKeys',
         id: 'apiKeyCreate2',
-        title: 'Select API Key',
-        attachTo: '.tab-list .add-btn .dropdown-menu ul:first',
+        title: 'Now, select “API Key”',
+        attachTo: '.tablist-button .add-api-key',
         position: '2',
         description: 'One API Key corresponds to one channel of distribution. This will open the API Key screen.',
         next: 'apiKeyEdit',
@@ -569,29 +915,26 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         category: 'apiKeys',
         id: 'apiKeyEdit',
-        title: 'Give it a name and a description',
-        description: 'Name and describe the application you are distributing to. This will help telling the API Keys apart from each other.',
-        buttons: [{name: 'Next'}],
+        title: 'Name and describe your first API Key',
+        description: 'Each API Key works for one distribution platform. To make sure you get the right content to the right platform, give your API Keys descriptive names.',
+        buttons: [{name: 'Next', classString: 'default-button primary-button'}],
+        attachTo: '.api-key-editor:visible input[ng-model="apiKey.data.name"]',
+        position: 2,
         next: 'apiKeySave'
       });
 
       createGuider({
         category: 'apiKeys',
         id: 'apiKeySave',
-        title: 'When finished, save and generate',
-        description: 'When you hit save, the API Key will be generated and ready to use by the app.',
+        title: 'All done? Save and generate the Key',
+        description: 'Clicking the save button will secure your changes, as well as generate the API Key you defined. Your content will then be available for your app.',
         attachTo: '.api-key-editor:visible button.save',
-        offset: {top: 15, left: 0},
         position: '1',
         next: 'apiKeyTest',
         onShow: function () {
-          var scope = $(this.attachTo).scope();
-          var d = scope.$watch('apiKey.data.accessToken', function (token) {
-            if (token) {
-              d();
-              tutorialScope.apiKeyDone = true;
-              guiders.next();
-            }
+          this.attachScope.waitFor('apiKey.data.accessToken', function () {
+            tutorialScope.apiKeyDone = true;
+            guiders.next();
           });
         }
       });
@@ -599,21 +942,21 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         category: 'apiKeys',
         id: 'apiKeyTest',
-        title: 'This is your Api Keys Access Token',
-        description: 'You can now authenticate your API calls with the access token and consume content from this Space.<br>Try accessing your content using this this token via CURL on the command line or by clicking the link.',
+        title: 'Tadaa! This is your Access Token',
+        description: '<p>The Access Token enables you to authenticate the API calls your distribution platform makes on Contentful to retrieve your content. Access Tokens make sure that your content can only be used from your own applications.</p><p>You can test this by using this token by either clicking the link or via CURL by using the command line.</p>',
         attachTo: '.api-key-editor:visible .curl-example',
         position: 7,
         next: 'apiKeyList',
-        buttons: [{name: 'Next'}]
+        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
       });
 
       createGuider({
         category: 'apiKeys',
         id: 'apiKeyList',
-        title: 'Here are your API Keys',
-        description: 'Every time you create an API Key it appears on the list shown by this button.',
+        title: 'The home to your API Keys',
+        description: '<p>Access and edit your API Keys anytime from the Content Delivery Menu.</p><p>Click <strong>Content Delivery</strong> now.</p>',
         attachTo: '.nav-bar ul li[data-view-type=api-key-list]',
-        position: '2',
+        position: '6',
         next: 'apiKeyDone',
         onShow: function () {
           $(this.attachTo).one('click', function () {
@@ -625,15 +968,17 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         category: 'apiKeys',
         id: 'apiKeyDone',
-        title: 'Learn more?',
-        description: 'If you need more information before starting to use Contentful, please check our <a href="http://support.contentful.com/home">Knowledge Base Pages</a>.',
+        title: 'You’ve closed the tutorial loop.',
+        description: 'Get more info on Contentful, features and functionalities any time of the day and night on our <a href="http://support.contentful.com/home">Knowledge Base Pages</a>.',
         overlay: true,
-        next: 'overview',
+        next: 'welcome',
         buttons: [
           {name: 'Back to overview', onclick: function () { guiders.next(); }}
         ]
 
       });
+
+      this._initialized = true;
 
     }
   };

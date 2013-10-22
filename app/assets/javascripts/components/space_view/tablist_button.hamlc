@@ -19,6 +19,7 @@
     %ul.content-types(ng-show="spaceContext.publishedContentTypes.length > 0" ng-show="can('create', 'Entry')")
       %li(ng-repeat="(index, contentType) in spaceContext.publishedContentTypes"
         ng-click="createEntry(contentType)"
+        data-content-type-id="{{contentType.getId()}}"
         dropdown-close="")
         {{contentType.getName()}}
     %ul.highlight.no-content-types(ng-hide="spaceContext.publishedContentTypes.length > 0")

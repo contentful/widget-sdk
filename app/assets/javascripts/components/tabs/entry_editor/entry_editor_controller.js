@@ -107,6 +107,7 @@ angular.module('contentful')
     var scope = event.currentScope;
     if (!_.isEmpty(scope.entry.data.fields)) scope.validate();
     firstValidate();
+    firstValidate = null;
   });
 
   $scope.$watch('fields', function (fields, old, scope) {

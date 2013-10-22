@@ -85,13 +85,45 @@ $separator-style: 1px solid $light-rule
   white-space: normal
   padding: 0
   ul
-    margin: 0 300px 0 0
+    margin: 0
+    li
+      list-style-type: circle
+      padding-left: 0px
+      margin-left: 20px
+    li:hover
+      a:link
+        color: $dark-gray
+  .menu-list
+    width: 200px
     min-height: 250px
     border-right: 1px solid $lightest-gray
-  li:first-child
-    +border-radius(3px 0 0 0)
-  li:last-child
-    +border-radius(0 0 0 3px)
+    .type,
+    .group
+      list-style-type: none
+    .type
+      padding-left: 20px
+      margin-left: 0
+    .type:first-child
+      +border-radius(3px 0 0 0)
+    .type:last-child
+      +border-radius(0 0 0 3px)
+    .type:hover
+      .content-type-description,
+      .validation-type-description
+        display: block
+    .group h3
+      margin-top: 8px
+      margin-bottom: 0
+    .group:hover
+      background: white
+      cursor: default
+    .cf-fieldtype-icon
+      font-size: 12px
+      margin-right: 5px
+      float: left
+    .type:hover .cf-fieldtype-icon
+      color: white
+      border-color: white
   .content-type-description,
   .validation-type-description
     position: absolute
@@ -103,28 +135,10 @@ $separator-style: 1px solid $light-rule
     padding: 20px 40px 10px 10px
     p
       padding: 0
+    a
+      display: inline
     img
-      position: absolute
-      bottom: 70px
-  li:hover
-    .content-type-description,
-    .validation-type-description
-      display: block
-  li.group h3
-    margin-top: 8px
-    margin-bottom: 0
-  li.group:hover
-    background: white
-    cursor: default
-  li.type
-    padding-left: 20px
-  .cf-fieldtype-icon
-    font-size: 12px
-    margin-right: 5px
-    float: left
-  li:hover .cf-fieldtype-icon
-    color: white
-    border-color: white
+      margin-top: 30px
 
 // Positioning/Caret stuff
 // TODO why caret?
