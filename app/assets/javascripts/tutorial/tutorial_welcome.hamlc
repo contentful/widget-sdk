@@ -81,6 +81,8 @@
       .welcome-text
         %a(href="#" ng-click="abort()") I want to start using Contentful right away
 
+  .hide-x-button(ng-hide="atLastSlide()")
+
   .nav-left(ng-hide="atFirstSlide()" ng-click="moveSlide(-1)")
     .nav-arrow-left
   .nav-right(ng-hide="atLastSlide()" ng-click="moveSlide(+1)")
