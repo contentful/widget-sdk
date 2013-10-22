@@ -69,6 +69,7 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
           var reason;
           if (errorId === 'ValidationFailed') {
             reason = 'Validation failed';
+            scope.setValidationErrors(err.body.details.errors);
           } else if (errorId === 'VersionMismatch')
             reason = 'Can only publish most recent version';
           else

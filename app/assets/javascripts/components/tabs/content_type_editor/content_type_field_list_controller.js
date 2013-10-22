@@ -1,20 +1,57 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeFieldListCtrl', function($scope, analytics, validation, HashMap) {
+angular.module('contentful').controller('ContentTypeFieldListCtrl', function($scope, analytics, validation, $q, random) {
   var _showValidations = {};
-  var hashMap = new HashMap();
 
-  $scope.showValidations = function(fieldId) {
-    return !!_showValidations[fieldId];
-  };
-
-  var openFieldKey;
-  $scope.toggleField = function (field) {
-    var key = $scope.fieldSortKey(field);
-    if (openFieldKey == key) {
-      openFieldKey = null;
+  $scope.fieldList = $scope.contentType.data.fields;
+  $scope.$watchCollection('contentType.data.fields', function (fields, old, scope) {
+    if (hasUIIDs(fields)) {
+      scope.fieldList = fields;
     } else {
-      openFieldKey = key;
+      scope.fieldList = _.map(fields, function (field) {
+        if (field.uiid) {
+          return field;
+        } else {
+          field = Object.create(field);
+          field.uiid = random.id();
+          return field;
+        }
+      });
+    }
+  });
+
+  $scope.$watch('otDoc', function (otDoc, old, scope) {
+    var otBecameActive = otDoc && !old;
+    if (otBecameActive && !hasUIIDs(scope.contentType.data.fields)) {
+      prepareUIIDs(scope.contentType);
+    }
+  });
+
+  function hasUIIDs(fields) {
+    return _.all(fields, 'uiid');
+  }
+
+  function prepareUIIDs(contentType) {
+    return $scope.waitFor('otDoc').then(function (otDoc) {
+      return $q.all(_(contentType.data.fields).reject('uiid').map(function (field, index) {
+        var d = $q.defer();
+        otDoc.setAt(['fields', index, 'uiid'], random.id(), function (err, res) {
+          if (err) d.reject(err);
+          else d.resolve(res);
+        });
+        return d.promise;
+      }).value());
+    }).finally(function () {
+      $scope.otUpdateEntity();
+    });
+  }
+
+  var openFieldUIID;
+  $scope.toggleField = function (field) {
+    if (openFieldUIID == field.uiid){
+      openFieldUIID = null;
+    } else {
+      openFieldUIID = field.uiid;
     }
   };
 
@@ -23,29 +60,55 @@ angular.module('contentful').controller('ContentTypeFieldListCtrl', function($sc
   };
 
   $scope.openField = function (field) {
-    var key = $scope.fieldSortKey(field);
-    openFieldKey = key;
-  };
-
-  $scope.fieldSortKey = function (field) {
-    if ($scope.fieldIsPublished(field)) {
-      return field.id;
-    } else {
-      return hashMap.hashFor(field);
-    }
-  };
-
-  $scope.fieldIsPublished = function (field) {
-    return _.contains($scope.publishedIds, field.id);
+    openFieldUIID = field.uiid;
   };
 
   $scope.closeAllFields = function () {
-    openFieldKey = null;
+    openFieldUIID = null;
   };
 
   $scope.isFieldOpen = function (field) {
-    var key = $scope.fieldSortKey(field);
-    return openFieldKey == key;
+    return openFieldUIID == field.uiid;
+  };
+
+  $scope.fieldTypeParams = function (f) {
+    var params = [f.type, f.linkType];
+    if (f.items) params.push(f.items.type, f.items.linkType);
+    return params;
+  };
+
+  $scope.fieldIsPublished = function (field) {
+    if (!$scope.publishedContentType || !$scope.publishedContentType.data) return false;
+
+    if (hasUIIDs($scope.publishedContentType.data.fields)) {
+      // should be the default case
+      return _.contains($scope.publishedUIIDs, field.uiid);
+    } else {
+      // Fallback for published content types that don't yet have uiids
+      var idIsPublished = _.contains($scope.publishedIds, field.id);
+      return idIsPublished && (idIsUnique(field) || (typeMatchesPublished(field) && typeIsUnique(field)));
+    }
+
+    function typeMatchesPublished(field) {
+      var publishedField = _.find($scope.publishedContentType.data.fields, {id: field.id});
+      return angular.equals($scope.fieldTypeParams(field), $scope.fieldTypeParams(publishedField));
+    }
+
+    function idIsUnique(field) {
+      return _.countBy($scope.fieldList, 'id')[field.id] < 2;
+    }
+
+    function typeIsUnique(field) {
+      var fieldType = $scope.fieldTypeParams(field);
+      return _.every($scope.fieldList, function isDifferent(other) {
+        if (field === other) return true; // always equal to self but that doesn't count so treat it as different
+        return other.id !== field.id || !angular.equals(fieldType, $scope.fieldTypeParams(other));
+      });
+    }
+  };
+
+  $scope.showValidations = function(fieldId) {
+    return !!_showValidations[fieldId];
   };
 
   $scope.hasValidations = function (field) {
@@ -81,13 +144,4 @@ angular.module('contentful').controller('ContentTypeFieldListCtrl', function($sc
     var scope = event.currentScope;
     scope.openField(scope.contentType.data.fields[index]);
   });
-
-  $scope.$on('fieldDeleted', function (event, field) {
-    hashMap.remove(field);
-  });
-
-  $scope.$watch('pulishedIds', function () {
-    hashMap.clear();
-  });
-
 });

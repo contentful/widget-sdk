@@ -1,8 +1,9 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeEditorCtrl', function ContentTypeEditorCtrl($scope, validation, can, notification, analytics, addCanMethods) {
+angular.module('contentful').controller('ContentTypeEditorCtrl', function ContentTypeEditorCtrl($scope, validation, can, notification, analytics, addCanMethods, random) {
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
 
+  $scope.contentType = $scope.tab.params.contentType;
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
 
   $scope.$watch(function contentTypeEditorEnabledWatcher(scope) {
@@ -56,7 +57,6 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
     }
   });
 
-
   function loadPublishedContentType() {
     // TODO replace with lookup in registry inside spaceContext
     $scope.contentType.getPublishedStatus(function(err, publishedContentType) {
@@ -73,7 +73,6 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
     firstValidate = null;
   });
 
-
   $scope.updatePublishedContentType = function (publishedContentType) {
     $scope.publishedContentType = publishedContentType;
   };
@@ -84,6 +83,7 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
 
   $scope.$watch('publishedContentType.data.fields', function (fields, old, scope) {
     scope.publishedIds = _.pluck(fields, 'id');
+    scope.publishedUIIDs = _.pluck(fields, 'uiid');
   });
 
   $scope.$watch('contentType.getName()', function(title) {
@@ -96,7 +96,8 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
     var newField = _.extend({
       name: '',
       id: '',
-      type: 'String'
+      type: 'String',
+      uiid: random.id()
     }, typeFieldTemplate);
 
     fieldDoc.push(newField, function(err, ops) {

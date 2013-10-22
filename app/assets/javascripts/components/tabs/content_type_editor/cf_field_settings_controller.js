@@ -8,12 +8,7 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
     scope.hasValidations = !noValidations;
   });
 
-  $scope.$watch(function (scope) {
-    var f = scope.field;
-    var params = [f.type, f.linkType];
-    if (f.items) params.push(f.items.type, f.items.linkType);
-    return params;
-  }, function (typeParams, old, scope) {
+  $scope.$watch('fieldTypeParams(field)', function (typeParams, old, scope) {
     scope.validationsAvailable = !_.isEmpty(validation.Validation.perType($scope.field));
   }, true);
 
@@ -53,8 +48,8 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
            : $scope.field.name;
   };
 
-  $scope.$watch('publishedIds', function(ids, old, scope) {
-    scope.published = scope.fieldIsPublished(scope.field);
+  $scope.$watch('fieldIsPublished(field)', function(published, old, scope) {
+    scope.published = published;
   });
 
   $scope.openValidations = function () {
@@ -71,6 +66,7 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
   };
 
   function otUpdateFieldId(newId) {
+    var isDisplayField = $scope.isDisplayField();
     $scope.field.id = newId;
 
     if (!$scope.otDoc) return false;
@@ -80,6 +76,11 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
         if (err) {
           scope.field.id = subdoc.get();
           notification.serverError('Error updating ID', err);
+          return;
+        }
+        if (isDisplayField ||
+            _.isEmpty($scope.contentType.data.displayField) && $scope.displayEnabled()) {
+          $scope.setDisplayField($scope.field);
         }
       });
     });
@@ -90,7 +91,8 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
 
     var newField = _.extend({
       name: $scope.field.name,
-      id: $scope.field.id
+      id: $scope.field.id,
+      uiid: $scope.field.uiid
     }, newType);
 
     var subdoc = $scope.otDoc.at(['fields', $scope.index]);

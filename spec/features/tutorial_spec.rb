@@ -48,6 +48,7 @@ feature 'Tutorial', js: true, non_ci: true do
     fill_in 'contentTypeDescription', with: 'Foobarbaz'
 
     add_field('Title', 'Text')
+    click_link 'Next' # Confirm ID
     6.times do # Second Row
       click_link 'Next'
       sleep 0.25
