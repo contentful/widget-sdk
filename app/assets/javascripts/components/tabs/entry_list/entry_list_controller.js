@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl($scope, $q, Paginator, Selection, analytics, PromisedLoader) {
+angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl($scope, $q, Paginator, Selection, analytics, PromisedLoader, can) {
   var entryLoader = new PromisedLoader();
 
   $scope.entrySection = 'all';

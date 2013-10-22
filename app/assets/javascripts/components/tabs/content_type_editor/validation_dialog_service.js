@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('validationDialog', function (modalDialog) {
+angular.module('contentful').factory('validationDialog', function (modalDialog, can) {
 
   return {
     open: function (scope) {

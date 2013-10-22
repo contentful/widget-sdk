@@ -2,7 +2,9 @@
   .logo(ng-click="logoClicked()")
     .cf-logo
   %ul(ng-show="spaceContext.space")
-    %li.tablist-button(space-context="spaceContext")
+    %li.tablist-button(
+      space-context="spaceContext"
+      ng-show="can('create', 'ContentType') || can('create', 'Asset') || can('create', 'Entry') || can('create', 'ApiKey')")
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'contentTypes',
                   'section-index': spaceContext.tabList.currentViewType() == 'content-type-list'}"
         ng-click="goToView('content-type-list')"
@@ -28,7 +30,7 @@
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'apiKeys',
                    'section-index': spaceContext.tabList.currentViewType() == 'api-key-list'}"
         ng-click="goToView('api-key-list')"
-        ng-show="can('update', 'ApiKey')"
+        ng-show="can('read', 'ApiKey')"
         data-view-type="api-key-list"
         tabindex="0")
       %i.ss-fork
