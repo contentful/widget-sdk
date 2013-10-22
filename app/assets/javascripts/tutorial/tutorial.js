@@ -161,7 +161,10 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         next: 'contentTypeCreate1',
         overlay: true,
         width: '90%',
-        xButton: true
+        xButton: true,
+        onShow: function () {
+          repositionLater();
+        }
       });
 
 ////////////////////////////////////////////////////////////////////////////////
