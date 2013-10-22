@@ -673,7 +673,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'entries',
         id: 'entryAnswers',
         title: 'Add some answers',
-        description: '<p>Add the following answers to each <strong>Answer</strong> Field by order: Wordpress, Contentful, Drupal, Joomla.</p><p>In the <strong>Correct Answer</strong> Field, you can define which option number has the correct answer. <strong>Well, you know it’s number 2, right?',
+        description: '<p>Add the following answers to each <strong>Answer</strong> Field by order: Wordpress, Contentful, Drupal, Joomla.</p><p>In the <strong>Correct Answer</strong> Field, you can define which option number has the correct answer. <strong>Well, you know it’s number 2, right?</strong>',
         attachTo: '.entry-editor:visible .form-field[data-field-id="answer1"] textarea',
         position: '2',
         next: 'entryAsset',
