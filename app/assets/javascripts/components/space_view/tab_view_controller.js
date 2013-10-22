@@ -98,10 +98,6 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     routing.goToTab(tab, $scope.spaceContext.space);
   };
 
-  $scope.hideTabBar = function () {
-    return _.every($scope.spaceContext.tabList.items, function(item){ return item.hidden; });
-  };
-
   $scope.findTabForPath = function (path) {
     return _.find($scope.spaceContext.tabList.items, function (tab) {
       return routing.makeLocation(tab, $scope.spaceContext.space) == path;
