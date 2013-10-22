@@ -172,7 +172,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'content-types',
         id: 'contentTypeIntro',
         title: 'Welcome to our Content Model tutorial!',
-        description: '<p>Before anything else, you have to create your Content Types. All your Content Types are your <strong>Content Model</strong>. This is like deciding which forms to use for cookies you’d like to bake.'+
+        description: '<p>Before anything else, you have to create your Content Types. All your Content Types are your <strong>Content Model</strong>.</p><p>This is like deciding which forms to use for cookies you’d like to bake.'+
           ' Depending on what you’ll be baking, you’ll use a set of specific forms (Content Types) that will ultimately shape the dough (your content).</p>'+
           ' <p>This first tutorial walks you through Content Types creation.</p>',
         overlay: true,
@@ -184,7 +184,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'content-types',
         id: 'contentTypeCreate1',
         title: 'Meet the mighty Add button',
-        description: '<p>One click on the Add button and you can add new Content Types, Entries and API Keys to your account.</p><p>Click and see for yourself.</p>',
+        description: '<p>One click on the Add button and you can add new Content Types, Entries and API Keys to your account.</p><p><strong>Click and see for yourself.</strong></p>',
         attachTo: '.tablist-button',
         position: '7',
         next: 'contentTypeCreate2',
@@ -199,7 +199,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'content-types',
         id: 'contentTypeCreate2',
         title: 'Now add your Content Types',
-        description: '<p>One click here will put you right into the Content Type Editor, where you’ll be able to create your Content Type, adding Fields to it.</p><p>Note: you won’t be able to see the Entries option in the Add menu, before you create Content Types</p><p>Take it to the next level, click on Content Types.</p>',
+        description: '<p>One click here will put you right into the Content Type Editor, where you’ll be able to create your Content Type, adding Fields to it.</p><p>Note: you won’t be able to see the Entries option in the Add menu, before you create Content Types</p><p><strong>Take it to the next level, click on Content Types.</strong></p>',
         attachTo: '.tablist-button .add-content-type',
         position: '2',
         next: 'contentTypeEditor',
@@ -280,7 +280,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         title: 'Populate with fields',
         description: 'Let’s create your first Fields. You can add Fields which store content themselves or Fields that will attach other Entries or Assets to the Entry corresponding to this Content Type.',
         attachTo: '.tab-content:visible [name="contentTypeForm"] .primary-button:visible',
-        position: '6',
+        position: '12',
         next: 'contentTypeAddText',
         onShow: function () {
           $(this.attachTo).one('click', function () {
@@ -449,7 +449,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'content-types',
         id: 'contentTypeAddTimestamp',
         title: 'More Fields!',
-        description: 'Often you’ll need a date and time for your content. Let’s do this: call your Field <strong>Timestamp</strong> and select <strong>Date/Time</strong> in the types selection.',
+        description: 'Often you’ll need a date and time for your content. Let’s do this: select <strong>Date/Time</strong> in the types selection and call your Field <strong>Timestamp</strong>.',
         attachTo: '.tab-content:visible .add-field-button',
         position: '2',
         next: 'contentTypeConfigTimestamp',
@@ -546,7 +546,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'content-types',
         id: 'contentTypeList',
         title: 'Your Content Types’ home',
-        description: 'Access and edit your Content Types anytime you want, whether they are activated or not. Click on the icon and take a look for yourself.',
+        description: 'Access and edit your Content Types anytime you want, whether they are activated or not. <strong>Click on the icon and take a look for yourself.</strong>',
         attachTo: '.nav-bar ul li[data-view-type=content-type-list]',
         position: '7',
         next: 'contentTypeExamples',
@@ -622,8 +622,8 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         category: 'entries',
         id: 'entryCreate2',
-        title: 'Now add a Quiz',
-        description: 'Clicking on the chosen Content Type, <strong>Quiz</strong>, will open the Entry Editor, where you will be able to edit the content for a new Quiz.',
+        title: 'Now add a Quiz Question',
+        description: 'Clicking on the chosen Content Type, <strong>Quiz Question</strong>, will open the Entry Editor, where you will be able to edit the content for a new Quiz.',
         attachTo: '.tablist-button li[data-content-type-id="6Ku1uo32lqMYieci6ocUCs"]',
         position: '2',
         next: 'entryContent',
@@ -669,7 +669,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'entries',
         id: 'entryAnswers',
         title: 'Add some answers',
-        description: '<p>Add the following answers to each <strong>Answer</strong> Field by order: Wordpress, Contentful, Drupal, Joomla.</p><p>In the <strong>Correct Answer</strong> Field, you can define which option number has the correct answer. Well, you know it’s number 2, right?',
+        description: '<p>Add the following answers to each <strong>Answer</strong> Field by order: Wordpress, Contentful, Drupal, Joomla.</p><p>In the <strong>Correct Answer</strong> Field, you can define which option number has the correct answer. <strong>Well, you know it’s number 2, right?',
         attachTo: '.entry-editor:visible .form-field[data-field-id="answer1"] textarea',
         position: '2',
         next: 'entryAsset',
@@ -692,7 +692,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         title: 'Let\'s add your first asset',
         description: '<p>By clicking the “New” button, you will open the Asset editor. Assets can also be created through the top add button independent from an Entry and then linked.</p><p>For now lets click on the “New” button and open the Asset editor right away.</p>',
         attachTo: '.entry-editor:visible .form-field[data-field-id="image"] .add-new:visible',
-        position: '5',
+        position: '2',
         next: 'assetTitle',
         onShow: function () {
           $(this.attachTo).one('click', function () {
@@ -730,7 +730,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         title: 'Time to upload',
         description: '<p>Finally, upload your file by either clicking “Open File Picker” or drag and drop the file from your computer.</p><p>For this tutorial, let’s open the File Picker.</p>',
         attachTo: '.asset-editor:visible .upload-button',
-        position: '6',
+        position: '3',
         next: 'assetPick',
         onShow: function (guider) {
           $(guider.attachTo).one('click', function () {
@@ -744,7 +744,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'entries',
         id: 'assetPick',
         title: 'Pick and choose',
-        description: '<p>There is quite a few types of Asset sources you can choose from in the File Picker.</p><p>Select <strong>Web Images</strong> and look for quiz. See the first colourful image? Select that one and click upload.</p>',
+        description: '<p>There is quite a few types of Asset sources you can choose from in the File Picker.</p><p>Select <strong>Web Images and search for quiz</strong>. See the first colourful image? Select that one and click upload.</p>',
         attachTo: '#filepicker_dialog_container',
         position: 6,
         next: 'assetPublish',
@@ -764,7 +764,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'entries',
         id: 'assetPublish',
         title: 'Are you ready?',
-        description: '<p>Publish your Asset to successfully display it later on any platform. If you choose to archive it, it will still be properly linked to the Entry but won’t be displayed with the exported content. You can publish it later at any given moment.</p><p>For now, publish!</p>',
+        description: '<p>Publish your Asset to successfully display it later on any platform. If you choose to archive it, it will still be properly linked to the Entry but won’t be displayed with the exported content. You can publish it later at any given moment.</p><p><strong>For now, publish!</strong></p>',
         attachTo: '.asset-editor:visible .publish',
         position: 1,
         next: 'entryOpenTab',
@@ -885,7 +885,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         title: 'One more click onto the Add button',
         attachTo: '.tablist-button',
         position: '7',
-        description: '<p>This time we’ll use it to create an API Key. Now, you’ve seen all the Add button can do.</p><p>Click the Add button</p>',
+        description: '<p>This time we’ll use it to create an API Key. Now, you’ve seen all the Add button can do.</p><p><strong>Click the Add button</strong></p>',
         next: 'apiKeyCreate2',
         onShow: function () {
           $(this.attachTo).one('click', function () {
@@ -939,7 +939,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       createGuider({
         category: 'apiKeys',
         id: 'apiKeyTest',
-        title: 'Tadaa. This is your Access Token',
+        title: 'Tadaa! This is your Access Token',
         description: '<p>The Access Token enables you to authenticate the API calls your distribution platform makes on Contentful to retrieve your content. Access Tokens make sure that your content can only be used from your own applications.</p><p>You can test this by using this token by either clicking the link or via CURL by using the command line.</p>',
         attachTo: '.api-key-editor:visible .curl-example',
         position: 7,

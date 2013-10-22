@@ -1,6 +1,6 @@
 .cf-tutorial-welcome
   .welcome-slide.welcome-overview(ng-show="currentSlide == 'overview'")
-    .welcome-title Welcome to Contentful, the Content Management Platform for web and mobile apps!
+    .welcome-title Welcome to Contentful!
     .welcome-center
       .welcome-image
       .welcome-header Contentful in a nutshell
@@ -11,11 +11,11 @@
     .welcome-left
       .welcome-image
       .welcome-header Create Content Type
-      .welcome-text Let's take a quick look at how to create and publish your content in 3 simple steps
+      .welcome-text Let's take a quick look at how to create and publish your content in 3 simple steps.
     .welcome-right
       .welcome-image
       .welcome-header Decide, Field by Field
-      .welcome-text No annoying templates. Decide how many and which Fields you want to fill later, from text to images or even custom JSON Objects.
+      .welcome-text No annoying templates. Decide how many and which Fields you want to fill later.
        
   .welcome-slide.welcome-content(ng-show="currentSlide == 'content'")
     .welcome-title 2. Add your content
@@ -26,7 +26,7 @@
     .welcome-right
       .welcome-image
       .welcome-header Upload Assets
-      .welcome-text Upload media of any kind, assign metadata to it and link them to your Entries.
+      .welcome-text Upload media files of any kind, assign metadata to them and link them to your Entries.
        
   .welcome-slide.welcome-delivery(ng-show="currentSlide == 'delivery'")
     .welcome-title 3. Deliver your content
@@ -45,7 +45,7 @@
             Content Model
           %i.ss-database.background-icon
           .welcome-text
-            Learn how to set up Content Types, which are the basis for all your Entries.
+            Learn how to set up Content Types, the basis for your Entries.
           .buttons
             %button.default-button.repeat(type="button" ng-show="contentTypeDone" ng-click="goTo('contentTypeIntro')")
               Repeat Tutorial
@@ -79,7 +79,7 @@
       .welcome-text
         These tutorials guide you through the most important steps towards publishing your content.
       .welcome-text
-        %a(href="#" ng-click="abort()") Or start using Contentful right away
+        %a(href="#" ng-click="abort()") I want to start using Contentful right away
 
   .nav-left(ng-hide="atFirstSlide()" ng-click="moveSlide(-1)")
     .nav-arrow-left
