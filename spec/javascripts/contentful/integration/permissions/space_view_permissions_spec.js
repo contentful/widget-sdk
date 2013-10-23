@@ -3,21 +3,17 @@
 describe('The Space view permissions', function () {
 
   var container, scope;
-  var canStub, currentSectionStub;
+  var canStub;
 
   beforeEach(function () {
     canStub = sinon.stub();
-    currentSectionStub = sinon.stub();
     module('contentful/test', function ($provide) {
       $provide.value('can', canStub);
     });
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
       scope.spaceContext = {
-        space: {},
-        tablist: {
-          currentSection: currentSectionStub
-        }
+        space: {}
       };
 
       container = $('<space-view></space-view>');
