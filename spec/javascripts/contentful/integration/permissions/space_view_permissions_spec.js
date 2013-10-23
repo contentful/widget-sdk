@@ -3,17 +3,21 @@
 describe('The Space view permissions', function () {
 
   var container, scope;
-  var canStub;
+  var canStub, currentSectionStub;
 
   beforeEach(function () {
     canStub = sinon.stub();
+    currentSectionStub = sinon.stub();
     module('contentful/test', function ($provide) {
       $provide.value('can', canStub);
     });
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
       scope.spaceContext = {
-        space: {}
+        space: {},
+        tablist: {
+          currentSection: currentSectionStub
+        }
       };
 
       container = $('<space-view></space-view>');
@@ -32,28 +36,37 @@ describe('The Space view permissions', function () {
     expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(true);
   });
 
-  it('add button shown if user can create a content type', function () {
-    canStub.withArgs('create', 'ContentType').returns(true);
-    scope.$apply();
-    expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(false);
-  });
+  function makeShownButtonTest(type) {
+    it('add button shown if user can create a '+type, function () {
+      canStub.withArgs('create', type).returns(true);
+      scope.$apply();
+      expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(false);
+    });
+  }
+  makeShownButtonTest('ContentType');
+  makeShownButtonTest('Entry');
+  makeShownButtonTest('Asset');
+  makeShownButtonTest('ApiKey');
 
-  it('add button shown if user can create an entry', function () {
-    canStub.withArgs('create', 'Entry').returns(true);
-    scope.$apply();
-    expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(false);
-  });
+  function makeNavbarItemTest(type, action, viewType){
+    describe('navbar item for '+type, function () {
+      var selector = 'li[data-view-type="'+viewType+'"]';
 
-  it('add button shown if user can create an asset', function () {
-    canStub.withArgs('create', 'Asset').returns(true);
-    scope.$apply();
-    expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(false);
-  });
+      it('is hidden', function () {
+        canStub.withArgs(action, type).returns(false);
+        scope.$apply();
+        expect(container.find(selector).hasClass('ng-hide')).toBe(true);
+      });
 
-  it('add button shown if user can create an apikey', function () {
-    canStub.withArgs('create', 'ApiKey').returns(true);
-    scope.$apply();
-    expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(false);
-  });
+      it('is shown', function () {
+        canStub.withArgs(action, type).returns(true);
+        scope.$apply();
+        expect(container.find(selector).hasClass('ng-hide')).toBe(false);
+      });
+    });
+  }
 
+  makeNavbarItemTest('ApiKey', 'read', 'api-key-list');
+  makeNavbarItemTest('ContentType', 'read', 'content-type-list');
+  makeNavbarItemTest('Settings', 'update', 'space-settings');
 });
