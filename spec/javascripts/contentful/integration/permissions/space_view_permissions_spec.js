@@ -49,7 +49,7 @@ describe('The Space view permissions', function () {
         expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(false);
       });
 
-      it('show add menu item', function () {
+      xit('show add menu item', function () {
         expect(container.find('.tablist-button .'+itemClass).get(0)).toBeDefined();
         expect(container.find('.tablist-button .'+itemClass).hasClass('ng-hide')).toBe(false);
         if(type == 'Entry'){
@@ -59,7 +59,7 @@ describe('The Space view permissions', function () {
         }
       });
 
-      it('hide other add menu items', function () {
+      xit('hide other add menu items', function () {
         var currentItem = menuItems.indexOf(itemClass);
         menuItems.splice(currentItem, 1);
         menuItems.forEach(function (val) {
