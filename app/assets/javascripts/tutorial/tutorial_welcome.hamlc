@@ -4,14 +4,15 @@
     .welcome-center
       .welcome-image
       .welcome-header Contentful in a nutshell
-      .welcome-text Let's take a quick look at how to create and publish your content in 3 simple steps
+      .welcome-text Let's take a quick look at how to create and publish your content in 3 simple steps.
        
   .welcome-slide.welcome-structure(ng-show="currentSlide == 'structure'")
     .welcome-title 1. Define your structure
     .welcome-left
       .welcome-image
       .welcome-header Create Content Type
-      .welcome-text Let's take a quick look at how to create and publish your content in 3 simple steps.
+      .welcome-text Creating a Content Type is the first step. This will work as a stencil that will filter which kind of content you can add through the editing interface.
+
     .welcome-right
       .welcome-image
       .welcome-header Decide, Field by Field
