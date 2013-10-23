@@ -32,17 +32,48 @@ describe('The Space view permissions', function () {
     expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(true);
   });
 
-  function makeShownButtonTest(type) {
-    it('add button shown if user can create a '+type, function () {
-      canStub.withArgs('create', type).returns(true);
-      scope.$apply();
-      expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(false);
+  function makeShownButtonTest(type, itemClass) {
+    var menuItems = [
+      'add-content-type',
+      'content-types',
+      'add-asset',
+      'add-api-key'
+    ];
+    describe('if user can create a '+type, function () {
+      beforeEach(function () {
+        canStub.withArgs('create', type).returns(true);
+        scope.$apply();
+      });
+
+      it('show add button', function () {
+        expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(false);
+      });
+
+      it('show add menu item', function () {
+        expect(container.find('.tablist-button .'+itemClass).get(0)).toBeDefined();
+        expect(container.find('.tablist-button .'+itemClass).hasClass('ng-hide')).toBe(false);
+        if(type == 'Entry'){
+          expect(container.find('.tablist-button .separator').hasClass('ng-hide')).toBe(false);
+        } else {
+          expect(container.find('.tablist-button .separator').hasClass('ng-hide')).toBe(true);
+        }
+      });
+
+      it('hide other add menu items', function () {
+        var currentItem = menuItems.indexOf(itemClass);
+        menuItems.splice(currentItem, 1);
+        menuItems.forEach(function (val) {
+          expect(container.find('.tablist-button .'+val).get(0)).toBeDefined();
+          expect(container.find('.tablist-button .'+val).hasClass('ng-hide')).toBe(true);
+        });
+      });
+
     });
   }
-  makeShownButtonTest('ContentType');
-  makeShownButtonTest('Entry');
-  makeShownButtonTest('Asset');
-  makeShownButtonTest('ApiKey');
+  makeShownButtonTest('ContentType', 'add-content-type');
+  makeShownButtonTest('Entry', 'content-types');
+  makeShownButtonTest('Asset', 'add-asset');
+  makeShownButtonTest('ApiKey', 'add-api-key');
 
   function makeNavbarItemTest(type, action, viewType){
     describe('navbar item for '+type, function () {
