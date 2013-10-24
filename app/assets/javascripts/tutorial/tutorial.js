@@ -163,7 +163,8 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         width: '90%',
         xButton: true,
         onShow: function () {
-          repositionLater();
+          setTimeout(repositionLater, 200);
+          //repositionLater();
         }
       });
 
@@ -350,7 +351,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'content-types',
         id: 'contentTypeMoreOptions',
         title: 'More content editing options',
-        description: 'The second row has more options for the field',
+        description: 'The second row displays even more editing options.',
         attachTo: '.tab-content:visible .field-details',
         position: '2',
         next: 'contentTypeRequire',
@@ -488,7 +489,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'content-types',
         id: 'contentTypeAddAsset',
         title: 'Now, onto the Asset Field!',
-        description: 'The last type of Field to add: an Asset. Choose the <strong>Link toAsset</strong> Field from the menu and call it <strong>Image</strong>. That’s it, you can now upload images on your Blog Post.',
+        description: 'The last type of Field to add: an Asset. Choose the <strong>Link to Asset</strong> Field from the menu and call it <strong>Image</strong>. That’s it, you can now upload images on your Blog Post.',
         attachTo: '.tab-content:visible .add-field-button',
         position: '2',
         next: 'contentTypeConfigAsset',
@@ -672,7 +673,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'entries',
         id: 'entryAnswers',
         title: 'Add some answers',
-        description: '<p>Add the following answers to each <strong>Answer</strong> Field by order: Wordpress, Contentful, Drupal, Joomla.</p><p>In the <strong>Correct Answer</strong> Field, you can define which option number has the correct answer. <strong>Well, you know it’s number 2, right?',
+        description: '<p>Add the following answers to each <strong>Answer</strong> Field by order: Wordpress, Contentful, Drupal, Joomla.</p><p>In the <strong>Correct Answer</strong> Field, you can define which option number has the correct answer. <strong>Well, you know it’s number 2, right?</strong>',
         attachTo: '.entry-editor:visible .form-field[data-field-id="answer1"] textarea',
         position: '2',
         next: 'entryAsset',
