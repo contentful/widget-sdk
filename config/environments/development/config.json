@@ -3,6 +3,7 @@
   "api_host": "api.joistio.com:8888",
   "app_host": "app.joistio.com:8888",
   "cdn_host": "cdn.joistio.com:8888",
+  "exception_tracking_host": "cf-track-107d49294b11c1.appspot.com",
   "marketing_url": "http://static.joistio.com:8888",
   "asset_host": "static.joistio.com:8888",
   "ot_host": "ot.joistio.com:8888",
