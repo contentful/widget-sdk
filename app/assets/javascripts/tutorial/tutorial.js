@@ -351,7 +351,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'content-types',
         id: 'contentTypeMoreOptions',
         title: 'More content editing options',
-        description: 'The second row has more options for the field',
+        description: 'The second row displays even more editing options.',
         attachTo: '.tab-content:visible .field-details',
         position: '2',
         next: 'contentTypeRequire',
