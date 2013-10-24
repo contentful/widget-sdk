@@ -93,12 +93,15 @@ angular.module('contentful').factory('tutorialExampledata', function ($q, $http,
           var deferred = $q.defer();
           spaceContext.space.createEntry(entry.sys.contentType.sys.id, entry, function (err, entry) {
             $rootScope.$apply(function () {
-              if (err) return deferred.reject(err);
+              if (err && !(err.body && err.body.sys && err.body.sys.id == 'VersionMismatch')) return deferred.reject(err);
               deferred.resolve(entry);
             });
           });
           return deferred.promise;
         }));
+      }).
+      then(function (entries) {
+        return _.compact(entries);
       }).
       then(function (entries) {
         return $timeout(function(){
