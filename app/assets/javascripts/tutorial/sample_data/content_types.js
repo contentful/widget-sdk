@@ -176,7 +176,7 @@ angular.module('contentful').constant('sampleContentTypes', {
         'updatedAt': '2013-06-19T08:40:27.427Z'
       },
       'description': 'Quiz questions for your entertainment',
-      'displayField': 'title'
+      'displayField': 'question'
     },
     {
       'fields': [
@@ -244,7 +244,7 @@ angular.module('contentful').constant('sampleContentTypes', {
           }
         }
       ],
-      'name': 'Blog Post',
+      'name': 'Article',
       'sys': {
         'space': {
           'sys': {
