@@ -489,7 +489,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'content-types',
         id: 'contentTypeAddAsset',
         title: 'Now, onto the Asset Field!',
-        description: 'The last type of Field to add: an Asset. Choose the <strong>Link toAsset</strong> Field from the menu and call it <strong>Image</strong>. That’s it, you can now upload images on your Blog Post.',
+        description: 'The last type of Field to add: an Asset. Choose the <strong>Link to Asset</strong> Field from the menu and call it <strong>Image</strong>. That’s it, you can now upload images on your Blog Post.',
         attachTo: '.tab-content:visible .add-field-button',
         position: '2',
         next: 'contentTypeConfigAsset',
