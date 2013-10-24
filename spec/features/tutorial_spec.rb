@@ -3,12 +3,12 @@ require 'spec_helper'
 feature 'Tutorial', js: true, non_ci: true do
   before do
     ensure_login
-    remove_test_space 'Tutorial'
+    remove_test_space 'Playground'
     create_test_space
   end
 
   after do
-    remove_test_space 'Tutorial'
+    remove_test_space 'Playground'
   end
 
   def open_tutorial_overview

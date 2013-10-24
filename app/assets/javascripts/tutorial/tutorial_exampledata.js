@@ -20,7 +20,7 @@ angular.module('contentful').factory('tutorialExampledata', function ($q, $http,
       
     switchToTutorialSpace: function (clientScope) {
       var deferred = $q.defer();
-      var IS_TUTORIAL = /tutorial/i;
+      var IS_TUTORIAL = /playground/i;
       var tutorialSpace = _.find(clientScope.spaces, function (space) {
         return space.data.membership.owner && IS_TUTORIAL.test(space.data.name);
       });
@@ -28,7 +28,7 @@ angular.module('contentful').factory('tutorialExampledata', function ($q, $http,
         clientScope.selectSpace(tutorialSpace);
         deferred.resolve(tutorialSpace);
       } else {
-        client.createSpace({name: 'Tutorial'}, function (err, newSpace) {
+        client.createSpace({name: 'Playground'}, function (err, newSpace) {
           clientScope.$apply(function (scope) {
             if (err) {
               deferred.reject(err);
