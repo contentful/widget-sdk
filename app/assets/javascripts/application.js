@@ -51,13 +51,7 @@ angular.module('contentful/app', [
   }
 
   $locationProvider.html5Mode(true).hashPrefix('!');
-  $sceDelegateProvider.resourceUrlWhitelist([
-    'self',
-    '*.staticflinkly-thriventures.netdna-ssl.com/**',
-    '*.flinkly.com/**',
-    '*.joistio.com/**',
-    '*.contentful.com/**'
-  ]);
+  $sceDelegateProvider.resourceUrlWhitelist([/https?:\/\/([^:\/.?&;]*\.)?(staticflinkly-thriventures\.netdna-ssl\.com|flinkly.com|joistio.com|contentful.com)(:\d+)?\/.*/, 'self' ]);
   clientProvider.endpoint('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');
   //analyticsProvider.forceLoad();
