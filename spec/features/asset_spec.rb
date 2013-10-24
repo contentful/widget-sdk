@@ -1,27 +1,8 @@
 require 'spec_helper'
 
-DEFAULT_LOCALE = 'en-US'
-ASSET = {
-  :fields => {
-    :title => Hash[*[DEFAULT_LOCALE, 'Bacon']],
-    :description => Hash[*[DEFAULT_LOCALE, 'So chunky and crispy']],
-    :file => Hash[*[DEFAULT_LOCALE, {
-      :contentType => 'image/jpeg',
-      :fileName => 'example.jpg',
-      :details => {
-        :image => {
-          :width => 333,
-          :height => 300
-        },
-        :size => 17812
-      },
-      :url => "//images.joistio.com:8888/jvghydx4zq2t/4iX7NmIA0wsIWkGOmm2OWS/4871dd9962d7a6120696d984bf078b80/evilmonkey.jpg"
-    }]],
-  }
-}
-
 feature 'Asset Editor', js: true do
   include EditorHelper
+  include AssetHelper
 
   before do
     ensure_login
@@ -38,10 +19,7 @@ feature 'Asset Editor', js: true do
     edit_field('title', 'en-US', 'input').set 'Bacon'
     edit_field('description', 'en-US', 'textarea').set 'So chunky and crispy'
 
-    eval_scope '.asset-editor', "otDoc.at('fields').set(#{ASSET[:fields].to_json})"
-    sleep 0.5
-    eval_scope '.asset-editor', "otUpdateEntity()"
-    apply_scope '.asset-editor'
+    set_asset('.asset-editor')
 
     find '.file-info .thumbnail', wait: 10
     click_button 'Publish'
@@ -49,13 +27,14 @@ feature 'Asset Editor', js: true do
     nav_bar 'asset-list'
     table = find('.main-results tbody')
     sleep 5
-    expect(table).to have_text 'Bacon'
+    expect(table).to have_text('Bacon')
   end
 end
 
 feature 'Link Editor', js: true, non_ci: true do
   include EditorHelper
   include ContentTypeHelper
+  include AssetHelper
 
   before do
     ensure_login
@@ -85,10 +64,7 @@ feature 'Link Editor', js: true, non_ci: true do
     edit_field('title', 'en-US', 'input').set 'Bacon'
     edit_field('description', 'en-US', 'textarea').set 'So chunky and crispy'
 
-    eval_scope '.asset-editor', "otDoc.at('fields').set(#{ASSET[:fields].to_json})"
-    sleep 0.5
-    eval_scope '.asset-editor', "otUpdateEntity()"
-    apply_scope '.asset-editor'
+    set_asset('.asset-editor')
 
     find '.file-info .thumbnail', wait: 10
     click_button 'Publish'

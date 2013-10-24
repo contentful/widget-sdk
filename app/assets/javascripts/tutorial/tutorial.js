@@ -974,7 +974,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         overlay: true,
         next: 'welcome',
         buttons: [
-          {name: 'Back to overview', onclick: function () { guiders.next(); }}
+          {name: 'Back to tutorials overview menu', onclick: function () { guiders.next(); }}
         ]
 
       });
