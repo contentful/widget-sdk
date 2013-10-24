@@ -52,7 +52,7 @@
       %header Nothing to see yet.
       %p Why don't you create a space?
       %button.default-button.primary-button(type="button" ng-click="showCreateSpaceDialog()") Create Space
-    .cf-profile-view
+    .cf-profile-view(ng-class="{'with-tab-bar': !hideTabBar()}")
 
   = javascript_include_tag "application"
   = javascript_include_tag 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDskFlzw1ujRovNWNG3K64EUsncYTbRPfM&sensor=false'

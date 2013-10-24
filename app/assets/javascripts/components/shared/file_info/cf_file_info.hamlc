@@ -34,11 +34,11 @@
       %i.ss-download
     %button.default-button.show-metadata(type="button" ng-click="toggleMeta()" ng-show="file" tooltip="Show file information")
       %i.ss-info
-    %button.default-button.delete-file(type="button" ng-show="deleteFile && file" ng-click="deleteFile()" tooltip="Delete file")
+    %button.default-button.delete-file(type="button" ng-show="!otDisabled && deleteFile && file" ng-click="deleteFile()" tooltip="Delete file")
       %i.ss-trash
-    %button.default-button.remove-link(type="button" ng-show="removeLink" ng-click="removeLink(index, entity)" tooltip="Remove link")
+    %button.default-button.remove-link(type="button" ng-show="!otDisabled && removeLink" ng-click="removeLink(index, entity)" tooltip="Remove link")
       %i.ss-delete
 
-  .cf-file-drop(ng-show="!file && enableUpload")
+  .cf-file-drop(ng-show="!otDisabled && !file && enableUpload")
     %button.default-button.upload-button(type="button" ng-click="uploadFile()") Or Open File Picker
 

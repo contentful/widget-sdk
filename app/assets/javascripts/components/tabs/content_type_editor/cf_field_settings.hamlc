@@ -87,10 +87,10 @@
     {{isDisplayField(field) ? 'Used as title' : 'Use as title'}}
   %a.toggle-disabled(ng-click="toggle('disabled')"
     ng-class="{active: field.disabled}"
-    ng-show="published"
+    ng-show="!otDisabled && published"
     tooltip="{{field.disabled ? 'Enable this field for editors' : 'Disable this field for editors'}}")
     {{field.disabled ? 'Enable Field' : 'Disable Field'}}
-  %a.toggle-disabled(ng-click="delete()" ng-hide="published")
+  %a.toggle-disabled(ng-click="delete()" ng-show="!otPublished" ng-hide="published")
     Delete Field
-.drag-handle
+.drag-handle(ng-hide="otDisabled")
   %i.ss-rows

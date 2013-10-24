@@ -109,23 +109,23 @@ angular.module('contentful').controller('AssetListActionsCtrl', function AssetLi
   };
 
   $scope.showDelete = function () {
-    return every('canDelete');
+    return $scope.can('delete', 'Asset') && every('canDelete');
   };
 
   $scope.showArchive = function () {
-    return every('canArchive');
+    return $scope.can('archive', 'Asset') && every('canArchive');
   };
 
   $scope.showUnarchive = function () {
-    return every('canUnarchive');
+    return $scope.can('unarchive', 'Asset') && every('canUnarchive');
   };
 
   $scope.showUnpublish = function () {
-    return every('canUnpublish');
+    return $scope.can('unpublish', 'Asset') && every('canUnpublish');
   };
 
   $scope.showPublish = function () {
-    return every('canPublish');
+    return $scope.can('publish', 'Asset') && every('canPublish');
   };
 
   $scope.publishButtonName = function () {

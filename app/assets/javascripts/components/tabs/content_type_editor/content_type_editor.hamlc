@@ -61,13 +61,13 @@
           %i.ss-layout.giant-icon
           %header You have no Fields yet
           %p
-            Add Fields to configure which form inputs are available for your editors to work with.            
+            Add Fields to configure which form inputs are available for your editors to work with.
           .dropdown-btn
             %button.dropdown-toggle.default-button.primary-button
               Create Field
             .dropdown-menu.type-menu(select-type="addField(type)")
         .dropdown-btn(ng-show="contentType.data.fields.length > 0")
-          %button.dropdown-toggle.add-field-button.default-button.primary-button
+          %button.dropdown-toggle.add-field-button.default-button.primary-button(ng-disabled="!can('create', 'ContentType')")
             %i.ss-plus.button-icon
             Add Field
           .dropdown-menu.type-menu(select-type="addField(type)")

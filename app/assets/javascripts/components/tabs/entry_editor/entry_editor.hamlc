@@ -61,7 +61,7 @@
 
 .tab-actions(ng-controller="EntryActionsCtrl")
   .button-set
-    .dropdown-btn(on-close="deleteConfirm=false; disableTooltip=false")
+    .dropdown-btn(on-close="deleteConfirm=false; disableTooltip=false" ng-show="canDelete() || canDuplicate()")
       %a.dropdown-toggle.flat-button(tooltip="More actions" ng-click="disableTooltip=true")
         %i.ss-dropdown.button-icon-right
         More

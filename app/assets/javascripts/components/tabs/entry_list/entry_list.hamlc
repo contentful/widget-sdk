@@ -84,14 +84,14 @@
         %header You have no Entries yet.
         %p(ng-show="spaceContext.publishedContentTypes.length == 0")
           Entries are your content itself. These depend on the field types you created in the Content Type editor.
-        %button.default-button.primary-button(type="button" ng-click="createContentType()" ng-show="spaceContext.publishedContentTypes.length == 0")
+        %button.default-button.primary-button(type="button" ng-click="createContentType()" ng-disabled="!can('create', 'Entry')" ng-show="spaceContext.publishedContentTypes.length == 0")
           Create a Content Type
         %p(ng-hide="spaceContext.publishedContentTypes.length == 0")
           To create an Entry, use the Add-Button near the top of the screen.
 .tab-actions
   .label {{selection.size()}} Entries selected
-  .button-set(ng-controller="EntryListActionsCtrl"   ng-hide="selection.isEmpty()")
-    %button.default-button.delete(   type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
+  .button-set(ng-controller="EntryListActionsCtrl" ng-hide="selection.isEmpty()")
+    %button.default-button.duplicate(type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
     %button.default-button.delete(   type="button" ng-click="deleteSelected()"    ng-show="showDelete()"   ) Delete
     %button.default-button.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
     %button.default-button.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
