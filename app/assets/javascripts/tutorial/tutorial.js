@@ -163,7 +163,8 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         width: '90%',
         xButton: true,
         onShow: function () {
-          repositionLater();
+          setTimeout(repositionLater, 200);
+          //repositionLater();
         }
       });
 
