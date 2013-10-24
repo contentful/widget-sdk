@@ -90,6 +90,9 @@
         %p Assets are external documents that you can link to your Entries. They can be any file you wish, form sounds to images or videos to text documents.
         %button.default-button.primary-button(type="button" ng-click="createAsset()" ng-disabled="!can('create', 'Asset')")
           Create an Asset
+        %a.knowledge-base(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
+          Visit the Knowledge Base Pages
+          %i.ss-help
 
 .tab-actions
   .label {{selection.size()}} Assets selected

@@ -588,7 +588,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'entries',
         id: 'entryIntro',
         title: 'Greetings! Let’s start the Entries & Assets tutorial',
-        description: '<p>The Entries are where your content will reside, live, stay put if you wish. Assets, are media that you add to your content, such as a picture, video or audio file.>/p><p>Your Entries and Assets depend on the Content Types we defined in the previous step of the tutorial.</p>',
+        description: '<p>The Entries are where your content will reside, live, stay put if you wish. Assets, are media that you add to your content, such as a picture, video or audio file.</p><p>Your Entries and Assets depend on the Content Types we defined in the previous step of the tutorial.</p>',
         overlay: true,
         buttons: [
           {name: 'Discover the Entry Editor', onclick: function () { guiders.next(); }}
