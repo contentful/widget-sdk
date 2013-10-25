@@ -3,6 +3,7 @@
 angular.module('contentful').factory('tutorial', function ($compile, notification, tutorialExampledata, $q, $timeout, $rootScope, analytics) {
   var guiders = window.guiders;
   guiders._defaultSettings.buttons = null;
+  guiders._defaultSettings.xButton = true;
   guiders._arrowSize = 10;
 
   function Tutorial() {}
@@ -161,7 +162,6 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         next: 'contentTypeCreate1',
         overlay: true,
         width: '90%',
-        xButton: true,
         onShow: function () {
           setTimeout(repositionLater, 200);
           //repositionLater();
@@ -566,6 +566,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         id: 'contentTypeExamples',
         title: 'You defined your first Content Type!',
         template: 'tutorial_content_type_examples',
+        xButton: false,
         next: 'contentTypeDone'
       });
 
@@ -854,6 +855,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         id: 'entryExamples',
         title: 'You defined you first Entry and Asset',
         template: 'tutorial_entry_examples',
+        xButton: false,
         next: 'entryDone'
       });
 
