@@ -77,11 +77,6 @@
             %button.default-button.take(type="button" ng-hide="apiKeyDone" ng-click="goTo('apiKeyIntro')")
               Take Tutorial
 
-      .welcome-text
-        These tutorials guide you through the most important steps towards publishing your content.
-      .welcome-text
-        %a(href="#" ng-click="abort()") I want to start using Contentful right away
-
   .hide-x-button(ng-hide="atLastSlide()")
 
   .nav-left(ng-hide="atFirstSlide()" ng-click="moveSlide(-1)")

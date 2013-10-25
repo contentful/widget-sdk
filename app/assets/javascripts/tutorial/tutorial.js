@@ -6,6 +6,8 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
   guiders._defaultSettings.xButton = true;
   guiders._arrowSize = 10;
 
+  var next = {name: '<i class="ss-navigateright"></i>', classString: 'default-button next-button', onclick: function(){guiders.next();}};
+
   function Tutorial() {}
 
   Tutorial.prototype = {
@@ -180,7 +182,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
           ' Depending on what you’ll be baking, you’ll use a set of specific forms (Content Types) that will ultimately shape the dough (your content).</p>'+
           ' <p>This first tutorial walks you through Content Types creation.</p>',
         overlay: true,
-        buttons: [{name: 'Next', classString: 'default-button primary-button'}],
+        buttons: [next],
         next: 'contentTypeCreate1'
       });
 
@@ -223,7 +225,8 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         title: 'Welcome to the Content Type editor. Let’s create your first Content Type',
         description: '<p>A Content Type is like a cookie cutter: it shapes your dough (which in Contentful is your content). Once you\'ve shaped the cutter into whatever you want your cookies to look like, you can change the ingredients. The same is true of your content. Once you defined your Content Type, you can insert any fitting content and media.</p><p>This shaping will facilitate the distribution of your content onto multiple platforms later.</p><p>Put together, your Content Types, make up your Content Model.</p>',
         next: 'contentTypeName',
-        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+        overlay: true,
+        buttons: [next]
       });
 
       createGuider({
@@ -234,7 +237,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         position: '2',
         description: 'The best name for your Content Type is one that’s descriptive of the content it stores (e.g. Book, Quiz, Recipe). Let’s call this one <strong>Blog Post</strong>.',
         next: 'contentTypeSaving',
-        buttons: [{name: 'Next', classString: 'default-button primary-button'}],
+        buttons: [next],
         onShow: function (guider) {
           $(this.attachTo).focus();
           var d = guider.attachScope.$watch('contentType.data.name', function (name) {
@@ -254,7 +257,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         position: '11',
         description: 'Each change that you make is automatically saved, so say goodbye to lost work.',
         next: 'contentTypeDescription',
-        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+        buttons: [next]
       });
 
 
@@ -266,7 +269,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         position: '2',
         description: 'Your description will help other editors to understand which content belongs in this Content Type. We recommend you keep it concise and objective.',
         next: 'contentTypeAddFields',
-        buttons: [{name: 'Next', classString: 'default-button primary-button'}],
+        buttons: [next],
         onShow: function (guider) {
           $(this.attachTo).focus();
           var d = guider.attachScope.$watch('contentType.data.description', function (description) {
@@ -332,7 +335,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'content-types',
         id: 'contentTypeConfirmId',
         title: 'Confirm the ID',
-        description: 'The ID is relevant for content delivery. Save is before you follow to the next Field.',
+        description: 'The ID is relevant for content delivery. Save it before you follow to the next Field.',
         attachTo: '.tab-content:visible .field-id-form .ss-check',
         position: '1',
         next: 'contentTypeMoreOptions',
@@ -355,7 +358,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         attachTo: '.tab-content:visible .field-details',
         position: '2',
         next: 'contentTypeRequire',
-        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+        buttons: [next]
       });
 
       createGuider({
@@ -366,7 +369,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         attachTo: '.tab-content:visible .field-details .toggle-required',
         position: '6',
         next: 'contentTypeValidate',
-        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+        buttons: [next]
       });
 
       createGuider({
@@ -377,7 +380,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         attachTo: '.tab-content:visible .field-details .toggle-validate',
         position: '6',
         next: 'contentTypeLocalize',
-        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+        buttons: [next]
       });
 
       createGuider({
@@ -388,7 +391,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         attachTo: '.tab-content:visible .field-details .toggle-localized',
         position: '6',
         next: 'contentTypeTitleField',
-        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+        buttons: [next]
       });
 
       createGuider({
@@ -399,7 +402,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         attachTo: '.tab-content:visible .field-details .toggle-title',
         position: '6',
         next: 'contentTypeDelete',
-        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+        buttons: [next]
       });
 
       createGuider({
@@ -410,16 +413,16 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         attachTo: '.tab-content:visible .field-details .toggle-disabled:visible',
         position: '6',
         next: 'contentTypeMoreFields',
-        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+        buttons: [next]
       });
 
       createGuider({
         category: 'content-types',
         id: 'contentTypeMoreFields',
         title: 'More Fields!',
-        description: 'Now let’s populate with some more Fields. Add another <strong>Text Field</strong>, called <strong>Body</strong> (this will be the body of your Blog Post).',
+        description: 'Now let’s populate with some more Fields. Add another <strong>Text</strong> Field, called <strong>Body</strong> (this will be the body of your Blog Post).',
         attachTo: '.tab-content:visible .add-field-button',
-        position: '2',
+        position: '11',
         next: 'contentTypeConfigBody',
         onShow: function (guider) {
           guider.scope.waitFor(function () {
@@ -446,7 +449,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
             guiders.next();
           });
         },
-        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+        buttons: [next]
       });
 
       createGuider({
@@ -455,7 +458,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         title: 'More Fields!',
         description: 'Often you’ll need a date and time for your content. Let’s do this: select <strong>Date/Time</strong> in the types selection and call your Field <strong>Timestamp</strong>.',
         attachTo: '.tab-content:visible .add-field-button',
-        position: '2',
+        position: '11',
         next: 'contentTypeConfigTimestamp',
         onShow: function (guider) {
           guider.scope.waitFor(function () {
@@ -482,7 +485,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
             guiders.next();
           });
         },
-        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+        buttons: [next]
       });
 
       createGuider({
@@ -491,7 +494,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         title: 'Now, onto the Asset Field!',
         description: 'The last type of Field to add: an Asset. Choose the <strong>Link to Asset</strong> Field from the menu and call it <strong>Image</strong>. That’s it, you can now upload images on your Blog Post.',
         attachTo: '.tab-content:visible .add-field-button',
-        position: '2',
+        position: '11',
         next: 'contentTypeConfigAsset',
         onShow: function (guider) {
           guider.scope.waitFor(function () {
@@ -522,7 +525,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
             guiders.next();
           });
         },
-        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+        buttons: [next]
       });
 
       createGuider({
@@ -645,7 +648,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         id: 'entryContent',
         title: 'This is the Entry editor',
         description: 'Here you can’t add or edit Fields anymore. This Editor allows editors to focus on inserting content, according to the Content Type you created before.',
-        buttons: [{ name: 'Next', classString: 'default-button primary-button' }],
+        buttons: [next],
         next: 'entryQuestion'
       });
 
@@ -657,7 +660,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         attachTo: '.entry-editor:visible .form-field[data-field-id="question"] textarea',
         position: '2',
         next: 'entryAnswers',
-        buttons: [{ name: 'Next', classString: 'default-button primary-button' }],
+        buttons: [next],
         onShow: function (guider) {
           $(this.attachTo).focus();
           var d = this.attachScope.$watch('fieldData.value', _.debounce(function (value, old) {
@@ -678,7 +681,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         attachTo: '.entry-editor:visible .form-field[data-field-id="answer1"] textarea',
         position: '2',
         next: 'entryAsset',
-        buttons: [{ name: 'Next', classString: 'default-button primary-button' }],
+        buttons: [next],
         onShow: function (guider) {
           $(this.attachTo).focus();
           var d = this.attachScope.$watch('entry.data.fields.correctAnswer[spaceContext.defaultLocale.code]', _.debounce(function (value, old) {
@@ -716,7 +719,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         attachTo: '.asset-editor:visible .form-field[data-field-id="title"] input',
         position: '2',
         next: 'assetUpload',
-        buttons: [{ name: 'Next', classString: 'default-button primary-button' }],
+        buttons: [next],
         onShow: function (guider) {
           $(this.attachTo).focus();
           var d = this.attachScope.$watch('asset.data.fields.title[spaceContext.defaultLocale.code]', _.debounce(function (value, old) {
@@ -804,7 +807,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         description: 'Contentful makes working together easy. Multiple users, simultaneous editing. See who is currently working on the same Entry with you.',
         attachTo: '.entry-editor:visible .other-users',
         position: 12,
-        buttons: [{ name: 'Next', classString: 'default-button primary-button' }],
+        buttons: [next],
         next: 'entrySave'
       });
 
@@ -815,7 +818,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         description: 'We <strong>automatically save your data</strong> on every single change you make, regardless of the stage you are at. No need to frantically click save or worry about losing data. Look at the bottom bar to see the current save status.',
         attachTo: '.entry-editor:visible .save-status',
         position: 11,
-        buttons: [{ name: 'Next', classString: 'default-button primary-button' }],
+        buttons: [next],
         next: 'entryPublish'
       });
 
@@ -882,7 +885,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         description: '<p>Once you created your Content Model, got it populated with Entries and Assets, you should get it to your users. Your content is distributed onto your apps through API Keys. The API is like your 60’s phone operator connecting your content and your app.</p><p>In this tutorial you’ll learn how to create an API Key for each one of your distribution platforms (app, website, etc).</p>',
         next: 'apiKeyCreate1',
         overlay: true,
-        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+        buttons: [next]
       });
 
       createGuider({
@@ -920,7 +923,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         id: 'apiKeyEdit',
         title: 'Name and describe your first API Key',
         description: 'Each API Key works for one distribution platform. To make sure you get the right content to the right platform, give your API Keys descriptive names.',
-        buttons: [{name: 'Next', classString: 'default-button primary-button'}],
+        buttons: [next],
         attachTo: '.api-key-editor:visible input[ng-model="apiKey.data.name"]',
         position: 2,
         next: 'apiKeySave'
@@ -950,7 +953,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         attachTo: '.api-key-editor:visible .curl-example',
         position: 7,
         next: 'apiKeyList',
-        buttons: [{name: 'Next', classString: 'default-button primary-button'}]
+        buttons: [next]
       });
 
       createGuider({
