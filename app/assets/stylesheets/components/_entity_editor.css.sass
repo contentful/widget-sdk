@@ -1,26 +1,6 @@
 // Common styles for all kinds of editors
 
 %entity-editor
-  // OH GOD WHAT HAVE I DONE
-  //.dropdown-btn
-    display: inline-block
-    margin-right: 5px
-    vertical-align: middle
-  //.dropdown-toggle
-    font-size: 12px
-    padding: 0 10px 0 11px
-    line-height: 32px
-    vertical-align: middle
-    i
-      color: darken($lightest-gray, 6%)
-      margin-left: 8px
-      margin-top: 1px
-  //.dropdown-toggle:hover,
-  //.active .dropdown-toggle
-    color: $dark-gray
-    +box-shadow(none)
-    i
-      color: $dark-gray
   .dropdown-menu
     margin-left: 10px
 
@@ -88,6 +68,22 @@
       .dropdown-toggle, .btn
         +border-top-right-radius(3px)
         +border-bottom-right-radius(3px)
+  .invite-users
+    position: relative
+    vertical-align: top 
+    display: inline-block
+    margin-left: 15px
+    line-height: 13px
+    padding-top: 10px
+    .ss-users,
+    .ss-plus
+      display: inline-block
+      line-height: inherit
+    .ss-users
+      font-size: 15px
+    .ss-plus
+      font-size: 9px
+      top: -4px
 
 .entity-info-panel
   font-size: 10px
