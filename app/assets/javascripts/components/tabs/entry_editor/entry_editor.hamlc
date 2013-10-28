@@ -63,7 +63,7 @@
   .button-set
     .dropdown-btn(on-close="deleteConfirm=false; disableTooltip=false" ng-show="canDelete() || canDuplicate()")
       %a.dropdown-toggle.flat-button(tooltip="More actions" ng-click="disableTooltip=true")
-        %i.ss-dropdown.button-icon-right
+        %i.ss-directup.button-icon-right
         More
       .dropdown-menu(position="top")
         %ul
