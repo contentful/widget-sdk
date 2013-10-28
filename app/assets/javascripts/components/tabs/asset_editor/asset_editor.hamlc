@@ -69,6 +69,6 @@
                          link="link" as="user"
                          tooltip="{{user.getName()}}")
         %img(ng-src="{{user.data.avatarUrl}}")
-    %a.invite-users(href="" ng-click="navigator.spaceSettings('/users/new').goTo()")
+    %a.default-button.invite-users(href="" ng-click="navigator.spaceSettings('/users/new').goTo()")
       %i.ss-users
       %i.ss-plus
