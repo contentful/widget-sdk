@@ -28,7 +28,7 @@ angular.module('contentful').
     var version = $scope.contentType.getVersion();
     var verb = $scope.contentType.isPublished() ? 'updated' : 'activated';
     if (!$scope.validate()) {
-      notification.error('Error activating ' + title() + ': ' + 'Validation failed');
+      notification.warn('Error activating ' + title() + ': ' + 'Validation failed');
       return;
     }
     $scope.contentType.publish(version, function (err, publishedContentType) {
