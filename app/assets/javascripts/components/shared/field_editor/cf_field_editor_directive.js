@@ -55,12 +55,12 @@ angular.module('contentful').directive('cfFieldEditor', function($compile, $log,
           //$log.log('update internal', scope.field.id, scope.fieldData.value);
         } else if (scope.fieldData.value !== oldValue) {
           // internal changed, update external
-          setExternal(oldValue = scope.fieldData.value);
+          setExternal(oldValue = scope.fieldData.value, external);
           //$log.log('update external', scope.field.id, scope.fieldData.value);
         }
       });
 
-      function setExternal(value) {
+      function setExternal(value, oldValue) {
         var entity = getEntity(scope);
         if (!entity.data.fields) {
           entity.data.fields = {};
@@ -69,6 +69,12 @@ angular.module('contentful').directive('cfFieldEditor', function($compile, $log,
           entity.data.fields[scope.field.id] = {};
         }
         entity.data.fields[scope.field.id][scope.locale.code] = value;
+        scope.$broadcast('fieldDataUpdated', {
+          fieldId: scope.field.id,
+          localeCode: scope.locale.code,
+          value: value,
+          oldValue: oldValue
+        });
         return value;
       }
 

@@ -124,9 +124,9 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
   });
 
   $scope.$on('fileUploaded', function (event, file) {
-    var localeCode = _($scope.asset.data.fields.file).keys().filter(function (localeCode) {
+    var localeCode = _($scope.asset.data.fields.file).keys().find(function (localeCode) {
       return $scope.asset.data.fields.file[localeCode] === file;
-    }).value();
+    });
     $scope.asset.process($scope.otDoc.version, localeCode, function (err) {
       if (err) notification.serverError('There has been a problem processing the Asset.', err);
     });
