@@ -26,6 +26,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       var tutorial = this;
       return tutorialExampledata.switchToTutorialSpace(clientScope).then(function () {
         if (!tutorial._initialized) tutorial.initialize();
+        clientScope.disableTooltip = true;
         tutorial.setSeen();
         guiders.hideAll();
         guiders.show('welcome');
@@ -83,7 +84,8 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
       };
 
       tutorialScope.abort = function () {
-        guiders.hideAll();
+        angular.element('.client').scope().disableTooltip = false;
+        guiders.show('restartHint');
       };
 
       var catGroups;
@@ -118,6 +120,9 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
           });
           if (!$rootScope.$$phase) $rootScope.$apply();
         };
+        options.onClose = function () {
+          tutorialScope.$apply('abort()');
+        };
         options.onHide = function (guider) {
           try {
             if (onHide) onHide.call(guider, guider);
@@ -125,13 +130,13 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
           } finally {
             if (guider.attachScope) {
               $rootScope.$evalAsync(function () {
-                guider.attachScope.$destroy();
+                if (guider.attachScope) guider.attachScope.$destroy();
                 delete guider.attachScope;
               });
             }
             if (guider.scope) {
               $rootScope.$evalAsync(function () {
-                guider.scope.$destroy();
+                if (guider.scope) guider.scope.$destroy();
                 delete guider.scope;
               });
             }
@@ -169,6 +174,18 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
           //repositionLater();
         }
       });
+
+      createGuider({
+        category: 'welcome',
+        id: 'restartHint',
+        title: 'If you want to restart the tutorial…',
+        description: 'If you want to restart the tutorial you can open it again any time buy chosing "Start Tutorial" from the user menu.',
+        attachTo: '.account .user',
+        position: 5,
+        xButton: false,
+        buttons: [{name: 'OK', classString: 'default-button primary-button', onclick: function(){guiders.hideAll();}}]
+      });
+
 
 ////////////////////////////////////////////////////////////////////////////////
 //   Content Types   ///////////////////////////////////////////////////////////

@@ -7,12 +7,12 @@ angular.module('contentful').
       link: function(scope, element, attrs) {
         var tooltipInitialized = false;
 
-        element.one('mouseenter', initialize);
-        element.one('focus', initialize);
+        element.on('mouseenter focus', initialize);
 
         function initialize() {
-          if (tooltipInitialized) return;
+          if (tooltipInitialized || scope.disableTooltip) return;
           createTooltip(true);
+          element.off('mouseenter focus', initialize);
           tooltipInitialized = true;
         }
 
@@ -42,8 +42,7 @@ angular.module('contentful').
 
         element.on('$destroy', function () {
           destroyTooltip();
-          element.off('mouseenter', initialize);
-          element.off('focus', initialize);
+          element.off('mouseenter focus', initialize);
         });
       }
     };
