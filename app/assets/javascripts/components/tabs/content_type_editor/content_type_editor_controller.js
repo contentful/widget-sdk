@@ -3,7 +3,6 @@
 angular.module('contentful').controller('ContentTypeEditorCtrl', function ContentTypeEditorCtrl($scope, validation, can, notification, analytics, addCanMethods, random) {
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
 
-  $scope.contentType = $scope.tab.params.contentType;
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
 
   $scope.$watch(function contentTypeEditorEnabledWatcher(scope) {

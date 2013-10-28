@@ -3,7 +3,6 @@
 angular.module('contentful').controller('ContentTypeFieldListCtrl', function($scope, analytics, validation, $q, random) {
   var _showValidations = {};
 
-  $scope.fieldList = $scope.contentType.data.fields;
   $scope.$watchCollection('contentType.data.fields', function (fields, old, scope) {
     if (hasUIIDs(fields)) {
       scope.fieldList = fields;
