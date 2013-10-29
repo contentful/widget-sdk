@@ -31,7 +31,7 @@
       %label
       .form-controls
         .cf-form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
-    .form-field(ng-repeat="field in fields"
+    .form-field(ng-repeat="field in fields track by field.id"
         data-field-id="{{field.id}}"
         ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
       %label {{field.name}}
