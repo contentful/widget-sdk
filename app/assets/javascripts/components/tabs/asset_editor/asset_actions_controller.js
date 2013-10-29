@@ -59,7 +59,7 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
   $scope.publish = function () {
     var version = $scope.asset.getVersion();
     if (!$scope.validate()) {
-      notification.error('Error publishing ' + title() + ': ' + 'Validation failed');
+      notification.warn('Error publishing ' + title() + ': ' + 'Validation failed');
       return;
     }
     $scope.asset.publish(version, function (err) {
@@ -69,6 +69,7 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
           var reason;
           if (errorId === 'ValidationFailed') {
             reason = 'Validation failed';
+            scope.setValidationErrors(err.body.details.errors);
           } else if (errorId === 'VersionMismatch')
             reason = 'Can only publish most recent version';
           else

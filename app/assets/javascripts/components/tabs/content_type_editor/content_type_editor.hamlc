@@ -1,7 +1,13 @@
 .tab-header.editor-configuration
   %h1 {{contentType.getName()}}
 
-  .editor-top-left
+  .editor-top-right
+    %button.flat-button(type="button"
+            ng-click="preferences.toggleAuxPanel()"
+            ng-class="{active: preferences.showAuxPanel}"
+            tooltip="Toggle additional details"
+            tooltip-placement="bottom")
+      Info
     .dropdown-btn
       %a.flat-button.dropdown-toggle
         %i.ss-dropdown.button-icon-right
@@ -12,17 +18,10 @@
             %label
               %input(type="checkbox" ng-model="preferences.showDisabledFields")
               Show disabled fields
-  .editor-top-right
-    %button.flat-button(type="button"
-            ng-click="preferences.toggleAuxPanel()"
-            ng-class="{active: preferences.showAuxPanel}"
-            tooltip-placement="left"
-            tooltip="Toggle additional details")
-      Info
 
 .aux-panel(ng-show="preferences.showAuxPanel")
   %header
-    %span Content Type Information
+    %h1 Content Type Information
   .entity-info-panel
 
 .tab-main
@@ -77,20 +76,28 @@
         .cf-form-box-error(cf-error-path="['fields']")
 .tab-actions(ng-controller="ContentTypeActionsCtrl")
   .button-set
-    %button.default-button.delete(type="button"
-                   ng-show="canUnpublish()"
-                   ng-click="unpublish()"
-                   tooltip="Deactivate this Content Type")
+    %button.default-button.deactivate(type="button"
+                  ng-show="canUnpublish()"
+                  ng-click="unpublish()"
+                  tooltip="Deactivate this Content Type")
       Deactivate
+
+    %button.default-button.delete-confirm(type="button"
+                  cf-click-outside="deleteConfirm=false"
+                  cf-click-outside-ignore=".delete"
+                  ng-show="deleteConfirm"
+                  ng-click="delete()"
+                  tooltip="Click anywhere else to dismiss")
+      Are you sure?
     %button.default-button.delete(type="button"
-                   ng-show="canDelete()"
-                   ng-click="delete()"
-                   tooltip="Delete this Content Type")
+                  ng-show="canDelete() && !deleteConfirm"
+                  ng-click="deleteConfirm=true" 
+                  tooltip="Delete this Content Type")
       Delete
     %button.default-button.primary-button.publish(
-                    ng-disabled="!canPublish()"
-                    ng-click="publish()"
-                    tooltip="Make this Content Type available to editors")
+                  ng-disabled="!canPublish()"
+                  ng-click="publish()"
+                  tooltip="Make this Content Type available to editors")
       {{publishButtonLabel()}}
   .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to create Entries of this Content Type."
                tooltip-placement="top")

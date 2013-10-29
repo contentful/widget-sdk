@@ -101,12 +101,11 @@ module FeatureHelper
 
   def add_button(text)
     find('.tablist-button .dropdown-toggle').click
-    #sleep 2
-    begin
-      find('.tablist-button li[ng-click]', text: text).click
-    rescue Capybara::Ambiguous
+    #begin
+      #find('.tablist-button li[ng-click]', text: text).click
+    #rescue Capybara::Ambiguous
       first('.tablist-button li[ng-click]', text: text).click
-    end
+    #end
   end
 
   def nav_bar(target)

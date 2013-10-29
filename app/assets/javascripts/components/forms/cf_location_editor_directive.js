@@ -79,6 +79,27 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
         }
       };
 
+      var checkValidity = function (value) {
+        if(!angular.isNumber(value) || isNaN(value)){
+          this.$setValidity('coordinate', false);
+          scope.$eval(this.$name+'Alert = "Invalid Value"');
+        } else {
+          this.$setValidity('coordinate', true);
+          scope.$eval(this.$name+'Alert = null');
+        }
+        return value;
+      };
+
+      var parse = function (viewValue) {
+        var val = parseFloat(viewValue);
+        if (isNaN(val)) {
+          return null;
+        } else {
+          return val;
+        }
+      };
+
+
       locationController.$viewChangeListeners.push(changeHandler);
       locationController.$parsers.unshift(latLngParser);
       locationController.$formatters.push(locationFormatter);
@@ -91,8 +112,10 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
         }
       };
 
-      latController.$parsers.push(parseFloat);
-      lonController.$parsers.push(parseFloat);
+      latController.$parsers.push(parse);
+      lonController.$parsers.push(parse);
+      latController.$parsers.push(_.bind(checkValidity, latController));
+      lonController.$parsers.push(_.bind(checkValidity, latController));
       latController.$viewChangeListeners.push(triggerLocationWatchers);
       lonController.$viewChangeListeners.push(triggerLocationWatchers);
       latController.$viewChangeListeners.push(changeHandler);

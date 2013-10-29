@@ -33,6 +33,7 @@ gem 'sprockets-browserify'
 
 group :development do
   gem 'debugger'
+  gem 'quiet_assets'
 end
 
 group :development, :test do

@@ -63,4 +63,9 @@ describe('ContentType FieldList Controller', function () {
     });
   });
 
+  describe('UIID', function () {
+    it('should create and return uiids for fields that don\'t have one');
+    it('should not create, just return uiids for fields that already have one');
+  });
+
 });

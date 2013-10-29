@@ -1,7 +1,13 @@
 .tab-header.editor-configuration
   %h1
     {{headline()}}
-  .editor-top-left
+  .editor-top-right
+    %button.flat-button(type="button"
+            ng-click="preferences.toggleAuxPanel()"
+            ng-class="{active: preferences.showAuxPanel}"
+            tooltip="Toggle additional details"
+            tooltip-placement="bottom")
+      Info
     .dropdown-btn
       %a.flat-button.dropdown-toggle
         %i.ss-dropdown.button-icon-right
@@ -19,17 +25,9 @@
               %input(type="checkbox" ng-model="preferences.showDisabledFields")
               Show disabled fields
 
-  .editor-top-right
-    %button.flat-button(type="button"
-            ng-click="preferences.toggleAuxPanel()"
-            ng-class="{active: preferences.showAuxPanel}"
-            tooltip="Toggle additional details"
-            tooltip-placement="left")
-      Info
-
 .aux-panel(ng-show="preferences.showAuxPanel")
   %header
-    %span Entry Information
+    %h1 Entry Information
   .entity-info-panel
 
 .tab-main
@@ -63,7 +61,7 @@
   .button-set
     .dropdown-btn(on-close="deleteConfirm=false; disableTooltip=false" ng-show="canDelete() || canDuplicate()")
       %a.dropdown-toggle.flat-button(tooltip="More actions" ng-click="disableTooltip=true")
-        %i.ss-dropdown.button-icon-right
+        %i.ss-directup.button-icon-right
         More
       .dropdown-menu(position="top")
         %ul
@@ -80,9 +78,13 @@
     %span(ng-show="presence.users.length == 0"
           tooltip="Edit collaboratively by inviting more users into your space. Go to Settings → Users → Invite New User to invite people.")
       No other users online
-      (<a href="" ng-click="navigator.spaceSettings('/users/new').goTo()">Invite User</a>)
     %ul(ng-show="presence.users.length > 0")
       %li.avatar.cf-user(ng-repeat="link in presence.users"
                          link="link" as="user"
                          tooltip="{{user.getName()}}")
         %img(ng-src="{{user.data.avatarUrl}}")
+    %a.default-button.invite-users(
+      href="" ng-click="navigator.spaceSettings('/users/new').goTo()"
+      tooltip="Add a user to this space")
+      %i.ss-users
+      %i.ss-plus

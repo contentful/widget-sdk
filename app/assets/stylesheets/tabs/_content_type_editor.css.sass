@@ -48,28 +48,7 @@
         border-width: 1px
       &[name="fieldId"][disabled]:hover
         border-width: 0
-  .field-id-form
-    // TODO remove duplication with cf-fieldtype-icon and .in-row-button
-    .ss-writingdisabled
-      color: $red
-      display: inline-block
-      height: 18px + 2 * 3px
-      line-height: 18px
-      padding: 3px 0
-      min-width: 35px
-      text-align: center
-      position: relative
-      top: 1px
-
-  .in-row-button
-    @extend .default-button
-    +border-radius(3px)
-    height: 18px + 2 * 3px
-    line-height: 18px
-    padding: 3px 0
-    min-width: 35px
-    text-align: center
-
+      
   // Layout for Field-row
   .cf-field-settings
     @extend %result-list-cell

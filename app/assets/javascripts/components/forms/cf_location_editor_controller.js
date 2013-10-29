@@ -4,7 +4,7 @@
 angular.module('contentful').controller('cfLocationEditorCtrl', function ($scope, cfSpinner) {
   $scope.$watch('location', function(loc, old, scope) {
     //console.log('location changed', loc);
-    scope.locationValid = !angular.isObject(loc) || angular.isNumber(loc.lat) && angular.isNumber(loc.lon);
+    scope.locationValid = !angular.isObject(loc) || angular.isNumber(loc.lat) && !isNaN(loc.lat) && angular.isNumber(loc.lon) && !isNaN(loc.lon);
     //console.log('setting valid to', scope.locationValid);
   });
 

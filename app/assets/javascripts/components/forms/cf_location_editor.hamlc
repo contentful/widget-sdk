@@ -14,10 +14,12 @@
           %span.lon Lon: {{result.strippedLocation.lon}}
 
   %label.location-picker
-    %input.lat(type="text" ng-model="location.lat" ng-disabled="!otEditable")
+    %input.lat(type="text" name="lat" ng-model="location.lat" ng-disabled="!otEditable")
+    %i(cf-field-alert="{{latAlert}}" tooltip-placement="left")
     %span Latitude
   %label.location-picker
-    %input.lon(type="text" ng-model="location.lon" ng-disabled="!otEditable")
+    %input.lon(type="text" name="lon" ng-model="location.lon" ng-disabled="!otEditable")
+    %i(cf-field-alert="{{lonAlert}}" tooltip-placement="left")
     %span Longitude
   %button.form-button.default-button.remove-location(type="button" ng-show="location && otEditable" ng-click="removeLocation()") Remove
 

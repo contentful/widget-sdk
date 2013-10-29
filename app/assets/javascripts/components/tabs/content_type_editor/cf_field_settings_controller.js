@@ -1,21 +1,5 @@
-'use strict';
-
 angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope, getFieldTypeName, analytics, validation, assert, notification, toIdentifier, validationDialog) {
-  $scope.newFieldId = {
-    value: $scope.field.id,
-    isInUse: function () {
-      var self = this;
-      return !!_.find($scope.contentType.data.fields, function (field) {
-        return field != $scope.field && field.id === self.value;
-      });
-    },
-    isPristine: function (){
-      return this.value === $scope.field.id;
-    },
-    canBeSaved: function () {
-      return !this.isInUse() && !this.isPristine();
-    }
-  };
+  'use strict';
 
   $scope.$watch(function (scope) {
     var f = scope.field;
@@ -24,12 +8,7 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
     scope.hasValidations = !noValidations;
   });
 
-  $scope.$watch(function (scope) {
-    var f = scope.field;
-    var params = [f.type, f.linkType];
-    if (f.items) params.push(f.items.type, f.items.linkType);
-    return params;
-  }, function (typeParams, old, scope) {
+  $scope.$watch('fieldTypeParams(field)', function (typeParams, old, scope) {
     scope.validationsAvailable = !_.isEmpty(validation.Validation.perType($scope.field));
   }, true);
 
@@ -69,8 +48,8 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
            : $scope.field.name;
   };
 
-  $scope.$watch('publishedIds', function(ids, old, scope) {
-    scope.published = scope.fieldIsPublished(scope.field);
+  $scope.$watch('fieldIsPublished(field)', function(published, old, scope) {
+    scope.published = published;
   });
 
   $scope.openValidations = function () {
@@ -78,40 +57,42 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
   };
 
   var oldName = $scope.field.name || '';
-  $scope.nameToNewFieldId = function () {
-    var currentNewId = $scope.newFieldId.value || '';
-    if (toIdentifier(oldName) == currentNewId){
-      $scope.newFieldId.value = toIdentifier($scope.field.name);
+  $scope.updateFieldId = function () {
+    var currentId = $scope.field.id || '';
+    if (!$scope.published && toIdentifier(oldName) == currentId){
+      otUpdateFieldId($scope.field.name ? toIdentifier($scope.field.name) : '');
     }
     oldName = $scope.field.name || '';
   };
 
-  $scope.saveNewFieldId = function () {
+  function otUpdateFieldId(newId) {
+    var isDisplayField = $scope.isDisplayField();
+    $scope.field.id = newId;
+
     if (!$scope.otDoc) return false;
     var subdoc = $scope.otDoc.at(['fields', $scope.index, 'id']);
-    subdoc.set($scope.newFieldId.value, function(err) {
+    subdoc.set(newId, function(err) {
       $scope.$apply(function (scope) {
         if (err) {
+          scope.field.id = subdoc.get();
           notification.serverError('Error updating ID', err);
-        } else {
-          scope.field.id = scope.newFieldId.value;
+          return;
+        }
+        if (isDisplayField ||
+            _.isEmpty($scope.contentType.data.displayField) && $scope.displayEnabled()) {
+          $scope.setDisplayField($scope.field);
         }
       });
     });
-  };
-
-  $scope.$watch('field.id', function (fieldId, old, scope) {
-    // FieldId updated from outside
-    if (fieldId !== scope.newFieldId.value)
-      scope.newFieldId.value = fieldId;
-  });
+  }
 
   $scope.changeFieldType = function (newType) {
     if (!$scope.otDoc) return false;
 
     var newField = _.extend({
       name: $scope.field.name,
-      id: $scope.field.id
+      id: $scope.field.id,
+      uiid: $scope.field.uiid
     }, newType);
 
     var subdoc = $scope.otDoc.at(['fields', $scope.index]);
@@ -153,43 +134,5 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
       });
     });
   };
-}).directive('newFieldIdInputx', function () {
-  return {
-    require: 'ngModel',
-    link: function (scope, elem, attr, ngModel) {
-      scope.newFieldId.isPristine = function () {
-        return ngModel.$pristine;
-      };
 
-      scope.newFieldId.isInUse = function () {
-        return ngModel.$error.idInUse;
-      };
-
-      scope.newFieldId.canBeSaved = function () {
-        return !this.isInUse() && !this.isPristine();
-      };
-
-      scope.newFieldId.setPristine = function () {
-        ngModel.$setPristine();
-      };
-
-      ngModel.$parsers.push(function (viewValue) {
-        updateValidity();
-        return viewValue;
-      });
-
-      ngModel.$formatters.push(function (modelValue) {
-        if (modelValue === scope.field.id) ngModel.$setPristine();
-        updateValidity();
-        return modelValue;
-      });
-
-      function updateValidity() {
-        var inUse = !_.find(scope.contentType.data.fields, {id: scope.newFieldId.value});
-        ngModel.$setValidity('idInUse', !inUse);
-      }
-    }
-  };
 });
-
-

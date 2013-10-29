@@ -28,7 +28,7 @@ angular.module('contentful').
     var version = $scope.contentType.getVersion();
     var verb = $scope.contentType.isPublished() ? 'updated' : 'activated';
     if (!$scope.validate()) {
-      notification.error('Error activating ' + title() + ': ' + 'Validation failed');
+      notification.warn('Error activating ' + title() + ': ' + 'Validation failed');
       return;
     }
     $scope.contentType.publish(version, function (err, publishedContentType) {
@@ -36,11 +36,14 @@ angular.module('contentful').
         if (err) {
           var errorId = err.body.sys.id;
           var reason = errorId;
-          if (errorId === 'validationFailed')
+          if (errorId === 'validationFailed') {
             reason = 'Validation failed';
             scope.setValidationErrors(err.body.details.errors);
-          if (errorId === 'versionMismatch')
+          } else if (errorId === 'versionMismatch') {
             reason = 'Can only activate most recent version';
+          } else {
+            reason = err.body.message;
+          }
           return notification.serverError('Error activating ' + title() + ': ' + reason, err);
         }
 

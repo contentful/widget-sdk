@@ -36,6 +36,10 @@ angular.module('contentful').provider('ShareJS', function ShareJSProvider(enviro
       //console.log('ShareJS connection error', c.connection.state, e);
       stateChangeHandler(e);
     });
+    c.connection.on('disconnected', function (e) {
+      //console.log('ShareJS connection closed', c.connection.state, e);
+      stateChangeHandler(e);
+    });
     c.connection.on('connect failed', function () {
       //console.log('ShareJS connect failed', c.connection.state);
       stateChangeHandler();

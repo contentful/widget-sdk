@@ -10,13 +10,21 @@
   padding: $modal-dialog-padding
   margin: 0
   position: relative
+  border-color: $medium-gray
+  +box-shadow(0 2px 60px rgba(0, 0, 0, 0.4))
 
 h1.guiders_title
   @extend %modal-dialog-title
+  +blue-highlight
+  border-bottom: none
 
 .guiders_description
-  line-height: 1.5
+  font-size: 13px
+  line-height: 1.75
   margin-top: $modal-dialog-padding
+
+.guiders_buttons_container
+  text-align: right
 
 //  Close-Button  //////////////////////////////////////////////////////////////
 
@@ -24,6 +32,17 @@ $close_size: 25px
 
 .guiders_x_button
   @extend %modal-dialog-close-button
+  &:hover
+    color: white
+
+// Next Button /////////////////////////////////////////////////////////////////
+
+.guiders_button.next-button
+  font-size: 16px
+  i
+    position: relative
+    top: 2px
+    left: 1px
 
 //  Arrows  ////////////////////////////////////////////////////////////////////
 
@@ -31,10 +50,10 @@ $guider-size: 10px
 .guiders_arrow
   width: $guider-size
   height: $guider-size
-  background-color: $gray-background
+  background-color: $blue
   position: absolute
-  border-top: 1px solid $light-gray
-  border-left: 1px solid $light-gray
+  border-top: 1px solid $medium-gray
+  border-left: 1px solid $medium-gray
   display: none
 .guiders_arrow_left
   display: block
@@ -78,6 +97,7 @@ $welcome-slide-width: 800px
 // Move the title on top of the actual title element
 .welcome-title
   @extend %modal-dialog-title
+  +blue-highlight
   position: absolute
   top: 0
   left: 0
@@ -199,7 +219,7 @@ $welcome-slide-width: 800px
   right: 0
   height: 54px
   width: 40px
-  background-color: $gray-background
+  +blue-highlight
 
 //  Tutorial-Boxes  //////////////////////////////////////////////////////////////////
 

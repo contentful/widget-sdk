@@ -1,6 +1,10 @@
 require 'spec_helper'
 
 feature 'Tutorial', js: true, non_ci: true do
+  include ContentTypeHelper
+  include EditorHelper
+  include AssetHelper
+
   before do
     ensure_login
     remove_test_space 'Playground'
@@ -16,19 +20,19 @@ feature 'Tutorial', js: true, non_ci: true do
       find('.dropdown-toggle').click
       find('li', text: 'Start Tutorial').click
     end
-    sleep 2
+    find('i.dot:last-child').click
   end
 
   def close_tutorial_overview
-    find('#overview .guiders_close').click
+    find('#welcome .guiders_x_button').click
   end
 
   def finish_tutorial
     using_wait_time 20 do
-      find('a', text: 'Back to overview')
+      find('a', text: 'Back to tutorials overview menu')
       yield if block_given?
     end
-    click_link 'Back to overview'
+    click_link 'Back to tutorials overview menu'
   end
 
   def run_content_type_tutorial
@@ -37,28 +41,29 @@ feature 'Tutorial', js: true, non_ci: true do
 
     add_button 'Content Type'
 
-    within('.tab-content', visible:true) do
-      fill_in 'contentTypeName', with: 'Blog Post'
-      fill_in 'contentTypeDescription', with: 'Foobar'
+    click_link 'Next' # Welcome
 
-      fill_in 'newName', with: 'Title'
-      find('.button.new').click
+    fill_in 'contentTypeName', with: 'Blog Post'
+    click_link 'Next' # Peace of Mind
+    fill_in 'contentTypeDescription', with: 'Foobarbaz'
 
-      fill_in 'newName', with: 'Content'
-      find('.button.new').click
-
-      fill_in 'newName', with: 'Timestamp'
-      find('.type .dropdown-toggle').click
-      find(:xpath, ".//span[text()='Date/Time']/..").click
-      find('.button.new').click
+    add_field('Title', 'Text')
+    click_link 'Next' # Confirm ID
+    6.times do # Second Row
+      click_link 'Next'
+      sleep 0.25
     end
-    click_link 'Next'
+
+    add_field('Body', 'Text')
+    add_field('Timestamp', 'Date/Time')
+    add_field('Image', 'Link to Asset')
 
     find('.publish').click
 
+    find('#contentTypeList')
     nav_bar 'content-type-list'
 
-    click_button 'Yes, please'
+    click_button 'Yes, please!'
 
     finish_tutorial do
       all('td.cell-name').should have(6).elements
@@ -67,27 +72,42 @@ feature 'Tutorial', js: true, non_ci: true do
 
   def run_entry_tutorial
     find('.middle.tutorial-select-box .take').click
-    click_link 'Next'
+    click_link 'Discover the Entry Editor'
     using_wait_time 20 do
-      find('.guiders_title', text:'Click on the Add button!')
+      find('.guiders_title', text:'Meet the mighty Add button')
     end
 
-    add_button 'Blog Post'
+    add_button 'Quiz Question'
 
-    3.times do
-      click_link 'Next'
-    end
+    click_link 'Next'
+    edit_field('question', 'en-US', 'textarea').set('Which CMS delivers content to web and native mobile applications?')
+    click_link 'Next'
+    edit_field('answer1', 'en-US', 'textarea').set('Wordpress')
+    edit_field('answer2', 'en-US', 'textarea').set('Contentful')
+    edit_field('answer3', 'en-US', 'textarea').set('Drupal')
+    edit_field('answer4', 'en-US', 'textarea').set('Joomla')
+    edit_field('correctAnswer', 'en-US', 'input').set('2')
 
-    all('textarea')[0..2].each do |ta|
-      ta.set('Lorem ipsum dolor sit amet')
-    end
-    find('.date').click
-    first('td[data-handler=selectDay] a').click
+    find '#entryAsset'
+    edit_field('image', 'en-US', '.add-new').click
+    find '#assetTitle'
+    edit_field('title', 'en-US', 'input').set('Quiz Picture')
+    find '#assetUpload'
+    page.execute_script %Q{guiders.next()}
+    set_asset('.asset-editor')
+    find '#assetPick'
+    page.execute_script %Q{guiders.next()}
+    click_button 'Publish'
+
+    find('.tab[data-view-type="entry-editor"]').click
+
+    click_link 'Next'
+    click_link 'Next'
     click_button 'Publish'
 
     nav_bar 'entry-list'
 
-    click_button 'Yes, please'
+    click_button 'Yes, please!'
 
     finish_tutorial do
       all('td.cell-name').should have(11).elements
@@ -98,13 +118,12 @@ feature 'Tutorial', js: true, non_ci: true do
     find('.right.tutorial-select-box .take').click
     click_link 'Next'
     add_button 'API Key'
+
+    find('input[ng-model="apiKey.data.name"]').set 'Name'
+    find('input[ng-model="apiKey.data.description"]').set 'Foobar'
     click_link 'Next'
 
-    within('.tab-content', visible:true) do
-      find('input[ng-model="apiKey.data.name"]').set 'Name'
-      find('input[ng-model="apiKey.data.description"]').set 'Foobar'
-      click_button 'Save'
-    end
+    click_button 'Save'
 
     click_link 'Next'
 

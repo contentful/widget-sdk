@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').directive('cfFieldtypeIcon', function(getFieldTypeName){
-  var nameTemplates = {
+  var nameTemplates = _.each({
     'Text'           :'<strong>ABC</strong>',
     'Symbol'         :'<strong>USD</strong>',
     'Number'         :'<strong>12</strong>',
@@ -15,11 +15,14 @@ angular.module('contentful').directive('cfFieldtypeIcon', function(getFieldTypeN
     'List of Assets' :'<i class="ss-attach"></i><strong>+</strong>',
     'List of Symbols':'<strong>USD+</strong>',
     'Location'       :'<i class="ss-location"></i>'
-  };
+  }, function (html, title, templates) {
+    templates[title] = $(html);
+  });
+
+  var fallback = $('<i class="ss-help"></i>');
 
   return {
     restrict: 'C',
-    template: '',
     link: function (scope, elem, attr) {
       var title;
       if (angular.isDefined(attr.showTooltip)) elem.tooltip({
@@ -32,7 +35,7 @@ angular.module('contentful').directive('cfFieldtypeIcon', function(getFieldTypeN
         var field = scope.$eval(attr.field);
         return getFieldTypeName(field);
       }, function (fieldTypeName) {
-        elem.html(nameTemplates[fieldTypeName] || '<i class="ss-help"></i>');
+        elem.empty().append(nameTemplates[fieldTypeName].clone() || fallback);
         title = nameTemplates[fieldTypeName] ? 'Field Type: ' + fieldTypeName : 'Unknown Type';
       });
 

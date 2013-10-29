@@ -91,9 +91,8 @@ angular.module('contentful').directive('otDocFor', function () {
     }
   });
 
-  $scope.otUpdateEntity = function () {
-    /*global moment */
-    var entity = otGetEntity();
+  $scope.otUpdateEntity = function (entity) {
+    entity = entity || otGetEntity();
     if (entity && $scope.otDoc) {
       var data = _.cloneDeep($scope.otDoc.snapshot);
       if(!data) {
