@@ -20,6 +20,22 @@ describe('Number widgets', function () {
       elem.find('input').val('0').trigger('input');
       scope.$apply();
       expect(scope.fieldData.value).toBe(0);
+      expect(elem.find('.cf-field-alert').css('display')).toBe('none');
+    });
+
+    it('should generate null for characters', function () {
+      elem.find('input').val('foo').trigger('input');
+      scope.$apply();
+      expect(scope.fieldData.value).toBe(null);
+      expect(elem.find('input').val()).toBe('foo');
+    });
+
+    it('should generate a warning for characters', function () {
+      elem.find('input').val('6.').trigger('input');
+      scope.$apply();
+      expect(scope.fieldData.value).toBe(6);
+      expect(elem.find('input').val()).toBe('6.');
+      expect(elem.find('.cf-field-alert').css('display')).toBe('inline');
     });
   });
 
@@ -33,6 +49,22 @@ describe('Number widgets', function () {
       elem.find('input').val('0').trigger('input');
       scope.$apply();
       expect(scope.fieldData.value).toBe(0);
+      expect(elem.find('.cf-field-alert').css('display')).toBe('none');
+    });
+
+    it('should generate null for characters', function () {
+      elem.find('input').val('foo').trigger('input');
+      scope.$apply();
+      expect(scope.fieldData.value).toBe(null);
+      expect(elem.find('input').val()).toBe('foo');
+    });
+
+    it('should generate a warning for characters', function () {
+      elem.find('input').val('6.7 asd').trigger('input');
+      scope.$apply();
+      expect(scope.fieldData.value).toBe(6.7);
+      expect(elem.find('input').val()).toBe('6.7 asd');
+      expect(elem.find('.cf-field-alert').css('display')).toBe('inline');
     });
   });
 });
