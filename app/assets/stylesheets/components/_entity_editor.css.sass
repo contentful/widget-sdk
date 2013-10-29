@@ -13,61 +13,15 @@
       overflow: hidden
       white-space: nowrap
       text-overflow: ellipsis
-  .editor-top-left
-    display: inline-block
-  .editor-top-right //TODO better move this stuff to AUX-Panel
+  .editor-top-right
     float: right
     height: 100%
-    &:before
-      // This is a fucking hack
-      // Since we want to float right, editor-top-right must be a block
-      // but that prevents us from aligning to the h1, so we need to
-      // insert another text element that simply serves as an alignment
-      // aid for vertical-align
-      display: inline-block
-      line-height: $tab-header-height - 2px
-      vertical-align: middle
-      content: '\2008' //zero width space
-    margin-right: 25px
-    .dropdown-btn
-      display: inline-block
-      //margin-left: 5px
-      vertical-align: middle
-    .dropdown-toggle,
-    .btn
-      @extend %blue-button
-      vertical-align: middle
-      padding-top: 0
-      padding-bottom: 0
-      text-align: center
-      margin: 2px 0 0 0
-      display: block
-      line-height: 15px
-      padding-right: 18px
-    a.dropdown-toggle,
-    a.btn
-      +border-radius(0)
-      padding-right: 18px
-      i
-        position: absolute 
-        font-size: 8px
-        top: 6px
-        right: 10px
-        margin-left: 20px
-    .btn
-      &:active
-        margin-top: 0
-        position: relative
-        top: 2px
+    width: 250px
+    .dropdown-button,
+    .flat-button
+      float: right
+      margin: 6% 25px 0 0
 
-    .dropdown-btn:first-child
-      .dropdown-toggle, .btn
-        +border-top-left-radius(3px)
-        +border-bottom-left-radius(3px)
-    .dropdown-btn:last-child
-      .dropdown-toggle, .btn
-        +border-top-right-radius(3px)
-        +border-bottom-right-radius(3px)
   .invite-users
     position: relative
     vertical-align: top 

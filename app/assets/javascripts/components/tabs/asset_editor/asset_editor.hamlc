@@ -1,7 +1,13 @@
 .tab-header.editor-configuration
   %h1
     {{headline()}}
-  .editor-top-left
+  .editor-top-right
+    %button.flat-button(type="button"
+            ng-click="preferences.toggleAuxPanel()"
+            ng-class="{active: preferences.showAuxPanel}"
+            tooltip="Toggle additional details"
+            tooltip-placement="bottom")
+      Info
     .dropdown-btn(ng-show="showLangSwitcher")
       %a.dropdown-toggle.flat-button
         %i.ss-dropdown.button-icon-right
@@ -13,13 +19,6 @@
               %input(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
               {{locale.name}}
               %span(ng-show="locale == spaceContext.space.getDefaultLocale()") (default)
-  .editor-top-right
-    %button.flat-button(type="button"
-            ng-click="preferences.toggleAuxPanel()"
-            ng-class="{active: preferences.showAuxPanel}"
-            tooltip="Toggle additional details"
-            tooltip-placement="left")
-      Info
 
 .aux-panel(ng-show="preferences.showAuxPanel")
   %header
