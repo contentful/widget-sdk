@@ -36,6 +36,10 @@ group :development do
   gem 'quiet_assets'
 end
 
+group :acceptance do
+  gem 'quiet_assets'
+end
+
 group :development, :test do
   gem "guard-livereload"
   gem 'rb-fsevent', '~> 0.9.1', :require => false
