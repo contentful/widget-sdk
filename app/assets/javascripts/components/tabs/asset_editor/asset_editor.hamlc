@@ -23,7 +23,7 @@
 
 .aux-panel(ng-show="preferences.showAuxPanel")
   %header
-    %span Asset Information
+    %h1 Asset Information
   .entity-info-panel
 
 .tab-main

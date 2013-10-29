@@ -22,7 +22,7 @@
 
 .aux-panel(ng-show="preferences.showAuxPanel")
   %header
-    %span Content Type Information
+    %h1 Content Type Information
   .entity-info-panel
 
 .tab-main

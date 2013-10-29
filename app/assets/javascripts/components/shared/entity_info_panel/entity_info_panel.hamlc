@@ -1,73 +1,61 @@
-%article
-  %table
-    %tr(ng-show="contentTypeName")
-      %th Content Type
-      %td {{contentTypeName}}
-    %tr(ng-show="contentTypeDescription")
-      %td(colspan="2") {{contentTypeDescription}}
-    %tr(ng-show="contentTypeDescription")
-      %th
-    %tr
-      %th ID
-      %td {{sys.id}}
-    %tr
-      %th
-    %tr
-      %th Current version
-      %td {{entityVersion()}}
-    %tr
-      %th
+%table
+  %tr(ng-show="contentTypeName")
+    %th Content Type
+    %td {{contentTypeName}}
+  %tr(ng-show="contentTypeDescription")
+    %th Description
+    %td {{contentTypeDescription}}
+  %tr
+    %th ID
+    %td {{sys.id}}
+  %tr
+    %th Current version
+    %td {{entityVersion()}}
 
-    %tbody
-      %tr
-        %th Created
-        %td
-          %date.relative(datetime="{{sys.createdAt}}")
-      %tr
-        %th Created by
-        %td
-          %span.cf-user(link="sys.createdBy" as="creator")
-            {{creator.getName()}}
-      %tr
-        %th
+  %tbody
+    %tr
+      %th Created
+      %td
+        %date.relative(datetime="{{sys.createdAt}}")
+    %tr
+      %th Created by
+      %td
+        %span.cf-user(link="sys.createdBy" as="creator")
+          {{creator.getName()}}
 
-    %tbody(ng-show="sys.updatedAt")
-      %tr
-        %th Updated
-        %td
-          %date.relative(datetime="{{sys.updatedAt}}")
-      %tr
-        %th Updated by
-        %td
-          %span.cf-user(link="sys.updatedBy" as="updater")
-            {{updater.getName()}}
-      %tr
-        %th
+  %tbody(ng-show="sys.updatedAt")
+    %tr
+      %th Updated
+      %td
+        %date.relative(datetime="{{sys.updatedAt}}")
+    %tr
+      %th Updated by
+      %td
+        %span.cf-user(link="sys.updatedBy" as="updater")
+          {{updater.getName()}}
 
-    %tbody(ng-show="sys.archivedVersion")
-      %tr
-        %th Archived
-        %td
-          %date.relative(datetime="{{sys.archivedAt}}")
-      %tr
-        %th Archived by
-        %td {{sys.archivedBy.sys.id}}
-      %tr
-        %th Archived version
-        %td {{sys.archivedVersion}}
-      %tr
-        %th
+  %tbody(ng-show="sys.archivedVersion")
+    %tr
+      %th Archived
+      %td
+        %date.relative(datetime="{{sys.archivedAt}}")
+    %tr
+      %th Archived by
+      %td {{sys.archivedBy.sys.id}}
+    %tr
+      %th Archived version
+      %td {{sys.archivedVersion}}
 
-    %tbody(ng-show="sys.publishedVersion")
-      %tr
-        %th Published
-        %td
-          %date.relative(datetime="{{sys.publishedAt}}")
-      %tr
-        %th Published by
-        %td
-          %span.cf-user(link="sys.publishedBy" as="publisher")
-            {{publisher.getName()}}
-      %tr
-        %th Published version
-        %td {{sys.publishedVersion}}
+  %tbody(ng-show="sys.publishedVersion")
+    %tr
+      %th Published
+      %td
+        %date.relative(datetime="{{sys.publishedAt}}")
+    %tr
+      %th Published by
+      %td
+        %span.cf-user(link="sys.publishedBy" as="publisher")
+          {{publisher.getName()}}
+    %tr
+      %th Published version
+      %td {{sys.publishedVersion}}
