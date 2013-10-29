@@ -20,6 +20,7 @@ angular.module('contentful').directive('cfNumberEditor', function(){
         } else {
           scope.parseWarning = '';
         }
+        modelVal = isNaN(modelVal) ? null : modelVal;
         return modelVal;
       });
 
