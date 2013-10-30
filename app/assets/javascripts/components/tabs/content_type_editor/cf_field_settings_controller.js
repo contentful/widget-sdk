@@ -114,7 +114,7 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
     subdoc.set(!subdoc.get(), function(err) {
       $scope.$apply(function (scope) {
         if (!err) {
-          scope.field[property] = subdoc.get();
+          scope.otUpdateEntity();
           analytics.modifiedContentType('Modified ContentType', scope.contentType, scope.field, 'toggled '+property);
         } else {
           notification.serverError('Could not toggle "'+property+'"', err);
