@@ -2,9 +2,27 @@ angular.module('contentful/environment', []).constant('environment', {
   env: '<%= Rails.env %>',
   settings: <%= Contentful.ui_config.to_json %>
 }).config(function (environment) {
+  environment.settings.resourceUrlWhiteList = [
+    'static.joistio.com:8888',
+    'app.joistio.com:8888',
+    'joistio.com:8888',
+    'static.joistio.com',
+    'app.joistio.com',
+    'joistio.com',
+    'staticflinkly-thriventures.netdna-ssl.com',
+    'app.flinkly.com',
+    'flinkly.com',
+    'static.contentful.com',
+    'app.contentful.com',
+    'contentful.com'
+  ];
+  environment.settings.resourceUrlWhiteListRegexp = [/(https?:)?\/\/([^:\/.?&;]*\.)?(staticflinkly-thriventures\.netdna-ssl\.com|flinkly.com|joistio.com|contentful.com)(:\d+)?\/.*/, 'self' ];
+
   if (window.XDomainRequest) {
     environment.settings.api_host = environment.settings.app_host + '/api';
     environment.settings.ot_host  = environment.settings.app_host + '/ot';
+    // for sceDelegateProvider
+    // for ZeroClipboard
     //environment.settings.api_host = 'app.joistio.com:8888' + '/api';
     //environment.settings.ot_host  = 'app.joistio.com:8888' + '/ot';
   }

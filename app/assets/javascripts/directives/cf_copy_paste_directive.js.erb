@@ -1,0 +1,70 @@
+'use strict';
+
+angular.module('contentful').directive('cfCopyPaste', function(environment) {
+  ZeroClipboard.setDefaults({
+    moviePath: "<%= asset_path 'ZeroClipboard.swf' %>",
+    forceHandCursor: true,
+    allowScriptAccess: 'always',
+    trustedOrigins: environment.settings.resourceUrlWhiteList
+  });
+
+  return {
+    restrict: 'AC',
+    link: function(scope, element, attrs) {
+      var clip = new ZeroClipboard(element.get(0));
+      var copyText = {
+        'default': 'Copy',
+        'copying': 'Copying...',
+        'copied': 'Copied'
+      };
+      var copyStatus = 'default';
+
+      element.tooltip({
+        title: function () {
+          return copyText[copyStatus];
+        }
+      });
+
+      function mouseoverHandler(client, args) {
+        copyStatus = 'default';
+        $(this).tooltip('show');
+      }
+      clip.on('mouseover', mouseoverHandler);
+
+      function mouseoutHandler(client, args) {
+        $(this).tooltip('hide');
+        copyStatus = 'default';
+      }
+      clip.on('mouseout', mouseoutHandler);
+
+      function dataRequestedHandler(client, args) {
+        var element = $(this);
+        var clipboardTarget = element.parent().find('.'+attrs.clipboardTarget);
+        copyStatus = 'copying';
+        element.tooltip('show');
+        client.setText(clipboardTarget.val());
+      }
+      clip.on('dataRequested', dataRequestedHandler);
+
+      function completeHandler(client, args) {
+        var element = $(this);
+        copyStatus = 'copied';
+        element.tooltip('show');
+        setTimeout(function () {
+          copyStatus = 'default';
+          element.tooltip('show');
+        }, 2000);
+      }
+      clip.on('complete', completeHandler);
+
+
+      element.on('$destroy', function () {
+        clip.off('mouseover', mouseoverHandler);
+        clip.off('mouseout', mouseoutHandler);
+        clip.off('dataRequested', dataRequestedHandler);
+        clip.off('complete', completeHandler);
+        element.tooltip('destroy');
+      });
+    }
+  };
+});
