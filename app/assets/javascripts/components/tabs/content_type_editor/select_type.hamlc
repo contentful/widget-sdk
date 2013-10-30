@@ -3,6 +3,7 @@
     %h3 Single
   %li.type(ng-repeat="type in availableTypes.Single track by type.name"
       ng-click="typeClicked(type.value)"
+      data-type-name="{{type.name}}"
       dropdown-close="")
     .cf-fieldtype-icon(field="type.value")
     %span {{type.name}}
@@ -11,6 +12,7 @@
     %h3 Multiple
   %li.type(ng-repeat="type in availableTypes.Multiple track by type.name"
       ng-click="typeClicked(type.value)"
+      data-type-name="{{type.name}}"
       dropdown-close="")
     .cf-fieldtype-icon(field="type.value")
     %span {{type.name}}

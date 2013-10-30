@@ -421,19 +421,35 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         description: 'If your Field isn’t activated yet, you can either modify it or delete it. However, once the Field is activated it won’t be possible to change the type or delete it. You will be able, though, to disable it. If you need to modify any Field, you’ll first need to deactivate it.',
         attachTo: '.tab-content:visible .field-details .toggle-disabled:visible',
         position: '6',
-        next: 'contentTypeMoreFields',
+        next: 'contentTypeAddBody1',
         buttons: [next]
       });
 
       createGuider({
         category: 'content-types',
-        id: 'contentTypeMoreFields',
+        id: 'contentTypeAddBody1',
         title: 'More Fields!',
         description: 'Now let’s populate with some more Fields. Add another <strong>Text</strong> Field, called <strong>Body</strong> (this will be the body of your Blog Post).',
         attachTo: '.tab-content:visible .add-field-button',
         position: '11',
+        next: 'contentTypeAddBody2',
+        onShow: function (guider) {
+          $(guider.attachTo).one('click', function () {
+            guiders.next();
+          });
+        },
+      });
+
+      createGuider({
+        category: 'content-types',
+        id: 'contentTypeAddBody2',
+        title: 'More Fields!',
+        description: 'Now let’s populate with some more Fields. Add another <strong>Text</strong> Field, called Body (this will be the body of your Blog Post).',
+        attachTo: '.tab-content:visible .type-menu:visible *[data-type-name="Text"]',
+        position: '2',
         next: 'contentTypeConfigBody',
         onShow: function (guider) {
+          repositionLater();
           guider.scope.waitFor(function () {
             return _.filter(guider.attachScope.contentType.data.fields, {type: 'Text'}).length >= 2;
           }, function () {
@@ -446,10 +462,10 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'content-types',
         id: 'contentTypeConfigBody',
         title: 'More Fields!',
-        description: 'Give the Field a the title <strong>Body</strong>, and don\'t forget to confirm the ID',
+        description: 'Give the Field a the title <strong>Body</strong>.',
         attachTo: '.tab-content:visible .field-form:visible',
-        position: '6',
-        next: 'contentTypeAddTimestamp',
+        position: '11',
+        next: 'contentTypeAddTimestamp1',
         onShow: function (guider) {
           repositionLater();
           guider.scope.waitFor(function () {
@@ -463,13 +479,29 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
 
       createGuider({
         category: 'content-types',
-        id: 'contentTypeAddTimestamp',
+        id: 'contentTypeAddTimestamp1',
         title: 'More Fields!',
         description: 'Often you’ll need a date and time for your content. Let’s do this: select <strong>Date/Time</strong> in the types selection and call your Field <strong>Timestamp</strong>.',
         attachTo: '.tab-content:visible .add-field-button',
         position: '11',
+        next: 'contentTypeAddTimestamp2',
+        onShow: function (guider) {
+          $(guider.attachTo).one('click', function () {
+            guiders.next();
+          });
+        },
+      });
+
+      createGuider({
+        category: 'content-types',
+        id: 'contentTypeAddTimestamp2',
+        title: 'More Fields!',
+        description: 'Often you’ll need a date and time for your content. Let’s do this: select <strong>Date/Time</strong> in the types selection and call your Field Timestamp.',
+        attachTo: '.tab-content:visible .type-menu:visible *[data-type-name="Date/Time"]',
+        position: '2',
         next: 'contentTypeConfigTimestamp',
         onShow: function (guider) {
+          repositionLater();
           guider.scope.waitFor(function () {
             return _.filter(guider.attachScope.contentType.data.fields, {type: 'Date'}).length >= 1;
           }, function () {
@@ -482,10 +514,10 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'content-types',
         id: 'contentTypeConfigTimestamp',
         title: 'More Fields!',
-        description: 'Give the Field a the title <strong>Timestamp</strong>, and don\'t forget to confirm the ID',
+        description: 'Give the Field a the title <strong>Timestamp</strong>.',
         attachTo: '.tab-content:visible .field-form:visible',
-        position: '6',
-        next: 'contentTypeAddAsset',
+        position: '11',
+        next: 'contentTypeAddAsset1',
         onShow: function (guider) {
           repositionLater();
           guider.scope.waitFor(function () {
@@ -499,13 +531,29 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
 
       createGuider({
         category: 'content-types',
-        id: 'contentTypeAddAsset',
+        id: 'contentTypeAddAsset1',
         title: 'Now, onto the Asset Field!',
-        description: 'The last type of Field to add: an Asset. Choose the <strong>Link to Asset</strong> Field from the menu and call it <strong>Image</strong>. That’s it, you can now upload images on your Blog Post.',
+        description: 'The last type of Field to add: an Asset. Choose the <strong>Link to Asset</strong> Field from the menu and call it <strong>Image</strong>.',
         attachTo: '.tab-content:visible .add-field-button',
         position: '11',
+        next: 'contentTypeAddAsset2',
+        onShow: function (guider) {
+          $(guider.attachTo).one('click', function () {
+            guiders.next();
+          });
+        },
+      });
+
+      createGuider({
+        category: 'content-types',
+        id: 'contentTypeAddAsset2',
+        title: 'More Fields!',
+        description: 'The last type of Field to add: an Asset. Choose the <strong>Link to Asset</strong> Field from the menu and call it Image.',
+        attachTo: '.tab-content:visible .type-menu:visible *[data-type-name="Link to Asset"]',
+        position: '2',
         next: 'contentTypeConfigAsset',
         onShow: function (guider) {
+          repositionLater();
           guider.scope.waitFor(function () {
             return _.filter(guider.attachScope.contentType.data.fields, function (field) {
               return field.type == 'Link' && field.linkType == 'Asset';
@@ -520,9 +568,9 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'content-types',
         id: 'contentTypeConfigAsset',
         title: 'Now, onto the Asset Field!',
-        description: 'Give the Field a the title <strong>Image</strong>, and don\'t forget to confirm the ID. That’s it, you can now upload images on your Blog Post.',
+        description: 'Give the Field a the title <strong>Image</strong>. That’s it, you can now upload images on your Blog Post.',
         attachTo: '.tab-content:visible .field-form:visible',
-        position: '6',
+        position: '11',
         next: 'contentTypeActivate',
         onShow: function (guider) {
           repositionLater();
