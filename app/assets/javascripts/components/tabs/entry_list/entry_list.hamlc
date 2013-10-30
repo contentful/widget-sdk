@@ -95,7 +95,7 @@
   .label {{selection.size()}} Entries selected
   .button-set(ng-controller="EntryListActionsCtrl" ng-hide="selection.isEmpty()")
     %button.default-button.duplicate(type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
-    %button.default-button.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" ng-show="deleteConfirm" ng-click="deleteSelected()" tooltip="Click anywhere else to dismiss") Are you sure?
+    %button.default-button.danger-button.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" ng-show="deleteConfirm" ng-click="deleteSelected()" tooltip="Click anywhere else to dismiss") Are you sure?
     %button.default-button.delete(type="button" ng-click="deleteConfirm=true" tooltip="Permanently delete these Entries" ng-show="showDelete() && !deleteConfirm") Delete
     %button.default-button.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
     %button.default-button.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive

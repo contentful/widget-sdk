@@ -82,7 +82,7 @@
                   tooltip="Deactivate this Content Type")
       Deactivate
 
-    %button.default-button.delete-confirm(type="button"
+    %button.default-button.danger-button.delete-confirm(type="button"
                   cf-click-outside="deleteConfirm=false"
                   cf-click-outside-ignore=".delete"
                   ng-show="deleteConfirm"
