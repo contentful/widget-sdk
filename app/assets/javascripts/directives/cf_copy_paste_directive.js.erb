@@ -18,43 +18,48 @@ angular.module('contentful').directive('cfCopyPaste', function(environment) {
         'copying': 'Copying...',
         'copied': 'Copied'
       };
-      var copyStatus = 'default';
+      element.attr('copy-status', 'default');
 
       element.tooltip({
         title: function () {
-          return copyText[copyStatus];
+          return copyText[$(this).attr('copy-status')];
         }
       });
 
       function mouseoverHandler(client, args) {
-        copyStatus = 'default';
+        $(this).attr('copy-status', 'default');
         $(this).tooltip('show');
+        setTimeout(_.bind(function () {
+          $(this).tooltip('hide');
+        }, this), 2000);
+
       }
       clip.on('mouseover', mouseoverHandler);
 
       function mouseoutHandler(client, args) {
         $(this).tooltip('hide');
-        copyStatus = 'default';
+        $(this).attr('copy-status', 'default');
       }
       clip.on('mouseout', mouseoutHandler);
 
       function dataRequestedHandler(client, args) {
+        $(this).tooltip('hide');
+        $(this).attr('copy-status', 'copying');
+        $(this).tooltip('show');
         var element = $(this);
         var clipboardTarget = element.parent().find('.'+element.attr('clipboard-target'));
-        copyStatus = 'copying';
-        element.tooltip('show');
         client.setText(clipboardTarget.val());
       }
       clip.on('dataRequested', dataRequestedHandler);
 
       function completeHandler(client, args) {
-        var element = $(this);
-        copyStatus = 'copied';
-        element.tooltip('show');
-        setTimeout(function () {
-          copyStatus = 'default';
-          element.tooltip('show');
-        }, 2000);
+        $(this).tooltip('hide');
+        $(this).attr('copy-status', 'copied');
+        $(this).tooltip('show');
+        setTimeout(_.bind(function () {
+          $(this).tooltip('hide');
+          $(this).attr('copy-status', 'default');
+        }, this), 2000);
       }
       clip.on('complete', completeHandler);
 
