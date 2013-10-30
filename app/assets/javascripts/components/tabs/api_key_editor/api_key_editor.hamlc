@@ -49,11 +49,17 @@
 
 .tab-actions
   .button-set
+    %button.default-button.delete-confirm(type="button"
+                   cf-click-outside="deleteConfirm=false"
+                   cf-click-outside-ignore=".delete"
+                   ng-show="deleteConfirm"
+                   ng-click="delete()"
+                   tooltip="Click anywhere else to dismiss") Are you sure?
     %button.default-button.delete(type="button"
                    tooltip="Permanently delete this API key"
-                   ng-click="delete()"
+                   ng-click="deleteConfirm=true"
                    ng-disabled="!can('create', 'ApiKey')"
-                   ng-show="apiKey.getId()")
+                   ng-show="apiKey.getId() && !deleteConfirm")
       Delete
     %button.default-button.primary-button.save(type="submit"
                  tooltip="Save this API key"

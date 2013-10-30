@@ -97,8 +97,9 @@
 .tab-actions
   .label {{selection.size()}} Assets selected
   .button-set(ng-controller="AssetListActionsCtrl"   ng-hide="selection.isEmpty()")
-    %button.default-button.delete(   type="button" ng-click="deleteSelected()"    ng-show="showDelete()"   ) Delete
-    %button.default-button.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
+    %button.default-button.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" ng-show="deleteConfirm" ng-click="deleteSelected()" tooltip="Click anywhere else to dismiss") Are you sure?
+    %button.default-button.delete(type="button" ng-click="deleteConfirm=true" tooltip="Permanently delete these Assets" ng-show="showDelete() && !deleteConfirm") Delete
+    %button.default-button.archive(type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
     %button.default-button.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
     %button.default-button.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
     %button.default-button.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}
