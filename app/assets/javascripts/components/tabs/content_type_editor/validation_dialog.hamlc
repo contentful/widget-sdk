@@ -7,8 +7,8 @@
     .validation-list
       .advice(ng-hide="validationList().length > 0")
         %i.ss-check.giant-icon
-        %header You have no Validations yet.
-        %p
+        %header.advice-title You have no Validations yet.
+        %p.advice-description
           Select Validations and narrow further what type of content should be added to your Fields.
         .dropdown-btn
           %button.default-button.primary-button.dropdown-toggle(ng-disabled="!can('create', 'ContentType')")

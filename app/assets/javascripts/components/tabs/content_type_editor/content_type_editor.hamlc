@@ -58,8 +58,8 @@
         .content-type-field-list(ng-show="contentType.data.fields.length > 0")
         .advice(ng-hide="contentType.data.fields.length > 0")
           %i.ss-layout.giant-icon
-          %header You have no Fields yet
-          %p
+          %header.advice-title You have no Fields yet
+          %p.advice-description
             Add Fields to configure which form inputs are available for your editors to work with.
           .dropdown-btn
             %button.dropdown-toggle.default-button.primary-button

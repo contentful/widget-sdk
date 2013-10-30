@@ -80,14 +80,14 @@
                 %span {{statusClass(asset)}}
                 .main-results-bar
       .loading(ng-hide="paginator.atLast()")
-    .results-empty(ng-show="visibleAssets | isEmpty")
+    .results-empty-advice(ng-show="visibleAssets | isEmpty")
       %div(ng-show="hasQuery()")
         %i.ss-search.giant-icon
-        %header There are no matches to your search
+        %header.advice-title There are no matches to your search
       %div(ng-show="!hasQuery()")
         %i.ss-attach.giant-icon
-        %header You have no Assets yet.
-        %p Assets are external documents that you can link to your Entries. They can be any file you wish, form sounds to images or videos to text documents.
+        %header.advice-title You have no Assets yet.
+        %p.advice-description Assets are external documents that you can link to your Entries. They can be any file you wish, form sounds to images or videos to text documents.
         %button.default-button.primary-button(type="button" ng-click="createAsset()" ng-disabled="!can('create', 'Asset')")
           Create an Asset
         %a.knowledge-base(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")

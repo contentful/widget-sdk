@@ -75,18 +75,18 @@
                 %span {{statusClass(entry)}}
                 .main-results-bar
       .loading(ng-hide="paginator.atLast()")
-    .results-empty(ng-show="visibleEntries | isEmpty")
+    .results-empty-advice(ng-show="visibleEntries | isEmpty")
       %div(ng-show="hasQuery()")
         %i.ss-search.giant-icon
-        %header There are no matches to your search
+        %header.advice-title There are no matches to your search
       %div(ng-show="!hasQuery()")
         %i.ss-file.giant-icon
-        %header You have no Entries yet.
-        %p(ng-show="spaceContext.publishedContentTypes.length == 0")
+        %header.advice-title You have no Entries yet.
+        %p.advice-description(ng-show="spaceContext.publishedContentTypes.length == 0")
           Entries are your content itself. These depend on the field types you created in the Content Type editor.
         %button.default-button.primary-button(type="button" ng-click="createContentType()" ng-disabled="!can('create', 'Entry')" ng-show="spaceContext.publishedContentTypes.length == 0")
           Create a Content Type
-        %p(ng-hide="spaceContext.publishedContentTypes.length == 0")
+        %p.advice-description(ng-hide="spaceContext.publishedContentTypes.length == 0")
           To create an Entry, use the Add-Button near the top of the screen.
         %a.knowledge-base(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
           Visit the Knowledge Base Pages

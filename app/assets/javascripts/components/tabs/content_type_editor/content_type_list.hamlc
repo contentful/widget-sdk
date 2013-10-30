@@ -32,8 +32,8 @@
               .main-results-bar
   .create-content-type-advice(ng-show="empty")
     %i.ss-database.giant-icon
-    %header You have no Content Types yet.
-    %p Content Types work like stencils that define which Entries you can create within a specific Space.
+    %header.advice-title You have no Content Types yet.
+    %p.advice-description Content Types work like stencils that define which Entries you can create within a specific Space.
     %button.default-button.primary-button(type="button" ng-click="createContentType()" ng-disabled="!can('create', 'ContentType')")
       Create Content Type
     %a.knowledge-base(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
