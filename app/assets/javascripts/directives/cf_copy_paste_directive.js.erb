@@ -5,6 +5,7 @@ angular.module('contentful').directive('cfCopyPaste', function(environment) {
     moviePath: "<%= asset_path 'ZeroClipboard.swf' %>",
     forceHandCursor: true,
     allowScriptAccess: 'always',
+    useNoCache: true,
     trustedOrigins: environment.settings.resourceUrlWhiteList
   });
 
