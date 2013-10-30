@@ -32,7 +32,7 @@
       %label Access Token
       .form-controls()
         .field-editor
-          %textarea.access-token.override-disabled(ng-model="apiKey.data.accessToken" ng-disabled="true" ng-show="apiKey.data.accessToken")
+          %input.access-token.override-disabled(type="text" ng-model="apiKey.data.accessToken" ng-disabled="true" ng-show="apiKey.data.accessToken")
           %a.default-button.cf-copy-paste(href="#" clipboard-target="access-token" ng-show="apiKey.data.accessToken")
             %i.ss-layers
             %i.ss-plus
@@ -41,8 +41,7 @@
           %div.curl-example(ng-show="apiKey.data.accessToken")
             %a(href="{{exampleUrl}}" target="_blank") Access Published Entries
             %span or via curl:
-            %textarea.curl-command.override-disabled(ng-disabled="true" ng-show="apiKey.data.accessToken")
-              curl {{exampleUrl|urlDisplay}}
+            %input.curl-command.override-disabled(type="text" ng-disabled="true" ng-show="apiKey.data.accessToken" value="curl {{exampleUrl}}")
             %a.default-button.cf-copy-paste(href="#" clipboard-target="curl-command" ng-show="apiKey.data.accessToken")
               %i.ss-layers
               %i.ss-plus

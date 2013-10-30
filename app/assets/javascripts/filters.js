@@ -95,9 +95,4 @@ filters.filter('isFieldStringList', function () {
   };
 });
 
-filters.filter('urlDisplay', function () {
-  return function (url) {
-    return url.replace('?', '?\\\n');
-  };
-});
 
