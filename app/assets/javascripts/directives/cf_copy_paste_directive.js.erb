@@ -40,7 +40,7 @@ angular.module('contentful').directive('cfCopyPaste', function(environment) {
 
       function dataRequestedHandler(client, args) {
         var element = $(this);
-        var clipboardTarget = element.parent().find('.'+attrs.clipboardTarget);
+        var clipboardTarget = element.parent().find('.'+element.attr('clipboard-target'));
         copyStatus = 'copying';
         element.tooltip('show');
         client.setText(clipboardTarget.val());
