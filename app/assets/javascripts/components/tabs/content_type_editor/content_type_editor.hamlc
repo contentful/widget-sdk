@@ -11,7 +11,7 @@
     .dropdown-btn
       %a.flat-button.dropdown-toggle
         %i.ss-dropdown.button-icon-right
-        %span View options…
+        %span View
       .dropdown-menu
         %ul
           %li

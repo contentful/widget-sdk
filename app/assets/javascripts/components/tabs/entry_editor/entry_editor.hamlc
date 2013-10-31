@@ -11,7 +11,7 @@
     .dropdown-btn
       %a.flat-button.dropdown-toggle
         %i.ss-dropdown.button-icon-right
-        %span Show fields…
+        %span View
       .dropdown-menu(style="display:none")
         %ul(ng-show="showLangSwitcher")
           %li(ng-repeat="locale in spaceContext.publishLocales track by locale.code")
