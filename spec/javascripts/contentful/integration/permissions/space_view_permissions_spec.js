@@ -49,7 +49,7 @@ describe('The Space view permissions', function () {
         expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(false);
       });
 
-      xit('show add menu item', function () {
+      it('show add menu item', function () {
         expect(container.find('.tablist-button .'+itemClass).get(0)).toBeDefined();
         expect(container.find('.tablist-button .'+itemClass).hasClass('ng-hide')).toBe(false);
         if(type == 'Entry'){
