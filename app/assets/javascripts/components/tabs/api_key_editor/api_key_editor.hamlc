@@ -36,7 +36,7 @@
           %a.default-button.cf-copy-paste(href="#" clipboard-target="access-token" ng-show="apiKey.data.accessToken")
             %i.ss-layers
             %i.ss-plus
-          %input(type="text" ng-hide="apiKey.data.accessToken" readonly="readonly" value="Save this API Key to get generate an OAuth Access Token and access your data.")
+          %input(type="text" ng-hide="apiKey.data.accessToken" readonly="readonly" value="Save this API Key to generate an OAuth Access Token and access your data.")
         .field-editor
           %div.curl-example(ng-show="apiKey.data.accessToken")
             %a(href="{{exampleUrl}}" target="_blank") Access Published Entries
