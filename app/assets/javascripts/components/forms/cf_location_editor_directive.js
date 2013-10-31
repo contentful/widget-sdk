@@ -79,18 +79,25 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
         }
       };
 
+      var resetAlerts = function () {
+        scope.latAlert = null;
+        scope.lonAlert = null;
+      };
+
       var checkValidity = function (value) {
-        if(!angular.isNumber(value) || isNaN(value)){
+        if((!angular.isNumber(value) || isNaN(value)) && value !== ''){
           this.$setValidity('coordinate', false);
           scope.$eval(this.$name+'Alert = "Invalid Value"');
         } else {
           this.$setValidity('coordinate', true);
           scope.$eval(this.$name+'Alert = null');
         }
+        if(value === '') return null;
         return value;
       };
 
       var parse = function (viewValue) {
+        if(viewValue === '') return viewValue;
         var val = parseFloat(viewValue);
         if (isNaN(val)) {
           return null;
@@ -98,7 +105,6 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
           return val;
         }
       };
-
 
       locationController.$viewChangeListeners.push(changeHandler);
       locationController.$parsers.unshift(latLngParser);
@@ -115,7 +121,7 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
       latController.$parsers.push(parse);
       lonController.$parsers.push(parse);
       latController.$parsers.push(_.bind(checkValidity, latController));
-      lonController.$parsers.push(_.bind(checkValidity, latController));
+      lonController.$parsers.push(_.bind(checkValidity, lonController));
       latController.$viewChangeListeners.push(triggerLocationWatchers);
       lonController.$viewChangeListeners.push(triggerLocationWatchers);
       latController.$viewChangeListeners.push(changeHandler);
@@ -127,10 +133,12 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
       };
 
       scope.removeLocation = function() {
+        resetAlerts();
         scope.updateLocation(null);
       };
 
       google.maps.event.addListener(map, 'click', function(event){
+        resetAlerts();
         if (!scope.location && scope.otEditable) {
           marker.setPosition(event.latLng);
           locationController.$setViewValue(event.latLng);
@@ -145,6 +153,7 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
       });
 
       google.maps.event.addListener(marker, 'dragend', function(event){
+        resetAlerts();
         locationController.$setViewValue(event.latLng);
       });
 
@@ -176,12 +185,14 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
       }
 
       scope.pickResult = function(result) {
+        resetAlerts();
         scope.updateLocation(result.location);
         map.fitBounds(result.viewport);
         scope.searchTerm = '';
       };
 
       scope.resetMapLocation = function () {
+        resetAlerts();
         if(locationController.$viewValue instanceof google.maps.LatLng){
           map.panTo(locationController.$viewValue);
         }
