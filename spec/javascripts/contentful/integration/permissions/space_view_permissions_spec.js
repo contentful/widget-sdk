@@ -48,18 +48,18 @@ describe('The Space view permissions', function () {
       it('show add button', function () {
         this.async(function (done) {
           expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(false);
-          _.defer(function () {
+          _.delay(function () {
             done();
-          });
+          }, 500);
         });
       });
 
       it('add menu item is not hidden', function () {
         this.async(function (done) {
           expect(container.find('.tablist-button .'+itemClass).hasClass('ng-hide')).toBe(false);
-          _.defer(function () {
+          _.delay(function () {
             done();
-          });
+          }, 500);
         });
       });
 
@@ -70,9 +70,9 @@ describe('The Space view permissions', function () {
           } else {
             expect(container.find('.tablist-button .separator').hasClass('ng-hide')).toBe(true);
           }
-          _.defer(function () {
+          _.delay(function () {
             done();
-          });
+          }, 500);
         });
       });
 
@@ -82,9 +82,9 @@ describe('The Space view permissions', function () {
         it(val+' add menu item is hidden', function () {
           this.async(function (done) {
             expect(container.find('.tablist-button .'+val).hasClass('ng-hide')).toBe(true);
-            _.defer(function () {
+            _.delay(function () {
               done();
-            });
+            }, 500);
           });
         });
       });
