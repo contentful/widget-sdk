@@ -43,12 +43,6 @@ angular.module('contentful').
       value: {type: 'Location'}
     },
     {
-      name: 'Object',
-      description: 'Object description',
-      group: 'Single',
-      value: {type: 'Object'}
-    },
-    {
       name: 'Entry',
       description: 'Link to Entry description',
       group: 'Single',
@@ -59,6 +53,12 @@ angular.module('contentful').
       description: 'Link to Asset description',
       group: 'Single',
       value: {type: 'Link', linkType: 'Asset'}
+    },
+    {
+      name: 'Object',
+      description: 'Object description',
+      group: 'Single',
+      value: {type: 'Object'}
     },
     {
       name: 'Entries',
