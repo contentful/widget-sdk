@@ -102,6 +102,6 @@ page.open(system.args[1], function(status){
                 }
             });
             phantom.exit(exitCode);
-        }, 10000);
+        }, 50000);
     }
 });
