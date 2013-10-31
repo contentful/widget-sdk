@@ -49,12 +49,19 @@ describe('The Space view permissions', function () {
         expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(false);
       });
 
-      it('show add menu item', function () {
+      it('add menu item exists', function () {
         expect(container.find('.tablist-button .'+itemClass).get(0)).toBeDefined();
+      });
+
+      it('add menu item is not hidden', function () {
         expect(container.find('.tablist-button .'+itemClass).hasClass('ng-hide')).toBe(false);
+      });
+
+      it('separator only shows for Entry', function () {
         if(type == 'Entry'){
           expect(container.find('.tablist-button .separator').hasClass('ng-hide')).toBe(false);
         } else {
+          console.log(container.find('.tablist-button .separator').get(0).className);
           expect(container.find('.tablist-button .separator').hasClass('ng-hide')).toBe(true);
         }
       });
