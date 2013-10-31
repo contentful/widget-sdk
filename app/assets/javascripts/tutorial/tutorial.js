@@ -549,7 +549,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         id: 'contentTypeAddAsset2',
         title: 'More Fields!',
         description: 'The last type of Field to add: an Asset. Choose the <strong>Link to Asset</strong> Field from the menu and call it Image.',
-        attachTo: '.tab-content:visible .type-menu:visible *[data-type-name="Link to Asset"]',
+        attachTo: '.tab-content:visible .type-menu:visible *[data-type-name="Asset"]',
         position: '2',
         next: 'contentTypeConfigAsset',
         onShow: function (guider) {
