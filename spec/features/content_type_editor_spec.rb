@@ -18,8 +18,8 @@ feature 'Content Type Editor', js: true, non_ci: true do
     fill_in 'contentTypeName', with: 'Test Content Type'
     fill_in 'contentTypeDescription', with: 'Test description'
     ["Text", "Symbol", "Number", "Decimal Number", "Yes/No",
-     "Date/Time", "Object", "Link to Entry", "List of Entries",
-     "List of Symbols", "Location"].each do |fieldType|
+     "Date/Time", "Object", "Entry", "Asset", "Entries", "Assets",
+     "Symbols", "Location"].each do |fieldType|
        add_field fieldType+' Field', fieldType
     end
     sleep 2

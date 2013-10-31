@@ -23,10 +23,9 @@ feature 'Asset Editor', js: true do
 
     find '.file-info .thumbnail', wait: 10
     click_button 'Publish'
-    sleep 1
+    sleep 3
     nav_bar 'asset-list'
     table = find('.main-results tbody')
-    sleep 5
     expect(table).to have_text('Bacon')
   end
 end
@@ -75,7 +74,7 @@ feature 'Link Editor', js: true, non_ci: true do
     add_button 'Content Type'
     fill_in 'contentTypeName', with: 'Entry with Link'
     fill_in 'contentTypeDescription', with: 'Test description'
-    add_field 'Asset Field', 'Link to Asset'
+    add_field 'Asset Field', 'Asset'
     sleep 1
     click_button 'Activate'
     close_tab

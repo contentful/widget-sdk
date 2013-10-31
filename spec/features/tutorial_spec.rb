@@ -56,7 +56,7 @@ feature 'Tutorial', js: true, non_ci: true do
 
     add_field('Body', 'Text')
     add_field('Timestamp', 'Date/Time')
-    add_field('Image', 'Link to Asset')
+    add_field('Image', 'Asset')
 
     find('.publish').click
 
