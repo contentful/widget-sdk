@@ -14,7 +14,7 @@ describe('Available field types', function () {
   });
 
   it('returns a field name for a collection field type', function () {
-    expect(getFieldTypeName({type: 'Array', items: {type: 'Symbol'}})).toEqual('List of Symbols');
+    expect(getFieldTypeName({type: 'Array', items: {type: 'Symbol'}})).toEqual('Symbols');
   });
 
   it('returns null for a non existing field type', function () {
