@@ -21,12 +21,20 @@ otModule.directive('otBindText', function(ShareJS, $sniffer, $parse) {
         if (path === event.currentScope.otPath) ngModelSet(event.currentScope, val);
       });
 
+      function isAttached() {
+        return !!unbindTextField;
+      }
+
+      function isString() {
+        return _.isString(ngModelCtrl.$modelValue);
+      }
+
       function needsAttach() {
-        return _.isString(ngModelCtrl.$modelValue) && !unbindTextField;
+        return !isAttached() && isString() && scope.otSubdoc;
       }
 
       function needsDetach() {
-        return !_.isString(ngModelCtrl.$modelValue) && (!!unbindTextField);
+        return isAttached() && (!isString() || !scope.otSubdoc);
       }
 
       function attach() {
