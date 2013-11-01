@@ -96,7 +96,7 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
       // TODO solve this cleaner, with tombstones? It's bad to have dead entities lying around in the identitymap
       // entity was deleted if getId() returns undefined
       //           vvvvvvvvvvvvv
-      if (entity && entity.getId() && entity.getId() != $scope.links[index].sys.id) throw new Error('Index mismatch!');
+      if (entity && entity.getId && entity.getId() && entity.getId() != $scope.links[index].sys.id) throw new Error('Index mismatch!');
       $scope.otDoc.at($scope.otPath.concat(index)).remove(function (err) {
         if (!err) $scope.$apply(function (scope) {
           scope.links.splice(index,1);
@@ -143,8 +143,13 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
     } else {
       var stopSpinner = cfSpinner.start();
       lookupEntities(scope, links).then(function (entities) {
+        var counter = 0;
         scope.linkedEntities = _.map(entities, function (entity) {
-          return entity && Object.create(entity);
+          if(!entity) {
+            entity = {'$$hashKey': 'missingEntity_'+counter};
+            counter++;
+          }
+          return Object.create(entity);
         });
         stopSpinner();
       }, function () {
@@ -158,7 +163,7 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
   });
 
   $scope.linkDescription = function(entity) {
-    if (entity && entity.getId()) {
+    if (entity && entity.getId && entity.getId()) {
       return $scope.linkType === 'Entry' ?
         $scope.spaceContext.entryTitle(entity, $scope.locale.code) :
         $scope.spaceContext.assetTitle(entity, $scope.locale.code) ;
