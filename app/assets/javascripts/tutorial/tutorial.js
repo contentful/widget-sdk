@@ -533,7 +533,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'content-types',
         id: 'contentTypeAddAsset1',
         title: 'Now, onto the Asset Field!',
-        description: 'The last type of Field to add: an Asset. Choose the <strong>Link to Asset</strong> Field from the menu and call it <strong>Image</strong>.',
+        description: 'The last type of Field to add: an Asset. Choose the <strong>Asset</strong> Field from the menu and call it <strong>Image</strong>.',
         attachTo: '.tab-content:visible .add-field-button',
         position: '11',
         next: 'contentTypeAddAsset2',
@@ -548,7 +548,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'content-types',
         id: 'contentTypeAddAsset2',
         title: 'More Fields!',
-        description: 'The last type of Field to add: an Asset. Choose the <strong>Link to Asset</strong> Field from the menu and call it Image.',
+        description: 'The last type of Field to add: an Asset. Choose the <strong>Asset</strong> Field from the menu and call it Image.',
         attachTo: '.tab-content:visible .type-menu:visible *[data-type-name="Asset"]',
         position: '2',
         next: 'contentTypeConfigAsset',
@@ -705,6 +705,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         id: 'entryContent',
         title: 'This is the Entry editor',
         description: 'Here you can’t add or edit Fields anymore. This Editor allows editors to focus on inserting content, according to the Content Type you created before.',
+        overlay: true,
         buttons: [next],
         next: 'entryQuestion'
       });
@@ -795,7 +796,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         title: 'Time to upload',
         description: '<p>Finally, upload your file by either clicking “Open File Picker” or drag and drop the file from your computer.</p><p>For this tutorial, let’s open the File Picker.</p>',
         attachTo: '.asset-editor:visible .upload-button',
-        position: '3',
+        position: 2,
         next: 'assetPick',
         onShow: function (guider) {
           $(guider.attachTo).one('click', function () {
