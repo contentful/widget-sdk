@@ -2,7 +2,7 @@
 
 angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     $scope, client, SpaceContext, authentication, notification, analytics,
-    routing, authorization, tutorial, modalDialog, presence, $location) {
+    routing, authorization, tutorial, modalDialog, presence, $location, $q) {
 
   $scope.spaces = null;
   $scope.spaceContext = new SpaceContext();
@@ -165,18 +165,14 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     $location.path('/profile' + '/' + pathSuffix);
   };
 
-  $scope.performTokenLookup = function (callback) {
+  $scope.performTokenLookup = function () {
     // TODO initialize blank user so that you can at least log out when
     // the getTokenLookup fails
-    authentication.getTokenLookup(function(tokenLookup) {
-      $scope.$apply(function(scope) {
-        //console.log('tokenLookup', tokenLookup);
-        scope.user = tokenLookup.sys.createdBy;
-        analytics.login(scope.user);
-        scope.updateSpaces(tokenLookup.spaces);
-        showTutorialIfNecessary();
-        if (callback) callback(tokenLookup);
-      });
+    return authentication.getTokenLookup().then(function (tokenLookup) {
+      //console.log('tokenLookup', tokenLookup);
+      $scope.user = tokenLookup.sys.createdBy;
+      analytics.login($scope.user);
+      $scope.updateSpaces(tokenLookup.spaces);
     });
   };
 
@@ -215,7 +211,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   };
 
   $scope.initClient = function () {
-    $scope.performTokenLookup();
+    $scope.performTokenLookup().then(showTutorialIfNecessary);
     setInterval(function () {
       if (presence.isActive()) $scope.performTokenLookup();
     }, 5 * 60 * 1000);

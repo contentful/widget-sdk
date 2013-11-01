@@ -26,7 +26,7 @@ angular.module('contentful').controller('createSpaceDialogCtrl', [
             scope.dialog.cancel();
             stopSpinner();
           } else {
-            $scope.performTokenLookup(function () {
+            $scope.performTokenLookup().then(function () {
               var space = _.find(scope.spaces, function (space) {
                 return space.getId() == newSpace.getId();
               });
