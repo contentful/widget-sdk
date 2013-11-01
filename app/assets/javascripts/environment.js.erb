@@ -18,6 +18,8 @@ angular.module('contentful/environment', []).constant('environment', {
   ];
   environment.settings.resourceUrlWhiteListRegexp = [/(https?:)?\/\/([^:\/.?&;]*\.)?(staticflinkly-thriventures\.netdna-ssl\.com|flinkly.com|joistio.com|contentful.com)(:\d+)?\/.*/, 'self' ];
 
+  environment.settings.dataLoggerUrl = 'https://cf-track-107d49294b11c1.appspot.com/track/';
+
   if (window.XDomainRequest) {
     environment.settings.api_host = environment.settings.app_host + '/api';
     environment.settings.ot_host  = environment.settings.app_host + '/ot';

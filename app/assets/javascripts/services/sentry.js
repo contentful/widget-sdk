@@ -2,7 +2,13 @@
 
 angular.module('contentful').factory('sentry', [
          '$injector', '$window', 'environment', 'stringifySafe',
-function ($injector ,  $window ,  environment, stringifySafe) {
+function ($injector , $window, environment, stringifySafe) {
+
+  function rand(length, current){
+   current = current ? current : '';
+
+   return length ? rand( --length , "0123456789ABCDEFabcdef".charAt( Math.floor( Math.random() * 22 ) ) + current ) : current;
+  }
 
   var GET_MAX_LENGTH = 1800;
 
@@ -36,30 +42,29 @@ function ($injector ,  $window ,  environment, stringifySafe) {
       git_revision: environment.settings.git_revision
     }});
     options.merge.apply(options, arguments);
-    options = options.value();
-    var charCount = 0;
-    var charPerKey, val;
-    if(options.extra){
-      for(var key in options.extra){
-        val = options.extra[key];
-        if(val) {
-          options.extra[key] = stringifySafe(val);
-          charCount += options.extra[key].length;
-        } else {
-          options.extra[key] = 'undefined or falsy value';
-        }
-      }
-      if(charCount > GET_MAX_LENGTH){
-        charPerKey = _.parseInt(GET_MAX_LENGTH / _.keys(options.extra).length);
-        for(var key in options.extra){
-          options.extra[key] = options.extra[key].substr(0, charPerKey);
-        }
-      }
-    }
     return options;
   }
 
+  function logDataObject(data) {
+    var $http = $injector.get('$http');
+    var id = rand(64);
+    $http.post(environment.settings.dataLoggerUrl+id, data);
+    return id;
+  }
+
+  function preParseData(data) {
+    var prop;
+    for(var key in data){
+      prop = data[key];
+      if(prop.$id && prop.$apply && prop.$digest){
+        data[key] = JSON.parse(stringifySafe(prop));
+      }
+    }
+    return data;
+  }
+
   return {
+    logDataObject: logDataObject,
     captureException: function (exception, options) {
       if ($window.Raven) {
         $window.Raven.captureException(exception, createOptions({
@@ -72,9 +77,19 @@ function ($injector ,  $window ,  environment, stringifySafe) {
 
     captureError: function (error, options) {
       if ($window.Raven) {
+        var dataId = null;
+        if(options.data){
+          dataId = logDataObject(preParseData(options.data));
+          options.extra = options.extra || {};
+          options.extra.data = {id: dataId};
+          delete options.data;
+          error = error += ' '+dataId
+        }
+
         $window.Raven.captureMessage(error, createOptions({
           tags: {
-            type: 'error_message'
+            type: 'error_message',
+            dataid: dataId
           }
         }, options));
       }
