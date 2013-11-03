@@ -115,7 +115,11 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
           });
           $rootScope.$evalAsync(function () {
             guider.scope = parentScope.$new();
-            if (guider.attachTo) guider.attachScope = $(guider.attachTo).scope().$new();
+            if (guider.attachTo) try {
+              guider.attachScope = $(guider.attachTo).scope().$new();
+            } catch (e) {
+              throw new Error('Failed to attach guider '+guider.id+' to '+guider.attachTo);
+            }
             if (onShow) onShow.call(guider, guider);
           });
           if (!$rootScope.$$phase) $rootScope.$apply();
