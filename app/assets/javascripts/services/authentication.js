@@ -66,8 +66,8 @@ angular.module('contentful').provider('authentication', function AuthenticationP
     },
 
     supportUrl: function() {
-      //return authApp + 'integrations/zendesk/login';
-      return 'http://support.contentful.com/';
+      return authApp + 'integrations/zendesk/login';
+      // return 'http://support.contentful.com/';
     },
 
     spaceSettingsUrl: function (spaceId) {
