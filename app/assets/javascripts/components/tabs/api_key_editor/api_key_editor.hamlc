@@ -30,7 +30,7 @@
           %input(type="text" ng-model="apiKey.data.description" ng-disabled="!editable()")
     .form-field
       %label Access Token
-      .form-controls()
+      .form-controls
         .field-editor
           %input.access-token.cf-select-all-input(type="text" ng-model="apiKey.data.accessToken" ng-show="apiKey.data.accessToken")
           %a.default-button.cf-copy-paste(href="#" clipboard-target="access-token" ng-show="apiKey.data.accessToken")
