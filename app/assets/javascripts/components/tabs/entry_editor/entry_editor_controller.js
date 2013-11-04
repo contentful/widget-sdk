@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-  .controller('EntryEditorCtrl', function EntryEditorCtrl($scope, validation, can, addCanMethods, notification, stringifySafe) {
+  .controller('EntryEditorCtrl', function EntryEditorCtrl($scope, validation, can, addCanMethods, notification, sentry) {
   $scope.$watch('tab.params.entry', 'entry=tab.params.entry');
   $scope.$watch(function entryEditorEnabledWatcher(scope) {
     return !scope.entry.isArchived() && can('update', scope.entry.data);
@@ -89,6 +89,17 @@ angular.module('contentful')
           return scope.spaceContext.getPublishLocale(code);
         });
         locales = _.union(locales, errorLocales);
+        var uniqLocales = _.uniq(locales, function(locale){return locale.code;});
+        locales = uniqLocales;
+        if(locales.length !== uniqLocales.length){
+          sentry.captureError('Locales have been duplicated', {
+            data: {
+              locales: locales,
+              errorLocales: errorLocales,
+              activeLocales: scope.spaceContext.activeLocales
+            }
+          });
+        }
         acc.push(inherit(field, locales));
       }
       return acc;
