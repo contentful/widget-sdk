@@ -25,7 +25,7 @@
       %header Content Types
       %ul.filter-list
         %li(ng-class="{active: tab.params.contentTypeId == contentType.getId()}"
-            ng-repeat="contentType in spaceContext.publishedContentTypes"
+            ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
             ng-click="switchList('contentType', contentType)")
           %span {{contentType.getName()}}
     -#

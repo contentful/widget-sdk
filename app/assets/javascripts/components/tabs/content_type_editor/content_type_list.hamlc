@@ -13,7 +13,7 @@
   .main-results-wrapper(ng-hide="empty")
     %table.result-list.main-results
       %tbody
-        %tr(ng-repeat="contentType in spaceContext.contentTypes"
+        %tr(ng-repeat="contentType in spaceContext.contentTypes track by contentType.getId()"
             cf-click-local="navigator.contentTypeEditor(contentType).goTo()")
           %td.cell-name
             %span {{contentType.getName()}}

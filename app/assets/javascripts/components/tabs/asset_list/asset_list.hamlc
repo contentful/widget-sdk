@@ -18,7 +18,7 @@
         %span Archived
     %header File type
     %ul.filter-list
-      %li(ng-repeat="(label, name) in mimetypeGroups"
+      %li(ng-repeat="(label, name) in mimetypeGroups track by label"
           ng-class="{active: tab.params.list == label}"
           ng-click="switchList(label)")
         %span {{name}}
@@ -58,7 +58,7 @@
     .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
       %table.result-list.main-results
         %tbody
-          %tr(ng-repeat="asset in visibleAssets = (assets | filter:visibleInCurrentList)" cf-click-local="navigator.assetEditor(asset).goTo()")
+          %tr(ng-repeat="asset in visibleAssets = (assets | filter:visibleInCurrentList) track by asset.getId()" cf-click-local="navigator.assetEditor(asset).goTo()")
             %td.cell-select(ng-click="selection.toggle(asset);$event.stopPropagation()")
               %input(type="checkbox" cf-selection="asset" tabindex="-1")
             -#%td.cell-favorite

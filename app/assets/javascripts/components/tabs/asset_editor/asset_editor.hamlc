@@ -14,7 +14,7 @@
         %span View
       .dropdown-menu(style="display:none")
         %ul
-          %li(ng-repeat="locale in spaceContext.publishLocales")
+          %li(ng-repeat="locale in spaceContext.publishLocales track by locale.code")
             %label
               %input(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
               {{locale.name}}
@@ -37,12 +37,12 @@
       %label {{field.name}}
         %sup(ng-show="field.required") *
       .form-controls
-        .locale(ng-repeat="locale in field.locales" ot-field-presence="['fields', field.id, locale.code]" data-locale="{{locale.code}}")
+        .locale(ng-repeat="locale in field.locales track by locale.code" ot-field-presence="['fields', field.id, locale.code]" data-locale="{{locale.code}}")
           .cf-field-editor(ot-path="['fields', field.id, locale.code]" cf-editor-entity="asset")
           .locale-label(ng-show="field.locales.length > 1") {{locale.name}}
           .field-collaborators
             %ul.plain-list
-              %li.avatar.cf-user(ng-repeat="link in fieldPresence.users"
+              %li.avatar.cf-user(ng-repeat="link in fieldPresence.users track by link.sys.id"
                                  link="link" as="user"
                                  tooltip="{{user.getName()}}")
                 %img(ng-src="{{user.data.avatarUrl}}")
@@ -64,7 +64,7 @@
           tooltip="Edit collaboratively by inviting more users into your space. Go to Settings → Users → Invite New User to invite people.")
       No other users online
     %ul(ng-show="presence.users.length > 0")
-      %li.avatar.cf-user(ng-repeat="link in presence.users"
+      %li.avatar.cf-user(ng-repeat="link in presence.users track by link.sys.id"
                          link="link" as="user"
                          tooltip="{{user.getName()}}")
         %img(ng-src="{{user.data.avatarUrl}}")

@@ -22,7 +22,7 @@
     .main-results-wrapper(ng-hide="empty")
       %table.result-list.main-results
         %tbody
-          %tr(ng-repeat="apiKey in apiKeys"
+          %tr(ng-repeat="apiKey in apiKeys track by apiKey.getId()"
               cf-click-local="navigator.apiKeyEditor(apiKey).goTo()")
             %td.cell-name
               %span {{apiKey.getName()}}

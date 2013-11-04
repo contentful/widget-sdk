@@ -14,7 +14,7 @@
           %button.default-button.primary-button.dropdown-toggle(ng-disabled="!can('create', 'ContentType')")
             Create Validation
           .dropdown-menu.type-menu(select-validation="addValidation(type)")
-      .cf-validation-options(ng-repeat="(validationIndex, validation) in validationList()" ng-model="validation")
+      .cf-validation-options(ng-repeat="(validationIndex, validation) in validationList() track by validationIndex" ng-model="validation")
 
     .buttons(ng-show="validationList().length > 0")
       .dropdown-btn

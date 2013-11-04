@@ -143,14 +143,7 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
     } else {
       var stopSpinner = cfSpinner.start();
       lookupEntities(scope, links).then(function (entities) {
-        var counter = 0;
-        scope.linkedEntities = _.map(entities, function (entity) {
-          if(!entity) {
-            entity = {'$$hashKey': 'missingEntity_'+counter};
-            counter++;
-          }
-          return Object.create(entity);
-        });
+        scope.linkedEntities = entities;
         stopSpinner();
       }, function () {
         stopSpinner();
