@@ -3,9 +3,12 @@
 
 angular.module('contentful').controller('cfLocationEditorCtrl', function ($scope, cfSpinner) {
   $scope.$watch('location', function(loc, old, scope) {
-    //console.log('location changed', loc);
-    scope.locationValid = !angular.isObject(loc) || angular.isNumber(loc.lat) && !isNaN(loc.lat) && angular.isNumber(loc.lon) && !isNaN(loc.lon);
-    //console.log('setting valid to', scope.locationValid);
+    var locValid = angular.isObject(loc);
+    scope.latValid = locValid && angular.isNumber(loc.lat) && !isNaN(loc.lat);
+    scope.latEmpty = locValid && (loc.lat === '' || loc.lat === null);
+    scope.lonValid = locValid && angular.isNumber(loc.lon) && !isNaN(loc.lon);
+    scope.lonEmpty = locValid && (loc.lon === '' || loc.lon === null);
+    scope.locationValid = !locValid || (scope.latValid && scope.lonValid);
   });
 
   $scope.$watch('searchTerm', function(searchTerm, old, scope) {

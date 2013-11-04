@@ -72,7 +72,7 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
       };
 
       var locationFormatter = function(location) {
-        if (location) {
+        if (location && location.lat && location.lon) {
           return new google.maps.LatLng(location.lat, location.lon);
         } else {
           return null;
@@ -112,7 +112,7 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
       locationController.$render = function() {
         if (!scope.locationValid) return;
         var latLng = locationController.$viewValue;
-        if (latLng) {
+        if (latLng && latLng.lng() && latLng.lat()) {
           marker.setPosition(latLng);
           map.panTo(latLng);
         }
