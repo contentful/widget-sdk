@@ -63,4 +63,4 @@ angular.module('contentful/app', [
   client.persistenceContext.adapter.token = authentication.token;
 });
 
-angular.bootstrap(document, ['contentful/app']);
+angular.bootstrap(document.body, ['contentful/app']);
