@@ -141,7 +141,7 @@ angular.module('contentful')
 
       if(!field){
         return notification.error('An error has occurred and we\'ve been notified. Please refresh your browser.', {
-          extra: {
+          data: {
             fieldId: fieldId,
             fields: _.map(et.data.fields, function(val){return {id: val.id, type: val.type};}),
             contentType: et.data.sys.id,
