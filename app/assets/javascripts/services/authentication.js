@@ -4,7 +4,7 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
   var authApp  = '//'+environment.settings.base_host+'/';
   var QueryLinkResolver = contentfulClient.QueryLinkResolver;
-  var $location, $q, $rootScope;
+  var $location, $q, $rootScope, notification;
   var sentry;
 
   this.authApp= function(e) {
@@ -47,6 +47,9 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
       if (token) {
         this.token = token;
+        if ($location.search().already_authenticated) {
+          notification.info('You are already signed in.');
+        }
       } else {
         this.redirectToLogin();
       }
@@ -133,11 +136,12 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
   };
 
-  this.$get = function(client, _$location_, _sentry_, _$q_, _$rootScope_){
+  this.$get = function(client, _$location_, _sentry_, _$q_, _$rootScope_, _notification_){
     $location = _$location_;
     sentry = _sentry_;
     $rootScope = _$rootScope_;
     $q = _$q_;
+    notification = _notification_;
     return new Authentication(client);
   };
 
