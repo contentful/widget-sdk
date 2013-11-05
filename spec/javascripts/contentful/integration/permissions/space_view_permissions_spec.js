@@ -32,7 +32,7 @@ describe('The Space view permissions', function () {
     expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(true);
   });
 
-  var waitForRenderTimeout = 1000;
+  var waitForRenderTimeout = 0;
   function makeShownButtonTest(type, itemClass) {
     var menuItems = [
       'add-content-type',
