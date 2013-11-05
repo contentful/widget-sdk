@@ -16,6 +16,7 @@ else
   npm link contentful-mimetype
   npm link validation
   npm link share
+  npm install
 fi
 
 popd
