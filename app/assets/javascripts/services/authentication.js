@@ -99,7 +99,7 @@ angular.module('contentful').provider('authentication', function AuthenticationP
     getTokenLookup: function(force) {
       if (this.redirectingToLogin) {
         sentry.captureError('redirection to login in process during getTokenLookup. Not executing');
-        return $q.reject();
+        return $q.defer().promise; // never resolved lol
       }
       var self = this;
       if (this.tokenLooukp && !force) {
