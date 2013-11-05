@@ -90,7 +90,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
   };
 
   $scope.syncLocation = function () {
-    routing.goTotTab($scope.spaceContext.tabList.current, $scope.spaceContext.space);
+    routing.goToTab($scope.spaceContext.tabList.current, $scope.spaceContext.space);
   };
 
   $scope.goToTab = function (tab) {
