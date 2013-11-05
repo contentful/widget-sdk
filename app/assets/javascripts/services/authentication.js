@@ -50,7 +50,15 @@ angular.module('contentful').provider('authentication', function AuthenticationP
         if ($location.search().already_authenticated) {
           notification.info('You are already signed in.');
         }
+        var afterLoginPath = $.cookies.get('redirect_after_login');
+        if(afterLoginPath){
+          $.cookies.del('redirect_after_login');
+          $location.path(afterLoginPath);
+        }
       } else {
+        if(/^\/(\w+)/.test($location.path())){
+          $.cookies.set('redirect_after_login', $location.path());
+        }
         this.redirectToLogin();
       }
     },
