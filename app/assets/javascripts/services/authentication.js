@@ -96,31 +96,27 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       window.location = authApp + 'oauth/authorize?' + params;
     },
 
-    getTokenLookup: function(force) {
+    getTokenLookup: function() {
       if (this.redirectingToLogin) {
         sentry.captureError('redirection to login in process during getTokenLookup. Not executing');
         return $q.defer().promise; // never resolved lol
       }
       var self = this;
-      if (this.tokenLooukp && !force) {
-        return $q.when(this.tokenLookup);
-      } else {
-        var d = $q.defer();
-        this.client.getTokenLookup(function (err, data) {
-          if (err) {
-            sentry.captureError('Error during token lookup', { data: { err: err } });
-            d.reject(err);
-          } else {
-            $rootScope.$apply(function () {
-              if (data !== undefined) { // Data === undefined is in cases of notmodified
-                self.setTokenLookup(data);
-              }
-              d.resolve(self.tokenLookup);
-            });
-          }
-        });
-        return d.promise;
-      }
+      var d = $q.defer();
+      this.client.getTokenLookup(function (err, data) {
+        if (err) {
+          sentry.captureError('Error during token lookup', { data: { err: err } });
+          d.reject(err);
+        } else {
+          $rootScope.$apply(function () {
+            if (data !== undefined) { // Data === undefined is in cases of notmodified
+              self.setTokenLookup(data);
+            }
+            d.resolve(self.tokenLookup);
+          });
+        }
+      });
+      return d.promise;
     },
 
     getUser: function () {

@@ -2,7 +2,8 @@
 
 angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     $scope, client, SpaceContext, authentication, notification, analytics,
-    routing, authorization, tutorial, modalDialog, presence, $location, $q) {
+    routing, authorization, tutorial, modalDialog, presence, $location,
+    ReloadNotification) {
 
   $scope.spaces = null;
   $scope.spaceContext = new SpaceContext();
@@ -165,16 +166,10 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     $location.path('/profile' + '/' + pathSuffix);
   };
 
-  $scope.performTokenLookup = function (force) {
-    // TODO initialize blank user so that you can at least log out when
-    // the getTokenLookup fails
-    return authentication.getTokenLookup(force).then(function (tokenLookup) {
+  $scope.performTokenLookup = function () {
+    return authentication.getTokenLookup().then(function (tokenLookup) {
       $scope.user = tokenLookup.sys.createdBy;
-      analytics.login($scope.user);
       $scope.updateSpaces(tokenLookup.spaces);
-    }, function () {
-      notification.error('Token Lookup failed. Logging out.');
-      authentication.logout();
     });
   };
 
@@ -213,9 +208,21 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   };
 
   $scope.initClient = function () {
-    $scope.performTokenLookup().then(showTutorialIfNecessary);
+    $scope.performTokenLookup().
+      then(function () {
+        analytics.login($scope.user);
+        showTutorialIfNecessary();
+      }, function () {
+        notification.error('Token Lookup failed. Logging out.');
+        authentication.logout();
+      });
     setInterval(function () {
-      if (presence.isActive()) $scope.performTokenLookup(true);
+      if (presence.isActive()) {
+        $scope.performTokenLookup().
+        catch(function () {
+          ReloadNotification.trigger('The app has encountered an authentication problem that requires termination of your session.');
+        });
+      }
     }, 5 * 60 * 1000);
   };
 
