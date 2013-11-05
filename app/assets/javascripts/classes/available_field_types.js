@@ -43,37 +43,37 @@ angular.module('contentful').
       value: {type: 'Location'}
     },
     {
+      name: 'Entry',
+      description: 'Link to Entry description',
+      group: 'Single',
+      value: {type: 'Link', linkType: 'Entry'}
+    },
+    {
+      name: 'Asset',
+      description: 'Link to Asset description',
+      group: 'Single',
+      value: {type: 'Link', linkType: 'Asset'}
+    },
+    {
       name: 'Object',
       description: 'Object description',
       group: 'Single',
       value: {type: 'Object'}
     },
     {
-      name: 'Link to Entry',
-      description: 'Link to Entry description',
-      group: 'Single',
-      value: {type: 'Link', linkType: 'Entry'}
-    },
-    {
-      name: 'Link to Asset',
-      description: 'Link to Asset description',
-      group: 'Single',
-      value: {type: 'Link', linkType: 'Asset'}
-    },
-    {
-      name: 'List of Entries',
+      name: 'Entries',
       description: 'List of Entries description',
       group: 'Multiple',
       value: {type: 'Array', items: {type: 'Link', linkType: 'Entry'}}
     },
     {
-      name: 'List of Assets',
+      name: 'Assets',
       description: 'List of Assets description',
       group: 'Multiple',
       value: {type: 'Array', items: {type: 'Link', linkType: 'Asset'}}
     },
     {
-      name: 'List of Symbols',
+      name: 'Symbols',
       description: 'List of Symbols description',
       group: 'Multiple',
       value: {type: 'Array' , items: {type: 'Symbol'}}

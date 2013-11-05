@@ -1,8 +1,12 @@
 .api-key-editor
   @extend %entity-editor
   .save
-    @extend %green-button
+    @extend %success-button
+  .field-editor
+    position: relative
   .curl-example
-    pre
-      padding: 15px
-      max-width: 70%
+    margin-top: 10px
+    input[type="text"]
+      padding-right: 40px
+    .cf-copy-paste
+      top: 28px

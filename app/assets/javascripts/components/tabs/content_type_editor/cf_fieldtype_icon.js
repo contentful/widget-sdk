@@ -9,11 +9,11 @@ angular.module('contentful').directive('cfFieldtypeIcon', function(getFieldTypeN
     'Yes/No'         :'<strong>Y/N</strong>',
     'Date/Time'      :'<i class="ss-calendar"></i>',
     'Object'         :'<strong>{}</strong>',
-    'Link to Entry'  :'<i class="ss-file"></i>',
-    'Link to Asset'  :'<i class="ss-attach"></i>',
-    'List of Entries':'<i class="ss-file"></i><strong>+</strong>',
-    'List of Assets' :'<i class="ss-attach"></i><strong>+</strong>',
-    'List of Symbols':'<strong>USD+</strong>',
+    'Entry'          :'<i class="ss-file"></i>',
+    'Asset'          :'<i class="ss-attach"></i>',
+    'Entries'        :'<i class="ss-file"></i><strong>+</strong>',
+    'Assets'         :'<i class="ss-attach"></i><strong>+</strong>',
+    'Symbols'        :'<strong>USD+</strong>',
     'Location'       :'<i class="ss-location"></i>'
   }, function (html, title, templates) {
     templates[title] = $(html);

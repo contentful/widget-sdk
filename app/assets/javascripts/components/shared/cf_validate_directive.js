@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfValidate', function (validation, assert) {
+angular.module('contentful').directive('cfValidate', function (validation, sentry) {
   return {
     restrict: 'A',
     scope: true,
@@ -54,8 +54,20 @@ angular.module('contentful').directive('cfValidate', function (validation, asser
 
       $scope.setValidationResult = function (schemaErrors, data, schema) {
         var errors = _.reject(schemaErrors, function (error) {
-          assert.truthy(error, 'Validation error is undefined');
-          assert.path(error, 'path', 'Validation error path does not exist');
+          try {
+            assert.truthy(error, 'Validation error is undefined');
+            assert.path(error, 'path', 'Validation error path does not exist');
+          } catch(err){
+            sentry.captureError('Validation error does not exist', {
+              data: {
+                err: err,
+                error: error,
+                schemaErrors: schemaErrors,
+                data: data,
+                schema: schema
+              }
+            });
+          }
           return error.path[error.path.length-1] == '$$hashKey';
         });
         var valid = _.isEmpty(errors);

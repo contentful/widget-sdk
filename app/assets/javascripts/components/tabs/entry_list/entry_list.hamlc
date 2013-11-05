@@ -25,7 +25,7 @@
       %header Content Types
       %ul.filter-list
         %li(ng-class="{active: tab.params.contentTypeId == contentType.getId()}"
-            ng-repeat="contentType in spaceContext.publishedContentTypes"
+            ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
             ng-click="switchList('contentType', contentType)")
           %span {{contentType.getName()}}
     -#
@@ -69,24 +69,24 @@
             %td.cell-updated
               %date.relative(datetime="{{entry.getUpdatedAt()}}")
             %td.cell-by
-              %span.cf-user(link="entry.getUpdatedBy()" as="updater") {{updater.getName()}}
+              %span.cf-user(link="entry.getUpdatedBy()" as="updater") {{currentUserName}}
             %td.cell-status(ng-class="statusClass(entry)")
               .draft-wrapper
                 %span {{statusClass(entry)}}
                 .main-results-bar
       .loading(ng-hide="paginator.atLast()")
-    .results-empty(ng-show="visibleEntries | isEmpty")
+    .results-empty-advice(ng-show="visibleEntries | isEmpty")
       %div(ng-show="hasQuery()")
         %i.ss-search.giant-icon
-        %header There are no matches to your search
+        %header.advice-title There are no matches to your search
       %div(ng-show="!hasQuery()")
         %i.ss-file.giant-icon
-        %header You have no Entries yet.
-        %p(ng-show="spaceContext.publishedContentTypes.length == 0")
+        %header.advice-title You have no Entries yet.
+        %p.advice-description(ng-show="spaceContext.publishedContentTypes.length == 0")
           Entries are your content itself. These depend on the field types you created in the Content Type editor.
         %button.default-button.primary-button(type="button" ng-click="createContentType()" ng-disabled="!can('create', 'Entry')" ng-show="spaceContext.publishedContentTypes.length == 0")
           Create a Content Type
-        %p(ng-hide="spaceContext.publishedContentTypes.length == 0")
+        %p.advice-description(ng-hide="spaceContext.publishedContentTypes.length == 0")
           To create an Entry, use the Add-Button near the top of the screen.
         %a.knowledge-base(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
           Visit the Knowledge Base Pages
@@ -95,7 +95,8 @@
   .label {{selection.size()}} Entries selected
   .button-set(ng-controller="EntryListActionsCtrl" ng-hide="selection.isEmpty()")
     %button.default-button.duplicate(type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
-    %button.default-button.delete(   type="button" ng-click="deleteSelected()"    ng-show="showDelete()"   ) Delete
+    %button.default-button.danger-button.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" ng-show="deleteConfirm" ng-click="deleteSelected()" tooltip="Click anywhere else to dismiss") Are you sure?
+    %button.default-button.delete(type="button" ng-click="deleteConfirm=true" tooltip="Permanently delete these Entries" ng-show="showDelete() && !deleteConfirm") Delete
     %button.default-button.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
     %button.default-button.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
     %button.default-button.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish

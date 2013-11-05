@@ -11,7 +11,7 @@
     .dropdown-btn
       %a.flat-button.dropdown-toggle
         %i.ss-dropdown.button-icon-right
-        %span View options…
+        %span View
       .dropdown-menu
         %ul
           %li
@@ -58,8 +58,8 @@
         .content-type-field-list(ng-show="contentType.data.fields.length > 0")
         .advice(ng-hide="contentType.data.fields.length > 0")
           %i.ss-layout.giant-icon
-          %header You have no Fields yet
-          %p
+          %header.advice-title You have no Fields yet
+          %p.advice-description
             Add Fields to configure which form inputs are available for your editors to work with.
           .dropdown-btn
             %button.dropdown-toggle.default-button.primary-button
@@ -82,7 +82,7 @@
                   tooltip="Deactivate this Content Type")
       Deactivate
 
-    %button.default-button.delete-confirm(type="button"
+    %button.default-button.danger-button.delete-confirm(type="button"
                   cf-click-outside="deleteConfirm=false"
                   cf-click-outside-ignore=".delete"
                   ng-show="deleteConfirm"

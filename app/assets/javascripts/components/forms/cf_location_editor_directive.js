@@ -9,7 +9,7 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
     controller: 'cfLocationEditorCtrl',
     link: function(scope, elm, attr, ngModelCtrl) {
       scope.$watch('location && locationValid', function (showMarker) {
-        marker.setVisible(showMarker);
+        marker.setVisible(!!showMarker);
       });
 
       var ngModelGet = $parse(attr.ngModel),
@@ -56,11 +56,15 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
       };
 
       var triggerLocationWatchers = function() {
-        // Dirty Hack to trigger watchers on scope.location to recognize
-        // changed locations even though only nested properties were changed
-        // The locationController watches location and does not recognize
-        // when a property has changed
-        scope.location = angular.copy(scope.location);
+        if (scope.location && noNumber(scope.location.lat) && noNumber(scope.location.lon)) {
+          scope.location = null;
+        } else {
+          // Dirty Hack to trigger watchers on scope.location to recognize
+          // changed locations even though only nested properties were changed
+          // The locationController watches location and does not recognize
+          // when a property has changed
+          scope.location = angular.copy(scope.location);
+        }
       };
 
       var latLngParser = function(latLng) {
@@ -72,39 +76,23 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
       };
 
       var locationFormatter = function(location) {
-        if (location) {
+        if (location && scope.locationIsValid(location)) {
           return new google.maps.LatLng(location.lat, location.lon);
         } else {
           return null;
         }
       };
 
-      var checkValidity = function (value) {
-        if(!angular.isNumber(value) || isNaN(value)){
-          this.$setValidity('coordinate', false);
-          scope.$eval(this.$name+'Alert = "Invalid Value"');
-        } else {
-          this.$setValidity('coordinate', true);
-          scope.$eval(this.$name+'Alert = null');
-        }
-        return value;
-      };
-
       var parse = function (viewValue) {
+        if(viewValue === '') return null;
         var val = parseFloat(viewValue);
-        if (isNaN(val)) {
-          return null;
-        } else {
-          return val;
-        }
+        return isNaN(val) ? null : val;
       };
-
 
       locationController.$viewChangeListeners.push(changeHandler);
       locationController.$parsers.unshift(latLngParser);
       locationController.$formatters.push(locationFormatter);
       locationController.$render = function() {
-        if (!scope.locationValid) return;
         var latLng = locationController.$viewValue;
         if (latLng) {
           marker.setPosition(latLng);
@@ -114,8 +102,6 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
 
       latController.$parsers.push(parse);
       lonController.$parsers.push(parse);
-      latController.$parsers.push(_.bind(checkValidity, latController));
-      lonController.$parsers.push(_.bind(checkValidity, latController));
       latController.$viewChangeListeners.push(triggerLocationWatchers);
       lonController.$viewChangeListeners.push(triggerLocationWatchers);
       latController.$viewChangeListeners.push(changeHandler);
@@ -147,6 +133,20 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
       google.maps.event.addListener(marker, 'dragend', function(event){
         locationController.$setViewValue(event.latLng);
       });
+
+      scope.$watch(function (scope) {
+        return {
+          lat: scope.location && noNumber(scope.location.lat),
+          lon: scope.location && noNumber(scope.location.lon)
+        };
+      }, function (valid) {
+        scope.latAlert = valid.lat ? 'Invalid Value' : null;
+        scope.lonAlert = valid.lon ? 'Invalid Value' : null;
+      }, true);
+
+      function noNumber(n) {
+        return !angular.isNumber(n) || isNaN(n);
+      }
 
       // Search Stuff /////////////////////////////////////////////////////////
 

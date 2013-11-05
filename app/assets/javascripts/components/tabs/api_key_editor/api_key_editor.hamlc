@@ -30,23 +30,36 @@
           %input(type="text" ng-model="apiKey.data.description" ng-disabled="!editable()")
     .form-field
       %label Access Token
-      .form-controls()
+      .form-controls
         .field-editor
-          %textarea(ng-model="apiKey.data.accessToken" ng-disabled="true" ng-show="apiKey.data.accessToken")
-          %input(type="text" ng-hide="apiKey.data.accessToken" ng-disabled="true" value="Save this API Key to get generate an OAuth Access Token and access your data.")
+          %input.access-token.cf-select-all-input(type="text" ng-model="apiKey.data.accessToken" ng-show="apiKey.data.accessToken")
+          %a.default-button.cf-copy-paste(href="#" clipboard-target="access-token" ng-show="apiKey.data.accessToken")
+            %i.ss-layers
+            %i.ss-plus
+          %input(type="text" ng-hide="apiKey.data.accessToken" readonly="readonly" value="Save this API Key to generate an OAuth Access Token and access your data.")
+        .field-editor
           %div.curl-example(ng-show="apiKey.data.accessToken")
             %a(href="{{exampleUrl}}" target="_blank") Access Published Entries
             %span or via curl:
-            %pre
-              curl {{exampleUrl|urlDisplay}}
+            %input.curl-command.cf-select-all-input(type="text" readonly="readonly" ng-show="apiKey.data.accessToken" value="curl {{exampleUrl}}")
+            %a.default-button.cf-copy-paste(href="#" clipboard-target="curl-command" ng-show="apiKey.data.accessToken")
+              %i.ss-layers
+              %i.ss-plus
+
 
 .tab-actions
   .button-set
+    %button.default-button.danger-button.delete-confirm(type="button"
+                   cf-click-outside="deleteConfirm=false"
+                   cf-click-outside-ignore=".delete"
+                   ng-show="deleteConfirm"
+                   ng-click="delete()"
+                   tooltip="Click anywhere else to dismiss") Are you sure?
     %button.default-button.delete(type="button"
                    tooltip="Permanently delete this API key"
-                   ng-click="delete()"
+                   ng-click="deleteConfirm=true"
                    ng-disabled="!can('create', 'ApiKey')"
-                   ng-show="apiKey.getId()")
+                   ng-show="apiKey.getId() && !deleteConfirm")
       Delete
     %button.default-button.primary-button.save(type="submit"
                  tooltip="Save this API key"

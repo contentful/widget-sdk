@@ -17,7 +17,7 @@
         %i.ss-file
         Entries
     %ul.content-types(ng-show="spaceContext.publishedContentTypes.length > 0" ng-show="can('create', 'Entry')")
-      %li(ng-repeat="(index, contentType) in spaceContext.publishedContentTypes"
+      %li(ng-repeat="(index, contentType) in spaceContext.publishedContentTypes track by contentType.getId()"
         ng-click="createEntry(contentType)"
         data-content-type-id="{{contentType.getId()}}"
         dropdown-close="")

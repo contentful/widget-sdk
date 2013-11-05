@@ -18,7 +18,7 @@ angular.module('contentful').directive('cfProfileView', function($window, $rootS
           pathChanged(messageEvent.data.path);
         } else {
           sentry.captureError('iframeMessage path is not defined', {
-            extra: {
+            data: {
               messageEvent: messageEvent
             }
           });

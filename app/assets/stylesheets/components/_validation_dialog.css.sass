@@ -15,18 +15,28 @@
 .validation-type-select
   display: inline
   .dropdown-toggle
-    width: 150px
     height: 34px
 
 .validation-controls
+  @extend %form-styled
   display: inline-block
   vertical-align: top
-  @extend %form-styled
 
 .cf-validation-options .validation-controls
+  // TODO this should only need prefixing by validation controls
+  // but the extension of form-styled creates a huge mess in
+  // terms of cascading
+  .select-box
+    top: 0px
+    padding-top: 10px
+    width: 100%
+
   input[type]
     display: inline
     width: auto
 
-.delete-validation
-  float: right
+.cf-validation-options
+  .delete-validation
+    margin: 0
+    padding-top: 10px
+    float: right

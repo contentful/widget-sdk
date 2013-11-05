@@ -5,7 +5,8 @@ var UserInterface = {
   validation: require('validation'),
   mimetype: require('contentful-mimetype'),
   client: require('contentful-client'),
-  stringifySafe: require('json-stringify-safe')
+  stringifySafe: require('json-stringify-safe'),
+  isDiacriticalMark: require('is-diacritical-mark')
 };
 
 module.exports = UserInterface;
@@ -16,6 +17,7 @@ if (angular) {
     constant('validation', UserInterface.validation).
     constant('mimetype', UserInterface.mimetype).
     constant('worf', UserInterface.worf).
-    constant('stringifySafe', UserInterface.stringifySafe);
+    constant('stringifySafe', UserInterface.stringifySafe).
+    constant('isDiacriticalMark', UserInterface.isDiacriticalMark);
 }
 

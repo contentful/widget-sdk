@@ -37,26 +37,26 @@ feature 'Tutorial', js: true, non_ci: true do
 
   def run_content_type_tutorial
     find('.left.tutorial-select-box .take').click
-    click_link 'Next'
+    find('.next-button').click
 
     add_button 'Content Type'
 
-    click_link 'Next' # Welcome
+    find('.next-button').click # Welcome
 
     fill_in 'contentTypeName', with: 'Blog Post'
-    click_link 'Next' # Peace of Mind
+    find('.next-button').click # Peace of Mind
     fill_in 'contentTypeDescription', with: 'Foobarbaz'
 
     add_field('Title', 'Text')
-    click_link 'Next' # Confirm ID
+    find('.next-button').click #Confirm ID
     6.times do # Second Row
-      click_link 'Next'
+      find('.next-button').click
       sleep 0.25
     end
 
     add_field('Body', 'Text')
     add_field('Timestamp', 'Date/Time')
-    add_field('Image', 'Link to Asset')
+    add_field('Image', 'Asset')
 
     find('.publish').click
 
@@ -79,9 +79,9 @@ feature 'Tutorial', js: true, non_ci: true do
 
     add_button 'Quiz Question'
 
-    click_link 'Next'
+    find('.next-button').click
     edit_field('question', 'en-US', 'textarea').set('Which CMS delivers content to web and native mobile applications?')
-    click_link 'Next'
+    find('.next-button').click
     edit_field('answer1', 'en-US', 'textarea').set('Wordpress')
     edit_field('answer2', 'en-US', 'textarea').set('Contentful')
     edit_field('answer3', 'en-US', 'textarea').set('Drupal')
@@ -101,8 +101,8 @@ feature 'Tutorial', js: true, non_ci: true do
 
     find('.tab[data-view-type="entry-editor"]').click
 
-    click_link 'Next'
-    click_link 'Next'
+    find('.next-button').click
+    find('.next-button').click
     click_button 'Publish'
 
     nav_bar 'entry-list'
@@ -116,16 +116,16 @@ feature 'Tutorial', js: true, non_ci: true do
 
   def run_api_key_tutorial
     find('.right.tutorial-select-box .take').click
-    click_link 'Next'
+    find('.next-button').click
     add_button 'API Key'
 
     find('input[ng-model="apiKey.data.name"]').set 'Name'
     find('input[ng-model="apiKey.data.description"]').set 'Foobar'
-    click_link 'Next'
+    find('.next-button').click
 
     click_button 'Save'
 
-    click_link 'Next'
+    find('.next-button').click
 
     nav_bar 'api-key-list'
     finish_tutorial do

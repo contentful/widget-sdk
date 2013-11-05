@@ -22,7 +22,7 @@
     .main-results-wrapper(ng-hide="empty")
       %table.result-list.main-results
         %tbody
-          %tr(ng-repeat="apiKey in apiKeys"
+          %tr(ng-repeat="apiKey in apiKeys track by apiKey.getId()"
               cf-click-local="navigator.apiKeyEditor(apiKey).goTo()")
             %td.cell-name
               %span {{apiKey.getName()}}
@@ -31,11 +31,11 @@
             %td.cell-updated
               %date.relative(datetime="{{apiKey.getUpdatedAt()}}")
             %td.cell-by
-              %span.cf-user(link="apiKey.getCreatedBy()" as="creator") {{creator.getName()}}
+              %span.cf-user(link="apiKey.getCreatedBy()" as="creator") {{currentUserName}}
     .create-api-key-advice(ng-show="empty")
       %i.ss-fork.giant-icon
-      %header There are no API Keys yet.
-      %p API Keys open the door to your content. One should be created for each application that accesses your content.
+      %header.advice-title There are no API Keys yet.
+      %p.advice-description API Keys open the door to your content. One should be created for each application that accesses your content.
       %button.default-button.primary-button(type="button" ng-click="createApiKey()" ng-disabled="!can('create', 'ApiKey')")
         Create API Key
       %a.knowledge-base(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")

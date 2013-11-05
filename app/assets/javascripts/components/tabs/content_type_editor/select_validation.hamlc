@@ -1,5 +1,5 @@
 %ul
-  %li.type(ng-repeat="(name, type) in availableValidations"
+  %li.type(ng-repeat="(name, type) in availableValidations track by name"
       ng-click="typeClicked(type)"
       dropdown-close="")
     %span {{name}}

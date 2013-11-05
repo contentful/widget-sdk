@@ -43,7 +43,7 @@ angular.module('contentful').directive('otDocFor', function () {
           if(err || !doc){
             scope.otDoc = null;
             sentry.captureError('Failed to open sharejs doc', {
-              extra: {
+              data: {
                 entity: entity,
                 err: err
               }
@@ -107,7 +107,7 @@ angular.module('contentful').directive('otDocFor', function () {
       entity.update(data);
     } else {
       sentry.captureError('otUpdateEntity did not update', {
-        extra: {
+        data: {
           entity: entity,
           otDoc: $scope.otDoc
         }

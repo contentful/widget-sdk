@@ -4,9 +4,18 @@
 angular.module('contentful').controller('cfLocationEditorCtrl', function ($scope, cfSpinner) {
   $scope.$watch('location', function(loc, old, scope) {
     //console.log('location changed', loc);
-    scope.locationValid = !angular.isObject(loc) || angular.isNumber(loc.lat) && !isNaN(loc.lat) && angular.isNumber(loc.lon) && !isNaN(loc.lon);
+    scope.locationValid = scope.locationIsValid(loc);
     //console.log('setting valid to', scope.locationValid);
   });
+
+  $scope.locationIsValid = function (loc) {
+    return !angular.isObject(loc) || isNumber(loc.lat) && isNumber(loc.lon);
+  };
+
+  function isNumber(n) {
+    return angular.isNumber(n) && !isNaN(n);
+  }
+
 
   $scope.$watch('searchTerm', function(searchTerm, old, scope) {
     if (searchTerm && searchTerm != old) { //changed Searchterm

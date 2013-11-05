@@ -80,7 +80,9 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
         this.space.getPublishedContentTypes(function (err, contentTypes) {
           $rootScope.$apply(function () {
             if (err) {
-              sentry.captureError('Could not get published Content Types');
+              sentry.captureError('Could not get published Content Types', {
+                data: err
+              });
               deferred.reject(err);
             } else {
                 self.publishedContentTypes = _(contentTypes)

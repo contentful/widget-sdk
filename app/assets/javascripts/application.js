@@ -14,6 +14,8 @@
 //
 //= require moment-2.1.0
 //
+//= require ZeroClipboard
+//
 //= require user_interface/node_modules/share/node_modules/browserchannel/dist/bcsocket-uncompressed
 //= require user_interface/node_modules/share/webclient/share.uncompressed
 //= require user_interface/node_modules/share/webclient/json.uncompressed
@@ -51,7 +53,7 @@ angular.module('contentful/app', [
   }
 
   $locationProvider.html5Mode(true).hashPrefix('!');
-  $sceDelegateProvider.resourceUrlWhitelist([/(https?:)?\/\/([^:\/.?&;]*\.)?(staticflinkly-thriventures\.netdna-ssl\.com|flinkly.com|joistio.com|contentful.com)(:\d+)?\/.*/, 'self' ]);
+  $sceDelegateProvider.resourceUrlWhitelist(env.resourceUrlWhiteListRegexp);
   clientProvider.endpoint('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');
   //analyticsProvider.forceLoad();
@@ -61,4 +63,4 @@ angular.module('contentful/app', [
   client.persistenceContext.adapter.token = authentication.token;
 });
 
-angular.bootstrap(document, ['contentful/app']);
+angular.bootstrap(document.body, ['contentful/app']);

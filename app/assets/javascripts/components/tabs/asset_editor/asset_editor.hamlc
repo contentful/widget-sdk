@@ -11,10 +11,10 @@
     .dropdown-btn(ng-show="showLangSwitcher")
       %a.dropdown-toggle.flat-button
         %i.ss-dropdown.button-icon-right
-        %span Show fields…
+        %span View
       .dropdown-menu(style="display:none")
         %ul
-          %li(ng-repeat="locale in spaceContext.publishLocales")
+          %li(ng-repeat="locale in spaceContext.publishLocales track by locale.code")
             %label
               %input(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
               {{locale.name}}
@@ -37,21 +37,21 @@
       %label {{field.name}}
         %sup(ng-show="field.required") *
       .form-controls
-        .locale(ng-repeat="locale in field.locales" ot-field-presence="['fields', field.id, locale.code]" data-locale="{{locale.code}}")
+        .locale(ng-repeat="locale in field.locales track by locale.code" ot-field-presence="['fields', field.id, locale.code]" data-locale="{{locale.code}}")
           .cf-field-editor(ot-path="['fields', field.id, locale.code]" cf-editor-entity="asset")
           .locale-label(ng-show="field.locales.length > 1") {{locale.name}}
           .field-collaborators
             %ul.plain-list
-              %li.avatar.cf-user(ng-repeat="link in fieldPresence.users"
+              %li.avatar.cf-user(ng-repeat="link in fieldPresence.users track by link.sys.id"
                                  link="link" as="user"
-                                 tooltip="{{user.getName()}}")
+                                 tooltip="{{currentUserName}}")
                 %img(ng-src="{{user.data.avatarUrl}}")
           .cf-form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
         .cf-form-box-error(cf-error-path="['fields', field.id]")
 
 .tab-actions(ng-controller="AssetActionsCtrl")
   .button-set
-    %button.default-button.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss") Are you sure?
+    %button.default-button.danger-button.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss") Are you sure?
     %button.default-button.delete(   type="button" ng-show="canDelete() && !deleteConfirm" ng-click="deleteConfirm=true" tooltip="Permanently delete this Asset") Delete
     %button.default-button.archive(  type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
     %button.default-button.archive(  type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
@@ -64,9 +64,9 @@
           tooltip="Edit collaboratively by inviting more users into your space. Go to Settings → Users → Invite New User to invite people.")
       No other users online
     %ul(ng-show="presence.users.length > 0")
-      %li.avatar.cf-user(ng-repeat="link in presence.users"
+      %li.avatar.cf-user(ng-repeat="link in presence.users track by link.sys.id"
                          link="link" as="user"
-                         tooltip="{{user.getName()}}")
+                         tooltip="{{currentUserName}}")
         %img(ng-src="{{user.data.avatarUrl}}")
     %a.default-button.invite-users(href="" ng-click="navigator.spaceSettings('/users/new').goTo()")
       %i.ss-users

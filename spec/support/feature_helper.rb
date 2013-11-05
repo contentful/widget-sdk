@@ -1,7 +1,7 @@
 module FeatureHelper
   def self.included(feature)
     feature.let(:space_id){ page.evaluate_script "$('.client').scope().spaceContext.space.getId()" }
-    feature.let(:tutorial_space_id){ page.evaluate_script "$('.client').scope().spaces.filter(function(s){return s.data.name === 'Test'})[0].getId()" }
+    feature.let(:tutorial_space_id) { page.evaluate_script "$('.client').scope().spaces.filter(function(s){return s.data.name === 'TestSpace'})[0].getId()" }
   end
 
   @@access_token = File.exist?('tmp/spec_token') ? File.read('tmp/spec_token') : nil

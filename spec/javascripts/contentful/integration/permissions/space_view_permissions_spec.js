@@ -46,34 +46,57 @@ describe('The Space view permissions', function () {
       });
 
       it('show add button', function () {
-        expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(false);
+        this.async(function (done) {
+          expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(false);
+          _.delay(function () {
+            done();
+          }, 500);
+        });
       });
 
-      xit('show add menu item', function () {
-        expect(container.find('.tablist-button .'+itemClass).get(0)).toBeDefined();
-        expect(container.find('.tablist-button .'+itemClass).hasClass('ng-hide')).toBe(false);
-        if(type == 'Entry'){
-          expect(container.find('.tablist-button .separator').hasClass('ng-hide')).toBe(false);
-        } else {
-          expect(container.find('.tablist-button .separator').hasClass('ng-hide')).toBe(true);
-        }
+      it('add menu item is not hidden', function () {
+        this.async(function (done) {
+          expect(container.find('.tablist-button .'+itemClass).hasClass('ng-hide')).toBe(false);
+          _.delay(function () {
+            done();
+          }, 500);
+        });
       });
 
-      xit('hide other add menu items', function () {
-        var currentItem = menuItems.indexOf(itemClass);
-        menuItems.splice(currentItem, 1);
-        menuItems.forEach(function (val) {
-          expect(container.find('.tablist-button .'+val).get(0)).toBeDefined();
-          expect(container.find('.tablist-button .'+val).hasClass('ng-hide')).toBe(true);
+      it('separator only shows for Entry', function () {
+        this.async(function (done) {
+          if(type == 'Entry'){
+            expect(container.find('.tablist-button .separator').hasClass('ng-hide')).toBe(false);
+          } else {
+            expect(container.find('.tablist-button .separator').hasClass('ng-hide')).toBe(true);
+          }
+          _.delay(function () {
+            done();
+          }, 500);
+        });
+      });
+
+      var currentItem = menuItems.indexOf(itemClass);
+      menuItems.splice(currentItem, 1);
+      menuItems.forEach(function (val) {
+        it(val+' add menu item is hidden', function () {
+          this.async(function (done) {
+            expect(container.find('.tablist-button .'+val).hasClass('ng-hide')).toBe(true);
+            _.delay(function () {
+              done();
+            }, 500);
+          });
         });
       });
 
     });
+
   }
   makeShownButtonTest('ContentType', 'add-content-type');
   makeShownButtonTest('Entry', 'content-types');
   makeShownButtonTest('Asset', 'add-asset');
   makeShownButtonTest('ApiKey', 'add-api-key');
+
 
   function makeNavbarItemTest(type, action, viewType){
     describe('navbar item for '+type, function () {

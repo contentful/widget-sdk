@@ -36,9 +36,7 @@ html
   display: none
 
 // Delete Icon
-// TODO move somewhere else, this makes absolutely no sense out of context
-// TODO also check ss-delete overriding on file_info
-i.ss-delete
+%delete-icon
   font-size: 8px
   color: $lightest-gray
   +text-shadow(0 1px 0 rgba(255,255,255,0.6))
@@ -90,9 +88,14 @@ i.ss-delete
 .knowledge-base
   display: block
   margin-top: 15px
+  &:visited
+    color: $link-blue
+  &:hover
+    color: $link-blue
   .ss-help
     display: inline-block
     vertical-align: middle
+    margin-top: 2px
 
 // Endless container
 .endless-container
@@ -141,12 +144,14 @@ a.base-button
   border: 1px solid darken($gray-background, 10%)
   +gradient($gray-background, darken($gray-background, 4%))
   +box-shadow(0 1px 1px rgba(255,255,255,0.8) inset, 0 2px 1px rgba(0,0,0,0.05)) 
-  &:hover,
+  &:active,
+  &.active
+  &:hover
+    +gradient($gray-background, darken($gray-background, 2%))
   &:active,
   &.active
     top: 1px
     +box-shadow(0 1px 2px darken($gray-background, 5%) inset)
-    +gradient($gray-background, darken($gray-background, 2%))
   &:disabled,
   &[disabled]
     opacity: 0.5
@@ -204,12 +209,15 @@ a.base-button
     +blue-highlight
     +colored-button($blue)
 
-.red-button
+.danger-button
   &.default-button
     +red-highlight
     +colored-button($red)
-    
-.green-button
+li.danger-button
+  +red-highlight
+  +colored-button($red)
+
+.success-button
   &.default-button
     +green-highlight
     +colored-button($green)
@@ -223,3 +231,30 @@ a.base-button
     +rotate(90deg)
   &:hover
     color: inherit
+
+.cf-copy-paste
+  position: absolute
+  display: block
+  right: 0px
+  top: 0px
+  bottom: 0px
+  width: 33px
+  line-height: 30px
+  padding: 0
+  padding-left: 4px
+  padding-top: 4px
+  text-align: center
+  vertical-align: middle
+  +box-shadow(none)
+  .ss-users,
+  .ss-plus
+    display: inline-block
+    line-height: inherit
+  .ss-layers
+    font-size: 15px
+  .ss-plus
+    position: relative
+    font-size: 7px
+    top: -10px
+    left: -2px
+

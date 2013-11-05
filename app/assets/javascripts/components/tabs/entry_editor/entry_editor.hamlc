@@ -11,7 +11,7 @@
     .dropdown-btn
       %a.flat-button.dropdown-toggle
         %i.ss-dropdown.button-icon-right
-        %span Show fields…
+        %span View
       .dropdown-menu(style="display:none")
         %ul(ng-show="showLangSwitcher")
           %li(ng-repeat="locale in spaceContext.publishLocales track by locale.code")
@@ -50,9 +50,9 @@
           .locale-label(ng-show="field.locales.length > 1") {{locale.name}}
           .field-collaborators
             %ul.field-list
-              %li.avatar.cf-user(ng-repeat="link in fieldPresence.users"
+              %li.avatar.cf-user(ng-repeat="link in fieldPresence.users track by link.sys.id"
                                  link="link" as="user"
-                                 tooltip="{{user.getName()}}")
+                                 tooltip="{{currentUserName}}")
                 %img(ng-src="{{user.data.avatarUrl}}")
           .cf-form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
         .cf-form-box-error(cf-error-path="['fields', field.id]")
@@ -66,7 +66,7 @@
       .dropdown-menu(position="top")
         %ul
           %li.duplicate(type="button" ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this Entry" dropdown-close) Duplicate
-          %li.delete-confirm(type="button" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss" dropdown-close) Are you sure?
+          %li.delete-confirm.danger-button(type="button" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss" dropdown-close) Are you sure?
           %li.delete(type="button" ng-show="canDelete() && !deleteConfirm" ng-click="deleteConfirm=true" tooltip="Permanently delete this Entry") Delete
     %button.default-button.archive(type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry") Archive
     %button.default-button.archive(type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry") Unarchive
@@ -79,9 +79,9 @@
           tooltip="Edit collaboratively by inviting more users into your space. Go to Settings → Users → Invite New User to invite people.")
       No other users online
     %ul(ng-show="presence.users.length > 0")
-      %li.avatar.cf-user(ng-repeat="link in presence.users"
+      %li.avatar.cf-user(ng-repeat="link in presence.users track by link.sys.id"
                          link="link" as="user"
-                         tooltip="{{user.getName()}}")
+                         tooltip="{{currentUserName}}")
         %img(ng-src="{{user.data.avatarUrl}}")
     %a.default-button.invite-users(
       href="" ng-click="navigator.spaceSettings('/users/new').goTo()"

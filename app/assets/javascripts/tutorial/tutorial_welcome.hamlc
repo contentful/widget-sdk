@@ -84,6 +84,6 @@
   .nav-right(ng-hide="atLastSlide()" ng-click="moveSlide(+1)")
     .nav-arrow-right
   .nav-bubbles
-    %i.ss-record.dot(ng-repeat="slide in slides"
+    %i.ss-record.dot(ng-repeat="(index, slide) in slides track by index"
       ng-class="{active: slide == currentSlide}"
       ng-click="setCurrent(slide)")

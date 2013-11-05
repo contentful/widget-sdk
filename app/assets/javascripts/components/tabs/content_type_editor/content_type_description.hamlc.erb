@@ -76,6 +76,15 @@
       %li Geographical location of a venue
     %img(src="<%= image_path('field_type/location.png') %>")
 
+  %div(ng-switch-when="Object")
+    %h3 Embedded JSON object
+
+    %p
+      Add an arbitrary JSON structure that you can write and read through the API.
+    %ul
+      %li Custom data from another system
+    %img(src="<%= image_path('field_type/jsonobject.png') %>")
+
   %div(ng-switch-when="Link")
     %div(ng-show="type.value.linkType == 'Entry'")
       %h3
@@ -97,15 +106,6 @@
         %li Attachment
         %li Media of any kind
       %img(src="<%= image_path('field_type/linktoasset.png') %>")
-
-  %div(ng-switch-when="Object")
-    %h3 Embedded JSON object
-
-    %p
-      Add an arbitrary JSON structure that you can write and read through the API.
-    %ul
-      %li Custom data from another system
-    %img(src="<%= image_path('field_type/jsonobject.png') %>")
 
   %div(ng-switch-when="Array")
     %div(ng-show="type.value.items.type == 'Link' && type.value.items.linkType == 'Entry'")

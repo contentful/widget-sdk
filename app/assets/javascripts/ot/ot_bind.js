@@ -2,7 +2,7 @@
 
 var otModule = angular.module('contentful');
 
-otModule.directive('otBindText', function(ShareJS, $sniffer, $parse) {
+otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacriticalMark) {
   return {
     restrict: 'A',
     require: ['^otSubdoc', 'ngModel'],
@@ -21,12 +21,20 @@ otModule.directive('otBindText', function(ShareJS, $sniffer, $parse) {
         if (path === event.currentScope.otPath) ngModelSet(event.currentScope, val);
       });
 
+      function isAttached() {
+        return !!unbindTextField;
+      }
+
+      function isString() {
+        return _.isString(ngModelCtrl.$modelValue);
+      }
+
       function needsAttach() {
-        return _.isString(ngModelCtrl.$modelValue) && !unbindTextField;
+        return !isAttached() && isString() && scope.otSubdoc;
       }
 
       function needsDetach() {
-        return !_.isString(ngModelCtrl.$modelValue) && (!!unbindTextField);
+        return isAttached() && (!isString() || !scope.otSubdoc);
       }
 
       function attach() {
@@ -56,7 +64,7 @@ otModule.directive('otBindText', function(ShareJS, $sniffer, $parse) {
 
       ngModelCtrl.$parsers.push(function (viewValue) {
         //console.log('parsing', viewValue);
-        return viewValue === '' ? null : viewValue;
+        return (viewValue === '' || isDiacriticalMark.fromChar(viewValue)) ? null : viewValue;
       });
 
       ngModelCtrl.$formatters.push(function (modelValue) {

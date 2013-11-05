@@ -1,5 +1,5 @@
 %ul.links(ng-hide="linkedEntities.length == 0" ng-class="{'asset-link': linkType=='Asset'}")
-  %li(ng-repeat="(index, entity) in linkedEntities" ng-class="{'asset-link': linkType=='Asset'}")
+  %li(ng-repeat="(index, entity) in linkedEntities track by index" ng-class="{'asset-link': linkType=='Asset'}")
     %i.ss-rows.drag-handle(ng-disabled="!otEditable"
                            ng-class="{'drag-file': linkType=='Asset'}"
                            ng-hide="linkedEntities.length==1")
@@ -31,7 +31,7 @@
           New
         %a.dropdown-menu
           %ul
-            %li(ng-repeat="contentType in spaceContext.publishedContentTypes"
+            %li(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
                 ng-click="addNewEntry(contentType)"
                 dropdown-close="")
               {{contentType.getName()}}
@@ -70,7 +70,7 @@
       .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
         %table.result-list
           %tbody
-            %tr(ng-repeat="entity in entities"
+            %tr(ng-repeat="entity in entities track by entity.getId()"
                 cf-click-local="pick(entity)"
                 ng-class="{selected: entity==selectedEntity}")
               %td.cell-preview
