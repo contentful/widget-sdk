@@ -165,14 +165,16 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     $location.path('/profile' + '/' + pathSuffix);
   };
 
-  $scope.performTokenLookup = function () {
+  $scope.performTokenLookup = function (force) {
     // TODO initialize blank user so that you can at least log out when
     // the getTokenLookup fails
-    return authentication.getTokenLookup().then(function (tokenLookup) {
-      //console.log('tokenLookup', tokenLookup);
+    return authentication.getTokenLookup(force).then(function (tokenLookup) {
       $scope.user = tokenLookup.sys.createdBy;
       analytics.login($scope.user);
       $scope.updateSpaces(tokenLookup.spaces);
+    }, function () {
+      notification.error('Token Lookup failed. Logging out.');
+      authentication.logout();
     });
   };
 
@@ -213,7 +215,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   $scope.initClient = function () {
     $scope.performTokenLookup().then(showTutorialIfNecessary);
     setInterval(function () {
-      if (presence.isActive()) $scope.performTokenLookup();
+      if (presence.isActive()) $scope.performTokenLookup(true);
     }, 5 * 60 * 1000);
   };
 

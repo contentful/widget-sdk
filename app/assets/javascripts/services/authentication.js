@@ -88,20 +88,20 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       window.location = authApp + 'oauth/authorize?' + params;
     },
 
-    getTokenLookup: function() {
+    getTokenLookup: function(force) {
       if (this.redirectingToLogin) {
         sentry.captureError('redirection to login in process during getTokenLookup. Not executing');
         return $q.reject();
       }
       var self = this;
-      if (this.tokenLooukp) {
+      if (this.tokenLooukp && !force) {
         return $q.when(this.tokenLookup);
       } else {
         var d = $q.defer();
         this.client.getTokenLookup(function (err, data) {
           if (err) {
             sentry.captureError('Error during token lookup', { data: { err: err } });
-            self.logout();
+            d.reject(err);
           } else {
             $rootScope.$apply(function () {
               if (data !== undefined) { // Data === undefined is in cases of notmodified
