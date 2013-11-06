@@ -35,7 +35,8 @@ angular.module('contentful').directive('cfValidate', function (validation, sentr
       }
 
       function validate(data, schema){
-        if (!data || !schema) return;
+        if(!data || !schema) return;
+        if(!data.fields) data.fields = {};
         var schemaErrors = schema.errors(data);
         $scope.setValidationResult(schemaErrors, data, schema);
       }
@@ -54,19 +55,16 @@ angular.module('contentful').directive('cfValidate', function (validation, sentr
 
       $scope.setValidationResult = function (schemaErrors, data, schema) {
         var errors = _.reject(schemaErrors, function (error) {
-          try {
-            assert.truthy(error, 'Validation error is undefined');
-            assert.path(error, 'path', 'Validation error path does not exist');
-          } catch(err){
+          if(!error || error && !error.path){
             sentry.captureError('Validation error does not exist', {
               data: {
-                err: err,
                 error: error,
                 schemaErrors: schemaErrors,
                 data: data,
                 schema: schema
               }
             });
+            return true;
           }
           return error.path[error.path.length-1] == '$$hashKey';
         });
