@@ -220,7 +220,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
       if (presence.isActive()) {
         $scope.performTokenLookup().
         catch(function () {
-          ReloadNotification.trigger('There has been an authentication problem. Please try logging in again.');
+          ReloadNotification.trigger('Your authentication data needs to be refreshed. Please try logging in again.');
         });
       }
     }, 5 * 60 * 1000);
