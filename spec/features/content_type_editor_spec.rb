@@ -81,4 +81,20 @@ feature 'Content Type Editor', js: true, non_ci: true do
     click_button 'Activate'
     expect(page).to have_selector('.notification.warn')
   end
+
+  scenario 'Validation errors on a disabled field cause it to be shown' do
+    add_button 'Content Type'
+    fill_in 'contentTypeName', with: 'Test Content Type'
+    add_field 'Text', 'Text'
+    click_button 'Activate'
+
+    debugger
+    for_field 'Text' do
+      fill_in 'fieldName', with: "\b"
+      toggle_disable(true)
+    end
+
+    click_button 'Update'
+    expect(page).to have_selector('.cf-field-settings')
+  end
 end
