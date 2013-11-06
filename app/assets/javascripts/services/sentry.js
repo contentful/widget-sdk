@@ -42,7 +42,7 @@ function ($injector , $window, environment, stringifySafe) {
       git_revision: environment.settings.git_revision
     }});
     options.merge.apply(options, arguments);
-    return options;
+    return options.value();
   }
 
   function logDataObject(data) {
@@ -56,7 +56,7 @@ function ($injector , $window, environment, stringifySafe) {
     var prop;
     for(var key in data){
       prop = data[key];
-      if(prop.$id && prop.$apply && prop.$digest){
+      if(prop && prop.$id && prop.$apply && prop.$digest){
         data[key] = JSON.parse(stringifySafe(prop));
       }
     }
@@ -81,15 +81,13 @@ function ($injector , $window, environment, stringifySafe) {
         if(options.data){
           dataId = logDataObject(preParseData(options.data));
           options.extra = options.extra || {};
-          options.extra.data = {id: dataId};
+          options.extra.dataId = dataId;
           delete options.data;
-          error = error += ' '+dataId
         }
 
         $window.Raven.captureMessage(error, createOptions({
           tags: {
-            type: 'error_message',
-            dataid: dataId
+            type: 'error_message'
           }
         }, options));
       }
