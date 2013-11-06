@@ -42,7 +42,7 @@ function ($injector , $window, environment, stringifySafe) {
       git_revision: environment.settings.git_revision
     }});
     options.merge.apply(options, arguments);
-    return options;
+    return options.value();
   }
 
   function logDataObject(data) {
@@ -81,9 +81,8 @@ function ($injector , $window, environment, stringifySafe) {
         if(options.data){
           dataId = logDataObject(preParseData(options.data));
           options.extra = options.extra || {};
-          options.extra.data = {id: dataId};
+          options.extra.dataId = dataId;
           delete options.data;
-          error = error += ' '+dataId
         }
 
         $window.Raven.captureMessage(error, createOptions({
