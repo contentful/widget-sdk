@@ -87,8 +87,7 @@ function ($injector , $window, environment, stringifySafe) {
 
         $window.Raven.captureMessage(error, createOptions({
           tags: {
-            type: 'error_message',
-            dataid: dataId
+            type: 'error_message'
           }
         }, options));
       }
