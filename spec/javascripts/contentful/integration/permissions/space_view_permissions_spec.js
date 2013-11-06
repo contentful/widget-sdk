@@ -93,10 +93,10 @@ describe('The Space view permissions', function () {
     });
 
   }
-  makeShownButtonTest('ContentType', 'add-content-type');
-  makeShownButtonTest('Entry', 'content-types');
-  makeShownButtonTest('Asset', 'add-asset');
-  makeShownButtonTest('ApiKey', 'add-api-key');
+  //makeShownButtonTest('ContentType', 'add-content-type');
+  //makeShownButtonTest('Entry', 'content-types');
+  //makeShownButtonTest('Asset', 'add-asset');
+  //makeShownButtonTest('ApiKey', 'add-api-key');
 
 
   function makeNavbarItemTest(type, action, viewType){
