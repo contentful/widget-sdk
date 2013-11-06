@@ -55,4 +55,30 @@ feature 'Content Type Editor', js: true, non_ci: true do
     click_button 'Activate'
     expect(page).to have_selector('.notification.info')
   end
+
+  scenario 'Adding blank validations to a field' do
+    add_button 'Content Type'
+    fill_in 'contentTypeName', with: 'Test Content Type'
+
+    validations = {
+      'Text' => ['Predefined Values', 'Length', 'Regular Expression'],
+      'Entry' => ['Content Type'],
+      'Asset' => ['File Type'],
+      'Number' => ['Numerical Range']
+    }
+
+    validations.each_pair do |type, validation_types|
+      add_field(type, type)
+      for_field type do
+        in_validations do
+          validation_types.each do |validation_type|
+            add_validation(validation_type)
+          end
+        end
+      end
+    end
+
+    click_button 'Activate'
+    expect(page).to have_selector('.notification.warn')
+  end
 end

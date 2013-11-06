@@ -10,7 +10,7 @@ module ContentTypeHelper
   end
 
   def for_field(field_name)
-    find('.cf-field-settings', text)
+    #find('.cf-field-settings', text)
     field_settings = find :xpath, %Q{//*[contains(@class, 'display')]/*[contains(@class, 'name')][text()='#{field_name}']/../..}
     field_settings.click() unless field_settings[:class] !~ /open/
 
@@ -34,10 +34,10 @@ module ContentTypeHelper
     find('.dropdown-toggle', text:'Validation').click
     find('.dropdown-menu li', text: name).click
     
+    first('.cf-validation-options') # all does not wait I think
     validation = all('.cf-validation-options').last
-
     within validation do
-      yield
+      yield if block_given?
     end
   end
 end
