@@ -4,7 +4,7 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
   var authApp  = '//'+environment.settings.base_host+'/';
   var QueryLinkResolver = contentfulClient.QueryLinkResolver;
-  var $location, $q, $rootScope;
+  var $location, $q, $rootScope, notification;
   var sentry;
 
   this.authApp= function(e) {
@@ -47,7 +47,18 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
       if (token) {
         this.token = token;
+        if ($location.search().already_authenticated) {
+          notification.info('You are already signed in.');
+        }
+        var afterLoginPath = $.cookies.get('redirect_after_login');
+        if(afterLoginPath){
+          $.cookies.del('redirect_after_login');
+          $location.path(afterLoginPath);
+        }
       } else {
+        if(/^\/(\w+)/.test($location.path())){
+          $.cookies.set('redirect_after_login', $location.path());
+        }
         this.redirectToLogin();
       }
     },
@@ -88,28 +99,24 @@ angular.module('contentful').provider('authentication', function AuthenticationP
     getTokenLookup: function() {
       if (this.redirectingToLogin) {
         sentry.captureError('redirection to login in process during getTokenLookup. Not executing');
-        return $q.reject();
+        return $q.defer().promise; // never resolved lol
       }
       var self = this;
-      if (this.tokenLooukp) {
-        return $q.when(this.tokenLookup);
-      } else {
-        var d = $q.defer();
-        this.client.getTokenLookup(function (err, data) {
-          if (err) {
-            sentry.captureError('Error during token lookup', { data: { err: err } });
-            self.logout();
-          } else {
-            $rootScope.$apply(function () {
-              if (data !== undefined) { // Data === undefined is in cases of notmodified
-                self.setTokenLookup(data);
-              }
-              d.resolve(self.tokenLookup);
-            });
-          }
-        });
-        return d.promise;
-      }
+      var d = $q.defer();
+      this.client.getTokenLookup(function (err, data) {
+        if (err) {
+          sentry.captureError('Error during token lookup', { data: { err: err } });
+          d.reject(err);
+        } else {
+          $rootScope.$apply(function () {
+            if (data !== undefined) { // Data === undefined is in cases of notmodified
+              self.setTokenLookup(data);
+            }
+            d.resolve(self.tokenLookup);
+          });
+        }
+      });
+      return d.promise;
     },
 
     getUser: function () {
@@ -133,11 +140,12 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
   };
 
-  this.$get = function(client, _$location_, _sentry_, _$q_, _$rootScope_){
+  this.$get = function(client, _$location_, _sentry_, _$q_, _$rootScope_, _notification_){
     $location = _$location_;
     sentry = _sentry_;
     $rootScope = _$rootScope_;
     $q = _$q_;
+    notification = _notification_;
     return new Authentication(client);
   };
 

@@ -4,7 +4,7 @@
     .close-button(ng-click="dialog.cancel()")
     %p.dialog-content {{dialog.message}}
     .buttons
-      %button.default-button.cancel(type="button" ng-click="dialog.cancel()")
+      %button.default-button.cancel(type="button" ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")
         {{dialog.cancelLabel}}
       %button.default-button.primary-button.confirm(ng-click="dialog.confirm()")
         {{dialog.confirmLabel}}

@@ -9,8 +9,6 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     else $scope.navigator.entryList().goTo();
   });
 
-  $scope.$on('tabBecameActive', setBrowserTitle);
-
   $scope.$watch('spaceContext', function(spaceContext, old, scope){
     var space = spaceContext.space;
     scope.spaceContext.tabList.closeAll();
@@ -92,7 +90,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
   };
 
   $scope.syncLocation = function () {
-    routing.goTotTab($scope.spaceContext.tabList.current, $scope.spaceContext.space);
+    routing.goToTab($scope.spaceContext.tabList.current, $scope.spaceContext.space);
   };
 
   $scope.goToTab = function (tab) {
@@ -123,11 +121,12 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     return tab;
   }
 
-  function setBrowserTitle() {
+  $scope.$watch('spaceContext.tabList.current.title', function (title, old, scope) {
     try {
-      $document[0].title = $scope.spaceContext.space.data.name + ' - ' + $scope.spaceContext.tabList.current.title;
+      $document[0].title = scope.spaceContext.space.data.name + ' - ' + title;
     } catch (e) {
       $document[0].title = 'Contentful';
     }
-  }
+  });
+
 });
