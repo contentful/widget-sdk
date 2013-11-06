@@ -1,8 +1,6 @@
 'use strict';
 
 angular.module('contentful').controller('ContentTypeFieldListCtrl', function($scope, analytics, validation, $q, random) {
-  var _showValidations = {};
-
   $scope.$watchCollection('contentType.data.fields', function (fields, old, scope) {
     if (hasUIIDs(fields)) {
       scope.fieldList = fields;
@@ -106,10 +104,6 @@ angular.module('contentful').controller('ContentTypeFieldListCtrl', function($sc
     }
   };
 
-  $scope.showValidations = function(fieldId) {
-    return !!_showValidations[fieldId];
-  };
-
   $scope.hasValidations = function (field) {
     return !_.isEmpty(validation.Validation.perType[field.type]);
   };
@@ -132,9 +126,9 @@ angular.module('contentful').controller('ContentTypeFieldListCtrl', function($sc
 
   $scope.$watch('validationResult.errors', function (errors, old, scope) {
     _.each(errors, function (error) {
-      if (error.path[2] === 'validations' || error.path[3] === 'validations') {
-        var fieldId = scope.contentType.data.fields[error.path[1]].id;
-        _showValidations[fieldId] = true;
+      if (error.path[0] === 'fields' && angular.isDefined(error.path[1])) {
+        var field = scope.contentType.data.fields[error.path[1]];
+        if (field.disabled) scope.preferences.showDisabledFields = true;
       }
     });
   });

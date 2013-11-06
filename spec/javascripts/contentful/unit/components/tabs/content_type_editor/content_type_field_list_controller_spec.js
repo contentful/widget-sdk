@@ -18,48 +18,19 @@ describe('ContentType FieldList Controller', function () {
       scope.contentType = {
         data: {
           fields: [
-            {id: 'foo'},
-            {id: 'bar'}
+            {id: 'foo', name: 'Foo'},
+            {id: 'bar', name: 'Bar', disabled: true}
           ]
         }
       };
+      scope.preferences = {};
     });
 
-    it('should forcefully show validations with errors for simple fields', function () {
-      expect(scope.showValidations('foo')).toBeFalsy();
-      expect(scope.showValidations('bar')).toBeFalsy();
-      scope.validationResult = {
-        valid: false,
-        errors: [{
-          path: [
-            'fields',
-            0,
-            'validations'
-          ]
-        }]
-      };
+    it('should turn showDisabledFields on when a disabled field has an error', function () {
+      expect(scope.preferences.showDisabledFields).toBeFalsy();
+      scope.validationResult = {errors: [ {path: ['fields', 1]} ]};
       scope.$apply();
-      expect(scope.showValidations('foo')).toBeTruthy();
-      expect(scope.showValidations('bar')).toBeFalsy();
-    });
-
-    it('should forcefully show validations with errors for simple fields', function () {
-      expect(scope.showValidations('foo')).toBeFalsy();
-      expect(scope.showValidations('bar')).toBeFalsy();
-      scope.validationResult = {
-        valid: false,
-        errors: [{
-          path: [
-            'fields',
-            0,
-            'items',
-            'validations'
-          ]
-        }]
-      };
-      scope.$apply();
-      expect(scope.showValidations('foo')).toBeTruthy();
-      expect(scope.showValidations('bar')).toBeFalsy();
+      expect(scope.preferences.showDisabledFields).toBe(true);
     });
   });
 
