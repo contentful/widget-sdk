@@ -31,7 +31,7 @@
             %td.cell-updated
               %date.relative(datetime="{{apiKey.getUpdatedAt()}}")
             %td.cell-by
-              %span.cf-user(link="apiKey.getCreatedBy()" as="creator") {{currentUserName}}
+              %span.cf-user(link="apiKey.getCreatedBy()" as="creator") {{creator.getName()}}
     .create-api-key-advice(ng-show="empty")
       %i.ss-fork.giant-icon
       %header.advice-title There are no API Keys yet.

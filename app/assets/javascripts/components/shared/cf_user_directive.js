@@ -11,7 +11,6 @@ angular.module('contentful').
             if (err) return;
             $scope.$apply(function() {
               $scope[$attrs.as] = user;
-              $scope.currentUserName = (user.getId() === $scope.user.sys.id) ? 'You' : user.getName();
             });
           });
         }, true);

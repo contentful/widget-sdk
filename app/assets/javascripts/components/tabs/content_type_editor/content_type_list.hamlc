@@ -25,7 +25,7 @@
             %date.relative(datetime="{{contentType.getUpdatedAt()}}")
           %td.cell-by
             %span.cf-user(link="contentType.getUpdatedBy()" as="updater")
-              {{currentUserName}}
+              {{updater.getName()}}
           %td.cell-status(ng-class="statusClass(contentType)")
             .draft-wrapper
               %span {{statusLabel(contentType)}}

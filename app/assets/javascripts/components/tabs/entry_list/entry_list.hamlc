@@ -69,7 +69,7 @@
             %td.cell-updated
               %date.relative(datetime="{{entry.getUpdatedAt()}}")
             %td.cell-by
-              %span.cf-user(link="entry.getUpdatedBy()" as="updater") {{currentUserName}}
+              %span.cf-user(link="entry.getUpdatedBy()" as="updater") {{updater.getName()}}
             %td.cell-status(ng-class="statusClass(entry)")
               .draft-wrapper
                 %span {{statusClass(entry)}}

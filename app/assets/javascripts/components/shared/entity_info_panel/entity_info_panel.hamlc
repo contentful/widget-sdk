@@ -21,7 +21,7 @@
       %th Created by
       %td
         %span.cf-user(link="sys.createdBy" as="creator")
-          {{currentUserName}}
+          {{creator.getName()}}
 
   %tbody(ng-show="sys.updatedAt")
     %tr
@@ -32,7 +32,7 @@
       %th Updated by
       %td
         %span.cf-user(link="sys.updatedBy" as="updater")
-          {{currentUserName}}
+          {{updater.getName()}}
 
   %tbody(ng-show="sys.archivedVersion")
     %tr
@@ -55,7 +55,7 @@
       %th Published by
       %td
         %span.cf-user(link="sys.publishedBy" as="publisher")
-          {{currentUserName}}
+          {{publisher.getName()}}
     %tr
       %th Published version
       %td {{sys.publishedVersion}}
