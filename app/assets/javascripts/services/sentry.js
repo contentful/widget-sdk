@@ -56,7 +56,7 @@ function ($injector , $window, environment, stringifySafe) {
     var prop;
     for(var key in data){
       prop = data[key];
-      if(prop.$id && prop.$apply && prop.$digest){
+      if(prop && prop.$id && prop.$apply && prop.$digest){
         data[key] = JSON.parse(stringifySafe(prop));
       }
     }
