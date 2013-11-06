@@ -56,7 +56,7 @@ angular.module('contentful/app', [
   $sceDelegateProvider.resourceUrlWhitelist(env.resourceUrlWhiteListRegexp);
   clientProvider.endpoint('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');
-  //analyticsProvider.forceLoad();
+  analyticsProvider.forceLoad();
 }).run(function(authentication, client) {
   'use strict';
   authentication.login();
