@@ -4,37 +4,37 @@
     .welcome-center
       .welcome-image
       .welcome-header Contentful in a nutshell
-      .welcome-text Let's take a quick look at how to create and publish your content in 3 simple steps.
+      .welcome-text Contentful is a content management platform for web & mobile apps. Editors manage content in a nice interface and your developers integrate it into apps or websites through our powerful API. Let's take a look now!
        
   .welcome-slide.welcome-structure(ng-show="currentSlide == 'structure'")
     .welcome-title 1. Define your structure
     .welcome-left
       .welcome-image
-      .welcome-header Create Content Type
-      .welcome-text Creating a Content Type is the first step. This will work as a stencil that will filter which kind of content you can add through the editing interface.
+      .welcome-header Future-friendly content
+      .welcome-text Creating a more structured Content Model helps you to reuse your content on all kinds of platforms - today and in the future.
 
     .welcome-right
       .welcome-image
-      .welcome-header Decide, Field by Field
-      .welcome-text No annoying templates. Decide how many and which Fields you want to fill later.
+      .welcome-header Content Types
+      .welcome-text Creating a Content Type is the first step in managing your content. They work as stencils for all the documents you want to publish like recipes, quizzes or blog posts.
        
   .welcome-slide.welcome-content(ng-show="currentSlide == 'content'")
     .welcome-title 2. Add your content
     .welcome-left
       .welcome-image
-      .welcome-header Add content to your Entries
-      .welcome-text Adding an Entry means actually entering your content in the Content Type you created previously.
+      .welcome-header Create Entries
+      .welcome-text Invite your team of editors so that they can create and manage Entries for all the Content Types that you set up in the previous step.
     .welcome-right
       .welcome-image
       .welcome-header Upload Assets
-      .welcome-text Upload media files of any kind, assign metadata to them and link them to your Entries.
+      .welcome-text Upload media like images, video or audio once and use it in all your Entries.
        
   .welcome-slide.welcome-delivery(ng-show="currentSlide == 'delivery'")
     .welcome-title 3. Deliver your content
     .welcome-center
       .welcome-image
-      .welcome-header Publish anywhere
-      .welcome-text Create an API Key for each platform and deliver your content anywhere you want.
+      .welcome-header Manage content once, publish it anywhere
+      .welcome-text Create an API Key and deliver your content anywhere! You can serve content to smartphones, tablets, car consoles, smart watches and even these old-school personal computers.
 
   .welcome-slide.welcome-tutorials(ng-show="currentSlide == 'tutorials'")
     .welcome-title Need further support?
@@ -43,10 +43,10 @@
       .tutorial-boxes
         .tutorial-select-box.left
           .welcome-header
-            Content Model
+            Content Modeling
           %i.ss-database.background-icon
           .welcome-text
-            Learn how to set up Content Types, the basis for your Entries.
+            Learn how to set up Content Types, the foundation for your Entries.
           .buttons
             %button.default-button.repeat(type="button" ng-show="contentTypeDone" ng-click="goTo('contentTypeIntro')")
               Repeat Tutorial
@@ -55,7 +55,7 @@
 
         .tutorial-select-box.middle
           .welcome-header
-            Managing Content
+            Content Management
           %i.ss-file.background-icon
           .welcome-text
             An intro to day to day content management tasks.
@@ -67,10 +67,10 @@
 
         .tutorial-select-box.right
           .welcome-header
-            Delivering Content
+            Content Delivery
           %i.ss-fork.background-icon
           .welcome-text
-            Learn how to configure the distribution of content.
+            Learn how to configure the distribution of your content.
           .buttons
             %button.default-button.repeat(type="button" ng-show="apiKeyDone" ng-click="goTo('apiKeyIntro')")
               Repeat Tutorial
