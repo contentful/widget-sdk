@@ -64,7 +64,7 @@ otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacritic
 
       ngModelCtrl.$parsers.push(function (viewValue) {
         //console.log('parsing', viewValue);
-        return (viewValue === '' || isDiacriticalMark.fromChar(viewValue)) ? null : viewValue;
+        return (viewValue === '' || viewValue && isDiacriticalMark.fromChar(viewValue)) ? null : viewValue;
       });
 
       ngModelCtrl.$formatters.push(function (modelValue) {
