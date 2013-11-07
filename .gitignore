@@ -20,3 +20,4 @@ chromedriver.log
 libpeerconnection.log
 .tern-port
 npm-debug.log
+sauce_connect.log*

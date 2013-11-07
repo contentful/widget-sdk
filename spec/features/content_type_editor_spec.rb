@@ -88,7 +88,6 @@ feature 'Content Type Editor', js: true, non_ci: true do
     add_field 'Text', 'Text'
     click_button 'Activate'
 
-    debugger
     for_field 'Text' do
       fill_in 'fieldName', with: "\b"
       toggle_disable(true)

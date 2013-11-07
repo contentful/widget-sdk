@@ -15,19 +15,24 @@ module FeatureHelper
     File.write('tmp/spec_token', t)
   end
 
+  def clear_access_token
+    File.delete('tmp/spec_token') if File.exist?('tmp/spec_token')
+    @@access_token = nil
+  end
+
   def ensure_login
     if access_token
-      visit "/#access_token=#{access_token}"
+      visit "#{app_host}/#access_token=#{access_token}"
     else
-      visit "/"
+      visit "#{app_host}/"
     end
 
     begin
-      page.find('.client')
+      page.find('.client', wait: 5)
     rescue Capybara::ElementNotFound
-      visit 'http://be.joistio.com:8888/' if current_url == 'http://www.joistio.com:8888/'
-      fill_in 'user_email', with: 'user@example.com'
-      fill_in 'user_password', with: 'password'
+      visit "#{be_host}/" if current_url == "#{marketing_host}/"
+      fill_in 'user_email', with: user
+      fill_in 'user_password', with: password
       check 'remember_me'
       click_button 'Sign In'
     rescue Selenium::WebDriver::Error::UnhandledAlertError

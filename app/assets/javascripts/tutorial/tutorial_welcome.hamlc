@@ -85,5 +85,6 @@
     .nav-arrow-right
   .nav-bubbles
     %i.ss-record.dot(ng-repeat="(index, slide) in slides track by index"
+      data-index="{{index}}"
       ng-class="{active: slide == currentSlide}"
       ng-click="setCurrent(slide)")

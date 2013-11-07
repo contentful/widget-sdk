@@ -2,13 +2,13 @@ require 'spec_helper'
 
 feature 'Logging in', js: true do
   before do
-    clear_cookies
-    visit 'http://be.joistio.com:8888/logout'
+    clear_access_token
+    visit "#{be_host}/logout"
   end
 
   scenario 'The user should not be logged in' do
-    visit '/'
-    current_url.should eq('http://be.joistio.com:8888/login')
+    visit "#{app_host}/"
+    current_url.should eq("#{be_host}/login")
   end
 
   scenario 'The user should be able to login' do
