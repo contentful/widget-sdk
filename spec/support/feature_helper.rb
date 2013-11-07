@@ -36,7 +36,9 @@ module FeatureHelper
     end
 
     begin
-      find('#overview .guiders_close', wait: 0.5).click
+      find('#welcome .dot[data-index="4"]').click
+      find('#welcome .guiders_x_button').click
+      find('#restartHint .primary-button').click
     rescue Capybara::ElementNotFound
     end
     page.find('.client')
