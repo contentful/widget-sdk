@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Logging in', js: true do
+feature 'Logging in', js: true, sauce: true do
   before do
     clear_access_token
     visit "#{be_host}/logout"
