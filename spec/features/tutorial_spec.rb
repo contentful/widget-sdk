@@ -8,7 +8,6 @@ feature 'Tutorial', js: true, sauce: true do
   before do
     ensure_login
     remove_test_space 'Playground'
-    create_test_space
   end
 
   after do
