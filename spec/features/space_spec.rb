@@ -11,7 +11,7 @@ feature 'Working with spaces', js: true, sauce: true do
       all('li').last.click
     end
     within 'form[name=newSpaceForm]' do
-      fill_in 'name', with: 'TestSpace'
+      fill_in 'name', with: test_space
       fill_in 'locale', with: 'en-US'
       click_button 'Create Space'
     end

@@ -1,7 +1,7 @@
 module FeatureHelper
   def self.included(feature)
     feature.let(:space_id){ page.evaluate_script "$('.client').scope().spaceContext.space.getId()" }
-    feature.let(:tutorial_space_id) { page.evaluate_script "$('.client').scope().spaces.filter(function(s){return s.data.name === 'TestSpace'})[0].getId()" }
+    feature.let(:tutorial_space_id) { page.evaluate_script "$('.client').scope().spaces.filter(function(s){return s.data.name === '#{test_space}'})[0].getId()" }
   end
 
   @@access_token = File.exist?('tmp/spec_token') ? File.read('tmp/spec_token') : nil
@@ -64,7 +64,7 @@ module FeatureHelper
     end
   end
 
-  def remove_test_space(name='TestSpace')
+  def remove_test_space(name=test_space)
     within 'nav.account .project' do
       find('.dropdown-toggle').click
       begin
@@ -88,16 +88,16 @@ module FeatureHelper
     sleep 4
   end
 
-  def create_test_space
+  def create_test_space(name=test_space)
     find('.account .project .dropdown-toggle').click
     begin
       using_wait_time 0.5 do
-        find('li', text: 'TestSpace').click
+        find('li', text: test_space).click
       end
       return
     rescue Capybara::ElementNotFound
       find('li', text: 'Create Space').click
-      fill_in 'name', with: 'TestSpace'
+      fill_in 'name', with: name
       fill_in 'locale', with: 'en-US'
       within ".modal-dialog" do
         click_button 'Create Space'
