@@ -12,19 +12,19 @@ feature 'Routing', js: true do
   end
 
   scenario 'Opening pages from an external link' do
-    visit '/profile'
+    visit "#{app_host}/profile"
     iframe = find('iframe')
     within_frame iframe do
       page.should have_text 'USER DETAILS'
     end
 
-    visit "/profile/billing_address/edit"
+    visit "#{app_host}/profile/billing_address/edit"
     iframe = find('iframe')
     within_frame iframe do
       page.should have_text 'Postal code'
     end
 
-    visit "/spaces/#{tutorial_space_id}/settings/users/new"
+    visit "#{app_host}/spaces/#{tutorial_space_id}/settings/users/new"
     iframe = find('iframe')
     within_frame iframe do
       page.find('input[name="commit"]')[:value].should eql('Invite New User')
