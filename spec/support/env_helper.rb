@@ -1,5 +1,5 @@
 module EnvHelper
-  if ENV['CI']
+  if ENV['USE_SAUCE']
     def app_host      ; 'https://app.flinkly.com'; end
     def be_host       ; 'https://be.flinkly.com' ; end
     def marketing_host; 'https://www.flinkly.com'; end
