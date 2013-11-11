@@ -60,6 +60,45 @@ describe('Content Type List Controller', function () {
 
     });
 
+    describe('on all list', function () {
+      beforeEach(function () {
+        scope.tab = {
+          params: {
+            list: 'all'
+          }
+        };
+      });
+
+      it('should include unpublished contentTypes in "changed" list', function () {
+        var contentType = makeContentType({
+          sys: {
+            version: 5
+          }
+        });
+        expect(scope.visibleInCurrentList(contentType)).toBe(true);
+      });
+
+      it('should include updated contentTypes in "changed" list', function () {
+        var contentType = makeContentType({
+          sys: {
+            publishedVersion: 2,
+            version: 5
+          }
+        });
+        expect(scope.visibleInCurrentList(contentType)).toBe(true);
+      });
+
+      it('should include published contentTypes without updates in "changed" list', function () {
+        var contentType = makeContentType({
+          sys: {
+            publishedVersion: 5,
+            version: 5
+          }
+        });
+        expect(scope.visibleInCurrentList(contentType)).toBe(true);
+      });
+    });
+
     describe('on changed list', function () {
       beforeEach(function () {
         scope.tab = {
@@ -88,7 +127,7 @@ describe('Content Type List Controller', function () {
         expect(scope.visibleInCurrentList(contentType)).toBe(true);
       });
 
-      it('should not include published contentTypes without updates in"changed" list', function () {
+      it('should not include published contentTypes without updates in "changed" list', function () {
         var contentType = makeContentType({
           sys: {
             publishedVersion: 5,
@@ -98,6 +137,86 @@ describe('Content Type List Controller', function () {
         expect(scope.visibleInCurrentList(contentType)).toBe(false);
       });
     });
+
+    describe('on active list', function () {
+      beforeEach(function () {
+        scope.tab = {
+          params: {
+            list: 'active'
+          }
+        };
+      });
+
+      it('should not include unpublished contentTypes in "active" list', function () {
+        var contentType = makeContentType({
+          sys: {
+            version: 5
+          }
+        });
+        expect(scope.visibleInCurrentList(contentType)).toBe(false);
+      });
+
+      it('should include updated contentTypes in "active" list', function () {
+        var contentType = makeContentType({
+          sys: {
+            publishedVersion: 2,
+            version: 5
+          }
+        });
+        expect(scope.visibleInCurrentList(contentType)).toBe(true);
+      });
+
+      it('should include published contentTypes without updates in "active" list', function () {
+        var contentType = makeContentType({
+          sys: {
+            publishedVersion: 5,
+            version: 5
+          }
+        });
+        expect(scope.visibleInCurrentList(contentType)).toBe(true);
+      });
+    });
+
+    describe('on inactive list', function () {
+      beforeEach(function () {
+        scope.tab = {
+          params: {
+            list: 'inactive'
+          }
+        };
+      });
+
+      it('should include unpublished contentTypes in "inactive" list', function () {
+        var contentType = makeContentType({
+          sys: {
+            version: 5
+          }
+        });
+        expect(scope.visibleInCurrentList(contentType)).toBe(true);
+      });
+
+      it('should not include updated contentTypes in "inactive" list', function () {
+        var contentType = makeContentType({
+          sys: {
+            publishedVersion: 2,
+            version: 5
+          }
+        });
+        expect(scope.visibleInCurrentList(contentType)).toBe(false);
+      });
+
+      it('should not include published contentTypes without updates in "inactive" list', function () {
+        var contentType = makeContentType({
+          sys: {
+            publishedVersion: 5,
+            version: 5
+          }
+        });
+        expect(scope.visibleInCurrentList(contentType)).toBe(false);
+      });
+    });
+
+
   });
 
 });
