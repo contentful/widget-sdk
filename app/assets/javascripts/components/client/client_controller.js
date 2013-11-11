@@ -130,6 +130,8 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
       _.extend($scope.spaceContext.space.data, message.resource);
       //TODO this is pobably much too simplified, better look up correct
       //space and check if the method of updating is correct
+    } else if (message.type === 'UserCancellation' && message.action === 'create') {
+      authentication.goodbye();
     } else if (message.type === 'user' && message.action === 'update') {
       _.extend($scope.user, message.resource);
     /*

@@ -50,6 +50,18 @@ module FeatureHelper
     self.access_token = page.evaluate_script('angular.element($(".client")).injector().get("authentication").token')
   end
 
+  def ensure_logout
+    visit "#{app_host}"
+
+    if page.first('.client', wait: 5)
+      find('.user .dropdown-toggle').click
+      find('li', test: 'Log out').click
+    else
+      visit "#{be_host}/logout"
+    end
+    clear_access_token
+  end
+
   def clear_cookies
     # https://makandracards.com/makandra/16117-how-to-clear-cookies-in-capybara-tests-both-selenium-and-rack-test
     browser = Capybara.current_session.driver.browser
