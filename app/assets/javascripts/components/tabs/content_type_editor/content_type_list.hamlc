@@ -1,5 +1,6 @@
 .tab-header
-  %h1 Content Types
+  .left-nav
+    %h1 Content Types
   .search-area.with-left-nav
     .search-field(search="searchTerm" placeholder="Search for Content Types")
 .tab-main
@@ -46,7 +47,7 @@
               .draft-wrapper
                 %span {{statusLabel(contentType)}}
                 .main-results-bar
-    .create-content-type-advice(ng-show="visibleContentTypes | isEmpty")
+    .results-empty-advice(ng-show="visibleContentTypes | isEmpty")
       %div(ng-show="hasQuery()")
         %i.ss-search.giant-icon
         %header.advice-title There are no matches to your search

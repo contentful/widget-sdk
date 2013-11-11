@@ -71,7 +71,7 @@
   .iframe-view(ng-switch-when="iframe")
   .entry-list.entity-list(ng-switch-when="entry-list")
   .asset-list.entity-list(ng-switch-when="asset-list")
-  .content-type-list(ng-switch-when="content-type-list")
+  .content-type-list.entity-list(ng-switch-when="content-type-list")
   .entry-editor.with-tab-actions(ng-switch-when="entry-editor"
     ot-doc-for="tab.params.entry"
     cf-validate="tab.params.entry.data" with-schema="entrySchema"
