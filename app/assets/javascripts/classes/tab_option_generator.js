@@ -87,6 +87,9 @@ angular.module('contentful').factory('TabOptionsGenerator', function () {
         viewType: 'content-type-list',
         section: 'contentTypes',
         hidden: true,
+        params: {
+          list: 'all'
+        },
         title: 'Content Model',
         canClose: true
       };

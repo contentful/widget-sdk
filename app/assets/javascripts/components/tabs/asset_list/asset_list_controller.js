@@ -30,8 +30,7 @@ angular.module('contentful').
   $scope.switchList = function(list){
     $scope.searchTerm = null;
     var params = $scope.tab.params;
-    var shouldReset =
-      params.list == list;
+    var shouldReset = params.list == list;
 
     if (shouldReset) {
       this.resetAssets();
