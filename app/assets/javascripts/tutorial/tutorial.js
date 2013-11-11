@@ -30,6 +30,8 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         tutorial.setSeen();
         guiders.hideAll();
         guiders.show('welcome');
+      }, function (err) {
+        notification.error('Could not create tutorial space');
       });
     },
     initialize: function () {

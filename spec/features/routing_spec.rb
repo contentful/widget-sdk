@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Routing', js: true do
+feature 'Routing', js: true, sauce: true do
   before do
     ensure_login
     remove_test_space
