@@ -22,7 +22,7 @@ angular.module('contentful').factory('tutorialExampledata', function ($q, $http,
       var ccb, newSpaceId, self = this;
       var IS_TUTORIAL = /playground/i;
       var tutorialSpace = _.find(clientScope.spaces, function (space) {
-        return space.data.membership.owner && IS_TUTORIAL.test(space.data.name);
+        return space.data.membership.admin && IS_TUTORIAL.test(space.data.name);
       });
       if (tutorialSpace) {
         clientScope.selectSpace(tutorialSpace);
