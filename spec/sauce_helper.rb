@@ -3,8 +3,10 @@ require "sauce/capybara"
 
 Sauce.config do |c|
   c[:start_tunnel] = false
-  c[:application_host] = "app.flinkly.com"
-  c[:application_port] = "80"
+  if ENV['USE_SAUCE']
+    c[:application_host] = "app.flinkly.com"
+    c[:application_port] = "80"
+  end
   c[:start_local_application] = false
   c[:screen_resolution] = '1280x1024'
   c[:browsers] = [
