@@ -78,7 +78,7 @@ function ($injector , $window, environment, stringifySafe) {
     captureError: function (error, options) {
       if ($window.Raven) {
         var dataId = null;
-        if(options.data){
+        if(options && options.data){
           dataId = logDataObject(preParseData(options.data));
           options.extra = options.extra || {};
           options.extra.dataId = dataId;
