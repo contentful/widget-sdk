@@ -10,12 +10,25 @@ module ContentTypeHelper
   end
 
   def for_field(field_name)
-    find('.cf-field-settings', text)
     field_settings = find :xpath, %Q{//*[contains(@class, 'display')]/*[contains(@class, 'name')][text()='#{field_name}']/../..}
     field_settings.click() unless field_settings[:class] !~ /open/
 
     within(field_settings) do
       yield
+    end
+  end
+
+  def toggle_disable(on_off)
+    find '.toggle-disabled'
+    begin
+      if on_off == true
+        find('.toggle-disabled:not(.active)').click
+      elsif on_of == false
+        find('.toggle-disabled.active').click
+      else
+        find('.toggle-disabled').click
+      end
+    rescue Capybara::ElementNotFound
     end
   end
 
@@ -34,10 +47,10 @@ module ContentTypeHelper
     find('.dropdown-toggle', text:'Validation').click
     find('.dropdown-menu li', text: name).click
     
+    first('.cf-validation-options') # all does not wait I think
     validation = all('.cf-validation-options').last
-
     within validation do
-      yield
+      yield if block_given?
     end
   end
 end

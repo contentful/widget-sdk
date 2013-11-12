@@ -51,8 +51,8 @@
           .field-collaborators
             %ul.field-list
               %li.avatar.cf-user(ng-repeat="link in fieldPresence.users track by link.sys.id"
-                                 link="link" as="user"
-                                 tooltip="{{currentUserName}}")
+                                 link="link" as="presenceUser"
+                                 tooltip="{{presenceUser | userNameDisplay:user}}")
                 %img(ng-src="{{user.data.avatarUrl}}")
           .cf-form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
         .cf-form-box-error(cf-error-path="['fields', field.id]")
@@ -80,9 +80,9 @@
       No other users online
     %ul(ng-show="presence.users.length > 0")
       %li.avatar.cf-user(ng-repeat="link in presence.users track by link.sys.id"
-                         link="link" as="user"
-                         tooltip="{{currentUserName}}")
-        %img(ng-src="{{user.data.avatarUrl}}")
+                         link="link" as="presenceUser"
+                         tooltip="{{presenceUser | userNameDisplay:user}}")
+        %img(ng-src="{{presenceUser.data.avatarUrl}}")
     %a.default-button.invite-users(
       href="" ng-click="navigator.spaceSettings('/users/new').goTo()"
       tooltip="Add a user to this space")

@@ -1,8 +1,8 @@
 angular.module('contentful').provider('authentication', function AuthenticationProvider(environment, contentfulClient) {
-  /*global moment*/
   'use strict';
 
   var authApp  = '//'+environment.settings.base_host+'/';
+  var marketingApp  = environment.settings.marketing_url+'/';
   var QueryLinkResolver = contentfulClient.QueryLinkResolver;
   var $location, $q, $rootScope, notification;
   var sentry;
@@ -66,6 +66,11 @@ angular.module('contentful').provider('authentication', function AuthenticationP
     logout: function() {
       $.cookies.del('token');
       window.location = authApp + 'logout';
+    },
+
+    goodbye: function () {
+      $.cookies.del('token');
+      window.location = marketingApp + 'goodbye';
     },
 
     isLoggedIn: function() {

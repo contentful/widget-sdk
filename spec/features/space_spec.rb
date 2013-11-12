@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Working with spaces', js: true do
+feature 'Working with spaces', js: true, sauce: true do
   before do
     ensure_login
   end
@@ -11,7 +11,7 @@ feature 'Working with spaces', js: true do
       all('li').last.click
     end
     within 'form[name=newSpaceForm]' do
-      fill_in 'name', with: 'TestSpace'
+      fill_in 'name', with: test_space
       fill_in 'locale', with: 'en-US'
       click_button 'Create Space'
     end

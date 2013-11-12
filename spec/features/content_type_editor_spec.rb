@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Content Type Editor', js: true, non_ci: true do
+feature 'Content Type Editor', js: true, sauce: true do
   include ContentTypeHelper
 
   before do
@@ -54,5 +54,46 @@ feature 'Content Type Editor', js: true, non_ci: true do
     end
     click_button 'Activate'
     expect(page).to have_selector('.notification.info')
+  end
+
+  scenario 'Adding blank validations to a field' do
+    add_button 'Content Type'
+    fill_in 'contentTypeName', with: 'Test Content Type'
+
+    validations = {
+      'Text' => ['Predefined Values', 'Length', 'Regular Expression'],
+      'Entry' => ['Content Type'],
+      'Asset' => ['File Type'],
+      'Number' => ['Numerical Range']
+    }
+
+    validations.each_pair do |type, validation_types|
+      add_field(type, type)
+      for_field type do
+        in_validations do
+          validation_types.each do |validation_type|
+            add_validation(validation_type)
+          end
+        end
+      end
+    end
+
+    click_button 'Activate'
+    expect(page).to have_selector('.notification.warn')
+  end
+
+  scenario 'Validation errors on a disabled field cause it to be shown' do
+    add_button 'Content Type'
+    fill_in 'contentTypeName', with: 'Test Content Type'
+    add_field 'Text', 'Text'
+    click_button 'Activate'
+
+    for_field 'Text' do
+      fill_in 'fieldName', with: "\b"
+      toggle_disable(true)
+    end
+
+    click_button 'Update'
+    expect(page).to have_selector('.cf-field-settings')
   end
 end

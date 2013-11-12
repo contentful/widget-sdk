@@ -137,17 +137,9 @@ angular.module('contentful')
       if (error.path[0] !== 'fields') return;
       var fieldId      = error.path[1];
       var field        = _.find(et.data.fields, {id: fieldId});
-      errorPaths[fieldId] = errorPaths[fieldId] || [];
 
-      if(!field){
-        return notification.error('An error has occurred and we\'ve been notified. Please refresh your browser.', {
-          data: {
-            fieldId: fieldId,
-            fields: _.map(et.data.fields, function(val){return {id: val.id, type: val.type};}),
-            contentType: et.data.sys.id,
-            space: et.data.sys.space.sys.id
-          }
-        });
+      if(error.path.length > 1) {
+        errorPaths[fieldId] = errorPaths[fieldId] || [];
       }
 
       if (error.path.length == 1 && error.path[0] == 'fields') {

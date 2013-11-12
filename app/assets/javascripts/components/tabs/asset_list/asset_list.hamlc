@@ -74,7 +74,7 @@
             %td.cell-updated
               %date.relative(datetime="{{asset.getUpdatedAt()}}")
             %td.cell-by
-              %span.cf-user(link="asset.getUpdatedBy()" as="updater") {{currentUserName}}
+              %span.cf-user(link="asset.getUpdatedBy()" as="updater") {{updater | userNameDisplay:user}}
             %td.cell-status(ng-class="statusClass(asset)")
               .draft-wrapper
                 %span {{statusClass(asset)}}

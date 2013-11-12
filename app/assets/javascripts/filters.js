@@ -95,4 +95,11 @@ filters.filter('isFieldStringList', function () {
   };
 });
 
+filters.filter('userNameDisplay', function () {
+  return function (currentUser, user) {
+    if(!currentUser || !user) return '';
+    return (currentUser.getId() === user.sys.id) ? 'Me' : currentUser.getName();
+  };
+});
+
 

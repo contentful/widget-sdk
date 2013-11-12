@@ -1,7 +1,7 @@
 module FeatureHelper
   def self.included(feature)
     feature.let(:space_id){ page.evaluate_script "$('.client').scope().spaceContext.space.getId()" }
-    feature.let(:tutorial_space_id) { page.evaluate_script "$('.client').scope().spaces.filter(function(s){return s.data.name === 'TestSpace'})[0].getId()" }
+    feature.let(:tutorial_space_id) { page.evaluate_script "$('.client').scope().spaces.filter(function(s){return s.data.name === '#{test_space}'})[0].getId()" }
   end
 
   @@access_token = File.exist?('tmp/spec_token') ? File.read('tmp/spec_token') : nil
@@ -15,19 +15,24 @@ module FeatureHelper
     File.write('tmp/spec_token', t)
   end
 
+  def clear_access_token
+    File.delete('tmp/spec_token') if File.exist?('tmp/spec_token')
+    @@access_token = nil
+  end
+
   def ensure_login
     if access_token
-      visit "/#access_token=#{access_token}"
+      visit "#{app_host}/#access_token=#{access_token}"
     else
-      visit "/"
+      visit "#{app_host}/"
     end
 
     begin
-      page.find('.client')
+      page.find('.client', wait: 5)
     rescue Capybara::ElementNotFound
-      visit 'http://be.joistio.com:8888/' if current_url == 'http://www.joistio.com:8888/'
-      fill_in 'user_email', with: 'user@example.com'
-      fill_in 'user_password', with: 'password'
+      visit "#{be_host}/" if current_url == "#{marketing_host}/"
+      fill_in 'user_email', with: user
+      fill_in 'user_password', with: password
       check 'remember_me'
       click_button 'Sign In'
     rescue Selenium::WebDriver::Error::UnhandledAlertError
@@ -36,11 +41,25 @@ module FeatureHelper
     end
 
     begin
-      find('#overview .guiders_close', wait: 0.5).click
+      find('#welcome .dot[data-index="4"]').click
+      find('#welcome .guiders_x_button').click
+      find('#restartHint .primary-button').click
     rescue Capybara::ElementNotFound
     end
     page.find('.client')
     self.access_token = page.evaluate_script('angular.element($(".client")).injector().get("authentication").token')
+  end
+
+  def ensure_logout
+    visit "#{app_host}"
+
+    if page.first('.client', wait: 5)
+      find('.user .dropdown-toggle').click
+      find('li', test: 'Log out').click
+    else
+      visit "#{be_host}/logout"
+    end
+    clear_access_token
   end
 
   def clear_cookies
@@ -57,7 +76,7 @@ module FeatureHelper
     end
   end
 
-  def remove_test_space(name='TestSpace')
+  def remove_test_space(name=test_space)
     within 'nav.account .project' do
       find('.dropdown-toggle').click
       begin
@@ -81,16 +100,16 @@ module FeatureHelper
     sleep 4
   end
 
-  def create_test_space
+  def create_test_space(name=test_space)
     find('.account .project .dropdown-toggle').click
     begin
       using_wait_time 0.5 do
-        find('li', text: 'TestSpace').click
+        find('li', text: test_space).click
       end
       return
     rescue Capybara::ElementNotFound
       find('li', text: 'Create Space').click
-      fill_in 'name', with: 'TestSpace'
+      fill_in 'name', with: name
       fill_in 'locale', with: 'en-US'
       within ".modal-dialog" do
         click_button 'Create Space'

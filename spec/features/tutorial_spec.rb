@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Tutorial', js: true, non_ci: true do
+feature 'Tutorial', js: true, sauce: true do
   include ContentTypeHelper
   include EditorHelper
   include AssetHelper
@@ -8,7 +8,6 @@ feature 'Tutorial', js: true, non_ci: true do
   before do
     ensure_login
     remove_test_space 'Playground'
-    create_test_space
   end
 
   after do

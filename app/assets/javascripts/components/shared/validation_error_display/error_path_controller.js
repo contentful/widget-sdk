@@ -61,6 +61,9 @@ angular.module('contentful').controller('ErrorPathController', function ErrorPat
       } else {
         return 'Must be a ' + v.type + '.';
       }
+    },
+    uniqueFieldIds: function () {
+      return 'Field ID must be unique';
     }
   };
 

@@ -1,41 +1,62 @@
 .tab-header
-  %h1 Content Types
+  .left-nav
+    %h1 Content Types
+  .search-area.with-left-nav
+    .search-field(search="searchTerm" placeholder="Search for Content Types")
 .tab-main
-  %table.result-list.main-header(ng-hide="empty")
-    %thead
-      %tr
-        %th.cell-name Name
-        %th.cell-description Description
-        %th.cell-num-fields Fields
-        %th.cell-updated Updated
-        %th.cell-by By
-        %th.cell-status Status
-  .main-results-wrapper(ng-hide="empty")
-    %table.result-list.main-results
-      %tbody
-        %tr(ng-repeat="contentType in spaceContext.contentTypes track by contentType.getId()"
-            cf-click-local="navigator.contentTypeEditor(contentType).goTo()")
-          %td.cell-name
-            %span {{contentType.getName()}}
-          %td.cell-description
-            %span {{contentType.data.description}}
-          %td.cell-num-fields
-            %span {{numFields(contentType)}}
-          %td.cell-updated
-            %date.relative(datetime="{{contentType.getUpdatedAt()}}")
-          %td.cell-by
-            %span.cf-user(link="contentType.getUpdatedBy()" as="updater")
-              {{currentUserName}}
-          %td.cell-status(ng-class="statusClass(contentType)")
-            .draft-wrapper
-              %span {{statusLabel(contentType)}}
-              .main-results-bar
-  .create-content-type-advice(ng-show="empty")
-    %i.ss-database.giant-icon
-    %header.advice-title You have no Content Types yet.
-    %p.advice-description Content Types work like stencils that define which Entries you can create within a specific Space.
-    %button.default-button.primary-button(type="button" ng-click="createContentType()" ng-disabled="!can('create', 'ContentType')")
-      Create Content Type
-    %a.knowledge-base(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
-      Visit the Knowledge Base Pages
-      %i.ss-help
+  .left-nav
+    %header Status
+    %ul.filter-list
+      %li(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
+        %span All
+      %li(ng-class="{active: tab.params.list == 'changed'}" ng-click="switchList('changed')")
+        %span Changed
+      %li(ng-class="{active: tab.params.list == 'active'}" ng-click="switchList('active')")
+        %span Active
+      %li(ng-class="{active: tab.params.list == 'inactive'}" ng-click="switchList('inactive')")
+        %span Inactive
+
+  .with-left-nav
+    %table.result-list.main-header(ng-hide="empty")
+      %thead
+        %tr
+          %th.cell-name Name
+          %th.cell-description Description
+          %th.cell-num-fields Fields
+          %th.cell-updated Updated
+          %th.cell-by By
+          %th.cell-status Status
+
+    .main-results-wrapper
+      %table.result-list.main-results.animated
+        %tbody
+          %tr(ng-repeat="contentType in visibleContentTypes = (contentTypes | filter:visibleInCurrentList) track by contentType.getId()"
+              cf-click-local="navigator.contentTypeEditor(contentType).goTo()")
+            %td.cell-name
+              %span {{contentType.getName()}}
+            %td.cell-description
+              %span {{contentType.data.description}}
+            %td.cell-num-fields
+              %span {{numFields(contentType)}}
+            %td.cell-updated
+              %date.relative(datetime="{{contentType.getUpdatedAt()}}")
+            %td.cell-by
+              %span.cf-user(link="contentType.getUpdatedBy()" as="updater")
+                {{updater | userNameDisplay:user}}
+            %td.cell-status(ng-class="statusClass(contentType)")
+              .draft-wrapper
+                %span {{statusLabel(contentType)}}
+                .main-results-bar
+    .results-empty-advice(ng-show="visibleContentTypes | isEmpty")
+      %div(ng-show="hasQuery()")
+        %i.ss-search.giant-icon
+        %header.advice-title There are no matches to your search
+      %div(ng-show="!hasQuery()")
+        %i.ss-database.giant-icon
+        %header.advice-title You have no Content Types yet.
+        %p.advice-description Content Types work like stencils that define which Entries you can create within a specific Space.
+        %button.default-button.primary-button(type="button" ng-click="createContentType()" ng-disabled="!can('create', 'ContentType')")
+          Create Content Type
+        %a.knowledge-base(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
+          Visit the Knowledge Base Pages
+          %i.ss-help

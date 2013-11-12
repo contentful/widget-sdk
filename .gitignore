@@ -20,3 +20,8 @@ chromedriver.log
 libpeerconnection.log
 .tern-port
 npm-debug.log
+sauce_connect.log*
+Vagrantfile
+vagrant_bootstrap.sh
+.vagrant
+run_vagrant_build.sh

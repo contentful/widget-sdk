@@ -16,11 +16,6 @@
         %span Published
       %li(ng-class="{active: tab.params.list == 'archived'}" ng-click="switchList('archived')")
         %span Archived
-      -#
-        %li.disabled(ng-class="{active: tab.params.list == 'starred'}")
-          %span Starred
-        %li.disabled(ng-class="{active: tab.params.list == 'createdByMe'}")
-          %span Created by me
     %div(ng-show="spaceContext.publishedContentTypes.length > 0")
       %header Content Types
       %ul.filter-list
@@ -28,26 +23,13 @@
             ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
             ng-click="switchList('contentType', contentType)")
           %span {{contentType.getName()}}
-    -#
-      %header Saved searches
-      %ul.left-nav-filters
-        %li
-          %i.ss-search
-          %span Updated by me
-        %li
-          %i.ss-search
-          %span Large rooms
-      %footer.left-nav-bottom
-        %span Import
-        %span Export
+
   .with-left-nav
     %table.result-list.main-header
       %thead
         %tr
           %th.cell-select
             %input(type="checkbox" cf-selection="" ng-show="entries.length > 0" tabindex="-1")
-          -#%th.cell-favorite
-            %i.ss-star
           %th.cell-content-type Content Type
           %th.cell-name Name
           %th.cell-updated Updated
@@ -60,8 +42,6 @@
           %tr(ng-repeat="entry in visibleEntries = (entries | filter:visibleInCurrentList) track by entry.getId()" cf-click-local="navigator.entryEditor(entry).goTo()")
             %td.cell-select(ng-click="selection.toggle(entry);$event.stopPropagation()")
               %input(type="checkbox" cf-selection="entry" tabindex="-1")
-            -#%td.cell-favorite
-              %i.ss-star
             %td.cell-content-type
               %span {{spaceContext.publishedTypeForEntry(entry).getName()}}
             %td.cell-name
@@ -69,7 +49,7 @@
             %td.cell-updated
               %date.relative(datetime="{{entry.getUpdatedAt()}}")
             %td.cell-by
-              %span.cf-user(link="entry.getUpdatedBy()" as="updater") {{currentUserName}}
+              %span.cf-user(link="entry.getUpdatedBy()" as="updater") {{updater | userNameDisplay:user}}
             %td.cell-status(ng-class="statusClass(entry)")
               .draft-wrapper
                 %span {{statusClass(entry)}}
