@@ -1,6 +1,6 @@
 %nav.nav-bar
   .logo(ng-click="logoClicked()")
-    .cf-logo
+    .cf-logo(cf-custom-logo)
   %ul(ng-show="spaceContext.space")
     %li.tablist-button(
       space-context="spaceContext"
