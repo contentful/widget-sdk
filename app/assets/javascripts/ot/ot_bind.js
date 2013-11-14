@@ -2,7 +2,7 @@
 
 var otModule = angular.module('contentful');
 
-otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacriticalMark) {
+otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacriticalMark, ReloadNotification, sentry) {
   return {
     restrict: 'A',
     require: ['^otSubdoc', 'ngModel'],
@@ -113,11 +113,18 @@ otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacritic
             path: subdoc.path,
             types: subdoc.types,
             value: ''
-          }, function() {
-            //console.log('attaching textarea %o to %o after mkPath', elm[0], subdoc.path, err);
+          }, function(err) {
+            if (err) {
+              sentry.captureError('makeAndAttach mkpath failed');
+              ReloadNotification.trigger('The editor failed to initialize the text field. To reconnect to the server, the application needs to reload.');
+              // TODO Later just raise exception, when exceptionHandler raises Reloadnotification
+            } else {
+              unbindTextField = subdoc.attach_textarea(elm[0]);
+            }
           });
+        } else {
+          unbindTextField = subdoc.attach_textarea(elm[0]);
         }
-        unbindTextField = subdoc.attach_textarea(elm[0]);
       }
       //console.log('linking done', scope.$id, scope.otPath);
     }
