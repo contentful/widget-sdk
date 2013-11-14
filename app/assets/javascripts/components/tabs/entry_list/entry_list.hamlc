@@ -12,6 +12,8 @@
         %span All
       %li(ng-class="{active: tab.params.list == 'changed'}" ng-click="switchList('changed')")
         %span Changed
+      %li(ng-class="{active: tab.params.list == 'draft'}" ng-click="switchList('draft')")
+        %span Draft
       %li(ng-class="{active: tab.params.list == 'published'}" ng-click="switchList('published')")
         %span Published
       %li(ng-class="{active: tab.params.list == 'archived'}" ng-click="switchList('archived')")

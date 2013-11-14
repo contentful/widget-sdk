@@ -48,6 +48,8 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
         return entry.isPublished();
       case 'changed':
         return entry.hasUnpublishedChanges();
+      case 'draft':
+        return entry.hasUnpublishedChanges() && !entry.isPublished();
       case 'archived':
         return entry.isArchived();
       default:

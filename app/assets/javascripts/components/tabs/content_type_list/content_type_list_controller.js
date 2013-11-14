@@ -48,7 +48,7 @@ angular.module('contentful').controller('ContentTypeListCtrl', function ContentT
         return contentType.hasUnpublishedChanges();
       case 'active':
         return contentType.isPublished();
-      case 'inactive':
+      case 'draft':
         return !contentType.isPublished();
       default:
         return true;

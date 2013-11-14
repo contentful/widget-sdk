@@ -11,10 +11,10 @@
         %span All
       %li(ng-class="{active: tab.params.list == 'changed'}" ng-click="switchList('changed')")
         %span Changed
+      %li(ng-class="{active: tab.params.list == 'draft'}" ng-click="switchList('draft')")
+        %span Draft
       %li(ng-class="{active: tab.params.list == 'active'}" ng-click="switchList('active')")
         %span Active
-      %li(ng-class="{active: tab.params.list == 'inactive'}" ng-click="switchList('inactive')")
-        %span Inactive
 
   .with-left-nav
     %table.result-list.main-header(ng-hide="empty")
