@@ -6,7 +6,6 @@ describe('The Space view permissions', function () {
   var canStub;
 
   beforeEach(function () {
-    jasmine.Clock.useMock();
     canStub = sinon.stub();
     module('contentful/test', function ($provide) {
       $provide.value('can', canStub);
@@ -43,24 +42,24 @@ describe('The Space view permissions', function () {
     describe('if user can create a '+type, function () {
       beforeEach(function () {
         canStub.withArgs('create', type).returns(true);
-        scope.changer = 'changer'+Math.random();
+        var seed = Math.random();
+        scope.changer = 'changer'+seed;
         scope.$apply();
-        jasmine.Clock.tick(500);
       });
 
       it('show add button', function () {
-        expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(false);
+        expect(scope.$eval(container.find('.tablist-button').attr('ng-show'))).toBe(true);
       });
 
       it('add menu item is not hidden', function () {
-        expect(container.find('.tablist-button .'+itemClass).hasClass('ng-hide')).toBe(false);
+        expect(scope.$eval(container.find('.tablist-button .'+itemClass).attr('ng-show'))).toBe(true);
       });
 
       it('separator only shows for Entry', function () {
         if(type == 'Entry'){
-          expect(container.find('.tablist-button .separator').hasClass('ng-hide')).toBe(false);
+          expect(scope.$eval(container.find('.tablist-button .separator').attr('ng-show'))).toBe(true);
         } else {
-          expect(container.find('.tablist-button .separator').hasClass('ng-hide')).toBe(true);
+          expect(scope.$eval(container.find('.tablist-button .separator').attr('ng-show'))).toBeFalsy();
         }
       });
 
@@ -68,7 +67,7 @@ describe('The Space view permissions', function () {
       menuItems.splice(currentItem, 1);
       menuItems.forEach(function (val) {
         it(val+' add menu item is hidden', function () {
-          expect(container.find('.tablist-button .'+val).hasClass('ng-hide')).toBe(true);
+          expect(scope.$eval(container.find('.tablist-button .'+val).attr('ng-show'))).toBeFalsy();
         });
       });
 
