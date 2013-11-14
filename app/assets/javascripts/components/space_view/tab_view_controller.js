@@ -123,7 +123,11 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
 
   $scope.$watch('spaceContext.tabList.current.title', function (title, old, scope) {
     try {
-      $document[0].title = scope.spaceContext.space.data.name + ' - ' + title;
+      if (title) {
+        $document[0].title = scope.spaceContext.space.data.name + ' - ' + title;
+      } else {
+        $document[0].title = scope.spaceContext.space.data.name;
+      }
     } catch (e) {
       $document[0].title = 'Contentful';
     }
