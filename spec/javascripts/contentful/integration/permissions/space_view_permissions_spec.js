@@ -43,9 +43,7 @@ describe('The Space view permissions', function () {
     describe('if user can create a '+type, function () {
       beforeEach(function () {
         canStub.withArgs('create', type).returns(true);
-        scope.spaceContext = {
-          space: {}
-        };
+        scope.changer = 'changer'+Math.random();
         scope.$apply();
         jasmine.Clock.tick(500);
       });
