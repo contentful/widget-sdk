@@ -113,6 +113,7 @@ describe('Authentication service', function () {
   describe('login with existing token from cookie', function () {
     beforeEach(function () {
       searchStub.returns({});
+      hashStub.returns('');
       cookiesGetStub.withArgs('token').returns('logintoken');
       cookiesGetStub.withArgs('redirect_after_login').returns(false);
     });
