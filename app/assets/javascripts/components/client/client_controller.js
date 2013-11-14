@@ -153,6 +153,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
 
     if (!newSpace) {
       $location.path('/');
+      setSpace();
       return;
     }
     if (newSpace != scope.spaceContext.space) {
