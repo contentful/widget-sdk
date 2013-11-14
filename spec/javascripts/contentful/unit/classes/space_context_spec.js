@@ -229,7 +229,7 @@ describe('SpaceContext class with a space', function () {
           
           it('should not be found by publishedTypeForEntry anymore', function () {
             var entry = {
-              getContentTypeId: sinon.stub.returns('contentType1')
+              getContentTypeId: sinon.stub().returns('contentType1')
             };
             expect(spaceContext.publishedTypeForEntry(entry)).toBe(undefined);
             expect(_.contains(spaceContext.publishedContentTypes, contentType1)).toBe(false);
