@@ -1,0 +1,2 @@
+%p(ng-show="message") {{message}}
+%button.default-button.primary-button(ng-show="actionMessage" ng-click="action()") {{actionMessage}}

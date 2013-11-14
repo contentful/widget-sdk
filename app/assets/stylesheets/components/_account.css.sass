@@ -1,5 +1,6 @@
 .account
   position: absolute
+  width: 100%
   right: 20px
   top: 0px
   height: $nav-bar-height
@@ -53,8 +54,6 @@
 
   #intercom
     display: none
-    width: 10%
-    float: left
     padding-right: 0
     padding-left: 0
     em
@@ -77,4 +76,29 @@
         position: relative
         top: -3px
 
+.navbar-loader
+  float: right
+  width: 50px
+  height: 50px
+  background: image-url('navbar-loader.gif') center no-repeat
 
+.cf-persistent-notification
+  float: right
+  margin-right: 10px
+  color: white
+  background-color: rgba($dark-red, 0.85)
+  padding: 0px 15px 5px
+  +border-radius(3px)
+  +border-top-radius(0px)
+  +box-shadow(rgba(0, 0, 0, 0.3) 2px 2px 3px 1px)
+  p, button
+    float: left
+    margin-bottom: 0px
+  p
+    line-height: 25px
+    margin-top: 6px
+    margin-right: 10px
+    vertical-align: middle
+  button
+    margin-top: 5px
+    padding: 3px 7px

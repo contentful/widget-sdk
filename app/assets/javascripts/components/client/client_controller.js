@@ -27,6 +27,56 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
 
   $scope.user = null;
 
+  function upgradeAction(){
+    $scope.goToProfile('subscription');
+  }
+
+  function trialWatcher() {
+    var user = $scope.user;
+    var space = $scope.spaceContext.space;
+    if(!user || !space) return;
+    var hours = null;
+    var timePeriod, message, tooltipMessage, action, actionMessage;
+    var isSpaceOwner = space.isOwner(user);
+    var subscription = space.data.subscription;
+
+    if(subscription.state == 'trial'){
+      hours = moment(subscription.trialPeriodEndsAt).diff(moment(), 'hours');
+      if(hours/24 <= 1){
+        timePeriod = hours +' hours';
+      } else {
+        timePeriod = Math.floor(hours/24) +' days';
+      }
+      message = 'Trial version';
+      tooltipMessage = 'This Space has '+timePeriod+' left.';
+    } else if(subscription.state == 'active' &&
+              !subscription.subscriptionPlan.paid &&
+              subscription.subscriptionPlan.kind == 'default'){
+      message = 'Paid plans';
+      tooltipMessage = 'Upgrade to a paid plan to activate all features.';
+    }
+
+
+    if(message || tooltipMessage || action && actionMessage){
+      if(isSpaceOwner){
+        actionMessage = 'Upgrade';
+        action = upgradeAction;
+      }
+
+      $scope.persistentNotification = {
+        message: message,
+        tooltipMessage: tooltipMessage,
+        action: action,
+        actionMessage: actionMessage
+      };
+    } else {
+      delete $scope.persistentNotification;
+    }
+  }
+
+  $scope.$watch('user', trialWatcher);
+  $scope.$watch('spaceContext.space', trialWatcher);
+
   $scope.clickedSpaceSwitcher = function () {
     analytics.track('Clicked Space-Switcher');
   };
