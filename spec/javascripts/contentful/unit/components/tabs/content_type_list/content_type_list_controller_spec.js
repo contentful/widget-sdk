@@ -177,16 +177,16 @@ describe('Content Type List Controller', function () {
       });
     });
 
-    describe('on inactive list', function () {
+    describe('on draft list', function () {
       beforeEach(function () {
         scope.tab = {
           params: {
-            list: 'inactive'
+            list: 'draft'
           }
         };
       });
 
-      it('should include unpublished contentTypes in "inactive" list', function () {
+      it('should include unpublished contentTypes in "draft" list', function () {
         var contentType = makeContentType({
           sys: {
             version: 5
@@ -195,7 +195,7 @@ describe('Content Type List Controller', function () {
         expect(scope.visibleInCurrentList(contentType)).toBe(true);
       });
 
-      it('should not include updated contentTypes in "inactive" list', function () {
+      it('should not include updated contentTypes in "draft" list', function () {
         var contentType = makeContentType({
           sys: {
             publishedVersion: 2,
@@ -205,7 +205,7 @@ describe('Content Type List Controller', function () {
         expect(scope.visibleInCurrentList(contentType)).toBe(false);
       });
 
-      it('should not include published contentTypes without updates in "inactive" list', function () {
+      it('should not include published contentTypes without updates in "draft" list', function () {
         var contentType = makeContentType({
           sys: {
             publishedVersion: 5,
