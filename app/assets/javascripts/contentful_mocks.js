@@ -1,6 +1,8 @@
 'use strict';
 
+
 var mocks = angular.module('contentful/mocks', []);
+
 
 mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
   var Client = contentfulClient;
@@ -210,3 +212,10 @@ mocks.provider('ShareJS', function () {
   };
 });
 
+mocks.provider('ReloadNotification', function () {
+  this.$get = function () {
+    return {
+      trigger: sinon.stub()
+    };
+  };
+});
