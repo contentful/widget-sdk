@@ -23,7 +23,8 @@ function ($injector , $window, environment, stringifySafe) {
 
   function getParams() {
     var route = getRoute();
-    return _.pick(route.params, 'spaceId', 'entryId', 'contentTypeId', 'apiKeyId');
+    var params = _.pick(route.params, 'spaceId', 'entryId', 'contentTypeId', 'apiKeyId');
+    return params;
   }
 
   function createOptions() {
@@ -37,7 +38,9 @@ function ($injector , $window, environment, stringifySafe) {
     options = _(options);
     options.merge({tags: {
       userId: $injector.get('authentication').getUser().sys.id,
-      git_revision: environment.settings.git_revision
+      git_revision: environment.settings.git_revision,
+      viewport: ''+window.innerWidth+'x'+window.innerHeight,
+      screensize: ''+screen.width+'x'+screen.height
     }});
     options.merge.apply(options, arguments);
     return options.value();
