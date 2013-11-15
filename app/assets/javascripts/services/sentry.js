@@ -7,10 +7,8 @@ function ($injector , $window, environment, stringifySafe) {
   function rand(length, current){
    current = current ? current : '';
 
-   return length ? rand( --length , "0123456789ABCDEFabcdef".charAt( Math.floor( Math.random() * 22 ) ) + current ) : current;
+   return length ? rand( --length , '0123456789ABCDEFabcdef'.charAt( Math.floor( Math.random() * 22 ) ) + current ) : current;
   }
-
-  var GET_MAX_LENGTH = 1800;
 
   function getRoute() { //avoiding circular dependency
     var routing = $injector.get('routing');
