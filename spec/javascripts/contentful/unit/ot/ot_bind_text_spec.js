@@ -64,21 +64,18 @@ describe('otBindText', function () {
   });
 
   describe('when mkPath fails', function () {
-    var trigger;
-
-    beforeEach(inject(function (ReloadNotification, ShareJS, $rootScope){
-      trigger = ReloadNotification.trigger;
+    it('should raise reload notification', inject(function (ShareJS, $rootScope, $log){
+      $log.assertEmpty();
       ShareJS.mkpath = sinon.stub().yieldsAsync('error');
       ShareJS.peek.withArgs(undefined, ['value']).returns(undefined);
       $rootScope.entity.value = null;
-    }));
 
-    it('should raise reload notification', function () {
       scope.$apply();
       elem.val('a').trigger('input');
       jasmine.Clock.tick(10);
-      expect(trigger.calledOnce).toBe(true);
-    });
+      expect($log.error.logs.length).toBe(1);
+      $log.reset();
+    }));
   });
 
 });

@@ -2,7 +2,7 @@
 
 var otModule = angular.module('contentful');
 
-otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacriticalMark) {
+otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacriticalMark, $log) {
   return {
     restrict: 'A',
     require: ['^otSubdoc', 'ngModel'],
@@ -115,7 +115,9 @@ otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacritic
             value: ''
           }, function(err) {
             if (err) {
-              throw new Error('makeAndAttach mkpath failed');
+              var message = 'makeAndAttach mkpath failed';
+              $log.error('makeAndAttach mkpath failed');
+              throw new Error(message);
             } else {
               unbindTextField = subdoc.attach_textarea(elm[0]);
             }
