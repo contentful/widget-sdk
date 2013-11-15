@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('tutorialExampledata', function ($q, $http, environment, $rootScope, $timeout, sampleEntries, sampleContentTypes, client) {
+angular.module('contentful').factory('tutorialExampledata', function ($q, environment, $rootScope, $timeout, sampleEntries, sampleContentTypes, client) {
   return {
     load: function () {
       var deferred = $q.defer();

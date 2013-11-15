@@ -14,15 +14,7 @@ angular.module('contentful').directive('cfProfileView', function($window, $rootS
 
       scope.$on('iframeMessage', function (event, messageEvent) {
         if (messageEvent.source !== $('iframe', elem)[0].contentWindow) return;
-        if(messageEvent.data.path){
-          pathChanged(messageEvent.data.path);
-        } else {
-          sentry.captureError('iframeMessage path is not defined', {
-            data: {
-              messageEvent: messageEvent
-            }
-          });
-        }
+        if (messageEvent.data.path) pathChanged(messageEvent.data.path);
       });
 
       function update(route, previous) {
