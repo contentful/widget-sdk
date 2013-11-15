@@ -2,6 +2,7 @@ angular.module('contentful/environment', []).constant('environment', {
   env: '<%= Rails.env %>',
   settings: <%= Contentful.ui_config.to_json %>
 }).config(function (environment) {
+  // for ZeroClipboard
   environment.settings.resourceUrlWhiteList = [
     'static.joistio.com:8888',
     'app.joistio.com:8888',
@@ -16,6 +17,7 @@ angular.module('contentful/environment', []).constant('environment', {
     'app.contentful.com',
     'contentful.com'
   ];
+  // for sceDelegateProvider
   environment.settings.resourceUrlWhiteListRegexp = [/(https?:)?\/\/([^:\/.?&;]*\.)?(staticflinkly-thriventures\.netdna-ssl\.com|flinkly.com|joistio.com|contentful.com)(:\d+)?\/.*/, 'self' ];
 
   environment.settings.dataLoggerUrl = 'https://cf-track-107d49294b11c1.appspot.com/track/';
@@ -23,8 +25,6 @@ angular.module('contentful/environment', []).constant('environment', {
   if (window.XDomainRequest) {
     environment.settings.api_host = environment.settings.app_host + '/api';
     environment.settings.ot_host  = environment.settings.app_host + '/ot';
-    // for sceDelegateProvider
-    // for ZeroClipboard
     //environment.settings.api_host = 'app.joistio.com:8888' + '/api';
     //environment.settings.ot_host  = 'app.joistio.com:8888' + '/ot';
   }
