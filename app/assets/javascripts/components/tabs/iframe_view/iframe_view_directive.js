@@ -20,9 +20,9 @@ angular.module('contentful').directive('iframeView', function($window, $rootScop
         scope.url = scope.tab.params.url;
       }
 
-      scope.$on('iframeMessage', function (event, messageEvent) {
-        if (messageEvent.source !== $('iframe', elem)[0].contentWindow) return;
-        if (pathChanged && messageEvent.data.path) pathChanged(messageEvent.data.path);
+      scope.$on('iframeMessage', function (event, data, iframe) {
+        if (iframe !== elem.find('iframe')[0]) return;
+        if (pathChanged && data.path) pathChanged(data.path);
       });
     }
   };

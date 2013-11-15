@@ -175,39 +175,38 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     window.open(authentication.supportUrl());
   };
 
-  $scope.$on('iframeMessage', function (event, messageEvent) {
-    var message = messageEvent.data;
-    if (message.type === 'space' && message.action === 'update') {
-      _.extend($scope.spaceContext.space.data, message.resource);
+  $scope.$on('iframeMessage', function (event, data) {
+    if (data.type === 'space' && data.action === 'update') {
+      _.extend($scope.spaceContext.space.data, data.resource);
       //TODO this is pobably much too simplified, better look up correct
       //space and check if the method of updating is correct
-    } else if (message.type === 'UserCancellation' && message.action === 'create') {
+    } else if (data.type === 'UserCancellation' && data.action === 'create') {
       authentication.goodbye();
-    } else if (message.type === 'user' && message.action === 'update') {
-      _.extend($scope.user, message.resource);
+    } else if (data.type === 'user' && data.action === 'update') {
+      _.extend($scope.user, data.resource);
     /*
      * This does not work yet because when you mix relational databases and
      * object graphs you're gonna have a bad time, mkay?
      *
-    } else if (message.action !== 'delete') {
-      authentication.updateTokenLookup(message.resource);
+    } else if (data.action !== 'delete') {
+      authentication.updateTokenLookup(data.resource);
       $scope.user = authentication.tokenLookup.sys.createdBy;
       $scope.updateSpaces(authentication.tokenLookup.spaces);
-    } else if (message.token) {
+    } else if (data.token) {
      */
-      authentication.setTokenLookup(message.token);
+      authentication.setTokenLookup(data.token);
       $scope.user = authentication.tokenLookup.sys.createdBy;
       $scope.updateSpaces(authentication.tokenLookup.spaces);
-    } else if (message.type === 'flash') {
-      var level = message.resource.type;
+    } else if (data.type === 'flash') {
+      var level = data.resource.type;
       if (!level.match(/info|error/)) level = 'info';
-      notification[level](message.resource.message);
-    } else if (message.type === 'location') {
+      notification[level](data.resource.message);
+    } else if (data.type === 'location') {
       // ignore
     } else {
       $scope.performTokenLookup();
     }
-    // TODO Better handle deletes (should also work somehow without message.token)
+    // TODO Better handle deletes (should also work somehow without data.token)
   });
 
   $scope.clickedProfileButton = function () {

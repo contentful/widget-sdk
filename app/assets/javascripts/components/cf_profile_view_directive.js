@@ -12,9 +12,9 @@ angular.module('contentful').directive('cfProfileView', function($window, $rootS
         update(route, previous);
       });
 
-      scope.$on('iframeMessage', function (event, messageEvent) {
-        if (messageEvent.source !== $('iframe', elem)[0].contentWindow) return;
-        if (messageEvent.data.path) pathChanged(messageEvent.data.path);
+      scope.$on('iframeMessage', function (event, data, iframe) {
+        if (iframe !== elem.find('iframe')[0]) return;
+        if (data.path) pathChanged(data.path);
       });
 
       function update(route, previous) {
