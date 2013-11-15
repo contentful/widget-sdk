@@ -8,8 +8,8 @@
   "license": "BSD",
   "dependencies": {
     "contentful-client": "git+ssh://git@github.com:contentful/client.git#v1.7.0",
-    "worf": "git+ssh://git@github.com:contentful/worf.git#v2.0.0",
-    "validation": "git+ssh://git@github.com:contentful/validation#v1.8.2",
+    "worf": "git+ssh://git@github.com:contentful/worf.git#v2.0.1",
+    "validation": "git+ssh://git@github.com:contentful/validation#v1.8.3",
     "contentful-mimetype": "git+ssh://git@github.com:contentful/mimetype#v0.4.6",
     "share": "git+ssh://git@github.com:contentful/ShareJS.git",
     "is-diacritical-mark": "1.0.1",
