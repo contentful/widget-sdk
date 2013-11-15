@@ -2,7 +2,7 @@
 
 var otModule = angular.module('contentful');
 
-otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacriticalMark, ReloadNotification, sentry) {
+otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacriticalMark) {
   return {
     restrict: 'A',
     require: ['^otSubdoc', 'ngModel'],
@@ -115,9 +115,7 @@ otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacritic
             value: ''
           }, function(err) {
             if (err) {
-              sentry.captureError('makeAndAttach mkpath failed');
-              ReloadNotification.trigger('The editor failed to initialize the text field. To reconnect to the server, the application needs to reload.');
-              // TODO Later just raise exception, when exceptionHandler raises Reloadnotification
+              throw new Error('makeAndAttach mkpath failed');
             } else {
               unbindTextField = subdoc.attach_textarea(elm[0]);
             }
