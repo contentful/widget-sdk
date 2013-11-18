@@ -18,7 +18,7 @@ feature 'Routing', js: true, sauce: true do
       page.should have_text 'USER DETAILS'
     end
 
-    visit "#{app_host}/profile/billing_address/edit"
+    visit "#{app_host}/profile/billing/billing_address/edit"
     iframe = find('iframe')
     within_frame iframe do
       page.should have_text 'Postal code'
