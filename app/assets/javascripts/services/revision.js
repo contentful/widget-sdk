@@ -1,7 +1,7 @@
 'use strict';
 angular.module('contentful').factory('revision', function RevisionFactory($rootScope, $http, $q, environment, sentry) {
   function hideManifestErrors(response, getHeader) {
-    if(getHeader('Content-Type') === 'application/json'){
+    if(getHeader('Content-Type') === 'application/json' && _.isString(response)){
       try {
         JSON.parse(response);
         return response;
@@ -13,6 +13,7 @@ angular.module('contentful').factory('revision', function RevisionFactory($rootS
         });
       }
     }
+    return response;
   }
 
   return {
