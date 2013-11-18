@@ -86,13 +86,15 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   $scope.$watch('spaceContext.space', trialWatcher);
 
   function newVersionCheck() {
-    revision.hasNewVersion().catch(function () {
-      $scope.persistentNotification = {
-        message: 'New application version',
-        tooltipMessage: 'Please reload to get a new version of the application',
-        action: ReloadNotification.triggerImmediateReload,
-        actionMessage: 'Reload'
-      };
+    revision.hasNewVersion().catch(function (err) {
+      if(err === 'APP_REVISION_CHANGED'){
+        $scope.persistentNotification = {
+          message: 'New application version',
+          tooltipMessage: 'Please reload to get a new version of the application',
+          action: ReloadNotification.triggerImmediateReload,
+          actionMessage: 'Reload'
+        };
+      }
     });
   }
 
