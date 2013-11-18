@@ -8,7 +8,7 @@ angular.module('contentful').directive('iframeView', function($window, $rootScop
 
       if (scope.tab.params.mode === 'spaceSettings') { //Special mode for spaceSettings
         pathSuffix = scope.tab.params.pathSuffix || 'edit';
-        scope.url = authentication.spaceSettingsUrl(scope.spaceContext.space.getId()) + '/' + pathSuffix + '?access_token='+authentication.token;
+        scope.iframeSrc = authentication.spaceSettingsUrl(scope.spaceContext.space.getId()) + '/' + pathSuffix + '?access_token='+authentication.token;
         pathChanged = function (path) {
           var match = path.match(/settings\/spaces\/\w+\/(.*$)/);
           if (match) {
@@ -17,7 +17,7 @@ angular.module('contentful').directive('iframeView', function($window, $rootScop
           }
         };
       } else {
-        scope.url = scope.tab.params.url;
+        scope.iframeSrc = scope.tab.params.url;
       }
 
       scope.$on('iframeMessage', function (event, data, iframe) {
