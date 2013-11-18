@@ -85,20 +85,27 @@
 .cf-persistent-notification
   float: right
   margin-right: 10px
+  margin-top: 5px
   color: white
-  background-color: rgba($dark-red, 0.85)
-  padding: 0px 15px 5px
+  background-color: darken($dark-gray, 5%)
+  padding: 0px 11px 5px
   +border-radius(3px)
-  +border-top-radius(0px)
-  +box-shadow(rgba(0, 0, 0, 0.3) 2px 2px 3px 1px)
+  $bottom-white-shadow: rgba(255,255,255,0.2) 0px 1px
+  $top-black-shadow: rgba(0,0,0,0.5) 0px -1px
+  $left-black-shadow: rgba(0,0,0,0.3) 1px 0px 1px inset
+  +box-shadow($bottom-white-shadow, $top-black-shadow, $left-black-shadow)
+  strong
+    color: white
   p, button
     float: left
     margin-bottom: 0px
   p
     line-height: 25px
-    margin-top: 6px
+    margin-top: 4px
     margin-right: 10px
     vertical-align: middle
   button
-    margin-top: 5px
+    margin-top: 3px
     padding: 3px 7px
+  .tooltip.in
+    opacity: 1

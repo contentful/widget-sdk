@@ -81,11 +81,11 @@ describe('Client controller', function () {
       });
 
       it('shows a message', function () {
-        expect(scope.persistentNotification.message).toBe('Trial version');
+        expect(scope.persistentNotification.message).toBe('<strong>20</strong> hours left in trial');
       });
 
       it('shows a tooltip message', function () {
-        expect(scope.persistentNotification.tooltipMessage).toBe('This Space has 20 hours left.');
+        expect(scope.persistentNotification.tooltipMessage).toBe('This Space is in trial mode and you can test all features for 20 more hours. Enter your billing information to activate your subscription.');
       });
 
       it('shows a tooltip message for days', function () {
@@ -93,7 +93,7 @@ describe('Client controller', function () {
         scope.user = {};
         scope.$apply();
         jasmine.Clock.tick(500);
-        expect(scope.persistentNotification.tooltipMessage).toBe('This Space has 3 days left.');
+        expect(scope.persistentNotification.tooltipMessage).toBe('This Space is in trial mode and you can test all features for 3 more days. Enter your billing information to activate your subscription.');
       });
 
       it('shows an action message', function () {
@@ -141,14 +141,14 @@ describe('Client controller', function () {
       });
 
       it('shows a message', function () {
-        expect(scope.persistentNotification.message).toBe('Paid plans');
+        expect(scope.persistentNotification.message).toBe('Limited trial version');
       });
 
       it('shows a tooltip message', function () {
         scope.user = {};
         scope.$apply();
         jasmine.Clock.tick(500);
-        expect(scope.persistentNotification.tooltipMessage).toBe('Upgrade to a paid plan to activate all features.');
+        expect(scope.persistentNotification.tooltipMessage).toBe('This Space is on our limited trial plan. Upgrade your subscription to get access to all features.');
       });
 
       it('shows an action message', function () {

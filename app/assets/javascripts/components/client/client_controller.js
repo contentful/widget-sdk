@@ -31,6 +31,12 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     $scope.goToProfile('subscription');
   }
 
+  function timeTpl(str, timePeriod) {
+    return str.
+      replace(/%length/, timePeriod.length).
+      replace(/%unit/, timePeriod.unit);
+  }
+
   function trialWatcher() {
     var user = $scope.user;
     var space = $scope.spaceContext.space;
@@ -43,17 +49,19 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     if(subscription.state == 'trial'){
       hours = moment(subscription.trialPeriodEndsAt).diff(moment(), 'hours');
       if(hours/24 <= 1){
-        timePeriod = hours +' hours';
+        timePeriod = {length: hours, unit: 'hours'};
       } else {
-        timePeriod = Math.floor(hours/24) +' days';
+        timePeriod = {length: Math.floor(hours/24), unit: 'days'};
       }
-      message = 'Trial version';
-      tooltipMessage = 'This Space has '+timePeriod+' left.';
+      message = timeTpl('<strong>%length</strong> %unit left in trial', timePeriod);
+      tooltipMessage = timeTpl('This Space is in trial mode and you can test all features for '+
+                       '%length more %unit. Enter your billing information to activate your subscription.', timePeriod);
+
     } else if(subscription.state == 'active' &&
               !subscription.subscriptionPlan.paid &&
               subscription.subscriptionPlan.kind == 'default'){
-      message = 'Paid plans';
-      tooltipMessage = 'Upgrade to a paid plan to activate all features.';
+      message = 'Limited trial version';
+      tooltipMessage = 'This Space is on our limited trial plan. Upgrade your subscription to get access to all features.';
     }
 
 

@@ -1,4 +1,4 @@
-angular.module('contentful').directive('cfPersistentNotification', function () {
+angular.module('contentful').directive('cfPersistentNotification', function ($sce) {
   'use strict';
 
   return {
@@ -11,14 +11,16 @@ angular.module('contentful').directive('cfPersistentNotification', function () {
       scope.$watch('persistentNotification', function (params) {
         if(!params) return;
         _.each(params, function (val, key) {
-          scope[key] = val;
+          if(key === 'message') scope[key] = $sce.trustAsHtml(val);
+          else scope[key] = val;
         });
 
         if(scope.tooltipMessage){
           elem.tooltip('destroy');
           elem.tooltip({
             title: scope.tooltipMessage,
-            placement: 'left'
+            placement: 'bottom',
+            container: '.cf-persistent-notification'
           });
         }
       });
