@@ -1,24 +1,21 @@
-/*
 'use strict';
 
-describe('App version service', function () {
-  var appVersion;
-  var stub, successStub;
+xdescribe('App version service', function () {
+  var revision;
+  var $httpBackend, $rootScope;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      successStub = sinon.stub();
-      $provide.value('$http', {
-        success: successStub
-      });
-      $provide.value('environment', {
+      $provide.constant('environment', {
         settings: {
           git_revision: 'git_revision'
         }
       });
     });
-    inject(function (_appVersion_) {
-      appVersion = _appVersion_;
+    inject(function (_revision_, _$httpBackend_, _$rootScope_) {
+      $httpBackend = _$httpBackend_;
+      $rootScope = _$rootScope_;
+      revision = _revision_;
     });
   });
 
@@ -27,24 +24,23 @@ describe('App version service', function () {
   }));
 
   it('has a new version', function () {
-    appVersion.hasNewVersion().then(stub);
-    successStub.callsArgWith(0, {git_revision: 'git_revision'});
-    expect(stub.called).toBe(true);
+    //var stub = sinon.stub();
+    $rootScope.$apply(function () {
+      $httpBackend.when('GET', /manifest\.json/, {data: {git_revision: 'new_git_revision'}});
+      revision.hasNewVersion();
+    });
+    //expect(stub.called).toBe(true);
+    //$httpBackend.flush();
   });
 
   xit('has no new version', function () {
-    appVersion.hasNewVersion().catch(stub);
-    successStub.callsArgWith(0, {git_revision: 'different_git_revision'});
-    expect(stub.called).toBe(true);
-  });
-
-  xit('request fails', function () {
-    var errorStub = sinon.stub();
-    appVersion.hasNewVersion().catch(stub);
-    successStub.returns({error: errorStub});
-    errorStub.callsArg(0);
-    expect(stub.called).toBe(true);
+    var successStub = sinon.stub();
+    var failStub = sinon.stub();
+    $httpBackend.whenGET('/manifest.json').respond({data: {git_revision: 'git_revision'}});
+    revision.hasNewVersion().then(successStub).catch(failStub);
+    expect(successStub.called).toBe(false);
+    expect(failStub.called).toBe(true);
+    //$httpBackend.flush();
   });
 
 });
-*/

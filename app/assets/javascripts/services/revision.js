@@ -1,27 +1,13 @@
 'use strict';
-/*
-angular.module('contentful').factory('revision', function RevisionFactory() {
-  return {};
-  /*
+angular.module('contentful').factory('revision', function RevisionFactory($rootScope, $http, $q, environment) {
   return {
     hasNewVersion: function() {
-      var deferred = $q.defer();
-
-      $http.get('/manifest.json').
-      success(function (data) {
-        if(data.git_revision !== environment.settings.git_revision)
-          deferred.resolve();
-        else
-          deferred.reject();
-      }).
-      error(function () {
-        deferred.reject();
+      return $http.get('/manifest.json?cfv='+Math.ceil(Math.random()*10000000)).
+      then(function (response) {
+        if(response.data.git_revision !== environment.settings.git_revision){
+          return $q.reject('App revision has changed');
+        }
       });
-
-      return deferred.promise;
     }
   };
-});
-*/
-angular.module('contentful').factory('revision', function(){
 });
