@@ -15,6 +15,7 @@ angular.module('contentful').directive('cfPersistentNotification', function () {
         });
 
         if(scope.tooltipMessage){
+          elem.tooltip('destroy');
           elem.tooltip({
             title: scope.tooltipMessage,
             placement: 'left'

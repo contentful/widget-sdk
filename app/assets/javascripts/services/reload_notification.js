@@ -10,6 +10,10 @@ angular.module('contentful').factory('ReloadNotification', function  ReloadNotif
   }
 
   return {
+    triggerImmediateReload: function () {
+      reloadWithCacheBuster();
+    },
+
     trigger: function(message) {
       if (!message) {
         message = 'The application has encountered a problem and needs to reload.';

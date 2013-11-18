@@ -3,7 +3,7 @@
 angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     $scope, client, SpaceContext, authentication, notification, analytics,
     routing, authorization, tutorial, modalDialog, presence, $location,
-    ReloadNotification) {
+    revision, ReloadNotification) {
 
   $scope.spaces = null;
   $scope.spaceContext = new SpaceContext();
@@ -76,6 +76,17 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
 
   $scope.$watch('user', trialWatcher);
   $scope.$watch('spaceContext.space', trialWatcher);
+
+  function newVersionCheck() {
+    revision.hasNewVersion().catch(function () {
+      $scope.persistentNotification = {
+        message: 'New application version',
+        tooltipMessage: 'Please reload to get a new version of the application',
+        action: ReloadNotification.triggerImmediateReload,
+        actionMessage: 'Reload'
+      };
+    });
+  }
 
   $scope.clickedSpaceSwitcher = function () {
     analytics.track('Clicked Space-Switcher');
@@ -268,8 +279,12 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
         notification.error('Token Lookup failed. Logging out.');
         authentication.logout();
       });
+
+    setTimeout(newVersionCheck, 5000);
+
     setInterval(function () {
       if (presence.isActive()) {
+        newVersionCheck();
         $scope.performTokenLookup().
         catch(function () {
           ReloadNotification.trigger('Your authentication data needs to be refreshed. Please try logging in again.');
