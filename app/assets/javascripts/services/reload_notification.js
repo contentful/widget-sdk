@@ -6,6 +6,7 @@ angular.module('contentful').factory('ReloadNotification', function  ReloadNotif
     var search = $location.search();
     search.cfv = Math.ceil(Math.random()*10000000);
     $location.search(search);
+    window.location = $location.url();
   }
 
   return {
