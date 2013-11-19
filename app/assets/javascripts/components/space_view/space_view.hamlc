@@ -1,4 +1,4 @@
-%nav.nav-bar
+%nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
   .logo(ng-click="logoClicked()")
     .cf-logo(cf-custom-logo)
   %ul(ng-show="spaceContext.space")
@@ -10,39 +10,49 @@
         ng-click="goToView('content-type-list')"
         ng-show="can('read', 'ContentType')"
         data-view-type="content-type-list"
+        tooltip="Content Model"
+        tooltip-placement="bottom"
         tabindex="0")
       %i.ss-database
-      Content Model
+      %span Content Model
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'entries',
                   'section-index': spaceContext.tabList.currentViewType() == 'entry-list'}"
         ng-click="goToView('entry-list')"
         data-view-type="entry-list"
+        tooltip="Entries"
+        tooltip-placement="bottom"
         tabindex="0")
       %i.ss-file
-      Entries
+      %span Entries
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'assets',
                  'section-index': spaceContext.tabList.currentViewType() == 'asset-list'}"
         ng-click="goToView('asset-list')"
         data-view-type="asset-list"
+        tooltip="Assets"
+        tooltip-placement="bottom"
         tabindex="0")
       %i.ss-attach
-      Assets
+      %span Assets
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'apiKeys',
                    'section-index': spaceContext.tabList.currentViewType() == 'api-key-list'}"
         ng-click="goToView('api-key-list')"
         ng-show="can('read', 'ApiKey')"
         data-view-type="api-key-list"
+        tooltip="Content Delivery"
+        tooltip-placement="bottom"
         tabindex="0")
       %i.ss-fork
-      Content Delivery
+      %span Content Delivery
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'spaceSettings',
                   'section-index': spaceContext.tabList.currentSection() == 'spaceSettings'}"
         ng-click="goToView('space-settings')"
         ng-show="can('update', 'Settings')"
         data-view-type="space-settings"
+        tooltip="Space Settings"
+        tooltip-placement="bottom"
         tabindex="0")
       %i.ss-settings
-      Space Settings
+      %span Space Settings
 %nav.tab-list(ng-show="spaceContext.space" ng-class="{hidden: hideTabBar()}")
   %ul
     %li.tab(ng-repeat="tabItem in spaceContext.tabList.items"
