@@ -118,6 +118,10 @@
       @extend .default-button
       @extend .primary-button
 
+  .in-form-margins
+    margin-left: 17%
+    width: 57%
+
 // Different style fixes
 .tab-iframe
   // Make buttons look like buttons
@@ -210,4 +214,113 @@
     +transition(box-shadow 0.1s ease-in-out)
   .auth_provider:hover
     +box-shadow(0 1px $identity-padding/2 $light-gray)
+
+// Subscription plan pages
+
+.current-plan
+  +pie-clearfix
+  margin-bottom: 75px
+  .current-plan-name,
+  .current-plan-price
+    width: 50%
+    +pie-clearfix
+  .current-plan-name
+    float: left
+  .current-plan-price
+    float: right
+
+
+.plan-header
+  font-size: 25px
+  font-weight: bold
+  line-height: 30px
+  color: $dark-gray
+  &.muted
+    color: inherit
+    font-weight: normal
+
+.plan-subscript-header
+  margin-top: 1em
+  font-size: 10px
+
+.available-plans
+  border-top: 1px solid $dark-rule
+.subscription-plan
+  width: 100%
+  border-bottom: 1px solid $dark-rule
+  //outline: 1px blue dotted
+  //height: 50px
+  line-height: 50px
+  +pie-clearfix
+  .number
+    color: $dark-gray
+    font-size: 14px
+  .col
+    float: left
+    //outline: 1px red dashed
+  .name
+    padding-left: 20px
+    font-size: 20px
+    font-weight: bold
+    width: 25%
+  .spaces,
+  .users,
+  .entries
+    text-align: right
+    width: 10%
+  .price
+    text-align: right
+    width: 25%
+  .aligned-number
+    font-size: 20px
+    font-weight: 600
+    display: inline-block
+    margin-right: 1em
+  .actions
+    text-align: right
+    padding-right: 20px
+    .default-button
+      line-height: 12px
+    width: 20%
+.plan-details
+  display: none
+
+.plan-cancel-account
+  margin-top: 40px
+  padding-right: 20px
+  text-align: right
+  a
+    color: darken($red, 30%)
+
+// Billing page
+
+.subscription-progress-bar
+  width: 100%
+  line-height: 50px
+  margin: 0 0 20px 0
+  padding: 0 20px
+  +pie-clearfix
+  border-bottom: 1px solid $dark-rule
+  li
+    display: block
+    width: 25%
+    float: left
+    text-align: center
+    margin: 0
+  .active
+    background-color: $gray-background
+    font-weight: bold
+
+.sidebar
+  position: absolute
+  margin-top: 20px
+  right: 40px
+  width: 17%
+  .plan,
+  .frequency,
+  .setup,
+  .price
+    margin-bottom: 20px
+  a
+    font-size: smaller
 
