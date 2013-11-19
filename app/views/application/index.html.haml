@@ -44,9 +44,9 @@
               {{space.data.name}}
             %li.highlight(ng-show="canCreateSpace(user)" ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close="")
               + Create Space
+      .cf-persistent-notification(ng-show="persistentNotification")
       %a#intercom(href="#" tabindex="-1")
       .navbar-loader
-      .cf-persistent-notification(ng-show="persistentNotification")
     %space-view(ng-controller="TabViewCtrl")
     .create-space-advice(ng-show="spaces.length == 0")
       %i.ss-folder.giant-icon
