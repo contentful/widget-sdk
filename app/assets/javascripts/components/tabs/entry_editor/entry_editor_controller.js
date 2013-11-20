@@ -100,7 +100,16 @@ angular.module('contentful')
             }
           });
         }
-        acc.push(inherit(field, locales));
+        var updatedField = inherit(field, locales);
+        if(!updatedField){
+          sentry.captureError('Failed to update field', {
+            data: {
+              field: field,
+              locales: locales
+            }
+          });
+        }
+        acc.push(updatedField);
       }
       return acc;
     }, []);
@@ -126,8 +135,7 @@ angular.module('contentful')
       return field.localized;
     });
   });
-  
-  // TODO move watcher upwards, before the updateFields
+
   $scope.$watch('validationResult.errors', function (errors) {
     var et = $scope.spaceContext.publishedTypeForEntry($scope.entry);
     errorPaths = {};
