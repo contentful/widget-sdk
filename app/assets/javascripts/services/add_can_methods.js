@@ -10,44 +10,39 @@ angular.module('contentful').factory('addCanMethods',
 
         var permissionMethods = {
           canDuplicate: function () {
-            return can(
-              'create',
+            return !!(entityType && can('create',
               entityType[0].toUpperCase() + entityType.substr(1, entityType.length)
-            );
+            ));
           },
 
           canDelete: function () {
-            return entity.canDelete() && can('delete', entity.data);
+            return !!(entity.canDelete() && can('delete', entity.data));
           },
 
           canArchive: function () {
-            return entity.canArchive() && can('archive', entity.data);
+            return !!(entity.canArchive() && can('archive', entity.data));
           },
 
           canUnarchive: function () {
-            return entity.canUnarchive() && can('unarchive', entity.data);
+            return !!(entity.canUnarchive() && can('unarchive', entity.data));
           },
 
           canUnpublish: function () {
-            return entity.canUnpublish() && can('unpublish', entity.data);
+            return !!(entity.canUnpublish() && can('unpublish', entity.data));
           },
 
           canPublish: function() {
-            return entity.canPublish() && can('publish', entity.data);
+            return !!(entity.canPublish() && can('publish', entity.data));
           }
         };
 
         for(var method in permissionMethods){
-          if(method in methodOverrides){
-            scope[method] = methodOverrides[method];
-          } else {
-            scope[method] = permissionMethods[method];
-          }
+          scope[method] = (method in methodOverrides) ? methodOverrides[method] : scope[method] = permissionMethods[method];
         }
       };
     }
 
-    return function (scope, entityType, methodOverrides) {
+    return function (scope, entityType/*, methodOverrides*/) {
       var addActionPermissions = makePermissionAdder.apply(null, arguments);
       scope.$watch(entityType, addActionPermissions);
     };
