@@ -17,6 +17,10 @@
 .settings-panel
   @extend .link-list
 
+// Adjust base font size
+.tab-iframe
+  font-size: 14px
+
 // Adjust content padding
 .tab-iframe
   .left-nav
@@ -122,6 +126,17 @@
     margin-left: 17%
     width: 57%
 
+  .actions-with-background,
+  fieldset.actions-with-background
+    background-color: $gray-background
+    border-bottom: 1px solid $dark-rule
+    ol
+      float: left
+
+  .actions-hint
+    margin: 0 1em
+    font-size: 12px
+
 // Different style fixes
 .tab-iframe
   // Make buttons look like buttons
@@ -221,10 +236,12 @@
 
 // Subscription plan pages
 
+$subscription-yellow: #fffeec
+
 .current-plan
   +pie-clearfix
   margin-bottom: 3em
-  background-color: #fffeec
+  background-color: $subscription-yellow
   padding: 20px
   .current-plan-name,
   .current-plan-price
@@ -253,10 +270,12 @@
 
 .plan-superscript-header
   text-transform: uppercase
+  font-size: 90%
 .plan-subscript-header
   margin-top: .5em
   color: $medium-dark-gray
   font-weight: bold
+  font-size: 90%
 
 .billing-frequency
   margin: auto
@@ -296,6 +315,7 @@
     padding-right: 20px
     .default-button
       width: 100%
+      max-width: 150px
       text-align: center
       line-height: 12px
     .ss-help,
@@ -369,31 +389,53 @@
 
 .subscription-progress-bar
   width: 100%
-  line-height: 50px
+  line-height: 40px
   margin: 0 0 20px 0
   padding: 0 20px
   +pie-clearfix
   border-bottom: 1px solid $dark-rule
+  text-transform: uppercase
+  font-size: 14px
   li
     display: block
     width: 25%
     float: left
     text-align: center
     margin: 0
+  .ss-check
+    color: $green
+    padding-right: .5em
+    position: relative
+    top: 2px
   .active
-    background-color: $gray-background
+    color: $dark-gray
     font-weight: bold
+    background-color: lighten($gray-background, 2%)
+
+.form-table
+  width: 17% + 57%
+  tr
+    line-height: 35px
+    height: 35px
+  th
+    width: (17% / (17 + 57) * 100)
+    text-align: right
+    padding-right: 12px
+    font-weight: normal
+  td
+    font-weight: bold
+    padding-left: 12px
 
 .sidebar
+  background-color: $subscription-yellow
   position: absolute
-  margin-top: 20px
   right: 40px
-  width: 17%
-  .plan,
-  .frequency,
-  .setup,
-  .price
-    margin-bottom: 20px
+  padding: 0 15px
+  width: 22%
+  .sidebar-section
+    padding: 15px 0
+  .sidebar-separator
+    border-top: 1px solid $dark-rule
   a
     font-size: smaller
 
@@ -401,4 +443,45 @@
   text-align: right
   width: 57%
   margin-left: 17%
-  margin-top: -36px
+  margin-top: -32px
+
+// Done page
+
+.done-columns
+  +pie-clearfix
+.done-left-column
+  float: left
+  width: 17%
+  padding-left: 20px
+.done-main-column
+  float: left
+  h1
+    margin-left: 20px
+
+.done-icon
+  background-color: $green
+  width: 80px
+  height: 80px
+  +border-radius(40px)
+  position: relative
+  i
+    position: absolute
+    top: 35px
+    left: 19px
+    color: white
+    font-size: 46px
+.done-plan-info
+  margin: 1em 0
+  font-size: 1.5em
+  font-weight: bold
+  padding-left: 20px
+.done-buttons.formtastic
+  clear: both
+  margin-top: 6em
+.billing-info-box
+  border: 1px solid $dark-rule
+  border-style: solid none
+  background-color: $subscription-yellow
+  padding: 10px
+  p
+    margin: 10px
