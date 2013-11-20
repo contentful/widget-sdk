@@ -145,6 +145,12 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
         return contentType;
       },
 
+      getContentType: function (contentTypeId) {
+        return _.find(this.contentTypes, function (contentType) {
+          return contentType.getId() === contentTypeId;
+        });
+      },
+
       localizedField: function(entity, path, locale) {
         var getField = $parse(path);
         var field = getField(entity);
