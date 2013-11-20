@@ -145,7 +145,7 @@ a.base-button
   +gradient($gray-background, darken($gray-background, 4%))
   +box-shadow(0 1px 1px rgba(255,255,255,0.8) inset, 0 2px 1px rgba(0,0,0,0.05)) 
   &:active,
-  &.active
+  &.active,
   &:hover
     +gradient($gray-background, darken($gray-background, 2%))
   &:active,
@@ -158,6 +158,26 @@ a.base-button
     pointer: default
     &:active
       top: 0px
+
+.toggle-button-set
+  +flexbox
+
+.toggle-button
+  +flex(1)
+  +border-radius(0)
+  &:first-child
+    +border-radius(3px 0 0 3px)
+  &:last-child
+    +border-radius(0 3px 3px 0)
+  cursor: pointer
+  margin: 0
+  &:active,
+  &.active
+    top: 0
+    +box-shadow(0 2px 2px darken($gray-background, 10%) inset)
+    cursor: default
+  &:focus
+    outline: none !important
 
 .flat-button
   @extend .base-button

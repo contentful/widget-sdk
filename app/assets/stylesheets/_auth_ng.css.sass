@@ -223,71 +223,140 @@
 
 .current-plan
   +pie-clearfix
-  margin-bottom: 75px
+  margin-bottom: 3em
+  background-color: #fffeec
+  padding: 20px
   .current-plan-name,
   .current-plan-price
     width: 50%
     +pie-clearfix
   .current-plan-name
     float: left
+    padding-right: 20px
   .current-plan-price
     float: right
-
+    padding-left: 20px
+    border-left: 1px solid $dark-rule
 
 .plan-header
   font-size: 25px
   font-weight: bold
   line-height: 30px
-  color: $dark-gray
+  height: 30px
+  color: $medium-dark-gray
   &.muted
     color: inherit
     font-weight: normal
 
+.plan-header-month
+  font-size: 14px
+
+.plan-superscript-header
+  text-transform: uppercase
 .plan-subscript-header
-  margin-top: 1em
-  font-size: 10px
+  margin-top: .5em
+  color: $medium-dark-gray
+  font-weight: bold
+
+.billing-frequency
+  margin: auto
+  width: 400px
+  margin-bottom: 2em
 
 .available-plans
   border-top: 1px solid $dark-rule
 .subscription-plan
   width: 100%
   border-bottom: 1px solid $dark-rule
+  padding: 15px 0 0 0
   //outline: 1px blue dotted
   //height: 50px
-  line-height: 50px
   +pie-clearfix
-  .number
-    color: $dark-gray
-    font-size: 14px
   .col
     float: left
     //outline: 1px red dashed
   .name
     padding-left: 20px
-    font-size: 20px
-    font-weight: bold
     width: 25%
   .spaces,
   .users,
   .entries
-    text-align: right
+    text-align: center
     width: 10%
   .price
-    text-align: right
+    text-align: center
     width: 25%
+    color: $blue
   .aligned-number
-    font-size: 20px
-    font-weight: 600
-    display: inline-block
-    margin-right: 1em
+    display: inline
   .actions
+    width: 20%
     text-align: right
+    padding-top: 10px
     padding-right: 20px
     .default-button
+      width: 100%
+      text-align: center
       line-height: 12px
-    width: 20%
+    .ss-help,
+    .ss-info
+      position: relative
+      top: 2px
+
+.plan-problem
+  font-style: italic
+.plan-big-row
+  line-height: 30px
+  font-size: 20px
+  font-weight: bold
+  color: $medium-dark-gray
+  .price &
+    color: $blue
+  .ss-info
+    font-size: 14px
+    color: $light-gray
+.plan-medium-row
+  line-height: 14px
+  font-size: 14px
+.plan-small-row
+  line-height: 14px
+  font-size: 12px
+  color: $blue
 .plan-details
-  display: none
+  clear: both
+  padding-top: 15px
+  .details-content
+    background-color: $gray-background
+    padding: 20px 20px 0
+    margin: 0 20px 15px
+    text-align: center
+  .details-block
+    display: inline-block
+    width: 19%
+    height: 60px
+    text-align: center
+    //outline: 1px dashed red
+    margin: 0
+    vertical-align: bottom
+  .details-feature
+    font-size: 20px
+    height: 20px
+    .ss-check
+      color: $blue
+  .details-number
+    font-weight: bold
+  .details-show,
+  .details-hide
+    margin: auto
+    padding-bottom: 3px
+    width: 50px
+    height: 15px
+    border: 1px solid $dark-rule
+    border-bottom-style: none
+    text-align: center
+    cursor: pointer
+    &:hover
+      background-color: $gray-background
 
 .plan-cancel-account
   margin-top: 40px
