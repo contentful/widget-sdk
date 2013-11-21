@@ -345,26 +345,6 @@ describe('SpaceContext class with a space', function () {
   });
 
 
-  describe('getting content types locally', function () {
-    var idStub, contentType;
-    beforeEach(function () {
-      idStub = sinon.stub();
-      contentType = {
-        getId: idStub
-      };
-      idStub.returns('idstr');
-      spaceContext.contentTypes = [contentType];
-    });
-
-    it('gets a content type', function () {
-      expect(spaceContext.getContentType('idstr')).toBe(contentType);
-    });
-
-    it('gets no content type', function () {
-      expect(spaceContext.getContentType('noidstr')).toBeFalsy();
-    });
-  });
-
 });
 
 describe('SpaceContext resolving missing ContentTypes', function () {

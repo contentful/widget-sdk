@@ -10,8 +10,8 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
       ngModelSet = ngModelGet.assign;
 
   var validations = $scope.field.type === 'Array' && $scope.field.items.validations ?
-    $scope.field.items.validations :
-    $scope.field.validations;
+      $scope.field.items.validations :
+      $scope.field.validations;
 
   $scope.$watch('linkType', function (linkType) {
     var validationType;

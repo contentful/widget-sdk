@@ -1,4 +1,4 @@
-angular.module('contentful').directive('cfLinkEditor', function(){
+angular.module('contentful').directive('cfLinkEditor', function(mimetype){
   'use strict';
 
   return {
@@ -15,6 +15,27 @@ angular.module('contentful').directive('cfLinkEditor', function(){
       scope.linkMultiple = !!attrs.linkMultiple;
       scope.linkSingle   = !scope.linkMultiple;
       scope.linkType     = scope.$eval(attrs.cfLinkEditor);
+      if(scope.linkType == 'Entry') {
+        scope.$watch('linkContentType', function (contentType) {
+          if(contentType){
+            scope.entityName = contentType ? contentType.getName() : undefined;
+          } else {
+            scope.entityName = scope.linkType;
+          }
+        });
+      }
+
+      if(scope.linkType == 'Asset') {
+        scope.$watch('linkMimetypeGroup', function (mimetypeName) {
+          if(mimetypeName){
+            scope.entityName = mimetype.groupDisplayNames[mimetypeName];
+          } else {
+            scope.entityName = scope.linkType;
+          }
+        });
+      }
+
+
       scope.fetchMethod  = scope.linkType === 'Entry' ? 'getEntries' : 'getAssets';
 
 

@@ -3,92 +3,122 @@
 describe('cfLinkEditor Directve', function () {
   var element, scope;
   var compileElement;
-  var getCTStub;
   var searchField;
   beforeEach(module('contentful/test'));
 
   beforeEach(inject(function ($compile, $rootScope) {
-    getCTStub = sinon.stub();
-
     scope = $rootScope.$new();
     scope.fieldData = { value: {}};
     scope.field = {
-      items: {
-        linkType: 'Entry'
-      },
-      type: 'Array'
+      items: {}
     };
     scope.spaceContext = {
-      getContentType: getCTStub
     };
 
     compileElement = function () {
-      return $compile('<div cf-link-editor="field.items.linkType" ng-model="fieldData.value"></div>')(scope);
-    };
-    element = compileElement();
-    scope.$digest();
-    searchField = element.find('.search-field');
-  }));
-
-  it('has a linktype', function () {
-    expect(scope.linkType).toBe('Entry');
-  });
-
-  describe('has validations', function () {
-    beforeEach(function () {
-      scope.field.validations = [
-        {linkContentType: 'contentTypeId'}
-      ];
-
-      var nameStub = sinon.stub();
-      nameStub.returns('Thing');
-      getCTStub.withArgs('contentTypeId').returns({
-        getName: nameStub
-      });
-
-      element = compileElement();
+      element = $compile('<div cf-link-editor="field.items.linkType" ng-model="fieldData.value"></div>')(scope);
       scope.$digest();
       searchField = element.find('.search-field');
+    };
+  }));
+
+  describe('links entries', function () {
+    beforeEach(function () {
+      scope.field.items.linkType = 'Entry';
+      compileElement();
     });
 
-    it('gets the validation', function () {
-      expect(getCTStub.calledWith('contentTypeId')).toBe(true);
+    it('has a linktype', function () {
+      expect(scope.linkType).toBe('Entry');
     });
 
-    it('sets the entity name', function () {
-      expect(scope.entityName).toBe('Thing');
+    describe('has a known content type', function () {
+      beforeEach(function () {
+        var nameStub = sinon.stub();
+        nameStub.returns('Thing');
+        scope.linkContentType = {
+          getName: nameStub
+        };
+
+        compileElement();
+      });
+
+      it('sets the entity name', function () {
+        expect(scope.entityName).toBe('Thing');
+      });
+
+      it('has entity name in placeholder', function () {
+        expect(searchField.attr('placeholder')).toMatch(/Thing/);
+      });
+
+      it('has entity name in placeholder', function () {
+        expect(searchField.attr('tooltip')).toMatch(/Thing/);
+      });
+
     });
 
-    it('has entity name in placeholder', function () {
-      expect(searchField.attr('placeholder')).toMatch(/Thing/);
-    });
+    describe('has no known content type', function () {
+      it('sets the entity name', function () {
+        expect(scope.entityName).toBe('Entry');
+      });
 
-    it('has entity name in placeholder', function () {
-      debugger;
-      expect(searchField.attr('tooltip')).toMatch(/Thing/);
-    });
+      it('has entity name in placeholder', function () {
+        expect(searchField.attr('placeholder')).toMatch(/Entry/);
+      });
 
+      it('has entity name in placeholder', function () {
+        expect(searchField.attr('tooltip')).toMatch(/Entry/);
+      });
+
+    });
   });
 
-  describe('has no validations', function () {
-    it('gets no validation', function () {
-      expect(getCTStub.calledWith('contentTypeId')).toBe(false);
+  describe('links assets', function () {
+    beforeEach(function () {
+      scope.field.items.linkType = 'Asset';
+      compileElement();
     });
 
-    it('sets the entity name', function () {
-      expect(scope.entityName).toBe('Entry');
+    it('has a linktype', function () {
+      expect(scope.linkType).toBe('Asset');
     });
 
-    it('has entity name in placeholder', function () {
-      expect(searchField.attr('placeholder')).toMatch(/Entry/);
+    describe('has a known asset mimetype', function () {
+      beforeEach(function () {
+        scope.linkMimetypeGroup = 'image';
+
+        compileElement();
+      });
+
+      it('sets the entity name', function () {
+        expect(scope.entityName).toBe('Image');
+      });
+
+      it('has entity name in placeholder', function () {
+        expect(searchField.attr('placeholder')).toMatch(/Image/);
+      });
+
+      it('has entity name in placeholder', function () {
+        expect(searchField.attr('tooltip')).toMatch(/Image/);
+      });
+
     });
 
-    it('has entity name in placeholder', function () {
-      expect(searchField.attr('tooltip')).toMatch(/Entry/);
-    });
+    describe('has no known asset mime type', function () {
+      it('sets the entity name', function () {
+        expect(scope.entityName).toBe('Asset');
+      });
 
+      it('has entity name in placeholder', function () {
+        expect(searchField.attr('placeholder')).toMatch(/Asset/);
+      });
+
+      it('has entity name in placeholder', function () {
+        expect(searchField.attr('tooltip')).toMatch(/Asset/);
+      });
+
+    });
   });
-
 
 
 });
