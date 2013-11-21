@@ -18,8 +18,9 @@
   @extend .link-list
 
 // Adjust base font size
-.tab-iframe
-  font-size: 14px
+.profile
+  .tab-iframe
+    font-size: 14px
 
 // Adjust content padding
 .tab-iframe
@@ -244,16 +245,22 @@ $subscription-yellow: #fffeec
   background-color: $subscription-yellow
   padding: 20px
   .current-plan-name,
-  .current-plan-price
-    width: 50%
+  .current-plan-price,
+  .current-plan-billing
+    width: 33%
     +pie-clearfix
   .current-plan-name
     float: left
     padding-right: 20px
   .current-plan-price
-    float: right
+    float: left
     padding-left: 20px
     border-left: 1px solid $dark-rule
+  .current-plan-billing
+    float: left
+    padding-left: 20px
+    border-left: 1px solid $dark-rule
+
 
 .plan-header
   font-size: 25px
