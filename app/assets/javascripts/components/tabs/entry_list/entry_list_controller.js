@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl($scope, Paginator, Selection, analytics, PromisedLoader) {
+angular.module('contentful').controller('EntryListCtrl',
+  function EntryListCtrl($scope, Paginator, Selection, analytics, PromisedLoader, sentry) {
   var entryLoader = new PromisedLoader();
 
   $scope.entrySection = 'all';
@@ -48,6 +49,8 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
         return entry.isPublished();
       case 'changed':
         return entry.hasUnpublishedChanges();
+      case 'draft':
+        return entry.hasUnpublishedChanges() && !entry.isPublished();
       case 'archived':
         return entry.isArchived();
       default:
@@ -113,8 +116,18 @@ angular.module('contentful').controller('EntryListCtrl', function EntryListCtrl(
   $scope.loadMore = function() {
     if ($scope.paginator.atLast()) return;
     $scope.paginator.page++;
-    entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
+    var query = buildQuery();
+    entryLoader.load($scope.spaceContext.space, 'getEntries', query).
     then(function (entries) {
+      if(!entries){
+        sentry.captureError('Failed to load more entries', {
+          data: {
+            entries: entries,
+            query: query
+          }
+        });
+        return;
+      }
       $scope.paginator.numEntries = entries.total;
       $scope.entries.push.apply($scope.entries, entries);
       $scope.selection.setBaseSize($scope.entries.length);

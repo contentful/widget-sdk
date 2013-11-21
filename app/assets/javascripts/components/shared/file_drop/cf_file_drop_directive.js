@@ -7,13 +7,32 @@ angular.module('contentful').directive('cfFileDrop', function (filepicker, notif
     template: JST['cf_file_drop'],
     link: function (scope, elem) {
       scope.state = 'drag';
+      var inOutSemaphore = 0;
+      elem.on('drop', function (event) {
+        if (scope.state == 'progress') {
+          event.preventDefault();
+          event.stopImmediatePropagation();
+          event.originalEvent.stopImmediatePropagation();
+        }
+      });
+
       filepicker.makeDropPane(elem[0], {
         multiple: false,
         dragEnter: function() {
-          scope.$apply('state="drop"');
+          inOutSemaphore++;
+          if (inOutSemaphore > 0) {
+            scope.$apply(function (scope) {
+              if (scope.state === 'drag') scope.state = 'drop';
+            });
+          }
         },
         dragLeave: function() {
-          scope.$apply('state="drag"');
+          inOutSemaphore--;
+          if (inOutSemaphore <= 0) {
+            scope.$apply(function (scope) {
+              if (scope.state === 'drop') scope.state = 'drag';
+            });
+          }
         },
         onSuccess: function(InkBlobs) {
           scope.$apply(function () {
@@ -22,16 +41,13 @@ angular.module('contentful').directive('cfFileDrop', function (filepicker, notif
           });
         },
         onError: function(type, message) {
-          scope.$apply(function () {
+          scope.$apply(function (scope) {
             scope.state = 'drag';
             notification.error('Upload failed: ' + message );
           });
         },
-        onStart: function (files) {
-          scope.$apply(function () {
-            scope.state = 'progress';
-            scope.filename = files[0].name;
-          });
+        onStart: function () {
+          scope.$apply('state = "progress"');
         },
         onProgress: function(percentage) {
           scope.$apply(function () {

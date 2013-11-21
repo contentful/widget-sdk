@@ -4,6 +4,11 @@ angular.module('contentful').controller('FieldValidationDialogController', funct
   $scope.validationType = availableValidations.type;
   $scope.validationName = availableValidations.name;
 
+  $scope.$watchCollection('validationList()', function (validationList, old, scope) {
+    var fieldValidations = availableValidations.forField(scope.field);
+    scope.availableValidations = _.omit(fieldValidations, validationUsed);
+  });
+
   $scope.validationListPath = function() {
     var args = [].splice.call(arguments,0);
     if ($scope.field.type == 'Array') {
@@ -76,4 +81,17 @@ angular.module('contentful').controller('FieldValidationDialogController', funct
     }
   };
 
+  $scope.canAddValidations = function () {
+    return $scope.can('create', 'ContentType') && !_.isEmpty($scope.availableValidations);
+  };
+
+  function validationUsed(availableValidation) {
+    return !!_.find($scope.validationList(), function (existingValidation) {
+      return vType(existingValidation) === vType(availableValidation);
+    });
+  }
+
+  function vType(v) {
+    return availableValidations.type(v);
+  }
 });

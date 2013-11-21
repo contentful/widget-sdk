@@ -17,13 +17,14 @@ angular.module('contentful').run(function($window, $rootScope, $sce){
     if ($window.navigator.userAgent.match(/MSIE/)) {
       event = {
         data: JSON.parse(event.data),
-        origin: event.origin,
-        source: event.source
+        source: event.source,
       };
     }
 
+    var iframe = $('iframe').filter(function () { return this.contentWindow === event.source; })[0];
+
     $rootScope.$apply(function (scope) {
-      scope.$broadcast('iframeMessage', event);
+      scope.$broadcast('iframeMessage', event.data, iframe);
     });
 
   },false);

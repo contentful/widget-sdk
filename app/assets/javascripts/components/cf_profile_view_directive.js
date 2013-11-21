@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfProfileView', function($window, $rootScope, authentication, routing, sentry){
+angular.module('contentful').directive('cfProfileView', function($window, $rootScope, authentication, routing){
   return {
     template: JST['iframe_view'](),
     restrict: 'C',
@@ -9,37 +9,60 @@ angular.module('contentful').directive('cfProfileView', function($window, $rootS
       elem.hide();
 
       scope.$on('$routeChangeSuccess', function (event, route, previous) {
-        update(route, previous);
+        routeChanged(route, previous);
       });
 
-      scope.$on('iframeMessage', function (event, messageEvent) {
-        if (messageEvent.source !== $('iframe', elem)[0].contentWindow) return;
-        if(messageEvent.data.path){
-          pathChanged(messageEvent.data.path);
-        } else {
-          sentry.captureError('iframeMessage path is not defined', {
-            data: {
-              messageEvent: messageEvent
-            }
-          });
-        }
+      scope.$on('iframeMessage', function (event, data, iframe) {
+        if (iframe !== elem.find('iframe')[0]) return;
+        if (data.path) internalNavigationTo(data.path);
       });
 
-      function update(route, previous) {
+      function routeChanged(route) {
         if (route.viewType === 'profile') {
-          if (!previous || previous.viewType !== 'profile') {
-            var pathSuffix = routing.getRoute().params.pathSuffix || 'user';
-            scope.url = scope.url || authentication.profileUrl() + '/' + pathSuffix + '?access_token='+authentication.token;
-          }
+          updateFrameLocation();
           elem.show();
         } else {
           elem.hide();
         }
       }
 
-      function pathChanged(path) {
-        var pathSuffix = path.match(/profile\/(.*$)/)[1];
-        scope.goToProfile(pathSuffix);
+      function updateFrameLocation() {
+        var pathSuffix = routing.getRoute().params.pathSuffix || 'user';
+        var url = buildUrl(pathSuffix);
+        if (!urlIsActive(url)) {
+          scope.url = url;
+          console.log('iframe set src');
+          elem.find('iframe').prop('src', appendToken(scope.url));
+        }
+      }
+
+      function internalNavigationTo(path) {
+        console.log('path changed', path, elem.find('iframe').prop('src'));
+        var oldPathSuffix = extractPathSuffix(scope.url);
+        var pathSuffix    = extractPathSuffix(path);
+        scope.url = buildUrl(pathSuffix);
+        if (oldPathSuffix !== pathSuffix) scope.goToProfile(pathSuffix);
+      }
+
+      function urlIsActive(url) {
+        //var activeURL = elem.find('iframe').prop('src');
+        return url.indexOf(scope.url) >= 0;
+      }
+
+      function buildUrl(pathSuffix) {
+        return authentication.profileUrl() + '/' + pathSuffix;
+      }
+
+      function extractPathSuffix(path) {
+        return path.match(/profile\/(.*$)/)[1];
+      }
+
+      function appendToken(url) {
+        if (url.indexOf('?') >= 0) {
+          return url + '&access_token='+authentication.token;
+        } else {
+          return url + '?access_token='+authentication.token;
+        }
       }
     }
   };

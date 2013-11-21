@@ -1,6 +1,6 @@
 'use strict';
 
-xdescribe('Authentication service', function () {
+describe('Authentication service', function () {
   var authentication, $rootScope;
   var hashStub, searchStub, pathStub;
   var cookiesSetStub, cookiesGetStub, cookiesDelStub;
@@ -47,6 +47,7 @@ xdescribe('Authentication service', function () {
   describe('login with existing token from hash param', function () {
     beforeEach(function () {
       hashStub.returns('#access_token=logintoken');
+      searchStub.returns({});
       cookiesGetStub.withArgs('redirect_after_login').returns(false);
     });
 
@@ -95,6 +96,7 @@ xdescribe('Authentication service', function () {
     describe('redirection after login', function () {
       beforeEach(function () {
         cookiesGetStub.withArgs('redirect_after_login').returns('/redirection/path');
+        searchStub.returns({});
         authentication.login();
       });
 
@@ -110,6 +112,8 @@ xdescribe('Authentication service', function () {
 
   describe('login with existing token from cookie', function () {
     beforeEach(function () {
+      searchStub.returns({});
+      hashStub.returns('');
       cookiesGetStub.withArgs('token').returns('logintoken');
       cookiesGetStub.withArgs('redirect_after_login').returns(false);
     });

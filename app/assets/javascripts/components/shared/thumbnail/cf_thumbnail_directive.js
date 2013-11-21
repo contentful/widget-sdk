@@ -89,6 +89,12 @@ angular.module('contentful').directive('cfThumbnail', function () {
         ) && hasDimensions();
       };
 
+      $scope.thumbnailUrl = function () {
+        if ($scope.file && $scope.file.url && $scope.width && $scope.height) {
+          return '' + $scope.file.url + '?w=' + $scope.width + '&h=' + $scope.height;
+        }
+      };
+
       function hasDimensions () {
         return 0 < $scope.width && 0 < $scope.height;
       }

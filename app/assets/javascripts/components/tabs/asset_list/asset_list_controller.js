@@ -124,8 +124,18 @@ angular.module('contentful').
   $scope.loadMore = function() {
     if ($scope.paginator.atLast()) return;
     $scope.paginator.page++;
-    assetLoader.load($scope.spaceContext.space, 'getAssets', buildQuery()).
+    var query = buildQuery();
+    assetLoader.load($scope.spaceContext.space, 'getAssets', query).
     then(function (assets) {
+      if(!assets){
+        sentry.captureError('Failed to load more assets', {
+          data: {
+            assets: assets,
+            query: query
+          }
+        });
+        return;
+      }
       $scope.paginator.numEntries = assets.total;
       $scope.assets.push.apply($scope.assets, assets);
       $scope.selection.setBaseSize($scope.entries.length);

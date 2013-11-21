@@ -3,7 +3,7 @@
 angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     $scope, client, SpaceContext, authentication, notification, analytics,
     routing, authorization, tutorial, modalDialog, presence, $location,
-    ReloadNotification) {
+    revision, ReloadNotification) {
 
   $scope.spaces = null;
   $scope.spaceContext = new SpaceContext();
@@ -26,6 +26,77 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   };
 
   $scope.user = null;
+
+  function upgradeAction(){
+    $scope.goToProfile('subscription');
+  }
+
+  function timeTpl(str, timePeriod) {
+    return str.
+      replace(/%length/, timePeriod.length).
+      replace(/%unit/, timePeriod.unit);
+  }
+
+  function trialWatcher() {
+    var user = $scope.user;
+    var space = $scope.spaceContext.space;
+    if(!user || !space) return;
+    var hours = null;
+    var timePeriod, message, tooltipMessage, action, actionMessage;
+    var isSpaceOwner = space.isOwner(user);
+    var subscription = space.data.subscription;
+
+    if(subscription.state == 'trial'){
+      hours = moment(subscription.trialPeriodEndsAt).diff(moment(), 'hours');
+      if(hours/24 <= 1){
+        timePeriod = {length: hours, unit: 'hours'};
+      } else {
+        timePeriod = {length: Math.floor(hours/24), unit: 'days'};
+      }
+      message = timeTpl('<strong>%length</strong> %unit left in trial', timePeriod);
+      tooltipMessage = timeTpl('This Space is in trial mode and you can test all features for '+
+                       '%length more %unit. Enter your billing information to activate your subscription.', timePeriod);
+
+    } else if(subscription.state == 'active' &&
+              !subscription.subscriptionPlan.paid &&
+              subscription.subscriptionPlan.kind == 'default'){
+      message = 'Limited trial version';
+      tooltipMessage = 'This Space is on our limited trial plan. Upgrade your subscription to get access to all features.';
+    }
+
+
+    if(message || tooltipMessage || action && actionMessage){
+      if(isSpaceOwner){
+        actionMessage = 'Upgrade';
+        action = upgradeAction;
+      }
+
+      $scope.persistentNotification = {
+        message: message,
+        tooltipMessage: tooltipMessage,
+        action: action,
+        actionMessage: actionMessage
+      };
+    } else {
+      delete $scope.persistentNotification;
+    }
+  }
+
+  $scope.$watch('user', trialWatcher);
+  $scope.$watch('spaceContext.space', trialWatcher);
+
+  function newVersionCheck() {
+    revision.hasNewVersion().catch(function (err) {
+      if(err === 'APP_REVISION_CHANGED'){
+        $scope.persistentNotification = {
+          message: 'New application version',
+          tooltipMessage: 'Please reload to get a new version of the application',
+          action: ReloadNotification.triggerImmediateReload,
+          actionMessage: 'Reload'
+        };
+      }
+    });
+  }
 
   $scope.clickedSpaceSwitcher = function () {
     analytics.track('Clicked Space-Switcher');
@@ -103,6 +174,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
 
     if (!newSpace) {
       $location.path('/');
+      setSpace();
       return;
     }
     if (newSpace != scope.spaceContext.space) {
@@ -124,39 +196,38 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     window.open(authentication.supportUrl());
   };
 
-  $scope.$on('iframeMessage', function (event, messageEvent) {
-    var message = messageEvent.data;
-    if (message.type === 'space' && message.action === 'update') {
-      _.extend($scope.spaceContext.space.data, message.resource);
+  $scope.$on('iframeMessage', function (event, data) {
+    if (data.type === 'space' && data.action === 'update') {
+      _.extend($scope.spaceContext.space.data, data.resource);
       //TODO this is pobably much too simplified, better look up correct
       //space and check if the method of updating is correct
-    } else if (message.type === 'UserCancellation' && message.action === 'create') {
+    } else if (data.type === 'UserCancellation' && data.action === 'create') {
       authentication.goodbye();
-    } else if (message.type === 'user' && message.action === 'update') {
-      _.extend($scope.user, message.resource);
+    } else if (data.type === 'user' && data.action === 'update') {
+      _.extend($scope.user, data.resource);
     /*
      * This does not work yet because when you mix relational databases and
      * object graphs you're gonna have a bad time, mkay?
      *
-    } else if (message.action !== 'delete') {
-      authentication.updateTokenLookup(message.resource);
+    } else if (data.action !== 'delete') {
+      authentication.updateTokenLookup(data.resource);
       $scope.user = authentication.tokenLookup.sys.createdBy;
       $scope.updateSpaces(authentication.tokenLookup.spaces);
-    } else if (message.token) {
+    } else if (data.token) {
      */
-      authentication.setTokenLookup(message.token);
+      authentication.setTokenLookup(data.token);
       $scope.user = authentication.tokenLookup.sys.createdBy;
       $scope.updateSpaces(authentication.tokenLookup.spaces);
-    } else if (message.type === 'flash') {
-      var level = message.resource.type;
+    } else if (data.type === 'flash') {
+      var level = data.resource.type;
       if (!level.match(/info|error/)) level = 'info';
-      notification[level](message.resource.message);
-    } else if (message.type === 'location') {
+      notification[level](data.resource.message);
+    } else if (data.type === 'location') {
       // ignore
     } else {
       $scope.performTokenLookup();
     }
-    // TODO Better handle deletes (should also work somehow without message.token)
+    // TODO Better handle deletes (should also work somehow without data.token)
   });
 
   $scope.clickedProfileButton = function () {
@@ -218,8 +289,12 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
         notification.error('Token Lookup failed. Logging out.');
         authentication.logout();
       });
+
+    setTimeout(newVersionCheck, 5000);
+
     setInterval(function () {
       if (presence.isActive()) {
+        newVersionCheck();
         $scope.performTokenLookup().
         catch(function () {
           ReloadNotification.trigger('Your authentication data needs to be refreshed. Please try logging in again.');

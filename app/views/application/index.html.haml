@@ -22,8 +22,6 @@
       .notification(class="{{message.severity}}" ng-repeat="(index, message) in notification.unseen() track by index")
         {{message.body}}
     %nav.account
-      .navbar-loader
-      %a#intercom(href="#" tabindex="-1")
       .dropdown-btn.user(label="")
         %a.btn.dropdown-toggle(ng-click="clickedProfileButton()" tabindex="0")
           %i.ss-dropdown.button-icon-right
@@ -46,6 +44,9 @@
               {{space.data.name}}
             %li.highlight(ng-show="canCreateSpace(user)" ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close="")
               + Create Space
+      .cf-persistent-notification(ng-show="persistentNotification")
+      %a#intercom(href="#" tabindex="-1")
+      .navbar-loader
     %space-view(ng-controller="TabViewCtrl")
     .create-space-advice(ng-show="spaces.length == 0")
       %i.ss-folder.giant-icon

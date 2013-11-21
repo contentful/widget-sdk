@@ -11,14 +11,14 @@
         %p.advice-description
           Select Validations and narrow further what type of content should be added to your Fields.
         .dropdown-btn
-          %button.default-button.primary-button.dropdown-toggle(ng-disabled="!can('create', 'ContentType')")
+          %button.default-button.primary-button.dropdown-toggle(ng-disabled="!canAddValidations()")
             Create Validation
           .dropdown-menu.type-menu(select-validation="addValidation(type)")
       .cf-validation-options(ng-repeat="(validationIndex, validation) in validationList() track by validationIndex" ng-model="validation")
 
     .buttons(ng-show="validationList().length > 0")
       .dropdown-btn
-        %button.default-button.primary-button.dropdown-toggle(ng-disabled="!can('create', 'ContentType')")
+        %button.default-button.primary-button.dropdown-toggle(ng-disabled="!canAddValidations()")
           %i.ss-plus.button-icon
           Add Validation
         .dropdown-menu.type-menu(select-validation="addValidation(type)")
