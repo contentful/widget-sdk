@@ -14,7 +14,7 @@ angular.module('contentful').run(function($window, $rootScope, $sce){
       return;
     }
 
-    if ($window.navigator.userAgent.match(/MSIE/)) {
+    if ($window.navigator && $window.navigator.userAgent && $window.navigator.userAgent.match(/MSIE/)) {
       event = {
         data: JSON.parse(event.data),
         source: event.source,
