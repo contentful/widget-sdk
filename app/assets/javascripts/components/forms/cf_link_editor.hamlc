@@ -18,9 +18,9 @@
     .search-field(ng-submit="submit()"
                   search="searchTerm"
                   search-type-ahead=""
-                  placeholder="Search for {{linkType}}"
+                  placeholder="Search for {{entityName}}"
                   tooltip-placement="top"
-                  tooltip="Search for existing {{linkType}}")
+                  tooltip="Search for existing {{entityName}}")
     %ng-switch(on="linkType")
       .dropdown-btn.add-new(ng-switch-when="Entry"
                             ng-hide="linkContentType"

@@ -14,7 +14,8 @@ angular.module('contentful').directive('searchField', function(){
     template: JST['search_field'](),
     scope: {
       placeholder: '@',
-      search: '='
+      search: '=',
+      tooltip: '@'
     },
 
     link: function(scope, element, attr) {

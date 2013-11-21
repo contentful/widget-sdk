@@ -61,7 +61,7 @@ describe('SpaceContext class with a space', function () {
     expect(spaceContext.getPublishLocale('en-US')).toEqual({name: 'en-US', code: 'en-US'});
   });
 
-  describe('gets content types', function () {
+  describe('getting content types from server', function () {
     var getContentTypesStub, getPublishedContentTypesStub;
     var contentType1, contentType2;
     beforeEach(function () {
@@ -226,7 +226,7 @@ describe('SpaceContext class with a space', function () {
           it('should not be included in the list anymore', function () {
             expect(_.contains(spaceContext.publishedContentTypes, contentType1)).toBe(false);
           });
-          
+
           it('should not be found by publishedTypeForEntry anymore', function () {
             var entry = {
               getContentTypeId: sinon.stub().returns('contentType1')
@@ -282,11 +282,68 @@ describe('SpaceContext class with a space', function () {
 
       });
 
-
-
     });
 
   });
+
+  describe('getting existing published content types locally', function () {
+    var contentType;
+
+    beforeEach(function () {
+      spaceContext._publishedContentTypesHash = {
+        hashId: 'contentType'
+      };
+      spaceContext.refreshContentTypes = sinon.stub();
+      contentType = spaceContext.getPublishedContentType('hashId');
+    });
+
+    it('gets a published content type', function () {
+      expect(contentType).toBe('contentType');
+    });
+
+    it('does not refresh content types', function () {
+      expect(spaceContext.refreshContentTypes.called).toBe(false);
+    });
+
+    it('does not set a flag for the content type as being missing', function () {
+      expect(spaceContext._publishedContentTypeIsMissing.hashId).toBeUndefined();
+    });
+
+    it('gets a published type for a given entry', function () {
+      var entry = window.createMockEntity(123, 'hashId', 'Entry');
+      expect(spaceContext.publishedTypeForEntry(entry)).toBe('contentType');
+    });
+
+  });
+
+  describe('getting missing published content types locally', function () {
+    var contentType;
+
+    beforeEach(function () {
+      spaceContext._publishedContentTypesHash = {};
+      spaceContext.refreshContentTypes = sinon.stub();
+      contentType = spaceContext.getPublishedContentType('hashId');
+    });
+
+    it('gets a published content type', function () {
+      expect(contentType).toBeUndefined();
+    });
+
+    it('refreshes content types', function () {
+      expect(spaceContext.refreshContentTypes.called).toBe(true);
+    });
+
+    it('sets a flag for the content type as being missing', function () {
+      expect(spaceContext._publishedContentTypeIsMissing.hashId).toBeDefined();
+    });
+
+    it('gets no published type for a given entry', function () {
+      var entry = window.createMockEntity(123, 'hashId', 'Entry');
+      expect(spaceContext.publishedTypeForEntry(entry)).toBeUndefined();
+    });
+
+  });
+
 
 });
 
