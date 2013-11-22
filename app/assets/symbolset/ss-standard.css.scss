@@ -14,10 +14,10 @@
   font-family: "SSStandard";
 
   src: asset-url('ss-standard.eot', symbolset);
-  src: asset-url('ss-standard.eot?#iefix', symbolset) format('embedded-opentype'),
+  src: url(asset-path('ss-standard.eot', symbolset) +'?#iefix') format('embedded-opentype'),
        asset-url('ss-standard.woff', symbolset) format('woff'),
        asset-url('ss-standard.ttf', symbolset)  format('truetype'),
-       asset-url('ss-standard.svg#SSStandard', symbolset) format('svg');
+       url(asset-path('ss-standard.svg', symbolset) + '#SSStandard') format('svg');
   font-weight: normal;
   font-style: normal;
 }
