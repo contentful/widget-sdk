@@ -64,7 +64,7 @@ describe('otBindText', function () {
   });
 
   describe('when mkPath fails', function () {
-    it('should raise reload notification', inject(function (ShareJS, $rootScope, $log){
+    it('should throw an error', inject(function (ShareJS, $rootScope, environment, $log){
       $log.assertEmpty();
       ShareJS.mkpath = sinon.stub().yieldsAsync('error');
       ShareJS.peek.withArgs(undefined, ['value']).returns(undefined);
