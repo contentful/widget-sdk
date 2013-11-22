@@ -1,13 +1,15 @@
 'use strict';
 
 angular.module('contentful').provider('$exceptionHandler', function () {
-  this.$get = ['$injector', '$log', 'sentry',
-    function($injector, $log, sentry) {
+  this.$get = ['$injector', '$log', 'sentry', 'environment',
+    function($injector, $log, sentry, environment) {
       return function(exception) {
-        var ReloadNotification = $injector.get('ReloadNotification');
         $log.error.apply($log, arguments);
         sentry.captureException(exception);
-        ReloadNotification.trigger();
+        if (environment.env != 'development') {
+          var ReloadNotification = $injector.get('ReloadNotification');
+          ReloadNotification.trigger();
+        }
       };
     }
   ];
