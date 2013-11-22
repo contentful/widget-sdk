@@ -6,6 +6,14 @@
   right: 0
   border: 0
 
+  // Styling of the headline
+  .tab-header a
+    color: $dark-gray
+    &:hover
+      color: $light-gray
+  .header-separator
+    color: $lightest-gray
+
 .settings-panel
   @extend .link-list
 
@@ -442,12 +450,16 @@ $subscription-yellow: #fffeec
     font-size: 115%
     padding-left: 12px
 
-.sidebar
-  float: right
+.formtastic.with-sidebar
+  position: relative
+.formtastic-sidebar
+  position: absolute
+  right: 0
   margin-top: 20px
+  width: (100% - $form-labelwidth - $formtastic-fieldwidth) * 0.8
+.billing-sidebar
   background-color: $subscription-yellow
   padding: 0 15px
-  width: (100% - $form-labelwidth - $formtastic-fieldwidth) * 0.8
   .sidebar-section
     padding: 15px 0
   .sidebar-separator

@@ -37,12 +37,14 @@ angular.module('contentful').directive('cfFileDrop', function (filepicker, notif
         onSuccess: function(InkBlobs) {
           scope.$apply(function () {
             scope.state = 'drag';
+            elem.attr('disabled', false);
             scope.$emit('cfFileDropped', InkBlobs[0]);
           });
         },
         onError: function(type, message) {
           scope.$apply(function (scope) {
             scope.state = 'drag';
+            elem.attr('disabled', 'enabled');
             notification.error('Upload failed: ' + message );
           });
         },
