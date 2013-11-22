@@ -114,17 +114,12 @@ otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacritic
             types: subdoc.types,
             value: ''
           }, function(err) {
-            if (err) {
-              var message = 'makeAndAttach mkpath failed';
-              $log.error('makeAndAttach mkpath failed');
-              throw new Error(message);
-            } else {
-              unbindTextField = subdoc.attach_textarea(elm[0]);
-            }
+            if (err) scope.$apply(function(){
+              throw new Error('makeAndAttach mkpath failed');
+            });
           });
-        } else {
-          unbindTextField = subdoc.attach_textarea(elm[0]);
         }
+        unbindTextField = subdoc.attach_textarea(elm[0]);
       }
       //console.log('linking done', scope.$id, scope.otPath);
     }
