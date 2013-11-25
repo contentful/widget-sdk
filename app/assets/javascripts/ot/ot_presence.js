@@ -72,7 +72,10 @@ angular.module('contentful').
       if (!doc) return;
 
       doc.shout(['open', user]);
-      doc.on('closed', closedHandler);
+      $scope.$on('tabClosed', function(event, tab) {
+        if (tab !== $scope.tab) { return; }
+        closedHandler.apply(doc);
+      });
       doc.on('shout', shoutHandler);
     });
 
