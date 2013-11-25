@@ -33,6 +33,7 @@ angular.module('contentful').controller('createSpaceDialogCtrl', [
               scope.selectSpace(space);
               scope.lockSubmit = false;
               scope.dialog.confirm();
+              notification.info('Created space "'+ space.data.name +'"');
               resetNewSpaceData();
               stopSpinner();
             });
