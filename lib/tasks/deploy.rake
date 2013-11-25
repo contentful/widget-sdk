@@ -26,6 +26,9 @@ namespace :generate do
       :public => true,
       :acl => 'public-read',
       :body => '',
+      'Cache-Control' =>  "no-cache, no-store, must-revalidate, max-age=0",
+      'Pragma' => 'no-cache',
+      'Expires' => 0,
       'x-amz-website-redirect-location' => "/app/#{filename}"
     })
   end
