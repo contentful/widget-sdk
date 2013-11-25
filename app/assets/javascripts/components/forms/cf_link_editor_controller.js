@@ -67,7 +67,6 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
         scope.links = [link];
       }));
     } else {
-      // TODO Build this pattern into mkpath
       if (_.isArray(ShareJS.peek($scope.otDoc, $scope.otPath))) {
         $scope.otDoc.at($scope.otPath).push(link, wrapply(cb(function(scope){
           scope.links.push(link);

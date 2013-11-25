@@ -107,18 +107,16 @@ otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacritic
       scope.$on('$destroy', detach);
 
       function makeAndAttach(subdoc){
-        if (!_.isString(ShareJS.peek(subdoc.doc, subdoc.path))) {
-          ShareJS.mkpath({
-            doc: scope.otDoc,
-            path: subdoc.path,
-            types: subdoc.types,
-            value: ''
-          }, function(err) {
-            if (err) scope.$apply(function(){
-              throw new Error('makeAndAttach mkpath failed');
-            });
+        ShareJS.mkpath({
+          doc: scope.otDoc,
+          path: subdoc.path,
+          types: subdoc.types,
+          value: ''
+        }, function(err) {
+          if (err) scope.$apply(function(){
+            throw new Error('makeAndAttach mkpath failed');
           });
-        }
+        });
         unbindTextField = subdoc.attach_textarea(elm[0]);
       }
       //console.log('linking done', scope.$id, scope.otPath);
