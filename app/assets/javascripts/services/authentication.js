@@ -110,7 +110,6 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       var d = $q.defer();
       this.client.getTokenLookup(function (err, data) {
         if (err) {
-          sentry.captureError('Error during token lookup', { data: { err: err } });
           d.reject(err);
         } else {
           $rootScope.$apply(function () {
