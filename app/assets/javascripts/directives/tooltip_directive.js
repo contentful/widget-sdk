@@ -16,14 +16,26 @@ angular.module('contentful').
           tooltipInitialized = true;
         }
 
-        function createTooltip(show) {
-          element.tooltip({
-            delay: {show: 100, hide: 100},
-            placement: attrs.tooltipPlacement,
-            title: function () {
-              return attrs.tooltip;
+        function getOptions() {
+          var options = {
+            title: attrs.tooltip
+          };
+          var newKey;
+          _.forEach(attrs, function (val, key) {
+            if(/^tooltip(.+)/.test(key)){
+              newKey = key.replace('tooltip', '').toLowerCase();
+              options[newKey] = val;
             }
           });
+          return options;
+        }
+
+        function createTooltip(show) {
+          var options = getOptions();
+          _.defaults(options, {
+            delay: {show: 100, hide: 100}
+          });
+          element.tooltip(options);
           if (show) element.tooltip('show');
         }
 
