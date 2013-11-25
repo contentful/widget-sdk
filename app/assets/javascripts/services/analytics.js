@@ -123,6 +123,12 @@ angular.module('contentful').provider('analytics', function (environment) {
       });
     },
 
+    knowledgeBase: function (section) {
+      this.track('Knowledge Base', {
+        section: section
+      });
+    },
+
     modifiedContentType: function (event, contentType, field, action) {
       var data = {};
       if (contentType) {
