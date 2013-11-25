@@ -28,9 +28,9 @@ angular.module('contentful').
       };
     }, true);
 
-    function closedHandler() {
+    function closedHandler(doc) {
       /*jshint validthis:true */
-      this.shout(['close', user]);
+      doc.shout(['close', user]);
       $timeout.cancel(timeout);
     }
 
@@ -72,8 +72,14 @@ angular.module('contentful').
       if (!doc) return;
 
       doc.shout(['open', user]);
-      doc.on('closed', closedHandler);
       doc.on('shout', shoutHandler);
+    });
+
+    $scope.$on('tabClosed', function(event, tab) {
+      var isOwnTab = (tab === $scope.tab);
+      var docExists = 'otDoc' in $scope;
+      if (!isOwnTab || !docExists) { return; }
+      closedHandler($scope.otDoc);
     });
 
     var lastId;

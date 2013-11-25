@@ -62,6 +62,7 @@ angular.module('contentful').provider('analytics', function (environment) {
     disable: function () {
       this._disabled = true;
     },
+
     login: function(user){
       this.setUserData(user);
       analytics.identify(user.sys.id, {
@@ -78,6 +79,7 @@ angular.module('contentful').provider('analytics', function (environment) {
         return;
       }
     },
+
     setUserData: function (user) {
       this._userData = {
         userSubscriptionKey:                    user.subscription.sys.id,
@@ -87,6 +89,7 @@ angular.module('contentful').provider('analytics', function (environment) {
         userSubscriptionSubscriptionPlanName:   user.subscription.subscriptionPlan.name
       };
     },
+
     setSpaceData: function (space) {
       if (space) {
         this._spaceData = {
@@ -100,6 +103,7 @@ angular.module('contentful').provider('analytics', function (environment) {
         this._spaceData = null;
       }
     },
+
     tabAdded: function (tab) {
       this.track('Opened Tab', {
         viewType: tab.viewType,
@@ -108,6 +112,7 @@ angular.module('contentful').provider('analytics', function (environment) {
       });
       this._trackView(tab);
     },
+
     tabActivated: function (tab, oldTab) {
       this.track('Switched Tab', {
         viewType: tab.viewType,
@@ -117,6 +122,13 @@ angular.module('contentful').provider('analytics', function (environment) {
         fromSection: oldTab ? oldTab.section : null
       });
     },
+
+    knowledgeBase: function (section) {
+      this.track('Knowledge Base', {
+        section: section
+      });
+    },
+
     modifiedContentType: function (event, contentType, field, action) {
       var data = {};
       if (contentType) {
@@ -140,6 +152,7 @@ angular.module('contentful').provider('analytics', function (environment) {
       }
       this.track(event, data);
     },
+
     tabClosed: function (tab) {
       this.track('Closed Tab', {
         viewType: tab.viewType,
@@ -147,6 +160,7 @@ angular.module('contentful').provider('analytics', function (environment) {
         id: this._idFromTab(tab)
       });
     },
+
     toggleAuxPanel: function (visible, tab) {
       var action = visible ? 'Opened Aux-Panel' : 'Closed Aux-Panel';
       this.track(action, {
@@ -154,6 +168,7 @@ angular.module('contentful').provider('analytics', function (environment) {
         currentViewType: tab.viewType
       });
     },
+
     _idFromTab: function (tab) {
       if (tab.viewType === 'entry-editor') {
         return tab.params.entry.getId();
@@ -161,6 +176,7 @@ angular.module('contentful').provider('analytics', function (environment) {
         return tab.params.contentType.getId();
       }
     },
+
     _trackView: function (tab) {
       var t = tab.viewType;
       if (t == 'entry-list') {
@@ -194,6 +210,7 @@ angular.module('contentful').provider('analytics', function (environment) {
         });
       }
     },
+
     track: function (event, data) {
       if (!this._disabled) {
         analytics.track(event, _.merge({},data, this._userData, this._spaceData));

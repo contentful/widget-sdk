@@ -25,21 +25,27 @@
   +filter-gradient($start, $stop)
   +background-image(linear-gradient($start, $stop))
 
-=blue-highlight
-  color: white
-  +gradient($blue, darken($blue,6%))
+=gradient-op($color, $highlight, $operation)
+  @if $operation == 'lighten'
+    +gradient($color, lighten($color, $highlight))
+  @if $operation == 'darken'
+    +gradient($color, darken($color, $highlight))
 
-=green-highlight
+=blue-highlight($highlight:6%, $operation:'darken')
   color: white
-  +gradient($green, darken($green,6%))
+  +gradient-op($blue, $highlight, $operation)
 
-=gold-highlight
+=green-highlight($highlight:6%, $operation:'darken')
   color: white
-  +gradient($gold, darken($gold,6%))  
+  +gradient-op($green, $highlight, $operation)
 
-=red-highlight
+=gold-highlight($highlight:6%, $operation:'darken')
   color: white
-  +gradient($red, darken($red,6%))
+  +gradient-op($gold, $highlight, $operation)
+
+=red-highlight($highlight:6%, $operation:'darken')
+  color: white
+  +gradient-op($red, $highlight, $operation)
 
 =gray-highlight
   color: $medium-gray

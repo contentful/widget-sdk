@@ -1,4 +1,9 @@
 .nav-bar
+  .dropdown-toggle
+    height: $nav-bar-height
+  .dropdown-toggle:hover
+    +blue-highlight(5%, 'lighten')
+    +box-shadow(none)
   .tablist-button
     +blue-highlight
     padding: 0
@@ -6,7 +11,6 @@
     +nav-bar-dropdowns
     .dropdown-menu
       width: 210px
-      margin-top: -3px
       li
         display: block
         line-height: 40px
