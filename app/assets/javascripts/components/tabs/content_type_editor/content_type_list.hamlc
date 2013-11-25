@@ -57,6 +57,6 @@
         %p.advice-description Content Types work like stencils that define which Entries you can create within a specific Space.
         %button.default-button.primary-button(type="button" ng-click="createContentType()" ng-disabled="!can('create', 'ContentType')")
           Create Content Type
-        %a.knowledge-base(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
+        %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
           Visit the Knowledge Base Pages
           %i.ss-help

@@ -70,7 +70,7 @@
           Create a Content Type
         %p.advice-description(ng-hide="spaceContext.publishedContentTypes.length == 0")
           To create an Entry, use the Add-Button near the top of the screen.
-        %a.knowledge-base(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
+        %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
           Visit the Knowledge Base Pages
           %i.ss-help
 .tab-actions
