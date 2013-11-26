@@ -9,9 +9,10 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', function 
       {
         template: 'modal_dialog',
         cancelLabel: 'Cancel',
-        confirmLabel: 'OK'
+        confirmLabel: 'OK',
+        noBackgroundClose: false
       },
-      _.pick(params, 'title', 'message', 'template', 'cancelLabel', 'confirmLabel')
+      _.pick(params, 'title', 'message', 'template', 'cancelLabel', 'confirmLabel', 'noBackgroundClose')
     );
     this._deferred = $q.defer();
     this.promise = this._deferred.promise;
@@ -40,6 +41,16 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', function 
       _.extend(scope.dialog, this.params);
 
       $compile(this.domElement)(scope);
+
+      this.domElement.on('click', function (ev) {
+        var target = $(ev.currentTarget);
+        if(target.hasClass('modal-background') &&
+           _.isUndefined(target.attr('no-background-close')) &&
+           !dialog.params.noBackgroundClose
+          ){
+          dialog.cancel();
+        }
+      });
     },
 
     confirm: function () {
