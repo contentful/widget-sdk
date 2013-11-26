@@ -1,6 +1,10 @@
 .tab-header
   .left-nav
     %h1 Assets
+    %a.cf-knowledge-base-icon(
+      tooltip="Learn more about Assets in the Knowledge Base Pages"
+      analytics-event="assets"
+      href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
   .search-area.with-left-nav
     .search-field(search="searchTerm" placeholder="Search for Assets")
   .search-results-position(paginator="paginator")
