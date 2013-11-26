@@ -14,7 +14,7 @@
 .tab-content.with-tab-bar
   margin-top: 30px
 
-$left-nav-width: 17%
+$left-nav-width: 19%
 $tab-main-margin-top: 28px
 
 .left-nav
@@ -77,12 +77,16 @@ $left-nav-padding: 8px
   z-index: 10
   h1
     display: inline-block
-    font-size: 20px
-    margin-right: 20px
+    font-size: $tab-header-font-size
+    margin-right: 10px
     color: $dark-gray
     padding-left: 25px
-    line-height: $tab-header-height - 2px
+    line-height: $tab-header-line-height
     vertical-align: middle
+  .knowledge-base-icon
+    vertical-align: middle
+    font-size: $tab-header-font-size
+    line-height: $tab-header-line-height
 
 .tab-workbench
   padding-top: $tab-main-margin-top
