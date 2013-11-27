@@ -16,6 +16,8 @@
 
 .settings-panel
   @extend .link-list
+  ul
+    margin-bottom: 2em
 
 // Adjust base font size // YOLO
 .profile
@@ -65,6 +67,7 @@ $formtastic-fieldwidth: 40%
       vertical-align: baseline
     .inline-hints
       margin-left: $form-labelwidth
+      width: $formtastic-fieldwidth
     .inline-errors
       margin-left: $form-labelwidth
   .input.info > div
@@ -109,19 +112,22 @@ $formtastic-fieldwidth: 40%
 
   // Make form actions look a little more like tab-actions
   fieldset.actions
-    margin-top: $form-offset
+    margin-top: 3em
+    margin-bottom: 3em
+    background-color: $gray-background
+    border-top: 1px solid $dark-rule
+    border-bottom: 1px solid $dark-rule
     @extend %tab-actions-padding
-    padding-right: 100% - $form-labelwidth - $field-editor-width
+    padding-left: $form-labelwidth
     height: $tab-actions-height
     .action
       display: inline-block
     ol
-      float: right
+      float: left
       button
         @extend .default-button
         height: $tab-actions-content-height
     // Colors
-    border-top: 1px solid $lightest-gray
     input[name="commit"]
       @extend .default-button
       @extend .primary-button
@@ -130,17 +136,13 @@ $formtastic-fieldwidth: 40%
     margin-left: $form-labelwidth
     width: $field-editor-width
 
-  .actions-with-background,
-  fieldset.actions-with-background
-    margin-top: 3em
-    background-color: $gray-background
-    border-bottom: 1px solid $dark-rule
-    ol
-      float: left
+  .actions-no-label
+    padding-left: 20px
 
   .actions-hint
     margin: 0 1em
     font-size: 12px
+      
 
   > h1
     margin-left: 20px
@@ -336,7 +338,14 @@ $subscription-yellow: #fffeec
     .ss-info
       position: relative
       top: 2px
+.subscription-plan.disabled
+  color: $light-gray
+  .plan-big-row,
+  .plan-small-row,
+  .plan-medium-row
+    color: $light-gray
 
+$plan-detail-gutter: 20px
 .plan-problem
   font-style: italic
 .plan-big-row
@@ -360,15 +369,12 @@ $subscription-yellow: #fffeec
   color: $blue
 .plan-details
   clear: both
-  padding-top: 15px
-  .details-content
-    background-color: $gray-background
-    padding: 20px 20px 0
-    margin: 0 20px 15px
-    text-align: center
+  padding: 15px 20px 0
   .details-block
     display: inline-block
     width: 19%
+    max-width: 130px
+    min-width: 115px
     height: 60px
     text-align: center
     //outline: 1px dashed red
@@ -381,6 +387,11 @@ $subscription-yellow: #fffeec
       color: $blue
   .details-number
     font-weight: bold
+  .details-period
+    color: $blue
+    text-transform: uppercase
+    font-size: 85%
+    font-weight: 600
   .details-show,
   .details-hide
     color: $lightest-gray
@@ -398,10 +409,75 @@ $subscription-yellow: #fffeec
   .details-show
     font-size: 15px
     line-height: 10px
+.details-content
+  +flexbox
+  margin-bottom: $plan-detail-gutter
+  background-color: $gray-background
+.plan-summary
+  width: 15em
+  margin: $plan-detail-gutter
+  background-color: white
+  li
+    list-style-type: none
+    line-height: 1.5
+  i
+    width: 25px
+    display: inline-block
+    text-align: center
+    margin-right: 8px
+  i.ss-plus
+    font-size: 90%
+    color: $light-gray
+  i.ss-cloud
+    position: relative
+    top: 2px
+    font-size: 150%
+    color: $blue
+    text-shadow: 0 0 2px black
+.plan-properties
+  +flex(1)
+  margin: $plan-detail-gutter $plan-detail-gutter $plan-detail-gutter 0
+  text-align: center
+.plan-features,
+.plan-limits
+  background-color: white
+  margin: 0
+  padding-top: 24px
+.plan-limits
+  margin-top: $plan-detail-gutter
+  
+#enterprise-contact-form
+  @extend %form-styled
+  clear: both
+  padding: 20px
+  label
+    text-transform: uppercase
+    display: block
+  input[type=tel]
+    width: 20em
+  textarea
+    width: 100%
+    height: 10em
+  .buttons
+    text-align: right
+  input[type=submit]
+    width: 150px
+.enterprise-close-form-button
+  color: $medium-gray
+  font-size: 130%
+  float: right
+  &:hover
+    color: $dark-gray
+
+.plan-questions
+  margin-left: 20px
+  margin-top: 20px
+  float: left
 
 .plan-cancel-account
-  margin-top: 40px
-  padding-right: 20px
+  float: right
+  margin-right: 20px
+  margin-top: 20px
   text-align: right
   a
     color: darken($red, 30%)
@@ -432,6 +508,29 @@ $subscription-yellow: #fffeec
     color: $dark-gray
     font-weight: bold
     background-color: lighten($gray-background, 2%)
+
+.tab-iframe .formtastic .input.yellow-highlight,
+.formtastic .input.yellow-highlight,
+.formtastic .yellow-highlight
+  background-color: $subscription-yellow
+  padding: 10px 0
+  width: $form-labelwidth + $formtastic-fieldwidth + 3%
+  $scalefactor: 100% / ($form-labelwidth + $formtastic-fieldwidth + 3%)
+  label
+    width: $form-labelwidth * $scalefactor
+  input
+    width: $formtastic-fieldwidth * $scalefactor
+  .inline-hints
+    width: $formtastic-fieldwidth * $scalefactor
+    margin-left: $form-labelwidth * $scalefactor
+  p
+    margin: 10px 20px
+
+.credit-card-notice
+  margin-bottom: 10px
+
+.credit-card-secure
+  color: $medium-gray
 
 .form-table
   width: $form-labelwidth + $formtastic-fieldwidth
@@ -467,6 +566,22 @@ $subscription-yellow: #fffeec
   a
     font-size: smaller
 
+#sidebar-coupon-link
+  position: absolute
+  bottom: -3em
+.redeem-button
+  margin-top: 10px
+  text-align: right
+  
+.annual-savings
+  color: white
+  background-color: red
+  font-size: 85%
+  +border-radius(3px)
+  padding: 2px 15px
+div.annual-savings
+  display: inline-block
+  margin: 0.5em 0
 .table-edit-button
   text-align: right
   width: $formtastic-fieldwidth
