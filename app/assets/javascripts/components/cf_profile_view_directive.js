@@ -14,8 +14,11 @@ angular.module('contentful').directive('cfProfileView', function($window, $rootS
 
       scope.$on('iframeMessage', function (event, data, iframe) {
         if (iframe !== elem.find('iframe')[0]) return;
+        scope.hasLoaded = true;
         if (data.path) internalNavigationTo(data.path);
       });
+
+      scope.hasLoaded = false;
 
       function routeChanged(route) {
         if (route.viewType === 'profile') {

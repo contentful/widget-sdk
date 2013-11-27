@@ -22,8 +22,11 @@ angular.module('contentful').directive('iframeView', function($window, $rootScop
 
       scope.$on('iframeMessage', function (event, data, iframe) {
         if (iframe !== elem.find('iframe')[0]) return;
+        scope.hasLoaded = true;
         if (pathChanged && data.path) pathChanged(data.path);
       });
+
+      scope.hasLoaded = false;
     }
   };
 });
