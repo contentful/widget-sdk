@@ -44,8 +44,8 @@ group :development, :test do
   gem "guard-livereload"
   gem 'rb-fsevent', '~> 0.9.1', :require => false
   gem "jasmine", :git => 'git://github.com/janv/jasmine-gem.git', :branch => 'patch-1'
-  gem 'sauce', '~> 3.1.1'
-  gem 'sauce-connect'
+  #gem 'sauce', '~> 3.1.1'
+  #gem 'sauce-connect'
 end
 
 group :test do
