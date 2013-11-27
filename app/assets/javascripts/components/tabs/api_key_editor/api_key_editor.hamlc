@@ -49,7 +49,11 @@
             %a.default-button.cf-copy-paste(href="#" clipboard-target="curl-command" ng-show="apiKey.data.accessToken")
               %i.ss-layers
               %i.ss-plus
-
+    .form-field(ng-show="apiKey.data.accessToken")
+      %label Regenerate Access Token
+      .form-controls
+        .field-editor
+          %input(type="checkbox" ng-model="apiKey.data.regenerateAccessToken" ng-disabled="!editable()" ng-click="showRegenerateWarning()")
 
 .tab-actions
   .button-set
