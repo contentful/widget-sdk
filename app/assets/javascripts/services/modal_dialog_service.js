@@ -43,7 +43,7 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', function 
       $compile(this.domElement)(scope);
 
       this.domElement.on('click', function (ev) {
-        var target = $(ev.currentTarget);
+        var target = $(ev.target);
         if(target.hasClass('modal-background') &&
            _.isUndefined(target.attr('no-background-close')) &&
            !dialog.params.noBackgroundClose
