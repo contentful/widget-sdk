@@ -42,5 +42,4 @@
   %div(ng-switch-default="")
     Please select a type first
 
-%button.default-button.delete-validation(ng-click="deleteValidation(validationIndex)")
-  %i.ss-delete
+%a.delete-validation(ng-click="deleteValidation(validationIndex)") Remove
