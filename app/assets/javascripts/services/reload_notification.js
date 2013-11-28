@@ -22,7 +22,8 @@ angular.module('contentful').factory('ReloadNotification', function  ReloadNotif
         title: 'The application needs to reload',
         message: message,
         scope: $injector.get('$rootScope'),
-        cancelLabel: null
+        cancelLabel: null,
+        noBackgroundClose: true
       }).then(reloadWithCacheBuster);
     }
   };

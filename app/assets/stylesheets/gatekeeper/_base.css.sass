@@ -1,0 +1,78 @@
+// Layout fixes for iframe
+.tab-content.tab-iframe
+  top: 0
+  bottom: 0
+  left: 0
+  right: 0
+  border: 0
+
+  // Styling of the headline
+  .tab-header a
+    color: $dark-gray
+    &:hover
+      color: $light-gray
+  .header-separator
+    color: $lightest-gray
+
+.settings-panel
+  @extend .link-list
+  ul
+    margin-bottom: 2em
+
+// Adjust base font size // YOLO
+.profile
+  .tab-iframe
+    font-size: 14px
+
+// Adjust content padding
+.tab-iframe
+  .left-nav
+    position: fixed
+    top: $tab-header-height
+  .with-left-nav
+    @extend .tab-workbench
+    +tab-padding
+
+// make sure to hide intercom in the frame
+.tab-iframe
+  #IModal,
+  #INotificationMessagesWrapper
+    display: none !important
+    z-index: -9999 !important
+    opacity: 0 !important
+
+// Different style fixes
+.tab-iframe
+  // Make buttons look like buttons
+  input[type="submit"]
+    @extend .default-button
+
+  .button_to
+    display: inline
+    div
+      display: inline
+  // delete button
+  //form.button_to
+    position: relative
+    top: -$tab-actions-height
+    height: $tab-actions-height
+    @extend %tab-actions-padding
+
+  // Add-Button
+
+  button,
+  a.default-button
+    &.new-resource
+      margin-top: 34px //result list tr-height
+      @extend .primary-button
+    .ss-plus
+      @extend .button-icon
+
+  // Main tables
+  .result-list
+    @extend %result-list-border-bottom
+  .result-list
+    .clickable
+      tr
+        @extend %tr-clickable
+

@@ -1,6 +1,11 @@
 .tab-header
   .left-nav
     %h1 Entries
+    %a.cf-knowledge-base-icon(
+      tooltip="Learn more about Entries in the Knowledge Base Pages"
+      analytics-event="entries"
+      href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
+
   .search-area.with-left-nav
     .search-field(search="searchTerm" placeholder="Search for Entries")
   .search-results-position(paginator="paginator")
@@ -70,7 +75,7 @@
           Create a Content Type
         %p.advice-description(ng-hide="spaceContext.publishedContentTypes.length == 0")
           To create an Entry, use the Add-Button near the top of the screen.
-        %a.knowledge-base(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
+        %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
           Visit the Knowledge Base Pages
           %i.ss-help
 .tab-actions

@@ -1,0 +1,17 @@
+.modal-background
+  .modal-dialog
+    .title
+      Regenerate token?
+      %a.cf-knowledge-base-icon(
+        tooltip="Learn more about API Keys in the Knowledge Base Pages"
+        analytics-event="api_keys"
+        href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
+    .close-button(ng-click="dialog.cancel()")
+    %p.dialog-content Resetting your access token can break the apps which currently use this access token.
+    %p.dialog-content Are you sure you want to do this now?
+    .buttons
+      %button.default-button.cancel(type="button" ng-click="dialog.cancel()")
+        Cancel
+      %button.default-button.primary-button.confirm(ng-click="dialog.confirm()")
+        Reset Access Token
+

@@ -54,7 +54,7 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
             if (errCreate) {
               //console.log('Error creating entry', errCreate);
               notification.serverError('Error creating Entry', errCreate);
-              throw new Error(errCreate);
+              return;
             }
             scope.addLink(entry, function(errSetLink) {
               if (errSetLink) {
@@ -65,11 +65,10 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
                     if (errDelete) {
                       //console.log('Error deleting entry', errDelete);
                       notification.serverError('Error deleting Entry again', errDelete);
-                      throw new Error(errDelete);
                     }
                   });
                 });
-                throw new Error(errSetLink);
+                return;
               }
               scope.navigator.entryEditor(entry).goTo();
             });
@@ -83,7 +82,7 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
             if (errCreate) {
               //console.log('Error creating asset', errCreate);
               notification.serverError('Error creating Asset', errCreate);
-              throw new Error(errCreate);
+              return;
             }
             scope.addLink(asset, function(errSetLink) {
               if (errSetLink) {
@@ -94,11 +93,10 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(Paginator,
                     if (errDelete) {
                       //console.log('Error deleting asset', errDelete);
                       notification.serverError('Error deleting Asset again', errDelete);
-                      throw new Error(errDelete);
                     }
                   });
                 });
-                throw new Error(errSetLink);
+                return
               }
               scope.navigator.assetEditor(asset).goTo();
             });

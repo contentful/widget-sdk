@@ -1,7 +1,7 @@
 module ContentTypeHelper
   def add_field(name, type, options={})
     find('.add-field-button, button', text: 'Field').click
-    find(:xpath, ".//span[text()='#{type}']/..").click
+    find(".type[data-type-name='#{type}']").click
 
     fill_in 'fieldName', with: name
     fill_in 'fieldId'  , with: options[:id] if options[:id]

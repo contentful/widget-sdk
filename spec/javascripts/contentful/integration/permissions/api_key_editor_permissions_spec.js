@@ -12,18 +12,22 @@ describe('The ApiKey editor permissions', function () {
     });
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
+      scope.spaceContext = {
+        space: {
+          getId: sinon.stub()
+        }
+      };
       scope.tab = {};
       scope.can = canStub;
 
-      container = $('<div class="api-key-editor"></div>');
-      $compile(container)(scope);
+      container = $compile('<div class="api-key-editor"></div>')(scope);
       scope.$digest();
     });
   });
 
-  afterEach(function () {
-    container.remove();
-  });
+  afterEach(inject(function ($log) {
+    $log.assertEmpty();
+  }));
 
   it('delete button is disabled', function () {
     canStub.withArgs('create', 'ApiKey').returns(false);

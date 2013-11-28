@@ -14,6 +14,8 @@
 //
 //= require moment-2.1.0
 //
+//= require ZeroClipboard
+//
 //= require user_interface/node_modules/share/node_modules/browserchannel/dist/bcsocket-uncompressed
 //= require user_interface/node_modules/share/webclient/share.uncompressed
 //= require user_interface/node_modules/share/webclient/json.uncompressed

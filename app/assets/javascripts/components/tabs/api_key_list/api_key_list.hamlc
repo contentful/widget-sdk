@@ -1,8 +1,11 @@
 .tab-header
   %h1 Content Delivery
+  %a.cf-knowledge-base-icon(
+    tooltip="Learn more about API Keys in the Knowledge Base Pages"
+    analytics-event="api_keys"
+    href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
 
 .tab-main
-
   .left-nav
     %ul
       %li.api-keys.active
@@ -38,7 +41,7 @@
       %p.advice-description API Keys open the door to your content. One should be created for each application that accesses your content.
       %button.default-button.primary-button(type="button" ng-click="createApiKey()" ng-disabled="!can('create', 'ApiKey')")
         Create API Key
-      %a.knowledge-base(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
+      %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
         Visit the Knowledge Base Pages
         %i.ss-help
 

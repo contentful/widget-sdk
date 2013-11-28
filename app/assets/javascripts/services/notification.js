@@ -5,14 +5,14 @@ angular.module('contentful').
     return {
       messages: [],
 
-      error: function(body, options) {
+      error: function(body) {
         this._notify(body, 'error');
-        sentry.captureError(body, options);
+        sentry.captureError(body);
       },
 
       serverError: function(message, body) {
         this._notify(message, 'error');
-        sentry.captureServerError(body);
+        sentry.captureServerError(message, body);
       },
 
       warn: function(body) {

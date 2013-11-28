@@ -23,7 +23,7 @@
                   tooltip="Search for existing {{entityName}}")
     %ng-switch(on="linkType")
       .dropdown-btn.add-new(ng-switch-when="Entry"
-                            ng-hide="linkContentType"
+                            ng-hide="linkContentType || !can('create', 'Entry')"
                             tooltip="Add new {{linkType}}"
                             tooltip-placement="left")
         %button.form-button.default-button.dropdown-toggle(type="button")
@@ -35,10 +35,10 @@
                 ng-click="addNewEntry(contentType)"
                 dropdown-close="")
               {{contentType.getName()}}
-      %button.form-button.default-button.add-new.with-link-content-type(type="button" ng-show="linkContentType" ng-click="addNewEntry(linkContentType)")
+      %button.form-button.default-button.add-new.with-link-content-type(type="button" ng-show="linkContentType && can('create', 'Asset')" ng-click="addNewEntry(linkContentType)")
         %i.ss-plus.button-icon
         New
-      %button.form-button.default-button.add-new.with-link-content-type(type="button" ng-switch-default="" ng-click="addNewAsset()")
+      %button.form-button.default-button.add-new.with-link-content-type(type="button" ng-switch-default="" ng-click="addNewAsset()" ng-show="can('create', 'Asset')")
         %i.ss-plus.button-icon
         New
 

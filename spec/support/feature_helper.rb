@@ -28,7 +28,7 @@ module FeatureHelper
     end
 
     begin
-      page.find('.client', wait: 5)
+      page.find('.client', wait: 1)
     rescue Capybara::ElementNotFound
       visit "#{be_host}/" if current_url == "#{marketing_host}/"
       fill_in 'user_email', with: user
@@ -41,7 +41,7 @@ module FeatureHelper
     end
 
     begin
-      find('#welcome .dot[data-index="4"]').click
+      find('#welcome .dot[data-index="4"]', wait: 0.5).click
       find('#welcome .guiders_x_button').click
       find('#restartHint .primary-button').click
     rescue Capybara::ElementNotFound
@@ -97,16 +97,13 @@ module FeatureHelper
       click_link 'Delete Space'
       accept_browser_dialog
     end
-    sleep 4
+    expect_success 'Space has been deleted'
   end
 
   def create_test_space(name=test_space)
     find('.account .project .dropdown-toggle').click
     begin
-      using_wait_time 0.5 do
-        find('li', text: test_space).click
-      end
-      return
+      find('li', text: name, wait: 0.5).click
     rescue Capybara::ElementNotFound
       find('li', text: 'Create Space').click
       fill_in 'name', with: name
@@ -114,8 +111,8 @@ module FeatureHelper
       within ".modal-dialog" do
         click_button 'Create Space'
       end
+      expect_success 'Created space'
     end
-    sleep 3
   end
 
   def add_button(text)
@@ -148,11 +145,19 @@ module FeatureHelper
   end
 
   def select_tab(title)
-    find(:xpath, "//*[@class='tab-title'][text()='#{title}']/..").click
+    find(:xpath, "//*[contains(@class,'tab-title')][text()='#{title}']/..").click
+  end
+
+  def wait_for_sharejs
+    find('.save-status.saved')
   end
 
   def expect_success(string = 'published successfully')
     find('.notification', text: string, wait: 10)
+  end
+
+  def expect_error(string)
+    find('.notification.error', text: string, wait: 10)
   end
 
   def eventually(options = {})

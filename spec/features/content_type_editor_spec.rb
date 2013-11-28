@@ -2,6 +2,7 @@ require 'spec_helper'
 
 feature 'Content Type Editor', js: true, sauce: true do
   include ContentTypeHelper
+  include EditorHelper
 
   before do
     ensure_login
@@ -95,5 +96,37 @@ feature 'Content Type Editor', js: true, sauce: true do
 
     click_button 'Update'
     expect(page).to have_selector('.cf-field-settings')
+  end
+
+  scenario 'Deactivating a content type' do
+    # Create content type
+    add_button 'Content Type'
+    fill_in 'contentTypeName', with: 'Test Content Type'
+    add_field 'Text', 'Text'
+    click_button 'Activate'
+    expect_success 'activated successfully'
+
+    # Create entry for content type
+    add_button 'Test Content Type'
+    edit_field('text', 'en-US', 'textarea').set('bla')
+    wait_for_sharejs
+    sleep 2 # Wait for Elasticsearch to catch up
+
+    # Switch back to content type editor and try to deactivate
+    select_tab 'Test Content Type'
+    click_button 'Deactivate'
+    expect_error 'has entries'
+
+    # Switch back to entry editor and delete entry
+    select_tab 'bla'
+    find('a', text: 'More').click
+    find('li.delete').click
+    find('li.delete-confirm').click
+    expect_success 'deleted successfully'
+
+    # Switch back to content type editor and deactivate
+    select_tab 'Test Content Type'
+    click_button 'Deactivate'
+    expect_success 'deactivated successfully'
   end
 end
