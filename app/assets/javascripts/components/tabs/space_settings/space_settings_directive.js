@@ -1,13 +1,10 @@
 'use strict';
-angular.module('contentful').directive('cfProfileView', function($window, $rootScope, authentication, routing){
+angular.module('contentful').directive('spaceSettings', function($window, $rootScope, authentication, routing){
   return {
     template: JST['iframe_view'](),
     restrict: 'C',
     scope: true,
     link: function (scope, elem) {
-      scope.tab = {params: {fullscreen: true}};
-      elem.hide();
-
       scope.$on('$routeChangeSuccess', function (event, route, previous) {
         routeChanged(route, previous);
       });
@@ -20,17 +17,24 @@ angular.module('contentful').directive('cfProfileView', function($window, $rootS
 
       scope.hasLoaded = false;
 
-      function routeChanged(route) {
-        if (route.viewType === 'profile') {
-          updateFrameLocation();
-          elem.show();
-        } else {
-          elem.hide();
+      init();
+
+      function init() {
+        var pathSuffix = scope.tab.params.pathSuffix;
+        var url = buildUrl(pathSuffix);
+        if (!urlIsActive(url)) {
+          scope.url = url;
+          elem.find('iframe').prop('src', appendToken(scope.url));
         }
+      };
+
+      function routeChanged(route) {
+        if (route.viewType !== 'space-settings') return;
+        updateFrameLocation();
       }
 
       function updateFrameLocation() {
-        var pathSuffix = routing.getRoute().params.pathSuffix || 'user';
+        var pathSuffix = routing.getRoute().params.pathSuffix || 'edit';
         var url = buildUrl(pathSuffix);
         if (!urlIsActive(url)) {
           scope.url = url;
@@ -39,11 +43,10 @@ angular.module('contentful').directive('cfProfileView', function($window, $rootS
       }
 
       function internalNavigationTo(path) {
-        console.log('path changed', path, elem.find('iframe').prop('src'));
         var oldPathSuffix = extractPathSuffix(scope.url);
         var pathSuffix    = extractPathSuffix(path);
         scope.url = buildUrl(pathSuffix);
-        if (oldPathSuffix !== pathSuffix) scope.goToProfile(pathSuffix);
+        if (oldPathSuffix !== pathSuffix) scope.navigator.spaceSettings(pathSuffix).goTo();
       }
 
       function urlIsActive(url) {
@@ -52,11 +55,13 @@ angular.module('contentful').directive('cfProfileView', function($window, $rootS
       }
 
       function buildUrl(pathSuffix) {
-        return authentication.profileUrl() + '/' + pathSuffix;
+        var spaceId = scope.spaceContext.space.getId();
+        return authentication.spaceSettingsUrl(spaceId) + '/' + pathSuffix;
       }
 
       function extractPathSuffix(path) {
-        return path.match(/profile\/(.*$)/)[1];
+        var match = path.match(/settings\/spaces\/\w+\/(.*$)/);
+        return match[1];
       }
 
       function appendToken(url) {
@@ -69,3 +74,4 @@ angular.module('contentful').directive('cfProfileView', function($window, $rootS
     }
   };
 });
+

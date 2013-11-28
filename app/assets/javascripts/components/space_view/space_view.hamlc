@@ -78,7 +78,7 @@
              ng-show="spaceContext.space && tab.active()"
              ng-class="{'with-tab-bar': !hideTabBar()}"
              ng-switch="tab.viewType")
-  .iframe-view(ng-switch-when="iframe")
+  .space-settings(ng-switch-when="space-settings")
   .entry-list.entity-list(ng-switch-when="entry-list")
   .asset-list.entity-list(ng-switch-when="asset-list")
   .content-type-list.entity-list(ng-switch-when="content-type-list")

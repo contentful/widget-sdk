@@ -98,11 +98,10 @@ angular.module('contentful').factory('TabOptionsGenerator', function () {
     spaceSettings: function (pathSuffix) {
       pathSuffix = pathSuffix || 'edit';
       return {
-        viewType: 'iframe',
+        viewType: 'space-settings',
         section: 'spaceSettings',
         hidden: true,
         params: {
-          mode: 'spaceSettings',
           pathSuffix: pathSuffix,
           fullscreen: true
         },
