@@ -55,4 +55,18 @@ describe('The Entry list directive', function () {
   makeActionTest('unpublish', 'unpublish');
   makeActionTest('publish', 'publish');
 
+  it('save button is disabled', function () {
+    canStub.withArgs('create', 'Entry').returns(false);
+    scope.$apply();
+    expect(container.find('.results-empty-advice .primary-button').attr('disabled')).toBe('disabled');
+  });
+
+  it('save button is enabled', function () {
+    canStub.withArgs('create', 'Entry').returns(true);
+    scope.$apply();
+    expect(container.find('.results-empty-advice .primary-button').attr('disabled')).toBeUndefined();
+  });
+
+
+
 });

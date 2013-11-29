@@ -77,7 +77,6 @@ describe('Asset editor controller', function () {
       scope.$apply();
       expect(scope.otDisabled).toBe(true);
     });
-
   });
 
   describe('validation on publish', function () {

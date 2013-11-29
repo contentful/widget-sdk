@@ -3,11 +3,10 @@
 describe('The Asset list directive', function () {
 
   var container, scope;
-  var canStub, emptyStub;
+  var canStub;
 
   beforeEach(function () {
     canStub = sinon.stub();
-    emptyStub = sinon.stub();
     module('contentful/test', function ($provide) {
       $provide.value('can', canStub);
     });
