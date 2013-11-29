@@ -3,10 +3,11 @@
 describe('The Asset list directive', function () {
 
   var container, scope;
-  var canStub;
+  var canStub, emptyStub;
 
   beforeEach(function () {
     canStub = sinon.stub();
+    emptyStub = sinon.stub();
     module('contentful/test', function ($provide) {
       $provide.value('can', canStub);
     });
@@ -53,5 +54,17 @@ describe('The Asset list directive', function () {
   makeActionTest('archive', 'archive');
   makeActionTest('unpublish', 'unpublish');
   makeActionTest('publish', 'publish');
+
+  it('create button is disabled', function () {
+    canStub.withArgs('create', 'Asset').returns(false);
+    scope.$apply();
+    expect(container.find('.results-empty-advice .primary-button').attr('disabled')).toBe('disabled');
+  });
+
+  it('create button is enabled', function () {
+    canStub.withArgs('create', 'Asset').returns(true);
+    scope.$apply();
+    expect(container.find('.results-empty-advice .primary-button').attr('disabled')).toBeUndefined();
+  });
 
 });
