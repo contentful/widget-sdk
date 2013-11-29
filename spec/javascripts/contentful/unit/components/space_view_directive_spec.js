@@ -1,6 +1,6 @@
 'use strict';
 
-describe('The Space view permissions', function () {
+describe('The Space view directive', function () {
 
   var container, scope;
   var canStub;
@@ -39,10 +39,10 @@ describe('The Space view permissions', function () {
       'add-asset',
       'add-api-key'
     ];
+    var seed = Math.random();
     describe('if user can create a '+type, function () {
       beforeEach(function () {
         canStub.withArgs('create', type).returns(true);
-        var seed = Math.random();
         scope.changer = 'changer'+seed;
         scope.$apply();
       });
