@@ -11,7 +11,6 @@ describe('Asset editor controller', function () {
     module('contentful/test');
     module(function ($provide) {
       canStub = sinon.stub();
-      // TODO maybe extract into
       $provide.value('can', canStub);
     });
 

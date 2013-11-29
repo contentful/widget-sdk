@@ -9,6 +9,13 @@ describe('The Space view directive', function () {
     canStub = sinon.stub();
     module('contentful/test', function ($provide) {
       $provide.value('can', canStub);
+      $provide.value('environment', {
+        settings: {
+          filepicker: {
+            api_key: 'apikey'
+          }
+        }
+      });
     });
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
