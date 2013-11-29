@@ -1,6 +1,6 @@
 'use strict';
 
-describe('The ApiKey list permissions', function () {
+describe('The ApiKey list directive', function () {
 
   var container, scope;
   var canStub;

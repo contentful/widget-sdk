@@ -1,6 +1,6 @@
 'use strict';
 
-describe('The Asset list actions permissions', function () {
+describe('The Asset list directive', function () {
 
   var container, scope;
   var canStub;

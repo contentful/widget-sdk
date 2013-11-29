@@ -1,6 +1,6 @@
 'use strict';
 
-describe('The Entry list actions permissions', function () {
+describe('The Entry list directive', function () {
 
   var container, scope;
   var canStub;
