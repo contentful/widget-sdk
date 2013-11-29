@@ -80,7 +80,7 @@ feature 'Content Type Editor', js: true, sauce: true do
     end
 
     click_button 'Activate'
-    expect(page).to have_selector('.notification.warn')
+    expect_warn 'Validation failed'
   end
 
   scenario 'Validation errors on a disabled field cause it to be shown' do
@@ -123,6 +123,7 @@ feature 'Content Type Editor', js: true, sauce: true do
     find('li.delete').click
     find('li.delete-confirm').click
     expect_success 'deleted successfully'
+    sleep 2 # Wait for Elasticsearch to catch up
 
     # Switch back to content type editor and deactivate
     select_tab 'Test Content Type'
