@@ -14,15 +14,25 @@ describe('The Entry list directive', function () {
       scope = $rootScope.$new();
       scope.can = canStub;
 
+      scope.tab = {
+        params: {}
+      };
+      scope.spaceContext = {
+        space: {
+          getId: sinon.stub()
+        }
+      };
+
       container = $('<div class="entry-list"></div>');
       $compile(container)(scope);
       scope.$digest();
     });
   });
 
-  afterEach(function () {
+  afterEach(inject(function ($log) {
     container.remove();
-  });
+    $log.assertEmpty();
+  }));
 
   function makeActionTest(button, action) {
     it(button+' button not shown', function () {

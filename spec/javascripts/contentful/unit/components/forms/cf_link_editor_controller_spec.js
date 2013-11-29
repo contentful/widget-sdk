@@ -77,6 +77,11 @@ describe('cf LinkEditor controller', function () {
     });
   });
 
+  afterEach(inject(function ($log) {
+    $log.assertEmpty();
+  }));
+
+
   describe('attaches one entry to an entry directive', function () {
     beforeEach(function () {
       attrs.cfLinkEditor = 'entry';

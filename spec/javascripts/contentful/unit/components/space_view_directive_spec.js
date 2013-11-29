@@ -13,7 +13,11 @@ describe('The Space view directive', function () {
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
       scope.spaceContext = {
-        space: {}
+        space: {
+          getPublishLocales: sinon.stub()
+        },
+        refreshContentTypes: sinon.stub(),
+        refreshLocales: sinon.stub()
       };
 
       container = $('<space-view></space-view>');
@@ -22,9 +26,11 @@ describe('The Space view directive', function () {
     });
   });
 
-  afterEach(function () {
+  afterEach(inject(function ($log) {
     container.remove();
-  });
+    $log.assertEmpty();
+  }));
+
 
   it('add button not shown if no create permissions exist', function () {
     canStub.returns(false);

@@ -13,6 +13,15 @@ describe('The Asset list directive', function () {
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
       scope.can = canStub;
+      scope.tab = {
+        params: {}
+      };
+      scope.spaceContext = {
+        space: {
+          getId: sinon.stub()
+        }
+      };
+      scope.validate = sinon.stub();
 
       container = $('<div class="asset-list"></div>');
       $compile(container)(scope);
@@ -20,9 +29,10 @@ describe('The Asset list directive', function () {
     });
   });
 
-  afterEach(function () {
+  afterEach(inject(function ($log) {
     container.remove();
-  });
+    $log.assertEmpty();
+  }));
 
   function makeActionTest(button, action) {
     it(button+' button not shown', function () {

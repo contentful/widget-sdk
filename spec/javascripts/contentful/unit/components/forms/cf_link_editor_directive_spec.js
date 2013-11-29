@@ -8,11 +8,17 @@ describe('cfLinkEditor Directve', function () {
 
   beforeEach(inject(function ($compile, $rootScope) {
     scope = $rootScope.$new();
-    scope.fieldData = { value: {}};
+    scope.fieldData = { value: {
+      sys: {id: 123}
+    }};
     scope.field = {
       items: {}
     };
     scope.spaceContext = {
+      space: {
+        getEntries: sinon.stub(),
+        getAssets: sinon.stub()
+      }
     };
 
     compileElement = function () {
@@ -20,6 +26,10 @@ describe('cfLinkEditor Directve', function () {
       scope.$digest();
       searchField = element.find('.search-field');
     };
+  }));
+
+  afterEach(inject(function ($log) {
+    $log.assertEmpty();
   }));
 
   describe('links entries', function () {

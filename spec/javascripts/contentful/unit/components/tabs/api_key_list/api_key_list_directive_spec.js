@@ -25,9 +25,10 @@ describe('The ApiKey list directive', function () {
     });
   });
 
-  afterEach(function () {
+  afterEach(inject(function ($log) {
+    $log.assertEmpty();
     container.remove();
-  });
+  }));
 
   it('save button is disabled', function () {
     canStub.withArgs('create', 'ApiKey').returns(false);

@@ -20,7 +20,7 @@ describe('Validation Dialog', function () {
   afterEach(inject(function ($log) {
     $log.assertEmpty();
   }));
-  
+
   it('should remove used validations from list of available validations', function () {
     expect(_.keys(scope.availableValidations).length).toBe(3);
     expect(_.keys(scope.availableValidations)).toContain('Predefined Values');

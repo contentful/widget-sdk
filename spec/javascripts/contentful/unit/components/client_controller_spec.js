@@ -30,6 +30,11 @@ describe('Client controller', function () {
     });
   });
 
+  afterEach(inject(function ($log) {
+    $log.assertEmpty();
+  }));
+
+
   it('gets no persistent notification', function () {
     scope.user = null;
     scope.spaceContext = {
