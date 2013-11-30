@@ -124,7 +124,7 @@ angular.module('contentful').provider('analytics', function (environment) {
     },
 
     knowledgeBase: function (section) {
-      this.track('Knowledge Base', {
+      this.track('Clicked KBP link', {
         section: section
       });
     },
