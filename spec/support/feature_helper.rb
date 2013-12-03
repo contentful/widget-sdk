@@ -12,6 +12,7 @@ module FeatureHelper
 
   def access_token=(t)
     @@access_token = t
+    Dir.mkdir('tmp') unless File.exist?('tmp')
     File.write('tmp/spec_token', t)
   end
 
