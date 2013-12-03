@@ -102,6 +102,7 @@ describe('Authorization service', function () {
 
 describe('Can service', function () {
   var can, canStub, authStub;
+  var scope;
 
   beforeEach(function () {
     canStub = sinon.stub();
@@ -113,7 +114,8 @@ describe('Can service', function () {
       };
       $provide.value('authorization', authStub);
     });
-    inject(function (_can_) {
+    inject(function (_can_, $rootScope) {
+      scope = $rootScope.$new();
       can = _can_;
     });
   });
@@ -127,14 +129,61 @@ describe('Can service', function () {
     expect(can()).toBe(false);
   });
 
-  it('returns false if auth fails', function () {
-    canStub.returns(false);
-    expect(can()).toBe(false);
+  describe('if auth fails', function () {
+    var canResult;
+    beforeEach(function () {
+      canStub.returns(false);
+      canResult = can(scope, 'create', 'Entry');
+    });
+
+    it('returns false', function () {
+      expect(canResult).toBe(false);
+    });
+
+    it('arguments passed along to can', function () {
+      expect(canStub.calledWith('create', 'Entry')).toBeTruthy();
+    });
   });
 
-  it('returns true if auth succeeds', function () {
-    canStub.returns(true);
-    expect(can()).toBe(true);
+  describe('if auth succeeds', function () {
+    var canResult;
+    beforeEach(function () {
+      canStub.returns(true);
+      canResult = can(scope, 'create', 'Entry');
+    });
+
+    it('returns true', function () {
+      expect(canResult).toBe(true);
+    });
+
+    it('arguments passed along to can', function () {
+      expect(canStub.calledWith('create', 'Entry')).toBeTruthy();
+    });
+  });
+
+  describe('if there are reasons for auth fail', function () {
+    var canResult;
+    beforeEach(function () {
+      canStub.returns(['system_maintenance']);
+      canResult = can(scope, 'create', 'Entry');
+    });
+
+    it('returns a message', function () {
+      expect(canResult).toBe(false);
+    });
+
+    it('arguments passed along to can', function () {
+      expect(canStub.calledWith('create', 'Entry')).toBeTruthy();
+    });
+
+    it('sets a persisstent notification on the scope', function () {
+      expect(scope.persistentNotification).toBeDefined();
+    });
+
+    it('sets a can object on the scope', function () {
+      expect(scope.canReasons).toBeDefined();
+    });
+
   });
 
 });
