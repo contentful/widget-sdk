@@ -1,6 +1,6 @@
 'use strict';
 
-describe('The Entry list actions permissions', function () {
+describe('The Entry list directive', function () {
 
   var container, scope;
   var canStub;
@@ -14,15 +14,25 @@ describe('The Entry list actions permissions', function () {
       scope = $rootScope.$new();
       scope.can = canStub;
 
+      scope.tab = {
+        params: {}
+      };
+      scope.spaceContext = {
+        space: {
+          getId: sinon.stub()
+        }
+      };
+
       container = $('<div class="entry-list"></div>');
       $compile(container)(scope);
       scope.$digest();
     });
   });
 
-  afterEach(function () {
+  afterEach(inject(function ($log) {
     container.remove();
-  });
+    $log.assertEmpty();
+  }));
 
   function makeActionTest(button, action) {
     it(button+' button not shown', function () {
@@ -44,5 +54,19 @@ describe('The Entry list actions permissions', function () {
   makeActionTest('archive', 'archive');
   makeActionTest('unpublish', 'unpublish');
   makeActionTest('publish', 'publish');
+
+  it('save button is disabled', function () {
+    canStub.withArgs('create', 'Entry').returns(false);
+    scope.$apply();
+    expect(container.find('.results-empty-advice .primary-button').attr('disabled')).toBe('disabled');
+  });
+
+  it('save button is enabled', function () {
+    canStub.withArgs('create', 'Entry').returns(true);
+    scope.$apply();
+    expect(container.find('.results-empty-advice .primary-button').attr('disabled')).toBeUndefined();
+  });
+
+
 
 });

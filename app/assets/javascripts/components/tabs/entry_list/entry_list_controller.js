@@ -95,6 +95,10 @@ angular.module('contentful').controller('EntryListCtrl',
     } else if ($scope.tab.params.list == 'changed') {
       queryObject['sys.archivedAt[exists]'] = 'false';
       queryObject['changed'] = 'true';
+    } else if ($scope.tab.params.list == 'draft') {
+      queryObject['sys.archivedAt[exists]'] = 'false';
+      queryObject['sys.publishedVersion[exists]'] = 'false';
+      queryObject['changed'] = 'true';
     } else if ($scope.tab.params.list == 'archived') {
       queryObject['sys.archivedAt[exists]'] = 'true';
     } else if ($scope.tab.params.list == 'contentType') {

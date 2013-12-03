@@ -7,11 +7,13 @@ describe('cfAutocompleteResultsController', function () {
 
   beforeEach(inject(function ($controller, $rootScope, $parse){
     scope = $rootScope;
-    //$rootScope.results  = [1,2,3,4];
-    //$rootScope.searchTerm = '';
     controller = $controller('CfAutocompleteResultsCtrl', {$scope: $rootScope});
     controller.getAutocompleteResults = $parse('results');
     controller.setAutocompleteTerm = $parse('searchTerm').assign;
+  }));
+
+  afterEach(inject(function ($log) {
+    $log.assertEmpty();
   }));
 
   it('should adjust selectedIndex, numResults', function () {
@@ -25,7 +27,7 @@ describe('cfAutocompleteResultsController', function () {
     expect(controller.selectedIndex).toBe(-1);
     expect(controller.numResults).toBe(0);
   });
-    
+
   it('should set autocompleteTerm to 0 when canceled', function () {
     scope.searchTerm = 'foobar';
     controller.cancelAutocomplete();

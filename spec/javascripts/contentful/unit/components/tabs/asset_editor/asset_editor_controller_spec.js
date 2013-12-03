@@ -5,19 +5,18 @@ describe('Asset editor controller', function () {
   var scope;
   var assetEditorCtrl;
   var getPublishLocalesStub, assetTitleStub, canStub;
+  var isArchivedStub;
 
   beforeEach(function () {
     module('contentful/test');
     module(function ($provide) {
       canStub = sinon.stub();
-      // TODO maybe extract into
       $provide.value('can', canStub);
     });
 
     inject(function (_$rootScope_, $controller) {
       scope = _$rootScope_;
 
-      scope.tab = {};
       var locale = {
         code: 'en-US',
         contentDeliveryApi: true,
@@ -35,11 +34,26 @@ describe('Asset editor controller', function () {
           getPublishLocales: getPublishLocalesStub
         }
       };
+      scope.validate = sinon.stub();
+
+      isArchivedStub = sinon.stub();
+      var asset = {
+        isArchived: isArchivedStub
+      };
+      scope.tab = {
+        params: {
+          asset: asset
+        }
+      };
 
       assetEditorCtrl = $controller('AssetEditorCtrl', {$scope: scope});
       scope.$apply();
     });
   });
+
+  afterEach(inject(function ($log) {
+    $log.assertEmpty();
+  }));
 
   it('gets a title set on a tab', function () {
     assetTitleStub.returns('title');
@@ -48,12 +62,7 @@ describe('Asset editor controller', function () {
   });
 
   describe('sets the otDisabled flag', function () {
-    var isArchivedStub;
     beforeEach(function () {
-      isArchivedStub = sinon.stub();
-      scope.asset = {
-        isArchived: isArchivedStub
-      };
       isArchivedStub.returns(false);
     });
 
@@ -68,7 +77,6 @@ describe('Asset editor controller', function () {
       scope.$apply();
       expect(scope.otDisabled).toBe(true);
     });
-
   });
 
   describe('validation on publish', function () {

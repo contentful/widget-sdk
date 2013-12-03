@@ -124,7 +124,7 @@ angular.module('contentful').provider('analytics', function (environment) {
     },
 
     knowledgeBase: function (section) {
-      this.track('Knowledge Base', {
+      this.track('Clicked KBP link', {
         section: section
       });
     },
@@ -197,15 +197,9 @@ angular.module('contentful').provider('analytics', function (environment) {
           section: tab.section,
           viewType: tab.viewType,
           entryId: tab.params.contentType.getId()});
-      } else if (t == 'iframe') {
-        var url;
-        if (tab.params.url) {
-          url = tab.params.url.replace(/access_token=(\w+)/, 'access_token=XXX');
-        }
+      } else if (t == 'space-settings') {
         this.track('Viewed Page', {
           viewType: tab.viewType,
-          url: url,
-          mode: tab.params.mode,
           pathSuffix: tab.params.pathSuffix
         });
       }

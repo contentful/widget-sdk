@@ -9,6 +9,10 @@ describe('Available field types', function () {
     });
   });
 
+  afterEach(inject(function ($log) {
+    $log.assertEmpty();
+  }));
+
   it('returns a field name for a simple field type', function () {
     expect(getFieldTypeName({type: 'Date'})).toEqual('Date/Time');
   });

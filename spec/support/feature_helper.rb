@@ -41,7 +41,7 @@ module FeatureHelper
     end
 
     begin
-      find('#welcome .dot[data-index="4"]', wait: 0.5).click
+      find('#welcome .dot[data-index="4"]', wait: 1).click
       find('#welcome .guiders_x_button').click
       find('#restartHint .primary-button').click
     rescue Capybara::ElementNotFound
@@ -156,8 +156,12 @@ module FeatureHelper
     find('.notification', text: string, wait: 10)
   end
 
-  def expect_error(string)
+  def expect_error(string=nil)
     find('.notification.error', text: string, wait: 10)
+  end
+
+  def expect_warn(string=nil)
+    find('.notification.warn', text: string, wait: 10)
   end
 
   def eventually(options = {})

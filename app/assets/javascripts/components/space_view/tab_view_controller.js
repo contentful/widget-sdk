@@ -85,8 +85,7 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     apiKeyList:        function () { return this._wrap(gen.apiKeyList()); },
     assetList:         function () { return this._wrap(gen.assetList()); },
     forViewType:       function (viewType) { return this._wrap(gen.forViewType(viewType)); },
-    spaceSettings:     function (pathSuffix) { return this._wrap(gen.spaceSettings([pathSuffix])); }
-    //profile:           function (pathSuffix) {return this._wrap(gen.profile())}
+    spaceSettings:     function (pathSuffix) { return this._wrap(gen.spaceSettings(pathSuffix)); }
   };
 
   $scope.syncLocation = function () {
@@ -99,7 +98,9 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
 
   $scope.findTabForPath = function (path) {
     return _.find($scope.spaceContext.tabList.items, function (tab) {
-      return routing.makeLocation(tab, $scope.spaceContext.space) == path;
+      var isSpaceSettings = tab.viewType == 'space-settings' && path.match(/spaces\/\w+\/settings\/(.*$)/);
+      var pathMatches = routing.makeLocation(tab, $scope.spaceContext.space) == path;
+      return isSpaceSettings || pathMatches;
     });
   };
 

@@ -4,29 +4,38 @@ describe('apiKeyEditor Directive', function () {
   var element, scope;
   var regenerateCheckbox;
   var openStub, catchStub;
+  var canStub;
+
   beforeEach(function () {
+    canStub = sinon.stub();
     openStub = sinon.stub();
     catchStub = sinon.stub();
     openStub.returns({
       catch: catchStub
     });
+
     module('contentful/test', function ($provide) {
+      $provide.value('can', canStub);
       $provide.value('modalDialog', {
         open: openStub
       });
     });
+
     inject(function ($compile, $rootScope) {
       scope = $rootScope.$new();
+
       scope.spaceContext = {
         space: {
           getId: sinon.stub()
         }
       };
+      scope.can = canStub;
       scope.tab = {
         params: {
           apiKey: {}
         }
       };
+
       element = $compile('<div class="api-key-editor"></div>')(scope);
       scope.$digest();
       regenerateCheckbox = element.find('.form-field').eq(3);
@@ -36,6 +45,7 @@ describe('apiKeyEditor Directive', function () {
   afterEach(inject(function ($log) {
     $log.assertEmpty();
   }));
+
 
   it('has a headline', function () {
     scope.headline = 'headline text';
@@ -86,4 +96,31 @@ describe('apiKeyEditor Directive', function () {
 
   });
 
+  it('delete button is disabled', function () {
+    canStub.withArgs('create', 'ApiKey').returns(false);
+    scope.$apply();
+    expect(element.find('.tab-actions .delete').attr('disabled')).toBe('disabled');
+  });
+
+  it('delete button is enabled', function () {
+    canStub.withArgs('create', 'ApiKey').returns(true);
+    scope.$apply();
+    expect(element.find('.tab-actions .delete').attr('disabled')).toBeUndefined();
+  });
+
+  it('save button is disabled', function () {
+    scope.apiKeyForm.$invalid = false;
+    canStub.withArgs('create', 'ApiKey').returns(false);
+    scope.$apply();
+    expect(element.find('.tab-actions .save').attr('disabled')).toBe('disabled');
+  });
+
+  it('save button is enabled', function () {
+    scope.apiKeyForm.$invalid = false;
+    canStub.withArgs('create', 'ApiKey').returns(true);
+    scope.$apply();
+    expect(element.find('.tab-actions .save').attr('disabled')).toBeUndefined();
+  });
+
 });
+

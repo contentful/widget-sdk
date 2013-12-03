@@ -1,6 +1,6 @@
 'use strict';
 
-describe('The Asset list actions permissions', function () {
+describe('The Asset list directive', function () {
 
   var container, scope;
   var canStub;
@@ -13,6 +13,15 @@ describe('The Asset list actions permissions', function () {
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
       scope.can = canStub;
+      scope.tab = {
+        params: {}
+      };
+      scope.spaceContext = {
+        space: {
+          getId: sinon.stub()
+        }
+      };
+      scope.validate = sinon.stub();
 
       container = $('<div class="asset-list"></div>');
       $compile(container)(scope);
@@ -20,9 +29,10 @@ describe('The Asset list actions permissions', function () {
     });
   });
 
-  afterEach(function () {
+  afterEach(inject(function ($log) {
     container.remove();
-  });
+    $log.assertEmpty();
+  }));
 
   function makeActionTest(button, action) {
     it(button+' button not shown', function () {
@@ -43,5 +53,17 @@ describe('The Asset list actions permissions', function () {
   makeActionTest('archive', 'archive');
   makeActionTest('unpublish', 'unpublish');
   makeActionTest('publish', 'publish');
+
+  it('create button is disabled', function () {
+    canStub.withArgs('create', 'Asset').returns(false);
+    scope.$apply();
+    expect(container.find('.results-empty-advice .primary-button').attr('disabled')).toBe('disabled');
+  });
+
+  it('create button is enabled', function () {
+    canStub.withArgs('create', 'Asset').returns(true);
+    scope.$apply();
+    expect(container.find('.results-empty-advice .primary-button').attr('disabled')).toBeUndefined();
+  });
 
 });

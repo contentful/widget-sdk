@@ -68,11 +68,9 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
           } else {
             path = path + '/api_keys/new';
           }
-        } else if (tab.viewType == 'iframe') {
-          if (tab.params.mode === 'spaceSettings') {
-            path = path + '/settings';
-            if (tab.params.pathSuffix) path = path + '/' + tab.params.pathSuffix;
-          }
+        } else if (tab.viewType == 'space-settings') {
+          path = path + '/settings';
+          if (tab.params.pathSuffix) path = path + '/' + tab.params.pathSuffix;
         }
         return path;
       }

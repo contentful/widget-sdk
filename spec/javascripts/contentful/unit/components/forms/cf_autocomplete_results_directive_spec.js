@@ -11,6 +11,10 @@ describe('cfAutocompleteResultsDirective', function () {
     controller = elem.controller('cfAutocompleteResults');
   }));
 
+  afterEach(inject(function ($log) {
+    $log.assertEmpty();
+  }));
+
   it('should set setters and getters in the controller', function () {
     scope.results = [1,2,3];
     scope.searchTerm = 'foobar';

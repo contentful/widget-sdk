@@ -24,6 +24,9 @@ feature 'Tutorial', js: true, sauce: true do
 
   def close_tutorial_overview
     find('#welcome .guiders_x_button').click
+    within '#restartHint' do
+      click_link 'OK'
+    end
   end
 
   def finish_tutorial

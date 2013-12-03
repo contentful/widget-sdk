@@ -27,23 +27,6 @@
           ng-click="switchList(label)")
         %span {{name}}
 
-      -#
-        %li.disabled(ng-class="{active: tab.params.list == 'starred'}")
-          %span Starred
-        %li.disabled(ng-class="{active: tab.params.list == 'createdByMe'}")
-          %span Created by me
-    -#
-      %header Saved searches
-      %ul.left-nav-filters
-        %li
-          %i.ss-search
-          %span Updated by me
-        %li
-          %i.ss-search
-          %span Large rooms
-      %footer.left-nav-bottom
-        %span Import
-        %span Export
   .with-left-nav
     %table.result-list.main-header
       %thead

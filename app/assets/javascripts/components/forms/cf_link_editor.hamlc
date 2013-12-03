@@ -13,6 +13,7 @@
         %i.ss-delete(ng-click="removeLink(index, entity)" ng-show="otEditable")
         .unpublished(ng-show="entity.canPublish()" tooltip-placement="right" tooltip="This entry hasn't been published")
 
+
 .cf-link-editor-search(cf-autocomplete-results="entities" autocomplete-term="searchTerm")
   .controls(ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
     .search-field(ng-submit="submit()"
@@ -21,26 +22,36 @@
                   placeholder="Search for {{entityName}}"
                   tooltip-placement="top"
                   tooltip="Search for existing {{entityName}}")
-    %ng-switch(on="linkType")
-      .dropdown-btn.add-new(ng-switch-when="Entry"
-                            ng-hide="linkContentType || !can('create', 'Entry')"
-                            tooltip="Add new {{linkType}}"
-                            tooltip-placement="left")
-        %button.form-button.default-button.dropdown-toggle(type="button")
-          %i.ss-plus.button-icon
-          New
-        %a.dropdown-menu
-          %ul
-            %li(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
-                ng-click="addNewEntry(contentType)"
-                dropdown-close="")
-              {{contentType.getName()}}
-      %button.form-button.default-button.add-new.with-link-content-type(type="button" ng-show="linkContentType && can('create', 'Asset')" ng-click="addNewEntry(linkContentType)")
+
+    -# link to entry or entries
+    .dropdown-btn.add-new(
+        ng-if="linkType=='Entry' && !linkContentType && can('create', 'Entry')"
+        tooltip="Add new {{linkType}}"
+        tooltip-placement="left")
+      %button.form-button.default-button.dropdown-toggle(type="button")
         %i.ss-plus.button-icon
         New
-      %button.form-button.default-button.add-new.with-link-content-type(type="button" ng-switch-default="" ng-click="addNewAsset()" ng-show="can('create', 'Asset')")
-        %i.ss-plus.button-icon
-        New
+      %a.dropdown-menu
+        %ul
+          %li(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
+              ng-click="addNewEntry(contentType)"
+              dropdown-close="")
+            {{contentType.getName()}}
+
+    -# link to entry or entries with restriction on the type
+    %button.form-button.default-button.add-new.with-link-content-type(type="button"
+        ng-if="linkContentType && can('create', 'Entry')"
+        ng-click="addNewEntry(linkContentType)")
+      %i.ss-plus.button-icon
+      New
+
+    -# link to asset (with or without restriction)
+    %button.form-button.default-button.add-new.with-link-content-type(type="button"
+        ng-if="linkType=='Asset' && can('create', 'Asset')"
+        ng-click="addNewAsset()")
+      %i.ss-plus.button-icon
+      New
+
 
   .results.search-options-on(ng-show="entities && entities.length > 0" ng-switch="linkType" cf-click-outside="searchTerm=''")
     %div(ng-switch-when="Entry")

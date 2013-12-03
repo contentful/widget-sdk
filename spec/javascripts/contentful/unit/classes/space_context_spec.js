@@ -9,6 +9,11 @@ describe('SpaceContext class with no space', function () {
     });
   });
 
+  afterEach(inject(function ($log) {
+    $log.assertEmpty();
+  }));
+
+
   it('has no space', function () {
     expect(spaceContext.space).toBeUndefined();
   });
@@ -39,6 +44,11 @@ describe('SpaceContext class with a space', function () {
       spaceContext = new SpaceContext(window.createMockSpace());
     });
   });
+
+  afterEach(inject(function ($log) {
+    $log.assertEmpty();
+  }));
+
 
   it('has a space', function () {
     expect(spaceContext.space).toBeDefined();
@@ -351,53 +361,57 @@ describe('SpaceContext resolving missing ContentTypes', function () {
   var spaceContext, scope;
 
   beforeEach(module('contentful/test'));
-    beforeEach(inject(function ($rootScope, SpaceContext) {
-      scope = $rootScope;
-      spaceContext = new SpaceContext(); // Not passing argument to avoid initializing the locales
-      spaceContext.space = { };
-    }));
+  beforeEach(inject(function ($rootScope, SpaceContext) {
+    scope = $rootScope;
+    spaceContext = new SpaceContext(); // Not passing argument to avoid initializing the locales
+    spaceContext.space = { };
+  }));
 
-    it('should not trigger a refresh when resolving a known published content type', function () {
-      spyOn(spaceContext, 'refreshContentTypes');
-      spaceContext._publishedContentTypesHash = {
-        foo: 'Bar'
-      };
-      expect(spaceContext.publishedTypeForEntry({
-        getContentTypeId: function () { return 'foo'; }
-      })).toBe('Bar');
-      expect(spaceContext.refreshContentTypes).not.toHaveBeenCalled();
-    });
+  afterEach(inject(function ($log) {
+    $log.assertEmpty();
+  }));
 
-    it('should trigger a refresh when attempting to resolve an unknown published content type', function () {
-      spyOn(spaceContext, 'refreshContentTypes');
-      spaceContext.publishedTypeForEntry({
-        getContentTypeId: function () { return 'foo'; }
-      });
-      expect(spaceContext.refreshContentTypes).toHaveBeenCalled();
-    });
+  it('should not trigger a refresh when resolving a known published content type', function () {
+    spyOn(spaceContext, 'refreshContentTypes');
+    spaceContext._publishedContentTypesHash = {
+      foo: 'Bar'
+    };
+    expect(spaceContext.publishedTypeForEntry({
+      getContentTypeId: function () { return 'foo'; }
+    })).toBe('Bar');
+    expect(spaceContext.refreshContentTypes).not.toHaveBeenCalled();
+  });
 
-    it('should mark a published type as not missing after retrieval', function () {
-      spaceContext._publishedContentTypeIsMissing['foo'] = true;
-      spaceContext.space.getPublishedContentTypes = function (callback) {
-        callback(null, [
-          {
-            getName: function(){return '';},
-            getId: function () { return 'foo'; },
-            isDeleted: sinon.stub().returns(false),
-            data: { sys: {id: 'foo'} }
-          }
-        ]);
-      };
-      spaceContext.refreshPublishedContentTypes();
-      expect(spaceContext._publishedContentTypeIsMissing['foo']).toBeFalsy();
+  it('should trigger a refresh when attempting to resolve an unknown published content type', function () {
+    spyOn(spaceContext, 'refreshContentTypes');
+    spaceContext.publishedTypeForEntry({
+      getContentTypeId: function () { return 'foo'; }
     });
+    expect(spaceContext.refreshContentTypes).toHaveBeenCalled();
+  });
 
-    it('should not trigger a refresh on content types that are known missing', function () {
-      spaceContext._publishedContentTypeIsMissing['foo'] = true;
-      spyOn(spaceContext, 'refreshContentTypes');
-      spaceContext.publishedTypeForEntry({
-        getContentTypeId: function () { return 'foo'; }
-      });
-      expect(spaceContext.refreshContentTypes).not.toHaveBeenCalled();
+  it('should mark a published type as not missing after retrieval', function () {
+    spaceContext._publishedContentTypeIsMissing['foo'] = true;
+    spaceContext.space.getPublishedContentTypes = function (callback) {
+      callback(null, [
+        {
+          getName: function(){return '';},
+          getId: function () { return 'foo'; },
+          isDeleted: sinon.stub().returns(false),
+          data: { sys: {id: 'foo'} }
+        }
+      ]);
+    };
+    spaceContext.refreshPublishedContentTypes();
+    expect(spaceContext._publishedContentTypeIsMissing['foo']).toBeFalsy();
+  });
+
+  it('should not trigger a refresh on content types that are known missing', function () {
+    spaceContext._publishedContentTypeIsMissing['foo'] = true;
+    spyOn(spaceContext, 'refreshContentTypes');
+    spaceContext.publishedTypeForEntry({
+      getContentTypeId: function () { return 'foo'; }
     });
+    expect(spaceContext.refreshContentTypes).not.toHaveBeenCalled();
+  });
 });

@@ -1,6 +1,6 @@
 'use strict';
 
-describe('The ApiKey list permissions', function () {
+describe('The ApiKey list directive', function () {
 
   var container, scope;
   var canStub;
@@ -25,9 +25,10 @@ describe('The ApiKey list permissions', function () {
     });
   });
 
-  afterEach(function () {
+  afterEach(inject(function ($log) {
+    $log.assertEmpty();
     container.remove();
-  });
+  }));
 
   it('save button is disabled', function () {
     canStub.withArgs('create', 'ApiKey').returns(false);

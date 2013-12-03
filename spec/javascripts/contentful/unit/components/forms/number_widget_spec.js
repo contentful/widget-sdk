@@ -9,7 +9,14 @@ describe('Number widgets', function () {
     scope.field = {type: null};
     scope.otEditable = true;
   }));
-  
+
+  /*
+   * TODO some issue with otPath
+  afterEach(inject(function ($log) {
+    $log.assertEmpty();
+  }));
+ */
+
   describe('Number widget', function () {
     beforeEach(inject(function ($rootScope, $compile){
       scope.field = {type: 'Number'};

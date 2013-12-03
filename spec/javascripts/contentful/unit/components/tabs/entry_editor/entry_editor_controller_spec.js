@@ -2,20 +2,25 @@
 
 describe('Entry Editor Controller', function () {
   var controller, scope;
-  beforeEach(module('contentful/test'));
-
-  beforeEach(inject(function ($compile, $rootScope, $controller, cfStub){
-    scope = $rootScope;
-    var space = cfStub.space('testSpace');
-    var contentTypeData = cfStub.contentTypeData('testType');
-    scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
-    var entry = cfStub.entry(space, 'testEntry', 'testType', {}, {
-      sys: { publishedVersion: 1 }
+  var canStub;
+  beforeEach(function () {
+    module('contentful/test', function ($provide) {
+        canStub = sinon.stub();
+        $provide.value('can', canStub);
     });
-    scope.tab = { params: { entry: entry } };
-    controller = $controller('EntryEditorCtrl', {$scope: $rootScope});
-    scope.$digest();
-  }));
+    inject(function ($compile, $rootScope, $controller, cfStub){
+      scope = $rootScope;
+      var space = cfStub.space('testSpace');
+      var contentTypeData = cfStub.contentTypeData('testType');
+      scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
+      var entry = cfStub.entry(space, 'testEntry', 'testType', {}, {
+        sys: { publishedVersion: 1 }
+      });
+      scope.tab = { params: { entry: entry } };
+      controller = $controller('EntryEditorCtrl', {$scope: scope});
+      scope.$digest();
+    });
+  });
 
   afterEach(inject(function ($log) {
     $log.assertEmpty();
@@ -28,9 +33,23 @@ describe('Entry Editor Controller', function () {
     expect(scope.validate.called).toBe(true);
   });
 
+  describe('sets the otDisabled flag', function () {
+    it('to disabled', function () {
+      canStub.withArgs('update', scope.entry.data).returns(true);
+      scope.$apply();
+      expect(scope.otDisabled).toBe(false);
+    });
+
+    it('to enabled', function () {
+      canStub.withArgs('update', scope.entry.data).returns(false);
+      scope.$apply();
+      expect(scope.otDisabled).toBe(true);
+    });
+  });
+
 });
 
-describe('Entry Editor Controller', function () {
+describe('Entry Editor Controller with validation errors', function () {
   var controller, scope;
   beforeEach(module('contentful/test'));
 
@@ -58,7 +77,6 @@ describe('Entry Editor Controller', function () {
   }));
 
   describe('fields with errors', function () {
-
     it('should display all locales for localized fields', function () {
       scope.$digest();
       expect(scope.fields[0].locales.length).toBe(2);
@@ -69,6 +87,7 @@ describe('Entry Editor Controller', function () {
       expect(scope.fields[1].locales.length).toBe(1);
     });
   });
+
 });
 
 
