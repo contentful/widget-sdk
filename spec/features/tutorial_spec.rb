@@ -96,9 +96,8 @@ feature 'Tutorial', js: true, sauce: true do
     edit_field('title', 'en-US', 'input').set('Quiz Picture')
     find '#assetUpload'
     page.execute_script %Q{guiders.next()}
-    set_asset('.asset-editor')
     find '#assetPick'
-    page.execute_script %Q{guiders.next()}
+    set_asset('.asset-editor')
     click_button 'Publish'
 
     find('.tab[data-view-type="entry-editor"]').click
