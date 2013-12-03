@@ -43,7 +43,7 @@ describe('Determine enforcement service', function () {
   describe('returns maintenance message', function () {
     var enforcement;
     beforeEach(function () {
-      enforcement = determineEnforcement('system_maintenance');
+      enforcement = determineEnforcement(['system_maintenance']);
     });
 
     it('has an error', function () {
@@ -63,10 +63,46 @@ describe('Determine enforcement service', function () {
     });
   });
 
+  describe('returns maintenance message with multiple reasons', function () {
+    var enforcement;
+    beforeEach(function () {
+      enforcement = determineEnforcement(['system_maintenance', 'subscription_unsettled']);
+    });
+
+    it('has an error', function () {
+      expect(enforcement.message).toBeDefined();
+    });
+
+    it('error matches reason', function () {
+      expect(enforcement.message).toMatch(/system/gi);
+    });
+
+    it('has a description', function () {
+      expect(enforcement.description).toBeDefined();
+    });
+
+    it('description matches reason', function () {
+      expect(enforcement.description).toMatch(/system/gi);
+    });
+
+    it('has a tooltip', function () {
+      expect(enforcement.tooltip).toBeDefined();
+    });
+
+    it('tooltip equals error message', function () {
+      expect(enforcement.tooltip).toEqual(enforcement.message);
+    });
+
+    it('tooltip matches reason', function () {
+      expect(enforcement.tooltip).toMatch(/system/gi);
+    });
+
+  });
+
   describe('returns subscription unsettled', function () {
     var enforcement;
     beforeEach(function () {
-      enforcement = determineEnforcement('subscription_unsettled');
+      enforcement = determineEnforcement(['subscription_unsettled']);
     });
 
     it('has an error', function () {
@@ -89,7 +125,7 @@ describe('Determine enforcement service', function () {
   describe('returns period usage exceeded', function () {
     var enforcement;
     beforeEach(function () {
-      enforcement = determineEnforcement('period_usage_exceeded');
+      enforcement = determineEnforcement(['period_usage_exceeded']);
     });
 
     it('has an error', function () {
@@ -113,7 +149,7 @@ describe('Determine enforcement service', function () {
     var enforcement;
     beforeEach(function () {
       userStub.returns(makeUserObject({ apiKey: 3}, { apiKey: 3}));
-      enforcement = determineEnforcement('usage_exceeded');
+      enforcement = determineEnforcement(['usage_exceeded']);
     });
 
     it('has an error', function () {
@@ -135,7 +171,7 @@ describe('Determine enforcement service', function () {
     describe('with no specific metric', function () {
       beforeEach(function () {
         userStub.returns(makeUserObject({ apiKey: 2}, { apiKey: 3}));
-        enforcement = determineEnforcement('usage_exceeded');
+        enforcement = determineEnforcement(['usage_exceeded']);
       });
 
       it('tooltip is the same as the message', function () {
@@ -152,7 +188,7 @@ describe('Determine enforcement service', function () {
           apiKey: 3,
           entry: 4
         }));
-        enforcement = determineEnforcement('usage_exceeded');
+        enforcement = determineEnforcement(['usage_exceeded']);
       });
 
       it('tooltip matches metric', function () {

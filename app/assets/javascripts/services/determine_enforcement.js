@@ -1,30 +1,35 @@
 'use strict';
 angular.module('contentful').factory('determineEnforcement', function DetermineEnforcement($injector) {
 
-  var errors = {
-    system_maintenance: {
+  var errorsByPriority = [
+    {
+      label: 'system_maintenance',
       message: 'System under maintenance',
       description: 'The system is currently under maintenance and in read-only mode.'
     },
-    subscription_unsettled: {
+    {
+      label: 'subscription_unsettled',
       message: 'Outstanding invoices',
       description: 'Please provide updated billing details to be able to edit the content in this Space again.'
     },
-    period_usage_exceeded: {
+    {
+      label: 'period_usage_exceeded',
       message: 'Over usage limits',
       description: 'This Space exceeds the monthly usage quota for the current subscription plan. Please upgrade to a higher plan to guarantee that your content is served without any interruptions.',
       tooltip: ''
     },
-    usage_exceeded: {
+    {
+      label: 'usage_exceeded',
       message: 'Over usage limits',
       description: 'This Space exceeds the usage quota for the current subscription plan. Please upgrade to a higher plan.',
       tooltip: computeUsage,
     },
-    access_token_scope: {
+    {
+      label: 'access_token_scope',
       message: 'Unknown error occurred',
       description: ''
     }
-  };
+  ];
 
   var usageMetrics = {
     apiKey: 'API keys',
@@ -53,10 +58,14 @@ angular.module('contentful').factory('determineEnforcement', function DetermineE
       undefined;
   }
 
-  return function (reason) {
-    if(!(reason in errors)) return null;
+  return function (reasons) {
+    var errors = _.filter(errorsByPriority, function (val) {
+      return reasons.indexOf(val.label) >= 0;
+    });
+    if(errors.length === 0) return null;
 
-    var error = _.clone(errors[reason]);
+    var error = _.clone(errors[0]);
+
     if(error.tooltip === undefined){
       error.tooltip = error.message;
     }
