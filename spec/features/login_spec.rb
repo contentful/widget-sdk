@@ -33,6 +33,7 @@ feature 'Registration', js: true, sauce: true do
     fill_in 'user_last_name', with: 'User'
     fill_in 'user_email', with: 'testuser@contentful.com'
     fill_in 'user_password', with: 'password'
+    fill_in 'user_coupon_code', with: 'bootstrap' if first('#user_coupon_code')
     click_button 'Sign Up'
     page.should have_selector('.client')
   end
