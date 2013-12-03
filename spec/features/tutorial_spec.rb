@@ -60,7 +60,9 @@ feature 'Tutorial', js: true, sauce: true do
     add_field('Timestamp', 'Date/Time')
     add_field('Image', 'Asset')
 
+    wait_for_sharejs
     find('.publish').click
+    expect_success('activated successfully')
 
     find('#contentTypeList')
     nav_bar 'content-type-list'
