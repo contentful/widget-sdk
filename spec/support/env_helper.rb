@@ -1,12 +1,13 @@
 module EnvHelper
   if ENV['USE_SAUCE']
     @@number = ENV['TEST_ENV_NUMBER']
-    def app_host      ; 'https://app.flinkly.com'; end
-    def be_host       ; 'https://be.flinkly.com' ; end
-    def marketing_host; 'https://www.flinkly.com'; end
-    def user          ; 'jan@contentful.com'     ; end
-    def password      ; 'upeW3Kz9KkcBrd'         ; end
-    def test_space    ; "TestSpace#{@@number}"   ; end
+    def app_host      ; 'https://app.flinkly.com'          ; end
+    def be_host       ; 'https://be.flinkly.com'           ; end
+    def marketing_host; 'https://www.flinkly.com'          ; end
+    def user          ; 'jan@contentful.com'               ; end
+    def password      ; 'upeW3Kz9KkcBrd'                   ; end
+    def test_space    ; "TestSpace#{@@number}"             ; end
+    def token_file    ; "tmp/spec_token_sauce_#{@@number}" ; end
   else
     def app_host      ; 'http://app.joistio.com:8888' ; end
     def be_host       ; 'http://be.joistio.com:8888'  ; end
@@ -14,5 +15,6 @@ module EnvHelper
     def user          ; 'user@example.com'            ; end
     def password      ; 'password'                    ; end
     def test_space    ; 'TestSpace'                   ; end
+    def token_file    ; 'tmp/spec_token'              ; end
   end
 end

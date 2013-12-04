@@ -76,6 +76,10 @@ function ($injector , $window, environment, stringifySafe) {
       }
     },
 
+    // options is an object
+    // If it contains a data key, that value is somehow processed and assigned to
+    // options.extra.
+    // Use it to log full objects in sentry
     captureError: function (error, options) {
       if ($window.Raven) {
         var dataId = null;

@@ -4,19 +4,20 @@ module FeatureHelper
     feature.let(:tutorial_space_id) { page.evaluate_script "$('.client').scope().spaces.filter(function(s){return s.data.name === '#{test_space}'})[0].getId()" }
   end
 
-  @@access_token = File.exist?('tmp/spec_token') ? File.read('tmp/spec_token') : nil
+  @@access_token = nil
 
   def access_token
-    @@access_token
+    @@access_token ||= File.exist?(token_file) ? File.read(token_file) : nil
   end
 
   def access_token=(t)
     @@access_token = t
-    File.write('tmp/spec_token', t)
+    Dir.mkdir('tmp') unless File.exist?('tmp')
+    File.write(token_file, t)
   end
 
   def clear_access_token
-    File.delete('tmp/spec_token') if File.exist?('tmp/spec_token')
+    File.delete(token_file) if File.exist?(token_file)
     @@access_token = nil
   end
 

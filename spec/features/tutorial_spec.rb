@@ -60,7 +60,9 @@ feature 'Tutorial', js: true, sauce: true do
     add_field('Timestamp', 'Date/Time')
     add_field('Image', 'Asset')
 
+    wait_for_sharejs
     find('.publish').click
+    expect_success('activated successfully')
 
     find('#contentTypeList')
     nav_bar 'content-type-list'
@@ -96,9 +98,8 @@ feature 'Tutorial', js: true, sauce: true do
     edit_field('title', 'en-US', 'input').set('Quiz Picture')
     find '#assetUpload'
     page.execute_script %Q{guiders.next()}
-    set_asset('.asset-editor')
     find '#assetPick'
-    page.execute_script %Q{guiders.next()}
+    set_asset('.asset-editor')
     click_button 'Publish'
 
     find('.tab[data-view-type="entry-editor"]').click

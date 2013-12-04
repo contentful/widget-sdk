@@ -103,6 +103,7 @@ feature 'Content Type Editor', js: true, sauce: true do
     add_button 'Content Type'
     fill_in 'contentTypeName', with: 'Test Content Type'
     add_field 'Text', 'Text'
+    wait_for_sharejs
     click_button 'Activate'
     expect_success 'activated successfully'
 

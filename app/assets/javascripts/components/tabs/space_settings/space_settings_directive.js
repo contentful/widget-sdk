@@ -61,7 +61,7 @@ angular.module('contentful').directive('spaceSettings', function($window, $rootS
 
       function extractPathSuffix(path) {
         var match = path.match(/settings\/spaces\/\w+\/(.*$)/);
-        return match[1];
+        return match && match[1];
       }
 
       function appendToken(url) {

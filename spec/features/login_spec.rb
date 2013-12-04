@@ -33,6 +33,7 @@ feature 'Registration', js: true, sauce: true do
     fill_in 'user_last_name', with: 'User'
     fill_in 'user_email', with: 'testuser@contentful.com'
     fill_in 'user_password', with: 'password'
+    fill_in 'user_coupon_code', with: 'bootstrap' if first('#user_coupon_code')
     click_button 'Sign Up'
     page.should have_selector('.client')
   end
@@ -46,6 +47,7 @@ feature "Account cancellation", js:true, sauce: true do
     fill_in 'user_last_name', with: 'User'
     fill_in 'user_email', with: 'testuser@contentful.com'
     fill_in 'user_password', with: 'password'
+    fill_in 'user_coupon_code', with: 'bootstrap' if first('#user_coupon_code')
     click_button 'Sign Up'
     find('.client')
   end
@@ -56,7 +58,7 @@ feature "Account cancellation", js:true, sauce: true do
     within_frame iframe do
       click_button 'Cancel Account'
     end
-    current_url.should eql("#{marketing_host}/goodbye")
+    current_url.should eql("#{marketing_host}/goodbye/")
     #page.should have_text('Please let us know about your experience')
   end
 end

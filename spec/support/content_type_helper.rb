@@ -3,6 +3,7 @@ module ContentTypeHelper
     find('.add-field-button, button', text: 'Field').click
     find(".type[data-type-name='#{type}']").click
 
+    find_field 'fieldName'
     fill_in 'fieldName', with: name
     fill_in 'fieldId'  , with: options[:id] if options[:id]
     find('.toggle-localized').click if options[:localized]

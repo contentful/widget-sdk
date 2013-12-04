@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('tutorial', function ($compile, notification, tutorialExampledata, $q, $timeout, $rootScope, analytics) {
+angular.module('contentful').factory('tutorial', function ($compile, notification, tutorialExampledata, $q, $timeout, $rootScope, analytics, sentry) {
   var guiders = window.guiders;
   guiders._defaultSettings.buttons = null;
   guiders._defaultSettings.xButton = true;
@@ -120,7 +120,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
             if (guider.attachTo) try {
               guider.attachScope = $(guider.attachTo).scope().$new();
             } catch (e) {
-              throw new Error('Failed to attach guider '+guider.id+' to '+guider.attachTo);
+              sentry.captureError('Failed to attach guider '+guider.id+' to '+guider.attachTo);
             }
             if (onShow) onShow.call(guider, guider);
           });
