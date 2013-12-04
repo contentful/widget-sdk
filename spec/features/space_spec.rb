@@ -19,8 +19,7 @@ feature 'Working with spaces', js: true, sauce: true do
     within '.nav-bar' do
       all('li').last.click
     end
-    space_settings = find 'iframe'
-    within_frame space_settings do
+    tab_iframe do
       click_link 'Delete Space'
       accept_browser_dialog
     end

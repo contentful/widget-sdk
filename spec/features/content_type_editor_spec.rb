@@ -23,7 +23,7 @@ feature 'Content Type Editor', js: true, sauce: true do
      "Symbols", "Location"].each do |fieldType|
        add_field fieldType+' Field', fieldType
     end
-    sleep 2
+    wait_for_sharejs
     click_button 'Activate'
     close_tab
     nav_bar 'entry-list' # this should not be necessary, but somehow the list isn't refreshed
