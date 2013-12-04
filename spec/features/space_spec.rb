@@ -25,4 +25,16 @@ feature 'Working with spaces', js: true, sauce: true do
     end
     sleep 2
   end
+
+  scenario 'Renaming a space' do
+    remove_test_space
+    create_test_space
+    nav_bar 'space-settings'
+    tab_iframe do
+      fill_in 'space_name', with: "Renamed #{test_space}"
+      click_button 'Update Space'
+    end
+    expect(find('.account .project .dropdown-toggle')).to have_content "Renamed #{test_space}"
+    remove_test_space "Renamed #{test_space}"
+  end
 end
