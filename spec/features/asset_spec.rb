@@ -54,6 +54,7 @@ feature 'Link Editor', js: true, sauce: true do
       sleep 0.5
       find('.result-list tbody tr').click
     end
+    wait_for_sharejs
     click_button 'Publish'
     expect_success
   end
