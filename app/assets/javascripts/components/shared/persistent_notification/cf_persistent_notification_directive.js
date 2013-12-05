@@ -8,8 +8,12 @@ angular.module('contentful').directive('cfPersistentNotification', function ($sc
       scope.message = null;
       scope.actionMessage = null;
 
-      scope.$watch('persistentNotification', function (params) {
-        if(!params) return;
+      function updateNotification(ev, params) {
+        if(!params){
+          scope.persistentNotification = null;
+          return;
+        }
+        scope.persistentNotification = true;
         _.each(params, function (val, key) {
           if(key === 'message') scope[key] = $sce.trustAsHtml(val);
           else scope[key] = val;
@@ -23,7 +27,9 @@ angular.module('contentful').directive('cfPersistentNotification', function ($sc
             container: '.cf-persistent-notification'
           });
         }
-      });
+      }
+
+      scope.$on('persistentNotification', _.throttle(updateNotification, 2500));
     }
   };
 });

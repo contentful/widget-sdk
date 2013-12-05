@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
-    $scope, client, SpaceContext, authentication, notification, analytics,
+    $scope, $rootScope, client, SpaceContext, authentication, notification, analytics,
     routing, authorization, tutorial, modalDialog, presence, $location,
     revision, ReloadNotification) {
 
@@ -71,14 +71,14 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
         action = upgradeAction;
       }
 
-      $scope.persistentNotification = {
+      $rootScope.$broadcast('persistentNotification', {
         message: message,
         tooltipMessage: tooltipMessage,
         action: action,
         actionMessage: actionMessage
-      };
+      });
     } else {
-      delete $scope.persistentNotification;
+      $rootScope.$broadcast('persistentNotification', null);
     }
   }
 
@@ -88,12 +88,12 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   function newVersionCheck() {
     revision.hasNewVersion().catch(function (err) {
       if(err === 'APP_REVISION_CHANGED'){
-        $scope.persistentNotification = {
+        $rootScope.$broadcast('persistentNotification', {
           message: 'New application version',
           tooltipMessage: 'Please reload to get a new version of the application',
           action: ReloadNotification.triggerImmediateReload,
           actionMessage: 'Reload'
-        };
+        });
       }
     });
   }
