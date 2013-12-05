@@ -56,7 +56,7 @@ feature 'Purchase flow', js: true, sauce: true do
     end
   end
 
-  scenario 'Toggle period' do
+  scenario 'Toggle period', non_ci: true do # no yearly plans on staging
     tab_iframe do
       find('.toggle-button.annually').click
       page.should have_text('/ year')
@@ -77,7 +77,7 @@ feature 'Purchase flow', js: true, sauce: true do
     expect_success 'Thanks for getting in touch. We will get back to you shortly'
   end
 
-  scenario 'Switch frequency in step 2', non_ci: true do # no yearly plans on staging
+  scenario 'Switch period in step 2', non_ci: true do # no yearly plans on staging
     tab_iframe do
       first('a', text: 'Choose plan').click
       click_link 'Switch to annual'
@@ -87,7 +87,7 @@ feature 'Purchase flow', js: true, sauce: true do
     expect_success 'The new plan has been switched to the annual plan'
   end
 
-  scenario 'Switch plan in step 2' do # no yearly plans on staging
+  scenario 'Switch plan in step 2' do
     tab_iframe do
       first('a', text: 'Choose plan').click
       click_link 'Change'
