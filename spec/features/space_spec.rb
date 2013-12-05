@@ -29,6 +29,7 @@ feature 'Working with spaces', js: true, sauce: true do
   scenario 'Renaming a space' do
     remove_test_space
     create_test_space
+    find '.content-type-list'
     nav_bar 'space-settings'
     tab_iframe do
       fill_in 'space_name', with: "Renamed #{test_space}"
