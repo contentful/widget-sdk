@@ -47,8 +47,8 @@ feature 'Link Editor', js: true, sauce: true do
   end
 
   scenario 'Add link to entry' do
-    create_content_type
-    add_button 'Entry with Link'
+    create_content_type('Asset')
+    add_button 'Entry with Asset'
     edit_field 'assetField' do
       find('input').set 'Bacon'
       sleep 0.5
@@ -69,16 +69,6 @@ feature 'Link Editor', js: true, sauce: true do
     find '.file-info .thumbnail', wait: 10
     click_button 'Publish'
     sleep 0.5
-  end
-
-  def create_content_type
-    add_button 'Content Type'
-    fill_in 'contentTypeName', with: 'Entry with Link'
-    fill_in 'contentTypeDescription', with: 'Test description'
-    add_field 'Asset Field', 'Asset'
-    wait_for_sharejs
-    click_button 'Activate'
-    close_tab
   end
 
   scenario 'Adding two different files to an entry'

@@ -15,7 +15,7 @@ feature 'Location Editor', js: true, sauce: true do
   end
 
   scenario 'Working with a location' do
-    create_content_type
+    create_content_type('Location')
     add_button 'Entry with Location'
     edit_field 'locationField' do
       # Add by click
@@ -42,12 +42,4 @@ feature 'Location Editor', js: true, sauce: true do
     expect_success
   end
 
-  def create_content_type
-    add_button 'Content Type'
-    fill_in 'contentTypeName', with: 'Entry with Location'
-    add_field 'Location Field', 'Location'
-    wait_for_sharejs
-    click_button 'Activate'
-    close_tab
-  end
 end
