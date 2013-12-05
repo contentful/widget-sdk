@@ -1,31 +1,69 @@
 'use strict';
-angular.module('contentful').factory('determineEnforcement', function DetermineEnforcement($injector) {
+angular.module('contentful').factory('determineEnforcement', function DetermineEnforcement($injector, $location, $window, authorization) {
+
+  var spaceContext, user;
+
+  var setTokenObjects = function() {
+    spaceContext = authorization.spaceContext;
+    user = $injector.get('authentication').getUser();
+  };
+
+  function isOwner() {
+    return user.sys.id === spaceContext.space.sys.createdBy.sys.id;
+  }
+
+  function upgradeActionMessage() {
+    return isOwner() ?  'Upgrade': undefined;
+  }
+
+  function upgradeAction() {
+    $location.path('/profile/subscription');
+  }
+
 
   var errorsByPriority = [
     {
-      label: 'system_maintenance',
+      label: 'systemMaintenance',
       message: 'System under maintenance',
-      description: 'The system is currently under maintenance and in read-only mode.'
+      description: 'The system is currently under maintenance and in read-only mode.',
+      actionMessage: 'Status',
+      action: function () {
+        $window.location = 'http://status.contentful.com';
+      }
     },
     {
-      label: 'subscription_unsettled',
+      label: 'subscriptionUnsettled',
       message: 'Outstanding invoices',
-      description: 'Please provide updated billing details to be able to edit the content in this Space again.'
+      description: function () {
+        return isOwner() ?
+          'Please provide updated billing details to be able to edit the content in this Space again.':
+          'The owner of the Space needs to provide updated billing details to be able to edit the content in this Space again.';
+      },
+      actionMessage: function () {
+        return isOwner() ?  'Update': undefined;
+      },
+      action: function () {
+        $location.path('/profile/subscription/billing');
+      }
     },
     {
-      label: 'period_usage_exceeded',
+      label: 'periodUsageExceeded',
       message: 'Over usage limits',
       description: 'This Space exceeds the monthly usage quota for the current subscription plan. Please upgrade to a higher plan to guarantee that your content is served without any interruptions.',
-      tooltip: ''
+      tooltip: '',
+      actionMessage: upgradeActionMessage,
+      action: upgradeAction
     },
     {
-      label: 'usage_exceeded',
+      label: 'usageExceeded',
       message: 'Over usage limits',
       description: 'This Space exceeds the usage quota for the current subscription plan. Please upgrade to a higher plan.',
       tooltip: computeUsage,
+      actionMessage: upgradeActionMessage,
+      action: upgradeAction
     },
     {
-      label: 'access_token_scope',
+      label: 'accessTokenScope',
       message: 'Unknown error occurred',
       description: ''
     }
@@ -44,13 +82,14 @@ angular.module('contentful').factory('determineEnforcement', function DetermineE
     webhookDefinition: 'Webhook Definitions'
   };
 
-  function computeUsage() {
-    var user = $injector.get('authentication').getUser();
-    var usage = user.subscription.usage.permanent;
-    var limits = user.subscription.subscriptionPlan.limits.permanent;
+  function computeUsage(filter) {
+    setTokenObjects();
+    var subscription = spaceContext.space.subscription;
+    var usage = subscription.usage.permanent;
+    var limits = subscription.subscriptionPlan.limits.permanent;
 
     var metricName = usageMetrics[_.findKey(usage, function (value, name) {
-      return value >= limits[name];
+      return (!filter || filter === name) && value >= limits[name];
     })];
 
     return metricName ?
@@ -58,7 +97,9 @@ angular.module('contentful').factory('determineEnforcement', function DetermineE
       undefined;
   }
 
-  return function (reasons) {
+  function determineEnforcement(reasons, usageTypeFilter) {
+    setTokenObjects();
+    if(!reasons || reasons.length && reasons.length === 0) return null;
     var errors = _.filter(errorsByPriority, function (val) {
       return reasons.indexOf(val.label) >= 0;
     });
@@ -71,9 +112,19 @@ angular.module('contentful').factory('determineEnforcement', function DetermineE
     }
 
     if(typeof error.tooltip == 'function'){
-      error.tooltip = error.tooltip() || error.message;
+      error.tooltip = error.tooltip(usageTypeFilter) || error.message;
     }
+    _.forEach(error, function (value, key) {
+      if(typeof value == 'function' && key != 'action'){
+        error[key] = value();
+      }
+    });
 
     return error;
+  }
+
+  return {
+    determineEnforcement: determineEnforcement,
+    computeUsage: computeUsage
   };
 });
