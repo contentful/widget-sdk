@@ -5,6 +5,7 @@
     %li.tablist-button(
       space-context="spaceContext"
       cf-can-no-disable=""
+      cf-can-no-hide=""
       cf-can="can('create', 'ContentType') || can('create', 'Asset') || can('create', 'Entry') || can('create', 'ApiKey')")
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'contentTypes',
                   'section-index': spaceContext.tabList.currentViewType() == 'content-type-list'}"

@@ -27,6 +27,7 @@
     .dropdown-btn.add-new(
         ng-if="linkType=='Entry' && !linkContentType"
         cf-can="can('create', 'Entry')"
+        cf-can-entity="entry"
         tooltip="Add new {{linkType}}"
         tooltip-placement="left")
       %button.form-button.default-button.dropdown-toggle(type="button")
@@ -43,6 +44,7 @@
     %button.form-button.default-button.add-new.with-link-content-type(type="button"
         ng-if="linkContentType"
         cf-can="can('create', 'Entry')"
+        cf-can-entity="entry"
         ng-click="addNewEntry(linkContentType)")
       %i.ss-plus.button-icon
       New
@@ -51,6 +53,7 @@
     %button.form-button.default-button.add-new.with-link-content-type(type="button"
         ng-if="linkType=='Asset'"
         cf-can="can('create', 'Asset')"
+        cf-can-entity="asset"
         ng-click="addNewAsset()")
       %i.ss-plus.button-icon
       New

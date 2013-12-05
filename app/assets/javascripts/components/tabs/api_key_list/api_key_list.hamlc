@@ -39,7 +39,7 @@
       %i.ss-fork.giant-icon
       %header.advice-title There are no API Keys yet.
       %p.advice-description API Keys open the door to your content. One should be created for each application that accesses your content.
-      %button.default-button.primary-button(type="button" ng-click="createApiKey()" cf-can="can('create', 'ApiKey')")
+      %button.default-button.primary-button(type="button" ng-click="createApiKey()" cf-can="can('create', 'ApiKey')" cf-can-entity="apiKey")
         Create API Key
       %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
         Visit the Knowledge Base Pages
