@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, analytics, routing, notification, can) {
+angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, $rootScope, analytics, routing, notification, authorization, reasonsDenied, determineEnforcement) {
   $scope.$watch(function (scope) {
     if (scope.spaceContext && scope.spaceContext.space) {
       return _.map(scope.spaceContext.space.getPublishLocales(),function (locale) {
@@ -15,7 +15,25 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
     scope.spaceContext.refreshContentTypes();
   });
 
-  $scope.can = can;
+  $scope.can = function () {
+    if (authorization.spaceContext){
+      var response = authorization.spaceContext.can.apply(authorization.spaceContext, arguments);
+      if(!response){
+        var enforcement = reasonsDenied.apply(null, arguments);
+        if(enforcement) {
+          $rootScope.$broadcast('persistentNotification', {
+            message: enforcement.message,
+            tooltipMessage: enforcement.description,
+            actionMessage: enforcement.actionMessage,
+            action: enforcement.action
+          });
+        }
+      }
+      return response;
+    }
+    return false;
+  };
+
 
   $scope.logoClicked = function () {
     analytics.track('Clicked Logo');

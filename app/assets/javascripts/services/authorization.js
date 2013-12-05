@@ -22,26 +22,11 @@ angular.module('contentful').
 
     return new Authorization();
   }).
-  factory('can', function (authorization, determineEnforcement) {
-    return function can() {
-      if (authorization.spaceContext){
-        var args = Array.prototype.slice.call(arguments);
-        var scope = args.shift();
-        var response = authorization.spaceContext.can.apply(authorization.spaceContext, args);
-
-        if(_.isArray(response)){
-          var enforcement = determineEnforcement(response);
-          if(enforcement){
-            scope.persistentNotification = {
-              message: enforcement.message,
-              tooltipMessage: enforcement.description
-            };
-            scope.canReasons = enforcement;
-          }
-        } else if(response){
-          return true;
-        }
-      }
-      return false;
+  factory('reasonsDenied', function (authorization, determineEnforcement) {
+    return function reasonsDenied() {
+      var reasons = authorization.spaceContext.reasonsDenied
+        .apply(authorization.spaceContext, arguments);
+      return determineEnforcement.determineEnforcement(reasons);
     };
   });
+

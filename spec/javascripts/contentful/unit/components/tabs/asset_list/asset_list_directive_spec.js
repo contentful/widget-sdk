@@ -12,7 +12,6 @@ describe('The Asset list directive', function () {
     });
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
-      scope.can = canStub;
       scope.tab = {
         params: {}
       };
