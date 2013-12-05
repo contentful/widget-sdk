@@ -76,7 +76,7 @@ feature 'Link Editor', js: true, sauce: true do
     fill_in 'contentTypeName', with: 'Entry with Link'
     fill_in 'contentTypeDescription', with: 'Test description'
     add_field 'Asset Field', 'Asset'
-    sleep 1
+    wait_for_sharejs
     click_button 'Activate'
     close_tab
   end
