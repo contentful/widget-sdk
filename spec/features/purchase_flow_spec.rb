@@ -1,12 +1,12 @@
 require 'spec_helper'
 
-feature 'Purchase flow', js: true, sauce: true, non_ci: true do
+feature 'Purchase flow', js: true, sauce: true do
   before do
     ensure_login
     visit "#{app_host}/profile/subscription"
   end
 
-  scenario 'Change Subscription plan' do
+  scenario 'Change Subscription plan', non_ci: true do
     tab_iframe do
       first('a', text: 'Choose plan').click
       #first('.billing .table-edit-button').click
@@ -16,7 +16,7 @@ feature 'Purchase flow', js: true, sauce: true, non_ci: true do
     end
   end
 
-  scenario 'Change Billing information' do
+  scenario 'Change Billing information', non_ci: true do
     tab_iframe do
       first('a', text: 'Choose plan').click
       first('.table-edit-button a').click
@@ -26,7 +26,7 @@ feature 'Purchase flow', js: true, sauce: true, non_ci: true do
     end
   end
 
-  scenario 'Change Credit Card information' do
+  scenario 'Change Credit Card information', non_ci: true do
     tab_iframe do
       first('a', text: 'Choose plan').click
       all('.table-edit-button a')[1].click
@@ -43,5 +43,55 @@ feature 'Purchase flow', js: true, sauce: true, non_ci: true do
       click_button 'Save Credit Card'
       page.should have_text('Foo Bar')
     end
+  end
+
+  scenario 'Toggle Plan details' do
+    tab_iframe do
+      first('.details-show').click
+      page.should have_text('Core platform')
+      page.should have_text('SSL')
+      find('.details-hide').click
+      page.should_not have_text('Core platform')
+      page.should_not have_text('SSL')
+    end
+  end
+
+  scenario 'Toggle period' do
+    tab_iframe do
+      find('.toggle-button.annually').click
+      page.should have_text('/ year')
+      page.should_not have_text('/ month')
+      find('.toggle-button.monthly').click
+      page.should_not have_text('/ year')
+      page.should have_text('/ month')
+    end
+  end
+
+  scenario 'Fill enterprise form' do
+    tab_iframe do
+      click_link 'Contact us'
+      fill_in 'phone_number', with: '123456'
+      fill_in 'description', with: "Hello Guys,\njust testing lol.\n\nTravis McTestbot"
+      click_button 'Send message'
+    end
+    expect_success 'Thanks for getting in touch. We will get back to you shortly'
+  end
+
+  scenario 'Switch frequency in step 2' do
+    tab_iframe do
+      first('a', text: 'Choose plan').click
+      click_link 'Switch to annual'
+      page.should have_text('Annually')
+      page.should have_text('/ year')
+    end
+    expect_success 'The new plan has been switched to the annual plan'
+  end
+
+  scenario 'Switch plan in step 2' do
+    tab_iframe do
+      first('a', text: 'Choose plan').click
+      click_link 'Change'
+    end
+    current_url.should eql("#{app_host}/profile/subscription")
   end
 end
