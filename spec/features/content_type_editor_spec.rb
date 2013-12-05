@@ -38,7 +38,7 @@ feature 'Content Type Editor', js: true, sauce: true do
     fill_in 'contentTypeDescription', with: 'Test description'
     add_field 'FooField', 'Object', id: 'fooId', required: true
     click_button 'Activate'
-    expect(page).to have_selector('.notification.info')
+    expect_success('successfully')
   end
 
   scenario 'Adding validations to a field' do
@@ -54,7 +54,7 @@ feature 'Content Type Editor', js: true, sauce: true do
       end
     end
     click_button 'Activate'
-    expect(page).to have_selector('.notification.info')
+    expect_success('successfully')
   end
 
   scenario 'Adding blank validations to a field' do

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Purchase flow', js: true, sauce: true do
+feature 'Purchase flow', js: true, sauce: true, non_ci: true do
   before do
     ensure_login
     visit "#{app_host}/profile/subscription"
