@@ -66,13 +66,15 @@
     %button.default-button.delete(type="button"
                    tooltip="Permanently delete this API key"
                    ng-click="deleteConfirm=true"
-                   ng-disabled="!can('create', 'ApiKey')"
+                   cf-can-no-disable=""
+                   cf-can="can('create', 'ApiKey')"
                    ng-show="apiKey.getId() && !deleteConfirm")
       Delete
     %button.default-button.primary-button.save(type="submit"
                  tooltip="Save this API key"
                  ng-click="save()"
-                 ng-disabled="apiKeyForm.$invalid || !can('create', 'ApiKey')")
+                 ng-disabled="apiKeyForm.$invalid"
+                 cf-can="can('create', 'ApiKey')")
       Save
   .rest-save-status
     Hit Save to save changes to this API Key.

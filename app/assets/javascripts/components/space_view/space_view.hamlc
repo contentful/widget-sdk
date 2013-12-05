@@ -4,11 +4,13 @@
   %ul(ng-show="spaceContext.space")
     %li.tablist-button(
       space-context="spaceContext"
-      ng-show="can('create', 'ContentType') || can('create', 'Asset') || can('create', 'Entry') || can('create', 'ApiKey')")
+      cf-can-no-disable=""
+      cf-can="can('create', 'ContentType') || can('create', 'Asset') || can('create', 'Entry') || can('create', 'ApiKey')")
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'contentTypes',
                   'section-index': spaceContext.tabList.currentViewType() == 'content-type-list'}"
         ng-click="goToView('content-type-list')"
-        ng-show="can('read', 'ContentType')"
+        cf-can-no-disable=""
+        cf-can="can('read', 'ContentType')"
         data-view-type="content-type-list"
         tooltip="Content Model"
         tooltip-placement="bottom"
@@ -36,7 +38,8 @@
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'apiKeys',
                    'section-index': spaceContext.tabList.currentViewType() == 'api-key-list'}"
         ng-click="goToView('api-key-list')"
-        ng-show="can('read', 'ApiKey')"
+        cf-can-no-disable=""
+        cf-can="can('read', 'ApiKey')"
         data-view-type="api-key-list"
         tooltip="Content Delivery"
         tooltip-placement="bottom"
@@ -46,7 +49,8 @@
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'spaceSettings',
                   'section-index': spaceContext.tabList.currentSection() == 'spaceSettings'}"
         ng-click="goToView('space-settings')"
-        ng-show="can('update', 'Settings')"
+        cf-can-no-disable=""
+        cf-can="can('update', 'Settings')"
         data-view-type="space-settings"
         tooltip="Space Settings"
         tooltip-placement="bottom"

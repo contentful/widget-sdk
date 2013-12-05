@@ -1,8 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('addCanMethods',
-  ['can', function(can){
-
+angular.module('contentful').factory('addCanMethods', [function(){
     function makePermissionAdder(scope, entityType, methodOverrides){
       methodOverrides = methodOverrides || {};
       return function addActionPermissions(){
@@ -10,29 +8,29 @@ angular.module('contentful').factory('addCanMethods',
 
         var permissionMethods = {
           canDuplicate: function () {
-            return !!(entityType && can('create',
+            return !!(entityType && scope.can('create',
               entityType[0].toUpperCase() + entityType.substr(1, entityType.length)
             ));
           },
 
           canDelete: function () {
-            return !!(entity.canDelete() && can('delete', entity.data));
+            return !!(entity.canDelete() && scope.can('delete', entity.data));
           },
 
           canArchive: function () {
-            return !!(entity.canArchive() && can('archive', entity.data));
+            return !!(entity.canArchive() && scope.can('archive', entity.data));
           },
 
           canUnarchive: function () {
-            return !!(entity.canUnarchive() && can('unarchive', entity.data));
+            return !!(entity.canUnarchive() && scope.can('unarchive', entity.data));
           },
 
           canUnpublish: function () {
-            return !!(entity.canUnpublish() && can('unpublish', entity.data));
+            return !!(entity.canUnpublish() && scope.can('unpublish', entity.data));
           },
 
           canPublish: function() {
-            return !!(entity.canPublish() && can('publish', entity.data));
+            return !!(entity.canPublish() && scope.can('publish', entity.data));
           }
         };
 

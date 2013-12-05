@@ -73,7 +73,7 @@
               Visit the Knowledge Base Pages
               %i.ss-help
         .dropdown-btn(ng-show="contentType.data.fields.length > 0")
-          %button.dropdown-toggle.add-field-button.default-button.primary-button(ng-disabled="!can('create', 'ContentType')")
+          %button.dropdown-toggle.add-field-button.default-button.primary-button(cf-can="can('create', 'ContentType')")
             %i.ss-plus.button-icon
             Add Field
           .dropdown-menu.type-menu(select-type="addField(type)")
