@@ -20,9 +20,8 @@ angular.module('contentful').factory('tutorialExampledata', function ($q, enviro
       
     switchToTutorialSpace: function (clientScope, tries) {
       var ccb, newSpaceId, self = this;
-      var IS_TUTORIAL = /playground/i;
       var tutorialSpace = _.find(clientScope.spaces, function (space) {
-        var isTutorialSpace = IS_TUTORIAL.test(space.data.name);
+        var isTutorialSpace = space.data.tutorial;
         var isCurrentUsersSpace = space.data.subscription.sys.createdBy.sys.id === clientScope.user.sys.id;
         return isCurrentUsersSpace && isTutorialSpace;
       });
@@ -31,7 +30,7 @@ angular.module('contentful').factory('tutorialExampledata', function ($q, enviro
         return $q.when(tutorialSpace);
       }
       if (_.isUndefined(tries)) tries = 2;
-      client.createSpace({name: 'Playground'}, ccb = $q.callback());
+      client.createSpace({name: 'Playground', tutorial: true}, ccb = $q.callback());
       return ccb.promise.then(function (newSpace) {
         newSpaceId = newSpace.getId();
         return clientScope.performTokenLookup();
