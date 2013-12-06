@@ -143,9 +143,13 @@ module FeatureHelper
     find(".nav-bar li[data-view-type=#{target}]").click
   end
 
+  def open_tab(title)
+    find(:xpath, "//*[contains(@class, 'tab-title') and text()='#{title}']/..").click
+  end
+
   def close_tab(title=nil)
     if title
-      find(:xpath, "//*[@class='tab-title'][text()='#{title}']/../*[@class='close']").click
+      find(:xpath, "//*[contains(@class, 'tab-title') and text()='#{title}']/../*[@class='close']").click
     else
       find('.tab-list .tab.active .close').click
     end
