@@ -71,6 +71,8 @@ feature 'Link Editor', js: true, sauce: true do
       click_button 'New'
       find('.dropdown-menu li', text: 'Entry with Links').click
     end
+    find('.tab-title', text: 'Untitled')
+    wait_for_sharejs
     # Flip to new editor
     edit_field 'textField' do
       find('textarea').set('Foobar')
@@ -85,9 +87,11 @@ feature 'Link Editor', js: true, sauce: true do
     # Links work
     click_link 'BBBB'
     click_button 'Unpublish'
+    expect_success 'unpublished successfully'
     find('.dropdown-toggle', text: 'More').click
     find('li.delete').click
     find('li.delete-confirm').click
+    expect_success 'deleted successfully'
     # Back to root
     open_tab('Root')
     # Dead links
@@ -95,7 +99,7 @@ feature 'Link Editor', js: true, sauce: true do
 
     wait_for_sharejs
     click_button 'Publish'
-    expect_success
+    expect_error 'Validation failed'
   end
 
   scenario 'Adding link, restricted by type'
