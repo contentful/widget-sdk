@@ -84,6 +84,7 @@ angular.module('contentful').factory('determineEnforcement', function DetermineE
 
   function computeUsage(filter) {
     setTokenObjects();
+    if(filter) filter[0] = filter[0].toLowerCase();
     var subscription = spaceContext.space.subscription;
     var usage = subscription.usage.permanent;
     var limits = subscription.subscriptionPlan.limits.permanent;
