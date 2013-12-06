@@ -16,6 +16,9 @@ angular.module('contentful').directive('cfCan', ['determineEnforcement', 'author
         if(!space) return;
         setupWatcher();
         scope.$watch(attrs.cfCan, function (can) {
+          if(elem.hasClass('ng-hide')) elem.removeClass('ng-hide');
+          if(elem.attr('disabled')) elem.attr('disabled', false);
+          if(elem.attr('disable-layer')) $('#'+elem.attr('disable-layer')).remove();
           if(can) return;
           var reasons = attrs.cfCanEntity ? determineEnforcement.computeUsage(attrs.cfCanEntity) : undefined;
 
@@ -24,7 +27,9 @@ angular.module('contentful').directive('cfCan', ['determineEnforcement', 'author
           if(reasons){
             if(disableButton){
               elem.attr('disabled', true);
-              var layer = $('<div class="transparent-button-layer"></div>');
+              var id = 'transparent-button-layer-'+Math.ceil(Math.random()*100000);
+              elem.attr('disable-layer', id);
+              var layer = $('<div id="'+id+'" class="transparent-button-layer"></div>');
               var position = elem.position();
               var prop = makePropGetter(elem);
               layer.css({
