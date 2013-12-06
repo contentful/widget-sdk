@@ -79,15 +79,21 @@ angular.module('contentful').factory('determineEnforcement', function DetermineE
     role: 'Roles',
     space: 'Spaces',
     user: 'Users',
-    webhookDefinition: 'Webhook Definitions'
+    webhookDefinition: 'Webhook Definitions',
+    assetBandwidth: 'Asset Bandwidth',
+    contentDeliveryApiRequest: 'Content Delivery API Requests'
   };
 
   function computeUsage(filter) {
     setTokenObjects();
     if(filter) filter[0] = filter[0].toLowerCase();
     var subscription = spaceContext.space.subscription;
-    var usage = subscription.usage.permanent;
-    var limits = subscription.subscriptionPlan.limits.permanent;
+    var usage = _.merge(
+      subscription.usage.permanent,
+      subscription.usage.period);
+    var limits = _.merge(
+      subscription.subscriptionPlan.limits.permanent,
+      subscription.subscriptionPlan.limits.permanent);
 
     var metricName = usageMetrics[_.findKey(usage, function (value, name) {
       return (!filter || filter === name) && value >= limits[name];
