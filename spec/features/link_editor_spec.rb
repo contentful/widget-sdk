@@ -14,7 +14,7 @@ feature 'Link Editor', js: true, sauce: true do
     remove_test_space
   end
 
-  scenario 'Working with a single link' do
+  scenario 'Working with links' do
     create_content_type 'Entry with Links', 'Text', 'Entry', 'Entries'
     add_button 'Entry with Links'
     wait_for_sharejs
@@ -102,6 +102,4 @@ feature 'Link Editor', js: true, sauce: true do
     expect_error 'Validation failed'
   end
 
-  scenario 'Adding link, restricted by type'
 end
-
