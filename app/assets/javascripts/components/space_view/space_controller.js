@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, $rootScope, analytics, routing, notification, authorization, reasonsDenied, determineEnforcement) {
+angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, $rootScope, analytics, routing, notification, authorization, reasonsDenied, determineEnforcement, authentication) {
   $scope.$watch(function (scope) {
     if (scope.spaceContext && scope.spaceContext.space) {
       return _.map(scope.spaceContext.space.getPublishLocales(),function (locale) {
@@ -13,6 +13,22 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
   $scope.$watch('spaceContext.localeStates', 'spaceContext.refreshActiveLocales()', true);
   $scope.$watch('spaceContext', function(space, o, scope) {
     scope.spaceContext.refreshContentTypes();
+  });
+
+  $scope.$watch(function () {
+    return authorization.isUpdated(authentication.tokenLookup, $scope.spaceContext.space) && authentication.tokenLookup;
+  }, function (updated) {
+    if(updated) {
+      var enforcement = determineEnforcement.getPeriodUsage();
+      if(enforcement) {
+        $rootScope.$broadcast('persistentNotification', {
+          message: enforcement.message,
+          tooltipMessage: enforcement.description,
+          actionMessage: enforcement.actionMessage,
+          action: enforcement.action
+        });
+      }
+    }
   });
 
   $scope.can = function () {
@@ -33,7 +49,6 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
     }
     return false;
   };
-
 
   $scope.logoClicked = function () {
     analytics.track('Clicked Logo');

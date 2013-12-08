@@ -84,6 +84,11 @@ angular.module('contentful').factory('determineEnforcement', function DetermineE
     contentDeliveryApiRequest: 'Content Delivery API Requests'
   };
 
+  var periodUsageMetrics = [
+    'assetBandwidth',
+    'contentDeliveryApiRequest'
+  ];
+
   function computeUsage(filter) {
     setTokenObjects();
     if(filter) filter[0] = filter[0].toLowerCase();
@@ -93,7 +98,7 @@ angular.module('contentful').factory('determineEnforcement', function DetermineE
       subscription.usage.period);
     var limits = _.merge(
       subscription.subscriptionPlan.limits.permanent,
-      subscription.subscriptionPlan.limits.permanent);
+      subscription.subscriptionPlan.limits.period);
 
     var metricName = usageMetrics[_.findKey(usage, function (value, name) {
       return (!filter || filter === name) && value >= limits[name];
@@ -130,8 +135,20 @@ angular.module('contentful').factory('determineEnforcement', function DetermineE
     return error;
   }
 
+  function getPeriodUsage() {
+    var enforcement;
+    _.forEach(periodUsageMetrics, function (metric) {
+      if(computeUsage(metric)){
+        enforcement = determineEnforcement('periodUsageExceeded', metric);
+        return false;
+      }
+    });
+    return enforcement;
+  }
+
   return {
     determineEnforcement: determineEnforcement,
-    computeUsage: computeUsage
+    computeUsage: computeUsage,
+    getPeriodUsage: getPeriodUsage
   };
 });

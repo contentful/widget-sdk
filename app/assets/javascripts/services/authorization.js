@@ -8,15 +8,22 @@ angular.module('contentful').
       authContext: null,
       spaceContext: null,
       setTokenLookup: function (tokenLookup, space) {
+        this._tokenLookup = tokenLookup;
         this.authContext = worf(tokenLookup);
         this.setSpace(space);
       },
       setSpace: function (space) {
+        this._space = space;
         if (space && this.authContext) {
           this.spaceContext = this.authContext.space(space.getId());
         } else {
           this.spaceContext = null;
         }
+      },
+      isUpdated: function (tokenLookup, space) {
+        return this._tokenLookup && this._space &&
+               this._tokenLookup === tokenLookup &&
+               this._space === space;
       }
     };
 
