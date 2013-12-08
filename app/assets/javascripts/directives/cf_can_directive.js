@@ -7,6 +7,12 @@ angular.module('contentful').directive('cfCan', ['determineEnforcement', 'author
     };
   }
 
+  /**
+   * Attributes:
+   * cf-can="expression" - hides or disables the element if expression is false
+   * cf-can-no-disable - makes sure this element can't ever be disabled
+   * cf-can-no-hide - makes sure this element can't ever be hidden
+   */
   return {
     restrict: 'A',
     link: function (scope, elem, attrs) {
