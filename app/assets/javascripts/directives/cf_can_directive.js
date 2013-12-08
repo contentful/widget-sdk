@@ -16,11 +16,11 @@ angular.module('contentful').directive('cfCan', ['determineEnforcement', 'author
   return {
     restrict: 'A',
     link: function (scope, elem, attrs) {
-      var setupWatcher = scope.$watch(function () {
+      var deactivateWatcher = scope.$watch(function () {
         return authorization.spaceContext;
       }, function (space) {
         if(!space) return;
-        setupWatcher();
+        deactivateWatcher();
         scope.$watch(attrs.cfCan, function (can) {
           if(elem.hasClass('ng-hide')) elem.removeClass('ng-hide');
           if(elem.attr('disabled')) elem.attr('disabled', false);
