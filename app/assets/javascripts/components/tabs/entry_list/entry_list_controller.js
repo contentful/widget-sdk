@@ -53,6 +53,8 @@ angular.module('contentful').controller('EntryListCtrl',
         return entry.hasUnpublishedChanges() && !entry.isPublished();
       case 'archived':
         return entry.isArchived();
+      case 'contentType':
+        return entry.getContentTypeId() === $scope.tab.params.contentTypeId;
       default:
         return true;
     }
