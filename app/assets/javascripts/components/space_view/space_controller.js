@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, $rootScope, analytics, routing, notification, authorization, reasonsDenied, determineEnforcement, authentication) {
+angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, $rootScope, analytics, routing, notification, authorization, reasonsDenied, enforcements, authentication) {
   $scope.$watch(function (scope) {
     if (scope.spaceContext && scope.spaceContext.space) {
       return _.map(scope.spaceContext.space.getPublishLocales(),function (locale) {
@@ -19,7 +19,7 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
     return authorization.isUpdated(authentication.tokenLookup, $scope.spaceContext.space) && authentication.tokenLookup;
   }, function (updated) {
     if(updated) {
-      var enforcement = determineEnforcement.getPeriodUsage();
+      var enforcement = enforcements.getPeriodUsage();
       if(enforcement) {
         $rootScope.$broadcast('persistentNotification', {
           message: enforcement.message,
@@ -35,7 +35,7 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
     if (authorization.spaceContext){
       var response = authorization.spaceContext.can.apply(authorization.spaceContext, arguments);
       if(!response){
-        var enforcement = reasonsDenied.apply(null, arguments);
+        var enforcement = enforcements.determineEnforcement(reasonsDenied.apply(null, arguments), arguments[1]);
         if(enforcement) {
           $rootScope.$broadcast('persistentNotification', {
             message: enforcement.message,
@@ -65,7 +65,7 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
           scope.navigator[params.navigatorHandler](entity).goTo();
         } else {
           if(err.body.details.reasons){
-            var enforcement = determineEnforcement.determineEnforcement(
+            var enforcement = enforcements.determineEnforcement(
               err.body.details.reasons, params.entityType);
             if(enforcement){
               params.errorMessage = enforcement.tooltip || enforcement.message;
@@ -133,7 +133,7 @@ angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, 
 
   $scope.createApiKey = function() {
     var scope = this;
-    var usage = determineEnforcement.computeUsage('apiKey');
+    var usage = enforcements.computeUsage('apiKey');
     if(usage){
       return notification.serverError(usage, {});
     }

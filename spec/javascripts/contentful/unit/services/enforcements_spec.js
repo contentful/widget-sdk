@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Determine enforcement service', function () {
+describe('Enforcements service', function () {
 
   function makeUserObject(usage, limit) {
     return {
@@ -17,7 +17,7 @@ describe('Determine enforcement service', function () {
     };
   }
 
-  var determineEnforcement;
+  var enforcements;
   var userStub;
 
   beforeEach(function () {
@@ -27,14 +27,18 @@ describe('Determine enforcement service', function () {
         getUser: userStub
       });
     });
-    inject(function (_determineEnforcement_) {
-      determineEnforcement = _determineEnforcement_;
+    inject(function (_enforcements_) {
+      enforcements = _enforcements_;
     });
   });
 
   afterEach(inject(function ($log) {
     $log.assertEmpty();
   }));
+
+  it('returns null for no reasons', function () {
+    expect(determineEnforcement()).toBeNull();
+  });
 
   it('returns null for unexistent reasons', function () {
     expect(determineEnforcement('random_reason')).toBeNull();

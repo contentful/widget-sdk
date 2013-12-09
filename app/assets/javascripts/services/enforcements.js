@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').factory('determineEnforcement', function DetermineEnforcement($injector, $location, $window, authorization) {
+angular.module('contentful').factory('enforcements', function Enforcements($injector, $location, $window, authorization) {
 
   var spaceContext, user;
 
@@ -58,7 +58,7 @@ angular.module('contentful').factory('determineEnforcement', function DetermineE
       label: 'usageExceeded',
       message: 'Over usage limits',
       description: 'This Space exceeds the usage quota for the current subscription plan. Please upgrade to a higher plan.',
-      tooltip: computeUsage,
+      tooltip: getTooltipMessage,
       actionMessage: upgradeActionMessage,
       action: upgradeAction
     },
@@ -89,9 +89,17 @@ angular.module('contentful').factory('determineEnforcement', function DetermineE
     'contentDeliveryApiRequest'
   ];
 
+  function uncapitalize(str) {
+    return str[0].toLowerCase() + str.substr(1);
+  }
+
+  function getTooltipMessage(metricKey) {
+    return 'You have exceeded your '+usageMetrics[uncapitalize(metricKey)]+' usage';
+  }
+
   function computeUsage(filter) {
     setTokenObjects();
-    if(filter) filter[0] = filter[0].toLowerCase();
+    if(filter) filter = uncapitalize(filter);
     var subscription = spaceContext.space.subscription;
     var usage = _.merge(
       subscription.usage.permanent,
@@ -100,16 +108,16 @@ angular.module('contentful').factory('determineEnforcement', function DetermineE
       subscription.subscriptionPlan.limits.permanent,
       subscription.subscriptionPlan.limits.period);
 
-    var metricName = usageMetrics[_.findKey(usage, function (value, name) {
+    var metricKey = _.findKey(usage, function (value, name) {
       return (!filter || filter === name) && value >= limits[name];
-    })];
+    });
 
-    return metricName ?
-      'You have exceeded your '+metricName+' usage' :
+    return metricKey ?
+      getTooltipMessage(metricKey) :
       undefined;
   }
 
-  function determineEnforcement(reasons, usageTypeFilter) {
+  function determineEnforcement(reasons, entityType) {
     setTokenObjects();
     if(!reasons || reasons.length && reasons.length === 0) return null;
     var errors = _.filter(errorsByPriority, function (val) {
@@ -124,7 +132,7 @@ angular.module('contentful').factory('determineEnforcement', function DetermineE
     }
 
     if(typeof error.tooltip == 'function'){
-      error.tooltip = error.tooltip(usageTypeFilter) || error.message;
+      error.tooltip = error.tooltip(entityType) || error.message;
     }
     _.forEach(error, function (value, key) {
       if(typeof value == 'function' && key != 'action'){
@@ -149,6 +157,7 @@ angular.module('contentful').factory('determineEnforcement', function DetermineE
   return {
     determineEnforcement: determineEnforcement,
     computeUsage: computeUsage,
-    getPeriodUsage: getPeriodUsage
+    getPeriodUsage: getPeriodUsage,
+    getTooltipMessage: getTooltipMessage
   };
 });

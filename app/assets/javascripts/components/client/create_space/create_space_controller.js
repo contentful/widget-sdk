@@ -1,6 +1,6 @@
 angular.module('contentful').controller('createSpaceDialogCtrl', [
-  '$scope', 'client', 'notification', 'cfSpinner', 'determineEnforcement',
-  function createSpaceDialogCtrl($scope, client, notification, cfSpinner, determineEnforcement) {
+  '$scope', 'client', 'notification', 'cfSpinner', 'enforcements',
+  function createSpaceDialogCtrl($scope, client, notification, cfSpinner, enforcements) {
     'use strict';
 
     function resetNewSpaceData() {
@@ -22,7 +22,7 @@ angular.module('contentful').controller('createSpaceDialogCtrl', [
         $scope.$apply(function (scope) {
           if (err) {
             var errorMessage = 'Could not create Space';
-            var usage = determineEnforcement.computeUsage('space');
+            var usage = enforcements.computeUsage('space');
             if(usage){ errorMessage = usage; }
             notification.serverError(errorMessage, err);
             scope.lockSubmit = false;
