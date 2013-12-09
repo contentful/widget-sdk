@@ -1,12 +1,14 @@
 'use strict';
 
-describe('cfPersistentNotification Directve', function () {
+describe('cfPersistentNotification Directive', function () {
   var element, scope;
   var tooltipStub;
+  var $rootScope;
   beforeEach(module('contentful/test'));
 
-  beforeEach(inject(function ($compile, $rootScope) {
-    scope = $rootScope;
+  beforeEach(inject(function ($compile, _$rootScope_) {
+    $rootScope = _$rootScope_;
+    scope = $rootScope.$new();
     scope.field = {};
     element = $compile('<div class="cf-persistent-notification"></div>')(scope);
   }));
@@ -16,40 +18,38 @@ describe('cfPersistentNotification Directve', function () {
   }));
 
   it('should show message', function () {
-    scope.persistentNotification = {
+    $rootScope.$broadcast('persistentNotification', {
       message: 'some message'
-    };
+    });
     scope.$apply();
     expect(element.find('p').hasClass('ng-hide')).toBe(false);
   });
 
   it('should not show message', function () {
-    scope.persistentNotification = {
-    };
+    $rootScope.$broadcast('persistentNotification');
     scope.$apply();
     expect(element.find('p').hasClass('ng-hide')).toBe(true);
   });
 
   it('should show action message', function () {
-    scope.persistentNotification = {
+    $rootScope.$broadcast('persistentNotification', {
       actionMessage: 'some message'
-    };
+    });
     scope.$apply();
     expect(element.find('button').hasClass('ng-hide')).toBe(false);
   });
 
   it('should not show action message', function () {
-    scope.persistentNotification = {
-    };
+    $rootScope.$broadcast('persistentNotification');
     scope.$apply();
     expect(element.find('button').hasClass('ng-hide')).toBe(true);
   });
 
   it('should have tooltip', function () {
-    scope.persistentNotification = {
-      tooltipMessage: 'some message'
-    };
     tooltipStub = sinon.stub($.fn, 'tooltip');
+    $rootScope.$broadcast('persistentNotification', {
+      tooltipMessage: 'some message'
+    });
 
     scope.$apply();
     expect(tooltipStub.called).toBe(true);

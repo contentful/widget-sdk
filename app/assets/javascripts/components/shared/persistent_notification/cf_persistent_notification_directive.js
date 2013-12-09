@@ -10,6 +10,8 @@ angular.module('contentful').directive('cfPersistentNotification', function ($sc
 
       function updateNotification(ev, params) {
         if(!params){
+          scope.message = null;
+          scope.actionMessage = null;
           scope.persistentNotification = null;
           return;
         }
