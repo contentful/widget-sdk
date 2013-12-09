@@ -3,20 +3,20 @@
     %i.ss-plus
   .dropdown-menu.fixed-position.left-aligned
     %ul
-      %li.add-content-type.bottom-separator(ng-click="createContentType()" dropdown-close="" cf-can="can('create', 'ContentType')" cf-can-entity="contentType")
+      %li.add-content-type.bottom-separator(ng-click="createContentType()" dropdown-close="" cf-can="create, ContentType")
         %i.ss-database
         Content Type
-      %li.add-asset(ng-click="createAsset()" dropdown-close="" cf-can="can('create', 'Asset')" cf-can-entity="asset")
+      %li.add-asset(ng-click="createAsset()" dropdown-close="" cf-can="create, Asset")
         %i.ss-attach
         Asset
-      %li.add-api-key(ng-click="createApiKey()" dropdown-close="" cf-can="can('create', 'ApiKey')" cf-can-entity="apiKey")
+      %li.add-api-key(ng-click="createApiKey()" dropdown-close="" cf-can="create, ApiKey")
         %i.ss-fork
         API Key
-    %ul.separator.no-highlight(cf-can="can('create', 'Entry')" cf-can-entity="entry")
+    %ul.separator.no-highlight(cf-can="create, Entry")
       %li
         %i.ss-file
         Entries
-    %ul.content-types(ng-show="spaceContext.publishedContentTypes.length > 0" cf-can="can('create', 'Entry')" cf-can-entity="entry")
+    %ul.content-types(ng-show="spaceContext.publishedContentTypes.length > 0" cf-can="create, Entry")
       %li(ng-repeat="(index, contentType) in spaceContext.publishedContentTypes track by contentType.getId()"
         ng-click="createEntry(contentType)"
         data-content-type-id="{{contentType.getId()}}"

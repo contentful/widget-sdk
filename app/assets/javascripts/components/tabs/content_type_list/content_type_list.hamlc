@@ -59,7 +59,7 @@
         %i.ss-database.giant-icon
         %header.advice-title You have no Content Types yet.
         %p.advice-description Content Types work like stencils that define which Entries you can create within a specific Space.
-        %button.default-button.primary-button(type="button" ng-click="createContentType()" cf-can="can('create', 'ContentType')" cf-can-entity="contentType")
+        %button.default-button.primary-button(type="button" ng-click="createContentType()" cf-can="create, ContentType")
           Create Content Type
         %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
           Visit the Knowledge Base Pages

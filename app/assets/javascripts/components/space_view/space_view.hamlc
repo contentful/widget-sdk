@@ -6,12 +6,12 @@
       space-context="spaceContext"
       cf-can-no-disable=""
       cf-can-no-hide=""
-      cf-can="can('create', 'ContentType') || can('create', 'Asset') || can('create', 'Entry') || can('create', 'ApiKey')")
+      cf-can="[create, ContentType], [create, Asset], [create, Entry], [create, ApiKey]")
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'contentTypes',
                   'section-index': spaceContext.tabList.currentViewType() == 'content-type-list'}"
         ng-click="goToView('content-type-list')"
         cf-can-no-disable=""
-        cf-can="can('read', 'ContentType')"
+        cf-can="read, ContentType"
         data-view-type="content-type-list"
         tooltip="Content Model"
         tooltip-placement="bottom"
@@ -40,7 +40,7 @@
                    'section-index': spaceContext.tabList.currentViewType() == 'api-key-list'}"
         ng-click="goToView('api-key-list')"
         cf-can-no-disable=""
-        cf-can="can('read', 'ApiKey')"
+        cf-can="read, ApiKey"
         data-view-type="api-key-list"
         tooltip="Content Delivery"
         tooltip-placement="bottom"
@@ -51,7 +51,7 @@
                   'section-index': spaceContext.tabList.currentSection() == 'spaceSettings'}"
         ng-click="goToView('space-settings')"
         cf-can-no-disable=""
-        cf-can="can('update', 'Settings')"
+        cf-can="update, Settings"
         data-view-type="space-settings"
         tooltip="Space Settings"
         tooltip-placement="bottom"
