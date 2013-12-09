@@ -127,13 +127,14 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
 
     var error = _.clone(errors[0]);
 
-    if(error.tooltip === undefined){
+    if(typeof error.tooltip == 'function'){
+      error.tooltip = entityType ? error.tooltip(entityType) : error.tooltip;
+    }
+
+    if(typeof error.tooltip !== 'string'){
       error.tooltip = error.message;
     }
 
-    if(typeof error.tooltip == 'function'){
-      error.tooltip = error.tooltip(entityType) || error.message;
-    }
     _.forEach(error, function (value, key) {
       if(typeof value == 'function' && key != 'action'){
         error[key] = value();
@@ -147,7 +148,7 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
     var enforcement;
     _.forEach(periodUsageMetrics, function (metric) {
       if(computeUsage(metric)){
-        enforcement = determineEnforcement('periodUsageExceeded', metric);
+        enforcement = determineEnforcement('periodUsageExceeded');
         return false;
       }
     });
