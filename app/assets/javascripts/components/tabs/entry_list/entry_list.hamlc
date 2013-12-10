@@ -71,7 +71,7 @@
         %header.advice-title You have no Entries yet.
         %p.advice-description(ng-show="spaceContext.publishedContentTypes.length == 0")
           Entries are your content itself. These depend on the field types you created in the Content Type editor.
-        %button.default-button.primary-button(type="button" ng-click="createContentType()" ng-disabled="!can('create', 'Entry')" ng-show="spaceContext.publishedContentTypes.length == 0")
+        %button.default-button.primary-button(type="button" ng-click="createContentType()" cf-can="create, ContentType" ng-show="spaceContext.publishedContentTypes.length == 0")
           Create a Content Type
         %p.advice-description(ng-hide="spaceContext.publishedContentTypes.length == 0")
           To create an Entry, use the Add-Button near the top of the screen.

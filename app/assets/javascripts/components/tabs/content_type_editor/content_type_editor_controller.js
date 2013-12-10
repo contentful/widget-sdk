@@ -1,12 +1,12 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeEditorCtrl', function ContentTypeEditorCtrl($scope, validation, can, notification, analytics, addCanMethods, random) {
+angular.module('contentful').controller('ContentTypeEditorCtrl', function ContentTypeEditorCtrl($scope, validation, notification, analytics, addCanMethods, random) {
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
 
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
 
   $scope.$watch(function contentTypeEditorEnabledWatcher(scope) {
-    return scope.contentType && can('update', scope.contentType.data);
+    return scope.contentType && scope.can('update', scope.contentType.data);
   }, function contentTypeEditorEnabledHandler(enabled, old, scope) {
     scope.otDisabled = !enabled;
   });
@@ -52,7 +52,7 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
       return $scope.contentType.canPublish() &&
         (notPublishedYet || updatedSincePublishing) &&
         hasFields &&
-        can('publish', $scope.contentType.data);
+        $scope.can('publish', $scope.contentType.data);
     }
   });
 

@@ -54,8 +54,7 @@ feature "Account cancellation", js:true, sauce: true do
 
   scenario 'After deleting my account I want to see the goodbye page' do
     visit "#{app_host}/profile/user_cancellation/new"
-    iframe = find 'iframe'
-    within_frame iframe do
+    tab_iframe do
       click_button 'Cancel Account'
     end
     current_url.should eql("#{marketing_host}/goodbye/")

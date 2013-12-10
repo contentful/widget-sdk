@@ -88,12 +88,9 @@ module FeatureHelper
       end
     end
 
-    within '.nav-bar' do
-      all('li').last.click
-    end
+    nav_bar 'space-settings'
 
-    settings_frame = find 'iframe'
-    within_frame settings_frame do
+    tab_iframe do
       click_link 'Space'
       click_link 'Delete Space'
       accept_browser_dialog
@@ -116,6 +113,23 @@ module FeatureHelper
     end
   end
 
+  # def reset_test_space(name=test_space)
+  #   within 'nav.account .project' do
+  #     find('.dropdown-toggle').click
+  #     has_space = !!first('li', text: name, wait: 0.5).click
+  #     if has_space
+  #       nav_bar 'space-settings'
+  #       settings_frame = find 'iframe'
+  #       within_frame settings_frame do
+  #         click_link 'Space'
+  #         click_link 'Delete Space'
+  #         accept_browser_dialog
+  #       end
+  #       expect_success 'Space has been deleted'
+  #     end
+  #   end
+  # end
+
   def add_button(text)
     find('.tablist-button .dropdown-toggle').click
     #begin
@@ -129,11 +143,22 @@ module FeatureHelper
     find(".nav-bar li[data-view-type=#{target}]").click
   end
 
+  def open_tab(title)
+    find(:xpath, "//*[contains(@class, 'tab-title') and text()='#{title}']/..").click
+  end
+
   def close_tab(title=nil)
     if title
-      find(:xpath, "//*[@class='tab-title'][text()='#{title}']/../*[@class='close']").click
+      find(:xpath, "//*[contains(@class, 'tab-title') and text()='#{title}']/../*[@class='close']").click
     else
       find('.tab-list .tab.active .close').click
+    end
+  end
+
+  def tab_iframe
+    frame = find 'iframe'
+    within_frame frame do
+      yield
     end
   end
 
@@ -150,19 +175,19 @@ module FeatureHelper
   end
 
   def wait_for_sharejs
-    find('.save-status.saved')
+    find('.save-status.saved, .save-status.last-saved-at')
   end
 
   def expect_success(string = 'published successfully')
-    find('.notification', text: string, wait: 10)
+    find :xpath, %Q{//*[contains(@class, 'notification') and contains(text(), '#{string}')]}, wait: 10
   end
 
   def expect_error(string=nil)
-    find('.notification.error', text: string, wait: 10)
+    find :xpath, %Q{//*[contains(@class, 'notification') and contains(@class, 'error') and contains(text(), '#{string}')]}, wait: 10
   end
 
   def expect_warn(string=nil)
-    find('.notification.warn', text: string, wait: 10)
+    find :xpath, %Q{//*[contains(@class, 'notification') and contains(@class, 'warn') and contains(text(), '#{string}')]}, wait: 10
   end
 
   def eventually(options = {})

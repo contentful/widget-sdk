@@ -93,6 +93,7 @@ angular.module('contentful').provider('analytics', function (environment) {
     setSpaceData: function (space) {
       if (space) {
         this._spaceData = {
+          spaceIsTutorial:                       space.data.tutorial,
           spaceSubscriptionKey:                  space.data.subscription.sys.id,
           spaceSubscriptionState:                space.data.subscription.state,
           spaceSubscriptionInvoiceState:         space.data.subscription.invoiceState,

@@ -13,28 +13,24 @@ feature 'Routing', js: true, sauce: true do
 
   scenario 'Opening pages from an external link' do
     visit "#{app_host}/profile"
-    iframe = find('iframe')
-    within_frame iframe do
+    tab_iframe do
       page.should have_text 'USER DETAILS'
     end
 
     visit "#{app_host}/profile/billing/billing_address/edit"
-    iframe = find('iframe')
-    within_frame iframe do
+    tab_iframe do
       page.should have_text 'Postal code'
     end
 
     visit "#{app_host}/spaces/#{tutorial_space_id}/settings/users/new"
-    iframe = find('iframe')
-    within_frame iframe do
+    tab_iframe do
       page.find('input[name="commit"]')[:value].should eql('Invite New User')
     end
   end
   
   scenario 'Opening pages through internal links', non_ci: true do
     nav_bar 'space-settings'
-    iframe = find('iframe')
-    within_frame iframe do
+    tab_iframe do
       click_link 'Users'
       click_link 'Invite New User'
     end
@@ -46,8 +42,7 @@ feature 'Routing', js: true, sauce: true do
     end
     eventually {current_path.should eql("/profile/user")}
 
-    iframe = find('iframe')
-    within_frame iframe do
+    tab_iframe do
       click_link 'Subscription'
     end
     eventually {current_path.should eql("/profile/subscription")}

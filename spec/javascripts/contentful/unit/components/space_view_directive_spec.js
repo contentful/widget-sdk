@@ -3,12 +3,17 @@
 describe('The Space view directive', function () {
 
   var container, scope;
-  var canStub;
+  var canStub, reasonsStub;
+  var compileElement;
 
   beforeEach(function () {
-    canStub = sinon.stub();
+    reasonsStub = sinon.stub();
     module('contentful/test', function ($provide) {
-      $provide.value('can', canStub);
+      $provide.value('authorization', {
+        isUpdated: sinon.stub(),
+        spaceContext: {}
+      });
+      $provide.value('reasonsDenied', reasonsStub);
       $provide.value('environment', {
         settings: {
           filepicker: {
@@ -26,10 +31,14 @@ describe('The Space view directive', function () {
         refreshContentTypes: sinon.stub(),
         refreshLocales: sinon.stub()
       };
+      canStub = sinon.stub();
 
-      container = $('<space-view></space-view>');
-      $compile(container)(scope);
-      scope.$digest();
+      compileElement = function () {
+        container = $('<space-view></space-view>');
+        $compile(container)(scope);
+        scope.can = canStub;
+        scope.$digest();
+      };
     });
   });
 
@@ -39,10 +48,10 @@ describe('The Space view directive', function () {
   }));
 
 
-  it('add button not shown if no create permissions exist', function () {
+  it('add button always shown even if no create permissions exist', function () {
     canStub.returns(false);
-    scope.$apply();
-    expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(true);
+    compileElement();
+    expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(false);
   });
 
 
@@ -53,21 +62,19 @@ describe('The Space view directive', function () {
       'add-asset',
       'add-api-key'
     ];
-    var seed = Math.random();
     describe('if user can create a '+type, function () {
       var tablistButton;
       beforeEach(function () {
-        tablistButton = container.find('.tablist-button');
         canStub.withArgs('create', type).returns(true);
-        scope.changer = 'changer'+seed;
-        scope.$apply();
+        compileElement();
+        tablistButton = container.find('.tablist-button');
       });
 
       it('show add button', function () {
         expect(tablistButton.hasClass('ng-hide')).toBeFalsy();
       });
 
-      it('add menu item is not hidden', function () {
+      it('add menu item with class '+itemClass+' is not hidden', function () {
         expect(tablistButton.find('.'+itemClass).hasClass('ng-hide')).toBeFalsy();
       });
 
@@ -102,13 +109,13 @@ describe('The Space view directive', function () {
 
       it('is hidden', function () {
         canStub.withArgs(action, type).returns(false);
-        scope.$apply();
+        compileElement();
         expect(container.find(selector).hasClass('ng-hide')).toBe(true);
       });
 
       it('is shown', function () {
         canStub.withArgs(action, type).returns(true);
-        scope.$apply();
+        compileElement();
         expect(container.find(selector).hasClass('ng-hide')).toBe(false);
       });
     });

@@ -1,9 +1,9 @@
 'use strict';
 
-angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorCtrl($scope, validation, can, AssetContentType, notification, addCanMethods) {
+angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorCtrl($scope, validation, AssetContentType, notification, addCanMethods) {
   $scope.$watch('tab.params.asset', 'asset=tab.params.asset');
   $scope.$watch(function assetEditorEnabledWatcher(scope) {
-    return !scope.asset.isArchived() && can('update', scope.asset.data);
+    return !scope.asset.isArchived() && scope.can('update', scope.asset.data);
   }, function assetEditorEnabledHandler(enabled, old, scope) {
     scope.otDisabled = !enabled;
   });

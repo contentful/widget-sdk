@@ -48,10 +48,26 @@ module ContentTypeHelper
     find('.dropdown-toggle', text:'Validation').click
     find('.dropdown-menu li', text: name).click
     
-    first('.cf-validation-options') # all does not wait I think
+    page.should have_selector('.cf-validation-options', minimum: 1)
     validation = all('.cf-validation-options').last
     within validation do
       yield if block_given?
     end
+  end
+
+  def create_content_type(field_type, *fields)
+    add_button 'Content Type'
+    if fields.blank?
+      fill_in 'contentTypeName', with: "Entry with #{field_type}"
+      add_field "#{field_type} Field", field_type
+    else
+      fill_in 'contentTypeName', with: field_type
+      fields.each do |field|
+        add_field "#{field} Field", field
+      end
+    end
+    wait_for_sharejs
+    click_button 'Activate'
+    close_tab
   end
 end

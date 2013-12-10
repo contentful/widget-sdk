@@ -43,6 +43,10 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
         });
       };
 
+      scope._getMap = function () {
+        return map;
+      };
+
       scope.$watch('otEditable', function(otEditable) {
         if (otEditable) {
           marker.setDraggable(true);

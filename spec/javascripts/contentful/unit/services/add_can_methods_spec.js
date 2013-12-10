@@ -6,11 +6,10 @@ describe('Add can methods service', function () {
 
   beforeEach(function () {
     canStub = sinon.stub();
-    module('contentful/test', function ($provide) {
-      $provide.value('can', canStub);
-    });
+    module('contentful/test');
     inject(function ($rootScope, addCanMethods) {
       scope = $rootScope.$new();
+      scope.can = canStub;
       addCanMethods(scope, 'entity');
       scope.entity = {};
       scope.$digest();

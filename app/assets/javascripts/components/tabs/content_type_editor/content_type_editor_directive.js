@@ -6,7 +6,7 @@ angular.module('contentful').directive('contentTypeEditor', function(){
     restrict: 'C',
     controller: 'ContentTypeEditorCtrl',
     link: function (scope, elem) {
-      
+
       function focus() {
         if (scope.otEditable) {
           var input = elem.find('[name=contentTypeForm] input').eq(0);

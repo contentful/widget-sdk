@@ -9,13 +9,10 @@ describe('Asset editor controller', function () {
 
   beforeEach(function () {
     module('contentful/test');
-    module(function ($provide) {
+    inject(function ($rootScope, $controller) {
+      scope = $rootScope.$new();
       canStub = sinon.stub();
-      $provide.value('can', canStub);
-    });
-
-    inject(function (_$rootScope_, $controller) {
-      scope = _$rootScope_;
+      scope.can = canStub;
 
       var locale = {
         code: 'en-US',
@@ -81,7 +78,9 @@ describe('Asset editor controller', function () {
 
   describe('validation on publish', function () {
     beforeEach(inject(function ($compile, $rootScope, $controller){
-      scope = $rootScope;
+      scope = $rootScope.$new();
+      canStub = sinon.stub();
+      scope.can = canStub;
       var locale = {
         code: 'en-US',
         contentDeliveryApi: true,
@@ -104,7 +103,7 @@ describe('Asset editor controller', function () {
           asset: asset
         }
       };
-      assetEditorCtrl = $controller('AssetEditorCtrl', {$scope: $rootScope});
+      assetEditorCtrl = $controller('AssetEditorCtrl', {$scope: scope});
       scope.$digest();
     }));
 

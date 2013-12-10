@@ -1,10 +1,10 @@
 'use strict';
 
 angular.module('contentful')
-  .controller('EntryEditorCtrl', function EntryEditorCtrl($scope, validation, can, addCanMethods, notification, sentry) {
+  .controller('EntryEditorCtrl', function EntryEditorCtrl($scope, validation, addCanMethods, notification, sentry) {
   $scope.$watch('tab.params.entry', 'entry=tab.params.entry');
   $scope.$watch(function entryEditorEnabledWatcher(scope) {
-    return !scope.entry.isArchived() && can('update', scope.entry.data);
+    return !scope.entry.isArchived() && scope.can('update', scope.entry.data);
   }, function entryEditorEnabledHandler(enabled, old, scope) {
     scope.otDisabled = !enabled;
   });

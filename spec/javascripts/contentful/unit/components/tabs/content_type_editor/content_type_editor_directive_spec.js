@@ -3,25 +3,47 @@
 describe('The ContentType editor directive', function () {
 
   var container, scope;
-  var canStub;
+  var compileElement;
+  var canStub, reasonsStub;
+  var contentTypeData;
 
   beforeEach(function () {
     canStub = sinon.stub();
+    reasonsStub = sinon.stub();
     module('contentful/test', function ($provide) {
-      $provide.value('can', canStub);
+      $provide.value('ShareJS', {
+        connection: {},
+        peek: sinon.stub(),
+        mkpath: sinon.stub()
+      });
+      $provide.value('reasonsDenied', reasonsStub);
+      $provide.value('authorization', {
+        spaceContext: {
+          space: {
+            sys: { createdBy: { sys: {id: 123} } }
+          }
+        }
+      });
+      var userStub = sinon.stub();
+      userStub.returns({ sys: {id: 123} });
+      $provide.value('authentication', {
+        getUser: userStub
+      });
     });
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
+      contentTypeData = {};
 
       scope.can = canStub;
       scope.tab = {
         params: {
           contentType: {
-            data: {},
+            data: contentTypeData,
             isPublished: sinon.stub(),
             canUnpublish: sinon.stub(),
             canDelete: sinon.stub(),
-            getPublishedStatus: sinon.stub()
+            getPublishedStatus: sinon.stub(),
+            getPublishedVersion: sinon.stub()
           }
         }
       };
@@ -31,10 +53,20 @@ describe('The ContentType editor directive', function () {
         }
       };
       scope.validate = sinon.stub();
+      scope.publishButtonLabel = sinon.stub();
+      scope.otDoc = {
+        at: sinon.stub(),
+        getAt: sinon.stub(),
+        removeListener: sinon.stub(),
+        on: sinon.stub(),
+        close: sinon.stub()
+      };
 
-      container = $('<div class="content-type-editor" ot-doc-for="tab.params.contentType"></div>');
-      $compile(container)(scope);
-      scope.$digest();
+      compileElement = function () {
+        container = $('<div class="content-type-editor" ot-doc-for="tab.params.contentType"></div>');
+        $compile(container)(scope);
+        scope.$digest();
+      };
     });
   });
 
@@ -45,26 +77,27 @@ describe('The ContentType editor directive', function () {
 
   it('create button is disabled', function () {
     canStub.withArgs('create', 'ContentType').returns(false);
-    scope.$apply();
+    reasonsStub.returns(['usageExceeded']);
+    compileElement();
     expect(container.find('.add-field-button').attr('disabled')).toBe('disabled');
   });
 
   it('create button is enabled', function () {
     canStub.withArgs('create', 'ContentType').returns(true);
-    scope.$apply();
+    compileElement();
     expect(container.find('.add-field-button').attr('disabled')).toBeUndefined();
   });
 
   describe('sets the otDisabled flag', function () {
     it('to disabled', function () {
-      canStub.withArgs('update', scope.contentType.data).returns(true);
-      scope.$apply();
+      canStub.withArgs('update', contentTypeData).returns(true);
+      compileElement();
       expect(scope.otDisabled).toBe(false);
     });
 
     it('to enabled', function () {
-      canStub.withArgs('update', scope.contentType.data).returns(false);
-      scope.$apply();
+      canStub.withArgs('update', contentTypeData).returns(false);
+      compileElement();
       expect(scope.otDisabled).toBe(true);
     });
   });

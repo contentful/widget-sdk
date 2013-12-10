@@ -3,12 +3,26 @@
 describe('The ApiKey list directive', function () {
 
   var container, scope;
-  var canStub;
+  var compileElement;
+  var canStub, reasonsStub;
 
   beforeEach(function () {
     canStub = sinon.stub();
+    reasonsStub = sinon.stub();
     module('contentful/test', function ($provide) {
-      $provide.value('can', canStub);
+      $provide.value('reasonsDenied', reasonsStub);
+      $provide.value('authorization', {
+        spaceContext: {
+          space: {
+            sys: { createdBy: { sys: {id: 123} } }
+          }
+        }
+      });
+      var userStub = sinon.stub();
+      userStub.returns({ sys: {id: 123} });
+      $provide.value('authentication', {
+        getUser: userStub
+      });
     });
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
@@ -19,9 +33,11 @@ describe('The ApiKey list directive', function () {
         }
       };
 
-      container = $('<div class="api-key-list"></div>');
-      $compile(container)(scope);
-      scope.$digest();
+      compileElement = function () {
+        container = $('<div class="api-key-list"></div>');
+        $compile(container)(scope);
+        scope.$digest();
+      };
     });
   });
 
@@ -32,13 +48,14 @@ describe('The ApiKey list directive', function () {
 
   it('save button is disabled', function () {
     canStub.withArgs('create', 'ApiKey').returns(false);
-    scope.$apply();
+    reasonsStub.returns(['usageExceeded']);
+    compileElement();
     expect(container.find('.create-api-key-advice button').attr('disabled')).toBe('disabled');
   });
 
   it('save button is enabled', function () {
     canStub.withArgs('create', 'ApiKey').returns(true);
-    scope.$apply();
+    compileElement();
     expect(container.find('.create-api-key-advice button').attr('disabled')).toBeUndefined();
   });
 
