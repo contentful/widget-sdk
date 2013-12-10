@@ -2,14 +2,14 @@
 
 describe('Entry Editor Controller', function () {
   var controller, scope;
-  var canStub;
+  var canStub, reasonsStub;
+
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
-        canStub = sinon.stub();
-        $provide.value('can', canStub);
-    });
+    canStub = sinon.stub();
+    module('contentful/test');
     inject(function ($compile, $rootScope, $controller, cfStub){
       scope = $rootScope;
+      scope.can = canStub;
       var space = cfStub.space('testSpace');
       var contentTypeData = cfStub.contentTypeData('testType');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
@@ -51,10 +51,13 @@ describe('Entry Editor Controller', function () {
 
 describe('Entry Editor Controller with validation errors', function () {
   var controller, scope;
+  var canStub;
   beforeEach(module('contentful/test'));
 
   beforeEach(inject(function ($compile, $rootScope, $controller, cfStub){
+    canStub = sinon.stub();
     scope = $rootScope;
+    scope.can = canStub;
     var space = cfStub.space('testSpace');
     var contentTypeData = cfStub.contentTypeData('testType', [
       cfStub.field('localized'),
