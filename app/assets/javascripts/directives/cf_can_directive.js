@@ -35,6 +35,7 @@ angular.module('contentful').directive('cfCan', [
   }
 
   function evalExpressions(canParams, can) {
+    canParams = _.clone(canParams);
     var results = [], params;
     while(canParams.length > 0){
       params = canParams.shift();
@@ -52,6 +53,33 @@ angular.module('contentful').directive('cfCan', [
     };
   }
 
+  function makeLayer(id, elem) {
+    var position = elem.position();
+    var prop = makePropGetter(elem);
+    var layer = $('<div id="'+id+'" class="transparent-button-layer"></div>');
+    layer.css({
+      top: position.top + prop('marginTop'),
+      left: position.left + prop('marginLeft'),
+      width: elem.width() +
+             prop('paddingLeft')+
+             prop('paddingRight')+
+             prop('borderLeft')+
+             prop('borderRight'),
+      height: elem.height()+
+              prop('paddingTop')+
+              prop('paddingBottom')+
+              prop('borderTop')+
+              prop('borderBottom'),
+    });
+    return layer;
+  }
+
+  function resetElement(elem) {
+    if(elem.hasClass('ng-hide')) elem.removeClass('ng-hide');
+    if(elem.attr('disabled')) elem.attr('disabled', false);
+    if(elem.attr('disable-layer')) $('#'+elem.attr('disable-layer')).remove();
+  }
+
   /**
    * Attributes:
    * cf-can="action, Entity" or cf-can="[action1, Entity1], [action2, Entity2]"
@@ -67,19 +95,17 @@ angular.module('contentful').directive('cfCan', [
       }, function (space) {
         if(!space) return;
         deactivateWatcher();
+        resetElement(elem);
         scope.cfCanDisabled = false;
-        if(elem.hasClass('ng-hide')) elem.removeClass('ng-hide');
-        if(elem.attr('disabled')) elem.attr('disabled', false);
-        if(elem.attr('disable-layer')) $('#'+elem.attr('disable-layer')).remove();
 
         var canParams = parseCanExpression(attrs.cfCan);
-        var canResults = evalExpressions(_.clone(canParams), scope.can);
-        var paramIndex = _.findIndex(canResults, function (val) {
+        var canResults = evalExpressions(canParams, scope.can);
+        var rejectedIndex = _.findIndex(canResults, function (val) {
           return !val.can;
         });
-        if(paramIndex < 0) return;
+        if(rejectedIndex < 0) return;
 
-        var reasons = enforcements.determineEnforcement(canResults[paramIndex].reasons, canParams[paramIndex][1]);
+        var reasons = enforcements.determineEnforcement(canResults[rejectedIndex].reasons, canParams[rejectedIndex][1]);
 
         var disableButton = !('cfCanNoDisable' in attrs);
         var hideButton = !('cfCanNoHide' in attrs);
@@ -87,23 +113,11 @@ angular.module('contentful').directive('cfCan', [
           if(disableButton){
             elem.attr('disabled', true);
             scope.cfCanDisabled = true;
-            var id = 'transparent-button-layer-'+Math.ceil(Math.random()*100000);
-            elem.attr('disable-layer', id);
-            var layer = $('<div id="'+id+'" class="transparent-button-layer"></div>');
-            var position = elem.position();
-            var prop = makePropGetter(elem);
-            layer.css({
-              top: position.top + prop('marginTop'),
-              left: position.left + prop('marginLeft'),
-              width: elem.width() + prop('paddingLeft')+
-                                    prop('paddingRight')+
-                                    prop('borderLeft')+
-                                    prop('borderRight'),
-              height: elem.height() + prop('paddingTop')+
-                                    prop('paddingBottom')+
-                                    prop('borderTop')+
-                                    prop('borderBottom'),
-            });
+
+            var layerId = 'transparent-button-layer-'+Math.ceil(Math.random()*100000);
+            elem.attr('disable-layer', layerId);
+
+            var layer = makeLayer(layerId, elem);
             layer.prependTo(elem.parent());
             layer.tooltip({
               title: reasons.tooltip,
