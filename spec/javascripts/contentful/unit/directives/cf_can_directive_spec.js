@@ -82,6 +82,10 @@ describe('The can directive', function () {
       expect(elem.hasClass('ng-hide')).toBeTruthy();
     });
 
+    it('sets a flag on the scope', function () {
+      expect(scope.cfCanDisabled).toBeFalsy();
+    });
+
     it('is deactivated', function () {
       expect(elem.attr('disabled')).toBeFalsy();
     });
@@ -110,6 +114,10 @@ describe('The can directive', function () {
 
     it('is deactivated', function () {
       expect(elem.attr('disabled')).toBeTruthy();
+    });
+
+    it('sets a flag on the scope', function () {
+      expect(scope.cfCanDisabled).toBeTruthy();
     });
 
     it('enforcement is called with reason', function () {

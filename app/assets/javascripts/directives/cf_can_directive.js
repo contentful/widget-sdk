@@ -67,6 +67,7 @@ angular.module('contentful').directive('cfCan', [
       }, function (space) {
         if(!space) return;
         deactivateWatcher();
+        scope.cfCanDisabled = false;
         if(elem.hasClass('ng-hide')) elem.removeClass('ng-hide');
         if(elem.attr('disabled')) elem.attr('disabled', false);
         if(elem.attr('disable-layer')) $('#'+elem.attr('disable-layer')).remove();
@@ -85,6 +86,7 @@ angular.module('contentful').directive('cfCan', [
         if(reasons){
           if(disableButton){
             elem.attr('disabled', true);
+            scope.cfCanDisabled = true;
             var id = 'transparent-button-layer-'+Math.ceil(Math.random()*100000);
             elem.attr('disable-layer', id);
             var layer = $('<div id="'+id+'" class="transparent-button-layer"></div>');
