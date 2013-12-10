@@ -3,15 +3,32 @@
 describe('The Asset list directive', function () {
 
   var container, scope;
+  var compileElement;
   var canStub;
+  var reasonsStub;
 
   beforeEach(function () {
     canStub = sinon.stub();
+    reasonsStub = sinon.stub();
     module('contentful/test', function ($provide) {
-      $provide.value('can', canStub);
+      $provide.value('reasonsDenied', reasonsStub);
+      $provide.value('authorization', {
+        spaceContext: {
+          space: {
+            sys: { createdBy: { sys: {id: 123} } }
+          }
+        }
+      });
+      var userStub = sinon.stub();
+      userStub.returns({ sys: {id: 123} });
+      $provide.value('authentication', {
+        getUser: userStub
+      });
+
     });
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
+      scope.can = canStub;
       scope.tab = {
         params: {}
       };
@@ -22,9 +39,11 @@ describe('The Asset list directive', function () {
       };
       scope.validate = sinon.stub();
 
-      container = $('<div class="asset-list"></div>');
-      $compile(container)(scope);
-      scope.$digest();
+      compileElement = function () {
+        container = $('<div class="asset-list"></div>');
+        $compile(container)(scope);
+        scope.$digest();
+      };
     });
   });
 
@@ -36,13 +55,13 @@ describe('The Asset list directive', function () {
   function makeActionTest(button, action) {
     it(button+' button not shown', function () {
       canStub.withArgs(action, 'Asset').returns(false);
-      scope.$apply();
+      compileElement();
       expect(container.find('.tab-actions .'+button).hasClass('ng-hide')).toBe(true);
     });
 
     it(button+' button shown', function () {
       canStub.withArgs(action, 'Asset').returns(true);
-      scope.$apply();
+      compileElement();
       expect(container.find('.tab-actions .'+button).hasClass('ng-hide')).toBe(false);
     });
   }
@@ -55,13 +74,14 @@ describe('The Asset list directive', function () {
 
   it('create button is disabled', function () {
     canStub.withArgs('create', 'Asset').returns(false);
-    scope.$apply();
+    reasonsStub.returns(['usageExceeded']);
+    compileElement();
     expect(container.find('.results-empty-advice .primary-button').attr('disabled')).toBe('disabled');
   });
 
   it('create button is enabled', function () {
     canStub.withArgs('create', 'Asset').returns(true);
-    scope.$apply();
+    compileElement();
     expect(container.find('.results-empty-advice .primary-button').attr('disabled')).toBeUndefined();
   });
 
