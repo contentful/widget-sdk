@@ -179,15 +179,18 @@ module FeatureHelper
   end
 
   def expect_success(string = 'published successfully')
-    find :xpath, %Q{//*[contains(@class, 'notification') and contains(text(), '#{string}')]}, wait: 10
+    notification = find :xpath, %Q{//*[contains(@class, 'notification') and contains(@class, 'info') and contains(text(), '#{string}')]}, wait: 10
+    notification.click
   end
 
   def expect_error(string=nil)
-    find :xpath, %Q{//*[contains(@class, 'notification') and contains(@class, 'error') and contains(text(), '#{string}')]}, wait: 10
+    notification = find :xpath, %Q{//*[contains(@class, 'notification') and contains(@class, 'error') and contains(text(), '#{string}')]}, wait: 10
+    notification.click
   end
 
   def expect_warn(string=nil)
-    find :xpath, %Q{//*[contains(@class, 'notification') and contains(@class, 'warn') and contains(text(), '#{string}')]}, wait: 10
+    notification = find :xpath, %Q{//*[contains(@class, 'notification') and contains(@class, 'warn') and contains(text(), '#{string}')]}, wait: 10
+    notification.click
   end
 
   def eventually(options = {})

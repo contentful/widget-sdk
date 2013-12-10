@@ -39,7 +39,6 @@ feature 'Link Editor', js: true, sauce: true do
     ensure_login
     remove_test_space
     create_test_space
-    create_asset
   end
 
   after do
@@ -47,6 +46,7 @@ feature 'Link Editor', js: true, sauce: true do
   end
 
   scenario 'Add link to entry' do
+    create_asset
     create_content_type('Asset')
     add_button 'Entry with Asset'
     edit_field 'assetField' do
@@ -66,7 +66,7 @@ feature 'Link Editor', js: true, sauce: true do
 
     set_asset('.asset-editor')
 
-    find '.file-info .thumbnail', wait: 10
+    find '.file-info *[cf-thumbnail]', wait: 10
     click_button 'Publish'
     sleep 0.5
   end

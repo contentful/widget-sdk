@@ -21,7 +21,7 @@ feature 'Entry List', js: true, sauce: true do
     remove_test_space
   end
 
-  scenario do
+  scenario 'Playing around in the Entry List' do
     nav_bar 'entry-list'
     select_filter 'All'
     page.should have_selector('.cell-status.draft', count: 3)

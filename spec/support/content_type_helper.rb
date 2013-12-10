@@ -68,6 +68,7 @@ module ContentTypeHelper
     end
     wait_for_sharejs
     click_button 'Activate'
+    expect_success 'activated successfully'
     close_tab
   end
 end
