@@ -49,7 +49,7 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
     {
       label: 'periodUsageExceeded',
       message: 'Over usage limits',
-      description: 'This Space exceeds the monthly usage quota for the current subscription plan. Please upgrade to a higher plan to guarantee that your content is served without any interruptions.',
+      description: 'You have exceeded the monthly usage quota of your pricing plan. Please upgrade to guarantee that your content is served without any interruptions.',
       tooltip: '',
       actionMessage: upgradeActionMessage,
       action: upgradeAction
@@ -57,7 +57,7 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
     {
       label: 'usageExceeded',
       message: 'Over usage limits',
-      description: 'This Space exceeds the usage quota for the current subscription plan. Please upgrade to a higher plan.',
+      description: 'You have exceeded the usage limits of your pricing plan. Please upgrade.',
       tooltip: getTooltipMessage,
       actionMessage: upgradeActionMessage,
       action: upgradeAction
