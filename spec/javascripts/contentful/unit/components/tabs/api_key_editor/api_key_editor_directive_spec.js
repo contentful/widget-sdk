@@ -1,13 +1,14 @@
 'use strict';
 
 describe('apiKeyEditor Directive', function () {
-  var element, scope;
+  var element, scope, compileElement;
   var regenerateCheckbox;
   var openStub, catchStub;
-  var canStub;
+  var canStub, reasonsStub;
 
   beforeEach(function () {
     canStub = sinon.stub();
+    reasonsStub = sinon.stub();
     openStub = sinon.stub();
     catchStub = sinon.stub();
     openStub.returns({
@@ -15,7 +16,19 @@ describe('apiKeyEditor Directive', function () {
     });
 
     module('contentful/test', function ($provide) {
-      $provide.value('can', canStub);
+      $provide.value('authorization', {
+        spaceContext: {
+          space: {
+            sys: { createdBy: { sys: {id: 123} } }
+          }
+        }
+      });
+      var userStub = sinon.stub();
+      userStub.returns({ sys: {id: 123} });
+      $provide.value('authentication', {
+        getUser: userStub
+      });
+      $provide.value('reasonsDenied', reasonsStub);
       $provide.value('modalDialog', {
         open: openStub
       });
@@ -36,9 +49,11 @@ describe('apiKeyEditor Directive', function () {
         }
       };
 
-      element = $compile('<div class="api-key-editor"></div>')(scope);
-      scope.$digest();
-      regenerateCheckbox = element.find('.form-field').eq(3);
+      compileElement = function () {
+        element = $compile('<div class="api-key-editor"></div>')(scope);
+        scope.$digest();
+        regenerateCheckbox = element.find('.form-field').eq(3);
+      };
     });
   });
 
@@ -48,16 +63,21 @@ describe('apiKeyEditor Directive', function () {
 
 
   it('has a headline', function () {
-    scope.headline = 'headline text';
-    scope.$apply();
+    scope.tab.params.apiKey = {
+      data: {
+       name: 'headline text'
+      }
+    };
+    compileElement();
     expect(element.find('.tab-header h1').html()).toBe('headline text');
   });
 
   describe('with no existing access token', function () {
     beforeEach(function () {
-      scope.apiKey.data = {
+      scope.tab.params.apiKey = {
+        data: {}
       };
-      scope.$apply();
+      compileElement();
     });
 
     it('does not show the regenerate form field', function () {
@@ -67,58 +87,51 @@ describe('apiKeyEditor Directive', function () {
 
   describe('with an existing access token', function () {
     beforeEach(function () {
-      scope.apiKey.data = {
-        name: 'accessTokenName',
-        accessToken: 'accessTokenValue'
+      scope.tab.params.apiKey = {
+        data: {
+          name: 'accessTokenName',
+          accessToken: 'accessTokenValue'
+        }
       };
-      scope.$apply();
+      compileElement();
     });
 
     it('shows the regenerate form field', function () {
       expect(regenerateCheckbox.hasClass('ng-hide')).toBeFalsy();
     });
 
-    // no good way of testing this via unit tests
-    xit('changes and confirms the regeneration checkbox', function () {
-      regenerateCheckbox.click();
-      expect(openStub.called).toBeTruthy();
-      scope.apiKey.data.regenerateAccessToken = true;
-      scope.$apply();
-      expect(scope.apiKey.data.regenerateAccessToken).toBeTruthy();
-    });
-
-    xit('changes and cancels the regeneration checkbox', function () {
-      catchStub.callsArg(0);
-      regenerateCheckbox.click();
-      scope.$apply();
-      expect(scope.apiKey.data.regenerateAccessToken).toBeFalsy();
-    });
-
   });
 
-  it('delete button is disabled', function () {
+  it('delete button cant ever be disabled', function () {
     canStub.withArgs('create', 'ApiKey').returns(false);
-    scope.$apply();
-    expect(element.find('.tab-actions .delete').attr('disabled')).toBe('disabled');
+    compileElement();
+    expect(element.find('.tab-actions .delete').attr('disabled')).toBeUndefined();
   });
 
   it('delete button is enabled', function () {
     canStub.withArgs('create', 'ApiKey').returns(true);
-    scope.$apply();
+    compileElement();
     expect(element.find('.tab-actions .delete').attr('disabled')).toBeUndefined();
   });
 
   it('save button is disabled', function () {
-    scope.apiKeyForm.$invalid = false;
     canStub.withArgs('create', 'ApiKey').returns(false);
-    scope.$apply();
+    reasonsStub.returns(['usageExceeded']);
+    compileElement();
+    scope.apiKeyForm = {
+      $invalid: false
+    };
+    scope.$digest();
     expect(element.find('.tab-actions .save').attr('disabled')).toBe('disabled');
   });
 
   it('save button is enabled', function () {
-    scope.apiKeyForm.$invalid = false;
     canStub.withArgs('create', 'ApiKey').returns(true);
-    scope.$apply();
+    compileElement();
+    scope.apiKeyForm = {
+      $invalid: false
+    };
+    scope.$digest();
     expect(element.find('.tab-actions .save').attr('disabled')).toBeUndefined();
   });
 
