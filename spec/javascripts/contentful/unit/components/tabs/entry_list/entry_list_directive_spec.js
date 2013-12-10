@@ -10,19 +10,7 @@ describe('The Entry list directive', function () {
     canStub = sinon.stub();
     reasonsStub = sinon.stub();
     module('contentful/test', function ($provide) {
-      $provide.value('reasonsDenied', reasonsStub);
-      $provide.value('authorization', {
-        spaceContext: {
-          space: {
-            sys: { createdBy: { sys: {id: 123} } }
-          }
-        }
-      });
-      var userStub = sinon.stub();
-      userStub.returns({ sys: {id: 123} });
-      $provide.value('authentication', {
-        getUser: userStub
-      });
+      window.setupCfCanStubs($provide, reasonsStub);
     });
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();

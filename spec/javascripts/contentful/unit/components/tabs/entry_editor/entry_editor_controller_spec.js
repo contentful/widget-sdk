@@ -2,7 +2,7 @@
 
 describe('Entry Editor Controller', function () {
   var controller, scope;
-  var canStub, reasonsStub;
+  var canStub;
 
   beforeEach(function () {
     canStub = sinon.stub();

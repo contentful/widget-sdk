@@ -16,19 +16,7 @@ describe('The ContentType editor directive', function () {
         peek: sinon.stub(),
         mkpath: sinon.stub()
       });
-      $provide.value('reasonsDenied', reasonsStub);
-      $provide.value('authorization', {
-        spaceContext: {
-          space: {
-            sys: { createdBy: { sys: {id: 123} } }
-          }
-        }
-      });
-      var userStub = sinon.stub();
-      userStub.returns({ sys: {id: 123} });
-      $provide.value('authentication', {
-        getUser: userStub
-      });
+      window.setupCfCanStubs($provide, reasonsStub);
     });
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
