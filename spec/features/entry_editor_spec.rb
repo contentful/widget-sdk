@@ -53,7 +53,7 @@ feature 'Entry Editor', js: true, sauce: true do
       add_field 'Disabled Field', 'Text'
       wait_for_sharejs
       click_button 'Activate'
-      find('.toggle-disabled').click
+      toggle_disable(true)
     end
 
     add_button 'Entry with Text'

@@ -98,6 +98,23 @@ feature 'Content Type Editor', js: true, sauce: true do
     expect(page).to have_selector('.cf-field-settings')
   end
 
+  scenario 'Toggling disabled fields' do
+    add_button 'Content Type'
+    fill_in 'contentTypeName', with: 'Test Content Type'
+    add_field 'Text', 'Text'
+    click_button 'Activate'
+
+    for_field 'Text' do
+      toggle_disable(true)
+    end
+
+    click_button 'Update'
+    page.should_not have_selector('.cf-field-settings')
+    find('.editor-top-right .dropdown-toggle').click
+    find('label', text: 'Show disabled fields').click
+    page.should have_selector('.cf-field-settings')
+  end
+
   scenario 'Deactivating a content type' do
     # Create content type
     add_button 'Content Type'
