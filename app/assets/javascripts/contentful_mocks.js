@@ -10,6 +10,8 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
   var adapter = new Adapter();
 
   var cfStub = {};
+  cfStub.adapter = adapter;
+
   cfStub.locale = function (code, extraData) {
     return _.extend({
       code: code,
@@ -18,7 +20,7 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
       'default': true,
       name: code,
       publish: true
-    }, extraData);
+    }, extraData || {});
   };
 
   cfStub.locales = function () {
@@ -39,7 +41,7 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
         id: id
       },
       locales: cfStub.locales('en-US', 'de-DE')
-    }, extraData));
+    }, extraData || {}));
     return testSpace;
   };
 
@@ -51,7 +53,22 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
         id: id,
         type: 'ContentType'
       }
-    }, extraData);
+    }, extraData || {});
+  };
+
+  cfStub.contentType = function (space, id, name, fields, extraData) {
+    var contentType;
+    space.getContentType(id, function (err, res) {
+      contentType = res;
+    });
+    var data = cfStub.contentTypeData(id, fields, {
+      name: name,
+      sys: {
+        version: 1
+      }
+    });
+    adapter.respondWith(null, _.merge(data, extraData || {}));
+    return contentType;
   };
 
   cfStub.field = function (id, extraData) {
@@ -61,7 +78,7 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
       'required': false,
       'localized': true,
       'type': 'Text'
-    }, extraData);
+    }, extraData || {});
   };
 
   cfStub.entry = function (space, id, contentTypeId, fields, extraData) {
@@ -75,16 +92,33 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
       sys: {
         id: id,
         type: 'Entry',
+        version: 1,
         contentType: {
           sys: {
             type: 'Link',
             linkType: 'ContentType',
-            id: contentTypeId
+            id: contentTypeId || 'entryId'
           }
         }
       }
-    }, extraData));
+    }, extraData || {}));
     return entry;
+  };
+
+  cfStub.apiKey = function (space, id, name, extraData) {
+    var apiKey;
+    space.getApiKey(id, function (err, res) {
+      apiKey = res;
+    });
+    adapter.respondWith(null, _.merge({
+      name: name,
+      sys: {
+        id: id,
+        version: 1,
+        type: 'ApiKey',
+      }
+    }, extraData || {}));
+    return apiKey;
   };
 
   cfStub.spaceContext = function (space, contentTypes) {
