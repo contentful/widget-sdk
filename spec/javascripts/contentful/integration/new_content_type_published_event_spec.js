@@ -7,8 +7,8 @@ describe('The Space context', function () {
 
   beforeEach(function () {
     module('contentful/test');
-    inject(function ($rootScope, SpaceContext) {
-      spaceContext = new SpaceContext(window.createMockSpace('test'));
+    inject(function ($rootScope, SpaceContext, cfStub) {
+      spaceContext = new SpaceContext(cfStub.space('test'));
       broadcastSpy = sinon.spy($rootScope, '$broadcast');
     });
   });

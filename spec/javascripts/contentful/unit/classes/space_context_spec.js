@@ -40,8 +40,8 @@ describe('SpaceContext class with a space', function () {
   var spaceContext;
   beforeEach(function () {
     module('contentful/test');
-    inject(function (SpaceContext) {
-      spaceContext = new SpaceContext(window.createMockSpace());
+    inject(function (SpaceContext, cfStub) {
+      spaceContext = new SpaceContext(cfStub.space('test'));
     });
   });
 
@@ -54,21 +54,51 @@ describe('SpaceContext class with a space', function () {
     expect(spaceContext.space).toBeDefined();
   });
 
-  it('gets the locales refreshed', function () {
+  it('gets an array of published locales', function () {
     expect(_.isArray(spaceContext.publishLocales)).toBeTruthy();
+  });
+
+  it('has a published locale with a code', function () {
     expect(spaceContext.publishLocales[0].code).toBeDefined();
+  });
+
+  it('has a default locale', function () {
     expect(spaceContext.defaultLocale).toBeDefined();
+  });
+
+  it('has a default locale with a code', function () {
     expect(spaceContext.defaultLocale.code).toBeDefined();
   });
 
-  it('has active locales', function () {
+  it('sets a locale state for an active locale', function () {
     expect(spaceContext.localeStates['en-US']).toBeTruthy();
+  });
+
+  it('has active locales', function () {
     expect(_.isArray(spaceContext.activeLocales)).toBeTruthy();
+  });
+
+  it('has an active locale with a code', function () {
     expect(spaceContext.activeLocales[0].code).toBeDefined();
   });
 
-  it('gets a publish locale', function () {
-    expect(spaceContext.getPublishLocale('en-US')).toEqual({name: 'en-US', code: 'en-US'});
+  describe('gets a publish locale and', function () {
+    var publishLocale;
+    beforeEach(function () {
+      publishLocale = spaceContext.getPublishLocale('en-US');
+    });
+
+    it('it exists', function () {
+      expect(publishLocale).toBeDefined();
+    });
+
+    it('has a name', function () {
+      expect(publishLocale.name).toEqual('en-US');
+    });
+
+    it('has a code', function () {
+      expect(publishLocale.code).toEqual('en-US');
+    });
   });
 
   describe('getting content types from server', function () {

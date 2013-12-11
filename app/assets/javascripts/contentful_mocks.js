@@ -10,7 +10,7 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
   var adapter = new Adapter();
 
   var cfStub = {};
-  cfStub.locale = function (code, extensions) {
+  cfStub.locale = function (code, extraData) {
     return _.extend({
       code: code,
       contentDeliveryApi: true,
@@ -18,7 +18,7 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
       'default': true,
       name: code,
       publish: true
-    }, extensions);
+    }, extraData);
   };
 
   cfStub.locales = function () {
@@ -27,7 +27,7 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
     });
   };
 
-  cfStub.space = function (id, extension) {
+  cfStub.space = function (id, extraData) {
     id = id || 'testSpace';
     var client = new Client(adapter);
     var testSpace;
@@ -39,11 +39,11 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
         id: id
       },
       locales: cfStub.locales('en-US', 'de-DE')
-    }, extension));
+    }, extraData));
     return testSpace;
   };
 
-  cfStub.contentTypeData = function (id, fields, extensions) {
+  cfStub.contentTypeData = function (id, fields, extraData) {
     fields = fields || [];
     return _.merge({
       fields: fields,
@@ -51,20 +51,20 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
         id: id,
         type: 'ContentType'
       }
-    }, extensions);
+    }, extraData);
   };
 
-  cfStub.field = function (id, extension) {
+  cfStub.field = function (id, extraData) {
     return _.extend({
       'id': id,
       'name': id,
       'required': false,
       'localized': true,
       'type': 'Text'
-    }, extension);
+    }, extraData);
   };
 
-  cfStub.entry = function (space, id, contentTypeId, fields, extensions) {
+  cfStub.entry = function (space, id, contentTypeId, fields, extraData) {
     fields = fields || {};
     var entry;
     space.getEntry(id, function (err, res) {
@@ -83,7 +83,7 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
           }
         }
       }
-    }, extensions));
+    }, extraData));
     return entry;
   };
 
@@ -159,23 +159,6 @@ window.createMockEntity = function (id, contentType, entityType) {
       return contentType;
     }
   };
-};
-
-window.createMockSpace = function (id) {
-  var entity = window.createMockEntity(id);
-  entity.getPublishLocales = function(){
-    return [
-      {name: 'en-US', code: 'en-US'},
-      {name: 'en-GB', code: 'en-GB'},
-      {name: 'pt-PT', code: 'pt-PT'},
-      {name: 'pt-BR', code: 'pt-BR'}
-    ];
-  };
-  entity.getDefaultLocale  = function(){
-    return {name: 'en-US', code: 'en-US'};
-  };
-
-  return entity;
 };
 
 mocks.provider('ShareJS', function () {
