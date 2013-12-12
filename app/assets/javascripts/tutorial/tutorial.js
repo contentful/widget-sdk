@@ -5,6 +5,27 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
   guiders._defaultSettings.buttons = null;
   guiders._defaultSettings.xButton = true;
   guiders._arrowSize = 10;
+  guiders.showDelayed = function (id) {
+    var guider = guiders._guiderById(id);
+    if (_.isEmpty(guider.attachTo)) {
+      //console.log('showing immediate', id, guider.attachTo);
+      guiders.showImmediate(id);
+    } else {
+      var tries = 4;
+      attach();
+    }
+    function attach() {
+      //console.log('attach', id, guider.attachTo, 'try', tries);
+      if (tries-- === 0) throw new Error('Failed to find attachTo('+guider.attachTo+') for Guider '+id);
+      if ($(guider.attachTo).length > 0) {
+        guiders.showImmediate(id);
+      } else {
+        setTimeout(attach, 200);
+      }
+    }
+  };
+  guiders.showImmediate = guiders.show;
+  guiders.show = guiders.showDelayed;
 
   var next = {name: '<i class="ss-navigateright"></i>', classString: 'default-button next-button', onclick: function(){guiders.next();}};
 
@@ -30,7 +51,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         tutorial.setSeen();
         guiders.hideAll();
         guiders.show('welcome');
-      }, function (err) {
+      }, function () {
         notification.error('Could not create tutorial space');
       });
     },
