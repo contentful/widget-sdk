@@ -27,7 +27,7 @@ Capybara.default_wait_time = 5
 Capybara.javascript_driver = :selenium
 
 if ENV['USE_SAUCE']
-  Capybara.app_host = 'https:/app.flinkly.com'
+  Capybara.app_host = 'https:/app.quirely.com'
   Capybara.default_wait_time = 30
   Capybara.javascript_driver = :sauce
 end

@@ -4,7 +4,7 @@ require "sauce/capybara"
 Sauce.config do |c|
   c[:start_tunnel] = false
   if ENV['USE_SAUCE']
-    c[:application_host] = "app.flinkly.com"
+    c[:application_host] = "app.quirely.com"
     c[:application_port] = "80"
   end
   c[:start_local_application] = false
