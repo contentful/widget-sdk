@@ -13,6 +13,10 @@ describe('Authorization service', function () {
     });
   });
 
+  afterEach(inject(function ($log) {
+    $log.assertEmpty();
+  }));
+
   it('creates an instance', function () {
     expect(authorization).toBeDefined();
   });
@@ -90,13 +94,35 @@ describe('Authorization service', function () {
         expect(idStub.called).toBeTruthy();
       });
     });
+  });
+});
 
+describe('reasonsDenied service', function () {
+  var reasonsDenied;
+  var authorizationStub, reasonsStub;
+  beforeEach(function () {
+    authorizationStub = sinon.stub();
+    module('contentful/test', function ($provide) {
+      $provide.service('authorization', authorizationStub);
+      reasonsStub = sinon.stub();
+      authorizationStub.returns({
+        spaceContext: {
+          reasonsDenied: reasonsStub
+        }
+      });
+    });
+    inject(function (_reasonsDenied_) {
+      reasonsDenied = _reasonsDenied_;
+    });
   });
 
   afterEach(inject(function ($log) {
     $log.assertEmpty();
   }));
 
-
+  it('calls reasonsDenied from authorization', function () {
+    reasonsDenied();
+    expect(reasonsStub.called).toBeTruthy();
+  });
 });
 
