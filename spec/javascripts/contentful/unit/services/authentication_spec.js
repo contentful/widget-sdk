@@ -4,14 +4,30 @@ describe('Authentication service', function () {
   var authentication, $rootScope;
   var hashStub, searchStub, pathStub;
   var cookiesSetStub, cookiesGetStub, cookiesDelStub;
+  var sentryErrorStub, queryLinksStub;
   var infoStub;
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', function ($provide, authenticationProvider) {
       hashStub = sinon.stub();
       searchStub = sinon.stub();
       pathStub = sinon.stub();
       infoStub = sinon.stub();
+      sentryErrorStub = sinon.stub();
+      queryLinksStub = sinon.stub();
+
+      $provide.constant('contentfulClient', {
+        QueryLinkResolver: {
+          resolveQueryLinks: queryLinksStub
+        }
+      });
+
+      $provide.constant('environment', {
+        settings: {
+          base_host: 'basehost',
+          marketing_url: 'marketinghost'
+        }
+      });
 
       $provide.value('$location', {
         hash: hashStub,
@@ -22,6 +38,16 @@ describe('Authentication service', function () {
       $provide.value('notification', {
         info: infoStub
       });
+
+      $provide.value('sentry', {
+        captureError: sentryErrorStub
+      });
+
+      $provide.value('$window', {
+        addEventListener: sinon.stub()
+      });
+
+      authenticationProvider.setEnvVars();
     });
     inject(function (_$rootScope_, _authentication_) {
       $rootScope = _$rootScope_;
@@ -190,8 +216,229 @@ describe('Authentication service', function () {
       expect(redirectStub.called).toBe(true);
       expect(cookiesSetStub.calledWith('redirect_after_login', '/path')).toBe(true);
     });
+  });
 
 
+  describe('logout', function () {
+    beforeEach(function () {
+      authentication.logout();
+    });
+
+    it('deletes the token cookie', function () {
+      expect(cookiesDelStub.calledWith('token')).toBeTruthy();
+    });
+
+    it('sets the window location', inject(function ($window) {
+      expect($window.location).toEqual('//basehost/logout');
+    }));
+  });
+
+  describe('goodbye', function () {
+    beforeEach(function () {
+      authentication.goodbye();
+    });
+
+    it('deletes the token cookie', function () {
+      expect(cookiesDelStub.calledWith('token')).toBeTruthy();
+    });
+
+    it('sets the window location', inject(function ($window) {
+      expect($window.location).toEqual('marketinghost/goodbye');
+    }));
+  });
+
+  describe('is logged in', function () {
+    it('is true', function () {
+      authentication.token = {};
+      expect(authentication.isLoggedIn()).toBeTruthy();
+    });
+
+    it('is false', function () {
+      expect(authentication.isLoggedIn()).toBeFalsy();
+    });
+  });
+
+  it('profile url', function () {
+    expect(authentication.profileUrl()).toEqual('//basehost/profile');
+  });
+
+
+  it('support url', function () {
+    expect(authentication.supportUrl()).toEqual('//basehost/integrations/zendesk/login');
+  });
+
+  it('space settings url', function () {
+    expect(authentication.spaceSettingsUrl('123')).toEqual('//basehost/settings/spaces/123');
+  });
+
+  describe('redirect to login', function () {
+    beforeEach(inject(function ($window) {
+      $window.location = {
+        protocol: 'redirectprotocol',
+        host: 'redirecthost'
+      };
+      authentication.redirectToLogin();
+    }));
+
+    it('redirectingToLogin set to true', function () {
+      expect(authentication.redirectingToLogin).toBeTruthy();
+    });
+
+    it('sets login url', inject(function ($window) {
+      expect($window.location).toMatch('oauth/authorize');
+    }));
+
+    it('login url contains redirect url', inject(function ($window) {
+      expect($window.location).toMatch('redirectprotocol');
+      expect($window.location).toMatch('redirecthost');
+    }));
+  });
+
+  describe('getting token lookup', function () {
+    var clientTokenLookupStub;
+    beforeEach(function () {
+      clientTokenLookupStub = sinon.stub(authentication.client, 'getTokenLookup');
+    });
+
+    afterEach(function () {
+      clientTokenLookupStub.restore();
+    });
+
+    describe('fails because login redirection', function () {
+      beforeEach(function () {
+        authentication.redirectingToLogin = true;
+        authentication.getTokenLookup();
+      });
+
+      it('sentry error is fired', function () {
+        expect(sentryErrorStub.called).toBeTruthy();
+      });
+
+      it('client token lookup not called', function () {
+        expect(clientTokenLookupStub.called).toBeFalsy();
+      });
+    });
+
+    describe('rejects because call fails', function () {
+      var tokenLookup, errorResponse;
+      beforeEach(function () {
+        errorResponse = {error: 'response'};
+        clientTokenLookupStub.callsArgWith(0, errorResponse);
+        tokenLookup = authentication.getTokenLookup();
+      });
+
+      it('client token lookup is called', function () {
+        expect(clientTokenLookupStub.called).toBeTruthy();
+      });
+
+      it('client token lookup promise fails', inject(function ($rootScope) {
+        $rootScope.$apply(function () {
+          tokenLookup.catch(function (error) {
+            expect(error).toBe(errorResponse);
+          });
+        });
+      }));
+    });
+
+    describe('resolves because call succeeds', function () {
+      var tokenLookup, tokenLookupObj, dataResponse, setTokenStub;
+      beforeEach(function () {
+        dataResponse = {token: 'lookup'};
+        clientTokenLookupStub.callsArgWith(0, null, dataResponse);
+        setTokenStub = sinon.stub(authentication, 'setTokenLookup');
+        tokenLookupObj = {parsed: 'lookup'};
+        authentication.tokenLookup = tokenLookupObj;
+        tokenLookup = authentication.getTokenLookup();
+      });
+
+      it('client token lookup is called', function () {
+        expect(clientTokenLookupStub.called).toBeTruthy();
+      });
+
+      it('client token lookup promise resolves', inject(function ($rootScope) {
+        $rootScope.$apply(function () {
+          tokenLookup.then(function () {
+            expect(setTokenStub.calledWith(dataResponse)).toBeTruthy();
+          });
+        });
+      }));
+
+      it('client token lookup is returned from promise', inject(function ($rootScope) {
+        $rootScope.$apply(function () {
+          tokenLookup.then(function (data) {
+            expect(data).toBe(authentication.tokenLookup);
+          });
+        });
+      }));
+    });
+  });
+
+  describe('get user', function () {
+    it('no token lookup', function () {
+      authentication.tokenLookup = null;
+      expect(authentication.getUser()).toBeFalsy();
+    });
+
+    it('with token lookup', function () {
+      var user = {name: 'doge'};
+      authentication.tokenLookup = {sys: {createdBy: user}};
+      expect(authentication.getUser()).toBe(user);
+    });
+  });
+
+  describe('set token lookup', function () {
+    var tokenLookup;
+    beforeEach(function () {
+      tokenLookup = {token: 'lookup'};
+      queryLinksStub.returns(['resolvedLink']);
+      authentication.setTokenLookup(tokenLookup);
+    });
+
+    it('is stored internally', function () {
+      expect(authentication._unresolvedTokenLookup).toBe(tokenLookup);
+    });
+
+    it('queryLinkResolver is called with tokenLookup', function () {
+      expect(queryLinksStub.calledWith(tokenLookup)).toBeTruthy();
+    });
+
+    it('is parsed by querylink resolver', function () {
+      expect(authentication.tokenLookup).toBe('resolvedLink');
+    });
+  });
+
+  describe('update token lookup', function () {
+    var resource, resourceList;
+    var unresolvedToken;
+    var setTokenStub;
+    beforeEach(function () {
+      setTokenStub = sinon.stub();
+      authentication.setTokenLookup = setTokenStub;
+      resource = {sys: {id: 'resourceId', type: 'resourceType'}};
+      resourceList = [
+        {sys: {id: 'resourceId'}},
+        {sys: {id: 'resourceId2'}}
+      ];
+      unresolvedToken = {
+        includes: {
+          resourceType: resourceList
+        }
+      };
+      authentication._unresolvedTokenLookup = unresolvedToken;
+      authentication.updateTokenLookup(resource);
+    });
+
+    it('sets unresolved token lookup', function () {
+      expect(authentication._unresolvedTokenLookup).toBe(unresolvedToken);
+    });
+
+    it('sets the provided resource on the resourceList', function () {
+      expect(resourceList[0]).toBe(resource);
+    });
+
+    it('set token is called', function () {
+      expect(setTokenStub.calledWith(unresolvedToken)).toBeTruthy();
+    });
   });
 
 });
