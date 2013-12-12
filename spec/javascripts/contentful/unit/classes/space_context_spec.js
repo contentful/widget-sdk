@@ -34,6 +34,29 @@ describe('SpaceContext class with no space', function () {
     expect(spaceContext.activeLocales.length).toBe(0);
   });
 
+  describe('refreshes locales', function () {
+    beforeEach(function () {
+      spaceContext.refreshActiveLocales = sinon.stub();
+      spaceContext.refreshLocales();
+    });
+
+    it('publishLocales exists', function () {
+      expect(_.isArray(spaceContext.publishLocales)).toBeTruthy();
+    });
+
+    it('publish locales is empty', function () {
+      expect(spaceContext.publishLocales.length).toBe(0);
+    });
+
+    it('no default locale is defined', function () {
+      expect(spaceContext.defaultLocale).toBeNull();
+    });
+
+    it('refreshes active locales', function () {
+      expect(spaceContext.refreshActiveLocales.called).toBeTruthy();
+    });
+  });
+
   describe('refreshes content types', function () {
     beforeEach(function () {
       spaceContext.refreshContentTypes();
@@ -97,6 +120,78 @@ describe('SpaceContext class with a space', function () {
 
   it('has an active locale with a code', function () {
     expect(spaceContext.activeLocales[0].code).toBeDefined();
+  });
+
+  describe('refreshes locales', function () {
+    var publishLocales, defaultLocale;
+    beforeEach(function () {
+      publishLocales = ['publishLocales'];
+      defaultLocale = {code: 'en-US'};
+      spaceContext.space.getPublishLocales = sinon.stub();
+      spaceContext.space.getPublishLocales.returns(publishLocales);
+      spaceContext.space.getDefaultLocale = sinon.stub();
+      spaceContext.space.getDefaultLocale.returns(defaultLocale);
+      spaceContext.refreshActiveLocales = sinon.stub();
+      spaceContext.refreshLocales();
+    });
+
+    it('calls publish locales space getter', function () {
+      expect(spaceContext.space.getPublishLocales.called).toBeTruthy();
+    });
+
+    it('publishLocales exists', function () {
+      expect(_.isArray(spaceContext.publishLocales)).toBeTruthy();
+    });
+
+    it('publish locales is the supplied array', function () {
+      expect(spaceContext.publishLocales).toBe(publishLocales);
+    });
+
+    it('calls default locale space getter', function () {
+      expect(spaceContext.space.getDefaultLocale.called).toBeTruthy();
+    });
+
+    it('default locale is defined', function () {
+      expect(spaceContext.defaultLocale).toBe(defaultLocale);
+    });
+
+    it('refreshes active locales', function () {
+      expect(spaceContext.refreshActiveLocales.called).toBeTruthy();
+    });
+
+    it('sets locale state for default locale', function () {
+      expect(spaceContext.localeStates['en-US']).toBeTruthy();
+    });
+  });
+
+  describe('refresh active locales', function () {
+    beforeEach(function () {
+      spaceContext.publishLocales = [
+        {code: 'en-US'},
+        {code: 'pt-PT'},
+        {code: 'pt-BR'}
+      ];
+      spaceContext.localeStates = {
+        'en-US': true,
+        'pt-PT': true,
+        'pt-BR': false
+      };
+      spaceContext.refreshActiveLocales();
+    });
+
+    it('sets new locale states', function () {
+      expect(spaceContext.localeStates).toEqual({
+        'en-US': true,
+        'pt-PT': true
+      });
+    });
+
+    it('sets new active locales', function () {
+      expect(spaceContext.activeLocales).toEqual([
+        {code: 'en-US'},
+        {code: 'pt-PT'}
+      ]);
+    });
   });
 
   describe('gets a publish locale and', function () {
@@ -403,9 +498,8 @@ describe('SpaceContext class with a space', function () {
     });
 
   });
-
-
 });
+
 
 describe('SpaceContext resolving missing ContentTypes', function () {
   var spaceContext, scope;
