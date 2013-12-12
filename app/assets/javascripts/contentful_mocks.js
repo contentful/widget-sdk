@@ -105,6 +105,26 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
     return entry;
   };
 
+  cfStub.asset = function (space, id, fields, extraData) {
+    var asset;
+    space.getAsset(id, function (err, res) {
+      asset = res;
+    });
+    adapter.respondWith(null, _.merge({
+      sys: {
+        id: id,
+        type: 'Asset',
+        version: 1,
+      },
+      fields: _.merge({
+        title: '',
+        description: '',
+        file: {}
+      }, fields || {})
+    }, extraData || {}));
+    return asset;
+  };
+
   cfStub.apiKey = function (space, id, name, extraData) {
     var apiKey;
     space.getApiKey(id, function (err, res) {
