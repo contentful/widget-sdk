@@ -174,47 +174,6 @@ mocks.factory('PromisedLoader', function () {
   return SpecPromisedLoader;
 });
 
-window.createMockEntity = function (id, contentType, entityType) {
-  return {
-    getId: function () {
-      return id;
-    },
-    // mock for api keys
-    getName: function () {
-      return id;
-    },
-    getType: function () {
-      return entityType;
-    },
-    getPublishedVersion: function () {
-      return this.data.sys.publishedVersion;
-    },
-    data: {
-      sys: {
-        id: id
-      },
-      displayField: 'title',
-      fields: {
-        title: {
-          'en-US': 'the title'
-        },
-        file: {
-          'en-US': {
-            contentType: 'application/octet-stream',
-            fileName: 'file.psd'
-          }
-        }
-      }
-    },
-    'delete': function (fn) {
-      fn(null, this);
-    },
-    getContentTypeId: function () {
-      return contentType;
-    }
-  };
-};
-
 mocks.provider('ShareJS', function () {
   function FakeShareJSClient() {
   }
