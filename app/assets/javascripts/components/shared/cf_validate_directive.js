@@ -56,7 +56,7 @@ angular.module('contentful').directive('cfValidate', function (validation, sentr
       $scope.setValidationResult = function (schemaErrors, data, schema) {
         var errors = _.reject(schemaErrors, function (error) {
           if(!error || (error && !error.path)){
-            sentry.captureError('Validation error does not exist', {
+            sentry.captureError('Validation error '+(error?'path':'')+' does not exist', {
               data: {
                 errorExists: !!error,
                 errorPathExists: !!(error && error.path),
