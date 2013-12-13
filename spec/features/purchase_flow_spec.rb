@@ -87,7 +87,7 @@ feature 'Purchase flow', js: true, sauce: true do
     expect_success 'The new plan has been switched to the annual plan'
   end
 
-  scenario 'Switch plan in step 2' do
+  scenario 'Switch plan in step 2', non_ci: true do
     tab_iframe do
       first('a', text: 'Choose plan').click
       click_link 'Change'

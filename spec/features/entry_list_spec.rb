@@ -14,7 +14,7 @@ feature 'Entry List', js: true, sauce: true do
       edit_field('textField', 'en-US', 'textarea').set 'Foo'
       close_tab
     end
-    sleep 3 # ElasticSearch catchup
+    wait_for_elasticsearch
   end
 
   after do
@@ -29,7 +29,7 @@ feature 'Entry List', js: true, sauce: true do
     all('input[type="checkbox"]')[1].set(true)
     click_button 'Publish'
     expect_success 'published successfully'
-    sleep 2 # Orr Elasticsearch
+    wait_for_elasticsearch
     page.should have_selector('.cell-status.draft', count: 2)
     page.should have_selector('.cell-status.published', count: 1)
 
@@ -46,7 +46,7 @@ feature 'Entry List', js: true, sauce: true do
     first('input[type="checkbox"]').set(true)
     click_button 'Archive'
     expect_success 'archived successfully'
-    sleep 2 # Orr Elasticsearch
+    wait_for_elasticsearch
     page.should have_selector('.cell-status.archived', count: 2)
 
     select_filter 'Archived'
@@ -57,12 +57,12 @@ feature 'Entry List', js: true, sauce: true do
     click_button 'Delete'
     click_button 'Are you sure?'
     expect_success 'deleted successfully'
-    sleep 2 # Orr Elasticsearch
+    wait_for_elasticsearch
     
     page.should_not have_selector('.tab-actions')
 
     select_filter('Entry with Text')
-    sleep 2
+    wait_for_elasticsearch
     page.should have_selector('.cell-status.archived' , count: 1)
     page.should have_selector('.cell-status.published', count: 1)
   end

@@ -132,12 +132,10 @@ module FeatureHelper
   # end
 
   def add_button(text)
+    tabs = all('.tab-content', visible: false).length
     find('.tablist-button .dropdown-toggle').click
-    #begin
-      #find('.tablist-button li[ng-click]', text: text).click
-    #rescue Capybara::Ambiguous
-      first('.tablist-button li[ng-click]', text: text).click
-    #end
+    first('.tablist-button li[ng-click]', text: text).click
+    page.should have_selector('.tab-content', count: tabs + 1, visible: false)
   end
 
   def nav_bar(target)
@@ -185,8 +183,12 @@ module FeatureHelper
   end
 
   def expect_error(string=nil)
-    notification = find :xpath, %Q{//*[contains(@class, 'notification') and (contains(@class, 'error') or contains(@class, 'warn'))and contains(text(), '#{string}')]}, wait: 10
+    notification = find :xpath, %Q{//*[contains(@class, 'notification') and (contains(@class, 'error') or contains(@class, 'warn')) and contains(text(), '#{string}')]}, wait: 10
     notification.click
+  end
+
+  def wait_for_elasticsearch
+    sleep 2
   end
 
   def eventually(options = {})

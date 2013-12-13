@@ -21,9 +21,9 @@ feature 'Asset Editor', js: true, sauce: true do
 
     set_asset('.asset-editor')
 
-    find '.file-info .thumbnail', wait: 10
+    find '.file-info *[cf-thumbnail]', wait: 10
     click_button 'Publish'
-    sleep 3
+    wait_for_elasticsearch
     nav_bar 'asset-list'
     table = find('.main-results tbody')
     expect(table).to have_text('Bacon')

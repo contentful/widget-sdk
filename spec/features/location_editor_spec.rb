@@ -20,6 +20,7 @@ feature 'Location Editor', js: true, sauce: true do
     edit_field 'locationField' do
       # Add by click
       page.execute_script("google.maps.event.trigger($('.gmaps-container').scope()._getMap(), 'click', {latLng: new google.maps.LatLng(51, 9)})")
+      page.should have_selector(:xpath, "//img[contains(@src, 'spotlight')]")
       find('.lat').value.should == '51'
       find('.lon').value.should == '9'
       # Search

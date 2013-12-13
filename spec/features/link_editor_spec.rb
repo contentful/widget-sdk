@@ -32,13 +32,13 @@ feature 'Link Editor', js: true, sauce: true do
     wait_for_sharejs
     click_button 'Publish'
     expect_success
-    sleep 2 # Wait for elasticsearch
 
     add_button 'Entry with Links'
     wait_for_sharejs
     edit_field 'textField' do
       find('textarea').set 'Root'
     end
+    wait_for_elasticsearch
     edit_field 'entryField' do
       find('input').set('AAAA')
       find('.result-list span', text: 'AAAA').click

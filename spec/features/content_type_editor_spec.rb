@@ -128,7 +128,7 @@ feature 'Content Type Editor', js: true, sauce: true do
     add_button 'Test Content Type'
     edit_field('text', 'en-US', 'textarea').set('bla')
     wait_for_sharejs
-    sleep 2 # Wait for Elasticsearch to catch up
+    wait_for_elasticsearch
 
     # Switch back to content type editor and try to deactivate
     select_tab 'Test Content Type'
@@ -141,7 +141,7 @@ feature 'Content Type Editor', js: true, sauce: true do
     find('li.delete').click
     find('li.delete-confirm').click
     expect_success 'deleted successfully'
-    sleep 2 # Wait for Elasticsearch to catch up
+    wait_for_elasticsearch
 
     # Switch back to content type editor and deactivate
     select_tab 'Test Content Type'
