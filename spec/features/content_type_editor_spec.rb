@@ -37,6 +37,7 @@ feature 'Content Type Editor', js: true, sauce: true do
     fill_in 'contentTypeName', with: 'Test Content Type'
     fill_in 'contentTypeDescription', with: 'Test description'
     add_field 'FooField', 'Object', id: 'fooId', required: true
+    wait_for_sharejs
     click_button 'Activate'
     expect_success('successfully')
   end
