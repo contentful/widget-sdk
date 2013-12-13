@@ -6,7 +6,7 @@ feature 'Reload Notification', js: true, sauce: true do
   end
 
   scenario 'Causing an error' do
-    execute_javascript '$(".client").scope().$apply(function(){throw new Error()})'
+    page.execute_script '$(".client").scope().$apply(function(){throw new Error()})'
     page.should have_selector('.title', text: 'The application needs to reload')
   end
 

@@ -110,6 +110,7 @@ module FeatureHelper
         click_button 'Create Space'
       end
       expect_success 'Created space'
+      find '.tab-content'
     end
   end
 
@@ -184,12 +185,7 @@ module FeatureHelper
   end
 
   def expect_error(string=nil)
-    notification = find :xpath, %Q{//*[contains(@class, 'notification') and contains(@class, 'error') and contains(text(), '#{string}')]}, wait: 10
-    notification.click
-  end
-
-  def expect_warn(string=nil)
-    notification = find :xpath, %Q{//*[contains(@class, 'notification') and contains(@class, 'warn') and contains(text(), '#{string}')]}, wait: 10
+    notification = find :xpath, %Q{//*[contains(@class, 'notification') and (contains(@class, 'error') or contains(@class, 'warn'))and contains(text(), '#{string}')]}, wait: 10
     notification.click
   end
 

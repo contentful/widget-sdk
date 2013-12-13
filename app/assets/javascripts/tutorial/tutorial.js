@@ -16,7 +16,11 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
     }
     function attach() {
       //console.log('attach', id, guider.attachTo, 'try', tries);
-      if (tries-- === 0) throw new Error('Failed to find attachTo('+guider.attachTo+') for Guider '+id);
+      if (tries-- === 0) {
+        sentry.captureError('Failed to find attachTo('+guider.attachTo+') for Guider '+id);
+        guiders.showImmediate(id);
+        return;
+      }
       if ($(guider.attachTo).length > 0) {
         guiders.showImmediate(id);
       } else {

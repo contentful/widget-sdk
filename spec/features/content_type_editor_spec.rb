@@ -80,7 +80,7 @@ feature 'Content Type Editor', js: true, sauce: true do
     end
 
     click_button 'Activate'
-    expect_warn 'Validation failed'
+    expect_error 'Validation failed'
   end
 
   scenario 'Validation errors on a disabled field cause it to be shown' do

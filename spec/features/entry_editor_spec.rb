@@ -18,6 +18,7 @@ feature 'Entry Editor', js: true, sauce: true do
     create_content_type 'Text'
     add_button 'Entry with Text'
     edit_field('textField', 'en-US', 'textarea').set 'Foo'
+    wait_for_sharejs
     click_button 'Publish'
     expect_success 'published successfully'
     click_button 'Unpublish'

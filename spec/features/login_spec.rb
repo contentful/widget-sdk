@@ -57,7 +57,7 @@ feature "Account cancellation", js:true, sauce: true do
     tab_iframe do
       click_button 'Cancel Account'
     end
-    current_url.should eql("#{marketing_host}/goodbye/")
+    current_url.should eql("#{marketing_host}/goodbye")
     #page.should have_text('Please let us know about your experience')
   end
 end
