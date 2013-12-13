@@ -198,7 +198,47 @@ describe('The can directive', function () {
     it('sets a tooltip on button layer', function () {
       expect(tooltipStub.args[0][0].title).toMatch(/Assets/g);
     });
-
   });
+
+  describe('override ng-hide cleanup', function () {
+    beforeEach(function () {
+      canStub.returns(true);
+      reasonsStub.returns(undefined);
+      compileElement('create, Entry', 'class="ng-hide" ng-init="noCfCanCleanup=true"');
+    });
+
+    it('can is called with supplied condition', function () {
+      expect(canStub.args[0]).toEqual(['create', 'Entry']);
+    });
+
+    it('has no hide class', function () {
+      expect(elem.hasClass('ng-hide')).toBeTruthy();
+    });
+
+    it('is not deactivated', function () {
+      expect(elem.attr('disabled')).toBeFalsy();
+    });
+  });
+
+  describe('override disabled cleanup', function () {
+    beforeEach(function () {
+      canStub.returns(true);
+      reasonsStub.returns(undefined);
+      compileElement('create, Entry', 'disabled="disabled" ng-init="noCfCanCleanup=true"');
+    });
+
+    it('can is called with supplied condition', function () {
+      expect(canStub.args[0]).toEqual(['create', 'Entry']);
+    });
+
+    it('has no hide class', function () {
+      expect(elem.hasClass('ng-hide')).toBeFalsy();
+    });
+
+    it('is not deactivated', function () {
+      expect(elem.attr('disabled')).toBeTruthy();
+    });
+  });
+
 
 });

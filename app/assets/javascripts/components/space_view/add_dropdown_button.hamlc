@@ -16,7 +16,7 @@
       %li
         %i.ss-file
         Entries
-    %ul.content-types(ng-show="spaceContext.publishedContentTypes.length > 0" cf-can="create, Entry")
+    %ul.content-types(ng-hide="spaceContext.publishedContentTypes.length === 0 && (noCfCanCleanup = true)" cf-can="create, Entry")
       %li(ng-repeat="(index, contentType) in spaceContext.publishedContentTypes track by contentType.getId()"
         ng-click="createEntry(contentType)"
         data-content-type-id="{{contentType.getId()}}"

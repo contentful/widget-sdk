@@ -55,13 +55,7 @@ describe('The Space view directive', function () {
   });
 
 
-  function makeShownButtonTest(type, itemClass) {
-    var menuItems = [
-      'add-content-type',
-      'content-types',
-      'add-asset',
-      'add-api-key'
-    ];
+  function makeShownButtonTest(type) {
     describe('if user can create a '+type, function () {
       var addDropdownButton;
       beforeEach(function () {
@@ -74,33 +68,13 @@ describe('The Space view directive', function () {
         expect(addDropdownButton.hasClass('ng-hide')).toBeFalsy();
       });
 
-      it('add menu item with class '+itemClass+' is not hidden', function () {
-        expect(addDropdownButton.find('.'+itemClass).hasClass('ng-hide')).toBeFalsy();
-      });
-
-      it('separator only shows for Entry', function () {
-        if(type == 'Entry'){
-          expect(addDropdownButton.find('.separator').hasClass('ng-hide')).toBeFalsy();
-        } else {
-          expect(addDropdownButton.find('.separator').hasClass('ng-hide')).toBeTruthy();
-        }
-      });
-
-      var currentItem = menuItems.indexOf(itemClass);
-      menuItems.splice(currentItem, 1);
-      menuItems.forEach(function (val) {
-        it(val+' add menu item is hidden', function () {
-          expect(addDropdownButton.find('.'+val).hasClass('ng-hide')).toBeTruthy();
-        });
-      });
-
     });
 
   }
-  makeShownButtonTest('ContentType', 'add-content-type');
-  makeShownButtonTest('Entry', 'content-types');
-  makeShownButtonTest('Asset', 'add-asset');
-  makeShownButtonTest('ApiKey', 'add-api-key');
+  makeShownButtonTest('ContentType');
+  makeShownButtonTest('Entry');
+  makeShownButtonTest('Asset');
+  makeShownButtonTest('ApiKey');
 
 
   function makeNavbarItemTest(type, action, viewType){

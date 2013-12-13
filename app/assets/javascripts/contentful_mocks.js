@@ -45,6 +45,26 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
     return testSpace;
   };
 
+  cfStub.spaceContext = function (space, contentTypes) {
+    var spaceContext = new SpaceContext(space);
+    spaceContext.refreshContentTypes();
+    adapter.respondWith(null, {
+      sys: {
+        type: 'Array'
+      },
+      items: contentTypes,
+      total: contentTypes.length
+    });
+    adapter.respondWith(null, {
+      sys: {
+        type: 'Array'
+      },
+      items: contentTypes,
+      total: contentTypes.length
+    });
+    return spaceContext;
+  };
+
   cfStub.contentTypeData = function (id, fields, extraData) {
     fields = fields || [];
     return _.merge({
@@ -139,26 +159,6 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
       }
     }, extraData || {}));
     return apiKey;
-  };
-
-  cfStub.spaceContext = function (space, contentTypes) {
-    var spaceContext = new SpaceContext(space);
-    spaceContext.refreshContentTypes();
-    adapter.respondWith(null, {
-      sys: {
-        type: 'Array'
-      },
-      items: contentTypes,
-      total: contentTypes.length
-    });
-    adapter.respondWith(null, {
-      sys: {
-        type: 'Array'
-      },
-      items: contentTypes,
-      total: contentTypes.length
-    });
-    return spaceContext;
   };
 
   return cfStub;

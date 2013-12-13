@@ -74,9 +74,9 @@ angular.module('contentful').directive('cfCan', [
     return layer;
   }
 
-  function resetElement(elem) {
-    if(elem.hasClass('ng-hide')) elem.removeClass('ng-hide');
-    if(elem.attr('disabled')) elem.attr('disabled', false);
+  function resetElement(elem, noCfCanCleanup) {
+    if(elem.hasClass('ng-hide') && !noCfCanCleanup) elem.removeClass('ng-hide');
+    if(elem.attr('disabled') && !noCfCanCleanup) elem.attr('disabled', false);
     if(elem.attr('disable-layer')) $('#'+elem.attr('disable-layer')).remove();
   }
 
@@ -86,6 +86,9 @@ angular.module('contentful').directive('cfCan', [
    * Hides or disables the element if expression is false. Element is disabled if reasons exist.
    * cf-can-no-disable - makes sure this element can't ever be disabled
    * cf-can-no-hide - makes sure this element can't ever be hidden
+   * Scope properties:
+   * - cfCanDisabled is set to true if cf-can has disabled the element (useful for other conditions)
+   * - if noCfCanCleanup is true, cf-can won't attempt to remove existing ng-hide or disabled states
    */
   return {
     restrict: 'A',
@@ -95,7 +98,7 @@ angular.module('contentful').directive('cfCan', [
       }, function (space) {
         if(!space) return;
         deactivateWatcher();
-        resetElement(elem);
+        resetElement(elem, scope.noCfCanCleanup);
         scope.cfCanDisabled = false;
 
         var canParams = parseCanExpression(attrs.cfCan);
