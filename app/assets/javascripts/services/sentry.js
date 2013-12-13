@@ -39,8 +39,8 @@ function ($injector , $window, environment, stringifySafe) {
     options.merge({tags: {
       userId: $injector.get('authentication').getUser().sys.id,
       git_revision: environment.settings.git_revision,
-      viewport: ''+window.innerWidth+'x'+window.innerHeight,
-      screensize: ''+screen.width+'x'+screen.height
+      viewport: ''+$window.innerWidth+'x'+$window.innerHeight,
+      screensize: ''+$window.screen.width+'x'+$window.screen.height
     }});
     options.merge.apply(options, arguments);
     return options.value();
@@ -57,7 +57,7 @@ function ($injector , $window, environment, stringifySafe) {
     var prop;
     for(var key in data){
       prop = data[key];
-      if(prop && prop.$id && prop.$apply && prop.$digest){
+      if(prop && prop.$evalAsync && prop.$watch){
         data[key] = JSON.parse(stringifySafe(prop));
       }
     }
@@ -66,20 +66,13 @@ function ($injector , $window, environment, stringifySafe) {
 
   return {
     logDataObject: logDataObject,
-    captureException: function (exception, options) {
-      if ($window.Raven) {
-        $window.Raven.captureException(exception, createOptions({
-          tags: {
-            type: 'exception'
-          }
-        }, options));
-      }
-    },
 
-    // options is an object
-    // If it contains a data key, that value is somehow processed and assigned to
-    // options.extra.
-    // Use it to log full objects in sentry
+    /*
+     * options is an object
+     * If it contains a data key, that value is processed, sent to google cloud
+     * and the id is assigned to options.extra.
+     * Use it to log full objects in sentry
+     */
     captureError: function (error, options) {
       if ($window.Raven) {
         var dataId = null;
@@ -93,6 +86,16 @@ function ($injector , $window, environment, stringifySafe) {
         $window.Raven.captureMessage(error, createOptions({
           tags: {
             type: 'error_message'
+          }
+        }, options));
+      }
+    },
+
+    captureException: function (exception, options) {
+      if ($window.Raven) {
+        $window.Raven.captureException(exception, createOptions({
+          tags: {
+            type: 'exception'
           }
         }, options));
       }
