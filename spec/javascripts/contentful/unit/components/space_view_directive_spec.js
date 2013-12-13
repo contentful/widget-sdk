@@ -51,7 +51,7 @@ describe('The Space view directive', function () {
   it('add button always shown even if no create permissions exist', function () {
     canStub.returns(false);
     compileElement();
-    expect(container.find('.tablist-button').hasClass('ng-hide')).toBe(false);
+    expect(container.find('.add-dropdown-button').hasClass('ng-hide')).toBe(false);
   });
 
 
@@ -63,26 +63,26 @@ describe('The Space view directive', function () {
       'add-api-key'
     ];
     describe('if user can create a '+type, function () {
-      var tablistButton;
+      var addDropdownButton;
       beforeEach(function () {
         canStub.withArgs('create', type).returns(true);
         compileElement();
-        tablistButton = container.find('.tablist-button');
+        addDropdownButton = container.find('.add-dropdown-button');
       });
 
       it('show add button', function () {
-        expect(tablistButton.hasClass('ng-hide')).toBeFalsy();
+        expect(addDropdownButton.hasClass('ng-hide')).toBeFalsy();
       });
 
       it('add menu item with class '+itemClass+' is not hidden', function () {
-        expect(tablistButton.find('.'+itemClass).hasClass('ng-hide')).toBeFalsy();
+        expect(addDropdownButton.find('.'+itemClass).hasClass('ng-hide')).toBeFalsy();
       });
 
       it('separator only shows for Entry', function () {
         if(type == 'Entry'){
-          expect(tablistButton.find('.separator').hasClass('ng-hide')).toBeFalsy();
+          expect(addDropdownButton.find('.separator').hasClass('ng-hide')).toBeFalsy();
         } else {
-          expect(tablistButton.find('.separator').hasClass('ng-hide')).toBeTruthy();
+          expect(addDropdownButton.find('.separator').hasClass('ng-hide')).toBeTruthy();
         }
       });
 
@@ -90,7 +90,7 @@ describe('The Space view directive', function () {
       menuItems.splice(currentItem, 1);
       menuItems.forEach(function (val) {
         it(val+' add menu item is hidden', function () {
-          expect(tablistButton.find('.'+val).hasClass('ng-hide')).toBeTruthy();
+          expect(addDropdownButton.find('.'+val).hasClass('ng-hide')).toBeTruthy();
         });
       });
 

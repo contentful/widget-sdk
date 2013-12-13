@@ -133,8 +133,8 @@ module FeatureHelper
 
   def add_button(text)
     tabs = all('.tab-content', visible: false).length
-    find('.tablist-button .dropdown-toggle').click
-    first('.tablist-button li[ng-click]', text: text).click
+    find('.add-dropdown-button .dropdown-toggle').click
+    first('.add-dropdown-button li[ng-click]', text: text).click
     page.should have_selector('.tab-content', count: tabs + 1, visible: false)
   end
 

@@ -25,11 +25,11 @@ describe('The Space context', function () {
     expect(broadcastSpy.calledWith('newContentTypePublished')).toBeTruthy();
   });
 
-  describe('fires and handles an event on the tablistButton directive', function () {
+  describe('fires and handles an event on the addDropdownButton directive', function () {
     var tooltipSpy, oneSpy;
     var container;
     beforeEach(inject(function ($rootScope, $compile) {
-      container = $('<div class="tablist-button" />');
+      container = $('<div class="add-dropdown-button" />');
       var dropdownToggle = $('<div class="dropdown-toggle" />');
       container.append(dropdownToggle);
       container.appendTo($('body'));
