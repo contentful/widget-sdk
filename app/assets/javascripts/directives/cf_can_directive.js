@@ -92,14 +92,14 @@ angular.module('contentful').directive('cfCan', [
    */
   return {
     restrict: 'A',
+    scope: true,
     link: function (scope, elem, attrs) {
-      var deactivateWatcher = scope.$watch(function () {
+      scope.$watch(function () {
         return authorization.spaceContext;
       }, function (space) {
         if(!space) return;
-        deactivateWatcher();
         resetElement(elem, scope.noCfCanCleanup);
-        scope.cfCanDisabled = false;
+        scope.cfCanDisabled = scope.noCfCanCleanup ? scope.cfCanDisabled : false;
 
         var canParams = parseCanExpression(attrs.cfCan);
         var canResults = evalExpressions(canParams, scope.can);
