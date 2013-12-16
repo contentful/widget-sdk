@@ -215,3 +215,23 @@ mocks.provider('ReloadNotification', function () {
     };
   };
 });
+
+mocks.provider('cfCanStubs', function ($provide) {
+  this.setup = function (reasonsStub) {
+    $provide.value('reasonsDenied', reasonsStub);
+    $provide.value('authorization', {
+      spaceContext: {
+        space: {
+          sys: { createdBy: { sys: {id: 123} } }
+        }
+      }
+    });
+    var userStub = sinon.stub();
+    userStub.returns({ sys: {id: 123} });
+    $provide.value('authentication', {
+      getUser: userStub
+    });
+  };
+
+  this.$get = function () {};
+});

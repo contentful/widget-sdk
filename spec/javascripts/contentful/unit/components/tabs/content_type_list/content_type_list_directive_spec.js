@@ -9,8 +9,8 @@ describe('The ContentType list directive', function () {
   beforeEach(function () {
     canStub = sinon.stub();
     reasonsStub = sinon.stub();
-    module('contentful/test', function ($provide) {
-      window.setupCfCanStubs($provide, reasonsStub);
+    module('contentful/test', function (cfCanStubsProvider) {
+      cfCanStubsProvider.setup(reasonsStub);
     });
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();

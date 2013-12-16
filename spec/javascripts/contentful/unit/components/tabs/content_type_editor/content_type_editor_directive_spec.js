@@ -10,13 +10,13 @@ describe('The ContentType editor directive', function () {
   beforeEach(function () {
     canStub = sinon.stub();
     reasonsStub = sinon.stub();
-    module('contentful/test', function ($provide) {
+    module('contentful/test', function ($provide, cfCanStubsProvider) {
       $provide.value('ShareJS', {
         connection: {},
         peek: sinon.stub(),
         mkpath: sinon.stub()
       });
-      window.setupCfCanStubs($provide, reasonsStub);
+      cfCanStubsProvider.setup(reasonsStub);
     });
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();

@@ -15,8 +15,8 @@ describe('apiKeyEditor Directive', function () {
       catch: catchStub
     });
 
-    module('contentful/test', function ($provide) {
-      window.setupCfCanStubs($provide, reasonsStub);
+    module('contentful/test', function ($provide, cfCanStubsProvider) {
+      cfCanStubsProvider.setup(reasonsStub);
       $provide.value('modalDialog', {
         open: openStub
       });
