@@ -6,15 +6,19 @@ angular.module('contentful').directive('cfLinkEditor', function(mimetype){
     require: 'ngModel',
     template: JST['cf_link_editor'],
     link: function(scope, elem, attrs, ngModelCtrl) {
+
       ngModelCtrl.$render = function () {
         if (!angular.equals(ngModelCtrl.$viewValue, scope.links)) {
           scope.links = ngModelCtrl.$viewValue;
         }
       };
 
+      scope.linkType     = scope.$eval(attrs.cfLinkEditor);
+      scope.fetchMethod  = scope.linkType === 'Entry' ? 'getEntries' : 'getAssets';
+
       scope.linkMultiple = !!attrs.linkMultiple;
       scope.linkSingle   = !scope.linkMultiple;
-      scope.linkType     = scope.$eval(attrs.cfLinkEditor);
+
       if(scope.linkType == 'Entry') {
         scope.$watch('linkContentType', function (contentType) {
           if(contentType){
@@ -34,10 +38,6 @@ angular.module('contentful').directive('cfLinkEditor', function(mimetype){
           }
         });
       }
-
-
-      scope.fetchMethod  = scope.linkType === 'Entry' ? 'getEntries' : 'getAssets';
-
 
       scope.updateModel = function () {
         ngModelCtrl.$setViewValue(scope.links);
