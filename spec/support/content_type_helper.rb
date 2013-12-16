@@ -69,7 +69,7 @@ module ContentTypeHelper
     yield if block_given?
     wait_for_sharejs
     find('button.publish').click
-    expect_success 'activated successfully'
+    expect_success 'successfully'
     close_tab
   end
 end
