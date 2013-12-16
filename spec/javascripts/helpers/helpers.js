@@ -47,8 +47,3 @@ afterEach(function() {
     console.log(spec.desc, spec.time);
   }
 });
-
-window.scope = function(elem) {
-  return angular.element(elem).scope();
-};
-
