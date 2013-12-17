@@ -3,12 +3,15 @@
 describe('cfLinkEditor Directive', function () {
   var element, scope;
   var compileElement;
-  var searchField;
-  var canStub;
+  var searchField, canStub, localizedFieldStub;
+
+  function ControllerMock() {
+  }
 
   beforeEach(function () {
     module('contentful/test');
-    inject(function ($compile, $rootScope) {
+    inject(function ($compile, $rootScope, cfLinkEditorDirective) {
+      cfLinkEditorDirective[0].controller = ControllerMock;
       scope = $rootScope.$new();
       canStub = sinon.stub();
       scope.can = canStub;
@@ -20,11 +23,13 @@ describe('cfLinkEditor Directive', function () {
         items: {}
       };
 
+      localizedFieldStub = sinon.stub();
       scope.spaceContext = {
         space: {
           getEntries: sinon.stub(),
           getAssets: sinon.stub()
-        }
+        },
+        localizedField: localizedFieldStub
       };
 
       compileElement = function (extra) {
@@ -97,7 +102,7 @@ describe('cfLinkEditor Directive', function () {
   });
 
 
-  describe('updating the model', function () {
+  describe('updating the model manually', function () {
     beforeEach(function () {
       compileElement();
       scope.links = [{ sys: {id: 456} }];
@@ -112,7 +117,9 @@ describe('cfLinkEditor Directive', function () {
 
   describe('for entry links', function () {
     beforeEach(function () {
+      scope.otEditable = true;
       scope.field.items.linkType = 'Entry';
+      scope.linkedEntities = [];
       compileElement();
     });
 
@@ -124,6 +131,14 @@ describe('cfLinkEditor Directive', function () {
       expect(scope.fetchMethod).toBe('getEntries');
     });
 
+    it('does not show links list', function () {
+      expect(element.find('.links').hasClass('ng-hide')).toBeTruthy();
+    });
+
+    it('shows cf-link-editor-search', function () {
+      expect(element.find('.cf-link-editor-search .controls').hasClass('ng-hide')).toBeFalsy();
+    });
+
     describe('has a known content type', function () {
       beforeEach(function () {
         var nameStub = sinon.stub();
@@ -132,7 +147,7 @@ describe('cfLinkEditor Directive', function () {
           getName: nameStub
         };
 
-        compileElement();
+        scope.$digest();
       });
 
       it('sets the entity name', function () {
@@ -146,7 +161,6 @@ describe('cfLinkEditor Directive', function () {
       it('has entity name in placeholder', function () {
         expect(searchField.attr('tooltip')).toMatch(/Thing/);
       });
-
     });
 
     describe('has no known content type', function () {
@@ -161,13 +175,114 @@ describe('cfLinkEditor Directive', function () {
       it('has entity name in placeholder', function () {
         expect(searchField.attr('tooltip')).toMatch(/Entry/);
       });
+    });
+
+    describe('has one link with no array field', function () {
+      beforeEach(function () {
+        scope.field.type = 'Link';
+        scope.linkedEntities = [{}];
+        scope.$digest();
+      });
+
+      it('drag-file is hidden because there is only one link', function () {
+        expect(element.find('.drag-handle').hasClass('ng-hide')).toBeTruthy();
+      });
+    });
+
+    describe('has multiple links with no array field', function () {
+      var descriptionStub;
+      beforeEach(function () {
+        scope.field.type = 'Link';
+        var publishStub = sinon.stub();
+        publishStub.returns(true);
+        scope.linkedEntities = [
+          {data: '1'},
+          {data: '2', canPublish: publishStub},
+          {}
+        ];
+        descriptionStub = sinon.stub();
+        scope.linkDescription = descriptionStub;
+        scope.$digest();
+      });
+
+      it('shows links list', function () {
+        expect(element.find('.links').hasClass('ng-hide')).toBeFalsy();
+      });
+
+      it('does not show cf-link-editor-search', function () {
+        expect(element.find('.cf-link-editor-search .controls').hasClass('ng-hide')).toBeTruthy();
+      });
+
+      it('drag-file is shown because there is multiple links', function () {
+        expect(element.find('.drag-handle').hasClass('ng-hide')).toBeFalsy();
+      });
+
+      it('cf-file-info is not shown', function () {
+        expect(element.find('.cf-file-info').get(0)).toBeUndefined();
+      });
+
+      it('entry-info is shown', function () {
+        expect(element.find('.entry-info').get(0)).toBeDefined();
+      });
+
+      it('link with description is shown for 1st entity', function () {
+        expect(element.find('.entry-info a').eq(0).hasClass('ng-hide')).toBeFalsy();
+      });
+
+      it('link with description is shown for 2nd entity', function () {
+        expect(element.find('.entry-info a').eq(1).hasClass('ng-hide')).toBeFalsy();
+      });
+
+      it('link with description is not shown for 3rd entity', function () {
+        expect(element.find('.entry-info a').eq(2).hasClass('ng-hide')).toBeTruthy();
+      });
+
+      it('span with description is not shown for 1st entity', function () {
+        expect(element.find('.entry-info span').eq(0).hasClass('ng-hide')).toBeTruthy();
+      });
+
+      it('span with description is not shown for 2nd entity', function () {
+        expect(element.find('.entry-info span').eq(1).hasClass('ng-hide')).toBeTruthy();
+      });
+
+      it('span with description is shown for 3rd entity', function () {
+        expect(element.find('.entry-info span').eq(2).hasClass('ng-hide')).toBeFalsy();
+      });
+
+      it('description method is called for first entity', function () {
+        expect(descriptionStub.calledWith(scope.linkedEntities[0])).toBeTruthy();
+      });
+
+      it('description method is called for second entity', function () {
+        expect(descriptionStub.calledWith(scope.linkedEntities[1])).toBeTruthy();
+      });
+
+      it('description method is called for third entity', function () {
+        expect(descriptionStub.calledWith(scope.linkedEntities[2])).toBeTruthy();
+      });
+
+      it('first entity has no unpublished marker', function () {
+        expect(element.find('.entry-info .unpublished').eq(0).hasClass('ng-hide')).toBeTruthy();
+      });
+
+      it('second entity has unpublished marker', function () {
+        expect(element.find('.entry-info .unpublished').eq(1).hasClass('ng-hide')).toBeFalsy();
+      });
+
+      it('third entity has no unpublished marker', function () {
+        expect(element.find('.entry-info .unpublished').eq(2).hasClass('ng-hide')).toBeTruthy();
+      });
+
 
     });
+
   });
 
   describe('for asset links', function () {
     beforeEach(function () {
+      scope.otEditable = true;
       scope.field.items.linkType = 'Asset';
+      scope.linkedEntities = [];
       compileElement();
     });
 
@@ -179,11 +294,18 @@ describe('cfLinkEditor Directive', function () {
       expect(scope.fetchMethod).toBe('getAssets');
     });
 
+    it('does not show links list', function () {
+      expect(element.find('.links').hasClass('ng-hide')).toBeTruthy();
+    });
+
+    it('shows cf-link-editor-search', function () {
+      expect(element.find('.cf-link-editor-search .controls').hasClass('ng-hide')).toBeFalsy();
+    });
+
     describe('has a known asset mimetype', function () {
       beforeEach(function () {
         scope.linkMimetypeGroup = 'image';
-
-        compileElement();
+        scope.$digest();
       });
 
       it('sets the entity name', function () {
@@ -212,8 +334,79 @@ describe('cfLinkEditor Directive', function () {
       it('has entity name in placeholder', function () {
         expect(searchField.attr('tooltip')).toMatch(/Asset/);
       });
-
     });
+
+    describe('has one link with no array field', function () {
+      beforeEach(function () {
+        scope.field.type = 'Link';
+        scope.linkedEntities = [{}];
+        scope.$digest();
+      });
+
+      it('drag-file is hidden because there is only one link', function () {
+        expect(element.find('.drag-handle').hasClass('ng-hide')).toBeTruthy();
+      });
+    });
+
+    describe('has multiple links with no array field', function () {
+      beforeEach(function () {
+        scope.field.type = 'Link';
+        scope.linkedEntities = [
+          {data: '1'},
+          {data: '2'}
+        ];
+        scope.$digest();
+      });
+
+      it('shows links list', function () {
+        expect(element.find('.links').hasClass('ng-hide')).toBeFalsy();
+      });
+
+      it('does not show cf-link-editor-search', function () {
+        expect(element.find('.cf-link-editor-search .controls').hasClass('ng-hide')).toBeTruthy();
+      });
+
+      it('has asset-link class on list', function () {
+        expect(element.find('.links').hasClass('asset-link')).toBeTruthy();
+      });
+
+      it('has asset-link class on list items', function () {
+        expect(element.find('.links li').hasClass('asset-link')).toBeTruthy();
+      });
+
+      it('has drag-file class on drag handle', function () {
+        expect(element.find('.drag-handle').hasClass('drag-file')).toBeTruthy();
+      });
+
+      it('drag-file is shown because there is multiple links', function () {
+        expect(element.find('.drag-handle').hasClass('ng-hide')).toBeFalsy();
+      });
+
+      it('cf-file-info is shown', function () {
+        expect(element.find('.cf-file-info').get(0)).toBeDefined();
+      });
+
+      it('entry-info is not shown', function () {
+        expect(element.find('.entry-info').get(0)).toBeUndefined();
+      });
+
+      it('localizedField is called with first entity and title', function () {
+        expect(localizedFieldStub.calledWith(scope.linkedEntities[0], 'data.fields.title')).toBeTruthy();
+      });
+
+      it('localizedField is called with second entity and title', function () {
+        expect(localizedFieldStub.calledWith(scope.linkedEntities[1], 'data.fields.title')).toBeTruthy();
+      });
+
+      it('localizedField is called with first entity and file', function () {
+        expect(localizedFieldStub.calledWith(scope.linkedEntities[0], 'data.fields.file')).toBeTruthy();
+      });
+
+      it('localizedField is called with second entity and file', function () {
+        expect(localizedFieldStub.calledWith(scope.linkedEntities[1], 'data.fields.file')).toBeTruthy();
+      });
+    });
+
   });
 
 
