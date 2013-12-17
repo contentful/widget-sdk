@@ -66,8 +66,10 @@ module ContentTypeHelper
         add_field "#{field} Field", field
       end
     end
+    yield if block_given?
     wait_for_sharejs
-    click_button 'Activate'
+    find('button.publish').click
+    expect_success 'successfully'
     close_tab
   end
 end

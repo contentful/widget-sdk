@@ -13,12 +13,14 @@ angular.module('contentful/environment', []).constant('environment', {
     'staticflinkly-thriventures.netdna-ssl.com',
     'app.flinkly.com',
     'flinkly.com',
+    'app.quirely.com',
+    'quirely.com',
     'static.contentful.com',
     'app.contentful.com',
     'contentful.com'
   ];
   // for sceDelegateProvider
-  environment.settings.resourceUrlWhiteListRegexp = [/(https?:)?\/\/([^:\/.?&;]*\.)?(staticflinkly-thriventures\.netdna-ssl\.com|flinkly.com|joistio.com|contentful.com)(:\d+)?\/.*/, 'self' ];
+  environment.settings.resourceUrlWhiteListRegexp = [/(https?:)?\/\/([^:\/.?&;]*\.)?(staticflinkly-thriventures\.netdna-ssl\.com|quirely.com|flinkly.com|joistio.com|contentful.com)(:\d+)?\/.*/, 'self' ];
 
   environment.settings.dataLoggerUrl = 'https://cf-track-107d49294b11c1.appspot.com/track/';
 

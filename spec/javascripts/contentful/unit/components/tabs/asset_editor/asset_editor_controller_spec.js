@@ -77,7 +77,7 @@ describe('Asset editor controller', function () {
   });
 
   describe('validation on publish', function () {
-    beforeEach(inject(function ($compile, $rootScope, $controller){
+    beforeEach(inject(function ($compile, $rootScope, $controller, cfStub){
       scope = $rootScope.$new();
       canStub = sinon.stub();
       scope.can = canStub;
@@ -89,8 +89,13 @@ describe('Asset editor controller', function () {
         name: 'en-US',
         publish: true
       };
-      var asset = window.createMockEntity('123');
-      asset.data.sys.publishedVersion = 1;
+      var space = cfStub.space('test');
+      var asset = cfStub.asset(space, 'asset1', {}, {
+        sys: {
+          publishedVersion: 1
+        }
+      });
+
       asset.isArchived = sinon.stub().returns(false);
       scope.spaceContext = {
         activeLocales: sinon.stub().returns([locale]),

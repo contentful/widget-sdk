@@ -18,9 +18,15 @@ describe('SpaceContext class with no space', function () {
     expect(spaceContext.space).toBeUndefined();
   });
 
-  it('gets the locales in a default state', function () {
+  it('publishLocales exists', function () {
     expect(_.isArray(spaceContext.publishLocales)).toBeTruthy();
+  });
+
+  it('publish locales is empty', function () {
     expect(spaceContext.publishLocales.length).toBe(0);
+  });
+
+  it('no default locale is defined', function () {
     expect(spaceContext.defaultLocale).toBeNull();
   });
 
@@ -28,20 +34,54 @@ describe('SpaceContext class with no space', function () {
     expect(spaceContext.activeLocales.length).toBe(0);
   });
 
-  it('has no content types', function () {
-    spaceContext.refreshContentTypes();
-    expect(spaceContext.contentTypes.length).toEqual(0);
-    expect(spaceContext.publishedContentTypes.length).toEqual(0);
+  describe('refreshes locales', function () {
+    beforeEach(function () {
+      spaceContext.refreshActiveLocales = sinon.stub();
+      spaceContext.refreshLocales();
+    });
+
+    it('publishLocales exists', function () {
+      expect(_.isArray(spaceContext.publishLocales)).toBeTruthy();
+    });
+
+    it('publish locales is empty', function () {
+      expect(spaceContext.publishLocales.length).toBe(0);
+    });
+
+    it('no default locale is defined', function () {
+      expect(spaceContext.defaultLocale).toBeNull();
+    });
+
+    it('refreshes active locales', function () {
+      expect(spaceContext.refreshActiveLocales.called).toBeTruthy();
+    });
+  });
+
+  describe('refreshes content types', function () {
+    beforeEach(function () {
+      spaceContext.refreshContentTypes();
+    });
+
+    it('but has no content types', function () {
+      expect(spaceContext.contentTypes.length).toEqual(0);
+    });
+
+    it('but has no content types', function () {
+      expect(spaceContext.publishedContentTypes.length).toEqual(0);
+    });
   });
 
 });
 
 describe('SpaceContext class with a space', function () {
-  var spaceContext;
+  var space, spaceContext;
+  var cfStub;
   beforeEach(function () {
     module('contentful/test');
-    inject(function (SpaceContext) {
-      spaceContext = new SpaceContext(window.createMockSpace());
+    inject(function (SpaceContext, _cfStub_) {
+      cfStub = _cfStub_;
+      space = cfStub.space('test');
+      spaceContext = new SpaceContext(space);
     });
   });
 
@@ -54,30 +94,136 @@ describe('SpaceContext class with a space', function () {
     expect(spaceContext.space).toBeDefined();
   });
 
-  it('gets the locales refreshed', function () {
+  it('gets an array of published locales', function () {
     expect(_.isArray(spaceContext.publishLocales)).toBeTruthy();
+  });
+
+  it('has a published locale with a code', function () {
     expect(spaceContext.publishLocales[0].code).toBeDefined();
+  });
+
+  it('has a default locale', function () {
     expect(spaceContext.defaultLocale).toBeDefined();
+  });
+
+  it('has a default locale with a code', function () {
     expect(spaceContext.defaultLocale.code).toBeDefined();
   });
 
-  it('has active locales', function () {
+  it('sets a locale state for an active locale', function () {
     expect(spaceContext.localeStates['en-US']).toBeTruthy();
+  });
+
+  it('has active locales', function () {
     expect(_.isArray(spaceContext.activeLocales)).toBeTruthy();
+  });
+
+  it('has an active locale with a code', function () {
     expect(spaceContext.activeLocales[0].code).toBeDefined();
   });
 
-  it('gets a publish locale', function () {
-    expect(spaceContext.getPublishLocale('en-US')).toEqual({name: 'en-US', code: 'en-US'});
+  describe('refreshes locales', function () {
+    var publishLocales, defaultLocale;
+    beforeEach(function () {
+      publishLocales = ['publishLocales'];
+      defaultLocale = {code: 'en-US'};
+      spaceContext.space.getPublishLocales = sinon.stub();
+      spaceContext.space.getPublishLocales.returns(publishLocales);
+      spaceContext.space.getDefaultLocale = sinon.stub();
+      spaceContext.space.getDefaultLocale.returns(defaultLocale);
+      spaceContext.refreshActiveLocales = sinon.stub();
+      spaceContext.refreshLocales();
+    });
+
+    it('calls publish locales space getter', function () {
+      expect(spaceContext.space.getPublishLocales.called).toBeTruthy();
+    });
+
+    it('publishLocales exists', function () {
+      expect(_.isArray(spaceContext.publishLocales)).toBeTruthy();
+    });
+
+    it('publish locales is the supplied array', function () {
+      expect(spaceContext.publishLocales).toBe(publishLocales);
+    });
+
+    it('calls default locale space getter', function () {
+      expect(spaceContext.space.getDefaultLocale.called).toBeTruthy();
+    });
+
+    it('default locale is defined', function () {
+      expect(spaceContext.defaultLocale).toBe(defaultLocale);
+    });
+
+    it('refreshes active locales', function () {
+      expect(spaceContext.refreshActiveLocales.called).toBeTruthy();
+    });
+
+    it('sets locale state for default locale', function () {
+      expect(spaceContext.localeStates['en-US']).toBeTruthy();
+    });
+  });
+
+  describe('refresh active locales', function () {
+    beforeEach(function () {
+      spaceContext.publishLocales = [
+        {code: 'en-US'},
+        {code: 'pt-PT'},
+        {code: 'pt-BR'}
+      ];
+      spaceContext.localeStates = {
+        'en-US': true,
+        'pt-PT': true,
+        'pt-BR': false
+      };
+      spaceContext.refreshActiveLocales();
+    });
+
+    it('sets new locale states', function () {
+      expect(spaceContext.localeStates).toEqual({
+        'en-US': true,
+        'pt-PT': true
+      });
+    });
+
+    it('sets new active locales', function () {
+      expect(spaceContext.activeLocales).toEqual([
+        {code: 'en-US'},
+        {code: 'pt-PT'}
+      ]);
+    });
+  });
+
+  describe('gets a publish locale and', function () {
+    var publishLocale;
+    beforeEach(function () {
+      publishLocale = spaceContext.getPublishLocale('en-US');
+    });
+
+    it('it exists', function () {
+      expect(publishLocale).toBeDefined();
+    });
+
+    it('has a name', function () {
+      expect(publishLocale.name).toEqual('en-US');
+    });
+
+    it('has a code', function () {
+      expect(publishLocale.code).toEqual('en-US');
+    });
   });
 
   describe('getting content types from server', function () {
     var getContentTypesStub, getPublishedContentTypesStub;
     var contentType1, contentType2;
     beforeEach(function () {
-      contentType1 = window.createMockEntity('contentType1');
+      contentType1 = cfStub.contentType(space, 'content_type1', 'contentType1', [
+        {id: 'title', name: 'Title', type: 'Text'}
+      ], {
+        displayField: 'title'
+      });
       contentType1.isDeleted = sinon.stub().returns(false);
-      contentType2 = window.createMockEntity('contentType2');
+      contentType2 = cfStub.contentType(space, 'content_type2', 'contentType2');
       contentType2.isDeleted = sinon.stub().returns(false);
       getContentTypesStub = sinon.stub();
       getContentTypesStub.callsArgWithAsync(1, null, [
@@ -143,7 +289,7 @@ describe('SpaceContext class with a space', function () {
       });
 
       it('registers a published content type', function () {
-        var contentType = window.createMockEntity('contentType3');
+        var contentType = cfStub.contentType(space, 'content_type3', 'contentType3');
         spaceContext.registerPublishedContentType(contentType);
         expect(spaceContext.publishedContentTypes[0]).toBe(contentType);
       });
@@ -162,7 +308,7 @@ describe('SpaceContext class with a space', function () {
       it('gets a published type for a given entry', function () {
         this.async(function (done) {
           spaceContext.refreshContentTypes().then(function () {
-            var entry = window.createMockEntity('entry1', 'contentType1');
+            var entry = cfStub.entry(space, 'entry2', 'content_type1');
             expect(spaceContext.publishedTypeForEntry(entry)).toBe(contentType1);
             done();
           });
@@ -172,7 +318,11 @@ describe('SpaceContext class with a space', function () {
       describe('gets an entry title', function () {
         var entry;
         beforeEach(function () {
-          entry = window.createMockEntity('entry1', 'contentType1');
+          entry = cfStub.entry(space, 'entry1', 'content_type1', {
+            title: {
+             'en-US': 'the title'
+            }
+          });
         });
 
         it('fetched successfully', function () {
@@ -251,7 +401,11 @@ describe('SpaceContext class with a space', function () {
       describe('gets an asset title', function () {
         var asset;
         beforeEach(function () {
-          asset = window.createMockEntity('entry1', 'contentType1');
+          asset = cfStub.asset(space, 'asset1', {
+            title: {
+             'en-US': 'the title'
+            }
+          });
         });
 
         it('fetched successfully', function () {
@@ -278,18 +432,9 @@ describe('SpaceContext class with a space', function () {
           expect(spaceContext.assetTitle(asset)).toEqual('Untitled');
         });
 
-      });
-
-      describe('gets a localized field', function () {
-        var asset;
-        beforeEach(function () {
-          asset = window.createMockEntity('entry1', 'contentType1');
-        });
-
-        it('fetched successfully', function () {
+        it('gets a localized field', function () {
           expect(spaceContext.localizedField(asset, 'data.fields.title')).toEqual('the title');
         });
-
       });
 
     });
@@ -301,14 +446,14 @@ describe('SpaceContext class with a space', function () {
 
     beforeEach(function () {
       spaceContext._publishedContentTypesHash = {
-        hashId: 'contentType'
+        hashId: 'contentType1'
       };
       spaceContext.refreshContentTypes = sinon.stub();
       contentType = spaceContext.getPublishedContentType('hashId');
     });
 
     it('gets a published content type', function () {
-      expect(contentType).toBe('contentType');
+      expect(contentType).toBe('contentType1');
     });
 
     it('does not refresh content types', function () {
@@ -320,8 +465,8 @@ describe('SpaceContext class with a space', function () {
     });
 
     it('gets a published type for a given entry', function () {
-      var entry = window.createMockEntity(123, 'hashId', 'Entry');
-      expect(spaceContext.publishedTypeForEntry(entry)).toBe('contentType');
+      var entry = cfStub.entry(space, 'entry1', 'hashId');
+      expect(spaceContext.publishedTypeForEntry(entry)).toBe('contentType1');
     });
 
   });
@@ -348,14 +493,13 @@ describe('SpaceContext class with a space', function () {
     });
 
     it('gets no published type for a given entry', function () {
-      var entry = window.createMockEntity(123, 'hashId', 'Entry');
+      var entry = cfStub.entry(space, 'entry1', 'hashId');
       expect(spaceContext.publishedTypeForEntry(entry)).toBeUndefined();
     });
 
   });
-
-
 });
+
 
 describe('SpaceContext resolving missing ContentTypes', function () {
   var spaceContext, scope;
@@ -364,7 +508,7 @@ describe('SpaceContext resolving missing ContentTypes', function () {
   beforeEach(inject(function ($rootScope, SpaceContext) {
     scope = $rootScope;
     spaceContext = new SpaceContext(); // Not passing argument to avoid initializing the locales
-    spaceContext.space = { };
+    spaceContext.space = {};
   }));
 
   afterEach(inject(function ($log) {

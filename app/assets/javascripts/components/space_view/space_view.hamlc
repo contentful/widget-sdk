@@ -2,7 +2,7 @@
   .logo(ng-click="logoClicked()")
     .cf-logo(cf-custom-logo)
   %ul(ng-show="spaceContext.space")
-    %li.tablist-button(
+    %li.add-dropdown-button(
       space-context="spaceContext"
       cf-can-no-disable=""
       cf-can-no-hide=""

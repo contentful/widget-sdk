@@ -5,6 +5,31 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
   guiders._defaultSettings.buttons = null;
   guiders._defaultSettings.xButton = true;
   guiders._arrowSize = 10;
+  guiders.showDelayed = function (id) {
+    var guider = guiders._guiderById(id);
+    if (_.isEmpty(guider.attachTo)) {
+      //console.log('showing immediate', id, guider.attachTo);
+      guiders.showImmediate(id);
+    } else {
+      var tries = 4;
+      attach();
+    }
+    function attach() {
+      //console.log('attach', id, guider.attachTo, 'try', tries);
+      if (tries-- === 0) {
+        sentry.captureError('Failed to find attachTo('+guider.attachTo+') for Guider '+id);
+        guiders.showImmediate(id);
+        return;
+      }
+      if ($(guider.attachTo).length > 0) {
+        guiders.showImmediate(id);
+      } else {
+        setTimeout(attach, 200);
+      }
+    }
+  };
+  guiders.showImmediate = guiders.show;
+  guiders.show = guiders.showDelayed;
 
   var next = {name: '<i class="ss-navigateright"></i>', classString: 'default-button next-button', onclick: function(){guiders.next();}};
 
@@ -30,7 +55,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         tutorial.setSeen();
         guiders.hideAll();
         guiders.show('welcome');
-      }, function (err) {
+      }, function () {
         notification.error('Could not create tutorial space');
       });
     },
@@ -214,7 +239,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         id: 'contentTypeCreate1',
         title: 'Meet the mighty Add button',
         description: '<p>One click on the Add button and you can add new Content Types, Entries and API Keys to your account.</p><p><strong>Click and see for yourself.</strong></p>',
-        attachTo: '.tablist-button',
+        attachTo: '.add-dropdown-button',
         position: '7',
         next: 'contentTypeCreate2',
         onShow: function () {
@@ -229,7 +254,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         id: 'contentTypeCreate2',
         title: 'Now add your Content Types',
         description: '<p>One click here will put you right into the Content Type Editor, where you’ll be able to create your Content Type, adding Fields to it.</p><p>Note: you won’t be able to see the Entries option in the Add menu, before you create Content Types</p><p><strong>Take it to the next level, click on Content Types.</strong></p>',
-        attachTo: '.tablist-button .add-content-type',
+        attachTo: '.add-dropdown-button .add-content-type',
         position: '2',
         next: 'contentTypeEditor',
         onShow: function () {
@@ -680,7 +705,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         id: 'entryCreate1',
         title: 'Meet the mighty Add button',
         description: 'One click on the Add button and you can add new Content Types, Entries, Assets and API Keys to your space.',
-        attachTo: '.tablist-button',
+        attachTo: '.add-dropdown-button',
         position: '7',
         next: 'entryCreate2',
         onShow: function () {
@@ -695,7 +720,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         id: 'entryCreate2',
         title: 'Now add a Quiz Question',
         description: 'Clicking on the chosen Content Type, <strong>Quiz Question</strong>, will open the Entry Editor, where you will be able to edit the content for a new Quiz.',
-        attachTo: '.tablist-button li[data-content-type-id="6Ku1uo32lqMYieci6ocUCs"]',
+        attachTo: '.add-dropdown-button li[data-content-type-id="6Ku1uo32lqMYieci6ocUCs"]',
         position: '2',
         next: 'entryContent',
         onShow: function () {
@@ -956,7 +981,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'apiKeys',
         id: 'apiKeyCreate1',
         title: 'One more click onto the Add button',
-        attachTo: '.tablist-button',
+        attachTo: '.add-dropdown-button',
         position: '7',
         description: '<p>This time we’ll use it to create an API Key. Now, you’ve seen all the Add button can do.</p><p><strong>Click the Add button</strong></p>',
         next: 'apiKeyCreate2',
@@ -971,7 +996,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         category: 'apiKeys',
         id: 'apiKeyCreate2',
         title: 'Now, select “API Key”',
-        attachTo: '.tablist-button .add-api-key',
+        attachTo: '.add-dropdown-button .add-api-key',
         position: '2',
         description: 'One API Key corresponds to one channel of distribution. This will open the API Key screen.',
         next: 'apiKeyEdit',

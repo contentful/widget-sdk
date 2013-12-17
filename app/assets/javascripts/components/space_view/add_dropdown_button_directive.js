@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('contentful').directive('tablistButton', function(analytics) {
+angular.module('contentful').directive('addDropdownButton', function(analytics) {
   return {
-    template: JST.tablist_button(),
+    template: JST.add_dropdown_button(),
     restrict: 'C',
     link: function (scope, elem) {
       elem.find('.dropdown-toggle').click(function (event) {

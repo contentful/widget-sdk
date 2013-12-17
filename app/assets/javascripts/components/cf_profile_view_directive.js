@@ -56,7 +56,8 @@ angular.module('contentful').directive('cfProfileView', function($window, $rootS
       }
 
       function extractPathSuffix(path) {
-        return path.match(/profile\/(.*$)/)[1];
+        var match = path.match(/profile\/(.*$)/);
+        return match && match[1];
       }
 
       function appendToken(url) {

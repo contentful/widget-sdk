@@ -1,9 +1,9 @@
 module EnvHelper
   if ENV['USE_SAUCE']
     @@number = ENV['TEST_ENV_NUMBER']
-    def app_host      ; 'https://app.flinkly.com'          ; end
-    def be_host       ; 'https://be.flinkly.com'           ; end
-    def marketing_host; 'https://www.flinkly.com'          ; end
+    def app_host      ; 'https://app.quirely.com'          ; end
+    def be_host       ; 'https://be.quirely.com'           ; end
+    def marketing_host; 'https://www.quirely.com'          ; end
     def user          ; 'jan@contentful.com'               ; end
     def password      ; 'upeW3Kz9KkcBrd'                   ; end
     def test_space    ; "TestSpace#{@@number}"             ; end

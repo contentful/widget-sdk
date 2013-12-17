@@ -10,7 +10,9 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
   var adapter = new Adapter();
 
   var cfStub = {};
-  cfStub.locale = function (code, extensions) {
+  cfStub.adapter = adapter;
+
+  cfStub.locale = function (code, extraData) {
     return _.extend({
       code: code,
       contentDeliveryApi: true,
@@ -18,7 +20,7 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
       'default': true,
       name: code,
       publish: true
-    }, extensions);
+    }, extraData || {});
   };
 
   cfStub.locales = function () {
@@ -27,7 +29,7 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
     });
   };
 
-  cfStub.space = function (id, extension) {
+  cfStub.space = function (id, extraData) {
     id = id || 'testSpace';
     var client = new Client(adapter);
     var testSpace;
@@ -39,52 +41,8 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
         id: id
       },
       locales: cfStub.locales('en-US', 'de-DE')
-    }, extension));
+    }, extraData || {}));
     return testSpace;
-  };
-
-  cfStub.contentTypeData = function (id, fields, extensions) {
-    fields = fields || [];
-    return _.merge({
-      fields: fields,
-      sys: {
-        id: id,
-        type: 'ContentType'
-      }
-    }, extensions);
-  };
-
-  cfStub.field = function (id, extension) {
-    return _.extend({
-      'id': id,
-      'name': id,
-      'required': false,
-      'localized': true,
-      'type': 'Text'
-    }, extension);
-  };
-
-  cfStub.entry = function (space, id, contentTypeId, fields, extensions) {
-    fields = fields || {};
-    var entry;
-    space.getEntry(id, function (err, res) {
-      entry = res;
-    });
-    adapter.respondWith(null, _.merge({
-      fields: fields,
-      sys: {
-        id: id,
-        type: 'Entry',
-        contentType: {
-          sys: {
-            type: 'Link',
-            linkType: 'ContentType',
-            id: contentTypeId
-          }
-        }
-      }
-    }, extensions));
-    return entry;
   };
 
   cfStub.spaceContext = function (space, contentTypes) {
@@ -107,6 +65,102 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
     return spaceContext;
   };
 
+  cfStub.contentTypeData = function (id, fields, extraData) {
+    fields = fields || [];
+    return _.merge({
+      fields: fields,
+      sys: {
+        id: id,
+        type: 'ContentType'
+      }
+    }, extraData || {});
+  };
+
+  cfStub.contentType = function (space, id, name, fields, extraData) {
+    var contentType;
+    space.getContentType(id, function (err, res) {
+      contentType = res;
+    });
+    var data = cfStub.contentTypeData(id, fields, {
+      name: name,
+      sys: {
+        version: 1
+      }
+    });
+    adapter.respondWith(null, _.merge(data, extraData || {}));
+    return contentType;
+  };
+
+  cfStub.field = function (id, extraData) {
+    return _.extend({
+      'id': id,
+      'name': id,
+      'required': false,
+      'localized': true,
+      'type': 'Text'
+    }, extraData || {});
+  };
+
+  cfStub.entry = function (space, id, contentTypeId, fields, extraData) {
+    fields = fields || {};
+    var entry;
+    space.getEntry(id, function (err, res) {
+      entry = res;
+    });
+    adapter.respondWith(null, _.merge({
+      fields: fields,
+      sys: {
+        id: id,
+        type: 'Entry',
+        version: 1,
+        contentType: {
+          sys: {
+            type: 'Link',
+            linkType: 'ContentType',
+            id: contentTypeId || 'entryId'
+          }
+        }
+      }
+    }, extraData || {}));
+    return entry;
+  };
+
+  cfStub.asset = function (space, id, fields, extraData) {
+    var asset;
+    space.getAsset(id, function (err, res) {
+      asset = res;
+    });
+    adapter.respondWith(null, _.merge({
+      sys: {
+        id: id,
+        type: 'Asset',
+        version: 1,
+      },
+      fields: _.merge({
+        title: '',
+        description: '',
+        file: {}
+      }, fields || {})
+    }, extraData || {}));
+    return asset;
+  };
+
+  cfStub.apiKey = function (space, id, name, extraData) {
+    var apiKey;
+    space.getApiKey(id, function (err, res) {
+      apiKey = res;
+    });
+    adapter.respondWith(null, _.merge({
+      name: name,
+      sys: {
+        id: id,
+        version: 1,
+        type: 'ApiKey',
+      }
+    }, extraData || {}));
+    return apiKey;
+  };
+
   return cfStub;
 });
 
@@ -119,64 +173,6 @@ mocks.factory('PromisedLoader', function () {
     });
   return SpecPromisedLoader;
 });
-
-window.createMockEntity = function (id, contentType, entityType) {
-  return {
-    getId: function () {
-      return id;
-    },
-    // mock for api keys
-    getName: function () {
-      return id;
-    },
-    getType: function () {
-      return entityType;
-    },
-    getPublishedVersion: function () {
-      return this.data.sys.publishedVersion;
-    },
-    data: {
-      sys: {
-        id: id
-      },
-      displayField: 'title',
-      fields: {
-        title: {
-          'en-US': 'the title'
-        },
-        file: {
-          'en-US': {
-            contentType: 'application/octet-stream',
-            fileName: 'file.psd'
-          }
-        }
-      }
-    },
-    'delete': function (fn) {
-      fn(null, this);
-    },
-    getContentTypeId: function () {
-      return contentType;
-    }
-  };
-};
-
-window.createMockSpace = function (id) {
-  var entity = window.createMockEntity(id);
-  entity.getPublishLocales = function(){
-    return [
-      {name: 'en-US', code: 'en-US'},
-      {name: 'en-GB', code: 'en-GB'},
-      {name: 'pt-PT', code: 'pt-PT'},
-      {name: 'pt-BR', code: 'pt-BR'}
-    ];
-  };
-  entity.getDefaultLocale  = function(){
-    return {name: 'en-US', code: 'en-US'};
-  };
-
-  return entity;
-};
 
 mocks.provider('ShareJS', function () {
   function FakeShareJSClient() {
@@ -218,4 +214,24 @@ mocks.provider('ReloadNotification', function () {
       trigger: sinon.stub()
     };
   };
+});
+
+mocks.provider('cfCanStubs', function ($provide) {
+  this.setup = function (reasonsStub) {
+    $provide.value('reasonsDenied', reasonsStub);
+    $provide.value('authorization', {
+      spaceContext: {
+        space: {
+          sys: { createdBy: { sys: {id: 123} } }
+        }
+      }
+    });
+    var userStub = sinon.stub();
+    userStub.returns({ sys: {id: 123} });
+    $provide.value('authentication', {
+      getUser: userStub
+    });
+  };
+
+  this.$get = function () {};
 });

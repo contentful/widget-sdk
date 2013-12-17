@@ -5,8 +5,8 @@ describe('Content Type List Controller', function () {
 
   beforeEach(module('contentful/test'));
 
-  beforeEach(inject(function ($rootScope, $controller, SpaceContext) {
-    $rootScope.spaceContext = new SpaceContext(window.createMockSpace());
+  beforeEach(inject(function ($rootScope, $controller, SpaceContext, cfStub) {
+    $rootScope.spaceContext = new SpaceContext(cfStub.space('test'));
     controller = $controller('ContentTypeListCtrl', {$scope: $rootScope});
     scope = $rootScope;
   }));

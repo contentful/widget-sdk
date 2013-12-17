@@ -10,20 +10,8 @@ describe('The can directive', function () {
   beforeEach(function () {
     canStub = sinon.stub();
     reasonsStub = sinon.stub();
-    module('contentful/test', function ($provide) {
-      $provide.value('reasonsDenied', reasonsStub);
-      $provide.value('authorization', {
-        spaceContext: {
-          space: {
-            sys: { createdBy: { sys: {id: 123} } }
-          }
-        }
-      });
-      var userStub = sinon.stub();
-      userStub.returns({ sys: {id: 123} });
-      $provide.value('authentication', {
-        getUser: userStub
-      });
+    module('contentful/test', function (cfCanStubsProvider) {
+      cfCanStubsProvider.setup(reasonsStub);
     });
     inject(function ($rootScope, $compile, enforcements) {
       scope = $rootScope.$new();
@@ -83,7 +71,7 @@ describe('The can directive', function () {
     });
 
     it('sets a flag on the scope', function () {
-      expect(scope.cfCanDisabled).toBeFalsy();
+      expect(container.find('[cf-can]').scope().cfCanDisabled).toBeFalsy();
     });
 
     it('is deactivated', function () {
@@ -117,7 +105,7 @@ describe('The can directive', function () {
     });
 
     it('sets a flag on the scope', function () {
-      expect(scope.cfCanDisabled).toBeTruthy();
+      expect(container.find('[cf-can]').scope().cfCanDisabled).toBeTruthy();
     });
 
     it('enforcement is called with reason', function () {
@@ -209,6 +197,127 @@ describe('The can directive', function () {
 
     it('sets a tooltip on button layer', function () {
       expect(tooltipStub.args[0][0].title).toMatch(/Assets/g);
+    });
+  });
+
+  describe('override ng-hide cleanup', function () {
+    beforeEach(function () {
+      canStub.returns(true);
+      reasonsStub.returns(undefined);
+      compileElement('create, Entry', 'class="ng-hide" ng-init="noCfCanCleanup=true"');
+    });
+
+    it('can is called with supplied condition', function () {
+      expect(canStub.args[0]).toEqual(['create', 'Entry']);
+    });
+
+    it('has no hide class', function () {
+      expect(elem.hasClass('ng-hide')).toBeTruthy();
+    });
+
+    it('is not deactivated', function () {
+      expect(elem.attr('disabled')).toBeFalsy();
+    });
+  });
+
+  describe('override disabled cleanup', function () {
+    beforeEach(function () {
+      canStub.returns(true);
+      reasonsStub.returns(undefined);
+      compileElement('create, Entry', 'disabled="disabled" ng-init="noCfCanCleanup=true"');
+    });
+
+    it('can is called with supplied condition', function () {
+      expect(canStub.args[0]).toEqual(['create', 'Entry']);
+    });
+
+    it('has no hide class', function () {
+      expect(elem.hasClass('ng-hide')).toBeFalsy();
+    });
+
+    it('is not deactivated', function () {
+      expect(elem.attr('disabled')).toBeTruthy();
+    });
+  });
+
+  describe('ensure cleanup parameter does not pollute scope', function () {
+    var asset, entry;
+    beforeEach(inject(function ($compile) {
+      canStub.withArgs('create', 'Entry').returns(true);
+      reasonsStub.withArgs('create', 'Entry').returns(undefined);
+
+      canStub.withArgs('create', 'Asset').returns(true);
+      reasonsStub.withArgs('create', 'Asset').returns(undefined);
+
+      scope.cfCanDisabled = true;
+
+      container = $('<div>'+
+                    '<div class="entry" cf-can="create, Entry" disabled="disabled" ng-init="noCfCanCleanup=true"></div>'+
+                    '<div class="asset" cf-can="create, Asset" disabled="disabled"></div>'+
+                    '</div>');
+      $compile(container)(scope);
+      scope.$digest();
+
+      entry = container.find('.entry');
+      asset = container.find('.asset');
+    }));
+
+    it('does not cleanup marked element', function () {
+      expect(entry.attr('disabled')).toBeTruthy();
+    });
+
+    it('does not cleanup cfCanDisabled marker', function () {
+      expect(entry.scope().cfCanDisabled).toBeTruthy();
+    });
+
+    it('cleans up other elements', function () {
+      expect(asset.attr('disabled')).toBeFalsy();
+    });
+
+    it('cleans up cfCanDisabled marker', function () {
+      expect(asset.scope().cfCanDisabled).toBeFalsy();
+    });
+  });
+
+  describe('ensure space context change triggers cleanup', function () {
+    beforeEach(function () {
+      canStub.returns(true);
+      reasonsStub.returns(undefined);
+      compileElement('create, Entry');
+    });
+
+    it('can is called with supplied condition', function () {
+      expect(canStub.args[0]).toEqual(['create', 'Entry']);
+    });
+
+    it('has no hide class', function () {
+      expect(elem.hasClass('ng-hide')).toBeFalsy();
+    });
+
+    describe('permissions change but no space context change', function () {
+      beforeEach(function () {
+        canStub.returns(false);
+        scope.$digest();
+      });
+
+      it('has no hide class', function () {
+        expect(elem.hasClass('ng-hide')).toBeFalsy();
+      });
+    });
+
+    describe('permissions change but with space context change', function () {
+      beforeEach(inject(function (authorization) {
+        canStub.returns(false);
+        var newContext = _.clone(authorization.spaceContext);
+        newContext.space.sys.version = 2;
+        authorization.spaceContext = newContext;
+
+        scope.$digest();
+      }));
+
+      it('has no hide class', function () {
+        expect(elem.hasClass('ng-hide')).toBeTruthy();
+      });
     });
 
   });

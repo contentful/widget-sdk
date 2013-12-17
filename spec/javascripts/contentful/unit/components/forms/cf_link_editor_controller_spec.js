@@ -28,7 +28,7 @@ describe('cf LinkEditor controller', function () {
 
   beforeEach(function () {
     module('contentful/test');
-    inject(function ($rootScope, $controller, $parse, _$q_) {
+    inject(function ($rootScope, $controller, $parse, _$q_, cfStub) {
       $q = _$q_;
       scope = $rootScope.$new();
 
@@ -66,7 +66,8 @@ describe('cf LinkEditor controller', function () {
 
       attrs = {ngModel: 'fieldData.value'};
 
-      entry = window.createMockEntity('entry1');
+      var space = cfStub.space('test');
+      entry = cfStub.entry(space, 'entry1', 'content_type1');
 
       cfLinkEditorCtrl = $controller('cfLinkEditorCtrl', {
         $scope: scope,

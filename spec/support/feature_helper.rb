@@ -110,6 +110,7 @@ module FeatureHelper
         click_button 'Create Space'
       end
       expect_success 'Created space'
+      find '.tab-content'
     end
   end
 
@@ -131,12 +132,10 @@ module FeatureHelper
   # end
 
   def add_button(text)
-    find('.tablist-button .dropdown-toggle').click
-    #begin
-      #find('.tablist-button li[ng-click]', text: text).click
-    #rescue Capybara::Ambiguous
-      first('.tablist-button li[ng-click]', text: text).click
-    #end
+    tabs = all('.tab-content', visible: false).length
+    find('.add-dropdown-button .dropdown-toggle').click
+    first('.add-dropdown-button li[ng-click]', text: text).click
+    page.should have_selector('.tab-content', count: tabs + 1, visible: false)
   end
 
   def nav_bar(target)
@@ -179,15 +178,17 @@ module FeatureHelper
   end
 
   def expect_success(string = 'published successfully')
-    find :xpath, %Q{//*[contains(@class, 'notification') and contains(text(), '#{string}')]}, wait: 10
+    notification = find :xpath, %Q{//*[contains(@class, 'notification') and contains(@class, 'info') and contains(text(), '#{string}')]}, wait: 10
+    notification.click
   end
 
   def expect_error(string=nil)
-    find :xpath, %Q{//*[contains(@class, 'notification') and contains(@class, 'error') and contains(text(), '#{string}')]}, wait: 10
+    notification = find :xpath, %Q{//*[contains(@class, 'notification') and (contains(@class, 'error') or contains(@class, 'warn')) and contains(text(), '#{string}')]}, wait: 10
+    notification.click
   end
 
-  def expect_warn(string=nil)
-    find :xpath, %Q{//*[contains(@class, 'notification') and contains(@class, 'warn') and contains(text(), '#{string}')]}, wait: 10
+  def wait_for_elasticsearch
+    sleep 2
   end
 
   def eventually(options = {})

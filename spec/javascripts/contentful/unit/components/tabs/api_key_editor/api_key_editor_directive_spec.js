@@ -15,20 +15,8 @@ describe('apiKeyEditor Directive', function () {
       catch: catchStub
     });
 
-    module('contentful/test', function ($provide) {
-      $provide.value('authorization', {
-        spaceContext: {
-          space: {
-            sys: { createdBy: { sys: {id: 123} } }
-          }
-        }
-      });
-      var userStub = sinon.stub();
-      userStub.returns({ sys: {id: 123} });
-      $provide.value('authentication', {
-        getUser: userStub
-      });
-      $provide.value('reasonsDenied', reasonsStub);
+    module('contentful/test', function ($provide, cfCanStubsProvider) {
+      cfCanStubsProvider.setup(reasonsStub);
       $provide.value('modalDialog', {
         open: openStub
       });

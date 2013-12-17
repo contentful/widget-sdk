@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  controller('ContentTypeActionsCtrl', function ContentTypeActionsCtrl($scope, notification, analytics) {
+  controller('ContentTypeActionsCtrl', function ContentTypeActionsCtrl($scope, notification, analytics, sentry) {
 
   // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,
   // We can query the entry instead of reimplementing the checks heere
@@ -68,7 +68,8 @@ angular.module('contentful').
       $scope.$apply(function(scope){
         if (err) {
           var reason = err.body.message;
-          return notification.serverError('Error deactivating ' + title() + ': ' + reason, err);
+          sentry.captureServerError('Error deactivating Content Type', err);
+          return notification.warn('Error deactivating ' + title() + ': ' + reason, err);
         }
 
         notification.info(title() + ' deactivated successfully');

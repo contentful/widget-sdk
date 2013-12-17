@@ -10,25 +10,13 @@ describe('The ContentType editor directive', function () {
   beforeEach(function () {
     canStub = sinon.stub();
     reasonsStub = sinon.stub();
-    module('contentful/test', function ($provide) {
+    module('contentful/test', function ($provide, cfCanStubsProvider) {
       $provide.value('ShareJS', {
         connection: {},
         peek: sinon.stub(),
         mkpath: sinon.stub()
       });
-      $provide.value('reasonsDenied', reasonsStub);
-      $provide.value('authorization', {
-        spaceContext: {
-          space: {
-            sys: { createdBy: { sys: {id: 123} } }
-          }
-        }
-      });
-      var userStub = sinon.stub();
-      userStub.returns({ sys: {id: 123} });
-      $provide.value('authentication', {
-        getUser: userStub
-      });
+      cfCanStubsProvider.setup(reasonsStub);
     });
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();

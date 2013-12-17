@@ -1,13 +1,20 @@
-angular.module('contentful').provider('authentication', function AuthenticationProvider(environment, contentfulClient) {
+angular.module('contentful').provider('authentication', function AuthenticationProvider($injector) {
   'use strict';
 
-  var authApp  = '//'+environment.settings.base_host+'/';
-  var marketingApp  = environment.settings.marketing_url+'/';
-  var QueryLinkResolver = contentfulClient.QueryLinkResolver;
-  var $location, $q, $rootScope, notification;
+  var authApp, marketingApp, QueryLinkResolver;
+
+  var contentfulClient, $window, $location, $q, $rootScope, notification;
   var sentry;
 
-  this.authApp= function(e) {
+  this.setEnvVars = function() {
+    var environment = $injector.get('environment');
+    contentfulClient = $injector.get('contentfulClient');
+    authApp  = '//'+environment.settings.base_host+'/';
+    marketingApp  = environment.settings.marketing_url+'/';
+    QueryLinkResolver = contentfulClient.QueryLinkResolver;
+  };
+
+  this.authApp = function(e) {
     authApp = e;
   };
 
@@ -65,12 +72,12 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
     logout: function() {
       $.cookies.del('token');
-      window.location = authApp + 'logout';
+      $window.location = authApp + 'logout';
     },
 
     goodbye: function () {
       $.cookies.del('token');
-      window.location = marketingApp + 'goodbye';
+      $window.location = marketingApp + 'goodbye';
     },
 
     isLoggedIn: function() {
@@ -94,11 +101,11 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       var params = $.param({
         response_type: 'token',
         client_id: 'aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa',
-        redirect_uri: window.location.protocol + '//' + window.location.host + '/',
+        redirect_uri: $window.location.protocol + '//' + $window.location.host + '/',
         scope: 'content_management_manage'
       });
       this.redirectingToLogin = true;
-      window.location = authApp + 'oauth/authorize?' + params;
+      $window.location = authApp + 'oauth/authorize?' + params;
     },
 
     getTokenLookup: function() {
@@ -109,16 +116,16 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       var self = this;
       var d = $q.defer();
       this.client.getTokenLookup(function (err, data) {
-        if (err) {
-          d.reject(err);
-        } else {
-          $rootScope.$apply(function () {
+        $rootScope.$apply(function () {
+          if (err) {
+            d.reject(err);
+          } else {
             if (data !== undefined) { // Data === undefined is in cases of notmodified
               self.setTokenLookup(data);
             }
             d.resolve(self.tokenLookup);
-          });
-        }
+          }
+        });
       });
       return d.promise;
     },
@@ -144,13 +151,16 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
   };
 
-  this.$get = function(client, _$location_, _sentry_, _$q_, _$rootScope_, _notification_){
+  this.$get = function(client, _$location_, _$window_, _sentry_, _$q_, _$rootScope_, _notification_){
     $location = _$location_;
+    $window = _$window_;
     sentry = _sentry_;
     $rootScope = _$rootScope_;
     $q = _$q_;
     notification = _notification_;
-    return new Authentication(client);
+    var authentication = new Authentication(client);
+    this.setEnvVars();
+    return authentication;
   };
 
 });

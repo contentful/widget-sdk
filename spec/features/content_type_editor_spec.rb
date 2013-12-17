@@ -37,6 +37,7 @@ feature 'Content Type Editor', js: true, sauce: true do
     fill_in 'contentTypeName', with: 'Test Content Type'
     fill_in 'contentTypeDescription', with: 'Test description'
     add_field 'FooField', 'Object', id: 'fooId', required: true
+    wait_for_sharejs
     click_button 'Activate'
     expect_success('successfully')
   end
@@ -80,7 +81,7 @@ feature 'Content Type Editor', js: true, sauce: true do
     end
 
     click_button 'Activate'
-    expect_warn 'Validation failed'
+    expect_error 'Validation failed'
   end
 
   scenario 'Validation errors on a disabled field cause it to be shown' do
@@ -98,6 +99,23 @@ feature 'Content Type Editor', js: true, sauce: true do
     expect(page).to have_selector('.cf-field-settings')
   end
 
+  scenario 'Toggling disabled fields' do
+    add_button 'Content Type'
+    fill_in 'contentTypeName', with: 'Test Content Type'
+    add_field 'Text', 'Text'
+    click_button 'Activate'
+
+    for_field 'Text' do
+      toggle_disable(true)
+    end
+
+    click_button 'Update'
+    page.should_not have_selector('.cf-field-settings')
+    find('.editor-top-right .dropdown-toggle').click
+    find('label', text: 'Show disabled fields').click
+    page.should have_selector('.cf-field-settings')
+  end
+
   scenario 'Deactivating a content type' do
     # Create content type
     add_button 'Content Type'
@@ -111,7 +129,7 @@ feature 'Content Type Editor', js: true, sauce: true do
     add_button 'Test Content Type'
     edit_field('text', 'en-US', 'textarea').set('bla')
     wait_for_sharejs
-    sleep 2 # Wait for Elasticsearch to catch up
+    wait_for_elasticsearch
 
     # Switch back to content type editor and try to deactivate
     select_tab 'Test Content Type'
@@ -124,7 +142,7 @@ feature 'Content Type Editor', js: true, sauce: true do
     find('li.delete').click
     find('li.delete-confirm').click
     expect_success 'deleted successfully'
-    sleep 2 # Wait for Elasticsearch to catch up
+    wait_for_elasticsearch
 
     # Switch back to content type editor and deactivate
     select_tab 'Test Content Type'
