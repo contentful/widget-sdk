@@ -134,7 +134,6 @@ describe('cfLinkEditor Controller', function () {
   });
 });
 
-// TODO these tests could do with a coverage check 
 describe('cfLinkEditor Controller methods', function () {
   var scope, attrs, $q;
   var getEntriesStub, otDocPushStub, removeStub, shareJSMock;
@@ -270,7 +269,6 @@ describe('cfLinkEditor Controller methods', function () {
         expect(scope.linkedEntities.length).toBeGreaterThan(0);
         done();
       });
-
     });
 
 
@@ -302,9 +300,6 @@ describe('cfLinkEditor Controller methods', function () {
 
   describe('attaches a list of entries to an entry directive', function () {
     var callbackSpy;
-    beforeEach(function () {
-      attrs.cfLinkEditor = 'entries';
-    });
 
     describe('adds an array of entries from a list', function () {
       function makeSpec(name, expectations) {
