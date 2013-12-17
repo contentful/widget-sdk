@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('contentful').factory('filepicker', function ($window, environment, $q, $rootScope) {
-    if (window.filepicker) {
-        return window.filepicker;
+    if ($window.filepicker) {
+        return $window.filepicker;
     }
     var b = document.createElement('script');
     b.type = 'text/javascript';
