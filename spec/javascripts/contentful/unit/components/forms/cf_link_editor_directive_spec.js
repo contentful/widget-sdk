@@ -3,7 +3,7 @@
 describe('cfLinkEditor Directive', function () {
   var element, scope;
   var compileElement;
-  var searchField, canStub, localizedFieldStub;
+  var searchField, canStub, localizedFieldStub, publishedTypeStub, publishedEntryNameStub, entryTitleStub;
 
   function ControllerMock() {
   }
@@ -24,12 +24,20 @@ describe('cfLinkEditor Directive', function () {
       };
 
       localizedFieldStub = sinon.stub();
+      publishedEntryNameStub = sinon.stub();
+      publishedTypeStub = sinon.stub();
+      publishedTypeStub.returns({
+        getName: publishedEntryNameStub
+      });
+      entryTitleStub = sinon.stub();
       scope.spaceContext = {
         space: {
           getEntries: sinon.stub(),
           getAssets: sinon.stub()
         },
-        localizedField: localizedFieldStub
+        localizedField: localizedFieldStub,
+        publishedTypeForEntry: publishedTypeStub,
+        entryTitle: entryTitleStub
       };
 
       compileElement = function (extra) {
@@ -120,6 +128,7 @@ describe('cfLinkEditor Directive', function () {
       scope.otEditable = true;
       scope.field.items.linkType = 'Entry';
       scope.linkedEntities = [];
+      scope.entities = [];
       compileElement();
     });
 
@@ -137,6 +146,62 @@ describe('cfLinkEditor Directive', function () {
 
     it('shows cf-link-editor-search', function () {
       expect(element.find('.cf-link-editor-search .controls').hasClass('ng-hide')).toBeFalsy();
+    });
+
+    it('results are not shown', function () {
+      expect(element.find('.results').hasClass('ng-hide')).toBeTruthy();
+    });
+
+    describe('if search results exist', function () {
+      beforeEach(function () {
+        scope.selectedEntity = { getId: function(){return 123;}};
+        scope.entities = [
+          scope.selectedEntity,
+          { getId: function(){return Math.random();}}
+        ];
+        scope.$digest();
+      });
+
+      it('has 2 entry items (plus a header)', function () {
+        expect(element.find('.cell-content-type').length).toBe(3);
+      });
+
+      it('first entry is selected', function () {
+        expect(element.find('.cell-content-type').eq(1).parent().hasClass('selected')).toBeTruthy();
+      });
+
+      it('gets published type for first entry', function () {
+        expect(publishedTypeStub.calledWith(scope.entities[0])).toBeTruthy();
+      });
+
+      it('gets published type for second entry', function () {
+        expect(publishedTypeStub.calledWith(scope.entities[1])).toBeTruthy();
+      });
+
+      it('gets name for entries', function () {
+        expect(publishedEntryNameStub.called).toBeTruthy();
+      });
+
+      it('gets title for first entry', function () {
+        expect(entryTitleStub.calledWith(scope.entities[0])).toBeTruthy();
+      });
+
+      it('gets title for second entry', function () {
+        expect(entryTitleStub.calledWith(scope.entities[1])).toBeTruthy();
+      });
+
+    });
+
+    describe('if field type is array', function () {
+      beforeEach(function () {
+        scope.field.type = 'Array';
+        scope.linkedEntities = [{}];
+        scope.$digest();
+      });
+
+      it('shows cf-link-editor-search', function () {
+        expect(element.find('.cf-link-editor-search .controls').hasClass('ng-hide')).toBeFalsy();
+      });
     });
 
     describe('has a known content type', function () {
@@ -273,7 +338,6 @@ describe('cfLinkEditor Directive', function () {
         expect(element.find('.entry-info .unpublished').eq(2).hasClass('ng-hide')).toBeTruthy();
       });
 
-
     });
 
   });
@@ -283,6 +347,7 @@ describe('cfLinkEditor Directive', function () {
       scope.otEditable = true;
       scope.field.items.linkType = 'Asset';
       scope.linkedEntities = [];
+      scope.entities = [];
       compileElement();
     });
 
@@ -300,6 +365,87 @@ describe('cfLinkEditor Directive', function () {
 
     it('shows cf-link-editor-search', function () {
       expect(element.find('.cf-link-editor-search .controls').hasClass('ng-hide')).toBeFalsy();
+    });
+
+    it('results are not shown', function () {
+      expect(element.find('.results').hasClass('ng-hide')).toBeTruthy();
+    });
+
+    describe('if search results exist', function () {
+      beforeEach(function () {
+        scope.selectedEntity = { getId: function(){return 123;}};
+        scope.entities = [
+          scope.selectedEntity,
+          {
+            getId: function(){return Math.random();},
+            file: {
+              url: 'http://url'
+            }
+          }
+        ];
+        scope.$digest();
+      });
+
+      it('has 2 assets (plus a header)', function () {
+        expect(element.find('.cell-preview').length).toBe(3);
+      });
+
+      it('first asset is selected', function () {
+        expect(element.find('.cell-preview').eq(1).parent().hasClass('selected')).toBeTruthy();
+      });
+
+      it('cf-thumbnail is not shown for first asset', function () {
+        expect(element.find('[cf-thumbnail]').eq(1).hasClass('ng-hide')).toBeTruthy();
+      });
+
+      it('cf-thumbnail is shown for second asset', function () {
+        expect(element.find('[cf-thumbnail]').eq(2).hasClass('ng-hide')).toBeFalsy();
+      });
+
+      it('file type is not shown for first asset', function () {
+        expect(element.find('.cell-type p').eq(1).hasClass('ng-hide')).toBeTruthy();
+      });
+
+      it('file type is shown for second asset', function () {
+        expect(element.find('.cell-type p').eq(2).hasClass('ng-hide')).toBeFalsy();
+      });
+
+      it('localizedField is called for first asset file', function () {
+        expect(localizedFieldStub.calledWith(scope.entities[0], 'data.fields.file')).toBeTruthy();
+      });
+
+      it('localizedField is called for second asset file', function () {
+        expect(localizedFieldStub.calledWith(scope.entities[1], 'data.fields.file')).toBeTruthy();
+      });
+
+      it('localizedField is called for first asset title', function () {
+        expect(localizedFieldStub.calledWith(scope.entities[0], 'data.fields.title')).toBeTruthy();
+      });
+
+      it('localizedField is called for second asset title', function () {
+        expect(localizedFieldStub.calledWith(scope.entities[1], 'data.fields.title')).toBeTruthy();
+      });
+
+      it('localizedField is called for first asset description', function () {
+        expect(localizedFieldStub.calledWith(scope.entities[0], 'data.fields.description')).toBeTruthy();
+      });
+
+      it('localizedField is called for second asset description', function () {
+        expect(localizedFieldStub.calledWith(scope.entities[1], 'data.fields.description')).toBeTruthy();
+      });
+
+    });
+
+    describe('if field type is array', function () {
+      beforeEach(function () {
+        scope.field.type = 'Array';
+        scope.linkedEntities = [{}];
+        scope.$digest();
+      });
+
+      it('shows cf-link-editor-search', function () {
+        expect(element.find('.cf-link-editor-search .controls').hasClass('ng-hide')).toBeFalsy();
+      });
     });
 
     describe('has a known asset mimetype', function () {
@@ -412,11 +558,16 @@ describe('cfLinkEditor Directive', function () {
 
   describe('shows new button for link to entries with no validation', function () {
     var newButton;
+    var nameStub;
     beforeEach(function () {
       scope.field.items.linkType = 'Entry';
       scope.linkContentType = null;
+      nameStub = sinon.stub();
       scope.spaceContext.publishedContentTypes = [
-        {getId: function(){return Math.random();}}
+        {
+          getId: function(){return Math.random();},
+          getName: nameStub
+        }
       ];
 
       canStub.withArgs('create', 'Entry').returns(true);
@@ -440,6 +591,11 @@ describe('cfLinkEditor Directive', function () {
     it('has action on menu elements', function () {
       expect(newButton.find('.dropdown-menu li').attr('ng-click')).toMatch('addNewEntry');
     });
+
+    it('gets the name of the content type', function () {
+      expect(nameStub.called).toBeTruthy();
+    });
+
   });
 
   describe('shows new button for link to entries with validations', function () {
