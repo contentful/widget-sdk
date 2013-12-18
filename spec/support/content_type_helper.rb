@@ -48,7 +48,7 @@ module ContentTypeHelper
     find('.dropdown-toggle', text:'Validation').click
     find('.dropdown-menu li', text: name).click
     
-    page.should have_selector('.cf-validation-options', minimum: 1)
+    expect(page).to have_selector('.cf-validation-options', minimum: 1)
     validation = all('.cf-validation-options').last
     within validation do
       yield if block_given?

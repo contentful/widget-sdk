@@ -135,7 +135,7 @@ module FeatureHelper
     tabs = all('.tab-content', visible: false).length
     find('.add-dropdown-button .dropdown-toggle').click
     first('.add-dropdown-button li[ng-click]', text: text).click
-    page.should have_selector('.tab-content', count: tabs + 1, visible: false)
+    expect(page).to have_selector('.tab-content', count: tabs + 1, visible: false)
   end
 
   def nav_bar(target)
