@@ -113,7 +113,7 @@ feature 'Tutorial', js: true, sauce: true do
     click_button 'Yes, please!'
 
     finish_tutorial do
-      expect(all('td.cell-name').length).to be(6)
+      expect(all('td.cell-name').length).to equal(11)
     end
   end
 
@@ -132,7 +132,7 @@ feature 'Tutorial', js: true, sauce: true do
 
     nav_bar 'api-key-list'
     finish_tutorial do
-      expect(all('td.cell-name').length).to be(6)
+      expect(all('td.cell-name').length).to equal(1)
     end
   end
 
