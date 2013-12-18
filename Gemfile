@@ -5,7 +5,7 @@ gem 'json', '>= 1.7.7' # Explicit version requirement because security
 gem "haml"
 
 group :assets do
-  gem 'haml_coffee_assets'
+  gem 'haml_coffee_assets', '~> 1.13.0'
   gem 'execjs'
   gem 'sass-rails',   '~> 3.2.6'
   gem 'coffee-rails', '~> 3.2.1'
