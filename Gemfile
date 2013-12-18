@@ -37,7 +37,7 @@ group :development, :test do
 end
 
 group :test do
-  gem 'rspec-rails'
+  gem 'rspec', '3.0.0.beta1'
   gem 'selenium-webdriver'
   gem 'capybara'
 end
