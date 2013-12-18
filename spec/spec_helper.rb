@@ -15,6 +15,21 @@ Capybara::Node::Element.class_eval do
   end
 end
 
+# Fix for reset! that removes the assertion because it fails when using Sauce Labs
+# See https://github.com/jnicklas/capybara/issues/1198
+Capybara::Session.class_eval do
+  def reset!
+    if @touched
+      driver.reset!
+      @touched = false
+      #assert_no_selector :xpath, "/html/body/*"
+    end
+    raise @server.error if Capybara.raise_server_errors and @server and @server.error
+  ensure
+    @server.reset_error! if @server
+  end
+end
+
 Capybara.register_driver :selenium_chrome do |app|
   Capybara::Selenium::Driver.new(app, :browser => :chrome)
 end
