@@ -70,7 +70,7 @@ feature 'Tutorial', js: true, sauce: true do
     click_button 'Yes, please!'
 
     finish_tutorial do
-      all('td.cell-name').should have(6).elements
+      expect(all('td.cell-name')).to have(6).elements
     end
   end
 
@@ -113,7 +113,7 @@ feature 'Tutorial', js: true, sauce: true do
     click_button 'Yes, please!'
 
     finish_tutorial do
-      all('td.cell-name').should have(11).elements
+      expect(all('td.cell-name')).to have(11).elements
     end
   end
 
@@ -132,7 +132,7 @@ feature 'Tutorial', js: true, sauce: true do
 
     nav_bar 'api-key-list'
     finish_tutorial do
-      all('td.cell-name').should have(1).element
+      expect(all('td.cell-name')).to have(1).element
     end
   end
 

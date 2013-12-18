@@ -110,10 +110,10 @@ feature 'Content Type Editor', js: true, sauce: true do
     end
 
     click_button 'Update'
-    page.should_not have_selector('.cf-field-settings')
+    expect(page).to_not have_selector('.cf-field-settings')
     find('.editor-top-right .dropdown-toggle').click
     find('label', text: 'Show disabled fields').click
-    page.should have_selector('.cf-field-settings')
+    expect(page).to have_selector('.cf-field-settings')
   end
 
   scenario 'Deactivating a content type' do

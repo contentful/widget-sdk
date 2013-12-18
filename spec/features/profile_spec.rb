@@ -13,7 +13,7 @@ feature 'Working with profile', js: true, sauce: true, non_ci: true do
 
   scenario 'Renaming user' do
     find('.user .dropdown-toggle').click
-    find('.user .dropdown-menu').should have_text('Test User')
+    expect(find('.user .dropdown-menu')).to have_text('Test User')
     find('li', text: 'Edit Profile').click
     tab_iframe do
       click_link 'Edit'
@@ -22,7 +22,7 @@ feature 'Working with profile', js: true, sauce: true, non_ci: true do
       click_button 'Update User'
     end
     find('.user .dropdown-toggle').click
-    find('.user .dropdown-menu').should have_text('Foo Bar')
+    expect(find('.user .dropdown-menu')).to have_text('Foo Bar')
     find('li', text: 'Edit Profile').click
     tab_iframe do
       click_link 'Edit'

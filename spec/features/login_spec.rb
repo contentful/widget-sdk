@@ -8,7 +8,7 @@ feature 'Logging in', js: true, sauce: true do
 
   scenario 'The user should not be logged in' do
     visit "#{app_host}/"
-    current_url.should eq("#{be_host}/login")
+    expect(current_url).to eq("#{be_host}/login")
   end
 
   scenario 'The user should be able to login' do
@@ -24,7 +24,7 @@ feature 'Registration', js: true, sauce: true do
   after do
     visit "#{be_host}/profile/user_cancellation/new"
     click_button 'Cancel Account'
-    page.should have_text("We're sorry to see you go.")
+    expect(page).to have_text("We're sorry to see you go.")
   end
 
   scenario 'I want to be able to register' do
@@ -35,7 +35,7 @@ feature 'Registration', js: true, sauce: true do
     fill_in 'user_password', with: 'password'
     fill_in 'user_coupon_code', with: 'bootstrap' if first('#user_coupon_code')
     click_button 'Sign Up'
-    page.should have_selector('.client')
+    expect(page).to have_selector('.client')
   end
 end
 
@@ -57,7 +57,7 @@ feature "Account cancellation", js:true, sauce: true do
     tab_iframe do
       click_button 'Cancel Account'
     end
-    current_url.should eql("#{marketing_host}/goodbye")
-    #page.should have_text('Please let us know about your experience')
+    expect(current_url).to eql("#{marketing_host}/goodbye")
+    #expect(page).to have_text('Please let us know about your experience')
   end
 end

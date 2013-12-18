@@ -42,11 +42,11 @@ feature 'Link Editor', js: true, sauce: true do
     edit_field 'entryField' do
       find('input').set('AAAA')
       find('.result-list span', text: 'AAAA').click
-      page.should     have_selector('li')
-      page.should_not have_selector('input')
+      expect(page).to     have_selector('li')
+      expect(page).to_not have_selector('input')
       find('.ss-delete').click
-      page.should_not have_selector('li')
-      page.should     have_selector('input')
+      expect(page).to_not have_selector('li')
+      expect(page).to     have_selector('input')
     end
     edit_field 'entriesField' do
       find('input').set('AAAA')
@@ -58,13 +58,13 @@ feature 'Link Editor', js: true, sauce: true do
       find('input').set('BBBB')
       find('.result-list span', text: 'BBBB').click
       unscope{ wait_for_sharejs }
-      page.should have_selector('li', text: 'AAAA', count: 2)
-      page.should have_selector('li', text: 'BBBB', count: 1)
-      page.should have_selector('input')
+      expect(page).to have_selector('li', text: 'AAAA', count: 2)
+      expect(page).to have_selector('li', text: 'BBBB', count: 1)
+      expect(page).to have_selector('input')
       first('.ss-delete').click
       unscope{ wait_for_sharejs }
-      page.should have_selector('li', text: 'AAAA', count: 1)
-      page.should have_selector('li', text: 'BBBB', count: 1)
+      expect(page).to have_selector('li', text: 'AAAA', count: 1)
+      expect(page).to have_selector('li', text: 'BBBB', count: 1)
     end
 
     edit_field 'entryField' do
@@ -82,7 +82,7 @@ feature 'Link Editor', js: true, sauce: true do
     expect_success
     close_tab
     # Back to root editor
-    page.should have_selector('li', text: 'Foobar', count: 1)
+    expect(page).to have_selector('li', text: 'Foobar', count: 1)
     
     # Links work
     click_link 'BBBB'
@@ -95,7 +95,7 @@ feature 'Link Editor', js: true, sauce: true do
     # Back to root
     open_tab('Root')
     # Dead links
-    page.should have_text('Missing entity')
+    expect(page).to have_text('Missing entity')
 
     wait_for_sharejs
     click_button 'Publish'

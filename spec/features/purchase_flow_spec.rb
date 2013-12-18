@@ -18,7 +18,7 @@ feature 'Purchase flow', js: true, sauce: true do
         choose_plan 'Pro'
         click_link 'Change'
       end
-      current_url.should eql("#{app_host}/profile/subscription")
+      expect(current_url).to eql("#{app_host}/profile/subscription")
     end
 
     scenario 'Change Subscription plan' do
@@ -29,7 +29,7 @@ feature 'Purchase flow', js: true, sauce: true do
         fill_credit_card_information
         click_button 'Continue'
         click_button 'Purchase'
-        page.should have_text('Your plan was successfully updated!')
+        expect(page).to have_text('Your plan was successfully updated!')
       end
     end
 
@@ -45,7 +45,7 @@ feature 'Purchase flow', js: true, sauce: true do
           first('.table-edit-button a').click
           fill_in 'billing_address_name', with: 'Foo McBar'
           click_button 'Update Billing Address'
-          page.should have_text('Foo McBar')
+          expect(page).to have_text('Foo McBar')
         end
       end
 
@@ -58,7 +58,7 @@ feature 'Purchase flow', js: true, sauce: true do
           all('.table-edit-button a')[1].click
           fill_credit_card_information
           click_button 'Save Credit Card'
-          page.should have_text('Foo Bar')
+          expect(page).to have_text('Foo Bar')
         end
       end
     end
@@ -91,11 +91,11 @@ feature 'Purchase flow', js: true, sauce: true do
     scenario 'Toggle period' do # no yearly plans on staging
       tab_iframe do
         find('.toggle-button.annually').click
-        page.should have_text('/ year')
-        page.should_not have_text('/ month')
+        expect(page).to have_text('/ year')
+        expect(page).to_not have_text('/ month')
         find('.toggle-button.monthly').click
-        page.should_not have_text('/ year')
-        page.should have_text('/ month')
+        expect(page).to_not have_text('/ year')
+        expect(page).to have_text('/ month')
       end
     end
 
@@ -103,8 +103,8 @@ feature 'Purchase flow', js: true, sauce: true do
       tab_iframe do
         first('a', text: 'Choose plan').click
         click_link 'Switch to annual'
-        page.should have_text('Annually')
-        page.should have_text('/ year')
+        expect(page).to have_text('Annually')
+        expect(page).to have_text('/ year')
       end
       expect_success 'The new plan has been switched to the annual plan'
     end

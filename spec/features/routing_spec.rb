@@ -14,17 +14,17 @@ feature 'Routing', js: true, sauce: true do
   scenario 'Opening pages from an external link' do
     visit "#{app_host}/profile"
     tab_iframe do
-      page.should have_text 'USER DETAILS'
+      expect(page).to have_text 'USER DETAILS'
     end
 
     visit "#{app_host}/profile/billing/billing_address/edit"
     tab_iframe do
-      page.should have_text 'Postal code'
+      expect(page).to have_text 'Postal code'
     end
 
     visit "#{app_host}/spaces/#{tutorial_space_id}/settings/users/new"
     tab_iframe do
-      page.find('input[name="commit"]')[:value].should eql('Invite New User')
+      expect(page.find('input[name="commit"]')[:value]).to eql('Invite New User')
     end
   end
   
@@ -34,17 +34,17 @@ feature 'Routing', js: true, sauce: true do
       click_link 'Users'
       click_link 'Invite New User'
     end
-    eventually {current_path.should eql("/spaces/#{space_id}/settings/users/new")}
+    eventually {expect(current_path).to eql("/spaces/#{space_id}/settings/users/new")}
 
     find('.account .user .dropdown-toggle').click
     within('.account .user ') do
       first('li').click
     end
-    eventually {current_path.should eql("/profile/user")}
+    eventually {expect(current_path).to eql("/profile/user")}
 
     tab_iframe do
       click_link 'Subscription'
     end
-    eventually {current_path.should eql("/profile/subscription")}
+    eventually {expect(current_path).to eql("/profile/subscription")}
   end
 end
