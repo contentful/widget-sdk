@@ -1,8 +1,8 @@
 'use strict';
 
-describe('Client controller', function () {
+describe('Trial Watch controller', function () {
   var scope;
-  var clientCtrl;
+  var trialWatchCtrl;
   var ownerStub;
   var broadcastStub;
   var $window, $q;
@@ -27,7 +27,7 @@ describe('Client controller', function () {
 
       ownerStub = sinon.stub();
 
-      clientCtrl = $controller('ClientCtrl', {
+      trialWatchCtrl = $controller('TrialWatchController', {
         $scope: scope
       });
     });
