@@ -21,6 +21,17 @@ feature 'Purchase flow', js: true, sauce: true do
       expect(current_url).to eql("#{app_host}/profile/subscription")
     end
 
+    scenario 'Enter Coupon in step 2' do
+      tab_iframe do
+        choose_plan 'Pro'
+        click_link('Got a promo code?')
+        find('#code').set('bootstrap')
+        click_button 'Redeem'
+      end
+      expect_success 'coupon has been added'
+      expect(page).to_not have_selector('#sidebar-coupon-link')
+    end
+
     scenario 'Change Subscription plan' do
       tab_iframe do
         choose_plan 'Pro'

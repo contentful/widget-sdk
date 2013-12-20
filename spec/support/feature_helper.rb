@@ -42,7 +42,7 @@ module FeatureHelper
     end
 
     begin
-      find('#welcome .dot[data-index="4"]', wait: 1).click
+      find('#welcome .dot[data-index="4"]', wait: 2).click
       find('#welcome .guiders_x_button').click
       find('#restartHint .primary-button').click
     rescue Capybara::ElementNotFound
@@ -56,7 +56,7 @@ module FeatureHelper
 
     if page.first('.client', wait: 5)
       find('.user .dropdown-toggle').click
-      find('li', test: 'Log out').click
+      find('li', text: 'Log out').click
     else
       visit "#{be_host}/logout"
     end
