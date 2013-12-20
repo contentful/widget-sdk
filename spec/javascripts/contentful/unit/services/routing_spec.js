@@ -31,30 +31,29 @@ describe('Routing service', function () {
           _.defer(callback, null, []);
         }
       });
-      spyOn($rootScope.spaceContext.tabList, 'add').andReturn({
+      spyOn($rootScope.spaceContext.tabList, 'add').and.returnValue({
         activate: function () { }
       });
       $controller('TabViewCtrl', {$scope: $rootScope});
     }));
 
-    // FIXME randomly failing for some unknown reason
+    // TODO randomly failing for some unknown reason
+    // TODO Also: don't use inject in it-functions. these should only contain one parameter, "done"
     xit('should visit the entryList if only the space was given', inject(function ($location, $rootScope, $controller, routing) {
       routing.getRoute(); // trigger routeProvider initialization
       $location.path('/spaces/123');
       $rootScope.$apply(); // Create route
 
       spyOn($rootScope, 'visitView');
-      this.async(function (done) {
-        spaceController = $controller('SpaceCtrl', {$scope: $rootScope});
-        $rootScope.$apply(); // Trigger watcher initializing the Controller
-        _.defer(function () { // Give callbacks a chance to return
-          try {
-            expect($rootScope.visitView).toHaveBeenCalledWith('entry-list');
-            done();
-          } catch (e) {
-            done(e);
-          }
-        });
+      spaceController = $controller('SpaceCtrl', {$scope: $rootScope});
+      $rootScope.$apply(); // Trigger watcher initializing the Controller
+      _.defer(function () { // Give callbacks a chance to return
+        try {
+          expect($rootScope.visitView).toHaveBeenCalledWith('entry-list');
+          done();
+        } catch (e) {
+          done(e);
+        }
       });
     }));
   });

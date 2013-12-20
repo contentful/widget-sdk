@@ -66,8 +66,8 @@ describe('otPath', function() {
         spyOn(scope.otDoc, 'setAt');
         scope.otChangeValue('bla');
         expect(scope.otDoc.setAt).toHaveBeenCalled();
-        expect(scope.otDoc.setAt.mostRecentCall.args[0]).toEqual(scope.otPath);
-        expect(scope.otDoc.setAt.mostRecentCall.args[1]).toEqual('bla');
+        expect(scope.otDoc.setAt.calls.mostRecent().args[0]).toEqual(scope.otPath);
+        expect(scope.otDoc.setAt.calls.mostRecent().args[1]).toEqual('bla');
       });
     });
     describe('when the path is not present in the otDoc', function () {
@@ -78,7 +78,7 @@ describe('otPath', function() {
         });
         scope.otChangeValue('bla');
         expect(mkpath).toHaveBeenCalled();
-        expect(mkpath.mostRecentCall.args[0]).toEqual({
+        expect(mkpath.calls.mostRecent().args[0]).toEqual({
           doc: scope.otDoc,
           path: scope.otPath,
           types: undefined,

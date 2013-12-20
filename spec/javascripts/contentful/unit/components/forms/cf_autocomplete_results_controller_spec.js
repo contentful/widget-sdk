@@ -80,7 +80,7 @@ describe('cfAutocompleteResultsController', function () {
   it('should emit when picked', function () {
     scope.results = ['a', 'b', 'c'];
     scope.$apply();
-    spyOn(scope, '$emit').andReturn({
+    spyOn(scope, '$emit').and.returnValue({
       defaultPrevented: false
     });
     controller.pickSelected();
@@ -92,7 +92,7 @@ describe('cfAutocompleteResultsController', function () {
     scope.searchTerm = 'foobar';
     scope.$apply();
 
-    spyOn(scope, '$emit').andReturn({ defaultPrevented: false });
+    spyOn(scope, '$emit').and.returnValue({ defaultPrevented: false });
     controller.pickSelected();
     expect(scope.searchTerm).toBe('');
   });
@@ -102,7 +102,7 @@ describe('cfAutocompleteResultsController', function () {
     scope.searchTerm = 'foobar';
     scope.$apply();
 
-    spyOn(scope, '$emit').andReturn({ defaultPrevented: true });
+    spyOn(scope, '$emit').and.returnValue({ defaultPrevented: true });
     controller.pickSelected();
     expect(scope.searchTerm).toBe('foobar');
   });

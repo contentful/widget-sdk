@@ -31,7 +31,7 @@ end
 group :development, :test do
   gem "guard-livereload"
   gem 'rb-fsevent', '~> 0.9.1', :require => false
-  gem "jasmine", :git => 'git://github.com/janv/jasmine-gem.git', :branch => 'patch-1'
+  gem "jasmine"
   gem 'sauce'
   gem 'sauce-connect'
 end
