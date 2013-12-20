@@ -671,18 +671,6 @@ describe('Client Controller', function () {
       expect(wrapSpaceStub.calledWith(spaces[2])).toBeTruthy();
     });
 
-    it('new space list has second raw space on first position', function () {
-      expect(scope.spaces[0].data.name.name).toEqual('space1');
-    });
-
-    it('new space list has first raw space on second position', function () {
-      expect(scope.spaces[1].data.name.name).toEqual('space2');
-    });
-
-    it('new space list has third raw space on third position', function () {
-      expect(scope.spaces[2].data.name.name).toEqual('space3');
-    });
-
     it('third space has a save method', function () {
       expect(scope.spaces[2].save).toBeDefined();
     });
@@ -703,8 +691,10 @@ describe('Client Controller', function () {
   });
 
   describe('initializes client', function () {
-    var thenStub, catchStub;
+    var thenStub, catchStub, revisionCatchStub;
     beforeEach(function () {
+      revisionCatchStub = sinon.stub();
+      hasNewVersionStub.returns({catch: revisionCatchStub});
       scope.performTokenLookup = sinon.stub();
       thenStub = sinon.stub();
       catchStub = sinon.stub();
@@ -743,12 +733,10 @@ describe('Client Controller', function () {
       });
 
       describe('fires an initial version check', function () {
-        var revisionCatchStub = sinon.stub();
         var broadcastStub;
         beforeEach(inject(function ($rootScope) {
           broadcastStub = sinon.stub($rootScope, '$broadcast');
           revisionCatchStub.callsArgWith(0, 'APP_REVISION_CHANGED');
-          hasNewVersionStub.returns({catch: revisionCatchStub});
           jasmine.Clock.tick(5000);
         }));
 
@@ -767,14 +755,12 @@ describe('Client Controller', function () {
 
 
       describe('presence timeout is fired', function () {
-        var revisionCatchStub = sinon.stub();
         var broadcastStub;
         beforeEach(inject(function ($rootScope) {
           presenceActiveStub.returns(true);
           catchStub.callsArg(0);
           broadcastStub = sinon.stub($rootScope, '$broadcast');
           revisionCatchStub.callsArgWith(0, 'APP_REVISION_CHANGED');
-          hasNewVersionStub.returns({catch: revisionCatchStub});
           jasmine.Clock.tick(50*60*1000);
         }));
 
