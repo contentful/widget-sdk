@@ -4,7 +4,7 @@
 #
 #Example: using a different boot file.
 Jasmine.configure do |config|
-  config.server_port = 8889
+  config.server_port = ENV['JASMINE_PORT'] || 8889
    #config.boot_dir = '/absolute/path/to/boot_dir'
    #config.boot_files = lambda { ['/absolute/path/to/boot_dir/file.js'] }
 end

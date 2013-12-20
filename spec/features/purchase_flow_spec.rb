@@ -40,7 +40,7 @@ feature 'Purchase flow', js: true, sauce: true do
         end
       end
 
-      scenario 'Change Billing Address' do # no way to reset form on staging
+      scenario 'Change Billing Address' do
         tab_iframe do
           first('.table-edit-button a').click
           fill_in 'billing_address_name', with: 'Foo McBar'
@@ -53,7 +53,7 @@ feature 'Purchase flow', js: true, sauce: true do
 
       scenario 'Set invalid VAT number'
 
-      scenario 'Change Credit Card information' do # no way to reset form on staging
+      scenario 'Change Credit Card information' do
         tab_iframe do
           all('.table-edit-button a')[1].click
           fill_credit_card_information
@@ -108,6 +108,8 @@ feature 'Purchase flow', js: true, sauce: true do
       end
       expect_success 'The new plan has been switched to the annual plan'
     end
+
+    scenario 'Use Coupon'
 =end
   end
 
