@@ -18,14 +18,13 @@ describe('Filepicker service', function () {
       });
     });
 
-    afterEach(inject(function ($log, $window) {
-      delete $window.filepicker;
-      $log.assertEmpty();
-    }));
-
-    it('same object is returned', function () {
-      expect(filepicker).toBe(filepickerStub);
+    afterEach(function () {
+      inject(function ($log, $window) {
+        delete $window.filepicker;
+        $log.assertEmpty();
+      });
     });
+
   });
 
   describe('returns filepicker object', function () {
@@ -51,12 +50,14 @@ describe('Filepicker service', function () {
       });
     });
 
-    afterEach(inject(function ($log, $window) {
-      makeDropPaneStub.restore();
-      pickStub.restore();
-      delete $window.filepicker;
-      $log.assertEmpty();
-    }));
+    afterEach(function () {
+      inject(function ($log, $window) {
+        makeDropPaneStub.restore();
+        pickStub.restore();
+        delete $window.filepicker;
+        $log.assertEmpty();
+      });
+    });
 
     it('filepicker service exists', function () {
       expect(filepicker).toBeDefined();
@@ -95,9 +96,11 @@ describe('Filepicker service', function () {
 
     describe('pick is called', function () {
       var $rootScope;
-      beforeEach(inject(function (_$rootScope_) {
-        $rootScope = _$rootScope_;
-      }));
+      beforeEach(function () {
+        inject(function (_$rootScope_) {
+          $rootScope = _$rootScope_;
+        });
+      });
 
       it('returns a file', function () {
         var successStub = sinon.stub();
