@@ -2,13 +2,15 @@
 
 describe('Space Controller', function () {
   var spaceController, scope;
-  var authUpdatedStub, periodUsageStub, enforcementStub, trackStub;
+  var authUpdatedStub, periodUsageStub, enforcementStub, trackStub, errorStub, computeUsageStub;
 
   beforeEach(function () {
     authUpdatedStub = sinon.stub();
     periodUsageStub = sinon.stub();
+    computeUsageStub = sinon.stub();
     enforcementStub = sinon.stub();
     trackStub = sinon.stub();
+    errorStub = sinon.stub();
     module('contentful/test', function ($provide) {
 
       $provide.value('authorization', {
@@ -20,6 +22,7 @@ describe('Space Controller', function () {
 
       $provide.value('enforcements', {
         getPeriodUsage: periodUsageStub,
+        computeUsage: computeUsageStub,
         determineEnforcement: enforcementStub
       });
 
@@ -27,6 +30,10 @@ describe('Space Controller', function () {
 
       $provide.value('analytics', {
         track: trackStub
+      });
+
+      $provide.value('notification', {
+        serverError: errorStub
       });
     });
     inject(function ($controller, $rootScope, cfStub){
@@ -66,6 +73,40 @@ describe('Space Controller', function () {
       scope.spaceContext.space = null;
       scope.$digest();
       expect(refreshStub.called).toBeFalsy();
+    });
+  });
+
+  describe('refreshes active locales if locale states change', function () {
+    var refreshStub;
+    beforeEach(function () {
+      scope.$digest();
+      refreshStub = sinon.stub(scope.spaceContext, 'refreshActiveLocales');
+      scope.spaceContext.localeStates['pt-PT'] = true;
+      scope.$digest();
+    });
+
+    afterEach(function () {
+      refreshStub.restore();
+    });
+
+    it('calls refresh method', function () {
+      expect(refreshStub.called).toBeTruthy();
+    });
+  });
+
+  describe('refreshes content types if spaceContext changes', function () {
+    var refreshStub;
+    beforeEach(function () {
+      scope.$digest();
+      refreshStub = sinon.stub();
+      scope.spaceContext = {
+        refreshContentTypes: refreshStub
+      };
+      scope.$digest();
+    });
+
+    it('calls refresh method', function () {
+      expect(refreshStub.called).toBeTruthy();
     });
   });
 
@@ -232,5 +273,249 @@ describe('Space Controller', function () {
       expect(broadcastStub.called).toBeTruthy();
     });
   });
+
+  describe('creates an entry', function () {
+    var createStub;
+    var contentType;
+    beforeEach(inject(function (cfStub) {
+      createStub = sinon.stub(scope.spaceContext.space, 'createEntry');
+      contentType = cfStub.contentType(scope.spaceContext.space, 'thing', 'Thing');
+    }));
+
+    afterEach(function () {
+      createStub.restore();
+    });
+
+    it('calls the space create method', function () {
+      scope.createEntry(contentType);
+      expect(createStub.called).toBeTruthy();
+    });
+
+    describe('creation fails', function () {
+      beforeEach(function () {
+        createStub.callsArgWith(2, {
+          body: {
+            details: {
+              reasons: []
+            }
+          }
+        });
+        scope.createEntry(contentType);
+      });
+
+      it('determines enforcements', function () {
+        expect(enforcementStub.calledWith([], 'entry')).toBeTruthy();
+      });
+
+      it('notifies of the error', function () {
+        expect(errorStub.called).toBeTruthy();
+      });
+
+      it('tracks analytics', function () {
+        expect(trackStub.called).toBeTruthy();
+      });
+    });
+
+    describe('creation suceeds', function () {
+      var editorStub;
+      beforeEach(function () {
+        editorStub = sinon.stub();
+        editorStub.returns({goTo: sinon.stub()});
+        scope.navigator = {
+          entryEditor: editorStub
+        };
+        createStub.callsArgWith(2, null, {});
+        scope.createEntry(contentType);
+      });
+
+      it('navigates to editor', function () {
+        expect(editorStub.called).toBeTruthy();
+      });
+
+      it('tracks analytics', function () {
+        expect(trackStub.called).toBeTruthy();
+      });
+    });
+  });
+
+  describe('creates an asset', function () {
+    var createStub;
+    beforeEach(function () {
+      createStub = sinon.stub(scope.spaceContext.space, 'createAsset');
+    });
+
+    afterEach(function () {
+      createStub.restore();
+    });
+
+    it('calls the space create method', function () {
+      scope.createAsset();
+      expect(createStub.called).toBeTruthy();
+    });
+
+    describe('creation fails', function () {
+      beforeEach(function () {
+        createStub.callsArgWith(1, {
+          body: {
+            details: {
+              reasons: []
+            }
+          }
+        });
+        scope.createAsset();
+      });
+
+      it('determines enforcements', function () {
+        expect(enforcementStub.calledWith([], 'asset')).toBeTruthy();
+      });
+
+      it('notifies of the error', function () {
+        expect(errorStub.called).toBeTruthy();
+      });
+
+      it('tracks analytics', function () {
+        expect(trackStub.called).toBeTruthy();
+      });
+    });
+
+    describe('creation suceeds', function () {
+      var editorStub;
+      beforeEach(inject(function (cfStub) {
+        editorStub = sinon.stub();
+        editorStub.returns({goTo: sinon.stub()});
+        scope.navigator = {
+          assetEditor: editorStub
+        };
+        createStub.callsArgWith(1, null, cfStub.asset(scope.spaceContext.space, 'image'));
+        scope.createAsset();
+      }));
+
+      it('navigates to editor', function () {
+        expect(editorStub.called).toBeTruthy();
+      });
+
+      it('tracks analytics', function () {
+        expect(trackStub.called).toBeTruthy();
+      });
+    });
+  });
+
+  describe('creates a content type', function () {
+    var createStub;
+    beforeEach(function () {
+      createStub = sinon.stub(scope.spaceContext.space, 'createContentType');
+    });
+
+    afterEach(function () {
+      createStub.restore();
+    });
+
+    it('calls the space create method', function () {
+      scope.createContentType();
+      expect(createStub.called).toBeTruthy();
+    });
+
+    describe('creation fails', function () {
+      beforeEach(function () {
+        createStub.callsArgWith(1, {
+          body: {
+            details: {
+              reasons: []
+            }
+          }
+        });
+        scope.createContentType();
+      });
+
+      it('determines enforcements', function () {
+        expect(enforcementStub.calledWith([], 'contentType')).toBeTruthy();
+      });
+
+      it('notifies of the error', function () {
+        expect(errorStub.called).toBeTruthy();
+      });
+
+      it('tracks analytics', function () {
+        expect(trackStub.called).toBeTruthy();
+      });
+    });
+
+    describe('creation suceeds', function () {
+      var editorStub;
+      beforeEach(function () {
+        editorStub = sinon.stub();
+        editorStub.returns({goTo: sinon.stub()});
+        scope.navigator = {
+          contentTypeEditor: editorStub
+        };
+        createStub.callsArgWith(1, null, {});
+        scope.createContentType();
+      });
+
+      it('navigates to editor', function () {
+        expect(editorStub.called).toBeTruthy();
+      });
+
+      it('tracks analytics', function () {
+        expect(trackStub.called).toBeTruthy();
+      });
+    });
+  });
+
+  describe('creates an api key', function () {
+    var createStub;
+    beforeEach(function () {
+      createStub = sinon.stub(scope.spaceContext.space, 'createBlankApiKey');
+    });
+
+    afterEach(function () {
+      createStub.restore();
+    });
+
+    describe('creation fails', function () {
+      beforeEach(function () {
+        computeUsageStub.returns({});
+        scope.createApiKey();
+      });
+
+      it('computes the api key usage', function () {
+        expect(computeUsageStub.calledWith('apiKey')).toBeTruthy();
+      });
+
+      it('notifies of the error', function () {
+        expect(errorStub.called).toBeTruthy();
+      });
+    });
+
+    describe('creation suceeds', function () {
+      var editorStub;
+      beforeEach(function () {
+        editorStub = sinon.stub();
+        editorStub.returns({openAndGoTo: sinon.stub()});
+        scope.navigator = {
+          apiKeyEditor: editorStub
+        };
+        computeUsageStub.returns(null);
+        scope.createApiKey();
+      });
+
+      it('computes the api key usage', function () {
+        expect(computeUsageStub.calledWith('apiKey')).toBeTruthy();
+      });
+
+      it('calls the space create method', function () {
+        expect(createStub.called).toBeTruthy();
+      });
+
+      it('navigates to editor', function () {
+        expect(editorStub.called).toBeTruthy();
+      });
+
+      it('tracks analytics', function () {
+        expect(trackStub.called).toBeTruthy();
+      });
+    });
+  });
+
 
 });
