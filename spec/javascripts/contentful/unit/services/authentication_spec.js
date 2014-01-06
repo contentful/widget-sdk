@@ -1,6 +1,6 @@
 'use strict';
 
-xdescribe('Authentication service', function () {
+describe('Authentication service', function () {
   var authentication, $rootScope;
   var hashStub, searchStub, pathStub;
   var cookiesSetStub, cookiesGetStub, cookiesDelStub;
