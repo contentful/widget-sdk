@@ -24,7 +24,7 @@ describe('otBindText', function () {
   }));
 
   beforeEach(inject(function ($rootScope, $compile) {
-    jasmine.Clock.useMock();
+    jasmine.clock().install();
     $rootScope.entity = {value: 'xx'};
     elem = $compile('<input type="text" ng-model="entity.value" ot-doc-for="entity" ot-path="[\'value\']" ot-subdoc ot-bind-text>')($rootScope);
     scope = elem.scope();
@@ -33,6 +33,7 @@ describe('otBindText', function () {
   }));
 
   afterEach(inject(function ($log) {
+    jasmine.clock().uninstall();
     $log.assertEmpty();
   }));
 
@@ -47,7 +48,7 @@ describe('otBindText', function () {
 
   it('should detach the textfield when otSubdoc is removed', function () {
     scope.$apply();
-    jasmine.Clock.tick(10);
+    jasmine.clock().tick(10);
     expect(scope.otSubdoc).not.toBe(null);
     expect(scope.otSubdoc).toBe(subdoc);
     expect(subdoc.attach_textarea.calledOnce).toBe(true);
@@ -72,7 +73,7 @@ describe('otBindText', function () {
 
       scope.$apply();
       elem.val('a').trigger('input');
-      jasmine.Clock.tick(10);
+      jasmine.clock().tick(10);
       expect($log.error.logs.length).toBe(1);
       $log.reset();
     }));

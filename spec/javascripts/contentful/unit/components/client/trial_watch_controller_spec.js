@@ -70,7 +70,7 @@ describe('Trial Watch controller', function () {
     var momentStub, diffStub;
 
     beforeEach(function () {
-      jasmine.Clock.useMock();
+      jasmine.clock().install();
       momentStub = sinon.stub($window, 'moment');
       diffStub = sinon.stub();
       momentStub.returns({
@@ -80,6 +80,7 @@ describe('Trial Watch controller', function () {
 
     afterEach(function () {
       momentStub.restore();
+      jasmine.clock().uninstall();
     });
 
     describe('for a trial subscription', function () {

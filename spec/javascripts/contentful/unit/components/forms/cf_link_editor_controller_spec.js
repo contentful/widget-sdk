@@ -3,7 +3,7 @@
 describe('cfLinkEditor Controller', function () {
   var cfLinkEditorCtrl, createController;
   var scope, attrs, entry, $q;
-  var getEntriesStub, otDocPushStub, removeStub, shareJSMock;
+  var shareJSMock;
   var validationParseStub;
 
   function validationParser(arg) {
@@ -227,16 +227,14 @@ describe('cfLinkEditor Controller methods', function () {
 
     describe('adds a link for an entry and updates linked entries', function () {
       function makeSpec(name, expectations) {
-        it(name, function () {
-          this.async(function (done) {
-            var addLinkDeferred = $q.defer();
-            callbackSpy = makeCallbackSpy(addLinkDeferred);
-            var linkedEntitiesDeferred = makeLinkedEntitiesDeferred();
-            scope.otChangeValue.callsArgAsync(1);
+        it(name, function (done) {
+          var addLinkDeferred = $q.defer();
+          callbackSpy = makeCallbackSpy(addLinkDeferred);
+          var linkedEntitiesDeferred = makeLinkedEntitiesDeferred();
+          scope.otChangeValue.callsArgAsync(1);
 
-            $q.all([addLinkDeferred.promise, linkedEntitiesDeferred.promise]).then(_.partial(expectations, done));
-            scope.addLink(entry, callbackSpy);
-          });
+          $q.all([addLinkDeferred.promise, linkedEntitiesDeferred.promise]).then(_.partial(expectations, done));
+          scope.addLink(entry, callbackSpy);
         });
       }
 
@@ -303,18 +301,16 @@ describe('cfLinkEditor Controller methods', function () {
 
     describe('adds an array of entries from a list', function () {
       function makeSpec(name, expectations) {
-        it(name, function () {
-          this.async(function (done) {
-            var addLinkDeferred = $q.defer();
-            callbackSpy = makeCallbackSpy(addLinkDeferred);
-            var linkedEntitiesDeferred = makeLinkedEntitiesDeferred();
-            otDocPushStub.callsArgAsync(1);
-            shareJSMock.peek.returns([]);
+        it(name, function (done) {
+          var addLinkDeferred = $q.defer();
+          callbackSpy = makeCallbackSpy(addLinkDeferred);
+          var linkedEntitiesDeferred = makeLinkedEntitiesDeferred();
+          otDocPushStub.callsArgAsync(1);
+          shareJSMock.peek.returns([]);
 
-            $q.all([addLinkDeferred.promise, linkedEntitiesDeferred.promise]).then(_.partial(expectations, done));
+          $q.all([addLinkDeferred.promise, linkedEntitiesDeferred.promise]).then(_.partial(expectations, done));
 
-            scope.addLink(entry, callbackSpy);
-          });
+          scope.addLink(entry, callbackSpy);
         });
       }
 
@@ -356,18 +352,16 @@ describe('cfLinkEditor Controller methods', function () {
 
     describe('adds an entry from a list', function () {
       function makeSpec(name, expectations) {
-        it(name, function () {
-          this.async(function (done) {
-            var addLinkDeferred = $q.defer();
-            callbackSpy = makeCallbackSpy(addLinkDeferred);
-            var linkedEntitiesDeferred = makeLinkedEntitiesDeferred();
-            shareJSMock.peek.returns({});
-            shareJSMock.mkpath.callsArgAsync(1);
+        it(name, function (done) {
+          var addLinkDeferred = $q.defer();
+          callbackSpy = makeCallbackSpy(addLinkDeferred);
+          var linkedEntitiesDeferred = makeLinkedEntitiesDeferred();
+          shareJSMock.peek.returns({});
+          shareJSMock.mkpath.callsArgAsync(1);
 
-            $q.all([addLinkDeferred.promise, linkedEntitiesDeferred.promise]).then(_.partial(expectations, done));
+          $q.all([addLinkDeferred.promise, linkedEntitiesDeferred.promise]).then(_.partial(expectations, done));
 
-            scope.addLink(entry, callbackSpy);
-          });
+          scope.addLink(entry, callbackSpy);
         });
       }
 
@@ -403,24 +397,22 @@ describe('cfLinkEditor Controller methods', function () {
 
     });
 
-    it('removes a link from an entry list', function () {
-      this.async(function (done) {
-        var addLinkDeferred = $q.defer();
-        var callbackSpy = makeCallbackSpy(addLinkDeferred);
-        var linkedEntitiesDeferred = makeLinkedEntitiesDeferred();
-        otDocPushStub.callsArgAsync(1);
-        shareJSMock.peek.returns([]);
-        removeStub.callsArgAsync(0);
+    it('removes a link from an entry list', function (done) {
+      var addLinkDeferred = $q.defer();
+      var callbackSpy = makeCallbackSpy(addLinkDeferred);
+      var linkedEntitiesDeferred = makeLinkedEntitiesDeferred();
+      otDocPushStub.callsArgAsync(1);
+      shareJSMock.peek.returns([]);
+      removeStub.callsArgAsync(0);
 
-        $q.all([addLinkDeferred.promise, linkedEntitiesDeferred.promise]).then(function () {
-          scope.removeLink(0, entry);
-          _.defer(function () {
-            expect(scope.links.length).toBe(0);
-            done();
-          });
+      $q.all([addLinkDeferred.promise, linkedEntitiesDeferred.promise]).then(function () {
+        scope.removeLink(0, entry);
+        _.defer(function () {
+          expect(scope.links.length).toBe(0);
+          done();
         });
-        scope.addLink(entry, callbackSpy);
       });
+      scope.addLink(entry, callbackSpy);
     });
 
   });
@@ -431,27 +423,25 @@ describe('cfLinkEditor Controller methods', function () {
       getEntriesStub.callsArgWithAsync(1, null, [entry]);
     });
 
-    it('and fetches them for caching', function () {
-      this.async(function (done) {
-        scope.$watch('linkedEntities', function (newval, oldval) {
-          if(newval !== oldval){
-            expect(getEntriesStub.calledWith({'sys.id[in]': 'entry1'})).toBeTruthy();
-            expect(scope.linkedEntities.length).toBe(1);
-            done();
-          }
-        });
-
-        scope.links = [
-          {
-            sys: {
-              id: 'entry1',
-              linkType: 'Entry',
-              type: 'Link'
-            }
-          }
-        ];
-        scope.$apply();
+    it('and fetches them for caching', function (done) {
+      scope.$watch('linkedEntities', function (newval, oldval) {
+        if(newval !== oldval){
+          expect(getEntriesStub.calledWith({'sys.id[in]': 'entry1'})).toBeTruthy();
+          expect(scope.linkedEntities.length).toBe(1);
+          done();
+        }
       });
+
+      scope.links = [
+        {
+          sys: {
+            id: 'entry1',
+            linkType: 'Entry',
+            type: 'Link'
+          }
+        }
+      ];
+      scope.$apply();
     });
   });
 

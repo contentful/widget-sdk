@@ -239,52 +239,44 @@ describe('SpaceContext class with a space', function () {
       spaceContext.space.getPublishedContentTypes = getPublishedContentTypesStub;
     });
 
-    it('refreshes content types', function () {
-      this.async(function (done) {
-        var refreshPublishedContentTypesSpy = sinon.spy(spaceContext, 'refreshPublishedContentTypes');
+    it('refreshes content types', function (done) {
+      var refreshPublishedContentTypesSpy = sinon.spy(spaceContext, 'refreshPublishedContentTypes');
 
-        spaceContext.refreshContentTypes().then(function () {
-          expect(spaceContext.contentTypes[0].getName()).toEqual('contentType1');
-          expect(refreshPublishedContentTypesSpy.called).toBeTruthy();
-          refreshPublishedContentTypesSpy.restore();
-          done();
-        });
+      spaceContext.refreshContentTypes().then(function () {
+        expect(spaceContext.contentTypes[0].getName()).toEqual('contentType1');
+        expect(refreshPublishedContentTypesSpy.called).toBeTruthy();
+        refreshPublishedContentTypesSpy.restore();
+        done();
       });
     });
 
     describe('refreshes published content types', function () {
-      it('has content types', function () {
-        this.async(function (done) {
-          spaceContext.refreshPublishedContentTypes().then(function () {
-            expect(spaceContext.publishedContentTypes.length).toBeGreaterThan(0);
-            expect(spaceContext.publishedContentTypes[0].getName()).toEqual('contentType1');
-            done();
-          });
+      it('has content types', function (done) {
+        spaceContext.refreshPublishedContentTypes().then(function () {
+          expect(spaceContext.publishedContentTypes.length).toBeGreaterThan(0);
+          expect(spaceContext.publishedContentTypes[0].getName()).toEqual('contentType1');
+          done();
         });
       });
 
-      it('merges context types from client and server together', function () {
-        this.async(function (done) {
-          spaceContext.publishedContentTypes = [ contentType1 ];
-          spaceContext.refreshPublishedContentTypes().then(function () {
-            expect(spaceContext.publishedContentTypes.length).toBe(2);
-            done();
-          });
+      it('merges context types from client and server together', function (done) {
+        spaceContext.publishedContentTypes = [ contentType1 ];
+        spaceContext.refreshPublishedContentTypes().then(function () {
+          expect(spaceContext.publishedContentTypes.length).toBe(2);
+          done();
         });
       });
 
-      it('does not include deleted published content Types', function () {
+      it('does not include deleted published content Types', function (done) {
         getPublishedContentTypesStub = sinon.stub();
         getPublishedContentTypesStub.callsArgWithAsync(0, null, [
           contentType1,
           _.merge(contentType2, {isDeleted: sinon.stub().returns(true)})
         ]);
-        this.async(function (done) {
-          spaceContext.refreshPublishedContentTypes().then(function () {
-            expect(spaceContext.publishedContentTypes.length).toBe(1);
-            expect(_.contains(spaceContext.publishedContentTypes, contentType2)).toBe(false);
-            done();
-          });
+        spaceContext.refreshPublishedContentTypes().then(function () {
+          expect(spaceContext.publishedContentTypes.length).toBe(1);
+          expect(_.contains(spaceContext.publishedContentTypes, contentType2)).toBe(false);
+          done();
         });
       });
 
@@ -294,24 +286,19 @@ describe('SpaceContext class with a space', function () {
         expect(spaceContext.publishedContentTypes[0]).toBe(contentType);
       });
 
-      it('removes a content type', function () {
-        this.async(function (done) {
-          spaceContext.refreshContentTypes().then(function () {
-            spaceContext.removeContentType(contentType1);
-
-            expect(spaceContext.contentTypes[0].getName()).toEqual('contentType2');
-            done();
-          });
+      it('removes a content type', function (done) {
+        spaceContext.refreshContentTypes().then(function () {
+          spaceContext.removeContentType(contentType1);
+          expect(spaceContext.contentTypes[0].getName()).toEqual('contentType2');
+          done();
         });
       });
 
-      it('gets a published type for a given entry', function () {
-        this.async(function (done) {
-          spaceContext.refreshContentTypes().then(function () {
-            var entry = cfStub.entry(space, 'entry2', 'content_type1');
-            expect(spaceContext.publishedTypeForEntry(entry)).toBe(contentType1);
-            done();
-          });
+      it('gets a published type for a given entry', function (done) {
+        spaceContext.refreshContentTypes().then(function () {
+          var entry = cfStub.entry(space, 'entry2', 'content_type1');
+          expect(spaceContext.publishedTypeForEntry(entry)).toBe(contentType1);
+          done();
         });
       });
 
@@ -325,56 +312,46 @@ describe('SpaceContext class with a space', function () {
           });
         });
 
-        it('fetched successfully', function () {
-          this.async(function (done) {
-            spaceContext.refreshContentTypes().then(function () {
-              expect(spaceContext.entryTitle(entry)).toEqual('the title');
-              done();
-            });
+        it('fetched successfully', function (done) {
+          spaceContext.refreshContentTypes().then(function () {
+            expect(spaceContext.entryTitle(entry)).toEqual('the title');
+            done();
           });
         });
 
-        it('gets no title, falls back to default', function () {
-          this.async(function (done) {
-            spaceContext.publishedTypeForEntry = sinon.stub();
-            spaceContext.publishedTypeForEntry.returns({
-              data: {}
-            });
-            spaceContext.refreshContentTypes().then(function () {
-              expect(spaceContext.entryTitle(entry)).toEqual('Untitled');
-              done();
-            });
+        it('gets no title, falls back to default', function (done) {
+          spaceContext.publishedTypeForEntry = sinon.stub();
+          spaceContext.publishedTypeForEntry.returns({
+            data: {}
+          });
+          spaceContext.refreshContentTypes().then(function () {
+            expect(spaceContext.entryTitle(entry)).toEqual('Untitled');
+            done();
           });
         });
 
-        it('handles an exception, falls back to default', function () {
-          this.async(function (done) {
-            spaceContext.publishedTypeForEntry = sinon.stub();
-            spaceContext.publishedTypeForEntry.returns({});
-            spaceContext.refreshContentTypes().then(function () {
-              expect(spaceContext.entryTitle(entry)).toEqual('Untitled');
-              done();
-            });
+        it('handles an exception, falls back to default', function (done) {
+          spaceContext.publishedTypeForEntry = sinon.stub();
+          spaceContext.publishedTypeForEntry.returns({});
+          spaceContext.refreshContentTypes().then(function () {
+            expect(spaceContext.entryTitle(entry)).toEqual('Untitled');
+            done();
           });
         });
 
-        it('fetched successfully but title is empty', function () {
-          this.async(function (done) {
-            entry.data.fields.title = '   ';
-            spaceContext.refreshContentTypes().then(function () {
-              expect(spaceContext.entryTitle(entry)).toEqual('Untitled');
-              done();
-            });
+        it('fetched successfully but title is empty', function (done) {
+          entry.data.fields.title = '   ';
+          spaceContext.refreshContentTypes().then(function () {
+            expect(spaceContext.entryTitle(entry)).toEqual('Untitled');
+            done();
           });
         });
 
-        it('fetched successfully but title doesn\'t exist', function () {
-          this.async(function (done) {
-            delete entry.data.fields.title;
-            spaceContext.refreshContentTypes().then(function () {
-              expect(spaceContext.entryTitle(entry)).toEqual('Untitled');
-              done();
-            });
+        it('fetched successfully but title doesn\'t exist', function (done) {
+          delete entry.data.fields.title;
+          spaceContext.refreshContentTypes().then(function () {
+            expect(spaceContext.entryTitle(entry)).toEqual('Untitled');
+            done();
           });
         });
 

@@ -53,31 +53,27 @@ describe('otDocFor', function () {
       scope.entity.data = {ding: 'dong', sys: {id: 'deadbeef', version: 1}};
     }));
 
-    it('should immediately update the entity', function () {
-      this.async(function (done) {
-        spyOn(scope, 'otUpdateEntity');
-        scope.$watch('!!otDoc', function (hasDoc) {
-          if (hasDoc) {
-            expect(scope.otUpdateEntity).toHaveBeenCalled();
-            done();
-          }
-        });
-        scope.$digest();
+    it('should immediately update the entity', function (done) {
+      spyOn(scope, 'otUpdateEntity');
+      scope.$watch('!!otDoc', function (hasDoc) {
+        if (hasDoc) {
+          expect(scope.otUpdateEntity).toHaveBeenCalled();
+          done();
+        }
       });
+      scope.$digest();
     });
 
-    it('should not immediately update the entity if the id is missing', function () {
-      delete scope.entity.data.sys.id;
-      this.async(function (done) {
-        spyOn(scope, 'otUpdateEntity');
-        scope.$watch('!!otDoc', function (hasDoc) {
-          if (hasDoc) {
-            expect(scope.otUpdateEntity).not.toHaveBeenCalled();
-            done();
-          }
-        });
-        scope.$digest();
+    it('should not immediately update the entity if the id is missing', function (done) {
+    delete scope.entity.data.sys.id;
+      spyOn(scope, 'otUpdateEntity');
+      scope.$watch('!!otDoc', function (hasDoc) {
+        if (hasDoc) {
+          expect(scope.otUpdateEntity).not.toHaveBeenCalled();
+          done();
+        }
       });
+      scope.$digest();
     });
   });
 });
