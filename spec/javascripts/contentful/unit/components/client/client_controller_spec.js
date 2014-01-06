@@ -711,13 +711,17 @@ describe('Client Controller', function () {
 
     describe('if lookup succeeds', function () {
       beforeEach(function () {
-        jasmine.Clock.useMock();
+        jasmine.clock().install();
         thenStub.callsArg(0);
         scope.user = {
           sys: {}
         };
         scope.spaces = [{}];
         scope.initClient();
+      });
+
+      afterEach(function () {
+        jasmine.clock().uninstall();
       });
 
       it('tracks login', function () {
@@ -737,7 +741,7 @@ describe('Client Controller', function () {
         beforeEach(inject(function ($rootScope) {
           broadcastStub = sinon.stub($rootScope, '$broadcast');
           revisionCatchStub.callsArgWith(0, 'APP_REVISION_CHANGED');
-          jasmine.Clock.tick(5000);
+          jasmine.clock().tick(5000);
         }));
 
         afterEach(function () {
@@ -761,7 +765,7 @@ describe('Client Controller', function () {
           catchStub.callsArg(0);
           broadcastStub = sinon.stub($rootScope, '$broadcast');
           revisionCatchStub.callsArgWith(0, 'APP_REVISION_CHANGED');
-          jasmine.Clock.tick(50*60*1000);
+          jasmine.clock().tick(50*60*1000);
         }));
 
         afterEach(function () {
