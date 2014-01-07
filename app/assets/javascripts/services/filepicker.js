@@ -22,12 +22,12 @@ angular.module('contentful').factory('filepicker', function ($window, environmen
       $window.filepicker = d;
 
       d.setKey(environment.settings.filepicker.api_key);
-
-      var settings = {
-        policy: environment.settings.filepicker.policy,
-        signature: environment.settings.filepicker.signature
-      };
     }
+
+    var settings = {
+      policy: environment.settings.filepicker.policy,
+      signature: environment.settings.filepicker.signature
+    };
 
     return {
       makeDropPane: function (dropPane, options) {

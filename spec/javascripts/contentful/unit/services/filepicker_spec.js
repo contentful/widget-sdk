@@ -51,10 +51,9 @@ describe('Filepicker service', function () {
     });
 
     afterEach(function () {
-      inject(function ($log, $window) {
+      inject(function ($log) {
         makeDropPaneStub.restore();
         pickStub.restore();
-        delete $window.filepicker;
         $log.assertEmpty();
       });
     });
