@@ -1,6 +1,6 @@
 'use strict';
 
-describe('ContentType FieldList Controller', function () {
+describe('ContentTypeFieldList Controller', function () {
   var controller, scope;
   beforeEach(function () {
     module('contentful/test', function ($provide) {
