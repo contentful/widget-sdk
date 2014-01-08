@@ -3,15 +3,7 @@
 describe('ContentTypeFieldList Controller', function () {
   var controller, scope;
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
-      $provide.value('validation', {
-        Validation: {
-          perType: {
-            text: [{}]
-          }
-        }
-      });
-    });
+    module('contentful/test');
     inject(function ($compile, $rootScope, $controller){
       scope = $rootScope.$new();
       controller = $controller('ContentTypeFieldListCtrl', {$scope: scope});
