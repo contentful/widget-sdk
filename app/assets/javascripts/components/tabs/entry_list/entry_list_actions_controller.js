@@ -63,7 +63,7 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
     forAllEntries(function(entry) {
       entry[params.method](function(err, entry){
         if(!err && params.event) $scope.broadcastFromSpace(params.event, entry);
-        applyLater();
+        applyLater(err);
       });
     });
     clearSelection();
@@ -126,7 +126,6 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
       method: 'unarchive',
       callback: makeBatchResultsNotifier('unarchived')
     });
-
   };
 
   $scope.showDuplicate = function () {
