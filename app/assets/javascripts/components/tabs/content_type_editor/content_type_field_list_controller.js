@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('contentful').controller('ContentTypeFieldListCtrl', function($scope, analytics, validation, $q, random, sentry) {
+
   $scope.$watchCollection('contentType.data.fields', function (fields, old, scope) {
     if (hasUIIDs(fields)) {
       scope.fieldList = fields;
@@ -59,7 +60,7 @@ angular.module('contentful').controller('ContentTypeFieldListCtrl', function($sc
     }
   };
 
-  $scope.fieldClicked =function (field) {
+  $scope.fieldClicked = function (field) {
     if (!$scope.isFieldOpen(field)) $scope.openField(field);
   };
 
@@ -92,28 +93,24 @@ angular.module('contentful').controller('ContentTypeFieldListCtrl', function($sc
       var idIsPublished = _.contains($scope.publishedIds, field.id);
       return idIsPublished && (idIsUnique(field) || (typeMatchesPublished(field) && typeIsUnique(field)));
     }
-
-    function typeMatchesPublished(field) {
-      var publishedField = _.find($scope.publishedContentType.data.fields, {id: field.id});
-      return angular.equals($scope.fieldTypeParams(field), $scope.fieldTypeParams(publishedField));
-    }
-
-    function idIsUnique(field) {
-      return _.countBy($scope.fieldList, 'id')[field.id] < 2;
-    }
-
-    function typeIsUnique(field) {
-      var fieldType = $scope.fieldTypeParams(field);
-      return _.every($scope.fieldList, function isDifferent(other) {
-        if (field === other) return true; // always equal to self but that doesn't count so treat it as different
-        return other.id !== field.id || !angular.equals(fieldType, $scope.fieldTypeParams(other));
-      });
-    }
   };
 
-  $scope.hasValidations = function (field) {
-    return !_.isEmpty(validation.Validation.perType[field.type]);
-  };
+  function idIsUnique(field) {
+    return _.countBy($scope.fieldList, 'id')[field.id] < 2;
+  }
+
+  function typeMatchesPublished(field) {
+    var publishedField = _.find($scope.publishedContentType.data.fields, {id: field.id});
+    return angular.equals($scope.fieldTypeParams(field), $scope.fieldTypeParams(publishedField));
+  }
+
+  function typeIsUnique(field) {
+    var fieldType = $scope.fieldTypeParams(field);
+    return _.every($scope.fieldList, function isDifferent(other) {
+      if (field === other) return true; // always equal to self but that doesn't count so treat it as different
+      return other.id !== field.id || !angular.equals(fieldType, $scope.fieldTypeParams(other));
+    });
+  }
 
   $scope.setDisplayField = function (field) {
     $scope.otDoc.at(['displayField']).set(field.id, function (err) {
@@ -131,7 +128,7 @@ angular.module('contentful').controller('ContentTypeFieldListCtrl', function($sc
     });
   };
 
-  $scope.$watch('validationResult.errors', function (errors, old, scope) {
+  $scope.$watch('validationResult.errors', function activateErroredDisabledFields(errors, old, scope) {
     _.each(errors, function (error) {
       if (error.path[0] === 'fields' && angular.isDefined(error.path[1])) {
         var field = scope.contentType.data.fields[error.path[1]];
