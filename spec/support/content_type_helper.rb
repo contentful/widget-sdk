@@ -4,6 +4,7 @@ module ContentTypeHelper
     find(".type[data-type-name='#{type}']").click
 
     find_field 'fieldName'
+    sleep 0.3
     fill_in 'fieldName', with: name
     fill_in 'fieldId'  , with: options[:id] if options[:id]
     find('.toggle-localized').click if options[:localized]

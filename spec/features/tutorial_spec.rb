@@ -57,8 +57,11 @@ feature 'Tutorial', js: true, sauce: true do
     end
 
     add_field('Body', 'Text')
+    wait_for_sharejs
     add_field('Timestamp', 'Date/Time')
+    wait_for_sharejs
     add_field('Image', 'Asset')
+    wait_for_sharejs
 
     wait_for_sharejs
     find('.publish').click
@@ -102,12 +105,14 @@ feature 'Tutorial', js: true, sauce: true do
     set_asset('.asset-editor')
     click_button 'Publish'
 
+    find('#entryOpenTab')
     find('.tab[data-view-type="entry-editor"]').click
 
     find('.next-button').click
     find('.next-button').click
     click_button 'Publish'
 
+    find '#entryList'
     nav_bar 'entry-list'
 
     click_button 'Yes, please!'
