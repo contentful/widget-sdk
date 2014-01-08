@@ -14,5 +14,6 @@ module GatekeeperHelper
     http.verify_mode = OpenSSL::SSL::VERIFY_NONE
     request = Net::HTTP::Get.new(uri.request_uri)
     http.request(request)
+    clear_access_token
   end
 end

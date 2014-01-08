@@ -132,10 +132,13 @@ module FeatureHelper
   # end
 
   def add_button(text)
-    tabs = all('.tab-content', visible: false).length
+    oldtabs = page.evaluate_script('$(".tab-content").length')
     find('.add-dropdown-button .dropdown-toggle').click
     first('.add-dropdown-button li[ng-click]', text: text).click
-    expect(page).to have_selector('.tab-content', count: tabs + 1, visible: false)
+    eventually(delay: 0.1) do
+      newtabs = page.evaluate_script('$(".tab-content").length')
+      expect(newtabs).to eql(oldtabs+1), "Failed to add #{text} tab"
+    end
   end
 
   def nav_bar(target)
