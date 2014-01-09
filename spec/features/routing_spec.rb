@@ -28,7 +28,7 @@ feature 'Routing', js: true, sauce: true do
     end
   end
   
-  scenario 'Opening pages through internal links', non_ci: true do
+  scenario 'Opening pages through internal links' do
     nav_bar 'space-settings'
     tab_iframe do
       click_link 'Users'
