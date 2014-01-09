@@ -11,9 +11,14 @@ angular.module('contentful').directive('cfObjectEditor', function(){
       });
       ngModel.$parsers.push(function (string) {
         try {
-          var json = JSON.parse(string);
-          ngModel.$setValidity('json', true);
-          return json;
+          if (string.match(/^\s*$/g)) {
+            ngModel.$setValidity('json', true);
+            return undefined;
+          } else {
+            var json = JSON.parse(string);
+            ngModel.$setValidity('json', true);
+            return json;
+          }
         } catch (e) {
           ngModel.$setValidity('json', false);
           return undefined;
