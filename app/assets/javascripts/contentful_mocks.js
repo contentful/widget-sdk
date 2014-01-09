@@ -244,3 +244,12 @@ mocks.provider('cfCanStubs', function ($provide) {
 
   this.$get = function () {};
 });
+
+mocks.config(function ($provide) {
+  $provide.stubDirectives = function () {
+    _.flatten(arguments).forEach(function (directive) {
+      var fullName = directive + 'Directive';
+      $provide.factory(fullName, function () { return {}; });
+    });
+  };
+});
