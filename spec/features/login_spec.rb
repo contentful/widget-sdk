@@ -25,6 +25,7 @@ feature 'Registration', js: true, sauce: true do
     visit "#{be_host}/profile/user_cancellation/new"
     click_button 'Cancel Account'
     expect(page).to have_text("We're sorry to see you go.")
+    clear_access_token
   end
 
   scenario 'I want to be able to register' do
@@ -50,6 +51,10 @@ feature "Account cancellation", js:true, sauce: true do
     fill_in 'user_coupon_code', with: 'bootstrap' if first('#user_coupon_code')
     click_button 'Sign Up'
     find('.client')
+  end
+
+  after do
+    clear_access_token
   end
 
   scenario 'After deleting my account I want to see the goodbye page' do

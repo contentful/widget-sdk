@@ -4,8 +4,8 @@ module EnvHelper
     def app_host      ; 'https://app.quirely.com'          ; end
     def be_host       ; 'https://be.quirely.com'           ; end
     def marketing_host; 'https://www.quirely.com'          ; end
-    def user          ; 'jan@contentful.com'               ; end
-    def password      ; 'upeW3Kz9KkcBrd'                   ; end
+    def user          ; 'user@example.com'                 ; end
+    def password      ; 'password'                         ; end
     def test_space    ; "TestSpace#{@@number}"             ; end
     def token_file    ; "tmp/spec_token_sauce_#{@@number}" ; end
   else
