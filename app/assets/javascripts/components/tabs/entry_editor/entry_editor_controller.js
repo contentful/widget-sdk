@@ -90,7 +90,6 @@ angular.module('contentful')
         });
         locales = _.union(locales, errorLocales);
         var uniqLocales = _.uniq(locales, function(locale){return locale.code;});
-        locales = uniqLocales;
         if(locales.length !== uniqLocales.length){
           sentry.captureError('Locales have been duplicated', {
             data: {
@@ -100,15 +99,8 @@ angular.module('contentful')
             }
           });
         }
+        locales = uniqLocales;
         var updatedField = inherit(field, locales);
-        if(!updatedField){
-          sentry.captureError('Failed to update field', {
-            data: {
-              field: field,
-              locales: locales
-            }
-          });
-        }
         acc.push(updatedField);
       }
       return acc;

@@ -20,23 +20,23 @@ feature 'Location Editor', js: true, sauce: true do
     edit_field 'locationField' do
       # Add by click
       page.execute_script("google.maps.event.trigger($('.gmaps-container').scope()._getMap(), 'click', {latLng: new google.maps.LatLng(51, 9)})")
-      page.should have_selector(:xpath, "//img[contains(@src, 'spotlight')]")
-      find('.lat').value.should == '51'
-      find('.lon').value.should == '9'
+      expect(page).to have_selector(:xpath, "//img[contains(@src, 'spotlight')]")
+      expect(find('.lat').value).to eq('51')
+      expect(find('.lon').value).to eq('9')
       # Search
       find('input[type="search"]').set('Berlin')
       find('li.selected').click
-      find('.lat').value[0..4].should == '52.52'
-      find('.lon').value[0..4].should == '13.40'
+      expect(find('.lat').value[0..4]).to eq('52.52')
+      expect(find('.lon').value[0..4]).to eq('13.40')
       # Remove
       find('.remove-location').click
-      find('.lat').value.should be_blank
-      find('.lon').value.should be_blank
-      page.should_not have_selector(:xpath, "//img[contains(@src, 'spotlight')]")
+      expect(find('.lat').value).to be_blank
+      expect(find('.lon').value).to be_blank
+      expect(page).to_not have_selector(:xpath, "//img[contains(@src, 'spotlight')]")
       # Add by entering
       find('.lat').set '50'
       find('.lon').set '8'
-      page.should have_selector(:xpath, "//img[contains(@src, 'spotlight')]")
+      expect(page).to have_selector(:xpath, "//img[contains(@src, 'spotlight')]")
     end
     wait_for_sharejs
     click_button 'Publish'

@@ -1,5 +1,5 @@
 module EnvHelper
-  if ENV['USE_SAUCE']
+  if ENV['USE_SAUCE'] || ENV['USE_QUIRELY']
     @@number = ENV['TEST_ENV_NUMBER']
     def app_host      ; 'https://app.quirely.com'          ; end
     def be_host       ; 'https://be.quirely.com'           ; end

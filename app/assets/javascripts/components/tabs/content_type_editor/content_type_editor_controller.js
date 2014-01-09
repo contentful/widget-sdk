@@ -14,6 +14,15 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
   $scope.tab.closingMessage = 'You have unpublished changes.';
   $scope.tab.closingMessageDisplayType = 'tooltip';
 
+  function loadPublishedContentType() {
+    // TODO replace with lookup in registry inside spaceContext
+    $scope.contentType.getPublishedStatus(function(err, publishedContentType) {
+      $scope.$apply(function(scope) {
+        scope.publishedContentType = publishedContentType;
+      });
+    });
+  }
+
   $scope.$watch('contentType', function(contentType){
     if (contentType) loadPublishedContentType();
   });
@@ -55,15 +64,6 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
         $scope.can('publish', $scope.contentType.data);
     }
   });
-
-  function loadPublishedContentType() {
-    // TODO replace with lookup in registry inside spaceContext
-    $scope.contentType.getPublishedStatus(function(err, publishedContentType) {
-      $scope.$apply(function(scope) {
-        scope.publishedContentType = publishedContentType;
-      });
-    });
-  }
 
   var firstValidate = $scope.$on('otBecameEditable', function (event) {
     var scope = event.currentScope;

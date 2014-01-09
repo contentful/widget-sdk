@@ -3,8 +3,9 @@
 angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     $scope, $rootScope, client, SpaceContext, authentication, notification, analytics,
     routing, authorization, tutorial, modalDialog, presence, $location,
-    revision, ReloadNotification) {
+    revision, ReloadNotification, $controller, $window) {
 
+  $controller('TrialWatchController', {$scope: $scope});
   $scope.spaces = null;
   $scope.spaceContext = new SpaceContext();
 
@@ -26,64 +27,6 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   };
 
   $scope.user = null;
-
-  function upgradeAction(){
-    $scope.goToProfile('subscription');
-  }
-
-  function timeTpl(str, timePeriod) {
-    return str.
-      replace(/%length/, timePeriod.length).
-      replace(/%unit/, timePeriod.unit);
-  }
-
-  function trialWatcher() {
-    var user = $scope.user;
-    var space = $scope.spaceContext.space;
-    if(!user || !space) return;
-    var hours = null;
-    var timePeriod, message, tooltipMessage, action, actionMessage;
-    var isSpaceOwner = space.isOwner(user);
-    var subscription = space.data.subscription;
-
-    if(subscription.state == 'trial'){
-      hours = moment(subscription.trialPeriodEndsAt).diff(moment(), 'hours');
-      if(hours/24 <= 1){
-        timePeriod = {length: hours, unit: 'hours'};
-      } else {
-        timePeriod = {length: Math.floor(hours/24), unit: 'days'};
-      }
-      message = timeTpl('<strong>%length</strong> %unit left in trial', timePeriod);
-      tooltipMessage = timeTpl('This Space is in trial mode and you can test all features for '+
-                       '%length more %unit. Enter your billing information to activate your subscription.', timePeriod);
-
-    } else if(subscription.state == 'active' &&
-              !subscription.subscriptionPlan.paid &&
-              subscription.subscriptionPlan.kind == 'default'){
-      message = 'Limited trial version';
-      tooltipMessage = 'This Space is on our limited trial plan. Upgrade your subscription to get access to all features.';
-    }
-
-
-    if(message || tooltipMessage || action && actionMessage){
-      if(isSpaceOwner){
-        actionMessage = 'Upgrade';
-        action = upgradeAction;
-      }
-
-      $rootScope.$broadcast('persistentNotification', {
-        message: message,
-        tooltipMessage: tooltipMessage,
-        action: action,
-        actionMessage: actionMessage
-      });
-    } else {
-      $rootScope.$broadcast('persistentNotification', null);
-    }
-  }
-
-  $scope.$watch('user', trialWatcher);
-  $scope.$watch('spaceContext.space', trialWatcher);
 
   function newVersionCheck() {
     revision.hasNewVersion().catch(function (err) {
@@ -107,11 +50,11 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
       space: scope.spaceContext.space,
       tokenLookup: authentication.tokenLookup
     };
-  }, function (c) {
-    if (c.tokenLookup){
-      authorization.setTokenLookup(c.tokenLookup);
-      if (c.space && authorization.authContext && authorization.authContext.hasSpace(c.space.getId()))
-        authorization.setSpace(c.space);
+  }, function (collection) {
+    if (collection.tokenLookup){
+      authorization.setTokenLookup(collection.tokenLookup);
+      if (collection.space && authorization.authContext && authorization.authContext.hasSpace(collection.space.getId()))
+        authorization.setSpace(collection.space);
     }
   });
 
@@ -145,13 +88,11 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   $scope.$on('$routeChangeSuccess', function (event, route) {
     if ($scope.spaces === null) return;
 
-
     if (route.params.spaceId != $scope.getCurrentSpaceId()) {
       var space = _.find($scope.spaces, function (space) {
         return space.getId() == route.params.spaceId;
       });
       if (space) setSpace(space);
-      // TODO Else fehlermeldung und route für aktuellen Space wieder herstellen
     }
   });
 
@@ -161,7 +102,9 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
 
     if (spaces === old) return; // $watch init
     if (routeSpaceId) {
-      newSpace = _.find(spaces, function (space) { return space.getId() == routeSpaceId; });
+      newSpace = _.find(spaces, function (space) {
+        return space.getId() == routeSpaceId;
+      });
       if (!newSpace) {
         if (old === null) notification.error('Space does not exist or is unaccessable');
         newSpace = spaces[0];
@@ -177,6 +120,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
       setSpace();
       return;
     }
+
     if (newSpace != scope.spaceContext.space) {
       // we need to change something
       if (routeSpaceId != newSpace.getId()) { // trigger switch by chaning location
@@ -193,7 +137,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   };
 
   $scope.openSupport = function() {
-    window.open(authentication.supportUrl());
+    $window.open(authentication.supportUrl());
   };
 
   $scope.$on('iframeMessage', function (event, data) {

@@ -63,7 +63,7 @@ angular.module('contentful').controller('AssetListActionsCtrl', function AssetLi
     forAllAssets(function(asset) {
       asset[params.method](function(err, asset){
         if(!err && params.event) $scope.broadcastFromSpace(params.event, asset);
-        applyLater();
+        applyLater(err);
       });
     });
     clearSelection();

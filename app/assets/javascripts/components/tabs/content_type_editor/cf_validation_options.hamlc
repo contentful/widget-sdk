@@ -1,8 +1,10 @@
-.dropdown-btn.validation-type-select
+.dropdown-btn.validation-type-select(ng-hide="availableValidations | isEmpty")
   %button.flat-button.dropdown-toggle
     %i.ss-dropdown.button-icon-right
     {{validationName(validation)}}
   .dropdown-menu.type-menu(select-validation="changeType(type)")
+.validation-type-select(ng-show="availableValidations | isEmpty")
+  %button.flat-button(disabled) {{validationName(validation)}}
 .validation-controls(ng-switch="validationType(validation)")
   %div(ng-switch-when="size")
     %input(type="number" ng-model="validation.size.min" placeholder="Minimum size" ng-change="updateDoc()" ng-disabled="!otEditable")

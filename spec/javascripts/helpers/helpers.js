@@ -13,9 +13,16 @@ window.specPerformance = window.specPerformance || {
 
 
 beforeEach(function() {
-  this.addMatchers({
-    toLookEqual: function (other) {
-      return angular.equals(this.actual, other);
+  jasmine.addMatchers({
+    toLookEqual: function() {
+      return {
+        compare: function (actual, expected) {
+          return {
+            pass: angular.equals(actual, expected),
+            message: 'Expected ' + actual + ' to look equal to ' + expected
+          };
+        }
+      };
     }
   });
   if(window.specPerformance){

@@ -5,7 +5,7 @@ gem 'json', '>= 1.7.7' # Explicit version requirement because security
 gem "haml"
 
 group :assets do
-  gem 'haml_coffee_assets'
+  gem 'haml_coffee_assets', '~> 1.13.0'
   gem 'execjs'
   gem 'sass-rails',   '~> 3.2.6'
   gem 'coffee-rails', '~> 3.2.1'
@@ -31,13 +31,13 @@ end
 group :development, :test do
   gem "guard-livereload"
   gem 'rb-fsevent', '~> 0.9.1', :require => false
-  gem "jasmine", :git => 'git://github.com/janv/jasmine-gem.git', :branch => 'patch-1'
+  gem "jasmine"
   gem 'sauce'
   gem 'sauce-connect'
 end
 
 group :test do
-  gem 'rspec-rails'
+  gem 'rspec', '3.0.0.beta1'
   gem 'selenium-webdriver'
   gem 'capybara'
 end

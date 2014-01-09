@@ -1,11 +1,15 @@
 # HTML Client App
 
-##Get it running:
+## Environments
 
-1. Start private_content_api at `http://localhost:3000` (the default) with -d flag
-2. Seed the server
-3. git submodule update --init
-4. Start rails with `rails -s -p3001` and visit `http://localhost:3001`
+### Integration
+The environment running on the integration server (for Capybara testing). Like Staging
+
+### Acceptance
+For running Capybara tests?
+
+### Test
+For locally running unit tests
 
 ##Running tests
 
@@ -15,8 +19,11 @@ Located under `spec/javascripts/contentful/`
 
 On the main project directory:
 
-1. On one terminal run the server `bundle exec rake jasmine JASMINE_PORT=8112`
-2. Then `./run_js_unit_tests.sh`
+1. On one terminal run the server `bundle exec rake jasmine`
+2. Open browser at localhost:8889
+
+You might want to use `RAILS_ENV=test bundle exec rake jasmine` to use
+localhost as the asset host instead of static.joistio.com.
 
 ### Acceptance tests
 
@@ -25,3 +32,10 @@ Located under `spec/features`
 On the main project directory:
 
 1. `bundle exec rspec spec/features`
+
+Possible ENV VARS:
+
+- `USE_QUIRELY=true` to run against the integration server
+  instead of localhost
+- `USE_SAUCE=true` to use sauce labs instead of local firefox.
+  Implies `USE_QUIRELY`

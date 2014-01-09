@@ -1,10 +1,8 @@
 # This file is copied to spec/ when you run 'rails generate rspec:install'
 ENV["RAILS_ENV"] ||= 'test'
 require File.expand_path("../../config/environment", __FILE__)
-require 'rspec/rails'
 require 'rspec/autorun'
 require "sauce_helper"
-#require 'capybara/rails'
 require 'capybara/rspec'
 
 Capybara::Node::Element.class_eval do
@@ -14,6 +12,21 @@ Capybara::Node::Element.class_eval do
       top = y - (native.size.height / 2)
       driver.browser.action.move_to(native).move_by(right.to_i, top.to_i).click.perform
     end
+  end
+end
+
+# Fix for reset! that removes the assertion because it fails when using Sauce Labs
+# See https://github.com/jnicklas/capybara/issues/1198
+Capybara::Session.class_eval do
+  def reset!
+    if @touched
+      driver.reset!
+      @touched = false
+      #assert_no_selector :xpath, "/html/body/*"
+    end
+    raise @server.error if Capybara.raise_server_errors and @server and @server.error
+  ensure
+    @server.reset_error! if @server
   end
 end
 
@@ -37,8 +50,9 @@ end
 Dir[Rails.root.join("spec/support/**/*.rb")].each {|f| require f}
 
 RSpec.configure do |config|
-  config.infer_base_class_for_anonymous_controllers = false
-  config.order = "random"
+  config.order = :random
+  # needed for saucelabs, see https://github.com/saucelabs/sauce_ruby/issues/178:
+  config.expose_current_running_example_as :example # remove when solved
   config.include EnvHelper
   config.include FeatureHelper
   config.before(:each) do

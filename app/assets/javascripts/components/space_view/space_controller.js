@@ -1,15 +1,18 @@
 'use strict';
 
-angular.module('contentful').controller('SpaceCtrl', function SpaceCtrl($scope, $rootScope, analytics, routing, notification, authorization, reasonsDenied, enforcements, authentication) {
+angular.module('contentful').controller('SpaceCtrl',
+  function SpaceCtrl($scope, $rootScope, analytics, routing, notification, authorization, reasonsDenied, enforcements, authentication) {
+
   $scope.$watch(function (scope) {
     if (scope.spaceContext && scope.spaceContext.space) {
-      return _.map(scope.spaceContext.space.getPublishLocales(),function (locale) {
+      return _.map(scope.spaceContext.space.getPublishLocales(), function (locale) {
         return locale.code;
       });
     }
   }, function (codes, old, scope) {
     if (codes) scope.spaceContext.refreshLocales();
   }, true);
+
   $scope.$watch('spaceContext.localeStates', 'spaceContext.refreshActiveLocales()', true);
   $scope.$watch('spaceContext', function(space, o, scope) {
     scope.spaceContext.refreshContentTypes();

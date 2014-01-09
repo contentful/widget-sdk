@@ -4,6 +4,7 @@ module ContentTypeHelper
     find(".type[data-type-name='#{type}']").click
 
     find_field 'fieldName'
+    sleep 0.3
     fill_in 'fieldName', with: name
     fill_in 'fieldId'  , with: options[:id] if options[:id]
     find('.toggle-localized').click if options[:localized]
@@ -48,7 +49,7 @@ module ContentTypeHelper
     find('.dropdown-toggle', text:'Validation').click
     find('.dropdown-menu li', text: name).click
     
-    page.should have_selector('.cf-validation-options', minimum: 1)
+    expect(page).to have_selector('.cf-validation-options', minimum: 1)
     validation = all('.cf-validation-options').last
     within validation do
       yield if block_given?

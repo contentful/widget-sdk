@@ -22,7 +22,7 @@ feature 'Api Key Editor', js: true, sauce: true do
     find('button.save').click
     expect_success 'saved successfully'
     newtoken = find('input.access-token').value
-    newtoken.should_not eql(token)
+    expect(newtoken).to_not eql(token)
   end
 
 end

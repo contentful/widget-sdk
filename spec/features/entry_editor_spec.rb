@@ -28,14 +28,14 @@ feature 'Entry Editor', js: true, sauce: true do
     click_button 'Unarchive'
     expect_success 'unarchived successfully'
 
-    page.should have_selector('.tab-title', count: 1)
+    expect(page).to have_selector('.tab-title', count: 1)
     find('.tab-actions .dropdown-toggle').click
     find('li.duplicate').click
-    page.should have_selector('.tab-title', count: 2)
+    expect(page).to have_selector('.tab-title', count: 2)
     find('.tab-actions .dropdown-toggle').click
     find('li.delete').click
     find('li.delete-confirm').click
-    page.should have_selector('.tab-title', count: 1)
+    expect(page).to have_selector('.tab-title', count: 1)
     expect_success 'deleted successfully'
   end
 
@@ -59,20 +59,20 @@ feature 'Entry Editor', js: true, sauce: true do
 
     add_button 'Entry with Text'
     wait_for_sharejs
-    page.should have_selector('.form-field[data-field-id=textField] textarea')
-    page.should have_selector('.form-field[data-field-id=localizedField] .locale[data-locale="en-US"] textarea')
+    expect(page).to have_selector('.form-field[data-field-id=textField] textarea')
+    expect(page).to have_selector('.form-field[data-field-id=localizedField] .locale[data-locale="en-US"] textarea')
 
     find('.editor-top-right .dropdown-toggle').click
     find('label', text: 'German').click
-    page.should have_selector('.form-field[data-field-id=textField] textarea')
-    page.should have_selector('.form-field[data-field-id=localizedField] .locale[data-locale="en-US"] textarea')
-    page.should have_selector('.form-field[data-field-id=localizedField] .locale[data-locale="de-DE"] textarea')
+    expect(page).to have_selector('.form-field[data-field-id=textField] textarea')
+    expect(page).to have_selector('.form-field[data-field-id=localizedField] .locale[data-locale="en-US"] textarea')
+    expect(page).to have_selector('.form-field[data-field-id=localizedField] .locale[data-locale="de-DE"] textarea')
 
     find('label', text: 'disabled').click
-    page.should have_selector('.form-field[data-field-id=textField] textarea')
-    page.should have_selector('.form-field[data-field-id=localizedField] .locale[data-locale="en-US"] textarea')
-    page.should have_selector('.form-field[data-field-id=localizedField] .locale[data-locale="de-DE"] textarea')
-    page.should have_selector('.form-field[data-field-id=disabledField] textarea')
+    expect(page).to have_selector('.form-field[data-field-id=textField] textarea')
+    expect(page).to have_selector('.form-field[data-field-id=localizedField] .locale[data-locale="en-US"] textarea')
+    expect(page).to have_selector('.form-field[data-field-id=localizedField] .locale[data-locale="de-DE"] textarea')
+    expect(page).to have_selector('.form-field[data-field-id=disabledField] textarea')
   end
 
   # The different editing widgets should be tested separately

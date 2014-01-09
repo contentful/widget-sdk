@@ -47,14 +47,12 @@ describe('Asset editor controller', function () {
     });
   });
 
-  it('handles a fileUploaded event from CfFileEditor controller', function () {
-    this.async(function (done) {
-      childScope.$apply(function () {
-        childScope.file = fileObj;
-        _.defer(function () {
-          expect(processStub.called).toBe(true);
-          done();
-        });
+  it('handles a fileUploaded event from CfFileEditor controller', function (done) {
+    childScope.$apply(function () {
+      childScope.file = fileObj;
+      _.defer(function () {
+        expect(processStub.called).toBe(true);
+        done();
       });
     });
   });

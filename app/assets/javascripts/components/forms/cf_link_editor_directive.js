@@ -5,6 +5,7 @@ angular.module('contentful').directive('cfLinkEditor', function(mimetype){
     restrict: 'A',
     require: 'ngModel',
     template: JST['cf_link_editor'],
+    controller: 'cfLinkEditorCtrl',
     link: function(scope, elem, attrs, ngModelCtrl) {
 
       ngModelCtrl.$render = function () {
@@ -81,8 +82,7 @@ angular.module('contentful').directive('cfLinkEditor', function(mimetype){
           }
         });
       }
-    },
-    controller: 'cfLinkEditorCtrl'
+    }
   };
 });
 

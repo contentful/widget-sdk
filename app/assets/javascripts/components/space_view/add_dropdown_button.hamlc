@@ -2,7 +2,7 @@
   %a.add.button.dropdown-toggle(tabindex="0")
     %i.ss-plus
   .dropdown-menu.fixed-position.left-aligned
-    %ul
+    %ul.main-types
       %li.add-content-type.bottom-separator(ng-click="createContentType()" dropdown-close="" cf-can="create, ContentType")
         %i.ss-database
         Content Type

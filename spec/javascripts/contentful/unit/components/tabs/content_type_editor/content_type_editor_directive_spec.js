@@ -5,53 +5,40 @@ describe('The ContentType editor directive', function () {
   var container, scope;
   var compileElement;
   var canStub, reasonsStub;
-  var contentTypeData;
+
+  function noop() { return {}; }
 
   beforeEach(function () {
     canStub = sinon.stub();
     reasonsStub = sinon.stub();
+
     module('contentful/test', function ($provide, cfCanStubsProvider) {
       $provide.value('ShareJS', {
         connection: {},
         peek: sinon.stub(),
         mkpath: sinon.stub()
       });
+      $provide.factory('otDocForDirective', noop);
+      $provide.factory('otDocPresenceDirective', noop);
+      $provide.factory('otSubdocDirective', noop);
+      $provide.factory('otBindTextDirective', noop);
+      $provide.factory('otPathDirective', noop);
+      $provide.factory('saveStatusDirective', noop);
+      $provide.factory('contentTypeFieldListDirective', noop);
       cfCanStubsProvider.setup(reasonsStub);
     });
-    inject(function ($rootScope, $compile) {
+
+    function ControllerMock(){}
+    ControllerMock.prototype.canPublish = sinon.stub();
+
+    inject(function ($rootScope, $compile, contentTypeEditorDirective) {
+      contentTypeEditorDirective[0].controller = ControllerMock;
       scope = $rootScope.$new();
-      contentTypeData = {};
 
       scope.can = canStub;
-      scope.tab = {
-        params: {
-          contentType: {
-            data: contentTypeData,
-            isPublished: sinon.stub(),
-            canUnpublish: sinon.stub(),
-            canDelete: sinon.stub(),
-            getPublishedStatus: sinon.stub(),
-            getPublishedVersion: sinon.stub()
-          }
-        }
-      };
-      scope.spaceContext = {
-        space: {
-          getId: sinon.stub()
-        }
-      };
-      scope.validate = sinon.stub();
-      scope.publishButtonLabel = sinon.stub();
-      scope.otDoc = {
-        at: sinon.stub(),
-        getAt: sinon.stub(),
-        removeListener: sinon.stub(),
-        on: sinon.stub(),
-        close: sinon.stub()
-      };
 
       compileElement = function () {
-        container = $('<div class="content-type-editor" ot-doc-for="tab.params.contentType"></div>');
+        container = $('<div class="content-type-editor"></div>');
         $compile(container)(scope);
         scope.$digest();
       };
@@ -76,20 +63,55 @@ describe('The ContentType editor directive', function () {
     expect(container.find('.add-field-button').attr('disabled')).toBeUndefined();
   });
 
-  describe('sets the otDisabled flag', function () {
-    it('to disabled', function () {
-      canStub.withArgs('update', contentTypeData).returns(true);
+  it('textarea is enabled', function () {
+    scope.otEditable = true;
+    compileElement();
+    expect(container.find('.form-field').eq(1).find('textarea').attr('disabled')).toBeFalsy();
+  });
+
+  it('textarea is enabled', function () {
+    scope.otEditable = false;
+    compileElement();
+    expect(container.find('.form-field').eq(1).find('textarea').attr('disabled')).toBeTruthy();
+  });
+
+  describe('if fields exist', function () {
+    beforeEach(function () {
+      scope.hasFields = true;
       compileElement();
-      expect(scope.otDisabled).toBe(false);
     });
 
-    it('to enabled', function () {
-      canStub.withArgs('update', contentTypeData).returns(false);
-      compileElement();
-      expect(scope.otDisabled).toBe(true);
+    it('field list is shown', function () {
+      expect(container.find('.content-type-field-list').hasClass('ng-hide')).toBeFalsy();
+    });
+
+    it('advice is not shown', function () {
+      expect(container.find('.advice').hasClass('ng-hide')).toBeTruthy();
+    });
+
+    it('fields dropdown is shown', function () {
+      expect(container.find('.form-controls > .dropdown-btn').hasClass('ng-hide')).toBeFalsy();
     });
   });
 
+  describe('if no fields exist', function () {
+    beforeEach(function () {
+      scope.hasFields = false;
+      compileElement();
+    });
+
+    it('field list is not shown', function () {
+      expect(container.find('.content-type-field-list').hasClass('ng-hide')).toBeTruthy();
+    });
+
+    it('advice is shown', function () {
+      expect(container.find('.advice').hasClass('ng-hide')).toBeFalsy();
+    });
+
+    it('fields dropdown is not shown', function () {
+      expect(container.find('.form-controls > .dropdown-btn').hasClass('ng-hide')).toBeTruthy();
+    });
+  });
 
 
 });

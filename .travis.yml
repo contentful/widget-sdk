@@ -7,9 +7,12 @@ before_install:
   - "npm install"
   - "popd"
 before_script:
-  - "rake jasmine JASMINE_PORT=8112 &"
-  - "sleep 15"
-script: "./run_js_unit_tests.sh"
+  - "npm install -g travis-notify-geckoboard"
+after_script: >
+  if [ $TRAVIS_BRANCH == 'master' ]; then
+    travis-notify-geckoboard -a ed5192f6255498bc3fe120e1fd5f1983 -w 49147-989e9c70-495c-0131-abd5-22000a9e0b33
+  fi
+script: "bundle exec rake jasmine:ci"
 notifications:
   flowdock: 726d6d512b8f3964f885df79c88387fa
 cache:

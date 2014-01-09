@@ -41,8 +41,8 @@ feature 'Working with locales', js: true, sauce: true, non_ci: true do
     add_button 'Test Content Type'
     wait_for_sharejs
     find('.editor-top-right .dropdown-toggle').click
-    find('.editor-top-right .dropdown-menu').should_not have_text('French')
+    expect(find('.editor-top-right .dropdown-menu')).to_not have_text('French')
     find('label', text: 'German').click
-    page.should have_selector('div[data-locale="de-DE"]')
+    expect(page).to have_selector('div[data-locale="de-DE"]')
   end
 end
