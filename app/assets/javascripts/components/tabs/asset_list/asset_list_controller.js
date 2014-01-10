@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  controller('AssetListCtrl',function AssetListCtrl($scope, $q, Paginator, Selection, PromisedLoader, mimetype, analytics) {
+  controller('AssetListCtrl',function AssetListCtrl($scope, $q, Paginator, Selection, PromisedLoader, mimetype, analytics, sentry) {
 
   var assetLoader = new PromisedLoader();
 
@@ -24,8 +24,19 @@ angular.module('contentful').
     if (term === null) return;
     $scope.tab.params.list = 'all';
     $scope.paginator.page = 0;
-    $scope.resetAssets();
   });
+
+  $scope.$watch(function pageParameters(scope){
+    return {
+      searchTerm: scope.searchTerm,
+      page: scope.paginator.page,
+      pageLength: scope.paginator.pageLength,
+      list: scope.tab.params.list,
+      spaceId: (scope.spaceContext.space && scope.spaceContext.space.getId())
+    };
+  }, function(pageParameters, old, scope){
+    scope.resetAssets();
+  }, true);
 
   $scope.switchList = function(list){
     $scope.searchTerm = null;
@@ -66,18 +77,6 @@ angular.module('contentful').
         return true;
     }
   };
-
-  // TODO doesn't this make some of the resetAssets calls unnecessary?
-  $scope.$watch(function pageParameters(scope){
-    return {
-      page: scope.paginator.page,
-      pageLength: scope.paginator.pageLength,
-      list: scope.tab.params.list,
-      spaceId: (scope.spaceContext.space && scope.spaceContext.space.getId())
-    };
-  }, function(pageParameters, old, scope){
-    scope.resetAssets();
-  }, true);
 
   $scope.resetAssets = function() {
     return assetLoader.load($scope.spaceContext.space, 'getAssets', buildQuery()).
@@ -138,7 +137,7 @@ angular.module('contentful').
       }
       $scope.paginator.numEntries = assets.total;
       $scope.assets.push.apply($scope.assets, assets);
-      $scope.selection.setBaseSize($scope.entries.length);
+      $scope.selection.setBaseSize($scope.assets.length);
     }, function () {
       $scope.paginator.page--;
     });
