@@ -2,6 +2,7 @@
 
 angular.module('contentful').controller('EntryListCtrl',
   function EntryListCtrl($scope, Paginator, Selection, analytics, PromisedLoader, sentry) {
+
   var entryLoader = new PromisedLoader();
 
   $scope.entrySection = 'all';
@@ -22,8 +23,20 @@ angular.module('contentful').controller('EntryListCtrl',
     $scope.tab.params.list = 'all';
     $scope.tab.params.contentTypeId = null;
     $scope.paginator.page = 0;
-    $scope.resetEntries();
   });
+
+  $scope.$watch(function pageParameters(scope){
+    return {
+      searchTerm: scope.searchTerm,
+      page: scope.paginator.page,
+      pageLength: scope.paginator.pageLength,
+      list: scope.tab.params.list,
+      contentTypeId: scope.tab.params.contentTypeId,
+      spaceId: (scope.spaceContext.space && scope.spaceContext.space.getId())
+    };
+  }, function(pageParameters, old, scope){
+    scope.resetEntries();
+  }, true);
 
   $scope.switchList = function(list, contentType){
     $scope.searchTerm = null;
@@ -59,19 +72,6 @@ angular.module('contentful').controller('EntryListCtrl',
         return true;
     }
   };
-
-  // TODO doesn't this make some of the resetEntries calls unnecessary?
-  $scope.$watch(function pageParameters(scope){
-    return {
-      page: scope.paginator.page,
-      pageLength: scope.paginator.pageLength,
-      list: scope.tab.params.list,
-      contentTypeId: scope.tab.params.contentTypeId,
-      spaceId: (scope.spaceContext.space && scope.spaceContext.space.getId())
-    };
-  }, function(pageParameters, old, scope){
-    scope.resetEntries();
-  }, true);
 
   $scope.resetEntries = function() {
     return entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
