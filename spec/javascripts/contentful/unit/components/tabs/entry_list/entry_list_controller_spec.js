@@ -109,9 +109,15 @@ describe('Entry List Controller', function () {
     });
 
     it('search term', function () {
+      scope.tab.params.list = 'all';
+      scope.tab.params.contentTypeId = null;
+      scope.paginator.page = 0;
+      scope.$digest();
+      resetStub.restore();
+      resetStub = sinon.stub(scope, 'resetEntries');
       scope.searchTerm = 'thing';
       scope.$digest();
-      expect(resetStub.called).toBeTruthy();
+      expect(resetStub.calledOnce).toBeTruthy();
     });
 
     it('page', function () {
