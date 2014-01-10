@@ -5,11 +5,9 @@ describe('The ContentTypeFieldList directive', function () {
   var container, scope;
   var compileElement;
 
-  function noop() { return {}; }
-
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      $provide.factory('cfFieldSettingsDirective', noop);
+      $provide.stubDirectives('cfFieldSettings');
     });
 
     function ControllerMock(){}

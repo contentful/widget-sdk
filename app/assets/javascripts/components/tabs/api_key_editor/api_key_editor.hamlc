@@ -59,14 +59,14 @@
 .tab-actions
   .button-set
     %button.default-button.danger-button.delete-confirm(type="button"
-                   cf-click-outside="deleteConfirm=false"
+                   cf-click-outside="deactivateDeleteConfirm()"
                    cf-click-outside-ignore=".delete"
                    ng-show="deleteConfirm"
                    ng-click="delete()"
                    tooltip="Click anywhere else to dismiss") Are you sure?
     %button.default-button.delete(type="button"
                    tooltip="Permanently delete this API key"
-                   ng-click="deleteConfirm=true"
+                   ng-click="activateDeleteConfirm()"
                    cf-can-no-disable=""
                    cf-can="create, ApiKey"
                    ng-show="apiKey.getId() && !deleteConfirm")

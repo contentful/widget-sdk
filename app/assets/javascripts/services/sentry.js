@@ -29,6 +29,7 @@ function ($injector , $window, environment, stringifySafe) {
 
   function createOptions() {
     var url = getUrl();
+    var user = $injector.get('authentication').getUser();
     var options = {
       'culprit': url,
       logger: 'user_interface',
@@ -37,7 +38,7 @@ function ($injector , $window, environment, stringifySafe) {
 
     options = _(options);
     options.merge({tags: {
-      userId: $injector.get('authentication').getUser().sys.id,
+      userId: user && user.sys.id,
       git_revision: environment.settings.git_revision,
       viewport: ''+$window.innerWidth+'x'+$window.innerHeight,
       screensize: ''+$window.screen.width+'x'+$window.screen.height

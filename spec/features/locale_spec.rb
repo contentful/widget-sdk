@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Working with locales', js: true, sauce: true, non_ci: true do
+feature 'Working with locales', js: true, sauce: true do
   include ContentTypeHelper
   include EditorHelper
 

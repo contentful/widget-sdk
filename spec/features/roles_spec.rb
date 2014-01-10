@@ -3,6 +3,14 @@ require 'spec_helper'
 feature 'Roles', js:true, sauce: true, order: :defined do
   include GatekeeperHelper
 
+  before :all do
+    clear_access_token
+  end
+
+  after :all do
+    clear_access_token
+  end
+
   scenario 'Reset system' do
     reset_system
   end

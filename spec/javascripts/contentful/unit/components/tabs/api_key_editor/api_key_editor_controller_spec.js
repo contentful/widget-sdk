@@ -183,4 +183,17 @@ describe('API key editor controller', function () {
     });
   });
 
+  describe('toggles deleteConfirm', function() {
+    it('to true', function() {
+      scope.activateDeleteConfirm();
+      expect(scope.deleteConfirm).toBeTruthy();
+    });
+
+    it('to false', function() {
+      scope.deleteConfirm = true;
+      scope.deactivateDeleteConfirm();
+      expect(scope.deleteConfirm).toBeFalsy();
+    });
+  });
+
 });

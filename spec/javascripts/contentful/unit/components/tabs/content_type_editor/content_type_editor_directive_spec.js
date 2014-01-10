@@ -6,8 +6,6 @@ describe('The ContentType editor directive', function () {
   var compileElement;
   var canStub, reasonsStub;
 
-  function noop() { return {}; }
-
   beforeEach(function () {
     canStub = sinon.stub();
     reasonsStub = sinon.stub();
@@ -18,13 +16,7 @@ describe('The ContentType editor directive', function () {
         peek: sinon.stub(),
         mkpath: sinon.stub()
       });
-      $provide.factory('otDocForDirective', noop);
-      $provide.factory('otDocPresenceDirective', noop);
-      $provide.factory('otSubdocDirective', noop);
-      $provide.factory('otBindTextDirective', noop);
-      $provide.factory('otPathDirective', noop);
-      $provide.factory('saveStatusDirective', noop);
-      $provide.factory('contentTypeFieldListDirective', noop);
+      $provide.stubDirectives('otDocFor', 'otDocPresence', 'otSubdoc', 'otBindText', 'otPath', 'saveStatus', 'contentTypeFieldList');
       cfCanStubsProvider.setup(reasonsStub);
     });
 
