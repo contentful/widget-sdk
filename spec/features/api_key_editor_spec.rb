@@ -25,4 +25,15 @@ feature 'Api Key Editor', js: true, sauce: true do
     expect(newtoken).to_not eql(token)
   end
 
+  scenario "Deleting an API Key" do
+    add_button 'API Key'
+    find('input[ng-model="apiKey.data.name"]').set 'Foobar'
+    find('button.save').click
+    expect_success 'saved successfully'
+
+    click_button 'Delete'
+    click_button 'Are you sure?'
+    expect_success 'deleted successfully'
+  end
+
 end
