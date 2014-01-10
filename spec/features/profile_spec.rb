@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Working with profile', js: true, sauce: true do
+feature 'Working with profile', js: true do
   before do
     ensure_login
     remove_test_space

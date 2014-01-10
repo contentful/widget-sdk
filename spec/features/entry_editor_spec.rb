@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Entry Editor', js: true, sauce: true do
+feature 'Entry Editor', js: true do
   include ContentTypeHelper
   include EditorHelper
 

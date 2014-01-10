@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Roles', js:true, sauce: true, order: :defined do
+feature 'Roles', js:true, order: :defined do
   include GatekeeperHelper
 
   before :all do

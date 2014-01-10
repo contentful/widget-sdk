@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Purchase flow', js: true, sauce: true do
+feature 'Purchase flow', js: true do
   include GatekeeperHelper
 
   describe "Resettable State",  order: :defined do

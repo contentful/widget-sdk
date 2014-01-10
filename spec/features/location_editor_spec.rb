@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Location Editor', js: true, sauce: true do
+feature 'Location Editor', js: true do
   include ContentTypeHelper
   include EditorHelper
 

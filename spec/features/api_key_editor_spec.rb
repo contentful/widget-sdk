@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Api Key Editor', js: true, sauce: true do
+feature 'Api Key Editor', js: true do
   before do
     ensure_login
     remove_test_space

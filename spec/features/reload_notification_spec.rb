@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Reload Notification', js: true, sauce: true do
+feature 'Reload Notification', js: true do
   before do
     ensure_login
   end

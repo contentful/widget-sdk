@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Link Editor', js: true, sauce: true do
+feature 'Link Editor', js: true do
   include ContentTypeHelper
   include EditorHelper
 

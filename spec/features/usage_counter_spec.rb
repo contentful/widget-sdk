@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Usage Tracking', js: true, sauce: true do
+feature 'Usage Tracking', js: true do
   include ContentTypeHelper
 
   before do
