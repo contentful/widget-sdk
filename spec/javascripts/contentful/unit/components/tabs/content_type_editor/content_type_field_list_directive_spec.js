@@ -7,7 +7,7 @@ describe('The ContentTypeFieldList directive', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      $provide.stubDirectives('cfFieldSettings');
+      $provide.removeDirectives('cfFieldSettings');
     });
 
     function ControllerMock(){}

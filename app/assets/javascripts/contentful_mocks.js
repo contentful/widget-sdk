@@ -246,10 +246,22 @@ mocks.provider('cfCanStubs', function ($provide) {
 });
 
 mocks.config(function ($provide) {
-  $provide.stubDirectives = function () {
+  $provide.stubDirective = function (name, definition) {
+    $provide.factory(name + 'Directive', function () {
+      return [_.extend({
+        name: name,
+        restrict: 'A',
+        priority: 0,
+      }, definition)];
+    });
+  };
+
+  $provide.removeDirectives = function () {
     _.flatten(arguments).forEach(function (directive) {
       var fullName = directive + 'Directive';
-      $provide.factory(fullName, function () { return {}; });
+      $provide.factory(fullName, function () {
+        return [];
+      });
     });
   };
 });

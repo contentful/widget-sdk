@@ -23,7 +23,7 @@ describe('The Space view directive', function () {
           }
         }
       });
-      $provide.stubDirectives('otDocFor', 'otDocPresence', 'entryEditor', 'apiKeyEditor', 'entryList');
+      $provide.removeDirectives('otDocFor', 'otDocPresence', 'entryEditor', 'apiKeyEditor', 'entryList');
     });
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();

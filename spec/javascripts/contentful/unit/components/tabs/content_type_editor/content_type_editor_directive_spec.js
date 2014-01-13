@@ -16,7 +16,7 @@ describe('The ContentType editor directive', function () {
         peek: sinon.stub(),
         mkpath: sinon.stub()
       });
-      $provide.stubDirectives('otDocFor', 'otDocPresence', 'otSubdoc', 'otBindText', 'otPath', 'saveStatus', 'contentTypeFieldList');
+      $provide.removeDirectives('otDocFor', 'otDocPresence', 'otSubdoc', 'otBindText', 'otPath', 'saveStatus', 'contentTypeFieldList');
       cfCanStubsProvider.setup(reasonsStub);
     });
 

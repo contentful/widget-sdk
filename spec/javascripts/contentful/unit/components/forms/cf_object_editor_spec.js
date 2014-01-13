@@ -5,7 +5,7 @@ describe('cfObjectEditor', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      $provide.stubDirectives('otBindModel');
+      $provide.removeDirectives('otBindModel');
     });
 
     inject(function ($rootScope, $compile) {
