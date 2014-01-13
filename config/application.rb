@@ -50,7 +50,7 @@ module Contentful
 
     # Enable escaping HTML in JSON.
     config.active_support.escape_html_entities_in_json = true
-    config.threadsafe!
+    #config.threadsafe!
 
     config.eager_load_paths = config.eager_load_paths.reject{|p| p =~ /app\/assets/}
 
