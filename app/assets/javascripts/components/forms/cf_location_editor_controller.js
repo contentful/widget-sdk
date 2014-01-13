@@ -2,6 +2,7 @@
 'use strict';
 
 angular.module('contentful').controller('cfLocationEditorCtrl', function ($scope, cfSpinner) {
+
   $scope.$watch('location', function(loc, old, scope) {
     //console.log('location changed', loc);
     scope.locationValid = scope.locationIsValid(loc);
@@ -56,7 +57,7 @@ angular.module('contentful').controller('cfLocationEditorCtrl', function ($scope
   }
 
   $scope.$watch('results', function (results, old, scope) {
-    scope.selectedResult = results ? results[0] : null;
+    scope.selectedResult = results && results[0] ? results[0] : null;
   });
 
   $scope.$on('autocompleteResultSelected', function (event, index, result) {
