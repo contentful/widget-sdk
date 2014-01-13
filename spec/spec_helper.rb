@@ -35,7 +35,7 @@ end
 Capybara.run_server = false
 
 if ENV['USE_QUIRELY']
-  Capybara.app_host = 'https:/app.quirely.com'
+  Capybara.app_host = 'https://app.quirely.com'
   Capybara.default_wait_time = 30
 else
   Capybara.app_host = 'http://app.joistio.com:8888'
