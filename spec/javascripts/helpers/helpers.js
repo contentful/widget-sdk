@@ -78,7 +78,26 @@ beforeEach(function() {
           };
         }
       };
-    }
+    },
+
+    toHaveTagName: function () {
+      return {
+        compare: function (actual, expected) {
+          var pass, tag;
+          if(actual.tagName){
+            tag = actual.tagName.toLowerCase();
+          } else if(actual.get && actual.get(0) && actual.get(0).tagName){
+            tag = actual.get(0).tagName.toLowerCase();
+          }
+          pass = tag && tag === expected;
+          var notText = pass ? 'not ' : '';
+          return {
+            pass: pass,
+            message: 'Expected element with tag '+tag+' '+notText+'to have tag name '+expected
+          };
+        }
+      };
+    },
 
   });
 
