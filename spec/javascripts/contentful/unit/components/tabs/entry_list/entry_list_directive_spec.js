@@ -102,11 +102,11 @@ describe('The Entry list directive', function () {
     });
 
     it('first element is active', function() {
-      expect(list.find('li').eq(0).hasClass('active')).toBeTruthy();
+      expect(list.find('li').eq(0)).toHaveClass('active');
     });
 
     it('second element is inactive', function() {
-      expect(list.find('li').eq(1).hasClass('active')).toBeFalsy();
+      expect(list.find('li').eq(1)).not.toHaveClass('active');
     });
   });
 

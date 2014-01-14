@@ -360,11 +360,11 @@ describe('cfLocationEditor Directive', function () {
     });
 
     it('first element is selected', function() {
-      expect(element.find('.results li').eq(0).hasClass('selected')).toBeTruthy();
+      expect(element.find('.results li').eq(0)).toHaveClass('selected');
     });
 
     it('second element is not selected', function() {
-      expect(element.find('.results li').eq(1).hasClass('selected')).toBeFalsy();
+      expect(element.find('.results li').eq(1)).not.toHaveClass('selected');
     });
   });
 

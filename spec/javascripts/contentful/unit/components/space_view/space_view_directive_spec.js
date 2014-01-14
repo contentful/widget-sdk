@@ -126,11 +126,11 @@ describe('The Space view directive', function () {
       });
 
       it('defines section class', function () {
-        expect(container.find(selector).hasClass('section')).toBeTruthy();
+        expect(container.find(selector)).toHaveClass('section');
       });
 
       it('defines section-index class', function () {
-        expect(container.find(selector).hasClass('section-index')).toBeTruthy();
+        expect(container.find(selector)).toHaveClass('section-index');
       });
     });
   }
@@ -156,7 +156,7 @@ describe('The Space view directive', function () {
     scope.hideTabBar = sinon.stub();
     scope.hideTabBar.returns(true);
     compileElement();
-    expect(container.find('.tab-list').hasClass('hidden')).toBeTruthy();
+    expect(container.find('.tab-list')).toHaveClass('hidden');
   });
 
   describe('rendering tab lists', function () {
@@ -183,27 +183,27 @@ describe('The Space view directive', function () {
     });
 
     it('first tab is active', function () {
-      expect(container.find('.tab-list li.tab').eq(0).hasClass('active')).toBeTruthy();
+      expect(container.find('.tab-list li.tab').eq(0)).toHaveClass('active');
     });
 
     it('second tab is inactive', function () {
-      expect(container.find('.tab-list li.tab').eq(1).hasClass('active')).toBeFalsy();
+      expect(container.find('.tab-list li.tab').eq(1)).not.toHaveClass('active');
     });
 
     it('third tab is inactive', function () {
-      expect(container.find('.tab-list li.tab').eq(2).hasClass('active')).toBeFalsy();
+      expect(container.find('.tab-list li.tab').eq(2)).not.toHaveClass('active');
     });
 
     it('first tab is dirty', function () {
-      expect(container.find('.tab-list li.tab').eq(0).hasClass('dirty')).toBeTruthy();
+      expect(container.find('.tab-list li.tab').eq(0)).toHaveClass('dirty');
     });
 
     it('second tab is dirty', function () {
-      expect(container.find('.tab-list li.tab').eq(1).hasClass('dirty')).toBeTruthy();
+      expect(container.find('.tab-list li.tab').eq(1)).toHaveClass('dirty');
     });
 
     it('third tab is not dirty', function () {
-      expect(container.find('.tab-list li.tab').eq(2).hasClass('dirty')).toBeFalsy();
+      expect(container.find('.tab-list li.tab').eq(2)).not.toHaveClass('dirty');
     });
 
     it('first tab is shown', function () {

@@ -172,7 +172,7 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('first entry is selected', function () {
-        expect(element.find('.cell-content-type').eq(1).parent().hasClass('selected')).toBeTruthy();
+        expect(element.find('.cell-content-type').eq(1).parent()).toHaveClass('selected');
       });
 
       it('gets published type for first entry', function () {
@@ -396,7 +396,7 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('first asset is selected', function () {
-        expect(element.find('.cell-preview').eq(1).parent().hasClass('selected')).toBeTruthy();
+        expect(element.find('.cell-preview').eq(1).parent()).toHaveClass('selected');
       });
 
       it('cf-thumbnail is not shown for first asset', function () {
@@ -518,15 +518,15 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('has asset-link class on list', function () {
-        expect(element.find('.links').hasClass('asset-link')).toBeTruthy();
+        expect(element.find('.links')).toHaveClass('asset-link');
       });
 
       it('has asset-link class on list items', function () {
-        expect(element.find('.links li').hasClass('asset-link')).toBeTruthy();
+        expect(element.find('.links li')).toHaveClass('asset-link');
       });
 
       it('has drag-file class on drag handle', function () {
-        expect(element.find('.drag-handle').hasClass('drag-file')).toBeTruthy();
+        expect(element.find('.drag-handle')).toHaveClass('drag-file');
       });
 
       it('drag-file is shown because there is multiple links', function () {

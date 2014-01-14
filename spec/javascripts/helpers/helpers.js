@@ -27,6 +27,19 @@ beforeEach(function() {
       };
     },
 
+    toHaveClass: function () {
+      return {
+        compare: function (actual, expected) {
+          var pass = actual.hasClass(expected);
+          var notText = pass ? 'not ' : '';
+          return {
+            pass: pass,
+            message: 'Expected element ' + notText + 'to have class '+expected
+          };
+        }
+      };
+    },
+
     toBeNgHidden: function () {
       return {
         compare: function (actual) {
