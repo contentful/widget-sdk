@@ -66,18 +66,18 @@ describe('The ContentTypeFieldList directive', function () {
 
   it('first field is not hidden', function () {
     compileElement();
-    expect(container.find('.cf-field-settings').eq(0).hasClass('ng-hide')).toBeFalsy();
+    expect(container.find('.cf-field-settings').eq(0)).not.toBeNgHidden();
   });
 
   it('second field is hidden', function () {
     compileElement();
-    expect(container.find('.cf-field-settings').eq(1).hasClass('ng-hide')).toBeTruthy();
+    expect(container.find('.cf-field-settings').eq(1)).toBeNgHidden();
   });
 
   it('if preference setting is active second field is not hidden', function () {
     scope.preferences.showDisabledFields = true;
     compileElement();
-    expect(container.find('.cf-field-settings').eq(1).hasClass('ng-hide')).toBeFalsy();
+    expect(container.find('.cf-field-settings').eq(1)).not.toBeNgHidden();
   });
 
 });

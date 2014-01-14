@@ -146,15 +146,15 @@ describe('cfLinkEditor Directive', function () {
     });
 
     it('does not show links list', function () {
-      expect(element.find('.links').hasClass('ng-hide')).toBeTruthy();
+      expect(element.find('.links')).toBeNgHidden();
     });
 
     it('shows cf-link-editor-search', function () {
-      expect(element.find('.cf-link-editor-search .controls').hasClass('ng-hide')).toBeFalsy();
+      expect(element.find('.cf-link-editor-search .controls')).not.toBeNgHidden();
     });
 
     it('results are not shown', function () {
-      expect(element.find('.results').hasClass('ng-hide')).toBeTruthy();
+      expect(element.find('.results')).toBeNgHidden();
     });
 
     describe('if search results exist', function () {
@@ -205,7 +205,7 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('shows cf-link-editor-search', function () {
-        expect(element.find('.cf-link-editor-search .controls').hasClass('ng-hide')).toBeFalsy();
+        expect(element.find('.cf-link-editor-search .controls')).not.toBeNgHidden();
       });
     });
 
@@ -255,7 +255,7 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('drag-file is hidden because there is only one link', function () {
-        expect(element.find('.drag-handle').hasClass('ng-hide')).toBeTruthy();
+        expect(element.find('.drag-handle')).toBeNgHidden();
       });
     });
 
@@ -276,15 +276,15 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('shows links list', function () {
-        expect(element.find('.links').hasClass('ng-hide')).toBeFalsy();
+        expect(element.find('.links')).not.toBeNgHidden();
       });
 
       it('does not show cf-link-editor-search', function () {
-        expect(element.find('.cf-link-editor-search .controls').hasClass('ng-hide')).toBeTruthy();
+        expect(element.find('.cf-link-editor-search .controls')).toBeNgHidden();
       });
 
       it('drag-file is shown because there is multiple links', function () {
-        expect(element.find('.drag-handle').hasClass('ng-hide')).toBeFalsy();
+        expect(element.find('.drag-handle')).not.toBeNgHidden();
       });
 
       it('cf-file-info is not shown', function () {
@@ -296,27 +296,27 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('link with description is shown for 1st entity', function () {
-        expect(element.find('.entry-info a').eq(0).hasClass('ng-hide')).toBeFalsy();
+        expect(element.find('.entry-info a').eq(0)).not.toBeNgHidden();
       });
 
       it('link with description is shown for 2nd entity', function () {
-        expect(element.find('.entry-info a').eq(1).hasClass('ng-hide')).toBeFalsy();
+        expect(element.find('.entry-info a').eq(1)).not.toBeNgHidden();
       });
 
       it('link with description is not shown for 3rd entity', function () {
-        expect(element.find('.entry-info a').eq(2).hasClass('ng-hide')).toBeTruthy();
+        expect(element.find('.entry-info a').eq(2)).toBeNgHidden();
       });
 
       it('span with description is not shown for 1st entity', function () {
-        expect(element.find('.entry-info span').eq(0).hasClass('ng-hide')).toBeTruthy();
+        expect(element.find('.entry-info span').eq(0)).toBeNgHidden();
       });
 
       it('span with description is not shown for 2nd entity', function () {
-        expect(element.find('.entry-info span').eq(1).hasClass('ng-hide')).toBeTruthy();
+        expect(element.find('.entry-info span').eq(1)).toBeNgHidden();
       });
 
       it('span with description is shown for 3rd entity', function () {
-        expect(element.find('.entry-info span').eq(2).hasClass('ng-hide')).toBeFalsy();
+        expect(element.find('.entry-info span').eq(2)).not.toBeNgHidden();
       });
 
       it('description method is called for first entity', function () {
@@ -332,15 +332,15 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('first entity has no unpublished marker', function () {
-        expect(element.find('.entry-info .unpublished').eq(0).hasClass('ng-hide')).toBeTruthy();
+        expect(element.find('.entry-info .unpublished').eq(0)).toBeNgHidden();
       });
 
       it('second entity has unpublished marker', function () {
-        expect(element.find('.entry-info .unpublished').eq(1).hasClass('ng-hide')).toBeFalsy();
+        expect(element.find('.entry-info .unpublished').eq(1)).not.toBeNgHidden();
       });
 
       it('third entity has no unpublished marker', function () {
-        expect(element.find('.entry-info .unpublished').eq(2).hasClass('ng-hide')).toBeTruthy();
+        expect(element.find('.entry-info .unpublished').eq(2)).toBeNgHidden();
       });
 
     });
@@ -365,15 +365,15 @@ describe('cfLinkEditor Directive', function () {
     });
 
     it('does not show links list', function () {
-      expect(element.find('.links').hasClass('ng-hide')).toBeTruthy();
+      expect(element.find('.links')).toBeNgHidden();
     });
 
     it('shows cf-link-editor-search', function () {
-      expect(element.find('.cf-link-editor-search .controls').hasClass('ng-hide')).toBeFalsy();
+      expect(element.find('.cf-link-editor-search .controls')).not.toBeNgHidden();
     });
 
     it('results are not shown', function () {
-      expect(element.find('.results').hasClass('ng-hide')).toBeTruthy();
+      expect(element.find('.results')).toBeNgHidden();
     });
 
     describe('if search results exist', function () {
@@ -400,19 +400,19 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('cf-thumbnail is not shown for first asset', function () {
-        expect(element.find('[cf-thumbnail]').eq(1).hasClass('ng-hide')).toBeTruthy();
+        expect(element.find('[cf-thumbnail]').eq(1)).toBeNgHidden();
       });
 
       it('cf-thumbnail is shown for second asset', function () {
-        expect(element.find('[cf-thumbnail]').eq(2).hasClass('ng-hide')).toBeFalsy();
+        expect(element.find('[cf-thumbnail]').eq(2)).not.toBeNgHidden();
       });
 
       it('file type is not shown for first asset', function () {
-        expect(element.find('.cell-type p').eq(1).hasClass('ng-hide')).toBeTruthy();
+        expect(element.find('.cell-type p').eq(1)).toBeNgHidden();
       });
 
       it('file type is shown for second asset', function () {
-        expect(element.find('.cell-type p').eq(2).hasClass('ng-hide')).toBeFalsy();
+        expect(element.find('.cell-type p').eq(2)).not.toBeNgHidden();
       });
 
       it('localizedField is called for first asset file', function () {
@@ -449,7 +449,7 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('shows cf-link-editor-search', function () {
-        expect(element.find('.cf-link-editor-search .controls').hasClass('ng-hide')).toBeFalsy();
+        expect(element.find('.cf-link-editor-search .controls')).not.toBeNgHidden();
       });
     });
 
@@ -495,7 +495,7 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('drag-file is hidden because there is only one link', function () {
-        expect(element.find('.drag-handle').hasClass('ng-hide')).toBeTruthy();
+        expect(element.find('.drag-handle')).toBeNgHidden();
       });
     });
 
@@ -510,11 +510,11 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('shows links list', function () {
-        expect(element.find('.links').hasClass('ng-hide')).toBeFalsy();
+        expect(element.find('.links')).not.toBeNgHidden();
       });
 
       it('does not show cf-link-editor-search', function () {
-        expect(element.find('.cf-link-editor-search .controls').hasClass('ng-hide')).toBeTruthy();
+        expect(element.find('.cf-link-editor-search .controls')).toBeNgHidden();
       });
 
       it('has asset-link class on list', function () {
@@ -530,7 +530,7 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('drag-file is shown because there is multiple links', function () {
-        expect(element.find('.drag-handle').hasClass('ng-hide')).toBeFalsy();
+        expect(element.find('.drag-handle')).not.toBeNgHidden();
       });
 
       it('cf-file-info is shown', function () {

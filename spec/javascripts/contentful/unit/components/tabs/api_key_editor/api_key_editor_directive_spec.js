@@ -68,7 +68,7 @@ describe('apiKeyEditor Directive', function () {
     });
 
     it('does not show the regenerate form field', function () {
-      expect(regenerateCheckbox.hasClass('ng-hide')).toBeTruthy();
+      expect(regenerateCheckbox).toBeNgHidden();
     });
   });
 
@@ -84,7 +84,7 @@ describe('apiKeyEditor Directive', function () {
     });
 
     it('shows the regenerate form field', function () {
-      expect(regenerateCheckbox.hasClass('ng-hide')).toBeFalsy();
+      expect(regenerateCheckbox).not.toBeNgHidden();
     });
   });
 
@@ -118,11 +118,11 @@ describe('apiKeyEditor Directive', function () {
       });
 
       it('delete button is shown', function() {
-        expect(element.find('button.delete').hasClass('ng-hide')).toBeFalsy();
+        expect(element.find('button.delete')).not.toBeNgHidden();
       });
 
       it('confirm delete button is not shown', function() {
-        expect(element.find('button.delete-confirm').hasClass('ng-hide')).toBeTruthy();
+        expect(element.find('button.delete-confirm')).toBeNgHidden();
       });
     });
 
@@ -134,11 +134,11 @@ describe('apiKeyEditor Directive', function () {
       });
 
       it('delete button is shown', function() {
-        expect(element.find('button.delete').hasClass('ng-hide')).toBeTruthy();
+        expect(element.find('button.delete')).toBeNgHidden();
       });
 
       it('confirm delete button is not shown', function() {
-        expect(element.find('button.delete-confirm').hasClass('ng-hide')).toBeFalsy();
+        expect(element.find('button.delete-confirm')).not.toBeNgHidden();
       });
     });
 
@@ -152,11 +152,11 @@ describe('apiKeyEditor Directive', function () {
       });
 
       it('delete button is shown', function() {
-        expect(element.find('button.delete').hasClass('ng-hide')).toBeFalsy();
+        expect(element.find('button.delete')).not.toBeNgHidden();
       });
 
       it('confirm delete button is not shown', function() {
-        expect(element.find('button.delete-confirm').hasClass('ng-hide')).toBeTruthy();
+        expect(element.find('button.delete-confirm')).toBeNgHidden();
       });
     });
 

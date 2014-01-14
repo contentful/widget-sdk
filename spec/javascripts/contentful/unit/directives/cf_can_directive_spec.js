@@ -47,7 +47,7 @@ describe('The can directive', function () {
     });
 
     it('has no hide class', function () {
-      expect(elem.hasClass('ng-hide')).toBeFalsy();
+      expect(elem).not.toBeNgHidden();
     });
 
     it('is not deactivated', function () {
@@ -67,7 +67,7 @@ describe('The can directive', function () {
     });
 
     it('has a hide class', function () {
-      expect(elem.hasClass('ng-hide')).toBeTruthy();
+      expect(elem).toBeNgHidden();
     });
 
     it('sets a flag on the scope', function () {
@@ -97,7 +97,7 @@ describe('The can directive', function () {
     });
 
     it('has no hide class', function () {
-      expect(elem.hasClass('ng-hide')).toBeFalsy();
+      expect(elem).not.toBeNgHidden();
     });
 
     it('is deactivated', function () {
@@ -144,7 +144,7 @@ describe('The can directive', function () {
     });
 
     it('has no hide class', function () {
-      expect(elem.hasClass('ng-hide')).toBeTruthy();
+      expect(elem).toBeNgHidden();
     });
 
     it('is deactivated', function () {
@@ -176,7 +176,7 @@ describe('The can directive', function () {
     });
 
     it('has no hide class', function () {
-      expect(elem.hasClass('ng-hide')).toBeFalsy();
+      expect(elem).not.toBeNgHidden();
     });
 
     it('is deactivated', function () {
@@ -212,7 +212,7 @@ describe('The can directive', function () {
     });
 
     it('has no hide class', function () {
-      expect(elem.hasClass('ng-hide')).toBeTruthy();
+      expect(elem).toBeNgHidden();
     });
 
     it('is not deactivated', function () {
@@ -232,7 +232,7 @@ describe('The can directive', function () {
     });
 
     it('has no hide class', function () {
-      expect(elem.hasClass('ng-hide')).toBeFalsy();
+      expect(elem).not.toBeNgHidden();
     });
 
     it('is not deactivated', function () {
@@ -291,7 +291,7 @@ describe('The can directive', function () {
     });
 
     it('has no hide class', function () {
-      expect(elem.hasClass('ng-hide')).toBeFalsy();
+      expect(elem).not.toBeNgHidden();
     });
 
     describe('permissions change but no space context change', function () {
@@ -301,7 +301,7 @@ describe('The can directive', function () {
       });
 
       it('has no hide class', function () {
-        expect(elem.hasClass('ng-hide')).toBeFalsy();
+        expect(elem).not.toBeNgHidden();
       });
     });
 
@@ -316,7 +316,7 @@ describe('The can directive', function () {
       }));
 
       it('has no hide class', function () {
-        expect(elem.hasClass('ng-hide')).toBeTruthy();
+        expect(elem).toBeNgHidden();
       });
     });
 

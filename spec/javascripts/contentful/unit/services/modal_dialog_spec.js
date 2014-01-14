@@ -69,7 +69,7 @@ describe('Modal dialog service', function () {
       });
 
       it('do not show cancel', function () {
-        expect(dialog.domElement.find('.cancel').hasClass('ng-hide')).toBeTruthy();
+        expect(dialog.domElement.find('.cancel')).toBeNgHidden();
       });
     });
 

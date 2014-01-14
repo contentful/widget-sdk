@@ -284,14 +284,14 @@ describe('cfLocationEditor Directive', function () {
     compileElement();
     scope.locationValid = false;
     scope.$digest();
-    expect(element.find('.invalid-location-warning').hasClass('ng-hide')).toBeFalsy();
+    expect(element.find('.invalid-location-warning')).not.toBeNgHidden();
   });
 
   it('does not show corrupt location warning', function () {
     compileElement();
     scope.locationValid = true;
     scope.$digest();
-    expect(element.find('.invalid-location-warning').hasClass('ng-hide')).toBeTruthy();
+    expect(element.find('.invalid-location-warning')).toBeNgHidden();
   });
 
   describe('if otEditable is not initiated', function() {
@@ -302,7 +302,7 @@ describe('cfLocationEditor Directive', function () {
     });
 
     it('search is not shown', function () {
-      expect(element.find('.search').hasClass('ng-hide')).toBeTruthy();
+      expect(element.find('.search')).toBeNgHidden();
     });
 
     it('latitude input is disabled', function () {
@@ -315,7 +315,7 @@ describe('cfLocationEditor Directive', function () {
 
 
     it('remove button is not shown', function () {
-      expect(element.find('.remove-location').hasClass('ng-hide')).toBeTruthy();
+      expect(element.find('.remove-location')).toBeNgHidden();
     });
   });
 
@@ -327,7 +327,7 @@ describe('cfLocationEditor Directive', function () {
     });
 
     it('search is shown', function () {
-      expect(element.find('.search').hasClass('ng-hide')).toBeFalsy();
+      expect(element.find('.search')).not.toBeNgHidden();
     });
 
     it('latitude input is enabled', function () {
@@ -339,7 +339,7 @@ describe('cfLocationEditor Directive', function () {
     });
 
     it('remove button is shown', function () {
-      expect(element.find('.remove-location').hasClass('ng-hide')).toBeFalsy();
+      expect(element.find('.remove-location')).not.toBeNgHidden();
     });
   });
 

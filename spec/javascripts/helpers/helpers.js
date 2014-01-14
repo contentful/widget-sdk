@@ -13,7 +13,9 @@ window.specPerformance = window.specPerformance || {
 
 
 beforeEach(function() {
+
   jasmine.addMatchers({
+
     toLookEqual: function() {
       return {
         compare: function (actual, expected) {
@@ -23,8 +25,23 @@ beforeEach(function() {
           };
         }
       };
+    },
+
+    toBeNgHidden: function () {
+      return {
+        compare: function (actual) {
+          var pass = actual.hasClass('ng-hide');
+          var notText = pass ? 'not ' : '';
+          return {
+            pass: pass,
+            message: 'Expected element ' + notText + 'to be ng-hidden'
+          };
+        }
+      };
     }
+
   });
+
   if(window.specPerformance){
     this.performanceStart = performance.now();
   }

@@ -22,13 +22,13 @@ describe('cfPersistentNotification Directive', function () {
       message: 'some message'
     });
     scope.$apply();
-    expect(element.find('p').hasClass('ng-hide')).toBe(false);
+    expect(element.find('p')).not.toBeNgHidden();
   });
 
   it('should not show message', function () {
     $rootScope.$broadcast('persistentNotification');
     scope.$apply();
-    expect(element.find('p').hasClass('ng-hide')).toBe(true);
+    expect(element.find('p')).toBeNgHidden();
   });
 
   it('should show action message', function () {
@@ -36,13 +36,13 @@ describe('cfPersistentNotification Directive', function () {
       actionMessage: 'some message'
     });
     scope.$apply();
-    expect(element.find('button').hasClass('ng-hide')).toBe(false);
+    expect(element.find('button')).not.toBeNgHidden();
   });
 
   it('should not show action message', function () {
     $rootScope.$broadcast('persistentNotification');
     scope.$apply();
-    expect(element.find('button').hasClass('ng-hide')).toBe(true);
+    expect(element.find('button')).toBeNgHidden();
   });
 
   it('should have tooltip', function () {

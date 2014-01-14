@@ -48,13 +48,13 @@ describe('The Entry list directive', function () {
     it(button+' button not shown', function () {
       canStub.withArgs(action, 'Entry').returns(false);
       compileElement();
-      expect(container.find('.tab-actions .'+button).hasClass('ng-hide')).toBe(true);
+      expect(container.find('.tab-actions .'+button)).toBeNgHidden();
     });
 
     it(button+' button shown', function () {
       canStub.withArgs(action, 'Entry').returns(true);
       compileElement();
-      expect(container.find('.tab-actions .'+button).hasClass('ng-hide')).toBe(false);
+      expect(container.find('.tab-actions .'+button)).not.toBeNgHidden();
     });
   }
 

@@ -51,14 +51,14 @@ describe('The add dropdown button directive', function () {
       });
 
       it('add menu item with class '+itemClass+' is not hidden', function () {
-        expect(container.find('.'+itemClass).hasClass('ng-hide')).toBeFalsy();
+        expect(container.find('.'+itemClass)).not.toBeNgHidden();
       });
 
       it('separator only shows for Entry', function () {
         if(type == 'Entry'){
-          expect(container.find('.separator').hasClass('ng-hide')).toBeFalsy();
+          expect(container.find('.separator')).not.toBeNgHidden();
         } else {
-          expect(container.find('.separator').hasClass('ng-hide')).toBeTruthy();
+          expect(container.find('.separator')).toBeNgHidden();
         }
       });
 
@@ -66,7 +66,7 @@ describe('The add dropdown button directive', function () {
       menuItems.splice(currentItem, 1);
       menuItems.forEach(function (val) {
         it(val+' add menu item is hidden', function () {
-          expect(container.find('.'+val).hasClass('ng-hide')).toBeTruthy();
+          expect(container.find('.'+val)).toBeNgHidden();
         });
       });
     });
@@ -85,11 +85,11 @@ describe('The add dropdown button directive', function () {
     });
 
     it('add menu item with class content-types is hidden', function () {
-      expect(container.find('.content-types').hasClass('ng-hide')).toBeTruthy();
+      expect(container.find('.content-types')).toBeNgHidden();
     });
 
     it('add menu item with class no-content-types is not hidden', function () {
-      expect(container.find('.no-content-types').hasClass('ng-hide')).toBeFalsy();
+      expect(container.find('.no-content-types')).not.toBeNgHidden();
     });
 
   });

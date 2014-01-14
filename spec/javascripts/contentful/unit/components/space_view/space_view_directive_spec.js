@@ -57,19 +57,19 @@ describe('The Space view directive', function () {
 
   it('main navigation shown if space is defined', function () {
     compileElement();
-    expect(container.find('.nav-bar > ul').hasClass('ng-hide')).toBeFalsy();
+    expect(container.find('.nav-bar > ul')).not.toBeNgHidden();
   });
 
   it('main navigation not shown if space is defined', function () {
     delete scope.spaceContext.space;
     compileElement();
-    expect(container.find('.nav-bar > ul').hasClass('ng-hide')).toBeTruthy();
+    expect(container.find('.nav-bar > ul')).toBeNgHidden();
   });
 
   it('add button always shown even if no create permissions exist', function () {
     stubs.can.returns(false);
     compileElement();
-    expect(container.find('.add-dropdown-button').hasClass('ng-hide')).toBe(false);
+    expect(container.find('.add-dropdown-button')).not.toBeNgHidden();
   });
 
   function makeShownButtonTest(type) {
@@ -82,7 +82,7 @@ describe('The Space view directive', function () {
       });
 
       it('show add button', function () {
-        expect(addDropdownButton.hasClass('ng-hide')).toBeFalsy();
+        expect(addDropdownButton).not.toBeNgHidden();
       });
 
     });
@@ -101,13 +101,13 @@ describe('The Space view directive', function () {
       it('is hidden', function () {
         stubs.can.withArgs(action, type).returns(false);
         compileElement();
-        expect(container.find(selector).hasClass('ng-hide')).toBe(true);
+        expect(container.find(selector)).toBeNgHidden();
       });
 
       it('is shown', function () {
         stubs.can.withArgs(action, type).returns(true);
         compileElement();
-        expect(container.find(selector).hasClass('ng-hide')).toBe(false);
+        expect(container.find(selector)).not.toBeNgHidden();
       });
     });
   }
@@ -143,13 +143,13 @@ describe('The Space view directive', function () {
 
   it('tab list shown if space is defined', function () {
     compileElement();
-    expect(container.find('.tab-list').hasClass('ng-hide')).toBeFalsy();
+    expect(container.find('.tab-list')).not.toBeNgHidden();
   });
 
   it('tab list not shown if space is defined', function () {
     delete scope.spaceContext.space;
     compileElement();
-    expect(container.find('.tab-list').hasClass('ng-hide')).toBeTruthy();
+    expect(container.find('.tab-list')).toBeNgHidden();
   });
 
   it('tab list has hidden class ', function () {
@@ -207,27 +207,27 @@ describe('The Space view directive', function () {
     });
 
     it('first tab is shown', function () {
-      expect(container.find('.tab-list li.tab').eq(0).hasClass('ng-hide')).toBeFalsy();
+      expect(container.find('.tab-list li.tab').eq(0)).not.toBeNgHidden();
     });
 
     it('second tab is shown', function () {
-      expect(container.find('.tab-list li.tab').eq(1).hasClass('ng-hide')).toBeFalsy();
+      expect(container.find('.tab-list li.tab').eq(1)).not.toBeNgHidden();
     });
 
     it('third tab is not shown', function () {
-      expect(container.find('.tab-list li.tab').eq(2).hasClass('ng-hide')).toBeTruthy();
+      expect(container.find('.tab-list li.tab').eq(2)).toBeNgHidden();
     });
 
     it('first tab can be closed', function () {
-      expect(container.find('.tab-list li.tab .close').eq(0).hasClass('ng-hide')).toBeFalsy();
+      expect(container.find('.tab-list li.tab .close').eq(0)).not.toBeNgHidden();
     });
 
     it('second tab can be closed', function () {
-      expect(container.find('.tab-list li.tab .close').eq(1).hasClass('ng-hide')).toBeFalsy();
+      expect(container.find('.tab-list li.tab .close').eq(1)).not.toBeNgHidden();
     });
 
     it('third tab cannot be closed', function () {
-      expect(container.find('.tab-list li.tab .close').eq(2).hasClass('ng-hide')).toBeTruthy();
+      expect(container.find('.tab-list li.tab .close').eq(2)).toBeNgHidden();
     });
 
     it('has 3 tabs with content', function () {
@@ -247,15 +247,15 @@ describe('The Space view directive', function () {
     });
 
     it('entry editor is shown', function () {
-      expect(container.find('.tab-content .entry-editor').parent().hasClass('ng-hide')).toBeFalsy();
+      expect(container.find('.tab-content .entry-editor').parent()).not.toBeNgHidden();
     });
 
     it('api key editor is not shown', function () {
-      expect(container.find('.tab-content .api-key-editor').parent().hasClass('ng-hide')).toBeTruthy();
+      expect(container.find('.tab-content .api-key-editor').parent()).toBeNgHidden();
     });
 
     it('entry list is not shown', function () {
-      expect(container.find('.tab-content .entry-list').parent().hasClass('ng-hide')).toBeTruthy();
+      expect(container.find('.tab-content .entry-list').parent()).toBeNgHidden();
     });
 
   });
