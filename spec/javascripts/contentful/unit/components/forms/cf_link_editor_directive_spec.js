@@ -3,18 +3,27 @@
 describe('cfLinkEditor Directive', function () {
   var element, scope;
   var compileElement;
-  var searchField, canStub, localizedFieldStub, publishedTypeStub, publishedEntryNameStub, entryTitleStub;
+  var searchField;
+  var stubs;
 
   function ControllerMock() {
   }
 
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', function ($provide) {
+      stubs = $provide.makeStubs([
+        'can',
+        'localizedField',
+        'publishedEntryName',
+        'publishedType',
+        'entryTitle'
+      ]);
+    });
+
     inject(function ($compile, $rootScope, cfLinkEditorDirective) {
       cfLinkEditorDirective[0].controller = ControllerMock;
       scope = $rootScope.$new();
-      canStub = sinon.stub();
-      scope.can = canStub;
+      scope.can = stubs.can;
       scope.fieldData = { value: {
         sys: {id: 123}
       }};
@@ -23,21 +32,17 @@ describe('cfLinkEditor Directive', function () {
         items: {}
       };
 
-      localizedFieldStub = sinon.stub();
-      publishedEntryNameStub = sinon.stub();
-      publishedTypeStub = sinon.stub();
-      publishedTypeStub.returns({
-        getName: publishedEntryNameStub
+      stubs.publishedType.returns({
+        getName: stubs.publishedEntryName
       });
-      entryTitleStub = sinon.stub();
       scope.spaceContext = {
         space: {
           getEntries: sinon.stub(),
           getAssets: sinon.stub()
         },
-        localizedField: localizedFieldStub,
-        publishedTypeForEntry: publishedTypeStub,
-        entryTitle: entryTitleStub
+        localizedField: stubs.localizedField,
+        publishedTypeForEntry: stubs.publishedType,
+        entryTitle: stubs.entryTitle
       };
 
       compileElement = function (extra) {
@@ -171,23 +176,23 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('gets published type for first entry', function () {
-        expect(publishedTypeStub.calledWith(scope.entities[0])).toBeTruthy();
+        expect(stubs.publishedType.calledWith(scope.entities[0])).toBeTruthy();
       });
 
       it('gets published type for second entry', function () {
-        expect(publishedTypeStub.calledWith(scope.entities[1])).toBeTruthy();
+        expect(stubs.publishedType.calledWith(scope.entities[1])).toBeTruthy();
       });
 
       it('gets name for entries', function () {
-        expect(publishedEntryNameStub.called).toBeTruthy();
+        expect(stubs.publishedEntryName.called).toBeTruthy();
       });
 
       it('gets title for first entry', function () {
-        expect(entryTitleStub.calledWith(scope.entities[0])).toBeTruthy();
+        expect(stubs.entryTitle.calledWith(scope.entities[0])).toBeTruthy();
       });
 
       it('gets title for second entry', function () {
-        expect(entryTitleStub.calledWith(scope.entities[1])).toBeTruthy();
+        expect(stubs.entryTitle.calledWith(scope.entities[1])).toBeTruthy();
       });
 
     });
@@ -411,27 +416,27 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('localizedField is called for first asset file', function () {
-        expect(localizedFieldStub.calledWith(scope.entities[0], 'data.fields.file')).toBeTruthy();
+        expect(stubs.localizedField.calledWith(scope.entities[0], 'data.fields.file')).toBeTruthy();
       });
 
       it('localizedField is called for second asset file', function () {
-        expect(localizedFieldStub.calledWith(scope.entities[1], 'data.fields.file')).toBeTruthy();
+        expect(stubs.localizedField.calledWith(scope.entities[1], 'data.fields.file')).toBeTruthy();
       });
 
       it('localizedField is called for first asset title', function () {
-        expect(localizedFieldStub.calledWith(scope.entities[0], 'data.fields.title')).toBeTruthy();
+        expect(stubs.localizedField.calledWith(scope.entities[0], 'data.fields.title')).toBeTruthy();
       });
 
       it('localizedField is called for second asset title', function () {
-        expect(localizedFieldStub.calledWith(scope.entities[1], 'data.fields.title')).toBeTruthy();
+        expect(stubs.localizedField.calledWith(scope.entities[1], 'data.fields.title')).toBeTruthy();
       });
 
       it('localizedField is called for first asset description', function () {
-        expect(localizedFieldStub.calledWith(scope.entities[0], 'data.fields.description')).toBeTruthy();
+        expect(stubs.localizedField.calledWith(scope.entities[0], 'data.fields.description')).toBeTruthy();
       });
 
       it('localizedField is called for second asset description', function () {
-        expect(localizedFieldStub.calledWith(scope.entities[1], 'data.fields.description')).toBeTruthy();
+        expect(stubs.localizedField.calledWith(scope.entities[1], 'data.fields.description')).toBeTruthy();
       });
 
     });
@@ -537,19 +542,19 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('localizedField is called with first entity and title', function () {
-        expect(localizedFieldStub.calledWith(scope.linkedEntities[0], 'data.fields.title')).toBeTruthy();
+        expect(stubs.localizedField.calledWith(scope.linkedEntities[0], 'data.fields.title')).toBeTruthy();
       });
 
       it('localizedField is called with second entity and title', function () {
-        expect(localizedFieldStub.calledWith(scope.linkedEntities[1], 'data.fields.title')).toBeTruthy();
+        expect(stubs.localizedField.calledWith(scope.linkedEntities[1], 'data.fields.title')).toBeTruthy();
       });
 
       it('localizedField is called with first entity and file', function () {
-        expect(localizedFieldStub.calledWith(scope.linkedEntities[0], 'data.fields.file')).toBeTruthy();
+        expect(stubs.localizedField.calledWith(scope.linkedEntities[0], 'data.fields.file')).toBeTruthy();
       });
 
       it('localizedField is called with second entity and file', function () {
-        expect(localizedFieldStub.calledWith(scope.linkedEntities[1], 'data.fields.file')).toBeTruthy();
+        expect(stubs.localizedField.calledWith(scope.linkedEntities[1], 'data.fields.file')).toBeTruthy();
       });
     });
 
@@ -570,7 +575,7 @@ describe('cfLinkEditor Directive', function () {
         }
       ];
 
-      canStub.withArgs('create', 'Entry').returns(true);
+      stubs.can.withArgs('create', 'Entry').returns(true);
 
       compileElement();
       newButton = element.find('.add-new');
@@ -606,7 +611,7 @@ describe('cfLinkEditor Directive', function () {
         getName: sinon.stub()
       };
 
-      canStub.withArgs('create', 'Entry').returns(true);
+      stubs.can.withArgs('create', 'Entry').returns(true);
 
       compileElement();
       newButton = element.find('.add-new');
@@ -625,7 +630,7 @@ describe('cfLinkEditor Directive', function () {
     var newButton;
     beforeEach(function () {
       scope.field.items.linkType = 'Asset';
-      canStub.withArgs('create', 'Asset').returns(true);
+      stubs.can.withArgs('create', 'Asset').returns(true);
 
       compileElement();
       newButton = element.find('.add-new');

@@ -2,29 +2,29 @@
 
 describe('API key editor controller', function () {
 
-  var scope;
+  var scope, stubs;
   var apiKeyEditorCtrl;
   var apiKey;
-  var idStub, deleteStub, nameStub, infoStub, serverErrorStub, broadcastStub, saveStub;
 
   beforeEach(function () {
-    idStub = sinon.stub();
-    deleteStub = sinon.stub();
-    saveStub = sinon.stub();
-    nameStub = sinon.stub();
-    infoStub = sinon.stub();
-    serverErrorStub = sinon.stub();
-    broadcastStub = sinon.stub();
-
     module('contentful/test', function ($provide) {
+      stubs = $provide.makeStubs([
+        'id',
+        'delete',
+        'save',
+        'name',
+        'info',
+        'serverError',
+        'broadcast'
+      ]);
       $provide.constant('environment', {
         settings: {
           cdn_host: 'cdn_host'
         }
       });
       $provide.value('notification', {
-        info: infoStub,
-        serverError: serverErrorStub
+        info: stubs.info,
+        serverError: stubs.serverError
       });
     });
     inject(function (_$rootScope_, $controller) {
@@ -35,19 +35,19 @@ describe('API key editor controller', function () {
       };
       scope.spaceContext = {
         space: {
-          getId: idStub
+          getId: stubs.id
         }
       };
-      scope.broadcastFromSpace = broadcastStub;
+      scope.broadcastFromSpace = stubs.broadcast;
 
       apiKey = {
-        getName: nameStub,
-        'delete': deleteStub,
-        save: saveStub
+        getName: stubs.name,
+        'delete': stubs.delete,
+        save: stubs.save
       };
       scope.tab.params.apiKey = apiKey;
 
-      nameStub.returns('apiKeyName');
+      stubs.name.returns('apiKeyName');
 
       apiKeyEditorCtrl = $controller('ApiKeyEditorCtrl', {$scope: scope});
       scope.$apply();
@@ -86,7 +86,7 @@ describe('API key editor controller', function () {
     scope.apiKey = {
       data: {accessToken: 'accessToken'}
     };
-    idStub.returns('spaceid');
+    stubs.id.returns('spaceid');
     scope.$apply();
     expect(scope.exampleUrl).toEqual('http://cdn_host/spaces/spaceid/entries?access_token=accessToken');
   });
@@ -101,32 +101,32 @@ describe('API key editor controller', function () {
 
   describe('deletes an api key', function () {
     beforeEach(function () {
-      deleteStub.callsArg(0);
+      stubs.delete.callsArg(0);
       scope['delete']();
     });
 
     it('info notification is shown', function () {
-      expect(infoStub.called).toBeTruthy();
-      expect(infoStub.args[0][0]).toEqual('"apiKeyName" deleted successfully');
+      expect(stubs.info.called).toBeTruthy();
+      expect(stubs.info.args[0][0]).toEqual('"apiKeyName" deleted successfully');
     });
 
     it('event is broadcasted from space', function () {
-      expect(broadcastStub.called).toBeTruthy();
-      expect(broadcastStub.args[0][0]).toEqual('entityDeleted');
-      expect(broadcastStub.args[0][1]).toBe(apiKey);
+      expect(stubs.broadcast.called).toBeTruthy();
+      expect(stubs.broadcast.args[0][0]).toEqual('entityDeleted');
+      expect(stubs.broadcast.args[0][1]).toBe(apiKey);
     });
   });
 
   describe('fails to delete an api key', function () {
     beforeEach(function () {
-      deleteStub.callsArgWith(0, {});
+      stubs.delete.callsArgWith(0, {});
       scope['delete']();
     });
 
     it('error notification is shown', function () {
-      expect(serverErrorStub.called).toBeTruthy();
-      expect(serverErrorStub.args[0][0]).toEqual('"apiKeyName" could not be deleted');
-      expect(serverErrorStub.args[0][1]).toEqual({});
+      expect(stubs.serverError.called).toBeTruthy();
+      expect(stubs.serverError.args[0][0]).toEqual('"apiKeyName" could not be deleted');
+      expect(stubs.serverError.args[0][1]).toEqual({});
     });
   });
 
@@ -139,7 +139,7 @@ describe('API key editor controller', function () {
       apiKeyEditorStub.returns({
         goTo: goToStub
       });
-      saveStub.callsArg(0);
+      stubs.save.callsArg(0);
 
       scope.apiKeyForm = {
         '$setPristine': pristineStub
@@ -151,8 +151,8 @@ describe('API key editor controller', function () {
     });
 
     it('info notification is shown', function () {
-      expect(infoStub.called).toBeTruthy();
-      expect(infoStub.args[0][0]).toEqual('"apiKeyName" saved successfully');
+      expect(stubs.info.called).toBeTruthy();
+      expect(stubs.info.args[0][0]).toEqual('"apiKeyName" saved successfully');
     });
 
     it('form is reset as pristine', function () {
@@ -172,14 +172,14 @@ describe('API key editor controller', function () {
 
   describe('fails to save an api key', function () {
     beforeEach(function () {
-      saveStub.callsArgWith(0, {});
+      stubs.save.callsArgWith(0, {});
       scope.save();
     });
 
     it('error notification is shown', function () {
-      expect(serverErrorStub.called).toBeTruthy();
-      expect(serverErrorStub.args[0][0]).toEqual('"apiKeyName" could not be saved');
-      expect(serverErrorStub.args[0][1]).toEqual({});
+      expect(stubs.serverError.called).toBeTruthy();
+      expect(stubs.serverError.args[0][0]).toEqual('"apiKeyName" could not be saved');
+      expect(stubs.serverError.args[0][1]).toEqual({});
     });
   });
 

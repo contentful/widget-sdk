@@ -2,27 +2,27 @@
 
 describe('cfLocationEditor Controller', function () {
   var controller;
-  var scope;
-  var spinnerStartStub, spinnerStopStub, geocodeStub, geocoderStub;
+  var scope, stubs;
 
   beforeEach(function () {
-    spinnerStartStub = sinon.stub();
-    spinnerStopStub = sinon.stub();
     module('contentful/test', function ($provide) {
-      spinnerStartStub.returns(spinnerStopStub);
+      stubs = $provide.makeStubs([
+        'spinnerStart',
+        'spinnerStop',
+        'geocoder',
+        'geocode'
+      ]);
+      stubs.spinnerStart.returns(stubs.spinnerStop);
       $provide.value('cfSpinner', {
-        start: spinnerStartStub
+        start: stubs.spinnerStart
       });
     });
     inject(function ($rootScope, $controller, $window) {
       scope = $rootScope.$new();
-
-      geocoderStub = sinon.stub();
-      geocodeStub = sinon.stub();
-      geocoderStub.returns({geocode: geocodeStub});
+      stubs.geocoder.returns({geocode: stubs.geocode});
       $window.google = {
         maps: {
-          Geocoder: geocoderStub
+          Geocoder: stubs.geocoder
         }
       };
 
@@ -96,7 +96,7 @@ describe('cfLocationEditor Controller', function () {
         latStub.returns('0.123456789');
         lonStub = sinon.stub();
         lonStub.returns('0.123456789');
-        geocodeStub.callsArgWithAsync(1, [
+        stubs.geocode.callsArgWithAsync(1, [
           {
             geometry: {
               location: {
@@ -114,20 +114,20 @@ describe('cfLocationEditor Controller', function () {
       });
 
       it('spinner is started', function () {
-        expect(spinnerStartStub.called).toBeTruthy();
+        expect(stubs.spinnerStart.called).toBeTruthy();
       });
 
       it('geocoder is created', function() {
-        expect(geocoderStub.called).toBeTruthy();
+        expect(stubs.geocoder.called).toBeTruthy();
       });
 
       it('geocoder method is called', function() {
-        expect(geocodeStub.called).toBeTruthy();
+        expect(stubs.geocode.called).toBeTruthy();
       });
 
       it('address is sent to geocoder', function(done) {
         scope.$watch('results', function () {
-          expect(geocodeStub.args[0][0].address).toBe('somewhere');
+          expect(stubs.geocode.args[0][0].address).toBe('somewhere');
           done();
         });
       });
@@ -152,7 +152,7 @@ describe('cfLocationEditor Controller', function () {
 
       it('stops spinner', function(done) {
         scope.$watch('results', function () {
-          expect(spinnerStopStub.called).toBeTruthy();
+          expect(stubs.spinnerStop.called).toBeTruthy();
           done();
         });
       });

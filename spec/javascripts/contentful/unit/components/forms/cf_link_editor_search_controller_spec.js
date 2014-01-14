@@ -2,23 +2,24 @@
 
 describe('cfLinkEditorSearch Controller', function () {
   var cfLinkEditorSearchCtrl;
-  var scope;
+  var scope, stubs;
   var space;
-  var serverErrorStub, loadStub, thenStub;
 
   beforeEach(function () {
-    serverErrorStub = sinon.stub();
-    loadStub = sinon.stub();
-    thenStub = sinon.stub();
     module('contentful/test', function ($provide) {
+      stubs = $provide.makeStubs([
+        'serverError',
+        'load',
+        'then'
+      ]);
       $provide.value('notification', {
-        serverError: serverErrorStub
+        serverError: stubs.serverError
       });
 
       function LoaderStub() {}
-      LoaderStub.prototype.load = loadStub;
-      loadStub.returns({
-        then: thenStub
+      LoaderStub.prototype.load = stubs.load;
+      stubs.load.returns({
+        then: stubs.then
       });
       $provide.value('PromisedLoader', LoaderStub);
     });
@@ -121,7 +122,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it('server error not called', function() {
-          expect(serverErrorStub.called).toBeFalsy();
+          expect(stubs.serverError.called).toBeFalsy();
         });
 
         it(entityType +' editor called', function() {
@@ -151,7 +152,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it('server error called', function() {
-          expect(serverErrorStub.called).toBeTruthy();
+          expect(stubs.serverError.called).toBeTruthy();
         });
 
         it(entityType +' editor not called', function() {
@@ -190,7 +191,7 @@ describe('cfLinkEditorSearch Controller', function () {
 
         it('server error called', function(done) {
           _.defer(function () {
-            expect(serverErrorStub.called).toBeTruthy();
+            expect(stubs.serverError.called).toBeTruthy();
             done();
           });
         });
@@ -232,7 +233,7 @@ describe('cfLinkEditorSearch Controller', function () {
         it('server error called', function(done) {
           _.defer(function () {
             _.defer(function () {
-              expect(serverErrorStub.calledTwice).toBeTruthy();
+              expect(stubs.serverError.calledTwice).toBeTruthy();
               done();
             });
           });
@@ -278,7 +279,7 @@ describe('cfLinkEditorSearch Controller', function () {
           0: entity,
           total: 30
         };
-        thenStub.callsArgWith(0, entities);
+        stubs.then.callsArgWith(0, entities);
 
         scope.paginator.pageLength = 3;
         scope.paginator.skipItems = sinon.stub();
@@ -287,7 +288,7 @@ describe('cfLinkEditorSearch Controller', function () {
 
       it('loads entities', function() {
         scope.resetEntities();
-        expect(loadStub.called).toBeTruthy();
+        expect(stubs.load.called).toBeTruthy();
       });
 
       it('sets entities num on the paginator', function() {
@@ -310,17 +311,17 @@ describe('cfLinkEditorSearch Controller', function () {
 
         it('with a defined order', function() {
           scope.resetEntities();
-          expect(loadStub.args[0][2].order).toEqual('-sys.updatedAt');
+          expect(stubs.load.args[0][2].order).toEqual('-sys.updatedAt');
         });
 
         it('with a defined limit', function() {
           scope.resetEntities();
-          expect(loadStub.args[0][2].limit).toEqual(3);
+          expect(stubs.load.args[0][2].limit).toEqual(3);
         });
 
         it('with a defined skip param', function() {
           scope.resetEntities();
-          expect(loadStub.args[0][2].skip).toBeTruthy();
+          expect(stubs.load.args[0][2].skip).toBeTruthy();
         });
 
         it('for linked content type', function() {
@@ -330,19 +331,19 @@ describe('cfLinkEditorSearch Controller', function () {
             getId: idStub
           };
           scope.resetEntities();
-          expect(loadStub.args[0][2]['sys.contentType.sys.id']).toBe(123);
+          expect(stubs.load.args[0][2]['sys.contentType.sys.id']).toBe(123);
         });
 
         it('for mimetype group', function() {
           scope.linkMimetypeGroup = 'files';
           scope.resetEntities();
-          expect(loadStub.args[0][2]['mimetype_group']).toBe('files');
+          expect(stubs.load.args[0][2]['mimetype_group']).toBe('files');
         });
 
         it('for search term', function() {
           scope.searchTerm = 'term';
           scope.resetEntities();
-          expect(loadStub.args[0][2].query).toBe('term');
+          expect(stubs.load.args[0][2].query).toBe('term');
         });
       });
     });
@@ -374,7 +375,7 @@ describe('cfLinkEditorSearch Controller', function () {
     it('doesnt load if on last page', function() {
       scope.paginator.atLast.returns(true);
       scope.loadMore();
-      expect(loadStub.called).toBeFalsy();
+      expect(stubs.load.called).toBeFalsy();
     });
 
     it('paginator count is increased', function() {
@@ -385,7 +386,7 @@ describe('cfLinkEditorSearch Controller', function () {
 
     it('gets query params', function () {
       scope.loadMore();
-      expect(loadStub.args[0][2]).toBeDefined();
+      expect(stubs.load.args[0][2]).toBeDefined();
     });
 
     it('should work on the page before the last', function () {
@@ -393,12 +394,12 @@ describe('cfLinkEditorSearch Controller', function () {
       scope.paginator.numEntries = 47;
       scope.paginator.page = 0;
       scope.loadMore();
-      expect(loadStub.called).toBeTruthy();
+      expect(stubs.load.called).toBeTruthy();
     });
 
     describe('on successful load response', function() {
       beforeEach(function() {
-        thenStub.callsArgWith(0, entities);
+        stubs.then.callsArgWith(0, entities);
         scope.paginator.page = 1;
         scope.loadMore();
       });
@@ -414,7 +415,7 @@ describe('cfLinkEditorSearch Controller', function () {
 
     describe('on previous page', function() {
       beforeEach(function() {
-        thenStub.callsArg(1);
+        stubs.then.callsArg(1);
         scope.paginator.page = 1;
         scope.loadMore();
       });

@@ -1,24 +1,23 @@
 'use strict';
 
 describe('apiKeyEditor Directive', function () {
-  var element, scope, compileElement;
+  var element, scope, compileElement, stubs;
   var regenerateCheckbox;
-  var openStub, catchStub;
-  var canStub, reasonsStub;
 
   beforeEach(function () {
-    canStub = sinon.stub();
-    reasonsStub = sinon.stub();
-    openStub = sinon.stub();
-    catchStub = sinon.stub();
-    openStub.returns({
-      catch: catchStub
-    });
-
     module('contentful/test', function ($provide, cfCanStubsProvider) {
-      cfCanStubsProvider.setup(reasonsStub);
+      stubs = $provide.makeStubs([
+        'can',
+        'reasons',
+        'open',
+        'catch',
+      ]);
+      stubs.open.returns({
+        catch: stubs.catch
+      });
+      cfCanStubsProvider.setup(stubs.reasons);
       $provide.value('modalDialog', {
-        open: openStub
+        open: stubs.open
       });
     });
 
@@ -30,7 +29,7 @@ describe('apiKeyEditor Directive', function () {
           getId: sinon.stub()
         }
       };
-      scope.can = canStub;
+      scope.can = stubs.can;
       scope.tab = {
         params: {
           apiKey: {}
@@ -90,13 +89,13 @@ describe('apiKeyEditor Directive', function () {
   });
 
   it('delete button cant ever be disabled', function () {
-    canStub.withArgs('create', 'ApiKey').returns(false);
+    stubs.can.withArgs('create', 'ApiKey').returns(false);
     compileElement();
     expect(element.find('.tab-actions .delete').attr('disabled')).toBeUndefined();
   });
 
   it('delete button is enabled', function () {
-    canStub.withArgs('create', 'ApiKey').returns(true);
+    stubs.can.withArgs('create', 'ApiKey').returns(true);
     compileElement();
     expect(element.find('.tab-actions .delete').attr('disabled')).toBeUndefined();
   });
@@ -110,7 +109,7 @@ describe('apiKeyEditor Directive', function () {
         getId: idStub
       };
       idStub.returns(1);
-      canStub.withArgs('create', 'ApiKey').returns(true);
+      stubs.can.withArgs('create', 'ApiKey').returns(true);
     });
 
     describe('on the default state', function() {
@@ -164,8 +163,8 @@ describe('apiKeyEditor Directive', function () {
   });
 
   it('save button is disabled', function () {
-    canStub.withArgs('create', 'ApiKey').returns(false);
-    reasonsStub.returns(['usageExceeded']);
+    stubs.can.withArgs('create', 'ApiKey').returns(false);
+    stubs.reasons.returns(['usageExceeded']);
     compileElement();
     scope.apiKeyForm = {
       $invalid: false
@@ -175,7 +174,7 @@ describe('apiKeyEditor Directive', function () {
   });
 
   it('save button is enabled', function () {
-    canStub.withArgs('create', 'ApiKey').returns(true);
+    stubs.can.withArgs('create', 'ApiKey').returns(true);
     compileElement();
     scope.apiKeyForm = {
       $invalid: false

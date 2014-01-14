@@ -1,31 +1,30 @@
 'use strict';
 
 describe('Asset List Actions Controller', function () {
-  var controller, scope;
-  var getSelectedStub, sizeStub, removeAllStub, actionStub1, actionStub2, createAssetStub,
-      getVersionStub, trackStub, infoStub, errorStub, canStub;
+  var controller, scope, stubs;
 
   beforeEach(function () {
-    trackStub = sinon.stub();
-    infoStub = sinon.stub();
-    errorStub = sinon.stub();
-    sizeStub = sinon.stub();
-    createAssetStub = sinon.stub();
-    getSelectedStub = sinon.stub();
-    removeAllStub = sinon.stub();
-    actionStub1 = sinon.stub();
-    actionStub2 = sinon.stub();
-    getVersionStub = sinon.stub();
-    canStub = sinon.stub();
-
     module('contentful/test', function ($provide) {
+      stubs = $provide.makeStubs([
+        'track',
+        'info',
+        'error',
+        'size',
+        'createAsset',
+        'getSelected',
+        'removeAll',
+        'action1',
+        'action2',
+        'getVersion',
+        'can'
+      ]);
       $provide.value('analytics', {
-        track: trackStub
+        track: stubs.track
       });
 
       $provide.value('notification', {
-        info: infoStub,
-        error: errorStub
+        info: stubs.info,
+        error: stubs.error
       });
     });
 
@@ -33,19 +32,18 @@ describe('Asset List Actions Controller', function () {
       scope = $rootScope.$new();
 
       scope.selection = {
-        size: sizeStub,
-        getSelected: getSelectedStub,
-        removeAll: removeAllStub
+        size: stubs.size,
+        getSelected: stubs.getSelected,
+        removeAll: stubs.removeAll
       };
 
       scope.spaceContext = {
         space: {
-          createAsset: createAssetStub
+          createAsset: stubs.createAsset
         }
       };
 
-      scope.can = canStub;
-
+      scope.can = stubs.can;
       scope.broadcastFromSpace = sinon.stub();
 
       controller = $controller('AssetListActionsCtrl', {$scope: scope});
@@ -60,7 +58,7 @@ describe('Asset List Actions Controller', function () {
     var entity = {};
     entity[action] = stub;
     if(action == 'publish'){
-      entity.getVersion = getVersionStub;
+      entity.getVersion = stubs.getVersion;
     }
     return entity;
   }
@@ -68,36 +66,36 @@ describe('Asset List Actions Controller', function () {
   function makePerformTests(action, actionIndex, extraSpecs){
     describe(action+' selected assets', function () {
       beforeEach(function () {
-        sizeStub.returns(2);
-        actionStub1.callsArg(actionIndex);
-        actionStub2.callsArgWith(actionIndex, {});
-        getSelectedStub.returns([
-          makeEntity(action, actionStub1),
-          makeEntity(action, actionStub2)
+        stubs.size.returns(2);
+        stubs.action1.callsArg(actionIndex);
+        stubs.action2.callsArgWith(actionIndex, {});
+        stubs.getSelected.returns([
+          makeEntity(action, stubs.action1),
+          makeEntity(action, stubs.action2)
         ]);
 
         scope[action+'Selected']();
       });
 
       it('calls '+action+' on selected assets', function () {
-        expect(actionStub1.called).toBeTruthy();
-        expect(actionStub2.called).toBeTruthy();
+        expect(stubs.action1.called).toBeTruthy();
+        expect(stubs.action2.called).toBeTruthy();
       });
 
       it('calls success notification', function () {
-        expect(infoStub.calledOnce).toBeTruthy();
+        expect(stubs.info.calledOnce).toBeTruthy();
       });
 
       it('calls error notification', function () {
-        expect(errorStub.calledOnce).toBeTruthy();
+        expect(stubs.error.calledOnce).toBeTruthy();
       });
 
       it('clears selection', function () {
-        expect(removeAllStub.called).toBeTruthy();
+        expect(stubs.removeAll.called).toBeTruthy();
       });
 
       it('tracks analytics event', function () {
-        expect(trackStub.called).toBeTruthy();
+        expect(stubs.track.called).toBeTruthy();
       });
 
       if(extraSpecs){ extraSpecs(); }
@@ -106,7 +104,7 @@ describe('Asset List Actions Controller', function () {
 
   makePerformTests('publish', 1, function () {
     it('gets version of selected assets', function () {
-      expect(getVersionStub.calledTwice).toBeTruthy();
+      expect(stubs.getVersion.calledTwice).toBeTruthy();
     });
   });
   makePerformTests('unpublish', 0);
@@ -122,36 +120,36 @@ describe('Asset List Actions Controller', function () {
     var methodName = 'show'+action.charAt(0).toUpperCase()+action.substr(1);
     var canMethodName = 'can'+action.charAt(0).toUpperCase()+action.substr(1);
     it('can show '+action+' action', function () {
-      canStub.withArgs(action, 'Asset').returns(true);
-      actionStub1.returns(true);
-      actionStub2.returns(true);
-      getSelectedStub.returns([
-        makeEntity(canMethodName, actionStub1),
-        makeEntity(canMethodName, actionStub2)
+      stubs.can.withArgs(action, 'Asset').returns(true);
+      stubs.action1.returns(true);
+      stubs.action2.returns(true);
+      stubs.getSelected.returns([
+        makeEntity(canMethodName, stubs.action1),
+        makeEntity(canMethodName, stubs.action2)
       ]);
 
       expect(scope[methodName]()).toBeTruthy();
     });
 
     it('cannot show delete '+action+' because no general permission', function () {
-      canStub.withArgs(action, 'Asset').returns(false);
-      actionStub1.returns(true);
-      actionStub2.returns(true);
-      getSelectedStub.returns([
-        makeEntity(canMethodName, actionStub1),
-        makeEntity(canMethodName, actionStub2)
+      stubs.can.withArgs(action, 'Asset').returns(false);
+      stubs.action1.returns(true);
+      stubs.action2.returns(true);
+      stubs.getSelected.returns([
+        makeEntity(canMethodName, stubs.action1),
+        makeEntity(canMethodName, stubs.action2)
       ]);
 
       expect(scope[methodName]()).toBeFalsy();
     });
 
     it('cannot show '+action+' action because no permission on item', function () {
-      canStub.withArgs(action, 'Asset').returns(true);
-      actionStub1.returns(true);
-      actionStub2.returns(false);
-      getSelectedStub.returns([
-        makeEntity(canMethodName, actionStub1),
-        makeEntity(canMethodName, actionStub2)
+      stubs.can.withArgs(action, 'Asset').returns(true);
+      stubs.action1.returns(true);
+      stubs.action2.returns(false);
+      stubs.getSelected.returns([
+        makeEntity(canMethodName, stubs.action1),
+        makeEntity(canMethodName, stubs.action2)
       ]);
 
       expect(scope[methodName]()).toBeFalsy();
@@ -164,33 +162,33 @@ describe('Asset List Actions Controller', function () {
   makePermissionTests('unpublish');
 
   it('gets publish button name if all are unpublished', function () {
-    actionStub1.returns(false);
-    actionStub2.returns(false);
-    getSelectedStub.returns([
-      makeEntity('isPublished', actionStub1),
-      makeEntity('isPublished', actionStub2)
+    stubs.action1.returns(false);
+    stubs.action2.returns(false);
+    stubs.getSelected.returns([
+      makeEntity('isPublished', stubs.action1),
+      makeEntity('isPublished', stubs.action2)
     ]);
 
     expect(scope.publishButtonName()).toBe('Publish');
   });
 
   it('gets publish button name if all published', function () {
-    actionStub1.returns(true);
-    actionStub2.returns(true);
-    getSelectedStub.returns([
-      makeEntity('isPublished', actionStub1),
-      makeEntity('isPublished', actionStub2)
+    stubs.action1.returns(true);
+    stubs.action2.returns(true);
+    stubs.getSelected.returns([
+      makeEntity('isPublished', stubs.action1),
+      makeEntity('isPublished', stubs.action2)
     ]);
 
     expect(scope.publishButtonName()).toBe('Republish');
   });
 
   it('gets publish button name not all are published', function () {
-    actionStub1.returns(true);
-    actionStub2.returns(false);
-    getSelectedStub.returns([
-      makeEntity('isPublished', actionStub1),
-      makeEntity('isPublished', actionStub2)
+    stubs.action1.returns(true);
+    stubs.action2.returns(false);
+    stubs.getSelected.returns([
+      makeEntity('isPublished', stubs.action1),
+      makeEntity('isPublished', stubs.action2)
     ]);
 
     expect(scope.publishButtonName()).toBe('(Re)publish');

@@ -2,17 +2,21 @@
 
 describe('Asset editor controller', function () {
 
-  var scope;
+  var scope, stubs;
   var assetEditorCtrl;
-  var getPublishLocalesStub, assetTitleStub, canStub;
-  var isArchivedStub;
 
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', function ($provide) {
+      stubs = $provide.makeStubs([
+        'can',
+        'getPublishLocales',
+        'assetTitle',
+        'isArchived'
+      ]);
+    });
     inject(function ($rootScope, $controller) {
       scope = $rootScope.$new();
-      canStub = sinon.stub();
-      scope.can = canStub;
+      scope.can = stubs.can;
 
       var locale = {
         code: 'en-US',
@@ -22,20 +26,17 @@ describe('Asset editor controller', function () {
         name: 'en-US',
         publish: true
       };
-      getPublishLocalesStub = sinon.stub();
-      getPublishLocalesStub.returns([locale]);
-      assetTitleStub = sinon.stub();
+      stubs.getPublishLocales.returns([locale]);
       scope.spaceContext = {
-        assetTitle: assetTitleStub,
+        assetTitle: stubs.assetTitle,
         space: {
-          getPublishLocales: getPublishLocalesStub
+          getPublishLocales: stubs.getPublishLocales
         }
       };
       scope.validate = sinon.stub();
 
-      isArchivedStub = sinon.stub();
       var asset = {
-        isArchived: isArchivedStub
+        isArchived: stubs.isArchived
       };
       scope.tab = {
         params: {
@@ -53,24 +54,24 @@ describe('Asset editor controller', function () {
   }));
 
   it('gets a title set on a tab', function () {
-    assetTitleStub.returns('title');
+    stubs.assetTitle.returns('title');
     scope.$apply();
     expect(scope.tab.title).toBe('title');
   });
 
   describe('sets the otDisabled flag', function () {
     beforeEach(function () {
-      isArchivedStub.returns(false);
+      stubs.isArchived.returns(false);
     });
 
     it('to disabled', function () {
-      canStub.returns(true);
+      stubs.can.returns(true);
       scope.$apply();
       expect(scope.otDisabled).toBe(false);
     });
 
     it('to enabled', function () {
-      canStub.returns(false);
+      stubs.can.returns(false);
       scope.$apply();
       expect(scope.otDisabled).toBe(true);
     });
@@ -79,8 +80,8 @@ describe('Asset editor controller', function () {
   describe('validation on publish', function () {
     beforeEach(inject(function ($compile, $rootScope, $controller, cfStub){
       scope = $rootScope.$new();
-      canStub = sinon.stub();
-      scope.can = canStub;
+      stubs.can = sinon.stub();
+      scope.can = stubs.can;
       var locale = {
         code: 'en-US',
         contentDeliveryApi: true,

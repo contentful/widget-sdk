@@ -5,25 +5,17 @@ describe('cfLocationEditor Directive', function () {
   var compileElement;
   var stubs;
 
-  function makeStubs(stubList) {
-    var stubs = {};
-    _.each(stubList, function (val) {
-      stubs[val] = sinon.stub();
-    });
-    return stubs;
-  }
-
   function ControllerMock() {
   }
 
   beforeEach(function () {
-    stubs = makeStubs([
-      'getCenter', 'panTo', 'setDraggable', 'setPosition', 'setVisible',
-      'fitBounds', 'map', 'latLng', 'marker', 'addListener',
-      'locationIsValid', 'serverError'
-    ]);
-
     module('contentful/test', function ($provide) {
+      stubs = $provide.makeStubs([
+        'getCenter', 'panTo', 'setDraggable', 'setPosition', 'setVisible',
+        'fitBounds', 'map', 'latLng', 'marker', 'addListener',
+        'locationIsValid', 'serverError'
+      ]);
+
       $provide.value('notification', {
         serverError: stubs.serverError
       });

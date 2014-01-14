@@ -9,46 +9,49 @@ describe('Client Controller', function () {
   var logoutStub, goodbyeStub, supportUrlStub, openStub, wrapSpaceStub;
   var dialogStub, loginTrackStub, presenceActiveStub, triggerStub, hasNewVersionStub;
   var tutorialStartStub, tutorialSeenStub;
+  var stubs;
 
   beforeEach(function () {
-    numVisibleStub = sinon.stub();
-    spaceIdStub = sinon.stub();
-    auxPanelStub = sinon.stub();
-    trackStub = sinon.stub();
-    loginTrackStub = sinon.stub();
-    authorizationTokenLookupStub = sinon.stub();
-    authenticationTokenLookupStub = sinon.stub();
-    getTokenLookupStub = sinon.stub();
-    setSpaceStub = sinon.stub();
-    hasSpaceStub = sinon.stub();
-    notificationInfoStub = sinon.stub();
-    notificationErrorStub = sinon.stub();
-    goToSpaceStub = sinon.stub();
-    routingSpaceIdStub = sinon.stub();
-    setSpaceDataStub = sinon.stub();
-    getRouteStub = sinon.stub();
-    pathStub = sinon.stub();
-    logoutStub = sinon.stub();
-    goodbyeStub = sinon.stub();
-    supportUrlStub = sinon.stub();
-    openStub = sinon.stub();
-    wrapSpaceStub = sinon.stub();
-    dialogStub = sinon.stub();
-    tutorialStartStub = sinon.stub();
-    tutorialSeenStub = sinon.stub();
-    presenceActiveStub = sinon.stub();
-    triggerStub = sinon.stub();
-    hasNewVersionStub = sinon.stub();
     module('contentful/test', function ($provide) {
+      stubs = $provide.makeStubs([
+        'numVisible',
+        'spaceId',
+        'auxPanel',
+        'track',
+        'loginTrack',
+        'authorizationTokenLookup',
+        'authenticationTokenLookup',
+        'getTokenLookup',
+        'setSpace',
+        'hasSpace',
+        'notificationInfo',
+        'notificationError',
+        'goToSpace',
+        'routingSpaceId',
+        'setSpaceData',
+        'getRoute',
+        'path',
+        'logout',
+        'goodbye',
+        'supportUrl',
+        'open',
+        'wrapSpace',
+        'dialog',
+        'tutorialStart',
+        'tutorialSeen',
+        'presenceActive',
+        'trigger',
+        'hasNewVersion'
+      ]);
       $provide.factory('SpaceContext', function () {
         return function(){
           return {
             space: {
-              getId: spaceIdStub,
+              getId: stubs.spaceId,
               data: {}
             },
             tabList: {
-              numVisible: numVisibleStub,
+              numVisible: stubs.numVisible,
               current: {}
             }
           };
@@ -56,72 +59,72 @@ describe('Client Controller', function () {
       });
 
       $provide.value('analytics', {
-        toggleAuxPanel: auxPanelStub,
-        track: trackStub,
-        setSpaceData: setSpaceDataStub,
-        login: loginTrackStub
+        toggleAuxPanel: stubs.auxPanel,
+        track: stubs.track,
+        setSpaceData: stubs.setSpaceData,
+        login: stubs.loginTrack
       });
 
       $provide.value('authorization', {
-        setTokenLookup: authorizationTokenLookupStub,
-        setSpace: setSpaceStub,
+        setTokenLookup: stubs.authorizationTokenLookup,
+        setSpace: stubs.setSpace,
         authContext: {
-          hasSpace: hasSpaceStub
+          hasSpace: stubs.hasSpace
         }
       });
 
       $provide.value('authentication', {
-        logout: logoutStub,
-        supportUrl: supportUrlStub,
-        goodbye: goodbyeStub,
-        setTokenLookup: authenticationTokenLookupStub,
-        getTokenLookup: getTokenLookupStub
+        logout: stubs.logout,
+        supportUrl: stubs.supportUrl,
+        goodbye: stubs.goodbye,
+        setTokenLookup: stubs.authenticationTokenLookup,
+        getTokenLookup: stubs.getTokenLookup
       });
 
       $provide.value('$window', {
-        open: openStub,
+        open: stubs.open,
         addEventListener: sinon.stub()
       });
 
 
       $provide.value('notification', {
-        info: notificationInfoStub,
-        error: notificationErrorStub
+        info: stubs.notificationInfo,
+        error: stubs.notificationError
       });
 
       $provide.value('routing', {
-        goToSpace: goToSpaceStub,
-        getSpaceId: routingSpaceIdStub,
-        getRoute: getRouteStub
+        goToSpace: stubs.goToSpace,
+        getSpaceId: stubs.routingSpaceId,
+        getRoute: stubs.getRoute
       });
 
       $provide.value('$location', {
-        path: pathStub
+        path: stubs.path
       });
 
       $provide.value('client', {
-        wrapSpace: wrapSpaceStub
+        wrapSpace: stubs.wrapSpace
       });
 
       $provide.value('modalDialog', {
-        open: dialogStub
+        open: stubs.dialog
       });
 
       $provide.value('tutorial', {
-        start: tutorialStartStub,
-        getSeen: tutorialSeenStub
+        start: stubs.tutorialStart,
+        getSeen: stubs.tutorialSeen
       });
 
       $provide.value('presence', {
-        isActive: presenceActiveStub
+        isActive: stubs.presenceActive
       });
 
       $provide.value('ReloadNotification', {
-        trigger: triggerStub
+        trigger: stubs.trigger
       });
 
       $provide.value('revision', {
-        hasNewVersion: hasNewVersionStub
+        hasNewVersion: stubs.hasNewVersion
       });
 
 
@@ -150,53 +153,53 @@ describe('Client Controller', function () {
     });
 
     it('analytics is triggered', function () {
-      expect(auxPanelStub.calledWith(true, {})).toBeTruthy();
+      expect(stubs.auxPanel.calledWith(true, {})).toBeTruthy();
     });
   });
 
   it('space switcher analytics tracking', function () {
     scope.clickedSpaceSwitcher();
-    expect(trackStub.called).toBeTruthy();
+    expect(stubs.track.called).toBeTruthy();
   });
 
   describe('on space and token lookup updates', function () {
     beforeEach(inject(function (authentication) {
-      spaceIdStub.returns(123);
-      hasSpaceStub.withArgs(123).returns(true);
+      stubs.spaceId.returns(123);
+      stubs.hasSpace.withArgs(123).returns(true);
       scope.spaceContext.space = _.extend(scope.spaceContext.space, {cloned: true});
       authentication.tokenLookup = {};
       scope.$digest();
     }));
 
     it('token lookup is called', function () {
-      expect(authorizationTokenLookupStub.called).toBeTruthy();
+      expect(stubs.authorizationTokenLookup.called).toBeTruthy();
     });
 
     it('space id is called', function () {
-      expect(spaceIdStub.called).toBeTruthy();
+      expect(stubs.spaceId.called).toBeTruthy();
     });
 
     it('hasSpace is called', function () {
-      expect(hasSpaceStub.called).toBeTruthy();
+      expect(stubs.hasSpace.called).toBeTruthy();
     });
 
     it('setSpace is called', function () {
-      expect(setSpaceStub.calledWith(scope.spaceContext.space)).toBeTruthy();
+      expect(stubs.setSpace.calledWith(scope.spaceContext.space)).toBeTruthy();
     });
   });
 
   it('hideTabBar is true if no tabs are visible', function () {
-    numVisibleStub.returns(0);
+    stubs.numVisible.returns(0);
     expect(scope.hideTabBar()).toBeTruthy();
   });
 
   it('hideTabBar is false if no tabs are visible', function () {
-    numVisibleStub.returns(1);
+    stubs.numVisible.returns(1);
     expect(scope.hideTabBar()).toBeFalsy();
   });
 
   it('gets current space id', function () {
-    spaceIdStub.returns(123);
+    stubs.spaceId.returns(123);
     expect(scope.getCurrentSpaceId()).toBe(123);
   });
 
@@ -205,7 +208,7 @@ describe('Client Controller', function () {
     var idStub;
     beforeEach(function () {
       idStub = sinon.stub();
-      spaceIdStub.returns(123);
+      stubs.spaceId.returns(123);
       space = {
         getId: idStub,
         data: {
@@ -216,7 +219,7 @@ describe('Client Controller', function () {
 
     it('with no space triggers an error notification', function () {
       scope.selectSpace();
-      expect(notificationErrorStub.called).toBeTruthy();
+      expect(stubs.notificationError.called).toBeTruthy();
     });
 
     describe('if we are selecting the current space', function () {
@@ -226,11 +229,11 @@ describe('Client Controller', function () {
       });
 
       it('dont track analytics', function () {
-        expect(trackStub.called).toBeFalsy();
+        expect(stubs.track.called).toBeFalsy();
       });
 
       it('dont route to another space', function () {
-        expect(goToSpaceStub.called).toBeFalsy();
+        expect(stubs.goToSpace.called).toBeFalsy();
       });
     });
 
@@ -241,15 +244,15 @@ describe('Client Controller', function () {
       });
 
       it('tracks analytics', function () {
-        expect(trackStub.called).toBeTruthy();
+        expect(stubs.track.called).toBeTruthy();
       });
 
       it('tracks the space properties', function () {
-        expect(trackStub.args[0][1]).toEqual({spaceId: 456, spaceName: 'testspace'});
+        expect(stubs.track.args[0][1]).toEqual({spaceId: 456, spaceName: 'testspace'});
       });
 
       it('route to another space', function () {
-        expect(goToSpaceStub.calledWith(space)).toBeTruthy();
+        expect(stubs.goToSpace.calledWith(space)).toBeTruthy();
       });
     });
   });
@@ -273,7 +276,7 @@ describe('Client Controller', function () {
       });
 
       it('sets no space data on analytics', function () {
-        expect(setSpaceDataStub.called).toBeFalsy();
+        expect(stubs.setSpaceData.called).toBeFalsy();
       });
     });
 
@@ -284,7 +287,7 @@ describe('Client Controller', function () {
       });
 
       it('sets no space data on analytics', function () {
-        expect(setSpaceDataStub.called).toBeFalsy();
+        expect(stubs.setSpaceData.called).toBeFalsy();
       });
     });
 
@@ -299,7 +302,7 @@ describe('Client Controller', function () {
       });
 
       it('space data is set on analytics', function () {
-        expect(setSpaceDataStub.calledWith(scope.spaces[0])).toBeTruthy();
+        expect(stubs.setSpaceData.calledWith(scope.spaces[0])).toBeTruthy();
       });
     });
 
@@ -310,7 +313,7 @@ describe('Client Controller', function () {
     beforeEach(function () {
       scope.spaces = null;
       scope.$digest();
-      spaceIdStub.returns(321);
+      stubs.spaceId.returns(321);
       idStub1 = sinon.stub();
       idStub2 = sinon.stub();
       idStub1.returns(123);
@@ -323,94 +326,94 @@ describe('Client Controller', function () {
     });
 
     it('space data is set on analytics', function () {
-      routingSpaceIdStub.returns(456);
+      stubs.routingSpaceId.returns(456);
       scope.$digest();
-      expect(setSpaceDataStub.calledWith(scope.spaces[1])).toBeTruthy();
+      expect(stubs.setSpaceData.calledWith(scope.spaces[1])).toBeTruthy();
     });
 
     it('redirects to a non existent space and defaults to first space', function () {
-      routingSpaceIdStub.returns(789);
+      stubs.routingSpaceId.returns(789);
       scope.$digest();
-      expect(goToSpaceStub.calledWith(scope.spaces[0])).toBeTruthy();
+      expect(stubs.goToSpace.calledWith(scope.spaces[0])).toBeTruthy();
     });
 
     it('redirects to a space with no routing id and defaults to first space', function () {
-      routingSpaceIdStub.returns();
-      getRouteStub.returns({
+      stubs.routingSpaceId.returns();
+      stubs.getRoute.returns({
         root: true
       });
       scope.$digest();
-      expect(goToSpaceStub.calledWith(scope.spaces[0])).toBeTruthy();
+      expect(stubs.goToSpace.calledWith(scope.spaces[0])).toBeTruthy();
     });
 
     describe('no space id for redirect provided and not redirecting to root', function () {
       beforeEach(function () {
-        getRouteStub.returns({
+        stubs.getRoute.returns({
           root: false
         });
         scope.$digest();
       });
 
       it('doesnt redirect to another space', function () {
-        expect(goToSpaceStub.called).toBeFalsy();
+        expect(stubs.goToSpace.called).toBeFalsy();
       });
 
       it('doesnt set analytics data', function () {
-        expect(setSpaceDataStub.called).toBeFalsy();
+        expect(stubs.setSpaceData.called).toBeFalsy();
       });
 
       it('doesnt set a location path', function () {
-        expect(pathStub.called).toBeFalsy();
+        expect(stubs.path.called).toBeFalsy();
       });
     });
 
     describe('redirects to the current space', function () {
       beforeEach(function () {
         scope.spaces = [];
-        routingSpaceIdStub.returns(321);
+        stubs.routingSpaceId.returns(321);
         scope.$digest();
       });
 
       it('doesnt redirect to another space', function () {
-        expect(goToSpaceStub.called).toBeFalsy();
+        expect(stubs.goToSpace.called).toBeFalsy();
       });
 
       it('sets analytics data', function () {
-        expect(setSpaceDataStub.called).toBeTruthy();
+        expect(stubs.setSpaceData.called).toBeTruthy();
       });
 
       it('sets a location path', function () {
-        expect(pathStub.called).toBeTruthy();
+        expect(stubs.path.called).toBeTruthy();
       });
     });
 
     describe('redirects to the current space', function () {
       beforeEach(function () {
-        routingSpaceIdStub.returns(321);
+        stubs.routingSpaceId.returns(321);
         scope.$digest();
       });
 
       it('doesnt redirect to another space', function () {
-        expect(goToSpaceStub.called).toBeFalsy();
+        expect(stubs.goToSpace.called).toBeFalsy();
       });
 
       it('doesnt set analytics data', function () {
-        expect(setSpaceDataStub.called).toBeFalsy();
+        expect(stubs.setSpaceData.called).toBeFalsy();
       });
     });
 
     describe('no space can be found', function () {
       beforeEach(function () {
-        routingSpaceIdStub.returns(321);
+        stubs.routingSpaceId.returns(321);
         scope.$digest();
       });
 
       it('doesnt redirect to another space', function () {
-        expect(goToSpaceStub.called).toBeFalsy();
+        expect(stubs.goToSpace.called).toBeFalsy();
       });
 
       it('doesnt set analytics data', function () {
-        expect(setSpaceDataStub.called).toBeFalsy();
+        expect(stubs.setSpaceData.called).toBeFalsy();
       });
     });
   });
@@ -421,11 +424,11 @@ describe('Client Controller', function () {
     });
 
     it('tracks analytics event', function () {
-      expect(trackStub.called).toBeTruthy();
+      expect(stubs.track.called).toBeTruthy();
     });
 
     it('logs out through authentication', function () {
-      expect(logoutStub.called).toBeTruthy();
+      expect(stubs.logout.called).toBeTruthy();
     });
   });
 
@@ -435,11 +438,11 @@ describe('Client Controller', function () {
     });
 
     it('opens new window', function () {
-      expect(openStub.called).toBeTruthy();
+      expect(stubs.open.called).toBeTruthy();
     });
 
     it('gets support url', function () {
-      expect(supportUrlStub.called).toBeTruthy();
+      expect(stubs.supportUrl.called).toBeTruthy();
     });
   });
 
@@ -476,7 +479,7 @@ describe('Client Controller', function () {
       });
 
       it('calls authentication goodbye', function () {
-        expect(goodbyeStub.called).toBeTruthy();
+        expect(stubs.goodbye.called).toBeTruthy();
       });
     });
 
@@ -503,7 +506,7 @@ describe('Client Controller', function () {
       });
 
       it('calls auth token lookup', function () {
-        expect(authenticationTokenLookupStub).toBeTruthy();
+        expect(stubs.authenticationTokenLookup).toBeTruthy();
       });
 
       it('sets user to looked up user', function () {
@@ -527,7 +530,7 @@ describe('Client Controller', function () {
           }
         };
         childScope.$emit('iframeMessage', data);
-        expect(notificationErrorStub.calledWith('hai')).toBeTruthy();
+        expect(stubs.notificationError.calledWith('hai')).toBeTruthy();
       });
 
       it('calls info notification', function () {
@@ -539,7 +542,7 @@ describe('Client Controller', function () {
           }
         };
         childScope.$emit('iframeMessage', data);
-        expect(notificationInfoStub.calledWith('hai')).toBeTruthy();
+        expect(stubs.notificationInfo.calledWith('hai')).toBeTruthy();
       });
     });
 
@@ -559,17 +562,17 @@ describe('Client Controller', function () {
 
   it('tracks profile button click event', function () {
     scope.clickedProfileButton();
-    expect(trackStub.called).toBeTruthy();
+    expect(stubs.track.called).toBeTruthy();
   });
 
   it('redirects to profile', function () {
     scope.goToProfile();
-    expect(pathStub.calledWith('/profile/user')).toBeTruthy();
+    expect(stubs.path.calledWith('/profile/user')).toBeTruthy();
   });
 
   it('redirects to profile with a suffix', function () {
     scope.goToProfile('derp');
-    expect(pathStub.calledWith('/profile/derp')).toBeTruthy();
+    expect(stubs.path.calledWith('/profile/derp')).toBeTruthy();
   });
 
   describe('performs token lookup', function () {
@@ -581,7 +584,7 @@ describe('Client Controller', function () {
         },
         spaces: ['space']
       });
-      getTokenLookupStub.returns({
+      stubs.getTokenLookup.returns({
         then: thenStub
       });
       scope.updateSpaces = sinon.stub();
@@ -589,7 +592,7 @@ describe('Client Controller', function () {
     });
 
     it('expect getTokenLookup to be called', function () {
-      expect(getTokenLookupStub.called).toBeTruthy();
+      expect(stubs.getTokenLookup.called).toBeTruthy();
     });
 
     it('user is set to the provided one', function () {
@@ -640,7 +643,7 @@ describe('Client Controller', function () {
           }
         }
       };
-      wrapSpaceStub.returns(newSpace);
+      stubs.wrapSpace.returns(newSpace);
 
       idStub1.returns(123);
       idStub2.returns(456);
@@ -668,7 +671,7 @@ describe('Client Controller', function () {
     });
 
     it('new space is wrapped', function () {
-      expect(wrapSpaceStub.calledWith(spaces[2])).toBeTruthy();
+      expect(stubs.wrapSpace.calledWith(spaces[2])).toBeTruthy();
     });
 
     it('third space has a save method', function () {
@@ -682,11 +685,11 @@ describe('Client Controller', function () {
     });
 
     it('opens dialog', function () {
-      expect(dialogStub.called).toBeTruthy();
+      expect(stubs.dialog.called).toBeTruthy();
     });
 
     it('tracks analytics event', function () {
-      expect(trackStub.called).toBeTruthy();
+      expect(stubs.track.called).toBeTruthy();
     });
   });
 
@@ -694,7 +697,7 @@ describe('Client Controller', function () {
     var thenStub, catchStub, revisionCatchStub;
     beforeEach(function () {
       revisionCatchStub = sinon.stub();
-      hasNewVersionStub.returns({catch: revisionCatchStub});
+      stubs.hasNewVersion.returns({catch: revisionCatchStub});
       scope.performTokenLookup = sinon.stub();
       thenStub = sinon.stub();
       catchStub = sinon.stub();
@@ -725,15 +728,15 @@ describe('Client Controller', function () {
       });
 
       it('tracks login', function () {
-        expect(loginTrackStub.called).toBeTruthy();
+        expect(stubs.loginTrack.called).toBeTruthy();
       });
 
       it('tutorial seen check is called', function () {
-        expect(tutorialSeenStub.called).toBeTruthy();
+        expect(stubs.tutorialSeen.called).toBeTruthy();
       });
 
       it('tutorial start is called', function () {
-        expect(tutorialStartStub.called).toBeTruthy();
+        expect(stubs.tutorialStart.called).toBeTruthy();
       });
 
       describe('fires an initial version check', function () {
@@ -749,7 +752,7 @@ describe('Client Controller', function () {
         });
 
         it('checks for new version', function () {
-          expect(hasNewVersionStub.called).toBeTruthy();
+          expect(stubs.hasNewVersion.called).toBeTruthy();
         });
 
         it('broadcasts event if new version is available', function () {
@@ -761,7 +764,7 @@ describe('Client Controller', function () {
       describe('presence timeout is fired', function () {
         var broadcastStub;
         beforeEach(inject(function ($rootScope) {
-          presenceActiveStub.returns(true);
+          stubs.presenceActive.returns(true);
           catchStub.callsArg(0);
           broadcastStub = sinon.stub($rootScope, '$broadcast');
           revisionCatchStub.callsArgWith(0, 'APP_REVISION_CHANGED');
@@ -773,15 +776,15 @@ describe('Client Controller', function () {
         });
 
         it('checks for presence', function () {
-          expect(presenceActiveStub.called).toBeTruthy();
+          expect(stubs.presenceActive.called).toBeTruthy();
         });
 
         it('checks for new version', function () {
-          expect(hasNewVersionStub.called).toBeTruthy();
+          expect(stubs.hasNewVersion.called).toBeTruthy();
         });
 
         it('reload is triggered if lookup fails', function () {
-          expect(triggerStub.called).toBeTruthy();
+          expect(stubs.trigger.called).toBeTruthy();
         });
 
         it('broadcasts event if new version is available', function () {
@@ -798,11 +801,11 @@ describe('Client Controller', function () {
       });
 
       it('error notification shown', function () {
-        expect(notificationErrorStub.called).toBeTruthy();
+        expect(stubs.notificationError.called).toBeTruthy();
       });
 
       it('user is logged out', function () {
-        expect(logoutStub.called).toBeTruthy();
+        expect(stubs.logout.called).toBeTruthy();
       });
     });
 

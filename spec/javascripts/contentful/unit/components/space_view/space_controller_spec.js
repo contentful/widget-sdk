@@ -1,39 +1,40 @@
 'use strict';
 
 describe('Space Controller', function () {
-  var spaceController, scope;
-  var authUpdatedStub, periodUsageStub, enforcementStub, trackStub, errorStub, computeUsageStub;
+  var spaceController, scope, stubs;
 
   beforeEach(function () {
-    authUpdatedStub = sinon.stub();
-    periodUsageStub = sinon.stub();
-    computeUsageStub = sinon.stub();
-    enforcementStub = sinon.stub();
-    trackStub = sinon.stub();
-    errorStub = sinon.stub();
     module('contentful/test', function ($provide) {
+      stubs = $provide.makeStubs([
+        'authUpdated',
+        'periodUsage',
+        'computeUsage',
+        'enforcement',
+        'track',
+        'error'
+      ]);
 
       $provide.value('authorization', {
-        isUpdated: authUpdatedStub
+        isUpdated: stubs.authUpdated
       });
 
       $provide.value('authentication', {
       });
 
       $provide.value('enforcements', {
-        getPeriodUsage: periodUsageStub,
-        computeUsage: computeUsageStub,
-        determineEnforcement: enforcementStub
+        getPeriodUsage: stubs.periodUsage,
+        computeUsage: stubs.computeUsage,
+        determineEnforcement: stubs.enforcement
       });
 
       $provide.value('reasonsDenied', sinon.stub());
 
       $provide.value('analytics', {
-        track: trackStub
+        track: stubs.track
       });
 
       $provide.value('notification', {
-        serverError: errorStub
+        serverError: stubs.error
       });
     });
     inject(function ($controller, $rootScope, cfStub){
@@ -114,8 +115,8 @@ describe('Space Controller', function () {
     var broadcastStub;
     beforeEach(inject(function (authentication, $rootScope) {
       authentication.tokenLookup = {};
-      authUpdatedStub.returns(true);
-      periodUsageStub.returns(true);
+      stubs.authUpdated.returns(true);
+      stubs.periodUsage.returns(true);
       broadcastStub = sinon.stub($rootScope, '$broadcast');
       scope.$digest();
     }));
@@ -125,7 +126,7 @@ describe('Space Controller', function () {
     });
 
     it('gets period usage', function () {
-      expect(periodUsageStub.called).toBeTruthy();
+      expect(stubs.periodUsage.called).toBeTruthy();
     });
 
     it('broadcasts event if usage exceeded', function () {
@@ -160,7 +161,7 @@ describe('Space Controller', function () {
       });
 
       it('enforcement is not determined', function () {
-        expect(enforcementStub.called).toBeFalsy();
+        expect(stubs.enforcement.called).toBeFalsy();
       });
 
       it('event is not broadcast', function () {
@@ -187,7 +188,7 @@ describe('Space Controller', function () {
         });
 
         it('enforcement is not determined', function () {
-          expect(enforcementStub.called).toBeFalsy();
+          expect(stubs.enforcement.called).toBeFalsy();
         });
 
         it('event is not broadcast', function () {
@@ -207,7 +208,7 @@ describe('Space Controller', function () {
 
       describe('if there are reasons', function () {
         beforeEach(function () {
-          enforcementStub.returns({});
+          stubs.enforcement.returns({});
           result = scope.can(args);
         });
 
@@ -216,7 +217,7 @@ describe('Space Controller', function () {
         });
 
         it('enforcement is determined', function () {
-          expect(enforcementStub.called).toBeTruthy();
+          expect(stubs.enforcement.called).toBeTruthy();
         });
 
         it('event is broadcast', function () {
@@ -230,7 +231,7 @@ describe('Space Controller', function () {
 
       describe('if there are no reasons', function () {
         beforeEach(function () {
-          enforcementStub.returns(false);
+          stubs.enforcement.returns(false);
           result = scope.can(args);
         });
 
@@ -239,7 +240,7 @@ describe('Space Controller', function () {
         });
 
         it('enforcement is determined', function () {
-          expect(enforcementStub.called).toBeTruthy();
+          expect(stubs.enforcement.called).toBeTruthy();
         });
 
         it('event is not broadcast', function () {
@@ -255,7 +256,7 @@ describe('Space Controller', function () {
 
   it('analytics event fired on logo clicked', function () {
     scope.logoClicked();
-    expect(trackStub.called).toBeTruthy();
+    expect(stubs.track.called).toBeTruthy();
   });
 
   describe('broadcasts an event from space', function () {
@@ -304,15 +305,15 @@ describe('Space Controller', function () {
       });
 
       it('determines enforcements', function () {
-        expect(enforcementStub.calledWith([], 'entry')).toBeTruthy();
+        expect(stubs.enforcement.calledWith([], 'entry')).toBeTruthy();
       });
 
       it('notifies of the error', function () {
-        expect(errorStub.called).toBeTruthy();
+        expect(stubs.error.called).toBeTruthy();
       });
 
       it('tracks analytics', function () {
-        expect(trackStub.called).toBeTruthy();
+        expect(stubs.track.called).toBeTruthy();
       });
     });
 
@@ -333,7 +334,7 @@ describe('Space Controller', function () {
       });
 
       it('tracks analytics', function () {
-        expect(trackStub.called).toBeTruthy();
+        expect(stubs.track.called).toBeTruthy();
       });
     });
   });
@@ -366,15 +367,15 @@ describe('Space Controller', function () {
       });
 
       it('determines enforcements', function () {
-        expect(enforcementStub.calledWith([], 'asset')).toBeTruthy();
+        expect(stubs.enforcement.calledWith([], 'asset')).toBeTruthy();
       });
 
       it('notifies of the error', function () {
-        expect(errorStub.called).toBeTruthy();
+        expect(stubs.error.called).toBeTruthy();
       });
 
       it('tracks analytics', function () {
-        expect(trackStub.called).toBeTruthy();
+        expect(stubs.track.called).toBeTruthy();
       });
     });
 
@@ -395,7 +396,7 @@ describe('Space Controller', function () {
       });
 
       it('tracks analytics', function () {
-        expect(trackStub.called).toBeTruthy();
+        expect(stubs.track.called).toBeTruthy();
       });
     });
   });
@@ -428,15 +429,15 @@ describe('Space Controller', function () {
       });
 
       it('determines enforcements', function () {
-        expect(enforcementStub.calledWith([], 'contentType')).toBeTruthy();
+        expect(stubs.enforcement.calledWith([], 'contentType')).toBeTruthy();
       });
 
       it('notifies of the error', function () {
-        expect(errorStub.called).toBeTruthy();
+        expect(stubs.error.called).toBeTruthy();
       });
 
       it('tracks analytics', function () {
-        expect(trackStub.called).toBeTruthy();
+        expect(stubs.track.called).toBeTruthy();
       });
     });
 
@@ -457,7 +458,7 @@ describe('Space Controller', function () {
       });
 
       it('tracks analytics', function () {
-        expect(trackStub.called).toBeTruthy();
+        expect(stubs.track.called).toBeTruthy();
       });
     });
   });
@@ -474,16 +475,16 @@ describe('Space Controller', function () {
 
     describe('creation fails', function () {
       beforeEach(function () {
-        computeUsageStub.returns({});
+        stubs.computeUsage.returns({});
         scope.createApiKey();
       });
 
       it('computes the api key usage', function () {
-        expect(computeUsageStub.calledWith('apiKey')).toBeTruthy();
+        expect(stubs.computeUsage.calledWith('apiKey')).toBeTruthy();
       });
 
       it('notifies of the error', function () {
-        expect(errorStub.called).toBeTruthy();
+        expect(stubs.error.called).toBeTruthy();
       });
     });
 
@@ -495,12 +496,12 @@ describe('Space Controller', function () {
         scope.navigator = {
           apiKeyEditor: editorStub
         };
-        computeUsageStub.returns(null);
+        stubs.computeUsage.returns(null);
         scope.createApiKey();
       });
 
       it('computes the api key usage', function () {
-        expect(computeUsageStub.calledWith('apiKey')).toBeTruthy();
+        expect(stubs.computeUsage.calledWith('apiKey')).toBeTruthy();
       });
 
       it('calls the space create method', function () {
@@ -512,7 +513,7 @@ describe('Space Controller', function () {
       });
 
       it('tracks analytics', function () {
-        expect(trackStub.called).toBeTruthy();
+        expect(stubs.track.called).toBeTruthy();
       });
     });
   });

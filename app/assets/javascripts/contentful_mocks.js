@@ -264,4 +264,13 @@ mocks.config(function ($provide) {
       });
     });
   };
+
+  $provide.makeStubs = function makeStubs(stubList) {
+    var stubs = {};
+    _.each(stubList, function (val) {
+      stubs[val] = sinon.stub();
+    });
+    return stubs;
+  };
+
 });
