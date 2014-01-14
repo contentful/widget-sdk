@@ -2,13 +2,6 @@
 
 describe('Client Controller', function () {
   var clientController, scope;
-  var numVisibleStub, spaceIdStub, auxPanelStub, trackStub;
-  var authorizationTokenLookupStub, authenticationTokenLookupStub, getTokenLookupStub;
-  var setSpaceStub, hasSpaceStub, notificationErrorStub, notificationInfoStub;
-  var goToSpaceStub, routingSpaceIdStub, setSpaceDataStub, getRouteStub, pathStub;
-  var logoutStub, goodbyeStub, supportUrlStub, openStub, wrapSpaceStub;
-  var dialogStub, loginTrackStub, presenceActiveStub, triggerStub, hasNewVersionStub;
-  var tutorialStartStub, tutorialSeenStub;
   var stubs;
 
   beforeEach(function () {
