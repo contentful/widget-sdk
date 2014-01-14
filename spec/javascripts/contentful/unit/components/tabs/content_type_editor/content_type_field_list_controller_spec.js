@@ -85,7 +85,7 @@ describe('ContentTypeFieldList Controller', function () {
     });
 
     it('sets uiid on otdoc fields', function () {
-      expect(scope.otDoc.setAt.called).toBeFalsy();
+      expect(scope.otDoc.setAt).not.toBeCalled();
     });
 
     it('updates the entity', function () {

@@ -52,7 +52,7 @@ describe('cfPersistentNotification Directive', function () {
     });
 
     scope.$apply();
-    expect(tooltipStub.called).toBe(true);
+    expect(tooltipStub).toBeCalled();
     tooltipStub.restore();
   });
 

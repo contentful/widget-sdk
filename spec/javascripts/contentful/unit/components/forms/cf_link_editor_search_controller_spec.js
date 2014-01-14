@@ -44,7 +44,7 @@ describe('cfLinkEditorSearch Controller', function () {
     scope.resetEntities = sinon.stub();
     scope.searchTerm = 'term';
     scope.$digest();
-    expect(scope.resetEntities.called).toBeTruthy();
+    expect(scope.resetEntities).toBeCalled();
   });
 
   it('when autocomplete result is selected sets the selected entity on the scope', inject(function ($rootScope) {
@@ -57,7 +57,7 @@ describe('cfLinkEditorSearch Controller', function () {
     var result = {result: true};
     scope.addLink = sinon.stub();
     $rootScope.$broadcast('autocompleteResultPicked', 0, result);
-    expect(scope.addLink.called).toBeTruthy();
+    expect(scope.addLink).toBeCalled();
   }));
 
   describe('the pick method', function() {
@@ -104,7 +104,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it('create '+entityType+' called', function() {
-          expect(createEntityStub.called).toBeTruthy();
+          expect(createEntityStub).toBeCalled();
         });
 
         if(entityType == 'entry') {
@@ -114,7 +114,7 @@ describe('cfLinkEditorSearch Controller', function () {
         }
 
         it('addLink called', function() {
-          expect(scope.addLink.called).toBeTruthy();
+          expect(scope.addLink).toBeCalled();
         });
 
         it('addLink called with '+ entityType, function() {
@@ -122,11 +122,11 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it('server error not called', function() {
-          expect(stubs.serverError.called).toBeFalsy();
+          expect(stubs.serverError).not.toBeCalled();
         });
 
         it(entityType +' editor called', function() {
-          expect(entityEditorStub.called).toBeTruthy();
+          expect(entityEditorStub).toBeCalled();
         });
       });
 
@@ -138,7 +138,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it('create '+ entityType +' called', function() {
-          expect(createEntityStub.called).toBeTruthy();
+          expect(createEntityStub).toBeCalled();
         });
 
         if(entityType == 'entry') {
@@ -148,15 +148,15 @@ describe('cfLinkEditorSearch Controller', function () {
         }
 
         it('addLink not called', function() {
-          expect(scope.addLink.called).toBeFalsy();
+          expect(scope.addLink).not.toBeCalled();
         });
 
         it('server error called', function() {
-          expect(stubs.serverError.called).toBeTruthy();
+          expect(stubs.serverError).toBeCalled();
         });
 
         it(entityType +' editor not called', function() {
-          expect(entityEditorStub.called).toBeFalsy();
+          expect(entityEditorStub).not.toBeCalled();
         });
       });
 
@@ -172,7 +172,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it('create '+ entityType +' called', function() {
-          expect(createEntityStub.called).toBeTruthy();
+          expect(createEntityStub).toBeCalled();
         });
 
         if(entityType == 'entry') {
@@ -182,7 +182,7 @@ describe('cfLinkEditorSearch Controller', function () {
         }
 
         it('addLink called', function() {
-          expect(scope.addLink.called).toBeTruthy();
+          expect(scope.addLink).toBeCalled();
         });
 
         it('addLink called with '+ entityType, function() {
@@ -191,7 +191,7 @@ describe('cfLinkEditorSearch Controller', function () {
 
         it('server error called', function(done) {
           _.defer(function () {
-            expect(stubs.serverError.called).toBeTruthy();
+            expect(stubs.serverError).toBeCalled();
             done();
           });
         });
@@ -213,7 +213,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it('create '+ entityType +' called', function() {
-          expect(createEntityStub.called).toBeTruthy();
+          expect(createEntityStub).toBeCalled();
         });
 
         if(entityType == 'entry') {
@@ -223,7 +223,7 @@ describe('cfLinkEditorSearch Controller', function () {
         }
 
         it('addLink called', function() {
-          expect(scope.addLink.called).toBeTruthy();
+          expect(scope.addLink).toBeCalled();
         });
 
         it('addLink called with '+ entityType, function() {
@@ -240,7 +240,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it(entityType +' editor not called', function() {
-          expect(entityEditorStub.called).toBeFalsy();
+          expect(entityEditorStub).not.toBeCalled();
         });
       });
     });
@@ -288,7 +288,7 @@ describe('cfLinkEditorSearch Controller', function () {
 
       it('loads entities', function() {
         scope.resetEntities();
-        expect(stubs.load.called).toBeTruthy();
+        expect(stubs.load).toBeCalled();
       });
 
       it('sets entities num on the paginator', function() {
@@ -375,7 +375,7 @@ describe('cfLinkEditorSearch Controller', function () {
     it('doesnt load if on last page', function() {
       scope.paginator.atLast.returns(true);
       scope.loadMore();
-      expect(stubs.load.called).toBeFalsy();
+      expect(stubs.load).not.toBeCalled();
     });
 
     it('paginator count is increased', function() {
@@ -394,7 +394,7 @@ describe('cfLinkEditorSearch Controller', function () {
       scope.paginator.numEntries = 47;
       scope.paginator.page = 0;
       scope.loadMore();
-      expect(stubs.load.called).toBeTruthy();
+      expect(stubs.load).toBeCalled();
     });
 
     describe('on successful load response', function() {
@@ -421,7 +421,7 @@ describe('cfLinkEditorSearch Controller', function () {
       });
 
       it('appends entities to scope', function () {
-        expect(scope.entities.push.called).toBeFalsy();
+        expect(scope.entities.push).not.toBeCalled();
       });
 
       it('pagination count decreases', function() {

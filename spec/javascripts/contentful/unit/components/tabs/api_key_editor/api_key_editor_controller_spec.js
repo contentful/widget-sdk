@@ -106,12 +106,12 @@ describe('API key editor controller', function () {
     });
 
     it('info notification is shown', function () {
-      expect(stubs.info.called).toBeTruthy();
+      expect(stubs.info).toBeCalled();
       expect(stubs.info.args[0][0]).toEqual('"apiKeyName" deleted successfully');
     });
 
     it('event is broadcasted from space', function () {
-      expect(stubs.broadcast.called).toBeTruthy();
+      expect(stubs.broadcast).toBeCalled();
       expect(stubs.broadcast.args[0][0]).toEqual('entityDeleted');
       expect(stubs.broadcast.args[0][1]).toBe(apiKey);
     });
@@ -124,7 +124,7 @@ describe('API key editor controller', function () {
     });
 
     it('error notification is shown', function () {
-      expect(stubs.serverError.called).toBeTruthy();
+      expect(stubs.serverError).toBeCalled();
       expect(stubs.serverError.args[0][0]).toEqual('"apiKeyName" could not be deleted');
       expect(stubs.serverError.args[0][1]).toEqual({});
     });
@@ -151,21 +151,21 @@ describe('API key editor controller', function () {
     });
 
     it('info notification is shown', function () {
-      expect(stubs.info.called).toBeTruthy();
+      expect(stubs.info).toBeCalled();
       expect(stubs.info.args[0][0]).toEqual('"apiKeyName" saved successfully');
     });
 
     it('form is reset as pristine', function () {
-      expect(pristineStub.called).toBeTruthy();
+      expect(pristineStub).toBeCalled();
     });
 
     it('gets api key editor from navigator', function () {
-      expect(apiKeyEditorStub.called).toBeTruthy();
+      expect(apiKeyEditorStub).toBeCalled();
       expect(apiKeyEditorStub.args[0][0]).toBe(apiKey);
     });
 
     it('reloads api key editor', function () {
-      expect(goToStub.called).toBeTruthy();
+      expect(goToStub).toBeCalled();
     });
 
   });
@@ -177,7 +177,7 @@ describe('API key editor controller', function () {
     });
 
     it('error notification is shown', function () {
-      expect(stubs.serverError.called).toBeTruthy();
+      expect(stubs.serverError).toBeCalled();
       expect(stubs.serverError.args[0][0]).toEqual('"apiKeyName" could not be saved');
       expect(stubs.serverError.args[0][1]).toEqual({});
     });

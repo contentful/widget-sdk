@@ -51,6 +51,19 @@ beforeEach(function() {
           };
         }
       };
+    },
+
+    toBeCalled: function () {
+      return {
+        compare: function (actual) {
+          var pass = actual.called;
+          var notText = pass ? 'not ' : '';
+          return {
+            pass: pass,
+            message: 'Expected stub ' + notText + 'to be called'
+          };
+        }
+      };
     }
 
   });

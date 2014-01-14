@@ -153,7 +153,7 @@ describe('cfLocationEditor Directive', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.serverError.called).toBeTruthy();
+        expect(stubs.serverError).toBeCalled();
       });
 
       it('sets location back to ngModel value', function() {
@@ -277,7 +277,7 @@ describe('cfLocationEditor Directive', function () {
     var locationController = element.find('.gmaps-container').controller('ngModel');
     locationController.$viewValue = new stubs.latLng();
     scope.resetMapLocation();
-    expect(stubs.panTo.called).toBeTruthy();
+    expect(stubs.panTo).toBeCalled();
   });
 
   it('shows corrupt location warning', function () {

@@ -152,7 +152,7 @@ describe('Client Controller', function () {
 
   it('space switcher analytics tracking', function () {
     scope.clickedSpaceSwitcher();
-    expect(stubs.track.called).toBeTruthy();
+    expect(stubs.track).toBeCalled();
   });
 
   describe('on space and token lookup updates', function () {
@@ -165,15 +165,15 @@ describe('Client Controller', function () {
     }));
 
     it('token lookup is called', function () {
-      expect(stubs.authorizationTokenLookup.called).toBeTruthy();
+      expect(stubs.authorizationTokenLookup).toBeCalled();
     });
 
     it('space id is called', function () {
-      expect(stubs.spaceId.called).toBeTruthy();
+      expect(stubs.spaceId).toBeCalled();
     });
 
     it('hasSpace is called', function () {
-      expect(stubs.hasSpace.called).toBeTruthy();
+      expect(stubs.hasSpace).toBeCalled();
     });
 
     it('setSpace is called', function () {
@@ -212,7 +212,7 @@ describe('Client Controller', function () {
 
     it('with no space triggers an error notification', function () {
       scope.selectSpace();
-      expect(stubs.notificationError.called).toBeTruthy();
+      expect(stubs.notificationError).toBeCalled();
     });
 
     describe('if we are selecting the current space', function () {
@@ -222,11 +222,11 @@ describe('Client Controller', function () {
       });
 
       it('dont track analytics', function () {
-        expect(stubs.track.called).toBeFalsy();
+        expect(stubs.track).not.toBeCalled();
       });
 
       it('dont route to another space', function () {
-        expect(stubs.goToSpace.called).toBeFalsy();
+        expect(stubs.goToSpace).not.toBeCalled();
       });
     });
 
@@ -237,7 +237,7 @@ describe('Client Controller', function () {
       });
 
       it('tracks analytics', function () {
-        expect(stubs.track.called).toBeTruthy();
+        expect(stubs.track).toBeCalled();
       });
 
       it('tracks the space properties', function () {
@@ -269,7 +269,7 @@ describe('Client Controller', function () {
       });
 
       it('sets no space data on analytics', function () {
-        expect(stubs.setSpaceData.called).toBeFalsy();
+        expect(stubs.setSpaceData).not.toBeCalled();
       });
     });
 
@@ -280,7 +280,7 @@ describe('Client Controller', function () {
       });
 
       it('sets no space data on analytics', function () {
-        expect(stubs.setSpaceData.called).toBeFalsy();
+        expect(stubs.setSpaceData).not.toBeCalled();
       });
     });
 
@@ -291,7 +291,7 @@ describe('Client Controller', function () {
       });
 
       it('gets the space id', function () {
-        expect(idStub.called).toBeTruthy();
+        expect(idStub).toBeCalled();
       });
 
       it('space data is set on analytics', function () {
@@ -348,15 +348,15 @@ describe('Client Controller', function () {
       });
 
       it('doesnt redirect to another space', function () {
-        expect(stubs.goToSpace.called).toBeFalsy();
+        expect(stubs.goToSpace).not.toBeCalled();
       });
 
       it('doesnt set analytics data', function () {
-        expect(stubs.setSpaceData.called).toBeFalsy();
+        expect(stubs.setSpaceData).not.toBeCalled();
       });
 
       it('doesnt set a location path', function () {
-        expect(stubs.path.called).toBeFalsy();
+        expect(stubs.path).not.toBeCalled();
       });
     });
 
@@ -368,15 +368,15 @@ describe('Client Controller', function () {
       });
 
       it('doesnt redirect to another space', function () {
-        expect(stubs.goToSpace.called).toBeFalsy();
+        expect(stubs.goToSpace).not.toBeCalled();
       });
 
       it('sets analytics data', function () {
-        expect(stubs.setSpaceData.called).toBeTruthy();
+        expect(stubs.setSpaceData).toBeCalled();
       });
 
       it('sets a location path', function () {
-        expect(stubs.path.called).toBeTruthy();
+        expect(stubs.path).toBeCalled();
       });
     });
 
@@ -387,11 +387,11 @@ describe('Client Controller', function () {
       });
 
       it('doesnt redirect to another space', function () {
-        expect(stubs.goToSpace.called).toBeFalsy();
+        expect(stubs.goToSpace).not.toBeCalled();
       });
 
       it('doesnt set analytics data', function () {
-        expect(stubs.setSpaceData.called).toBeFalsy();
+        expect(stubs.setSpaceData).not.toBeCalled();
       });
     });
 
@@ -402,11 +402,11 @@ describe('Client Controller', function () {
       });
 
       it('doesnt redirect to another space', function () {
-        expect(stubs.goToSpace.called).toBeFalsy();
+        expect(stubs.goToSpace).not.toBeCalled();
       });
 
       it('doesnt set analytics data', function () {
-        expect(stubs.setSpaceData.called).toBeFalsy();
+        expect(stubs.setSpaceData).not.toBeCalled();
       });
     });
   });
@@ -417,11 +417,11 @@ describe('Client Controller', function () {
     });
 
     it('tracks analytics event', function () {
-      expect(stubs.track.called).toBeTruthy();
+      expect(stubs.track).toBeCalled();
     });
 
     it('logs out through authentication', function () {
-      expect(stubs.logout.called).toBeTruthy();
+      expect(stubs.logout).toBeCalled();
     });
   });
 
@@ -431,11 +431,11 @@ describe('Client Controller', function () {
     });
 
     it('opens new window', function () {
-      expect(stubs.open.called).toBeTruthy();
+      expect(stubs.open).toBeCalled();
     });
 
     it('gets support url', function () {
-      expect(stubs.supportUrl.called).toBeTruthy();
+      expect(stubs.supportUrl).toBeCalled();
     });
   });
 
@@ -472,7 +472,7 @@ describe('Client Controller', function () {
       });
 
       it('calls authentication goodbye', function () {
-        expect(stubs.goodbye.called).toBeTruthy();
+        expect(stubs.goodbye).toBeCalled();
       });
     });
 
@@ -507,7 +507,7 @@ describe('Client Controller', function () {
       });
 
       it('updates spaces', function () {
-        expect(scope.updateSpaces.called).toBeTruthy();
+        expect(scope.updateSpaces).toBeCalled();
       });
     });
    */
@@ -547,7 +547,7 @@ describe('Client Controller', function () {
       });
 
       it('calls token lookup', function () {
-        expect(scope.performTokenLookup.called).toBeTruthy();
+        expect(scope.performTokenLookup).toBeCalled();
       });
     });
 
@@ -555,7 +555,7 @@ describe('Client Controller', function () {
 
   it('tracks profile button click event', function () {
     scope.clickedProfileButton();
-    expect(stubs.track.called).toBeTruthy();
+    expect(stubs.track).toBeCalled();
   });
 
   it('redirects to profile', function () {
@@ -585,7 +585,7 @@ describe('Client Controller', function () {
     });
 
     it('expect getTokenLookup to be called', function () {
-      expect(stubs.getTokenLookup.called).toBeTruthy();
+      expect(stubs.getTokenLookup).toBeCalled();
     });
 
     it('user is set to the provided one', function () {
@@ -678,11 +678,11 @@ describe('Client Controller', function () {
     });
 
     it('opens dialog', function () {
-      expect(stubs.dialog.called).toBeTruthy();
+      expect(stubs.dialog).toBeCalled();
     });
 
     it('tracks analytics event', function () {
-      expect(stubs.track.called).toBeTruthy();
+      expect(stubs.track).toBeCalled();
     });
   });
 
@@ -702,7 +702,7 @@ describe('Client Controller', function () {
 
     it('token lookup is called', function () {
       scope.initClient();
-      expect(scope.performTokenLookup.called).toBeTruthy();
+      expect(scope.performTokenLookup).toBeCalled();
     });
 
     describe('if lookup succeeds', function () {
@@ -721,15 +721,15 @@ describe('Client Controller', function () {
       });
 
       it('tracks login', function () {
-        expect(stubs.loginTrack.called).toBeTruthy();
+        expect(stubs.loginTrack).toBeCalled();
       });
 
       it('tutorial seen check is called', function () {
-        expect(stubs.tutorialSeen.called).toBeTruthy();
+        expect(stubs.tutorialSeen).toBeCalled();
       });
 
       it('tutorial start is called', function () {
-        expect(stubs.tutorialStart.called).toBeTruthy();
+        expect(stubs.tutorialStart).toBeCalled();
       });
 
       describe('fires an initial version check', function () {
@@ -745,11 +745,11 @@ describe('Client Controller', function () {
         });
 
         it('checks for new version', function () {
-          expect(stubs.hasNewVersion.called).toBeTruthy();
+          expect(stubs.hasNewVersion).toBeCalled();
         });
 
         it('broadcasts event if new version is available', function () {
-          expect(broadcastStub.called).toBeTruthy();
+          expect(broadcastStub).toBeCalled();
         });
       });
 
@@ -769,19 +769,19 @@ describe('Client Controller', function () {
         });
 
         it('checks for presence', function () {
-          expect(stubs.presenceActive.called).toBeTruthy();
+          expect(stubs.presenceActive).toBeCalled();
         });
 
         it('checks for new version', function () {
-          expect(stubs.hasNewVersion.called).toBeTruthy();
+          expect(stubs.hasNewVersion).toBeCalled();
         });
 
         it('reload is triggered if lookup fails', function () {
-          expect(stubs.trigger.called).toBeTruthy();
+          expect(stubs.trigger).toBeCalled();
         });
 
         it('broadcasts event if new version is available', function () {
-          expect(broadcastStub.called).toBeTruthy();
+          expect(broadcastStub).toBeCalled();
         });
       });
 
@@ -794,11 +794,11 @@ describe('Client Controller', function () {
       });
 
       it('error notification shown', function () {
-        expect(stubs.notificationError.called).toBeTruthy();
+        expect(stubs.notificationError).toBeCalled();
       });
 
       it('user is logged out', function () {
-        expect(stubs.logout.called).toBeTruthy();
+        expect(stubs.logout).toBeCalled();
       });
     });
 

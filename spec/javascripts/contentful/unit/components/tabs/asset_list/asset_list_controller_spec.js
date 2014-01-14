@@ -115,26 +115,26 @@ describe('Asset List Controller', function () {
     it('page', function () {
       scope.paginator.page = 1;
       scope.$digest();
-      expect(resetStub.called).toBeTruthy();
+      expect(resetStub).toBeCalled();
     });
 
     it('page length', function () {
       scope.pageLength = 10;
       scope.$digest();
-      expect(resetStub.called).toBeTruthy();
+      expect(resetStub).toBeCalled();
     });
 
     it('list', function () {
       scope.tab.params.list = 'all';
       scope.$digest();
-      expect(resetStub.called).toBeTruthy();
+      expect(resetStub).toBeCalled();
     });
 
     it('space id', function () {
       var idStub = sinon.stub(scope.spaceContext.space, 'getId');
       idStub.returns(123);
       scope.$digest();
-      expect(resetStub.called).toBeTruthy();
+      expect(resetStub).toBeCalled();
       idStub.restore();
     });
   });
@@ -155,7 +155,7 @@ describe('Asset List Controller', function () {
     it('resets current list', function () {
       scope.tab.params.list = list;
       scope.switchList(list);
-      expect(scope.resetAssets.called).toBeTruthy();
+      expect(scope.resetAssets).toBeCalled();
     });
 
     it('switches current list', function () {
@@ -230,7 +230,7 @@ describe('Asset List Controller', function () {
 
     it('loads assets', function() {
       scope.resetAssets();
-      expect(loadStub.called).toBeTruthy();
+      expect(loadStub).toBeCalled();
     });
 
     it('sets assets num on the paginator', function() {
@@ -245,12 +245,12 @@ describe('Asset List Controller', function () {
 
     it('switches the selection base set', function() {
       scope.resetAssets();
-      expect(switchStub.called).toBeTruthy();
+      expect(switchStub).toBeCalled();
     });
 
     it('tracks analytics event', function() {
       scope.resetAssets();
-      expect(trackStub.called).toBeTruthy();
+      expect(trackStub).toBeCalled();
     });
 
     describe('creates a query object', function() {
@@ -344,7 +344,7 @@ describe('Asset List Controller', function () {
     it('doesnt load if on last page', function() {
       scope.paginator.atLast.returns(true);
       scope.loadMore();
-      expect(loadStub.called).toBeFalsy();
+      expect(loadStub).not.toBeCalled();
     });
 
     it('paginator count is increased', function() {
@@ -363,12 +363,12 @@ describe('Asset List Controller', function () {
       scope.paginator.numEntries = 47;
       scope.paginator.page = 0;
       scope.loadMore();
-      expect(loadStub.called).toBeTruthy();
+      expect(loadStub).toBeCalled();
     });
 
     it('triggers analytics event', function () {
       scope.loadMore();
-      expect(trackStub.called).toBeTruthy();
+      expect(trackStub).toBeCalled();
     });
 
     describe('on successful load response', function() {
@@ -399,11 +399,11 @@ describe('Asset List Controller', function () {
       });
 
       it('appends assets to scope', function () {
-        expect(scope.assets.push.called).toBeFalsy();
+        expect(scope.assets.push).not.toBeCalled();
       });
 
       it('sends an error', function() {
-        expect(captureErrorStub.called).toBeTruthy();
+        expect(captureErrorStub).toBeCalled();
       });
     });
 
@@ -415,7 +415,7 @@ describe('Asset List Controller', function () {
       });
 
       it('appends assets to scope', function () {
-        expect(scope.assets.push.called).toBeFalsy();
+        expect(scope.assets.push).not.toBeCalled();
       });
 
       it('pagination count decreases', function() {
@@ -463,13 +463,13 @@ describe('Asset List Controller', function () {
     it('does nothing if its not the current scope tab', inject(function ($rootScope) {
       scope.tab = null;
       $rootScope.$broadcast('tabBecameActive', {});
-      expect(scope.resetAssets.called).toBeFalsy();
+      expect(scope.resetAssets).not.toBeCalled();
     }));
 
     it('resets assets', inject(function($rootScope) {
       scope.tab = {};
       $rootScope.$broadcast('tabBecameActive', scope.tab);
-      expect(scope.resetAssets.called).toBeTruthy();
+      expect(scope.resetAssets).toBeCalled();
     }));
   });
 

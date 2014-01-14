@@ -73,7 +73,7 @@ describe('Filepicker service', function () {
       });
 
       it('filepicker method gets called', function () {
-        expect(makeDropPaneStub.called).toBeTruthy();
+        expect(makeDropPaneStub).toBeCalled();
       });
 
       it('filepicker method gets called with dropPane object', function () {

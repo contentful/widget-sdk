@@ -108,7 +108,7 @@ describe('Add can methods service', function () {
     scope.entity2 = {};
     scope.$digest();
     scope.canDelete();
-    expect(deleteStub.called).toBe(true);
+    expect(deleteStub).toBeCalled();
   }));
 
 });

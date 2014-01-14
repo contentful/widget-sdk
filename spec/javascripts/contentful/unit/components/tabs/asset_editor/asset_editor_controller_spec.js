@@ -117,7 +117,7 @@ describe('Asset editor controller', function () {
       scope.validate = sinon.spy();
       scope.asset.data.sys.publishedVersion = 2;
       scope.$digest();
-      expect(scope.validate.called).toBe(true);
+      expect(scope.validate).toBeCalled();
     });
   });
 

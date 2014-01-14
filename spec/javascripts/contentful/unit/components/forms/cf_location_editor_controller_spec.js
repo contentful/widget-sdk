@@ -114,15 +114,15 @@ describe('cfLocationEditor Controller', function () {
       });
 
       it('spinner is started', function () {
-        expect(stubs.spinnerStart.called).toBeTruthy();
+        expect(stubs.spinnerStart).toBeCalled();
       });
 
       it('geocoder is created', function() {
-        expect(stubs.geocoder.called).toBeTruthy();
+        expect(stubs.geocoder).toBeCalled();
       });
 
       it('geocoder method is called', function() {
-        expect(stubs.geocode.called).toBeTruthy();
+        expect(stubs.geocode).toBeCalled();
       });
 
       it('address is sent to geocoder', function(done) {
@@ -152,7 +152,7 @@ describe('cfLocationEditor Controller', function () {
 
       it('stops spinner', function(done) {
         scope.$watch('results', function () {
-          expect(stubs.spinnerStop.called).toBeTruthy();
+          expect(stubs.spinnerStop).toBeCalled();
           done();
         });
       });
@@ -176,7 +176,7 @@ describe('cfLocationEditor Controller', function () {
       });
 
       it('map location is reset', function() {
-        expect(scope.resetMapLocation.called).toBeTruthy();
+        expect(scope.resetMapLocation).toBeCalled();
       });
     });
   });
@@ -221,7 +221,7 @@ describe('cfLocationEditor Controller', function () {
     });
 
     it('calls result picker', function() {
-      expect(scope.pickResult.called).toBeTruthy();
+      expect(scope.pickResult).toBeCalled();
     });
   });
 

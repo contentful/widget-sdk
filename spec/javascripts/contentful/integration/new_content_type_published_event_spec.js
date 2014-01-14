@@ -54,7 +54,7 @@ describe('The Space context', function () {
     });
 
     it('removes the menu', function () {
-      expect(oneSpy.called).toBeTruthy();
+      expect(oneSpy).toBeCalled();
     });
   });
 

@@ -184,7 +184,7 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('gets name for entries', function () {
-        expect(stubs.publishedEntryName.called).toBeTruthy();
+        expect(stubs.publishedEntryName).toBeCalled();
       });
 
       it('gets title for first entry', function () {
@@ -598,7 +598,7 @@ describe('cfLinkEditor Directive', function () {
     });
 
     it('gets the name of the content type', function () {
-      expect(nameStub.called).toBeTruthy();
+      expect(nameStub).toBeCalled();
     });
 
   });

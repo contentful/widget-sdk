@@ -79,8 +79,8 @@ describe('Entry List Actions Controller', function () {
       });
 
       it('calls '+action+' on selected entries', function () {
-        expect(stubs.action1.called).toBeTruthy();
-        expect(stubs.action2.called).toBeTruthy();
+        expect(stubs.action1).toBeCalled();
+        expect(stubs.action2).toBeCalled();
       });
 
       it('calls success notification', function () {
@@ -92,11 +92,11 @@ describe('Entry List Actions Controller', function () {
       });
 
       it('clears selection', function () {
-        expect(stubs.removeAll.called).toBeTruthy();
+        expect(stubs.removeAll).toBeCalled();
       });
 
       it('tracks analytics event', function () {
-        expect(stubs.track.called).toBeTruthy();
+        expect(stubs.track).toBeCalled();
       });
 
       if(extraSpecs){ extraSpecs(); }
@@ -134,8 +134,8 @@ describe('Entry List Actions Controller', function () {
     });
 
     it('calls getSys on selected entries', function () {
-      expect(stubs.action1.called).toBeTruthy();
-      expect(stubs.action2.called).toBeTruthy();
+      expect(stubs.action1).toBeCalled();
+      expect(stubs.action2).toBeCalled();
     });
 
     it('attempts to create first entries', function () {
@@ -155,11 +155,11 @@ describe('Entry List Actions Controller', function () {
     });
 
     it('clears selection', function () {
-      expect(stubs.removeAll.called).toBeTruthy();
+      expect(stubs.removeAll).toBeCalled();
     });
 
     it('tracks analytics event', function () {
-      expect(stubs.track.called).toBeTruthy();
+      expect(stubs.track).toBeCalled();
     });
   });
 

@@ -45,7 +45,7 @@ describe('Exception handler service', function () {
   });
 
   it('ReloadNotification triggered', function () {
-    expect(triggerStub.called).toBeTruthy();
+    expect(triggerStub).toBeCalled();
   });
 
 

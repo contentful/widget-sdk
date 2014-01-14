@@ -140,7 +140,7 @@ describe('Sentry service', function () {
     });
 
     it('calls sentry method', function () {
-      expect(sentryStubs.captureMessageStub.called).toBeTruthy();
+      expect(sentryStubs.captureMessageStub).toBeCalled();
     });
 
     it('sends error to sentry', function () {
@@ -180,7 +180,7 @@ describe('Sentry service', function () {
     });
 
     it('calls sentry method', function () {
-      expect(sentryStubs.captureExceptionStub.called).toBeTruthy();
+      expect(sentryStubs.captureExceptionStub).toBeCalled();
     });
 
     it('sends error to sentry', function () {
@@ -204,7 +204,7 @@ describe('Sentry service', function () {
     });
 
     it('calls sentry method', function () {
-      expect(sentryStubs.captureMessageStub.called).toBeTruthy();
+      expect(sentryStubs.captureMessageStub).toBeCalled();
     });
 
     it('sends message to sentry', function () {

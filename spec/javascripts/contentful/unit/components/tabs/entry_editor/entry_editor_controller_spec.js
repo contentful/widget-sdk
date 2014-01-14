@@ -30,7 +30,7 @@ describe('Entry Editor Controller', function () {
     scope.validate = sinon.spy();
     scope.entry.data.sys.publishedVersion = 2;
     scope.$digest();
-    expect(scope.validate.called).toBe(true);
+    expect(scope.validate).toBeCalled();
   });
 
   describe('sets the otDisabled flag', function () {
@@ -68,11 +68,11 @@ describe('Entry Editor Controller', function () {
     });
     it('should close the tab', function () {
       otherScope.$emit('entityDeleted', null);
-      expect(closeSpy.called).toBe(false); // wrong entry
+      expect(closeSpy).not.toBeCalled(); // wrong entry
       scope.$broadcast('entityDeleted', scope.entry);
-      expect(closeSpy.called).toBe(false); // own scope
+      expect(closeSpy).not.toBeCalled(); // own scope
       otherScope.$emit('entityDeleted', scope.entry);
-      expect(closeSpy.called).toBe(true);
+      expect(closeSpy).toBeCalled();
     });
   });
 
@@ -81,7 +81,7 @@ describe('Entry Editor Controller', function () {
       scope.validate = sinon.spy();
       scope.entry.data.sys.publishedVersion++;
       scope.$digest();
-      expect(scope.validate.called).toBe(true);
+      expect(scope.validate).toBeCalled();
     });
   });
 
@@ -176,7 +176,7 @@ describe('Entry Editor Controller', function () {
     scope.validate = sinon.stub();
     scope.entry.data.fields = {foo: {'en-US': 'bar'}};
     scope.$broadcast('otBecameEditable');
-    expect(scope.validate.called).toBe(true);
+    expect(scope.validate).toBeCalled();
   });
 
 });

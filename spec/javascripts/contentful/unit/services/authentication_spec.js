@@ -89,15 +89,15 @@ describe('Authentication service', function () {
       });
 
       it('shows no notification if already authenticated', function () {
-        expect(stubs.info.called).toBe(false);
+        expect(stubs.info).not.toBeCalled();
       });
 
       it('does not delete a redirect cookie', function () {
-        expect(cookiesDelStub.called).toBe(false);
+        expect(cookiesDelStub).not.toBeCalled();
       });
 
       it('does not attempt to redirect', function () {
-        expect(stubs.path.called).toBe(false);
+        expect(stubs.path).not.toBeCalled();
       });
 
     });
@@ -109,7 +109,7 @@ describe('Authentication service', function () {
       });
 
       it('shows a notification if already authenticated', function () {
-        expect(stubs.info.called).toBe(true);
+        expect(stubs.info).toBeCalled();
       });
     });
 
@@ -148,15 +148,15 @@ describe('Authentication service', function () {
       });
 
       it('shows no notification if already authenticated', function () {
-        expect(stubs.info.called).toBe(false);
+        expect(stubs.info).not.toBeCalled();
       });
 
       it('does not delete a redirect cookie', function () {
-        expect(cookiesDelStub.called).toBe(false);
+        expect(cookiesDelStub).not.toBeCalled();
       });
 
       it('does not attempt to redirect', function () {
-        expect(stubs.path.called).toBe(false);
+        expect(stubs.path).not.toBeCalled();
       });
 
     });
@@ -165,7 +165,7 @@ describe('Authentication service', function () {
       it('shows a notification if already authenticated', function () {
         stubs.search.returns({already_authenticated: true});
         authentication.login();
-        expect(stubs.info.called).toBe(true);
+        expect(stubs.info).toBeCalled();
       });
     });
 
@@ -201,13 +201,13 @@ describe('Authentication service', function () {
     it('redirect is called', function () {
       stubs.path.returns('/');
       authentication.login();
-      expect(redirectStub.called).toBe(true);
+      expect(redirectStub).toBeCalled();
     });
 
     it('redirect is called and cookie is set', function () {
       stubs.path.returns('/path');
       authentication.login();
-      expect(redirectStub.called).toBe(true);
+      expect(redirectStub).toBeCalled();
       expect(cookiesSetStub.calledWith('redirect_after_login', '/path')).toBe(true);
     });
   });
@@ -305,11 +305,11 @@ describe('Authentication service', function () {
       });
 
       it('sentry error is fired', function () {
-        expect(stubs.sentryError.called).toBeTruthy();
+        expect(stubs.sentryError).toBeCalled();
       });
 
       it('client token lookup not called', function () {
-        expect(clientTokenLookupStub.called).toBeFalsy();
+        expect(clientTokenLookupStub).not.toBeCalled();
       });
     });
 
@@ -322,7 +322,7 @@ describe('Authentication service', function () {
       });
 
       it('client token lookup is called', function () {
-        expect(clientTokenLookupStub.called).toBeTruthy();
+        expect(clientTokenLookupStub).toBeCalled();
       });
 
       it('client token lookup promise fails', inject(function ($rootScope) {
@@ -346,7 +346,7 @@ describe('Authentication service', function () {
       });
 
       it('client token lookup is called', function () {
-        expect(clientTokenLookupStub.called).toBeTruthy();
+        expect(clientTokenLookupStub).toBeCalled();
       });
 
       it('client token lookup promise resolves', inject(function ($rootScope) {
