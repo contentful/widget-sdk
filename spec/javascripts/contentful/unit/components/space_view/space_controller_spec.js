@@ -184,7 +184,7 @@ describe('Space Controller', function () {
         });
 
         it('can is called', function () {
-          expect(canStub.calledWith(args)).toBeTruthy();
+          expect(canStub).toBeCalledWith(args);
         });
 
         it('enforcement is not determined', function () {
@@ -213,7 +213,7 @@ describe('Space Controller', function () {
         });
 
         it('can is called', function () {
-          expect(canStub.calledWith(args)).toBeTruthy();
+          expect(canStub).toBeCalledWith(args);
         });
 
         it('enforcement is determined', function () {
@@ -236,7 +236,7 @@ describe('Space Controller', function () {
         });
 
         it('can is called', function () {
-          expect(canStub.calledWith(args)).toBeTruthy();
+          expect(canStub).toBeCalledWith(args);
         });
 
         it('enforcement is determined', function () {
@@ -305,7 +305,7 @@ describe('Space Controller', function () {
       });
 
       it('determines enforcements', function () {
-        expect(stubs.enforcement.calledWith([], 'entry')).toBeTruthy();
+        expect(stubs.enforcement).toBeCalledWith([], 'entry');
       });
 
       it('notifies of the error', function () {
@@ -367,7 +367,7 @@ describe('Space Controller', function () {
       });
 
       it('determines enforcements', function () {
-        expect(stubs.enforcement.calledWith([], 'asset')).toBeTruthy();
+        expect(stubs.enforcement).toBeCalledWith([], 'asset');
       });
 
       it('notifies of the error', function () {
@@ -429,7 +429,7 @@ describe('Space Controller', function () {
       });
 
       it('determines enforcements', function () {
-        expect(stubs.enforcement.calledWith([], 'contentType')).toBeTruthy();
+        expect(stubs.enforcement).toBeCalledWith([], 'contentType');
       });
 
       it('notifies of the error', function () {
@@ -480,7 +480,7 @@ describe('Space Controller', function () {
       });
 
       it('computes the api key usage', function () {
-        expect(stubs.computeUsage.calledWith('apiKey')).toBeTruthy();
+        expect(stubs.computeUsage).toBeCalledWith('apiKey');
       });
 
       it('notifies of the error', function () {
@@ -501,7 +501,7 @@ describe('Space Controller', function () {
       });
 
       it('computes the api key usage', function () {
-        expect(stubs.computeUsage.calledWith('apiKey')).toBeTruthy();
+        expect(stubs.computeUsage).toBeCalledWith('apiKey');
       });
 
       it('calls the space create method', function () {

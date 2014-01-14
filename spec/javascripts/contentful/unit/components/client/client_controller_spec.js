@@ -146,7 +146,7 @@ describe('Client Controller', function () {
     });
 
     it('analytics is triggered', function () {
-      expect(stubs.auxPanel.calledWith(true, {})).toBeTruthy();
+      expect(stubs.auxPanel).toBeCalledWith(true, {});
     });
   });
 
@@ -177,7 +177,7 @@ describe('Client Controller', function () {
     });
 
     it('setSpace is called', function () {
-      expect(stubs.setSpace.calledWith(scope.spaceContext.space)).toBeTruthy();
+      expect(stubs.setSpace).toBeCalledWith(scope.spaceContext.space);
     });
   });
 
@@ -245,7 +245,7 @@ describe('Client Controller', function () {
       });
 
       it('route to another space', function () {
-        expect(stubs.goToSpace.calledWith(space)).toBeTruthy();
+        expect(stubs.goToSpace).toBeCalledWith(space);
       });
     });
   });
@@ -295,7 +295,7 @@ describe('Client Controller', function () {
       });
 
       it('space data is set on analytics', function () {
-        expect(stubs.setSpaceData.calledWith(scope.spaces[0])).toBeTruthy();
+        expect(stubs.setSpaceData).toBeCalledWith(scope.spaces[0]);
       });
     });
 
@@ -321,13 +321,13 @@ describe('Client Controller', function () {
     it('space data is set on analytics', function () {
       stubs.routingSpaceId.returns(456);
       scope.$digest();
-      expect(stubs.setSpaceData.calledWith(scope.spaces[1])).toBeTruthy();
+      expect(stubs.setSpaceData).toBeCalledWith(scope.spaces[1]);
     });
 
     it('redirects to a non existent space and defaults to first space', function () {
       stubs.routingSpaceId.returns(789);
       scope.$digest();
-      expect(stubs.goToSpace.calledWith(scope.spaces[0])).toBeTruthy();
+      expect(stubs.goToSpace).toBeCalledWith(scope.spaces[0]);
     });
 
     it('redirects to a space with no routing id and defaults to first space', function () {
@@ -336,7 +336,7 @@ describe('Client Controller', function () {
         root: true
       });
       scope.$digest();
-      expect(stubs.goToSpace.calledWith(scope.spaces[0])).toBeTruthy();
+      expect(stubs.goToSpace).toBeCalledWith(scope.spaces[0]);
     });
 
     describe('no space id for redirect provided and not redirecting to root', function () {
@@ -523,7 +523,7 @@ describe('Client Controller', function () {
           }
         };
         childScope.$emit('iframeMessage', data);
-        expect(stubs.notificationError.calledWith('hai')).toBeTruthy();
+        expect(stubs.notificationError).toBeCalledWith('hai');
       });
 
       it('calls info notification', function () {
@@ -535,7 +535,7 @@ describe('Client Controller', function () {
           }
         };
         childScope.$emit('iframeMessage', data);
-        expect(stubs.notificationInfo.calledWith('hai')).toBeTruthy();
+        expect(stubs.notificationInfo).toBeCalledWith('hai');
       });
     });
 
@@ -560,12 +560,12 @@ describe('Client Controller', function () {
 
   it('redirects to profile', function () {
     scope.goToProfile();
-    expect(stubs.path.calledWith('/profile/user')).toBeTruthy();
+    expect(stubs.path).toBeCalledWith('/profile/user');
   });
 
   it('redirects to profile with a suffix', function () {
     scope.goToProfile('derp');
-    expect(stubs.path.calledWith('/profile/derp')).toBeTruthy();
+    expect(stubs.path).toBeCalledWith('/profile/derp');
   });
 
   describe('performs token lookup', function () {
@@ -593,7 +593,7 @@ describe('Client Controller', function () {
     });
 
     it('spaces are updated', function () {
-      expect(scope.updateSpaces.calledWith(['space'])).toBeTruthy();
+      expect(scope.updateSpaces).toBeCalledWith(['space']);
     });
   });
 
@@ -664,7 +664,7 @@ describe('Client Controller', function () {
     });
 
     it('new space is wrapped', function () {
-      expect(stubs.wrapSpace.calledWith(spaces[2])).toBeTruthy();
+      expect(stubs.wrapSpace).toBeCalledWith(spaces[2]);
     });
 
     it('third space has a save method', function () {

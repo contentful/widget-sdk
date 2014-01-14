@@ -45,11 +45,11 @@ describe('Authorization service', function () {
     });
 
     it('calls worf with tokenLookup', function () {
-      expect(worfStub.calledWith(tokenLookup)).toBeTruthy();
+      expect(worfStub).toBeCalledWith(tokenLookup);
     });
 
     it('sets a space', function () {
-      expect(setSpaceStub.calledWith(space)).toBeTruthy();
+      expect(setSpaceStub).toBeCalledWith(space);
     });
   });
 

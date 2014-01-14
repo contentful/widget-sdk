@@ -176,11 +176,11 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('gets published type for first entry', function () {
-        expect(stubs.publishedType.calledWith(scope.entities[0])).toBeTruthy();
+        expect(stubs.publishedType).toBeCalledWith(scope.entities[0]);
       });
 
       it('gets published type for second entry', function () {
-        expect(stubs.publishedType.calledWith(scope.entities[1])).toBeTruthy();
+        expect(stubs.publishedType).toBeCalledWith(scope.entities[1]);
       });
 
       it('gets name for entries', function () {
@@ -188,11 +188,11 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('gets title for first entry', function () {
-        expect(stubs.entryTitle.calledWith(scope.entities[0])).toBeTruthy();
+        expect(stubs.entryTitle).toBeCalledWith(scope.entities[0]);
       });
 
       it('gets title for second entry', function () {
-        expect(stubs.entryTitle.calledWith(scope.entities[1])).toBeTruthy();
+        expect(stubs.entryTitle).toBeCalledWith(scope.entities[1]);
       });
 
     });
@@ -320,15 +320,15 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('description method is called for first entity', function () {
-        expect(descriptionStub.calledWith(scope.linkedEntities[0])).toBeTruthy();
+        expect(descriptionStub).toBeCalledWith(scope.linkedEntities[0]);
       });
 
       it('description method is called for second entity', function () {
-        expect(descriptionStub.calledWith(scope.linkedEntities[1])).toBeTruthy();
+        expect(descriptionStub).toBeCalledWith(scope.linkedEntities[1]);
       });
 
       it('description method is called for third entity', function () {
-        expect(descriptionStub.calledWith(scope.linkedEntities[2])).toBeTruthy();
+        expect(descriptionStub).toBeCalledWith(scope.linkedEntities[2]);
       });
 
       it('first entity has no unpublished marker', function () {
@@ -416,27 +416,27 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('localizedField is called for first asset file', function () {
-        expect(stubs.localizedField.calledWith(scope.entities[0], 'data.fields.file')).toBeTruthy();
+        expect(stubs.localizedField).toBeCalledWith(scope.entities[0], 'data.fields.file');
       });
 
       it('localizedField is called for second asset file', function () {
-        expect(stubs.localizedField.calledWith(scope.entities[1], 'data.fields.file')).toBeTruthy();
+        expect(stubs.localizedField).toBeCalledWith(scope.entities[1], 'data.fields.file');
       });
 
       it('localizedField is called for first asset title', function () {
-        expect(stubs.localizedField.calledWith(scope.entities[0], 'data.fields.title')).toBeTruthy();
+        expect(stubs.localizedField).toBeCalledWith(scope.entities[0], 'data.fields.title');
       });
 
       it('localizedField is called for second asset title', function () {
-        expect(stubs.localizedField.calledWith(scope.entities[1], 'data.fields.title')).toBeTruthy();
+        expect(stubs.localizedField).toBeCalledWith(scope.entities[1], 'data.fields.title');
       });
 
       it('localizedField is called for first asset description', function () {
-        expect(stubs.localizedField.calledWith(scope.entities[0], 'data.fields.description')).toBeTruthy();
+        expect(stubs.localizedField).toBeCalledWith(scope.entities[0], 'data.fields.description');
       });
 
       it('localizedField is called for second asset description', function () {
-        expect(stubs.localizedField.calledWith(scope.entities[1], 'data.fields.description')).toBeTruthy();
+        expect(stubs.localizedField).toBeCalledWith(scope.entities[1], 'data.fields.description');
       });
 
     });
@@ -542,19 +542,19 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('localizedField is called with first entity and title', function () {
-        expect(stubs.localizedField.calledWith(scope.linkedEntities[0], 'data.fields.title')).toBeTruthy();
+        expect(stubs.localizedField).toBeCalledWith(scope.linkedEntities[0], 'data.fields.title');
       });
 
       it('localizedField is called with second entity and title', function () {
-        expect(stubs.localizedField.calledWith(scope.linkedEntities[1], 'data.fields.title')).toBeTruthy();
+        expect(stubs.localizedField).toBeCalledWith(scope.linkedEntities[1], 'data.fields.title');
       });
 
       it('localizedField is called with first entity and file', function () {
-        expect(stubs.localizedField.calledWith(scope.linkedEntities[0], 'data.fields.file')).toBeTruthy();
+        expect(stubs.localizedField).toBeCalledWith(scope.linkedEntities[0], 'data.fields.file');
       });
 
       it('localizedField is called with second entity and file', function () {
-        expect(stubs.localizedField.calledWith(scope.linkedEntities[1], 'data.fields.file')).toBeTruthy();
+        expect(stubs.localizedField).toBeCalledWith(scope.linkedEntities[1], 'data.fields.file');
       });
     });
 

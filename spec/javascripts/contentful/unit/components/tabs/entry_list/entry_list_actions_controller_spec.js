@@ -111,7 +111,7 @@ describe('Entry List Actions Controller', function () {
   makePerformTests('unpublish', 0);
   makePerformTests('delete', 0, function () {
     it('broadcasts event for sucessfully deleted entry', function () {
-      expect(scope.broadcastFromSpace.calledWith('entityDeleted')).toBeTruthy();
+      expect(scope.broadcastFromSpace).toBeCalledWith('entityDeleted');
     });
   });
   makePerformTests('archive', 0);
@@ -139,11 +139,11 @@ describe('Entry List Actions Controller', function () {
     });
 
     it('attempts to create first entries', function () {
-      expect(stubs.createEntry.calledWith('foo')).toBeTruthy();
+      expect(stubs.createEntry).toBeCalledWith('foo');
     });
 
     it('attempts to create second entries', function () {
-      expect(stubs.createEntry.calledWith('bar')).toBeTruthy();
+      expect(stubs.createEntry).toBeCalledWith('bar');
     });
 
     it('calls success notification', function () {

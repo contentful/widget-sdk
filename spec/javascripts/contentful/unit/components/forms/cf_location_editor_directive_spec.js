@@ -134,11 +134,11 @@ describe('cfLocationEditor Directive', function () {
       });
 
       it('calls ot change value with location', function() {
-        expect(scope.otChangeValue.calledWith(location)).toBeTruthy();
+        expect(scope.otChangeValue).toBeCalledWith(location);
       });
 
       it('calls $setViewValue with location', function() {
-        expect(viewValueStub.calledWith(location)).toBeTruthy();
+        expect(viewValueStub).toBeCalledWith(location);
       });
     });
 
@@ -149,7 +149,7 @@ describe('cfLocationEditor Directive', function () {
       });
 
       it('calls ot change value with location', function() {
-        expect(scope.otChangeValue.calledWith(location)).toBeTruthy();
+        expect(scope.otChangeValue).toBeCalledWith(location);
       });
 
       it('shows error notification', function() {
@@ -166,7 +166,7 @@ describe('cfLocationEditor Directive', function () {
     compileElement();
     scope.updateLocation = sinon.stub();
     scope.removeLocation();
-    expect(scope.updateLocation.calledWith(null)).toBeTruthy();
+    expect(scope.updateLocation).toBeCalledWith(null);
   });
 
   describe('watches for location validity', function() {
@@ -246,7 +246,7 @@ describe('cfLocationEditor Directive', function () {
     });
 
     it('sends viewport to fitBounds method', function() {
-      expect(stubs.fitBounds.calledWith('viewport')).toBeTruthy();
+      expect(stubs.fitBounds).toBeCalledWith('viewport');
     });
   });
 
@@ -260,11 +260,11 @@ describe('cfLocationEditor Directive', function () {
     });
 
     it('updates location', function() {
-      expect(scope.updateLocation.calledWith('location')).toBeTruthy();
+      expect(scope.updateLocation).toBeCalledWith('location');
     });
 
     it('sets fit bounds', function() {
-      expect(stubs.fitBounds.calledWith('viewport')).toBeTruthy();
+      expect(stubs.fitBounds).toBeCalledWith('viewport');
     });
 
     it('searchTerm is empty', function() {

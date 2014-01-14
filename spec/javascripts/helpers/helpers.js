@@ -64,6 +64,20 @@ beforeEach(function() {
           };
         }
       };
+    },
+
+    toBeCalledWith: function () {
+      return {
+        compare: function (actual) {
+          var args = Array.prototype.slice.call(arguments, 1, arguments.length);
+          var pass = actual.calledWith.apply(actual, args);
+          var notText = pass ? 'not ' : '';
+          return {
+            pass: pass,
+            message: 'Expected stub ' + notText + 'to be called with supplied args'
+          };
+        }
+      };
     }
 
   });

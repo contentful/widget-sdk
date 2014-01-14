@@ -36,12 +36,11 @@ describe('Entry Actions Controller', function () {
         getVersion: sinon.stub().returns(20)
       };
     });
-    
+
     it('should put remote validation errors on the scope', function () {
       scope.setValidationErrors = sinon.stub();
       scope.publish();
-      //expect(scope.setValidationResult.args[0][0]).toBe(errors);
-      expect(scope.setValidationErrors.calledWith(errors)).toBe(true);
+      expect(scope.setValidationErrors).toBeCalledWith(errors);
     });
   });
 

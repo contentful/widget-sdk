@@ -70,7 +70,7 @@ describe('cfLinkEditorSearch Controller', function () {
     });
 
     it('calls add link with the given entity', function () {
-      expect(scope.addLink.calledWith(entity)).toBeTruthy();
+      expect(scope.addLink).toBeCalledWith(entity);
     });
 
     it('sets search term to an empty string', function() {

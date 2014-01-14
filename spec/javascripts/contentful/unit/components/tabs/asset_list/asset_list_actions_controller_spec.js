@@ -110,7 +110,7 @@ describe('Asset List Actions Controller', function () {
   makePerformTests('unpublish', 0);
   makePerformTests('delete', 0, function () {
     it('broadcasts event for sucessfully deleted asset', function () {
-      expect(scope.broadcastFromSpace.calledWith('entityDeleted')).toBeTruthy();
+      expect(scope.broadcastFromSpace).toBeCalledWith('entityDeleted');
     });
   });
   makePerformTests('archive', 0);

@@ -135,7 +135,7 @@ describe('ContentTypeFieldList Controller', function () {
     });
 
     it('field is opened', function () {
-      expect(scope.openField.calledWith(field)).toBeTruthy();
+      expect(scope.openField).toBeCalledWith(field);
     });
   });
 
@@ -280,7 +280,7 @@ describe('ContentTypeFieldList Controller', function () {
       });
 
       it('set is called with field id', function () {
-        expect(setStub.calledWith('foo')).toBeTruthy();
+        expect(setStub).toBeCalledWith('foo');
       });
     });
 
@@ -295,7 +295,7 @@ describe('ContentTypeFieldList Controller', function () {
       });
 
       it('set is called with field id', function () {
-        expect(setStub.calledWith('foo')).toBeTruthy();
+        expect(setStub).toBeCalledWith('foo');
       });
     });
 
@@ -311,7 +311,7 @@ describe('ContentTypeFieldList Controller', function () {
       });
 
       it('set is called with field id', function () {
-        expect(setStub.calledWith(null)).toBeTruthy();
+        expect(setStub).toBeCalledWith(null);
       });
     });
 
@@ -327,7 +327,7 @@ describe('ContentTypeFieldList Controller', function () {
       });
 
       it('set is called with field id', function () {
-        expect(setStub.calledWith(null)).toBeTruthy();
+        expect(setStub).toBeCalledWith(null);
       });
     });
 
@@ -370,7 +370,7 @@ describe('ContentTypeFieldList Controller', function () {
     }));
 
     it('calls openField with new field', function () {
-      expect(scope.openField.calledWith({id: 'foo'})).toBeTruthy();
+      expect(scope.openField).toBeCalledWith({id: 'foo'});
     });
   });
 
