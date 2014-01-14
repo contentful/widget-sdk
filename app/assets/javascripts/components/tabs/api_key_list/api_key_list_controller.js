@@ -5,7 +5,7 @@ angular.module('contentful').
     $scope.marketingUrl = environment.settings.marketing_url;
 
     $scope.refreshApiKeys = function() {
-      $scope.spaceContext.space.getApiKeys(null, function(err, apiKeys) {
+      $scope.spaceContext.space.getApiKeys({limit: 1000}, function(err, apiKeys) {
         $scope.$apply(function() {
           $scope.apiKeys = apiKeys;
         });
