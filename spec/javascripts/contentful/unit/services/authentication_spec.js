@@ -2,23 +2,17 @@
 
 describe('Authentication service', function () {
   var authentication, $rootScope;
-  var hashStub, searchStub, pathStub;
   var cookiesSetStub, cookiesGetStub, cookiesDelStub;
-  var sentryErrorStub, queryLinksStub;
-  var infoStub;
+  var stubs;
 
   beforeEach(function () {
     module('contentful/test', function ($provide, authenticationProvider) {
-      hashStub = sinon.stub();
-      searchStub = sinon.stub();
-      pathStub = sinon.stub();
-      infoStub = sinon.stub();
-      sentryErrorStub = sinon.stub();
-      queryLinksStub = sinon.stub();
-
+      stubs = $provide.makeStubs([
+        'hash', 'search', 'path', 'info', 'sentryError', 'resolveQueryLinks',
+      ]);
       $provide.constant('contentfulClient', {
         QueryLinkResolver: {
-          resolveQueryLinks: queryLinksStub
+          resolveQueryLinks: stubs.resolveQueryLinks
         }
       });
 
@@ -30,17 +24,17 @@ describe('Authentication service', function () {
       });
 
       $provide.value('$location', {
-        hash: hashStub,
-        search: searchStub,
-        path: pathStub
+        hash: stubs.hash,
+        search: stubs.search,
+        path: stubs.path
       });
 
       $provide.value('notification', {
-        info: infoStub
+        info: stubs.info
       });
 
       $provide.value('sentry', {
-        captureError: sentryErrorStub
+        captureError: stubs.sentryError
       });
 
       $provide.value('$window', {
@@ -72,8 +66,8 @@ describe('Authentication service', function () {
 
   describe('login with existing token from hash param', function () {
     beforeEach(function () {
-      hashStub.returns('#access_token=logintoken');
-      searchStub.returns({});
+      stubs.hash.returns('#access_token=logintoken');
+      stubs.search.returns({});
       cookiesGetStub.withArgs('redirect_after_login').returns(false);
     });
 
@@ -91,55 +85,55 @@ describe('Authentication service', function () {
       });
 
       it('clears the url hash', function () {
-        expect(hashStub.calledWith('')).toBe(true);
+        expect(stubs.hash).toBeCalledWith('');
       });
 
       it('shows no notification if already authenticated', function () {
-        expect(infoStub.called).toBe(false);
+        expect(stubs.info).not.toBeCalled();
       });
 
       it('does not delete a redirect cookie', function () {
-        expect(cookiesDelStub.called).toBe(false);
+        expect(cookiesDelStub).not.toBeCalled();
       });
 
       it('does not attempt to redirect', function () {
-        expect(pathStub.called).toBe(false);
+        expect(stubs.path).not.toBeCalled();
       });
 
     });
 
     describe('notification if already authenticated', function () {
       beforeEach(function () {
-        searchStub.returns({already_authenticated: true});
+        stubs.search.returns({already_authenticated: true});
         authentication.login();
       });
 
       it('shows a notification if already authenticated', function () {
-        expect(infoStub.called).toBe(true);
+        expect(stubs.info).toBeCalled();
       });
     });
 
     describe('redirection after login', function () {
       beforeEach(function () {
         cookiesGetStub.withArgs('redirect_after_login').returns('/redirection/path');
-        searchStub.returns({});
+        stubs.search.returns({});
         authentication.login();
       });
 
       it('deletes the redirection cookie', function () {
-        expect(cookiesDelStub.calledWith('redirect_after_login')).toBe(true);
+        expect(cookiesDelStub).toBeCalledWith('redirect_after_login');
       });
 
       it('redirects the path', function () {
-        expect(pathStub.calledWith('/redirection/path')).toBe(true);
+        expect(stubs.path).toBeCalledWith('/redirection/path');
       });
     });
   });
 
   describe('login with existing token from cookie', function () {
     beforeEach(function () {
-      searchStub.returns({});
-      hashStub.returns('');
+      stubs.search.returns({});
+      stubs.hash.returns('');
       cookiesGetStub.withArgs('token').returns('logintoken');
       cookiesGetStub.withArgs('redirect_after_login').returns(false);
     });
@@ -154,24 +148,24 @@ describe('Authentication service', function () {
       });
 
       it('shows no notification if already authenticated', function () {
-        expect(infoStub.called).toBe(false);
+        expect(stubs.info).not.toBeCalled();
       });
 
       it('does not delete a redirect cookie', function () {
-        expect(cookiesDelStub.called).toBe(false);
+        expect(cookiesDelStub).not.toBeCalled();
       });
 
       it('does not attempt to redirect', function () {
-        expect(pathStub.called).toBe(false);
+        expect(stubs.path).not.toBeCalled();
       });
 
     });
 
     describe('notification if already authenticated', function () {
       it('shows a notification if already authenticated', function () {
-        searchStub.returns({already_authenticated: true});
+        stubs.search.returns({already_authenticated: true});
         authentication.login();
-        expect(infoStub.called).toBe(true);
+        expect(stubs.info).toBeCalled();
       });
     });
 
@@ -182,11 +176,11 @@ describe('Authentication service', function () {
       });
 
       it('deletes the redirection cookie', function () {
-        expect(cookiesDelStub.calledWith('redirect_after_login')).toBe(true);
+        expect(cookiesDelStub).toBeCalledWith('redirect_after_login');
       });
 
       it('redirects the path', function () {
-        expect(pathStub.calledWith('/redirection/path')).toBe(true);
+        expect(stubs.path).toBeCalledWith('/redirection/path');
       });
     });
   });
@@ -195,7 +189,7 @@ describe('Authentication service', function () {
   describe('fail to login with no token', function () {
     var redirectStub;
     beforeEach(function () {
-      hashStub.returns('');
+      stubs.hash.returns('');
       cookiesGetStub.withArgs('token').returns(false);
       redirectStub = sinon.stub(authentication, 'redirectToLogin');
     });
@@ -205,16 +199,16 @@ describe('Authentication service', function () {
     });
 
     it('redirect is called', function () {
-      pathStub.returns('/');
+      stubs.path.returns('/');
       authentication.login();
-      expect(redirectStub.called).toBe(true);
+      expect(redirectStub).toBeCalled();
     });
 
     it('redirect is called and cookie is set', function () {
-      pathStub.returns('/path');
+      stubs.path.returns('/path');
       authentication.login();
-      expect(redirectStub.called).toBe(true);
-      expect(cookiesSetStub.calledWith('redirect_after_login', '/path')).toBe(true);
+      expect(redirectStub).toBeCalled();
+      expect(cookiesSetStub).toBeCalledWith('redirect_after_login', '/path');
     });
   });
 
@@ -225,7 +219,7 @@ describe('Authentication service', function () {
     });
 
     it('deletes the token cookie', function () {
-      expect(cookiesDelStub.calledWith('token')).toBeTruthy();
+      expect(cookiesDelStub).toBeCalledWith('token');
     });
 
     it('sets the window location', inject(function ($window) {
@@ -239,7 +233,7 @@ describe('Authentication service', function () {
     });
 
     it('deletes the token cookie', function () {
-      expect(cookiesDelStub.calledWith('token')).toBeTruthy();
+      expect(cookiesDelStub).toBeCalledWith('token');
     });
 
     it('sets the window location', inject(function ($window) {
@@ -311,11 +305,11 @@ describe('Authentication service', function () {
       });
 
       it('sentry error is fired', function () {
-        expect(sentryErrorStub.called).toBeTruthy();
+        expect(stubs.sentryError).toBeCalled();
       });
 
       it('client token lookup not called', function () {
-        expect(clientTokenLookupStub.called).toBeFalsy();
+        expect(clientTokenLookupStub).not.toBeCalled();
       });
     });
 
@@ -328,7 +322,7 @@ describe('Authentication service', function () {
       });
 
       it('client token lookup is called', function () {
-        expect(clientTokenLookupStub.called).toBeTruthy();
+        expect(clientTokenLookupStub).toBeCalled();
       });
 
       it('client token lookup promise fails', inject(function ($rootScope) {
@@ -352,13 +346,13 @@ describe('Authentication service', function () {
       });
 
       it('client token lookup is called', function () {
-        expect(clientTokenLookupStub.called).toBeTruthy();
+        expect(clientTokenLookupStub).toBeCalled();
       });
 
       it('client token lookup promise resolves', inject(function ($rootScope) {
         $rootScope.$apply(function () {
           tokenLookup.then(function () {
-            expect(setTokenStub.calledWith(dataResponse)).toBeTruthy();
+            expect(setTokenStub).toBeCalledWith(dataResponse);
           });
         });
       }));
@@ -390,7 +384,7 @@ describe('Authentication service', function () {
     var tokenLookup;
     beforeEach(function () {
       tokenLookup = {token: 'lookup'};
-      queryLinksStub.returns(['resolvedLink']);
+      stubs.resolveQueryLinks.returns(['resolvedLink']);
       authentication.setTokenLookup(tokenLookup);
     });
 
@@ -399,7 +393,7 @@ describe('Authentication service', function () {
     });
 
     it('queryLinkResolver is called with tokenLookup', function () {
-      expect(queryLinksStub.calledWith(tokenLookup)).toBeTruthy();
+      expect(stubs.resolveQueryLinks).toBeCalledWith(tokenLookup);
     });
 
     it('is parsed by querylink resolver', function () {
@@ -437,7 +431,7 @@ describe('Authentication service', function () {
     });
 
     it('set token is called', function () {
-      expect(setTokenStub.calledWith(unresolvedToken)).toBeTruthy();
+      expect(setTokenStub).toBeCalledWith(unresolvedToken);
     });
   });
 

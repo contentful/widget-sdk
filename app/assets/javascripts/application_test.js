@@ -19,8 +19,7 @@
 //= require user_interface/node_modules/share/node_modules/browserchannel/dist/bcsocket-uncompressed
 //= require user_interface/node_modules/share/webclient/share.uncompressed
 //= require user_interface/node_modules/share/webclient/json.uncompressed
-//
-//= require lib/bind_textarea
+//= require user_interface/node_modules/share/webclient/textarea.js
 //
 //= require hamlcoffee
 //

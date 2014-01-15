@@ -1,6 +1,7 @@
 angular.module('contentful').factory('Paginator', function(){
   'use strict';
 
+  // TODO rename numEntries to numEntities
   function Paginator(numEntries) {
     this.numEntries = numEntries || 0;
     this.page = 0;

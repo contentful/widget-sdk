@@ -69,7 +69,7 @@ describe('Modal dialog service', function () {
       });
 
       it('do not show cancel', function () {
-        expect(dialog.domElement.find('.cancel').hasClass('ng-hide')).toBeTruthy();
+        expect(dialog.domElement.find('.cancel')).toBeNgHidden();
       });
     });
 
@@ -84,19 +84,19 @@ describe('Modal dialog service', function () {
 
       it('cancel is called', function () {
         dialog._closeOnBackground(event);
-        expect(cancelStub.called).toBeTruthy();
+        expect(cancelStub).toBeCalled();
       });
 
       it('cancel is not called with html attr', function () {
         $(event.target).attr('no-background-close', true);
         dialog._closeOnBackground(event);
-        expect(cancelStub.called).toBeFalsy();
+        expect(cancelStub).not.toBeCalled();
       });
 
       it('cancel is not called with params attr', function () {
         dialog.params.noBackgroundClose = true;
         dialog._closeOnBackground(event);
-        expect(cancelStub.called).toBeFalsy();
+        expect(cancelStub).not.toBeCalled();
       });
     });
 
@@ -113,20 +113,20 @@ describe('Modal dialog service', function () {
         event.keyCode = 27;
         dialog._handleKeys(event);
         dialog.scope.$digest();
-        expect(cancelStub.called).toBeTruthy();
+        expect(cancelStub).toBeCalled();
       });
 
       it('cancel is called with Enter key', function () {
         event.keyCode = 13;
         dialog._handleKeys(event);
         dialog.scope.$digest();
-        expect(confirmStub.called).toBeTruthy();
+        expect(confirmStub).toBeCalled();
       });
     });
 
     it('calls the success stub', function () {
       dialog.confirm().finally(function () {
-        expect(successStub.called).toBeTruthy();
+        expect(successStub).toBeCalled();
       });
     });
 
@@ -136,7 +136,7 @@ describe('Modal dialog service', function () {
 
     it('calls the success stub', function () {
       dialog.cancel().finally(function () {
-        expect(errorStub.called).toBeTruthy();
+        expect(errorStub).toBeCalled();
       });
     });
 

@@ -51,7 +51,7 @@ describe('Asset editor controller', function () {
     childScope.$apply(function () {
       childScope.file = fileObj;
       _.defer(function () {
-        expect(processStub.called).toBe(true);
+        expect(processStub).toBeCalled();
         done();
       });
     });

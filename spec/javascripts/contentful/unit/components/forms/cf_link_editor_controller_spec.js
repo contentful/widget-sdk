@@ -239,22 +239,22 @@ describe('cfLinkEditor Controller methods', function () {
       }
 
       makeSpec('otChangeValue is called', function (done) {
-        expect(scope.otChangeValue.called).toBeTruthy();
+        expect(scope.otChangeValue).toBeCalled();
         done();
       });
 
       makeSpec('updateModel is called', function (done) {
-        expect(scope.updateModel.called).toBeTruthy();
+        expect(scope.updateModel).toBeCalled();
         done();
       });
 
       makeSpec('callback is called', function (done) {
-        expect(callbackSpy.called).toBeTruthy();
+        expect(callbackSpy).toBeCalled();
         done();
       });
 
       makeSpec('getEntries is called', function (done) {
-        expect(getEntriesStub.called).toBeFalsy();
+        expect(getEntriesStub).not.toBeCalled();
         done();
       });
 
@@ -282,11 +282,11 @@ describe('cfLinkEditor Controller methods', function () {
       });
 
       it('otChangeValue is called', function () {
-        expect(scope.otChangeValue.called).toBeTruthy();
+        expect(scope.otChangeValue).toBeCalled();
       });
 
       it('updateModel is called', function () {
-        expect(scope.updateModel.called).toBeTruthy();
+        expect(scope.updateModel).toBeCalled();
       });
 
       it('list is empty', function () {
@@ -315,27 +315,27 @@ describe('cfLinkEditor Controller methods', function () {
       }
 
       makeSpec('otDocPush is called', function (done) {
-        expect(otDocPushStub.called).toBeTruthy();
+        expect(otDocPushStub).toBeCalled();
         done();
       });
 
       makeSpec('updateModel is called', function (done) {
-        expect(scope.updateModel.called).toBeTruthy();
+        expect(scope.updateModel).toBeCalled();
         done();
       });
 
       makeSpec('peek is called', function (done) {
-        expect(shareJSMock.peek.called).toBeTruthy();
+        expect(shareJSMock.peek).toBeCalled();
         done();
       });
 
       makeSpec('callback is called', function (done) {
-        expect(callbackSpy.called).toBeTruthy();
+        expect(callbackSpy).toBeCalled();
         done();
       });
 
       makeSpec('getEntries is called', function (done) {
-        expect(getEntriesStub.called).toBeFalsy();
+        expect(getEntriesStub).not.toBeCalled();
         done();
       });
 
@@ -366,22 +366,22 @@ describe('cfLinkEditor Controller methods', function () {
       }
 
       makeSpec('updateModel is called', function (done) {
-        expect(scope.updateModel.called).toBeTruthy();
+        expect(scope.updateModel).toBeCalled();
         done();
       });
 
       makeSpec('mkpath is called', function (done) {
-        expect(shareJSMock.mkpath.called).toBeTruthy();
+        expect(shareJSMock.mkpath).toBeCalled();
         done();
       });
 
       makeSpec('callback is called', function (done) {
-        expect(callbackSpy.called).toBeTruthy();
+        expect(callbackSpy).toBeCalled();
         done();
       });
 
       makeSpec('getEntries is called', function (done) {
-        expect(getEntriesStub.called).toBeFalsy();
+        expect(getEntriesStub).not.toBeCalled();
         done();
       });
 
@@ -426,7 +426,7 @@ describe('cfLinkEditor Controller methods', function () {
     it('and fetches them for caching', function (done) {
       scope.$watch('linkedEntities', function (newval, oldval) {
         if(newval !== oldval){
-          expect(getEntriesStub.calledWith({'sys.id[in]': 'entry1'})).toBeTruthy();
+          expect(getEntriesStub).toBeCalledWith({'sys.id[in]': 'entry1'});
           expect(scope.linkedEntities.length).toBe(1);
           done();
         }

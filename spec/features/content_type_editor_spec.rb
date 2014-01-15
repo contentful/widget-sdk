@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Content Type Editor', js: true, sauce: true do
+feature 'Content Type Editor', js: true do
   include ContentTypeHelper
   include EditorHelper
 

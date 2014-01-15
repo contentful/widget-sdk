@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Api Key Editor', js: true, sauce: true do
+feature 'Api Key Editor', js: true do
   before do
     ensure_login
     remove_test_space
@@ -23,6 +23,17 @@ feature 'Api Key Editor', js: true, sauce: true do
     expect_success 'saved successfully'
     newtoken = find('input.access-token').value
     expect(newtoken).to_not eql(token)
+  end
+
+  scenario "Deleting an API Key" do
+    add_button 'API Key'
+    find('input[ng-model="apiKey.data.name"]').set 'Foobar'
+    find('button.save').click
+    expect_success 'saved successfully'
+
+    click_button 'Delete'
+    click_button 'Are you sure?'
+    expect_success 'deleted successfully'
   end
 
 end

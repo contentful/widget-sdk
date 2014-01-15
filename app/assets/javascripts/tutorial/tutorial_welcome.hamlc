@@ -4,7 +4,7 @@
     .welcome-center
       .welcome-image
       .welcome-header Contentful in a nutshell
-      .welcome-text Contentful is a content management platform for web & mobile apps. Editors manage content in a nice interface and your developers integrate it into apps or websites through our powerful API. Let's take a look now!
+      .welcome-text.welcome-text-margin Contentful is a content management platform for web & mobile apps. Editors manage content in a nice interface and your developers integrate it into apps or websites through our powerful API. Let's take a look now!
        
   .welcome-slide.welcome-structure(ng-show="currentSlide == 'structure'")
     .welcome-title 1. Define your structure
@@ -34,7 +34,7 @@
     .welcome-center
       .welcome-image
       .welcome-header Manage content once, publish it anywhere
-      .welcome-text Create an API Key and deliver your content anywhere! You can serve content to smartphones, tablets, car consoles, smart watches and even these old-school personal computers.
+      .welcome-text.welcome-text-margin Create an API Key and deliver your content anywhere! You can serve content to smartphones, tablets, car consoles, smart watches and even these old-school personal computers.
 
   .welcome-slide.welcome-tutorials(ng-show="currentSlide == 'tutorials'")
     .welcome-title Need further support?

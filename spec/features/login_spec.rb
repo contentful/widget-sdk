@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Logging in', js: true, sauce: true do
+feature 'Logging in', js: true do
   before do
     clear_access_token
     visit "#{be_host}/logout"
@@ -16,7 +16,7 @@ feature 'Logging in', js: true, sauce: true do
   end
 end
 
-feature 'Registration', js: true, sauce: true do
+feature 'Registration', js: true do
   before do
     ensure_logout
   end
@@ -40,7 +40,7 @@ feature 'Registration', js: true, sauce: true do
   end
 end
 
-feature "Account cancellation", js:true, sauce: true do
+feature "Account cancellation", js:true do
   before do
     ensure_logout
     visit "#{be_host}/register"

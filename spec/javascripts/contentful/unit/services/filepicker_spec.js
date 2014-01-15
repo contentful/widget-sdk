@@ -73,7 +73,7 @@ describe('Filepicker service', function () {
       });
 
       it('filepicker method gets called', function () {
-        expect(makeDropPaneStub.called).toBeTruthy();
+        expect(makeDropPaneStub).toBeCalled();
       });
 
       it('filepicker method gets called with dropPane object', function () {
@@ -106,7 +106,7 @@ describe('Filepicker service', function () {
         var file = {file: 'name'};
         pickStub.callsArgWith(1, file);
         filepicker.pick().then(successStub).finally(function () {
-          expect(successStub.calledWith(file)).toBeTruthy();
+          expect(successStub).toBeCalledWith(file);
         });
       });
 
@@ -115,7 +115,7 @@ describe('Filepicker service', function () {
         var error = new Error('fileerror');
         pickStub.callsArgWith(2, error);
         filepicker.pick().catch(errorStub).finally(function () {
-          expect(errorStub.calledWith(error)).toBeTruthy();
+          expect(errorStub).toBeCalledWith(error);
         });
       });
 

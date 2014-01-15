@@ -45,7 +45,7 @@ describe('Trial Watch controller', function () {
       space: null
     };
     scope.$digest();
-    expect(broadcastStub.called).toBeFalsy();
+    expect(broadcastStub).not.toBeCalled();
   });
 
   describe('removes an existing notification', function () {
@@ -58,7 +58,7 @@ describe('Trial Watch controller', function () {
     });
 
     it('calls broadcast', function () {
-      expect(broadcastStub.called).toBeTruthy();
+      expect(broadcastStub).toBeCalled();
     });
 
     it('calls broadcast with null', function () {
@@ -102,15 +102,19 @@ describe('Trial Watch controller', function () {
         });
 
         it('shows a message', function () {
-          expect(broadcastStub.args[0][1].message).toBe('<strong>20</strong> hours left in trial');
+          expect(broadcastStub.args[0][1].message).toMatch(/20(.*)hours left in trial/);
         });
 
-        it('shows a tooltip message', function () {
-          expect(broadcastStub.args[0][1].tooltipMessage).toBe('This Space is in trial mode and you can test all features for 20 more hours. Enter your billing information to activate your subscription.');
+        it('shows a tooltip message for trial mode', function () {
+          expect(broadcastStub.args[0][1].tooltipMessage).toMatch('trial mode');
+        });
+
+        it('shows a tooltip message for hours', function () {
+          expect(broadcastStub.args[0][1].tooltipMessage).toMatch('20 more hours');
         });
 
         it('shows an action message', function () {
-          expect(broadcastStub.args[0][1].actionMessage).toBe('Upgrade');
+          expect(broadcastStub.args[0][1].actionMessage).toMatch(/upgrade/i);
         });
 
         it('has an action', function () {
@@ -125,12 +129,16 @@ describe('Trial Watch controller', function () {
           scope.$digest();
         });
 
+        it('shows a tooltip message for trial mode', function () {
+          expect(broadcastStub.args[0][1].tooltipMessage).toMatch('trial mode');
+        });
+
         it('shows a tooltip message for days', function () {
-          expect(broadcastStub.args[0][1].tooltipMessage).toBe('This Space is in trial mode and you can test all features for 3 more days. Enter your billing information to activate your subscription.');
+          expect(broadcastStub.args[0][1].tooltipMessage).toMatch('3 more days');
         });
 
         it('shows an action message', function () {
-          expect(broadcastStub.args[0][1].actionMessage).toBe('Upgrade');
+          expect(broadcastStub.args[0][1].actionMessage).toMatch(/upgrade/i);
         });
 
         it('has an action', function () {
@@ -177,15 +185,15 @@ describe('Trial Watch controller', function () {
         });
 
         it('shows a message', function () {
-          expect(broadcastStub.args[0][1].message).toBe('Limited trial version');
+          expect(broadcastStub.args[0][1].message).toMatch('free version');
         });
 
         it('shows a tooltip message', function () {
-          expect(broadcastStub.args[0][1].tooltipMessage).toBe('This Space is on our limited trial plan. Upgrade your subscription to get access to all features.');
+          expect(broadcastStub.args[0][1].tooltipMessage).toMatch('free plan');
         });
 
         it('shows an action message', function () {
-          expect(broadcastStub.args[0][1].actionMessage).toBe('Upgrade');
+          expect(broadcastStub.args[0][1].actionMessage).toMatch(/upgrade/i);
         });
 
         it('has an action', function () {

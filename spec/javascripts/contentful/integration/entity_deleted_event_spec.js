@@ -76,7 +76,7 @@ describe('Entry list controller events', function () {
     }));
 
     it('closes the tab', function () {
-      expect(closeStub.called).toBeTruthy();
+      expect(closeStub).toBeCalled();
     });
 
     it('has 2 entries after deletion', function () {
@@ -141,7 +141,7 @@ describe('Content Type Actions controller events', function () {
 
 
   it('handles an entityDeleted event from ContentTypeActions controller', function () {
-    expect(closeStub.called).toBeTruthy();
+    expect(closeStub).toBeCalled();
   });
 
 });
@@ -201,7 +201,7 @@ describe('ApiKey List controller events', function () {
   }));
 
   it('handles an entityDeleted event from ApiKeyEditor controller', function () {
-    expect(closeStub.called).toBeTruthy();
+    expect(closeStub).toBeCalled();
   });
 
   it('number of apikeys is now 2', function () {

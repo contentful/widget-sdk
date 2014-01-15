@@ -7,7 +7,7 @@ describe('The ContentTypeFieldList directive', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      $provide.stubDirectives('cfFieldSettings');
+      $provide.removeDirectives('cfFieldSettings');
     });
 
     function ControllerMock(){}
@@ -46,38 +46,38 @@ describe('The ContentTypeFieldList directive', function () {
 
   it('first field is active', function () {
     compileElement();
-    expect(container.find('.cf-field-settings').eq(0).hasClass('active')).toBeTruthy();
+    expect(container.find('.cf-field-settings').eq(0)).toHaveClass('active');
   });
 
   it('second field is inactive', function () {
     compileElement();
-    expect(container.find('.cf-field-settings').eq(1).hasClass('active')).toBeFalsy();
+    expect(container.find('.cf-field-settings').eq(1)).not.toHaveClass('active');
   });
 
   it('first field is open', function () {
     compileElement();
-    expect(container.find('.cf-field-settings').eq(0).hasClass('open')).toBeTruthy();
+    expect(container.find('.cf-field-settings').eq(0)).toHaveClass('open');
   });
 
   it('second field is closed', function () {
     compileElement();
-    expect(container.find('.cf-field-settings').eq(1).hasClass('open')).toBeFalsy();
+    expect(container.find('.cf-field-settings').eq(1)).not.toHaveClass('open');
   });
 
   it('first field is not hidden', function () {
     compileElement();
-    expect(container.find('.cf-field-settings').eq(0).hasClass('ng-hide')).toBeFalsy();
+    expect(container.find('.cf-field-settings').eq(0)).not.toBeNgHidden();
   });
 
   it('second field is hidden', function () {
     compileElement();
-    expect(container.find('.cf-field-settings').eq(1).hasClass('ng-hide')).toBeTruthy();
+    expect(container.find('.cf-field-settings').eq(1)).toBeNgHidden();
   });
 
   it('if preference setting is active second field is not hidden', function () {
     scope.preferences.showDisabledFields = true;
     compileElement();
-    expect(container.find('.cf-field-settings').eq(1).hasClass('ng-hide')).toBeFalsy();
+    expect(container.find('.cf-field-settings').eq(1)).not.toBeNgHidden();
   });
 
 });

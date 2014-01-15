@@ -32,8 +32,6 @@ group :development, :test do
   gem "guard-livereload"
   gem 'rb-fsevent', '~> 0.9.1', :require => false
   gem "jasmine"
-  gem 'sauce'
-  gem 'sauce-connect'
 end
 
 group :test do

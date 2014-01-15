@@ -37,15 +37,15 @@ describe('Exception handler service', function () {
   }));
 
   it('$log error called', function () {
-    expect(errorStub.calledWith(exception)).toBeTruthy();
+    expect(errorStub).toBeCalledWith(exception);
   });
 
   it('sentry captureException called', function () {
-    expect(exceptionStub.calledWith(exception)).toBeTruthy();
+    expect(exceptionStub).toBeCalledWith(exception);
   });
 
   it('ReloadNotification triggered', function () {
-    expect(triggerStub.called).toBeTruthy();
+    expect(triggerStub).toBeCalled();
   });
 
 

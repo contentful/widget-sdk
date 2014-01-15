@@ -16,7 +16,7 @@ describe('The ContentType editor directive', function () {
         peek: sinon.stub(),
         mkpath: sinon.stub()
       });
-      $provide.stubDirectives('otDocFor', 'otDocPresence', 'otSubdoc', 'otBindText', 'otPath', 'saveStatus', 'contentTypeFieldList');
+      $provide.removeDirectives('otDocFor', 'otDocPresence', 'otSubdoc', 'otBindText', 'otPath', 'saveStatus', 'contentTypeFieldList');
       cfCanStubsProvider.setup(reasonsStub);
     });
 
@@ -74,15 +74,15 @@ describe('The ContentType editor directive', function () {
     });
 
     it('field list is shown', function () {
-      expect(container.find('.content-type-field-list').hasClass('ng-hide')).toBeFalsy();
+      expect(container.find('.content-type-field-list')).not.toBeNgHidden();
     });
 
     it('advice is not shown', function () {
-      expect(container.find('.advice').hasClass('ng-hide')).toBeTruthy();
+      expect(container.find('.advice')).toBeNgHidden();
     });
 
     it('fields dropdown is shown', function () {
-      expect(container.find('.form-controls > .dropdown-btn').hasClass('ng-hide')).toBeFalsy();
+      expect(container.find('.form-controls > .dropdown-btn')).not.toBeNgHidden();
     });
   });
 
@@ -93,15 +93,15 @@ describe('The ContentType editor directive', function () {
     });
 
     it('field list is not shown', function () {
-      expect(container.find('.content-type-field-list').hasClass('ng-hide')).toBeTruthy();
+      expect(container.find('.content-type-field-list')).toBeNgHidden();
     });
 
     it('advice is shown', function () {
-      expect(container.find('.advice').hasClass('ng-hide')).toBeFalsy();
+      expect(container.find('.advice')).not.toBeNgHidden();
     });
 
     it('fields dropdown is not shown', function () {
-      expect(container.find('.form-controls > .dropdown-btn').hasClass('ng-hide')).toBeTruthy();
+      expect(container.find('.form-controls > .dropdown-btn')).toBeNgHidden();
     });
   });
 

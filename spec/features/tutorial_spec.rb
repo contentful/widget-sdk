@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Tutorial', js: true, sauce: true do
+feature 'Tutorial', js: true do
   include ContentTypeHelper
   include EditorHelper
   include AssetHelper

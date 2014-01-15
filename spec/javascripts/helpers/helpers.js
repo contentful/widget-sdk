@@ -13,7 +13,9 @@ window.specPerformance = window.specPerformance || {
 
 
 beforeEach(function() {
+
   jasmine.addMatchers({
+
     toLookEqual: function() {
       return {
         compare: function (actual, expected) {
@@ -23,8 +25,63 @@ beforeEach(function() {
           };
         }
       };
+    },
+
+    toHaveClass: function () {
+      return {
+        compare: function (actual, expected) {
+          var pass = actual.hasClass(expected);
+          var notText = pass ? 'not ' : '';
+          return {
+            pass: pass,
+            message: 'Expected element ' + notText + 'to have class '+expected
+          };
+        }
+      };
+    },
+
+    toBeNgHidden: function () {
+      return {
+        compare: function (actual) {
+          var pass = actual.hasClass('ng-hide');
+          var notText = pass ? 'not ' : '';
+          return {
+            pass: pass,
+            message: 'Expected element ' + notText + 'to be ng-hidden'
+          };
+        }
+      };
+    },
+
+    toBeCalled: function () {
+      return {
+        compare: function (actual) {
+          var pass = actual.called;
+          var notText = pass ? 'not ' : '';
+          return {
+            pass: pass,
+            message: 'Expected stub ' + notText + 'to be called'
+          };
+        }
+      };
+    },
+
+    toBeCalledWith: function () {
+      return {
+        compare: function (actual) {
+          var args = Array.prototype.slice.call(arguments, 1, arguments.length);
+          var pass = actual.calledWith.apply(actual, args);
+          var notText = pass ? 'not ' : '';
+          return {
+            pass: pass,
+            message: 'Expected stub ' + notText + 'to be called with supplied args'
+          };
+        }
+      };
     }
+
   });
+
   if(window.specPerformance){
     this.performanceStart = performance.now();
   }

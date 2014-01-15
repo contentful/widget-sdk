@@ -27,8 +27,8 @@ angular.module('contentful').controller('TrialWatchController', function TrialWa
     } else if(subscription.state == 'active' &&
               !subscription.subscriptionPlan.paid &&
               subscription.subscriptionPlan.kind == 'default'){
-      message = 'Limited trial version';
-      tooltipMessage = 'This Space is on our limited trial plan. Upgrade your subscription to get access to all features.';
+      message = 'Limited free version';
+      tooltipMessage = 'This Space is on our limited free plan. Upgrade your subscription to get access to all features.';
     }
 
 

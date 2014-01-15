@@ -5,7 +5,7 @@ describe('cfObjectEditor', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      $provide.stubDirectives('otBindModel');
+      $provide.removeDirectives('otBindModel');
     });
 
     inject(function ($rootScope, $compile) {
@@ -20,12 +20,12 @@ describe('cfObjectEditor', function () {
     elem.val('');
     elem.trigger('input');
     expect(scope.fieldData.value).toBe(undefined);
-    expect(elem.hasClass('ng-valid-json')).toBe(true);
+    expect(elem).toHaveClass('ng-valid-json');
 
     elem.val('\n    \n   \t  \n');
     elem.trigger('input');
     expect(scope.fieldData.value).toBe(undefined);
-    expect(elem.hasClass('ng-valid-json')).toBe(true);
+    expect(elem).toHaveClass('ng-valid-json');
   });
 
   it('should turn invalid json into undefined', function () {
@@ -37,7 +37,7 @@ describe('cfObjectEditor', function () {
   it('should mark textarea invalid when json invalid', function () {
     elem.val('{a: undefined}');
     elem.trigger('input');
-    expect(elem.hasClass('ng-invalid-json')).toBe(true);
+    expect(elem).toHaveClass('ng-invalid-json');
   });
 
   it('should format json properly', function () {

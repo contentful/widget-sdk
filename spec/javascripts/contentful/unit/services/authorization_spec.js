@@ -45,11 +45,11 @@ describe('Authorization service', function () {
     });
 
     it('calls worf with tokenLookup', function () {
-      expect(worfStub.calledWith(tokenLookup)).toBeTruthy();
+      expect(worfStub).toBeCalledWith(tokenLookup);
     });
 
     it('sets a space', function () {
-      expect(setSpaceStub.calledWith(space)).toBeTruthy();
+      expect(setSpaceStub).toBeCalledWith(space);
     });
   });
 
@@ -87,11 +87,11 @@ describe('Authorization service', function () {
       });
 
       it('calls space on auth context', function () {
-        expect(spaceStub.called).toBeTruthy();
+        expect(spaceStub).toBeCalled();
       });
 
       it('gets an id from the space', function () {
-        expect(idStub.called).toBeTruthy();
+        expect(idStub).toBeCalled();
       });
     });
   });
@@ -122,7 +122,7 @@ describe('reasonsDenied service', function () {
 
   it('calls reasonsDenied from authorization', function () {
     reasonsDenied();
-    expect(reasonsStub.called).toBeTruthy();
+    expect(reasonsStub).toBeCalled();
   });
 });
 

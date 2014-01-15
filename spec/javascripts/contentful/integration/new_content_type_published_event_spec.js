@@ -22,7 +22,7 @@ describe('The Space context', function () {
 
   it('registers a new published content type', function () {
     spaceContext.registerPublishedContentType(contentType);
-    expect(broadcastSpy.calledWith('newContentTypePublished')).toBeTruthy();
+    expect(broadcastSpy).toBeCalledWith('newContentTypePublished');
   });
 
   describe('fires and handles an event on the addDropdownButton directive', function () {
@@ -54,7 +54,7 @@ describe('The Space context', function () {
     });
 
     it('removes the menu', function () {
-      expect(oneSpy.called).toBeTruthy();
+      expect(oneSpy).toBeCalled();
     });
   });
 

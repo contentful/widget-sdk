@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Asset Editor', js: true, sauce: true do
+feature 'Asset Editor', js: true do
   include EditorHelper
   include AssetHelper
 
@@ -30,7 +30,7 @@ feature 'Asset Editor', js: true, sauce: true do
   end
 end
 
-feature 'Link Editor', js: true, sauce: true do
+feature 'Link Editor', js: true do
   include EditorHelper
   include ContentTypeHelper
   include AssetHelper

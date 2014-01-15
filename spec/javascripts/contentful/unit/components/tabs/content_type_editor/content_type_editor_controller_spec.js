@@ -67,7 +67,7 @@ describe('ContentTypeEditor Controller', function () {
     }));
 
     it('gets published status', function () {
-      expect(scope.contentType.getPublishedStatus.called).toBeTruthy();
+      expect(scope.contentType.getPublishedStatus).toBeCalled();
     });
 
     it('sets the published content type', function (done) {
@@ -87,7 +87,7 @@ describe('ContentTypeEditor Controller', function () {
     }));
 
     it('fires entity update', function () {
-      expect(updateEntityStub.called).toBeTruthy();
+      expect(updateEntityStub).toBeCalled();
     });
   });
 
@@ -270,11 +270,11 @@ describe('ContentTypeEditor Controller', function () {
       });
 
       it('push is called', function () {
-        expect(pushStub.called).toBeTruthy();
+        expect(pushStub).toBeCalled();
       });
 
       it('updates ot entity', function () {
-        expect(scope.otUpdateEntity.called).toBeTruthy();
+        expect(scope.otUpdateEntity).toBeCalled();
       });
 
       it('broadcasts event', function () {
@@ -282,7 +282,7 @@ describe('ContentTypeEditor Controller', function () {
       });
 
       it('fires analytics event', function () {
-        expect(modifiedContentTypeStub.called).toBeTruthy();
+        expect(modifiedContentTypeStub).toBeCalled();
       });
     });
 
@@ -293,11 +293,11 @@ describe('ContentTypeEditor Controller', function () {
       });
 
       it('push is called', function () {
-        expect(pushStub.called).toBeTruthy();
+        expect(pushStub).toBeCalled();
       });
 
       it('fires server error notification', function () {
-        expect(serverErrorStub.called).toBeTruthy();
+        expect(serverErrorStub).toBeCalled();
       });
     });
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Working with spaces', js: true, sauce: true do
+feature 'Working with spaces', js: true do
   before do
     ensure_login
   end
