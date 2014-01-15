@@ -74,7 +74,7 @@ beforeEach(function() {
           var notText = pass ? 'not ' : '';
           return {
             pass: pass,
-            message: 'Expected stub ' + notText + 'to be called with supplied args'
+            message: 'Expected stub ' + notText + 'to be called with '+args+' but was called with '+actual.args
           };
         }
       };
