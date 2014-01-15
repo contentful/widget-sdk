@@ -57,6 +57,7 @@ feature 'Roles', js:true, order: :defined do
       expect(page).to_not have_selector('button', text: 'Create Content Type')
       nav_bar 'asset-list'
       expect(page).to_not have_selector('button', text: 'Create an Asset')
+      ensure_logout
     end
   end
 
