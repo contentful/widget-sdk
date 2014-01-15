@@ -36,10 +36,10 @@ angular.module('contentful').
         if (err) {
           var errorId = err.body.sys.id;
           var reason = errorId;
-          if (errorId === 'validationFailed') {
+          if (errorId === 'ValidationFailed') {
             reason = 'Validation failed';
             scope.setValidationErrors(err.body.details.errors);
-          } else if (errorId === 'versionMismatch') {
+          } else if (errorId === 'VersionMismatch') {
             reason = 'Can only activate most recent version';
           } else {
             reason = err.body.message;
