@@ -38,15 +38,12 @@
          placeholder="e.g. productName"
          tooltip="Field ID used in API"
          tooltip-placement="top")
-  .field-errors
-    %span(cf-error-path="['fields', index, 'name']" ng-hide="noErrors")
+  .field-errors(ng-hide="noErrors")
+    %span(cf-error-path="['fields', index, 'name']")
       Name: {{errorMessages.join(' ')}}
       %br
-    %span(cf-error-path="['fields', index, 'id']" ng-hide="noErrors")
+    %span(cf-error-path="['fields', index, 'id']")
       Identifier: {{errorMessages.join(' ')}}
-    -#.cf-form-inline-error(ng-show="idExists")
-      TODO generate idExists Flag
-      Identifier already exists
 
 .dropdown-btn.fieldtype-dropdown
   .dropdown-toggle.flat-button.cf-fieldtype-icon(field="field" show-tooltip="" ng-disabled="published")
