@@ -33,7 +33,7 @@
         ng-model="fieldData.value"
         ot-bind-model=""
         ng-disabled="!otEditable")
-  .cf-object-editor(ng-switch-when="Object")
+  .cf-object-editor(ng-switch-when="Object" ng-model="fieldData.value")
   .cf-location-editor(ng-switch-when="Location" ng-model="fieldData.value")
   .cf-number-editor(ng-switch-when="Number")
   .cf-number-editor(ng-switch-when="Integer")

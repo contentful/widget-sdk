@@ -2,28 +2,56 @@
 angular.module('contentful').directive('cfObjectEditor', function(){
   return {
     restrict: 'C',
-    template: '<textarea class="input-xxlarge" cf-input-autogrow ng-model="fieldData.value" ot-bind-model ng-disabled="!otEditable"></textarea>',
-    replace: true,
+    template: JST['cf_object_editor'](),
     require: 'ngModel',
     link: function(scope, elem, attr, ngModel){
-      ngModel.$formatters.push(function (object) {
+      scope.jsonData = {
+        value: undefined,
+        editing: false
+      };
+
+      scope.textFieldModel = elem.find('textarea').controller('ngModel');
+
+      scope.textFieldModel.$formatters.push(function (object) {
         return JSON.stringify(object, null, 2);
       });
-      ngModel.$parsers.push(function (string) {
+
+      scope.textFieldModel.$parsers.push(function (string) {
+        scope.textFieldModel.$setValidity('json', true);
+        if (string.match(/^\s*$/g)) return undefined;
         try {
-          if (string.match(/^\s*$/g)) {
-            ngModel.$setValidity('json', true);
-            return undefined;
-          } else {
-            var json = JSON.parse(string);
-            ngModel.$setValidity('json', true);
-            return json;
-          }
+          var obj = JSON.parse(string);
+          if (_.isArray(obj) || _.isPlainObject(obj)) return obj;
         } catch (e) {
-          ngModel.$setValidity('json', false);
-          return undefined;
         }
+        scope.textFieldModel.$setValidity('json', false);
+        return undefined;
       });
+
+      ngModel.$render = function () {
+        scope.jsonData.editing = false;
+        scope.jsonData.value = angular.copy(ngModel.$viewValue);
+        scope.textFieldModel.$setPristine();
+        scope.textFieldModel.$setValidity('json', true);
+        _.defer(function () {
+          elem.find('textarea').trigger('autosize');
+        });
+      };
+
+      scope.saveJSON = function () {
+        scope.otChangeValue(scope.jsonData.value, function (err) {
+          if (!err) {
+            ngModel.$setViewValue(scope.jsonData.value);
+            ngModel.$render();
+          } else {
+            ngModel.$render();
+          }
+        });
+      };
+
+      scope.revertJSON = function () {
+        ngModel.$render();
+      };
 
     }
   };

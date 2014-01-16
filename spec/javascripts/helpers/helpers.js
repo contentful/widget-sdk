@@ -21,7 +21,7 @@ beforeEach(function() {
         compare: function (actual, expected) {
           return {
             pass: angular.equals(actual, expected),
-            message: 'Expected ' + actual + ' to look equal to ' + expected
+            message: 'Expected ' + JSON.stringify(actual) + ' to look equal to ' + JSON.stringify(expected)
           };
         }
       };
