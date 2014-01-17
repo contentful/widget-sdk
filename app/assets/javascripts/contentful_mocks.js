@@ -5,7 +5,7 @@ var mocks = angular.module('contentful/mocks', []);
 
 
 mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
-  var Client = contentfulClient;
+  var Client = contentfulClient.Client;
   var Adapter = contentfulClient.adapters.testing;
   var adapter = new Adapter();
 
