@@ -7,9 +7,7 @@ describe('otBindText', function () {
     $provide.value('ShareJS', {
       mkpath: sinon.stub().yieldsAsync(null),
       peek: sinon.stub().returns('xx'),
-      connection: {
-        state: 'ok'
-      },
+      isConnected: function () { return true; },
       open: sinon.stub().yieldsAsync(null, doc = {
         on: sinon.stub(),
         at: sinon.stub().returns(subdoc ={
