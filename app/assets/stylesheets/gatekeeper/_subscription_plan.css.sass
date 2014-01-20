@@ -24,6 +24,24 @@ $subscription-yellow: #fffeec
     padding-left: 20px
     border-left: 1px solid $dark-rule
 
+.subscription-notice
+  border: 1px solid gray
+  +border-radius
+  margin-bottom: 20px
+  padding: 10px
+  padding-right: 20px
+  padding-left: 55px
+  min-height: 60px
+  &:before
+    content: '\2139'
+    font-family: 'SSStandard'
+    display: block
+    position: absolute
+    left: 20px
+    font-size: 35px
+    padding: 14px 20px
+    vertical-align: top
+    color: $light-gray
 
 .plan-header
   font-size: 25px
@@ -49,7 +67,7 @@ $subscription-yellow: #fffeec
 
 .billing-frequency
   margin: auto
-  width: 400px
+  width: 500px
   margin-bottom: 2em
 
 .available-plans
@@ -223,15 +241,18 @@ $plan-detail-gutter: 20px
   &:hover
     color: $dark-gray
 
+.plan-questions,
+.plan-cancel-account
+  margin-top: 20px
+  margin-bottom: 20px
+
 .plan-questions
   margin-left: 20px
-  margin-top: 20px
   float: left
 
 .plan-cancel-account
   float: right
   margin-right: 20px
-  margin-top: 20px
   text-align: right
   a
     color: darken($red, 30%)
