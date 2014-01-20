@@ -217,7 +217,6 @@ describe('Entry List Controller', function () {
 
     it('entry is included in published', function () {
       var entry = makeEntry();
-      stubs.deleted.returns(true);
       stubs.published.returns(true);
       scope.tab.params.list = 'published';
       expect(scope.visibleInCurrentList(entry)).toBeTruthy();
@@ -225,7 +224,6 @@ describe('Entry List Controller', function () {
 
     it('entry is included in changed', function () {
       var entry = makeEntry();
-      stubs.deleted.returns(true);
       stubs.hasUnpublishedChanges.returns(true);
       scope.tab.params.list = 'changes';
       expect(scope.visibleInCurrentList(entry)).toBeTruthy();
@@ -233,7 +231,6 @@ describe('Entry List Controller', function () {
 
     it('entry is included in draft', function () {
       var entry = makeEntry();
-      stubs.deleted.returns(true);
       stubs.hasUnpublishedChanges.returns(true);
       stubs.published.returns(false);
       scope.tab.params.list = 'draft';
@@ -242,7 +239,6 @@ describe('Entry List Controller', function () {
 
     it('entry is included in archived', function () {
       var entry = makeEntry();
-      stubs.deleted.returns(false);
       stubs.archived.returns(true);
       scope.tab.params.list = 'archived';
       expect(scope.visibleInCurrentList(entry)).toBeTruthy();
@@ -250,7 +246,6 @@ describe('Entry List Controller', function () {
 
     it('entry is filtered by content type', function () {
       var entry = makeEntry();
-      stubs.deleted.returns(true);
       stubs.getContentTypeId.returns('ct1');
       scope.tab.params.contentTypeId = 'ct1';
       scope.tab.params.list = 'contentType';
@@ -496,7 +491,6 @@ describe('Entry List Controller', function () {
   describe('status class', function () {
     it('is updated', function () {
       var entry = makeEntry();
-      entry.hasUnpublishedChanges();
       stubs.published.returns(true);
       stubs.hasUnpublishedChanges.returns(true);
       expect(scope.statusClass(entry)).toBe('updated');

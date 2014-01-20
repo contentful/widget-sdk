@@ -23,15 +23,6 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
     }, extraData || {});
   };
 
-  cfStub.field = function (id, extraData) {
-    return _.extend({
-      id: id,
-      name: id,
-      type: 'Text',
-      localized: true
-    }, extraData);
-  };
-
   cfStub.locales = function () {
     return _.map(arguments, function (code, index) {
       return cfStub.locale(code, {'default': index === 0});

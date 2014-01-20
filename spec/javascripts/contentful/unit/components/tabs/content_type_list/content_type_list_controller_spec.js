@@ -1,222 +1,278 @@
 'use strict';
 
 describe('Content Type List Controller', function () {
-  var controller, scope;
+  var controller, scope, stubs;
 
-  beforeEach(module('contentful/test'));
+  var makeCT = function (sys) {
+    var ct;
+    inject(function (contentfulClient) {
+      ct = new contentfulClient.Entity({ sys: sys || {} });
+    });
+    stubs.deleted = sinon.stub(ct, 'isDeleted');
+    stubs.published = sinon.stub(ct, 'isPublished');
+    stubs.hasUnpublishedChanges = sinon.stub(ct, 'hasUnpublishedChanges');
+    stubs.publishedAt = sinon.stub(ct, 'getPublishedAt');
+    ct.getName = stubs.getName;
+    return ct;
+  };
 
-  beforeEach(inject(function ($rootScope, $controller, SpaceContext, cfStub) {
-    $rootScope.spaceContext = new SpaceContext(cfStub.space('test'));
-    controller = $controller('ContentTypeListCtrl', {$scope: $rootScope});
-    scope = $rootScope;
-  }));
+  beforeEach(function () {
+    module('contentful/test', function ($provide) {
+      stubs = $provide.makeStubs(['resetContentTypes', 'getName']);
+    });
+    inject(function ($rootScope, $controller, SpaceContext, cfStub) {
+      scope = $rootScope.$new();
+      var space = cfStub.space('space');
+      scope.spaceContext = cfStub.spaceContext(space, [
+        cfStub.contentTypeData('typeid1', [
+          cfStub.field('name1')
+        ]),
+        cfStub.contentTypeData('typeid2', [
+          cfStub.field('name2')
+        ])
+      ]);
+
+      scope.tab = {
+        params: {}
+      };
+      scope.searchTerm = null;
+
+      controller = $controller('ContentTypeListCtrl', {$scope: scope});
+      scope.$digest();
+    });
+  });
+
+  it('content types are set', function() {
+    expect(scope.contentTypes).toBeDefined();
+  });
+
+  it('first content type is set', function() {
+    expect(scope.contentTypes[0].data.fields[0].name).toEqual('name1');
+  });
+
+  it('empty flag is false', function() {
+    expect(scope.empty).toBeFalsy();
+  });
+
+  it('getting number of fields from a content type', function() {
+    expect(scope.numFields(scope.contentTypes[0])).toEqual(1);
+  });
+
+  describe('empty content types', function() {
+    beforeEach(function() {
+      delete scope.spaceContext.contentTypes;
+      scope.$digest();
+    });
+
+    it('content types are empty', function() {
+      expect(scope.contentTypes).toEqual([]);
+    });
+
+    it('empty flag is true', function() {
+      expect(scope.empty).toBeTruthy();
+    });
+  });
+
+  describe('on search term change', function () {
+    beforeEach(function() {
+      scope.resetContentTypes = sinon.stub();
+    });
+
+    describe('if term is null', function () {
+      beforeEach(function () {
+        scope.searchTerm = null;
+        scope.$digest();
+      });
+
+      it('list is not defined', function () {
+        expect(scope.tab.params.list).toBeUndefined();
+      });
+
+      it('reset content types not called', function () {
+        expect(scope.resetContentTypes).not.toBeCalled();
+      });
+    });
+
+    describe('if term is set', function () {
+      beforeEach(function () {
+        scope.searchTerm = 'thing';
+        scope.$digest();
+      });
+
+      it('list is defined', function () {
+        expect(scope.tab.params.list).toBe('all');
+      });
+
+      it('reset content types is called', function() {
+        expect(scope.resetContentTypes).toBeCalled();
+      });
+    });
+
+  });
+
+  describe('switching lists', function () {
+    var list;
+    beforeEach(function() {
+      list = 'all';
+      scope.resetContentTypes = sinon.stub();
+    });
+
+    it('sets search term to null', function() {
+      scope.tab.params.list = list;
+      scope.switchList(list);
+      expect(scope.searchTerm).toBeNull();
+    });
+
+    it('resets current list', function () {
+      scope.tab.params.list = list;
+      scope.switchList(list);
+      expect(scope.resetContentTypes).toBeCalled();
+    });
+
+    it('switches current list', function () {
+      scope.switchList(list);
+      expect(scope.tab.params.list).toBe(list);
+    });
+  });
+
+  describe('changed list', function () {
+    it('content type is filtered by search', function () {
+      var contentType = makeCT();
+      stubs.getName.returns('Type Name');
+      scope.searchTerm = 'type';
+      expect(scope.visibleInCurrentList(contentType)).toBeTruthy();
+    });
+
+    it('content type is included in all', function () {
+      var contentType = makeCT();
+      stubs.deleted.returns(false);
+      scope.tab.params.list = 'all';
+      expect(scope.visibleInCurrentList(contentType)).toBeTruthy();
+    });
+
+    it('content type is included in changed', function () {
+      var contentType = makeCT();
+      stubs.hasUnpublishedChanges.returns(true);
+      scope.tab.params.list = 'changes';
+      expect(scope.visibleInCurrentList(contentType)).toBeTruthy();
+    });
+
+    it('content type is included in active', function () {
+      var contentType = makeCT();
+      stubs.published.returns(true);
+      scope.tab.params.list = 'active';
+      expect(scope.visibleInCurrentList(contentType)).toBeTruthy();
+    });
+
+    it('content type is included in draft', function () {
+      var contentType = makeCT();
+      stubs.published.returns(false);
+      scope.tab.params.list = 'draft';
+      expect(scope.visibleInCurrentList(contentType)).toBeTruthy();
+    });
+
+    it('content type is not contained in any list', function () {
+      var contentType = makeCT();
+      scope.tab.params.list = '';
+      expect(scope.visibleInCurrentList(contentType)).toBeTruthy();
+    });
+  });
+
+  describe('resetting content types', function() {
+    beforeEach(function() {
+      stubs.refreshContentTypes = sinon.stub(scope.spaceContext, 'refreshContentTypes');
+    });
+
+    it('refreshes content types if a spaceContext exists', function() {
+      scope.resetContentTypes();
+      expect(stubs.refreshContentTypes).toBeCalled();
+    });
+
+    it('does not refresh content types if a spaceContext doesnt exist', function() {
+      delete scope.spaceContext;
+      scope.resetContentTypes();
+      expect(stubs.refreshContentTypes).not.toBeCalled();
+    });
+  });
+
+  it('has a query', function() {
+    scope.tab.params.list = 'all';
+    scope.searchTerm = 'term';
+    expect(scope.hasQuery()).toBeTruthy();
+  });
+
+  it('has no query', function() {
+    scope.tab.params.list = 'all';
+    scope.searchTerm = null;
+    expect(scope.hasQuery()).toBeFalsy();
+  });
+
+  describe('status class', function () {
+    it('is updated', function () {
+      var contentType = makeCT();
+      stubs.publishedAt.returns(true);
+      stubs.hasUnpublishedChanges.returns(true);
+      expect(scope.statusClass(contentType)).toBe('updated');
+    });
+
+    it('is published', function () {
+      var contentType = makeCT();
+      stubs.publishedAt.returns(true);
+      stubs.hasUnpublishedChanges.returns(false);
+      expect(scope.statusClass(contentType)).toBe('published');
+    });
+
+    it('is draft', function () {
+      var contentType = makeCT();
+      stubs.publishedAt.returns(false);
+      expect(scope.statusClass(contentType)).toBe('draft');
+    });
+  });
+
+  describe('status label', function () {
+    it('is updated', function () {
+      var contentType = makeCT();
+      stubs.publishedAt.returns(true);
+      stubs.hasUnpublishedChanges.returns(true);
+      expect(scope.statusLabel(contentType)).toBe('updated');
+    });
+
+    it('is active', function () {
+      var contentType = makeCT();
+      stubs.publishedAt.returns(true);
+      stubs.hasUnpublishedChanges.returns(false);
+      expect(scope.statusLabel(contentType)).toBe('active');
+    });
+
+    it('is draft', function () {
+      var contentType = makeCT();
+      stubs.publishedAt.returns(false);
+      expect(scope.statusLabel(contentType)).toBe('draft');
+    });
+  });
+
+  describe('when tab becomes active', function () {
+    beforeEach(function() {
+      scope.resetContentTypes = sinon.stub();
+    });
+
+    it('does nothing if its not the current scope tab', inject(function ($rootScope) {
+      scope.tab = null;
+      $rootScope.$broadcast('tabBecameActive', {});
+      expect(scope.resetContentTypes).not.toBeCalled();
+    }));
+
+    it('resets content types', inject(function($rootScope) {
+      scope.tab = {};
+      $rootScope.$broadcast('tabBecameActive', scope.tab);
+      expect(scope.resetContentTypes).toBeCalled();
+    }));
+  });
+
+
 
   afterEach(inject(function ($log) {
     $log.assertEmpty();
   }));
-
-  describe('list filtering', function () {
-    var makeContentType = function (params) {
-      var contentType;
-      inject(function (contentfulClient) {
-        contentType = new contentfulClient.Entity(params);
-        contentType.getName = function () {
-          return params.data.name;
-        };
-      });
-      return contentType;
-    };
-
-    describe('on searching', function () {
-      it('searches for an existing name', function () {
-        scope.searchTerm = 'term';
-        var contentType = makeContentType({
-          data: {
-            name: 'some term'
-          }
-        });
-        expect(scope.visibleInCurrentList(contentType)).toBe(true);
-      });
-
-      it('lowercase search for an existing name capitalized', function () {
-        scope.searchTerm = 'term';
-        var contentType = makeContentType({
-          data: {
-            name: 'some Term'
-          }
-        });
-        expect(scope.visibleInCurrentList(contentType)).toBe(true);
-      });
-
-      it('searches for a non existing name', function () {
-        scope.searchTerm = 'term';
-        var contentType = makeContentType({
-          data: {
-            name: 'does not exist'
-          }
-        });
-        expect(scope.visibleInCurrentList(contentType)).toBe(false);
-      });
-
-    });
-
-    describe('on all list', function () {
-      beforeEach(function () {
-        scope.tab = {
-          params: {
-            list: 'all'
-          }
-        };
-      });
-
-      it('should include unpublished contentTypes in "changed" list', function () {
-        var contentType = makeContentType({
-          sys: {
-            version: 5
-          }
-        });
-        expect(scope.visibleInCurrentList(contentType)).toBe(true);
-      });
-
-      it('should include updated contentTypes in "changed" list', function () {
-        var contentType = makeContentType({
-          sys: {
-            publishedVersion: 2,
-            version: 5
-          }
-        });
-        expect(scope.visibleInCurrentList(contentType)).toBe(true);
-      });
-
-      it('should include published contentTypes without updates in "changed" list', function () {
-        var contentType = makeContentType({
-          sys: {
-            publishedVersion: 5,
-            version: 5
-          }
-        });
-        expect(scope.visibleInCurrentList(contentType)).toBe(true);
-      });
-    });
-
-    describe('on changed list', function () {
-      beforeEach(function () {
-        scope.tab = {
-          params: {
-            list: 'changed'
-          }
-        };
-      });
-
-      it('should include unpublished contentTypes in "changed" list', function () {
-        var contentType = makeContentType({
-          sys: {
-            version: 5
-          }
-        });
-        expect(scope.visibleInCurrentList(contentType)).toBe(true);
-      });
-
-      it('should include updated contentTypes in "changed" list', function () {
-        var contentType = makeContentType({
-          sys: {
-            publishedVersion: 2,
-            version: 5
-          }
-        });
-        expect(scope.visibleInCurrentList(contentType)).toBe(true);
-      });
-
-      it('should not include published contentTypes without updates in "changed" list', function () {
-        var contentType = makeContentType({
-          sys: {
-            publishedVersion: 5,
-            version: 5
-          }
-        });
-        expect(scope.visibleInCurrentList(contentType)).toBe(false);
-      });
-    });
-
-    describe('on active list', function () {
-      beforeEach(function () {
-        scope.tab = {
-          params: {
-            list: 'active'
-          }
-        };
-      });
-
-      it('should not include unpublished contentTypes in "active" list', function () {
-        var contentType = makeContentType({
-          sys: {
-            version: 5
-          }
-        });
-        expect(scope.visibleInCurrentList(contentType)).toBe(false);
-      });
-
-      it('should include updated contentTypes in "active" list', function () {
-        var contentType = makeContentType({
-          sys: {
-            publishedVersion: 2,
-            version: 5
-          }
-        });
-        expect(scope.visibleInCurrentList(contentType)).toBe(true);
-      });
-
-      it('should include published contentTypes without updates in "active" list', function () {
-        var contentType = makeContentType({
-          sys: {
-            publishedVersion: 5,
-            version: 5
-          }
-        });
-        expect(scope.visibleInCurrentList(contentType)).toBe(true);
-      });
-    });
-
-    describe('on draft list', function () {
-      beforeEach(function () {
-        scope.tab = {
-          params: {
-            list: 'draft'
-          }
-        };
-      });
-
-      it('should include unpublished contentTypes in "draft" list', function () {
-        var contentType = makeContentType({
-          sys: {
-            version: 5
-          }
-        });
-        expect(scope.visibleInCurrentList(contentType)).toBe(true);
-      });
-
-      it('should not include updated contentTypes in "draft" list', function () {
-        var contentType = makeContentType({
-          sys: {
-            publishedVersion: 2,
-            version: 5
-          }
-        });
-        expect(scope.visibleInCurrentList(contentType)).toBe(false);
-      });
-
-      it('should not include published contentTypes without updates in "draft" list', function () {
-        var contentType = makeContentType({
-          sys: {
-            publishedVersion: 5,
-            version: 5
-          }
-        });
-        expect(scope.visibleInCurrentList(contentType)).toBe(false);
-      });
-    });
-
-
-  });
 
 });
