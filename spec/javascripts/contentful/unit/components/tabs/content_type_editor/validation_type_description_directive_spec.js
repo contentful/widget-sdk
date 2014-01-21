@@ -1,6 +1,6 @@
 'use strict';
 
-describe('The contentTypeDescription directive', function () {
+describe('The validationTypeDescription directive', function () {
 
   var container, scope;
   var compileElement;
@@ -12,7 +12,7 @@ describe('The contentTypeDescription directive', function () {
       scope = $rootScope.$new();
 
       compileElement = function () {
-        container = $('<div class="content-type-description"></div>');
+        container = $('<div class="validation-type-description"></div>');
         $compile(container)(scope);
         scope.$digest();
       };
@@ -26,27 +26,20 @@ describe('The contentTypeDescription directive', function () {
 
   function makeDescriptionTest(type) {
     it('renders '+type+' description', function() {
-      scope.type = {
-        value: {
-          type: type
-        }
-      };
+      scope.validationType = sinon.stub();
+      scope.validationType.returns(type);
       compileElement();
       expect(container.find('h3').get(0)).toBeDefined();
     });
   }
 
   _.each([
-    'Text',
-    'Symbol',
-    'Integer',
-    'Number',
-    'Boolean',
-    'Date',
-    'Location',
-    'Object',
-    'Link',
-    'Array',
+    'in',
+    'regexp',
+    'size',
+    'range',
+    'linkContentType',
+    'linkMimetypeGroup'
   ], makeDescriptionTest);
 
 });
