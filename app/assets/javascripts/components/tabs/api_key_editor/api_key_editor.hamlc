@@ -67,8 +67,6 @@
     %button.default-button.delete(type="button"
                    tooltip="Permanently delete this API key"
                    ng-click="activateDeleteConfirm()"
-                   cf-can-no-disable=""
-                   cf-can="create, ApiKey"
                    ng-show="apiKey.getId() && !deleteConfirm")
       Delete
     %button.default-button.primary-button.save(type="submit"
