@@ -4,6 +4,16 @@ angular.module('contentful').controller('FieldValidationDialogController', funct
   $scope.validationType = availableValidations.type;
   $scope.validationName = availableValidations.name;
 
+  function validationUsed(availableValidation) {
+    return !!_.find($scope.validationList(), function (existingValidation) {
+      return vType(existingValidation) === vType(availableValidation);
+    });
+  }
+
+  function vType(v) {
+    return availableValidations.type(v);
+  }
+
   $scope.$watchCollection('validationList()', function (validationList, old, scope) {
     var fieldValidations = availableValidations.forField(scope.field);
     scope.availableValidations = _.omit(fieldValidations, validationUsed);
@@ -85,13 +95,4 @@ angular.module('contentful').controller('FieldValidationDialogController', funct
     return $scope.can('create', 'ContentType') && !_.isEmpty($scope.availableValidations);
   };
 
-  function validationUsed(availableValidation) {
-    return !!_.find($scope.validationList(), function (existingValidation) {
-      return vType(existingValidation) === vType(availableValidation);
-    });
-  }
-
-  function vType(v) {
-    return availableValidations.type(v);
-  }
 });
