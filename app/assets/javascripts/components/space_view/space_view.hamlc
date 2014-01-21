@@ -11,7 +11,7 @@
                   'section-index': spaceContext.tabList.currentViewType() == 'content-type-list'}"
         ng-click="goToView('content-type-list')"
         cf-can-no-disable=""
-        cf-can="read, ContentType"
+        cf-can="update, ContentType"
         data-view-type="content-type-list"
         tooltip="Content Model"
         tooltip-placement="bottom"

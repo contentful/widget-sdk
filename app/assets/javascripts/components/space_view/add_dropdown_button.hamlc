@@ -22,6 +22,8 @@
         data-content-type-id="{{contentType.getId()}}"
         dropdown-close="")
         {{contentType.getName()}}
-    %ul.highlight.no-content-types(ng-hide="spaceContext.publishedContentTypes.length > 0")
-      %li.hint(ng-click="createContentType()" dropdown-close)
+    %ul.highlight.no-content-types(ng-hide="spaceContext.publishedContentTypes.length > 0" cf-can="create, Entry")
+      %li.hint(ng-click="createContentType()" dropdown-close="" cf-can="create, ContentType")
         (Create and activate a Content Type before creating Entries)
+      %li.hint(dropdown-close="" ng-hide="can('create', 'ContentType')")
+        (No Content Types available. An admin needs to create a Content Type before you can add Entries)

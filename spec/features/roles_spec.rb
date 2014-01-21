@@ -2,6 +2,7 @@ require 'spec_helper'
 
 feature 'Roles', js:true, order: :defined do
   include GatekeeperHelper
+  include ContentTypeHelper
 
   before :all do
     clear_access_token
@@ -35,15 +36,22 @@ feature 'Roles', js:true, order: :defined do
       click_button 'Invite New User'
     end
     expect_success 'invited successfully'
+    create_content_type 'Text'
     ensure_logout
   end
 
   context 'Login as Developer' do
     let(:user){ "testuser1@contentful.com" }
     let(:password){ "password" }
+
+    after do
+      ensure_logout
+    end
+
     scenario "login" do
       ensure_login
-      create_test_space
+      select_space
+      debugger
       expect(page).to_not have_selector(".nav-bar li[data-view-type=space-settings]")
       find('.add.button.dropdown-toggle').click
       dropdown_menu = find('.dropdown-menu')
@@ -51,8 +59,6 @@ feature 'Roles', js:true, order: :defined do
       expect(dropdown_menu).to_not have_selector(".main-types li", text: 'Asset')
       expect(dropdown_menu).to_not have_selector(".main-types li", text: 'Entries')
 
-      nav_bar 'content-type-list'
-      expect(page).to_not have_selector('button', text: 'Create Content Type')
       nav_bar 'entry-list'
       expect(page).to_not have_selector('button', text: 'Create Content Type')
       nav_bar 'asset-list'
@@ -64,6 +70,26 @@ feature 'Roles', js:true, order: :defined do
   context 'Login as Editor' do
     let(:user){ "testuser2@contentful.com" }
     let(:password){ "password" }
-    scenario "login"
+
+    after do
+      ensure_logout
+    end
+
+    scenario "login" do
+      ensure_login
+      select_space
+      expect(page).to_not have_selector(".nav-bar li[data-view-type=space-settings]")
+      expect(page).to_not have_selector(".nav-bar li[data-view-type=content-type-list]")
+      find('.add.button.dropdown-toggle').click
+      dropdown_menu = find('.dropdown-menu')
+      expect(dropdown_menu).to_not have_selector(".main-types li", text: 'Content Type')
+      expect(dropdown_menu).to     have_selector(".main-types li", text: 'Asset')
+      debugger
+      expect(dropdown_menu).to     have_selector(".content-types li")
+      nav_bar 'entry-list'
+      expect(page).to_not have_selector('button', text: 'Create Content Type')
+      nav_bar 'asset-list'
+      expect(page).to     have_selector('button', text: 'Create an Asset')
+    end
   end
 end

@@ -114,6 +114,11 @@ module FeatureHelper
     end
   end
 
+  def select_space(name=test_space)
+    find('.account .project .dropdown-toggle').click
+    find('li', text: name, wait: 0.5).click
+  end
+
   # def reset_test_space(name=test_space)
   #   within 'nav.account .project' do
   #     find('.dropdown-toggle').click

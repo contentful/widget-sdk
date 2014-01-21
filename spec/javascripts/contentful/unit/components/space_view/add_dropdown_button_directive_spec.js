@@ -77,9 +77,9 @@ describe('The add dropdown button directive', function () {
   makeShownButtonTest('Asset', 'add-asset');
   makeShownButtonTest('ApiKey', 'add-api-key');
 
-  describe('if user can create an Entry but no published content types exist', function () {
+  describe('if a user can not create an Entry and no published content types exist', function () {
     beforeEach(function () {
-      canStub.withArgs('create', 'Entry').returns(true);
+      canStub.withArgs('create', 'Entry').returns(false);
       scope.spaceContext.publishedContentTypes = [];
       compileElement();
     });
@@ -88,9 +88,47 @@ describe('The add dropdown button directive', function () {
       expect(container.find('.content-types')).toBeNgHidden();
     });
 
-    it('add menu item with class no-content-types is not hidden', function () {
-      expect(container.find('.no-content-types')).not.toBeNgHidden();
+    it('add menu item with class no-content-types is hidden', function () {
+      expect(container.find('.no-content-types')).toBeNgHidden();
     });
+  });
+
+  describe('if user can create an Entry but no published content types exist', function () {
+    describe('and the user can not create Content Types', function () {
+      beforeEach(function () {
+        canStub.withArgs('create', 'Entry').returns(true);
+        scope.spaceContext.publishedContentTypes = [];
+        compileElement();
+      });
+
+      it('add menu item with class content-types is hidden', function () {
+        expect(container.find('.content-types')).toBeNgHidden();
+      });
+
+      it('add menu item with class no-content-types is not hidden', function () {
+        expect(container.find('.no-content-types')).not.toBeNgHidden();
+        expect(container.find('.no-content-types li:not(.ng-hide)').text()).toMatch(/No Content Types available/);
+      });
+    });
+
+    describe('and the user can create Content Types', function () {
+      beforeEach(function () {
+        canStub.withArgs('create', 'Entry').returns(true);
+        canStub.withArgs('create', 'ContentType').returns(true);
+        scope.spaceContext.publishedContentTypes = [];
+        compileElement();
+      });
+
+      it('add menu item with class content-types is hidden', function () {
+        expect(container.find('.content-types')).toBeNgHidden();
+      });
+
+      it('add menu item with class no-content-types is not hidden', function () {
+        expect(container.find('.no-content-types')).not.toBeNgHidden();
+        expect(container.find('.no-content-types li:not(.ng-hide)').text()).toMatch(/Create and activate/);
+      });
+    });
+
 
   });
 

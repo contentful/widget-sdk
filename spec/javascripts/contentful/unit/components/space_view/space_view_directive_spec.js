@@ -113,7 +113,7 @@ describe('The Space view directive', function () {
   }
 
   makeNavbarItemTest('ApiKey', 'read', 'api-key-list');
-  makeNavbarItemTest('ContentType', 'read', 'content-type-list');
+  makeNavbarItemTest('ContentType', 'update', 'content-type-list');
   makeNavbarItemTest('Settings', 'update', 'space-settings');
 
   function makeNavbarItemClassesTest(dataViewType, viewType, section) {
