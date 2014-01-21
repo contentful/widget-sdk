@@ -51,7 +51,6 @@ feature 'Roles', js:true, order: :defined do
     scenario "login" do
       ensure_login
       select_space
-      debugger
       expect(page).to_not have_selector(".nav-bar li[data-view-type=space-settings]")
       find('.add.button.dropdown-toggle').click
       dropdown_menu = find('.dropdown-menu')
@@ -63,7 +62,6 @@ feature 'Roles', js:true, order: :defined do
       expect(page).to_not have_selector('button', text: 'Create Content Type')
       nav_bar 'asset-list'
       expect(page).to_not have_selector('button', text: 'Create an Asset')
-      ensure_logout
     end
   end
 
@@ -79,6 +77,7 @@ feature 'Roles', js:true, order: :defined do
       ensure_login
       select_space
       expect(page).to_not have_selector(".nav-bar li[data-view-type=space-settings]")
+      debugger
       expect(page).to_not have_selector(".nav-bar li[data-view-type=content-type-list]")
       find('.add.button.dropdown-toggle').click
       dropdown_menu = find('.dropdown-menu')
