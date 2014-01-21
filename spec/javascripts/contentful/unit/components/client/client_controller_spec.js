@@ -476,42 +476,6 @@ describe('Client Controller', function () {
       });
     });
 
-    /*
-    describe('user updates', function () {
-      beforeEach(inject(function (authentication) {
-        scope.user = {};
-        data = {
-          type: 'user',
-          action: 'update',
-          resource: {
-            newproperty: 'value'
-          }
-        };
-        authentication.tokenLookup = {
-          sys: {createdBy: 'lookedupuser' }
-        };
-        scope.updateSpaces = sinon.stub();
-        childScope.$emit('iframeMessage', data);
-      }));
-
-      it('sets new property on user data', function () {
-        expect(scope.user.newproperty).toBeDefined();
-      });
-
-      it('calls auth token lookup', function () {
-        expect(stubs.authenticationTokenLookup).toBeTruthy();
-      });
-
-      it('sets user to looked up user', function () {
-        expect(scope.user).toBe('lookedupuser');
-      });
-
-      it('updates spaces', function () {
-        expect(scope.updateSpaces).toBeCalled();
-      });
-    });
-   */
-
     describe('flash message', function () {
 
       it('calls error notification', function () {
