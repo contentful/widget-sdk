@@ -4,7 +4,7 @@ angular.module('contentful').factory('validationDialog', function (modalDialog) 
 
   return {
     open: function (scope) {
-      modalDialog.open({
+      return modalDialog.open({
         title: 'Validations',
         template: 'validation_dialog',
         scope: scope
