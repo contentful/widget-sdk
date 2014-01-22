@@ -92,10 +92,7 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
         $scope.updateModel();
       });
     } else {
-      // TODO solve this cleaner, with tombstones? It's bad to have dead entities lying around in the identitymap
-      // entity was deleted if getId() returns undefined
-      //           vvvvvvvvvvvvv
-      if (entity && entity.getId && entity.getId() && entity.getId() != $scope.links[index].sys.id) throw new Error('Index mismatch!');
+      if (entity && !entity.isMissing && entity.getId() && entity.getId() != $scope.links[index].sys.id) throw new Error('Index mismatch!');
       $scope.otDoc.at($scope.otPath.concat(index)).remove(function (err) {
         if (!err) $scope.$apply(function (scope) {
           scope.links.splice(index,1);
@@ -136,13 +133,21 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
     });
   }
 
+  function markMissing(entities) {
+    return _.map(entities, function (value) {
+      return value ? value : {
+        isMissing: true
+      };
+    });
+  }
+
   $scope.$watch('links', function (links, old, scope) {
     if (!links || links.length === 0) {
       $scope.linkedEntities = [];
     } else {
       var stopSpinner = cfSpinner.start();
       lookupEntities(scope, links).then(function (entities) {
-        scope.linkedEntities = entities;
+        scope.linkedEntities = markMissing(entities);
         stopSpinner();
       }, function () {
         stopSpinner();
@@ -155,7 +160,7 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
   });
 
   $scope.linkDescription = function(entity) {
-    if (entity && entity.getId && entity.getId()) {
+    if (entity && !entity.isMissing && entity.getId()) {
       return $scope.linkType === 'Entry' ?
         $scope.spaceContext.entryTitle(entity, $scope.locale.code) :
         $scope.spaceContext.assetTitle(entity, $scope.locale.code) ;

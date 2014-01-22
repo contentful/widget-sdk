@@ -2,7 +2,6 @@
 
 describe('cfFileEditor Directive', function () {
   var element, scope;
-  var compileElement;
   var stubs;
 
   beforeEach(function () {
@@ -32,10 +31,8 @@ describe('cfFileEditor Directive', function () {
         fileType: 'image/jpeg'
       };
 
-      //compileElement = function () {
-        element = $compile('<div ot-path=""><div class="cf-file-editor" ng-model="fieldData"></div></div>')(scope);
-        scope.$digest();
-      //};
+      element = $compile('<div ot-path=""><div class="cf-file-editor" ng-model="fieldData"></div></div>')(scope);
+      scope.$digest();
     });
   });
 

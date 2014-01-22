@@ -72,7 +72,6 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
       };
     },
     entityEditor:      function (entity) {
-      if(!entity.getType) return {};
       if(entity.getType() == 'Entry') return this.entryEditor(entity);
       if(entity.getType() == 'Asset') return this.assetEditor(entity);
     },
