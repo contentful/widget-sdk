@@ -34,6 +34,7 @@ describe('Field Settings Controller', function () {
       scope = $rootScope.$new();
 
       scope.field = {};
+      scope.pickNewDisplayField = sinon.stub();
 
       controller = $controller('CfFieldSettingsCtrl', {$scope: scope});
       scope.$digest();
