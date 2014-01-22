@@ -100,6 +100,7 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
       $scope.$apply(function (scope) {
         if (!err) {
           scope.otUpdateEntity();
+          _.defer($scope.pickNewDisplayField);
         } else {
           notification.serverError('Could not change type.', err);
         }
@@ -131,6 +132,7 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
         analytics.modifiedContentType('Modified ContentType', scope.contentType, field, 'delete');
         scope.otUpdateEntity();
         scope.$emit('fieldDeleted', field);
+        _.defer($scope.pickNewDisplayField);
       });
     });
   };

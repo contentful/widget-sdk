@@ -13,7 +13,7 @@ module ContentTypeHelper
 
   def for_field(field_name)
     field_settings = find :xpath, %Q{//*[contains(@class, 'display')]/*[contains(@class, 'name')][text()='#{field_name}']/../..}
-    field_settings.click() unless field_settings[:class] !~ /open/
+    field_settings.click() unless field_settings[:class] =~ /open/
 
     within(field_settings) do
       yield
