@@ -14,12 +14,11 @@ feature 'Usage Tracking', js: true do
   end
 
   scenario 'Track resources' do
-    #TODO, Bug in Gatekeeper, comment api keys out when https://www.pivotaltracker.com/story/show/63615254 is solved
     expect_usage(
       'Spaces' => 1,
       'Content Types' => 0,
       'Entries' => 0,
-      #'API Keys' => 0
+      'API Keys' => 0
     )
     create_content_type 'Text'
     add_button 'Entry with Text'
@@ -34,7 +33,7 @@ feature 'Usage Tracking', js: true do
       'Spaces' => 1,
       'Content Types' => 1,
       'Entries' => 1,
-      #'API Keys' => 1
+      'API Keys' => 1
     )
 
     open_tab 'Foobar'
@@ -62,7 +61,7 @@ feature 'Usage Tracking', js: true do
       'Spaces' => 1,
       'Content Types' => 0,
       'Entries' => 0,
-      #'API Keys' => 0 
+      'API Keys' => 0 
     )
   end
 
