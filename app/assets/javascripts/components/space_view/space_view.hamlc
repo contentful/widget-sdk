@@ -1,7 +1,7 @@
 %nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
   .logo(ng-click="logoClicked()")
     .cf-logo(cf-custom-logo)
-  %ul(ng-show="spaceContext.space")
+  %ul(ng-show="spaceContext.space && !spaceContext.space.isHibernated()")
     %li.add-dropdown-button(
       space-context="spaceContext"
       cf-can-no-disable=""
@@ -58,7 +58,7 @@
         tabindex="0")
       %i.ss-settings
       %span Space Settings
-%nav.tab-list(ng-show="spaceContext.space" ng-class="{hidden: hideTabBar()}")
+%nav.tab-list(ng-show="spaceContext.space && !spaceContext.space.isHibernated()" ng-class="{hidden: hideTabBar()}")
   %ul
     %li.tab(ng-repeat="tabItem in spaceContext.tabList.items"
             ng-class="{active: tabItem.active(), dirty: tabItem.dirty}"
@@ -80,7 +80,7 @@
                                 ng-class="{draft: tabItem.dirty == 'draft'}"
                                 ng-mouseover="tabItem.setHovering(true)")
 .tab-content(ng-repeat="tab in spaceContext.tabList.items"
-             ng-show="spaceContext.space && tab.active()"
+             ng-show="spaceContext.space && !spaceContext.space.isHibernated() && tab.active()"
              ng-class="{'with-tab-bar': !hideTabBar()}"
              ng-switch="tab.viewType")
   .space-settings(ng-switch-when="space-settings")
@@ -106,3 +106,13 @@
     ng-class="{'with-aux-panel': preferences.showAuxPanel}")
   %div(ng-switch-default="")
     Unhandled case: viewType = {{spaceContext.tabList.currentViewType()}}
+.advice(ng-show="spaceContext.space && spaceContext.space.isHibernated()")
+  %i.ss-cloudupload.giant-icon
+  %header.advice-title Hold on! We're bringing your space back
+  %div.advice-description.top-advice
+    %p You haven't been here for a while, so your Space slipped into hibernation.
+    %p Don't worry, all your content is safe and shall be available for use in a few moments.
+  %div.advice-description
+    %p Refresh your browser window in a minute or
+    %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/201316206")
+      Learn more about hibernation in our Help Center

@@ -8,10 +8,7 @@ describe('The Space view directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'reasons',
-        'section',
-        'viewType',
-        'can'
+        'reasons', 'section', 'viewType', 'can', 'isHibernated'
       ]);
       $provide.value('authorization', {
         isUpdated: sinon.stub(),
@@ -31,7 +28,8 @@ describe('The Space view directive', function () {
       scope = $rootScope.$new();
       scope.spaceContext = {
         space: {
-          getPublishLocales: sinon.stub()
+          getPublishLocales: sinon.stub(),
+          isHibernated: stubs.isHibernated
         },
         refreshContentTypes: sinon.stub(),
         refreshLocales: sinon.stub(),
@@ -60,8 +58,14 @@ describe('The Space view directive', function () {
     expect(container.find('.nav-bar > ul')).not.toBeNgHidden();
   });
 
-  it('main navigation not shown if space is defined', function () {
+  it('main navigation not shown if space is not defined', function () {
     delete scope.spaceContext.space;
+    compileElement();
+    expect(container.find('.nav-bar > ul')).toBeNgHidden();
+  });
+
+  it('main navigation not shown if space is defined but hibernated', function () {
+    stubs.isHibernated.returns(true);
     compileElement();
     expect(container.find('.nav-bar > ul')).toBeNgHidden();
   });
@@ -152,6 +156,12 @@ describe('The Space view directive', function () {
     expect(container.find('.tab-list')).toBeNgHidden();
   });
 
+  it('tab list not shown if space is defined but hibernated', function () {
+    stubs.isHibernated.returns(true);
+    compileElement();
+    expect(container.find('.tab-list')).toBeNgHidden();
+  });
+
   it('tab list has hidden class ', function () {
     scope.hideTabBar = sinon.stub();
     scope.hideTabBar.returns(true);
@@ -228,6 +238,23 @@ describe('The Space view directive', function () {
 
     it('third tab cannot be closed', function () {
       expect(container.find('.tab-list li.tab .close').eq(2)).toBeNgHidden();
+    });
+
+    it('tab content shown if space is defined and tab active', function () {
+      compileElement();
+      expect(container.find('.tab-content').eq(0)).not.toBeNgHidden();
+    });
+
+    it('main navigation not shown if space is not defined', function () {
+      delete scope.spaceContext.space;
+      compileElement();
+      expect(container.find('.tab-content').eq(0)).toBeNgHidden();
+    });
+
+    it('tab content not shown if space is defined but hibernated', function () {
+      stubs.isHibernated.returns(true);
+      compileElement();
+      expect(container.find('.tab-content').eq(0)).toBeNgHidden();
     });
 
     it('has 3 tabs with content', function () {

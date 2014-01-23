@@ -9,6 +9,10 @@ angular.module('contentful').
 
         element.on('mouseenter focus', initialize);
 
+        scope.$watch(attrs.ngDisabled, function(val){
+          scope.disableTooltip = !!val;
+        });
+
         function initialize() {
           if (tooltipInitialized || scope.disableTooltip) return;
           createTooltip(true);
@@ -44,8 +48,6 @@ angular.module('contentful').
         }
 
         scope.$watch('disableTooltip', disableHandler);
-        scope.$watch(attrs.ngDisabled, disableHandler);
-
         function disableHandler(disabled) {
           if (!tooltipInitialized) return;
           if(disabled) destroyTooltip();

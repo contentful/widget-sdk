@@ -41,8 +41,12 @@
           %span(ng-bind="spaceContext.space.data.name || 'Spaces'")
         .dropdown-menu.fixed-position.left-aligned
           %ul
-            %li(ng-repeat="space in spaces track by space.getId()" ng-click="selectSpace(space)" dropdown-close="")
+            %li(ng-repeat="space in spaces track by space.getId()" ng-click="selectSpace(space)" dropdown-close=""
+                ng-class="{hibernated: space.isHibernated()}" ng-disabled="!space.isHibernated()"
+                tooltip-container=".project" tooltip-placement="left"
+                tooltip="This space entered hibernation due to lack of use. It will be back online soon.")
               {{space.data.name}}
+              %i.ss-record(ng-show="space.isHibernated()")
             %li.highlight(ng-show="canCreateSpace(user)" ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close="")
               + Create Space
       .cf-persistent-notification(ng-show="persistentNotification")
