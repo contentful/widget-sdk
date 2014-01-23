@@ -49,10 +49,10 @@
       %a#intercom(href="#" tabindex="-1")
       .navbar-loader
     %space-view(ng-controller="TabViewCtrl")
-    .create-space-advice(ng-show="spaces.length == 0")
+    .advice(ng-show="spaces.length == 0")
       %i.ss-folder.giant-icon
-      %header Nothing to see yet.
-      %p Why don't you create a space?
+      %header.advice-title Nothing to see yet.
+      %p.advice-description Why don't you create a space?
       %button.default-button.primary-button(type="button" ng-click="showCreateSpaceDialog()") Create Space
       %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513118-What-is-a-space-")
         Visit the Knowledge Base Pages

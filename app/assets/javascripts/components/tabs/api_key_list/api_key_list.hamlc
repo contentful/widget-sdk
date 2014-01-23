@@ -35,7 +35,7 @@
               %date.relative(datetime="{{apiKey.getUpdatedAt()}}")
             %td.cell-by
               %span.cf-user(link="apiKey.getCreatedBy()" as="creator") {{creator | userNameDisplay:user}}
-    .create-api-key-advice(ng-show="empty")
+    .advice(ng-show="empty")
       %i.ss-fork.giant-icon
       %header.advice-title There are no API Keys yet.
       %p.advice-description API Keys open the door to your content. One should be created for each application that accesses your content.

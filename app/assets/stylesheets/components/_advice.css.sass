@@ -1,11 +1,13 @@
-%advice
-  // TODO make simple class, extract positioning
+.advice
   position: absolute
   left: 50%
   margin-left: -200px
   text-align: center
   top: 40%
-  width: 400px
+  width: 600px
+
+  p
+    margin-bottom: 4px
 
   .advice-title
     font-weight: bold
@@ -13,20 +15,32 @@
     font-size: 25px
     line-height: 25px
     margin-top: 1em
+    margin-bottom: 2em
+
   .advice-description
     font-size: 14px
     margin-bottom: 2em
     margin-top: 1em
 
-  //.action
-    @extend %blue-button
+  .top-advice
+    margin-bottom: 10em
 
   .giant-icon
-    font-size: 125px
-    color: $light-gray
+    font-size: 200px
+    color: $medium-gray
+    +text-shadow(0 -1px 0px rgba(0,0,0,0.7))
 
-.advice
-  @extend %advice
+  .default-button
+    margin-bottom: 15px
+
+.advice.inner-advice
   position: static
   margin: auto
   padding-top: 80px
+
+  .giant-icon
+    font-size: 125px
+
+.with-left-nav
+  .advice
+    left: 35%

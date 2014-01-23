@@ -9,7 +9,7 @@
     .close-button(ng-click="dialog.cancel()")
 
     .validation-list
-      .advice(ng-hide="validationList().length > 0")
+      .advice.inner-advice(ng-hide="validationList().length > 0")
         %i.ss-check.giant-icon
         %header.advice-title You have no Validations yet.
         %p.advice-description
