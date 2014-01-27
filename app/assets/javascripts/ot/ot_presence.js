@@ -155,7 +155,7 @@ angular.module('contentful').
           otPresenceCtrl.focus(scope.otFieldPresenceId);
         }
 
-        element.find('input, textarea').on('focus keydown', focus);
+        element.on('focus keydown', 'input, textarea', focus);
       }
     };
   }).
