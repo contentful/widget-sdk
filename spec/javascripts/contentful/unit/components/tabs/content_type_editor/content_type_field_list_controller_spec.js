@@ -269,6 +269,44 @@ describe('ContentTypeFieldList Controller', function () {
       };
     });
 
+    describe('pick a new display field', function () {
+      beforeEach(function () {
+        setStub.yields(null);
+      });
+
+      it('should not pick a new if current is valid', function () {
+        scope.contentType.data.fields[0].type = 'Text';
+        scope.contentType.data.displayField = 'foo';
+        scope.removeDisplayField = sinon.stub();
+        scope.pickNewDisplayField();
+        expect(setStub.called).toBe(false);
+        expect(scope.contentType.data.displayField).toBe('foo');
+      });
+
+      it('should pick a new if current is invalid', function () {
+        scope.contentType.data.displayField = 'foo';
+        scope.contentType.data.fields.push({id: 'bar', type: 'Text'});
+        scope.pickNewDisplayField();
+        expect(setStub.calledWith('bar')).toBe(true);
+        expect(scope.contentType.data.displayField).toBe('bar');
+      });
+
+      it('should pick a new if current is blank', function () {
+        scope.contentType.data.displayField = null;
+        scope.contentType.data.fields.push({id: 'bar', type: 'Text'});
+        scope.pickNewDisplayField();
+        expect(setStub.calledWith('bar')).toBe(true);
+        expect(scope.contentType.data.displayField).toBe('bar');
+      });
+
+      it('should set to blank if invalid and no alternative available', function () {
+        scope.contentType.data.displayField = 'bar';
+        scope.pickNewDisplayField();
+        expect(setStub.calledWith(null)).toBe(true);
+        expect(scope.contentType.data.displayField).toBe(null);
+      });
+    });
+
     describe('sets a display field', function () {
       beforeEach(function () {
         setStub.callsArg(1);
