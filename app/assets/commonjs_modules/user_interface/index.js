@@ -11,6 +11,10 @@ var UserInterface = {
 
 module.exports = UserInterface;
 
+if(window){
+  window._ = require('lodash-node/modern');
+}
+
 if (angular) {
   angular.module('contentful/user_interface', []).
     constant('contentfulClient', UserInterface.contentfulClient).

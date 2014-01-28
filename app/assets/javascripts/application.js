@@ -1,5 +1,4 @@
 //= require jquery
-//= require lodash
 //
 //= require jquery.ui.sortable
 //= require jquery.ui.autocomplete
