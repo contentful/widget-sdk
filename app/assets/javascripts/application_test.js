@@ -11,8 +11,6 @@
 //
 //= require bootstrap-tooltip
 //
-//= require moment-2.1.0
-//
 //= require ZeroClipboard
 //
 //= require user_interface/node_modules/share/node_modules/browserchannel/dist/bcsocket-uncompressed
@@ -27,8 +25,8 @@
 //= require angular-route
 //= require contentful
 //= require environment
-//= require ng-time-relative
 //= require user_interface
+//= require ng-time-relative
 //= require contentful_mocks
 //
 //= require_self

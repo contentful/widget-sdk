@@ -14,6 +14,7 @@
     "share": "git+ssh://git@github.com:contentful/sharejs.git",
     "is-diacritical-mark": "1.0.1",
     "json-stringify-safe": "~5.0.0",
-    "lodash-node": "~2.4.1"
+    "lodash-node": "~2.4.1",
+    "moment": "~2.5.1"
   }
 }

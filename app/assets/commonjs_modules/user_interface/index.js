@@ -13,6 +13,7 @@ module.exports = UserInterface;
 
 if(window){
   window._ = require('lodash-node/modern');
+  window.moment = require('moment');
 }
 
 if (angular) {
