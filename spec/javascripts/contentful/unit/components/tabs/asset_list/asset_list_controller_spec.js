@@ -1,42 +1,41 @@
 'use strict';
 
 describe('Asset List Controller', function () {
-  var controller, scope;
-  var loadStub, trackStub, thenStub, captureErrorStub;
-  var deletedStub, archivedStub, publishedStub, hasUnpublishedChangesStub;
+  var controller, scope, stubs;
 
   var makeAsset = function (sys) {
     var asset;
     inject(function (contentfulClient) {
       asset = new contentfulClient.Entity({ sys: sys || {} });
     });
-    deletedStub = sinon.stub(asset, 'isDeleted');
-    archivedStub = sinon.stub();
-    asset.isArchived = archivedStub;
-    publishedStub = sinon.stub(asset, 'isPublished');
-    hasUnpublishedChangesStub = sinon.stub(asset, 'hasUnpublishedChanges');
+    stubs.deleted = sinon.stub(asset, 'isDeleted');
+    stubs.published = sinon.stub(asset, 'isPublished');
+    stubs.hasUnpublishedChanges = sinon.stub(asset, 'hasUnpublishedChanges');
+    asset.isArchived = stubs.archived;
     return asset;
   };
 
-
   beforeEach(function () {
-    trackStub = sinon.stub();
-    loadStub = sinon.stub();
-    thenStub = sinon.stub();
-    captureErrorStub = sinon.stub();
     module('contentful/test', function ($provide) {
+      stubs = $provide.makeStubs([
+        'archived',
+        'track',
+        'load',
+        'then',
+        'captureError'
+      ]);
       $provide.value('sentry', {
-        captureError: captureErrorStub
+        captureError: stubs.captureError
       });
 
       $provide.value('analytics', {
-        track: trackStub
+        track: stubs.track
       });
 
       function LoaderStub() {}
-      LoaderStub.prototype.load = loadStub;
-      loadStub.returns({
-        then: thenStub
+      LoaderStub.prototype.load = stubs.load;
+      stubs.load.returns({
+        then: stubs.then
       });
       $provide.value('PromisedLoader', LoaderStub);
     });
@@ -92,50 +91,49 @@ describe('Asset List Controller', function () {
 
 
   describe('page parameters change trigger assets reset', function () {
-    var resetStub;
     beforeEach(function () {
-      resetStub = sinon.stub(scope, 'resetAssets');
+      stubs.reset = sinon.stub(scope, 'resetAssets');
     });
 
     afterEach(function () {
-      resetStub.restore();
+      stubs.reset.restore();
     });
 
     it('search term', function () {
       scope.tab.params.list = 'all';
       scope.paginator.page = 0;
       scope.$digest();
-      resetStub.restore();
-      resetStub = sinon.stub(scope, 'resetAssets');
+      stubs.reset.restore();
+      stubs.reset = sinon.stub(scope, 'resetAssets');
       scope.searchTerm = 'thing';
       scope.$digest();
-      expect(resetStub.calledOnce).toBeTruthy();
+      expect(stubs.reset.calledOnce).toBeTruthy();
     });
 
     it('page', function () {
       scope.paginator.page = 1;
       scope.$digest();
-      expect(resetStub).toBeCalled();
+      expect(stubs.reset).toBeCalled();
     });
 
     it('page length', function () {
       scope.pageLength = 10;
       scope.$digest();
-      expect(resetStub).toBeCalled();
+      expect(stubs.reset).toBeCalled();
     });
 
     it('list', function () {
       scope.tab.params.list = 'all';
       scope.$digest();
-      expect(resetStub).toBeCalled();
+      expect(stubs.reset).toBeCalled();
     });
 
     it('space id', function () {
-      var idStub = sinon.stub(scope.spaceContext.space, 'getId');
-      idStub.returns(123);
+      stubs.id = sinon.stub(scope.spaceContext.space, 'getId');
+      stubs.id.returns(123);
       scope.$digest();
-      expect(resetStub).toBeCalled();
-      idStub.restore();
+      expect(stubs.reset).toBeCalled();
+      stubs.id.restore();
     });
   });
 
@@ -172,32 +170,32 @@ describe('Asset List Controller', function () {
   describe('changed list', function () {
     it('asset is included in all', function () {
       var asset = makeAsset();
-      deletedStub.returns(false);
-      archivedStub.returns(false);
+      stubs.deleted.returns(false);
+      stubs.archived.returns(false);
       scope.tab.params.list = 'all';
       expect(scope.visibleInCurrentList(asset)).toBeTruthy();
     });
 
     it('asset is included in published', function () {
       var asset = makeAsset();
-      deletedStub.returns(true);
-      publishedStub.returns(true);
+      stubs.deleted.returns(true);
+      stubs.published.returns(true);
       scope.tab.params.list = 'published';
       expect(scope.visibleInCurrentList(asset)).toBeTruthy();
     });
 
     it('asset is included in changed', function () {
       var asset = makeAsset();
-      deletedStub.returns(true);
-      hasUnpublishedChangesStub.returns(true);
+      stubs.deleted.returns(true);
+      stubs.hasUnpublishedChanges.returns(true);
       scope.tab.params.list = 'changes';
       expect(scope.visibleInCurrentList(asset)).toBeTruthy();
     });
 
     it('asset is included in archived', function () {
       var asset = makeAsset();
-      deletedStub.returns(false);
-      archivedStub.returns(true);
+      stubs.deleted.returns(false);
+      stubs.archived.returns(true);
       scope.tab.params.list = 'archived';
       expect(scope.visibleInCurrentList(asset)).toBeTruthy();
     });
@@ -210,17 +208,16 @@ describe('Asset List Controller', function () {
   });
 
   describe('resetting assets', function() {
-    var switchStub;
     var assets;
     beforeEach(function() {
-      switchStub = sinon.stub();
+      stubs.switch = sinon.stub();
       assets = {
         total: 30
       };
-      thenStub.callsArgWith(0, assets);
+      stubs.then.callsArgWith(0, assets);
 
       scope.selection = {
-        switchBaseSet: switchStub
+        switchBaseSet: stubs.switch
       };
 
       scope.paginator.pageLength = 3;
@@ -230,7 +227,7 @@ describe('Asset List Controller', function () {
 
     it('loads assets', function() {
       scope.resetAssets();
-      expect(loadStub).toBeCalled();
+      expect(stubs.load).toBeCalled();
     });
 
     it('sets assets num on the paginator', function() {
@@ -245,12 +242,12 @@ describe('Asset List Controller', function () {
 
     it('switches the selection base set', function() {
       scope.resetAssets();
-      expect(switchStub).toBeCalled();
+      expect(stubs.switch).toBeCalled();
     });
 
     it('tracks analytics event', function() {
       scope.resetAssets();
-      expect(trackStub).toBeCalled();
+      expect(stubs.track).toBeCalled();
     });
 
     describe('creates a query object', function() {
@@ -258,51 +255,51 @@ describe('Asset List Controller', function () {
       it('with a defined order', function() {
         scope.tab.params.list = 'all';
         scope.resetAssets();
-        expect(loadStub.args[0][2].order).toEqual('-sys.updatedAt');
+        expect(stubs.load.args[0][2].order).toEqual('-sys.updatedAt');
       });
 
       it('with a defined limit', function() {
         scope.tab.params.list = 'all';
         scope.resetAssets();
-        expect(loadStub.args[0][2].limit).toEqual(3);
+        expect(stubs.load.args[0][2].limit).toEqual(3);
       });
 
       it('with a defined skip param', function() {
         scope.tab.params.list = 'all';
         scope.resetAssets();
-        expect(loadStub.args[0][2].skip).toBeTruthy();
+        expect(stubs.load.args[0][2].skip).toBeTruthy();
       });
 
       it('for all list', function() {
         scope.tab.params.list = 'all';
         scope.resetAssets();
-        expect(loadStub.args[0][2]['sys.archivedAt[exists]']).toBe('false');
+        expect(stubs.load.args[0][2]['sys.archivedAt[exists]']).toBe('false');
       });
 
       it('for published list', function() {
         scope.tab.params.list = 'published';
         scope.resetAssets();
-        expect(loadStub.args[0][2]['sys.publishedAt[exists]']).toBe('true');
+        expect(stubs.load.args[0][2]['sys.publishedAt[exists]']).toBe('true');
       });
 
       it('for changed list', function() {
         scope.tab.params.list = 'changed';
         scope.resetAssets();
-        expect(loadStub.args[0][2]['sys.archivedAt[exists]']).toBe('false');
-        expect(loadStub.args[0][2].changed).toBe('true');
+        expect(stubs.load.args[0][2]['sys.archivedAt[exists]']).toBe('false');
+        expect(stubs.load.args[0][2].changed).toBe('true');
       });
 
       it('for archived list', function() {
         scope.tab.params.list = 'archived';
         scope.resetAssets();
-        expect(loadStub.args[0][2]['sys.archivedAt[exists]']).toBe('true');
+        expect(stubs.load.args[0][2]['sys.archivedAt[exists]']).toBe('true');
       });
 
       it('for search term', function() {
         scope.tab.params.list = '';
         scope.searchTerm = 'term';
         scope.resetAssets();
-        expect(loadStub.args[0][2].query).toBe('term');
+        expect(stubs.load.args[0][2].query).toBe('term');
       });
     });
   });
@@ -344,7 +341,7 @@ describe('Asset List Controller', function () {
     it('doesnt load if on last page', function() {
       scope.paginator.atLast.returns(true);
       scope.loadMore();
-      expect(loadStub).not.toBeCalled();
+      expect(stubs.load).not.toBeCalled();
     });
 
     it('paginator count is increased', function() {
@@ -355,7 +352,7 @@ describe('Asset List Controller', function () {
 
     it('gets query params', function () {
       scope.loadMore();
-      expect(loadStub.args[0][2]).toBeDefined();
+      expect(stubs.load.args[0][2]).toBeDefined();
     });
 
     it('should work on the page before the last', function () {
@@ -363,17 +360,17 @@ describe('Asset List Controller', function () {
       scope.paginator.numEntries = 47;
       scope.paginator.page = 0;
       scope.loadMore();
-      expect(loadStub).toBeCalled();
+      expect(stubs.load).toBeCalled();
     });
 
     it('triggers analytics event', function () {
       scope.loadMore();
-      expect(trackStub).toBeCalled();
+      expect(stubs.track).toBeCalled();
     });
 
     describe('on successful load response', function() {
       beforeEach(function() {
-        thenStub.callsArgWith(0, assets);
+        stubs.then.callsArgWith(0, assets);
         scope.paginator.page = 1;
         scope.loadMore();
       });
@@ -393,7 +390,7 @@ describe('Asset List Controller', function () {
 
     describe('on failed load response', function() {
       beforeEach(function() {
-        thenStub.callsArgWith(0, null);
+        stubs.then.callsArgWith(0, null);
         scope.paginator.page = 1;
         scope.loadMore();
       });
@@ -403,13 +400,13 @@ describe('Asset List Controller', function () {
       });
 
       it('sends an error', function() {
-        expect(captureErrorStub).toBeCalled();
+        expect(stubs.captureError).toBeCalled();
       });
     });
 
     describe('on previous page', function() {
       beforeEach(function() {
-        thenStub.callsArg(1);
+        stubs.then.callsArg(1);
         scope.paginator.page = 1;
         scope.loadMore();
       });
@@ -428,29 +425,29 @@ describe('Asset List Controller', function () {
     it('is updated', function () {
       var asset = makeAsset();
       asset.hasUnpublishedChanges();
-      publishedStub.returns(true);
-      hasUnpublishedChangesStub.returns(true);
+      stubs.published.returns(true);
+      stubs.hasUnpublishedChanges.returns(true);
       expect(scope.statusClass(asset)).toBe('updated');
     });
 
     it('is published', function () {
       var asset = makeAsset();
-      publishedStub.returns(true);
-      hasUnpublishedChangesStub.returns(false);
+      stubs.published.returns(true);
+      stubs.hasUnpublishedChanges.returns(false);
       expect(scope.statusClass(asset)).toBe('published');
     });
 
     it('is archived', function () {
       var asset = makeAsset();
-      publishedStub.returns(false);
-      archivedStub.returns(true);
+      stubs.published.returns(false);
+      stubs.archived.returns(true);
       expect(scope.statusClass(asset)).toBe('archived');
     });
 
     it('is draft', function () {
       var asset = makeAsset();
-      publishedStub.returns(false);
-      archivedStub.returns(false);
+      stubs.published.returns(false);
+      stubs.archived.returns(false);
       expect(scope.statusClass(asset)).toBe('draft');
     });
   });
@@ -472,7 +469,5 @@ describe('Asset List Controller', function () {
       expect(scope.resetAssets).toBeCalled();
     }));
   });
-
-
 
 });

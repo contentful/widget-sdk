@@ -62,7 +62,7 @@
                 %span {{statusClass(entry)}}
                 .main-results-bar
       .loading(ng-hide="paginator.atLast()")
-    .results-empty-advice(ng-show="visibleEntries | isEmpty")
+    .advice(ng-show="visibleEntries | isEmpty")
       %div(ng-show="hasQuery()")
         %i.ss-search.giant-icon
         %header.advice-title There are no matches to your search

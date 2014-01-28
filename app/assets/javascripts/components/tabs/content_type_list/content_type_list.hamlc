@@ -51,7 +51,7 @@
               .draft-wrapper
                 %span {{statusLabel(contentType)}}
                 .main-results-bar
-    .results-empty-advice(ng-show="visibleContentTypes | isEmpty")
+    .advice(ng-show="visibleContentTypes | isEmpty")
       %div(ng-show="hasQuery()")
         %i.ss-search.giant-icon
         %header.advice-title There are no matches to your search

@@ -1,0 +1,9 @@
+%textarea.input-cclarge(
+  cf-input-autogrow=""
+  ng-model="jsonData.value"
+  ng-disabled="!otEditable")
+%button.default-button(ng-show="textFieldModel.$dirty" ng-click="saveJSON()" ng-disabled="textFieldModel.$invalid") Submit
+%button.default-button(ng-show="textFieldModel.$dirty" ng-click="revertJSON()") Revert
+%span(ng-hide="textFieldModel.$valid")
+  %i.ss-alert
+  Invalid JSON

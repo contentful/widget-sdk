@@ -112,6 +112,20 @@ angular.module('contentful').controller('ContentTypeFieldListCtrl', function($sc
     });
   }
 
+  $scope.pickNewDisplayField = function () {
+    var current = _.find($scope.contentType.data.fields, {id: $scope.contentType.data.displayField});
+    var currentIsFine = current && displayEnabled(current);
+    if (!currentIsFine) {
+      var firstEnabled = _.find($scope.contentType.data.fields, displayEnabled);
+      if (firstEnabled) $scope.setDisplayField(firstEnabled);
+      else $scope.removeDisplayField();
+    }
+
+    function displayEnabled(field) {
+      return field.type === 'Symbol' || field.type === 'Text';
+    }
+  };
+
   $scope.setDisplayField = function (field) {
     $scope.otDoc.at(['displayField']).set(field.id, function (err) {
       if (!err) $scope.$apply(function (scope) {

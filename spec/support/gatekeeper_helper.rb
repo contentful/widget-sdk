@@ -8,6 +8,7 @@ module GatekeeperHelper
   end
 
   def reset_system
+    return unless ENV['USE_QUIRELY']
     uri = URI.parse("https://reset.quirely.com/123abc")
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true

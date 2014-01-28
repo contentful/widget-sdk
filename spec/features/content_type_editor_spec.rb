@@ -120,6 +120,37 @@ feature 'Content Type Editor', js: true do
     expect(page).to have_selector('.cf-field-settings')
   end
 
+  scenario 'Picking new displayField' do
+    add_button 'Content Type'
+    add_field 'A', 'Text'
+    add_field 'B', 'Text'
+    expect(page).to have_selector('*[data-field-id=a] .toggle-title.active', visible: false)
+    for_field 'A' do
+      find('.dropdown-toggle').click
+      find(".type[data-type-name='Number']").click
+    end
+    expect(page).to have_selector('*[data-field-id=b] .toggle-title.active', visible: false)
+    for_field 'B' do
+      find('.dropdown-toggle').click
+      find(".type[data-type-name='Number']").click
+    end
+    expect(page).to_not have_selector('*[data-field-id=a] .toggle-title.active', visible: false)
+    expect(page).to_not have_selector('*[data-field-id=b] .toggle-title.active', visible: false)
+    for_field 'A' do
+      find('.dropdown-toggle').click
+      find(".type[data-type-name='Text']").click
+    end
+    expect(page).to have_selector('*[data-field-id=a] .toggle-title.active', visible: false)
+    for_field 'B' do
+      find('.dropdown-toggle').click
+      find(".type[data-type-name='Text']").click
+    end
+    for_field 'A' do
+      find('.toggle-disabled').click
+    end
+    expect(page).to have_selector('*[data-field-id=b] .toggle-title.active', visible: false)
+  end
+
   scenario 'Deactivating a content type' do
     # Create content type
     add_button 'Content Type'

@@ -420,14 +420,15 @@ describe('cfLinkEditor Controller methods', function () {
   describe('attaches a list of previously loaded entries', function () {
     beforeEach(function () {
       scope.fetchMethod = 'getEntries';
-      getEntriesStub.callsArgWithAsync(1, null, [entry]);
+      getEntriesStub.callsArgWithAsync(1, null, [entry, undefined]);
     });
 
     it('and fetches them for caching', function (done) {
       scope.$watch('linkedEntities', function (newval, oldval) {
         if(newval !== oldval){
-          expect(getEntriesStub).toBeCalledWith({'sys.id[in]': 'entry1'});
-          expect(scope.linkedEntities.length).toBe(1);
+          expect(getEntriesStub).toBeCalledWith({'sys.id[in]': 'entry1,entry2'});
+          expect(scope.linkedEntities.length).toBe(2);
+          expect(scope.linkedEntities[1].isMissing).toBeTruthy();
           done();
         }
       });
@@ -436,6 +437,13 @@ describe('cfLinkEditor Controller methods', function () {
         {
           sys: {
             id: 'entry1',
+            linkType: 'Entry',
+            type: 'Link'
+          }
+        },
+        {
+          sys: {
+            id: 'entry2',
             linkType: 'Entry',
             type: 'Link'
           }

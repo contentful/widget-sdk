@@ -41,18 +41,22 @@
           %span(ng-bind="spaceContext.space.data.name || 'Spaces'")
         .dropdown-menu.fixed-position.left-aligned
           %ul
-            %li(ng-repeat="space in spaces track by space.getId()" ng-click="selectSpace(space)" dropdown-close="")
+            %li(ng-repeat="space in spaces track by space.getId()" ng-click="selectSpace(space)" dropdown-close=""
+                ng-class="{hibernated: space.isHibernated()}" ng-disabled="!space.isHibernated()"
+                tooltip-container=".project" tooltip-placement="left"
+                tooltip="This space entered hibernation due to lack of use. It will be back online soon.")
               {{space.data.name}}
+              %i.ss-record(ng-show="space.isHibernated()")
             %li.highlight(ng-show="canCreateSpace(user)" ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close="")
               + Create Space
       .cf-persistent-notification(ng-show="persistentNotification")
       %a#intercom(href="#" tabindex="-1")
       .navbar-loader
     %space-view(ng-controller="TabViewCtrl")
-    .create-space-advice(ng-show="spaces.length == 0")
+    .advice(ng-show="spaces.length == 0")
       %i.ss-folder.giant-icon
-      %header Nothing to see yet.
-      %p Why don't you create a space?
+      %header.advice-title Nothing to see yet.
+      %p.advice-description Why don't you create a space?
       %button.default-button.primary-button(type="button" ng-click="showCreateSpaceDialog()") Create Space
       %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513118-What-is-a-space-")
         Visit the Knowledge Base Pages

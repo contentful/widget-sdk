@@ -7,8 +7,8 @@ angular.module('contentful').provider('client', function ClientProvider(contentf
     endpoint = e;
   };
 
-  var Client = contentfulClient;
-  var Adapter = Client.adapters.jquery;
+  var Client = contentfulClient.Client;
+  var Adapter = contentfulClient.adapters.jquery;
 
   this.$get = function() {
     return new Client(new Adapter(endpoint));

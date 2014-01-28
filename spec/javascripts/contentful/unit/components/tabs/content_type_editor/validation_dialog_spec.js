@@ -1,32 +1,129 @@
 'use strict';
 
-describe('Validation Dialog', function () {
-  var scope, controller;
-  beforeEach(module('contentful/test'));
+describe('Validation dialog service', function () {
+  var validationDialog, scope;
+  var successStub, errorStub;
+  var dialog, makeDialog;
+  beforeEach(function () {
+    module('contentful/test');
+    inject(function ($rootScope, _validationDialog_) {
+      scope = $rootScope.$new();
+      validationDialog = _validationDialog_;
+      successStub = sinon.stub();
+      errorStub = sinon.stub();
 
-  beforeEach(inject(function ($controller, $rootScope){
-    scope = $rootScope;
-    scope.field = {
-      'name': 'aaa',
-      'id': 'aaa',
-      'type': 'Text',
-      'uiid': '4718xi6vshs',
-      //'validations': [ { 'in': null } ]
-    };
-    controller = $controller('FieldValidationDialogController', {$scope: scope});
-    scope.$apply();
-  }));
+      scope.field = {
+        type: 'Text'
+      };
+
+      scope.can = sinon.stub();
+      scope.can.returns(true);
+
+      makeDialog = function () {
+        dialog = validationDialog.open(scope);
+        dialog.then(successStub)
+              .catch(errorStub);
+        scope.$digest();
+      };
+    });
+  });
 
   afterEach(inject(function ($log) {
     $log.assertEmpty();
   }));
 
-  it('should remove used validations from list of available validations', function () {
-    expect(_.keys(scope.availableValidations).length).toBe(3);
-    expect(_.keys(scope.availableValidations)).toContain('Predefined Values');
-    scope.field.validations = [ { 'in': null } ];
-    scope.$apply();
-    expect(_.keys(scope.availableValidations).length).toBe(2);
-    expect(_.keys(scope.availableValidations)).not.toContain('Predefined Values');
+  describe('create a dialog', function () {
+    beforeEach(function () {
+      makeDialog();
+    });
+
+    afterEach(function () {
+      dialog._cleanup();
+    });
+
+    it('creates a dialog', function () {
+      expect(dialog).toBeDefined();
+    });
+
+    it('dom element property exists', function () {
+      expect(dialog.domElement).toBeDefined();
+    });
+
+    it('dom element exists', function () {
+      expect(dialog.domElement.get(0)).toBeDefined();
+    });
+
+    it('sets title', function () {
+      expect(dialog.domElement.find('.title').html()).toMatch(dialog.params.title);
+    });
   });
+
+  describe('shows advice if no validations are set', function () {
+    beforeEach(function () {
+      scope.field.validations = [];
+      makeDialog();
+    });
+
+    afterEach(function () {
+      dialog._cleanup();
+    });
+
+    it('has advice', function() {
+      expect(dialog.domElement.find('.advice')).not.toBeNgHidden();
+    });
+
+    it('has no buttons', function() {
+      expect(dialog.domElement.find('.buttons')).toBeNgHidden();
+    });
+
+    it('create validation button is enabled', function() {
+      expect(dialog.domElement.find('.advice .primary-button').attr('disabled')).toBeFalsy();
+    });
+
+    it('create validation button is disabled', function() {
+      scope.can.returns(false);
+      scope.$digest();
+      expect(dialog.domElement.find('.advice .primary-button').attr('disabled')).toBeTruthy();
+    });
+
+  });
+
+  describe('shows buttons if validations are set', function () {
+    beforeEach(function () {
+      scope.field.validations = [
+        {'Length': {size: {min: null, max: null}}},
+      ];
+      makeDialog();
+    });
+
+    afterEach(function () {
+      dialog._cleanup();
+    });
+
+    it('has no advice', function() {
+      expect(dialog.domElement.find('.advice')).toBeNgHidden();
+    });
+
+    it('has buttons', function() {
+      expect(dialog.domElement.find('.buttons')).not.toBeNgHidden();
+    });
+
+    it('has validation options', function() {
+      expect(dialog.domElement.find('.cf-validation-options').length).toBeGreaterThan(0);
+    });
+
+    it('add validation button is enabled', function() {
+      expect(dialog.domElement.find('.buttons .primary-button').attr('disabled')).toBeFalsy();
+    });
+
+    it('add validation button is disabled', function() {
+      scope.can.returns(false);
+      scope.$digest();
+      expect(dialog.domElement.find('.buttons .primary-button').attr('disabled')).toBeTruthy();
+    });
+
+
+  });
+
+
 });

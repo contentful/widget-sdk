@@ -13,13 +13,21 @@
     .selected
       background-color: $result-list-highlight
 
-textarea.cf-object-editor
-  font-family: "Andale mono", "Monaco", monospace
-  white-space: pre
-  word-wrap: normal
-  overflow-x: scroll
-  &.ng-invalid-json
-    border-color: red
+.cf-object-editor
+  textarea
+    font-family: "Andale mono", "Monaco", monospace
+    white-space: pre
+    word-wrap: normal
+    overflow-x: scroll
+    &.ng-invalid-json
+      border-color: red
+  span
+    position: relative
+    top: 1px
+  .ss-alert
+    position: relative
+    top: 1px
+    
 
 .cf-location-editor
   position: relative

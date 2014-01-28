@@ -23,7 +23,7 @@ angular.module('contentful').factory('availableValidations', function (validatio
 
   return {
     all: validations,
-    
+
     forField: function (field) {
       var type = field.type === 'Array' ?  field.items : field;
       var typeValidationKeys = validation.Validation.perType(type);

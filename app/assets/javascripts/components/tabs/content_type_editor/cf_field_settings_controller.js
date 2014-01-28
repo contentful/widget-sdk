@@ -12,6 +12,10 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
     scope.validationsAvailable = !_.isEmpty(validation.Validation.perType($scope.field));
   }, true);
 
+  $scope.$watch('fieldIsPublished(field)', function(published, old, scope) {
+    scope.published = published;
+  });
+
   $scope.getFieldTypeName = getFieldTypeName;
 
   $scope.statusTooltipText = function () {
@@ -47,10 +51,6 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
              _.isEmpty($scope.field.id) ?  'Untitled field' : 'ID: '+$scope.field.id
            : $scope.field.name;
   };
-
-  $scope.$watch('fieldIsPublished(field)', function(published, old, scope) {
-    scope.published = published;
-  });
 
   $scope.openValidations = function () {
     validationDialog.open($scope);
@@ -100,6 +100,7 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
       $scope.$apply(function (scope) {
         if (!err) {
           scope.otUpdateEntity();
+          _.defer($scope.pickNewDisplayField);
         } else {
           notification.serverError('Could not change type.', err);
         }
@@ -131,6 +132,7 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
         analytics.modifiedContentType('Modified ContentType', scope.contentType, field, 'delete');
         scope.otUpdateEntity();
         scope.$emit('fieldDeleted', field);
+        _.defer($scope.pickNewDisplayField);
       });
     });
   };

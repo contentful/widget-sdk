@@ -69,13 +69,13 @@ describe('The Entry list directive', function () {
     canStub.withArgs('create', 'Entry').returns(false);
     reasonsStub.returns(['usageExceeded']);
     compileElement();
-    expect(container.find('.results-empty-advice .primary-button').attr('disabled')).toBe('disabled');
+    expect(container.find('.advice .primary-button').attr('disabled')).toBe('disabled');
   });
 
   it('save button is enabled', function () {
     canStub.withArgs('create', 'Entry').returns(true);
     compileElement();
-    expect(container.find('.results-empty-advice .primary-button').attr('disabled')).toBeUndefined();
+    expect(container.find('.advice .primary-button').attr('disabled')).toBeUndefined();
   });
 
   describe('list of content type filters', function() {

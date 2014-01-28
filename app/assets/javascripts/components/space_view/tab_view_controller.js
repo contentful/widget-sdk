@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('TabViewCtrl', function ($scope, authentication, analytics, notification, routing, $location, TabOptionsGenerator, $document) {
+angular.module('contentful').controller('TabViewCtrl', function ($scope, authentication, analytics, notification, routing, TabOptionsGenerator, $document) {
   var gen = TabOptionsGenerator;
   $scope.$on('tabClosed', function (event, tab) {
     if (tab.list.numVisible() > 0) return;
@@ -16,6 +16,8 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
   });
 
   $scope.$on('$routeChangeSuccess', function () {
+    if ($scope.spaceContext && $scope.spaceContext.space && $scope.spaceContext.space.isHibernated())
+      analytics.track('Viewed Placeholder Page');
     if ($scope.spaceContext.space && routing.getSpaceId() == $scope.getCurrentSpaceId())
       openRoute();
     else
@@ -72,7 +74,6 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
       };
     },
     entityEditor:      function (entity) {
-      if(!entity.getType) return {};
       if(entity.getType() == 'Entry') return this.entryEditor(entity);
       if(entity.getType() == 'Asset') return this.assetEditor(entity);
     },

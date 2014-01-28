@@ -62,13 +62,13 @@ describe('The ApiKey list directive', function () {
     canStub.withArgs('create', 'ApiKey').returns(false);
     reasonsStub.returns(['usageExceeded']);
     compileElement();
-    expect(container.find('.create-api-key-advice button').attr('disabled')).toBe('disabled');
+    expect(container.find('.advice button').attr('disabled')).toBe('disabled');
   });
 
   it('save button is enabled', function () {
     canStub.withArgs('create', 'ApiKey').returns(true);
     compileElement();
-    expect(container.find('.create-api-key-advice button').attr('disabled')).toBeUndefined();
+    expect(container.find('.advice button').attr('disabled')).toBeUndefined();
   });
 
 

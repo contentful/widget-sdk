@@ -42,8 +42,20 @@
     margin-right: 10px
     min-width: 120px
     .dropdown-menu
-      max-height: 600px
+      max-height: 500px
       overflow-y: auto
+    +tooltip-opaque
+    .tooltip
+      margin-left: -75px
+    .hibernated
+      color: $medium-gray
+      &:hover
+        color: $lightest-gray
+    .ss-record
+      font-size: 7px
+      float: right
+      margin-right: 10%
+      margin-top: 2px
   .user
     img
       vertical-align: middle
@@ -110,5 +122,4 @@
   button
     margin-top: 3px
     padding: 3px 7px
-  .tooltip.in
-    opacity: 1
+  +tooltip-opaque

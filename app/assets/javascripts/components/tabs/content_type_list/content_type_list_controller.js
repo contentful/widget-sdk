@@ -64,28 +64,28 @@ angular.module('contentful').controller('ContentTypeListCtrl', function ContentT
     return !noQuery;
   };
 
-  $scope.statusClass = function(contentType) {
+  function getStatus(contentType, statusType) {
+    var status = {
+      'class': 'published',
+      label: 'active'
+    };
     if (contentType.getPublishedAt()) {
       if (contentType.hasUnpublishedChanges()) {
         return 'updated';
       } else {
-        return 'published';
+        return status[statusType];
       }
     } else {
       return 'draft';
     }
+  }
+
+  $scope.statusClass = function(contentType) {
+    return getStatus(contentType, 'class');
   };
 
   $scope.statusLabel = function(contentType) {
-    if (contentType.getPublishedAt()) {
-      if (contentType.hasUnpublishedChanges()) {
-        return 'updated';
-      } else {
-        return 'active';
-      }
-    } else {
-      return 'draft';
-    }
+    return getStatus(contentType, 'label');
   };
 
   $scope.$on('tabBecameActive', function(event, tab) {

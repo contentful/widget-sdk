@@ -24,14 +24,14 @@ angular.module('contentful').directive('otDocFor', function () {
   $scope.otGetEntity = otGetEntity;
 
   $scope.$watch(function () {
-    return ShareJS.connection.state == 'ok';
+    return ShareJS.isConnected();
   }, function (connected, old, scope) {
     scope.otConnected = connected;
   });
 
   function shouldDocBeOpen(scope) {
     //console.log('otDocFor shouldDocBeOpen disabled %o, connected %o, entity %o', scope.otDisabled, scope.otConnected, otGetEntity() );
-    return !scope.otDisabled && scope.otConnected && !!otGetEntity();
+    return !scope.otDisabled && !!otGetEntity();
   }
 
   $scope.$watch(function (scope) {

@@ -5,7 +5,7 @@ var mocks = angular.module('contentful/mocks', []);
 
 
 mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
-  var Client = contentfulClient;
+  var Client = contentfulClient.Client;
   var Adapter = contentfulClient.adapters.testing;
   var adapter = new Adapter();
 
@@ -21,15 +21,6 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
       name: code,
       publish: true
     }, extraData || {});
-  };
-
-  cfStub.field = function (id, extraData) {
-    return _.extend({
-      id: id,
-      name: id,
-      type: 'Text',
-      localized: true
-    }, extraData);
   };
 
   cfStub.locales = function () {
@@ -183,38 +174,31 @@ mocks.factory('PromisedLoader', function () {
   return SpecPromisedLoader;
 });
 
-mocks.provider('ShareJS', function () {
-  function FakeShareJSClient() {
-  }
-
-  FakeShareJSClient.prototype = {
-    open: function (entity, callback) {
-      _.defer(callback, null, new FakeShareJSDoc(entity));
-    },
-    connection: {
-      state: 'ok'
+mocks.config(function ($provide) {
+  $provide.decorator('ShareJS', function ($delegate) {
+    function FakeShareJSDoc(entity) {
+      this.entity = entity;
+      this.snapshot = angular.copy(entity.data);
+      if (this.snapshot && this.snapshot.sys) delete this.snapshot.sys.version;
+      if (this.snapshot && this.snapshot.sys) delete this.snapshot.sys.updatedAt;
     }
-  };
 
-  function FakeShareJSDoc(entity) {
-    this.entity = entity;
-    this.snapshot = angular.copy(entity.data);
-    if (this.snapshot && this.snapshot.sys) delete this.snapshot.sys.version;
-    if (this.snapshot && this.snapshot.sys) delete this.snapshot.sys.updatedAt;
-  }
+    FakeShareJSDoc.prototype = {
+      removeListener: angular.noop,
+      //addListener: angular.noop,
+      on: angular.noop
+    };
 
-  FakeShareJSDoc.prototype = {
-    removeListener: angular.noop,
-    //addListener: angular.noop,
-    on: angular.noop
-  };
+    $delegate.open = function (entity, callback) {
+      _.defer(callback, null, new FakeShareJSDoc(entity));
+    };
 
-  this.token = function () { };
-  this.url = function () { };
+    $delegate.isConnected = function () {
+      return true;
+    };
 
-  this.$get = function () {
-    return new FakeShareJSClient();
-  };
+    return $delegate;
+  });
 });
 
 mocks.provider('ReloadNotification', function () {

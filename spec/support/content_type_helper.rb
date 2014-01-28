@@ -1,10 +1,10 @@
 module ContentTypeHelper
   def add_field(name, type, options={})
+    wait_for_sharejs
     find('.add-field-button, button', text: 'Field').click
     find(".type[data-type-name='#{type}']").click
+    wait_for_sharejs
 
-    find_field 'fieldName'
-    sleep 0.3
     fill_in 'fieldName', with: name
     fill_in 'fieldId'  , with: options[:id] if options[:id]
     find('.toggle-localized').click if options[:localized]
@@ -13,7 +13,7 @@ module ContentTypeHelper
 
   def for_field(field_name)
     field_settings = find :xpath, %Q{//*[contains(@class, 'display')]/*[contains(@class, 'name')][text()='#{field_name}']/../..}
-    field_settings.click() unless field_settings[:class] !~ /open/
+    field_settings.click() unless field_settings[:class] =~ /open/
 
     within(field_settings) do
       yield

@@ -1,0 +1,20 @@
+#!/bin/sh
+
+set -e
+
+die () {
+    echo >&2 "$@"
+    exit 1
+}
+
+[ "$#" -eq 1 ] || die "1 version argument required, $# provided"
+
+export VERSION=$1
+
+pushd vendor/assets/javascripts
+  curl -# https://ajax.googleapis.com/ajax/libs/angularjs/$VERSION/angular.js > angular.js
+  curl -# https://ajax.googleapis.com/ajax/libs/angularjs/$VERSION/angular-animate.js > angular-animate.js
+  curl -# https://ajax.googleapis.com/ajax/libs/angularjs/$VERSION/angular-route.js > angular-route.js
+popd
+
+curl -# https://ajax.googleapis.com/ajax/libs/angularjs/$VERSION/angular-mocks.js > spec/javascripts/helpers/angular-mocks.js 

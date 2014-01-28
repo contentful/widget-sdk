@@ -71,13 +71,13 @@ describe('The Asset list directive', function () {
     canStub.withArgs('create', 'Asset').returns(false);
     reasonsStub.returns(['usageExceeded']);
     compileElement();
-    expect(container.find('.results-empty-advice .primary-button').attr('disabled')).toBe('disabled');
+    expect(container.find('.advice .primary-button').attr('disabled')).toBe('disabled');
   });
 
   it('create button is enabled', function () {
     canStub.withArgs('create', 'Asset').returns(true);
     compileElement();
-    expect(container.find('.results-empty-advice .primary-button').attr('disabled')).toBeUndefined();
+    expect(container.find('.advice .primary-button').attr('disabled')).toBeUndefined();
   });
 
   describe('list of assets is filtered', function() {

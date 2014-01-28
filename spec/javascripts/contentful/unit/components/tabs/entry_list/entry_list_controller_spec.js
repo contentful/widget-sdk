@@ -2,42 +2,43 @@
 
 describe('Entry List Controller', function () {
   var controller, scope;
-  var loadStub, trackStub, thenStub, captureErrorStub;
-  var deletedStub, archivedStub, publishedStub, hasUnpublishedChangesStub, getContentTypeIdStub;
+  var stubs;
 
   var makeEntry = function (sys) {
     var entry;
     inject(function (contentfulClient) {
       entry = new contentfulClient.Entity({ sys: sys || {} });
     });
-    deletedStub = sinon.stub(entry, 'isDeleted');
-    archivedStub = sinon.stub();
-    entry.isArchived = archivedStub;
-    publishedStub = sinon.stub(entry, 'isPublished');
-    hasUnpublishedChangesStub = sinon.stub(entry, 'hasUnpublishedChanges');
-    getContentTypeIdStub = sinon.stub();
-    entry.getContentTypeId = getContentTypeIdStub;
+    stubs.deleted = sinon.stub(entry, 'isDeleted');
+    stubs.published = sinon.stub(entry, 'isPublished');
+    stubs.hasUnpublishedChanges = sinon.stub(entry, 'hasUnpublishedChanges');
+    entry.isArchived = stubs.archived;
+    entry.getContentTypeId = stubs.getContentTypeId;
     return entry;
   };
 
   beforeEach(function () {
-    trackStub = sinon.stub();
-    loadStub = sinon.stub();
-    thenStub = sinon.stub();
-    captureErrorStub = sinon.stub();
     module('contentful/test', function ($provide) {
+      stubs = $provide.makeStubs([
+        'archived',
+        'getContentTypeId',
+        'track',
+        'load',
+        'then',
+        'captureError'
+      ]);
       $provide.value('sentry', {
-        captureError: captureErrorStub
+        captureError: stubs.captureError
       });
 
       $provide.value('analytics', {
-        track: trackStub
+        track: stubs.track
       });
 
       function LoaderStub() {}
-      LoaderStub.prototype.load = loadStub;
-      loadStub.returns({
-        then: thenStub
+      LoaderStub.prototype.load = stubs.load;
+      stubs.load.returns({
+        then: stubs.then
       });
       $provide.value('PromisedLoader', LoaderStub);
     });
@@ -99,13 +100,12 @@ describe('Entry List Controller', function () {
   });
 
   describe('page parameters change trigger entries reset', function () {
-    var resetStub;
     beforeEach(function () {
-      resetStub = sinon.stub(scope, 'resetEntries');
+      stubs.reset = sinon.stub(scope, 'resetEntries');
     });
 
     afterEach(function () {
-      resetStub.restore();
+      stubs.reset.restore();
     });
 
     it('search term', function () {
@@ -113,53 +113,52 @@ describe('Entry List Controller', function () {
       scope.tab.params.contentTypeId = null;
       scope.paginator.page = 0;
       scope.$digest();
-      resetStub.restore();
-      resetStub = sinon.stub(scope, 'resetEntries');
+      stubs.reset.restore();
+      stubs.reset = sinon.stub(scope, 'resetEntries');
       scope.searchTerm = 'thing';
       scope.$digest();
-      expect(resetStub.calledOnce).toBeTruthy();
+      expect(stubs.reset.calledOnce).toBeTruthy();
     });
 
     it('page', function () {
       scope.paginator.page = 1;
       scope.$digest();
-      expect(resetStub).toBeCalled();
+      expect(stubs.reset).toBeCalled();
     });
 
     it('page length', function () {
       scope.pageLength = 10;
       scope.$digest();
-      expect(resetStub).toBeCalled();
+      expect(stubs.reset).toBeCalled();
     });
 
     it('list', function () {
       scope.tab.params.list = 'all';
       scope.$digest();
-      expect(resetStub).toBeCalled();
+      expect(stubs.reset).toBeCalled();
     });
 
     it('contentTypeId', function () {
       scope.tab.params.contentTypeId = 'something';
       scope.$digest();
-      expect(resetStub).toBeCalled();
+      expect(stubs.reset).toBeCalled();
     });
 
     it('space id', function () {
-      var idStub = sinon.stub(scope.spaceContext.space, 'getId');
-      idStub.returns(123);
+      stubs.id = sinon.stub(scope.spaceContext.space, 'getId');
+      stubs.id.returns(123);
       scope.$digest();
-      expect(resetStub).toBeCalled();
-      idStub.restore();
+      expect(stubs.reset).toBeCalled();
+      stubs.id.restore();
     });
   });
 
   describe('switching lists', function () {
     var contentType, list;
-    var idStub;
     beforeEach(function() {
-      idStub = sinon.stub();
+      stubs.id = sinon.stub();
       contentType = {
-        getId: idStub
+        getId: stubs.id
       };
       list = 'all';
       scope.resetEntries = sinon.stub();
@@ -180,7 +179,7 @@ describe('Entry List Controller', function () {
     it('resets current list for current content type', function () {
       scope.tab.params.list = list;
       scope.tab.params.contentTypeId = 'ct1';
-      idStub.returns('ct1');
+      stubs.id.returns('ct1');
       scope.switchList(list, contentType);
       expect(scope.resetEntries).toBeCalled();
     });
@@ -201,7 +200,7 @@ describe('Entry List Controller', function () {
     });
 
     it('switches current content type', function() {
-      idStub.returns('ct1');
+      stubs.id.returns('ct1');
       scope.switchList(list, contentType);
       expect(scope.tab.params.contentTypeId).toBe('ct1');
     });
@@ -210,49 +209,44 @@ describe('Entry List Controller', function () {
   describe('changed list', function () {
     it('entry is included in all', function () {
       var entry = makeEntry();
-      deletedStub.returns(false);
-      archivedStub.returns(false);
+      stubs.deleted.returns(false);
+      stubs.archived.returns(false);
       scope.tab.params.list = 'all';
       expect(scope.visibleInCurrentList(entry)).toBeTruthy();
     });
 
     it('entry is included in published', function () {
       var entry = makeEntry();
-      deletedStub.returns(true);
-      publishedStub.returns(true);
+      stubs.published.returns(true);
       scope.tab.params.list = 'published';
       expect(scope.visibleInCurrentList(entry)).toBeTruthy();
     });
 
     it('entry is included in changed', function () {
       var entry = makeEntry();
-      deletedStub.returns(true);
-      hasUnpublishedChangesStub.returns(true);
+      stubs.hasUnpublishedChanges.returns(true);
       scope.tab.params.list = 'changes';
       expect(scope.visibleInCurrentList(entry)).toBeTruthy();
     });
 
     it('entry is included in draft', function () {
       var entry = makeEntry();
-      deletedStub.returns(true);
-      hasUnpublishedChangesStub.returns(true);
-      publishedStub.returns(false);
+      stubs.hasUnpublishedChanges.returns(true);
+      stubs.published.returns(false);
       scope.tab.params.list = 'draft';
       expect(scope.visibleInCurrentList(entry)).toBeTruthy();
     });
 
     it('entry is included in archived', function () {
       var entry = makeEntry();
-      deletedStub.returns(false);
-      archivedStub.returns(true);
+      stubs.archived.returns(true);
       scope.tab.params.list = 'archived';
       expect(scope.visibleInCurrentList(entry)).toBeTruthy();
     });
 
     it('entry is filtered by content type', function () {
       var entry = makeEntry();
-      deletedStub.returns(true);
-      getContentTypeIdStub.returns('ct1');
+      stubs.getContentTypeId.returns('ct1');
       scope.tab.params.contentTypeId = 'ct1';
       scope.tab.params.list = 'contentType';
       expect(scope.visibleInCurrentList(entry)).toBeTruthy();
@@ -266,17 +260,16 @@ describe('Entry List Controller', function () {
   });
 
   describe('resetting entries', function() {
-    var switchStub;
     var entries;
     beforeEach(function() {
-      switchStub = sinon.stub();
+      stubs.switch = sinon.stub();
       entries = {
         total: 30
       };
-      thenStub.callsArgWith(0, entries);
+      stubs.then.callsArgWith(0, entries);
 
       scope.selection = {
-        switchBaseSet: switchStub
+        switchBaseSet: stubs.switch
       };
 
       scope.paginator.pageLength = 3;
@@ -286,7 +279,7 @@ describe('Entry List Controller', function () {
 
     it('loads entries', function() {
       scope.resetEntries();
-      expect(loadStub).toBeCalled();
+      expect(stubs.load).toBeCalled();
     });
 
     it('sets entries num on the paginator', function() {
@@ -301,12 +294,12 @@ describe('Entry List Controller', function () {
 
     it('switches the selection base set', function() {
       scope.resetEntries();
-      expect(switchStub).toBeCalled();
+      expect(stubs.switch).toBeCalled();
     });
 
     it('tracks analytics event', function() {
       scope.resetEntries();
-      expect(trackStub).toBeCalled();
+      expect(stubs.track).toBeCalled();
     });
 
     describe('creates a query object', function() {
@@ -314,66 +307,66 @@ describe('Entry List Controller', function () {
       it('with a defined order', function() {
         scope.tab.params.list = 'all';
         scope.resetEntries();
-        expect(loadStub.args[0][2].order).toEqual('-sys.updatedAt');
+        expect(stubs.load.args[0][2].order).toEqual('-sys.updatedAt');
       });
 
       it('with a defined limit', function() {
         scope.tab.params.list = 'all';
         scope.resetEntries();
-        expect(loadStub.args[0][2].limit).toEqual(3);
+        expect(stubs.load.args[0][2].limit).toEqual(3);
       });
 
       it('with a defined skip param', function() {
         scope.tab.params.list = 'all';
         scope.resetEntries();
-        expect(loadStub.args[0][2].skip).toBeTruthy();
+        expect(stubs.load.args[0][2].skip).toBeTruthy();
       });
 
       it('for all list', function() {
         scope.tab.params.list = 'all';
         scope.resetEntries();
-        expect(loadStub.args[0][2]['sys.archivedAt[exists]']).toBe('false');
+        expect(stubs.load.args[0][2]['sys.archivedAt[exists]']).toBe('false');
       });
 
       it('for published list', function() {
         scope.tab.params.list = 'published';
         scope.resetEntries();
-        expect(loadStub.args[0][2]['sys.publishedAt[exists]']).toBe('true');
+        expect(stubs.load.args[0][2]['sys.publishedAt[exists]']).toBe('true');
       });
 
       it('for changed list', function() {
         scope.tab.params.list = 'changed';
         scope.resetEntries();
-        expect(loadStub.args[0][2]['sys.archivedAt[exists]']).toBe('false');
-        expect(loadStub.args[0][2].changed).toBe('true');
+        expect(stubs.load.args[0][2]['sys.archivedAt[exists]']).toBe('false');
+        expect(stubs.load.args[0][2].changed).toBe('true');
       });
 
       it('for draft list', function() {
         scope.tab.params.list = 'draft';
         scope.resetEntries();
-        expect(loadStub.args[0][2]['sys.archivedAt[exists]']).toBe('false');
-        expect(loadStub.args[0][2]['sys.publishedVersion[exists]']).toBe('false');
-        expect(loadStub.args[0][2].changed).toBe('true');
+        expect(stubs.load.args[0][2]['sys.archivedAt[exists]']).toBe('false');
+        expect(stubs.load.args[0][2]['sys.publishedVersion[exists]']).toBe('false');
+        expect(stubs.load.args[0][2].changed).toBe('true');
       });
 
       it('for archived list', function() {
         scope.tab.params.list = 'archived';
         scope.resetEntries();
-        expect(loadStub.args[0][2]['sys.archivedAt[exists]']).toBe('true');
+        expect(stubs.load.args[0][2]['sys.archivedAt[exists]']).toBe('true');
       });
 
       it('for contentType list', function() {
         scope.tab.params.list = 'contentType';
         scope.tab.params.contentTypeId = 'ct1';
         scope.resetEntries();
-        expect(loadStub.args[0][2]['sys.contentType.sys.id']).toBe('ct1');
+        expect(stubs.load.args[0][2]['sys.contentType.sys.id']).toBe('ct1');
       });
 
       it('for search term', function() {
         scope.tab.params.list = '';
         scope.searchTerm = 'term';
         scope.resetEntries();
-        expect(loadStub.args[0][2].query).toBe('term');
+        expect(stubs.load.args[0][2].query).toBe('term');
       });
     });
   });
@@ -415,7 +408,7 @@ describe('Entry List Controller', function () {
     it('doesnt load if on last page', function() {
       scope.paginator.atLast.returns(true);
       scope.loadMore();
-      expect(loadStub).not.toBeCalled();
+      expect(stubs.load).not.toBeCalled();
     });
 
     it('paginator count is increased', function() {
@@ -426,7 +419,7 @@ describe('Entry List Controller', function () {
 
     it('gets query params', function () {
       scope.loadMore();
-      expect(loadStub.args[0][2]).toBeDefined();
+      expect(stubs.load.args[0][2]).toBeDefined();
     });
 
     it('should work on the page before the last', function () {
@@ -434,17 +427,17 @@ describe('Entry List Controller', function () {
       scope.paginator.numEntries = 47;
       scope.paginator.page = 0;
       scope.loadMore();
-      expect(loadStub).toBeCalled();
+      expect(stubs.load).toBeCalled();
     });
 
     it('triggers analytics event', function () {
       scope.loadMore();
-      expect(trackStub).toBeCalled();
+      expect(stubs.track).toBeCalled();
     });
 
     describe('on successful load response', function() {
       beforeEach(function() {
-        thenStub.callsArgWith(0, entries);
+        stubs.then.callsArgWith(0, entries);
         scope.paginator.page = 1;
         scope.loadMore();
       });
@@ -464,7 +457,7 @@ describe('Entry List Controller', function () {
 
     describe('on failed load response', function() {
       beforeEach(function() {
-        thenStub.callsArgWith(0, null);
+        stubs.then.callsArgWith(0, null);
         scope.paginator.page = 1;
         scope.loadMore();
       });
@@ -474,13 +467,13 @@ describe('Entry List Controller', function () {
       });
 
       it('sends an error', function() {
-        expect(captureErrorStub).toBeCalled();
+        expect(stubs.captureError).toBeCalled();
       });
     });
 
     describe('on previous page', function() {
       beforeEach(function() {
-        thenStub.callsArg(1);
+        stubs.then.callsArg(1);
         scope.paginator.page = 1;
         scope.loadMore();
       });
@@ -498,30 +491,29 @@ describe('Entry List Controller', function () {
   describe('status class', function () {
     it('is updated', function () {
       var entry = makeEntry();
-      entry.hasUnpublishedChanges();
-      publishedStub.returns(true);
-      hasUnpublishedChangesStub.returns(true);
+      stubs.published.returns(true);
+      stubs.hasUnpublishedChanges.returns(true);
       expect(scope.statusClass(entry)).toBe('updated');
     });
 
     it('is published', function () {
       var entry = makeEntry();
-      publishedStub.returns(true);
-      hasUnpublishedChangesStub.returns(false);
+      stubs.published.returns(true);
+      stubs.hasUnpublishedChanges.returns(false);
       expect(scope.statusClass(entry)).toBe('published');
     });
 
     it('is archived', function () {
       var entry = makeEntry();
-      publishedStub.returns(false);
-      archivedStub.returns(true);
+      stubs.published.returns(false);
+      stubs.archived.returns(true);
       expect(scope.statusClass(entry)).toBe('archived');
     });
 
     it('is draft', function () {
       var entry = makeEntry();
-      publishedStub.returns(false);
-      archivedStub.returns(false);
+      stubs.published.returns(false);
+      stubs.archived.returns(false);
       expect(scope.statusClass(entry)).toBe('draft');
     });
   });
