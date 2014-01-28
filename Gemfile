@@ -15,7 +15,7 @@ group :assets do
   gem "compass", "~> 0.13.alpha.4"
   gem 'jquery-rails'
   gem 'jquery-ui-rails'
-  gem 'sprockets-browserify'
+  gem 'sprockets-browserify', '~> 0.3.0'
   gem "compass-rails"
 end
 
