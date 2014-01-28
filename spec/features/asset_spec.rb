@@ -16,6 +16,7 @@ feature 'Asset Editor', js: true do
 
   scenario 'Creating a new Asset' do
     add_button 'Asset'
+    wait_for_sharejs
     edit_field('title', 'en-US', 'input').set 'Bacon'
     edit_field('description', 'en-US', 'textarea').set 'So chunky and crispy'
 
@@ -61,6 +62,7 @@ feature 'Link Editor', js: true do
 
   def create_asset
     add_button 'Asset'
+    wait_for_sharejs
     edit_field('title', 'en-US', 'input').set 'Bacon'
     edit_field('description', 'en-US', 'textarea').set 'So chunky and crispy'
 

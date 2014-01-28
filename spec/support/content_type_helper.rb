@@ -1,10 +1,10 @@
 module ContentTypeHelper
   def add_field(name, type, options={})
+    wait_for_sharejs
     find('.add-field-button, button', text: 'Field').click
     find(".type[data-type-name='#{type}']").click
+    wait_for_sharejs
 
-    find_field 'fieldName'
-    sleep 0.3
     fill_in 'fieldName', with: name
     fill_in 'fieldId'  , with: options[:id] if options[:id]
     find('.toggle-localized').click if options[:localized]
