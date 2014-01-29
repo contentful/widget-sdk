@@ -24,7 +24,6 @@
 //= require contentful
 //= require environment
 //= require user_interface
-//= require ng-time-relative
 //= require contentful_mocks
 //
 //= require_self
