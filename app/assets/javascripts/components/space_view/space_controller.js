@@ -34,9 +34,9 @@ angular.module('contentful').controller('SpaceCtrl',
     }
   });
 
-  $scope.can = function () {
+  $scope.can = function (action, entity) {
     if (authorization.spaceContext){
-      var response = authorization.spaceContext.can.apply(authorization.spaceContext, arguments);
+      var response = entity && authorization.spaceContext.can.apply(authorization.spaceContext, arguments);
       if(!response){
         var enforcement = enforcements.determineEnforcement(reasonsDenied.apply(null, arguments), arguments[1]);
         if(enforcement) {
