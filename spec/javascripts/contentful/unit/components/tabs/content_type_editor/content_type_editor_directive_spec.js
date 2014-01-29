@@ -26,6 +26,7 @@ describe('The ContentType editor directive', function () {
     inject(function ($rootScope, $compile, contentTypeEditorDirective) {
       contentTypeEditorDirective[0].controller = ControllerMock;
       scope = $rootScope.$new();
+      scope.otEditable = true;
 
       scope.can = canStub;
 
@@ -41,6 +42,21 @@ describe('The ContentType editor directive', function () {
     container.remove();
     $log.assertEmpty();
   }));
+
+  describe('when otEditable is false', function () {
+    beforeEach(function () {
+      scope.otEditable = false;
+      compileElement();
+    });
+
+    it('Create Field button should be disabled', function () {
+      expect(container.find('.advice button').is(':disabled')).toBe(true);
+    });
+
+    it('Add Field button should be disabled', function () {
+      expect(container.find('.advice button').is(':disabled')).toBe(true);
+    });
+  });
 
   it('create button is disabled', function () {
     canStub.withArgs('create', 'ContentType').returns(false);
