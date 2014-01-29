@@ -66,14 +66,14 @@
           %p.advice-description
             Add Fields to configure which form inputs are available for your editors to work with.
           .dropdown-btn
-            %button.dropdown-toggle.default-button.primary-button(ng-disabled="!otEditable")
+            %button.dropdown-toggle.default-button.primary-button(ng-disabled="!otEditable || cfCanDisabled")
               Create Field
             .dropdown-menu.type-menu(select-type="addField(type)")
             %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
               Visit the Knowledge Base Pages
               %i.ss-help
         .dropdown-btn(ng-show="hasFields")
-          %button.dropdown-toggle.add-field-button.default-button.primary-button(cf-can="create, ContentType" ng-disabled="!otEditable")
+          %button.dropdown-toggle.add-field-button.default-button.primary-button(cf-can="create, ContentType" ng-disabled="!otEditable || cfCanDisabled")
             %i.ss-plus.button-icon
             Add Field
           .dropdown-menu.type-menu(select-type="addField(type)")

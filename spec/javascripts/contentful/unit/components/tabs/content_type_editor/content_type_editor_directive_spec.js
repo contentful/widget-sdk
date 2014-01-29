@@ -26,9 +26,9 @@ describe('The ContentType editor directive', function () {
     inject(function ($rootScope, $compile, contentTypeEditorDirective) {
       contentTypeEditorDirective[0].controller = ControllerMock;
       scope = $rootScope.$new();
-      scope.otEditable = true;
 
       scope.can = canStub;
+      scope.otEditable = true;
 
       compileElement = function () {
         container = $('<div class="content-type-editor"></div>');
@@ -45,6 +45,7 @@ describe('The ContentType editor directive', function () {
 
   describe('when otEditable is false', function () {
     beforeEach(function () {
+      canStub.withArgs('create', 'ContentType').returns(true);
       scope.otEditable = false;
       compileElement();
     });
