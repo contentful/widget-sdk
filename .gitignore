@@ -27,3 +27,5 @@ vagrant_bootstrap.sh
 run_vagrant_build.sh
 
 public/app
+# put in place by npm's postinstall script
+vendor/assets/swf/ZeroClipboard.swf
