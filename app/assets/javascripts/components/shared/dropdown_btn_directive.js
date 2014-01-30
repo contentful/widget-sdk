@@ -74,6 +74,10 @@ angular.module('contentful').directive('dropdownBtn', function($parse) {
         }));
       }
 
+      function skipPositioning() {
+        return element.find('.dropdown-menu').hasClass('fixed-position');
+      }
+
       function resetPosition() {
         element.find('.dropdown-menu').css({
           top:    '',
@@ -85,33 +89,6 @@ angular.module('contentful').directive('dropdownBtn', function($parse) {
             return className.match(/-caret$|-aligned$/);
           }).join(' ');
         });
-      }
-
-      function applyPosition(pos, info) {
-        var $menu = info.element.element;
-        //console.log('original position', pos, info);
-        var caretDirection = getCaretDirection(pos, info);
-        if (caretDirection == 'horizontal') {
-          $menu.addClass(info.vertical + '-caret ' + info.horizontal + '-aligned');
-          if (info.vertical == 'top') {
-            pos.top += 10;
-          } else {
-            pos.top -= 10;
-          }
-        } else if (caretDirection == 'vertical') {
-          $menu.addClass(info.horizontal + '-caret ' + info.vertical + '-aligned');
-          if (info.horizontal == 'left') {
-            pos.left += 10;
-          } else {
-            pos.left -= 10;
-          }
-        }
-        //console.log('new position', pos, info);
-        $menu.css(pos);
-      }
-
-      function skipPositioning() {
-        return element.find('.dropdown-menu').hasClass('fixed-position');
       }
 
       function getPositioning() {
@@ -154,6 +131,29 @@ angular.module('contentful').directive('dropdownBtn', function($parse) {
         }
       }
 
+      function applyPosition(pos, info) {
+        var $menu = info.element.element;
+        //console.log('original position', pos, info);
+        var caretDirection = getCaretDirection(pos, info);
+        if (caretDirection == 'horizontal') {
+          $menu.addClass(info.vertical + '-caret ' + info.horizontal + '-aligned');
+          if (info.vertical == 'top') {
+            pos.top += 10;
+          } else {
+            pos.top -= 10;
+          }
+        } else if (caretDirection == 'vertical') {
+          $menu.addClass(info.horizontal + '-caret ' + info.vertical + '-aligned');
+          if (info.horizontal == 'left') {
+            pos.left += 10;
+          } else {
+            pos.left -= 10;
+          }
+        }
+        //console.log('new position', pos, info);
+        $menu.css(pos);
+      }
+
       function getCaretDirection(pos, info) {
         if (info.element.top + info.element.height <= info.target.top)
           return 'horizontal'; // above
@@ -166,6 +166,7 @@ angular.module('contentful').directive('dropdownBtn', function($parse) {
         else
           return 'float';
       }
+
     }
   };
 });
