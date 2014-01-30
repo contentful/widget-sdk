@@ -101,7 +101,7 @@
     ot-doc-for="tab.params.contentType"
     cf-validate="tab.params.contentType.data"
     ng-class="{'with-aux-panel': preferences.showAuxPanel}")
-  .api-key-list(ng-switch-when="api-key-list" )
+  .api-key-list.entity-list(ng-switch-when="api-key-list" )
   .api-key-editor.with-tab-actions(ng-switch-when="api-key-editor"
     ng-class="{'with-aux-panel': preferences.showAuxPanel}")
   %div(ng-switch-default="")

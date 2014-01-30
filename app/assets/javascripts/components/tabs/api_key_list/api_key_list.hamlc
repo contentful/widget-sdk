@@ -1,9 +1,14 @@
 .tab-header
-  %h1 Content Delivery
-  %a.cf-knowledge-base-icon(
-    tooltip="Learn more about API Keys in the Knowledge Base Pages"
-    analytics-event="api_keys"
-    href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
+  .left-nav
+    %h1 Content Delivery
+    %a.cf-knowledge-base-icon(
+      tooltip="Learn more about API Keys in the Knowledge Base Pages"
+      analytics-event="api_keys"
+      href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
+  .add-entity(ng-class="{'with-pagination': paginator.numPages() > 1}" ng-hide="empty")
+    %button.default-button.primary-button(cf-can="create, ApiKey" ng-click="createApiKey('frameButton')")
+      %i.ss-plus.button-icon
+      Add API Key
 
 .tab-main
   .left-nav
@@ -35,11 +40,12 @@
               %date.relative(datetime="{{apiKey.getUpdatedAt()}}")
             %td.cell-by
               %span.cf-user(link="apiKey.getCreatedBy()" as="creator") {{creator | userNameDisplay:user}}
+
     .advice(ng-show="empty")
       %i.ss-fork.giant-icon
       %header.advice-title There are no API Keys yet.
       %p.advice-description API Keys open the door to your content. One should be created for each application that accesses your content.
-      %button.default-button.primary-button(type="button" ng-click="createApiKey()" cf-can="create, ApiKey")
+      %button.default-button.primary-button(type="button" ng-click="createApiKey('frameButton')" cf-can="create, ApiKey")
         Create API Key
       %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
         Visit the Knowledge Base Pages

@@ -61,6 +61,14 @@ angular.module('contentful').controller('SpaceCtrl',
     $scope.$broadcast.apply($scope, arguments);
   };
 
+  function getEventSource(source) {
+    return {
+      addDropdown: 'Selected Add-Button',
+      frameButton: 'Selected Add-Button in the Frame',
+      frameLink: 'Selected Add-Link in the Frame'
+    }[source];
+  }
+
   function makeEntityResponseHandler(params) {
     return function entityResponseHandler(err, entity) {
       $scope.$apply(function (scope) {
@@ -77,7 +85,7 @@ angular.module('contentful').controller('SpaceCtrl',
           notification.serverError(params.errorMessage, err);
         }
       });
-      analytics.track('Selected Add-Button', {
+      analytics.track(getEventSource(params.source), {
         currentSection: $scope.spaceContext.tabList.currentSection(),
         currentViewType: $scope.spaceContext.tabList.currentViewType(),
         entityType: params.entityType,
@@ -87,12 +95,13 @@ angular.module('contentful').controller('SpaceCtrl',
     };
   }
 
-  $scope.createEntry = function(contentType) {
+  $scope.createEntry = function(contentType, source) {
     var scope = this;
     scope.spaceContext.space.createEntry(
       contentType.getId(),
       {},
       makeEntityResponseHandler({
+        source: source,
         entityType: 'entry',
         entitySubType: contentType.getId(),
         navigatorHandler: 'entryEditor',
@@ -101,7 +110,7 @@ angular.module('contentful').controller('SpaceCtrl',
     );
   };
 
-  $scope.createAsset = function() {
+  $scope.createAsset = function(source) {
     var scope = this;
     var data = {
       sys: {
@@ -111,6 +120,7 @@ angular.module('contentful').controller('SpaceCtrl',
     };
 
     scope.spaceContext.space.createAsset(data, makeEntityResponseHandler({
+      source: source,
       entityType: 'asset',
       entitySubType: function (entity) {
         return entity && entity.getId();
@@ -120,7 +130,7 @@ angular.module('contentful').controller('SpaceCtrl',
     }));
   };
 
-  $scope.createContentType = function() {
+  $scope.createContentType = function(source) {
     var scope = this;
     var data = {
       sys: {},
@@ -128,13 +138,14 @@ angular.module('contentful').controller('SpaceCtrl',
       name: ''
     };
     scope.spaceContext.space.createContentType(data, makeEntityResponseHandler({
+      source: source,
       entityType: 'contentType',
       navigatorHandler: 'contentTypeEditor',
       errorMessage: 'Could not create Content Type'
     }));
   };
 
-  $scope.createApiKey = function() {
+  $scope.createApiKey = function(source) {
     var scope = this;
     var usage = enforcements.computeUsage('apiKey');
     if(usage){
@@ -142,7 +153,7 @@ angular.module('contentful').controller('SpaceCtrl',
     }
     var apiKey = scope.spaceContext.space.createBlankApiKey();
     scope.navigator.apiKeyEditor(apiKey).openAndGoTo();
-    analytics.track('Selected Add-Button', {
+    analytics.track(getEventSource(source), {
       currentSection: scope.spaceContext.tabList.currentSection(),
       currentViewType: scope.spaceContext.tabList.currentViewType(),
       entityType: 'apiKey'

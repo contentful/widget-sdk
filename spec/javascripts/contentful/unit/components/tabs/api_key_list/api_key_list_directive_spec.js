@@ -34,6 +34,21 @@ describe('The ApiKey list directive', function () {
     container.remove();
   }));
 
+  describe('the tab header add button', function() {
+    it('is not shown', function() {
+      canStub.withArgs('create', 'ApiKey').returns(false);
+      compileElement();
+      expect(container.find('.tab-header .add-entity .primary-button')).toBeNgHidden();
+    });
+
+    it('is shown', function() {
+      canStub.withArgs('create', 'ApiKey').returns(true);
+      compileElement();
+      expect(container.find('.tab-header .add-entity .primary-button')).not.toBeNgHidden();
+    });
+  });
+
+
   describe('list of api keys', function() {
     var list;
     var idStub1, idStub2, nameStub;

@@ -68,7 +68,7 @@ angular.module('contentful').directive('dropdownBtn', function($parse) {
         resetPosition();
         element.find('.dropdown-menu').position(_.extend(getPositioning(),{
           of: element.find('.dropdown-toggle'),
-          collision: 'flipfit',
+          collision: element.find('.dropdown-menu').attr('collision') || 'flipfit',
           using: applyPosition,
           within: getMenuContainer()
         }));
@@ -114,7 +114,11 @@ angular.module('contentful').directive('dropdownBtn', function($parse) {
               my: 'right top',
               at: 'left top'
             };
-          //case 'bottom': == default
+          case 'bottomright':
+            return {
+              my: 'center top',
+              at: 'center bottom'
+            };
           default:
             return {
               my: 'left top',

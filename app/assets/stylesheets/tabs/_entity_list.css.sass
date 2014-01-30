@@ -15,6 +15,22 @@
     .left-nav
       margin: 0
       padding: 0
+    .add-entity
+      position: absolute
+      top: 0
+      bottom: 0
+      right: 20px
+      padding: $tab-header-padding 0
+      .default-button
+        margin: 0
+    .add-entity.with-pagination
+      right: 70px
+    .dropdown-menu
+      $new-entities-dropdown-height: 600px
+      max-height: $new-entities-dropdown-height
+      ul
+        max-height: $new-entities-dropdown-height - 30px
+        overflow-y: auto
   .tab-main
     .left-nav
       overflow-y: auto
@@ -42,7 +58,6 @@
         margin-left: 29px
         margin-right: .6em
         padding-right: .6em
-        //border-right: 1px solid $lightest-gray
 
   .result-list
     tbody tr

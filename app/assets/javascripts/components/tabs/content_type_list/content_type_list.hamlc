@@ -7,9 +7,14 @@
       href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
   .search-area.with-left-nav
     .search-field(search="searchTerm" placeholder="Search for Content Types")
+  .add-entity(ng-hide="empty")
+    %button.default-button.primary-button(cf-can="create, ContentType" ng-click="createContentType('frameButton')")
+      %i.ss-plus.button-icon
+      Add Content Type
+
 .tab-main
   .left-nav
-    %header Status
+    %header Filter By Status
     %ul.filter-list
       %li(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
         %span All
@@ -19,6 +24,10 @@
         %span Draft
       %li(ng-class="{active: tab.params.list == 'active'}" ng-click="switchList('active')")
         %span Active
+    %header(cf-can="create, ContentType") Add New
+    %ul.filter-list(cf-can="create, ContentType")
+      %li(ng-click="createContentType('frameLink')")
+        %span Content Type
 
   .with-left-nav
     %table.result-list.main-header(ng-hide="empty")
@@ -51,6 +60,7 @@
               .draft-wrapper
                 %span {{statusLabel(contentType)}}
                 .main-results-bar
+
     .advice(ng-show="visibleContentTypes | isEmpty")
       %div(ng-show="hasQuery()")
         %i.ss-search.giant-icon
@@ -59,7 +69,7 @@
         %i.ss-database.giant-icon
         %header.advice-title You have no Content Types yet.
         %p.advice-description Content Types work like stencils that define which Entries you can create within a specific Space.
-        %button.default-button.primary-button(type="button" ng-click="createContentType()" cf-can="create, ContentType")
+        %button.default-button.primary-button(type="button" ng-click="createContentType('frameButton')" cf-can="create, ContentType")
           Create Content Type
         %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
           Visit the Knowledge Base Pages
