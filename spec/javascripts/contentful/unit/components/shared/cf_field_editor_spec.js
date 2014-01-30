@@ -65,6 +65,12 @@ describe('cfFieldEditor Directive', function () {
 
   makeEditorTypeTests('textarea', 'textarea');
 
+  makeEditorTypeTests('markdownEditor', 'div', function () {
+    it('has class name', function() {
+      expect(ngSwitch.children().eq(0)).toHaveClass('cf-markdown-editor');
+    });
+  });
+
   makeEditorTypeTests('radiobuttons', 'div', function () {
     it('has 2 labels', function() {
       expect(ngSwitch.find('label').length).toBe(2);

@@ -6,6 +6,7 @@
 //
 //= require jquery.autosize
 //= require jquery.cookies.2.2.0
+//= require jquery-textrange
 //
 //= require guiders-1.3.0
 //

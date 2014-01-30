@@ -125,12 +125,16 @@ angular.module('contentful')
     return getFieldValidationsOfType.apply(null, arguments)[0];
   };
 
-  function fieldWidgetType(field) {
+  function fieldWidgetType(field, contentType) {
     if (field.type === 'Symbol' ) return 'textfield';
     if (field.type === 'Text'   ) {
       var hasValidations = getFieldValidationsOfType(field, 'in').length > 0;
       if(hasValidations) return 'dropdown';
-      return 'textarea';
+      if (contentType.data.displayField === field.id) {
+        return 'textarea';
+      } else {
+        return 'markdownEditor';
+      }
     }
     if (field.type === 'Boolean') return 'radiobuttons';
     if (field.type === 'Date'   ) return 'datetimeEditor';

@@ -26,5 +26,13 @@ if (angular) {
     constant('worf', UserInterface.worf).
     constant('stringifySafe', UserInterface.stringifySafe).
     constant('isDiacriticalMark', UserInterface.isDiacriticalMark);
+  angular.module('contentful/user_interface').factory('marked', function () {
+    var marked = require('marked');
+    marked.setOptions({
+      tables: false,
+      sanitize: true
+    });
+    return marked;
+  });
 }
 
