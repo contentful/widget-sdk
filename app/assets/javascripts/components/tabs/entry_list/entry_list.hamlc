@@ -92,8 +92,8 @@
         %header.advice-title You have no Entries yet.
         %p.advice-description(ng-show="spaceContext.publishedContentTypes.length == 0")
           Entries are your content itself. These depend on the field types you created in the Content Type editor.
-        %button.default-button.primary-button(type="button" ng-click="createContentType('frameButton')" cf-can="create, ContentType" ng-show="spaceContext.publishedContentTypes.length == 0")
-          Create a Content Type
+        %button.default-button.primary-button(type="button" ng-click="createContentType('frameButton')" cf-can="create, ContentType" ng-hide="spaceContext.publishedContentTypes.length > 0 && (noCfCanCleanup = true)")
+          Create a Content Type {{spaceContext.publishedContentTypes.length}}
         %p.advice-description(ng-hide="spaceContext.publishedContentTypes.length == 0")
           To create an Entry, use the Add-Button near the top of the screen.
         %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
