@@ -3,6 +3,7 @@
     %h1 Content Types
     %a.cf-knowledge-base-icon(
       tooltip="Learn more about Content Types in the Knowledge Base Pages"
+      tooltip-container=".entity-list"
       analytics-event="content_types"
       href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
   .search-area.with-left-nav
