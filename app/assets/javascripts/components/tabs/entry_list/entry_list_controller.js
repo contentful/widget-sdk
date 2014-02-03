@@ -25,6 +25,13 @@ angular.module('contentful').controller('EntryListCtrl',
     $scope.paginator.page = 0;
   });
 
+  $scope.$watch('spaceContext.publishedContentTypes.length', function (count) {
+    if(count === 1)
+      $scope.singleContentType = $scope.spaceContext.publishedContentTypes[0];
+    else
+      $scope.singleContentType = null;
+  }, true);
+
   $scope.$watch(function pageParameters(scope){
     return {
       searchTerm: scope.searchTerm,

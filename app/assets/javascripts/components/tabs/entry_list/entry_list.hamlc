@@ -10,7 +10,13 @@
     .search-field(search="searchTerm" placeholder="Search for Entries")
   .add-entity(ng-class="{'with-pagination': paginator.numPages() > 1}"
               ng-hide="spaceContext.publishedContentTypes.length == 0")
-    .dropdown-btn(ng-show="spaceContext.publishedContentTypes.length > 0")
+    %button.dropdown-toggle.default-button.primary-button(
+            ng-hide="(!singleContentType || singleContentType && entries.length < 1) && (noCfCanCleanup = true)"
+            cf-can="create, Entry"
+            ng-click="createEntry(singleContentType, 'frameButton')")
+      %i.ss-plus.button-icon
+      Add New {{singleContentType.getName()}}
+    .dropdown-btn(ng-show="spaceContext.publishedContentTypes.length > 1 && entries.length > 0")
       %button.dropdown-toggle.default-button.primary-button(cf-can="create, Entry")
         %i.ss-plus.button-icon
         Add New Entry
@@ -94,9 +100,18 @@
         %p.advice-description(ng-show="spaceContext.publishedContentTypes.length == 0")
           Entries are your content itself. These depend on the field types you created in the Content Type editor.
         %button.default-button.primary-button(type="button" ng-click="createContentType('frameButton')" cf-can="create, ContentType" ng-hide="spaceContext.publishedContentTypes.length > 0 && (noCfCanCleanup = true)")
-          Create a Content Type {{spaceContext.publishedContentTypes.length}}
+          Create a Content Type
         %p.advice-description(ng-hide="spaceContext.publishedContentTypes.length == 0")
-          To create an Entry, use the Add-Button near the top of the screen.
+          %button.dropdown-toggle.default-button.primary-button(
+                  ng-hide="!singleContentType && (noCfCanCleanup = true)"
+                  cf-can="create, Entry"
+                  ng-click="createEntry(singleContentType, 'frameButton')")
+            %i.ss-plus.button-icon
+            Add New {{singleContentType.getName()}}
+          %button.dropdown-toggle.default-button.primary-button.cf-dialog(
+              cf-can="create, Entry" dialog-template="new_content_type_list")
+            %i.ss-plus.button-icon
+            Add New Entry
         %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
           Visit the Knowledge Base Pages
           %i.ss-help

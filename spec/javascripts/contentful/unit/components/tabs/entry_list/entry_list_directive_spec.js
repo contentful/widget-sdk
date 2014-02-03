@@ -44,18 +44,52 @@ describe('The Entry list directive', function () {
     $log.assertEmpty();
   }));
 
-  describe('the tab header add button', function() {
+  describe('the tab header first add button', function() {
+    it('is not shown if not allowed', function() {
+      canStub.withArgs('create', 'Entry').returns(false);
+      compileElement();
+      expect(container.find('.tab-header .add-entity .primary-button').eq(0)).toBeNgHidden();
+    });
+
+
+    it('is not shown if there are no entries', function() {
+      scope.singleContentType = {};
+      scope.entries = [];
+      canStub.withArgs('create', 'Entry').returns(true);
+      compileElement();
+      expect(container.find('.tab-header .add-entity .primary-button').eq(0)).toBeNgHidden();
+    });
+
+    it('is not shown if there is no single content type', function() {
+      scope.singleContentType = null;
+      scope.entries = [{}];
+      canStub.withArgs('create', 'Entry').returns(true);
+      compileElement();
+      expect(container.find('.tab-header .add-entity .primary-button').eq(0)).toBeNgHidden();
+    });
+
+    it('is shown if all conditions are met', function() {
+      scope.singleContentType = {};
+      scope.entries = [{}];
+      canStub.withArgs('create', 'Entry').returns(true);
+      compileElement();
+      expect(container.find('.tab-header .add-entity .primary-button').eq(0)).not.toBeNgHidden();
+    });
+  });
+
+
+  describe('the tab header add dropdown button', function() {
 
     it('is not shown', function() {
       canStub.withArgs('create', 'Entry').returns(false);
       compileElement();
-      expect(container.find('.tab-header .add-entity .primary-button')).toBeNgHidden();
+      expect(container.find('.tab-header .add-entity .primary-button').eq(1)).toBeNgHidden();
     });
 
     it('is shown', function() {
       canStub.withArgs('create', 'Entry').returns(true);
       compileElement();
-      expect(container.find('.tab-header .add-entity .primary-button')).not.toBeNgHidden();
+      expect(container.find('.tab-header .add-entity .primary-button').eq(1)).not.toBeNgHidden();
     });
 
     describe('has dropdown items', function() {
