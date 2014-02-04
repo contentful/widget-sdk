@@ -164,16 +164,6 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
   return cfStub;
 });
 
-mocks.factory('PromisedLoader', function () {
-  function SpecPromisedLoader() {}
-  SpecPromisedLoader.prototype.load =
-  SpecPromisedLoader.loadSpy =
-    sinon.stub().returns({
-      then: sinon.stub()
-    });
-  return SpecPromisedLoader;
-});
-
 mocks.config(function ($provide) {
   $provide.decorator('ShareJS', function ($delegate) {
     function FakeShareJSDoc(entity) {

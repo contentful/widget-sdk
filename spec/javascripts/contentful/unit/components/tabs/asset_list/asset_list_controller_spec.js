@@ -31,15 +31,13 @@ describe('Asset List Controller', function () {
       $provide.value('analytics', {
         track: stubs.track
       });
-
-      function LoaderStub() {}
-      LoaderStub.prototype.load = stubs.load;
+    });
+    inject(function ($rootScope, $controller, cfStub, PromisedLoader) {
+      stubs.load = sinon.stub(PromisedLoader.prototype, 'load');
       stubs.load.returns({
         then: stubs.then
       });
-      $provide.value('PromisedLoader', LoaderStub);
-    });
-    inject(function ($rootScope, $controller, cfStub) {
+
       scope = $rootScope.$new();
 
       scope.tab = {
@@ -56,6 +54,7 @@ describe('Asset List Controller', function () {
 
 
   afterEach(inject(function ($log) {
+    stubs.load.restore();
     $log.assertEmpty();
   }));
 
