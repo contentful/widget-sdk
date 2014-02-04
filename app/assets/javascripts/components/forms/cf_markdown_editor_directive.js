@@ -1,10 +1,31 @@
 'use strict';
-angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce){
+angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce, $timeout){
   return {
     restrict: 'C',
     template: JST['cf_markdown_editor'](),
     link: function(scope, elem, attr){
       var textarea = elem.find('textarea');
+
+      // Different display modes: preview, edit, combined
+      scope.displayMode = 'preview';
+
+      scope.toggleDisplayMode = function () {
+        if (scope.displayMode == 'preview') {
+          scope.displayMode = 'edit';
+        } else {
+          scope.displayMode = 'preview';
+        }
+      };
+
+      scope.enterEditor = function () {
+        if (scope.displayMode === 'preview') {
+          scope.displayMode = 'edit';
+          _.delay(function () {
+            //textarea.textrange('set', 0);
+            textarea.trigger('focus');
+          }, 200);
+        }
+      };
 
       function toggleWrapper(wrapper, wrapperRegex) {
         var regexp = new RegExp('^'+wrapperRegex+'([^*]+)'+wrapperRegex+'$');
@@ -38,7 +59,6 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
             return '########'.substr(0, level) + ' ' + line;
           }));
         }
-        textarea.trigger('input').trigger('autosize');
       };
 
       scope.toggleUnorderedList = function () {
@@ -138,8 +158,7 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
 
       scope.$watch('fieldData.value', function (source, old, scope) {
         if (source) {
-          // TODO Use sanitization service!
-          scope.markdownPreview = $sce.trustAsHtml(marked(source));
+          scope.markdownPreview = marked(source);
         } else {
           scope.markdownPreview = null;
         }

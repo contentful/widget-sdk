@@ -1,4 +1,4 @@
-.markdown-toolbar
+.markdown-toolbar(ng-hide="displayMode == 'preview'")
   .toolbar-button.md-bold-icon(ng-click="toggleBold()")
   .toolbar-button.md-italic-icon(ng-click="toggleItalic()")
   .toolbar-button.md-h1-icon(ng-click="toggleHeadline(1)")
@@ -10,11 +10,20 @@
   .toolbar-button.md-ol-icon(ng-click="toggleOrderedList()")
   .toolbar-button.md-code-icon(ng-click="addCodeblock()")
 
-  .toolbar-button.md-right-button.md-preview-icon(ng-click="togglePreview()")
-%textarea.field-with-toolbar(cf-input-autogrow=""
+.markdown-modeswitch
+  .toolbar-button.md-right-button.md-preview-icon(
+    ng-click="toggleDisplayMode()"
+    ng-class="{'md-preview-icon': displayMode != 'preview', 'md-edit-icon': displayMode == 'preview'}")
+
+%textarea.field-with-toolbar.markdown-textarea(cf-input-autogrow=""
   ng-model="fieldData.value"
   ot-subdoc=""
   ot-bind-text=""
-  ng-disabled="!otEditable")
-.markdown-preview(ng-bind-html="markdownPreview")
+  ng-disabled="!otEditable"
+  ng-hide="displayMode == 'preview'")
+.markdown-preview(
+  tabindex="0"
+  ng-bind-html="markdownPreview"
+  ng-hide="displayMode == 'edit'"
+  ng-focus="enterEditor()")
 

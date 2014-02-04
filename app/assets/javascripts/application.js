@@ -21,6 +21,7 @@
 //
 //= require angular
 //= require angular-animate
+//= require angular-sanitize
 //= require angular-route
 //= require contentful
 //= require environment
@@ -30,6 +31,7 @@
 
 angular.module('contentful/app', [
   'ngAnimate',
+  'ngSanitize',
   'contentful/environment',
   'timeRelative',
   'contentful/user_interface',

@@ -1,17 +1,31 @@
 .cf-markdown-editor
   position: relative
 
-.markdown-toolbar
+.markdown-toolbar,
+.markdown-modeswitch
   border-bottom: 1px solid $dark-rule
   position: absolute
   top: 7px
   left: 1px
   right: 1px
-  padding: 0 3px
+  padding: 1px 4px
+
+.markdown-modeswitch
+  left: auto
+  border: none
+
+.markdown-preview
+  border: 1px solid $light-rule
+  +border-radius
+  padding: 7px
+
+.markdown-textarea,
+.form-controls .markdown-textarea
+  margin-bottom: 10px
 
 .field-with-toolbar,
 .form-controls .field-with-toolbar
-  padding-top: 25px + 7px + 5px
+  padding-top: 25px + 7px + 7px
 
 .toolbar-button
   width: 36px
@@ -53,3 +67,5 @@
   background-image: image_url('markdown/code.png')
 .md-preview-icon
   background-image: image_url('markdown/preview.png')
+.md-edit-icon
+  background-image: image_url('markdown/edit.png')
