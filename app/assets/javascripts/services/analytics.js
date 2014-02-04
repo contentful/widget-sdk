@@ -64,11 +64,9 @@ angular.module('contentful').provider('analytics', function (environment) {
     },
 
     login: function(user){
-      this.setUserData(user);
       analytics.identify(user.sys.id, {
         firstName: user.firstName,
-        lastName:  user.lastName,
-        plan: user.subscription.subscriptionPlan.name
+        lastName:  user.lastName
       }, {
         intercom: {
           user_hash: user.intercomUserHash
@@ -78,16 +76,6 @@ angular.module('contentful').provider('analytics', function (environment) {
         this.disable();
         return;
       }
-    },
-
-    setUserData: function (user) {
-      this._userData = {
-        userSubscriptionKey:                    user.subscription.sys.id,
-        userSubscriptionState:                  user.subscription.state,
-        userSubscriptionInvoiceState:           user.subscription.invoiceState,
-        userSubscriptionSubscriptionPlanKey:    user.subscription.subscriptionPlan.sys.id,
-        userSubscriptionSubscriptionPlanName:   user.subscription.subscriptionPlan.name
-      };
     },
 
     setSpaceData: function (space) {
@@ -208,7 +196,7 @@ angular.module('contentful').provider('analytics', function (environment) {
 
     track: function (event, data) {
       if (!this._disabled) {
-        analytics.track(event, _.merge({},data, this._userData, this._spaceData));
+        analytics.track(event, _.merge({},data, this._spaceData));
       }
       //console.log('analytics.track', event, data);
     }
