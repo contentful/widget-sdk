@@ -83,11 +83,11 @@ describe('Asset List Actions Controller', function () {
       });
 
       it('calls success notification', function () {
-        expect(stubs.info.calledOnce).toBeTruthy();
+        expect(stubs.info).toBeCalledOnce();
       });
 
       it('calls error notification', function () {
-        expect(stubs.error.calledOnce).toBeTruthy();
+        expect(stubs.error).toBeCalledOnce();
       });
 
       it('clears selection', function () {
@@ -104,7 +104,7 @@ describe('Asset List Actions Controller', function () {
 
   makePerformTests('publish', 1, function () {
     it('gets version of selected assets', function () {
-      expect(stubs.getVersion.calledTwice).toBeTruthy();
+      expect(stubs.getVersion).toBeCalledTwice();
     });
   });
   makePerformTests('unpublish', 0);

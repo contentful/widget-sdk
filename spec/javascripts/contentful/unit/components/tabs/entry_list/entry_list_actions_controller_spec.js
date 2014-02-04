@@ -84,11 +84,11 @@ describe('Entry List Actions Controller', function () {
       });
 
       it('calls success notification', function () {
-        expect(stubs.info.calledOnce).toBeTruthy();
+        expect(stubs.info).toBeCalledOnce();
       });
 
       it('calls error notification', function () {
-        expect(stubs.error.calledOnce).toBeTruthy();
+        expect(stubs.error).toBeCalledOnce();
       });
 
       it('clears selection', function () {
@@ -105,7 +105,7 @@ describe('Entry List Actions Controller', function () {
 
   makePerformTests('publish', 1, function () {
     it('gets version of selected entries', function () {
-      expect(stubs.getVersion.calledTwice).toBeTruthy();
+      expect(stubs.getVersion).toBeCalledTwice();
     });
   });
   makePerformTests('unpublish', 0);
@@ -147,11 +147,11 @@ describe('Entry List Actions Controller', function () {
     });
 
     it('calls success notification', function () {
-      expect(stubs.info.calledOnce).toBeTruthy();
+      expect(stubs.info).toBeCalledOnce();
     });
 
     it('calls error notification', function () {
-      expect(stubs.error.calledOnce).toBeTruthy();
+      expect(stubs.error).toBeCalledOnce();
     });
 
     it('clears selection', function () {

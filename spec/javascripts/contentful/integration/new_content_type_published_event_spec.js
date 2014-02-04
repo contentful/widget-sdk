@@ -50,7 +50,7 @@ describe('The Space context', function () {
     });
 
     it('shows a tooltip', function () {
-      expect(tooltipSpy.calledTwice).toBeTruthy();
+      expect(tooltipSpy).toBeCalledTwice();
     });
 
     it('removes the menu', function () {

@@ -106,7 +106,7 @@ describe('Asset List Controller', function () {
       stubs.reset = sinon.stub(scope, 'resetAssets');
       scope.searchTerm = 'thing';
       scope.$digest();
-      expect(stubs.reset.calledOnce).toBeTruthy();
+      expect(stubs.reset).toBeCalledOnce();
     });
 
     it('page', function () {

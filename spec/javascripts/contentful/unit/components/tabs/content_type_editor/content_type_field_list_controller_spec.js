@@ -57,11 +57,11 @@ describe('ContentTypeFieldList Controller', function () {
     });
 
     it('sets uiid on otdoc fields', function () {
-      expect(scope.otDoc.setAt.calledTwice).toBeTruthy();
+      expect(scope.otDoc.setAt).toBeCalledTwice();
     });
 
     it('updates the entity', function () {
-      expect(scope.otUpdateEntity.calledOnce).toBeTruthy();
+      expect(scope.otUpdateEntity).toBeCalledOnce();
     });
   });
 
@@ -89,7 +89,7 @@ describe('ContentTypeFieldList Controller', function () {
     });
 
     it('updates the entity', function () {
-      expect(scope.otUpdateEntity.calledOnce).toBeFalsy();
+      expect(scope.otUpdateEntity).not.toBeCalledOnce();
     });
   });
 

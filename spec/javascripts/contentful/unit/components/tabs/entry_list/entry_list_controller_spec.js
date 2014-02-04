@@ -116,13 +116,13 @@ describe('Entry List Controller', function () {
       stubs.reset = sinon.stub(scope, 'resetEntries');
       scope.searchTerm = 'thing';
       scope.$digest();
-      expect(stubs.reset.calledOnce).toBeTruthy();
+      expect(stubs.reset).toBeCalledOnce();
     });
 
     it('does not update on page', function () {
       scope.paginator.page = 1;
       scope.$digest();
-      expect(stubs.reset.calledOnce).toBeTruthy();
+      expect(stubs.reset).toBeCalledOnce();
     });
 
     it('page length', function () {

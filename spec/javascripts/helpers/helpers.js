@@ -66,6 +66,45 @@ beforeEach(function() {
       };
     },
 
+    toBeCalledOnce: function () {
+      return {
+        compare: function (actual) {
+          var pass = actual.calledOnce;
+          var notText = pass ? 'not ' : '';
+          return {
+            pass: pass,
+            message: 'Expected stub ' + notText + 'to be called twice'
+          };
+        }
+      };
+    },
+
+    toBeCalledTwice: function () {
+      return {
+        compare: function (actual) {
+          var pass = actual.calledTwice;
+          var notText = pass ? 'not ' : '';
+          return {
+            pass: pass,
+            message: 'Expected stub ' + notText + 'to be called twice'
+          };
+        }
+      };
+    },
+
+    toBeCalledThrice: function () {
+      return {
+        compare: function (actual) {
+          var pass = actual.calledThrice;
+          var notText = pass ? 'not ' : '';
+          return {
+            pass: pass,
+            message: 'Expected stub ' + notText + 'to be called twice'
+          };
+        }
+      };
+    },
+
     toBeCalledWith: function () {
       return {
         compare: function (actual) {

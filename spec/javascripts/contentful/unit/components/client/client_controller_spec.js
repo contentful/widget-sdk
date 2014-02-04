@@ -616,7 +616,7 @@ describe('Client Controller', function () {
     });
 
     it('update is called twice', function () {
-      expect(updateStub.calledTwice).toBeTruthy();
+      expect(updateStub).toBeCalledTwice();
     });
 
     it('update is called with first raw space', function () {

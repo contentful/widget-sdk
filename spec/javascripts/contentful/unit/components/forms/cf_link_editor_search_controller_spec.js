@@ -196,7 +196,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it(entityType +' editor not called', function() {
-          expect(entityEditorStub.calledOnce).toBeFalsy();
+          expect(entityEditorStub).not.toBeCalledOnce();
         });
       });
 
@@ -232,7 +232,7 @@ describe('cfLinkEditorSearch Controller', function () {
         it('server error called', function(done) {
           _.defer(function () {
             _.defer(function () {
-              expect(stubs.serverError.calledTwice).toBeTruthy();
+              expect(stubs.serverError).toBeCalledTwice();
               done();
             });
           });
