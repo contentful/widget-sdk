@@ -102,6 +102,7 @@ describe('Entry List Controller', function () {
   describe('page parameters change trigger entries reset', function () {
     beforeEach(function () {
       stubs.reset = sinon.stub(scope, 'resetEntries');
+      scope.$digest();
     });
 
     afterEach(function () {
@@ -120,10 +121,10 @@ describe('Entry List Controller', function () {
       expect(stubs.reset.calledOnce).toBeTruthy();
     });
 
-    it('page', function () {
+    it('does not update on page', function () {
       scope.paginator.page = 1;
       scope.$digest();
-      expect(stubs.reset).toBeCalled();
+      expect(stubs.reset.calledOnce).toBeTruthy();
     });
 
     it('page length', function () {
