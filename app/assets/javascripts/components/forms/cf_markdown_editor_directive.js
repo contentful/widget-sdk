@@ -9,6 +9,11 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
       // Different display modes: preview, edit, combined
       scope.displayMode = 'preview';
 
+      scope.guideOpen = true;
+      scope.toggleGuide = function () {
+        scope.guideOpen = !scope.guideOpen;
+      };
+
       scope.toggleDisplayMode = function () {
         if (scope.displayMode == 'preview') {
           scope.displayMode = 'edit';
@@ -20,6 +25,7 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
       scope.enterEditor = function () {
         if (scope.displayMode === 'preview') {
           scope.displayMode = 'edit';
+          textarea.trigger('autosize');
           _.delay(function () {
             //textarea.textrange('set', 0);
             textarea.trigger('focus');

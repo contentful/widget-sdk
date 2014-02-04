@@ -70,6 +70,49 @@
 .md-edit-icon
   background-image: image_url('markdown/edit.png')
 
+.markdown-guide-hint
+
+.cf-markdown-guide
+  position: relative
+  height: 300px
+  border: 1px solid $light-gray
+  +border-radius
+  overflow: hidden
+
+.markdown-guide-nav
+  position: absolute
+  top: 0
+  left: 0
+  bottom: 0
+  width: 20%
+  +plain-list
+  font-weight: bold
+  background-color: $lightest-gray
+  +border-radius(3px 0 0 3px)
+  overflow: hidden
+  li
+    cursor: pointer
+    color: black
+    padding: 5px
+    border-bottom: 1px solid $light-gray
+  li:hover:not(.active)
+    background-color: darken($lightest-gray, 10%)
+  li.active
+    color: white
+    background-color: $blue
+
+.markdown-guide-main
+  position: absolute
+  top: 0
+  right: 0
+  bottom: 0
+  width: 80%
+  overflow-y: auto
+  padding: 10px
+  +box-shadow(-1px 0px 4px rgba(0,0,0,0.3))
+
+  
+
 .markdown-preview
   p:first-child
     margin-top: 0
