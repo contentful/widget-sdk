@@ -22,7 +22,7 @@
         data-content-type-id="{{contentType.getId()}}"
         dropdown-close="")
         {{contentType.getName()}}
-    %ul.highlight.no-content-types(ng-hide="spaceContext.publishedContentTypes.length > 0" cf-can="create, Entry")
+    %ul.highlight.no-content-types(ng-hide="spaceContext.publishedContentTypes.length > 0 && (noCfCanCleanup = true)" cf-can="create, Entry")
       %li.hint(ng-click="createContentType('addDropdown')" dropdown-close="" cf-can="create, ContentType")
         (Create and activate a Content Type before creating Entries)
       %li.hint(dropdown-close="" ng-hide="can('create', 'ContentType')")
