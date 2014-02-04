@@ -20,15 +20,22 @@ angular.module('contentful').controller('EntryListCtrl',
 
   $scope.$watch('searchTerm',  function (term) {
     if (term === null) return;
+    $scope.paginator.page = 0;
     $scope.tab.params.list = 'all';
     $scope.tab.params.contentTypeId = null;
-    $scope.paginator.page = 0;
   });
 
+  $scope.$watch('spaceContext.publishedContentTypes.length', function (count) {
+    if(count === 1)
+      $scope.singleContentType = $scope.spaceContext.publishedContentTypes[0];
+    else
+      $scope.singleContentType = null;
+  }, true);
+
   $scope.$watch(function pageParameters(scope){
+    // does not watch page to avoid unnecessary resets on pagination
     return {
       searchTerm: scope.searchTerm,
-      page: scope.paginator.page,
       pageLength: scope.paginator.pageLength,
       list: scope.tab.params.list,
       contentTypeId: scope.tab.params.contentTypeId,
@@ -160,6 +167,7 @@ angular.module('contentful').controller('EntryListCtrl',
 
   $scope.$on('tabBecameActive', function(event, tab) {
     if (tab !== $scope.tab) return;
+    $scope.paginator.page = 0;
     $scope.resetEntries();
   });
 });

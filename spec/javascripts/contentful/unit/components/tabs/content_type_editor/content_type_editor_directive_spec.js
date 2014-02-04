@@ -28,6 +28,7 @@ describe('The ContentType editor directive', function () {
       scope = $rootScope.$new();
 
       scope.can = canStub;
+      scope.otEditable = true;
 
       compileElement = function () {
         container = $('<div class="content-type-editor"></div>');
@@ -41,6 +42,22 @@ describe('The ContentType editor directive', function () {
     container.remove();
     $log.assertEmpty();
   }));
+
+  describe('when otEditable is false', function () {
+    beforeEach(function () {
+      canStub.withArgs('create', 'ContentType').returns(true);
+      scope.otEditable = false;
+      compileElement();
+    });
+
+    it('Create Field button should be disabled', function () {
+      expect(container.find('.advice button').is(':disabled')).toBe(true);
+    });
+
+    it('Add Field button should be disabled', function () {
+      expect(container.find('.advice button').is(':disabled')).toBe(true);
+    });
+  });
 
   it('create button is disabled', function () {
     canStub.withArgs('create', 'ContentType').returns(false);

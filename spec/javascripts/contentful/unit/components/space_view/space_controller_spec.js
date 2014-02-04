@@ -180,7 +180,7 @@ describe('Space Controller', function () {
 
       describe('if there are reasons', function () {
         beforeEach(function () {
-          result = scope.can(args);
+          result = scope.can(args, {});
         });
 
         it('can is called', function () {
@@ -209,7 +209,7 @@ describe('Space Controller', function () {
       describe('if there are reasons', function () {
         beforeEach(function () {
           stubs.enforcement.returns({});
-          result = scope.can(args);
+          result = scope.can(args, {});
         });
 
         it('can is called', function () {
@@ -232,7 +232,7 @@ describe('Space Controller', function () {
       describe('if there are no reasons', function () {
         beforeEach(function () {
           stubs.enforcement.returns(false);
-          result = scope.can(args);
+          result = scope.can(args, {});
         });
 
         it('can is called', function () {

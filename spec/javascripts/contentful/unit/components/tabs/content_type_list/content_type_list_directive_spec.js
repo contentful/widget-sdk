@@ -31,6 +31,20 @@ describe('The ContentType list directive', function () {
     container.remove();
   }));
 
+  describe('the tab header add button', function() {
+    it('is not shown', function() {
+      canStub.withArgs('create', 'ContentType').returns(false);
+      compileElement();
+      expect(container.find('.tab-header .add-entity .primary-button')).toBeNgHidden();
+    });
+
+    it('is shown', function() {
+      canStub.withArgs('create', 'ContentType').returns(true);
+      compileElement();
+      expect(container.find('.tab-header .add-entity .primary-button')).not.toBeNgHidden();
+    });
+  });
+
   it('save button is disabled', function () {
     canStub.withArgs('create', 'ContentType').returns(false);
     reasonsStub.returns(['usageExceeded']);
@@ -77,6 +91,18 @@ describe('The ContentType list directive', function () {
     });
   });
 
+  describe('add button list', function() {
+    it('not shown', function() {
+      canStub.withArgs('create', 'ContentType').returns(false);
+      compileElement();
+      expect(container.find('.filter-list').eq(1)).toBeNgHidden();
+    });
 
+    it('shown', function() {
+      canStub.withArgs('create', 'ContentType').returns(true);
+      compileElement();
+      expect(container.find('.filter-list').eq(1)).not.toBeNgHidden();
+    });
+  });
 
 });

@@ -1,0 +1,11 @@
+.modal-background.new-content-type-dialog
+  .modal-dialog
+    .title
+      Choose the type of Entry
+    .close-button(ng-click="dialog.cancel()")
+
+    %ul
+      %li(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
+               ng-click="dialog.confirm() && createEntry(contentType, 'frameButton')")
+        {{contentType.getName()}}
+

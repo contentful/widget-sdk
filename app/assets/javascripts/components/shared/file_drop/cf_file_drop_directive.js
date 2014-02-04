@@ -44,7 +44,7 @@ angular.module('contentful').directive('cfFileDrop', function (filepicker, notif
         onError: function(type, message) {
           scope.$apply(function (scope) {
             scope.state = 'drag';
-            elem.attr('disabled', 'enabled');
+            elem.attr('disabled', false);
             notification.error('Upload failed: ' + message );
           });
         },

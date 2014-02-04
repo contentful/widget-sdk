@@ -1,14 +1,13 @@
 'use strict';
 
 describe('Validation dialog service', function () {
-  var validationDialog, scope;
+  var scope, container;
   var successStub, errorStub;
   var dialog, makeDialog;
   beforeEach(function () {
     module('contentful/test');
-    inject(function ($rootScope, _validationDialog_) {
+    inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
-      validationDialog = _validationDialog_;
       successStub = sinon.stub();
       errorStub = sinon.stub();
 
@@ -20,7 +19,12 @@ describe('Validation dialog service', function () {
       scope.can.returns(true);
 
       makeDialog = function () {
-        dialog = validationDialog.open(scope);
+        container = $('<div class="cf-dialog" dialog-template="validation_dialog"></div>');
+        $compile(container)(scope);
+        scope.$digest();
+
+        container.click();
+        dialog = container.scope().dialog;
         dialog.then(successStub)
               .catch(errorStub);
         scope.$digest();
@@ -51,10 +55,6 @@ describe('Validation dialog service', function () {
 
     it('dom element exists', function () {
       expect(dialog.domElement.get(0)).toBeDefined();
-    });
-
-    it('sets title', function () {
-      expect(dialog.domElement.find('.title').html()).toMatch(dialog.params.title);
     });
   });
 

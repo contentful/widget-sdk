@@ -1,4 +1,4 @@
-angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope, getFieldTypeName, analytics, validation, assert, notification, toIdentifier, validationDialog) {
+angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope, getFieldTypeName, analytics, validation, assert, notification, toIdentifier) {
   'use strict';
 
   $scope.$watch(function (scope) {
@@ -50,10 +50,6 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
     return _.isEmpty($scope.field.name) ?
              _.isEmpty($scope.field.id) ?  'Untitled field' : 'ID: '+$scope.field.id
            : $scope.field.name;
-  };
-
-  $scope.openValidations = function () {
-    validationDialog.open($scope);
   };
 
   var oldName = $scope.field.name || '';

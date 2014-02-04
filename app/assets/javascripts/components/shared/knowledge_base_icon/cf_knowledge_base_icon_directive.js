@@ -7,7 +7,8 @@ angular.module('contentful').directive('cfKnowledgeBaseIcon', function (analytic
     priority: 100,
     replace: true,
     link: function (scope, elem, attrs) {
-      scope.placement = attrs.tooltipPlacement || 'right';
+      if(!scope.placement) scope.placement = attrs.tooltipPlacement || 'right';
+      if(!attrs.tooltipContainer) scope.container = '.cf-knowledge-base-icon';
       elem.on('click', function () {
         analytics.knowledgeBase(attrs.analyticsEvent);
       });

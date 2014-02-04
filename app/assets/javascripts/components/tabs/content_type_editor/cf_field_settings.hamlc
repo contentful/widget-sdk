@@ -57,10 +57,12 @@
                      tooltip="Make Field mandatory when filling in content")
     %i.required-icon ✱
     {{field.required ? 'Required' : 'Require'}}
-  %a.toggle-validate(ng-click="openValidations()"
-                     ng-class="{active: hasValidations}"
-                     ng-show="validationsAvailable"
-                     tooltip="Add Validations to the content in this Field")
+  %a.toggle-validate.cf-dialog(
+        dialog-title="Validations"
+        dialog-template="validation_dialog"
+        ng-class="{active: hasValidations}"
+        ng-show="validationsAvailable"
+        tooltip="Add Validations to the content in this Field")
     %i.ss-check
     {{hasValidations? 'Validated' : 'Validate'}}
     %i.ss-alert.validation-alert(ng-show="validationResult.pathErrors.fields[index].validations || validationResult.pathErrors.fields[index].items.validations" tooltip="There are errors in the validations")

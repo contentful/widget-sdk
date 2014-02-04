@@ -47,6 +47,20 @@ describe('The Asset list directive', function () {
     $log.assertEmpty();
   }));
 
+  describe('the tab header add button', function() {
+    it('is not shown', function() {
+      canStub.withArgs('create', 'Asset').returns(false);
+      compileElement();
+      expect(container.find('.tab-header .add-entity .primary-button')).toBeNgHidden();
+    });
+
+    it('is shown', function() {
+      canStub.withArgs('create', 'Asset').returns(true);
+      compileElement();
+      expect(container.find('.tab-header .add-entity .primary-button')).not.toBeNgHidden();
+    });
+  });
+
   function makeActionTest(button, action) {
     it(button+' button not shown', function () {
       canStub.withArgs(action, 'Asset').returns(false);
@@ -113,6 +127,18 @@ describe('The Asset list directive', function () {
     });
   });
 
+  describe('add button list', function() {
+    it('not shown', function() {
+      canStub.withArgs('create', 'Asset').returns(false);
+      compileElement();
+      expect(container.find('.filter-list').eq(2)).toBeNgHidden();
+    });
 
+    it('shown', function() {
+      canStub.withArgs('create', 'Asset').returns(true);
+      compileElement();
+      expect(container.find('.filter-list').eq(2)).not.toBeNgHidden();
+    });
+  });
 
 });

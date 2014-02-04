@@ -1,5 +1,5 @@
 %a.knowledge-base-icon(
     tooltip-placement="{{placement}}"
-    tooltip-container=".cf-knowledge-base-icon"
+    tooltip-container="{{container}}"
     target="_blank")
   %i.ss-help

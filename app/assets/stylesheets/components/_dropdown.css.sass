@@ -73,11 +73,12 @@ $separator-style: 1px solid $light-rule
     padding-top: 3px
   .highlight
     font-weight: 600
-
-.dropdown-menu
   .no-highlight
     li:hover
       background: none
+  .ss-plus
+    font-size: 0.7em
+    margin-right: 0.5em
 
 // For the wide type menus
 .type-menu
@@ -145,7 +146,6 @@ $separator-style: 1px solid $light-rule
 
 
 // Positioning/Caret stuff
-// TODO why caret?
 .dropdown-menu.top-caret,
 .dropdown-menu.bottom-caret,
 .dropdown-menu.left-caret,
@@ -156,25 +156,27 @@ $separator-style: 1px solid $light-rule
   left: $caret-size + 10px
 .dropdown-menu.right-aligned:before
   right: $caret-size + 10px
+.dropdown-menu.center-aligned:before
+  left: 50%
 
 .dropdown-menu.top-caret:before
   +caret
   content: "▴"
   top: - $caret-size - 4px
   +text-shadow(0px -2px 3px rgba(0,0,0,0.12))
-  
+
 .dropdown-menu.bottom-caret:before
   +caret
   content: "▾"
   bottom: - $caret-size - 6px
   +text-shadow(0px 2px 3px rgba(0,0,0,0.12)) 
-  
+
 .dropdown-menu.left-caret:before
   +caret
   content: "◃"
   left: - $caret-size + 2px
   +text-shadow(-2px 0px 3px rgba(0,0,0,0.12))
-  
+
 .dropdown-menu.right-caret:before
   +caret
   content: "▹"

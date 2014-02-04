@@ -1,11 +1,8 @@
-$search-area-height: 66px
-$search-field-height: 32px
-
 // Search Area Layout
 
 .search-area
-  height: $search-area-height
-  padding: ($search-area-height - $search-field-height)/2 0
+  height: $tab-header-height
+  padding: $tab-header-padding 0
 
 .search-area
   .search-field
@@ -25,10 +22,10 @@ $search-field-height: 32px
   display: table
   table-layout: fixed
   border-spacing: 0
-  height: $search-field-height
+  height: $tab-header-field-height
   .row
     //outline: 1px red dashed
-    height: $search-field-height
+    height: $tab-header-field-height
     display: table-row
     > *
       display: table-cell
@@ -76,14 +73,13 @@ $search-field-height: 32px
 %search-area-button
   cursor: pointer
   background-color: $gray-background
-  line-height: $search-field-height - 2px
+  line-height: $tab-header-field-height - 2px
   +box-shadow(0 1px 3px rgba(255,255,255,0.8) inset)
   &:active
     +box-shadow(0 1px 2px rgba(0,0,0,0.05) inset)
 
 %search-field-button
   @extend %search-area-button
-  //height: $search-field-height
   padding: 0 7px 0 9px
   font-size: 12px
 
@@ -150,14 +146,14 @@ $search-field-height: 32px
     width: 8px
     +box-shadow(1px 0 1px rgba(0,0,0,0.06) inset)
     +border-radius(0 2px 0 0)
-  
+
   .fill
     height: $position
     width: 8px
     +single-transition(height, 400ms, linear)
     +gradient(#459cd9, #1e82c8)
     +border-radius(0 2px 0 0)
-    
+
   .tip
     right: 19px
     top: $position

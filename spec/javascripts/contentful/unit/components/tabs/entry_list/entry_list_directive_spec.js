@@ -44,6 +44,79 @@ describe('The Entry list directive', function () {
     $log.assertEmpty();
   }));
 
+  describe('the tab header first add button', function() {
+    it('is not shown if not allowed', function() {
+      canStub.withArgs('create', 'Entry').returns(false);
+      compileElement();
+      expect(container.find('.tab-header .add-entity .primary-button').eq(0)).toBeNgHidden();
+    });
+
+
+    it('is not shown if there are no entries', function() {
+      scope.singleContentType = {};
+      scope.entries = [];
+      canStub.withArgs('create', 'Entry').returns(true);
+      compileElement();
+      expect(container.find('.tab-header .add-entity .primary-button').eq(0)).toBeNgHidden();
+    });
+
+    it('is not shown if there is no single content type', function() {
+      scope.singleContentType = null;
+      scope.entries = [{}];
+      canStub.withArgs('create', 'Entry').returns(true);
+      compileElement();
+      expect(container.find('.tab-header .add-entity .primary-button').eq(0)).toBeNgHidden();
+    });
+
+    it('is shown if all conditions are met', function() {
+      scope.singleContentType = {};
+      scope.entries = [{}];
+      canStub.withArgs('create', 'Entry').returns(true);
+      compileElement();
+      expect(container.find('.tab-header .add-entity .primary-button').eq(0)).not.toBeNgHidden();
+    });
+  });
+
+
+  describe('the tab header add dropdown button', function() {
+
+    it('is not shown', function() {
+      canStub.withArgs('create', 'Entry').returns(false);
+      compileElement();
+      expect(container.find('.tab-header .add-entity .primary-button').eq(1)).toBeNgHidden();
+    });
+
+    it('is shown', function() {
+      canStub.withArgs('create', 'Entry').returns(true);
+      compileElement();
+      expect(container.find('.tab-header .add-entity .primary-button').eq(1)).not.toBeNgHidden();
+    });
+
+    describe('has dropdown items', function() {
+      var idStub1, idStub2, nameStub;
+      beforeEach(function() {
+        canStub.withArgs('create', 'Entry').returns(true);
+        idStub1 = sinon.stub();
+        idStub1.returns(1);
+        idStub2 = sinon.stub();
+        idStub2.returns(2);
+        nameStub = sinon.stub();
+        nameStub.returns('name');
+        scope.tab.params.contentTypeId = 1;
+        scope.spaceContext.publishedContentTypes = [
+          {getId: idStub1, getName: nameStub},
+          {getId: idStub2, getName: nameStub}
+        ];
+        compileElement();
+      });
+
+      it('has 2 items', function() {
+        expect(container.find('.tab-header .add-entity li').length).toBe(2);
+      });
+    });
+
+  });
+
   function makeActionTest(button, action) {
     it(button+' button not shown', function () {
       canStub.withArgs(action, 'Entry').returns(false);
@@ -79,7 +152,7 @@ describe('The Entry list directive', function () {
   });
 
   describe('list of content type filters', function() {
-    var list;
+    var filterList, addList;
     var idStub1, idStub2, nameStub;
     beforeEach(function() {
       idStub1 = sinon.stub();
@@ -94,19 +167,38 @@ describe('The Entry list directive', function () {
         {getId: idStub2, getName: nameStub}
       ];
       compileElement();
-      list = container.find('.filter-list').eq(1);
+      filterList = container.find('.filter-list').eq(1);
+      addList = container.find('.filter-list').eq(2);
     });
 
-    it('list has 2 elements', function () {
-      expect(list.find('li').length).toBe(2);
+    it('filter list has 2 elements', function () {
+      expect(filterList.find('li').length).toBe(2);
     });
 
-    it('first element is active', function() {
-      expect(list.find('li').eq(0)).toHaveClass('active');
+    it('add list has 2 elements', function () {
+      expect(addList.find('li').length).toBe(2);
     });
 
-    it('second element is inactive', function() {
-      expect(list.find('li').eq(1)).not.toHaveClass('active');
+    it('filter list first element is active', function() {
+      expect(filterList.find('li').eq(0)).toHaveClass('active');
+    });
+
+    it('filter list second element is inactive', function() {
+      expect(filterList.find('li').eq(1)).not.toHaveClass('active');
+    });
+  });
+
+  describe('add button list', function() {
+    it('not shown', function() {
+      canStub.withArgs('create', 'Entry').returns(false);
+      compileElement();
+      expect(container.find('.filter-list').eq(2)).toBeNgHidden();
+    });
+
+    it('shown', function() {
+      canStub.withArgs('create', 'Entry').returns(true);
+      compileElement();
+      expect(container.find('.filter-list').eq(2)).not.toBeNgHidden();
     });
   });
 

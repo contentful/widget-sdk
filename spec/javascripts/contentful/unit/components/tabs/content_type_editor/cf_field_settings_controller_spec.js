@@ -205,11 +205,6 @@ describe('Field Settings Controller', function () {
     });
   });
 
-  it('opens validations', function() {
-    scope.openValidations();
-    expect(stubs.open).toBeCalled();
-  });
-
   describe('update field id', function() {
     beforeEach(function() {
       scope.field.name = 'fieldname';

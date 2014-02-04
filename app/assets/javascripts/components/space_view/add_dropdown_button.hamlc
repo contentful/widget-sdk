@@ -3,13 +3,13 @@
     %i.ss-plus
   .dropdown-menu.fixed-position.left-aligned
     %ul.main-types
-      %li.add-content-type.bottom-separator(ng-click="createContentType()" dropdown-close="" cf-can="create, ContentType")
+      %li.add-content-type.bottom-separator(ng-click="createContentType('addDropdown')" dropdown-close="" cf-can="create, ContentType")
         %i.ss-database
         Content Type
-      %li.add-asset(ng-click="createAsset()" dropdown-close="" cf-can="create, Asset")
+      %li.add-asset(ng-click="createAsset('addDropdown')" dropdown-close="" cf-can="create, Asset")
         %i.ss-attach
         Asset
-      %li.add-api-key(ng-click="createApiKey()" dropdown-close="" cf-can="create, ApiKey")
+      %li.add-api-key(ng-click="createApiKey('addDropdown')" dropdown-close="" cf-can="create, ApiKey")
         %i.ss-fork
         API Key
     %ul.separator.no-highlight(cf-can="create, Entry")
@@ -18,12 +18,12 @@
         Entries
     %ul.content-types(ng-hide="spaceContext.publishedContentTypes.length === 0 && (noCfCanCleanup = true)" cf-can="create, Entry")
       %li(ng-repeat="(index, contentType) in spaceContext.publishedContentTypes track by contentType.getId()"
-        ng-click="createEntry(contentType)"
+        ng-click="createEntry(contentType, 'addDropdown')"
         data-content-type-id="{{contentType.getId()}}"
         dropdown-close="")
         {{contentType.getName()}}
     %ul.highlight.no-content-types(ng-hide="spaceContext.publishedContentTypes.length > 0" cf-can="create, Entry")
-      %li.hint(ng-click="createContentType()" dropdown-close="" cf-can="create, ContentType")
+      %li.hint(ng-click="createContentType('addDropdown')" dropdown-close="" cf-can="create, ContentType")
         (Create and activate a Content Type before creating Entries)
       %li.hint(dropdown-close="" ng-hide="can('create', 'ContentType')")
         (No Content Types available. An admin needs to create a Content Type before you can add Entries)

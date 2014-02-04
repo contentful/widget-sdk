@@ -12,22 +12,21 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
   }
 
   PromisedLoader.prototype = {
-    _throttle: function() {
-      var loader = this;
-      if (loader.throttled) return true;
-      loader.throttled = true;
-      setTimeout(function() {
-        loader.throttled = false;
-      }, 500);
-      return false;
-    },
 
     load: function (host, methodName /* args ... */) {
+      var deferred = $q.defer();
       var args = _.toArray(arguments).slice(2);
       var loader = this;
-      if (loader.inProgress || loader._throttle()) return noopPromise;
+      if (loader.inProgress){
+        deferred.reject();
+        return deferred.promise;
+      }
 
-      var deferred = $q.defer();
+      loader.inProgress = true;
+      if(!loader._load) loader._load = _.throttle(function (host, methodName, args) {
+        host[methodName].apply(host, args);
+      }, 500);
+
       var stopSpinner = cfSpinner.start();
       args.push(function callback(err, res, stats) {
         $rootScope.$apply(function () {
@@ -40,13 +39,14 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
             deferred.resolve(res);
           }
           loader.inProgress = false;
+          delete loader._load;
           stopSpinner();
         });
       });
-      this.inProgress = true;
-      host[methodName].apply(host, args);
+      loader._load(host, methodName, args);
       return deferred.promise;
     }
+
   };
 
   return PromisedLoader;

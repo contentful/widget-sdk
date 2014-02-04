@@ -1,5 +1,4 @@
 //= require jquery
-//= require lodash
 //
 //= require jquery.ui.sortable
 //= require jquery.ui.autocomplete
@@ -11,10 +10,6 @@
 //= require guiders-1.3.0
 //
 //= require bootstrap-tooltip
-//
-//= require moment-2.1.0
-//
-//= require ZeroClipboard
 //
 //= require user_interface/node_modules/share/node_modules/browserchannel/dist/bcsocket-uncompressed
 //= require user_interface/node_modules/share/webclient/share.uncompressed
@@ -28,7 +23,6 @@
 //= require angular-route
 //= require contentful
 //= require environment
-//= require ng-time-relative
 //= require user_interface
 //
 //= require_self

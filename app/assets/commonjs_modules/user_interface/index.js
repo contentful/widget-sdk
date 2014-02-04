@@ -11,7 +11,14 @@ var UserInterface = {
 
 module.exports = UserInterface;
 
+if(window){
+  window._ = require('lodash-node/modern');
+  window.moment = require('moment');
+  window.ZeroClipboard = require('zeroclipboard');
+}
+
 if (angular) {
+  require('ng-time-relative');
   angular.module('contentful/user_interface', []).
     constant('contentfulClient', UserInterface.contentfulClient).
     constant('validation', UserInterface.validation).

@@ -3,14 +3,20 @@
     %h1 Assets
     %a.cf-knowledge-base-icon(
       tooltip="Learn more about Assets in the Knowledge Base Pages"
+      tooltip-container=".entity-list"
       analytics-event="assets"
       href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
   .search-area.with-left-nav
     .search-field(search="searchTerm" placeholder="Search for Assets")
+  .add-entity(ng-class="{'with-pagination': paginator.numPages() > 1}" ng-hide="assets.length == 0")
+    %button.default-button.primary-button(cf-can="create, Asset" ng-click="createAsset('frameButton')")
+      %i.ss-plus.button-icon
+      Add Asset
   .search-results-position(paginator="paginator")
+
 .tab-main
   .left-nav
-    %header Status
+    %header Filter By Status
     %ul.filter-list
       %li(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
         %span All
@@ -20,12 +26,17 @@
         %span Published
       %li(ng-class="{active: tab.params.list == 'archived'}" ng-click="switchList('archived')")
         %span Archived
-    %header File type
+    %header Filter By File Type
     %ul.filter-list
       %li(ng-repeat="(label, name) in mimetypeGroups track by label"
           ng-class="{active: tab.params.list == label}"
           ng-click="switchList(label)")
         %span {{name}}
+    %header(cf-can="create, Asset") Add New
+    %ul.filter-list(cf-can="create, Asset")
+      %li(ng-click="createAsset('frameLink')")
+        %span Asset
+
 
   .with-left-nav
     %table.result-list.main-header
@@ -33,8 +44,6 @@
         %tr
           %th.cell-select
             %input(type="checkbox" cf-selection="" ng-show="assets.length > 0" tabindex="-1")
-          -#%th.cell-favorite
-            %i.ss-star
           %th.cell-preview Preview
           %th.cell-name Name
           %th.cell-type Type
@@ -48,8 +57,6 @@
           %tr(ng-repeat="asset in visibleAssets = (assets | filter:visibleInCurrentList) track by asset.getId()" cf-click-local="navigator.assetEditor(asset).goTo()")
             %td.cell-select(ng-click="selection.toggle(asset);$event.stopPropagation()")
               %input(type="checkbox" cf-selection="asset" tabindex="-1")
-            -#%td.cell-favorite
-              %i.ss-star
             %td.cell-preview(ng-class="{'no-padding': (!!file)}")
               %div.file-preview(cf-file-preview="" file="spaceContext.localizedField(asset, 'data.fields.file')" preview-size="400")
                 %span(cf-thumbnail="file" size="30")
@@ -67,6 +74,7 @@
                 %span {{statusClass(asset)}}
                 .main-results-bar
       .loading(ng-hide="paginator.atLast()")
+
     .advice(ng-show="visibleAssets | isEmpty")
       %div(ng-show="hasQuery()")
         %i.ss-search.giant-icon
@@ -75,7 +83,7 @@
         %i.ss-attach.giant-icon
         %header.advice-title You have no Assets yet.
         %p.advice-description Assets are external documents that you can link to your Entries. They can be any file you wish, form sounds to images or videos to text documents.
-        %button.default-button.primary-button(type="button" ng-click="createAsset()" cf-can="create, Asset")
+        %button.default-button.primary-button(type="button" ng-click="createAsset('frameButton')" cf-can="create, Asset")
           Create an Asset
         %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
           Visit the Knowledge Base Pages

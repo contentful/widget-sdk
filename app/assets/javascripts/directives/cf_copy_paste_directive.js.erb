@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('contentful').directive('cfCopyPaste', function(environment) {
-  ZeroClipboard.setDefaults({
-    moviePath: "<%= asset_path 'ZeroClipboard.swf' %>",
+  ZeroClipboard.config({
+    moviePath: "<%= asset_path 'user_interface/node_modules/zeroclipboard/ZeroClipboard.swf' %>",
     forceHandCursor: true,
     allowScriptAccess: 'always',
     useNoCache: true,
