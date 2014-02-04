@@ -101,7 +101,7 @@
           Entries are your content itself. These depend on the field types you created in the Content Type editor.
         %button.default-button.primary-button(type="button" ng-click="createContentType('frameButton')" cf-can="create, ContentType" ng-hide="spaceContext.publishedContentTypes.length > 0 && (noCfCanCleanup = true)")
           Create a Content Type
-        %p.advice-description(ng-hide="spaceContext.publishedContentTypes.length == 0")
+        %p(ng-hide="spaceContext.publishedContentTypes.length == 0")
           %button.dropdown-toggle.default-button.primary-button(
                   ng-hide="!singleContentType && (noCfCanCleanup = true)"
                   cf-can="create, Entry"
@@ -109,6 +109,7 @@
             %i.ss-plus.button-icon
             Add New {{singleContentType.getName()}}
           %button.dropdown-toggle.default-button.primary-button.cf-dialog(
+              ng-hide="singleContentType && (noCfCanCleanup = true)"
               cf-can="create, Entry" dialog-template="new_content_type_list")
             %i.ss-plus.button-icon
             Add New Entry
