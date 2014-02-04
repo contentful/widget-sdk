@@ -28,6 +28,16 @@ angular.module('contentful').directive('cfMarkdownGuide', function(){
       });
 
       onScroll();
+
+      scope.guideOpen = false;
+      scope.toggleGuide = function () {
+        scope.guideOpen = !scope.guideOpen;
+        if (scope.guideOpen) {
+          elem.addClass('open');
+        } else {
+          elem.removeClass('open');
+        }
+      };
     }
   };
 });

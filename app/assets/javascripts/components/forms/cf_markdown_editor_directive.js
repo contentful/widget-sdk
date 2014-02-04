@@ -7,7 +7,7 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
       var textarea = elem.find('textarea');
 
       // Different display modes: preview, edit, combined
-      scope.displayMode = 'preview';
+      scope.displayMode = 'edit';
 
       scope.guideOpen = true;
       scope.toggleGuide = function () {

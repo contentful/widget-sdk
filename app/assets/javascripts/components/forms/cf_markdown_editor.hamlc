@@ -21,10 +21,7 @@
   ot-bind-text=""
   ng-disabled="!otEditable"
   ng-hide="displayMode == 'preview'")
-.markdown-guide-hint(ng-hide="displayMode == 'preview'")
-  Use Markdown format style your text. Click here to see a quick overview.
-  %a.toggle-collapse(cf-click-local="toggleGuide()" ng-class="{open: guideOpen}") ▶
-.cf-markdown-guide(ng-if="guideOpen")
+.cf-markdown-guide(ng-if="displayMode != 'preview'")
 .markdown-preview(
   tabindex="0"
   ng-bind-html="markdownPreview"

@@ -19,10 +19,6 @@
   +border-radius
   padding: 7px
 
-.markdown-textarea,
-.form-controls .markdown-textarea
-  margin-bottom: 10px
-
 .field-with-toolbar,
 .form-controls .field-with-toolbar
   padding-top: 25px + 7px + 7px
@@ -42,6 +38,12 @@
 .md-right-button
   display: block
   float: right
+
+.markdown-textarea,
+.form-controls .markdown-textarea
+  +border-radius(3px 3px 0 0)
+  border-bottom: none
+
 
 .md-bold-icon
   background-image: image_url('markdown/bold.png')
@@ -70,29 +72,50 @@
 .md-edit-icon
   background-image: image_url('markdown/edit.png')
 
+$markdown-guide-height: 25px
+
 .markdown-guide-hint
+  position: absolute
+  top: 0
+  left: 0
+  right: 0
+  height: $markdown-guide-height
+  background-color: $lightest-gray
+  border-bottom: 1px solid $light-gray
+  padding: 3px 7px
+  cursor: pointer
+  color: $dark-gray
+  border-top: 1px solid $light-gray
+  &:hover
+    background-color: darken($lightest-gray, 10%)
+  .toggle-collapse
+    float: right
+
 
 .cf-markdown-guide
   position: relative
-  height: 300px
+  height: $markdown-guide-height
   border: 1px solid $light-gray
-  +border-radius
+  +border-radius(0 0 3px 3px)
+  border-top: none
   overflow: hidden
+  margin-bottom: 10px
+  &.open
+    height: 300px
 
 .markdown-guide-nav
   position: absolute
-  top: 0
+  top: $markdown-guide-height
   left: 0
   bottom: 0
   width: 20%
   +plain-list
   font-weight: bold
   background-color: $lightest-gray
-  +border-radius(3px 0 0 3px)
   overflow: hidden
   li
     cursor: pointer
-    color: black
+    color: $dark-gray
     padding: 5px
     border-bottom: 1px solid $light-gray
   li:hover:not(.active)
@@ -103,7 +126,7 @@
 
 .markdown-guide-main
   position: absolute
-  top: 0
+  top: $markdown-guide-height
   right: 0
   bottom: 0
   width: 80%
