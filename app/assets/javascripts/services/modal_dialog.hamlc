@@ -1,7 +1,7 @@
 .modal-background
   .modal-dialog
     .title {{dialog.title}}
-    .close-button(ng-click="dialog.cancel()")
+    .modal-dialog-close-button(ng-click="dialog.cancel()")
     %p.dialog-content {{dialog.message}}
     .buttons
       %button.default-button.cancel(type="button" ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")

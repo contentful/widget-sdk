@@ -37,8 +37,8 @@ $modal-dialog-padding: 20px
   margin-bottom: 0
   padding: $modal-dialog-padding
   background: $gray-background
-.modal-dialog .close-button,
-%modal-dialog-close-button
+
+.close-button
   color: $lightest-gray
   cursor: pointer
   font-weight: 200
@@ -47,10 +47,15 @@ $modal-dialog-padding: 20px
   &:after
     content: '×'
     font-size: 30px
+
+.modal-dialog-close-button,
+%modal-dialog-close-button
+  @extend .close-button
   position: absolute
   top: 0
   right: 0
   margin: $modal-dialog-padding
+
 .modal-dialog .dialog-content,
 %modal-dialog-content
   margin: $modal-dialog-padding 0
