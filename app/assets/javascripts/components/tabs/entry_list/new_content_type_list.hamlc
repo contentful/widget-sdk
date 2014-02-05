@@ -4,7 +4,7 @@
       Choose the type of Entry
     .close-button(ng-click="dialog.cancel()")
 
-    %ul
+    %ul.block-list
       %li(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
                ng-click="dialog.confirm() && createEntry(contentType, 'frameButton')")
         {{contentType.getName()}}
