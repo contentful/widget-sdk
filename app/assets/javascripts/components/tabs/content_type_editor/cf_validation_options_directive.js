@@ -1,9 +1,20 @@
 'use strict';
-angular.module('contentful').directive('cfValidationOptions', function () {
+angular.module('contentful').directive('cfValidationOptions', function (keycodes) {
 
   return {
     restrict: 'C',
     template: JST['cf_validation_options'](),
+
+    link: function (scope, elem) {
+
+      scope.submitValue = function (ev) {
+        if(ev.keyCode === keycodes.ENTER){
+          scope.updateValues(elem.val());
+        }
+      };
+
+    },
+
     controller: function CfValidationOptionsCtrl($scope, mimetype) {
       $scope.mimetypeGroups = mimetype.groupDisplayNames;
 

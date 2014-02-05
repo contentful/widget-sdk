@@ -28,10 +28,15 @@
 
 
   %div(ng-switch-when="in")
-    %input(type="text" ng-model="validation.in" ng-list cf-list-type-for="field" cf-list-identity-fix placeholder="apple,orange,banana" ng-change="updateDoc()" ng-disabled="!otEditable")
-    %span (separate allowed values by comma)
+    %input(type="text" ng-keypress="submitValue()")
+    %span (info icon will go here)
     .cf-form-inline-error(cf-error-path="validationListPath(validationIndex)")
-
+    %ul.block-list
+      %li
+        apple
+        .close-button(ng-click="removeFromValuesList()")
+      %li orange
+      %li banana
 
   .select-box.around-zone(ng-switch-when="linkContentType")
     %select(ng-model="validation.linkContentType"
