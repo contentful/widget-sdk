@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfProfileView', function($window, $rootScope, authentication, routing){
+angular.module('contentful').directive('cfAccountView', function($window, $rootScope, authentication, routing){
   return {
     template: JST['iframe_view'](),
     restrict: 'C',
@@ -21,7 +21,7 @@ angular.module('contentful').directive('cfProfileView', function($window, $rootS
       scope.hasLoaded = false;
 
       function routeChanged(route) {
-        if (route.viewType === 'profile') {
+        if (route.viewType === 'account') {
           updateFrameLocation();
           elem.show();
         } else {
