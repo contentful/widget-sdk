@@ -10,14 +10,16 @@ angular.module('contentful').constant('AssetContentType', {
       type: 'Symbol',
       localized: true,
       disabled: false,
-      required: true
+      required: true,
+      widgetType: 'textfield'
     },
     {
       id: 'description',
       name: 'Description',
       type: 'Text',
       localized: true,
-      disabled: false
+      disabled: false,
+      widgetType: 'textarea'
     },
     {
       id: 'file',
@@ -25,7 +27,8 @@ angular.module('contentful').constant('AssetContentType', {
       type: 'File',
       localized: true,
       disabled: false,
-      required: true
+      required: true,
+      widgetType: 'fileEditor'
     }
   ]
 });

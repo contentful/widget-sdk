@@ -1,44 +1,37 @@
-%ng-switch(on="field.type")
-  %input(ng-switch-when="Symbol"
+%ng-switch(on="field.widgetType")
+  %input(ng-switch-when="textfield"
     type="text"
     ng-model="fieldData.value"
     ot-subdoc=""
     ot-bind-text=""
     ng-disabled="!otEditable")
-  %textarea(ng-switch-when="Text"
+  %textarea(ng-switch-when="textarea"
     cf-input-autogrow=""
     ng-model="fieldData.value"
     ot-subdoc=""
     ot-bind-text=""
     ng-disabled="!otEditable")
-  %div(ng-switch-when="Boolean")
+  %div(ng-switch-when="radiobuttons")
     %label
       %input(type="radio" ng-model="fieldData.value" ng-value="true" ot-bind-model="" ng-disabled="!otEditable")
       %span.yes Yes
     %label
       %input(type="radio" ng-model="fieldData.value" ng-value="false" ot-bind-model="" ng-disabled="!otEditable")
       %span.no No
-  .cf-datetime-editor(ng-switch-when="Date"
-    ng-model="fieldData.value")
-  %div(ng-switch-when="Array")
-    %ng-switch(on="field.items.type")
-      %div(ng-switch-when="Link"
-        ng-model="fieldData.value"
-        cf-link-editor="field.items.linkType"
-        link-multiple="true")
-      %input(ng-switch-when="Symbol"
-        type="text"
-        ng-list=""
-        cf-list-identity-fix=""
-        ng-model="fieldData.value"
-        ot-bind-model=""
-        ng-disabled="!otEditable")
-  .cf-object-editor(ng-switch-when="Object" ng-model="fieldData.value")
-  .cf-location-editor(ng-switch-when="Location" ng-model="fieldData.value")
-  .cf-number-editor(ng-switch-when="Number")
-  .cf-number-editor(ng-switch-when="Integer")
-  %div(ng-switch-when="Link"
+  .cf-datetime-editor(ng-switch-when="datetimeEditor" ng-model="fieldData.value")
+  %div(ng-switch-when="linksEditor"
     ng-model="fieldData.value"
-    cf-link-editor="field.linkType")
-  .cf-file-editor(ng-switch-when="File"
-    ng-model="fieldData.value")
+    cf-link-editor="field.items.linkType"
+    link-multiple="true")
+  %input(ng-switch-when="listInput"
+    type="text"
+    ng-list=""
+    cf-list-identity-fix=""
+    ng-model="fieldData.value"
+    ot-bind-model=""
+    ng-disabled="!otEditable")
+  .cf-object-editor(ng-switch-when="objectEditor" ng-model="fieldData.value")
+  .cf-location-editor(ng-switch-when="locationEditor" ng-model="fieldData.value")
+  .cf-number-editor(ng-switch-when="numberEditor")
+  %div(ng-switch-when="linkEditor" ng-model="fieldData.value" cf-link-editor="field.linkType")
+  .cf-file-editor(ng-switch-when="fileEditor" ng-model="fieldData.value")
