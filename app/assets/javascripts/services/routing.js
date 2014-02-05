@@ -12,8 +12,8 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
   $routeProvider.when('/spaces/:spaceId/api_keys/:apiKeyId', {viewType: 'api-key-editor'});
   $routeProvider.when('/spaces/:spaceId/settings/:pathSuffix*', {viewType: 'space-settings'});
   $routeProvider.when('/spaces/:spaceId/settings', {viewType: 'space-settings'});
-  $routeProvider.when('/profile/:pathSuffix*', {viewType: 'profile'});
-  $routeProvider.when('/profile', {viewType: 'profile'});
+  $routeProvider.when('/account/:pathSuffix*', {viewType: 'profile'});
+  $routeProvider.when('/account', {viewType: 'profile'});
   $routeProvider.otherwise({root: true});
 
   this.$get = function ($rootScope, $route, $location) {

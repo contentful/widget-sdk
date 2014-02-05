@@ -30,7 +30,7 @@ angular.module('contentful').directive('cfProfileView', function($window, $rootS
       }
 
       function updateFrameLocation() {
-        var pathSuffix = routing.getRoute().params.pathSuffix || 'user';
+        var pathSuffix = routing.getRoute().params.pathSuffix || 'profile/user';
         var url = buildUrl(pathSuffix);
         if (!urlIsActive(url)) {
           scope.url = url;
@@ -43,20 +43,19 @@ angular.module('contentful').directive('cfProfileView', function($window, $rootS
         var oldPathSuffix = extractPathSuffix(scope.url);
         var pathSuffix    = extractPathSuffix(path);
         scope.url = buildUrl(pathSuffix);
-        if (oldPathSuffix !== pathSuffix) scope.goToProfile(pathSuffix);
+        if (oldPathSuffix !== pathSuffix) scope.goToAccount(pathSuffix);
       }
 
       function urlIsActive(url) {
-        //var activeURL = elem.find('iframe').prop('src');
         return url.indexOf(scope.url) >= 0;
       }
 
       function buildUrl(pathSuffix) {
-        return authentication.profileUrl() + '/' + pathSuffix;
+        return authentication.accountUrl() + '/' + pathSuffix;
       }
 
       function extractPathSuffix(path) {
-        var match = path.match(/profile\/(.*$)/);
+        var match = path.match(/account\/(.*$)/);
         return match && match[1];
       }
 

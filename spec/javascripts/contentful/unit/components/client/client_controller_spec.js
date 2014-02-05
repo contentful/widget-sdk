@@ -523,13 +523,13 @@ describe('Client Controller', function () {
   });
 
   it('redirects to profile', function () {
-    scope.goToProfile();
-    expect(stubs.path).toBeCalledWith('/profile/user');
+    scope.goToAccount();
+    expect(stubs.path).toBeCalledWith('/account/profile/user');
   });
 
   it('redirects to profile with a suffix', function () {
-    scope.goToProfile('derp');
-    expect(stubs.path).toBeCalledWith('/profile/derp');
+    scope.goToAccount('section');
+    expect(stubs.path).toBeCalledWith('/account/section');
   });
 
   describe('performs token lookup', function () {

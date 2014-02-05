@@ -50,7 +50,10 @@ angular.module('contentful').controller('TrialWatchController', function TrialWa
   }
 
   function upgradeAction(){
-    $scope.goToProfile('subscription');
+    $scope.goToAccount(
+      'organizations/'+
+      $scope.spaceContext.space.getOrganizationId()+
+      '/subscription');
   }
 
   function timeTpl(str, timePeriod) {

@@ -178,9 +178,9 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     analytics.track('Clicked Profile Button');
   };
 
-  $scope.goToProfile = function (pathSuffix) {
-    pathSuffix = pathSuffix || 'user';
-    $location.path('/profile' + '/' + pathSuffix);
+  $scope.goToAccount = function (pathSuffix) {
+    pathSuffix = pathSuffix || 'profile/user';
+    $location.path('/account' + '/' + pathSuffix);
   };
 
   $scope.performTokenLookup = function () {

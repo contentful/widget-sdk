@@ -12,12 +12,16 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
     return user.sys.id === spaceContext.space.sys.createdBy.sys.id;
   }
 
+  function getOrgId() {
+    return spaceContext.space.getOrganizationId();
+  }
+
   function upgradeActionMessage() {
     return isOwner() ?  'Upgrade': undefined;
   }
 
   function upgradeAction() {
-    $location.path('/profile/subscription');
+    $location.path('/account/organizations/'+getOrgId()+'/subscription');
   }
 
 
@@ -43,7 +47,7 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
         return isOwner() ?  'Update': undefined;
       },
       action: function () {
-        $location.path('/profile/subscription/billing');
+        $location.path('/account/organizations/'+getOrgId()+'/subscription/billing');
       }
     },
     {
