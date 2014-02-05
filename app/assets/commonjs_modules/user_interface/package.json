@@ -7,7 +7,7 @@
   "author": "",
   "license": "BSD",
   "dependencies": {
-    "contentful-client": "git+ssh://git@github.com:contentful/client.git#45de88b6651864f6b3b783139ee68934c9d3a3bb",
+    "contentful-client": "git+ssh://git@github.com:contentful/client.git#b3f54ec0a5febecd67025143691df37baf7d7bdf",
     "worf": "git+ssh://git@github.com:contentful/worf.git#v2.2.0",
     "validation": "git+ssh://git@github.com:contentful/validation#v1.9.2",
     "contentful-mimetype": "git+ssh://git@github.com:contentful/mimetype#v0.4.6",
