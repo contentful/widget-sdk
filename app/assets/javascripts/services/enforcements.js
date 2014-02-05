@@ -104,13 +104,13 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
   function computeUsage(filter) {
     setTokenObjects();
     if(filter) filter = uncapitalize(filter);
-    var subscription = spaceContext.space.subscription;
+    var organization = spaceContext.space.organization;
     var usage = _.merge(
-      subscription.usage.permanent,
-      subscription.usage.period);
+      organization.usage.permanent,
+      organization.usage.period);
     var limits = _.merge(
-      subscription.subscriptionPlan.limits.permanent,
-      subscription.subscriptionPlan.limits.period);
+      organization.subscriptionPlan.limits.permanent,
+      organization.subscriptionPlan.limits.period);
 
     var metricKey = _.findKey(usage, function (value, name) {
       return (!filter || filter === name) && value >= limits[name];

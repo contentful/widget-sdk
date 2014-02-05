@@ -82,11 +82,11 @@ angular.module('contentful').provider('analytics', function (environment) {
       if (space) {
         this._spaceData = {
           spaceIsTutorial:                       space.data.tutorial,
-          spaceSubscriptionKey:                  space.data.subscription.sys.id,
-          spaceSubscriptionState:                space.data.subscription.state,
-          spaceSubscriptionInvoiceState:         space.data.subscription.invoiceState,
-          spaceSubscriptionSubscriptionPlanKey:  space.data.subscription.subscriptionPlan.sys.id,
-          spaceSubscriptionSubscriptionPlanName: space.data.subscription.subscriptionPlan.name
+          spaceSubscriptionKey:                  space.data.organization.sys.id,
+          spaceSubscriptionState:                space.data.organization.subscriptionState,
+          spaceSubscriptionInvoiceState:         space.data.organization.invoiceState,
+          spaceSubscriptionSubscriptionPlanKey:  space.data.organization.subscriptionPlan.sys.id,
+          spaceSubscriptionSubscriptionPlanName: space.data.organization.subscriptionPlan.name
         };
       } else {
         this._spaceData = null;

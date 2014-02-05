@@ -17,12 +17,12 @@ angular.module('contentful').factory('tutorialExampledata', function ($q, enviro
         };
       });
     },
-      
+
     switchToTutorialSpace: function (clientScope, tries) {
       var ccb, newSpaceId, self = this;
       var tutorialSpace = _.find(clientScope.spaces, function (space) {
         var isTutorialSpace = space.data.tutorial;
-        var isCurrentUsersSpace = space.data.subscription.sys.createdBy.sys.id === clientScope.user.sys.id;
+        var isCurrentUsersSpace = space.data.organization.sys.createdBy.sys.id === clientScope.user.sys.id;
         return isCurrentUsersSpace && isTutorialSpace;
       });
       if (tutorialSpace) {
