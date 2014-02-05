@@ -1,4 +1,4 @@
-angular.module('contentful').directive('apiKeyEditor', function(modalDialog) {
+angular.module('contentful').directive('apiKeyEditor', function(modalDialog, keycodes) {
   'use strict';
   return {
     template: JST.api_key_editor(),
@@ -6,7 +6,7 @@ angular.module('contentful').directive('apiKeyEditor', function(modalDialog) {
     controller: 'ApiKeyEditorCtrl',
     link: function(scope, elem) {
       elem.on('keydown', function(e) {
-        if (e.keyCode === 13) scope.save();
+        if (e.keyCode === keycodes.ENTER) scope.save();
       });
       _.defer(function(){elem.find('input').eq(0).focus();});
 

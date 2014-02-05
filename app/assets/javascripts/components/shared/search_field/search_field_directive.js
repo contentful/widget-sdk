@@ -8,7 +8,7 @@
 
 // A version of ngClick that performs stopPropagation() and
 // preventDefault() to support nested click targets
-angular.module('contentful').directive('searchField', function(){
+angular.module('contentful').directive('searchField', function(keycodes){
   return {
     restrict: 'C',
     template: JST['search_field'](),
@@ -31,7 +31,7 @@ angular.module('contentful').directive('searchField', function(){
 
       element.on('keydown', function(e) {
         if (typeAhead) debouncedUpdate();
-        var pressedReturn = e.keyCode === 13;
+        var pressedReturn = e.keyCode === keycodes.ENTER;
         if (!typeAhead && pressedReturn) update();
       });
     },
