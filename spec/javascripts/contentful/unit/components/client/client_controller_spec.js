@@ -44,7 +44,13 @@ describe('Client Controller', function () {
           return {
             space: {
               getId: stubs.spaceId,
-              data: {}
+              data: {
+                organization: {
+                  sys: {
+                    id: 456
+                  }
+                }
+              }
             },
             tabList: {
               numVisible: stubs.numVisible,
@@ -315,10 +321,19 @@ describe('Client Controller', function () {
       idStub1.returns(123);
       idStub2.returns(456);
       scope.spaces = [
-        {getId: idStub1},
-        {getId: idStub2},
+        {getId: idStub1, data: {organization: {sys: {id: 132}}}},
+        {getId: idStub2, data: {organization: {sys: {id: 132}}}},
         scope.spaceContext.space
       ];
+    });
+
+    it('spaces are grouped by organization', function() {
+      stubs.routingSpaceId.returns(123);
+      scope.$digest();
+      expect(scope.spacesByOrg).toEqual({
+        132: [scope.spaces[0], scope.spaces[1]],
+        456: [scope.spaces[2]]
+      });
     });
 
     it('space data is set on analytics', function () {
@@ -794,5 +809,20 @@ describe('Client Controller', function () {
       ]);
     });
   });
+
+  it('gets organization name', function() {
+    scope.organizations = [
+      {name: 'orgname', sys: {id: '123'}}
+    ];
+    scope.$digest();
+    expect(scope.getOrgName('123')).toEqual('orgname');
+  });
+
+  it('gets no organization name', function() {
+    scope.organizations = [];
+    scope.$digest();
+    expect(scope.getOrgName('123')).toEqual('');
+  });
+
 
 });

@@ -97,11 +97,34 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     }
   });
 
+  $scope.getOrgName = function (orgId) {
+    var org = _.where($scope.organizations, {sys: {id: orgId}});
+    if(org.length > 0){
+      return org[0].name;
+    }
+    return '';
+  };
+
+  function groupSpacesByOrg(spaces) {
+    var spacesByOrg = {};
+    _.forEach(spaces, function (space) {
+      var orgId = space.data.organization.sys.id;
+      spacesByOrg[orgId] = spacesByOrg[orgId] || [];
+      spacesByOrg[orgId].push(space);
+    });
+    return spacesByOrg;
+  }
+
   $scope.$watch('spaces', function(spaces, old, scope) {
     var routeSpaceId = routing.getSpaceId();
     var newSpace;
 
     if (spaces === old) return; // $watch init
+
+    if(spaces) {
+      scope.spacesByOrg = groupSpacesByOrg(spaces);
+    }
+
     if (routeSpaceId) {
       newSpace = _.find(spaces, function (space) {
         return space.getId() == routeSpaceId;
