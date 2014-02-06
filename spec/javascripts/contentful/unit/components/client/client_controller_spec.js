@@ -5,7 +5,7 @@ describe('Client Controller', function () {
   var stubs;
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', function ($provide, $controllerProvider) {
       stubs = $provide.makeStubs([
         'numVisible',
         'spaceId',
@@ -36,6 +36,9 @@ describe('Client Controller', function () {
         'trigger',
         'hasNewVersion'
       ]);
+
+      $controllerProvider.register('TrialWatchController', function () {});
+
       $provide.factory('SpaceContext', function () {
         return function(){
           return {
@@ -766,6 +769,30 @@ describe('Client Controller', function () {
       });
     });
 
+  });
+
+  describe('organizations on the scope', function() {
+    it('are not set', function() {
+      expect(scope.organizations).toBeNull();
+    });
+
+    it('are set', function() {
+      var org1 = {org1: true};
+      var org2 = {org2: true};
+      var org3 = {org3: true};
+      scope.user = {
+        organizationMemberships: [
+          {organization: org1},
+          {organization: org2},
+          {organization: org3},
+        ]
+      };
+      scope.$digest();
+
+      expect(scope.organizations).toEqual([
+        org1, org2, org3
+      ]);
+    });
   });
 
 });

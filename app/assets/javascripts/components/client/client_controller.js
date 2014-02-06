@@ -27,6 +27,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   };
 
   $scope.user = null;
+  $scope.organizations = null;
 
   function newVersionCheck() {
     revision.hasNewVersion().catch(function (err) {
@@ -128,6 +129,12 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
       } else { // location is already correct, just load the space
         setSpace(newSpace);
       }
+    }
+  });
+
+  $scope.$watch('user', function (user) {
+    if(user){
+      $scope.organizations = _.pluck(user.organizationMemberships, 'organization');
     }
   });
 
