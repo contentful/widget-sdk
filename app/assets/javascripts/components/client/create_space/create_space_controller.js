@@ -24,7 +24,12 @@ angular.module('contentful').controller('createSpaceDialogCtrl', [
       if ($scope.newSpaceData.defaultLocale)
         data.defaultLocale = $scope.newSpaceData.defaultLocale;
 
-      client.createSpace(data, $scope.selectedOrganization.sys.id, function (err, newSpace) {
+      var orgId = $scope.selectedOrganization.sys.id;
+      if(!$scope.canCreateSpaceInOrg(orgId)){
+        return notification.error('You can\'t create a Space in this Organization');
+      }
+
+      client.createSpace(data, orgId, function (err, newSpace) {
         $scope.$apply(function (scope) {
           if (err) {
             var errorMessage = 'Could not create Space';

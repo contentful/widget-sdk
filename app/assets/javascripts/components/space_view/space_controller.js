@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').controller('SpaceCtrl',
-  function SpaceCtrl($scope, $rootScope, analytics, routing, notification, authorization, reasonsDenied, enforcements, authentication) {
+  function SpaceCtrl($scope, $rootScope, analytics, routing, notification, authorization, enforcements, authentication) {
 
   $scope.$watch(function (scope) {
     if (scope.spaceContext && scope.spaceContext.space) {
@@ -38,15 +38,7 @@ angular.module('contentful').controller('SpaceCtrl',
     if (authorization.spaceContext){
       var response = entity && authorization.spaceContext.can.apply(authorization.spaceContext, arguments);
       if(!response){
-        var enforcement = enforcements.determineEnforcement(reasonsDenied.apply(null, arguments), arguments[1]);
-        if(enforcement) {
-          $rootScope.$broadcast('persistentNotification', {
-            message: enforcement.message,
-            tooltipMessage: enforcement.description,
-            actionMessage: enforcement.actionMessage,
-            action: enforcement.action
-          });
-        }
+        $scope.checkForEnforcements.apply($scope, arguments);
       }
       return response;
     }

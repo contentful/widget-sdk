@@ -2,7 +2,7 @@
 
 angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     $scope, $rootScope, client, SpaceContext, authentication, notification, analytics,
-    routing, authorization, tutorial, modalDialog, presence, $location,
+    routing, authorization, tutorial, modalDialog, presence, $location, enforcements, reasonsDenied,
     revision, ReloadNotification, $controller, $window) {
 
   $controller('TrialWatchController', {$scope: $scope});
@@ -241,9 +241,30 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   };
 
   $scope.canCreateSpace = function () {
-    // For now it is impossible to determine if this is allowed
-    // TODO: Implement proper check as soon as the information is available
-    return true;
+    var response;
+    if(authorization.authContext){
+      response = authorization.authContext.can('create', 'Space');
+      if(!response){
+        $scope.checkForEnforcements('create', 'Space');
+      }
+    }
+    return response;
+  };
+
+  $scope.canCreateSpaceInOrg = function (orgId) {
+    return authorization.authContext && authorization.authContext.organization(orgId).can('create', 'Space');
+  };
+
+  $scope.checkForEnforcements = function () {
+    var enforcement = enforcements.determineEnforcement(reasonsDenied.apply(null, arguments), arguments[1]);
+    if(enforcement) {
+      $rootScope.$broadcast('persistentNotification', {
+        message: enforcement.message,
+        tooltipMessage: enforcement.description,
+        actionMessage: enforcement.actionMessage,
+        action: enforcement.action
+      });
+    }
   };
 
   $scope.showCreateSpaceDialog = function () {

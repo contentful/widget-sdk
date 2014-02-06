@@ -52,7 +52,7 @@
                     tooltip="This space entered hibernation due to lack of use. It will be back online soon.")
                   {{space.data.name}}
                   %i.ss-record(ng-show="space.isHibernated()")
-            %li.emphasize(ng-show="canCreateSpace(user)" ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close="")
+            %li.emphasize(ng-show="canCreateSpace()" ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close="")
               + Create Space
 
       .cf-persistent-notification(ng-show="persistentNotification")
