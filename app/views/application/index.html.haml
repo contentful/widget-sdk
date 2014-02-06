@@ -22,7 +22,7 @@
     .notifications
       .notification(class="{{message.severity}}" ng-repeat="(index, message) in notification.unseen() track by index")
         {{message.body}}
-    %nav.account
+    %nav.account-menus
       .dropdown-btn.user(label="")
         %a.btn.dropdown-toggle(ng-click="clickedProfileButton()" tabindex="0")
           %i.ss-dropdown.button-icon-right
