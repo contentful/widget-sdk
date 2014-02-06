@@ -10,6 +10,12 @@ angular.module('contentful').controller('createSpaceDialogCtrl', [
 
     resetNewSpaceData();
 
+
+    $scope.selectOrganization = function (org) {
+      $scope.selectedOrganization = org;
+    };
+    $scope.selectOrganization($scope.organizations[0]);
+
     $scope.createSpace = function () {
       if ($scope.lockSubmit) return;
       $scope.lockSubmit = true;
@@ -18,7 +24,7 @@ angular.module('contentful').controller('createSpaceDialogCtrl', [
       if ($scope.newSpaceData.defaultLocale)
         data.defaultLocale = $scope.newSpaceData.defaultLocale;
 
-      client.createSpace(data, function (err, newSpace) {
+      client.createSpace(data, $scope.selectedOrganization.sys.id, function (err, newSpace) {
         $scope.$apply(function (scope) {
           if (err) {
             var errorMessage = 'Could not create Space';
