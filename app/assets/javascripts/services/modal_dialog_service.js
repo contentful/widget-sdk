@@ -47,6 +47,7 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', function 
     _handleKeys: function(ev) {
       var dialog = this;
       dialog.scope.$apply(function(){
+        if (ev.target.tagName.toLowerCase() == 'select') return;
         if (ev.keyCode === ESC_KEY) dialog.cancel();
         if (ev.keyCode === ENTER_KEY) dialog.confirm();
       });
