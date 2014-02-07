@@ -14,10 +14,10 @@
   %h2(data-anchor="paragraphs") Paragraphs
   %p Paragraphs in Markdown are just one or more lines of consecutive text followed by one or more blank lines.
   %code
-    After World War II, the city authorities used the area as a dumping ground for the detritus of bombed-out Berlin, creating an area 377 feet high that became known as the Teufelsberg, or Devil’s Mountain.
+    The raven paradox, also known as Hempel's paradox or Hempel's ravens, is a paradox arising from the question of what constitutes evidence for a statement. 
     %br
     %br
-    "The place is like an Indian burial ground," Shalom Abraham, a 30-year-old filmmaker, said. "Esoterics who have visited told us that two energy currents cross here, and when you think about the history, you can sense it."
+    Observing objects that are neither black nor ravens may formally increase the likelihood that all ravens are black – even though, intuitively, these observations are unrelated.
     
   %h2 Line breaks
   %p Every time you hit &lt;Enter&gt;, a new line is inserted providing some space between paragraphs. Here are some things to try out:
