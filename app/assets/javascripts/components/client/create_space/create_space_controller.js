@@ -1,6 +1,6 @@
-angular.module('contentful').controller('createSpaceDialogCtrl', [
+angular.module('contentful').controller('CreateSpaceDialogCtrl', [
   '$scope', 'client', 'notification', 'cfSpinner', 'enforcements',
-  function createSpaceDialogCtrl($scope, client, notification, cfSpinner, enforcements) {
+  function CreateSpaceDialogCtrl($scope, client, notification, cfSpinner, enforcements) {
     'use strict';
 
     function resetNewSpaceData() {
@@ -12,7 +12,6 @@ angular.module('contentful').controller('createSpaceDialogCtrl', [
 
     $scope.dialog.setInvalid(true);
     $scope.$watch('newSpaceForm.$invalid', function (state) {
-      console.log('setting state to', state);
       $scope.dialog.setInvalid(state);
     });
 
@@ -31,6 +30,7 @@ angular.module('contentful').controller('createSpaceDialogCtrl', [
 
       var orgId = $scope.selectedOrganization.sys.id;
       if(!$scope.canCreateSpaceInOrg(orgId)){
+        stopSpinner();
         return notification.error('You can\'t create a Space in this Organization');
       }
 

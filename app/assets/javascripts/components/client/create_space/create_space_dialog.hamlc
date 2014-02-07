@@ -1,4 +1,4 @@
-.modal-background.create-space-dialog(ng-controller="createSpaceDialogCtrl")
+.modal-background.create-space-dialog(ng-controller="CreateSpaceDialogCtrl")
   .modal-dialog
     .title
       Create Space
