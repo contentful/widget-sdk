@@ -34,7 +34,11 @@ describe('Client Controller', function () {
         'tutorialSeen',
         'presenceActive',
         'trigger',
-        'hasNewVersion'
+        'hasNewVersion',
+        'enforcement',
+        'reasons',
+        'organization',
+        'can'
       ]);
 
       $controllerProvider.register('TrialWatchController', function () {});
@@ -71,9 +75,13 @@ describe('Client Controller', function () {
         setTokenLookup: stubs.authorizationTokenLookup,
         setSpace: stubs.setSpace,
         authContext: {
-          hasSpace: stubs.hasSpace
+          hasSpace: stubs.hasSpace,
+          organization: stubs.organization,
+          can: stubs.can
         }
       });
+
+      stubs.organization.returns({can: stubs.can});
 
       $provide.value('authentication', {
         logout: stubs.logout,
@@ -129,6 +137,11 @@ describe('Client Controller', function () {
         hasNewVersion: stubs.hasNewVersion
       });
 
+      $provide.value('enforcements', {
+        determineEnforcement: stubs.enforcement
+      });
+
+      $provide.value('reasonsDenied', stubs.reasons);
 
     });
     inject(function ($controller, $rootScope){
@@ -653,6 +666,109 @@ describe('Client Controller', function () {
       expect(scope.spaces[2].save).toBeDefined();
     });
   });
+
+
+  describe('check if user can create a space', function() {
+    it('with no auth context', inject(function(authorization) {
+      delete authorization.authContext;
+      expect(scope.canCreateSpace()).toBeFalsy();
+    }));
+
+    it('if authorization allows', function() {
+      stubs.can.returns(true);
+      expect(scope.canCreateSpace()).toBeTruthy();
+    });
+
+    describe('if authorization does not allow', function() {
+      var result;
+      beforeEach(function() {
+        stubs.can.returns(false);
+        scope.checkForEnforcements = sinon.stub();
+        result = scope.canCreateSpace();
+      });
+
+      it('result is false', function() {
+        expect(result).toBeFalsy();
+      });
+
+      it('checks for enforcements', function() {
+        expect(scope.checkForEnforcements).toBeCalled();
+      });
+    });
+  });
+
+
+  describe('check if user can create space in org', function() {
+
+    it('with no auth context', inject(function(authorization) {
+      delete authorization.authContext;
+      expect(scope.canCreateSpaceInOrg()).toBeFalsy();
+    }));
+
+    describe('with an auth context', function() {
+      beforeEach(function() {
+        scope.canCreateSpaceInOrg('orgid');
+      });
+
+      it('gets an organization', function() {
+        expect(stubs.organization).toBeCalledWith('orgid');
+      });
+
+      it('checks for permission on organization', function() {
+        expect(stubs.can).toBeCalled();
+      });
+    });
+  });
+
+
+  describe('check for enforcements', function() {
+    var args, broadcastStub;
+
+    beforeEach(inject(function($rootScope) {
+      args = [1, 2];
+      broadcastStub = sinon.stub($rootScope, '$broadcast');
+    }));
+
+    describe('if there are reasons', function () {
+      beforeEach(function () {
+        stubs.enforcement.returns({});
+        scope.checkForEnforcements(args, {});
+      });
+
+      it('enforcement is determined', function () {
+        expect(stubs.enforcement).toBeCalled();
+      });
+
+      it('reasons are determined', function () {
+        expect(stubs.reasons).toBeCalled();
+      });
+
+      it('event is broadcast', function () {
+        expect(broadcastStub).toBeCalled();
+      });
+    });
+
+    describe('if there are no reasons', function () {
+      beforeEach(function () {
+        stubs.enforcement.returns(false);
+        scope.checkForEnforcements(args, {});
+      });
+
+      it('enforcement is determined', function () {
+        expect(stubs.enforcement).toBeCalled();
+      });
+
+      it('reasons are determined', function () {
+        expect(stubs.reasons).toBeCalled();
+      });
+
+      it('event is not broadcast', function () {
+        expect(broadcastStub).not.toBeCalled();
+      });
+
+    });
+  });
+
 
   describe('shows create space dialog', function () {
     beforeEach(function () {
