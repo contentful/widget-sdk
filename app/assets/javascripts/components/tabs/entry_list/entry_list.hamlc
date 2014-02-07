@@ -33,7 +33,7 @@
 .tab-main
   .left-nav
     %header Filter By Status
-    %ul.filter-list
+    %ul.filter-list.status-filters
       %li(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
         %span All
       %li(ng-class="{active: tab.params.list == 'changed'}" ng-click="switchList('changed')")
@@ -46,7 +46,7 @@
         %span Archived
     %div(ng-show="spaceContext.publishedContentTypes.length > 0")
       %header Filter By Content Types
-      %ul.filter-list
+      %ul.filter-list.type-filters
         %li(ng-class="{active: tab.params.contentTypeId == contentType.getId()}"
             ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
             ng-click="switchList('contentType', contentType)")

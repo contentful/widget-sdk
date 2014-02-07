@@ -7,6 +7,10 @@ module GatekeeperHelper
     find(:xpath, "//div[@class=\"plan-big-row\" and contains(text(), \"#{plan_name}\")]/../../*/a").click
   end
 
+  def choose_organization(organization_name)
+    find(:xpath, "//h3/a[contains(@href, 'organization') and contains(text(), '#{organization_name}')]").click
+  end
+
   def reset_system
     return unless ENV['USE_QUIRELY']
     uri = URI.parse("https://reset.quirely.com/123abc")

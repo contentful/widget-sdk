@@ -68,7 +68,7 @@ feature 'Entry List', js: true do
   end
 
   def select_filter(f)
-    find('.filter-list li', text: f).click
+    find('.filter-list.status-filters li, .filter-list.type-filters li', text: f).click
   end
 
 end

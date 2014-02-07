@@ -1,6 +1,7 @@
 module FeatureHelper
   def self.included(feature)
     feature.let(:space_id){ page.evaluate_script "$('.client').scope().spaceContext.space.getId()" }
+    feature.let(:organization_id){ page.evaluate_script "$('.client').scope().spaces.filter(function(s){return s.data.name === '#{test_space}'})[0].getOrganizationId()" }
     feature.let(:tutorial_space_id) { page.evaluate_script "$('.client').scope().spaces.filter(function(s){return s.data.name === '#{test_space}'})[0].getId()" }
   end
 
@@ -78,10 +79,12 @@ module FeatureHelper
   end
 
   def remove_test_space(name=test_space)
-    within 'nav.account .project' do
+    within '.account-menus .project' do
       find('.dropdown-toggle').click
       begin
-        find('li', text: name, wait: 0.5).click
+        find('li li', text: name, wait: 0.5).click
+      rescue Capybara::Ambiguous
+        raise
       rescue Capybara::ElementNotFound
         find('.dropdown-toggle').click
         return
@@ -99,9 +102,11 @@ module FeatureHelper
   end
 
   def create_test_space(name=test_space)
-    find('.account .project .dropdown-toggle').click
+    find('.account-menus .project .dropdown-toggle').click
     begin
-      find('li', text: name, wait: 0.5).click
+      find('li li', text: name, wait: 0.5).click
+    rescue Capybara::Ambiguous
+      raise
     rescue Capybara::ElementNotFound
       find('li', text: 'Create Space').click
       fill_in 'name', with: name
@@ -115,12 +120,12 @@ module FeatureHelper
   end
 
   def select_space(name=test_space)
-    find('.account .project .dropdown-toggle').click
+    find('.account-menus .project .dropdown-toggle').click
     find('li', text: name, wait: 0.5).click
   end
 
   # def reset_test_space(name=test_space)
-  #   within 'nav.account .project' do
+  #   within 'nav.account-menus .project' do
   #     find('.dropdown-toggle').click
   #     has_space = !!first('li', text: name, wait: 0.5).click
   #     if has_space

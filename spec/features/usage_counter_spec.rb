@@ -2,6 +2,7 @@ require 'spec_helper'
 
 feature 'Usage Tracking', js: true do
   include ContentTypeHelper
+  include GatekeeperHelper
 
   before do
     ensure_login
@@ -84,8 +85,9 @@ feature 'Usage Tracking', js: true do
   def expect_usage(usages)
     sleep 0.5
     find('.user .dropdown-toggle').click
-    find('.user li', text: 'Edit Profile').click
+    find('.user li', text: 'Account Settings').click
     tab_iframe do
+      choose_organization('Test User')
       click_link 'Usage'
       usages.each_pair do |key, amount|
         value = find(:xpath, "//td[text() = '#{key}']/../td[2]").text.to_i

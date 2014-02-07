@@ -6,7 +6,7 @@ feature 'Working with spaces', js: true do
   end
 
   scenario 'creating and deleting a space' do
-    within 'nav.account .project' do
+    within 'nav.account-menus .project' do
       find('.dropdown-toggle').click
       all('li').last.click
     end
@@ -35,7 +35,7 @@ feature 'Working with spaces', js: true do
       fill_in 'space_name', with: "Renamed #{test_space}"
       click_button 'Update Space'
     end
-    expect(find('.account .project .dropdown-toggle')).to have_content "Renamed #{test_space}"
+    expect(find('.account-menus .project .dropdown-toggle')).to have_content "Renamed #{test_space}"
     remove_test_space "Renamed #{test_space}"
   end
 end

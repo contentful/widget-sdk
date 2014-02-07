@@ -14,7 +14,7 @@ feature 'Working with profile', js: true do
   scenario 'Renaming user' do
     find('.user .dropdown-toggle').click
     expect(find('.user .dropdown-menu')).to have_text('Test User')
-    find('li', text: 'Edit Profile').click
+    find('li', text: 'Account Settings').click
     tab_iframe do
       click_link 'Edit'
       fill_in 'user_first_name', with: 'Foo'
@@ -23,7 +23,7 @@ feature 'Working with profile', js: true do
     end
     find('.user .dropdown-toggle').click
     expect(find('.user .dropdown-menu')).to have_text('Foo Bar')
-    find('li', text: 'Edit Profile').click
+    find('li', text: 'Account Settings').click
     tab_iframe do
       click_link 'Edit'
       fill_in 'user_first_name', with: 'Test'

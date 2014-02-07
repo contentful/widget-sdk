@@ -1,6 +1,8 @@
 require 'spec_helper'
 
 feature 'Routing', js: true do
+  include GatekeeperHelper
+
   before do
     ensure_login
     remove_test_space
@@ -12,12 +14,12 @@ feature 'Routing', js: true do
   end
 
   scenario 'Opening pages from an external link' do
-    visit "#{app_host}/profile"
+    visit "#{app_host}/account/profile/user"
     tab_iframe do
       expect(page).to have_text 'USER DETAILS'
     end
 
-    visit "#{app_host}/profile/billing/billing_address/edit"
+    visit "#{app_host}/account/organizations/#{organization_id}/billing/billing_address/edit"
     tab_iframe do
       expect(page).to have_text 'Postal code'
     end
@@ -36,15 +38,15 @@ feature 'Routing', js: true do
     end
     eventually {expect(current_path).to eql("/spaces/#{space_id}/settings/users/new")}
 
-    find('.account .user .dropdown-toggle').click
-    within('.account .user ') do
+    find('.account-menus .user .dropdown-toggle').click
+    within('.account-menus .user ') do
       first('li').click
     end
-    eventually {expect(current_path).to eql("/profile/user")}
+    eventually {expect(current_path).to eql("/account/profile/user")}
 
     tab_iframe do
-      click_link 'Subscription'
+      choose_organization 'Test User'
     end
-    eventually {expect(current_path).to eql("/profile/subscription")}
+    eventually {expect(current_path).to eql("/account/organizations/#{organization_id}/edit")}
   end
 end

@@ -22,7 +22,7 @@ feature 'Registration', js: true do
   end
 
   after do
-    visit "#{be_host}/profile/user_cancellation/new"
+    visit "#{be_host}/account/profile/user_cancellation/new"
     click_button 'Cancel Account'
     expect(page).to have_text("We're sorry to see you go.")
     clear_access_token
@@ -32,6 +32,7 @@ feature 'Registration', js: true do
     visit "#{be_host}/register"
     fill_in 'user_first_name', with: 'Test'
     fill_in 'user_last_name', with: 'User'
+    fill_in 'user_organization_name', with: 'Test Organization'
     fill_in 'user_email', with: 'testuser@contentful.com'
     fill_in 'user_password', with: 'password'
     fill_in 'user_coupon_code', with: 'bootstrap' if first('#user_coupon_code')
@@ -46,6 +47,7 @@ feature "Account cancellation", js:true do
     visit "#{be_host}/register"
     fill_in 'user_first_name', with: 'Test'
     fill_in 'user_last_name', with: 'User'
+    fill_in 'user_organization_name', with: 'Test Organization'
     fill_in 'user_email', with: 'testuser@contentful.com'
     fill_in 'user_password', with: 'password'
     fill_in 'user_coupon_code', with: 'bootstrap' if first('#user_coupon_code')
@@ -58,7 +60,7 @@ feature "Account cancellation", js:true do
   end
 
   scenario 'After deleting my account I want to see the goodbye page' do
-    visit "#{app_host}/profile/user_cancellation/new"
+    visit "#{app_host}/account/profile/user_cancellation/new"
     tab_iframe do
       click_button 'Cancel Account'
     end
