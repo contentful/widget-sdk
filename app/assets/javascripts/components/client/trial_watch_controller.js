@@ -11,10 +11,10 @@ angular.module('contentful').controller('TrialWatchController', function TrialWa
     var hours = null;
     var timePeriod, message, tooltipMessage, action, actionMessage;
     var isSpaceOwner = space.isOwner(user);
-    var subscription = space.data.subscription;
+    var organization = space.data.organization;
 
-    if(subscription.state == 'trial'){
-      hours = moment(subscription.trialPeriodEndsAt).diff(moment(), 'hours');
+    if(organization.subscriptionState == 'trial'){
+      hours = moment(organization.trialPeriodEndsAt).diff(moment(), 'hours');
       if(hours/24 <= 1){
         timePeriod = {length: hours, unit: 'hours'};
       } else {
@@ -24,9 +24,9 @@ angular.module('contentful').controller('TrialWatchController', function TrialWa
       tooltipMessage = timeTpl('This Space is in trial mode and you can test all features for '+
                        '%length more %unit. Enter your billing information to activate your subscription.', timePeriod);
 
-    } else if(subscription.state == 'active' &&
-              !subscription.subscriptionPlan.paid &&
-              subscription.subscriptionPlan.kind == 'default'){
+    } else if(organization.subscriptionState == 'active' &&
+              !organization.subscriptionPlan.paid &&
+              organization.subscriptionPlan.kind == 'default'){
       message = 'Limited free version';
       tooltipMessage = 'This Space is on our limited free plan. Upgrade your subscription to get access to all features.';
     }
@@ -50,7 +50,10 @@ angular.module('contentful').controller('TrialWatchController', function TrialWa
   }
 
   function upgradeAction(){
-    $scope.goToProfile('subscription');
+    $scope.goToAccount(
+      'organizations/'+
+      $scope.spaceContext.space.getOrganizationId()+
+      '/subscription');
   }
 
   function timeTpl(str, timePeriod) {

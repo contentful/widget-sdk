@@ -252,8 +252,8 @@ describe('Authentication service', function () {
     });
   });
 
-  it('profile url', function () {
-    expect(authentication.profileUrl()).toEqual('//basehost/profile');
+  it('account url', function () {
+    expect(authentication.accountUrl()).toEqual('//basehost/account');
   });
 
 

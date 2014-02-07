@@ -64,11 +64,9 @@ angular.module('contentful').provider('analytics', function (environment) {
     },
 
     login: function(user){
-      this.setUserData(user);
       analytics.identify(user.sys.id, {
         firstName: user.firstName,
-        lastName:  user.lastName,
-        plan: user.subscription.subscriptionPlan.name
+        lastName:  user.lastName
       }, {
         intercom: {
           user_hash: user.intercomUserHash
@@ -80,25 +78,15 @@ angular.module('contentful').provider('analytics', function (environment) {
       }
     },
 
-    setUserData: function (user) {
-      this._userData = {
-        userSubscriptionKey:                    user.subscription.sys.id,
-        userSubscriptionState:                  user.subscription.state,
-        userSubscriptionInvoiceState:           user.subscription.invoiceState,
-        userSubscriptionSubscriptionPlanKey:    user.subscription.subscriptionPlan.sys.id,
-        userSubscriptionSubscriptionPlanName:   user.subscription.subscriptionPlan.name
-      };
-    },
-
     setSpaceData: function (space) {
       if (space) {
         this._spaceData = {
           spaceIsTutorial:                       space.data.tutorial,
-          spaceSubscriptionKey:                  space.data.subscription.sys.id,
-          spaceSubscriptionState:                space.data.subscription.state,
-          spaceSubscriptionInvoiceState:         space.data.subscription.invoiceState,
-          spaceSubscriptionSubscriptionPlanKey:  space.data.subscription.subscriptionPlan.sys.id,
-          spaceSubscriptionSubscriptionPlanName: space.data.subscription.subscriptionPlan.name
+          spaceSubscriptionKey:                  space.data.organization.sys.id,
+          spaceSubscriptionState:                space.data.organization.subscriptionState,
+          spaceSubscriptionInvoiceState:         space.data.organization.invoiceState,
+          spaceSubscriptionSubscriptionPlanKey:  space.data.organization.subscriptionPlan.sys.id,
+          spaceSubscriptionSubscriptionPlanName: space.data.organization.subscriptionPlan.name
         };
       } else {
         this._spaceData = null;
@@ -208,7 +196,7 @@ angular.module('contentful').provider('analytics', function (environment) {
 
     track: function (event, data) {
       if (!this._disabled) {
-        analytics.track(event, _.merge({},data, this._userData, this._spaceData));
+        analytics.track(event, _.merge({},data, this._spaceData));
       }
       //console.log('analytics.track', event, data);
     }

@@ -1,4 +1,4 @@
-.modal-background(ng-controller="createSpaceDialogCtrl")
+.modal-background.create-space-dialog(ng-controller="createSpaceDialogCtrl")
   .modal-dialog
     .title
       Create Space
@@ -14,6 +14,16 @@
           %label Name
           .form-controls
             %input(type="text" name="name" ng-model="newSpaceData.name" required="")
+        .form-field
+          %label Organization
+          .form-controls
+            .dropdown-btn
+              %button.dropdown-toggle.flat-button(type="button")
+                {{selectedOrganization.name}}
+                %i.button-icon-right.ss-dropdown
+              .dropdown-menu.fixed-position
+                %ul(ng-repeat="org in organizations")
+                  %li(ng-click="selectOrganization(org)" dropdown-close="") {{org.name}}
         .form-field
           %label Locale
           .form-controls

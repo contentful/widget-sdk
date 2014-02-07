@@ -12,12 +12,16 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
     return user.sys.id === spaceContext.space.sys.createdBy.sys.id;
   }
 
+  function getOrgId() {
+    return spaceContext.space.getOrganizationId();
+  }
+
   function upgradeActionMessage() {
     return isOwner() ?  'Upgrade': undefined;
   }
 
   function upgradeAction() {
-    $location.path('/profile/subscription');
+    $location.path('/account/organizations/'+getOrgId()+'/subscription');
   }
 
 
@@ -43,7 +47,7 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
         return isOwner() ?  'Update': undefined;
       },
       action: function () {
-        $location.path('/profile/subscription/billing');
+        $location.path('/account/organizations/'+getOrgId()+'/subscription/billing');
       }
     },
     {
@@ -100,13 +104,13 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
   function computeUsage(filter) {
     setTokenObjects();
     if(filter) filter = uncapitalize(filter);
-    var subscription = spaceContext.space.subscription;
+    var organization = spaceContext.space.organization;
     var usage = _.merge(
-      subscription.usage.permanent,
-      subscription.usage.period);
+      organization.usage.permanent,
+      organization.usage.period);
     var limits = _.merge(
-      subscription.subscriptionPlan.limits.permanent,
-      subscription.subscriptionPlan.limits.period);
+      organization.subscriptionPlan.limits.permanent,
+      organization.subscriptionPlan.limits.period);
 
     var metricKey = _.findKey(usage, function (value, name) {
       return (!filter || filter === name) && value >= limits[name];

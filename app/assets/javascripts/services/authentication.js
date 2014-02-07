@@ -84,8 +84,8 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       return !!this.token;
     },
 
-    profileUrl: function() {
-      return authApp + 'profile';
+    accountUrl: function() {
+      return authApp + 'account';
     },
 
     supportUrl: function() {

@@ -111,17 +111,39 @@ describe('Modal dialog service', function () {
 
       it('cancel is called with ESC key', function () {
         event.keyCode = 27;
+        event.target = {tagName: ''};
         dialog._handleKeys(event);
         dialog.scope.$digest();
         expect(cancelStub).toBeCalled();
       });
 
-      it('cancel is called with Enter key', function () {
+      it('confirm is called with Enter key', function () {
         event.keyCode = 13;
+        event.target = {tagName: ''};
         dialog._handleKeys(event);
         dialog.scope.$digest();
         expect(confirmStub).toBeCalled();
       });
+
+      it('confirm is not called with Enter key if dialog invalid', function () {
+        event.keyCode = 13;
+        event.target = {tagName: ''};
+        dialog.invalid = true;
+        dialog._handleKeys(event);
+        dialog.scope.$digest();
+        expect(confirmStub).not.toBeCalled();
+      });
+
+    });
+
+    it('sets the dialog to invalid', function() {
+      dialog.setInvalid(true);
+      expect(dialog.invalid).toBeTruthy();
+    });
+
+    it('sets the dialog to valid', function() {
+      dialog.setInvalid(false);
+      expect(dialog.invalid).toBeFalsy();
     });
 
     it('calls the success stub', function () {

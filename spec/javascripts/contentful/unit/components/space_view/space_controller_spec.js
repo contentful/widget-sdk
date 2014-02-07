@@ -134,7 +134,8 @@ describe('Space Controller', function () {
     });
   });
 
-  describe('can method for permissions', function () {
+  // TODO move these tests to client controller and split them up
+  xdescribe('can method for permissions', function () {
     var broadcastStub;
     var canStub;
     var result, args;

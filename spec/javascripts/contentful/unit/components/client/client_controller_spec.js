@@ -5,7 +5,7 @@ describe('Client Controller', function () {
   var stubs;
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', function ($provide, $controllerProvider) {
       stubs = $provide.makeStubs([
         'numVisible',
         'spaceId',
@@ -36,12 +36,21 @@ describe('Client Controller', function () {
         'trigger',
         'hasNewVersion'
       ]);
+
+      $controllerProvider.register('TrialWatchController', function () {});
+
       $provide.factory('SpaceContext', function () {
         return function(){
           return {
             space: {
               getId: stubs.spaceId,
-              data: {}
+              data: {
+                organization: {
+                  sys: {
+                    id: 456
+                  }
+                }
+              }
             },
             tabList: {
               numVisible: stubs.numVisible,
@@ -312,10 +321,19 @@ describe('Client Controller', function () {
       idStub1.returns(123);
       idStub2.returns(456);
       scope.spaces = [
-        {getId: idStub1},
-        {getId: idStub2},
+        {getId: idStub1, data: {organization: {sys: {id: 132}}}},
+        {getId: idStub2, data: {organization: {sys: {id: 132}}}},
         scope.spaceContext.space
       ];
+    });
+
+    it('spaces are grouped by organization', function() {
+      stubs.routingSpaceId.returns(123);
+      scope.$digest();
+      expect(scope.spacesByOrg).toEqual({
+        132: [scope.spaces[0], scope.spaces[1]],
+        456: [scope.spaces[2]]
+      });
     });
 
     it('space data is set on analytics', function () {
@@ -523,13 +541,13 @@ describe('Client Controller', function () {
   });
 
   it('redirects to profile', function () {
-    scope.goToProfile();
-    expect(stubs.path).toBeCalledWith('/profile/user');
+    scope.goToAccount();
+    expect(stubs.path).toBeCalledWith('/account/profile/user');
   });
 
   it('redirects to profile with a suffix', function () {
-    scope.goToProfile('derp');
-    expect(stubs.path).toBeCalledWith('/profile/derp');
+    scope.goToAccount('section');
+    expect(stubs.path).toBeCalledWith('/account/section');
   });
 
   describe('performs token lookup', function () {
@@ -767,5 +785,44 @@ describe('Client Controller', function () {
     });
 
   });
+
+  describe('organizations on the scope', function() {
+    it('are not set', function() {
+      expect(scope.organizations).toBeNull();
+    });
+
+    it('are set', function() {
+      var org1 = {org1: true};
+      var org2 = {org2: true};
+      var org3 = {org3: true};
+      scope.user = {
+        organizationMemberships: [
+          {organization: org1},
+          {organization: org2},
+          {organization: org3},
+        ]
+      };
+      scope.$digest();
+
+      expect(scope.organizations).toEqual([
+        org1, org2, org3
+      ]);
+    });
+  });
+
+  it('gets organization name', function() {
+    scope.organizations = [
+      {name: 'orgname', sys: {id: '123'}}
+    ];
+    scope.$digest();
+    expect(scope.getOrgName('123')).toEqual('orgname');
+  });
+
+  it('gets no organization name', function() {
+    scope.organizations = [];
+    scope.$digest();
+    expect(scope.getOrgName('123')).toEqual('');
+  });
+
 
 });
