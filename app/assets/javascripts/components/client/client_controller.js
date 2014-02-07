@@ -106,13 +106,9 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   };
 
   function groupSpacesByOrg(spaces) {
-    var spacesByOrg = {};
-    _.forEach(spaces, function (space) {
-      var orgId = space.data.organization.sys.id;
-      spacesByOrg[orgId] = spacesByOrg[orgId] || [];
-      spacesByOrg[orgId].push(space);
+    return _.groupBy(spaces, function(space){
+      return space.data.organization.sys.id;
     });
-    return spacesByOrg;
   }
 
   $scope.$watch('spaces', function(spaces, old, scope) {
