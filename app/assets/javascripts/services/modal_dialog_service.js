@@ -17,9 +17,11 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', function 
     );
     this._deferred = $q.defer();
     this.promise = this._deferred.promise;
+    this.invalid = undefined;
   }
 
   Dialog.prototype = {
+
     attach: function () {
       var scope = this.scope;
       this.domElement = $(JST[this.params.template]()).appendTo('body');
@@ -32,6 +34,10 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', function 
       $compile(this.domElement)(scope);
 
       this.domElement.on('click', _.bind(this._closeOnBackground, this));
+    },
+
+    setInvalid: function (state) {
+      this.invalid = !!state;
     },
 
     _closeOnBackground: function (ev) {
@@ -49,7 +55,7 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', function 
       dialog.scope.$apply(function(){
         if (ev.target.tagName.toLowerCase() == 'select') return;
         if (ev.keyCode === ESC_KEY) dialog.cancel();
-        if (ev.keyCode === ENTER_KEY) dialog.confirm();
+        if (ev.keyCode === ENTER_KEY && dialog.invalid !== true) dialog.confirm();
       });
     },
 

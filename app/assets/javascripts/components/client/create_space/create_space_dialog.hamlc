@@ -18,7 +18,7 @@
           %label Organization
           .form-controls
             .dropdown-btn
-              %button.dropdown-toggle.flat-button
+              %button.dropdown-toggle.flat-button(type="button")
                 {{selectedOrganization.name}}
                 %i.button-icon-right.ss-dropdown
               .dropdown-menu.fixed-position

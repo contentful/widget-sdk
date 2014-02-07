@@ -10,6 +10,11 @@ angular.module('contentful').controller('createSpaceDialogCtrl', [
 
     resetNewSpaceData();
 
+    $scope.dialog.setInvalid(true);
+    $scope.$watch('newSpaceForm.$invalid', function (state) {
+      console.log('setting state to', state);
+      $scope.dialog.setInvalid(state);
+    });
 
     $scope.selectOrganization = function (org) {
       $scope.selectedOrganization = org;
