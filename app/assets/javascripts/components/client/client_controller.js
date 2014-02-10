@@ -238,13 +238,21 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
 
   $scope.canCreateSpace = function () {
     var response;
-    if(authorization.authContext){
+    if(authorization.authContext && $scope.organizations && $scope.organizations.length > 0){
+      if(!$scope.canCreateSpaceInAnyOrg()) return false;
+
       response = authorization.authContext.can('create', 'Space');
       if(!response){
         $scope.checkForEnforcements('create', 'Space');
       }
     }
-    return response;
+    return !!response;
+  };
+
+  $scope.canCreateSpaceInAnyOrg = function () {
+    return _.some($scope.organizations, function (org) {
+      return $scope.canCreateSpaceInOrg(org.sys.id);
+    });
   };
 
   $scope.canCreateSpaceInOrg = function (orgId) {

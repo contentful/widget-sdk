@@ -667,6 +667,32 @@ describe('Client Controller', function () {
     });
   });
 
+  describe('check if user can create a space in any org', function() {
+    beforeEach(function() {
+      scope.organizations = [
+        {sys: {id: 'abc'}},
+        {sys: {id: 'def'}},
+      ];
+      scope.canCreateSpaceInOrg = sinon.stub();
+    });
+
+    it('if user cant create spaces in any organizations', function() {
+      scope.canCreateSpaceInOrg.returns(false);
+      expect(scope.canCreateSpaceInAnyOrg()).toBeFalsy();
+    });
+
+    it('if user can create spaces in any organizations', function() {
+      scope.canCreateSpaceInOrg.returns(true);
+      expect(scope.canCreateSpaceInAnyOrg()).toBeTruthy();
+    });
+
+    it('if user can create spaces in some organizations', function() {
+      scope.canCreateSpaceInOrg.withArgs('abc').returns(false);
+      scope.canCreateSpaceInOrg.withArgs('def').returns(true);
+      expect(scope.canCreateSpaceInAnyOrg()).toBeTruthy();
+    });
+
+  });
 
   describe('check if user can create a space', function() {
     it('with no auth context', inject(function(authorization) {
@@ -674,27 +700,55 @@ describe('Client Controller', function () {
       expect(scope.canCreateSpace()).toBeFalsy();
     }));
 
-    it('if authorization allows', function() {
-      stubs.can.returns(true);
-      expect(scope.canCreateSpace()).toBeTruthy();
+    it('with no organizations', function() {
+      expect(scope.canCreateSpace()).toBeFalsy();
     });
 
-    describe('if authorization does not allow', function() {
-      var result;
+    it('with zero organizations', function() {
+      scope.organizations = [];
+      expect(scope.canCreateSpace()).toBeFalsy();
+    });
+
+    describe('with organizations', function() {
       beforeEach(function() {
-        stubs.can.returns(false);
-        scope.checkForEnforcements = sinon.stub();
-        result = scope.canCreateSpace();
+        scope.organizations = [
+          {sys: {id: 'abc'}},
+          {sys: {id: 'def'}},
+        ];
+        scope.canCreateSpaceInAnyOrg = sinon.stub();
       });
 
-      it('result is false', function() {
-        expect(result).toBeFalsy();
+      it('if user cant create spaces in any organizations', function() {
+        scope.canCreateSpaceInAnyOrg.returns(false);
+        expect(scope.canCreateSpace()).toBeFalsy();
       });
 
-      it('checks for enforcements', function() {
-        expect(scope.checkForEnforcements).toBeCalled();
+      it('if authorization allows', function() {
+        scope.canCreateSpaceInAnyOrg.returns(true);
+        stubs.can.returns(true);
+        expect(scope.canCreateSpace()).toBeTruthy();
       });
+
+      describe('if authorization does not allow', function() {
+        var result;
+        beforeEach(function() {
+          scope.canCreateSpaceInAnyOrg.returns(true);
+          stubs.can.returns(false);
+          scope.checkForEnforcements = sinon.stub();
+          result = scope.canCreateSpace();
+        });
+
+        it('result is false', function() {
+          expect(result).toBeFalsy();
+        });
+
+        it('checks for enforcements', function() {
+          expect(scope.checkForEnforcements).toBeCalled();
+        });
+      });
+
     });
+
   });
 
 

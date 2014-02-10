@@ -36,7 +36,7 @@
             %li(ng-click="openSupport()" dropdown-close="") Support
             %li(ng-click="logout()" dropdown-close="") Log out
 
-      .dropdown-btn.project
+      .dropdown-btn.project(ng-show="organizations && organizations.length > 0" ng-hide="spaces.length == 0 && !canCreateSpaceInAnyOrg()")
         %a.btn.dropdown-toggle(ng-click="clickedSpaceSwitcher()" tabindex="0")
           %i.ss-dropdown.button-icon-right
           %span(ng-bind="spaceContext.space.data.name || 'Spaces'")
@@ -52,7 +52,8 @@
                     tooltip="This space entered hibernation due to lack of use. It will be back online soon.")
                   {{space.data.name}}
                   %i.ss-record(ng-show="space.isHibernated()")
-            %li.emphasize(ng-show="canCreateSpace()" ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close="")
+            %li.emphasize(ng-show="canCreateSpace()"
+                          ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close="")
               + Create Space
 
       .cf-persistent-notification(ng-show="persistentNotification")
@@ -63,8 +64,9 @@
     .advice(ng-show="spaces.length == 0")
       %i.ss-folder.giant-icon
       %header.advice-title Nothing to see yet.
-      %p.advice-description Why don't you create a space?
-      %button.default-button.primary-button(type="button" ng-click="showCreateSpaceDialog()") Create Space
+      %p.advice-description(ng-show="!canCreateSpace()") You need to be part of an Organization to create a space.
+      %p.advice-description(ng-show="canCreateSpace()") Why don't you create a space?
+      %button.default-button.primary-button(type="button" ng-show="canCreateSpace()" ng-click="showCreateSpaceDialog()") Create Space
       %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513118-What-is-a-space-")
         Visit the Knowledge Base Pages
         %i.ss-help
