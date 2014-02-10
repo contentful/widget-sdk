@@ -39,7 +39,7 @@ angular.module('contentful').directive('cfAccountView', function($window, $rootS
       }
 
       function internalNavigationTo(path) {
-        console.log('path changed', path, elem.find('iframe').prop('src'));
+        //console.log('path changed', path, elem.find('iframe').prop('src'));
         var oldPathSuffix = extractPathSuffix(scope.url);
         var pathSuffix    = extractPathSuffix(path);
         scope.url = buildUrl(pathSuffix);
