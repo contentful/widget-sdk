@@ -18,7 +18,10 @@ angular.module('contentful').controller('CreateSpaceDialogCtrl', [
     $scope.selectOrganization = function (org) {
       $scope.selectedOrganization = org;
     };
-    $scope.selectOrganization($scope.organizations[0]);
+
+    if($scope.organizations.length > 0){
+      $scope.selectOrganization($scope.organizations[0]);
+    }
 
     $scope.createSpace = function () {
       if ($scope.lockSubmit) return;

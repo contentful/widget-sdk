@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Create Space Dialog controller', function () {
-  var scope, createSpaceCtrl, stubs;
+  var scope, createSpaceCtrl, stubs, createController;
   var org;
 
   beforeEach(function () {
@@ -44,7 +44,9 @@ describe('Create Space Dialog controller', function () {
       ];
       scope.newSpaceForm = {};
 
-      createSpaceCtrl = $controller('CreateSpaceDialogCtrl', {$scope: scope});
+      createController = function () {
+        createSpaceCtrl = $controller('CreateSpaceDialogCtrl', {$scope: scope});
+      };
     });
   });
 
@@ -52,7 +54,17 @@ describe('Create Space Dialog controller', function () {
     $log.assertEmpty();
   }));
 
+  it('does not preselect if no organizations exist', function() {
+    scope.organizations = [];
+    createController();
+      expect(scope.selectedOrganization).toBeUndefined();
+  });
+
   describe('on the default state', function() {
+    beforeEach(function() {
+      createController();
+    });
+
     it('dialog state is set to invalid', function() {
       expect(stubs.setInvalid).toBeCalledWith(true);
     });
@@ -71,18 +83,24 @@ describe('Create Space Dialog controller', function () {
   });
 
   it('updates state', function() {
+    createController();
     scope.newSpaceForm.$invalid = false;
     scope.$digest();
     expect(stubs.setInvalid).toBeCalledWith(false);
   });
 
   it('selects an organization', function() {
+    createController();
     var neworg = {neworg: true};
     scope.selectOrganization(neworg);
     expect(scope.selectedOrganization).toBe(neworg);
   });
 
   describe('creates a space', function() {
+    beforeEach(function() {
+      createController();
+    });
+
     it('does nothing if submit is locked', function() {
       scope.lockSubmit = true;
       scope.createSpace();
