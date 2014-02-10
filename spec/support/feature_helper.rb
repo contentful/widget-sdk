@@ -1,7 +1,7 @@
 module FeatureHelper
   def self.included(feature)
     feature.let(:space_id){ page.evaluate_script "$('.client').scope().spaceContext.space.getId()" }
-    feature.let(:organization_id){ page.evaluate_script "$('.client').scope().spaces.filter(function(s){return s.data.name === '#{test_space}'})[0].getOrganizationId()" }
+    feature.let(:organization_id){ page.evaluate_script "$('.client').scope().organizations[0].sys.id" }
     feature.let(:tutorial_space_id) { page.evaluate_script "$('.client').scope().spaces.filter(function(s){return s.data.name === '#{test_space}'})[0].getId()" }
   end
 
@@ -121,7 +121,7 @@ module FeatureHelper
 
   def select_space(name=test_space)
     find('.account-menus .project .dropdown-toggle').click
-    find('li', text: name, wait: 0.5).click
+    find('li li', text: name, wait: 0.5).click
   end
 
   # def reset_test_space(name=test_space)

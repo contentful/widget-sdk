@@ -17,13 +17,15 @@ feature 'Logging in', js: true do
 end
 
 feature 'Registration', js: true do
+  include GatekeeperHelper
   before do
     ensure_logout
+    reset_system
   end
 
   after do
     visit "#{be_host}/account/profile/user_cancellation/new"
-    click_button 'Cancel Account'
+    click_button 'Cancel User Account'
     expect(page).to have_text("We're sorry to see you go.")
     clear_access_token
   end
@@ -42,8 +44,10 @@ feature 'Registration', js: true do
 end
 
 feature "Account cancellation", js:true do
+  include GatekeeperHelper
   before do
     ensure_logout
+    reset_system
     visit "#{be_host}/register"
     fill_in 'user_first_name', with: 'Test'
     fill_in 'user_last_name', with: 'User'
@@ -62,7 +66,7 @@ feature "Account cancellation", js:true do
   scenario 'After deleting my account I want to see the goodbye page' do
     visit "#{app_host}/account/profile/user_cancellation/new"
     tab_iframe do
-      click_button 'Cancel Account'
+      click_button 'Cancel User Account'
     end
     expect(current_url).to eql("#{marketing_host}/goodbye")
     #expect(page).to have_text('Please let us know about your experience')
