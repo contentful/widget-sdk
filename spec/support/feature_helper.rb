@@ -124,6 +124,23 @@ module FeatureHelper
     find('li li', text: name, wait: 0.5).click
   end
 
+  def create_space(name, org_name=nil)
+    within 'nav.account-menus .project' do
+      find('.dropdown-toggle').click
+      all('li').last.click
+    end
+    within 'form[name=newSpaceForm]' do
+      fill_in 'name', with: test_space
+      if org_name
+        find('.dropdown-toggle').click
+        find('.dropdown-menu li', text: org_name).click
+      end
+      fill_in 'locale', with: 'en-US'
+      click_button 'Create Space'
+    end
+    expect_success 'Created space'
+  end
+
   # def reset_test_space(name=test_space)
   #   within 'nav.account-menus .project' do
   #     find('.dropdown-toggle').click
