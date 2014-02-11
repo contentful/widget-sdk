@@ -45,7 +45,7 @@ feature 'Routing', js: true do
     eventually {expect(current_path).to eql("/account/profile/user")}
 
     tab_iframe do
-      choose_organization 'Test User'
+      choose_organization 'Test Organization'
     end
     eventually {expect(current_path).to eql("/account/organizations/#{organization_id}/edit")}
   end

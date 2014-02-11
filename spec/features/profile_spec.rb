@@ -1,7 +1,9 @@
 require 'spec_helper'
 
 feature 'Working with profile', js: true do
+  include GatekeeperHelper
   before do
+    reset_system
     ensure_login
     remove_test_space
     create_test_space
@@ -21,6 +23,7 @@ feature 'Working with profile', js: true do
       fill_in 'user_last_name', with: 'Bar'
       click_button 'Update User'
     end
+    expect_success 'updated successfully'
     find('.user .dropdown-toggle').click
     expect(find('.user .dropdown-menu')).to have_text('Foo Bar')
     find('li', text: 'Account Settings').click

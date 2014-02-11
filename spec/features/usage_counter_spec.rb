@@ -87,7 +87,7 @@ feature 'Usage Tracking', js: true do
     find('.user .dropdown-toggle').click
     find('.user li', text: 'Account Settings').click
     tab_iframe do
-      choose_organization('Test User')
+      choose_organization('Test Organization')
       click_link 'Usage'
       usages.each_pair do |key, amount|
         value = find(:xpath, "//td[text() = '#{key}']/../td[2]").text.to_i
