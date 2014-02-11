@@ -82,8 +82,12 @@ angular.module('contentful').provider('ShareJS', function ShareJSProvider(enviro
     var ShareJS = {
       client : null,
 
-      open: function () {
+      connect: function () {
         ShareJS.client = ShareJS.client || new ShareJSClient(url, token || client.persistenceContext.adapter.token);
+      },
+
+      open: function () {
+        ShareJS.connect();
         return ShareJS.client.open.apply(ShareJS.client, arguments);
       },
       isConnected: function () {
