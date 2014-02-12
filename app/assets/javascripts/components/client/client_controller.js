@@ -171,6 +171,8 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
       _.extend($scope.spaceContext.space.data, data.resource);
       //TODO this is pobably much too simplified, better look up correct
       //space and check if the method of updating is correct
+    } else if (data.type === 'space' && data.action === 'new') {
+      $scope.showCreateSpaceDialog(data.organizationId);
     } else if (data.type === 'UserCancellation' && data.action === 'create') {
       authentication.goodbye();
     } else if (data.type === 'user' && data.action === 'update') {
@@ -192,8 +194,8 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
       var level = data.resource.type;
       if (!level.match(/info|error/)) level = 'info';
       notification[level](data.resource.message);
-    } else if (data.type === 'location') {
-      // ignore
+    } else if (data.type === 'location' && data.action === 'navigate') {
+      $location.path(data.path);
     } else {
       $scope.performTokenLookup();
     }
@@ -271,9 +273,19 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     }
   };
 
-  $scope.showCreateSpaceDialog = function () {
+  $scope.showCreateSpaceDialog = function (organizationId) {
+    var scope = $scope;
+    if (organizationId) {
+      scope = $scope.$new();
+      scope.organizations = scope.organizations.concat();
+      scope.organizations.sort(function (a, b) {
+        if (a.sys.id === organizationId) return -1;
+        if (b.sys.id === organizationId) return 1;
+        else return 0;
+      });
+    }
     modalDialog.open({
-      scope: $scope,
+      scope: scope,
       template: 'create_space_dialog'
     });
     analytics.track('Clicked Create-Space');

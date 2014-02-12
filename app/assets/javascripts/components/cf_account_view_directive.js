@@ -15,7 +15,7 @@ angular.module('contentful').directive('cfAccountView', function($window, $rootS
       scope.$on('iframeMessage', function (event, data, iframe) {
         if (iframe !== elem.find('iframe')[0]) return;
         scope.hasLoaded = true;
-        if (data.path) internalNavigationTo(data.path);
+        if (data.path && data.action === 'update') internalNavigationTo(data.path);
       });
 
       scope.hasLoaded = false;
