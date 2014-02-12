@@ -3,8 +3,10 @@
     %i.ss-dropdown.button-icon-right
     {{validationName(validation)}}
   .dropdown-menu.type-menu(select-validation="changeType(type)")
+
 .validation-type-select(ng-show="availableValidations | isEmpty")
   %button.flat-button(disabled) {{validationName(validation)}}
+
 .validation-controls(ng-switch="validationType(validation)")
   %div(ng-switch-when="size")
     %input(type="number" ng-model="validation.size.min" placeholder="Minimum size" ng-change="updateDoc()" ng-disabled="!otEditable")
@@ -28,15 +30,10 @@
 
 
   %div(ng-switch-when="in")
-    %input(type="text" ng-keypress="submitValue()")
+    %input(type="text" ng-keypress="submitValue($event)")
     %span (info icon will go here)
     .cf-form-inline-error(cf-error-path="validationListPath(validationIndex)")
-    %ul.block-list
-      %li
-        apple
-        .close-button(ng-click="removeFromValuesList()")
-      %li orange
-      %li banana
+    .cf-predefined-values-list
 
   .select-box.around-zone(ng-switch-when="linkContentType")
     %select(ng-model="validation.linkContentType"

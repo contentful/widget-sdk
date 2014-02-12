@@ -5,18 +5,40 @@ angular.module('contentful').directive('cfValidationOptions', function (keycodes
     restrict: 'C',
     template: JST['cf_validation_options'](),
 
-    link: function (scope, elem) {
+    link: function (scope) {
 
       scope.submitValue = function (ev) {
-        if(ev.keyCode === keycodes.ENTER){
-          scope.updateValues(elem.val());
+        ev.stopPropagation();
+        var target = $(ev.target);
+        if(ev.keyCode === keycodes.ENTER && target.val()){
+          ev.preventDefault();
+          scope.updateValues(target.val());
+          target.val('');
         }
+      };
+
+      scope.removeFromValuesList = function (ev, index) {
+        $(ev.target).parent().remove();
+        scope.removeValue(index);
       };
 
     },
 
     controller: function CfValidationOptionsCtrl($scope, mimetype) {
       $scope.mimetypeGroups = mimetype.groupDisplayNames;
+
+      $scope.updateValues = function (val) {
+        $scope.validation.in = $scope.validation.in || [];
+        if(!_.contains($scope.validation.in, val)){
+          $scope.validation.in.push(val);
+          $scope.updateDoc();
+        }
+      };
+
+      $scope.removeValue = function (index) {
+        $scope.validation.in.splice(index, 1);
+        $scope.updateDoc();
+      };
 
       $scope.updateDoc = function () {
         if (!angular.isDefined($scope.validationIndex)) return;
