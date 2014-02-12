@@ -5,11 +5,21 @@ angular.module('contentful').directive('cfDialog', function (modalDialog) {
     restrict: 'CA',
     link: function (scope, elem, attrs) {
       elem.on('click', function () {
-        scope.dialog = modalDialog.open({
-          title: attrs.dialogTitle || null,
-          template: attrs.dialogTemplate,
+        var options = {
           scope: scope
+        };
+
+        var dialogAttrs = _.pick(attrs, function (val, key) {
+          return (/^dialog/g.test(key));
         });
+
+        _.forEach(dialogAttrs, function (val, key) {
+          var strippedKey = key.replace('dialog', '');
+          strippedKey = strippedKey[0].toLowerCase() + strippedKey.substr(1);
+          options[strippedKey] = val;
+        });
+
+        scope.dialog = modalDialog.open(options);
       });
 
       scope.$on('$destroy', modalDialog.close);

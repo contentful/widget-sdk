@@ -60,6 +60,7 @@
   %a.toggle-validate.cf-dialog(
         dialog-title="Validations"
         dialog-template="validation_dialog"
+        dialog-deactivate-confirm-key="true"
         ng-class="{active: hasValidations}"
         ng-show="validationsAvailable"
         tooltip="Add Validations to the content in this Field")

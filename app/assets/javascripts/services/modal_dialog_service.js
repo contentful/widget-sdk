@@ -9,9 +9,14 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', 'keycodes
         template: 'modal_dialog',
         cancelLabel: 'Cancel',
         confirmLabel: 'OK',
-        noBackgroundClose: false
+        noBackgroundClose: false,
+        deactivateConfirmKey: false,
+        deactivateCancelKey: false
       },
-      _.pick(params, 'title', 'message', 'template', 'cancelLabel', 'confirmLabel', 'noBackgroundClose')
+      _.pick(params,
+             'title', 'message', 'template',
+             'cancelLabel', 'confirmLabel', 'deactivateConfirmKey', 'deactivateCancelKey',
+             'noBackgroundClose')
     );
     this._deferred = $q.defer();
     this.promise = this._deferred.promise;
@@ -52,8 +57,10 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', 'keycodes
       var dialog = this;
       dialog.scope.$apply(function(){
         if (ev.target.tagName.toLowerCase() == 'select') return;
-        if (ev.keyCode === keycodes.ESC) dialog.cancel();
-        if (ev.keyCode === keycodes.ENTER && dialog.invalid !== true) dialog.confirm();
+        if (!dialog.params.deactivateCancelKey && ev.keyCode === keycodes.ESC)
+          dialog.cancel();
+        if (!dialog.params.deactivateConfirmKey && dialog.invalid !== true && ev.keyCode === keycodes.ENTER)
+          dialog.confirm();
       });
     },
 
