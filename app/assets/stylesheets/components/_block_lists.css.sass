@@ -5,6 +5,7 @@
   padding-right: 20px
   li
     display: block
+    position: relative
     list-style: none
     text-align: center
     background-color: $lightest-gray
@@ -15,5 +16,12 @@
     +transition(background-color ease-in 0.1s)
   li:hover
     background-color: $light-gray
+    .close-button
+      color: $medium-dark-gray
+  .close-button
+    position: absolute
+    top: 30%
+    right: 10px
   .close-button:after
     font-size: 20px
+
