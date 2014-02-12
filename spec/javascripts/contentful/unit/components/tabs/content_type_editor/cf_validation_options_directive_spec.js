@@ -35,6 +35,63 @@ describe('The cfValidationOptions directive', function () {
       controller = container.controller('cfValidationOptions');
     });
 
+    describe('updates values', function() {
+      beforeEach(function() {
+        scope.validation = {};
+        scope.updateDoc = sinon.stub();
+      });
+
+      describe('with a new value', function() {
+        beforeEach(function() {
+          scope.updateValues('hello');
+        });
+
+        it('new value is in validation list', function() {
+          expect(scope.validation.in[0]).toEqual('hello');
+        });
+
+        it('document is updated', function() {
+          expect(scope.updateDoc).toBeCalled();
+        });
+      });
+
+      describe('with an existing new value', function() {
+        beforeEach(function() {
+          scope.validation.in = ['hello'];
+          scope.updateValues('hello');
+        });
+
+        it('new value is not repeated in validation list', function() {
+          expect(scope.validation.in.length).toEqual(1);
+        });
+
+        it('document is not updated', function() {
+          expect(scope.updateDoc).not.toBeCalled();
+        });
+      });
+
+    });
+
+    describe('removes values', function() {
+      beforeEach(function() {
+        scope.validation = {in: ['value1', 'value2']};
+        scope.updateDoc = sinon.stub();
+        scope.removeValue(1);
+      });
+
+      it('value is not in list', function() {
+        expect(scope.validation.in[1]).toBeUndefined();
+      });
+
+      it('list has only one item', function() {
+        expect(scope.validation.in.length).toEqual(1);
+      });
+
+      it('document is updated', function() {
+        expect(scope.updateDoc).toBeCalled();
+      });
+    });
+
     describe('updates the validation doc', function() {
       beforeEach(function() {
         scope.updateValidationsFromDoc = sinon.stub();
@@ -106,6 +163,87 @@ describe('The cfValidationOptions directive', function () {
       it('updates the doc', function() {
         expect(scope.updateDoc).toBeCalled();
       });
+    });
+  });
+
+  describe('submit value', function() {
+    var event, target;
+    beforeEach(function() {
+      compileElement();
+      target = $('<input type="text" value="targetvalue" />');
+      event = {
+        target: target,
+        preventDefault: sinon.stub(),
+        stopPropagation: sinon.stub()
+      };
+      scope.updateValues = sinon.stub();
+    });
+
+    describe('on enter key', function() {
+      beforeEach(inject(function(keycodes) {
+        event.keyCode = keycodes.ENTER;
+        scope.submitValue(event);
+      }));
+
+      it('stops propagation', function() {
+        expect(event.stopPropagation).toBeCalled();
+      });
+
+      it('prevents default', function() {
+        expect(event.preventDefault).toBeCalled();
+      });
+
+      it('updates values', function() {
+        expect(scope.updateValues).toBeCalledWith('targetvalue');
+      });
+
+      it('value is reset to empty', function() {
+        expect(target.val()).toBe('');
+      });
+    });
+
+    describe('on any other key', function() {
+      beforeEach(function() {
+        event.keyCode = 6;
+        scope.submitValue(event);
+      });
+
+      it('stops propagation', function() {
+        expect(event.stopPropagation).toBeCalled();
+      });
+
+      it('does not prevent default', function() {
+        expect(event.preventDefault).not.toBeCalled();
+      });
+
+      it('does not update values', function() {
+        expect(scope.updateValues).not.toBeCalled();
+      });
+
+      it('value is not reset to empty', function() {
+        expect(target.val()).toBe('targetvalue');
+      });
+    });
+
+  });
+
+  describe('remove a value from list', function() {
+    var target, container;
+    beforeEach(function() {
+      target = $('<input type="text" value="targetvalue" />');
+      container = $('<div><span></span></div>');
+      target.appendTo(container.find('span'));
+      compileElement();
+      scope.removeValue = sinon.stub();
+      scope.removeFromValuesList({target: target}, 1);
+    });
+
+    it('removes containing node', function() {
+      expect(container.find('span').get(0)).toBeUndefined();
+    });
+
+    it('removes index', function() {
+      expect(scope.removeValue).toBeCalledWith(1);
     });
   });
 
