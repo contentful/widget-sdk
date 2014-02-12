@@ -189,7 +189,7 @@ describe('Trial Watch controller', function () {
         });
 
         it('shows a tooltip message', function () {
-          expect(broadcastStub.args[0][1].tooltipMessage).toMatch('free plan');
+          expect(broadcastStub.args[0][1].tooltipMessage).toMatch('limited Starter plan');
         });
 
         it('shows an action message', function () {

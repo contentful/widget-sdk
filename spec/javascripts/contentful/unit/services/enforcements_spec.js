@@ -107,7 +107,7 @@ describe('Enforcements service', function () {
       });
 
       it('description matches reason', function () {
-        expect(enforcement.description).toMatch(/system/gi);
+        expect(enforcement.description).toMatch(/maintenance/gi);
       });
 
       it('has a tooltip', function () {

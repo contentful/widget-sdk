@@ -21,14 +21,15 @@ angular.module('contentful').controller('TrialWatchController', function TrialWa
         timePeriod = {length: Math.floor(hours/24), unit: 'days'};
       }
       message = timeTpl('<strong>%length</strong> %unit left in trial', timePeriod);
-      tooltipMessage = timeTpl('This Space is in trial mode and you can test all features for '+
-                       '%length more %unit. Enter your billing information to activate your subscription.', timePeriod);
+      tooltipMessage = timeTpl(
+        'Your current Organization is in trial mode giving you access to all features for '+
+        '%length more %unit. Enter your billing information to activate your subscription.', timePeriod);
 
     } else if(organization.subscriptionState == 'active' &&
               !organization.subscriptionPlan.paid &&
               organization.subscriptionPlan.kind == 'default'){
       message = 'Limited free version';
-      tooltipMessage = 'This Space is on our limited free plan. Upgrade your subscription to get access to all features.';
+      tooltipMessage = 'You are currently enjoying our limited Starter plan. To get access to all features, please upgrade to a paid subscription plan.';
     }
 
 
