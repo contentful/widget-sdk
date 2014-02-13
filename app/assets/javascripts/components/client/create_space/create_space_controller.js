@@ -8,6 +8,10 @@ angular.module('contentful').controller('CreateSpaceDialogCtrl', [
       $scope.lockSubmit = false;
     }
 
+    $scope.writableOrganizations = _.filter($scope.organizations, function (org) {
+      return org && org.sys ? $scope.canCreateSpaceInOrg(org.sys.id) : false;
+    });
+
     resetNewSpaceData();
 
     $scope.dialog.setInvalid(true);
@@ -19,8 +23,8 @@ angular.module('contentful').controller('CreateSpaceDialogCtrl', [
       $scope.selectedOrganization = org;
     };
 
-    if($scope.organizations.length > 0){
-      $scope.selectOrganization($scope.organizations[0]);
+    if($scope.writableOrganizations.length > 0){
+      $scope.selectOrganization($scope.writableOrganizations[0]);
     }
 
     $scope.createSpace = function () {
@@ -34,6 +38,7 @@ angular.module('contentful').controller('CreateSpaceDialogCtrl', [
       var orgId = $scope.selectedOrganization.sys.id;
       if(!$scope.canCreateSpaceInOrg(orgId)){
         stopSpinner();
+        $scope.dialog.cancel();
         return notification.error('You can\'t create a Space in this Organization');
       }
 
