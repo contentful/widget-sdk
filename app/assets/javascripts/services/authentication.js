@@ -110,7 +110,6 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
     getTokenLookup: function() {
       if (this.redirectingToLogin) {
-        sentry.captureError('redirection to login in process during getTokenLookup. Not executing');
         return $q.defer().promise; // never resolved lol
       }
       var self = this;
@@ -118,6 +117,7 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       this.client.getTokenLookup(function (err, data) {
         $rootScope.$apply(function () {
           if (err) {
+            sentry.captureError('getTokenlookup failed');
             d.reject(err);
           } else {
             if (data !== undefined) { // Data === undefined is in cases of notmodified

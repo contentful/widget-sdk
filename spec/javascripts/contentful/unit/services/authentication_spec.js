@@ -304,10 +304,6 @@ describe('Authentication service', function () {
         authentication.getTokenLookup();
       });
 
-      it('sentry error is fired', function () {
-        expect(stubs.sentryError).toBeCalled();
-      });
-
       it('client token lookup not called', function () {
         expect(clientTokenLookupStub).not.toBeCalled();
       });
@@ -323,6 +319,10 @@ describe('Authentication service', function () {
 
       it('client token lookup is called', function () {
         expect(clientTokenLookupStub).toBeCalled();
+      });
+
+      it('sentry error is fired', function () {
+        expect(stubs.sentryError).toBeCalled();
       });
 
       it('client token lookup promise fails', inject(function ($rootScope) {
