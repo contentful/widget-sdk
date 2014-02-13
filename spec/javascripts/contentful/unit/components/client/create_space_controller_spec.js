@@ -38,10 +38,11 @@ describe('Create Space Dialog controller', function () {
         confirm: stubs.confirm,
         cancel: stubs.cancel
       };
-      org = {org: true};
+      org = {sys: {id: 'orgid'}};
       scope.organizations = [
         org
       ];
+      scope.canCreateSpaceInOrg = sinon.stub();
       scope.newSpaceForm = {};
 
       createController = function () {
@@ -57,11 +58,29 @@ describe('Create Space Dialog controller', function () {
   it('does not preselect if no organizations exist', function() {
     scope.organizations = [];
     createController();
-      expect(scope.selectedOrganization).toBeUndefined();
+    expect(scope.selectedOrganization).toBeUndefined();
+  });
+
+  describe('creates an array of writable orgs', function() {
+    beforeEach(function() {
+      scope.organizations = [
+        org,
+        {sys: {id: 'orgid2'}},
+        {badorg: true}
+      ];
+      scope.canCreateSpaceInOrg.withArgs('orgid').returns(true);
+      scope.canCreateSpaceInOrg.withArgs('orgid2').returns(false);
+      createController();
+    });
+
+    it('with only writable orgs', function() {
+      expect(scope.writableOrganizations).toEqual([org]);
+    });
   });
 
   describe('on the default state', function() {
     beforeEach(function() {
+      scope.canCreateSpaceInOrg.returns(true);
       createController();
     });
 
@@ -112,7 +131,6 @@ describe('Create Space Dialog controller', function () {
         scope.selectedOrganization = {
           sys: {id: 'orgid'}
         };
-        scope.canCreateSpaceInOrg = sinon.stub();
       });
 
       describe('if user cant create space in org', function() {
@@ -127,6 +145,10 @@ describe('Create Space Dialog controller', function () {
 
         it('checks for creation permission', function() {
           expect(scope.canCreateSpaceInOrg).toBeCalledWith('orgid');
+        });
+
+        it('cancels dialog', function() {
+          expect(stubs.cancel).toBeCalled();
         });
 
         it('stops spinner', function() {
