@@ -15,15 +15,13 @@ describe('cfLinkEditorSearch Controller', function () {
       $provide.value('notification', {
         serverError: stubs.serverError
       });
-
-      function LoaderStub() {}
-      LoaderStub.prototype.load = stubs.load;
+    });
+    inject(function ($rootScope, $controller, cfStub, PromisedLoader) {
+      stubs.load = sinon.stub(PromisedLoader.prototype, 'load');
       stubs.load.returns({
         then: stubs.then
       });
-      $provide.value('PromisedLoader', LoaderStub);
-    });
-    inject(function ($rootScope, $controller, cfStub) {
+
       scope = $rootScope.$new();
 
       space = cfStub.space('test');
@@ -35,6 +33,7 @@ describe('cfLinkEditorSearch Controller', function () {
   });
 
   afterEach(inject(function ($log) {
+    stubs.load.restore();
     $log.assertEmpty();
   }));
 
@@ -197,7 +196,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it(entityType +' editor not called', function() {
-          expect(entityEditorStub.calledOnce).toBeFalsy();
+          expect(entityEditorStub).not.toBeCalledOnce();
         });
       });
 
@@ -233,7 +232,7 @@ describe('cfLinkEditorSearch Controller', function () {
         it('server error called', function(done) {
           _.defer(function () {
             _.defer(function () {
-              expect(stubs.serverError.calledTwice).toBeTruthy();
+              expect(stubs.serverError).toBeCalledTwice();
               done();
             });
           });

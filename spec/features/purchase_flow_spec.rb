@@ -6,7 +6,7 @@ feature 'Purchase flow', js: true do
   describe "Resettable State",  order: :defined do
     before do
       ensure_login
-      visit "#{app_host}/profile/subscription"
+      visit "#{app_host}/account/organizations/#{organization_id}/subscription"
     end
 
     scenario 'Reset system' do
@@ -18,7 +18,7 @@ feature 'Purchase flow', js: true do
         choose_plan 'Pro'
         click_link 'Change'
       end
-      expect(current_url).to eql("#{app_host}/profile/subscription")
+      expect(current_url).to eql("#{app_host}/account/organizations/#{organization_id}/subscription")
     end
 
     scenario 'Enter Coupon in step 2' do
@@ -127,7 +127,7 @@ feature 'Purchase flow', js: true do
   describe "Stable state" do
     before do
       ensure_login
-      visit "#{app_host}/profile/subscription"
+      visit "#{app_host}/account/organizations/#{organization_id}/subscription"
     end
 
     scenario 'Toggle Plan details' do

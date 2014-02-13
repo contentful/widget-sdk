@@ -2,7 +2,7 @@
 
 angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     $scope, $rootScope, client, SpaceContext, authentication, notification, analytics,
-    routing, authorization, tutorial, modalDialog, presence, $location,
+    routing, authorization, tutorial, modalDialog, presence, $location, enforcements, reasonsDenied,
     revision, ReloadNotification, $controller, $window) {
 
   $controller('TrialWatchController', {$scope: $scope});
@@ -27,6 +27,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   };
 
   $scope.user = null;
+  $scope.organizations = null;
 
   function newVersionCheck() {
     revision.hasNewVersion().catch(function (err) {
@@ -96,11 +97,30 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     }
   });
 
+  $scope.getOrgName = function (orgId) {
+    var org = _.where($scope.organizations, {sys: {id: orgId}});
+    if(org.length > 0){
+      return org[0].name;
+    }
+    return '';
+  };
+
+  function groupSpacesByOrg(spaces) {
+    return _.groupBy(spaces, function(space){
+      return space.data.organization.sys.id;
+    });
+  }
+
   $scope.$watch('spaces', function(spaces, old, scope) {
     var routeSpaceId = routing.getSpaceId();
     var newSpace;
 
     if (spaces === old) return; // $watch init
+
+    if(spaces) {
+      scope.spacesByOrg = groupSpacesByOrg(spaces);
+    }
+
     if (routeSpaceId) {
       newSpace = _.find(spaces, function (space) {
         return space.getId() == routeSpaceId;
@@ -131,6 +151,12 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     }
   });
 
+  $scope.$watch('user', function (user) {
+    if(user){
+      $scope.organizations = _.pluck(user.organizationMemberships, 'organization');
+    }
+  });
+
   $scope.logout = function() {
     analytics.track('Clicked Logout');
     authentication.logout();
@@ -145,6 +171,8 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
       _.extend($scope.spaceContext.space.data, data.resource);
       //TODO this is pobably much too simplified, better look up correct
       //space and check if the method of updating is correct
+    } else if (data.type === 'space' && data.action === 'new') {
+      $scope.showCreateSpaceDialog(data.organizationId);
     } else if (data.type === 'UserCancellation' && data.action === 'create') {
       authentication.goodbye();
     } else if (data.type === 'user' && data.action === 'update') {
@@ -166,8 +194,8 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
       var level = data.resource.type;
       if (!level.match(/info|error/)) level = 'info';
       notification[level](data.resource.message);
-    } else if (data.type === 'location') {
-      // ignore
+    } else if (data.type === 'location' && data.action === 'navigate') {
+      $location.path(data.path);
     } else {
       $scope.performTokenLookup();
     }
@@ -178,9 +206,9 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     analytics.track('Clicked Profile Button');
   };
 
-  $scope.goToProfile = function (pathSuffix) {
-    pathSuffix = pathSuffix || 'user';
-    $location.path('/profile' + '/' + pathSuffix);
+  $scope.goToAccount = function (pathSuffix) {
+    pathSuffix = pathSuffix || 'profile/user';
+    $location.path('/account' + '/' + pathSuffix);
   };
 
   $scope.performTokenLookup = function () {
@@ -211,14 +239,53 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   };
 
   $scope.canCreateSpace = function () {
-    // For now it is impossible to determine if this is allowed
-    // TODO: Implement proper check as soon as the information is available
-    return true;
+    var response;
+    if(authorization.authContext && $scope.organizations && $scope.organizations.length > 0){
+      if(!$scope.canCreateSpaceInAnyOrg()) return false;
+
+      response = authorization.authContext.can('create', 'Space');
+      if(!response){
+        $scope.checkForEnforcements('create', 'Space');
+      }
+    }
+    return !!response;
   };
 
-  $scope.showCreateSpaceDialog = function () {
+  $scope.canCreateSpaceInAnyOrg = function () {
+    return _.some($scope.organizations, function (org) {
+      return $scope.canCreateSpaceInOrg(org.sys.id);
+    });
+  };
+
+  $scope.canCreateSpaceInOrg = function (orgId) {
+    return authorization.authContext && authorization.authContext.organization(orgId).can('create', 'Space');
+  };
+
+  $scope.checkForEnforcements = function () {
+    var enforcement = enforcements.determineEnforcement(reasonsDenied.apply(null, arguments), arguments[1]);
+    if(enforcement) {
+      $rootScope.$broadcast('persistentNotification', {
+        message: enforcement.message,
+        tooltipMessage: enforcement.description,
+        actionMessage: enforcement.actionMessage,
+        action: enforcement.action
+      });
+    }
+  };
+
+  $scope.showCreateSpaceDialog = function (organizationId) {
+    var scope = $scope;
+    if (organizationId) {
+      scope = $scope.$new();
+      scope.organizations = scope.organizations.concat();
+      scope.organizations.sort(function (a, b) {
+        if (a.sys.id === organizationId) return -1;
+        if (b.sys.id === organizationId) return 1;
+        else return 0;
+      });
+    }
     modalDialog.open({
-      scope: $scope,
+      scope: scope,
       template: 'create_space_dialog'
     });
     analytics.track('Clicked Create-Space');

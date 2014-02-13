@@ -27,8 +27,6 @@ describe('Space Controller', function () {
         determineEnforcement: stubs.enforcement
       });
 
-      $provide.value('reasonsDenied', sinon.stub());
-
       $provide.value('analytics', {
         track: stubs.track
       });
@@ -135,21 +133,16 @@ describe('Space Controller', function () {
   });
 
   describe('can method for permissions', function () {
-    var broadcastStub;
     var canStub;
     var result, args;
-    beforeEach(inject(function (authorization, $rootScope) {
+    beforeEach(inject(function (authorization) {
       args = [1, 2];
       canStub = sinon.stub();
       authorization.spaceContext = {
         can: canStub
       };
-      broadcastStub = sinon.stub($rootScope, '$broadcast');
+      scope.checkForEnforcements = sinon.stub();
     }));
-
-    afterEach(function () {
-      broadcastStub.restore();
-    });
 
     describe('if there is no space context', function () {
       beforeEach(inject(function (authorization) {
@@ -160,98 +153,53 @@ describe('Space Controller', function () {
         expect(canStub).not.toBeCalled();
       });
 
-      it('enforcement is not determined', function () {
-        expect(stubs.enforcement).not.toBeCalled();
-      });
-
-      it('event is not broadcast', function () {
-        expect(broadcastStub).not.toBeCalled();
-      });
-
       it('response is returned', function () {
         expect(result).toBeFalsy();
+      });
+
+      it('doesnt check for enforcements', function() {
+        expect(scope.checkForEnforcements).not.toBeCalled();
       });
     });
 
     describe('if permission succeeds', function () {
       beforeEach(function () {
         canStub.returns(true);
+        result = scope.can(args, {});
       });
 
-      describe('if there are reasons', function () {
-        beforeEach(function () {
-          result = scope.can(args, {});
-        });
+      it('can is called', function () {
+        expect(canStub).toBeCalledWith(args);
+      });
 
-        it('can is called', function () {
-          expect(canStub).toBeCalledWith(args);
-        });
+      it('response is returned', function () {
+        expect(result).toBeTruthy();
+      });
 
-        it('enforcement is not determined', function () {
-          expect(stubs.enforcement).not.toBeCalled();
-        });
-
-        it('event is not broadcast', function () {
-          expect(broadcastStub).not.toBeCalled();
-        });
-
-        it('response is returned', function () {
-          expect(result).toBeTruthy();
-        });
+      it('doesnt check for enforcements', function() {
+        expect(scope.checkForEnforcements).not.toBeCalled();
       });
     });
 
     describe('if permission fails', function () {
       beforeEach(function () {
         canStub.returns(false);
+        result = scope.can(args, {});
       });
 
-      describe('if there are reasons', function () {
-        beforeEach(function () {
-          stubs.enforcement.returns({});
-          result = scope.can(args, {});
-        });
-
-        it('can is called', function () {
-          expect(canStub).toBeCalledWith(args);
-        });
-
-        it('enforcement is determined', function () {
-          expect(stubs.enforcement).toBeCalled();
-        });
-
-        it('event is broadcast', function () {
-          expect(broadcastStub).toBeCalled();
-        });
-
-        it('response is returned', function () {
-          expect(result).toBeFalsy();
-        });
+      it('can is called', function () {
+        expect(canStub).toBeCalledWith(args);
       });
 
-      describe('if there are no reasons', function () {
-        beforeEach(function () {
-          stubs.enforcement.returns(false);
-          result = scope.can(args, {});
-        });
+      it('response is returned', function () {
+        expect(result).toBeFalsy();
+      });
 
-        it('can is called', function () {
-          expect(canStub).toBeCalledWith(args);
-        });
-
-        it('enforcement is determined', function () {
-          expect(stubs.enforcement).toBeCalled();
-        });
-
-        it('event is not broadcast', function () {
-          expect(broadcastStub).not.toBeCalled();
-        });
-
-        it('response is returned', function () {
-          expect(result).toBeFalsy();
-        });
+      it('checks for enforcements', function() {
+        expect(scope.checkForEnforcements).toBeCalled();
       });
     });
+
   });
 
   it('analytics event fired on logo clicked', function () {

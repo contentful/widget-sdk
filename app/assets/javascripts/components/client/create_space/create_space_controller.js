@@ -1,6 +1,6 @@
-angular.module('contentful').controller('createSpaceDialogCtrl', [
+angular.module('contentful').controller('CreateSpaceDialogCtrl', [
   '$scope', 'client', 'notification', 'cfSpinner', 'enforcements',
-  function createSpaceDialogCtrl($scope, client, notification, cfSpinner, enforcements) {
+  function CreateSpaceDialogCtrl($scope, client, notification, cfSpinner, enforcements) {
     'use strict';
 
     function resetNewSpaceData() {
@@ -10,6 +10,19 @@ angular.module('contentful').controller('createSpaceDialogCtrl', [
 
     resetNewSpaceData();
 
+    $scope.dialog.setInvalid(true);
+    $scope.$watch('newSpaceForm.$invalid', function (state) {
+      $scope.dialog.setInvalid(state);
+    });
+
+    $scope.selectOrganization = function (org) {
+      $scope.selectedOrganization = org;
+    };
+
+    if($scope.organizations.length > 0){
+      $scope.selectOrganization($scope.organizations[0]);
+    }
+
     $scope.createSpace = function () {
       if ($scope.lockSubmit) return;
       $scope.lockSubmit = true;
@@ -18,7 +31,13 @@ angular.module('contentful').controller('createSpaceDialogCtrl', [
       if ($scope.newSpaceData.defaultLocale)
         data.defaultLocale = $scope.newSpaceData.defaultLocale;
 
-      client.createSpace(data, function (err, newSpace) {
+      var orgId = $scope.selectedOrganization.sys.id;
+      if(!$scope.canCreateSpaceInOrg(orgId)){
+        stopSpinner();
+        return notification.error('You can\'t create a Space in this Organization');
+      }
+
+      client.createSpace(data, orgId, function (err, newSpace) {
         $scope.$apply(function (scope) {
           if (err) {
             var errorMessage = 'Could not create Space';

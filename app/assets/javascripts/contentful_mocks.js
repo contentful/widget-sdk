@@ -40,7 +40,12 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
       sys: {
         id: id
       },
-      locales: cfStub.locales('en-US', 'de-DE')
+      locales: cfStub.locales('en-US', 'de-DE'),
+      organization: {
+        sys: {
+          id: '456'
+        }
+      }
     }, extraData || {}));
     return testSpace;
   };
@@ -162,16 +167,6 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
   };
 
   return cfStub;
-});
-
-mocks.factory('PromisedLoader', function () {
-  function SpecPromisedLoader() {}
-  SpecPromisedLoader.prototype.load =
-  SpecPromisedLoader.loadSpy =
-    sinon.stub().returns({
-      then: sinon.stub()
-    });
-  return SpecPromisedLoader;
 });
 
 mocks.config(function ($provide) {

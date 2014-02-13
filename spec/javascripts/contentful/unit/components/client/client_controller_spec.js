@@ -5,7 +5,7 @@ describe('Client Controller', function () {
   var stubs;
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', function ($provide, $controllerProvider) {
       stubs = $provide.makeStubs([
         'numVisible',
         'spaceId',
@@ -34,14 +34,27 @@ describe('Client Controller', function () {
         'tutorialSeen',
         'presenceActive',
         'trigger',
-        'hasNewVersion'
+        'hasNewVersion',
+        'enforcement',
+        'reasons',
+        'organization',
+        'can'
       ]);
+
+      $controllerProvider.register('TrialWatchController', function () {});
+
       $provide.factory('SpaceContext', function () {
         return function(){
           return {
             space: {
               getId: stubs.spaceId,
-              data: {}
+              data: {
+                organization: {
+                  sys: {
+                    id: 456
+                  }
+                }
+              }
             },
             tabList: {
               numVisible: stubs.numVisible,
@@ -62,9 +75,13 @@ describe('Client Controller', function () {
         setTokenLookup: stubs.authorizationTokenLookup,
         setSpace: stubs.setSpace,
         authContext: {
-          hasSpace: stubs.hasSpace
+          hasSpace: stubs.hasSpace,
+          organization: stubs.organization,
+          can: stubs.can
         }
       });
+
+      stubs.organization.returns({can: stubs.can});
 
       $provide.value('authentication', {
         logout: stubs.logout,
@@ -120,6 +137,11 @@ describe('Client Controller', function () {
         hasNewVersion: stubs.hasNewVersion
       });
 
+      $provide.value('enforcements', {
+        determineEnforcement: stubs.enforcement
+      });
+
+      $provide.value('reasonsDenied', stubs.reasons);
 
     });
     inject(function ($controller, $rootScope){
@@ -312,10 +334,19 @@ describe('Client Controller', function () {
       idStub1.returns(123);
       idStub2.returns(456);
       scope.spaces = [
-        {getId: idStub1},
-        {getId: idStub2},
+        {getId: idStub1, data: {organization: {sys: {id: 132}}}},
+        {getId: idStub2, data: {organization: {sys: {id: 132}}}},
         scope.spaceContext.space
       ];
+    });
+
+    it('spaces are grouped by organization', function() {
+      stubs.routingSpaceId.returns(123);
+      scope.$digest();
+      expect(scope.spacesByOrg).toEqual({
+        132: [scope.spaces[0], scope.spaces[1]],
+        456: [scope.spaces[2]]
+      });
     });
 
     it('space data is set on analytics', function () {
@@ -523,13 +554,13 @@ describe('Client Controller', function () {
   });
 
   it('redirects to profile', function () {
-    scope.goToProfile();
-    expect(stubs.path).toBeCalledWith('/profile/user');
+    scope.goToAccount();
+    expect(stubs.path).toBeCalledWith('/account/profile/user');
   });
 
   it('redirects to profile with a suffix', function () {
-    scope.goToProfile('derp');
-    expect(stubs.path).toBeCalledWith('/profile/derp');
+    scope.goToAccount('section');
+    expect(stubs.path).toBeCalledWith('/account/section');
   });
 
   describe('performs token lookup', function () {
@@ -616,7 +647,7 @@ describe('Client Controller', function () {
     });
 
     it('update is called twice', function () {
-      expect(updateStub.calledTwice).toBeTruthy();
+      expect(updateStub).toBeCalledTwice();
     });
 
     it('update is called with first raw space', function () {
@@ -635,6 +666,163 @@ describe('Client Controller', function () {
       expect(scope.spaces[2].save).toBeDefined();
     });
   });
+
+  describe('check if user can create a space in any org', function() {
+    beforeEach(function() {
+      scope.organizations = [
+        {sys: {id: 'abc'}},
+        {sys: {id: 'def'}},
+      ];
+      scope.canCreateSpaceInOrg = sinon.stub();
+    });
+
+    it('if user cant create spaces in any organizations', function() {
+      scope.canCreateSpaceInOrg.returns(false);
+      expect(scope.canCreateSpaceInAnyOrg()).toBeFalsy();
+    });
+
+    it('if user can create spaces in any organizations', function() {
+      scope.canCreateSpaceInOrg.returns(true);
+      expect(scope.canCreateSpaceInAnyOrg()).toBeTruthy();
+    });
+
+    it('if user can create spaces in some organizations', function() {
+      scope.canCreateSpaceInOrg.withArgs('abc').returns(false);
+      scope.canCreateSpaceInOrg.withArgs('def').returns(true);
+      expect(scope.canCreateSpaceInAnyOrg()).toBeTruthy();
+    });
+
+  });
+
+  describe('check if user can create a space', function() {
+    it('with no auth context', inject(function(authorization) {
+      delete authorization.authContext;
+      expect(scope.canCreateSpace()).toBeFalsy();
+    }));
+
+    it('with no organizations', function() {
+      expect(scope.canCreateSpace()).toBeFalsy();
+    });
+
+    it('with zero organizations', function() {
+      scope.organizations = [];
+      expect(scope.canCreateSpace()).toBeFalsy();
+    });
+
+    describe('with organizations', function() {
+      beforeEach(function() {
+        scope.organizations = [
+          {sys: {id: 'abc'}},
+          {sys: {id: 'def'}},
+        ];
+        scope.canCreateSpaceInAnyOrg = sinon.stub();
+      });
+
+      it('if user cant create spaces in any organizations', function() {
+        scope.canCreateSpaceInAnyOrg.returns(false);
+        expect(scope.canCreateSpace()).toBeFalsy();
+      });
+
+      it('if authorization allows', function() {
+        scope.canCreateSpaceInAnyOrg.returns(true);
+        stubs.can.returns(true);
+        expect(scope.canCreateSpace()).toBeTruthy();
+      });
+
+      describe('if authorization does not allow', function() {
+        var result;
+        beforeEach(function() {
+          scope.canCreateSpaceInAnyOrg.returns(true);
+          stubs.can.returns(false);
+          scope.checkForEnforcements = sinon.stub();
+          result = scope.canCreateSpace();
+        });
+
+        it('result is false', function() {
+          expect(result).toBeFalsy();
+        });
+
+        it('checks for enforcements', function() {
+          expect(scope.checkForEnforcements).toBeCalled();
+        });
+      });
+
+    });
+
+  });
+
+
+  describe('check if user can create space in org', function() {
+
+    it('with no auth context', inject(function(authorization) {
+      delete authorization.authContext;
+      expect(scope.canCreateSpaceInOrg()).toBeFalsy();
+    }));
+
+    describe('with an auth context', function() {
+      beforeEach(function() {
+        scope.canCreateSpaceInOrg('orgid');
+      });
+
+      it('gets an organization', function() {
+        expect(stubs.organization).toBeCalledWith('orgid');
+      });
+
+      it('checks for permission on organization', function() {
+        expect(stubs.can).toBeCalled();
+      });
+    });
+  });
+
+
+  describe('check for enforcements', function() {
+    var args, broadcastStub;
+
+    beforeEach(inject(function($rootScope) {
+      args = [1, 2];
+      broadcastStub = sinon.stub($rootScope, '$broadcast');
+    }));
+
+    describe('if there are reasons', function () {
+      beforeEach(function () {
+        stubs.enforcement.returns({});
+        scope.checkForEnforcements(args, {});
+      });
+
+      it('enforcement is determined', function () {
+        expect(stubs.enforcement).toBeCalled();
+      });
+
+      it('reasons are determined', function () {
+        expect(stubs.reasons).toBeCalled();
+      });
+
+      it('event is broadcast', function () {
+        expect(broadcastStub).toBeCalled();
+      });
+    });
+
+    describe('if there are no reasons', function () {
+      beforeEach(function () {
+        stubs.enforcement.returns(false);
+        scope.checkForEnforcements(args, {});
+      });
+
+      it('enforcement is determined', function () {
+        expect(stubs.enforcement).toBeCalled();
+      });
+
+      it('reasons are determined', function () {
+        expect(stubs.reasons).toBeCalled();
+      });
+
+      it('event is not broadcast', function () {
+        expect(broadcastStub).not.toBeCalled();
+      });
+
+    });
+  });
+
 
   describe('shows create space dialog', function () {
     beforeEach(function () {
@@ -767,5 +955,44 @@ describe('Client Controller', function () {
     });
 
   });
+
+  describe('organizations on the scope', function() {
+    it('are not set', function() {
+      expect(scope.organizations).toBeNull();
+    });
+
+    it('are set', function() {
+      var org1 = {org1: true};
+      var org2 = {org2: true};
+      var org3 = {org3: true};
+      scope.user = {
+        organizationMemberships: [
+          {organization: org1},
+          {organization: org2},
+          {organization: org3},
+        ]
+      };
+      scope.$digest();
+
+      expect(scope.organizations).toEqual([
+        org1, org2, org3
+      ]);
+    });
+  });
+
+  it('gets organization name', function() {
+    scope.organizations = [
+      {name: 'orgname', sys: {id: '123'}}
+    ];
+    scope.$digest();
+    expect(scope.getOrgName('123')).toEqual('orgname');
+  });
+
+  it('gets no organization name', function() {
+    scope.organizations = [];
+    scope.$digest();
+    expect(scope.getOrgName('123')).toEqual('');
+  });
+
 
 });

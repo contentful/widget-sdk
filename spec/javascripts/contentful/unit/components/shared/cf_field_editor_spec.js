@@ -45,7 +45,7 @@ describe('cfFieldEditor Directive', function () {
   function makeEditorTypeTests(editorName, elementType, additionalTests) {
     describe('renders a '+editorName+' editor', function() {
       beforeEach(function() {
-        scope.field.type = editorName;
+        scope.field.widgetType = editorName;
         compileElement();
       });
 
@@ -61,11 +61,11 @@ describe('cfFieldEditor Directive', function () {
     });
   }
 
-  makeEditorTypeTests('Symbol', 'input');
+  makeEditorTypeTests('textfield', 'input');
 
-  makeEditorTypeTests('Text', 'textarea');
+  makeEditorTypeTests('textarea', 'textarea');
 
-  makeEditorTypeTests('Boolean', 'div', function () {
+  makeEditorTypeTests('radiobuttons', 'div', function () {
     it('has 2 labels', function() {
       expect(ngSwitch.find('label').length).toBe(2);
     });
@@ -75,97 +75,49 @@ describe('cfFieldEditor Directive', function () {
     });
   });
 
-  makeEditorTypeTests('Date', 'div', function () {
+  makeEditorTypeTests('datetimeEditor', 'div', function () {
     it('has class name', function() {
       expect(ngSwitch.children().eq(0)).toHaveClass('cf-datetime-editor');
     });
   });
 
-  makeEditorTypeTests('Array', 'div', function () {
-    it('has inner ng-switch', function() {
-      expect(ngSwitch.find('ng-switch').length).toBe(1);
-    });
-  });
-
-  describe('renders an Array editor with inner elements', function() {
-    var innerNgSwitch;
-    beforeEach(function() {
-      scope.field.type = 'Array';
-      scope.field.items = {};
-    });
-
-    describe('for links', function() {
-      beforeEach(function() {
-        scope.field.items.type = 'Link';
-        compileElement();
-        innerNgSwitch = ngSwitch.find('ng-switch');
-      });
-
-      it('only has one element', function() {
-        expect(innerNgSwitch.children().length).toBe(1);
-      });
-
-      it('element is defined', function () {
-        expect(innerNgSwitch.children().eq(0)).toHaveTagName('div');
-      });
-
-      it('has attr name', function() {
-        expect(innerNgSwitch.children().eq(0).attr('cf-link-editor')).toBeDefined();
-      });
-    });
-
-    describe('for symbols', function() {
-      beforeEach(function() {
-        scope.field.items.type = 'Symbol';
-        compileElement();
-        innerNgSwitch = ngSwitch.find('ng-switch');
-      });
-
-      it('only has one element', function() {
-        expect(innerNgSwitch.children().length).toBe(1);
-      });
-
-      it('element is defined', function () {
-        expect(innerNgSwitch.children().eq(0)).toHaveTagName('input');
-      });
-
-      it('has attr name', function() {
-        expect(innerNgSwitch.children().eq(0).attr('cf-list-identity-fix')).toBeDefined();
-      });
-    });
-  });
-
-  makeEditorTypeTests('Object', 'div', function () {
-    it('has class name', function() {
-      expect(ngSwitch.children().eq(0)).toHaveClass('cf-object-editor');
-    });
-  });
-
-  makeEditorTypeTests('Location', 'div', function () {
-    it('has class name', function() {
-      expect(ngSwitch.children().eq(0)).toHaveClass('cf-location-editor');
-    });
-  });
-
-  makeEditorTypeTests('Number', 'div', function () {
-    it('has class name', function() {
-      expect(ngSwitch.children().eq(0)).toHaveClass('cf-number-editor');
-    });
-  });
-
-  makeEditorTypeTests('Integer', 'div', function () {
-    it('has class name', function() {
-      expect(ngSwitch.children().eq(0)).toHaveClass('cf-number-editor');
-    });
-  });
-
-  makeEditorTypeTests('Link', 'div', function () {
+  makeEditorTypeTests('linksEditor', 'div', function () {
     it('has attr name', function() {
       expect(ngSwitch.children().eq(0).attr('cf-link-editor')).toBeDefined();
     });
   });
 
-  makeEditorTypeTests('File', 'div', function () {
+  makeEditorTypeTests('listInput', 'input', function () {
+    it('has attr name', function() {
+      expect(ngSwitch.children().eq(0).attr('cf-list-identity-fix')).toBeDefined();
+    });
+  });
+
+  makeEditorTypeTests('objectEditor', 'div', function () {
+    it('has class name', function() {
+      expect(ngSwitch.children().eq(0)).toHaveClass('cf-object-editor');
+    });
+  });
+
+  makeEditorTypeTests('locationEditor', 'div', function () {
+    it('has class name', function() {
+      expect(ngSwitch.children().eq(0)).toHaveClass('cf-location-editor');
+    });
+  });
+
+  makeEditorTypeTests('numberEditor', 'div', function () {
+    it('has class name', function() {
+      expect(ngSwitch.children().eq(0)).toHaveClass('cf-number-editor');
+    });
+  });
+
+  makeEditorTypeTests('linkEditor', 'div', function () {
+    it('has attr name', function() {
+      expect(ngSwitch.children().eq(0).attr('cf-link-editor')).toBeDefined();
+    });
+  });
+
+  makeEditorTypeTests('fileEditor', 'div', function () {
     it('has class name', function() {
       expect(ngSwitch.children().eq(0)).toHaveClass('cf-file-editor');
     });
@@ -174,6 +126,7 @@ describe('cfFieldEditor Directive', function () {
   describe('fieldData is set', function() {
     beforeEach(function() {
       scope.field.type = 'Symbol';
+      scope.field.widgetType = 'textfield';
       scope.entity = {
         data: {
           fields: {
@@ -228,6 +181,7 @@ describe('cfFieldEditor Directive', function () {
   describe('with no fields', function() {
     beforeEach(function() {
       scope.field.type = 'Symbol';
+      scope.field.widgetType = 'textfield';
       scope.entity = {
         data: {}
       };
@@ -256,6 +210,7 @@ describe('cfFieldEditor Directive', function () {
   describe('if field does not exist', function() {
     beforeEach(function() {
       scope.field.type = 'Symbol';
+      scope.field.widgetType = 'textfield';
       scope.entity = {
         data: {}
       };

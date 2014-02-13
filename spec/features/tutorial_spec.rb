@@ -15,7 +15,7 @@ feature 'Tutorial', js: true do
   end
 
   def open_tutorial_overview
-    within 'nav.account .user' do
+    within '.account-menus .user' do
       find('.dropdown-toggle').click
       find('li', text: 'Start Tutorial').click
     end

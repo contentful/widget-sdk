@@ -77,13 +77,11 @@ feature 'Roles', js:true, order: :defined do
       ensure_login
       select_space
       expect(page).to_not have_selector(".nav-bar li[data-view-type=space-settings]")
-      debugger
       expect(page).to_not have_selector(".nav-bar li[data-view-type=content-type-list]")
       find('.add.button.dropdown-toggle').click
       dropdown_menu = find('.dropdown-menu')
       expect(dropdown_menu).to_not have_selector(".main-types li", text: 'Content Type')
       expect(dropdown_menu).to     have_selector(".main-types li", text: 'Asset')
-      debugger
       expect(dropdown_menu).to     have_selector(".content-types li")
       nav_bar 'entry-list'
       expect(page).to_not have_selector('button', text: 'Create Content Type')

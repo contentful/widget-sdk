@@ -50,8 +50,9 @@ angular.module('contentful/app', [
   clientProvider.endpoint('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');
   //analyticsProvider.forceLoad();
-}).run(function(authentication, client) {
+}).run(function(authentication, client, ShareJS) {
   'use strict';
   authentication.login();
   client.persistenceContext.adapter.token = authentication.token;
+  ShareJS.connect();
 });

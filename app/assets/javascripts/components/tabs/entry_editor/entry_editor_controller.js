@@ -100,19 +100,39 @@ angular.module('contentful')
           });
         }
         locales = uniqLocales;
-        var updatedField = inherit(field, locales);
+        var updatedField = inherit(field, {
+          locales: locales,
+          widgetType: fieldWidgetType(field, et)
+        });
         acc.push(updatedField);
       }
       return acc;
     }, []);
 
-    function inherit(source, locales){
+    function inherit(source, extensions){
       var Clone = function () { };
       Clone.prototype = source;
       var clone = new Clone();
-      clone.locales = locales;
-      return clone;
+      return _.extend(clone, extensions);
     }
+  }
+
+  function fieldWidgetType(field) {
+    if (field.type === 'Symbol' ) return 'textfield';
+    if (field.type === 'Text'   ) return 'textarea';
+    if (field.type === 'Boolean') return 'radiobuttons';
+    if (field.type === 'Date'   ) return 'datetimeEditor';
+    if (field.type === 'Array') {
+      if (field.items.type === 'Link'  ) return 'linksEditor';
+      if (field.items.type === 'Symbol') return 'listInput';
+    }
+    if (field.type === 'Object'  ) return 'objectEditor';
+    if (field.type === 'Location') return 'locationEditor';
+    if (field.type === 'Number'  ) return 'numberEditor';
+    if (field.type === 'Integer' ) return 'numberEditor';
+    if (field.type === 'Link'    ) return 'linkEditor';
+    if (field.type === 'File'    ) return 'fileEditor';
+    return null;
   }
 
   var firstValidate = $scope.$on('otBecameEditable', function (event) {

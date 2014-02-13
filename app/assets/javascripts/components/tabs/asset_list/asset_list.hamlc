@@ -17,7 +17,7 @@
 .tab-main
   .left-nav
     %header Filter By Status
-    %ul.filter-list
+    %ul.filter-list.status-filters
       %li(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
         %span All
       %li(ng-class="{active: tab.params.list == 'changed'}" ng-click="switchList('changed')")
@@ -27,7 +27,7 @@
       %li(ng-class="{active: tab.params.list == 'archived'}" ng-click="switchList('archived')")
         %span Archived
     %header Filter By File Type
-    %ul.filter-list
+    %ul.filter-list.type-filters
       %li(ng-repeat="(label, name) in mimetypeGroups track by label"
           ng-class="{active: tab.params.list == label}"
           ng-click="switchList(label)")

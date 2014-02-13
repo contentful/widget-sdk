@@ -17,25 +17,32 @@ angular.module('contentful').factory('tutorialExampledata', function ($q, enviro
         };
       });
     },
-      
+
     switchToTutorialSpace: function (clientScope, tries) {
       var ccb, newSpaceId, self = this;
       var tutorialSpace = _.find(clientScope.spaces, function (space) {
         var isTutorialSpace = space.data.tutorial;
-        var isCurrentUsersSpace = space.data.subscription.sys.createdBy.sys.id === clientScope.user.sys.id;
+        var isCurrentUsersSpace = space.data.organization.sys.createdBy.sys.id === clientScope.user.sys.id;
         return isCurrentUsersSpace && isTutorialSpace;
       });
       if (tutorialSpace) {
         clientScope.selectSpace(tutorialSpace);
         return $q.when(tutorialSpace);
       }
+
+      // Prepare Space creation
       if (_.isUndefined(tries)) tries = 2;
-      client.createSpace({name: 'Playground', tutorial: true}, ccb = $q.callback());
+      var tutorialOrg = _.find(clientScope.organizations, function (organization) {
+        return clientScope.canCreateSpaceInOrg(organization.sys.id);
+      });
+      if (!tutorialOrg) return $q.reject();
+
+      // Run Space creation
+      client.createSpace({name: 'Playground', tutorial: true}, tutorialOrg.sys.id, ccb = $q.callback());
       return ccb.promise.then(function (newSpace) {
         newSpaceId = newSpace.getId();
         return clientScope.performTokenLookup();
-      }).
-      then(function () {
+      }).then(function () {
         var space = _.find(clientScope.spaces, function (space) { return space.getId() == newSpaceId; });
         if (space) {
           clientScope.selectSpace(space);

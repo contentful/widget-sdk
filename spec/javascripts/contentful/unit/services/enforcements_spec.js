@@ -3,11 +3,11 @@
 describe('Enforcements service', function () {
 
   var enforcements;
-  var userStub, subscriptionStub;
+  var userStub, organizationStub;
 
   beforeEach(function () {
     userStub = sinon.stub();
-    subscriptionStub = {
+    organizationStub = {
       usage: {
         permanent: {
           entry: 0,
@@ -37,7 +37,7 @@ describe('Enforcements service', function () {
         spaceContext: {
           space: {
             sys: { createdBy: { sys: {id: 123} } },
-            subscription: subscriptionStub
+            organization: organizationStub
           }
         }
       });
@@ -107,7 +107,7 @@ describe('Enforcements service', function () {
       });
 
       it('description matches reason', function () {
-        expect(enforcement.description).toMatch(/system/gi);
+        expect(enforcement.description).toMatch(/maintenance/gi);
       });
 
       it('has a tooltip', function () {
@@ -218,7 +218,7 @@ describe('Enforcements service', function () {
   describe('gets period usage', function () {
     var enforcement;
     beforeEach(function () {
-      subscriptionStub.usage.period.assetBandwidth = 5;
+      organizationStub.usage.period.assetBandwidth = 5;
       enforcement = enforcements.getPeriodUsage();
     });
 
@@ -262,13 +262,13 @@ describe('Enforcements service', function () {
     });
 
     it('for exceeded usage metric returns message', function () {
-      subscriptionStub.usage.period.assetBandwidth = 5;
+      organizationStub.usage.period.assetBandwidth = 5;
       expect(enforcements.computeUsage()).toMatch('Bandwidth');
     });
 
     it('for exceeded usage metric with filter returns message', function () {
-      subscriptionStub.usage.permanent.entry = 5;
-      subscriptionStub.usage.permanent.user = 5;
+      organizationStub.usage.permanent.entry = 5;
+      organizationStub.usage.permanent.user = 5;
       expect(enforcements.computeUsage('user')).toMatch('Users');
     });
 

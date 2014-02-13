@@ -34,15 +34,12 @@ describe('Entry List Controller', function () {
       $provide.value('analytics', {
         track: stubs.track
       });
-
-      function LoaderStub() {}
-      LoaderStub.prototype.load = stubs.load;
+    });
+    inject(function ($rootScope, $controller, cfStub, PromisedLoader) {
+      stubs.load = sinon.stub(PromisedLoader.prototype, 'load');
       stubs.load.returns({
         then: stubs.then
       });
-      $provide.value('PromisedLoader', LoaderStub);
-    });
-    inject(function ($rootScope, $controller, cfStub) {
       scope = $rootScope.$new();
 
       scope.tab = {
@@ -58,6 +55,7 @@ describe('Entry List Controller', function () {
   });
 
   afterEach(inject(function ($log) {
+    stubs.load.restore();
     $log.assertEmpty();
   }));
 
@@ -118,13 +116,13 @@ describe('Entry List Controller', function () {
       stubs.reset = sinon.stub(scope, 'resetEntries');
       scope.searchTerm = 'thing';
       scope.$digest();
-      expect(stubs.reset.calledOnce).toBeTruthy();
+      expect(stubs.reset).toBeCalledOnce();
     });
 
     it('does not update on page', function () {
       scope.paginator.page = 1;
       scope.$digest();
-      expect(stubs.reset.calledOnce).toBeTruthy();
+      expect(stubs.reset).toBeCalledOnce();
     });
 
     it('page length', function () {

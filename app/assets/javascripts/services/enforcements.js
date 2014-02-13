@@ -12,12 +12,16 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
     return user.sys.id === spaceContext.space.sys.createdBy.sys.id;
   }
 
+  function getOrgId() {
+    return spaceContext.space.getOrganizationId();
+  }
+
   function upgradeActionMessage() {
     return isOwner() ?  'Upgrade': undefined;
   }
 
   function upgradeAction() {
-    $location.path('/profile/subscription');
+    $location.path('/account/organizations/'+getOrgId()+'/subscription');
   }
 
 
@@ -25,7 +29,7 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
     {
       label: 'systemMaintenance',
       message: 'System under maintenance',
-      description: 'The system is currently under maintenance and in read-only mode.',
+      description: 'The service is down for maintenance and accessible in read-only mode.',
       actionMessage: 'Status',
       action: function () {
         $window.location = 'http://status.contentful.com';
@@ -36,20 +40,20 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
       message: 'Outstanding invoices',
       description: function () {
         return isOwner() ?
-          'Please provide updated billing details to be able to edit the content in this Space again.':
-          'The owner of the Space needs to provide updated billing details to be able to edit the content in this Space again.';
+          'To be able to edit content within your Organization, please update your billing details.':
+          'To be able to edit content within your Organization, the Organization Owner must update billing details.';
       },
       actionMessage: function () {
         return isOwner() ?  'Update': undefined;
       },
       action: function () {
-        $location.path('/profile/subscription/billing');
+        $location.path('/account/organizations/'+getOrgId()+'/subscription/billing');
       }
     },
     {
       label: 'periodUsageExceeded',
       message: 'Over usage limits',
-      description: 'You have exceeded the monthly usage quota of your pricing plan. Please upgrade to guarantee that your content is served without any interruptions.',
+      description: 'You have exceeded the monthly usage quota for your pricing plan. Please upgrade to ensure an uninterrupted delivery of your content.',
       tooltip: '',
       actionMessage: upgradeActionMessage,
       action: upgradeAction
@@ -57,7 +61,7 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
     {
       label: 'usageExceeded',
       message: 'Over usage limits',
-      description: 'You have exceeded the usage limits of your pricing plan. Please upgrade.',
+      description: 'You have exceeded the usage limits for your plan. Please upgrade to proceed with content creation & delivery.',
       tooltip: getTooltipMessage,
       actionMessage: upgradeActionMessage,
       action: upgradeAction
@@ -100,13 +104,13 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
   function computeUsage(filter) {
     setTokenObjects();
     if(filter) filter = uncapitalize(filter);
-    var subscription = spaceContext.space.subscription;
+    var organization = spaceContext.space.organization;
     var usage = _.merge(
-      subscription.usage.permanent,
-      subscription.usage.period);
+      organization.usage.permanent,
+      organization.usage.period);
     var limits = _.merge(
-      subscription.subscriptionPlan.limits.permanent,
-      subscription.subscriptionPlan.limits.period);
+      organization.subscriptionPlan.limits.permanent,
+      organization.subscriptionPlan.limits.period);
 
     var metricKey = _.findKey(usage, function (value, name) {
       return (!filter || filter === name) && value >= limits[name];

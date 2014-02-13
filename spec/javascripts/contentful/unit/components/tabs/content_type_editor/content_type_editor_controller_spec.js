@@ -199,7 +199,7 @@ describe('ContentTypeEditor Controller', function () {
     }));
 
     it('fires validate', function () {
-      expect(validateStub.calledOnce).toBeTruthy();
+      expect(validateStub).toBeCalledOnce();
     });
   });
 

@@ -211,7 +211,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         id: 'restartHint',
         title: 'If you want to restart the tutorial…',
         description: 'If you want to restart the tutorial you can open it again any time buy chosing "Start Tutorial" from the user menu.',
-        attachTo: '.account .user',
+        attachTo: '.account-menus .user',
         position: 5,
         xButton: false,
         buttons: [{name: 'OK', classString: 'default-button primary-button', onclick: function(){guiders.hideAll();}}]

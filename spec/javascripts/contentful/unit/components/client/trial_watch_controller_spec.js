@@ -7,10 +7,10 @@ describe('Trial Watch controller', function () {
   var broadcastStub;
   var $window, $q;
 
-  function makeSpace(subscription) {
+  function makeSpace(organization) {
     return {
       data: {
-        subscription: subscription
+        organization: organization
       },
       isOwner: ownerStub
     };
@@ -88,7 +88,7 @@ describe('Trial Watch controller', function () {
         scope.user = {};
         scope.spaceContext = {
           space: makeSpace({
-            state: 'trial',
+            subscriptionState: 'trial',
             trialPeriodEndsAt: '2013-12-13T13:28:44Z'
           })
         };
@@ -169,7 +169,7 @@ describe('Trial Watch controller', function () {
         scope.user = {};
         scope.spaceContext = {
           space: makeSpace({
-            state: 'active',
+            subscriptionState: 'active',
             subscriptionPlan: {
               paid: false,
               kind: 'default'
@@ -189,7 +189,7 @@ describe('Trial Watch controller', function () {
         });
 
         it('shows a tooltip message', function () {
-          expect(broadcastStub.args[0][1].tooltipMessage).toMatch('free plan');
+          expect(broadcastStub.args[0][1].tooltipMessage).toMatch('limited Starter plan');
         });
 
         it('shows an action message', function () {

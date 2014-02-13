@@ -92,7 +92,7 @@ describe('The cfValidationOptions directive', function () {
       });
 
       it('gets the validation types', function() {
-        expect(scope.validationType.calledTwice).toBeTruthy();
+        expect(scope.validationType).toBeCalledTwice();
       });
 
       it('removes the old type', function() {

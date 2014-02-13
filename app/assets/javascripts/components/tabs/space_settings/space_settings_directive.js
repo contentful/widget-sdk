@@ -12,7 +12,7 @@ angular.module('contentful').directive('spaceSettings', function($window, $rootS
       scope.$on('iframeMessage', function (event, data, iframe) {
         if (iframe !== elem.find('iframe')[0]) return;
         scope.hasLoaded = true;
-        if (data.path) internalNavigationTo(data.path);
+        if (data.path && data.action === 'update') internalNavigationTo(data.path);
       });
 
       scope.hasLoaded = false;
@@ -26,7 +26,7 @@ angular.module('contentful').directive('spaceSettings', function($window, $rootS
           scope.url = url;
           elem.find('iframe').prop('src', appendToken(scope.url));
         }
-      };
+      }
 
       function routeChanged(route) {
         if (route.viewType !== 'space-settings') return;

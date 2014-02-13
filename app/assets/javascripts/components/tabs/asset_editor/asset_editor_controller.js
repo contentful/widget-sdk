@@ -80,17 +80,18 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
         } else {
           locales = [scope.spaceContext.space.getDefaultLocale()];
         }
-        acc.push(inherit(field, locales));
+        acc.push(inherit(field, {
+          locales: locales
+        }));
       }
       return acc;
     }, []);
 
-    function inherit(source, locales){
+    function inherit(source, extensions){
       var Clone = function () { };
       Clone.prototype = source;
       var clone = new Clone();
-      clone.locales = locales;
-      return clone;
+      return _.extend(clone, extensions);
     }
   }
 

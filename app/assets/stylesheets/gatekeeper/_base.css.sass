@@ -14,13 +14,53 @@
   .header-separator
     color: $lightest-gray
 
-.settings-panel
+.spaces .settings-panel
   @extend .link-list
+.account .settings-panel
+  padding: 0
+  color: black
+  font-weight: 600
+  border-right: 1px solid $lightest-gray
   ul
+    +plain-list
+    padding: 10px 0
+    border-bottom: 1px solid $lightest-gray
+  a
+    color: black
+    &:hover
+      color: $blue
+  h3,
+  li
+    padding-left: 40px
+  li
+    padding-top: 8px
+    padding-bottom: 8px
+  li.active a
+    color: $blue
+  h3
+    font-size: 16px
+    font-weight: 600
+    +gradient(lighten($gray-background, 4%), $gray-background)
+    line-height: 40px
+    position: relative
+    border-bottom: 1px solid $lightest-gray
+    margin: 0
+  img
+    height: 15px
+    position: absolute
+    top: 13px
+    left: 15px
+  .ss-users
+    position: absolute
+    left: 15px
+    font-size: 14px
+    
+  //@extend .link-list
+  //ul
     margin-bottom: 2em
 
 // Adjust base font size // YOLO
-.profile
+.account
   .tab-iframe
     font-size: 14px
 
@@ -75,4 +115,7 @@
     .clickable
       tr
         @extend %tr-clickable
+  .result-list-thumbnail
+    vertical-align: middle
+    
 
