@@ -144,7 +144,8 @@ describe('Client Controller', function () {
       $provide.value('reasonsDenied', stubs.reasons);
 
     });
-    inject(function ($controller, $rootScope){
+    inject(function ($controller, $rootScope, tutorial, $q){
+      tutorial.start.returns($q.when());
       scope = $rootScope.$new();
       clientController = $controller('ClientCtrl', {$scope: scope});
     });
@@ -865,7 +866,6 @@ describe('Client Controller', function () {
           sys: {}
         };
         scope.spaces = [{}];
-        scope.initClient();
       });
 
       afterEach(function () {
@@ -873,14 +873,26 @@ describe('Client Controller', function () {
       });
 
       it('tracks login', function () {
+        scope.initClient();
         expect(stubs.loginTrack).toBeCalled();
       });
 
       it('tutorial seen check is called', function () {
+        scope.initClient();
         expect(stubs.tutorialSeen).toBeCalled();
       });
 
       it('tutorial start is called', function () {
+        scope.initClient();
+        expect(stubs.tutorialStart).toBeCalled();
+      });
+
+      it('sets tutorial to be seen if tutorial fails to start', function () {
+        inject(function (tutorial, $q) {
+          tutorial.start.returns($q.when($q.reject()));
+        });
+        scope.initClient();
+        expect(stubs.tutorialSeen).toBeCalled();
         expect(stubs.tutorialStart).toBeCalled();
       });
 
@@ -889,6 +901,7 @@ describe('Client Controller', function () {
         beforeEach(inject(function ($rootScope) {
           broadcastStub = sinon.stub($rootScope, '$broadcast');
           revisionCatchStub.callsArgWith(0, 'APP_REVISION_CHANGED');
+          scope.initClient();
           jasmine.clock().tick(5000);
         }));
 
@@ -913,6 +926,7 @@ describe('Client Controller', function () {
           catchStub.callsArg(0);
           broadcastStub = sinon.stub($rootScope, '$broadcast');
           revisionCatchStub.callsArgWith(0, 'APP_REVISION_CHANGED');
+          scope.initClient();
           jasmine.clock().tick(50*60*1000);
         }));
 
@@ -992,6 +1006,15 @@ describe('Client Controller', function () {
     scope.organizations = [];
     scope.$digest();
     expect(scope.getOrgName('123')).toEqual('');
+  });
+
+  it('should display an error if the tutorial fails to start', function () {
+    inject(function ($q, tutorial) {
+      tutorial.start.returns($q.when($q.reject()));
+    });
+    scope.startTutorial();
+    scope.$apply();
+    expect(stubs.notificationError).toBeCalled();
   });
 
 
