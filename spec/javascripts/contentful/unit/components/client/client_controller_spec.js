@@ -547,6 +547,34 @@ describe('Client Controller', function () {
       });
     });
 
+    describe('requests navigation', function () {
+      beforeEach(function () {
+        data = {
+          type: 'location',
+          action: 'navigate',
+          path: '/foobar/baz'
+        };
+        childScope.$emit('iframeMessage', data);
+        expect(stubs.path).toBeCalledWith('/foobar/baz');
+      });
+
+      it('should change the location to whatever was requested', function () {
+
+      });
+    });
+
+    describe('requests create Space dialog', function () {
+      beforeEach(function () {
+        data = {
+          type: 'space',
+          action: 'new',
+          organizationId: '123abc'
+        };
+        childScope.$emit('iframeMessage', data);
+        expect(stubs.dialog).toBeCalledWith('123abc');
+      });
+    });
+
   });
 
   it('tracks profile button click event', function () {
@@ -827,15 +855,33 @@ describe('Client Controller', function () {
 
   describe('shows create space dialog', function () {
     beforeEach(function () {
-      scope.showCreateSpaceDialog();
+      scope.organizations = [
+        {sys: {id: 'abc'}},
+        {sys: {id: 'def'}},
+      ];
     });
-
     it('opens dialog', function () {
+      scope.showCreateSpaceDialog();
       expect(stubs.dialog).toBeCalled();
     });
 
     it('tracks analytics event', function () {
+      scope.showCreateSpaceDialog();
       expect(stubs.track).toBeCalled();
+    });
+
+    describe('with an organizationId', function () {
+      it('displays that organization first in the dropdown', function () {
+        scope.showCreateSpaceDialog('def');
+        expect(stubs.dialog.args[0][0].scope.organizations[0].sys.id).toBe('def');
+      });
+    });
+
+    describe('without an organizationId', function () {
+      it('displays that organization first in the dropdown', function () {
+        scope.showCreateSpaceDialog();
+        expect(stubs.dialog.args[0][0].scope.organizations[0].sys.id).toBe('abc');
+      });
     });
   });
 
