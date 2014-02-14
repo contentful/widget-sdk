@@ -43,13 +43,13 @@ angular.module('contentful').directive('cfPredefinedValuesList', function () {
       }
 
       scope.atTop = function () {
-        if(scope.validation.in.length <= VISIBLE_ITEMS) return true;
+        if(scope.validation.in && scope.validation.in.length <= VISIBLE_ITEMS) return true;
         if(blockList.scrollTop() === 0) return true;
         return false;
       };
 
       scope.atBottom = function () {
-        if(scope.validation.in.length <= VISIBLE_ITEMS) return true;
+        if(scope.validation.in && scope.validation.in.length <= VISIBLE_ITEMS) return true;
         var fullListHeight = getListHeight();
         var listHeight = blockList.height();
         if(blockList.scrollTop() + listHeight >= fullListHeight) return true;
