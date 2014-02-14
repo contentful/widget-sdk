@@ -5,6 +5,7 @@
     ot-subdoc=""
     ot-bind-text=""
     ng-disabled="!otEditable")
+  .cf-dropdown-editor(ng-switch-when="dropdown" ng-model="fieldData.value")
   %textarea(ng-switch-when="textarea"
     cf-input-autogrow=""
     ng-model="fieldData.value"
