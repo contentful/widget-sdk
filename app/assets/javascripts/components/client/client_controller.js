@@ -12,7 +12,9 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   $scope.notification = notification;
 
   $scope.startTutorial = function () {
-    tutorial.start();
+    tutorial.start().catch(function () {
+      notification.error('Could not create tutorial space');
+    });
   };
 
   $scope.preferences = {
@@ -320,7 +322,9 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     var age = now.diff(created, 'days');
     var seenTutorial = tutorial.getSeen();
     if (age < 7 && !seenTutorial && !_.isEmpty($scope.spaces)) {
-      tutorial.start();
+      tutorial.start().catch(function () {
+        tutorial.setSeen();
+      });
     }
   }
 });
