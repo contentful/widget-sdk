@@ -286,6 +286,7 @@ describe('The cfValidationOptions directive', function () {
   describe('switches validation types', function() {
     beforeEach(function() {
       scope.validationType = stubs.validationType;
+      scope.validation = {in: []};
     });
 
     function createFormTest(type, element) {

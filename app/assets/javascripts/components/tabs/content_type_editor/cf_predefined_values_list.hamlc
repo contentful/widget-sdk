@@ -1,3 +1,5 @@
+%i.ss-directup(ng-hide="atTop()")
+%i.ss-dropdown(ng-hide="atBottom()")
 %ul.block-list
   %li(ng-repeat="(index, value) in validation.in" index="{{index}}")
     {{value}}
