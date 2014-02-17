@@ -4,6 +4,7 @@ describe('Enforcements service', function () {
 
   var enforcements;
   var userStub, organizationStub;
+  var authorizationMock;
 
   beforeEach(function () {
     userStub = sinon.stub();
@@ -33,14 +34,15 @@ describe('Enforcements service', function () {
     };
 
     module('contentful/test', function ($provide) {
-      $provide.value('authorization', {
+      authorizationMock = {
         spaceContext: {
           space: {
             sys: { createdBy: { sys: {id: 123} } },
             organization: organizationStub
           }
         }
-      });
+      };
+      $provide.value('authorization', authorizationMock);
       userStub.returns({ sys: {id: 123} });
       $provide.value('authentication', {
         getUser: userStub
@@ -257,6 +259,16 @@ describe('Enforcements service', function () {
   });
 
   describe('computes metrics usage', function () {
+    it('if no space context exists returns no message', function() {
+      delete authorizationMock.spaceContext;
+      expect(enforcements.computeUsage()).toBeUndefined();
+    });
+
+    it('if no space exists returns no message', function() {
+      delete authorizationMock.spaceContext.space;
+      expect(enforcements.computeUsage()).toBeUndefined();
+    });
+
     it('for no exceeded usage metric returns no message', function () {
       expect(enforcements.computeUsage()).toBeUndefined();
     });
@@ -271,7 +283,6 @@ describe('Enforcements service', function () {
       organizationStub.usage.permanent.user = 5;
       expect(enforcements.computeUsage('user')).toMatch('Users');
     });
-
   });
 
 
