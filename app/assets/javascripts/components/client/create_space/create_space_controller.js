@@ -27,6 +27,14 @@ angular.module('contentful').controller('CreateSpaceDialogCtrl', [
       $scope.selectOrganization($scope.writableOrganizations[0]);
     }
 
+    function hasErrorOnField(err, error, field) {
+      if(err && err.body && err.body.details.errors.length > 0){
+        return err.body.details.errors[0].path == field &&
+               err.body.details.errors[0].name == error;
+      }
+      return false;
+    }
+
     $scope.createSpace = function () {
       if ($scope.lockSubmit) return;
       $scope.lockSubmit = true;
@@ -45,13 +53,20 @@ angular.module('contentful').controller('CreateSpaceDialogCtrl', [
       client.createSpace(data, orgId, function (err, newSpace) {
         $scope.$apply(function (scope) {
           if (err) {
+            var dismiss = true;
             var errorMessage = 'Could not create Space';
             var usage = enforcements.computeUsage('space');
             if(usage){ errorMessage = usage; }
+            else if(hasErrorOnField(err, 'length', 'name')){
+              errorMessage = 'Space name is too long';
+              dismiss = false;
+            }
             notification.serverError(errorMessage, err);
-            scope.lockSubmit = false;
-            scope.dialog.cancel();
-            stopSpinner();
+            if(dismiss){
+              scope.lockSubmit = false;
+              scope.dialog.cancel();
+              stopSpinner();
+            }
           } else {
             $scope.performTokenLookup().then(function () {
               var space = _.find(scope.spaces, function (space) {

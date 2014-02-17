@@ -166,9 +166,15 @@ describe('Create Space Dialog controller', function () {
           scope.newSpaceData.name = 'name';
         });
 
-        describe('if remote call fails', function() {
+        describe('if remote call fails with no specific error', function() {
           beforeEach(function() {
-            stubs.createSpace.callsArgWith(2, {});
+            stubs.createSpace.callsArgWith(2, {
+              body: {
+                details: {
+                  errors: []
+                }
+              }
+            });
             scope.createSpace();
           });
 
@@ -206,6 +212,57 @@ describe('Create Space Dialog controller', function () {
 
           it('unlocks submit', function() {
             expect(scope.lockSubmit).toBeFalsy();
+          });
+        });
+
+        describe('if remote call fails with a specific error', function() {
+          beforeEach(function() {
+            stubs.createSpace.callsArgWith(2, {
+              body: {
+                details: {
+                  errors: [
+                    {path: 'name', name: 'length'}
+                  ]
+                }
+              }
+            });
+            scope.createSpace();
+          });
+
+          it('starts spinner', function() {
+            expect(stubs.start).toBeCalled();
+          });
+
+          it('checks for creation permission', function() {
+            expect(scope.canCreateSpaceInOrg).toBeCalledWith('orgid');
+          });
+
+          it('calls client lib with data', function() {
+            expect(stubs.createSpace.args[0][0].name).toEqual('name');
+          });
+
+          it('calls client lib with org id', function() {
+            expect(stubs.createSpace.args[0][1]).toEqual('orgid');
+          });
+
+          it('computes usage', function() {
+            expect(stubs.computeUsage).toBeCalled();
+          });
+
+          it('shows server error', function() {
+            expect(stubs.serverError).toBeCalled();
+          });
+
+          it('does not cancel dialog', function() {
+            expect(stubs.cancel).not.toBeCalled();
+          });
+
+          it('does not stop spinner', function() {
+            expect(stubs.stop).not.toBeCalled();
+          });
+
+          it('does not unlock submit', function() {
+            expect(scope.lockSubmit).toBeTruthy();
           });
         });
 
