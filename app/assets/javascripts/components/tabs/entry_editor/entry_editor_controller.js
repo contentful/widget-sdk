@@ -126,10 +126,12 @@ angular.module('contentful')
   };
 
   function fieldWidgetType(field, contentType) {
-    if (field.type === 'Symbol' ) return 'textfield';
+    var hasValidations = getFieldValidationsOfType(field, 'in').length > 0;
+    if(hasValidations) return 'dropdown';
+    if (field.type === 'Symbol' ) {
+      return 'textfield';
+    }
     if (field.type === 'Text'   ) {
-      var hasValidations = getFieldValidationsOfType(field, 'in').length > 0;
-      if(hasValidations) return 'dropdown';
       if (contentType.data.displayField === field.id) {
         return 'textarea';
       } else {
