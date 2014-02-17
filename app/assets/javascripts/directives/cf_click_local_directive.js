@@ -7,7 +7,7 @@ angular.module('contentful').directive('cfClickLocal', function($parse){
     restrict: 'A',
     link: function(scope, element, attr) {
       var fn = $parse(attr.cfClickLocal);
-      element.bind('click', function(event) {
+      element.on('click', function(event) {
         event.stopPropagation();
         event.preventDefault();
         scope.$apply(function() {

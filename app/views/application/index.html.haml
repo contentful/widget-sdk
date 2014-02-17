@@ -42,11 +42,13 @@
           %span(ng-bind="spaceContext.space.data.name || 'Spaces'")
         .dropdown-menu.fixed-position.left-aligned
           %ul.dropdown-group
-            %li.no-highlight(ng-repeat="(orgId, org) in spacesByOrg")
+            %li.no-highlight(ng-repeat="(orgId, org) in spacesByOrg"
+                             ng-class="{'no-action': !canSelectOrg(orgId)}"
+                             cf-click-local="selectOrg(orgId) && toggleDropdown()")
               %i.ss-users
               %span {{getOrgName(orgId)}}
               %ul
-                %li(ng-repeat="space in org track by space.getId()" ng-click="selectSpace(space)" dropdown-close=""
+                %li(ng-repeat="space in org track by space.getId()" cf-click-local="selectSpace(space) && toggleDropdown()"
                     ng-class="{hibernated: space.isHibernated()}" ng-disabled="!space.isHibernated()"
                     tooltip-container=".project" tooltip-placement="left"
                     tooltip="This space entered hibernation due to lack of use. It will be back online soon.")

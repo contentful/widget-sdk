@@ -40,6 +40,10 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
         if (space) $location.path('/spaces/'+space.getId());
       },
 
+      goToOrganization: function (orgId, isOwner) {
+        $location.path('/account/organizations/'+orgId+'/'+(isOwner ? 'edit' : 'usage'));
+      },
+
       goToTab : function (tab, space) {
         $location.path(this.makeLocation(tab, space));
       },

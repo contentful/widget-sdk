@@ -20,6 +20,7 @@ describe('Client Controller', function () {
         'notificationInfo',
         'notificationError',
         'goToSpace',
+        'goToOrganization',
         'routingSpaceId',
         'setSpaceData',
         'getRoute',
@@ -104,6 +105,7 @@ describe('Client Controller', function () {
 
       $provide.value('routing', {
         goToSpace: stubs.goToSpace,
+        goToOrganization: stubs.goToOrganization,
         getSpaceId: stubs.routingSpaceId,
         getRoute: stubs.getRoute
       });
@@ -270,6 +272,103 @@ describe('Client Controller', function () {
       it('route to another space', function () {
         expect(stubs.goToSpace).toBeCalledWith(space);
       });
+    });
+  });
+
+  describe('select organization', function() {
+    beforeEach(function() {
+      scope.organizations = [{
+        sys: {
+          id: '1234',
+          createdBy: {
+            sys: {
+              id: '456'
+            }
+          }
+        },
+        name: 'orgname'
+      }];
+      scope.user = {
+        sys: {id: '456'}
+      };
+      scope.canSelectOrg = sinon.stub();
+    });
+
+    describe('cannot select org', function() {
+      beforeEach(function() {
+        scope.canSelectOrg.returns(false);
+        scope.selectOrg('1234');
+      });
+
+      it('does not tracks analytics', function () {
+          expect(stubs.track).not.toBeCalled();
+        });
+
+      it('does not route to another space', function () {
+        expect(stubs.goToOrganization).not.toBeCalled();
+      });
+
+    });
+
+    describe('can select org', function() {
+      beforeEach(function() {
+        scope.canSelectOrg.returns(true);
+        scope.selectOrg('1234');
+      });
+
+      it('tracks analytics', function () {
+          expect(stubs.track).toBeCalled();
+        });
+
+      it('tracks the org properties', function () {
+        expect(stubs.track.args[0][1]).toEqual({
+          organizationId: '1234', organizationName: 'orgname'
+        });
+      });
+
+      it('route to another space', function () {
+        expect(stubs.goToOrganization).toBeCalledWith('1234', true);
+      });
+    });
+
+  });
+
+  describe('check if user can select an organization', function() {
+    beforeEach(function() {
+      scope.user = {
+        organizationMemberships: [{
+          organization: {
+            sys: {
+              id: '1234',
+              createdBy: {
+                sys: {
+                  id: '456'
+                }
+              }
+            }
+          }
+        }]
+      };
+    });
+
+    it('as an owner', function() {
+      scope.user.organizationMemberships[0].role = 'owner';
+      expect(scope.canSelectOrg('1234')).toBeTruthy();
+    });
+
+    it('as an admin', function() {
+      scope.user.organizationMemberships[0].role = 'admin';
+      expect(scope.canSelectOrg('1234')).toBeTruthy();
+    });
+
+    it('as an user', function() {
+      scope.user.organizationMemberships[0].role = 'user';
+      expect(scope.canSelectOrg('1234')).toBeFalsy();
+    });
+
+    it('with no memberships', function() {
+      scope.user.organizationMemberships = [];
+      expect(scope.canSelectOrg('1234')).toBeFalsy();
     });
   });
 

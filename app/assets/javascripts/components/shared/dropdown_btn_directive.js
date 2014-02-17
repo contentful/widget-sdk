@@ -22,6 +22,10 @@ angular.module('contentful').directive('dropdownBtn', function($parse) {
         if (isOpen) close(); else open();
       };
 
+      scope.toggleDropdown = function () {
+        toggle();
+      };
+
       var isDisabled = function () {
         return element.find('.dropdown-toggle[disabled]').length > 0;
       };
