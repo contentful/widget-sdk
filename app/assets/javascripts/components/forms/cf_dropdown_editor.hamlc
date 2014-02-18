@@ -4,5 +4,5 @@
     %i.button-icon-right.ss-dropdown
   .dropdown-menu.fixed-position
     %ul
-      %li(ng-repeat="value in valuesList" ng-click="selectDropdownValue(value)" dropdown-close="") {{value}}
+      %li(ng-repeat="value in valuesList" ng-click="selectDropdownValue(value)" dropdown-close="") {{value || 'Choose a value'}}
 

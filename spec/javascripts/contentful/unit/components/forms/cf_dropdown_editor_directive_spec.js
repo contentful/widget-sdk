@@ -18,6 +18,7 @@ describe('cfDropdownEditor Directive', function () {
       scope.field = {};
 
       scope.getFieldValidationsOfType = sinon.stub();
+      scope.getFieldValidationsOfType.returns([]);
 
       compileElement = function () {
         element = $compile('<div class="cf-dropdown-editor" ng-model="fieldData.value"></div>')(scope);
@@ -80,6 +81,24 @@ describe('cfDropdownEditor Directive', function () {
       compileElement();
     });
 
+    it('has 4 elements', function() {
+      expect(element.find('.dropdown-menu li').length).toBe(4);
+    });
+
+    it('values list is set', function() {
+      expect(scope.valuesList).toEqual(valuesList);
+    });
+  });
+
+  describe('renders a list with a required validation', function() {
+    var valuesList;
+    beforeEach(function() {
+      scope.field.required = true;
+      valuesList = ['banana', 'orange', 'strawberry'];
+      scope.getFieldValidationsOfType.returns(valuesList);
+      compileElement();
+    });
+
     it('has 3 elements', function() {
       expect(element.find('.dropdown-menu li').length).toBe(3);
     });
@@ -88,6 +107,7 @@ describe('cfDropdownEditor Directive', function () {
       expect(scope.valuesList).toEqual(valuesList);
     });
   });
+
 
   describe('selects dropdown value', function() {
     beforeEach(function() {

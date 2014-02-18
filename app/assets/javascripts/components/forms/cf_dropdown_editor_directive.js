@@ -7,6 +7,9 @@ angular.module('contentful').directive('cfDropdownEditor', function(){
 
     link: function(scope, elem, attr, ngModelCtrl){
       scope.valuesList = scope.getFieldValidationsOfType(scope.field, 'in');
+      if(!scope.field.required){
+        scope.valuesList.unshift('');
+      }
 
       ngModelCtrl.$render = function () {
         scope.selectedValue = ngModelCtrl.$viewValue;
