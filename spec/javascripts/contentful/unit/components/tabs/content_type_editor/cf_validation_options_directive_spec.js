@@ -8,7 +8,11 @@ describe('The cfValidationOptions directive', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs(['set', 'validationType']);
+      stubs = $provide.makeStubs(['set', 'validationType', 'warn']);
+
+      $provide.value('notification', {
+        warn: stubs.warn
+      });
     });
 
     inject(function ($rootScope, $compile) {
@@ -36,6 +40,7 @@ describe('The cfValidationOptions directive', function () {
     });
 
     describe('updates values', function() {
+      var result;
       beforeEach(function() {
         scope.validation = {};
         scope.updateDoc = sinon.stub();
@@ -43,7 +48,11 @@ describe('The cfValidationOptions directive', function () {
 
       describe('with a new value', function() {
         beforeEach(function() {
-          scope.updateValues('hello');
+          result = scope.updateValues('hello');
+        });
+
+        it('returns true', function() {
+          expect(result).toBeTruthy();
         });
 
         it('new value is in validation list', function() {
@@ -58,7 +67,11 @@ describe('The cfValidationOptions directive', function () {
       describe('with an existing new value', function() {
         beforeEach(function() {
           scope.validation.in = ['hello'];
-          scope.updateValues('hello');
+          result = scope.updateValues('hello');
+        });
+
+        it('returns falsy', function() {
+          expect(result).toBeFalsy();
         });
 
         it('new value is not repeated in validation list', function() {
@@ -68,7 +81,58 @@ describe('The cfValidationOptions directive', function () {
         it('document is not updated', function() {
           expect(scope.updateDoc).not.toBeCalled();
         });
+
+        it('shows notification', function() {
+          expect(stubs.warn).toBeCalled();
+        });
       });
+
+      describe('if max number of values is reached', function() {
+        beforeEach(function() {
+          scope.validation.in = new Array(50);
+          result = scope.updateValues('hello');
+        });
+
+        it('returns falsy', function() {
+          expect(result).toBeFalsy();
+        });
+
+        it('length is unchanged', function() {
+          expect(scope.validation.in.length).toEqual(50);
+        });
+
+        it('document is not updated', function() {
+          expect(scope.updateDoc).not.toBeCalled();
+        });
+
+        it('shows notification', function() {
+          expect(stubs.warn).toBeCalled();
+        });
+      });
+
+      describe('if value is over max length', function() {
+        beforeEach(function() {
+          scope.validation.in = [];
+          result = scope.updateValues((new Array(100)).join('a'));
+        });
+
+        it('returns falsy', function() {
+          expect(result).toBeFalsy();
+        });
+
+        it('length is unchanged', function() {
+          expect(scope.validation.in.length).toEqual(0);
+        });
+
+        it('document is not updated', function() {
+          expect(scope.updateDoc).not.toBeCalled();
+        });
+
+        it('shows notification', function() {
+          expect(stubs.warn).toBeCalled();
+        });
+      });
+
 
     });
 
@@ -182,6 +246,7 @@ describe('The cfValidationOptions directive', function () {
     describe('on enter key', function() {
       beforeEach(inject(function(keycodes) {
         event.keyCode = keycodes.ENTER;
+        scope.updateValues.returns(true);
         scope.submitValue(event);
       }));
 
@@ -201,6 +266,31 @@ describe('The cfValidationOptions directive', function () {
         expect(target.val()).toBe('');
       });
     });
+
+    describe('on enter key if value fails to update', function() {
+      beforeEach(inject(function(keycodes) {
+        event.keyCode = keycodes.ENTER;
+        scope.updateValues.returns(false);
+        scope.submitValue(event);
+      }));
+
+      it('stops propagation', function() {
+        expect(event.stopPropagation).toBeCalled();
+      });
+
+      it('prevents default', function() {
+        expect(event.preventDefault).toBeCalled();
+      });
+
+      it('updates values', function() {
+        expect(scope.updateValues).toBeCalledWith('targetvalue');
+      });
+
+      it('value is not reset to empty', function() {
+        expect(target.val()).toBe('targetvalue');
+      });
+    });
+
 
     describe('on any other key', function() {
       beforeEach(function() {

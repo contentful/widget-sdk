@@ -12,8 +12,8 @@ angular.module('contentful').directive('cfValidationOptions', function (keycodes
         var target = $(ev.target);
         if(ev.keyCode === keycodes.ENTER && target.val()){
           ev.preventDefault();
-          scope.updateValues(target.val());
-          target.val('');
+          if(scope.updateValues(target.val()))
+            target.val('');
         }
       };
 
@@ -24,14 +24,21 @@ angular.module('contentful').directive('cfValidationOptions', function (keycodes
 
     },
 
-    controller: function CfValidationOptionsCtrl($scope, mimetype) {
+    controller: function CfValidationOptionsCtrl($scope, mimetype, notification) {
       $scope.mimetypeGroups = mimetype.groupDisplayNames;
 
       $scope.updateValues = function (val) {
         $scope.validation.in = $scope.validation.in || [];
-        if(!_.contains($scope.validation.in, val)){
+        if($scope.validation.in.length == 50){
+          notification.warn('You can only add up to 50 predefined values');
+        } else if(val.length > 85){
+          notification.warn('Values should be 85 characters or less');
+        } else if(_.contains($scope.validation.in, val)){
+          notification.warn('This value already exists on the list');
+        } else {
           $scope.validation.in.push(val);
           $scope.updateDoc();
+          return true;
         }
       };
 

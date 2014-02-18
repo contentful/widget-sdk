@@ -27,7 +27,7 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', 'keycodes
 
     attach: function () {
       var scope = this.scope;
-      this.domElement = $(JST[this.params.template]()).appendTo('body');
+      this.domElement = $(JST[this.params.template]()).prependTo('.client');
 
       this.domElement.find('input').eq(0).focus();
 

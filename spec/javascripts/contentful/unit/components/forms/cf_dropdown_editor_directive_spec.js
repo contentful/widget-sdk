@@ -59,13 +59,13 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('is medium', function() {
-      scope.getFieldValidationsOfType.returns(['012345678901234567890123']);
+      scope.getFieldValidationsOfType.returns(['012345678901234567890']);
       compileElement();
       expect(scope.dropdownWidthClass()).toEqual('medium-dropdown');
     });
 
     it('is large', function() {
-      scope.getFieldValidationsOfType.returns(['012345678901234567890123456789012345678901234567890123456789']);
+      scope.getFieldValidationsOfType.returns(['0123456789012345678901234567890123456789012345678901234567890123456789012345678901234']);
       compileElement();
       expect(scope.dropdownWidthClass()).toEqual('large-dropdown');
     });

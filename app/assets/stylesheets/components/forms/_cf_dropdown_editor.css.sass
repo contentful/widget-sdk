@@ -1,11 +1,14 @@
 .cf-dropdown-editor
   .dropdown-toggle, .dropdown-menu li
+    text-align: left
     overflow: hidden
     white-space: nowrap
     text-overflow: ellipsis
-    max-width: 672px
-  .dropdown-menu li
-    max-width: 650px
+  .dropdown-menu
+    margin-left: 0px
+    min-width: 0px
+    overflow-y: auto
+    max-height: 390px
   .button-icon-right
     position: absolute
     left: auto
@@ -15,9 +18,15 @@
   .flat-button
     padding-right: 1.5em
   .small-dropdown
-    width: 20%
+    .dropdown-toggle,
+    .dropdown-menu
+      width: 28%
   .medium-dropdown
-    width: 60%
+    .dropdown-toggle,
+    .dropdown-menu
+      width: 60%
   .large-dropdown
-    width: 100%
+    .dropdown-toggle,
+    .dropdown-menu
+      width: 100%
 

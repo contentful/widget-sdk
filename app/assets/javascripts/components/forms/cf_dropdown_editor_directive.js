@@ -18,8 +18,8 @@ angular.module('contentful').directive('cfDropdownEditor', function(){
 
       scope.dropdownWidthClass = function () {
         var maxLength = _.max(scope.valuesList, 'length').length;
-        if(maxLength <= 20) return 'small-dropdown';
-        if(maxLength <= 50) return 'medium-dropdown';
+        if(maxLength <= 19) return 'small-dropdown';
+        if(maxLength <= 45) return 'medium-dropdown';
         return 'large-dropdown';
       };
     },

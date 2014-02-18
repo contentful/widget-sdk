@@ -1,8 +1,8 @@
-.dropdown-btn
-  %button.dropdown-toggle.flat-button(type="button" ng-class="dropdownWidthClass()")
+.dropdown-btn(ng-class="dropdownWidthClass()")
+  %button.dropdown-toggle.flat-button(type="button")
     {{selectedValue || 'Choose a value' }}
     %i.button-icon-right.ss-dropdown
   .dropdown-menu.fixed-position
-    %ul(ng-repeat="value in valuesList")
-      %li(ng-click="selectDropdownValue(value)" dropdown-close="") {{value}}
+    %ul
+      %li(ng-repeat="value in valuesList" ng-click="selectDropdownValue(value)" dropdown-close="") {{value}}
 

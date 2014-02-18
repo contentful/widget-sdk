@@ -19,6 +19,7 @@ describe('Validation dialog service', function () {
       scope.can.returns(true);
 
       makeDialog = function () {
+        $('<div class="client"></div>').appendTo('body');
         container = $('<div class="cf-dialog" dialog-template="validation_dialog"></div>');
         $compile(container)(scope);
         scope.$digest();
@@ -33,6 +34,7 @@ describe('Validation dialog service', function () {
   });
 
   afterEach(inject(function ($log) {
+    $('.client').remove();
     $log.assertEmpty();
   }));
 
