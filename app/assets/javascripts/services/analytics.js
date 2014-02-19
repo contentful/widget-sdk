@@ -1,8 +1,7 @@
 'use strict';
 
 angular.module('contentful').provider('analytics', function (environment) {
-  /*global analytics*/
-
+  var $window, $document, $q;
   var dontLoad = environment.env.match(/acceptance|development|test/) ? true : false;
 
   this.dontLoad = function () {
@@ -16,20 +15,20 @@ angular.module('contentful').provider('analytics', function (environment) {
 
   function createAnalytics() {
     // Create a queue, but don't obliterate an existing one!
-    window.analytics = window.analytics || [];
+    $window.analytics = $window.analytics || [];
 
     // Define a method that will asynchronously load analytics.js from our CDN.
-    analytics.load = function(apiKey) {
+    $window.analytics.load = function(apiKey) {
 
       // Create an async script element for analytics.js.
-      var script = document.createElement('script');
+      var script = $document.createElement('script');
       script.type = 'text/javascript';
       script.async = true;
-      script.src = ('https:' === document.location.protocol ? 'https://' : 'http://') +
+      script.src = ('https:' === $document.location.protocol ? 'https://' : 'http://') +
                     'd2dq2ahtl5zl1z.cloudfront.net/analytics.js/v1/' + apiKey + '/analytics.min.js';
 
       // Find the first script element on the page and insert our script next to it.
-      var firstScript = document.getElementsByTagName('script')[0];
+      var firstScript = $document.getElementsByTagName('script')[0];
       firstScript.parentNode.insertBefore(script, firstScript);
 
       // Define a factory that generates wrapper methods to push arrays of
@@ -37,7 +36,7 @@ angular.module('contentful').provider('analytics', function (environment) {
       // is always the name of the analytics.js method itself (eg. `track`).
       var methodFactory = function (type) {
         return function () {
-          analytics.push([type].concat(Array.prototype.slice.call(arguments, 0)));
+          $window.analytics.push([type].concat(Array.prototype.slice.call(arguments, 0)));
         };
       };
 
@@ -45,16 +44,16 @@ angular.module('contentful').provider('analytics', function (environment) {
       var methods = ['identify', 'track', 'trackLink', 'trackForm', 'trackClick',
                      'trackSubmit', 'pageview', 'ab', 'alias', 'ready'];
       for (var i = 0; i < methods.length; i++) {
-        analytics[methods[i]] = methodFactory(methods[i]);
+        $window.analytics[methods[i]] = methodFactory(methods[i]);
       }
     };
 
     // Load analytics.js with your API key, which will automatically load all of the
     // analytics integrations you've turned on for your account. Boosh!
-    analytics.load(environment.settings.segment_io);
+    $window.analytics.load(environment.settings.segment_io);
 
-    analytics.ready(function () { // analytics.js object
-      window.ga('set', 'anonymizeIp', true);
+    $window.analytics.ready(function () { // analytics.js object
+      $window.ga('set', 'anonymizeIp', true);
     });
   }
 
@@ -64,7 +63,7 @@ angular.module('contentful').provider('analytics', function (environment) {
     },
 
     login: function(user){
-      analytics.identify(user.sys.id, {
+      $window.analytics.identify(user.sys.id, {
         firstName: user.firstName,
         lastName:  user.lastName
       }, {
@@ -196,13 +195,15 @@ angular.module('contentful').provider('analytics', function (environment) {
 
     track: function (event, data) {
       if (!this._disabled) {
-        analytics.track(event, _.merge({},data, this._spaceData));
+        $window.analytics.track(event, _.merge({},data, this._spaceData));
       }
       //console.log('analytics.track', event, data);
     }
   };
 
-  this.$get = function () {
+  this.$get = function (_$window_, _$document_) {
+    $window = _$window_;
+    $document = _$document_;
     if (dontLoad) {
       return _.reduce(api, function (api, fun, name) {
         api[name] = angular.noop;
