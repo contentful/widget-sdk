@@ -7,6 +7,7 @@
   "cdn_host": "cdn.flinkly.com",
   "ot_host": "ot.flinkly.com",
   "segment_io": "2z8un4c6u4",
+  "totango": "SP-6959-01",
   "intercom": {"secret":"13gvdwUHBfyDcRvq8WJQLwDkQTp4nZl5Dq5V2RmZ"},
   "git_revision": "e1658431",
   "filepicker": {
