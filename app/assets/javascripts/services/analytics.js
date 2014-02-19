@@ -250,13 +250,13 @@ angular.module('contentful').provider('analytics', function (environment) {
     }
   };
 
-  this.$get = function (_$window_, _$document_, _$q_) {
+  this.$get = function (_$window_, _$document_, _$q_, $location) {
     $window = _$window_;
     $document = _$document_;
     $q = _$q_;
     api._spaceDeferred = $q.defer();
     api._userDeferred = $q.defer();
-    if (dontLoad) {
+    if (dontLoad && !$location.search().forceAnalytics) {
       return _.reduce(api, function (api, fun, name) {
         api[name] = angular.noop;
         return api;
