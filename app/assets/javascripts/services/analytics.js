@@ -12,24 +12,48 @@ angular.module('contentful').provider('analytics', function (environment) {
     dontLoad = false;
   };
 
+  var totangoModuleNames = {
+    apiKeys: 'API Keys',
+    assets: 'Assets',
+    contentTypes: 'Content Types',
+    entries: 'Entries'
+  };
+
+  function injectAndLoadScript(path, onLoad) {
+    var doc = $document.get(0);
+    var script = doc.createElement('script');
+    script.type = 'text/javascript';
+    script.async = true;
+    script.src = ('https:' === doc.location.protocol ? 'https://' : 'http://') + path;
+    if(onLoad) script.onload = onLoad;
+
+    // Find the first script element on the page and insert our script next to it.
+    var firstScript = doc.getElementsByTagName('script')[0];
+    firstScript.parentNode.insertBefore(script, firstScript);
+  }
 
   function createAnalytics() {
     // Create a queue, but don't obliterate an existing one!
     $window.analytics = $window.analytics || [];
 
+    $window.totango = {
+      go: function(){return -1;},
+      track: function(){},
+      identify: function(){},
+      setAccountAttributes: function(){}
+    };
+
+    $window.totango_options = {
+      service_id: environment.settings.totango,
+      allow_empty_accounts: false,
+      account: {}
+     };
+
     // Define a method that will asynchronously load analytics.js from our CDN.
     $window.analytics.load = function(apiKey) {
 
-      // Create an async script element for analytics.js.
-      var script = $document.createElement('script');
-      script.type = 'text/javascript';
-      script.async = true;
-      script.src = ('https:' === $document.location.protocol ? 'https://' : 'http://') +
-                    'd2dq2ahtl5zl1z.cloudfront.net/analytics.js/v1/' + apiKey + '/analytics.min.js';
-
-      // Find the first script element on the page and insert our script next to it.
-      var firstScript = $document.getElementsByTagName('script')[0];
-      firstScript.parentNode.insertBefore(script, firstScript);
+      injectAndLoadScript('d2dq2ahtl5zl1z.cloudfront.net/analytics.js/v1/' + apiKey + '/analytics.min.js');
+      injectAndLoadScript('s3.amazonaws.com/totango-cdn/totango2.js', initializeTotango);
 
       // Define a factory that generates wrapper methods to push arrays of
       // arguments onto our `analytics` queue, where the first element of the arrays
@@ -57,6 +81,16 @@ angular.module('contentful').provider('analytics', function (environment) {
     });
   }
 
+  function initializeTotango() {
+     $q.all([api._spaceDeferred.promise, api._userDeferred.promise]).then(function () {
+       var orgId = api._organizationData ? api._organizationData.sys.id : 'noorg';
+       $window.totango_options.username = api._userData.sys.id +'-'+ orgId;
+       $window.totango_options.account.id = orgId;
+       $window.totango_options.module = totangoModuleNames.entries;
+       $window.totango.go($window.totango_options);
+     });
+  }
+
   var api = {
     disable: function () {
       this._disabled = true;
@@ -79,6 +113,7 @@ angular.module('contentful').provider('analytics', function (environment) {
 
     setSpaceData: function (space) {
       if (space) {
+        this._organizationData = space.data.organization;
         this._spaceData = {
           spaceIsTutorial:                       space.data.tutorial,
           spaceSubscriptionKey:                  space.data.organization.sys.id,
@@ -89,7 +124,14 @@ angular.module('contentful').provider('analytics', function (environment) {
         };
       } else {
         this._spaceData = null;
+        this._organizationData = null;
       }
+      this._spaceDeferred.resolve(this._spaceData);
+    },
+
+    setUserData: function (user) {
+      this._userData = user;
+      this._userDeferred.resolve(this._userData);
     },
 
     tabAdded: function (tab) {
@@ -102,6 +144,7 @@ angular.module('contentful').provider('analytics', function (environment) {
     },
 
     tabActivated: function (tab, oldTab) {
+      this._setTotangoModule(tab.section);
       this.track('Switched Tab', {
         viewType: tab.viewType,
         section: tab.section,
@@ -109,6 +152,12 @@ angular.module('contentful').provider('analytics', function (environment) {
         fromViewType: oldTab ? oldTab.viewType : null,
         fromSection: oldTab ? oldTab.section : null
       });
+    },
+
+    _setTotangoModule: function (sectionName) {
+      if($window.totango_options){
+        $window.totango_options.module = totangoModuleNames[sectionName];
+      }
     },
 
     knowledgeBase: function (section) {
@@ -201,9 +250,12 @@ angular.module('contentful').provider('analytics', function (environment) {
     }
   };
 
-  this.$get = function (_$window_, _$document_) {
+  this.$get = function (_$window_, _$document_, _$q_) {
     $window = _$window_;
     $document = _$document_;
+    $q = _$q_;
+    api._spaceDeferred = $q.defer();
+    api._userDeferred = $q.defer();
     if (dontLoad) {
       return _.reduce(api, function (api, fun, name) {
         api[name] = angular.noop;

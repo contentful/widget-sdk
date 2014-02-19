@@ -185,6 +185,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   $scope.$watch('user', function (user) {
     if(user){
       $scope.organizations = _.pluck(user.organizationMemberships, 'organization');
+      analytics.setUserData(user);
     }
   });
 
