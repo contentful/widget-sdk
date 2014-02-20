@@ -10,7 +10,7 @@ describe('Analytics service', function () {
       analyticsProvider = _analyticsProvider_;
 
       stubs = $provide.makeStubs([
-        'load', 'ready', 'push',
+        'load', 'ready', 'push', 'get', 'resolve',
         'createElement', 'getElementsByTagName', 'insertBefore'
       ]);
 
@@ -18,12 +18,17 @@ describe('Analytics service', function () {
         addEventListener: sinon.stub()
       });
 
-      $provide.value('$document', {
+      var doc = {
         createElement: stubs.createElement,
         getElementsByTagName: stubs.getElementsByTagName,
         location: {
           protocol: 'protocol'
         }
+      };
+
+      stubs.get.returns(doc);
+      $provide.value('$document', {
+        get: stubs.get
       });
 
       scriptMock = {};
@@ -81,12 +86,20 @@ describe('Analytics service', function () {
       loadAnalytics();
     });
 
-    it('creates a script element', function() {
-      expect(stubs.createElement).toBeCalled();
+    it('creates 2 script elements', function() {
+      expect(stubs.createElement).toBeCalledTwice();
     });
 
-    it('inserts the script element', function() {
-      expect(stubs.getElementsByTagName).toBeCalled();
+    it('inserts 2 script elements', function() {
+      expect(stubs.getElementsByTagName).toBeCalledTwice();
+    });
+
+    it('initializes totango object', function() {
+      expect($window.totango).toBeDefined();
+    });
+
+    it('initializes totango options object', function() {
+      expect($window.totango_options).toBeDefined();
     });
 
     describe('readies analytics', function() {
@@ -97,6 +110,51 @@ describe('Analytics service', function () {
       it('gets method name', function() {
         expect(stubs.push.args[0][0][0]).toBe('ready');
       });
+    });
+
+    describe('on totango load event', function() {
+      beforeEach(function() {
+        $window.totango.go = sinon.stub();
+      });
+
+      describe('if space and user data not ready', function() {
+        beforeEach(inject(function($rootScope) {
+          scriptMock.onload();
+          $rootScope.$digest();
+        }));
+
+        it('does not call totango initialization method', function() {
+          expect($window.totango.go).not.toBeCalled();
+        });
+      });
+
+      describe('when space and user data are ready', function() {
+        beforeEach(inject(function($rootScope) {
+          analytics._userData = {sys:{id: '123'}};
+          analytics._organizationData = {sys:{id: '456'}};
+          scriptMock.onload();
+          analytics._spaceDeferred.resolve();
+          analytics._userDeferred.resolve();
+          $rootScope.$digest();
+        }));
+
+        it('calls totango initialization method', function() {
+          expect($window.totango.go).toBeCalled();
+        });
+
+        it('sets up totango username', function() {
+          expect($window.totango_options.username).toEqual('123-456');
+        });
+
+        it('sets up account id', function() {
+          expect($window.totango_options.account.id).toEqual('456');
+        });
+
+        it('sets up initial module', function() {
+          expect($window.totango_options.module).toEqual('Entries');
+        });
+      });
+
     });
 
     it('disables api', function() {
@@ -152,14 +210,18 @@ describe('Analytics service', function () {
       });
     });
 
-  });
+    describe('sets space data', function() {
+      var organization;
 
-  describe('sets space data', function() {
-    it('to actual data', function() {
-      analytics.setSpaceData({
-        data: {
-          tutorial: true,
-          organization: {
+      beforeEach(function() {
+        analytics._spaceDeferred = {
+          resolve: stubs.resolve
+        };
+      });
+
+      describe('to supplied data', function() {
+        beforeEach(function() {
+          organization = {
             sys: {id: '123'},
             subscriptionState: 'substate',
             invoiceState: 'invstate',
@@ -167,24 +229,185 @@ describe('Analytics service', function () {
               sys: { id: '456' },
               name: 'name'
             }
-          }
-        }
+          };
+          analytics.setSpaceData({
+            data: {
+              tutorial: true,
+              organization: organization
+            }
+          });
+        });
+
+        it('sets spaceData object', function() {
+          expect(analytics._spaceData).toEqual({
+            spaceIsTutorial: true,
+            spaceSubscriptionKey: '123',
+            spaceSubscriptionState: 'substate',
+            spaceSubscriptionInvoiceState: 'invstate',
+            spaceSubscriptionSubscriptionPlanKey: '456',
+            spaceSubscriptionSubscriptionPlanName: 'name'
+          });
+        });
+
+        it('sets organization data object', function() {
+          expect(analytics._organizationData).toEqual(organization);
+        });
+
+        it('resolves deferred', function() {
+          expect(stubs.resolve).toBeCalled();
+        });
       });
 
-      expect(analytics._spaceData).toEqual({
-        spaceIsTutorial: true,
-        spaceSubscriptionKey: '123',
-        spaceSubscriptionState: 'substate',
-        spaceSubscriptionInvoiceState: 'invstate',
-        spaceSubscriptionSubscriptionPlanKey: '456',
-        spaceSubscriptionSubscriptionPlanName: 'name'
+      describe('to null', function() {
+        beforeEach(function() {
+          analytics.setSpaceData();
+        });
+
+        it('sets space data', function() {
+          expect(analytics._spaceData).toBeNull();
+        });
+
+        it('sets organization data', function() {
+          expect(analytics._organizationData).toBeNull();
+        });
+
+        it('resolves deferred', function() {
+          expect(stubs.resolve).toBeCalled();
+        });
       });
     });
 
-    it('to null', function() {
-      analytics.setSpaceData();
-      expect(analytics._spaceData).toBeNull();
+    describe('sets user data', function() {
+      var user;
+
+      beforeEach(function() {
+        analytics._userDeferred = {
+          resolve: stubs.resolve
+        };
+      });
+
+      describe('to supplied data', function() {
+        beforeEach(function() {
+          user = {name: 'Tiago'};
+          analytics.setUserData(user);
+        });
+
+        it('sets userData object', function() {
+          expect(analytics._userData).toEqual(user);
+        });
+
+        it('resolves deferred', function() {
+          expect(stubs.resolve).toBeCalled();
+        });
+      });
     });
+
+    describe('tab added', function() {
+      var tab;
+      beforeEach(function() {
+        analytics.track = sinon.stub();
+        analytics._trackView = sinon.stub();
+        analytics._idFromTab = sinon.stub();
+        analytics._idFromTab.returns('id');
+        tab = {
+          viewType: 'viewtype',
+          section: 'section',
+          id: 'id'
+        };
+        analytics.tabAdded(tab);
+      });
+
+      it('tracks tab opening', function() {
+        expect(analytics.track).toBeCalled();
+      });
+
+      it('sends data to tab opening track', function() {
+        expect(analytics.track.args[0][1]).toEqual({
+          viewType: 'viewtype',
+          section: 'section',
+          id: 'id'
+        });
+      });
+
+      it('tracks view', function() {
+        expect(analytics._trackView).toBeCalledWith(tab);
+      });
+    });
+
+    describe('tab activated', function() {
+      var tab, oldTab;
+      beforeEach(function() {
+        analytics.track = sinon.stub();
+        analytics._setTotangoModule = sinon.stub();
+        analytics._idFromTab = sinon.stub();
+        analytics._idFromTab.returns('id');
+        tab = {
+          viewType: 'viewtype',
+          section: 'section',
+          id: 'id'
+        };
+      });
+
+      describe('without old tab', function() {
+        beforeEach(function() {
+          analytics.tabActivated(tab);
+        });
+
+        it('sets totango module', function() {
+          expect(analytics._setTotangoModule).toBeCalledWith('section');
+        });
+
+        it('tracks tab opening', function() {
+          expect(analytics.track).toBeCalled();
+        });
+
+        it('sends data to tab opening track', function() {
+          expect(analytics.track.args[0][1]).toEqual({
+            viewType: 'viewtype',
+            section: 'section',
+            id: 'id',
+            fromViewType: null,
+            fromSection: null
+          });
+        });
+      });
+
+      describe('with old tab', function() {
+        beforeEach(function() {
+          oldTab = {
+            viewType: 'oldviewtype',
+            section: 'oldsection'
+          };
+
+          analytics.tabActivated(tab, oldTab);
+        });
+
+        it('sets totango module', function() {
+          expect(analytics._setTotangoModule).toBeCalledWith('section');
+        });
+
+        it('tracks tab opening', function() {
+          expect(analytics.track).toBeCalled();
+        });
+
+        it('sends data to tab opening track', function() {
+          expect(analytics.track.args[0][1]).toEqual({
+            viewType: 'viewtype',
+            section: 'section',
+            id: 'id',
+            fromViewType: 'oldviewtype',
+            fromSection: 'oldsection'
+          });
+        });
+      });
+    });
+
+    it('sets totango module', function() {
+      $window.totango_options = {};
+      analytics._setTotangoModule('entries');
+      expect($window.totango_options.module).toBeDefined();
+    });
+
   });
 
 });

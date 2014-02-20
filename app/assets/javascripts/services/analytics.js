@@ -82,13 +82,13 @@ angular.module('contentful').provider('analytics', function (environment) {
   }
 
   function initializeTotango() {
-     $q.all([api._spaceDeferred.promise, api._userDeferred.promise]).then(function () {
-       var orgId = api._organizationData ? api._organizationData.sys.id : 'noorg';
-       $window.totango_options.username = api._userData.sys.id +'-'+ orgId;
-       $window.totango_options.account.id = orgId;
-       $window.totango_options.module = totangoModuleNames.entries;
-       $window.totango.go($window.totango_options);
-     });
+    $q.all([api._spaceDeferred.promise, api._userDeferred.promise]).then(function () {
+      var orgId = api._organizationData ? api._organizationData.sys.id : 'noorg';
+      $window.totango_options.username = api._userData.sys.id +'-'+ orgId;
+      $window.totango_options.account.id = orgId;
+      $window.totango_options.module = totangoModuleNames.entries;
+      $window.totango.go($window.totango_options);
+    });
   }
 
   var api = {
