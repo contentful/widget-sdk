@@ -11,7 +11,8 @@ describe('Analytics service', function () {
 
       stubs = $provide.makeStubs([
         'load', 'ready', 'push', 'get', 'resolve',
-        'createElement', 'getElementsByTagName', 'insertBefore'
+        'createElement', 'getElementsByTagName', 'insertBefore',
+        'getId', 'getName'
       ]);
 
       $provide.value('$window', {
@@ -407,6 +408,296 @@ describe('Analytics service', function () {
       analytics._setTotangoModule('entries');
       expect($window.totango_options.module).toBeDefined();
     });
+
+    describe('knowledge base', function() {
+      beforeEach(function() {
+        analytics.track = sinon.stub();
+        analytics.knowledgeBase('section');
+      });
+
+      it('tracks link opening', function() {
+        expect(analytics.track).toBeCalled();
+      });
+
+      it('sends data to track', function() {
+        expect(analytics.track.args[0][1]).toEqual({
+          section: 'section'
+        });
+      });
+    });
+
+    describe('modified content type', function() {
+      var event, contentType, field;
+      beforeEach(function() {
+        analytics.track = sinon.stub();
+        event = {event: true};
+        contentType = {
+          getId: stubs.getId,
+          getName: stubs.getName
+        };
+        field = {
+          id: 'id',
+          name: 'name',
+          type: 'Array',
+          items: {type: 'Link'},
+          localized: true,
+          required: true
+        };
+        stubs.getId.returns('ctid');
+        stubs.getName.returns('ctname');
+        analytics.modifiedContentType(event, contentType, field, 'update');
+      });
+
+      it('tracks link opening', function() {
+        expect(analytics.track).toBeCalled();
+      });
+
+      it('sends data to track', function() {
+        expect(analytics.track.args[0][1]).toEqual({
+          contentTypeId: 'ctid',
+          contentTypeName: 'ctname',
+          fieldId: 'id',
+          fieldName: 'name',
+          fieldType: 'Array',
+          fieldSubtype: 'Link',
+          fieldLocalized: true,
+          fieldRequired: true,
+          action: 'update'
+        });
+      });
+    });
+
+    describe('tab closed', function() {
+      var tab;
+      beforeEach(function() {
+        analytics.track = sinon.stub();
+        analytics._idFromTab = sinon.stub();
+        analytics._idFromTab.returns('id');
+        tab = {
+          viewType: 'viewtype',
+          section: 'section',
+          id: 'id'
+        };
+        analytics.tabClosed(tab);
+      });
+
+      it('tracks tab closing', function() {
+        expect(analytics.track).toBeCalled();
+      });
+
+      it('sends data to tab closing track', function() {
+        expect(analytics.track.args[0][1]).toEqual({
+          viewType: 'viewtype',
+          section: 'section',
+          id: 'id'
+        });
+      });
+    });
+
+    describe('toggle aux panel', function() {
+      var tab;
+      beforeEach(function() {
+        analytics.track = sinon.stub();
+        tab = {
+          viewType: 'viewtype',
+          section: 'section'
+        };
+        analytics.toggleAuxPanel(true, tab);
+      });
+
+      it('tracks toggling', function() {
+        expect(analytics.track).toBeCalled();
+      });
+
+      it('sends track action name', function() {
+        expect(analytics.track.args[0][0]).toMatch(/open/i);
+      });
+
+      it('sends data to track', function() {
+        expect(analytics.track.args[0][1]).toEqual({
+          currentViewType: 'viewtype',
+          currentSection: 'section'
+        });
+      });
+    });
+
+    describe('id from tab', function() {
+      var tab;
+      beforeEach(function() {
+        tab = {
+          params: {
+            entry: {
+              getId: stubs.getId
+            },
+            contentType: {
+              getId: stubs.getId
+            }
+          }
+        };
+        stubs.getId.returns('id');
+      });
+
+      it('on entry editor', function() {
+        tab.viewType = 'entry-editor';
+        expect(analytics._idFromTab(tab)).toBe('id');
+      });
+
+      it('on content type editor', function() {
+        tab.viewType = 'content-type-editor';
+        expect(analytics._idFromTab(tab)).toBe('id');
+      });
+    });
+
+    describe('tracks view', function() {
+      var tab;
+      beforeEach(function() {
+        analytics.track = sinon.stub();
+        tab = {
+          section: 'section',
+          params: {
+            entry: {
+              getId: stubs.getId
+            },
+            contentType: {
+              getId: stubs.getId
+            }
+          }
+        };
+        stubs.getId.returns('id');
+      });
+
+      describe('for entry list', function() {
+        beforeEach(function() {
+          tab.viewType = 'entry-list';
+          analytics._trackView(tab);
+        });
+
+        it('tracks view', function() {
+          expect(analytics.track).toBeCalled();
+        });
+
+        it('sends data to view track', function() {
+          expect(analytics.track.args[0][1]).toEqual({
+            viewType: tab.viewType,
+            section: 'section'
+          });
+        });
+      });
+
+      describe('for content type list', function() {
+        beforeEach(function() {
+          tab.viewType = 'content-type-list';
+          analytics._trackView(tab);
+        });
+
+        it('tracks view', function() {
+          expect(analytics.track).toBeCalled();
+        });
+
+        it('sends data to view track', function() {
+          expect(analytics.track.args[0][1]).toEqual({
+            viewType: tab.viewType,
+            section: 'section'
+          });
+        });
+      });
+
+      describe('for entry editor', function() {
+        beforeEach(function() {
+          tab.viewType = 'entry-editor';
+          analytics._trackView(tab);
+        });
+
+        it('tracks view', function() {
+          expect(analytics.track).toBeCalled();
+        });
+
+        it('sends data to view track', function() {
+          expect(analytics.track.args[0][1]).toEqual({
+            viewType: tab.viewType,
+            section: 'section',
+            entryId: 'id'
+          });
+        });
+      });
+
+      describe('for content type editor', function() {
+        beforeEach(function() {
+          tab.viewType = 'content-type-editor';
+          analytics._trackView(tab);
+        });
+
+        it('tracks view', function() {
+          expect(analytics.track).toBeCalled();
+        });
+
+        it('sends data to view track', function() {
+          expect(analytics.track.args[0][1]).toEqual({
+            viewType: tab.viewType,
+            section: 'section',
+            entryId: 'id'
+          });
+        });
+      });
+
+      describe('for space settings', function() {
+        beforeEach(function() {
+          tab.viewType = 'space-settings';
+          tab.params.pathSuffix = 'suffix';
+          analytics._trackView(tab);
+        });
+
+        it('tracks view', function() {
+          expect(analytics.track).toBeCalled();
+        });
+
+        it('sends data to view track', function() {
+          expect(analytics.track.args[0][1]).toEqual({
+            viewType: tab.viewType,
+            pathSuffix: 'suffix'
+          });
+        });
+      });
+
+    });
+
+    describe('track an analytics action', function() {
+      beforeEach(function() {
+        $window.analytics.track = sinon.stub();
+      });
+
+      describe('if analytics disabled', function() {
+        beforeEach(function() {
+          analytics._disabled = true;
+          analytics.track();
+        });
+
+        it('does not track', function() {
+          expect($window.analytics.track).not.toBeCalled();
+        });
+      });
+
+      describe('if analytics enabled', function() {
+        var data;
+        beforeEach(function() {
+          data = {data: true};
+          analytics._disabled = false;
+          analytics._spaceData = {
+            space: 'name'
+          };
+          analytics.track('event', data);
+        });
+
+        it('track on analytics object is called', function() {
+          expect($window.analytics.track).toBeCalledWith('event', {
+            data: true,
+            space: 'name'
+          });
+        });
+
+      });
+    });
+
 
   });
 

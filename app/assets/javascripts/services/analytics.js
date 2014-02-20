@@ -244,7 +244,7 @@ angular.module('contentful').provider('analytics', function (environment) {
 
     track: function (event, data) {
       if (!this._disabled) {
-        $window.analytics.track(event, _.merge({},data, this._spaceData));
+        $window.analytics.track(event, _.merge({}, data, this._spaceData));
       }
       //console.log('analytics.track', event, data);
     }
