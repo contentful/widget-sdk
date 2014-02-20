@@ -10,6 +10,9 @@ describe('Entry Editor Controller', function () {
     inject(function ($compile, $rootScope, $controller, cfStub){
       scope = $rootScope;
       scope.can = canStub;
+      scope.user = {
+        features: {}
+      };
       var space = cfStub.space('testSpace');
       var contentTypeData = cfStub.contentTypeData('testType');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
@@ -195,6 +198,9 @@ describe('Entry Editor Controller with validation errors', function () {
       cfStub.field('localized'),
       cfStub.field('nonlocalized', {localized: false})
     ]);
+    scope.user = {
+      features: {}
+    };
     scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
     var entry = cfStub.entry(space, 'testEntry', 'testType');
     scope.tab = { params: { entry: entry } };
