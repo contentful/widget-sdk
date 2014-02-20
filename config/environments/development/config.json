@@ -27,5 +27,6 @@
     }
   },
   "segment_io": "uwr64jkg06",
+  "totango": "SP-6959-01",
   "git_revision": "OVERRIDE_FROM_CONFIG_JSON"
 }

@@ -22,6 +22,7 @@ describe('Client Controller', function () {
         'goToSpace',
         'goToOrganization',
         'routingSpaceId',
+        'setUserData',
         'setSpaceData',
         'getRoute',
         'path',
@@ -69,6 +70,7 @@ describe('Client Controller', function () {
         toggleAuxPanel: stubs.auxPanel,
         track: stubs.track,
         setSpaceData: stubs.setSpaceData,
+        setUserData: stubs.setUserData,
         login: stubs.loginTrack
       });
 
@@ -1120,22 +1122,32 @@ describe('Client Controller', function () {
       expect(scope.organizations).toBeNull();
     });
 
-    it('are set', function() {
-      var org1 = {org1: true};
-      var org2 = {org2: true};
-      var org3 = {org3: true};
-      scope.user = {
-        organizationMemberships: [
-          {organization: org1},
-          {organization: org2},
-          {organization: org3},
-        ]
-      };
-      scope.$digest();
+    describe('if user exists', function() {
+      var org1, org2, org3;
+      beforeEach(function() {
+        org1 = {org1: true};
+        org2 = {org2: true};
+        org3 = {org3: true};
+        scope.user = {
+          organizationMemberships: [
+            {organization: org1},
+            {organization: org2},
+            {organization: org3},
+          ]
+        };
+        scope.$digest();
+      });
 
-      expect(scope.organizations).toEqual([
-        org1, org2, org3
-      ]);
+      it('are set', function() {
+        expect(scope.organizations).toEqual([
+          org1, org2, org3
+        ]);
+      });
+
+      it('sets analytics user data', function() {
+        expect(stubs.setUserData).toBeCalled();
+      });
+
     });
   });
 
