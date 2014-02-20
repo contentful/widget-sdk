@@ -131,6 +131,53 @@ describe('cfDropdownEditor Directive', function () {
     });
   });
 
+  describe('selects dropdown value for integer', function() {
+    beforeEach(function() {
+      compileElement();
+      scope.otChangeValue = sinon.stub();
+      scope.otChangeValue.callsArg(1, null);
+      scope.updateModel = sinon.stub();
+      scope.field.type = 'Integer';
+      scope.selectDropdownValue('1');
+    });
+
+    it('changes ot value', function() {
+      expect(scope.otChangeValue).toBeCalledWith(1);
+    });
+
+    it('sets the selected value', function() {
+      expect(scope.selectedValue).toEqual(1);
+    });
+
+    it('updates the model', function() {
+      expect(scope.updateModel).toBeCalled();
+    });
+  });
+
+  describe('selects dropdown value for number', function() {
+    beforeEach(function() {
+      compileElement();
+      scope.otChangeValue = sinon.stub();
+      scope.otChangeValue.callsArg(1, null);
+      scope.updateModel = sinon.stub();
+      scope.field.type = 'Number';
+      scope.selectDropdownValue('1.2');
+    });
+
+    it('changes ot value', function() {
+      expect(scope.otChangeValue).toBeCalledWith(1.2);
+    });
+
+    it('sets the selected value', function() {
+      expect(scope.selectedValue).toEqual(1.2);
+    });
+
+    it('updates the model', function() {
+      expect(scope.updateModel).toBeCalled();
+    });
+  });
+
+
   describe('handles the ot value changed event', function() {
     beforeEach(inject(function($rootScope) {
       compileElement();

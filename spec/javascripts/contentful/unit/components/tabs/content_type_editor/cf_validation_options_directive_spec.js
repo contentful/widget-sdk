@@ -64,6 +64,90 @@ describe('The cfValidationOptions directive', function () {
         });
       });
 
+      describe('with a new integer value', function() {
+        beforeEach(function() {
+          scope.field.type = 'Integer';
+          result = scope.updateValues(3);
+        });
+
+        it('returns true', function() {
+          expect(result).toBeTruthy();
+        });
+
+        it('new value is in validation list', function() {
+          expect(scope.validation.in[0]).toEqual(3);
+        });
+
+        it('document is updated', function() {
+          expect(scope.updateDoc).toBeCalled();
+        });
+      });
+
+      describe('with a new number value', function() {
+        beforeEach(function() {
+          scope.field.type = 'Number';
+          result = scope.updateValues(3.2);
+        });
+
+        it('returns true', function() {
+          expect(result).toBeTruthy();
+        });
+
+        it('new value is in validation list', function() {
+          expect(scope.validation.in[0]).toEqual(3.2);
+        });
+
+        it('document is updated', function() {
+          expect(scope.updateDoc).toBeCalled();
+        });
+      });
+
+      describe('with an invalid value', function() {
+        beforeEach(function() {
+          result = scope.updateValues(null);
+        });
+
+        it('returns falsy', function() {
+          expect(result).toBeFalsy();
+        });
+
+        it('validation list is empty', function() {
+          expect(scope.validation.in.length).toEqual(0);
+        });
+
+        it('document is not updated', function() {
+          expect(scope.updateDoc).not.toBeCalled();
+        });
+
+        it('shows notification', function() {
+          expect(stubs.warn).toBeCalled();
+        });
+      });
+
+      describe('with an invalid value for a type', function() {
+        beforeEach(function() {
+          scope.field.type = 'Number';
+          result = scope.updateValues('a');
+        });
+
+        it('returns falsy', function() {
+          expect(result).toBeFalsy();
+        });
+
+        it('validation list is empty', function() {
+          expect(scope.validation.in.length).toEqual(0);
+        });
+
+        it('document is not updated', function() {
+          expect(scope.updateDoc).not.toBeCalled();
+        });
+
+        it('shows notification', function() {
+          expect(stubs.warn).toBeCalled();
+        });
+      });
+
+
       describe('with an existing new value', function() {
         beforeEach(function() {
           scope.validation.in = ['hello'];

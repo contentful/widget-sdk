@@ -39,6 +39,10 @@ angular.module('contentful').directive('cfDropdownEditor', function(){
           }
         }
 
+        value = ($scope.field.type == 'Integer') ? parseInt(value, 10) : value;
+        value = ($scope.field.type == 'Number') ? parseFloat(value, 10) : value;
+        value = (($scope.field.type == 'Integer' || $scope.field.type == 'Number') && isNaN(value)) ? null : value;
+
         $scope.otChangeValue(value, handler);
       };
 

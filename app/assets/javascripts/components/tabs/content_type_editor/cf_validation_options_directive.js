@@ -27,16 +27,22 @@ angular.module('contentful').directive('cfValidationOptions', function (keycodes
     controller: function CfValidationOptionsCtrl($scope, mimetype, notification) {
       $scope.mimetypeGroups = mimetype.groupDisplayNames;
 
-      $scope.updateValues = function (val) {
+      $scope.updateValues = function (value) {
+        value = ($scope.field.type == 'Integer') ? parseInt(value, 10) : value;
+        value = ($scope.field.type == 'Number') ? parseFloat(value, 10) : value;
+        value = (($scope.field.type == 'Number' || $scope.field.type == 'Integer') && isNaN(value)) ? null : value;
+
         $scope.validation.in = $scope.validation.in || [];
-        if($scope.validation.in.length == 50){
+        if(!value){
+          notification.warn('This value is invalid for this field type');
+        } else if($scope.validation.in.length == 50){
           notification.warn('You can only add up to 50 predefined values');
-        } else if(val.length > 85){
+        } else if(value.length > 85){
           notification.warn('Values should be 85 characters or less');
-        } else if(_.contains($scope.validation.in, val)){
+        } else if(_.contains($scope.validation.in, value)){
           notification.warn('This value already exists on the list');
         } else {
-          $scope.validation.in.push(val);
+          $scope.validation.in.push(value);
           $scope.updateDoc();
           return true;
         }
