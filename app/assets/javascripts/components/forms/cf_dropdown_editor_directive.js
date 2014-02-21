@@ -2,25 +2,32 @@
 angular.module('contentful').directive('cfDropdownEditor', function(){
   return {
     restrict: 'C',
+    replace: true,
     template: JST['cf_dropdown_editor'](),
     require: 'ngModel',
 
     link: function(scope, elem, attr, ngModelCtrl){
       scope.valuesList = scope.getFieldValidationsOfType(scope.field, 'in');
-      if(!scope.field.required){
-        scope.valuesList.unshift('');
-      }
+
+      scope.selected = {value: null};
+
+      scope.$watch('selected.value', function (val) {
+        scope.selectDropdownValue(val);
+      });
 
       ngModelCtrl.$render = function () {
-        scope.selectedValue = ngModelCtrl.$viewValue;
+        scope.selected.value = ngModelCtrl.$viewValue;
       };
 
       scope.updateModel = function () {
-        ngModelCtrl.$setViewValue(scope.selectedValue);
+        ngModelCtrl.$setViewValue(scope.selected.value);
       };
 
       scope.dropdownWidthClass = function () {
-        var maxLength = _.max(scope.valuesList, 'length').length;
+        var maxLength = (_.max(scope.valuesList, function (val) {
+          if(typeof val == 'string') return val.length;
+          if(typeof val == 'number') return (val+'').length;
+        })+'').length;
         if(maxLength <= 19) return 'small-dropdown';
         if(maxLength <= 45) return 'medium-dropdown';
         return 'large-dropdown';
@@ -34,7 +41,7 @@ angular.module('contentful').directive('cfDropdownEditor', function(){
       $scope.selectDropdownValue = function (value) {
         function handler(err) {
           if(!err){
-            $scope.selectedValue = value;
+            $scope.selected.value = value;
             $scope.updateModel();
           }
         }
