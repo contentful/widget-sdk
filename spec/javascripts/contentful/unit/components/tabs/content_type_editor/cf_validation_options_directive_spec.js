@@ -67,7 +67,7 @@ describe('The cfValidationOptions directive', function () {
       describe('with a new integer value', function() {
         beforeEach(function() {
           scope.field.type = 'Integer';
-          result = scope.updateValues(3);
+          result = scope.updateValues('3');
         });
 
         it('returns true', function() {
@@ -86,7 +86,7 @@ describe('The cfValidationOptions directive', function () {
       describe('with a new number value', function() {
         beforeEach(function() {
           scope.field.type = 'Number';
-          result = scope.updateValues(3.2);
+          result = scope.updateValues('3.2');
         });
 
         it('returns true', function() {
@@ -101,6 +101,15 @@ describe('The cfValidationOptions directive', function () {
           expect(scope.updateDoc).toBeCalled();
         });
       });
+
+      describe('with a non string value', function() {
+        it('should throw', function() {
+          expect(function(){
+            scope.updateValues(123);
+          }).toThrow();
+        });
+      });
+
 
       describe('with an invalid value', function() {
         beforeEach(function() {
@@ -128,6 +137,52 @@ describe('The cfValidationOptions directive', function () {
         beforeEach(function() {
           scope.field.type = 'Number';
           result = scope.updateValues('a');
+        });
+
+        it('returns falsy', function() {
+          expect(result).toBeFalsy();
+        });
+
+        it('validation list is empty', function() {
+          expect(scope.validation.in.length).toEqual(0);
+        });
+
+        it('document is not updated', function() {
+          expect(scope.updateDoc).not.toBeCalled();
+        });
+
+        it('shows notification', function() {
+          expect(stubs.warn).toBeCalled();
+        });
+      });
+
+      describe('with an integer too large', function() {
+        beforeEach(function() {
+          scope.field.type = 'Integer';
+          result = scope.updateValues('123456789912345678991234567899');
+        });
+
+        it('returns falsy', function() {
+          expect(result).toBeFalsy();
+        });
+
+        it('validation list is empty', function() {
+          expect(scope.validation.in.length).toEqual(0);
+        });
+
+        it('document is not updated', function() {
+          expect(scope.updateDoc).not.toBeCalled();
+        });
+
+        it('shows notification', function() {
+          expect(stubs.warn).toBeCalled();
+        });
+      });
+
+      describe('with a number too large', function() {
+        beforeEach(function() {
+          scope.field.type = 'Number';
+          result = scope.updateValues('1.23456789912345678991234567899');
         });
 
         it('returns falsy', function() {
