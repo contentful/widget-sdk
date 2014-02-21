@@ -117,9 +117,27 @@ angular.module('contentful')
     }
   }
 
-  function fieldWidgetType(field) {
-    if (field.type === 'Symbol' ) return 'textfield';
-    if (field.type === 'Text'   ) return 'textarea';
+  function getFieldValidationsOfType(field, type) {
+    return _.filter(_.pluck(field.validations, type));
+  }
+
+  $scope.getFieldValidationsOfType = function () {
+    return getFieldValidationsOfType.apply(null, arguments)[0];
+  };
+
+  function fieldWidgetType(field, contentType) {
+    var hasValidations = getFieldValidationsOfType(field, 'in').length > 0;
+    if(hasValidations) return 'dropdown';
+    if (field.type === 'Symbol' ) {
+      return 'textfield';
+    }
+    if (field.type === 'Text'   ) {
+      if (contentType.data.displayField === field.id || !$scope.user.features.showPreview) {
+        return 'textarea';
+      } else {
+        return 'markdownEditor';
+      }
+    }
     if (field.type === 'Boolean') return 'radiobuttons';
     if (field.type === 'Date'   ) return 'datetimeEditor';
     if (field.type === 'Array') {

@@ -20,6 +20,7 @@ describe('Modal dialog service', function () {
   describe('create a dialog', function () {
     var dialog;
     beforeEach(function () {
+      $('<div class="client"></div>').appendTo('body');
       dialog = modalDialog.open({
         scope: scope,
         message: 'dialog message'
@@ -31,6 +32,7 @@ describe('Modal dialog service', function () {
 
     afterEach(function () {
       dialog._cleanup();
+      $('.client').remove();
     });
 
     it('creates a dialog', function () {

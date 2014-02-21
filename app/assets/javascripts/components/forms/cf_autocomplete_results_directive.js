@@ -1,11 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfAutocompleteResults', function ($parse) {
-  var DOWN  = 40,
-      UP    = 38,
-      ENTER = 13,
-      ESC   = 27;
-
+angular.module('contentful').directive('cfAutocompleteResults', function ($parse, keycodes) {
   return {
     require: 'cfAutocompleteResults',
     controller: 'CfAutocompleteResultsCtrl',
@@ -17,13 +12,13 @@ angular.module('contentful').directive('cfAutocompleteResults', function ($parse
         if (controller.numResults === 0) return;
         var handled = true;
         scope.$apply(function () {
-          if (event.keyCode == DOWN){
+          if (event.keyCode == keycodes.DOWN){
             controller.selectNext();
-          } else if (event.keyCode == UP) {
+          } else if (event.keyCode == keycodes.UP) {
             controller.selectPrevious();
-          } else if (event.keyCode == ESC) {
+          } else if (event.keyCode == keycodes.ESC) {
             controller.cancelAutocomplete();
-          } else if (event.keyCode == ENTER) {
+          } else if (event.keyCode == keycodes.ENTER) {
             controller.pickSelected();
           } else {
             handled = false;

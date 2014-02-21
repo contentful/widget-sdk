@@ -6,7 +6,7 @@
         tooltip="Learn more about Spaces in the Knowledge Base Pages"
         analytics-event="space_creation"
         href="https://contentful.zendesk.com/hc/en-us/articles/200513108-What-is-a-difference-between-a-Content-Type-and-a-Space-")
-    .close-button(ng-click="dialog.cancel()")
+    .modal-dialog-close-button(ng-click="dialog.cancel()")
 
     %form(name="newSpaceForm" ng-submit="createSpace()")
       .form-horizontal

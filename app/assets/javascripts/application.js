@@ -6,6 +6,7 @@
 //
 //= require jquery.autosize
 //= require jquery.cookies.2.2.0
+//= require jquery-textrange
 //
 //= require guiders-1.3.0
 //
@@ -20,6 +21,7 @@
 //
 //= require angular
 //= require angular-animate
+//= require angular-sanitize
 //= require angular-route
 //= require contentful
 //= require environment
@@ -29,6 +31,7 @@
 
 angular.module('contentful/app', [
   'ngAnimate',
+  'ngSanitize',
   'contentful/environment',
   'timeRelative',
   'contentful/user_interface',

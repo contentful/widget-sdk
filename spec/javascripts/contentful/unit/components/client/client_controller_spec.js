@@ -20,7 +20,9 @@ describe('Client Controller', function () {
         'notificationInfo',
         'notificationError',
         'goToSpace',
+        'goToOrganization',
         'routingSpaceId',
+        'setUserData',
         'setSpaceData',
         'getRoute',
         'path',
@@ -68,6 +70,7 @@ describe('Client Controller', function () {
         toggleAuxPanel: stubs.auxPanel,
         track: stubs.track,
         setSpaceData: stubs.setSpaceData,
+        setUserData: stubs.setUserData,
         login: stubs.loginTrack
       });
 
@@ -104,6 +107,7 @@ describe('Client Controller', function () {
 
       $provide.value('routing', {
         goToSpace: stubs.goToSpace,
+        goToOrganization: stubs.goToOrganization,
         getSpaceId: stubs.routingSpaceId,
         getRoute: stubs.getRoute
       });
@@ -270,6 +274,103 @@ describe('Client Controller', function () {
       it('route to another space', function () {
         expect(stubs.goToSpace).toBeCalledWith(space);
       });
+    });
+  });
+
+  describe('select organization', function() {
+    beforeEach(function() {
+      scope.organizations = [{
+        sys: {
+          id: '1234',
+          createdBy: {
+            sys: {
+              id: '456'
+            }
+          }
+        },
+        name: 'orgname'
+      }];
+      scope.user = {
+        sys: {id: '456'}
+      };
+      scope.canSelectOrg = sinon.stub();
+    });
+
+    describe('cannot select org', function() {
+      beforeEach(function() {
+        scope.canSelectOrg.returns(false);
+        scope.selectOrg('1234');
+      });
+
+      it('does not tracks analytics', function () {
+          expect(stubs.track).not.toBeCalled();
+        });
+
+      it('does not route to another space', function () {
+        expect(stubs.goToOrganization).not.toBeCalled();
+      });
+
+    });
+
+    describe('can select org', function() {
+      beforeEach(function() {
+        scope.canSelectOrg.returns(true);
+        scope.selectOrg('1234');
+      });
+
+      it('tracks analytics', function () {
+          expect(stubs.track).toBeCalled();
+        });
+
+      it('tracks the org properties', function () {
+        expect(stubs.track.args[0][1]).toEqual({
+          organizationId: '1234', organizationName: 'orgname'
+        });
+      });
+
+      it('route to another space', function () {
+        expect(stubs.goToOrganization).toBeCalledWith('1234', true);
+      });
+    });
+
+  });
+
+  describe('check if user can select an organization', function() {
+    beforeEach(function() {
+      scope.user = {
+        organizationMemberships: [{
+          organization: {
+            sys: {
+              id: '1234',
+              createdBy: {
+                sys: {
+                  id: '456'
+                }
+              }
+            }
+          }
+        }]
+      };
+    });
+
+    it('as an owner', function() {
+      scope.user.organizationMemberships[0].role = 'owner';
+      expect(scope.canSelectOrg('1234')).toBeTruthy();
+    });
+
+    it('as an admin', function() {
+      scope.user.organizationMemberships[0].role = 'admin';
+      expect(scope.canSelectOrg('1234')).toBeTruthy();
+    });
+
+    it('as an user', function() {
+      scope.user.organizationMemberships[0].role = 'user';
+      expect(scope.canSelectOrg('1234')).toBeFalsy();
+    });
+
+    it('with no memberships', function() {
+      scope.user.organizationMemberships = [];
+      expect(scope.canSelectOrg('1234')).toBeFalsy();
     });
   });
 
@@ -544,6 +645,34 @@ describe('Client Controller', function () {
 
       it('calls token lookup', function () {
         expect(scope.performTokenLookup).toBeCalled();
+      });
+    });
+
+    describe('requests navigation', function () {
+      beforeEach(function () {
+        data = {
+          type: 'location',
+          action: 'navigate',
+          path: '/foobar/baz'
+        };
+        childScope.$emit('iframeMessage', data);
+        expect(stubs.path).toBeCalledWith('/foobar/baz');
+      });
+
+      it('should change the location to whatever was requested', function () {
+
+      });
+    });
+
+    describe('requests create Space dialog', function () {
+      beforeEach(function () {
+        data = {
+          type: 'space',
+          action: 'new',
+          organizationId: '123abc'
+        };
+        childScope.$emit('iframeMessage', data);
+        expect(stubs.dialog).toBeCalledWith('123abc');
       });
     });
 
@@ -827,15 +956,33 @@ describe('Client Controller', function () {
 
   describe('shows create space dialog', function () {
     beforeEach(function () {
-      scope.showCreateSpaceDialog();
+      scope.organizations = [
+        {sys: {id: 'abc'}},
+        {sys: {id: 'def'}},
+      ];
     });
-
     it('opens dialog', function () {
+      scope.showCreateSpaceDialog();
       expect(stubs.dialog).toBeCalled();
     });
 
     it('tracks analytics event', function () {
+      scope.showCreateSpaceDialog();
       expect(stubs.track).toBeCalled();
+    });
+
+    describe('with an organizationId', function () {
+      it('displays that organization first in the dropdown', function () {
+        scope.showCreateSpaceDialog('def');
+        expect(stubs.dialog.args[0][0].scope.organizations[0].sys.id).toBe('def');
+      });
+    });
+
+    describe('without an organizationId', function () {
+      it('displays that organization first in the dropdown', function () {
+        scope.showCreateSpaceDialog();
+        expect(stubs.dialog.args[0][0].scope.organizations[0].sys.id).toBe('abc');
+      });
     });
   });
 
@@ -975,22 +1122,32 @@ describe('Client Controller', function () {
       expect(scope.organizations).toBeNull();
     });
 
-    it('are set', function() {
-      var org1 = {org1: true};
-      var org2 = {org2: true};
-      var org3 = {org3: true};
-      scope.user = {
-        organizationMemberships: [
-          {organization: org1},
-          {organization: org2},
-          {organization: org3},
-        ]
-      };
-      scope.$digest();
+    describe('if user exists', function() {
+      var org1, org2, org3;
+      beforeEach(function() {
+        org1 = {org1: true};
+        org2 = {org2: true};
+        org3 = {org3: true};
+        scope.user = {
+          organizationMemberships: [
+            {organization: org1},
+            {organization: org2},
+            {organization: org3},
+          ]
+        };
+        scope.$digest();
+      });
 
-      expect(scope.organizations).toEqual([
-        org1, org2, org3
-      ]);
+      it('are set', function() {
+        expect(scope.organizations).toEqual([
+          org1, org2, org3
+        ]);
+      });
+
+      it('sets analytics user data', function() {
+        expect(stubs.setUserData).toBeCalled();
+      });
+
     });
   });
 

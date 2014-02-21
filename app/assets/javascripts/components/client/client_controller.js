@@ -80,12 +80,33 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     if(!space){
       return notification.error('Selected space does not exist');
     }
-    if (space && $scope.getCurrentSpaceId() === space.getId()) return;
+    if (space && $scope.getCurrentSpaceId() === space.getId()) return true;
     analytics.track('Switched Space', {
       spaceId: space.getId(),
       spaceName: space.data.name
     });
     routing.goToSpace(space);
+    return true;
+  };
+
+  function isOrgOwner(org) {
+    return org.sys.createdBy.sys.id === $scope.user.sys.id;
+  }
+
+  $scope.selectOrg = function(orgId) {
+    if(!$scope.canSelectOrg(orgId)) return false;
+    var org = getOrgById(orgId);
+    analytics.track('Switched Organization', {
+      organizationId: orgId,
+      organizationName: $scope.getOrgName(orgId)
+    });
+    routing.goToOrganization(orgId, isOrgOwner(org));
+    return true;
+  };
+
+  $scope.canSelectOrg = function (orgId) {
+    var query = _.where($scope.user.organizationMemberships, {organization: {sys: {id: orgId}}});
+    return query.length > 0 && (query[0].role == 'admin' || query[0].role == 'owner');
   };
 
   $scope.$on('$routeChangeSuccess', function (event, route) {
@@ -99,10 +120,18 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     }
   });
 
+  function getOrgById(id) {
+    var query = _.where($scope.organizations, {sys: {id: id}});
+    if(query.length > 0){
+      return query[0];
+    }
+    return null;
+  }
+
   $scope.getOrgName = function (orgId) {
-    var org = _.where($scope.organizations, {sys: {id: orgId}});
-    if(org.length > 0){
-      return org[0].name;
+    var org = getOrgById(orgId);
+    if(org){
+      return org.name;
     }
     return '';
   };
@@ -156,6 +185,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   $scope.$watch('user', function (user) {
     if(user){
       $scope.organizations = _.pluck(user.organizationMemberships, 'organization');
+      analytics.setUserData(user);
     }
   });
 

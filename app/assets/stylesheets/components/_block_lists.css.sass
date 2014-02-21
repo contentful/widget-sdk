@@ -1,0 +1,30 @@
+.block-list
+  max-height: 400px
+  overflow-y: auto
+  padding-left: 10px
+  padding-right: 20px
+  li
+    display: block
+    position: relative
+    list-style: none
+    text-align: center
+    overflow: hidden
+    white-space: nowrap
+    text-overflow: ellipsis
+    background-color: $lightest-gray
+    padding: 10px
+    color: $link-blue
+    +border-radius(5px)
+    cursor: pointer
+    +transition(background-color ease-in 0.1s)
+  li:hover
+    background-color: $light-gray
+    .close-button
+      color: $medium-dark-gray
+  .close-button
+    position: absolute
+    top: 30%
+    right: 10px
+  .close-button:after
+    font-size: 20px
+

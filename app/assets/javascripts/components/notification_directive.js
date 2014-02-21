@@ -9,7 +9,8 @@ angular.module('contentful').
       link: function(scope, element) {
         var timeout;
 
-        element.bind('click', function() {
+        element.bind('click', function(ev) {
+          ev.stopPropagation();
           scope.$apply(function(scope) {
             scope.message.seen = true;
           });

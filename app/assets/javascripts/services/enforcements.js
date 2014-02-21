@@ -104,6 +104,7 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
   function computeUsage(filter) {
     setTokenObjects();
     if(filter) filter = uncapitalize(filter);
+    if(!spaceContext || !spaceContext.space) return;
     var organization = spaceContext.space.organization;
     var usage = _.merge(
       organization.usage.permanent,

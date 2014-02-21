@@ -1,0 +1,132 @@
+%ul.markdown-guide-nav
+  %li(data-anchor="paragraphs") Paragraphs
+  %li(data-anchor="headings") Headings
+  %li(data-anchor="blockquotes") Blockquotes
+  %li(data-anchor="styling") Styling
+  %li(data-anchor="lists") Lists
+  %li(data-anchor="links") Links
+  %li(data-anchor="code") Code
+  %li(data-anchor="rules") Rules
+.markdown-guide-main
+  %h2 Markdown Basics
+  %p Markdown allows you to write using an easy-to-read plain text format, which is then formatted for viewing on devices and browsers serving content from Contentful API. Think of it as a stripped down version of HTML. Scroll down below for tips on how to use markdown syntax.
+
+  %h2(data-anchor="paragraphs") Paragraphs
+  %p Paragraphs in Markdown are just one or more lines of consecutive text followed by one or more blank lines.
+  %code
+    The raven paradox, also known as Hempel's paradox or Hempel's ravens, is a paradox arising from the question of what constitutes evidence for a statement. 
+    %br
+    %br
+    Observing objects that are neither black nor ravens may formally increase the likelihood that all ravens are black – even though, intuitively, these observations are unrelated.
+    
+  %h2 Line breaks
+  %p Every time you hit &lt;Enter&gt;, a new line is inserted providing some space between paragraphs. Here are some things to try out:
+  %code
+    Here's a line for us to start with.
+    %br
+    %br
+    This line is separated from the one above by two newlines, so it will be a *separate paragraph*.
+    %br
+    %br
+    This line is also a separate paragraph, but...
+    %br
+    This line is only separated by a single newline, so it's a separate line in the *same paragraph*.
+    
+  %h2(data-anchor="headings") Headings
+  %p You can create a heading by adding one or more # symbols before your heading text. The number of # you use will determine the size of the heading.
+  %code
+    :plain 
+      # The largest heading<br>
+      ## The second largest heading<br>
+      ### The third largest heading
+
+  %h2(data-anchor="blockquotes") Blockquotes
+  %p You can indicate blockquotes with a &gt;, just like you do in email.
+  %code
+    To quote topographic scholars:
+    %br
+    %br
+    &gt; There are three types of people in this world: those who know how to count and those who don’t!
+
+  %h2(data-anchor="styling") Styling text
+  %p You can make text bold, italic, or strikethrough.
+  %code
+    :plain
+      *This text will be italic*<br>
+      **This text will be bold**<br>
+      ~~This text will have a strike through it~~<br>
+  %p Both bold and italic can use either a * or an _ around the text for styling. This allows you to combine both bold and italic if needed.
+  %code
+    :plain
+      **Everyone _must_ attend the 5 o'clock tea at Lady Mae’s house.**
+
+  %h2(data-anchor="lists") Unordered lists
+  %p You can make an unordered list by preceding list items with either a * or a -.
+  %code
+    :plain
+      * Item<br>
+      * Item<br>
+      * Item<br>
+      <br>
+      - Item<br>
+      - Item<br>
+      - Item
+
+  %h2 Ordered lists
+  %p You can make an ordered list by preceding list items with a number.
+  %code
+    1. Item 1
+    %br
+    2. Item 2
+    %br
+    3. Item 3
+
+  %h2(data-anchor="links") Links
+  %p There are two ways to create links - doing it inline or creating a reference. In both cases, the link text is delimited by [square brackets]. 
+  %code
+    This is [an example](http://example.com/ "Title") inline link. 
+    %br
+    [This link](http://example.net/) has no title attribute.
+  %p For reference-style links, use a second set of square brackets for any label to identify the link: 
+  %code
+    This is [an example][id] reference-style link. 
+    %br
+    This is [another example] [foo] reference-style link. 
+  %p Then, anywhere in the document, you define your link label like this, on a line by itself: 
+  %code
+    [id]: http://example.com/ "Optional Title Here" 
+    %br
+    [foo]: http://anotherexample.com/ "Optional Title Here" 
+    %br
+    [id]: http://example.com/ 'Optional Title with Single Quotes Here' 
+    %br
+    [foo]: http://anotherexample.com/ (Optional Title with Parentheses Here)
+
+  %h2(data-anchor="code") Code blocks
+  %p
+    To include examples of source code in the text, simply intend every line of the block by at least 4 spaces.
+    Your text will be displayed as a code.
+    Alternatively you can surround your code block with lines containing three backticks
+  %code
+    :plain
+      &nbsp;&nbsp;&nbsp;&nbsp;foo(123);<br>
+      &nbsp;&nbsp;&nbsp;&nbsp;bar('baz');<br>
+      <br>
+      ```<br>
+      foo(123);<br>
+      bar('baz');<br>
+      ```<br>
+
+  %h2(data-anchor="rules") Horizontal rules
+  %p You can produce a horizontal rule by placing three or more hyphens, asterisks, or underscores on a line by themselves. 
+  %code
+    :plain
+      *** This will produce a line below<br>
+      --- This will also produce a line below<br>
+      ___ Lo and behold, this will produce a line below as well
+  %p
+    When using three hyphens, there should not be text above the hyphens but a blank line instead.
+    A line of text followed by a line with hyphens would be turned into a headline instead.
+.markdown-guide-hint(ng-click="toggleGuide()")
+  Use Markdown format style your text. Click here to see a quick overview.
+  %a.toggle-collapse(ng-class="{open: guideOpen}") ▶

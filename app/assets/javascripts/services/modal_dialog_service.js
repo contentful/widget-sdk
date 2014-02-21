@@ -1,8 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('modalDialog', ['$compile', '$q', function ($compile, $q) {
-  var ESC_KEY = 27;
-  var ENTER_KEY = 13;
+angular.module('contentful').factory('modalDialog', ['$compile', '$q', 'keycodes', function ($compile, $q, keycodes) {
 
   function Dialog(params) {
     this.scope = params.scope.$new();
@@ -11,9 +9,14 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', function 
         template: 'modal_dialog',
         cancelLabel: 'Cancel',
         confirmLabel: 'OK',
-        noBackgroundClose: false
+        noBackgroundClose: false,
+        deactivateConfirmKey: false,
+        deactivateCancelKey: false
       },
-      _.pick(params, 'title', 'message', 'template', 'cancelLabel', 'confirmLabel', 'noBackgroundClose')
+      _.pick(params,
+             'title', 'message', 'template',
+             'cancelLabel', 'confirmLabel', 'deactivateConfirmKey', 'deactivateCancelKey',
+             'noBackgroundClose')
     );
     this._deferred = $q.defer();
     this.promise = this._deferred.promise;
@@ -24,7 +27,7 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', function 
 
     attach: function () {
       var scope = this.scope;
-      this.domElement = $(JST[this.params.template]()).appendTo('body');
+      this.domElement = $(JST[this.params.template]()).prependTo('.client');
 
       this.domElement.find('input').eq(0).focus();
 
@@ -54,8 +57,10 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', function 
       var dialog = this;
       dialog.scope.$apply(function(){
         if (ev.target.tagName.toLowerCase() == 'select') return;
-        if (ev.keyCode === ESC_KEY) dialog.cancel();
-        if (ev.keyCode === ENTER_KEY && dialog.invalid !== true) dialog.confirm();
+        if (!dialog.params.deactivateCancelKey && ev.keyCode === keycodes.ESC)
+          dialog.cancel();
+        if (!dialog.params.deactivateConfirmKey && dialog.invalid !== true && ev.keyCode === keycodes.ENTER)
+          dialog.confirm();
       });
     },
 
