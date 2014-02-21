@@ -44,7 +44,7 @@ angular.module('contentful').directive('cfValidationOptions', function (keycodes
         value = (fieldIsNumeric() && isNaN(value) || fieldIsNumeric() && initialValue.length > MAX_PRECISON) ? null : value;
 
         $scope.validation.in = $scope.validation.in || [];
-        if(!value && initialValue.length > MAX_PRECISON){
+        if(!value && initialValue && initialValue.length > MAX_PRECISON){
           notification.warn('Numbers should be 21 characters long or less (use a text field otherwise).');
         } else if(!value){
           notification.warn('This value is invalid for this field type');
