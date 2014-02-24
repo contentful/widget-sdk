@@ -4,6 +4,7 @@
       Validations for {{field.name}}
       %a.cf-knowledge-base-icon(
         tooltip="Learn more about Validations in the Knowledge Base Pages"
+        tooltip-container=".validation-dialog"
         analytics-event="content_type_validations"
         href="https://contentful.zendesk.com/hc/en-us/articles/200513248-What-are-validations-")
     .modal-dialog-close-button(ng-click="dialog.cancel()")
