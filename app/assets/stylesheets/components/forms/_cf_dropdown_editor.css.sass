@@ -1,5 +1,6 @@
 .dropdown-editor
   position: relative
+  overflow: hidden
   &:hover
     border-color: $light-gray
   .button-icon-right
@@ -15,14 +16,17 @@
   &.large-dropdown
     width: 100%
   select
-    width: 100%
+    text-indent: 0.01px
+    text-overflow: ''
     margin: 0
     color: inherit
     font-size: inherit
     font-family: inherit
     border: none
     background: transparent
+    line-height: 1
+    +border-radius(0)
     -webkit-appearance: none
     -moz-appearance: none
-
+    appearance: none
 
