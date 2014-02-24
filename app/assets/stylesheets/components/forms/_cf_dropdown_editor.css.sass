@@ -1,6 +1,9 @@
+.cf-field-editor
+  +user-select(none)
+  .dropdown-editor
+    padding: 0px
+
 .dropdown-editor
-  position: relative
-  overflow: hidden
   &:hover
     border-color: $light-gray
   .button-icon-right
@@ -9,6 +12,8 @@
     float: none
     right: 7px
     top: 8px
+    cursor: default
+    pointer-events: none
   &.small-dropdown
     width: 28%
   &.medium-dropdown
@@ -16,15 +21,16 @@
   &.large-dropdown
     width: 100%
   select
-    text-indent: 0.01px
-    text-overflow: ''
+    width: 100%
+    padding: 7.2px 12px
     margin: 0
     color: inherit
     font-size: inherit
     font-family: inherit
     border: none
     background: transparent
-    line-height: 1
+    text-indent: 0.01px
+    text-overflow: ''
     +border-radius(0)
     -webkit-appearance: none
     -moz-appearance: none

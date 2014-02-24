@@ -1,4 +1,4 @@
-.dropdown-editor.flat-button(ng-class="dropdownWidthClass()")
+.flat-button.dropdown-editor(ng-class="dropdownWidthClass()")
   %select(ng-model="selected.value"
           ng-required="field.required"
           ng-options="value for value in valuesList")
