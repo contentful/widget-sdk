@@ -73,7 +73,7 @@ beforeEach(function() {
           var notText = pass ? 'not ' : '';
           return {
             pass: pass,
-            message: 'Expected stub ' + notText + 'to be called twice'
+            message: 'Expected stub ' + notText + 'to be called once'
           };
         }
       };
@@ -99,7 +99,7 @@ beforeEach(function() {
           var notText = pass ? 'not ' : '';
           return {
             pass: pass,
-            message: 'Expected stub ' + notText + 'to be called twice'
+            message: 'Expected stub ' + notText + 'to be called thrice'
           };
         }
       };
