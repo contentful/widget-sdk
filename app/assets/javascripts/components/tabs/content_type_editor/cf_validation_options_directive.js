@@ -1,6 +1,10 @@
 'use strict';
 angular.module('contentful').directive('cfValidationOptions', function (keycodes) {
 
+  // If precision is larger than this number is only represented in exponential
+  // because lol javascript
+  var MAX_PRECISON = 21;
+
   return {
     restrict: 'C',
     template: JST['cf_validation_options'](),
@@ -27,13 +31,22 @@ angular.module('contentful').directive('cfValidationOptions', function (keycodes
     controller: function CfValidationOptionsCtrl($scope, mimetype, notification) {
       $scope.mimetypeGroups = mimetype.groupDisplayNames;
 
-      $scope.updateValues = function (value) {
+      function fieldIsNumeric() {
+        return $scope.field.type == 'Number' || $scope.field.type == 'Integer';
+      }
+
+      $scope.updateValues = function (initialValue) {
+        // enforce strings because of length checking in conversion
+        if(initialValue !== null && typeof initialValue != 'string') throw new Error('Value needs to be a string.');
+        var value = initialValue;
         value = ($scope.field.type == 'Integer') ? parseInt(value, 10) : value;
         value = ($scope.field.type == 'Number') ? parseFloat(value, 10) : value;
-        value = (($scope.field.type == 'Number' || $scope.field.type == 'Integer') && isNaN(value)) ? null : value;
+        value = (fieldIsNumeric() && isNaN(value) || fieldIsNumeric() && initialValue.length > MAX_PRECISON) ? null : value;
 
         $scope.validation.in = $scope.validation.in || [];
-        if(!value){
+        if(!value && initialValue && initialValue.length > MAX_PRECISON){
+          notification.warn('Numbers should be 21 characters long or less (use a text field otherwise).');
+        } else if(!value){
           notification.warn('This value is invalid for this field type');
         } else if($scope.validation.in.length == 50){
           notification.warn('You can only add up to 50 predefined values');

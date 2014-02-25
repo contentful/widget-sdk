@@ -1,33 +1,38 @@
-.cf-dropdown-editor
-  .dropdown-toggle, .dropdown-menu li
-    text-align: left
-    overflow: hidden
-    white-space: nowrap
-    text-overflow: ellipsis
-  .dropdown-menu
-    margin-left: 0px
-    min-width: 0px
-    overflow-y: auto
-    max-height: 390px
-    margin-bottom: 30px
+.cf-field-editor
+  +user-select(none)
+  .dropdown-editor
+    padding: 0px
+
+.dropdown-editor
+  &:hover
+    border-color: $light-gray
   .button-icon-right
     position: absolute
     left: auto
     float: none
     right: 7px
-    top: 7px
-  .flat-button
-    padding-right: 1.5em
-  .small-dropdown
-    .dropdown-toggle,
-    .dropdown-menu
-      width: 28%
-  .medium-dropdown
-    .dropdown-toggle,
-    .dropdown-menu
-      width: 60%
-  .large-dropdown
-    .dropdown-toggle,
-    .dropdown-menu
-      width: 100%
+    top: 8px
+    cursor: default
+    pointer-events: none
+  &.small-dropdown
+    width: 28%
+  &.medium-dropdown
+    width: 60%
+  &.large-dropdown
+    width: 100%
+  select
+    width: 100%
+    padding: 7.2px 12px
+    margin: 0
+    color: inherit
+    font-size: inherit
+    font-family: inherit
+    border: none
+    background: transparent
+    text-indent: 0.01px
+    text-overflow: ''
+    +border-radius(0)
+    -webkit-appearance: none
+    -moz-appearance: none
+    appearance: none
 

@@ -22,6 +22,7 @@ describe('cfDropdownEditor Directive', function () {
 
       compileElement = function () {
         element = $compile('<div class="cf-dropdown-editor" ng-model="fieldData.value"></div>')(scope);
+        scope.otChangeValue = sinon.stub();
         scope.$digest();
         controller = element.controller('cfDropdownEditorController');
       };
@@ -34,41 +35,67 @@ describe('cfDropdownEditor Directive', function () {
 
   it('defaults if no initial value', function() {
     compileElement();
-    expect(element.find('.dropdown-toggle').html()).toMatch(/choose/i);
+    expect(element.find('select').scope().selected.value).toBe('');
   });
 
   it('renders initial value', function() {
     scope.fieldData.value = 'initial';
+    scope.getFieldValidationsOfType.returns(['initial']);
     compileElement();
-    expect(element.find('.dropdown-toggle').html()).toMatch(/initial/i);
+    expect(element.find('select').scope().selected.value).toBe('initial');
   });
 
   it('updates model value', function() {
     scope.fieldData.value = 'initial';
+    scope.getFieldValidationsOfType.returns(['initial', 'newvalue']);
     compileElement();
-    scope.selectedValue = 'newvalue';
+    scope.selected.value = 'newvalue';
     scope.updateModel();
     scope.$digest();
-    expect(element.find('.dropdown-toggle').html()).toMatch(/newvalue/i);
+    expect(element.find('select').scope().selected.value).toBe('newvalue');
   });
 
   describe('dropdown width class', function() {
-    it('is small', function() {
-      scope.getFieldValidationsOfType.returns(['01234']);
-      compileElement();
-      expect(scope.dropdownWidthClass()).toEqual('small-dropdown');
+    describe('with strings', function() {
+      it('is small', function() {
+        scope.getFieldValidationsOfType.returns(['01234']);
+        compileElement();
+        expect(scope.dropdownWidthClass()).toEqual('small-dropdown');
+      });
+
+      it('is medium', function() {
+        scope.getFieldValidationsOfType.returns(['012345678901234567890']);
+        compileElement();
+        expect(scope.dropdownWidthClass()).toEqual('medium-dropdown');
+      });
+
+      it('is large', function() {
+        scope.getFieldValidationsOfType.returns(['0123456789012345678901234567890123456789012345678901234567890123456789012345678901234']);
+        compileElement();
+        expect(scope.dropdownWidthClass()).toEqual('large-dropdown');
+      });
     });
 
-    it('is medium', function() {
-      scope.getFieldValidationsOfType.returns(['012345678901234567890']);
-      compileElement();
-      expect(scope.dropdownWidthClass()).toEqual('medium-dropdown');
+    describe('with integers', function() {
+      it('is small', function() {
+        scope.getFieldValidationsOfType.returns([12341]);
+        compileElement();
+        expect(scope.dropdownWidthClass()).toEqual('small-dropdown');
+      });
+
+      it('is medium', function() {
+        scope.getFieldValidationsOfType.returns([123456789012345678921]);
+        compileElement();
+        expect(scope.dropdownWidthClass()).toEqual('medium-dropdown');
+      });
     });
 
-    it('is large', function() {
-      scope.getFieldValidationsOfType.returns(['0123456789012345678901234567890123456789012345678901234567890123456789012345678901234']);
-      compileElement();
-      expect(scope.dropdownWidthClass()).toEqual('large-dropdown');
+    describe('with numbers', function() {
+      it('is small', function() {
+        scope.getFieldValidationsOfType.returns([12.40]);
+        compileElement();
+        expect(scope.dropdownWidthClass()).toEqual('small-dropdown');
+      });
     });
   });
 
@@ -82,7 +109,7 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('has 4 elements', function() {
-      expect(element.find('.dropdown-menu li').length).toBe(4);
+      expect(element.find('option').length).toBe(4);
     });
 
     it('values list is set', function() {
@@ -100,7 +127,7 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('has 3 elements', function() {
-      expect(element.find('.dropdown-menu li').length).toBe(3);
+      expect(element.find('option').length).toBe(4);
     });
 
     it('values list is set', function() {
@@ -112,7 +139,6 @@ describe('cfDropdownEditor Directive', function () {
   describe('selects dropdown value', function() {
     beforeEach(function() {
       compileElement();
-      scope.otChangeValue = sinon.stub();
       scope.otChangeValue.callsArg(1, null);
       scope.updateModel = sinon.stub();
       scope.selectDropdownValue('newvalue');
@@ -123,7 +149,7 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('sets the selected value', function() {
-      expect(scope.selectedValue).toEqual('newvalue');
+      expect(scope.selected.value).toEqual('newvalue');
     });
 
     it('updates the model', function() {
@@ -146,7 +172,7 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('sets the selected value', function() {
-      expect(scope.selectedValue).toEqual(1);
+      expect(scope.selected.value).toEqual(1);
     });
 
     it('updates the model', function() {
@@ -169,7 +195,7 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('sets the selected value', function() {
-      expect(scope.selectedValue).toEqual(1.2);
+      expect(scope.selected.value).toEqual(1.2);
     });
 
     it('updates the model', function() {
@@ -187,7 +213,7 @@ describe('cfDropdownEditor Directive', function () {
     }));
 
     it('sets the selected value', function() {
-      expect(scope.selectedValue).toEqual('newvalue');
+      expect(scope.selected.value).toEqual('newvalue');
     });
   });
 

@@ -31,7 +31,11 @@
 
   %div(ng-switch-when="in")
     %input(type="text" ng-keypress="submitValue($event)")
-    -#%span (info icon will go here)
+    %a.cf-knowledge-base-icon(
+      tooltip="Learn more about Predefined Values in the Knowledge Base Pages"
+      tooltip-container=".validation-dialog"
+      analytics-event="predefined_values"
+      href="https://contentful.zendesk.com/hc/en-us/articles/201551466")
     .cf-form-inline-error(cf-error-path="validationListPath(validationIndex)")
     .cf-predefined-values-list
 
