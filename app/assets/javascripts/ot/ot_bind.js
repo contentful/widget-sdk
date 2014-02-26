@@ -2,7 +2,7 @@
 
 var otModule = angular.module('contentful');
 
-otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacriticalMark, $log) {
+otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacriticalMark) {
   return {
     restrict: 'A',
     require: ['^otSubdoc', 'ngModel'],
@@ -64,7 +64,7 @@ otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacritic
 
       ngModelCtrl.$parsers.push(function (viewValue) {
         //console.log('parsing', viewValue);
-        return (viewValue === '' || viewValue && typeof viewValue == 'string' && isDiacriticalMark.fromChar(viewValue)) ? null : viewValue;
+        return (viewValue === '' || viewValue && typeof viewValue == 'string' && viewValue.length === 1 && isDiacriticalMark.fromChar(viewValue)) ? null : viewValue;
       });
 
       ngModelCtrl.$formatters.push(function (modelValue) {
