@@ -89,6 +89,7 @@
                 %span {{spaceContext.entryTitle(entity)}}
               %td.cell-updated
                 %date.relative(datetime="{{entity.getUpdatedAt()}}")
+        %p.result-length Showing {{entities.length}} of {{paginator.numEntries}} entries
         .loading(ng-hide="paginator.atLast()")
     %div(ng-switch-when="Asset")
       %table.result-list
@@ -114,4 +115,5 @@
                   %span.lighter {{file|fileExtension}}
                 %p.lighter
                   %date.relative(datetime="{{entity.getUpdatedAt()}}")
+        %p.result-length Showing {{entity.length}} of {{paginator.numEntries}} assets
         .loading(ng-hide="paginator.atLast()")
