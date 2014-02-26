@@ -12,12 +12,16 @@ $markdown-guide-height: 25px
   left: 1px
   right: 1px
   padding: 1px 4px
+  &.preview-mode
+    border: none
 
 .markdown-modeswitch
   left: auto
   border: none
 
 .markdown-preview
+  position: relative
+  top: 38px
   border: 1px solid $light-rule
   +border-radius
   padding: 7px
@@ -37,6 +41,8 @@ $markdown-guide-height: 25px
 .toolbar-button
   width: 36px
   height: 23px
+  border: none
+  background-color: transparent
   background-repeat: no-repeat
   background-position: center
   background-size: 50%
@@ -45,6 +51,9 @@ $markdown-guide-height: 25px
   cursor: pointer
   &:hover
     background-color: lighten($light-gray, 20%)
+.preview-mode
+  .toolbar-button:hover
+    background-color: transparent
 
 .md-right-button
   display: block

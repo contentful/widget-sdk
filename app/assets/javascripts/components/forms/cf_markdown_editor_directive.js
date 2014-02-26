@@ -3,7 +3,7 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
   return {
     restrict: 'C',
     template: JST['cf_markdown_editor'](),
-    link: function(scope, elem, attr){
+    link: function(scope, elem){
       var textarea = elem.find('textarea');
 
       // Different display modes: preview, edit, combined
@@ -14,8 +14,16 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
         scope.guideOpen = !scope.guideOpen;
       };
 
+      scope.inPreviewMode = function () {
+        return scope.displayMode == 'preview';
+      };
+
+      scope.inEditMode = function () {
+        return scope.displayMode == 'edit';
+      };
+
       scope.toggleDisplayMode = function () {
-        if (scope.displayMode == 'preview') {
+        if (scope.inPreviewMode()) {
           scope.displayMode = 'edit';
         } else {
           scope.displayMode = 'preview';
