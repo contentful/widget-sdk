@@ -1,3 +1,6 @@
+$markdown-editor-height: 125px
+$markdown-guide-height: 25px
+
 .cf-markdown-editor
   position: relative
 
@@ -18,6 +21,9 @@
   border: 1px solid $light-rule
   +border-radius
   padding: 7px
+  min-height: $markdown-editor-height
+  p:first-child
+    margin-top: 0
 
 .field-with-toolbar,
 .form-controls .field-with-toolbar
@@ -42,6 +48,7 @@
 .markdown-textarea,
 .form-controls .markdown-textarea
   +border-radius(3px 3px 0 0)
+  min-height: $markdown-editor-height
   border-bottom: none
 
 
@@ -71,8 +78,6 @@
   background-image: image_url('markdown/preview.png')
 .md-edit-icon
   background-image: image_url('markdown/edit.png')
-
-$markdown-guide-height: 25px
 
 .markdown-guide-hint
   position: absolute
@@ -134,8 +139,4 @@ $markdown-guide-height: 25px
   padding: 10px
   +box-shadow(-1px 0px 4px rgba(0,0,0,0.3))
 
-  
 
-.markdown-preview
-  p:first-child
-    margin-top: 0
