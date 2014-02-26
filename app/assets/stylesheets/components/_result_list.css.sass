@@ -34,6 +34,18 @@
   &:first-child
     padding-left: 13px
 
+.result-list-empty
+  p
+    font-size: 16px
+    color: $light-gray
+    text-align: center
+    line-height: 60px
+    opacity: 0
+    +transition(opacity ease-in 0.4s 0.4s)
+  &.visible
+    p
+      opacity: 1
+
 .result-list
   table-layout: fixed
   // borders

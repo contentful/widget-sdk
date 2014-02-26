@@ -57,6 +57,15 @@
       New
 
 
+  .results.search-options-on.result-list-empty(ng-show="searchAll && entities && entities.length == 0"
+                             ng-class="{visible: searchAll && entities && entities.length == 0}"
+                             ng-switch="linkType"
+                             cf-click-outside-ignore=".search-button, .ss-search"
+                             cf-click-outside="searchTerm=''; searchAll=false")
+    %div(ng-switch-when="Entry")
+      %p No Entries created yet.
+    %div(ng-switch-when="Asset")
+      %p No Assets created yet.
   .results.search-options-on(ng-show="entities && entities.length > 0"
                              ng-switch="linkType"
                              cf-click-outside-ignore=".search-button, .ss-search"
