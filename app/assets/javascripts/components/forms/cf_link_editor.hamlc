@@ -67,6 +67,7 @@
           %tr
             %th.cell-content-type Content Type
             %th.cell-name Name
+            %th.cell-updated Updated
       .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
         %table.result-list
           %tbody
@@ -77,6 +78,8 @@
                 %span {{spaceContext.publishedTypeForEntry(entity).getName()}}
               %td.cell-name
                 %span {{spaceContext.entryTitle(entity)}}
+              %td.cell-updated
+                %date.relative(datetime="{{entity.getUpdatedAt()}}")
         .loading(ng-hide="paginator.atLast()")
     %div(ng-switch-when="Asset")
       %table.result-list
@@ -84,11 +87,11 @@
           %tr
             %th.cell-preview Preview
             %th.cell-name Title / Description
-            %th.cell-by Type
+            %th.cell-by Type / Updated
       .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
         %table.result-list
           %tbody
-            %tr(ng-repeat="entity in entities track by entity.getId()"
+            %tr.thin-row(ng-repeat="entity in entities track by entity.getId()"
                 cf-click-local="pick(entity)"
                 ng-class="{selected: entity==selectedEntity}")
               %td.cell-preview
@@ -97,7 +100,9 @@
               %td.cell-name
                 %p {{spaceContext.localizedField(entity, 'data.fields.title') || 'Untitled'}}
                 %p.lighter {{spaceContext.localizedField(entity, 'data.fields.description')}}
-              %td.cell-type
+              %td.cell-type(ng-init="file=spaceContext.localizedField(entity, 'data.fields.file')")
                 %p(ng-show="file && file.url") {{file|fileType}}
                   %span.lighter {{file|fileExtension}}
+                %p.lighter
+                  %date.relative(datetime="{{entity.getUpdatedAt()}}")
         .loading(ng-hide="paginator.atLast()")
