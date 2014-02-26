@@ -8,12 +8,17 @@ $markdown-guide-height: 25px
 .markdown-modeswitch
   border-bottom: 1px solid $dark-rule
   position: absolute
-  top: 7px
+  top: 0px
   left: 1px
   right: 1px
-  padding: 1px 4px
+  padding: 7px 4px 1px
+  +form-control-look
+  &:focus, &.opaque
+    +form-focus-look
   &.preview-mode
     border: none
+    background-color: white
+    box-shadow: none
 
 .markdown-modeswitch
   left: auto
@@ -51,9 +56,11 @@ $markdown-guide-height: 25px
   cursor: pointer
   &:hover
     background-color: lighten($light-gray, 20%)
+
 .preview-mode
-  .toolbar-button:hover
-    background-color: transparent
+  .markdown-toolbar
+    .toolbar-button:hover
+      background-color: transparent
 
 .md-right-button
   display: block

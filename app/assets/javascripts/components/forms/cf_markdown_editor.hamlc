@@ -10,7 +10,7 @@
   %button.toolbar-button.md-ol-icon(ng-click="toggleOrderedList()" ng-disabled="inPreviewMode()")
   %button.toolbar-button.md-code-icon(ng-click="addCodeblock()" ng-disabled="inPreviewMode()")
 
-.markdown-modeswitch
+.markdown-modeswitch(ng-class="{'preview-mode': inPreviewMode()}")
   .toolbar-button.md-right-button.md-preview-icon(
     ng-click="toggleDisplayMode()"
     ng-class="{'md-preview-icon': inEditMode(), 'md-edit-icon': inPreviewMode()}")

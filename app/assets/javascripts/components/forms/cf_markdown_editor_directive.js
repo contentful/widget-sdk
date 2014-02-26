@@ -5,6 +5,8 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
     template: JST['cf_markdown_editor'](),
     link: function(scope, elem){
       var textarea = elem.find('textarea');
+      var toolbar = elem.find('.markdown-toolbar');
+      var modeSwitch = elem.find('.markdown-modeswitch');
 
       // Different display modes: preview, edit, combined
       scope.displayMode = 'edit';
@@ -40,6 +42,16 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
           }, 200);
         }
       };
+
+      textarea.on('focus', function () {
+        toolbar.addClass('opaque');
+        modeSwitch.addClass('opaque');
+      });
+
+      textarea.on('blur', function () {
+        toolbar.removeClass('opaque');
+        modeSwitch.removeClass('opaque');
+      });
 
       function toggleWrapper(wrapper, wrapperRegex) {
         var regexp = new RegExp('^'+wrapperRegex+'([^*]+)'+wrapperRegex+'$');
