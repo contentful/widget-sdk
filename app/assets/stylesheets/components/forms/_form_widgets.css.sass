@@ -1,17 +1,25 @@
 .form-field
-  .results
-    ul
-      +plain-list
-    font-size: 10px
-    +stretch-x(5px, 56px)
-    z-index: 10
-    background: white
-    background: rgba(255,255,255,0.96)
-    border: 1px solid shade(#FFFFFF, 10)
-    +box-shadow(0 2px 6px rgba(0,0,0,0.1))
-    +border-radius(0 0 3px 3px)
-    .selected
-      background-color: $result-list-highlight
+  .search-field
+    width: 100%
+    margin-top: 1px
+    height: 35px
+
+.results
+  +stretch-x(15px, 54px)
+  font-size: 10px
+  margin-right: 17%
+  margin-bottom: 20px
+  z-index: 10
+  background: white
+  background: rgba(255,255,255,0.96)
+  border: 1px solid shade(#FFFFFF, 10)
+  +box-shadow(0 2px 6px rgba(0,0,0,0.1))
+  +border-radius(0 0 3px 3px)
+  ul
+    +plain-list
+  .selected
+    background-color: $result-list-highlight
+
 
 .cf-object-editor
   textarea
@@ -27,7 +35,6 @@
   .ss-alert
     position: relative
     top: 1px
-    
 
 .cf-location-editor
   position: relative
@@ -79,12 +86,6 @@
     top: 0
     right: 10px
     line-height: 35px
-
-.form-field
-  .search-field
-    width: 100%
-    margin-top: 1px
-    height: 35px
 
 .data-field-boolean .form-controls,
 .data-field-string-list .form-controls

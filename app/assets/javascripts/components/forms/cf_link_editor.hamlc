@@ -18,6 +18,7 @@
   .controls(ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
     .search-field(ng-submit="submit()"
                   search="searchTerm"
+                  search-all="searchAll"
                   search-type-ahead=""
                   placeholder="Search for {{entityName}}"
                   tooltip-placement="top"
@@ -56,13 +57,26 @@
       New
 
 
-  .results.search-options-on(ng-show="entities && entities.length > 0" ng-switch="linkType" cf-click-outside="searchTerm=''")
+  .results.search-options-on.result-list-empty(ng-show="searchAll && entities && entities.length == 0"
+                             ng-class="{visible: searchAll && entities && entities.length == 0}"
+                             ng-switch="linkType"
+                             cf-click-outside-ignore=".search-button, .ss-search"
+                             cf-click-outside="searchTerm=''; searchAll=false")
+    %div(ng-switch-when="Entry")
+      %p No Entries created yet.
+    %div(ng-switch-when="Asset")
+      %p No Assets created yet.
+  .results.search-options-on(ng-show="entities && entities.length > 0"
+                             ng-switch="linkType"
+                             cf-click-outside-ignore=".search-button, .ss-search"
+                             cf-click-outside="searchTerm=''; searchAll=false")
     %div(ng-switch-when="Entry")
       %table.result-list
         %thead
           %tr
             %th.cell-content-type Content Type
             %th.cell-name Name
+            %th.cell-updated Updated
       .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
         %table.result-list
           %tbody
@@ -73,6 +87,9 @@
                 %span {{spaceContext.publishedTypeForEntry(entity).getName()}}
               %td.cell-name
                 %span {{spaceContext.entryTitle(entity)}}
+              %td.cell-updated
+                %date.relative(datetime="{{entity.getUpdatedAt()}}")
+        %p.result-length Showing {{entities.length}} of {{paginator.numEntries}} entries
         .loading(ng-hide="paginator.atLast()")
     %div(ng-switch-when="Asset")
       %table.result-list
@@ -80,11 +97,11 @@
           %tr
             %th.cell-preview Preview
             %th.cell-name Title / Description
-            %th.cell-by Type
+            %th.cell-by Type / Updated
       .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
         %table.result-list
           %tbody
-            %tr(ng-repeat="entity in entities track by entity.getId()"
+            %tr.thin-row(ng-repeat="entity in entities track by entity.getId()"
                 cf-click-local="pick(entity)"
                 ng-class="{selected: entity==selectedEntity}")
               %td.cell-preview
@@ -93,7 +110,10 @@
               %td.cell-name
                 %p {{spaceContext.localizedField(entity, 'data.fields.title') || 'Untitled'}}
                 %p.lighter {{spaceContext.localizedField(entity, 'data.fields.description')}}
-              %td.cell-type
+              %td.cell-type(ng-init="file=spaceContext.localizedField(entity, 'data.fields.file')")
                 %p(ng-show="file && file.url") {{file|fileType}}
                   %span.lighter {{file|fileExtension}}
+                %p.lighter
+                  %date.relative(datetime="{{entity.getUpdatedAt()}}")
+        %p.result-length Showing {{entity.length}} of {{paginator.numEntries}} assets
         .loading(ng-hide="paginator.atLast()")

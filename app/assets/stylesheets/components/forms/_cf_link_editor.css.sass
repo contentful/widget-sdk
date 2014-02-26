@@ -6,7 +6,7 @@
 
   .controls
     position: relative
-    +pie-clearfix
+    +clearfix
 
   .search-field
     width: 80%
@@ -16,7 +16,7 @@
     float: right
 
   .endless-container
-    max-height: 200px
+    max-height: 350px
     overflow-x: hidden
 
   .drag-handle
@@ -54,9 +54,6 @@
   .tooltip
     width: 200px
 
-  .results
-    margin-right: 17%
-
   .links li
     position: relative
 
@@ -72,13 +69,27 @@
     background-color: $result-list-highlight
     cursor: pointer
 
-  .cell-content-type, .cell-preview
-    width: 100px
+  .result-list
+    .thin-row
+      td
+        padding-top: 4px
+        padding-bottom: 4px
+        line-height: 12px
+
+  .cell-content-type
+    width: 140px
+    padding-right: 15px
+
   .cell-preview
+    width: 80px
+    text-align: center
+    padding-left: 0
+    .icon
+      font-size: 40px
     p
       margin: 0
   .cell-name
-    width: 60%
+    width: 40%
     vertical-align: top
     p
       max-width: 200px

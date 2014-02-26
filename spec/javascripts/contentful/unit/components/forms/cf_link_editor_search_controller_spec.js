@@ -46,18 +46,116 @@ describe('cfLinkEditorSearch Controller', function () {
     expect(scope.resetEntities).toBeCalled();
   });
 
+  describe('when searchAll property changes', function() {
+    beforeEach(function() {
+      scope.$digest();
+      scope.resetEntities = sinon.stub();
+      scope.loadEntities = sinon.stub();
+    });
+
+    describe('if searchAll is falsy', function() {
+      beforeEach(function() {
+        scope.searchAll = false;
+        scope.$digest();
+      });
+
+      it('resets entities', function() {
+        expect(scope.resetEntities).toBeCalledOnce();
+      });
+
+      it('does not load entities', function() {
+        expect(scope.loadEntities).not.toBeCalled();
+      });
+    });
+
+    describe('if a single link exists', function() {
+      beforeEach(function() {
+        scope.searchAll = true;
+        scope.links = [{}];
+        scope.linkSingle = true;
+        scope.$digest();
+      });
+
+      it('resets entities', function() {
+        expect(scope.resetEntities).toBeCalledOnce();
+      });
+
+      it('does not load entities', function() {
+        expect(scope.loadEntities).not.toBeCalled();
+      });
+    });
+
+    describe('if no links exist', function() {
+      beforeEach(function() {
+        scope.searchAll = true;
+        scope.$digest();
+      });
+
+      it('does not reset entities', function() {
+        expect(scope.resetEntities).not.toBeCalled();
+      });
+
+      it('loads entities', function() {
+        expect(scope.loadEntities).toBeCalledOnce();
+      });
+    });
+
+    describe('if a single link does not exist', function() {
+      beforeEach(function() {
+        scope.searchAll = true;
+        scope.links = [];
+        scope.linkSingle = true;
+        scope.$digest();
+      });
+
+      it('does not reset entities', function() {
+        expect(scope.resetEntities).not.toBeCalled();
+      });
+
+      it('loads entities', function() {
+        expect(scope.loadEntities).toBeCalledOnce();
+      });
+    });
+
+    describe('if multiple links exist', function() {
+      beforeEach(function() {
+        scope.searchAll = true;
+        scope.linkMultiple = true;
+        scope.$digest();
+      });
+
+      it('does not reset entities', function() {
+        expect(scope.resetEntities).not.toBeCalled();
+      });
+
+      it('loads entities', function() {
+        expect(scope.loadEntities).toBeCalledOnce();
+      });
+    });
+
+  });
+
   it('when autocomplete result is selected sets the selected entity on the scope', inject(function ($rootScope) {
     var result = {result: true};
     $rootScope.$broadcast('autocompleteResultSelected', 0, result);
     expect(scope.selectedEntity).toBe(result);
   }));
 
-  it('when autocomplete result is picked it calls the addLink method', inject(function($rootScope) {
-    var result = {result: true};
-    scope.addLink = sinon.stub();
-    $rootScope.$broadcast('autocompleteResultPicked', 0, result);
-    expect(scope.addLink).toBeCalled();
-  }));
+  describe('when autocomplete result is picked', function() {
+    beforeEach(inject(function($rootScope) {
+      var result = {result: true};
+      scope.addLink = sinon.stub();
+      $rootScope.$broadcast('autocompleteResultPicked', 0, result);
+    }));
+
+    it('calls the addLink method', function() {
+      expect(scope.addLink).toBeCalled();
+    });
+
+    it('sets searchAll to false', function() {
+      expect(scope.searchAll).toBeFalsy();
+    });
+  });
 
   describe('the pick method', function() {
     var entity;
@@ -74,6 +172,10 @@ describe('cfLinkEditorSearch Controller', function () {
 
     it('sets search term to an empty string', function() {
       expect(scope.searchTerm).toBe('');
+    });
+
+    it('sets searchAll to false', function() {
+      expect(scope.searchAll).toBeFalsy();
     });
   });
 
@@ -270,83 +372,96 @@ describe('cfLinkEditorSearch Controller', function () {
     });
 
     describe('with a search term', function() {
-      var entities, entity;
       beforeEach(function() {
         scope.searchTerm = 'term';
-        entity = {entity: true};
-        entities = {
-          0: entity,
-          total: 30
-        };
-        stubs.then.callsArgWith(0, entities);
-
-        scope.paginator.pageLength = 3;
-        scope.paginator.skipItems = sinon.stub();
-        scope.paginator.skipItems.returns(true);
+        scope.loadEntities = sinon.stub();
+        scope.resetEntities();
       });
 
       it('loads entities', function() {
-        scope.resetEntities();
-        expect(stubs.load).toBeCalled();
-      });
-
-      it('sets entities num on the paginator', function() {
-        scope.resetEntities();
-        expect(scope.paginator.numEntries).toEqual(30);
-      });
-
-      it('sets entities on scope', function() {
-        scope.resetEntities();
-        expect(scope.entities).toBe(entities);
-      });
-
-      it('sets first entity as selected on scope', function() {
-        scope.resetEntities();
-        expect(scope.selectedEntity).toBe(entity);
-      });
-
-
-      describe('creates a query object', function() {
-
-        it('with a defined order', function() {
-          scope.resetEntities();
-          expect(stubs.load.args[0][2].order).toEqual('-sys.updatedAt');
-        });
-
-        it('with a defined limit', function() {
-          scope.resetEntities();
-          expect(stubs.load.args[0][2].limit).toEqual(3);
-        });
-
-        it('with a defined skip param', function() {
-          scope.resetEntities();
-          expect(stubs.load.args[0][2].skip).toBeTruthy();
-        });
-
-        it('for linked content type', function() {
-          var idStub = sinon.stub();
-          idStub.returns(123);
-          scope.linkContentType = {
-            getId: idStub
-          };
-          scope.resetEntities();
-          expect(stubs.load.args[0][2]['sys.contentType.sys.id']).toBe(123);
-        });
-
-        it('for mimetype group', function() {
-          scope.linkMimetypeGroup = 'files';
-          scope.resetEntities();
-          expect(stubs.load.args[0][2]['mimetype_group']).toBe('files');
-        });
-
-        it('for search term', function() {
-          scope.searchTerm = 'term';
-          scope.resetEntities();
-          expect(stubs.load.args[0][2].query).toBe('term');
-        });
+        expect(scope.loadEntities).toBeCalled();
       });
     });
   });
+
+
+  describe('loading entities', function() {
+    var entities, entity;
+    beforeEach(function() {
+      entity = {entity: true};
+      entities = {
+        0: entity,
+        total: 30
+      };
+      stubs.then.callsArgWith(0, entities);
+
+      scope.paginator.pageLength = 3;
+      scope.paginator.skipItems = sinon.stub();
+      scope.paginator.skipItems.returns(true);
+    });
+
+    it('loads entities', function() {
+      scope.loadEntities();
+      expect(stubs.load).toBeCalled();
+    });
+
+    it('sets entities num on the paginator', function() {
+      scope.loadEntities();
+      expect(scope.paginator.numEntries).toEqual(30);
+    });
+
+    it('sets entities on scope', function() {
+      scope.loadEntities();
+      expect(scope.entities).toBe(entities);
+    });
+
+    it('sets first entity as selected on scope', function() {
+      scope.loadEntities();
+      expect(scope.selectedEntity).toBe(entity);
+    });
+
+
+    describe('creates a query object', function() {
+
+      it('with a defined order', function() {
+        scope.loadEntities();
+        expect(stubs.load.args[0][2].order).toEqual('-sys.updatedAt');
+      });
+
+      it('with a defined limit', function() {
+        scope.loadEntities();
+        expect(stubs.load.args[0][2].limit).toEqual(3);
+      });
+
+      it('with a defined skip param', function() {
+        scope.loadEntities();
+        expect(stubs.load.args[0][2].skip).toBeTruthy();
+      });
+
+      it('for linked content type', function() {
+        var idStub = sinon.stub();
+        idStub.returns(123);
+        scope.linkContentType = {
+          getId: idStub
+        };
+        scope.loadEntities();
+        expect(stubs.load.args[0][2]['sys.contentType.sys.id']).toBe(123);
+      });
+
+      it('for mimetype group', function() {
+        scope.linkMimetypeGroup = 'files';
+        scope.loadEntities();
+        expect(stubs.load.args[0][2]['mimetype_group']).toBe('files');
+      });
+
+      it('for search term', function() {
+        scope.searchTerm = 'term';
+        scope.loadEntities();
+        expect(stubs.load.args[0][2].query).toBe('term');
+      });
+    });
+  });
+
 
 
   describe('loadMore', function () {
