@@ -33,6 +33,7 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
       };
 
       scope.enterEditor = function () {
+        /*
         if (scope.displayMode === 'preview') {
           scope.displayMode = 'edit';
           textarea.trigger('autosize');
@@ -41,6 +42,7 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
             textarea.trigger('focus');
           }, 200);
         }
+       */
       };
 
       textarea.on('focus', function () {
