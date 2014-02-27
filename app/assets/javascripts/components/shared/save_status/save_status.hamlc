@@ -1,5 +1,5 @@
 %i.ss-info.last-saved-at
-%span.last-saved-at
+%span.last-saved-at(ng-if="lastSavedAt")
   Last change made
   %time.relative(datetime="{{lastSavedAt}}")
 %i.ss-check.saved

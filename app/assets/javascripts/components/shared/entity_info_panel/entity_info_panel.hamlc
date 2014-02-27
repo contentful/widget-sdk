@@ -1,8 +1,9 @@
 %table
-  %tr(ng-show="contentTypeName")
+  %tr(ng-if="contentTypeName")
     %th Content Type
     %td {{contentTypeName}}
-  %tr(ng-show="contentTypeDescription")
+
+  %tr(ng-if="contentTypeDescription")
     %th Description
     %td {{contentTypeDescription}}
   %tr
@@ -16,14 +17,14 @@
     %tr
       %th Created
       %td
-        %date.relative(datetime="{{sys.createdAt}}")
+        %date.relative(ng-if="sys.createdAt" datetime="{{sys.createdAt}}")
     %tr
       %th Created by
       %td
         %span.cf-user(link="sys.createdBy" as="creator")
           {{creator | userNameDisplay:user}}
 
-  %tbody(ng-show="sys.updatedAt")
+  %tbody(ng-if="sys.updatedAt")
     %tr
       %th Updated
       %td
@@ -34,7 +35,7 @@
         %span.cf-user(link="sys.updatedBy" as="updater")
           {{updater | userNameDisplay:user}}
 
-  %tbody(ng-show="sys.archivedVersion")
+  %tbody(ng-if="sys.archivedVersion")
     %tr
       %th Archived
       %td
@@ -46,7 +47,7 @@
       %th Archived version
       %td {{sys.archivedVersion}}
 
-  %tbody(ng-show="sys.publishedVersion")
+  %tbody(ng-if="sys.publishedVersion")
     %tr
       %th Published
       %td
