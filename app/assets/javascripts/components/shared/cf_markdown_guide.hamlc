@@ -7,6 +7,7 @@
   %li(data-anchor="links") Links
   %li(data-anchor="code") Code
   %li(data-anchor="rules") Rules
+
 .markdown-guide-main
   %h2 Markdown Basics
   %p Markdown allows you to write using an easy-to-read plain text format, which is then formatted for viewing on devices and browsers serving content from Contentful API. Think of it as a stripped down version of HTML. Scroll down below for tips on how to use markdown syntax.
@@ -18,20 +19,16 @@
     %br
     %br
     Observing objects that are neither black nor ravens may formally increase the likelihood that all ravens are black – even though, intuitively, these observations are unrelated.
-    
+
   %h2 Line breaks
-  %p Every time you hit &lt;Enter&gt;, a new line is inserted providing some space between paragraphs. Here are some things to try out:
+  %p If you wish to create a line break you need to leave two spaces at the end of a line, otherwise they will still be rendered on the same line
   %code
-    Here's a line for us to start with.
+    This is a line with two spaces at the end
     %br
+    And this is another line
     %br
-    This line is separated from the one above by two newlines, so it will be a *separate paragraph*.
-    %br
-    %br
-    This line is also a separate paragraph, but...
-    %br
-    This line is only separated by a single newline, so it's a separate line in the *same paragraph*.
-    
+    This is one line with no spaces at the end And this is a second line after it
+
   %h2(data-anchor="headings") Headings
   %p You can create a heading by adding one or more # symbols before your heading text. The number of # you use will determine the size of the heading.
   %code
@@ -49,13 +46,13 @@
     &gt; There are three types of people in this world: those who know how to count and those who don’t!
 
   %h2(data-anchor="styling") Styling text
-  %p You can make text bold, italic, or strikethrough.
+  %p You can make text bold (one asterisk), italic (two asterisks), or strikethrough (two tilde signs).
   %code
     :plain
       *This text will be italic*<br>
       **This text will be bold**<br>
       ~~This text will have a strike through it~~<br>
-  %p Both bold and italic can use either a * or an _ around the text for styling. This allows you to combine both bold and italic if needed.
+  %p Both bold and italic can use either a * or a _ around the text for styling. This allows you to combine both bold and italic if needed.
   %code
     :plain
       **Everyone _must_ attend the 5 o'clock tea at Lady Mae’s house.**
