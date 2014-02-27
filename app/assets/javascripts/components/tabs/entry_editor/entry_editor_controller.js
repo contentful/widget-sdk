@@ -132,7 +132,7 @@ angular.module('contentful')
       return 'textfield';
     }
     if (field.type === 'Text'   ) {
-      if (contentType.data.displayField === field.id || !$scope.user.features.showPreview) {
+      if (contentType.data.displayField === field.id) {
         return 'textarea';
       } else {
         return 'markdownEditor';
