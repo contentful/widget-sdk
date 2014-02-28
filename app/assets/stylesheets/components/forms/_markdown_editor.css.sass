@@ -1,31 +1,69 @@
+$markdown-editor-height: 125px
+$markdown-guide-height: 25px
+
 .cf-markdown-editor
   position: relative
 
 .markdown-toolbar,
 .markdown-modeswitch
-  border-bottom: 1px solid $dark-rule
-  position: absolute
-  top: 7px
-  left: 1px
-  right: 1px
-  padding: 1px 4px
+  padding: 7px 4px 1px
+
+.markdown-toolbar
+  position: relative
+  height: 35px
+  +form-control-look
+  +border-radius(3px 3px 0 0)
+  border: 1px solid $dark-rule
+  border-top: 1px solid transparent
+  &:focus, &.opaque
+    +border-top-radius(3px)
+    background-color: $gray-background
+    border-color: $link-blue
+    outline: none
+  &.preview-mode
+    background-color: white
+    border: none
+    box-shadow: none
 
 .markdown-modeswitch
-  left: auto
-  border: none
+  position: absolute
+  right: 0
+  +stretch-y
+  border-left: 1px solid $dark-rule
+
+.markdown-textarea,
+.form-controls .markdown-textarea
+  +border-radius(0 0 0 0)
+  +box-shadow(none)
+  min-height: $markdown-editor-height
+  border-bottom: none
+  border-top: none
+
 
 .markdown-preview
+  position: relative
+  overflow-y: auto
+  padding: 9px 7px 4px
+  min-height: $markdown-editor-height
+  max-width: 700px
+  max-height: $textarea-max-height
   border: 1px solid $light-rule
   +border-radius
-  padding: 7px
-
-.field-with-toolbar,
-.form-controls .field-with-toolbar
-  padding-top: 25px + 7px + 7px
+  word-wrap: break-word
+  overflow-wrap: break-word
+  p
+    margin: 0
+    margin-top: 0
+  p, pre
+    margin-bottom: 22px
+  hr
+    background-color: $medium-gray
 
 .toolbar-button
   width: 36px
   height: 23px
+  border: none
+  background-color: transparent
   background-repeat: no-repeat
   background-position: center
   background-size: 50%
@@ -35,15 +73,15 @@
   &:hover
     background-color: lighten($light-gray, 20%)
 
+.preview-mode
+  .toolbar-button:hover
+    background-color: transparent
+  .markdown-modeswitch
+    border-left: none
+
 .md-right-button
   display: block
   float: right
-
-.markdown-textarea,
-.form-controls .markdown-textarea
-  +border-radius(3px 3px 0 0)
-  border-bottom: none
-
 
 .md-bold-icon
   background-image: image_url('markdown/bold.png')
@@ -71,8 +109,6 @@
   background-image: image_url('markdown/preview.png')
 .md-edit-icon
   background-image: image_url('markdown/edit.png')
-
-$markdown-guide-height: 25px
 
 .markdown-guide-hint
   position: absolute
@@ -134,8 +170,4 @@ $markdown-guide-height: 25px
   padding: 10px
   +box-shadow(-1px 0px 4px rgba(0,0,0,0.3))
 
-  
 
-.markdown-preview
-  p:first-child
-    margin-top: 0

@@ -14,16 +14,6 @@
 
 %standalone-table
   +border-radius(3px)
-  //thead
-    th:first-child
-      +border-top-left-radius(3px)
-    th:last-child
-      +border-top-right-radius(3px)
-  //tbody
-    th:first-child
-      +border-bottom-left-radius(3px)
-    th:last-child
-      +border-bottom-right-radius(3px)
 
 %result-list-border-bottom
   tbody
@@ -43,6 +33,22 @@
   text-align: left
   &:first-child
     padding-left: 13px
+
+.result-length
+  text-align: center
+  width: 100%
+
+.result-list-empty
+  p
+    font-size: 16px
+    color: $light-gray
+    text-align: center
+    line-height: 60px
+    opacity: 0
+    +transition(opacity ease-in 0.4s 0.4s)
+  &.visible
+    p
+      opacity: 1
 
 .result-list
   table-layout: fixed

@@ -15,6 +15,7 @@ angular.module('contentful').directive('searchField', function(keycodes){
     scope: {
       placeholder: '@',
       search: '=',
+      searchAll: '=?',
       tooltip: '@'
     },
 
@@ -30,19 +31,31 @@ angular.module('contentful').directive('searchField', function(keycodes){
       var debouncedUpdate = _.debounce(update, 300);
 
       element.on('keydown', function(e) {
-        if (typeAhead) debouncedUpdate();
+        if (typeAhead && scope.inner.term) return debouncedUpdate();
         var pressedReturn = e.keyCode === keycodes.ENTER;
-        if (!typeAhead && pressedReturn) update();
+        if (pressedReturn) update();
+        else scope.resetSearchAll();
       });
     },
 
-    controller: function($scope) {
+    controller: function SearchFieldCtrl($scope) {
       $scope.inner = {
         term: ''
       };
 
+      $scope.updateFromButton = function () {
+        if(!$scope.inner.term) $scope.inner.term = '';
+        $scope.update();
+      };
+
       $scope.update = function() {
         $scope.search = $scope.inner.term;
+        if($scope.search === '') $scope.searchAll = true;
+        else $scope.resetSearchAll();
+      };
+
+      $scope.resetSearchAll = function () {
+        $scope.searchAll = false;
       };
 
       $scope.$watch('search', function(search) {

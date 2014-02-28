@@ -9,11 +9,21 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
     scope.resetEntities();
   });
 
+  function noLinksOrMultipleLink() {
+    return !$scope.links || ($scope.linkSingle && $scope.links.length === 0 || $scope.linkMultiple);
+  }
+
+  $scope.$watch('searchAll', function (searchAll) {
+    if(searchAll && noLinksOrMultipleLink()) $scope.loadEntities();
+    else $scope.resetEntities();
+  });
+
   $scope.$on('autocompleteResultSelected', function (event, index, entity) {
     event.currentScope.selectedEntity = entity;
   });
 
   $scope.$on('autocompleteResultPicked', function (event, index, entity) {
+    event.currentScope.searchAll = false;
     event.currentScope.addLink(entity, function(err) {
       if (err) event.preventDefault();
     });
@@ -21,7 +31,10 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
 
   $scope.pick = function (entity) {
     $scope.addLink(entity, function(err) {
-      if (!err) $scope.searchTerm = '';
+      if (!err) {
+        $scope.searchTerm = '';
+        $scope.searchAll = false;
+      }
     });
   };
 
@@ -88,13 +101,17 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
       $scope.entities = [];
       $scope.selectedEntity = null;
     } else {
-      entityLoader.load($scope.spaceContext.space, $scope.fetchMethod, buildQuery()).
-      then(function (entities) {
-        $scope.paginator.numEntries = entities.total;
-        $scope.entities = entities;
-        $scope.selectedEntity = entities[0];
-      });
+      $scope.loadEntities();
     }
+  };
+
+  $scope.loadEntities = function () {
+    entityLoader.load($scope.spaceContext.space, $scope.fetchMethod, buildQuery()).
+    then(function (entities) {
+      $scope.paginator.numEntries = entities.total;
+      $scope.entities = entities;
+      $scope.selectedEntity = entities[0];
+    });
   };
 
   $scope.loadMore = function() {

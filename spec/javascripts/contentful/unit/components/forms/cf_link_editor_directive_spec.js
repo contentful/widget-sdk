@@ -18,6 +18,11 @@ describe('cfLinkEditor Directive', function () {
         'publishedType',
         'entryTitle'
       ]);
+
+      $provide.value('fileTypeFilter', function () {return '';});
+      $provide.value('fileExtensionFilter', function () {return '';});
+
+      $provide.removeDirectives('cfThumbnail');
     });
 
     inject(function ($compile, $rootScope, cfLinkEditorDirective) {
@@ -377,7 +382,7 @@ describe('cfLinkEditor Directive', function () {
     });
 
     describe('if search results exist', function () {
-      beforeEach(function () {
+      beforeEach(inject(function () {
         scope.selectedEntity = { getId: function(){return 123;}};
         scope.entities = [
           scope.selectedEntity,
@@ -388,8 +393,10 @@ describe('cfLinkEditor Directive', function () {
             }
           }
         ];
+        stubs.localizedField.withArgs(scope.entities[0], 'data.fields.file').returns(null);
+        stubs.localizedField.withArgs(scope.entities[1], 'data.fields.file').returns(scope.entities[1].file);
         scope.$digest();
-      });
+      }));
 
       it('has 2 assets (plus a header)', function () {
         expect(element.find('.cell-preview').length).toBe(3);
@@ -400,19 +407,19 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('cf-thumbnail is not shown for first asset', function () {
-        expect(element.find('[cf-thumbnail]').eq(1)).toBeNgHidden();
+        expect(element.find('[cf-thumbnail]').eq(0)).toBeNgHidden();
       });
 
       it('cf-thumbnail is shown for second asset', function () {
-        expect(element.find('[cf-thumbnail]').eq(2)).not.toBeNgHidden();
+        expect(element.find('[cf-thumbnail]').eq(1)).not.toBeNgHidden();
       });
 
       it('file type is not shown for first asset', function () {
-        expect(element.find('.cell-type p').eq(1)).toBeNgHidden();
+        expect(element.find('.cell-type p').eq(0)).toBeNgHidden();
       });
 
       it('file type is shown for second asset', function () {
-        expect(element.find('.cell-type p').eq(2)).not.toBeNgHidden();
+        expect(element.find('.cell-type p').eq(1)).not.toBeNgHidden();
       });
 
       it('localizedField is called for first asset file', function () {
