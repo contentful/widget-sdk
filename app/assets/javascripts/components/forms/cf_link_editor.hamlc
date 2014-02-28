@@ -115,5 +115,5 @@
                   %span.lighter {{file|fileExtension}}
                 %p.lighter
                   %date.relative(datetime="{{entity.getUpdatedAt()}}")
-        %p.result-length Showing {{entity.length}} of {{paginator.numEntries}} assets
+        %p.result-length Showing {{entities.length}} of {{paginator.numEntries}} assets
         .loading(ng-hide="paginator.atLast()")
