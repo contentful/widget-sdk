@@ -79,7 +79,7 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
     contentType: 'Content Types',
     entry: 'Entries',
     locale: 'Locales',
-    membership: 'Memberships',
+    spaceMembership: 'Space Memberships',
     role: 'Roles',
     space: 'Spaces',
     user: 'Users',
