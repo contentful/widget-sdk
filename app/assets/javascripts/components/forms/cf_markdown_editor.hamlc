@@ -9,13 +9,12 @@
   %button.toolbar-button.md-ul-icon(ng-click="toggleUnorderedList()" ng-disabled="inPreviewMode()")
   %button.toolbar-button.md-ol-icon(ng-click="toggleOrderedList()" ng-disabled="inPreviewMode()")
   %button.toolbar-button.md-code-icon(ng-click="addCodeblock()" ng-disabled="inPreviewMode()")
+  .markdown-modeswitch
+    %button.toolbar-button.md-right-button.md-preview-icon(
+      ng-click="toggleDisplayMode()"
+      ng-class="{'md-preview-icon': inEditMode(), 'md-edit-icon': inPreviewMode()}")
 
-.markdown-modeswitch(ng-class="{'preview-mode': inPreviewMode()}")
-  .toolbar-button.md-right-button.md-preview-icon(
-    ng-click="toggleDisplayMode()"
-    ng-class="{'md-preview-icon': inEditMode(), 'md-edit-icon': inPreviewMode()}")
-
-%textarea.field-with-toolbar.markdown-textarea(cf-input-autogrow=""
+%textarea.markdown-textarea(cf-input-autogrow=""
   ng-model="fieldData.value"
   ot-subdoc=""
   ot-bind-text=""

@@ -6,42 +6,57 @@ $markdown-guide-height: 25px
 
 .markdown-toolbar,
 .markdown-modeswitch
-  border-bottom: 1px solid $dark-rule
-  position: absolute
-  top: 0px
-  left: 1px
-  right: 1px
   padding: 7px 4px 1px
+
+.markdown-toolbar
+  position: relative
+  height: 35px
   +form-control-look
+  +border-radius(3px 3px 0 0)
+  border: 1px solid $dark-rule
+  border-top: 1px solid transparent
   &:focus, &.opaque
-    +form-focus-look
+    +border-top-radius(3px)
+    background-color: $gray-background
+    border-color: $link-blue
+    outline: none
   &.preview-mode
-    border: none
     background-color: white
+    border: none
     box-shadow: none
 
 .markdown-modeswitch
-  left: auto
-  border: none
+  position: absolute
+  right: 0
+  +stretch-y
+  border-left: 1px solid $dark-rule
+
+.markdown-textarea,
+.form-controls .markdown-textarea
+  +border-radius(0 0 0 0)
+  +box-shadow(none)
+  min-height: $markdown-editor-height
+  border-bottom: none
+  border-top: none
+
 
 .markdown-preview
   position: relative
-  top: 38px
-  border: 1px solid $light-rule
-  +border-radius
-  padding: 7px
+  overflow: hidden
+  padding: 9px 7px 4px
   min-height: $markdown-editor-height
   max-width: 700px
-  overflow: hidden
+  border: 1px solid $light-rule
+  +border-radius
   word-wrap: break-word
-  white-space: pre-wrap
   overflow-wrap: break-word
-  p:first-child
+  p
+    margin: 0
     margin-top: 0
-
-.field-with-toolbar,
-.form-controls .field-with-toolbar
-  padding-top: 25px + 7px + 7px
+  p, pre
+    margin-bottom: 22px
+  hr
+    background-color: $medium-gray
 
 .toolbar-button
   width: 36px
@@ -58,20 +73,14 @@ $markdown-guide-height: 25px
     background-color: lighten($light-gray, 20%)
 
 .preview-mode
-  .markdown-toolbar
-    .toolbar-button:hover
-      background-color: transparent
+  .toolbar-button:hover
+    background-color: transparent
+  .markdown-modeswitch
+    border-left: none
 
 .md-right-button
   display: block
   float: right
-
-.markdown-textarea,
-.form-controls .markdown-textarea
-  +border-radius(3px 3px 0 0)
-  min-height: $markdown-editor-height
-  border-bottom: none
-
 
 .md-bold-icon
   background-image: image_url('markdown/bold.png')
