@@ -124,6 +124,7 @@
   %p
     When using three hyphens, there should not be text above the hyphens but a blank line instead.
     A line of text followed by a line with hyphens would be turned into a headline instead.
+
 .markdown-guide-hint(ng-click="toggleGuide()")
-  Use Markdown format style your text. Click here to see a quick overview.
+  Use Markdown syntax to format your text. Click here to see a quick overview.
   %a.toggle-collapse(ng-class="{open: guideOpen}") ▶
