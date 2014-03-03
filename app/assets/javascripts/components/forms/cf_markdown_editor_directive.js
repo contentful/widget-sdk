@@ -76,53 +76,73 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
       scope.toggleHeadline = function (level) {
         var range = lineRange();
         var match = range.text.match(/^#+ /);
+        var afterPosition;
 
         if (match) {
           var currentLevel = match[0].length - 1;
+          afterPosition = range.end - currentLevel - 1;
           textarea.textrange('replace', mapLines(range.text, function (line) {
             return line.substr(currentLevel + 1);
           }));
         } else {
+          afterPosition = range.end + level + 1;
           textarea.textrange('replace', mapLines(range.text, function (line) {
-            return '########'.substr(0, level) + ' ' + line;
+            return '######'.substr(0, level) + ' ' + line;
           }));
         }
+        textarea.textrange('setcursor', afterPosition);
       };
 
-      scope.toggleUnorderedList = function () {
-        var prefix = /^-+ /;
-        var range = lineRange();
-        var match = range.text.match(prefix);
+      var ulPrefix = /^-+ /;
+      var olPrefix = /^(\d+)\. /;
 
-        if (match) {
+      scope.toggleUnorderedList = function () {
+        var range = lineRange();
+        var afterPosition;
+
+        if (ulPrefix.test(range.text)) {
+          afterPosition = range.end - 2;
           textarea.textrange('replace', mapLines(range.text, function (line) {
-            return line.replace(prefix, '');
+            return line.replace(ulPrefix, '');
+          }));
+        } else if(olPrefix.test(range.text)) {
+          afterPosition = range.end - 1;
+          textarea.textrange('replace', mapLines(range.text, function (line) {
+            return line.replace(olPrefix, '- ');
           }));
         } else {
+          afterPosition = range.end + 2;
           textarea.textrange('replace', mapLines(range.text, function (line) {
             return '- ' + line;
           }));
         }
         textarea.trigger('input').trigger('autosize');
+        textarea.textrange('setcursor', afterPosition);
       };
 
       scope.toggleOrderedList = function () {
-        var numPrefix = /^(\d+)\. /;
         var range = lineRange();
-        var match = range.text.match(numPrefix);
+        var afterPosition;
 
-        if (match) {
+        if (olPrefix.test(range.text)) {
+          afterPosition = range.end - 3;
           textarea.textrange('replace', mapLines(range.text, function (line) {
-            return line.replace(numPrefix, '');
+            return line.replace(olPrefix, '');
           }));
         } else {
           var lineNum = 0;
+          afterPosition = range.end + (ulPrefix.test(range.text) ? 1 : 3);
           textarea.textrange('replace', mapLines(range.text, function (line) {
             lineNum++;
-            return '' + lineNum + '. ' + line;
+            if(ulPrefix.test(range.text)) {
+              return line.replace(ulPrefix, lineNum + '. ');
+            } else {
+              return '' + lineNum + '. ' + line;
+            }
           }));
         }
         textarea.trigger('input').trigger('autosize');
+        textarea.textrange('setcursor', afterPosition);
       };
 
       scope.insertRule = function () {
@@ -139,12 +159,14 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
         }).join('\n');
         textarea.textrange('replace', quote);
         textarea.trigger('input').trigger('autosize');
+        textarea.textrange('setcursor', range.end + 1);
       };
 
       scope.addCodeblock = function () {
         var range = lineRange();
         textarea.textrange('replace', '```\n' + range.text + '\n```');
         textarea.trigger('input').trigger('autosize');
+        textarea.textrange('setcursor', range.start + 4);
       };
 
       // Helpers ///////////////////////////////////////////
