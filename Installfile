@@ -8,3 +8,6 @@ popd
 
 bundle install
 rm -rf tmp/cache/*
+
+mkdir -p /tmp/user_interface
+ln -sf /tmp/user_interface tmp
