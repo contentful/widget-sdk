@@ -69,5 +69,5 @@
   tabindex="0"
   ng-bind-html="markdownPreview"
   ng-hide="inEditMode()"
-  ng-focus="enterEditor()")
+  ng-click="enterEditor($event)")
 

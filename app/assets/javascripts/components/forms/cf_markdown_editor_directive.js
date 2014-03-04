@@ -35,17 +35,17 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, keyc
         }
       };
 
-      scope.enterEditor = function () {
-        /*
+      scope.enterEditor = function (ev) {
         if (scope.displayMode === 'preview') {
+          var targetText = $(ev.target).text().trim();
           scope.displayMode = 'edit';
           textarea.trigger('autosize');
           _.delay(function () {
-            //textarea.textrange('set', 0);
             textarea.trigger('focus');
+            var cursorPos = textarea.val().indexOf(targetText);
+            textarea.textrange('setcursor', cursorPos);
           }, 200);
         }
-       */
       };
 
       textarea.on('focus', function () {
