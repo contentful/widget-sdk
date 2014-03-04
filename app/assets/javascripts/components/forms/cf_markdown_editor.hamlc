@@ -42,7 +42,7 @@
   .markdown-modeswitch
     %button.toolbar-button.md-right-button.md-preview-icon(
       ng-click="toggleDisplayMode()"
-      tooltip="Preview"
+      tooltip="Preview (Shift+{{metaKey}}+P)"
       ng-class="{'md-preview-icon': inEditMode(), 'md-edit-icon': inPreviewMode()}")
 
 %textarea.markdown-textarea(cf-input-autogrow=""

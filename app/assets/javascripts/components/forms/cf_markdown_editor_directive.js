@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce, $timeout){
+angular.module('contentful').directive('cfMarkdownEditor', function(marked, keycodes, $document, $window, $timeout){
   return {
     restrict: 'C',
     template: JST['cf_markdown_editor'](),
@@ -7,6 +7,9 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
       var textarea = elem.find('textarea');
       var toolbar = elem.find('.markdown-toolbar');
       var modeSwitch = elem.find('.markdown-modeswitch');
+      var preview = elem.find('.markdown-preview');
+
+      scope.metaKey = /(Mac|Macintosh)/gi.test($window.navigator.userAgent) ? 'Cmd' : 'Ctrl';
 
       // Different display modes: preview, edit, combined
       scope.displayMode = 'edit';
@@ -53,6 +56,30 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
       textarea.on('blur', function () {
         toolbar.removeClass('opaque');
         modeSwitch.removeClass('opaque');
+      });
+
+      function isPreviewKey(ev) {
+        return ev.metaKey && ev.shiftKey && ev.keyCode === keycodes.p;
+      }
+
+      function toggleKeyboardPreview(ev) {
+        if(isPreviewKey(ev) && (
+          ev.target === textarea.get(0) ||
+          ev.target === preview.get(0)
+        )){
+          ev.preventDefault();
+          scope.toggleDisplayMode();
+          scope.$digest();
+          $timeout(function () {
+            if(scope.inPreviewMode()) preview.focus();
+            else textarea.focus();
+          }, 500);
+        }
+      }
+
+      $document.on('keydown', toggleKeyboardPreview);
+      scope.$on('$destroy', function () {
+        $document.off('keydown', toggleKeyboardPreview);
       });
 
       function toggleWrapper(wrapper, wrapperRegex) {
