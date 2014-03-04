@@ -58,8 +58,16 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, keyc
         modeSwitch.removeClass('opaque');
       });
 
+      textarea.on('keydown', function (ev) {
+        if(ev.shiftKey && ev.keyCode === keycodes.TAB){
+          ev.preventDefault();
+          ev.stopPropagation();
+          scope.indent();
+        }
+      });
+
       function isPreviewKey(ev) {
-        return ev.metaKey && ev.shiftKey && ev.keyCode === keycodes.p;
+        return ev.metaKey && ev.shiftKey && ev.keyCode === keycodes.P;
       }
 
       function toggleKeyboardPreview(ev) {
@@ -99,6 +107,17 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, keyc
 
       scope.toggleBold = function () { toggleWrapper('**', '\\*\\*'); };
       scope.toggleItalic = function () { toggleWrapper('*', '\\*'); };
+
+      scope.indent = function () {
+        var range = textarea.textrange('get');
+        if(!isLineStart(range)){
+          textarea.textrange('setcursor', range.start);
+        }
+        textarea.textrange('replace', mapLines(range.text, function (line) {
+          return '  ' + line;
+        }));
+        textarea.textrange('setcursor', range.start + 2);
+      };
 
       scope.toggleHeadline = function (level) {
         var range = lineRange();
@@ -229,6 +248,18 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, keyc
         range.text = text.substr(range.start, range.length);
 
         return range;
+      }
+
+      function isLineStart(range) {
+        var position = range.position-1;
+        if(position > 0 && textarea.val()[position] === '\n') return true;
+        var chr;
+        while(position > 0 && (chr = textarea.val()[position])){
+          if(chr === ' ') position--;
+          else if(chr === '\n') return true;
+          else return false;
+        }
+        return false;
       }
 
       // Update Preview /////////////////////////////////////
