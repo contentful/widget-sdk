@@ -24,7 +24,7 @@ angular.module('contentful').directive('cfMarkdownGuide', function(){
       $nav.on('click', 'li', function () {
         var id = $(this).attr('data-anchor');
         var $headline = $main.find('*[data-anchor='+id+']');
-        $main.scrollTop($headline.prop('offsetTop'));
+        $main.scrollTop($headline.prop('offsetTop')-10);
       });
 
       onScroll();

@@ -5,6 +5,7 @@
   %li(data-anchor="styling") Styling
   %li(data-anchor="lists") Lists
   %li(data-anchor="links") Links
+  %li(data-anchor="images") Images
   %li(data-anchor="code") Code
   %li(data-anchor="rules") Rules
 
@@ -98,6 +99,16 @@
     [id]: http://example.com/ 'Optional Title with Single Quotes Here' 
     %br
     [foo]: http://anotherexample.com/ (Optional Title with Parentheses Here)
+
+  %h2(data-anchor="images") Images
+  %p To include images, use the following syntax to the define the image and the alt attribute:
+  %code
+    \![Alt text](http://example.com/image.jpg)
+
+  %p Or with a title attribute
+  %code
+    \![Alt text](http://example.com/image.jpg "Title text")
+
 
   %h2(data-anchor="code") Code blocks
   %p
