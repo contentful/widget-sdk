@@ -67,7 +67,7 @@ angular.module('contentful').controller('SpaceCtrl',
         if (!err) {
           scope.navigator[params.navigatorHandler](entity).goTo();
         } else {
-          if(err.body.details.reasons){
+          if(err && err.body && err.body.details.reasons){
             var enforcement = enforcements.determineEnforcement(
               err.body.details.reasons, params.entityType);
             if(enforcement){
