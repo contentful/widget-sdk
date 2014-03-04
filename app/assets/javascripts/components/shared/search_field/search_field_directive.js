@@ -30,11 +30,14 @@ angular.module('contentful').directive('searchField', function(keycodes){
 
       var debouncedUpdate = _.debounce(update, 300);
 
-      element.on('keydown', function(e) {
+      element.on('keydown', function(ev) {
         if (typeAhead && scope.inner.term) return debouncedUpdate();
-        var pressedReturn = e.keyCode === keycodes.ENTER;
-        if (pressedReturn) update();
-        else scope.resetSearchAll();
+        var pressedReturn = ev.keyCode === keycodes.ENTER;
+        if (pressedReturn) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          update();
+        } else scope.resetSearchAll();
       });
     },
 

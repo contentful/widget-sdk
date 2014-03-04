@@ -61,7 +61,7 @@
                              ng-class="{visible: searchAll && entities && entities.length == 0}"
                              ng-switch="linkType"
                              cf-click-outside-ignore=".search-button, .ss-search"
-                             cf-click-outside="searchTerm=''; searchAll=false")
+                             cf-click-outside="clickOutsideHandler()")
     %div(ng-switch-when="Entry")
       %p No Entries created yet.
     %div(ng-switch-when="Asset")

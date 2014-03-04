@@ -4,6 +4,11 @@ angular.module('contentful').directive('cfLinkEditorSearch', function() {
   return {
     restrict: 'AC',
     link: function (scope, element) {
+      scope.clickOutsideHandler = function () {
+        scope.searchTerm = '';
+        scope.searchAll = false;
+      };
+
       scope.$watch('selectedEntity', function () {
         _.defer(scrollToSelected);
       });
