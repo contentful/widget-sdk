@@ -59,7 +59,7 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, keyc
       });
 
       textarea.on('keydown', function (ev) {
-        if(ev.shiftKey && ev.keyCode === keycodes.TAB){
+        if(ev.altKey && ev.shiftKey && ev.keyCode === keycodes.TAB){
           ev.preventDefault();
           ev.stopPropagation();
           scope.indent();

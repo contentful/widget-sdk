@@ -52,7 +52,7 @@
   %button.toolbar-button.md-indent-icon(
     ng-click="indent()"
     tabindex="-1"
-    tooltip="Tab (Shift+Tab)"
+    tooltip="Tab (Shift+Alt+Tab)"
     ng-disabled="inPreviewMode()")
   .markdown-modeswitch
     %button.toolbar-button.md-right-button.md-preview-icon(
