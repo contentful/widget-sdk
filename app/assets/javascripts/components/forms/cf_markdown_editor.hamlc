@@ -49,6 +49,11 @@
     tabindex="-1"
     tooltip="Code"
     ng-disabled="inPreviewMode()")
+  %button.toolbar-button.md-indent-icon(
+    ng-click="indent()"
+    tabindex="-1"
+    tooltip="Tab (Shift+Tab)"
+    ng-disabled="inPreviewMode()")
   .markdown-modeswitch
     %button.toolbar-button.md-right-button.md-preview-icon(
       ng-click="toggleDisplayMode()"
