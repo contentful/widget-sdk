@@ -264,8 +264,17 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, keyc
 
       // Update Preview /////////////////////////////////////
 
+      scope.$watch('displayMode', function () {
+        var source = scope.fieldData.value;
+        if (scope.inPreviewMode() && source) {
+          scope.markdownPreview = marked(source);
+        } else {
+          scope.markdownPreview = null;
+        }
+      });
+
       scope.$watch('fieldData.value', function (source, old, scope) {
-        if (source) {
+        if (scope.inPreviewMode() && source) {
           scope.markdownPreview = marked(source);
         } else {
           scope.markdownPreview = null;
