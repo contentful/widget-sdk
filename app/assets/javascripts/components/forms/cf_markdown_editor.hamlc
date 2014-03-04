@@ -1,47 +1,58 @@
 .markdown-toolbar(ng-class="{'preview-mode': inPreviewMode()}")
   %button.toolbar-button.md-bold-icon(
     ng-click="toggleBold()"
+    tabindex="-1"
     tooltip="Bold (on selection)"
     ng-disabled="inPreviewMode()")
   %button.toolbar-button.md-italic-icon(
     ng-click="toggleItalic()"
+    tabindex="-1"
     tooltip="Italic (on selection)"
     ng-disabled="inPreviewMode()")
   %button.toolbar-button.md-h1-icon(
     ng-click="toggleHeadline(1)"
+    tabindex="-1"
     tooltip="Heading 1"
     ng-disabled="inPreviewMode()")
   %button.toolbar-button.md-h2-icon(
     ng-click="toggleHeadline(2)"
+    tabindex="-1"
     tooltip="Heading 2"
     ng-disabled="inPreviewMode()")
   %button.toolbar-button.md-h3-icon(
     ng-click="toggleHeadline(3)"
+    tabindex="-1"
     tooltip="Heading 3"
     ng-disabled="inPreviewMode()")
   %button.toolbar-button.md-hr-icon(
     ng-click="insertRule()"
+    tabindex="-1"
     tooltip="Horizontal rule"
     ng-disabled="inPreviewMode()")
   %button.toolbar-button.md-quote-icon(
     ng-click="toggleBlockQuote()"
+    tabindex="-1"
     tooltip="Blockquote"
     ng-disabled="inPreviewMode()")
   %button.toolbar-button.md-ul-icon(
     ng-click="toggleUnorderedList()"
+    tabindex="-1"
     tooltip="Unordered List"
     ng-disabled="inPreviewMode()")
   %button.toolbar-button.md-ol-icon(
     ng-click="toggleOrderedList()"
+    tabindex="-1"
     tooltip="Ordered List"
     ng-disabled="inPreviewMode()")
   %button.toolbar-button.md-code-icon(
     ng-click="addCodeblock()"
+    tabindex="-1"
     tooltip="Code"
     ng-disabled="inPreviewMode()")
   .markdown-modeswitch
     %button.toolbar-button.md-right-button.md-preview-icon(
       ng-click="toggleDisplayMode()"
+      tabindex="-1"
       tooltip="Preview (Shift+{{metaKey}}+P)"
       ng-class="{'md-preview-icon': inEditMode(), 'md-edit-icon': inPreviewMode()}")
 
