@@ -8,7 +8,7 @@
   "license": "BSD",
   "dependencies": {
     "contentful-client": "git+ssh://git@github.com:contentful/client.git#v1.11.0",
-    "worf": "git+ssh://git@github.com:contentful/worf.git#v2.2.0",
+    "worf": "git+ssh://git@github.com:contentful/worf.git#v3.0.0",
     "validation": "git+ssh://git@github.com:contentful/validation#v1.10.2",
     "contentful-mimetype": "git+ssh://git@github.com:contentful/mimetype#v0.4.6",
     "share": "git+ssh://git@github.com:contentful/sharejs.git",
@@ -18,6 +18,6 @@
     "moment": "~2.5.1",
     "zeroclipboard": "~1.3.1",
     "ng-time-relative": "~0.3.0",
-    "marked": "~0.3.0"
+    "marked": "~0.3.1"
   }
 }
