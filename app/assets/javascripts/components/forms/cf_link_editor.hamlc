@@ -7,7 +7,7 @@
       .cf-file-info(ng-switch-when="Asset"
                     entity-title="spaceContext.localizedField(entity, 'data.fields.title')"
                     file="spaceContext.localizedField(entity, 'data.fields.file')")
-      %span.entry-info(ng-switch-when="Entry")
+      .entry-info(ng-switch-when="Entry" ng-class="{'with-handle': linkedEntities.length>1}")
         %a(href="" ng-click="navigator.entityEditor(entity).goTo()" ng-show="entity && entity.data") {{linkDescription(entity)}}
         %span(ng-hide="entity && entity.data") {{linkDescription(entity)}}
         %i.ss-delete(ng-click="removeLink(index, entity)" ng-show="otEditable")

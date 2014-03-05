@@ -108,8 +108,18 @@
     li
       padding: 10px 7px
       border-bottom: 1px solid $light-rule
+  .entry-info
+    overflow: hidden
+    &.with-handle
+      margin-left: 25px
+  .entry-info a, .entry-info span
+    float: left
+    width: 97%
+    overflow: hidden
+    white-space: nowrap
+    text-overflow: ellipsis
   .ss-delete
     @extend %delete-icon
     float: right
     margin-top: 1px
-    margin-right: 3px
+    margin-right: 4px
