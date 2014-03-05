@@ -12,7 +12,7 @@ describe('The Entry list directive', function () {
     module('contentful/test', function (cfCanStubsProvider) {
       cfCanStubsProvider.setup(reasonsStub);
     });
-    inject(function ($rootScope, $compile, entryListDirective) {
+    inject(function ($rootScope, $compile, entryListDirective, enforcements) {
       scope = $rootScope.$new();
       scope.can = canStub;
 
@@ -27,9 +27,12 @@ describe('The Entry list directive', function () {
       };
       scope.spaceContext = {
         space: {
+          data: {sys: {createdBy: {sys: {id: ''}}}},
           getId: sinon.stub()
         }
       };
+
+      enforcements.setSpaceContext(scope.spaceContext);
 
       compileElement = function () {
         container = $('<div class="entry-list"></div>');

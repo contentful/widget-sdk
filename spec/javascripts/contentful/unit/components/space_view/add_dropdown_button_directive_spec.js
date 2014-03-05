@@ -15,11 +15,12 @@ describe('The add dropdown button directive', function () {
       });
       $provide.value('reasonsDenied', reasonsStub);
     });
-    inject(function ($rootScope, $compile, cfStub) {
+    inject(function ($rootScope, $compile, cfStub, enforcements) {
       scope = $rootScope.$new();
       var space = cfStub.space('testSpace');
       var contentTypeData = cfStub.contentTypeData('testType');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
+      enforcements.setSpaceContext(scope.spaceContext);
 
       canStub = sinon.stub();
 

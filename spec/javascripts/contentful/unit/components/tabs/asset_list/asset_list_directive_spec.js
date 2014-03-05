@@ -13,7 +13,7 @@ describe('The Asset list directive', function () {
     module('contentful/test', function (cfCanStubsProvider) {
       cfCanStubsProvider.setup(reasonsStub);
     });
-    inject(function ($rootScope, $compile, assetListDirective) {
+    inject(function ($rootScope, $compile, assetListDirective, enforcements) {
       scope = $rootScope.$new();
 
       assetListDirective[0].controller = function () {};
@@ -29,9 +29,11 @@ describe('The Asset list directive', function () {
       };
       scope.spaceContext = {
         space: {
+          data: {sys: {createdBy: {sys: {id: ''}}}},
           getId: sinon.stub()
         }
       };
+      enforcements.setSpaceContext(scope.spaceContext);
       scope.validate = sinon.stub();
 
       compileElement = function () {

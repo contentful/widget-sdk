@@ -40,7 +40,8 @@ describe('Client Controller', function () {
         'enforcement',
         'reasons',
         'organization',
-        'can'
+        'can',
+        'setSpaceContext'
       ]);
 
       $controllerProvider.register('TrialWatchController', function () {});
@@ -142,7 +143,8 @@ describe('Client Controller', function () {
       });
 
       $provide.value('enforcements', {
-        determineEnforcement: stubs.enforcement
+        determineEnforcement: stubs.enforcement,
+        setSpaceContext: stubs.setSpaceContext
       });
 
       $provide.value('reasonsDenied', stubs.reasons);

@@ -15,6 +15,7 @@ angular.module('contentful').controller('SpaceCtrl',
 
   $scope.$watch('spaceContext.localeStates', 'spaceContext.refreshActiveLocales()', true);
   $scope.$watch('spaceContext', function(space, o, scope) {
+    enforcements.setSpaceContext(scope.spaceContext);
     scope.spaceContext.refreshContentTypes();
   });
 

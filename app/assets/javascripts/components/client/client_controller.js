@@ -68,6 +68,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   function setSpace(space) {
     analytics.setSpaceData(space);
     $scope.spaceContext = new SpaceContext(space);
+    enforcements.setSpaceContext($scope.spaceContext);
   }
 
   $scope.getCurrentSpaceId = function () {

@@ -1,6 +1,6 @@
 angular.module('contentful').controller('CreateSpaceDialogCtrl', [
-  '$scope', 'client', 'notification', 'cfSpinner', 'enforcements',
-  function CreateSpaceDialogCtrl($scope, client, notification, cfSpinner, enforcements) {
+  '$scope', 'client', 'notification', 'cfSpinner', 'enforcements', '$rootScope',
+  function CreateSpaceDialogCtrl($scope, client, notification, cfSpinner, enforcements, $rootScope) {
     'use strict';
 
     function resetNewSpaceData() {
@@ -56,8 +56,16 @@ angular.module('contentful').controller('CreateSpaceDialogCtrl', [
             var dismiss = true;
             var errorMessage = 'Could not create Space';
             var usage = enforcements.computeUsage('space');
-            if(usage){ errorMessage = usage; }
-            else if(hasErrorOnField(err, 'length', 'name')){
+            if(usage){
+              errorMessage = usage;
+              var enforcement = enforcements.determineEnforcement('usageExceeded');
+              $rootScope.$broadcast('persistentNotification', {
+                message: enforcement.message,
+                tooltipMessage: enforcement.description,
+                actionMessage: enforcement.actionMessage,
+                action: enforcement.action
+              });
+            } else if(hasErrorOnField(err, 'length', 'name')){
               errorMessage = 'Space name is too long';
               dismiss = false;
             }
