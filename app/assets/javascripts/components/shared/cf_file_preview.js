@@ -9,6 +9,7 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
       var maxWidth, maxHeight;
       var windowWidth, windowHeight, windowGap = 100;
       var fullscreen = attrs.previewSize == 'fullscreen';
+      var noPreview = !attrs.previewSize;
 
       scope.$watch(attrs.file, function (val) {
         if(val) scope.file = val;
@@ -19,7 +20,7 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
 
       if (fullscreen) {
         elem.on('click', showFullscreen);
-      } else {
+      } else if(!noPreview) {
         elem.on('mousemove', mouseMoveHandler);
         elem.on('mouseout', mouseOutHandler);
       }
