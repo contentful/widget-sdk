@@ -66,15 +66,18 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
       $scope.$apply(function(scope){
         if (err) {
           var errorId = err.body.sys.id;
+          var method = 'serverError';
           var reason;
           if (errorId === 'ValidationFailed') {
             reason = 'Validation failed';
             scope.setValidationErrors(err.body.details.errors);
-          } else if (errorId === 'VersionMismatch')
+            method = 'warn';
+          } else if (errorId === 'VersionMismatch'){
             reason = 'Can only publish most recent version';
-          else
+            method = 'warn';
+          } else
             reason = errorId;
-          notification.serverError('Error publishing ' + title() + ': ' + reason, err);
+          notification[method]('Error publishing ' + title() + ': ' + reason, err);
         } else {
           scope.asset.setPublishedVersion(version);
           notification.info(title() + ' published successfully');

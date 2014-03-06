@@ -203,7 +203,7 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.serverError).toBeCalled();
+        expect(stubs.warn).toBeCalled();
       });
     });
 
@@ -234,11 +234,11 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.serverError).toBeCalled();
+        expect(stubs.warn).toBeCalled();
       });
 
       it('gets contextual error message', function() {
-        expect(stubs.serverError.args[0][0]).toMatch(/version/i);
+        expect(stubs.warn.args[0][0]).toMatch(/version/i);
       });
     });
 

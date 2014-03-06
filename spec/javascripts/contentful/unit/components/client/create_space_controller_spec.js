@@ -7,7 +7,7 @@ describe('Create Space Dialog controller', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'setInvalid', 'start', 'stop', 'error', 'info', 'createSpace', 'serverError', 'then',
+        'setInvalid', 'start', 'stop', 'error', 'info', 'createSpace', 'serverError', 'warn', 'then',
         'getId', 'computeUsage', 'confirm', 'cancel'
       ]);
 
@@ -18,6 +18,7 @@ describe('Create Space Dialog controller', function () {
 
       $provide.value('notification', {
         serverError: stubs.serverError,
+        warn: stubs.warn,
         error: stubs.error,
         info: stubs.info
       });
@@ -250,7 +251,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('shows server error', function() {
-            expect(stubs.serverError).toBeCalled();
+            expect(stubs.warn).toBeCalled();
           });
 
           it('does not cancel dialog', function() {
