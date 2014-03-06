@@ -15,6 +15,7 @@ angular.module('contentful').controller('SpaceCtrl',
 
   $scope.$watch('spaceContext.localeStates', 'spaceContext.refreshActiveLocales()', true);
   $scope.$watch('spaceContext', function(space, o, scope) {
+    enforcements.setSpaceContext(scope.spaceContext);
     scope.spaceContext.refreshContentTypes();
   });
 
@@ -67,7 +68,7 @@ angular.module('contentful').controller('SpaceCtrl',
         if (!err) {
           scope.navigator[params.navigatorHandler](entity).goTo();
         } else {
-          if(err.body.details.reasons){
+          if(err && err.body && err.body.details.reasons){
             var enforcement = enforcements.determineEnforcement(
               err.body.details.reasons, params.entityType);
             if(enforcement){

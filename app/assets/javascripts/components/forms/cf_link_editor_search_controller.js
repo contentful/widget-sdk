@@ -43,18 +43,15 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
     $scope.spaceContext.space.createEntry(contentType.getId(), {}, function(errCreate, entry){
       $scope.$apply(function (scope) {
         if (errCreate) {
-          //console.log('Error creating entry', errCreate);
           notification.serverError('Error creating Entry', errCreate);
           return;
         }
         scope.addLink(entry, function(errSetLink) {
           if (errSetLink) {
             notification.serverError('Error linking Entry', errSetLink);
-            //console.log('Error linking entry', errSetLink);
             entry['delete'](function(errDelete) {
               scope.$apply(function () {
                 if (errDelete) {
-                  //console.log('Error deleting entry', errDelete);
                   notification.serverError('Error deleting Entry again', errDelete);
                 }
               });
@@ -71,18 +68,15 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
     $scope.spaceContext.space.createAsset({}, function(errCreate, asset){
       $scope.$apply(function (scope) {
         if (errCreate) {
-          //console.log('Error creating asset', errCreate);
           notification.serverError('Error creating Asset', errCreate);
           return;
         }
         scope.addLink(asset, function(errSetLink) {
           if (errSetLink) {
             notification.serverError('Error linking Asset', errSetLink);
-            //console.log('Error linking asset', errSetLink);
             asset['delete'](function(errDelete) {
               scope.$apply(function () {
                 if (errDelete) {
-                  //console.log('Error deleting asset', errDelete);
                   notification.serverError('Error deleting Asset again', errDelete);
                 }
               });

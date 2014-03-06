@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce, $timeout){
+angular.module('contentful').directive('cfMarkdownEditor', function(marked, keycodes, $document, $window, $timeout){
   return {
     restrict: 'C',
     template: JST['cf_markdown_editor'](),
@@ -7,6 +7,9 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
       var textarea = elem.find('textarea');
       var toolbar = elem.find('.markdown-toolbar');
       var modeSwitch = elem.find('.markdown-modeswitch');
+      var preview = elem.find('.markdown-preview');
+
+      scope.metaKey = /(Mac|Macintosh)/gi.test($window.navigator.userAgent) ? 'Cmd' : 'Ctrl';
 
       // Different display modes: preview, edit, combined
       scope.displayMode = 'edit';
@@ -32,17 +35,17 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
         }
       };
 
-      scope.enterEditor = function () {
-        /*
+      scope.enterEditor = function (ev) {
         if (scope.displayMode === 'preview') {
+          var targetText = $(ev.target).text().trim();
           scope.displayMode = 'edit';
           textarea.trigger('autosize');
           _.delay(function () {
-            //textarea.textrange('set', 0);
             textarea.trigger('focus');
+            var cursorPos = textarea.val().indexOf(targetText);
+            textarea.textrange('setcursor', cursorPos);
           }, 200);
         }
-       */
       };
 
       textarea.on('focus', function () {
@@ -53,6 +56,38 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
       textarea.on('blur', function () {
         toolbar.removeClass('opaque');
         modeSwitch.removeClass('opaque');
+      });
+
+      textarea.on('keydown', function (ev) {
+        if(ev.altKey && ev.shiftKey && ev.keyCode === keycodes.TAB){
+          ev.preventDefault();
+          ev.stopPropagation();
+          scope.indent();
+        }
+      });
+
+      function isPreviewKey(ev) {
+        return ev.metaKey && ev.shiftKey && ev.keyCode === keycodes.P;
+      }
+
+      function toggleKeyboardPreview(ev) {
+        if(isPreviewKey(ev) && (
+          ev.target === textarea.get(0) ||
+          ev.target === preview.get(0)
+        )){
+          ev.preventDefault();
+          scope.toggleDisplayMode();
+          scope.$digest();
+          $timeout(function () {
+            if(scope.inPreviewMode()) preview.focus();
+            else textarea.focus();
+          }, 500);
+        }
+      }
+
+      $document.on('keydown', toggleKeyboardPreview);
+      scope.$on('$destroy', function () {
+        $document.off('keydown', toggleKeyboardPreview);
       });
 
       function toggleWrapper(wrapper, wrapperRegex) {
@@ -73,56 +108,87 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
       scope.toggleBold = function () { toggleWrapper('**', '\\*\\*'); };
       scope.toggleItalic = function () { toggleWrapper('*', '\\*'); };
 
+      scope.indent = function () {
+        var range = textarea.textrange('get');
+        if(!isLineStart(range)){
+          textarea.textrange('setcursor', range.start);
+        }
+        textarea.textrange('replace', mapLines(range.text, function (line) {
+          return '  ' + line;
+        }));
+        textarea.textrange('setcursor', range.start + 2);
+      };
+
       scope.toggleHeadline = function (level) {
         var range = lineRange();
         var match = range.text.match(/^#+ /);
+        var afterPosition;
 
         if (match) {
           var currentLevel = match[0].length - 1;
+          afterPosition = range.end - currentLevel - 1;
           textarea.textrange('replace', mapLines(range.text, function (line) {
             return line.substr(currentLevel + 1);
           }));
         } else {
+          afterPosition = range.end + level + 1;
           textarea.textrange('replace', mapLines(range.text, function (line) {
-            return '########'.substr(0, level) + ' ' + line;
+            return '######'.substr(0, level) + ' ' + line;
           }));
         }
+        textarea.textrange('setcursor', afterPosition);
       };
 
-      scope.toggleUnorderedList = function () {
-        var prefix = /^-+ /;
-        var range = lineRange();
-        var match = range.text.match(prefix);
+      var ulPrefix = /^-+ /;
+      var olPrefix = /^(\d+)\. /;
 
-        if (match) {
+      scope.toggleUnorderedList = function () {
+        var range = lineRange();
+        var afterPosition;
+
+        if (ulPrefix.test(range.text)) {
+          afterPosition = range.end - 2;
           textarea.textrange('replace', mapLines(range.text, function (line) {
-            return line.replace(prefix, '');
+            return line.replace(ulPrefix, '');
+          }));
+        } else if(olPrefix.test(range.text)) {
+          afterPosition = range.end - 1;
+          textarea.textrange('replace', mapLines(range.text, function (line) {
+            return line.replace(olPrefix, '- ');
           }));
         } else {
+          afterPosition = range.end + 2;
           textarea.textrange('replace', mapLines(range.text, function (line) {
             return '- ' + line;
           }));
         }
         textarea.trigger('input').trigger('autosize');
+        textarea.textrange('setcursor', afterPosition);
       };
 
       scope.toggleOrderedList = function () {
-        var numPrefix = /^(\d+)\. /;
         var range = lineRange();
-        var match = range.text.match(numPrefix);
+        var afterPosition;
 
-        if (match) {
+        if (olPrefix.test(range.text)) {
+          afterPosition = range.end - 3;
           textarea.textrange('replace', mapLines(range.text, function (line) {
-            return line.replace(numPrefix, '');
+            return line.replace(olPrefix, '');
           }));
         } else {
           var lineNum = 0;
+          afterPosition = range.end + (ulPrefix.test(range.text) ? 1 : 3);
           textarea.textrange('replace', mapLines(range.text, function (line) {
             lineNum++;
-            return '' + lineNum + '. ' + line;
+            if(ulPrefix.test(range.text)) {
+              return line.replace(ulPrefix, lineNum + '. ');
+            } else {
+              return '' + lineNum + '. ' + line;
+            }
           }));
         }
         textarea.trigger('input').trigger('autosize');
+        textarea.textrange('setcursor', afterPosition);
       };
 
       scope.insertRule = function () {
@@ -139,12 +205,14 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
         }).join('\n');
         textarea.textrange('replace', quote);
         textarea.trigger('input').trigger('autosize');
+        textarea.textrange('setcursor', range.end + 1);
       };
 
       scope.addCodeblock = function () {
         var range = lineRange();
         textarea.textrange('replace', '```\n' + range.text + '\n```');
         textarea.trigger('input').trigger('autosize');
+        textarea.textrange('setcursor', range.start + 4);
       };
 
       // Helpers ///////////////////////////////////////////
@@ -182,10 +250,31 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, $sce
         return range;
       }
 
+      function isLineStart(range) {
+        var position = range.position-1;
+        if(position > 0 && textarea.val()[position] === '\n') return true;
+        var chr;
+        while(position > 0 && (chr = textarea.val()[position])){
+          if(chr === ' ') position--;
+          else if(chr === '\n') return true;
+          else return false;
+        }
+        return false;
+      }
+
       // Update Preview /////////////////////////////////////
 
+      scope.$watch('displayMode', function () {
+        var source = scope.fieldData.value;
+        if (scope.inPreviewMode() && source) {
+          scope.markdownPreview = marked(source);
+        } else {
+          scope.markdownPreview = null;
+        }
+      });
+
       scope.$watch('fieldData.value', function (source, old, scope) {
-        if (source) {
+        if (scope.inPreviewMode() && source) {
           scope.markdownPreview = marked(source);
         } else {
           scope.markdownPreview = null;

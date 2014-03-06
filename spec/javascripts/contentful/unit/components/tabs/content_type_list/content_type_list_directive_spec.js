@@ -12,11 +12,17 @@ describe('The ContentType list directive', function () {
     module('contentful/test', function (cfCanStubsProvider) {
       cfCanStubsProvider.setup(reasonsStub);
     });
-    inject(function ($rootScope, $compile, contentTypeListDirective) {
+    inject(function ($rootScope, $compile, contentTypeListDirective, enforcements) {
       scope = $rootScope.$new();
       scope.can = canStub;
 
       contentTypeListDirective[0].controller = function () {};
+
+      enforcements.setSpaceContext({
+        space: {
+          data: {sys: {createdBy: {sys: {id: ''}}}}
+        }
+      });
 
       compileElement = function () {
         container = $('<div class="content-type-list"></div>');

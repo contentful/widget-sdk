@@ -21,14 +21,16 @@ describe('apiKeyEditor Directive', function () {
       });
     });
 
-    inject(function ($compile, $rootScope) {
+    inject(function ($compile, $rootScope, enforcements) {
       scope = $rootScope.$new();
 
       scope.spaceContext = {
         space: {
+          data: {sys: {createdBy: {sys: {id: ''}}}},
           getId: sinon.stub()
         }
       };
+      enforcements.setSpaceContext(scope.spaceContext);
       scope.can = stubs.can;
       scope.tab = {
         params: {

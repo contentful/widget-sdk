@@ -12,14 +12,16 @@ describe('The ApiKey list directive', function () {
     module('contentful/test', function (cfCanStubsProvider) {
       cfCanStubsProvider.setup(reasonsStub);
     });
-    inject(function ($rootScope, $compile) {
+    inject(function ($rootScope, $compile, enforcements) {
       scope = $rootScope.$new();
       scope.can = canStub;
       scope.spaceContext = {
         space: {
+          data: {sys: {createdBy: {sys: {id: ''}}}},
           getApiKeys: sinon.stub()
         }
       };
+      enforcements.setSpaceContext(scope.spaceContext);
 
       compileElement = function () {
         container = $('<div class="api-key-list"></div>');

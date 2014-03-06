@@ -18,6 +18,13 @@ describe('The can directive', function () {
       scope.can = canStub;
       enforcementSpy = sinon.spy(enforcements, 'determineEnforcement');
 
+      enforcements.setSpaceContext({
+        space: {
+          data: {sys: {createdBy: {sys: {id: ''}}}},
+          getApiKeys: sinon.stub()
+        }
+      });
+
       compileElement = function (expression, extra) {
         container = $('<div><div cf-can="'+expression+'" '+extra+'></div></div>');
         $compile(container)(scope);

@@ -23,12 +23,18 @@ describe('The ContentType editor directive', function () {
     function ControllerMock(){}
     ControllerMock.prototype.canPublish = sinon.stub();
 
-    inject(function ($rootScope, $compile, contentTypeEditorDirective) {
+    inject(function ($rootScope, $compile, contentTypeEditorDirective, enforcements) {
       contentTypeEditorDirective[0].controller = ControllerMock;
       scope = $rootScope.$new();
 
       scope.can = canStub;
       scope.otEditable = true;
+
+      enforcements.setSpaceContext({
+        space: {
+          data: {sys: {createdBy: {sys: {id: ''}}}}
+        }
+      });
 
       compileElement = function () {
         container = $('<div class="content-type-editor"></div>');

@@ -38,13 +38,16 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
     });
     adapter.respondWith(null, _.merge({
       sys: {
-        id: id
+        id: id,
+        createdBy: { sys: {id: 123} }
       },
       locales: cfStub.locales('en-US', 'de-DE'),
       organization: {
         sys: {
           id: '456'
-        }
+        },
+        usage: {},
+        subscriptionPlan: {limits: {}}
       }
     }, extraData || {}));
     return testSpace;
@@ -68,6 +71,12 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
       total: contentTypes.length
     });
     return spaceContext;
+  };
+
+  cfStub.mockSpaceContext = function () {
+    var space = cfStub.space('test');
+    var contentTypeData = cfStub.contentTypeData('testType');
+    return cfStub.spaceContext(space, [contentTypeData]);
   };
 
   cfStub.contentTypeData = function (id, fields, extraData) {

@@ -9,6 +9,7 @@ describe('Space Controller', function () {
         'authUpdated',
         'periodUsage',
         'computeUsage',
+        'setSpaceContext',
         'enforcement',
         'track',
         'error'
@@ -24,7 +25,8 @@ describe('Space Controller', function () {
       $provide.value('enforcements', {
         getPeriodUsage: stubs.periodUsage,
         computeUsage: stubs.computeUsage,
-        determineEnforcement: stubs.enforcement
+        determineEnforcement: stubs.enforcement,
+        setSpaceContext: stubs.setSpaceContext
       });
 
       $provide.value('analytics', {

@@ -54,7 +54,7 @@ angular.module('contentful').controller('ErrorPathController', function ErrorPat
       }
     },
     type: function(v) {
-      if (v.type == 'Validation') {
+      if (v.details && (v.type == 'Validation' || v.type == 'Text')) {
         return v.details;
       } else if (v.type.match(/^aeio/i)) {
         return 'Must be an ' + v.type + '.';

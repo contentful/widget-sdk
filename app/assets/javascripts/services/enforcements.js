@@ -1,15 +1,17 @@
 'use strict';
-angular.module('contentful').factory('enforcements', function Enforcements($injector, $location, $window, authorization) {
+angular.module('contentful').factory('enforcements', function Enforcements($injector, $location, $window) {
 
   var spaceContext, user;
 
-  var setTokenObjects = function() {
-    spaceContext = authorization.spaceContext;
+  function setTokenObjects(newSpaceContext) {
+    if(newSpaceContext) spaceContext = newSpaceContext;
     user = $injector.get('authentication').getUser();
-  };
+  }
 
   function isOwner() {
-    return user.sys.id === spaceContext.space.sys.createdBy.sys.id;
+    if(!user.sys) throw new Error('Bad user object');
+    if(!spaceContext.space.data.sys) throw new Error('Bad space object');
+    return user.sys.id === spaceContext.space.data.sys.createdBy.sys.id;
   }
 
   function getOrgId() {
@@ -93,6 +95,10 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
     'contentDeliveryApiRequest'
   ];
 
+  function assertSpaceContext() {
+    if(!spaceContext) throw new Error('No space context defined');
+  }
+
   function uncapitalize(str) {
     return str[0].toLowerCase() + str.substr(1);
   }
@@ -102,10 +108,10 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
   }
 
   function computeUsage(filter) {
-    setTokenObjects();
+    assertSpaceContext();
+    if(!spaceContext.space) return;
     if(filter) filter = uncapitalize(filter);
-    if(!spaceContext || !spaceContext.space) return;
-    var organization = spaceContext.space.organization;
+    var organization = spaceContext.space.data.organization;
     var usage = _.merge(
       organization.usage.permanent,
       organization.usage.period);
@@ -123,7 +129,7 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
   }
 
   function determineEnforcement(reasons, entityType) {
-    setTokenObjects();
+    assertSpaceContext();
     if(!reasons || reasons.length && reasons.length === 0) return null;
     var errors = _.filter(errorsByPriority, function (val) {
       return reasons.indexOf(val.label) >= 0;
@@ -164,6 +170,9 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
     determineEnforcement: determineEnforcement,
     computeUsage: computeUsage,
     getPeriodUsage: getPeriodUsage,
-    getTooltipMessage: getTooltipMessage
+    getTooltipMessage: getTooltipMessage,
+    setSpaceContext: function (spaceContext) {
+      setTokenObjects(spaceContext);
+    }
   };
 });
