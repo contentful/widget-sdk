@@ -30,7 +30,7 @@ angular.module('contentful').
 
     function closedHandler(doc) {
       /*jshint validthis:true */
-      doc.shout(['close', user]);
+      if(doc) doc.shout(['close', user]);
       $timeout.cancel(timeout);
     }
 
