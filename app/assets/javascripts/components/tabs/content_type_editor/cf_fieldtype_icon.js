@@ -31,6 +31,7 @@ angular.module('contentful').directive('cfFieldtypeIcon', function(getFieldTypeN
           return title;
         }
       });
+
       var unwatch = scope.$watch(function () {
         var field = scope.$eval(attr.field);
         return getFieldTypeName(field);
@@ -43,7 +44,7 @@ angular.module('contentful').directive('cfFieldtypeIcon', function(getFieldTypeN
           sentry.captureError('Invalid field type template name', {
             data: {
               fieldTypeName: fieldTypeName,
-              fieldAttr: attr.field
+              fieldAttr: scope.$eval(attr.field)
             }
           });
         }
