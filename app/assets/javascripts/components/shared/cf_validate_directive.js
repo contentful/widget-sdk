@@ -55,19 +55,7 @@ angular.module('contentful').directive('cfValidate', function (validation, sentr
 
       $scope.setValidationResult = function (schemaErrors, data, schema) {
         var errors = _.reject(schemaErrors, function (error) {
-          if(!error || (error && !error.path)){
-            sentry.captureError('Validation error '+(error?'path':'')+' does not exist', {
-              data: {
-                errorExists: !!error,
-                errorPathExists: !!(error && error.path),
-                error: error,
-                schemaErrors: schemaErrors,
-                data: data,
-                schema: schema
-              }
-            });
-            return true;
-          }
+          if(error && !error.path || error.name == 'notResolvable') return true;
           return error.path[error.path.length-1] == '$$hashKey';
         });
         var valid = _.isEmpty(errors);
