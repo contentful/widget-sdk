@@ -58,9 +58,7 @@ function ($injector , $window, environment, stringifySafe) {
     var prop;
     for(var key in data){
       prop = data[key];
-      if(prop && prop.$evalAsync && prop.$watch){
-        data[key] = JSON.parse(stringifySafe(prop));
-      }
+      data[key] = JSON.parse(stringifySafe(prop));
     }
     return data;
   }
