@@ -117,7 +117,9 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       this.client.getTokenLookup(function (err, data) {
         $rootScope.$apply(function () {
           if (err) {
-            sentry.captureError('getTokenlookup failed');
+            sentry.captureError('getTokenlookup failed', {
+              data: err
+            });
             d.reject(err);
           } else {
             if (data !== undefined) { // Data === undefined is in cases of notmodified

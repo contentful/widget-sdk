@@ -79,7 +79,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
 
   $scope.selectSpace = function(space) {
     if(!space){
-      return notification.error('Selected space does not exist');
+      return notification.warn('Selected space does not exist');
     }
     if (space && $scope.getCurrentSpaceId() === space.getId()) return true;
     analytics.track('Switched Space', {

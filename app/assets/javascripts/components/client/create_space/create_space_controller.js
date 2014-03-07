@@ -53,7 +53,7 @@ angular.module('contentful').controller('CreateSpaceDialogCtrl', [
       client.createSpace(data, orgId, function (err, newSpace) {
         $scope.$apply(function (scope) {
           if (err) {
-            var dismiss = true;
+            var dismiss = true, method = 'serverError';
             var errorMessage = 'Could not create Space';
             var usage = enforcements.computeUsage('space');
             if(usage){
@@ -65,11 +65,15 @@ angular.module('contentful').controller('CreateSpaceDialogCtrl', [
                 actionMessage: enforcement.actionMessage,
                 action: enforcement.action
               });
+              method = 'warn';
             } else if(hasErrorOnField(err, 'length', 'name')){
               errorMessage = 'Space name is too long';
               dismiss = false;
+              method = 'warn';
             }
-            notification.serverError(errorMessage, err);
+
+            notification[method](errorMessage);
+
             if(dismiss){
               scope.lockSubmit = false;
               scope.dialog.cancel();

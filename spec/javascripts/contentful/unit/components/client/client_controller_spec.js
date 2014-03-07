@@ -19,6 +19,7 @@ describe('Client Controller', function () {
         'hasSpace',
         'notificationInfo',
         'notificationError',
+        'notificationWarn',
         'goToSpace',
         'goToOrganization',
         'routingSpaceId',
@@ -103,7 +104,8 @@ describe('Client Controller', function () {
 
       $provide.value('notification', {
         info: stubs.notificationInfo,
-        error: stubs.notificationError
+        error: stubs.notificationError,
+        warn: stubs.notificationWarn
       });
 
       $provide.value('routing', {
@@ -241,7 +243,7 @@ describe('Client Controller', function () {
 
     it('with no space triggers an error notification', function () {
       scope.selectSpace();
-      expect(stubs.notificationError).toBeCalled();
+      expect(stubs.notificationWarn).toBeCalled();
     });
 
     describe('if we are selecting the current space', function () {

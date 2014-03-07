@@ -162,6 +162,16 @@ angular.module('contentful')
 
   $scope.$watch('fields', function (fields, old, scope) {
     scope.showLangSwitcher = _.some(fields, function (field) {
+      if(!field) {
+        sentry.captureError('Field object does not exist', {
+          data: {
+            field: field,
+            fields: fields
+          }
+        });
+        return false;
+      }
+
       return field.localized;
     });
   });
@@ -179,6 +189,14 @@ angular.module('contentful')
       if(error.path.length > 1) {
         errorPaths[fieldId] = errorPaths[fieldId] || [];
       }
+
+      if(!field) sentry.captureError('Field object does not exist', {
+        data: {
+          fieldId: fieldId,
+          field: field,
+          dataFields: et.data.fields
+        }
+      });
 
       if (error.path.length == 1 && error.path[0] == 'fields') {
         $scope.hasErrorOnFields = error.path.length == 1 && error.path[0] == 'fields';

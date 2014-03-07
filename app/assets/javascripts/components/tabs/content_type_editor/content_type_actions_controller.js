@@ -35,16 +35,19 @@ angular.module('contentful').
       $scope.$apply(function(scope){
         if (err) {
           var errorId = err.body.sys.id;
+          var method = 'serverError';
           var reason = errorId;
           if (errorId === 'ValidationFailed') {
             reason = 'Validation failed';
             scope.setValidationErrors(err.body.details.errors);
+            method = 'warn';
           } else if (errorId === 'VersionMismatch') {
             reason = 'Can only activate most recent version';
+            method = 'warn';
           } else {
             reason = err.body.message;
           }
-          return notification.serverError('Error activating ' + title() + ': ' + reason, err);
+          return notification[method]('Error activating ' + title() + ': ' + reason, err);
         }
 
         notification.info(title() + ' ' + verb + ' successfully');
@@ -68,7 +71,7 @@ angular.module('contentful').
       $scope.$apply(function(scope){
         if (err) {
           var reason = err.body.message;
-          sentry.captureServerError('Error deactivating Content Type', err);
+          if(!reason) sentry.captureServerError('Error deactivating Content Type', err);
           return notification.warn('Error deactivating ' + title() + ': ' + reason, err);
         }
 

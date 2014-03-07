@@ -82,15 +82,17 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
         if (err) {
           var errorId = err.body.sys.id;
           var reason;
+          var method = 'serverError';
           if (errorId === 'ValidationFailed') {
             reason = 'Validation failed';
             scope.setValidationErrors(err.body.details.errors);
           } else if (errorId === 'VersionMismatch') {
             reason = 'Can only publish most recent version';
+            method = 'warn';
           } else {
             reason = errorId;
           }
-          notification.serverError('Error publishing ' + title() + ': ' + reason, err);
+          notification[method]('Error publishing ' + title() + ': ' + reason, err);
         } else {
           scope.entry.setPublishedVersion(version);
           notification.info(title() + ' published successfully');
