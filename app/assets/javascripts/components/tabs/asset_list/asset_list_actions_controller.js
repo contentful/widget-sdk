@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('AssetListActionsCtrl', function AssetListActionsCtrl($scope, notification, analytics) {
+angular.module('contentful').controller('AssetListActionsCtrl', function AssetListActionsCtrl($scope, listActions) {
 
   var _cacheSelected;
 
@@ -20,63 +20,27 @@ angular.module('contentful').controller('AssetListActionsCtrl', function AssetLi
     _cacheSelected = null;
   };
 
+  var performer = listActions.createPerformer({
+    getSelected: getSelected,
+    clearSelection: clearSelection,
+    entityName: 'Asset',
+    entityNamePlural: 'Assets',
+  });
+  var perform = performer.perform;
+  var makeBatchResultsNotifier = performer.makeBatchResultsNotifier;
+
   var every = function (predicate) {
     return _.every(getSelected(), function (asset) {
       return asset[predicate]();
     });
   };
 
-  var forAllAssets = function(callback) {
-    var assets = getSelected();
-    _.each(assets, callback);
-  };
-
-  var makeApplyLater = function(callback) {
-    var num = $scope.selection.size();
-    var numCalled = 0;
-    var results = [];
-    return function(err) {
-      numCalled++;
-      results.push({
-        err: err,
-        rest: Array.prototype.slice.call(arguments, 1)
-      });
-      if (numCalled === num)
-        $scope.$apply(_.partial(callback, results));
-    };
-  };
-
-  function makeBatchResultsNotifier(word) {
-    return function(results) {
-      var hasFailed = function(r) { return r.err; };
-      var failed = _.filter(results, hasFailed);
-      var succeeded = _.reject(results, hasFailed);
-      if (succeeded.length > 0)
-        notification.info(succeeded.length + ' Assets ' + word + ' successfully');
-      if (failed.length > 0)
-        notification.error(failed.length + ' Assets could not be ' + word);
-    };
-  }
-
-  var perform = function(params) {
-    var applyLater = makeApplyLater(params.callback);
-    forAllAssets(function(asset) {
-      asset[params.method](function(err, asset){
-        if(!err && params.event) $scope.broadcastFromSpace(params.event, asset);
-        applyLater(err);
-      });
-    });
-    clearSelection();
-    analytics.track('Performed AssetList action', {action: params.method});
-  };
-
   $scope.publishSelected = function() {
-    var applyLater = makeApplyLater(makeBatchResultsNotifier('published'));
-    forAllAssets(function(asset) {
-      asset.publish(asset.getVersion(), applyLater);
+    perform({
+      method: 'publish',
+      methodArgs: 'getVersion',
+      callback: makeBatchResultsNotifier('published')
     });
-    clearSelection();
-    analytics.track('Performed AssetList action', {action: 'publish'});
   };
 
   $scope.unpublishSelected = function() {

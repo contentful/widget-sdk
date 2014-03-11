@@ -8,15 +8,19 @@ describe('Entry List Actions Controller', function () {
       stubs = $provide.makeStubs([
         'track',
         'info',
-        'error',
+        'warn',
         'size',
         'createEntry',
         'getSelected',
         'removeAll',
         'action1',
         'action2',
+        'action3',
+        'action4',
         'getVersion',
-        'can'
+        'can',
+        'timeout',
+        'broadcast'
       ]);
       $provide.value('analytics', {
         track: stubs.track
@@ -24,11 +28,14 @@ describe('Entry List Actions Controller', function () {
 
       $provide.value('notification', {
         info: stubs.info,
-        error: stubs.error
+        warn: stubs.warn
       });
+
+      $provide.value('$timeout', stubs.timeout);
     });
 
     inject(function ($rootScope, $controller) {
+      $rootScope.$broadcast = stubs.broadcast;
       scope = $rootScope.$new();
 
       scope.selection = {
@@ -44,8 +51,6 @@ describe('Entry List Actions Controller', function () {
       };
 
       scope.can = stubs.can;
-
-      scope.broadcastFromSpace = sinon.stub();
 
       controller = $controller('EntryListActionsCtrl', {$scope: scope});
     });
@@ -67,28 +72,56 @@ describe('Entry List Actions Controller', function () {
   function makePerformTests(action, actionIndex, extraSpecs){
     describe(action+' selected entries', function () {
       beforeEach(function () {
+        stubs.getVersion.returns(3);
         stubs.size.returns(2);
         stubs.action1.callsArg(actionIndex);
         stubs.action2.callsArgWith(actionIndex, {});
+        stubs.action3
+          .onFirstCall().callsArgWith(actionIndex, {statusCode: 429})
+          .onSecondCall().callsArgWith(actionIndex);
+        stubs.action4.callsArg(actionIndex);
         stubs.getSelected.returns([
           makeEntity(action, stubs.action1),
-          makeEntity(action, stubs.action2)
+          makeEntity(action, stubs.action2),
+          makeEntity(action, stubs.action3),
+          makeEntity(action, stubs.action4)
         ]);
+        stubs.timeout.callsArg(0);
 
         scope[action+'Selected']();
+        scope.$digest();
       });
 
-      it('calls '+action+' on selected entries', function () {
+      it('calls '+action+' on first selected entry', function () {
         expect(stubs.action1).toBeCalled();
+      });
+
+      it('calls '+action+' on second selected entry', function () {
         expect(stubs.action2).toBeCalled();
+      });
+
+      it('calls '+action+' on third selected entry', function () {
+        expect(stubs.action3).toBeCalled();
+      });
+
+      it('calls '+action+' on fourth selected entry', function () {
+        expect(stubs.action4).toBeCalled();
       });
 
       it('calls success notification', function () {
         expect(stubs.info).toBeCalledOnce();
       });
 
-      it('calls error notification', function () {
-        expect(stubs.error).toBeCalledOnce();
+      it('success notification shown for 3 items', function () {
+        expect(stubs.info.args[0][0]).toMatch(/^2*/);
+      });
+
+      it('calls warn notification', function () {
+        expect(stubs.warn).toBeCalledOnce();
+      });
+
+      it('warn notification shown for 1 item', function () {
+        expect(stubs.warn.args[0][0]).toMatch(/^2*/);
       });
 
       it('clears selection', function () {
@@ -105,15 +138,21 @@ describe('Entry List Actions Controller', function () {
 
   makePerformTests('publish', 1, function () {
     it('gets version of selected entries', function () {
-      expect(stubs.getVersion).toBeCalledTwice();
+      expect(stubs.getVersion.callCount).toBe(5);
+    });
+
+    it('publishes 3rd version', function () {
+      expect(stubs.getVersion.getCall(0).returnValue).toBe(3);
     });
   });
+
   makePerformTests('unpublish', 0);
   makePerformTests('delete', 0, function () {
     it('broadcasts event for sucessfully deleted entry', function () {
-      expect(scope.broadcastFromSpace).toBeCalledWith('entityDeleted');
+      expect(stubs.broadcast).toBeCalledWith('entityDeleted');
     });
   });
+
   makePerformTests('archive', 0);
   makePerformTests('unarchive', 0);
 
@@ -131,10 +170,14 @@ describe('Entry List Actions Controller', function () {
       ]);
 
       scope.duplicateSelected();
+      scope.$apply();
     });
 
-    it('calls getSys on selected entries', function () {
+    it('calls getSys on first selected entry', function () {
       expect(stubs.action1).toBeCalled();
+    });
+
+    it('calls getSys on second selected entry', function () {
       expect(stubs.action2).toBeCalled();
     });
 
@@ -150,8 +193,8 @@ describe('Entry List Actions Controller', function () {
       expect(stubs.info).toBeCalledOnce();
     });
 
-    it('calls error notification', function () {
-      expect(stubs.error).toBeCalledOnce();
+    it('calls warn notification', function () {
+      expect(stubs.warn).toBeCalledOnce();
     });
 
     it('clears selection', function () {

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('EntryListActionsCtrl', function EntryListActionsCtrl($scope, notification, analytics) {
+angular.module('contentful').controller('EntryListActionsCtrl', function EntryListActionsCtrl($scope, $timeout, listActions) {
 
   var _cacheSelected;
 
@@ -20,63 +20,27 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
     _cacheSelected = null;
   };
 
+  var performer = listActions.createPerformer({
+    getSelected: getSelected,
+    clearSelection: clearSelection,
+    entityName: 'Entry',
+    entityNamePlural: 'Entries',
+  });
+  var perform = performer.perform;
+  var makeBatchResultsNotifier = performer.makeBatchResultsNotifier;
+
   var every = function (predicate) {
     return _.every(getSelected(), function (entry) {
       return entry[predicate]();
     });
   };
 
-  var forAllEntries = function(callback) {
-    var entries = getSelected();
-    _.each(entries, callback);
-  };
-
-  var makeApplyLater = function(callback) {
-    var num = $scope.selection.size();
-    var numCalled = 0;
-    var results = [];
-    return function(err) {
-      numCalled++;
-      results.push({
-        err: err,
-        rest: Array.prototype.slice.call(arguments, 1)
-      });
-      if (numCalled === num)
-        $scope.$apply(_.partial(callback, results));
-    };
-  };
-
-  function makeBatchResultsNotifier(word) {
-    return function(results) {
-      var hasFailed = function(r) { return r.err; };
-      var failed = _.filter(results, hasFailed);
-      var succeeded = _.reject(results, hasFailed);
-      if (succeeded.length > 0)
-        notification.info(succeeded.length + ' Entries ' + word + ' successfully');
-      if (failed.length > 0)
-        notification.error(failed.length + ' Entries could not be ' + word);
-    };
-  }
-
-  var perform = function(params) {
-    var applyLater = makeApplyLater(params.callback);
-    forAllEntries(function(entry) {
-      entry[params.method](function(err, entry){
-        if(!err && params.event) $scope.broadcastFromSpace(params.event, entry);
-        applyLater(err);
-      });
-    });
-    clearSelection();
-    analytics.track('Performed EntryList action', {action: params.method});
-  };
-
   $scope.publishSelected = function() {
-    var applyLater = makeApplyLater(makeBatchResultsNotifier('published'));
-    forAllEntries(function(entry) {
-      entry.publish(entry.getVersion(), applyLater);
+    perform({
+      method: 'publish',
+      methodArgs: 'getVersion',
+      callback: makeBatchResultsNotifier('published')
     });
-    clearSelection();
-    analytics.track('Performed EntryList action', {action: 'publish'});
   };
 
   $scope.unpublishSelected = function() {
@@ -88,23 +52,31 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
 
   $scope.duplicateSelected = function() {
     var notifier = makeBatchResultsNotifier('duplicated');
-    var applyLater = makeApplyLater(function (results) {
-      var successes = _(results).reject('err').pluck('rest').pluck('0').value();
-      $scope.entries.unshift.apply($scope.entries, successes);
-      notifier(results);
-    });
-    forAllEntries(function (entry) {
-      duplicate(entry, applyLater);
-    });
-    clearSelection();
-    analytics.track('Performed EntryList action', {action: 'duplicate'});
 
-    function duplicate(entry, callback) {
-      var contentType = entry.getSys().contentType.sys.id;
-      var data = _.omit(entry.data, 'sys');
-      $scope.spaceContext.space.createEntry(contentType, data, callback);
-    }
+    perform({
+      method: 'duplicate',
+      callback: function (results, length) {
+        var successes =  _.reject(results, 'err');
+        $scope.entries.unshift.apply($scope.entries, successes);
+        notifier(results, length);
+      },
+      actionCallback: duplicateCallback
+    });
   };
+
+  function duplicateCallback(entry, params, deferred) {
+    var contentType = entry.getSys().contentType.sys.id;
+    var data = _.omit(entry.data, 'sys');
+    $scope.spaceContext.space.createEntry(contentType, data, function (err, newEntry) {
+      if(err) {
+        if(err.statusCode === performer.ERRORS.TOO_MANY_REQUESTS)
+          $timeout(_.partial(duplicateCallback, entry, params, deferred), performer.RETRY_TIMEOUT);
+        else
+          deferred.reject({err: err});
+      } else
+        deferred.resolve(newEntry);
+    });
+  }
 
   $scope.deleteSelected = function() {
     perform({
