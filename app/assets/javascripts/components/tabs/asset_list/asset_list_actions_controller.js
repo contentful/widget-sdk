@@ -38,7 +38,7 @@ angular.module('contentful').controller('AssetListActionsCtrl', function AssetLi
   $scope.publishSelected = function() {
     perform({
       method: 'publish',
-      methodArgs: 'getVersion',
+      methodArgGetters: ['getVersion'],
       callback: makeBatchResultsNotifier('published')
     });
   };
