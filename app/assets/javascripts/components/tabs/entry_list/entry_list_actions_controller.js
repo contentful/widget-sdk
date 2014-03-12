@@ -38,7 +38,7 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
   $scope.publishSelected = function() {
     perform({
       method: 'publish',
-      methodArgs: 'getVersion',
+      methodArgGetters: ['getVersion'],
       callback: makeBatchResultsNotifier('published')
     });
   };

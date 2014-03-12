@@ -42,8 +42,10 @@ angular.module('contentful').factory('listActions', [
       }
     }];
 
-    if(params.methodArgs){
-      args.unshift(entity.getVersion());
+    if(params.methodArgGetters){
+      args.unshift.apply(args, _.map(params.methodArgGetters, function (getter) {
+        return entity[getter] && entity[getter]();
+      }));
     }
 
     entity[params.method].apply(entity, args);
