@@ -31,6 +31,7 @@ angular.module('contentful').factory('listActions', [
         if(err.statusCode === ERRORS.TOO_MANY_REQUESTS)
           $timeout(_.partial(callAction, entity, params, deferred), RETRY_TIMEOUT);
         else if(err.statusCode === ERRORS.NOT_FOUND){
+          entity.setDeleted();
           $rootScope.$broadcast('entityDeleted', entity);
           deferred.resolve();
         } else
