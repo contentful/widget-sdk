@@ -1,13 +1,20 @@
 'use strict';
 
 angular.module('contentful').factory('filepicker', function ($window, environment, $q, $rootScope) {
+  function loadFile(file) {
+    var b = document.createElement('script');
+    b.type = 'text/javascript';
+    b.async = !0;
+    b.src = ('https:' === document.location.protocol ? 'https:' : 'http:') + '//api.filepicker.io/v1/'+file;
+    var c = document.getElementsByTagName('script')[0];
+    c.parentNode.insertBefore(b, c);
+  }
+
     if (!$window.filepicker) {
-      var b = document.createElement('script');
-      b.type = 'text/javascript';
-      b.async = !0;
-      b.src = ('https:' === document.location.protocol ? 'https:' : 'http:') + '//api.filepicker.io/v1/filepicker.js';
-      var c = document.getElementsByTagName('script')[0];
-      c.parentNode.insertBefore(b, c);
+      loadFile('filepicker.js');
+      if(environment.env == 'development'){
+        loadFile('filepicker_debug.js');
+      }
       var d = {};
       d._queue = [];
       var e = 'pick,pickMultiple,pickAndStore,read,write,writeUrl,export,convert,store,storeUrl,remove,stat,setKey,constructWidget,makeDropPane'.split(',');

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfFileDrop', function (filepicker, notification) {
+angular.module('contentful').directive('cfFileDrop', function (filepicker, notification, sentry) {
   return {
     restrict: 'C',
     transclude: true,
@@ -45,7 +45,13 @@ angular.module('contentful').directive('cfFileDrop', function (filepicker, notif
           scope.$apply(function (scope) {
             scope.state = 'drag';
             elem.attr('disabled', false);
-            notification.error('Upload failed: ' + message );
+            notification.error('Upload failed');
+            sentry.captureError('Upload failed ('+type+'): ' + message, {
+              data: {
+                type: type,
+                message: message
+              }
+            });
           });
         },
         onStart: function () {

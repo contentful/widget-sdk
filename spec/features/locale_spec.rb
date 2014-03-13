@@ -31,14 +31,11 @@ feature 'Working with locales', js: true do
       click_button 'Create Locale'
     end
 
-    add_button 'Content Type'
-    fill_in 'contentTypeName', with: 'Test Content Type'
-    add_field 'Text', 'Text'
-    add_field 'Text localized', 'Text', localized: true
-    wait_for_sharejs
-    click_button 'Activate'
+    create_content_type 'Text' do
+      add_field 'Localized Field', 'Text', localized: true
+    end
 
-    add_button 'Test Content Type'
+    add_button 'Entry with Text'
     wait_for_sharejs
     find('.editor-top-right .dropdown-toggle').click
     expect(find('.editor-top-right .dropdown-menu')).to_not have_text('French')

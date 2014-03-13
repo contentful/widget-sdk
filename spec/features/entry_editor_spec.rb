@@ -40,6 +40,7 @@ feature 'Entry Editor', js: true do
   end
 
   scenario 'toggling languages and disabled fields' do
+
     nav_bar 'space-settings'
     tab_iframe do
       click_link 'Locales'
@@ -54,7 +55,9 @@ feature 'Entry Editor', js: true do
       add_field 'Disabled Field', 'Text'
       wait_for_sharejs
       click_button 'Activate'
+      expect_success 'successfully'
       toggle_disable(true)
+      wait_for_elasticsearch
     end
 
     add_button 'Entry with Text'

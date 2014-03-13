@@ -92,7 +92,7 @@ angular.module('contentful').factory('tutorialExampledata', function ($q, enviro
             if (err && err.body && err.body.sys && err.body.sys.id == 'VersionMismatch'){
               return null;
             } else {
-              return $.reject();
+              return $q.reject();
             }
           });
         }));
