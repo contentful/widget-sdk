@@ -40,7 +40,7 @@ module ContentTypeHelper
       find('.validation-dialog')
       within('.validation-dialog .modal-dialog') do
         yield
-        find('.close-button').click
+        find('.modal-dialog-close-button').click
       end
     end
   end

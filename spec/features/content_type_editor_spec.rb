@@ -50,7 +50,10 @@ feature 'Content Type Editor', js: true do
     for_field 'Text' do
       in_validations do
         add_validation 'Predefined Values' do
-          find('.cf-validation-options input').set('apple, banana')
+          find('.cf-validation-options input').set('apple')
+          find('.cf-validation-options input').native.send_keys(:return)
+          find('.cf-validation-options input').set('banana')
+          find('.cf-validation-options input').native.send_keys(:return)
         end
       end
     end
