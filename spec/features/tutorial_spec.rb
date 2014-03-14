@@ -115,6 +115,7 @@ feature 'Tutorial', js: true do
     find '#entryList'
     nav_bar 'entry-list'
 
+    wait_for_elasticsearch
     click_button 'Yes, please!'
 
     finish_tutorial do

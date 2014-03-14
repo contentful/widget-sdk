@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('tutorialExampledata', function ($q, environment, $rootScope, $timeout, sampleEntries, sampleContentTypes, client) {
+angular.module('contentful').factory('tutorialExampledata', function ($q, environment, $rootScope, $timeout, sampleEntries, sampleContentTypes, client, listActions) {
   return {
     load: function () {
       var deferred = $q.defer();
@@ -58,19 +58,31 @@ angular.module('contentful').factory('tutorialExampledata', function ($q, enviro
     createContentTypes: function (spaceContext) {
       return this.load().
       then(function createContentTypes(data) {
-        return $q.all(_(data.contentTypes).reject(function (newContentType) {
+        return _.reject(data.contentTypes, function (newContentType) {
           return !!_.find(spaceContext.contentTypes, function (existingContentType) {
             return existingContentType.getId() == newContentType.sys.id;
           });
-        }).map(function (contentType) {
-          var ccb = $q.callback();
-          spaceContext.space.createContentType(contentType, ccb);
-          return ccb.promise.then(function (contentType) {
+        });
+      }).
+      then(function(newContentTypeData){
+        var createCalls = _.map(newContentTypeData, function (data) {
+          return function call() {
+            var ccb = $q.callback();
+            spaceContext.space.createContentType(data, ccb);
+            return ccb.promise;
+          };
+        });
+        return listActions.serialize(createCalls);
+      }).
+      then(function (contentTypes) {
+        var publishCalls = _.map(contentTypes, function (contentType) {
+          return function () {
             var pcb = $q.callback();
             contentType.publish(contentType.getVersion(), pcb);
             return pcb.promise;
-          });
-        }).value());
+          };
+        });
+        return listActions.serialize(publishCalls);
       }).
       then(function (contentTypes) {
         if (contentTypes.length > 0) return $timeout(function () {
@@ -84,18 +96,22 @@ angular.module('contentful').factory('tutorialExampledata', function ($q, enviro
       then(function (data) {
         return data.entries;
       }).
-      then(function createEntries(entries) {
-        return $q.all(_.map(entries, function (entry) {
-          var ccb = $q.callback();
-          spaceContext.space.createEntry(entry.sys.contentType.sys.id, entry, ccb);
-          return ccb.promise.catch(function (err) {
-            if (err && err.body && err.body.sys && err.body.sys.id == 'VersionMismatch'){
-              return null;
-            } else {
-              return $q.reject();
-            }
-          });
-        }));
+      then(function(entryData) {
+        var createCalls = _.map(entryData, function (entry) {
+          return function () {
+            var ccb = $q.callback();
+            spaceContext.space.createEntry(entry.sys.contentType.sys.id, entry, ccb);
+            return ccb.promise.catch(function (err) {
+              if (err && err.body && err.body.sys && err.body.sys.id == 'VersionMismatch'){
+                return null;
+              } else {
+                console.log('error', err);
+                return $q.reject();
+              }
+            });
+          };
+        });
+        return listActions.serialize(createCalls);
       }).
       then(function (entries) {
         return _.compact(entries);
@@ -104,11 +120,14 @@ angular.module('contentful').factory('tutorialExampledata', function ($q, enviro
         return $timeout(function(){ return entries; }, 3000);
       }).
       then(function publishEntries(entries) {
-        return $q.all(_.map(entries, function (entry) {
-          var pcb = $q.callback();
-          entry.publish(entry.getVersion(), pcb);
-          return pcb.promise;
-        }));
+        var publishCalls = _.map(entries, function (entry) {
+          return function () {
+            var pcb = $q.callback();
+            entry.publish(entry.getVersion(), pcb);
+            return pcb.promise;
+          };
+        });
+        return listActions.serialize(publishCalls);
       });
     },
 
