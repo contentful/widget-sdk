@@ -24,14 +24,14 @@ feature 'Roles', js:true, order: :defined do
     tab_iframe do
       click_link 'Users'
       click_link 'Invite New User'
-      find('#membership_email').set('testuser1@contentful.com')
+      find('#space_membership_email').set('testuser1@contentful.com')
       check 'Developer'
       click_button 'Invite New User'
     end
     expect_success 'invited successfully'
     tab_iframe do
       click_link 'Invite New User'
-      find('#membership_email').set('testuser2@contentful.com')
+      find('#space_membership_email').set('testuser2@contentful.com')
       check 'Editor'
       click_button 'Invite New User'
     end

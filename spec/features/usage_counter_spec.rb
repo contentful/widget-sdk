@@ -73,7 +73,7 @@ feature 'Usage Tracking', js: true do
     tab_iframe do
       click_link 'Users'
       click_link 'Invite New User'
-      find('#membership_email').set('testuser1@contentful.com')
+      find('#space_membership_email').set('testuser1@contentful.com')
       check 'Developer'
       click_button 'Invite New User'
     end
