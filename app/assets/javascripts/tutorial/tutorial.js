@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('tutorial', function ($compile, notification, tutorialExampledata, $q, $timeout, $rootScope, analytics, sentry) {
+angular.module('contentful').factory('tutorial', function ($compile, notification, tutorialExampledata, $q, $timeout, $rootScope, analytics, sentry, environment) {
   var guiders = window.guiders;
   guiders._defaultSettings.buttons = null;
   guiders._defaultSettings.xButton = true;
@@ -43,7 +43,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
     setSeen : function () {
       return $.cookies.set('seenTutorial', true, {
         expiresAt: moment().add('y', 1).toDate(),
-        secure: true
+        secure: environment.env != 'development'
       });
     },
 

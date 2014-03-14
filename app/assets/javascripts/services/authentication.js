@@ -3,11 +3,11 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
   var authApp, marketingApp, QueryLinkResolver;
 
-  var contentfulClient, $window, $location, $q, $rootScope, notification;
+  var environment, contentfulClient, $window, $location, $q, $rootScope, notification;
   var sentry;
 
   this.setEnvVars = function() {
-    var environment = $injector.get('environment');
+    environment = $injector.get('environment');
     contentfulClient = $injector.get('contentfulClient');
     authApp  = '//'+environment.settings.base_host+'/';
     marketingApp  = environment.settings.marketing_url+'/';
@@ -36,7 +36,7 @@ angular.module('contentful').provider('authentication', function AuthenticationP
         $location.hash('');
         $.cookies.set('token', token, {
           expiresAt: moment().add('y', 1).toDate(),
-          secure: true
+          secure: environment.env != 'development'
         });
         return token;
       }
@@ -143,6 +143,7 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       this.tokenLookup = QueryLinkResolver.resolveQueryLinks(tokenLookup)[0];
     },
 
+    // TODO check if this is used somewhere else and if not remove it
     updateTokenLookup: function (resource) {
       var resourceList = this._unresolvedTokenLookup.includes[resource.sys.type];
       var index = _.findIndex(resourceList, function (existingResource) {
