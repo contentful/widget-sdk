@@ -158,7 +158,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
         return space.getId() == routeSpaceId;
       });
       if (!newSpace) {
-        if (old === null) notification.error('Space does not exist or is unaccessable');
+        if (old === null) notification.warn('Space does not exist or is unaccessable');
         newSpace = spaces[0];
       }
     } else if (routing.getRoute().root) { // no Space requested, pick first
