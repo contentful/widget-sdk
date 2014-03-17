@@ -1,4 +1,4 @@
-angular.module('contentful').factory('SpaceContext', function(TabList, $rootScope, $q, $parse, sentry){
+angular.module('contentful').factory('SpaceContext', function(TabList, $rootScope, $q, $parse, sentry, notification){
   'use strict';
 
   function SpaceContext(space){
@@ -80,9 +80,12 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
         this.space.getPublishedContentTypes(function (err, contentTypes) {
           $rootScope.$apply(function () {
             if (err) {
-              sentry.captureError('Could not get published Content Types', {
-                data: err
-              });
+              if(err && err.body && err.body.message)
+                notification.warn(err.body.message);
+              else
+                notification.serverError('Could not get published Content Types', {
+                  data: err
+                });
               deferred.reject(err);
             } else {
                 self.publishedContentTypes = _(contentTypes)
