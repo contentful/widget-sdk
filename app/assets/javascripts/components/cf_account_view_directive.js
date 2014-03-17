@@ -15,7 +15,7 @@ angular.module('contentful').directive('cfAccountView', function($window, $rootS
       scope.$on('iframeMessage', function (event, data, iframe) {
         if (iframe !== elem.find('iframe')[0]) return;
         scope.hasLoaded = true;
-        if (data.path && data.action === 'update') internalNavigationTo(data.path);
+        if (data.path && data.action === 'update') internalNavigationTo(data.path, data);
       });
 
       scope.hasLoaded = false;
@@ -38,12 +38,14 @@ angular.module('contentful').directive('cfAccountView', function($window, $rootS
         }
       }
 
-      function internalNavigationTo(path) {
+      function internalNavigationTo(path, data) {
+        // FIXME data param only for debugging purposes
         //console.log('path changed', path, elem.find('iframe').prop('src'));
         if(!scope.url || !path) sentry.captureError('scope url or path not defined', {
-          extra: {
+          data: {
             currentPath: path,
-            scopeUrl: scope.url
+            scopeUrl: scope.url,
+            data: data
           }
         });
         var oldPathSuffix = extractPathSuffix(scope.url);
