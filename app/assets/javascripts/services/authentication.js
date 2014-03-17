@@ -140,16 +140,6 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       this._unresolvedTokenLookup = tokenLookup;
       tokenLookup = angular.copy(tokenLookup);
       this.tokenLookup = QueryLinkResolver.resolveQueryLinks(tokenLookup)[0];
-    },
-
-    // TODO check if this is used somewhere else and if not remove it
-    updateTokenLookup: function (resource) {
-      var resourceList = this._unresolvedTokenLookup.includes[resource.sys.type];
-      var index = _.findIndex(resourceList, function (existingResource) {
-        return existingResource.sys.id === resource.sys.id;
-      });
-      resourceList[index] = resource;
-      this.setTokenLookup(this._unresolvedTokenLookup);
     }
 
   };

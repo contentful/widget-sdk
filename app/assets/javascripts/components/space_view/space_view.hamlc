@@ -1,7 +1,7 @@
 %nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
   .logo(ng-click="logoClicked()")
     .cf-logo(cf-custom-logo)
-  %ul(ng-show="spaceContext.space && !spaceContext.space.isHibernated()")
+  %ul(ng-show="!locationInAccount && spaces.length > 0 && spaceContext.space && !spaceContext.space.isHibernated()")
     %li.add-dropdown-button(
       space-context="spaceContext"
       cf-can-no-disable=""

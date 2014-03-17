@@ -401,38 +401,4 @@ describe('Authentication service', function () {
     });
   });
 
-  describe('update token lookup', function () {
-    var resource, resourceList;
-    var unresolvedToken;
-    var setTokenStub;
-    beforeEach(function () {
-      setTokenStub = sinon.stub();
-      authentication.setTokenLookup = setTokenStub;
-      resource = {sys: {id: 'resourceId', type: 'resourceType'}};
-      resourceList = [
-        {sys: {id: 'resourceId'}},
-        {sys: {id: 'resourceId2'}}
-      ];
-      unresolvedToken = {
-        includes: {
-          resourceType: resourceList
-        }
-      };
-      authentication._unresolvedTokenLookup = unresolvedToken;
-      authentication.updateTokenLookup(resource);
-    });
-
-    it('sets unresolved token lookup', function () {
-      expect(authentication._unresolvedTokenLookup).toBe(unresolvedToken);
-    });
-
-    it('sets the provided resource on the resourceList', function () {
-      expect(resourceList[0]).toBe(resource);
-    });
-
-    it('set token is called', function () {
-      expect(setTokenStub).toBeCalledWith(unresolvedToken);
-    });
-  });
-
 });
