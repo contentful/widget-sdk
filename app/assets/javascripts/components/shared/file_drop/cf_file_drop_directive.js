@@ -53,7 +53,6 @@ angular.module('contentful').directive('cfFileDrop', function (filepicker, notif
           scope.$apply(function (scope) {
             scope.state = 'drag';
             elem.attr('disabled', false);
-            console.log(type, message);
             if(_.contains(IGNORED_ERRORS, type))
               notification.warn('Upload failed due to an unknown error. We have been notified.');
             else
