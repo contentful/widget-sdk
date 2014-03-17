@@ -8,11 +8,12 @@ feature 'Organizations', js: true, order: :defined do
   end
 
   scenario 'Checking Memberships' do
-   ensure_login
-   delete_organizations
-   create_organization 'ABC'
-   create_space 'Montezuma', 'ABC'
+   #ensure_login
+   #delete_organizations
+   #create_organization 'ABC'
+   #create_space 'Montezuma', 'ABC'
    pending 'Not finished yet'
+
    #Add yourself as an Admin to Space
    #Add an existing user Mike to space as a ‘Developer’
    #Invite a new user Peter to space as an ‘Editor”

@@ -110,6 +110,7 @@ feature 'Content Type Editor', js: true do
     add_field 'Text', 'Text'
     wait_for_sharejs
     click_button 'Activate'
+    wait_for_elasticsearch
 
     for_field 'Text' do
       toggle_disable(true)
