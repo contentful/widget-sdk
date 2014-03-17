@@ -42,8 +42,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
 
     setSeen : function () {
       return $.cookies.set('seenTutorial', true, {
-        expiresAt: moment().add('y', 1).toDate(),
-        secure: environment.env != 'development'
+        expiresAt: moment().add('y', 1).toDate()
       });
     },
 

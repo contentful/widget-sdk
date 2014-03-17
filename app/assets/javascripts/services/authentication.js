@@ -35,8 +35,7 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       if (token = this.extractToken($location.hash())) {
         $location.hash('');
         $.cookies.set('token', token, {
-          expiresAt: moment().add('y', 1).toDate(),
-          secure: environment.env != 'development'
+          expiresAt: moment().add('y', 1).toDate()
         });
         return token;
       }
