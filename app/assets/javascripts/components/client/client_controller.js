@@ -208,16 +208,11 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
         data.type && data.type.toLowerCase() === type.toLowerCase();
     }
 
-    if (data.token) {
-      authentication.setTokenLookup(data.token);
-      $scope.user = authentication.tokenLookup.sys.createdBy;
-      $scope.updateSpaces(authentication.tokenLookup.spaces);
+    if (msg('create', 'UserCancellation')) {
+      authentication.goodbye();
 
     } else if (msg('new', 'space')) {
       $scope.showCreateSpaceDialog(data.organizationId);
-
-    } else if (msg('create', 'UserCancellation')) {
-      authentication.goodbye();
 
     } else if (data.type === 'flash') {
       var level = data.resource.type;
@@ -226,6 +221,16 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
 
     } else if (msg('navigate', 'location')) {
       $location.path(data.path);
+
+    //} else if (msg('update', 'path')) {
+      //return;
+      // TODO: I think we don't want to look up the token on every pageload in iframe
+      // On the other hand I'm not sure removing this behavior would maybe break things
+
+    } else if (data.token) {
+      authentication.setTokenLookup(data.token);
+      $scope.user = authentication.tokenLookup.sys.createdBy;
+      $scope.updateSpaces(authentication.tokenLookup.spaces);
 
     } else {
       $scope.performTokenLookup();
