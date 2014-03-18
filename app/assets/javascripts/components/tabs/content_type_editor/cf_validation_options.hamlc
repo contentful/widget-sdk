@@ -7,7 +7,7 @@
 .validation-type-select(ng-show="availableValidations | isEmpty")
   %button.flat-button(disabled) {{validationName(validation)}}
 
-.validation-controls(ng-switch="validationType(validation)")
+.validation-controls(ng-switch="validationType(validation)" ng-class="validationType(validation)")
   %div(ng-switch-when="size")
     %input(type="number" ng-model="validation.size.min" placeholder="Minimum size" ng-change="updateDoc()" ng-disabled="!otEditable")
     \-
@@ -23,9 +23,9 @@
 
 
   %div(ng-switch-when="regexp")
-    %input.regexp(type="text" ng-model="validation.regexp.pattern" placeholder="foo|bar[baz]" ng-change="updateDoc()" ng-required="true" ng-disabled="!otEditable")
+    %input(type="text" ng-model="validation.regexp.pattern" placeholder="foo|bar[baz]" ng-change="updateDoc()" ng-required="true" ng-disabled="!otEditable")
     %span Flags:
-    %input.flags(type="text" ng-model="validation.regexp.flags" ng-change="updateDoc()" ng-required="true" ng-disabled="!otEditable")
+    %input(type="text" ng-model="validation.regexp.flags" ng-change="updateDoc()" ng-required="true" ng-disabled="!otEditable")
     .cf-form-inline-error(cf-error-path="validationListPath(validationIndex)")
 
 
