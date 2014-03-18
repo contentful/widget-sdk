@@ -31,7 +31,7 @@ angular.module('contentful').directive('otDocFor', function () {
 
   function shouldDocBeOpen(scope) {
     //console.log('otDocFor shouldDocBeOpen disabled %o, connected %o, entity %o', scope.otDisabled, scope.otConnected, otGetEntity() );
-    return !scope.otDisabled && !!otGetEntity();
+    return scope.otConnected && !scope.otDisabled && !!otGetEntity();
   }
 
   $scope.$watch(function (scope) {
