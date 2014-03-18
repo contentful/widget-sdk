@@ -94,6 +94,8 @@ feature 'Usage Tracking', js: true do
         expect(value).to eql(amount), "Expected #{amount} counted #{key} but found #{value}"
       end
     end
+    select_space
+    sleep 1 # wait for routing to go to entries before clicking on anything else
   end
 
 end
