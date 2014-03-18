@@ -1,6 +1,8 @@
 'use strict';
 
 angular.module('contentful').factory('ReloadNotification', function  ReloadNotificationFactory($injector, modalDialog) {
+  var open = false;
+
   function reloadWithCacheBuster() {
     var $location = $injector.get('$location');
     var search = $location.search();
@@ -15,6 +17,8 @@ angular.module('contentful').factory('ReloadNotification', function  ReloadNotif
     },
 
     trigger: function(message) {
+      if(open) return;
+      open = true;
       if (!message) {
         message = 'The application has encountered a problem and needs to reload.';
       }
