@@ -720,6 +720,23 @@ describe('Client Controller', function () {
       });
     });
 
+    describe('location update', function () {
+      beforeEach(function () {
+        data = {
+          type: 'location',
+          action: 'update',
+          path: '/foobar/baz'
+        };
+        scope.performTokenLookup = sinon.stub();
+        childScope.$emit('iframeMessage', data);
+      });
+
+      it('performs no token lookup', function() {
+        expect(scope.performTokenLookup).not.toBeCalled();
+      });
+    });
+
+
     describe('for other messages', function () {
       beforeEach(function () {
         data = {};

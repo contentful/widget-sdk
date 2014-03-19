@@ -222,10 +222,8 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     } else if (msg('navigate', 'location')) {
       $location.path(data.path);
 
-    //} else if (msg('update', 'path')) {
-      //return;
-      // TODO: I think we don't want to look up the token on every pageload in iframe
-      // On the other hand I'm not sure removing this behavior would maybe break things
+    } else if (msg('update', 'location')) {
+      return;
 
     } else if (data.token) {
       authentication.setTokenLookup(data.token);
