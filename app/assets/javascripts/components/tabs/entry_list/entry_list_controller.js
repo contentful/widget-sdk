@@ -33,7 +33,6 @@ angular.module('contentful').controller('EntryListCtrl',
   }, true);
 
   $scope.$watch(function pageParameters(scope){
-    // does not watch page to avoid unnecessary resets on pagination
     return {
       searchTerm: scope.searchTerm,
       pageLength: scope.paginator.pageLength,

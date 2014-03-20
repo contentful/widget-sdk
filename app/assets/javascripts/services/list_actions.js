@@ -84,7 +84,35 @@ angular.module('contentful').factory('listActions', [
   };
 
 
+  /**
+   * Pass an array of functions. The function are expected to return promises.
+   *
+   * They will be called in serial. If a call fails and error.statusCode is 429 (Too many requests)
+   * it will be retried.
+   */
+  var serialize = function (calls) {
+    if (calls.length === 0) return $q.when([]);
+
+    calls = calls.concat();
+    var call = calls.shift();
+    return call().then(function (result) {
+      return serialize(calls).then(function (otherResults) {
+        return [result].concat(otherResults);
+      });
+    }, function (err) {
+      if(err && err.statusCode === ERRORS.TOO_MANY_REQUESTS) {
+        return $timeout(function () {
+          calls.unshift(call);
+          return serialize(calls);
+        }, RETRY_TIMEOUT);
+      } else {
+        return $q.reject(err);
+      }
+    });
+  };
+
   return {
+    serialize: serialize,
     createPerformer: function (params) {
       _params = params;
       return {

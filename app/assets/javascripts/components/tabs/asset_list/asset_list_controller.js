@@ -29,7 +29,6 @@ angular.module('contentful').
   $scope.$watch(function pageParameters(scope){
     return {
       searchTerm: scope.searchTerm,
-      page: scope.paginator.page,
       pageLength: scope.paginator.pageLength,
       list: scope.tab.params.list,
       spaceId: (scope.spaceContext.space && scope.spaceContext.space.getId())

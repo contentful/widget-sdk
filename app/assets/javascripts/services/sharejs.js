@@ -28,6 +28,7 @@ angular.module('contentful').provider('ShareJS', function ShareJSProvider(enviro
       var oldState, c=this;
       function stateChangeHandler(error) {
         if (c.connection.state !== oldState) {
+          //console.log('sharejs connection state changed from %o to %o', oldState, c.connection.state);
           $rootScope.$apply(function (scope) {
             scope.$broadcast('otConnectionStateChanged', c.connection.state, c.connection, error);
           });
@@ -91,7 +92,7 @@ angular.module('contentful').provider('ShareJS', function ShareJSProvider(enviro
         return ShareJS.client.open.apply(ShareJS.client, arguments);
       },
       isConnected: function () {
-        return ShareJS.client && ShareJS.client.connection == 'ok';
+        return ShareJS.client && ShareJS.client.connection.state == 'ok';
       },
       mkpath: function(params, callback){
         //jshint boss:true

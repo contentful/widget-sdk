@@ -40,6 +40,10 @@ angular.module('contentful/app', [
   'use strict';
   var env = environment.settings;
 
+  $.cookies.setOptions({
+    secure: environment.env != 'development'
+  });
+
   if (!history.pushState) {
     // Strip invalid hash so $location does not trip up
     // when we call the page with #access_token=foo

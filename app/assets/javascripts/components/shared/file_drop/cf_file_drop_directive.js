@@ -1,11 +1,19 @@
 'use strict';
 
 angular.module('contentful').directive('cfFileDrop', function (filepicker, notification, sentry) {
+  var IGNORED_ERRORS = [
+    'WrongType',
+    'TooManyFiles',
+    'WrongSize'
+  ];
+
   return {
     restrict: 'C',
     transclude: true,
     template: JST['cf_file_drop'],
     link: function (scope, elem) {
+      var files;
+
       scope.state = 'drag';
       var inOutSemaphore = 0;
       elem.on('drop', function (event) {
@@ -45,16 +53,23 @@ angular.module('contentful').directive('cfFileDrop', function (filepicker, notif
           scope.$apply(function (scope) {
             scope.state = 'drag';
             elem.attr('disabled', false);
-            notification.error('Upload failed');
-            sentry.captureError('Upload failed ('+type+'): ' + message, {
-              data: {
-                type: type,
-                message: message
-              }
-            });
+            if(_.contains(IGNORED_ERRORS, type))
+              notification.warn('Upload failed due to an unknown error. We have been notified.');
+            else
+              notification.warn('Upload failed: '+message);
+            if(!_.contains(IGNORED_ERRORS, type)){
+              sentry.captureError('Upload failed ('+type+'): ' + message, {
+                data: {
+                  type: type,
+                  message: message,
+                  files: files
+                }
+              });
+            }
           });
         },
-        onStart: function () {
+        onStart: function (files) {
+          files = files;
           scope.$apply('state = "progress"');
         },
         onProgress: function(percentage) {

@@ -81,7 +81,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
     if(!space){
       return notification.warn('Selected space does not exist');
     }
-    if (space && $scope.getCurrentSpaceId() === space.getId()) return true;
+    if (!$scope.locationInAccount && $scope.getCurrentSpaceId() === space.getId()) return true;
     analytics.track('Switched Space', {
       spaceId: space.getId(),
       spaceName: space.data.name
@@ -111,9 +111,9 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   };
 
   $scope.$on('$routeChangeSuccess', function (event, route) {
-    if ($scope.spaces === null) return;
+    $scope.locationInAccount = route.viewType === 'account';
 
-    if (route.params.spaceId != $scope.getCurrentSpaceId()) {
+    if ($scope.spaces !== null && route.params.spaceId != $scope.getCurrentSpaceId()) {
       var space = _.find($scope.spaces, function (space) {
         return space.getId() == route.params.spaceId;
       });
@@ -158,7 +158,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
         return space.getId() == routeSpaceId;
       });
       if (!newSpace) {
-        if (old === null) notification.error('Space does not exist or is unaccessable');
+        if (old === null) notification.warn('Space does not exist or is unaccessable');
         newSpace = spaces[0];
       }
     } else if (routing.getRoute().root) { // no Space requested, pick first
@@ -200,39 +200,39 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   };
 
   $scope.$on('iframeMessage', function (event, data) {
-    if (data.type === 'space' && data.action === 'update') {
-      _.extend($scope.spaceContext.space.data, data.resource);
-      //TODO this is pobably much too simplified, better look up correct
-      //space and check if the method of updating is correct
-    } else if (data.type === 'space' && data.action === 'new') {
-      $scope.showCreateSpaceDialog(data.organizationId);
-    } else if (data.type === 'UserCancellation' && data.action === 'create') {
+    //console.log('iframe message: ', data);
+
+    function msg(action, type) {
+      return data &&
+        data.action && data.action.toLowerCase() === action.toLowerCase() &&
+        data.type && data.type.toLowerCase() === type.toLowerCase();
+    }
+
+    if (msg('create', 'UserCancellation')) {
       authentication.goodbye();
-    } else if (data.type === 'user' && data.action === 'update') {
-      _.extend($scope.user, data.resource);
-    /*
-     * This does not work yet because when you mix relational databases and
-     * object graphs you're gonna have a bad time, mkay?
-     *
-    } else if (data.action !== 'delete') {
-      authentication.updateTokenLookup(data.resource);
-      $scope.user = authentication.tokenLookup.sys.createdBy;
-      $scope.updateSpaces(authentication.tokenLookup.spaces);
-    } else if (data.token) {
-     */
-      authentication.setTokenLookup(data.token);
-      $scope.user = authentication.tokenLookup.sys.createdBy;
-      $scope.updateSpaces(authentication.tokenLookup.spaces);
+
+    } else if (msg('new', 'space')) {
+      $scope.showCreateSpaceDialog(data.organizationId);
+
     } else if (data.type === 'flash') {
       var level = data.resource.type;
       if (!level.match(/info|error/)) level = 'info';
       notification[level](data.resource.message);
-    } else if (data.type === 'location' && data.action === 'navigate') {
+
+    } else if (msg('navigate', 'location')) {
       $location.path(data.path);
+
+    } else if (msg('update', 'location')) {
+      return;
+
+    } else if (data.token) {
+      authentication.setTokenLookup(data.token);
+      $scope.user = authentication.tokenLookup.sys.createdBy;
+      $scope.updateSpaces(authentication.tokenLookup.spaces);
+
     } else {
       $scope.performTokenLookup();
     }
-    // TODO Better handle deletes (should also work somehow without data.token)
   });
 
   $scope.clickedProfileButton = function () {

@@ -73,7 +73,7 @@ feature 'Usage Tracking', js: true do
     tab_iframe do
       click_link 'Users'
       click_link 'Invite New User'
-      find('#membership_email').set('testuser1@contentful.com')
+      find('#space_membership_email').set('testuser1@contentful.com')
       check 'Developer'
       click_button 'Invite New User'
     end
@@ -94,6 +94,8 @@ feature 'Usage Tracking', js: true do
         expect(value).to eql(amount), "Expected #{amount} counted #{key} but found #{value}"
       end
     end
+    select_space
+    sleep 1 # wait for routing to go to entries before clicking on anything else
   end
 
 end

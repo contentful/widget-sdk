@@ -261,6 +261,26 @@ describe('Client Controller', function () {
       });
     });
 
+    describe('if we are selecting the current space but in account section', function () {
+      beforeEach(function () {
+        idStub.returns(123);
+        scope.locationInAccount = true;
+        scope.selectSpace(space);
+      });
+
+      it('tracks analytics', function () {
+        expect(stubs.track).toBeCalled();
+      });
+
+      it('tracks the space properties', function () {
+        expect(stubs.track.args[0][1]).toEqual({spaceId: 123, spaceName: 'testspace'});
+      });
+
+      it('route to another space', function () {
+        expect(stubs.goToSpace).toBeCalledWith(space);
+      });
+    });
+
     describe('if we are selecting a different space', function () {
       beforeEach(function () {
         idStub.returns(456);
@@ -277,6 +297,10 @@ describe('Client Controller', function () {
 
       it('route to another space', function () {
         expect(stubs.goToSpace).toBeCalledWith(space);
+      });
+
+      it('location in account set to false', function() {
+        expect(scope.locationInAccount).toBeFalsy();
       });
     });
   });
@@ -387,13 +411,12 @@ describe('Client Controller', function () {
       scope.getCurrentSpaceId.returns(123);
 
       idStub = sinon.stub();
-      idStub.returns(456);
     });
 
     describe('no spaces exist', function () {
       beforeEach(function () {
         scope.spaces = null;
-        childScope.$emit('$routeChangeSuccess');
+        childScope.$emit('$routeChangeSuccess', {viewType: null});
       });
 
       it('sets no space data on analytics', function () {
@@ -401,20 +424,25 @@ describe('Client Controller', function () {
       });
     });
 
-    describe('changing route but not to the same space', function () {
+    describe('does not change route to the same space', function () {
       beforeEach(function () {
         scope.spaces = [];
-        childScope.$emit('$routeChangeSuccess', {params: {spaceId: 123}});
+        childScope.$emit('$routeChangeSuccess', {params: {spaceId: 123}, viewType: null});
       });
 
       it('sets no space data on analytics', function () {
         expect(stubs.setSpaceData).not.toBeCalled();
       });
+
+      it('location in account flag is false', function() {
+        expect(scope.locationInAccount).toBeFalsy();
+      });
     });
 
-    describe('changing route but to a different space', function () {
+    describe('changing route to a different space', function () {
       beforeEach(function () {
         scope.spaces = [{getId: idStub}];
+        idStub.returns(456);
         childScope.$emit('$routeChangeSuccess', {params: {spaceId: 456}});
       });
 
@@ -424,6 +452,10 @@ describe('Client Controller', function () {
 
       it('space data is set on analytics', function () {
         expect(stubs.setSpaceData).toBeCalledWith(scope.spaces[0]);
+      });
+
+      it('location in account flag is false', function() {
+        expect(scope.locationInAccount).toBeFalsy();
       });
     });
 
@@ -577,33 +609,45 @@ describe('Client Controller', function () {
   });
 
   describe('handle iframe messages', function () {
-    var childScope, data;
-    beforeEach(function () {
+    var childScope, data, token, user, spaces;
+    beforeEach(inject(function (authentication) {
       childScope = scope.$new();
-    });
+      scope.updateSpaces = sinon.stub();
+      scope.showCreateSpaceDialog = sinon.stub();
 
-    describe('space updates', function () {
+      token = {token: true};
+      user = { user: true };
+      spaces = [{space: true}];
+
+      authentication.tokenLookup = {
+        sys: {
+          createdBy: user
+        },
+        spaces: spaces
+      };
+    }));
+
+
+    describe('new space', function () {
       beforeEach(function () {
         data = {
+          action: 'new',
           type: 'space',
-          action: 'update',
-          resource: {
-            newproperty: 'value'
-          }
+          organizationId: '123abc'
         };
         childScope.$emit('iframeMessage', data);
       });
 
-      it('sets new property on space data', function () {
-        expect(scope.spaceContext.space.data.newproperty).toBeDefined();
+      it('shows create space dialog', function() {
+        expect(scope.showCreateSpaceDialog).toBeCalledWith('123abc');
       });
     });
 
     describe('user cancellation', function () {
       beforeEach(function () {
         data = {
-          type: 'UserCancellation',
-          action: 'create'
+          action: 'create',
+          type: 'UserCancellation'
         };
         childScope.$emit('iframeMessage', data);
       });
@@ -613,8 +657,28 @@ describe('Client Controller', function () {
       });
     });
 
-    describe('flash message', function () {
+    describe('on token change', function() {
+      beforeEach(function () {
+        data = {
+          token: token
+        };
+        childScope.$emit('iframeMessage', data);
+      });
 
+      it('sets token lookup', function() {
+        expect(stubs.authenticationTokenLookup).toBeCalledWith(token);
+      });
+
+      it('sets user', function() {
+        expect(scope.user).toBe(user);
+      });
+
+      it('updates spaces', function() {
+        expect(scope.updateSpaces).toBeCalledWith(spaces);
+      });
+    });
+
+    describe('flash message', function () {
       it('calls error notification', function () {
         data = {
           type: 'flash',
@@ -640,18 +704,6 @@ describe('Client Controller', function () {
       });
     });
 
-    describe('performs token lookup', function () {
-      beforeEach(function () {
-        data = {};
-        scope.performTokenLookup = sinon.stub();
-        childScope.$emit('iframeMessage', data);
-      });
-
-      it('calls token lookup', function () {
-        expect(scope.performTokenLookup).toBeCalled();
-      });
-    });
-
     describe('requests navigation', function () {
       beforeEach(function () {
         data = {
@@ -660,23 +712,40 @@ describe('Client Controller', function () {
           path: '/foobar/baz'
         };
         childScope.$emit('iframeMessage', data);
-        expect(stubs.path).toBeCalledWith('/foobar/baz');
+
       });
 
-      it('should change the location to whatever was requested', function () {
-
+      it('calls into location', function() {
+        expect(stubs.path).toBeCalledWith('/foobar/baz');
       });
     });
 
-    describe('requests create Space dialog', function () {
+    describe('location update', function () {
       beforeEach(function () {
         data = {
-          type: 'space',
-          action: 'new',
-          organizationId: '123abc'
+          type: 'location',
+          action: 'update',
+          path: '/foobar/baz'
         };
+        scope.performTokenLookup = sinon.stub();
         childScope.$emit('iframeMessage', data);
-        expect(stubs.dialog).toBeCalledWith('123abc');
+      });
+
+      it('performs no token lookup', function() {
+        expect(scope.performTokenLookup).not.toBeCalled();
+      });
+    });
+
+
+    describe('for other messages', function () {
+      beforeEach(function () {
+        data = {};
+        scope.performTokenLookup = sinon.stub();
+        childScope.$emit('iframeMessage', data);
+      });
+
+      it('performs token lookup', function() {
+        expect(scope.performTokenLookup).toBeCalled();
       });
     });
 
@@ -687,14 +756,29 @@ describe('Client Controller', function () {
     expect(stubs.track).toBeCalled();
   });
 
-  it('redirects to profile', function () {
-    scope.goToAccount();
-    expect(stubs.path).toBeCalledWith('/account/profile/user');
+  describe('redirects to profile', function () {
+    beforeEach(function() {
+      scope.goToAccount();
+    });
+
+    it('sets the path', function() {
+      expect(stubs.path).toBeCalledWith('/account/profile/user');
+    });
+
+    it('sets account section flag', function() {
+      scope.$emit('$routeChangeSuccess', {viewType: 'account'});
+      expect(scope.locationInAccount).toBeTruthy();
+    });
   });
 
-  it('redirects to profile with a suffix', function () {
-    scope.goToAccount('section');
-    expect(stubs.path).toBeCalledWith('/account/section');
+  describe('redirects to profile with a suffix', function () {
+    beforeEach(function() {
+      scope.goToAccount('section');
+    });
+
+    it('sets the path', function() {
+      expect(stubs.path).toBeCalledWith('/account/section');
+    });
   });
 
   describe('performs token lookup', function () {

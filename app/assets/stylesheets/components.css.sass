@@ -1,6 +1,4 @@
 @import "components/*"
-@import "components/forms/*"
-@import "components/tabs/*"
 
 // Overwrite some jQuery-UI stuff
 .ui-corner-all
@@ -286,3 +284,7 @@ li.danger-button
     top: -10px
     left: -2px
 
+// Imported at the end to allow for easier overriding of extendable properties
+// TODO everything above this should move to individual files which are included here
+@import "components/forms/*"
+@import "components/tabs/*"

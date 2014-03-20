@@ -28,15 +28,20 @@
   // but the extension of form-styled creates a huge mess in
   // terms of cascading
   .select-box
-    top: 0px
-    padding-top: 10px
-    width: 100%
+    padding-right: 12px
+
+    .button-icon-right
+      top: 10px
 
   input[type]
     display: inline
 
   input[type], li
     width: 250px
+
+  &.regexp
+    input[type]
+      width: 150px
 
   .block-list
     margin: 0

@@ -22,7 +22,6 @@ $textarea-max-height: 400px
   input[type="password"],
   input[type="url"],
   input.time,
-  .select-box,
   textarea
     display: block
     margin: 0
@@ -58,14 +57,34 @@ $textarea-max-height: 400px
     padding-bottom: 8px
 
   .select-box
-    display: inline-block
-    position: relative
-    top: 2px
-    height: 35px
-    width: 115px
+    @extend .flat-button
+    padding: 0px
     select
+      width: 100%
+      padding: 7.6px 12px
       margin: 0
-      margin-top: -5px
+      color: inherit
+      font-size: inherit
+      font-family: inherit
+      border: none
+      background: transparent
+      text-indent: 0.01px
+      text-overflow: ''
+      +border-radius(0)
+      -webkit-appearance: none
+      -moz-appearance: none
+      appearance: none
+    &:hover
+      border-color: $light-gray
+    .button-icon-right
+      position: absolute
+      left: auto
+      float: none
+      right: 7px
+      top: 8px
+      cursor: default
+      pointer-events: none
+
 
   input.date,
   input.time
@@ -80,24 +99,27 @@ $textarea-max-height: 400px
   .cf-datetime-editor
     input
       display: inline
-  .invalid-date,
-  .invalid-time
-    color: $red
-    font-size: 14px
-    position: relative
-    top: 3px
-
-  .cf-datetime-editor
     .ss-calendar,
     .ss-clock,
     .ss-globe
       font-size: 14px
       color: $light-gray
       vertical-align: middle
-      pointer-events: none // http://stackoverflow.com/questions/3680429/click-through-a-div-to-underlying-elements
+      pointer-events: none
       position: relative
       left: -25px
       top: 1px
+    .select-box
+      padding-right: 30px
+      .button-icon-right
+        right: 27px
+
+  .invalid-date,
+  .invalid-time
+    color: $red
+    font-size: 14px
+    position: relative
+    top: 3px
 
   .sub-fields
     width: $form-controlwidth-inner

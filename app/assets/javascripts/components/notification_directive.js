@@ -3,6 +3,8 @@
 angular.module('contentful').
   directive('notification', function($timeout) {
     var durationAfterSeen = 3e3;
+    // if message is longer than this, extend duration
+    var messageLengthModifier = 100;
 
     return {
       restrict: 'C',
@@ -26,9 +28,11 @@ angular.module('contentful').
 
         function markSeenAfterDelay() {
           $timeout.cancel(timeout);
+          var durationModifier = Math.ceil(scope.message.body.length / messageLengthModifier);
+          var duration = durationAfterSeen * durationModifier;
           timeout = $timeout(function() {
             scope.message.seen = true;
-          }, durationAfterSeen);
+          }, duration);
         }
 
         markSeenAfterDelay();

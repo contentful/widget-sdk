@@ -28,6 +28,7 @@ feature 'Registration', js: true do
     click_button 'Cancel User Account'
     expect(page).to have_text("We're sorry to see you go.")
     clear_access_token
+    reset_system
   end
 
   scenario 'I want to be able to register' do
@@ -60,6 +61,7 @@ feature "Account cancellation", js:true do
   end
 
   after do
+    reset_system
     clear_access_token
   end
 

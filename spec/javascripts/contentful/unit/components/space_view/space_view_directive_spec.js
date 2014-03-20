@@ -39,6 +39,9 @@ describe('The Space view directive', function () {
         }
       };
 
+      scope.spaces = [{}];
+      scope.locationInAccount = false;
+
       compileElement = function () {
         container = $('<space-view></space-view>');
         $compile(container)(scope);
@@ -60,6 +63,18 @@ describe('The Space view directive', function () {
 
   it('main navigation not shown if space is not defined', function () {
     delete scope.spaceContext.space;
+    compileElement();
+    expect(container.find('.nav-bar > ul')).toBeNgHidden();
+  });
+
+  it('main navigation not shown if spaces list is empty', function () {
+    scope.spaces = [];
+    compileElement();
+    expect(container.find('.nav-bar > ul')).toBeNgHidden();
+  });
+
+  it('main navigation not shown if in account section', function () {
+    scope.locationInAccount = true;
     compileElement();
     expect(container.find('.nav-bar > ul')).toBeNgHidden();
   });
