@@ -385,16 +385,10 @@ describe('Entry List Controller', function () {
   describe('loadMore', function () {
     var entries;
     beforeEach(function() {
-      entries = {
-        total: 30
-      };
+      entries = [];
+      Object.defineProperty(entries, 'total', {value: 30});
 
-      scope.entries = {
-        push: {
-          apply: sinon.stub()
-        },
-        length: 60
-      };
+      scope.entries = new Array(60);
 
       scope.selection = {
         setBaseSize: sinon.stub()
@@ -446,12 +440,23 @@ describe('Entry List Controller', function () {
       });
 
       it('appends entries to scope', function () {
-        expect(scope.entries.push.apply.args[0][1]).toEqual(entries);
+        expect(scope.entries.slice(60)).toEqual(entries);
       });
 
       it('sets selection base size', function () {
         expect(scope.selection.setBaseSize.args[0][0]).toBe(60);
       });
+
+    });
+
+    it('discards entries already in the list', function () {
+      scope.entries = ['a'];
+      entries = ['a', 'b', 'c'];
+      Object.defineProperty(entries, 'total', {value: 30});
+      stubs.then.callsArgWith(0, entries);
+      scope.paginator.page = 2;
+      scope.loadMore();
+      expect(scope.entries).toEqual(['a', 'b', 'c']);
     });
 
     describe('on failed load response', function() {

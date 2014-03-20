@@ -141,6 +141,7 @@ angular.module('contentful').controller('EntryListCtrl',
         return;
       }
       $scope.paginator.numEntries = entries.total;
+      entries = _.difference(entries, $scope.entries);
       $scope.entries.push.apply($scope.entries, entries);
       $scope.selection.setBaseSize($scope.entries.length);
     }, function () {

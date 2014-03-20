@@ -135,6 +135,7 @@ angular.module('contentful').
         return;
       }
       $scope.paginator.numEntries = assets.total;
+      assets = _.difference(assets, $scope.assets);
       $scope.assets.push.apply($scope.assets, assets);
       $scope.selection.setBaseSize($scope.assets.length);
     }, function () {
