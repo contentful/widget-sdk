@@ -58,7 +58,7 @@
         tabindex="0")
       %i.ss-settings
       %span Space Settings
-%nav.tab-list(ng-show="spaceContext.space && !spaceContext.space.isHibernated()" ng-class="{hidden: hideTabBar()}")
+%nav.tab-list(ng-show="spaceContext.space && !spaceContext.space.isHibernated() && !locationInAccount" ng-class="{hidden: hideTabBar()}")
   %ul
     %li.tab(ng-repeat="tabItem in spaceContext.tabList.items"
             ng-class="{active: tabItem.active(), dirty: tabItem.dirty}"
