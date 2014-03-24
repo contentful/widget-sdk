@@ -162,7 +162,6 @@ angular.module('contentful').
 
   $scope.$on('tabBecameActive', function(event, tab) {
     if (tab !== $scope.tab) return;
-    $scope.paginator.page = 0;
     $scope.resetAssets();
   });
 });
