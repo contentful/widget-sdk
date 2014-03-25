@@ -318,16 +318,10 @@ describe('Asset List Controller', function () {
   describe('loadMore', function () {
     var assets;
     beforeEach(function() {
-      assets = {
-        total: 30
-      };
+      assets = [];
+      Object.defineProperty(assets, 'total', {value: 30});
 
-      scope.assets = {
-        push: {
-          apply: sinon.stub()
-        },
-        length: 60
-      };
+      scope.assets = new Array(60);
 
       scope.selection = {
         setBaseSize: sinon.stub()
@@ -379,7 +373,7 @@ describe('Asset List Controller', function () {
       });
 
       it('appends assets to scope', function () {
-        expect(scope.assets.push.apply.args[0][1]).toEqual(assets);
+        expect(scope.assets.slice(60)).toEqual(assets);
       });
 
       it('sets selection base size', function () {

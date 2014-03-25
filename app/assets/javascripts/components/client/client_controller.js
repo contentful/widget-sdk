@@ -62,7 +62,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   });
 
   $scope.hideTabBar = function () {
-    return $scope.spaceContext.tabList.numVisible() === 0;
+    return $scope.spaceContext.tabList.numVisible() === 0 || $scope.locationInAccount;
   };
 
   function setSpace(space) {

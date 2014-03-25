@@ -78,6 +78,7 @@ angular.module('contentful').
   };
 
   $scope.resetAssets = function() {
+    $scope.paginator.page = 0;
     return assetLoader.load($scope.spaceContext.space, 'getAssets', buildQuery()).
     then(function (assets) {
       $scope.paginator.numEntries = assets.total;
@@ -135,6 +136,7 @@ angular.module('contentful').
         return;
       }
       $scope.paginator.numEntries = assets.total;
+      assets = _.difference(assets, $scope.assets);
       $scope.assets.push.apply($scope.assets, assets);
       $scope.selection.setBaseSize($scope.assets.length);
     }, function () {
