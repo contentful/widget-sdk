@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').controller('EntryListCtrl',
-  function EntryListCtrl($scope, Paginator, Selection, analytics, PromisedLoader, sentry) {
+  function EntryListCtrl($scope, Paginator, Selection, analytics, PromisedLoader, sentry, searchQueryHelper) {
 
   var entryLoader = new PromisedLoader();
 
@@ -18,8 +18,7 @@ angular.module('contentful').controller('EntryListCtrl',
     }
   });
 
-  $scope.$watch('searchTerm',  function (term) {
-    if (term === null) return;
+  $scope.$watch('searchTerm',  function () {
     $scope.paginator.page = 0;
     $scope.tab.params.list = 'all';
     $scope.tab.params.contentTypeId = null;
@@ -62,20 +61,20 @@ angular.module('contentful').controller('EntryListCtrl',
 
   $scope.visibleInCurrentList = function(entry){
     switch ($scope.tab.params.list) {
-      case 'all':
-        return !entry.isDeleted() && !entry.isArchived();
-      case 'published':
-        return entry.isPublished();
-      case 'changed':
-        return entry.hasUnpublishedChanges();
-      case 'draft':
-        return entry.hasUnpublishedChanges() && !entry.isPublished();
-      case 'archived':
-        return entry.isArchived();
-      case 'contentType':
-        return entry.getContentTypeId() === $scope.tab.params.contentTypeId;
+      //case 'all':
+        //return !entry.isDeleted() && !entry.isArchived();
+      //case 'published':
+        //return entry.isPublished();
+      //case 'changed':
+        //return entry.hasUnpublishedChanges();
+      //case 'draft':
+        //return entry.hasUnpublishedChanges() && !entry.isPublished();
+      //case 'archived':
+        //return entry.isArchived();
+      //case 'contentType':
+        //return entry.getContentTypeId() === $scope.tab.params.contentTypeId;
       default:
-        return true;
+        return true || entry;
     }
   };
 
@@ -97,6 +96,11 @@ angular.module('contentful').controller('EntryListCtrl',
       skip: $scope.paginator.skipItems()
     };
 
+    var searchQuery = searchQueryHelper.buildQuery(null, $scope.searchTerm);
+
+    _.extend(queryObject, searchQuery);
+
+    /*
     if ($scope.tab.params.list == 'all') {
       queryObject['sys.archivedAt[exists]'] = 'false';
     } else if ($scope.tab.params.list == 'published') {
@@ -117,6 +121,7 @@ angular.module('contentful').controller('EntryListCtrl',
     if (!_.isEmpty($scope.searchTerm)) {
       queryObject.query = $scope.searchTerm;
     }
+    */
 
     return queryObject;
   }
