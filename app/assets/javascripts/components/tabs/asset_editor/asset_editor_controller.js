@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorCtrl($scope, validation, AssetContentType, notification, addCanMethods) {
+angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorCtrl($scope, validation, AssetContentType, notification, addCanMethods, ShareJS) {
   $scope.$watch('tab.params.asset', 'asset=tab.params.asset');
   $scope.$watch(function assetEditorEnabledWatcher(scope) {
     return !scope.asset.isArchived() && scope.can('update', scope.asset.data);
@@ -124,12 +124,31 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
     });
   });
 
+  function setTitleOnDoc(file, localeCode) {
+    var otPath = ['fields', 'title', localeCode];
+    var fileName = file.fileName.replace(/\.\w+$/g, '').replace(/_/g, ' ');
+    var doc;
+    try {
+      doc = $scope.otDoc.getAt(otPath);
+    } catch(e){
+      ShareJS.mkpath({
+        doc: $scope.otDoc,
+        path: otPath,
+        value: fileName
+      });
+    }
+  }
+
   $scope.$on('fileUploaded', function (event, file) {
     var localeCode = _($scope.asset.data.fields.file).keys().find(function (localeCode) {
       return $scope.asset.data.fields.file[localeCode] === file;
     });
     $scope.asset.process($scope.otDoc.version, localeCode, function (err) {
-      if (err) notification.serverError('There has been a problem processing the Asset.', err);
+      if (err) {
+        notification.serverError('There has been a problem processing the Asset.', err);
+      } else {
+        setTitleOnDoc(file, localeCode);
+      }
     });
   });
 
