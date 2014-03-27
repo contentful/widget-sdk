@@ -127,16 +127,12 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
   function setTitleOnDoc(file, localeCode) {
     var otPath = ['fields', 'title', localeCode];
     var fileName = file.fileName.replace(/\.\w+$/g, '').replace(/_/g, ' ');
-    var doc;
-    try {
-      doc = $scope.otDoc.getAt(otPath);
-    } catch(e){
+    if(!ShareJS.peek($scope.otDoc, otPath))
       ShareJS.mkpath({
         doc: $scope.otDoc,
         path: otPath,
         value: fileName
       });
-    }
   }
 
   $scope.$on('fileUploaded', function (event, file) {
