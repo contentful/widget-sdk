@@ -28,11 +28,13 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, keyc
       };
 
       scope.toggleDisplayMode = function () {
-        if (scope.inPreviewMode()) {
-          scope.displayMode = 'edit';
-        } else {
-          scope.displayMode = 'preview';
-        }
+        $timeout(function () {
+          if (scope.inPreviewMode()) {
+            scope.displayMode = 'edit';
+          } else {
+            scope.displayMode = 'preview';
+          }
+        }, 500);
       };
 
       scope.enterEditor = function (ev) {
