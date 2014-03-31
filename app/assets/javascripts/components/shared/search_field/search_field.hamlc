@@ -1,5 +1,4 @@
-.row
-  .input
-    %input(type="search" ng-model="inner.term" placeholder="{{placeholder}}")
-  .search-button(ng-click="updateFromButton()" tabindex="0")
-    %i.ss-search
+.input
+  %input(type="search" ng-model="inner.term" placeholder="{{placeholder}}")
+.search-button(ng-click="updateFromButton()" tabindex="0")
+  %i.ss-search
