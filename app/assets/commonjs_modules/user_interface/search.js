@@ -33,29 +33,24 @@ module.exports = (function() {
         peg$startRuleIndex   = 0,
 
         peg$consts = [
-          { type: "other", description: "search" },
           peg$FAILED,
-          null,
-          function(e) {return e},
-          function(pairs, fulltext) { return {pairs: pairs, search: fulltext} },
           [],
-          function(p) {return p},
+          function(t) {return t},
           function(head, tail) { return [head].concat(tail) },
-          function() { return [] },
-          { type: "other", description: "key-value pair" },
+          function(key, op, value) { return { _type: 'pair', key: key, value:value, operator:op, _offset: offset()} },
           ":",
           { type: "literal", value: ":", description: "\":\"" },
-          function(key, exp) { return {key: key, exp:exp, _offset: offset()} },
-          { type: "other", description: "key" },
-          /^[a-z]/i,
-          { type: "class", value: "[a-z]i", description: "[a-z]i" },
-          function(key) { return annotate(key) },
-          { type: "other", description: "term" },
+          function(op) { return op },
+          void 0,
+          function() { return {_type: 'Novalue', _offset: offset()} },
+          /^[a-z0-9_\-]/i,
+          { type: "class", value: "[a-z0-9_\\-]i", description: "[a-z0-9_\\-]i" },
+          function(key) { return annotate(key, 'Key') },
           "\"",
           { type: "literal", value: "\"", description: "\"\\\"\"" },
           /^[^"]/,
           { type: "class", value: "[^\"]", description: "[^\"]" },
-          function(exp) { return annotate(exp) },
+          function(q) { return annotate(q, 'Query') },
           /^[^ "]/i,
           { type: "class", value: "[^ \"]i", description: "[^ \"]i" },
           { type: "other", description: "whitespace" },
@@ -71,20 +66,21 @@ module.exports = (function() {
           "\n",
           { type: "literal", value: "\n", description: "\"\\n\"" },
           { type: "other", description: "EOF" },
-          void 0,
           { type: "any", description: "any character" }
         ],
 
         peg$bytecode = [
-          peg$decode("8!7!+S$!7%+2$7$+(%4\"6#\"! %$\"# !\"# !*# \" \"+)%4\"6$\"\"! %$\"# !\"# !9*\" 3 "),
-          peg$decode("!7\"+o$ %!7&+2$7\"+(%4\"6&\"! %$\"# !\"# !,=&!7&+2$7\"+(%4\"6&\"! %$\"# !\"# !\"+)%4\"6'\"\"! %$\"# !\"# !*. \"!7%+& 4!6(! %"),
-          peg$decode("8!7#+C$.*\"\"2*3++3%7$+)%4#6,#\"\" %$## !$\"# !\"# !9*\" 3)"),
-          peg$decode("8!! %0.\"\"1!3/+,$,)&0.\"\"1!3/\"\"\" !+! (%+' 4!60!! %9*\" 3-"),
-          peg$decode("8!.2\"\"2233+c$! %04\"\"1!35+,$,)&04\"\"1!35\"\"\" !+! (%+8%.2\"\"2233+(%4#66#!!%$## !$\"# !\"# !*P \"!! %07\"\"1!38+,$,)&07\"\"1!38\"\"\" !+! (%+' 4!66!! %9*\" 31"),
-          peg$decode("8 %0:\"\"1!3;,)&0:\"\"1!3;\"9*\" 39"),
-          peg$decode("8 %0:\"\"1!3;+,$,)&0:\"\"1!3;\"\"\" !9*\" 39"),
-          peg$decode("8.=\"\"2=3>*G \".?\"\"2?3@*; \".A\"\"2A3B*/ \".C\"\"2C3D*# \"7(9*\" 3<"),
-          peg$decode("8!8-\"\"1!3G9*$$\"\" F\"# !9*\" 3E")
+          peg$decode("!7'+\x83$7!+y% !!7(+2$7!+(%4\"6\"\"! %$\"#  \"#  ,=&!7(+2$7!+(%4\"6\"\"! %$\"#  \"#  \"+3%7'+)%4$6#$\"\"!%$$#  $##  $\"#  \"#  "),
+          peg$decode("7\"*# \"7&"),
+          peg$decode("!7%+D$7#+:%7&*# \"7$+*%4#6$##\"! %$##  $\"#  \"#  "),
+          peg$decode("!7'+B$.%\"\"2%3&+2%7'+(%4#6'#!!%$##  $\"#  \"#  "),
+          peg$decode("!!87(*# \"7)9+$$\"# (\"\"  +& 4!6)! %"),
+          peg$decode("!! !0*\"\"1!3++,$,)&0*\"\"1!3+\"\"\"  +! (%+' 4!6,!! %"),
+          peg$decode("!.-\"\"2-3.+c$! !0/\"\"1!30+,$,)&0/\"\"1!30\"\"\"  +! (%+8%.-\"\"2-3.+(%4#61#!!%$##  $\"#  \"#  *P \"!! !02\"\"1!33+,$,)&02\"\"1!33\"\"\"  +! (%+' 4!61!! %"),
+          peg$decode("8 !05\"\"1!36,)&05\"\"1!36\"9*\" 34"),
+          peg$decode("8 !05\"\"1!36+,$,)&05\"\"1!36\"\"\"  9*\" 34"),
+          peg$decode("8.8\"\"2839*G \".:\"\"2:3;*; \".<\"\"2<3=*/ \".>\"\"2>3?*# \"7*9*\" 37"),
+          peg$decode("8!8-\"\"1!3A9*$$\"\" (\"#  9*\" 3@")
         ],
 
         peg$currPos          = 0,
@@ -513,10 +509,11 @@ module.exports = (function() {
     }
 
 
-      function annotate(value) {
+      function annotate(token, type) {
         return {
-          value: value,
-          _offset: offset()
+          token: token,
+          _offset: offset(),
+          _type: type
         }
       }
 

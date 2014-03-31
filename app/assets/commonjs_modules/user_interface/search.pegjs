@@ -1,37 +1,41 @@
 {
-  function annotate(value) {
+  function annotate(token, type) {
     return {
-      value: value,
-      _offset: offset()
+      token: token,
+      _offset: offset(),
+      _type: type
     }
   }
 }
 
-
-Search "search"
-  = pairs:Pairs fulltext:(_ e:Expression {return e})?
-    { return {pairs: pairs, search: fulltext} }
-
-Pairs
-  = head:Pair tail:(__ p:Pair {return p})*
+Search
+  = _ head:Token tail:(__ t:Token {return t})* _
     { return [head].concat(tail) }
-  / _
-    { return [] }
 
-Pair "key-value pair"
-  = key:Key ":" exp:Expression
-    { return {key: key, exp:exp, _offset: offset()} }
+Token
+  = Pair / Query
 
-Key "key"
-  = key:($ [a-z]i+)
-    { return annotate(key) }
+Pair
+  = key:Key op:Operator value:(Query / Novalue)
+    { return { _type: 'pair', key: key, value:value, operator:op, _offset: offset()} }
 
-Expression "term"
-  = "\"" exp:$[^"]+ "\""
-    { return annotate(exp) }
-  / exp:$[^ "]i+
-    { return annotate(exp) }
- 
+Operator
+  = _ op:":" _
+    { return op }
+
+Novalue
+  = & (__ / eol)
+    { return {_type: 'Novalue', _offset: offset()} }
+
+Key
+  = key:($ [a-z0-9_-]i+)
+    { return annotate(key, 'Key') }
+
+Query
+  = "\"" q:$[^"]+ "\""
+    { return annotate(q, 'Query') }
+  / q:$[^ "]i+
+    { return annotate(q, 'Query') }
 
 _ "whitespace"
   = [ \t]*
