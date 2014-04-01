@@ -7,11 +7,17 @@
       analytics-event="entries"
       href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
   .search-area.with-left-nav
-    .dropdown-button.content-type-filter
+    .dropdown-btn.content-type-filter
       %button.dropdown-toggle.default-button
         %i.ss-dropdown.button-icon-right
-        Content Type
-    .search-field(search="searchTerm" placeholder="Search for Entries")
+        {{ typeNameOr('Content Type') }}
+      .dropdown-menu
+        %ul.menu-list
+          %li.type(ng-click="filterByContentType()" dropdown-close="") All
+          %li.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
+                   ng-click="filterByContentType(contentType)"
+                   dropdown-close="") {{contentType.getName()}}
+    .search-field(search="searchTerm" placeholder="Search for {{typeNameOr('Entries')}}")
   .add-entity(ng-class="{'with-pagination': paginator.numPages() > 1}"
               ng-hide="spaceContext.publishedContentTypes.length == 0")
     %button.dropdown-toggle.default-button.primary-button(

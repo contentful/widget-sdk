@@ -18,12 +18,6 @@ angular.module('contentful').controller('EntryListCtrl',
     }
   });
 
-  $scope.$watch('searchTerm',  function () {
-    $scope.paginator.page = 0;
-    $scope.tab.params.list = 'all';
-    $scope.tab.params.contentTypeId = null;
-  });
-
   $scope.$watch('spaceContext.publishedContentTypes.length', function (count) {
     if(count === 1)
       $scope.singleContentType = $scope.spaceContext.publishedContentTypes[0];
@@ -35,7 +29,6 @@ angular.module('contentful').controller('EntryListCtrl',
     return {
       searchTerm: scope.searchTerm,
       pageLength: scope.paginator.pageLength,
-      list: scope.tab.params.list,
       contentTypeId: scope.tab.params.contentTypeId,
       spaceId: (scope.spaceContext.space && scope.spaceContext.space.getId())
     };
@@ -43,39 +36,21 @@ angular.module('contentful').controller('EntryListCtrl',
     scope.resetEntries();
   }, true);
 
-  $scope.switchList = function(list, contentType){
-    $scope.searchTerm = null;
-    var params = $scope.tab.params;
-    var shouldReset =
-      params.list == list &&
-      (!contentType || params.contentTypeId == contentType.getId());
-
-    if (shouldReset) {
-      this.resetEntries();
-    } else {
-      this.paginator.page = 0;
-      params.contentTypeId = contentType ? contentType.getId() : null;
-      params.list = list;
-    }
+  $scope.typeNameOr = function (or) {
+    return $scope.tab.params.contentTypeId ?
+      $scope.spaceContext.getPublishedContentType($scope.tab.params.contentTypeId).getName() : or;
   };
 
-  $scope.visibleInCurrentList = function(entry){
-    switch ($scope.tab.params.list) {
-      //case 'all':
-        //return !entry.isDeleted() && !entry.isArchived();
-      //case 'published':
-        //return entry.isPublished();
-      //case 'changed':
-        //return entry.hasUnpublishedChanges();
-      //case 'draft':
-        //return entry.hasUnpublishedChanges() && !entry.isPublished();
-      //case 'archived':
-        //return entry.isArchived();
-      //case 'contentType':
-        //return entry.getContentTypeId() === $scope.tab.params.contentTypeId;
-      default:
-        return true || entry;
-    }
+  $scope.filterByContentType = function (contentType) {
+    $scope.searchTerm = null;
+    this.paginator.page = 0;
+    var params = $scope.tab.params;
+    params.contentTypeId = contentType ? contentType.getId() : null;
+  };
+
+  $scope.visibleInCurrentList = function(){
+    // TODO: This needs to basically emulate the API :(
+    return true;
   };
 
   $scope.resetEntries = function() {
@@ -90,13 +65,18 @@ angular.module('contentful').controller('EntryListCtrl',
   };
 
   function buildQuery() {
+    var contentType;
     var queryObject = {
       order: '-sys.updatedAt',
       limit: $scope.paginator.pageLength,
       skip: $scope.paginator.skipItems()
     };
 
-    var searchQuery = searchQueryHelper.buildQuery(null, $scope.searchTerm);
+    if ($scope.tab.params.contentTypeId) {
+      queryObject['sys.contentType.sys.id'] = $scope.tab.params.contentTypeId;
+      contentType = $scope.spaceContext.getPublishedContentType($scope.tab.params.contentTypeId);
+    }
+    var searchQuery = searchQueryHelper.buildQuery(contentType, $scope.searchTerm);
 
     _.extend(queryObject, searchQuery);
 
