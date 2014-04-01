@@ -73,7 +73,6 @@ angular.module('contentful').controller('EntryListCtrl',
     };
 
     if ($scope.tab.params.contentTypeId) {
-      queryObject['sys.contentType.sys.id'] = $scope.tab.params.contentTypeId;
       contentType = $scope.spaceContext.getPublishedContentType($scope.tab.params.contentTypeId);
     }
     var searchQuery = searchQueryHelper.buildQuery(contentType, $scope.searchTerm);

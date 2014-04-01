@@ -7,23 +7,14 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
     //},
 
     buildQuery: function (contentType, queryString) {
-      //var fields = _.reduce(contentType.data.fields, function (list, field) {
-        //list[field.id] = field;
-      //}, {});
       var requestObject = {};
       if (!queryString) return requestObject;
+      var fields = createFieldsLookup(contentType);
       var tokens = searchParser.parse(queryString);
-
-      var pairs = _.reduce(tokens, function (pairs, token) {
-        if (token._type == 'pair') pairs.push(token);
-        return pairs;
-      }, []);
+      var pairs = extractPairs(tokens);
 
       _.each(pairs, function (pair) {
-        if (pair.value._type === 'Query') {
-          var ro = pairToRequestObject(pair.key.token, pair.value.token);
-          _.extend(requestObject, ro);
-        }
+        _.extend(requestObject, pairToRequestObject(pair.key.token, pair.value.token, fields));
       });
 
       _.tap(tokens[tokens.length-1], function (last) {
@@ -33,26 +24,8 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
       if (!('sys.archivedAt[exists]' in requestObject)) {
         requestObject['sys.archivedAt[exists]'] = false;
       }
-
-      function pairToRequestObject(key, value) {
-        var keyData = autocompletion[key];
-        if (!keyData) return;
-
-        if (_.isFunction(keyData.convert) ) return keyData.convert(value);
-        if (_.isObject(keyData.convert)) {
-          return createConverter(keyData.convert, value);
-        }
-      }
-
-      function createConverter(convertData, value) {
-        var converterForValue = convertData[value];
-        if (!converterForValue) return;
-
-        if (_.isFunction(converterForValue)) {
-          return converterForValue(value);
-        } else { //is requestObject
-          return converterForValue;
-        }
+      if (contentType) {
+        requestObject.content_type = contentType.getId();
       }
 
       return requestObject;
@@ -112,5 +85,58 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
     //               
   };
 
-  return stuff;
+  function createFieldsLookup(contentType) {
+    if (!contentType) return {};
+    return _.reduce(contentType.data.fields, function (list, field) {
+      list[field.id] = field;
+      return list;
+    }, {});
+  }
+
+  function extractPairs(tokens) {
+    return _.reduce(tokens, function (pairs, token) {
+      if (token._type == 'pair' && token.value._type === 'Query') pairs.push(token);
+      return pairs;
+    }, []);
+  }
+
+  function pairToRequestObject(key, value, fields) {
+    var keyData = autocompletion[key];
+    if (keyData) {
+      if (_.isFunction(keyData.convert) ) return keyData.convert(value);
+      if (_.isObject(keyData.convert)) {
+        return createConverter(keyData.convert, value);
+      }
+    } else {
+      return createFieldQuery(key, value, fields);
+    }
+  }
+
+  function createConverter(convertData, value) {
+    var converterForValue = convertData[value];
+    if (!converterForValue) return;
+
+    if (_.isFunction(converterForValue)) {
+      return converterForValue(value);
+    } else { //is requestObject
+      return converterForValue;
+    }
+  }
+
+  function createFieldQuery(key, value, fields) {
+    var field = findField(key, fields);
+    if (field) return _.tap({}, function (q) {
+      var queryKey = 'fields.'+field.id;
+      q[queryKey] = value;
+    });
+  }
+
+  function findField(key, fields) {
+    if (fields[key]) return fields[key];
+    else return _.find(fields, function (field) {
+      return field.name.toLowerCase() == key.toLowerCase();
+    });
+  }
+
+return stuff;
 });
