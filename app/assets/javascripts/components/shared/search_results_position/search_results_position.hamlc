@@ -1,8 +1,7 @@
 %div(ng-show="paginator.numPages() > 1")
+  .text
+    {{paginator.numEntries}} Results
+    %br
+    Page {{paginator.page + 1}} of {{paginator.numPages()}}
   .track
   .fill
-  .tip
-    %span.search-results-active {{paginator.page+1}}
-    %span.search-results-total /{{paginator.numPages()}}
-    .arrow-right
-    .arrow-right-border

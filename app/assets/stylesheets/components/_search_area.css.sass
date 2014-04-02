@@ -89,6 +89,7 @@
   right: 0
   top: 0
   bottom: 0
+  width: 150px
   .track
     position: absolute
     right: 0
@@ -97,12 +98,12 @@
     position: absolute
     top: 0
     right: 0
-  .tip
+  .text
     position: absolute
-    margin-top: -11px
-    white-space: nowrap
+    bottom: 13px
+    right: 0
+    margin-right: 11px
   // internal behavior/styles
-  $position: 50%
   .track
     background-color: $gray-background
     width: 8px
@@ -110,17 +111,8 @@
     +border-radius(0 2px 0 0)
 
   .fill
-    height: $position
+    height: 0
     width: 8px
     +single-transition(height, 400ms, linear)
     +gradient(#459cd9, #1e82c8)
     +border-radius(0 2px 0 0)
-
-  .tip
-    right: 19px
-    top: $position
-    +single-transition(top, 400ms, linear)
-    .search-results-active
-      font-size: 12px
-      color: $dark-gray
-      font-weight: 700
