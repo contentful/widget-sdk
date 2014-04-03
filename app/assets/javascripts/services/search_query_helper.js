@@ -1,33 +1,76 @@
 'use strict';
 angular.module('contentful').factory('searchQueryHelper', function(searchParser){
   var stuff = {
-    //offerCompletion: function (contentType, queryString, cursorPos) {
-      // TODO need to extend the parser for that to support
-      // less strict formatting and intermediate pairs
-    //},
+    offerCompletion: function (contentType, queryString, cursorPos) {
+      if (!queryString) return [];
+      var tokens = searchParser.parse(queryString);
+      for (var i = 0, l = tokens.length; i < l; i ++) {
+        var token = tokens[i];
+        var pos = tokenPosition(token);
+        if (pos === 'after') continue;
+        if (pos === 'inside' || pos === 'end') {
+          if (token.type === 'Pair') {
+            pos = tokenPosition(token.content.key);
+            //if (pos === 'inside' || pos === 'end')
+              //return keyCompletion(contentType);
+            if (token.content.operator.end <= cursorPos)
+              return valueCompletion(token.content.key.content, contentType);
+          }
+        }
+      }
+
+      return keyCompletion(contentType);
+
+      function tokenPosition(token) {
+        if (cursorPos  <  token.offset) return 'before';
+        if (cursorPos  <  token.end   ) return 'inside';
+        if (cursorPos === token.end   ) return 'end';
+        return 'after';
+      }
+
+      function keyCompletion(contentType, prefix) {
+        var completions = [];
+        if (contentType)
+          completions.push.apply(completions, _.map(contentType.data.fields, 'id'));
+        completions.push.apply(completions, _.keys(autocompletion));
+        // TODO filter completions by prefix
+        return completions;
+      }
+
+      function valueCompletion(key, contentType) {
+        if (!autocompletion[key]) return;
+        var complete = autocompletion[key].complete;
+        if (_.isFunction(complete)) {
+          return complete(contentType);
+        } else {
+          return complete;
+        }
+      }
+    },
 
     buildQuery: function (contentType, queryString) {
       var requestObject = {};
-      if (!queryString) return requestObject;
+
+      // Content Type
       var fields = createFieldsLookup(contentType);
-      var tokens = searchParser.parse(queryString);
-      var pairs = extractPairs(tokens);
+      if (contentType) requestObject.content_type = contentType.getId();
 
-      _.each(pairs, function (pair) {
-        _.extend(requestObject, pairToRequestObject(pair.key.token, pair.value.token, fields));
-      });
+      // Search
+      if (queryString){
+        var tokens = searchParser.parse(queryString);
+        var pairs = extractPairs(tokens);
+        _.each(pairs, function (pair) {
+          _.extend(requestObject, pairToRequestObject(pair.content.key.content, pair.content.value.content, fields));
+        });
+        _.tap(tokens[tokens.length-1], function (last) {
+          if (last.type === 'Query') requestObject.query = last.token;
+        });
+      }
 
-      _.tap(tokens[tokens.length-1], function (last) {
-        if (last._type === 'Query') requestObject.query = last.token;
-      });
-
+      // Filter out archived entries
       if (!('sys.archivedAt[exists]' in requestObject)) {
         requestObject['sys.archivedAt[exists]'] = false;
       }
-      if (contentType) {
-        requestObject.content_type = contentType.getId();
-      }
-
       return requestObject;
     }
   };
@@ -95,7 +138,7 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
 
   function extractPairs(tokens) {
     return _.reduce(tokens, function (pairs, token) {
-      if (token._type == 'pair' && token.value._type === 'Query') pairs.push(token);
+      if (token.type == 'Pair' && token.content.value.type === 'Query') pairs.push(token);
       return pairs;
     }, []);
   }

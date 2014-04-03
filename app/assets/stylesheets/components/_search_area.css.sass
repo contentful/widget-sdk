@@ -4,8 +4,9 @@
   height: $tab-header-height
   padding: $tab-header-padding 0
   +flexbox
-  .search-field
+  .search-with-results
     +flex(1)
+    position: relative
   .content-type-filter
     margin-right: 20px
 
@@ -109,10 +110,8 @@
     width: 8px
     +box-shadow(1px 0 1px rgba(0,0,0,0.06) inset)
     +border-radius(0 2px 0 0)
-
   .fill
     height: 0
     width: 8px
-    +single-transition(height, 400ms, linear)
     +gradient(#459cd9, #1e82c8)
     +border-radius(0 2px 0 0)

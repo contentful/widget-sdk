@@ -1,13 +1,5 @@
 'use strict';
 
-// Search field should have the following interface:
-// list of categories, with autocomplete request and select function per
-// category (async functions)
-//
-// For now, without categories, just an enter function or idle function
-
-// A version of ngClick that performs stopPropagation() and
-// preventDefault() to support nested click targets
 angular.module('contentful').directive('searchField', function(keycodes){
   return {
     restrict: 'C',
@@ -38,6 +30,12 @@ angular.module('contentful').directive('searchField', function(keycodes){
           ev.stopPropagation();
           update();
         } else scope.resetSearchAll();
+      });
+
+      scope.$watch('inner.term', function (inner, old) {
+        if (inner === old) return;
+        var position = element.find('input').textrange('get').end;
+        scope.$emit('searchChanged', inner, position);
       });
     },
 

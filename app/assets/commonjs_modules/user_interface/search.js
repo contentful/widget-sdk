@@ -37,20 +37,26 @@ module.exports = (function() {
           [],
           function(t) {return t},
           function(head, tail) { return [head].concat(tail) },
-          function(key, op, value) { return { _type: 'pair', key: key, value:value, operator:op, _offset: offset()} },
+          function() { return [] },
+          function(key, op, value) { return annotate2({
+                  key: key,
+                  operator: op,
+                  value: value,
+                }, 'Pair')
+              },
           ":",
           { type: "literal", value: ":", description: "\":\"" },
-          function(op) { return op },
+          function(op) { return annotate2(op, 'Operator') },
           void 0,
-          function() { return {_type: 'Novalue', _offset: offset()} },
+          function() { return annotate2(null, 'Novalue') },
           /^[a-z0-9_\-]/i,
           { type: "class", value: "[a-z0-9_\\-]i", description: "[a-z0-9_\\-]i" },
-          function(key) { return annotate(key, 'Key') },
+          function(key) { return annotate2(key, 'Key') },
           "\"",
           { type: "literal", value: "\"", description: "\"\\\"\"" },
           /^[^"]/,
           { type: "class", value: "[^\"]", description: "[^\"]" },
-          function(q) { return annotate(q, 'Query') },
+          function(q) { return annotate2(q, 'Query') },
           /^[^ "]/i,
           { type: "class", value: "[^ \"]i", description: "[^ \"]i" },
           { type: "other", description: "whitespace" },
@@ -70,17 +76,17 @@ module.exports = (function() {
         ],
 
         peg$bytecode = [
-          peg$decode("!7'+\x83$7!+y% !!7(+2$7!+(%4\"6\"\"! %$\"#  \"#  ,=&!7(+2$7!+(%4\"6\"\"! %$\"#  \"#  \"+3%7'+)%4$6#$\"\"!%$$#  $##  $\"#  \"#  "),
+          peg$decode("!7'+\x83$7!+y% !!7(+2$7!+(%4\"6\"\"! %$\"#  \"#  ,=&!7(+2$7!+(%4\"6\"\"! %$\"#  \"#  \"+3%7'+)%4$6#$\"\"!%$$#  $##  $\"#  \"#  *. \"!7'+& 4!6$! %"),
           peg$decode("7\"*# \"7&"),
-          peg$decode("!7%+D$7#+:%7&*# \"7$+*%4#6$##\"! %$##  $\"#  \"#  "),
-          peg$decode("!7'+B$.%\"\"2%3&+2%7'+(%4#6'#!!%$##  $\"#  \"#  "),
-          peg$decode("!!87(*# \"7)9+$$\"# (\"\"  +& 4!6)! %"),
-          peg$decode("!! !0*\"\"1!3++,$,)&0*\"\"1!3+\"\"\"  +! (%+' 4!6,!! %"),
-          peg$decode("!.-\"\"2-3.+c$! !0/\"\"1!30+,$,)&0/\"\"1!30\"\"\"  +! (%+8%.-\"\"2-3.+(%4#61#!!%$##  $\"#  \"#  *P \"!! !02\"\"1!33+,$,)&02\"\"1!33\"\"\"  +! (%+' 4!61!! %"),
-          peg$decode("8 !05\"\"1!36,)&05\"\"1!36\"9*\" 34"),
-          peg$decode("8 !05\"\"1!36+,$,)&05\"\"1!36\"\"\"  9*\" 34"),
-          peg$decode("8.8\"\"2839*G \".:\"\"2:3;*; \".<\"\"2<3=*/ \".>\"\"2>3?*# \"7*9*\" 37"),
-          peg$decode("8!8-\"\"1!3A9*$$\"\" (\"#  9*\" 3@")
+          peg$decode("!7%+D$7#+:%7&*# \"7$+*%4#6%##\"! %$##  $\"#  \"#  "),
+          peg$decode("!7'+B$.&\"\"2&3'+2%7'+(%4#6(#!!%$##  $\"#  \"#  "),
+          peg$decode("!!87(*# \"7)9+$$\"# )\"\"  +& 4!6*! %"),
+          peg$decode("!! !0+\"\"1!3,+,$,)&0+\"\"1!3,\"\"\"  +! (%+' 4!6-!! %"),
+          peg$decode("!..\"\"2.3/+c$! !00\"\"1!31+,$,)&00\"\"1!31\"\"\"  +! (%+8%..\"\"2.3/+(%4#62#!!%$##  $\"#  \"#  *P \"!! !03\"\"1!34+,$,)&03\"\"1!34\"\"\"  +! (%+' 4!62!! %"),
+          peg$decode("8 !06\"\"1!37,)&06\"\"1!37\"9*\" 35"),
+          peg$decode("8 !06\"\"1!37+,$,)&06\"\"1!37\"\"\"  9*\" 35"),
+          peg$decode("8.9\"\"293:*G \".;\"\"2;3<*; \".=\"\"2=3>*/ \".?\"\"2?3@*# \"7*9*\" 38"),
+          peg$decode("8!8-\"\"1!3B9*$$\"\" )\"#  9*\" 3A")
         ],
 
         peg$currPos          = 0,
@@ -509,11 +515,14 @@ module.exports = (function() {
     }
 
 
-      function annotate(token, type) {
+      function annotate2(content, type) {
         return {
-          token: token,
-          _offset: offset(),
-          _type: type
+          type: type,
+          text: text(),
+          offset: offset(),
+          length: text().length,
+          end: offset() + text().length,
+          content: content,
         }
       }
 
