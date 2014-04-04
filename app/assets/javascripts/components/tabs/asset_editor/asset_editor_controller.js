@@ -136,6 +136,7 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
   }
 
   $scope.$on('fileUploaded', function (event, file) {
+    console.log('file uploaded', file);
     var localeCode = _($scope.asset.data.fields.file).keys().find(function (localeCode) {
       return $scope.asset.data.fields.file[localeCode] === file;
     });

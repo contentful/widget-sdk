@@ -80,6 +80,7 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
         } : null;
         scope.otChangeValue(file, function (err) {
           if (!err) {
+            console.log('changing otvalue', file);
             scope.file = file;
             ngModelCtrl.$setViewValue(file);
           } else {
