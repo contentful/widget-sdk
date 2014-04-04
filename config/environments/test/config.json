@@ -11,6 +11,9 @@
     "policy": "",
     "signature": ""
   },
+  "aviary": {
+    "api_key": ""
+  },
   "fog": {
     "s3": {
       "options": {
