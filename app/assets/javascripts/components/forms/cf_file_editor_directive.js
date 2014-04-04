@@ -55,6 +55,7 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
           image: preview,
           url: imgUrl
         }).then(function (FPFile) {
+          console.log('after edit', FPFile);
           changeHandler(FPFile);
         }).catch(function (FPError) {
           console.log(FPError);
