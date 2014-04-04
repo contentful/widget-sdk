@@ -50,13 +50,28 @@ angular.module('contentful').factory('filepicker', function ($window, environmen
         return deferred.promise;
       },
 
-      store: function (imageID, newURL) {
+      store: function (imageID, newURL, file) {
+        var deferred = $q.defer();
+
         $window.filepicker.store({
           url: newURL,
-          filename: imageID,
-          mimetype: 'text/plain',
-          isWriteable: true
+          filename: file.fileName,
+          mimetype: file.contentType,
+          isWriteable: true,
+          size: file.details.size
+        },
+        settings,
+        function(FPFile){
+          $rootScope.$apply(function () {
+            deferred.resolve(FPFile);
+          });
+        }, function (FPError) {
+          $rootScope.$apply(function () {
+            deferred.reject(FPError);
+          });
         });
+
+        return deferred.promise;
       }
     };
 });

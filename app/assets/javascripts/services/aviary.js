@@ -7,13 +7,13 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
       loadFile('feather.js');
     }
 
-    function createEditor() {
+    function createEditor(file) {
       return new $window.Aviary.Feather({
         apiKey: environment.settings.aviary.api_key,
         apiVersion: 2,
         onSave: function(imageID, newURL) {
-          console.log('aviary saved', imageID, newURL);
-          //filepicker.store(imageID, newURL);
+          console.log('aviary saved', imageID, newURL, file);
+          filepicker.store(imageID, newURL, file);
         },
         appendTo: '',
         onError: function () {
@@ -24,7 +24,8 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
 
     return {
       createEditor: function (params) {
-        if(!featherEditor) featherEditor = createEditor();
+        featherEditor = createEditor(params.file);
+        delete params.file;
         featherEditor.launch(params);
       }
     };

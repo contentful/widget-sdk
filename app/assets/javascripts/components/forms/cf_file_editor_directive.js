@@ -45,8 +45,13 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
       scope.editFile = function () {
         var preview = elem.find('.thumbnail').get(0);
         aviary.createEditor({
+          file: scope.file,
           image: preview,
-          url: preview.src.replace(/(\.\w+)\?.*/, '$1')
+          url: preview.src.replace(/(\.\w+)\?.*/, '$1').replace(/^https/g, 'http')
+        }).then(function (FPFile) {
+          console.log(FPFile);
+        }).catch(function (FPError) {
+          console.log(FPError);
         });
       };
 
