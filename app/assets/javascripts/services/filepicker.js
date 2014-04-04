@@ -33,6 +33,7 @@ angular.module('contentful').factory('filepicker', function ($window, environmen
         options = _.extend(settings, options);
         return $window.filepicker.makeDropPane(dropPane, options);
       },
+
       pick: function () {
         var deferred = $q.defer();
 
@@ -47,6 +48,15 @@ angular.module('contentful').factory('filepicker', function ($window, environmen
         });
 
         return deferred.promise;
+      },
+
+      store: function (imageID, newURL) {
+        $window.filepicker.store({
+          url: newURL,
+          filename: imageID,
+          mimetype: 'text/plain',
+          isWriteable: true
+        });
       }
     };
 });

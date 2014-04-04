@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfFileEditor', function (notification, filepicker, $parse) {
+angular.module('contentful').directive('cfFileEditor', function (notification, filepicker, $parse, aviary) {
   return {
     restrict: 'C',
     require: ['ngModel', '^otPath'],
@@ -39,6 +39,14 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
             throw new Error(FPError);
           }
           scope.validate();
+        });
+      };
+
+      scope.editFile = function () {
+        var preview = elem.find('.thumbnail').get(0);
+        aviary.createEditor({
+          image: preview,
+          url: preview.src.replace(/(\.\w+)\?.*/, '$1')
         });
       };
 
