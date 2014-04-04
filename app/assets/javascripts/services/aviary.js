@@ -13,13 +13,13 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
         apiVersion: 2,
         onSave: function(imageID, newURL) {
           console.log('aviary saved', imageID, newURL, file);
-          filepicker.store(imageID, newURL, file).then(
-            function (res) {
-              deferred.resolve(res);
-            },
-            function (err) {
-              deferred.reject(err);
-            });
+          filepicker.store(imageID, newURL, file)
+          .then(function (res) {
+            deferred.resolve(res);
+          })
+          .catch(function (err) {
+            deferred.reject(err);
+          });
         },
         appendTo: '',
         onError: function () {
