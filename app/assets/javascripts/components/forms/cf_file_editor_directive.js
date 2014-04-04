@@ -72,6 +72,7 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
       });
 
       function changeHandler(FPFile) {
+        console.log('change handler', FPFile);
         var file = FPFile ? {
          upload: FPFile.url,
          fileName: FPFile.filename,
