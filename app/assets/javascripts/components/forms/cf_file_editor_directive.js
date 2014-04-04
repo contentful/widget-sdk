@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfFileEditor', function (notification, filepicker, $parse, aviary) {
+angular.module('contentful').directive('cfFileEditor', function (notification, filepicker, $parse, aviary, environment) {
   return {
     restrict: 'C',
     require: ['ngModel', '^otPath'],
@@ -44,10 +44,16 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
 
       scope.editFile = function () {
         var preview = elem.find('.thumbnail').get(0);
+        var nonSecureUrl = preview.src.replace(/^https/g, 'http');
+        var imgUrl = nonSecureUrl.replace(/(\.\w+)\?.*/, '$1');
+        if(environment.env == 'staging'){
+          preview.src = nonSecureUrl;
+        }
+        console.log('attempting to edit url', preview.src, imgUrl, nonSecureUrl);
         aviary.createEditor({
           file: scope.file,
           image: preview,
-          url: preview.src.replace(/(\.\w+)\?.*/, '$1').replace(/^https/g, 'http')
+          url: imgUrl
         }).then(function (FPFile) {
           console.log(FPFile);
         }).catch(function (FPError) {
