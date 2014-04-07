@@ -1,40 +1,64 @@
 'use strict';
 angular.module('contentful').factory('searchQueryHelper', function(searchParser){
-  var stuff = {
-    offerCompletion: function (contentType, queryString, cursorPos) {
-      if (!queryString) return keyCompletion(contentType);
+  var lastQueryString, lastParseResult;
 
-      var tokens = searchParser.parse(queryString);
+  function parse(queryString) {
+    if (queryString !== lastQueryString) {
+      lastQueryString = queryString;
+      lastParseResult = searchParser.parse(queryString);
+    }
+    return lastParseResult;
+  }
+
+  function tokenPosition(cursorPos, token) {
+    if (cursorPos  <  token.offset) return 'before';
+    if (cursorPos  <  token.end   ) return 'inside';
+    if (cursorPos === token.end   ) return 'end';
+    return 'after';
+  }
+
+  var stuff = {
+    currentToken: function (queryString, cursorPos) {
+      if (!queryString) return null;
+
+      var tokens = parse(queryString);
       for (var i = 0, l = tokens.length; i < l; i ++) {
         var token = tokens[i];
-        var pos = tokenPosition(token);
+        var pos = tokenPosition(cursorPos, token);
         if (pos === 'after') continue;
         if (pos === 'inside' || pos === 'end') {
-          if (token.type === 'Pair') {
-            pos = tokenPosition(token.content.key);
-            //if (pos === 'inside' || pos === 'end')
-              //return keyCompletion(contentType);
-            if (token.content.operator.end <= cursorPos)
-              return valueCompletion(token.content.key.content, contentType);
-          }
+          return token;
         }
+      }
+    },
+
+    currentSubToken: function (queryString, cursorPos) {
+      var token = stuff.currentToken(queryString, cursorPos);
+      if (token && token.type === 'Pair') {
+        if (cursorPos <= token.content.operator.offset) {
+          return token.content.key;
+        } else {
+          return token.content.value;
+        }
+      } else {
+        return token;
+      }
+    },
+
+    offerCompletion: function (contentType, queryString, cursorPos) {
+      var token = stuff.currentToken(queryString, cursorPos);
+      
+      if (token && token.type === 'Pair' && token.content.operator.end <= cursorPos) {
+        return valueCompletion(token.content.key.content, contentType);
       }
 
       return keyCompletion(contentType);
 
-      function tokenPosition(token) {
-        if (cursorPos  <  token.offset) return 'before';
-        if (cursorPos  <  token.end   ) return 'inside';
-        if (cursorPos === token.end   ) return 'end';
-        return 'after';
-      }
-
-      function keyCompletion(contentType, prefix) {
+      function keyCompletion(contentType) {
         var completions = [];
         if (contentType)
           completions.push.apply(completions, _.map(contentType.data.fields, 'id'));
         completions.push.apply(completions, _.keys(autocompletion));
-        // TODO filter completions by prefix
         return completions;
       }
 
@@ -58,7 +82,7 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
 
       // Search
       if (queryString){
-        var tokens = searchParser.parse(queryString);
+        var tokens = parse(queryString);
         var pairs = extractPairs(tokens);
         _.each(pairs, function (pair) {
           _.extend(requestObject, pairToRequestObject(pair.content.key.content, pair.content.value.content, fields));

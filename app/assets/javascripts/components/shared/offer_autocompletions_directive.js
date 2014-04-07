@@ -2,49 +2,79 @@
 angular.module('contentful').directive('offerAutocompletions', function(searchQueryHelper, keycodes){
   return {
     link: function(scope, elem){
-      var oldTerm;
       var input = elem.find('input');
 
-      //elem.on('keydown', function (event) {
+      function getPosition() {
+        return input.textrange('get').start;
+      }
+
+      function getContentType() {
+        return scope.spaceContext.getPublishedContentType(scope.tab.params.contentTypeId);
+      }
+      
+      function getSearchTerm() {
+        return input.val();
+      }
+
+      function getToken() {
+        return searchQueryHelper.currentSubToken(getSearchTerm(), getPosition());
+      }
+
+      scope.$watch(function () {
+        return [getSearchTerm(), getPosition()];
+      }, function (n, old, scope) {
+        var term = n[0], position = n[1], oldTerm = old[0];
+        var contentType = getContentType();
+        var autocompletions = searchQueryHelper.offerCompletion(contentType, term, position);
+        //console.log('autocompletions updated, Term %o, Position %o, Pressed %o, Completions: %o', getSearchTerm(), position, event, scope.autocompletions);
+        scope.setAutocompletions(autocompletions);
+        if (term !== oldTerm) scope.showAutocompletions();
+      }, true);
+
       scope.$on('searchKeyPressed', function(ngEvent, event){
-        //scope.$apply(function (scope) {
-          var contentType = scope.spaceContext.getPublishedContentType(scope.tab.params.contentTypeId);
-          var term        = input.val();
-          var position    = input.textrange('get').end;
-          var autocompletions = searchQueryHelper.offerCompletion(contentType, term, position);
-          scope.setAutocompletions(autocompletions);
-          // TODO reset current autocompletion
-          if (event.keyCode == keycodes.DOWN){
-            scope.showAutocompletions();
-            scope.selectNextAutocompletion();
-            event.preventDefault();
-          } else if (event.keyCode == keycodes.UP) {
-            scope.showAutocompletions();
-            scope.selectNextAutocompletion();
-            event.preventDefault();
-          } else if (event.keyCode == keycodes.ESC) {
+        //console.log('SearchkeyPressed, Term %o, Position %o, Pressed %o, Completions: %o', getSearchTerm(), getPosition(), event, scope.autocompletions);
+        if (event.keyCode == keycodes.DOWN){
+          scope.showAutocompletions();
+          scope.selectNextAutocompletion();
+          event.preventDefault();
+        } else if (event.keyCode == keycodes.UP) {
+          scope.showAutocompletions();
+          scope.selectPreviousAutocompletion();
+          event.preventDefault();
+        } else if (event.keyCode == keycodes.ESC) {
+          scope.hideAutocompletions();
+        } else if (event.keyCode == keycodes.ENTER) {
+          if (scope.selectedAutocompletion) {
+            scope.fillAutocompletion(scope.selectedAutocompletion);
             scope.hideAutocompletions();
-          } else if (event.keyCode == keycodes.ENTER) {
-            if (scope.selectedAutocompletion) scope.fillAutocompletion(scope.selectedAutocompletion);
-          } else if (term === oldTerm) {
-            // Moved cursor, do nothing
-          } else {
-            // Typed, term has changed
-            scope.showAutocompletions();
           }
-          oldTerm = term;
-        //});
+        }
       });
 
       scope.fillAutocompletion = function (wat) {
-        // TODO: Current token finden (auch innerhalb pairs) und das token ersetzen
-        input.textrange('insert', wat);
+        var token = getToken();
+        if (token) {
+          var suffix = token.type === 'Key' ? ':' : ' ';
+          input.textrange('set', token.offset, token.end);
+          input.textrange('replace', wat + suffix);
+        } else {
+          input.textrange('insert', wat+':');
+        }
+        var end = input.textrange('get').end;
+        input.textrange('set', end);
       };
-      //scope.$on('searchChanged', function (event, term, position) {
-        //var contentType;$scope.spaceContext.getPublishedContentType($scope.tab.params.contentTypeId).getName() :
-        //scope.autocompletions = searchQueryHelper.offerCompletion(contentType, term, position);
-      //});
+
+      scope.selectTokenRange = function () {
+        var token = getToken();
+        if (token) input.textrange('set', token.offset, token.end);
+      };
+
+      scope.getCurrentPrefix = function () {
+        var token = getToken();
+        if (token) return new RegExp('^'+token.text);
+      };
     },
+
     controller: function ($scope) {
       $scope.autocompletions = [];
       $scope.selectedAutocompletion = null;
@@ -55,6 +85,10 @@ angular.module('contentful').directive('offerAutocompletions', function(searchQu
           $scope.selectedAutocompletion = null;
         }
         $scope.autocompletions = autocompletions;
+        var prefix = $scope.getCurrentPrefix();
+        if (prefix) $scope.selectedAutocompletion = _.find($scope.autocompletions, function (ac) {
+          return prefix.test(ac);
+        });
       };
 
       $scope.showAutocompletions = function () {

@@ -12,7 +12,7 @@
         %i.ss-dropdown.button-icon-right
         {{ typeNameOr('Content Type') }}
       .dropdown-menu
-        %ul.menu-list
+        %ul
           %li.type(ng-click="filterByContentType()" dropdown-close="") All
           %li.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
                    ng-click="filterByContentType(contentType)"
@@ -20,8 +20,8 @@
     %div.search-with-results(offer-autocompletions)
       .search-field(search="searchTerm" placeholder="Search for {{typeNameOr('Entries')}}")
       .results(ng-if="autocompletions.length > 0 && autocompletionsVisible")
-        %ul
-          %li(ng-repeat="completion in autocompletions") {{completion}} {{completion === selectedAutocompletion}}
+        %ul.search-autocomplete-list
+          %li(ng-repeat="completion in autocompletions" ng-class="{selected: completion === selectedAutocompletion}") {{completion}}
   .add-entity(ng-class="{'with-pagination': paginator.numPages() > 1}"
               ng-hide="spaceContext.publishedContentTypes.length == 0")
     %button.dropdown-toggle.default-button.primary-button(
@@ -35,7 +35,7 @@
         %i.ss-plus.button-icon
         Add New Entry
       .dropdown-menu(position="bottomright" container=".tab-content")
-        %ul.menu-list
+        %ul
           %li.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
                    ng-click="createEntry(contentType, 'frameButton')"
                    dropdown-close="")
