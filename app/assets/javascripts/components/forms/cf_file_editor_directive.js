@@ -63,6 +63,7 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
             console.log('after edit', FPFile);
             changeHandler(FPFile);
           }).catch(function (FPError) {
+            aviary.unlock();
             console.log(FPError);
           });
         };
@@ -93,6 +94,7 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
           } else {
             notification.serverError('There has been a problem saving the file', err);
           }
+          aviary.unlock();
         });
       }
 
