@@ -1,40 +1,58 @@
 'use strict';
 
 angular.module('contentful').factory('aviary', function ($window, environment, $q, $rootScope, jsloader, filepicker) {
-    var featherEditor;
     if (!$window.Aviary) {
       var loadFile = jsloader.create('//feather.aviary.com/js/', '//dme0ih8comzn4.cloudfront.net/js/');
       loadFile('feather.js');
     }
 
-    function createEditor(file, deferred) {
-      return new $window.Aviary.Feather({
-        apiKey: environment.settings.aviary.api_key,
-        apiVersion: 2,
-        onSave: function(imageID, newURL) {
-          console.log('aviary saved', imageID, newURL, file);
-          filepicker.store(imageID, newURL, file)
-          .then(function (res) {
-            deferred.resolve(res);
-          })
-          .catch(function (err) {
-            deferred.reject(err);
-          });
-        },
-        appendTo: '',
-        onError: function () {
-          console.log('aviary error', arguments);
-        }
+    var featherEditor, file, createDeferred;
+
+    function createEditor() {
+      var initDeferred = $q.defer();
+      if(featherEditor)
+        initDeferred.resolve();
+      else
+        featherEditor = new $window.Aviary.Feather({
+          apiKey: environment.settings.aviary.api_key,
+          apiVersion: 2,
+          appendTo: '',
+          onLoad: function () {
+            initDeferred.resolve();
+          },
+          onSave: onSave,
+          onError: onError
+        });
+      return initDeferred.promise;
+    }
+
+    function onSave(imageID, newURL) {
+      console.log('aviary saved', imageID, newURL, file);
+      filepicker.store(imageID, newURL, file)
+      .then(function (res) {
+        createDeferred.resolve(res);
+      })
+      .catch(function (err) {
+        createDeferred.reject(err);
+      });
+    }
+
+    function onError(error) {
+      createDeferred.reject({
+        message: 'Aviary Error',
+        error: error
       });
     }
 
     return {
       createEditor: function (params) {
-        var deferred = $q.defer();
-        featherEditor = createEditor(params.file, deferred);
+        createDeferred = $q.defer();
+        file = params.file;
         delete params.file;
-        featherEditor.launch(params);
-        return deferred.promise;
+        createEditor().then(function () {
+          featherEditor.launch(params);
+        });
+        return createDeferred.promise;
       }
     };
 });

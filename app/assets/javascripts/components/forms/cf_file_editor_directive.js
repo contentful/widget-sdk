@@ -43,23 +43,30 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
       };
 
       scope.editFile = function () {
-        var preview = elem.find('.thumbnail').get(0);
-        var nonSecureUrl = preview.src.replace(/^https/g, 'http');
-        var imgUrl = nonSecureUrl.replace(/(\.\w+)\?.*/, '$1');
-        if(environment.env == 'staging'){
-          preview.src = nonSecureUrl;
-        }
-        console.log('attempting to edit url', preview.src, imgUrl, nonSecureUrl);
-        aviary.createEditor({
-          file: scope.file,
-          image: preview,
-          url: imgUrl
-        }).then(function (FPFile) {
-          console.log('after edit', FPFile);
-          changeHandler(FPFile);
-        }).catch(function (FPError) {
-          console.log(FPError);
-        });
+        var img = elem.find('.thumbnail').get(0);
+        var preview = elem.find('.editor-preview').get(0);
+        preview.src = '';
+        //var nonSecureUrl = preview.src.replace(/^https/g, 'http');
+        var imgUrl = img.src.replace(/(\.\w+)\?.*/, '$1');
+        preview.onload = function () {
+          /*
+          if(environment.env == 'staging'){
+            preview.src = nonSecureUrl;
+          }
+         */
+          console.log('attempting to edit url', preview.src, imgUrl);
+          aviary.createEditor({
+            file: scope.file,
+            image: preview,
+            url: imgUrl
+          }).then(function (FPFile) {
+            console.log('after edit', FPFile);
+            changeHandler(FPFile);
+          }).catch(function (FPError) {
+            console.log(FPError);
+          });
+        };
+        preview.src = imgUrl;
       };
 
       scope.deleteFile = function () {
