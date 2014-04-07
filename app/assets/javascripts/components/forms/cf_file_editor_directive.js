@@ -48,17 +48,14 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
         preview.src = '';
         var imgUrl = img.src.replace(/(\.\w+)\?.*/, '$1');
         preview.onload = function () {
-          console.log('attempting to edit url', preview.src, imgUrl);
           aviary.createEditor({
             file: scope.file,
             image: preview,
             url: imgUrl
           }).then(function (FPFile) {
-            console.log('after edit', FPFile);
             changeHandler(FPFile);
           }).catch(function (FPError) {
-            // TODO properly handle error
-            console.log(FPError);
+            notification.serverError('There has been a problem saving the file', FPError);
             aviary.close();
           });
         };
@@ -75,7 +72,6 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
       });
 
       function changeHandler(FPFile) {
-        console.log('change handler', FPFile);
         var file = FPFile ? {
          upload: FPFile.url,
          fileName: FPFile.filename,
@@ -83,7 +79,6 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
         } : null;
         scope.otChangeValue(file, function (err) {
           if (!err) {
-            console.log('changing otvalue', file);
             scope.file = file;
             ngModelCtrl.$setViewValue(file);
           } else {

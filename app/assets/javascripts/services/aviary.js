@@ -27,7 +27,6 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
     }
 
     function onSave(imageID, newURL) {
-      console.log('aviary saved', imageID, newURL, file);
       featherEditor.showWaitIndicator();
       filepicker.store(imageID, newURL, file)
       .then(function (res) {
