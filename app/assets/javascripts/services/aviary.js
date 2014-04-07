@@ -7,7 +7,6 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
     }
 
     var featherEditor, file, createDeferred;
-    var saveLock = false;
 
     function createEditor() {
       var initDeferred = $q.defer();
@@ -22,19 +21,14 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
             initDeferred.resolve();
           },
           onSave: onSave,
-          onSaveButtonClicked: onSaveButtonClicked,
-          //onClose: onClose,
           onError: onError
         });
       return initDeferred.promise;
     }
 
-    function onSaveButtonClicked() {
-      saveLock = true;
-    }
-
     function onSave(imageID, newURL) {
       console.log('aviary saved', imageID, newURL, file);
+      featherEditor.showWaitIndicator();
       filepicker.store(imageID, newURL, file)
       .then(function (res) {
         createDeferred.resolve(res);
@@ -51,13 +45,12 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
       });
     }
 
-    function onClose(dirty) {
-      if(dirty || saveLock) return false;
-    }
-
     return {
-      unlock: function () {
-        saveLock = false;
+      close: function () {
+        if(featherEditor) {
+          featherEditor.hideWaitIndicator();
+          featherEditor.close();
+        }
       },
 
       createEditor: function (params) {

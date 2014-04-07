@@ -46,14 +46,8 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
         var img = elem.find('.thumbnail').get(0);
         var preview = elem.find('.editor-preview').get(0);
         preview.src = '';
-        //var nonSecureUrl = preview.src.replace(/^https/g, 'http');
         var imgUrl = img.src.replace(/(\.\w+)\?.*/, '$1');
         preview.onload = function () {
-          /*
-          if(environment.env == 'staging'){
-            preview.src = nonSecureUrl;
-          }
-         */
           console.log('attempting to edit url', preview.src, imgUrl);
           aviary.createEditor({
             file: scope.file,
@@ -63,8 +57,9 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
             console.log('after edit', FPFile);
             changeHandler(FPFile);
           }).catch(function (FPError) {
-            aviary.unlock();
+            // TODO properly handle error
             console.log(FPError);
+            aviary.close();
           });
         };
         preview.src = imgUrl;
@@ -94,7 +89,7 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
           } else {
             notification.serverError('There has been a problem saving the file', err);
           }
-          aviary.unlock();
+          aviary.close();
         });
       }
 
