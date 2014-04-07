@@ -37,7 +37,8 @@
       %i.ss-download
     %button.default-button.show-metadata(type="button" ng-click="toggleMeta()" ng-show="file" tooltip="Show file information")
       %i.ss-info
-    %button.default-button.edit-button(type="button" ng-show="file" ng-click="editFile()") Edit
+    %button.default-button.edit-button(type="button" ng-show="file" ng-click="editFile()" tooltip="Edit file")
+      %i.ss-picture
     %button.default-button.delete-file(type="button" ng-show="!otDisabled && deleteFile && file" ng-click="deleteFile()" tooltip="Delete file")
       %i.ss-trash
     %button.default-button.remove-link(type="button" ng-show="!otDisabled && removeLink" ng-click="removeLink(index, entity)" tooltip="Remove link")
