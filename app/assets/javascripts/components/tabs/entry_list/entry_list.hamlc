@@ -19,9 +19,9 @@
                    dropdown-close="") {{contentType.getName()}}
     %div.search-with-results(offer-autocompletions)
       .search-field(search="searchTerm" placeholder="Search for {{typeNameOr('Entries')}}")
-      .results(ng-if="autocompletions.length > 0")
+      .results(ng-if="autocompletions.length > 0 && autocompletionsVisible")
         %ul
-          %li(ng-repeat="completion in autocompletions") {{completion}}
+          %li(ng-repeat="completion in autocompletions") {{completion}} {{completion === selectedAutocompletion}}
   .add-entity(ng-class="{'with-pagination': paginator.numPages() > 1}"
               ng-hide="spaceContext.publishedContentTypes.length == 0")
     %button.dropdown-toggle.default-button.primary-button(
@@ -46,8 +46,8 @@
 
 .tab-main
   .left-nav
-    %header Filter By Status
-    %ul.filter-list.status-filters
+    -#%header Filter By Status
+    -#%ul.filter-list.status-filters
       %li(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
         %span All
       %li(ng-class="{active: tab.params.list == 'changed'}" ng-click="switchList('changed')")
@@ -58,7 +58,7 @@
         %span Published
       %li(ng-class="{active: tab.params.list == 'archived'}" ng-click="switchList('archived')")
         %span Archived
-    %div(ng-show="spaceContext.publishedContentTypes.length > 0")
+    -#%div(ng-show="spaceContext.publishedContentTypes.length > 0")
       %header Filter By Content Types
       %ul.filter-list.type-filters
         %li(ng-class="{active: tab.params.contentTypeId == contentType.getId()}"

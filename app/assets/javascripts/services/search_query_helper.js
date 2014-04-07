@@ -2,7 +2,8 @@
 angular.module('contentful').factory('searchQueryHelper', function(searchParser){
   var stuff = {
     offerCompletion: function (contentType, queryString, cursorPos) {
-      if (!queryString) return [];
+      if (!queryString) return keyCompletion(contentType);
+
       var tokens = searchParser.parse(queryString);
       for (var i = 0, l = tokens.length; i < l; i ++) {
         var token = tokens[i];

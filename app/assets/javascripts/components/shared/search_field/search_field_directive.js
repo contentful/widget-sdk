@@ -23,19 +23,16 @@ angular.module('contentful').directive('searchField', function(keycodes){
       var debouncedUpdate = _.debounce(update, 300);
 
       element.on('keydown', function(ev) {
-        if (typeAhead && scope.inner.term) return debouncedUpdate();
-        var pressedReturn = ev.keyCode === keycodes.ENTER;
-        if (pressedReturn) {
-          ev.preventDefault();
-          ev.stopPropagation();
-          update();
-        } else scope.resetSearchAll();
-      });
-
-      scope.$watch('inner.term', function (inner, old) {
-        if (inner === old) return;
-        var position = element.find('input').textrange('get').end;
-        scope.$emit('searchChanged', inner, position);
+        scope.$apply(function (scope) {
+          scope.$emit('searchKeyPressed', ev);
+          if (typeAhead && scope.inner.term) return debouncedUpdate();
+          var pressedReturn = ev.keyCode === keycodes.ENTER;
+          if (pressedReturn) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            scope.update();
+          } else scope.resetSearchAll();
+        });
       });
     },
 
