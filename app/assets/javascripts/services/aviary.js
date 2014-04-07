@@ -23,7 +23,7 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
           },
           onSave: onSave,
           onSaveButtonClicked: onSaveButtonClicked,
-          onClose: onClose,
+          //onClose: onClose,
           onError: onError
         });
       return initDeferred.promise;
