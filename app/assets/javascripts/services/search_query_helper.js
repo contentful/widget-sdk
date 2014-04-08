@@ -195,6 +195,7 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
     var field = findField(key, fields);
     if (field) return _.tap({}, function (q) {
       var queryKey = 'fields.'+field.id;
+      if (field.type === 'Text') queryKey = queryKey + '[match]';
       q[queryKey] = value;
     });
   }
