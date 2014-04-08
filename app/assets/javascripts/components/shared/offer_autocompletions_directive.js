@@ -20,19 +20,19 @@ angular.module('contentful').directive('offerAutocompletions', function(searchQu
         return searchQueryHelper.currentSubToken(getSearchTerm(), getPosition());
       }
 
-      scope.$watch(function () {
-        return [getSearchTerm(), getPosition()];
+      scope.$watch(function (scope) {
+        return [getSearchTerm(), getPosition(), scope.tab.params.contentTypeId];
       }, function (n, old, scope) {
         var term = n[0], position = n[1], oldTerm = old[0];
         var contentType = getContentType();
         var autocompletions = searchQueryHelper.offerCompletion(contentType, term, position);
         //console.log('autocompletions updated, Term %o, Position %o, Pressed %o, Completions: %o', getSearchTerm(), position, event, scope.autocompletions);
-        scope.setAutocompletions(autocompletions);
         if (term !== oldTerm) scope.showAutocompletions();
+        scope.setAutocompletions(autocompletions);
       }, true);
 
       scope.$on('searchKeyPressed', function(ngEvent, event){
-        //console.log('SearchkeyPressed, Term %o, Position %o, Pressed %o, Completions: %o', getSearchTerm(), getPosition(), event, scope.autocompletions);
+        console.log('SearchkeyPressed, Term %o, Position %o, Pressed %o, Completions: %o', getSearchTerm(), getPosition(), event.keyCode, scope.autocompletions);
         if (event.keyCode == keycodes.DOWN){
           scope.showAutocompletions();
           scope.selectNextAutocompletion();
@@ -42,11 +42,15 @@ angular.module('contentful').directive('offerAutocompletions', function(searchQu
           scope.selectPreviousAutocompletion();
           event.preventDefault();
         } else if (event.keyCode == keycodes.ESC) {
-          scope.hideAutocompletions();
+          if (scope.autocompletionsVisible) {
+            scope.hideAutocompletions();
+            event.preventDefault();
+          }
         } else if (event.keyCode == keycodes.ENTER) {
           if (scope.selectedAutocompletion) {
             scope.fillAutocompletion(scope.selectedAutocompletion);
             scope.hideAutocompletions();
+            event.preventDefault();
           }
         }
       });
@@ -54,7 +58,8 @@ angular.module('contentful').directive('offerAutocompletions', function(searchQu
       scope.fillAutocompletion = function (wat) {
         var token = getToken();
         if (token) {
-          var suffix = token.type === 'Key' ? ':' : ' ';
+          var isValue = token.type === 'Value' || token.type === 'Novalue';
+          var suffix = isValue ? ' ' : ':';
           input.textrange('set', token.offset, token.end);
           input.textrange('replace', wat + suffix);
         } else {
@@ -62,6 +67,10 @@ angular.module('contentful').directive('offerAutocompletions', function(searchQu
         }
         var end = input.textrange('get').end;
         input.textrange('set', end);
+        // TODO This should not be necessary. We need to write a new
+        // search field that better intgrates the autocompletion instead of bolting on
+        // functionality through the offer_autocompletions directive.
+        input.controller('ngModel').$setViewValue(input.val());
       };
 
       scope.selectTokenRange = function () {
@@ -84,11 +93,15 @@ angular.module('contentful').directive('offerAutocompletions', function(searchQu
         if (!angular.equals(autocompletions, $scope.autocompletions)) {
           $scope.selectedAutocompletion = null;
         }
-        $scope.autocompletions = autocompletions;
+        $scope.autocompletions = autocompletions || [];
         var prefix = $scope.getCurrentPrefix();
-        if (prefix) $scope.selectedAutocompletion = _.find($scope.autocompletions, function (ac) {
-          return prefix.test(ac);
-        });
+        if (prefix) {
+          $scope.selectedAutocompletion = _.find($scope.autocompletions, function (ac) {
+            return prefix.test(ac);
+          });
+          if (!$scope.selectedAutocompletion) $scope.autocompletionsVisible = false;
+        }
+
       };
 
       $scope.showAutocompletions = function () {

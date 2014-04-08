@@ -88,7 +88,7 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
           _.extend(requestObject, pairToRequestObject(pair.content.key.content, pair.content.value.content, fields));
         });
         _.tap(tokens[tokens.length-1], function (last) {
-          if (last.type === 'Query') requestObject.query = last.token;
+          if (last.type === 'Query') requestObject.query = last.content;
         });
       }
 
