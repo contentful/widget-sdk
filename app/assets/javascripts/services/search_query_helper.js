@@ -94,7 +94,7 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
 
       // Filter out archived entries
       if (!('sys.archivedAt[exists]' in requestObject)) {
-        requestObject['sys.archivedAt[exists]'] = false;
+        requestObject['sys.archivedAt[exists]'] = 'false';
       }
       return requestObject;
     }

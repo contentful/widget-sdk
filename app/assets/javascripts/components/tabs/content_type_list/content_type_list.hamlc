@@ -6,7 +6,7 @@
       tooltip-container=".entity-list"
       analytics-event="content_types"
       href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
-  .search-area.with-left-nav
+  -#.search-area.with-left-nav
     .search-field(search="searchTerm" placeholder="Search for Content Types")
   .add-entity(ng-hide="empty")
     %button.default-button.primary-button(cf-can="create, ContentType" ng-click="createContentType('frameButton')")
