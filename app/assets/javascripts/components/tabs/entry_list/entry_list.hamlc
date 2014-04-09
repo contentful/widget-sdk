@@ -18,7 +18,7 @@
                    ng-click="filterByContentType(contentType)"
                    dropdown-close="") {{contentType.getName()}}
     %div.search-with-results(offer-autocompletions)
-      .search-field(search="searchTerm" placeholder="Search for {{typeNameOr('Entries')}}")
+      .search-field(cf-search="searchTerm" placeholder="Search for {{typeNameOr('Entries')}}")
       .results(ng-if="autocompletions.length > 0 && autocompletionsVisible")
         %ul.search-autocomplete-list
           %li(ng-repeat="completion in autocompletions" ng-class="{selected: completion === selectedAutocompletion}") {{completion}}

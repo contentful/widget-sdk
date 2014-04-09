@@ -1,12 +1,11 @@
 'use strict';
 
-angular.module('contentful').directive('searchField', function(keycodes){
+angular.module('contentful').directive('cfSearch', function(keycodes){
   return {
-    restrict: 'C',
-    template: JST['search_field'](),
+    template: JST['cf_search'](),
     scope: {
       placeholder: '@',
-      search: '=',
+      search: '=cfSearch',
       searchAll: '=?',
       tooltip: '@'
     },
@@ -36,7 +35,7 @@ angular.module('contentful').directive('searchField', function(keycodes){
       });
     },
 
-    controller: function SearchFieldCtrl($scope) {
+    controller: function cfSearchController($scope) {
       $scope.inner = {
         term: ''
       };

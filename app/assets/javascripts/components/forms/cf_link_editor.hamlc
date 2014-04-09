@@ -17,7 +17,7 @@
 .cf-link-editor-search(cf-autocomplete-results="entities" autocomplete-term="searchTerm")
   .controls(ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
     .search-field(ng-submit="submit()"
-                  search="searchTerm"
+                  cf-search="searchTerm"
                   search-all="searchAll"
                   search-type-ahead=""
                   placeholder="Search for {{entityName}}"
