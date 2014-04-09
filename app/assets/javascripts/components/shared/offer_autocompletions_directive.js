@@ -33,7 +33,7 @@ angular.module('contentful').directive('offerAutocompletions', function(searchQu
       }, true);
 
       scope.$on('searchKeyPressed', function(ngEvent, event){
-        console.log('SearchkeyPressed, Term %o, Position %o, Pressed %o, Completions: %o', getSearchTerm(), getPosition(), event.keyCode, scope.autocompletions);
+        //console.log('SearchkeyPressed, Term %o, Position %o, Pressed %o, Completions: %o', getSearchTerm(), getPosition(), event.keyCode, scope.autocompletions);
         if (event.keyCode == keycodes.DOWN){
           scope.showAutocompletions();
           scope.selectNextAutocompletion();
