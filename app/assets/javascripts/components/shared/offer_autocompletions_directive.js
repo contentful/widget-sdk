@@ -22,8 +22,11 @@ angular.module('contentful').directive('offerAutocompletions', function(searchQu
       }
 
       scope.$watch(function (scope) {
+        if (!input.is(':focus')) return null;
         return [getSearchTerm(), getPosition(), scope.tab.params.contentTypeId];
       }, function (n, old, scope) {
+        if (n === null) return scope.hideAutocompletions();
+        if (old === null) old = [];
         var term = n[0], position = n[1], oldTerm = old[0];
         var contentType = getContentType();
         var autocompletions = searchQueryHelper.offerCompletion(contentType, term, position);
@@ -80,6 +83,7 @@ angular.module('contentful').directive('offerAutocompletions', function(searchQu
       };
 
       scope.getCurrentPrefix = function () {
+        // TODO SyntaxError: Invalid regular expression: /^\/: \ at end of pattern
         var token = getToken();
         if (token) return new RegExp('^'+token.text);
       };
