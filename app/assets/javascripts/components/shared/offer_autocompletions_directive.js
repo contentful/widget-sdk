@@ -51,7 +51,7 @@ angular.module('contentful').directive('offerAutocompletions', function(searchQu
             event.preventDefault();
           }
         } else if (event.keyCode == keycodes.ENTER) {
-          if (scope.selectedAutocompletion) {
+          if (scope.selectedAutocompletion && scope.autocompletionsVisible) {
             scope.fillAutocompletion(scope.selectedAutocompletion);
             scope.hideAutocompletions();
             event.preventDefault();
