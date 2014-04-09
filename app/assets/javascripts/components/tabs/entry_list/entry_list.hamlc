@@ -18,12 +18,7 @@
           %li.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
                    ng-click="filterByContentType(contentType)"
                    dropdown-close="") {{contentType.getName()}}
-    .search-with-results(offer-autocompletions)
-      .search-field(cf-search="searchTerm" placeholder="Search for {{typeNameOr('Entries')}}")
-      .results(ng-if="autocompletions.length > 0 && autocompletionsVisible")
-        %ul.search-autocomplete-list
-          %li(ng-repeat="completion in autocompletions" ng-class="{selected: completion === selectedAutocompletion}") {{completion}}
-
+    .search-with-results(cf-tokenized-search="searchTerm" placeholder="Search for {{typeNameOr('Entries')}}")
   .add-entity(ng-class="{'with-pagination': paginator.numPages() > 1}"
               ng-hide="spaceContext.publishedContentTypes.length == 0")
     %button.dropdown-toggle.default-button.primary-button(

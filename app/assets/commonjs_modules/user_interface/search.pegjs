@@ -21,7 +21,7 @@ Token
   = Pair / Query
 
 Pair
-  = key:Key op:Operator value:(Query / Novalue)
+  = key:Key op:Operator value:Value
     { return annotate2({
         key: key,
         operator: op,
@@ -33,19 +33,25 @@ Operator
   = _ op:":" _
     { return annotate2(op, 'Operator') }
 
+Value
+  = val:(Expression / Novalue)
+    { return annotate2(val, 'Value') }
+
 Novalue
   = & (__ / eol)
-    { return annotate2(null, 'Novalue') }
+    { return '' }
 
 Key
   = key:($ [a-z0-9_-]i+)
     { return annotate2(key, 'Key') }
 
 Query
+  = exp:Expression
+    { return annotate2(exp, 'Query') }
+
+Expression
   = "\"" q:$[^"]+ "\""
-    { return annotate2(q, 'Query') }
   / q:$[^ "]i+
-    { return annotate2(q, 'Query') }
 
 _ "whitespace"
   = [ \t]*

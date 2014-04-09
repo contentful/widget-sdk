@@ -1,0 +1,14 @@
+.search-field
+  .input
+    %input(type="search"
+      ng-model="inner.term"
+      placeholder="{{placeholder}}"
+      ng-change="inputChanged()"
+      ng-keydown="keyPressed($event)"
+      ng-focus="inputFocused($event)"
+      ng-blur="inputBlurred($event)")
+  .search-button(ng-click="updateFromButton()" tabindex="0")
+    %i.ss-search
+.results(ng-if="autocompletions.length > 0 && selectedAutocompletion")
+  %ul.search-autocomplete-list
+    %li(ng-repeat="completion in autocompletions" ng-class="{selected: completion === selectedAutocompletion}") {{completion}}
