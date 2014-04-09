@@ -22,16 +22,13 @@ angular.module('contentful').directive('cfSearch', function(keycodes){
       var debouncedUpdate = _.debounce(update, 300);
 
       element.on('keydown', function(ev) {
-        scope.$apply(function (scope) {
-          scope.$emit('searchKeyPressed', ev);
-          if (typeAhead && scope.inner.term) return debouncedUpdate();
-          var pressedReturn = ev.keyCode === keycodes.ENTER;
-          if (pressedReturn) {
-            ev.preventDefault();
-            ev.stopPropagation();
-            scope.update();
-          } else scope.resetSearchAll();
-        });
+        if (typeAhead && scope.inner.term) return debouncedUpdate();
+        var pressedReturn = ev.keyCode === keycodes.ENTER;
+        if (pressedReturn) {
+          ev.preventDefault();
+          ev.stopPropagation();
+          update();
+        } else scope.resetSearchAll();
       });
     },
 
