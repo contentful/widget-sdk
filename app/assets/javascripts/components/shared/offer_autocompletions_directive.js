@@ -9,7 +9,8 @@ angular.module('contentful').directive('offerAutocompletions', function(searchQu
       }
 
       function getContentType() {
-        return scope.spaceContext.getPublishedContentType(scope.tab.params.contentTypeId);
+        var id = scope.tab && scope.tab.params && scope.tab.params.contentTypeId;
+        return scope.spaceContext && scope.spaceContext.getPublishedContentType && scope.spaceContext.getPublishedContentType(id);
       }
       
       function getSearchTerm() {
