@@ -1,12 +1,13 @@
 .tab-header
-  .left-nav
+  .tab-title
     %h1 Entries
     %a.cf-knowledge-base-icon(
       tooltip="Learn more about Entries in the Knowledge Base Pages"
       tooltip-container=".entity-list"
       analytics-event="entries"
       href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
-  .search-area.with-left-nav
+
+  .search-area
     .dropdown-btn.content-type-filter
       %button.dropdown-toggle.default-button
         %i.ss-dropdown.button-icon-right
@@ -17,11 +18,12 @@
           %li.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
                    ng-click="filterByContentType(contentType)"
                    dropdown-close="") {{contentType.getName()}}
-    %div.search-with-results(offer-autocompletions)
+    .search-with-results(offer-autocompletions)
       .search-field(cf-search="searchTerm" placeholder="Search for {{typeNameOr('Entries')}}")
       .results(ng-if="autocompletions.length > 0 && autocompletionsVisible")
         %ul.search-autocomplete-list
           %li(ng-repeat="completion in autocompletions" ng-class="{selected: completion === selectedAutocompletion}") {{completion}}
+
   .add-entity(ng-class="{'with-pagination': paginator.numPages() > 1}"
               ng-hide="spaceContext.publishedContentTypes.length == 0")
     %button.dropdown-toggle.default-button.primary-button(

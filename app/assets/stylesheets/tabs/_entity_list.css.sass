@@ -10,18 +10,22 @@
     .main-results
       border-left: none
   .tab-header
+    +flexbox
+    +justify-content(space-between)
+    .tab-title
+      +flex-grow(1)
+      +left-nav-layout
+      +tab-header-title
+      h1
+        line-height: 40px
     .search-area
-      max-width: 600px
-    .left-nav
-      margin: 0
-      padding: 0
-      overflow: hidden
+      +flex-grow(3)
+      +flex-basis(60%)
+      padding-right: 40px
     .add-entity
-      position: absolute
-      top: 0
-      bottom: 0
-      right: 20px
+      +flex-grow(1)
       padding: $tab-header-padding 0
+      padding-right: 20px
       .default-button
         margin: 0
     .add-entity.with-pagination

@@ -1,49 +1,38 @@
-// Search Area Layout
-
 .search-area
   height: $tab-header-height
   padding: $tab-header-padding 0
   +flexbox
-  .search-with-results
-    +flex(1)
-    position: relative
-  .content-type-filter
-    margin-right: 20px
 
-// Search Field Layout
+.content-type-filter
+  +flex-grow(1)
+  .dropdown-toggle
+    height: $tab-header-field-height
+
+.search-with-results
+  position: relative
+  +flex-grow(2)
+  +flex-basis(70%)
 
 .search-field
-  height: $tab-header-field-height
   position: relative
+  height: $tab-header-field-height
+  background-color: white
+  border: 1px solid $lightest-gray
+  +border-radius(20px 20px 20px 20px)
+  +box-shadow(0 1px 3px rgba(0,0,0,0.1) inset)
+
   .input
     position: absolute
     +stretch(0,35px,0,0)
   input[type="search"]
+    padding: 0 7px
     width: 100%
     height: 100%
-  .search-button
-    position: absolute
-    top: 0
-    right: 0
-    bottom: 0
-
-.content-type-filter
-  .dropdown-toggle
-    height: $tab-header-field-height
-
-// Search-Field Look
-
-.search-field
-  background: white
-  border: 1px solid $lightest-gray
-  +border-radius(20px 20px 20px 20px)
-  +box-shadow(0 1px 3px rgba(0,0,0,0.1) inset)
-  input[type="search"]
-    -webkit-appearance: none
-    -moz-appeareance: none
-    border: none
     font-size: 12px
-    padding: 0 7px
+    -webkit-appearance: none
+    -moz-appearance: none
+    appearance: none
+    border: none
     color: $dark-gray
     opacity: 0.6
     +border-radius(20px 0px 0px 20px)
@@ -54,44 +43,33 @@
     border: none
     outline: none
 
-.search-autocomplete-list
-  .selected
-    color: white
-    +blue-highlight
-  
-
-// Common styles for elements in the search area
-
-%search-area-button
-  // TODO I have the suspicion that this is no longer needed,
-  // default-button should cover this style
+.search-button
+  position: absolute
+  top: 0
+  right: 0
+  bottom: 0
+  padding: 0 7px 0 9px
+  width: 35px
+  font-size: 12px
+  line-height: $tab-header-field-height - 2px
   cursor: pointer
   background-color: $gray-background
-  line-height: $tab-header-field-height - 2px
   +box-shadow(0 1px 3px rgba(255,255,255,0.8) inset)
-  &:active
-    +box-shadow(0 1px 2px rgba(0,0,0,0.05) inset)
-
-%search-field-button
-  @extend %search-area-button
-  padding: 0 7px 0 9px
-  font-size: 12px
-
-// Search options look
-
-.search-button
-  @extend %search-field-button
   border-left: 1px solid $lightest-gray
   +border-radius(0 20px 20px 0)
-  width: 35px
+  &:active
+    +box-shadow(0 1px 2px rgba(0,0,0,0.05) inset)
   .ss-search
     position: relative
     top: 2px
 
-// Search results position widget
+.search-autocomplete-list
+  .selected
+    color: white
+    +blue-highlight
 
+// Search results position widget
 .search-results-position
-  // layout
   position: absolute
   right: 0
   top: 0
@@ -100,24 +78,22 @@
   .track
     position: absolute
     right: 0
+    width: 8px
     height: 100%
+    background-color: $gray-background
+    +box-shadow(1px 0 1px rgba(0,0,0,0.06) inset)
+    +border-radius(0 2px 0 0)
   .fill
     position: absolute
     top: 0
     right: 0
+    height: 0
+    width: 8px
+    +gradient(#459cd9, #1e82c8)
+    +border-radius(0 2px 0 0)
   .text
     position: absolute
     bottom: 13px
     right: 0
     margin-right: 11px
-  // internal behavior/styles
-  .track
-    background-color: $gray-background
-    width: 8px
-    +box-shadow(1px 0 1px rgba(0,0,0,0.06) inset)
-    +border-radius(0 2px 0 0)
-  .fill
-    height: 0
-    width: 8px
-    +gradient(#459cd9, #1e82c8)
-    +border-radius(0 2px 0 0)
+

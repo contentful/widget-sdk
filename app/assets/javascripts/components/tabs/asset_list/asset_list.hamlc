@@ -1,17 +1,20 @@
 .tab-header
-  .left-nav
+  .tab-title
     %h1 Assets
     %a.cf-knowledge-base-icon(
       tooltip="Learn more about Assets in the Knowledge Base Pages"
       tooltip-container=".entity-list"
       analytics-event="assets"
       href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
-  .search-area.with-left-nav
+
+  .search-area
     .search-field(cf-search="searchTerm" placeholder="Search for Assets")
+
   .add-entity(ng-class="{'with-pagination': paginator.numPages() > 1}" ng-hide="assets.length == 0")
     %button.default-button.primary-button(cf-can="create, Asset" ng-click="createAsset('frameButton')")
       %i.ss-plus.button-icon
       Add Asset
+
   .search-results-position(paginator="paginator")
 
 .tab-main
