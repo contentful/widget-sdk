@@ -1,7 +1,6 @@
-%div(ng-show="paginator.numPages() > 1")
+.paginator(ng-show="paginator.numPages() > 1")
   .text
-    {{paginator.numEntries}} Results
-    %br
-    Page {{paginator.page + 1}} of {{paginator.numPages()}}
+    %p {{paginator.numEntries}} Results,
+    %p Page {{paginator.page + 1}} of {{paginator.numPages()}}
   .track
   .fill

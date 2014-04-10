@@ -24,12 +24,15 @@
       padding-right: 40px
     .add-entity
       +flex-grow(1)
+      +flex-basis(15%)
       padding: $tab-header-padding 0
       padding-right: 20px
       .default-button
         margin: 0
-    .add-entity.with-pagination
-      right: 150px
+        width: 100%
+        overflow: hidden
+        white-space: nowrap
+        text-overflow: ellipsis
     .dropdown-menu
       $new-entities-dropdown-height: 600px
       max-height: $new-entities-dropdown-height

@@ -19,8 +19,10 @@
                    ng-click="filterByContentType(contentType)"
                    dropdown-close="") {{contentType.getName()}}
     .search-with-results(cf-tokenized-search="searchTerm" placeholder="Search for {{typeNameOr('Entries')}}")
-  .add-entity(ng-class="{'with-pagination': paginator.numPages() > 1}"
-              ng-hide="spaceContext.publishedContentTypes.length == 0")
+
+  .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries || paginator.numPages() < 2")
+
+  .add-entity(ng-hide="spaceContext.publishedContentTypes.length == 0")
     %button.dropdown-toggle.default-button.primary-button(
             ng-hide="(!singleContentType || singleContentType && entries.length < 1) && (noCfCanCleanup = true)"
             cf-can="create, Entry"
@@ -38,8 +40,6 @@
                    dropdown-close="")
             %i.ss-plus
             {{contentType.getName()}}
-
-  .search-results-position(paginator="paginator")
 
 .tab-main
   .left-nav

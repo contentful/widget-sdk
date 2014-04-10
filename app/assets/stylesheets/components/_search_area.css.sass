@@ -15,6 +15,8 @@
 
 .search-field
   position: relative
+  width: 100%
+  max-width: 800px
   height: $tab-header-field-height
   background-color: white
   border: 1px solid $lightest-gray
@@ -22,8 +24,8 @@
   +box-shadow(0 1px 3px rgba(0,0,0,0.1) inset)
 
   .input
-    position: absolute
-    +stretch(0,35px,0,0)
+    width: 90%
+    height: 100%
   input[type="search"]
     padding: 0 7px
     width: 100%
@@ -70,30 +72,32 @@
 
 // Search results position widget
 .search-results-position
-  position: absolute
-  right: 0
-  top: 0
-  bottom: 0
-  width: 150px
-  .track
-    position: absolute
-    right: 0
+  +flexbox
+  +align-content(stretch)
+  +flex-grow(1)
+  +flex-basis(15%)
+  min-width: 150px
+  .paginator
+    +flexbox
+    +align-items(center)
+  .text
+    margin-right: 11px
+    p
+      float: left
+      margin-right: 5px
+      margin-bottom: 0
+  //.track
     width: 8px
     height: 100%
     background-color: $gray-background
     +box-shadow(1px 0 1px rgba(0,0,0,0.06) inset)
     +border-radius(0 2px 0 0)
-  .fill
-    position: absolute
-    top: 0
-    right: 0
-    height: 0
+  //.fill
+    //position: absolute
+    //top: 0
+    //right: 0
+    //height: 0
     width: 8px
     +gradient(#459cd9, #1e82c8)
     +border-radius(0 2px 0 0)
-  .text
-    position: absolute
-    bottom: 13px
-    right: 0
-    margin-right: 11px
 
