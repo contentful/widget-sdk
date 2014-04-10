@@ -36,13 +36,13 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
         var originalString = scope.inner.term || '';
         var insertString;
         if (!token) {
-          //console.error('OOPS NO TOKEN IN fillAutoCompletion', scope.inner.term);
           token = {
             offset: scope.position || 0,
             length: 0
           };
         }
         insertString = scope.selectedAutocompletion;
+        scope.backupString(originalString, token.offset, token.length);
         scope.inner.term = spliceSlice(originalString, token.offset, token.length, insertString);
         _.defer(function () {
           input.textrange('set', token.offset, insertString.length);
@@ -63,6 +63,19 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
             scope.updateAutocompletions();
           });
         });
+      };
+
+      scope._backupString=null;
+      scope.backupString = function (str, offset, length) {
+        if (!scope._backupString) scope._backupString = str.slice(offset, length);
+      };
+
+      scope.restoreString = function () {
+        var token = scope.getCurrentToken();
+        if (scope._backupString) {
+          scope.inner.term = spliceSlice(scope.inner.term, token.offset, token.length, scope._backupString);
+          scope._backupString = null;
+        }
       };
 
       function spliceSlice(str, index, count, add) {
@@ -133,6 +146,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
           if ($scope.selectedAutocompletion) event.preventDefault();
         } else if (event.keyCode == keycodes.ESC) {
           if ($scope.selectedAutocompletion) {
+            $scope.restoreString();
             $scope.selectedAutocompletion = null;
             event.preventDefault();
           }
