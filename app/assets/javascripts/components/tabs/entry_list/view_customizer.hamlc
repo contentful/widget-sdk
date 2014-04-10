@@ -1,0 +1,14 @@
+.dropdown-btn
+  %button.dropdown-toggle.default-button
+    %i.ss-columns.button-icon
+    %i.ss-dropdown.button-icon
+  .dropdown-menu(position="bottomright" container=".tab-content")
+    %ul
+      %li lol
+      -#%li.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
+               ng-click="createEntry(contentType, 'frameButton')"
+               dropdown-close="")
+        %i.ss-plus
+        {{contentType.getName()}}
+
+
