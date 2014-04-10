@@ -22,7 +22,7 @@
 
   .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries || paginator.numPages() < 2")
 
-  .view-customizer(ng-show="tab.params.contentTypeId")
+  .view-customizer(ng-show="filteredContentType")
 
   .add-entity(ng-hide="spaceContext.publishedContentTypes.length == 0")
     %button.dropdown-toggle.default-button.primary-button(

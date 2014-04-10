@@ -4,11 +4,9 @@
     %i.ss-dropdown.button-icon
   .dropdown-menu(position="bottomright" container=".tab-content")
     %ul
-      %li lol
-      -#%li.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
-               ng-click="createEntry(contentType, 'frameButton')"
+      %li.type(ng-repeat="field in filteredContentType.data.fields track by field.id"
+               ng-click=""
                dropdown-close="")
-        %i.ss-plus
-        {{contentType.getName()}}
+        {{field.name}}
 
 
