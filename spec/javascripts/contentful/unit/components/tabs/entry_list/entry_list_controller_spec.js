@@ -82,14 +82,6 @@ describe('Entry List Controller', function () {
         scope.$digest();
       });
 
-      it('list is defined', function () {
-        expect(scope.tab.params.list).toBe('all');
-      });
-
-      it('contentTypeId is null', function () {
-        expect(scope.tab.params.contentTypeId).toBeNull();
-      });
-
       it('page is set to the first one', function () {
         expect(scope.paginator.page).toBe(0);
       });
@@ -152,112 +144,6 @@ describe('Entry List Controller', function () {
     });
   });
 
-  describe('switching lists', function () {
-    var contentType, list;
-    beforeEach(function() {
-      stubs.id = sinon.stub();
-      contentType = {
-        getId: stubs.id
-      };
-      list = 'all';
-      scope.resetEntries = sinon.stub();
-    });
-
-    it('sets search term to null', function() {
-      scope.tab.params.list = list;
-      scope.switchList(list);
-      expect(scope.searchTerm).toBeNull();
-    });
-
-    it('resets current list', function () {
-      scope.tab.params.list = list;
-      scope.switchList(list);
-      expect(scope.resetEntries).toBeCalled();
-    });
-
-    it('resets current list for current content type', function () {
-      scope.tab.params.list = list;
-      scope.tab.params.contentTypeId = 'ct1';
-      stubs.id.returns('ct1');
-      scope.switchList(list, contentType);
-      expect(scope.resetEntries).toBeCalled();
-    });
-
-    it('switches current list', function () {
-      scope.switchList(list);
-      expect(scope.tab.params.list).toBe(list);
-    });
-
-    it('resets pagination page index', function () {
-      scope.switchList(list);
-      expect(scope.paginator.page).toBe(0);
-    });
-
-    it('sets content type id to null if only list', function () {
-      scope.switchList(list);
-      expect(scope.tab.params.contentTypeId).toBeNull();
-    });
-
-    it('switches current content type', function() {
-      stubs.id.returns('ct1');
-      scope.switchList(list, contentType);
-      expect(scope.tab.params.contentTypeId).toBe('ct1');
-    });
-  });
-
-  describe('changed list', function () {
-    it('entry is included in all', function () {
-      var entry = makeEntry();
-      stubs.deleted.returns(false);
-      stubs.archived.returns(false);
-      scope.tab.params.list = 'all';
-      expect(scope.visibleInCurrentList(entry)).toBeTruthy();
-    });
-
-    it('entry is included in published', function () {
-      var entry = makeEntry();
-      stubs.published.returns(true);
-      scope.tab.params.list = 'published';
-      expect(scope.visibleInCurrentList(entry)).toBeTruthy();
-    });
-
-    it('entry is included in changed', function () {
-      var entry = makeEntry();
-      stubs.hasUnpublishedChanges.returns(true);
-      scope.tab.params.list = 'changes';
-      expect(scope.visibleInCurrentList(entry)).toBeTruthy();
-    });
-
-    it('entry is included in draft', function () {
-      var entry = makeEntry();
-      stubs.hasUnpublishedChanges.returns(true);
-      stubs.published.returns(false);
-      scope.tab.params.list = 'draft';
-      expect(scope.visibleInCurrentList(entry)).toBeTruthy();
-    });
-
-    it('entry is included in archived', function () {
-      var entry = makeEntry();
-      stubs.archived.returns(true);
-      scope.tab.params.list = 'archived';
-      expect(scope.visibleInCurrentList(entry)).toBeTruthy();
-    });
-
-    it('entry is filtered by content type', function () {
-      var entry = makeEntry();
-      stubs.getContentTypeId.returns('ct1');
-      scope.tab.params.contentTypeId = 'ct1';
-      scope.tab.params.list = 'contentType';
-      expect(scope.visibleInCurrentList(entry)).toBeTruthy();
-    });
-
-    it('entry is not contained in any list', function () {
-      var entry = makeEntry();
-      scope.tab.params.list = '';
-      expect(scope.visibleInCurrentList(entry)).toBeTruthy();
-    });
-  });
-
   describe('resetting entries', function() {
     var entries;
     beforeEach(function() {
@@ -304,44 +190,40 @@ describe('Entry List Controller', function () {
     describe('creates a query object', function() {
 
       it('with a defined order', function() {
-        scope.tab.params.list = 'all';
         scope.resetEntries();
         expect(stubs.load.args[0][2].order).toEqual('-sys.updatedAt');
       });
 
       it('with a defined limit', function() {
-        scope.tab.params.list = 'all';
         scope.resetEntries();
         expect(stubs.load.args[0][2].limit).toEqual(3);
       });
 
       it('with a defined skip param', function() {
-        scope.tab.params.list = 'all';
         scope.resetEntries();
         expect(stubs.load.args[0][2].skip).toBeTruthy();
       });
 
       it('for all list', function() {
-        scope.tab.params.list = 'all';
         scope.resetEntries();
         expect(stubs.load.args[0][2]['sys.archivedAt[exists]']).toBe('false');
       });
 
       it('for published list', function() {
-        scope.tab.params.list = 'published';
+        scope.searchTerm = 'status:published';
         scope.resetEntries();
         expect(stubs.load.args[0][2]['sys.publishedAt[exists]']).toBe('true');
       });
 
       it('for changed list', function() {
-        scope.tab.params.list = 'changed';
+        scope.searchTerm = 'status:changed';
         scope.resetEntries();
         expect(stubs.load.args[0][2]['sys.archivedAt[exists]']).toBe('false');
         expect(stubs.load.args[0][2].changed).toBe('true');
       });
 
       it('for draft list', function() {
-        scope.tab.params.list = 'draft';
+        scope.searchTerm = 'status:draft';
         scope.resetEntries();
         expect(stubs.load.args[0][2]['sys.archivedAt[exists]']).toBe('false');
         expect(stubs.load.args[0][2]['sys.publishedVersion[exists]']).toBe('false');
@@ -349,16 +231,16 @@ describe('Entry List Controller', function () {
       });
 
       it('for archived list', function() {
-        scope.tab.params.list = 'archived';
+        scope.searchTerm = 'status:archived';
         scope.resetEntries();
         expect(stubs.load.args[0][2]['sys.archivedAt[exists]']).toBe('true');
       });
 
       it('for contentType list', function() {
-        scope.tab.params.list = 'contentType';
+        pending('Need to change the test so that the content type is actually found');
         scope.tab.params.contentTypeId = 'ct1';
         scope.resetEntries();
-        expect(stubs.load.args[0][2]['sys.contentType.sys.id']).toBe('ct1');
+        expect(stubs.load.args[0][2]['content_type']).toBe('ct1');
       });
 
       it('for search term', function() {

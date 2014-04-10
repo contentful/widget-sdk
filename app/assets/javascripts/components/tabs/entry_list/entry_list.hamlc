@@ -1,15 +1,28 @@
 .tab-header
-  .left-nav
+  .tab-title
     %h1 Entries
     %a.cf-knowledge-base-icon(
       tooltip="Learn more about Entries in the Knowledge Base Pages"
       tooltip-container=".entity-list"
       analytics-event="entries"
       href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
-  .search-area.with-left-nav
-    .search-field(search="searchTerm" placeholder="Search for Entries")
-  .add-entity(ng-class="{'with-pagination': paginator.numPages() > 1}"
-              ng-hide="spaceContext.publishedContentTypes.length == 0")
+
+  .search-area
+    .dropdown-btn.content-type-filter
+      %button.dropdown-toggle.default-button
+        %i.ss-dropdown.button-icon-right
+        {{ typeNameOr('Content Type') }}
+      .dropdown-menu
+        %ul
+          %li.type(ng-click="filterByContentType()" dropdown-close="") All
+          %li.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
+                   ng-click="filterByContentType(contentType)"
+                   dropdown-close="") {{contentType.getName()}}
+    .search-with-results(cf-tokenized-search="searchTerm" placeholder="Search for {{typeNameOr('Entries')}}")
+
+  .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries || paginator.numPages() < 2")
+
+  .add-entity(ng-hide="spaceContext.publishedContentTypes.length == 0")
     %button.dropdown-toggle.default-button.primary-button(
             ng-hide="(!singleContentType || singleContentType && entries.length < 1) && (noCfCanCleanup = true)"
             cf-can="create, Entry"
@@ -21,19 +34,17 @@
         %i.ss-plus.button-icon
         Add New Entry
       .dropdown-menu(position="bottomright" container=".tab-content")
-        %ul.menu-list
+        %ul
           %li.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
                    ng-click="createEntry(contentType, 'frameButton')"
                    dropdown-close="")
             %i.ss-plus
             {{contentType.getName()}}
 
-  .search-results-position(paginator="paginator")
-
 .tab-main
   .left-nav
-    %header Filter By Status
-    %ul.filter-list.status-filters
+    -#%header Filter By Status
+    -#%ul.filter-list.status-filters
       %li(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
         %span All
       %li(ng-class="{active: tab.params.list == 'changed'}" ng-click="switchList('changed')")
@@ -44,7 +55,7 @@
         %span Published
       %li(ng-class="{active: tab.params.list == 'archived'}" ng-click="switchList('archived')")
         %span Archived
-    %div(ng-show="spaceContext.publishedContentTypes.length > 0")
+    -#%div(ng-show="spaceContext.publishedContentTypes.length > 0")
       %header Filter By Content Types
       %ul.filter-list.type-filters
         %li(ng-class="{active: tab.params.contentTypeId == contentType.getId()}"
