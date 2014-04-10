@@ -5,6 +5,7 @@
       placeholder="{{placeholder}}"
       ng-change="inputChanged()"
       ng-keydown="keyPressed($event)"
+      ng-keyup="keyReleased($event)"
       ng-focus="inputFocused($event)"
       ng-blur="inputBlurred($event)")
   .search-button(ng-click="updateFromButton()" tabindex="0")

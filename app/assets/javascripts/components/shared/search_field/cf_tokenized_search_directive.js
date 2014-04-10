@@ -23,7 +23,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
       };
 
       scope.getPosition = function () {
-        return scope.hasFocus && input.textrange('get').end;
+        return scope.hasFocus && input.textrange('get').start;
       };
 
       scope.selectTokenRange = function () {
@@ -36,17 +36,32 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
         var originalString = scope.inner.term || '';
         var insertString;
         if (!token) {
-          console.error('OOPS NO TOKEN IN fillAutoCompletion', scope.inner.term);
+          //console.error('OOPS NO TOKEN IN fillAutoCompletion', scope.inner.term);
           token = {
-            offset: scope.getPosition(),
+            offset: scope.position || 0,
             length: 0
           };
         }
-        var isValue = token.type === 'Value';
-        insertString = isValue ? scope.selectedAutocompletion+' ' : scope.selectedAutocompletion+':';
+        insertString = scope.selectedAutocompletion;
         scope.inner.term = spliceSlice(originalString, token.offset, token.length, insertString);
         _.defer(function () {
-          input.textrange('set', token.offset + insertString.length);
+          input.textrange('set', token.offset, insertString.length);
+        });
+      };
+
+      scope.confirmAutocompletion = function () {
+        var token = scope.getCurrentToken();
+        var originalString = scope.inner.term || '';
+        var insertString = token.type === 'Key'   ? ''  :
+                           token.type === 'Query' ? ':' :
+                           ' ';
+        scope.inner.term = spliceSlice(originalString, token.end, 0, insertString);
+        _.defer(function () {
+          input.textrange('set', token.end + insertString.length, 0);
+          scope.$apply(function (scope) {
+            scope.position = token.end + insertString.length;
+            scope.updateAutocompletions();
+          });
         });
       };
 
@@ -59,6 +74,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
       $scope.inner = { term: null };
       $scope.autocompletions = [];
       $scope.selectedAutocompletion = null;
+      $scope.position = null;
 
       $scope.getContentType = function () {
         var id = $scope.tab && $scope.tab.params && $scope.tab.params.contentTypeId;
@@ -66,7 +82,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
       };
 
       $scope.getCurrentToken = function () {
-        return searchQueryHelper.currentSubToken($scope.inner.term, $scope.getPosition());
+        return searchQueryHelper.currentSubToken($scope.inner.term, $scope.position);
       };
 
       $scope.getCurrentPrefix = function () {
@@ -78,45 +94,51 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
       $scope.updateAutocompletions = function () {
         var contentType = $scope.getContentType(),
             term        = $scope.inner.term,
-            position    = $scope.getPosition();
+            position    = $scope.position;
         $scope.autocompletions = searchQueryHelper.offerCompletion(contentType, term, position) || [];
       };
 
       $scope.selectNextAutocompletion = function () {
         var index = _.indexOf($scope.autocompletions, $scope.selectedAutocompletion);
         $scope.selectedAutocompletion = $scope.autocompletions[index+1] || $scope.autocompletions[0];
-        $scope.selectTokenRange();
+        if ($scope.selectedAutocompletion) $scope.fillAutocompletion();
       };
 
       $scope.selectPreviousAutocompletion = function () {
         var index = _.indexOf($scope.autocompletions, $scope.selectedAutocompletion);
         $scope.selectedAutocompletion = $scope.autocompletions[index-1] || $scope.autocompletions[$scope.autocompletions.length-1];
-        $scope.selectTokenRange();
+        if ($scope.selectedAutocompletion) $scope.fillAutocompletion();
       };
 
-      $scope.$watchCollection(
-        '[inner.term, getPosition(), getContentType()]', function (n, old, scope) {
-          scope.updateAutocompletions();
-        });
+      $scope.$watch('getContentType()', 'updateAutocompletions()');
 
       $scope.inputChanged = function () {
-        console.log('input changed');
+        $scope.updateAutocompletions();
+      };
+
+      $scope.keyReleased = function () {
+        if ($scope.position !== $scope.getPosition()) {
+          $scope.position = $scope.getPosition();
+          $scope.updateAutocompletions();
+        }
       };
 
       $scope.keyPressed = function (event) {
-        //console.log('keyPressed', event);
-        //console.log('SearchkeyPressed, Term %o, Position %o, Pressed %o, Completions: %o', getSearchTerm(), getPosition(), event.keyCode, scope.autocompletions);
         if (event.keyCode == keycodes.DOWN){
           $scope.selectNextAutocompletion();
-          event.preventDefault();
+          if ($scope.selectedAutocompletion) event.preventDefault();
         } else if (event.keyCode == keycodes.UP) {
           $scope.selectPreviousAutocompletion();
           event.preventDefault();
+          if ($scope.selectedAutocompletion) event.preventDefault();
         } else if (event.keyCode == keycodes.ESC) {
-          $scope.selectedAutocompletion = null;
+          if ($scope.selectedAutocompletion) {
+            $scope.selectedAutocompletion = null;
+            event.preventDefault();
+          }
         } else if (event.keyCode == keycodes.ENTER) {
           if ($scope.selectedAutocompletion) {
-            $scope.fillAutocompletion();
+            $scope.confirmAutocompletion();
             $scope.selectedAutocompletion = null;
             event.preventDefault();
           }
