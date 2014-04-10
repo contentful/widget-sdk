@@ -22,6 +22,20 @@
 
   .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries || paginator.numPages() < 2")
 
+  .view-customizer
+    .dropdown-btn(ng-show="true")
+      %button.dropdown-toggle.default-button
+        %i.ss-columns.button-icon
+        %i.ss-dropdown.button-icon
+      .dropdown-menu(position="bottomright" container=".tab-content")
+        %ul
+          %li lol
+          -#%li.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
+                   ng-click="createEntry(contentType, 'frameButton')"
+                   dropdown-close="")
+            %i.ss-plus
+            {{contentType.getName()}}
+
   .add-entity(ng-hide="spaceContext.publishedContentTypes.length == 0")
     %button.dropdown-toggle.default-button.primary-button(
             ng-hide="(!singleContentType || singleContentType && entries.length < 1) && (noCfCanCleanup = true)"

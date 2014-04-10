@@ -12,33 +12,49 @@
   .tab-header
     +flexbox
     +justify-content(space-between)
+    +align-content(stretch)
+
     .tab-title
       +flex-grow(1)
       +left-nav-layout
       +tab-header-title
       h1
         line-height: 40px
-    .search-area
-      +flex-grow(3)
-      +flex-basis(60%)
-      padding-right: 40px
+
+    .view-customizer
+      +flexbox
+      +align-items(center)
+      +flex-grow(1)
+      margin-right: 20px
+      .dropdown-toggle
+        width: 55px
+        height: $tab-header-field-height
+        padding-right: 6px
+      .ss-dropdown
+        margin-left: 5px
+
     .add-entity
       +flex-grow(1)
-      +flex-basis(15%)
-      padding: $tab-header-padding 0
+      +flex-basis(12%)
+      +justify-content(flex-end)
+      +flexbox
+      +align-items(center)
       padding-right: 20px
       .default-button
+        overflow: hidden
         margin: 0
         width: 100%
-        overflow: hidden
+        height: $tab-header-field-height
         white-space: nowrap
         text-overflow: ellipsis
+
     .dropdown-menu
       $new-entities-dropdown-height: 600px
       max-height: $new-entities-dropdown-height
       ul
         max-height: $new-entities-dropdown-height - 30px
         overflow-y: auto
+
   .tab-main
     .left-nav
       overflow-y: auto

@@ -1,7 +1,10 @@
 .search-area
+  +flexbox
+  +flex-grow(3)
+  +flex-basis(60%)
   height: $tab-header-height
   padding: $tab-header-padding 0
-  +flexbox
+  padding-right: 20px
 
 .content-type-filter
   +flex-grow(1)
@@ -83,6 +86,7 @@
   +flex-grow(1)
   +flex-basis(15%)
   min-width: 150px
+  font-weight: 600
   .paginator
     +flexbox
     +align-items(center)
