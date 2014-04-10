@@ -22,8 +22,8 @@
                 {{selectedOrganization.name}}
                 %i.button-icon-right.ss-dropdown
               .dropdown-menu.fixed-position
-                %ul(ng-repeat="org in writableOrganizations")
-                  %li(ng-click="selectOrganization(org)" dropdown-close="") {{org.name}}
+                %ul.dropdown-menu-list(ng-repeat="org in writableOrganizations")
+                  %li.dropdown-menu-item(ng-click="selectOrganization(org)" dropdown-close="") {{org.name}}
         .form-field
           %label Locale
           .form-controls

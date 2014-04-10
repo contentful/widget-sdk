@@ -34,8 +34,8 @@
         %i.ss-plus.button-icon
         New
       %a.dropdown-menu
-        %ul
-          %li(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
+        %ul.dropdown-menu-list
+          %li.dropdown-menu-item(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
               ng-click="addNewEntry(contentType)"
               dropdown-close="")
             {{contentType.getName()}}

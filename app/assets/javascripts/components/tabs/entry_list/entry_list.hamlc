@@ -12,10 +12,11 @@
       %button.dropdown-toggle.default-button
         %i.ss-dropdown.button-icon-right
         {{ typeNameOr('Content Type') }}
+      -# TODO replace with a native dropdown
       .dropdown-menu
-        %ul
-          %li.type(ng-click="filterByContentType()" dropdown-close="") All
-          %li.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
+        %ul.dropdown-menu-list
+          %li.dropdown-menu-item.type(ng-click="filterByContentType()" dropdown-close="") All
+          %li.dropdown-menu-item.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
                    ng-click="filterByContentType(contentType)"
                    dropdown-close="") {{contentType.getName()}}
     .search-with-results(cf-tokenized-search="searchTerm" placeholder="Search for {{typeNameOr('Entries')}}")
@@ -36,8 +37,8 @@
         %i.ss-plus.button-icon
         Add New Entry
       .dropdown-menu(position="bottomright" container=".tab-content")
-        %ul
-          %li.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
+        %ul.dropdown-menu-list
+          %li.dropdown-menu-item.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
                    ng-click="createEntry(contentType, 'frameButton')"
                    dropdown-close="")
             %i.ss-plus
