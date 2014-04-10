@@ -163,7 +163,7 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
 
   function extractPairs(tokens) {
     return _.reduce(tokens, function (pairs, token) {
-      if (token.type == 'Pair' && token.content.value.type === 'Query') pairs.push(token);
+      if (token.type == 'Pair' && token.content.value.length > 0) pairs.push(token);
       return pairs;
     }, []);
   }

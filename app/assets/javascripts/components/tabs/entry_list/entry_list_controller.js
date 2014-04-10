@@ -33,7 +33,6 @@ angular.module('contentful').controller('EntryListCtrl',
       spaceId: (scope.spaceContext.space && scope.spaceContext.space.getId())
     };
   }, function(pageParameters, old, scope){
-    console.log('page parameters changed', pageParameters.searchTerm);
     scope.resetEntries();
   }, true);
 

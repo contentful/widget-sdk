@@ -155,6 +155,8 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
             $scope.confirmAutocompletion();
             $scope.selectedAutocompletion = null;
             event.preventDefault();
+          } else {
+            $scope.search = $scope.inner.term;
           }
         }
       };
