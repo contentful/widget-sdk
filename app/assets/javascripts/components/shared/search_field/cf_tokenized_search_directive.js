@@ -3,13 +3,24 @@
 angular.module('contentful').directive('cfTokenizedSearch', function($parse, searchQueryHelper, keycodes){
   return {
     template: JST['cf_tokenized_search'](),
-    scope: {
-      placeholder: '@',
-      search: '=cfTokenizedSearch',
-      tooltip: '@'
-    },
+    link: function(scope, element, attr) {
+      var getSearchTerm = $parse(attr.cfTokenizedSearch),
+          setSearchTerm = getSearchTerm.assign;
 
-    link: function(scope, element) {
+      scope.$watch(function (scope) {
+        return getSearchTerm(scope.$parent);
+      }, function (term) {
+        scope.inner.term = term;
+      });
+
+      attr.$observe('placeholder', function (placeholder) {
+        scope.placeholder = placeholder;
+      });
+
+      scope.submitSearch = function (term) {
+        setSearchTerm(scope.$parent, term);
+      };
+
       var input = element.find('input');
       scope.hasFocus = false;
 
@@ -56,6 +67,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
                            token.type === 'Query' ? ':' :
                            ' ';
         scope.inner.term = spliceSlice(originalString, token.end, 0, insertString);
+        scope.clearBackupString();
         _.defer(function () {
           input.textrange('set', token.end + insertString.length, 0);
           scope.$apply(function (scope) {
@@ -76,6 +88,10 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
           scope.inner.term = spliceSlice(scope.inner.term, token.offset, token.length, scope._backupString);
           scope._backupString = null;
         }
+      };
+
+      scope.clearBackupString = function () {
+        scope._backupString = null;
       };
 
       function spliceSlice(str, index, count, add) {
@@ -156,7 +172,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
             $scope.selectedAutocompletion = null;
             event.preventDefault();
           } else {
-            $scope.search = $scope.inner.term;
+            $scope.submitSearch($scope.inner.term);
           }
         }
       };
