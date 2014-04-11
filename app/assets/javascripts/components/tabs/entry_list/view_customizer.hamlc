@@ -3,10 +3,18 @@
     %i.ss-columns.button-icon
     %i.ss-dropdown.button-icon
   .dropdown-menu(position="bottomright" container=".tab-content")
+    %h3 Displayed
     %ul
-      %li.type(ng-repeat="field in filteredContentType.data.fields track by field.id"
-               ng-click=""
-               dropdown-close="")
+      %li.type(ng-repeat="field in displayedFields track by field.id"
+               ng-click="")
+        {{field.name}}
+
+    %hr
+
+    %h3 Add Columns
+    %ul
+      %li.type(ng-repeat="field in hiddenFields track by field.id"
+               ng-click="")
         {{field.name}}
 
 
