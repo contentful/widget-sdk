@@ -28,7 +28,7 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
 
     function onSave(imageID, newURL) {
       featherEditor.showWaitIndicator();
-      filepicker.store(imageID, newURL, file)
+      filepicker.store(newURL, file)
       .then(function (res) {
         createDeferred.resolve(res);
       })

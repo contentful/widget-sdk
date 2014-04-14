@@ -30,14 +30,14 @@ angular.module('contentful').factory('filepicker', function ($window, environmen
 
     return {
       makeDropPane: function (dropPane, options) {
-        options = _.extend(settings, options);
+        options = _.extend(_.clone(settings), options);
         return $window.filepicker.makeDropPane(dropPane, options);
       },
 
       pick: function () {
         var deferred = $q.defer();
 
-        $window.filepicker.pick(settings, function(FPFile){
+        $window.filepicker.pick(_.clone(settings), function(FPFile){
           $rootScope.$apply(function () {
             deferred.resolve(FPFile);
           });
@@ -50,7 +50,7 @@ angular.module('contentful').factory('filepicker', function ($window, environmen
         return deferred.promise;
       },
 
-      store: function (imageID, newURL, file) {
+      store: function (newURL, file) {
         var deferred = $q.defer();
 
         $window.filepicker.store({
@@ -60,7 +60,7 @@ angular.module('contentful').factory('filepicker', function ($window, environmen
           isWriteable: true,
           size: file.details.size
         },
-        settings,
+        _.clone(settings),
         function(FPFile){
           $rootScope.$apply(function () {
             deferred.resolve(FPFile);

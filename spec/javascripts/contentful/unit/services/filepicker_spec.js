@@ -29,7 +29,7 @@ describe('Filepicker service', function () {
 
   describe('returns filepicker object', function () {
     var filepicker, $window;
-    var makeDropPaneStub, pickStub;
+    var makeDropPaneStub, pickStub, storeStub;
     beforeEach(function () {
       module('contentful/test', function ($provide) {
         $provide.constant('environment', {
@@ -47,6 +47,7 @@ describe('Filepicker service', function () {
 
         makeDropPaneStub = sinon.stub($window.filepicker, 'makeDropPane');
         pickStub = sinon.stub($window.filepicker, 'pick');
+        storeStub = sinon.stub($window.filepicker, 'store');
       });
     });
 
@@ -54,6 +55,7 @@ describe('Filepicker service', function () {
       inject(function ($log) {
         makeDropPaneStub.restore();
         pickStub.restore();
+        storeStub.restore();
         $log.assertEmpty();
       });
     });
@@ -69,7 +71,7 @@ describe('Filepicker service', function () {
     describe('makeDropPane is called', function () {
       var dropPane = {drop: 'pane'};
       beforeEach(function () {
-        filepicker.makeDropPane(dropPane, {option: 'droppane'});
+        filepicker.makeDropPane(dropPane, {option: 'droppane', extraoption: 'extra'});
       });
 
       it('filepicker method gets called', function () {
@@ -91,16 +93,19 @@ describe('Filepicker service', function () {
       it('filepicker method gets called with signature', function () {
         expect(makeDropPaneStub.args[0][1].signature).toBe('signature');
       });
+
+      it('has an extra option', function() {
+        expect(makeDropPaneStub.args[0][1].extraoption).toBe('extra');
+      });
+
+      it('extra option disappears if called again', function() {
+        filepicker.makeDropPane(dropPane, {});
+        expect(makeDropPaneStub.args[1][1].extraoption).toBeUndefined();
+      });
+
     });
 
     describe('pick is called', function () {
-      var $rootScope;
-      beforeEach(function () {
-        inject(function (_$rootScope_) {
-          $rootScope = _$rootScope_;
-        });
-      });
-
       it('returns a file', function () {
         var successStub = sinon.stub();
         var file = {file: 'name'};
@@ -118,6 +123,47 @@ describe('Filepicker service', function () {
           expect(errorStub).toBeCalledWith(error);
         });
       });
+
+      it('has no extra option if passed previously', function() {
+        filepicker.makeDropPane({}, {extraoption: 'extra'});
+        filepicker.pick();
+        expect(pickStub.args[0][0].extraoption).toBeUndefined();
+      });
+
+    });
+
+    describe('store is called', function() {
+      it('returns a file', function () {
+        var successStub = sinon.stub();
+        var file = {fileName: 'name', mimetype: 'type', details: {size: 'size'}};
+        storeStub.callsArgWith(2, file);
+        filepicker.store('newurl', file).then(successStub).finally(function () {
+          expect(successStub).toBeCalled();
+          expect(successStub.args[0][0]).toEqual({
+            url: 'newurl',
+            filename: 'name',
+            mimetype: 'type',
+            isWriteable: true,
+            size: 'size'
+          });
+        });
+      });
+
+      it('returns an error', function () {
+        var errorStub = sinon.stub();
+        var error = new Error('fileerror');
+        storeStub.callsArgWith(3, error);
+        filepicker.store('', {details: {}}).catch(errorStub).finally(function () {
+          expect(errorStub).toBeCalledWith(error);
+        });
+      });
+
+      it('has no extra option if passed previously', function() {
+        filepicker.makeDropPane({}, {extraoption: 'extra'});
+        filepicker.store('', {details: {}});
+        expect(storeStub.args[0][1].extraoption).toBeUndefined();
+      });
+
 
     });
 
