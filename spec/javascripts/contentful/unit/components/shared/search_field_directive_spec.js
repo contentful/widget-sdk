@@ -1,13 +1,13 @@
 'use strict';
 
-describe('cfSearch Directive', function () {
+describe('searchField Directive', function () {
   var element, scope, isolateScope, compileElement;
   beforeEach(function () {
     module('contentful/test');
     inject(function ($compile, $rootScope) {
       scope = $rootScope.$new();
       compileElement = function () {
-        element = $compile('<div class="search-field" cf-search="searchTerm" search-all="searchAllFlag"></div>')(scope);
+        element = $compile('<div class="search-field" search="searchTerm" search-all="searchAllFlag"></div>')(scope);
         scope.$digest();
         isolateScope = element.isolateScope();
       };

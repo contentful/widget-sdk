@@ -1,12 +1,11 @@
 .tab-header
-  .tab-title
+  .left-nav
     %h1 Content Delivery
     %a.cf-knowledge-base-icon(
       tooltip="Learn more about API Keys in the Knowledge Base Pages"
       tooltip-container=".entity-list"
       analytics-event="api_keys"
       href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
-
   .add-entity(ng-class="{'with-pagination': paginator.numPages() > 1}" ng-hide="empty")
     %button.default-button.primary-button(cf-can="create, ApiKey" ng-click="createApiKey('frameButton')")
       %i.ss-plus.button-icon

@@ -4,7 +4,7 @@
     Corrupt location data!
 .sub-fields(cf-autocomplete-results="results" autocomplete-term="searchTerm")
   .search(ng-show="otEditable")
-    .search-field(placeholder="Search Address" cf-search="searchTerm" search-type-ahead)
+    .search-field(placeholder="Search Address" search="searchTerm" search-type-ahead)
     .results.search-options-on(ng-show="results.length > 0")
       %ul
         %li(ng-repeat="(index, result) in results track by index" ng-click="pickResult(result)" ng-class="{selected: result==selectedResult}")

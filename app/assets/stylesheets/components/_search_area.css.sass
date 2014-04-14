@@ -1,43 +1,61 @@
+// Search Area Layout
+
 .search-area
   height: $tab-header-height
   padding: $tab-header-padding 0
-  +flexbox
 
-.content-type-filter
-  +flex-grow(1)
-  .dropdown-toggle
-    height: $tab-header-field-height
+.search-area
+  .search-field
+    width: 83%
 
-.search-with-results
-  position: relative
-  +flex-grow(2)
-  +flex-basis(70%)
+.search-area
+  .search-field,
+  .search-view-options
+    float: left
+
+.search-view-options
+  margin-left: 10px
+
+// Search Field Layout
 
 .search-field
-  position: relative
-  width: 100%
-  max-width: 800px
+  display: table
+  table-layout: fixed
+  border-spacing: 0
   height: $tab-header-field-height
-  background-color: white
+  .row
+    //outline: 1px red dashed
+    height: $tab-header-field-height
+    display: table-row
+    > *
+      display: table-cell
+      //outline: 1px blue dashed
+    .search-filters
+      //width: 10%
+    .input
+      //width: 20%
+      //position: relative
+      input[type="search"]
+        //position: absolute
+        width: 100%
+        height: 100%
+
+// Search-Field Look
+
+.search-field
+  background: white
   border: 1px solid $lightest-gray
   +border-radius(20px 20px 20px 20px)
   +box-shadow(0 1px 3px rgba(0,0,0,0.1) inset)
-
-  .input
-    width: 90%
-    height: 100%
   input[type="search"]
-    padding: 0 7px
-    width: 100%
-    height: 100%
-    font-size: 12px
     -webkit-appearance: none
-    -moz-appearance: none
-    appearance: none
+    -moz-appeareance: none
     border: none
+    font-size: 12px
+    padding: 0 7px
     color: $dark-gray
     opacity: 0.6
-    +border-radius(20px 0px 0px 20px)
+    +border-radius(20px 20px 20px 20px)
     &::-webkit-search-cancel-button
       display: none
   input:focus
@@ -45,59 +63,102 @@
     border: none
     outline: none
 
-.search-button
-  position: absolute
-  top: 0
-  right: 0
-  bottom: 0
-  padding: 0 7px 0 9px
-  width: 35px
-  font-size: 12px
-  line-height: $tab-header-field-height - 2px
+.search-field.with-filters
+  input
+    +border-top-left-radius(0)
+    +border-bottom-left-radius(0)
+
+// Common styles for elements in the search area
+
+%search-area-button
   cursor: pointer
   background-color: $gray-background
+  line-height: $tab-header-field-height - 2px
   +box-shadow(0 1px 3px rgba(255,255,255,0.8) inset)
-  border-left: 1px solid $lightest-gray
-  +border-radius(0 20px 20px 0)
   &:active
     +box-shadow(0 1px 2px rgba(0,0,0,0.05) inset)
+
+%search-field-button
+  @extend %search-area-button
+  padding: 0 7px 0 9px
+  font-size: 12px
+
+// Search filter buttons look
+
+.search-filters
+  li
+    @extend %search-field-button
+    border-right: 1px solid $lightest-gray
+    &:first-child
+      +border-radius(20px 0 0 20px)
+      padding-left: 15px
+    .ss-delete
+      @extend %delete-icon
+      margin: 0 0 0 6px
+      position: relative
+      top: 1px
+  .search-filter-title
+    color: $light-gray
+
+// Search options look
+
+.search-button
+  @extend %search-field-button
+  border-left: 1px solid $lightest-gray
+  +border-radius(0 20px 20px 0)
+  width: 35px
   .ss-search
     position: relative
     top: 2px
 
-.search-autocomplete-list
-  .selected
-    color: white
-    +blue-highlight
+.search-view-options
+  .dropdown-toggle
+    @extend %search-area-button
+    padding: 0 5px 0 10px
+    width: 40px
+    border: 1px solid $lightest-gray
+    +border-radius(3px 3px 3px 3px)
 
 // Search results position widget
+
 .search-results-position
-  +flexbox
-  +align-content(stretch)
-  +flex-grow(1)
-  +flex-basis(15%)
-  min-width: 150px
-  .paginator
-    +flexbox
-    +align-items(center)
-  .text
-    margin-right: 11px
-    p
-      float: left
-      margin-right: 5px
-      margin-bottom: 0
-  //.track
-    width: 8px
+  // layout
+  position: absolute
+  right: 0
+  top: 0
+  bottom: 0
+  .track
+    position: absolute
+    right: 0
     height: 100%
+  .fill
+    position: absolute
+    top: 0
+    right: 0
+  .tip
+    position: absolute
+    margin-top: -11px
+    white-space: nowrap
+  // internal behavior/styles
+  $position: 50%
+  .track
     background-color: $gray-background
+    width: 8px
     +box-shadow(1px 0 1px rgba(0,0,0,0.06) inset)
     +border-radius(0 2px 0 0)
-  //.fill
-    //position: absolute
-    //top: 0
-    //right: 0
-    //height: 0
+
+  .fill
+    height: $position
     width: 8px
+    +single-transition(height, 400ms, linear)
     +gradient(#459cd9, #1e82c8)
     +border-radius(0 2px 0 0)
 
+  .tip
+    right: 19px
+    top: $position
+    +single-transition(top, 400ms, linear)
+    .search-results-active
+      font-size: 12px
+      color: $dark-gray
+      font-weight: 700

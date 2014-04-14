@@ -6,8 +6,7 @@ var UserInterface = {
   mimetype: require('contentful-mimetype'),
   contentfulClient: require('contentful-client'),
   stringifySafe: require('json-stringify-safe'),
-  isDiacriticalMark: require('is-diacritical-mark'),
-  searchParser: require('./search')
+  isDiacriticalMark: require('is-diacritical-mark')
 };
 
 module.exports = UserInterface;
@@ -26,8 +25,7 @@ if (angular) {
     constant('mimetype', UserInterface.mimetype).
     constant('worf', UserInterface.worf).
     constant('stringifySafe', UserInterface.stringifySafe).
-    constant('isDiacriticalMark', UserInterface.isDiacriticalMark).
-    constant('searchParser', UserInterface.searchParser);
+    constant('isDiacriticalMark', UserInterface.isDiacriticalMark);
   angular.module('contentful/user_interface').factory('marked', function () {
     var marked = require('marked');
     marked.setOptions({

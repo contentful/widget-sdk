@@ -10,29 +10,22 @@
     .main-results
       border-left: none
   .tab-header
-    +flexbox
-    +justify-content(space-between)
-    .tab-title
-      +flex-grow(1)
-      +left-nav-layout
-      +tab-header-title
-      h1
-        line-height: 40px
     .search-area
-      +flex-grow(3)
-      +flex-basis(60%)
-      padding-right: 40px
+      max-width: 600px
+    .left-nav
+      margin: 0
+      padding: 0
+      overflow: hidden
     .add-entity
-      +flex-grow(1)
-      +flex-basis(15%)
+      position: absolute
+      top: 0
+      bottom: 0
+      right: 20px
       padding: $tab-header-padding 0
-      padding-right: 20px
       .default-button
         margin: 0
-        width: 100%
-        overflow: hidden
-        white-space: nowrap
-        text-overflow: ellipsis
+    .add-entity.with-pagination
+      right: 70px
     .dropdown-menu
       $new-entities-dropdown-height: 600px
       max-height: $new-entities-dropdown-height

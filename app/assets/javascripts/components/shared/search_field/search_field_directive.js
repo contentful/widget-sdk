@@ -1,11 +1,20 @@
 'use strict';
 
-angular.module('contentful').directive('cfSearch', function(keycodes){
+// Search field should have the following interface:
+// list of categories, with autocomplete request and select function per
+// category (async functions)
+//
+// For now, without categories, just an enter function or idle function
+
+// A version of ngClick that performs stopPropagation() and
+// preventDefault() to support nested click targets
+angular.module('contentful').directive('searchField', function(keycodes){
   return {
-    template: JST['cf_search'](),
+    restrict: 'C',
+    template: JST['search_field'](),
     scope: {
       placeholder: '@',
-      search: '=cfSearch',
+      search: '=',
       searchAll: '=?',
       tooltip: '@'
     },
@@ -32,7 +41,7 @@ angular.module('contentful').directive('cfSearch', function(keycodes){
       });
     },
 
-    controller: function cfSearchController($scope) {
+    controller: function SearchFieldCtrl($scope) {
       $scope.inner = {
         term: ''
       };
