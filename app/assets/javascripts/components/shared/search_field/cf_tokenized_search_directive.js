@@ -3,6 +3,7 @@
 angular.module('contentful').directive('cfTokenizedSearch', function($parse, searchQueryHelper, keycodes){
   return {
     template: JST['cf_tokenized_search'](),
+    scope: true,
     link: function(scope, element, attr) {
       var getSearchTerm = $parse(attr.cfTokenizedSearch),
           setSearchTerm = getSearchTerm.assign;
