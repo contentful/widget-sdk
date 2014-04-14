@@ -4,6 +4,13 @@ angular.module('contentful').controller('ViewCustomizerCtrl', function ViewCusto
 
   var systemFields = [
     {
+      id: 'updated',
+      name: 'Updated',
+      type: 'Date',
+      sys: true,
+      persistent: true
+    },
+    {
       id: 'author',
       name: 'Author',
       type: 'Symbol',
@@ -15,22 +22,32 @@ angular.module('contentful').controller('ViewCustomizerCtrl', function ViewCusto
       type: 'Symbol',
       sys: true,
       persistent: true
-    },
-    {
-      id: 'updated',
-      name: 'Updated',
-      type: 'Date',
-      sys: true,
-      persistent: true
     }
   ];
+
+  var displayedFieldIds = ['author', 'status', 'updated'];
 
   function initFields() {
     $scope.displayedFields = systemFields;
     $scope.hiddenFields = [];
   }
 
-  var displayedFieldIds = ['author', 'status', 'updated'];
+  function determineFieldVisibility() {
+    var displayedFields = systemFields.concat($scope.filteredContentTypeFields);
+
+    var titleIndex = _.findIndex(displayedFields, function (field) {
+      return field.id == $scope.filteredContentType.data.displayField;
+    });
+    displayedFields[titleIndex].persistent = true;
+    displayedFieldIds.push(displayedFields[titleIndex].id);
+
+    var displayFilter = function(field) {
+      return _.contains(displayedFieldIds, field.id);
+    };
+
+    $scope.displayedFields = _.filter(displayedFields, displayFilter);
+    $scope.hiddenFields = _.sortBy(_.reject(displayedFields, displayFilter), 'name');
+  }
 
   initFields();
 
@@ -38,24 +55,20 @@ angular.module('contentful').controller('ViewCustomizerCtrl', function ViewCusto
     if(!contentType){
       initFields();
     } else {
-      var fields = contentType ? contentType.data.fields : [];
-      var displayedFields = systemFields.concat(fields);
-
-      var titleIndex = _.findIndex(displayedFields, function (field) {
-        return field.id == contentType.data.displayField;
-      });
-      displayedFields[titleIndex].persistent = true;
-      displayedFieldIds.push(displayedFields[titleIndex].id);
-
-      displayedFields = _.sortBy(displayedFields, 'name');
-
-      var displayFilter = function(field) {
-        return _.contains(displayedFieldIds, field.id);
-      };
-
-      $scope.displayedFields = _.filter(displayedFields, displayFilter);
-      $scope.hiddenFields = _.reject(displayedFields, displayFilter);
+      $scope.filteredContentTypeFields = contentType ? contentType.data.fields : [];
+      determineFieldVisibility();
     }
   });
+
+  $scope.addDisplayField = function (fieldId) {
+    displayedFieldIds.push(fieldId);
+    determineFieldVisibility();
+  };
+
+  $scope.removeDisplayField = function (fieldId) {
+    var index = _.indexOf(displayedFieldIds, fieldId);
+    displayedFieldIds.splice(index, 1);
+    determineFieldVisibility();
+  };
 
 });

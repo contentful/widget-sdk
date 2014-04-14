@@ -4,17 +4,17 @@
     %i.ss-dropdown.button-icon
   .dropdown-menu(position="bottomright" container=".tab-content")
     %h3 Displayed
-    %ul
-      %li.type(ng-repeat="field in displayedFields track by field.id"
-               ng-click="")
-        {{field.name}}
+    %ul.displayed-fields
+      %li(ng-repeat="field in displayedFields track by field.id" data-field-id="{{field.id}}")
+        %p {{field.name}}
+        .close-button(ng-show="!field.persistent" ng-click="hideField($event, field.id)")
 
     %hr
 
     %h3 Add Columns
-    %ul
-      %li.type(ng-repeat="field in hiddenFields track by field.id"
-               ng-click="")
-        {{field.name}}
+    %ul.hidden-fields
+      %li(ng-repeat="field in hiddenFields track by field.id")
+        %a(ng-click="displayField($event, field.id)")
+          {{field.name}}
 
 

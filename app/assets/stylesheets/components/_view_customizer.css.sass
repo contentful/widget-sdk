@@ -12,3 +12,33 @@
   hr
     margin: 15px 0px
     background-color: $dark-rule
+
+.displayed-fields
+  li
+    overflow: hidden
+    &:hover
+      .close-button
+        display: block
+  p, .close-button
+    float: left
+  p, a
+    line-height: 20px
+  p
+    clear: left
+    cursor: move
+  .dragging
+    text-shadow: lighten($dark-gray, 0.6) 1px 1px 5px
+    &:hover
+      .close-button
+        display: none
+  .close-button
+    display: none
+    margin-top: -2px
+    margin-left: 5px
+    &:after
+      font-size: 16px
+
+.hidden-fields
+  a
+    cursor: pointer
+
