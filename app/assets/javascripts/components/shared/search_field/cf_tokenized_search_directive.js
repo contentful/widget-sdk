@@ -64,9 +64,9 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
       scope.confirmAutocompletion = function () {
         var token = scope.getCurrentToken();
         var originalString = scope.inner.term || '';
-        var insertString = token.type === 'Key'   ? ''  :
-                           token.type === 'Query' ? ':' :
-                           ' ';
+        var insertString = token.type === 'Value'    ? ' ' :
+                           token.type === 'Operator' ? ''  :
+                           searchQueryHelper.operatorsForKey(token.content, scope.getContentType())[0];
         scope.inner.term = spliceSlice(originalString, token.end, 0, insertString);
         scope.clearBackupString();
         _.defer(function () {
@@ -112,7 +112,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
       };
 
       $scope.getCurrentToken = function () {
-        return searchQueryHelper.currentSubToken($scope.inner.term, $scope.position);
+        return searchQueryHelper.currentSubToken($scope.getContentType(), $scope.inner.term, $scope.position);
       };
 
       $scope.getCurrentPrefix = function () {

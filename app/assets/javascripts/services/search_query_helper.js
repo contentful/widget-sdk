@@ -11,10 +11,20 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
   }
 
   function tokenPosition(cursorPos, token) {
-    if (cursorPos  <  token.offset) return 'before';
-    if (cursorPos  <  token.end   ) return 'inside';
-    if (cursorPos === token.end   ) return 'end';
-    return 'after';
+    var pos = {
+      before: cursorPos     <  token.offset,
+      start:  cursorPos    === token.offset,
+      inside: token.offset  <  cursorPos && cursorPos < token.end,
+      end:    cursorPos    === token.end,
+      after:  token.end     <  cursorPos,
+    };
+
+    pos.outside = pos.before || pos.after;
+    pos.pre     = pos.start  || pos.inside;
+    pos.post    = pos.inside || pos.end;
+    pos.touch   = pos.pre    || pos.post;
+
+    return pos;
   }
 
   var api = {
@@ -25,34 +35,53 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
       for (var i = 0, l = tokens.length; i < l; i ++) {
         var token = tokens[i];
         var pos = tokenPosition(cursorPos, token);
-        if (pos === 'after') continue;
-        if (pos === 'inside' || pos === 'end') {
-          return token;
-        }
+        if (pos.after) continue;
+        if (pos.touch) return token;
       }
     },
 
-    currentSubToken: function (queryString, cursorPos) {
+    currentSubToken: function (contentType, queryString, cursorPos) {
       var token = api.currentToken(queryString, cursorPos);
       if (token && token.type === 'Pair') {
-        if (cursorPos <= token.content.operator.offset) {
-          return token.content.key;
-        } else {
-          return token.content.value;
-        }
+        var p = token.content;
+        var pos = tokenPosition(cursorPos, token.content.operator);
+        var key = token.content.key.content;
+        if (pos.before) return p.key;
+        if (pos.pre)    return p.operator;
+        else if (pos.end) {
+          var values    = valueCompletion(key, contentType);
+          return !_.isEmpty(values) ? p.value : p.operator;
+        } else return p.value;
       } else {
         return token;
       }
     },
 
+    // TODO Make sure currentSubToken and offerCompletion are using the same logic to find the token
+
     offerCompletion: function (contentType, queryString, cursorPos) {
       var token = api.currentToken(queryString, cursorPos);
       
-      if (token && token.type === 'Pair' && token.content.operator.end <= cursorPos) {
-        return valueCompletion(token.content.key.content, contentType);
+      if (token && token.type === 'Pair') {
+        var pos = tokenPosition(cursorPos, token.content.operator);
+        var key = token.content.key.content;
+        if (pos.pre) {
+          return operatorCompletion(key, contentType);
+        } else if (pos.end) {
+          var operators = operatorCompletion(key, contentType),
+              values    = valueCompletion(key, contentType);
+          return !_.isEmpty(values)   ? values    :
+                 operators.length > 1 ? operators : // if 1 operator it has already been filled
+                 [];
+        } else if (pos.after) {
+          return valueCompletion(key, contentType);
+        }
       }
-
       return keyCompletion(contentType);
+    },
+
+    operatorsForKey: function (key, contentType) {
+      return operatorCompletion(key, contentType);
     },
 
     buildQuery: function (contentType, queryString) {
@@ -118,6 +147,11 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
       completions.push.apply(completions, _.keys(createFieldsLookup(contentType)));
     completions.push.apply(completions, _.keys(autocompletion));
     return completions;
+  }
+
+  function operatorCompletion(key, contentType) {
+    console.log('LOL', key, contentType);
+    return [':', '=='];
   }
 
   function valueCompletion(key, contentType) {

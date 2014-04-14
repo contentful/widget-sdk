@@ -30,7 +30,7 @@ Pair
     }
 
 Operator
-  = _ op:":" _
+  = _ op:$(":" / [<>!=] "=" / "=" / [<>]) _
     { return annotate2(op, 'Operator') }
 
 Value
