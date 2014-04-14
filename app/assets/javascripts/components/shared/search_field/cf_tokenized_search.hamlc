@@ -10,6 +10,6 @@
       ng-blur="inputBlurred($event)")
   .search-button(ng-click="updateFromButton()" tabindex="0")
     %i.ss-search
-.results(ng-if="autocompletions.length > 0 && selectedAutocompletion")
+.results(ng-if="autocompletions.length > 0 && !!selectedAutocompletion")
   %ul.search-autocomplete-list
     %li(ng-repeat="completion in autocompletions" ng-class="{selected: completion === selectedAutocompletion}") {{completion}}
