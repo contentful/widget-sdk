@@ -78,7 +78,7 @@
         %tr
           %th.cell-select
             %input(type="checkbox" cf-selection="" ng-show="entries.length > 0" tabindex="-1")
-          %th.cell-content-type Content Type
+          %th.cell-content-type(ng-show="!filteredContentType") Content Type
           %th.cell-name Name
           %th.cell-updated Updated
           %th.cell-by By
@@ -90,7 +90,7 @@
           %tr(ng-repeat="entry in visibleEntries = (entries | filter:visibleInCurrentList) track by entry.getId()" cf-click-local="navigator.entryEditor(entry).goTo()")
             %td.cell-select(ng-click="selection.toggle(entry);$event.stopPropagation()")
               %input(type="checkbox" cf-selection="entry" tabindex="-1")
-            %td.cell-content-type
+            %td.cell-content-type(ng-show="!filteredContentType")
               %span {{spaceContext.publishedTypeForEntry(entry).getName()}}
             %td.cell-name
               %span {{spaceContext.entryTitle(entry)}}
