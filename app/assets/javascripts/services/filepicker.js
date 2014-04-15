@@ -1,16 +1,8 @@
 'use strict';
 
-angular.module('contentful').factory('filepicker', function ($window, environment, $q, $rootScope) {
-  function loadFile(file) {
-    var b = document.createElement('script');
-    b.type = 'text/javascript';
-    b.async = !0;
-    b.src = ('https:' === document.location.protocol ? 'https:' : 'http:') + '//api.filepicker.io/v1/'+file;
-    var c = document.getElementsByTagName('script')[0];
-    c.parentNode.insertBefore(b, c);
-  }
-
+angular.module('contentful').factory('filepicker', function ($window, environment, $q, $rootScope, jsloader) {
     if (!$window.filepicker) {
+      var loadFile = jsloader.create('//api.filepicker.io/v1/');
       loadFile('filepicker.js');
       if(environment.env == 'development'){
         loadFile('filepicker_debug.js');
@@ -38,13 +30,38 @@ angular.module('contentful').factory('filepicker', function ($window, environmen
 
     return {
       makeDropPane: function (dropPane, options) {
-        options = _.extend(settings, options);
+        options = _.extend(_.clone(settings), options);
         return $window.filepicker.makeDropPane(dropPane, options);
       },
+
       pick: function () {
         var deferred = $q.defer();
 
-        $window.filepicker.pick(settings, function(FPFile){
+        $window.filepicker.pick(_.clone(settings), function(FPFile){
+          $rootScope.$apply(function () {
+            deferred.resolve(FPFile);
+          });
+        }, function (FPError) {
+          $rootScope.$apply(function () {
+            deferred.reject(FPError);
+          });
+        });
+
+        return deferred.promise;
+      },
+
+      store: function (newURL, file) {
+        var deferred = $q.defer();
+
+        $window.filepicker.store({
+          url: newURL,
+          filename: file.fileName,
+          mimetype: file.contentType,
+          isWriteable: true,
+          size: file.details.size
+        },
+        _.clone(settings),
+        function(FPFile){
           $rootScope.$apply(function () {
             deferred.resolve(FPFile);
           });

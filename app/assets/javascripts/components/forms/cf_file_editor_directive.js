@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfFileEditor', function (notification, filepicker, $parse) {
+angular.module('contentful').directive('cfFileEditor', function (notification, filepicker, $parse, aviary, environment) {
   return {
     restrict: 'C',
     require: ['ngModel', '^otPath'],
@@ -42,6 +42,26 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
         });
       };
 
+      scope.editFile = function () {
+        var img = elem.find('.thumbnail').get(0);
+        var preview = elem.find('.editor-preview').get(0);
+        preview.src = '';
+        var imgUrl = img.src.replace(/(\.\w+)\?.*/, '$1');
+        preview.onload = function () {
+          aviary.createEditor({
+            file: scope.file,
+            image: preview,
+            url: imgUrl
+          }).then(function (FPFile) {
+            changeHandler(FPFile);
+          }).catch(function (FPError) {
+            notification.serverError('There has been a problem saving the file', FPError);
+            aviary.close();
+          });
+        };
+        preview.src = imgUrl;
+      };
+
       scope.deleteFile = function () {
         changeHandler(null);
         scope.validate();
@@ -64,6 +84,7 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
           } else {
             notification.serverError('There has been a problem saving the file', err);
           }
+          aviary.close();
         });
       }
 

@@ -15,6 +15,9 @@
     "policy": "eyJleHBpcnkiOjE1MzQ3NTcwMjgsImNhbGwiOlsicGljayIsInN0b3JlIl19",
     "signature": "7d05aaf92295dea900c7b85e3e4aa4b10c95d42c1a0ae449ab8aca554082f188"
   },
+  "aviary": {
+    "api_key": "cc79d8ec6cacbf11"
+  },
   "fog": {
     "s3": {
       "options": {
