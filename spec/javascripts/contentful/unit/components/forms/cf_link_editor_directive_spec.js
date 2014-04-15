@@ -37,6 +37,10 @@ describe('cfLinkEditor Directive', function () {
         items: {}
       };
 
+      scope.locale = {
+        code: 'en-US'
+      };
+
       stubs.publishedType.returns({
         getName: stubs.publishedEntryName
       });
@@ -423,27 +427,27 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('localizedField is called for first asset file', function () {
-        expect(stubs.localizedField).toBeCalledWith(scope.entities[0], 'data.fields.file');
+        expect(stubs.localizedField).toBeCalledWith(scope.entities[0], 'data.fields.file', 'en-US');
       });
 
       it('localizedField is called for second asset file', function () {
-        expect(stubs.localizedField).toBeCalledWith(scope.entities[1], 'data.fields.file');
+        expect(stubs.localizedField).toBeCalledWith(scope.entities[1], 'data.fields.file', 'en-US');
       });
 
       it('localizedField is called for first asset title', function () {
-        expect(stubs.localizedField).toBeCalledWith(scope.entities[0], 'data.fields.title');
+        expect(stubs.localizedField).toBeCalledWith(scope.entities[0], 'data.fields.title', 'en-US');
       });
 
       it('localizedField is called for second asset title', function () {
-        expect(stubs.localizedField).toBeCalledWith(scope.entities[1], 'data.fields.title');
+        expect(stubs.localizedField).toBeCalledWith(scope.entities[1], 'data.fields.title', 'en-US');
       });
 
       it('localizedField is called for first asset description', function () {
-        expect(stubs.localizedField).toBeCalledWith(scope.entities[0], 'data.fields.description');
+        expect(stubs.localizedField).toBeCalledWith(scope.entities[0], 'data.fields.description', 'en-US');
       });
 
       it('localizedField is called for second asset description', function () {
-        expect(stubs.localizedField).toBeCalledWith(scope.entities[1], 'data.fields.description');
+        expect(stubs.localizedField).toBeCalledWith(scope.entities[1], 'data.fields.description', 'en-US');
       });
 
     });
@@ -549,19 +553,19 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('localizedField is called with first entity and title', function () {
-        expect(stubs.localizedField).toBeCalledWith(scope.linkedEntities[0], 'data.fields.title');
+        expect(stubs.localizedField).toBeCalledWith(scope.linkedEntities[0], 'data.fields.title', 'en-US');
       });
 
       it('localizedField is called with second entity and title', function () {
-        expect(stubs.localizedField).toBeCalledWith(scope.linkedEntities[1], 'data.fields.title');
+        expect(stubs.localizedField).toBeCalledWith(scope.linkedEntities[1], 'data.fields.title', 'en-US');
       });
 
       it('localizedField is called with first entity and file', function () {
-        expect(stubs.localizedField).toBeCalledWith(scope.linkedEntities[0], 'data.fields.file');
+        expect(stubs.localizedField).toBeCalledWith(scope.linkedEntities[0], 'data.fields.file', 'en-US');
       });
 
       it('localizedField is called with second entity and file', function () {
-        expect(stubs.localizedField).toBeCalledWith(scope.linkedEntities[1], 'data.fields.file');
+        expect(stubs.localizedField).toBeCalledWith(scope.linkedEntities[1], 'data.fields.file', 'en-US');
       });
     });
 
