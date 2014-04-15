@@ -14,7 +14,9 @@
     %h3 Add Columns
     %ul.hidden-fields
       %li(ng-repeat="field in hiddenFields track by field.id")
-        %a(ng-click="displayField($event, field.id)")
+        %a(ng-if="field.type != 'Object' && !field.disabled" ng-click="displayField($event, field.id)")
+          {{field.name}}
+        %span(ng-if="field.type == 'Object' || field.disabled")
           {{field.name}}
 
 
