@@ -57,8 +57,6 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
       }
     },
 
-    // TODO Make sure currentSubToken and offerCompletion are using the same logic to find the token
-
     offerCompletion: function (contentType, queryString, cursorPos) {
       var token = api.currentToken(queryString, cursorPos);
       
@@ -96,7 +94,10 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
         var tokens = parse(queryString);
         var pairs = extractPairs(tokens);
         _.each(pairs, function (pair) {
-          _.extend(requestObject, pairToRequestObject(pair.content.key.content, pair.content.value.content, fields));
+          _.extend(requestObject, pairToRequestObject(
+            pair.content.key.content,
+            pair.content.operator.content,
+            pair.content.value.content, fields));
         });
         _.tap(tokens[tokens.length-1], function (last) {
           if (last.type === 'Query') requestObject.query = last.content;
@@ -112,10 +113,18 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
   };
 
   var autocompletion = {
-    newerThan: {
-      convert: function (exp) {
+    updatedAt: {
+      operators: ['<=', '>='],
+      convert: function (op, exp) {
+        // todo use op
         try {
-          return { 'sys.updatedAt[gte]': moment(exp).toISOString() };
+          var qop = op == '<=' ? '[lte]' :
+                    op == '>=' ? '[gte]' :
+                    '';
+          var query = {};
+          query['sys.updatedAt' + qop] = moment(exp).toISOString();
+          return query;
+          //return { 'sys.updatedAt[gte]': moment(exp).toISOString() };
         } catch(e) {
           return;
         }
@@ -149,9 +158,9 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
     return completions;
   }
 
-  function operatorCompletion(key, contentType) {
-    console.log('LOL', key, contentType);
-    return [':', '=='];
+  function operatorCompletion(key) {
+    if (!autocompletion[key]) return [':'];
+    return autocompletion[key].operators || ':';
   }
 
   function valueCompletion(key, contentType) {
@@ -220,32 +229,33 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
     }, []);
   }
 
-  function pairToRequestObject(key, value, fields) {
+  function pairToRequestObject(key, operator, value, fields) {
     var keyData = autocompletion[key];
     if (keyData) {
-      if (_.isFunction(keyData.convert) ) return keyData.convert(value);
+      if (_.isFunction(keyData.convert) ) return keyData.convert(operator, value);
       if (_.isObject(keyData.convert)) {
-        return createConverter(keyData.convert, value);
+        return createConverter(keyData.convert, operator, value);
       }
     } else {
-      return createFieldQuery(key, value, fields);
+      return createFieldQuery(key, operator, value, fields);
     }
   }
 
-  function createConverter(convertData, value) {
+  function createConverter(convertData, operator, value) {
     var converterForValue = convertData[value];
     if (!converterForValue) return;
 
     if (_.isFunction(converterForValue)) {
-      return converterForValue(value);
+      return converterForValue(operator, value);
     } else { //is requestObject
       return converterForValue;
     }
   }
 
-  function createFieldQuery(key, value, fields) {
+  function createFieldQuery(key, operator, value, fields) {
     var field = findField(key, fields);
     if (field) return _.tap({}, function (q) {
+      // TODO discern between operators
       var queryKey = 'fields.'+field.id;
       if (field.type === 'Text') queryKey = queryKey + '[match]';
       q[queryKey] = value;
