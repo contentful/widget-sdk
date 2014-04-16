@@ -56,7 +56,11 @@ angular.module('contentful').directive('otDocFor', function () {
                 setVersionUpdater();
                 updateIfValid();
               } else {
-                doc.close();
+                try {
+                  doc.close();
+                } catch(e) {
+                  if (e.message !== 'Cannot send to a closed connection') throw e;
+                }
               }
           }
         });
@@ -66,6 +70,8 @@ angular.module('contentful').directive('otDocFor', function () {
         //console.log('setting doc to null %o (id: %o) in scope %o', scope.otDoc.name, scope.otDoc.snapshot.sys.id, scope.$id);
         try {
           scope.otDoc.close();
+        } catch(e) {
+          if (e.message !== 'Cannot send to a closed connection') throw e;
         } finally {
           scope.otDoc = null;
         }
@@ -122,6 +128,8 @@ angular.module('contentful').directive('otDocFor', function () {
       remoteOpListener = null;
       try {
         scope.otDoc.close();
+      } catch(e) {
+        if (e.message !== 'Cannot send to a closed connection') throw e;
       } finally {
         scope.otDoc = null;
       }
