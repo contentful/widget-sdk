@@ -80,8 +80,8 @@
             %input(type="checkbox" cf-selection="" ng-show="entries.length > 0" tabindex="-1")
           %th.cell-content-type(ng-show="!filteredContentType") Content Type
           %th.cell-name Name
-          %th.cell-updated Updated
-          %th.cell-by By
+          %th(ng-repeat="field in displayedFields" ng-class="getFieldClass(field)")
+            {{field.name}}
           %th.cell-status Status
 
     .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
@@ -94,10 +94,8 @@
               %span {{spaceContext.publishedTypeForEntry(entry).getName()}}
             %td.cell-name
               %span {{spaceContext.entryTitle(entry)}}
-            %td.cell-updated
-              %date.relative(datetime="{{entry.getUpdatedAt()}}")
-            %td.cell-by
-              %span.cf-user(link="entry.getUpdatedBy()" as="updater") {{updater | userNameDisplay:user}}
+            %td(ng-repeat="field in displayedFields" ng-class="getFieldClass(field)")
+              %cf-field-display
             %td.cell-status(ng-class="statusClass(entry)")
               .draft-wrapper
                 %span {{statusClass(entry)}}

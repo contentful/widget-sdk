@@ -1,0 +1,3 @@
+%ng-switch(on="displayType(field)")
+  %date.relative(ng-switch-when="updated" datetime="{{entry.getUpdatedAt()}}")
+  %span.cf-user(ng-switch-when="author" link="entry.getUpdatedBy()" as="updater") {{updater | userNameDisplay:user}}

@@ -5,6 +5,29 @@ angular.module('contentful').controller('EntryListCtrl',
 
   var entryLoader = new PromisedLoader();
 
+  $scope.systemFields = [
+    {
+      id: 'updated',
+      name: 'Updated',
+      type: 'Date',
+      sys: true,
+      persistent: true
+    },
+    {
+      id: 'author',
+      name: 'Author',
+      type: 'Symbol',
+      sys: true
+    }
+  ];
+
+  $scope.filteredContentType = null;
+  $scope.filteredContentTypeFields = [];
+  $scope.displayedFields = _.clone($scope.systemFields);
+
+  //function getDisplayedFields(fields){
+  //}
+
   $scope.entrySection = 'all';
 
   $scope.paginator = new Paginator();
@@ -53,6 +76,7 @@ angular.module('contentful').controller('EntryListCtrl',
     var params = $scope.tab.params;
     params.contentTypeId = contentType ? contentType.getId() : null;
     $scope.filteredContentType = contentType ? getFilteredContentType(params.contentTypeId) : null;
+    $scope.filteredContentTypeFields = contentType ? contentType.data.fields : [];
   };
 
   $scope.visibleInCurrentList = function(){
@@ -137,6 +161,13 @@ angular.module('contentful').controller('EntryListCtrl',
     } else {
       return 'draft';
     }
+  };
+
+  $scope.getFieldClass = function (field) {
+    if(field.sys)
+      return 'cell-'+field.id.toLowerCase();
+    else
+      return 'cell-'+field.type.toLowerCase();
   };
 
   $scope.$on('tabBecameActive', function(event, tab) {
