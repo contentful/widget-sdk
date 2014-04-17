@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  controller('ApiKeyEditorCtrl', function($scope, authentication, environment, notification) {
+  controller('ApiKeyEditorCtrl', function($scope, authentication, environment, notification, sentry) {
     $scope.$watch('tab.params.apiKey', 'apiKey=tab.params.apiKey');
 
     $scope.tab.closingMessage = 'You have unsaved changes.';
@@ -37,7 +37,11 @@ angular.module('contentful').
       var t = title();
       $scope.apiKey['delete'](function(err) {
         $scope.$apply(function() {
-          if (err) return notification.serverError(t + ' could not be deleted', err);
+          if (err) {
+            notification.warn(t + ' could not be deleted');
+            sentry.captureServerError('ApiKey could not be deleted', err);
+            return;
+          }
           notification.info(t + ' deleted successfully');
           $scope.broadcastFromSpace('entityDeleted', $scope.apiKey);
         });
@@ -56,7 +60,11 @@ angular.module('contentful').
       var t = title();
       $scope.apiKey.save(function(err) {
         $scope.$apply(function() {
-          if (err) return notification.serverError(t + ' could not be saved', err);
+          if (err) {
+            notification.warn(t + ' could not be saved');
+            sentry.captureServerError('ApiKey could not be saved', err);
+            return;
+          }
           $scope.apiKeyForm.$setPristine();
           $scope.navigator.apiKeyEditor($scope.apiKey).goTo();
           notification.info(t + ' saved successfully');

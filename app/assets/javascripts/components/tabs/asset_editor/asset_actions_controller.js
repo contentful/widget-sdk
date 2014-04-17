@@ -1,6 +1,5 @@
-angular.module('contentful').controller('AssetActionsCtrl', function AssetActionsCtrl($scope, notification) {
-  'use strict';
-
+'use strict';
+angular.module('contentful').controller('AssetActionsCtrl', function AssetActionsCtrl($scope, notification, sentry) {
   // TODO If we are sure that the data in the asset has been updated from the ShareJS doc,
   // We can query the asset instead of reimplementing the checks heere
 
@@ -24,9 +23,10 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
   $scope.archive = function() {
     $scope.asset.archive(function(err) {
       $scope.$apply(function() {
-        if (err)
-          notification.serverError('Error archiving ' + title() + ' (' + err.body.sys.id + ')', err);
-        else
+        if (err) {
+          notification.warn('Error archiving ' + title() + ' (' + err.body.sys.id + ')');
+          sentry.captureServerError('Error archiving asset', err);
+        } else
           notification.info(title() + ' archived successfully');
       });
     });
@@ -35,9 +35,10 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
   $scope.unarchive = function() {
     $scope.asset.unarchive(function(err) {
       $scope.$apply(function() {
-        if (err)
-          notification.serverError('Error unarchiving ' + title() + ' (' + err.body.sys.id + ')', err);
-        else
+        if (err) {
+          notification.warn('Error unarchiving ' + title() + ' (' + err.body.sys.id + ')');
+          sentry.captureServerError('Error unarchiving asset', err);
+        } else
           notification.info(title() + ' unarchived successfully');
       });
     });
@@ -47,7 +48,8 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
     $scope.asset.unpublish(function (err) {
       $scope.$apply(function(scope){
         if (err) {
-          notification.serverError('Error unpublishing ' + title() + ' (' + err.body.sys.id + ')', err);
+          notification.warn('Error unpublishing ' + title() + ' (' + err.body.sys.id + ')');
+          sentry.captureServerError('Error unpublishing asset', err);
         } else {
           notification.info(title() + ' unpublished successfully');
           scope.otUpdateEntity();
@@ -66,18 +68,14 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
       $scope.$apply(function(scope){
         if (err) {
           var errorId = err.body.sys.id;
-          var method = 'serverError';
-          var reason;
           if (errorId === 'ValidationFailed') {
-            reason = 'Validation failed';
             scope.setValidationErrors(err.body.details.errors);
-            method = 'warn';
+            notification.warn('Error publishing ' + title() + ': Validation failed');
           } else if (errorId === 'VersionMismatch'){
-            reason = 'Can only publish most recent version';
-            method = 'warn';
-          } else
-            reason = errorId;
-          notification[method]('Error publishing ' + title() + ': ' + reason, err);
+            notification.warn('Error publishing ' + title() + ': Can only publish most recent version');
+          } else {
+            notification.serverError('Error publishing asset: ' + errorId, err);
+          }
         } else {
           scope.asset.setPublishedVersion(version);
           notification.info(title() + ' published successfully');

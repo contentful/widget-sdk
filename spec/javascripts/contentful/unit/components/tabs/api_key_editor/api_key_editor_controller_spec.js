@@ -15,7 +15,9 @@ describe('API key editor controller', function () {
         'name',
         'info',
         'serverError',
-        'broadcast'
+        'warn',
+        'broadcast',
+        'captureServerError'
       ]);
       $provide.constant('environment', {
         settings: {
@@ -24,7 +26,11 @@ describe('API key editor controller', function () {
       });
       $provide.value('notification', {
         info: stubs.info,
+        warn: stubs.warn,
         serverError: stubs.serverError
+      });
+      $provide.value('sentry', {
+        captureServerError: stubs.captureServerError
       });
     });
     inject(function (_$rootScope_, $controller) {
@@ -124,9 +130,9 @@ describe('API key editor controller', function () {
     });
 
     it('error notification is shown', function () {
-      expect(stubs.serverError).toBeCalled();
-      expect(stubs.serverError.args[0][0]).toEqual('"apiKeyName" could not be deleted');
-      expect(stubs.serverError.args[0][1]).toEqual({});
+      expect(stubs.captureServerError).toBeCalled();
+      expect(stubs.captureServerError.args[0][1]).toEqual({});
+      expect(stubs.warn.args[0][0]).toEqual('"apiKeyName" could not be deleted');
     });
   });
 
@@ -177,9 +183,9 @@ describe('API key editor controller', function () {
     });
 
     it('error notification is shown', function () {
-      expect(stubs.serverError).toBeCalled();
-      expect(stubs.serverError.args[0][0]).toEqual('"apiKeyName" could not be saved');
-      expect(stubs.serverError.args[0][1]).toEqual({});
+      expect(stubs.captureServerError).toBeCalled();
+      expect(stubs.captureServerError.args[0][1]).toEqual({});
+      expect(stubs.warn.args[0][0]).toEqual('"apiKeyName" could not be saved');
     });
   });
 

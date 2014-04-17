@@ -1,5 +1,5 @@
-angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope, getFieldTypeName, analytics, validation, assert, notification, toIdentifier) {
-  'use strict';
+'use strict';
+angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope, getFieldTypeName, analytics, validation, assert, notification, toIdentifier, sentry) {
 
   $scope.$watch(function (scope) {
     var f = scope.field;
@@ -114,7 +114,8 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
           scope.otUpdateEntity();
           analytics.modifiedContentType('Modified ContentType', scope.contentType, scope.field, 'toggled '+property);
         } else {
-          notification.serverError('Could not toggle "'+property+'"', err);
+          notification.warn('Could not toggle "'+property+'"', err);
+          sentry.captureServerError('Could not toggle property on ContentType', err, {extra: {property: property}});
         }
       });
     });
