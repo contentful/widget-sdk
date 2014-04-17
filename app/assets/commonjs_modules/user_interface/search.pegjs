@@ -51,7 +51,8 @@ Query
 
 Expression
   = "\"" q:$[^"]+ "\""
-  / q:$[^ "]i+
+    { return q }
+  / $[^ "]i+
 
 _ "whitespace"
   = [ \t]*

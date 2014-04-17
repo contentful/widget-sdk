@@ -5,7 +5,11 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
   function parse(queryString) {
     if (queryString !== lastQueryString) {
       lastQueryString = queryString;
-      lastParseResult = searchParser.parse(queryString);
+      try {
+        lastParseResult = searchParser.parse(queryString);
+      } catch (e) {
+        lastParseResult = [];
+      }
     }
     return lastParseResult;
   }
@@ -112,24 +116,27 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
     }
   };
 
-  var autocompletion = {
-    updatedAt: {
-      operators: ['<=', '>='],
+  function dateCompletions(key) {
+    var regex = /(\d+) +days +ago/i;
+    return {
+      operators: ['<', '<=', '==', '>=', '>'],
       convert: function (op, exp) {
-        // todo use op
         try {
-          var qop = op == '<=' ? '[lte]' :
-                    op == '>=' ? '[gte]' :
-                    '';
+          var match = regex.exec(exp);
+          var date = match ? moment().subtract('days', match[1]) : moment(exp);
           var query = {};
-          query['sys.updatedAt' + qop] = moment(exp).toISOString();
+          query[key + queryOperator(op)] = date.toISOString();
           return query;
-          //return { 'sys.updatedAt[gte]': moment(exp).toISOString() };
         } catch(e) {
           return;
         }
       }
-    },
+    };
+  }
+
+  var autocompletion = {
+    updatedAt: dateCompletions('sys.updatedAt'),
+    createdAt: dateCompletions('sys.createdAt'),
     status: {
       complete: 'published changed draft archived'.split(' '),
       convert: {
@@ -150,6 +157,14 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
     }
   };
 
+  function queryOperator(op) {
+    return op == '<=' ? '[lte]' :
+           op == '<'  ? '[lt]'  :
+           op == '>=' ? '[gte]' :
+           op == '>'  ? '[gt]'  :
+           '';
+  }
+
   function keyCompletion(contentType) {
     var completions = [];
     if (contentType)
@@ -158,9 +173,17 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
     return completions;
   }
 
-  function operatorCompletion(key) {
-    if (!autocompletion[key]) return [':'];
+  function operatorCompletion(key, contentType) {
+    if (!autocompletion[key]) return operatorsForField(key, contentType);
     return autocompletion[key].operators || ':';
+  }
+
+  function operatorsForField(fieldId, contentType) {
+    var field = createFieldsLookup(contentType)[fieldId] || {};
+    if (field.type === 'Integer' || field.type === 'Number' || field.type === 'Date') {
+      return ['<', '<=', '==', '>=', '>'];
+    }
+    return [':'];
   }
 
   function valueCompletion(key, contentType) {
@@ -213,6 +236,12 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
   //         By allowing to search only asset titles (e.g. asset_title : contains / does not contain X)
   //         By specifying asset size
   //         By combining asset creation with the date parameter from above (e.g. I imagine the query would look something like "status:created" "date:before 23, April 2014" "type:asset" "size:less than (Mb):2)
+  //
+  // Relative dates (xxx days ago)
+  // calendar dates
+  // date,number operators
+  // author -> users
+  //
 
   function createFieldsLookup(contentType) {
     if (!contentType) return {};

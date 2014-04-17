@@ -79,29 +79,7 @@ angular.module('contentful').controller('EntryListCtrl',
 
     _.extend(queryObject, searchQuery);
 
-    /*
-    if ($scope.tab.params.list == 'all') {
-      queryObject['sys.archivedAt[exists]'] = 'false';
-    } else if ($scope.tab.params.list == 'published') {
-      queryObject['sys.publishedAt[exists]'] = 'true';
-    } else if ($scope.tab.params.list == 'changed') {
-      queryObject['sys.archivedAt[exists]'] = 'false';
-      queryObject['changed'] = 'true';
-    } else if ($scope.tab.params.list == 'draft') {
-      queryObject['sys.archivedAt[exists]'] = 'false';
-      queryObject['sys.publishedVersion[exists]'] = 'false';
-      queryObject['changed'] = 'true';
-    } else if ($scope.tab.params.list == 'archived') {
-      queryObject['sys.archivedAt[exists]'] = 'true';
-    } else if ($scope.tab.params.list == 'contentType') {
-      queryObject['sys.contentType.sys.id'] = $scope.tab.params.contentTypeId;
-    }
-
-    if (!_.isEmpty($scope.searchTerm)) {
-      queryObject.query = $scope.searchTerm;
-    }
-    */
-
+    console.log('built query', queryObject);
     return queryObject;
   }
 
