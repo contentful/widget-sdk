@@ -17,6 +17,14 @@ angular.module('contentful').directive('cfFieldDisplay', function(){
         return field.type;
       };
 
+      scope.dataForField = function(entry, field) {
+        return scope.spaceContext.localizedField(entry, 'data.fields.'+field.id);
+      };
+
+      scope.displayBool = function (value) {
+        return value ? 'Yes' : 'No';
+      };
+
     }
   };
 });
