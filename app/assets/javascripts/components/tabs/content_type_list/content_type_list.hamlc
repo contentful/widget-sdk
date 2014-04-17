@@ -36,11 +36,11 @@
     %table.result-list.main-header(ng-hide="empty")
       %thead
         %tr
-          %th.cell-name Name
+          %th.cell-display-name Name
           %th.cell-description Description
-          %th.cell-num-fields Fields
-          %th.cell-updated Updated
-          %th.cell-by By
+          %th.cell-integer Fields
+          %th.cell-date Updated
+          %th.cell-symbol By
           %th.cell-status Status
 
     .main-results-wrapper
@@ -48,15 +48,15 @@
         %tbody
           %tr(ng-repeat="contentType in visibleContentTypes = (contentTypes | filter:visibleInCurrentList) track by contentType.getId()"
               cf-click-local="navigator.contentTypeEditor(contentType).goTo()")
-            %td.cell-name
+            %td.cell-display-name
               %span {{contentType.getName()}}
             %td.cell-description
               %span {{contentType.data.description}}
-            %td.cell-num-fields
+            %td.cell-integer
               %span {{numFields(contentType)}}
-            %td.cell-updated
+            %td.cell-date
               %date.relative(datetime="{{contentType.getUpdatedAt()}}")
-            %td.cell-by
+            %td.cell-symbol
               %span.cf-user(link="contentType.getUpdatedBy()" as="updater")
                 {{updater | userNameDisplay:user}}
             %td.cell-status(ng-class="statusClass(contentType)")

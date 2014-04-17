@@ -79,7 +79,7 @@
           %th.cell-select
             %input(type="checkbox" cf-selection="" ng-show="entries.length > 0" tabindex="-1")
           %th.cell-content-type(ng-show="!filteredContentType") Content Type
-          %th.cell-name Name
+          %th.cell-display-name Name
           %th(ng-repeat="field in displayedFields" ng-class="getFieldClass(field)")
             {{field.name}}
           %th.cell-status Status
@@ -92,7 +92,7 @@
               %input(type="checkbox" cf-selection="entry" tabindex="-1")
             %td.cell-content-type(ng-show="!filteredContentType")
               %span {{spaceContext.publishedTypeForEntry(entry).getName()}}
-            %td.cell-name
+            %td.cell-display-name
               %span {{spaceContext.entryTitle(entry)}}
             %td(ng-repeat="field in displayedFields" ng-class="getFieldClass(field)")
               %cf-field-display

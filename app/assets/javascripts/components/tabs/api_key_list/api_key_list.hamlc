@@ -26,8 +26,8 @@
         %tr
           %th.cell-name Name
           %th.cell-description Description
-          %th.cell-updated Updated
-          %th.cell-by By
+          %th.cell-date Updated
+          %th.cell-symbol By
 
     .main-results-wrapper(ng-hide="empty")
       %table.result-list.main-results
@@ -38,9 +38,9 @@
               %span {{apiKey.getName()}}
             %td.cell-description
               %span {{apiKey.data.description}}
-            %td.cell-updated
+            %td.cell-date
               %date.relative(datetime="{{apiKey.getUpdatedAt()}}")
-            %td.cell-by
+            %td.cell-symbol
               %span.cf-user(link="apiKey.getCreatedBy()" as="creator") {{creator | userNameDisplay:user}}
 
     .advice(ng-show="empty")

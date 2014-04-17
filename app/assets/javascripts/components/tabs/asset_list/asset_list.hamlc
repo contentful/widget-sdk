@@ -48,7 +48,7 @@
           %th.cell-name Name
           %th.cell-type Type
           %th.cell-updated Updated
-          %th.cell-by By
+          %th.cell-author By
           %th.cell-status Status
 
     .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
@@ -67,7 +67,7 @@
               %span.extension {{file|fileExtension}}
             %td.cell-updated
               %date.relative(datetime="{{asset.getUpdatedAt()}}")
-            %td.cell-by
+            %td.cell-author
               %span.cf-user(link="asset.getUpdatedBy()" as="updater") {{updater | userNameDisplay:user}}
             %td.cell-status(ng-class="statusClass(asset)")
               .draft-wrapper

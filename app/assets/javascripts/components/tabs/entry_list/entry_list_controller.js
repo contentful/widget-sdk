@@ -164,9 +164,11 @@ angular.module('contentful').controller('EntryListCtrl',
   };
 
   $scope.getFieldClass = function (field) {
+    /*
     if(field.sys)
       return 'cell-'+field.id.toLowerCase();
     else
+   */
       return 'cell-'+field.type.toLowerCase();
   };
 
