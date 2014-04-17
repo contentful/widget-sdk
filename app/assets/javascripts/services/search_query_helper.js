@@ -237,18 +237,19 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
   //         By specifying asset size
   //         By combining asset creation with the date parameter from above (e.g. I imagine the query would look something like "status:created" "date:before 23, April 2014" "type:asset" "size:less than (Mb):2)
   //
-  // Relative dates (xxx days ago)
   // calendar dates
-  // date,number operators
   // author -> users
-  //
 
   function createFieldsLookup(contentType) {
     if (!contentType) return {};
     return _.reduce(contentType.data.fields, function (list, field) {
-      if (!field.disabled) list[field.id] = field;
+      if (fieldSearchable(field)) list[field.id] = field;
       return list;
     }, {});
+  }
+
+  function fieldSearchable(field) {
+    return !field.disabled && !field.type.match(/Location|Link|Object|Array/);
   }
 
   function extractPairs(tokens) {
