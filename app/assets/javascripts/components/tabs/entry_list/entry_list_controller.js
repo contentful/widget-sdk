@@ -25,9 +25,6 @@ angular.module('contentful').controller('EntryListCtrl',
   $scope.filteredContentTypeFields = [];
   $scope.displayedFields = _.clone($scope.systemFields);
 
-  //function getDisplayedFields(fields){
-  //}
-
   $scope.entrySection = 'all';
 
   $scope.paginator = new Paginator();
@@ -164,12 +161,7 @@ angular.module('contentful').controller('EntryListCtrl',
   };
 
   $scope.getFieldClass = function (field) {
-    /*
-    if(field.sys)
-      return 'cell-'+field.id.toLowerCase();
-    else
-   */
-      return 'cell-'+field.type.toLowerCase();
+    return 'cell-'+field.type.toLowerCase();
   };
 
   $scope.$on('tabBecameActive', function(event, tab) {
