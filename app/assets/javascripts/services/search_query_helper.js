@@ -1,6 +1,6 @@
 'use strict';
-angular.module('contentful').factory('searchQueryHelper', function(searchParser){
-  var lastQueryString, lastParseResult;
+angular.module('contentful').factory('searchQueryHelper', function(searchParser, userCache, $q){
+  var lastQueryString, lastParseResult = [];
 
   function parse(queryString) {
     if (queryString !== lastQueryString) {
@@ -61,7 +61,7 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
       }
     },
 
-    offerCompletion: function (contentType, queryString, cursorPos) {
+    offerCompletion: _.compose($q.when, function (space, contentType, queryString, cursorPos) {
       var token = api.currentToken(queryString, cursorPos);
       
       if (token && token.type === 'Pair') {
@@ -80,13 +80,13 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
         }
       }
       return keyCompletion(contentType);
-    },
+    }),
 
     operatorsForKey: function (key, contentType) {
       return operatorCompletion(key, contentType);
     },
 
-    buildQuery: function (contentType, queryString) {
+    buildQuery: function (space, contentType, queryString) {
       var requestObject = {};
 
       // Content Type
@@ -94,25 +94,30 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
       if (contentType) requestObject.content_type = contentType.getId();
 
       // Search
-      if (queryString){
-        var tokens = parse(queryString);
-        var pairs = extractPairs(tokens);
-        _.each(pairs, function (pair) {
-          _.extend(requestObject, pairToRequestObject(
+      var tokens = parse(queryString);
+      var pairs = extractPairs(tokens);
+      return $q.all(_.map(pairs, function (pair) {
+          return pairToRequestObject(
             pair.content.key.content,
             pair.content.operator.content,
-            pair.content.value.content, fields));
+            pair.content.value.content,
+            fields, space);
+      }))
+      .then(function (reqObjects) {
+        return _.each(reqObjects, function (o) {
+          _.extend(requestObject, o);
         });
+      })
+      .then(function () {
         _.tap(tokens[tokens.length-1], function (last) {
-          if (last.type === 'Query') requestObject.query = last.content;
+          if (last && last.type === 'Query') requestObject.query = last.content;
         });
-      }
-
-      // Filter out archived entries
-      if (!('sys.archivedAt[exists]' in requestObject)) {
-        requestObject['sys.archivedAt[exists]'] = 'false';
-      }
-      return requestObject;
+        // Filter out archived entries
+        if (!('sys.archivedAt[exists]' in requestObject)) {
+          requestObject['sys.archivedAt[exists]'] = 'false';
+        }
+        return requestObject;
+      });
     }
   };
 
@@ -137,6 +142,24 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
   var autocompletion = {
     updatedAt: dateCompletions('sys.updatedAt'),
     createdAt: dateCompletions('sys.createdAt'),
+    author: {
+      complete: function (contentType, space) {
+        return getUserMap(space).then(function (userMap) {
+          return _(userMap).keys().map(function (userName) {
+            return '"'+userName+'"';
+          }).value();
+        });
+      },
+      convert: function (operator, value, space) {
+        return getUserMap(space).then(function (userMap) {
+          if (userMap[value]) {
+            var query = {};
+            query['sys.createdBy.sys.id'] = userMap[value];
+            return query;
+          }
+        });
+      }
+    },
     status: {
       complete: 'published changed draft archived'.split(' '),
       convert: {
@@ -156,6 +179,18 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
       }
     }
   };
+
+  function getUserMap(space) {
+    return userCache.getAll(space).then(function (users) {
+      var names = _.map(users, 'getName');
+      var occurences = _.countBy(names);
+      return _.transform(users, function (map, user) {
+        var name = user.getName();
+        name = occurences[name] > 1 ? name + ' (' +user.getId()+ ')' : name;
+        map[name] = user.getId();
+      }, {});
+    });
+  }
 
   function queryOperator(op) {
     return op == '<=' ? '[lte]' :
@@ -259,24 +294,24 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser)
     }, []);
   }
 
-  function pairToRequestObject(key, operator, value, fields) {
+  function pairToRequestObject(key, operator, value, fields, space) {
     var keyData = autocompletion[key];
     if (keyData) {
-      if (_.isFunction(keyData.convert) ) return keyData.convert(operator, value);
+      if (_.isFunction(keyData.convert) ) return keyData.convert(operator, value, space);
       if (_.isObject(keyData.convert)) {
-        return createConverter(keyData.convert, operator, value);
+        return createConverter(keyData.convert, operator, value, space);
       }
     } else {
       return createFieldQuery(key, operator, value, fields);
     }
   }
 
-  function createConverter(convertData, operator, value) {
+  function createConverter(convertData, operator, value, space) {
     var converterForValue = convertData[value];
     if (!converterForValue) return;
 
     if (_.isFunction(converterForValue)) {
-      return converterForValue(operator, value);
+      return converterForValue(operator, value, space);
     } else { //is requestObject
       return converterForValue;
     }

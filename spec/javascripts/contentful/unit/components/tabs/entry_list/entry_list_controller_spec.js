@@ -164,26 +164,31 @@ describe('Entry List Controller', function () {
 
     it('loads entries', function() {
       scope.resetEntries();
+      scope.$apply();
       expect(stubs.load).toBeCalled();
     });
 
     it('sets entries num on the paginator', function() {
       scope.resetEntries();
+      scope.$apply();
       expect(scope.paginator.numEntries).toEqual(30);
     });
 
     it('sets entries on scope', function() {
       scope.resetEntries();
+      scope.$apply();
       expect(scope.entries).toBe(entries);
     });
 
     it('switches the selection base set', function() {
       scope.resetEntries();
+      scope.$apply();
       expect(stubs.switch).toBeCalled();
     });
 
     it('tracks analytics event', function() {
       scope.resetEntries();
+      scope.$apply();
       expect(stubs.track).toBeCalled();
     });
 
@@ -191,33 +196,39 @@ describe('Entry List Controller', function () {
 
       it('with a defined order', function() {
         scope.resetEntries();
+        scope.$apply();
         expect(stubs.load.args[0][2].order).toEqual('-sys.updatedAt');
       });
 
       it('with a defined limit', function() {
         scope.resetEntries();
+        scope.$apply();
         expect(stubs.load.args[0][2].limit).toEqual(3);
       });
 
       it('with a defined skip param', function() {
         scope.resetEntries();
+        scope.$apply();
         expect(stubs.load.args[0][2].skip).toBeTruthy();
       });
 
       it('for all list', function() {
         scope.resetEntries();
+        scope.$apply();
         expect(stubs.load.args[0][2]['sys.archivedAt[exists]']).toBe('false');
       });
 
       it('for published list', function() {
         scope.searchTerm = 'status:published';
         scope.resetEntries();
+        scope.$apply();
         expect(stubs.load.args[0][2]['sys.publishedAt[exists]']).toBe('true');
       });
 
       it('for changed list', function() {
         scope.searchTerm = 'status:changed';
         scope.resetEntries();
+        scope.$apply();
         expect(stubs.load.args[0][2]['sys.archivedAt[exists]']).toBe('false');
         expect(stubs.load.args[0][2].changed).toBe('true');
       });
@@ -225,6 +236,7 @@ describe('Entry List Controller', function () {
       it('for draft list', function() {
         scope.searchTerm = 'status:draft';
         scope.resetEntries();
+        scope.$apply();
         expect(stubs.load.args[0][2]['sys.archivedAt[exists]']).toBe('false');
         expect(stubs.load.args[0][2]['sys.publishedVersion[exists]']).toBe('false');
         expect(stubs.load.args[0][2].changed).toBe('true');
@@ -233,6 +245,7 @@ describe('Entry List Controller', function () {
       it('for archived list', function() {
         scope.searchTerm = 'status:archived';
         scope.resetEntries();
+        scope.$apply();
         expect(stubs.load.args[0][2]['sys.archivedAt[exists]']).toBe('true');
       });
 
@@ -240,6 +253,7 @@ describe('Entry List Controller', function () {
         pending('Need to change the test so that the content type is actually found');
         scope.tab.params.contentTypeId = 'ct1';
         scope.resetEntries();
+        scope.$apply();
         expect(stubs.load.args[0][2]['content_type']).toBe('ct1');
       });
 
@@ -247,6 +261,7 @@ describe('Entry List Controller', function () {
         scope.tab.params.list = '';
         scope.searchTerm = 'term';
         scope.resetEntries();
+        scope.$apply();
         expect(stubs.load.args[0][2].query).toBe('term');
       });
     });
@@ -272,8 +287,10 @@ describe('Entry List Controller', function () {
 
       scope.entries = new Array(60);
 
+      stubs.switch = sinon.stub();
       scope.selection = {
-        setBaseSize: sinon.stub()
+        setBaseSize: sinon.stub(),
+        switchBaseSet: stubs.switch
       };
 
       scope.paginator.atLast = sinon.stub();
@@ -294,6 +311,7 @@ describe('Entry List Controller', function () {
 
     it('gets query params', function () {
       scope.loadMore();
+      scope.$apply();
       expect(stubs.load.args[0][2]).toBeDefined();
     });
 
@@ -302,11 +320,13 @@ describe('Entry List Controller', function () {
       scope.paginator.numEntries = 47;
       scope.paginator.page = 0;
       scope.loadMore();
+      scope.$apply();
       expect(stubs.load).toBeCalled();
     });
 
     it('triggers analytics event', function () {
       scope.loadMore();
+      scope.$apply();
       expect(stubs.track).toBeCalled();
     });
 
@@ -318,14 +338,17 @@ describe('Entry List Controller', function () {
       });
 
       it('sets num entries', function() {
+        scope.$apply();
         expect(scope.paginator.numEntries).toEqual(30);
       });
 
       it('appends entries to scope', function () {
+        scope.$apply();
         expect(scope.entries.slice(60)).toEqual(entries);
       });
 
       it('sets selection base size', function () {
+        scope.$apply();
         expect(scope.selection.setBaseSize.args[0][0]).toBe(60);
       });
 
@@ -338,14 +361,18 @@ describe('Entry List Controller', function () {
       stubs.then.callsArgWith(0, entries);
       scope.paginator.page = 2;
       scope.loadMore();
+      scope.$apply();
       expect(scope.entries).toEqual(['a', 'b', 'c']);
     });
 
     describe('on failed load response', function() {
       beforeEach(function() {
-        stubs.then.callsArgWith(0, null);
+        stubs.load.returns(entries);
         scope.paginator.page = 1;
+        scope.$apply(); //trigger resetEntries
+        stubs.load.returns(null);
         scope.loadMore();
+        scope.$apply(); //trigger loadMore promises
       });
 
       it('appends entries to scope', function () {
@@ -359,9 +386,11 @@ describe('Entry List Controller', function () {
 
     describe('on previous page', function() {
       beforeEach(function() {
+        scope.$apply(); // trigger resetEntries
         stubs.then.callsArg(1);
         scope.paginator.page = 1;
         scope.loadMore();
+        scope.$apply();
       });
 
       it('appends entries to scope', function () {

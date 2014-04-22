@@ -55,8 +55,11 @@ angular.module('contentful').controller('EntryListCtrl',
 
   $scope.resetEntries = function() {
     $scope.paginator.page = 0;
-    return entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
-    then(function (entries) {
+    return buildQuery()
+    .then(function (query) {
+      return entryLoader.load($scope.spaceContext.space, 'getEntries', query);
+    })
+    .then(function (entries) {
       $scope.paginator.numEntries = entries.total;
       $scope.entries = entries;
       $scope.selection.switchBaseSet($scope.entries.length);
@@ -75,12 +78,11 @@ angular.module('contentful').controller('EntryListCtrl',
     if ($scope.tab.params.contentTypeId) {
       contentType = $scope.spaceContext.getPublishedContentType($scope.tab.params.contentTypeId);
     }
-    var searchQuery = searchQueryHelper.buildQuery(contentType, $scope.searchTerm);
-
-    _.extend(queryObject, searchQuery);
-
-    console.log('built query', queryObject);
-    return queryObject;
+    return searchQueryHelper.buildQuery($scope.spaceContext.space, contentType, $scope.searchTerm)
+    .then(function (searchQuery) {
+      _.extend(queryObject, searchQuery);
+      return queryObject;
+    });
   }
 
   $scope.hasQuery = function () {
@@ -91,14 +93,19 @@ angular.module('contentful').controller('EntryListCtrl',
   $scope.loadMore = function() {
     if ($scope.paginator.atLast()) return;
     $scope.paginator.page++;
-    var query = buildQuery();
-    entryLoader.load($scope.spaceContext.space, 'getEntries', query).
-    then(function (entries) {
+    var queryForDebug;
+    return buildQuery()
+    .then(function (query) {
+      analytics.track('Scrolled EntryList');
+      queryForDebug = query;
+      return entryLoader.load($scope.spaceContext.space, 'getEntries', query);
+    })
+    .then(function (entries) {
       if(!entries){
         sentry.captureError('Failed to load more entries', {
           data: {
             entries: entries,
-            query: query
+            query: queryForDebug
           }
         });
         return;
@@ -110,8 +117,6 @@ angular.module('contentful').controller('EntryListCtrl',
     }, function () {
       $scope.paginator.page--;
     });
-
-    analytics.track('Scrolled EntryList');
   };
 
   $scope.statusClass = function(entry){

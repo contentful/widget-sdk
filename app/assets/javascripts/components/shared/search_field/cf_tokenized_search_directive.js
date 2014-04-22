@@ -123,9 +123,12 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
 
       $scope.updateAutocompletions = function () {
         var contentType = $scope.getContentType(),
+            space       = $scope.spaceContext.space,
             term        = $scope.inner.term,
             position    = $scope.position;
-        $scope.autocompletions = searchQueryHelper.offerCompletion(contentType, term, position) || [];
+        searchQueryHelper.offerCompletion(space, contentType, term, position).then(function (completions) {
+          $scope.autocompletions = completions || [];
+        });
       };
 
       $scope.selectNextAutocompletion = function () {
