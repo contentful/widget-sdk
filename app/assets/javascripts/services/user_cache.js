@@ -1,38 +1,43 @@
 'use strict';
 angular.module('contentful').
-  service('userCache', function UserCache($browser) {
-    var cache = [];
+  service('userCache', function UserCache($browser, $q) {
+    var cache = {};
     var inflight = false;
     var pending = [];
 
     return {
-      get: function(space, id, callback) {
-        if (cache[id])
-          return $browser.defer(function() {
-            callback(null, cache[id]);
-          });
+      getAll: function(space) {
+        if (!_.isEmpty(cache)) return $q.when(cache);
 
-        pending.push(function(err) {
-          if (err)
-            return callback(err);
-          if (!cache[id])
-            return callback(new Error('User not found'));
-          callback(null, cache[id]);
-        });
+        if (inflight) return inflight.promise;
 
-        if (inflight) return;
-        inflight = true;
-
-        space.getUsers(null, function(err, users) {
+        inflight = $q.callback();
+        space.getUsers(null, inflight);
+        return inflight.promise.then(function (users) {
           _.forEach(users, function(user) {
             cache[user.getId()] = user;
           });
-          _.forEach(pending, function(cb) {
-            cb(err);
-          });
-          pending = [];
           inflight = false;
         });
-      }
+      },
+
+      get: function (space, id) {
+        if (cache[id]) return $q.when(cache[id]);
+
+        var request = $q.defer();
+        pending.push(request);
+        request.promise.then(function () {
+          if (!cache[id]) return $q.reject(new Error('User not found'));
+          return cache[id];
+        });
+
+        return this.getAll(space).then(function () {
+          _.invoke(pending, 'resolve');
+          pending = [];
+        }, function (err) {
+          _.invoke(pending, 'reject', err);
+          pending = [];
+        });
+      },
     };
   });
