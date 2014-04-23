@@ -21,7 +21,7 @@ angular.module('contentful').controller('EntryListCtrl',
 
   $scope.orderQuery = DEFAULT_ORDER_QUERY;
   $scope.orderDirection = DEFAULT_ORDER_DIRECTION;
-  $scope.orderField = 'updatedAt'
+  $scope.orderField = 'updatedAt';
 
   var entryLoader = new PromisedLoader();
 

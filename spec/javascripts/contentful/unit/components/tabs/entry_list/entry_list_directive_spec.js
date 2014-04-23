@@ -9,8 +9,9 @@ describe('The Entry list directive', function () {
   beforeEach(function () {
     canStub = sinon.stub();
     reasonsStub = sinon.stub();
-    module('contentful/test', function (cfCanStubsProvider) {
+    module('contentful/test', function ($provide, cfCanStubsProvider) {
       cfCanStubsProvider.setup(reasonsStub);
+      $provide.removeDirectives('viewCustomizer');
     });
     inject(function ($rootScope, $compile, entryListDirective, enforcements) {
       scope = $rootScope.$new();
