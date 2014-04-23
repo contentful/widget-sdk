@@ -142,6 +142,8 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser,
   var autocompletion = {
     updatedAt: dateCompletions('sys.updatedAt'),
     createdAt: dateCompletions('sys.createdAt'),
+    publishedAt: dateCompletions('sys.publishedAt'),
+    firstPublishedAt: dateCompletions('sys.firstPublishedAt'),
     author: {
       complete: function (contentType, space) {
         return getUserMap(space).then(function (userMap) {
@@ -245,7 +247,7 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser,
       val = field.type === 'Integer' && _.find(field.validations, 'range');
       if (val) return buildRange(val.range.min, val.range.max);
       // Booleans
-      if (field.type === 'Boolean') return ['true', 'false'];
+      if (field.type === 'Boolean') return ['yes', 'no'];
     }
     return null;
   }
@@ -323,6 +325,7 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser,
       // TODO discern between operators
       var queryKey = 'fields.'+field.id;
       if (field.type === 'Text') queryKey = queryKey + '[match]';
+      if (field.type === 'Boolean') value = value.match(/yes|true/i) ? 'true' : false;
       q[queryKey] = value;
     });
   }
