@@ -50,7 +50,7 @@ Query
     { return annotate2(exp, 'Query') }
 
 Expression
-  = "\"" q:$[^"]+ "\""
+  = "\"" q:$[^"]+ ("\"" / eof)
     { return q }
   / $[^ "]i+
 
