@@ -24,8 +24,7 @@
   +box-shadow(0 1px 3px rgba(0,0,0,0.1) inset)
 
   .input
-    width: 90%
-    height: 100%
+    +stretch(0, 35px, 0, 0)
   input[type="search"]
     padding: 0 7px
     width: 100%
@@ -38,8 +37,6 @@
     color: $dark-gray
     opacity: 0.6
     +border-radius(20px 0px 0px 20px)
-    &::-webkit-search-cancel-button
-      display: none
   input:focus
     opacity: 1
     border: none
@@ -65,7 +62,16 @@
     position: relative
     top: 2px
 
-.search-autocomplete-list
+.search-with-results
+  .results // Necessary overrides/resets for .results which is per default geared towards use in forms
+    right: 35px
+    margin-right: 0
+    font-size: 11px
+
+.search-autocomplete-list,
+.results .search-autocomplete-list //necessary for overriding too-specific selector ".results ol > *" in mixins.css.sass
+  li
+    padding: 2px 5px
   .selected
     color: white
     +blue-highlight
