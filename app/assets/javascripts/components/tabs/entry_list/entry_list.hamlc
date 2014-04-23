@@ -73,7 +73,7 @@
           %span {{contentType.getName()}}
 
   .with-left-nav
-    %table.result-list.main-header
+    %table.result-list.main-results.main-header
       %thead
         %tr
           %th.cell-select
@@ -81,7 +81,10 @@
           %th.cell-content-type(ng-show="!filteredContentType") Content Type
           %th.cell-display-name Name
           %th(ng-repeat="field in displayedFields" ng-class="getFieldClass(field)")
-            {{field.name}}
+            %button.transparent-button(ng-click="setOrderField(field)") {{field.name}}
+            %button.transparent-button(ng-show="orderField == field.id && fieldIsSortable(field)" ng-click="orderColumnBy(field)")
+              %i.button-icon.ss-directup(ng-show="orderDirection == 'ascendant'")
+              %i.button-icon.ss-dropdown(ng-show="orderDirection == 'descendant'")
           %th.cell-status Status
 
     .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")

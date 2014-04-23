@@ -21,7 +21,7 @@
         %a(href="//{{marketingUrl}}/developers/documentation/content-delivery-api/" target="_blank") API Documentation
 
   .with-left-nav
-    %table.result-list.main-header(ng-hide="empty")
+    %table.result-list.main-results.main-header(ng-hide="empty")
       %thead
         %tr
           %th.cell-name Name

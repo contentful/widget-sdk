@@ -3,11 +3,31 @@
 angular.module('contentful').controller('EntryListCtrl',
   function EntryListCtrl($scope, Paginator, Selection, analytics, PromisedLoader, sentry, searchQueryHelper) {
 
+  var DEFAULT_ORDER_QUERY = 'sys.updatedAt';
+  var DEFAULT_ORDER_DIRECTION = 'descendant';
+  var ORDER_PREFIXES = {
+    'descendant': '-',
+    'ascendant': '',
+  };
+
+  var SORTABLE_TYPES = [
+    'Boolean',
+    'Date',
+    'Integer',
+    'Number',
+    'Symbol',
+    'Location'
+  ];
+
+  $scope.orderQuery = DEFAULT_ORDER_QUERY;
+  $scope.orderDirection = DEFAULT_ORDER_DIRECTION;
+  $scope.orderField = 'updatedAt'
+
   var entryLoader = new PromisedLoader();
 
   $scope.systemFields = [
     {
-      id: 'updated',
+      id: 'updatedAt',
       name: 'Updated',
       type: 'Date',
       sys: true,
@@ -20,6 +40,10 @@ angular.module('contentful').controller('EntryListCtrl',
       sys: true
     }
   ];
+
+  $scope.fieldIsSortable = function (field) {
+    return _.contains(SORTABLE_TYPES, field.type);
+  };
 
   $scope.filteredContentType = null;
   $scope.filteredContentTypeFields = [];
@@ -95,10 +119,38 @@ angular.module('contentful').controller('EntryListCtrl',
     });
   };
 
+  $scope.setOrderField = function (field) {
+    var fieldPath = $scope.getFieldPath(field);
+    $scope.orderDirection = DEFAULT_ORDER_DIRECTION;
+    $scope.orderQuery = fieldPath;
+    $scope.orderField = field.id;
+    $scope.resetEntries();
+  };
+
+  $scope.orderColumnBy = function () {
+    $scope.orderDirection = switchOrderDirection($scope.orderDirection);
+    $scope.resetEntries();
+  };
+
+  function getOrderDirection() {
+    return ORDER_PREFIXES[$scope.orderDirection];
+  }
+
+  function switchOrderDirection(direction) {
+    return {
+      'ascendant': 'descendant',
+      'descendant': 'ascendant'
+    }[direction];
+  }
+
+  function getOrderQuery() {
+    return getOrderDirection() + $scope.orderQuery;
+  }
+
   function buildQuery() {
     var contentType;
     var queryObject = {
-      order: '-sys.updatedAt',
+      order: getOrderQuery(),
       limit: $scope.paginator.pageLength,
       skip: $scope.paginator.skipItems()
     };
@@ -162,6 +214,14 @@ angular.module('contentful').controller('EntryListCtrl',
 
   $scope.getFieldClass = function (field) {
     return 'cell-'+field.type.toLowerCase();
+  };
+
+  $scope.getFieldPath = function (field) {
+    if(field.sys){
+      return 'sys.'+field.id;
+    }
+    var defaultLocale = $scope.spaceContext.space.getDefaultLocale().code;
+    return 'fields.'+field.id+'.'+defaultLocale;
   };
 
   $scope.$on('tabBecameActive', function(event, tab) {

@@ -45,14 +45,19 @@
   width: 100%
   table-layout: fixed
   border: 1px solid $dark-rule
-  td
-    border-bottom: 1px solid $light-rule
   th
     padding: 4px 0 3px 0
-    font-weight: normal
     font-size: 90%
+  th,
+  th button
+    font-weight: normal
     color: $light-gray
     border-bottom: 1px solid $dark-rule
+  td
+    border-bottom: 1px solid $light-rule
+  thead
+    .button-icon
+      color: $light-gray
   tr:last-child
     td
       border-bottom: none
@@ -63,6 +68,22 @@
   td,
   th
     @extend %result-list-cell
+
+  .draft-wrapper
+    position: relative
+    span
+      padding: 12.5px 0
+      display: block
+
+  .main-results-bar
+    position: absolute
+    right: -20px
+    height: 100%
+    top: 0
+    bottom: 0
+    width: 8px
+    height: 100%
+    background-color: $light-gray
 
   .published
     color: $green
@@ -138,7 +159,6 @@
     text-transform: uppercase
     color: $light-gray
     font-size: 80%
-
 
 // State variations
 %tr-clickable

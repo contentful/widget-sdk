@@ -1,5 +1,5 @@
 %ng-switch(on="displayType(field)")
-  %date.relative(ng-switch-when="updated" datetime="{{entry.getUpdatedAt()}}")
+  %date.relative(ng-switch-when="updatedAt" datetime="{{entry.getUpdatedAt()}}")
   %date.relative(ng-switch-when="Date" datetime="{{dataForField(entry, field)}}")
   %span.cf-user(ng-switch-when="author" link="entry.getUpdatedBy()" as="updater") {{updater | userNameDisplay:user}}
   %span(ng-switch-when="Boolean") {{displayBool(dataForField(entry, field))}}

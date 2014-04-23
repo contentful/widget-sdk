@@ -33,7 +33,7 @@
         %span Content Type
 
   .with-left-nav
-    %table.result-list.main-header(ng-hide="empty")
+    %table.result-list.main-results.main-header(ng-hide="empty")
       %thead
         %tr
           %th.cell-display-name Name

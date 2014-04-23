@@ -16,7 +16,7 @@ angular.module('contentful').controller('ViewCustomizerCtrl', function ViewCusto
   }
 
   $scope.$watch('filteredContentType', function () {
-    displayedFieldIds = ['author', 'updated'];
+    displayedFieldIds = ['author', 'updatedAt'];
   });
 
   $scope.$watch('filteredContentTypeFields', function (contentTypeFields) {

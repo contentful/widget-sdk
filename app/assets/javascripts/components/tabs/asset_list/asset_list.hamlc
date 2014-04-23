@@ -39,7 +39,7 @@
           %span {{name}}
 
   .with-left-nav
-    %table.result-list.main-header
+    %table.result-list.main-results.main-header
       %thead
         %tr
           %th.cell-select
