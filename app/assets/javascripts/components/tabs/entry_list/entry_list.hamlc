@@ -46,31 +46,7 @@
 
 .tab-main
   .left-nav
-    -#%header Filter By Status
-    -#%ul.filter-list.status-filters
-      %li(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
-        %span All
-      %li(ng-class="{active: tab.params.list == 'changed'}" ng-click="switchList('changed')")
-        %span Changed
-      %li(ng-class="{active: tab.params.list == 'draft'}" ng-click="switchList('draft')")
-        %span Draft
-      %li(ng-class="{active: tab.params.list == 'published'}" ng-click="switchList('published')")
-        %span Published
-      %li(ng-class="{active: tab.params.list == 'archived'}" ng-click="switchList('archived')")
-        %span Archived
-    -#%div(ng-show="spaceContext.publishedContentTypes.length > 0")
-      %header Filter By Content Types
-      %ul.filter-list.type-filters
-        %li(ng-class="{active: tab.params.contentTypeId == contentType.getId()}"
-            ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
-            ng-click="switchList('contentType', contentType)")
-          %span {{contentType.getName()}}
-      %header(cf-can="create, Entry") Add New Entry
-      %ul.filter-list(cf-can="create, Entry")
-        %li(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
-            ng-click="createEntry(contentType, 'frameLink')")
-          %i.ss-plus
-          %span {{contentType.getName()}}
+    -# saved searches
 
   .with-left-nav
     %table.result-list.main-results.main-header
