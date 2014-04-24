@@ -1,5 +1,5 @@
-angular.module('contentful').controller('EntryActionsCtrl', function EntryActionsCtrl($scope, notification) {
-  'use strict';
+'use strict';
+angular.module('contentful').controller('EntryActionsCtrl', function EntryActionsCtrl($scope, notification, sentry) {
 
   // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,
   // We can query the entry instead of reimplementing the checks heere
@@ -39,10 +39,12 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
   $scope.archive = function() {
     $scope.entry.archive(function(err) {
       $scope.$apply(function() {
-        if (err)
-          notification.serverError('Error archiving ' + title() + ' (' + err.body.sys.id + ')', err);
-        else
+        if (err) {
+          notification.warn('Error archiving ' + title() + ' (' + err.body.sys.id + ')');
+          sentry.captureServerError('Error archiving entry', err);
+        } else {
           notification.info(title() + ' archived successfully');
+        }
       });
     });
   };
@@ -50,10 +52,12 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
   $scope.unarchive = function() {
     $scope.entry.unarchive(function(err) {
       $scope.$apply(function() {
-        if (err)
-          notification.serverError('Error unarchiving ' + title + ' (' + err.body.sys.id + ')', err);
-        else
+        if (err) {
+          notification.warn('Error unarchiving ' + title() + ' (' + err.body.sys.id + ')');
+          sentry.captureServerError('Error unarchiving entry', err);
+        } else {
           notification.info(title() + ' unarchived successfully');
+        }
       });
     });
   };
@@ -62,7 +66,8 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
     $scope.entry.unpublish(function (err) {
       $scope.$apply(function(scope){
         if (err) {
-          notification.serverError('Error unpublishing ' + title() + ' (' + err.body.sys.id + ')', err);
+          notification.warn('Error unpublishing ' + title() + ' (' + err.body.sys.id + ')');
+          sentry.captureServerError('Error unpublishing entry', err);
         } else {
           notification.info(title() + ' unpublished successfully');
           scope.otUpdateEntity();
@@ -81,18 +86,14 @@ angular.module('contentful').controller('EntryActionsCtrl', function EntryAction
       $scope.$apply(function(scope){
         if (err) {
           var errorId = err.body.sys.id;
-          var reason;
-          var method = 'serverError';
           if (errorId === 'ValidationFailed') {
-            reason = 'Validation failed';
             scope.setValidationErrors(err.body.details.errors);
-          } else if (errorId === 'VersionMismatch') {
-            reason = 'Can only publish most recent version';
-            method = 'warn';
+            notification.warn('Error publishing ' + title() + ': Validation failed');
+          } else if (errorId === 'VersionMismatch'){
+            notification.warn('Error publishing ' + title() + ': Can only publish most recent version');
           } else {
-            reason = errorId;
+            notification.serverError('Error publishing entry: ' + errorId, err);
           }
-          notification[method]('Error publishing ' + title() + ': ' + reason, err);
         } else {
           scope.entry.setPublishedVersion(version);
           notification.info(title() + ' published successfully');

@@ -7,12 +7,15 @@ describe('Asset Actions Controller', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'serverError', 'warn', 'info', 'otUpdateEntity', 'getAt'
+        'serverError', 'warn', 'info', 'otUpdateEntity', 'getAt', 'captureServerError'
       ]);
       $provide.value('notification', {
         serverError: stubs.serverError,
         info: stubs.info,
         warn: stubs.warn
+      });
+      $provide.value('sentry', {
+        captureServerError: stubs.captureServerError
       });
     });
     inject(function ($controller, $rootScope, cfStub) {
@@ -89,7 +92,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.serverError).toBeCalled();
+        expect(stubs.captureServerError).toBeCalled();
       });
     });
 
@@ -125,7 +128,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.serverError).toBeCalled();
+        expect(stubs.captureServerError).toBeCalled();
       });
     });
 
@@ -161,7 +164,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.serverError).toBeCalled();
+        expect(stubs.captureServerError).toBeCalled();
       });
     });
 

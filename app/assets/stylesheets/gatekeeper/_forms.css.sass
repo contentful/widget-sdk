@@ -18,8 +18,12 @@ $formtastic-fieldwidth: 40%
       width: $form-labelwidth
       text-align: right
       padding: $form-offset $form-gutter $form-offset 0
-    input[type="checkbox"]
+    input[type="checkbox"],
+    input[type="radio"]
       vertical-align: baseline
+    input[type="checkbox"]
+      position: relative
+      top: -1px
     .inline-hints
       margin-left: $form-labelwidth
       width: $formtastic-fieldwidth
@@ -40,6 +44,13 @@ $formtastic-fieldwidth: 40%
       left: $form-labelwidth !important
   .input.boolean label
     padding-left: $form-labelwidth
+  .input.table
+    .result-list
+      margin-top: $form-offset
+      width: 100% - $form-labelwidth
+      float: left
+      th
+        padding-top: 0
   .choices,
   .fragments
     .label label
