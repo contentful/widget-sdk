@@ -107,8 +107,13 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
       $scope.position = null;
 
       $scope.getContentType = function () {
-        var id = $scope.tab && $scope.tab.params && $scope.tab.params.contentTypeId;
-        return $scope.spaceContext && $scope.spaceContext.getPublishedContentType && $scope.spaceContext.getPublishedContentType(id);
+        if ($scope.tab.viewType === 'entry-list') {
+          var id = $scope.tab && $scope.tab.params && $scope.tab.params.contentTypeId;
+          return $scope.spaceContext && $scope.spaceContext.getPublishedContentType && $scope.spaceContext.getPublishedContentType(id);
+        }
+        if ($scope.tab.viewType === 'asset-list') {
+          return searchQueryHelper.assetContentType;
+        }
       };
 
       $scope.getCurrentToken = function () {

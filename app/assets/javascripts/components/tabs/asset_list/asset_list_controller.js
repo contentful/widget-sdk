@@ -56,8 +56,7 @@ angular.module('contentful').
       skip: $scope.paginator.skipItems()
     };
 
-    // TODO need buildQuery method for assets
-    return searchQueryHelper.buildQuery($scope.spaceContext.space, null, $scope.searchTerm)
+    return searchQueryHelper.buildQuery($scope.spaceContext.space, searchQueryHelper.assetContentType, $scope.searchTerm)
     .then(function (searchQuery) {
       _.extend(queryObject, searchQuery);
       return queryObject;
