@@ -86,8 +86,7 @@ angular.module('contentful').controller('EntryListCtrl',
   }
 
   $scope.hasQuery = function () {
-    var noQuery = $scope.tab.params.list == 'all' && _.isEmpty($scope.searchTerm);
-    return !noQuery;
+    return !_.isEmpty($scope.searchTerm);
   };
 
   $scope.loadMore = function() {

@@ -7,8 +7,9 @@
       analytics-event="assets"
       href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
 
+
   .search-area
-    .search-field(cf-search="searchTerm" placeholder="Search for Assets")
+    .search-with-results(cf-tokenized-search="searchTerm" placeholder="Search for Assets")
 
   .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries || paginator.numPages() < 2")
 
@@ -22,25 +23,21 @@
   .left-nav
     %header Filter By Status
     %ul.filter-list.status-filters
-      %li(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
+      %li(ng-class="{active: searchTerm == null}" ng-click="searchTerm = null")
         %span All
-      %li(ng-class="{active: tab.params.list == 'changed'}" ng-click="switchList('changed')")
+      %li(ng-class="{active: searchTerm == 'status:changed'}" ng-click="searchTerm = 'status:changed'")
         %span Changed
-      %li(ng-class="{active: tab.params.list == 'published'}" ng-click="switchList('published')")
+      %li(ng-class="{active: searchTerm == 'status:published'}" ng-click="searchTerm = 'status:published'")
         %span Published
-      %li(ng-class="{active: tab.params.list == 'archived'}" ng-click="switchList('archived')")
+      %li(ng-class="{active: searchTerm == 'status:archived'}" ng-click="searchTerm = 'status:archived'")
         %span Archived
-    %header Filter By File Type
-    %ul.filter-list.type-filters
-      %li(ng-repeat="(label, name) in mimetypeGroups track by label"
-          ng-class="{active: tab.params.list == label}"
-          ng-click="switchList(label)")
-        %span {{name}}
-    %header(cf-can="create, Asset") Add New
-    %ul.filter-list(cf-can="create, Asset")
-      %li(ng-click="createAsset('frameLink')")
-        %span Asset
-
+    -# TODO rewrite filters
+      %header Filter By File Type
+      %ul.filter-list.type-filters
+        %li(ng-repeat="(label, name) in mimetypeGroups track by label"
+            ng-class="{active: tab.params.list == label}"
+            ng-click="switchList(label)")
+          %span {{name}}
 
   .with-left-nav
     %table.result-list.main-header

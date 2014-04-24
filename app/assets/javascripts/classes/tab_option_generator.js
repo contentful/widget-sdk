@@ -61,9 +61,7 @@ angular.module('contentful').factory('TabOptionsGenerator', function () {
         viewType: 'entry-list',
         section: 'entries',
         hidden: true,
-        params: {
-          list: 'all'
-        },
+        params: {},
         title: 'Entries',
         canClose: true
       };
@@ -74,9 +72,7 @@ angular.module('contentful').factory('TabOptionsGenerator', function () {
         viewType: 'asset-list',
         section: 'assets',
         hidden: true,
-        params: {
-          list: 'all'
-        },
+        params: {},
         title: 'Assets',
         canClose: true
       };
