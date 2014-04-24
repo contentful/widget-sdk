@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').factory('searchQueryAutocompletions', function(userCache){
+angular.module('contentful').factory('searchQueryAutocompletions', function(userCache, mimetype, AssetContentType){
   // Autocomplete object {{{1
 
   // Predefined keys and their completions/conversions
@@ -47,6 +47,38 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
     }
   };
 
+  var assetcompletions = {
+    type: {
+      complete: _.keys(mimetype.groupDisplayNames),
+      convert: function (operator, value) {
+        return {mimetype_group: value};
+      }
+    },
+    size: {
+      operators: ['<', '<=', '==', '>=', '>'],
+      convert: function (operator, value) {
+        // TODO support M KB suffixes etc.
+        var query = {};
+        query['fields.file.details.size' + queryOperator(operator)] = value;
+        return query;
+      }
+    },
+    // TODO image sizes, extract numerical stuff, filesize image size dates etc in function
+    filename: {
+      convert: function (op, value) {
+        // TODO fuzzy [match]ing on filenames?
+        return {'fields.file.fileName': value};
+      }
+    }
+  };
+
+  function staticAutocompletions(contentType) {
+    if (contentType.data === AssetContentType) {
+      return _.extend({}, autocompletion, assetcompletions);
+    } else {
+      return autocompletion;
+    }
+  }
   function dateCompletions(key) {
     var regex = /(\d+) +days +ago/i;
     return {
@@ -84,7 +116,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
   // Completions {{{1
 
   function keyCompletion(contentType) {
-    return _.union(searchableFieldIds(contentType), _.keys(autocompletion));
+    return _.union( searchableFieldIds(contentType), _.keys(staticAutocompletions(contentType)));
 
     function searchableFieldIds(contentType) {
       if (!contentType) return [];
@@ -95,13 +127,14 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
 
     // Tells if a field is searchable or not
     function fieldSearchable(field) {
-      return !field.disabled && !field.type.match(/Location|Link|Object|Array/);
+      return !field.disabled && !field.type.match(/Location|Link|Object|Array|File/);
     }
   }
 
   function operatorCompletion(key, contentType) {
-    if (!autocompletion[key]) return operatorsForField(key, contentType);
-    return autocompletion[key].operators || ':';
+    var completions = staticAutocompletions(contentType);
+    if (!completions[key]) return operatorsForField(key, contentType);
+    return completions[key].operators || ':';
 
     // Offer available operators for a certain field of a content type
     // Based on field type and validations
@@ -115,11 +148,12 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
   }
 
   function valueCompletion(key, contentType) {
-    if (!autocompletion[key]) {
+    var completions = staticAutocompletions(contentType);
+    if (!completions[key]) {
       return predefinedFieldCompletion(key, contentType);
     }
 
-    var complete = autocompletion[key].complete;
+    var complete = completions[key].complete;
     if (_.isFunction(complete)) {
       return complete(contentType);
     } else {
@@ -159,7 +193,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
     var key      = pair.content.key.content;
     var operator = pair.content.operator.content;
     var value    = pair.content.value.content;
-    var keyData = autocompletion[key];
+    var keyData  = staticAutocompletions(contentType)[key];
     if (keyData) {
       if (_.isFunction(keyData.convert) ) return keyData.convert(operator, value, space);
       if (_.isObject(keyData.convert)) {

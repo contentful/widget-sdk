@@ -35,6 +35,10 @@ angular.module('contentful').
     return true;
   };
 
+  $scope.setSearchTerm = function (term) {
+    $scope.searchTerm = term;
+  };
+
   $scope.resetAssets = function() {
     $scope.paginator.page = 0;
     return buildQuery()

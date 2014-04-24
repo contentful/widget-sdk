@@ -25,18 +25,17 @@
     %ul.filter-list.status-filters
       %li(ng-class="{active: searchTerm == null}" ng-click="searchTerm = null")
         %span All
-      %li(ng-class="{active: searchTerm == 'status:changed'}" ng-click="searchTerm = 'status:changed'")
+      %li(ng-class="{active: searchTerm == 'status:changed'}" ng-click="setSearchTerm('status:changed')")
         %span Changed
-      %li(ng-class="{active: searchTerm == 'status:published'}" ng-click="searchTerm = 'status:published'")
+      %li(ng-class="{active: searchTerm == 'status:published'}" ng-click="setSearchTerm('status:published')")
         %span Published
-      %li(ng-class="{active: searchTerm == 'status:archived'}" ng-click="searchTerm = 'status:archived'")
+      %li(ng-class="{active: searchTerm == 'status:archived'}" ng-click="setSearchTerm('status:archived')")
         %span Archived
-    -# TODO rewrite filters
       %header Filter By File Type
       %ul.filter-list.type-filters
         %li(ng-repeat="(label, name) in mimetypeGroups track by label"
-            ng-class="{active: tab.params.list == label}"
-            ng-click="switchList(label)")
+            ng-class="{active: searchTerm == 'type:'+label}"
+            ng-click="setSearchTerm('type:'+label)")
           %span {{name}}
 
   .with-left-nav
