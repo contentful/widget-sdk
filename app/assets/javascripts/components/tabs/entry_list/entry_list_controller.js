@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').controller('EntryListCtrl',
-  function EntryListCtrl($scope, Paginator, Selection, analytics, PromisedLoader, sentry, searchQueryHelper) {
+  function EntryListCtrl($scope, Paginator, Selection, analytics, PromisedLoader, sentry, searchQueryHelper, modalDialog, random) {
 
   var DEFAULT_ORDER_QUERY = 'sys.updatedAt';
   var DEFAULT_ORDER_DIRECTION = 'descendant';
@@ -19,27 +19,33 @@ angular.module('contentful').controller('EntryListCtrl',
     'Location'
   ];
 
+  var updatedAtField = {
+    id: 'updatedAt',
+    name: 'Updated',
+    type: 'Date',
+    sys: true,
+    persistent: true
+  };
+
+  var authorField = {
+    id: 'author',
+    name: 'Author',
+    type: 'Symbol',
+    sys: true
+  };
+
+  $scope.systemFields = [
+    updatedAtField,
+    authorField
+  ];
+
   $scope.orderQuery = DEFAULT_ORDER_QUERY;
   $scope.orderDirection = DEFAULT_ORDER_DIRECTION;
-  $scope.orderField = 'updatedAt';
+  $scope.orderField = updatedAtField;
 
   var entryLoader = new PromisedLoader();
 
-  $scope.systemFields = [
-    {
-      id: 'updatedAt',
-      name: 'Updated',
-      type: 'Date',
-      sys: true,
-      persistent: true
-    },
-    {
-      id: 'author',
-      name: 'Author',
-      type: 'Symbol',
-      sys: true
-    }
-  ];
+  loadUIConfig();
 
   $scope.fieldIsSortable = function (field) {
     return _.contains(SORTABLE_TYPES, field.type);
@@ -123,7 +129,7 @@ angular.module('contentful').controller('EntryListCtrl',
     var fieldPath = $scope.getFieldPath(field);
     $scope.orderDirection = DEFAULT_ORDER_DIRECTION;
     $scope.orderQuery = fieldPath;
-    $scope.orderField = field.id;
+    $scope.orderField = field;
     $scope.resetEntries();
   };
 
@@ -197,6 +203,67 @@ angular.module('contentful').controller('EntryListCtrl',
     }, function () {
       $scope.paginator.page--;
     });
+  };
+
+  $scope.openSaveView = function () {
+    $scope.uiConfigLoadedPreset = $scope.uiConfigLoadedPreset || {title: '', id: random.id()}; // GET RANDOM ID
+    modalDialog.open({
+      template: 'save_view_dialog',
+      scope: $scope
+    }).then(saveView);
+  };
+
+  function saveView() {
+    var preset = $scope.uiConfigLoadedPreset;
+    if($scope.searchTerm) preset.searchTerm = $scope.searchTerm;
+    if($scope.tab.params.contentTypeId){
+      preset.contentTypeId = $scope.tab.params.contentTypeId;
+      preset.displayedFields = $scope.displayedFields;
+    }
+    preset.order = {
+      field: {
+        id: $scope.orderField.id,
+        sys: $scope.orderField.sys
+      },
+      direction: $scope.orderDirection
+    };
+    var presetIndex = _.findIndex($scope.uiConfig.savedPresets, function (val) { return val.id === preset.id;});
+    if(presetIndex >= 0){
+      $scope.uiConfig.savedPresets[presetIndex] = preset;
+    } else {
+      $scope.uiConfig.savedPresets.push(preset);
+    }
+    $scope.uiConfigLoadedPreset = preset;
+    $scope.spaceContext.space.setUIConfig($scope.uiConfig, function (err, config) {
+      //if(err && err.body.sys.id == 'VersionMismatch')
+      // Handle version mismatch
+      // maybe get config again, and inject new preset or look for preset and update it in case order was changed
+      $scope.uiConfig = config;
+    });
+  }
+
+  function loadUIConfig() {
+    $scope.spaceContext.space.getUIConfig(function (err, config) {
+      //TODO if(err)
+      if(config && config.savedPresets)
+        $scope.uiConfig = config;
+      else
+        $scope.uiConfig = {savedPresets: []};
+      //console.log('loaded uiconfig', $scope.uiConfig);
+    });
+  }
+
+  $scope.loadPreset = function (preset) {
+    if(preset.searchTerm) $scope.searchTerm = preset.searchTerm;
+    if(preset.contentTypeId) {
+      $scope.tab.params.contentTypeId = preset.contentTypeId;
+      $scope.displayedFields = preset.displayedFields;
+    }
+    $scope.orderDirection = preset.order.direction;
+    $scope.orderField = preset.order.field;
+    $scope.orderQuery = $scope.getFieldPath(preset.order.field);
+    $scope.uiConfigLoadedPreset = preset;
+    $scope.resetEntries();
   };
 
   $scope.statusClass = function(entry){

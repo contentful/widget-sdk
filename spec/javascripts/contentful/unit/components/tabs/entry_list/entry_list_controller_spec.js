@@ -3,6 +3,7 @@
 describe('Entry List Controller', function () {
   var controller, scope;
   var stubs;
+  var createController;
 
   var makeEntry = function (sys) {
     var entry;
@@ -25,7 +26,9 @@ describe('Entry List Controller', function () {
         'track',
         'load',
         'then',
-        'captureError'
+        'captureError',
+        'getUIConfig',
+        'setUIConfig'
       ]);
       $provide.value('sentry', {
         captureError: stubs.captureError
@@ -47,10 +50,14 @@ describe('Entry List Controller', function () {
       };
 
       var space = cfStub.space('test');
+      space.getUIConfig = stubs.getUIConfig;
+      space.setUIConfig = stubs.setUIConfig;
       var contentTypeData = cfStub.contentTypeData('testType');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
 
-      controller = $controller('EntryListCtrl', {$scope: scope});
+      createController = function() {
+        controller = $controller('EntryListCtrl', {$scope: scope});
+      };
     });
   });
 
@@ -59,7 +66,273 @@ describe('Entry List Controller', function () {
     $log.assertEmpty();
   }));
 
+  describe('loads ui config', function() {
+    it('initializes a non existing config', function() {
+      stubs.getUIConfig.callsArgWith(0, null);
+      createController();
+      expect(scope.uiConfig).toEqual({savedPresets: []});
+    });
+
+    it('loads an existing config', function() {
+      var config = {savedPresets: [{}]};
+      stubs.getUIConfig.callsArgWith(0, null, config);
+      createController();
+      expect(scope.uiConfig).toBe(config);
+    });
+  });
+
+  describe('loads a ui config preset', function() {
+    var preset;
+    beforeEach(function() {
+      createController();
+      scope.resetEntries = sinon.stub();
+      scope.getFieldPath = sinon.stub();
+      scope.getFieldPath.returns('fields.fieldid.en-US');
+    });
+
+    describe('partial preset', function() {
+      beforeEach(function() {
+        preset = {
+          order: {
+            field: {
+              id: 'fieldid'
+            },
+            direction: 'ascending'
+          }
+        };
+        scope.loadPreset(preset);
+      });
+
+      it('sets the order direction', function() {
+        expect(scope.orderDirection).toEqual('ascending');
+      });
+
+      it('sets the order field', function() {
+        expect(scope.orderField.id).toEqual('fieldid');
+      });
+
+      it('sets the order query', function() {
+        expect(scope.orderQuery).toEqual('fields.fieldid.en-US');
+      });
+
+      it('resets entries', function() {
+        expect(scope.resetEntries).toBeCalled();
+      });
+
+      it('saves preset object', function() {
+        expect(scope.uiConfigLoadedPreset).toBe(preset);
+      });
+    });
+
+    describe('full preset', function() {
+      beforeEach(function() {
+        preset = {
+          searchTerm: 'search term',
+          contentTypeId: 'ctid',
+          displayedFields: ['field1', 'field2'],
+          order: {
+            field: {
+              id: 'fieldid'
+            },
+            direction: 'descending'
+          }
+        };
+        scope.loadPreset(preset);
+      });
+
+      it('sets the search term', function() {
+        expect(scope.searchTerm).toEqual('search term');
+      });
+
+      it('sets the content type id', function() {
+        expect(scope.tab.params.contentTypeId).toEqual('ctid');
+      });
+
+      it('sets the displayed fields', function() {
+        expect(scope.displayedFields).toEqual(['field1', 'field2']);
+      });
+
+      it('sets the order direction', function() {
+        expect(scope.orderDirection).toEqual('descending');
+      });
+
+      it('sets the order field', function() {
+        expect(scope.orderField.id).toEqual('fieldid');
+      });
+
+      it('sets the order query', function() {
+        expect(scope.orderQuery).toEqual('fields.fieldid.en-US');
+      });
+
+      it('resets entries', function() {
+        expect(scope.resetEntries).toBeCalled();
+      });
+
+      it('saves preset object', function() {
+        expect(scope.uiConfigLoadedPreset).toBe(preset);
+      });
+    });
+
+  });
+
+  describe('opens the view saving dialog', function() {
+    var fields = ['field1', 'field2'];
+    var orderField = {id: 'fieldid', sys: false};
+    beforeEach(inject(function(modalDialog) {
+      stubs.open = sinon.stub(modalDialog, 'open');
+      stubs.open.returns({then: stubs.then});
+      stubs.then.callsArg(0);
+      createController();
+    }));
+
+    describe('loads an existing preset', function() {
+      beforeEach(function() {
+        var preset = {
+          id: 'existing id',
+          title: 'existing preset',
+          searchTerm: 'search term',
+          contentTypeId: 'ctid',
+          displayedFields: fields
+        };
+        scope.uiConfigLoadedPreset = preset;
+        scope.uiConfig = {
+          savedPresets: [preset]
+        };
+        scope.orderField = orderField;
+        scope.orderDirection = 'ascending';
+
+        scope.openSaveView();
+      });
+
+      it('has the existing preset id', function() {
+        expect(scope.uiConfigLoadedPreset.id).toEqual('existing id');
+      });
+
+      it('has the existing preset title', function() {
+        expect(scope.uiConfigLoadedPreset.title).toEqual('existing preset');
+      });
+
+      it('has search term', function() {
+        expect(scope.uiConfigLoadedPreset.searchTerm).toBe('search term');
+      });
+
+      it('has content type id', function() {
+        expect(scope.uiConfigLoadedPreset.contentTypeId).toBe('ctid');
+      });
+
+      it('has displayedFields', function() {
+        expect(scope.uiConfigLoadedPreset.displayedFields).toBe(fields);
+      });
+
+      it('has order field id', function() {
+        expect(scope.uiConfigLoadedPreset.order.field.id).toBe(orderField.id);
+      });
+
+      it('has order field sys', function() {
+        expect(scope.uiConfigLoadedPreset.order.field.sys).toBe(orderField.sys);
+      });
+
+      it('has order direction', function() {
+        expect(scope.uiConfigLoadedPreset.order.direction).toBe('ascending');
+      });
+
+      it('updates the preset in the presets collection', function() {
+        var presets = scope.uiConfig.savedPresets;
+        var foundPreset = _.find(presets, function (val) { return val.id == 'existing id';});
+        expect(foundPreset).toBe(scope.uiConfigLoadedPreset);
+      });
+
+      it('saves ui config', function() {
+        expect(stubs.setUIConfig).toBeCalled();
+      });
+
+    });
+
+    describe('creates a new preset', function() {
+      beforeEach(function() {
+        scope.searchTerm = 'search term';
+        scope.tab.params.contentTypeId = 'ctid';
+        scope.displayedFields = fields;
+        scope.orderField = orderField;
+        scope.orderDirection = 'ascending';
+
+        scope.uiConfig = {
+          savedPresets: []
+        };
+
+        scope.openSaveView();
+      });
+
+      it('has new id', function() {
+        expect(scope.uiConfigLoadedPreset.id).toBeDefined();
+      });
+
+      it('has new title', function() {
+        expect(scope.uiConfigLoadedPreset.title).toBe('');
+      });
+
+      it('has search term', function() {
+        expect(scope.uiConfigLoadedPreset.searchTerm).toBe('search term');
+      });
+
+      it('has content type id', function() {
+        expect(scope.uiConfigLoadedPreset.contentTypeId).toBe('ctid');
+      });
+
+      it('has displayedFields', function() {
+        expect(scope.uiConfigLoadedPreset.displayedFields).toBe(fields);
+      });
+
+      it('has order field id', function() {
+        expect(scope.uiConfigLoadedPreset.order.field.id).toBe(orderField.id);
+      });
+
+      it('has order field sys', function() {
+        expect(scope.uiConfigLoadedPreset.order.field.sys).toBe(orderField.sys);
+      });
+
+      it('has order direction', function() {
+        expect(scope.uiConfigLoadedPreset.order.direction).toBe('ascending');
+      });
+
+      it('pushes the preset into the presets collection', function() {
+        var presets = scope.uiConfig.savedPresets;
+        var foundPreset = _.find(presets, function (val) { return val.searchTerm == 'search term';});
+        expect(foundPreset).toBe(scope.uiConfigLoadedPreset);
+      });
+
+      it('saves ui config', function() {
+        expect(stubs.setUIConfig).toBeCalled();
+      });
+
+    });
+
+
+  });
+
+  describe('gets a path for the field content', function() {
+    beforeEach(function() {
+      createController();
+    });
+
+    it('for sys fields', function() {
+      expect(scope.getFieldPath({
+        id: 'fieldid',
+        sys: true
+      })).toEqual('sys.fieldid');
+    });
+
+    it('for regular fields', function() {
+      expect(scope.getFieldPath({
+        id: 'fieldid'
+      })).toEqual('fields.fieldid.en-US');
+    });
+  });
+
   describe('on search term change', function () {
+    beforeEach(function() {
+      createController();
+    });
 
     describe('if term is null', function () {
       beforeEach(function () {
@@ -91,6 +364,7 @@ describe('Entry List Controller', function () {
 
   describe('page parameters change trigger entries reset', function () {
     beforeEach(function () {
+      createController();
       stubs.reset = sinon.stub(scope, 'resetEntries');
       scope.$digest();
     });
@@ -147,6 +421,7 @@ describe('Entry List Controller', function () {
   describe('resetting entries', function() {
     var entries;
     beforeEach(function() {
+      createController();
       stubs.switch = sinon.stub();
       entries = {
         total: 30
@@ -268,12 +543,14 @@ describe('Entry List Controller', function () {
   });
 
   it('has a query', function() {
+    createController();
     scope.tab.params.list = 'all';
     scope.searchTerm = 'term';
     expect(scope.hasQuery()).toBeTruthy();
   });
 
   it('has no query', function() {
+    createController();
     scope.tab.params.list = 'all';
     scope.searchTerm = null;
     expect(scope.hasQuery()).toBeFalsy();
@@ -282,6 +559,7 @@ describe('Entry List Controller', function () {
   describe('loadMore', function () {
     var entries;
     beforeEach(function() {
+      createController();
       entries = [];
       Object.defineProperty(entries, 'total', {value: 30});
 
@@ -404,6 +682,10 @@ describe('Entry List Controller', function () {
   });
 
   describe('status class', function () {
+    beforeEach(function() {
+      createController();
+    });
+
     it('is updated', function () {
       var entry = makeEntry();
       stubs.published.returns(true);
@@ -435,6 +717,7 @@ describe('Entry List Controller', function () {
 
   describe('when tab becomes active', function () {
     beforeEach(function() {
+      createController();
       scope.resetEntries = sinon.stub();
     });
 

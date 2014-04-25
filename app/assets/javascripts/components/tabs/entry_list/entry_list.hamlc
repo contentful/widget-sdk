@@ -46,7 +46,10 @@
 
 .tab-main
   .left-nav
-    -# saved searches
+    %button(ng-click="openSaveView()") Save View
+    %ul
+      %li(ng-repeat="preset in uiConfig.savedPresets track by preset.id")
+        %a(ng-click="loadPreset(preset)") {{preset.title}}
 
   .with-left-nav
     %table.result-list.main-results.main-header
@@ -58,7 +61,7 @@
           %th.cell-display-name Name
           %th(ng-repeat="field in displayedFields" ng-class="getFieldClass(field)")
             %button.transparent-button(ng-click="setOrderField(field)") {{field.name}}
-            %button.transparent-button(ng-show="orderField == field.id && fieldIsSortable(field)" ng-click="orderColumnBy(field)")
+            %button.transparent-button(ng-show="orderField.id == field.id && fieldIsSortable(field)" ng-click="orderColumnBy(field)")
               %i.button-icon.ss-directup(ng-show="orderDirection == 'ascendant'")
               %i.button-icon.ss-dropdown(ng-show="orderDirection == 'descendant'")
           %th.cell-status Status
