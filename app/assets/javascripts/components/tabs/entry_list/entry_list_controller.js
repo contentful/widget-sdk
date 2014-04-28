@@ -165,11 +165,11 @@ angular.module('contentful').controller('EntryListCtrl',
       contentType = $scope.spaceContext.getPublishedContentType($scope.tab.params.contentTypeId);
     }
 
-    var searchQuery = searchQueryHelper.buildQuery(contentType, $scope.searchTerm);
-
-    _.extend(queryObject, searchQuery);
-
-    return queryObject;
+    return searchQueryHelper.buildQuery($scope.spaceContext.space, contentType, $scope.searchTerm)
+    .then(function (searchQuery) {
+      _.extend(queryObject, searchQuery);
+      return queryObject;
+    });
   }
 
   $scope.hasQuery = function () {
