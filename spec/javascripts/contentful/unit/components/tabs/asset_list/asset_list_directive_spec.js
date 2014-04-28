@@ -129,18 +129,4 @@ describe('The Asset list directive', function () {
     });
   });
 
-  describe('add button list', function() {
-    it('not shown', function() {
-      canStub.withArgs('create', 'Asset').returns(false);
-      compileElement();
-      expect(container.find('.filter-list').eq(2)).toBeNgHidden();
-    });
-
-    it('shown', function() {
-      canStub.withArgs('create', 'Asset').returns(true);
-      compileElement();
-      expect(container.find('.filter-list').eq(2)).not.toBeNgHidden();
-    });
-  });
-
 });

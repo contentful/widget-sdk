@@ -487,6 +487,7 @@ describe('Entry List Controller', function () {
         expect(stubs.load.args[0][2].skip).toBeTruthy();
       });
 
+      // TODO these tests should go into a test for the search query helper
       it('for all list', function() {
         scope.resetEntries();
         scope.$apply();
@@ -533,7 +534,6 @@ describe('Entry List Controller', function () {
       });
 
       it('for search term', function() {
-        scope.tab.params.list = '';
         scope.searchTerm = 'term';
         scope.resetEntries();
         scope.$apply();

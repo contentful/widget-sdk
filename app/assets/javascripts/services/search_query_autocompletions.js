@@ -73,7 +73,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
   };
 
   function staticAutocompletions(contentType) {
-    if (contentType.data === AssetContentType) {
+    if (contentType && contentType.data === AssetContentType) {
       return _.extend({}, autocompletion, assetcompletions);
     } else {
       return autocompletion;
