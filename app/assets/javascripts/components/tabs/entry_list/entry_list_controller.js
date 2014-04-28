@@ -4,10 +4,10 @@ angular.module('contentful').controller('EntryListCtrl',
   function EntryListCtrl($scope, Paginator, Selection, analytics, PromisedLoader, sentry, searchQueryHelper, modalDialog, random) {
 
   var DEFAULT_ORDER_QUERY = 'sys.updatedAt';
-  var DEFAULT_ORDER_DIRECTION = 'descendant';
+  var DEFAULT_ORDER_DIRECTION = 'descending';
   var ORDER_PREFIXES = {
-    'descendant': '-',
-    'ascendant': '',
+    'descending': '-',
+    'ascending': '',
   };
 
   var SORTABLE_TYPES = [
@@ -144,8 +144,8 @@ angular.module('contentful').controller('EntryListCtrl',
 
   function switchOrderDirection(direction) {
     return {
-      'ascendant': 'descendant',
-      'descendant': 'ascendant'
+      'ascending': 'descending',
+      'descending': 'ascending'
     }[direction];
   }
 
@@ -278,6 +278,10 @@ angular.module('contentful').controller('EntryListCtrl',
     } else {
       return 'draft';
     }
+  };
+
+  $scope.getFieldList = function () {
+    return _.map($scope.displayedFields, 'name').join(', ');
   };
 
   $scope.getFieldClass = function (field) {

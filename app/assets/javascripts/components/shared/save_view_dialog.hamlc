@@ -2,22 +2,29 @@
   .modal-dialog
     .title Save View
     .modal-dialog-close-button(ng-click="dialog.cancel()")
-    %p.dialog-content
-      %label Title
-      %input(type="text" ng-model="uiConfigLoadedPreset.title")
-    %p.dialog-content(ng-show="searchTerm")
-      Search terms: {{searchTerm}}
-    %p.dialog-content(ng-show="tab.params.contentTypeId")
-      Content Type: {{tab.params.contentTypeId}}
-    %p.dialog-content(ng-show="displayedFields")
-      Displayed columns:
-      %ul
-        %li(ng-repeat="field in displayedFields") {{field.name}}
-    %p.dialog-content(ng-show="orderField")
-      Ordered {{orderDirection}} by {{orderField}}
 
-    .buttons
-      %button.default-button.cancel(type="button" ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")
-        {{dialog.cancelLabel}}
-      %button.default-button.primary-button.confirm(ng-click="dialog.confirm()")
-        {{dialog.confirmLabel}}
+    %form(name="saveViewForm" ng-submit="dialog.confirm()")
+      .form-horizontal
+        .form-field
+          %label Title
+          .form-controls
+            %input(type="text" name="title" ng-model="uiConfigLoadedPreset.title" required="")
+        .form-field(ng-show="searchTerm")
+          %label Search terms
+          .form-controls {{SearchTerm}}
+        .form-field(ng-show="tab.params.contentTypeId")
+          %label Content Type
+          .form-controls {{typeName()}}
+        .form-field(ng-show="displayedFields")
+          %label Displayed columns
+          .form-controls
+            %p {{getFieldList()}}
+        .form-field(ng-show="orderField")
+          %label Ordered
+          .form-controls
+            %p {{orderDirection}} by {{orderField.name}}
+      .buttons
+        %button.default-button.cancel(type="button" ng-click="dialog.cancel()")
+          {{dialog.cancelLabel}}
+        %button.default-button.primary-button.confirm(ng-click="dialog.confirm()" ng-disabled="saveViewForm.$invalid")
+          {{dialog.confirmLabel}}
