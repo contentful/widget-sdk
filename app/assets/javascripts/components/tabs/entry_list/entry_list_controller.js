@@ -19,6 +19,32 @@ angular.module('contentful').controller('EntryListCtrl',
     'Location'
   ];
 
+  function generateDefaultViews() {
+    var views = [ { title: 'All', id: random.id(), order: makeOrder()} ];
+    views.push(
+      {title: 'Status: Published', searchTerm: 'status:published', id: random.id(), order: makeOrder()},
+      {title: 'Status: Changed',   searchTerm: 'status:changed'  , id: random.id(), order: makeOrder()},
+      {title: 'Status: Draft',     searchTerm: 'status:draft'    , id: random.id(), order: makeOrder()},
+      {title: 'Status: Archived',  searchTerm: 'status:archived' , id: random.id(), order: makeOrder()}
+    );
+    $scope.waitFor('spaceContext.publishedContentTypes.length > 0', function () {
+      _.each($scope.spaceContext.publishedContentTypes, function (contentType) {
+        views.push({
+          title: 'Content Type: '+contentType.data.name,
+          contentTypeId: contentType.getId(),
+          id: random.id(),
+          order: makeOrder()
+        });
+    });
+
+    });
+    return views;
+
+    function makeOrder() {
+      return { field: updatedAtField, direction: DEFAULT_ORDER_DIRECTION };
+    }
+  }
+
   var updatedAtField = {
     id: 'updatedAt',
     name: 'Updated',
@@ -206,7 +232,7 @@ angular.module('contentful').controller('EntryListCtrl',
   };
 
   $scope.openSaveView = function () {
-    $scope.uiConfigLoadedPreset = $scope.uiConfigLoadedPreset || {title: '', id: random.id()}; // GET RANDOM ID
+    $scope.uiConfigLoadedPreset = $scope.uiConfigLoadedPreset || {title: '', id: random.id()};
     modalDialog.open({
       template: 'save_view_dialog',
       scope: $scope
@@ -243,18 +269,22 @@ angular.module('contentful').controller('EntryListCtrl',
   }
 
   function loadUIConfig() {
+    // TODO ugh, this is wrong because uiConfig is of a higher scope than entrylistController
     $scope.spaceContext.space.getUIConfig(function (err, config) {
-      //TODO if(err)
-      if(config && config.savedPresets)
-        $scope.uiConfig = config;
-      else
-        $scope.uiConfig = {savedPresets: []};
-      //console.log('loaded uiconfig', $scope.uiConfig);
+      if (!err) {
+        if(config && config.savedPresets)
+          $scope.uiConfig = config;
+        else
+          $scope.uiConfig = {savedPresets: generateDefaultViews()};
+      } else {
+        $scope.uiConfig = {savedPresets: generateDefaultViews()};
+        sentry.captureServerError('Could not load UIConfig', err);
+      }
     });
   }
 
   $scope.loadPreset = function (preset) {
-    if(preset.searchTerm) $scope.searchTerm = preset.searchTerm;
+    $scope.searchTerm = preset.searchTerm || null;
     if(preset.contentTypeId) {
       $scope.tab.params.contentTypeId = preset.contentTypeId;
       $scope.displayedFields = preset.displayedFields;
