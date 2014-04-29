@@ -58,9 +58,9 @@ angular.module('contentful').controller('EntryListCtrl',
     $scope.searchTerm = null;
     this.paginator.page = 0;
     var params = $scope.tab.params;
-    params.contentTypeId = contentType ? contentType.getId() : null;
+    params.contentTypeId = contentType ? contentType : null;
     $scope.filteredContentType = contentType ? getFilteredContentType(params.contentTypeId) : null;
-    $scope.filteredContentTypeFields = contentType ? contentType.data.fields : [];
+    $scope.filteredContentTypeFields = contentType ? $scope.filteredContentType.data.fields : [];
   };
 
   $scope.visibleInCurrentList = function(){

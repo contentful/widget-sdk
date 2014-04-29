@@ -104,9 +104,11 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
   $scope.loadPreset = function (preset) {
     $scope.searchTerm = preset.searchTerm || null;
     if(preset.contentTypeId) {
-      $scope.tab.params.contentTypeId = preset.contentTypeId;
-      $scope.displayedFields = preset.displayedFields;
+      $scope.filterByContentType(preset.contentTypeId);
+    } else {
+      $scope.filterByContentType();
     }
+    $scope.displayedFields = preset.displayedFields;
     $scope.orderDirection = preset.order.direction;
     $scope.orderField = preset.order.field;
     $scope.orderQuery = $scope.getFieldPath(preset.order.field);
@@ -149,12 +151,13 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
   }
 
   function generateDefaultViews() {
-    var views = [ { title: 'All', id: random.id(), order: makeOrder()} ];
+    var fields = _.clone($scope.systemFields);
+    var views = [ { title: 'All', id: random.id(), order: makeOrder(), displayedFields: fields} ];
     views.push(
-      {title: 'Status: Published', searchTerm: 'status:published', id: random.id(), order: makeOrder()},
-      {title: 'Status: Changed',   searchTerm: 'status:changed'  , id: random.id(), order: makeOrder()},
-      {title: 'Status: Draft',     searchTerm: 'status:draft'    , id: random.id(), order: makeOrder()},
-      {title: 'Status: Archived',  searchTerm: 'status:archived' , id: random.id(), order: makeOrder()}
+      {title: 'Status: Published', searchTerm: 'status:published', id: random.id(), order: makeOrder(), displayedFields: fields},
+      {title: 'Status: Changed',   searchTerm: 'status:changed'  , id: random.id(), order: makeOrder(), displayedFields: fields},
+      {title: 'Status: Draft',     searchTerm: 'status:draft'    , id: random.id(), order: makeOrder(), displayedFields: fields},
+      {title: 'Status: Archived',  searchTerm: 'status:archived' , id: random.id(), order: makeOrder(), displayedFields: fields}
     );
     $scope.waitFor('spaceContext.publishedContentTypes.length > 0', function () {
       _.each($scope.spaceContext.publishedContentTypes, function (contentType) {
@@ -162,7 +165,8 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
           title: 'Content Type: '+contentType.data.name,
           contentTypeId: contentType.getId(),
           id: random.id(),
-          order: makeOrder()
+          order: makeOrder(),
+          displayedFields: fields
         });
     });
 

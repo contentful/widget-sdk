@@ -17,7 +17,7 @@
         %ul.dropdown-menu-list
           %li.dropdown-menu-item.type(ng-click="filterByContentType()" dropdown-close="") All
           %li.dropdown-menu-item.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
-                   ng-click="filterByContentType(contentType)"
+                   ng-click="filterByContentType(contentType.getId())"
                    dropdown-close="") {{contentType.getName()}}
     .search-with-results(cf-tokenized-search="searchTerm" placeholder="Search for {{typeNameOr('Entries')}}")
 
