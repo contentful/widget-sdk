@@ -1,28 +1,29 @@
 'use strict';
 
 angular.module('contentful').controller('ViewCustomizerCtrl', function ViewCustomizerCtrl($scope) {
-
-  var displayedFieldIds, fields;
+  var displayedFieldIds;
 
   function determineFieldVisibility() {
-    var displayedFields = $scope.systemFields.concat(fields);
+    var filteredContentType = $scope.spaceContext.getPublishedContentType($scope.tab.params.contentTypeId);
+    var contentTypeFields = filteredContentType ? filteredContentType.data.fields : [];
+    var displayedFields = $scope.systemFields.concat(contentTypeFields);
 
-    var displayFilter = function(field) {
+    $scope.displayedFields = _.filter(displayedFields, fieldIsSelected);
+    $scope.hiddenFields = _.sortBy(_.reject(displayedFields, fieldIsSelected), 'name');
+
+    function fieldIsSelected(field) {
       return _.contains(displayedFieldIds, field.id);
-    };
-
-    $scope.displayedFields = _.filter(displayedFields, displayFilter);
-    $scope.hiddenFields = _.sortBy(_.reject(displayedFields, displayFilter), 'name');
+    }
   }
 
-  $scope.$watch('filteredContentType', function () {
-    displayedFieldIds = ['author', 'updatedAt'];
+  $scope.$on('switchedContentType', function () {
+    $scope.resetDisplayFields();
   });
 
-  $scope.$watch('filteredContentTypeFields', function (contentTypeFields) {
-    fields = contentTypeFields;
+  $scope.resetDisplayFields = function () {
+    displayedFieldIds = ['author', 'updatedAt'];
     determineFieldVisibility();
-  });
+  };
 
   $scope.addDisplayField = function (fieldId) {
     displayedFieldIds.push(fieldId);
@@ -30,8 +31,7 @@ angular.module('contentful').controller('ViewCustomizerCtrl', function ViewCusto
   };
 
   $scope.removeDisplayField = function (fieldId) {
-    var index = _.indexOf(displayedFieldIds, fieldId);
-    displayedFieldIds.splice(index, 1);
+    _.remove(displayedFieldIds, fieldId);
     determineFieldVisibility();
   };
 

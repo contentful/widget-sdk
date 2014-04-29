@@ -15,15 +15,15 @@
       -# TODO replace with a native dropdown
       .dropdown-menu
         %ul.dropdown-menu-list
-          %li.dropdown-menu-item.type(ng-click="filterByContentType()" dropdown-close="") All
+          %li.dropdown-menu-item.type(ng-click="filterByContentTypeId()" dropdown-close="") All
           %li.dropdown-menu-item.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
-                   ng-click="filterByContentType(contentType.getId())"
+                   ng-click="filterByContentTypeId(contentType.getId())"
                    dropdown-close="") {{contentType.getName()}}
     .search-with-results(cf-tokenized-search="searchTerm" placeholder="Search for {{typeNameOr('Entries')}}")
 
   .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries || paginator.numPages() < 2")
 
-  .view-customizer(ng-show="filteredContentType")
+  .view-customizer(ng-show="tab.params.contentTypeId")
 
   .add-entity(ng-hide="spaceContext.publishedContentTypes.length == 0")
     %button.dropdown-toggle.default-button.primary-button(
@@ -64,7 +64,7 @@
         %tr
           %th.cell-select
             %input(type="checkbox" cf-selection="" ng-show="entries.length > 0" tabindex="-1")
-          %th.cell-content-type(ng-show="!filteredContentType") Content Type
+          %th.cell-content-type(ng-show="!tab.params.contentTypeId") Content Type
           %th.cell-display-name Name
           %th(ng-repeat="field in displayedFields" ng-class="getFieldClass(field)")
             %button.transparent-button(ng-click="setOrderField(field)") {{field.name}}
@@ -79,7 +79,7 @@
           %tr(ng-repeat="entry in visibleEntries = (entries | filter:visibleInCurrentList) track by entry.getId()" cf-click-local="navigator.entryEditor(entry).goTo()")
             %td.cell-select(ng-click="selection.toggle(entry);$event.stopPropagation()")
               %input(type="checkbox" cf-selection="entry" tabindex="-1")
-            %td.cell-content-type(ng-show="!filteredContentType")
+            %td.cell-content-type(ng-show="!tab.params.contentTypeId")
               %span {{spaceContext.publishedTypeForEntry(entry).getName()}}
             %td.cell-display-name
               %span {{spaceContext.entryTitle(entry)}}

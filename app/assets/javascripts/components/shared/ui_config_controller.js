@@ -32,8 +32,6 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
     authorField
   ];
 
-  $scope.filteredContentType = null;
-  $scope.filteredContentTypeFields = [];
   $scope.displayedFields = _.clone($scope.systemFields);
 
   $scope.orderQuery = DEFAULT_ORDER_QUERY;
@@ -125,16 +123,14 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
 
   $scope.loadPreset = function (preset) {
     $scope.searchTerm = preset.searchTerm || null;
-    if(preset.contentTypeId) {
-      $scope.filterByContentType(preset.contentTypeId);
-    } else {
-      $scope.filterByContentType();
-    }
+    $scope.filterByContentTypeId(preset.contentTypeId);
     $scope.displayedFields = preset.displayedFields;
+    // TODO calculating the hiddenFields is missing here
     $scope.orderDirection = preset.order.direction;
     $scope.orderField = preset.order.field;
     $scope.orderQuery = $scope.getFieldPath(preset.order.field);
     $scope.uiConfigLoadedPreset = preset;
+    //todo reset page
     $scope.resetEntries();
   };
 

@@ -60,19 +60,11 @@ angular.module('contentful').controller('EntryListCtrl',
       $scope.spaceContext.getPublishedContentType($scope.tab.params.contentTypeId).getName() : or;
   };
 
-  function getFilteredContentType(contentTypeId) {
-    return _.filter($scope.spaceContext.publishedContentTypes, function (ct) {
-      return ct.getId() === contentTypeId;
-    })[0];
-  }
-
-  $scope.filterByContentType = function (contentType) {
+  $scope.filterByContentTypeId = function (contentTypeId) {
     $scope.searchTerm = null;
     this.paginator.page = 0;
-    var params = $scope.tab.params;
-    params.contentTypeId = contentType ? contentType : null;
-    $scope.filteredContentType = contentType ? getFilteredContentType(params.contentTypeId) : null;
-    $scope.filteredContentTypeFields = contentType ? $scope.filteredContentType.data.fields : [];
+    $scope.tab.params.contentTypeId = contentTypeId;
+    $scope.resetDisplayFields();
   };
 
   $scope.visibleInCurrentList = function(){
