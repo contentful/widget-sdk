@@ -14,6 +14,10 @@ angular.module('contentful').directive('cfFieldDisplay', function(){
         if(field.type == 'Symbol' && field.id == 'author')
           return 'author';
 
+        if(field.type == 'Link'){
+          return field.linkType;
+        }
+
         return field.type;
       };
 
@@ -47,24 +51,34 @@ angular.module('contentful').directive('cfFieldDisplay', function(){
         if(items && items.length > 0) {
           if(items[0].entityType == 'entries') {
             return _.map(filterVisibleItems(items), function (entry) {
-              return scope.spaceContext.entryTitle(entry);
+              return scope.dataForEntry(entry);
             });
           }
 
           if(items[0].entityType == 'assets') {
             return _.map(filterVisibleItems(items), function (entry) {
-              return scope.spaceContext.localizedField(entry, 'data.fields.file');
+              return scope.dataForAsset(entry, 'data.fields.file');
             });
           }
         }
       };
 
-      scope.dataForLink = function (entry, field) {
-        return scope.dataForField(entry, field);
+      scope.dataForEntry = function (entry) {
+        return scope.spaceContext.entryTitle(entry);
       };
 
-      scope.dataForAsset = function (entry, field) {
-        return scope.dataForField(entry, field);
+      scope.dataForAsset = function (entry) {
+        return scope.spaceContext.localizedField(entry, 'data.fields.file');
+      };
+
+      scope.dataForLinkedEntry = function (entry, field) {
+        var entryField = scope.spaceContext.localizedField(entry, 'data.fields.'+field.id);
+        return scope.spaceContext.entryTitle(entryField);
+      };
+
+      scope.dataForLinkedAsset = function (entry, field) {
+        var assetField = scope.spaceContext.localizedField(entry, 'data.fields.'+field.id);
+        return scope.dataForAsset(assetField);
       };
 
       scope.displayBool = function (value) {
