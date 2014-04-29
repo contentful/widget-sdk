@@ -3,11 +3,16 @@
   %date.relative(ng-switch-when="Date" datetime="{{dataForField(entry, field)}}")
   %span.cf-user(ng-switch-when="author" link="entry.getUpdatedBy()" as="updater") {{updater | userNameDisplay:user}}
   %span(ng-switch-when="Boolean") {{displayBool(dataForField(entry, field))}}
-  %div(ng-switch-when="Link") {{dataForLink(entry, field)}}
-  %div(ng-switch-when="Asset") {{dataForAsset(entry, field)}}
+  %div(ng-switch-when="Link" class="linked-entries") {{dataForLink(entry, field)}}
+  %div(ng-switch-when="Asset" class="linked-assets") {{dataForAsset(entry, field)}}
   %div(ng-switch-when="Array")
-    %ul
+    %ul(ng-class="{'linked-entries': isEntryArray(entry, field), 'linked-assets': isAssetArray(entry, field)}")
       %li(ng-repeat="(index, entity) in dataForArray(entry, field) track by index")
-        {{entity}}
+        %span(ng-if="isEntryArray(entry, field)")
+          {{entity}}
+        %span(ng-if="isAssetArray(entry, field)")
+          %img(ng-src="{{entity.url}}")
+      %li(ng-if="countArrayHiddenItems(entry, field)")
+        \+ {{countArrayHiddenItems(entry, field)}} more items
   %span(ng-switch-default) {{dataForField(entry, field)}}
 

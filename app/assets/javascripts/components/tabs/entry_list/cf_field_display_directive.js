@@ -27,9 +27,24 @@ angular.module('contentful').directive('cfFieldDisplay', function(){
         });
       }
 
+      scope.isEntryArray = function (entity, field) {
+        var items = scope.dataForField(entity, field);
+        return items && items.length > 0 && items[0].entityType == 'entries';
+      };
+
+      scope.isAssetArray = function (entity, field) {
+        var items = scope.dataForField(entity, field);
+        return items && items.length > 0 && items[0].entityType == 'assets';
+      };
+
+      scope.countArrayHiddenItems = function (entity, field) {
+        var items = scope.dataForField(entity, field);
+        return items && items.length - filterVisibleItems(items).length;
+      };
+
       scope.dataForArray = function (entry, field) {
         var items = scope.dataForField(entry, field);
-        if(items.length > 0) {
+        if(items && items.length > 0) {
           if(items[0].entityType == 'entries') {
             return _.map(filterVisibleItems(items), function (entry) {
               return scope.spaceContext.entryTitle(entry);
@@ -38,7 +53,7 @@ angular.module('contentful').directive('cfFieldDisplay', function(){
 
           if(items[0].entityType == 'assets') {
             return _.map(filterVisibleItems(items), function (entry) {
-              return scope.spaceContext.assetTitle(entry);
+              return scope.spaceContext.localizedField(entry, 'data.fields.file');
             });
           }
         }

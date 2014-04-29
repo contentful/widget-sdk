@@ -26,7 +26,7 @@ angular.module('contentful').controller('EntryListCtrl',
   $scope.assetCache = new EntityCache({
     space: $scope.spaceContext.space,
     entityType: 'Asset',
-    limit: 1
+    limit: 5
   });
 
   $scope.$on('entityDeleted', function (event, entity) {
@@ -92,7 +92,7 @@ angular.module('contentful').controller('EntryListCtrl',
       $scope.selection.switchBaseSet($scope.entries.length);
       if($scope.tab.params.contentTypeId){
         $scope.entryCache.resolveLinkedEntities($scope.entries);
-        //$scope.assetCache.resolveLinkedEntities($scope.entries);
+        $scope.assetCache.resolveLinkedEntities($scope.entries);
       }
       analytics.track('Reloaded EntryList');
     });
