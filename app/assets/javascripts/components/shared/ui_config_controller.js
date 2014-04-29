@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('UiConfigController', function($scope, sentry, random, modalDialog){
+angular.module('contentful').controller('UiConfigController', function($scope, sentry, random, modalDialog, $q, notification){
   var DEFAULT_ORDER_QUERY = 'sys.updatedAt';
   var DEFAULT_ORDER_DIRECTION = 'descending';
 
@@ -93,13 +93,35 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
       $scope.uiConfig.savedPresets.push(preset);
     }
     $scope.uiConfigLoadedPreset = preset;
-    $scope.spaceContext.space.setUIConfig($scope.uiConfig, function (err, config) {
-      //if(err && err.body.sys.id == 'VersionMismatch')
-      // Handle version mismatch
-      // maybe get config again, and inject new preset or look for preset and update it in case order was changed
-      $scope.uiConfig = config;
-    });
+    saveUiConfig();
   }
+
+  function saveUiConfig() {
+    var callback = $q.callback();
+    $scope.spaceContext.space.setUIConfig($scope.uiConfig, callback);
+    callback.promise.then(function (config) {
+      $scope.uiConfig = config;
+    }, function (err) {
+      var errorId = err.body.sys.id;
+      if (errorId === 'VersionMismatch') {
+        notification.serverError('Version mismatch when trying to save views.');
+        loadUIConfig();
+        // maybe get config again, and inject new preset or look for preset and update it in case order was changed
+      }
+    });
+    return callback.promise;
+  }
+
+  $scope.clearPreset = function () {
+    $scope.searchTerm = null;
+    $scope.tab.params.contentTypeId = null;
+    $scope.displayedFields = _.clone($scope.systemFields);
+    $scope.orderDirection = DEFAULT_ORDER_DIRECTION;
+    $scope.orderField = updatedAtField;
+    $scope.orderQuery = DEFAULT_ORDER_QUERY;
+    $scope.uiConfigLoadedPreset = null;
+    $scope.resetEntries();
+  };
 
   $scope.loadPreset = function (preset) {
     $scope.searchTerm = preset.searchTerm || null;
@@ -114,6 +136,17 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
     $scope.orderQuery = $scope.getFieldPath(preset.order.field);
     $scope.uiConfigLoadedPreset = preset;
     $scope.resetEntries();
+  };
+
+  $scope.deletePreset = function (preset) {
+    modalDialog.open({
+      title: 'Delete Saved View?',
+      message: 'Do you really want to delete the Saved View "'+preset.title+'"?',
+      scope: $scope
+    }).then(function () {
+      _.remove($scope.uiConfig.savedPresets, {id: preset.id});
+      return saveUiConfig();
+    });
   };
 
   $scope.getFieldList = function () {
@@ -151,13 +184,12 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
   }
 
   function generateDefaultViews() {
-    var fields = _.clone($scope.systemFields);
-    var views = [ { title: 'All', id: random.id(), order: makeOrder(), displayedFields: fields} ];
+    var views = [];
     views.push(
-      {title: 'Status: Published', searchTerm: 'status:published', id: random.id(), order: makeOrder(), displayedFields: fields},
-      {title: 'Status: Changed',   searchTerm: 'status:changed'  , id: random.id(), order: makeOrder(), displayedFields: fields},
-      {title: 'Status: Draft',     searchTerm: 'status:draft'    , id: random.id(), order: makeOrder(), displayedFields: fields},
-      {title: 'Status: Archived',  searchTerm: 'status:archived' , id: random.id(), order: makeOrder(), displayedFields: fields}
+      {title: 'Status: Published', searchTerm: 'status:published', id: random.id(), order: makeOrder(), displayedFields: fields()},
+      {title: 'Status: Changed',   searchTerm: 'status:changed'  , id: random.id(), order: makeOrder(), displayedFields: fields()},
+      {title: 'Status: Draft',     searchTerm: 'status:draft'    , id: random.id(), order: makeOrder(), displayedFields: fields()},
+      {title: 'Status: Archived',  searchTerm: 'status:archived' , id: random.id(), order: makeOrder(), displayedFields: fields()}
     );
     $scope.waitFor('spaceContext.publishedContentTypes.length > 0', function () {
       _.each($scope.spaceContext.publishedContentTypes, function (contentType) {
@@ -166,15 +198,18 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
           contentTypeId: contentType.getId(),
           id: random.id(),
           order: makeOrder(),
-          displayedFields: fields
+          displayedFields: fields()
         });
-    });
-
+      });
     });
     return views;
 
     function makeOrder() {
       return { field: updatedAtField, direction: DEFAULT_ORDER_DIRECTION };
+    }
+
+    function fields() {
+      return _.clone($scope.systemFields);
     }
   }
 

@@ -70,6 +70,15 @@ html
     border: 1px solid $dark-rule
     +border-radius(3px  3px  3px  3px)
     background: $gray-background
+.filter-list-delete
+  float: right
+  color: silver
+  display: none
+  text-decoration: none
+  &:after
+    content: '×'
+  li:hover &
+    display: inline
 
 .knowledge-base-link
   display: block
