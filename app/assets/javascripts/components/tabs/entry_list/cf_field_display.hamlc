@@ -3,7 +3,11 @@
   %date.relative(ng-switch-when="Date" datetime="{{dataForField(entry, field)}}")
   %span.cf-user(ng-switch-when="author" link="entry.getUpdatedBy()" as="updater") {{updater | userNameDisplay:user}}
   %span(ng-switch-when="Boolean") {{displayBool(dataForField(entry, field))}}
+  %div(ng-switch-when="Link") {{dataForLink(entry, field)}}
+  %div(ng-switch-when="Asset") {{dataForAsset(entry, field)}}
+  %div(ng-switch-when="Array")
+    %ul
+      %li(ng-repeat="(index, entity) in dataForArray(entry, field) track by index")
+        {{entity}}
   %span(ng-switch-default) {{dataForField(entry, field)}}
-  //link
-  //array
 

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').controller('EntryListCtrl',
-  function EntryListCtrl($scope, Paginator, Selection, analytics, PromisedLoader, sentry, searchQueryHelper, $controller) {
+  function EntryListCtrl($scope, $controller, Paginator, Selection, analytics, PromisedLoader, sentry, searchQueryHelper, EntityCache) {
 
   $controller('UiConfigController', {$scope: $scope});
 
@@ -16,6 +16,18 @@ angular.module('contentful').controller('EntryListCtrl',
 
   $scope.paginator = new Paginator();
   $scope.selection = new Selection();
+
+  $scope.entryCache = new EntityCache({
+    space: $scope.spaceContext.space,
+    entityType: 'Entry',
+    limit: 5
+  });
+
+  $scope.assetCache = new EntityCache({
+    space: $scope.spaceContext.space,
+    entityType: 'Asset',
+    limit: 1
+  });
 
   $scope.$on('entityDeleted', function (event, entity) {
     var scope = event.currentScope;
@@ -78,6 +90,10 @@ angular.module('contentful').controller('EntryListCtrl',
       $scope.paginator.numEntries = entries.total;
       $scope.entries = entries;
       $scope.selection.switchBaseSet($scope.entries.length);
+      if($scope.tab.params.contentTypeId){
+        $scope.entryCache.resolveLinkedEntities($scope.entries);
+        //$scope.assetCache.resolveLinkedEntities($scope.entries);
+      }
       analytics.track('Reloaded EntryList');
     });
   };
