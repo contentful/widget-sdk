@@ -20,7 +20,7 @@ angular.module('contentful').controller('EntryListCtrl',
   $scope.entryCache = new EntityCache({
     space: $scope.spaceContext.space,
     entityType: 'Entry',
-    limit: 5
+    limit: 1
   });
 
   $scope.assetCache = new EntityCache({
@@ -144,6 +144,10 @@ angular.module('contentful').controller('EntryListCtrl',
       entries = _.difference(entries, $scope.entries);
       $scope.entries.push.apply($scope.entries, entries);
       $scope.selection.setBaseSize($scope.entries.length);
+      if($scope.tab.params.contentTypeId){
+        $scope.entryCache.resolveLinkedEntities($scope.entries);
+        $scope.assetCache.resolveLinkedEntities($scope.entries);
+      }
     }, function () {
       $scope.paginator.page--;
     });

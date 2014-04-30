@@ -10,6 +10,8 @@ angular.module('contentful').factory('EntityCache', function($rootScope, $q){
     this.locale = params.space.getDefaultLocale().code;
     this.missingIds = [];
     this.cache = {};
+    this.queue = [];
+    this.inProgress = false;
   }
 
   EntityCache.prototype = {
@@ -21,12 +23,27 @@ angular.module('contentful').factory('EntityCache', function($rootScope, $q){
       this.cache[getId(entity)] = entity;
     },
 
-    resolveLinkedEntities: function (entities) {
-      var linkResolver = $q.defer();
+    resolveLinkedEntities: function (entities, linkResolver) {
+      linkResolver = linkResolver || $q.defer();
+      if(this.inProgress){
+        this.queue.push({
+          linkResolver: linkResolver,
+          entities: entities
+        });
+        return linkResolver.promise;
+      }
+
       var self = this;
+      this.inProgress = true;
       this.getLinkedEntities(entities).then(function () {
         linkResolver.resolve(self.replaceMissingEntityIds(entities));
+        self.inProgress = false;
+        if(self.queue.length > 0){
+          var nextRequest = self.queue.splice(0, 1)[0];
+          self.resolveLinkedEntities(nextRequest.entities, nextRequest.linkResolver);
+        }
       });
+
       return linkResolver.promise;
     },
 
