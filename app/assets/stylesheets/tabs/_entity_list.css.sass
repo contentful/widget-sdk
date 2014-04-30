@@ -15,8 +15,8 @@
     +align-content(stretch)
 
     .tab-title
-      +flex-grow(1)
-      +left-nav-layout
+      width: $left-nav-width + 1%
+      padding: $left-nav-padding
       +tab-header-title
       h1
         line-height: 40px
@@ -40,10 +40,13 @@
       +flexbox
       +align-items(center)
       padding-right: 20px
+      .default-button,
+      .dropdown-btn
+        width: 100%
+        max-width: 200px
       .default-button
         overflow: hidden
         margin: 0
-        width: 100%
         height: $tab-header-field-height
         white-space: nowrap
         text-overflow: ellipsis
