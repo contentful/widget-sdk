@@ -16,10 +16,6 @@ angular.module('contentful').controller('ViewCustomizerCtrl', function ViewCusto
     }
   }
 
-  $scope.$on('switchedContentType', function () {
-    $scope.resetDisplayFields();
-  });
-
   $scope.resetDisplayFields = function () {
     displayedFieldIds = ['author', 'updatedAt'];
     determineFieldVisibility();

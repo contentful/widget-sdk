@@ -61,6 +61,10 @@ angular.module('contentful').controller('EntryListCtrl',
   };
 
   $scope.filterByContentTypeId = function (contentTypeId) {
+    // TODO we need to split up changing ContentType by loading and by other means
+    // loading should do only that other means should also reset other stuff
+    // loading should explicitly do the things contained in here, this function
+    // should only be an event handler
     $scope.searchTerm = null;
     this.paginator.page = 0;
     $scope.tab.params.contentTypeId = contentTypeId;

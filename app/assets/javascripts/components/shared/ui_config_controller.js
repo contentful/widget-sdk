@@ -122,8 +122,8 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
   };
 
   $scope.loadPreset = function (preset) {
-    $scope.searchTerm = preset.searchTerm || null;
     $scope.filterByContentTypeId(preset.contentTypeId);
+    $scope.searchTerm = preset.searchTerm || null;
     $scope.displayedFields = preset.displayedFields;
     // TODO calculating the hiddenFields is missing here
     $scope.orderDirection = preset.order.direction;
