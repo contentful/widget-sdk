@@ -244,8 +244,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
   // COMPLETIONS + PAIRTOREQUESTOBJECT
   function findField(key, contentType) {
     var fields = contentType ? contentType.data.fields : [];
-    if (fields[key]) return fields[key];
-    else return _.find(fields, function (field) {
+    return _.find(fields, {id: key}) || _.find(fields, function (field) {
       return field.name.toLowerCase() == key.toLowerCase();
     });
   }
