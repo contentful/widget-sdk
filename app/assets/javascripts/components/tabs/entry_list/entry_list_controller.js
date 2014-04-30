@@ -20,7 +20,7 @@ angular.module('contentful').controller('EntryListCtrl',
   $scope.entryCache = new EntityCache({
     space: $scope.spaceContext.space,
     entityType: 'Entry',
-    limit: 1
+    limit: 5
   });
 
   $scope.assetCache = new EntityCache({
