@@ -34,6 +34,7 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
 
   $scope.displayedFields = _.clone($scope.systemFields);
 
+  // TODO why is all this on the scope and not tucked away into a currentPreset object or the tab.params?
   $scope.orderQuery = DEFAULT_ORDER_QUERY;
   $scope.orderDirection = DEFAULT_ORDER_DIRECTION;
   $scope.orderField = updatedAtField;
@@ -70,6 +71,7 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
     }).then(saveView);
   };
 
+  // TODO Why is this not called savePreset, like loadPreset or clearPreset?
   function saveView() {
     var preset = $scope.uiConfigLoadedPreset;
     if($scope.searchTerm) preset.searchTerm = $scope.searchTerm;
@@ -122,13 +124,14 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
   };
 
   $scope.loadPreset = function (preset) {
-    $scope.filterByContentTypeId(preset.contentTypeId);
+    $scope.tab.params.contentTypeId = preset.contentTypeId;
     $scope.searchTerm = preset.searchTerm || null;
     $scope.displayedFields = preset.displayedFields;
     // TODO calculating the hiddenFields is missing here
-    $scope.orderDirection = preset.order.direction;
-    $scope.orderField = preset.order.field;
-    $scope.orderQuery = $scope.getFieldPath(preset.order.field);
+    $scope.orderDirection  = preset.order.direction;
+    $scope.orderField      = preset.order.field;
+    // TODO why is orderQuery on the scope and why is getFieldPath not called getOrderQuery?
+    $scope.orderQuery      = $scope.getFieldPath(preset.order.field);
     $scope.uiConfigLoadedPreset = preset;
     //todo reset page
     $scope.resetEntries();
