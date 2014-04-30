@@ -48,15 +48,15 @@
   .left-nav
     %header Views
     %ul.filter-list
-      %li
+      %li(ng-class="{active: !uiConfigLoadedPreset}")
         %a(ng-click="clearPreset()") All
-      %li(ng-repeat="preset in uiConfig.savedPresets track by preset.id")
+      %li(ng-repeat="preset in uiConfig.savedPresets track by preset.id" ng-class="{active: uiConfigLoadedPreset === preset}")
         %span
           %a(ng-click="loadPreset(preset)") {{preset.title}}
         %a.filter-list-delete(ng-click="deletePreset(preset)")
     %button.default-button(ng-click="openSaveView()")
       %i.button-icon(ng-class="{'ss-write': uiConfigLoadedPreset, 'ss-plus': !uiConfigLoadedPreset}")
-      {{ uiConfigLoadedPreset ? 'Update View' : 'Save new View'}}
+      {{ uiConfigLoadedPreset ? 'Update selected View' : 'Save new View'}}
 
   .with-left-nav
     %table.result-list.main-results.main-header
