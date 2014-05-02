@@ -70,10 +70,10 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse, zone
 
         scope.otChangeValue(value, function (err) {
           if (!err) {
-            console.log('setting view Value to', value);
+            //console.log('setting view Value to', value);
             ngModelCtrl.$setViewValue(value);
           } else {
-            console.log('setting resetting view  Value from', ngModelCtrl.$modelValue);
+            //console.log('setting resetting view  Value from', ngModelCtrl.$modelValue);
             scope.setFromISO(ngModelCtrl.$modelValue);
           }
         });
@@ -88,7 +88,7 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse, zone
       };
 
       scope.setFromISO = function(iso){
-        if (_.isString(iso)) {
+        if (_.isString(iso) && moment(iso).isValid()) {
           var dateTime = hasTimezone(iso) ? moment(iso).zone(iso) : moment(iso);
           scope.localDate = dateTime.format(DATE_FORMAT_INTERNAL);
           if (dateTime.seconds()) {
