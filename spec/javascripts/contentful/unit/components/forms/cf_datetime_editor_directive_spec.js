@@ -82,6 +82,13 @@ describe('DateTime Editor', function () {
     expect(scope.fieldData.value).toBe('2013-12-24T05:23:00+03:00');
   });
 
+  it('should not parse from invalid ISOs', function () {
+    scope.setFromISO('Invalid Date');
+    scope.$apply();
+    expect(scope.localDate).toBe(null);
+    expect(scope.localTime).toBe(null);
+  });
+
   it('should assume local time when no timezone given in ISO', function () {
     var iso = '2013-12-24T05:23:00';
     var autozone = moment(iso).format('Z');
