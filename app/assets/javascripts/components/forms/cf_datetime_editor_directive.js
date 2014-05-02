@@ -29,6 +29,7 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse, zone
       elm.find('.date').datepicker({
         dateFormat: DATE_FORMAT,
         onSelect: function(dateString) {
+          $(this).val(dateString);
           scope.$apply(function() {
             dateController.$setViewValue(dateString);
           });
@@ -36,15 +37,14 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse, zone
       });
 
       dateController.$parsers.unshift(function(viewValue) {
-        scope.dateInvalid = false;
+        var raw;
         try {
-          var raw = $.datepicker.parseDate(DATE_FORMAT, viewValue);
+          raw = $.datepicker.parseDate(DATE_FORMAT, viewValue);
+          scope.dateInvalid = false;
         } catch(e) {
           scope.dateInvalid = true;
         }
-        var date = moment(raw);
-        date = date ? date.format(DATE_FORMAT_INTERNAL) : null;
-        return date;
+        return raw ? moment(raw).format(DATE_FORMAT_INTERNAL) : null;
       });
 
       dateController.$formatters.push(function(modelValue) {
@@ -70,8 +70,10 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse, zone
 
         scope.otChangeValue(value, function (err) {
           if (!err) {
+            console.log('setting view Value to', value);
             ngModelCtrl.$setViewValue(value);
           } else {
+            console.log('setting resetting view  Value from', ngModelCtrl.$modelValue);
             scope.setFromISO(ngModelCtrl.$modelValue);
           }
         });

@@ -25,14 +25,14 @@ describe('DateTime Editor', function () {
   }));
 
   function enter(date, time, zone) {
-    if (date) element.find('.date').val(date).
+    if (date !== null && date !== undefined) element.find('.date').val(date).
         trigger('input').
         trigger('change').
         trigger('blur');
-    if (time) element.find('.time').val(time).
+    if (time !== null && time !== undefined) element.find('.time').val(time).
         trigger('input').
         trigger('change');
-    if (zone) {
+    if (zone !== null && zone !== undefined) {
       var zoneIndex = _.indexOf(scope.timezones, zone);
       var $zone = element.find('.zone');
       $zone.val(zoneIndex);
@@ -110,6 +110,25 @@ describe('DateTime Editor', function () {
     expect(scope.fieldData.value).toBe('2013-12-24T01:23:00+05:00');
     enter('2013-12-24', '01:23', '-03:00');
     expect(scope.fieldData.value).toBe('2013-12-24T01:23:00-03:00');
+  });
+
+  it('should assume null for invalid dates', function () {
+    enter('', '13:00', '+03:00');
+    expect(scope.fieldData.value).toBe(null);
+    enter('201', '13:00', '+03:00');
+    expect(scope.fieldData.value).toBe(null);
+    enter('2013', '13:00', '+03:00');
+    expect(scope.fieldData.value).toBe(null);
+    enter('2013-11-11', '13:00', '+03:00');
+    expect(scope.fieldData.value).toBe('2013-11-11T13:00:00+03:00');
+  });
+
+  it('should return null for Invalid Date strings', function () {
+    var dateController = element.find('.date').controller('ngModel');
+    dateController.$setViewValue('');
+    scope.$apply();
+    expect(scope.fieldData.value).toBe(null);
+    expect(scope.fieldData.value).not.toBe('Invalid Date');
   });
 
   it('should assume null for invalid times', function () {
