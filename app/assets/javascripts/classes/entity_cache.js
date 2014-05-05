@@ -15,6 +15,10 @@ angular.module('contentful').factory('EntityCache', function($rootScope, $q){
   }
 
   EntityCache.prototype = {
+    has: function (id) {
+      return !!this.cache[id];
+    },
+
     get: function (id) {
       return this.cache[id];
     },
@@ -36,7 +40,7 @@ angular.module('contentful').factory('EntityCache', function($rootScope, $q){
       var self = this;
       this.inProgress = true;
       this.getLinkedEntities(entities).then(function () {
-        linkResolver.resolve(self.replaceMissingEntityIds(entities));
+        linkResolver.resolve();
         self.inProgress = false;
         if(self.queue.length > 0){
           var nextRequest = self.queue.splice(0, 1)[0];
@@ -47,41 +51,23 @@ angular.module('contentful').factory('EntityCache', function($rootScope, $q){
       return linkResolver.promise;
     },
 
-    replaceMissingEntityIds: function (entities) {
-      var self = this;
-      _.forEach(entities, function (entity) {
-        entity.data.fields = _.mapValues(entity.data.fields, function (field) {
-          var resolvedField = {};
-          var locfield = field[self.locale];
-          if(isLink(locfield))
-            resolvedField[self.locale] = self.get(getId(locfield)) || locfield;
-          else if(isLinkArray(locfield))
-            resolvedField[self.locale] = _.map(locfield, function (field) {
-              return self.get(getId(field)) || field;
-            });
-          else
-            return field;
-          return resolvedField;
-        });
-      });
-      return entities;
-    },
-
     getLinkedEntities: function (entities) {
       var lookup = $q.defer();
       var self = this;
       this.determineMissingEntityIds(entities);
 
-      if(!this.missingIds.length) lookup.resolve();
-
-      this.params.space[this.fetchMethod]({'sys.id[in]': this.missingIds.join(',')}, function (err, linkedEntities) {
-        $rootScope.$apply(function () {
-          if (err) return lookup.reject(err);
-          self.missingIds = [];
-          _.forEach(linkedEntities, self.save.bind(self));
-          lookup.resolve();
+      if(this.missingIds.length) {
+        this.params.space[this.fetchMethod]({'sys.id[in]': this.missingIds.join(',')}, function (err, linkedEntities) {
+          $rootScope.$apply(function () {
+            if (err) return lookup.reject(err);
+            self.missingIds = [];
+            _.forEach(linkedEntities, self.save.bind(self));
+            lookup.resolve();
+          });
         });
-      });
+      } else {
+        lookup.resolve();
+      }
 
       return lookup.promise;
     },

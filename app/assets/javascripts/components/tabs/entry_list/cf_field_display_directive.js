@@ -26,19 +26,20 @@ angular.module('contentful').directive('cfFieldDisplay', function(){
       };
 
       function filterVisibleItems(items) {
+        var cacheName = hasItemsOfType(items, 'Entry') ? 'entryCache' : 'assetCache';
         return _.filter(items, function (item) {
-          return item.data && item.entityType;
+          return scope[cacheName].has(item.sys.id);
         });
       }
 
       scope.isEntryArray = function (entity, field) {
         var items = scope.dataForField(entity, field);
-        return items && items.length > 0 && items[0].entityType == 'entries';
+        return hasItemsOfType(items, 'Entry');
       };
 
       scope.isAssetArray = function (entity, field) {
         var items = scope.dataForField(entity, field);
-        return items && items.length > 0 && items[0].entityType == 'assets';
+        return hasItemsOfType(items, 'Asset');
       };
 
       scope.countArrayHiddenItems = function (entity, field) {
@@ -48,42 +49,46 @@ angular.module('contentful').directive('cfFieldDisplay', function(){
 
       scope.dataForArray = function (entry, field) {
         var items = scope.dataForField(entry, field);
-        if(items && items.length > 0) {
-          if(items[0].entityType == 'entries') {
-            return _.map(filterVisibleItems(items), function (entry) {
-              return scope.dataForEntry(entry);
-            });
-          }
+        if(hasItemsOfType(items, 'Entry')) {
+          return _.map(filterVisibleItems(items), function (entry) {
+            return scope.dataForEntry(entry);
+          });
+        }
 
-          if(items[0].entityType == 'assets') {
-            return _.map(filterVisibleItems(items), function (entry) {
-              return scope.dataForAsset(entry, 'data.fields.file');
-            });
-          }
+        if(hasItemsOfType(items, 'Asset')) {
+          return _.map(filterVisibleItems(items), function (entry) {
+            return scope.dataForAsset(entry, 'data.fields.file');
+          });
         }
       };
 
-      scope.dataForEntry = function (entry) {
+      scope.dataForEntry = function (entryLink) {
+        var entry = scope.entryCache.get(entryLink.sys.id);
         return scope.spaceContext.entryTitle(entry);
       };
 
-      scope.dataForAsset = function (entry) {
-        return scope.spaceContext.localizedField(entry, 'data.fields.file');
+      scope.dataForAsset = function (assetLink) {
+        var asset = scope.assetCache.get(assetLink.sys.id);
+        return scope.spaceContext.localizedField(asset, 'data.fields.file');
       };
 
       scope.dataForLinkedEntry = function (entry, field) {
-        var entryField = scope.spaceContext.localizedField(entry, 'data.fields.'+field.id);
-        return scope.spaceContext.entryTitle(entryField);
+        var entryLinkField = scope.spaceContext.localizedField(entry, 'data.fields.'+field.id);
+        return scope.dataForEntry(entryLinkField);
       };
 
       scope.dataForLinkedAsset = function (entry, field) {
-        var assetField = scope.spaceContext.localizedField(entry, 'data.fields.'+field.id);
-        return scope.dataForAsset(assetField);
+        var assetLinkField = scope.spaceContext.localizedField(entry, 'data.fields.'+field.id);
+        return scope.dataForAsset(assetLinkField);
       };
 
       scope.displayBool = function (value) {
         return value ? 'Yes' : 'No';
       };
+
+      function hasItemsOfType(items, type){
+        return items && items.length > 0 && items[0].sys && items[0].sys.linkType == type;
+      }
 
     }
   };
