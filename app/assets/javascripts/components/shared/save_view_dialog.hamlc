@@ -14,7 +14,8 @@
           .form-controls {{SearchTerm}}
         .form-field(ng-show="tab.params.contentTypeId")
           %label Content Type
-          .form-controls {{typeName()}}
+          .form-controls
+            %p {{typeNameOr('')}}
         .form-field(ng-show="displayedFields")
           %label Displayed columns
           .form-controls
