@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('aviary', function ($window, environment, $q, $rootScope, jsloader, filepicker) {
+angular.module('contentful').factory('aviary', function ($window, environment, $q, $rootScope, jsloader, filepicker, client) {
     if (!$window.Aviary) {
       var loadFile = jsloader.create('//feather.aviary.com/js/', '//dme0ih8comzn4.cloudfront.net/js/');
       loadFile('feather.js');
@@ -16,11 +16,16 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
         featherEditor = new $window.Aviary.Feather({
           apiKey: environment.settings.aviary.api_key,
           apiVersion: 2,
+          encryptionMethod: 'sha1',
           appendTo: '',
           onLoad: function () {
             initDeferred.resolve();
           },
-          onSave: onSave,
+          onSaveButtonClicked: function () {
+            featherEditor.saveHiRes();
+            return false;
+          },
+          onSaveHiRes: onSave,
           onError: onError
         });
       return initDeferred.promise;
@@ -44,6 +49,15 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
       });
     }
 
+    function getIntegrationToken() {
+      var token = $q.defer();
+      client.getIntegrationToken('aviary', function (err, data) {
+        if(err) token.reject(err);
+        else token.resolve(data);
+      });
+      return token.promise;
+    }
+
     return {
       close: function () {
         if(featherEditor) {
@@ -54,9 +68,14 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
 
       createEditor: function (params) {
         createDeferred = $q.defer();
-        file = params.file;
-        delete params.file;
-        createEditor().then(function () {
+        $q.all([getIntegrationToken(), createEditor()]).then(function (aviaryToken) {
+          file = params.file;
+          delete params.file;
+          params.hiresUrl = params.url;
+          params.timestamp = aviaryToken.timestamp;
+          params.signature = aviaryToken.signature;
+          params.salt = aviaryToken.salt;
+
           featherEditor.launch(params);
         });
         return createDeferred.promise;
