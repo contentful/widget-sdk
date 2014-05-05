@@ -57,8 +57,8 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
     size: {
       operators: ['<', '<=', '==', '>=', '>'],
       convert: function (operator, value) {
-        // TODO support M KB suffixes etc.
         var query = {};
+        value = sizeParser(value);
         query['fields.file.details.size' + queryOperator(operator)] = value;
         return query;
       }
@@ -79,6 +79,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
       return autocompletion;
     }
   }
+
   function dateCompletions(key) {
     var regex = /(\d+) +days +ago/i;
     return {
@@ -238,6 +239,23 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
            op == '>'  ? '[gt]'  :
            op == '!=' ? '[ne]'  :
            '';
+  }
+
+  function sizeParser(exp) {
+    var number = parseInt(exp, 10);
+    if (number < 1) return exp;
+
+    if (exp.match(/kib/i)) {
+      return number * 1024;
+    } else if (exp.match(/kb?/i)) {
+      return number * 1000;
+    } else if (exp.match(/mib/i)) {
+      return number * 1024 * 1024;
+    } else if (exp.match(/mb?/i)) {
+      return number * 1000 * 1000;
+    } else {
+      return exp;
+    }
   }
 
   // Identifies a field by its ID, falling back to searching by name
