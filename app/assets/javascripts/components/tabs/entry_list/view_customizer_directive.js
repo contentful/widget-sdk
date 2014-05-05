@@ -7,14 +7,19 @@ angular.module('contentful').directive('viewCustomizer', function(){
     controller: 'ViewCustomizerCtrl',
     link: function (scope, elem) {
 
+      // Index is always -1 because of fixed items in list
+      function getIndex(ui) {
+        return ui.item.index() - 1;
+      }
+
       elem.find('.displayed-fields').sortable({
         axis: 'y',
         cancel: '.close-button',
         containment: '.displayed-fields',
         cursor: 'move',
-        items: 'li',
+        items: 'li[data-field-id]',
         start: function (ev, ui) {
-          ui.item.startIndex = ui.item.index();
+          ui.item.startIndex = getIndex(ui);
           ui.item.addClass('dragging');
         },
         stop: function (ev, ui) {
@@ -22,7 +27,7 @@ angular.module('contentful').directive('viewCustomizer', function(){
         },
         update: function (ev, ui) {
           var oldIndex = ui.item.startIndex;
-          var newIndex = ui.item.index();
+          var newIndex = getIndex(ui);
           delete ui.item.startIndex;
           scope.$apply(function(){
             var list = scope.displayedFields;

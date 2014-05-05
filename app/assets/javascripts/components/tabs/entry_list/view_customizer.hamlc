@@ -5,9 +5,13 @@
   .dropdown-menu(position="bottomright" container=".tab-content")
     %h3 Displayed
     %ul.displayed-fields
-      %li(ng-repeat="field in displayedFields track by field.id" data-field-id="{{field.id}}")
+      %li.non-customizable
+        %p Name
+      %li.customizable(ng-repeat="field in displayedFields track by field.id" data-field-id="{{field.id}}")
         %p {{field.name}}
         .close-button(ng-show="!field.persistent" ng-click="hideField($event, field.id)")
+      %li.non-customizable
+        %p Status
 
     %hr
 

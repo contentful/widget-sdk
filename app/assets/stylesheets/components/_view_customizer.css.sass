@@ -16,16 +16,19 @@
 .displayed-fields
   li
     overflow: hidden
+    cursor: default
+    +user-select(none)
     &:hover
       .close-button
         display: block
+    &[data-field-id]
+      cursor: move
   p, .close-button
     float: left
   p, a
     line-height: 20px
   p
     clear: left
-    cursor: move
   .dragging
     text-shadow: lighten($dark-gray, 0.6) 1px 1px 5px
     &:hover
@@ -37,6 +40,9 @@
     margin-left: 5px
     &:after
       font-size: 16px
+
+.non-customizable
+  color: $light-gray
 
 .hidden-fields
   a
