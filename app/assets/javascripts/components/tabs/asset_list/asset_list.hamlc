@@ -11,9 +11,9 @@
   .search-area
     .search-with-results(cf-tokenized-search="searchTerm" placeholder="Search for Assets")
 
-  .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries || paginator.numPages() < 2")
+  .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")
 
-  .add-entity(ng-hide="assets.length == 0")
+  .add-entity
     %button.default-button.primary-button(cf-can="create, Asset" ng-click="createAsset('frameButton')")
       %i.ss-plus.button-icon
       Add Asset
