@@ -1,4 +1,4 @@
-.paginator(ng-show="paginator.numPages() > 1")
+.paginator
   .text
     %p {{paginator.numEntries}} Results,
     %p Page {{paginator.page + 1}} of {{paginator.numPages()}}

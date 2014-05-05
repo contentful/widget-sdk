@@ -21,7 +21,7 @@
                    dropdown-close="") {{contentType.getName()}}
     .search-with-results(cf-tokenized-search="searchTerm" placeholder="Search for {{typeNameOr('Entries')}}")
 
-  .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries || paginator.numPages() < 2")
+  .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")
 
   .view-customizer(ng-show="tab.params.contentTypeId")
 
