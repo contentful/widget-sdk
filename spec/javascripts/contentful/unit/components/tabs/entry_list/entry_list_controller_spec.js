@@ -70,7 +70,7 @@ describe('Entry List Controller', function () {
     it('initializes a non existing config', function() {
       stubs.getUIConfig.callsArgWith(0, null);
       createController();
-      expect(scope.uiConfig).toEqual({savedPresets: []});
+      expect(scope.uiConfig).toBeTruthy();
     });
 
     it('loads an existing config', function() {
