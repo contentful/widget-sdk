@@ -48,6 +48,8 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
   };
 
   var assetcompletions = {
+    //width: imageDimensionCompletion('width'),
+    //height: imageDimensionCompletion('height'),
     type: {
       complete: _.keys(mimetype.groupDisplayNames),
       convert: function (operator, value) {
@@ -90,6 +92,21 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
           var date = match ? moment().subtract('days', match[1]) : moment(exp);
           var query = {};
           query[key + queryOperator(op)] = date.toISOString();
+          return query;
+        } catch(e) {
+          return;
+        }
+      }
+    };
+  }
+
+  function imageDimensionCompletion(key) {
+    return {
+      operators: ['<', '<=', '==', '>=', '>'],
+      convert: function (op, exp) {
+        try {
+          var query = {};
+          query['file.details.image.' + key + queryOperator(op)] = exp;
           return query;
         } catch(e) {
           return;
