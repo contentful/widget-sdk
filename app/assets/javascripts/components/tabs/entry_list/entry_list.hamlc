@@ -50,6 +50,7 @@
     %ul.filter-list
       %li(ng-class="{active: !uiConfigLoadedPreset}")
         %a(ng-click="clearPreset()") All
+    %ul.filter-list(cf-reorder-presets)
       %li(ng-repeat="preset in uiConfig.savedPresets track by preset.id" ng-class="{active: uiConfigLoadedPreset === preset}")
         %span
           %a(ng-click="loadPreset(preset)") {{preset.title}}

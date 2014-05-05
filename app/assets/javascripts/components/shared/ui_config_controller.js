@@ -93,10 +93,10 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
       $scope.uiConfig.savedPresets.push(preset);
     }
     $scope.uiConfigLoadedPreset = preset;
-    saveUiConfig();
+    $scope.saveUiConfig();
   }
 
-  function saveUiConfig() {
+  $scope.saveUiConfig = function() {
     var callback = $q.callback();
     $scope.spaceContext.space.setUIConfig($scope.uiConfig, callback);
     callback.promise.then(function (config) {
@@ -110,7 +110,7 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
       }
     });
     return callback.promise;
-  }
+  };
 
   $scope.clearPreset = function () {
     $scope.searchTerm = null;
@@ -144,7 +144,7 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
       scope: $scope
     }).then(function () {
       _.remove($scope.uiConfig.savedPresets, {id: preset.id});
-      return saveUiConfig();
+      return $scope.saveUiConfig();
     });
   };
 
