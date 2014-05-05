@@ -25,10 +25,8 @@ angular.module('contentful').directive('viewCustomizer', function(){
           var newIndex = ui.item.index();
           delete ui.item.startIndex;
           scope.$apply(function(){
-            var currentItem = scope.displayedFields[oldIndex];
-            var replacedItem = scope.displayedFields[newIndex];
-            scope.displayedFields[newIndex] = currentItem;
-            scope.displayedFields[oldIndex] = replacedItem;
+            var list = scope.displayedFields;
+            list.splice(newIndex, 0, list.splice(oldIndex, 1)[0]);
           });
         }
       });
