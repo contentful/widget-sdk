@@ -32,7 +32,7 @@
             ng-click="createEntry(singleContentType, 'frameButton')")
       %i.ss-plus.button-icon
       Add New {{singleContentType.getName()}}
-    .dropdown-btn(ng-show="spaceContext.publishedContentTypes.length > 1 && entries.length > 0")
+    .dropdown-btn(ng-show="spaceContext.publishedContentTypes.length > 1")
       %button.dropdown-toggle.default-button.primary-button(cf-can="create, Entry")
         %i.ss-plus.button-icon
         Add New Entry
