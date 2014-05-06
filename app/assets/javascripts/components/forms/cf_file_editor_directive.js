@@ -43,6 +43,7 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
       };
 
       scope.editFile = function () {
+        scope.loadingEditor = true;
         var img = elem.find('.thumbnail').get(0);
         var preview = elem.find('.editor-preview').get(0);
         preview.src = '';
@@ -51,11 +52,16 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
           aviary.createEditor({
             file: scope.file,
             image: preview,
-            url: imgUrl
+            url: imgUrl,
+            onClose: function () {
+              scope.loadingEditor = false;
+            }
           }).then(function (FPFile) {
             changeHandler(FPFile);
-          }).catch(function (FPError) {
-            notification.serverError('There has been a problem saving the file', FPError);
+            scope.loadingEditor = false;
+          }).catch(function (err) {
+            notification.serverError(err.message, err.error);
+            scope.loadingEditor = false;
             aviary.close();
           });
         };
