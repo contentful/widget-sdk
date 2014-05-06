@@ -77,7 +77,8 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
 
       createEditor: function (params) {
         createDeferred = $q.defer();
-        $q.all([getIntegrationToken(), createEditor()]).then(function (aviaryToken) {
+        $q.all([getIntegrationToken(), createEditor()]).then(function (results) {
+          var aviaryToken = results[0];
           file = params.file;
           delete params.file;
           params.hiresUrl = params.url;
