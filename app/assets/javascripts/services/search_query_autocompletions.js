@@ -86,6 +86,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
     var regex = /(\d+) +days +ago/i;
     return {
       operators: ['<', '<=', '==', '>=', '>'],
+      complete: 'date',
       convert: function (op, exp) {
         try {
           var match = regex.exec(exp);
@@ -192,6 +193,8 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
         if (val) return buildRange(val.range.min, val.range.max);
         // Booleans
         if (field.type === 'Boolean') return ['yes', 'no'];
+        // Dates
+        if (field.type === 'Date') return 'date';
       }
       return null;
     }

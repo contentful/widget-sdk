@@ -131,8 +131,19 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
             space       = $scope.spaceContext.space,
             term        = $scope.inner.term,
             position    = $scope.position;
-        searchQueryHelper.offerCompletion(space, contentType, term, position).then(function (completions) {
-          $scope.autocompletions = completions || [];
+        searchQueryHelper.offerCompletion(space, contentType, term, position)
+        .then(function (completions) {
+          if (_.isArray(completions)){
+            $scope.autocompletions = completions;
+            $scope.specialCompletion = null;
+          } else if (_.isString(completions)) {
+            $scope.autocompletions = [];
+            $scope.specialCompletion = completions;
+            $scope.$broadcast('autocompletionsUpdated');
+          } else {
+            $scope.autocompletions = [];
+            $scope.specialCompletion = null;
+          }
         });
       };
 
@@ -165,14 +176,19 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
         if (event.keyCode == keycodes.DOWN){
           $scope.selectNextAutocompletion();
           if ($scope.selectedAutocompletion) event.preventDefault();
+          autocompletionKeypress(event);
         } else if (event.keyCode == keycodes.UP) {
           $scope.selectPreviousAutocompletion();
           event.preventDefault();
           if ($scope.selectedAutocompletion) event.preventDefault();
+          autocompletionKeypress(event);
         } else if (event.keyCode == keycodes.ESC) {
           if ($scope.selectedAutocompletion) {
             $scope.restoreString();
             $scope.selectedAutocompletion = null;
+            event.preventDefault();
+          } else if ($scope.specialCompletion) {
+            autocompletionKeypress(event);
             event.preventDefault();
           }
         } else if (event.keyCode == keycodes.ENTER) {
@@ -180,16 +196,40 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
             $scope.confirmAutocompletion();
             $scope.selectedAutocompletion = null;
             event.preventDefault();
+          } else if ($scope.specialCompletion) {
+            var e = autocompletionKeypress(event);
+            if (!e.defaultPrevented) $scope.submitSearch($scope.inner.term);
+            event.preventDefault();
           } else {
             $scope.submitSearch($scope.inner.term);
           }
         }
       };
 
+      // TODO Put different autocompletion modes into different modules,
+      // then handle completion management there. TokenizedSearch should only
+      // a) call into those modules
+      // b) perform manipulation of the Search field
+
       $scope.updateFromButton = function () {
         window.alert('button not implemented yet');
       };
 
+      $scope.fillSpecialCompletion = function (value) {
+        var old = $scope.selectedAutocompletion;
+        $scope.selectedAutocompletion = value;
+        $scope.fillAutocompletion();
+        $scope.selectedAutocompletion = old;
+      };
+
+      $scope.readSpecialCompletion = function () {
+        var token = $scope.getCurrentToken();
+        return token.content;
+      };
+
+      function autocompletionKeypress(event) {
+        return $scope.$broadcast('autocompletionKeypress', event);
+      }
     }
   };
 });
