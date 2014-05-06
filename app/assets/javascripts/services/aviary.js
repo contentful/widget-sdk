@@ -18,6 +18,7 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
           apiVersion: 2,
           encryptionMethod: 'sha1',
           appendTo: '',
+          displayImageSize: true,
           onLoad: function () {
             initDeferred.resolve();
           },
