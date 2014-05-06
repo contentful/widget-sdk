@@ -43,15 +43,24 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
     return _.contains(SORTABLE_TYPES, field.type);
   };
 
-  $scope.setOrderField = function (field) {
+  $scope.isOrderField = function (field) {
+    return $scope.orderField.id === field.id;
+  };
+
+  function setOrderField(field) {
     var fieldPath = $scope.getFieldPath(field);
     $scope.orderDirection = DEFAULT_ORDER_DIRECTION;
     $scope.orderQuery = fieldPath;
     $scope.orderField = field;
+  }
+
+  $scope.setOrderField = function (field) {
+    setOrderField(field);
     $scope.resetEntries();
   };
 
-  $scope.orderColumnBy = function () {
+  $scope.orderColumnBy = function (field) {
+    if(!$scope.isOrderField(field)) setOrderField(field);
     $scope.orderDirection = switchOrderDirection($scope.orderDirection);
     $scope.resetEntries();
   };
@@ -150,10 +159,6 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
 
   $scope.getFieldList = function () {
     return _.map($scope.displayedFields, 'name').join(', ');
-  };
-
-  $scope.getFieldClass = function (field) {
-    return 'cell-'+field.type.toLowerCase();
   };
 
   $scope.getFieldPath = function (field) {

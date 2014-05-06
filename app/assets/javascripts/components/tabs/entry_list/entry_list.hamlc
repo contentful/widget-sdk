@@ -67,11 +67,12 @@
             %input(type="checkbox" cf-selection="" ng-show="entries.length > 0" tabindex="-1")
           %th.cell-content-type(ng-show="!tab.params.contentTypeId") Content Type
           %th.cell-display-name Name
-          %th(ng-repeat="field in displayedFields" ng-class="getFieldClass(field)")
-            %button.transparent-button(ng-click="setOrderField(field)") {{field.name}}
-            %button.transparent-button(ng-show="orderField.id == field.id && fieldIsSortable(field)" ng-click="orderColumnBy(field)")
-              %i.button-icon.ss-directup(ng-show="orderDirection == 'ascending'")
-              %i.button-icon.ss-dropdown(ng-show="orderDirection == 'descending'")
+          %th(ng-repeat="field in displayedFields" ng-class="[getFieldClass(field)]")
+            %span(ng-class="{active: isOrderField(field)}")
+              %button.transparent-button(ng-click="setOrderField(field)") {{field.name}}
+              %button.transparent-button(ng-show="fieldIsSortable(field)" ng-click="orderColumnBy(field)")
+                %i.button-icon.ss-directup(ng-show="orderDirection == 'ascending'")
+                %i.button-icon.ss-dropdown(ng-show="orderDirection == 'descending'")
           %th.cell-status Status
 
     .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")

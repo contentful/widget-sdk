@@ -167,6 +167,10 @@ angular.module('contentful').controller('EntryListCtrl',
     }
   };
 
+  $scope.getFieldClass = function (field) {
+    return 'cell-'+field.type.toLowerCase();
+  };
+
   $scope.$on('tabBecameActive', function(event, tab) {
     if (tab !== $scope.tab) return;
     $scope.resetEntries();
