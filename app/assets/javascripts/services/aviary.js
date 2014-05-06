@@ -6,7 +6,7 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
       loadFile('feather.js');
     }
 
-    var featherEditor, file, createDeferred;
+    var featherEditor, file, createDeferred, onClose;
 
     function createEditor() {
       var initDeferred = $q.defer();
@@ -24,6 +24,9 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
           onSaveButtonClicked: function () {
             featherEditor.saveHiRes();
             return false;
+          },
+          onClose: function () {
+            if(onClose) onClose();
           },
           onSaveHiRes: onSave,
           onError: onError
@@ -71,6 +74,7 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
       close: function () {
         if(featherEditor) {
           featherEditor.hideWaitIndicator();
+          if(onClose) onClose();
           featherEditor.close();
         }
       },
@@ -79,8 +83,8 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
         createDeferred = $q.defer();
         $q.all([getIntegrationToken(), createEditor()]).then(function (results) {
           var aviaryToken = results[0];
-          file = params.file;
-          delete params.file;
+          file = params.file; delete params.file;
+          onClose = params.onClose; delete params.onClose;
           params.hiresUrl = params.url;
           params.timestamp = aviaryToken.timestamp;
           params.signature = aviaryToken.signature;

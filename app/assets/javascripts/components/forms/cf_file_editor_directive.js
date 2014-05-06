@@ -52,7 +52,10 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
           aviary.createEditor({
             file: scope.file,
             image: preview,
-            url: imgUrl
+            url: imgUrl,
+            onClose: function () {
+              scope.loadingEditor = false;
+            }
           }).then(function (FPFile) {
             changeHandler(FPFile);
             scope.loadingEditor = false;
