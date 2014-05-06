@@ -2,6 +2,7 @@
   .input
     %input(type="search"
       ng-model="inner.term"
+      ng-trim="false"
       placeholder="{{placeholder}}"
       ng-change="inputChanged()"
       ng-keydown="keyPressed($event)"
