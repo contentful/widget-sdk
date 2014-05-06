@@ -136,12 +136,12 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
     $scope.tab.params.contentTypeId = preset.contentTypeId;
     $scope.searchTerm = preset.searchTerm || null;
     $scope.displayedFields = preset.displayedFields;
-    // TODO calculating the hiddenFields is missing here
     $scope.orderDirection  = preset.order.direction;
     $scope.orderField      = preset.order.field;
     // TODO why is orderQuery on the scope and why is getFieldPath not called getOrderQuery?
     $scope.orderQuery      = $scope.getFieldPath(preset.order.field);
     $scope.uiConfigLoadedPreset = preset;
+    //$scope.determineFieldVisibility();
     //todo reset page
     $scope.resetEntries();
   };

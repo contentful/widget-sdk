@@ -1,34 +1,31 @@
 'use strict';
 
 angular.module('contentful').controller('ViewCustomizerCtrl', function ViewCustomizerCtrl($scope) {
-  var displayedFieldIds;
 
   function determineFieldVisibility() {
     var filteredContentType = $scope.spaceContext.getPublishedContentType($scope.tab.params.contentTypeId);
     var contentTypeFields = filteredContentType ? filteredContentType.data.fields : [];
-    var displayedFields = $scope.systemFields.concat(contentTypeFields);
+    var fields = $scope.systemFields.concat(contentTypeFields);
 
-    $scope.displayedFields = _.filter(displayedFields, fieldIsSelected);
-    $scope.hiddenFields = _.sortBy(_.reject(displayedFields, fieldIsSelected), 'name');
+    $scope.hiddenFields = _.sortBy(_.reject(fields, fieldIsVisible), 'name');
 
-    function fieldIsSelected(field) {
-      return _.contains(displayedFieldIds, field.id);
+    function fieldIsVisible(field) {
+      return _.contains($scope.displayedFields, field);
     }
   }
 
+  $scope.$watch('displayedFields', determineFieldVisibility);
+
   $scope.resetDisplayFields = function () {
-    displayedFieldIds = ['author', 'updatedAt'];
-    determineFieldVisibility();
+    $scope.displayedFields = _.clone($scope.systemFields);
   };
 
-  $scope.addDisplayField = function (fieldId) {
-    displayedFieldIds.push(fieldId);
-    determineFieldVisibility();
+  $scope.addDisplayField = function (field) {
+    $scope.displayedFields.push(field);
   };
 
-  $scope.removeDisplayField = function (fieldId) {
-    _.remove(displayedFieldIds, fieldId);
-    determineFieldVisibility();
+  $scope.removeDisplayField = function (field) {
+    _.remove($scope.displayedFields, field);
   };
 
 });
