@@ -40,7 +40,7 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
   $scope.orderField = updatedAtField;
 
   $scope.fieldIsSortable = function (field) {
-    return _.contains(SORTABLE_TYPES, field.type);
+    return _.contains(SORTABLE_TYPES, field.type) && field.id !== 'author';
   };
 
   $scope.isOrderField = function (field) {
