@@ -74,12 +74,12 @@ angular.module('contentful').directive('cfFieldDisplay', function(){
 
       scope.dataForLinkedEntry = function (entry, field) {
         var entryLinkField = scope.spaceContext.localizedField(entry, 'data.fields.'+field.id);
-        return scope.dataForEntry(entryLinkField);
+        return entryLinkField ? scope.dataForEntry(entryLinkField) : '';
       };
 
       scope.dataForLinkedAsset = function (entry, field) {
         var assetLinkField = scope.spaceContext.localizedField(entry, 'data.fields.'+field.id);
-        return scope.dataForAsset(assetLinkField);
+        return assetLinkField ? scope.dataForAsset(assetLinkField) : '';
       };
 
       scope.displayBool = function (value) {
