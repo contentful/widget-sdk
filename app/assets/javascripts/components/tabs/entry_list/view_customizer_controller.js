@@ -2,7 +2,7 @@
 
 angular.module('contentful').controller('ViewCustomizerCtrl', function ViewCustomizerCtrl($scope) {
 
-  function determineFieldVisibility() {
+  function refreshHiddenFields() {
     var filteredContentType = $scope.spaceContext.getPublishedContentType($scope.tab.params.contentTypeId);
     var contentTypeFields = filteredContentType ? filteredContentType.data.fields : [];
     var fields = $scope.systemFields.concat(contentTypeFields);
@@ -14,7 +14,7 @@ angular.module('contentful').controller('ViewCustomizerCtrl', function ViewCusto
     }
   }
 
-  $scope.$watch('displayedFields', determineFieldVisibility);
+  $scope.$watch('displayedFields', refreshHiddenFields);
 
   $scope.resetDisplayFields = function () {
     $scope.displayedFields = _.clone($scope.systemFields);

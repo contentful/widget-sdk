@@ -141,8 +141,6 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
     // TODO why is orderQuery on the scope and why is getFieldPath not called getOrderQuery?
     $scope.orderQuery      = $scope.getFieldPath(preset.order.field);
     $scope.uiConfigLoadedPreset = preset;
-    //$scope.determineFieldVisibility();
-    //todo reset page
     $scope.resetEntries();
   };
 
