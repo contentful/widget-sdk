@@ -54,8 +54,8 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
             url: imgUrl
           }).then(function (FPFile) {
             changeHandler(FPFile);
-          }).catch(function (FPError) {
-            notification.serverError('There has been a problem saving the file', FPError);
+          }).catch(function (err) {
+            notification.serverError(err.message, err.error);
             aviary.close();
           });
         };

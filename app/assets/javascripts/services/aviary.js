@@ -38,14 +38,23 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
         createDeferred.resolve(res);
       })
       .catch(function (err) {
-        createDeferred.reject(err);
+        createDeferred.reject({
+          message: 'There has been a problem saving the file',
+          error: {
+            obj: err,
+            type: 'filepicker'
+          }
+        });
       });
     }
 
     function onError(error) {
       createDeferred.reject({
-        message: 'Aviary Error',
-        error: error
+        message: 'There was a problem editing the file',
+        error: {
+          obj: error,
+          type: 'aviary'
+        }
       });
     }
 
@@ -77,6 +86,14 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
           params.salt = aviaryToken.salt;
 
           featherEditor.launch(params);
+        }).catch(function (errors) {
+          createDeferred.reject({
+            message: 'There was a problem initializing the editor',
+            error: {
+              obj: errors,
+              type: 'initialize'
+            }
+          });
         });
         return createDeferred.promise;
       }
