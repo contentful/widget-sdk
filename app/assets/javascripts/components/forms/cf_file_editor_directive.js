@@ -43,6 +43,7 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
       };
 
       scope.editFile = function () {
+        scope.loadingEditor = true;
         var img = elem.find('.thumbnail').get(0);
         var preview = elem.find('.editor-preview').get(0);
         preview.src = '';
@@ -54,8 +55,10 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
             url: imgUrl
           }).then(function (FPFile) {
             changeHandler(FPFile);
+            scope.loadingEditor = false;
           }).catch(function (err) {
             notification.serverError(err.message, err.error);
+            scope.loadingEditor = false;
             aviary.close();
           });
         };
