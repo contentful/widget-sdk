@@ -26,9 +26,16 @@ angular.module('contentful').directive('cfFieldDisplay', function(){
       };
 
       function filterVisibleItems(items) {
+        var counter = 0;
         var cacheName = hasItemsOfType(items, 'Entry') ? 'entryCache' : 'assetCache';
+        var limit = scope[cacheName].params.limit;
         return _.filter(items, function (item) {
-          return scope[cacheName].has(item.sys.id);
+          var hasItem = scope[cacheName].has(item.sys.id);
+          if(hasItem && counter < limit) {
+            counter++;
+            return true;
+          }
+          return false;
         });
       }
 
