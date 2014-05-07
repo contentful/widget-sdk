@@ -7,7 +7,7 @@ angular.module('contentful').controller('ViewCustomizerCtrl', function ViewCusto
     var contentTypeFields = filteredContentType ? filteredContentType.data.fields : [];
     var fields = $scope.systemFields.concat(contentTypeFields);
 
-    $scope.hiddenFields = _.sortBy(_.reject(fields, fieldIsHidden), 'name');
+    $scope.hiddenFields = _.sortBy(_.filter(fields, fieldIsHidden), 'name');
 
     function fieldIsHidden(field) {
       return filteredContentType &&
