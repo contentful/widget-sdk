@@ -60,9 +60,8 @@
               %span.cf-user(link="contentType.getUpdatedBy()" as="updater")
                 {{updater | userNameDisplay:user}}
             %td.cell-status(ng-class="statusClass(contentType)")
-              .draft-wrapper
-                %span {{statusLabel(contentType)}}
-                .main-results-bar
+              .status-label {{statusLabel(contentType)}}
+              .status-bar
 
     .advice(ng-show="visibleContentTypes | isEmpty")
       %div(ng-show="hasQuery()")

@@ -88,9 +88,8 @@
             %td(ng-repeat="field in displayedFields" ng-class="getFieldClass(field)")
               %cf-field-display
             %td.cell-status(ng-class="statusClass(entry)")
-              .draft-wrapper
-                %span {{statusClass(entry)}}
-                .main-results-bar
+              .status-label {{statusClass(entry)}}
+              .status-bar
       .loading(ng-hide="paginator.atLast()")
 
     .advice(ng-show="visibleEntries | isEmpty")

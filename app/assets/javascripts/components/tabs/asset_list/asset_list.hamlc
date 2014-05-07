@@ -71,8 +71,8 @@
               %span.cf-user(link="asset.getUpdatedBy()" as="updater") {{updater | userNameDisplay:user}}
             %td.cell-status(ng-class="statusClass(asset)")
               .draft-wrapper
-                %span {{statusClass(asset)}}
-                .main-results-bar
+                .status-label {{statusClass(asset)}}
+                .status-bar
       .loading(ng-hide="paginator.atLast()")
 
     .advice(ng-show="visibleAssets | isEmpty")

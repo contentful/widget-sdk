@@ -71,41 +71,34 @@
   th
     @extend %result-list-cell
 
-  .draft-wrapper
-    position: relative
-    span
-      padding: 12.5px 0
-      display: block
-
-  .main-results-bar
+  .status-bar
     position: absolute
-    right: -20px
-    height: 100%
     top: 0
     bottom: 0
+    right: 0
     width: 8px
     height: 100%
     background-color: $light-gray
 
   .published
     color: $green
-    .main-results-bar
+    .status-bar
       background-color: $green
 
   .updated
     color: $blue
-    .main-results-bar
+    .status-bar
       background-color: $blue
 
   .draft,
   .pending
     color: $gold
-    .main-results-bar
+    .status-bar
       background-color: $gold
 
   .archived
     color: $red
-    .main-results-bar
+    .status-bar
       background-color: $red
 
   .cell-select
@@ -115,10 +108,13 @@
       top: -2px
 
   .cell-status
+    position: relative
     padding-top: 0
     padding-bottom: 0
-    padding-right: 20px
+    padding-right: 16px
     text-align: right
+    .status-label
+      padding: 12.5px 0
 
   .cell-type,
   .cell-author,
