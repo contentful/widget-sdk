@@ -2,10 +2,6 @@
 
 angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope, cfSpinner) {
 
-  var noopPromise = {
-    then: function () { return noopPromise; }
-  };
-
   function PromisedLoader() {
     this.inProgress = false;
     this.throttled = false;
@@ -18,7 +14,7 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
       var args = _.toArray(arguments).slice(2);
       var loader = this;
       if (loader.inProgress){
-        deferred.reject();
+        deferred.reject('Already in progress');
         return deferred.promise;
       }
 

@@ -92,7 +92,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         then(function () {
           tutorialScope.standby = false;
           if (tutorialScope.spaceContext.tabList.current.viewType == 'entry-list') {
-            $('.tab-content .entry-list').scope().resetEntries();
+            $('.tab-content .entry-list').scope().resetEntries(true);
           }
           guiders.next();
         }, function (err) {

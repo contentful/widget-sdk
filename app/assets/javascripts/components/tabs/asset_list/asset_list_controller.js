@@ -23,11 +23,12 @@ angular.module('contentful').
   $scope.$watch(function pageParameters(scope){
     return {
       searchTerm: scope.searchTerm,
+      page: scope.paginator.page,
       pageLength: scope.paginator.pageLength,
       spaceId: (scope.spaceContext.space && scope.spaceContext.space.getId())
     };
   }, function(pageParameters, old, scope){
-    scope.resetAssets();
+    scope.resetAssets(pageParameters.page === old.page);
   }, true);
 
   $scope.visibleInCurrentList = function(){
@@ -39,8 +40,8 @@ angular.module('contentful').
     $scope.searchTerm = term;
   };
 
-  $scope.resetAssets = function() {
-    $scope.paginator.page = 0;
+  $scope.resetAssets = function(resetPage) {
+    if (resetPage) $scope.paginator.page = 0;
     return buildQuery()
     .then(function (query) {
       return assetLoader.load($scope.spaceContext.space, 'getAssets', query);
@@ -49,7 +50,6 @@ angular.module('contentful').
       $scope.paginator.numEntries = assets.total;
       $scope.assets = assets;
       $scope.selection.switchBaseSet($scope.assets.length);
-      analytics.track('Reloaded AssetList');
     });
   };
 

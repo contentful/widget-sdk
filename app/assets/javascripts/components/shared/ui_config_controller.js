@@ -56,13 +56,13 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
 
   $scope.setOrderField = function (field) {
     setOrderField(field);
-    $scope.resetEntries();
+    $scope.resetEntries(true);
   };
 
   $scope.orderColumnBy = function (field) {
     if(!$scope.isOrderField(field)) setOrderField(field);
     $scope.orderDirection = switchOrderDirection($scope.orderDirection);
-    $scope.resetEntries();
+    $scope.resetEntries(true);
   };
 
   function switchOrderDirection(direction) {
@@ -129,7 +129,7 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
     $scope.orderField = updatedAtField;
     $scope.orderQuery = DEFAULT_ORDER_QUERY;
     $scope.uiConfigLoadedPreset = null;
-    $scope.resetEntries();
+    $scope.resetEntries(true);
   };
 
   $scope.loadPreset = function (preset) {
@@ -141,7 +141,7 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
     // TODO why is orderQuery on the scope and why is getFieldPath not called getOrderQuery?
     $scope.orderQuery      = $scope.getFieldPath(preset.order.field);
     $scope.uiConfigLoadedPreset = preset;
-    $scope.resetEntries();
+    $scope.resetEntries(true);
   };
 
   $scope.deletePreset = function (preset) {

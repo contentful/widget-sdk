@@ -1,6 +1,9 @@
 .paginator
   .text
     %p {{paginator.numEntries}} Results,
-    %p Page {{paginator.page + 1}} of {{paginator.numPages()}}
+    %p
+      Page
+      %input.form-look(type="number" ng-model="paginator.page" min="1" max="{{paginator.numPages() || 10000000}}")
+      of {{paginator.numPages()}}
   .track
   .fill

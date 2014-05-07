@@ -10,6 +10,13 @@ $textarea-max-height: 400px
   border-color: $link-blue
   outline: none
 
+.form-look
+  border: 1px solid $lightest-gray
+  +border-radius(3px 3px 3px 3px)
+  +form-control-look
+  &:focus
+    +form-focus-look
+
 .form-controls,
 .form-styled,
 %form-styled

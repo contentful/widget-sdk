@@ -47,19 +47,21 @@ angular.module('contentful').controller('EntryListCtrl',
   $scope.$watch(function pageParameters(scope){
     return {
       searchTerm: scope.searchTerm,
+      page: scope.paginator.page,
       pageLength: scope.paginator.pageLength,
       contentTypeId: scope.tab.params.contentTypeId,
       spaceId: (scope.spaceContext.space && scope.spaceContext.space.getId())
     };
   }, function(pageParameters, old, scope){
-    scope.resetEntries();
+    scope.resetEntries(pageParameters.page === old.page);
   }, true);
 
   $scope.$watch(function cacheParameters(scope){
     return {
       contentTypeId: scope.tab.params.contentTypeId,
       displayedFields: scope.displayedFields,
-      entriesLength: scope.entries && scope.entries.length
+      entriesLength: scope.entries && scope.entries.length,
+      page: scope.paginator.page
     };
   }, refreshEntityCaches, true);
 
@@ -79,8 +81,8 @@ angular.module('contentful').controller('EntryListCtrl',
     return true;
   };
 
-  $scope.resetEntries = function() {
-    $scope.paginator.page = 0;
+  $scope.resetEntries = function(resetPage) {
+    if (resetPage) $scope.paginator.page = 0;
     return buildQuery()
     .then(function (query) {
       return entryLoader.load($scope.spaceContext.space, 'getEntries', query);
@@ -89,7 +91,6 @@ angular.module('contentful').controller('EntryListCtrl',
       $scope.paginator.numEntries = entries.total;
       $scope.entries = entries;
       $scope.selection.switchBaseSet($scope.entries.length);
-      analytics.track('Reloaded EntryList');
     });
   };
 
