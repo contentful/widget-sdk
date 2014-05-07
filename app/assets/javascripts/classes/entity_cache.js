@@ -57,7 +57,10 @@ angular.module('contentful').factory('EntityCache', function($rootScope, $q){
       this.determineMissingEntityIds(entities);
 
       if(this.missingIds.length) {
-        this.params.space[this.fetchMethod]({'sys.id[in]': this.missingIds.join(',')}, function (err, linkedEntities) {
+        this.params.space[this.fetchMethod]({
+          'sys.id[in]': this.missingIds.join(','),
+          limit: 250
+        }, function (err, linkedEntities) {
           $rootScope.$apply(function () {
             if (err) return lookup.reject(err);
             self.missingIds = [];
