@@ -14,7 +14,8 @@ angular.module('contentful').controller('ViewCustomizerCtrl', function ViewCusto
     }
   }
 
-  $scope.$watch('displayedFields', refreshHiddenFields);
+  $scope.$watch('tab.params.contentTypeId', refreshHiddenFields);
+  $scope.$watch('displayedFields', refreshHiddenFields, true);
 
   $scope.resetDisplayFields = function () {
     $scope.displayedFields = _.clone($scope.systemFields);
