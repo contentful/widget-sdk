@@ -55,6 +55,14 @@ angular.module('contentful').controller('EntryListCtrl',
     scope.resetEntries();
   }, true);
 
+  $scope.$watch(function cacheParameters(scope){
+    return {
+      contentTypeId: scope.tab.params.contentTypeId,
+      displayedFields: scope.displayedFields,
+      entriesLength: scope.entries && scope.entries.length
+    };
+  }, refreshEntityCaches, true);
+
   $scope.typeNameOr = function (or) {
     return $scope.tab.params.contentTypeId ?
       $scope.spaceContext.getPublishedContentType($scope.tab.params.contentTypeId).getName() : or;
@@ -81,13 +89,18 @@ angular.module('contentful').controller('EntryListCtrl',
       $scope.paginator.numEntries = entries.total;
       $scope.entries = entries;
       $scope.selection.switchBaseSet($scope.entries.length);
-      if($scope.tab.params.contentTypeId){
-        $scope.entryCache.resolveLinkedEntities($scope.entries);
-        $scope.assetCache.resolveLinkedEntities($scope.entries);
-      }
       analytics.track('Reloaded EntryList');
     });
   };
+
+  function refreshEntityCaches() {
+    if($scope.tab.params.contentTypeId){
+      $scope.entryCache.setDisplayedFields($scope.displayedFields);
+      $scope.entryCache.resolveLinkedEntities($scope.entries);
+      $scope.assetCache.setDisplayedFields($scope.displayedFields);
+      $scope.assetCache.resolveLinkedEntities($scope.entries);
+    }
+  }
 
   function getOrderDirection() {
     return ORDER_PREFIXES[$scope.orderDirection];
@@ -144,10 +157,6 @@ angular.module('contentful').controller('EntryListCtrl',
       entries = _.difference(entries, $scope.entries);
       $scope.entries.push.apply($scope.entries, entries);
       $scope.selection.setBaseSize($scope.entries.length);
-      if($scope.tab.params.contentTypeId){
-        $scope.entryCache.resolveLinkedEntities($scope.entries);
-        $scope.assetCache.resolveLinkedEntities($scope.entries);
-      }
     }, function () {
       $scope.paginator.page--;
     });

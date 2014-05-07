@@ -27,6 +27,10 @@ angular.module('contentful').factory('EntityCache', function($rootScope, $q){
       this.cache[getId(entity)] = entity;
     },
 
+    setDisplayedFields: function (displayedFields) {
+      this.displayedFields = displayedFields;
+    },
+
     resolveLinkedEntities: function (entities, linkResolver) {
       linkResolver = linkResolver || $q.defer();
       if(this.inProgress){
@@ -75,11 +79,20 @@ angular.module('contentful').factory('EntityCache', function($rootScope, $q){
       return lookup.promise;
     },
 
+    fieldIsDisplayed: function (fieldId) {
+      return this.displayedFields &&
+        _.some(this.displayedFields, function (field) {
+          return field.id === fieldId;
+        });
+    },
+
     determineMissingEntityIds: function (entities) {
       var self = this;
       _.forEach(entities, function (entity) {
-        _.forEach(entity.data.fields, function (field) {
+        _.forEach(entity.data.fields, function (field, fieldId) {
           var locfield = field[self.locale];
+          if(!self.fieldIsDisplayed(fieldId)) return;
+
           if(isLink(locfield))
             self.pushFieldId(locfield);
           if(isLinkArray(locfield)){
