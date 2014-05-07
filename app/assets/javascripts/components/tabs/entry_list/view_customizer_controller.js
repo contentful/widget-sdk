@@ -10,7 +10,7 @@ angular.module('contentful').controller('ViewCustomizerCtrl', function ViewCusto
     $scope.hiddenFields = _.sortBy(_.reject(fields, fieldIsVisible), 'name');
 
     function fieldIsVisible(field) {
-      return _.contains($scope.displayedFields, field);
+      return _.contains($scope.displayedFields, field) && field.id !== filteredContentType.data.displayField;
     }
   }
 
