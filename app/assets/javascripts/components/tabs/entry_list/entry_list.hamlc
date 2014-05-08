@@ -67,7 +67,7 @@
             %input(type="checkbox" cf-selection="" ng-show="entries.length > 0" tabindex="-1")
           %th.cell-content-type(ng-show="!tab.params.contentTypeId") Content Type
           %th.cell-display-name Name
-          %th(ng-repeat="field in displayedFields" ng-class="[getFieldClass(field)]")
+          %th(ng-repeat="field in displayedFields track by field.id" ng-class="[getFieldClass(field)]")
             %span(ng-class="{active: isOrderField(field)}")
               %button.transparent-button(ng-click="setOrderField(field)") {{field.name}}
               %button.transparent-button(ng-show="fieldIsSortable(field)" ng-click="orderColumnBy(field)")
@@ -85,7 +85,7 @@
               %span {{spaceContext.publishedTypeForEntry(entry).getName()}}
             %td.cell-display-name
               %span {{spaceContext.entryTitle(entry)}}
-            %td(ng-repeat="field in displayedFields" ng-class="getFieldClass(field)")
+            %td(ng-repeat="field in displayedFields track by field.id" ng-class="getFieldClass(field)")
               %cf-field-display
             %td.cell-status(ng-class="statusClass(entry)")
               .status-label {{statusClass(entry)}}
