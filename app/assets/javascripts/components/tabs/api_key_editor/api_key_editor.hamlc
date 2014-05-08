@@ -49,6 +49,11 @@
             %a.default-button.cf-copy-paste(href="#" clipboard-target="curl-command" ng-show="apiKey.data.accessToken")
               %i.ss-layers
               %i.ss-plus
+    .form-field
+      %label
+      .form-controls
+        .field-editor
+          %a(href="{{mobileAppUrl}}" target="_blank") Open in Browser App
     .form-field(ng-show="apiKey.data.accessToken")
       %label
       .form-controls

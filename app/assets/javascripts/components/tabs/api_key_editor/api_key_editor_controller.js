@@ -19,6 +19,12 @@ angular.module('contentful').
         $scope.spaceContext.space.getId() +
         '/entries?access_token=' +
         accessToken;
+
+      $scope.mobileAppUrl =
+        'contentful://open/space/' +
+        $scope.spaceContext.space.getId() +
+        '?access_token=' +
+        accessToken;
     });
 
     $scope.$watch('apiKeyForm.$dirty', function (modified, old, scope) {
