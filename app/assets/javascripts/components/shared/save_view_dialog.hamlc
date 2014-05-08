@@ -11,7 +11,8 @@
             %input(type="text" name="title" ng-model="uiConfigLoadedPreset.title" required="")
         .form-field(ng-show="searchTerm")
           %label Search terms
-          .form-controls {{SearchTerm}}
+          .form-controls
+            %p "{{searchTerm}}"
         .form-field(ng-show="tab.params.contentTypeId")
           %label Content Type
           .form-controls
