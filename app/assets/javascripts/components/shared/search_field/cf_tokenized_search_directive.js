@@ -212,7 +212,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
       // b) perform manipulation of the Search field
 
       $scope.updateFromButton = function () {
-        window.alert('button not implemented yet');
+        $scope.submitSearch($scope.inner.term);
       };
 
       $scope.fillSpecialCompletion = function (value) {
