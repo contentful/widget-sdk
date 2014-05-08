@@ -16,6 +16,7 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
         featherEditor = new $window.Aviary.Feather({
           apiKey: environment.settings.aviary.api_key,
           apiVersion: 2,
+          isPremiumPartner: 1,
           encryptionMethod: 'sha1',
           appendTo: '',
           displayImageSize: true,

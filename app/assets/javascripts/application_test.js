@@ -38,10 +38,11 @@ angular.module('contentful/test', [
   'contentful/user_interface',
   'contentful',
   'contentful/mocks'
-], function($locationProvider, clientProvider, authenticationProvider, environment, $sceDelegateProvider){
+], function($locationProvider, clientProvider, authenticationProvider, environment, $sceDelegateProvider, $compileProvider){
   'use strict';
   var env = environment.settings;
   $locationProvider.html5Mode(true);
+  $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
   $sceDelegateProvider.resourceUrlWhitelist([/(https?:)?\/\/([^:\/.?&;]*\.)?(staticflinkly-thriventures\.netdna-ssl\.com|quirely.com|flinkly.com|joistio.com|contentful.com)(:\d+)?\/.*/, 'self' ]);
   clientProvider.endpoint('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');

@@ -36,7 +36,7 @@ angular.module('contentful/app', [
   'timeRelative',
   'contentful/user_interface',
   'contentful'
-], function($locationProvider, clientProvider, authenticationProvider, analyticsProvider, environment, $sceDelegateProvider){
+], function($locationProvider, clientProvider, authenticationProvider, analyticsProvider, environment, $sceDelegateProvider, $compileProvider){
   'use strict';
   var env = environment.settings;
 
@@ -53,6 +53,7 @@ angular.module('contentful/app', [
   }
 
   $locationProvider.html5Mode(true).hashPrefix('!');
+  $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
   $sceDelegateProvider.resourceUrlWhitelist(env.resourceUrlWhiteListRegexp);
   clientProvider.endpoint('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');
