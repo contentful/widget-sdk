@@ -32,6 +32,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
 
       scope.inputBlurred = function () {
         scope.hasFocus = false;
+        scope.clearAutocompletions();
       };
 
       scope.getPosition = function () {
@@ -145,6 +146,12 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
             $scope.specialCompletion = null;
           }
         });
+      };
+
+      $scope.clearAutocompletions = function () {
+        $scope.restoreString();
+        $scope.selectedAutocompletion = null;
+        $scope.specialCompletion = null;
       };
 
       $scope.selectNextAutocompletion = function () {
