@@ -66,18 +66,9 @@ angular.module('contentful').directive('cfLinkEditor', function(mimetype){
             var oldIndex = ui.item.startIndex;
             var newIndex = ui.item.index();
             delete ui.item.startIndex;
-            scope.otDoc.at(scope.otPath).move(oldIndex, newIndex, function(err) {
-              if (err) {
-                // undo DOM move operation
-                if (oldIndex < newIndex){
-                  $(ui.item).insertBefore(list.children().at(oldIndex));
-                } else {
-                  $(ui.item).insertAfter(list.children().at(oldIndex));
-                }
-              } else {
-                // TODO instead use the ngModelController.$setviewValue
-                scope.$apply('otUpdateEntity()');
-              }
+            list.sortable('cancel');
+            scope.otDoc.at(scope.otPath).move(oldIndex, newIndex, function() {
+              scope.$apply('otUpdateEntity()');
             });
           }
         });
