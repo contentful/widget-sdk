@@ -67,7 +67,7 @@
             %input(type="checkbox" cf-selection="" ng-show="entries.length > 0" tabindex="-1")
           %th.cell-content-type(ng-show="!tab.params.contentTypeId") Content Type
           %th.cell-display-name Name
-          %th.collapsible(ng-repeat="field in displayedFields track by field.id" data-field-id="{{field.id}}" ng-class="[getFieldClass(field)]")
+          %th(ng-repeat="field in displayedFields track by field.id" data-field-id="{{field.id}}" ng-class="[getFieldClass(field)]")
             %span(ng-class="{active: isOrderField(field)}")
               %button.transparent-button(ng-show="fieldIsSortable(field)" ng-click="orderColumnBy(field)" ng-hide="isFieldCollapsed(field)")
                 %i.button-icon.ss-directup(ng-show="orderDirection == 'ascending'")
@@ -89,7 +89,7 @@
               %span {{spaceContext.publishedTypeForEntry(entry).getName()}}
             %td.cell-display-name
               %span {{spaceContext.entryTitle(entry)}}
-            %td.collapsible(ng-repeat="field in displayedFields track by field.id" ng-class="[getFieldClass(field), getFieldCollapsedClass(field)]")
+            %td(ng-repeat="field in displayedFields track by field.id" ng-class="[getFieldClass(field), getFieldCollapsedClass(field)]")
               %cf-field-display(ng-hide="isFieldCollapsed(field)")
               %button.transparent-button(cf-click-local="expandColumn(field)" ng-show="isFieldCollapsed(field)")
                 &hellip;
