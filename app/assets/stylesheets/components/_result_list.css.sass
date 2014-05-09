@@ -70,6 +70,21 @@
   td,
   th
     @extend %result-list-cell
+  td,
+  th,
+  th button
+    overflow: hidden
+    white-space: nowrap
+    text-overflow: ellipsis
+  th
+    .button-icon
+      right: 0
+    .truncated-button
+      width: 90%
+      text-align: left
+    .active
+      .truncated-button
+        width: auto
 
   .status-bar
     position: absolute
@@ -124,39 +139,64 @@
   .cell-number,
   .cell-boolean,
     color: $medium-gray
+
   .cell-display-field,
   .cell-name
     color: $dark-gray
     font-weight: 600
+
   .cell-text,
   .cell-description
     overflow: hidden
     padding-right: 1em
     text-overflow: ellipsis
+
   .cell-date
     color: $light-gray
     font-size: 85%
+
   .cell-display-name
     width: 27%
+
   .cell-description
     width: 47%
+
   .cell-content-type
     width: 13%
+
   .cell-select
     width: 3%
+
   .cell-preview,
   .cell-integer,
   .cell-number,
   .cell-boolean,
   .cell-status
     width: 6%
+
   .cell-date,
-  .cell-symbol
+  .cell-symbol,
+  .cell-array,
+  .cell-link
     width: 10%
+
   td.cell-status
     text-transform: uppercase
     color: $light-gray
     font-size: 80%
+
+  .collapsed,
+    width: 2%
+  .collapsed .linked-entries,
+  .collapsed .linked-entries span,
+  .collapsed .linked-assets
+    width: 100%
+    overflow: hidden
+    white-space: nowrap
+    text-overflow: ellipsis
+  tbody
+    button
+      color: $blue
 
   .linked-entries,
   .linked-assets

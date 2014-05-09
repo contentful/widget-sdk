@@ -67,12 +67,16 @@
             %input(type="checkbox" cf-selection="" ng-show="entries.length > 0" tabindex="-1")
           %th.cell-content-type(ng-show="!tab.params.contentTypeId") Content Type
           %th.cell-display-name Name
-          %th(ng-repeat="field in displayedFields track by field.id" ng-class="[getFieldClass(field)]")
+          %th.collapsible(ng-repeat="field in displayedFields track by field.id" data-field-id="{{field.id}}" ng-class="[getFieldClass(field)]")
             %span(ng-class="{active: isOrderField(field)}")
-              %button.transparent-button(ng-click="setOrderField(field)") {{field.name}}
-              %button.transparent-button(ng-show="fieldIsSortable(field)" ng-click="orderColumnBy(field)")
+              %button.transparent-button(ng-show="fieldIsSortable(field)" ng-click="orderColumnBy(field)" ng-hide="isFieldCollapsed(field)")
                 %i.button-icon.ss-directup(ng-show="orderDirection == 'ascending'")
                 %i.button-icon.ss-dropdown(ng-show="orderDirection == 'descending'")
+              %button.transparent-button.truncated-button(ng-click="setOrderField(field)" ng-disabled="!fieldIsSortable(field)" ng-hide="isFieldCollapsed(field)")
+                {{field.name}}
+              %button.transparent-button.truncated-button(ng-click="expandColumn(field)" ng-show="isFieldCollapsed(field)")
+                {{field.name}}
+
           %th.cell-status Status
 
     .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
@@ -85,8 +89,10 @@
               %span {{spaceContext.publishedTypeForEntry(entry).getName()}}
             %td.cell-display-name
               %span {{spaceContext.entryTitle(entry)}}
-            %td(ng-repeat="field in displayedFields track by field.id" ng-class="getFieldClass(field)")
-              %cf-field-display
+            %td.collapsible(ng-repeat="field in displayedFields track by field.id" ng-class="[getFieldClass(field), getFieldCollapsedClass(field)]")
+              %cf-field-display(ng-hide="isFieldCollapsed(field)")
+              %button.transparent-button(cf-click-local="expandColumn(field)" ng-show="isFieldCollapsed(field)")
+                &hellip;
             %td.cell-status(ng-class="statusClass(entry)")
               .status-label {{statusClass(entry)}}
               .status-bar

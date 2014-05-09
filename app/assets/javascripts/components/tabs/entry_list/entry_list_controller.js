@@ -177,8 +177,25 @@ angular.module('contentful').controller('EntryListCtrl',
     }
   };
 
+  var narrowFieldTypes = [
+    'integer',
+    'number',
+    'boolean'
+  ];
+
+  var mediumFieldTypes = [
+    'date',
+    'symbol',
+    'array',
+    'link'
+  ];
+
   $scope.getFieldClass = function (field) {
-    return 'cell-'+field.type.toLowerCase();
+    var type = field.type.toLowerCase();
+    var sizeClass = ' ';
+    if(_.contains(narrowFieldTypes, type)) sizeClass += 'narrow';
+    else if(_.contains(mediumFieldTypes, type)) sizeClass += 'medium';
+    return 'cell-'+ type +sizeClass;
   };
 
   $scope.$on('tabBecameActive', function(event, tab) {
