@@ -96,9 +96,9 @@ angular.module('contentful').controller('EntryListCtrl',
 
   function refreshEntityCaches() {
     if($scope.tab.params.contentTypeId){
-      $scope.entryCache.setDisplayedFields($scope.displayedFields);
+      $scope.entryCache.setDisplayedFieldIds(_.map($scope.displayedFields, 'id'));
       $scope.entryCache.resolveLinkedEntities($scope.entries);
-      $scope.assetCache.setDisplayedFields($scope.displayedFields);
+      $scope.assetCache.setDisplayedFieldIds(_.map($scope.displayedFields, 'id'));
       $scope.assetCache.resolveLinkedEntities($scope.entries);
     }
   }

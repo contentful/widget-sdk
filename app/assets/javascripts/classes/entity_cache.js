@@ -27,8 +27,8 @@ angular.module('contentful').factory('EntityCache', function($rootScope, $q){
       this.cache[getId(entity)] = entity;
     },
 
-    setDisplayedFields: function (displayedFields) {
-      this.displayedFields = displayedFields;
+    setDisplayedFieldIds: function (displayedFieldIds) {
+      this.displayedFieldIds = displayedFieldIds;
     },
 
     resolveLinkedEntities: function (entities, linkResolver) {
@@ -80,10 +80,7 @@ angular.module('contentful').factory('EntityCache', function($rootScope, $q){
     },
 
     fieldIsDisplayed: function (fieldId) {
-      return this.displayedFields &&
-        _.some(this.displayedFields, function (field) {
-          return field.id === fieldId;
-        });
+      return _.contains(this.displayedFieldIds, fieldId);
     },
 
     determineMissingEntityIds: function (entities) {
