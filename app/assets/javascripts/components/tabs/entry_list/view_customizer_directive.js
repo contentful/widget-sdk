@@ -4,7 +4,6 @@ angular.module('contentful').directive('viewCustomizer', function(){
   return {
     template: JST.view_customizer(),
     restrict: 'C',
-    controller: 'ViewCustomizerCtrl',
     link: function (scope, elem) {
 
       // Index is always -1 because of fixed items in list
@@ -30,20 +29,20 @@ angular.module('contentful').directive('viewCustomizer', function(){
           var newIndex = getIndex(ui);
           delete ui.item.startIndex;
           scope.$apply(function(){
-            var list = scope.displayedFields;
+            var list = scope.tab.params.preset.displayedFieldIds;
             list.splice(newIndex, 0, list.splice(oldIndex, 1)[0]);
           });
         }
       });
 
-      scope.displayField = function (ev, fieldId) {
+      scope.displayField = function (ev, field) {
         ev.stopPropagation();
-        scope.addDisplayField(fieldId);
+        scope.addDisplayField(field);
       };
 
-      scope.hideField = function (ev, fieldId) {
+      scope.hideField = function (ev, field) {
         ev.stopPropagation();
-        scope.removeDisplayField(fieldId);
+        scope.removeDisplayField(field);
       };
     }
   };

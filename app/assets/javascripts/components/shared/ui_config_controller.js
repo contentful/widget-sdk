@@ -1,6 +1,5 @@
 'use strict';
 angular.module('contentful').controller('UiConfigController', function($scope, sentry, random, modalDialog, $q, notification){
-  var DEFAULT_ORDER_QUERY = 'sys.updatedAt';
   var DEFAULT_ORDER_DIRECTION = 'descending';
 
   var SORTABLE_TYPES = [
@@ -32,26 +31,37 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
     authorField
   ];
 
-  $scope.displayedFields = _.clone($scope.systemFields);
+  function getBlankPreset() {
+    return {
+      title: null,
+      searchTerm: null,
+      contentTypeId: null,
+      id: null,
+      order: {
+        fieldId: updatedAtField.id,
+        direction: DEFAULT_ORDER_DIRECTION
+      },
+      displayedFieldIds: _.map($scope.systemFields, 'id')
+    };
+  }
 
-  // TODO why is all this on the scope and not tucked away into a currentPreset object or the tab.params?
-  $scope.orderQuery = DEFAULT_ORDER_QUERY;
-  $scope.orderDirection = DEFAULT_ORDER_DIRECTION;
-  $scope.orderField = updatedAtField;
+  var blankPreset = getBlankPreset();
+
+  $scope.tab.params.preset = $scope.tab.params.preset || getBlankPreset();
 
   $scope.fieldIsSortable = function (field) {
     return _.contains(SORTABLE_TYPES, field.type) && field.id !== 'author';
   };
 
   $scope.isOrderField = function (field) {
-    return $scope.orderField.id === field.id;
+    return $scope.tab.params.preset.order.fieldId === field.id;
   };
 
   function setOrderField(field) {
-    var fieldPath = $scope.getFieldPath(field);
-    $scope.orderDirection = DEFAULT_ORDER_DIRECTION;
-    $scope.orderQuery = fieldPath;
-    $scope.orderField = field;
+    $scope.tab.params.preset.order = {
+      fieldId: field.id,
+      direction: DEFAULT_ORDER_DIRECTION
+    };
   }
 
   $scope.setOrderField = function (field) {
@@ -61,47 +71,24 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
 
   $scope.orderColumnBy = function (field) {
     if(!$scope.isOrderField(field)) setOrderField(field);
-    $scope.orderDirection = switchOrderDirection($scope.orderDirection);
+    $scope.tab.params.preset.order.direction = switchOrderDirection($scope.orderDirection);
     $scope.resetEntries(true);
   };
 
   function switchOrderDirection(direction) {
-    return {
-      'ascending': 'descending',
-      'descending': 'ascending'
-    }[direction];
+    return direction === 'ascending' ? 'descending' : 'ascending';
   }
 
   $scope.openSaveView = function () {
-    $scope.uiConfigLoadedPreset = $scope.uiConfigLoadedPreset || {title: '', id: random.id()};
     modalDialog.open({
       template: 'save_view_dialog',
       scope: $scope
-    }).then(saveView);
+    }).then(savePreset);
   };
 
-  // TODO Why is this not called savePreset, like loadPreset or clearPreset?
-  function saveView() {
-    var preset = $scope.uiConfigLoadedPreset;
-    if($scope.searchTerm) preset.searchTerm = $scope.searchTerm;
-    if($scope.tab.params.contentTypeId){
-      preset.contentTypeId = $scope.tab.params.contentTypeId;
-      preset.displayedFields = $scope.displayedFields;
-    }
-    preset.order = {
-      field: {
-        id: $scope.orderField.id,
-        sys: $scope.orderField.sys
-      },
-      direction: $scope.orderDirection
-    };
-    var presetIndex = _.findIndex($scope.uiConfig.savedPresets, function (val) { return val.id === preset.id;});
-    if(presetIndex >= 0){
-      $scope.uiConfig.savedPresets[presetIndex] = preset;
-    } else {
-      $scope.uiConfig.savedPresets.push(preset);
-    }
-    $scope.uiConfigLoadedPreset = preset;
+  function savePreset() {
+    var preset = _.extend($scope.tab.params.preset, {id: random.id()});
+    $scope.uiConfig.savedPresets.push(preset);
     $scope.saveUiConfig();
   }
 
@@ -122,26 +109,20 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
   };
 
   $scope.clearPreset = function () {
-    $scope.searchTerm = null;
-    $scope.tab.params.contentTypeId = null;
-    $scope.displayedFields = _.clone($scope.systemFields);
-    $scope.orderDirection = DEFAULT_ORDER_DIRECTION;
-    $scope.orderField = updatedAtField;
-    $scope.orderQuery = DEFAULT_ORDER_QUERY;
-    $scope.uiConfigLoadedPreset = null;
+    $scope.tab.params.preset = getBlankPreset();
     $scope.resetEntries(true);
   };
 
   $scope.loadPreset = function (preset) {
-    $scope.tab.params.contentTypeId = preset.contentTypeId;
-    $scope.searchTerm = preset.searchTerm || null;
-    $scope.displayedFields = preset.displayedFields;
-    $scope.orderDirection  = preset.order.direction;
-    $scope.orderField      = preset.order.field;
-    // TODO why is orderQuery on the scope and why is getFieldPath not called getOrderQuery?
-    $scope.orderQuery      = $scope.getFieldPath(preset.order.field);
-    $scope.uiConfigLoadedPreset = preset;
+    $scope.tab.params.preset = _.omit(preset, 'id');
+    $scope.tab.params.preset.title = '' + preset.title + ' (copy)';
     $scope.resetEntries(true);
+  };
+
+  $scope.orderDescription = function (preset) {
+    var field = _.find($scope.displayedFields, {id: preset.order.fieldId});
+    var direction = preset.order.direction;
+    return '' + direction + ' by ' + field.name;
   };
 
   $scope.deletePreset = function (preset) {
@@ -159,14 +140,14 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
     return _.map($scope.displayedFields, 'name').join(', ');
   };
 
-  $scope.getFieldPath = function (field) {
-    if(field.sys){
-      return 'sys.'+field.id;
-    }
-    var defaultLocale = $scope.spaceContext.space.getDefaultLocale().code;
-    return 'fields.'+field.id+'.'+defaultLocale;
+  $scope.presetIsActive = function (preset){
+    var p = $scope.tab.params.preset;
+    if (!preset) preset = blankPreset;
+    return p.searchTerm === preset.searchTerm &&
+           p.contentTypeId === preset.contentTypeId &&
+           _.isEqual(p.order, preset.order) &&
+           _.isEqual(p.displayedFieldsIds, preset.displayedFieldsIds);
   };
-
   
   loadUIConfig();
 
@@ -188,10 +169,10 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
   function generateDefaultViews() {
     var views = [];
     views.push(
-      {title: 'Status: Published', searchTerm: 'status:published', id: random.id(), order: makeOrder(), displayedFields: fields()},
-      {title: 'Status: Changed',   searchTerm: 'status:changed'  , id: random.id(), order: makeOrder(), displayedFields: fields()},
-      {title: 'Status: Draft',     searchTerm: 'status:draft'    , id: random.id(), order: makeOrder(), displayedFields: fields()},
-      {title: 'Status: Archived',  searchTerm: 'status:archived' , id: random.id(), order: makeOrder(), displayedFields: fields()}
+      {title: 'Status: Published', searchTerm: 'status:published', id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
+      {title: 'Status: Changed',   searchTerm: 'status:changed'  , id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
+      {title: 'Status: Draft',     searchTerm: 'status:draft'    , id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
+      {title: 'Status: Archived',  searchTerm: 'status:archived' , id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()}
     );
     $scope.waitFor('spaceContext.publishedContentTypes.length > 0', function () {
       _.each($scope.spaceContext.publishedContentTypes, function (contentType) {
@@ -200,18 +181,18 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
           contentTypeId: contentType.getId(),
           id: random.id(),
           order: makeOrder(),
-          displayedFields: fields()
+          displayedFieldIds: fieldIds()
         });
       });
     });
     return views;
 
     function makeOrder() {
-      return { field: updatedAtField, direction: DEFAULT_ORDER_DIRECTION };
+      return { fieldId: updatedAtField.id, direction: DEFAULT_ORDER_DIRECTION };
     }
 
-    function fields() {
-      return _.clone($scope.systemFields);
+    function fieldIds() {
+      return _.map($scope.systemFields, 'id');
     }
   }
 

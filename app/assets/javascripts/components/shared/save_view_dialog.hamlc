@@ -3,17 +3,17 @@
     .title Save View
     .modal-dialog-close-button(ng-click="dialog.cancel()")
 
-    %form(name="saveViewForm" ng-submit="dialog.confirm()")
+    %form(name="saveViewForm")
       .form-horizontal
         .form-field
           %label Title
           .form-controls
-            %input(type="text" name="title" ng-model="uiConfigLoadedPreset.title" required="")
-        .form-field(ng-show="searchTerm")
+            %input(type="text" name="title" ng-model="tab.params.preset.title" required="")
+        .form-field(ng-hide="tab.params.preset.searchTerm | isEmpty")
           %label Search terms
           .form-controls
-            %p "{{searchTerm}}"
-        .form-field(ng-show="tab.params.contentTypeId")
+            %p "{{tab.params.preset.searchTerm}}"
+        .form-field(ng-show="tab.params.preset.contentTypeId")
           %label Content Type
           .form-controls
             %p {{typeNameOr('')}}
@@ -21,10 +21,10 @@
           %label Displayed columns
           .form-controls
             %p {{getFieldList()}}
-        .form-field(ng-show="orderField")
+        .form-field(ng-show="tab.params.preset.order.fieldId")
           %label Ordered
           .form-controls
-            %p {{orderDirection}} by {{orderField.name}}
+            %p {{orderDescription(tab.params.preset)}}
       .buttons
         %button.default-button.cancel(type="button" ng-click="dialog.cancel()")
           {{dialog.cancelLabel}}

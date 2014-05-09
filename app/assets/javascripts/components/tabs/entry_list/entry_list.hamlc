@@ -19,11 +19,11 @@
           %li.dropdown-menu-item.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
                    ng-click="filterByContentTypeId(contentType.getId())"
                    dropdown-close="") {{contentType.getName()}}
-    .search-with-results(cf-tokenized-search="searchTerm" placeholder="Search for {{typeNameOr('Entries')}}")
+    .search-with-results(cf-tokenized-search="tab.params.preset.searchTerm" placeholder="Search for {{typeNameOr('Entries')}}")
 
   .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")
 
-  .view-customizer(ng-show="tab.params.contentTypeId")
+  .view-customizer(ng-show="tab.params.preset.contentTypeId")
 
   .add-entity(ng-hide="spaceContext.publishedContentTypes.length == 0")
     %button.dropdown-toggle.default-button.primary-button(
@@ -48,16 +48,16 @@
   .left-nav
     %header Views
     %ul.filter-list
-      %li(ng-class="{active: !uiConfigLoadedPreset}")
+      %li(ng-class="{active: presetIsActive()}")
         %a(ng-click="clearPreset()") All
     %ul.filter-list(cf-reorder-presets)
-      %li(ng-repeat="preset in uiConfig.savedPresets track by preset.id" ng-class="{active: uiConfigLoadedPreset === preset}")
+      %li(ng-repeat="preset in uiConfig.savedPresets track by preset.id" ng-class="{active: presetIsActive(preset)}")
         %span
           %a(ng-click="loadPreset(preset)") {{preset.title}}
         %a.filter-list-delete(ng-click="deletePreset(preset)")
     %button.default-button(ng-click="openSaveView()")
-      %i.button-icon(ng-class="{'ss-write': uiConfigLoadedPreset, 'ss-plus': !uiConfigLoadedPreset}")
-      {{ uiConfigLoadedPreset ? 'Update selected View' : 'Save new View'}}
+      %i.button-icon.ss-plus
+      Save View
 
   .with-left-nav
     %table.result-list.main-results.main-header
@@ -65,7 +65,7 @@
         %tr
           %th.cell-select
             %input(type="checkbox" cf-selection="" ng-show="entries.length > 0" tabindex="-1")
-          %th.cell-content-type(ng-show="!tab.params.contentTypeId") Content Type
+          %th.cell-content-type(ng-show="!tab.params.preset.contentTypeId") Content Type
           %th.cell-display-name Name
           %th(ng-repeat="field in displayedFields track by field.id" data-field-id="{{field.id}}" ng-class="[getFieldClass(field)]")
             %span(ng-class="{active: isOrderField(field)}")
@@ -85,7 +85,7 @@
           %tr(ng-repeat="entry in visibleEntries = (entries | filter:visibleInCurrentList) track by entry.getId()" cf-click-local="navigator.entryEditor(entry).goTo()")
             %td.cell-select(ng-click="selection.toggle(entry);$event.stopPropagation()")
               %input(type="checkbox" cf-selection="entry" tabindex="-1")
-            %td.cell-content-type(ng-show="!tab.params.contentTypeId")
+            %td.cell-content-type(ng-show="!tab.params.preset.contentTypeId")
               %span {{spaceContext.publishedTypeForEntry(entry).getName()}}
             %td.cell-display-name
               %span {{spaceContext.entryTitle(entry)}}

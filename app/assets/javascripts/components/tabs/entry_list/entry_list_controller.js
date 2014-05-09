@@ -3,6 +3,7 @@
 angular.module('contentful').controller('EntryListCtrl',
   function EntryListCtrl($scope, $controller, Paginator, Selection, analytics, PromisedLoader, sentry, searchQueryHelper, EntityCache) {
 
+  $controller('DisplayedFieldsController', {$scope: $scope});
   $controller('UiConfigController', {$scope: $scope});
 
   var ORDER_PREFIXES = {
@@ -46,10 +47,10 @@ angular.module('contentful').controller('EntryListCtrl',
 
   $scope.$watch(function pageParameters(scope){
     return {
-      searchTerm: scope.searchTerm,
+      searchTerm: scope.tab.params.preset.searchTerm,
       page: scope.paginator.page,
       pageLength: scope.paginator.pageLength,
-      contentTypeId: scope.tab.params.contentTypeId,
+      contentTypeId: scope.tab.params.preset.contentTypeId,
       spaceId: (scope.spaceContext.space && scope.spaceContext.space.getId())
     };
   }, function(pageParameters, old, scope){
@@ -58,21 +59,21 @@ angular.module('contentful').controller('EntryListCtrl',
 
   $scope.$watch(function cacheParameters(scope){
     return {
-      contentTypeId: scope.tab.params.contentTypeId,
-      displayedFields: scope.displayedFields,
+      contentTypeId: scope.tab.params.preset.contentTypeId,
+      displayedFieldIds: scope.tab.params.displayedFieldIds,
       entriesLength: scope.entries && scope.entries.length,
       page: scope.paginator.page
     };
   }, refreshEntityCaches, true);
 
   $scope.typeNameOr = function (or) {
-    return $scope.tab.params.contentTypeId ?
-      $scope.spaceContext.getPublishedContentType($scope.tab.params.contentTypeId).getName() : or;
+    return $scope.tab.params.preset.contentTypeId ?
+      $scope.spaceContext.getPublishedContentType($scope.tab.params.preset.contentTypeId).getName() : or;
   };
 
   $scope.filterByContentTypeId = function (contentTypeId) {
-    $scope.searchTerm = null;
-    $scope.tab.params.contentTypeId = contentTypeId;
+    $scope.tab.params.preset.searchTerm = null;
+    $scope.tab.params.preset.contentTypeId = contentTypeId;
     $scope.resetDisplayFields();
   };
 
@@ -95,20 +96,26 @@ angular.module('contentful').controller('EntryListCtrl',
   };
 
   function refreshEntityCaches() {
-    if($scope.tab.params.contentTypeId){
-      $scope.entryCache.setDisplayedFieldIds(_.map($scope.displayedFields, 'id'));
+    if($scope.tab.params.preset.contentTypeId){
+      $scope.entryCache.setDisplayedFieldIds($scope.tab.params.preset.displayedFieldIds);
       $scope.entryCache.resolveLinkedEntities($scope.entries);
-      $scope.assetCache.setDisplayedFieldIds(_.map($scope.displayedFields, 'id'));
+      $scope.assetCache.setDisplayedFieldIds($scope.tab.params.preset.displayedFieldIds);
       $scope.assetCache.resolveLinkedEntities($scope.entries);
     }
   }
 
-  function getOrderDirection() {
-    return ORDER_PREFIXES[$scope.orderDirection];
-  }
-
   function getOrderQuery() {
-    return getOrderDirection() + $scope.orderQuery;
+    var p = $scope.tab.params.preset;
+    return ORDER_PREFIXES[p.order.direction] + getFieldPath(p.order.fieldId);
+
+    function getFieldPath(fieldId) {
+      if (_.find($scope.systemFields, {id: fieldId})) {
+        return 'sys.'+fieldId;
+      } else {
+        var defaultLocale = $scope.spaceContext.space.getDefaultLocale().code;
+        return 'fields.'+fieldId+'.'+defaultLocale;
+      }
+    }
   }
 
   function buildQuery() {
@@ -119,11 +126,11 @@ angular.module('contentful').controller('EntryListCtrl',
       skip: $scope.paginator.skipItems()
     };
 
-    if ($scope.tab.params.contentTypeId) {
-      contentType = $scope.spaceContext.getPublishedContentType($scope.tab.params.contentTypeId);
+    if ($scope.tab.params.preset.contentTypeId) {
+      contentType = $scope.spaceContext.getPublishedContentType($scope.tab.params.preset.contentTypeId);
     }
 
-    return searchQueryHelper.buildQuery($scope.spaceContext.space, contentType, $scope.searchTerm)
+    return searchQueryHelper.buildQuery($scope.spaceContext.space, contentType, $scope.tab.params.preset.searchTerm)
     .then(function (searchQuery) {
       _.extend(queryObject, searchQuery);
       return queryObject;
@@ -131,7 +138,7 @@ angular.module('contentful').controller('EntryListCtrl',
   }
 
   $scope.hasQuery = function () {
-    return !_.isEmpty($scope.searchTerm);
+    return !_.isEmpty($scope.tab.params.preset.searchTerm);
   };
 
   $scope.loadMore = function() {
