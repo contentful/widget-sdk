@@ -174,12 +174,6 @@ describe('Asset List Controller', function () {
       expect(stubs.switch).toBeCalled();
     });
 
-    it('tracks analytics event', function() {
-      scope.resetAssets();
-      scope.$apply();
-      expect(stubs.track).toBeCalled();
-    });
-
     describe('creates a query object', function() {
 
       it('with a defined order', function() {
@@ -260,6 +254,11 @@ describe('Asset List Controller', function () {
       scope.assets = new Array(60);
 
       stubs.switch = sinon.stub();
+      // loadMore triggers resetEntries which in reality will not
+      // run because the promisedLoader prevents that. In this test
+      // the PromisedLoader is stubbed, so we need to fake
+      // resetEntries not running:
+      scope.resetAssets = sinon.stub();
       scope.selection = {
         setBaseSize: sinon.stub(),
         switchBaseSet: stubs.switch

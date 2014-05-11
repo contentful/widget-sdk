@@ -3,6 +3,7 @@
   "node": true,
   "predef": [
     "describe",
+    "xdescribe",
     "beforeEach",
     "afterEach",
     "jasmine",
