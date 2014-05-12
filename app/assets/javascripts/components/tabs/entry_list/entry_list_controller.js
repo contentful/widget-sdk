@@ -60,7 +60,7 @@ angular.module('contentful').controller('EntryListCtrl',
   $scope.$watch(function cacheParameters(scope){
     return {
       contentTypeId: scope.tab.params.preset.contentTypeId,
-      displayedFieldIds: scope.tab.params.displayedFieldIds,
+      displayedFieldIds: scope.tab.params.preset.displayedFieldIds,
       entriesLength: scope.entries && scope.entries.length,
       page: scope.paginator.page
     };
