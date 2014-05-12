@@ -79,6 +79,11 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
     return direction === 'ascending' ? 'descending' : 'ascending';
   }
 
+  $scope.$watch('tab.params.preset.displayedFieldIds', function (displayedFieldIds) {
+    if(!_.contains(displayedFieldIds, $scope.tab.params.preset.order.fieldId))
+      $scope.setOrderField(updatedAtField);
+  }, true);
+
   $scope.openSaveView = function () {
     modalDialog.open({
       template: 'save_view_dialog',
