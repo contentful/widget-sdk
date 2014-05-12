@@ -138,9 +138,31 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
             total: catGroup.length,
             id: options.id
           });
+
+          function scroll(selector) {
+            var $elem = $(selector);
+            var $parent = $elem.scrollParent();
+            var top = scrollTopOffset($elem[0], $parent[0]);
+            // TODO sometimes top is too large
+            var bottom = top + $elem[0].offsetHeight;
+            
+            if ($parent[0].scrollHeight <= $parent[0].clientHeight) return;
+
+            if ($parent[0].scrollTop + $parent[0].clientHeight < top)
+              $elem[0].scrollIntoView();
+            else if (bottom < $parent[0].scrollTop)
+              $elem[0].scrollIntoView();
+
+            function scrollTopOffset(elem, container) {
+              if (elem === container || !elem) return 0;
+              return elem.offsetTop + scrollTopOffset(elem.offsetParent);
+            }
+          }
+
           $rootScope.$evalAsync(function () {
             guider.scope = parentScope.$new();
             if (guider.attachTo) try {
+              if ($(guider.attachTo).parents('.tab-main').length > 0) scroll(guider.attachTo);
               guider.attachScope = $(guider.attachTo).scope().$new();
             } catch (e) {
               sentry.captureError('Failed to attach guider '+guider.id+' to '+guider.attachTo);
@@ -787,7 +809,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         title: 'Let\'s add your first asset',
         description: '<p>By clicking the “New” button, you will open the Asset editor. Assets can also be created through the top add button independent from an Entry and then linked.</p><p>For now lets click on the “New” button and open the Asset editor right away.</p>',
         attachTo: '.entry-editor:visible .form-field[data-field-id="image"] .add-new:visible',
-        position: '2',
+        position: '11',
         next: 'assetTitle',
         onShow: function () {
           $(this.attachTo).one('click', function () {
