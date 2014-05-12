@@ -13,15 +13,18 @@ angular.module('contentful').directive('cfSearchDatepicker', function(keycodes){
             scope.fillSpecialCompletion(dateString);
           });
         },
-        defaultDate: getDate()
+        defaultDate: getDate(),
+        firstDay: 1,
       });
 
       scope.$on('autocompletionsUpdated', function () {
         elem.datepicker('setDate', getDate());
       });
 
-
-      // TODO convert malformed date to undefined
+      scope.$evalAsync(function () {
+        var date = moment(elem.datepicker('getDate')).format(DATE_FORMAT_INTERNAL);
+        scope.fillSpecialCompletion(date);
+      });
 
       scope.$on('autocompletionKeypress', function (event, inputEvent) {
         if (inputEvent.keyCode == keycodes.DOWN){

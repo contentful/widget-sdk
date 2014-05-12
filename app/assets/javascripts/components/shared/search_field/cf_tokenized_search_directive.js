@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfTokenizedSearch', function($parse, searchQueryHelper, keycodes){
+angular.module('contentful').directive('cfTokenizedSearch', function($parse, searchQueryHelper, keycodes, $timeout){
   return {
     template: JST['cf_tokenized_search'](),
     scope: true,
@@ -70,6 +70,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
                            searchQueryHelper.operatorsForKey(token.content, scope.getContentType())[0];
         scope.inner.term = spliceSlice(originalString, token.end, 0, insertString);
         scope.clearBackupString();
+        if(token.type === 'Value') scope.submitSearch(scope.inner.term);
         _.defer(function () {
           input.textrange('set', token.end + insertString.length, 0);
           scope.$apply(function (scope) {
@@ -151,7 +152,13 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
       $scope.clearAutocompletions = function () {
         $scope.restoreString();
         $scope.selectedAutocompletion = null;
-        $scope.specialCompletion = null;
+        $timeout(function () {
+          $scope.specialCompletion = null;
+        }, 200);
+        // TODO This timeout is a dirty hack to prevent the blurring
+        // from destroying the datepicker before the clickandler selects the date
+        // Proper solution would be to differentiate between
+        // blurring the inputField and leaving the tokenized search altogether
       };
 
       $scope.selectNextAutocompletion = function () {
