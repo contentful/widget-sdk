@@ -18,10 +18,15 @@
   line-height: 18px
   vertical-align: middle
   padding: 8px 0px
+  padding-right: 10px
+  text-align: left
   white-space: nowrap
   overflow: hidden
   text-overflow: ellipsis
-  text-align: left
+  span
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
 
 .result-length
   text-align: center
@@ -44,7 +49,8 @@
   table-layout: fixed
   border: 1px solid $dark-rule
   th
-    padding: 4px 0 3px 0
+    padding-top: 4px
+    padding-bottom: 3px
     font-size: 90%
     border-bottom: 1px solid $dark-rule
   th,
@@ -150,7 +156,7 @@
     text-overflow: ellipsis
 
   .cell-display-name
-    width: 20%
+    width: 15%
 
   .cell-description
     width: 47%
@@ -176,8 +182,8 @@
 
   .cell-symbol,
   .cell-array,
-  .cell-link,
-    width: 10%
+  .cell-link
+    width: 8%
 
   td.cell-status
     text-transform: uppercase
