@@ -93,6 +93,14 @@ angular.module('contentful').directive('cfFieldDisplay', function(){
         return value ? 'Yes' : 'No';
       };
 
+      scope.displayLocation = function (value) {
+        return value ? parseLocation(value.lat) +', '+ parseLocation(value.lon) : '';
+      };
+
+      function parseLocation(val) {
+        return _.isNumber(val) ? val.toFixed(4) : 'Invalid value';
+      }
+
       function hasItemsOfType(items, type){
         return items && items.length > 0 && items[0].sys && items[0].sys.linkType == type;
       }

@@ -3,6 +3,7 @@
   %date.relative(ng-switch-when="Date" datetime="{{dataForField(entry, field)}}")
   %span.cf-user(ng-switch-when="author" link="entry.getUpdatedBy()" as="updater") {{updater | userNameDisplay:user}}
   %span(ng-switch-when="Boolean") {{displayBool(dataForField(entry, field))}}
+  %span(ng-switch-when="Location") {{displayLocation(dataForField(entry, field))}}
   %div(ng-switch-when="Entry" class="linked-entries") {{dataForLinkedEntry(entry, field)}}
   %div.file-preview(ng-switch-when="Asset" class="linked-assets" cf-file-preview="" file="dataForLinkedAsset(entry, field)" preview-size="400")
     %span(cf-thumbnail="file" size="40")
