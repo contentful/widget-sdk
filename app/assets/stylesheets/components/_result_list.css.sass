@@ -1,5 +1,5 @@
 %endless-result-list-body
-  // The borders come from the container/main-header/tab-content instead
+  // The borders come from the container/masn-header/tab-content instead
   border-bottom: none
   border-top: none
 
@@ -22,8 +22,6 @@
   overflow: hidden
   text-overflow: ellipsis
   text-align: left
-  &:first-child
-    padding-left: 13px
 
 .result-length
   text-align: center
@@ -162,24 +160,27 @@
     width: 47%
 
   .cell-content-type
-    width: 13%
+    width: 11%
 
   .cell-select
-    width: 3%
+    width: 40px
+    text-align: center
 
   .cell-preview,
   .cell-integer,
   .cell-number,
   .cell-boolean,
+  .cell-location,
+  .cell-date,
   .cell-status
     width: 6%
 
+  .cell-text
+    width: 15%
+
   .cell-symbol,
-  .cell-text,
-  .cell-date,
   .cell-array,
   .cell-link,
-  .cell-location
     width: 10%
 
   td.cell-status
