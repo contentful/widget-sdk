@@ -70,8 +70,8 @@
           %th(ng-repeat="field in displayedFields track by field.id" data-field-id="{{field.id}}" ng-class="[getFieldClass(field)]")
             %span(ng-class="{active: isOrderField(field)}")
               %button.transparent-button(ng-show="fieldIsSortable(field)" ng-click="orderColumnBy(field)" ng-hide="isFieldCollapsed(field)")
-                %i.button-icon.ss-directup(ng-show="orderDirection == 'ascending'")
-                %i.button-icon.ss-dropdown(ng-show="orderDirection == 'descending'")
+                %i.button-icon.ss-directup(ng-show="tab.params.preset.order.direction == 'ascending'")
+                %i.button-icon.ss-dropdown(ng-show="tab.params.preset.order.direction == 'descending'")
               %button.transparent-button.truncated-button(ng-click="setOrderField(field)" ng-disabled="!fieldIsSortable(field)" ng-hide="isFieldCollapsed(field)")
                 {{field.name}}
               %button.transparent-button.truncated-button(ng-click="expandColumn(field)" ng-show="isFieldCollapsed(field)")
