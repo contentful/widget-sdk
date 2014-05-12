@@ -146,9 +146,9 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
     return p.searchTerm === preset.searchTerm &&
            p.contentTypeId === preset.contentTypeId &&
            _.isEqual(p.order, preset.order) &&
-           _.isEqual(p.displayedFieldsIds, preset.displayedFieldsIds);
+           _.isEqual(p.displayedFieldIds, preset.displayedFieldIds);
   };
-  
+
   loadUIConfig();
 
   function loadUIConfig() {
