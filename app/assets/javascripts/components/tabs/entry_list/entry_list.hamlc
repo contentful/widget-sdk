@@ -72,7 +72,7 @@
               %button.transparent-button(ng-show="fieldIsSortable(field) && !isFieldCollapsed(field)" ng-click="orderColumnBy(field)")
                 %i.button-icon.ss-directup(ng-show="tab.params.preset.order.direction == 'ascending' && isOrderField(field)")
                 %i.button-icon.ss-dropdown(ng-show="tab.params.preset.order.direction == 'descending' || !isOrderField(field)")
-              %button.transparent-button.truncated-button(ng-click="setOrderField(field)" ng-disabled="!fieldIsSortable(field)" ng-hide="isFieldCollapsed(field)")
+              %button.transparent-button.truncated-button(ng-click="orderColumnBy(field)" ng-disabled="!fieldIsSortable(field)" ng-hide="isFieldCollapsed(field)")
                 {{field.name}}
               %button.transparent-button.truncated-button(ng-click="expandColumn(field)" ng-show="isFieldCollapsed(field)"
                                                           tooltip="{{field.name}}" tooltip-placement="bottom" tooltip-container=".main-header")
