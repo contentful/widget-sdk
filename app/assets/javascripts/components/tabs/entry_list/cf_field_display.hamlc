@@ -6,14 +6,14 @@
   %span(ng-switch-when="Location") {{displayLocation(dataForField(entry, field))}}
   %div(ng-switch-when="Entry" class="linked-entries") {{dataForLinkedEntry(entry, field)}}
   %div.file-preview(ng-switch-when="Asset" class="linked-assets" cf-file-preview="" file="dataForLinkedAsset(entry, field)" preview-size="400")
-    %span(cf-thumbnail="file" size="40")
+    %div(cf-thumbnail="file" size="30")
   %div(ng-switch-when="Array")
     %ul(ng-class="{'linked-entries': isEntryArray(entry, field), 'linked-assets': isAssetArray(entry, field)}")
       %li(ng-repeat="(index, entity) in dataForArray(entry, field) track by index")
         %span(ng-if="isEntryArray(entry, field)")
           {{entity}}
         %div.file-preview(ng-if="isAssetArray(entry, field)" cf-file-preview="" file="entity" preview-size="400")
-          %span(cf-thumbnail="file" size="40")
+          %div(cf-thumbnail="file" size="30")
       %li(ng-if="countArrayHiddenItems(entry, field)")
         \+ {{countArrayHiddenItems(entry, field)}} more items
   %span(ng-switch-default) {{dataForField(entry, field)}}
