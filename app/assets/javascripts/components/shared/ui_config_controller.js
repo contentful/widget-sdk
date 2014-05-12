@@ -71,7 +71,7 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
 
   $scope.orderColumnBy = function (field) {
     if(!$scope.isOrderField(field)) setOrderField(field);
-    $scope.tab.params.preset.order.direction = switchOrderDirection($scope.orderDirection);
+    $scope.tab.params.preset.order.direction = switchOrderDirection($scope.tab.params.preset.order.direction);
     $scope.resetEntries(true);
   };
 
