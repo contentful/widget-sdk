@@ -19,7 +19,7 @@
           %li.dropdown-menu-item.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
                    ng-click="filterByContentTypeId(contentType.getId())"
                    dropdown-close="") {{contentType.getName()}}
-    .search-with-results(cf-tokenized-search="tab.params.preset.searchTerm" placeholder="Search for {{typeNameOr('Entries')}}")
+    .search-with-results(cf-tokenized-search="tab.params.preset.searchTerm" placeholder="Search for {{typeNameOr('Entries')}}" cf-on-blur-component="leftSearch($event)")
 
   .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")
 

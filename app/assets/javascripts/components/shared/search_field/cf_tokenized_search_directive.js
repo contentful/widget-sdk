@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfTokenizedSearch', function($parse, searchQueryHelper, keycodes, $timeout){
+angular.module('contentful').directive('cfTokenizedSearch', function($parse, searchQueryHelper, keycodes){
   return {
     template: JST['cf_tokenized_search'](),
     scope: true,
@@ -32,6 +32,13 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
 
       scope.inputBlurred = function () {
         scope.hasFocus = false;
+      };
+
+      scope.leftSearch = function (event) {
+        // If we clicked on a button in the datepicker the leftSearch will trigger although it
+        // shouldn't because the DOM node has been removed and the parent lookup won't work correctly
+        // http://stackoverflow.com/questions/22406505
+        if ($(event.target).parents('[data-event=click]').length > 0) return;
         scope.clearAutocompletions();
       };
 
@@ -152,13 +159,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
       $scope.clearAutocompletions = function () {
         $scope.restoreString();
         $scope.selectedAutocompletion = null;
-        $timeout(function () {
-          $scope.specialCompletion = null;
-        }, 200);
-        // TODO This timeout is a dirty hack to prevent the blurring
-        // from destroying the datepicker before the clickandler selects the date
-        // Proper solution would be to differentiate between
-        // blurring the inputField and leaving the tokenized search altogether
+        $scope.specialCompletion = null;
       };
 
       $scope.selectNextAutocompletion = function () {
