@@ -191,8 +191,10 @@ angular.module('contentful').controller('EntryListCtrl',
   ];
 
   var mediumFieldTypes = [
-    'date',
+    'text',
     'symbol',
+    'location',
+    'date',
     'array',
     'link'
   ];
