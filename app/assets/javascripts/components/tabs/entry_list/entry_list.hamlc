@@ -74,7 +74,8 @@
                 %i.button-icon.ss-dropdown(ng-show="tab.params.preset.order.direction == 'descending'")
               %button.transparent-button.truncated-button(ng-click="setOrderField(field)" ng-disabled="!fieldIsSortable(field)" ng-hide="isFieldCollapsed(field)")
                 {{field.name}}
-              %button.transparent-button.truncated-button(ng-click="expandColumn(field)" ng-show="isFieldCollapsed(field)")
+              %button.transparent-button.truncated-button(ng-click="expandColumn(field)" ng-show="isFieldCollapsed(field)"
+                                                          tooltip="{{field.name}}" tooltip-placement="bottom" tooltip-container=".main-header")
                 {{field.name}}
 
           %th.cell-status Status
