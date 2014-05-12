@@ -28,6 +28,7 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse, zone
 
       elm.find('.date').datepicker({
         dateFormat: DATE_FORMAT,
+        firstDay: 1,
         onSelect: function(dateString) {
           scope.$apply(function() {
             dateController.$setViewValue(dateString);
@@ -37,8 +38,9 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse, zone
 
       dateController.$parsers.unshift(function(viewValue) {
         scope.dateInvalid = false;
+        var raw;
         try {
-          var raw = $.datepicker.parseDate(DATE_FORMAT, viewValue);
+          raw = $.datepicker.parseDate(DATE_FORMAT, viewValue);
         } catch(e) {
           scope.dateInvalid = true;
         }
