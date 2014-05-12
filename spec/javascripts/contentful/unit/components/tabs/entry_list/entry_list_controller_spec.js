@@ -90,6 +90,7 @@ describe('Entry List Controller', function () {
 
       preset = {
         id: 'foo',
+        title: 'Derp',
         searchTerm: 'search term',
         contentTypeId: 'ctid',
         displayedFields: ['field1', 'field2'],
@@ -103,7 +104,9 @@ describe('Entry List Controller', function () {
 
 
     it('sets the preset, omitting the id', function () {
-      expect(scope.tab.params.preset).toEqual(_.omit(preset, 'id'));
+      var loaded = _.omit(preset, 'id');
+      loaded.title = 'Derp (copy)';
+      expect(scope.tab.params.preset).toEqual(loaded);
     });
 
     it('resets entries', function() {
