@@ -7,10 +7,10 @@
       analytics-event="entries"
       href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
 
-  .search-area
-    .select-box.content-type-filter
-      %select(ng-model="filteredContentType"
-              ng-options="ct.getName() for ct in spaceContext.publishedContentTypes")
+  .search-area.with-filter
+    .select-box
+      %select(ng-model="tab.params.preset.contentTypeId"
+              ng-options="ct.getId() as ct.getName() for ct in spaceContext.publishedContentTypes")
         %option(value="") Content Type
       %i.button-icon-right.ss-dropdown
 

@@ -6,15 +6,25 @@
   padding: $tab-header-padding 0
   padding-right: 20px
 
-.content-type-filter
-  +flex-grow(1)
-  .dropdown-toggle
-    height: $tab-header-field-height
-
 .search-with-results
   position: relative
-  +flex-grow(2)
-  +flex-basis(70%)
+  width: 100%
+
+.with-filter
+  .search-with-results
+    .search-field
+      +border-top-left-radius(0px)
+      +border-bottom-left-radius(0px)
+    input[type="search"]
+      +border-radius(0px)
+  .select-box
+    +border-radius(20px 0px 0px 20px)
+    select
+      padding-top: 7px
+      width: 95%
+      white-space: nowrap
+      overflow: hidden
+      text-overflow: ellipsis
 
 .search-field
   position: relative

@@ -71,8 +71,7 @@ angular.module('contentful').controller('EntryListCtrl',
       $scope.spaceContext.getPublishedContentType($scope.tab.params.preset.contentTypeId).getName() : or;
   };
 
-  $scope.$watch('filteredContentType', function (contentType) {
-    $scope.tab.params.preset.contentTypeId = contentType ? contentType.getId() : null;
+  $scope.$watch('tab.params.preset.contentTypeId', function () {
     $scope.tab.params.preset.searchTerm = null;
     $scope.resetDisplayFields();
   });
