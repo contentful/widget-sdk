@@ -8,17 +8,12 @@
       href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
 
   .search-area
-    .dropdown-btn.content-type-filter
-      %button.dropdown-toggle.default-button
-        %i.ss-dropdown.button-icon-right
-        {{ typeNameOr('Content Type') }}
-      -# TODO replace with a native dropdown
-      .dropdown-menu
-        %ul.dropdown-menu-list
-          %li.dropdown-menu-item.type(ng-click="filterByContentTypeId()" dropdown-close="") All
-          %li.dropdown-menu-item.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
-                   ng-click="filterByContentTypeId(contentType.getId())"
-                   dropdown-close="") {{contentType.getName()}}
+    .select-box.content-type-filter
+      %select(ng-model="filteredContentType"
+              ng-options="ct.getName() for ct in spaceContext.publishedContentTypes")
+        %option(value="") Content Type
+      %i.button-icon-right.ss-dropdown
+
     .search-with-results(cf-tokenized-search="tab.params.preset.searchTerm" placeholder="Search for {{typeNameOr('Entries')}}" cf-on-blur-component="leftSearch($event)")
 
   .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")

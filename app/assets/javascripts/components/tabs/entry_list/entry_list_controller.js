@@ -71,11 +71,11 @@ angular.module('contentful').controller('EntryListCtrl',
       $scope.spaceContext.getPublishedContentType($scope.tab.params.preset.contentTypeId).getName() : or;
   };
 
-  $scope.filterByContentTypeId = function (contentTypeId) {
+  $scope.$watch('filteredContentType', function (contentType) {
+    $scope.tab.params.preset.contentTypeId = contentType ? contentType.getId() : null;
     $scope.tab.params.preset.searchTerm = null;
-    $scope.tab.params.preset.contentTypeId = contentTypeId;
     $scope.resetDisplayFields();
-  };
+  });
 
   $scope.visibleInCurrentList = function(){
     // TODO: This needs to basically emulate the API :(
