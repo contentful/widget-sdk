@@ -4,7 +4,7 @@ angular.module('contentful').controller('DisplayedFieldsController', function Di
 
   function getAvailableFields(contentTypeId) {
     var filteredContentType = $scope.spaceContext.getPublishedContentType(contentTypeId);
-    var contentTypeFields = filteredContentType ? filteredContentType.data.fields : [];
+    var contentTypeFields = filteredContentType ? _.reject(filteredContentType.data.fields, {disabled: true}) : [];
     var fields = $scope.systemFields.concat(contentTypeFields);
     if (filteredContentType) _.remove(fields, function (field) { return field.id === filteredContentType.data.displayField; });
     return fields;
