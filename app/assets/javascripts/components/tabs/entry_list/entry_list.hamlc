@@ -10,6 +10,7 @@
   .search-area.with-filter
     .select-box
       %select(ng-model="tab.params.preset.contentTypeId"
+              ng-change="selectedContentType()"
               ng-options="ct.getId() as ct.getName() for ct in spaceContext.publishedContentTypes")
         %option(value="") Content Type
       %i.button-icon-right.ss-dropdown
