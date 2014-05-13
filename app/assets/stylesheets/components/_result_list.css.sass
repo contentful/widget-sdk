@@ -203,18 +203,30 @@
     button
       color: $blue
 
+  $list-thumbnail-size: 30px
+
   .linked-entries,
   .linked-assets
     padding: 0
     margin: 0
     img, [cf-thumbnail]
-      width: 30px
-      height: 30px
+      width: $list-thumbnail-size
+      height: $list-thumbnail-size
   .linked-assets
     li
       float: left
       margin-right: 2px
       margin-bottom: 0px
+  .asset-count
+    display: block
+    width: $list-thumbnail-size
+    height: $list-thumbnail-size
+    line-height: $list-thumbnail-size
+    text-align: center
+    vertical-align: middle
+    font-weight: bold
+    color: white
+    background-color: $blue
 
 // State variations
 %tr-clickable

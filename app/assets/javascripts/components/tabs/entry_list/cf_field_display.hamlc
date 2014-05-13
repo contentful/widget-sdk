@@ -14,7 +14,9 @@
           {{entity}}
         %div.file-preview(ng-if="isAssetArray(entry, field)" cf-file-preview="" file="entity" preview-size="400")
           %div(cf-thumbnail="file" size="30")
-      %li(ng-if="countArrayHiddenItems(entry, field)")
+      %li(ng-if="isEntryArray(entry, field) && countArrayHiddenItems(entry, field)")
         \+ {{countArrayHiddenItems(entry, field)}} more items
+      %li.asset-count(ng-if="isAssetArray(entry, field) && countArrayHiddenItems(entry, field)")
+        \+{{countArrayHiddenItems(entry, field)}}
   %span(ng-switch-default) {{dataForField(entry, field)}}
 

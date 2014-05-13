@@ -27,7 +27,7 @@ angular.module('contentful').controller('EntryListCtrl',
   $scope.assetCache = new EntityCache({
     space: $scope.spaceContext.space,
     entityType: 'Asset',
-    limit: 5
+    limit: 3
   });
 
   $scope.$on('entityDeleted', function (event, entity) {
