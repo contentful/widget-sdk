@@ -46,6 +46,10 @@ angular.module('contentful').directive('searchField', function(keycodes){
         term: ''
       };
 
+      $scope.searchFieldFocused = function () {
+        $scope.$emit('searchFieldFocused');
+      };
+
       $scope.updateFromButton = function () {
         if(!$scope.inner.term) $scope.inner.term = '';
         $scope.update();
