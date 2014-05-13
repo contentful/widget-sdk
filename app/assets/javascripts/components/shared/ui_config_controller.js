@@ -45,6 +45,10 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
     };
   }
 
+  $scope.$watch('spaceContext.space.isAdmin(user)', function (can, old, scope) {
+    scope.canEditPresets = !!can;
+  });
+
   var blankPreset = getBlankPreset();
 
   $scope.tab.params.preset = $scope.tab.params.preset || getBlankPreset();
@@ -98,6 +102,7 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
   }
 
   $scope.saveUiConfig = function() {
+    if (!$scope.canEditPresets) return;
     var callback = $q.callback();
     $scope.spaceContext.space.setUIConfig($scope.uiConfig, callback);
     callback.promise.then(function (config) {
