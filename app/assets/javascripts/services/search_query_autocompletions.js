@@ -12,9 +12,9 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
     author: {
       complete: function (contentType, space) {
         return getUserMap(space).then(function (userMap) {
-          return _(userMap).keys().map(function (userName) {
+          return makeListCompletion(_(userMap).keys().map(function (userName) {
             return '"'+userName+'"';
-          }).value();
+          }).value());
         });
       },
       convert: function (operator, value, space) {
@@ -28,7 +28,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
       }
     },
     status: {
-      complete: 'published changed draft archived'.split(' '),
+      complete: makeListCompletion('published changed draft archived'.split(' ')),
       convert: {
         published: {'sys.publishedAt[exists]': 'true'},
         changed: {
@@ -51,7 +51,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
     //width: imageDimensionCompletion('width'),
     //height: imageDimensionCompletion('height'),
     type: {
-      complete: _.keys(mimetype.groupDisplayNames),
+      complete: makeListCompletion(_.keys(mimetype.groupDisplayNames)),
       convert: function (operator, value) {
         return {mimetype_group: value};
       }
@@ -86,7 +86,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
     var regex = /(\d+) +days +ago/i;
     return {
       operators: ['<', '<=', '==', '>=', '>'],
-      complete: 'date',
+      complete: makeDateCompletion(),
       convert: function (op, exp) {
         try {
           var match = regex.exec(exp);
@@ -135,7 +135,9 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
   // Completions {{{1
 
   function keyCompletion(contentType) {
-    return _.union( searchableFieldIds(contentType), _.keys(staticAutocompletions(contentType)));
+    return makeListCompletion(_.union(
+      searchableFieldIds(contentType),
+      _.keys(staticAutocompletions(contentType))));
 
     function searchableFieldIds(contentType) {
       if (!contentType) return [];
@@ -152,8 +154,8 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
 
   function operatorCompletion(key, contentType) {
     var completions = staticAutocompletions(contentType);
-    if (!completions[key]) return operatorsForField(key, contentType);
-    return completions[key].operators || ':';
+    if (!completions[key]) return makeListCompletion(operatorsForField(key, contentType));
+    return makeListCompletion(completions[key].operators || [':']);
 
     // Offer available operators for a certain field of a content type
     // Based on field type and validations
@@ -187,14 +189,14 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
         var val;
         // Predefined values
         val = _.find(field.validations, 'in');
-        if (val) return val['in'];
+        if (val) return makeListCompletion(val['in']);
         // Integer ranges
         val = field.type === 'Integer' && _.find(field.validations, 'range');
-        if (val) return buildRange(val.range.min, val.range.max);
+        if (val) return makeListCompletion(buildRange(val.range.min, val.range.max));
         // Booleans
-        if (field.type === 'Boolean') return ['yes', 'no'];
+        if (field.type === 'Boolean') return makeListCompletion(['yes', 'no']);
         // Dates
-        if (field.type === 'Date') return 'date';
+        if (field.type === 'Date') return makeDateCompletion();
       }
       return null;
     }
@@ -285,6 +287,19 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
     return _.find(fields, {id: key}) || _.find(fields, function (field) {
       return field.name.toLowerCase() == key.toLowerCase();
     });
+  }
+
+  function makeListCompletion(values) {
+    return {
+      type: 'List',
+      values: values
+    };
+  }
+
+  function makeDateCompletion() {
+    return {
+      type: 'Date'
+    };
   }
 
   // API {{{1

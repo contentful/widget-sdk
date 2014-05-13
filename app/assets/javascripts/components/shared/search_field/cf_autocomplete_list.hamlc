@@ -1,0 +1,2 @@
+%ul.search-autocomplete-list
+  %li(ng-repeat="value in autocompletion.values" ng-class="{selected: value === selectedAutocompletion}") {{value}}

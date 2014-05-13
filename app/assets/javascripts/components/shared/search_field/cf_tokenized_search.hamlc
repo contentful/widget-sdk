@@ -11,8 +11,5 @@
       ng-blur="inputBlurred($event)")
   .search-button(ng-click="updateFromButton()" tabindex="0")
     %i.ss-search
-.results(ng-if="autocompletions.length > 0 && !!selectedAutocompletion")
-  %ul.search-autocomplete-list
-    %li(ng-repeat="completion in autocompletions" ng-class="{selected: completion === selectedAutocompletion}") {{completion}}
-.results.shrink-result-width(ng-if="specialCompletion")
-  .cf-search-datepicker
+.results(cf-autocomplete-list="" ng-if="autocompletion.type === 'List'")
+.results.shrink-result-width(cf-autocomplete-date="" ng-if="autocompletion.type === 'Date'")
