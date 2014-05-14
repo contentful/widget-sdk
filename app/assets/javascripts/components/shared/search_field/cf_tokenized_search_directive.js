@@ -111,6 +111,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
     controller: function ($scope) {
       $scope.inner = { term: null };
       $scope.position = null;
+      $scope.showAutocompletions = false;
 
       $scope.getContentType = function () {
         if ($scope.tab.viewType === 'entry-list') {
@@ -133,10 +134,6 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
       };
 
       $scope.updateAutocompletions = function () {
-        if ($scope.autocompletion) $scope.setAutocompletions();
-      };
-
-      $scope.setAutocompletions = function () {
         var contentType = $scope.getContentType(),
             space       = $scope.spaceContext.space,
             term        = $scope.inner.term,
@@ -149,7 +146,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
 
       $scope.clearAutocompletions = function () {
         $scope.restoreString();
-        $scope.autocompletion = null;
+        $scope.showAutocompletions = false;
       };
 
       $scope.$watch('getContentType()', 'updateAutocompletions()');
@@ -168,13 +165,13 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
       $scope.keyPressed = function (event) {
         $scope.$broadcast('autocompletionKeypress', event);
         if (event.keyCode == keycodes.DOWN){
-          if (!$scope.autocompletion) $scope.setAutocompletions();
+          $scope.showAutocompletions = true;
           if ($scope.autocompletion) {
             $scope.$broadcast('selectNextAutocompletion');
             event.preventDefault();
           }
         } else if (event.keyCode == keycodes.UP) {
-          if (!$scope.autocompletion) $scope.setAutocompletions();
+          $scope.showAutocompletions = true;
           if ($scope.autocompletion) {
             $scope.$broadcast('selectPreviousAutocompletion');
             event.preventDefault();
