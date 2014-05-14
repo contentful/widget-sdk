@@ -26,15 +26,15 @@ angular.module('contentful').directive('cfAutocompleteList', function(){
       });
 
       function selectNextAutocompletion(){
-        var index = _.indexOf($scope.autocompletion.values, $scope.selectedAutocompletion);
-        $scope.selectedAutocompletion = $scope.autocompletion.values[index+1] || $scope.autocompletion.values[0];
-        if ($scope.selectedAutocompletion) $scope.fillAutocompletion($scope.selectedAutocompletion);
+        var index = _.indexOf($scope.autocompletion.items, $scope.selectedAutocompletion);
+        $scope.selectedAutocompletion = $scope.autocompletion.items[index+1] || $scope.autocompletion.items[0];
+        if ($scope.selectedAutocompletion) $scope.fillAutocompletion($scope.selectedAutocompletion.value);
       }
 
       function selectPreviousAutocompletion(){
-        var index = _.indexOf($scope.autocompletion.values, $scope.selectedAutocompletion);
-        $scope.selectedAutocompletion = $scope.autocompletion.values[index-1] || $scope.autocompletion.values[$scope.autocompletions.length-1];
-        if ($scope.selectedAutocompletion) $scope.fillAutocompletion($scope.selectedAutocompletion);
+        var index = _.indexOf($scope.autocompletion.items, $scope.selectedAutocompletion);
+        $scope.selectedAutocompletion = $scope.autocompletion.items[index-1] || $scope.autocompletion.items[$scope.autocompletion.items.length-1];
+        if ($scope.selectedAutocompletion) $scope.fillAutocompletion($scope.selectedAutocompletion.value);
       }
 
     }

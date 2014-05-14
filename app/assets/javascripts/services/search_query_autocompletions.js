@@ -5,15 +5,16 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
   // Predefined keys and their completions/conversions
   // PAIRTOREQUEST + COMPLETIONS
   var autocompletion = {
-    updatedAt: dateCompletions('sys.updatedAt'),
-    createdAt: dateCompletions('sys.createdAt'),
-    publishedAt: dateCompletions('sys.publishedAt'),
-    firstPublishedAt: dateCompletions('sys.firstPublishedAt'),
+    updatedAt: dateCompletions('sys.updatedAt', 'Date the item was modified'),
+    createdAt: dateCompletions('sys.createdAt', 'Date the item was created'),
+    publishedAt: dateCompletions('sys.publishedAt', 'Date the item was last published'),
+    firstPublishedAt: dateCompletions('sys.firstPublishedAt', 'Date the item was published for the first time'),
     author: {
+      description: 'User who created the item',
       complete: function (contentType, space) {
         return getUserMap(space).then(function (userMap) {
           return makeListCompletion(_(userMap).keys().map(function (userName) {
-            return '"'+userName+'"';
+            return {value: '"'+userName+'"', description: userName};
           }).value());
         });
       },
@@ -28,7 +29,13 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
       }
     },
     status: {
-      complete: makeListCompletion('published changed draft archived'.split(' ')),
+      description: 'Current status of the item',
+      complete: makeListCompletion([
+        {value: 'published', description: 'Has been published and not modified since.'},
+        {value: 'changed'  , description: 'Has been published but has updates that are not contained in the published version.'},
+        {value: 'draft'    , description: 'Has not been published or has been unpublished.'},
+        {value: 'archived' , description: 'Has been archived.'},
+      ]),
       convert: {
         published: {'sys.publishedAt[exists]': 'true'},
         changed: {
@@ -48,16 +55,20 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
   };
 
   var assetcompletions = {
-    //width: imageDimensionCompletion('width'),
-    //height: imageDimensionCompletion('height'),
+    //width: imageDimensionCompletion('width', 'The width of the image'),
+    //height: imageDimensionCompletion('height', 'The height of the image'),
     type: {
-      complete: makeListCompletion(_.keys(mimetype.groupDisplayNames)),
+      description: 'The filetype of the item',
+      complete: makeListCompletion(_.map(mimetype.groupDisplayNames, function (name, id) {
+        return {value: id, description: name};
+      })),
       convert: function (operator, value) {
         return {mimetype_group: value};
       }
     },
     size: {
-      operators: ['<', '<=', '==', '>=', '>'],
+      description: 'The filesize of the item',
+      operators: makeOperatorList(['<', '<=', '==', '>=', '>']),
       convert: function (operator, value) {
         var query = {};
         value = sizeParser(value);
@@ -67,6 +78,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
     },
     // TODO image sizes, extract numerical stuff, filesize image size dates etc in function
     filename: {
+      description: 'The exact filename of the item',
       convert: function (op, value) {
         // TODO fuzzy [match]ing on filenames?
         return {'fields.file.fileName': value};
@@ -82,10 +94,18 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
     }
   }
 
-  function dateCompletions(key) {
+  function staticKeys(contentType) {
+    var completions = staticAutocompletions(contentType);
+    return _.map(completions, function (completion, key) {
+      return {value: key, description: completion.description};
+    });
+  }
+
+  function dateCompletions(key, description) {
     var regex = /(\d+) +days +ago/i;
     return {
-      operators: ['<', '<=', '==', '>=', '>'],
+      description: description,
+      operators: makeOperatorList(['<', '<=', '==', '>=', '>'], 'Date'),
       complete: makeDateCompletion(),
       convert: function (op, exp) {
         try {
@@ -101,9 +121,10 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
     };
   }
 
-  function imageDimensionCompletion(key) {
+  function imageDimensionCompletion(key, description) {
     return {
-      operators: ['<', '<=', '==', '>=', '>'],
+      description: description,
+      operators: makeOperatorList(['<', '<=', '==', '>=', '>']),
       convert: function (op, exp) {
         try {
           var query = {};
@@ -137,12 +158,14 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
   function keyCompletion(contentType) {
     return makeListCompletion(_.union(
       searchableFieldIds(contentType),
-      _.keys(staticAutocompletions(contentType))));
+      staticKeys(contentType)));
 
     function searchableFieldIds(contentType) {
       if (!contentType) return [];
       return _.transform(contentType.data.fields, function (fieldIds, field) {
-        if (fieldSearchable(field)) fieldIds.push(field.id);
+        if (fieldSearchable(field)) fieldIds.push({
+          value: field.id,
+          description: field.name});
       });
     }
 
@@ -154,17 +177,20 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
 
   function operatorCompletion(key, contentType) {
     var completions = staticAutocompletions(contentType);
-    if (!completions[key]) return makeListCompletion(operatorsForField(key, contentType));
-    return makeListCompletion(completions[key].operators || [':']);
+    if (completions[key]) {
+      return makeListCompletion(completions[key].operators || makeOperatorList([':']));
+    } else {
+      return makeListCompletion(operatorsForField(key, contentType));
+    }
 
     // Offer available operators for a certain field of a content type
     // Based on field type and validations
     function operatorsForField(fieldId, contentType) {
       var field = findField(fieldId, contentType) || {};
       if (field.type === 'Integer' || field.type === 'Number' || field.type === 'Date') {
-        return ['<', '<=', '==', '>=', '>'];
+        return makeOperatorList(['<', '<=', '==', '>=', '>']);
       }
-      return [':'];
+      return makeOperatorList([':']);
     }
   }
 
@@ -292,8 +318,34 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
   function makeListCompletion(values) {
     return {
       type: 'List',
-      values: values
+      items: _.map(values, function (val) {
+        return _.isPlainObject(val) ? val : {value: val};
+      })
     };
+  }
+
+  function makeOperatorList(operators, type) {
+    return _.map(operators, function (op) {
+      return {value: op, description: descriptions(op)};
+    });
+
+    function descriptions(op) {
+      if (type === 'Date') {
+        return op == '<=' ? 'Before or on that date/time' :
+               op == '<'  ? 'Before that date/time'       :
+               op == '>=' ? 'After or on that date/time'  :
+               op == '>'  ? 'After that date/time'        :
+               op == '!=' ? 'Not on that date/time'       :
+               '';
+      } else {
+        return op == '<=' ? 'Less than or equal'    :
+               op == '<'  ? 'Less than'             :
+               op == '>=' ? 'Greater than or equal' :
+               op == '>'  ? 'Greater than'          :
+               op == '!=' ? 'Not equal'             :
+               '';
+        }
+      }
   }
 
   function makeDateCompletion() {

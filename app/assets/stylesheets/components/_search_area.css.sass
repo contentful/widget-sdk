@@ -85,11 +85,17 @@
 
 .search-autocomplete-list,
 .results .search-autocomplete-list //necessary for overriding too-specific selector ".results ol > *" in mixins.css.sass
+  display: table
+  width: 100%
   li
-    padding: 2px 5px
+    display: table-row 
   .selected
     color: white
     +blue-highlight
+  .item-value,
+  .item-description
+    padding: 2px 5px
+    display: table-cell
 
 // Search results position widget
 .search-results-position

@@ -1,2 +1,4 @@
 %ul.search-autocomplete-list
-  %li(ng-repeat="value in autocompletion.values" ng-class="{selected: value === selectedAutocompletion}") {{value}}
+  %li(ng-repeat="(index, item) in autocompletion.items track by index" ng-class="{selected: item === selectedAutocompletion}")
+    %span.item-value {{item.value}}
+    %span.item-description {{item.description}}
