@@ -1,0 +1,47 @@
+.modal-background
+  .modal-dialog.getty-dialog(ng-controller="GettyDialogController")
+    .title Getty Images
+    .modal-dialog-close-button(ng-click="dialog.cancel()")
+    .dialog-content
+      .search-field(search="getty.search" placeholder="Search Getty Images")
+
+      .image-family
+        %p
+          %input(type="checkbox" ng-model="getty.family.active" id="creativeImages")
+          %label.group-label(for="creativeImages") Creative image family
+        .checkbox-group
+          %p
+            %input(type="checkbox" ng-disabled="!getty.family.active" ng-model="getty.family.rightsManaged" id="rightsManaged")
+            %label(for="rightsManaged") Rights managed
+          %p
+            %input(type="checkbox" ng-disabled="!getty.family.active" ng-model="getty.family.royaltyFree" id="royaltyFree")
+            %label(for="royaltyFree") Royalty free
+          %p
+            %input(type="checkbox" ng-disabled="!getty.family.active" ng-model="getty.family.excludeNudity" id="excludeNudity")
+            %label(for="excludeNudity") Exclude nudity
+        .checkbox-group
+          %p
+            %input(type="checkbox" ng-disabled="!getty.family.active" ng-model="getty.family.photography" id="photography")
+            %label(for="photography") Photography 
+          %p
+            %input(type="checkbox" ng-disabled="!getty.family.active" ng-model="getty.family.illustrations" id="illustrations")
+            %label(for="illustrations") Illustrations
+          %p.sub-checkbox
+            %input(type="checkbox" ng-disabled="!getty.family.illustrations" ng-model="getty.family.vector" id="vector")
+            %label(for="vector") Vector
+
+      .editorial-topics
+        %p
+          %input(type="checkbox" ng-model="getty.editorial.active" id="editorialImages")
+          %label.group-label(for="editorialImages") Editorial images
+        %p
+          %select(ng-model="getty.editorial.group" ng-disabled="!getty.editorial.active")
+            %option(value="") All editorial topics
+            %option(value="news") News
+            %option(value="sports") Sports
+            %option(value="entertainment") Entertainment
+            %option(value="contour") Contour
+            %option(value="travel") Travel
+            %option(value="publicity") Publicity
+            %option(value="royalty") Royalty
+            %option(value="archival") Archival

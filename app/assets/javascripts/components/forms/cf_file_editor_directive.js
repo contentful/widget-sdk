@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfFileEditor', function (notification, filepicker, $parse, aviary, environment) {
+angular.module('contentful').directive('cfFileEditor', function (notification, filepicker, $parse, aviary, modalDialog) {
   return {
     restrict: 'C',
     require: ['ngModel', '^otPath'],
@@ -39,6 +39,13 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
             throw new Error(FPError);
           }
           scope.validate();
+        });
+      };
+
+      scope.uploadFromGetty = function () {
+        modalDialog.open({
+          scope: scope,
+          template: 'getty_dialog'
         });
       };
 

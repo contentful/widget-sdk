@@ -47,4 +47,5 @@
 
   .cf-file-drop(ng-show="!otDisabled && !file && enableUpload")
     %button.default-button.upload-button(type="button" ng-click="uploadFile()") Or Open File Picker
+    %button.default-button.upload-button(type="button" ng-show="spaceContext.space.hasFeature('gettyImages')" ng-click="uploadFromGetty()") Or Pick From Getty Images
 
