@@ -31,10 +31,10 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
     status: {
       description: 'Current status of the item',
       complete: makeListCompletion([
-        {value: 'published', description: 'Has been published and not modified since.'},
-        {value: 'changed'  , description: 'Has been published but has updates that are not contained in the published version.'},
-        {value: 'draft'    , description: 'Has not been published or has been unpublished.'},
-        {value: 'archived' , description: 'Has been archived.'},
+        {value: 'published', description: 'Published and visible to the public'},
+        {value: 'changed'  , description: 'Was modified, but changes are invisible until re-published'},
+        {value: 'draft'    , description: 'Not published, invisible to the public'},
+        {value: 'archived' , description: 'Not published and normally even hidden from editors'},
       ]),
       convert: {
         published: {'sys.publishedAt[exists]': 'true'},
