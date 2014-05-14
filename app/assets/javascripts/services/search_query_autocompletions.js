@@ -335,6 +335,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
                op == '<'  ? 'Before that date/time'       :
                op == '>=' ? 'After or on that date/time'  :
                op == '>'  ? 'After that date/time'        :
+               op == '==' ? 'Exactly on that date/time'   :
                op == '!=' ? 'Not on that date/time'       :
                '';
       } else {
@@ -342,6 +343,8 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
                op == '<'  ? 'Less than'             :
                op == '>=' ? 'Greater than or equal' :
                op == '>'  ? 'Greater than'          :
+               op == '='  ? 'Equal'                 :
+               op == '==' ? 'Equal'                 :
                op == '!=' ? 'Not equal'             :
                '';
         }

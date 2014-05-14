@@ -5,14 +5,16 @@ angular.module('contentful').directive('cfAutocompleteList', function(){
     scope: true,
     template: JST['cf_autocomplete_list'](),
     controller: function ($scope) {
-      selectNextAutocompletion();
+      //selectInitialAutocompletion();
 
       $scope.$on('selectNextAutocompletion', function () {
         selectNextAutocompletion();
+        if ($scope.selectedAutocompletion) $scope.fillAutocompletion($scope.selectedAutocompletion.value);
       });
 
       $scope.$on('selectPreviousAutocompletion', function () {
         selectPreviousAutocompletion();
+        if ($scope.selectedAutocompletion) $scope.fillAutocompletion($scope.selectedAutocompletion.value);
       });
 
       $scope.$on('cancelAutocompletion', function () {
@@ -25,16 +27,29 @@ angular.module('contentful').directive('cfAutocompleteList', function(){
         $scope.selectedAutocompletion = null;
       });
 
+      $scope.$watch('autocompletion.items', selectInitialAutocompletion);
+
+      function selectInitialAutocompletion() {
+        var token = $scope.currentTokenContent();
+        $scope.selectedAutocompletion = _.find($scope.autocompletion.items, function (i) {
+          return i.value.toString() === token;
+        });
+      }
+
       function selectNextAutocompletion(){
-        var index = _.indexOf($scope.autocompletion.items, $scope.selectedAutocompletion);
+        var index = getSelectedIndex();
         $scope.selectedAutocompletion = $scope.autocompletion.items[index+1] || $scope.autocompletion.items[0];
-        if ($scope.selectedAutocompletion) $scope.fillAutocompletion($scope.selectedAutocompletion.value);
       }
 
       function selectPreviousAutocompletion(){
-        var index = _.indexOf($scope.autocompletion.items, $scope.selectedAutocompletion);
+        var index = getSelectedIndex();
         $scope.selectedAutocompletion = $scope.autocompletion.items[index-1] || $scope.autocompletion.items[$scope.autocompletion.items.length-1];
-        if ($scope.selectedAutocompletion) $scope.fillAutocompletion($scope.selectedAutocompletion.value);
+      }
+
+      function getSelectedIndex() {
+        return _.findIndex($scope.autocompletion.items, function (i) {
+          return i.value === ($scope.selectedAutocompletion && $scope.selectedAutocompletion.value);
+        });
       }
 
     }

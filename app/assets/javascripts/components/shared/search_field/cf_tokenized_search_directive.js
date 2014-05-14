@@ -94,7 +94,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
 
       scope.restoreString = function () {
         var token = scope.getCurrentToken();
-        if (scope._backupString) {
+        if (token && scope._backupString) {
           scope.inner.term = spliceSlice(scope.inner.term, token.offset, token.length, scope._backupString);
           scope._backupString = null;
         }
@@ -164,7 +164,6 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
       };
 
       $scope.keyPressed = function (event) {
-        $scope.$broadcast('autocompletionKeypress', event);
         if (event.keyCode == keycodes.DOWN){
           $scope.showAutocompletions = true;
           if ($scope.autocompletion) {
@@ -200,7 +199,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
 
       $scope.currentTokenContent = function () {
         var token = $scope.getCurrentToken();
-        return token.content;
+        return token && token.content;
       };
     }
   };
