@@ -72,7 +72,8 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
         var originalString = scope.inner.term || '';
         var insertString = token.type === 'Value'    ? ' ' :
                            token.type === 'Operator' ? ''  :
-                           searchQueryHelper.operatorsForKey(token.content, scope.getContentType()).values[0];
+                           // TODO whoopsie, knowledge leaking here about internal structure of result. Should not.
+                           searchQueryHelper.operatorsForKey(token.content, scope.getContentType()).items[0].value;
         scope.inner.term = spliceSlice(originalString, token.end, 0, insertString);
         scope.clearBackupString();
         if(token.type === 'Value') scope.submitSearch(scope.inner.term);
@@ -115,7 +116,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
 
       $scope.getContentType = function () {
         if ($scope.tab.viewType === 'entry-list') {
-          var id = $scope.tab && $scope.tab.params && $scope.tab.params.contentTypeId;
+          var id = $scope.tab && $scope.tab.params && $scope.tab.params.preset && $scope.tab.params.preset.contentTypeId;
           return $scope.spaceContext && $scope.spaceContext.getPublishedContentType && $scope.spaceContext.getPublishedContentType(id);
         }
         if ($scope.tab.viewType === 'asset-list') {
