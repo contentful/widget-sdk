@@ -111,11 +111,14 @@
   // Main tables
   .result-list
     @extend %result-list-border-bottom
-  .result-list
+    border-left: none
+    border-right: none
+    border-top: none
+    thead
+      text-transform: uppercase
     .clickable
       tr
         @extend %tr-clickable
   .result-list-thumbnail
     vertical-align: middle
-    
 
