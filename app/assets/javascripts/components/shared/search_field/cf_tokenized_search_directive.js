@@ -166,24 +166,24 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
       $scope.keyPressed = function (event) {
         if (event.keyCode == keycodes.DOWN){
           $scope.showAutocompletions = true;
-          if ($scope.autocompletion) {
+          if ($scope.autocompletion && $scope.showAutocompletions) {
             $scope.$broadcast('selectNextAutocompletion');
             event.preventDefault();
           }
         } else if (event.keyCode == keycodes.UP) {
           $scope.showAutocompletions = true;
-          if ($scope.autocompletion) {
+          if ($scope.autocompletion && $scope.showAutocompletions) {
             $scope.$broadcast('selectPreviousAutocompletion');
             event.preventDefault();
           }
         } else if (event.keyCode == keycodes.ESC) {
-          if ($scope.autocompletion){
+          if ($scope.autocompletion && $scope.showAutocompletions) {
             $scope.$broadcast('cancelAutocompletion');
             $scope.clearAutocompletions();
             event.preventDefault();
           }
         } else if (event.keyCode == keycodes.ENTER) {
-          if ($scope.autocompletion) {
+          if ($scope.autocompletion && $scope.showAutocompletions) {
             $scope.$broadcast('submitAutocompletion');
             $scope.confirmAutocompletion();
           } else {
