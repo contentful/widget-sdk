@@ -14,6 +14,7 @@
 .with-filter
   .search-with-results
     .search-field
+      border-left: none
       +border-top-left-radius(0px)
       +border-bottom-left-radius(0px)
     input[type="search"]
@@ -21,6 +22,8 @@
   .select-box
     +border-radius(20px 0px 0px 20px)
     min-width: 140px
+    +box-shadow(0 1px 3px rgba(255,255,255,0.8) inset)
+    border-color: $lightest-gray
     select
       padding-top: 7px
       width: 95%
