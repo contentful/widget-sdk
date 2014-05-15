@@ -22,8 +22,8 @@ angular.module('contentful').directive('cfAutocompleteList', function(){
         $scope.selectedAutocompletion = null;
       });
 
-      $scope.$on('submitAutocompletion', function () {
-        // TODO probably unnecessessary, because the directive should be destroyed
+      $scope.$on('submitAutocompletion', function (event) {
+        if (!$scope.selectedAutocompletion) event.preventDefault();
         $scope.selectedAutocompletion = null;
       });
 

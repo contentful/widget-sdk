@@ -189,8 +189,12 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
           }
         } else if (event.keyCode == keycodes.ENTER) {
           if ($scope.autocompletion && $scope.showAutocompletions) {
-            $scope.$broadcast('submitAutocompletion');
-            $scope.confirmAutocompletion();
+            var e = $scope.$broadcast('submitAutocompletion');
+            if (e.defaultPrevented) {
+              $scope.submitSearch($scope.inner.term);
+            } else {
+              $scope.confirmAutocompletion();
+            }
           } else {
             $scope.submitSearch($scope.inner.term);
           }
