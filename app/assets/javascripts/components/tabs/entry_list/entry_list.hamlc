@@ -19,7 +19,7 @@
 
   .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")
 
-  .view-customizer(ng-show="tab.params.preset.contentTypeId")
+  .view-customizer
 
   .add-entity(ng-hide="spaceContext.publishedContentTypes.length == 0")
     %button.dropdown-toggle.default-button.primary-button(
