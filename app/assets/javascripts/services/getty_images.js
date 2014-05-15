@@ -6,8 +6,8 @@ angular.module('contentful').factory('gettyImagesFactory', function gettyImagesF
   var space;
 
   var operations = {
-    SearchForImages: 'http://connect.gettyimages.com/v2/search/SearchForImages',
-    GetImageDetails: 'http://connect.gettyimages.com/v1/search/GetImageDetails',
+    SearchForImages: 'https://connect.gettyimages.com/v2/search/SearchForImages',
+    GetImageDetails: 'https://connect.gettyimages.com/v1/search/GetImageDetails',
     GetImageDownloadAuthorizations: 'https://connect.gettyimages.com/v1/download/GetImageDownloadAuthorizations',
     CreateDownloadRequest: 'https://connect.gettyimages.com/v1/download/CreateDownloadRequest',
   };
@@ -16,14 +16,22 @@ angular.module('contentful').factory('gettyImagesFactory', function gettyImagesF
     var operationURI = operations[operation];
     var methodName = operation.charAt(0).toLowerCase() + operation.substr(1);
 
-    service[methodName] = function (params) {
+    service[methodName] = function (headerParams, bodyParams) {
+      if(arguments.length === 1) {
+        bodyParams = headerParams;
+        headerParams = {};
+      }
       return service.getIntegrationToken().then(function (token) {
-        var data = { RequestHeader: { Token: token } };
-        data[operation + 'Body'] = params;
+        var data = { RequestHeader: _.assign({ Token: token}, headerParams)};
+        data[operation + 'RequestBody'] = bodyParams;
 
         return $http({
           method: 'POST',
+<<<<<<< HEAD
           uri: operationURI,
+=======
+          url: operationURI,
+>>>>>>> restructure the service
           data: data,
           headers: {
             'Content-Type': 'application/json'
@@ -47,12 +55,11 @@ angular.module('contentful').factory('gettyImagesFactory', function gettyImagesF
     return result.promise;
   };
 
-  function getNewToken (result) {
+  function getNewToken (spaceId, result) {
     var path = 'getty_images/' + space.getOrganizationId();
-    var spaceId = space.getId();
     client.getIntegrationToken(path, function (err, data) {
       if (err) return result.reject(err);
-      result.resolve(data);
+      result.resolve(data.access_token);
       var expiresIn = parseInt(data.expires_in, 10);
       if (isNaN(expiresIn)) {
         expiresIn = 1800;
@@ -71,7 +78,8 @@ angular.module('contentful').factory('gettyImagesFactory', function gettyImagesF
 
   function transformResponse (operation) {
     return function (data, header) {
-      if (header('Contenty-Type') === 'application/json') {
+      var typeHeader = header('Content-Type');
+      if (typeHeader && typeHeader.indexOf('application/json') >= 0) {
         return JSON.parse(data)[operation + 'Result'];
       } else {
         return data;
