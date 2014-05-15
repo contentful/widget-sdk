@@ -19,7 +19,7 @@ angular.module('contentful').directive('cfAutocompleteDate', function(){
         firstDay: 1,
       });
 
-      scope.$on('autocompletionsUpdated', function (event, completion) {
+      scope.$on('autocompletionsUpdated', function () {
         var date = getDate();
         if (date) $datepicker.datepicker('setDate', date);
       });

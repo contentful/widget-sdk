@@ -26,7 +26,5 @@
           .form-controls
             %p {{orderDescription(tab.params.preset)}}
       .buttons
-        %button.default-button.cancel(type="button" ng-click="dialog.cancel()")
-          {{dialog.cancelLabel}}
         %button.default-button.primary-button.confirm(ng-click="dialog.confirm()" ng-disabled="saveViewForm.$invalid")
-          {{dialog.confirmLabel}}
+          Save View

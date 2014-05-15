@@ -137,8 +137,9 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
 
   $scope.deletePreset = function (preset) {
     modalDialog.open({
-      title: 'Delete Saved View?',
-      message: 'Do you really want to delete the Saved View "'+preset.title+'"?',
+      title: 'Delete View?',
+      message: 'Do you really want to delete the View "'+preset.title+'"?',
+      confirmLabel: 'Delete View',
       scope: $scope
     }).then(function () {
       _.remove($scope.uiConfig.savedPresets, {id: preset.id});
