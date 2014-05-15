@@ -1,8 +1,9 @@
 'use strict';
 
-angular.module('contentful').factory('gettyImages', function ($http, $q, client, routing) {
+angular.module('contentful').factory('gettyImagesFactory', function gettyImagesFactory($http, $q, client) {
   var accessTokens = {};
   var service = {};
+  var space;
 
   var operations = {
     SearchForImages: 'http://connect.gettyimages.com/v2/search/SearchForImages',
@@ -22,21 +23,20 @@ angular.module('contentful').factory('gettyImages', function ($http, $q, client,
 
         return $http({
           method: 'POST',
-          uri: operationURI, 
+          uri: operationURI,
           data: data,
           headers: {
-            'Content-Type': 'application/json',
-            'Content-Length': body.length
+            'Content-Type': 'application/json'
           },
           transformRequest: transformRequest,
           transformResponse: transformResponse(operation),
         });
       });
-    }
+    };
   });
 
   service.getIntegrationToken = function () {
-    var spaceId = routing.getSpaceId();
+    var spaceId = space.getId();
     var result = $q.defer();
     if (spaceId in accessTokens) {
       result.resolve(accessTokens[spaceId]);
@@ -47,23 +47,18 @@ angular.module('contentful').factory('gettyImages', function ($http, $q, client,
     return result.promise;
   };
 
-  return service;
-
-  function getNewToken (spaceId, result) {
-    client.getSpace(spaceId, function (err, space) {
-      if (err) return result.resolve(err);
-
-      var path = 'getty_images/' + space.getOrganizationId();
-      client.getIntegrationToken(path, function (err, data) {
-        if (err) return result.reject(err);
-        result.resolve(data);
-        var expiresIn = parseInt(data.expires_in, 10);
-        if (isNaN(expiresIn)) {
-          expiresIn = 1800;
-        }
-        accessTokens[spaceId] = data.access_token;
-        setTimeout(function () { delete accessTokens[spaceId]; }, 1000 * expiresIn)
-      });
+  function getNewToken (result) {
+    var path = 'getty_images/' + space.getOrganizationId();
+    var spaceId = space.getId();
+    client.getIntegrationToken(path, function (err, data) {
+      if (err) return result.reject(err);
+      result.resolve(data);
+      var expiresIn = parseInt(data.expires_in, 10);
+      if (isNaN(expiresIn)) {
+        expiresIn = 1800;
+      }
+      accessTokens[spaceId] = data.access_token;
+      setTimeout(function () { delete accessTokens[spaceId]; }, 1000 * expiresIn);
     });
   }
 
@@ -81,6 +76,12 @@ angular.module('contentful').factory('gettyImages', function ($http, $q, client,
       } else {
         return data;
       }
-    }
+    };
   }
+
+  return function (currentSpace) {
+    space = currentSpace;
+    return service;
+  };
+
 });
