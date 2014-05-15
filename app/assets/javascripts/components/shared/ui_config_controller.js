@@ -96,8 +96,8 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
   };
 
   function savePreset() {
-    var preset = _.extend($scope.tab.params.preset, {id: random.id()});
-    $scope.uiConfig.savedPresets.push(preset);
+    $scope.tab.params.preset.id = random.id();
+    $scope.uiConfig.savedPresets.push($scope.tab.params.preset);
     $scope.saveUiConfig();
   }
 
@@ -111,7 +111,7 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
       var errorId = err.body.sys.id;
       if (errorId === 'VersionMismatch') {
         notification.serverError('Version mismatch when trying to save views.');
-        loadUIConfig();
+        return loadUIConfig();
         // maybe get config again, and inject new preset or look for preset and update it in case order was changed
       }
     });
@@ -124,7 +124,7 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
   };
 
   $scope.loadPreset = function (preset) {
-    $scope.tab.params.preset = _.omit(preset, 'id');
+    $scope.tab.params.preset = _.cloneDeep(preset);
     $scope.tab.params.preset.title = '' + preset.title + ' (copy)';
     $scope.resetEntries(true);
   };
@@ -154,27 +154,28 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
   $scope.presetIsActive = function (preset){
     var p = $scope.tab.params.preset;
     if (!preset) preset = blankPreset;
-    return p.searchTerm === preset.searchTerm &&
-           p.contentTypeId === preset.contentTypeId &&
-           _.isEqual(p.order, preset.order) &&
-           _.isEqual(p.displayedFieldIds, preset.displayedFieldIds);
+    return p.id === preset.id;
   };
 
   loadUIConfig();
 
   function loadUIConfig() {
     // TODO ugh, this is wrong because uiConfig is of a higher scope than entrylistController
+    var d = $q.defer();
     $scope.spaceContext.space.getUIConfig(function (err, config) {
       if (!err) {
         if(config && config.savedPresets)
           $scope.uiConfig = config;
         else
           $scope.uiConfig = {savedPresets: generateDefaultViews()};
+        d.resolve($scope.uiConfig);
       } else {
         $scope.uiConfig = {savedPresets: generateDefaultViews()};
         sentry.captureServerError('Could not load UIConfig', err);
+        d.reject(err);
       }
     });
+    return d.promise;
   }
 
   function generateDefaultViews() {
