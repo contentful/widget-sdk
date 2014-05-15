@@ -195,6 +195,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
             } else {
               $scope.confirmAutocompletion();
             }
+            $scope.showAutocompletions = false;
           } else {
             $scope.submitSearch($scope.inner.term);
           }
