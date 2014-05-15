@@ -9,12 +9,12 @@ angular.module('contentful').directive('cfAutocompleteList', function(){
 
       $scope.$on('selectNextAutocompletion', function () {
         selectNextAutocompletion();
-        if ($scope.selectedAutocompletion) $scope.fillAutocompletion($scope.selectedAutocompletion.value);
+        fill();
       });
 
       $scope.$on('selectPreviousAutocompletion', function () {
         selectPreviousAutocompletion();
-        if ($scope.selectedAutocompletion) $scope.fillAutocompletion($scope.selectedAutocompletion.value);
+        fill();
       });
 
       $scope.$on('cancelAutocompletion', function () {
@@ -27,13 +27,20 @@ angular.module('contentful').directive('cfAutocompleteList', function(){
         $scope.selectedAutocompletion = null;
       });
 
-      $scope.$watch('autocompletion.items', selectInitialAutocompletion);
+      $scope.$watch('autocompletion.items', function(items, old) {
+        if (items === old) {
+          selectInitialAutocompletion();
+          fill();
+        } else {
+          selectInitialAutocompletion();
+        }
+      });
 
       function selectInitialAutocompletion() {
         var token = $scope.currentTokenContent();
         $scope.selectedAutocompletion = _.find($scope.autocompletion.items, function (i) {
           return i.value.toString() === token;
-        }) || $scope.autocompletion.items[0];
+        });
       }
 
       function selectNextAutocompletion(){
@@ -52,6 +59,10 @@ angular.module('contentful').directive('cfAutocompleteList', function(){
         });
       }
 
+      function fill() {
+        if ($scope.selectedAutocompletion)
+          $scope.fillAutocompletion($scope.selectedAutocompletion.value);
+      }
     }
   };
 });

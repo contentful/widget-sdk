@@ -6,7 +6,6 @@ angular.module('contentful').directive('cfAutocompleteDate', function(){
   return {
     restrict: 'A',
     template: JST['cf_autocomplete_date'](),
-    //template: '<div class="datepicker"></class>',
     link: function(scope, elem){
       var $datepicker = elem.find('.datepicker');
       $datepicker.datepicker({
@@ -20,8 +19,9 @@ angular.module('contentful').directive('cfAutocompleteDate', function(){
         firstDay: 1,
       });
 
-      scope.$on('autocompletionsUpdated', function () {
-        $datepicker.datepicker('setDate', getDate());
+      scope.$on('autocompletionsUpdated', function (event, completion) {
+        var date = getDate();
+        if (date) $datepicker.datepicker('setDate', date);
       });
 
       scope.$evalAsync(function () {
@@ -47,7 +47,7 @@ angular.module('contentful').directive('cfAutocompleteDate', function(){
 
       function getDate() {
         var dateStr = scope.currentTokenContent();
-        if (dateStr.match(/\d{4}-\d{1,2}-\d{1,2}/)) {
+        if (dateStr && dateStr.match(/\d{4}-\d{1,2}-\d{1,2}/)) {
           return dateStr;
         }
       }

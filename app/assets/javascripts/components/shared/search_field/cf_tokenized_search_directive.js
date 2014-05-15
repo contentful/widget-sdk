@@ -142,6 +142,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
         searchQueryHelper.offerCompletion(space, contentType, term, position)
         .then(function (completion) {
           $scope.autocompletion = completion;
+          $scope.$broadcast('autocompletionsUpdated', completion);
         });
       };
 
@@ -153,6 +154,10 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
       $scope.$watch('getContentType()', 'updateAutocompletions()');
 
       $scope.inputChanged = function () {
+        // TODO: This is necessary because $scope.position will only be updated in the next digtest cycle.
+        // When deleting from the end, this can cause the position to be $scope.inner.term.length + 1
+        // which gives a current token of undefined
+        $scope.position = $scope.getPosition();
         $scope.updateAutocompletions();
       };
 
