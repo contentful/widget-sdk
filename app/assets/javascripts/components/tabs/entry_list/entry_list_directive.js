@@ -1,9 +1,10 @@
 'use strict';
 
 angular.module('contentful').directive('entryList', function(){
+  // Definitions for narrow/medium types in entry list controller
   var classToWidth = {
-    narrow: 100,
-    medium: 150
+    narrow: 70,
+    medium: 130
   };
 
   return {
@@ -53,6 +54,7 @@ angular.module('contentful').directive('entryList', function(){
         var minWidth = getMinWidth(fieldEl.get(0));
 
         if(!fieldEl.hasClass('collapsed') && field.id !== expandedField && !isOrderingField(fieldEl) && fieldEl.width() < minWidth) {
+          //console.log('field.id %s field width: %d min width: %d', field.id, fieldEl.width(), minWidth);
           fieldEl.addClass('collapsed');
           collapsedStates[field.id] = true;
         } else {
