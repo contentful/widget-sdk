@@ -5,7 +5,7 @@
     %i.ss-columns.button-icon
     %i.ss-dropdown.button-icon
   .dropdown-menu(position="bottomright" container=".tab-content")
-    %h3 Displayed
+    %h3 Displayed columns
     %ul.displayed-fields
       %li.non-customizable
         %p Name
@@ -17,7 +17,7 @@
 
     %hr
 
-    %h3 Add Columns
+    %h3 Available Columns
     %ul.hidden-fields
       %li(ng-repeat="field in hiddenFields track by field.id")
         %a(ng-if="field.type != 'Object' && !field.disabled" ng-click="displayField($event, field)")
