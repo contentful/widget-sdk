@@ -36,6 +36,13 @@ angular.module('contentful').directive('cfAutocompleteList', function(){
         }
       });
 
+      $scope.selectAutocompletion = function (autocompletion, $event) {
+        $scope.selectedAutocompletion = autocompletion;
+        fill();
+        $scope.confirmAutocompletion();
+        $event.preventDefault();
+      };
+
       function selectInitialAutocompletion() {
         var token = $scope.currentTokenContent();
         $scope.selectedAutocompletion = _.find($scope.autocompletion.items, function (i) {
