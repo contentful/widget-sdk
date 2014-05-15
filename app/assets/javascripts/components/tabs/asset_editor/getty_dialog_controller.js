@@ -16,5 +16,8 @@ angular.module('contentful').controller('GettyDialogController', function($scope
   }, true);
   */
 
+  $scope.showImageDetail = function (image) {
+    $scope.imageDetail = image;
+  };
 
 });
