@@ -33,7 +33,7 @@ angular.module('contentful').directive('cfAutocompleteList', function(){
         var token = $scope.currentTokenContent();
         $scope.selectedAutocompletion = _.find($scope.autocompletion.items, function (i) {
           return i.value.toString() === token;
-        });
+        }) || $scope.autocompletion.items[0];
       }
 
       function selectNextAutocompletion(){
