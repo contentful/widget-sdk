@@ -15,10 +15,10 @@
       %li.non-customizable
         %p Status
 
-    %hr
+    %hr(ng-hide="hiddenFields.length == 0")
 
-    %h3 Available Columns
-    %ul.hidden-fields
+    %h3(ng-hide="hiddenFields.length == 0") Available Columns
+    %ul.hidden-fields(ng-hide="hiddenFields.length == 0")
       %li(ng-repeat="field in hiddenFields track by field.id")
         %a(ng-if="field.type != 'Object' && !field.disabled" ng-click="displayField($event, field)")
           {{field.name}}
