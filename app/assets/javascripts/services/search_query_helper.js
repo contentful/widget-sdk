@@ -79,8 +79,8 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser,
         });
       })
       .then(function () {
-        _.tap(tokens[tokens.length-1], function (last) {
-          if (last && last.type === 'Query') requestObject.query = last.content;
+        _.tap(extractQuery(tokens), function (query) {
+          if (query.length > 0) requestObject.query = query;
         });
         // Filter out archived entries
         if (!('sys.archivedAt[exists]' in requestObject)) {
@@ -127,6 +127,12 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser,
     return _.filter(tokens, function (token) {
       return token.type == 'Pair' && token.content.value.length > 0;
     });
+  }
+
+  function extractQuery(tokens) {
+    return _(tokens).filter(function (token) {
+      return token.type == 'Query' && token.content.length > 0;
+    }).map(function(token){return token.content;}).value().join(' ');
   }
 
 });
