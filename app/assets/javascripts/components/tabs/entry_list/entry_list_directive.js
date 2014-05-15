@@ -77,6 +77,10 @@ angular.module('contentful').directive('entryList', function(){
         return elem.find('span').hasClass('active');
       }
 
+      scope.getGroupName = function () {
+        return 'Content Types';
+      };
+
     }
   };
 });

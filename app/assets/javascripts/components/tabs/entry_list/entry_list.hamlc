@@ -11,8 +11,8 @@
     .select-box
       %select(ng-model="tab.params.preset.contentTypeId"
               ng-change="selectedContentType()"
-              ng-options="ct.getId() as ct.getName() for ct in spaceContext.publishedContentTypes")
-        %option(value="") Content Type
+              ng-options="ct.getId() as ct.getName() group by getGroupName() for ct in spaceContext.publishedContentTypes")
+        %option(value="") All
       %i.button-icon-right.ss-dropdown
 
     .search-with-results(cf-tokenized-search="tab.params.preset.searchTerm" placeholder="Search for {{typeNameOr('Entries')}}" cf-on-blur-component="leftSearch($event)")
