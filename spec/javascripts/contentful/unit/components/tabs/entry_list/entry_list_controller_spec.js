@@ -104,9 +104,10 @@ describe('Entry List Controller', function () {
 
 
     it('sets the preset, omitting the id', function () {
-      var loaded = _.omit(preset, 'id');
+      var loaded = _.cloneDeep(preset);
       loaded.title = 'Derp (copy)';
       expect(scope.tab.params.preset).toEqual(loaded);
+      expect(scope.tab.params.preset).not.toBe(loaded);
     });
 
     it('resets entries', function() {
