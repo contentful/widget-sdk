@@ -56,20 +56,39 @@ html
 .filter-list
   +plain-list
   margin-bottom: 10px
-  li
+  .filter-list-item
     font-size: 12px
     line-height: 25px
     padding: 0 $left-nav-padding
     border: 1px solid transparent
     color: $link-blue
     line-height: 24px
+    cursor: pointer
     small
       font-size: 9px
       color: $light-gray
-  li.active
+  .filter-list-item:hover
+    .filter-list-title
+      text-decoration: underline
+      color: $link-blue
+  .filter-list-item.active
     border: 1px solid $dark-rule
     +border-radius(3px  3px  3px  3px)
     background: $gray-background
+    .filter-list-title
+      font-weight: 600
+      color: $dark-gray
+  .filter-list-item.active:hover
+    .filter-list-title
+      text-decoration: none
+      color: $dark-gray
+    .filter-list-title:after
+      font-family: "SSStandard"
+      content: "↻"
+      font-size: 7px
+      color: $light-gray
+      line-height: 10px
+      margin-left: 3px
 .filter-list-delete
   float: right
   color: silver
@@ -77,7 +96,7 @@ html
   text-decoration: none
   &:after
     content: '×'
-  li:hover &
+  .filter-list-item:hover &
     display: inline
 
 .knowledge-base-link

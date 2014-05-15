@@ -1,6 +1,4 @@
 .entity-list
-  .left-nav
-    @extend .tab-list-filters
   .main-header
     +stretch(0, 0, false, 0)
     width: 99%
@@ -86,6 +84,9 @@
         margin-left: 29px
         margin-right: .6em
         padding-right: .6em
+    span:hover
+      color: $link-blue
+      cursor: pointer
 
   .result-list
     tbody tr
