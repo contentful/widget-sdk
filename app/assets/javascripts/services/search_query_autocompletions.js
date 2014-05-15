@@ -34,7 +34,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
         {value: 'published', description: 'Published and visible to the public'},
         {value: 'changed'  , description: 'Was modified, but changes are invisible until re-published'},
         {value: 'draft'    , description: 'Not published, invisible to the public'},
-        {value: 'archived' , description: 'Not published and normally even hidden from editors'},
+        {value: 'archived' , description: 'Not published and hidden from editors'},
       ]),
       convert: {
         published: {'sys.publishedAt[exists]': 'true'},
