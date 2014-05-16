@@ -31,12 +31,12 @@
         %span.filter-list-title Published
       %li.filter-list-item(ng-class="{active: searchTerm == 'status:archived'}" ng-click="setSearchTerm('status:archived')")
         %span.filter-list-title Archived
-      %header Filter By File Type
-      %ul.filter-list.type-filters
-        %li.filter-list-item(ng-repeat="(label, name) in mimetypeGroups track by label"
-            ng-class="{active: searchTerm == 'type:'+label}"
-            ng-click="setSearchTerm('type:'+label)")
-          %span.filter-list-title {{name}}
+    %header Filter By File Type
+    %ul.filter-list.type-filters
+      %li.filter-list-item(ng-repeat="(label, name) in mimetypeGroups track by label"
+          ng-class="{active: searchTerm == 'type:'+label}"
+          ng-click="setSearchTerm('type:'+label)")
+        %span.filter-list-title {{name}}
 
   .with-left-nav
     %table.result-list.main-results.main-header

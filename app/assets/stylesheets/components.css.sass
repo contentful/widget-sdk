@@ -57,12 +57,11 @@ html
   +plain-list
   margin-bottom: 10px
   .filter-list-item
+    position: relative
     font-size: 12px
-    line-height: 25px
-    padding: 0 $left-nav-padding
+    padding: 4px $left-nav-padding
     border: 1px solid transparent
     color: $link-blue
-    line-height: 24px
     cursor: pointer
     small
       font-size: 9px
@@ -90,7 +89,9 @@ html
       line-height: 10px
       margin-left: 3px
 .filter-list-delete
-  float: right
+  position: absolute
+  top: 5px
+  right: 5px
   color: silver
   display: none
   text-decoration: none
