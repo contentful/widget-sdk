@@ -34,12 +34,12 @@ feature 'Entry List', js: true do
     expect(page).to have_selector('.cell-status.published', count: 1)
 
     select_filter 'Published'
-    sleep 0.5
+    sleep 1
     expect(page).to_not have_selector('.cell-status.draft')
     expect(page).to     have_selector('.cell-status.published', count: 1)
 
     select_filter 'Draft'
-    sleep 0.5
+    sleep 1
     expect(page).to     have_selector('.cell-status.draft', count: 2)
     expect(page).to_not have_selector('.cell-status.published')
 
@@ -63,12 +63,11 @@ feature 'Entry List', js: true do
 
     select_filter('Entry with Text')
     wait_for_elasticsearch
-    expect(page).to have_selector('.cell-status.archived' , count: 1)
     expect(page).to have_selector('.cell-status.published', count: 1)
   end
 
   def select_filter(f)
-    find('.filter-list.status-filters li, .filter-list.type-filters li', text: f).click
+    find('.filter-list-item', text: f).click
   end
 
 end
