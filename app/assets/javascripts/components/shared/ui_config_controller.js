@@ -97,7 +97,7 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
 
   function savePreset() {
     $scope.tab.params.preset.id = random.id();
-    $scope.uiConfig.savedPresets.push($scope.tab.params.preset);
+    $scope.uiConfig.entryListViews[0].views.push($scope.tab.params.preset);
     $scope.saveUiConfig();
   }
 
@@ -142,7 +142,7 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
       confirmLabel: 'Delete View',
       scope: $scope
     }).then(function () {
-      _.remove($scope.uiConfig.savedPresets, {id: preset.id});
+      _.remove($scope.uiConfig.entryListViews[0].views, {id: preset.id});
       return $scope.saveUiConfig();
     });
   };
@@ -164,13 +164,13 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
     var d = $q.defer();
     $scope.spaceContext.space.getUIConfig(function (err, config) {
       if (!err) {
-        if(config && config.savedPresets)
+        if(config && config.entryListViews)
           $scope.uiConfig = config;
         else
-          $scope.uiConfig = {savedPresets: generateDefaultViews()};
+          $scope.uiConfig = {entryListViews: generateDefaultViews()};
         d.resolve($scope.uiConfig);
       } else {
-        $scope.uiConfig = {savedPresets: generateDefaultViews()};
+        $scope.uiConfig = {entryListViews: generateDefaultViews()};
         sentry.captureServerError('Could not load UIConfig', err);
         d.reject(err);
       }
@@ -197,7 +197,11 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
         });
       });
     });
-    return views;
+    return [{
+      id: random.id(),
+      title: 'Saved Views',
+      views: views
+    }];
 
     function makeOrder() {
       return { fieldId: updatedAtField.id, direction: DEFAULT_ORDER_DIRECTION };

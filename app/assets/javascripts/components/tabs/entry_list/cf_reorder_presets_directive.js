@@ -16,7 +16,7 @@ angular.module('contentful').directive('cfReorderPresets', function(){
           var newIndex = ui.item.index();
           delete ui.item.startIndex;
           scope.$apply(function(scope){
-            var list = scope.uiConfig.savedPresets;
+            var list = scope.uiConfig.entryListViews[0].views;
             list.splice(newIndex, 0, list.splice(oldIndex, 1)[0]);
             scope.saveUiConfig();
           });

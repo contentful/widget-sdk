@@ -74,7 +74,7 @@ describe('Entry List Controller', function () {
     });
 
     it('loads an existing config', function() {
-      var config = {savedPresets: [{}]};
+      var config = {entryListViews: [{views: [{}]}]};
       stubs.getUIConfig.callsArgWith(0, null, config);
       createController();
       expect(scope.uiConfig).toBe(config);
@@ -141,14 +141,16 @@ describe('Entry List Controller', function () {
           }
         };
         scope.uiConfig = {
-          savedPresets: [preset]
+          entryListViews: [{
+            views: [preset]
+          }]
         };
 
         scope.openSaveView();
       });
 
       it('updates the preset in the presets collection', function() {
-        var presets = scope.uiConfig.savedPresets;
+        var presets = scope.uiConfig.entryListViews[0].views;
         var foundPreset = _.find(presets, function (val) { return val.id == 'existing id';});
         expect(foundPreset).toBe(scope.uiConfigLoadedPreset);
       });
@@ -168,7 +170,9 @@ describe('Entry List Controller', function () {
         scope.orderDirection = 'ascending';
 
         scope.uiConfig = {
-          savedPresets: []
+          entryListViews: [{
+            views: []
+          }]
         };
 
         scope.openSaveView();
@@ -207,7 +211,7 @@ describe('Entry List Controller', function () {
       });
 
       it('pushes the preset into the presets collection', function() {
-        var presets = scope.uiConfig.savedPresets;
+        var presets = scope.uiConfig.entryListViews[0].views;
         var foundPreset = _.find(presets, function (val) { return val.searchTerm == 'search term';});
         expect(foundPreset).toBe(scope.uiConfigLoadedPreset);
       });
