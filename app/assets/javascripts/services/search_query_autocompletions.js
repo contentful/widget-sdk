@@ -55,8 +55,8 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
   };
 
   var assetcompletions = {
-    width: imageDimensionCompletion('width', 'The width of the image'),
-    height: imageDimensionCompletion('height', 'The height of the image'),
+    width: imageDimensionCompletion('width', 'Width of an image in pixels'),
+    height: imageDimensionCompletion('height', 'Height of an image in pixels'),
     type: {
       description: 'The filetype of the item',
       complete: makeListCompletion(_.map(mimetype.groupDisplayNames, function (name, id) {
