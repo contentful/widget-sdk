@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeListCtrl', function ContentTypeListCtrl($scope, analytics, PromisedLoader) {
+angular.module('contentful').controller('ContentTypeListCtrl', function ContentTypeListCtrl($scope, analytics) {
   $scope.contentTypeSection = 'all';
 
   $scope.numFields = function(contentType) {

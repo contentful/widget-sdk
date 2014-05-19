@@ -107,8 +107,11 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
   };
 
   $scope.loadEntities = function () {
-    entityLoader.load($scope.spaceContext.space, $scope.fetchMethod, buildQuery()).
-    then(function (entities) {
+    entityLoader.load({
+      host: $scope.spaceContext.space,
+      methodName: $scope.fetchMethod,
+      args: buildQuery()
+    }).then(function (entities) {
       $scope.searchResultsVisible = true;
       $scope.paginator.numEntries = entities.total;
       $scope.entities = entities;
@@ -119,8 +122,11 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
   $scope.loadMore = function() {
     if ($scope.paginator.atLast()) return;
     $scope.paginator.page++;
-    entityLoader.load($scope.spaceContext.space, $scope.fetchMethod, buildQuery()).
-    then(function (entities) {
+    entityLoader.load({
+      host: $scope.spaceContext.space,
+      methodName: $scope.fetchMethod,
+      args: buildQuery()
+    }).then(function (entities) {
       $scope.paginator.numEntries = entities.total;
       $scope.entities.push.apply($scope.entities, entities);
     }, function () {

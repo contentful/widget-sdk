@@ -10,7 +10,7 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
 
   PromisedLoader.prototype = {
 
-    load: function (host, methodName /* args ... */) {
+    load: function (params/* host, methodName args ... */) {
       var deferred = $q.defer();
       var loader = this;
       if (loader.inProgress){
@@ -26,27 +26,47 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
       // - First is done: _load has been reset and will be recreated
       // Also, this should be debounce, not throttle
       loader.inProgress = true;
-      if(!loader._load) loader._load = _.throttle(function (host, methodName, args) {
-        host[methodName].apply(host, args);
-      }, 500);
 
-      var stopSpinner = cfSpinner.start();
-      args.push(function callback(err, res, stats) {
-        $rootScope.$apply(function () {
-          if (err) {
-            deferred.reject(err);
-          } else {
-            if (_.isObject(stats)) _.each(stats, function (stat, name) {
-              Object.defineProperty(res, name, {value: stat});
-            });
-            deferred.resolve(res);
-          }
-          loader.inProgress = false;
-          delete loader._load;
-          stopSpinner();
+      function endLoading() {
+        loader.inProgress = false;
+        delete loader._load;
+        stopSpinner();
+      }
+
+      if(!loader._load && params.host && params.methodName){
+        loader._load = _.throttle(function (host, methodName, args) {
+          host[methodName].apply(host, args);
+        }, 500);
+
+        args.push(function callback(err, res, stats) {
+          $rootScope.$apply(function () {
+            if (err) {
+              deferred.reject(err);
+            } else {
+              if (_.isObject(stats)) _.each(stats, function (stat, name) {
+                Object.defineProperty(res, name, {value: stat});
+              });
+              deferred.resolve(res);
+            }
+            endLoading();
+          });
         });
-      });
-      loader._load(host, methodName, args);
+        loader._load(params.host, params.methodName, args);
+      }
+
+      if(!loader._load && params.promiseLoader){
+        loader._load = _.throttle(function (promiseLoader, args) {
+          params.promiseLoader(args).then(function (res) {
+            deferred.resolve(res);
+            endLoading();
+          }, function (err) {
+            deferred.reject(err);
+            endLoading();
+          });
+        }, 500);
+        loader._load(params.promiseLoader, args);
+      }
+
       return deferred.promise;
     }
 

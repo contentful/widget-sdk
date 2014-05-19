@@ -1,8 +1,13 @@
 'use strict';
 
-angular.module('contentful').controller('GettyDialogController', function($scope, gettyImagesFactory) {
+angular.module('contentful').controller('GettyDialogController', function($scope, gettyImagesFactory, PromisedLoader, Paginator) {
 
   var IMAGES_PER_PAGE = 6;
+
+  var entryLoader = new PromisedLoader();
+
+  $scope.paginator = new Paginator();
+  $scope.paginator.pageLength = IMAGES_PER_PAGE;
 
   function makeFileNameRe() {
     return (/\/([\d|\w]*.(\w{3}))\?/g);
@@ -26,7 +31,7 @@ angular.module('contentful').controller('GettyDialogController', function($scope
 
   $scope.$watch('getty.search', function (search) {
     if(!_.isEmpty(search)){
-      searchForImages($scope.getty);
+      searchForImages($scope.getty).then(saveResults);
     }
   });
 
@@ -56,11 +61,17 @@ angular.module('contentful').controller('GettyDialogController', function($scope
     if(params.excludeNudity) searchParams.Filter.ExcludeNudity = true;
     if(params.vectorIllustrations) searchParams.Filter.FileTypes.push('eps');
 
-    gettyImages.searchForImages(searchParams).then(saveResults);
+    return gettyImages.searchForImages(searchParams);
   }
 
   function saveResults(res) {
-    $scope.imageResults = res && res.data && res.data.Images ? res.data.Images : [];
+    $scope.paginator.numEntries = res && res.data && res.data.ItemTotalCount;
+    $scope.imageResults = parseResult(res);
+  }
+
+  function parseResult(res) {
+    // TODO better handling of null results or error conditions
+    return res && res.data && res.data.Images ? res.data.Images : [];
   }
 
   function objectToArrayIf(condition, obj) {
@@ -129,5 +140,34 @@ angular.module('contentful').controller('GettyDialogController', function($scope
     dims[relativeDim] = Math.ceil(sourceDims[relativeDim]*(ratio*0.01));
     return dims;
   }
+
+  $scope.loadMore = function() {
+    if ($scope.paginator.atLast()) return;
+    $scope.paginator.page++;
+    entryLoader.load({
+      promiseLoader: searchForImages,
+      args: [$scope.getty, $scope.paginator.skipItems()]
+    }).
+    then(function (res) {
+      /*
+      if(!entries){
+        sentry.captureError('Failed to load more entries', {
+          data: {
+            entries: entries
+          }
+        });
+        return;
+      }
+      */
+      $scope.paginator.numEntries = res && res.data && res.data.ItemTotalCount;
+      var images = _.difference(parseResult(res), $scope.imageResults);
+      $scope.imageResults.push.apply($scope.imageResults, images);
+      $scope.paginator.numEntries = $scope.imageResults.length;
+    }, function () {
+      $scope.paginator.page--;
+    });
+  };
+
+
 
 });
