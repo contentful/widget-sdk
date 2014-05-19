@@ -55,6 +55,19 @@ angular.module('contentful').factory('gettyImagesFactory', function gettyImagesF
     return result.promise;
   };
 
+  service.getImageDownload = function (size, params) {
+    service.getImageDownloadAuthorizations(params).then(function (res) {
+      var requestHeader = {
+        CoordinationId: res.ResponseHeader.CoordinationId
+      };
+      var requestBody = {
+      };
+      service.createDownloadRequest(requestHeader, requestBody).then(function () {
+        
+      });
+    });
+  };
+
   function getNewToken (spaceId, result) {
     var path = 'getty_images/' + space.getOrganizationId();
     client.getIntegrationToken(path, function (err, data) {

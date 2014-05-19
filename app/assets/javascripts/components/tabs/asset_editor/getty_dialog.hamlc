@@ -8,35 +8,35 @@
 
         .image-family
           %p
-            %input(type="checkbox" ng-model="getty.family.active" id="creativeImages")
+            %input(type="checkbox" ng-model="getty.families.creative" id="creativeImages")
             %label.group-label(for="creativeImages") Creative image family
           .checkbox-group
             %p
-              %input(type="checkbox" ng-disabled="!getty.family.active" ng-model="getty.family.rightsManaged" id="rightsManaged")
+              %input(type="checkbox" ng-disabled="!getty.families.creative" ng-model="getty.licensing.rightsManaged" id="rightsManaged")
               %label(for="rightsManaged") Rights managed
             %p
-              %input(type="checkbox" ng-disabled="!getty.family.active" ng-model="getty.family.royaltyFree" id="royaltyFree")
+              %input(type="checkbox" ng-disabled="!getty.families.creative" ng-model="getty.licensing.royaltyFree" id="royaltyFree")
               %label(for="royaltyFree") Royalty free
             %p
-              %input(type="checkbox" ng-disabled="!getty.family.active" ng-model="getty.family.excludeNudity" id="excludeNudity")
+              %input(type="checkbox" ng-disabled="!getty.families.creative" ng-model="getty.excludeNudity" id="excludeNudity")
               %label(for="excludeNudity") Exclude nudity
           .checkbox-group
             %p
-              %input(type="checkbox" ng-disabled="!getty.family.active" ng-model="getty.family.photography" id="photography")
+              %input(type="checkbox" ng-disabled="!getty.families.creative" ng-model="getty.graphicsStyle.photography" id="photography")
               %label(for="photography") Photography
             %p
-              %input(type="checkbox" ng-disabled="!getty.family.active" ng-model="getty.family.illustrations" id="illustrations")
-              %label(for="illustrations") Illustrations
+              %input(type="checkbox" ng-disabled="!getty.families.creative" ng-model="getty.graphicsStyle.illustration" id="illustration")
+              %label(for="illustration") Illustration
             %p.sub-checkbox
-              %input(type="checkbox" ng-disabled="!getty.family.illustrations" ng-model="getty.family.vector" id="vector")
+              %input(type="checkbox" ng-disabled="!getty.graphicsStyle.illustration" ng-model="getty.vectorIllustrations" id="vector")
               %label(for="vector") Vector
 
         .editorial-topics
           %p
-            %input(type="checkbox" ng-model="getty.editorial.active" id="editorialImages")
+            %input(type="checkbox" ng-model="getty.families.editorial" id="editorialImages")
             %label.group-label(for="editorialImages") Editorial images
           %p
-            %select(ng-model="getty.editorial.group" ng-disabled="!getty.editorial.active")
+            %select(ng-model="getty.editorial" ng-disabled="!getty.families.editorial")
               %option(value="") All editorial topics
               %option(value="news") News
               %option(value="sports") Sports
@@ -46,12 +46,22 @@
               %option(value="publicity") Publicity
               %option(value="royalty") Royalty
               %option(value="archival") Archival
+          %p
+            %input(type="checkbox" ng-model="getty.offerings.easyAccess" id="easyAccess")
+            %label.group-label(for="easyAccess") Easy Access
 
       .image-results(ng-show="imageResults.length > 0 && !imageDetail")
-        .image-result(ng-repeat="image in imageResults track by image.id")
-          %img(ng-src="" ng-click="showImageDetail(image)")
+        .image-result(ng-repeat="image in augmentImagesAsFiles(imageResults) track by image.ImageId")
+          .file-preview(cf-file-preview="" file="image" preview-size="600" ng-click="showImageDetail(image)")
+            %div(cf-thumbnail="image" size="300")
           .metadata
-            stuff goes here
+            %p {{image.Title}}
+            %p \#{{image.ImageId}}
+            %p(ng-if="image.ApplicableProductOfferings.length > 0")
+              %span(ng-repeat="offering in image.ApplicableProductOfferings") {{productOfferings(offering)}}
+            %p {{image.ImageFamily}}
+            %p {{licensingModel(image.LicensingModel)}}
+            %p {{image.CollectionName}}
 
       .image-view(ng-show="imageDetail")
         %img(ng-src="" ng-click="showImageDetail(image)")

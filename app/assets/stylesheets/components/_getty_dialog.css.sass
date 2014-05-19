@@ -1,12 +1,17 @@
 .getty-dialog
+  &.modal-dialog
+    top: 150px
   width: 60%
-  min-height: 40%
+  min-height: 50%
+  max-height: 70%
+  overflow-y: scroll
 
   .search-field , .image-family, .editorial-topics
     float: left
     margin-right: 1%
-  .search-field
-    width: 40%
+  .search-area
+    .search-field
+      width: 40%
 
   .group-label
     font-weight: bold
@@ -18,3 +23,14 @@
   .sub-checkbox
     margin-left: 20px
 
+  .image-results
+    clear: left
+    width: 100%
+
+  .image-result
+    float: left
+    width: 33%
+    height: 300px
+    .thumbnail
+      width: 300px
+      // TODO this should be enforced via cf-thumbnail
