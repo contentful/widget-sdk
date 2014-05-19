@@ -3,7 +3,7 @@ require 'spec_helper'
 feature 'Purchase flow', js: true do
   include GatekeeperHelper
 
-  describe "Resettable State",  order: :defined do
+  describe "Resettable State",  order: :defined, quirely_only:true do
     before do
       ensure_login
       visit "#{app_host}/account/organizations/#{organization_id}/subscription"

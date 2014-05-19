@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Organizations', js: true, order: :defined do
+feature 'Organizations', js: true, order: :defined, quirely_only: true do
   include GatekeeperHelper
 
   before :all do

@@ -12,7 +12,9 @@ module GatekeeperHelper
   end
 
   def reset_system
-    return unless ENV['USE_QUIRELY']
+    unless ENV['USE_QUIRELY']
+      raise "Aborted. Does not run locally. Run specs with USE_QUIRELY environment variable set"
+    end
     uri = URI.parse("https://reset.quirely.com/123abc")
     http = Net::HTTP.new(uri.host, uri.port)
     http.use_ssl = true
