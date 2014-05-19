@@ -27,11 +27,7 @@ angular.module('contentful').factory('gettyImagesFactory', function gettyImagesF
 
         return $http({
           method: 'POST',
-<<<<<<< HEAD
-          uri: operationURI,
-=======
           url: operationURI,
->>>>>>> restructure the service
           data: data,
           headers: {
             'Content-Type': 'application/json'
