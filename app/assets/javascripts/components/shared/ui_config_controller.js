@@ -171,7 +171,8 @@ angular.module('contentful').controller('UiConfigController', function($scope, s
         d.resolve($scope.uiConfig);
       } else {
         $scope.uiConfig = {entryListViews: generateDefaultViews()};
-        sentry.captureServerError('Could not load UIConfig', err);
+        if(err && err.statusCode !== 404)
+          sentry.captureServerError('Could not load UIConfig', err);
         d.reject(err);
       }
     });
