@@ -50,7 +50,7 @@ angular.module('contentful').controller('GettyDialogController', function($scope
       },
       ResultOptions: {
         ItemCount: IMAGES_PER_PAGE,
-        ItemStartNumber: offset+1 || 0,
+        ItemStartNumber: offset+1 || 0
       },
       Query: {
         SearchPhrase: params.search
@@ -60,6 +60,12 @@ angular.module('contentful').controller('GettyDialogController', function($scope
     if(params.editorial) searchParams.Filter.EditorialSegments = [ capitalize(params.editorial) ];
     if(params.excludeNudity) searchParams.Filter.ExcludeNudity = true;
     if(params.vectorIllustrations) searchParams.Filter.FileTypes.push('eps');
+    if(params.sorting) {
+      if(params.families.editorial && !params.families.creative)
+        searchParams.ResultOptions.EditorialSortOrder = params.sorting;
+      if(!params.families.editorial && params.families.creative)
+        searchParams.ResultOptions.CreativeSortOrder = params.sorting;
+    }
 
     return gettyImages.searchForImages(searchParams);
   }
@@ -169,6 +175,9 @@ angular.module('contentful').controller('GettyDialogController', function($scope
     });
   };
 
-
+  $scope.sortBy = function (sorting) {
+    $scope.getty.sorting = sorting == 'default' ? null : sorting;
+    searchForImages($scope.getty).then(saveResults);
+  };
 
 });

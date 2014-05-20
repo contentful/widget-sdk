@@ -52,6 +52,10 @@
             %label.group-label(for="easyAccess") Easy Access
 
       .image-results(ng-show="imageResults.length > 0 && !imageDetail")
+        .sorting-options(ng-show="(getty.families.editorial && !getty.families.creative) || (!getty.families.editorial && getty.families.creative)")
+          %button(ng-click="sortBy('default')") Best Match
+          %button(ng-click="sortBy('MostRecent')") Most Recent
+          %button(ng-click="sortBy('MostPopular')") Most Popular
         .image-result(ng-repeat="image in augmentImagesAsFiles(imageResults) track by image.ImageId")
           .file-preview(cf-file-preview="" file="image" preview-size="600" ng-click="showImageDetail(image)")
             %div(cf-thumbnail="image" size="300")
