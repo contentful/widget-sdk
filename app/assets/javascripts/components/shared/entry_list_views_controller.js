@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('UiConfigController', function($scope, sentry, random, modalDialog, $q, notification){
+angular.module('contentful').controller('EntryListViewsController', function($scope, sentry, random, modalDialog, $q, notification){
   var DEFAULT_ORDER_DIRECTION = 'descending';
 
   var SORTABLE_TYPES = [

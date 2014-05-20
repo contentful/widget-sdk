@@ -4,7 +4,7 @@ angular.module('contentful').controller('EntryListCtrl',
   function EntryListCtrl($scope, $controller, Paginator, Selection, analytics, PromisedLoader, sentry, searchQueryHelper, EntityCache) {
 
   $controller('DisplayedFieldsController', {$scope: $scope});
-  $controller('UiConfigController', {$scope: $scope});
+  $controller('EntryListViewsController', {$scope: $scope});
 
   var ORDER_PREFIXES = {
     'descending': '-',
