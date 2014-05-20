@@ -1,8 +1,7 @@
 .entity-list
-  .left-nav
-    @extend .tab-list-filters
   .main-header
     +stretch(0, 0, false, 0)
+    width: 99%
   .main-results-wrapper
     +stretch(false, 0, 0, 0)
     top: 27px
@@ -10,28 +9,54 @@
     .main-results
       border-left: none
   .tab-header
-    .search-area
-      max-width: 600px
-    .left-nav
-      margin: 0
-      padding: 0
-      overflow: hidden
+    +flexbox
+    +justify-content(space-between)
+    +align-content(stretch)
+
+    .tab-title
+      width: $left-nav-width + 1%
+      padding: $left-nav-padding
+      +tab-header-title
+      h1
+        line-height: 40px
+
+    .view-customizer
+      +flexbox
+      +align-items(center)
+      +flex-grow(1)
+      margin-right: 20px
+      .dropdown-toggle
+        width: 55px
+        height: $tab-header-field-height
+        padding-right: 6px
+      .ss-dropdown
+        margin-left: 5px
+
     .add-entity
-      position: absolute
-      top: 0
-      bottom: 0
-      right: 20px
-      padding: $tab-header-padding 0
+      +flex-grow(1)
+      +flex-basis(12%)
+      +justify-content(flex-end)
+      +flexbox
+      +align-items(center)
+      padding-right: 20px
+      .default-button,
+      .dropdown-btn
+        width: 100%
+        max-width: 200px
       .default-button
+        overflow: hidden
         margin: 0
-    .add-entity.with-pagination
-      right: 70px
+        height: $tab-header-field-height
+        white-space: nowrap
+        text-overflow: ellipsis
+
     .dropdown-menu
       $new-entities-dropdown-height: 600px
       max-height: $new-entities-dropdown-height
-      ul
+      .dropdown-menu-list
         max-height: $new-entities-dropdown-height - 30px
         overflow-y: auto
+
   .tab-main
     .left-nav
       overflow-y: auto
@@ -59,6 +84,9 @@
         margin-left: 29px
         margin-right: .6em
         padding-right: .6em
+    span:hover
+      color: $link-blue
+      cursor: pointer
 
   .result-list
     tbody tr

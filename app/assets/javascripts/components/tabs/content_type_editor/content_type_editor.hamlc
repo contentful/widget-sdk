@@ -17,8 +17,8 @@
         %i.ss-dropdown.button-icon-right
         %span View
       .dropdown-menu
-        %ul
-          %li
+        %ul.dropdown-menu-list
+          %li.dropdown-menu-item
             %label
               %input(type="checkbox" ng-model="preferences.showDisabledFields")
               Show disabled fields

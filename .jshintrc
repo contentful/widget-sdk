@@ -3,6 +3,7 @@
   "node": true,
   "predef": [
     "describe",
+    "xdescribe",
     "beforeEach",
     "afterEach",
     "jasmine",
@@ -10,6 +11,7 @@
     "xit",
     "inject",
     "expect",
+    "pending",
     "spyOn",
     "runs",
     "waits",

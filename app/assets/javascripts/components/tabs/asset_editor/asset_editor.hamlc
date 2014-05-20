@@ -17,8 +17,8 @@
         %i.ss-dropdown.button-icon-right
         %span View
       .dropdown-menu(style="display:none")
-        %ul
-          %li(ng-repeat="locale in spaceContext.publishLocales track by locale.code")
+        %ul.dropdown-menu-list
+          %li.dropdown-menu-item(ng-repeat="locale in spaceContext.publishLocales track by locale.code")
             %label
               %input(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
               {{locale.name}}

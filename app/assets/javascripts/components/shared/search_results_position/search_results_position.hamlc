@@ -1,8 +1,9 @@
-%div(ng-show="paginator.numPages() > 1")
+.paginator
+  .text
+    %p {{paginator.numEntries}} Results,
+    %p
+      Page
+      %input.form-look(type="number" ng-model="paginator.page" min="1" max="{{paginator.numPages() || 10000000}}")
+      of {{paginator.numPages()}}
   .track
   .fill
-  .tip
-    %span.search-results-active {{paginator.page+1}}
-    %span.search-results-total /{{paginator.numPages()}}
-    .arrow-right
-    .arrow-right-border

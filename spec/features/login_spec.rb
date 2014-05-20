@@ -16,7 +16,7 @@ feature 'Logging in', js: true do
   end
 end
 
-feature 'Registration', js: true do
+feature 'Registration', js: true, quirely_only: true do
   include GatekeeperHelper
   before do
     ensure_logout
@@ -44,7 +44,7 @@ feature 'Registration', js: true do
   end
 end
 
-feature "Account cancellation", js:true do
+feature "Account cancellation", js:true, quirely_only: true do
   include GatekeeperHelper
   before do
     ensure_logout

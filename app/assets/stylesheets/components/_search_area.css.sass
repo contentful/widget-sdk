@@ -1,164 +1,145 @@
-// Search Area Layout
-
 .search-area
+  +flexbox
+  +flex-grow(3)
+  +flex-basis(60%)
   height: $tab-header-height
   padding: $tab-header-padding 0
+  padding-right: 20px
+  padding-left: 10px
 
-.search-area
-  .search-field
-    width: 83%
+.search-with-results
+  position: relative
+  width: 100%
 
-.search-area
-  .search-field,
-  .search-view-options
-    float: left
-
-.search-view-options
-  margin-left: 10px
-
-// Search Field Layout
+.with-filter
+  .search-with-results
+    .search-field
+      border-left: none
+      +border-top-left-radius(0px)
+      +border-bottom-left-radius(0px)
+    input[type="search"]
+      +border-radius(0px)
+  .select-box
+    +border-radius(20px 0px 0px 20px)
+    min-width: 140px
+    +box-shadow(0 1px 3px rgba(255,255,255,0.8) inset)
+    border-color: $lightest-gray
+    select
+      padding-top: 7px
+      width: 95%
+      white-space: nowrap
+      overflow: hidden
 
 .search-field
-  display: table
-  table-layout: fixed
-  border-spacing: 0
+  position: relative
+  width: 100%
+  max-width: 800px
   height: $tab-header-field-height
-  .row
-    //outline: 1px red dashed
-    height: $tab-header-field-height
-    display: table-row
-    > *
-      display: table-cell
-      //outline: 1px blue dashed
-    .search-filters
-      //width: 10%
-    .input
-      //width: 20%
-      //position: relative
-      input[type="search"]
-        //position: absolute
-        width: 100%
-        height: 100%
-
-// Search-Field Look
-
-.search-field
-  background: white
+  background-color: white
   border: 1px solid $lightest-gray
   +border-radius(20px 20px 20px 20px)
   +box-shadow(0 1px 3px rgba(0,0,0,0.1) inset)
+
+  .input
+    +stretch(0, 35px, 0, 0)
   input[type="search"]
-    -webkit-appearance: none
-    -moz-appeareance: none
-    border: none
-    font-size: 12px
     padding: 0 7px
+    width: 100%
+    height: 100%
+    font-size: 12px
+    -webkit-appearance: none
+    -moz-appearance: none
+    appearance: none
+    border: none
     color: $dark-gray
     opacity: 0.6
-    +border-radius(20px 20px 20px 20px)
-    &::-webkit-search-cancel-button
-      display: none
+    +border-radius(20px 0px 0px 20px)
   input:focus
     opacity: 1
     border: none
     outline: none
 
-.search-field.with-filters
-  input
-    +border-top-left-radius(0)
-    +border-bottom-left-radius(0)
-
-// Common styles for elements in the search area
-
-%search-area-button
+.search-button
+  position: absolute
+  top: 0
+  right: 0
+  bottom: 0
+  padding: 0 7px 0 9px
+  width: 35px
+  font-size: 12px
+  line-height: $tab-header-field-height - 2px
   cursor: pointer
   background-color: $gray-background
-  line-height: $tab-header-field-height - 2px
   +box-shadow(0 1px 3px rgba(255,255,255,0.8) inset)
-  &:active
-    +box-shadow(0 1px 2px rgba(0,0,0,0.05) inset)
-
-%search-field-button
-  @extend %search-area-button
-  padding: 0 7px 0 9px
-  font-size: 12px
-
-// Search filter buttons look
-
-.search-filters
-  li
-    @extend %search-field-button
-    border-right: 1px solid $lightest-gray
-    &:first-child
-      +border-radius(20px 0 0 20px)
-      padding-left: 15px
-    .ss-delete
-      @extend %delete-icon
-      margin: 0 0 0 6px
-      position: relative
-      top: 1px
-  .search-filter-title
-    color: $light-gray
-
-// Search options look
-
-.search-button
-  @extend %search-field-button
   border-left: 1px solid $lightest-gray
   +border-radius(0 20px 20px 0)
-  width: 35px
+  &:active
+    +box-shadow(0 1px 2px rgba(0,0,0,0.05) inset)
   .ss-search
     position: relative
     top: 2px
 
-.search-view-options
-  .dropdown-toggle
-    @extend %search-area-button
-    padding: 0 5px 0 10px
-    width: 40px
-    border: 1px solid $lightest-gray
-    +border-radius(3px 3px 3px 3px)
+.search-with-results
+  .results.shrink-result-width
+    right: auto
+  .results // Necessary overrides/resets for .results which is per default geared towards use in forms
+    left: 0
+    right: 35px
+    margin-right: 0
+    font-size: 11px
+
+.search-autocomplete-list,
+.results .search-autocomplete-list //necessary for overriding too-specific selector ".results ol > *" in mixins.css.sass
+  display: table
+  width: 100%
+  li
+    display: table-row 
+    cursor: pointer
+  li:hover
+    +gradient-op(lighten($blue, 20), 6%, 'darken')
+    color: white
+  .selected,
+  .selected:hover
+    +blue-highlight
+  .item-value,
+  .item-description
+    padding: 2px 5px
+    display: table-cell
 
 // Search results position widget
-
 .search-results-position
-  // layout
-  position: absolute
-  right: 0
-  top: 0
-  bottom: 0
-  .track
-    position: absolute
-    right: 0
-    height: 100%
-  .fill
-    position: absolute
-    top: 0
-    right: 0
-  .tip
-    position: absolute
-    margin-top: -11px
-    white-space: nowrap
-  // internal behavior/styles
-  $position: 50%
-  .track
-    background-color: $gray-background
+  +flexbox
+  +align-content(stretch)
+  +flex-grow(1)
+  +flex-basis(15%)
+  min-width: 150px
+  .paginator
+    +flexbox
+    +align-items(center)
+  .text
+    margin-right: 11px
+    p
+      margin-right: 5px
+      margin-bottom: 0
+    input
+      color: $medium-gray
+      text-align: right
+      background-color: white
+      position: relative
+      top: -1px
+      width: 35px
+  //.track
     width: 8px
+    height: 100%
+    background-color: $gray-background
     +box-shadow(1px 0 1px rgba(0,0,0,0.06) inset)
     +border-radius(0 2px 0 0)
-
-  .fill
-    height: $position
+  //.fill
+    //position: absolute
+    //top: 0
+    //right: 0
+    //height: 0
     width: 8px
-    +single-transition(height, 400ms, linear)
     +gradient(#459cd9, #1e82c8)
     +border-radius(0 2px 0 0)
 
-  .tip
-    right: 19px
-    top: $position
-    +single-transition(top, 400ms, linear)
-    .search-results-active
-      font-size: 12px
-      color: $dark-gray
-      font-weight: 700

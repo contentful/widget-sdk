@@ -1,45 +1,45 @@
 .tab-header
-  .left-nav
+  .tab-title
     %h1 Assets
     %a.cf-knowledge-base-icon(
       tooltip="Learn more about Assets in the Knowledge Base Pages"
       tooltip-container=".entity-list"
       analytics-event="assets"
       href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
-  .search-area.with-left-nav
-    .search-field(search="searchTerm" placeholder="Search for Assets")
-  .add-entity(ng-class="{'with-pagination': paginator.numPages() > 1}" ng-hide="assets.length == 0")
+
+
+  .search-area
+    .search-with-results(cf-tokenized-search="searchTerm" placeholder="Search for Assets")
+
+  .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")
+
+  .add-entity
     %button.default-button.primary-button(cf-can="create, Asset" ng-click="createAsset('frameButton')")
       %i.ss-plus.button-icon
       Add Asset
-  .search-results-position(paginator="paginator")
+
 
 .tab-main
   .left-nav
     %header Filter By Status
     %ul.filter-list.status-filters
-      %li(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
-        %span All
-      %li(ng-class="{active: tab.params.list == 'changed'}" ng-click="switchList('changed')")
-        %span Changed
-      %li(ng-class="{active: tab.params.list == 'published'}" ng-click="switchList('published')")
-        %span Published
-      %li(ng-class="{active: tab.params.list == 'archived'}" ng-click="switchList('archived')")
-        %span Archived
+      %li.filter-list-item(ng-class="{active: searchTerm == null}" ng-click="searchTerm = null")
+        %span.filter-list-title All
+      %li.filter-list-item(ng-class="{active: searchTerm == 'status:changed'}" ng-click="setSearchTerm('status:changed')")
+        %span.filter-list-title Changed
+      %li.filter-list-item(ng-class="{active: searchTerm == 'status:published'}" ng-click="setSearchTerm('status:published')")
+        %span.filter-list-title Published
+      %li.filter-list-item(ng-class="{active: searchTerm == 'status:archived'}" ng-click="setSearchTerm('status:archived')")
+        %span.filter-list-title Archived
     %header Filter By File Type
     %ul.filter-list.type-filters
-      %li(ng-repeat="(label, name) in mimetypeGroups track by label"
-          ng-class="{active: tab.params.list == label}"
-          ng-click="switchList(label)")
-        %span {{name}}
-    %header(cf-can="create, Asset") Add New
-    %ul.filter-list(cf-can="create, Asset")
-      %li(ng-click="createAsset('frameLink')")
-        %span Asset
-
+      %li.filter-list-item(ng-repeat="(label, name) in mimetypeGroups track by label"
+          ng-class="{active: searchTerm == 'type:'+label}"
+          ng-click="setSearchTerm('type:'+label)")
+        %span.filter-list-title {{name}}
 
   .with-left-nav
-    %table.result-list.main-header
+    %table.result-list.main-results.main-header
       %thead
         %tr
           %th.cell-select
@@ -48,7 +48,7 @@
           %th.cell-name Name
           %th.cell-type Type
           %th.cell-updated Updated
-          %th.cell-by By
+          %th.cell-author By
           %th.cell-status Status
 
     .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
@@ -67,12 +67,12 @@
               %span.extension {{file|fileExtension}}
             %td.cell-updated
               %date.relative(datetime="{{asset.getUpdatedAt()}}")
-            %td.cell-by
+            %td.cell-author
               %span.cf-user(link="asset.getUpdatedBy()" as="updater") {{updater | userNameDisplay:user}}
             %td.cell-status(ng-class="statusClass(asset)")
               .draft-wrapper
-                %span {{statusClass(asset)}}
-                .main-results-bar
+                .status-label {{statusClass(asset)}}
+                .status-bar
       .loading(ng-hide="paginator.atLast()")
 
     .advice(ng-show="visibleAssets | isEmpty")

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Roles', js:true, order: :defined do
+feature 'Roles', js:true, order: :defined, quirely_only: true do
   include GatekeeperHelper
   include ContentTypeHelper
 

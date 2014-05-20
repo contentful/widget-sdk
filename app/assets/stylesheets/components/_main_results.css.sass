@@ -1,8 +1,7 @@
 // main-results and main-header are used for tables in the entity
 // overviews
 
-.result-list.main-results,
-.result-list.main-header
+.main-results
   border-left: none
   border-right: none
 
@@ -11,33 +10,14 @@
     @extend %endless-result-list-body
 
 // style changes for main-results, compared to regular result-list
-.main-results,
 .main-header
   &.result-list
     border: 0
-    th
+    th, th button
       text-transform: uppercase
 
-// status cell stuff for main-results
-.result-list
-  .draft-wrapper
-    position: relative
-    span
-      padding: 12.5px 0
-      display: block
-  .main-results-bar
-    position: absolute
-    right: -20px
-    height: 100%
-    top: 0
-    bottom: 0
-    width: 8px
-    height: 100%
-    background-color: $light-gray  
-
 // Widgets used IN the tables:
-.main-results,
-.main-header
+.main-results
   .ss-star
     font-size: 8px
     color: $gold

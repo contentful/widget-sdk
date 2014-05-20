@@ -4,10 +4,9 @@ rvm:
 bundler_args: --without development
 before_install:
   - "pushd ./app/assets/commonjs_modules/user_interface"
+  - npm config set ca ""
   - "npm install"
   - "popd"
-before_install:
-  - npm config set ca ""
 before_script:
   - "npm install -g travis-notify-geckoboard"
 after_script: >
