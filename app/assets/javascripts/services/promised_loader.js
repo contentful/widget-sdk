@@ -10,7 +10,85 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
 
   PromisedLoader.prototype = {
 
-    load: function (params/* host, methodName args ... */) {
+    startLoading: function () {
+      this.stopSpinner = cfSpinner.start();
+      this.inProgress = true;
+    },
+
+    endLoading: function() {
+      this.inProgress = false;
+      delete this._load;
+      this.stopSpinner();
+    },
+
+    loadCallback: function (host, methodName/*, args[] */) {
+      var deferred = $q.defer();
+      var args = _.toArray(arguments).slice(2);
+      var loader = this;
+      if (loader.inProgress){
+        deferred.reject();
+        return deferred.promise;
+      }
+
+      loader.startLoading();
+
+      loader._load = _.throttle(function (host, methodName, args) {
+        host[methodName].apply(host, args);
+      }, 500);
+
+      args.push(function callback(err, res, stats) {
+        $rootScope.$apply(function () {
+          if (err) {
+            deferred.reject(err);
+          } else {
+            if (_.isObject(stats)) _.each(stats, function (stat, name) {
+              Object.defineProperty(res, name, {value: stat});
+            });
+            deferred.resolve(res);
+          }
+          loader.endLoading();
+        });
+      });
+      loader._load(host, methodName, args);
+
+      return deferred.promise;
+    },
+
+    loadPromise: function (promiseLoader/*, args[]*/) {
+      var deferred = $q.defer();
+      var args = _.toArray(arguments).slice(1);
+      var loader = this;
+      if (loader.inProgress){
+        deferred.reject();
+        return deferred.promise;
+      }
+
+      loader.startLoading();
+
+      loader._load = _.throttle(function (promiseLoader, args) {
+        promiseLoader.apply(null, args).then(function (res) {
+          deferred.resolve(res);
+          loader.endLoading();
+        }, function (err) {
+          deferred.reject(err);
+          loader.endLoading();
+        });
+      }, 500);
+      loader._load(promiseLoader, args);
+
+      return deferred.promise;
+    },
+
+
+
+    /**
+     * params
+     * - host: object which hosts the loading context (used together with methodName)
+     * - methodName: callback based loader method to be called on the host (used together with host)
+     * - promiseLoader: a promise based loader method
+     * - args: arguments to be passed to the loader method
+    */
+    load: function (params) {
       var deferred = $q.defer();
       var loader = this;
       if (loader.inProgress){
@@ -56,7 +134,7 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
 
       if(!loader._load && params.promiseLoader){
         loader._load = _.throttle(function (promiseLoader, args) {
-          params.promiseLoader(args).then(function (res) {
+          promiseLoader.apply(null, args).then(function (res) {
             deferred.resolve(res);
             endLoading();
           }, function (err) {

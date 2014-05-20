@@ -1,8 +1,9 @@
 .modal-background
-  .modal-dialog.getty-dialog(ng-controller="GettyDialogController")
+  .modal-dialog.getty-dialog.endless-container(ng-controller="GettyDialogController"
+                  at-bottom="loadMore()" num-elements="paginator.page" threshold="50")
     .title Getty Images
     .modal-dialog-close-button(ng-click="dialog.cancel()")
-    .dialog-content.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
+    .dialog-content
       .search-area(ng-show="!imageDetail")
         .search-field(search="getty.search" placeholder="Search Getty Images")
 

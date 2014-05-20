@@ -50,7 +50,7 @@ angular.module('contentful').controller('GettyDialogController', function($scope
       },
       ResultOptions: {
         ItemCount: IMAGES_PER_PAGE,
-        ItemStartNumber: offset || 0,
+        ItemStartNumber: offset+1 || 0,
       },
       Query: {
         SearchPhrase: params.search
@@ -142,12 +142,14 @@ angular.module('contentful').controller('GettyDialogController', function($scope
   }
 
   $scope.loadMore = function() {
-    if ($scope.paginator.atLast()) return;
+    if ($scope.paginator.atLast() ||
+        $scope.imageResults.length === 0 ||
+        $scope.imageDetail
+       ) return;
     $scope.paginator.page++;
-    entryLoader.load({
-      promiseLoader: searchForImages,
-      args: [$scope.getty, $scope.paginator.skipItems()]
-    }).
+    entryLoader.loadPromise(
+      searchForImages, $scope.getty, $scope.paginator.skipItems()
+    ).
     then(function (res) {
       /*
       if(!entries){
@@ -162,7 +164,6 @@ angular.module('contentful').controller('GettyDialogController', function($scope
       $scope.paginator.numEntries = res && res.data && res.data.ItemTotalCount;
       var images = _.difference(parseResult(res), $scope.imageResults);
       $scope.imageResults.push.apply($scope.imageResults, images);
-      $scope.paginator.numEntries = $scope.imageResults.length;
     }, function () {
       $scope.paginator.page--;
     });

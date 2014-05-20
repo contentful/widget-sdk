@@ -8,16 +8,23 @@ angular.module('contentful').directive('endlessContainer', function(){
         'overflow-y': 'auto'
       });
 
+      function getThreshold() {
+        var threshold = parseInt(attr.threshold, 10);
+        return !isNaN(threshold) && threshold >= 0 ? threshold : 200;
+      }
+
       var reloadInProgress;
 
       var interval = setInterval(function() {
         if (!elem.is(':visible')) return;
         var scrollBottom = elem.scrollTop() + elem.prop('clientHeight');
         //console.log('scrolling', scrollBottom);
-        if (elem.prop('scrollHeight')-200 <= scrollBottom) {
+        if (elem.prop('scrollHeight') - getThreshold() <= scrollBottom) {
           reloadInProgress = true;
           try {
             //console.log('loading more');
+            console.log(elem.scrollTop(), elem.prop('clientHeight'), scrollBottom,
+                        elem.prop('scrollHeight') - getThreshold(), elem.prop('scrollHeight'), getThreshold());
             scope.$eval(attr.atBottom);
           } finally {
             reloadInProgress = false;

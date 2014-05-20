@@ -95,7 +95,7 @@ angular.module('contentful').controller('EntryListCtrl',
     if (resetPage) $scope.paginator.page = 0;
     return buildQuery()
     .then(function (query) {
-      return entryLoader.load($scope.spaceContext.space, 'getEntries', query);
+      return entryLoader.loadCallback($scope.spaceContext.space, 'getEntries', query);
     })
     .then(function (entries) {
       $scope.paginator.numEntries = entries.total;
@@ -160,7 +160,7 @@ angular.module('contentful').controller('EntryListCtrl',
     .then(function (query) {
       analytics.track('Scrolled EntryList');
       queryForDebug = query;
-      return entryLoader.load($scope.spaceContext.space, 'getEntries', query);
+      return entryLoader.loadCallback($scope.spaceContext.space, 'getEntries', query);
     })
     .then(function (entries) {
       if(!entries){
