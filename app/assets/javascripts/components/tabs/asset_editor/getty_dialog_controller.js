@@ -35,10 +35,6 @@ angular.module('contentful').controller('GettyDialogController', function($scope
     }
   });
 
-  $scope.showImageDetail = function (image) {
-    $scope.imageDetail = image;
-  };
-
   function searchForImages (params, offset) {
     var searchParams = {
       Filter: {
@@ -178,6 +174,14 @@ angular.module('contentful').controller('GettyDialogController', function($scope
   $scope.sortBy = function (sorting) {
     $scope.getty.sorting = sorting == 'default' ? null : sorting;
     searchForImages($scope.getty).then(saveResults);
+  };
+
+  $scope.showImageDetail = function (image) {
+    gettyImages.getImageDetails({
+      ImageIds: [image.ImageId]
+    }).then(function (res) {
+      $scope.imageDetail = res.data.Images[0];
+    });
   };
 
 });

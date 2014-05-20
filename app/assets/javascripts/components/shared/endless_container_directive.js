@@ -23,8 +23,8 @@ angular.module('contentful').directive('endlessContainer', function(){
           reloadInProgress = true;
           try {
             //console.log('loading more');
-            console.log(elem.scrollTop(), elem.prop('clientHeight'), scrollBottom,
-                        elem.prop('scrollHeight') - getThreshold(), elem.prop('scrollHeight'), getThreshold());
+            //console.log(elem.scrollTop(), elem.prop('clientHeight'), scrollBottom,
+            //elem.prop('scrollHeight') - getThreshold(), elem.prop('scrollHeight'), getThreshold());
             scope.$eval(attr.atBottom);
           } finally {
             reloadInProgress = false;

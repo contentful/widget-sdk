@@ -57,8 +57,8 @@
           %button(ng-click="sortBy('MostRecent')") Most Recent
           %button(ng-click="sortBy('MostPopular')") Most Popular
         .image-result(ng-repeat="image in augmentImagesAsFiles(imageResults) track by image.ImageId")
-          .file-preview(cf-file-preview="" file="image" preview-size="600" ng-click="showImageDetail(image)")
-            %div(cf-thumbnail="image" size="300")
+          .file-preview(cf-file-preview="" file="image" preview-size="600")
+            %div(cf-thumbnail="image" size="300" ng-click="showImageDetail(image)")
           .metadata
             %p {{image.Title}}
             %p \#{{image.ImageId}}
@@ -70,13 +70,31 @@
         .loading(ng-hide="paginator.atLast()")
 
       .image-view(ng-show="imageDetail")
-        %img(ng-src="" ng-click="showImageDetail(image)")
+        %a(ng-click="imageDetail=null") Back
+        %img(ng-src="{{imageDetail.UrlPreview}}")
         .metadata
-          stuff goes here
+          %p {{imageDetail.Title}}
+          %p \#{{imageDetail.ImageId}}
+          %p(ng-if="imageDetail.ApplicableProductOfferings.length > 0")
+            %span(ng-repeat="offering in imageDetail.ApplicableProductOfferings") {{productOfferings(offering)}}
+          %p {{imageDetail.ImageFamily}}
+          %p {{licensingModel(imageDetail.LicensingModel)}}
+          %p {{imageDetail.CollectionName}}
+          %p {{imageDetail.Artist}}
+          %p {{imageDetail.ReleaseMessage}}
         .image-sizes
-          %ul
-            %li
-              %button 100x60
+          %table
+            %thead
+              %tr
+                %th Dimensions
+                %th dpi
+                %th Size
+                %th Price
+            %tbody
+              %tr(ng-repeat="size in imageDetail.SizesDownloadableImages")
+                %td {{size.PixelWidth}}x{{size.PixelHeight}}
+                %td {{size.ResolutionDpi}}
+                %td {{size.FileSizeInBytes}}
         %button
           Add image
 
