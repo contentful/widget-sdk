@@ -56,6 +56,7 @@ RSpec.configure do |config|
   config.order = :random
   config.include EnvHelper
   config.include FeatureHelper
+  config.filter_run_excluding :quirely_only => true unless ENV['USE_QUIRELY']
   config.before(:all) do
     clear_access_token if ENV['USE_QUIRELY']
   end

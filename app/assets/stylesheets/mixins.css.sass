@@ -68,26 +68,6 @@
   font-size: $caret-size
   position: absolute
 
-%blue-link-list
-  li:hover
-    cursor: pointer
-    span
-      text-decoration: underline
-      cursor: pointer
-      color: $link-blue
-  .active
-    span
-      font-weight: 600
-      color: $dark-gray
-  .active:hover
-    span
-      text-decoration: none
-      color: $dark-gray
-  .left-nav-bottom
-    span:hover
-      color: $link-blue
-      cursor: pointer
-
 =tab-padding
   padding-left: 30px
   padding-right: 30px
@@ -99,7 +79,7 @@
   .dropdown-menu
     border: none
     background: darken($dark-gray, 10%)
-    li
+    .dropdown-menu-item
       color: white
       border: none
       +box-shadow(none)

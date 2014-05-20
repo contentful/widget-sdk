@@ -1,0 +1,30 @@
+.modal-background
+  .modal-dialog
+    .title Save View
+    .modal-dialog-close-button(ng-click="dialog.cancel()")
+
+    %form(name="saveViewForm")
+      .form-horizontal
+        .form-field
+          %label Title
+          .form-controls
+            %input(type="text" name="title" ng-model="tab.params.preset.title" required="")
+        .form-field(ng-hide="tab.params.preset.searchTerm | isEmpty")
+          %label Search terms
+          .form-controls
+            %p "{{tab.params.preset.searchTerm}}"
+        .form-field(ng-show="tab.params.preset.contentTypeId")
+          %label Content Type
+          .form-controls
+            %p {{typeNameOr('')}}
+        .form-field(ng-show="displayedFields")
+          %label Displayed columns
+          .form-controls
+            %p {{getFieldList()}}
+        .form-field(ng-show="tab.params.preset.order.fieldId")
+          %label Ordered
+          .form-controls
+            %p {{orderDescription(tab.params.preset)}}
+      .buttons
+        %button.default-button.primary-button.confirm(ng-click="dialog.confirm()" ng-disabled="saveViewForm.$invalid")
+          Save View

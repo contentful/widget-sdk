@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Working with profile', js: true do
+feature 'Working with profile', js: true, quirely_only: true do
   include GatekeeperHelper
   before do
     reset_system

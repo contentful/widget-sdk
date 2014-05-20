@@ -1,7 +1,15 @@
 'use strict';
 
 angular.module('contentful').controller('EntryListCtrl',
-  function EntryListCtrl($scope, Paginator, Selection, analytics, PromisedLoader, sentry) {
+  function EntryListCtrl($scope, $controller, Paginator, Selection, analytics, PromisedLoader, sentry, searchQueryHelper, EntityCache) {
+
+  $controller('DisplayedFieldsController', {$scope: $scope});
+  $controller('UiConfigController', {$scope: $scope});
+
+  var ORDER_PREFIXES = {
+    'descending': '-',
+    'ascending': '',
+  };
 
   var entryLoader = new PromisedLoader();
 
@@ -10,19 +18,24 @@ angular.module('contentful').controller('EntryListCtrl',
   $scope.paginator = new Paginator();
   $scope.selection = new Selection();
 
+  $scope.entryCache = new EntityCache({
+    space: $scope.spaceContext.space,
+    entityType: 'Entry',
+    limit: 5
+  });
+
+  $scope.assetCache = new EntityCache({
+    space: $scope.spaceContext.space,
+    entityType: 'Asset',
+    limit: 3
+  });
+
   $scope.$on('entityDeleted', function (event, entity) {
     var scope = event.currentScope;
     var index = _.indexOf(scope.entries, entity);
     if (index > -1) {
       scope.entries.splice(index, 1);
     }
-  });
-
-  $scope.$watch('searchTerm',  function (term) {
-    if (term === null) return;
-    $scope.paginator.page = 0;
-    $scope.tab.params.list = 'all';
-    $scope.tab.params.contentTypeId = null;
   });
 
   $scope.$watch('spaceContext.publishedContentTypes.length', function (count) {
@@ -34,109 +47,115 @@ angular.module('contentful').controller('EntryListCtrl',
 
   $scope.$watch(function pageParameters(scope){
     return {
-      searchTerm: scope.searchTerm,
+      searchTerm: scope.tab.params.preset.searchTerm,
+      page: scope.paginator.page,
       pageLength: scope.paginator.pageLength,
-      list: scope.tab.params.list,
-      contentTypeId: scope.tab.params.contentTypeId,
+      contentTypeId: scope.tab.params.preset.contentTypeId,
       spaceId: (scope.spaceContext.space && scope.spaceContext.space.getId())
     };
   }, function(pageParameters, old, scope){
-    scope.resetEntries();
+    scope.resetEntries(pageParameters.page === old.page);
   }, true);
 
-  $scope.switchList = function(list, contentType){
-    $scope.searchTerm = null;
-    var params = $scope.tab.params;
-    var shouldReset =
-      params.list == list &&
-      (!contentType || params.contentTypeId == contentType.getId());
+  $scope.$watch(function cacheParameters(scope){
+    return {
+      contentTypeId: scope.tab.params.preset.contentTypeId,
+      displayedFieldIds: scope.tab.params.preset.displayedFieldIds,
+      entriesLength: scope.entries && scope.entries.length,
+      page: scope.paginator.page
+    };
+  }, refreshEntityCaches, true);
 
-    if (shouldReset) {
-      this.resetEntries();
-    } else {
-      this.paginator.page = 0;
-      params.contentTypeId = contentType ? contentType.getId() : null;
-      params.list = list;
-    }
+  $scope.typeNameOr = function (or) {
+    return $scope.tab.params.preset.contentTypeId ?
+      $scope.spaceContext.getPublishedContentType($scope.tab.params.preset.contentTypeId).getName() : or;
   };
 
-  $scope.visibleInCurrentList = function(entry){
-    switch ($scope.tab.params.list) {
-      case 'all':
-        return !entry.isDeleted() && !entry.isArchived();
-      case 'published':
-        return entry.isPublished();
-      case 'changed':
-        return entry.hasUnpublishedChanges();
-      case 'draft':
-        return entry.hasUnpublishedChanges() && !entry.isPublished();
-      case 'archived':
-        return entry.isArchived();
-      case 'contentType':
-        return entry.getContentTypeId() === $scope.tab.params.contentTypeId;
-      default:
-        return true;
-    }
+  $scope.selectedContentType = function () {
+    $scope.tab.params.preset.searchTerm = null;
+    $scope.resetDisplayFields();
   };
 
-  $scope.resetEntries = function() {
-    $scope.paginator.page = 0;
-    return entryLoader.load($scope.spaceContext.space, 'getEntries', buildQuery()).
-    then(function (entries) {
+  $scope.visibleInCurrentList = function(){
+    // TODO: This needs to basically emulate the API :(
+    return true;
+  };
+
+  $scope.resetEntries = function(resetPage) {
+    if (resetPage) $scope.paginator.page = 0;
+    return buildQuery()
+    .then(function (query) {
+      return entryLoader.load($scope.spaceContext.space, 'getEntries', query);
+    })
+    .then(function (entries) {
       $scope.paginator.numEntries = entries.total;
       $scope.entries = entries;
       $scope.selection.switchBaseSet($scope.entries.length);
-      analytics.track('Reloaded EntryList');
     });
   };
 
+  function refreshEntityCaches() {
+    if($scope.tab.params.preset.contentTypeId){
+      $scope.entryCache.setDisplayedFieldIds($scope.tab.params.preset.displayedFieldIds);
+      $scope.entryCache.resolveLinkedEntities($scope.entries);
+      $scope.assetCache.setDisplayedFieldIds($scope.tab.params.preset.displayedFieldIds);
+      $scope.assetCache.resolveLinkedEntities($scope.entries);
+    }
+  }
+
+  function getOrderQuery() {
+    var p = $scope.tab.params.preset;
+    return ORDER_PREFIXES[p.order.direction] + getFieldPath(p.order.fieldId);
+
+    function getFieldPath(fieldId) {
+      if (_.find($scope.systemFields, {id: fieldId})) {
+        return 'sys.'+fieldId;
+      } else {
+        var defaultLocale = $scope.spaceContext.space.getDefaultLocale().code;
+        return 'fields.'+fieldId+'.'+defaultLocale;
+      }
+    }
+  }
+
   function buildQuery() {
+    var contentType;
     var queryObject = {
-      order: '-sys.updatedAt',
+      order: getOrderQuery(),
       limit: $scope.paginator.pageLength,
       skip: $scope.paginator.skipItems()
     };
 
-    if ($scope.tab.params.list == 'all') {
-      queryObject['sys.archivedAt[exists]'] = 'false';
-    } else if ($scope.tab.params.list == 'published') {
-      queryObject['sys.publishedAt[exists]'] = 'true';
-    } else if ($scope.tab.params.list == 'changed') {
-      queryObject['sys.archivedAt[exists]'] = 'false';
-      queryObject['changed'] = 'true';
-    } else if ($scope.tab.params.list == 'draft') {
-      queryObject['sys.archivedAt[exists]'] = 'false';
-      queryObject['sys.publishedVersion[exists]'] = 'false';
-      queryObject['changed'] = 'true';
-    } else if ($scope.tab.params.list == 'archived') {
-      queryObject['sys.archivedAt[exists]'] = 'true';
-    } else if ($scope.tab.params.list == 'contentType') {
-      queryObject['sys.contentType.sys.id'] = $scope.tab.params.contentTypeId;
+    if ($scope.tab.params.preset.contentTypeId) {
+      contentType = $scope.spaceContext.getPublishedContentType($scope.tab.params.preset.contentTypeId);
     }
 
-    if (!_.isEmpty($scope.searchTerm)) {
-      queryObject.query = $scope.searchTerm;
-    }
-
-    return queryObject;
+    return searchQueryHelper.buildQuery($scope.spaceContext.space, contentType, $scope.tab.params.preset.searchTerm)
+    .then(function (searchQuery) {
+      _.extend(queryObject, searchQuery);
+      return queryObject;
+    });
   }
 
   $scope.hasQuery = function () {
-    var noQuery = $scope.tab.params.list == 'all' && _.isEmpty($scope.searchTerm);
-    return !noQuery;
+    return !_.isEmpty($scope.tab.params.preset.searchTerm);
   };
 
   $scope.loadMore = function() {
     if ($scope.paginator.atLast()) return;
     $scope.paginator.page++;
-    var query = buildQuery();
-    entryLoader.load($scope.spaceContext.space, 'getEntries', query).
-    then(function (entries) {
+    var queryForDebug;
+    return buildQuery()
+    .then(function (query) {
+      analytics.track('Scrolled EntryList');
+      queryForDebug = query;
+      return entryLoader.load($scope.spaceContext.space, 'getEntries', query);
+    })
+    .then(function (entries) {
       if(!entries){
         sentry.captureError('Failed to load more entries', {
           data: {
             entries: entries,
-            query: query
+            query: queryForDebug
           }
         });
         return;
@@ -148,8 +167,6 @@ angular.module('contentful').controller('EntryListCtrl',
     }, function () {
       $scope.paginator.page--;
     });
-
-    analytics.track('Scrolled EntryList');
   };
 
   $scope.statusClass = function(entry){
@@ -164,6 +181,29 @@ angular.module('contentful').controller('EntryListCtrl',
     } else {
       return 'draft';
     }
+  };
+
+  var narrowFieldTypes = [
+    'integer',
+    'number',
+    'boolean'
+  ];
+
+  var mediumFieldTypes = [
+    'text',
+    'symbol',
+    'location',
+    'date',
+    'array',
+    'link'
+  ];
+
+  $scope.getFieldClass = function (field) {
+    var type = field.type.toLowerCase();
+    var sizeClass = ' ';
+    if(_.contains(narrowFieldTypes, type)) sizeClass += 'narrow';
+    else if(_.contains(mediumFieldTypes, type)) sizeClass += 'medium';
+    return 'cell-'+ type +sizeClass;
   };
 
   $scope.$on('tabBecameActive', function(event, tab) {

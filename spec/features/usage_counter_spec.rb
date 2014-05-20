@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-feature 'Usage Tracking', js: true do
+feature 'Usage Tracking', js: true, quirely_only: true do
   include ContentTypeHelper
   include GatekeeperHelper
 

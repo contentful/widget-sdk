@@ -1,73 +1,78 @@
 .tab-header
-  .left-nav
+  .tab-title
     %h1 Entries
     %a.cf-knowledge-base-icon(
       tooltip="Learn more about Entries in the Knowledge Base Pages"
       tooltip-container=".entity-list"
       analytics-event="entries"
       href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
-  .search-area.with-left-nav
-    .search-field(search="searchTerm" placeholder="Search for Entries")
-  .add-entity(ng-class="{'with-pagination': paginator.numPages() > 1}"
-              ng-hide="spaceContext.publishedContentTypes.length == 0")
+
+  .search-area.with-filter
+    .select-box
+      %select(ng-model="tab.params.preset.contentTypeId"
+              ng-change="selectedContentType()"
+              ng-options="ct.getId() as ct.getName() group by getGroupName() for ct in spaceContext.publishedContentTypes")
+        %option(value="") All
+      %i.button-icon-right.ss-dropdown
+
+    .search-with-results(cf-tokenized-search="tab.params.preset.searchTerm" placeholder="Search for {{typeNameOr('Entries')}}" cf-on-blur-component="leftSearch($event)")
+
+  .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")
+
+  .view-customizer
+
+  .add-entity(ng-hide="spaceContext.publishedContentTypes.length == 0")
     %button.dropdown-toggle.default-button.primary-button(
             ng-hide="(!singleContentType || singleContentType && entries.length < 1) && (noCfCanCleanup = true)"
             cf-can="create, Entry"
             ng-click="createEntry(singleContentType, 'frameButton')")
       %i.ss-plus.button-icon
       Add New {{singleContentType.getName()}}
-    .dropdown-btn(ng-show="spaceContext.publishedContentTypes.length > 1 && entries.length > 0")
+    .dropdown-btn(ng-show="spaceContext.publishedContentTypes.length > 1")
       %button.dropdown-toggle.default-button.primary-button(cf-can="create, Entry")
         %i.ss-plus.button-icon
         Add New Entry
       .dropdown-menu(position="bottomright" container=".tab-content")
-        %ul.menu-list
-          %li.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
+        %ul.dropdown-menu-list
+          %li.dropdown-menu-item.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
                    ng-click="createEntry(contentType, 'frameButton')"
                    dropdown-close="")
             %i.ss-plus
             {{contentType.getName()}}
 
-  .search-results-position(paginator="paginator")
-
 .tab-main
   .left-nav
-    %header Filter By Status
-    %ul.filter-list.status-filters
-      %li(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
-        %span All
-      %li(ng-class="{active: tab.params.list == 'changed'}" ng-click="switchList('changed')")
-        %span Changed
-      %li(ng-class="{active: tab.params.list == 'draft'}" ng-click="switchList('draft')")
-        %span Draft
-      %li(ng-class="{active: tab.params.list == 'published'}" ng-click="switchList('published')")
-        %span Published
-      %li(ng-class="{active: tab.params.list == 'archived'}" ng-click="switchList('archived')")
-        %span Archived
-    %div(ng-show="spaceContext.publishedContentTypes.length > 0")
-      %header Filter By Content Types
-      %ul.filter-list.type-filters
-        %li(ng-class="{active: tab.params.contentTypeId == contentType.getId()}"
-            ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
-            ng-click="switchList('contentType', contentType)")
-          %span {{contentType.getName()}}
-      %header(cf-can="create, Entry") Add New Entry
-      %ul.filter-list(cf-can="create, Entry")
-        %li(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
-            ng-click="createEntry(contentType, 'frameLink')")
-          %i.ss-plus
-          %span {{contentType.getName()}}
+    %header Views
+    %ul.filter-list
+      %li.filter-list-item(ng-class="{active: presetIsActive()}" ng-click="clearPreset()")
+        %a.filter-list-title All
+    %ul.filter-list(cf-reorder-presets="canEditPresets")
+      %li.filter-list-item(ng-repeat="preset in uiConfig.entryListViews[0].views track by preset.id" ng-class="{active: presetIsActive(preset)}" ng-click="loadPreset(preset)")
+        %span.filter-list-title {{preset.title}}
+        %a.filter-list-delete(cf-click-local="deletePreset(preset)" ng-show="canEditPresets")
+    %button.default-button(ng-click="openSaveView()" ng-show="canEditPresets")
+      %i.button-icon.ss-plus
+      Save View
 
   .with-left-nav
-    %table.result-list.main-header
+    %table.result-list.main-results.main-header
       %thead
         %tr
           %th.cell-select
             %input(type="checkbox" cf-selection="" ng-show="entries.length > 0" tabindex="-1")
-          %th.cell-content-type Content Type
-          %th.cell-name Name
-          %th.cell-updated Updated
-          %th.cell-by By
+          %th.cell-content-type(ng-show="!tab.params.preset.contentTypeId") Content Type
+          %th.cell-display-name Name
+          %th(ng-repeat="field in displayedFields track by field.id" data-field-id="{{field.id}}" ng-class="[getFieldClass(field)]")
+            %span(ng-class="{active: isOrderField(field)}")
+              %button.transparent-button(ng-show="fieldIsSortable(field) && !isFieldCollapsed(field)" ng-click="orderColumnBy(field)")
+                %i.button-icon.ss-directup(ng-show="tab.params.preset.order.direction == 'ascending' && isOrderField(field)")
+                %i.button-icon.ss-dropdown(ng-show="tab.params.preset.order.direction == 'descending' || !isOrderField(field)")
+              %button.transparent-button.truncated-button(ng-click="orderColumnBy(field)" ng-disabled="!fieldIsSortable(field)" ng-hide="isFieldCollapsed(field)")
+                {{field.name}}
+              %button.transparent-button.truncated-button(ng-click="expandColumn(field)" ng-show="isFieldCollapsed(field)"
+                                                          tooltip="{{field.name}}" tooltip-placement="bottom" tooltip-container=".main-header")
+                {{field.name}}
+
           %th.cell-status Status
 
     .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
@@ -76,18 +81,17 @@
           %tr(ng-repeat="entry in visibleEntries = (entries | filter:visibleInCurrentList) track by entry.getId()" cf-click-local="navigator.entryEditor(entry).goTo()")
             %td.cell-select(ng-click="selection.toggle(entry);$event.stopPropagation()")
               %input(type="checkbox" cf-selection="entry" tabindex="-1")
-            %td.cell-content-type
+            %td.cell-content-type(ng-show="!tab.params.preset.contentTypeId")
               %span {{spaceContext.publishedTypeForEntry(entry).getName()}}
-            %td.cell-name
+            %td.cell-display-name
               %span {{spaceContext.entryTitle(entry)}}
-            %td.cell-updated
-              %date.relative(datetime="{{entry.getUpdatedAt()}}")
-            %td.cell-by
-              %span.cf-user(link="entry.getUpdatedBy()" as="updater") {{updater | userNameDisplay:user}}
+            %td(ng-repeat="field in displayedFields track by field.id" ng-class="[getFieldClass(field), getFieldCollapsedClass(field)]")
+              %cf-field-display(ng-hide="isFieldCollapsed(field)")
+              %button.transparent-button(cf-click-local="expandColumn(field)" ng-show="isFieldCollapsed(field)")
+                &hellip;
             %td.cell-status(ng-class="statusClass(entry)")
-              .draft-wrapper
-                %span {{statusClass(entry)}}
-                .main-results-bar
+              .status-label {{statusClass(entry)}}
+              .status-bar
       .loading(ng-hide="paginator.atLast()")
 
     .advice(ng-show="visibleEntries | isEmpty")

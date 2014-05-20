@@ -56,20 +56,49 @@ html
 .filter-list
   +plain-list
   margin-bottom: 10px
-  li
+  .filter-list-item
+    position: relative
     font-size: 12px
-    line-height: 25px
-    padding: 0 $left-nav-padding
+    padding: 4px $left-nav-padding
     border: 1px solid transparent
     color: $link-blue
-    line-height: 24px
+    cursor: pointer
     small
       font-size: 9px
       color: $light-gray
-  li.active
+  .filter-list-item:hover
+    .filter-list-title
+      text-decoration: underline
+      color: $link-blue
+  .filter-list-item.active
     border: 1px solid $dark-rule
     +border-radius(3px  3px  3px  3px)
     background: $gray-background
+    .filter-list-title
+      font-weight: 600
+      color: $dark-gray
+  .filter-list-item.active:hover
+    .filter-list-title
+      text-decoration: none
+      color: $dark-gray
+    .filter-list-title:after
+      font-family: "SSStandard"
+      content: "↻"
+      font-size: 7px
+      color: $light-gray
+      line-height: 10px
+      margin-left: 3px
+.filter-list-delete
+  position: absolute
+  top: 5px
+  right: 5px
+  color: silver
+  display: none
+  text-decoration: none
+  &:after
+    content: '×'
+  .filter-list-item:hover &
+    display: inline
 
 .knowledge-base-link
   display: block
@@ -247,6 +276,15 @@ li.danger-button
   &.default-button
     +green-highlight
     +colored-button($green)
+
+.transparent-button
+  background: none
+  border: none
+  cursor: pointer
+  padding: 0
+  margin: 0
+.transparent-button[disabled]
+  cursor: auto
 
 .toggle-collapse
   display: inline-block

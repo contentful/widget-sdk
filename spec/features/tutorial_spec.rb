@@ -73,7 +73,7 @@ feature 'Tutorial', js: true do
     click_button 'Yes, please!'
 
     finish_tutorial do
-      expect(all('td.cell-name').length).to eq(6)
+      expect(all('td.cell-display-name').length).to eq(6)
     end
   end
 
@@ -119,7 +119,7 @@ feature 'Tutorial', js: true do
     click_button 'Yes, please!'
 
     finish_tutorial do
-      expect(all('td.cell-name').length).to equal(11)
+      expect(all('td.cell-display-name').length).to eq(11)
     end
   end
 

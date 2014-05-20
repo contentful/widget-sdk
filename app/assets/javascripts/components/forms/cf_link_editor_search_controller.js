@@ -4,6 +4,7 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
 
   var entityLoader = new PromisedLoader();
   $scope.paginator = new Paginator();
+  $scope.searchTerm = '';
 
   $scope.$watch('searchTerm', function(term, old, scope) {
     scope.resetEntities();
@@ -29,11 +30,16 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
     });
   });
 
+  $scope.$on('searchFieldFocused', function () {
+    $scope.searchResultsVisible = true;
+  });
+
   $scope.pick = function (entity) {
     $scope.addLink(entity, function(err) {
       if (!err) {
         $scope.searchTerm = '';
         $scope.searchAll = false;
+        $scope.searchResultsVisible = false;
       }
     });
   };
@@ -94,6 +100,7 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
       $scope.paginator.page = 0;
       $scope.entities = [];
       $scope.selectedEntity = null;
+      $scope.searchResultsVisible = false;
     } else {
       $scope.loadEntities();
     }
@@ -102,6 +109,7 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
   $scope.loadEntities = function () {
     entityLoader.load($scope.spaceContext.space, $scope.fetchMethod, buildQuery()).
     then(function (entities) {
+      $scope.searchResultsVisible = true;
       $scope.paginator.numEntries = entities.total;
       $scope.entities = entities;
       $scope.selectedEntity = entities[0];

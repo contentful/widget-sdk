@@ -5,7 +5,7 @@ angular.module('contentful').directive('cfLinkEditorSearch', function() {
     restrict: 'AC',
     link: function (scope, element) {
       scope.clickOutsideHandler = function () {
-        scope.searchTerm = '';
+        scope.searchResultsVisible = false;
         scope.searchAll = false;
       };
 

@@ -10,13 +10,15 @@
   &:hover
     color: black
     +box-shadow(0 5px 15px rgba(255,255,255,0.6) inset)
+  &[disabled]
+    color: $light-gray
 .active .dropdown-toggle
   color: $dark-gray
 
-=dropdown-padding
-  padding: 4px 12px
-
 $separator-style: 1px solid $light-rule
+
+.dropdown-row
+  padding: 4px 12px
 
 // Dropdown Menu base and general modifiers
 .dropdown-menu
@@ -32,13 +34,13 @@ $separator-style: 1px solid $light-rule
   padding-top: 4px
   +box-shadow(0 2px 6px rgba(0,0,0,0.1))
   +border-radius(0 0 3px 3px)
-  p
-    +dropdown-padding
-  ul,
-  ol
-    +plain-list
-  li
-    +dropdown-padding
+  .dropdown-menu-list
+    margin: 0
+    padding: 0
+  .dropdown-menu-item
+    @extend .dropdown-row
+    list-style-type: none
+    margin: 0
     a
       display: block
     a:link,
@@ -55,7 +57,8 @@ $separator-style: 1px solid $light-rule
       border-bottom: $separator-style
     &.hint
       color: $light-gray
-  li:hover
+  .dropdown-menu-item:hover,
+  .dropdown-menu-item.hover
     cursor: pointer
     +blue-highlight
     a:link

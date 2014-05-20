@@ -28,6 +28,7 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse, zone
 
       elm.find('.date').datepicker({
         dateFormat: DATE_FORMAT,
+        firstDay: 1,
         onSelect: function(dateString) {
           $(this).val(dateString);
           scope.$apply(function() {

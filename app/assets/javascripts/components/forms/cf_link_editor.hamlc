@@ -17,7 +17,7 @@
 .cf-link-editor-search(cf-autocomplete-results="entities" autocomplete-term="searchTerm")
   .controls(ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
     .search-field(ng-submit="submit()"
-                  search="searchTerm"
+                  cf-search="searchTerm"
                   search-all="searchAll"
                   search-type-ahead=""
                   placeholder="Search for {{entityName}}"
@@ -34,8 +34,8 @@
         %i.ss-plus.button-icon
         New
       %a.dropdown-menu
-        %ul
-          %li(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
+        %ul.dropdown-menu-list
+          %li.dropdown-menu-item(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
               ng-click="addNewEntry(contentType)"
               dropdown-close="")
             {{contentType.getName()}}
@@ -57,20 +57,20 @@
       New
 
 
-  .results.search-options-on.result-list-empty(ng-show="searchAll && entities && entities.length == 0"
+  .results.search-options-on.result-list-empty(ng-show="searchAll && searchResultsVisible && entities && entities.length == 0"
                              ng-class="{visible: searchAll && entities && entities.length == 0}"
                              ng-switch="linkType"
-                             cf-click-outside-ignore=".search-button, .ss-search"
+                             cf-click-outside-ignore=".search-button, .ss-search, .search-field input"
                              cf-click-outside="clickOutsideHandler()")
     %div(ng-switch-when="Entry")
       %p No Entries created yet.
     %div(ng-switch-when="Asset")
       %p No Assets created yet.
 
-  .results.search-options-on(ng-show="entities && entities.length > 0"
+  .results.search-options-on(ng-show="searchResultsVisible && entities && entities.length > 0"
                              ng-switch="linkType"
-                             cf-click-outside-ignore=".search-button, .ss-search"
-                             cf-click-outside="searchTerm=''; searchAll=false")
+                             cf-click-outside-ignore=".search-button, .ss-search, .search-field input"
+                             cf-click-outside="clickOutsideHandler()")
 
     %div(ng-switch-when="Entry")
       %table.result-list
@@ -91,8 +91,8 @@
                 %span {{spaceContext.entryTitle(entity)}}
               %td.cell-updated
                 %date.relative(datetime="{{entity.getUpdatedAt()}}")
-        %p.result-length Showing {{entities.length}} of {{paginator.numEntries}} entries
         .loading(ng-hide="paginator.atLast()")
+      %p.result-length Showing {{entities.length}} of {{paginator.numEntries}} entries
 
     %div(ng-switch-when="Asset")
       %table.result-list
@@ -100,7 +100,7 @@
           %tr
             %th.cell-preview Preview
             %th.cell-name Title / Description
-            %th.cell-by Type / Updated
+            %th.cell-type Type / Updated
       .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
         %table.result-list
           %tbody
@@ -118,5 +118,5 @@
                   %span.lighter {{file|fileExtension}}
                 %p.lighter
                   %date.relative(datetime="{{entity.getUpdatedAt()}}")
-        %p.result-length Showing {{entities.length}} of {{paginator.numEntries}} assets
         .loading(ng-hide="paginator.atLast()")
+      %p.result-length Showing {{entities.length}} of {{paginator.numEntries}} assets
