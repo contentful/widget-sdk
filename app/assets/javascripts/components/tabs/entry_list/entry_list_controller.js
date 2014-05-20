@@ -67,8 +67,13 @@ angular.module('contentful').controller('EntryListCtrl',
   }, refreshEntityCaches, true);
 
   $scope.typeNameOr = function (or) {
-    return $scope.tab.params.preset.contentTypeId ?
-      $scope.spaceContext.getPublishedContentType($scope.tab.params.preset.contentTypeId).getName() : or;
+    try {
+      return $scope.tab.params.preset.contentTypeId ?
+        $scope.spaceContext.getPublishedContentType($scope.tab.params.preset.contentTypeId).getName() : or;
+    } catch (e) {
+      sentry.captureException(e, {extra: {contentTypeId: $scope.tab.params.preset.contentTypeId}});
+      return or;
+    }
   };
 
   $scope.selectedContentType = function () {
