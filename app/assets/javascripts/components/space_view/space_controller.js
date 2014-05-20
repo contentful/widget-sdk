@@ -1,7 +1,9 @@
 'use strict';
 
 angular.module('contentful').controller('SpaceCtrl',
-  function SpaceCtrl($scope, $rootScope, analytics, routing, notification, authorization, enforcements, authentication) {
+  function SpaceCtrl($scope, $rootScope, analytics, routing, notification, authorization, enforcements, authentication, $controller) {
+
+  $controller('UiConfigController', {$scope: $scope});
 
   $scope.$watch(function (scope) {
     if (scope.spaceContext && scope.spaceContext.space) {

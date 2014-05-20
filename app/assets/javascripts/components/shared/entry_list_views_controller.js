@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('EntryListViewsController', function($scope, sentry, random, modalDialog, $q, notification){
+angular.module('contentful').controller('EntryListViewsController', function($scope, sentry, random, modalDialog){
   var DEFAULT_ORDER_DIRECTION = 'descending';
 
   var SORTABLE_TYPES = [
@@ -45,8 +45,10 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     };
   }
 
-  $scope.$watch('spaceContext.space.isAdmin(user)', function (can, old, scope) {
-    scope.canEditPresets = !!can;
+  $scope.$watch('uiConfig', function (uiConfig) {
+    if (uiConfig && !uiConfig.entryListViews) {
+      uiConfig.entryListViews = generateDefaultViews();
+    }
   });
 
   var blankPreset = getBlankPreset();
@@ -101,23 +103,6 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     $scope.saveUiConfig();
   }
 
-  $scope.saveUiConfig = function() {
-    if (!$scope.canEditPresets) return;
-    var callback = $q.callback();
-    $scope.spaceContext.space.setUIConfig($scope.uiConfig, callback);
-    callback.promise.then(function (config) {
-      $scope.uiConfig = config;
-    }, function (err) {
-      var errorId = err.body.sys.id;
-      if (errorId === 'VersionMismatch') {
-        notification.serverError('Version mismatch when trying to save views.');
-        return loadUIConfig();
-        // maybe get config again, and inject new preset or look for preset and update it in case order was changed
-      }
-    });
-    return callback.promise;
-  };
-
   $scope.clearPreset = function () {
     $scope.tab.params.preset = getBlankPreset();
     $scope.resetEntries(true);
@@ -156,28 +141,6 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     if (!preset) preset = blankPreset;
     return p.id === preset.id;
   };
-
-  loadUIConfig();
-
-  function loadUIConfig() {
-    // TODO ugh, this is wrong because uiConfig is of a higher scope than entrylistController
-    var d = $q.defer();
-    $scope.spaceContext.space.getUIConfig(function (err, config) {
-      if (!err) {
-        if(config && config.entryListViews)
-          $scope.uiConfig = config;
-        else
-          $scope.uiConfig = {entryListViews: generateDefaultViews()};
-        d.resolve($scope.uiConfig);
-      } else {
-        $scope.uiConfig = {entryListViews: generateDefaultViews()};
-        if(err && err.statusCode !== 404)
-          sentry.captureServerError('Could not load UIConfig', err);
-        d.reject(err);
-      }
-    });
-    return d.promise;
-  }
 
   function generateDefaultViews() {
     var views = [];

@@ -46,11 +46,11 @@
     %ul.filter-list
       %li.filter-list-item(ng-class="{active: presetIsActive()}" ng-click="clearPreset()")
         %a.filter-list-title All
-    %ul.filter-list(cf-reorder-presets="canEditPresets")
+    %ul.filter-list(cf-reorder-presets="canEditUiConfig")
       %li.filter-list-item(ng-repeat="preset in uiConfig.entryListViews[0].views track by preset.id" ng-class="{active: presetIsActive(preset)}" ng-click="loadPreset(preset)")
         %span.filter-list-title {{preset.title}}
-        %a.filter-list-delete(cf-click-local="deletePreset(preset)" ng-show="canEditPresets")
-    %button.default-button(ng-click="openSaveView()" ng-show="canEditPresets")
+        %a.filter-list-delete(cf-click-local="deletePreset(preset)" ng-show="canEditUiConfig")
+    %button.default-button(ng-click="openSaveView()" ng-show="canEditUiConfig")
       %i.button-icon.ss-plus
       Save View
 
