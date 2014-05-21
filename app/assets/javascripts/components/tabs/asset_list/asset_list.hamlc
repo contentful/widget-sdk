@@ -59,7 +59,7 @@
               %input(type="checkbox" cf-selection="asset" tabindex="-1")
             %td.cell-preview(ng-class="{'no-padding': (!!file)}")
               %div.file-preview(cf-file-preview="" file="spaceContext.localizedField(asset, 'data.fields.file')" preview-size="400")
-                %span(cf-thumbnail="file" size="30")
+                %span.cf-thumbnail(file="file" size="30")
             %td.cell-name
               %span {{spaceContext.assetTitle(asset)}}
             %td.cell-type(ng-init="file=spaceContext.localizedField(asset, 'data.fields.file')")

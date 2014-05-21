@@ -17,10 +17,10 @@ angular.module('contentful').directive('cfThumbnail', function () {
   };
 
   return {
-    restrict: 'A',
+    restrict: 'CA',
     template: JST['cf_thumbnail'],
     scope: {
-      file: '=cfThumbnail'
+      file: '=file'
     },
     link: function (scope, el, attrs) {
       var maxWidth, maxHeight;

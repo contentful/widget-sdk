@@ -58,7 +58,7 @@
           %button(ng-click="sortBy('MostPopular')") Most Popular
         .image-result(ng-repeat="image in augmentImagesAsFiles(imageResults) track by image.ImageId")
           .file-preview(cf-file-preview="" file="image" preview-size="600")
-            %div(cf-thumbnail="image" size="300" ng-click="showImageDetail(image)")
+            .cf-thumbnail(file="image" size="300" ng-click="showImageDetail(image)")
           .metadata
             %p {{image.Title}}
             %p \#{{image.ImageId}}
