@@ -14,7 +14,7 @@ angular.module('contentful').config(function ($provide) {
     $q.callback = function () {
       var deferred = $delegate.defer();
       var callbackFunction = function (err) {
-        var args = Array.prototype.slice.call(arguments, 1);
+        var args = _.rest(arguments);
         $rootScope.$apply(function () {
           if (err) {
             deferred.reject(err);

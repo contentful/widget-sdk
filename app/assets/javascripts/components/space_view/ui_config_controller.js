@@ -11,18 +11,15 @@ angular.module('contentful').controller('UiConfigController', function($scope, $
   });
 
   $scope.saveUiConfig = function() {
-    if (!$scope.canEditUiConfig) return;
+    if (!$scope.canEditUiConfig) return $q.reject('Not allowed');
     // TODO client-side verification
     var callback = $q.callback();
     $scope.spaceContext.space.setUIConfig($scope.uiConfig, callback);
     callback.promise.then(function (config) {
       $scope.uiConfig = config;
-    }, function (err) {
-      var errorId = err.body.sys.id;
-      if (errorId === 'VersionMismatch') {
-        notification.serverError('Version mismatch when trying to save views.');
-        return loadUiConfig();
-      }
+      return $scope.uiConfig;
+    }, function () {
+      loadUiConfig();
     });
     return callback.promise;
   };

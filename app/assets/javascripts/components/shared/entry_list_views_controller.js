@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('EntryListViewsController', function($scope, sentry, random, modalDialog){
+angular.module('contentful').controller('EntryListViewsController', function($scope, sentry, random, modalDialog, notification){
   var DEFAULT_ORDER_DIRECTION = 'descending';
 
   var SORTABLE_TYPES = [
@@ -100,7 +100,7 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
   function savePreset() {
     $scope.tab.params.preset.id = random.id();
     $scope.uiConfig.entryListViews[0].views.push($scope.tab.params.preset);
-    $scope.saveUiConfig();
+    $scope.saveEntryListViews();
   }
 
   $scope.clearPreset = function () {
@@ -128,7 +128,13 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
       scope: $scope
     }).then(function () {
       _.remove($scope.uiConfig.entryListViews[0].views, {id: preset.id});
-      return $scope.saveUiConfig();
+      return $scope.saveEntryListViews();
+    });
+  };
+
+  $scope.saveEntryListViews = function () {
+    return $scope.saveUiConfig().catch(function () {
+      notification.serverError('Error trying to save view');
     });
   };
 
