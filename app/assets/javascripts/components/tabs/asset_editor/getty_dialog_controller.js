@@ -67,13 +67,13 @@ angular.module('contentful').controller('GettyDialogController', function($scope
   }
 
   function saveResults(res) {
-    $scope.paginator.numEntries = res && res.data && res.data.ItemTotalCount;
+    $scope.paginator.numEntries = res && res.data && res.data.result.ItemTotalCount;
     $scope.imageResults = parseResult(res);
   }
 
   function parseResult(res) {
     // TODO better handling of null results or error conditions
-    return res && res.data && res.data.Images ? res.data.Images : [];
+    return res && res.data && res.data.result.Images ? res.data.result.Images : [];
   }
 
   function objectToArrayIf(condition, obj) {
@@ -163,7 +163,7 @@ angular.module('contentful').controller('GettyDialogController', function($scope
         return;
       }
       */
-      $scope.paginator.numEntries = res && res.data && res.data.ItemTotalCount;
+      $scope.paginator.numEntries = res && res.data && res.data.result.ItemTotalCount;
       var images = _.difference(parseResult(res), $scope.imageResults);
       $scope.imageResults.push.apply($scope.imageResults, images);
     }, function () {
@@ -180,7 +180,7 @@ angular.module('contentful').controller('GettyDialogController', function($scope
     gettyImages.getImageDetails({
       ImageIds: [image.ImageId]
     }).then(function (res) {
-      $scope.imageDetail = res.data.Images[0];
+      $scope.imageDetail = res.data.result.Images[0];
     });
   };
 

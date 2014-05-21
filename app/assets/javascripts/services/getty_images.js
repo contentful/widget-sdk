@@ -51,19 +51,6 @@ angular.module('contentful').factory('gettyImagesFactory', function gettyImagesF
     return result.promise;
   };
 
-  service.getImageDownload = function (size, params) {
-    service.getImageDownloadAuthorizations(params).then(function (res) {
-      var requestHeader = {
-        CoordinationId: res.ResponseHeader.CoordinationId
-      };
-      var requestBody = {
-      };
-      service.createDownloadRequest(requestHeader, requestBody).then(function () {
-        
-      });
-    });
-  };
-
   function getNewToken (spaceId, result) {
     var path = 'getty_images/' + space.getOrganizationId();
     client.getIntegrationToken(path, function (err, data) {
@@ -89,12 +76,40 @@ angular.module('contentful').factory('gettyImagesFactory', function gettyImagesF
     return function (data, header) {
       var typeHeader = header('Content-Type');
       if (typeHeader && typeHeader.indexOf('application/json') >= 0) {
-        return JSON.parse(data)[operation + 'Result'];
+        data = JSON.parse(data);
+        return {
+          result: data[operation + 'Result'],
+          headers: data.ResponseHeaders
+        };
       } else {
         return data;
       }
     };
   }
+
+  service.getImageDownload = function (imageId, sizeKey) {
+    var params = {
+      ImageSizes: [{
+        ImageId: imageId,
+        SizeKey: sizeKey
+      }]
+    };
+    return service.getImageDownloadAuthorizations(params).then(function (res) {
+      var image = _.find(res.data.result.Images, function (image) {
+        return image.ImageId === imageId && image.SizeKey === sizeKey;
+      });
+      var downloadToken = image.Authorizations[0].DownloadToken;
+      var requestHeader = {
+        CoordinationId: res.data.headers.CoordinationId
+      };
+      var requestBody = {
+        DownloadItems: [
+          {DownloadToken: downloadToken}
+        ]
+      };
+      return service.createDownloadRequest(requestHeader, requestBody);
+    });
+  };
 
   return function (currentSpace) {
     space = currentSpace;
