@@ -66,21 +66,6 @@ describe('Entry List Controller', function () {
     $log.assertEmpty();
   }));
 
-  describe('loads ui config', function() {
-    it('initializes a non existing config', function() {
-      stubs.getUIConfig.callsArgWith(0, null);
-      createController();
-      expect(scope.uiConfig).toBeTruthy();
-    });
-
-    it('loads an existing config', function() {
-      var config = {entryListViews: [{views: [{}]}]};
-      stubs.getUIConfig.callsArgWith(0, null, config);
-      createController();
-      expect(scope.uiConfig).toBe(config);
-    });
-  });
-
   describe('loads a ui config preset', function() {
     var preset;
 
