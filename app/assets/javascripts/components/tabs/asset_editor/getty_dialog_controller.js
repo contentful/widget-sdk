@@ -71,7 +71,7 @@ angular.module('contentful').controller('GettyDialogController', function($scope
 
   function saveResults(res) {
     $scope.paginator.numEntries = res && res.data && res.data.result.ItemTotalCount;
-    $scope.imageResults = parseResult(res);
+    $scope.imageResults = prepareImageObjects(parseResult(res));
   }
 
   function parseResult(res) {
@@ -109,29 +109,32 @@ angular.module('contentful').controller('GettyDialogController', function($scope
     }[key];
   };
 
-  $scope.augmentImagesAsFiles = function (images) {
-    return _.map(images, function (image) {
-      var fileName = makeFileNameRe().exec(image.UrlPreview);
-      if(fileName){
-        image.fileName = fileName[1];
-        image.url = image.UrlPreview;
-        image.contentType = extensionsToMimetypes(fileName[2]);
-        image.details = {
-          image: calculateDimensions(image)
-        };
-      }
-      return image;
-    });
-  };
-
-  function extensionsToMimetypes(extension) {
-    return {
-      jpg: 'image/jpeg',
-      eps: 'application/postscript'
-    }[extension];
+  function augmentImageAsFile (image, srcAttr, baseDimSize) {
+    image = _.clone(image);
+    var fileName = makeFileNameRe().exec(image[srcAttr]);
+    if(fileName){
+      image.fileName = fileName[1];
+      image.url = image[srcAttr];
+      image.external = true;
+      image.baseDimSize = baseDimSize;
+      image.details = {
+        image: calculateDimensions(image, baseDimSize)
+      };
+    }
+    return image;
   }
 
-  function calculateDimensions(file) {
+  function prepareImageObjects (images) {
+    return _.map(images, function (image) {
+      return {
+        id: image.ImageId,
+        preview: augmentImageAsFile(image, 'UrlPreview', 340),
+        thumb: augmentImageAsFile(image, 'UrlThumb', 170)
+      };
+    });
+  }
+
+  function calculateDimensions(file, baseDimSize) {
     var sourceDims = {
       width: parseInt(file.MaxImageResolutionWidth, 10),
       height: parseInt(file.MaxImageResolutionHeight, 10)
@@ -140,7 +143,7 @@ angular.module('contentful').controller('GettyDialogController', function($scope
     var baseDim = sourceDims.width >= sourceDims.height ? 'width' : 'height';
     var relativeDim = sourceDims.width < sourceDims.height ? 'width' : 'height';
     var dims = {};
-    dims[baseDim] = 300;
+    dims[baseDim] = baseDimSize;
     var ratio = (dims[baseDim]*100)/sourceDims[baseDim];
     dims[relativeDim] = Math.ceil(sourceDims[relativeDim]*(ratio*0.01));
     return dims;
@@ -167,7 +170,10 @@ angular.module('contentful').controller('GettyDialogController', function($scope
       }
       */
       $scope.paginator.numEntries = res && res.data && res.data.result.ItemTotalCount;
-      var images = _.difference(parseResult(res), $scope.imageResults);
+      var images = _.difference(
+        prepareImageObjects(parseResult(res)),
+        $scope.imageResults
+      );
       $scope.imageResults.push.apply($scope.imageResults, images);
     }, function () {
       $scope.paginator.page--;

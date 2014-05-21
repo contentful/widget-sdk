@@ -56,10 +56,10 @@
           %button(ng-click="sortBy('default')") Best Match
           %button(ng-click="sortBy('MostRecent')") Most Recent
           %button(ng-click="sortBy('MostPopular')") Most Popular
-        .image-result(ng-repeat="image in augmentImagesAsFiles(imageResults) track by image.ImageId")
-          .file-preview(cf-file-preview="" file="image" preview-size="600")
-            .cf-thumbnail(file="image" size="300" ng-click="showImageDetail(image)")
-          .metadata
+        .image-result(ng-repeat="image in imageResults track by image.id")
+          .file-preview(cf-file-preview="" file="image.preview" preview-size="{{image.preview.baseDimSize}}")
+            .cf-thumbnail(file="image.thumb" size="{{image.thumb.baseDimSize}}" ng-click="showImageDetail(image.thumb)")
+          -#.metadata
             %p {{image.Title}}
             %p \#{{image.ImageId}}
             %p(ng-if="image.ApplicableProductOfferings.length > 0")
