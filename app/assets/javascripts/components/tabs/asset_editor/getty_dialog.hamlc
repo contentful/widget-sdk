@@ -59,29 +59,13 @@
         .image-result(ng-repeat="image in imageResults track by image.id")
           .file-preview(cf-file-preview="" file="image.preview" preview-size="{{image.preview.baseDimSize}}")
             .cf-thumbnail(file="image.thumb" size="{{image.thumb.baseDimSize}}" ng-click="showImageDetail(image.thumb)")
-          -#.metadata
-            %p {{image.Title}}
-            %p \#{{image.ImageId}}
-            %p(ng-if="image.ApplicableProductOfferings.length > 0")
-              %span(ng-repeat="offering in image.ApplicableProductOfferings") {{productOfferings(offering)}}
-            %p {{image.ImageFamily}}
-            %p {{licensingModel(image.LicensingModel)}}
-            %p {{image.CollectionName}}
+          .getty-metadata(image="image.thumb")
         .loading(ng-hide="paginator.atLast()")
 
       .image-view(ng-show="imageDetail")
         %a(ng-click="imageDetail=null") Back
         %img(ng-src="{{imageDetail.UrlPreview}}")
-        .metadata
-          %p {{imageDetail.Title}}
-          %p \#{{imageDetail.ImageId}}
-          %p(ng-if="imageDetail.ApplicableProductOfferings.length > 0")
-            %span(ng-repeat="offering in imageDetail.ApplicableProductOfferings") {{productOfferings(offering)}}
-          %p {{imageDetail.ImageFamily}}
-          %p {{licensingModel(imageDetail.LicensingModel)}}
-          %p {{imageDetail.CollectionName}}
-          %p {{imageDetail.Artist}}
-          %p {{imageDetail.ReleaseMessage}}
+        .getty-metadata(image="imageDetail" full)
         .image-sizes
           %table
             %thead
