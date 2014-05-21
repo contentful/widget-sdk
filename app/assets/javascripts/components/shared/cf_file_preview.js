@@ -88,7 +88,8 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
         if ($preview || isInvalid(scope.width) || isInvalid(scope.height)) return;
         $($window).on('resize', resizeHandler);
         setSizes();
-        $preview = $compile('<img ng-src="{{file.url}}?w={{width}}&h={{height}}" class="cf-file-preview" style="display:block; position: fixed; width: {{width}}px; height: {{height}}px; background: white">')(scope);
+        var sizeQueryString = scope.file.external ? '' : '?w={{width}}&h={{height}}';
+        $preview = $compile('<img ng-src="{{file.url}}'+sizeQueryString+'" class="cf-file-preview" style="display:block; position: fixed; width: {{width}}px; height: {{height}}px; background: white">')(scope);
         $document.find('body').append($preview);
         scope.$digest();
 

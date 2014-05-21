@@ -83,20 +83,25 @@ angular.module('contentful').directive('cfThumbnail', function () {
       };
 
       $scope.hasPreview = function(){
-        return $scope.file && mimetype.hasPreview(
-          mimetype.getExtension($scope.file.fileName),
-          $scope.file.contentType
-        ) && hasDimensions();
+        return $scope.file && ($scope.file.external || hasPreview() && hasDimensions());
       };
 
       $scope.thumbnailUrl = function () {
         if ($scope.file && $scope.file.url && $scope.width && $scope.height) {
-          return '' + $scope.file.url + '?w=' + $scope.width + '&h=' + $scope.height;
+          var sizeQueryString = $scope.file.external ? '' : '?w=' + $scope.width + '&h=' + $scope.height;
+          return '' + $scope.file.url + sizeQueryString;
         }
       };
 
       function hasDimensions () {
         return 0 < $scope.width && 0 < $scope.height;
+      }
+
+      function hasPreview() {
+        return mimetype.hasPreview(
+          mimetype.getExtension($scope.file.fileName),
+          $scope.file.contentType
+        );
       }
 
     }]
