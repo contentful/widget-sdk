@@ -1,12 +1,12 @@
 'use strict';
-angular.module('contentful').directive('cfReorderPresets', function(){
+angular.module('contentful').directive('cfReorderViews', function(){
   return {
     link: function(scope, elem, attr){
       elem.sortable({
         axis: 'y',
         cancel: '.all-filter',
         cursor: 'move',
-        disable: !scope.$eval(attr.cfReorderPresets),
+        disable: !scope.$eval(attr.cfReorderViews),
         items: 'li',
         start: function (ev, ui) {
           ui.item.startIndex = ui.item.index();
@@ -23,7 +23,7 @@ angular.module('contentful').directive('cfReorderPresets', function(){
         }
       });
 
-      scope.$watch(attr.cfReorderPresets, function (can) {
+      scope.$watch(attr.cfReorderViews, function (can) {
         elem.sortable(can ? 'enable' : 'disable');
       });
     }

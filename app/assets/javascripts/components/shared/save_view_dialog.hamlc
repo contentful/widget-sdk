@@ -8,12 +8,12 @@
         .form-field
           %label Title
           .form-controls
-            %input(type="text" name="title" ng-model="tab.params.preset.title" required="")
-        .form-field(ng-hide="tab.params.preset.searchTerm | isEmpty")
+            %input(type="text" name="title" ng-model="tab.params.view.title" required="")
+        .form-field(ng-hide="tab.params.view.searchTerm | isEmpty")
           %label Search terms
           .form-controls
-            %p "{{tab.params.preset.searchTerm}}"
-        .form-field(ng-show="tab.params.preset.contentTypeId")
+            %p "{{tab.params.view.searchTerm}}"
+        .form-field(ng-show="tab.params.view.contentTypeId")
           %label Content Type
           .form-controls
             %p {{typeNameOr('')}}
@@ -21,10 +21,10 @@
           %label Displayed columns
           .form-controls
             %p {{getFieldList()}}
-        .form-field(ng-show="tab.params.preset.order.fieldId")
+        .form-field(ng-show="tab.params.view.order.fieldId")
           %label Ordered
           .form-controls
-            %p {{orderDescription(tab.params.preset)}}
+            %p {{orderDescription(tab.params.view)}}
       .buttons
         %button.default-button.primary-button.confirm(ng-click="dialog.confirm()" ng-disabled="saveViewForm.$invalid")
           Save View

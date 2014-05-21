@@ -1,6 +1,6 @@
 .dropdown-btn
   %button.dropdown-toggle.default-button(
-    ng-disabled="!tab.params.preset.contentTypeId"
+    ng-disabled="!tab.params.view.contentTypeId"
     tooltip="Select visible columns" tooltip-placement="top" tooltip-container=".view-customizer")
     %i.ss-columns.button-icon
     %i.ss-dropdown.button-icon

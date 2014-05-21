@@ -11,8 +11,8 @@ angular.module('contentful').controller('DisplayedFieldsController', function Di
   }
 
   $scope.refreshDisplayFields = function () {
-    var displayedFieldIds = $scope.tab.params.preset.displayedFieldIds;
-    var fields = getAvailableFields($scope.tab.params.preset.contentTypeId);
+    var displayedFieldIds = $scope.tab.params.view.displayedFieldIds;
+    var fields = getAvailableFields($scope.tab.params.view.contentTypeId);
 
     $scope.displayedFields = _.map(displayedFieldIds, function (id) {
       return _.find(fields, {id: id});
@@ -24,18 +24,18 @@ angular.module('contentful').controller('DisplayedFieldsController', function Di
     }
   };
 
-  $scope.$watch('[tab.params.preset.contentTypeId, tab.params.preset.displayedFieldIds]', $scope.refreshDisplayFields, true);
+  $scope.$watch('[tab.params.view.contentTypeId, tab.params.view.displayedFieldIds]', $scope.refreshDisplayFields, true);
 
   $scope.resetDisplayFields = function () {
-    $scope.tab.params.preset.displayedFieldIds = _.map($scope.systemFields, 'id');
+    $scope.tab.params.view.displayedFieldIds = _.map($scope.systemFields, 'id');
   };
 
   $scope.addDisplayField = function (field) {
-    $scope.tab.params.preset.displayedFieldIds.push(field.id);
+    $scope.tab.params.view.displayedFieldIds.push(field.id);
   };
 
   $scope.removeDisplayField = function (field) {
-    _.remove($scope.tab.params.preset.displayedFieldIds, function (id) {
+    _.remove($scope.tab.params.view.displayedFieldIds, function (id) {
       return id === field.id;
     });
   };

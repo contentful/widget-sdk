@@ -29,7 +29,7 @@ angular.module('contentful').directive('viewCustomizer', function(){
           var newIndex = getIndex(ui);
           delete ui.item.startIndex;
           scope.$apply(function(){
-            var list = scope.tab.params.preset.displayedFieldIds;
+            var list = scope.tab.params.view.displayedFieldIds;
             list.splice(newIndex, 0, list.splice(oldIndex, 1)[0]);
           });
         }

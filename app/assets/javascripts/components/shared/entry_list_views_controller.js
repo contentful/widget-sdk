@@ -31,7 +31,7 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     authorField
   ];
 
-  function getBlankPreset() {
+  function getBlankView() {
     return {
       title: null,
       searchTerm: null,
@@ -51,20 +51,20 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     }
   });
 
-  var blankPreset = getBlankPreset();
+  var blankView = getBlankView();
 
-  $scope.tab.params.preset = $scope.tab.params.preset || getBlankPreset();
+  $scope.tab.params.view = $scope.tab.params.view || getBlankView();
 
   $scope.fieldIsSortable = function (field) {
     return _.contains(SORTABLE_TYPES, field.type) && field.id !== 'author';
   };
 
   $scope.isOrderField = function (field) {
-    return $scope.tab.params.preset.order.fieldId === field.id;
+    return $scope.tab.params.view.order.fieldId === field.id;
   };
 
   function setOrderField(field) {
-    $scope.tab.params.preset.order = {
+    $scope.tab.params.view.order = {
       fieldId: field.id,
       direction: DEFAULT_ORDER_DIRECTION
     };
@@ -77,7 +77,7 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
 
   $scope.orderColumnBy = function (field) {
     if(!$scope.isOrderField(field)) setOrderField(field);
-    $scope.tab.params.preset.order.direction = switchOrderDirection($scope.tab.params.preset.order.direction);
+    $scope.tab.params.view.order.direction = switchOrderDirection($scope.tab.params.view.order.direction);
     $scope.resetEntries(true);
   };
 
@@ -85,8 +85,8 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     return direction === 'ascending' ? 'descending' : 'ascending';
   }
 
-  $scope.$watch('tab.params.preset.displayedFieldIds', function (displayedFieldIds) {
-    if(!_.contains(displayedFieldIds, $scope.tab.params.preset.order.fieldId))
+  $scope.$watch('tab.params.view.displayedFieldIds', function (displayedFieldIds) {
+    if(!_.contains(displayedFieldIds, $scope.tab.params.view.order.fieldId))
       $scope.setOrderField(updatedAtField);
   }, true);
 
@@ -94,40 +94,40 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     modalDialog.open({
       template: 'save_view_dialog',
       scope: $scope
-    }).then(savePreset);
+    }).then(saveView);
   };
 
-  function savePreset() {
-    $scope.tab.params.preset.id = random.id();
-    $scope.uiConfig.entryListViews[0].views.push($scope.tab.params.preset);
+  function saveView() {
+    $scope.tab.params.view.id = random.id();
+    $scope.uiConfig.entryListViews[0].views.push($scope.tab.params.view);
     $scope.saveEntryListViews();
   }
 
-  $scope.clearPreset = function () {
-    $scope.tab.params.preset = getBlankPreset();
+  $scope.clearView = function () {
+    $scope.tab.params.view = getBlankView();
     $scope.resetEntries(true);
   };
 
-  $scope.loadPreset = function (preset) {
-    $scope.tab.params.preset = _.cloneDeep(preset);
-    $scope.tab.params.preset.title = '' + preset.title + ' (copy)';
+  $scope.loadView = function (view) {
+    $scope.tab.params.view = _.cloneDeep(view);
+    $scope.tab.params.view.title = '' + view.title + ' (copy)';
     $scope.resetEntries(true);
   };
 
-  $scope.orderDescription = function (preset) {
-    var field = _.find($scope.displayedFields, {id: preset.order.fieldId});
-    var direction = preset.order.direction;
+  $scope.orderDescription = function (view) {
+    var field = _.find($scope.displayedFields, {id: view.order.fieldId});
+    var direction = view.order.direction;
     return '' + direction + ' by ' + field.name;
   };
 
-  $scope.deletePreset = function (preset) {
+  $scope.deleteView = function (view) {
     modalDialog.open({
       title: 'Delete View?',
-      message: 'Do you really want to delete the View "'+preset.title+'"?',
+      message: 'Do you really want to delete the View "'+view.title+'"?',
       confirmLabel: 'Delete View',
       scope: $scope
     }).then(function () {
-      _.remove($scope.uiConfig.entryListViews[0].views, {id: preset.id});
+      _.remove($scope.uiConfig.entryListViews[0].views, {id: view.id});
       return $scope.saveEntryListViews();
     });
   };
@@ -142,10 +142,10 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     return _.map($scope.displayedFields, 'name').join(', ');
   };
 
-  $scope.presetIsActive = function (preset){
-    var p = $scope.tab.params.preset;
-    if (!preset) preset = blankPreset;
-    return p.id === preset.id;
+  $scope.viewIsActive = function (view){
+    var p = $scope.tab.params.view;
+    if (!view) view = blankView;
+    return p.id === view.id;
   };
 
   function generateDefaultViews() {
