@@ -53,9 +53,12 @@ angular.module('contentful').controller('GettyDialogController', function($scope
       }
     };
 
-    if(params.editorial) searchParams.Filter.EditorialSegments = [ capitalize(params.editorial) ];
-    if(params.excludeNudity) searchParams.Filter.ExcludeNudity = true;
-    if(params.vectorIllustrations) searchParams.Filter.FileTypes.push('eps');
+    if(params.editorial)
+      searchParams.Filter.EditorialSegments = [ capitalize(params.editorial) ];
+    if(params.excludeNudity)
+      searchParams.Filter.ExcludeNudity = true;
+    if(params.vectorIllustrations)
+      searchParams.Filter.FileTypes.push('eps');
     if(params.sorting) {
       if(params.families.editorial && !params.families.creative)
         searchParams.ResultOptions.EditorialSortOrder = params.sorting;
