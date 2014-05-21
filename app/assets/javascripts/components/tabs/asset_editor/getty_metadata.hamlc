@@ -1,11 +1,16 @@
-%p {{image.Title}}
+%h4 {{image.Title}}
 %p \#{{image.ImageId}}
 %p(ng-if="image.ApplicableProductOfferings.length > 0")
   %span(ng-repeat="offering in image.ApplicableProductOfferings") {{productOfferings(offering)}}
-%p {{image.ImageFamily}}
-%p {{licensingModel(image.LicensingModel)}}
-%p {{image.CollectionName}}
-%p(ng-if="fullMetadata") {{image.Artist}}
-%p(ng-if="fullMetadata") {{image.ReleaseMessage}}
+%p Family:
+  %span {{image.ImageFamily}}
+%p Licensing: 
+  %span {{licensingModel(image.LicensingModel)}}
+%p Collection:
+  %span {{image.CollectionName}}
+%p(ng-if="fullMetadata")
+  %span By: {{image.Artist}}
+%p(ng-if="fullMetadata") Release:
+  %span {{image.ReleaseMessage}}
 
 

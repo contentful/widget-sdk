@@ -63,8 +63,9 @@
         .loading(ng-hide="paginator.atLast()")
 
       .image-view(ng-show="imageDetail")
-        %a(ng-click="imageDetail=null") Back
-        %img(ng-src="{{imageDetail.UrlPreview}}")
+        %a.back(ng-click="imageDetail=null") Back
+        .preview
+          %img(ng-src="{{imageDetail.UrlPreview}}")
         .getty-metadata(image="imageDetail" full)
         .image-sizes
           %table

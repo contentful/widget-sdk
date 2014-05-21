@@ -28,5 +28,36 @@
 
   .image-result
     float: left
-    width: 33%
-    height: 300px
+    width: 31%
+    margin-right: 3.5%
+    height: 400px
+  // +4 because of an existing previous sibling
+  .image-result:nth-child(3n+4)
+    margin-right: 0
+
+  .cf-thumbnail
+    text-align: center
+    line-height: 185px
+    .thumbnail
+      vertical-align: middle
+
+  .image-view
+    position: relative
+    .getty-metadata, .preview
+      float: left
+      margin-top: 30px
+    .preview
+      width: 40%
+    .getty-metadata
+      width: 60%
+    .back
+      position: absolute
+      top: 0
+      left: 0
+
+.getty-metadata
+  //p
+    color: black
+  span
+    color: black
+    //color: $medium-gray
