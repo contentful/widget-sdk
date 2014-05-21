@@ -90,16 +90,17 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
       $scope.setOrderField(updatedAtField);
   }, true);
 
-  $scope.openSaveView = function () {
+  $scope.openSaveView = function (folder) {
     modalDialog.open({
       template: 'save_view_dialog',
       scope: $scope
-    }).then(saveView);
+    }).then(_.partial(saveView, folder));
   };
 
-  function saveView() {
+  function saveView(folder) {
+    // TODO handle no folder case
     $scope.tab.params.view.id = random.id();
-    $scope.uiConfig.entryListViews[0].views.push($scope.tab.params.view);
+    folder.views.push($scope.tab.params.view);
     $scope.saveEntryListViews();
   }
 
@@ -149,16 +150,10 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
   };
 
   function generateDefaultViews() {
-    var views = [];
-    views.push(
-      {title: 'Status: Published', searchTerm: 'status:published', id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
-      {title: 'Status: Changed',   searchTerm: 'status:changed'  , id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
-      {title: 'Status: Draft',     searchTerm: 'status:draft'    , id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
-      {title: 'Status: Archived',  searchTerm: 'status:archived' , id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()}
-    );
+    var contentTypes = [];
     $scope.waitFor('spaceContext.publishedContentTypes.length > 0', function () {
       _.each($scope.spaceContext.publishedContentTypes, function (contentType) {
-        views.push({
+        contentTypes.push({
           title: 'Content Type: '+contentType.data.name,
           contentTypeId: contentType.getId(),
           id: random.id(),
@@ -167,11 +162,23 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
         });
       });
     });
-    return [{
-      id: random.id(),
-      title: 'Saved Views',
-      views: views
-    }];
+    return [
+      {
+        id: random.id(),
+        title: 'By Status',
+        views: [
+          {title: 'Status: Published', searchTerm: 'status:published', id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
+          {title: 'Status: Changed',   searchTerm: 'status:changed'  , id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
+          {title: 'Status: Draft',     searchTerm: 'status:draft'    , id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
+          {title: 'Status: Archived',  searchTerm: 'status:archived' , id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()}
+        ]
+      },
+      {
+        id: random.id(),
+        title: 'By Content Type',
+        views: contentTypes
+      }
+    ];
 
     function makeOrder() {
       return { fieldId: updatedAtField.id, direction: DEFAULT_ORDER_DIRECTION };

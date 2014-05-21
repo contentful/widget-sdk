@@ -1,0 +1,19 @@
+%header Views
+%ul.filter-list
+  %li.filter-list-item(ng-class="{active: viewIsActive()}" ng-click="clearView()")
+    %a.filter-list-title All
+
+.view-folder(ng-repeat="folder in uiConfig.entryListViews track by folder.id")
+  %header
+    %a.header-toggle.toggle-collapse.open(
+      ng-if="canEditUiConfig"
+      cf-click-local="toggleFolder(folder)" 
+      ng-class="{open: isFolderOpen(folder)}") ▶
+    {{folder.title}}
+  %ul.filter-list(ng-show="isFolderOpen(folder)")
+    %li.filter-list-item(ng-repeat="view in folder.views track by view.id" ng-class="{active: viewIsActive(view)}" ng-click="loadView(view)")
+      %span.filter-list-title {{view.title}}
+      %a.filter-list-delete(cf-click-local="deleteView(view)" ng-show="canEditUiConfig")
+    %li.filter-list-item(ng-click="openSaveView(folder)" ng-show="canEditUiConfig")
+      %span.filter-list-title + Save View
+
