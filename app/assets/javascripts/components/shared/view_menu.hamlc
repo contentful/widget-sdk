@@ -3,4 +3,4 @@
     cf-view-folder=""
     ng-class="{'allow-drag': editable(folder)}")
 %button.default-button(ng-click="addFolder()") Add Folder
-%button.default-button Add View
+%button.default-button(ng-click="addViewToDefault()") Add View

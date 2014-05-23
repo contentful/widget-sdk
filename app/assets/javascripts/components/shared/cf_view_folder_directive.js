@@ -8,17 +8,6 @@ angular.module('contentful').directive('cfViewFolder', function(random, $timeout
         $scope.regularFolder = id !== 'default';
       });
 
-      $scope.addViewToFolder = function (folder) {
-        var view = $scope.tab.params.view;
-        view.id = random.id();
-        folder.views.push(view);
-        $scope.saveEntryListViews();
-
-        $timeout(function () {
-          $scope.$broadcast('startInlineEditor', view);
-        });
-      };
-      
       $scope.deleteViewFromFolder = function (view, folder) {
         modalDialog.open({
           title: 'Delete View?',
@@ -27,6 +16,9 @@ angular.module('contentful').directive('cfViewFolder', function(random, $timeout
           scope: $scope
         }).then(function () {
           _.remove(folder.views, {id: view.id});
+          if (folder.id === 'default' && _.isEmpty(folder.views)) {
+            _.remove($scope.folders, {id: 'default'});
+          }
           return $scope.saveEntryListViews();
         });
       };

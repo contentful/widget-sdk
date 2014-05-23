@@ -55,6 +55,30 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
         });
       };
 
+      $scope.addViewToDefault = function () {
+        var defaultFolder = _.find($scope.folders, {id: 'default'});
+        if (!defaultFolder) {
+          defaultFolder = {
+            id: 'default',
+            title: 'Views',
+            views: []
+          };
+          $scope.folders.unshift(defaultFolder);
+        }
+        $scope.addViewToFolder(defaultFolder);
+      };
+
+      $scope.addViewToFolder = function (folder) {
+        var view = $scope.tab.params.view;
+        view.id = random.id();
+        folder.views.push(view);
+        $scope.saveEntryListViews();
+
+        $timeout(function () {
+          $scope.$broadcast('startInlineEditor', view);
+        });
+      };
+
       $scope.$watch('canEditUiConfig', function (can) {
         $scope.viewMenuEditable = can;
         $scope.viewSortOptions.disabled = !can;
