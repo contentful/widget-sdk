@@ -5,12 +5,17 @@
 
 .view-folders(ui-sortable="folderSortOptions" ng-model="uiConfig.entryListViews")
   .view-folder(ng-repeat="folder in uiConfig.entryListViews track by folder.id")
-    %header(ng-class="{'header-draggable': canEditUiConfig}")
-      %a.header-toggle.toggle-collapse.open(
-        ng-if="canEditUiConfig"
-        cf-click-local="toggleFolder(folder)" 
-        ng-class="{open: isFolderOpen(folder)}") ▶
-      {{folder.title}}
+    %header.folder-header(ng-class="{'header-draggable': canEditUiConfig}")
+      .folder-name {{folder.title}}
+      .folder-header-icons(ng-if="canEditUiConfig")
+        %i.ss-write
+        &nbsp;
+        %i.ss-delete
+      .folder-toggle-icon
+        %a.header-toggle.toggle-collapse.open(
+          ng-if="canEditUiConfig"
+          cf-click-local="toggleFolder(folder)" 
+          ng-class="{open: isFolderOpen(folder)}") ▶
     %ul.filter-list(ui-sortable="viewSortOptions" ng-model="folder.views" ng-show="isFolderOpen(folder)")
       %li.filter-list-item(ng-repeat="view in folder.views track by view.id" ng-class="{active: viewIsActive(view)}" ng-click="loadView(view)")
         %span.filter-list-title {{view.title}}
@@ -19,3 +24,4 @@
       %li.filter-list-item(ng-click="openSaveView(folder)" ng-show="canEditUiConfig")
         %span.filter-list-title + Save View
 
+%span(cf-inline-editor-enter="'New Folder'" cf-inline-editor-submit="createFolder(value)") Add Folder

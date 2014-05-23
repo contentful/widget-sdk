@@ -25,11 +25,30 @@
     padding: 0 $left-nav-padding 7px
     font-size: 11px
     text-transform: uppercase
-  .header-toggle
-    float: right
-  .header-draggable
-    cursor: move
-    cursor: -webkit-grab
+
+.folder-header
+  +flexbox
+.folder-name
+  overflow-x: hidden
+  white-space: nowrap
+  text-overflow: ellipsis
+.folder-header-icons
+  text-align: center
+  opacity: 0
+  +flex(0 0 4em)
+  i
+    cursor: pointer
+    color: silver
+  i:hover
+    color: inherit
+.folder-header:hover .folder-header-icons
+  opacity: 1
+.folder-toggle-icon
+  text-align: right
+  +flex(1 1 1em)
+.header-draggable
+  cursor: move
+  cursor: -webkit-grab
 
 .with-left-nav
   +stretch-x($left-nav-width, 0)
