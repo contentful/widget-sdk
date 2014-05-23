@@ -90,20 +90,6 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
       $scope.setOrderField(updatedAtField);
   }, true);
 
-  $scope.openSaveView = function (folder) {
-    modalDialog.open({
-      template: 'save_view_dialog',
-      scope: $scope
-    }).then(_.partial(saveView, folder));
-  };
-
-  function saveView(folder) {
-    // TODO handle no folder case
-    $scope.tab.params.view.id = random.id();
-    folder.views.push($scope.tab.params.view);
-    $scope.saveEntryListViews();
-  }
-
   $scope.clearView = function () {
     $scope.tab.params.view = getBlankView();
     $scope.resetEntries(true);
