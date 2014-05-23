@@ -154,7 +154,7 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     $scope.waitFor('spaceContext.publishedContentTypes.length > 0', function () {
       _.each($scope.spaceContext.publishedContentTypes, function (contentType) {
         contentTypes.push({
-          title: 'Content Type: '+contentType.data.name,
+          title: contentType.data.name,
           contentTypeId: contentType.getId(),
           id: random.id(),
           order: makeOrder(),
@@ -167,10 +167,10 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
         id: random.id(),
         title: 'By Status',
         views: [
-          {title: 'Status: Published', searchTerm: 'status:published', id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
-          {title: 'Status: Changed',   searchTerm: 'status:changed'  , id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
-          {title: 'Status: Draft',     searchTerm: 'status:draft'    , id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
-          {title: 'Status: Archived',  searchTerm: 'status:archived' , id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()}
+          {title: 'Published', searchTerm: 'status:published', id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
+          {title: 'Changed',   searchTerm: 'status:changed'  , id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
+          {title: 'Draft',     searchTerm: 'status:draft'    , id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
+          {title: 'Archived',  searchTerm: 'status:archived' , id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()}
         ]
       },
       {
