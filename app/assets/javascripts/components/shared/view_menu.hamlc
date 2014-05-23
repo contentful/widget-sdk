@@ -1,11 +1,11 @@
-%header Views
+%header.filter-list-header Views
 %ul.filter-list
   %li.filter-list-item(ng-class="{active: viewIsActive()}" ng-click="clearView()")
     %a.filter-list-title All
 
 .view-folders(ui-sortable="folderSortOptions" ng-model="folders")
   .view-folder(ng-repeat="folder in folders track by folder.id")
-    %header.folder-header(ng-class="{'header-draggable': canEditUiConfig}")
+    %header.filter-list-header.folder-header(ng-class="{'header-draggable': canEditUiConfig}")
       .folder-name(cf-inline-editor="folder" ng-model="folder.title" ng-change="nameChanged()")
       .folder-header-icons(ng-if="canEditUiConfig")
         %i.ss-write(ng-click="editFolderName(folder)")
