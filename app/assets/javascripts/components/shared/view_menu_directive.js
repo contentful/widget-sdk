@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('viewMenu', function(modalDialog){
+angular.module('contentful').directive('viewMenu', function(modalDialog, random, $timeout){
   return {
     restrict: 'A',
     template: JST['view_menu'](),
@@ -24,6 +24,19 @@ angular.module('contentful').directive('viewMenu', function(modalDialog){
 
       $scope.editFolderName = function (folder) {
         $scope.$broadcast('startInlineEditor', folder);
+      };
+
+      $scope.addFolder = function () {
+        var folder = {
+          title: 'New Folder',
+          id: random.id(),
+          views: []
+        };
+        $scope.folders.push(folder);
+        $scope.saveEntryListViews();
+        $timeout(function () {
+          $scope.$broadcast('startInlineEditor', folder);
+        });
       };
 
       $scope.deleteFolder = function (folder) {

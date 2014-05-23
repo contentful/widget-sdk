@@ -121,18 +121,6 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     return '' + direction + ' by ' + field.name;
   };
 
-  $scope.deleteView = function (view) {
-    modalDialog.open({
-      title: 'Delete View?',
-      message: 'Do you really want to delete the View "'+view.title+'"?',
-      confirmLabel: 'Delete View',
-      scope: $scope
-    }).then(function () {
-      _.remove($scope.uiConfig.entryListViews[0].views, {id: view.id});
-      return $scope.saveEntryListViews();
-    });
-  };
-
   $scope.saveEntryListViews = function () {
     return $scope.saveUiConfig().catch(function () {
       notification.serverError('Error trying to save view');
@@ -143,6 +131,7 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     return _.map($scope.displayedFields, 'name').join(', ');
   };
 
+  //TODO move to ViewMenuController
   $scope.viewIsActive = function (view){
     var p = $scope.tab.params.view;
     if (!view) view = blankView;

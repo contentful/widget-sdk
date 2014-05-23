@@ -20,8 +20,9 @@
       %li.filter-list-item(ng-repeat="view in folder.views track by view.id" ng-class="{active: viewIsActive(view)}" ng-click="loadView(view)")
         %span.filter-list-title {{view.title}}
         %a.filter-list-delete(cf-click-local="deleteView(view, folder)" ng-show="canEditUiConfig")
-    %ul.filter-list
+    %ul.filter-list(ng-show="isFolderOpen(folder)")
       %li.filter-list-item(ng-click="openSaveView(folder)" ng-show="canEditUiConfig")
         %span.filter-list-title + Save View
 
-%span(cf-inline-editor-enter="'New Folder'" cf-inline-editor-submit="createFolder(value)") Add Folder
+%button.default-button(ng-click="addFolder()") Add Folder
+%button.default-button Add View
