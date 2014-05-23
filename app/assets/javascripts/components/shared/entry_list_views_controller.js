@@ -47,7 +47,7 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
 
   $scope.$watch('uiConfig', function (uiConfig) {
     if (uiConfig && !uiConfig.entryListViews) {
-      uiConfig.entryListViews = generateDefaultViews();
+      uiConfig.entryListViews = generateDefaultViews(true);
     }
   });
 
@@ -129,19 +129,16 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     return p.id === view.id;
   };
 
-  function generateDefaultViews() {
-    var contentTypes = [];
-    $scope.waitFor('spaceContext.publishedContentTypes.length > 0', function () {
-      _.each($scope.spaceContext.publishedContentTypes, function (contentType) {
-        contentTypes.push({
-          title: contentType.data.name,
-          contentTypeId: contentType.getId(),
-          id: random.id(),
-          order: makeOrder(),
-          displayedFieldIds: fieldIds()
-        });
+  function generateDefaultViews(wait) {
+    var contentTypes;
+    if (wait) {
+      contentTypes = [];
+      $scope.waitFor('spaceContext.publishedContentTypes.length > 0', function () {
+        contentTypes.push.apply(contentTypes, contentTypeViews());
       });
-    });
+    } else {
+      contentTypes = contentTypeViews();
+    }
     return [
       {
         id: 'default',
@@ -169,6 +166,18 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
         views: contentTypes
       }
     ];
+
+    function contentTypeViews() {
+      return _.map($scope.spaceContext.publishedContentTypes, function (contentType) {
+        return {
+          title: contentType.data.name,
+          contentTypeId: contentType.getId(),
+          id: random.id(),
+          order: makeOrder(),
+          displayedFieldIds: fieldIds()
+        };
+      });
+    }
 
     function makeOrder() {
       return { fieldId: updatedAtField.id, direction: DEFAULT_ORDER_DIRECTION };
