@@ -55,6 +55,11 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
 
   $scope.tab.params.view = $scope.tab.params.view || getBlankView();
 
+  $scope.resetViews = function () {
+    $scope.uiConfig.entryListViews = generateDefaultViews();
+    $scope.saveEntryListViews();
+  };
+
   $scope.fieldIsSortable = function (field) {
     return _.contains(SORTABLE_TYPES, field.type) && field.id !== 'author';
   };
@@ -150,7 +155,7 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
       },
       {
         id: random.id(),
-        title: 'By Status',
+        title: 'Status',
         views: [
           {title: 'Published', searchTerm: 'status:published', id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
           {title: 'Changed',   searchTerm: 'status:changed'  , id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
@@ -160,7 +165,7 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
       },
       {
         id: random.id(),
-        title: 'By Content Type',
+        title: 'Content Type',
         views: contentTypes
       }
     ];

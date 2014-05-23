@@ -1,6 +1,29 @@
+.view-folders-empty(ng-if="folders | isEmpty")
+  %header.filter-list-header Views
+  %div(ng-if="!viewMenuEditable")
+    %p.filter-list-notice <strong>There are no Views configured.</strong>
+    %p.filter-list-notice
+      Here you usually see a list of Views your administrator has set up.
+    %p.filter-list-notice
+      However, currently there are no Views set up.
+  %div(ng-if="viewMenuEditable")
+    %p.filter-list-notice <strong>You currently do not have any Views configured.</strong>
+    %p.filter-list-notice
+      You can either start <em>adding Folders</em>, <em>save the current View</em> or just
+      let our system <em>restore the default Views</em>, based on available Content Types
+      and Entry status.
+    %button.default-button.primary-button.restore-views-button(ng-click="resetViews()")
+      Restore default Views
+
 .view-folders(ui-sortable="folderSortOptions" ng-model="folders")
   .view-folder(ng-repeat="folder in folders track by folder.id"
     cf-view-folder=""
     ng-class="{'allow-drag': editable(folder)}")
-%button.default-button(ng-click="addFolder()") Add Folder
-%button.default-button(ng-click="addViewToDefault()") Add View
+
+.view-menu-buttons(ng-if="viewMenuEditable")
+  %button.default-button.slim-button(ng-click="addFolder()")
+    %i.ss-folder.button-icon
+    Add Folder
+  %button.default-button.slim-button(ng-click="addViewToDefault()")
+    %i.ss-plus.button-icon
+    Add View

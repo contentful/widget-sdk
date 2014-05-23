@@ -2,6 +2,8 @@
 .filter-list
   +plain-list
   margin-bottom: 10px
+.filter-list-nogap
+  margin-top: -10px
 .filter-list-item
   position: relative
   font-size: 12px
@@ -23,6 +25,18 @@
 .filter-list-item.active:hover .filter-list-title
   text-decoration: none
   color: $dark-gray
+
+.filter-list-notice
+  padding: 4px $left-nav-padding
+
+.restore-views-button
+  width: 100%
+
+.view-menu-buttons
+  +flexbox
+  margin-top: 4em
+  button
+    +flex(1)
 
 .filter-list-header
   color: $medium-gray
