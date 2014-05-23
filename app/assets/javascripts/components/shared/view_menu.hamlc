@@ -1,26 +1,6 @@
 .view-folders(ui-sortable="folderSortOptions" ng-model="folders")
-  .view-folder(ng-repeat="folder in folders track by folder.id" ng-class="{'allow-drag': editable(folder)}")
-    %header.filter-list-header.filter-list-row(ng-class="{'filter-list-row-draggable': canEditUiConfig && editable(folder)}")
-      .filter-list-row-main.filter-list-row-truncate(cf-inline-editor="folder" ng-model="folder.title" ng-change="nameChanged()")
-      .filter-list-row-middle.filter-list-row-hover(ng-if="canEditUiConfig && editable(folder)")
-        %i.ss-write(ng-click="editName(folder)")
-        &nbsp;
-        %i.ss-delete(ng-click="deleteFolder(folder)")
-      .filter-list-row-end.folder-toggle-icon(ng-if="editable(folder)")
-        %a.header-toggle.toggle-collapse.open(
-          ng-if="canEditUiConfig"
-          cf-click-local="toggleFolder(folder)" 
-          ng-class="{open: isFolderOpen(folder)}") ▶
-    %ul.filter-list(ui-sortable="viewSortOptions" ng-model="folder.views" ng-show="isFolderOpen(folder)")
-      %li.filter-list-item.filter-list-row(ng-repeat="view in folder.views track by view.id" ng-class="{active: viewIsActive(view)}" ng-click="loadView(view)")
-        .filter-list-row-main.filter-list-title(cf-inline-editor="view" ng-model="view.title" ng-change="nameChanged()") {{view.title}}
-        .filter-list-row-middle.filter-list-row-hover(ng-if="canEditUiConfig")
-          %i.ss-write(cf-click-local="editName(view)")
-        .filter-list-row-end.filter-list-row-hover(ng-if="canEditUiConfig")
-          %i.ss-delete(cf-click-local="deleteView(view, folder)" ng-show="canEditUiConfig")
-    %ul.filter-list(ng-show="isFolderOpen(folder)" ng-if="editable(folder)")
-      %li.filter-list-item(ng-click="openSaveView(folder)" ng-show="canEditUiConfig")
-        %span.filter-list-title(ng-click="addViewToFolder(folder)") + Add View to {{folder.title}}
-
+  .view-folder(ng-repeat="folder in folders track by folder.id"
+    cf-view-folder=""
+    ng-class="{'allow-drag': editable(folder)}")
 %button.default-button(ng-click="addFolder()") Add Folder
 %button.default-button Add View

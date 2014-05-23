@@ -39,17 +39,6 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
         });
       };
 
-      $scope.addViewToFolder = function (folder) {
-        var view = $scope.tab.params.view;
-        view.id = random.id();
-        folder.views.push(view);
-        $scope.saveEntryListViews();
-
-        $timeout(function () {
-          $scope.$broadcast('startInlineEditor', view);
-        });
-      };
-
       $scope.editable = function (folder) {
         return folder.id !== 'default';
       };
@@ -65,19 +54,6 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
           return $scope.saveEntryListViews();
         });
       };
-
-      $scope.deleteView = function (view, folder) {
-        modalDialog.open({
-          title: 'Delete View?',
-          message: 'Do you really want to delete the View "'+view.title+'"?',
-          confirmLabel: 'Delete View',
-          scope: $scope
-        }).then(function () {
-          _.remove(folder.views, {id: view.id});
-          return $scope.saveEntryListViews();
-        });
-      };
-
 
       $scope.$watch('canEditUiConfig', function (can) {
         $scope.viewMenuEditable = can;
