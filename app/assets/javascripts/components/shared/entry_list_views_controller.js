@@ -33,7 +33,7 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
 
   function getBlankView() {
     return {
-      title: null,
+      title: 'New View',
       searchTerm: null,
       contentTypeId: null,
       id: null,

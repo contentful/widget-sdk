@@ -22,8 +22,8 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
         return $scope.folderStates[folder.id] !== 'closed';
       };
 
-      $scope.editFolderName = function (folder) {
-        $scope.$broadcast('startInlineEditor', folder);
+      $scope.editName = function (item) {
+        $scope.$broadcast('startInlineEditor', item);
       };
 
       $scope.addFolder = function () {
@@ -36,6 +36,17 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
         $scope.saveEntryListViews();
         $timeout(function () {
           $scope.$broadcast('startInlineEditor', folder);
+        });
+      };
+
+      $scope.addViewToFolder = function (folder) {
+        var view = $scope.tab.params.view;
+        view.id = random.id();
+        folder.views.push(view);
+        $scope.saveEntryListViews();
+
+        $timeout(function () {
+          $scope.$broadcast('startInlineEditor', view);
         });
       };
 
