@@ -50,6 +50,10 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
         });
       };
 
+      $scope.editable = function (folder) {
+        return folder.id !== 'default';
+      };
+
       $scope.deleteFolder = function (folder) {
         modalDialog.open({
           title: 'Delete Folder "' + folder.title + '"?',
@@ -89,7 +93,7 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
       };
 
       $scope.folderSortOptions = {
-        connectWith: '[ui-sortable=folderSortOptions]',
+        items: '.allow-drag',
         handle: 'header',
         stop: function () {
           $scope.saveEntryListViews();

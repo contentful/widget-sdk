@@ -139,6 +139,16 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     });
     return [
       {
+        id: 'default',
+        title: 'Views',
+        views: [{
+          id: random.id(),
+          title: 'All',
+          order: makeOrder(),
+          displayedFieldIds: fieldIds()
+        }]
+      },
+      {
         id: random.id(),
         title: 'By Status',
         views: [
