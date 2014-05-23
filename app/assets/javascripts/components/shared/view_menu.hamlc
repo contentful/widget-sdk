@@ -3,14 +3,14 @@
   %li.filter-list-item(ng-class="{active: viewIsActive()}" ng-click="clearView()")
     %a.filter-list-title All
 
-.view-folders(ui-sortable="folderSortOptions" ng-model="uiConfig.entryListViews")
-  .view-folder(ng-repeat="folder in uiConfig.entryListViews track by folder.id")
+.view-folders(ui-sortable="folderSortOptions" ng-model="folders")
+  .view-folder(ng-repeat="folder in folders track by folder.id")
     %header.folder-header(ng-class="{'header-draggable': canEditUiConfig}")
-      .folder-name {{folder.title}}
+      .folder-name(cf-inline-editor="folder" ng-model="folder.title" ng-change="nameChanged()")
       .folder-header-icons(ng-if="canEditUiConfig")
-        %i.ss-write
+        %i.ss-write(ng-click="editFolderName(folder)")
         &nbsp;
-        %i.ss-delete
+        %i.ss-delete(ng-click="deleteFolder(folder)")
       .folder-toggle-icon
         %a.header-toggle.toggle-collapse.open(
           ng-if="canEditUiConfig"
@@ -19,7 +19,7 @@
     %ul.filter-list(ui-sortable="viewSortOptions" ng-model="folder.views" ng-show="isFolderOpen(folder)")
       %li.filter-list-item(ng-repeat="view in folder.views track by view.id" ng-class="{active: viewIsActive(view)}" ng-click="loadView(view)")
         %span.filter-list-title {{view.title}}
-        %a.filter-list-delete(cf-click-local="deleteView(view)" ng-show="canEditUiConfig")
+        %a.filter-list-delete(cf-click-local="deleteView(view, folder)" ng-show="canEditUiConfig")
     %ul.filter-list
       %li.filter-list-item(ng-click="openSaveView(folder)" ng-show="canEditUiConfig")
         %span.filter-list-title + Save View

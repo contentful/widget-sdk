@@ -1,10 +1,14 @@
 'use strict';
-angular.module('contentful').directive('viewMenu', function(){
+angular.module('contentful').directive('viewMenu', function(modalDialog){
   return {
     restrict: 'A',
     template: JST['view_menu'](),
-    controller: function ($scope) {
+    controller: function ($scope, $attrs) {
       $scope.folderStates = {};
+
+      $scope.$watch($attrs.viewMenu, function (folders) {
+        $scope.folders = folders;
+      });
 
       $scope.toggleFolder = function (folder) {
         if ($scope.folderStates[folder.id] === 'closed') {
@@ -17,6 +21,35 @@ angular.module('contentful').directive('viewMenu', function(){
       $scope.isFolderOpen = function (folder) {
         return $scope.folderStates[folder.id] !== 'closed';
       };
+
+      $scope.editFolderName = function (folder) {
+        $scope.$broadcast('startInlineEditor', folder);
+      };
+
+      $scope.deleteFolder = function (folder) {
+        modalDialog.open({
+          title: 'Delete Folder "' + folder.title + '"?',
+          message: 'Deleting this Folder will also delete all Views inside the folder.\nIf you want to keep your views, drag them into another folder first.',
+          confirmLabel: 'Delete Folder',
+          scope: $scope
+        }).then(function () {
+          _.remove($scope.folders, {id: folder.id});
+          return $scope.saveEntryListViews();
+        });
+      };
+
+      $scope.deleteView = function (view, folder) {
+        modalDialog.open({
+          title: 'Delete View?',
+          message: 'Do you really want to delete the View "'+view.title+'"?',
+          confirmLabel: 'Delete View',
+          scope: $scope
+        }).then(function () {
+          _.remove(folder.views, {id: view.id});
+          return $scope.saveEntryListViews();
+        });
+      };
+
 
       $scope.$watch('canEditUiConfig', function (can) {
         $scope.viewMenuEditable = can;
@@ -37,6 +70,10 @@ angular.module('contentful').directive('viewMenu', function(){
         stop: function () {
           $scope.saveEntryListViews();
         }
+      };
+
+      $scope.nameChanged = function () {
+        $scope.saveEntryListViews();
       };
     }
   };
