@@ -5,13 +5,13 @@
 
 .view-folders(ui-sortable="folderSortOptions" ng-model="folders")
   .view-folder(ng-repeat="folder in folders track by folder.id")
-    %header.filter-list-header.folder-header(ng-class="{'header-draggable': canEditUiConfig}")
-      .folder-name(cf-inline-editor="folder" ng-model="folder.title" ng-change="nameChanged()")
-      .folder-header-icons(ng-if="canEditUiConfig")
+    %header.filter-list-header.filter-list-row(ng-class="{'filter-list-row-draggable': canEditUiConfig}")
+      .filter-list-row-main.filter-list-row-truncate(cf-inline-editor="folder" ng-model="folder.title" ng-change="nameChanged()")
+      .filter-list-row-edit(ng-if="canEditUiConfig")
         %i.ss-write(ng-click="editFolderName(folder)")
         &nbsp;
         %i.ss-delete(ng-click="deleteFolder(folder)")
-      .folder-toggle-icon
+      .filter-list-row-toggle.folder-toggle-icon
         %a.header-toggle.toggle-collapse.open(
           ng-if="canEditUiConfig"
           cf-click-local="toggleFolder(folder)" 

@@ -56,18 +56,14 @@
   font-size: 11px
   text-transform: uppercase
 
-.folder-header
+.filter-list-row
   +flexbox
-.folder-name
-  overflow-x: hidden
-  white-space: nowrap
-  text-overflow: ellipsis
-  //input
-    +form-control-look
-.folder-header-icons
+.filter-list-row-main
+  // nothing
+.filter-list-row-edit
+  +flex(0 0 4em)
   text-align: center
   opacity: 0
-  +flex(0 0 4em)
   i
     position: relative
     top: 2px
@@ -75,12 +71,18 @@
     color: silver
   i:hover
     color: inherit
-.folder-header:hover .folder-header-icons
+.filter-list-row:hover .filter-list-row-edit
   opacity: 1
-.folder-toggle-icon
+.filter-list-row-toggle
+  +flex(1 1 2em)
   text-align: right
-  +flex(1 1 1em)
-.header-draggable
+
+
+.filter-list-row-truncate
+  overflow: hidden
+  white-space: nowrap
+  text-overflow: ellipsis
+.filter-list-row-draggable
   cursor: move
   cursor: -webkit-grab
 
