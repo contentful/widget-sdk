@@ -15,6 +15,10 @@
     %button.default-button.primary-button.restore-views-button(ng-click="resetViews()")
       Restore default Views
 
+.free-views(ng-show="showTempFreeViews()")
+  %header.filter-list-header Views
+  %ul.filter-list(ui-sortable="viewSortOptions" ng-model="tempFreeViews")
+
 .view-folders(ui-sortable="folderSortOptions" ng-model="folders")
   .view-folder(ng-repeat="folder in folders track by folder.id"
     cf-view-folder=""

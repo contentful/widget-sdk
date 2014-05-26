@@ -91,6 +91,17 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
         return defaultFolder;
       };
 
+      function moveTempFreeViews() {
+        var defaultFolder = $scope.createDefaultFolder();
+        defaultFolder.views.push.apply(defaultFolder.views, $scope.tempFreeViews);
+        $scope.tempFreeViews.length = 0;
+      }
+
+      $scope.showTempFreeViews = function () {
+        var hasDefaultFolder = _.find($scope.folders, {id: 'default'});
+        return $scope.draggingView && !hasDefaultFolder;
+      };
+
       $scope.$watch('canEditUiConfig', function (can) {
         $scope.viewMenuEditable = can;
         $scope.viewSortOptions.disabled = !can;
@@ -106,6 +117,8 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
           $scope.$apply();
         },
         stop: function () {
+          $scope.draggingView = false;
+          moveTempFreeViews();
           $scope.cleanDefaultFolder();
           $scope.saveEntryListViews();
         }
