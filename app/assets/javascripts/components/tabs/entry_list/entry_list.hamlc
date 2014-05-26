@@ -42,7 +42,7 @@
 
 .tab-main
   .left-nav
-    %div.menu-with-buttons(view-menu="uiConfig.entryListViews" current-view="tab.params.view")
+    %div.menu-with-buttons(view-menu="uiConfig.entryListViews" current-view="tab.params.view" ng-show="uiConfig")
   .with-left-nav
     %table.result-list.main-results.main-header
       %thead
