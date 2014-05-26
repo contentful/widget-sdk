@@ -42,7 +42,7 @@
 
 .tab-main
   .left-nav
-    %div(view-menu="uiConfig.entryListViews" current-view="tab.params.view")
+    %div.menu-with-buttons(view-menu="uiConfig.entryListViews" current-view="tab.params.view")
   .with-left-nav
     %table.result-list.main-results.main-header
       %thead

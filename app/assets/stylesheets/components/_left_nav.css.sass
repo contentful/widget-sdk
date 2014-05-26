@@ -38,9 +38,22 @@
 .restore-views-button
   width: 100%
 
-.view-menu-buttons
+.menu-with-buttons
+  height: 100%
   +flexbox
-  margin-top: 4em
+  +flex-direction(column)
+.menu-with-buttons-main
+  +flex(1 1 0)
+  overflow-y: auto
+.menu-with-buttons-bottom
+  +flex(0 0 1)
+  margin-bottom: $left-nav-padding
+
+.view-menu-buttons
+  padding: 4px $left-nav-padding
+  +flexbox
+  margin-top: 1em
+  margin-bottom: 1em
   button
     +flex(1)
 
