@@ -16,9 +16,7 @@ angular.module('contentful').directive('cfViewFolder', function(random, $timeout
           scope: $scope
         }).then(function () {
           _.remove(folder.views, {id: view.id});
-          if (folder.id === 'default' && _.isEmpty(folder.views)) {
-            _.remove($scope.folders, {id: 'default'});
-          }
+          $scope.cleanDefaultFolder();
           return $scope.saveEntryListViews();
         });
       };

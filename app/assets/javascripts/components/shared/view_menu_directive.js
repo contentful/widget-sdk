@@ -4,6 +4,7 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
     restrict: 'A',
     template: JST['view_menu'](),
     controller: function ($scope, $attrs) {
+      $scope.tempFreeViews = [];
       $scope.folderStates = {};
 
       $scope.$watch($attrs.viewMenu, function (folders) {
@@ -56,15 +57,7 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
       };
 
       $scope.addViewToDefault = function () {
-        var defaultFolder = _.find($scope.folders, {id: 'default'});
-        if (!defaultFolder) {
-          defaultFolder = {
-            id: 'default',
-            title: 'Views',
-            views: []
-          };
-          $scope.folders.unshift(defaultFolder);
-        }
+        var defaultFolder = $scope.createDefaultFolder();
         $scope.addViewToFolder(defaultFolder);
       };
 
@@ -79,6 +72,25 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
         });
       };
 
+      $scope.cleanDefaultFolder = function () {
+        _.remove($scope.folders, function (folder) {
+          return folder.id === 'default' && folder.views.length === 0;
+        });
+      };
+
+      $scope.createDefaultFolder = function () {
+        var defaultFolder = _.find($scope.folders, {id: 'default'});
+        if (!defaultFolder) {
+          defaultFolder = {
+            id: 'default',
+            title: 'Views',
+            views: []
+          };
+          $scope.folders.unshift(defaultFolder);
+        }
+        return defaultFolder;
+      };
+
       $scope.$watch('canEditUiConfig', function (can) {
         $scope.viewMenuEditable = can;
         $scope.viewSortOptions.disabled = !can;
@@ -89,7 +101,12 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
         connectWith: '[ui-sortable=viewSortOptions]',
         placeholder: 'filter-list-item-placeholder',
         axis: 'y',
+        start: function () {
+          $scope.draggingView = true;
+          $scope.$apply();
+        },
         stop: function () {
+          $scope.cleanDefaultFolder();
           $scope.saveEntryListViews();
         }
       };
