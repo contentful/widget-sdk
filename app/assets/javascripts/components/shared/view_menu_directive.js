@@ -47,7 +47,7 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
       $scope.deleteFolder = function (folder) {
         modalDialog.open({
           title: 'Delete Folder "' + folder.title + '"?',
-          message: 'Deleting this Folder will also delete all Views inside the folder.\nIf you want to keep your views, drag them into another folder first.',
+          message: 'Deleting this Folder will also delete all the saved Views inside.\nIf you want to keep your views, please drag them into another folder before deleting the Folder.',
           confirmLabel: 'Delete Folder',
           scope: $scope
         }).then(function () {
