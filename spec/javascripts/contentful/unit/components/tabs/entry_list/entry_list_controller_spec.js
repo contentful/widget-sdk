@@ -90,7 +90,7 @@ describe('Entry List Controller', function () {
 
     it('sets the view, omitting the id', function () {
       var loaded = _.cloneDeep(view);
-      loaded.title = 'Derp (copy)';
+      loaded.title = 'New View';
       expect(scope.tab.params.view).toEqual(loaded);
       expect(scope.tab.params.view).not.toBe(loaded);
     });
