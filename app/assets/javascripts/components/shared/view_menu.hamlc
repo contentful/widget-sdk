@@ -1,20 +1,16 @@
 .menu-with-buttons-main
   .view-folders-empty(ng-if="folders | isEmpty")
     %header.filter-list-header Views
-    %div(ng-if="!viewMenuEditable")
-      %p.filter-list-notice <strong>There are no Views configured.</strong>
-      %p.filter-list-notice
-        Here you usually see a list of Views your administrator has set up.
-      %p.filter-list-notice
-        However, currently there are no Views set up.
-    %div(ng-if="viewMenuEditable")
-      %p.filter-list-notice <strong>You currently do not have any Views configured.</strong>
-      %p.filter-list-notice
-        You can either start <em>adding Folders</em>, <em>save the current View</em> or just
-        let our system <em>restore the default Views</em>, based on available Content Types
-        and Entry status.
-      %button.default-button.primary-button.restore-views-button(ng-click="resetViews()")
-        Restore default Views
+    .filter-list-well(ng-if="!viewMenuEditable")
+      %strong No views available
+      %i.ss-redirect
+      %p Your administrator has not set up any views or folders yet
+    .filter-list-well(ng-if="viewMenuEditable")
+      %strong This menu is empty
+      %i.ss-redirect
+      %p Add a folder or save a view to enable this menu
+      %button.default-button.primary-button.slim-button(ng-click="resetViews()")
+        Restore default menu
 
   .free-views(ng-show="showTempFreeViews()")
     %header.filter-list-header Views

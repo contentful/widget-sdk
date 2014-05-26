@@ -16,8 +16,4 @@
       %i.ss-write(cf-click-local="editName(view)")
     .filter-list-row-end.filter-list-row-hover(ng-if="viewMenuEditable")
       %i.ss-delete(cf-click-local="deleteViewFromFolder(view, folder)" ng-show="viewMenuEditable")
--#%p.filter-list-notice(ng-show="isFolderOpen(folder)" ng-if="viewMenuEditable && regularFolder")
-  %button.default-button.slim-button(ng-click="addViewToFolder(folder)")
-    %i.ss-plus.button-icon
-    Add View to {{folder.title}}
 
