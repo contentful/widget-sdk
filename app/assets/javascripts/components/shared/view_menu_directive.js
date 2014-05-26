@@ -87,6 +87,8 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
 
       $scope.viewSortOptions = {
         connectWith: '[ui-sortable=viewSortOptions]',
+        placeholder: 'filter-list-item-placeholder',
+        axis: 'y',
         stop: function () {
           $scope.saveEntryListViews();
         }
@@ -94,6 +96,7 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
 
       $scope.folderSortOptions = {
         items: '.allow-drag',
+        axis: 'y',
         handle: 'header',
         stop: function () {
           $scope.saveEntryListViews();
