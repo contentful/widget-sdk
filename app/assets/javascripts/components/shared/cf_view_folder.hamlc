@@ -20,10 +20,4 @@
   %button.default-button.slim-button(ng-click="addViewToFolder(folder)")
     %i.ss-plus.button-icon
     Add View to {{folder.title}}
-%ul.filter-list.filter-list-nogap(ng-if="viewMenuEditable && regularFolder" ng-show="isFolderOpen(folder)")
-  %li.filter-list-item(ng-click="openSaveView(folder)")
-    %a.filter-list-title(ng-click="addViewToFolder(folder)")
-      <strong>+</strong> Add View to
-      %em {{folder.title}}
-
 
