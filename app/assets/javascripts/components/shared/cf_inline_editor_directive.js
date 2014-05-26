@@ -10,6 +10,10 @@ angular.module('contentful').directive('cfInlineEditor', function(keycodes){
         scope.inner.text = ngModelController.$viewValue;
       };
 
+      attr.$observe('required', function (value) {
+        scope.required = value;
+      });
+
       scope.$watch('inlineEditing', function (active) {
         if (active) _.defer(function(){
           elem.find('.inline-editor-form input').select().focus();
