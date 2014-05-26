@@ -14,7 +14,11 @@ angular.module('contentful').directive('cfInlineEditor', function(keycodes){
         scope.required = value;
       });
 
-      scope.$watch('inlineEditing', function (active) {
+      scope.$watch('inlineEditing', function (active, old, scope) {
+        if (active !== old) {
+          if (active) scope.$emit('editingStarted');
+          else        scope.$emit('editingStopped');
+        }
         if (active) _.defer(function(){
           elem.find('.inline-editor-form input').select().focus();
         });

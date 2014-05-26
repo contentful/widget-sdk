@@ -102,7 +102,14 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
         return $scope.draggingView && !hasDefaultFolder;
       };
 
-      $scope.$watch('canEditUiConfig', function (can) {
+      $scope.$on('editingStarted', function () {
+        $scope.insideInlineEditor = true;
+      });
+      $scope.$on('editingStopped', function () {
+        $scope.insideInlineEditor = false;
+      });
+
+      $scope.$watch('canEditUiConfig && !insideInlineEditor', function (can) {
         $scope.viewMenuEditable = can;
         $scope.viewSortOptions.disabled = !can;
         $scope.folderSortOptions.disabled = !can;

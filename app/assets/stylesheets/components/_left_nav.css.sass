@@ -32,6 +32,9 @@
   text-decoration: none
   color: $dark-gray
 
+.inline-editor-form input
+  width: 100%
+
 .filter-list-well
   padding: 10px
   border: 1px solid $dark-rule
@@ -83,14 +86,15 @@
   i:hover
     color: inherit
 .filter-list-row-main
-  // nothing
+  // Without this the div won't grow even if it's the only element in the container:
+  +flex-grow(0.1)
 .filter-list-row-hover
   opacity: 0
 .filter-list-row:hover .filter-list-row-hover
   opacity: 1
 .filter-list-row-middle
   +flex(0 0 4em)
-  text-align: center
+  text-align: left
 .filter-list-row-end
   +flex(1 1 2em)
   text-align: right

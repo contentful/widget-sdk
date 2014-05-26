@@ -4,7 +4,7 @@
     %i.ss-write(ng-click="editName(folder)")
     &nbsp;
     %i.ss-delete(ng-click="deleteFolder(folder)")
-  .filter-list-row-end.folder-toggle-icon(ng-if="regularFolder")
+  .filter-list-row-end.folder-toggle-icon(ng-if="regularFolder && !insideInlineEditor")
     %a.header-toggle.toggle-collapse.open(
       ng-if="viewMenuEditable"
       cf-click-local="toggleFolder(folder)" 
