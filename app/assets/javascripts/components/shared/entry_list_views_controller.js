@@ -102,7 +102,7 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
 
   $scope.loadView = function (view) {
     $scope.tab.params.view = _.cloneDeep(view);
-    $scope.tab.params.view.title = '' + view.title + ' (copy)';
+    $scope.tab.params.view.title = 'New View';
     $scope.resetEntries(true);
   };
 
