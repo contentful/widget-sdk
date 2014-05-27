@@ -62,7 +62,9 @@ angular.module('contentful').controller('EntryListCtrl',
       contentTypeId: scope.tab.params.view.contentTypeId,
       displayedFieldIds: scope.tab.params.view.displayedFieldIds,
       entriesLength: scope.entries && scope.entries.length,
-      page: scope.paginator.page
+      page: scope.paginator.page,
+      orderDirection: scope.tab.params.view.order.direction,
+      orderFieldId: scope.tab.params.view.order.fieldId
     };
   }, refreshEntityCaches, true);
 
@@ -96,6 +98,8 @@ angular.module('contentful').controller('EntryListCtrl',
       $scope.paginator.numEntries = entries.total;
       $scope.entries = entries;
       $scope.selection.switchBaseSet($scope.entries.length);
+      // Check if a refresh is necessary in cases where no pageParameters change
+      refreshEntityCaches();
     });
   };
 
