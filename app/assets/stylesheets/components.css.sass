@@ -247,6 +247,8 @@ li.danger-button
   color: inherit
   cursor: pointer
   +transition(transform 0.1s ease-in-out)
+  &.on-right
+    +rotate(180deg)
   &.open
     +rotate(90deg)
   &:hover

@@ -5,7 +5,7 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
     template: JST['view_menu'](),
     controller: function ($scope, $attrs) {
       $scope.tempFreeViews = [];
-      $scope.folderStates = {};
+      $scope.folderStates = loadFolderStates();
 
       $scope.$watch($attrs.viewMenu, function (folders) {
         $scope.folders = folders;
@@ -17,11 +17,31 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
         } else {
           $scope.folderStates[folder.id] = 'closed';
         }
+        saveFolderStates($scope.folderStates);
       };
 
       $scope.isFolderOpen = function (folder) {
         return $scope.folderStates[folder.id] !== 'closed';
       };
+
+      function loadFolderStates() {
+        var states = {};
+        try {
+          states = $.cookies.get('folderStates') || {};
+        } finally {
+          return states;
+        }
+      }
+
+      function saveFolderStates(folderStates) {
+        // Only store closed folders that actually exist
+        folderStates = _.pick(folderStates, function (state, folderId) {
+          return state === 'closed' && _.find($scope.folders, {id: folderId});
+        });
+        $.cookies.set('folderStates', folderStates, {
+          expiresAt: moment().add('y', 1).toDate()
+        });
+      }
 
       $scope.editName = function (item) {
         $scope.$broadcast('startInlineEditor', item);
