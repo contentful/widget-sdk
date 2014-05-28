@@ -4,7 +4,7 @@
     tooltip="Select visible columns" tooltip-placement="top" tooltip-container=".view-customizer")
     %i.ss-columns.button-icon
     %i.ss-dropdown.button-icon
-  .dropdown-menu(position="bottomright" container=".tab-content")
+  .dropdown-menu(position="bottomcenter" container=".tab-content")
     %h3 Displayed columns
     %ul.displayed-fields
       %li.non-customizable

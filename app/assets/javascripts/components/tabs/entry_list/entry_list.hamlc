@@ -32,7 +32,7 @@
       %button.dropdown-toggle.default-button.primary-button(cf-can="create, Entry")
         %i.ss-plus.button-icon
         Add New Entry
-      .dropdown-menu(position="bottomright" container=".tab-content")
+      .dropdown-menu(position="bottomcenter" container=".tab-content")
         %ul.dropdown-menu-list
           %li.dropdown-menu-item.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
                    ng-click="createEntry(contentType, 'frameButton')"

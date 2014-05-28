@@ -118,7 +118,7 @@ angular.module('contentful').directive('dropdownBtn', function($parse) {
               my: 'right top',
               at: 'left top'
             };
-          case 'bottomright':
+          case 'bottomcenter':
             return {
               my: 'center top',
               at: 'center bottom'
