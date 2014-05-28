@@ -111,9 +111,11 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
         try {
           var match = regex.exec(exp);
           var date = match ? moment().subtract('days', match[1]) : moment(exp);
-          var query = {};
-          query[key + queryOperator(op)] = date.toISOString();
-          return query;
+          if (date.isValid()) {
+            var query = {};
+            query[key + queryOperator(op)] = date.toISOString();
+            return query;
+          }
         } catch(e) {
           return;
         }
