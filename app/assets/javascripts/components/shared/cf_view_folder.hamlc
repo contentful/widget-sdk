@@ -9,11 +9,13 @@
       ng-if="viewMenuEditable"
       cf-click-local="toggleFolder(folder)" 
       ng-class="{open: isFolderOpen(folder)}") ▶
+
+-# Views:
 %ul.filter-list(ui-sortable="viewSortOptions" ng-model="folder.views" ng-show="isFolderOpen(folder)")
   %li.filter-list-item.filter-list-row(ng-repeat="view in folder.views track by view.id" ng-class="{active: viewIsActive(view)}" ng-click="loadView(view)")
     .filter-list-row-main.filter-list-title(cf-inline-editor="view" ng-model="view.title" ng-change="nameChanged()" required="true") {{view.title}}
-    .filter-list-row-middle.filter-list-row-hover(ng-if="viewMenuEditable")
-      %i.ss-write(cf-click-local="editName(view)")
     .filter-list-row-end.filter-list-row-hover(ng-if="viewMenuEditable")
+      %i.ss-write(cf-click-local="editName(view)")
+      &nbsp;
       %i.ss-delete(cf-click-local="deleteViewFromFolder(view, folder)" ng-show="viewMenuEditable")
 
