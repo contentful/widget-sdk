@@ -426,7 +426,10 @@ describe('cfLinkEditor Controller methods', function () {
     it('and fetches them for caching', function (done) {
       scope.$watch('linkedEntities', function (newval, oldval) {
         if(newval !== oldval){
-          expect(getEntriesStub).toBeCalledWith({'sys.id[in]': 'entry1,entry2'});
+          expect(getEntriesStub).toBeCalledWith({
+            'sys.id[in]': 'entry1,entry2',
+            limit: 1000
+          });
           expect(scope.linkedEntities.length).toBe(2);
           expect(scope.linkedEntities[1].isMissing).toBeTruthy();
           done();
