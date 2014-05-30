@@ -118,7 +118,10 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
     var missingIds = _.reject(ids, function (id) { return !!entityFromCache(id); });
     if(missingIds.length > 0){
       // TODO use promisedLoader
-      scope.spaceContext.space[scope.fetchMethod]({'sys.id[in]': missingIds.join(',')}, function (err, entities) {
+      scope.spaceContext.space[scope.fetchMethod]({
+        'sys.id[in]': missingIds.join(','),
+        limit: 1000
+      }, function (err, entities) {
         scope.$apply(function () {
           if (err) return lookup.reject(err);
           _.each(entities, saveEntityInCache);
