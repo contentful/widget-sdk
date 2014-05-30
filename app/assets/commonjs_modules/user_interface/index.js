@@ -2,7 +2,7 @@
 
 var UserInterface = {
   worf: require('worf'),
-  validation: require('validation'),
+  validation: require('contentful-validation'),
   mimetype: require('contentful-mimetype'),
   contentfulClient: require('contentful-client'),
   stringifySafe: require('json-stringify-safe'),
