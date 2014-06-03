@@ -33,11 +33,6 @@ describe('Asset List Controller', function () {
       });
     });
     inject(function ($rootScope, $controller, cfStub, PromisedLoader) {
-      stubs.load = sinon.stub(PromisedLoader.prototype, 'load');
-      stubs.load.returns({
-        then: stubs.then
-      });
-
       scope = $rootScope.$new();
 
       scope.tab = {
@@ -47,6 +42,11 @@ describe('Asset List Controller', function () {
       var space = cfStub.space('test');
       var contentTypeData = cfStub.contentTypeData('testType');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
+
+      stubs.load = sinon.stub(PromisedLoader.prototype, 'load');
+      stubs.load.returns({
+        then: stubs.then
+      });
 
       controller = $controller('AssetListCtrl', {$scope: scope});
     });

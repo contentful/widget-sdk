@@ -4,20 +4,27 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
 
   function PromisedLoader() {
     this.inProgress = false;
-    this.throttled = false;
   }
+
+  PromisedLoader.IN_PROGRESS = 'Already in progress';
 
   PromisedLoader.prototype = {
 
     load: function (host, methodName /* args ... */) {
       var deferred = $q.defer();
-      var args = _.toArray(arguments).slice(2);
       var loader = this;
       if (loader.inProgress){
-        deferred.reject('Already in progress');
+        deferred.reject(PromisedLoader.IN_PROGRESS);
         return deferred.promise;
       }
+      var args = _.rest(arguments, 2);
 
+      // TODO
+      // Shouldn't inProgress be set to true inside the _.throtte callback?
+      // What happens now is that a second request will always either
+      // - First is in progress: abort above
+      // - First is done: _load has been reset and will be recreated
+      // Also, this should be debounce, not throttle
       loader.inProgress = true;
       if(!loader._load) loader._load = _.throttle(function (host, methodName, args) {
         host[methodName].apply(host, args);

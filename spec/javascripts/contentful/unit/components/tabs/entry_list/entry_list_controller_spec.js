@@ -39,10 +39,6 @@ describe('Entry List Controller', function () {
       });
     });
     inject(function ($rootScope, $controller, cfStub, PromisedLoader) {
-      stubs.load = sinon.stub(PromisedLoader.prototype, 'load');
-      stubs.load.returns({
-        then: stubs.then
-      });
       scope = $rootScope.$new();
 
       scope.tab = {
@@ -54,6 +50,11 @@ describe('Entry List Controller', function () {
       space.setUIConfig = stubs.setUIConfig;
       var contentTypeData = cfStub.contentTypeData('testType');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
+
+      stubs.load = sinon.stub(PromisedLoader.prototype, 'load');
+      stubs.load.returns({
+        then: stubs.then
+      });
 
       createController = function() {
         controller = $controller('EntryListCtrl', {$scope: scope});
@@ -198,6 +199,7 @@ describe('Entry List Controller', function () {
     var entries;
     beforeEach(function() {
       createController();
+      scope.$apply();
       stubs.switch = sinon.stub();
       entries = {
         total: 30
@@ -238,6 +240,9 @@ describe('Entry List Controller', function () {
     });
 
     describe('creates a query object', function() {
+      beforeEach(function () {
+        stubs.load.reset();
+      });
 
       it('with a defined order', function() {
         scope.resetEntries();
@@ -328,6 +333,7 @@ describe('Entry List Controller', function () {
     var entries;
     beforeEach(function() {
       createController();
+      scope.$apply();
       entries = [];
       Object.defineProperty(entries, 'total', {value: 30});
 
@@ -346,6 +352,7 @@ describe('Entry List Controller', function () {
 
       scope.paginator.atLast = sinon.stub();
       scope.paginator.atLast.returns(false);
+      stubs.load.reset();
     });
 
     it('doesnt load if on last page', function() {

@@ -17,16 +17,16 @@ describe('cfLinkEditorSearch Controller', function () {
       });
     });
     inject(function ($rootScope, $controller, cfStub, PromisedLoader) {
-      stubs.load = sinon.stub(PromisedLoader.prototype, 'load');
-      stubs.load.returns({
-        then: stubs.then
-      });
-
       scope = $rootScope.$new();
 
       space = cfStub.space('test');
       var contentTypeData = cfStub.contentTypeData('content_type1');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
+
+      stubs.load = sinon.stub(PromisedLoader.prototype, 'load');
+      stubs.load.returns({
+        then: stubs.then
+      });
 
       cfLinkEditorSearchCtrl = $controller('cfLinkEditorSearchCtrl', { $scope: scope });
     });

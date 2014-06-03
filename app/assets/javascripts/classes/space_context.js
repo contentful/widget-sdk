@@ -1,9 +1,11 @@
-angular.module('contentful').factory('SpaceContext', function(TabList, $rootScope, $q, $parse, sentry, notification){
+angular.module('contentful').factory('SpaceContext', function(TabList, $rootScope, $q, $parse, sentry, notification, PromisedLoader){
   'use strict';
 
   function SpaceContext(space){
     this.tabList = new TabList();
     this.space = space;
+    this._contentTypeLoader = new PromisedLoader();
+    this._publishedContentTypeLoader = new PromisedLoader();
     this.refreshLocales();
   }
 
@@ -50,22 +52,18 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
 
       refreshContentTypes: function() {
         if (this.space) {
-          var deferred = $q.defer();
           var spaceContext = this;
-          this.space.getContentTypes({order: 'name', limit: 1000}, function(err, contentTypes) {
-            $rootScope.$apply(function() {
-              if (err) return deferred.reject(err);
-              contentTypes = _.reject(contentTypes, function (ct) { return ct.isDeleted(); });
-              contentTypes.sort(function (a,b) {
-                return a.getName().localeCompare(b.getName());
-              });
-              spaceContext.contentTypes = contentTypes;
-              spaceContext.refreshPublishedContentTypes().then(function () {
-                deferred.resolve(contentTypes);
-              });
+          return this._contentTypeLoader.load(this.space, 'getContentTypes', {order: 'name', limit: 1000})
+          .then(function (contentTypes) {
+            contentTypes = _.reject(contentTypes, function (ct) { return ct.isDeleted(); });
+            contentTypes.sort(function (a,b) {
+              return a.getName().localeCompare(b.getName());
+            });
+            spaceContext.contentTypes = contentTypes;
+            return spaceContext.refreshPublishedContentTypes().then(function () {
+              return contentTypes;
             });
           });
-          return deferred.promise;
         } else {
           this.contentTypes = [];
           this.publishedContentTypes = [];
@@ -75,35 +73,28 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
       },
 
       refreshPublishedContentTypes: function() {
-        var deferred = $q.defer();
-        var self = this;
-        this.space.getPublishedContentTypes(function (err, contentTypes) {
-          $rootScope.$apply(function () {
-            if (err) {
-              if(err && err.body && err.body.message)
-                notification.warn(err.body.message);
-              else
-                notification.serverError('Could not get published Content Types', {
-                  data: err
-                });
-              deferred.reject(err);
-            } else {
-                self.publishedContentTypes = _(contentTypes)
-                  .reject(function (ct) { return ct.isDeleted(); })
-                  .union(self.publishedContentTypes)
-                  .sortBy(function(ct) { return ct.getName().trim().toLowerCase(); })
-                  .value();
-                self._publishedContentTypesHash = _(self.publishedContentTypes).map(function(ct) {
-                  return [ct.getId(), ct];
-                }).object().valueOf();
-                _.each(self._publishedContentTypesHash, function (val, id) {
-                  self._publishedContentTypeIsMissing[id] = false;
-                });
-                deferred.resolve(self.publishedContentTypes);
-            }
+        var spaceContext = this;
+        return this._publishedContentTypeLoader.load(this.space, 'getPublishedContentTypes')
+        .then(function (contentTypes) {
+          spaceContext.publishedContentTypes = _(contentTypes)
+            .reject(function (ct) { return ct.isDeleted(); })
+            .union(spaceContext.publishedContentTypes)
+            .sortBy(function(ct) { return ct.getName().trim().toLowerCase(); })
+            .value();
+          spaceContext._publishedContentTypesHash = _(spaceContext.publishedContentTypes).map(function(ct) {
+            return [ct.getId(), ct];
+          }).object().valueOf();
+          _.each(spaceContext._publishedContentTypesHash, function (val, id) {
+            spaceContext._publishedContentTypeIsMissing[id] = false;
           });
+          return spaceContext.publishedContentTypes;
+        }, function (err) {
+          if (err === PromisedLoader.IN_PROGRESS) return;
+          if(err && err.body && err.body.message)
+            notification.warn(err.body.message);
+          else
+            notification.serverError('Could not get published Content Types', { data: err });
         });
-        return deferred.promise;
       },
 
       registerPublishedContentType: function (publishedContentType) {
