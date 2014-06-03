@@ -6,7 +6,7 @@
     %i.ss-delete(ng-click="deleteFolder(folder)")
   .filter-list-row-end.folder-toggle-icon(ng-if="regularFolder && !insideInlineEditor")
     %a.header-toggle.toggle-collapse.on-right(
-      ng-if="viewMenuEditable"
+      ng-if="!insideInlineEditor"
       cf-click-local="toggleFolder(folder)" 
       ng-class="{open: isFolderOpen(folder)}") ▶
 
