@@ -92,8 +92,12 @@
   +flex-grow(0.1)
 .filter-list-row-hover
   opacity: 0
+  &.hover-remove
+    display: none
 .filter-list-row:hover .filter-list-row-hover
   opacity: 1
+  &.hover-remove
+    display: initial
 .filter-list-row-middle
   +flex(0 0 4em)
   text-align: left
