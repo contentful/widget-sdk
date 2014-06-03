@@ -116,7 +116,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
 
       $scope.getContentType = function () {
         if ($scope.tab.viewType === 'entry-list') {
-          var id = $scope.tab && $scope.tab.params && $scope.tab.params.preset && $scope.tab.params.preset.contentTypeId;
+          var id = $scope.tab && $scope.tab.params && $scope.tab.params.view && $scope.tab.params.view.contentTypeId;
           return $scope.spaceContext && $scope.spaceContext.getPublishedContentType && $scope.spaceContext.getPublishedContentType(id);
         }
         if ($scope.tab.viewType === 'asset-list') {

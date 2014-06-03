@@ -17,7 +17,7 @@
 
 .tab-main
   .left-nav
-    %header Filter By Status
+    %header.filter-list-header Filter By Status
     %ul.filter-list.status-filters
       %li.filter-list-item(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
         %span.filter-list-title All
@@ -27,10 +27,6 @@
         %span.filter-list-title Draft
       %li.filter-list-item(ng-class="{active: tab.params.list == 'active'}" ng-click="switchList('active')")
         %span.filter-list-title Active
-    %header(cf-can="create, ContentType") Add New
-    %ul.filter-list(cf-can="create, ContentType")
-      %li.filter-list-item(ng-click="createContentType('frameLink')")
-        %span.filter-list-title Content Type
 
   .with-left-nav
     %table.result-list.main-results.main-header(ng-hide="empty")

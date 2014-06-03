@@ -23,6 +23,7 @@
 //= require angular-animate
 //= require angular-sanitize
 //= require angular-route
+//= require angular-ui/sortable
 //= require contentful
 //= require environment
 //= require user_interface
@@ -35,6 +36,7 @@ angular.module('contentful/test', [
   'ngSanitize',
   'contentful/environment',
   'timeRelative',
+  'ui.sortable',
   'contentful/user_interface',
   'contentful',
   'contentful/mocks'

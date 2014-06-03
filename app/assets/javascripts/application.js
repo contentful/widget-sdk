@@ -23,6 +23,7 @@
 //= require angular-animate
 //= require angular-sanitize
 //= require angular-route
+//= require angular-ui/sortable
 //= require contentful
 //= require environment
 //= require user_interface
@@ -34,6 +35,7 @@ angular.module('contentful/app', [
   'ngSanitize',
   'contentful/environment',
   'timeRelative',
+  'ui.sortable',
   'contentful/user_interface',
   'contentful'
 ], function($locationProvider, clientProvider, authenticationProvider, analyticsProvider, environment, $sceDelegateProvider, $compileProvider){

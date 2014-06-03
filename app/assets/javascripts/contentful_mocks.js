@@ -233,7 +233,7 @@ mocks.provider('cfCanStubs', function ($provide) {
   this.$get = function () {};
 });
 
-mocks.config(function ($provide) {
+mocks.config(function ($provide, $controllerProvider) {
   $provide.stubDirective = function (name, definition) {
     $provide.factory(name + 'Directive', function () {
       return [_.extend({
@@ -250,6 +250,12 @@ mocks.config(function ($provide) {
       $provide.factory(fullName, function () {
         return [];
       });
+    });
+  };
+
+  $provide.removeControllers = function () {
+    _.flatten(arguments).forEach(function (controller) {
+      $controllerProvider.register(controller, angular.noop);
     });
   };
 

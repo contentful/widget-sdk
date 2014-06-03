@@ -21,7 +21,7 @@
 
 .tab-main
   .left-nav
-    %header Filter By Status
+    %header.filter-list-header Filter By Status
     %ul.filter-list.status-filters
       %li.filter-list-item(ng-class="{active: searchTerm == null}" ng-click="searchTerm = null")
         %span.filter-list-title All
@@ -31,7 +31,7 @@
         %span.filter-list-title Published
       %li.filter-list-item(ng-class="{active: searchTerm == 'status:archived'}" ng-click="setSearchTerm('status:archived')")
         %span.filter-list-title Archived
-    %header Filter By File Type
+    %header.filter-list-header Filter By File Type
     %ul.filter-list.type-filters
       %li.filter-list-item(ng-repeat="(label, name) in mimetypeGroups track by label"
           ng-class="{active: searchTerm == 'type:'+label}"

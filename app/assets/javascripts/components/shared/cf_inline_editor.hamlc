@@ -1,0 +1,7 @@
+%span.inline-editor-label(ng-if="!inlineEditing") {{inner.text}}
+%form.inline-editor-form(ng-if="inlineEditing" name="inlineForm" ng-submit="submitInlineForm()")
+  %input.form-look(type="text"
+    ng-model="inner.text"
+    ng-required="required"
+    ng-blur="cancelInlineForm()"
+    ng-keydown="keyDown($event)")

@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('contentful').factory('listActions', [
-  '$q', '$timeout', '$rootScope', 'notification', 'analytics',
-  function($q, $timeout, $rootScope, notification, analytics){
+  '$q', '$timeout', '$rootScope', 'notification', 'analytics', 'cfSpinner',
+  function($q, $timeout, $rootScope, notification, analytics, cfSpinner){
 
   var _params;
 
@@ -60,8 +60,10 @@ angular.module('contentful').factory('listActions', [
     var actionCalls = _.map(selected, function (entity, idx, selected) {
       var deferred = $q.defer();
       var call = _.partial(actionCallback, entity, params, deferred);
+      var stopSpinner = cfSpinner.start();
 
       var handler = function (res) {
+        stopSpinner();
         results.push(res || {});
         var next = actionCalls[idx+1];
         if(next) next(res);

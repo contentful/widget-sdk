@@ -1,16 +1,69 @@
 /*global performance*/
 'use strict';
 
-// uncomment for gathering spec performance
-/*
-window.specPerformance = window.specPerformance || {
-  results: [],
-  sorted: function () {
-    return window.specPerformance.results.sort(function(a,b){return a.time > b.time;});
-  }
-};
-*/
+var timingReporter = {
+  suites: [{
+    id: 'root',
+    description: 'Entire Suite',
+    children: []
+  }],
+  getCurrentSuite: function () {
+    return _.last(this.suites);
+  },
+  jasmineStarted: function(){
+    this.getCurrentSuite().start = performance.now();
+  },
+  jasmineDone: function(){
+    this.lastSuite.stop = performance.now();
+    this.lastSuite.length = this.lastSuite.stop - this.lastSuite.start;
+    sortChildren(this.lastSuite);
+    printThing(this.lastSuite);
 
+    function printThing(thing) {
+      if (thing.children) {
+        console.groupCollapsed('%ims %o', thing.length, thing.description);
+        _.each(thing.children, printThing);
+        console.groupEnd();
+      } else {
+        console.log('%ims %o', thing.length, thing.description);
+      }
+    }
+
+    function sortChildren(thing) {
+      if (thing.children) {
+        thing.children = _.sortBy(thing.children, function (child) {
+          return -child.length;
+        });
+        _.each(thing.children, function (child) {
+          sortChildren(child);
+        });
+      }
+    }
+  },
+  suiteStarted: function(result){
+    result.start = performance.now();
+    result.children = [];
+    this.getCurrentSuite().children.push(result);
+    this.suites.push(result);
+  },
+  suiteDone: function(result){
+    result.stop = performance.now();
+    result.length = result.stop - result.start;
+    this.lastSuite = this.suites.pop();
+  },
+  specStarted: function(result){
+    var suite = this.getCurrentSuite();
+    result.start = performance.now();
+    suite.children.push(result);
+  },
+  specDone: function(result){
+    result.stop = performance.now();
+    result.length = result.stop - result.start;
+  },
+};
+
+// uncomment for gathering spec performance
+//jasmine.getEnv().addReporter(timingReporter);
 
 beforeEach(function() {
 
@@ -139,33 +192,4 @@ beforeEach(function() {
     },
 
   });
-
-  if(window.specPerformance){
-    this.performanceStart = performance.now();
-  }
-});
-
-afterEach(function() {
-  function specName(spec) {
-    var name = '';
-    if(spec.suite.description){
-      name += spec.suite.description;
-    }
-    var parent, previousParent;
-    while(parent = (spec.suite && spec.suite.parentSuite || parent && parent.parentSuite)){
-      if(parent && previousParent && parent.description == previousParent.description) break;
-      previousParent = parent;
-      name = parent.description+ ' ' +name;
-    }
-    return name + ' ' + spec.description;
-  }
-
-  if(window.specPerformance){
-    var spec = {
-      desc: specName(jasmine.getEnv().currentSpec),
-      time: (performance.now() - this.performanceStart)/1000
-    };
-    window.specPerformance.results.push(spec);
-    console.log(spec.desc, spec.time);
-  }
 });

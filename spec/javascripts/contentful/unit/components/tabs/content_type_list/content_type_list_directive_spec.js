@@ -97,18 +97,4 @@ describe('The ContentType list directive', function () {
     });
   });
 
-  describe('add button list', function() {
-    it('not shown', function() {
-      canStub.withArgs('create', 'ContentType').returns(false);
-      compileElement();
-      expect(container.find('.filter-list').eq(1)).toBeNgHidden();
-    });
-
-    it('shown', function() {
-      canStub.withArgs('create', 'ContentType').returns(true);
-      compileElement();
-      expect(container.find('.filter-list').eq(1)).not.toBeNgHidden();
-    });
-  });
-
 });

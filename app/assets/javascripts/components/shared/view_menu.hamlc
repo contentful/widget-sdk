@@ -1,0 +1,31 @@
+.menu-with-buttons-main
+  .view-folders-empty(ng-if="folders | isEmpty")
+    %header.filter-list-header Views
+    .filter-list-well(ng-if="!viewMenuEditable")
+      %strong No views available
+      %i.ss-redirect
+      %p Your administrator has not set up any views or folders yet
+    .filter-list-well(ng-if="viewMenuEditable")
+      %strong This menu is empty
+      %i.ss-redirect
+      %p Add a folder or save a view to enable this menu
+      %button.default-button.primary-button.slim-button(ng-click="resetViews()")
+        Restore default menu
+
+  .free-views(ng-show="showTempFreeViews()")
+    %header.filter-list-header Views
+    %ul.filter-list(ui-sortable="viewSortOptions" ng-model="tempFreeViews")
+
+  .view-folders(ui-sortable="folderSortOptions" ng-model="folders")
+    .view-folder(ng-repeat="folder in folders track by folder.id"
+      cf-view-folder=""
+      ng-class="{'allow-drag': editable(folder)}")
+
+.view-menu-buttons.menu-with-buttons-bottom(ng-if="viewMenuEditable")
+  .dropdown-btn
+    %i.ss-plus.dropdown-toggle
+    .dropdown-menu(position="topright" collision="none")
+      %ul.dropdown-menu-list
+        %li.dropdown-menu-item(ng-click="addFolder()" dropdown-close="") Add Folder
+        %li.dropdown-menu-item(ng-click="addViewToDefault()" dropdown-close="") Save current view as…
+

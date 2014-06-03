@@ -39,10 +39,6 @@ describe('Entry List Controller', function () {
       });
     });
     inject(function ($rootScope, $controller, cfStub, PromisedLoader) {
-      stubs.load = sinon.stub(PromisedLoader.prototype, 'load');
-      stubs.load.returns({
-        then: stubs.then
-      });
       scope = $rootScope.$new();
 
       scope.tab = {
@@ -55,6 +51,11 @@ describe('Entry List Controller', function () {
       var contentTypeData = cfStub.contentTypeData('testType');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
 
+      stubs.load = sinon.stub(PromisedLoader.prototype, 'load');
+      stubs.load.returns({
+        then: stubs.then
+      });
+
       createController = function() {
         controller = $controller('EntryListCtrl', {$scope: scope});
       };
@@ -66,29 +67,14 @@ describe('Entry List Controller', function () {
     $log.assertEmpty();
   }));
 
-  describe('loads ui config', function() {
-    it('initializes a non existing config', function() {
-      stubs.getUIConfig.callsArgWith(0, null);
-      createController();
-      expect(scope.uiConfig).toBeTruthy();
-    });
-
-    it('loads an existing config', function() {
-      var config = {entryListViews: [{views: [{}]}]};
-      stubs.getUIConfig.callsArgWith(0, null, config);
-      createController();
-      expect(scope.uiConfig).toBe(config);
-    });
-  });
-
-  describe('loads a ui config preset', function() {
-    var preset;
+  describe('loads a ui config view', function() {
+    var view;
 
     beforeEach(function() {
       createController();
       scope.resetEntries = sinon.stub();
 
-      preset = {
+      view = {
         id: 'foo',
         title: 'Derp',
         searchTerm: 'search term',
@@ -99,129 +85,20 @@ describe('Entry List Controller', function () {
           direction: 'descending'
         }
       };
-      scope.loadPreset(preset);
+      scope.loadView(view);
     });
 
 
-    it('sets the preset, omitting the id', function () {
-      var loaded = _.cloneDeep(preset);
-      loaded.title = 'Derp (copy)';
-      expect(scope.tab.params.preset).toEqual(loaded);
-      expect(scope.tab.params.preset).not.toBe(loaded);
+    it('sets the view, omitting the id', function () {
+      var loaded = _.cloneDeep(view);
+      loaded.title = 'New View';
+      expect(scope.tab.params.view).toEqual(loaded);
+      expect(scope.tab.params.view).not.toBe(loaded);
     });
 
     it('resets entries', function() {
       expect(scope.resetEntries).toBeCalled();
     });
-
-  });
-
-  xdescribe('opens the view saving dialog', function() {
-    // TODO WTF is this supposed to do?
-    var fields = ['field1', 'field2'];
-    var orderField = {id: 'fieldid', sys: false};
-    beforeEach(inject(function(modalDialog) {
-      stubs.open = sinon.stub(modalDialog, 'open');
-      stubs.open.returns({then: stubs.then});
-      stubs.then.callsArg(0);
-      createController();
-    }));
-
-    describe('loads an existing preset', function() {
-      beforeEach(function() {
-        var preset = {
-          id: 'existing id',
-          title: 'existing preset',
-          searchTerm: 'search term',
-          contentTypeId: 'ctid',
-          displayedFields: fields,
-          order: {
-            fieldId: 'fieldid',
-            direction: 'descending'
-          }
-        };
-        scope.uiConfig = {
-          entryListViews: [{
-            views: [preset]
-          }]
-        };
-
-        scope.openSaveView();
-      });
-
-      it('updates the preset in the presets collection', function() {
-        var presets = scope.uiConfig.entryListViews[0].views;
-        var foundPreset = _.find(presets, function (val) { return val.id == 'existing id';});
-        expect(foundPreset).toBe(scope.uiConfigLoadedPreset);
-      });
-
-      it('saves ui config', function() {
-        expect(stubs.setUIConfig).toBeCalled();
-      });
-
-    });
-
-    describe('creates a new preset', function() {
-      beforeEach(function() {
-        scope.searchTerm = 'search term';
-        scope.tab.params.contentTypeId = 'ctid';
-        scope.displayedFields = fields;
-        scope.orderField = orderField;
-        scope.orderDirection = 'ascending';
-
-        scope.uiConfig = {
-          entryListViews: [{
-            views: []
-          }]
-        };
-
-        scope.openSaveView();
-      });
-
-      it('has new id', function() {
-        expect(scope.uiConfigLoadedPreset.id).toBeDefined();
-      });
-
-      it('has new title', function() {
-        expect(scope.uiConfigLoadedPreset.title).toBe('');
-      });
-
-      it('has search term', function() {
-        expect(scope.uiConfigLoadedPreset.searchTerm).toBe('search term');
-      });
-
-      it('has content type id', function() {
-        expect(scope.uiConfigLoadedPreset.contentTypeId).toBe('ctid');
-      });
-
-      it('has displayedFields', function() {
-        expect(scope.uiConfigLoadedPreset.displayedFields).toBe(fields);
-      });
-
-      it('has order field id', function() {
-        expect(scope.uiConfigLoadedPreset.order.field.id).toBe(orderField.id);
-      });
-
-      it('has order field sys', function() {
-        expect(scope.uiConfigLoadedPreset.order.field.sys).toBe(orderField.sys);
-      });
-
-      it('has order direction', function() {
-        expect(scope.uiConfigLoadedPreset.order.direction).toBe('ascending');
-      });
-
-      it('pushes the preset into the presets collection', function() {
-        var presets = scope.uiConfig.entryListViews[0].views;
-        var foundPreset = _.find(presets, function (val) { return val.searchTerm == 'search term';});
-        expect(foundPreset).toBe(scope.uiConfigLoadedPreset);
-      });
-
-      it('saves ui config', function() {
-        expect(stubs.setUIConfig).toBeCalled();
-      });
-
-    });
-
 
   });
 
@@ -305,7 +182,7 @@ describe('Entry List Controller', function () {
     });
 
     it('contentTypeId', function () {
-      scope.tab.params.preset.contentTypeId = 'something';
+      scope.tab.params.view.contentTypeId = 'something';
       scope.$digest();
       expect(stubs.reset).toBeCalledOnce();
     });
@@ -322,6 +199,7 @@ describe('Entry List Controller', function () {
     var entries;
     beforeEach(function() {
       createController();
+      scope.$apply();
       stubs.switch = sinon.stub();
       entries = {
         total: 30
@@ -362,6 +240,9 @@ describe('Entry List Controller', function () {
     });
 
     describe('creates a query object', function() {
+      beforeEach(function () {
+        stubs.load.reset();
+      });
 
       it('with a defined order', function() {
         scope.resetEntries();
@@ -389,14 +270,14 @@ describe('Entry List Controller', function () {
       });
 
       it('for published list', function() {
-        scope.tab.params.preset.searchTerm = 'status:published';
+        scope.tab.params.view.searchTerm = 'status:published';
         scope.resetEntries();
         scope.$apply();
         expect(stubs.load.args[0][2]['sys.publishedAt[exists]']).toBe('true');
       });
 
       it('for changed list', function() {
-        scope.tab.params.preset.searchTerm = 'status:changed';
+        scope.tab.params.view.searchTerm = 'status:changed';
         scope.resetEntries();
         scope.$apply();
         expect(stubs.load.args[0][2]['sys.archivedAt[exists]']).toBe('false');
@@ -404,7 +285,7 @@ describe('Entry List Controller', function () {
       });
 
       it('for draft list', function() {
-        scope.tab.params.preset.searchTerm = 'status:draft';
+        scope.tab.params.view.searchTerm = 'status:draft';
         scope.resetEntries();
         scope.$apply();
         expect(stubs.load.args[0][2]['sys.archivedAt[exists]']).toBe('false');
@@ -413,7 +294,7 @@ describe('Entry List Controller', function () {
       });
 
       it('for archived list', function() {
-        scope.tab.params.preset.searchTerm = 'status:archived';
+        scope.tab.params.view.searchTerm = 'status:archived';
         scope.resetEntries();
         scope.$apply();
         expect(stubs.load.args[0][2]['sys.archivedAt[exists]']).toBe('true');
@@ -421,14 +302,14 @@ describe('Entry List Controller', function () {
 
       it('for contentType list', function() {
         pending('Need to change the test so that the content type is actually found');
-        scope.tab.params.preset.contentTypeId = 'ct1';
+        scope.tab.params.view.contentTypeId = 'ct1';
         scope.resetEntries();
         scope.$apply();
         expect(stubs.load.args[0][2]['content_type']).toBe('ct1');
       });
 
       it('for search term', function() {
-        scope.tab.params.preset.searchTerm = 'term';
+        scope.tab.params.view.searchTerm = 'term';
         scope.resetEntries();
         scope.$apply();
         expect(stubs.load.args[0][2].query).toBe('term');
@@ -438,13 +319,13 @@ describe('Entry List Controller', function () {
 
   it('has a query', function() {
     createController();
-    scope.tab.params.preset.searchTerm = 'foo';
+    scope.tab.params.view.searchTerm = 'foo';
     expect(scope.hasQuery()).toBeTruthy();
   });
 
   it('has no query', function() {
     createController();
-    scope.tab.params.preset.searchTerm = null;
+    scope.tab.params.view.searchTerm = null;
     expect(scope.hasQuery()).toBeFalsy();
   });
 
@@ -452,6 +333,7 @@ describe('Entry List Controller', function () {
     var entries;
     beforeEach(function() {
       createController();
+      scope.$apply();
       entries = [];
       Object.defineProperty(entries, 'total', {value: 30});
 
@@ -470,6 +352,7 @@ describe('Entry List Controller', function () {
 
       scope.paginator.atLast = sinon.stub();
       scope.paginator.atLast.returns(false);
+      stubs.load.reset();
     });
 
     it('doesnt load if on last page', function() {
