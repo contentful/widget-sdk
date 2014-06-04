@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('contentful').controller('GettyDialogController', function($scope, gettyImagesFactory, PromisedLoader, Paginator) {
+angular.module('contentful').controller('GettyDialogController',
+    function($scope, gettyImagesFactory, PromisedLoader, Paginator, fileSize) {
 
   var IMAGES_PER_PAGE = 6;
 
@@ -191,6 +192,10 @@ angular.module('contentful').controller('GettyDialogController', function($scope
     }).then(function (res) {
       $scope.imageDetail = res.data.result.Images[0];
     });
+  };
+
+  $scope.fileSize = function (value) {
+    return fileSize(value, {fixed: 0}).human({jedec: true});
   };
 
 });

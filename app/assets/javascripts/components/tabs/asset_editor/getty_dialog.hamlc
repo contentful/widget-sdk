@@ -79,7 +79,7 @@
               %tr(ng-repeat="size in imageDetail.SizesDownloadableImages")
                 %td {{size.PixelWidth}}x{{size.PixelHeight}}
                 %td {{size.ResolutionDpi}}
-                %td {{size.FileSizeInBytes}}
+                %td {{fileSize(size.FileSizeInBytes)}}
         %button
           Add image
 
