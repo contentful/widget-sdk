@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfViewFolder', function(random, $timeout, modalDialog){
+angular.module('contentful').directive('cfViewFolder', function(random, $timeout, modalDialog, analytics){
   return {
     restrict: 'A',
     template: JST['cf_view_folder'](),
@@ -17,6 +17,7 @@ angular.module('contentful').directive('cfViewFolder', function(random, $timeout
         }).then(function () {
           _.remove(folder.views, {id: view.id});
           $scope.cleanDefaultFolder();
+          analytics.trackTotango('Deleted View');
           return $scope.saveEntryListViews();
         });
       };
