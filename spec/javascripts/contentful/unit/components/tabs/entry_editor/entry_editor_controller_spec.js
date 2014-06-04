@@ -186,31 +186,20 @@ describe('Entry Editor Controller', function () {
 
 describe('Entry Editor Controller with validation errors', function () {
   var controller, scope;
-  var canStub;
   beforeEach(module('contentful/test'));
 
-  beforeEach(inject(function ($compile, $rootScope, $controller, cfStub){
-    canStub = sinon.stub();
+  beforeEach(inject(function ($rootScope, $controller, cfStub){
     scope = $rootScope;
-    scope.can = canStub;
+    scope.can = sinon.stub();
     var space = cfStub.space('testSpace');
     var contentTypeData = cfStub.contentTypeData('testType', [
       cfStub.field('localized'),
       cfStub.field('nonlocalized', {localized: false})
     ]);
-    scope.user = {
-      features: {}
-    };
     scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
     var entry = cfStub.entry(space, 'testEntry', 'testType');
     scope.tab = { params: { entry: entry } };
     controller = $controller('EntryEditorCtrl', {$scope: $rootScope});
-    scope.validationResult = {
-      errors: [
-        {'name':'required','path':['fields','localized']},
-        {'name':'required','path':['fields','nonlocalized']}
-      ]
-    };
   }));
 
   afterEach(inject(function ($log) {
@@ -218,6 +207,15 @@ describe('Entry Editor Controller with validation errors', function () {
   }));
 
   describe('fields with errors', function () {
+    beforeEach(function () {
+      scope.validationResult = {
+        errors: [
+          {'name':'required','path':['fields','localized']},
+          {'name':'required','path':['fields','nonlocalized']}
+        ]
+      };
+    });
+
     it('should display all locales for localized fields', function () {
       scope.$digest();
       expect(scope.fields[0].locales.length).toBe(2);
@@ -226,6 +224,24 @@ describe('Entry Editor Controller with validation errors', function () {
     it('should only display the default locale for non-localized fields', function () {
       scope.$digest();
       expect(scope.fields[1].locales.length).toBe(1);
+    });
+  });
+
+  describe('field with data in a disabled locale', function () {
+    beforeEach(function () {
+      scope.spaceContext.space.data.locales[1].publish = false;
+      scope.spaceContext.refreshLocales();
+
+      scope.validationResult = {
+        errors: [
+          {'name':'unknown','path':['fields','localized', 'de-DE']},
+        ]
+      };
+    });
+
+    it('should show the field with the error', function () {
+      scope.$digest();
+      expect(scope.fields[0].locales.length).toBe(2);
     });
   });
 
