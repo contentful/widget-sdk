@@ -77,37 +77,42 @@ angular.module('contentful')
   function updateFields(n, o, scope) {
     var et = scope.spaceContext.publishedTypeForEntry(scope.entry);
     if (!et) return;
-    scope.fields = _(et.data.fields).reduce(function (acc, field) {
-      if (!field.disabled || scope.preferences.showDisabledFields || errorPaths[field.id]) {
-        var locales;
-        if (field.localized) {
-          locales = scope.spaceContext.activeLocales;
-        } else {
-          locales = [scope.spaceContext.space.getDefaultLocale()];
-        }
-        var errorLocales = _.map(errorPaths[field.id], function (code) {
-          return scope.spaceContext.getPublishLocale(code);
+    scope.fields = _(et.data.fields).filter(fieldIsEditable).map(function (field) {
+      var locales = _.union(getFieldLocales(field), getErrorLocales(field));
+      locales = makeUnique(locales);
+      return inherit(field, {
+        locales: locales,
+        widgetType: fieldWidgetType(field, et)});
+    }).value();
+
+    function fieldIsEditable(field) {
+      return !field.disabled || scope.preferences.showDisabledFields || errorPaths[field.id];
+    }
+
+    function makeUnique(locales) {
+      var uniqLocales = _.uniq(locales, 'code');
+      if(locales.length !== uniqLocales.length){
+        sentry.captureError('Locales have been duplicated', {
+          data: {
+            locales: locales,
+            activeLocales: scope.spaceContext.activeLocales
+          }
         });
-        locales = _.union(locales, errorLocales);
-        var uniqLocales = _.uniq(locales, function(locale){return locale.code;});
-        if(locales.length !== uniqLocales.length){
-          sentry.captureError('Locales have been duplicated', {
-            data: {
-              locales: locales,
-              errorLocales: errorLocales,
-              activeLocales: scope.spaceContext.activeLocales
-            }
-          });
-        }
-        locales = uniqLocales;
-        var updatedField = inherit(field, {
-          locales: locales,
-          widgetType: fieldWidgetType(field, et)
-        });
-        acc.push(updatedField);
       }
-      return acc;
-    }, []);
+      return uniqLocales;
+    }
+    function getFieldLocales(field) {
+      if (field.localized)
+        return scope.spaceContext.activeLocales;
+      else
+        return [scope.spaceContext.space.getDefaultLocale()];
+    }
+
+    function getErrorLocales(field) {
+      return _.map(errorPaths[field.id], function (code) {
+        return _.find(scope.spaceContext.space.data.locales, {code: code});
+      });
+    }
 
     function inherit(source, extensions){
       var Clone = function () { };

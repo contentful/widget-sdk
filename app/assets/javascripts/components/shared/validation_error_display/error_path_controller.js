@@ -64,6 +64,15 @@ angular.module('contentful').controller('ErrorPathController', function ErrorPat
     },
     uniqueFieldIds: function () {
       return 'Field ID must be unique';
+    },
+    unknown: function (v) {
+      if (v.path.length == 3 && v.path[0] == 'fields') {
+        return 'Locale disabled. This field should not contain a value.';
+      } else if (v.path.length == 2 && v.path[0] == 'fields') {
+        return 'Unknown field.';
+      } else {
+        return 'Unkown property.';
+      }
     }
   };
 
