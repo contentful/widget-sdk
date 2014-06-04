@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('viewMenu', function(modalDialog, random, $timeout){
+angular.module('contentful').directive('viewMenu', function(modalDialog, random, $timeout, analytics){
   return {
     restrict: 'A',
     template: JST['view_menu'](),
@@ -55,6 +55,7 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
         };
         $scope.folders.push(folder);
         $scope.saveEntryListViews();
+        analytics.trackTotango('Added View Folder');
         $timeout(function () {
           $scope.$broadcast('startInlineEditor', folder);
         });
@@ -72,6 +73,7 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
           scope: $scope
         }).then(function () {
           _.remove($scope.folders, {id: folder.id});
+          analytics.trackTotango('Deleted View Folder');
           return $scope.saveEntryListViews();
         });
       };
@@ -86,6 +88,7 @@ angular.module('contentful').directive('viewMenu', function(modalDialog, random,
         view.id = random.id();
         folder.views.push(view);
         $scope.saveEntryListViews();
+        analytics.trackTotango('Added View');
 
         $timeout(function () {
           $scope.$broadcast('startInlineEditor', view);

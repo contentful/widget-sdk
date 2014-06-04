@@ -70,8 +70,11 @@ angular.module('contentful').controller('EntryListCtrl',
 
   $scope.typeNameOr = function (or) {
     try {
-      return $scope.tab.params.view.contentTypeId ?
-        $scope.spaceContext.getPublishedContentType($scope.tab.params.view.contentTypeId).getName() : or;
+      var id = $scope.tab.params.view.contentTypeId;
+      if (!id) return or;
+      var ct = $scope.spaceContext.getPublishedContentType($scope.tab.params.view.contentTypeId);
+      if (!ct) return or;
+      return ct.getName();
     } catch (e) {
       sentry.captureException(e, {extra: {contentTypeId: $scope.tab.params.view.contentTypeId}});
       return or;

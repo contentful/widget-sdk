@@ -247,6 +247,10 @@ angular.module('contentful').provider('analytics', function (environment) {
         $window.analytics.track(event, _.merge({}, data, this._spaceData));
       }
       //console.log('analytics.track', event, data);
+    },
+
+    trackTotango: function (event) {
+      $window.totango.track(event);
     }
   };
 
