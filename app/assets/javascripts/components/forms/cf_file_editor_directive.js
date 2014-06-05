@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfFileEditor', function (notification, filepicker, $parse, aviary, modalDialog) {
+angular.module('contentful').directive('cfFileEditor', function (notification, filepicker, $parse, aviary, modalDialog, stringUtils) {
   return {
     restrict: 'C',
     require: ['ngModel', '^otPath'],
@@ -55,7 +55,7 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
         var img = elem.find('.thumbnail').get(0);
         var preview = elem.find('.editor-preview').get(0);
         preview.src = '';
-        var imgUrl = img.src.replace(/(\.\w+)\?.*/, '$1');
+        var imgUrl = stringUtils.removeQueryString(img.src);
         preview.onload = function () {
           aviary.createEditor({
             file: scope.file,

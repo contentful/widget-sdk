@@ -15,6 +15,11 @@ angular.module('contentful').constant('stringUtils', (function(){
     return string[0].toUpperCase() + string.slice(1).toLowerCase();
   }
 
+  function uncapitalize(str) {
+    if (_.isEmpty(str)) return '';
+    return str[0].toLowerCase() + str.substr(1);
+  }
+
   function cleanPrefix(string) {
     return string.replace(/^[^a-z]+/, function(prefix) {
       return prefix.toLowerCase().replace(/[0-9]/g, '');
@@ -33,10 +38,26 @@ angular.module('contentful').constant('stringUtils', (function(){
     return string.replace(/\W/g, '');
   }
 
+  function removeQueryString(str) {
+    return str.replace(/(\.\w+)\?.*/, '$1');
+  }
+
+  function removeExtension(str) {
+    return str.replace(/\.\w+$/g, '');
+  }
+
+  function fileNameToTitle(str) {
+    return removeExtension(str).replace(/_/g, ' ');
+  }
+
   return {
     toIdentifier: toIdentifier,
     capitalize: capitalize,
+    uncapitalize: uncapitalize,
     splitIntoWords: splitIntoWords,
-    stripInvalidChars: stripInvalidChars
+    stripInvalidChars: stripInvalidChars,
+    removeQueryString: removeQueryString,
+    removeExtension: removeExtension,
+    fileNameToTitle: fileNameToTitle
   };
 })());

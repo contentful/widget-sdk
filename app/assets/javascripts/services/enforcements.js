@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').factory('enforcements', function Enforcements($injector, $location, $window) {
+angular.module('contentful').factory('enforcements', function Enforcements($injector, $location, $window, stringUtils) {
 
   var spaceContext, user;
 
@@ -99,18 +99,14 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
     if(!spaceContext) throw new Error('No space context defined');
   }
 
-  function uncapitalize(str) {
-    return str[0].toLowerCase() + str.substr(1);
-  }
-
   function getTooltipMessage(metricKey) {
-    return 'You have exceeded your '+usageMetrics[uncapitalize(metricKey)]+' usage';
+    return 'You have exceeded your '+usageMetrics[stringUtils.uncapitalize(metricKey)]+' usage';
   }
 
   function computeUsage(filter) {
     assertSpaceContext();
     if(!spaceContext.space) return;
-    if(filter) filter = uncapitalize(filter);
+    if(filter) filter = stringUtils.uncapitalize(filter);
     var organization = spaceContext.space.data.organization;
     var usage = _.merge(
       organization.usage.permanent,
