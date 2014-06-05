@@ -1,4 +1,4 @@
-%a.back(ng-click="imageDetail=null") Back
+%a.back(ng-click="resetImageView()") Back
 
 .preview
   %img(ng-src="{{imageDetail.UrlPreview}}")

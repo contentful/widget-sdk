@@ -29,7 +29,7 @@ angular.module('contentful').controller('GettyDialogController',
 
   $scope.imageFamilies = [];
   $scope.editorialImages = null;
-  $scope.selectedSizeKey = null;
+  $scope.selectedSizeKey = '';
 
   $scope.$watch('getty.search', function (search) {
     if(!_.isEmpty(search)){
@@ -195,6 +195,11 @@ angular.module('contentful').controller('GettyDialogController',
       imageDetail.SizesDownloadableImages = _.sortBy(imageDetail.SizesDownloadableImages, 'FileSizeInBytes');
       $scope.imageDetail = imageDetail;
     });
+  };
+
+  $scope.resetImageView = function () {
+    $scope.imageDetail = null;
+    $scope.selectedSizeKey = '';
   };
 
   $scope.fileSize = function (value) {
