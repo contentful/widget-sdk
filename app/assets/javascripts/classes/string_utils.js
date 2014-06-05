@@ -50,6 +50,10 @@ angular.module('contentful').constant('stringUtils', (function(){
     return removeExtension(str).replace(/_/g, ' ');
   }
 
+  function titleToFileName(str, spacer) {
+    return str.replace(/\s/g, spacer||'').replace(/[^\w]*/g, '');
+  }
+
   return {
     toIdentifier: toIdentifier,
     capitalize: capitalize,
@@ -58,6 +62,7 @@ angular.module('contentful').constant('stringUtils', (function(){
     stripInvalidChars: stripInvalidChars,
     removeQueryString: removeQueryString,
     removeExtension: removeExtension,
-    fileNameToTitle: fileNameToTitle
+    fileNameToTitle: fileNameToTitle,
+    titleToFileName: titleToFileName
   };
 })());

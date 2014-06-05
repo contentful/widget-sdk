@@ -23,7 +23,8 @@ angular.module('contentful').factory('gettyImagesFactory', function gettyImagesF
       }
       return service.getIntegrationToken().then(function (token) {
         var data = { RequestHeader: _.assign({ Token: token}, headerParams)};
-        data[operation + 'RequestBody'] = bodyParams;
+        // remove Request form the end because of CreateDownloadRequest
+        data[operation.replace(/Request$/g, '') + 'RequestBody'] = bodyParams;
 
         return $http({
           method: 'POST',
@@ -38,6 +39,28 @@ angular.module('contentful').factory('gettyImagesFactory', function gettyImagesF
       });
     };
   });
+
+  function transformRequest (data, header) {
+    header('Content-Type', 'application/json');
+    var body = JSON.stringify(data);
+    header('Content-Length', body.length);
+    return body;
+  }
+
+  function transformResponse (operation) {
+    return function (data, header) {
+      var typeHeader = header('Content-Type');
+      if (typeHeader && typeHeader.indexOf('application/json') >= 0) {
+        data = JSON.parse(data);
+        return {
+          result: data[operation + 'Result'],
+          headers: data.ResponseHeader
+        };
+      } else {
+        return data;
+      }
+    };
+  }
 
   service.getIntegrationToken = function () {
     var spaceId = space.getId();
@@ -63,28 +86,6 @@ angular.module('contentful').factory('gettyImagesFactory', function gettyImagesF
       accessTokens[spaceId] = data.access_token;
       setTimeout(function () { delete accessTokens[spaceId]; }, 1000 * expiresIn);
     });
-  }
-
-  function transformRequest (data, header) {
-    header('Content-Type', 'application/json');
-    var body = JSON.stringify(data);
-    header('Content-Length', body.length);
-    return body;
-  }
-
-  function transformResponse (operation) {
-    return function (data, header) {
-      var typeHeader = header('Content-Type');
-      if (typeHeader && typeHeader.indexOf('application/json') >= 0) {
-        data = JSON.parse(data);
-        return {
-          result: data[operation + 'Result'],
-          headers: data.ResponseHeaders
-        };
-      } else {
-        return data;
-      }
-    };
   }
 
   service.getImageDownload = function (imageId, sizeKey) {

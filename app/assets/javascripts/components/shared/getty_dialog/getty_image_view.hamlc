@@ -22,6 +22,6 @@
           %td {{size.ResolutionDpi}}
           %td {{fileSize(size.FileSizeInBytes)}}
 
-%button(ng-disabled="!selectedSizeKey")
+%button(ng-disabled="!selectedSizeKey" ng-click="addImage()")
   Add image
 

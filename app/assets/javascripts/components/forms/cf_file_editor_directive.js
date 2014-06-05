@@ -81,9 +81,12 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
         scope.validate();
       };
 
-      scope.$on('cfFileDropped', function (event, FPFile) {
-        changeHandler(FPFile);
-      });
+      scope.$on('cfFileDropped', fileEventHandler);
+      scope.$on('gettyFileAuthorized', fileEventHandler);
+
+      function fileEventHandler(event, file) {
+        changeHandler(file);
+      }
 
       function changeHandler(FPFile) {
         var file = FPFile ? {

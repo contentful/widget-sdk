@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').controller('GettyDialogController',
-    function($scope, gettyImagesFactory, PromisedLoader, Paginator, fileSize) {
+    function($scope, gettyImagesFactory, PromisedLoader, Paginator, fileSize, stringUtils) {
 
   var IMAGES_PER_PAGE = 6;
 
@@ -11,7 +11,7 @@ angular.module('contentful').controller('GettyDialogController',
   $scope.paginator.pageLength = IMAGES_PER_PAGE;
 
   function makeFileNameRe() {
-    return (/\/([\d|\w]*.(\w{3}))\?/g);
+    return (/\/([\d|\w|-]*.(\w{3}))\?/g);
   }
 
   var gettyImages = gettyImagesFactory($scope.spaceContext.space);
@@ -56,7 +56,7 @@ angular.module('contentful').controller('GettyDialogController',
     };
 
     if(params.editorial)
-      searchParams.Filter.EditorialSegments = [ capitalize(params.editorial) ];
+      searchParams.Filter.EditorialSegments = [ stringUtils.capitalize(params.editorial) ];
     if(params.excludeNudity)
       searchParams.Filter.ExcludeNudity = true;
     if(params.vectorIllustrations)
@@ -90,12 +90,8 @@ angular.module('contentful').controller('GettyDialogController',
   }
 
   function pushExistingKey(res, val, key) {
-    if(val) res.push(capitalize(key));
+    if(val) res.push(stringUtils.capitalize(key));
     return res;
-  }
-
-  function capitalize(str) {
-    return str.charAt(0).toUpperCase() + str.substr(1, str.length);
   }
 
   $scope.productOfferings = function (key) {
@@ -159,8 +155,8 @@ angular.module('contentful').controller('GettyDialogController',
     $scope.paginator.page++;
     entryLoader.loadPromise(
       searchForImages, $scope.getty, $scope.paginator.skipItems()
-    ).
-    then(function (res) {
+    )
+    .then(function (res) {
       /*
       if(!entries){
         sentry.captureError('Failed to load more entries', {
@@ -208,6 +204,20 @@ angular.module('contentful').controller('GettyDialogController',
 
   $scope.selectSize = function (key) {
     $scope.selectedSizeKey = key;
+  };
+
+  $scope.addImage = function () {
+    gettyImages.getImageDownload($scope.imageDetail.ImageId, $scope.selectedSizeKey)
+    .then(function (res) {
+      if(res.data.result.DownloadUrls[0].Status.toLowerCase() == 'success'){
+        $scope.$emit('gettyFileAuthorized', {
+          url: res.data.result.DownloadUrls[0].UrlAttachment,
+          filename: stringUtils.titleToFileName($scope.imageDetail.Title, '_')+'.jpg',
+          mimetype: 'image/jpeg'
+        });
+        $scope.dialog.cancel();
+      }
+    });
   };
 
 });
