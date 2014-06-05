@@ -33,7 +33,7 @@ describe('Field Settings Controller', function () {
         modifiedContentType: stubs.modifiedContentType
       });
 
-      $provide.constant('toIdentifier', stubs.toIdentifier);
+      $provide.constant('stringUtils', {toIdentifier: stubs.toIdentifier});
     });
     inject(function ($controller, $rootScope) {
       scope = $rootScope.$new();

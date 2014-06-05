@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope, getFieldTypeName, analytics, validation, assert, notification, toIdentifier, sentry) {
+angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope, getFieldTypeName, analytics, validation, assert, notification, stringUtils, sentry) {
 
   $scope.$watch(function (scope) {
     var f = scope.field;
@@ -55,8 +55,8 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
   var oldName = $scope.field.name || '';
   $scope.updateFieldId = function () {
     var currentId = $scope.field.id || '';
-    if (!$scope.published && toIdentifier(oldName) == currentId){
-      otUpdateFieldId($scope.field.name ? toIdentifier($scope.field.name) : '');
+    if (!$scope.published && stringUtils.toIdentifier(oldName) == currentId){
+      otUpdateFieldId($scope.field.name ? stringUtils.toIdentifier($scope.field.name) : '');
     }
     oldName = $scope.field.name || '';
   };
