@@ -1,0 +1,27 @@
+%a.back(ng-click="imageDetail=null") Back
+
+.preview
+  %img(ng-src="{{imageDetail.UrlPreview}}")
+
+.getty-metadata(image="imageDetail" full)
+
+.image-sizes
+  %form(name="imageSizes")
+    %table
+      %thead
+        %tr
+          %th Selection
+          %th Dimensions
+          %th dpi
+          %th Size
+      %tbody
+        %tr(ng-repeat="size in imageDetail.SizesDownloadableImages track by size.SizeKey")
+          %td
+            %input(type="radio" name="{{imageDetail.ImageId}}" ng-model="selectedSizeKey" ng-change="selectSize(size.SizeKey)")
+          %td {{size.PixelWidth}}x{{size.PixelHeight}}
+          %td {{size.ResolutionDpi}}
+          %td {{fileSize(size.FileSizeInBytes)}}
+
+%button(ng-disabled="!selectedSizeKey")
+  Add image
+
