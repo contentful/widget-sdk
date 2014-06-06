@@ -21,8 +21,8 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
       if (fullscreen) {
         elem.on('click', showFullscreen);
       } else if(!noPreview) {
-        elem.on('mousemove', mouseMoveHandler);
-        elem.on('mouseout', mouseOutHandler);
+        elem.find('img').on('mousemove', mouseMoveHandler);
+        elem.find('img').on('mouseout', mouseOutHandler);
       }
 
       scope.$watch('file', setSizes, true);
