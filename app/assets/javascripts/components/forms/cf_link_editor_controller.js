@@ -117,12 +117,14 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
     var ids        = _.map(links, function (link) { return link.sys.id; });
     var missingIds = _.reject(ids, function (id) { return !!entityFromCache(id); });
     if(missingIds.length > 0){
-      // TODO use promisedLoader
+      // TODO use common entityCache (#70858522)
+      var stopSpinner = cfSpinner.start();
       scope.spaceContext.space[scope.fetchMethod]({
         'sys.id[in]': missingIds.join(','),
         limit: 1000
       }, function (err, entities) {
         scope.$apply(function () {
+          stopSpinner();
           if (err) return lookup.reject(err);
           _.each(entities, saveEntityInCache);
           lookup.resolve();
@@ -148,12 +150,8 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
     if (!links || links.length === 0) {
       $scope.linkedEntities = [];
     } else {
-      var stopSpinner = cfSpinner.start();
       lookupEntities(scope, links).then(function (entities) {
         scope.linkedEntities = markMissing(entities);
-        stopSpinner();
-      }, function () {
-        stopSpinner();
       });
     }
   }, true);

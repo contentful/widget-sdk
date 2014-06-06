@@ -1,4 +1,4 @@
-%ul.links(ng-hide="linkedEntities.length == 0" ng-class="{'asset-link': linkType=='Asset'}")
+%ul.links(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide="linkedEntities.length == 0" ng-class="{'asset-link': linkType=='Asset'}")
   %li(ng-repeat="(index, entity) in linkedEntities track by index" ng-class="{'asset-link': linkType=='Asset'}")
     %i.ss-rows.drag-handle(ng-disabled="!otEditable"
                            ng-class="{'drag-file': linkType=='Asset'}"
