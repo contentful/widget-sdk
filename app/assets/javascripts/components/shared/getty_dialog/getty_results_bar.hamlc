@@ -1,0 +1,8 @@
+.sorting-options(ng-show="isActive() && ((getty.families.editorial && !getty.families.creative) || (!getty.families.editorial && getty.families.creative))")
+  %button(ng-click="sortBy('default')") Best Match
+  %button(ng-click="sortBy('MostRecent')") Most Recent
+  %button(ng-click="sortBy('MostPopular')") Most Popular
+
+.results-count(ng-show="isActive() && paginator.numEntries")
+  {{paginator.numEntries}} Results, Page {{paginator.page}} of {{paginator.numPages()}}
+

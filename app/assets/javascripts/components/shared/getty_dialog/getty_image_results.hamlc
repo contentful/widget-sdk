@@ -1,7 +1,4 @@
-.sorting-options(ng-show="(getty.families.editorial && !getty.families.creative) || (!getty.families.editorial && getty.families.creative)")
-  %button(ng-click="sortBy('default')") Best Match
-  %button(ng-click="sortBy('MostRecent')") Most Recent
-  %button(ng-click="sortBy('MostPopular')") Most Popular
+.getty-results-bar(active-when="!fixedResults")
 
 .image-result(ng-repeat="image in imageResults track by image.id")
   .file-preview(cf-file-preview="" file="image.preview" preview-size="{{image.preview.baseDimSize}}")
