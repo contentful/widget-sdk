@@ -23,10 +23,10 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
 
     loadCallback: function (host, methodName/*, args[] */) {
       var deferred = $q.defer();
-      var args = _.toArray(arguments).slice(2);
+      var args = _.rest(arguments, 2);
       var loader = this;
       if (loader.inProgress){
-        deferred.reject();
+        deferred.reject(PromisedLoader.IN_PROGRESS);
         return deferred.promise;
       }
 
@@ -56,10 +56,10 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
 
     loadPromise: function (promiseLoader/*, args[]*/) {
       var deferred = $q.defer();
-      var args = _.toArray(arguments).slice(1);
+      var args = _.rest(arguments, 1);
       var loader = this;
       if (loader.inProgress){
-        deferred.reject();
+        deferred.reject(PromisedLoader.IN_PROGRESS);
         return deferred.promise;
       }
 
