@@ -30,9 +30,8 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
         return deferred.promise;
       }
 
-      loader.startLoading();
-
-      loader._load = _.throttle(function (host, methodName, args) {
+      if(!loader._load) loader._load = _.debounce(function (host, methodName, args) {
+        loader.startLoading();
         host[methodName].apply(host, args);
       }, 500);
 
@@ -63,9 +62,9 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
         return deferred.promise;
       }
 
-      loader.startLoading();
 
-      loader._load = _.throttle(function (promiseLoader, args) {
+      if(!loader._load) loader._load = _.debounce(function (promiseLoader, args) {
+        loader.startLoading();
         promiseLoader.apply(null, args).then(function (res) {
           deferred.resolve(res);
           loader.endLoading();
