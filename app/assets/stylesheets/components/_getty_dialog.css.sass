@@ -3,14 +3,17 @@
   height: 70%
   .endless-container
     position: relative
-    height: 93%
+    height: 88%
+    &.scrolled
+      +box-shadow(none)
 
   &.modal-dialog
     top: 150px
 
   .search-field, .image-family, .editorial-topics
     float: left
-    margin-right: 1%
+  .search-field, .image-family
+    margin-right: 4%
   .search-area
     .search-field
       width: 40%
@@ -25,6 +28,14 @@
   .sub-checkbox
     margin-left: 20px
 
+.getty-results-bar
+  overflow: hidden
+  padding: 20px 0px
+  .sorting-options
+    float: right
+  .results-count
+    float: left
+
 .getty-image-results
   position: relative
   overflow: hidden
@@ -35,14 +46,14 @@
     float: left
     width: 31%
     margin-right: 3.5%
-    height: 400px
+    height: 420px
   // +4 because of an existing previous sibling
   .image-result:nth-child(3n+4)
     margin-right: 0
 
   .cf-thumbnail
     text-align: center
-    line-height: 185px
+    line-height: 220px
     .thumbnail
       vertical-align: middle
 
@@ -53,24 +64,31 @@
 
 .getty-image-view
   position: relative
-  .getty-metadata, .preview
-    float: left
-    margin-top: 30px
-  .preview
-    width: 40%
   .back
     position: absolute
     top: 0
     left: 0
+  .image-data, .preview
+    float: left
+    margin-top: 50px
+  .preview
+    margin-right: 3%
+  .image-data
+    width: 45%
+  .getty-metadata
+    padding: 0
+    padding-right: 40px
   .image-sizes
+    padding-top: 30px
     table
-      width: 400px
+      width: 330px
+    th, td
+      padding: 3px
+    button
+      margin-top: 20px
 
 
 .getty-metadata
-  width: 60%
-  //p
-    color: black
+  padding: 0 40px
   span
     color: black
-    //color: $medium-gray
