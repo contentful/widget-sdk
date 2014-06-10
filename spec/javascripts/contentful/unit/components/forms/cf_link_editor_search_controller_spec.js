@@ -9,7 +9,7 @@ describe('cfLinkEditorSearch Controller', function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'serverError',
-        'load',
+        'loadCallback',
         'then'
       ]);
       $provide.value('notification', {
@@ -23,8 +23,8 @@ describe('cfLinkEditorSearch Controller', function () {
       var contentTypeData = cfStub.contentTypeData('content_type1');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
 
-      stubs.load = sinon.stub(PromisedLoader.prototype, 'load');
-      stubs.load.returns({
+      stubs.loadCallback = sinon.stub(PromisedLoader.prototype, 'loadCallback');
+      stubs.loadCallback.returns({
         then: stubs.then
       });
 
@@ -33,7 +33,7 @@ describe('cfLinkEditorSearch Controller', function () {
   });
 
   afterEach(inject(function ($log) {
-    stubs.load.restore();
+    stubs.loadCallback.restore();
     $log.assertEmpty();
   }));
 

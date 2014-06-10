@@ -29,7 +29,7 @@ describe('Promised loader service', function () {
   describe('load entities successfully', function() {
     beforeEach(function() {
       stubs.method.callsArgWith(1, null, {});
-      loader.load(host, 'methodName', {}).then(stubs.success, stubs.error);
+      loader.loadCallback(host, 'methodName', {}).then(stubs.success, stubs.error);
       jasmine.clock().tick(600);
       $rootScope.$digest();
     });
@@ -54,7 +54,7 @@ describe('Promised loader service', function () {
   describe('load entities with a server error', function() {
     beforeEach(function() {
       stubs.method.callsArgWith(1, {});
-      loader.load(host, 'methodName', {}).then(stubs.success, stubs.error);
+      loader.loadCallback(host, 'methodName', {}).then(stubs.success, stubs.error);
       jasmine.clock().tick(600);
       $rootScope.$digest();
     });
@@ -77,7 +77,7 @@ describe('Promised loader service', function () {
   });
 
   it('loader in progress', function() {
-    loader.load(host, 'methodName', {}).then(stubs.success, stubs.error);
+    loader.loadCallback(host, 'methodName', {}).then(stubs.success, stubs.error);
     jasmine.clock().tick(100);
     expect(loader.inProgress).toBeTruthy();
   });
@@ -85,9 +85,9 @@ describe('Promised loader service', function () {
   describe('attempt to load more than once simultaneously', function() {
     beforeEach(function() {
       stubs.method.callsArgWith(1, null, {});
-      loader.load(host, 'methodName', {}).then(stubs.success, stubs.error);
+      loader.loadCallback(host, 'methodName', {}).then(stubs.success, stubs.error);
       loader.inProgress = true;
-      loader.load(host, 'methodName', {}).then(stubs.success2, stubs.error2);
+      loader.loadCallback(host, 'methodName', {}).then(stubs.success2, stubs.error2);
       $rootScope.$digest();
     });
 

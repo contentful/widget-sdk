@@ -62,7 +62,6 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
         return deferred.promise;
       }
 
-
       if(!loader._load) loader._load = _.debounce(function (promiseLoader, args) {
         loader.startLoading();
         promiseLoader.apply(null, args).then(function (res) {
