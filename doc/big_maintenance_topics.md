@@ -33,4 +33,4 @@ The move away from Rails asset pipeline is a requirement to be able to move away
 Switch from Capybara to Karma, the canonical AngularJS Test runner.
 
 ## CSS refactoring
-Check the [associated document](docs/css_refactoring.md)
+Check the [associated document](css_refactoring.md)
