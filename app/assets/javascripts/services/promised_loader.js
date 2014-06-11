@@ -17,9 +17,13 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
 
     endLoading: function() {
       this.inProgress = false;
-      delete this._load;
       this.stopSpinner();
     },
+
+    _loadCallback: _.debounce(function (host, methodName, args) {
+      this.startLoading();
+      host[methodName].apply(host, args);
+    }, 500),
 
     loadCallback: function (host, methodName/*, args[] */) {
       var deferred = $q.defer();
@@ -29,11 +33,6 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
         deferred.reject(PromisedLoader.IN_PROGRESS);
         return deferred.promise;
       }
-
-      if(!loader._load) loader._load = _.debounce(function (host, methodName, args) {
-        loader.startLoading();
-        host[methodName].apply(host, args);
-      }, 500);
 
       args.push(function callback(err, res, stats) {
         $rootScope.$apply(function () {
@@ -48,31 +47,47 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
           loader.endLoading();
         });
       });
-      loader._load(host, methodName, args);
+      loader._loadCallback(host, methodName, args);
 
       return deferred.promise;
     },
 
+    // Variant that delegates to loadPromise
+    //loadCallback: function (host, methodName) {
+      //var args = _.rest(arguments, 2);
+      //return this.loadPromise(function (args) {
+        //var cb = $q.callback();
+        //args.push(cb);
+        //host[methodName].apply(host, args);
+        //return cb.promise.then(function (res, stats) {
+          //if (_.isObject(stats)) _.each(stats, function (stat, name) {
+            //Object.defineProperty(res, name, {value: stat});
+          //});
+        //});
+      //}, args);
+    //},
+
+    _loadPromise: _.debounce(function (promiseLoader, args, deferred) {
+      var loader = this;
+      this.startLoading();
+      promiseLoader.apply(null, args).then(function (res) {
+        deferred.resolve(res);
+        loader.endLoading();
+      }, function (err) {
+        deferred.reject(err);
+        loader.endLoading();
+      });
+    }),
+
     loadPromise: function (promiseLoader/*, args[]*/) {
       var deferred = $q.defer();
       var args = _.rest(arguments, 1);
-      var loader = this;
-      if (loader.inProgress){
+      if (this.inProgress){
         deferred.reject(PromisedLoader.IN_PROGRESS);
         return deferred.promise;
       }
 
-      if(!loader._load) loader._load = _.debounce(function (promiseLoader, args) {
-        loader.startLoading();
-        promiseLoader.apply(null, args).then(function (res) {
-          deferred.resolve(res);
-          loader.endLoading();
-        }, function (err) {
-          deferred.reject(err);
-          loader.endLoading();
-        });
-      }, 500);
-      loader._load(promiseLoader, args);
+      this._load(promiseLoader, args, deferred);
 
       return deferred.promise;
     }

@@ -55,6 +55,14 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
 
   cfStub.spaceContext = function (space, contentTypes) {
     var spaceContext = new SpaceContext(space);
+    sinon.stub(spaceContext._contentTypeLoader, '_loadCallback', function (host, methodName, args) {
+      this.startLoading();
+      host[methodName].apply(host, args);
+    });
+    sinon.stub(spaceContext._publishedContentTypeLoader, '_loadCallback', function (host, methodName, args) {
+      this.startLoading();
+      host[methodName].apply(host, args);
+    });
     spaceContext.refreshContentTypes();
     adapter.respondWith(null, {
       sys: {
@@ -70,6 +78,8 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
       items: contentTypes,
       total: contentTypes.length
     });
+    spaceContext._contentTypeLoader._loadCallback.restore();
+    spaceContext._publishedContentTypeLoader._loadCallback.restore();
     return spaceContext;
   };
 
@@ -232,6 +242,33 @@ mocks.provider('cfCanStubs', function ($provide) {
 
   this.$get = function () {};
 });
+
+mocks.constant('delayedInvocationStub', (function () {
+  function delayedInvocationStub (originalFunction) {
+    var result;
+    function delayedFunction() {
+      /*jshint validthis:true */
+      delayedFunction.calls.push({
+        thisArg: this,
+        arguments: arguments
+      });
+      return result;
+    }
+    delayedFunction.calls = [];
+    delayedFunction.invokeDelayed = function () {
+      var call = this.calls.shift();
+      result = originalFunction.apply(call.thisArg, call.arguments);
+    };
+    delayedFunction.invokeAll = function () {
+      while (this.calls.length > 0) {
+        this.invokeDelayed();
+      }
+    };
+    return delayedFunction;
+  }
+
+  return delayedInvocationStub;
+})());
 
 mocks.config(function ($provide, $controllerProvider) {
   $provide.stubDirective = function (name, definition) {

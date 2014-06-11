@@ -5,11 +5,11 @@ describe('Promised loader service', function () {
   var host;
 
   beforeEach(function () {
-    jasmine.clock().install();
-    module('contentful/test', function ($provide) {
+    module('contentful/test', function ($provide, delayedInvocationStub) {
       stubs = $provide.makeStubs([
         'method', 'success', 'error', 'success2', 'error2'
       ]);
+      sinon.stub(_, 'debounce', delayedInvocationStub);
     });
     inject(function (PromisedLoader, _$rootScope_) {
       $rootScope = _$rootScope_;
@@ -22,16 +22,15 @@ describe('Promised loader service', function () {
   });
 
   afterEach(inject(function ($log) {
+    _.debounce.restore();
     $log.assertEmpty();
-    jasmine.clock().uninstall();
   }));
 
   describe('load entities successfully', function() {
     beforeEach(function() {
-      stubs.method.callsArgWith(1, null, {});
+      stubs.method.yields( null, {});
       loader.loadCallback(host, 'methodName', {}).then(stubs.success, stubs.error);
-      jasmine.clock().tick(600);
-      $rootScope.$digest();
+      loader._loadCallback.invokeDelayed();
     });
 
     it('calls host method', function() {
@@ -53,10 +52,9 @@ describe('Promised loader service', function () {
 
   describe('load entities with a server error', function() {
     beforeEach(function() {
-      stubs.method.callsArgWith(1, {});
+      stubs.method.yields({});
       loader.loadCallback(host, 'methodName', {}).then(stubs.success, stubs.error);
-      jasmine.clock().tick(600);
-      $rootScope.$digest();
+      loader._loadCallback.invokeDelayed();
     });
 
     it('calls host method', function() {
@@ -78,16 +76,16 @@ describe('Promised loader service', function () {
 
   it('loader in progress', function() {
     loader.loadCallback(host, 'methodName', {}).then(stubs.success, stubs.error);
-    jasmine.clock().tick(100);
+    loader._loadCallback.invokeDelayed();
     expect(loader.inProgress).toBeTruthy();
   });
 
   describe('attempt to load more than once simultaneously', function() {
     beforeEach(function() {
-      stubs.method.callsArgWith(1, null, {});
       loader.loadCallback(host, 'methodName', {}).then(stubs.success, stubs.error);
-      loader.inProgress = true;
+      loader._loadCallback.invokeDelayed();
       loader.loadCallback(host, 'methodName', {}).then(stubs.success2, stubs.error2);
+      stubs.method.yield(null, {});
       $rootScope.$digest();
     });
 
