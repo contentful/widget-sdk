@@ -5,6 +5,13 @@ Use Promises in the client library and subsequently everywhere in the user inter
 
 Since AngularJS at its core is based on Promises, this opens up a _lot_ of potential for cleaning up and improving things.
 
+## Promises in ShareJS
+Since all the ShareJS helper code has been moved into the user_interface
+project, we should write wrappers around the client, the docs and
+subdocs that are properly promise-based and digest-cycle aware.
+
+This will also help a lot with testing.
+
 ## Identify design problems in tests
 Currently writing and maintaining the tests for the user interface is a bit of a pain since a lot of or components have APIs that are awkward to test and require a lot of mocking and boilerplate setup to test the actual functionality.
 
@@ -34,3 +41,13 @@ Switch from Capybara to Karma, the canonical AngularJS Test runner.
 
 ## CSS refactoring
 Check the [associated document](css_refactoring.md)
+
+## Clean up Controller Structures and establish coding guidelines
+Currently the codebase is in varying states of niceness, depending on
+how old the code is. Stuff that was written in the beginning is not
+following conventions that have been established later. Some controllers
+are too big, statements in the controllers are in random order.
+Separation between link-functions and controllers is not always clear.
+
+This stuff should be cleaned up and the rules be written down in the
+[coding guidelines](coding_guidelines.md).
