@@ -402,7 +402,7 @@ describe('cfLinkEditorSearch Controller', function () {
 
     it('loads entities', function() {
       scope.loadEntities();
-      expect(stubs.load).toBeCalled();
+      expect(stubs.loadCallback).toBeCalled();
     });
 
     it('sets entities num on the paginator', function() {
@@ -425,17 +425,17 @@ describe('cfLinkEditorSearch Controller', function () {
 
       it('with a defined order', function() {
         scope.loadEntities();
-        expect(stubs.load.args[0][2].order).toEqual('-sys.updatedAt');
+        expect(stubs.loadCallback.args[0][2].order).toEqual('-sys.updatedAt');
       });
 
       it('with a defined limit', function() {
         scope.loadEntities();
-        expect(stubs.load.args[0][2].limit).toEqual(3);
+        expect(stubs.loadCallback.args[0][2].limit).toEqual(3);
       });
 
       it('with a defined skip param', function() {
         scope.loadEntities();
-        expect(stubs.load.args[0][2].skip).toBeTruthy();
+        expect(stubs.loadCallback.args[0][2].skip).toBeTruthy();
       });
 
       it('for linked content type', function() {
@@ -445,19 +445,19 @@ describe('cfLinkEditorSearch Controller', function () {
           getId: idStub
         };
         scope.loadEntities();
-        expect(stubs.load.args[0][2]['sys.contentType.sys.id']).toBe(123);
+        expect(stubs.loadCallback.args[0][2]['sys.contentType.sys.id']).toBe(123);
       });
 
       it('for mimetype group', function() {
         scope.linkMimetypeGroup = 'files';
         scope.loadEntities();
-        expect(stubs.load.args[0][2]['mimetype_group']).toBe('files');
+        expect(stubs.loadCallback.args[0][2]['mimetype_group']).toBe('files');
       });
 
       it('for search term', function() {
         scope.searchTerm = 'term';
         scope.loadEntities();
-        expect(stubs.load.args[0][2].query).toBe('term');
+        expect(stubs.loadCallback.args[0][2].query).toBe('term');
       });
     });
   });
@@ -489,7 +489,7 @@ describe('cfLinkEditorSearch Controller', function () {
     it('doesnt load if on last page', function() {
       scope.paginator.atLast.returns(true);
       scope.loadMore();
-      expect(stubs.load).not.toBeCalled();
+      expect(stubs.loadCallback).not.toBeCalled();
     });
 
     it('paginator count is increased', function() {
@@ -500,7 +500,7 @@ describe('cfLinkEditorSearch Controller', function () {
 
     it('gets query params', function () {
       scope.loadMore();
-      expect(stubs.load.args[0][2]).toBeDefined();
+      expect(stubs.loadCallback.args[0][2]).toBeDefined();
     });
 
     it('should work on the page before the last', function () {
@@ -508,7 +508,7 @@ describe('cfLinkEditorSearch Controller', function () {
       scope.paginator.numEntries = 47;
       scope.paginator.page = 0;
       scope.loadMore();
-      expect(stubs.load).toBeCalled();
+      expect(stubs.loadCallback).toBeCalled();
     });
 
     describe('on successful load response', function() {

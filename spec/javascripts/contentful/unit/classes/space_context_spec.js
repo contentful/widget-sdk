@@ -225,6 +225,14 @@ describe('SpaceContext class with a space', function () {
       ];
       spaceContext.space.getContentTypes = getContentTypes = sinon.stub();
       spaceContext.space.getPublishedContentTypes = getPublishedContentTypes = sinon.stub();
+      sinon.stub(spaceContext._contentTypeLoader, '_loadCallback',
+                 spaceContext._contentTypeLoader._loadCallbackImmediately);
+      sinon.stub(spaceContext._publishedContentTypeLoader, '_loadCallback',
+                 spaceContext._publishedContentTypeLoader._loadCallbackImmediately);
+    });
+    afterEach(function () {
+      spaceContext._contentTypeLoader._loadCallback.restore();
+      spaceContext._publishedContentTypeLoader._loadCallback.restore();
     });
 
     it('refreshes content types', function () {
@@ -465,9 +473,15 @@ describe('SpaceContext resolving missing ContentTypes', function () {
     spaceContext.space = {};
     entry = { getContentTypeId: function () { return 'foo'; } };
     spyOn(spaceContext, 'refreshContentTypes');
+    sinon.stub(spaceContext._contentTypeLoader, '_loadCallback',
+               spaceContext._contentTypeLoader._loadCallbackImmediately);
+    sinon.stub(spaceContext._publishedContentTypeLoader, '_loadCallback',
+               spaceContext._publishedContentTypeLoader._loadCallbackImmediately);
   }));
 
   afterEach(inject(function ($log) {
+    spaceContext._contentTypeLoader._loadCallback.restore();
+    spaceContext._publishedContentTypeLoader._loadCallback.restore();
     $log.assertEmpty();
   }));
 
