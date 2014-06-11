@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfPredefinedValuesList', function () {
+angular.module('contentful').directive('cfPredefinedValuesList', function (debounce) {
 
   var VISIBLE_ITEMS = 6;
 
@@ -15,7 +15,7 @@ angular.module('contentful').directive('cfPredefinedValuesList', function () {
 
       var blockList = elem.find('.block-list');
 
-      blockList.on('scroll', _.debounce(function(){
+      blockList.on('scroll', debounce(function(){
         scope.$digest();
       }, 500));
 

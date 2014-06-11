@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope, cfSpinner) {
+angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope, cfSpinner, debounce) {
 
   function PromisedLoader() {
     this.inProgress = false;
@@ -20,13 +20,9 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
       this.stopSpinner();
     },
 
-    _loadCallbackImmediately: function (host, methodName, args) {
+    _loadCallback: debounce(function (host, methodName, args) {
       this.startLoading();
       host[methodName].apply(host, args);
-    },
-
-    _loadCallback: _.debounce(function () {
-      this._loadCallbackImmediately.apply(this, arguments);
     }, 500),
 
     loadCallback: function (host, methodName/*, args[] */) {
@@ -71,7 +67,7 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
       //}, args);
     //},
 
-    _loadPromiseImmediately: function (promiseLoader, args, deferred) {
+    _loadPromise: debounce(function (promiseLoader, args, deferred) {
       var loader = this;
       this.startLoading();
       promiseLoader.apply(null, args).then(function (res) {
@@ -81,10 +77,6 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
         deferred.reject(err);
         loader.endLoading();
       });
-    },
-
-    _loadPromise: _.debounce(function () {
-      this._loadPromiseImmediately.apply(this, arguments);
     }, 500),
 
     loadPromise: function (promiseLoader/*, args[]*/) {

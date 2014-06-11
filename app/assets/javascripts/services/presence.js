@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('presence', function ($rootScope) {
+angular.module('contentful').factory('presence', function ($rootScope, debounce) {
   // Code related to the hidden Property is from http://www.html5rocks.com/en/tutorials/pagevisibility/intro/
   
   function watchVisibility() {
@@ -51,7 +51,7 @@ angular.module('contentful').factory('presence', function ($rootScope) {
 
   var lastActive = Date.now();
 
-  var trackActivity = _.debounce(function() {
+  var trackActivity = debounce(function() {
     lastActive = Date.now();
   }, 1000 * 10);
 

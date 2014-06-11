@@ -55,8 +55,6 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
 
   cfStub.spaceContext = function (space, contentTypes) {
     var spaceContext = new SpaceContext(space);
-    sinon.stub(spaceContext._contentTypeLoader, '_loadCallback', spaceContext._contentTypeLoader._loadCallbackImmediately);
-    sinon.stub(spaceContext._publishedContentTypeLoader, '_loadCallback', spaceContext._publishedContentTypeLoader._loadCallbackImmediately);
     spaceContext.refreshContentTypes();
     adapter.respondWith(null, {
       sys: {
@@ -72,8 +70,6 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
       items: contentTypes,
       total: contentTypes.length
     });
-    spaceContext._contentTypeLoader._loadCallback.restore();
-    spaceContext._publishedContentTypeLoader._loadCallback.restore();
     return spaceContext;
   };
 

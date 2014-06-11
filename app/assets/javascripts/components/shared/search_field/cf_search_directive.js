@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfSearch', function(keycodes){
+angular.module('contentful').directive('cfSearch', function(keycodes, debounce){
   return {
     template: JST['cf_search'](),
     scope: {
@@ -19,7 +19,7 @@ angular.module('contentful').directive('cfSearch', function(keycodes){
         });
       }
 
-      var debouncedUpdate = _.debounce(update, 300);
+      var debouncedUpdate = debounce(update, 300);
 
       element.on('keydown', function(ev) {
         if (typeAhead && scope.inner.term) return debouncedUpdate();

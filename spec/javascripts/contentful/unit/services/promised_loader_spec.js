@@ -5,15 +5,15 @@ describe('Promised loader service', function () {
   var host;
 
   beforeEach(function () {
-    module('contentful/test', function ($provide, delayedInvocationStub) {
+    module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'method', 'success', 'error', 'success2', 'error2'
       ]);
-      sinon.stub(_, 'debounce', delayedInvocationStub);
     });
-    inject(function (PromisedLoader, _$rootScope_) {
+    inject(function (PromisedLoader, _$rootScope_, delayedInvocationStub) {
       $rootScope = _$rootScope_;
       loader = new PromisedLoader();
+      sinon.stub(loader, '_loadCallback', delayedInvocationStub(loader._loadCallback));
 
       host = {
         methodName: stubs.method
@@ -22,7 +22,6 @@ describe('Promised loader service', function () {
   });
 
   afterEach(inject(function ($log) {
-    _.debounce.restore();
     $log.assertEmpty();
   }));
 
