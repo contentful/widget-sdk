@@ -106,7 +106,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
   };
 
   $scope.canSelectOrg = function (orgId) {
-    var query = _.where($scope.user.organizationMembership, {organization: {sys: {id: orgId}}});
+    var query = _.where($scope.user.organizationMemberships, {organization: {sys: {id: orgId}}});
     return query.length > 0 && (query[0].role == 'admin' || query[0].role == 'owner');
   };
 
@@ -185,7 +185,7 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
 
   $scope.$watch('user', function (user) {
     if(user){
-      $scope.organizations = _.pluck(user.organizationMembership, 'organization');
+      $scope.organizations = _.pluck(user.organizationMemberships, 'organization');
       analytics.setUserData(user);
     }
   });

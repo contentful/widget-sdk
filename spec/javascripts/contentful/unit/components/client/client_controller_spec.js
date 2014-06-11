@@ -366,7 +366,7 @@ describe('Client Controller', function () {
   describe('check if user can select an organization', function() {
     beforeEach(function() {
       scope.user = {
-        organizationMembership: [{
+        organizationMemberships: [{
           organization: {
             sys: {
               id: '1234',
@@ -382,22 +382,22 @@ describe('Client Controller', function () {
     });
 
     it('as an owner', function() {
-      scope.user.organizationMembership[0].role = 'owner';
+      scope.user.organizationMemberships[0].role = 'owner';
       expect(scope.canSelectOrg('1234')).toBeTruthy();
     });
 
     it('as an admin', function() {
-      scope.user.organizationMembership[0].role = 'admin';
+      scope.user.organizationMemberships[0].role = 'admin';
       expect(scope.canSelectOrg('1234')).toBeTruthy();
     });
 
     it('as an user', function() {
-      scope.user.organizationMembership[0].role = 'user';
+      scope.user.organizationMemberships[0].role = 'user';
       expect(scope.canSelectOrg('1234')).toBeFalsy();
     });
 
     it('with no memberships', function() {
-      scope.user.organizationMembership = [];
+      scope.user.organizationMemberships = [];
       expect(scope.canSelectOrg('1234')).toBeFalsy();
     });
   });
@@ -1217,7 +1217,7 @@ describe('Client Controller', function () {
         org2 = {org2: true};
         org3 = {org3: true};
         scope.user = {
-          organizationMembership: [
+          organizationMemberships: [
             {organization: org1},
             {organization: org2},
             {organization: org3},
