@@ -11,7 +11,7 @@ describe('otDocFor', function () {
       version: 123
     };
     $rootScope.entity = {
-      update: sinon.spy()
+      update: sinon.stub()
     };
     elem = $compile('<div ot-doc-for="entity"></div>')($rootScope);
   }));
@@ -65,7 +65,7 @@ describe('otDocFor', function () {
     });
 
     it('should not immediately update the entity if the id is missing', function (done) {
-    delete scope.entity.data.sys.id;
+      delete scope.entity.data.sys.id;
       spyOn(scope, 'otUpdateEntity');
       scope.$watch('!!otDoc', function (hasDoc) {
         if (hasDoc) {

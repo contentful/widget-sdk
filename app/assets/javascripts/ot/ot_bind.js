@@ -2,7 +2,7 @@
 
 var otModule = angular.module('contentful');
 
-otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacriticalMark) {
+otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacriticalMark, defer) {
   return {
     restrict: 'A',
     require: ['^otSubdoc', 'ngModel'],
@@ -89,7 +89,7 @@ otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacritic
           // This needs to be deferred, because the OT change operation triggered by this keypress
           // is also deferred. If we would change the value to null now, some code in attach_textarea
           // would try to access null as a string in the next tick:
-          _.defer(function () {
+          defer(function () {
             //console.log('deferred otChangeValue to null running now');
             scope.otChangeValue(null);
           });

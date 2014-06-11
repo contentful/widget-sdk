@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfMarkdownEditor', function(marked, keycodes, $document, $window, $timeout){
+angular.module('contentful').directive('cfMarkdownEditor', function(marked, keycodes, $document, $window, $timeout, delay){
   return {
     restrict: 'C',
     template: JST['cf_markdown_editor'](),
@@ -42,7 +42,7 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, keyc
           var targetText = $(ev.target).text().trim();
           scope.displayMode = 'edit';
           textarea.trigger('autosize');
-          _.delay(function () {
+          delay(function () {
             textarea.trigger('focus');
             var cursorPos = textarea.val().indexOf(targetText);
             textarea.textrange('setcursor', cursorPos);

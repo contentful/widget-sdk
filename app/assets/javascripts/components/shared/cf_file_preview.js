@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfFilePreview', function ($compile, $window, $document) {
+angular.module('contentful').directive('cfFilePreview', function ($compile, $window, $document, defer) {
   return {
     scope: true,
     link: function (scope, elem, attrs) {
@@ -50,7 +50,7 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
       function showFullscreen() {
         if (!isImage()) return;
         makePreview();
-        _.defer(function () {
+        defer(function () {
           $document.one('click', removePreview);
         });
         $preview.css({

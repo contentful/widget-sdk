@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('assetEditor', function(){
+angular.module('contentful').directive('assetEditor', function(defer){
   return {
     template: JST.asset_editor(),
     restrict: 'C',
@@ -9,7 +9,7 @@ angular.module('contentful').directive('assetEditor', function(){
       function focus() {
         if (scope.fields && scope.otEditable) {
           var input = elem.find('[name=assetForm]').find('input, textarea').eq(0);
-          _.defer(function () { input.focus(); });
+          defer(function () { input.focus(); });
           unwatchFields();
           unwatchEditable();
         }

@@ -1,4 +1,4 @@
-angular.module('contentful').directive('apiKeyEditor', function(modalDialog, keycodes) {
+angular.module('contentful').directive('apiKeyEditor', function(modalDialog, keycodes, defer) {
   'use strict';
   return {
     template: JST.api_key_editor(),
@@ -8,7 +8,7 @@ angular.module('contentful').directive('apiKeyEditor', function(modalDialog, key
       elem.on('keydown', function(e) {
         if (e.keyCode === keycodes.ENTER) scope.save();
       });
-      _.defer(function(){elem.find('input').eq(0).focus();});
+      defer(function(){elem.find('input').eq(0).focus();});
 
       scope.showRegenerateWarning = function () {
         if(!scope.apiKey.data.regenerateAccessToken){

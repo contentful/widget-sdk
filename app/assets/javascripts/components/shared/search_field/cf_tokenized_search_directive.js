@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfTokenizedSearch', function($parse, searchQueryHelper, keycodes){
+angular.module('contentful').directive('cfTokenizedSearch', function($parse, searchQueryHelper, keycodes, defer){
   return {
     template: JST['cf_tokenized_search'](),
     scope: true,
@@ -62,7 +62,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
         }
         scope.backupString(originalString, token.offset, token.length);
         scope.inner.term = spliceSlice(originalString, token.offset, token.length, insertString);
-        _.defer(function () {
+        defer(function () {
           input.textrange('set', token.offset, insertString.length);
         });
       };
@@ -77,7 +77,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
         scope.inner.term = spliceSlice(originalString, token.end, 0, insertString);
         scope.clearBackupString();
         if(token.type === 'Value') scope.submitSearch(scope.inner.term);
-        _.defer(function () {
+        defer(function () {
           input.textrange('set', token.end + insertString.length, 0);
           scope.$apply(function (scope) {
             scope.position = token.end + insertString.length;

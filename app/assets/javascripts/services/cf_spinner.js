@@ -1,4 +1,4 @@
-angular.module('contentful').factory('cfSpinner', function () {
+angular.module('contentful').factory('cfSpinner', function (throttle) {
   'use strict';
 
   var counter = 0;
@@ -16,7 +16,7 @@ angular.module('contentful').factory('cfSpinner', function () {
   };
 
   var running = false;
-  var startStop = _.throttle(function () {
+  var startStop = throttle(function () {
     var newState = 0 < counter;
     if (newState != running) {
       //console.log('spinner changing state to', newState);

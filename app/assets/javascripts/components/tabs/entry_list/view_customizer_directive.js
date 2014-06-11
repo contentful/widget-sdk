@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('viewCustomizer', function(){
+angular.module('contentful').directive('viewCustomizer', function(defer){
   return {
     template: JST.view_customizer(),
     restrict: 'C',
@@ -22,7 +22,7 @@ angular.module('contentful').directive('viewCustomizer', function(){
         containment: '.displayed-fields[ui-sortable]',
         cursor: 'move',
         start: function (ev, ui) {
-          _.defer(function () { ui.item.addClass('dragging'); });
+          defer(function () { ui.item.addClass('dragging'); });
         },
         stop: function (ev, ui) {
           ui.item.removeClass('dragging');

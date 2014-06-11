@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('tutorial', function ($compile, notification, tutorialExampledata, $q, $timeout, $rootScope, analytics, sentry, environment, debounce) {
+angular.module('contentful').factory('tutorial', function ($compile, notification, tutorialExampledata, $q, $timeout, $rootScope, analytics, sentry, environment, debounce, throttle) {
   var guiders = window.guiders;
   guiders._defaultSettings.buttons = null;
   guiders._defaultSettings.xButton = true;
@@ -197,7 +197,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         $compile(angular.element('.guider#'+options.id))(parentScope);
       }
 
-      var repositionLater = _.throttle(function () {
+      var repositionLater = throttle(function () {
         guiders.reposition();
       }, 50, true);
 

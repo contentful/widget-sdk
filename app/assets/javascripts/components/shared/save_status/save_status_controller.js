@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('SaveStatusCtrl', function ($scope) {
+angular.module('contentful').controller('SaveStatusCtrl', function ($scope, defer) {
   $scope.saveStatus = 'no_connection';
 
   $scope.$watch(function (scope) {
@@ -84,7 +84,7 @@ angular.module('contentful').controller('SaveStatusCtrl', function ($scope) {
     if (event === 'change') {
       lastOp = op;
       saveStartTime = new Date();
-      willBeSaving = _.defer(function () {
+      willBeSaving = defer(function () {
         $scope.saving = true;
         $scope.$digest();
       });
