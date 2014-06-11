@@ -1,4 +1,4 @@
-.search-field(search="getty.search" placeholder="Search Getty Images")
+.search-field(cf-search="getty.search" placeholder="Search Getty Images")
 
 .image-family
   %p
