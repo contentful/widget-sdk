@@ -6,8 +6,10 @@
       Searching for {{getty.search}}:
     .endless-container(at-bottom="loadMore()" num-elements="paginator.page" threshold="50")
       .dialog-content
-        .getty-search-area.search-area(ng-show="!imageDetail")
         .getty-error(ng-show="searchError")
           {{searchError}}
+        .getty-search-area.search-area(ng-show="!imageDetail")
+        .getty-no-results(ng-show="noResults")
+          No results were found for this search
         .getty-image-results(ng-show="imageResults.length > 0 && !imageDetail")
         .getty-image-view(ng-show="imageDetail")

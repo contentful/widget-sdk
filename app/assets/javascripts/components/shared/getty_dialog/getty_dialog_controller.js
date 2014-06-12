@@ -88,7 +88,7 @@ angular.module('contentful').controller('GettyDialogController',
     var itemCount = getPath(res, 'data.result.ItemTotalCount');
     if(itemCount === 0)
       noResultsFound();
-    if(!itemCount)
+    else if(!itemCount)
       unknownError('Failure getting item count', res.data);
     return itemCount;
   }
@@ -254,10 +254,11 @@ angular.module('contentful').controller('GettyDialogController',
   function resetErrors() {
     $scope.searchError = null;
     $scope.downloadsError = null;
+    $scope.noResults = false;
   }
 
   function noResultsFound() {
-    $scope.searchError = 'No results were found for this search';
+    $scope.noResults = true;
   }
 
   function unknownError(message, data) {
