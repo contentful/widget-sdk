@@ -53,7 +53,7 @@
       %label
       .form-controls
         .field-editor
-          %a(href="{{mobileAppUrl}}" target="_blank") Open in Browser App
+          %a(href="{{mobileAppUrl}}" target="_blank") Open in Discovery App
     .form-field(ng-show="apiKey.data.accessToken")
       %label
       .form-controls
