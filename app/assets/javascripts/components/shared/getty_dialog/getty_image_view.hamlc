@@ -24,6 +24,8 @@
             %td {{fileSize(size.FileSizeInBytes)}}
 
       %p.getty-downloads-error(ng-show="downloadsError") {{downloadsError}}
-      %button.default-button.primary-button(ng-disabled="!selectedSizeKey" ng-click="addImage()")
-        Add image
+      .getty-download-button
+        %button.default-button.primary-button(ng-disabled="!selectedSizeKey" ng-click="addImage()")
+          Add image
+        .loading(ng-show="gettyDownloading")
 

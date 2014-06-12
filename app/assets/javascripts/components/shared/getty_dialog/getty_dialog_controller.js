@@ -32,6 +32,8 @@ angular.module('contentful').controller('GettyDialogController',
 
   $scope.$watch('getty.search', function (search) {
     if(!_.isEmpty(search)){
+      $scope.gettyLoading = true;
+      $scope.imageResults = null;
       searchForImages($scope.getty).then(saveResults, handleSearchFail);
     }
   });
@@ -75,6 +77,7 @@ angular.module('contentful').controller('GettyDialogController',
   }
 
   function saveResults(res) {
+    $scope.gettyLoading = false;
     var itemCount = getItemCount(res);
     if(!itemCount) return;
     $scope.paginator.numEntries = itemCount;
@@ -202,13 +205,17 @@ angular.module('contentful').controller('GettyDialogController',
   };
 
   $scope.showImageDetail = function (image) {
+    $scope.gettyLoading = true;
     gettyImages.getImageDetails({
       ImageIds: [image.ImageId]
     }).then(function (res) {
+      $scope.gettyLoading = false;
       var images = parseImagesResult(res);
       var imageDetail = images[0];
       imageDetail.SizesDownloadableImages = _.sortBy(imageDetail.SizesDownloadableImages, 'FileSizeInBytes');
       $scope.imageDetail = imageDetail;
+    }, function (err) {
+      unknownError('Failure getting image details', err);
     });
   };
 
@@ -233,8 +240,10 @@ angular.module('contentful').controller('GettyDialogController',
   };
 
   $scope.addImage = function () {
+    $scope.gettyDownloading = true;
     gettyImages.getImageDownload($scope.imageDetail.ImageId, $scope.selectedSizeKey)
     .then(function (res) {
+      $scope.gettyDownloading = false;
       var downloadUrls = getPath(res, 'data.result.DownloadUrls');
       if(downloadUrls && downloadUrls.length > 0 && downloadUrls[0].Status.toLowerCase() == 'success'){
         $scope.$emit('gettyFileAuthorized', {
@@ -247,6 +256,7 @@ angular.module('contentful').controller('GettyDialogController',
         noDownloadsAvailable();
       }
     }, function (err) {
+      $scope.gettyDownloading = false;
       unknownError('Failure getting image download', err);
     });
   };
@@ -262,6 +272,7 @@ angular.module('contentful').controller('GettyDialogController',
   }
 
   function unknownError(message, data) {
+    $scope.gettyLoading = false;
     sentry.captureError(message, {
       data: data
     });
