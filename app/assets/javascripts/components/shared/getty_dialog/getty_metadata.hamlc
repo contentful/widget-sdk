@@ -8,6 +8,8 @@
   %span {{licensingModel(image.LicensingModel)}}
 %p Collection:
   %span {{image.CollectionName}}
+%p(ng-if="fullMetadata") Date:
+  %span {{parseDate(image.DateCreated)}}
 %p(ng-if="fullMetadata")
   %span By: {{image.Artist}}
 %p(ng-if="fullMetadata") Release:

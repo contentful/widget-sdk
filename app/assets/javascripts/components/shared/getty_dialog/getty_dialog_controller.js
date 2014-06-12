@@ -122,19 +122,6 @@ angular.module('contentful').controller('GettyDialogController',
     return res;
   }
 
-  $scope.productOfferings = function (key) {
-    return {
-      EasyAccess: 'Easy Access'
-    }[key];
-  };
-
-  $scope.licensingModel = function (key) {
-    return {
-      RoyaltyFree: 'Royalty Free',
-      RightsManaged: 'Rights Managed'
-    }[key];
-  };
-
   function augmentImageAsFile (image, srcAttr, baseDimSize) {
     image = _.clone(image);
     var fileName = makeFileNameRe().exec(image[srcAttr]);
