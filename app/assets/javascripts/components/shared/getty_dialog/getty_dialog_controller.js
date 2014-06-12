@@ -24,11 +24,10 @@ angular.module('contentful').controller('GettyDialogController',
     licensing: {},
     creative: {},
     offerings: {},
-    editorial: null
+    editorial: ''
   };
 
   $scope.imageFamilies = [];
-  $scope.editorialImages = null;
   $scope.selectedSizeKey = '';
 
   $scope.$watch('getty.search', function (search) {
