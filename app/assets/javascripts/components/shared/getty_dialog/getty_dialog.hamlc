@@ -3,6 +3,7 @@
     .title Getty Images
     .modal-dialog-close-button(ng-click="dialog.cancel()")
     .getty-results-bar(active-when="fixedResults" ng-show="fixedResults")
+      Searching for {{getty.search}}:
     .endless-container(at-bottom="loadMore()" num-elements="paginator.page" threshold="50")
       .dialog-content
         .getty-search-area.search-area(ng-show="!imageDetail")

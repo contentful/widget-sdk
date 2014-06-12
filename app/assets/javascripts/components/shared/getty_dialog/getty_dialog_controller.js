@@ -78,6 +78,9 @@ angular.module('contentful').controller('GettyDialogController',
     var itemCount = getItemCount(res);
     if(!itemCount) return;
     $scope.paginator.numEntries = itemCount;
+    $scope.hasBlendedSortOrder = !!getPath(res, 'data.result.BlendedSortOrder');
+    $scope.currentSortOrder = getPath(res, 'data.result.CreativeSortOrder') || getPath(res, 'data.result.EditorialSortOrder');
+
     $scope.imageResults = prepareImageObjects(parseImagesResult(res));
   }
 
@@ -220,6 +223,13 @@ angular.module('contentful').controller('GettyDialogController',
 
   $scope.selectSize = function (key) {
     $scope.selectedSizeKey = key;
+  };
+
+  $scope.isSortingActive = function () {
+    return !$scope.hasBlendedSortOrder && (
+             ($scope.getty.families.editorial && !$scope.getty.families.creative) ||
+             (!$scope.getty.families.editorial && $scope.getty.families.creative)
+           );
   };
 
   $scope.addImage = function () {

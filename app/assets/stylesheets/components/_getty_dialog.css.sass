@@ -12,8 +12,10 @@
 
   .search-field, .image-family, .editorial-topics
     float: left
-  .search-field, .image-family
+  .search-field
     margin-right: 4%
+  .image-family
+    margin-right: 1%
   .search-area
     .search-field
       width: 40%
@@ -31,10 +33,12 @@
 .getty-results-bar
   overflow: hidden
   padding: 20px 0px
+  width: 100%
   .sorting-options
     float: right
   .results-count
     float: left
+    margin-left: 3px
 
 .getty-image-results
   position: relative
@@ -61,6 +65,16 @@
     position: absolute
     bottom: 0
     left: 50%
+
+  .getty-results-bar
+    width: 50%
+    padding: 0
+    margin-left: 10px
+
+    .sorting-options
+      float: left
+      clear: left
+      margin-top: 4px
 
 .getty-image-view
   position: relative
