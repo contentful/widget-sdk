@@ -21,22 +21,7 @@
 
 .tab-main
   .left-nav
-    %header.filter-list-header Filter By Status
-    %ul.filter-list.status-filters
-      %li.filter-list-item(ng-class="{active: searchTerm == null}" ng-click="searchTerm = null")
-        %span.filter-list-title All
-      %li.filter-list-item(ng-class="{active: searchTerm == 'status:changed'}" ng-click="setSearchTerm('status:changed')")
-        %span.filter-list-title Changed
-      %li.filter-list-item(ng-class="{active: searchTerm == 'status:published'}" ng-click="setSearchTerm('status:published')")
-        %span.filter-list-title Published
-      %li.filter-list-item(ng-class="{active: searchTerm == 'status:archived'}" ng-click="setSearchTerm('status:archived')")
-        %span.filter-list-title Archived
-    %header.filter-list-header Filter By File Type
-    %ul.filter-list.type-filters
-      %li.filter-list-item(ng-repeat="(label, name) in mimetypeGroups track by label"
-          ng-class="{active: searchTerm == 'type:'+label}"
-          ng-click="setSearchTerm('type:'+label)")
-        %span.filter-list-title {{name}}
+    %div.menu-with-buttons(view-menu="uiConfig.assetListViews" current-view="tab.params.view" ng-show="uiConfig")
 
   .with-left-nav
     %table.result-list.main-results.main-header

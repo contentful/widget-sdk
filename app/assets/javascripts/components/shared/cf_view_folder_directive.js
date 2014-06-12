@@ -18,7 +18,7 @@ angular.module('contentful').directive('cfViewFolder', function(random, $timeout
           _.remove(folder.views, {id: view.id});
           $scope.cleanDefaultFolder();
           analytics.trackTotango('Deleted View');
-          return $scope.saveEntryListViews();
+          return $scope.saveViews();
         });
       };
 

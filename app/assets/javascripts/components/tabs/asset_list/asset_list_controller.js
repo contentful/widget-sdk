@@ -1,11 +1,10 @@
 'use strict';
 
 angular.module('contentful').
-  controller('AssetListCtrl',function AssetListCtrl($scope, $q, Paginator, Selection, PromisedLoader, mimetype, analytics, sentry, searchQueryHelper) {
+  controller('AssetListCtrl',function AssetListCtrl($scope, $q, Paginator, Selection, PromisedLoader, analytics, sentry, searchQueryHelper, $controller) {
 
+  $controller('AssetListViewsController', {$scope: $scope});
   var assetLoader = new PromisedLoader();
-
-  $scope.mimetypeGroups = mimetype.groupDisplayNames;
 
   $scope.assetSection = 'all';
 
