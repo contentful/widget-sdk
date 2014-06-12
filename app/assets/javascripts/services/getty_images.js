@@ -35,7 +35,7 @@ angular.module('contentful').factory('gettyImagesFactory', function gettyImagesF
           },
           transformRequest: transformRequest,
           transformResponse: transformResponse(operation),
-        });
+        }).then(parseGettyHeaders);
       });
     };
   });
@@ -60,6 +60,20 @@ angular.module('contentful').factory('gettyImagesFactory', function gettyImagesF
         return data;
       }
     };
+  }
+
+  function parseGettyHeaders(response) {
+    var deferred = $q.defer();
+    try {
+      var status = response.data.headers.Status.toLowerCase();
+      if(status == 'success' || status == 'warning')
+        deferred.resolve(response);
+      else
+        deferred.reject(response.data.headers);
+    } catch(e){
+      deferred.reject(e);
+    }
+    return deferred.promise;
   }
 
   service.getIntegrationToken = function () {

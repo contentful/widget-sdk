@@ -23,6 +23,7 @@
             %td {{size.ResolutionDpi}}
             %td {{fileSize(size.FileSizeInBytes)}}
 
+      %p(ng-show="downloadsError") {{downloadsError}}
       %button.default-button.primary-button(ng-disabled="!selectedSizeKey" ng-click="addImage()")
         Add image
 

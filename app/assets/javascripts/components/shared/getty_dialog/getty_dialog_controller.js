@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').controller('GettyDialogController',
-    function($scope, gettyImagesFactory, PromisedLoader, Paginator, fileSize, stringUtils) {
+    function($scope, gettyImagesFactory, PromisedLoader, Paginator, fileSize, stringUtils, sentry) {
 
   var IMAGES_PER_PAGE = 6;
 
@@ -33,7 +33,7 @@ angular.module('contentful').controller('GettyDialogController',
 
   $scope.$watch('getty.search', function (search) {
     if(!_.isEmpty(search)){
-      searchForImages($scope.getty).then(saveResults);
+      searchForImages($scope.getty).then(saveResults, handleSearchFail);
     }
   });
 
@@ -71,14 +71,37 @@ angular.module('contentful').controller('GettyDialogController',
     return gettyImages.searchForImages(searchParams);
   }
 
-  function saveResults(res) {
-    $scope.paginator.numEntries = res && res.data && res.data.result.ItemTotalCount;
-    $scope.imageResults = prepareImageObjects(parseResult(res));
+  function handleSearchFail(error) {
+    unknownError('Failure on Getty Images API Request', error);
   }
 
-  function parseResult(res) {
-    // TODO better handling of null results or error conditions
-    return res && res.data && res.data.result.Images ? res.data.result.Images : [];
+  function saveResults(res) {
+    var itemCount = getItemCount(res);
+    if(!itemCount) return;
+    $scope.paginator.numEntries = itemCount;
+    $scope.imageResults = prepareImageObjects(parseImagesResult(res));
+  }
+
+  function getItemCount(res) {
+    var itemCount = getPath(res, 'data.result.ItemTotalCount');
+    if(itemCount === 0)
+      noResultsFound();
+    if(!itemCount)
+      unknownError('Failure getting item count', res.data);
+    return itemCount;
+  }
+
+  function parseImagesResult(res) {
+    var images = getPath(res, 'data.result.Images');
+    if(images && images.length > 0)
+      return images;
+    else if(images && images.length === 0){
+      noResultsFound();
+      return images;
+    } else {
+      unknownError('Failure getting images', res.data);
+      return [];
+    }
   }
 
   function objectToArrayIf(condition, obj) {
@@ -148,6 +171,7 @@ angular.module('contentful').controller('GettyDialogController',
   }
 
   $scope.loadMore = function() {
+    resetErrors();
     if ($scope.paginator.atLast() ||
         $scope.imageResults.length === 0 ||
         $scope.imageDetail
@@ -157,19 +181,11 @@ angular.module('contentful').controller('GettyDialogController',
       searchForImages, $scope.getty, $scope.paginator.skipItems()
     )
     .then(function (res) {
-      /*
-      if(!entries){
-        sentry.captureError('Failed to load more entries', {
-          data: {
-            entries: entries
-          }
-        });
-        return;
-      }
-      */
-      $scope.paginator.numEntries = res && res.data && res.data.result.ItemTotalCount;
+      var itemCount = getItemCount(res);
+      if(!itemCount) return;
+      $scope.paginator.numEntries = itemCount;
       var images = _.difference(
-        prepareImageObjects(parseResult(res)),
+        prepareImageObjects(parseImagesResult(res)),
         $scope.imageResults
       );
       $scope.imageResults.push.apply($scope.imageResults, images);
@@ -187,7 +203,8 @@ angular.module('contentful').controller('GettyDialogController',
     gettyImages.getImageDetails({
       ImageIds: [image.ImageId]
     }).then(function (res) {
-      var imageDetail = res.data.result.Images[0];
+      var images = parseImagesResult(res);
+      var imageDetail = images[0];
       imageDetail.SizesDownloadableImages = _.sortBy(imageDetail.SizesDownloadableImages, 'FileSizeInBytes');
       $scope.imageDetail = imageDetail;
     });
@@ -209,15 +226,50 @@ angular.module('contentful').controller('GettyDialogController',
   $scope.addImage = function () {
     gettyImages.getImageDownload($scope.imageDetail.ImageId, $scope.selectedSizeKey)
     .then(function (res) {
-      if(res.data.result.DownloadUrls[0].Status.toLowerCase() == 'success'){
+      var downloadUrls = getPath(res, 'data.result.DownloadUrls');
+      if(downloadUrls && downloadUrls.length > 0 && downloadUrls[0].Status.toLowerCase() == 'success'){
         $scope.$emit('gettyFileAuthorized', {
-          url: res.data.result.DownloadUrls[0].UrlAttachment,
+          url: downloadUrls[0].UrlAttachment,
           filename: stringUtils.titleToFileName($scope.imageDetail.Title, '_')+'.jpg',
           mimetype: 'image/jpeg'
         });
         $scope.dialog.cancel();
+      } else {
+        noDownloadsAvailable();
       }
+    }, function (err) {
+      unknownError('Failure getting image download', err);
     });
   };
+
+  function resetErrors() {
+    $scope.searchError = null;
+    $scope.downloadsError = null;
+  }
+
+  function noResultsFound() {
+    $scope.searchError = 'No results were found for this search';
+  }
+
+  function unknownError(message, data) {
+    sentry.captureError(message, {
+      data: data
+    });
+    $scope.searchError = 'An error occured and we have been notified. Please try again and contact us if the problem persists.';
+  }
+
+  function noDownloadsAvailable() {
+    $scope.downloadsError = 'No downloads are available for this image';
+  }
+
+  function getPath(obj, path) {
+    var segment;
+    path = path.split('.');
+    while(segment = path.shift()){
+      if(!_.isUndefined(obj[segment])) obj = obj[segment];
+      else return;
+    }
+    return obj;
+  }
 
 });
