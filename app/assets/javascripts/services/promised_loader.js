@@ -23,7 +23,7 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
     _loadCallback: debounce(function (host, methodName, args) {
       this.startLoading();
       host[methodName].apply(host, args);
-    }, 500, {leading: true, trailing: false}),
+    }, 500, {leading: true}),
 
     loadCallback: function (host, methodName/*, args[] */) {
       var deferred = $q.defer();
@@ -77,7 +77,7 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
         deferred.reject(err);
         loader.endLoading();
       });
-    }, 500, {leading: true, trailing: false}),
+    }, 500, {leading: true}),
 
     loadPromise: function (promiseLoader/*, args[]*/) {
       var deferred = $q.defer();
