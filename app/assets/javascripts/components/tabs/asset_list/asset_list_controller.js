@@ -21,7 +21,7 @@ angular.module('contentful').
 
   $scope.$watch(function pageParameters(scope){
     return {
-      searchTerm: scope.searchTerm,
+      searchTerm: scope.tab.params.view.searchTerm,
       page: scope.paginator.page,
       pageLength: scope.paginator.pageLength,
       spaceId: (scope.spaceContext.space && scope.spaceContext.space.getId())
@@ -33,10 +33,6 @@ angular.module('contentful').
   $scope.visibleInCurrentList = function(){
     // TODO: This needs to basically emulate the API :(
     return true;
-  };
-
-  $scope.setSearchTerm = function (term) {
-    $scope.searchTerm = term;
   };
 
   $scope.resetAssets = function(resetPage) {
@@ -59,7 +55,7 @@ angular.module('contentful').
       skip: $scope.paginator.skipItems()
     };
 
-    return searchQueryHelper.buildQuery($scope.spaceContext.space, searchQueryHelper.assetContentType, $scope.searchTerm)
+    return searchQueryHelper.buildQuery($scope.spaceContext.space, searchQueryHelper.assetContentType, $scope.tab.params.view.searchTerm)
     .then(function (searchQuery) {
       _.extend(queryObject, searchQuery);
       return queryObject;
@@ -67,7 +63,7 @@ angular.module('contentful').
   }
 
   $scope.hasQuery = function () {
-    return !_.isEmpty($scope.searchTerm);
+    return !_.isEmpty($scope.tab.params.view.searchTerm);
   };
 
   $scope.loadMore = function() {

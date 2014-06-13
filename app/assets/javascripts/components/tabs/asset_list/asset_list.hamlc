@@ -9,7 +9,7 @@
 
 
   .search-area
-    .search-with-results(cf-tokenized-search="searchTerm" placeholder="Search for Assets")
+    .search-with-results(cf-tokenized-search="tab.params.view.searchTerm" placeholder="Search for Assets")
 
   .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")
 
