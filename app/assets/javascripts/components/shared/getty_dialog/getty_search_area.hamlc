@@ -35,8 +35,6 @@
       %option(value="news") News
       %option(value="sports") Sports
       %option(value="entertainment") Entertainment
-      %option(value="contour") Contour
-      %option(value="travel") Travel
       %option(value="publicity") Publicity
       %option(value="royalty") Royalty
       %option(value="archival") Archival
