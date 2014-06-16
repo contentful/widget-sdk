@@ -111,3 +111,25 @@ describe('Promised loader service', function () {
   });
 
 });
+
+describe('PromisedLoader service', function () {
+  var a,b;
+  beforeEach(function () {
+    module('contentful/test', function ($provide) {
+      $provide.value('debounce', _.debounce);
+    });
+    inject(function (PromisedLoader) {
+      a = new PromisedLoader();
+      b = new PromisedLoader();
+    });
+  });
+
+  afterEach(inject(function ($log) {
+    $log.assertEmpty();
+  }));
+
+  it('The debounced function in two Promised Loaders should be distinct', function () {
+    expect(a._loadCallback).not.toBe(b._loadCallback);
+  });
+
+});
