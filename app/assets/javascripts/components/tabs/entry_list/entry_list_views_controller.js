@@ -57,7 +57,7 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
 
   $scope.resetViews = function () {
     $scope.uiConfig.entryListViews = generateDefaultViews();
-    $scope.saveEntryListViews();
+    $scope.saveViews();
   };
 
   $scope.fieldIsSortable = function (field) {
@@ -112,7 +112,7 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     return '' + direction + ' by ' + field.name;
   };
 
-  $scope.saveEntryListViews = function () {
+  $scope.saveViews = function () {
     return $scope.saveUiConfig().catch(function () {
       notification.serverError('Error trying to save view');
     });

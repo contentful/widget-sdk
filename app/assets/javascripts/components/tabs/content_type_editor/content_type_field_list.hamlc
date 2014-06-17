@@ -1,5 +1,6 @@
-.cf-field-settings(ng-repeat="(index, field) in fieldList track by field.uiid"
-  ng-class="{open: isFieldOpen(field), active: !field.disabled }"
-  ng-hide="field.disabled && !preferences.showDisabledFields"
-  data-field-id="{{field.id}}"
-  ng-click="fieldClicked(field)")
+%div(ui-sortable="fieldListSortOptions" ng-model="fieldList")
+  .cf-field-settings(ng-repeat="(index, field) in fieldList track by field.uiid"
+    ng-class="{open: isFieldOpen(field), active: !field.disabled }"
+    ng-hide="field.disabled && !preferences.showDisabledFields"
+    data-field-id="{{field.id}}"
+    ng-click="fieldClicked(field)")

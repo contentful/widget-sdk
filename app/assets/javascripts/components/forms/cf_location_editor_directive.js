@@ -1,7 +1,7 @@
 /*global google:false*/
 'use strict';
 
-angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, notification, $parse){
+angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, notification, $parse, defer){
   return {
     restrict: 'C',
     require: 'ngModel',
@@ -157,7 +157,7 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
       scope.$watch('selectedResult', function (result) {
         if (result) {
           moveMapToSelected();
-          _.defer(scrollToSelected);
+          defer(scrollToSelected);
         }
       });
 

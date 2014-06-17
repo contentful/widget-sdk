@@ -59,8 +59,8 @@
     .form-field
       %label Fields
       .form-controls
-        .content-type-field-list(ng-show="hasFields")
-        .advice.inner-advice(ng-hide="hasFields")
+        .content-type-field-list(ng-if="hasFields")
+        .advice.inner-advice(ng-if="!hasFields")
           %i.ss-layout.giant-icon
           %header.advice-title You have no Fields yet
           %p.advice-description

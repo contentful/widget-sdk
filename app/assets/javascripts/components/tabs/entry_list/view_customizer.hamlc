@@ -9,9 +9,11 @@
     %ul.displayed-fields
       %li.non-customizable
         %p Name
+    %ul.displayed-fields(ui-sortable="displayedFieldsSortOptions" ng-model="displayedFields")
       %li.customizable(ng-repeat="field in displayedFields track by field.id" data-field-id="{{field.id}}")
         %p {{field.name}}
         .close-button(ng-show="!field.persistent" ng-click="hideField($event, field)")
+    %ul.displayed-fields
       %li.non-customizable
         %p Status
 

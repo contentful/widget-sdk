@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfFilePreview', function ($compile, $window, $document) {
+angular.module('contentful').directive('cfFilePreview', function ($compile, $window, $document, defer) {
   return {
     scope: true,
     link: function (scope, elem, attrs) {
@@ -21,8 +21,8 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
       if (fullscreen) {
         elem.on('click', showFullscreen);
       } else if(!noPreview) {
-        elem.on('mousemove', mouseMoveHandler);
-        elem.on('mouseout', mouseOutHandler);
+        elem.find('img').on('mousemove', mouseMoveHandler);
+        elem.find('img').on('mouseout', mouseOutHandler);
       }
 
       scope.$watch('file', setSizes, true);
@@ -50,7 +50,7 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
       function showFullscreen() {
         if (!isImage()) return;
         makePreview();
-        _.defer(function () {
+        defer(function () {
           $document.one('click', removePreview);
         });
         $preview.css({
@@ -88,7 +88,8 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
         if ($preview || isInvalid(scope.width) || isInvalid(scope.height)) return;
         $($window).on('resize', resizeHandler);
         setSizes();
-        $preview = $compile('<img ng-src="{{file.url}}?w={{width}}&h={{height}}" class="cf-file-preview" style="display:block; position: fixed; width: {{width}}px; height: {{height}}px; background: white">')(scope);
+        var sizeQueryString = scope.file.external ? '' : '?w={{width}}&h={{height}}';
+        $preview = $compile('<img ng-src="{{file.url}}'+sizeQueryString+'" class="cf-file-preview" style="display:block; position: fixed; width: {{width}}px; height: {{height}}px; background: white">')(scope);
         $document.find('body').append($preview);
         scope.$digest();
 

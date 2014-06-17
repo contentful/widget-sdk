@@ -9,7 +9,7 @@
 
 
   .search-area
-    .search-with-results(cf-tokenized-search="searchTerm" placeholder="Search for Assets")
+    .search-with-results(cf-tokenized-search="tab.params.view.searchTerm" placeholder="Search for Assets")
 
   .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")
 
@@ -21,22 +21,7 @@
 
 .tab-main
   .left-nav
-    %header.filter-list-header Filter By Status
-    %ul.filter-list.status-filters
-      %li.filter-list-item(ng-class="{active: searchTerm == null}" ng-click="searchTerm = null")
-        %span.filter-list-title All
-      %li.filter-list-item(ng-class="{active: searchTerm == 'status:changed'}" ng-click="setSearchTerm('status:changed')")
-        %span.filter-list-title Changed
-      %li.filter-list-item(ng-class="{active: searchTerm == 'status:published'}" ng-click="setSearchTerm('status:published')")
-        %span.filter-list-title Published
-      %li.filter-list-item(ng-class="{active: searchTerm == 'status:archived'}" ng-click="setSearchTerm('status:archived')")
-        %span.filter-list-title Archived
-    %header.filter-list-header Filter By File Type
-    %ul.filter-list.type-filters
-      %li.filter-list-item(ng-repeat="(label, name) in mimetypeGroups track by label"
-          ng-class="{active: searchTerm == 'type:'+label}"
-          ng-click="setSearchTerm('type:'+label)")
-        %span.filter-list-title {{name}}
+    %div.menu-with-buttons(view-menu="uiConfig.assetListViews" current-view="tab.params.view" ng-show="uiConfig")
 
   .with-left-nav
     %table.result-list.main-results.main-header
@@ -59,7 +44,7 @@
               %input(type="checkbox" cf-selection="asset" tabindex="-1")
             %td.cell-preview(ng-class="{'no-padding': (!!file)}")
               %div.file-preview(cf-file-preview="" file="spaceContext.localizedField(asset, 'data.fields.file')" preview-size="400")
-                %span(cf-thumbnail="file" size="30")
+                %span.cf-thumbnail(file="file" size="30")
             %td.cell-name
               %span {{spaceContext.assetTitle(asset)}}
             %td.cell-type(ng-init="file=spaceContext.localizedField(asset, 'data.fields.file')")

@@ -1,36 +1,43 @@
 'use strict';
 
-angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope, cfSpinner) {
+angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope, cfSpinner, debounce) {
 
   function PromisedLoader() {
     this.inProgress = false;
+    this._loadCallback = debounce(this._loadCallbackImmediately, 500, {leading: true});
+    this._loadPromise = debounce(this._loadPromiseImmediately, 500, {leading: true});
   }
 
   PromisedLoader.IN_PROGRESS = 'Already in progress';
 
   PromisedLoader.prototype = {
 
-    load: function (host, methodName /* args ... */) {
+    startLoading: function () {
+      this.stopSpinner = cfSpinner.start();
+      this.inProgress = true;
+    },
+
+    endLoading: function() {
+      this.inProgress = false;
+      this.stopSpinner();
+    },
+
+    _loadCallbackImmediately: function (host, methodName, args) {
+      this.startLoading();
+      host[methodName].apply(host, args);
+    },
+
+    _loadCallback: null, //initialized in Constructor
+
+    loadCallback: function (host, methodName/*, args[] */) {
       var deferred = $q.defer();
+      var args = _.rest(arguments, 2);
       var loader = this;
       if (loader.inProgress){
         deferred.reject(PromisedLoader.IN_PROGRESS);
         return deferred.promise;
       }
-      var args = _.rest(arguments, 2);
 
-      // TODO
-      // Shouldn't inProgress be set to true inside the _.throtte callback?
-      // What happens now is that a second request will always either
-      // - First is in progress: abort above
-      // - First is done: _load has been reset and will be recreated
-      // Also, this should be debounce, not throttle
-      loader.inProgress = true;
-      if(!loader._load) loader._load = _.throttle(function (host, methodName, args) {
-        host[methodName].apply(host, args);
-      }, 500);
-
-      var stopSpinner = cfSpinner.start();
       args.push(function callback(err, res, stats) {
         $rootScope.$apply(function () {
           if (err) {
@@ -41,12 +48,53 @@ angular.module('contentful').factory('PromisedLoader', function ($q, $rootScope,
             });
             deferred.resolve(res);
           }
-          loader.inProgress = false;
-          delete loader._load;
-          stopSpinner();
+          loader.endLoading();
         });
       });
-      loader._load(host, methodName, args);
+      loader._loadCallback(host, methodName, args);
+
+      return deferred.promise;
+    },
+
+    // Variant that delegates to loadPromise
+    //loadCallback: function (host, methodName) {
+      //var args = _.rest(arguments, 2);
+      //return this.loadPromise(function (args) {
+        //var cb = $q.callback();
+        //args.push(cb);
+        //host[methodName].apply(host, args);
+        //return cb.promise.then(function (res, stats) {
+          //if (_.isObject(stats)) _.each(stats, function (stat, name) {
+            //Object.defineProperty(res, name, {value: stat});
+          //});
+        //});
+      //}, args);
+    //},
+
+    _loadPromiseImmediately: function (promiseLoader, args, deferred) {
+      var loader = this;
+      this.startLoading();
+      promiseLoader.apply(null, args).then(function (res) {
+        deferred.resolve(res);
+        loader.endLoading();
+      }, function (err) {
+        deferred.reject(err);
+        loader.endLoading();
+      });
+    },
+
+    _loadPromise: null, // Initialized in Constructor
+
+    loadPromise: function (promiseLoader/*, args[]*/) {
+      var deferred = $q.defer();
+      var args = _.rest(arguments, 1);
+      if (this.inProgress){
+        deferred.reject(PromisedLoader.IN_PROGRESS);
+        return deferred.promise;
+      }
+
+      this._loadPromise(promiseLoader, args, deferred);
+
       return deferred.promise;
     }
 

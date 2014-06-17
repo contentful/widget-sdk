@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfFileEditor', function (notification, filepicker, $parse, aviary, environment) {
+angular.module('contentful').directive('cfFileEditor', function (notification, filepicker, $parse, aviary, modalDialog, stringUtils) {
   return {
     restrict: 'C',
     require: ['ngModel', '^otPath'],
@@ -42,12 +42,20 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
         });
       };
 
+      scope.uploadFromGetty = function () {
+        modalDialog.open({
+          scope: scope,
+          template: 'getty_dialog',
+          deactivateConfirmKey: true
+        });
+      };
+
       scope.editFile = function () {
         scope.loadingEditor = true;
         var img = elem.find('.thumbnail').get(0);
         var preview = elem.find('.editor-preview').get(0);
         preview.src = '';
-        var imgUrl = img.src.replace(/(\.\w+)\?.*/, '$1');
+        var imgUrl = stringUtils.removeQueryString(img.src);
         preview.onload = function () {
           aviary.createEditor({
             file: scope.file,
@@ -73,9 +81,12 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
         scope.validate();
       };
 
-      scope.$on('cfFileDropped', function (event, FPFile) {
-        changeHandler(FPFile);
-      });
+      scope.$on('cfFileDropped', fileEventHandler);
+      scope.$on('gettyFileAuthorized', fileEventHandler);
+
+      function fileEventHandler(event, file) {
+        changeHandler(file);
+      }
 
       function changeHandler(FPFile) {
         var file = FPFile ? {

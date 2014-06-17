@@ -1,0 +1,13 @@
+.results-count(ng-show="isActive() && paginator.numEntries")
+  %span(ng-transclude)
+  {{paginator.numEntries}} Results, {{paginator.page+1}} of {{paginator.numPages()}} pages
+
+.sorting-options(ng-show="isActive() && isSortingActive()")
+  %button.flat-button(ng-click="sortBy('default')" ng-show="getty.families.editorial" ng-class="{active: currentSortOrder == 'Default'}")
+    Best Match
+  %button.flat-button(ng-click="sortBy('MostRecent')" ng-class="{active: !hasBlendedSortOrder && currentSortOrder == 'MostRecent'}")
+    Most Recent
+  %button.flat-button(ng-click="sortBy('MostPopular')" ng-class="{active: !hasBlendedSortOrder && currentSortOrder == 'MostPopular'}")
+    Most Popular
+
+

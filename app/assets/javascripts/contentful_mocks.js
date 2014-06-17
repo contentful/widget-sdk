@@ -233,6 +233,56 @@ mocks.provider('cfCanStubs', function ($provide) {
   this.$get = function () {};
 });
 
+mocks.config(function ($provide) {
+  $provide.value('debounce', immediateInvocationStub);
+  $provide.value('throttle', immediateInvocationStub);
+  $provide.value('defer',    noDeferStub);
+  $provide.value('delay',    noDelayStub);
+  $provide.constant('noDeferStub', noDeferStub);
+  $provide.constant('noDelayStub', noDelayStub);
+  $provide.constant('delayedInvocationStub', delayedInvocationStub);
+  $provide.constant('immediateInvocationStub', immediateInvocationStub);
+
+  function noDeferStub(f) {
+    /*jshint validthis:true */
+    var args = _.rest(arguments);
+    f.apply(this, args);
+  }
+
+  function noDelayStub(f/*, delay*/) {
+    /*jshint validthis:true */
+    var args = _.rest(arguments, 2);
+    f.apply(this, args);
+  }
+
+  function immediateInvocationStub(f) {
+    return f;
+  }
+
+  function delayedInvocationStub (originalFunction) {
+    var result;
+    function delayedFunction() {
+      /*jshint validthis:true */
+      delayedFunction.calls.push({
+        thisArg: this,
+        arguments: arguments
+      });
+      return result;
+    }
+    delayedFunction.calls = [];
+    delayedFunction.invokeDelayed = function () {
+      var call = this.calls.shift();
+      result = originalFunction.apply(call.thisArg, call.arguments);
+    };
+    delayedFunction.invokeAll = function () {
+      while (this.calls.length > 0) {
+        this.invokeDelayed();
+      }
+    };
+    return delayedFunction;
+  }
+});
+
 mocks.config(function ($provide, $controllerProvider) {
   $provide.stubDirective = function (name, definition) {
     $provide.factory(name + 'Directive', function () {

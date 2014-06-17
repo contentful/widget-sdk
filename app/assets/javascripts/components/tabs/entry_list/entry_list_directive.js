@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('entryList', function(){
+angular.module('contentful').directive('entryList', function($timeout){
   // Definitions for narrow/medium types in entry list controller
   var classToWidth = {
     narrow: 70,
@@ -34,18 +34,16 @@ angular.module('contentful').directive('entryList', function(){
 
       scope.expandColumn = function (field) {
         expandedField = field.id;
-        _.defer(collapseColumns);
+        $timeout(collapseColumns);
       };
 
       // Must be deferred because it depends on the rendered content
-      scope.$watch('displayedFields', _.partial(_.defer, collapseColumns), true);
+      scope.$watch('displayedFields', _.partial($timeout, collapseColumns), true);
 
       function collapseColumns() {
         elem.find('th.collapsed').removeClass('collapsed');
         collapsedStates = {};
         _.forEach(scope.displayedFields, collapseElement);
-        // We need to trigger the cycle due to the previous defer
-        scope.$digest();
       }
 
 

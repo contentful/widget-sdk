@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('contentTypeEditor', function(){
+angular.module('contentful').directive('contentTypeEditor', function(defer){
   return {
     template: JST.content_type_editor(),
     restrict: 'C',
@@ -10,7 +10,7 @@ angular.module('contentful').directive('contentTypeEditor', function(){
       function focus() {
         if (scope.otEditable) {
           var input = elem.find('[name=contentTypeForm] input').eq(0);
-          _.defer(function () { input.focus(); });
+          defer(function () { input.focus(); });
           unwatchEditable();
         }
       }

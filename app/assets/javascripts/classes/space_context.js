@@ -53,7 +53,7 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
       refreshContentTypes: function() {
         if (this.space) {
           var spaceContext = this;
-          return this._contentTypeLoader.load(this.space, 'getContentTypes', {order: 'name', limit: 1000})
+          return this._contentTypeLoader.loadCallback(this.space, 'getContentTypes', {order: 'name', limit: 1000})
           .then(function (contentTypes) {
             contentTypes = _.reject(contentTypes, function (ct) { return ct.isDeleted(); });
             contentTypes.sort(function (a,b) {
@@ -74,7 +74,7 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
 
       refreshPublishedContentTypes: function() {
         var spaceContext = this;
-        return this._publishedContentTypeLoader.load(this.space, 'getPublishedContentTypes')
+        return this._publishedContentTypeLoader.loadCallback(this.space, 'getPublishedContentTypes')
         .then(function (contentTypes) {
           spaceContext.publishedContentTypes = _(contentTypes)
             .reject(function (ct) { return ct.isDeleted(); })

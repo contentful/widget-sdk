@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorCtrl($scope, validation, AssetContentType, notification, addCanMethods, ShareJS) {
+angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorCtrl($scope, validation, AssetContentType, notification, addCanMethods, ShareJS, stringUtils) {
   $scope.$watch('tab.params.asset', 'asset=tab.params.asset');
   $scope.$watch(function assetEditorEnabledWatcher(scope) {
     return !scope.asset.isArchived() && scope.can('update', scope.asset.data);
@@ -126,7 +126,7 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
 
   function setTitleOnDoc(file, localeCode) {
     var otPath = ['fields', 'title', localeCode];
-    var fileName = file.fileName.replace(/\.\w+$/g, '').replace(/_/g, ' ');
+    var fileName = stringUtils.fileNameToTitle(file.fileName);
     if(!ShareJS.peek($scope.otDoc, otPath))
       ShareJS.mkpath({
         doc: $scope.otDoc,

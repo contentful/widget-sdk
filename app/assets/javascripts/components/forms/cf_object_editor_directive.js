@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfObjectEditor', function(){
+angular.module('contentful').directive('cfObjectEditor', function(defer){
   return {
     restrict: 'C',
     template: JST['cf_object_editor'](),
@@ -33,7 +33,7 @@ angular.module('contentful').directive('cfObjectEditor', function(){
         scope.jsonData.value = angular.copy(ngModel.$viewValue);
         scope.textFieldModel.$setPristine();
         scope.textFieldModel.$setValidity('json', true);
-        _.defer(function () {
+        defer(function () {
           elem.find('textarea').trigger('autosize');
         });
       };

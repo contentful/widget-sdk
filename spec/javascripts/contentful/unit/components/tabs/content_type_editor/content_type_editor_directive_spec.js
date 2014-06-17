@@ -101,7 +101,7 @@ describe('The ContentType editor directive', function () {
     });
 
     it('advice is not shown', function () {
-      expect(container.find('.advice')).toBeNgHidden();
+      expect(container.find('.advice').length).toBe(0);
     });
 
     it('fields dropdown is shown', function () {
@@ -116,7 +116,7 @@ describe('The ContentType editor directive', function () {
     });
 
     it('field list is not shown', function () {
-      expect(container.find('.content-type-field-list')).toBeNgHidden();
+      expect(container.find('.content-type-field-list').length).toBe(0);
     });
 
     it('advice is shown', function () {

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfLinkEditorSearch', function() {
+angular.module('contentful').directive('cfLinkEditorSearch', function(defer) {
   return {
     restrict: 'AC',
     link: function (scope, element) {
@@ -10,7 +10,7 @@ angular.module('contentful').directive('cfLinkEditorSearch', function() {
       };
 
       scope.$watch('selectedEntity', function () {
-        _.defer(scrollToSelected);
+        defer(scrollToSelected);
       });
 
       function scrollToSelected(){

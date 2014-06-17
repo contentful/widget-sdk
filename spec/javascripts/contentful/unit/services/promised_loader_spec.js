@@ -5,15 +5,15 @@ describe('Promised loader service', function () {
   var host;
 
   beforeEach(function () {
-    jasmine.clock().install();
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'method', 'success', 'error', 'success2', 'error2'
       ]);
     });
-    inject(function (PromisedLoader, _$rootScope_) {
+    inject(function (PromisedLoader, _$rootScope_, delayedInvocationStub) {
       $rootScope = _$rootScope_;
       loader = new PromisedLoader();
+      sinon.stub(loader, '_loadCallback', delayedInvocationStub(loader._loadCallback));
 
       host = {
         methodName: stubs.method
@@ -23,15 +23,13 @@ describe('Promised loader service', function () {
 
   afterEach(inject(function ($log) {
     $log.assertEmpty();
-    jasmine.clock().uninstall();
   }));
 
   describe('load entities successfully', function() {
     beforeEach(function() {
-      stubs.method.callsArgWith(1, null, {});
-      loader.load(host, 'methodName', {}).then(stubs.success, stubs.error);
-      jasmine.clock().tick(600);
-      $rootScope.$digest();
+      stubs.method.yields( null, {});
+      loader.loadCallback(host, 'methodName', {}).then(stubs.success, stubs.error);
+      loader._loadCallback.invokeDelayed();
     });
 
     it('calls host method', function() {
@@ -53,10 +51,9 @@ describe('Promised loader service', function () {
 
   describe('load entities with a server error', function() {
     beforeEach(function() {
-      stubs.method.callsArgWith(1, {});
-      loader.load(host, 'methodName', {}).then(stubs.success, stubs.error);
-      jasmine.clock().tick(600);
-      $rootScope.$digest();
+      stubs.method.yields({});
+      loader.loadCallback(host, 'methodName', {}).then(stubs.success, stubs.error);
+      loader._loadCallback.invokeDelayed();
     });
 
     it('calls host method', function() {
@@ -77,17 +74,17 @@ describe('Promised loader service', function () {
   });
 
   it('loader in progress', function() {
-    loader.load(host, 'methodName', {}).then(stubs.success, stubs.error);
-    jasmine.clock().tick(100);
+    loader.loadCallback(host, 'methodName', {}).then(stubs.success, stubs.error);
+    loader._loadCallback.invokeDelayed();
     expect(loader.inProgress).toBeTruthy();
   });
 
   describe('attempt to load more than once simultaneously', function() {
     beforeEach(function() {
-      stubs.method.callsArgWith(1, null, {});
-      loader.load(host, 'methodName', {}).then(stubs.success, stubs.error);
-      loader.inProgress = true;
-      loader.load(host, 'methodName', {}).then(stubs.success2, stubs.error2);
+      loader.loadCallback(host, 'methodName', {}).then(stubs.success, stubs.error);
+      loader._loadCallback.invokeDelayed();
+      loader.loadCallback(host, 'methodName', {}).then(stubs.success2, stubs.error2);
+      stubs.method.yield(null, {});
       $rootScope.$digest();
     });
 
@@ -111,6 +108,28 @@ describe('Promised loader service', function () {
       expect(stubs.error2).toBeCalled();
     });
 
+  });
+
+});
+
+describe('PromisedLoader service', function () {
+  var a,b;
+  beforeEach(function () {
+    module('contentful/test', function ($provide) {
+      $provide.value('debounce', _.debounce);
+    });
+    inject(function (PromisedLoader) {
+      a = new PromisedLoader();
+      b = new PromisedLoader();
+    });
+  });
+
+  afterEach(inject(function ($log) {
+    $log.assertEmpty();
+  }));
+
+  it('The debounced function in two Promised Loaders should be distinct', function () {
+    expect(a._loadCallback).not.toBe(b._loadCallback);
   });
 
 });

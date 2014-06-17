@@ -279,7 +279,7 @@ describe('The cfValidationOptions directive', function () {
       beforeEach(function() {
         scope.validation = {in: ['value1', 'value2']};
         scope.updateDoc = sinon.stub();
-        scope.removeValue(1);
+        scope.removeIndex(1);
       });
 
       it('value is not in list', function() {
@@ -454,26 +454,6 @@ describe('The cfValidationOptions directive', function () {
       });
     });
 
-  });
-
-  describe('remove a value from list', function() {
-    var target, container;
-    beforeEach(function() {
-      target = $('<input type="text" value="targetvalue" />');
-      container = $('<div><span></span></div>');
-      target.appendTo(container.find('span'));
-      compileElement();
-      scope.removeValue = sinon.stub();
-      scope.removeFromValuesList({target: target}, 1);
-    });
-
-    it('removes containing node', function() {
-      expect(container.find('span').get(0)).toBeUndefined();
-    });
-
-    it('removes index', function() {
-      expect(scope.removeValue).toBeCalledWith(1);
-    });
   });
 
   describe('hides validation type select', function() {

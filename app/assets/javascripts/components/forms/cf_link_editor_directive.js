@@ -53,26 +53,19 @@ angular.module('contentful').directive('cfLinkEditor', function(mimetype){
         });
       }
 
-      if (scope.linkMultiple) {
-        var list = elem.find('ul.links').eq(0);
-        list.sortable({
-          handle: '.drag-handle',
-          forceHelperSize: true,
-          start: function(event, ui) {
-            list.sortable('refresh');
-            ui.item.startIndex = ui.item.index();
-          },
-          update: function(e, ui) {
-            var oldIndex = ui.item.startIndex;
-            var newIndex = ui.item.index();
-            delete ui.item.startIndex;
-            list.sortable('cancel');
-            scope.otDoc.at(scope.otPath).move(oldIndex, newIndex, function() {
-              scope.$apply('otUpdateEntity()');
-            });
-          }
-        });
-      }
+      scope.linkSortOptions = {
+        disabled: scope.linkSingle,
+        handle: '.drag-handle',
+        forceHelperSize: true,
+        update: function(e, ui) {
+          var oldIndex = ui.item.sortable.index;
+          var newIndex = ui.item.sortable.dropindex;
+          scope.otDoc.at(scope.otPath).move(oldIndex, newIndex, function() {
+            scope.$apply('otUpdateEntity()');
+          });
+        }
+      };
+
     }
   };
 });

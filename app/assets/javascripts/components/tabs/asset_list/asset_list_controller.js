@@ -1,11 +1,10 @@
 'use strict';
 
 angular.module('contentful').
-  controller('AssetListCtrl',function AssetListCtrl($scope, $q, Paginator, Selection, PromisedLoader, mimetype, analytics, sentry, searchQueryHelper) {
+  controller('AssetListCtrl',function AssetListCtrl($scope, $q, Paginator, Selection, PromisedLoader, analytics, sentry, searchQueryHelper, $controller) {
 
+  $controller('AssetListViewsController', {$scope: $scope});
   var assetLoader = new PromisedLoader();
-
-  $scope.mimetypeGroups = mimetype.groupDisplayNames;
 
   $scope.assetSection = 'all';
 
@@ -22,7 +21,7 @@ angular.module('contentful').
 
   $scope.$watch(function pageParameters(scope){
     return {
-      searchTerm: scope.searchTerm,
+      searchTerm: scope.tab.params.view.searchTerm,
       page: scope.paginator.page,
       pageLength: scope.paginator.pageLength,
       spaceId: (scope.spaceContext.space && scope.spaceContext.space.getId())
@@ -36,15 +35,11 @@ angular.module('contentful').
     return true;
   };
 
-  $scope.setSearchTerm = function (term) {
-    $scope.searchTerm = term;
-  };
-
   $scope.resetAssets = function(resetPage) {
     if (resetPage) $scope.paginator.page = 0;
     return buildQuery()
     .then(function (query) {
-      return assetLoader.load($scope.spaceContext.space, 'getAssets', query);
+      return assetLoader.loadCallback($scope.spaceContext.space, 'getAssets', query);
     })
     .then(function (assets) {
       $scope.paginator.numEntries = assets.total;
@@ -60,7 +55,7 @@ angular.module('contentful').
       skip: $scope.paginator.skipItems()
     };
 
-    return searchQueryHelper.buildQuery($scope.spaceContext.space, searchQueryHelper.assetContentType, $scope.searchTerm)
+    return searchQueryHelper.buildQuery($scope.spaceContext.space, searchQueryHelper.assetContentType, $scope.tab.params.view.searchTerm)
     .then(function (searchQuery) {
       _.extend(queryObject, searchQuery);
       return queryObject;
@@ -68,7 +63,7 @@ angular.module('contentful').
   }
 
   $scope.hasQuery = function () {
-    return !_.isEmpty($scope.searchTerm);
+    return !_.isEmpty($scope.tab.params.view.searchTerm);
   };
 
   $scope.loadMore = function() {
@@ -79,7 +74,7 @@ angular.module('contentful').
     .then(function (query) {
       analytics.track('Scrolled AssetList');
       queryForDebug = query;
-      return assetLoader.load($scope.spaceContext.space, 'getAssets', query);
+      return assetLoader.loadCallback($scope.spaceContext.space, 'getAssets', query);
     })
     .then(function (assets) {
       if(!assets){

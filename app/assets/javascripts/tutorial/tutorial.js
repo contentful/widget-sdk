@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('tutorial', function ($compile, notification, tutorialExampledata, $q, $timeout, $rootScope, analytics, sentry, environment) {
+angular.module('contentful').factory('tutorial', function ($compile, notification, tutorialExampledata, $q, $timeout, $rootScope, analytics, sentry, environment, debounce, throttle) {
   var guiders = window.guiders;
   guiders._defaultSettings.buttons = null;
   guiders._defaultSettings.xButton = true;
@@ -197,7 +197,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         $compile(angular.element('.guider#'+options.id))(parentScope);
       }
 
-      var repositionLater = _.throttle(function () {
+      var repositionLater = throttle(function () {
         guiders.reposition();
       }, 50, true);
 
@@ -772,7 +772,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         buttons: [next],
         onShow: function (guider) {
           $(this.attachTo).focus();
-          var d = this.attachScope.$watch('fieldData.value', _.debounce(function (value, old) {
+          var d = this.attachScope.$watch('fieldData.value', debounce(function (value, old) {
             if (value !== old) {
               if (guiders._currentGuiderID === guider.id) guiders.next();
               d();
@@ -793,7 +793,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         buttons: [next],
         onShow: function (guider) {
           $(this.attachTo).focus();
-          var d = this.attachScope.$watch('entry.data.fields.correctAnswer[spaceContext.defaultLocale.code]', _.debounce(function (value, old) {
+          var d = this.attachScope.$watch('entry.data.fields.correctAnswer[spaceContext.defaultLocale.code]', debounce(function (value, old) {
             if (value !== old) {
               if (guiders._currentGuiderID === guider.id) guiders.next();
               d();
@@ -831,7 +831,7 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
         buttons: [next],
         onShow: function (guider) {
           $(this.attachTo).focus();
-          var d = this.attachScope.$watch('asset.data.fields.title[spaceContext.defaultLocale.code]', _.debounce(function (value, old) {
+          var d = this.attachScope.$watch('asset.data.fields.title[spaceContext.defaultLocale.code]', debounce(function (value, old) {
             if (value !== old) {
               if (guiders._currentGuiderID === guider.id) guiders.next();
               d();

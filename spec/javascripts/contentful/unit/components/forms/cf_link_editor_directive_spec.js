@@ -411,11 +411,11 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('cf-thumbnail is not shown for first asset', function () {
-        expect(element.find('[cf-thumbnail]').eq(0)).toBeNgHidden();
+        expect(element.find('.cf-thumbnail').eq(0)).toBeNgHidden();
       });
 
       it('cf-thumbnail is shown for second asset', function () {
-        expect(element.find('[cf-thumbnail]').eq(1)).not.toBeNgHidden();
+        expect(element.find('.cf-thumbnail').eq(1)).not.toBeNgHidden();
       });
 
       it('file type is not shown for first asset', function () {

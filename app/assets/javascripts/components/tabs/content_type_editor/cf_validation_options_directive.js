@@ -21,11 +21,6 @@ angular.module('contentful').directive('cfValidationOptions', function (keycodes
         }
       };
 
-      scope.removeFromValuesList = function (ev, index) {
-        $(ev.target).parent().remove();
-        scope.removeValue(index);
-      };
-
     },
 
     controller: function CfValidationOptionsCtrl($scope, mimetype, notification) {
@@ -61,7 +56,7 @@ angular.module('contentful').directive('cfValidationOptions', function (keycodes
         }
       };
 
-      $scope.removeValue = function (index) {
+      $scope.removeIndex = function (index) {
         $scope.validation.in.splice(index, 1);
         $scope.updateDoc();
       };
