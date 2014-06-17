@@ -62,7 +62,7 @@ describe('Asset List Controller', function () {
 
     describe('if term is null', function () {
       beforeEach(function () {
-        scope.searchTerm = null;
+        scope.tab.params.view.searchTerm = null;
         scope.$digest();
       });
 
@@ -73,7 +73,7 @@ describe('Asset List Controller', function () {
 
     describe('if term is set', function () {
       beforeEach(function () {
-        scope.searchTerm = 'thing';
+        scope.tab.params.view.searchTerm = 'thing';
         scope.$digest();
       });
 
@@ -100,7 +100,7 @@ describe('Asset List Controller', function () {
       scope.$digest();
       stubs.reset.restore();
       stubs.reset = sinon.stub(scope, 'resetAssets');
-      scope.searchTerm = 'thing';
+      scope.tab.params.view.searchTerm = 'thing';
       scope.$digest();
       expect(stubs.reset).toBeCalledOnce();
     });
@@ -203,14 +203,14 @@ describe('Asset List Controller', function () {
       });
 
       it('for published list', function() {
-        scope.searchTerm = 'status:published';
+        scope.tab.params.view.searchTerm = 'status:published';
         scope.resetAssets();
         scope.$apply();
         expect(stubs.loadCallback.args[0][2]['sys.publishedAt[exists]']).toBe('true');
       });
 
       it('for changed list', function() {
-        scope.searchTerm = 'status:changed';
+        scope.tab.params.view.searchTerm = 'status:changed';
         scope.resetAssets();
         scope.$apply();
         expect(stubs.loadCallback.args[0][2]['sys.archivedAt[exists]']).toBe('false');
@@ -218,14 +218,14 @@ describe('Asset List Controller', function () {
       });
 
       it('for archived list', function() {
-        scope.searchTerm = 'status:archived';
+        scope.tab.params.view.searchTerm = 'status:archived';
         scope.resetAssets();
         scope.$apply();
         expect(stubs.loadCallback.args[0][2]['sys.archivedAt[exists]']).toBe('true');
       });
 
       it('for search term', function() {
-        scope.searchTerm = 'term';
+        scope.tab.params.view.searchTerm = 'term';
         scope.resetAssets();
         scope.$apply();
         expect(stubs.loadCallback.args[0][2].query).toBe('term');
@@ -235,13 +235,13 @@ describe('Asset List Controller', function () {
 
   it('has a query', function() {
     scope.tab.params.list = 'all';
-    scope.searchTerm = 'term';
+    scope.tab.params.view.searchTerm = 'term';
     expect(scope.hasQuery()).toBeTruthy();
   });
 
   it('has no query', function() {
     scope.tab.params.list = 'all';
-    scope.searchTerm = null;
+    scope.tab.params.view.searchTerm = null;
     expect(scope.hasQuery()).toBeFalsy();
   });
 
