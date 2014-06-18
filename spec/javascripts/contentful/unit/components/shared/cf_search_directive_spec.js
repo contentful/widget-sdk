@@ -7,7 +7,7 @@ describe('cfSearch Directive', function () {
     inject(function ($compile, $rootScope) {
       scope = $rootScope.$new();
       compileElement = function () {
-        element = $compile('<div class="search-field" cf-search="searchTerm" search-all="searchAllFlag"></div>')(scope);
+        element = $compile('<div class="search-field" cf-search="searchTerm"></div>')(scope);
         scope.$digest();
         isolateScope = element.isolateScope();
       };
@@ -21,7 +21,6 @@ describe('cfSearch Directive', function () {
   describe('sets properties on scope', function() {
     beforeEach(function() {
       scope.searchTerm = 'term';
-      scope.searchAllFlag = true;
       compileElement();
     });
 
@@ -31,15 +30,6 @@ describe('cfSearch Directive', function () {
 
     it('inner search term', function() {
       expect(isolateScope.inner.term).toBe('term');
-    });
-
-    it('searchAll', function() {
-      expect(isolateScope.searchAll).toBe(true);
-    });
-
-    it('resets searchAll', function() {
-      isolateScope.resetSearchAll();
-      expect(isolateScope.searchAll).toBe(false);
     });
 
     describe('updates state from button', function() {
@@ -53,47 +43,40 @@ describe('cfSearch Directive', function () {
         expect(isolateScope.inner.term).toBe('');
       });
 
-      it('updates state', function() {
-        expect(isolateScope.update).toBeCalled();
+      it('updates state with button trigger', function() {
+        expect(isolateScope.update).toBeCalledWith({trigger: 'button'});
       });
     });
 
-    describe('updates state with new term', function() {
+    it('updates state with new term', function() {
+      isolateScope.inner.term = 'newterm';
+      isolateScope.update();
+      expect(isolateScope.search).toBe('newterm');
+    });
+
+    it('updates state with empty term', function() {
+      isolateScope.inner.term = '';
+      isolateScope.update();
+      expect(isolateScope.search).toBe('');
+    });
+
+    describe('updates state with same term', function() {
+      var params;
       beforeEach(function() {
-        isolateScope.inner.term = 'newterm';
-        isolateScope.resetSearchAll = sinon.stub();
-        isolateScope.update();
+        params = {};
+        isolateScope.inner.term = 'term';
+        isolateScope.$emit = sinon.stub();
+        isolateScope.update(params);
       });
 
-      it('sets new search term', function() {
-        expect(isolateScope.search).toBe('newterm');
+      it('term doesnt change', function() {
+        expect(isolateScope.search).toBe('term');
       });
 
-      it('resets search all flag', function() {
-        expect(isolateScope.resetSearchAll).toBeCalled();
-      });
-    });
-
-    describe('updates state with empty term', function() {
-      beforeEach(function() {
-        isolateScope.inner.term = '';
-        isolateScope.resetSearchAll = sinon.stub();
-        isolateScope.update();
-      });
-
-      it('sets new search term', function() {
-        expect(isolateScope.search).toBe('');
-      });
-
-      it('sets searchAll flag to true', function() {
-        expect(isolateScope.searchAll).toBeTruthy();
-      });
-
-      it('does not reset search all flag', function() {
-        expect(isolateScope.resetSearchAll).not.toBeCalled();
+      it('emits event with given parans', function() {
+        expect(isolateScope.$emit).toBeCalledWith('refreshSearch', params);
       });
     });
-
 
   });
 

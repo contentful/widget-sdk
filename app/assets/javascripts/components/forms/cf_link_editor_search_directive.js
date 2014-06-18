@@ -6,7 +6,6 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(defer) {
     link: function (scope, element) {
       scope.clickOutsideHandler = function () {
         scope.searchResultsVisible = false;
-        scope.searchAll = false;
       };
 
       scope.$watch('selectedEntity', function () {

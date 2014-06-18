@@ -30,13 +30,19 @@ angular.module('contentful').controller('GettyDialogController',
   $scope.imageFamilies = [];
   $scope.selectedSizeKey = '';
 
-  $scope.$watch('getty.search', function (search) {
+  $scope.$watch('getty.search', handleSearch);
+
+  $scope.$on('refreshSearch', function () {
+    handleSearch($scope.getty.search);
+  });
+
+  function handleSearch(search) {
     if(!_.isEmpty(search)){
       $scope.gettyLoading = true;
       $scope.imageResults = null;
       searchForImages($scope.getty).then(saveResults, handleSearchFail);
     }
-  });
+  }
 
   function searchForImages (params, offset) {
     var searchParams = {

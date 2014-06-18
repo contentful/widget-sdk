@@ -46,95 +46,6 @@ describe('cfLinkEditorSearch Controller', function () {
     expect(scope.resetEntities).toBeCalled();
   });
 
-  describe('when searchAll property changes', function() {
-    beforeEach(function() {
-      scope.$digest();
-      scope.resetEntities = sinon.stub();
-      scope.loadEntities = sinon.stub();
-    });
-
-    describe('if searchAll is falsy', function() {
-      beforeEach(function() {
-        scope.searchAll = false;
-        scope.$digest();
-      });
-
-      it('resets entities', function() {
-        expect(scope.resetEntities).toBeCalledOnce();
-      });
-
-      it('does not load entities', function() {
-        expect(scope.loadEntities).not.toBeCalled();
-      });
-    });
-
-    describe('if a single link exists', function() {
-      beforeEach(function() {
-        scope.searchAll = true;
-        scope.links = [{}];
-        scope.linkSingle = true;
-        scope.$digest();
-      });
-
-      it('resets entities', function() {
-        expect(scope.resetEntities).toBeCalledOnce();
-      });
-
-      it('does not load entities', function() {
-        expect(scope.loadEntities).not.toBeCalled();
-      });
-    });
-
-    describe('if no links exist', function() {
-      beforeEach(function() {
-        scope.searchAll = true;
-        scope.$digest();
-      });
-
-      it('does not reset entities', function() {
-        expect(scope.resetEntities).not.toBeCalled();
-      });
-
-      it('loads entities', function() {
-        expect(scope.loadEntities).toBeCalledOnce();
-      });
-    });
-
-    describe('if a single link does not exist', function() {
-      beforeEach(function() {
-        scope.searchAll = true;
-        scope.links = [];
-        scope.linkSingle = true;
-        scope.$digest();
-      });
-
-      it('does not reset entities', function() {
-        expect(scope.resetEntities).not.toBeCalled();
-      });
-
-      it('loads entities', function() {
-        expect(scope.loadEntities).toBeCalledOnce();
-      });
-    });
-
-    describe('if multiple links exist', function() {
-      beforeEach(function() {
-        scope.searchAll = true;
-        scope.linkMultiple = true;
-        scope.$digest();
-      });
-
-      it('does not reset entities', function() {
-        expect(scope.resetEntities).not.toBeCalled();
-      });
-
-      it('loads entities', function() {
-        expect(scope.loadEntities).toBeCalledOnce();
-      });
-    });
-
-  });
-
   it('when autocomplete result is selected sets the selected entity on the scope', inject(function ($rootScope) {
     var result = {result: true};
     $rootScope.$broadcast('autocompleteResultSelected', 0, result);
@@ -151,9 +62,23 @@ describe('cfLinkEditorSearch Controller', function () {
     it('calls the addLink method', function() {
       expect(scope.addLink).toBeCalled();
     });
+  });
 
-    it('sets searchAll to false', function() {
-      expect(scope.searchAll).toBeFalsy();
+  describe('on refresh search event', function() {
+    var childScope;
+    beforeEach(function() {
+      scope.resetEntities = sinon.stub();
+      childScope = scope.$new();
+    });
+
+    it('refreshes search if button was clicked', function() {
+      childScope.$emit('refreshSearch', {trigger: 'button'});
+      expect(scope.resetEntities).toBeCalled();
+    });
+
+    it('does not refresh search if other trigger was used', function() {
+      childScope.$emit('refreshSearch', {trigger: ''});
+      expect(scope.resetEntities).not.toBeCalled();
     });
   });
 
@@ -170,12 +95,8 @@ describe('cfLinkEditorSearch Controller', function () {
       expect(scope.addLink).toBeCalledWith(entity);
     });
 
-    it('sets search term to an empty string', function() {
-      expect(scope.searchTerm).toBe('');
-    });
-
-    it('sets searchAll to false', function() {
-      expect(scope.searchAll).toBeFalsy();
+    it('sets search term to undefined', function() {
+      expect(scope.searchTerm).toBeUndefined();
     });
   });
 
@@ -351,10 +272,30 @@ describe('cfLinkEditorSearch Controller', function () {
   makeAddMethodTests('entry', 2);
   makeAddMethodTests('asset', 1);
 
+  it('search is empty if null', function() {
+    scope.searchTerm = undefined;
+    expect(scope.searchIsEmpty()).toBeTruthy();
+  });
+
+  it('search is empty if undefined', function() {
+    scope.searchTerm = undefined;
+    expect(scope.searchIsEmpty()).toBeTruthy();
+  });
+
+  it('search is not empty if empty string', function() {
+    scope.searchTerm = '';
+    expect(scope.searchIsEmpty()).toBeFalsy();
+  });
+
+  it('search is not empty if string', function() {
+    scope.searchTerm = 'term';
+    expect(scope.searchIsEmpty()).toBeFalsy();
+  });
+
   describe('resetting entities', function() {
     describe('with no search term', function() {
       beforeEach(function() {
-        scope.searchTerm = '';
+        scope.searchTerm = undefined;
         scope.resetEntities();
       });
 
@@ -382,6 +323,19 @@ describe('cfLinkEditorSearch Controller', function () {
         expect(scope.loadEntities).toBeCalled();
       });
     });
+
+    describe('with an empty search term', function() {
+      beforeEach(function() {
+        scope.searchTerm = '';
+        scope.loadEntities = sinon.stub();
+        scope.resetEntities();
+      });
+
+      it('loads entities', function() {
+        expect(scope.loadEntities).toBeCalled();
+      });
+    });
+
   });
 
 
