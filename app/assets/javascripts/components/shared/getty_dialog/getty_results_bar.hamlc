@@ -1,6 +1,6 @@
 .results-count(ng-show="isActive() && paginator.numEntries")
+  {{paginator.numEntries}} results, {{paginator.page+1}} of {{paginator.numPages()}} pages
   %span(ng-transclude)
-  {{paginator.numEntries}} Results, {{paginator.page+1}} of {{paginator.numPages()}} pages
 
 .sorting-options(ng-show="isActive() && isSortingActive()")
   %button.flat-button(ng-click="sortBy('default')" ng-show="getty.families.editorial" ng-class="{active: currentSortOrder == 'Default'}")
