@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('ListViewsController', function($scope, modalDialog, notification,
+angular.module('contentful').controller('ListViewsController', function($scope, modalDialog, notification, $q,
                                                                        getBlankView, viewCollectionName, generateDefaultViews, resetList){
   var blankView = getBlankView();
 
@@ -30,6 +30,7 @@ angular.module('contentful').controller('ListViewsController', function($scope, 
   $scope.saveViews = function () {
     return $scope.saveUiConfig().catch(function () {
       notification.serverError('Error trying to save view');
+      return $q.reject();
     });
   };
 
