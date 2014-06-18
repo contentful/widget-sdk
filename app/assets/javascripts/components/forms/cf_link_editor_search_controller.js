@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scope, Paginator, notification, PromisedLoader) {
+angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scope, Paginator, notification, PromisedLoader, $q) {
 
   var entityLoader = new PromisedLoader();
   $scope.paginator = new Paginator();
@@ -36,50 +36,51 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
     });
   };
 
-
   $scope.addNewEntry = function(contentType) {
-    $scope.spaceContext.space.createEntry(contentType.getId(), {}, function(errCreate, entry){
-      $scope.$apply(function (scope) {
-        if (errCreate) {
-          notification.serverError('Error creating Entry', errCreate);
-          return;
-        }
-        scope.addLink(entry).then(function () {
-          scope.navigator.entryEditor(entry).goTo();
-        }, function (errSetLink) {
-          notification.serverError('Error linking Entry', errSetLink);
-          entry['delete'](function(errDelete) {
-            scope.$apply(function () {
-              if (errDelete) {
-                notification.serverError('Error deleting Entry again', errDelete);
-              }
-            });
-          });
-        });
+    var cb = $q.callback(), cbDelete = $q.callback();
+    $scope.spaceContext.space.createEntry(contentType.getId(), {}, cb);
+    return cb.promise
+    .then(function createEntityHandler(entry) {
+      return $scope.addLink(entry)
+      .then(function addLinkHandler() {
+        $scope.navigator.entryEditor(entry).goTo();
+      })
+      .catch(function addLinkErrorHandler(errSetLink) {
+        notification.serverError('Error linking Entry', errSetLink);
+        entry['delete'](cbDelete);
+        return cbDelete.promise;
+      })
+      .catch(function deleteEntityErrorHandler(errDelete) {
+        notification.serverError('Error deleting Entry again', errDelete);
+        return $q.reject(errDelete);
       });
+    }, function createEntityErrorHandler(errCreate) {
+      notification.serverError('Error creating Entry', errCreate);
+      return $q.reject(errCreate);
     });
   };
 
   $scope.addNewAsset = function() {
-    $scope.spaceContext.space.createAsset({}, function(errCreate, asset){
-      $scope.$apply(function (scope) {
-        if (errCreate) {
-          notification.serverError('Error creating Asset', errCreate);
-          return;
-        }
-        scope.addLink(asset).then(function () {
-          scope.navigator.assetEditor(asset).goTo();
-        }, function (errSetLink) {
-          notification.serverError('Error linking Asset', errSetLink);
-          asset['delete'](function(errDelete) {
-            scope.$apply(function () {
-              if (errDelete) {
-                notification.serverError('Error deleting Asset again', errDelete);
-              }
-            });
-          });
-        });
+    var cb = $q.callback(), cbDelete = $q.callback();
+    $scope.spaceContext.space.createAsset({}, cb);
+    return cb.promise
+    .then(function createEntityHandler(asset) {
+      return $scope.addLink(asset)
+      .then(function addLinkHandler() {
+        $scope.navigator.assetEditor(asset).goTo();
+      })
+      .catch(function addLinkErrorHandler(errSetLink) {
+        notification.serverError('Error linking Asset', errSetLink);
+        asset['delete'](cbDelete);
+        return cbDelete.promise;
+      })
+      .catch(function deleteEntityErrorHandler(errDelete) {
+        notification.serverError('Error deleting Asset again', errDelete);
+        return $q.reject(errDelete);
       });
+    }, function createEntityErrorHandler(errCreate) {
+      notification.serverError('Error creating Asset', errCreate);
+      return $q.reject(errCreate);
     });
   };
 
