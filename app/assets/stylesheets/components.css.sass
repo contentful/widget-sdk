@@ -167,16 +167,7 @@ a.base-button
     outline: none !important
 
 .flat-button
-  @extend .base-button
-  background: inherit
-  border: 1px solid darken($dark-rule, 10)
-  &:not(:disabled),
-  &:not([disabled])
-    &:hover
-      border: 1px solid darken($dark-rule, 20)
-    &:active,
-    &.active
-      border: 1px solid darken($dark-rule, 30)
+  +flat-button
 
 .button-icon
   // An Icon inside a button

@@ -85,3 +85,17 @@
       +box-shadow(none)
   .no-content-types
     background: $dark-gray
+
+=flat-button($border-color: darken($dark-rule, 10), $hover-color: darken($dark-rule, 20), $active-color: darken($dark-rule, 30))
+  @extend .base-button
+  background: inherit
+  border: 1px solid $border-color
+  &:not(:disabled),
+  &:not([disabled])
+    &:hover
+      border: 1px solid $hover-color
+    &:active,
+    &.active
+      border: 1px solid $active-color
+
+
