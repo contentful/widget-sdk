@@ -20,14 +20,12 @@ angular.module('contentful').controller('AssetListActionsCtrl', function AssetLi
     _cacheSelected = null;
   };
 
-  var performer = listActions.createPerformer({
+  var batchPerformer = listActions.createBatchPerformer({
     getSelected: getSelected,
     clearSelection: clearSelection,
     entityName: 'Asset',
     entityNamePlural: 'Assets',
   });
-  var perform = performer.perform;
-  var makeBatchResultsNotifier = performer.makeBatchResultsNotifier;
 
   var every = function (predicate) {
     return _.every(getSelected(), function (asset) {
@@ -36,39 +34,39 @@ angular.module('contentful').controller('AssetListActionsCtrl', function AssetLi
   };
 
   $scope.publishSelected = function() {
-    perform({
+    batchPerformer.perform({
       method: 'publish',
       methodArgGetters: ['getVersion'],
-      callback: makeBatchResultsNotifier('published')
+      callback: batchPerformer.makeBatchResultsNotifier('published')
     });
   };
 
   $scope.unpublishSelected = function() {
-    perform({
+    batchPerformer.perform({
       method: 'unpublish',
-      callback: makeBatchResultsNotifier('unpublished')
+      callback: batchPerformer.makeBatchResultsNotifier('unpublished')
     });
   };
 
   $scope.deleteSelected = function() {
-    perform({
+    batchPerformer.perform({
       method: 'delete',
-      callback: makeBatchResultsNotifier('deleted'),
+      callback: batchPerformer.makeBatchResultsNotifier('deleted'),
       event: 'entityDeleted'
     });
   };
 
   $scope.archiveSelected = function() {
-    perform({
+    batchPerformer.perform({
       method: 'archive',
-      callback: makeBatchResultsNotifier('archived')
+      callback: batchPerformer.makeBatchResultsNotifier('archived')
     });
   };
 
   $scope.unarchiveSelected = function() {
-    perform({
+    batchPerformer.perform({
       method: 'unarchive',
-      callback: makeBatchResultsNotifier('unarchived')
+      callback: batchPerformer.makeBatchResultsNotifier('unarchived')
     });
   };
 
