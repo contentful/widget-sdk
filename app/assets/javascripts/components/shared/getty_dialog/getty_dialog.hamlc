@@ -2,7 +2,7 @@
   .modal-dialog.getty-dialog(ng-controller="GettyDialogController")
     .title Getty Images
     .modal-dialog-close-button(ng-click="dialog.cancel()")
-    .getty-results-bar(active-when="fixedResults" ng-show="fixedResults")
+    .getty-results-bar(active-when="fixedResults" ng-show="fixedResults && !imageDetail")
       Searching for {{getty.search}}:
     .endless-container(at-bottom="loadMore()" num-elements="paginator.page" threshold="50")
       .dialog-content
