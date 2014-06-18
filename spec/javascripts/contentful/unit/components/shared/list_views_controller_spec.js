@@ -86,16 +86,4 @@ describe('ListViewsController', function () {
       expect(serverError).toBeCalled();
     });
   });
-
-  describe('viewIsActive', function () {
-    it('should return true if view matches tab view', function () {
-      scope.tab.params.view = {id: 'foo'};
-      expect(scope.viewIsActive({id: 'foo'})).toBeTruthy();
-      expect(scope.viewIsActive({id: 'bar'})).toBeFalsy();
-    });
-    it('should return true if tab view is blank view and passed in undefined', function () {
-      scope.tab.params.view = {id: 'blankView'};
-      expect(scope.viewIsActive()).toBeTruthy();
-    });
-  });
 });

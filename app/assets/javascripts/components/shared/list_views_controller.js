@@ -1,8 +1,6 @@
 'use strict';
 angular.module('contentful').controller('ListViewsController', function($scope, modalDialog, notification, $q,
                                                                        getBlankView, viewCollectionName, generateDefaultViews, resetList){
-  var blankView = getBlankView();
-
   $scope.tab.params.view = $scope.tab.params.view || getBlankView();
 
   $scope.$watch('uiConfig', function (uiConfig) {
@@ -32,11 +30,5 @@ angular.module('contentful').controller('ListViewsController', function($scope, 
       notification.serverError('Error trying to save view');
       return $q.reject();
     });
-  };
-
-  $scope.viewIsActive = function (view){
-    var p = $scope.tab.params.view;
-    if (!view) view = blankView;
-    return p.id === view.id;
   };
 });

@@ -111,6 +111,13 @@ angular.module('contentful').controller('ViewMenuController', function($scope, $
     return defaultFolder;
   };
 
+  $scope.viewIsActive = function (view){
+    if (!view) return false;
+    var p = getCurrentView($scope);
+    return p.id === view.id;
+  };
+
+
   function moveTempFreeViews() {
     var defaultFolder = $scope.createDefaultFolder();
     defaultFolder.views.push.apply(defaultFolder.views, $scope.tempFreeViews);
