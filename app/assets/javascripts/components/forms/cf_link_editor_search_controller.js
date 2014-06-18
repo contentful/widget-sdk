@@ -14,8 +14,8 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
   });
 
   $scope.$on('autocompleteResultPicked', function (event, index, entity) {
-    event.currentScope.addLink(entity, function(err) {
-      if (err) event.preventDefault();
+    event.currentScope.addLink(entity).catch(function(){
+      event.preventDefault();
     });
   });
 
@@ -30,11 +30,9 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
   });
 
   $scope.pick = function (entity) {
-    $scope.addLink(entity, function(err) {
-      if (!err) {
-        $scope.searchTerm = undefined;
-        $scope.searchResultsVisible = false;
-      }
+    $scope.addLink(entity).then(function () {
+      $scope.searchTerm = undefined;
+      $scope.searchResultsVisible = false;
     });
   };
 
@@ -46,19 +44,17 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
           notification.serverError('Error creating Entry', errCreate);
           return;
         }
-        scope.addLink(entry, function(errSetLink) {
-          if (errSetLink) {
-            notification.serverError('Error linking Entry', errSetLink);
-            entry['delete'](function(errDelete) {
-              scope.$apply(function () {
-                if (errDelete) {
-                  notification.serverError('Error deleting Entry again', errDelete);
-                }
-              });
-            });
-            return;
-          }
+        scope.addLink(entry).then(function () {
           scope.navigator.entryEditor(entry).goTo();
+        }, function (errSetLink) {
+          notification.serverError('Error linking Entry', errSetLink);
+          entry['delete'](function(errDelete) {
+            scope.$apply(function () {
+              if (errDelete) {
+                notification.serverError('Error deleting Entry again', errDelete);
+              }
+            });
+          });
         });
       });
     });
@@ -71,19 +67,17 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
           notification.serverError('Error creating Asset', errCreate);
           return;
         }
-        scope.addLink(asset, function(errSetLink) {
-          if (errSetLink) {
-            notification.serverError('Error linking Asset', errSetLink);
-            asset['delete'](function(errDelete) {
-              scope.$apply(function () {
-                if (errDelete) {
-                  notification.serverError('Error deleting Asset again', errDelete);
-                }
-              });
-            });
-            return;
-          }
+        scope.addLink(asset).then(function () {
           scope.navigator.assetEditor(asset).goTo();
+        }, function (errSetLink) {
+          notification.serverError('Error linking Asset', errSetLink);
+          asset['delete'](function(errDelete) {
+            scope.$apply(function () {
+              if (errDelete) {
+                notification.serverError('Error deleting Asset again', errDelete);
+              }
+            });
+          });
         });
       });
     });
