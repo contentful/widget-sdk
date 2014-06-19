@@ -4,6 +4,7 @@ describe('cfLinkEditorSearch Controller', function () {
   var cfLinkEditorSearchCtrl;
   var scope, stubs;
   var space;
+  var $q;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -16,7 +17,8 @@ describe('cfLinkEditorSearch Controller', function () {
         serverError: stubs.serverError
       });
     });
-    inject(function ($rootScope, $controller, cfStub, PromisedLoader) {
+    inject(function ($rootScope, $controller, cfStub, PromisedLoader, _$q_) {
+      $q = _$q_;
       scope = $rootScope.$new();
 
       space = cfStub.space('test');
@@ -55,7 +57,10 @@ describe('cfLinkEditorSearch Controller', function () {
   describe('when autocomplete result is picked', function() {
     beforeEach(inject(function($rootScope) {
       var result = {result: true};
-      scope.addLink = sinon.stub();
+      scope.addLink = sinon.stub().returns({
+        then: sinon.stub(),
+        catch: sinon.stub()
+      });
       $rootScope.$broadcast('autocompleteResultPicked', 0, result);
     }));
 
@@ -86,8 +91,10 @@ describe('cfLinkEditorSearch Controller', function () {
     var entity;
     beforeEach(function() {
       entity = {entity: true};
-      scope.addLink = sinon.stub();
-      scope.addLink.callsArg(1);
+      scope.addLink = sinon.stub().returns({
+        then: sinon.stub(),
+        catch: sinon.stub()
+      });
       scope.pick(entity);
     });
 
@@ -101,7 +108,7 @@ describe('cfLinkEditorSearch Controller', function () {
   });
 
 
-  function makeAddMethodTests(entityType, createEntityArgIndex) {
+  function makeAddMethodTests(entityType) {
 
     describe('adding a new '+entityType, function() {
       var uppercasedEntityType = entityType.charAt(0).toUpperCase() + entityType.substr(1);
@@ -120,9 +127,9 @@ describe('cfLinkEditorSearch Controller', function () {
 
       describe('successfully', function() {
         beforeEach(function() {
-          createEntityStub.callsArgWith(createEntityArgIndex, null, entity);
-          scope.addLink.callsArgWith(1, null);
+          scope.addLink.returns($q.when(null));
           scope['addNew'+uppercasedEntityType](contentType);
+          createEntityStub.yield(null, entity);
         });
 
         it('create '+entityType+' called', function() {
@@ -154,9 +161,9 @@ describe('cfLinkEditorSearch Controller', function () {
 
       describe('fails on create'+uppercasedEntityType, function() {
         beforeEach(function() {
-          createEntityStub.callsArgWith(createEntityArgIndex, {});
-          scope.addLink.callsArgWith(1, null);
+          scope.addLink.returns($q.when(null));
           scope['addNew'+uppercasedEntityType](contentType);
+          createEntityStub.yield({});
         });
 
         it('create '+ entityType +' called', function() {
@@ -183,14 +190,12 @@ describe('cfLinkEditorSearch Controller', function () {
       });
 
       describe('fails on linking '+ entityType, function() {
-        var deleteStub;
         beforeEach(function() {
-          createEntityStub.callsArgWith(createEntityArgIndex, null, entity);
-          scope.addLink.callsArgWithAsync(1, {});
-          deleteStub = sinon.stub();
-          deleteStub.callsArgWith(0, null);
-          entity['delete'] = deleteStub;
+          scope.addLink.returns($q.reject({}));
+          sinon.stub(entity, 'delete');
           scope['addNew'+uppercasedEntityType](contentType);
+          createEntityStub.yield(null, entity);
+          entity.delete.yield(null);
         });
 
         it('create '+ entityType +' called', function() {
@@ -224,14 +229,12 @@ describe('cfLinkEditorSearch Controller', function () {
       });
 
       describe('fails on deleting failed linked '+ entityType, function() {
-        var deleteStub;
         beforeEach(function() {
-          createEntityStub.callsArgWith(createEntityArgIndex, null, entity);
-          scope.addLink.callsArgWithAsync(1, {});
-          deleteStub = sinon.stub();
-          deleteStub.callsArgWithAsync(0, {});
-          entity['delete'] = deleteStub;
+          scope.addLink.returns($q.reject({}));
+          sinon.stub(entity, 'delete');
           scope['addNew'+uppercasedEntityType](contentType);
+          createEntityStub.yield(null, entity);
+          entity.delete.yield({});
         });
 
         it('create '+ entityType +' called', function() {
@@ -269,8 +272,8 @@ describe('cfLinkEditorSearch Controller', function () {
 
   }
 
-  makeAddMethodTests('entry', 2);
-  makeAddMethodTests('asset', 1);
+  makeAddMethodTests('entry');
+  makeAddMethodTests('asset');
 
   it('search is empty if null', function() {
     scope.searchTerm = undefined;
@@ -347,30 +350,29 @@ describe('cfLinkEditorSearch Controller', function () {
         0: entity,
         total: 30
       };
-      stubs.then.callsArgWith(0, entities);
+      stubs.loadCallback.returns($q.when(entities));
 
       scope.paginator.pageLength = 3;
       scope.paginator.skipItems = sinon.stub();
       scope.paginator.skipItems.returns(true);
+      scope.$apply();
+      scope.loadEntities();
+      scope.$apply();
     });
 
     it('loads entities', function() {
-      scope.loadEntities();
       expect(stubs.loadCallback).toBeCalled();
     });
 
     it('sets entities num on the paginator', function() {
-      scope.loadEntities();
       expect(scope.paginator.numEntries).toEqual(30);
     });
 
     it('sets entities on scope', function() {
-      scope.loadEntities();
       expect(scope.entities).toBe(entities);
     });
 
     it('sets first entity as selected on scope', function() {
-      scope.loadEntities();
       expect(scope.selectedEntity).toBe(entity);
     });
 
@@ -378,21 +380,19 @@ describe('cfLinkEditorSearch Controller', function () {
     describe('creates a query object', function() {
 
       it('with a defined order', function() {
-        scope.loadEntities();
         expect(stubs.loadCallback.args[0][2].order).toEqual('-sys.updatedAt');
       });
 
       it('with a defined limit', function() {
-        scope.loadEntities();
         expect(stubs.loadCallback.args[0][2].limit).toEqual(3);
       });
 
       it('with a defined skip param', function() {
-        scope.loadEntities();
         expect(stubs.loadCallback.args[0][2].skip).toBeTruthy();
       });
 
       it('for linked content type', function() {
+        stubs.loadCallback.reset();
         var idStub = sinon.stub();
         idStub.returns(123);
         scope.linkContentType = {
@@ -403,12 +403,14 @@ describe('cfLinkEditorSearch Controller', function () {
       });
 
       it('for mimetype group', function() {
+        stubs.loadCallback.reset();
         scope.linkMimetypeGroup = 'files';
         scope.loadEntities();
         expect(stubs.loadCallback.args[0][2]['mimetype_group']).toBe('files');
       });
 
       it('for search term', function() {
+        stubs.loadCallback.reset();
         scope.searchTerm = 'term';
         scope.loadEntities();
         expect(stubs.loadCallback.args[0][2].query).toBe('term');
@@ -421,6 +423,7 @@ describe('cfLinkEditorSearch Controller', function () {
   describe('loadMore', function () {
     var entities;
     beforeEach(function() {
+      scope.$apply();
       entities = {
         total: 30
       };
@@ -467,9 +470,11 @@ describe('cfLinkEditorSearch Controller', function () {
 
     describe('on successful load response', function() {
       beforeEach(function() {
-        stubs.then.callsArgWith(0, entities);
+        stubs.loadCallback.reset();
         scope.paginator.page = 1;
+        stubs.loadCallback.returns($q.when(entities));
         scope.loadMore();
+        scope.$apply();
       });
 
       it('sets num entities', function() {
@@ -481,14 +486,15 @@ describe('cfLinkEditorSearch Controller', function () {
       });
     });
 
-    describe('on previous page', function() {
+    describe('on failed load response', function() {
       beforeEach(function() {
-        stubs.then.callsArg(1);
         scope.paginator.page = 1;
+        stubs.loadCallback.returns($q.reject(entities));
         scope.loadMore();
+        scope.$apply();
       });
 
-      it('appends entities to scope', function () {
+      it('does not append entities', function () {
         expect(scope.entities.push).not.toBeCalled();
       });
 
