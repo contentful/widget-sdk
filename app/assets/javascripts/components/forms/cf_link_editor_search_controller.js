@@ -1,12 +1,12 @@
 'use strict';
 
-angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scope, Paginator, notification, PromisedLoader, $q) {
+angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scope, Paginator, notification, PromisedLoader, $q, searchQueryHelper) {
 
   var entityLoader = new PromisedLoader();
   $scope.paginator = new Paginator();
 
-  $scope.$watch('searchTerm', function(term, old, scope) {
-    scope.resetEntities();
+  $scope.$watch('searchTerm', function() {
+    $scope.resetEntities();
   });
 
   $scope.$on('autocompleteResultSelected', function (event, index, entity) {
@@ -21,12 +21,6 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
 
   $scope.$on('searchFieldFocused', function () {
     $scope.searchResultsVisible = true;
-  });
-
-  $scope.$on('refreshSearch', function (ev, params) {
-    if(params && params.trigger == 'button'){
-      $scope.resetEntities();
-    }
   });
 
   $scope.pick = function (entity) {
@@ -84,26 +78,20 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
     });
   };
 
-  // Custom check because an empty string should still be considered as a valid search
-  $scope.searchIsEmpty = function () {
-    return _.isEmpty($scope.searchTerm) && !_.isString($scope.searchTerm);
-  };
-
   $scope.resetEntities = function() {
-    if ($scope.searchIsEmpty()) {
-      $scope.paginator.page = 0;
-      $scope.entities = [];
-      $scope.selectedEntity = null;
-      $scope.searchResultsVisible = false;
-    } else {
-      $scope.loadEntities();
-    }
+    $scope.paginator.page = 0;
+    $scope.entities = [];
+    $scope.selectedEntity = null;
+    $scope.searchResultsVisible = false;
+    $scope.loadEntities();
   };
 
   $scope.loadEntities = function () {
-    entityLoader.loadCallback(
-      $scope.spaceContext.space, $scope.fetchMethod, buildQuery()
-    ).then(function (entities) {
+    return buildQuery()
+    .then(function (query) {
+      return entityLoader.loadCallback($scope.spaceContext.space, $scope.fetchMethod, query);
+    })
+    .then(function (entities) {
       $scope.searchResultsVisible = true;
       $scope.paginator.numEntries = entities.total;
       $scope.entities = entities;
@@ -114,9 +102,11 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
   $scope.loadMore = function() {
     if ($scope.paginator.atLast()) return;
     $scope.paginator.page++;
-    entityLoader.loadCallback(
-      $scope.spaceContext.space, $scope.fetchMethod, buildQuery()
-    ).then(function (entities) {
+    return buildQuery()
+    .then(function (query) {
+      return entityLoader.loadCallback($scope.spaceContext.space, $scope.fetchMethod, query);
+    })
+    .then(function (entities) {
       $scope.paginator.numEntries = entities.total;
       $scope.entities.push.apply($scope.entities, entities);
     }, function () {
@@ -125,20 +115,26 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
   };
 
   function buildQuery() {
+    var contentType;
     var queryObject = {
       order: '-sys.updatedAt',
       limit: $scope.paginator.pageLength,
       skip: $scope.paginator.skipItems()
     };
 
+    if ($scope.linkType === 'Asset')
+      contentType = searchQueryHelper.assetContentType;
     if ($scope.linkContentType)
-      queryObject['sys.contentType.sys.id'] = $scope.linkContentType.getId();
-    if ($scope.linkMimetypeGroup){
+      contentType = $scope.linkContentType;
+    if ($scope.linkMimetypeGroup)
       queryObject['mimetype_group'] = $scope.linkMimetypeGroup;
-    }
-    if ($scope.searchTerm && 0 < $scope.searchTerm.length)
-      queryObject.query = $scope.searchTerm;
+      //TODO well, actually when the linkMimeTypeGroup is predefined, we shouldn't allow searching for it
 
-    return queryObject;
+    return searchQueryHelper.buildQuery($scope.spaceContext.space, $scope.linkContentType, $scope.searchTerm)
+    .then(function (searchQuery) {
+      _.extend(searchQuery, queryObject);
+      return searchQuery;
+    });
   }
+
 });

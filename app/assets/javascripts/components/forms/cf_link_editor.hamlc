@@ -16,12 +16,11 @@
 
 .cf-link-editor-search(cf-autocomplete-results="entities" autocomplete-term="searchTerm")
   .controls(ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
-    .search-field(ng-submit="submit()"
-                  cf-search="searchTerm"
-                  search-type-ahead=""
-                  placeholder="Search for {{entityName}}"
-                  tooltip-placement="top"
-                  tooltip="Search for existing {{entityName}}")
+    .search-with-results(cf-tokenized-search="searchTerm" 
+      tooltip-placement="top"
+      tooltip="Search for existing {{entityName}}"
+      placeholder="Search for {{entityName}}"
+      cf-on-blur-component="leftSearch($event)")
 
     -# link to entry or entries
     .dropdown-btn.add-new(
