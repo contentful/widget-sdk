@@ -14,6 +14,7 @@ angular.module('contentful').directive('cfLinkEditor', function(mimetype){
         }
       };
 
+      // TODO move this into the controller for gods sake
       scope.linkType     = scope.$eval(attrs.cfLinkEditor);
       scope.fetchMethod  = scope.linkType === 'Entry' ? 'getEntries' : 'getAssets';
 

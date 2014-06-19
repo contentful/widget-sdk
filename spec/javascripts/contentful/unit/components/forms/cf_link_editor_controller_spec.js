@@ -140,37 +140,19 @@ describe('cfLinkEditor Controller methods', function () {
   var cfLinkEditorCtrl;
   var entry;
 
-  // A spy around a function that resolves the provided deferred in the next tick
-  function makeCallbackSpy(deferred){
-    return sinon.spy(function () {
-      _.defer(function () {
-        scope.$apply(function () {
-          deferred.resolve();
-        });
-      });
-    });
-  }
-
-  // A deferred that resolves when the linkedEntities have changed
-  function makeLinkedEntitiesDeferred() {
-    var deferred = $q.defer();
-    scope.$watch('linkedEntities', function () {
-      deferred.resolve();
-    });
-    return deferred;
-  }
-
   beforeEach(function () {
     module('contentful/test');
-    inject(function ($rootScope, $controller, $parse, _$q_, cfStub) {
+    inject(function ($rootScope, $controller, _$q_, cfStub) {
       $q = _$q_;
       scope = $rootScope.$new();
 
+      scope.fetchMethod = 'getEntries';
       scope.fieldData = {value: 'formfieldvalue'};
       scope.field = {
         type: 'Link',
         validations: []
       };
+      scope.otChangeValue = sinon.stub();
       scope.updateModel = sinon.stub();
       scope.linkType = 'Entry';
 
@@ -205,7 +187,6 @@ describe('cfLinkEditor Controller methods', function () {
 
       cfLinkEditorCtrl = $controller('cfLinkEditorCtrl', {
         $scope: scope,
-        $parse: $parse,
         $attrs: attrs,
         ShareJS: shareJSMock
       });
@@ -217,242 +198,89 @@ describe('cfLinkEditor Controller methods', function () {
   }));
 
 
-  describe('attaches one entry to an entry directive', function () {
-    var callbackSpy;
+  describe('in single entry mode', function () {
     beforeEach(function () {
       attrs.cfLinkEditor = 'entry';
-      scope.otChangeValue = sinon.stub();
       scope.linkSingle = true;
     });
 
-    describe('adds a link for an entry and updates linked entries', function () {
-      function makeSpec(name, expectations) {
-        it(name, function (done) {
-          var addLinkDeferred = $q.defer();
-          callbackSpy = makeCallbackSpy(addLinkDeferred);
-          var linkedEntitiesDeferred = makeLinkedEntitiesDeferred();
-          scope.otChangeValue.callsArgAsync(1);
-
-          $q.all([addLinkDeferred.promise, linkedEntitiesDeferred.promise]).then(_.partial(expectations, done));
-          scope.addLink(entry, callbackSpy);
-        });
-      }
-
-      makeSpec('otChangeValue is called', function (done) {
-        expect(scope.otChangeValue).toBeCalled();
-        done();
-      });
-
-      makeSpec('updateModel is called', function (done) {
-        expect(scope.updateModel).toBeCalled();
-        done();
-      });
-
-      makeSpec('callback is called', function (done) {
-        expect(callbackSpy).toBeCalled();
-        done();
-      });
-
-      makeSpec('getEntries is called', function (done) {
-        expect(getEntriesStub).not.toBeCalled();
-        done();
-      });
-
-      makeSpec('added entry is first on the list', function (done) {
-        expect(scope.links[0].sys.id).toEqual('entry1');
-        done();
-      });
-
-      makeSpec('linkedEntities have been set', function (done) {
-        expect(scope.linkedEntities.length).toBeGreaterThan(0);
-        done();
-      });
+    it('add an entry', function () {
+      scope.addLink(entry);
+      scope.otChangeValue.yield();
+      scope.$apply();
+      expect(scope.links.length).toBe(1);
+      expect(scope.updateModel).toBeCalled();
+      expect(getEntriesStub).not.toBeCalled();
+      expect(scope.links[0].sys.id).toEqual('entry1');
+      expect(scope.linkedEntities.length).toBe(1);
     });
 
-
-    describe('removes a link for an entry and updates linked entries', function () {
-      beforeEach(function () {
+    it('removes an entry', function () {
         scope.links = [
           {sys: {id: 'entry1'}},
           {sys: {id: 'entry2'}},
           {sys: {id: 'entry3'}}
         ];
-        scope.otChangeValue.callsArg(1);
         scope.removeLink(0, entry);
-      });
-
-      it('otChangeValue is called', function () {
-        expect(scope.otChangeValue).toBeCalled();
-      });
-
-      it('updateModel is called', function () {
+        scope.otChangeValue.yield();
+        scope.$apply();
         expect(scope.updateModel).toBeCalled();
-      });
-
-      it('list is empty', function () {
         expect(scope.links.length).toBe(0);
-      });
     });
-
   });
 
-  describe('attaches a list of entries to an entry directive', function () {
-    var callbackSpy;
-
-    describe('adds an array of entries from a list', function () {
-      function makeSpec(name, expectations) {
-        it(name, function (done) {
-          var addLinkDeferred = $q.defer();
-          callbackSpy = makeCallbackSpy(addLinkDeferred);
-          var linkedEntitiesDeferred = makeLinkedEntitiesDeferred();
-          otDocPushStub.callsArgAsync(1);
-          shareJSMock.peek.returns([]);
-
-          $q.all([addLinkDeferred.promise, linkedEntitiesDeferred.promise]).then(_.partial(expectations, done));
-
-          scope.addLink(entry, callbackSpy);
-        });
-      }
-
-      makeSpec('otDocPush is called', function (done) {
-        expect(otDocPushStub).toBeCalled();
-        done();
-      });
-
-      makeSpec('updateModel is called', function (done) {
-        expect(scope.updateModel).toBeCalled();
-        done();
-      });
-
-      makeSpec('peek is called', function (done) {
-        expect(shareJSMock.peek).toBeCalled();
-        done();
-      });
-
-      makeSpec('callback is called', function (done) {
-        expect(callbackSpy).toBeCalled();
-        done();
-      });
-
-      makeSpec('getEntries is called', function (done) {
-        expect(getEntriesStub).not.toBeCalled();
-        done();
-      });
-
-      makeSpec('added entry is first on the list', function (done) {
-        expect(scope.links[0].sys.id).toEqual('entry1');
-        done();
-      });
-
-      makeSpec('linkedEntities has been populated', function (done) {
-        expect(scope.linkedEntities.length).toBe(1);
-        done();
-      });
-    });
-
-    describe('adds an entry from a list', function () {
-      function makeSpec(name, expectations) {
-        it(name, function (done) {
-          var addLinkDeferred = $q.defer();
-          callbackSpy = makeCallbackSpy(addLinkDeferred);
-          var linkedEntitiesDeferred = makeLinkedEntitiesDeferred();
-          shareJSMock.peek.returns({});
-          shareJSMock.mkpath.callsArgAsync(1);
-
-          $q.all([addLinkDeferred.promise, linkedEntitiesDeferred.promise]).then(_.partial(expectations, done));
-
-          scope.addLink(entry, callbackSpy);
-        });
-      }
-
-      makeSpec('updateModel is called', function (done) {
-        expect(scope.updateModel).toBeCalled();
-        done();
-      });
-
-      makeSpec('mkpath is called', function (done) {
-        expect(shareJSMock.mkpath).toBeCalled();
-        done();
-      });
-
-      makeSpec('callback is called', function (done) {
-        expect(callbackSpy).toBeCalled();
-        done();
-      });
-
-      makeSpec('getEntries is called', function (done) {
-        expect(getEntriesStub).not.toBeCalled();
-        done();
-      });
-
-      makeSpec('added entry is first on the list', function (done) {
-        expect(scope.links[0].sys.id).toEqual('entry1');
-        done();
-      });
-
-      makeSpec('linkedEntities has been populated', function (done) {
-        expect(scope.linkedEntities.length).toBe(1);
-        done();
-      });
-
-    });
-
-    it('removes a link from an entry list', function (done) {
-      var addLinkDeferred = $q.defer();
-      var callbackSpy = makeCallbackSpy(addLinkDeferred);
-      var linkedEntitiesDeferred = makeLinkedEntitiesDeferred();
-      otDocPushStub.callsArgAsync(1);
+  describe('in multiple entry mode', function () {
+    it('add an entry to an existing list', function () {
       shareJSMock.peek.returns([]);
-      removeStub.callsArgAsync(0);
 
-      $q.all([addLinkDeferred.promise, linkedEntitiesDeferred.promise]).then(function () {
-        scope.removeLink(0, entry);
-        _.defer(function () {
-          expect(scope.links.length).toBe(0);
-          done();
-        });
-      });
-      scope.addLink(entry, callbackSpy);
+      scope.addLink(entry);
+      otDocPushStub.yield();
+
+      expect(scope.updateModel).toBeCalled();
+      expect(getEntriesStub).not.toBeCalled();
+      expect(scope.links[0].sys.id).toEqual('entry1');
+      expect(scope.linkedEntities.length).toBe(1);
     });
 
+    it('add an entry to a nonexisting list', function () {
+      shareJSMock.peek.returns({});
+
+      scope.addLink(entry);
+      shareJSMock.mkpath.yield();
+
+      expect(scope.updateModel).toBeCalled();
+      expect(getEntriesStub).not.toBeCalled();
+      expect(scope.links[0].sys.id).toEqual('entry1');
+      expect(scope.linkedEntities.length).toBe(1);
+    });
+
+    it('removes an entry from a list', function () {
+      shareJSMock.peek.returns([]);
+
+      scope.addLink(entry);
+      otDocPushStub.yield();
+
+      expect(scope.updateModel).toBeCalled();
+      scope.removeLink(0, entry);
+      removeStub.yield();
+      expect(scope.links.length).toBe(0);
+    });
   });
 
   describe('attaches a list of previously loaded entries', function () {
-    beforeEach(function () {
-      scope.fetchMethod = 'getEntries';
-      getEntriesStub.callsArgWithAsync(1, null, [entry, undefined]);
-    });
-
-    it('and fetches them for caching', function (done) {
-      scope.$watch('linkedEntities', function (newval, oldval) {
-        if(newval !== oldval){
-          expect(getEntriesStub).toBeCalledWith({
-            'sys.id[in]': 'entry1,entry2',
-            limit: 1000
-          });
-          expect(scope.linkedEntities.length).toBe(2);
-          expect(scope.linkedEntities[1].isMissing).toBeTruthy();
-          done();
-        }
-      });
-
+    it('and fetches them for caching', function () {
       scope.links = [
-        {
-          sys: {
-            id: 'entry1',
-            linkType: 'Entry',
-            type: 'Link'
-          }
-        },
-        {
-          sys: {
-            id: 'entry2',
-            linkType: 'Entry',
-            type: 'Link'
-          }
-        }
+        { sys: { id: 'entry1', linkType: 'Entry', type: 'Link' } },
+        { sys: { id: 'entry2', linkType: 'Entry', type: 'Link' } }
       ];
       scope.$apply();
+      expect(getEntriesStub).toBeCalledWith({
+        'sys.id[in]': 'entry1,entry2',
+        limit: 1000
+      });
+      getEntriesStub.yield(null, [entry, undefined]);
+      expect(scope.linkedEntities.length).toBe(2);
+      expect(scope.linkedEntities[1].isMissing).toBeTruthy();
     });
   });
 
