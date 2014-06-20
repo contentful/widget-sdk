@@ -11,9 +11,23 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     'Location'
   ];
 
+  var createdAtField = {
+    id: 'createdAt',
+    name: 'Created',
+    type: 'Date',
+    sys: true
+  };
+
   var updatedAtField = {
     id: 'updatedAt',
     name: 'Updated',
+    type: 'Date',
+    sys: true
+  };
+
+  var publishedAtField = {
+    id: 'publishedAt',
+    name: 'Published',
     type: 'Date',
     sys: true
   };
@@ -27,8 +41,17 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
 
   $scope.systemFields = [
     updatedAtField,
+    createdAtField,
+    publishedAtField,
     authorField
   ];
+
+  function fieldIds() {
+    return _.reject(_.map($scope.systemFields, 'id'), function (fieldId) {
+      return fieldId == 'createdAt' || fieldId == 'publishedAt';
+    });
+  }
+  $scope.getDefaultFieldIds = fieldIds;
 
   function getBlankView() {
     return {
@@ -40,7 +63,7 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
         fieldId: updatedAtField.id,
         direction: DEFAULT_ORDER_DIRECTION
       },
-      displayedFieldIds: _.map($scope.systemFields, 'id')
+      displayedFieldIds: fieldIds()
     };
   }
 
@@ -74,7 +97,6 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     };
   }
 
-
   $scope.orderColumnBy = function (field) {
     if(!$scope.isOrderField(field)) setOrderField(field);
     $scope.tab.params.view.order.direction = switchOrderDirection($scope.tab.params.view.order.direction);
@@ -86,6 +108,7 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
   }
 
   $scope.$watch('tab.params.view.displayedFieldIds', function (displayedFieldIds) {
+    //  Published date > Created date > Status;
     if(!_.contains(displayedFieldIds, $scope.tab.params.view.order.fieldId))
       $scope.setOrderField(updatedAtField);
       $scope.resetEntries(true);
@@ -179,9 +202,6 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
       return { fieldId: updatedAtField.id, direction: DEFAULT_ORDER_DIRECTION };
     }
 
-    function fieldIds() {
-      return _.map($scope.systemFields, 'id');
-    }
   }
 
 });

@@ -27,7 +27,7 @@ angular.module('contentful').controller('DisplayedFieldsController', function Di
   $scope.$watch('[tab.params.view.contentTypeId, tab.params.view.displayedFieldIds]', $scope.refreshDisplayFields, true);
 
   $scope.resetDisplayFields = function () {
-    $scope.tab.params.view.displayedFieldIds = _.map($scope.systemFields, 'id');
+    $scope.tab.params.view.displayedFieldIds = $scope.getDefaultFieldIds();
   };
 
   $scope.addDisplayField = function (field) {
