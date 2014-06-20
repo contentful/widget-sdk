@@ -21,14 +21,35 @@ angular.module('contentful').controller('GettyDialogController',
       creative: false,
       editorial: false
     },
+    graphicsStyle: {},
     licensing: {},
-    creative: {},
     offerings: {},
     editorial: ''
   };
 
   $scope.imageFamilies = [];
   $scope.selectedSizeKey = '';
+
+  $scope.$watch('getty.families.creative', function (val) {
+    if(!val) {
+      $scope.getty.licensing = {};
+      $scope.getty.graphicsStyle = {};
+      delete $scope.getty.excludeNudity;
+      delete $scope.getty.vectorIllustrations;
+    }
+  });
+
+  $scope.$watch('getty.graphicsStyle.illustration', function (val) {
+    if(!val) {
+      delete $scope.getty.vectorIllustrations;
+    }
+  });
+
+  $scope.$watch('getty.families.editorial', function (val) {
+    if(!val) {
+      $scope.getty.editorial = '';
+    }
+  });
 
   $scope.$watch('getty.search', handleSearch);
 
