@@ -2,23 +2,16 @@
 
 angular.module('contentful').directive('cfAutocompleteResults', function (keycodes) {
   return {
-    require: 'cfAutocompleteResults',
     controller: 'CfAutocompleteResultsCtrl',
-    link: function (scope, elem, attrs, controller) {
+    controllerAs: 'resultsController',
+    link: function (scope, elem) {
       var navigateResultList = function navigateResultList(event) {
-        if (controller.numResults === 0) return;
-        var handled = true;
+        var handled;
         scope.$apply(function () {
-          if (event.keyCode == keycodes.DOWN){
-            controller.selectNext();
-          } else if (event.keyCode == keycodes.UP) {
-            controller.selectPrevious();
-          } else if (event.keyCode == keycodes.ESC) {
-            controller.cancelAutocomplete();
-          } else if (event.keyCode == keycodes.ENTER) {
-            controller.pickSelected();
-          } else {
-            handled = false;
+          if (scope.searchController.isEmptyState()) {
+            handled = handleEmptyList();
+          } else if (scope.resultsController.numResults > 0) {
+            handled = handleFullList(event);
           }
         });
         if (handled) {
@@ -33,6 +26,27 @@ angular.module('contentful').directive('cfAutocompleteResults', function (keycod
         navigateResultList = null;
       });
       
+
+      function handleFullList(event) {
+        var handled = true;
+        if (event.keyCode == keycodes.DOWN){
+          scope.resultsController.selectNext();
+        } else if (event.keyCode == keycodes.UP) {
+          scope.resultsController.selectPrevious();
+        } else if (event.keyCode == keycodes.ESC) {
+          scope.resultsController.cancelAutocomplete();
+        } else if (event.keyCode == keycodes.ENTER) {
+          scope.resultsController.pickSelected();
+        } else {
+          handled = false;
+        }
+        return handled;
+      }
+
+      function handleEmptyList() {
+        scope.resultsController.cancelAutocomplete();
+        return true;
+      }
     }
   };
 });

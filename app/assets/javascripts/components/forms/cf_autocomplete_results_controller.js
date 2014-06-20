@@ -3,7 +3,6 @@
 angular.module('contentful').controller('CfAutocompleteResultsCtrl', function ($scope, $attrs, $parse) {
   var controller = this;
   this.getAutocompleteResults = $parse($attrs.cfAutocompleteResults);
-  this.setAutocompleteTerm = $parse($attrs.autocompleteTerm).assign;
   this.selectedIndex = -1;
   this.numResults = 0;
 
@@ -42,8 +41,7 @@ angular.module('contentful').controller('CfAutocompleteResultsCtrl', function ($
   };
 
   this.cancelAutocomplete = function () {
-    //TODO replace with event
-    this.setAutocompleteTerm($scope, '');
+    $scope.searchController.clearSearch();
   };
 
   $scope.$on('$destroy', function () {

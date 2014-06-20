@@ -14,7 +14,7 @@
         .unpublished(ng-show="entity.canPublish()" tooltip-placement="right" tooltip="This entry hasn't been published")
 
 
-.cf-link-editor-search(cf-autocomplete-results="entities" autocomplete-term="searchTerm")
+.cf-link-editor-search(cf-autocomplete-results="entities")
   .controls(ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
     .search-with-results(cf-tokenized-search="searchTerm" 
       tooltip-placement="top"
