@@ -99,8 +99,8 @@ describe('List Actions', function () {
           params.event = 'eventname';
           params.getterForMethodArgs = ['getVersion'];
           stubs.getVersion.returns(2);
-          stubs.action.callsArgWith(1, null, changedEntity);
           performer.callAction(entity, params, deferred);
+          stubs.action.yield(null, changedEntity);
         });
 
         it('calls action', function() {
@@ -126,8 +126,8 @@ describe('List Actions', function () {
 
       describe('unsuccessfully', function() {
         beforeEach(function() {
-          stubs.action.callsArgWith(0, err);
           performer.callAction(entity, params, deferred);
+          stubs.action.yield(err);
         });
 
         it('calls action', function() {
@@ -146,8 +146,8 @@ describe('List Actions', function () {
       describe('unsuccessfully because entity is gone', function() {
         beforeEach(function() {
           err.statusCode = performer.getErrors().NOT_FOUND;
-          stubs.action.callsArgWith(0, err);
           performer.callAction(entity, params, deferred);
+          stubs.action.yield(err);
         });
 
         it('calls action', function() {
@@ -170,8 +170,8 @@ describe('List Actions', function () {
       describe('unsuccessfully because too many requests', function() {
         beforeEach(function() {
           err.statusCode = performer.getErrors().TOO_MANY_REQUESTS;
-          stubs.action.callsArgWith(0, err);
           performer.callAction(entity, params, deferred);
+          stubs.action.yield(err);
           $timeout.flush();
         });
 
@@ -183,29 +183,27 @@ describe('List Actions', function () {
     });
 
     describe('perform', function() {
-      var params;
+      var params, results;
       beforeEach(function() {
         params = {};
-        stubs.callAction = sinon.stub(performer, 'callAction');
+        results = [
+          {res1: true},
+          {res2: true}
+        ];
         stubs.handlePerformResult = sinon.stub(performer, 'handlePerformResult');
         performer.params.getSelected = stubs.getSelected;
-        stubs.getSelected.returns([{}]);
-        stubs.defer = sinon.stub($q, 'defer');
-        stubs.defer.returns({
-          promise: {
-            then: stubs.then
-          }
-        });
-        stubs.then.returns({
-          catch: stubs.catch
-        });
       });
 
-      describe('with a supplied action callback', function() {
-        beforeEach(function() {
+      describe('with a supplied action callback and multiple results', function() {
+        beforeEach(inject(function($rootScope) {
+          stubs.action = sinon.spy(function (entity, params, deferred) {
+            deferred.resolve(results[entity.index]);
+            $rootScope.$apply();
+          });
           params.actionCallback = stubs.action;
+          stubs.getSelected.returns([{index: 0}, {index: 1}]);
           performer.perform(params);
-        });
+        }));
 
         it('gets selected items', function() {
           expect(stubs.getSelected).toBeCalled();
@@ -218,12 +216,25 @@ describe('List Actions', function () {
         it('starts spinner', function() {
           expect(stubs.start).toBeCalled();
         });
+
+        it('stops spinner', function() {
+          expect(stubs.stopSpinner).toBeCalled();
+        });
+
+        it('handles results', function() {
+          expect(stubs.handlePerformResult).toBeCalledWith(results, params, 2);
+        });
       });
 
       describe('with the default action callback', function() {
-        beforeEach(function() {
+        beforeEach(inject(function($rootScope) {
+          stubs.callAction = sinon.stub(performer, 'callAction', function (entity, params, deferred) {
+            deferred.resolve(results[0]);
+            $rootScope.$apply();
+          });
+          stubs.getSelected.returns([{}]);
           performer.perform(params);
-        });
+        }));
 
         it('gets selected items', function() {
           expect(stubs.getSelected).toBeCalled();
@@ -235,6 +246,14 @@ describe('List Actions', function () {
 
         it('starts spinner', function() {
           expect(stubs.start).toBeCalled();
+        });
+
+        it('stops spinner', function() {
+          expect(stubs.stopSpinner).toBeCalled();
+        });
+
+        it('handles results', function() {
+          expect(stubs.handlePerformResult).toBeCalledWith([results[0]], params, 1);
         });
       });
 
