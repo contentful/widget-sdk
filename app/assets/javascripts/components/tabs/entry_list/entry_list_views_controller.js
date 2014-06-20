@@ -22,7 +22,8 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     id: 'updatedAt',
     name: 'Updated',
     type: 'Date',
-    sys: true
+    sys: true,
+    persistent: true
   };
 
   var publishedAtField = {
