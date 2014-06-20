@@ -5,7 +5,7 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
   var entityLoader = new PromisedLoader();
   $scope.paginator = new Paginator();
 
-  $scope.$watch('searchTerm', function() {
+  $scope.$on('searchSubmitted', function () {
     $scope.resetEntities();
   });
 
