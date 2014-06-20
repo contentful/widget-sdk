@@ -6,13 +6,7 @@ angular.module('contentful').controller('cfTokenizedSearchController', function 
   $scope.showAutocompletions = false;
 
   $scope.getContentType = function () {
-    if ($scope.tab.viewType === 'entry-list') {
-      var id = $scope.tab && $scope.tab.params && $scope.tab.params.view && $scope.tab.params.view.contentTypeId;
-      return $scope.spaceContext && $scope.spaceContext.getPublishedContentType && $scope.spaceContext.getPublishedContentType(id);
-    }
-    if ($scope.tab.viewType === 'asset-list') {
-      return searchQueryHelper.assetContentType;
-    }
+    return $scope.$eval($attrs.searchContentType);
   };
 
   $scope.getCurrentToken = function () {

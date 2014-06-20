@@ -133,6 +133,13 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
     });
   };
 
+  $scope.getSearchContentType = function () {
+    if ($scope.linkType === 'Asset')
+     return searchQueryHelper.assetContentType;
+    if ($scope.linkContentType)
+      return $scope.linkContentType;
+  };
+
   function buildQuery() {
     var contentType;
     var queryObject = {

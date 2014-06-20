@@ -30,6 +30,11 @@ angular.module('contentful').controller('EntryListCtrl',
     limit: 3
   });
 
+  $scope.getSearchContentType = function () {
+    var id = $scope.tab && $scope.tab.params && $scope.tab.params.view && $scope.tab.params.view.contentTypeId;
+    return $scope.spaceContext && $scope.spaceContext.getPublishedContentType && $scope.spaceContext.getPublishedContentType(id);
+  };
+
   $scope.$on('entityDeleted', function (event, entity) {
     var scope = event.currentScope;
     var index = _.indexOf(scope.entries, entity);

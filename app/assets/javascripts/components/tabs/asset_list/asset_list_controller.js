@@ -11,6 +11,8 @@ angular.module('contentful').
   $scope.paginator = new Paginator();
   $scope.selection = new Selection();
 
+  $scope.assetContentType = searchQueryHelper.assetContentType;
+
   $scope.$on('entityDeleted', function (event, entity) {
     var scope = event.currentScope;
     var index = _.indexOf(scope.assets, entity);

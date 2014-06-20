@@ -19,6 +19,7 @@
     .search-with-results(cf-tokenized-search="searchTerm" 
       tooltip-placement="top"
       tooltip="Search for existing {{entityName}}"
+      search-content-type="getSearchContentType()"
       placeholder="Search for {{entityName}}"
       cf-on-blur-component="leftSearch($event)")
 
