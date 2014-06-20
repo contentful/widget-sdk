@@ -1,13 +1,10 @@
 'use strict';
 
-angular.module('contentful').directive('cfAutocompleteResults', function ($parse, keycodes) {
+angular.module('contentful').directive('cfAutocompleteResults', function (keycodes) {
   return {
     require: 'cfAutocompleteResults',
     controller: 'CfAutocompleteResultsCtrl',
     link: function (scope, elem, attrs, controller) {
-      controller.getAutocompleteResults = $parse(attrs.cfAutocompleteResults);
-      controller.setAutocompleteTerm = $parse(attrs.autocompleteTerm).assign;
-
       var navigateResultList = function navigateResultList(event) {
         if (controller.numResults === 0) return;
         var handled = true;

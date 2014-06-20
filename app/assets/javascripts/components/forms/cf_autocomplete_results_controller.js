@@ -1,9 +1,9 @@
 'use strict';
 
-angular.module('contentful').controller('CfAutocompleteResultsCtrl', function ($scope) {
+angular.module('contentful').controller('CfAutocompleteResultsCtrl', function ($scope, $attrs, $parse) {
   var controller = this;
-  this.getAutocompleteResults = angular.noop;
-  this.setAutocompleteTerm = angular.noop;
+  this.getAutocompleteResults = $parse($attrs.cfAutocompleteResults);
+  this.setAutocompleteTerm = $parse($attrs.autocompleteTerm).assign;
   this.selectedIndex = -1;
   this.numResults = 0;
 
@@ -42,6 +42,7 @@ angular.module('contentful').controller('CfAutocompleteResultsCtrl', function ($
   };
 
   this.cancelAutocomplete = function () {
+    //TODO replace with event
     this.setAutocompleteTerm($scope, '');
   };
 
