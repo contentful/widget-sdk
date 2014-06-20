@@ -109,9 +109,10 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
 
   $scope.$watch('tab.params.view.displayedFieldIds', function (displayedFieldIds) {
     //  Published date > Created date > Status;
-    if(!_.contains(displayedFieldIds, $scope.tab.params.view.order.fieldId))
-      $scope.setOrderField(updatedAtField);
+    if(!_.contains(displayedFieldIds, $scope.tab.params.view.order.fieldId)){
+      setOrderField(updatedAtField);
       $scope.resetEntries(true);
+    }
   }, true);
 
   $scope.clearView = function () {
