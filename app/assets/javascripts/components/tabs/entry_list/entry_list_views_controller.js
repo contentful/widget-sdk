@@ -107,10 +107,22 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     return direction === 'ascending' ? 'descending' : 'ascending';
   }
 
+  function determineFallbackSortField(displayedFieldIds) {
+    if(_.contains(displayedFieldIds, 'publishedAt'))
+      return publishedAtField;
+    if(_.contains(displayedFieldIds, 'createdAt'))
+      return createdAtField;
+    // TODO this should be the first condition in this function
+    // move it there when sorting is allowed by status
+    if(_.contains(displayedFieldIds, 'updatedAt'))
+      return updatedAtField;
+    //if(_.contains(displayedFieldIds, 'status'))
+    //return updatedAtField;
+  }
+
   $scope.$watch('tab.params.view.displayedFieldIds', function (displayedFieldIds) {
-    //  Published date > Created date > Status;
     if(!_.contains(displayedFieldIds, $scope.tab.params.view.order.fieldId)){
-      setOrderField(updatedAtField);
+      setOrderField(determineFallbackSortField(displayedFieldIds));
       $scope.resetEntries(true);
     }
   }, true);
