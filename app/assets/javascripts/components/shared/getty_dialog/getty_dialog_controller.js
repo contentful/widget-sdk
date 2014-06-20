@@ -190,12 +190,12 @@ angular.module('contentful').controller('GettyDialogController',
   }
 
   $scope.loadMore = function() {
-    resetErrors();
     if ($scope.paginator.atLast() ||
         !$scope.imageResults ||
         $scope.imageResults.length === 0 ||
         $scope.imageDetail
        ) return;
+    resetErrors();
     $scope.paginator.page++;
     entryLoader.loadPromise(
       searchForImages, $scope.getty, $scope.paginator.skipItems()
