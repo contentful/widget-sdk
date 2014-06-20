@@ -56,8 +56,8 @@ angular.module('contentful').factory('listActions', [
         }
       }];
 
-      if(params.methodArgGetters){
-        args.unshift.apply(args, _.map(params.methodArgGetters, function (getter) {
+      if(params.getterForMethodArgs){
+        args.unshift.apply(args, _.map(params.getterForMethodArgs, function (getter) {
           return entity[getter] && entity[getter]();
         }));
       }
@@ -73,7 +73,6 @@ angular.module('contentful').factory('listActions', [
 
       var actionCalls = _.map(selected, function (entity, idx, selected) {
         var deferred = $q.defer();
-        var call = _.partial(actionCallback, entity, params, deferred);
         var stopSpinner = cfSpinner.start();
 
         var handler = function actionHandler(res) {
@@ -85,7 +84,7 @@ angular.module('contentful').factory('listActions', [
         };
 
         deferred.promise.then(handler).catch(handler);
-        return call;
+        return _.partial(actionCallback, entity, params, deferred);
       });
 
       if(actionCalls.length) {
