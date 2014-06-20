@@ -20,14 +20,12 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
     _cacheSelected = null;
   };
 
-  var performer = listActions.createPerformer({
+  var batchPerformer = listActions.createBatchPerformer({
     getSelected: getSelected,
     clearSelection: clearSelection,
     entityName: 'Entry',
     entityNamePlural: 'Entries',
   });
-  var perform = performer.perform;
-  var makeBatchResultsNotifier = performer.makeBatchResultsNotifier;
 
   var every = function (predicate) {
     return _.every(getSelected(), function (entry) {
@@ -36,24 +34,24 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
   };
 
   $scope.publishSelected = function() {
-    perform({
+    batchPerformer.perform({
       method: 'publish',
-      methodArgGetters: ['getVersion'],
-      callback: makeBatchResultsNotifier('published')
+      getterForMethodArgs: ['getVersion'],
+      callback: batchPerformer.makeBatchResultsNotifier('published')
     });
   };
 
   $scope.unpublishSelected = function() {
-    perform({
+    batchPerformer.perform({
       method: 'unpublish',
-      callback: makeBatchResultsNotifier('unpublished')
+      callback: batchPerformer.makeBatchResultsNotifier('unpublished')
     });
   };
 
   $scope.duplicateSelected = function() {
-    var notifier = makeBatchResultsNotifier('duplicated');
+    var notifier = batchPerformer.makeBatchResultsNotifier('duplicated');
 
-    perform({
+    batchPerformer.perform({
       method: 'duplicate',
       callback: function (results, length) {
         var successes =  _.reject(results, 'err');
@@ -69,8 +67,8 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
     var data = _.omit(entry.data, 'sys');
     $scope.spaceContext.space.createEntry(contentType, data, function (err, newEntry) {
       if(err) {
-        if(err.statusCode === performer.ERRORS.TOO_MANY_REQUESTS)
-          $timeout(_.partial(duplicateCallback, entry, params, deferred), performer.RETRY_TIMEOUT);
+        if(err.statusCode === batchPerformer.getErrors().TOO_MANY_REQUESTS)
+          $timeout(_.partial(duplicateCallback, entry, params, deferred), batchPerformer.getRetryTimeout());
         else
           deferred.reject({err: err});
       } else
@@ -79,24 +77,24 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
   }
 
   $scope.deleteSelected = function() {
-    perform({
+    batchPerformer.perform({
       method: 'delete',
-      callback: makeBatchResultsNotifier('deleted'),
+      callback: batchPerformer.makeBatchResultsNotifier('deleted'),
       event: 'entityDeleted'
     });
   };
 
   $scope.archiveSelected = function() {
-    perform({
+    batchPerformer.perform({
       method: 'archive',
-      callback: makeBatchResultsNotifier('archived')
+      callback: batchPerformer.makeBatchResultsNotifier('archived')
     });
   };
 
   $scope.unarchiveSelected = function() {
-    perform({
+    batchPerformer.perform({
       method: 'unarchive',
-      callback: makeBatchResultsNotifier('unarchived')
+      callback: batchPerformer.makeBatchResultsNotifier('unarchived')
     });
   };
 
