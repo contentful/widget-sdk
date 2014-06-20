@@ -74,10 +74,6 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     };
   }
 
-  $scope.setOrderField = function (field) {
-    setOrderField(field);
-    $scope.resetEntries(true);
-  };
 
   $scope.orderColumnBy = function (field) {
     if(!$scope.isOrderField(field)) setOrderField(field);
@@ -92,6 +88,7 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
   $scope.$watch('tab.params.view.displayedFieldIds', function (displayedFieldIds) {
     if(!_.contains(displayedFieldIds, $scope.tab.params.view.order.fieldId))
       $scope.setOrderField(updatedAtField);
+      $scope.resetEntries(true);
   }, true);
 
   $scope.clearView = function () {
