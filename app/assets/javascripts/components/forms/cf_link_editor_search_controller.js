@@ -1,12 +1,35 @@
 'use strict';
 
 angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scope, Paginator, notification, PromisedLoader, $q, searchQueryHelper) {
-
+  var controller = this;
   var entityLoader = new PromisedLoader();
   $scope.paginator = new Paginator();
 
+
+  // STATES
+  // CLEAR - Initial state, no search, no results
+  this.isClearState = function () {
+    return !this._searchResultsVisible;
+  };
+  // EMPTY - Search, Results, but empty
+  this.isEmptyState = function () {
+    return this._searchResultsVisible && _.isEmpty($scope.entities);
+  };
+  // RESULTS - Search and Results
+  this.isResultsState = function () {
+    return this._searchResultsVisible && !_.isEmpty($scope.entities);
+  };
+
+  this.hideSearchResults = function () {
+    this._searchResultsVisible = false;
+  };
+
+  this.showSearchResults = function () {
+    this._searchResultsVisible = true;
+  };
+
   $scope.$on('searchSubmitted', function () {
-    $scope.resetEntities();
+    controller._resetEntities();
   });
 
   $scope.$on('autocompleteResultSelected', function (event, index, entity) {
@@ -19,14 +42,9 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
     });
   });
 
-  $scope.$on('searchFieldFocused', function () {
-    $scope.searchResultsVisible = true;
-  });
-
   $scope.pick = function (entity) {
     $scope.addLink(entity).then(function () {
-      $scope.searchTerm = undefined;
-      $scope.searchResultsVisible = false;
+      controller.clearSearch();
     });
   };
 
@@ -78,34 +96,35 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
     });
   };
 
-  $scope.resetEntities = function() {
+  this.clearSearch = function () {
     $scope.paginator.page = 0;
     $scope.entities = [];
     $scope.selectedEntity = null;
-    $scope.searchResultsVisible = false;
-    $scope.loadEntities();
+    controller.hideSearchResults();
   };
 
-  $scope.loadEntities = function () {
-    return buildQuery()
-    .then(function (query) {
-      return entityLoader.loadCallback($scope.spaceContext.space, $scope.fetchMethod, query);
-    })
+  this._resetEntities = function() {
+    this.clearSearch();
+    this._loadEntities()
     .then(function (entities) {
-      $scope.searchResultsVisible = true;
+      controller.showSearchResults();
       $scope.paginator.numEntries = entities.total;
       $scope.entities = entities;
       $scope.selectedEntity = entities[0];
     });
   };
 
-  $scope.loadMore = function() {
-    if ($scope.paginator.atLast()) return;
-    $scope.paginator.page++;
+  this._loadEntities = function () {
     return buildQuery()
     .then(function (query) {
       return entityLoader.loadCallback($scope.spaceContext.space, $scope.fetchMethod, query);
-    })
+    });
+  };
+
+  this.loadMore = function() {
+    if ($scope.paginator.atLast()) return;
+    $scope.paginator.page++;
+    controller._loadEntities()
     .then(function (entities) {
       $scope.paginator.numEntries = entities.total;
       $scope.entities.push.apply($scope.entities, entities);

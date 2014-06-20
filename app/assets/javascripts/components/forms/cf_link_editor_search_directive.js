@@ -3,9 +3,11 @@
 angular.module('contentful').directive('cfLinkEditorSearch', function(defer) {
   return {
     restrict: 'AC',
+    controller: 'cfLinkEditorSearchCtrl',
+    controllerAs: 'searchController',
     link: function (scope, element) {
       scope.clickOutsideHandler = function () {
-        scope.searchResultsVisible = false;
+        scope.searchController.hideSearchResults();
       };
 
       scope.$watch('selectedEntity', function () {
@@ -13,7 +15,7 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(defer) {
       });
 
       scope.$watch(function (scope) {
-        return scope.searchResultsVisible;
+        return scope.searchController.isResultsState();
       }, function (searchShown) {
         if (searchShown) defer(function(){
           element.find('> .results:visible').focus();
@@ -33,6 +35,5 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(defer) {
         }
       }
     },
-    controller: 'cfLinkEditorSearchCtrl'
   };
 });

@@ -55,8 +55,7 @@
       New
 
 
-  .results.search-options-on.result-list-empty(ng-show="searchResultsVisible && !searchIsEmpty() && entities && entities.length == 0"
-                             ng-class="{visible: entities && entities.length == 0}"
+  .results.search-options-on.result-list-empty(ng-show="searchController.isEmptyState()"
                              ng-switch="linkType"
                              cf-click-outside-ignore=".search-button, .ss-search, .search-field input"
                              cf-click-outside="clickOutsideHandler()")
@@ -65,7 +64,7 @@
     %div(ng-switch-when="Asset")
       %p No Assets created yet.
 
-  .results.search-options-on(ng-show="searchResultsVisible && entities && entities.length > 0"
+  .results.search-options-on(ng-show="searchController.isResultsState()"
                              ng-switch="linkType"
                              tabindex="0"
                              cf-click-outside-ignore=".search-button, .ss-search, .search-field input"
@@ -78,7 +77,7 @@
             %th.cell-content-type Content Type
             %th.cell-name Name
             %th.cell-updated Updated
-      .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
+      .endless-container(at-bottom="searchController.loadMore()" num-elements="paginator.page")
         %table.result-list
           %tbody
             %tr(ng-repeat="entity in entities track by entity.getId()"
