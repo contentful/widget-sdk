@@ -121,6 +121,7 @@ angular.module('contentful').controller('cfTokenizedSearchController', function 
 
   $scope.submitSearch = function (term) {
     setSearchTerm($scope.$parent, term);
+    $scope.$emit('searchSubmitted', term);
   };
 
   $scope.hasFocus = false;
