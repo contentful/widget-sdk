@@ -66,6 +66,7 @@ angular.module('contentful').controller('GettyDialogController',
   }
 
   function searchForImages (params, offset) {
+    resetErrors();
     var searchParams = {
       Filter: {
         FileTypes: ['jpg'],
