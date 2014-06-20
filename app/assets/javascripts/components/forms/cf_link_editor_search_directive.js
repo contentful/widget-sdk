@@ -12,6 +12,14 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(defer) {
         defer(scrollToSelected);
       });
 
+      scope.$watch(function (scope) {
+        return scope.searchResultsVisible;
+      }, function (searchShown) {
+        if (searchShown) defer(function(){
+          element.find('> .results:visible').focus();
+        });
+      });
+
       function scrollToSelected(){
         var $selected = element.find('.selected');
         if ($selected.length === 0) return;
