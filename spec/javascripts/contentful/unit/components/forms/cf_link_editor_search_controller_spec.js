@@ -265,46 +265,54 @@ describe('cfLinkEditorSearch Controller', function () {
     it('should still be tested');
   });
   describe('_buildQuery', function () {
-    it('should still be tested');
+    var query;
 
-    xdescribe('creates a query object', function() {
+    function performQuery() {
+      stubs.loadCallback.reset();
+      cfLinkEditorSearchCtrl._loadEntities();
+      scope.$apply();
+      query = stubs.loadCallback.args[0][2];
+    }
 
-      it('with a defined order', function() {
-        expect(stubs.loadCallback.args[0][2].order).toEqual('-sys.updatedAt');
-      });
+    beforeEach(function () {
+      scope.paginator.pageLength = 3;
+      scope.paginator.skipItems = sinon.stub();
+      scope.paginator.skipItems.returns(true);
+    });
 
-      it('with a defined limit', function() {
-        expect(stubs.loadCallback.args[0][2].limit).toEqual(3);
-      });
+    it('with a defined order', function() {
+      performQuery();
+      expect(query.order).toEqual('-sys.updatedAt');
+    });
 
-      it('with a defined skip param', function() {
-        expect(stubs.loadCallback.args[0][2].skip).toBeTruthy();
-      });
+    it('with a defined limit', function() {
+      performQuery();
+      expect(query.limit).toEqual(3);
+    });
 
-      it('for linked content type', function() {
-        stubs.loadCallback.reset();
-        var idStub = sinon.stub();
-        idStub.returns(123);
-        scope.linkContentType = {
-          getId: idStub
-        };
-        cfLinkEditorSearchCtrl._loadEntities();
-        expect(stubs.loadCallback.args[0][2]['sys.contentType.sys.id']).toBe(123);
-      });
+    it('with a defined skip param', function() {
+      performQuery();
+      expect(query.skip).toBeTruthy();
+    });
 
-      it('for mimetype group', function() {
-        stubs.loadCallback.reset();
-        scope.linkMimetypeGroup = 'files';
-        cfLinkEditorSearchCtrl._loadEntities();
-        expect(stubs.loadCallback.args[0][2]['mimetype_group']).toBe('files');
-      });
+    it('for linked content type', function() {
+      scope.linkContentType = {
+        getId: sinon.stub().returns(123)
+      };
+      performQuery();
+      expect(query.content_type).toBe(123);
+    });
 
-      it('for search term', function() {
-        stubs.loadCallback.reset();
-        scope.searchTerm = 'term';
-        cfLinkEditorSearchCtrl._loadEntities();
-        expect(stubs.loadCallback.args[0][2].query).toBe('term');
-      });
+    it('for mimetype group', function() {
+      scope.linkMimetypeGroup = 'files';
+      performQuery();
+      expect(query['mimetype_group']).toBe('files');
+    });
+
+    it('for search term', function() {
+      scope.searchTerm = 'term';
+      performQuery();
+      expect(query.query).toBe('term');
     });
   });
 
