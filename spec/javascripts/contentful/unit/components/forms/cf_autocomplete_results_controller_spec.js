@@ -7,9 +7,13 @@ describe('cfAutocompleteResultsController', function () {
 
   beforeEach(inject(function ($controller, $rootScope, $parse){
     scope = $rootScope;
-    controller = $controller('CfAutocompleteResultsCtrl', {$scope: $rootScope});
+    scope.searchController = {
+      clearSearch: sinon.stub()
+    };
+    controller = $controller('CfAutocompleteResultsCtrl', {
+      $scope: $rootScope,
+      $attrs: {cfAutocompleteResults: 'results'}});
     controller.getAutocompleteResults = $parse('results');
-    controller.setAutocompleteTerm = $parse('searchTerm').assign;
   }));
 
   afterEach(inject(function ($log) {
@@ -28,10 +32,9 @@ describe('cfAutocompleteResultsController', function () {
     expect(controller.numResults).toBe(0);
   });
 
-  it('should set autocompleteTerm to 0 when canceled', function () {
-    scope.searchTerm = 'foobar';
+  it('should clear the search when canceled', function () {
     controller.cancelAutocomplete();
-    expect(scope.searchTerm).toBe('');
+    expect(scope.searchController.clearSearch).toBeCalled();
   });
 
   it('should return the selected element from the autocompleteResults in getSelected', function () {
@@ -94,7 +97,7 @@ describe('cfAutocompleteResultsController', function () {
 
     spyOn(scope, '$emit').and.returnValue({ defaultPrevented: false });
     controller.pickSelected();
-    expect(scope.searchTerm).toBe('');
+    expect(scope.searchController.clearSearch).toBeCalled();
   });
 
   it('should not cancel Autocomplete if prevented after pick', function () {

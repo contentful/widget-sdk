@@ -39,15 +39,6 @@ describe('cfLinkEditorSearch Controller', function () {
     $log.assertEmpty();
   }));
 
-  it('if searchTerm changes, reset entities', function() {
-    scope.searchTerm = null;
-    scope.$digest();
-    scope.resetEntities = sinon.stub();
-    scope.searchTerm = 'term';
-    scope.$digest();
-    expect(scope.resetEntities).toBeCalled();
-  });
-
   it('when autocomplete result is selected sets the selected entity on the scope', inject(function ($rootScope) {
     var result = {result: true};
     $rootScope.$broadcast('autocompleteResultSelected', 0, result);
@@ -69,21 +60,16 @@ describe('cfLinkEditorSearch Controller', function () {
     });
   });
 
-  describe('on refresh search event', function() {
+  describe('on searchSubmitted event', function() {
     var childScope;
     beforeEach(function() {
-      scope.resetEntities = sinon.stub();
+      cfLinkEditorSearchCtrl._resetEntities = sinon.stub();
       childScope = scope.$new();
     });
 
     it('refreshes search if button was clicked', function() {
-      childScope.$emit('refreshSearch', {trigger: 'button'});
-      expect(scope.resetEntities).toBeCalled();
-    });
-
-    it('does not refresh search if other trigger was used', function() {
-      childScope.$emit('refreshSearch', {trigger: ''});
-      expect(scope.resetEntities).not.toBeCalled();
+      childScope.$emit('searchSubmitted');
+      expect(cfLinkEditorSearchCtrl._resetEntities).toBeCalled();
     });
   });
 
@@ -275,109 +261,13 @@ describe('cfLinkEditorSearch Controller', function () {
   makeAddMethodTests('entry');
   makeAddMethodTests('asset');
 
-  it('search is empty if null', function() {
-    scope.searchTerm = undefined;
-    expect(scope.searchIsEmpty()).toBeTruthy();
+  describe('_loadEntities', function () {
+    it('should still be tested');
   });
+  describe('_buildQuery', function () {
+    it('should still be tested');
 
-  it('search is empty if undefined', function() {
-    scope.searchTerm = undefined;
-    expect(scope.searchIsEmpty()).toBeTruthy();
-  });
-
-  it('search is not empty if empty string', function() {
-    scope.searchTerm = '';
-    expect(scope.searchIsEmpty()).toBeFalsy();
-  });
-
-  it('search is not empty if string', function() {
-    scope.searchTerm = 'term';
-    expect(scope.searchIsEmpty()).toBeFalsy();
-  });
-
-  describe('resetting entities', function() {
-    describe('with no search term', function() {
-      beforeEach(function() {
-        scope.searchTerm = undefined;
-        scope.resetEntities();
-      });
-
-      it('resets paginator page', function() {
-        expect(scope.paginator.page).toBe(0);
-      });
-
-      it('resets entities', function() {
-        expect(scope.entities).toEqual([]);
-      });
-
-      it('resets selected entry', function() {
-        expect(scope.selectedEntity).toBeNull();
-      });
-    });
-
-    describe('with a search term', function() {
-      beforeEach(function() {
-        scope.searchTerm = 'term';
-        scope.loadEntities = sinon.stub();
-        scope.resetEntities();
-      });
-
-      it('loads entities', function() {
-        expect(scope.loadEntities).toBeCalled();
-      });
-    });
-
-    describe('with an empty search term', function() {
-      beforeEach(function() {
-        scope.searchTerm = '';
-        scope.loadEntities = sinon.stub();
-        scope.resetEntities();
-      });
-
-      it('loads entities', function() {
-        expect(scope.loadEntities).toBeCalled();
-      });
-    });
-
-  });
-
-
-  describe('loading entities', function() {
-    var entities, entity;
-    beforeEach(function() {
-      entity = {entity: true};
-      entities = {
-        0: entity,
-        total: 30
-      };
-      stubs.loadCallback.returns($q.when(entities));
-
-      scope.paginator.pageLength = 3;
-      scope.paginator.skipItems = sinon.stub();
-      scope.paginator.skipItems.returns(true);
-      scope.$apply();
-      scope.loadEntities();
-      scope.$apply();
-    });
-
-    it('loads entities', function() {
-      expect(stubs.loadCallback).toBeCalled();
-    });
-
-    it('sets entities num on the paginator', function() {
-      expect(scope.paginator.numEntries).toEqual(30);
-    });
-
-    it('sets entities on scope', function() {
-      expect(scope.entities).toBe(entities);
-    });
-
-    it('sets first entity as selected on scope', function() {
-      expect(scope.selectedEntity).toBe(entity);
-    });
-
-
-    describe('creates a query object', function() {
+    xdescribe('creates a query object', function() {
 
       it('with a defined order', function() {
         expect(stubs.loadCallback.args[0][2].order).toEqual('-sys.updatedAt');
@@ -398,24 +288,60 @@ describe('cfLinkEditorSearch Controller', function () {
         scope.linkContentType = {
           getId: idStub
         };
-        scope.loadEntities();
+        cfLinkEditorSearchCtrl._loadEntities();
         expect(stubs.loadCallback.args[0][2]['sys.contentType.sys.id']).toBe(123);
       });
 
       it('for mimetype group', function() {
         stubs.loadCallback.reset();
         scope.linkMimetypeGroup = 'files';
-        scope.loadEntities();
+        cfLinkEditorSearchCtrl._loadEntities();
         expect(stubs.loadCallback.args[0][2]['mimetype_group']).toBe('files');
       });
 
       it('for search term', function() {
         stubs.loadCallback.reset();
         scope.searchTerm = 'term';
-        scope.loadEntities();
+        cfLinkEditorSearchCtrl._loadEntities();
         expect(stubs.loadCallback.args[0][2].query).toBe('term');
       });
     });
+  });
+
+  describe('resetting entities', function() {
+    var entities, entity;
+    beforeEach(function() {
+      entity = {entity: true};
+      entities = {
+        0: entity,
+        total: 30
+      };
+      sinon.stub(cfLinkEditorSearchCtrl, '_loadEntities').returns($q.when(entities));
+      sinon.spy(cfLinkEditorSearchCtrl, 'clearSearch');
+      scope.paginator.pageLength = 3;
+      scope.paginator.skipItems = sinon.stub();
+      scope.paginator.skipItems.returns(true);
+      scope.$apply();
+      cfLinkEditorSearchCtrl._resetEntities();
+      scope.$apply();
+    });
+
+    it('clear the searchResult', function () {
+      expect(cfLinkEditorSearchCtrl.clearSearch).toBeCalled();
+    });
+
+    it('sets entities num on the paginator', function() {
+      expect(scope.paginator.numEntries).toEqual(30);
+    });
+
+    it('sets entities on scope', function() {
+      expect(scope.entities).toBe(entities);
+    });
+
+    it('sets first entity as selected on scope', function() {
+      expect(scope.selectedEntity).toBe(entity);
+    });
+
   });
 
 
@@ -439,41 +365,35 @@ describe('cfLinkEditorSearch Controller', function () {
         setBaseSize: sinon.stub()
       };
 
+      sinon.stub(cfLinkEditorSearchCtrl, '_loadEntities').returns($q.when(entities));
       scope.paginator.atLast = sinon.stub();
       scope.paginator.atLast.returns(false);
     });
 
     it('doesnt load if on last page', function() {
       scope.paginator.atLast.returns(true);
-      scope.loadMore();
+      cfLinkEditorSearchCtrl.loadMore();
       expect(stubs.loadCallback).not.toBeCalled();
     });
 
     it('paginator count is increased', function() {
       scope.paginator.page = 0;
-      scope.loadMore();
+      cfLinkEditorSearchCtrl.loadMore();
       expect(scope.paginator.page).toBe(1);
-    });
-
-    it('gets query params', function () {
-      scope.loadMore();
-      expect(stubs.loadCallback.args[0][2]).toBeDefined();
     });
 
     it('should work on the page before the last', function () {
       // Regression test for https://www.pivotaltracker.com/story/show/57743532
       scope.paginator.numEntries = 47;
       scope.paginator.page = 0;
-      scope.loadMore();
-      expect(stubs.loadCallback).toBeCalled();
+      cfLinkEditorSearchCtrl.loadMore();
+      expect(cfLinkEditorSearchCtrl._loadEntities).toBeCalled();
     });
 
     describe('on successful load response', function() {
       beforeEach(function() {
-        stubs.loadCallback.reset();
         scope.paginator.page = 1;
-        stubs.loadCallback.returns($q.when(entities));
-        scope.loadMore();
+        cfLinkEditorSearchCtrl.loadMore();
         scope.$apply();
       });
 
@@ -488,9 +408,9 @@ describe('cfLinkEditorSearch Controller', function () {
 
     describe('on failed load response', function() {
       beforeEach(function() {
+        cfLinkEditorSearchCtrl._loadEntities.returns($q.reject());
         scope.paginator.page = 1;
-        stubs.loadCallback.returns($q.reject(entities));
-        scope.loadMore();
+        cfLinkEditorSearchCtrl.loadMore();
         scope.$apply();
       });
 

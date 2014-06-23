@@ -14,7 +14,8 @@ describe('cfFieldEditor Directive', function () {
         'cfLocationEditor',
         'cfNumberEditor',
         'cfFileEditor',
-        'cfDatetimeEditor'
+        'cfDatetimeEditor',
+        'cfTokenizedSearch'
       );
     });
     inject(function ($compile, $rootScope) {
