@@ -60,7 +60,7 @@ describe('cfLinkEditor Directive', function () {
                            extra+
                            '></div>')(scope);
         scope.$digest();
-        searchField = element.find('.search-field');
+        searchField = element.find('.search-with-results');
       };
     });
   });
@@ -223,7 +223,10 @@ describe('cfLinkEditor Directive', function () {
         var nameStub = sinon.stub();
         nameStub.returns('Thing');
         scope.linkContentType = {
-          getName: nameStub
+          getName: nameStub,
+          data: {
+            fields: []
+          }
         };
 
         scope.$digest();
@@ -619,7 +622,11 @@ describe('cfLinkEditor Directive', function () {
     beforeEach(function () {
       scope.field.items.linkType = 'Entry';
       scope.linkContentType = {
-        getName: sinon.stub()
+        getName: sinon.stub().returns('ContentTypeName'),
+        getId: sinon.stub().returns('contentypeId'),
+        data: {
+          fields: []
+        }
       };
 
       stubs.can.withArgs('create', 'Entry').returns(true);
