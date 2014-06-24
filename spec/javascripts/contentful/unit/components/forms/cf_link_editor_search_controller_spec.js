@@ -47,17 +47,46 @@ describe('cfLinkEditorSearch Controller', function () {
 
   describe('when autocomplete result is picked', function() {
     beforeEach(inject(function($rootScope) {
+      spyOn(cfLinkEditorSearchCtrl, 'clearSearch');
       var result = {result: true};
-      scope.addLink = sinon.stub().returns({
-        then: sinon.stub(),
-        catch: sinon.stub()
-      });
+      scope.addLink = sinon.stub().returns($q.when());
       $rootScope.$broadcast('autocompleteResultPicked', 0, result);
     }));
 
     it('calls the addLink method', function() {
+      scope.$apply();
       expect(scope.addLink).toBeCalled();
     });
+
+    it('clears the search when linkSingle', function () {
+      scope.linkSingle = true;
+      scope.$apply();
+      expect(cfLinkEditorSearchCtrl.clearSearch).toHaveBeenCalled();
+    });
+
+    it('clears the search when linkMultiple', function () {
+      scope.linkSingle = false;
+      scope.$apply();
+      expect(cfLinkEditorSearchCtrl.clearSearch).not.toHaveBeenCalled();
+    });
+  });
+
+  it('should clear the search when autocompleteResults are canceled', function () {
+    sinon.stub(cfLinkEditorSearchCtrl, 'clearSearch');
+    scope.$broadcast('autocompleteResultsCancel');
+    expect(cfLinkEditorSearchCtrl.clearSearch).toBeCalled();
+  });
+
+  it('should emit a searchResultsHidden event when hiding the search results', function () {
+    spyOn(scope, '$emit');
+    cfLinkEditorSearchCtrl.hideSearchResults();
+    expect(scope.$emit).toHaveBeenCalledWith('searchResultsHidden');
+  });
+
+  it('should clear the search when the tokenized search displays its dropdown', function () {
+    spyOn(cfLinkEditorSearchCtrl, 'clearSearch');
+    scope.$emit('tokenizedSearchShowAutocompletions', true);
+    expect(cfLinkEditorSearchCtrl.clearSearch).toHaveBeenCalled();
   });
 
   describe('on searchSubmitted event', function() {
@@ -76,21 +105,21 @@ describe('cfLinkEditorSearch Controller', function () {
   describe('the pick method', function() {
     var entity;
     beforeEach(function() {
+      spyOn(cfLinkEditorSearchCtrl, 'clearSearch');
       entity = {entity: true};
-      scope.addLink = sinon.stub().returns({
-        then: sinon.stub(),
-        catch: sinon.stub()
-      });
+      scope.addLink = sinon.stub().returns($q.when());
       scope.pick(entity);
+      scope.$apply();
     });
 
     it('calls add link with the given entity', function () {
       expect(scope.addLink).toBeCalledWith(entity);
     });
 
-    it('sets search term to undefined', function() {
-      expect(scope.searchTerm).toBeUndefined();
+    it('clears the search', function () {
+      expect(cfLinkEditorSearchCtrl.clearSearch).toHaveBeenCalled();
     });
+
   });
 
 

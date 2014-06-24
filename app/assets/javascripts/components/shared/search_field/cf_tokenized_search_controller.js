@@ -33,7 +33,7 @@ angular.module('contentful').controller('cfTokenizedSearchController', function 
 
   $scope.clearAutocompletions = function () {
     $scope.restoreString();
-    $scope.showAutocompletions = false;
+    toggleAutocompletions(false);
   };
 
   $scope.$watch('getContentType()', 'updateAutocompletions()');
@@ -55,13 +55,13 @@ angular.module('contentful').controller('cfTokenizedSearchController', function 
 
   $scope.keyPressed = function (event) {
     if (event.keyCode == keycodes.DOWN){
-      $scope.showAutocompletions = true;
+      toggleAutocompletions(true);
       if ($scope.autocompletion && $scope.showAutocompletions) {
         $scope.$broadcast('selectNextAutocompletion');
         event.preventDefault();
       }
     } else if (event.keyCode == keycodes.UP) {
-      $scope.showAutocompletions = true;
+      toggleAutocompletions(true);
       if ($scope.autocompletion && $scope.showAutocompletions) {
         $scope.$broadcast('selectPreviousAutocompletion');
         event.preventDefault();
@@ -80,7 +80,7 @@ angular.module('contentful').controller('cfTokenizedSearchController', function 
         } else {
           $scope.confirmAutocompletion();
         }
-        $scope.showAutocompletions = false;
+      toggleAutocompletions(false);
       } else {
         $scope.submitSearch($scope.inner.term);
       }
@@ -97,6 +97,10 @@ angular.module('contentful').controller('cfTokenizedSearchController', function 
     return token && token.content;
   };
 
+  function toggleAutocompletions(show) {
+    $scope.showAutocompletions = show;
+    $scope.$emit('tokenizedSearchShowAutocompletions', show);
+  }
 
   // FORMER LINK FUNCTION STUFF;
 

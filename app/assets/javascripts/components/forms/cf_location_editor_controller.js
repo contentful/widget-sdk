@@ -70,6 +70,9 @@ angular.module('contentful').controller('cfLocationEditorCtrl', function ($scope
     scope.pickResult(result);
   });
 
+  $scope.$on('autocompleteResultsCancel', function () {
+    $scope.searchTerm = '';
+  });
 
   // TODO Destroy cleanup
 
