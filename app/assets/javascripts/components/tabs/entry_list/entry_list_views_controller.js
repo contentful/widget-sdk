@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('EntryListViewsController', function($scope, sentry, random, modalDialog, notification){
+angular.module('contentful').controller('EntryListViewsController', function($scope, random, $controller){
   var DEFAULT_ORDER_DIRECTION = 'descending';
 
   var SORTABLE_TYPES = [
@@ -31,6 +31,61 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     authorField
   ];
 
+  $scope.fieldIsSortable = function (field) {
+    return _.contains(SORTABLE_TYPES, field.type) && field.id !== 'author';
+  };
+
+  $scope.isOrderField = function (field) {
+    return $scope.tab.params.view.order.fieldId === field.id;
+  };
+
+  $scope.setOrderField = function (field) {
+    setOrderField(field);
+    $scope.resetEntries(true);
+  };
+
+  $scope.orderColumnBy = function (field) {
+    if(!$scope.isOrderField(field)) setOrderField(field);
+    $scope.tab.params.view.order.direction = switchOrderDirection($scope.tab.params.view.order.direction);
+    $scope.resetEntries(true);
+  };
+
+  $scope.$watch('tab.params.view.displayedFieldIds', function (displayedFieldIds) {
+    if(!_.contains(displayedFieldIds, $scope.tab.params.view.order.fieldId))
+      $scope.setOrderField(updatedAtField);
+  }, true);
+
+  $scope.orderDescription = function (view) {
+    var field = _.find($scope.displayedFields, {id: view.order.fieldId});
+    var direction = view.order.direction;
+    return '' + direction + ' by ' + field.name;
+  };
+
+  $scope.getFieldList = function () {
+    return _.map($scope.displayedFields, 'name').join(', ');
+  };
+
+  return $controller('ListViewsController', {
+    $scope: $scope,
+    getBlankView: getBlankView,
+    viewCollectionName: 'entryListViews',
+    generateDefaultViews: generateDefaultViews,
+    resetList: function () {
+      $scope.resetEntries(true);
+    }
+  });
+
+  function setOrderField(field) {
+    $scope.tab.params.view.order = {
+      fieldId: field.id,
+      direction: DEFAULT_ORDER_DIRECTION
+    };
+  }
+
+  function switchOrderDirection(direction) {
+    return direction === 'ascending' ? 'descending' : 'ascending';
+  }
+
   function getBlankView() {
     return {
       title: 'New View',
@@ -44,90 +99,6 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
       displayedFieldIds: _.map($scope.systemFields, 'id')
     };
   }
-
-  $scope.$watch('uiConfig', function (uiConfig) {
-    if (uiConfig && !uiConfig.entryListViews) {
-      uiConfig.entryListViews = generateDefaultViews(true);
-    }
-  });
-
-  var blankView = getBlankView();
-
-  $scope.tab.params.view = $scope.tab.params.view || getBlankView();
-
-  $scope.resetViews = function () {
-    $scope.uiConfig.entryListViews = generateDefaultViews();
-    $scope.saveViews();
-  };
-
-  $scope.fieldIsSortable = function (field) {
-    return _.contains(SORTABLE_TYPES, field.type) && field.id !== 'author';
-  };
-
-  $scope.isOrderField = function (field) {
-    return $scope.tab.params.view.order.fieldId === field.id;
-  };
-
-  function setOrderField(field) {
-    $scope.tab.params.view.order = {
-      fieldId: field.id,
-      direction: DEFAULT_ORDER_DIRECTION
-    };
-  }
-
-  $scope.setOrderField = function (field) {
-    setOrderField(field);
-    $scope.resetEntries(true);
-  };
-
-  $scope.orderColumnBy = function (field) {
-    if(!$scope.isOrderField(field)) setOrderField(field);
-    $scope.tab.params.view.order.direction = switchOrderDirection($scope.tab.params.view.order.direction);
-    $scope.resetEntries(true);
-  };
-
-  function switchOrderDirection(direction) {
-    return direction === 'ascending' ? 'descending' : 'ascending';
-  }
-
-  $scope.$watch('tab.params.view.displayedFieldIds', function (displayedFieldIds) {
-    if(!_.contains(displayedFieldIds, $scope.tab.params.view.order.fieldId))
-      $scope.setOrderField(updatedAtField);
-  }, true);
-
-  $scope.clearView = function () {
-    $scope.tab.params.view = getBlankView();
-    $scope.resetEntries(true);
-  };
-
-  $scope.loadView = function (view) {
-    $scope.tab.params.view = _.cloneDeep(view);
-    $scope.tab.params.view.title = 'New View';
-    $scope.resetEntries(true);
-  };
-
-  $scope.orderDescription = function (view) {
-    var field = _.find($scope.displayedFields, {id: view.order.fieldId});
-    var direction = view.order.direction;
-    return '' + direction + ' by ' + field.name;
-  };
-
-  $scope.saveViews = function () {
-    return $scope.saveUiConfig().catch(function () {
-      notification.serverError('Error trying to save view');
-    });
-  };
-
-  $scope.getFieldList = function () {
-    return _.map($scope.displayedFields, 'name').join(', ');
-  };
-
-  //TODO move to ViewMenuController
-  $scope.viewIsActive = function (view){
-    var p = $scope.tab.params.view;
-    if (!view) view = blankView;
-    return p.id === view.id;
-  };
 
   function generateDefaultViews(wait) {
     var contentTypes;
