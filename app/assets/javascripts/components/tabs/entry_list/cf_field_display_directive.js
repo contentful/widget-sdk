@@ -8,8 +8,8 @@ angular.module('contentful').directive('cfFieldDisplay', function(){
     link: function (scope) {
 
       scope.displayType = function (field) {
-        if(field.type == 'Date' && field.id == 'updatedAt')
-          return 'updatedAt';
+        if(field.type == 'Date' && (field.id == 'updatedAt' || field.id == 'createdAt' || field.id == 'publishedAt'))
+          return field.id;
 
         if(field.type == 'Symbol' && field.id == 'author')
           return 'author';

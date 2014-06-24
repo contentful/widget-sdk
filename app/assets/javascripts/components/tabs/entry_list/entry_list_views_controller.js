@@ -11,12 +11,26 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     'Location'
   ];
 
+  var createdAtField = {
+    id: 'createdAt',
+    name: 'Created',
+    type: 'Date',
+    sys: true
+  };
+
   var updatedAtField = {
     id: 'updatedAt',
     name: 'Updated',
     type: 'Date',
     sys: true,
     persistent: true
+  };
+
+  var publishedAtField = {
+    id: 'publishedAt',
+    name: 'Published',
+    type: 'Date',
+    sys: true
   };
 
   var authorField = {
@@ -28,8 +42,12 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
 
   $scope.systemFields = [
     updatedAtField,
+    createdAtField,
+    publishedAtField,
     authorField
   ];
+
+  $scope.getDefaultFieldIds = getDefaultFieldIds;
 
   $scope.fieldIsSortable = function (field) {
     return _.contains(SORTABLE_TYPES, field.type) && field.id !== 'author';
@@ -39,11 +57,6 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
     return $scope.tab.params.view.order.fieldId === field.id;
   };
 
-  $scope.setOrderField = function (field) {
-    setOrderField(field);
-    $scope.resetEntries(true);
-  };
-
   $scope.orderColumnBy = function (field) {
     if(!$scope.isOrderField(field)) setOrderField(field);
     $scope.tab.params.view.order.direction = switchOrderDirection($scope.tab.params.view.order.direction);
@@ -51,8 +64,10 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
   };
 
   $scope.$watch('tab.params.view.displayedFieldIds', function (displayedFieldIds) {
-    if(!_.contains(displayedFieldIds, $scope.tab.params.view.order.fieldId))
-      $scope.setOrderField(updatedAtField);
+    if(!_.contains(displayedFieldIds, $scope.tab.params.view.order.fieldId)){
+      setOrderField(determineFallbackSortField(displayedFieldIds));
+      $scope.resetEntries(true);
+    }
   }, true);
 
   $scope.orderDescription = function (view) {
@@ -96,8 +111,27 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
         fieldId: updatedAtField.id,
         direction: DEFAULT_ORDER_DIRECTION
       },
-      displayedFieldIds: _.map($scope.systemFields, 'id')
+      displayedFieldIds: getDefaultFieldIds()
     };
+  }
+
+  function determineFallbackSortField(displayedFieldIds) {
+    if(_.contains(displayedFieldIds, 'publishedAt'))
+      return publishedAtField;
+    if(_.contains(displayedFieldIds, 'createdAt'))
+      return createdAtField;
+    // TODO this should be the first condition in this function
+    // move it there when sorting is allowed by status
+    if(_.contains(displayedFieldIds, 'updatedAt'))
+      return updatedAtField;
+    //if(_.contains(displayedFieldIds, 'status'))
+    //return updatedAtField;
+  }
+
+  function getDefaultFieldIds() {
+    return _.reject(_.map($scope.systemFields, 'id'), function (fieldId) {
+      return fieldId == 'createdAt' || fieldId == 'publishedAt';
+    });
   }
 
   function generateDefaultViews(wait) {
@@ -118,17 +152,17 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
           id: random.id(),
           title: 'All',
           order: makeOrder(),
-          displayedFieldIds: fieldIds()
+          displayedFieldIds: getDefaultFieldIds()
         }]
       },
       {
         id: random.id(),
         title: 'Status',
         views: [
-          {title: 'Published', searchTerm: 'status:published', id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
-          {title: 'Changed',   searchTerm: 'status:changed'  , id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
-          {title: 'Draft',     searchTerm: 'status:draft'    , id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()},
-          {title: 'Archived',  searchTerm: 'status:archived' , id: random.id(), order: makeOrder(), displayedFieldIds: fieldIds()}
+          {title: 'Published', searchTerm: 'status:published', id: random.id(), order: makeOrder(), displayedFieldIds: getDefaultFieldIds()},
+          {title: 'Changed',   searchTerm: 'status:changed'  , id: random.id(), order: makeOrder(), displayedFieldIds: getDefaultFieldIds()},
+          {title: 'Draft',     searchTerm: 'status:draft'    , id: random.id(), order: makeOrder(), displayedFieldIds: getDefaultFieldIds()},
+          {title: 'Archived',  searchTerm: 'status:archived' , id: random.id(), order: makeOrder(), displayedFieldIds: getDefaultFieldIds()}
         ]
       },
       {
@@ -145,7 +179,7 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
           contentTypeId: contentType.getId(),
           id: random.id(),
           order: makeOrder(),
-          displayedFieldIds: fieldIds()
+          displayedFieldIds: getDefaultFieldIds()
         };
       });
     }
@@ -154,9 +188,6 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
       return { fieldId: updatedAtField.id, direction: DEFAULT_ORDER_DIRECTION };
     }
 
-    function fieldIds() {
-      return _.map($scope.systemFields, 'id');
-    }
   }
 
 });
