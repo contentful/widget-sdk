@@ -21,8 +21,8 @@ angular.module('contentful').controller('GettyDialogController',
       creative: false,
       editorial: false
     },
+    graphicsStyle: {},
     licensing: {},
-    creative: {},
     offerings: {},
     editorial: ''
   };
@@ -30,15 +30,43 @@ angular.module('contentful').controller('GettyDialogController',
   $scope.imageFamilies = [];
   $scope.selectedSizeKey = '';
 
-  $scope.$watch('getty.search', function (search) {
+  $scope.$watch('getty.families.creative', function (val) {
+    if(!val) {
+      $scope.getty.licensing = {};
+      $scope.getty.graphicsStyle = {};
+      delete $scope.getty.excludeNudity;
+      delete $scope.getty.vectorIllustrations;
+    }
+  });
+
+  $scope.$watch('getty.graphicsStyle.illustration', function (val) {
+    if(!val) {
+      delete $scope.getty.vectorIllustrations;
+    }
+  });
+
+  $scope.$watch('getty.families.editorial', function (val) {
+    if(!val) {
+      $scope.getty.editorial = '';
+    }
+  });
+
+  $scope.$watch('getty.search', handleSearch);
+
+  $scope.$on('refreshSearch', function () {
+    handleSearch($scope.getty.search);
+  });
+
+  function handleSearch(search) {
     if(!_.isEmpty(search)){
       $scope.gettyLoading = true;
       $scope.imageResults = null;
       searchForImages($scope.getty).then(saveResults, handleSearchFail);
     }
-  });
+  }
 
   function searchForImages (params, offset) {
+    resetErrors();
     var searchParams = {
       Filter: {
         FileTypes: ['jpg'],
@@ -163,12 +191,12 @@ angular.module('contentful').controller('GettyDialogController',
   }
 
   $scope.loadMore = function() {
-    resetErrors();
     if ($scope.paginator.atLast() ||
         !$scope.imageResults ||
         $scope.imageResults.length === 0 ||
         $scope.imageDetail
        ) return;
+    resetErrors();
     $scope.paginator.page++;
     entryLoader.loadPromise(
       searchForImages, $scope.getty, $scope.paginator.skipItems()

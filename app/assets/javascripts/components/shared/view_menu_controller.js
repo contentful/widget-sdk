@@ -1,7 +1,8 @@
 'use strict';
-angular.module('contentful').controller('ViewMenuController', function($scope, $attrs, modalDialog, random, $timeout, analytics){
+angular.module('contentful').controller('ViewMenuController', function($scope, $attrs, modalDialog, random, $timeout, analytics, $parse){
   $scope.tempFreeViews = [];
   $scope.folderStates = loadFolderStates();
+  var getCurrentView = $parse($attrs.currentView);
 
   $scope.$watch($attrs.viewMenu, function (folders) {
     $scope.folders = folders;
@@ -80,7 +81,7 @@ angular.module('contentful').controller('ViewMenuController', function($scope, $
   };
 
   $scope.addViewToFolder = function (folder) {
-    var view = $scope.tab.params.view;
+    var view = getCurrentView($scope);
     view.id = random.id();
     folder.views.push(view);
     $scope.saveViews();
@@ -109,6 +110,13 @@ angular.module('contentful').controller('ViewMenuController', function($scope, $
     }
     return defaultFolder;
   };
+
+  $scope.viewIsActive = function (view){
+    if (!view) return false;
+    var p = getCurrentView($scope);
+    return p.id === view.id;
+  };
+
 
   function moveTempFreeViews() {
     var defaultFolder = $scope.createDefaultFolder();

@@ -1,5 +1,18 @@
 'use strict';
-angular.module('contentful').controller('AssetListViewsController', function($scope, sentry, random, modalDialog, notification, mimetype){
+
+angular.module('contentful').controller('AssetListViewsController', function($scope, $controller, mimetype, random){
+
+  return $controller('ListViewsController', {
+    $scope: $scope,
+    getBlankView: getBlankView,
+    viewCollectionName: 'assetListViews',
+    generateDefaultViews: generateDefaultViews,
+    resetList: function () {
+      $scope.resetAssets(true);
+    }
+  });
+
+
   function getBlankView() {
     return {
       id: null,
@@ -7,55 +20,6 @@ angular.module('contentful').controller('AssetListViewsController', function($sc
       searchTerm: null
     };
   }
-
-  $scope.$watch('uiConfig', function (uiConfig) {
-    if (uiConfig && !uiConfig.assetListViews) {
-      uiConfig.assetListViews = generateDefaultViews();
-    }
-  });
-
-  var blankView = getBlankView();
-
-  $scope.tab.params.view = $scope.tab.params.view || getBlankView();
-
-  $scope.resetViews = function () {
-    $scope.uiConfig.assetListViews = generateDefaultViews();
-    $scope.saveViews();
-  };
-
-  $scope.clearView = function () {
-    $scope.tab.params.view = getBlankView();
-    $scope.resetAssets(true);
-  };
-
-  $scope.loadView = function (view) {
-    $scope.tab.params.view = _.cloneDeep(view);
-    $scope.tab.params.view.title = 'New View';
-    $scope.resetAssets(true);
-  };
-
-  $scope.orderDescription = function (view) {
-    var field = _.find($scope.displayedFields, {id: view.order.fieldId});
-    var direction = view.order.direction;
-    return '' + direction + ' by ' + field.name;
-  };
-
-  $scope.saveViews = function () {
-    return $scope.saveUiConfig().catch(function () {
-      notification.serverError('Error trying to save view');
-    });
-  };
-
-  $scope.getFieldList = function () {
-    return _.map($scope.displayedFields, 'name').join(', ');
-  };
-
-  //TODO move to ViewMenuController
-  $scope.viewIsActive = function (view){
-    var p = $scope.tab.params.view;
-    if (!view) view = blankView;
-    return p.id === view.id;
-  };
 
   function generateDefaultViews() {
     return [

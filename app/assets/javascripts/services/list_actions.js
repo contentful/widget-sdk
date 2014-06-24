@@ -4,8 +4,6 @@ angular.module('contentful').factory('listActions', [
   '$q', '$timeout', '$rootScope', 'notification', 'analytics', 'cfSpinner',
   function($q, $timeout, $rootScope, notification, analytics, cfSpinner){
 
-  var _params;
-
   var RETRY_TIMEOUT = 1000;
 
   var ERRORS = {
@@ -13,76 +11,92 @@ angular.module('contentful').factory('listActions', [
     NOT_FOUND: 404
   };
 
-  function makeBatchResultsNotifier(word) {
-    return function(results, length) {
-      var hasFailed = function(r) { return r && r.err; };
-      var failed = _.filter(results, hasFailed);
-      var succeeded = length - failed.length;
-      if (succeeded > 0)
-        notification.info(succeeded+ ' '+ _params.entityNamePlural +' ' + word + ' successfully');
-      if (failed.length > 0)
-        notification.warn(failed.length+ ' '+ _params.entityNamePlural +' could not be ' + word);
-    };
+  function BatchPerformer(params) {
+    this.params = params;
   }
 
-  var callAction = function (entity, params, deferred) {
-    var args = [function(err, changedEntity){
-      if(err){
-        if(err.statusCode === ERRORS.TOO_MANY_REQUESTS)
-          $timeout(_.partial(callAction, entity, params, deferred), RETRY_TIMEOUT);
-        else if(err.statusCode === ERRORS.NOT_FOUND){
-          entity.setDeleted();
-          $rootScope.$broadcast('entityDeleted', entity);
-          deferred.resolve();
-        } else
-          deferred.reject({err: err});
-      } else {
-        if(params.event)
-          $rootScope.$broadcast(params.event, changedEntity);
-        deferred.resolve();
-      }
-    }];
+  BatchPerformer.prototype = {
+    getErrors: function () {
+      return ERRORS;
+    },
 
-    if(params.methodArgGetters){
-      args.unshift.apply(args, _.map(params.methodArgGetters, function (getter) {
-        return entity[getter] && entity[getter]();
-      }));
-    }
+    getRetryTimeout: function () {
+      return RETRY_TIMEOUT;
+    },
 
-    entity[params.method].apply(entity, args);
-  };
-
-  var perform = function(params) {
-    var selected = _params.getSelected();
-    var actionCallback = params.actionCallback || callAction;
-    var results = [];
-
-    var actionCalls = _.map(selected, function (entity, idx, selected) {
-      var deferred = $q.defer();
-      var call = _.partial(actionCallback, entity, params, deferred);
-      var stopSpinner = cfSpinner.start();
-
-      var handler = function (res) {
-        stopSpinner();
-        results.push(res || {});
-        var next = actionCalls[idx+1];
-        if(next) next(res);
-        else handlePerformResult(results, params, selected.length);
+    makeBatchResultsNotifier: function (word) {
+      var self = this;
+      return function batchResultsNotifier(results, length) {
+        var hasFailed = function(r) { return r && r.err; };
+        var failed = _.filter(results, hasFailed);
+        var succeeded = length - failed.length;
+        if (succeeded > 0)
+          notification.info(succeeded+ ' '+ self.params.entityNamePlural +' ' + word + ' successfully');
+        if (failed.length > 0)
+          notification.warn(failed.length+ ' '+ self.params.entityNamePlural +' could not be ' + word);
       };
+    },
 
-      deferred.promise.then(handler).catch(handler);
-      return call;
-    });
+    callAction: function (entity, params, deferred) {
+      var self = this;
+      var args = [function(err, changedEntity){
+        if(err){
+          if(err.statusCode === ERRORS.TOO_MANY_REQUESTS)
+            $timeout(_.partial(self.callAction, entity, params, deferred), RETRY_TIMEOUT);
+          else if(err.statusCode === ERRORS.NOT_FOUND){
+            entity.setDeleted();
+            $rootScope.$broadcast('entityDeleted', entity);
+            deferred.resolve();
+          } else
+            deferred.reject({err: err});
+        } else {
+          if(params.event)
+            $rootScope.$broadcast(params.event, changedEntity);
+          deferred.resolve();
+        }
+      }];
 
-    if(actionCalls.length) {
-      actionCalls[0]();
+      if(params.getterForMethodArgs){
+        args.unshift.apply(args, _.map(params.getterForMethodArgs, function (getter) {
+          return entity[getter] && entity[getter]();
+        }));
+      }
+
+      entity[params.method].apply(entity, args);
+    },
+
+    perform: function(params) {
+      var self = this;
+      var selected = this.params.getSelected();
+      var actionCallback = params.actionCallback || _.bind(this.callAction, this);
+      var results = [];
+
+      var actionCalls = _.map(selected, function (entity, idx, selected) {
+        var deferred = $q.defer();
+        var stopSpinner = cfSpinner.start();
+
+        var handler = function actionHandler(res) {
+          stopSpinner();
+          results.push(res || {});
+          var next = actionCalls[idx+1];
+          if(next) next(res);
+          else self.handlePerformResult(results, params, selected.length);
+        };
+
+        deferred.promise.then(handler).catch(handler);
+        return _.partial(actionCallback, entity, params, deferred);
+      });
+
+      if(actionCalls.length) {
+        actionCalls[0]();
+      }
+    },
+
+    handlePerformResult: function (results, params, length) {
+      params.callback(results, length);
+      this.params.clearSelection();
+      analytics.track('Performed '+ this.params.entityName +'List action', {action: params.method});
     }
-  };
-
-  var handlePerformResult = function (results, params, length) {
-    params.callback(results, length);
-    _params.clearSelection();
-    analytics.track('Performed '+ _params.entityName +'List action', {action: params.method});
   };
 
 
@@ -115,14 +129,8 @@ angular.module('contentful').factory('listActions', [
 
   return {
     serialize: serialize,
-    createPerformer: function (params) {
-      _params = params;
-      return {
-        perform: perform,
-        makeBatchResultsNotifier: makeBatchResultsNotifier,
-        RETRY_TIMEOUT: RETRY_TIMEOUT,
-        ERRORS: ERRORS
-      };
+    createBatchPerformer: function (params) {
+      return new BatchPerformer(params);
     }
   };
   }]
