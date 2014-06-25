@@ -85,9 +85,19 @@ describe('cfAutocompleteResultsController', function () {
   });
 
   it('should emit an event when the search when canceled', function () {
-    spyOn(scope, '$emit');
+    spyOn(scope, '$emit').and.callThrough();
     controller.cancelAutocomplete();
     expect(scope.$emit).toHaveBeenCalledWith('autocompleteResultsCancel');
+  });
+
+  it('should handle the event if canceling search', function () {
+    spyOn(scope, '$emit').and.returnValue({defaultPrevented: false});
+    expect(controller.cancelAutocomplete()).toBe(true);
+  });
+
+  it('should not handle the event if canceling search doesn\'t do anything', function () {
+    spyOn(scope, '$emit').and.returnValue({defaultPrevented: true});
+    expect(controller.cancelAutocomplete()).toBe(false);
   });
 
   it('should return false from the action methods if operating on a normal list', function () {

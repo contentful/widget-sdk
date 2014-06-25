@@ -44,6 +44,7 @@ angular.module('contentful').controller('cfTokenizedSearchController', function 
     // which gives a current token of undefined
     $scope.position = $scope.getPosition();
     $scope.updateAutocompletions();
+    $scope.$emit('tokenizedSearchInputChanged', $scope.inner.term);
   };
 
   $scope.keyReleased = function () {

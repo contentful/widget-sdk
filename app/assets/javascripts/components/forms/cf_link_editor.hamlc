@@ -67,7 +67,6 @@
 
   .results.search-options-on(ng-show="searchController.isResultsState()"
                              ng-switch="linkType"
-                             tabindex="0"
                              cf-click-outside-ignore=".search-button, .ss-search, .search-field input"
                              cf-click-outside="clickOutsideHandler()")
 

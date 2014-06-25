@@ -25,9 +25,10 @@ angular.module('contentful').directive('cfAutocompleteResults', function (keycod
           event.stopPropagation();
         }
       };
-      elem.on('keydown', navigateResultList);
+      elem[0].addEventListener('keydown', navigateResultList, true);
 
       scope.$on('$destroy', function () {
+        elem[0].removeEventListener('keydown', navigateResultList, true);
         elem.off('keydown', navigateResultList);
         navigateResultList = null;
       });

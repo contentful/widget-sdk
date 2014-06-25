@@ -43,12 +43,17 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
     });
   });
 
-  $scope.$on('autocompleteResultsCancel', function () {
+  $scope.$on('autocompleteResultsCancel', function (event) {
+    if (!controller._searchResultsVisible) event.preventDefault();
     controller.clearSearch();
   });
 
   $scope.$on('tokenizedSearchShowAutocompletions', function (ev, showing) {
     if (showing) controller.clearSearch();
+  });
+
+  $scope.$on('tokenizedSearchInputChanged', function () {
+    controller.clearSearch();
   });
 
   $scope.pick = function (entity) {

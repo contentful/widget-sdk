@@ -14,20 +14,6 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(defer) {
         defer(scrollToSelected);
       });
 
-      scope.$on('searchResultsHidden', function () {
-        defer(function () {
-          element.find('input[type=search]').select();
-        });
-      });
-
-      scope.$watch(function (scope) {
-        return scope.searchController.isResultsState();
-      }, function (searchShown) {
-        if (searchShown) defer(function(){
-          element.find('> .results:visible').focus();
-        });
-      });
-
       function scrollToSelected(){
         var $selected = element.find('.selected');
         if ($selected.length === 0) return;

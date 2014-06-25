@@ -48,8 +48,10 @@ angular.module('contentful').controller('CfAutocompleteResultsCtrl', function ($
   };
 
   this.cancelAutocomplete = function () {
-    $scope.$emit('autocompleteResultsCancel');
-    return true;
+    var event = $scope.$emit('autocompleteResultsCancel');
+    // If default prevent that means the search was already
+    // canceled and that means we didn't really handle anything
+    return !event.defaultPrevented;
   };
 
   $scope.$on('$destroy', function () {

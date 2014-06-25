@@ -77,6 +77,17 @@ describe('cfLinkEditorSearch Controller', function () {
     expect(cfLinkEditorSearchCtrl.clearSearch).toBeCalled();
   });
 
+  it('should prevent the default action on the cancel event when search is already clear', function () {
+    var event;
+    cfLinkEditorSearchCtrl._searchResultsVisible = true;
+    event = scope.$broadcast('autocompleteResultsCancel');
+    expect(event.defaultPrevented).toBe(false);
+
+    cfLinkEditorSearchCtrl._searchResultsVisible = false;
+    event = scope.$broadcast('autocompleteResultsCancel');
+    expect(event.defaultPrevented).toBe(true);
+  });
+
   it('should emit a searchResultsHidden event when hiding the search results', function () {
     spyOn(scope, '$emit');
     cfLinkEditorSearchCtrl.hideSearchResults();
@@ -86,6 +97,12 @@ describe('cfLinkEditorSearch Controller', function () {
   it('should clear the search when the tokenized search displays its dropdown', function () {
     spyOn(cfLinkEditorSearchCtrl, 'clearSearch');
     scope.$emit('tokenizedSearchShowAutocompletions', true);
+    expect(cfLinkEditorSearchCtrl.clearSearch).toHaveBeenCalled();
+  });
+
+  it('should clear the search when the tokenized search changes its input', function () {
+    spyOn(cfLinkEditorSearchCtrl, 'clearSearch');
+    scope.$emit('tokenizedSearchInputChanged');
     expect(cfLinkEditorSearchCtrl.clearSearch).toHaveBeenCalled();
   });
 

@@ -70,8 +70,11 @@ angular.module('contentful').controller('cfLocationEditorCtrl', function ($scope
     scope.pickResult(result);
   });
 
-  $scope.$on('autocompleteResultsCancel', function () {
-    $scope.searchTerm = '';
+  $scope.$on('autocompleteResultsCancel', function (event) {
+    if ($scope.searchTerm === '')
+      event.preventDefault();
+    else
+      $scope.searchTerm = '';
   });
 
   // TODO Destroy cleanup
