@@ -69,20 +69,26 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
   };
 
   $scope.removeLink = function(index, entity) {
+    var cb;
     if ($scope.linkSingle) {
-      return $scope.otChangeValue(null, function(err) {
-        if (err) return;
+      cb = $q.callbackWithoutApply();
+      $scope.otChangeValue(null, cb);
+      return cb.promise.then(function () {
         $scope.links.length = 0;
         $scope.updateModel();
       });
     } else {
-      if (entity && !entity.isMissing && entity.getId() && entity.getId() != $scope.links[index].sys.id) throw new Error('Index mismatch!');
-      $scope.otDoc.at($scope.otPath.concat(index)).remove(function (err) {
-        if (!err) $scope.$apply(function (scope) {
-          scope.links.splice(index,1);
-          scope.updateModel();
-        });
+      assertIndexMatches(index, entity);
+      cb = $q.callback();
+      $scope.otDoc.at($scope.otPath.concat(index)).remove(cb);
+      return cb.promise.then(function () {
+        $scope.links.splice(index,1);
+        $scope.updateModel();
       });
+    }
+
+    function assertIndexMatches(index, entity) {
+      if (entity && !entity.isMissing && entity.getId() && entity.getId() != $scope.links[index].sys.id) throw new Error('Index mismatch!');
     }
   };
 
