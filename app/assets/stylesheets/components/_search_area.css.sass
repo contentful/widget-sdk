@@ -114,38 +114,8 @@
 
 // Search results position widget
 .search-results-position
-  +flexbox
-  +align-content(stretch)
+  +align-self(center)
   +flex-grow(1)
-  +flex-basis(15%)
-  min-width: 150px
-  .paginator
-    +flexbox
-    +align-items(center)
-  .text
-    margin-right: 11px
-    p
-      margin-right: 5px
-      margin-bottom: 0
-    input
-      color: $medium-gray
-      text-align: right
-      background-color: white
-      position: relative
-      top: -1px
-      width: 35px
-  //.track
-    width: 8px
-    height: 100%
-    background-color: $gray-background
-    +box-shadow(1px 0 1px rgba(0,0,0,0.06) inset)
-    +border-radius(0 2px 0 0)
-  //.fill
-    //position: absolute
-    //top: 0
-    //right: 0
-    //height: 0
-    width: 8px
-    +gradient(#459cd9, #1e82c8)
-    +border-radius(0 2px 0 0)
-
+  +flex-shrink(0)
+  +flex-basis(150px)
+  margin-right: 16px
