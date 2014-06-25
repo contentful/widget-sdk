@@ -173,8 +173,7 @@ angular.module('contentful').controller('cfTokenizedSearchController', function 
     });
 
     function operator(key) {
-      // TODO whoopsie, knowledge leaking here about internal structure of result. Should not.
-      return searchQueryHelper.operatorsForKey(key, $scope.getContentType()).items[0].value;
+      return searchQueryHelper.operatorsForKey(key, $scope.getContentType());
     }
   };
 
