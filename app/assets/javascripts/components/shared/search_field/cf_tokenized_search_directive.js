@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfTokenizedSearch', function($parse, searchQueryHelper, keycodes, defer){
+angular.module('contentful').directive('cfTokenizedSearch', function($parse, searchQueryHelper, $timeout){
   return {
     template: JST['cf_tokenized_search'](),
     scope: true,
@@ -53,6 +53,12 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
         if (token) input.textrange('set', token.offset, token.end);
       };
 
+      scope.selectRange = function (offset, length) {
+        return $timeout(function () {
+          input.textrange('set', offset, length);
+        }, null, false);
+      };
+
       scope.fillAutocompletion = function (insertString) {
         var token = scope.getCurrentToken();
         var originalString = scope.inner.term || '';
@@ -64,9 +70,7 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
         }
         scope.backupString(originalString, token.offset, token.length);
         scope.inner.term = spliceSlice(originalString, token.offset, token.length, insertString);
-        defer(function () {
-          input.textrange('set', token.offset, insertString.length);
-        });
+        scope.selectRange(token.offset, insertString.length);
       };
 
       scope.confirmAutocompletion = function () {
@@ -79,12 +83,10 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
         scope.inner.term = spliceSlice(originalString, token.end, 0, insertString);
         scope.clearBackupString();
         if(token.type === 'Value') scope.submitSearch(scope.inner.term);
-        defer(function () {
-          input.textrange('set', token.end + insertString.length, 0);
-          scope.$apply(function (scope) {
-            scope.position = token.end + insertString.length;
-            scope.updateAutocompletions();
-          });
+        scope.selectRange(token.end + insertString.length, 0)
+        .then(function () {
+          scope.position = token.end + insertString.length;
+          scope.updateAutocompletions();
         });
       };
 
