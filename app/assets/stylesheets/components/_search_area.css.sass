@@ -81,7 +81,7 @@
 
 
 .search-with-results
-  // When used inside the entry form, the forms border-spacing also
+  // When used inside the entry form, the form's border-spacing also
   // applies to the tables inside the autocomplete-results
   border-spacing: 0
 
@@ -89,10 +89,16 @@
   .results.shrink-result-width
     right: auto
   .results // Necessary overrides/resets for .results which is per default geared towards use in forms
-    left: 0
+    left: 13px
     right: 35px
     margin-right: 0
     font-size: 11px
+.with-filter //oh god, apologies for the specificity bukkake
+  .search-with-results
+    .results
+      left: 0px
+
+
 
 .search-autocomplete-list,
 .results .search-autocomplete-list //necessary for overriding too-specific selector ".results ol > *" in mixins.css.sass
