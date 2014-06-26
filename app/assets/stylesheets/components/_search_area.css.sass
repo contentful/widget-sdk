@@ -12,6 +12,7 @@
   width: 100%
 
 .with-filter
+  max-width: 800px
   .search-with-results
     .search-field
       border-left: none
@@ -33,7 +34,6 @@
 .search-field
   position: relative
   width: 100%
-  max-width: 800px
   height: $tab-header-field-height
   background-color: white
   border: 1px solid $lightest-gray
@@ -117,5 +117,6 @@
   +align-self(center)
   +flex-grow(1)
   +flex-shrink(0)
-  +flex-basis(150px)
+  +flex-basis(200px)
   margin-right: 16px
+  white-space: nowrap
