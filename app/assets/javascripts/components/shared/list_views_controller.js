@@ -5,7 +5,7 @@ angular.module('contentful').controller('ListViewsController', function($scope, 
 
   $scope.$watch('uiConfig', function (uiConfig) {
     if (uiConfig && !uiConfig[viewCollectionName]) {
-      uiConfig[viewCollectionName] = generateDefaultViews();
+      uiConfig[viewCollectionName] = generateDefaultViews(true);
     }
   });
 
