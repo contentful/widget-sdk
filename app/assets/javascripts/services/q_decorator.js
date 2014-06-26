@@ -26,6 +26,20 @@ angular.module('contentful').config(function ($provide) {
       callbackFunction.promise = deferred.promise;
       return callbackFunction;
     };
+
+    $q.callbackWithoutApply = function () {
+      var deferred = $delegate.defer();
+      var callbackFunction = function (err) {
+        var args = _.rest(arguments);
+        if (err) {
+          deferred.reject(err);
+        } else {
+          deferred.resolve.apply(deferred, args);
+        }
+      };
+      callbackFunction.promise = deferred.promise;
+      return callbackFunction;
+    };
     return $q;
   });
 });

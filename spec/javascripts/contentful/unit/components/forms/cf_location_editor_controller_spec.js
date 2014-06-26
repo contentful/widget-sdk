@@ -208,6 +208,23 @@ describe('cfLocationEditor Controller', function () {
     expect(scope.selectedResult).toBe(result);
   }));
 
+  it('clears the searchTerm on autocomplete cancel event', function () {
+    scope.searchTerm = 'foo';
+    scope.$broadcast('autocompleteResultsCancel');
+    expect(scope.searchTerm).toBe('');
+  });
+
+  it('cancels the default action on autocomplete cancel if the searchterm is already empty', function () {
+    var event;
+    scope.searchTerm = 'foo';
+    event = scope.$broadcast('autocompleteResultsCancel');
+    expect(event.defaultPrevented).toBe(false);
+
+    scope.searchTerm = '';
+    event = scope.$broadcast('autocompleteResultsCancel');
+    expect(event.defaultPrevented).toBe(true);
+  });
+
   describe('picks result on autocomplete event', function () {
     var result;
     beforeEach(inject(function($rootScope) {

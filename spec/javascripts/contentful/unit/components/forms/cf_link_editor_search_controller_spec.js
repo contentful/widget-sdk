@@ -4,6 +4,7 @@ describe('cfLinkEditorSearch Controller', function () {
   var cfLinkEditorSearchCtrl;
   var scope, stubs;
   var space;
+  var $q;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -16,7 +17,8 @@ describe('cfLinkEditorSearch Controller', function () {
         serverError: stubs.serverError
       });
     });
-    inject(function ($rootScope, $controller, cfStub, PromisedLoader) {
+    inject(function ($rootScope, $controller, cfStub, PromisedLoader, _$q_) {
+      $q = _$q_;
       scope = $rootScope.$new();
 
       space = cfStub.space('test');
@@ -37,15 +39,6 @@ describe('cfLinkEditorSearch Controller', function () {
     $log.assertEmpty();
   }));
 
-  it('if searchTerm changes, reset entities', function() {
-    scope.searchTerm = null;
-    scope.$digest();
-    scope.resetEntities = sinon.stub();
-    scope.searchTerm = 'term';
-    scope.$digest();
-    expect(scope.resetEntities).toBeCalled();
-  });
-
   it('when autocomplete result is selected sets the selected entity on the scope', inject(function ($rootScope) {
     var result = {result: true};
     $rootScope.$broadcast('autocompleteResultSelected', 0, result);
@@ -54,54 +47,100 @@ describe('cfLinkEditorSearch Controller', function () {
 
   describe('when autocomplete result is picked', function() {
     beforeEach(inject(function($rootScope) {
+      spyOn(cfLinkEditorSearchCtrl, 'clearSearch');
       var result = {result: true};
-      scope.addLink = sinon.stub();
+      scope.addLink = sinon.stub().returns($q.when());
       $rootScope.$broadcast('autocompleteResultPicked', 0, result);
     }));
 
     it('calls the addLink method', function() {
+      scope.$apply();
       expect(scope.addLink).toBeCalled();
+    });
+
+    it('clears the search when linkSingle', function () {
+      scope.linkSingle = true;
+      scope.$apply();
+      expect(cfLinkEditorSearchCtrl.clearSearch).toHaveBeenCalled();
+    });
+
+    it('clears the search when linkMultiple', function () {
+      scope.linkSingle = false;
+      scope.$apply();
+      expect(cfLinkEditorSearchCtrl.clearSearch).not.toHaveBeenCalled();
     });
   });
 
-  describe('on refresh search event', function() {
+  it('should clear the search when autocompleteResults are canceled', function () {
+    sinon.stub(cfLinkEditorSearchCtrl, 'clearSearch');
+    scope.$broadcast('autocompleteResultsCancel');
+    expect(cfLinkEditorSearchCtrl.clearSearch).toBeCalled();
+  });
+
+  it('should prevent the default action on the cancel event when search is already clear', function () {
+    var event;
+    cfLinkEditorSearchCtrl._searchResultsVisible = true;
+    event = scope.$broadcast('autocompleteResultsCancel');
+    expect(event.defaultPrevented).toBe(false);
+
+    cfLinkEditorSearchCtrl._searchResultsVisible = false;
+    event = scope.$broadcast('autocompleteResultsCancel');
+    expect(event.defaultPrevented).toBe(true);
+  });
+
+  it('should emit a searchResultsHidden event when hiding the search results', function () {
+    spyOn(scope, '$emit');
+    cfLinkEditorSearchCtrl.hideSearchResults();
+    expect(scope.$emit).toHaveBeenCalledWith('searchResultsHidden');
+  });
+
+  it('should clear the search when the tokenized search displays its dropdown', function () {
+    spyOn(cfLinkEditorSearchCtrl, 'clearSearch');
+    scope.$emit('tokenizedSearchShowAutocompletions', true);
+    expect(cfLinkEditorSearchCtrl.clearSearch).toHaveBeenCalled();
+  });
+
+  it('should clear the search when the tokenized search changes its input', function () {
+    spyOn(cfLinkEditorSearchCtrl, 'clearSearch');
+    scope.$emit('tokenizedSearchInputChanged');
+    expect(cfLinkEditorSearchCtrl.clearSearch).toHaveBeenCalled();
+  });
+
+  describe('on searchSubmitted event', function() {
     var childScope;
     beforeEach(function() {
-      scope.resetEntities = sinon.stub();
+      cfLinkEditorSearchCtrl._resetEntities = sinon.stub();
       childScope = scope.$new();
     });
 
     it('refreshes search if button was clicked', function() {
-      childScope.$emit('refreshSearch', {trigger: 'button'});
-      expect(scope.resetEntities).toBeCalled();
-    });
-
-    it('does not refresh search if other trigger was used', function() {
-      childScope.$emit('refreshSearch', {trigger: ''});
-      expect(scope.resetEntities).not.toBeCalled();
+      childScope.$emit('searchSubmitted');
+      expect(cfLinkEditorSearchCtrl._resetEntities).toBeCalled();
     });
   });
 
   describe('the pick method', function() {
     var entity;
     beforeEach(function() {
+      spyOn(cfLinkEditorSearchCtrl, 'clearSearch');
       entity = {entity: true};
-      scope.addLink = sinon.stub();
-      scope.addLink.callsArg(1);
+      scope.addLink = sinon.stub().returns($q.when());
       scope.pick(entity);
+      scope.$apply();
     });
 
     it('calls add link with the given entity', function () {
       expect(scope.addLink).toBeCalledWith(entity);
     });
 
-    it('sets search term to undefined', function() {
-      expect(scope.searchTerm).toBeUndefined();
+    it('clears the search', function () {
+      expect(cfLinkEditorSearchCtrl.clearSearch).toHaveBeenCalled();
     });
+
   });
 
 
-  function makeAddMethodTests(entityType, createEntityArgIndex) {
+  function makeAddMethodTests(entityType) {
 
     describe('adding a new '+entityType, function() {
       var uppercasedEntityType = entityType.charAt(0).toUpperCase() + entityType.substr(1);
@@ -120,9 +159,9 @@ describe('cfLinkEditorSearch Controller', function () {
 
       describe('successfully', function() {
         beforeEach(function() {
-          createEntityStub.callsArgWith(createEntityArgIndex, null, entity);
-          scope.addLink.callsArgWith(1, null);
+          scope.addLink.returns($q.when(null));
           scope['addNew'+uppercasedEntityType](contentType);
+          createEntityStub.yield(null, entity);
         });
 
         it('create '+entityType+' called', function() {
@@ -154,9 +193,9 @@ describe('cfLinkEditorSearch Controller', function () {
 
       describe('fails on create'+uppercasedEntityType, function() {
         beforeEach(function() {
-          createEntityStub.callsArgWith(createEntityArgIndex, {});
-          scope.addLink.callsArgWith(1, null);
+          scope.addLink.returns($q.when(null));
           scope['addNew'+uppercasedEntityType](contentType);
+          createEntityStub.yield({});
         });
 
         it('create '+ entityType +' called', function() {
@@ -183,14 +222,12 @@ describe('cfLinkEditorSearch Controller', function () {
       });
 
       describe('fails on linking '+ entityType, function() {
-        var deleteStub;
         beforeEach(function() {
-          createEntityStub.callsArgWith(createEntityArgIndex, null, entity);
-          scope.addLink.callsArgWithAsync(1, {});
-          deleteStub = sinon.stub();
-          deleteStub.callsArgWith(0, null);
-          entity['delete'] = deleteStub;
+          scope.addLink.returns($q.reject({}));
+          sinon.stub(entity, 'delete');
           scope['addNew'+uppercasedEntityType](contentType);
+          createEntityStub.yield(null, entity);
+          entity.delete.yield(null);
         });
 
         it('create '+ entityType +' called', function() {
@@ -224,14 +261,12 @@ describe('cfLinkEditorSearch Controller', function () {
       });
 
       describe('fails on deleting failed linked '+ entityType, function() {
-        var deleteStub;
         beforeEach(function() {
-          createEntityStub.callsArgWith(createEntityArgIndex, null, entity);
-          scope.addLink.callsArgWithAsync(1, {});
-          deleteStub = sinon.stub();
-          deleteStub.callsArgWithAsync(0, {});
-          entity['delete'] = deleteStub;
+          scope.addLink.returns($q.reject({}));
+          sinon.stub(entity, 'delete');
           scope['addNew'+uppercasedEntityType](contentType);
+          createEntityStub.yield(null, entity);
+          entity.delete.yield({});
         });
 
         it('create '+ entityType +' called', function() {
@@ -269,77 +304,65 @@ describe('cfLinkEditorSearch Controller', function () {
 
   }
 
-  makeAddMethodTests('entry', 2);
-  makeAddMethodTests('asset', 1);
+  makeAddMethodTests('entry');
+  makeAddMethodTests('asset');
 
-  it('search is empty if null', function() {
-    scope.searchTerm = undefined;
-    expect(scope.searchIsEmpty()).toBeTruthy();
+  describe('_loadEntities', function () {
+    it('should still be tested');
   });
+  describe('_buildQuery', function () {
+    var query;
 
-  it('search is empty if undefined', function() {
-    scope.searchTerm = undefined;
-    expect(scope.searchIsEmpty()).toBeTruthy();
-  });
+    function performQuery() {
+      stubs.loadCallback.reset();
+      cfLinkEditorSearchCtrl._loadEntities();
+      scope.$apply();
+      query = stubs.loadCallback.args[0][2];
+    }
 
-  it('search is not empty if empty string', function() {
-    scope.searchTerm = '';
-    expect(scope.searchIsEmpty()).toBeFalsy();
-  });
+    beforeEach(function () {
+      scope.paginator.pageLength = 3;
+      scope.paginator.skipItems = sinon.stub();
+      scope.paginator.skipItems.returns(true);
+    });
 
-  it('search is not empty if string', function() {
-    scope.searchTerm = 'term';
-    expect(scope.searchIsEmpty()).toBeFalsy();
+    it('with a defined order', function() {
+      performQuery();
+      expect(query.order).toEqual('-sys.updatedAt');
+    });
+
+    it('with a defined limit', function() {
+      performQuery();
+      expect(query.limit).toEqual(3);
+    });
+
+    it('with a defined skip param', function() {
+      performQuery();
+      expect(query.skip).toBeTruthy();
+    });
+
+    it('for linked content type', function() {
+      scope.linkContentType = {
+        getId: sinon.stub().returns(123)
+      };
+      performQuery();
+      expect(query.content_type).toBe(123);
+    });
+
+    it('for mimetype group', function() {
+      scope.linkMimetypeGroup = 'files';
+      performQuery();
+      expect(query['mimetype_group']).toBe('files');
+    });
+
+    it('for search term', function() {
+      scope.searchTerm = 'term';
+      performQuery();
+      expect(query.query).toBe('term');
+    });
   });
 
   describe('resetting entities', function() {
-    describe('with no search term', function() {
-      beforeEach(function() {
-        scope.searchTerm = undefined;
-        scope.resetEntities();
-      });
-
-      it('resets paginator page', function() {
-        expect(scope.paginator.page).toBe(0);
-      });
-
-      it('resets entities', function() {
-        expect(scope.entities).toEqual([]);
-      });
-
-      it('resets selected entry', function() {
-        expect(scope.selectedEntity).toBeNull();
-      });
-    });
-
-    describe('with a search term', function() {
-      beforeEach(function() {
-        scope.searchTerm = 'term';
-        scope.loadEntities = sinon.stub();
-        scope.resetEntities();
-      });
-
-      it('loads entities', function() {
-        expect(scope.loadEntities).toBeCalled();
-      });
-    });
-
-    describe('with an empty search term', function() {
-      beforeEach(function() {
-        scope.searchTerm = '';
-        scope.loadEntities = sinon.stub();
-        scope.resetEntities();
-      });
-
-      it('loads entities', function() {
-        expect(scope.loadEntities).toBeCalled();
-      });
-    });
-
-  });
-
-
-  describe('loading entities', function() {
     var entities, entity;
     beforeEach(function() {
       entity = {entity: true};
@@ -347,73 +370,32 @@ describe('cfLinkEditorSearch Controller', function () {
         0: entity,
         total: 30
       };
-      stubs.then.callsArgWith(0, entities);
-
+      sinon.stub(cfLinkEditorSearchCtrl, '_loadEntities').returns($q.when(entities));
+      sinon.spy(cfLinkEditorSearchCtrl, 'clearSearch');
       scope.paginator.pageLength = 3;
       scope.paginator.skipItems = sinon.stub();
       scope.paginator.skipItems.returns(true);
+      scope.$apply();
+      cfLinkEditorSearchCtrl._resetEntities();
+      scope.$apply();
     });
 
-    it('loads entities', function() {
-      scope.loadEntities();
-      expect(stubs.loadCallback).toBeCalled();
+    it('clear the searchResult', function () {
+      expect(cfLinkEditorSearchCtrl.clearSearch).toBeCalled();
     });
 
     it('sets entities num on the paginator', function() {
-      scope.loadEntities();
       expect(scope.paginator.numEntries).toEqual(30);
     });
 
     it('sets entities on scope', function() {
-      scope.loadEntities();
       expect(scope.entities).toBe(entities);
     });
 
     it('sets first entity as selected on scope', function() {
-      scope.loadEntities();
       expect(scope.selectedEntity).toBe(entity);
     });
 
-
-    describe('creates a query object', function() {
-
-      it('with a defined order', function() {
-        scope.loadEntities();
-        expect(stubs.loadCallback.args[0][2].order).toEqual('-sys.updatedAt');
-      });
-
-      it('with a defined limit', function() {
-        scope.loadEntities();
-        expect(stubs.loadCallback.args[0][2].limit).toEqual(3);
-      });
-
-      it('with a defined skip param', function() {
-        scope.loadEntities();
-        expect(stubs.loadCallback.args[0][2].skip).toBeTruthy();
-      });
-
-      it('for linked content type', function() {
-        var idStub = sinon.stub();
-        idStub.returns(123);
-        scope.linkContentType = {
-          getId: idStub
-        };
-        scope.loadEntities();
-        expect(stubs.loadCallback.args[0][2]['sys.contentType.sys.id']).toBe(123);
-      });
-
-      it('for mimetype group', function() {
-        scope.linkMimetypeGroup = 'files';
-        scope.loadEntities();
-        expect(stubs.loadCallback.args[0][2]['mimetype_group']).toBe('files');
-      });
-
-      it('for search term', function() {
-        scope.searchTerm = 'term';
-        scope.loadEntities();
-        expect(stubs.loadCallback.args[0][2].query).toBe('term');
-      });
-    });
   });
 
 
@@ -421,6 +403,7 @@ describe('cfLinkEditorSearch Controller', function () {
   describe('loadMore', function () {
     var entities;
     beforeEach(function() {
+      scope.$apply();
       entities = {
         total: 30
       };
@@ -436,40 +419,36 @@ describe('cfLinkEditorSearch Controller', function () {
         setBaseSize: sinon.stub()
       };
 
+      sinon.stub(cfLinkEditorSearchCtrl, '_loadEntities').returns($q.when(entities));
       scope.paginator.atLast = sinon.stub();
       scope.paginator.atLast.returns(false);
     });
 
     it('doesnt load if on last page', function() {
       scope.paginator.atLast.returns(true);
-      scope.loadMore();
+      cfLinkEditorSearchCtrl.loadMore();
       expect(stubs.loadCallback).not.toBeCalled();
     });
 
     it('paginator count is increased', function() {
       scope.paginator.page = 0;
-      scope.loadMore();
+      cfLinkEditorSearchCtrl.loadMore();
       expect(scope.paginator.page).toBe(1);
-    });
-
-    it('gets query params', function () {
-      scope.loadMore();
-      expect(stubs.loadCallback.args[0][2]).toBeDefined();
     });
 
     it('should work on the page before the last', function () {
       // Regression test for https://www.pivotaltracker.com/story/show/57743532
       scope.paginator.numEntries = 47;
       scope.paginator.page = 0;
-      scope.loadMore();
-      expect(stubs.loadCallback).toBeCalled();
+      cfLinkEditorSearchCtrl.loadMore();
+      expect(cfLinkEditorSearchCtrl._loadEntities).toBeCalled();
     });
 
     describe('on successful load response', function() {
       beforeEach(function() {
-        stubs.then.callsArgWith(0, entities);
         scope.paginator.page = 1;
-        scope.loadMore();
+        cfLinkEditorSearchCtrl.loadMore();
+        scope.$apply();
       });
 
       it('sets num entities', function() {
@@ -481,14 +460,15 @@ describe('cfLinkEditorSearch Controller', function () {
       });
     });
 
-    describe('on previous page', function() {
+    describe('on failed load response', function() {
       beforeEach(function() {
-        stubs.then.callsArg(1);
+        cfLinkEditorSearchCtrl._loadEntities.returns($q.reject());
         scope.paginator.page = 1;
-        scope.loadMore();
+        cfLinkEditorSearchCtrl.loadMore();
+        scope.$apply();
       });
 
-      it('appends entities to scope', function () {
+      it('does not append entities', function () {
         expect(scope.entities.push).not.toBeCalled();
       });
 

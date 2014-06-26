@@ -5,18 +5,21 @@ describe('cfAutocompleteResultsController', function () {
 
   beforeEach(module('contentful/test'));
 
-  beforeEach(inject(function ($controller, $rootScope, $parse){
+  beforeEach(inject(function ($controller, $rootScope){
     scope = $rootScope;
-    controller = $controller('CfAutocompleteResultsCtrl', {$scope: $rootScope});
-    controller.getAutocompleteResults = $parse('results');
-    controller.setAutocompleteTerm = $parse('searchTerm').assign;
+    scope.searchController = {
+      clearSearch: sinon.stub()
+    };
+    controller = $controller('CfAutocompleteResultsCtrl', {
+      $scope: $rootScope,
+      $attrs: {cfAutocompleteResults: 'results'}});
   }));
 
   afterEach(inject(function ($log) {
     $log.assertEmpty();
   }));
 
-  it('should adjust selectedIndex, numResults', function () {
+  it('should adjust selectedIndex, numResults when results change', function () {
     scope.results = [1,2,3,4];
     scope.$apply();
     expect(controller.selectedIndex).toBe(0);
@@ -26,12 +29,6 @@ describe('cfAutocompleteResultsController', function () {
     scope.$apply();
     expect(controller.selectedIndex).toBe(-1);
     expect(controller.numResults).toBe(0);
-  });
-
-  it('should set autocompleteTerm to 0 when canceled', function () {
-    scope.searchTerm = 'foobar';
-    controller.cancelAutocomplete();
-    expect(scope.searchTerm).toBe('');
   });
 
   it('should return the selected element from the autocompleteResults in getSelected', function () {
@@ -77,7 +74,7 @@ describe('cfAutocompleteResultsController', function () {
     expect(scope.$broadcast).toHaveBeenCalledWith('autocompleteResultSelected', 0, 'a');
   });
 
-  it('should emit when picked', function () {
+  it('should emit event when picked', function () {
     scope.results = ['a', 'b', 'c'];
     scope.$apply();
     spyOn(scope, '$emit').and.returnValue({
@@ -87,23 +84,36 @@ describe('cfAutocompleteResultsController', function () {
     expect(scope.$emit).toHaveBeenCalledWith('autocompleteResultPicked', 0, 'a');
   });
 
-  it('should cancel Autocomplete if not prevented after pick', function () {
-    scope.results = ['a', 'b', 'c'];
-    scope.searchTerm = 'foobar';
-    scope.$apply();
-
-    spyOn(scope, '$emit').and.returnValue({ defaultPrevented: false });
-    controller.pickSelected();
-    expect(scope.searchTerm).toBe('');
+  it('should emit an event when the search when canceled', function () {
+    spyOn(scope, '$emit').and.callThrough();
+    controller.cancelAutocomplete();
+    expect(scope.$emit).toHaveBeenCalledWith('autocompleteResultsCancel');
   });
 
-  it('should not cancel Autocomplete if prevented after pick', function () {
-    scope.results = ['a', 'b', 'c'];
-    scope.searchTerm = 'foobar';
-    scope.$apply();
+  it('should handle the event if canceling search', function () {
+    spyOn(scope, '$emit').and.returnValue({defaultPrevented: false});
+    expect(controller.cancelAutocomplete()).toBe(true);
+  });
 
-    spyOn(scope, '$emit').and.returnValue({ defaultPrevented: true });
-    controller.pickSelected();
-    expect(scope.searchTerm).toBe('foobar');
+  it('should not handle the event if canceling search doesn\'t do anything', function () {
+    spyOn(scope, '$emit').and.returnValue({defaultPrevented: true});
+    expect(controller.cancelAutocomplete()).toBe(false);
+  });
+
+  it('should return false from the action methods if operating on a normal list', function () {
+    scope.results = [1,2,3];
+    scope.$apply();
+    expect(controller.selectPrevious()).toBe(true);
+    expect(controller.selectNext()).toBe(true);
+    expect(controller.pickSelected()).toBe(true);
+    expect(controller.cancelAutocomplete()).toBe(true);
+  });
+
+  it('should return false from the action methods if operating on an empty list', function () {
+    scope.results = null;
+    scope.$apply();
+    expect(controller.selectNext()).toBe(false);
+    expect(controller.selectPrevious()).toBe(false);
+    expect(controller.pickSelected()).toBe(false);
   });
 });

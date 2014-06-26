@@ -3,9 +3,11 @@
 angular.module('contentful').directive('cfLinkEditorSearch', function(defer) {
   return {
     restrict: 'AC',
+    controller: 'cfLinkEditorSearchCtrl',
+    controllerAs: 'searchController',
     link: function (scope, element) {
       scope.clickOutsideHandler = function () {
-        scope.searchResultsVisible = false;
+        scope.searchController.hideSearchResults();
       };
 
       scope.$watch('selectedEntity', function () {
@@ -25,6 +27,5 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(defer) {
         }
       }
     },
-    controller: 'cfLinkEditorSearchCtrl'
   };
 });

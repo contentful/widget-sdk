@@ -1,15 +1,14 @@
 'use strict';
 
-angular.module('contentful').controller('CfAutocompleteResultsCtrl', function ($scope) {
+angular.module('contentful').controller('CfAutocompleteResultsCtrl', function ($scope, $attrs, $parse) {
   var controller = this;
-  this.getAutocompleteResults = angular.noop;
-  this.setAutocompleteTerm = angular.noop;
+  var getAutocompleteResults = $parse($attrs.cfAutocompleteResults);
   this.selectedIndex = -1;
   this.numResults = 0;
 
-  var unwatchResults = $scope.$watch(function (scope) {
-    return controller.getAutocompleteResults(scope);
-  }, function (results) {
+  var unwatchResults = $scope.$watch(
+    getAutocompleteResults,
+  function (results) {
     if (_.isEmpty(results)) {
       controller.selectedIndex = -1;
       controller.numResults = 0;
@@ -20,29 +19,39 @@ angular.module('contentful').controller('CfAutocompleteResultsCtrl', function ($
   });
 
   this.getSelectedResult = function () {
-    var results = this.getAutocompleteResults($scope);
+    var results = getAutocompleteResults($scope);
     return results[this.selectedIndex];
   };
 
   this.selectNext = function () {
-    if (this.selectedIndex >= this.numResults -1) return;
-    this.selectedIndex++;
-    $scope.$broadcast('autocompleteResultSelected', this.selectedIndex, this.getSelectedResult());
+    if (this.numResults === 0) return false;
+    if (this.selectedIndex < this.numResults -1) {
+      this.selectedIndex++;
+      $scope.$broadcast('autocompleteResultSelected', this.selectedIndex, this.getSelectedResult());
+    }
+    return true;
   };
 
   this.selectPrevious = function () {
-    if (this.selectedIndex <= 0) return;
-    this.selectedIndex--;
-    $scope.$broadcast('autocompleteResultSelected', this.selectedIndex, this.getSelectedResult());
+    if (this.numResults === 0) return false;
+    if (this.selectedIndex > 0) {
+      this.selectedIndex--;
+      $scope.$broadcast('autocompleteResultSelected', this.selectedIndex, this.getSelectedResult());
+    }
+    return true;
   };
 
   this.pickSelected = function () {
-    var event = $scope.$emit('autocompleteResultPicked', this.selectedIndex, this.getSelectedResult());
-    if (!event.defaultPrevented) this.cancelAutocomplete();
+    if (this.selectedIndex < 0) return false;
+    $scope.$emit('autocompleteResultPicked', this.selectedIndex, this.getSelectedResult());
+    return true;
   };
 
   this.cancelAutocomplete = function () {
-    this.setAutocompleteTerm($scope, '');
+    var event = $scope.$emit('autocompleteResultsCancel');
+    // If default prevent that means the search was already
+    // canceled and that means we didn't really handle anything
+    return !event.defaultPrevented;
   };
 
   $scope.$on('$destroy', function () {

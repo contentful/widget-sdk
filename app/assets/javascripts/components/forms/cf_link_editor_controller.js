@@ -34,71 +34,61 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
     }
   });
 
-  $scope.addLink = function(entity, callback) {
+  $scope.addLink = function (entity) {
+    // TODO this still looks like too much manual work
+    // Should just be the ShareJS operation, then the model should update itself from that
     var link = { sys: {
       type: 'Link',
       linkType: $scope.linkType,
       id: entity.getId() }};
-
-    function wrapply(body) {
-      return function wrappedBody() {
-        var args = arguments,
-            self = this,
-            retval;
-        $scope.$apply(function () {
-          retval = body.apply(self, args);
-        });
-        return retval;
-      };
-    }
-
-    function cb(updateFn) {
-      return function (err) {
-        if (err) return callback(err);
-        updateFn($scope);
-        $scope.updateModel();
-        callback(null);
-      };
-    }
-
     saveEntityInCache(entity);
+
+    var cb, promise;
     if ($scope.linkSingle) {
-      $scope.otChangeValue(link, cb(function(scope){
-        scope.links = [link];
-      }));
+      cb = $q.callbackWithoutApply();
+      $scope.otChangeValue(link, cb);
+      promise = cb.promise.then(function () { $scope.links = [link]; });
     } else {
+      cb = $q.callback();
       if (_.isArray(ShareJS.peek($scope.otDoc, $scope.otPath))) {
-        $scope.otDoc.at($scope.otPath).push(link, wrapply(cb(function(scope){
-          scope.links.push(link);
-        })));
+        $scope.otDoc.at($scope.otPath).push(link, cb);
+        promise = cb.promise.then(function () { $scope.links.push(link); });
       } else {
         ShareJS.mkpath({
           doc: $scope.otDoc,
           path: $scope.otPath,
           types: $scope.otPathTypes,
           value: [link]
-        }, wrapply(cb(function(scope){
-          scope.links = [link];
-        })));
+        }, cb);
+        promise = cb.promise.then(function () { $scope.links = [link]; });
       }
     }
+    return promise.then(function () {
+      $scope.updateModel();
+    });
   };
 
   $scope.removeLink = function(index, entity) {
+    var cb;
     if ($scope.linkSingle) {
-      return $scope.otChangeValue(null, function(err) {
-        if (err) return;
+      cb = $q.callbackWithoutApply();
+      $scope.otChangeValue(null, cb);
+      return cb.promise.then(function () {
         $scope.links.length = 0;
         $scope.updateModel();
       });
     } else {
-      if (entity && !entity.isMissing && entity.getId() && entity.getId() != $scope.links[index].sys.id) throw new Error('Index mismatch!');
-      $scope.otDoc.at($scope.otPath.concat(index)).remove(function (err) {
-        if (!err) $scope.$apply(function (scope) {
-          scope.links.splice(index,1);
-          scope.updateModel();
-        });
+      assertIndexMatches(index, entity);
+      cb = $q.callback();
+      $scope.otDoc.at($scope.otPath.concat(index)).remove(cb);
+      return cb.promise.then(function () {
+        $scope.links.splice(index,1);
+        $scope.updateModel();
       });
+    }
+
+    function assertIndexMatches(index, entity) {
+      if (entity && !entity.isMissing && entity.getId() && entity.getId() != $scope.links[index].sys.id) throw new Error('Index mismatch!');
     }
   };
 

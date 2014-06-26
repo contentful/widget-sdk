@@ -15,7 +15,10 @@
         %option(value="") All
       %i.button-icon-right.ss-dropdown
 
-    .search-with-results(cf-tokenized-search="tab.params.view.searchTerm" placeholder="Search for {{typeNameOr('Entries')}}" cf-on-blur-component="leftSearch($event)")
+    .search-with-results(cf-tokenized-search="tab.params.view.searchTerm"
+      search-content-type="getSearchContentType()"
+      placeholder="Search for {{typeNameOr('Entries')}}"
+      cf-on-blur-component="leftSearch($event)")
 
   .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")
 

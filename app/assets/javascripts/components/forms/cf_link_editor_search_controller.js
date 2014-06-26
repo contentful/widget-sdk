@@ -1,12 +1,36 @@
 'use strict';
 
-angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scope, Paginator, notification, PromisedLoader) {
-
+angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scope, Paginator, notification, PromisedLoader, $q, searchQueryHelper) {
+  var controller = this;
   var entityLoader = new PromisedLoader();
   $scope.paginator = new Paginator();
 
-  $scope.$watch('searchTerm', function(term, old, scope) {
-    scope.resetEntities();
+
+  // STATES
+  // CLEAR - Initial state, no search, no results
+  this.isClearState = function () {
+    return !this._searchResultsVisible;
+  };
+  // EMPTY - Search, Results, but empty
+  this.isEmptyState = function () {
+    return this._searchResultsVisible && _.isEmpty($scope.entities);
+  };
+  // RESULTS - Search and Results
+  this.isResultsState = function () {
+    return this._searchResultsVisible && !_.isEmpty($scope.entities);
+  };
+
+  this.hideSearchResults = function () {
+    this._searchResultsVisible = false;
+    $scope.$emit('searchResultsHidden');
+  };
+
+  this.showSearchResults = function () {
+    this._searchResultsVisible = true;
+  };
+
+  $scope.$on('searchSubmitted', function () {
+    controller._resetEntities();
   });
 
   $scope.$on('autocompleteResultSelected', function (event, index, entity) {
@@ -14,114 +38,108 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
   });
 
   $scope.$on('autocompleteResultPicked', function (event, index, entity) {
-    event.currentScope.addLink(entity, function(err) {
-      if (err) event.preventDefault();
+    $scope.addLink(entity).then(function () {
+      if ($scope.linkSingle) controller.clearSearch();
     });
   });
 
-  $scope.$on('searchFieldFocused', function () {
-    $scope.searchResultsVisible = true;
+  $scope.$on('autocompleteResultsCancel', function (event) {
+    if (!controller._searchResultsVisible) event.preventDefault();
+    controller.clearSearch();
   });
 
-  $scope.$on('refreshSearch', function (ev, params) {
-    if(params && params.trigger == 'button'){
-      $scope.resetEntities();
-    }
+  $scope.$on('tokenizedSearchShowAutocompletions', function (ev, showing) {
+    if (showing) controller.clearSearch();
+  });
+
+  $scope.$on('tokenizedSearchInputChanged', function () {
+    controller.clearSearch();
   });
 
   $scope.pick = function (entity) {
-    $scope.addLink(entity, function(err) {
-      if (!err) {
-        $scope.searchTerm = undefined;
-        $scope.searchResultsVisible = false;
-      }
+    $scope.addLink(entity).then(function () {
+      controller.clearSearch();
     });
   };
 
-
   $scope.addNewEntry = function(contentType) {
-    $scope.spaceContext.space.createEntry(contentType.getId(), {}, function(errCreate, entry){
-      $scope.$apply(function (scope) {
-        if (errCreate) {
-          notification.serverError('Error creating Entry', errCreate);
-          return;
-        }
-        scope.addLink(entry, function(errSetLink) {
-          if (errSetLink) {
-            notification.serverError('Error linking Entry', errSetLink);
-            entry['delete'](function(errDelete) {
-              scope.$apply(function () {
-                if (errDelete) {
-                  notification.serverError('Error deleting Entry again', errDelete);
-                }
-              });
-            });
-            return;
-          }
-          scope.navigator.entryEditor(entry).goTo();
-        });
+    var cb = $q.callback(), cbDelete = $q.callback();
+    $scope.spaceContext.space.createEntry(contentType.getId(), {}, cb);
+    return cb.promise
+    .then(function createEntityHandler(entry) {
+      return $scope.addLink(entry)
+      .then(function addLinkHandler() {
+        $scope.navigator.entryEditor(entry).goTo();
+      })
+      .catch(function addLinkErrorHandler(errSetLink) {
+        notification.serverError('Error linking Entry', errSetLink);
+        entry['delete'](cbDelete);
+        return cbDelete.promise;
+      })
+      .catch(function deleteEntityErrorHandler(errDelete) {
+        notification.serverError('Error deleting Entry again', errDelete);
+        return $q.reject(errDelete);
       });
+    }, function createEntityErrorHandler(errCreate) {
+      notification.serverError('Error creating Entry', errCreate);
+      return $q.reject(errCreate);
     });
   };
 
   $scope.addNewAsset = function() {
-    $scope.spaceContext.space.createAsset({}, function(errCreate, asset){
-      $scope.$apply(function (scope) {
-        if (errCreate) {
-          notification.serverError('Error creating Asset', errCreate);
-          return;
-        }
-        scope.addLink(asset, function(errSetLink) {
-          if (errSetLink) {
-            notification.serverError('Error linking Asset', errSetLink);
-            asset['delete'](function(errDelete) {
-              scope.$apply(function () {
-                if (errDelete) {
-                  notification.serverError('Error deleting Asset again', errDelete);
-                }
-              });
-            });
-            return;
-          }
-          scope.navigator.assetEditor(asset).goTo();
-        });
+    var cb = $q.callback(), cbDelete = $q.callback();
+    $scope.spaceContext.space.createAsset({}, cb);
+    return cb.promise
+    .then(function createEntityHandler(asset) {
+      return $scope.addLink(asset)
+      .then(function addLinkHandler() {
+        $scope.navigator.assetEditor(asset).goTo();
+      })
+      .catch(function addLinkErrorHandler(errSetLink) {
+        notification.serverError('Error linking Asset', errSetLink);
+        asset['delete'](cbDelete);
+        return cbDelete.promise;
+      })
+      .catch(function deleteEntityErrorHandler(errDelete) {
+        notification.serverError('Error deleting Asset again', errDelete);
+        return $q.reject(errDelete);
       });
+    }, function createEntityErrorHandler(errCreate) {
+      notification.serverError('Error creating Asset', errCreate);
+      return $q.reject(errCreate);
     });
   };
 
-  // Custom check because an empty string should still be considered as a valid search
-  $scope.searchIsEmpty = function () {
-    return _.isEmpty($scope.searchTerm) && !_.isString($scope.searchTerm);
+  this.clearSearch = function () {
+    $scope.paginator.page = 0;
+    $scope.entities = [];
+    $scope.selectedEntity = null;
+    controller.hideSearchResults();
   };
 
-  $scope.resetEntities = function() {
-    if ($scope.searchIsEmpty()) {
-      $scope.paginator.page = 0;
-      $scope.entities = [];
-      $scope.selectedEntity = null;
-      $scope.searchResultsVisible = false;
-    } else {
-      $scope.loadEntities();
-    }
-  };
-
-  $scope.loadEntities = function () {
-    entityLoader.loadCallback(
-      $scope.spaceContext.space, $scope.fetchMethod, buildQuery()
-    ).then(function (entities) {
-      $scope.searchResultsVisible = true;
+  this._resetEntities = function() {
+    this.clearSearch();
+    this._loadEntities()
+    .then(function (entities) {
+      controller.showSearchResults();
       $scope.paginator.numEntries = entities.total;
       $scope.entities = entities;
       $scope.selectedEntity = entities[0];
     });
   };
 
-  $scope.loadMore = function() {
+  this._loadEntities = function () {
+    return buildQuery()
+    .then(function (query) {
+      return entityLoader.loadCallback($scope.spaceContext.space, $scope.fetchMethod, query);
+    });
+  };
+
+  this.loadMore = function() {
     if ($scope.paginator.atLast()) return;
     $scope.paginator.page++;
-    entityLoader.loadCallback(
-      $scope.spaceContext.space, $scope.fetchMethod, buildQuery()
-    ).then(function (entities) {
+    controller._loadEntities()
+    .then(function (entities) {
       $scope.paginator.numEntries = entities.total;
       $scope.entities.push.apply($scope.entities, entities);
     }, function () {
@@ -129,21 +147,34 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
     });
   };
 
+  $scope.getSearchContentType = function () {
+    if ($scope.linkType === 'Asset')
+     return searchQueryHelper.assetContentType;
+    if ($scope.linkContentType)
+      return $scope.linkContentType;
+  };
+
   function buildQuery() {
+    var contentType;
     var queryObject = {
       order: '-sys.updatedAt',
       limit: $scope.paginator.pageLength,
       skip: $scope.paginator.skipItems()
     };
 
+    if ($scope.linkType === 'Asset')
+      contentType = searchQueryHelper.assetContentType;
     if ($scope.linkContentType)
-      queryObject['sys.contentType.sys.id'] = $scope.linkContentType.getId();
-    if ($scope.linkMimetypeGroup){
+      contentType = $scope.linkContentType;
+    if ($scope.linkMimetypeGroup)
       queryObject['mimetype_group'] = $scope.linkMimetypeGroup;
-    }
-    if ($scope.searchTerm && 0 < $scope.searchTerm.length)
-      queryObject.query = $scope.searchTerm;
+      //TODO well, actually when the linkMimeTypeGroup is predefined, we shouldn't allow searching for it
 
-    return queryObject;
+    return searchQueryHelper.buildQuery($scope.spaceContext.space, $scope.linkContentType, $scope.searchTerm)
+    .then(function (searchQuery) {
+      _.extend(searchQuery, queryObject);
+      return searchQuery;
+    });
   }
+
 });

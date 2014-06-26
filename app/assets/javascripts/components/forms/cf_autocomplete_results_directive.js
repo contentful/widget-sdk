@@ -1,25 +1,21 @@
 'use strict';
 
-angular.module('contentful').directive('cfAutocompleteResults', function ($parse, keycodes) {
+angular.module('contentful').directive('cfAutocompleteResults', function (keycodes) {
   return {
-    require: 'cfAutocompleteResults',
     controller: 'CfAutocompleteResultsCtrl',
-    link: function (scope, elem, attrs, controller) {
-      controller.getAutocompleteResults = $parse(attrs.cfAutocompleteResults);
-      controller.setAutocompleteTerm = $parse(attrs.autocompleteTerm).assign;
-
+    controllerAs: 'resultsController',
+    link: function (scope, elem) {
       var navigateResultList = function navigateResultList(event) {
-        if (controller.numResults === 0) return;
-        var handled = true;
+        var handled;
         scope.$apply(function () {
           if (event.keyCode == keycodes.DOWN){
-            controller.selectNext();
+            handled = scope.resultsController.selectNext();
           } else if (event.keyCode == keycodes.UP) {
-            controller.selectPrevious();
+            handled = scope.resultsController.selectPrevious();
           } else if (event.keyCode == keycodes.ESC) {
-            controller.cancelAutocomplete();
+            handled = scope.resultsController.cancelAutocomplete();
           } else if (event.keyCode == keycodes.ENTER) {
-            controller.pickSelected();
+            handled = scope.resultsController.pickSelected();
           } else {
             handled = false;
           }
@@ -29,13 +25,13 @@ angular.module('contentful').directive('cfAutocompleteResults', function ($parse
           event.stopPropagation();
         }
       };
-      elem.on('keydown', navigateResultList);
+      elem[0].addEventListener('keydown', navigateResultList, true);
 
       scope.$on('$destroy', function () {
+        elem[0].removeEventListener('keydown', navigateResultList, true);
         elem.off('keydown', navigateResultList);
         navigateResultList = null;
       });
-      
     }
   };
 });
