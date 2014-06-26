@@ -22,8 +22,6 @@
 
   .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")
 
-  .view-customizer
-
   .add-entity(ng-hide="spaceContext.publishedContentTypes.length == 0")
     %button.dropdown-toggle.default-button.primary-button(
             ng-hide="(!singleContentType || singleContentType && entries.length < 1) && (noCfCanCleanup = true)"
@@ -66,6 +64,7 @@
                 {{field.name}}
 
           %th.cell-status Status
+    .view-customizer
 
     .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
       %table.result-list.main-results.animated
