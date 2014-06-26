@@ -26,6 +26,7 @@ describe('ListViewsController', function () {
     it('should generate the default views', function () {
       scope.uiConfig = {};
       scope.$apply();
+      expect(generateDefaultViews).toBeCalledWith(true);
       expect(scope.uiConfig.views).toEqual(['defaultViews']);
     });
   });
