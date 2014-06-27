@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('presence', function ($rootScope, debounce) {
+angular.module('contentful').factory('presence', ['$rootScope', 'debounce', function ($rootScope, debounce) {
   // Code related to the hidden Property is from http://www.html5rocks.com/en/tutorials/pagevisibility/intro/
   
   function watchVisibility() {
@@ -73,4 +73,4 @@ angular.module('contentful').factory('presence', function ($rootScope, debounce)
       return !this.isHidden() && (now - lastActive < this.timeOut);
     }
   };
-});
+}]);

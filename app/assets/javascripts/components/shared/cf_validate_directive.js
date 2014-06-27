@@ -1,10 +1,10 @@
 'use strict';
 
-angular.module('contentful').directive('cfValidate', function (validation, sentry) {
+angular.module('contentful').directive('cfValidate', ['validation', function (validation) {
   return {
     restrict: 'A',
     scope: true,
-    controller: function ($scope, $attrs) {
+    controller: ['$scope', '$attrs', function ($scope, $attrs) {
       $scope.validationResult = {};
 
       $scope.validate = function () {
@@ -81,6 +81,6 @@ angular.module('contentful').directive('cfValidate', function (validation, sentr
         scope.validationResult = {};
       });
 
-    }
+    }]
   };
-});
+}]);

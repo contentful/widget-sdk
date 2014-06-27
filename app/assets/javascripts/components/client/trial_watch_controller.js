@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('TrialWatchController', function TrialWatchController($scope, $rootScope) {
+angular.module('contentful').controller('TrialWatchController', ['$scope', '$rootScope', function TrialWatchController($scope, $rootScope) {
   $scope.$watch('user', trialWatcher);
   $scope.$watch('spaceContext.space', trialWatcher);
 
@@ -64,4 +64,4 @@ angular.module('contentful').controller('TrialWatchController', function TrialWa
       replace(/%unit/, timePeriod.unit);
   }
 
-});
+}]);

@@ -13,7 +13,7 @@ angular.module('contentful').
     pingTimeout: 60e3
   }).
 
-  controller('otDocPresenceCtrl', function($scope, $timeout, otPresenceConfig) {
+  controller('otDocPresenceCtrl', ['$scope', '$timeout', 'otPresenceConfig', function($scope, $timeout, otPresenceConfig) {
     var presence = {};
     var ownPresence = {};
     var user  = $scope.user.sys.id;
@@ -143,7 +143,7 @@ angular.module('contentful').
       return {sys: {type: 'Link', linkType: 'User', id: id}};
     }
 
-  }).
+  }]).
 
   directive('otFieldPresence', function() {
     return {
@@ -160,7 +160,7 @@ angular.module('contentful').
     };
   }).
 
-  controller('otFieldPresenceCtrl', function($scope, $attrs) {
+  controller('otFieldPresenceCtrl', ['$scope', '$attrs', function($scope, $attrs) {
     var unregister;
     $scope.$watch($attrs.otFieldPresence, function(v) {
       var id = $scope.otFieldPresenceId = v.join('.');
@@ -168,4 +168,4 @@ angular.module('contentful').
       if (unregister) unregister();
       unregister = $scope.$watch(fp, 'fieldPresence=' + fp);
     }, true);
-  });
+  }]);

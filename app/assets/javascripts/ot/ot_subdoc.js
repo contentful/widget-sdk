@@ -4,7 +4,7 @@ angular.module('contentful').directive('otSubdoc', function () {
   return {
     restrict: 'AC',
     require: '^otDocFor',
-    controller: function ($scope) {
+    controller: ['$scope', function ($scope) {
       $scope.$watch('otDoc' , updateSubdoc);
       $scope.$watch('otPath', updateSubdoc, true);
 
@@ -25,6 +25,6 @@ angular.module('contentful').directive('otSubdoc', function () {
         }
       }
 
-    }
+    }]
   };
 });

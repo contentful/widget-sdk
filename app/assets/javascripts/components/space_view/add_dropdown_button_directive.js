@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('addDropdownButton', function(analytics) {
+angular.module('contentful').directive('addDropdownButton', ['analytics', function(analytics) {
   return {
     template: JST.add_dropdown_button(),
     restrict: 'C',
@@ -35,4 +35,4 @@ angular.module('contentful').directive('addDropdownButton', function(analytics) 
       });
     }
   };
-});
+}]);

@@ -1,5 +1,5 @@
 /*global moment:false*/
-angular.module('contentful').directive('cfDatetimeEditor', function($parse, zoneOffsets){
+angular.module('contentful').directive('cfDatetimeEditor', ['$parse', 'zoneOffsets', function($parse, zoneOffsets){
   'use strict';
 
   return {
@@ -128,7 +128,7 @@ angular.module('contentful').directive('cfDatetimeEditor', function($parse, zone
       }
     }
   };
-});
+}]);
 
 
 

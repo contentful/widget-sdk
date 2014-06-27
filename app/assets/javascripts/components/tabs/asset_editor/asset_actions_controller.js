@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('AssetActionsCtrl', function AssetActionsCtrl($scope, notification, sentry) {
+angular.module('contentful').controller('AssetActionsCtrl', ['$scope', 'notification', 'sentry', function AssetActionsCtrl($scope, notification, sentry) {
   // TODO If we are sure that the data in the asset has been updated from the ShareJS doc,
   // We can query the asset instead of reimplementing the checks heere
 
@@ -97,5 +97,5 @@ angular.module('contentful').controller('AssetActionsCtrl', function AssetAction
     }
   };
 
-});
+}]);
 

@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfOnBlurComponent', function($document, $parse){
+angular.module('contentful').directive('cfOnBlurComponent', ['$document', '$parse', function($document, $parse){
   // A better replacement for clickoutside that tracks both blur and focus
   // so, whether you leave a component by mouse or keyboard doesn't matter
   // - NOTE: Oops this..blur != that.focus. You can blur somthing without focusin something else.
@@ -29,4 +29,4 @@ angular.module('contentful').directive('cfOnBlurComponent', function($document, 
       }
     }
   };
-});
+}]);

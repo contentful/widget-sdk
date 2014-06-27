@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('EntryListViewsController', function($scope, random, $controller){
+angular.module('contentful').controller('EntryListViewsController', ['$scope', 'random', '$controller', function($scope, random, $controller){
   var DEFAULT_ORDER_DIRECTION = 'descending';
 
   var SORTABLE_TYPES = [
@@ -190,4 +190,4 @@ angular.module('contentful').controller('EntryListViewsController', function($sc
 
   }
 
-});
+}]);

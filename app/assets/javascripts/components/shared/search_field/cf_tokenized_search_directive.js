@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfTokenizedSearch', function($parse, searchQueryHelper, $timeout){
+angular.module('contentful').directive('cfTokenizedSearch', ['$parse', 'searchQueryHelper', '$timeout', function($parse, searchQueryHelper, $timeout){
   return {
     template: JST['cf_tokenized_search'](),
     scope: true,
@@ -20,6 +20,6 @@ angular.module('contentful').directive('cfTokenizedSearch', function($parse, sea
       };
     }
   };
-});
+}]);
 
 

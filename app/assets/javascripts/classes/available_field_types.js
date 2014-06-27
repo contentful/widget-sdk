@@ -79,7 +79,7 @@ angular.module('contentful').
       value: {type: 'Array' , items: {type: 'Symbol'}}
     }
   ]).
-  factory('getFieldTypeName', function(availableFieldTypes) {
+  factory('getFieldTypeName', ['availableFieldTypes', function(availableFieldTypes) {
     'use strict';
 
     return function(field) {
@@ -94,4 +94,4 @@ angular.module('contentful').
         return true;
       }), 'name');
     };
-  });
+  }]);

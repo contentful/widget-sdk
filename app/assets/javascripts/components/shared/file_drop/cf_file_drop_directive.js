@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfFileDrop', function (filepicker, notification, sentry) {
+angular.module('contentful').directive('cfFileDrop', ['filepicker', 'notification', 'sentry', function (filepicker, notification, sentry) {
   var IGNORED_ERRORS = [
     'WrongType',
     'TooManyFiles',
@@ -80,4 +80,4 @@ angular.module('contentful').directive('cfFileDrop', function (filepicker, notif
       });
     }
   };
-});
+}]);

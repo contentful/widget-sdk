@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('selectType', function (availableFieldTypes) {
+angular.module('contentful').directive('selectType', ['availableFieldTypes', function (availableFieldTypes) {
   return {
     template: JST['select_type'](),
     link: function (scope, elem, attr) {
@@ -10,4 +10,4 @@ angular.module('contentful').directive('selectType', function (availableFieldTyp
       };
     }
   };
-});
+}]);

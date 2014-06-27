@@ -34,7 +34,7 @@ angular.module('contentful').directive('cfDropdownEditor', function(){
       };
     },
 
-    controller: function cfDropdownEditorController ($scope, $parse, $attrs) {
+    controller: ['$scope', '$parse', '$attrs',  function cfDropdownEditorController ($scope, $parse, $attrs) {
       var ngModelGet = $parse($attrs.ngModel),
           ngModelSet = ngModelGet.assign;
 
@@ -56,6 +56,6 @@ angular.module('contentful').directive('cfDropdownEditor', function(){
       $scope.$on('otValueChanged', function(event, path, value) {
         if (path === event.currentScope.otPath) ngModelSet(event.currentScope, value);
       });
-    }
+    }]
   };
 });

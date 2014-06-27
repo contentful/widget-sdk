@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('DisplayedFieldsController', function DisplayedFieldsController($scope) {
+angular.module('contentful').controller('DisplayedFieldsController', ['$scope', function DisplayedFieldsController($scope) {
 
   function getAvailableFields(contentTypeId) {
     var filteredContentType = $scope.spaceContext.getPublishedContentType(contentTypeId);
@@ -40,4 +40,4 @@ angular.module('contentful').controller('DisplayedFieldsController', function Di
     });
   };
 
-});
+}]);

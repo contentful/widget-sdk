@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').provider('ShareJS', function ShareJSProvider(environment) {
+angular.module('contentful').provider('ShareJS', ['environment', function ShareJSProvider(environment) {
   var token;
   var url = '//'+environment.settings.ot_host+'/channel';
 
@@ -11,7 +11,7 @@ angular.module('contentful').provider('ShareJS', function ShareJSProvider(enviro
     url = e;
   };
 
-  this.$get = function(client, $rootScope) {
+  this.$get = ['client', '$rootScope', function(client, $rootScope) {
     function ShareJSClient(url, token) {
       this.token = token;
       this.url = url;
@@ -138,5 +138,5 @@ angular.module('contentful').provider('ShareJS', function ShareJSProvider(enviro
 
     return ShareJS;
   
-  };
-});
+  }];
+}]);

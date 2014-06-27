@@ -1,4 +1,4 @@
-angular.module('contentful').factory('cfSpinner', function (throttle) {
+angular.module('contentful').factory('cfSpinner', ['throttle', function (throttle) {
   'use strict';
 
   var counter = 0;
@@ -55,4 +55,4 @@ angular.module('contentful').factory('cfSpinner', function (throttle) {
 
   return Spinner;
   
-});
+}]);

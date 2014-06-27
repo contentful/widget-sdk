@@ -1,4 +1,4 @@
-angular.module('contentful').factory('EntityCache', function($rootScope, $q){
+angular.module('contentful').factory('EntityCache', ['$rootScope', '$q', function($rootScope, $q){
   'use strict';
 
   // params:
@@ -135,4 +135,4 @@ angular.module('contentful').factory('EntityCache', function($rootScope, $q){
   }
 
   return EntityCache;
-});
+}]);

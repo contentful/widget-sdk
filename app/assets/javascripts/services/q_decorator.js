@@ -1,8 +1,8 @@
 'use strict';
-angular.module('contentful').config(function ($provide) {
+angular.module('contentful').config(['$provide', function ($provide) {
   
   // Decorates $q instances with the `callback` method
-  $provide.decorator('$q', function($delegate, $rootScope){
+  $provide.decorator('$q', ['$delegate', '$rootScope', function($delegate, $rootScope){
     var $q = Object.create($delegate);
     // Returns a callback method that should be passed in where a node-style callback is expected.
     // The callback method has a `promise` property that can then be passed around in a promise environment:
@@ -41,5 +41,5 @@ angular.module('contentful').config(function ($provide) {
       return callbackFunction;
     };
     return $q;
-  });
-});
+  }]);
+}]);

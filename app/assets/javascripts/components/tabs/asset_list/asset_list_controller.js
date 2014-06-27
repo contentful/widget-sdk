@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  controller('AssetListCtrl',function AssetListCtrl($scope, $q, Paginator, Selection, PromisedLoader, analytics, sentry, searchQueryHelper, $controller) {
+  controller('AssetListCtrl',['$scope', '$q', 'Paginator', 'Selection', 'PromisedLoader', 'analytics', 'sentry', 'searchQueryHelper', '$controller', function AssetListCtrl($scope, $q, Paginator, Selection, PromisedLoader, analytics, sentry, searchQueryHelper, $controller) {
 
   $controller('AssetListViewsController', {$scope: $scope});
   var assetLoader = new PromisedLoader();
@@ -115,4 +115,4 @@ angular.module('contentful').
     if (tab !== $scope.tab) return;
     $scope.resetAssets();
   });
-});
+}]);

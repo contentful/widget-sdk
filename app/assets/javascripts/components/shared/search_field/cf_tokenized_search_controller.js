@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('cfTokenizedSearchController', function ($scope, searchQueryHelper, keycodes, $attrs, $parse) {
+angular.module('contentful').controller('cfTokenizedSearchController', ['$scope', 'searchQueryHelper', 'keycodes', '$attrs', '$parse', function ($scope, searchQueryHelper, keycodes, $attrs, $parse) {
   $scope.inner = { term: null };
   $scope.position = null;
   $scope.showAutocompletions = false;
@@ -199,6 +199,6 @@ angular.module('contentful').controller('cfTokenizedSearchController', function 
     return str.slice(0, index) + add + str.slice(index + count);
   }
   
-});
+}]);
 
 

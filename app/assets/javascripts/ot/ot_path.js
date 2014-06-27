@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('otPath', function(ShareJS, cfSpinner) {
+angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', function(ShareJS, cfSpinner) {
 
   return {
     restrict: 'AC',
@@ -18,7 +18,7 @@ angular.module('contentful').directive('otPath', function(ShareJS, cfSpinner) {
       scope.otPath = scope.$eval(attr['otPath']);
       scope.otPathTypes = scope.$eval(attr['otPathTypes']);
     },
-    controller: function OtPathCtrl($scope) {
+    controller: ['$scope', function OtPathCtrl($scope) {
       $scope.$on('otRemoteOp', function (event, op) {
         var scope = event.currentScope;
         //if (isSubPath(op.p)) {
@@ -84,7 +84,7 @@ angular.module('contentful').directive('otPath', function(ShareJS, cfSpinner) {
       // TODO attr "sync entity", that provides a value that can be bound to ng-models,
       // that writes back all changes that appear within here to the entity
 
-    }
+    }]
   };
-});
+}]);
 

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfFieldtypeIcon', function(getFieldTypeName, sentry){
+angular.module('contentful').directive('cfFieldtypeIcon', ['getFieldTypeName', 'sentry', function(getFieldTypeName, sentry){
   var nameTemplates = _.each({
     'Text'           :'<strong>ABC</strong>',
     'Symbol'         :'<strong>USD</strong>',
@@ -59,4 +59,4 @@ angular.module('contentful').directive('cfFieldtypeIcon', function(getFieldTypeN
       });
     }
   };
-});
+}]);

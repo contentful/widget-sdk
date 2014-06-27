@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeEditorCtrl', function ContentTypeEditorCtrl($scope, validation, notification, analytics, addCanMethods, random) {
+angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', 'validation', 'notification', 'analytics', 'addCanMethods', 'random', function ContentTypeEditorCtrl($scope, validation, notification, analytics, addCanMethods, random) {
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
 
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
@@ -112,4 +112,4 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', function Conten
     });
   };
 
-});
+}]);

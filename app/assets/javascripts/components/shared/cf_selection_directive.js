@@ -1,4 +1,4 @@
-angular.module('contentful').directive('cfSelection', function(Selection){
+angular.module('contentful').directive('cfSelection', ['Selection', function(Selection){
   'use strict';
 
   return {
@@ -40,4 +40,4 @@ angular.module('contentful').directive('cfSelection', function(Selection){
 
     }
   };
-});
+}]);

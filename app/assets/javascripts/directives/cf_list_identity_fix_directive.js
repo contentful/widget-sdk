@@ -8,7 +8,7 @@ angular.module('contentful').directive('cfListIdentityFix', function () {
   return {
     require: ['ngModel', 'cfListIdentityFix'],
     priority: 100,
-    controller: function ($scope, $attrs, $parse) {
+    controller: ['$scope', '$attrs', '$parse', function ($scope, $attrs, $parse) {
       var ngModelGet = $parse($attrs.ngModel);
       var ctrl = this;
 
@@ -25,7 +25,7 @@ angular.module('contentful').directive('cfListIdentityFix', function () {
       $scope.$on('$destroy', function () {
         ctrl.ngModelCtrl = null;
       });
-    },
+    }],
     link: function (scope, elem, attr, controllers) {
       var ngModelCtrl = controllers[0];
       var fixCtrl     = controllers[1];

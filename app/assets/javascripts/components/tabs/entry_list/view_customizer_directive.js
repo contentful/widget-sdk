@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('viewCustomizer', function(defer){
+angular.module('contentful').directive('viewCustomizer', ['defer', function(defer){
   return {
     template: JST.view_customizer(),
     restrict: 'C',
@@ -15,7 +15,7 @@ angular.module('contentful').directive('viewCustomizer', function(defer){
         scope.removeDisplayField(field);
       };
     },
-    controller: function ($scope) {
+    controller: ['$scope', function ($scope) {
       $scope.displayedFieldsSortOptions = {
         axis: 'y',
         cancel: '.close-button',
@@ -28,6 +28,6 @@ angular.module('contentful').directive('viewCustomizer', function(defer){
           ui.item.removeClass('dragging');
         },
       };
-    }
+    }]
   };
-});
+}]);

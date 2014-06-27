@@ -8,7 +8,7 @@ angular.module('contentful').directive('gettyMetadata', function(){
       image: '=image',
       full: '=full'
     },
-    controller: function ($scope) {
+    controller: ['$scope', function ($scope) {
       $scope.productOfferings = function (key) {
         return {
           EasyAccess: 'Easy Access'
@@ -29,7 +29,7 @@ angular.module('contentful').directive('gettyMetadata', function(){
         }
         return '';
       };
-    },
+    }],
 
     link: function (scope, elem, attrs) {
       if(!_.isUndefined(attrs.full)){

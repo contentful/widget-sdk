@@ -40,7 +40,8 @@ angular.module('contentful/test', [
   'contentful/user_interface',
   'contentful',
   'contentful/mocks'
-], function($locationProvider, clientProvider, authenticationProvider, environment, $sceDelegateProvider, $compileProvider, timeRelativeConfig){
+], ['$locationProvider', 'clientProvider', 'authenticationProvider', 'environment', '$sceDelegateProvider', '$compileProvider', 'timeRelativeConfig', 
+  function($locationProvider, clientProvider, authenticationProvider, environment, $sceDelegateProvider, $compileProvider, timeRelativeConfig){
   'use strict';
   var env = environment.settings;
   $locationProvider.html5Mode(true);
@@ -51,4 +52,4 @@ angular.module('contentful/test', [
   timeRelativeConfig.calendar.en.sameElse = 'll';
   timeRelativeConfig.calendar.en.lastWeek = 'ddd, LT';
   timeRelativeConfig.calendar.en.nextWeek = 'Next ddd, LT';
-});
+}]);

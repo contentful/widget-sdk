@@ -1,6 +1,7 @@
 'use strict';
-angular.module('contentful').controller('ListViewsController', function($scope, modalDialog, notification, $q,
-                                                                       getBlankView, viewCollectionName, generateDefaultViews, resetList){
+angular.module('contentful').controller('ListViewsController',
+    ['$scope', 'modalDialog', 'notification', '$q', 'getBlankView', 'viewCollectionName', 'generateDefaultViews', 'resetList',
+      function($scope, modalDialog, notification, $q, getBlankView, viewCollectionName, generateDefaultViews, resetList){
   $scope.tab.params.view = $scope.tab.params.view || getBlankView();
 
   $scope.$watch('uiConfig', function (uiConfig) {
@@ -31,4 +32,4 @@ angular.module('contentful').controller('ListViewsController', function($scope, 
       return $q.reject();
     });
   };
-});
+}]);

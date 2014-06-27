@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').provider('analytics', function (environment) {
+angular.module('contentful').provider('analytics', ['environment', function (environment) {
   var $window, $document, $q;
   var dontLoad = environment.env.match(/acceptance|development|test/) ? true : false;
 
@@ -254,7 +254,7 @@ angular.module('contentful').provider('analytics', function (environment) {
     }
   };
 
-  this.$get = function (_$window_, _$document_, _$q_, $location) {
+  this.$get = ['$window', '$document', '$q', '$location', function (_$window_, _$document_, _$q_, $location) {
     $window = _$window_;
     $document = _$document_;
     $q = _$q_;
@@ -269,6 +269,6 @@ angular.module('contentful').provider('analytics', function (environment) {
       createAnalytics();
       return api;
     }
-  };
+  }];
 
-});
+}]);

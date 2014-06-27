@@ -2,7 +2,7 @@
 
 // A version of ngClick that performs stopPropagation() and
 // preventDefault() to support nested click targets
-angular.module('contentful').directive('cfClickLocal', function($parse){
+angular.module('contentful').directive('cfClickLocal', ['$parse', function($parse){
   return {
     restrict: 'A',
     link: function(scope, element, attr) {
@@ -16,4 +16,4 @@ angular.module('contentful').directive('cfClickLocal', function($parse){
       });
     }
   };
-});
+}]);

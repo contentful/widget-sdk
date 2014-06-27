@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  factory('authorization', function (worf) {
+  factory('authorization', ['worf', function (worf) {
     function Authorization() {}
 
     Authorization.prototype = {
@@ -28,11 +28,11 @@ angular.module('contentful').
     };
 
     return new Authorization();
-  }).
-  factory('reasonsDenied', function (authorization) {
+  }]).
+  factory('reasonsDenied', ['authorization', function (authorization) {
     return function reasonsDenied() {
       return authorization.spaceContext.reasonsDenied
         .apply(authorization.spaceContext, arguments);
     };
-  });
+  }]);
 

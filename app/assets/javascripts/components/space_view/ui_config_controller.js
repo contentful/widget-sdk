@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('UiConfigController', function($scope, $q, notification, sentry){
+angular.module('contentful').controller('UiConfigController', ['$scope', '$q', 'notification', 'sentry', function($scope, $q, notification, sentry){
 
   $scope.$watch('spaceContext.space', function (space) {
     $scope.uiConfig = null;
@@ -41,4 +41,4 @@ angular.module('contentful').controller('UiConfigController', function($scope, $
     return callback.promise;
   }
 
-});
+}]);

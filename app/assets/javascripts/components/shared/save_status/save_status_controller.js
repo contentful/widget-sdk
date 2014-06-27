@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('SaveStatusCtrl', function ($scope, defer) {
+angular.module('contentful').controller('SaveStatusCtrl', ['$scope', 'defer', function ($scope, defer) {
   $scope.saveStatus = 'no_connection';
 
   $scope.$watch(function (scope) {
@@ -196,4 +196,4 @@ angular.module('contentful').controller('SaveStatusCtrl', function ($scope, defe
   // Determining wether a change was remote or local relies on the fact that
   // within one tick a remote operating causes TWO events, "change" and "remoteOp"
   // so, in startSave we wait for the remoteOp before actually doing anything.
-});
+}]);

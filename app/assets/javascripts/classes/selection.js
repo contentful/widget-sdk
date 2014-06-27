@@ -1,4 +1,4 @@
-angular.module('contentful').factory('Selection', function(analytics){
+angular.module('contentful').factory('Selection', ['analytics', function(analytics){
   'use strict';
   
   function Selection() {
@@ -102,4 +102,4 @@ angular.module('contentful').factory('Selection', function(analytics){
   };
 
   return Selection;
-});
+}]);

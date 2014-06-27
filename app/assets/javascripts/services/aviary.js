@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('aviary', function ($window, environment, $q, $rootScope, jsloader, filepicker, client) {
+angular.module('contentful').factory('aviary', ['$window', 'environment', '$q', '$rootScope', 'jsloader', 'filepicker', 'client', function ($window, environment, $q, $rootScope, jsloader, filepicker, client) {
     if (!$window.Aviary) {
       var loadFile = jsloader.create('//feather.aviary.com/js/', '//dme0ih8comzn4.cloudfront.net/js/');
       loadFile('feather.js');
@@ -105,4 +105,4 @@ angular.module('contentful').factory('aviary', function ($window, environment, $
         return createDeferred.promise;
       }
     };
-});
+}]);

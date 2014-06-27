@@ -10,8 +10,9 @@ describe('The Asset list directive', function () {
   beforeEach(function () {
     canStub = sinon.stub();
     reasonsStub = sinon.stub();
-    module('contentful/test', function (cfCanStubsProvider) {
+    module('contentful/test', function (cfCanStubsProvider, $provide) {
       cfCanStubsProvider.setup(reasonsStub);
+      $provide.removeDirectives('relative');
     });
     inject(function ($rootScope, $compile, assetListDirective, enforcements) {
       scope = $rootScope.$new();

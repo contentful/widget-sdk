@@ -2,7 +2,7 @@
 
 var otModule = angular.module('contentful');
 
-otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacriticalMark, defer) {
+otModule.directive('otBindText', ['ShareJS', '$sniffer', '$parse', 'isDiacriticalMark', 'defer', function(ShareJS, $sniffer, $parse, isDiacriticalMark, defer) {
   return {
     restrict: 'A',
     require: ['^otSubdoc', 'ngModel'],
@@ -123,9 +123,9 @@ otModule.directive('otBindText', function(ShareJS, $sniffer, $parse, isDiacritic
     }
 
   };
-});
+}]);
 
-otModule.directive('otBindModel', function($parse) {
+otModule.directive('otBindModel', ['$parse', function($parse) {
   return {
     restrict: 'A',
     require: ['ngModel', '^otPath'],
@@ -141,10 +141,10 @@ otModule.directive('otBindModel', function($parse) {
       });
     }
   };
-});
+}]);
 
 // Untested, do not use because we don't need it internally, see notes below for intended use scenario
-otModule.directive('otBindValue', function($parse) {
+otModule.directive('otBindValue', ['$parse', function($parse) {
   return {
     restrict: 'A',
     require: '^otPath',
@@ -172,4 +172,4 @@ otModule.directive('otBindValue', function($parse) {
     }
 
   };
-});
+}]);

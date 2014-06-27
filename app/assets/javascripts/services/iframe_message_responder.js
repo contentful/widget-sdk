@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').run(function($window, $rootScope, $sce){
+angular.module('contentful').run(['$window', '$rootScope', '$sce', function($window, $rootScope, $sce){
   // Create IE + others compatible event handler
   var eventMethod = $window.addEventListener ? 'addEventListener' : 'attachEvent';
   var eventer = $window[eventMethod];
@@ -28,4 +28,4 @@ angular.module('contentful').run(function($window, $rootScope, $sce){
     });
 
   },false);
-});
+}]);

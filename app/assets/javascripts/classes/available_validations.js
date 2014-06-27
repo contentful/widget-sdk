@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('availableValidations', function (validation) {
+angular.module('contentful').factory('availableValidations', ['validation', function (validation) {
   var validations = {
     'Length': {size: {min: null, max: null}},
     'Numerical Range': {range: {min: null, max: null}},
@@ -37,4 +37,4 @@ angular.module('contentful').factory('availableValidations', function (validatio
 
     name: validationName
   };
-});
+}]);

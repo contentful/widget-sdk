@@ -1,7 +1,8 @@
 'use strict';
 
 angular.module('contentful').controller('EntryListCtrl',
-  function EntryListCtrl($scope, $controller, Paginator, Selection, analytics, PromisedLoader, sentry, searchQueryHelper, EntityCache) {
+  ['$scope', '$controller', 'Paginator', 'Selection', 'analytics', 'PromisedLoader', 'sentry', 'searchQueryHelper', 'EntityCache',
+    function EntryListCtrl($scope, $controller, Paginator, Selection, analytics, PromisedLoader, sentry, searchQueryHelper, EntityCache) {
 
   $controller('DisplayedFieldsController', {$scope: $scope});
   $controller('EntryListViewsController', {$scope: $scope});
@@ -227,4 +228,4 @@ angular.module('contentful').controller('EntryListCtrl',
     if (tab !== $scope.tab) return;
     $scope.resetEntries();
   });
-});
+}]);

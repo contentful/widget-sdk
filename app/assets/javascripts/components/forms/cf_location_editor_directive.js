@@ -1,7 +1,7 @@
 /*global google:false*/
 'use strict';
 
-angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, notification, $parse, defer){
+angular.module('contentful').directive('cfLocationEditor', ['cfSpinner', 'notification', '$parse', 'defer', function(cfSpinner, notification, $parse, defer){
   return {
     restrict: 'C',
     require: 'ngModel',
@@ -193,6 +193,6 @@ angular.module('contentful').directive('cfLocationEditor', function(cfSpinner, n
 
     }
   };
-});
+}]);
 
 

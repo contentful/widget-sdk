@@ -1,4 +1,4 @@
-angular.module('contentful').directive('cfLinkEditor', function(mimetype){
+angular.module('contentful').directive('cfLinkEditor', ['mimetype', function(mimetype){
   'use strict';
 
   return {
@@ -69,5 +69,5 @@ angular.module('contentful').directive('cfLinkEditor', function(mimetype){
 
     }
   };
-});
+}]);
 

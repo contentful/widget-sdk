@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('contentTypeEditor', function(defer){
+angular.module('contentful').directive('contentTypeEditor', ['defer', function(defer){
   return {
     template: JST.content_type_editor(),
     restrict: 'C',
@@ -17,4 +17,4 @@ angular.module('contentful').directive('contentTypeEditor', function(defer){
       var unwatchEditable = scope.$watch('otEditable', focus);
     }
   };
-});
+}]);

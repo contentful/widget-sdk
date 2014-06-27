@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorCtrl($scope, validation, AssetContentType, notification, addCanMethods, ShareJS, stringUtils) {
+angular.module('contentful').controller('AssetEditorCtrl', ['$scope', 'validation', 'AssetContentType', 'notification', 'addCanMethods', 'ShareJS', 'stringUtils', function AssetEditorCtrl($scope, validation, AssetContentType, notification, addCanMethods, ShareJS, stringUtils) {
   $scope.$watch('tab.params.asset', 'asset=tab.params.asset');
   $scope.$watch(function assetEditorEnabledWatcher(scope) {
     return !scope.asset.isArchived() && scope.can('update', scope.asset.data);
@@ -156,4 +156,4 @@ angular.module('contentful').controller('AssetEditorCtrl', function AssetEditorC
     return this.spaceContext.assetTitle(this.asset);
   };
 
-});
+}]);

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  controller('ContentTypeActionsCtrl', function ContentTypeActionsCtrl($scope, notification, analytics, sentry) {
+  controller('ContentTypeActionsCtrl', ['$scope', 'notification', 'analytics', 'sentry', function ContentTypeActionsCtrl($scope, notification, analytics, sentry) {
 
   // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,
   // We can query the entry instead of reimplementing the checks heere
@@ -98,5 +98,5 @@ angular.module('contentful').
     }
   };
 
-});
+}]);
 

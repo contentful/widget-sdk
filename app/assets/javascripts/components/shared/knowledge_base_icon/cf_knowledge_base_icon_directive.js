@@ -1,4 +1,4 @@
-angular.module('contentful').directive('cfKnowledgeBaseIcon', function (analytics) {
+angular.module('contentful').directive('cfKnowledgeBaseIcon', ['analytics', function (analytics) {
   'use strict';
 
   return {
@@ -14,4 +14,4 @@ angular.module('contentful').directive('cfKnowledgeBaseIcon', function (analytic
       });
     }
   };
-});
+}]);

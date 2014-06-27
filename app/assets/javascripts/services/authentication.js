@@ -1,4 +1,4 @@
-angular.module('contentful').provider('authentication', function AuthenticationProvider($injector) {
+angular.module('contentful').provider('authentication', ['$injector', function AuthenticationProvider($injector) {
   'use strict';
 
   var authApp, marketingApp, QueryLinkResolver;
@@ -144,7 +144,7 @@ angular.module('contentful').provider('authentication', function AuthenticationP
 
   };
 
-  this.$get = function(client, _$location_, _$window_, _sentry_, _$q_, _$rootScope_, _notification_){
+  this.$get = ['client', '$location', '$window', 'sentry', '$q', '$rootScope', 'notification', function(client, _$location_, _$window_, _sentry_, _$q_, _$rootScope_, _notification_){
     $location = _$location_;
     $window = _$window_;
     sentry = _sentry_;
@@ -154,6 +154,6 @@ angular.module('contentful').provider('authentication', function AuthenticationP
     var authentication = new Authentication(client);
     this.setEnvVars();
     return authentication;
-  };
+  }];
 
-});
+}]);

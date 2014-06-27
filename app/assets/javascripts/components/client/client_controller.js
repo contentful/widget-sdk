@@ -1,9 +1,24 @@
 'use strict';
 
-angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
-    $scope, $rootScope, client, SpaceContext, authentication, notification, analytics,
-    routing, authorization, tutorial, modalDialog, presence, $location, enforcements, reasonsDenied,
-    revision, ReloadNotification, $controller, $window) {
+angular.module('contentful').controller('ClientCtrl', ['$scope', '$injector', function ClientCtrl($scope, $injector) {
+  var $rootScope         = $injector.get('$rootScope');
+  var client             = $injector.get('client');
+  var SpaceContext       = $injector.get('SpaceContext');
+  var authentication     = $injector.get('authentication');
+  var notification       = $injector.get('notification');
+  var analytics          = $injector.get('analytics');
+  var routing            = $injector.get('routing');
+  var authorization      = $injector.get('authorization');
+  var tutorial           = $injector.get('tutorial');
+  var modalDialog        = $injector.get('modalDialog');
+  var presence           = $injector.get('presence');
+  var $location          = $injector.get('$location');
+  var enforcements       = $injector.get('enforcements');
+  var reasonsDenied      = $injector.get('reasonsDenied');
+  var revision           = $injector.get('revision');
+  var ReloadNotification = $injector.get('ReloadNotification');
+  var $controller        = $injector.get('$controller');
+  var $window            = $injector.get('$window');
 
   $controller('TrialWatchController', {$scope: $scope});
   $scope.spaces = null;
@@ -358,4 +373,4 @@ angular.module('contentful').controller('ClientCtrl', function ClientCtrl(
       });
     }
   }
-});
+}]);

@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('spaceSettings', function($window, $rootScope, authentication, routing){
+angular.module('contentful').directive('spaceSettings', ['$window', '$rootScope', 'authentication', 'routing', function($window, $rootScope, authentication, routing){
   return {
     template: JST['iframe_view'](),
     restrict: 'C',
@@ -73,5 +73,5 @@ angular.module('contentful').directive('spaceSettings', function($window, $rootS
       }
     }
   };
-});
+}]);
 

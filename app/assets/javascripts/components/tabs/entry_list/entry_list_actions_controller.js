@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('EntryListActionsCtrl', function EntryListActionsCtrl($scope, $timeout, listActions) {
+angular.module('contentful').controller('EntryListActionsCtrl', ['$scope', '$timeout', 'listActions', function EntryListActionsCtrl($scope, $timeout, listActions) {
 
   var _cacheSelected;
 
@@ -136,4 +136,4 @@ angular.module('contentful').controller('EntryListActionsCtrl', function EntryLi
     if (unpublished === 0) return 'Republish';
     return '(Re)publish';
   };
-});
+}]);

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').controller('GettyDialogController',
-    function($scope, gettyImagesFactory, PromisedLoader, Paginator, fileSize, stringUtils, sentry) {
+    ['$scope', 'gettyImagesFactory', 'PromisedLoader', 'Paginator', 'fileSize', 'stringUtils', 'sentry', function($scope, gettyImagesFactory, PromisedLoader, Paginator, fileSize, stringUtils, sentry) {
 
   var IMAGES_PER_PAGE = 6;
 
@@ -309,4 +309,4 @@ angular.module('contentful').controller('GettyDialogController',
     return obj;
   }
 
-});
+}]);

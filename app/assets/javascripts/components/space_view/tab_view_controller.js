@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('TabViewCtrl', function ($scope, authentication, analytics, notification, routing, TabOptionsGenerator, $document) {
+angular.module('contentful').controller('TabViewCtrl', ['$scope', 'authentication', 'analytics', 'notification', 'routing', 'TabOptionsGenerator', '$document', function ($scope, authentication, analytics, notification, routing, TabOptionsGenerator, $document) {
   var gen = TabOptionsGenerator;
   $scope.$on('tabClosed', function (event, tab) {
     if (tab.list.numVisible() > 0) return;
@@ -135,4 +135,4 @@ angular.module('contentful').controller('TabViewCtrl', function ($scope, authent
     }
   });
 
-});
+}]);

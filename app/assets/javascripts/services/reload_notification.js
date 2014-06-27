@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('ReloadNotification', function($window, $location, $rootScope, modalDialog) {
+angular.module('contentful').factory('ReloadNotification', ['$window', '$location', '$rootScope', 'modalDialog', function($window, $location, $rootScope, modalDialog) {
   var open = false;
 
   function reloadWithCacheBuster() {
@@ -30,4 +30,4 @@ angular.module('contentful').factory('ReloadNotification', function($window, $lo
       }).then(reloadWithCacheBuster);
     }
   };
-});
+}]);

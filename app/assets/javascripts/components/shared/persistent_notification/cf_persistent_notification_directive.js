@@ -1,4 +1,4 @@
-angular.module('contentful').directive('cfPersistentNotification', function ($sce, throttle) {
+angular.module('contentful').directive('cfPersistentNotification', ['$sce', 'throttle', function ($sce, throttle) {
   'use strict';
 
   return {
@@ -34,4 +34,4 @@ angular.module('contentful').directive('cfPersistentNotification', function ($sc
       scope.$on('persistentNotification', throttle(updateNotification, 2500));
     }
   };
-});
+}]);

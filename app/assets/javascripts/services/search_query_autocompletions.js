@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').factory('searchQueryAutocompletions', function(userCache, mimetype, AssetContentType){
+angular.module('contentful').factory('searchQueryAutocompletions', ['userCache', 'mimetype', 'AssetContentType', function(userCache, mimetype, AssetContentType){
   // Autocomplete object {{{1
 
   // Predefined keys and their completions/conversions
@@ -371,5 +371,5 @@ angular.module('contentful').factory('searchQueryAutocompletions', function(user
   };
 
   // }}}
-});
+}]);
 

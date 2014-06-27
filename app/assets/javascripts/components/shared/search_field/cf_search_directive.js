@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfSearch', function(keycodes, debounce){
+angular.module('contentful').directive('cfSearch', ['keycodes', 'debounce', function(keycodes, debounce){
 
   return {
     template: JST['cf_search'](),
@@ -35,7 +35,7 @@ angular.module('contentful').directive('cfSearch', function(keycodes, debounce){
       });
     },
 
-    controller: function cfSearchController($scope) {
+    controller: ['$scope', function cfSearchController($scope) {
       $scope.inner = {
         term: ''
       };
@@ -62,8 +62,8 @@ angular.module('contentful').directive('cfSearch', function(keycodes, debounce){
         $scope.inner.term = search;
       });
 
-    }
+    }]
   };
-});
+}]);
 
 
