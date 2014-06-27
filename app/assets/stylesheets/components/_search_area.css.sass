@@ -12,6 +12,7 @@
   width: 100%
 
 .with-filter
+  max-width: 800px
   .search-with-results
     .search-field
       border-left: none
@@ -33,7 +34,6 @@
 .search-field
   position: relative
   width: 100%
-  max-width: 800px
   height: $tab-header-field-height
   background-color: white
   border: 1px solid $lightest-gray
@@ -81,7 +81,7 @@
 
 
 .search-with-results
-  // When used inside the entry form, the forms border-spacing also
+  // When used inside the entry form, the form's border-spacing also
   // applies to the tables inside the autocomplete-results
   border-spacing: 0
 
@@ -89,10 +89,16 @@
   .results.shrink-result-width
     right: auto
   .results // Necessary overrides/resets for .results which is per default geared towards use in forms
-    left: 0
+    left: 13px
     right: 35px
     margin-right: 0
     font-size: 11px
+.with-filter //oh god, apologies for the specificity bukkake
+  .search-with-results
+    .results
+      left: 0px
+
+
 
 .search-autocomplete-list,
 .results .search-autocomplete-list //necessary for overriding too-specific selector ".results ol > *" in mixins.css.sass
@@ -118,38 +124,9 @@
 
 // Search results position widget
 .search-results-position
-  +flexbox
-  +align-content(stretch)
+  +align-self(center)
   +flex-grow(1)
-  +flex-basis(15%)
-  min-width: 150px
-  .paginator
-    +flexbox
-    +align-items(center)
-  .text
-    margin-right: 11px
-    p
-      margin-right: 5px
-      margin-bottom: 0
-    input
-      color: $medium-gray
-      text-align: right
-      background-color: white
-      position: relative
-      top: -1px
-      width: 35px
-  //.track
-    width: 8px
-    height: 100%
-    background-color: $gray-background
-    +box-shadow(1px 0 1px rgba(0,0,0,0.06) inset)
-    +border-radius(0 2px 0 0)
-  //.fill
-    //position: absolute
-    //top: 0
-    //right: 0
-    //height: 0
-    width: 8px
-    +gradient(#459cd9, #1e82c8)
-    +border-radius(0 2px 0 0)
-
+  +flex-shrink(0)
+  +flex-basis(200px)
+  margin-right: 16px
+  white-space: nowrap

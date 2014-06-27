@@ -8,21 +8,15 @@ angular.module('contentful').directive('searchResultsPosition', function() {
       paginator: '='
     },
     link: function(scope, element) {
-      scope.$watch('paginator.progress()', function(progress) {
-        element.find('.fill').css({height: progress*100+'%'});
+      scope.pages = [];
+      scope.$watch('paginator.numPages()', function (pages) {
+        scope.pages = new Array(pages);
+        _.each(scope.pages, function (v, i) { scope.pages[i] = i; });
       });
-      var numberController = element.find('input[type=number]').controller('ngModel');
-
-      numberController.$parsers.push(function (viewValue) {
-        return parseInt(viewValue)-1;
-      });
-
-      numberController.$formatters.push(function (modelValue) {
-        return parseInt(modelValue)+1;
-      });
-
+      var numberController = element.find('select').controller('ngModel');
     }
   };
 });
+
 
 
