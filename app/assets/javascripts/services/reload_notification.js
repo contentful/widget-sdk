@@ -1,14 +1,13 @@
 'use strict';
 
-angular.module('contentful').factory('ReloadNotification', function  ReloadNotificationFactory($injector, modalDialog) {
+angular.module('contentful').factory('ReloadNotification', function($window, $location, $rootScope, modalDialog) {
   var open = false;
 
   function reloadWithCacheBuster() {
-    var $location = $injector.get('$location');
     var search = $location.search();
     search.cfv = Math.ceil(Math.random()*10000000);
     $location.search(search);
-    window.location = '/';
+    window.location = $location.url();
   }
 
   return {
@@ -25,7 +24,7 @@ angular.module('contentful').factory('ReloadNotification', function  ReloadNotif
       modalDialog.open({
         title: 'The application needs to reload',
         message: message,
-        scope: $injector.get('$rootScope'),
+        scope: $rootScope,
         cancelLabel: null,
         noBackgroundClose: true
       }).then(reloadWithCacheBuster);
