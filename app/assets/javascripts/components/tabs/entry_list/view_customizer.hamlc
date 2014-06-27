@@ -1,29 +1,26 @@
 .dropdown-btn
-  %button.dropdown-toggle.default-button(
-    tooltip="Select visible columns" tooltip-placement="top" tooltip-container=".view-customizer")
-    %i.ss-columns.button-icon
-    %i.ss-dropdown.button-icon
-  .dropdown-menu(position="bottomcenter" container=".tab-content")
+  %i.ss-columns.dropdown-toggle(
+    tooltip="Select visible columns" tooltip-placement="top" tooltip-container=".client")
+  .dropdown-menu(position="left" container=".tab-content")
     %h3 Displayed columns
-    %ul.displayed-fields
-      %li.non-customizable
-        %p Name
-    %ul.displayed-fields(ui-sortable="displayedFieldsSortOptions" ng-model="displayedFields")
-      %li.customizable(ng-repeat="field in displayedFields track by field.id" data-field-id="{{field.id}}")
-        %p {{field.name}}
-        .close-button(ng-show="!field.persistent" ng-click="hideField($event, field)")
-    %ul.displayed-fields
-      %li.non-customizable
-        %p Status
+    .column-lists
+      %ul.displayed-fields
+        %li.non-customizable
+          %p Name
+      %ul.displayed-fields(ui-sortable="displayedFieldsSortOptions" ng-model="displayedFields")
+        %li.customizable(ng-repeat="field in displayedFields track by field.id" data-field-id="{{field.id}}")
+          %p {{field.name}}
+          .close-button(ng-show="!field.persistent" ng-click="hideField($event, field)")
+      %ul.displayed-fields
+        %li.non-customizable
+          %p Status
 
-    %hr(ng-hide="hiddenFields.length == 0")
+      %hr(ng-hide="hiddenFields.length == 0")
 
-    %h3(ng-hide="hiddenFields.length == 0") Available Columns
-    %ul.hidden-fields(ng-hide="hiddenFields.length == 0")
-      %li(ng-repeat="field in hiddenFields track by field.id")
-        %a(ng-if="field.type != 'Object' && !field.disabled" ng-click="displayField($event, field)")
-          {{field.name}}
-        %span(ng-if="field.type == 'Object' || field.disabled")
-          {{field.name}}
-
-
+      %h3(ng-hide="hiddenFields.length == 0") Available Columns
+      %ul.hidden-fields(ng-hide="hiddenFields.length == 0")
+        %li(ng-repeat="field in hiddenFields track by field.id")
+          %a(ng-if="field.type != 'Object' && !field.disabled" ng-click="displayField($event, field)")
+            {{field.name}}
+          %span(ng-if="field.type == 'Object' || field.disabled")
+            {{field.name}}
