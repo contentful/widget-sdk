@@ -38,7 +38,7 @@ module.exports = (function() {
           function(t) {return t},
           function(head, tail) { return [head].concat(tail) },
           function() { return [] },
-          function(key, op, value) { return annotate2({
+          function(key, op, value) { return annotate({
                   key: key,
                   operator: op,
                   value: value,
@@ -52,14 +52,14 @@ module.exports = (function() {
           { type: "literal", value: "=", description: "\"=\"" },
           /^[<>]/,
           { type: "class", value: "[<>]", description: "[<>]" },
-          function(op) { return annotate2(op, 'Operator') },
-          function(val) { return annotate2(val, 'Value') },
+          function(op) { return annotate(op, 'Operator') },
+          function(val) { return annotate(val, 'Value') },
           void 0,
           function() { return '' },
           /^[a-z0-9_\-]/i,
           { type: "class", value: "[a-z0-9_\\-]i", description: "[a-z0-9_\\-]i" },
-          function(key) { return annotate2(key, 'Key') },
-          function(exp) { return annotate2(exp, 'Query') },
+          function(key) { return annotate(key, 'Key') },
+          function(exp) { return annotate(exp, 'Query') },
           "\"",
           { type: "literal", value: "\"", description: "\"\\\"\"" },
           /^[^"]/,
@@ -67,9 +67,10 @@ module.exports = (function() {
           function(q) { return q },
           /^[^ "]/i,
           { type: "class", value: "[^ \"]i", description: "[^ \"]i" },
-          { type: "other", description: "whitespace" },
+          { type: "other", description: "whitespace*" },
           /^[ \t]/,
           { type: "class", value: "[ \\t]", description: "[ \\t]" },
+          { type: "other", description: "whitespace+" },
           { type: "other", description: "EOL" },
           "\r\n",
           { type: "literal", value: "\r\n", description: "\"\\r\\n\"" },
@@ -87,16 +88,16 @@ module.exports = (function() {
           peg$decode("!7)+\x83$7!+y% !!7*+2$7!+(%4\"6\"\"! %$\"#  \"#  ,=&!7*+2$7!+(%4\"6\"\"! %$\"#  \"#  \"+3%7)+)%4$6#$\"\"!%$$#  $##  $\"#  \"#  *. \"!7)+& 4!6$! %"),
           peg$decode("7\"*# \"7'"),
           peg$decode("!7&+>$7#+4%7$+*%4#6%##\"! %$##  $\"#  \"#  "),
-          peg$decode("!7)+\x87$!.&\"\"2&3'*\\ \"!0(\"\"1!3)+3$.*\"\"2*3++#%'\"%$\"#  \"#  *5 \".*\"\"2*3+*) \"0,\"\"1!3-+! (%+2%7)+(%4#6.#!!%$##  $\"#  \"#  "),
+          peg$decode("!!.&\"\"2&3'*\\ \"!0(\"\"1!3)+3$.*\"\"2*3++#%'\"%$\"#  \"#  *5 \".*\"\"2*3+*) \"0,\"\"1!3-+! (%+2$7)+(%4\"6.\"!!%$\"#  \"#  "),
           peg$decode("!7(*# \"7%+' 4!6/!! %"),
           peg$decode("!!87**# \"7+9+$$\"# 0\"\"  +& 4!61! %"),
-          peg$decode("!! !02\"\"1!33+,$,)&02\"\"1!33\"\"\"  +! (%+' 4!64!! %"),
-          peg$decode("!7(+' 4!65!! %"),
+          peg$decode("!! !02\"\"1!33+,$,)&02\"\"1!33\"\"\"  +! (%+2$7)+(%4\"64\"!!%$\"#  \"#  "),
+          peg$decode("!7(+2$7)+(%4\"65\"!!%$\"#  \"#  "),
           peg$decode("!.6\"\"2637+i$! !08\"\"1!39+,$,)&08\"\"1!39\"\"\"  +! (%+>%.6\"\"2637*# \"7,+(%4#6:#!!%$##  $\"#  \"#  *D \"! !0;\"\"1!3<+,$,)&0;\"\"1!3<\"\"\"  +! (%"),
           peg$decode("8 !0>\"\"1!3?,)&0>\"\"1!3?\"9*\" 3="),
-          peg$decode("8 !0>\"\"1!3?+,$,)&0>\"\"1!3?\"\"\"  9*\" 3="),
-          peg$decode("8.A\"\"2A3B*G \".C\"\"2C3D*; \".E\"\"2E3F*/ \".G\"\"2G3H*# \"7,9*\" 3@"),
-          peg$decode("8!8-\"\"1!3J9*$$\"\" 0\"#  9*\" 3I")
+          peg$decode("8 !0>\"\"1!3?+,$,)&0>\"\"1!3?\"\"\"  9*\" 3@"),
+          peg$decode("8.B\"\"2B3C*G \".D\"\"2D3E*; \".F\"\"2F3G*/ \".H\"\"2H3I*# \"7,9*\" 3A"),
+          peg$decode("8!8-\"\"1!3K9*$$\"\" 0\"#  9*\" 3J")
         ],
 
         peg$currPos          = 0,
@@ -525,7 +526,7 @@ module.exports = (function() {
     }
 
 
-      function annotate2(content, type) {
+      function annotate(content, type) {
         return {
           type: type,
           text: text(),

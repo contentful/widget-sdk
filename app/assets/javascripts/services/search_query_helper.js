@@ -61,7 +61,7 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser,
     }),
 
     operatorsForKey: function (key, contentType) {
-      return complete.operator(key, contentType);
+      return complete.operator(key, contentType).items[0].value;
     },
 
     buildQuery: function (space, contentType, queryString) {
