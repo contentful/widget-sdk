@@ -1,6 +1,13 @@
-angular.module('contentful').factory('SpaceContext', ['TabList', '$rootScope', '$q', '$parse', 'sentry', 'notification', 'PromisedLoader',
-                                     function(TabList, $rootScope, $q, $parse, sentry, notification, PromisedLoader){
-  'use strict';
+'use strict';
+
+angular.module('contentful').factory('SpaceContext', ['$injector', function($injector){
+  var $parse             = $injector.get('$parse');
+  var $q                 = $injector.get('$q');
+  var $rootScope         = $injector.get('$rootScope');
+  var PromisedLoader     = $injector.get('PromisedLoader');
+  var ReloadNotification = $injector.get('ReloadNotification');
+  var TabList            = $injector.get('TabList');
+  var notification       = $injector.get('notification');
 
   function SpaceContext(space){
     this.tabList = new TabList();
@@ -64,7 +71,8 @@ angular.module('contentful').factory('SpaceContext', ['TabList', '$rootScope', '
             return spaceContext.refreshPublishedContentTypes().then(function () {
               return contentTypes;
             });
-          });
+          })
+          .catch(ReloadNotification.apiErrorHandler);
         } else {
           this.contentTypes = [];
           this.publishedContentTypes = [];
@@ -95,7 +103,8 @@ angular.module('contentful').factory('SpaceContext', ['TabList', '$rootScope', '
             notification.warn(err.body.message);
           else
             notification.serverError('Could not get published Content Types', { data: err });
-        });
+        })
+        .catch(ReloadNotification.apiErrorHandler);
       },
 
       registerPublishedContentType: function (publishedContentType) {

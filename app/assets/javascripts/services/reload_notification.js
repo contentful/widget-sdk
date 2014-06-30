@@ -1,6 +1,10 @@
 'use strict';
 
-angular.module('contentful').factory('ReloadNotification', ['$window', '$location', '$rootScope', 'modalDialog', function($window, $location, $rootScope, modalDialog) {
+angular.module('contentful').factory('ReloadNotification', ['$injector', function($injector) {
+  var $location   = $injector.get('$location');
+  var $rootScope  = $injector.get('$rootScope');
+  var modalDialog = $injector.get('modalDialog');
+
   var open = false;
 
   function reloadWithCacheBuster() {
@@ -10,7 +14,21 @@ angular.module('contentful').factory('ReloadNotification', ['$window', '$locatio
     window.location = $location.url();
   }
 
-  return {
+  function trigger(options) {
+    if(open) return;
+    open = true;
+    options = _.defaults({}, options, {
+      title: 'The application needs to reload',
+      message: 'The application has encountered a problem and needs to reload.',
+      scope: $rootScope,
+      cancelLabel: null,
+      noBackgroundClose: true
+    });
+    modalDialog.open(options)
+    .then(reloadWithCacheBuster);
+  }
+
+  var ReloadNotificationService = {
     triggerImmediateReload: function () {
       reloadWithCacheBuster();
     },
@@ -18,16 +36,23 @@ angular.module('contentful').factory('ReloadNotification', ['$window', '$locatio
     trigger: function(message) {
       if(open) return;
       open = true;
-      if (!message) {
-        message = 'The application has encountered a problem and needs to reload.';
+      trigger({message: message});
+    },
+
+    apiErrorHandler: function (err) {
+      if ('statusCode' in err && 500 <= err.statusCode) {
+        ReloadNotificationService.triggerApiError();
       }
-      modalDialog.open({
-        title: 'The application needs to reload',
-        message: message,
-        scope: $rootScope,
-        cancelLabel: null,
-        noBackgroundClose: true
-      }).then(reloadWithCacheBuster);
+    },
+
+    triggerApiError: function () {
+      trigger({
+        title: 'Error connecting to backend',
+        template: 'api_error_dialog',
+        message: null
+      });
     }
   };
+
+  return ReloadNotificationService;
 }]);
