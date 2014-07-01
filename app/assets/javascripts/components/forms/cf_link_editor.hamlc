@@ -99,7 +99,7 @@
             %th.cell-preview Preview
             %th.cell-name Title / Description
             %th.cell-type Type / Updated
-      .endless-container(at-bottom="loadMore()" num-elements="paginator.page")
+      .endless-container(at-bottom="searchController.loadMore()" num-elements="paginator.page")
         %table.result-list
           %tbody
             %tr.thin-row(ng-repeat="entity in entities track by entity.getId()"
