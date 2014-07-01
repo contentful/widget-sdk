@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('CfAutocompleteResultsCtrl', function ($scope, $attrs, $parse) {
+angular.module('contentful').controller('CfAutocompleteResultsCtrl', ['$scope', '$attrs', '$parse', function ($scope, $attrs, $parse) {
   var controller = this;
   var getAutocompleteResults = $parse($attrs.cfAutocompleteResults);
   this.selectedIndex = -1;
@@ -58,4 +58,4 @@ angular.module('contentful').controller('CfAutocompleteResultsCtrl', function ($
     unwatchResults();
     unwatchResults = null;
   });
-});
+}]);

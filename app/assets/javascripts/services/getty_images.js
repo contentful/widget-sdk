@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('gettyImagesFactory', function gettyImagesFactory($http, $q, client) {
+angular.module('contentful').factory('gettyImagesFactory', ['$http', '$q', 'client', function gettyImagesFactory($http, $q, client) {
   var accessTokens = {};
   var service = {};
   var space;
@@ -131,4 +131,4 @@ angular.module('contentful').factory('gettyImagesFactory', function gettyImagesF
     return service;
   };
 
-});
+}]);

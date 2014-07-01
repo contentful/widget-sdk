@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('entryList', function($timeout){
+angular.module('contentful').directive('entryList', ['$timeout', function($timeout){
   // Definitions for narrow/medium types in entry list controller
   var classToWidth = {
     narrow: 70,
@@ -81,4 +81,4 @@ angular.module('contentful').directive('entryList', function($timeout){
 
     }
   };
-});
+}]);

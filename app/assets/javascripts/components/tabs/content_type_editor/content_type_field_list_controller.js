@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeFieldListCtrl', function($scope, analytics, validation, $q, random, sentry) {
+angular.module('contentful').controller('ContentTypeFieldListCtrl', ['$scope', 'analytics', 'validation', '$q', 'random', 'sentry', function($scope, analytics, validation, $q, random, sentry) {
 
   $scope.$watchCollection('contentType.data.fields', function (fields, old, scope) {
     if (hasUIIDs(fields)) {
@@ -155,4 +155,4 @@ angular.module('contentful').controller('ContentTypeFieldListCtrl', function($sc
     var scope = event.currentScope;
     scope.openField(scope.contentType.data.fields[index]);
   });
-});
+}]);

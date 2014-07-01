@@ -38,7 +38,8 @@ angular.module('contentful/app', [
   'ui.sortable',
   'contentful/user_interface',
   'contentful'
-], function($locationProvider, clientProvider, authenticationProvider, analyticsProvider, environment, $sceDelegateProvider, $compileProvider){
+], ['$locationProvider', 'clientProvider', 'authenticationProvider', 'analyticsProvider', 'environment', '$sceDelegateProvider', '$compileProvider', 'timeRelativeConfig', 
+  function($locationProvider, clientProvider, authenticationProvider, analyticsProvider, environment, $sceDelegateProvider, $compileProvider, timeRelativeConfig){
   'use strict';
   var env = environment.settings;
 
@@ -60,9 +61,12 @@ angular.module('contentful/app', [
   clientProvider.endpoint('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');
   //analyticsProvider.forceLoad();
-}).run(function(authentication, client, ShareJS) {
+  timeRelativeConfig.calendar.en.sameElse = 'll';
+  timeRelativeConfig.calendar.en.lastWeek = 'ddd, LT';
+  timeRelativeConfig.calendar.en.nextWeek = 'Next ddd, LT';
+}]).run(['authentication', 'client', 'ShareJS', function(authentication, client, ShareJS) {
   'use strict';
   authentication.login();
   client.persistenceContext.adapter.token = authentication.token;
   ShareJS.connect();
-});
+}]);

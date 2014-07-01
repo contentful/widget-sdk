@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('dropdownBtn', function($parse) {
+angular.module('contentful').directive('dropdownBtn', ['$parse', function($parse) {
   return {
     restrict: 'C',
     link: function(scope, element, attrs) {
@@ -115,7 +115,7 @@ angular.module('contentful').directive('dropdownBtn', function($parse) {
             };
           case 'left':
             return {
-              my: 'right top',
+              my: 'right top-10',
               at: 'left top'
             };
           case 'bottomcenter':
@@ -182,5 +182,5 @@ angular.module('contentful').directive('dropdownBtn', function($parse) {
 
     }
   };
-});
+}]);
 

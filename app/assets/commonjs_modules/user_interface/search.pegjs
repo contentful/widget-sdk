@@ -1,5 +1,5 @@
 {
-  function annotate2(content, type) {
+  function annotate(content, type) {
     return {
       type: type,
       text: text(),
@@ -22,7 +22,7 @@ Token
 
 Pair
   = key:Key op:Operator value:Value
-    { return annotate2({
+    { return annotate({
         key: key,
         operator: op,
         value: value,
@@ -30,34 +30,34 @@ Pair
     }
 
 Operator
-  = _ op:$(":" / [<>!=] "=" / "=" / [<>]) _
-    { return annotate2(op, 'Operator') }
+  = op:$(":" / [<>!=] "=" / "=" / [<>]) _
+    { return annotate(op, 'Operator') }
 
 Value
   = val:(Expression / Novalue)
-    { return annotate2(val, 'Value') }
+    { return annotate(val, 'Value') }
 
 Novalue
   = & (__ / eol)
     { return '' }
 
 Key
-  = key:($ [a-z0-9_-]i+)
-    { return annotate2(key, 'Key') }
+  = key:($ [a-z0-9_-]i+) _
+    { return annotate(key, 'Key') }
 
 Query
-  = exp:Expression
-    { return annotate2(exp, 'Query') }
+  = exp:Expression _
+    { return annotate(exp, 'Query') }
 
 Expression
   = "\"" q:$[^"]+ ("\"" / eof)
     { return q }
   / $[^ "]i+
 
-_ "whitespace"
+_ "whitespace*"
   = [ \t]*
 
-__ "whitespace"
+__ "whitespace+"
   = [ \t]+
 
 eol "EOL"

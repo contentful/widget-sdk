@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  service('notification', function(sentry) {
+  service('notification', ['sentry', function(sentry) {
     return {
       messages: [],
 
@@ -37,4 +37,4 @@ angular.module('contentful').
         return _.reject(this.messages, 'seen').reverse();
       }
     };
-  });
+  }]);

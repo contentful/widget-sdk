@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('AssetListViewsController', function($scope, $controller, mimetype, random){
+angular.module('contentful').controller('AssetListViewsController', ['$scope', '$controller', 'mimetype', 'random', function($scope, $controller, mimetype, random){
 
   return $controller('ListViewsController', {
     $scope: $scope,
@@ -60,4 +60,4 @@ angular.module('contentful').controller('AssetListViewsController', function($sc
 
   }
 
-});
+}]);

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfCopyPaste', function(environment) {
+angular.module('contentful').directive('cfCopyPaste', ['environment', function(environment) {
   ZeroClipboard.config({
     moviePath: "<%= asset_path 'user_interface/node_modules/zeroclipboard/ZeroClipboard.swf' %>",
     forceHandCursor: true,
@@ -73,4 +73,4 @@ angular.module('contentful').directive('cfCopyPaste', function(environment) {
       });
     }
   };
-});
+}]);

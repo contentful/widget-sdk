@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('CfViewFolderController', function ($scope, modalDialog, analytics) {
+angular.module('contentful').controller('CfViewFolderController', ['$scope', 'modalDialog', 'analytics', function ($scope, modalDialog, analytics) {
   $scope.$watch('folder.id', function (id) {
     $scope.regularFolder = id !== 'default';
   });
@@ -18,4 +18,4 @@ angular.module('contentful').controller('CfViewFolderController', function ($sco
     });
   };
 
-});
+}]);

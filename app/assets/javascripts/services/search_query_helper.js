@@ -1,6 +1,6 @@
 'use strict';
 // Provide services to entrylistController and cfTokenizedSearch
-angular.module('contentful').factory('searchQueryHelper', function(searchParser, userCache, $q, searchQueryAutocompletions, AssetContentType){
+angular.module('contentful').factory('searchQueryHelper', ['searchParser', 'userCache', '$q', 'searchQueryAutocompletions', 'AssetContentType', function(searchParser, userCache, $q, searchQueryAutocompletions, AssetContentType){
   var lastQueryString, lastParseResult = [];
   var complete = searchQueryAutocompletions.complete;
   var api = {
@@ -61,7 +61,7 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser,
     }),
 
     operatorsForKey: function (key, contentType) {
-      return complete.operator(key, contentType);
+      return complete.operator(key, contentType).items[0].value;
     },
 
     buildQuery: function (space, contentType, queryString) {
@@ -135,4 +135,4 @@ angular.module('contentful').factory('searchQueryHelper', function(searchParser,
     }).map(function(token){return token.content;}).value().join(' ');
   }
 
-});
+}]);

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('AssetListActionsCtrl', function AssetListActionsCtrl($scope, listActions) {
+angular.module('contentful').controller('AssetListActionsCtrl', ['$scope', 'listActions', function AssetListActionsCtrl($scope, listActions) {
 
   var _cacheSelected;
 
@@ -104,4 +104,4 @@ angular.module('contentful').controller('AssetListActionsCtrl', function AssetLi
     if (unpublished === 0) return 'Republish';
     return '(Re)publish';
   };
-});
+}]);

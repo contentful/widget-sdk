@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('tutorialExampledata', function ($q, environment, $rootScope, $timeout, sampleEntries, sampleContentTypes, client, listActions) {
+angular.module('contentful').factory('tutorialExampledata', ['$q', 'environment', '$rootScope', '$timeout', 'sampleEntries', 'sampleContentTypes', 'client', 'listActions', function ($q, environment, $rootScope, $timeout, sampleEntries, sampleContentTypes, client, listActions) {
   return {
     load: function () {
       var deferred = $q.defer();
@@ -140,5 +140,5 @@ angular.module('contentful').factory('tutorialExampledata', function ($q, enviro
       });
     }
   };
-});
+}]);
 

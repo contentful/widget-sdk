@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope, getFieldTypeName, analytics, validation, assert, notification, stringUtils, sentry, defer) {
+angular.module('contentful').controller('CfFieldSettingsCtrl', ['$scope', 'getFieldTypeName', 'analytics', 'validation', 'assert', 'notification', 'stringUtils', 'sentry', 'defer', function ($scope, getFieldTypeName, analytics, validation, assert, notification, stringUtils, sentry, defer) {
 
   $scope.$watch(function (scope) {
     var f = scope.field;
@@ -134,4 +134,4 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', function ($scope,
     });
   };
 
-});
+}]);

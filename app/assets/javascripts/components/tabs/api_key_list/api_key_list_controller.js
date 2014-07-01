@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  controller('ApiKeyListCtrl', function($scope, $window, environment) {
+  controller('ApiKeyListCtrl', ['$scope', '$window', 'environment', function($scope, $window, environment) {
     $scope.marketingUrl = environment.settings.marketing_url;
 
     $scope.refreshApiKeys = function() {
@@ -31,4 +31,4 @@ angular.module('contentful').
       $scope.refreshApiKeys();
     });
 
-  });
+  }]);

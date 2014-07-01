@@ -40,7 +40,8 @@ angular.module('contentful/test', [
   'contentful/user_interface',
   'contentful',
   'contentful/mocks'
-], function($locationProvider, clientProvider, authenticationProvider, environment, $sceDelegateProvider, $compileProvider){
+], ['$locationProvider', 'clientProvider', 'authenticationProvider', 'environment', '$sceDelegateProvider', '$compileProvider', 'timeRelativeConfig', 
+  function($locationProvider, clientProvider, authenticationProvider, environment, $sceDelegateProvider, $compileProvider, timeRelativeConfig){
   'use strict';
   var env = environment.settings;
   $locationProvider.html5Mode(true);
@@ -48,4 +49,7 @@ angular.module('contentful/test', [
   $sceDelegateProvider.resourceUrlWhitelist([/(https?:)?\/\/([^:\/.?&;]*\.)?(staticflinkly-thriventures\.netdna-ssl\.com|quirely.com|flinkly.com|joistio.com|contentful.com)(:\d+)?\/.*/, 'self' ]);
   clientProvider.endpoint('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');
-});
+  timeRelativeConfig.calendar.en.sameElse = 'll';
+  timeRelativeConfig.calendar.en.lastWeek = 'ddd, LT';
+  timeRelativeConfig.calendar.en.nextWeek = 'Next ddd, LT';
+}]);

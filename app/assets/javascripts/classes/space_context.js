@@ -1,4 +1,5 @@
-angular.module('contentful').factory('SpaceContext', function(TabList, $rootScope, $q, $parse, sentry, notification, PromisedLoader){
+angular.module('contentful').factory('SpaceContext', ['TabList', '$rootScope', '$q', '$parse', 'sentry', 'notification', 'PromisedLoader',
+                                     function(TabList, $rootScope, $q, $parse, sentry, notification, PromisedLoader){
   'use strict';
 
   function SpaceContext(space){
@@ -185,4 +186,4 @@ angular.module('contentful').factory('SpaceContext', function(TabList, $rootScop
     };
 
     return SpaceContext;
-});
+}]);

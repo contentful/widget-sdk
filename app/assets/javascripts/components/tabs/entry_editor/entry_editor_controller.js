@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-  .controller('EntryEditorCtrl', function EntryEditorCtrl($scope, validation, addCanMethods, notification, sentry) {
+  .controller('EntryEditorCtrl', ['$scope', 'validation', 'addCanMethods', 'notification', 'sentry', function EntryEditorCtrl($scope, validation, addCanMethods, notification, sentry) {
   $scope.$watch('tab.params.entry', 'entry=tab.params.entry');
   $scope.$watch(function entryEditorEnabledWatcher(scope) {
     return !scope.entry.isArchived() && scope.can('update', scope.entry.data);
@@ -222,4 +222,4 @@ angular.module('contentful')
     return this.spaceContext.entryTitle(this.entry);
   };
 
-});
+}]);

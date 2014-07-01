@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfDialog', function (modalDialog) {
+angular.module('contentful').directive('cfDialog', ['modalDialog', function (modalDialog) {
   return {
     restrict: 'CA',
     link: function (scope, elem, attrs) {
@@ -25,4 +25,4 @@ angular.module('contentful').directive('cfDialog', function (modalDialog) {
       scope.$on('$destroy', modalDialog.close);
     }
   };
-});
+}]);

@@ -20,20 +20,8 @@
       h1
         line-height: 40px
 
-    .view-customizer
-      +flexbox
-      +align-items(center)
-      +flex-grow(1)
-      margin-right: 20px
-      .dropdown-toggle
-        width: 55px
-        height: $tab-header-field-height
-        padding-right: 6px
-      .ss-dropdown
-        margin-left: 5px
-
     .add-entity
-      +flex-grow(1)
+      +flex-grow(0)
       +flex-basis(12%)
       +justify-content(flex-end)
       +flexbox
@@ -91,3 +79,13 @@
   .result-list
     tbody tr
       @extend %tr-clickable
+
+  .view-customizer
+    position: absolute
+    right: 0
+    top: 0
+    height: 27px
+    .dropdown-toggle
+      line-height: 28px
+      margin-right: 5px
+

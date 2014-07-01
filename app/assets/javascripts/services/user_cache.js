@@ -1,6 +1,6 @@
 'use strict';
 angular.module('contentful').
-  service('userCache', function UserCache($browser, $q) {
+  service('userCache', ['$browser', '$q', function UserCache($browser, $q) {
     var cache = {};
     var inflight = false;
     var pending = [];
@@ -40,4 +40,4 @@ angular.module('contentful').
         });
       },
     };
-  });
+  }]);

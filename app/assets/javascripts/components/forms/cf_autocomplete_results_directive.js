@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfAutocompleteResults', function (keycodes) {
+angular.module('contentful').directive('cfAutocompleteResults', ['keycodes', function (keycodes) {
   return {
     controller: 'CfAutocompleteResultsCtrl',
     controllerAs: 'resultsController',
@@ -34,4 +34,4 @@ angular.module('contentful').directive('cfAutocompleteResults', function (keycod
       });
     }
   };
-});
+}]);

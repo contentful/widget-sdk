@@ -18,7 +18,7 @@
 // otValueChanged
 //   ngModelSet(scope, incomingValue)
 
-angular.module('contentful').directive('cfFieldEditor', function($compile, $log, $parse) {
+angular.module('contentful').directive('cfFieldEditor', ['$compile', '$log', '$parse', function($compile, $log, $parse) {
   return {
     restrict: 'C',
     require: '^otPath',
@@ -84,4 +84,4 @@ angular.module('contentful').directive('cfFieldEditor', function($compile, $log,
       }
     }
   };
-});
+}]);

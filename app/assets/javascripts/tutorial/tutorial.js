@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('tutorial', function ($compile, notification, tutorialExampledata, $q, $timeout, $rootScope, analytics, sentry, environment, debounce, throttle) {
+angular.module('contentful').factory('tutorial', ['$compile', 'notification', 'tutorialExampledata', '$q', '$timeout', '$rootScope', 'analytics', 'sentry', 'environment', 'debounce', 'throttle', function ($compile, notification, tutorialExampledata, $q, $timeout, $rootScope, analytics, sentry, environment, debounce, throttle) {
   var guiders = window.guiders;
   guiders._defaultSettings.buttons = null;
   guiders._defaultSettings.xButton = true;
@@ -1099,4 +1099,4 @@ angular.module('contentful').factory('tutorial', function ($compile, notificatio
   };
 
   return new Tutorial();
-});
+}]);

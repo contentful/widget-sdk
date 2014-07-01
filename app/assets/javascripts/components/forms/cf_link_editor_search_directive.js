@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfLinkEditorSearch', function(defer) {
+angular.module('contentful').directive('cfLinkEditorSearch', ['defer', function(defer) {
   return {
     restrict: 'AC',
     controller: 'cfLinkEditorSearchCtrl',
@@ -28,4 +28,4 @@ angular.module('contentful').directive('cfLinkEditorSearch', function(defer) {
       }
     },
   };
-});
+}]);

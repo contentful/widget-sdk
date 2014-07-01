@@ -1,7 +1,7 @@
 angular.module('contentful/environment', []).constant('environment', {
   env: '<%= Rails.env %>',
   settings: <%= Contentful.ui_config.to_json %>
-}).config(function (environment) {
+}).config(['environment', function (environment) {
   // for ZeroClipboard
   environment.settings.resourceUrlWhiteList = [
     'static.joistio.com:8888',
@@ -30,4 +30,4 @@ angular.module('contentful/environment', []).constant('environment', {
     //environment.settings.api_host = 'app.joistio.com:8888' + '/api';
     //environment.settings.ot_host  = 'app.joistio.com:8888' + '/ot';
   }
-});
+}]);

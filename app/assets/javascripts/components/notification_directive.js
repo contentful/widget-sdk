@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  directive('notification', function($timeout) {
+  directive('notification', ['$timeout', function($timeout) {
     var durationAfterSeen = 3e3;
     // if message is longer than this, extend duration
     var messageLengthModifier = 100;
@@ -38,4 +38,4 @@ angular.module('contentful').
         markSeenAfterDelay();
       }
     };
-  });
+  }]);

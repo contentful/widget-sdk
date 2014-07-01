@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfObjectEditor', function(defer){
+angular.module('contentful').directive('cfObjectEditor', ['defer', function(defer){
   return {
     restrict: 'C',
     template: JST['cf_object_editor'](),
@@ -55,4 +55,4 @@ angular.module('contentful').directive('cfObjectEditor', function(defer){
 
     }
   };
-});
+}]);

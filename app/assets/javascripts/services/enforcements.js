@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').factory('enforcements', function Enforcements($injector, $location, $window, stringUtils) {
+angular.module('contentful').factory('enforcements', ['$injector', '$location', '$window', 'stringUtils', function Enforcements($injector, $location, $window, stringUtils) {
 
   var spaceContext, user;
 
@@ -171,4 +171,4 @@ angular.module('contentful').factory('enforcements', function Enforcements($inje
       setTokenObjects(spaceContext);
     }
   };
-});
+}]);

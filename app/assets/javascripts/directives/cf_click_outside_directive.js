@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfClickOutside', function($parse, $document){
+angular.module('contentful').directive('cfClickOutside', ['$parse', '$document', function($parse, $document){
   return {
     restrict: 'A',
     link: function(scope, element, attr) {
@@ -38,5 +38,5 @@ angular.module('contentful').directive('cfClickOutside', function($parse, $docum
       });
     }
   };
-});
+}]);
 

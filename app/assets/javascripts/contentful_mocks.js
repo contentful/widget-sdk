@@ -4,7 +4,7 @@
 var mocks = angular.module('contentful/mocks', []);
 
 
-mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
+mocks.factory('cfStub', ['contentfulClient', 'SpaceContext', function (contentfulClient, SpaceContext) {
   var Client = contentfulClient.Client;
   var Adapter = contentfulClient.adapters.testing;
   var adapter = new Adapter();
@@ -176,10 +176,10 @@ mocks.factory('cfStub', function (contentfulClient, SpaceContext) {
   };
 
   return cfStub;
-});
+}]);
 
-mocks.config(function ($provide) {
-  $provide.decorator('ShareJS', function ($delegate) {
+mocks.config(['$provide', function ($provide) {
+  $provide.decorator('ShareJS', ['$delegate', function ($delegate) {
     function FakeShareJSDoc(entity) {
       this.entity = entity;
       this.snapshot = angular.copy(entity.data);
@@ -202,8 +202,8 @@ mocks.config(function ($provide) {
     };
 
     return $delegate;
-  });
-});
+  }]);
+}]);
 
 mocks.provider('ReloadNotification', function () {
   this.$get = function () {
@@ -213,7 +213,7 @@ mocks.provider('ReloadNotification', function () {
   };
 });
 
-mocks.provider('cfCanStubs', function ($provide) {
+mocks.provider('cfCanStubs', ['$provide', function ($provide) {
   this.setup = function (reasonsStub) {
     $provide.value('reasonsDenied', reasonsStub);
     $provide.value('authorization', {
@@ -231,7 +231,7 @@ mocks.provider('cfCanStubs', function ($provide) {
   };
 
   this.$get = function () {};
-});
+}]);
 
 mocks.config(function ($provide) {
   $provide.value('debounce', immediateInvocationStub);
@@ -283,7 +283,7 @@ mocks.config(function ($provide) {
   }
 });
 
-mocks.config(function ($provide, $controllerProvider) {
+mocks.config(['$provide', '$controllerProvider', function ($provide, $controllerProvider) {
   $provide.stubDirective = function (name, definition) {
     $provide.factory(name + 'Directive', function () {
       return [_.extend({
@@ -317,4 +317,4 @@ mocks.config(function ($provide, $controllerProvider) {
     return stubs;
   };
 
-});
+}]);

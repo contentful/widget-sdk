@@ -22,7 +22,7 @@ describe('cfLinkEditor Directive', function () {
       $provide.value('fileTypeFilter', function () {return '';});
       $provide.value('fileExtensionFilter', function () {return '';});
 
-      $provide.removeDirectives('cfThumbnail');
+      $provide.removeDirectives('cfThumbnail', 'relative');
     });
 
     inject(function ($compile, $rootScope, cfLinkEditorDirective) {

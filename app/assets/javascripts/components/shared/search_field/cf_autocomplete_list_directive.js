@@ -4,7 +4,7 @@ angular.module('contentful').directive('cfAutocompleteList', function(){
     restrict: 'A',
     scope: true,
     template: JST['cf_autocomplete_list'](),
-    controller: function ($scope) {
+    controller: ['$scope', function ($scope) {
       //selectInitialAutocompletion();
 
       $scope.$on('selectNextAutocompletion', function () {
@@ -70,6 +70,6 @@ angular.module('contentful').directive('cfAutocompleteList', function(){
         if ($scope.selectedAutocompletion)
           $scope.fillAutocompletion($scope.selectedAutocompletion.value);
       }
-    }
+    }]
   };
 });

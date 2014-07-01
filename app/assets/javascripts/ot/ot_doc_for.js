@@ -6,7 +6,7 @@ angular.module('contentful').directive('otDocFor', function () {
     priority: -100,
     controller: 'otDocForCtrl'
   };
-}).controller('otDocForCtrl', function OtDocForCtrl($scope, $attrs, ShareJS, sentry) {
+}).controller('otDocForCtrl', ['$scope', '$attrs', 'ShareJS', 'sentry', function OtDocForCtrl($scope, $attrs, ShareJS, sentry) {
   function remoteOpListener(ops) {
     $scope.$apply(function(scope) {
       _.each(ops, function (op) {
@@ -152,4 +152,4 @@ angular.module('contentful').directive('otDocFor', function () {
     $scope.otDoc.on('remoteop', updateHandler);
   }
 
-});
+}]);

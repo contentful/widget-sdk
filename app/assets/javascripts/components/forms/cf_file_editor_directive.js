@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('contentful').directive('cfFileEditor', function (notification, filepicker, $parse, aviary, modalDialog, stringUtils) {
+angular.module('contentful').directive('cfFileEditor', ['notification', 'filepicker', '$parse', 'aviary', 'modalDialog', 'stringUtils',
+                                       function (notification, filepicker, $parse, aviary, modalDialog, stringUtils) {
   return {
     restrict: 'C',
     require: ['ngModel', '^otPath'],
@@ -107,4 +108,4 @@ angular.module('contentful').directive('cfFileEditor', function (notification, f
 
     }
   };
-});
+}]);

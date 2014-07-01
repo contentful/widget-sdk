@@ -1,4 +1,4 @@
-angular.module('contentful').directive('apiKeyEditor', function(modalDialog, keycodes, defer) {
+angular.module('contentful').directive('apiKeyEditor', ['modalDialog', 'keycodes', 'defer', function(modalDialog, keycodes, defer) {
   'use strict';
   return {
     template: JST.api_key_editor(),
@@ -22,4 +22,4 @@ angular.module('contentful').directive('apiKeyEditor', function(modalDialog, key
       };
     }
   };
-});
+}]);

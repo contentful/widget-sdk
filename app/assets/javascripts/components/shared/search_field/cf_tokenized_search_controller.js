@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('cfTokenizedSearchController', function ($scope, searchQueryHelper, keycodes, $attrs, $parse) {
+angular.module('contentful').controller('cfTokenizedSearchController', ['$scope', 'searchQueryHelper', 'keycodes', '$attrs', '$parse', function ($scope, searchQueryHelper, keycodes, $attrs, $parse) {
   $scope.inner = { term: null };
   $scope.position = null;
   $scope.showAutocompletions = false;
@@ -151,6 +151,7 @@ angular.module('contentful').controller('cfTokenizedSearchController', function 
         length: 0
       };
     }
+    if (token.type !== 'Value') insertString = insertString + ' ';
     $scope.backupString(originalString, token.offset, token.length);
     $scope.inner.term = spliceSlice(originalString, token.offset, token.length, insertString);
     $scope.selectRange(token.offset, insertString.length);
@@ -159,18 +160,21 @@ angular.module('contentful').controller('cfTokenizedSearchController', function 
   $scope.confirmAutocompletion = function () {
     var token = $scope.getCurrentToken();
     var originalString = $scope.inner.term || '';
-    var insertString = token.type === 'Value'    ? ' ' :
-                       token.type === 'Operator' ? ''  :
-                       // TODO whoopsie, knowledge leaking here about internal structure of result. Should not.
-                       searchQueryHelper.operatorsForKey(token.content, $scope.getContentType()).items[0].value;
-    $scope.inner.term = spliceSlice(originalString, token.end, 0, insertString);
+    var appendString = token.type === 'Value'    ? ' ' :
+                       token.type === 'Operator' ? '' :
+                       /*token.type === Key*/      operator(token.content) + ' ';
+    $scope.inner.term = spliceSlice(originalString, token.end, 0, appendString);
     $scope.clearBackupString();
     if(token.type === 'Value') $scope.submitSearch($scope.inner.term);
-    $scope.selectRange(token.end + insertString.length, 0)
+    $scope.selectRange(token.end + appendString.length, 0)
     .then(function () {
-      $scope.position = token.end + insertString.length;
+      $scope.position = token.end + appendString.length;
       $scope.updateAutocompletions();
     });
+
+    function operator(key) {
+      return searchQueryHelper.operatorsForKey(key, $scope.getContentType());
+    }
   };
 
   $scope._backupString=null;
@@ -195,6 +199,6 @@ angular.module('contentful').controller('cfTokenizedSearchController', function 
     return str.slice(0, index) + add + str.slice(index + count);
   }
   
-});
+}]);
 
 

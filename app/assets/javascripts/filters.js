@@ -29,14 +29,14 @@ filters.filter('fileSize', function () {
   };
 });
 
-filters.filter('mimeGroup', function (mimetype) {
+filters.filter('mimeGroup', ['mimetype', function (mimetype) {
   return function (file) {
     if (file) return mimetype.getGroupDisplayName(
       mimetype.getExtension(file.fileName),
       file.contentType
     );
   };
-});
+}]);
 
 filters.filter('isFileMissing', function () {
   return function (file) {
@@ -56,7 +56,7 @@ filters.filter('isFileReady', function () {
   };
 });
 
-filters.filter('fileType', function (mimetype) {
+filters.filter('fileType', ['mimetype', function (mimetype) {
   return function (file) {
     if(file)
       return mimetype.getGroupDisplayName(
@@ -65,9 +65,9 @@ filters.filter('fileType', function (mimetype) {
       );
     return '';
   };
-});
+}]);
 
-filters.filter('fileExtension', function (mimetype) {
+filters.filter('fileExtension', ['mimetype', function (mimetype) {
   return function (file) {
     if(file){
       var ext = mimetype.getExtension(file.fileName);
@@ -75,7 +75,7 @@ filters.filter('fileExtension', function (mimetype) {
     }
     return '';
   };
-});
+}]);
 
 filters.filter('isFieldLink', function () {
   return function (field) {

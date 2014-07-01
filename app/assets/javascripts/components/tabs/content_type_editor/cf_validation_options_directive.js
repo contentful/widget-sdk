@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfValidationOptions', function (keycodes) {
+angular.module('contentful').directive('cfValidationOptions', ['keycodes', function (keycodes) {
 
   // If precision is larger than this number is only represented in exponential
   // because lol javascript
@@ -23,7 +23,7 @@ angular.module('contentful').directive('cfValidationOptions', function (keycodes
 
     },
 
-    controller: function CfValidationOptionsCtrl($scope, mimetype, notification) {
+    controller: ['$scope', 'mimetype', 'notification', function CfValidationOptionsCtrl($scope, mimetype, notification) {
       $scope.mimetypeGroups = mimetype.groupDisplayNames;
 
       function fieldIsNumeric() {
@@ -76,6 +76,6 @@ angular.module('contentful').directive('cfValidationOptions', function (keycodes
         $scope.updateDoc();
       };
 
-    }
+    }]
   };
-});
+}]);

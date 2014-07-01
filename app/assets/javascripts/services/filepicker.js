@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('filepicker', function ($window, environment, $q, $rootScope, jsloader) {
+angular.module('contentful').factory('filepicker', ['$window', 'environment', '$q', '$rootScope', 'jsloader', function ($window, environment, $q, $rootScope, jsloader) {
     if (!$window.filepicker) {
       var loadFile = jsloader.create('//api.filepicker.io/v1/');
       loadFile('filepicker.js');
@@ -74,4 +74,4 @@ angular.module('contentful').factory('filepicker', function ($window, environmen
         return deferred.promise;
       }
     };
-});
+}]);

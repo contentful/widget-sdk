@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfPredefinedValuesList', function (debounce) {
+angular.module('contentful').directive('cfPredefinedValuesList', ['debounce', function (debounce) {
 
   var VISIBLE_ITEMS = 6;
 
@@ -48,4 +48,4 @@ angular.module('contentful').directive('cfPredefinedValuesList', function (debou
     }
 
   };
-});
+}]);

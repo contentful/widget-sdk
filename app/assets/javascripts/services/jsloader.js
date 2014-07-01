@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('jsloader', function ($document) {
+angular.module('contentful').factory('jsloader', ['$document', function ($document) {
   return {
     create: function (baseUrl, httpsBaseUrl) {
       var doc = $document.get(0);
@@ -17,5 +17,5 @@ angular.module('contentful').factory('jsloader', function ($document) {
       };
     }
   };
-});
+}]);
 

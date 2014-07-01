@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scope, Paginator, notification, PromisedLoader, $q, searchQueryHelper) {
+angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', 'Paginator', 'notification', 'PromisedLoader', '$q', 'searchQueryHelper', function($scope, Paginator, notification, PromisedLoader, $q, searchQueryHelper) {
   var controller = this;
   var entityLoader = new PromisedLoader();
   $scope.paginator = new Paginator();
@@ -177,4 +177,4 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', function($scop
     });
   }
 
-});
+}]);

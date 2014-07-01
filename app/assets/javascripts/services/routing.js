@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').provider('routing', function ($routeProvider) {
+angular.module('contentful').provider('routing', ['$routeProvider', function ($routeProvider) {
   $routeProvider.when('/spaces/:spaceId', {viewType: null});
   $routeProvider.when('/spaces/:spaceId/entries', {viewType: 'entry-list'});
   $routeProvider.when('/spaces/:spaceId/entries/:entryId', {viewType: 'entry-editor'});
@@ -16,7 +16,7 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
   $routeProvider.when('/account', {viewType: 'account'});
   $routeProvider.otherwise({root: true});
 
-  this.$get = function ($rootScope, $route, $location) {
+  this.$get = ['$rootScope', '$route', '$location', function ($rootScope, $route, $location) {
     function Routing(){}
 
     Routing.prototype = {
@@ -81,5 +81,5 @@ angular.module('contentful').provider('routing', function ($routeProvider) {
     };
 
     return new Routing();
-  };
-});
+  }];
+}]);

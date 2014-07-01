@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeListCtrl', function ContentTypeListCtrl($scope, analytics) {
+angular.module('contentful').controller('ContentTypeListCtrl', ['$scope', function ContentTypeListCtrl($scope) {
   $scope.contentTypeSection = 'all';
 
   $scope.numFields = function(contentType) {
@@ -93,4 +93,4 @@ angular.module('contentful').controller('ContentTypeListCtrl', function ContentT
     $scope.resetContentTypes();
   });
 
-});
+}]);

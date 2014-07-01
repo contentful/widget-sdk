@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  controller('ApiKeyEditorCtrl', function($scope, authentication, environment, notification, sentry) {
+  controller('ApiKeyEditorCtrl', ['$scope', 'authentication', 'environment', 'notification', 'sentry', function($scope, authentication, environment, notification, sentry) {
     $scope.$watch('tab.params.apiKey', 'apiKey=tab.params.apiKey');
 
     $scope.tab.closingMessage = 'You have unsaved changes.';
@@ -86,4 +86,4 @@ angular.module('contentful').
     $scope.deactivateDeleteConfirm = function () {
       $scope.deleteConfirm = false;
     };
-  });
+  }]);

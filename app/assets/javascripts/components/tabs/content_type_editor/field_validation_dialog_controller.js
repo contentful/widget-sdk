@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('FieldValidationDialogController', function($scope, analytics, availableValidations, notification) {
+angular.module('contentful').controller('FieldValidationDialogController', ['$scope', 'analytics', 'availableValidations', 'notification', function($scope, analytics, availableValidations, notification) {
   $scope.validationType = availableValidations.type;
   $scope.validationName = availableValidations.name;
 
@@ -95,4 +95,4 @@ angular.module('contentful').controller('FieldValidationDialogController', funct
     return $scope.can('create', 'ContentType') && !_.isEmpty($scope.availableValidations);
   };
 
-});
+}]);

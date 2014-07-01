@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('ViewMenuController', function($scope, $attrs, modalDialog, random, $timeout, analytics, $parse){
+angular.module('contentful').controller('ViewMenuController', ['$scope', '$attrs', 'modalDialog', 'random', '$timeout', 'analytics', '$parse', function($scope, $attrs, modalDialog, random, $timeout, analytics, $parse){
   $scope.tempFreeViews = [];
   $scope.folderStates = loadFolderStates();
   var getCurrentView = $parse($attrs.currentView);
@@ -170,4 +170,4 @@ angular.module('contentful').controller('ViewMenuController', function($scope, $
   $scope.nameChanged = function () {
     $scope.saveViews();
   };
-});
+}]);

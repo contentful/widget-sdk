@@ -1,4 +1,4 @@
-angular.module('contentful').provider('client', function ClientProvider(contentfulClient) {
+angular.module('contentful').provider('client', ['contentfulClient', function ClientProvider(contentfulClient) {
   'use strict';
 
   var endpoint = null;
@@ -13,4 +13,4 @@ angular.module('contentful').provider('client', function ClientProvider(contentf
   this.$get = function() {
     return new Client(new Adapter(endpoint));
   };
-});
+}]);

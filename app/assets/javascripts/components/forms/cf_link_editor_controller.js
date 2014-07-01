@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $parse, $attrs, validation, cfSpinner, ShareJS, $q) {
+angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$parse', '$attrs', 'validation', 'cfSpinner', 'ShareJS', '$q', function ($scope, $parse, $attrs, validation, cfSpinner, ShareJS, $q) {
   $scope.links = [];
   $scope.linkedEntities = [];
 
@@ -166,4 +166,4 @@ angular.module('contentful').controller('cfLinkEditorCtrl', function ($scope, $p
     ngModelGet =
     validations = null;
   });
-});
+}]);

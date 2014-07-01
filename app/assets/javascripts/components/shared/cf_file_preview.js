@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfFilePreview', function ($compile, $window, $document, defer) {
+angular.module('contentful').directive('cfFilePreview', ['$compile', '$window', '$document', 'defer', function ($compile, $window, $document, defer) {
   return {
     scope: true,
     link: function (scope, elem, attrs) {
@@ -132,4 +132,4 @@ angular.module('contentful').directive('cfFilePreview', function ($compile, $win
       scope.$on('$destroy', removePreview);
     }
   };
-});
+}]);

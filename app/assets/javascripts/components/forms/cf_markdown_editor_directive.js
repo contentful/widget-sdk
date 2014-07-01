@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfMarkdownEditor', function(marked, keycodes, $document, $window, $timeout, delay){
+angular.module('contentful').directive('cfMarkdownEditor', ['marked', 'keycodes', '$document', '$window', '$timeout', 'delay', function(marked, keycodes, $document, $window, $timeout, delay){
   return {
     restrict: 'C',
     template: JST['cf_markdown_editor'](),
@@ -284,4 +284,4 @@ angular.module('contentful').directive('cfMarkdownEditor', function(marked, keyc
       });
     }
   };
-});
+}]);

@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfAccountView', function($window, $rootScope, authentication, routing, sentry){
+angular.module('contentful').directive('cfAccountView', ['$window', '$rootScope', 'authentication', 'routing', 'sentry', function($window, $rootScope, authentication, routing, sentry){
   return {
     template: JST['iframe_view'](),
     restrict: 'C',
@@ -76,4 +76,4 @@ angular.module('contentful').directive('cfAccountView', function($window, $rootS
       }
     }
   };
-});
+}]);
