@@ -3,6 +3,7 @@
 angular.module('contentful').factory('ReloadNotification', ['$injector', function($injector) {
   var $location   = $injector.get('$location');
   var $rootScope  = $injector.get('$rootScope');
+  var $q          = $injector.get('$q');
   var modalDialog = $injector.get('modalDialog');
 
   var open = false;
@@ -51,6 +52,7 @@ angular.module('contentful').factory('ReloadNotification', ['$injector', functio
         template: 'api_error_dialog',
         message: null
       });
+      return $q.reject.apply($q, arguments);
     }
   };
 

@@ -103,7 +103,8 @@ angular.module('contentful').
       $scope.selection.setBaseSize($scope.assets.length);
     }, function () {
       $scope.paginator.page--;
-    }).catch(ReloadNotification.apiErrorHandler);
+    })
+    .catch(ReloadNotification.apiErrorHandler);
   };
 
   $scope.statusClass = function(asset){

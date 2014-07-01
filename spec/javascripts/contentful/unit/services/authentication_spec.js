@@ -313,8 +313,8 @@ describe('Authentication service', function () {
       var tokenLookup, errorResponse;
       beforeEach(function () {
         errorResponse = {error: 'response'};
-        clientTokenLookupStub.callsArgWith(0, errorResponse);
         tokenLookup = authentication.getTokenLookup();
+        clientTokenLookupStub.yield(errorResponse);
       });
 
       it('client token lookup is called', function () {

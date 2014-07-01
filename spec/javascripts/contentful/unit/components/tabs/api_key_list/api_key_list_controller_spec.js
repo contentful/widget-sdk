@@ -48,8 +48,8 @@ describe('API Key List Controller', function () {
     var getApiKeysStub;
     beforeEach(function() {
       getApiKeysStub = sinon.stub(scope.spaceContext.space, 'getApiKeys');
-      getApiKeysStub.callsArgWith(1, null, {});
       scope.refreshApiKeys();
+      getApiKeysStub.yield(null, {});
     });
 
     it('calls api keys getter', function() {

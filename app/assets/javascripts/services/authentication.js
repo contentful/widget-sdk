@@ -1,6 +1,6 @@
-angular.module('contentful').provider('authentication', ['$injector', function AuthenticationProvider($injector) {
-  'use strict';
+'use strict';
 
+angular.module('contentful').provider('authentication', ['$injector', function AuthenticationProvider($injector) {
   var authApp, marketingApp, QueryLinkResolver;
 
   var environment, contentfulClient, $window, $location, $q, $rootScope, notification, ReloadNotification;
@@ -139,12 +139,14 @@ angular.module('contentful').provider('authentication', ['$injector', function A
   };
 
   this.$get = ['$injector', function($injector){
-    $location    = $injector.get('$location');
-    $q           = $injector.get('$q');
-    $rootScope   = $injector.get('$rootScope');
-    $window      = $injector.get('$window');
-    notification = $injector.get('notification');
-    sentry       = $injector.get('sentry');
+    $location          = $injector.get('$location');
+    $q                 = $injector.get('$q');
+    $rootScope         = $injector.get('$rootScope');
+    $window            = $injector.get('$window');
+    notification       = $injector.get('notification');
+    sentry             = $injector.get('sentry');
+    ReloadNotification = $injector.get('ReloadNotification');
+    var client         = $injector.get('client');
 
     var authentication = new Authentication(client);
     this.setEnvVars();

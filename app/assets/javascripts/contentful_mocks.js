@@ -175,6 +175,13 @@ mocks.factory('cfStub', ['contentfulClient', 'SpaceContext', function (contentfu
     return apiKey;
   };
 
+  cfStub.collection = function (items, total) {
+    if (_.isNumber(items)) items = new Array(items);
+    total = total === undefined ? items.length : total;
+    Object.defineProperty(items, 'total', {value: total});
+    return items;
+  };
+
   return cfStub;
 }]);
 
