@@ -1,18 +1,18 @@
 {
   function annotate(content, type) {
     return {
-      type: type,
-      text: text(),
-      offset: offset(),
-      length: text().length,
-      end: offset() + text().length,
-      content: content,
+      type:     type,
+      text:     text(),
+      offset:   offset(),
+      length:   text().length,
+      end:      offset() + text().length,
+      content:  content,
     }
   }
 }
 
 Search
-  = _ head:Token tail:(__ t:Token {return t})* _
+  = _ head:Token tail:(t:Token {return t})* _
     { return [head].concat(tail) }
   / _
     { return [] }
@@ -34,7 +34,7 @@ Operator
     { return annotate(op, 'Operator') }
 
 Value
-  = val:(Expression / Novalue)
+  = val:(Expression_ / Novalue)
     { return annotate(val, 'Value') }
 
 Novalue
@@ -46,8 +46,12 @@ Key
     { return annotate(key, 'Key') }
 
 Query
-  = exp:Expression _
+  = exp:Expression_
     { return annotate(exp, 'Query') }
+
+Expression_
+  = x:Expression _
+    {return x}
 
 Expression
   = "\"" q:$[^"]+ ("\"" / eof)
