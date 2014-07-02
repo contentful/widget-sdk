@@ -210,15 +210,15 @@ mocks.config(['$provide', function ($provide) {
 
     return $delegate;
   }]);
-}]);
 
-mocks.provider('ReloadNotification', function () {
-  this.$get = function () {
-    return {
-      trigger: sinon.stub()
-    };
-  };
-});
+  $provide.decorator('ReloadNotification', ['$delegate', function ($delegate) {
+    for (var prop in $delegate) {
+      sinon.stub($delegate, prop);
+    }
+    return $delegate;
+  }]);
+
+}]);
 
 mocks.provider('cfCanStubs', ['$provide', function ($provide) {
   this.setup = function (reasonsStub) {

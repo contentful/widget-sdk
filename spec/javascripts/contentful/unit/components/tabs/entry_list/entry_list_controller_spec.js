@@ -438,6 +438,28 @@ describe('Entry List Controller', function () {
 
   });
 
+  describe('Api Errors', function () {
+    var apiErrorHandler;
+    beforeEach(inject(function (ReloadNotification){
+      createController();
+      scope.$apply();
+      apiErrorHandler = ReloadNotification.apiErrorHandler;
+    }));
+
+    it('should cause resetEntries to show an error message', function () {
+      scope.resetEntries();
+      scope.spaceContext.space.getEntries.yield({statusCode: 500}, null);
+      expect(apiErrorHandler).toBeCalled();
+    });
+
+    it('should cause loadMore to show an error message', function () {
+      scope.loadMore();
+      scope.spaceContext.space.getEntries.yield({statusCode: 500}, null);
+      expect(apiErrorHandler).toBeCalled();
+    });
+  });
+
+
   describe('status class', function () {
     beforeEach(function() {
       createController();

@@ -1,7 +1,7 @@
 'use strict';
 
 describe('API Key List Controller', function () {
-  var controller, scope;
+  var controller, scope, apiErrorHandler;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -11,8 +11,9 @@ describe('API Key List Controller', function () {
         }
       });
     });
-    inject(function ($rootScope, $controller, cfStub) {
+    inject(function ($rootScope, $controller, cfStub, ReloadNotification) {
       scope = $rootScope.$new();
+      apiErrorHandler = ReloadNotification.apiErrorHandler;
 
       var space = cfStub.space('test');
       var contentTypeData = cfStub.contentTypeData('testType');
@@ -59,6 +60,20 @@ describe('API Key List Controller', function () {
     it('saves api keys on scope', function() {
       expect(scope.apiKeys).toEqual({});
     });
+  });
+
+  describe('refreshing api keys fails', function () {
+    var getApiKeysStub;
+    beforeEach(function() {
+      getApiKeysStub = sinon.stub(scope.spaceContext.space, 'getApiKeys');
+      scope.refreshApiKeys();
+      getApiKeysStub.yield({statusCode: 500}, null);
+    });
+    
+    it('results in an error message', function () {
+      expect(apiErrorHandler).toBeCalled();
+    });
+
   });
 
   describe('when tab becomes active', function () {
