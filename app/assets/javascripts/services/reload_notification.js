@@ -42,18 +42,14 @@ angular.module('contentful').factory('ReloadNotification', ['$injector', functio
 
     apiErrorHandler: function (err) {
       if ('statusCode' in err && 500 <= err.statusCode) {
-        ReloadNotificationService.triggerApiError();
+        trigger({
+          title: 'Error connecting to backend',
+          template: 'api_error_dialog',
+          message: null
+        });
       }
-    },
-
-    triggerApiError: function () {
-      trigger({
-        title: 'Error connecting to backend',
-        template: 'api_error_dialog',
-        message: null
-      });
       return $q.reject.apply($q, arguments);
-    }
+    },
   };
 
   return ReloadNotificationService;
