@@ -42,6 +42,12 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
     sys: true
   };
 
+  var contentTypeField = {
+    id: 'contentType',
+    name: 'Content Type',
+    type: 'Symbol'
+  };
+
   $scope.systemFields = [
     updatedAtField,
     createdAtField,
@@ -108,6 +114,7 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
       title: 'New View',
       searchTerm: null,
       contentTypeId: null,
+      contentTypeHidden: false,
       id: null,
       order: {
         fieldId: updatedAtField.id,

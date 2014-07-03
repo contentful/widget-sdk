@@ -50,7 +50,7 @@
         %tr
           %th.cell-select
             %input(type="checkbox" cf-selection="" ng-show="entries.length > 0" tabindex="-1")
-          %th.cell-content-type(ng-show="!tab.params.view.contentTypeId") Content Type
+          %th.cell-content-type(ng-show="!tab.params.view.contentTypeId && !tab.params.view.contentTypeHidden") Content Type
           %th.cell-display-name Name
           %th(ng-repeat="field in displayedFields track by field.id" data-field-id="{{field.id}}" ng-class="[getFieldClass(field)]")
             %span(ng-class="{active: isOrderField(field)}")
@@ -72,7 +72,7 @@
           %tr(ng-repeat="entry in visibleEntries = (entries | filter:visibleInCurrentList) track by entry.getId()" cf-click-local="navigator.entryEditor(entry).goTo()")
             %td.cell-select(ng-click="selection.toggle(entry);$event.stopPropagation()")
               %input(type="checkbox" cf-selection="entry" tabindex="-1")
-            %td.cell-content-type(ng-show="!tab.params.view.contentTypeId")
+            %td.cell-content-type(ng-show="!tab.params.view.contentTypeId && !tab.params.view.contentTypeHidden")
               %span {{spaceContext.publishedTypeForEntry(entry).getName()}}
             %td.cell-display-name
               %span {{spaceContext.entryTitle(entry)}}

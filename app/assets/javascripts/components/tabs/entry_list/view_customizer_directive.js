@@ -14,6 +14,11 @@ angular.module('contentful').directive('viewCustomizer', ['defer', function(defe
         ev.stopPropagation();
         scope.removeDisplayField(field);
       };
+
+      scope.toggleContentType = function (ev) {
+        ev.stopPropagation();
+        scope.tab.params.view.contentTypeHidden = !scope.tab.params.view.contentTypeHidden;
+      };
     },
     controller: ['$scope', function ($scope) {
       $scope.displayedFieldsSortOptions = {
