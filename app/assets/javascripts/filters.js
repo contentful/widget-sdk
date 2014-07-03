@@ -102,4 +102,13 @@ filters.filter('userNameDisplay', function () {
   };
 });
 
-
+filters.filter('decimalMarks', function () {
+  return function (str) {
+    str = str ? str+'' : '';
+    var markedStr = '', bound;
+    for(var i=str.length; bound=i-3, i>0; i=bound){
+      markedStr = str.slice(bound, i) + (i < str.length ? ',' : '') + markedStr;
+    }
+    return str.slice(0, i<0 ? 3+i : i) + (str.length>3 ? markedStr : '');
+  };
+});
