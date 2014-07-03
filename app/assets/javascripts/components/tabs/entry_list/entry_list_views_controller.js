@@ -15,7 +15,8 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
     id: 'createdAt',
     name: 'Created',
     type: 'Date',
-    sys: true
+    sys: true,
+    canPersist: true
   };
 
   var updatedAtField = {
@@ -23,14 +24,15 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
     name: 'Updated',
     type: 'Date',
     sys: true,
-    persistent: true
+    canPersist: true
   };
 
   var publishedAtField = {
     id: 'publishedAt',
     name: 'Published',
     type: 'Date',
-    sys: true
+    sys: true,
+    canPersist: true
   };
 
   var authorField = {

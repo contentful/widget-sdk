@@ -28,6 +28,11 @@ angular.module('contentful').directive('viewCustomizer', ['defer', function(defe
           ui.item.removeClass('dragging');
         },
       };
+
+      $scope.isPersistent = function (field) {
+        var displayedFields = _.reject($scope.displayedFields, {id: field.id});
+        return !_.some(displayedFields, 'canPersist');
+      };
     }]
   };
 }]);
