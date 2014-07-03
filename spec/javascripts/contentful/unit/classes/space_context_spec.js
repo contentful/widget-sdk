@@ -452,6 +452,35 @@ describe('SpaceContext class with a space', function () {
     });
 
   });
+
+  describe('getting display field for a given type', function() {
+    beforeEach(function() {
+      spaceContext.getPublishedContentType = sinon.stub();
+    });
+
+    it('returns the field', function() {
+      var field = {id: 'name'};
+      spaceContext.getPublishedContentType.returns({
+        data: {
+          displayField: 'name',
+          fields: [field]
+        }
+      });
+      expect(spaceContext.displayFieldForType('type')).toBe(field);
+    });
+
+    it('returns nothing', function() {
+      var field = {id: 'name'};
+      spaceContext.getPublishedContentType.returns({
+        data: {
+          displayField: 'othername',
+          fields: [field]
+        }
+      });
+      expect(spaceContext.displayFieldForType('type')).toBeUndefined();
+    });
+
+  });
 });
 
 
