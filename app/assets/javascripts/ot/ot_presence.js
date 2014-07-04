@@ -115,8 +115,10 @@ angular.module('contentful').
 
     doLater();
 
+    var controller = this;
     $scope.$on('$destroy', function(event) {
       var scope = event.currentScope;
+      controller.focus = null;
       $timeout.cancel(timeout);
       if (scope.otDoc) {
         scope.otDoc.removeListener('closed', closedHandler);

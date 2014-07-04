@@ -6,7 +6,7 @@ angular.module('contentful').directive('otDocFor', function () {
     priority: -100,
     controller: 'otDocForCtrl'
   };
-}).controller('otDocForCtrl', ['$scope', '$attrs', 'ShareJS', 'sentry', function OtDocForCtrl($scope, $attrs, ShareJS, sentry) {
+}).controller('otDocForCtrl', ['$scope', '$attrs', 'ShareJS', 'sentry', 'defer', function OtDocForCtrl($scope, $attrs, ShareJS, sentry, defer) {
   function remoteOpListener(ops) {
     $scope.$apply(function(scope) {
       _.each(ops, function (op) {
@@ -49,6 +49,17 @@ angular.module('contentful').directive('otDocFor', function () {
               }
             });
           } else {
+              doc.on('closed', function () {
+                // TODO this is dangerous! We could be removing listeners that are still needed
+                var d = this;
+                defer(function () {
+                  d._listeners.length = 0;
+                  _.each(d._events, function (listeners) {
+                    listeners.length = 0;
+                  });
+                  d = null;
+                });
+              });
               if (shouldDocBeOpen(scope)) {
                 //console.log('otDocFor installing doc %o for entity %o', doc, entity);
                 //console.log('setting doc to %o (id: %o) in scope %o', doc.name, doc.snapshot.sys.id, scope.$id);

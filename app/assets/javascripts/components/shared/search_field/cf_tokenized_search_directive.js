@@ -18,6 +18,10 @@ angular.module('contentful').directive('cfTokenizedSearch', ['$parse', 'searchQu
           input.textrange('set', offset, length);
         }, null, false);
       };
+
+      scope.$on('$destroy', function () {
+        scope = null; //MEMLEAK FIX
+      });
     }
   };
 }]);

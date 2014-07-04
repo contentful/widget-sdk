@@ -29,8 +29,8 @@ angular.module('contentful').directive('cfAutocompleteResults', ['keycodes', fun
 
       scope.$on('$destroy', function () {
         elem[0].removeEventListener('keydown', navigateResultList, true);
-        elem.off('keydown', navigateResultList);
         navigateResultList = null;
+        scope = null; //MEMLEAK FIX
       });
     }
   };
