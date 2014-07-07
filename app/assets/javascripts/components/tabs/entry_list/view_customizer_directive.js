@@ -14,6 +14,11 @@ angular.module('contentful').directive('viewCustomizer', ['defer', function(defe
         ev.stopPropagation();
         scope.removeDisplayField(field);
       };
+
+      scope.toggleContentType = function (ev) {
+        ev.stopPropagation();
+        scope.tab.params.view.contentTypeHidden = !scope.tab.params.view.contentTypeHidden;
+      };
     },
     controller: ['$scope', function ($scope) {
       $scope.displayedFieldsSortOptions = {
@@ -27,6 +32,11 @@ angular.module('contentful').directive('viewCustomizer', ['defer', function(defe
         stop: function (ev, ui) {
           ui.item.removeClass('dragging');
         },
+      };
+
+      $scope.isPersistent = function (field) {
+        var displayedFields = _.reject($scope.displayedFields, {id: field.id});
+        return !_.some(displayedFields, 'canPersist');
       };
     }]
   };

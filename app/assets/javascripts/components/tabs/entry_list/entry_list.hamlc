@@ -50,19 +50,11 @@
         %tr
           %th.cell-select
             %input(type="checkbox" cf-selection="" ng-show="entries.length > 0" tabindex="-1")
-          %th.cell-content-type(ng-show="!tab.params.view.contentTypeId") Content Type
-          %th.cell-display-name Name
-          %th(ng-repeat="field in displayedFields track by field.id" data-field-id="{{field.id}}" ng-class="[getFieldClass(field)]")
-            %span(ng-class="{active: isOrderField(field)}")
-              %button.transparent-button(ng-show="fieldIsSortable(field) && !isFieldCollapsed(field)" ng-click="orderColumnBy(field)")
-                %i.button-icon.ss-directup(ng-show="tab.params.view.order.direction == 'ascending' && isOrderField(field)")
-                %i.button-icon.ss-dropdown(ng-show="tab.params.view.order.direction == 'descending' || !isOrderField(field)")
-              %button.transparent-button.truncated-button(ng-click="orderColumnBy(field)" ng-disabled="!fieldIsSortable(field)" ng-hide="isFieldCollapsed(field)")
-                {{field.name}}
-              %button.transparent-button.truncated-button(ng-click="expandColumn(field)" ng-show="isFieldCollapsed(field)"
-                                                          tooltip="{{field.name}}" tooltip-placement="bottom" tooltip-container=".main-header")
-                {{field.name}}
-
+          %th.cell-content-type(ng-show="!tab.params.view.contentTypeId && !tab.params.view.contentTypeHidden") Content Type
+          %th.cell-display-name(ng-if="!tab.params.view.contentTypeId") Name
+          %th.cell-display-name(ng-if="tab.params.view.contentTypeId" ng-init="field=spaceContext.displayFieldForType(tab.params.view.contentTypeId)" cf-field-order-header="displayField")
+          %th(ng-repeat="field in displayedFields track by field.id" cf-field-order-header=""
+            data-field-id="{{field.id}}" ng-class="[getFieldClass(field)]")
           %th.cell-status Status
     .view-customizer
 
@@ -72,7 +64,7 @@
           %tr(ng-repeat="entry in visibleEntries = (entries | filter:visibleInCurrentList) track by entry.getId()" cf-click-local="navigator.entryEditor(entry).goTo()")
             %td.cell-select(ng-click="selection.toggle(entry);$event.stopPropagation()")
               %input(type="checkbox" cf-selection="entry" tabindex="-1")
-            %td.cell-content-type(ng-show="!tab.params.view.contentTypeId")
+            %td.cell-content-type(ng-show="!tab.params.view.contentTypeId && !tab.params.view.contentTypeHidden")
               %span {{spaceContext.publishedTypeForEntry(entry).getName()}}
             %td.cell-display-name
               %span {{spaceContext.entryTitle(entry)}}

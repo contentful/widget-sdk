@@ -140,6 +140,11 @@ angular.module('contentful').factory('SpaceContext', ['TabList', '$rootScope', '
         return contentType;
       },
 
+      displayFieldForType: function (contentTypeId) {
+        var ct = this.getPublishedContentType(contentTypeId);
+        return _.find(ct.data.fields, {id: ct.data.displayField});
+      },
+
       localizedField: function(entity, path, locale) {
         var getField = $parse(path);
         var field = getField(entity);

@@ -15,7 +15,8 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
     id: 'createdAt',
     name: 'Created',
     type: 'Date',
-    sys: true
+    sys: true,
+    canPersist: true
   };
 
   var updatedAtField = {
@@ -23,14 +24,15 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
     name: 'Updated',
     type: 'Date',
     sys: true,
-    persistent: true
+    canPersist: true
   };
 
   var publishedAtField = {
     id: 'publishedAt',
     name: 'Published',
     type: 'Date',
-    sys: true
+    sys: true,
+    canPersist: true
   };
 
   var authorField = {
@@ -38,6 +40,12 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
     name: 'Author',
     type: 'Symbol',
     sys: true
+  };
+
+  var contentTypeField = {
+    id: 'contentType',
+    name: 'Content Type',
+    type: 'Symbol'
   };
 
   $scope.systemFields = [
@@ -106,6 +114,7 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
       title: 'New View',
       searchTerm: null,
       contentTypeId: null,
+      contentTypeHidden: false,
       id: null,
       order: {
         fieldId: updatedAtField.id,
