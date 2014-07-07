@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$injector', function($scope, $injector) {
+angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$attrs', '$injector', function($scope, $attrs, $injector) {
   var $q                = $injector.get('$q');
   var Paginator         = $injector.get('Paginator');
   var PromisedLoader    = $injector.get('PromisedLoader');
@@ -48,7 +48,8 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$i
   });
 
   $scope.$on('autocompleteResultPicked', function (event, index, entity) {
-    $scope.addLink(entity).then(function () {
+    addEntity(entity).then(function () {
+      // TODO shouldn't be necessary because the link editor hides the search anyway
       if ($scope.linkSingle) controller.clearSearch();
     });
   });
@@ -67,7 +68,7 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$i
   });
 
   $scope.pick = function (entity) {
-    $scope.addLink(entity).then(function () {
+    addEntity(entity).then(function () {
       controller.clearSearch();
     });
   };
@@ -77,7 +78,7 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$i
     $scope.spaceContext.space.createEntry(contentType.getId(), {}, cb);
     return cb.promise
     .then(function createEntityHandler(entry) {
-      return $scope.addLink(entry)
+      return addEntity(entry)
       .then(function addLinkHandler() {
         $scope.navigator.entryEditor(entry).goTo();
       })
@@ -101,7 +102,7 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$i
     $scope.spaceContext.space.createAsset({}, cb);
     return cb.promise
     .then(function createEntityHandler(asset) {
-      return $scope.addLink(asset)
+      return addEntity(asset)
       .then(function addLinkHandler() {
         $scope.navigator.assetEditor(asset).goTo();
       })
@@ -167,6 +168,10 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$i
   $scope.$on('$destroy', function () {
     $scope = null; //MEMLEAK FIX
   });
+
+  function addEntity(entity) {
+    return $q.when($scope.$eval($attrs.addEntity, {entity: entity}));
+  }
 
   function buildQuery() {
     var contentType;

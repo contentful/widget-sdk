@@ -30,7 +30,9 @@ describe('cfLinkEditorSearch Controller', function () {
         then: stubs.then
       });
 
-      cfLinkEditorSearchCtrl = $controller('cfLinkEditorSearchCtrl', { $scope: scope });
+      var attrs = {addEntity: 'addLink(entity)'};
+
+      cfLinkEditorSearchCtrl = $controller('cfLinkEditorSearchCtrl', { $scope: scope, $attrs: attrs });
     });
   });
 
