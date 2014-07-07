@@ -58,7 +58,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['marked', 'keycodes'
       textarea.on('blur', function () {
         toolbar.removeClass('opaque');
         modeSwitch.removeClass('opaque');
-        textarea.trigger('input').trigger('textInput').trigger('autosize');
+        textarea.trigger('input').trigger('autosize');
       });
 
       textarea.on('keydown', function (ev) {

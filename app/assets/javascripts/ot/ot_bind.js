@@ -41,6 +41,7 @@ otModule.directive('otBindText', ['ShareJS', '$sniffer', '$parse', 'isDiacritica
         if (scope.otSubdoc) {
           //console.log('attaching');
           makeAndAttach(scope.otSubdoc);
+          elm.on('blur', triggerUpdate);
         }
       }
 
@@ -49,6 +50,7 @@ otModule.directive('otBindText', ['ShareJS', '$sniffer', '$parse', 'isDiacritica
           //console.log('detaching');
           unbindTextField();
           unbindTextField = null;
+          elm.off('blur', triggerUpdate);
         }
       }
 
@@ -118,6 +120,10 @@ otModule.directive('otBindText', ['ShareJS', '$sniffer', '$parse', 'isDiacritica
           });
         });
         unbindTextField = subdoc.attach_textarea(elm[0]);
+      }
+
+      function triggerUpdate() {
+        elm.trigger('textInput');
       }
       //console.log('linking done', scope.$id, scope.otPath);
     }
