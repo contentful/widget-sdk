@@ -5,12 +5,15 @@
     %h3 Displayed columns
     .column-lists
       %ul.displayed-fields
+        %li.non-customizable(ng-show="!tab.params.view.contentTypeId && !tab.params.view.contentTypeHidden")
+          %p Content Type
+          .close-button(ng-click="toggleContentType($event)")
         %li.non-customizable
           %p Name
       %ul.displayed-fields(ui-sortable="displayedFieldsSortOptions" ng-model="displayedFields")
         %li.customizable(ng-repeat="field in displayedFields track by field.id" data-field-id="{{field.id}}")
           %p {{field.name}}
-          .close-button(ng-show="!field.persistent" ng-click="hideField($event, field)")
+          .close-button(ng-show="!isPersistent(field)" ng-click="hideField($event, field)")
       %ul.displayed-fields
         %li.non-customizable
           %p Status
@@ -19,6 +22,9 @@
 
       %h3(ng-hide="hiddenFields.length == 0") Available Columns
       %ul.hidden-fields(ng-hide="hiddenFields.length == 0")
+        %li(ng-show="!tab.params.view.contentTypeId && tab.params.view.contentTypeHidden")
+          %a(ng-click="toggleContentType($event)")
+            Content Type
         %li(ng-repeat="field in hiddenFields track by field.id")
           %a(ng-if="field.type != 'Object' && !field.disabled" ng-click="displayField($event, field)")
             {{field.name}}

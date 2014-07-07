@@ -1,5 +1,5 @@
 .results-count(ng-show="isActive() && paginator.numEntries")
-  {{paginator.numEntries}} results, {{paginator.page+1}} of {{paginator.numPages()}} pages
+  {{paginator.numEntries|decimalMarks}} results, {{paginator.page+1}} of {{paginator.numPages()|decimalMarks}} pages
   %span(ng-transclude)
 
 .sorting-options(ng-show="isActive() && isSortingActive()")

@@ -58,6 +58,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['marked', 'keycodes'
       textarea.on('blur', function () {
         toolbar.removeClass('opaque');
         modeSwitch.removeClass('opaque');
+        textarea.trigger('input').trigger('autosize');
       });
 
       textarea.on('keydown', function (ev) {
@@ -104,7 +105,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['marked', 'keycodes'
         } else {
           textarea.textrange('replace', wrapper+text+wrapper);
         }
-        textarea.trigger('input').trigger('autosize');
+        textarea.trigger('input').trigger('textInput').trigger('autosize');
       }
 
       scope.toggleBold = function () { toggleWrapper('**', '\\*\\*'); };
@@ -164,7 +165,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['marked', 'keycodes'
             return '- ' + line;
           }));
         }
-        textarea.trigger('input').trigger('autosize');
+        textarea.trigger('input').trigger('textInput').trigger('autosize');
         textarea.textrange('setcursor', afterPosition);
       };
 
@@ -189,7 +190,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['marked', 'keycodes'
             }
           }));
         }
-        textarea.trigger('input').trigger('autosize');
+        textarea.trigger('input').trigger('textInput').trigger('autosize');
         textarea.textrange('setcursor', afterPosition);
       };
 
@@ -197,7 +198,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['marked', 'keycodes'
         var range = lineRange();
         textarea.textrange('replace', range.text + '\n\n___');
         textarea.textrange('set', range.end, 0);
-        textarea.trigger('input').trigger('autosize');
+        textarea.trigger('input').trigger('textInput').trigger('autosize');
       };
 
       scope.toggleBlockQuote = function () {
@@ -206,14 +207,14 @@ angular.module('contentful').directive('cfMarkdownEditor', ['marked', 'keycodes'
           return '> '+line;
         }).join('\n');
         textarea.textrange('replace', quote);
-        textarea.trigger('input').trigger('autosize');
+        textarea.trigger('input').trigger('textInput').trigger('autosize');
         textarea.textrange('setcursor', range.end + 1);
       };
 
       scope.addCodeblock = function () {
         var range = lineRange();
         textarea.textrange('replace', '```\n' + range.text + '\n```');
-        textarea.trigger('input').trigger('autosize');
+        textarea.trigger('input').trigger('textInput').trigger('autosize');
         textarea.textrange('setcursor', range.start + 4);
       };
 

@@ -1,7 +1,7 @@
 .entity-list
   .main-header
     +stretch(0, 0, false, 0)
-    width: 99%
+    width: 100%
   .main-results-wrapper
     +stretch(false, 0, 0, 0)
     top: 27px
@@ -48,10 +48,13 @@
   .tab-main
     .left-nav
       overflow-y: auto
+      overflow-x: hidden
       @extend .tab-workbench
       padding-left: 20px
       padding-right: 20px
       padding: $tab-main-margin-top 20px 0
+      .dropdown-menu
+        min-width: 150px
     .with-left-nav
       margin-top: $tab-main-margin-top // padding is ignored by absolute children
       @extend .tab-workbench
