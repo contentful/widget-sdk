@@ -1,4 +1,4 @@
-.controls(ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
+.controls
   .search-with-results(cf-tokenized-search="searchTerm" 
     tooltip-placement="top"
     tooltip="Search for existing {{entityName}}"

@@ -18,4 +18,5 @@
   add-entity="addLink(entity)"
   entity-type="linkType"
   entity-content-type="linkContentType"
-  entity-mime-type-group="linkMimetypeGroup")
+  entity-mime-type-group="linkMimetypeGroup"
+  ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")

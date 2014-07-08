@@ -70,8 +70,7 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$a
 
   $scope.$on('autocompleteResultPicked', function (event, index, entity) {
     addEntity(entity).then(function () {
-      // TODO shouldn't be necessary because the link editor hides the search anyway
-      if ($scope.linkSingle) controller.clearSearch();
+      if (!$scope.$eval($attrs.ngShow)) controller.clearSearch();
     });
   });
 

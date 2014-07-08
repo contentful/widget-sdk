@@ -32,6 +32,7 @@ describe('cfLinkEditorSearch Controller', function () {
 
       var attrs = {
         addEntity: 'addLink(entity)',
+        ngShow: '__visible',
         entityType: 'linkType',
         entityContentType: 'linkContentType',
         entityMimeTypeGroup: 'linkMimetypeGroup'
@@ -65,14 +66,14 @@ describe('cfLinkEditorSearch Controller', function () {
       expect(scope.addLink).toBeCalled();
     });
 
-    it('clears the search when linkSingle', function () {
-      scope.linkSingle = true;
+    it('clears the search when invisible', function () {
+      scope.__visible = false;
       scope.$apply();
       expect(cfLinkEditorSearchCtrl.clearSearch).toHaveBeenCalled();
     });
 
-    it('clears the search when linkMultiple', function () {
-      scope.linkSingle = false;
+    it('does not clear the search when visible', function () {
+      scope.__visible = true;
       scope.$apply();
       expect(cfLinkEditorSearchCtrl.clearSearch).not.toHaveBeenCalled();
     });
