@@ -1,5 +1,10 @@
 'use strict';
 
+/**
+ * Check all available options for thumbnailing service at:
+ * https://github.com/contentful/media_system/blob/master/app_engine_proxy/test_page/test.js
+ */
+
 angular.module('contentful').directive('cfThumbnail', function () {
   var groupToIconMap = {
     image: 'image',
@@ -25,6 +30,10 @@ angular.module('contentful').directive('cfThumbnail', function () {
     link: function (scope, el, attrs) {
       var maxWidth, maxHeight;
 
+      scope.format = attrs.format;
+      scope.fit = attrs.fit;
+      scope.focus = attrs.focus;
+
       if (parseInt(attrs.size, 10) > 0) {
         maxWidth = maxHeight = parseInt(attrs.size, 10);
       } else {
@@ -49,16 +58,21 @@ angular.module('contentful').directive('cfThumbnail', function () {
         var resizeWidth = srcWidth;
         var resizeHeight = srcHeight;
 
-        var aspect = resizeWidth / resizeHeight;
+        if(scope.format == 'square') {
+          resizeWidth = maxWidth;
+          resizeHeight = maxHeight;
+        } else {
+          var aspect = resizeWidth / resizeHeight;
 
-        if (resizeWidth > maxWidth) {
-            resizeWidth = maxWidth;
-            resizeHeight = resizeWidth / aspect;
-        }
-        if (resizeHeight > maxHeight) {
-            aspect = resizeWidth / resizeHeight;
-            resizeHeight = maxHeight;
-            resizeWidth = resizeHeight * aspect;
+          if (resizeWidth > maxWidth) {
+              resizeWidth = maxWidth;
+              resizeHeight = resizeWidth / aspect;
+          }
+          if (resizeHeight > maxHeight) {
+              aspect = resizeWidth / resizeHeight;
+              resizeHeight = maxHeight;
+              resizeWidth = resizeHeight * aspect;
+          }
         }
 
         scope.width  = Math.round(resizeWidth);
@@ -89,6 +103,8 @@ angular.module('contentful').directive('cfThumbnail', function () {
       $scope.thumbnailUrl = function () {
         if ($scope.file && $scope.file.url && $scope.width && $scope.height) {
           var sizeQueryString = $scope.file.external ? '' : '?w=' + $scope.width + '&h=' + $scope.height;
+          if($scope.fit) sizeQueryString += '&fit='+$scope.fit;
+          if($scope.focus) sizeQueryString += '&f='+$scope.focus;
           return '' + $scope.file.url + sizeQueryString;
         }
       };
