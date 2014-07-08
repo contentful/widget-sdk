@@ -77,14 +77,4 @@ describe('otBindText', function () {
     }));
   });
 
-  it('should trigger a textInput event on blur', function () {
-    var shareJSUpdate = sinon.stub();
-    elem.on('textInput', shareJSUpdate);
-    scope.$apply();
-    jasmine.clock().tick(10);
-    elem.val('derp').trigger('blur');
-    jasmine.clock().tick(10);
-    expect(shareJSUpdate).toBeCalled();
-  });
-
 });

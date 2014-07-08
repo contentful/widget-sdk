@@ -37,11 +37,10 @@ otModule.directive('otBindText', ['ShareJS', '$sniffer', '$parse', 'isDiacritica
         return isAttached() && (!isString() || !scope.otSubdoc);
       }
 
-      function attach() {
+      function attach(text) {
         if (scope.otSubdoc) {
           //console.log('attaching');
-          makeAndAttach(scope.otSubdoc);
-          elm.on('blur', triggerUpdate);
+          makeAndAttach(scope.otSubdoc, text);
         }
       }
 
@@ -50,7 +49,6 @@ otModule.directive('otBindText', ['ShareJS', '$sniffer', '$parse', 'isDiacritica
           //console.log('detaching');
           unbindTextField();
           unbindTextField = null;
-          elm.off('blur', triggerUpdate);
         }
       }
 
@@ -75,15 +73,11 @@ otModule.directive('otBindText', ['ShareJS', '$sniffer', '$parse', 'isDiacritica
       });
 
       ngModelCtrl.$viewChangeListeners.push(function () {
-        //var value = ngModelCtrl.$viewValue;
         //console.log('viewChangeListener triggered with', ngModelCtrl.$viewValue);
         //console.log('viewChangeListener, needs attach?');
         if (needsAttach()) {
-          attach();
-          //console.log('viewChangeListener attached, resetting element value to modelCtrl.$viewValue', ngModelCtrl.$viewValue);
-          elm.val(ngModelCtrl.$viewValue);
-          //console.log('viewChangeListener, trigger change event on element');
-          elm.trigger('change');
+          attach(ngModelCtrl.$viewValue);
+          //console.log('viewChangeListener attached');
         //} else if (console.log('viewChangeListender, needs detach?', needsDetach()), needsDetach()) {
         } else if (needsDetach()) {
           detach();
@@ -108,12 +102,13 @@ otModule.directive('otBindText', ['ShareJS', '$sniffer', '$parse', 'isDiacritica
 
       scope.$on('$destroy', detach);
 
-      function makeAndAttach(subdoc){
+      function makeAndAttach(subdoc, text){
+        text = text === undefined ? '' : text;
         ShareJS.mkpath({
           doc: scope.otDoc,
           path: subdoc.path,
           types: subdoc.types,
-          value: ''
+          value: text
         }, function(err) {
           if (err) scope.$apply(function(){
             throw new Error('makeAndAttach mkpath failed');
@@ -122,9 +117,6 @@ otModule.directive('otBindText', ['ShareJS', '$sniffer', '$parse', 'isDiacritica
         unbindTextField = subdoc.attach_textarea(elm[0]);
       }
 
-      function triggerUpdate() {
-        elm.trigger('textInput');
-      }
       //console.log('linking done', scope.$id, scope.otPath);
     }
 
