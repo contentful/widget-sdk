@@ -18,6 +18,11 @@ Contains methods for:
 
 Holds list of open tabs. Handles creating, closing and activating tabs.
 
+## classes/tab_options_generator.js
+
+Generates options to create new tabs based on parameters of currently
+viewed objects (entries, assets, etc).
+
 ## components/space_view/tab_view_controller.js
 
 Controller for the app tab view.
@@ -26,7 +31,8 @@ Handles route changes, app state changes and loads the appropriate tabs
 based on that, by interacting with the space context `tabList` instance.
 
 Creates a `navigator` object on the scope that can be easily used by the
-whole app to navigate to and/or create new tabs.
+whole app to navigate to and/or create new tabs, generating options from
+the `tab_options_generator`.
 
 
 ## components/space_view/space_view.hamlc
