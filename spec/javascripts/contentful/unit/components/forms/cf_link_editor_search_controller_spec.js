@@ -30,7 +30,12 @@ describe('cfLinkEditorSearch Controller', function () {
         then: stubs.then
       });
 
-      var attrs = {addEntity: 'addLink(entity)'};
+      var attrs = {
+        addEntity: 'addLink(entity)',
+        entityType: 'linkType',
+        entityContentType: 'linkContentType',
+        entityMimeTypeGroup: 'linkMimetypeGroup'
+      };
 
       cfLinkEditorSearchCtrl = $controller('cfLinkEditorSearchCtrl', { $scope: scope, $attrs: attrs });
     });
@@ -344,15 +349,20 @@ describe('cfLinkEditorSearch Controller', function () {
     });
 
     it('for linked content type', function() {
+      scope.linkType = 'Entry';
       scope.linkContentType = {
-        getId: sinon.stub().returns(123)
+        getName: sinon.stub().returns('123 Type'),
+        getId:   sinon.stub().returns(123)
       };
+      scope.$apply();
       performQuery();
       expect(query.content_type).toBe(123);
     });
 
     it('for mimetype group', function() {
+      scope.linkType = 'Asset';
       scope.linkMimetypeGroup = 'files';
+      scope.$apply();
       performQuery();
       expect(query['mimetype_group']).toBe('files');
     });

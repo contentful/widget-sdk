@@ -9,9 +9,9 @@
 
   -# link to entry or entries
   .dropdown-btn.add-new(
-      ng-if="linkType=='Entry' && !linkContentType"
+      ng-if="entityType=='Entry' && !entityContentType"
       cf-can="create, Entry"
-      tooltip="Add new {{linkType}}"
+      tooltip="Add new {{entityType}}"
       tooltip-placement="left")
     %button.form-button.default-button.dropdown-toggle(type="button")
       %i.ss-plus.button-icon
@@ -25,15 +25,15 @@
 
   -# link to entry or entries with restriction on the type
   %button.form-button.default-button.add-new.with-link-content-type(type="button"
-      ng-if="linkContentType"
+      ng-if="entityContentType"
       cf-can="create, Entry"
-      ng-click="addNewEntry(linkContentType)")
+      ng-click="addNewEntry(entityContentType)")
     %i.ss-plus.button-icon
     New
 
   -# link to asset (with or without restriction)
   %button.form-button.default-button.add-new.with-link-content-type(type="button"
-      ng-if="linkType=='Asset'"
+      ng-if="entityType=='Asset'"
       cf-can="create, Asset"
       ng-click="addNewAsset()")
     %i.ss-plus.button-icon
@@ -41,7 +41,7 @@
 
 
 .results.search-options-on.result-list-empty(ng-show="searchController.isEmptyState()"
-                           ng-switch="linkType"
+                           ng-switch="entityType"
                            cf-click-outside-ignore=".search-button, .ss-search, .search-field input"
                            cf-click-outside-when="searchController.areResultsVisible()"
                            cf-click-outside="clickOutsideHandler()")
@@ -51,7 +51,7 @@
     %p No Assets created yet.
 
 .results.search-options-on(ng-show="searchController.isResultsState()"
-                           ng-switch="linkType"
+                           ng-switch="entityType"
                            cf-click-outside-ignore=".search-button, .ss-search, .search-field input"
                            cf-click-outside-when="searchController.areResultsVisible()"
                            cf-click-outside="clickOutsideHandler()")

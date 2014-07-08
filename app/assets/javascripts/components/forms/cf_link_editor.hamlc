@@ -14,4 +14,8 @@
         .unpublished(ng-show="entity.canPublish()" tooltip-placement="right" tooltip="This entry hasn't been published")
 
 
-.cf-link-editor-search(cf-autocomplete-results="entities" add-entity="addLink(entity)")
+.cf-link-editor-search(cf-autocomplete-results="entities"
+  add-entity="addLink(entity)"
+  entity-type="linkType"
+  entity-content-type="linkContentType"
+  entity-mime-type-group="linkMimetypeGroup")
