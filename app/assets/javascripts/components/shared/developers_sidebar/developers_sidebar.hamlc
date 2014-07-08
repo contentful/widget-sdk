@@ -1,0 +1,6 @@
+%ul
+  %li.api-keys.active
+    %a(href="" ng-click="navigator.apiKeyList().goTo()") API Keys
+  %li
+    %a(href="//{{marketingUrl}}/developers/documentation/content-delivery-api/" target="_blank") API Documentation
+

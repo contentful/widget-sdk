@@ -13,12 +13,7 @@
       Add API Key
 
 .tab-main
-  .left-nav
-    %ul
-      %li.api-keys.active
-        %a(href="" ng-click="refreshApiKeys()") API Keys
-      %li
-        %a(href="//{{marketingUrl}}/developers/documentation/content-delivery-api/" target="_blank") API Documentation
+  .developers-sidebar.left-nav
 
   .with-left-nav
     %table.result-list.main-results.main-header(ng-hide="empty")
