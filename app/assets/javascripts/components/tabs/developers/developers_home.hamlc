@@ -1,0 +1,15 @@
+.tab-header
+  .tab-title
+    %h1 developers
+
+.tab-main
+  .left-nav
+    %ul
+      %li.api-keys.active
+        %a(href="" ng-click="refreshApiKeys()") API Keys
+      %li
+        %a(href="//{{marketingUrl}}/developers/documentation/content-delivery-api/" target="_blank") API Documentation
+
+  .with-left-nav
+    developers section
+
