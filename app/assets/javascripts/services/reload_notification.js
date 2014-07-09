@@ -29,6 +29,10 @@ angular.module('contentful').factory('ReloadNotification', ['$injector', functio
     .then(reloadWithCacheBuster);
   }
 
+  function isApiError(error) {
+    return _.isObject(error) && 'statusCode' in error && 500 <= error.statusCode;
+  }
+
   var ReloadNotificationService = {
     triggerImmediateReload: function () {
       reloadWithCacheBuster();
@@ -41,7 +45,7 @@ angular.module('contentful').factory('ReloadNotification', ['$injector', functio
     },
 
     apiErrorHandler: function (err) {
-      if ('statusCode' in err && 500 <= err.statusCode) {
+      if (isApiError(err)) {
         trigger({
           title: 'Error connecting to backend',
           template: 'api_error_dialog',

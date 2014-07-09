@@ -3,6 +3,7 @@
 angular.module('contentful').
   controller('AssetListCtrl',['$scope', '$injector', function AssetListCtrl($scope, $injector) {
   var $controller        = $injector.get('$controller');
+  var $q                 = $injector.get('$q');
   var Paginator          = $injector.get('Paginator');
   var PromisedLoader     = $injector.get('PromisedLoader');
   var ReloadNotification = $injector.get('ReloadNotification');
@@ -101,8 +102,9 @@ angular.module('contentful').
       assets = _.difference(assets, $scope.assets);
       $scope.assets.push.apply($scope.assets, assets);
       $scope.selection.setBaseSize($scope.assets.length);
-    }, function () {
+    }, function (err) {
       $scope.paginator.page--;
+      return $q.reject(err);
     })
     .catch(ReloadNotification.apiErrorHandler);
   };

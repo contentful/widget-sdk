@@ -41,6 +41,12 @@ describe('ReloadNotification service', function () {
       expect(open).not.toBeCalled();
     });
 
+    it('should not trigger the api error for errors that are Strings', function () {
+      $q.reject('lolnope').catch(ReloadNotification.apiErrorHandler);
+      $rootScope.$apply();
+      expect(open).not.toBeCalled();
+    });
+
     describe('should not interfere with further processing', function () {
       var successHandler, errorHandler, error;
 

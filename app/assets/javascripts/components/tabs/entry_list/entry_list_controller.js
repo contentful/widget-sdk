@@ -2,6 +2,7 @@
 
 angular.module('contentful').controller('EntryListCtrl', ['$scope', '$injector', function EntryListCtrl($scope, $injector) {
   var $controller        = $injector.get('$controller');
+  var $q                 = $injector.get('$q');
   var EntityCache        = $injector.get('EntityCache');
   var Paginator          = $injector.get('Paginator');
   var PromisedLoader     = $injector.get('PromisedLoader');
@@ -190,8 +191,9 @@ angular.module('contentful').controller('EntryListCtrl', ['$scope', '$injector',
       entries = _.difference(entries, $scope.entries);
       $scope.entries.push.apply($scope.entries, entries);
       $scope.selection.setBaseSize($scope.entries.length);
-    }, function () {
+    }, function (err) {
       $scope.paginator.page--;
+      return $q.reject(err);
     })
     .catch(ReloadNotification.apiErrorHandler);
   };
