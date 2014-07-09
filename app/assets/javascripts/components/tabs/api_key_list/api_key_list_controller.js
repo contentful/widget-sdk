@@ -1,9 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  controller('ApiKeyListCtrl', ['$scope', '$window', 'environment', function($scope, $window, environment) {
-    $scope.marketingUrl = environment.settings.marketing_url;
-
+  controller('ApiKeyListCtrl', ['$scope', '$window', 'environment', function($scope, $window) {
     $scope.refreshApiKeys = function() {
       $scope.spaceContext.space.getApiKeys({limit: 1000}, function(err, apiKeys) {
         $scope.$apply(function() {

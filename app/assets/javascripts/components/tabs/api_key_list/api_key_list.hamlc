@@ -13,7 +13,13 @@
       Add API Key
 
 .tab-main
-  .developers-sidebar.left-nav
+  .left-nav
+    %header.filter-list-header
+      Content Delivery API
+    %ul.cf-cda-links
+    %header.filter-list-header
+      Content Management API
+    %ul.cf-cma-links
 
   .with-left-nav
     %table.result-list.main-results.main-header(ng-hide="empty")

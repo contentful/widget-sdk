@@ -1,0 +1,8 @@
+%li
+  %a(href="" ng-click="navigator.apiKeyList().goTo()") API Keys
+%li
+  %a(cf-marketing="/developers/documentation/content-delivery-api/") Documentation
+%li
+  %a(href="") Content Model
+%li
+  %a(href="https://support.contentful.com/hc/en-us/requests/new" target="_blank") Support

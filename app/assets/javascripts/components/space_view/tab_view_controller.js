@@ -86,7 +86,7 @@ angular.module('contentful').controller('TabViewCtrl', ['$scope', 'authenticatio
     entryList:         function () { return this._wrap(gen.entryList()); },
     contentTypeList:   function () { return this._wrap(gen.contentTypeList()); },
     apiKeyList:        function () { return this._wrap(gen.apiKeyList()); },
-    developersHome:   function () { return this._wrap(gen.developersHome()); },
+    developersHome:    function () { return this._wrap(gen.developersHome()); },
     assetList:         function () { return this._wrap(gen.assetList()); },
     forViewType:       function (viewType) { return this._wrap(gen.forViewType(viewType)); },
     spaceSettings:     function (pathSuffix) { return this._wrap(gen.spaceSettings(pathSuffix)); }
