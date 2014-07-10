@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Asset List Controller', function () {
-  var controller, scope, stubs;
+  var controller, scope, stubs, $q;
 
   var makeAsset = function (sys) {
     var asset;
@@ -32,8 +32,9 @@ describe('Asset List Controller', function () {
         track: stubs.track
       });
     });
-    inject(function ($rootScope, $controller, cfStub, PromisedLoader) {
+    inject(function ($rootScope, $controller, cfStub, PromisedLoader, _$q_) {
       scope = $rootScope.$new();
+      $q = _$q_;
 
       scope.tab = {
         params: {}
@@ -243,6 +244,26 @@ describe('Asset List Controller', function () {
     scope.tab.params.list = 'all';
     scope.tab.params.view.searchTerm = null;
     expect(scope.hasQuery()).toBeFalsy();
+  });
+
+  describe('Api Errors', function () {
+    var apiErrorHandler;
+    beforeEach(inject(function (ReloadNotification){
+      apiErrorHandler = ReloadNotification.apiErrorHandler;
+      stubs.loadCallback.returns($q.reject({statusCode: 500}));
+    }));
+
+    it('should cause resetAssets to show an error message', function () {
+      scope.resetAssets();
+      scope.$apply();
+      expect(apiErrorHandler).toBeCalled();
+    });
+
+    it('should cause loadMore to show an error message', function () {
+      scope.loadMore();
+      scope.$apply();
+      expect(apiErrorHandler).toBeCalled();
+    });
   });
 
   describe('loadMore', function () {

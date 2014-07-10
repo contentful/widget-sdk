@@ -4,6 +4,7 @@ describe('Entry List Controller', function () {
   var controller, scope;
   var stubs;
   var createController;
+  var $q;
 
   var makeEntry = function (sys) {
     var entry;
@@ -24,12 +25,12 @@ describe('Entry List Controller', function () {
         'archived',
         'getContentTypeId',
         'track',
-        'loadCallback',
         'then',
         'captureError',
         'getUIConfig',
         'setUIConfig'
       ]);
+      $provide.removeControllers('DisplayedFieldsController');
       $provide.value('sentry', {
         captureError: stubs.captureError
       });
@@ -38,7 +39,8 @@ describe('Entry List Controller', function () {
         track: stubs.track
       });
     });
-    inject(function ($rootScope, $controller, cfStub, PromisedLoader) {
+    inject(function ($rootScope, $controller, cfStub, PromisedLoader, _$q_) {
+      $q = _$q_;
       scope = $rootScope.$new();
 
       scope.tab = {
@@ -50,11 +52,7 @@ describe('Entry List Controller', function () {
       space.setUIConfig = stubs.setUIConfig;
       var contentTypeData = cfStub.contentTypeData('testType');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
-
-      stubs.loadCallback = sinon.stub(PromisedLoader.prototype, 'loadCallback');
-      stubs.loadCallback.returns({
-        then: stubs.then
-      });
+      sinon.stub(scope.spaceContext.space, 'getEntries');
 
       createController = function() {
         controller = $controller('EntryListCtrl', {$scope: scope});
@@ -63,7 +61,6 @@ describe('Entry List Controller', function () {
   });
 
   afterEach(inject(function ($log) {
-    stubs.loadCallback.restore();
     $log.assertEmpty();
   }));
 
@@ -198,13 +195,13 @@ describe('Entry List Controller', function () {
   describe('resetting entries', function() {
     var entries;
     beforeEach(function() {
-      createController();
-      scope.$apply();
-      stubs.switch = sinon.stub();
       entries = {
         total: 30
       };
-      stubs.then.callsArgWith(0, entries);
+      createController();
+      scope.$apply();
+      scope.spaceContext.space.getEntries.yield(null, entries);
+      stubs.switch = sinon.stub();
 
       scope.selection = {
         switchBaseSet: stubs.switch
@@ -213,17 +210,13 @@ describe('Entry List Controller', function () {
       scope.paginator.pageLength = 3;
       scope.paginator.skipItems = sinon.stub();
       scope.paginator.skipItems.returns(true);
-    });
-
-    it('loads entries', function() {
-      scope.resetEntries();
-      scope.$apply();
-      expect(stubs.loadCallback).toBeCalled();
+      scope.spaceContext.space.getEntries.reset();
     });
 
     it('sets entries num on the paginator', function() {
       scope.resetEntries();
       scope.$apply();
+      scope.spaceContext.space.getEntries.yield(null, entries);
       expect(scope.paginator.numEntries).toEqual(30);
     });
 
@@ -236,68 +229,66 @@ describe('Entry List Controller', function () {
     it('switches the selection base set', function() {
       scope.resetEntries();
       scope.$apply();
+      scope.spaceContext.space.getEntries.yield(null, entries);
       expect(stubs.switch).toBeCalled();
     });
 
     describe('creates a query object', function() {
-      beforeEach(function () {
-        stubs.loadCallback.reset();
-      });
-
       it('with a defined order', function() {
         scope.resetEntries();
         scope.$apply();
-        expect(stubs.loadCallback.args[0][2].order).toEqual('-sys.updatedAt');
+        expect(scope.spaceContext.space.getEntries.args[0][0].order).toEqual('-sys.updatedAt');
       });
 
       it('with a defined limit', function() {
         scope.resetEntries();
         scope.$apply();
-        expect(stubs.loadCallback.args[0][2].limit).toEqual(3);
+        scope.spaceContext.space.getEntries.yield(null, entries);
+        expect(scope.spaceContext.space.getEntries.args[0][0].limit).toEqual(3);
       });
 
       it('with a defined skip param', function() {
         scope.resetEntries();
         scope.$apply();
-        expect(stubs.loadCallback.args[0][2].skip).toBeTruthy();
+        expect(scope.spaceContext.space.getEntries.args[0][0].skip).toBeTruthy();
       });
 
       // TODO these tests should go into a test for the search query helper
       it('for all list', function() {
         scope.resetEntries();
         scope.$apply();
-        expect(stubs.loadCallback.args[0][2]['sys.archivedAt[exists]']).toBe('false');
+        expect(scope.spaceContext.space.getEntries.args[0][0]['sys.archivedAt[exists]']).toBe('false');
       });
 
       it('for published list', function() {
         scope.tab.params.view.searchTerm = 'status:published';
         scope.resetEntries();
         scope.$apply();
-        expect(stubs.loadCallback.args[0][2]['sys.publishedAt[exists]']).toBe('true');
+        expect(scope.spaceContext.space.getEntries.args[0][0]['sys.publishedAt[exists]']).toBe('true');
       });
 
       it('for changed list', function() {
         scope.tab.params.view.searchTerm = 'status:changed';
         scope.resetEntries();
         scope.$apply();
-        expect(stubs.loadCallback.args[0][2]['sys.archivedAt[exists]']).toBe('false');
-        expect(stubs.loadCallback.args[0][2].changed).toBe('true');
+        expect(scope.spaceContext.space.getEntries.args[0][0]['sys.archivedAt[exists]']).toBe('false');
+        expect(scope.spaceContext.space.getEntries.args[0][0].changed).toBe('true');
       });
 
       it('for draft list', function() {
         scope.tab.params.view.searchTerm = 'status:draft';
         scope.resetEntries();
         scope.$apply();
-        expect(stubs.loadCallback.args[0][2]['sys.archivedAt[exists]']).toBe('false');
-        expect(stubs.loadCallback.args[0][2]['sys.publishedVersion[exists]']).toBe('false');
-        expect(stubs.loadCallback.args[0][2].changed).toBe('true');
+        expect(scope.spaceContext.space.getEntries.args[0][0]['sys.archivedAt[exists]']).toBe('false');
+        expect(scope.spaceContext.space.getEntries.args[0][0]['sys.publishedVersion[exists]']).toBe('false');
+        expect(scope.spaceContext.space.getEntries.args[0][0].changed).toBe('true');
       });
 
       it('for archived list', function() {
         scope.tab.params.view.searchTerm = 'status:archived';
         scope.resetEntries();
         scope.$apply();
-        expect(stubs.loadCallback.args[0][2]['sys.archivedAt[exists]']).toBe('true');
+        expect(scope.spaceContext.space.getEntries.args[0][0]['sys.archivedAt[exists]']).toBe('true');
       });
 
       it('for contentType list', function() {
@@ -305,14 +296,14 @@ describe('Entry List Controller', function () {
         scope.tab.params.view.contentTypeId = 'ct1';
         scope.resetEntries();
         scope.$apply();
-        expect(stubs.loadCallback.args[0][2]['content_type']).toBe('ct1');
+        expect(scope.spaceContext.space.getEntries.args[0][0]['content_type']).toBe('ct1');
       });
 
       it('for search term', function() {
         scope.tab.params.view.searchTerm = 'term';
         scope.resetEntries();
         scope.$apply();
-        expect(stubs.loadCallback.args[0][2].query).toBe('term');
+        expect(scope.spaceContext.space.getEntries.args[0][0].query).toBe('term');
       });
     });
   });
@@ -332,15 +323,20 @@ describe('Entry List Controller', function () {
   describe('loadMore', function () {
     var entries;
     beforeEach(function() {
+      entries = [];
+      Object.defineProperty(entries, 'total', {value: 0});
+
       createController();
       scope.$apply();
+      scope.spaceContext.space.getEntries.yield(null, entries);
+
       entries = [];
       Object.defineProperty(entries, 'total', {value: 30});
 
       scope.entries = new Array(60);
 
       stubs.switch = sinon.stub();
-      // loadMore triggers resetEntries which in reality will not
+      // loadMore as a side effect triggers resetEntries which in reality will not
       // run because the promisedLoader prevents that. In this test
       // the PromisedLoader is stubbed, so we need to fake
       // resetEntries not running:
@@ -352,13 +348,13 @@ describe('Entry List Controller', function () {
 
       scope.paginator.atLast = sinon.stub();
       scope.paginator.atLast.returns(false);
-      stubs.loadCallback.reset();
+      scope.spaceContext.space.getEntries.reset();
     });
 
     it('doesnt load if on last page', function() {
       scope.paginator.atLast.returns(true);
       scope.loadMore();
-      expect(stubs.loadCallback).not.toBeCalled();
+      expect(scope.spaceContext.space.getEntries).not.toBeCalled();
     });
 
     it('paginator count is increased', function() {
@@ -370,7 +366,7 @@ describe('Entry List Controller', function () {
     it('gets query params', function () {
       scope.loadMore();
       scope.$apply();
-      expect(stubs.loadCallback.args[0][2]).toBeDefined();
+      expect(scope.spaceContext.space.getEntries.args[0][0]).toBeDefined();
     });
 
     it('should work on the page before the last', function () {
@@ -379,7 +375,7 @@ describe('Entry List Controller', function () {
       scope.paginator.page = 0;
       scope.loadMore();
       scope.$apply();
-      expect(stubs.loadCallback).toBeCalled();
+      expect(scope.spaceContext.space.getEntries).toBeCalled();
     });
 
     it('triggers analytics event', function () {
@@ -390,9 +386,10 @@ describe('Entry List Controller', function () {
 
     describe('on successful load response', function() {
       beforeEach(function() {
-        stubs.then.callsArgWith(0, entries);
         scope.paginator.page = 1;
         scope.loadMore();
+        scope.$apply();
+        scope.spaceContext.space.getEntries.yield(null, entries);
       });
 
       it('sets num entries', function() {
@@ -416,24 +413,21 @@ describe('Entry List Controller', function () {
       scope.entries = ['a'];
       entries = ['a', 'b', 'c'];
       Object.defineProperty(entries, 'total', {value: 30});
-      stubs.then.callsArgWith(0, entries);
       scope.paginator.page = 2;
       scope.loadMore();
       scope.$apply();
+      scope.spaceContext.space.getEntries.yield(null, entries);
       expect(scope.entries).toEqual(['a', 'b', 'c']);
     });
 
-    describe('on failed load response', function() {
+    describe('on empty load response', function() {
       beforeEach(function() {
-        stubs.loadCallback.returns(entries);
-        scope.paginator.page = 1;
-        scope.$apply(); //trigger resetEntries
-        stubs.loadCallback.returns(null);
         scope.loadMore();
-        scope.$apply(); //trigger loadMore promises
+        scope.$apply();
+        scope.spaceContext.space.getEntries.yield(null, null);
       });
 
-      it('appends entries to scope', function () {
+      it('appends no entries to scope', function () {
         expect(scope.entries.push).not.toBeCalled();
       });
 
@@ -442,24 +436,29 @@ describe('Entry List Controller', function () {
       });
     });
 
-    describe('on previous page', function() {
-      beforeEach(function() {
-        scope.$apply(); // trigger resetEntries
-        stubs.then.callsArg(1);
-        scope.paginator.page = 1;
-        scope.loadMore();
-        scope.$apply();
-      });
+  });
 
-      it('appends entries to scope', function () {
-        expect(scope.entries.push).not.toBeCalled();
-      });
+  describe('Api Errors', function () {
+    var apiErrorHandler;
+    beforeEach(inject(function (ReloadNotification){
+      createController();
+      scope.$apply();
+      apiErrorHandler = ReloadNotification.apiErrorHandler;
+    }));
 
-      it('pagination count decreases', function() {
-        expect(scope.paginator.page).toBe(1);
-      });
+    it('should cause resetEntries to show an error message', function () {
+      scope.resetEntries();
+      scope.spaceContext.space.getEntries.yield({statusCode: 500}, null);
+      expect(apiErrorHandler).toBeCalled();
+    });
+
+    it('should cause loadMore to show an error message', function () {
+      scope.loadMore();
+      scope.spaceContext.space.getEntries.yield({statusCode: 500}, null);
+      expect(apiErrorHandler).toBeCalled();
     });
   });
+
 
   describe('status class', function () {
     beforeEach(function() {

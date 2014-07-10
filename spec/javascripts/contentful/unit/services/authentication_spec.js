@@ -313,8 +313,8 @@ describe('Authentication service', function () {
       var tokenLookup, errorResponse;
       beforeEach(function () {
         errorResponse = {error: 'response'};
-        clientTokenLookupStub.callsArgWith(0, errorResponse);
         tokenLookup = authentication.getTokenLookup();
+        clientTokenLookupStub.yield(errorResponse);
       });
 
       it('client token lookup is called', function () {
@@ -332,6 +332,20 @@ describe('Authentication service', function () {
           });
         });
       }));
+    });
+
+    describe('fails on the server with 500', function () {
+      var tokenLookup, errorResponse, apiErrorHandler;
+      beforeEach(inject(function (ReloadNotification) {
+        errorResponse = {statusCode: 500};
+        tokenLookup = authentication.getTokenLookup();
+        clientTokenLookupStub.yield(errorResponse);
+        apiErrorHandler = ReloadNotification.apiErrorHandler;
+      }));
+
+      it('should show the API error', function () {
+        expect(apiErrorHandler).toBeCalled();
+      });
     });
 
     describe('resolves because call succeeds', function () {

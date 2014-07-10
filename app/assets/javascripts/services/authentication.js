@@ -1,16 +1,16 @@
-angular.module('contentful').provider('authentication', ['$injector', function AuthenticationProvider($injector) {
-  'use strict';
+'use strict';
 
+angular.module('contentful').provider('authentication', ['$injector', function AuthenticationProvider($injector) {
   var authApp, marketingApp, QueryLinkResolver;
 
-  var environment, contentfulClient, $window, $location, $q, $rootScope, notification;
+  var environment, contentfulClient, $window, $location, $q, $rootScope, notification, ReloadNotification;
   var sentry;
 
   this.setEnvVars = function() {
-    environment = $injector.get('environment');
-    contentfulClient = $injector.get('contentfulClient');
-    authApp  = '//'+environment.settings.base_host+'/';
-    marketingApp  = environment.settings.marketing_url+'/';
+    environment       = $injector.get('environment');
+    contentfulClient  = $injector.get('contentfulClient');
+    authApp           = '//'+environment.settings.base_host+'/';
+    marketingApp      = environment.settings.marketing_url+'/';
     QueryLinkResolver = contentfulClient.QueryLinkResolver;
   };
 
@@ -113,23 +113,17 @@ angular.module('contentful').provider('authentication', ['$injector', function A
         return $q.defer().promise; // never resolved lol
       }
       var self = this;
-      var d = $q.defer();
-      this.client.getTokenLookup(function (err, data) {
-        $rootScope.$apply(function () {
-          if (err) {
-            sentry.captureError('getTokenlookup failed', {
-              data: err
-            });
-            d.reject(err);
-          } else {
-            if (data !== undefined) { // Data === undefined is in cases of notmodified
-              self.setTokenLookup(data);
-            }
-            d.resolve(self.tokenLookup);
-          }
-        });
-      });
-      return d.promise;
+      var cb = $q.callback();
+      this.client.getTokenLookup(cb);
+      return cb.promise.then(function (data) {
+        // Data === undefined is in cases of notmodified
+        if (data !== undefined) self.setTokenLookup(data);
+        return self.tokenLookup;
+      }, function (err) {
+        sentry.captureError('getTokenlookup failed', { data: err });
+        return $q.reject(err);
+      })
+      .catch(ReloadNotification.apiErrorHandler);
     },
 
     getUser: function () {
@@ -144,13 +138,16 @@ angular.module('contentful').provider('authentication', ['$injector', function A
 
   };
 
-  this.$get = ['client', '$location', '$window', 'sentry', '$q', '$rootScope', 'notification', function(client, _$location_, _$window_, _sentry_, _$q_, _$rootScope_, _notification_){
-    $location = _$location_;
-    $window = _$window_;
-    sentry = _sentry_;
-    $rootScope = _$rootScope_;
-    $q = _$q_;
-    notification = _notification_;
+  this.$get = ['$injector', function($injector){
+    $location          = $injector.get('$location');
+    $q                 = $injector.get('$q');
+    $rootScope         = $injector.get('$rootScope');
+    $window            = $injector.get('$window');
+    notification       = $injector.get('notification');
+    sentry             = $injector.get('sentry');
+    ReloadNotification = $injector.get('ReloadNotification');
+    var client         = $injector.get('client');
+
     var authentication = new Authentication(client);
     this.setEnvVars();
     return authentication;
