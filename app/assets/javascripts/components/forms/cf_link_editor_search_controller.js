@@ -10,10 +10,16 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$a
 
   var controller = this;
   var entityLoader = new PromisedLoader();
+  var fetchMethod;
   $scope.paginator = new Paginator();
 
   $scope.$watch($attrs.entityType, function (entityType) {
     $scope.entityType = entityType;
+    if (entityType === 'Entry'){
+      fetchMethod = 'getEntries';
+    } else if (entityType === 'Asset') {
+      fetchMethod = 'getAssets';
+    }
   });
   $scope.$watch($attrs.entityContentType, function (entityContentType) {
     $scope.entityContentType = entityContentType;
@@ -162,7 +168,7 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$a
   this._loadEntities = function () {
     return buildQuery()
     .then(function (query) {
-      return entityLoader.loadCallback($scope.spaceContext.space, $scope.fetchMethod, query);
+      return entityLoader.loadCallback($scope.spaceContext.space, fetchMethod, query);
     });
   };
 
