@@ -51,6 +51,6 @@
             %a(href="https://github.com/contentful/contentful-management.js#cloning-a-spaces-content-model")
               Cloning a Content Model between Spaces
 
-    .footer-warning
+    .note-box
       This page is only visible to Space Admins and Developers.
 

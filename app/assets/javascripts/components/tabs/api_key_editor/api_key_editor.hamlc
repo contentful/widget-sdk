@@ -20,6 +20,9 @@
 
 
 .tab-main
+  .note-box
+    %h2 Content Delivery API Key
+    %p The API Key you will receive is a read only Content Delivery API Key and blah blah and more blah. The API Key you will receive is a read only Content Delivery API Key and blah blah and more blah. The API Key you will receive is a read only Content Delivery API Key and blah blah and more blah. The API Key you will receive is a read only Content Delivery API Key and blah blah and more blah. The API Key you will receive is a read only Content Delivery API Key and blah blah and more blah. The API Key you will receive is a read only Content Delivery API Key and blah blah and more blah. The API Key you will receive is a read only Content Delivery API Key and blah blah and more blah. 
   .ng-form.form-horizontal(name="apiKeyForm" submit="save()")
     .form-field
       %label Name
