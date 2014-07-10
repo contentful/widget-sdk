@@ -3,7 +3,7 @@
     .title Insert Asset
     .modal-dialog-close-button(ng-click="dialog.cancel()")
     .dialog-content
-      .cf-link-editor-search(cf-autocomplete-results="assets"
+      .cf-link-editor-search(cf-autocomplete-results="entities"
         add-entity="selectAsset(entity)"
         entity-type="'Asset'")
     .buttons

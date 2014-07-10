@@ -2,7 +2,7 @@
 angular.module('contentful').controller('InsertAssetDialogController', ['$scope', '$injector', function($scope, $injector){
   var keycodes = $injector.get('keycodes');
 
-  $scope.assets = [];
+  $scope.entities = [];
   $scope.selectAsset = function (asset) {
     $scope.dialog.confirm(asset);
   };
