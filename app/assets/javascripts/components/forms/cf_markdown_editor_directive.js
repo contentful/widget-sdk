@@ -1,5 +1,13 @@
 'use strict';
-angular.module('contentful').directive('cfMarkdownEditor', ['marked', 'keycodes', '$document', '$window', '$timeout', 'delay', function(marked, keycodes, $document, $window, $timeout, delay){
+angular.module('contentful').directive('cfMarkdownEditor', ['$injector', function($injector){
+  var $document   = $injector.get('$document');
+  var $timeout    = $injector.get('$timeout');
+  var $window     = $injector.get('$window');
+  var delay       = $injector.get('delay');
+  var keycodes    = $injector.get('keycodes');
+  var modalDialog = $injector.get('modalDialog');
+  var marked      = $injector.get('marked');
+
   return {
     restrict: 'C',
     template: JST['cf_markdown_editor'](),
@@ -218,6 +226,20 @@ angular.module('contentful').directive('cfMarkdownEditor', ['marked', 'keycodes'
         textarea.textrange('setcursor', range.start + 4);
       };
 
+      scope.insertAsset = function () {
+        modalDialog.open({
+          scope: scope,
+          template: 'insert_asset_dialog'
+        }).then(function (asset) {
+          asset = localizedAsset(asset, scope.locale);
+          var link = '!['+asset.title+']('+asset.file.url+')';
+          var range = lineRange();
+          textarea.textrange('replace', range.text + '\n\n'+link+'\n');
+          textarea.textrange('set', range.end, 0);
+          triggerUpdateEvents();
+        });
+      };
+
       // Helpers ///////////////////////////////////////////
 
       function lineRange() {
@@ -268,6 +290,16 @@ angular.module('contentful').directive('cfMarkdownEditor', ['marked', 'keycodes'
       function triggerUpdateEvents() {
         textarea.trigger('input').trigger('autosize');
         textarea[0].dispatchEvent(new Event('paste'));
+      }
+
+      function localizedAsset(asset, locale) {
+        var defaultLocale = scope.spaceContext.defaultLocale;
+        var file  = asset.data.fields.file;
+        var title = asset.data.fields.title;
+        return {
+          file:   file[locale.code] ||  file[defaultLocale.code] || _.first(file ),
+          title: title[locale.code] || title[defaultLocale.code] || _.first(title),
+        };
       }
 
       // Update Preview /////////////////////////////////////
