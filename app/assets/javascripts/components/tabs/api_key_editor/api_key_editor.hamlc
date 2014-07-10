@@ -22,19 +22,28 @@
 .tab-main
   .note-box
     %h2 Content Delivery API Key
-    %p The API Key you will receive is a read only Content Delivery API Key and blah blah and more blah. The API Key you will receive is a read only Content Delivery API Key and blah blah and more blah. The API Key you will receive is a read only Content Delivery API Key and blah blah and more blah. The API Key you will receive is a read only Content Delivery API Key and blah blah and more blah. The API Key you will receive is a read only Content Delivery API Key and blah blah and more blah. The API Key you will receive is a read only Content Delivery API Key and blah blah and more blah. The API Key you will receive is a read only Content Delivery API Key and blah blah and more blah. 
+    %p The Content Delivery API is a REST API for delivering content from the Contentful platform to your apps, websites and other media. To activate the API you need to generate at least one API key. Just fill out the title and description fields below and we will auto-generate an access token for you when you 'Save'.
+    %p We recommend using one key per supported device. For example, if you plan to serve content to a website, iPhone 8, iPad 7 and Android app, then you would generate four API keys. 
   .ng-form.form-horizontal(name="apiKeyForm" submit="save()")
     .form-field
       %label Name
         %sup *
       .form-controls
         .field-editor
-          %input(type="text" ng-model="apiKey.data.name" required="" ng-disabled="!editable()")
+          %input(type="text" ng-model="apiKey.data.name" required="" ng-disabled="!editable()" placeholder="iOS iPad Application")
     .form-field
       %label Description
       .form-controls
         .field-editor
-          %input(type="text" ng-model="apiKey.data.description" ng-disabled="!editable()")
+          %input(type="text" ng-model="apiKey.data.description" ng-disabled="!editable()" placeholder="This API Key will grant the iOS iPad Application access to the content on Contentful.")
+    .form-field
+      %label Space ID
+      .form-controls
+        .field-editor
+          %input.space-id(type="text" value="{{spaceContext.space.getId()}}" readonly="readonly")
+          %a.default-button.cf-copy-paste(href="#" clipboard-target="space-id")
+            %i.ss-layers
+            %i.ss-plus
     .form-field
       %label Access Token
       .form-controls
