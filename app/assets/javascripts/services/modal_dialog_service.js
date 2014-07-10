@@ -1,8 +1,13 @@
 'use strict';
 
-angular.module('contentful').factory('modalDialog', ['$compile', '$q', 'keycodes', function ($compile, $q, keycodes) {
+angular.module('contentful').factory('modalDialog', ['$injector', function ($injector) {
+  var $compile = $injector.get('$compile');
+  var $q       = $injector.get('$q');
+  var $window  = $injector.get('$window');
+  var keycodes = $injector.get('keycodes');
 
   function Dialog(params) {
+    this._handleKeys = _.bind(this._handleKeys, this);
     this.scope = params.scope.$new();
     this.params = _.extend(
       {
@@ -32,7 +37,7 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', 'keycodes
 
       this.domElement.find('input').eq(0).focus();
 
-      $(window).on('keyup', _.bind(this._handleKeys, this));
+      $($window).on('keyup', this._handleKeys);
 
       scope.dialog = _.extend(this, this.params);
       $compile(this.domElement)(scope);
@@ -66,13 +71,13 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', 'keycodes
     },
 
     confirm: function () {
-      this._deferred.resolve();
+      this._deferred.resolve.apply(this, arguments);
       this._cleanup();
       return this;
     },
 
     cancel: function () {
-      this._deferred.reject();
+      this._deferred.reject.apply(this, arguments);
       this._cleanup();
       return this;
     },
@@ -81,7 +86,7 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', 'keycodes
       if(this.domElement){
         this.domElement.scope().$destroy();
         this.domElement.remove();
-        $(window).off('keyup', this.handleKeys);
+        $($window).off('keyup', this._handleKeys);
         this.domElement = this.scope = null;
       }
     }
