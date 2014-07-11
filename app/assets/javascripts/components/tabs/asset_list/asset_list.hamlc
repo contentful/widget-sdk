@@ -13,7 +13,7 @@
       search-content-type="assetContentType"
       placeholder="Search for Assets")
 
-  .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")
+  .search-results-position(paginator="searchController.paginator" ng-hide="!searchController.paginator.numEntries")
 
   .add-entity
     %button.default-button.primary-button(cf-can="create, Asset" ng-click="createAsset('frameButton')")
@@ -38,7 +38,7 @@
           %th.cell-author By
           %th.cell-status Status
 
-    .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
+    .main-results-wrapper.endless-container(at-bottom="searchController.loadMore()" num-elements="searchController.paginator.page")
       %table.result-list.main-results
         %tbody
           %tr(ng-repeat="asset in visibleAssets = (assets | filter:visibleInCurrentList) track by asset.getId()" cf-click-local="navigator.assetEditor(asset).goTo()")
@@ -60,7 +60,7 @@
               .draft-wrapper
                 .status-label {{statusClass(asset)}}
                 .status-bar
-      .loading(ng-hide="paginator.atLast()")
+      .loading(ng-hide="searchController.paginator.atLast()")
 
     .advice(ng-show="visibleAssets | isEmpty")
       %div(ng-show="hasQuery()")

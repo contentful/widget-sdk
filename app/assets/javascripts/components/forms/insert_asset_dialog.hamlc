@@ -3,7 +3,21 @@
     .title Insert Asset
     .modal-dialog-close-button(ng-click="dialog.cancel()")
     .dialog-content
-      .cf-link-editor-search(cf-autocomplete-results="entities"
+      %div.menu-with-buttons(
+        view-menu="uiConfig.assetListViews"
+        current-view="currentView"
+        ng-show="uiConfig")
+      .main
+        .search-with-results(cf-tokenized-search="searchTerm" 
+          tooltip-placement="top"
+          tooltip="Search for existing asset"
+          search-content-type="assetContentType"
+          placeholder="Search for asset"
+          cf-on-blur-component="leftSearch($event)")
+        .assets
+          .asset(ng-repeat="asset in assets") {{asset.data.fields}}
+
+      -#.cf-link-editor-search(cf-autocomplete-results="entities"
         add-entity="selectAsset(entity)"
         entity-type="'Asset'")
     .buttons
