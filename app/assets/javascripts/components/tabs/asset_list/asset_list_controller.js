@@ -12,10 +12,13 @@ angular.module('contentful').
   var searchQueryHelper  = $injector.get('searchQueryHelper');
   var sentry             = $injector.get('sentry');
 
-  $controller('AssetListViewsController', {$scope: $scope});
   var assetLoader = new PromisedLoader();
 
   $scope.assetSection = 'all';
+  $controller('AssetListViewsController', {
+    $scope: $scope,
+    currentViewLocation: 'tab.params.view'
+  });
 
   $scope.paginator = new Paginator();
   $scope.selection = new Selection();
