@@ -7,6 +7,8 @@ angular.module('contentful').
     $scope.tab.closingMessage = 'You have unsaved changes.';
     $scope.tab.closingMessageDisplayType = 'dialog';
 
+    $scope.authCodeExampleLang = 'http';
+
     $scope.$watch('apiKey.data.name', function(name) {
       $scope.headline = $scope.tab.title = name || 'Untitled';
     });

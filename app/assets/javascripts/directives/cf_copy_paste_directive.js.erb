@@ -47,7 +47,10 @@ angular.module('contentful').directive('cfCopyPaste', ['environment', function(e
         $(this).attr('copy-status', 'copying');
         $(this).tooltip('show');
         var element = $(this);
-        var clipboardTarget = element.parent().find('.'+element.attr('clipboard-target'));
+        var targetClass = element.attr('clipboard-target-class');
+        targetClass = targetClass ? '.'+targetClass : targetClass;
+        var targetSelector = element.attr('clipboard-target-selector') || targetClass;
+        var clipboardTarget = element.parent().find(targetSelector);
         client.setText(clipboardTarget.val());
       }
       clip.on('dataRequested', dataRequestedHandler);
