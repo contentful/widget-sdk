@@ -100,6 +100,10 @@ angular.module('contentful').controller('EntryListCtrl', ['$scope', '$injector',
     $scope.resetDisplayFields();
   };
 
+  $scope.displayFieldForFilteredContentType = function () {
+    return $scope.spaceContext.displayFieldForType($scope.tab.params.view.contentTypeId);
+  };
+
   $scope.visibleInCurrentList = function(){
     // TODO: This needs to basically emulate the API :(
     return true;
