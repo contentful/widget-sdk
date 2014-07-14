@@ -74,13 +74,15 @@ describe('SpaceContext class with no space', function () {
 });
 
 describe('SpaceContext class with a space', function () {
-  var space, spaceContext;
+  var space, spaceContext, rootScope, $q;
   var cfStub;
   beforeEach(function () {
     module('contentful/test');
-    inject(function (SpaceContext, _cfStub_) {
+    inject(function (SpaceContext, _cfStub_, $rootScope, _$q_) {
       cfStub = _cfStub_;
       space = cfStub.space('test');
+      rootScope = $rootScope;
+      $q = _$q_;
       spaceContext = new SpaceContext(space);
     });
   });
@@ -241,6 +243,17 @@ describe('SpaceContext class with a space', function () {
       spaceContext.refreshContentTypes();
       spaceContext.refreshContentTypes();
       expect(getContentTypes.callCount).toBe(1);
+    });
+
+    it('results in an error message if API broken', function () {
+      var handler;
+      inject(function (ReloadNotification) {
+        handler = ReloadNotification.apiErrorHandler;
+      });
+      sinon.stub(spaceContext._contentTypeLoader, 'loadCallback').returns($q.reject({statusCode: 500}));
+      spaceContext.refreshContentTypes();
+      rootScope.$apply();
+      expect(handler).toBeCalled();
     });
 
     describe('refreshes published content types', function () {

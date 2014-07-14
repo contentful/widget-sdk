@@ -1,8 +1,16 @@
 'use strict';
 
-angular.module('contentful').controller('EntryListCtrl',
-  ['$scope', '$controller', 'Paginator', 'Selection', 'analytics', 'PromisedLoader', 'sentry', 'searchQueryHelper', 'EntityCache',
-    function EntryListCtrl($scope, $controller, Paginator, Selection, analytics, PromisedLoader, sentry, searchQueryHelper, EntityCache) {
+angular.module('contentful').controller('EntryListCtrl', ['$scope', '$injector', function EntryListCtrl($scope, $injector) {
+  var $controller        = $injector.get('$controller');
+  var $q                 = $injector.get('$q');
+  var EntityCache        = $injector.get('EntityCache');
+  var Paginator          = $injector.get('Paginator');
+  var PromisedLoader     = $injector.get('PromisedLoader');
+  var ReloadNotification = $injector.get('ReloadNotification');
+  var Selection          = $injector.get('Selection');
+  var analytics          = $injector.get('analytics');
+  var searchQueryHelper  = $injector.get('searchQueryHelper');
+  var sentry             = $injector.get('sentry');
 
   $controller('DisplayedFieldsController', {$scope: $scope});
   $controller('EntryListViewsController', {$scope: $scope});
@@ -92,6 +100,10 @@ angular.module('contentful').controller('EntryListCtrl',
     $scope.resetDisplayFields();
   };
 
+  $scope.displayFieldForFilteredContentType = function () {
+    return $scope.spaceContext.displayFieldForType($scope.tab.params.view.contentTypeId);
+  };
+
   $scope.visibleInCurrentList = function(){
     // TODO: This needs to basically emulate the API :(
     return true;
@@ -109,7 +121,8 @@ angular.module('contentful').controller('EntryListCtrl',
       $scope.selection.switchBaseSet($scope.entries.length);
       // Check if a refresh is necessary in cases where no pageParameters change
       refreshEntityCaches();
-    });
+    })
+    .catch(ReloadNotification.apiErrorHandler);
   };
 
   function refreshEntityCaches() {
@@ -182,9 +195,11 @@ angular.module('contentful').controller('EntryListCtrl',
       entries = _.difference(entries, $scope.entries);
       $scope.entries.push.apply($scope.entries, entries);
       $scope.selection.setBaseSize($scope.entries.length);
-    }, function () {
+    }, function (err) {
       $scope.paginator.page--;
-    });
+      return $q.reject(err);
+    })
+    .catch(ReloadNotification.apiErrorHandler);
   };
 
   $scope.statusClass = function(entry){

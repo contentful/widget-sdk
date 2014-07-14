@@ -175,6 +175,13 @@ mocks.factory('cfStub', ['contentfulClient', 'SpaceContext', function (contentfu
     return apiKey;
   };
 
+  cfStub.collection = function (items, total) {
+    if (_.isNumber(items)) items = new Array(items);
+    total = total === undefined ? items.length : total;
+    Object.defineProperty(items, 'total', {value: total});
+    return items;
+  };
+
   return cfStub;
 }]);
 
@@ -203,15 +210,15 @@ mocks.config(['$provide', function ($provide) {
 
     return $delegate;
   }]);
-}]);
 
-mocks.provider('ReloadNotification', function () {
-  this.$get = function () {
-    return {
-      trigger: sinon.stub()
-    };
-  };
-});
+  $provide.decorator('ReloadNotification', ['$delegate', function ($delegate) {
+    for (var prop in $delegate) {
+      sinon.stub($delegate, prop);
+    }
+    return $delegate;
+  }]);
+
+}]);
 
 mocks.provider('cfCanStubs', ['$provide', function ($provide) {
   this.setup = function (reasonsStub) {

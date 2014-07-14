@@ -51,10 +51,9 @@
           %th.cell-select
             %input(type="checkbox" cf-selection="" ng-show="entries.length > 0" tabindex="-1")
           %th.cell-content-type(ng-show="!tab.params.view.contentTypeId && !tab.params.view.contentTypeHidden") Content Type
-          %th.cell-display-name(ng-if="!tab.params.view.contentTypeId") Name
-          %th.cell-display-name(ng-if="tab.params.view.contentTypeId" ng-init="field=spaceContext.displayFieldForType(tab.params.view.contentTypeId)" cf-field-order-header="displayField")
-          %th(ng-repeat="field in displayedFields track by field.id" cf-field-order-header=""
-            data-field-id="{{field.id}}" ng-class="[getFieldClass(field)]")
+          %th.cell-display-name(ng-if="!tab.params.view.contentTypeId || !displayFieldForFilteredContentType()") Name
+          %th.cell-display-name(ng-if="tab.params.view.contentTypeId && displayFieldForFilteredContentType()" ng-init="field=displayFieldForFilteredContentType()" cf-field-order-header="displayField")
+          %th(ng-repeat="field in displayedFields track by field.id" cf-field-order-header="" data-field-id="{{field.id}}" ng-class="[getFieldClass(field)]")
           %th.cell-status Status
     .view-customizer
 

@@ -1,7 +1,16 @@
 'use strict';
 
 angular.module('contentful').
-  controller('AssetListCtrl',['$scope', '$q', 'Paginator', 'Selection', 'PromisedLoader', 'analytics', 'sentry', 'searchQueryHelper', '$controller', function AssetListCtrl($scope, $q, Paginator, Selection, PromisedLoader, analytics, sentry, searchQueryHelper, $controller) {
+  controller('AssetListCtrl',['$scope', '$injector', function AssetListCtrl($scope, $injector) {
+  var $controller        = $injector.get('$controller');
+  var $q                 = $injector.get('$q');
+  var Paginator          = $injector.get('Paginator');
+  var PromisedLoader     = $injector.get('PromisedLoader');
+  var ReloadNotification = $injector.get('ReloadNotification');
+  var Selection          = $injector.get('Selection');
+  var analytics          = $injector.get('analytics');
+  var searchQueryHelper  = $injector.get('searchQueryHelper');
+  var sentry             = $injector.get('sentry');
 
   $controller('AssetListViewsController', {$scope: $scope});
   var assetLoader = new PromisedLoader();
@@ -47,7 +56,8 @@ angular.module('contentful').
       $scope.paginator.numEntries = assets.total;
       $scope.assets = assets;
       $scope.selection.switchBaseSet($scope.assets.length);
-    });
+    })
+    .catch(ReloadNotification.apiErrorHandler);
   };
 
   function buildQuery() {
@@ -92,9 +102,11 @@ angular.module('contentful').
       assets = _.difference(assets, $scope.assets);
       $scope.assets.push.apply($scope.assets, assets);
       $scope.selection.setBaseSize($scope.assets.length);
-    }, function () {
+    }, function (err) {
       $scope.paginator.page--;
-    });
+      return $q.reject(err);
+    })
+    .catch(ReloadNotification.apiErrorHandler);
   };
 
   $scope.statusClass = function(asset){

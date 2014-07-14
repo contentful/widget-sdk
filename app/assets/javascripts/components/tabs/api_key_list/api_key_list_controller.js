@@ -1,15 +1,20 @@
 'use strict';
 
 angular.module('contentful').
-  controller('ApiKeyListCtrl', ['$scope', '$window', 'environment', function($scope, $window, environment) {
+  controller('ApiKeyListCtrl', ['$scope', '$injector', function($scope, $injector) {
+    var $q                 = $injector.get('$q');
+    var environment        = $injector.get('environment');
+    var ReloadNotification = $injector.get('ReloadNotification');
+
     $scope.marketingUrl = environment.settings.marketing_url;
 
     $scope.refreshApiKeys = function() {
-      $scope.spaceContext.space.getApiKeys({limit: 1000}, function(err, apiKeys) {
-        $scope.$apply(function() {
-          $scope.apiKeys = apiKeys;
-        });
-      });
+      var cb = $q.callback();
+      $scope.spaceContext.space.getApiKeys({limit: 1000}, cb);
+      return cb.promise.then(function (apiKeys) {
+        $scope.apiKeys = apiKeys;
+      })
+      .catch(ReloadNotification.apiErrorHandler);
     };
 
     $scope.$watch('apiKeys', function(apiKeys) {
