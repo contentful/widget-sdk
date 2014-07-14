@@ -54,7 +54,7 @@
     tabindex="-1"
     tooltip="Tab (Shift+Alt+Tab)"
     ng-disabled="inPreviewMode()")
-  %button.toolbar-button.md-code-icon(
+  %button.toolbar-button.md-asset-icon(
     ng-click="insertAsset()"
     tabindex="-1"
     tooltip="Insert link to an asset"
