@@ -8,20 +8,19 @@
         current-view="currentView"
         ng-show="uiConfig")
       .main
-        .search-with-results(cf-tokenized-search="searchTerm" 
+        .search-with-results(cf-tokenized-search="currentView.searchTerm"
           tooltip-placement="top"
           tooltip="Search for existing asset"
           search-content-type="assetContentType"
           placeholder="Search for asset"
           cf-on-blur-component="leftSearch($event)")
         .assets
-          .asset(ng-repeat="asset in assets") {{asset.data.fields}}
-
-      -#.cf-link-editor-search(cf-autocomplete-results="entities"
-        add-entity="selectAsset(entity)"
-        entity-type="'Asset'")
+          .asset(ng-repeat="asset in assets" ng-click="selectAsset(asset)")
+            %i.ss-check(ng-show="selection.isSelected(asset)")
+            .cf-thumbnail(file="spaceContext.localizedField(asset, 'data.fields.file')" size="100")
+            .asset-title {{spaceContext.assetTitle(asset)}}
     .buttons
       %button.default-button.cancel(type="button" ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")
         {{dialog.cancelLabel}}
-      %button.default-button.primary-button.confirm(ng-click="dialog.confirm()")
-        {{dialog.confirmLabel}}
+      %button.default-button.primary-button.confirm(ng-click="dialog.confirm(selection.getSelected(assets))")
+        Insert selected

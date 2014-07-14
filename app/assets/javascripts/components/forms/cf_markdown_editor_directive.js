@@ -230,11 +230,11 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         modalDialog.open({
           scope: scope,
           template: 'insert_asset_dialog'
-        }).then(function (asset) {
-          asset = localizedAsset(asset, scope.locale);
-          var link = '!['+asset.title+']('+asset.file.url+')';
+        }).then(function (assets) {
+          if (_.isEmpty(assets)) return;
+          var links = _.map(assets, makeAssetLink).join('\n');
           var range = lineRange();
-          textarea.textrange('replace', range.text + '\n\n'+link+'\n');
+          textarea.textrange('replace', range.text + '\n\n'+links+'\n');
           textarea.textrange('set', range.end, 0);
           triggerUpdateEvents();
         });
@@ -290,6 +290,11 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       function triggerUpdateEvents() {
         textarea.trigger('input').trigger('autosize');
         textarea[0].dispatchEvent(new Event('paste'));
+      }
+
+      function makeAssetLink(asset) {
+        asset = localizedAsset(asset, scope.locale);
+        return '!['+asset.title+']('+asset.file.url+')';
       }
 
       function localizedAsset(asset, locale) {

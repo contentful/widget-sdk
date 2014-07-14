@@ -3,10 +3,14 @@ angular.module('contentful').controller('InsertAssetDialogController', ['$scope'
   var $controller       = $injector.get('$controller');
   var keycodes          = $injector.get('keycodes');
   var searchQueryHelper = $injector.get('searchQueryHelper');
+  var Selection         = $injector.get('Selection');
 
-  $scope.canEditUiConfig = false;
-  $scope.currentView = null;
   $scope.assetContentType = searchQueryHelper.assetContentType;
+  $scope.canEditUiConfig  = false;
+  $scope.currentView      = {searchTerm: null};
+  $scope.assets           = [];
+  $scope.selection        = new Selection();
+
   $controller('AssetListViewsController', {
     $scope: $scope,
     currentViewLocation: 'currentView'
@@ -18,7 +22,7 @@ angular.module('contentful').controller('InsertAssetDialogController', ['$scope'
 
   $scope.$watch(function pageParameters(scope){
     return {
-      searchTerm:  scope.searchTerm,
+      searchTerm:  scope.currentView.searchTerm,
       page:        scope.searchController.paginator.page,
       pageLength:  scope.searchController.paginator.pageLength,
     };
@@ -27,9 +31,8 @@ angular.module('contentful').controller('InsertAssetDialogController', ['$scope'
   }, true);
 
 
-  $scope.entities = [];
   $scope.selectAsset = function (asset) {
-    $scope.dialog.confirm(asset);
+    $scope.selection.toggle(asset);
   };
 
   $scope.handleKeys = function (event) {
@@ -37,6 +40,6 @@ angular.module('contentful').controller('InsertAssetDialogController', ['$scope'
   };
 
   function getSearchTerm() {
-    return $scope.searchTerm;
+    return $scope.currentView.searchTerm;
   }
 }]);
