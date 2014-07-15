@@ -23,9 +23,9 @@
     .main-results-wrapper
       %table.result-list.main-results.animated
         %tbody
-          %tr(ng-repeat-start="contentType in visibleContentTypes = (contentTypes | filter:visibleInCurrentList) track by contentType.getId()")
-            %td.cell-select(cf-click-local="toggleDisplay(contentType.getId())")
-              %a.toggle-collapse(cf-click-local="toggleDisplay(contentType.getId())" ng-class="{open: isExpanded(contentType.getId())}") ▶
+          %tr(ng-repeat-start="contentType in visibleContentTypes = (contentTypes | filter:visibleInCurrentList) track by contentType.getId()" cf-click-local="toggleDisplay(contentType.getId())")
+            %td.cell-select
+              %a.toggle-collapse(ng-class="{open: isExpanded(contentType.getId())}") ▶
             %td.cell-display-name.cell-anchor(cf-click-local="toggleDisplay(contentType.getId())")
               %span {{contentType.getName()}}
             %td.cell-symbol
@@ -45,7 +45,9 @@
                     %td.cell-display-name {{field.name}}
                     %td.cell-symbol
                       %span {{field.id}}
-                    %td.cell-description {{field.type}}
+                    %td.cell-description
+                      %span(tooltip="{{getHelpText(field.type)}}" tooltip-container=".main-results-wrapper" tooltip-delay-hide="1000" tooltip-html="true")
+                        {{field.type}}
 
       .advice(ng-show="visibleContentTypes | isEmpty")
         %div

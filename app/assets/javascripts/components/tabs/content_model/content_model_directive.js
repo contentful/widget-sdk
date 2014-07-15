@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('contentful').directive('contentModel', function() {
+angular.module('contentful').directive('contentModel', ['$injector', function($injector) {
+  var contentModelFieldTypes = $injector.get('contentModelFieldTypes');
   return {
     template: JST['content_model'](),
     controller: 'ContentTypeListCtrl',
@@ -17,6 +18,12 @@ angular.module('contentful').directive('contentModel', function() {
       scope.isExpanded = function (id) {
         return expandedContentTypes[id];
       };
+
+      scope.getHelpText = function (type) {
+        var fieldType = contentModelFieldTypes[type];
+        if(!fieldType) throw new Error('No type for '+type);
+        return '<p>'+fieldType.description +'</p><p><strong>JSON Primitive:</strong> '+fieldType.jsonType+'</p>';
+      };
     }
   };
-});
+}]);
