@@ -1,7 +1,11 @@
 'use strict';
 
-angular.module('contentful')
-  .controller('EntryEditorCtrl', ['$scope', 'validation', 'addCanMethods', 'notification', 'sentry', function EntryEditorCtrl($scope, validation, addCanMethods, notification, sentry) {
+angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector', function EntryEditorCtrl($scope, $injector) {
+  var addCanMethods     = $injector.get('addCanMethods');
+  var editingInterfaces = $injector.get('editingInterfaces');
+  var sentry            = $injector.get('sentry');
+  var validation        = $injector.get('validation');
+
   $scope.$watch('tab.params.entry', 'entry=tab.params.entry');
   $scope.$watch(function entryEditorEnabledWatcher(scope) {
     return !scope.entry.isArchived() && scope.can('update', scope.entry.data);
