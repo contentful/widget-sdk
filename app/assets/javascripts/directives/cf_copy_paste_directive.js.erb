@@ -12,67 +12,69 @@ angular.module('contentful').directive('cfCopyPaste', ['environment', function(e
   return {
     restrict: 'AC',
     link: function(scope, element, attrs) {
-      var clip = new ZeroClipboard(element.get(0));
-      var copyText = {
-        'default': 'Copy',
-        'copying': 'Copying...',
-        'copied': 'Copied'
-      };
-      element.attr('copy-status', 'default');
+      scope.$evalAsync(function(){
+        var clip = new ZeroClipboard(element.get(0));
+        var copyText = {
+          'default': 'Copy',
+          'copying': 'Copying...',
+          'copied': 'Copied'
+        };
+        element.attr('copy-status', 'default');
 
-      element.tooltip({
-        title: function () {
-          return copyText[$(this).attr('copy-status')];
+        element.tooltip({
+          title: function () {
+            return copyText[$(this).attr('copy-status')];
+          }
+        });
+
+        function mouseoverHandler(client, args) {
+          $(this).attr('copy-status', 'default');
+          $(this).tooltip('show');
+          setTimeout(_.bind(function () {
+            $(this).tooltip('hide');
+          }, this), 2000);
+
         }
-      });
+        clip.on('mouseover', mouseoverHandler);
 
-      function mouseoverHandler(client, args) {
-        $(this).attr('copy-status', 'default');
-        $(this).tooltip('show');
-        setTimeout(_.bind(function () {
-          $(this).tooltip('hide');
-        }, this), 2000);
-
-      }
-      clip.on('mouseover', mouseoverHandler);
-
-      function mouseoutHandler(client, args) {
-        $(this).tooltip('hide');
-        $(this).attr('copy-status', 'default');
-      }
-      clip.on('mouseout', mouseoutHandler);
-
-      function dataRequestedHandler(client, args) {
-        $(this).tooltip('hide');
-        $(this).attr('copy-status', 'copying');
-        $(this).tooltip('show');
-        var element = $(this);
-        var targetClass = element.attr('clipboard-target-class');
-        targetClass = targetClass ? '.'+targetClass : targetClass;
-        var targetSelector = element.attr('clipboard-target-selector') || targetClass;
-        var clipboardTarget = element.parent().find(targetSelector);
-        client.setText(clipboardTarget.val());
-      }
-      clip.on('dataRequested', dataRequestedHandler);
-
-      function completeHandler(client, args) {
-        $(this).tooltip('hide');
-        $(this).attr('copy-status', 'copied');
-        $(this).tooltip('show');
-        setTimeout(_.bind(function () {
+        function mouseoutHandler(client, args) {
           $(this).tooltip('hide');
           $(this).attr('copy-status', 'default');
-        }, this), 2000);
-      }
-      clip.on('complete', completeHandler);
+        }
+        clip.on('mouseout', mouseoutHandler);
+
+        function dataRequestedHandler(client, args) {
+          $(this).tooltip('hide');
+          $(this).attr('copy-status', 'copying');
+          $(this).tooltip('show');
+          var element = $(this);
+          var targetClass = element.attr('clipboard-target-class');
+          targetClass = targetClass ? '.'+targetClass : targetClass;
+          var targetSelector = element.attr('clipboard-target-selector') || targetClass;
+          var clipboardTarget = element.parent().find(targetSelector);
+          client.setText(clipboardTarget.val() || clipboardTarget.text());
+        }
+        clip.on('dataRequested', dataRequestedHandler);
+
+        function completeHandler(client, args) {
+          $(this).tooltip('hide');
+          $(this).attr('copy-status', 'copied');
+          $(this).tooltip('show');
+          setTimeout(_.bind(function () {
+            $(this).tooltip('hide');
+            $(this).attr('copy-status', 'default');
+          }, this), 2000);
+        }
+        clip.on('complete', completeHandler);
 
 
-      element.on('$destroy', function () {
-        clip.off('mouseover', mouseoverHandler);
-        clip.off('mouseout', mouseoutHandler);
-        clip.off('dataRequested', dataRequestedHandler);
-        clip.off('complete', completeHandler);
-        element.tooltip('destroy');
+        element.on('$destroy', function () {
+          clip.off('mouseover', mouseoverHandler);
+          clip.off('mouseout', mouseoutHandler);
+          clip.off('dataRequested', dataRequestedHandler);
+          clip.off('complete', completeHandler);
+          element.tooltip('destroy');
+        });
       });
     }
   };

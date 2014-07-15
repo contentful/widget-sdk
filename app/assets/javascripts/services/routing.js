@@ -8,6 +8,7 @@ angular.module('contentful').provider('routing', ['$routeProvider', function ($r
   $routeProvider.when('/spaces/:spaceId/assets/:assetId', {viewType: 'asset-editor'});
   $routeProvider.when('/spaces/:spaceId/content_types', {viewType: 'content-type-list'});
   $routeProvider.when('/spaces/:spaceId/content_types/:contentTypeId', {viewType: 'content-type-editor'});
+  $routeProvider.when('/spaces/:spaceId/content_model', {viewType: 'content-model'});
   $routeProvider.when('/spaces/:spaceId/developers', {viewType: 'developers-home'});
   $routeProvider.when('/spaces/:spaceId/api_keys', {viewType: 'api-key-list'});
   $routeProvider.when('/spaces/:spaceId/api_keys/:apiKeyId', {viewType: 'api-key-editor'});
@@ -64,6 +65,8 @@ angular.module('contentful').provider('routing', ['$routeProvider', function ($r
           path = path + '/content_types/' + tab.params.contentType.getId();
         } else if (tab.viewType == 'content-type-list') {
           path = path + '/content_types';
+        } else if (tab.viewType == 'content-model') {
+          path = path + '/content_model';
         } else if (tab.viewType == 'developers-home') {
           path = path + '/developers';
         } else if (tab.viewType == 'api-key-list') {

@@ -139,6 +139,9 @@
     color: $dark-gray
     font-weight: 600
 
+  .cell-anchor
+    color: $link-blue
+
   .cell-text,
   .cell-description
     overflow: hidden
@@ -173,6 +176,11 @@
   .cell-link,
   .cell-text
     width: 9%
+
+  .cell-full
+    width: 100%
+  td.cell-full
+    padding: 0
 
   td.cell-status
     text-transform: uppercase
@@ -233,3 +241,18 @@
     &.ng-leave-active
       opacity: 0
       +transform(translateX(100%))
+
+.inner-result-list
+  background-color: $gray-background
+  padding-top: 5px
+  padding-bottom: 3px
+  padding-left: 2%
+  padding-right: 2%
+  th, th button
+    text-transform: uppercase
+    font-weight: bold
+  th, td
+    padding-left: 20px
+  td
+    border-bottom: 1px solid $dark-rule
+

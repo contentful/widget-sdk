@@ -32,6 +32,8 @@ angular.module('contentful').controller('TabViewCtrl', ['$scope', 'authenticatio
       tab.activate();
     else if (route.viewType && route.viewType.match(/^(entry|asset|content-type|api-key)-list$/))
       $scope.navigator.forViewType(route.viewType).open();
+    else if (route.viewType == 'content-model')
+      $scope.navigator.contentModel().open();
     else if (route.viewType == 'developers-home')
       $scope.navigator.developersHome().open();
     else if (route.viewType == 'space-settings')
@@ -86,6 +88,7 @@ angular.module('contentful').controller('TabViewCtrl', ['$scope', 'authenticatio
     entryList:         function () { return this._wrap(gen.entryList()); },
     contentTypeList:   function () { return this._wrap(gen.contentTypeList()); },
     apiKeyList:        function () { return this._wrap(gen.apiKeyList()); },
+    contentModel:      function () { return this._wrap(gen.contentModel()); },
     developersHome:    function () { return this._wrap(gen.developersHome()); },
     assetList:         function () { return this._wrap(gen.assetList()); },
     forViewType:       function (viewType) { return this._wrap(gen.forViewType(viewType)); },

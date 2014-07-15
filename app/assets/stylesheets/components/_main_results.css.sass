@@ -4,8 +4,10 @@
 .main-results
   border-left: none
   border-right: none
-  td:first-child,
-  th:first-child
+  > thead > td:first-child,
+  > td:first-child,
+  > tbody > th:first-child,
+  > th:first-child
     padding-left: 10px
 
 .main-results-wrapper
@@ -13,12 +15,13 @@
     @extend %endless-result-list-body
 
 // style changes for main-results, compared to regular result-list
-.main-header
-  &.result-list
-    border: 0
-    border-bottom: 1px solid $dark-rule
-    th, th button
-      text-transform: uppercase
+.main-header.result-list
+  border: 0
+  border-bottom: 1px solid $dark-rule
+
+.main-header.result-list
+  th, th button
+    text-transform: uppercase
 
 // Widgets used IN the tables:
 .main-results

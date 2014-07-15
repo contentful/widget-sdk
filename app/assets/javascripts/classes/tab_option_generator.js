@@ -125,6 +125,19 @@ angular.module('contentful').factory('TabOptionsGenerator', function () {
       };
     },
 
+    contentModel: function () {
+      return {
+        viewType: 'content-model',
+        section: 'contentModel',
+        hidden: true,
+        title: 'Content Model',
+        canClose: true,
+        params: {
+          list: 'active'
+        }
+      };
+    },
+
     forViewType: function (viewType) {
       if (viewType == 'entry-list')       return this.entryList();
       if (viewType == 'asset-list')       return this.assetList();
