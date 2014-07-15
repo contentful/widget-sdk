@@ -1,4 +1,8 @@
 language: ruby
+branches:
+  only:
+    - master
+    - production
 rvm:
   - 1.9.3
 bundler_args: --without development
