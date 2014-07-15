@@ -8,6 +8,14 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
   var modalDialog = $injector.get('modalDialog');
   var marked      = $injector.get('marked');
 
+  var renderer = new marked.Renderer();
+
+  renderer._image = renderer.image;
+  renderer.image = function (href, title, text) {
+    var img = this._image(href, title, text);
+    return '<div class="markdown-image-placeholder">'+img+'</div>';
+  };
+
   return {
     restrict: 'C',
     template: JST['cf_markdown_editor'](),
@@ -316,7 +324,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       scope.$watch('displayMode', function () {
         var source = scope.fieldData.value;
         if (scope.inPreviewMode() && source) {
-          scope.markdownPreview = marked(source);
+          scope.markdownPreview = marked(source, {renderer: renderer});
         } else {
           scope.markdownPreview = null;
         }
@@ -324,7 +332,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
 
       scope.$watch('fieldData.value', function (source, old, scope) {
         if (scope.inPreviewMode() && source) {
-          scope.markdownPreview = marked(source);
+          scope.markdownPreview = marked(source, {renderer: renderer});
         } else {
           scope.markdownPreview = null;
         }
