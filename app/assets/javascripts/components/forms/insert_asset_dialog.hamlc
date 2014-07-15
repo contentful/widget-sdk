@@ -14,7 +14,7 @@
           search-content-type="assetContentType"
           placeholder="Search for asset"
           cf-on-blur-component="leftSearch($event)")
-        .assets
+        .assets.endless-container(at-bottom="searchController.loadMore()" num-elements="searchController.paginator.page")
           .asset(ng-repeat="asset in assets" ng-click="selectAsset(asset)")
             %i.ss-check(ng-show="selection.isSelected(asset)")
             .cf-thumbnail(file="spaceContext.localizedField(asset, 'data.fields.file')" size="100")
