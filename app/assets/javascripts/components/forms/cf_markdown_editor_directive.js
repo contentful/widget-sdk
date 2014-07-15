@@ -293,8 +293,12 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       }
 
       function makeAssetLink(asset) {
-        asset = localizedAsset(asset, scope.locale);
-        return '!['+asset.title+']('+asset.file.url+')';
+        try {
+          asset = localizedAsset(asset, scope.locale);
+          return '!['+asset.title+']('+asset.file.url+')';
+        } catch (e) {
+          return null;
+        }
       }
 
       function localizedAsset(asset, locale) {
