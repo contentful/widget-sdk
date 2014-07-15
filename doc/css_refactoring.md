@@ -10,6 +10,7 @@ Some main points:
 - Adopt an atomic structure and naming conventions
   - http://www.slideshare.net/spirosmartzoukos/lessons-learnt-from-the-fontshop-site-relaunch (slide 6)
   - http://nicolasgallagher.com/about-html-semantics-front-end-architecture/
+  - http://philipwalton.com/articles/css-architecture/
   - https://medium.com/@drublic/css-naming-conventions-less-rules-more-fun-12af220e949b
   - http://www.smashingmagazine.com/2013/08/02/other-interface-atomic-design-sass/
   - http://www.smashingmagazine.com/2011/12/12/an-introduction-to-object-oriented-css-oocss/
