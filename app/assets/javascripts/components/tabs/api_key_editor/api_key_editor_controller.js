@@ -5,6 +5,7 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
   var notification = $injector.get('notification');
   var sentry = $injector.get('sentry');
   var $window = $injector.get('$window');
+  $scope.notes = $injector.get('notes');
 
   var deviceRegexps = {
     iOS: /(iphone os|ipad|iphone)/gi

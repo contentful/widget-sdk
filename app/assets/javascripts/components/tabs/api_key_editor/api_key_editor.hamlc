@@ -20,10 +20,12 @@
 
 
 .tab-main
-  .note-box
+  .note-box(ng-if="notes.isActive('content-delivery-api-key')")
     %h2 Content Delivery API Key
     %p The Content Delivery API is a REST API for delivering content from the Contentful platform to your apps, websites and other media. To activate the API you need to generate at least one API key. Just fill out the title and description fields below and we will auto-generate an access token for you when you 'Save'.
     %p We recommend using one key per supported device. For example, if you plan to serve content to a website, iPhone 8, iPad 7 and Android app, then you would generate four API keys. 
+    %p.note-box-dismissal
+      %button.default-button(href="" ng-click="notes.dismiss('content-delivery-api-key')") Ok, got it
   .ng-form.form-horizontal(name="apiKeyForm" submit="save()")
     .form-field
       %label Name
