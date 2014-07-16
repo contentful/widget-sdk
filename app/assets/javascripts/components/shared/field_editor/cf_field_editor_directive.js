@@ -28,9 +28,12 @@ angular.module('contentful').directive('cfFieldEditor', ['$compile', '$log', '$p
       // Necessary because the widgets can't access the entry directly, only the value variable
       var getEntity = $parse(attr.cfEditorEntity);
 
+      scope.field = scope.widget && scope.widget.field;
       scope.fieldData = {value: getExternal()};
       var oldValue = scope.fieldData.value;
 
+
+      scope.$watch('widget.field', 'field=widget.field');
       scope.$watch(function (scope) {
         var external = getExternal();
         if (external === scope.fieldData.value) {

@@ -1,4 +1,4 @@
-%ng-switch(on="field.widgetType")
+%ng-switch(on="widget.widgetType")
   %input(ng-switch-when="textfield"
     type="text"
     ng-model="fieldData.value"

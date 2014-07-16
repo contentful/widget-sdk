@@ -5,7 +5,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
 
   return {
     forContentType: function (contentType) {
-      return $q.when([defaultInterface(contentType)]);
+      return $q.when(defaultInterface(contentType));
     }
   };
 
@@ -23,6 +23,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
 
   function defaultWidget(contentType, field) {
     return {
+      id: random.id(),
       type: 'field',
       fieldId: field.id, // TODO use internal id
       widgetType: fieldWidgetType(field, contentType),
@@ -30,7 +31,6 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
     };
   }
 
-  // TODO: Copypasted from EntryEditorController. Won't be needed later, only intermediary
   function fieldWidgetType(field, contentType) {
     var hasValidations = getFieldValidationsOfType(field, 'in').length > 0;
     if(hasValidations) return 'dropdown';

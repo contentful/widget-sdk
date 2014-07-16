@@ -4,12 +4,14 @@
   contentTypeId: 'asdasd',
   widgets: [
     {
+      id: random.id(),
       type: 'field'
       fieldId: 'asdf'
       widgetType: 'widgetType',
       widgetOptions: {...}
     },
     {
+      id: random.id(),
       type: 'static'
       widgetType: 'sectionHeader'
       widgetOptions: {
@@ -17,6 +19,7 @@
       }
     },
     {
+      id: random.id(),
       type: 'static'
       widgetType: 'infoText'
       widgetOptions: {
@@ -24,6 +27,7 @@
       }
     },
     {
+      id: random.id(),
       type: 'static'
       widgetType: 'sectionBreak'
       widgetOptions: {
@@ -31,6 +35,7 @@
       }
     },
     {
+      id: random.id(),
       type: 'static'
       widgetType: 'image'
       widgetOptions: {

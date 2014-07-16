@@ -103,6 +103,10 @@ angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector
   $scope.formWidgetsController = $controller('FormWidgetsController', {$scope: $scope});
 
   // Helper methods on the scope
+  $scope.getFieldValidationsOfType = function(field, type) {
+    return _.filter(_.pluck(field.validations, type))[0];
+  };
+
   $scope.$watch('fields', function (fields, old, scope) {
     scope.showLangSwitcher = _.some(fields, function (field) {
       if(!field) {
