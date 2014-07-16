@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('FormFieldsController', ['$scope', '$injector', function FormFieldsController($scope, $injector){
+angular.module('contentful').controller('FormWidgetsController', ['$scope', '$injector', function FormFieldsController($scope, $injector){
   var sentry = $injector.get('sentry');
   $scope.$watch(function (scope) {
     return _.pluck(scope.spaceContext.activeLocales, 'code');

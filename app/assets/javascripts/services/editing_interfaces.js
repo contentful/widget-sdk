@@ -14,19 +14,18 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
       title: 'Default',
       id: random.id(),
       contentTypeId: contentType.getId(),
-      fields: []
+      widgets: []
     };
-    config.fields = _.map(contentType.data.fields, _.partial(defaultWidget, contentType));
+    config.widgets = _.map(contentType.data.fields, _.partial(defaultWidget, contentType));
 
     return config;
   }
 
   function defaultWidget(contentType, field) {
-    var type = fieldWidgetType(field, contentType);
     return {
       type: 'field',
       fieldId: field.id, // TODO use internal id
-      widgetType: type,
+      widgetType: fieldWidgetType(field, contentType),
       widgetOptions: {}
     };
   }

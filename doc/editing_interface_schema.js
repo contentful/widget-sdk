@@ -2,7 +2,7 @@
   title: 'Foo',
   id: 'asdasdasd',
   contentTypeId: 'asdasd',
-  fields: [
+  widgets: [
     {
       type: 'field'
       fieldId: 'asdf'

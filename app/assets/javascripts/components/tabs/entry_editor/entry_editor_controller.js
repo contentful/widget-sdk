@@ -100,7 +100,7 @@ angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector
   });
 
   // Building the form
-  $scope.formFieldsController = $controller('FormFieldsController', {$scope: $scope});
+  $scope.formWidgetsController = $controller('FormWidgetsController', {$scope: $scope});
 
   // Helper methods on the scope
   $scope.$watch('fields', function (fields, old, scope) {
