@@ -53,14 +53,6 @@
             %i.ss-layers
             %i.ss-plus
           %input(type="text" ng-hide="apiKey.data.accessToken" readonly="readonly" value="Save this API Key to generate an OAuth Access Token and access your data.")
-        .field-editor
-          %div.curl-example(ng-show="apiKey.data.accessToken")
-            %a(href="{{exampleUrl}}" target="_blank") Access Published Entries
-            %span or via curl:
-            %input.curl-command.cf-select-all-input(type="text" readonly="readonly" ng-show="apiKey.data.accessToken" value="curl {{exampleUrl}}")
-            %a.default-button.copy-paste-button.cf-copy-paste(href="#" clipboard-target-class="curl-command" ng-show="apiKey.data.accessToken")
-              %i.ss-layers
-              %i.ss-plus
     .form-field
       %label
       .form-controls
@@ -84,7 +76,7 @@
         %option(value="swift") Swift
       %i.button-icon-right.ss-dropdown
     %ng-switch(on="authCodeExampleLang")
-      .http.code-example(ng-switch-when="http")
+      .http.code-example.curl-example(ng-switch-when="http")
         %textarea(readonly="readonly")
           :preserve
             curl -X GET https://cdn.contentful.com/spaces/{{spaceContext.space.getId()}}?access_token={{apiKey.data.accessToken}}
