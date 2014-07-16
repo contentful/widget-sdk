@@ -46,7 +46,7 @@
         data-field-items-type="{{widget.field.items.type}}"
         ng-class="{'data-field-array': (widget.field|isFieldLink), 'data-field-boolean': (widget.field|isFieldBoolean), 'data-field-string-list': (widget.field|isFieldStringList)}")
       %label
-        {{wdiget.field.name}}
+        {{widget.field.name}}
         %sup(ng-show="wdiget.field.required") *
       .form-controls
         .locale(ng-repeat="locale in widget.locales track by locale.code" ot-field-presence="['fields', widget.field.id, locale.code]" data-locale="{{locale.code}}")

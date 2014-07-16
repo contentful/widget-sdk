@@ -102,7 +102,7 @@ angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector
   // Building the form
   $scope.formWidgetsController = $controller('FormWidgetsController', {$scope: $scope});
   $scope.$watch('spaceContext.publishedTypeForEntry(entry)', function (contentType) {
-    $scope.FormWidgetsController.contentType = contentType;
+    $scope.formWidgetsController.contentType = contentType;
   });
   $scope.$watch('spaceContext.publishedTypeForEntry(entry).data.fields', 'formWidgetsController.updateWidgets', true);
 
