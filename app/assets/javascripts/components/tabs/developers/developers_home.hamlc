@@ -52,6 +52,19 @@
           %li
             %a(href="https://github.com/contentful/contentful-management.js#cloning-a-spaces-content-model")
               Cloning a Content Model between Spaces
+          %li
+            %a(href="https://github.com/contentful/cosmonaut")
+              Cosmonaut
+          %li
+            %a(href="https://github.com/contentful/guide-app")
+              Guide App
+          %li
+            %a(href="https://github.com/contentful/guide-app-ios")
+              iOS Guide App
+          %li
+            %a(href="https://github.com/contentful")
+              See more in our Github
+
 
     .note-box
       This page is only visible to Space Admins and Developers.
