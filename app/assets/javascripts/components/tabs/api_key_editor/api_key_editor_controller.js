@@ -1,7 +1,20 @@
 'use strict';
 
-angular.module('contentful').
-  controller('ApiKeyEditorCtrl', ['$scope', 'authentication', 'environment', 'notification', 'sentry', function($scope, authentication, environment, notification, sentry) {
+angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', 'authentication', 'environment', 'notification', 'sentry', '$window', function($scope, authentication, environment, notification, sentry, $window) {
+
+    var deviceRegexps = {
+      iOS: /(iphone os|ipad|iphone)/gi
+    };
+
+    var detectedDevice = 'any';
+
+    _.forEach(deviceRegexps, function (re, id) {
+      if(re.test($window.navigator.userAgent)){
+        detectedDevice = id;
+        return false;
+      }
+    });
+
     $scope.$watch('tab.params.apiKey', 'apiKey=tab.params.apiKey');
 
     $scope.tab.closingMessage = 'You have unsaved changes.';
@@ -28,6 +41,10 @@ angular.module('contentful').
         '?access_token=' +
         accessToken;
     });
+
+    $scope.isDevice = function (id) {
+      return id === detectedDevice;
+    };
 
     $scope.$watch('apiKeyForm.$dirty', function (modified, old, scope) {
       scope.tab.dirty = modified;

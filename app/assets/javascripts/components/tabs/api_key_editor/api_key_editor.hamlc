@@ -56,8 +56,12 @@
     .form-field
       %label
       .form-controls
-        .field-editor
-          %a(href="{{mobileAppUrl}}" target="_blank") Open in Discovery App
+        .field-editor(ng-if="isDevice('iOS')")
+          %a(href="{{mobileAppUrl}}" target="_blank") Browse entries in the Discovery App
+        .field-editor(ng-if="isDevice('any')")
+          %a(href="https://itunes.apple.com/au/app/contentful-discovery-cms-for/id892840015" target="_blank") Browse entries in the Discovery App
+          %span (For iOS devices only)
+
     .form-field(ng-show="apiKey.data.accessToken")
       %label
       .form-controls
