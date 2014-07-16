@@ -71,22 +71,23 @@
   .authentication-code.form-styled(ng-show="apiKey.data.accessToken")
     %hr
     %h1 Authentication Code
-    .select-box
-      %select(ng-model="authCodeExampleLang")
-        %option(value="http" selected) HTTP (Curl)
-        %option(value="javascript") JavaScript
-        %option(value="objc") Objective-C
-        %option(value="ruby") Ruby
-        %option(value="swift") Swift
-      %i.button-icon-right.ss-dropdown
+    .tools
+      .select-box
+        %select(ng-model="authCodeExampleLang")
+          %option(value="http" selected) HTTP (Curl)
+          %option(value="javascript") JavaScript
+          %option(value="objc") Objective-C
+          %option(value="ruby") Ruby
+          %option(value="swift") Swift
+        %i.button-icon-right.ss-dropdown
+      %a.cf-copy-paste(href="#" clipboard-target-selector=".code-example textarea")
+        Copy to Clipboard
+
     %ng-switch(on="authCodeExampleLang")
       .http.code-example.curl-example(ng-switch-when="http")
         %textarea(readonly="readonly")
           :preserve
             curl -X GET https://cdn.contentful.com/spaces/{{spaceContext.space.getId()}}?access_token={{apiKey.data.accessToken}}
-        %a.default-button.copy-paste-button.cf-copy-paste(href="#" clipboard-target-selector="textarea")
-          %i.ss-layers
-          %i.ss-plus
       .javascript.code-example(ng-switch-when="javascript")
         %textarea(readonly="readonly")
           :preserve
@@ -95,17 +96,11 @@
               accessToken: '{{apiKey.data.accessToken}}',
               space: '{{spaceContext.space.getId()}}'
             });
-        %a.default-button.copy-paste-button.cf-copy-paste(href="#" clipboard-target-selector="textarea")
-          %i.ss-layers
-          %i.ss-plus
       .objc.code-example(ng-switch-when="objc")
         %textarea(readonly="readonly")
           :preserve
             CDAClient* client = [[CDAClient alloc] initWithSpaceKey:@"{{spaceContext.space.getId()}}"
                                       accessToken:@"{{apiKey.data.accessToken}}"];
-        %a.default-button.copy-paste-button.cf-copy-paste(href="#" clipboard-target-selector="textarea")
-          %i.ss-layers
-          %i.ss-plus
       .ruby.code-example(ng-switch-when="ruby")
         %textarea(readonly="readonly")
           :preserve
@@ -114,16 +109,10 @@
               access_token: '{{apiKey.data.accessToken}}',
               space: '{{spaceContext.space.getId()}}'
             )
-        %a.default-button.copy-paste-button.cf-copy-paste(href="#" clipboard-target-selector="textarea")
-          %i.ss-layers
-          %i.ss-plus
       .swift.code-example(ng-switch-when="swift")
         %textarea(readonly="readonly")
           :preserve
             var client = CDAClient(spaceKey:"{{spaceContext.space.getId()}}", accessToken:"{{apiKey.data.accessToken}}")
-        %a.default-button.copy-paste-button.cf-copy-paste(href="#" clipboard-target-selector="textarea")
-          %i.ss-layers
-          %i.ss-plus
 
 .tab-actions
   .button-set
