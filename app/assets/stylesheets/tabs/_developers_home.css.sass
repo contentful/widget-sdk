@@ -5,25 +5,33 @@
     padding: $tab-main-margin-top 20px 0
     background-color: white
   .with-left-nav
-    padding: $tab-main-margin-top*2 60px 0
+    padding: $tab-main-margin-top*2 20px 0
 
   .hero
     text-align: center
     line-height: 1.6rem
+    margin: 0 auto
     margin-bottom: $tab-main-margin-top*2
+    width: 90%
+    max-width: 1000px
     h1
       font-size: 1.8rem
       font-weight: normal
       margin-bottom: 1.4rem
     p
       font-size: 1rem
-      padding: 0 15%
+      position: relative
+    .close-button:after
+      position: absolute
+      right: -20px
+      top: -20px
+      font-size: 20px
 
   .boxes
     overflow: hidden
     margin: 0 5%
 
-  $developers-box-width: 27%
+  $developers-box-width: 30%
   $developers-box-right-margin: (100 - ($developers-box-width * 3))/2
   .box:last-child
     margin-right: 0%
@@ -40,7 +48,7 @@
     h2
       text-align: center
       text-transform: none
-      font-size: 1.6rem
+      font-size: 1.4rem
       margin-bottom: 2rem
       line-height: 1.8rem
     p
