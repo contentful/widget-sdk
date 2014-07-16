@@ -38,7 +38,8 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
       return 'textfield';
     }
     if (field.type === 'Text'   ) {
-      if (contentType.data.displayField === field.id) {
+      if (contentType.data.displayField === field.id ||
+          contentType.getId() === 'asset') {
         return 'textarea';
       } else {
         return 'markdownEditor';

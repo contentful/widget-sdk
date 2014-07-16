@@ -1,19 +1,20 @@
 'use strict';
 angular.module('contentful').controller('FormWidgetsController', ['$scope', '$injector', function FormFieldsController($scope, $injector){
+  var controller = this;
   var editingInterfaces = $injector.get('editingInterfaces');
   var sentry            = $injector.get('sentry');
 
   $scope.$watch(function (scope) {
     return _.pluck(scope.spaceContext.activeLocales, 'code');
   }, updateWidgets, true);
-  $scope.$watch('spaceContext.space.getDefaultLocale()',                 updateWidgets);
-  $scope.$watch('preferences.showDisabledFields',                        updateWidgets);
-  $scope.$watch('errorPaths',                                            updateWidgets);
-  $scope.$watch('spaceContext.publishedTypeForEntry(entry).data.fields', updateWidgets, true);
+  $scope.$watch('spaceContext.space.getDefaultLocale()', updateWidgets);
+  $scope.$watch('preferences.showDisabledFields',        updateWidgets);
+  $scope.$watch('errorPaths',                            updateWidgets);
+
+  this.updateWidgets = updateWidgets;
 
   function updateWidgets() {
-    var ct = $scope.spaceContext.publishedTypeForEntry($scope.entry);
-    if (ct) editingInterfaces.forContentType(ct)
+    if (controller.contentType) editingInterfaces.forContentType(controller.contentType)
     .then(function (interf) {
       $scope.widgets = _(interf.widgets)
         .filter(widgetIsVisible)
@@ -60,8 +61,7 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
   }
 
   function getWidgetField(widget) {
-    var ct = $scope.spaceContext.publishedTypeForEntry($scope.entry);
-    return _.find(ct.data.fields, {id: widget.fieldId});
+    return _.find(controller.contentType.data.fields, {id: widget.fieldId});
   }
 
   function getFieldLocales(field) {

@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('contentful').controller('AssetEditorCtrl', ['$scope', '$injector', function AssetEditorCtrl($scope, $injector) {
+  var $controller      = $injector.get('$controller');
   var AssetContentType = $injector.get('AssetContentType');
   var ShareJS          = $injector.get('ShareJS');
   var addCanMethods    = $injector.get('addCanMethods');
@@ -82,39 +83,11 @@ angular.module('contentful').controller('AssetEditorCtrl', ['$scope', '$injector
   });
 
   // Building the form
-  $scope.$watch(function (scope) {
-    return _.pluck(scope.spaceContext.activeLocales, 'code');
-  }, updateFields, true);
-  $scope.$watch('spaceContext.space.getDefaultLocale()', updateFields);
-  $scope.$watch(function () { return $scope.errorPaths; }, updateFields);
-
-  function updateFields(n, o ,scope) {
-    scope.fields = _(AssetContentType.fields).reduce(function (acc, field) {
-      if (!field.disabled || scope.preferences.showDisabledFields || $scope.errorPaths[field.id]) {
-        var locales;
-        if (field.localized) {
-          locales = scope.spaceContext.activeLocales;
-          var errorLocales = _.map($scope.errorPaths[field.id], function (code) {
-            return scope.spaceContext.getPublishLocale(code);
-          });
-          locales = _.union(locales, errorLocales);
-        } else {
-          locales = [scope.spaceContext.space.getDefaultLocale()];
-        }
-        acc.push(inherit(field, {
-          locales: locales
-        }));
-      }
-      return acc;
-    }, []);
-
-    function inherit(source, extensions){
-      var Clone = function () { };
-      Clone.prototype = source;
-      var clone = new Clone();
-      return _.extend(clone, extensions);
-    }
-  }
+  $scope.formWidgetsController = $controller('FormWidgetsController', {$scope: $scope});
+  $scope.formWidgetsController.contentType = {
+    data: AssetContentType,
+    getId: _.constant('asset')
+  };
 
   // File uploads
   $scope.$on('fileUploaded', function (event, file) {
