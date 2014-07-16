@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector', function EntryEditorCtrl($scope, $injector) {
+  var $controller       = $injector.get('$controller');
   var addCanMethods     = $injector.get('addCanMethods');
-  var editingInterfaces = $injector.get('editingInterfaces');
   var sentry            = $injector.get('sentry');
   var validation        = $injector.get('validation');
 
@@ -48,7 +48,7 @@ angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector
   });
 
   // Validations
-  var errorPaths = {};
+  $scope.errorPaths = {};
   $scope.$watch('spaceContext.publishedTypeForEntry(entry).data', function(data) {
     if (!data) return;
     var locales = $scope.spaceContext.space.getPublishLocales(); // TODO: watch this, too
@@ -65,7 +65,7 @@ angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector
   });
   $scope.$watch('validationResult.errors', function (errors) {
     var et = $scope.spaceContext.publishedTypeForEntry($scope.entry);
-    errorPaths = {};
+    $scope.errorPaths = {};
     $scope.hasErrorOnFields = false;
 
     _.each(errors, function (error) {
@@ -74,7 +74,7 @@ angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector
       var field        = _.find(et.data.fields, {id: fieldId});
 
       if(error.path.length > 1) {
-        errorPaths[fieldId] = errorPaths[fieldId] || [];
+        $scope.errorPaths[fieldId] = $scope.errorPaths[fieldId] || [];
       }
 
       if(!field) sentry.captureError('Field object does not exist', {
@@ -90,107 +90,17 @@ angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector
       } else if (error.path.length == 2) {
         var locales = field.localized ? $scope.spaceContext.publishLocales : [$scope.spaceContext.space.getDefaultLocale()];
         var allCodes = _.pluck(locales, 'code');
-        errorPaths[fieldId].push.apply(errorPaths[fieldId], allCodes);
+        $scope.errorPaths[fieldId].push.apply($scope.errorPaths[fieldId], allCodes);
       } else {
         var localeCode = error.path[2];
-        errorPaths[fieldId].push(localeCode);
+        $scope.errorPaths[fieldId].push(localeCode);
       }
-      errorPaths[fieldId] = _.unique(errorPaths[fieldId]);
+      $scope.errorPaths[fieldId] = _.unique($scope.errorPaths[fieldId]);
     });
   });
 
   // Building the form
-  $scope.$watch(function (scope) {
-    return _.pluck(scope.spaceContext.activeLocales, 'code');
-  }, updateFields, true);
-  $scope.$watch('spaceContext.space.getDefaultLocale()', updateFields);
-  $scope.$watch('preferences.showDisabledFields', updateFields);
-  $scope.$watch(function () { return errorPaths; }, updateFields);
-  $scope.$watch('spaceContext.publishedTypeForEntry(entry).data.fields', updateFields, true);
-
-  function updateFields(n, o, scope) {
-    var et = scope.spaceContext.publishedTypeForEntry(scope.entry);
-    if (!et) return;
-    scope.fields = _(et.data.fields).filter(fieldIsEditable).map(function (field) {
-      var locales = _.union(getFieldLocales(field), getErrorLocales(field));
-      locales = makeUnique(locales);
-      return inherit(field, {
-        locales: locales,
-        widgetType: fieldWidgetType(field, et)});
-    }).value();
-
-    function fieldIsEditable(field) {
-      return !field.disabled || scope.preferences.showDisabledFields || errorPaths[field.id];
-    }
-
-    function makeUnique(locales) {
-      var uniqLocales = _.uniq(locales, 'code');
-      if(locales.length !== uniqLocales.length){
-        sentry.captureError('Locales have been duplicated', {
-          data: {
-            locales: locales,
-            activeLocales: scope.spaceContext.activeLocales
-          }
-        });
-      }
-      return uniqLocales;
-    }
-    function getFieldLocales(field) {
-      if (field.localized)
-        return scope.spaceContext.activeLocales;
-      else
-        return [scope.spaceContext.space.getDefaultLocale()];
-    }
-
-    function getErrorLocales(field) {
-      return _.map(errorPaths[field.id], function (code) {
-        return _.find(scope.spaceContext.space.data.locales, {code: code});
-      });
-    }
-
-    function inherit(source, extensions){
-      var Clone = function () { };
-      Clone.prototype = source;
-      var clone = new Clone();
-      return _.extend(clone, extensions);
-    }
-  }
-
-  function getFieldValidationsOfType(field, type) {
-    return _.filter(_.pluck(field.validations, type));
-  }
-
-  $scope.getFieldValidationsOfType = function () {
-    return getFieldValidationsOfType.apply(null, arguments)[0];
-  };
-
-  function fieldWidgetType(field, contentType) {
-    var hasValidations = getFieldValidationsOfType(field, 'in').length > 0;
-    if(hasValidations) return 'dropdown';
-    if (field.type === 'Symbol' ) {
-      return 'textfield';
-    }
-    if (field.type === 'Text'   ) {
-      if (contentType.data.displayField === field.id) {
-        return 'textarea';
-      } else {
-        return 'markdownEditor';
-      }
-    }
-    if (field.type === 'Boolean') return 'radiobuttons';
-    if (field.type === 'Date'   ) return 'datetimeEditor';
-    if (field.type === 'Array') {
-      if (field.items.type === 'Link'  ) return 'linksEditor';
-      if (field.items.type === 'Symbol') return 'listInput';
-    }
-    if (field.type === 'Object'  ) return 'objectEditor';
-    if (field.type === 'Location') return 'locationEditor';
-    if (field.type === 'Number'  ) return 'numberEditor';
-    if (field.type === 'Integer' ) return 'numberEditor';
-    if (field.type === 'Link'    ) return 'linkEditor';
-    if (field.type === 'File'    ) return 'fileEditor';
-    return null;
-  }
+  $scope.formFieldsController = $controller('FormFieldsController', {$scope: $scope});
 
   // Helper methods on the scope
   $scope.$watch('fields', function (fields, old, scope) {
