@@ -50,7 +50,7 @@ angular.module('contentful').controller('AssetEditorCtrl', ['$scope', '$injector
   });
 
   // Validations
-  var errorPaths = {};
+  $scope.errorPaths = {};
   $scope.assetSchema = validation.schemas.Asset($scope.spaceContext.space.getPublishLocales());
   $scope.$watch('asset.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {
     if (publishedVersion > oldVersion) scope.validate();
@@ -61,23 +61,23 @@ angular.module('contentful').controller('AssetEditorCtrl', ['$scope', '$injector
     firstValidate();
   });
   $scope.$watch('validationResult.errors', function (errors) {
-    errorPaths = {};
+    $scope.errorPaths = {};
     $scope.hasErrorOnFields = false;
 
     _.each(errors, function (error) {
       if (error.path[0] !== 'fields') return;
       var field      = error.path[1];
-      errorPaths[field] = errorPaths[field] || [];
+      $scope.errorPaths[field] = $scope.errorPaths[field] || [];
 
       if (error.path.length == 1 && error.path[0] == 'fields') {
         $scope.hasErrorOnFields = error.path.length == 1 && error.path[0] == 'fields';
       } else if (error.path.length == 2) {
-        errorPaths[field].push($scope.spaceContext.space.getDefaultLocale().code);
+        $scope.errorPaths[field].push($scope.spaceContext.space.getDefaultLocale().code);
       } else {
         var localeCode = error.path[2];
-        errorPaths[field].push(localeCode);
+        $scope.errorPaths[field].push(localeCode);
       }
-      errorPaths[field] = _.unique(errorPaths[field]);
+      $scope.errorPaths[field] = _.unique($scope.errorPaths[field]);
     });
   });
 
@@ -86,15 +86,15 @@ angular.module('contentful').controller('AssetEditorCtrl', ['$scope', '$injector
     return _.pluck(scope.spaceContext.activeLocales, 'code');
   }, updateFields, true);
   $scope.$watch('spaceContext.space.getDefaultLocale()', updateFields);
-  $scope.$watch(function () { return errorPaths; }, updateFields);
+  $scope.$watch(function () { return $scope.errorPaths; }, updateFields);
 
   function updateFields(n, o ,scope) {
     scope.fields = _(AssetContentType.fields).reduce(function (acc, field) {
-      if (!field.disabled || scope.preferences.showDisabledFields || errorPaths[field.id]) {
+      if (!field.disabled || scope.preferences.showDisabledFields || $scope.errorPaths[field.id]) {
         var locales;
         if (field.localized) {
           locales = scope.spaceContext.activeLocales;
-          var errorLocales = _.map(errorPaths[field.id], function (code) {
+          var errorLocales = _.map($scope.errorPaths[field.id], function (code) {
             return scope.spaceContext.getPublishLocale(code);
           });
           locales = _.union(locales, errorLocales);
