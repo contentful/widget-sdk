@@ -27,8 +27,8 @@ describe('cfFieldEditor Directive', function () {
         }
       };
 
-      scope.field = {
-        id: 'fieldId'
+      scope.widget = {
+        field: { id: 'fieldId' }
       };
 
       compileElement = function () {
@@ -46,7 +46,7 @@ describe('cfFieldEditor Directive', function () {
   function makeEditorTypeTests(editorName, elementType, additionalTests) {
     describe('renders a '+editorName+' editor', function() {
       beforeEach(function() {
-        scope.field.widgetType = editorName;
+        scope.widget.widgetType = editorName;
         compileElement();
       });
 
@@ -132,8 +132,8 @@ describe('cfFieldEditor Directive', function () {
 
   describe('fieldData is set', function() {
     beforeEach(function() {
-      scope.field.type = 'Symbol';
-      scope.field.widgetType = 'textfield';
+      scope.widget.field.type = 'Symbol';
+      scope.widget.widgetType = 'textfield';
       scope.entity = {
         data: {
           fields: {
@@ -144,8 +144,8 @@ describe('cfFieldEditor Directive', function () {
         }
       };
 
-      scope.field = {
-        id: 'fieldId'
+      scope.widget = {
+        field : { id: 'fieldId' }
       };
 
       scope.locale = {
@@ -187,13 +187,13 @@ describe('cfFieldEditor Directive', function () {
 
   describe('with no fields', function() {
     beforeEach(function() {
-      scope.field.type = 'Symbol';
-      scope.field.widgetType = 'textfield';
+      scope.widget.field.type = 'Symbol';
+      scope.widget.field.widgetType = 'textfield';
       scope.entity = {
         data: {}
       };
 
-      scope.field = {};
+      scope.widget = {field:{}};
 
       scope.locale = {
         code: 'en-US'
@@ -208,7 +208,7 @@ describe('cfFieldEditor Directive', function () {
 
     it('updates external value on change and creates field', function() {
       scope.fieldData.value = 'newfieldvalue';
-      scope.field.id = 'fieldId';
+      scope.widget.field.id = 'fieldId';
       scope.$digest();
       expect(scope.entity.data.fields.fieldId['en-US']).toBe('newfieldvalue');
     });
@@ -216,13 +216,13 @@ describe('cfFieldEditor Directive', function () {
 
   describe('if field does not exist', function() {
     beforeEach(function() {
-      scope.field.type = 'Symbol';
-      scope.field.widgetType = 'textfield';
+      scope.widget.field.type = 'Symbol';
+      scope.widget.widgetType = 'textfield';
       scope.entity = {
         data: {}
       };
 
-      scope.field = {id: 'randomfield'};
+      scope.widget = {field: {id: 'randomfield'}};
 
       scope.locale = {
         code: 'en-US'
@@ -237,7 +237,7 @@ describe('cfFieldEditor Directive', function () {
 
     it('updates external value on change and creates field', function() {
       scope.fieldData.value = 'newfieldvalue';
-      scope.field.id = 'fieldId';
+      scope.widget.field.id = 'fieldId';
       scope.$digest();
       expect(scope.entity.data.fields.fieldId['en-US']).toBe('newfieldvalue');
     });
