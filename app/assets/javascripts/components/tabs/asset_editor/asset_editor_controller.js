@@ -143,18 +143,6 @@ angular.module('contentful').controller('AssetEditorCtrl', ['$scope', '$injector
     if (file !== old) scope.validate();
   }, true);
 
-  // Helper methods on the scope
-  // TODO This can probably be removed since we always keep the entity in sync
-  $scope.publishedAt = function(){
-    if (!$scope.otDoc) return;
-    var val = $scope.otDoc.getAt(['sys', 'publishedAt']);
-    if (val) {
-      return new Date(val);
-    } else {
-      return undefined;
-    }
-  };
-
   $scope.showLangSwitcher = $scope.spaceContext.space.getPublishLocales().length > 1;
 
   $scope.headline = function(){

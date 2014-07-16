@@ -193,18 +193,6 @@ angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector
   }
 
   // Helper methods on the scope
-
-  // TODO This can probably be removed since we always keep the entity in sync
-  $scope.publishedAt = function(){
-    if (!$scope.otDoc) return;
-    var val = $scope.otDoc.getAt(['sys', 'publishedAt']);
-    if (val) {
-      return new Date(val);
-    } else {
-      return undefined;
-    }
-  };
-
   $scope.$watch('fields', function (fields, old, scope) {
     scope.showLangSwitcher = _.some(fields, function (field) {
       if(!field) {
