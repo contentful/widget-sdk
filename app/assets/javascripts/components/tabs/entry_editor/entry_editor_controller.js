@@ -104,7 +104,7 @@ angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector
   $scope.$watch('spaceContext.publishedTypeForEntry(entry)', function (contentType) {
     $scope.formWidgetsController.contentType = contentType;
   });
-  $scope.$watch('spaceContext.publishedTypeForEntry(entry).data.fields', 'formWidgetsController.updateWidgets', true);
+  $scope.$watch('spaceContext.publishedTypeForEntry(entry).data.fields', 'formWidgetsController.updateWidgets()', true);
 
 
   // Helper methods on the scope
@@ -112,19 +112,19 @@ angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector
     return _.filter(_.pluck(field.validations, type))[0];
   };
 
-  $scope.$watch('fields', function (fields, old, scope) {
-    scope.showLangSwitcher = _.some(fields, function (field) {
-      if(!field) {
-        sentry.captureError('Field object does not exist', {
+  $scope.$watch('widgets', function (widgets, old, scope) {
+    scope.showLangSwitcher = _.some(widgets, function (widget) {
+      if(!widget) {
+        sentry.captureError('widget object does not exist', {
           data: {
-            field: field,
-            fields: fields
+            widget: widget,
+            widgets: widgets
           }
         });
         return false;
       }
 
-      return field.localized;
+      return widget.field && widget.field.localized;
     });
   });
 
