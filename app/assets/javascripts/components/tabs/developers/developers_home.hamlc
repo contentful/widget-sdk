@@ -23,7 +23,7 @@
       .box
         %a.box-image.cda(href="/developers/documentation/content-delivery-api")
         %a.box-title(href="/developers/documentation/content-delivery-api")
-          %h2 Content Delivery API
+          %h2 Content<br>Delivery API
         %p
           Deliver content to mobile apps, websites and connected devices. The Content Delivery API is designed to help you display content to end users.
         %ul.cf-cda-links
@@ -31,7 +31,7 @@
       .box
         %a.box-image.cma(href="/developers/documentation/content-management-api")
         %a.box-title(href="/developers/documentation/content-management-api")
-          %h2 Content Management API
+          %h2 Content<br>Management API
         %p
           Import content from own servers, third-party systems or tap into crowd-sourced user contributions. The Content Management API is here to help you manage your content more effectively.
         %ul.cf-cma-links
@@ -39,7 +39,7 @@
       .box
         %a.box-image.demo(href="http://contentful.github.io/contentful.js/example")
         %a.box-title(href="http://contentful.github.io/contentful.js/example")
-          %h2 Showcase
+          %h2 Contentful<br>Showcase
         %p
           Learn by playing. We assembled a collection of demo apps and interactive examples to help you explore the possibilities opened up by Contentful platform. Prototype your apps faster by leveraging our datasets, open-source libraries and language-specific SDKs. Built something cool? We are always happy to showcase creativity and technical chops of our users.
         %ul.content-list
