@@ -30,7 +30,10 @@ angular.module('contentful').factory('ReloadNotification', ['$injector', functio
   }
 
   function isApiError(error) {
-    return _.isObject(error) && 'statusCode' in error && 500 <= error.statusCode;
+    return _.isObject(error) &&
+      'statusCode' in error &&
+      500 <=  error.statusCode &&
+      502 !== error.statusCode; // 502 means a space is hibernated
   }
 
   var ReloadNotificationService = {
