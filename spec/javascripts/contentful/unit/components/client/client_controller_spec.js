@@ -20,6 +20,7 @@ describe('Client Controller', function () {
         'notificationInfo',
         'notificationError',
         'notificationWarn',
+        'gatekeeperErrorHandler',
         'goToSpace',
         'goToOrganization',
         'routingSpaceId',
@@ -137,7 +138,8 @@ describe('Client Controller', function () {
       });
 
       $provide.value('ReloadNotification', {
-        trigger: stubs.trigger
+        trigger: stubs.trigger,
+        gatekeeperErrorHandler: stubs.gatekeeperErrorHandler
       });
 
       $provide.value('revision', {
@@ -1195,11 +1197,7 @@ describe('Client Controller', function () {
       });
 
       it('error notification shown', function () {
-        expect(stubs.notificationError).toBeCalled();
-      });
-
-      it('user is logged out', function () {
-        expect(stubs.logout).toBeCalled();
+        expect(stubs.gatekeeperErrorHandler).toBeCalled();
       });
     });
 
