@@ -10,7 +10,14 @@ angular.module('contentful').factory('ReloadNotification', ['$injector', functio
 
   function reloadWithCacheBuster() {
     var search = $location.search();
+    var reloaded = search.reloaded;
     search.cfv = Math.ceil(Math.random()*10000000);
+    if (reloaded) {
+      delete search.reloaded;
+      $location.path('/');
+    } else {
+      search.reloaded = true;
+    }
     $location.search(search);
     window.location = $location.url();
   }
@@ -43,8 +50,6 @@ angular.module('contentful').factory('ReloadNotification', ['$injector', functio
     },
 
     trigger: function(message) {
-      if(open) return;
-      open = true;
       trigger({message: message});
     },
 
