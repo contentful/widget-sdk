@@ -6,7 +6,8 @@ angular.module('contentful').provider('$exceptionHandler', function () {
       return function(exception) {
         $log.error.apply($log, arguments);
         sentry.captureException(exception, {extra: {'promptedReload': true}});
-        Bugsnag.notifyException(exception);
+        if(window.Bugsnag)
+          window.Bugsnag.notifyException(exception);
         if (environment.env != 'development') {
           var ReloadNotification = $injector.get('ReloadNotification');
           ReloadNotification.trigger();
