@@ -34,12 +34,13 @@
               %span {{contentType.data.description}}
           %tr(ng-repeat-end="" ng-show="isExpanded(contentType.getId())")
             %td.cell-full(colspan="4")
-              %table.result-list.inner-result-list
+              %table.result-list.inner-result-list.inner-result-list-white
                 %thead
                   %tr
                     %th.cell-display-name Name
                     %th.cell-symbol Field Identifier
                     %th.cell-description Field Type
+              %table.result-list.inner-result-list
                 %tbody
                   %tr(ng-repeat="field in contentType.data.fields track by field.id")
                     %td.cell-display-name {{field.name}}
