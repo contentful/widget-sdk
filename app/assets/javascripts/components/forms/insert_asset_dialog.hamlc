@@ -1,5 +1,5 @@
 .modal-background
-  .modal-dialog.insert-asset-dialog(ng-controller="InsertAssetDialogController" ng-keyup="handleKeys($event)")
+  .modal-dialog.insert-asset-dialog(ng-controller="InsertAssetDialogController" ng-keyup="handleKeys($event)" cf-center-on=".modal-background")
     .title Insert Asset
     .modal-dialog-close-button(ng-click="dialog.cancel()")
     .dialog-content
