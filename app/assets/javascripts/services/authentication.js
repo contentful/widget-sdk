@@ -3,7 +3,7 @@
 angular.module('contentful').provider('authentication', ['$injector', function AuthenticationProvider($injector) {
   var authApp, marketingApp, QueryLinkResolver;
 
-  var environment, contentfulClient, $window, $location, $q, $rootScope, notification, ReloadNotification;
+  var environment, contentfulClient, $window, $location, $q, $rootScope, notification;
   var sentry;
 
   this.setEnvVars = function() {
@@ -122,8 +122,7 @@ angular.module('contentful').provider('authentication', ['$injector', function A
       }, function (err) {
         sentry.captureError('getTokenlookup failed', { data: err });
         return $q.reject(err);
-      })
-      .catch(ReloadNotification.apiErrorHandler);
+      });
     },
 
     getUser: function () {
@@ -145,7 +144,6 @@ angular.module('contentful').provider('authentication', ['$injector', function A
     $window            = $injector.get('$window');
     notification       = $injector.get('notification');
     sentry             = $injector.get('sentry');
-    ReloadNotification = $injector.get('ReloadNotification');
     var client         = $injector.get('client');
 
     var authentication = new Authentication(client);
