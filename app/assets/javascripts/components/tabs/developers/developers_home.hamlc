@@ -33,7 +33,7 @@
         %a.box-title(href="/developers/documentation/content-management-api")
           %h2 Content<br>Management API
         %p
-          Import content from own servers, third-party systems or tap into crowd-sourced user contributions. The Content Management API is here to help you manage your content more effectively.
+          Import content from own servers, 3rd-party systems or your community. The Content Management API helps you create content.
         %ul.cf-cma-links
 
       .box
@@ -41,7 +41,7 @@
         %a.box-title(href="http://contentful.github.io/contentful.js/example")
           %h2 Contentful<br>Showcase
         %p
-          Learn by playing. We assembled a collection of demo apps and interactive examples to help you explore the possibilities opened up by Contentful platform. Prototype your apps faster by leveraging our datasets, open-source libraries and language-specific SDKs. Built something cool? We are always happy to showcase creativity and technical chops of our users.
+          We assembled a collection of demo apps &amp; interactive examples to help you explore the possibilities opened up by our platform.
         %ul.content-list
           %li
             %a(href="http://contentful.github.io/contentful.js/example/browser")
