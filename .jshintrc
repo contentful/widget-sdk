@@ -2,6 +2,7 @@
   "globalstrict": true,
   "node": true,
   "predef": [
+    "Event",
     "describe",
     "xdescribe",
     "beforeEach",

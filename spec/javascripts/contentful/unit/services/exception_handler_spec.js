@@ -14,7 +14,8 @@ describe('Exception handler service', function () {
       exceptionStub = sinon.stub();
       $provide.factory('sentry', function () {
         return {
-          captureException: exceptionStub
+          captureException: exceptionStub,
+          captureBugSnag: exceptionStub
         };
       });
 
