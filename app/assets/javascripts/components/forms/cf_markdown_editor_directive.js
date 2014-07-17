@@ -12,6 +12,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
 
   renderer._image = renderer.image;
   renderer.image = function (href, title, text) {
+    href = ''+href+'?h=200';
     var img = this._image(href, title, text);
     return '<div class="markdown-image-placeholder">'+img+'</div>';
   };
