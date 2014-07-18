@@ -17,7 +17,7 @@
         %tr
           %th.cell-select
           %th.cell-display-name Name
-          %th.cell-symbol Identifier
+          %th.cell-identifier Identifier
           %th.cell-description Description
 
     .main-results-wrapper
@@ -28,7 +28,7 @@
               %a.toggle-collapse(ng-class="{open: isExpanded(contentType.getId())}") ▶
             %td.cell-display-name.cell-anchor(cf-click-local="toggleDisplay(contentType.getId())")
               %span {{contentType.getName()}}
-            %td.cell-symbol
+            %td.cell-identifier
               %span {{contentType.getId()}}
             %td.cell-description
               %span {{contentType.data.description}}
@@ -38,16 +38,16 @@
                 %thead
                   %tr
                     %th.cell-display-name Name
-                    %th.cell-symbol Field Identifier
+                    %th.cell-identifier Field Identifier
                     %th.cell-description Field Type
               %table.result-list.inner-result-list
                 %tbody
                   %tr(ng-repeat="field in contentType.data.fields track by field.id")
                     %td.cell-display-name {{field.name}}
-                    %td.cell-symbol
+                    %td.cell-identifier
                       %span {{field.id}}
                     %td.cell-description
-                      %span(tooltip="{{getHelpText(field.type)}}" tooltip-container=".main-results-wrapper" tooltip-delay-hide="1000" tooltip-html="true")
+                      %span(tooltip="{{getHelpText(field.type)}}" tooltip-container=".entity-list" tooltip-delay-hide="1000" tooltip-html="true")
                         {{field.type}}
 
       .advice(ng-show="visibleContentTypes | isEmpty")

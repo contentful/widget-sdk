@@ -9,7 +9,14 @@
     text-align: left
     strong
       color: white
+  // THIS IS WHY WE CAN'T HAVE NICE THINGS
   .inner-result-list
     &.inner-result-list-white
       background-color: white
+  &.entity-list
+    .result-list tbody > tr:hover,
+    .inner-result-list thead > tr:hover
+      background-color: white
+    .inner-result-list tbody > tr:hover
+      background-color: $result-list-highlight
 
