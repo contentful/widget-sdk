@@ -172,7 +172,6 @@ describe('Analytics service', function () {
           },
           firstName: 'first',
           lastName: 'last',
-          intercomUserHash: 'intercom',
           features: {
             logAnalytics: false
           }
@@ -195,14 +194,6 @@ describe('Analytics service', function () {
         expect(stubs.push.args[1][0][2]).toEqual({
           firstName: 'first',
           lastName: 'last'
-        });
-      });
-
-      it('gets intercom user hash', function() {
-        expect(stubs.push.args[1][0][3]).toEqual({
-          intercom: {
-            user_hash: 'intercom'
-          }
         });
       });
 
