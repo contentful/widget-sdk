@@ -8,6 +8,7 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
   var ReloadNotification = $injector.get('ReloadNotification');
   var TabList            = $injector.get('TabList');
   var notification       = $injector.get('notification');
+  var sentry             = $injector.get('sentry');
 
   function SpaceContext(space){
     this.tabList = new TabList();
@@ -152,6 +153,10 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
 
       displayFieldForType: function (contentTypeId) {
         var ct = this.getPublishedContentType(contentTypeId);
+        if(!ct){
+          sentry.captureError('No content type available for '+contentTypeId);
+          return null;
+        }
         return _.find(ct.data.fields, {id: ct.data.displayField});
       },
 
