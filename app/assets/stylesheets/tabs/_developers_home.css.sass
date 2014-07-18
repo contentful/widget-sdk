@@ -4,8 +4,15 @@
   .left-nav
     padding: $tab-main-margin-top 20px 0
     background-color: white
+    overflow-x: hidden
+    overflow-y: auto
   .with-left-nav
-    padding: $tab-main-margin-top*2 20px 0
+    padding: 0 20px 0
+    @extend .expand-vertically
+    .main-results-wrapper
+      +stretch(27px, 0, 0, 0)
+      overflow-x: hidden
+      overflow-y: auto
 
   .hero
     text-align: center
