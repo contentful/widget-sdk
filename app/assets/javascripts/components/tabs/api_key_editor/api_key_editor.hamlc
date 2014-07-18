@@ -70,51 +70,55 @@
         .field-editor
           %input(type="checkbox" ng-model="apiKey.data.regenerateAccessToken" ng-disabled="!editable()" ng-click="showRegenerateWarning()")
           %label Regenerate Access Token
-  .authentication-code.form-styled(ng-show="apiKey.data.accessToken")
-    %hr
-    %h1 Authentication Code
-    .tools
-      .select-box
-        %select(ng-model="authCodeExampleLang")
-          %option(value="http" selected) HTTP (Curl)
-          %option(value="javascript") JavaScript
-          %option(value="objc") Objective-C
-          %option(value="ruby") Ruby
-          %option(value="swift") Swift
-        %i.button-icon-right.ss-dropdown
-      %a.cf-copy-paste(href="#" clipboard-target-selector=".code-example textarea")
-        Copy to Clipboard
 
-    %ng-switch(on="authCodeExampleLang")
-      .http.code-example.curl-example(ng-switch-when="http")
-        %textarea(readonly="readonly")
-          :preserve
-            curl -X GET https://cdn.contentful.com/spaces/{{spaceContext.space.getId()}}?access_token={{apiKey.data.accessToken}}
-      .javascript.code-example(ng-switch-when="javascript")
-        %textarea(readonly="readonly")
-          :preserve
-            var contentful = require('contentful');
-            var client = contentful.createClient({
-              accessToken: '{{apiKey.data.accessToken}}',
-              space: '{{spaceContext.space.getId()}}'
-            });
-      .objc.code-example(ng-switch-when="objc")
-        %textarea(readonly="readonly")
-          :preserve
-            CDAClient* client = [[CDAClient alloc] initWithSpaceKey:@"{{spaceContext.space.getId()}}"
-                                      accessToken:@"{{apiKey.data.accessToken}}"];
-      .ruby.code-example(ng-switch-when="ruby")
-        %textarea(readonly="readonly")
-          :preserve
-            require 'contentful'
-            client = Contentful::Client.new(
-              access_token: '{{apiKey.data.accessToken}}',
-              space: '{{spaceContext.space.getId()}}'
-            )
-      .swift.code-example(ng-switch-when="swift")
-        %textarea(readonly="readonly")
-          :preserve
-            var client = CDAClient(spaceKey:"{{spaceContext.space.getId()}}", accessToken:"{{apiKey.data.accessToken}}")
+    .form-field.authentication-code(ng-show="apiKey.data.accessToken")
+      %label
+      .form-controls
+        .field-editor
+          %hr
+          %h1 Authentication Code
+          .tools
+            .select-box
+              %select(ng-model="authCodeExampleLang")
+                %option(value="http" selected) HTTP (Curl)
+                %option(value="javascript") JavaScript
+                %option(value="objc") Objective-C
+                %option(value="ruby") Ruby
+                %option(value="swift") Swift
+              %i.button-icon-right.ss-dropdown
+            %a.cf-copy-paste(href="#" clipboard-target-selector=".code-example textarea")
+              Copy to Clipboard
+
+          %ng-switch(on="authCodeExampleLang")
+            .http.code-example.curl-example(ng-switch-when="http")
+              %textarea(readonly="readonly")
+                :preserve
+                  curl -X GET https://cdn.contentful.com/spaces/{{spaceContext.space.getId()}}?access_token={{apiKey.data.accessToken}}
+            .javascript.code-example(ng-switch-when="javascript")
+              %textarea(readonly="readonly")
+                :preserve
+                  var contentful = require('contentful');
+                  var client = contentful.createClient({
+                    accessToken: '{{apiKey.data.accessToken}}',
+                    space: '{{spaceContext.space.getId()}}'
+                  });
+            .objc.code-example(ng-switch-when="objc")
+              %textarea(readonly="readonly")
+                :preserve
+                  CDAClient* client = [[CDAClient alloc] initWithSpaceKey:@"{{spaceContext.space.getId()}}"
+                                            accessToken:@"{{apiKey.data.accessToken}}"];
+            .ruby.code-example(ng-switch-when="ruby")
+              %textarea(readonly="readonly")
+                :preserve
+                  require 'contentful'
+                  client = Contentful::Client.new(
+                    access_token: '{{apiKey.data.accessToken}}',
+                    space: '{{spaceContext.space.getId()}}'
+                  )
+            .swift.code-example(ng-switch-when="swift")
+              %textarea(readonly="readonly")
+                :preserve
+                  var client = CDAClient(spaceKey:"{{spaceContext.space.getId()}}", accessToken:"{{apiKey.data.accessToken}}")
 
 .tab-actions
   .button-set
