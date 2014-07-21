@@ -14,13 +14,14 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
   this.updateWidgets = updateWidgets;
 
   function updateWidgets() {
-    if (controller.contentType) editingInterfaces.forContentType(controller.contentType)
-    .then(function (interf) {
-      $scope.widgets = _(interf.widgets)
-        .filter(widgetIsVisible)
-        .map(addLocalesAndFieldToWidget)
-        .value();
-    });
+    if (controller.contentType)
+      editingInterfaces.forContentTypeWithId(controller.contentType, 'default')
+      .then(function (interf) {
+        $scope.widgets = _(interf.widgets)
+          .filter(widgetIsVisible)
+          .map(addLocalesAndFieldToWidget)
+          .value();
+      });
   }
 
   function addLocalesAndFieldToWidget(widget) {

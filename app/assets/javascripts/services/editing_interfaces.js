@@ -5,14 +5,21 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
 
   return {
     forContentType: function (contentType) {
-      return $q.when(defaultInterface(contentType));
+      return $q.when([defaultInterface(contentType)]);
+    },
+
+    forContentTypeWithId: function (contentType, id) {
+      return this.forContentType(contentType)
+             .then(function (interfaces) {
+               return _.find(interfaces, {id: id});
+             });
     }
   };
 
   function defaultInterface(contentType) {
     var config = {
       title: 'Default',
-      id: random.id(),
+      id: 'default',
       contentTypeId: contentType.getId(),
       widgets: []
     };
