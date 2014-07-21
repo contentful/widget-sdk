@@ -86,7 +86,7 @@
                 %option(value="ruby") Ruby
                 %option(value="swift") Swift
               %i.button-icon-right.ss-dropdown
-            %a.cf-copy-paste(href="#" clipboard-target-selector=".code-example textarea")
+            %a.cf-copy-paste(href="#" clipboard-target-selector=".authentication-code .code-example textarea")
               Copy to Clipboard
 
           %ng-switch(on="authCodeExampleLang")

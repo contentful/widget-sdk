@@ -1,6 +1,8 @@
 'use strict';
 
-angular.module('contentful').directive('cfCopyPaste', ['environment', function(environment) {
+angular.module('contentful').directive('cfCopyPaste', ['$injector', function($injector) {
+  var environment = $injector.get('environment');
+  var $window = $injector.get('$window');
   ZeroClipboard.config({
     moviePath: "<%= asset_path 'user_interface/node_modules/zeroclipboard/ZeroClipboard.swf' %>",
     forceHandCursor: true,
@@ -44,14 +46,17 @@ angular.module('contentful').directive('cfCopyPaste', ['environment', function(e
         clip.on('mouseout', mouseoutHandler);
 
         function dataRequestedHandler(client, args) {
+          var clipboardTarget;
           $(this).tooltip('hide');
           $(this).attr('copy-status', 'copying');
           $(this).tooltip('show');
           var element = $(this);
           var targetClass = element.attr('clipboard-target-class');
-          targetClass = targetClass ? '.'+targetClass : targetClass;
-          var targetSelector = element.attr('clipboard-target-selector') || targetClass;
-          var clipboardTarget = element.parent().find(targetSelector);
+          var targetSelector = element.attr('clipboard-target-selector');
+          if(targetClass)
+            clipboardTarget = element.parent().find('.'+targetClass);
+          else if(targetSelector)
+            clipboardTarget = $window.$(targetSelector);
           client.setText(clipboardTarget.val() || clipboardTarget.text());
         }
         clip.on('dataRequested', dataRequestedHandler);
