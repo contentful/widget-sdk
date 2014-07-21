@@ -370,4 +370,5 @@ angular.module('contentful').controller('ClientCtrl', ['$scope', '$injector', fu
       });
     }
   }
+
 }]);

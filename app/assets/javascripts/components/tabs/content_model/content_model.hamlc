@@ -1,0 +1,63 @@
+.tab-header
+  .tab-title
+    %h1 Content Model
+
+.tab-main
+  .left-nav
+    %header.filter-list-header
+      Content Delivery API
+    %ul.cf-cda-links
+    %header.filter-list-header
+      Content Management API
+    %ul.cf-cma-links
+
+  .with-left-nav
+    %table.result-list.main-results.main-header(ng-hide="visibleContentTypes | isEmpty")
+      %thead
+        %tr
+          %th.cell-select
+          %th.cell-display-name Name
+          %th.cell-identifier Identifier
+          %th.cell-description Description
+
+    .main-results-wrapper
+      %table.result-list.main-results.animated
+        %tbody
+          %tr(ng-repeat-start="contentType in visibleContentTypes = (contentTypes | filter:visibleInCurrentList) track by contentType.getId()" cf-click-local="toggleDisplay(contentType.getId())")
+            %td.cell-select
+              %a.toggle-collapse(ng-class="{open: isExpanded(contentType.getId())}") ▶
+            %td.cell-display-name.cell-anchor(cf-click-local="toggleDisplay(contentType.getId())")
+              %span {{contentType.getName()}}
+            %td.cell-identifier
+              %a.cf-copy-paste(href="#" clipboard-sibling-selector=".cf-copy-paste" tooltip-selector=".entity-list") {{contentType.getId()}}
+            %td.cell-description
+              %span {{contentType.data.description}}
+          %tr(ng-repeat-end="" ng-show="isExpanded(contentType.getId())")
+            %td.cell-full(colspan="4")
+              %table.result-list.inner-result-list.inner-result-list-white
+                %thead
+                  %tr
+                    %th.cell-display-name Name
+                    %th.cell-identifier Field Identifier
+                    %th.cell-description Field Type
+              %table.result-list.inner-result-list
+                %tbody
+                  %tr(ng-repeat="field in contentType.data.fields track by field.id")
+                    %td.cell-display-name {{field.name}}
+                    %td.cell-identifier
+                      %a.cf-copy-paste(href="#" clipboard-sibling-selector=".cf-copy-paste") {{field.id}}
+                    %td.cell-description
+                      %span(tooltip="{{getHelpText(field.type)}}" tooltip-container=".entity-list" tooltip-delay-hide="1000" tooltip-html="true")
+                        {{field.type}}
+
+      .advice(ng-show="visibleContentTypes | isEmpty")
+        %div
+          %i.ss-database.giant-icon
+          %header.advice-title You have no Content Types yet.
+          %p.advice-description Content Types work like stencils that define which Entries you can create within a specific Space.
+          %button.default-button.primary-button(type="button" ng-click="createContentType('frameButton')" cf-can="create, ContentType")
+            Create Content Type
+          %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
+            Visit the Knowledge Base Pages
+            %i.ss-help
+
