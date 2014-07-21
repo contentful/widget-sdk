@@ -1,6 +1,6 @@
 .tab-header
   .tab-title
-    %h1 Developers
+    %h1 API
 
 .tab-main
   .left-nav

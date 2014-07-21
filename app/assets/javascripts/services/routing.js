@@ -9,7 +9,7 @@ angular.module('contentful').provider('routing', ['$routeProvider', function ($r
   $routeProvider.when('/spaces/:spaceId/content_types', {viewType: 'content-type-list'});
   $routeProvider.when('/spaces/:spaceId/content_types/:contentTypeId', {viewType: 'content-type-editor'});
   $routeProvider.when('/spaces/:spaceId/content_model', {viewType: 'content-model'});
-  $routeProvider.when('/spaces/:spaceId/developers', {viewType: 'developers-home'});
+  $routeProvider.when('/spaces/:spaceId/api', {viewType: 'api-home'});
   $routeProvider.when('/spaces/:spaceId/api_keys', {viewType: 'api-key-list'});
   $routeProvider.when('/spaces/:spaceId/api_keys/:apiKeyId', {viewType: 'api-key-editor'});
   $routeProvider.when('/spaces/:spaceId/settings/:pathSuffix*', {viewType: 'space-settings'});
@@ -67,8 +67,8 @@ angular.module('contentful').provider('routing', ['$routeProvider', function ($r
           path = path + '/content_types';
         } else if (tab.viewType == 'content-model') {
           path = path + '/content_model';
-        } else if (tab.viewType == 'developers-home') {
-          path = path + '/developers';
+        } else if (tab.viewType == 'api-home') {
+          path = path + '/api';
         } else if (tab.viewType == 'api-key-list') {
           path = path + '/api_keys';
         } else if (tab.viewType == 'api-key-editor') {

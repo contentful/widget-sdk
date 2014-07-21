@@ -105,12 +105,12 @@ angular.module('contentful').factory('TabOptionsGenerator', function () {
       };
     },
 
-    developersHome: function () {
+    apiHome: function () {
       return {
-        viewType: 'developers-home',
-        section: 'developersHome',
+        viewType: 'api-home',
+        section: 'apiHome',
         hidden: true,
-        title: 'developers',
+        title: 'API',
         canClose: true
       };
     },
@@ -144,7 +144,7 @@ angular.module('contentful').factory('TabOptionsGenerator', function () {
       if (viewType == 'content-type-list')return this.contentTypeList();
       if (viewType == 'space-settings')   return this.spaceSettings();
       if (viewType == 'api-key-list')     return this.apiKeyList();
-      if (viewType == 'developers-home') return this.developersHome();
+      if (viewType == 'api-home') return this.apiHome();
     }
 
   };

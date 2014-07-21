@@ -34,8 +34,8 @@ angular.module('contentful').controller('TabViewCtrl', ['$scope', 'authenticatio
       $scope.navigator.forViewType(route.viewType).open();
     else if (route.viewType == 'content-model')
       $scope.navigator.contentModel().open();
-    else if (route.viewType == 'developers-home')
-      $scope.navigator.developersHome().open();
+    else if (route.viewType == 'api-home')
+      $scope.navigator.apiHome().open();
     else if (route.viewType == 'space-settings')
       $scope.navigator.spaceSettings(route.params.pathSuffix).open();
     else if (route.viewType == 'entry-editor')
@@ -89,7 +89,7 @@ angular.module('contentful').controller('TabViewCtrl', ['$scope', 'authenticatio
     contentTypeList:   function () { return this._wrap(gen.contentTypeList()); },
     apiKeyList:        function () { return this._wrap(gen.apiKeyList()); },
     contentModel:      function () { return this._wrap(gen.contentModel()); },
-    developersHome:    function () { return this._wrap(gen.developersHome()); },
+    apiHome:           function () { return this._wrap(gen.apiHome()); },
     assetList:         function () { return this._wrap(gen.assetList()); },
     forViewType:       function (viewType) { return this._wrap(gen.forViewType(viewType)); },
     spaceSettings:     function (pathSuffix) { return this._wrap(gen.spaceSettings(pathSuffix)); }
@@ -116,7 +116,7 @@ angular.module('contentful').controller('TabViewCtrl', ['$scope', 'authenticatio
     else if (viewType == 'asset-list')        analytics.track('Clicked "Assets"');
     else if (viewType == 'content-type-list') analytics.track('Clicked "Content Model"');
     else if (viewType == 'space-settings')    analytics.track('Clicked "Space Settings"');
-    else if (viewType == 'developers-home')   analytics.track('Clicked "Developers"');
+    else if (viewType == 'api-home')          analytics.track('Clicked "api"');
     else return;
     $scope.navigator.forViewType(viewType).goTo();
   };
