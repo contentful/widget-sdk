@@ -132,7 +132,7 @@ describe('The Space view directive', function () {
     });
   }
 
-  makeNavbarItemTest('ApiKey', 'read', 'api-key-list');
+  makeNavbarItemTest('ApiKey', 'read', 'api-home');
   makeNavbarItemTest('ContentType', 'update', 'content-type-list');
   makeNavbarItemTest('Settings', 'update', 'space-settings');
 
@@ -158,7 +158,7 @@ describe('The Space view directive', function () {
   makeNavbarItemClassesTest('content-type-list', 'content-type-list', 'contentTypes');
   makeNavbarItemClassesTest('entry-list', 'entry-list', 'entries');
   makeNavbarItemClassesTest('asset-list', 'asset-list', 'assets');
-  makeNavbarItemClassesTest('api-key-list', 'api-key-list', 'apiKeys');
+  makeNavbarItemClassesTest('api-home', 'api-home', 'apiHome');
   makeNavbarItemClassesTest('space-settings', 'spaceSettings', 'spaceSettings');
 
   it('tab list shown if space is defined', function () {
