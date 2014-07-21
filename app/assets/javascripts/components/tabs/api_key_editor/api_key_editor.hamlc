@@ -43,7 +43,7 @@
       .form-controls
         .field-editor
           %input.space-id(type="text" value="{{spaceContext.space.getId()}}" readonly="readonly")
-          %a.default-button.copy-paste-button.cf-copy-paste(href="#" clipboard-target-class="space-id")
+          %a.default-button.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".space-id")
             %i.ss-layers
             %i.ss-plus
     .form-field
@@ -51,7 +51,7 @@
       .form-controls
         .field-editor
           %input.access-token.cf-select-all-input(type="text" ng-model="apiKey.data.accessToken" ng-show="apiKey.data.accessToken")
-          %a.default-button.copy-paste-button.cf-copy-paste(href="#" clipboard-target-class="access-token" ng-show="apiKey.data.accessToken")
+          %a.default-button.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token" ng-show="apiKey.data.accessToken")
             %i.ss-layers
             %i.ss-plus
           %input(type="text" ng-hide="apiKey.data.accessToken" readonly="readonly" value="Save this API Key to generate an OAuth Access Token and access your data.")

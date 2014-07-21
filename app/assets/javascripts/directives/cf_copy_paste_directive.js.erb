@@ -23,11 +23,32 @@ angular.module('contentful').directive('cfCopyPaste', ['$injector', function($in
         };
         element.attr('copy-status', 'default');
 
-        element.tooltip({
-          title: function () {
-            return copyText[$(this).attr('copy-status')];
+        element.tooltip(getOptions());
+
+        function getOptions() {
+          var options = {
+            title: function () {
+              return copyText[$(this).attr('copy-status')];
+            }
+          };
+          var newKey;
+          if(attrs.tooltipDelayShow){
+            options.delay.show = attrs.tooltipDelayShow;
+            delete attrs.tooltipDelayShow;
           }
-        });
+          if(attrs.tooltipDelayHide){
+            options.delay.hide = attrs.tooltipDelayHide;
+            delete attrs.tooltipDelayHide;
+          }
+          _.forEach(attrs, function (val, key) {
+            if(/^tooltip(.+)/.test(key)){
+              newKey = key.replace('tooltip', '').toLowerCase();
+              options[newKey] = val;
+            }
+          });
+          return options;
+        }
+
 
         function mouseoverHandler(client, args) {
           $(this).attr('copy-status', 'default');
@@ -51,10 +72,10 @@ angular.module('contentful').directive('cfCopyPaste', ['$injector', function($in
           $(this).attr('copy-status', 'copying');
           $(this).tooltip('show');
           var element = $(this);
-          var targetClass = element.attr('clipboard-target-class');
+          var siblingSelector = element.attr('clipboard-sibling-selector');
           var targetSelector = element.attr('clipboard-target-selector');
-          if(targetClass)
-            clipboardTarget = element.parent().find('.'+targetClass);
+          if(siblingSelector)
+            clipboardTarget = element.parent().find(siblingSelector);
           else if(targetSelector)
             clipboardTarget = $window.$(targetSelector);
           client.setText(clipboardTarget.val() || clipboardTarget.text());
