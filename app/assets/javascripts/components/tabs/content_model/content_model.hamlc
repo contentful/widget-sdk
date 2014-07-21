@@ -45,8 +45,7 @@
                   %tr(ng-repeat="field in contentType.data.fields track by field.id")
                     %td.cell-display-name {{field.name}}
                     %td.cell-identifier
-                      %a.cf-copy-paste(href="#" clipboard-sibling-selector=".cf-copy-paste")
-                        {{field.id}}
+                      %a.cf-copy-paste(href="#" clipboard-sibling-selector=".cf-copy-paste") {{field.id}}
                     %td.cell-description
                       %span(tooltip="{{getHelpText(field.type)}}" tooltip-container=".entity-list" tooltip-delay-hide="1000" tooltip-html="true")
                         {{field.type}}
