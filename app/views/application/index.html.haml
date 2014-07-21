@@ -20,7 +20,7 @@
     // FIXME this is a temporary fix for a weird positioning issue that manifests only in Chrome versions below Chrome 38
     // It should be removed some weeks after Chrome 38 is released as stable (possibly mid August 2014)
     if (/Chrome\/(35|36|37)/g.test(window.navigator.userAgent)){
-      document.getElementById('chrome-temp-fix').innerHTML = '.entity-list.api-key-list .main-results-wrapper, .entity-list.content-model .main-results-wrapper {right: 60px !important}';
+      document.getElementById('chrome-temp-fix').innerHTML = '.entity-list.api-key-list .main-results-wrapper{right: 60px !important}.entity-list.content-model .main-results-wrapper{right: 120px !important}';
     }
 
 %body.cf-clear-outlines(ng-app="contentful/app")
