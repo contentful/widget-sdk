@@ -1,5 +1,5 @@
 .tab-header.editor-configuration
-  %h1 LOL
+  %h1 {{contentType.getName()}} / {{editingInterface.title}}
   %a.cf-knowledge-base-icon(
     tooltip="Learn more about Content Types in the Knowledge Base Pages"
     analytics-event="content_types"
@@ -8,11 +8,11 @@
   .editor-top-right
     %button.flat-button(type="button"
             ng-click=""
-            tooltip="Customize editing view"
+            tooltip="Restore default view"
             tooltip-placement="bottom")
-      Customize View
+      Restore Defaults
 
 .tab-main
   lol
 
-.tab-actions(ng-controller="ContentTypeActionsCtrl")
+-#.tab-actions(ng-controller="ContentTypeActionsCtrl")

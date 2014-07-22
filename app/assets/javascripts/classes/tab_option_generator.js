@@ -52,7 +52,7 @@ angular.module('contentful').factory('TabOptionsGenerator', function () {
           contentType: contentType,
           editingInterface: editingInterface
         },
-        title: contentType.getName()
+        title: contentType.getName() +'/'+ editingInterface.title
       };
     },
 
