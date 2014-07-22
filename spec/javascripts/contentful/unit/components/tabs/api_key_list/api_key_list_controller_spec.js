@@ -4,6 +4,7 @@ describe('API Key List Controller', function () {
   var controller, scope, apiErrorHandler;
 
   beforeEach(function () {
+    module('contentful/test');
     inject(function ($rootScope, $controller, cfStub, ReloadNotification) {
       scope = $rootScope.$new();
       apiErrorHandler = ReloadNotification.apiErrorHandler;
@@ -58,7 +59,7 @@ describe('API Key List Controller', function () {
       scope.refreshApiKeys();
       getApiKeysStub.yield({statusCode: 500}, null);
     });
-    
+
     it('results in an error message', function () {
       expect(apiErrorHandler).toBeCalled();
     });
