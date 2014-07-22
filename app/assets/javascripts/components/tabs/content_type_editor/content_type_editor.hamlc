@@ -22,6 +22,11 @@
             %label
               %input(type="checkbox" ng-model="preferences.showDisabledFields")
               Show disabled fields
+    %button.flat-button(type="button"
+            ng-click="navigator.editingInterfaceEditor(contentType, defaultEditingInterface).goTo()"
+            tooltip="Customize editing view"
+            tooltip-placement="bottom")
+      Customize View
 
 .aux-panel(ng-show="preferences.showAuxPanel")
   %header
