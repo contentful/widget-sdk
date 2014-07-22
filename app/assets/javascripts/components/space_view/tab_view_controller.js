@@ -85,11 +85,14 @@ angular.module('contentful').controller('TabViewCtrl', ['$scope', '$injector', f
       return function (err, contentType) {
         $scope.$apply(function (scope) {
           if (err)
-            scope.navigator[fallbackView]().goTo();
+            scope.navigator[fallbackView](contentType).goTo();
           else {
             editingInterfaces.forContentTypeWithId(contentType, editingInterfaceId)
             .then(function (editingInterface) {
               scope.navigator.editingInterfaceEditor(contentType, editingInterface).open();
+            })
+            .catch(function(){
+              scope.navigator[fallbackView](contentType).goTo();
             });
           }
         });

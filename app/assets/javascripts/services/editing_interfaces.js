@@ -9,10 +9,19 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
     },
 
     forContentTypeWithId: function (contentType, id) {
-      return this.forContentType(contentType)
-             .then(function (interfaces) {
-               return _.find(interfaces, {id: id});
-             });
+      var cb = $q.callback();
+      contentType.getEditorInterface(id, cb);
+      return cb.promise.then(
+        function (config) {
+          return config;
+        },
+        function (err) {
+          if(err && err.statusCode === 404)
+            return $q.when(defaultInterface(contentType));
+          else
+            return $q.reject(err);
+        }
+      );
     }
   };
 
