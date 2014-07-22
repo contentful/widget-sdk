@@ -8,7 +8,6 @@ angular.module('contentful').directive('apiKeyEditor', ['modalDialog', 'keycodes
       elem.on('keydown', function(e) {
         if (e.keyCode === keycodes.ENTER) scope.save();
       });
-      defer(function(){elem.find('input').eq(0).focus();});
 
       scope.showRegenerateWarning = function () {
         if(!scope.apiKey.data.regenerateAccessToken){

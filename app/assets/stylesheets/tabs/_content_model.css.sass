@@ -1,0 +1,21 @@
+.content-model
+  .left-nav
+    padding: $tab-main-margin-top 20px 0
+  .with-left-nav
+    padding: $tab-main-margin-top*2 60px 0
+  .tooltip-inner
+    white-space: normal
+    text-align: left
+    strong
+      color: white
+  // THIS IS WHY WE CAN'T HAVE NICE THINGS
+  .inner-result-list
+    &.inner-result-list-white
+      background-color: white
+  &.entity-list
+    .result-list tbody > tr:hover,
+    .inner-result-list thead > tr:hover
+      background-color: white
+    .inner-result-list tbody > tr:hover
+      background-color: $result-list-highlight
+

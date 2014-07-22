@@ -4,13 +4,7 @@ describe('API Key List Controller', function () {
   var controller, scope, apiErrorHandler;
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
-      $provide.constant('environment', {
-        settings: {
-          marketing_url: 'marketing'
-        }
-      });
-    });
+    module('contentful/test');
     inject(function ($rootScope, $controller, cfStub, ReloadNotification) {
       scope = $rootScope.$new();
       apiErrorHandler = ReloadNotification.apiErrorHandler;
@@ -26,10 +20,6 @@ describe('API Key List Controller', function () {
   afterEach(inject(function ($log) {
     $log.assertEmpty();
   }));
-
-  it('gets a marketing url', function() {
-    expect(scope.marketingUrl).toEqual('marketing');
-  });
 
   describe('empty marker', function() {
     it('is true', function() {
@@ -69,7 +59,7 @@ describe('API Key List Controller', function () {
       scope.refreshApiKeys();
       getApiKeysStub.yield({statusCode: 500}, null);
     });
-    
+
     it('results in an error message', function () {
       expect(apiErrorHandler).toBeCalled();
     });

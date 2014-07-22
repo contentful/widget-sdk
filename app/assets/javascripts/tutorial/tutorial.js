@@ -1060,7 +1060,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
         title: 'Tadaa! This is your Access Token',
         description: '<p>The Access Token enables you to authenticate the API calls your distribution platform makes on Contentful to retrieve your content. Access Tokens make sure that your content can only be used from your own applications.</p><p>You can test this by using this token by either clicking the link or via CURL by using the command line.</p>',
         attachTo: '.api-key-editor:visible .curl-example',
-        position: 7,
+        position: 2,
         next: 'apiKeyList',
         buttons: [next]
       });

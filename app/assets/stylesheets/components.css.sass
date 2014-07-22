@@ -245,7 +245,23 @@ li.danger-button
   &:hover
     color: inherit
 
-.cf-copy-paste
+.note-box
+  clear: both
+  overflow: hidden
+  margin: 3rem 5%
+  padding: 2rem
+  padding-bottom: 1rem
+  +border-radius(4px)
+  +box-shadow(0 1px 2px rgba(0, 0, 0, 0.1))
+  background-color: lighten($gold, 40%)
+  h2
+    text-transform: none
+    margin-bottom: 1.4rem
+  .note-box-dismissal
+    float: right
+    margin-top: 0.5rem
+
+.copy-paste-button
   position: absolute
   display: block
   right: 0px
@@ -270,6 +286,10 @@ li.danger-button
     font-size: 7px
     top: -10px
     left: -2px
+
+.cf-hover
+  .on-hover
+    display: none
 
 // Imported at the end to allow for easier overriding of extendable properties
 // TODO everything above this should move to individual files which are included here

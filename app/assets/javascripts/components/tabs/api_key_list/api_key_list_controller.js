@@ -3,10 +3,7 @@
 angular.module('contentful').
   controller('ApiKeyListCtrl', ['$scope', '$injector', function($scope, $injector) {
     var $q                 = $injector.get('$q');
-    var environment        = $injector.get('environment');
     var ReloadNotification = $injector.get('ReloadNotification');
-
-    $scope.marketingUrl = environment.settings.marketing_url;
 
     $scope.refreshApiKeys = function() {
       var cb = $q.callback();
