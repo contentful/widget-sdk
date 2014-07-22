@@ -13,6 +13,7 @@ describe('Asset editor controller', function () {
         'assetTitle',
         'isArchived'
       ]);
+      $provide.removeControllers('FormWidgetsController');
     });
     inject(function ($rootScope, $controller) {
       scope = $rootScope.$new();

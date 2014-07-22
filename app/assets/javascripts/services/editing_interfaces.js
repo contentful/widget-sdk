@@ -4,10 +4,6 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   var random = $injector.get('random');
 
   return {
-    forContentType: function (contentType) {
-      return $q.when([defaultInterface(contentType)]);
-    },
-
     forContentTypeWithId: function (contentType, id) {
       var cb = $q.callback();
       contentType.getEditorInterface(id, cb);
