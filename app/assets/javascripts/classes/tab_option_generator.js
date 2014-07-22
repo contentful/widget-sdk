@@ -44,6 +44,18 @@ angular.module('contentful').factory('TabOptionsGenerator', function () {
       };
     },
 
+    editingInterfaceEditor: function (contentType, editingInterface) {
+      return {
+        viewType: 'editing-interface-editor',
+        section: 'contentTypes',
+        params: {
+          contentType: contentType,
+          editingInterface: editingInterface
+        },
+        title: contentType.getName()
+      };
+    },
+
     apiKeyEditor: function (apiKey) {
       return {
         viewType: 'api-key-editor',

@@ -1,5 +1,11 @@
 'use strict';
-angular.module('contentful').controller('TabViewCtrl', ['$scope', 'authentication', 'analytics', 'notification', 'routing', 'TabOptionsGenerator', '$document', function ($scope, authentication, analytics, notification, routing, TabOptionsGenerator, $document) {
+angular.module('contentful').controller('TabViewCtrl', ['$scope', '$injector', function ($scope, $injector) {
+  var analytics = $injector.get('analytics');
+  var routing = $injector.get('routing');
+  var TabOptionsGenerator = $injector.get('TabOptionsGenerator');
+  var $document = $injector.get('$document');
+  var editingInterfaces = $injector.get('editingInterfaces');
+
   var gen = TabOptionsGenerator;
   $scope.$on('tabClosed', function (event, tab) {
     if (tab.list.numVisible() > 0) return;
@@ -35,12 +41,26 @@ angular.module('contentful').controller('TabViewCtrl', ['$scope', 'authenticatio
     else if (route.viewType == 'space-settings')
       $scope.navigator.spaceSettings(route.params.pathSuffix).open();
     else if (route.viewType == 'entry-editor')
-      $scope.spaceContext.space.getEntry(route.params.entryId, handleFallback('entryEditor', 'entryList'));
+      $scope.spaceContext.space.getEntry(
+        route.params.entryId,
+        handleFallback('entryEditor', 'entryList')
+      );
     else if (route.viewType == 'asset-editor')
-      $scope.spaceContext.space.getAsset(route.params.assetId, handleFallback('assetEditor', 'assetList'));
+      $scope.spaceContext.space.getAsset(
+        route.params.assetId,
+        handleFallback('assetEditor', 'assetList')
+      );
     else if (route.viewType == 'content-type-editor')
-      $scope.spaceContext.space.getContentType(route.params.contentTypeId, handleFallback('contentTypeEditor', 'contentTypeList'));
-    else if (route.viewType == 'api-key-editor')
+      $scope.spaceContext.space.getContentType(
+        route.params.contentTypeId,
+        handleFallback('contentTypeEditor', 'contentTypeList')
+      );
+    else if (route.viewType == 'editing-interface-editor'){
+      $scope.spaceContext.space.getContentType(
+        route.params.contentTypeId,
+        handleEditingInterface('contentTypeEditor', route.params.editingInterfaceId)
+      );
+    } else if (route.viewType == 'api-key-editor')
       $scope.spaceContext.space.getApiKey(route.params.apiKeyId, handleFallback('apiKeyEditor', 'apiKeyList'));
     else
       $scope.spaceContext.space.getPublishedContentTypes(function(err, ets) {
@@ -53,8 +73,25 @@ angular.module('contentful').controller('TabViewCtrl', ['$scope', 'authenticatio
     function handleFallback(defaultView, fallbackView){
       return function (err, obj) {
         $scope.$apply(function (scope) {
-          if (err) scope.navigator[fallbackView]().goTo();
-          else     scope.navigator[defaultView](obj).open();
+          if (err)
+            scope.navigator[fallbackView]().goTo();
+          else
+            scope.navigator[defaultView](obj).open();
+        });
+      };
+    }
+
+    function handleEditingInterface(fallbackView, editingInterfaceId) {
+      return function (err, contentType) {
+        $scope.$apply(function (scope) {
+          if (err)
+            scope.navigator[fallbackView]().goTo();
+          else {
+            editingInterfaces.forContentTypeWithId(contentType, editingInterfaceId)
+            .then(function (editingInterface) {
+              scope.navigator.editingInterfaceEditor(contentType, editingInterface).open();
+            });
+          }
         });
       };
     }
@@ -77,16 +114,17 @@ angular.module('contentful').controller('TabViewCtrl', ['$scope', 'authenticatio
       if(entity.getType() == 'Entry') return this.entryEditor(entity);
       if(entity.getType() == 'Asset') return this.assetEditor(entity);
     },
-    entryEditor:       function (entity) { return this._wrap(gen.entryEditor(entity)); },
-    assetEditor:       function (entity) { return this._wrap(gen.assetEditor(entity)); },
-    apiKeyEditor:      function (entity) { return this._wrap(gen.apiKeyEditor(entity)); },
-    contentTypeEditor: function (entity) { return this._wrap(gen.contentTypeEditor(entity)); },
-    entryList:         function () { return this._wrap(gen.entryList()); },
-    contentTypeList:   function () { return this._wrap(gen.contentTypeList()); },
-    apiKeyList:        function () { return this._wrap(gen.apiKeyList()); },
-    assetList:         function () { return this._wrap(gen.assetList()); },
-    forViewType:       function (viewType) { return this._wrap(gen.forViewType(viewType)); },
-    spaceSettings:     function (pathSuffix) { return this._wrap(gen.spaceSettings(pathSuffix)); }
+    entryEditor:            function (entity) { return this._wrap(gen.entryEditor(entity)); },
+    assetEditor:            function (entity) { return this._wrap(gen.assetEditor(entity)); },
+    apiKeyEditor:           function (entity) { return this._wrap(gen.apiKeyEditor(entity)); },
+    contentTypeEditor:      function (entity) { return this._wrap(gen.contentTypeEditor(entity)); },
+    editingInterfaceEditor: function (contentType, editingInterface) { return this._wrap(gen.editingInterfaceEditor(contentType, editingInterface)); },
+    entryList:              function () { return this._wrap(gen.entryList()); },
+    contentTypeList:        function () { return this._wrap(gen.contentTypeList()); },
+    apiKeyList:             function () { return this._wrap(gen.apiKeyList()); },
+    assetList:              function () { return this._wrap(gen.assetList()); },
+    forViewType:            function (viewType) { return this._wrap(gen.forViewType(viewType)); },
+    spaceSettings:          function (pathSuffix) { return this._wrap(gen.spaceSettings(pathSuffix)); }
   };
 
   $scope.syncLocation = function () {

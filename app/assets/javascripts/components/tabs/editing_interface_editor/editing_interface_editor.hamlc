@@ -1,0 +1,18 @@
+.tab-header.editor-configuration
+  %h1 LOL
+  %a.cf-knowledge-base-icon(
+    tooltip="Learn more about Content Types in the Knowledge Base Pages"
+    analytics-event="content_types"
+    href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
+
+  .editor-top-right
+    %button.flat-button(type="button"
+            ng-click=""
+            tooltip="Customize editing view"
+            tooltip-placement="bottom")
+      Customize View
+
+.tab-main
+  lol
+
+.tab-actions(ng-controller="ContentTypeActionsCtrl")
