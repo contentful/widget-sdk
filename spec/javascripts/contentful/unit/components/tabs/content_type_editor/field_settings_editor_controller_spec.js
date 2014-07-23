@@ -149,26 +149,6 @@ describe('Field Settings Editor Controller', function () {
     });
   });
 
-  describe('display field enabled', function() {
-    it('if field type is symbol', function() {
-      scope.field.type = 'Symbol';
-      scope.$digest();
-      expect(scope.displayEnabled()).toBeTruthy();
-    });
-
-    it('if field type is text', function() {
-      scope.field.type = 'Text';
-      scope.$digest();
-      expect(scope.displayEnabled()).toBeTruthy();
-    });
-
-    it('if field type is something else', function() {
-      scope.field.type = 'Array';
-      scope.$digest();
-      expect(scope.displayEnabled()).toBeFalsy();
-    });
-  });
-
   describe('check if field is display field', function() {
     beforeEach(function() {
       scope.contentType = {data: {}};
@@ -186,27 +166,6 @@ describe('Field Settings Editor Controller', function () {
       scope.contentType.data.displayField = 'something else';
       scope.$digest();
       expect(scope.isDisplayField()).toBeFalsy();
-    });
-  });
-
-  describe('displayed field name', function() {
-    it('is empty', function() {
-      scope.field.name = '';
-      scope.$digest();
-      expect(scope.displayedFieldName()).toMatch(/untitled/i);
-    });
-
-    it('is empty but has id', function() {
-      scope.field.name = '';
-      scope.field.id = '123';
-      scope.$digest();
-      expect(scope.displayedFieldName()).toMatch(/id/i);
-    });
-
-    it('is not empty', function() {
-      scope.field.name = 'fieldname';
-      scope.$digest();
-      expect(scope.displayedFieldName()).toBe('fieldname');
     });
   });
 
