@@ -6,13 +6,40 @@
     href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
 
   .editor-top-right
-    %button.flat-button(type="button"
+    %button.default-button(type="button"
             ng-click=""
             tooltip="Restore default view"
             tooltip-placement="bottom")
-      Restore Defaults
+      %i.ss-replay.button-icon
+      Restore to defaults
 
 .tab-main
-  lol
+  .left-nav
+  .with-left-nav
+    .field-widget-settings(ng-repeat="widget in widgets track by widget.id")
+      .cf-fieldtype-icon(field="widget.field" show-tooltip)
+        %i.ss-help
+      {{displayedFieldName(widget.field)}}
 
--#.tab-actions(ng-controller="ContentTypeActionsCtrl")
+.tab-actions
+  .button-set
+    %button.default-button.danger-button.delete-confirm(type="button"
+                  cf-click-outside="deleteConfirm=false"
+                  cf-click-outside-ignore=".delete"
+                  ng-show="deleteConfirm"
+                  ng-click="delete()"
+                  tooltip="Click anywhere else to dismiss")
+      Are you sure?
+    %button.default-button.delete(type="button"
+                  ng-show="canDelete() && !deleteConfirm"
+                  ng-click="deleteConfirm=true" 
+                  tooltip="Delete this Editing Interface")
+      Delete
+
+    %button.default-button.primary-button.publish(
+                  ng-disabled="!canPublish()"
+                  ng-click="update()"
+                  tooltip="Update this Editing Interface")
+      {{publishButtonLabel()}}
+  .save-status(tooltip="Every change you make is automatically saved as a draft. Hit Update to save this Editing Interface draft."
+               tooltip-placement="top")

@@ -45,7 +45,7 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
   }
 
   function fieldIsEditable(field) {
-    return !field.disabled || $scope.preferences.showDisabledFields || $scope.errorPaths[field.id];
+    return !field.disabled || $scope.preferences.showDisabledFields || $scope.errorPaths && $scope.errorPaths[field.id];
   }
 
   function makeUnique(locales) {
@@ -73,7 +73,7 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
   }
 
   function getErrorLocales(field) {
-    return _.map($scope.errorPaths[field.id], function (code) {
+    return $scope.errorPaths && _.map($scope.errorPaths[field.id], function (code) {
       return _.find($scope.spaceContext.space.data.locales, {code: code});
     });
   }
