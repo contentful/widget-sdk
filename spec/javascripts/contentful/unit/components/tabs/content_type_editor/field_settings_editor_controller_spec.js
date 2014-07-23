@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Field Settings Controller', function () {
+describe('Field Settings Editor Controller', function () {
   var controller, scope, stubs;
 
   beforeEach(function () {
@@ -41,7 +41,7 @@ describe('Field Settings Controller', function () {
       scope.field = {};
       scope.pickNewDisplayField = sinon.stub();
 
-      controller = $controller('CfFieldSettingsCtrl', {$scope: scope});
+      controller = $controller('FieldSettingsEditorCtrl', {$scope: scope});
       scope.$digest();
     });
   });

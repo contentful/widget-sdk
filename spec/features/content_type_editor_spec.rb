@@ -101,7 +101,7 @@ feature 'Content Type Editor', js: true do
     wait_for_sharejs
 
     click_button 'Update'
-    expect(page).to have_selector('.cf-field-settings')
+    expect(page).to have_selector('.cf-field-settings-editor')
   end
 
   scenario 'Toggling disabled fields' do
@@ -118,10 +118,10 @@ feature 'Content Type Editor', js: true do
     wait_for_sharejs
 
     click_button 'Update'
-    expect(page).to_not have_selector('.cf-field-settings')
+    expect(page).to_not have_selector('.cf-field-settings-editor')
     find('.editor-top-right .dropdown-toggle').click
     find('label', text: 'Show disabled fields').click
-    expect(page).to have_selector('.cf-field-settings')
+    expect(page).to have_selector('.cf-field-settings-editor')
   end
 
   scenario 'Picking new displayField' do

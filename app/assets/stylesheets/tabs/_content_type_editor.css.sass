@@ -50,7 +50,7 @@
         border-width: 0
 
   // Layout for Field-row
-  .cf-field-settings
+  .cf-field-settings-editor
     @extend %result-list-cell
     white-space: normal
     color: $inactive-row-color
@@ -95,7 +95,7 @@
     width: 6px
 
   // Field settings Look and Feel
-  .cf-field-settings
+  .cf-field-settings-editor
     background-color: white
     &:hover
       background-color: $result-list-highlight
@@ -111,7 +111,7 @@
   .field-details,
   .fieldtype-dropdown
     display: none
-  .cf-field-settings.open
+  .cf-field-settings-editor.open
     .field-form,
     .field-details,
     .fieldtype-dropdown
@@ -136,7 +136,7 @@
     cursor: -moz-grab
     cursor: -moz-grabbing
     opacity: 0.2
-  .cf-field-settings:hover .drag-handle
+  .cf-field-settings-editor:hover .drag-handle
     opacity: 1
 
   // Colored Status-Bar at the end of the row

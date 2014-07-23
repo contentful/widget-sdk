@@ -1,5 +1,16 @@
 'use strict';
-angular.module('contentful').controller('CfFieldSettingsCtrl', ['$scope', 'getFieldTypeName', 'analytics', 'validation', 'assert', 'notification', 'stringUtils', 'sentry', 'defer', function ($scope, getFieldTypeName, analytics, validation, assert, notification, stringUtils, sentry, defer) {
+angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$injector', function ($scope, $injector) {
+  var $controller = $injector.get('$controller');
+  var getFieldTypeName = $injector.get('getFieldTypeName');
+  var analytics = $injector.get('analytics');
+  var validation = $injector.get('validation');
+  var assert = $injector.get('assert');
+  var notification = $injector.get('notification');
+  var stringUtils = $injector.get('stringUtils');
+  var sentry = $injector.get('sentry');
+  var defer = $injector.get('defer');
+
+  $controller('FieldSettingsController', {$scope: $scope});
 
   $scope.$watch(function (scope) {
     var f = scope.field;
@@ -38,18 +49,8 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', ['$scope', 'getFi
       return 'unpublished';
   };
 
-  $scope.displayEnabled = function () {
-    return $scope.field.type === 'Symbol' || $scope.field.type === 'Text';
-  };
-
   $scope.isDisplayField = function () {
     return $scope.contentType.data.displayField === $scope.field.id;
-  };
-
-  $scope.displayedFieldName = function () {
-    return _.isEmpty($scope.field.name) ?
-             _.isEmpty($scope.field.id) ?  'Untitled field' : 'ID: '+$scope.field.id
-           : $scope.field.name;
   };
 
   var oldName = $scope.field.name || '';
@@ -75,7 +76,7 @@ angular.module('contentful').controller('CfFieldSettingsCtrl', ['$scope', 'getFi
           return;
         }
         if (isDisplayField ||
-            _.isEmpty($scope.contentType.data.displayField) && $scope.displayEnabled()) {
+            _.isEmpty($scope.contentType.data.displayField) && $scope.displayEnabled($scope.field)) {
           $scope.setDisplayField($scope.field);
         }
       });
