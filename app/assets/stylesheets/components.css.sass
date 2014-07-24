@@ -271,6 +271,38 @@ li.danger-button
     top: -10px
     left: -2px
 
+// TODO split the stuff out of content types in order to standardize this and the colors
+.cf-fieldtype-icon
+  cursor: default
+  height: 18px + 2 * 3px
+  line-height: 18px
+  padding: 3px 0
+  width: 35px
+  text-align: center
+  border: 1px solid $lightest-gray
+  +border-radius(3px)
+  // Adjust the color because <strong> makes the text appear darker
+  color: $lightest-gray
+  i
+    position: relative
+    top: 1px
+  strong
+    color: inherit
+.active .cf-fieldtype-icon
+  $active-row-color: darken($light-gray, 30)
+  color: lighten($active-row-color, 10)
+  border-color: $active-row-color
+
+.dropdown-toggle.cf-fieldtype-icon:not([disabled])
+  width: 45px
+  padding-left: 13px
+  cursor: pointer
+  &:before
+    content: '▼'
+    font-size: 0.8em
+    position: absolute
+    left: 3px
+
 // Imported at the end to allow for easier overriding of extendable properties
 // TODO everything above this should move to individual files which are included here
 @import "components/forms/*"

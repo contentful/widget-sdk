@@ -16,10 +16,11 @@
 .tab-main
   .left-nav
   .with-left-nav
-    .field-widget-settings(ng-repeat="widget in widgets track by widget.id")
+    .field-widget-settings.active(ng-repeat="widget in widgets track by widget.id")
       .cf-fieldtype-icon(field="widget.field" show-tooltip)
         %i.ss-help
-      {{displayedFieldName(widget.field)}}
+      .widget-label
+        {{displayedFieldName(widget.field)}}
 
 .tab-actions
   .button-set

@@ -149,6 +149,7 @@
       background-color: $blue
 
   // Icons
+  // TODO maybe rename this to tools and make it more consistent with stuff in editing interfaces
   .icons
     color: $inactive-row-icon-inactive-color
     .ss-test,
@@ -161,37 +162,8 @@
   .required-icon
     font-style: normal
     font-size: 120%
-  .cf-fieldtype-icon
-    strong
-      color: inherit
-    // Adjust the color because <strong> makes the text appear darker
-    color: $inactive-row-color
   .validation-alert
     color: $red
-      
-  // Fieldtype icon
-  .cf-fieldtype-icon
-    // Look / internal
-    cursor: default
-    border: 1px solid $inactive-row-color
-    +border-radius(3px)
-    height: 18px + 2 * 3px
-    line-height: 18px
-    padding: 3px 0
-    width: 35px
-    text-align: center
-    i
-      position: relative
-      top: 1px
-  .dropdown-toggle.cf-fieldtype-icon:not([disabled])
-    width: 45px
-    padding-left: 13px
-    cursor: pointer
-    &:before
-      content: '▼'
-      font-size: 0.8em
-      position: absolute
-      left: 3px
 
   // Color variations for active fields
   .active
@@ -200,9 +172,6 @@
     color: $active-row-icon-inactive-color
     .enabled
       color: $active-row-icon-active-color
-  .active .cf-fieldtype-icon
-    color: lighten($active-row-color, 10)
-    border-color: $active-row-color
 
   // Color varaitions for open fields
   .open
