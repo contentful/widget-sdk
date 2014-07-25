@@ -88,7 +88,7 @@
               %td.cell-name
                 %span {{spaceContext.entryTitle(entity)}}
               %td.cell-updated
-                %date.relative(datetime="{{entity.getUpdatedAt()}}")
+                %date.relative(ng-if="entity.getUpdatedAt()" datetime="{{entity.getUpdatedAt()}}")
         .loading(ng-hide="paginator.atLast()")
       %p.result-length Showing {{entities.length}} of {{paginator.numEntries}} entries
 
@@ -115,6 +115,6 @@
                 %p(ng-show="file && file.url") {{file|fileType}}
                   %span.lighter {{file|fileExtension}}
                 %p.lighter
-                  %date.relative(datetime="{{entity.getUpdatedAt()}}")
+                  %date.relative(ng-if="entity.getUpdatedAt()" datetime="{{entity.getUpdatedAt()}}")
         .loading(ng-hide="paginator.atLast()")
       %p.result-length Showing {{entities.length}} of {{paginator.numEntries}} assets

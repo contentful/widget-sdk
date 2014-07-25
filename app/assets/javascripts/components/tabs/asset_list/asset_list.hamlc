@@ -53,7 +53,7 @@
               %span {{file|fileType}}
               %span.extension {{file|fileExtension}}
             %td.cell-updated
-              %date.relative(datetime="{{asset.getUpdatedAt()}}")
+              %date.relative(ng-if="asset.getUpdatedAt()" datetime="{{asset.getUpdatedAt()}}")
             %td.cell-author
               %span.cf-user(link="asset.getUpdatedBy()" as="updater") {{updater | userNameDisplay:user}}
             %td.cell-status(ng-class="statusClass(asset)")

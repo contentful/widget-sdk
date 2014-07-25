@@ -40,7 +40,7 @@
             %td.cell-description
               %span {{apiKey.data.description}}
             %td.cell-date
-              %date.relative(datetime="{{apiKey.getUpdatedAt()}}")
+              %date.relative(ng-if="apiKey.getUpdatedAt()" datetime="{{apiKey.getUpdatedAt()}}")
             %td.cell-symbol
               %span.cf-user(link="apiKey.getCreatedBy()" as="creator") {{creator | userNameDisplay:user}}
 
