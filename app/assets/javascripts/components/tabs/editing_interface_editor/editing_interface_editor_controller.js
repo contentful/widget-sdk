@@ -4,6 +4,7 @@ angular.module('contentful').controller('EditingInterfaceEditorCtrl', ['$scope',
   var $controller = $injector.get('$controller');
 
   $controller('FieldSettingsController', {$scope: $scope});
+  $controller('FieldActionsController', {$scope: $scope});
 
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
   $scope.$watch('tab.params.editingInterface', 'editingInterface=tab.params.editingInterface');
