@@ -57,7 +57,8 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', 'val
       var publishedVersion = $scope.otDoc.getAt(['sys', 'publishedVersion']);
       var notPublishedYet = !publishedVersion;
       var updatedSincePublishing = version !== publishedVersion + 1;
-      var hasFields = $scope.otDoc.getAt(['fields']).length > 0;
+      var fields = $scope.otDoc.getAt(['fields']);
+      var hasFields = fields && fields.length > 0;
       return $scope.contentType.canPublish() &&
         (notPublishedYet || updatedSincePublishing) &&
         hasFields &&

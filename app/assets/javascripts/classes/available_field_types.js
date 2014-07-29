@@ -87,8 +87,8 @@ angular.module('contentful').
         if (!field ||
             field.type !== availableFieldType.value.type ||
             field.type === 'Link' && field.linkType !== availableFieldType.value.linkType ||
-            field.items && field.items.type !== availableFieldType.value.items.type ||
-            field.type === 'Array' && field.items.type === 'Link' && field.items.linkType !== availableFieldType.value.items.linkType
+            field.items && availableFieldType.value.items && field.items.type !== availableFieldType.value.items.type ||
+            field.type === 'Array' && field.items.type === 'Link' && field.items && availableFieldType.value.items && field.items.linkType !== availableFieldType.value.items.linkType
            )
           return false;
         return true;

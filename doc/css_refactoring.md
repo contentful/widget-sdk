@@ -16,6 +16,8 @@ Some main points:
   - http://www.smashingmagazine.com/2011/12/12/an-introduction-to-object-oriented-css-oocss/
   - http://mdo.github.io/code-guide/
   - https://github.com/csswizardry/CSS-Guidelines
+  - http://csswizardry.com/2014/03/naming-ui-components-in-oocss/
+  - http://csswizardry.com/2014/01/extending-silent-classes-in-sass/
 - create a styleguide, together with a better naming scheme for different CSS blocks
   - https://pinboard.in/u:trodrigues/t:styleguide/
   - http://alistapart.com/article/creating-style-guides
