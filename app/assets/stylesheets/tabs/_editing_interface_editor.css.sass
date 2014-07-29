@@ -8,10 +8,8 @@
     +stretch(0, 30%, 0, $left-nav-width)
     padding: 50px 30px
 
-  .field-widget-settings
-    padding: 10px
-    margin-bottom: 20px
-    border: 1px solid $dark-rule
+.field-widget-header
+  padding: 10px
 
   .widget-label,
   .cf-fieldtype-icon
@@ -24,4 +22,17 @@
   .tools
     float: right
     margin-top: 3px
-    margin-right: 10px
+
+.field-widget-settings
+  margin-bottom: 20px
+  border: 1px solid $dark-rule
+
+  .details
+    display: none
+
+  &.open
+    .details
+      display: block
+      padding-top: 20px
+      padding-bottom: 20px
+      background-color: $gray-background

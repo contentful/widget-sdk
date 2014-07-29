@@ -30,15 +30,7 @@
 
     .field-widget-settings.active(
         ng-repeat="widget in widgets track by widget.id"
-        ng-class="{open: isFieldOpen(widget.field), active: !widget.field.disabled }"
-        ng-click="fieldClicked(widget.field)")
-      .cf-fieldtype-icon(field="widget.field" show-tooltip)
-        %i.ss-help
-      .widget-label
-        {{displayedFieldName(widget.field)}}
-      .tools
-        %i.ss-writingdisabled(ng-if="widget.field.disabled")
-        %a.toggle-collapse.on-right(cf-click-local="toggleField(widget.field)" ng-class="{open: isFieldOpen(widget.field)}") ▶
+        ng-class="{open: isFieldOpen(widget.field), active: !widget.field.disabled }")
 
 .tab-actions
   .button-set

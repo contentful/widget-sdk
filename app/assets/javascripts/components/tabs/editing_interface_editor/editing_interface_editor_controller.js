@@ -15,5 +15,4 @@ angular.module('contentful').controller('EditingInterfaceEditorCtrl', ['$scope',
   });
   $scope.$watch('contentType.data.fields', 'formWidgetsController.updateWidgets()', true);
 
-
 }]);
