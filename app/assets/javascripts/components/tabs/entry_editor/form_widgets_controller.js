@@ -12,16 +12,19 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
   $scope.$watch('errorPaths',                            updateWidgets);
 
   this.updateWidgets = updateWidgets;
+  this.updateWidgetsFromInterface = updateWidgetsFromInterface;
 
   function updateWidgets() {
     if (controller.contentType)
       editingInterfaces.forContentTypeWithId(controller.contentType, 'default')
-      .then(function (interf) {
-        $scope.widgets = _(interf.widgets)
-          .filter(widgetIsVisible)
-          .map(addLocalesAndFieldToWidget)
-          .value();
-      });
+      .then(updateWidgetsFromInterface);
+  }
+
+  function updateWidgetsFromInterface(interf) {
+    $scope.widgets = _(interf.widgets)
+      .filter(widgetIsVisible)
+      .map(addLocalesAndFieldToWidget)
+      .value();
   }
 
   function addLocalesAndFieldToWidget(widget) {

@@ -13,6 +13,43 @@ angular.module('contentful').controller('EditingInterfaceEditorCtrl', ['$scope',
   $scope.$watch('contentType', function (contentType) {
     $scope.formWidgetsController.contentType = contentType;
   });
-  $scope.$watch('contentType.data.fields', 'formWidgetsController.updateWidgets()', true);
+
+  var _contentTypeFields,
+      _editingInterface;
+
+  function checkContentTypeFields() {
+    var contentType = $scope.contentType;
+    if(contentType && contentType.data && contentType.data.fields){
+      if(!_contentTypeFields){
+        _contentTypeFields = angular.copy(contentType.data.fields, _contentTypeFields);
+        return true;
+      } else {
+        var differs = !angular.equals(contentType.data.fields, _contentTypeFields);
+        if(differs) angular.copy(contentType.data.fields, _contentTypeFields);
+        return differs;
+      }
+    }
+  }
+
+  function checkEditingInterface() {
+    var editingInterface = $scope.editingInterface;
+    if(editingInterface){
+      if(!_editingInterface){
+        _editingInterface = angular.copy(editingInterface, _editingInterface);
+        return true;
+      } else {
+        var differs = !angular.equals(editingInterface, _editingInterface);
+        if(differs) angular.copy(editingInterface, _editingInterface);
+        return differs;
+      }
+    }
+  }
+
+  $scope.$watch(function () {
+    return (checkContentTypeFields() || checkEditingInterface()) && _contentTypeFields && _editingInterface;
+  }, function (modified) {
+    if(modified)
+      $scope.formWidgetsController.updateWidgetsFromInterface($scope.editingInterface);
+  });
 
 }]);
