@@ -3,60 +3,68 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
   var $q = $injector.get('$q');
 
   var WIDGET_TYPES = {
-    Text: [
+    'Text': [
       'singleLine',
       'multipleLine',
       'markdown',
       'dropdown',
       'radio'
     ],
-    Symbol: [
+    'Symbol': [
       'singleLine',
       'dropdown',
       'radio'
     ],
-    Integer: [
-      'singleLine',
+    'Symbols': [
+      'listInput'
+    ],
+    'Integer': [
+      'numberEditor',
       'dropdown',
       'radio',
       'rating'
     ],
-    Number: [
-      'singleLine',
+    'Number': [
+      'numberEditor',
       'dropdown',
       'radio',
       'rating'
     ],
-    Boolean: [
+    'Boolean': [
       'radio',
       'toggle',
       'dropdown'
     ],
-    Date: [
+    'Date': [
       'datePicker',
       'dateDropdown'
     ],
-    Location: [
-      'coordinates'
+    'Location': [
+      'locationEditor'
     ],
-    Entry: [
+    'Link': [
+      'linkEditor',
       'item',
       'card'
     ],
-    Asset: [
+    'Links': [
+      'linksEditor'
+    ],
+    'File': [
       'item',
       'gallery'
     ],
-    Object: [
-      'multipleLine'
-    ],
-    Array: [
-      'list'
+    'Object': [
+      'objectEditor'
     ]
   };
 
   var WIDGET_OPTIONS = {
     singleLine: {
+      name: 'Single Line',
+      fields: {}
+    },
+    numberEditor: {
       name: 'Single Line',
       fields: {}
     },
@@ -88,6 +96,10 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
       name: 'Date Dropdown',
       fields: {}
     },
+    locationEditor: {
+      name: 'Location',
+      fields: {}
+    },
     coordinates: {
       name: 'Coordinates',
       fields: {}
@@ -107,23 +119,77 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
     list: {
       name: 'List',
       fields: {}
+    },
+    objectEditor: {
+      name: 'Object',
+      fields: {}
+    },
+    listInput: {
+      name: 'List',
+      fields: {}
+    },
+    fileEditor: {
+      name: 'File',
+      fields: {}
+    },
+    linkEditor: {
+      name: 'Link',
+      fields: {}
+    },
+    linksEditor: {
+      name: 'Links',
+      fields: {}
     }
   };
 
-  return {
-    forFieldType: function (fieldType) {
-      var widgetTypes = _.map(WIDGET_TYPES[fieldType], function (widgetType) {
-        return {
-          id: widgetType,
-          name: WIDGET_OPTIONS[widgetType].name
-        };
-      });
-      return $q.when(widgetTypes);
-    },
+  function forFieldType(fieldType) {
+    var widgetTypes = _.map(WIDGET_TYPES[fieldType], function (widgetType) {
+      return {
+        id: widgetType,
+        name: WIDGET_OPTIONS[widgetType].name
+      };
+    });
+    return $q.when(widgetTypes);
+  }
 
-    options: function (widgetType) {
-      return $q.when(WIDGET_OPTIONS[widgetType].fields);
+  function widgetOptions(widgetType) {
+    return $q.when(WIDGET_OPTIONS[widgetType].fields);
+  }
+
+  function forFieldWithContentType(field, contentType) {
+    var type = field.type === 'Array' ? linkTypeForArray(field.items.type) : field.type;
+    var widgetTypes = WIDGET_TYPES[type];
+    var hasValidations = getFieldValidationsOfType(field, 'in').length > 0;
+    if(hasValidations && _.contains(widgetTypes, 'dropdown')) return 'dropdown';
+    if (type === 'Text') {
+      if (contentType.data.displayField === field.id ||
+          contentType.getId() === 'asset') {
+        return 'singleLine';
+      } else {
+        return 'markdown';
+      }
     }
+    if (type === 'Link' ) return 'linkEditor';
+    if (type === 'File' ) return 'fileEditor';
+    if(widgetTypes && widgetTypes.length > 0)
+      return widgetTypes[0];
+    return null;
+  }
+
+  function linkTypeForArray(type) {
+    if (type === 'Link'  ) return 'Links';
+    if (type === 'Symbol') return 'Symbols';
+    return null;
+  }
+
+  function getFieldValidationsOfType(field, type) {
+    return _.filter(_.pluck(field.validations, type));
+  }
+
+  return {
+    forField: forFieldWithContentType,
+    forFieldType: forFieldType,
+    options: widgetOptions
   };
 
 }]);

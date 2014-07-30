@@ -2,6 +2,7 @@
 angular.module('contentful').factory('editingInterfaces', ['$injector', function($injector){
   var $q     = $injector.get('$q');
   var random = $injector.get('random');
+  var widgetTypes = $injector.get('widgetTypes');
 
   return {
     forContentTypeWithId: function (contentType, id) {
@@ -18,7 +19,13 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
             return $q.reject(err);
         }
       );
-    }
+    },
+
+    saveForContentTypeWithId: function (contentType, id, editingInterface) {
+      
+    },
+
+    defaultInterface: defaultInterface
   };
 
   function defaultInterface(contentType) {
@@ -38,42 +45,9 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
       id: random.id(),
       type: 'field',
       fieldId: field.id, // TODO use internal id (field renaming)
-      widgetType: fieldWidgetType(field, contentType),
+      widgetType: widgetTypes.forField(field, contentType),
       widgetOptions: {}
     };
-  }
-
-  function fieldWidgetType(field, contentType) {
-    var hasValidations = getFieldValidationsOfType(field, 'in').length > 0;
-    if(hasValidations) return 'dropdown';
-    if (field.type === 'Symbol' ) {
-      return 'textfield';
-    }
-    if (field.type === 'Text'   ) {
-      if (contentType.data.displayField === field.id ||
-          contentType.getId() === 'asset') {
-        return 'textarea';
-      } else {
-        return 'markdownEditor';
-      }
-    }
-    if (field.type === 'Boolean') return 'radiobuttons';
-    if (field.type === 'Date'   ) return 'datetimeEditor';
-    if (field.type === 'Array') {
-      if (field.items.type === 'Link'  ) return 'linksEditor';
-      if (field.items.type === 'Symbol') return 'listInput';
-    }
-    if (field.type === 'Object'  ) return 'objectEditor';
-    if (field.type === 'Location') return 'locationEditor';
-    if (field.type === 'Number'  ) return 'numberEditor';
-    if (field.type === 'Integer' ) return 'numberEditor';
-    if (field.type === 'Link'    ) return 'linkEditor';
-    if (field.type === 'File'    ) return 'fileEditor';
-    return null;
-  }
-
-  function getFieldValidationsOfType(field, type) {
-    return _.filter(_.pluck(field.validations, type));
   }
 
 }]);

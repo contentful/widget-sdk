@@ -1,26 +1,26 @@
 %ng-switch(on="widget.widgetType")
-  %input(ng-switch-when="textfield"
+  %input(ng-switch-when="singleLine"
     type="text"
     ng-model="fieldData.value"
     ot-subdoc=""
     ot-bind-text=""
     ng-disabled="!otEditable")
   .cf-dropdown-editor(ng-switch-when="dropdown" ng-model="fieldData.value")
-  .cf-markdown-editor(ng-switch-when="markdownEditor")
-  %textarea(ng-switch-when="textarea"
+  .cf-markdown-editor(ng-switch-when="markdown")
+  %textarea(ng-switch-when="multipleLine"
     cf-input-autogrow=""
     ng-model="fieldData.value"
     ot-subdoc=""
     ot-bind-text=""
     ng-disabled="!otEditable")
-  %div(ng-switch-when="radiobuttons")
+  %div(ng-switch-when="radio")
     %label
       %input(type="radio" ng-model="fieldData.value" ng-value="true" ot-bind-model="" ng-disabled="!otEditable")
       %span.yes Yes
     %label
       %input(type="radio" ng-model="fieldData.value" ng-value="false" ot-bind-model="" ng-disabled="!otEditable")
       %span.no No
-  .cf-datetime-editor(ng-switch-when="datetimeEditor" ng-model="fieldData.value")
+  .cf-datetime-editor(ng-switch-when="datePicker" ng-model="fieldData.value")
   %div(ng-switch-when="linksEditor"
     ng-model="fieldData.value"
     cf-link-editor="field.items.linkType"
