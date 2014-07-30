@@ -7,7 +7,7 @@
 
   .editor-top-right
     %button.default-button(type="button"
-            ng-click=""
+            ng-click="restoreDefaults()"
             tooltip="Restore default view"
             tooltip-placement="bottom")
       %i.ss-replay.button-icon

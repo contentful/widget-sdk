@@ -2,6 +2,7 @@
 
 angular.module('contentful').controller('EditingInterfaceEditorCtrl', ['$scope', '$injector', function EditingInterfaceEditorCtrl($scope, $injector) {
   var $controller = $injector.get('$controller');
+  var editingInterfaces = $injector.get('editingInterfaces');
 
   $controller('FieldSettingsController', {$scope: $scope});
   $controller('FieldActionsController', {$scope: $scope});
@@ -52,4 +53,8 @@ angular.module('contentful').controller('EditingInterfaceEditorCtrl', ['$scope',
       $scope.formWidgetsController.updateWidgetsFromInterface($scope.editingInterface);
   });
 
+  $scope.restoreDefaults = function () {
+    $scope.closeAllFields();
+    $scope.editingInterface = editingInterfaces.defaultInterface($scope.contentType);
+  };
 }]);
