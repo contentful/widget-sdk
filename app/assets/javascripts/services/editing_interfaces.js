@@ -8,21 +8,26 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
     forContentTypeWithId: function (contentType, id) {
       var cb = $q.callback();
       contentType.getEditorInterface(id, cb);
-      return cb.promise.then(
-        function (config) {
-          return config;
-        },
-        function (err) {
-          if(err && err.statusCode === 404)
-            return $q.when(defaultInterface(contentType));
-          else
-            return $q.reject(err);
-        }
-      );
+      return cb.promise
+      .then(function (config) {
+        return config;
+      }, function (err) {
+        if(err && err.statusCode === 404)
+          return $q.when(defaultInterface(contentType));
+        else
+          return $q.reject(err);
+      });
     },
 
-    saveForContentTypeWithId: function (contentType, id, editingInterface) {
-      
+    saveForContentType: function (contentType, editingInterface) {
+      var cb = $q.callback();
+      contentType.saveEditorInterface(editingInterface.id, editingInterface, cb);
+      return cb.promise
+      .then(function (res) {
+        console.log(res);
+      }, function (err) {
+        console.log(err);
+      });
     },
 
     defaultInterface: defaultInterface

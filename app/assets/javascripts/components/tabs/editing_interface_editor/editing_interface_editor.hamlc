@@ -23,7 +23,6 @@
               %input(type="checkbox" ng-model="preferences.showDisabledFields")
               Show disabled fields
 
-
 .tab-main
   .left-nav
   .with-left-nav
@@ -34,23 +33,21 @@
 
 .tab-actions
   .button-set
-    %button.default-button.danger-button.delete-confirm(type="button"
+    -# TODO: Only show delete if not default
+    -#%button.default-button.danger-button.delete-confirm(type="button"
                   cf-click-outside="deleteConfirm=false"
                   cf-click-outside-ignore=".delete"
                   ng-show="deleteConfirm"
                   ng-click="delete()"
                   tooltip="Click anywhere else to dismiss")
       Are you sure?
-    %button.default-button.delete(type="button"
+    -#%button.default-button.delete(type="button"
                   ng-show="canDelete() && !deleteConfirm"
                   ng-click="deleteConfirm=true" 
                   tooltip="Delete this Editing Interface")
       Delete
 
     %button.default-button.primary-button.publish(
-                  ng-disabled="!canPublish()"
                   ng-click="update()"
                   tooltip="Update this Editing Interface")
-      {{publishButtonLabel()}}
-  .save-status(tooltip="Every change you make is automatically saved as a draft. Hit Update to save this Editing Interface draft."
-               tooltip-placement="top")
+      Update

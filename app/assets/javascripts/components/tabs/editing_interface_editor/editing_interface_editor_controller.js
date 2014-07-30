@@ -55,6 +55,17 @@ angular.module('contentful').controller('EditingInterfaceEditorCtrl', ['$scope',
 
   $scope.restoreDefaults = function () {
     $scope.closeAllFields();
-    $scope.editingInterface = editingInterfaces.defaultInterface($scope.contentType);
+    var editingInterface = editingInterfaces.defaultInterface($scope.contentType);
+    editingInterface.sys = _.clone($scope.editingInterface.sys);
+    $scope.editingInterface = editingInterface;
   };
+
+  $scope.update = function () {
+    editingInterfaces.saveForContentType($scope.contentType, $scope.editingInterface);
+  };
+
+  $scope.delete = function () {
+    // TODO: implement when we have more than the default interface
+  };
+
 }]);

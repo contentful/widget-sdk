@@ -16,7 +16,7 @@
           %input(type="text"
                  name="helpText"
                  placeholder="This help text will show up below the field"
-                 ng-model="widget.widgetOptions.helpText")
+                 ng-model="widgetOptions.helpText")
     .form-field
       %label
         Widget Type
@@ -24,4 +24,4 @@
         .field-editor
           %select(ng-model="widgetType"
                   ng-options="value.name for value in widgetTypesForType")
--#.widget-setting(ng-repeat="setting in widgetOptionFields(widget.widgetType)")
+-#.widget-setting(ng-repeat="setting in widgetOptionFields")
