@@ -181,6 +181,7 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
     …
   }
 }]);
+```
 
 This helps to expose all relevant interface in one glance.
 
@@ -189,6 +190,37 @@ depends on how they're implemented.
 They might require some stuff from the Scope or create stuff on the
 scope and is then used by something else.
 That's why there is no single guideline, put them wherever they need to be.
+
+#### Controller size and interfaces
+
+Keep controllers small.
+
+It's easy to split out functionalilty by using the `$controller` service
+as illustrated above. That helps keep them better testable.
+
+Using the structure outlined in the previous section helps to keep the
+interface to a controller slim and easy to test.
+
+What remains is the question: where yo put data and functions:
+
+The basic rules should be:
+- Put as little on the scope as possible.
+- Expose main model data structures and helper state
+- Functionality that is assigned to handlers (`ng-click` etc.) should be
+  exposed as methods on controllers
+- Helper-Methods that return some object or expect some state or
+  encapsulate complex expressions should alse be exposed on the
+  controller.
+
+These rules can be flexible where necessary. The main goal is to avoid
+cluttering the scope.
+
+Ideally, a controller is just a slim interface between the scope and
+services. The main advantage of a controller is that there can be
+multiple instances, each carrying different state. While it makes sense
+for example to store the current Space in a service and exposing access
+through a controller, there can be multiple Entry editors with multiple
+controllers, each referencing a different Entry.
 
 ### Directives
 
