@@ -8,40 +8,30 @@ angular.module('contentful').controller('FieldWidgetSettingsCtrl', ['$scope', '$
     'helpText'
   ];
 
-  function getWidget() {
-    return _.find($scope.editingInterface.widgets, {id: $scope.widget.id});
-  }
+  $scope.field = $scope.getWidgetField($scope.widget);
 
-  $scope.widgetParams = $scope.widget.widgetParams;
-
-  widgetTypes.forField($scope.widget.field).then(function (types) {
+  widgetTypes.forField($scope.field).then(function (types) {
     $scope.widgetTypesForType = types;
-    $scope.widgetType = $scope.widget.widgetType ?
+    $scope.selectedWidgetType = $scope.widget.widgetType ?
       _.find(types, {id: $scope.widget.widgetType}) : types[0];
   });
 
-  $scope.$watch('widgetParams', function (params) {
-    var widget = getWidget();
-    if(widget && params && widget.widgetParams)
-      widget.widgetParams = params;
-  }, true);
-
-  $scope.$watch('widgetType', function (widgetType) {
+  $scope.$watch('selectedWidgetType', function (widgetType) {
     if(widgetType) {
-      var widget = getWidget();
-      widget.widgetType = widgetType.id;
-      if(widgetType.id !== _widgetTypeId)
+      $scope.widget.widgetType = widgetType.id;
+      if(widgetType.id !== _widgetTypeId){
         widgetTypes.params(widgetType.id).then(function (params) {
-          $scope.widgetParams = mergeCommonParams(params);
+          $scope.widget.widgetParams = mergeCommonParams(params);
         });
+      }
       _widgetTypeId = widgetType.id;
     }
   });
 
   function mergeCommonParams(params) {
-    if($scope.widgetParams){
+    if($scope.widget.widgetParams){
       _.each(COMMON_PARAMS, function (paramLabel) {
-        params[paramLabel] = $scope.widgetParams[paramLabel];
+        params[paramLabel] = $scope.widget.widgetParams[paramLabel];
       });
     }
     return params;

@@ -27,9 +27,10 @@
   .left-nav
   .with-left-nav
 
-    .field-widget-settings.active(
-        ng-repeat="widget in widgets track by widget.id"
-        ng-class="{open: isFieldOpen(widget.field), active: !widget.field.disabled }")
+    .field-widget-settings(
+        ng-repeat="widget in editingInterface.widgets track by widget.id"
+        ng-hide="getWidgetField(widget).disabled && !preferences.showDisabledFields"
+        ng-class="{open: isFieldOpen(field), active: !field.disabled }")
 
 .tab-actions
   .button-set

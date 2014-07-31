@@ -10,48 +10,9 @@ angular.module('contentful').controller('EditingInterfaceEditorCtrl', ['$scope',
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
   $scope.$watch('tab.params.editingInterface', 'editingInterface=tab.params.editingInterface');
 
-  $scope.formWidgetsController = $controller('FormWidgetsController', {$scope: $scope});
-  $scope.$watch('contentType', function (contentType) {
-    $scope.formWidgetsController.contentType = contentType;
-  });
-
-  var _contentTypeFields,
-      _editingInterface;
-
-  function checkContentTypeFields() {
-    var contentType = $scope.contentType;
-    if(contentType && contentType.data && contentType.data.fields){
-      if(!_contentTypeFields){
-        _contentTypeFields = angular.copy(contentType.data.fields, _contentTypeFields);
-        return true;
-      } else {
-        var differs = !angular.equals(contentType.data.fields, _contentTypeFields);
-        if(differs) angular.copy(contentType.data.fields, _contentTypeFields);
-        return differs;
-      }
-    }
-  }
-
-  function checkEditingInterface() {
-    var editingInterface = $scope.editingInterface;
-    if(editingInterface){
-      if(!_editingInterface){
-        _editingInterface = angular.copy(editingInterface, _editingInterface);
-        return true;
-      } else {
-        var differs = !angular.equals(editingInterface, _editingInterface);
-        if(differs) angular.copy(editingInterface, _editingInterface);
-        return differs;
-      }
-    }
-  }
-
-  $scope.$watch(function () {
-    return (checkContentTypeFields() || checkEditingInterface()) && _contentTypeFields && _editingInterface;
-  }, function (modified) {
-    if(modified)
-      $scope.formWidgetsController.updateWidgetsFromInterface($scope.editingInterface);
-  });
+  $scope.getWidgetField = function(widget) {
+    return _.find($scope.contentType.data.fields, {id: widget.fieldId});
+  };
 
   $scope.restoreDefaults = function () {
     $scope.closeAllFields();
