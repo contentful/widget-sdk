@@ -24,6 +24,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
       contentType.saveEditorInterface(editingInterface.id, editingInterface, cb);
       return cb.promise
       .then(function (res) {
+        //TODO handle this better lol
         console.log(res);
       }, function (err) {
         console.log(err);
