@@ -88,6 +88,10 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
       name: 'Rating',
       fields: {}
     },
+    toggle: {
+      name: 'Toggle',
+      fields: {}
+    },
     datePicker: {
       name: 'Date Picker',
       fields: {}
@@ -142,8 +146,9 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
     }
   };
 
-  function forFieldType(fieldType) {
-    var widgetTypes = _.map(WIDGET_TYPES[fieldType], function (widgetType) {
+  function forField(field) {
+    var type = detectArrayLinkType(field);
+    var widgetTypes = _.map(WIDGET_TYPES[type], function (widgetType) {
       return {
         id: widgetType,
         name: WIDGET_OPTIONS[widgetType].name
@@ -157,7 +162,7 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
   }
 
   function forFieldWithContentType(field, contentType) {
-    var type = field.type === 'Array' ? linkTypeForArray(field.items.type) : field.type;
+    var type = detectArrayLinkType(field);
     var widgetTypes = WIDGET_TYPES[type];
     var hasValidations = getFieldValidationsOfType(field, 'in').length > 0;
     if(hasValidations && _.contains(widgetTypes, 'dropdown')) return 'dropdown';
@@ -176,10 +181,14 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
     return null;
   }
 
-  function linkTypeForArray(type) {
-    if (type === 'Link'  ) return 'Links';
-    if (type === 'Symbol') return 'Symbols';
-    return null;
+  function detectArrayLinkType(field) {
+    var type = field.type;
+    if(type === 'Array'){
+      var itemsType = field.items.type;
+      if (itemsType === 'Link'  ) return 'Links';
+      if (itemsType === 'Symbol') return 'Symbols';
+    }
+    return type;
   }
 
   function getFieldValidationsOfType(field, type) {
@@ -187,8 +196,8 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
   }
 
   return {
-    forField: forFieldWithContentType,
-    forFieldType: forFieldType,
+    forFieldWithContentType: forFieldWithContentType,
+    forField: forField,
     options: widgetOptions
   };
 

@@ -14,7 +14,7 @@ angular.module('contentful').controller('FieldWidgetSettingsCtrl', ['$scope', '$
 
   $scope.widgetOptions = $scope.widget.widgetOptions;
 
-  widgetTypes.forFieldType($scope.widget.field.type).then(function (types) {
+  widgetTypes.forField($scope.widget.field).then(function (types) {
     $scope.widgetTypesForType = types;
     $scope.widgetType = $scope.widget.widgetType ?
       _.find(types, {id: $scope.widget.widgetType}) : types[0];

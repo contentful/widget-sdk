@@ -50,7 +50,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
       id: random.id(),
       type: 'field',
       fieldId: field.id, // TODO use internal id (field renaming)
-      widgetType: widgetTypes.forField(field, contentType),
+      widgetType: widgetTypes.forFieldWithContentType(field, contentType),
       widgetOptions: {}
     };
   }
