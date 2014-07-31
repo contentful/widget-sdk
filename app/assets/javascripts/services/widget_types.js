@@ -59,7 +59,7 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
     ]
   };
 
-  var WIDGET_OPTIONS = {
+  var WIDGET_PARAMS = {
     singleLine: {
       name: 'Single Line',
       fields: {}
@@ -151,14 +151,14 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
     var widgetTypes = _.map(WIDGET_TYPES[type], function (widgetType) {
       return {
         id: widgetType,
-        name: WIDGET_OPTIONS[widgetType].name
+        name: WIDGET_PARAMS[widgetType].name
       };
     });
     return $q.when(widgetTypes);
   }
 
-  function widgetOptions(widgetType) {
-    return $q.when(WIDGET_OPTIONS[widgetType].fields);
+  function widgetParams(widgetType) {
+    return $q.when(WIDGET_PARAMS[widgetType].fields);
   }
 
   function forFieldWithContentType(field, contentType) {
@@ -198,7 +198,7 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
   return {
     forFieldWithContentType: forFieldWithContentType,
     forField: forField,
-    options: widgetOptions
+    params: widgetParams
   };
 
 }]);

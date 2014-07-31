@@ -8,13 +8,13 @@
       type: 'field'
       fieldId: 'asdf'
       widgetType: 'widgetType',
-      widgetOptions: {...}
+      widgetParams: {...}
     },
     {
       id: random.id(),
       type: 'static'
       widgetType: 'sectionHeader'
-      widgetOptions: {
+      widgetParams: {
         text: 'Foobar'
       }
     },
@@ -22,7 +22,7 @@
       id: random.id(),
       type: 'static'
       widgetType: 'infoText'
-      widgetOptions: {
+      widgetParams: {
         text: 'Foobar'
       }
     },
@@ -30,7 +30,7 @@
       id: random.id(),
       type: 'static'
       widgetType: 'sectionBreak'
-      widgetOptions: {
+      widgetParams: {
         text: 'Foobar'
       }
     },
@@ -38,7 +38,7 @@
       id: random.id(),
       type: 'static'
       widgetType: 'image'
-      widgetOptions: {
+      widgetParams: {
         href: '...'
         altText: 'Foobar'
       }

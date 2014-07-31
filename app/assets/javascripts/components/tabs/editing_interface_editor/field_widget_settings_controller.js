@@ -4,7 +4,7 @@ angular.module('contentful').controller('FieldWidgetSettingsCtrl', ['$scope', '$
   var widgetTypes = $injector.get('widgetTypes');
   var _widgetTypeId;
 
-  var COMMON_OPTIONS = [
+  var COMMON_PARAMS = [
     'helpText'
   ];
 
@@ -12,7 +12,7 @@ angular.module('contentful').controller('FieldWidgetSettingsCtrl', ['$scope', '$
     return _.find($scope.editingInterface.widgets, {id: $scope.widget.id});
   }
 
-  $scope.widgetOptions = $scope.widget.widgetOptions;
+  $scope.widgetParams = $scope.widget.widgetParams;
 
   widgetTypes.forField($scope.widget.field).then(function (types) {
     $scope.widgetTypesForType = types;
@@ -20,10 +20,10 @@ angular.module('contentful').controller('FieldWidgetSettingsCtrl', ['$scope', '$
       _.find(types, {id: $scope.widget.widgetType}) : types[0];
   });
 
-  $scope.$watch('widgetOptions', function (options) {
+  $scope.$watch('widgetParams', function (params) {
     var widget = getWidget();
-    if(widget && options && widget.widgetOptions)
-      widget.widgetOptions = options;
+    if(widget && params && widget.widgetParams)
+      widget.widgetParams = params;
   }, true);
 
   $scope.$watch('widgetType', function (widgetType) {
@@ -31,20 +31,20 @@ angular.module('contentful').controller('FieldWidgetSettingsCtrl', ['$scope', '$
       var widget = getWidget();
       widget.widgetType = widgetType.id;
       if(widgetType.id !== _widgetTypeId)
-        widgetTypes.options(widgetType.id).then(function (options) {
-          $scope.widgetOptions = mergeCommonOptions(options);
+        widgetTypes.params(widgetType.id).then(function (params) {
+          $scope.widgetParams = mergeCommonParams(params);
         });
       _widgetTypeId = widgetType.id;
     }
   });
 
-  function mergeCommonOptions(options) {
-    if($scope.widgetOptions){
-      _.each(COMMON_OPTIONS, function (optionLabel) {
-        options[optionLabel] = $scope.widgetOptions[optionLabel];
+  function mergeCommonParams(params) {
+    if($scope.widgetParams){
+      _.each(COMMON_PARAMS, function (paramLabel) {
+        params[paramLabel] = $scope.widgetParams[paramLabel];
       });
     }
-    return options;
+    return params;
   }
 
 }]);
