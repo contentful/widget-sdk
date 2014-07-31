@@ -62,17 +62,17 @@ describe('cfFieldEditor Directive', function () {
     });
   }
 
-  makeEditorTypeTests('textfield', 'input');
+  makeEditorTypeTests('singleLine', 'input');
 
-  makeEditorTypeTests('textarea', 'textarea');
+  makeEditorTypeTests('multipleLine', 'textarea');
 
-  makeEditorTypeTests('markdownEditor', 'div', function () {
+  makeEditorTypeTests('markdown', 'div', function () {
     it('has class name', function() {
       expect(ngSwitch.children().eq(0)).toHaveClass('cf-markdown-editor');
     });
   });
 
-  makeEditorTypeTests('radiobuttons', 'div', function () {
+  makeEditorTypeTests('radio', 'div', function () {
     it('has 2 labels', function() {
       expect(ngSwitch.find('label').length).toBe(2);
     });
@@ -82,7 +82,7 @@ describe('cfFieldEditor Directive', function () {
     });
   });
 
-  makeEditorTypeTests('datetimeEditor', 'div', function () {
+  makeEditorTypeTests('datePicker', 'div', function () {
     it('has class name', function() {
       expect(ngSwitch.children().eq(0)).toHaveClass('cf-datetime-editor');
     });
