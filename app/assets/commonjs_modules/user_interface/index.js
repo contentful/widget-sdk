@@ -15,6 +15,7 @@ module.exports = UserInterface;
 
 if(window){
   window._ = require('lodash-node/modern');
+  window.dotty = require('dotty');
   window.moment = require('moment');
   window.ZeroClipboard = require('zeroclipboard');
 }

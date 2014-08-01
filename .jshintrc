@@ -25,7 +25,8 @@
     "_",
     "JST",
     "$",
-    "moment"
+    "moment",
+    "dotty"
   ],
   "browser": true,
   "quotmark": "single",
