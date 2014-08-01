@@ -34,18 +34,18 @@ angular.module('contentful').
     $scope.contentType.publish(version, function (err, publishedContentType) {
       $scope.$apply(function(scope){
         if (err) {
-          var errorId = err.body.sys.id;
+          var errorId = dotty.get(err, 'body.sys.id');
           var method = 'serverError';
           var reason = errorId;
           if (errorId === 'ValidationFailed') {
             reason = 'Validation failed';
-            scope.setValidationErrors(err.body.details.errors);
+            scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
             method = 'warn';
           } else if (errorId === 'VersionMismatch') {
             reason = 'Can only activate most recent version';
             method = 'warn';
           } else {
-            reason = err.body.message;
+            reason = dotty.get(err, 'body.message');
           }
           return notification[method]('Error activating ' + title() + ': ' + reason, err);
         }
@@ -70,7 +70,7 @@ angular.module('contentful').
     $scope.contentType.unpublish(function (err, publishedContentType) {
       $scope.$apply(function(scope){
         if (err) {
-          var reason = err.body.message;
+          var reason = dotty.get(err, 'body.message');
           if(!reason) sentry.captureServerError('Error deactivating Content Type', err);
           return notification.warn('Error deactivating ' + title() + ': ' + reason, err);
         }

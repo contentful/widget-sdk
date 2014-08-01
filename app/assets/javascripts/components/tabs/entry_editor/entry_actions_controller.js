@@ -40,7 +40,7 @@ angular.module('contentful').controller('EntryActionsCtrl', ['$scope', 'notifica
     $scope.entry.archive(function(err) {
       $scope.$apply(function() {
         if (err) {
-          notification.warn('Error archiving ' + title() + ' (' + err.body.sys.id + ')');
+          notification.warn('Error archiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
           sentry.captureServerError('Error archiving entry', err);
         } else {
           notification.info(title() + ' archived successfully');
@@ -53,7 +53,7 @@ angular.module('contentful').controller('EntryActionsCtrl', ['$scope', 'notifica
     $scope.entry.unarchive(function(err) {
       $scope.$apply(function() {
         if (err) {
-          notification.warn('Error unarchiving ' + title() + ' (' + err.body.sys.id + ')');
+          notification.warn('Error unarchiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
           sentry.captureServerError('Error unarchiving entry', err);
         } else {
           notification.info(title() + ' unarchived successfully');
@@ -66,7 +66,7 @@ angular.module('contentful').controller('EntryActionsCtrl', ['$scope', 'notifica
     $scope.entry.unpublish(function (err) {
       $scope.$apply(function(scope){
         if (err) {
-          notification.warn('Error unpublishing ' + title() + ' (' + err.body.sys.id + ')');
+          notification.warn('Error unpublishing ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
           sentry.captureServerError('Error unpublishing entry', err);
         } else {
           notification.info(title() + ' unpublished successfully');
@@ -85,9 +85,9 @@ angular.module('contentful').controller('EntryActionsCtrl', ['$scope', 'notifica
     $scope.entry.publish(version, function (err) {
       $scope.$apply(function(scope){
         if (err) {
-          var errorId = err.body.sys.id;
+          var errorId = dotty.get(err, 'body.sys.id');
           if (errorId === 'ValidationFailed') {
-            scope.setValidationErrors(err.body.details.errors);
+            scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
             notification.warn('Error publishing ' + title() + ': Validation failed');
           } else if (errorId === 'VersionMismatch'){
             notification.warn('Error publishing ' + title() + ': Can only publish most recent version');

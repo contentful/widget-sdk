@@ -28,9 +28,10 @@ angular.module('contentful').controller('CreateSpaceDialogCtrl', [
     }
 
     function hasErrorOnField(err, error, field) {
-      if(err && err.body && err.body.details.errors.length > 0){
-        return err.body.details.errors[0].path == field &&
-               err.body.details.errors[0].name == error;
+      var errors = dotty.get(err, 'body.details.errors');
+      if(errors.length > 0){
+        return errors[0].path == field &&
+               errors[0].name == error;
       }
       return false;
     }

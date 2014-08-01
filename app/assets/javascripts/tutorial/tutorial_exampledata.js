@@ -103,10 +103,9 @@ angular.module('contentful').factory('tutorialExampledata', ['$q', 'environment'
             var ccb = $q.callback();
             spaceContext.space.createEntry(entry.sys.contentType.sys.id, entry, ccb);
             return ccb.promise.catch(function (err) {
-              if (err && err.body && err.body.sys && err.body.sys.id == 'VersionMismatch'){
+              if (dotty.get(err, 'body.sys.id') == 'VersionMismatch'){
                 return null;
               } else {
-                console.log('error', err);
                 return $q.reject();
               }
             });
