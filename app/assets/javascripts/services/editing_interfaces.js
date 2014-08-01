@@ -27,7 +27,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
       .then(function () {
         notification.info('Configuration saved successfully');
       }, function (err) {
-        if(err && err.body && err.body.sys && err.body.sys.type == 'Error' && err.body.sys.id == 'VersionMismatch')
+        if(dotty.get(err, 'body.sys.type') == 'Error' && dotty.get(err, 'body.sys.id') == 'VersionMismatch')
           notification.warn('This configuration has been changed by another user. Please reload and try again.');
         else
           notification.serverError('There was a problem saving the configuration', err);
