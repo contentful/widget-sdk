@@ -148,6 +148,9 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
 
   function forField(field) {
     var type = detectArrayLinkType(field);
+    if(!(type in WIDGET_TYPES)) {
+      return $q.reject(new Error('Field type '+type+' is not supported.'));
+    }
     var widgetTypes = _.map(WIDGET_TYPES[type], function (widgetType) {
       return {
         id: widgetType,
@@ -158,6 +161,8 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
   }
 
   function widgetParams(widgetType) {
+    if(!(widgetType in WIDGET_PARAMS))
+      return $q.reject(new Error('Widget type '+widgetType+' is not supported.'));
     return $q.when(WIDGET_PARAMS[widgetType].fields);
   }
 
@@ -192,12 +197,12 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
   }
 
   function getFieldValidationsOfType(field, type) {
-    return _.filter(_.pluck(field.validations, type));
+    return _.pluck(field.validations, type);
   }
 
   return {
-    forFieldWithContentType: forFieldWithContentType,
     forField: forField,
+    forFieldWithContentType: forFieldWithContentType,
     params: widgetParams
   };
 
