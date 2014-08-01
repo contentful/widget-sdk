@@ -230,7 +230,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
         category: 'welcome',
         id: 'restartHint',
         title: 'If you want to restart the tutorial…',
-        description: 'If you want to restart the tutorial you can open it again any time buy choosing "Start Tutorial" from the user menu.',
+        description: 'If you want to restart the tutorial you can open it again any time by choosing "Start Tutorial" from the user menu.',
         attachTo: '.account-menus .user',
         position: 5,
         xButton: false,
