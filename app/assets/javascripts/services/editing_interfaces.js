@@ -2,6 +2,7 @@
 angular.module('contentful').factory('editingInterfaces', ['$injector', function($injector){
   var $q     = $injector.get('$q');
   var random = $injector.get('random');
+  var notification = $injector.get('notification');
   var widgetTypes = $injector.get('widgetTypes');
 
   return {
@@ -23,11 +24,13 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
       var cb = $q.callback();
       contentType.saveEditorInterface(editingInterface.id, editingInterface, cb);
       return cb.promise
-      .then(function (res) {
-        //TODO handle this better lol
-        console.log(res);
+      .then(function () {
+        notification.info('Configuration saved successfully');
       }, function (err) {
-        console.log(err);
+        if(err && err.body && err.body.sys && err.body.sys.type == 'Error' && err.body.sys.id == 'VersionMismatch')
+          notification.warn('This configuration has been changed by another user. Please reload and try again.');
+        else
+          notification.serverError('There was a problem saving the configuration', err);
       });
     },
 
