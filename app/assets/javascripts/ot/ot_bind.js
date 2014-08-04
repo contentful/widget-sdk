@@ -123,6 +123,13 @@ otModule.directive('otBindText', ['ShareJS', '$sniffer', '$parse', 'isDiacritica
   };
 }]);
 
+// Use this directive in combination with ngModel on an element to
+// automatically propagate changes to the model into ShareJS
+// The Position where the change is made in ShareJS is defined by the
+// otPath directive.
+//
+// This is intended to be used with 3rd party directives that use
+// ngModel, not custom directives.
 otModule.directive('otBindModel', ['$parse', function($parse) {
   return {
     restrict: 'A',
