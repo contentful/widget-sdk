@@ -135,6 +135,7 @@ Selectors should be lowercase, with multiple words separated by dashes.
 ### Modules
 
 From SMACSS:
+
     As briefly mentioned in the previous section, a Module is a more discrete
     component of the page. It is your navigation bars and your carousels and your
     dialogs and your widgets and so on. This is the meat of the page. Modules sit
