@@ -36,4 +36,4 @@
   .cf-location-editor(ng-switch-when="locationEditor" ng-model="fieldData.value")
   .cf-number-editor(ng-switch-when="numberEditor")
   %div(ng-switch-when="linkEditor" ng-model="fieldData.value" cf-link-editor="field.linkType")
-  .cf-file-editor(ng-switch-when="fileEditor" ng-model="fieldData.value")
+  .cf-file-editor(ng-switch-when="fileEditor" ng-model="fieldData.value" ot-bind-internal="file")

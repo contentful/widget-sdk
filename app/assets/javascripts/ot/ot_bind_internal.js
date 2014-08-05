@@ -17,6 +17,8 @@
 // cf_field_editor_directive.js, but simplified in a neat package.
 angular.module('contentful').directive('otBindInternal', ['$injector', function($injector){
   var $parse = $injector.get('$parse');
+  var $q     = $injector.get('$q');
+  
   return {
     restrict: 'A',
     require: ['ngModel', '^otPath'],
@@ -28,13 +30,17 @@ angular.module('contentful').directive('otBindInternal', ['$injector', function(
           setInternal = getInternal.assign;
 
       scope.otBindInternalChangeHandler = function() {
+        var deferred = $q.defer();
         scope.otChangeValue(getInternal(scope), function(err) {
           if (!err) {
             ngModelCtrl.$setViewValue(getInternal(scope));
+            deferred.resolve(getInternal(scope));
           } else {
             ngModelCtrl.$render();
+            deferred.reject(err);
           }
         });
+        return deferred.promise;
       };
 
       ngModelCtrl.$render = function () {
