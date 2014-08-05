@@ -1,20 +1,39 @@
 # CSS refactoring
 
-## TODO
-- Compose guide
-- Set up styleguide and other tools
-- Identify pain points to remove
+## File structure
+
+Listed by lower to higher level:
+
+- **base**: base styles and variables
+- **mixins**: standalone mixins
+- **utils**: generic utility classes
+- **vendor**: vendor components
+- **objects**: visual objects, with no further hierarchy below them
+- **modules**: modules composed by visual objects, with some level of
+  hierarchy
+- **layouts**: layouts for pages or modules (not composed of modules)
 
 ## Refactoring plan
 
-Come up with a more structured plan for this.
+- Set up some tests with webdrivercss
+- Set up a styleguide with node-kss
+- Split base and mixins into directories
+- Decrease nesting overall, component by component
+- Get rid of any duplication of class definitions
+- Remove use of very generic element selectors
+- Split components.css into objects and/or modules
+- Split components/* into modules
+- Split components/tabs/* into modules and/or layouts
+- Split forms into components and/or objects
+- Split tabs/* into layouts/components
+- Follow http://alistapart.com/article/creating-style-guides to build a
+  styleguide
+- Follow http://alistapart.com/article/creating-style-guides to
+  standardize font size usage
+- Gradually add things to the styleguide
 
-Some main points:
-- get rid of complex selectors
-- get rid of nesting
-- remove duplication where possible
-- get rid of class declarations spread out across different files and different points in files
-- Adopt an atomic structure and naming conventions
+More to come
+
 - get some statistics:
   - current size of css
   - current number of selectors in compiled css
