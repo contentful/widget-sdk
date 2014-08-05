@@ -10,7 +10,9 @@ describe('cfFileEditor Directive', function () {
         'pick', 'then', 'serverError'
       ]);
       $provide.stubDirective('otPath', {
-        controller: function () {}
+        controller: function ($scope, $q) {
+          $scope.otChangeValueP = sinon.stub().returns($q.when());
+        }
       });
       $provide.removeDirectives('cfFileDrop');
       $provide.value('filepicker', {
@@ -56,14 +58,12 @@ describe('cfFileEditor Directive', function () {
         filename: 'newfilename',
         mimetype: 'newmimetype'
       });
-      scope.otChangeValue = sinon.stub();
     });
 
     describe('and updating the otDoc value succeeds', function() {
       beforeEach(function() {
         scope.uploadFile();
         sinon.stub(scope, '$emit');
-        scope.otChangeValue.yield(null);
         scope.$apply();
       });
 
@@ -72,7 +72,7 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('calls otchangevalue', function() {
-        expect(scope.otChangeValue).toBeCalled();
+        expect(scope.otChangeValueP).toBeCalled();
       });
 
       it('file now has url', function() {
@@ -133,12 +133,10 @@ describe('cfFileEditor Directive', function () {
   describe('deleting a file succeeds', function() {
     beforeEach(function() {
       scope.validate = sinon.stub();
-      scope.otChangeValue = sinon.stub();
     });
 
     describe('and updating the otDoc value succeeds', function() {
       beforeEach(function() {
-        scope.otChangeValue.callsArgWith(1, null);
         scope.deleteFile();
       });
 
@@ -147,7 +145,7 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('calls otchangevalue', function() {
-        expect(scope.otChangeValue).toBeCalled();
+        expect(scope.otChangeValueP).toBeCalled();
       });
 
       it('file is null', function() {
@@ -157,13 +155,8 @@ describe('cfFileEditor Directive', function () {
   });
 
   describe('uploading a file via drop succeeds', function() {
-    beforeEach(function() {
-      scope.otChangeValue = sinon.stub();
-    });
-
     describe('and updating the otDoc value succeeds', function() {
       beforeEach(function() {
-        scope.otChangeValue.callsArgWith(1, null);
         scope.$broadcast('cfFileDropped', {
           url: 'newurl',
           filename: 'newfilename',
@@ -172,7 +165,7 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('calls otchangevalue', function() {
-        expect(scope.otChangeValue).toBeCalled();
+        expect(scope.otChangeValueP).toBeCalled();
       });
 
       it('file now has url', function() {

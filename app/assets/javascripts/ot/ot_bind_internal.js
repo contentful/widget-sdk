@@ -30,17 +30,14 @@ angular.module('contentful').directive('otBindInternal', ['$injector', function(
           setInternal = getInternal.assign;
 
       scope.otBindInternalChangeHandler = function() {
-        var deferred = $q.defer();
-        scope.otChangeValue(getInternal(scope), function(err) {
-          if (!err) {
-            ngModelCtrl.$setViewValue(getInternal(scope));
-            deferred.resolve(getInternal(scope));
-          } else {
-            ngModelCtrl.$render();
-            deferred.reject(err);
-          }
+        return scope.otChangeValueP(getInternal(scope))
+        .then(function(){
+          ngModelCtrl.$setViewValue(getInternal(scope));
+          return getInternal(scope);
+        }, function(err){
+          ngModelCtrl.$render();
+          return $q.reject(err);
         });
-        return deferred.promise;
       };
 
       ngModelCtrl.$render = function () {
