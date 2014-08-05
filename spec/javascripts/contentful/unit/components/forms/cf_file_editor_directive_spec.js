@@ -61,8 +61,9 @@ describe('cfFileEditor Directive', function () {
 
     describe('and updating the otDoc value succeeds', function() {
       beforeEach(function() {
-        scope.otChangeValue.callsArgWith(1, null);
         scope.uploadFile();
+        sinon.stub(scope, '$emit');
+        scope.otChangeValue.yield(null);
       });
 
       it('calls filepickers pick', function() {
@@ -83,6 +84,16 @@ describe('cfFileEditor Directive', function () {
 
       it('file now has new mimetype', function() {
         expect(scope.file.contentType).toEqual('newmimetype');
+      });
+
+      it('emits fileUploaded event', function() {
+        expect(scope.$emit).toBeCalledWith('fileUploaded');
+        expect(scope.$emit.args[0][1]).toEqual({
+          upload: 'newurl',
+          fileName: 'newfilename',
+          contentType: 'newmimetype'
+        });
+        expect(scope.$emit.args[0][2]).toEqual(scope.locale);
       });
     });
 

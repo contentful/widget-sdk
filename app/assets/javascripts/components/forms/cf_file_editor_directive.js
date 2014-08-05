@@ -6,7 +6,6 @@ angular.module('contentful').directive('cfFileEditor', ['notification', 'filepic
     restrict: 'C',
     require: ['ngModel', '^otPath'],
     template: JST['cf_file_info'],
-    controller: 'CfFileEditorCtrl',
     link: function (scope, elem, attr, controllers) {
       var ngModelCtrl = controllers[0];
 
@@ -99,11 +98,17 @@ angular.module('contentful').directive('cfFileEditor', ['notification', 'filepic
           if (!err) {
             scope.file = file;
             ngModelCtrl.$setViewValue(file);
+            if (file) notify(file);
           } else {
             notification.serverError('There has been a problem saving the file', err);
           }
           aviary.close();
         });
+      }
+
+      function notify(file) {
+        // dependency on scope.locale feels weird
+        scope.$emit('fileUploaded', file, scope.locale);
       }
 
     }

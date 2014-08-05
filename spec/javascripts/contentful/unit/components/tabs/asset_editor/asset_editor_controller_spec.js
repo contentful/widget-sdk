@@ -11,7 +11,8 @@ describe('Asset editor controller', function () {
         'can',
         'getPublishLocales',
         'assetTitle',
-        'isArchived'
+        'isArchived',
+        'process'
       ]);
     });
     inject(function ($rootScope, $controller) {
@@ -36,7 +37,8 @@ describe('Asset editor controller', function () {
       scope.validate = sinon.stub();
 
       var asset = {
-        isArchived: stubs.isArchived
+        isArchived: stubs.isArchived,
+        process: stubs.process
       };
       scope.tab = {
         params: {
@@ -121,9 +123,12 @@ describe('Asset editor controller', function () {
     });
   });
 
+  it('handles a fileUploaded event from CfFileEditor controller', function () {
+    scope.otDoc = { version: 123 };
+    var fileObj = {fileName: 'file.jpg'};
+    scope.$emit('fileUploaded', fileObj, {code: 'en-US'});
+    expect(scope.asset.process).toBeCalled();
+  });
+
   // TODO test dirty flag
-
-
-
-
 });
