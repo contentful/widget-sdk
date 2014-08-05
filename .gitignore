@@ -27,3 +27,6 @@ vagrant_bootstrap.sh
 run_vagrant_build.sh
 
 public/app
+
+webdrivercss
+webdrivercss.tar.gz
