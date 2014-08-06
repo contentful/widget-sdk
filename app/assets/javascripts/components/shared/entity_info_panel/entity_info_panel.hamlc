@@ -28,7 +28,7 @@
     %tr
       %th Updated
       %td
-        %date.relative(datetime="{{sys.updatedAt}}")
+        %date.relative(ng-if="sys.updatedAt" datetime="{{sys.updatedAt}}")
     %tr
       %th Updated by
       %td
@@ -39,7 +39,7 @@
     %tr
       %th Archived
       %td
-        %date.relative(datetime="{{sys.archivedAt}}")
+        %date.relative(ng-if="sys.archivedAt" datetime="{{sys.archivedAt}}")
     %tr
       %th Archived by
       %td {{sys.archivedBy.sys.id}}
@@ -51,7 +51,7 @@
     %tr
       %th Published
       %td
-        %date.relative(datetime="{{sys.publishedAt}}")
+        %date.relative(ng-if="sys.publishedAt" datetime="{{sys.publishedAt}}")
     %tr
       %th Published by
       %td

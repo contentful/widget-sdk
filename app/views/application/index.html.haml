@@ -13,9 +13,15 @@
   %link(href='//fonts.googleapis.com/css?family=Open+Sans:400italic,600italic,700italic,400,700,600' rel='stylesheet' type='text/css')
 
   %style#disable-outlines
+  %style#chrome-temp-fix
 
   :javascript
     if (top != self) { top.location.replace(self.location.href); }
+    // FIXME this is a temporary fix for a weird positioning issue that manifests only in Chrome versions below Chrome 38
+    // It should be removed some weeks after Chrome 38 is released as stable (possibly mid August 2014)
+    if (/Chrome\/(35|36|37)/g.test(window.navigator.userAgent)){
+      document.getElementById('chrome-temp-fix').innerHTML = '.entity-list.api-key-list .main-results-wrapper{right: 60px !important}.entity-list.content-model .main-results-wrapper{right: 120px !important}';
+    }
 
 %body.cf-clear-outlines(ng-app="contentful/app")
   .client.ng-hide(ng-controller="ClientCtrl" ng-init="initClient()" ng-show="user")
@@ -59,7 +65,6 @@
               + Create Space
 
       .cf-persistent-notification(ng-show="persistentNotification")
-      %a#intercom(href="#" tabindex="-1")
       .navbar-loader
 
     %space-view(ng-controller="TabViewCtrl")

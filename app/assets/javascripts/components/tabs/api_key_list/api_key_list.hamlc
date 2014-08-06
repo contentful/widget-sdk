@@ -14,11 +14,12 @@
 
 .tab-main
   .left-nav
-    %ul
-      %li.api-keys.active
-        %a(href="" ng-click="refreshApiKeys()") API Keys
-      %li
-        %a(href="//{{marketingUrl}}/developers/documentation/content-delivery-api/" target="_blank") API Documentation
+    %header.filter-list-header
+      Content Delivery API
+    %ul.cf-cda-links
+    %header.filter-list-header
+      Content Management API
+    %ul.cf-cma-links
 
   .with-left-nav
     %table.result-list.main-results.main-header(ng-hide="empty")
@@ -39,7 +40,7 @@
             %td.cell-description
               %span {{apiKey.data.description}}
             %td.cell-date
-              %date.relative(datetime="{{apiKey.getUpdatedAt()}}")
+              %date.relative(ng-if="apiKey.getUpdatedAt()" datetime="{{apiKey.getUpdatedAt()}}")
             %td.cell-symbol
               %span.cf-user(link="apiKey.getCreatedBy()" as="creator") {{creator | userNameDisplay:user}}
 

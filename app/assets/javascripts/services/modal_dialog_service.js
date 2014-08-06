@@ -11,12 +11,13 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', 'keycodes
         confirmLabel: 'OK',
         noBackgroundClose: false,
         deactivateConfirmKey: false,
-        deactivateCancelKey: false
+        deactivateCancelKey: false,
+        attachTo: '.client'
       },
       _.pick(params,
              'title', 'message', 'template',
              'cancelLabel', 'confirmLabel', 'deactivateConfirmKey', 'deactivateCancelKey',
-             'noBackgroundClose')
+             'noBackgroundClose', 'attachTo')
     );
     this._deferred = $q.defer();
     this.promise = this._deferred.promise;
@@ -27,7 +28,7 @@ angular.module('contentful').factory('modalDialog', ['$compile', '$q', 'keycodes
 
     attach: function () {
       var scope = this.scope;
-      this.domElement = $(JST[this.params.template]()).prependTo('.client');
+      this.domElement = $(JST[this.params.template]()).prependTo(this.params.attachTo);
 
       this.domElement.find('input').eq(0).focus();
 

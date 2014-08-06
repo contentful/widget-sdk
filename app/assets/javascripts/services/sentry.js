@@ -111,6 +111,28 @@ function ($injector , $window, environment, stringifySafe) {
           }
         }, options));
       }
+    },
+
+    // FIXME temporary method to evaulate bugsnag
+    // The metadata should then be set once and not on every request
+    captureBugSnag: function (exception) {
+      if(window.Bugsnag){
+        var user = $injector.get('authentication').getUser();
+        window.Bugsnag.releaseStage = environment.env;
+        window.Bugsnag.notifyReleaseStages = ['staging', 'production'];
+        window.Bugsnag.appVersion = environment.settings.git_revision;
+        window.Bugsnag.metaData = {
+          params: getParams(),
+          viewport: ''+$window.innerWidth+'x'+$window.innerHeight,
+          screensize: ''+$window.screen.width+'x'+$window.screen.height
+        };
+        window.Bugsnag.user = {
+          id: user && user.sys.id,
+          firstName: user.firstName,
+          lastName: user.lastName
+        };
+        window.Bugsnag.notifyException(exception);
+      }
     }
   };
 }]);

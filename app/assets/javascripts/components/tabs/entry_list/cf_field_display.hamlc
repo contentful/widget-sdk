@@ -1,8 +1,8 @@
 %ng-switch(on="displayType(field)")
-  %date.relative(ng-switch-when="updatedAt" datetime="{{entry.getUpdatedAt()}}")
-  %date.relative(ng-switch-when="createdAt" datetime="{{entry.getCreatedAt()}}")
+  %date.relative(ng-switch-when="updatedAt" ng-if="entry.getUpdatedAt()" datetime="{{entry.getUpdatedAt()}}")
+  %date.relative(ng-switch-when="createdAt" ng-if="entry.getCreatedAt()" datetime="{{entry.getCreatedAt()}}")
   %date.relative(ng-switch-when="publishedAt" ng-if="entry.getPublishedAt()" datetime="{{entry.getPublishedAt()}}")
-  %date.relative(ng-switch-when="Date" datetime="{{dataForField(entry, field)}}")
+  %date.relative(ng-switch-when="Date" ng-if="dataForField(entry, field)" datetime="{{dataForField(entry, field)}}")
   %span.cf-user(ng-switch-when="author" link="entry.getUpdatedBy()" as="updater") {{updater | userNameDisplay:user}}
   %span(ng-switch-when="Boolean") {{displayBool(dataForField(entry, field))}}
   %span(ng-switch-when="Location") {{displayLocation(dataForField(entry, field))}}

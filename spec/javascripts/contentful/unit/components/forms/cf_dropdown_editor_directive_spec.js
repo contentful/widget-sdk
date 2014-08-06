@@ -3,12 +3,12 @@
 describe('cfDropdownEditor Directive', function () {
   var element, scope, controller;
   var compileElement;
-  var stubs;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs([
-      ]);
+      $provide.stubDirective('otPath', {controller: function ($scope, $q) {
+        $scope.otChangeValueP = sinon.stub().returns($q.when());
+      }});
     });
 
     inject(function ($compile, $rootScope) {
@@ -17,13 +17,11 @@ describe('cfDropdownEditor Directive', function () {
 
       scope.field = {};
 
-      scope.getFieldValidationsOfType = sinon.stub();
-      scope.getFieldValidationsOfType.returns([]);
+      scope.getFieldValidationsOfType = sinon.stub().returns([]);
 
       compileElement = function () {
-        element = $compile('<div class="cf-dropdown-editor" ng-model="fieldData.value"></div>')(scope);
-        scope.otChangeValue = sinon.stub();
-        scope.$digest();
+        element = $compile('<div class="cf-dropdown-editor" ot-bind-internal="selected.value" ot-path="" ng-model="fieldData.value"></div>')(scope);
+        scope.$apply();
         controller = element.controller('cfDropdownEditorController');
       };
     });
@@ -32,28 +30,6 @@ describe('cfDropdownEditor Directive', function () {
   afterEach(inject(function ($log) {
     $log.assertEmpty();
   }));
-
-  it('defaults if no initial value', function() {
-    compileElement();
-    expect(element.find('select').scope().selected.value).toBe('');
-  });
-
-  it('renders initial value', function() {
-    scope.fieldData.value = 'initial';
-    scope.getFieldValidationsOfType.returns(['initial']);
-    compileElement();
-    expect(element.find('select').scope().selected.value).toBe('initial');
-  });
-
-  it('updates model value', function() {
-    scope.fieldData.value = 'initial';
-    scope.getFieldValidationsOfType.returns(['initial', 'newvalue']);
-    compileElement();
-    scope.selected.value = 'newvalue';
-    scope.updateModel();
-    scope.$digest();
-    expect(element.find('select').scope().selected.value).toBe('newvalue');
-  });
 
   describe('dropdown width class', function() {
     describe('with strings', function() {
@@ -138,68 +114,54 @@ describe('cfDropdownEditor Directive', function () {
 
   describe('selects dropdown value', function() {
     beforeEach(function() {
+      var valuesList = ['banana', 'orange', 'strawberry'];
+      scope.getFieldValidationsOfType.returns(valuesList);
       compileElement();
-      scope.otChangeValue.callsArg(1, null);
-      scope.updateModel = sinon.stub();
-      scope.selectDropdownValue('newvalue');
+      element.find('select').val(1).trigger('change');
     });
 
     it('changes ot value', function() {
-      expect(scope.otChangeValue).toBeCalledWith('newvalue');
+      expect(scope.otChangeValueP).toBeCalledWith('orange');
     });
 
     it('sets the selected value', function() {
-      expect(scope.selected.value).toEqual('newvalue');
-    });
-
-    it('updates the model', function() {
-      expect(scope.updateModel).toBeCalled();
+      expect(scope.selected.value).toEqual('orange');
     });
   });
 
   describe('selects dropdown value for integer', function() {
     beforeEach(function() {
-      compileElement();
-      scope.otChangeValue = sinon.stub();
-      scope.otChangeValue.callsArg(1, null);
-      scope.updateModel = sinon.stub();
+      var valuesList = [0,1,2,3];
+      scope.getFieldValidationsOfType.returns(valuesList);
       scope.field.type = 'Integer';
-      scope.selectDropdownValue('1');
+      compileElement();
+      element.find('select').val(1).trigger('change');
     });
 
     it('changes ot value', function() {
-      expect(scope.otChangeValue).toBeCalledWith(1);
+      expect(scope.otChangeValueP).toBeCalledWith(1);
     });
 
     it('sets the selected value', function() {
       expect(scope.selected.value).toEqual(1);
     });
-
-    it('updates the model', function() {
-      expect(scope.updateModel).toBeCalled();
-    });
   });
 
   describe('selects dropdown value for number', function() {
     beforeEach(function() {
-      compileElement();
-      scope.otChangeValue = sinon.stub();
-      scope.otChangeValue.callsArg(1, null);
-      scope.updateModel = sinon.stub();
+      var valuesList = [0.2,1.2,2.2,3.2];
+      scope.getFieldValidationsOfType.returns(valuesList);
       scope.field.type = 'Number';
-      scope.selectDropdownValue('1.2');
+      compileElement();
+      element.find('select').val(1).trigger('change');
     });
 
     it('changes ot value', function() {
-      expect(scope.otChangeValue).toBeCalledWith(1.2);
+      expect(scope.otChangeValueP).toBeCalledWith(1.2);
     });
 
     it('sets the selected value', function() {
       expect(scope.selected.value).toEqual(1.2);
-    });
-
-    it('updates the model', function() {
-      expect(scope.updateModel).toBeCalled();
     });
   });
 

@@ -117,13 +117,36 @@ angular.module('contentful').factory('TabOptionsGenerator', function () {
       };
     },
 
+    apiHome: function () {
+      return {
+        viewType: 'api-home',
+        section: 'apiHome',
+        hidden: true,
+        title: 'API',
+        canClose: true
+      };
+    },
+
     apiKeyList: function () {
       return {
         viewType: 'api-key-list',
         section: 'apiKeys',
         hidden: true,
-        title: 'Content Delivery',
+        title: 'API Keys',
         canClose: true
+      };
+    },
+
+    contentModel: function () {
+      return {
+        viewType: 'content-model',
+        section: 'contentModel',
+        hidden: true,
+        title: 'Content Model',
+        canClose: true,
+        params: {
+          list: 'active'
+        }
       };
     },
 
@@ -133,6 +156,7 @@ angular.module('contentful').factory('TabOptionsGenerator', function () {
       if (viewType == 'content-type-list')return this.contentTypeList();
       if (viewType == 'space-settings')   return this.spaceSettings();
       if (viewType == 'api-key-list')     return this.apiKeyList();
+      if (viewType == 'api-home') return this.apiHome();
     }
 
   };

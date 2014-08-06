@@ -29,6 +29,12 @@ describe('ReloadNotification service', function () {
       expect(open).toBeCalled();
     });
 
+    it('should not trigger the api error for 502', function () {
+      $q.reject({statusCode: 502}).catch(ReloadNotification.apiErrorHandler);
+      $rootScope.$apply();
+      expect(open).not.toBeCalled();
+    });
+
     it('should not trigger the api error for < 500eds', function () {
       $q.reject({statusCode: 404}).catch(ReloadNotification.apiErrorHandler);
       $rootScope.$apply();

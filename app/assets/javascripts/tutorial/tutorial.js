@@ -145,7 +145,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
             var top = scrollTopOffset($elem[0], $parent[0]);
             // TODO sometimes top is too large
             var bottom = top + $elem[0].offsetHeight;
-            
+
             if ($parent[0].scrollHeight <= $parent[0].clientHeight) return;
 
             if ($parent[0].scrollTop + $parent[0].clientHeight < top)
@@ -230,7 +230,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
         category: 'welcome',
         id: 'restartHint',
         title: 'If you want to restart the tutorial…',
-        description: 'If you want to restart the tutorial you can open it again any time buy chosing "Start Tutorial" from the user menu.',
+        description: 'If you want to restart the tutorial you can open it again any time by choosing "Start Tutorial" from the user menu.',
         attachTo: '.account-menus .user',
         position: 5,
         xButton: false,
@@ -653,7 +653,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
               guiders.next();
             }
           });
- 
+
         }
       });
 
@@ -1060,7 +1060,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
         title: 'Tadaa! This is your Access Token',
         description: '<p>The Access Token enables you to authenticate the API calls your distribution platform makes on Contentful to retrieve your content. Access Tokens make sure that your content can only be used from your own applications.</p><p>You can test this by using this token by either clicking the link or via CURL by using the command line.</p>',
         attachTo: '.api-key-editor:visible .curl-example',
-        position: 7,
+        position: 2,
         next: 'apiKeyList',
         buttons: [next]
       });

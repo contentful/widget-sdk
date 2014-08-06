@@ -8,13 +8,11 @@
     height: $nav-bar-height
     font-weight: $nav-bar-font-weight
     text-align: right
-  .dropdown-toggle,
-  #intercom
+  .dropdown-toggle
     float: right
     line-height: 27px
     padding: 10px 10px 0px
     border-bottom: none
-  .dropdown-toggle
     i
       margin-left: 10px
       margin-top: 2px
@@ -80,30 +78,6 @@
   .user.active
     padding-top: 1px
     background: darken($dark-gray, 10%)
-
-  #intercom
-    display: none
-    padding-right: 0
-    padding-left: 0
-    em
-      position: relative
-      top: 1px
-      display: block
-      font-style: normal
-      +blue-highlight
-      border: 2px solid white
-      font-size: 12px
-      +box-shadow(1px 1px 4px rgba(0,0,0,0.6))
-      +text-shadow(0 -1px 0px black)
-      text-align: center
-      width: 25px
-      height: 25px
-      +border-radius(13px)
-      &:hover
-        background-color: white
-      span
-        position: relative
-        top: -3px
 
 .navbar-loader
   float: right

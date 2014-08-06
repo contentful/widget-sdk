@@ -22,9 +22,18 @@ angular.module('contentful').
 
         function getOptions() {
           var options = {
-            title: attrs.tooltip
+            title: attrs.tooltip,
+            delay: {show: 100, hide: 100}
           };
           var newKey;
+          if(attrs.tooltipDelayShow){
+            options.delay.show = attrs.tooltipDelayShow;
+            delete attrs.tooltipDelayShow;
+          }
+          if(attrs.tooltipDelayHide){
+            options.delay.hide = attrs.tooltipDelayHide;
+            delete attrs.tooltipDelayHide;
+          }
           _.forEach(attrs, function (val, key) {
             if(/^tooltip(.+)/.test(key)){
               newKey = key.replace('tooltip', '').toLowerCase();
@@ -36,9 +45,6 @@ angular.module('contentful').
 
         function createTooltip(show) {
           var options = getOptions();
-          _.defaults(options, {
-            delay: {show: 100, hide: 100}
-          });
           element.tooltip(options);
           if (show) element.tooltip('show');
         }

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', function(ShareJS, cfSpinner) {
+angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', function(ShareJS, cfSpinner, $q) {
 
   return {
     restrict: 'AC',
@@ -28,6 +28,28 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', functi
           scope.$broadcast('otValueChanged', scope.otPath, scope.otDoc.getAt(op.p));
         }
       });
+
+      $scope.otChangeValueP = function (value) {
+        if ($scope.otDoc) {
+          var stopSpin = cfSpinner.start();
+          var cb = $q.callback();
+          try {
+            $scope.otDoc.setAt($scope.otPath, value, cb);
+          } catch(e) {
+            ShareJS.mkpath({
+              doc: $scope.otDoc,
+              path: $scope.otPath,
+              types: $scope.otPathTypes,
+              value: value
+            }, cb);
+          } finally {
+            cb.promise.finally(stopSpin);
+            return cb.promise;
+          }
+        } else {
+          return $q.reject('No otDoc to push to');
+        }
+      };
 
       $scope.otChangeValue = function(value, callback) {
         //console.log('changing value %o -> %o in %o, %o', $scope.otDoc.getAt($scope.otPath), value, $scope.otPath, $scope.otDoc);

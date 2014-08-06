@@ -340,14 +340,11 @@ angular.module('contentful').controller('ClientCtrl', ['$scope', '$injector', fu
   };
 
   $scope.initClient = function () {
-    $scope.performTokenLookup().
-      then(function () {
-        analytics.login($scope.user);
-        showTutorialIfNecessary();
-      }, function () {
-        notification.error('Token Lookup failed. Logging out.');
-        authentication.logout();
-      });
+    $scope.performTokenLookup()
+    .then(function () {
+      analytics.login($scope.user);
+      showTutorialIfNecessary();
+    }, ReloadNotification.gatekeeperErrorHandler);
 
     setTimeout(newVersionCheck, 5000);
 
@@ -373,4 +370,5 @@ angular.module('contentful').controller('ClientCtrl', ['$scope', '$injector', fu
       });
     }
   }
+
 }]);

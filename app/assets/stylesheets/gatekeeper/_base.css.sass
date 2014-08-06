@@ -15,7 +15,22 @@
     color: $lightest-gray
 
 .spaces .settings-panel
-  @extend .link-list
+  margin-top: 0
+  padding-top: $tab-main-margin-top
+  padding-left: 25px
+  background-color: #fdfcfc
+  border-right: 1px solid $light-rule
+  a
+    color: #8d8c8c
+  .active a
+    color: #434343
+    font-weight: bold
+  ul
+    margin-top: 0
+  li
+    font-size: 14px
+    line-height: 25px
+
 .account .settings-panel
   padding: 0
   color: black
@@ -54,10 +69,6 @@
     position: absolute
     left: 15px
     font-size: 14px
-    
-  //@extend .link-list
-  //ul
-    margin-bottom: 2em
 
 // Adjust base font size // YOLO
 .account
@@ -72,14 +83,6 @@
   .with-left-nav
     @extend .tab-workbench
     +tab-padding
-
-// make sure to hide intercom in the frame
-.tab-iframe
-  #IModal,
-  #INotificationMessagesWrapper
-    display: none !important
-    z-index: -9999 !important
-    opacity: 0 !important
 
 // Different style fixes
 .tab-iframe

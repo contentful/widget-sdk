@@ -2,26 +2,23 @@
 angular.module('contentful').directive('cfDropdownEditor', function(){
   return {
     restrict: 'C',
-    replace: true,
     template: JST['cf_dropdown_editor'](),
     require: 'ngModel',
 
-    link: function(scope, elem, attr, ngModelCtrl){
+    link: function(scope, elem){
       scope.valuesList = scope.getFieldValidationsOfType(scope.field, 'in');
-
       scope.selected = {value: null};
 
-      scope.$watch('selected.value', function (val) {
-        scope.selectDropdownValue(val);
-      });
+      var internalController = elem.find('select').controller('ngModel');
+      internalController.$parsers.push(valueParser);
+      internalController.$viewChangeListeners.push(scope.otBindInternalChangeHandler);
 
-      ngModelCtrl.$render = function () {
-        scope.selected.value = ngModelCtrl.$viewValue;
-      };
-
-      scope.updateModel = function () {
-        ngModelCtrl.$setViewValue(scope.selected.value);
-      };
+      function valueParser(value) {
+        value = (scope.field.type == 'Integer') ? parseInt(value, 10)   : value;
+        value = (scope.field.type == 'Number' ) ? parseFloat(value, 10) : value;
+        value = ((scope.field.type == 'Integer' || scope.field.type == 'Number') && isNaN(value)) ? null : value;
+        return value;
+      }
 
       scope.dropdownWidthClass = function () {
         var maxLength = (_.max(scope.valuesList, function (val) {
@@ -32,30 +29,6 @@ angular.module('contentful').directive('cfDropdownEditor', function(){
         if(maxLength <= 45) return 'medium-dropdown';
         return 'large-dropdown';
       };
-    },
-
-    controller: ['$scope', '$parse', '$attrs',  function cfDropdownEditorController ($scope, $parse, $attrs) {
-      var ngModelGet = $parse($attrs.ngModel),
-          ngModelSet = ngModelGet.assign;
-
-      $scope.selectDropdownValue = function (value) {
-        function handler(err) {
-          if(!err){
-            $scope.selected.value = value;
-            $scope.updateModel();
-          }
-        }
-
-        value = ($scope.field.type == 'Integer') ? parseInt(value, 10) : value;
-        value = ($scope.field.type == 'Number') ? parseFloat(value, 10) : value;
-        value = (($scope.field.type == 'Integer' || $scope.field.type == 'Number') && isNaN(value)) ? null : value;
-
-        $scope.otChangeValue(value, handler);
-      };
-
-      $scope.$on('otValueChanged', function(event, path, value) {
-        if (path === event.currentScope.otPath) ngModelSet(event.currentScope, value);
-      });
-    }]
+    }
   };
 });

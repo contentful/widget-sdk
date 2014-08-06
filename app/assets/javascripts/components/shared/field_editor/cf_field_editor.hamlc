@@ -5,7 +5,7 @@
     ot-subdoc=""
     ot-bind-text=""
     ng-disabled="!otEditable")
-  .cf-dropdown-editor(ng-switch-when="dropdown" ng-model="fieldData.value")
+  .cf-dropdown-editor(ng-switch-when="dropdown" ng-model="fieldData.value" ot-bind-internal="selected.value")
   .cf-markdown-editor(ng-switch-when="markdown")
   %textarea(ng-switch-when="multipleLine"
     cf-input-autogrow=""
@@ -33,7 +33,7 @@
     ot-bind-model=""
     ng-disabled="!otEditable")
   .cf-object-editor(ng-switch-when="objectEditor" ng-model="fieldData.value")
-  .cf-location-editor(ng-switch-when="locationEditor" ng-model="fieldData.value")
+  .cf-location-editor(ng-switch-when="locationEditor" ng-model="fieldData.value" ot-bind-internal="location")
   .cf-number-editor(ng-switch-when="numberEditor")
   %div(ng-switch-when="linkEditor" ng-model="fieldData.value" cf-link-editor="field.linkType")
-  .cf-file-editor(ng-switch-when="fileEditor" ng-model="fieldData.value")
+  .cf-file-editor(ng-switch-when="fileEditor" ng-model="fieldData.value" ot-bind-internal="file")

@@ -1,0 +1,96 @@
+.api-home
+  .tab-main
+    background-color: $gray-background
+  .left-nav
+    padding: $tab-main-margin-top 20px 0
+    background-color: white
+    overflow-x: hidden
+    overflow-y: auto
+  .with-left-nav
+    padding: 0 20px 0
+    @extend .expand-vertically
+    .main-results-wrapper
+      +stretch(27px, 0, 0, 0)
+      overflow-x: hidden
+      overflow-y: auto
+
+  .hero
+    text-align: center
+    line-height: 1.6rem
+    margin: 0 auto
+    margin-bottom: $tab-main-margin-top*2
+    width: 90%
+    max-width: 1000px
+    h1
+      font-size: 1.8rem
+      font-weight: normal
+      margin-bottom: 1.4rem
+    p
+      font-size: 1rem
+      position: relative
+    .close-button:after
+      position: absolute
+      right: -33px
+      top: -30px
+      font-size: 20px
+      +border-radius(50%)
+      width: 25px
+      height: 24px
+      padding-bottom: 1px
+      border: 1px solid $light-gray
+      color: $light-gray
+
+  .boxes
+    overflow: hidden
+    margin: 0 5%
+
+  $api-box-width: 30%
+  $api-box-right-margin: (100 - ($api-box-width * 3))/2
+  .box:last-child
+    margin-right: 0%
+  .box
+    float: left
+    width: $api-box-width
+    margin-right: $api-box-right-margin
+    padding: 3%
+    min-height: 650px
+    background-color: white
+    +box-shadow(0 1px 4px rgba(0, 0, 0, 0.1))
+    +border-radius(4px)
+
+    h2
+      text-align: center
+      text-transform: none
+      font-size: 1.4rem
+      margin-bottom: 2rem
+      line-height: 1.8rem
+    p
+      line-height: 1.4rem
+    li
+      list-style-type: disc
+
+  .box-title
+    display: block
+    height: 5rem
+
+  .box-image
+    display: block
+    height: 115px
+    margin-bottom: 2rem
+    background-size: 115px
+    background-repeat: no-repeat
+    background-position: center
+
+    &.cda
+      background-image: asset-url('developers/cda.png', image)
+    &.cma
+      background-image: asset-url('developers/cma.png', image)
+    &.demo
+      background-image: asset-url('developers/demo.png', image)
+
+  .note-box
+    padding: 0
+    line-height: 4rem
+    text-align: center
+
+

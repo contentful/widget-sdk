@@ -36,17 +36,17 @@
         tabindex="0")
       %i.ss-attach
       %span Assets
-    %li(ng-class="{section: spaceContext.tabList.currentSection() == 'apiKeys',
-                   'section-index': spaceContext.tabList.currentViewType() == 'api-key-list'}"
-        ng-click="goToView('api-key-list')"
+    %li(ng-class="{section: spaceContext.tabList.currentSection() == 'apiHome',
+                   'section-index': spaceContext.tabList.currentViewType() == 'api-home'}"
+        ng-click="goToView('api-home')"
         cf-can-no-disable=""
         cf-can="read, ApiKey"
-        data-view-type="api-key-list"
-        tooltip="Content Delivery"
+        data-view-type="api-home"
+        tooltip="API"
         tooltip-placement="bottom"
         tabindex="0")
       %i.ss-fork
-      %span Content Delivery
+      %span API
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'spaceSettings',
                   'section-index': spaceContext.tabList.currentSection() == 'spaceSettings'}"
         ng-click="goToView('space-settings')"
@@ -102,6 +102,8 @@
     cf-validate="tab.params.contentType.data"
     ng-class="{'with-aux-panel': preferences.showAuxPanel}")
   .editing-interface-editor.with-tab-actions(ng-switch-when="editing-interface-editor")
+  .content-model.entity-list(ng-switch-when="content-model")
+  .api-home(ng-switch-when="api-home" )
   .api-key-list.entity-list(ng-switch-when="api-key-list" )
   .api-key-editor.with-tab-actions(ng-switch-when="api-key-editor"
     ng-class="{'with-aux-panel': preferences.showAuxPanel}")

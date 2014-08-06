@@ -100,10 +100,6 @@ angular.module('contentful').provider('analytics', ['environment', function (env
       $window.analytics.identify(user.sys.id, {
         firstName: user.firstName,
         lastName:  user.lastName
-      }, {
-        intercom: {
-          user_hash: user.intercomUserHash
-        }
       });
       if (user.features.logAnalytics === false) {
         this.disable();
