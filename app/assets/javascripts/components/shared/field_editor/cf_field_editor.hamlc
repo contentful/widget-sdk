@@ -33,7 +33,7 @@
     ot-bind-model=""
     ng-disabled="!otEditable")
   .cf-object-editor(ng-switch-when="objectEditor" ng-model="fieldData.value")
-  .cf-location-editor(ng-switch-when="locationEditor" ng-model="fieldData.value")
+  .cf-location-editor(ng-switch-when="locationEditor" ng-model="fieldData.value" ot-bind-internal="location")
   .cf-number-editor(ng-switch-when="numberEditor")
   %div(ng-switch-when="linkEditor" ng-model="fieldData.value" cf-link-editor="field.linkType")
   .cf-file-editor(ng-switch-when="fileEditor" ng-model="fieldData.value" ot-bind-internal="file")

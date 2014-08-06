@@ -1,23 +1,22 @@
 /*global google:false*/
 'use strict';
 
-angular.module('contentful').directive('cfLocationEditor', ['cfSpinner', 'notification', '$parse', 'defer', function(cfSpinner, notification, $parse, defer){
+angular.module('contentful').directive('cfLocationEditor', ['$injector', function($injector){
+  var defer = $injector.get('defer');
+
   return {
     restrict: 'C',
     require: 'ngModel',
     template: JST['cf_location_editor'],
     controller: 'cfLocationEditorCtrl',
-    link: function(scope, elm, attr, ngModelCtrl) {
+    link: function(scope, elm) {
       scope.$watch('location && locationValid', function (showMarker) {
         marker.setVisible(!!showMarker);
       });
 
-      var ngModelGet = $parse(attr.ngModel),
-          ngModelSet = ngModelGet.assign;
-
       var locationController = elm.find('.gmaps-container').controller('ngModel');
-      var latController = elm.find('input.lat').controller('ngModel');
-      var lonController = elm.find('input.lon').controller('ngModel');
+      var latController      = elm.find('input.lat').controller('ngModel');
+      var lonController      = elm.find('input.lon').controller('ngModel');
 
       var map = new google.maps.Map(elm.find('.gmaps-container')[0], {
         zoom: 6,
@@ -32,17 +31,6 @@ angular.module('contentful').directive('cfLocationEditor', ['cfSpinner', 'notifi
         visible: true
       });
 
-      var changeHandler = function() {
-        scope.otChangeValue(scope.location, function(err) {
-          if (!err) {
-            ngModelCtrl.$setViewValue(scope.location);
-          } else {
-            notification.serverError('Error updating location', err);
-            scope.location = ngModelCtrl.$modelValue;
-          }
-        });
-      };
-
       scope._getMap = function () {
         return map;
       };
@@ -54,10 +42,6 @@ angular.module('contentful').directive('cfLocationEditor', ['cfSpinner', 'notifi
           marker.setDraggable(false);
         }
       });
-
-      ngModelCtrl.$render = function () {
-        scope.location = ngModelCtrl.$viewValue;
-      };
 
       var triggerLocationWatchers = function() {
         if (scope.location && noNumber(scope.location.lat) && noNumber(scope.location.lon)) {
@@ -93,7 +77,7 @@ angular.module('contentful').directive('cfLocationEditor', ['cfSpinner', 'notifi
         return isNaN(val) ? null : val;
       };
 
-      locationController.$viewChangeListeners.push(changeHandler);
+      locationController.$viewChangeListeners.push(scope.otBindInternalChangeHandler);
       locationController.$parsers.unshift(latLngParser);
       locationController.$formatters.push(locationFormatter);
       locationController.$render = function() {
@@ -108,12 +92,12 @@ angular.module('contentful').directive('cfLocationEditor', ['cfSpinner', 'notifi
       lonController.$parsers.push(parse);
       latController.$viewChangeListeners.push(triggerLocationWatchers);
       lonController.$viewChangeListeners.push(triggerLocationWatchers);
-      latController.$viewChangeListeners.push(changeHandler);
-      lonController.$viewChangeListeners.push(changeHandler);
+      latController.$viewChangeListeners.push(scope.otBindInternalChangeHandler);
+      lonController.$viewChangeListeners.push(scope.otBindInternalChangeHandler);
 
       scope.updateLocation = function(location) {
         scope.location = location;
-        changeHandler();
+        scope.otBindInternalChangeHandler();
       };
 
       scope.removeLocation = function() {
@@ -124,13 +108,6 @@ angular.module('contentful').directive('cfLocationEditor', ['cfSpinner', 'notifi
         if (!scope.location && scope.otEditable) {
           marker.setPosition(event.latLng);
           locationController.$setViewValue(event.latLng);
-        }
-      });
-
-      scope.$on('otValueChanged', function(event, path, value){
-        //console.log('location editor received valie changed', event, path, value);
-        if (path === event.currentScope.otPath) {
-          ngModelSet(event.currentScope, value);
         }
       });
 

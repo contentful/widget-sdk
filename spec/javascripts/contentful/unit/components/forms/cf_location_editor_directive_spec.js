@@ -13,11 +13,17 @@ describe('cfLocationEditor Directive', function () {
       stubs = $provide.makeStubs([
         'getCenter', 'panTo', 'setDraggable', 'setPosition', 'setVisible',
         'fitBounds', 'map', 'latLng', 'marker', 'addListener',
-        'locationIsValid', 'serverError'
+        'locationIsValid', 'serverError', 'otChangeValueP'
       ]);
 
       $provide.value('notification', {
         serverError: stubs.serverError
+      });
+
+      $provide.stubDirective('otPath', {
+        controller: function ($scope, $q) {
+          $scope.otChangeValueP = stubs.otChangeValueP.returns($q.when());
+        }
       });
     });
     inject(function ($compile, $rootScope, $window, cfLocationEditorDirective) {
@@ -55,8 +61,8 @@ describe('cfLocationEditor Directive', function () {
       };
 
       compileElement = function () {
-        element = $compile('<div class="cf-location-editor" ng-model="fieldData.value"></div>')(scope);
-        scope.$digest();
+        element = $compile('<div class="cf-location-editor" ot-path="" ot-bind-internal="location" ng-model="fieldData.value"></div>')(scope);
+        scope.$apply();
       };
     });
   });
@@ -112,21 +118,21 @@ describe('cfLocationEditor Directive', function () {
   });
 
   describe('updateLocation method', function() {
-    var viewValueStub, location, oldLocation;
+    var location, oldLocation;
     beforeEach(function() {
       compileElement();
-      location = {lat: 123, lon: 456};
+      location    = {lat: 123, lon: 456};
       oldLocation = {lat: 789, lon: 321};
-      viewValueStub = sinon.stub();
-      element.controller('ngModel').$setViewValue = viewValueStub;
-      element.controller('ngModel').$modelValue = oldLocation;
-      scope.otChangeValue = sinon.stub();
+      scope.location        = location;
+      scope.fieldData.value = oldLocation;
+      //element.controller('ngModel').$setViewValue = viewValueStub = sinon.stub();
+      //element.controller('ngModel').$modelValue = oldLocation;
     });
 
     describe('updates successfully', function() {
       beforeEach(function() {
-        scope.otChangeValue.callsArgWith(1, null);
         scope.updateLocation(location);
+        scope.$apply();
       });
 
       it('sets location on scope', function() {
@@ -134,30 +140,31 @@ describe('cfLocationEditor Directive', function () {
       });
 
       it('calls ot change value with location', function() {
-        expect(scope.otChangeValue).toBeCalledWith(location);
+        expect(scope.otChangeValueP).toBeCalledWith(location);
       });
 
-      it('calls $setViewValue with location', function() {
-        expect(viewValueStub).toBeCalledWith(location);
+      it('update external value', function() {
+        expect(scope.fieldData.value).toEqual(location);
       });
     });
 
     describe('fails to update', function() {
-      beforeEach(function() {
-        scope.otChangeValue.callsArgWith(1, {error: true});
+      beforeEach(inject(function($q) {
+        stubs.otChangeValueP.returns($q.reject());
         scope.updateLocation(location);
-      });
-
-      it('calls ot change value with location', function() {
-        expect(scope.otChangeValue).toBeCalledWith(location);
-      });
-
-      it('shows error notification', function() {
-        expect(stubs.serverError).toBeCalled();
-      });
+        scope.$apply();
+      }));
 
       it('sets location back to ngModel value', function() {
         expect(scope.location).toEqual(oldLocation);
+      });
+
+      it('calls ot change value with location', function() {
+        expect(scope.otChangeValueP).toBeCalledWith(location);
+      });
+
+      it('resets external value', function() {
+        expect(scope.fieldData.value).toEqual(oldLocation);
       });
     });
   });
