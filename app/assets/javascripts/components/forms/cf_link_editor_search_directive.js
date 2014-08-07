@@ -26,6 +26,10 @@ angular.module('contentful').directive('cfLinkEditorSearch', ['defer', function(
           $container.scrollTop($selected.prop('offsetTop')-$container.height() + $selected.height());
         }
       }
+
+      scope.$on('$destroy', function () {
+        scope = null; //MEMLEAK FIX
+      });
     },
   };
 }]);

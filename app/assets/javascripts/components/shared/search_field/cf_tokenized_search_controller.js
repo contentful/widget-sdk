@@ -198,6 +198,10 @@ angular.module('contentful').controller('cfTokenizedSearchController', ['$scope'
   function spliceSlice(str, index, count, add) {
     return str.slice(0, index) + add + str.slice(index + count);
   }
+
+  $scope.$on('$destroy', function () {
+    $scope = null; //MEMLEAK FIX
+  });
   
 }]);
 

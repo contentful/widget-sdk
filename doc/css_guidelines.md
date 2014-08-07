@@ -35,15 +35,28 @@ Listed by lower to higher level:
 
 ## Tools
 
-At the moment we are using SASS/Compass with SASS syntax.
-
-**TODO** outline use of KSS and/or webdrivercss
+- At the moment we are using Stylus with nib.
+- There are some full page CSS tests using webdrivercss under
+  bin/css-tests.js (**TODO**: add more info on setup)
+- **TODO** outline use of KSS
 
 ## Syntax
 
+Because we are using Stylus which is very liberal in its syntax, the
+following outlines some rules for how we're writing our CSS.
+
+Example:
+```css
+.selector
+  property: value
+```
 - 2 space soft tabs
 - one selector per line
 - space after `:`
+- prefix variables with `$`
+- if using mixins from nib, you can call them as if they were existing
+  properties (because many of them will be): `box-sizing: border-box`
+- if using or creating our own mixins or functions, prefix them with $
 - [Avoid shorthand](https://github.com/csswizardry/CSS-Guidelines#shorthand) unless you are specifying all possible values of a
   property, as you'll just be setting more properties that could have to
   be overriden
@@ -77,6 +90,8 @@ recommendations that don't belong anywhere else in the document:
 - Only use mixins for things that take parameters, don't use them for
   pattern repetition. Prefer classes instead.
 - Avoid writing rules that do too much
+- Never leave commented out code lying around. If you want to make a
+  note of it, use a single commit to remove old code.
 
 ## Selectors
 
@@ -93,8 +108,11 @@ Selectors should be lowercase, with multiple words separated by dashes.
 - **Variants**: `.component--variant` Ex: `.btn`, `.btn--primary`
 - **Nested elements**: `.component__nested-element` 
 - **Modifiers/State**: `.component.is-active`
+  - If a state is something generic, declare it as a global state
+  - If a state is specific to a module, scope it: `.component.is-active`
+    or using the `&.is-active` nesting selector
   - If a state rule is very specific for one particular object/module,
-    it should contain that module name: `.is-tab-active`
+    and it's not scoped, it should contain that module name: `.is-tab-active`
 - Utilities can have some more generic names, but if necessary, prefix
   them with `.u-name` to avoid clashes.
 
