@@ -37,3 +37,4 @@
   .cf-number-editor(ng-switch-when="numberEditor")
   %div(ng-switch-when="linkEditor" ng-model="fieldData.value" cf-link-editor="field.linkType")
   .cf-file-editor(ng-switch-when="fileEditor" ng-model="fieldData.value" ot-bind-internal="file")
+  %cf-rating-editor(ng-switch-when="rating" ng-model="fieldData.value" ot-bind-internal="rating")

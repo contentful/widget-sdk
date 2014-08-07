@@ -79,6 +79,26 @@
   .search
     margin-bottom: 10px
 
+cf-rating-editor
+  display: block
+  margin-top: 10px
+  margin-bottom: 10px
+  padding-top: 2px
+  cursor: pointer
+.cf-rating-editor__star
+  display: inline-block
+  width: 10px
+  height: 10px
+  +border-radius(5px)
+  border: 1px solid $dark-rule
+  margin-right: 5px
+  &.is-active
+    background-color: $medium-gray
+  &.is-pending
+    background-color: $light-gray
+.clear-rating-button
+  margin-top: -3px
+
 .cf-number-editor
   position: relative
   .cf-field-alert
