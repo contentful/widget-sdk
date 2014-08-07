@@ -19,6 +19,7 @@ Listed by lower to higher level:
 - Set up a styleguide with node-kss
 - Split base and mixins into directories
 - Decrease nesting overall, component by component
+- Move all mixins with no parameters to classes
 - Get rid of any duplication of class definitions
 - Remove use of very generic element selectors
 - Split components.css into objects and/or modules
@@ -31,6 +32,12 @@ Listed by lower to higher level:
 - Follow http://alistapart.com/article/creating-style-guides to
   standardize font size usage
 - Gradually add things to the styleguide
+- Stop using the formtastic default CSS on gatekeeper
+- Add more classes to the generated formtastic forms to allow for better
+  styling
+  - http://rdoc.info/github/justinfrench/formtastic#Usage
+  - :input_html => { :class => 'autogrow' }
+  - :button_html => { :class => "primary" }
 
 More to come
 

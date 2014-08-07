@@ -104,16 +104,25 @@ angular.module('contentful').directive('cfLocationEditor', ['$injector', functio
         scope.updateLocation(null);
       };
 
-      google.maps.event.addListener(map, 'click', function(event){
+      google.maps.event.addListener(map, 'click', mapClick);
+      google.maps.event.addListener(marker, 'dragend', mapDrag);
+      scope.$on('$destroy', function () {
+        google.maps.event.clearInstanceListeners(map);
+        google.maps.event.clearInstanceListeners(marker);
+        map = null;
+        marker = null;
+      });
+
+      function mapClick(event){
         if (!scope.location && scope.otEditable) {
           marker.setPosition(event.latLng);
           locationController.$setViewValue(event.latLng);
         }
-      });
+      }
 
-      google.maps.event.addListener(marker, 'dragend', function(event){
+      function mapDrag(event){
         locationController.$setViewValue(event.latLng);
-      });
+      }
 
       scope.$watch(function (scope) {
         return {

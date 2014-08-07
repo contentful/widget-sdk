@@ -112,3 +112,5 @@ filters.filter('decimalMarks', function () {
     return str.slice(0, i<0 ? 3+i : i) + (str.length>3 ? markedStr : '');
   };
 });
+
+filters = null;

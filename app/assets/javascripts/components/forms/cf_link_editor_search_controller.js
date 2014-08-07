@@ -154,6 +154,10 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', 'Pa
       return $scope.linkContentType;
   };
 
+  $scope.$on('$destroy', function () {
+    $scope = null; //MEMLEAK FIX
+  });
+
   function buildQuery() {
     var contentType;
     var queryObject = {
