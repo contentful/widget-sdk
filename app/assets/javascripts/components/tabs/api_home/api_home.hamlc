@@ -21,16 +21,16 @@
 
       .boxes
         .box
-          %a.box-image.cda(href="/developers/documentation/content-delivery-api")
-          %a.box-title(href="/developers/documentation/content-delivery-api")
+          %a.box-image.cda(cf-marketing="/developers/documentation/content-delivery-api")
+          %a.box-title(cf-marketing="/developers/documentation/content-delivery-api")
             %h2 Content<br>Delivery API
           %p
             Deliver content to mobile apps, websites and connected devices. The Content Delivery API is designed to help you display content to end users.
           %ul.cf-cda-links
 
         .box
-          %a.box-image.cma(href="/developers/documentation/content-management-api")
-          %a.box-title(href="/developers/documentation/content-management-api")
+          %a.box-image.cma(cf-marketing="/developers/documentation/content-management-api")
+          %a.box-title(cf-marketing="/developers/documentation/content-management-api")
             %h2 Content<br>Management API
           %p
             Import content from own servers, 3rd-party systems or your community. The Content Management API helps you create content.
