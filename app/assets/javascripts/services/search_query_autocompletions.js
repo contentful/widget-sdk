@@ -102,18 +102,25 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
   }
 
   function dateCompletions(key, description) {
-    var regex = /(\d+) +days +ago/i;
+    var RELATIVE = /(\d+) +days +ago/i;
+    var DAY      = /^\s*\d{2,4}-\d{2}-\d{2}\s*$/;
+    var EQUALITY = /^==|=|:$/;
     return {
       description: description,
-      operators: makeOperatorList(['<', '<=', '==', '>=', '>'], 'Date'),
+      operators: makeOperatorList(['==', '<', '<=', '>=', '>'], 'Date'),
       complete: makeDateCompletion(),
       convert: function (op, exp) {
         try {
-          var match = regex.exec(exp);
+          var match = RELATIVE.exec(exp);
           var date = match ? moment().subtract('days', match[1]) : moment(exp);
           if (date.isValid()) {
             var query = {};
-            query[key + queryOperator(op)] = date.toISOString();
+            if (dayEquality(op, exp)) {
+              query[key + queryOperator('>=')] = date.startOf('day').toISOString();
+              query[key + queryOperator('<=')] = date.endOf('day').toISOString();
+            } else {
+              query[key + queryOperator(op)] = date.toISOString();
+            }
             return query;
           }
         } catch(e) {
@@ -121,6 +128,10 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
         }
       }
     };
+
+    function dayEquality(op, exp) {
+      return EQUALITY.test(op) && DAY.test(exp);
+    }
   }
 
   function imageDimensionCompletion(key, description) {
