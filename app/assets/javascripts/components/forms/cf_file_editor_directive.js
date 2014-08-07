@@ -1,40 +1,28 @@
 'use strict';
 
-angular.module('contentful').directive('cfFileEditor', ['notification', 'filepicker', '$parse', 'aviary', 'modalDialog', 'stringUtils',
-                                       function (notification, filepicker, $parse, aviary, modalDialog, stringUtils) {
+angular.module('contentful').directive('cfFileEditor', ['$injector', function ($injector) {
+  var aviary       = $injector.get('aviary');
+  var filepicker   = $injector.get('filepicker');
+  var modalDialog  = $injector.get('modalDialog');
+  var notification = $injector.get('notification');
+  var stringUtils  = $injector.get('stringUtils');
+
   return {
     restrict: 'C',
     require: ['ngModel', '^otPath'],
     template: JST['cf_file_info'],
-    controller: 'CfFileEditorCtrl',
-    link: function (scope, elem, attr, controllers) {
-      var ngModelCtrl = controllers[0];
-
-      var ngModelGet = $parse(attr.ngModel),
-          ngModelSet = ngModelGet.assign;
-
+    link: function (scope, elem) {
       scope.enableUpload = true;
-
       scope.showMeta = false;
 
       scope.toggleMeta = function () {
         scope.showMeta = !scope.showMeta;
       };
 
-      ngModelCtrl.$render = function () {
-        scope.file = ngModelCtrl.$viewValue;
-      };
-
-      scope.$on('otValueChanged', function(event, path, value){
-        if (path === event.currentScope.otPath) {
-          ngModelSet(event.currentScope, value);
-        }
-      });
-
       scope.uploadFile = function () {
         filepicker.pick().
         then(function (FPFile) {
-          changeHandler(FPFile);
+          setFPFile(FPFile);
         }, function (FPError) {
           if (FPError.code !== 101) {
             throw new Error(FPError);
@@ -66,7 +54,7 @@ angular.module('contentful').directive('cfFileEditor', ['notification', 'filepic
               scope.loadingEditor = false;
             }
           }).then(function (FPFile) {
-            changeHandler(FPFile);
+            setFPFile(FPFile);
             scope.loadingEditor = false;
           }).catch(function (err) {
             notification.serverError(err.message, err.error);
@@ -78,7 +66,7 @@ angular.module('contentful').directive('cfFileEditor', ['notification', 'filepic
       };
 
       scope.deleteFile = function () {
-        changeHandler(null);
+        setFPFile(null);
         scope.validate();
       };
 
@@ -86,24 +74,23 @@ angular.module('contentful').directive('cfFileEditor', ['notification', 'filepic
       scope.$on('gettyFileAuthorized', fileEventHandler);
 
       function fileEventHandler(event, file) {
-        changeHandler(file);
+        setFPFile(file);
       }
 
-      function changeHandler(FPFile) {
+      function setFPFile(FPFile) {
         var file = FPFile ? {
-         upload: FPFile.url,
-         fileName: FPFile.filename,
+         upload:      FPFile.url,
+         fileName:    FPFile.filename,
          contentType: FPFile.mimetype
         } : null;
-        scope.otChangeValue(file, function (err) {
-          if (!err) {
-            scope.file = file;
-            ngModelCtrl.$setViewValue(file);
-          } else {
-            notification.serverError('There has been a problem saving the file', err);
-          }
-          aviary.close();
-        });
+        scope.file = file;
+        scope.otBindInternalChangeHandler().then(notify);
+        aviary.close();
+      }
+
+      function notify() {
+        // dependency on scope.locale feels weird
+        if (scope.file) scope.$emit('fileUploaded', scope.file, scope.locale);
       }
 
     }

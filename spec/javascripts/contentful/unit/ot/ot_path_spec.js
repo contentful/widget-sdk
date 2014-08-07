@@ -36,6 +36,8 @@ describe('otPath', function() {
     expect(scope.otChangeValue).toBeDefined();
   });
 
+  it('otChangeValueP should be specced here');
+
   describe('receiving otRemoteOp', function () {
     describe('with the exact Path', function () {
       var op = {p: ['FOO', 'bar']};

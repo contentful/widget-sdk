@@ -1,8 +1,11 @@
 'use strict';
 
-var otModule = angular.module('contentful');
+angular.module('contentful').directive('otBindText', ['$injector', function($injector) {
+  var $parse            = $injector.get('$parse');
+  var ShareJS           = $injector.get('ShareJS');
+  var defer             = $injector.get('defer');
+  var isDiacriticalMark = $injector.get('isDiacriticalMark');
 
-otModule.directive('otBindText', ['ShareJS', '$sniffer', '$parse', 'isDiacriticalMark', 'defer', function(ShareJS, $sniffer, $parse, isDiacriticalMark, defer) {
   return {
     restrict: 'A',
     require: ['^otSubdoc', 'ngModel'],
@@ -118,55 +121,6 @@ otModule.directive('otBindText', ['ShareJS', '$sniffer', '$parse', 'isDiacritica
       }
 
       //console.log('linking done', scope.$id, scope.otPath);
-    }
-
-  };
-}]);
-
-otModule.directive('otBindModel', ['$parse', function($parse) {
-  return {
-    restrict: 'A',
-    require: ['ngModel', '^otPath'],
-    link: function(scope, elm, attr, controllers) {
-      var ngModelCtrl = controllers[0];
-      var ngModelGet = $parse(attr['ngModel']),
-          ngModelSet = ngModelGet.assign;
-      ngModelCtrl.$viewChangeListeners.push(function(){
-        scope.otChangeValue(ngModelCtrl.$modelValue);
-      });
-      scope.$on('otValueChanged', function(event, path, val) {
-        if (path === event.currentScope.otPath) ngModelSet(event.currentScope, val);
-      });
-    }
-  };
-}]);
-
-// Untested, do not use because we don't need it internally, see notes below for intended use scenario
-otModule.directive('otBindValue', ['$parse', function($parse) {
-  return {
-    restrict: 'A',
-    require: '^otPath',
-    scope: true,
-    link: function(scope, elm, attr) {
-      // Use this if you want to simply replace values in your ShareJS
-      // document. Works by simply manipulating the `value` property
-      // in the scope (as established by cfFieldEditor)
-      //
-      // This method should be only used as a last resort as a
-      // shortcut if using a model binding is not possible. Main use
-      // case is easier integration into sharejs for 3rd party widget
-      // providers
-      var getter = $parse(attr['otBindValue']),
-          setter = getter.assign;
-      //
-      scope.$watch(attr['otBindValue'], function(val, old, scope) {
-        scope.otChangeValue(val);
-      }, true);
-
-      scope.$on('otValueChanged', function(event, path, val) {
-        if (path === event.currentScope.otPath) setter(event.currentScope, val);
-      });
-
     }
 
   };

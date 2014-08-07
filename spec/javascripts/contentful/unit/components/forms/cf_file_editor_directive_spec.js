@@ -10,7 +10,9 @@ describe('cfFileEditor Directive', function () {
         'pick', 'then', 'serverError'
       ]);
       $provide.stubDirective('otPath', {
-        controller: function () {}
+        controller: function ($scope, $q) {
+          $scope.otChangeValueP = sinon.stub().returns($q.when());
+        }
       });
       $provide.removeDirectives('cfFileDrop');
       $provide.value('filepicker', {
@@ -31,8 +33,8 @@ describe('cfFileEditor Directive', function () {
         fileType: 'image/jpeg'
       };
 
-      element = $compile('<div ot-path=""><div class="cf-file-editor" ng-model="fieldData"></div></div>')(scope);
-      scope.$digest();
+      element = $compile('<div ot-path=""><div class="cf-file-editor" ng-model="fieldData" ot-bind-internal="file"></div></div>')(scope);
+      scope.$apply();
     });
   });
 
@@ -56,13 +58,13 @@ describe('cfFileEditor Directive', function () {
         filename: 'newfilename',
         mimetype: 'newmimetype'
       });
-      scope.otChangeValue = sinon.stub();
     });
 
     describe('and updating the otDoc value succeeds', function() {
       beforeEach(function() {
-        scope.otChangeValue.callsArgWith(1, null);
         scope.uploadFile();
+        sinon.stub(scope, '$emit');
+        scope.$apply();
       });
 
       it('calls filepickers pick', function() {
@@ -70,7 +72,7 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('calls otchangevalue', function() {
-        expect(scope.otChangeValue).toBeCalled();
+        expect(scope.otChangeValueP).toBeCalled();
       });
 
       it('file now has url', function() {
@@ -84,24 +86,15 @@ describe('cfFileEditor Directive', function () {
       it('file now has new mimetype', function() {
         expect(scope.file.contentType).toEqual('newmimetype');
       });
-    });
 
-    describe('and updating the otDoc value fails', function() {
-      beforeEach(function() {
-        scope.otChangeValue.callsArgWith(1, {});
-        scope.uploadFile();
-      });
-
-      it('calls filepickers pick', function() {
-        expect(stubs.pick).toBeCalled();
-      });
-
-      it('calls otchangevalue', function() {
-        expect(scope.otChangeValue).toBeCalled();
-      });
-
-      it('calls error notification', function() {
-        expect(stubs.serverError).toBeCalled();
+      it('emits fileUploaded event', function() {
+        expect(scope.$emit).toBeCalledWith('fileUploaded');
+        expect(scope.$emit.args[0][1]).toEqual({
+          upload: 'newurl',
+          fileName: 'newfilename',
+          contentType: 'newmimetype'
+        });
+        expect(scope.$emit.args[0][2]).toEqual(scope.locale);
       });
     });
   });
@@ -140,12 +133,10 @@ describe('cfFileEditor Directive', function () {
   describe('deleting a file succeeds', function() {
     beforeEach(function() {
       scope.validate = sinon.stub();
-      scope.otChangeValue = sinon.stub();
     });
 
     describe('and updating the otDoc value succeeds', function() {
       beforeEach(function() {
-        scope.otChangeValue.callsArgWith(1, null);
         scope.deleteFile();
       });
 
@@ -154,38 +145,18 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('calls otchangevalue', function() {
-        expect(scope.otChangeValue).toBeCalled();
+        expect(scope.otChangeValueP).toBeCalled();
       });
 
       it('file is null', function() {
         expect(scope.file).toBeNull();
       });
     });
-
-    describe('and updating the otDoc value fails', function() {
-      beforeEach(function() {
-        scope.otChangeValue.callsArgWith(1, {});
-        scope.deleteFile();
-      });
-
-      it('calls otchangevalue', function() {
-        expect(scope.otChangeValue).toBeCalled();
-      });
-
-      it('calls error notification', function() {
-        expect(stubs.serverError).toBeCalled();
-      });
-    });
   });
 
   describe('uploading a file via drop succeeds', function() {
-    beforeEach(function() {
-      scope.otChangeValue = sinon.stub();
-    });
-
     describe('and updating the otDoc value succeeds', function() {
       beforeEach(function() {
-        scope.otChangeValue.callsArgWith(1, null);
         scope.$broadcast('cfFileDropped', {
           url: 'newurl',
           filename: 'newfilename',
@@ -194,7 +165,7 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('calls otchangevalue', function() {
-        expect(scope.otChangeValue).toBeCalled();
+        expect(scope.otChangeValueP).toBeCalled();
       });
 
       it('file now has url', function() {
@@ -207,25 +178,6 @@ describe('cfFileEditor Directive', function () {
 
       it('file now has new mimetype', function() {
         expect(scope.file.contentType).toEqual('newmimetype');
-      });
-    });
-
-    describe('and updating the otDoc value fails', function() {
-      beforeEach(function() {
-        scope.otChangeValue.callsArgWith(1, {});
-        scope.$broadcast('cfFileDropped', {
-          url: 'newurl',
-          filename: 'newfilename',
-          mimetype: 'newmimetype'
-        });
-      });
-
-      it('calls otchangevalue', function() {
-        expect(scope.otChangeValue).toBeCalled();
-      });
-
-      it('calls error notification', function() {
-        expect(stubs.serverError).toBeCalled();
       });
     });
   });
