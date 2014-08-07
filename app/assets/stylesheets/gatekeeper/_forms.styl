@@ -1,0 +1,121 @@
+$formtastic-fieldwidth = 40%
+.tab-iframe .formtastic
+  max-width: 80em
+  // Overrides for things that formtastic styles too much
+  .default-button
+    @extend .default-button
+  .primary-button
+    @extend .primary-button
+  // remove list bullets
+  .inputs,
+  .actions
+    li
+      list-style-type: none
+      margin: 0
+    .input
+      margin-bottom: $form-spacing
+  .input
+    padding: 0
+    .label
+      position: relative
+      color: inherit
+      width: $form-labelwidth
+      text-align: right
+      padding: $form-offset $form-gutter $form-offset 0
+    input[type="checkbox"],
+    input[type="radio"]
+      vertical-align: baseline
+    input[type="checkbox"]
+      position: relative
+      top: -1px
+    .inline-hints
+      margin-left: $form-labelwidth
+      width: $formtastic-fieldwidth
+    .inline-errors
+      margin-left: $form-labelwidth
+  .input.info > div
+    padding-top: $form-offset
+  .input > select
+    margin-top: $form-offset
+  .fragment
+    padding-right: 10px
+  .input input
+    margin-top: 2px
+  .input.boolean
+    padding-top: $form-offset
+    padding-bottom: $form-offset
+    .tooltip.top
+      left: $form-labelwidth !important
+  .input.boolean label
+    padding-left: $form-labelwidth
+  .input.table
+    .result-list
+      margin-top: $form-offset
+      width: 100% - $form-labelwidth
+      float: left
+      th
+        padding-top: 0
+  .choices,
+  .fragments
+    .label label
+      position: static
+    .choices-group,
+    .fragments-group
+      padding-left: 0
+      margin-bottom: 0
+      padding-bottom: 5px
+      li
+        margin-top: $form-offset
+
+  // Style form elements
+  .input
+    @extend $form-styled
+    input[type="text"],
+    input[type="number"],
+    input[type="email"],
+    input[type="tel"],
+    input[type="password"],
+    input[type="url"],
+    input.time,
+    textarea
+      width: $formtastic-fieldwidth
+
+  // Make form actions look a little more like tab-actions
+  fieldset.actions
+    margin-top: 3em
+    margin-bottom: 3em
+    background-color: $gray-background
+    border-top: 1px solid $dark-rule
+    border-bottom: 1px solid $dark-rule
+    @extend $tab-actions-padding
+    padding-left: $form-labelwidth
+    height: $tab-actions-height
+    .action
+      display: inline-block
+    ol
+      float: left
+      /*
+      //button
+        //@extend .default-button
+        //height: $tab-actions-content-height
+    // Colors
+    //input[name="commit"]
+      //@extend .primary-button
+      */
+
+  .in-form-margins
+    margin-left: $form-labelwidth
+    width: $field-editor-width
+
+  .actions-no-label
+    padding-left: 20px
+
+  .actions-hint
+    margin: 0 1em
+    font-size: 12px
+      
+
+  > h1
+    margin-left: 20px
+
+

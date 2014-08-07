@@ -7,7 +7,7 @@
 .validation-type-select(ng-show="availableValidations | isEmpty")
   %button.flat-button(disabled) {{validationName(validation)}}
 
-.validation-controls(ng-switch="validationType(validation)" ng-class="validationType(validation)")
+.validation-controls.form-styled(ng-switch="validationType(validation)" ng-class="validationType(validation)")
   %div(ng-switch-when="size")
     %input(type="number" ng-model="validation.size.min" placeholder="Minimum size" ng-change="updateDoc()" ng-disabled="!otEditable")
     \-

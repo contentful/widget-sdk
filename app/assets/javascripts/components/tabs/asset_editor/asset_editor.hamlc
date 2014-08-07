@@ -29,7 +29,7 @@
     %h1 Asset Information
   .entity-info-panel
 
-.tab-main
+.tab-main.tab-workbench
   %form.form-horizontal(name="assetForm")
     .form-field(ng-show="hasErrorOnFields")
       %label

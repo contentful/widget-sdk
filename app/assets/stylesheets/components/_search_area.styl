@@ -1,0 +1,131 @@
+.search-area
+  $display-flexbox()
+  flex-grow: 3
+  flex-basis: 60%
+  height: $tab-header-height
+  padding: $tab-header-padding 0
+  padding-right: 20px
+  padding-left: 10px
+
+.search-with-results
+  position: relative
+  width: 100%
+
+.with-filter
+  max-width: 800px
+  .search-with-results
+    .search-field
+      border-left: none
+      border-top-left-radius: 0px
+      border-bottom-left-radius: 0px
+    input[type="search"]
+      border-radius: 0px
+  .select-box
+    border-radius: 20px 0px 0px 20px
+    min-width: 140px
+    box-shadow: 0 1px 3px rgba(255,255,255,0.8) inset
+    border-color: $lightest-gray
+    select
+      padding-top: 7px
+      white-space: nowrap
+      overflow: hidden
+
+.search-field
+  position: relative
+  width: 100%
+  height: $tab-header-field-height
+  background-color: white
+  border: 1px solid $lightest-gray
+  border-radius: 20px 20px 20px 20px
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1) inset
+
+  .input
+    $stretch(0, 35px, 0, 0)
+  input[type="search"]
+    padding: 0 7px
+    width: 100%
+    height: 100%
+    font-size: 12px
+    -webkit-appearance: none
+    -moz-appearance: none
+    appearance: none
+    border: none
+    color: $dark-gray
+    opacity: 0.6
+    border-radius: 20px 0px 0px 20px
+  input:focus
+    opacity: 1
+    border: none
+    outline: none
+
+.search-button
+  position: absolute
+  top: 0
+  right: 0
+  bottom: 0
+  padding: 0 7px 0 9px
+  width: 35px
+  font-size: 12px
+  line-height: $tab-header-field-height - 2px
+  cursor: pointer
+  background-color: $gray-background
+  box-shadow: 0 1px 3px rgba(255,255,255,0.8) inset
+  border-left: 1px solid $lightest-gray
+  border-radius: 0 20px 20px 0
+  &:active
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05) inset
+  .ss-search
+    position: relative
+    top: 2px
+
+
+.search-with-results
+  // When used inside the entry form, the form's border-spacing also
+  // applies to the tables inside the autocomplete-results
+  border-spacing: 0
+
+.search-with-results
+  .results.shrink-result-width
+    right: auto
+  .results // Necessary overrides/resets for .results which is per default geared towards use in forms
+    left: 13px
+    right: 35px
+    margin-right: 0
+    font-size: 11px
+.with-filter //oh god, apologies for the specificity bukkake
+  .search-with-results
+    .results
+      left: 0px
+
+
+
+.search-autocomplete-list,
+.results .search-autocomplete-list //necessary for overriding too-specific selector ".results ol > *" in mixins.css.sass
+  display: table
+  width: 100%
+  li
+    display: table-row 
+    cursor: pointer
+  li:hover
+    $gradient-op(lighten($blue, 20), 6%, 'darken')
+    color: white
+  .selected,
+  .selected:hover
+    $blue-highlight()
+  .item-value
+    color: $light-gray
+  .item-description
+    color: $dark-gray
+  .item-value,
+  .item-description
+    padding: 2px 5px
+    display: table-cell
+
+// Search results position widget
+.search-results-position
+  align-self: center
+  flex-grow: 1
+  flex-shrink: 0
+  flex-basis: 200px
+  margin-right: 16px
+  white-space: nowrap

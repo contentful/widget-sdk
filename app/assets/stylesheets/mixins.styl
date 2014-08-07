@@ -1,0 +1,173 @@
+@import "nib/vendor"
+@import 'nib/gradients'
+
+$plain-list()
+  margin: 0
+  padding: 0
+  > *
+    list-style-type: none
+    margin: 0
+    padding: 0
+
+$gradient($start, $stop)
+  background: $start
+  background-image: linear-gradient($start, $stop)
+
+$gradient-op($color, $highlight, $operation)
+  if $operation == 'lighten'
+    $gradient($color, lighten($color, $highlight))
+  if $operation == 'darken'
+    $gradient($color, darken($color, $highlight))
+
+$blue-highlight($highlight = 6%, $operation = 'darken')
+  color: white
+  $gradient-op($blue, $highlight, $operation)
+
+$green-highlight($highlight = 6%, $operation = 'darken')
+  color: white
+  $gradient-op($green, $highlight, $operation)
+
+$gold-highlight($highlight = 6%, $operation = 'darken')
+  color: white
+  $gradient-op($gold, $highlight, $operation)
+
+$red-highlight($highlight = 6%, $operation = 'darken')
+  color: white
+  $gradient-op($red, $highlight, $operation)
+
+$gray-highlight()
+  color: $medium-gray
+  box-shadow: 0 8px 16px rgba(255,255,255,0.6) inset
+
+$fade-text-background($color)
+  background-image: linear-gradient(left, rgba($color, 0) 0%, $color 50%, $color 100%)
+
+$focus-styles()
+  outline: 1px dotted
+  outline: -webkit-focus-ring-color auto 5px
+
+$tooltip-opaque()
+  .tooltip.in
+    opacity: 1
+
+$caret()
+  font-family: "SSStandard"
+  color: white
+  font-size: $caret-size
+  position: absolute
+
+$tab-padding()
+  padding-left: 30px
+  padding-right: 30px
+
+$nav-bar-dropdowns()
+  .separator,
+  .dropdown-menu li.top-separator
+    border-top: 1px solid $medium-dark-gray
+  .dropdown-menu
+    border: none
+    background: darken($dark-gray, 10%)
+    .dropdown-menu-item
+      color: white
+      border: none
+      box-shadow: none
+  .no-content-types
+    background: $dark-gray
+
+$flat-button($border-color = darken($dark-rule, 10), $hover-color = darken($dark-rule, 20), $active-color = darken($dark-rule, 30))
+  @extend .base-button
+  background: inherit
+  border: 1px solid $border-color
+  &:not(:disabled),
+  &:not([disabled])
+    &:hover
+      border: 1px solid $hover-color
+    &:active,
+    &.active
+      border: 1px solid $active-color
+
+$stretch($top = 0, $right = 0, $bottom = 0, $left = 0)
+  position: absolute
+  if type($top) is 'unit'
+    top: $top
+  if type($right) is 'unit' 
+    right: $right
+  if type($bottom) is 'unit' 
+    bottom: $bottom
+  if type($left) is 'unit' 
+    left: $left
+
+$stretch-x($left = 0, $right = 0)
+  $stretch(false, $right, false, $left)
+
+$stretch-y($top = 0, $bottom = 0)
+  $stretch($top, false, $bottom, false)
+
+
+$pie-clearfix()
+  &:after
+    content: "\0020";
+    display: block;
+    height: 0;
+    clear: both;
+    overflow: hidden;
+    visibility: hidden;
+
+// Flexbox mixins
+$display-flexbox()
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+
+flex($values)
+  -moz-box-flex:  $values;
+  -ms-flex:  $values;
+  flex:  $values;
+
+order($val)
+  -moz-box-ordinal-group: $val;     
+  -ms-flex-order: $val;     
+  order: $val;
+
+flex-grow($val)
+  -ms-flex-positive: $val
+  flex-grow: $val
+
+flex-direction($val)
+  -ms-flex-direction: $val
+  flex-direction: $val
+
+flex-wrap($val)
+  -ms-flex-wrap: $val
+  flex-wrap: $val
+
+flex-shrink($val)
+  -ms-flex-negative: $val
+  flex-shrink: $val
+
+flex-basis($val)
+  -ms-flex-preferred-size: $val
+  flex-basis: $val
+
+flex-flow($val)
+  -ms-flex-flow: $val
+  flex-flow: $val
+
+justify-content($val)
+  -ms-flex-pack: $val
+  justify-content: $val
+
+align-self($val)
+  -ms-flex-item-align: $val
+  align-self: $val
+
+align-items($val)
+  -ms-flex-align: $val
+  align-items: $val
+
+align-content($val)
+  -ms-flex-line-pack: $val
+  align-content: $val
+

@@ -1,0 +1,59 @@
+$aux-padding = 1.8em
+$aux-panel-border-color = lighten($lightest-gray, 47%)
+
+.aux-panel
+  width: 20%
+  position: absolute
+  overflow-y: auto
+  top: $tab-header-height
+  bottom: 0
+  right: 0
+  padding: 0
+  background-color: lighten($lightest-gray, 82%)
+  border-left: 1px solid $aux-panel-border-color
+  box-shadow: -1px 0 5px rgba(0,0,0,0.06), 0 0 4px rgba(255,255,255,1) inset
+  .entity-info-panel
+    font-size: 10px
+    padding: 0
+    color: $light-gray
+    box-shadow: 0 1px 0 rgba(255,255,255,0.4) inset
+  header,
+  tr
+    border-bottom: 1px solid $aux-panel-border-color
+  header
+    padding: 1.5em $aux-padding 1.1em
+    $gray-highlight()
+    h1
+      font-weight: 600
+      color: $dark-gray
+      font-size: 1.5em
+    i
+      font-size: 10px
+      position: absolute
+      right: 1.5em
+  table 
+    width: 100%
+    border-collapse: collapse
+    border-spacing: 0
+    td, th
+      width: 100%
+      float: left
+      display: block
+      text-align: left
+      font-weight: normal
+      padding: 0 $aux-padding
+    th
+      margin-top: 1em
+      font-size: 1.0em
+    td
+      padding-left: $aux-padding - 0.3
+      margin-bottom: 1em
+      font-size: 1.2em
+      font-weight: 600
+      color: $dark-gray
+
+.with-tab-actions
+  .aux-panel
+    bottom: $tab-actions-height
+
+

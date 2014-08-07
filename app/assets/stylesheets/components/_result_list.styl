@@ -1,0 +1,256 @@
+// The borders come from the container/masn-header/tab-content instead
+$standalone-table
+  border-radius: 3px
+
+$result-list-border-bottom
+  tbody
+    tr:last-child
+      border-bottom: 1px solid $light-rule
+
+// Main styles
+$result-list-cell
+  line-height: 18px
+  vertical-align: middle
+  padding: 8px 0px
+  padding-right: 10px
+  text-align: left
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis
+  span
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
+
+.result-length
+  text-align: center
+  width: 100%
+
+.result-list-empty
+  p
+    font-size: 16px
+    color: $light-gray
+    text-align: center
+    line-height: 60px
+
+.result-list
+  width: 100%
+  table-layout: fixed
+  th
+    padding-top: 4px
+    padding-bottom: 3px
+    font-size: 90%
+  th,
+  th button
+    font-weight: normal
+    color: $light-gray
+  td
+    border-bottom: 1px solid $light-rule
+  thead
+    .button-icon
+      color: $lightest-gray
+    .active
+      .button-icon
+        color: $light-gray
+      .truncated-button
+        font-weight: bold
+  tr:last-child
+    td
+      border-bottom: none
+  td,
+  th
+    @extend $result-list-cell
+  td,
+  th,
+  th button
+    overflow: hidden
+    white-space: nowrap
+    text-overflow: ellipsis
+  th
+    .button-icon
+      right: 0
+    .truncated-button
+      width: 90%
+      text-align: left
+    .active
+      .truncated-button
+        width: auto
+
+  .status-bar
+    position: absolute
+    top: 0
+    bottom: 0
+    right: 0
+    width: 8px
+    height: 100%
+    background-color: $light-gray
+
+  .published
+    color: $green
+    .status-bar
+      background-color: $green
+
+  .updated
+    color: $blue
+    .status-bar
+      background-color: $blue
+
+  .draft,
+  .pending
+    color: $gold
+    .status-bar
+      background-color: $gold
+
+  .archived
+    color: $red
+    .status-bar
+      background-color: $red
+
+  .cell-select
+    cursor: default
+    input[type="checkbox"]
+      position: relative
+      top: -2px
+
+  .cell-status
+    position: relative
+    padding-top: 0
+    padding-bottom: 0
+    padding-right: 16px
+    text-align: right
+    .status-label
+      padding: 12.5px 0
+
+  .cell-type,
+  .cell-author,
+  .cell-preview,
+  .cell-symbol,
+  .cell-integer,
+  .cell-number,
+  .cell-boolean,
+    color: $medium-gray
+
+  .cell-name
+    color: $dark-gray
+    font-weight: 600
+
+  .cell-anchor
+    color: $link-blue
+
+  .cell-text,
+  .cell-description
+    overflow: hidden
+    padding-right: 1em
+    text-overflow: ellipsis
+
+  .cell-name,
+  .cell-display-name
+    width: 13%
+
+  .cell-description
+    width: 47%
+
+  .cell-content-type
+    width: 11%
+
+  .cell-select
+    width: 2%
+    text-align: center
+
+  .cell-preview,
+  .cell-integer,
+  .cell-number,
+  .cell-boolean,
+  .cell-location,
+  .cell-date,
+  .cell-status
+    width: 7%
+
+  .cell-symbol,
+  .cell-array,
+  .cell-link,
+  .cell-text
+    width: 9%
+
+  .cell-identifier
+    width: 16%
+
+  .cell-full
+    width: 100%
+  td.cell-full
+    padding: 0
+
+  td.cell-status
+    text-transform: uppercase
+    color: $light-gray
+    font-size: 80%
+
+  .collapsed,
+    width: 2%
+  .collapsed .linked-entries,
+  .collapsed .linked-entries span,
+  .collapsed .linked-assets
+    width: 100%
+    overflow: hidden
+    white-space: nowrap
+    text-overflow: ellipsis
+  tbody
+    button
+      color: $blue
+
+  $list-thumbnail-size = 30px
+
+  .linked-entries,
+  .linked-assets
+    padding: 0
+    margin: 0
+    img, [cf-thumbnail]
+      width: $list-thumbnail-size
+      height: $list-thumbnail-size
+  .linked-assets
+    li
+      float: left
+      margin-right: 2px
+      margin-bottom: 0px
+  .asset-count
+    display: block
+    width: $list-thumbnail-size
+    height: $list-thumbnail-size
+    line-height: $list-thumbnail-size
+    text-align: center
+    vertical-align: middle
+    font-weight: bold
+    color: white
+    background-color: $blue
+
+// State variations
+$tr-clickable
+  &:hover
+    background-color: $result-list-highlight
+    cursor: pointer
+
+// Animations
+.result-list.animated
+  tr
+    &.ng-leave
+      transition: all ease-in 0.3s
+      opacity: 1
+      transform: translateX(0)
+    &.ng-leave-active
+      opacity: 0
+      transform: translateX(100%)
+
+.inner-result-list
+  background-color: $gray-background
+  padding-top: 5px
+  padding-bottom: 3px
+  padding-left: 2%
+  padding-right: 2%
+  th, th button
+    text-transform: uppercase
+    font-weight: bold
+  th, td
+    padding-left: 20px
+  td
+    border-bottom: 1px solid $dark-rule
+

@@ -1,0 +1,76 @@
+.validation-dialog .modal-dialog
+  width: 700px
+  user-select: none
+
+.cf-validation-options
+  padding: $modal-dialog-padding/2 0
+  border-bottom: 1px solid $light-rule
+  margin-left: -($modal-dialog-padding)
+  margin-right: -($modal-dialog-padding)
+  padding-left: $modal-dialog-padding
+  padding-right: $modal-dialog-padding
+.cf-validation-options:last-child
+  border-bottom: none
+  padding-bottom: 0
+
+.validation-type-select
+  display: inline
+  button
+    height: 34px
+
+.validation-controls
+  display: inline-block
+  vertical-align: top
+
+.cf-validation-options .validation-controls
+  // TODO this should only need prefixing by validation controls
+  // but the extension of form-styled creates a huge mess in
+  // terms of cascading
+  .select-box
+    padding-right: 12px
+
+    .button-icon-right
+      top: 10px
+
+  input[type]
+    display: inline
+
+  input[type], li
+    width: 250px
+
+  &.regexp
+    input[type]
+      width: 150px
+
+  .block-list
+    margin: 0
+    padding: 0
+    margin-top: 10px
+    width: 270px
+    max-height: 240px
+    overflow-y: auto
+    li
+      text-align: left
+
+.cf-predefined-values-list
+  position: relative
+  width: 270px
+  .ss-dropdown, .ss-directup
+    position: absolute
+    right: -20px
+    color: $lightest-gray
+  .ss-dropdown
+    bottom: 3px
+  .ss-directup
+    top: 0px
+
+.delete-validation
+  display: block
+  color: $light-gray
+  line-height: 38px
+  cursor: pointer
+  text-transform: uppercase
+  float: right
+  &:hover
+    color: $medium-gray
+

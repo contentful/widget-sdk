@@ -1,0 +1,37 @@
+.notifications
+  // Layout
+  position: absolute
+  z-index: 10
+
+  // Hacked
+  top: 60px
+  right: 40px
+
+  .notification
+    // Layout
+    margin-top: 10px
+    padding: 1.3em 1.8em
+    width: 400px
+    z-index: inherit
+
+    // Style
+    background: white
+    border: 1px solid $lightest-gray
+    color: black
+    font-size: 12px
+    font-weight: 600
+    line-height: 18px
+    opacity: 0.9
+    border-radius: 4px
+    box-shadow: 0 2px 8px rgba(0,0,0,0.4), 0 1px 1px rgba(255,255,255,0.2) inset
+
+    &.info
+      background: rgba($green, 0.95)
+      border: 1px solid darken($green, 8%)
+      color: white
+
+    &.error,
+    &.warn
+      background: rgba($red, 0.95)
+      border: 1px solid darken($red, 8%)
+      color: white

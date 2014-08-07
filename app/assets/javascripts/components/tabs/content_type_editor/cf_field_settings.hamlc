@@ -25,6 +25,7 @@
          placeholder="e.g. Product Name"
          ng-change="updateFieldId()"
          tooltip="Field title displayed to editors"
+         tooltip-container=".tab-main"
          tooltip-placement="top")
   %span.field-id-display(tooltip="Field ID used in API"
          ng-if="published") {{field.id}}
@@ -37,6 +38,7 @@
          ot-subdoc ot-bind-text type="text"
          placeholder="e.g. productName"
          tooltip="Field ID used in API"
+         tooltip-container=".tab-main"
          tooltip-placement="top")
   .field-errors(ng-hide="noErrors")
     %span(cf-error-path="['fields', index, 'name']")

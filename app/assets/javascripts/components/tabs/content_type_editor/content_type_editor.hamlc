@@ -28,7 +28,7 @@
     %h1 Content Type Information
   .entity-info-panel
 
-.tab-main
+.tab-main.tab-workbench
   .form-horizontal(name="contentTypeForm")
     .form-field
       %label

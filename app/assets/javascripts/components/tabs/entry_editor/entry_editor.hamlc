@@ -34,7 +34,7 @@
     %h1 Entry Information
   .entity-info-panel
 
-.tab-main
+.tab-main.tab-workbench
   %form.form-horizontal(name="entryForm")
     .form-field(ng-show="hasErrorOnFields")
       %label

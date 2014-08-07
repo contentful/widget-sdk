@@ -1,0 +1,335 @@
+@import 'components/_account.styl'
+@import 'components/_add_dropdown_button.styl'
+@import 'components/_advice.styl'
+@import 'components/_aux_panel.styl'
+@import 'components/_block_lists.styl'
+@import 'components/_button_set.styl'
+@import 'components/_client.styl'
+@import 'components/_dropdown.styl'
+@import 'components/_entity_editor.styl'
+@import 'components/_getty_dialog.styl'
+@import 'components/_left_nav.styl'
+@import 'components/_main_results.styl'
+@import 'components/_modal.styl'
+@import 'components/_nav_bar.styl'
+@import 'components/_notification.styl'
+@import 'components/_progress_bar.styl'
+@import 'components/_result_list.styl'
+@import 'components/_search_area.styl'
+@import 'components/_tip.styl'
+@import 'components/_tooltip.styl'
+@import 'components/_tutorial.styl'
+@import 'components/_validation_dialog.styl'
+@import 'components/_view_customizer.styl'
+@import 'components/cf_logo.styl'
+
+
+// Overwrite some jQuery-UI stuff
+.ui-corner-all
+  border-radius: 3px  3px  3px  3px
+.ui-widget-header
+  background-image: none
+  background-color: $gray-background
+  color: $dark-gray
+
+.ui-autocomplete
+  li
+    list-style-type: none
+
+html
+  .ui-menu-item
+    .ui-state-focus,
+    .ui-state-active
+      background-image: none
+
+// Angular
+.ng-hide
+  display: none
+
+// Delete Icon
+$delete-icon
+  font-size: 8px
+  color: $lightest-gray
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6)
+  &:hover
+    color: $medium-gray
+    cursor: pointer
+
+.aligned-number 
+  min-width: 70px
+  text-align: right
+  display: block
+  max-width: 100px
+
+// Loading indicator
+.loading
+  background-image: url('/app/ajax-loader.gif')
+  background-position: center
+  background-repeat: no-repeat
+  background-size: 25px 25px
+  width: 30px
+  height: 30px
+  img
+    width: 50%
+    vertical-align: middle
+
+.plain-list
+  $plain-list()
+
+.knowledge-base-link
+  display: block
+  &:visited
+    color: $link-blue
+  &:hover
+    color: $link-blue
+  .ss-help
+    display: inline-block
+    vertical-align: middle
+    margin-top: 2px
+
+.knowledge-base-icon
+  color: $light-gray
+  display: inline-block
+  &:link,
+  &:visited
+    color: $light-gray
+  &:hover
+    color: $dark-gray
+  .tooltip-inner
+    width: 200px
+
+// Endless container
+.endless-container
+  .loading
+    margin: auto
+    height: 50px
+    text-align: center
+.endless-container.scrolled
+  box-shadow: rgba(black, .1) 1px 4px 9px -6px inset
+
+// Avatars
+// TODO configure only .avatar here, mix into account.user
+.avatar,
+.account-menus .user
+  img
+    width: $avatar-width
+    border-radius: 3px
+
+button::-moz-focus-inner
+  border: 0
+  padding: 0
+  outline: 0
+
+.transparent-button-layer
+  background-color: transparent
+  position: absolute
+  z-index: 100
+
+.base-button
+  -webkit-appearance: none
+  font-size: 1em
+  text-decoration: none
+  color: $medium-gray
+  display: inline-block
+  vertical-align: middle
+  position: relative
+  padding: 0.6em 1em
+  overflow: hidden
+  border-radius: 3px
+  cursor: pointer
+  &:disabled,
+  &[disabled]
+    cursor: default
+
+a.base-button
+  color: inherit
+
+.default-button
+  @extend .base-button
+  border: 1px solid darken($gray-background, 10%)
+  $gradient($gray-background, darken($gray-background, 4%))
+  box-shadow: 0 1px 1px rgba(255,255,255,0.8) inset, 0 2px 1px rgba(0,0,0,0.05)
+  &:link
+    color: inherit
+  &:not(:disabled),
+  &:not([disabled])
+    &:active,
+    &.active,
+    &:hover
+      $gradient($gray-background, darken($gray-background, 2%))
+    &:active,
+    &.active
+      top: 1px
+      box-shadow: 0 1px 2px darken($gray-background, 5%) inset
+  &:disabled,
+  &[disabled]
+    opacity: 0.5
+    pointer: default
+    &:active
+      top: 0px
+
+.slim-button
+  padding-top: 0
+  padding-bottom: 0
+
+.toggle-button-set
+  $display-flex
+
+.toggle-button
+  flex-grow: 1
+  border-radius: 0
+  &:first-child
+    border-radius: 3px 0 0 3px
+  &:last-child
+    border-radius: 0 3px 3px 0
+  cursor: pointer
+  margin: 0
+  &:active,
+  &.active
+    top: 0
+    box-shadow: 0 2px 2px darken($gray-background, 10%) inset
+    cursor: default
+  &:focus
+    outline: none !important
+
+.flat-button
+  $flat-button()
+
+.button-icon
+  // An Icon inside a button
+  position: relative
+  top: 1px
+  right: 2px
+
+.button-icon-right
+  //TODO
+  @extend .button-icon
+  float: right
+  right: 0
+  left: 3px
+  //font-size: 0.8em
+
+// Tweaks for specific icons
+.button-icon,
+.button-icon-right
+  &.ss-dropdown
+    font-size: 0.8em
+  &.ss-plus
+    font-size: 0.9em
+  &.ss-navigateright
+    font-size: 0.9em
+
+$colored-button($color)
+  font-weight: 600
+  border-color: darken($color, 10%)
+  box-shadow: 0 1px 1px lighten($color, 7%) inset, 0 2px 1px rgba(0,0,0,0.03)
+  i
+    color: lighten($color, 40%)
+  &:not(:disabled),
+  &:not([disabled])
+    &:hover
+      $gradient(lighten($color, 5%), darken($color, 6%))
+    &:active
+      box-shadow: 0 1px 2px darken($color, 5%) inset
+      $gradient($color, darken($color, 4%))
+
+.primary-button
+  &.default-button
+    $blue-highlight()
+    $colored-button($blue)
+
+.danger-button
+  &.default-button
+    $red-highlight()
+    $colored-button($red)
+li.danger-button
+  $red-highlight()
+  $colored-button($red)
+
+.success-button
+  &.default-button
+    $green-highlight()
+    $colored-button($green)
+
+.transparent-button
+  background: none
+  border: none
+  cursor: pointer
+  padding: 0
+  margin: 0
+.transparent-button[disabled]
+  cursor: auto
+
+.toggle-collapse
+  display: inline-block
+  color: inherit
+  cursor: pointer
+  transition: transform 0.1s ease-in-out
+  &.on-right
+    rotate: 180deg
+  &.open
+    rotate: 90deg
+  &:hover
+    color: inherit
+
+.note-box
+  clear: both
+  overflow: hidden
+  margin: 3rem 5%
+  padding: 2rem
+  padding-bottom: 1rem
+  border-radius: 4px
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1)
+  background-color: lighten($gold, 70%)
+  h2
+    text-transform: none
+    margin-bottom: 1.4rem
+  .note-box-dismissal
+    float: right
+    margin-top: 0.5rem
+
+.copy-paste-button
+  position: absolute
+  display: block
+  right: 0px
+  top: 0px
+  bottom: 0px
+  width: 33px
+  line-height: 30px
+  padding: 0
+  padding-left: 4px
+  padding-top: 4px
+  text-align: center
+  vertical-align: middle
+  box-shadow: none
+  .ss-users,
+  .ss-plus
+    display: inline-block
+    line-height: inherit
+  .ss-layers
+    font-size: 15px
+  .ss-plus
+    position: relative
+    font-size: 7px
+    top: -10px
+    left: -2px
+
+.cf-hover
+  .on-hover
+    display: none
+
+// Imported at the end to allow for easier overriding of extendable properties
+// TODO everything above this should move to individual files which are included here
+@import 'components/forms/_cf_dropdown_editor.styl'
+@import 'components/forms/_cf_file_preview.styl'
+@import 'components/forms/_cf_link_editor.styl'
+@import 'components/forms/_file_info.styl'
+@import 'components/forms/_form.styl'
+@import 'components/forms/_form_controls.styl'
+@import 'components/forms/_form_widgets.styl'
+@import 'components/forms/_markdown_editor.styl'
+@import 'components/tabs/_tab_actions.styl'
+@import 'components/tabs/_tab_content.styl'
+@import 'components/tabs/_tab_list.styl'
+
+
