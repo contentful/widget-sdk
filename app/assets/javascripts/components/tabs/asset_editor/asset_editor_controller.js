@@ -140,7 +140,6 @@ angular.module('contentful').controller('AssetEditorCtrl', ['$scope', 'validatio
     $scope.asset.process($scope.otDoc.version, locale.code, function (err) {
       if (err) {
         notification.serverError('There has been a problem processing the Asset.', err);
-        console.log('asset processing error', err);
       } else {
         setTitleOnDoc(file, localeCode);
       }
