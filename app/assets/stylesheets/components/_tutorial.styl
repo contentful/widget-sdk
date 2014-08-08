@@ -56,23 +56,23 @@ $guider-size = 10px
 .guiders_arrow_left
   display: block
   left: -($guider-size)
-  transform-origin: top, right
+  transform-origin: top right
   transform: rotate(-45deg)
 .guiders_arrow_right
   display: block
   right: -($guider-size)
-  transform-origin: bottom, left
+  transform-origin: bottom left
   transform: translateY(-10px) rotate(45deg + 90deg)
 .guiders_arrow_up
   display: block
   top: -($guider-size)
-  transform-origin: bottom, left
+  transform-origin: bottom left
   transform: rotate(45deg)
 .guiders_arrow_down
   display: block
   background-color: white
   bottom: -($guider-size)
-  transform-origin: top, right
+  transform-origin: top right
   transform: translateX(-10px) rotate(-45deg - 90deg)
 
 // Welcome /////////////////////////////////////////////////////////////////////
@@ -250,9 +250,12 @@ $welcome-slide-width = 800px
     $stretch(false, 1.5 * $modal-dialog-padding, $modal-dialog-padding, 1.5 * $modal-dialog-padding)
   .tutorial-select-box button
     width: 100%
-    cursor: hover
+    cursor: pointer
     &.take, &.repeat
-      padding: .75em inherit
+      padding-top: .75em
+      padding-bottom: .75em
+      padding-left: inherit
+      padding-right: inherit
 
 // Adjustments for specific guiders
 
