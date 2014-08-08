@@ -108,7 +108,7 @@ angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector
 
 
   // Helper methods on the scope
-  $scope.getFieldValidationsOfType = function(field, type) {
+  $scope.getFieldValidationsOfType = function(field, type) {//TODO this should go in a service
     return _.filter(_.pluck(field.validations, type))[0];
   };
 

@@ -170,7 +170,7 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
     var type = detectArrayLinkType(field);
     var widgetTypes = WIDGET_TYPES[type];
     var hasValidations = getFieldValidationsOfType(field, 'in').length > 0;
-    if(hasValidations && _.contains(widgetTypes, 'dropdown')) return 'dropdown';
+    if(hasValidations && _.contains(widgetTypes, 'radio')) return 'radio';
     if (type === 'Text') {
       if (contentType.data.displayField === field.id ||
           contentType.getId() === 'asset') {

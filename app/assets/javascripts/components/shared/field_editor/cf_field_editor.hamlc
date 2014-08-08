@@ -5,7 +5,8 @@
     ot-subdoc=""
     ot-bind-text=""
     ng-disabled="!otEditable")
-  .cf-dropdown-editor(ng-switch-when="dropdown" ng-model="fieldData.value" ot-bind-internal="selected.value")
+  .cf-dropdown-editor(ng-switch-when="dropdown" ng-model="fieldData.value" ot-bind-internal="valuesController.selected")
+  %cf-radio-editor(ng-switch-when="radio" ng-model="fieldData.value" ot-bind-internal="valuesController.selected")
   .cf-markdown-editor(ng-switch-when="markdown")
   %textarea(ng-switch-when="multipleLine"
     cf-input-autogrow=""
@@ -13,13 +14,6 @@
     ot-subdoc=""
     ot-bind-text=""
     ng-disabled="!otEditable")
-  %div(ng-switch-when="radio")
-    %label
-      %input(type="radio" ng-model="fieldData.value" ng-value="true" ot-bind-model="" ng-disabled="!otEditable")
-      %span.yes Yes
-    %label
-      %input(type="radio" ng-model="fieldData.value" ng-value="false" ot-bind-model="" ng-disabled="!otEditable")
-      %span.no No
   .cf-datetime-editor(ng-switch-when="datePicker" ng-model="fieldData.value")
   %div(ng-switch-when="linksEditor"
     ng-model="fieldData.value"

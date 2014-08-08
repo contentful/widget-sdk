@@ -1,6 +1,6 @@
 .select-box.dropdown-editor(ng-class="dropdownWidthClass()")
-  %select(ng-model="selected.value"
+  %select(ng-model="valuesController.selected"
           ng-required="field.required"
-          ng-options="value for value in valuesList")
+          ng-options="v.value as v.label for v in valuesController.valuesList")
     %option(value="") Choose a value
   %i.button-icon-right.ss-dropdown
