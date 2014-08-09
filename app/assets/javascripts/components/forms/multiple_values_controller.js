@@ -13,7 +13,7 @@ angular.module('contentful').controller('MultipleValuesController', ['$scope', f
       // TODO getFieldValidationsOfType should come from a service or be defined here
       // Having it on the scope is ugly
       return _.map($scope.getFieldValidationsOfType(field, 'in'), function (value) {
-        return { value: value, label: value };
+        return { value: value, label: value.toString() };
       });
     }
   }

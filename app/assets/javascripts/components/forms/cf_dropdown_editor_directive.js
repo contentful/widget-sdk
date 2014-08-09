@@ -19,10 +19,9 @@ angular.module('contentful').directive('cfDropdownEditor', function(){
       }
 
       scope.dropdownWidthClass = function () {
-        var maxLength = (_.max(scope.valuesController.valuesList, function (val) {
-          if(typeof val == 'string') return val.length;
-          if(typeof val == 'number') return (val+'').length;
-        })+'').length;
+        var maxLength = _.max(scope.valuesController.valuesList, function (val) {
+          return val.label.length;
+        }).label.length;
         if(maxLength <= 19) return 'small-dropdown';
         if(maxLength <= 45) return 'medium-dropdown';
         return 'large-dropdown';
