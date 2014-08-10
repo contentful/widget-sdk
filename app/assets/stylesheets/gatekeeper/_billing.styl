@@ -3,10 +3,10 @@
   line-height: 40px
   margin: 0 0 20px 0
   padding: 0 20px
-  clearfix()
   border-bottom: 1px solid $dark-rule
   text-transform: uppercase
   font-size: 14px
+  $pie-clearfix()
   li
     display: block
     width: 25%
@@ -28,7 +28,6 @@
 .formtastic .yellow-highlight
   background-color: $subscription-yellow
   padding: 10px 0
-  width: $form-labelwidth + $formtastic-fieldwidth + 3%
   $scalefactor = 100% / ($form-labelwidth + $formtastic-fieldwidth + 3%)
   label
     width: $form-labelwidth * $scalefactor
@@ -50,8 +49,8 @@
   tr
     line-height: 35px
     height: 35px
+  // scalefactor to make th width relative to total form
   th
-    // scalefactor to make th width relative to total form
     $scalefactor = 100% / ($form-labelwidth + $formtastic-fieldwidth)
     width: $form-labelwidth * $scalefactor
     text-align: right

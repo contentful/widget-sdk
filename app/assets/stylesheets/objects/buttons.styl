@@ -1,0 +1,165 @@
+.transparent-button-layer
+  background-color: transparent
+  position: absolute
+  z-index: 100
+
+.base-button
+  -webkit-appearance: none
+  font-size: 1em
+  text-decoration: none
+  color: $medium-gray
+  display: inline-block
+  vertical-align: middle
+  position: relative
+  padding: 0.6em 1em
+  overflow: hidden
+  border-radius: 3px
+  cursor: pointer
+  &:disabled,
+  &[disabled]
+    cursor: default
+
+a.base-button
+  color: inherit
+
+.default-button
+  @extend .base-button
+  border: 1px solid darken($gray-background, 10%)
+  $gradient($gray-background, darken($gray-background, 4%))
+  box-shadow: 0 1px 1px rgba(255,255,255,0.8) inset, 0 2px 1px rgba(0,0,0,0.05)
+  &:link
+    color: inherit
+  &:not(:disabled),
+  &:not([disabled])
+    &:active,
+    &.active,
+    &:hover
+      $gradient($gray-background, darken($gray-background, 2%))
+    &:active,
+    &.active
+      top: 1px
+      box-shadow: 0 1px 2px darken($gray-background, 5%) inset
+  &:disabled,
+  &[disabled]
+    opacity: 0.5
+    pointer: default
+    &:active
+      top: 0px
+
+.slim-button
+  padding-top: 0
+  padding-bottom: 0
+
+.toggle-button-set
+  $display-flex
+
+.toggle-button
+  flex-grow: 1
+  border-radius: 0
+  &:first-child
+    border-radius: 3px 0 0 3px
+  &:last-child
+    border-radius: 0 3px 3px 0
+  cursor: pointer
+  margin: 0
+  &:active,
+  &.active
+    top: 0
+    box-shadow: 0 2px 2px darken($gray-background, 10%) inset
+    cursor: default
+  &:focus
+    outline: none !important
+
+.flat-button
+  $flat-button()
+
+// An Icon inside a button
+.button-icon
+  position: relative
+  top: 1px
+  right: 2px
+
+.button-icon-right
+  @extend .button-icon
+  float: right
+  right: 0
+  left: 3px
+
+// Tweaks for specific icons
+.button-icon,
+.button-icon-right
+  &.ss-dropdown
+    font-size: 0.8em
+  &.ss-plus
+    font-size: 0.9em
+  &.ss-navigateright
+    font-size: 0.9em
+
+.primary-button
+  &.default-button
+    $blue-highlight()
+    $colored-button($blue)
+    &:hover
+      $blue-highlight()
+
+.danger-button
+  &.default-button
+    $red-highlight()
+    $colored-button($red)
+li.danger-button
+  $red-highlight()
+  $colored-button($red)
+
+.success-button
+  &.default-button
+    $green-highlight()
+    $colored-button($green)
+
+.transparent-button
+  background: none
+  border: none
+  cursor: pointer
+  padding: 0
+  margin: 0
+.transparent-button[disabled]
+  cursor: auto
+
+.toggle-collapse
+  display: inline-block
+  color: inherit
+  cursor: pointer
+  transition: transform 0.1s ease-in-out
+  &.on-right
+    transform: rotate(180deg)
+  &.open
+    transform: rotate(90deg)
+  &:hover
+    color: inherit
+
+.copy-paste-button
+  position: absolute
+  display: block
+  right: 0px
+  top: 0px
+  bottom: 0px
+  width: 33px
+  line-height: 30px
+  padding: 0
+  padding-left: 4px
+  padding-top: 4px
+  text-align: center
+  vertical-align: middle
+  box-shadow: none
+  .ss-users,
+  .ss-plus
+    display: inline-block
+    line-height: inherit
+  .ss-layers
+    font-size: 15px
+  .ss-plus
+    position: relative
+    font-size: 7px
+    top: -10px
+    left: -2px
+
+

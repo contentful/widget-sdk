@@ -1,0 +1,43 @@
+// TODO move the following mixins onto classes maybe
+$focus-styles()
+  outline: 1px dotted
+  outline: -webkit-focus-ring-color auto 5px
+
+$tooltip-opaque()
+  .tooltip.in
+    opacity: 1
+
+$caret()
+  font-family: "SSStandard"
+  color: white
+  font-size: $caret-size
+  position: absolute
+
+$tab-padding()
+  padding-left: 30px
+  padding-right: 30px
+
+$nav-bar-dropdowns()
+  .separator,
+  .dropdown-menu li.top-separator
+    border-top: 1px solid $medium-dark-gray
+  .dropdown-menu
+    border: none
+    background: darken($dark-gray, 10%)
+    .dropdown-menu-item
+      color: white
+      border: none
+      box-shadow: none
+  .no-content-types
+    background: $dark-gray
+
+// Delete Icon
+$delete-icon
+  font-size: 8px
+  color: $lightest-gray
+  text-shadow: 0 1px 0 rgba(255,255,255,0.6)
+  &:hover
+    color: $medium-gray
+    cursor: pointer
+
+
