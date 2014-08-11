@@ -8,7 +8,7 @@ angular.module('contentful').controller('FieldWidgetSettingsCtrl', ['$scope', '$
     'helpText'
   ];
 
-  $scope.field = $scope.getWidgetField($scope.widget);
+  $scope.field = $scope.getFieldForWidget($scope.widget);
 
   widgetTypes.forField($scope.field).then(function (types) {
     $scope.widgetTypesForType = types;

@@ -10,7 +10,7 @@ angular.module('contentful').controller('EditingInterfaceEditorCtrl', ['$scope',
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
   $scope.$watch('tab.params.editingInterface', 'editingInterface=tab.params.editingInterface');
 
-  $scope.getWidgetField = function(widget) {
+  $scope.getFieldForWidget = function(widget) {
     return _.find($scope.contentType.data.fields, {id: widget.fieldId});
   };
 

@@ -29,11 +29,11 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
 
   function addLocalesAndFieldToWidget(widget) {
     if (widget.type === 'field') {
-      var field = getWidgetField(widget);
+      var field = getFieldForWidget(widget);
       var locales = _.union(getFieldLocales(field), getErrorLocales(field));
       locales = makeUnique(locales);
       return inherit(widget, {
-        field: getWidgetField(widget),
+        field: getFieldForWidget(widget),
         locales: locales
       });
     } else {
@@ -44,7 +44,7 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
   }
 
   function widgetIsVisible(widget) {
-    return widget.type === 'static' || fieldIsEditable(getWidgetField(widget));
+    return widget.type === 'static' || fieldIsEditable(getFieldForWidget(widget));
   }
 
   function fieldIsEditable(field) {
@@ -64,7 +64,7 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
     return uniqLocales;
   }
 
-  function getWidgetField(widget) {
+  function getFieldForWidget(widget) {
     return _.find(controller.contentType.data.fields, {id: widget.fieldId});
   }
 

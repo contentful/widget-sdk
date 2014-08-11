@@ -29,7 +29,7 @@
 
     .field-widget-settings(
         ng-repeat="widget in editingInterface.widgets track by widget.id"
-        ng-hide="getWidgetField(widget).disabled && !preferences.showDisabledFields"
+        ng-hide="getFieldForWidget(widget).disabled && !preferences.showDisabledFields"
         ng-class="{open: isFieldOpen(field), active: !field.disabled }")
 
 .tab-actions
