@@ -29,6 +29,10 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', 'Pa
     this._searchResultsVisible = true;
   };
 
+  this.areResultsVisible = function () {
+    return this._searchResultsVisible;
+  };
+
   $scope.$on('searchSubmitted', function () {
     controller._resetEntities();
   });

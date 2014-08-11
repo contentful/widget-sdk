@@ -89,6 +89,7 @@
     %button.default-button.danger-button.delete-confirm(type="button"
                   cf-click-outside="deleteConfirm=false"
                   cf-click-outside-ignore=".delete"
+                  cf-click-outside-when="deleteConfirm"
                   ng-show="deleteConfirm"
                   ng-click="delete()"
                   tooltip="Click anywhere else to dismiss")
