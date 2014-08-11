@@ -25,7 +25,7 @@ angular.module('contentful').directive('cfRatingEditor', ['$injector', function(
       $scope.setRating  = setRating;
 
       $scope.hasRating = function () {
-        return _.isNumber($scope.rating) && $scope.rating > 0
+        return _.isNumber($scope.rating) && $scope.rating > 0;
       };
 
       function setPending(index) {
