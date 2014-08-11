@@ -75,7 +75,7 @@ describe('Widget types service', function () {
 
     it('with an unexistent field', function() {
       field.type = 'unsupportedtype';
-      expect(widgetTypes.forFieldWithContentType(field, contentType)).toBeNull();
+      expect(widgetTypes.defaultType(field, contentType)).toBeUndefined();
     });
 
     describe('if validations exist', function() {
@@ -85,12 +85,12 @@ describe('Widget types service', function () {
 
       it('for a type with a dropdown widget', function() {
         field.type = 'Symbol';
-        expect(widgetTypes.forFieldWithContentType(field, contentType)).toBe('dropdown');
+        expect(widgetTypes.defaultType(field, contentType)).toBe('dropdown');
       });
 
       it('for a type with no dropdown widget', function() {
         field.type = 'Date';
-        expect(widgetTypes.forFieldWithContentType(field, contentType)).toBe('datePicker');
+        expect(widgetTypes.defaultType(field, contentType)).toBe('datePicker');
       });
     });
 
@@ -102,33 +102,33 @@ describe('Widget types service', function () {
 
       it('and is display field', function() {
         contentType.data.displayField = 'textfield';
-        expect(widgetTypes.forFieldWithContentType(field, contentType)).toBe('singleLine');
+        expect(widgetTypes.defaultType(field, contentType)).toBe('singleLine');
       });
 
       it('and is asset', function() {
         idStub.returns('asset');
-        expect(widgetTypes.forFieldWithContentType(field, contentType)).toBe('singleLine');
+        expect(widgetTypes.defaultType(field, contentType)).toBe('singleLine');
       });
 
       it('is no display field or asset', function() {
-        expect(widgetTypes.forFieldWithContentType(field, contentType)).toBe('markdown');
+        expect(widgetTypes.defaultType(field, contentType)).toBe('markdown');
       });
     });
 
     it('if field is Link', function() {
       field.type = 'Link';
-      expect(widgetTypes.forFieldWithContentType(field, contentType)).toBe('linkEditor');
+      expect(widgetTypes.defaultType(field, contentType)).toBe('linkEditor');
     });
 
     it('if field is File', function() {
       field.type = 'File';
-      expect(widgetTypes.forFieldWithContentType(field, contentType)).toBe('fileEditor');
+      expect(widgetTypes.defaultType(field, contentType)).toBe('fileEditor');
     });
 
     it('if field is a list of Links', function() {
       field.type = 'Array';
       field.items = {type: 'Link'};
-      expect(widgetTypes.forFieldWithContentType(field, contentType)).toBe('linksEditor');
+      expect(widgetTypes.defaultType(field, contentType)).toBe('linksEditor');
     });
   });
 

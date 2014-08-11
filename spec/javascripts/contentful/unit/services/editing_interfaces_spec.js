@@ -6,9 +6,9 @@ describe('Editing interfaces service', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs(['forFieldWithContentType', 'info', 'warn', 'serverError']);
+      stubs = $provide.makeStubs(['defaultType', 'info', 'warn', 'serverError']);
       $provide.value('widgetTypes', {
-        forFieldWithContentType: stubs.forFieldWithContentType
+        defaultType: stubs.defaultType
       });
 
       $provide.value('notification', {
@@ -118,7 +118,7 @@ describe('Editing interfaces service', function () {
     });
 
     it('gets widget type', function() {
-      expect(stubs.forFieldWithContentType).toBeCalled();
+      expect(stubs.defaultType).toBeCalled();
     });
   });
 
