@@ -1,13 +1,13 @@
 'use strict';
 
 angular.module('contentful').controller('AssetEditorCtrl', ['$scope', '$injector', function AssetEditorCtrl($scope, $injector) {
-  var $controller      = $injector.get('$controller');
-  var AssetContentType = $injector.get('AssetContentType');
-  var ShareJS          = $injector.get('ShareJS');
-  var addCanMethods    = $injector.get('addCanMethods');
-  var notification     = $injector.get('notification');
-  var stringUtils      = $injector.get('stringUtils');
-  var validation       = $injector.get('validation');
+  var $controller       = $injector.get('$controller');
+  var AssetContentType  = $injector.get('AssetContentType');
+  var ShareJS           = $injector.get('ShareJS');
+  var addCanMethods     = $injector.get('addCanMethods');
+  var notification      = $injector.get('notification');
+  var stringUtils       = $injector.get('stringUtils');
+  var validation        = $injector.get('validation');
 
   //Initialization
   $scope.$watch('tab.params.asset', 'asset=tab.params.asset');
@@ -86,7 +86,7 @@ angular.module('contentful').controller('AssetEditorCtrl', ['$scope', '$injector
   $scope.formWidgetsController = $controller('FormWidgetsController', {$scope: $scope});
   $scope.formWidgetsController.contentType = {
     data: AssetContentType,
-    getId: _.constant('asset')
+    getId: _.constant('asset'),
   };
 
   // File uploads

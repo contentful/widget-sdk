@@ -6,10 +6,8 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   var widgetTypes = $injector.get('widgetTypes');
 
   return {
-    forContentTypeWithId: function (contentType, id) {
-      var cb = $q.callback();
-      contentType.getEditorInterface(id, cb);
-      return cb.promise
+    forContentTypeWithId: function (contentType, interfaceId) {
+      return getEditorInterface(contentType, interfaceId)
       .then(function (config) {
         return config;
       }, function (err) {
@@ -36,6 +34,16 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
 
     defaultInterface: defaultInterface
   };
+
+  function getEditorInterface(contentType, interfaceId) {
+    if (contentType.getId() === 'asset') {
+      return $q.when(defaultInterface(contentType));
+    } else {
+      var cb = $q.callback();
+      contentType.getEditorInterface(interfaceId, cb);
+      return cb.promise;
+    }
+  }
 
   function defaultInterface(contentType) {
     var config = {
