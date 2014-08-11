@@ -40,4 +40,33 @@ $delete-icon
     color: $medium-gray
     cursor: pointer
 
+// State variations
+// TODO lol nope
+$tr-clickable
+  &:hover
+    background-color: $result-list-highlight
+    cursor: pointer
+
+// Main styles
+// TODO nope_octopus.gif
+$result-list-cell
+  line-height: 18px
+  vertical-align: middle
+  padding: 8px 0px
+  padding-right: 10px
+  text-align: left
+  white-space: nowrap
+  overflow: hidden
+  text-overflow: ellipsis
+  span
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
+
+$result-list-border-bottom
+  tbody
+    tr:last-child
+      border-bottom: 1px solid $light-rule
+
+
 

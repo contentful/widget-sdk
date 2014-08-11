@@ -2,26 +2,6 @@
 $standalone-table
   border-radius: 3px
 
-$result-list-border-bottom
-  tbody
-    tr:last-child
-      border-bottom: 1px solid $light-rule
-
-// Main styles
-$result-list-cell
-  line-height: 18px
-  vertical-align: middle
-  padding: 8px 0px
-  padding-right: 10px
-  text-align: left
-  white-space: nowrap
-  overflow: hidden
-  text-overflow: ellipsis
-  span
-    white-space: nowrap
-    overflow: hidden
-    text-overflow: ellipsis
-
 .result-length
   text-align: center
   width: 100%
@@ -222,12 +202,6 @@ $result-list-cell
     font-weight: bold
     color: white
     background-color: $blue
-
-// State variations
-$tr-clickable
-  &:hover
-    background-color: $result-list-highlight
-    cursor: pointer
 
 // Animations
 .result-list.animated
