@@ -17,6 +17,7 @@ angular.module('contentful').directive('cfOnBlurComponent', ['$document', '$pars
       });
 
       function clickHandler(event) {
+        if(!scope.$eval(attr.cfOnBlurComponentWhen)) return;
         event.stopPropagation();
         var targetParents = $(event.target).parents();
         var inside = targetParents.index(elem) !== -1;

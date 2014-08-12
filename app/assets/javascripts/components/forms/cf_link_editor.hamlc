@@ -21,7 +21,8 @@
       tooltip="Search for existing {{entityName}}"
       search-content-type="getSearchContentType()"
       placeholder="Search for {{entityName}}"
-      cf-on-blur-component="leftSearch($event)")
+      cf-on-blur-component="leftSearch($event)"
+      cf-on-blur-component-when="showAutocompletions")
 
     -# link to entry or entries
     .dropdown-btn.add-new(
@@ -59,6 +60,7 @@
   .results.search-options-on.result-list-empty(ng-show="searchController.isEmptyState()"
                              ng-switch="linkType"
                              cf-click-outside-ignore=".search-button, .ss-search, .search-field input"
+                             cf-click-outside-when="searchController.areResultsVisible()"
                              cf-click-outside="clickOutsideHandler()")
     %div(ng-switch-when="Entry")
       %p No Entries created yet.
@@ -68,6 +70,7 @@
   .results.search-options-on(ng-show="searchController.isResultsState()"
                              ng-switch="linkType"
                              cf-click-outside-ignore=".search-button, .ss-search, .search-field input"
+                             cf-click-outside-when="searchController.areResultsVisible()"
                              cf-click-outside="clickOutsideHandler()")
 
     %div(ng-switch-when="Entry")
