@@ -15,52 +15,53 @@ describe('Widget types service', function () {
     $log.assertEmpty();
   }));
 
-
-  function testTypesFor(fieldType) {
-    describe('gets widget types for a field with type '+fieldType, function() {
-      var types;
-      beforeEach(function() {
-        widgetTypes.forField({type: fieldType}).then(function (_types) {
-          types = _types;
+  describe('forField', function(){
+    function testTypesFor(fieldType) {
+      describe('gets widget types for a field with type '+fieldType, function() {
+        var types;
+        beforeEach(function() {
+          widgetTypes.forField({type: fieldType}).then(function (_types) {
+            types = _types;
+          });
+          $rootScope.$apply();
         });
-        $rootScope.$apply();
-      });
 
-      it('gets types list', function() {
-        expect(types.length).not.toBeUndefined();
-      });
+        it('gets types list', function() {
+          expect(types.length).not.toBeUndefined();
+        });
 
-      it('types have ids', function() {
-        expect(_.every(types, function (item) {
-          return item.id && item.name;
-        })).toBeTruthy();
+        it('types have ids', function() {
+          expect(_.every(types, function (item) {
+            return item.id && item.name;
+          })).toBeTruthy();
+        });
       });
+    }
+
+    testTypesFor('Text');
+    testTypesFor('Symbol');
+    testTypesFor('Symbols');
+    testTypesFor('Integer');
+    testTypesFor('Number');
+    testTypesFor('Boolean');
+    testTypesFor('Date');
+    testTypesFor('Location');
+    testTypesFor('Link');
+    testTypesFor('Links');
+    testTypesFor('File');
+    testTypesFor('Object');
+
+    it('fails to get widget for an unknown type', function() {
+      var err;
+      widgetTypes.forField({type: 'unsupportedtype'}).catch(function (_err) {
+        err = _err;
+      });
+      $rootScope.$apply();
+      expect(err).not.toBeUndefined();
     });
-  }
-
-  testTypesFor('Text');
-  testTypesFor('Symbol');
-  testTypesFor('Symbols');
-  testTypesFor('Integer');
-  testTypesFor('Number');
-  testTypesFor('Boolean');
-  testTypesFor('Date');
-  testTypesFor('Location');
-  testTypesFor('Link');
-  testTypesFor('Links');
-  testTypesFor('File');
-  testTypesFor('Object');
-
-  it('fails to get widget for an unknown type', function() {
-    var err;
-    widgetTypes.forField({type: 'unsupportedtype'}).catch(function (_err) {
-      err = _err;
-    });
-    $rootScope.$apply();
-    expect(err).not.toBeUndefined();
   });
-
-  describe('gets a widget for a field with a content type', function() {
+  
+  describe('defaultType', function() {
     var contentType, field, idStub;
 
     beforeEach(function() {
@@ -132,24 +133,20 @@ describe('Widget types service', function () {
     });
   });
 
-  describe('gets params for a widget type', function() {
-    it('it the widget type exists', function() {
-      var params;
-      widgetTypes.params('singleLine').then(function (_params) {
-        params = _params;
-      });
-      $rootScope.$apply();
-      expect(params).toBeDefined();
+  describe('optionsForWidget', function(){
+    it('should return empty array for missing widget', function () {
+      expect(widgetTypes.optionsForWidget(undefined)).toEqual([]);
+      expect(widgetTypes.optionsForWidget(null)).toEqual([]);
     });
-
-    it('widget type does not exist', function() {
-      var err;
-      widgetTypes.params('unsupportedWidget').catch(function (_err) {
-        err = _err;
-      });
-      $rootScope.$apply();
-      expect(err).toBeDefined();
+    it('should contain common options', function () {
+      var options = widgetTypes.optionsForWidget({options: []});
+      expect(_.find(options, {param: 'helpText'})).toBeTruthy();
+    });
+    it('should contain widget options', function () {
+      var options = widgetTypes.optionsForWidget({options: ['foo']});
+      expect(options).toContain('foo');
     });
   });
+  
 
 });

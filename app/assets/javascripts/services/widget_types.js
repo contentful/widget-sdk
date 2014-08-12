@@ -2,96 +2,84 @@
 angular.module('contentful').factory('widgetTypes', ['$injector', function($injector){
   var $q = $injector.get('$q');
 
-  var WIDGET_PARAMS = {
+  var COMMON_OPTIONS = [
+    {param: 'helpText', name: 'Help text', description: 'This help text will show up below the field'}
+  ];
+
+  var WIDGETS = {
     singleLine: {
       fieldTypes: ['Text', 'Symbol'],
       name: 'Single Line',
-      fields: {}
     },
     numberEditor: {
       fieldTypes: ['Integer', 'Number'],
       name: 'Single Line',
-      fields: {}
     },
     multipleLine: {
       fieldTypes: ['Text'],
       name: 'Multiple Line',
-      fields: {}
     },
     markdown: {
       fieldTypes: ['Text'],
       name: 'Markdown',
-      fields: {}
     },
     dropdown: {
       fieldTypes: ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'],
       name: 'Dropdown',
-      fields: {}
     },
     radio: {
       fieldTypes: ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'],
       name: 'Radio',
-      fields: {}
     },
     rating: {
       fieldTypes: ['Integer', 'Number'],
       name: 'Rating',
-      fields: {
-      }
+      options: [
+        {param: 'stars', name: 'Number of stars', default: 10}
+      ]
     },
     toggle: {
       fieldTypes: ['Boolean'],
       name: 'Toggle',
-      fields: {}
     },
     datePicker: {
       fieldTypes: ['Date'],
       name: 'Date Picker',
-      fields: {}
     },
     dateDropdown: {
       fieldTypes: ['Date'],
       name: 'Date Dropdown',
-      fields: {}
     },
     locationEditor: {
       fieldTypes: ['Location'],
       name: 'Location',
-      fields: {}
     },
     coordinates: {
       fieldTypes: ['Location'],
       name: 'Coordinates',
-      fields: {}
     },
     item: {
       fieldTypes: ['Link', 'File'],
       name: 'Item',
-      fields: {}
     },
     card: {
       fieldTypes: ['Link'],
       name: 'Card',
-      fields: {}
     },
     gallery: {
       fieldTypes: ['File'],
       name: 'Gallery',
-      fields: {}
     },
     //list: {
       //name: 'List',
-      //fields: {}
     //},
     objectEditor: {
       fieldTypes: ['Object'],
       name: 'Object',
-      fields: {}
     },
     listInput: {
       fieldTypes: ['Symbols'],
       name: 'List',
-      fields: {}
     },
     //fileEditor: {
       //name: 'File',
@@ -100,18 +88,16 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
     linkEditor: {
       fieldTypes: ['Link'],
       name: 'Link',
-      fields: {}
     },
     linksEditor: {
       fieldTypes: ['Links'],
       name: 'Links',
-      fields: {}
     }
   };
 
   function widgetsForField(field) {
     var fieldType = detectFieldType(field);
-    var widgets =  _(WIDGET_PARAMS)
+    var widgets =  _(WIDGETS)
     .pick(function (widget) {
       return _.contains(widget.fieldTypes, fieldType);
     })
@@ -126,16 +112,10 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
     }
   }
 
-  function widgetParams(widgetType) {
-    if(!(widgetType in WIDGET_PARAMS))
-      return $q.reject(new Error('Widget type '+widgetType+' is not supported.'));
-    return $q.when(WIDGET_PARAMS[widgetType].fields);
-  }
-
   function defaultWidgetType(field, contentType) {
     var type = detectFieldType(field);
     var hasValidations = getFieldValidationsOfType(field, 'in').length > 0;
-    if(hasValidations && _.contains(WIDGET_PARAMS['dropdown'].fieldTypes, type)) return 'dropdown';
+    if(hasValidations && _.contains(WIDGETS['dropdown'].fieldTypes, type)) return 'dropdown';
     if (type === 'Text') {
       if (contentType.data.displayField === field.id ||
           contentType.getId() === 'asset') {
@@ -147,7 +127,7 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
     if (type === 'Link' ) return 'linkEditor';
     if (type === 'File' ) return 'fileEditor';
 
-    return _.findKey(WIDGET_PARAMS, function (widget) {
+    return _.findKey(WIDGETS, function (widget) {
       return _.contains(widget.fieldTypes, type);
     });
   }
@@ -166,10 +146,18 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
     return _.pluck(field.validations, type);
   }
 
+  function optionsForWidget(widget) {
+    if (widget) {
+      return COMMON_OPTIONS.concat(widget.options || []);
+    } else {
+      return [];
+    }
+  }
+
   return {
     forField: widgetsForField,
     defaultType: defaultWidgetType,
-    params: widgetParams
+    optionsForWidget: optionsForWidget
   };
 
 }]);

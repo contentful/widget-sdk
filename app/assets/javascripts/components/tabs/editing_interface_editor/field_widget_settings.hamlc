@@ -22,6 +22,13 @@
         Widget Type
       .form-controls
         .field-editor
-          %select(ng-model="selectedWidgetType"
-                  ng-options="value.name for value in widgetTypesForType")
--#.params-field(ng-repeat="setting in widgetParamsFields")
+          %select(ng-model="widget.widgetType"
+                  ng-change="widgetTypeChanged()"
+                  ng-options="type.id as type.name for type in widgetTypesForType")
+    .form-field(ng-repeat="option in widgetOptions")
+      %label {{option.name}}
+      .form-controls
+        .field-editor
+          %input(type="text"
+                 placeholder="{{option.description}}"
+                 ng-model="widget.widgetParams[option.param]")
