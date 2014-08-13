@@ -22,9 +22,9 @@
       ng-class="{'allow-drag': editable(folder)}")
 
 .view-menu-buttons.menu-with-buttons-bottom(ng-if="viewMenuEditable")
-  .dropdown-btn
-    %i.ss-plus.dropdown-toggle
-    .dropdown-menu(position="topright" collision="none")
+  .dropdown-btn(cf-dropdown)
+    %i.ss-plus.dropdown-toggle(cf-dropdown-toggle)
+    .dropdown-menu(cf-dropdown-menu="" position="topright" collision="none")
       %ul.dropdown-menu-list
         %li.dropdown-menu-item(ng-click="addFolder()" dropdown-close="") Add Folder
         %li.dropdown-menu-item(ng-click="addViewToDefault()" dropdown-close="") Save current view as…

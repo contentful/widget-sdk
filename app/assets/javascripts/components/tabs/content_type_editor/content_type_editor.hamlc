@@ -12,11 +12,11 @@
             tooltip="Toggle additional details"
             tooltip-placement="bottom")
       Info
-    .dropdown-btn
-      %a.flat-button.dropdown-toggle
+    .dropdown-btn(cf-dropdown)
+      %a.flat-button.dropdown-toggle(cf-dropdown-toggle)
         %i.ss-dropdown.button-icon-right
         %span View
-      .dropdown-menu
+      .dropdown-menu(cf-dropdown-menu)
         %ul.dropdown-menu-list
           %li.dropdown-menu-item
             %label

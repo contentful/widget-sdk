@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('contentful').directive('addDropdownButton', ['analytics', function(analytics) {
+angular.module('contentful').directive('cfAddDropdownButton', ['analytics', function(analytics) {
   return {
-    template: JST.add_dropdown_button(),
-    restrict: 'C',
+    template: JST.cf_add_dropdown_button(),
+    restrict: 'A',
     link: function (scope, elem) {
-      elem.find('.dropdown-toggle').click(function (event) {
+      elem.find('[cf-dropdown-toggle]').click(function (event) {
         if ($(event.currentTarget).parent().hasClass('active')) {
           analytics.track('Clicked Add-Button', {
             currentSection: scope.spaceContext.tabList.currentSection(),
@@ -15,7 +15,7 @@ angular.module('contentful').directive('addDropdownButton', ['analytics', functi
       });
 
       scope.$on('newContentTypePublished', function (event, contentType) {
-        var toggle = elem.find('.dropdown-toggle');
+        var toggle = elem.find('[cf-dropdown-toggle]');
         toggle.tooltip({
           delay: {show: 100, hide: 100},
           trigger: 'manual',

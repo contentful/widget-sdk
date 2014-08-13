@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('contentful').directive('dropdownBtn', ['$parse', function($parse) {
+angular.module('contentful').directive('cfDropdown', ['$parse', function($parse) {
   return {
-    restrict: 'C',
+    restrict: 'A',
     link: function(scope, element, attrs) {
       var onClose = attrs.onClose ? $parse(attrs.onClose) : undefined;
 
@@ -27,10 +27,10 @@ angular.module('contentful').directive('dropdownBtn', ['$parse', function($parse
       };
 
       var isDisabled = function () {
-        return element.find('.dropdown-toggle[disabled]').length > 0;
+        return element.find('[cf-dropdown-toggle][disabled]').length > 0;
       };
 
-      element.find('.dropdown-toggle').click(function(event) {
+      element.find('[cf-dropdown-toggle]').click(function(event) {
         event.preventDefault();
         scope.$apply(toggle);
       });
@@ -39,7 +39,7 @@ angular.module('contentful').directive('dropdownBtn', ['$parse', function($parse
         return isOpen;
       }, function(isOpen) {
         var button = element;
-        var content = element.find('.dropdown-menu');
+        var content = element.find('[cf-dropdown-menu]');
         if (isOpen) {
           button.addClass('active');
           content.show();
@@ -70,20 +70,20 @@ angular.module('contentful').directive('dropdownBtn', ['$parse', function($parse
       function repositionMenu() {
         if (skipPositioning()) return;
         resetPosition();
-        element.find('.dropdown-menu').position(_.extend(getPositioning(),{
-          of: element.find('.dropdown-toggle'),
-          collision: element.find('.dropdown-menu').attr('collision') || 'flipfit',
+        element.find('[cf-dropdown-menu]').position(_.extend(getPositioning(),{
+          of: element.find('[cf-dropdown-toggle]'),
+          collision: element.find('[cf-dropdown-menu]').attr('collision') || 'flipfit',
           using: applyPosition,
           within: getMenuContainer()
         }));
       }
 
       function skipPositioning() {
-        return element.find('.dropdown-menu').hasClass('fixed-position');
+        return element.find('[cf-dropdown-menu]').hasClass('fixed-position');
       }
 
       function resetPosition() {
-        element.find('.dropdown-menu').css({
+        element.find('[cf-dropdown-menu]').css({
           top:    '',
           bottom: '',
           left:   '',
@@ -96,7 +96,7 @@ angular.module('contentful').directive('dropdownBtn', ['$parse', function($parse
       }
 
       function getPositioning() {
-        var position = element.find('.dropdown-menu').attr('position');
+        var position = element.find('[cf-dropdown-menu]').attr('position');
         switch (position) {
           case 'topcenter':
             return {
@@ -137,7 +137,7 @@ angular.module('contentful').directive('dropdownBtn', ['$parse', function($parse
       }
 
       function getMenuContainer() {
-        var selector = element.find('.dropdown-menu').attr('container') || '.tab-main';
+        var selector = element.find('[cf-dropdown-menu]').attr('container') || '.tab-main';
         var container = element.parents(selector);
         if (container.length !== 0) {
           return container;

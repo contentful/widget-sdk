@@ -20,3 +20,4 @@
   entity-content-type="linkContentType"
   entity-mime-type-group="linkMimetypeGroup"
   ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
+

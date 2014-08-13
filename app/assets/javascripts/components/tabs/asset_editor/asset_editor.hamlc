@@ -12,11 +12,11 @@
             tooltip="Toggle additional details"
             tooltip-placement="bottom")
       Info
-    .dropdown-btn(ng-show="showLangSwitcher")
-      %a.dropdown-toggle.flat-button
+    .dropdown-btn(cf-dropdown="" ng-show="showLangSwitcher")
+      %a.dropdown-toggle.flat-button(cf-dropdown-toggle)
         %i.ss-dropdown.button-icon-right
         %span View
-      .dropdown-menu(style="display:none")
+      .dropdown-menu(cf-dropdown-menu="" style="display:none")
         %ul.dropdown-menu-list
           %li.dropdown-menu-item(ng-repeat="locale in spaceContext.publishLocales track by locale.code")
             %label

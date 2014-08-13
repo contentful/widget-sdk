@@ -1,7 +1,7 @@
-.add-btn.dropdown-btn
-  %a.add.button.dropdown-toggle(tabindex="0")
+.add-btn.dropdown-btn(cf-dropdown)
+  %a.add.button.dropdown-toggle(cf-dropdown-toggle="" tabindex="0")
     %i.ss-plus
-  .dropdown-menu.fixed-position.left-aligned
+  .dropdown-menu.fixed-position.left-aligned(cf-dropdown-menu)
     %ul.dropdown-menu-list.main-types
       %li.dropdown-menu-item.add-content-type.bottom-separator(ng-click="createContentType('addDropdown')" dropdown-close="" cf-can="create, ContentType")
         %i.ss-database
