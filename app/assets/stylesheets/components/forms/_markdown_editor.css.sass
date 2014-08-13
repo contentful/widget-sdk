@@ -54,7 +54,9 @@ $markdown-guide-height: 25px
   p
     margin: 0
     margin-top: 0
-  p, pre
+  p,
+  pre,
+  .markdown-image-placeholder
     margin-bottom: 22px
   hr
     background-color: $medium-gray
@@ -62,6 +64,13 @@ $markdown-guide-height: 25px
     list-style-type: square
   ol > li
     list-style-type: decimal
+
+.markdown-image-placeholder
+  border: 1px solid $dark-rule
+  +border-radius
+  text-align: center
+  padding: 5px
+  background: $lightest-gray
 
 .toolbar-button
   width: 36px
@@ -115,6 +124,10 @@ $markdown-guide-height: 25px
   background-image: image_url('markdown/edit.png')
 .md-indent-icon
   background-image: image_url('markdown/indent.png')
+.md-asset-icon
+  background-image: image_url('markdown/asset.png')
+.md-image-icon
+  background-image: image_url('markdown/image.png')
 
 
 .markdown-guide-hint

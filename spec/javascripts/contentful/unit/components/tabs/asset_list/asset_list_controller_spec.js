@@ -79,7 +79,7 @@ describe('Asset List Controller', function () {
       });
 
       it('page is set to the first one', function () {
-        expect(scope.paginator.page).toBe(0);
+        expect(scope.searchController.paginator.page).toBe(0);
       });
     });
 
@@ -88,7 +88,7 @@ describe('Asset List Controller', function () {
 
   describe('page parameters change trigger assets reset', function () {
     beforeEach(function () {
-      stubs.reset = sinon.stub(scope, 'resetAssets');
+      stubs.reset = sinon.stub(scope.searchController, 'resetAssets');
     });
 
     afterEach(function () {
@@ -97,17 +97,17 @@ describe('Asset List Controller', function () {
 
     it('search term', function () {
       scope.tab.params.list = 'all';
-      scope.paginator.page = 0;
+      scope.searchController.paginator.page = 0;
       scope.$digest();
       stubs.reset.restore();
-      stubs.reset = sinon.stub(scope, 'resetAssets');
+      stubs.reset = sinon.stub(scope.searchController, 'resetAssets');
       scope.tab.params.view.searchTerm = 'thing';
       scope.$digest();
       expect(stubs.reset).toBeCalledOnce();
     });
 
     it('page', function () {
-      scope.paginator.page = 1;
+      scope.searchController.paginator.page = 1;
       scope.$digest();
       expect(stubs.reset).toBeCalled();
     });
@@ -146,31 +146,31 @@ describe('Asset List Controller', function () {
         switchBaseSet: stubs.switch
       };
 
-      scope.paginator.pageLength = 3;
-      scope.paginator.skipItems = sinon.stub();
-      scope.paginator.skipItems.returns(true);
+      scope.searchController.paginator.pageLength = 3;
+      scope.searchController.paginator.skipItems = sinon.stub();
+      scope.searchController.paginator.skipItems.returns(true);
     });
 
     it('loads assets', function() {
-      scope.resetAssets();
+      scope.searchController.resetAssets();
       scope.$apply();
       expect(stubs.loadCallback).toBeCalled();
     });
 
     it('sets assets num on the paginator', function() {
-      scope.resetAssets();
+      scope.searchController.resetAssets();
       scope.$apply();
-      expect(scope.paginator.numEntries).toEqual(30);
+      expect(scope.searchController.paginator.numEntries).toEqual(30);
     });
 
     it('sets assets on scope', function() {
-      scope.resetAssets();
+      scope.searchController.resetAssets();
       scope.$apply();
       expect(scope.assets).toBe(assets);
     });
 
     it('switches the selection base set', function() {
-      scope.resetAssets();
+      scope.searchController.resetAssets();
       scope.$apply();
       expect(stubs.switch).toBeCalled();
     });
@@ -179,40 +179,40 @@ describe('Asset List Controller', function () {
 
       it('with a defined order', function() {
         scope.tab.params.list = 'all';
-        scope.resetAssets();
+        scope.searchController.resetAssets();
         scope.$apply();
         expect(stubs.loadCallback.args[0][2].order).toEqual('-sys.updatedAt');
       });
 
       it('with a defined limit', function() {
-        scope.resetAssets();
+        scope.searchController.resetAssets();
         scope.$apply();
         expect(stubs.loadCallback.args[0][2].limit).toEqual(3);
       });
 
       it('with a defined skip param', function() {
-        scope.resetAssets();
+        scope.searchController.resetAssets();
         scope.$apply();
         expect(stubs.loadCallback.args[0][2].skip).toBeTruthy();
       });
 
       // TODO these tests should go into a test for the search query helper
       it('for all list', function() {
-        scope.resetAssets();
+        scope.searchController.resetAssets();
         scope.$apply();
         expect(stubs.loadCallback.args[0][2]['sys.archivedAt[exists]']).toBe('false');
       });
 
       it('for published list', function() {
         scope.tab.params.view.searchTerm = 'status:published';
-        scope.resetAssets();
+        scope.searchController.resetAssets();
         scope.$apply();
         expect(stubs.loadCallback.args[0][2]['sys.publishedAt[exists]']).toBe('true');
       });
 
       it('for changed list', function() {
         scope.tab.params.view.searchTerm = 'status:changed';
-        scope.resetAssets();
+        scope.searchController.resetAssets();
         scope.$apply();
         expect(stubs.loadCallback.args[0][2]['sys.archivedAt[exists]']).toBe('false');
         expect(stubs.loadCallback.args[0][2].changed).toBe('true');
@@ -220,14 +220,14 @@ describe('Asset List Controller', function () {
 
       it('for archived list', function() {
         scope.tab.params.view.searchTerm = 'status:archived';
-        scope.resetAssets();
+        scope.searchController.resetAssets();
         scope.$apply();
         expect(stubs.loadCallback.args[0][2]['sys.archivedAt[exists]']).toBe('true');
       });
 
       it('for search term', function() {
         scope.tab.params.view.searchTerm = 'term';
-        scope.resetAssets();
+        scope.searchController.resetAssets();
         scope.$apply();
         expect(stubs.loadCallback.args[0][2].query).toBe('term');
       });
@@ -254,13 +254,13 @@ describe('Asset List Controller', function () {
     }));
 
     it('should cause resetAssets to show an error message', function () {
-      scope.resetAssets();
+      scope.searchController.resetAssets();
       scope.$apply();
       expect(apiErrorHandler).toBeCalled();
     });
 
     it('should cause loadMore to show an error message', function () {
-      scope.loadMore();
+      scope.searchController.loadMore();
       scope.$apply();
       expect(apiErrorHandler).toBeCalled();
     });
@@ -279,45 +279,45 @@ describe('Asset List Controller', function () {
       // run because the promisedLoader prevents that. In this test
       // the PromisedLoader is stubbed, so we need to fake
       // resetEntries not running:
-      scope.resetAssets = sinon.stub();
+      scope.searchController.resetAssets = sinon.stub();
       scope.selection = {
         setBaseSize: sinon.stub(),
         switchBaseSet: stubs.switch
       };
 
-      scope.paginator.atLast = sinon.stub();
-      scope.paginator.atLast.returns(false);
+      scope.searchController.paginator.atLast = sinon.stub();
+      scope.searchController.paginator.atLast.returns(false);
     });
 
     it('doesnt load if on last page', function() {
-      scope.paginator.atLast.returns(true);
-      scope.loadMore();
+      scope.searchController.paginator.atLast.returns(true);
+      scope.searchController.loadMore();
       expect(stubs.loadCallback).not.toBeCalled();
     });
 
     it('paginator count is increased', function() {
-      scope.paginator.page = 0;
-      scope.loadMore();
-      expect(scope.paginator.page).toBe(1);
+      scope.searchController.paginator.page = 0;
+      scope.searchController.loadMore();
+      expect(scope.searchController.paginator.page).toBe(1);
     });
 
     it('gets query params', function () {
-      scope.loadMore();
+      scope.searchController.loadMore();
       scope.$apply();
       expect(stubs.loadCallback.args[0][2]).toBeDefined();
     });
 
     it('should work on the page before the last', function () {
       // Regression test for https://www.pivotaltracker.com/story/show/57743532
-      scope.paginator.numEntries = 47;
-      scope.paginator.page = 0;
-      scope.loadMore();
+      scope.searchController.paginator.numEntries = 47;
+      scope.searchController.paginator.page = 0;
+      scope.searchController.loadMore();
       scope.$apply();
       expect(stubs.loadCallback).toBeCalled();
     });
 
     it('triggers analytics event', function () {
-      scope.loadMore();
+      scope.searchController.loadMore();
       scope.$apply();
       expect(stubs.track).toBeCalled();
     });
@@ -325,13 +325,13 @@ describe('Asset List Controller', function () {
     describe('on successful load response', function() {
       beforeEach(function() {
         stubs.then.callsArgWith(0, assets);
-        scope.paginator.page = 1;
-        scope.loadMore();
+        scope.searchController.paginator.page = 1;
+        scope.searchController.loadMore();
       });
 
       it('sets num assets', function() {
         scope.$apply();
-        expect(scope.paginator.numEntries).toEqual(30);
+        expect(scope.searchController.paginator.numEntries).toEqual(30);
       });
 
       it('appends assets to scope', function () {
@@ -348,10 +348,10 @@ describe('Asset List Controller', function () {
     describe('on failed load response', function() {
       beforeEach(function() {
         stubs.loadCallback.returns(assets);
-        scope.paginator.page = 1;
+        scope.searchController.paginator.page = 1;
         scope.$apply(); //trigger resetAssets
         stubs.loadCallback.returns(null);
-        scope.loadMore();
+        scope.searchController.loadMore();
         scope.$apply(); //trigger loadMore promises
       });
 
@@ -368,8 +368,8 @@ describe('Asset List Controller', function () {
       beforeEach(function() {
         scope.$apply(); // trigger resetAssets
         stubs.then.callsArg(1);
-        scope.paginator.page = 1;
-        scope.loadMore();
+        scope.searchController.paginator.page = 1;
+        scope.searchController.loadMore();
         scope.$apply();
       });
 
@@ -378,7 +378,7 @@ describe('Asset List Controller', function () {
       });
 
       it('pagination count decreases', function() {
-        expect(scope.paginator.page).toBe(1);
+        expect(scope.searchController.paginator.page).toBe(1);
       });
     });
   });
@@ -416,19 +416,19 @@ describe('Asset List Controller', function () {
 
   describe('when tab becomes active', function () {
     beforeEach(function() {
-      scope.resetAssets = sinon.stub();
+      scope.searchController.resetAssets = sinon.stub();
     });
 
     it('does nothing if its not the current scope tab', inject(function ($rootScope) {
       scope.tab = null;
       $rootScope.$broadcast('tabBecameActive', {});
-      expect(scope.resetAssets).not.toBeCalled();
+      expect(scope.searchController.resetAssets).not.toBeCalled();
     }));
 
     it('resets assets', inject(function($rootScope) {
       scope.tab = {};
       $rootScope.$broadcast('tabBecameActive', scope.tab);
-      expect(scope.resetAssets).toBeCalled();
+      expect(scope.searchController.resetAssets).toBeCalled();
     }));
   });
 

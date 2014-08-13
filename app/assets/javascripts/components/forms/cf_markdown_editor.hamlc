@@ -54,6 +54,11 @@
     tabindex="-1"
     tooltip="Tab (Shift+Alt+Tab)"
     ng-disabled="inPreviewMode()")
+  %button.toolbar-button.md-asset-icon(
+    ng-click="insertAsset()"
+    tabindex="-1"
+    tooltip="Insert link to an asset"
+    ng-disabled="inPreviewMode()")
   .markdown-modeswitch
     %button.toolbar-button.md-right-button.md-preview-icon(
       ng-click="toggleDisplayMode()"
@@ -75,4 +80,3 @@
   ng-bind-html="markdownPreview"
   ng-hide="inEditMode()"
   ng-click="enterEditor($event)")
-

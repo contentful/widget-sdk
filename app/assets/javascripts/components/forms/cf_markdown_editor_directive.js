@@ -1,5 +1,22 @@
 'use strict';
-angular.module('contentful').directive('cfMarkdownEditor', ['marked', 'keycodes', '$document', '$window', '$timeout', 'delay', function(marked, keycodes, $document, $window, $timeout, delay){
+angular.module('contentful').directive('cfMarkdownEditor', ['$injector', function($injector){
+  var $document   = $injector.get('$document');
+  var $timeout    = $injector.get('$timeout');
+  var $window     = $injector.get('$window');
+  var delay       = $injector.get('delay');
+  var keycodes    = $injector.get('keycodes');
+  var modalDialog = $injector.get('modalDialog');
+  var marked      = $injector.get('marked');
+
+  var renderer = new marked.Renderer();
+
+  renderer._image = renderer.image;
+  renderer.image = function (href, title, text) {
+    href = ''+href+'?h=200';
+    var img = this._image(href, title, text);
+    return '<div class="markdown-image-placeholder">'+img+'</div>';
+  };
+
   return {
     restrict: 'C',
     template: JST['cf_markdown_editor'](),
@@ -218,6 +235,20 @@ angular.module('contentful').directive('cfMarkdownEditor', ['marked', 'keycodes'
         textarea.textrange('setcursor', range.start + 4);
       };
 
+      scope.insertAsset = function () {
+        modalDialog.open({
+          scope: scope,
+          template: 'insert_asset_dialog'
+        }).then(function (assets) {
+          if (_.isEmpty(assets)) return;
+          var links = _.map(assets, makeAssetLink).join('\n');
+          var range = lineRange();
+          textarea.textrange('replace', range.text + '\n\n'+links+'\n');
+          textarea.textrange('set', range.end, 0);
+          triggerUpdateEvents();
+        });
+      };
+
       // Helpers ///////////////////////////////////////////
 
       function lineRange() {
@@ -270,12 +301,31 @@ angular.module('contentful').directive('cfMarkdownEditor', ['marked', 'keycodes'
         textarea[0].dispatchEvent(new Event('paste'));
       }
 
+      function makeAssetLink(asset) {
+        try {
+          asset = localizedAsset(asset, scope.locale);
+          return '!['+asset.title+']('+asset.file.url+')';
+        } catch (e) {
+          return null;
+        }
+      }
+
+      function localizedAsset(asset, locale) {
+        var defaultLocale = scope.spaceContext.defaultLocale;
+        var file  = asset.data.fields.file;
+        var title = asset.data.fields.title;
+        return {
+          file:   file[locale.code] ||  file[defaultLocale.code] || _.first(file ),
+          title: title[locale.code] || title[defaultLocale.code] || _.first(title),
+        };
+      }
+
       // Update Preview /////////////////////////////////////
 
       scope.$watch('displayMode', function () {
         var source = scope.fieldData.value;
         if (scope.inPreviewMode() && source) {
-          scope.markdownPreview = marked(source);
+          scope.markdownPreview = marked(source, {renderer: renderer});
         } else {
           scope.markdownPreview = null;
         }
@@ -283,7 +333,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['marked', 'keycodes'
 
       scope.$watch('fieldData.value', function (source, old, scope) {
         if (scope.inPreviewMode() && source) {
-          scope.markdownPreview = marked(source);
+          scope.markdownPreview = marked(source, {renderer: renderer});
         } else {
           scope.markdownPreview = null;
         }

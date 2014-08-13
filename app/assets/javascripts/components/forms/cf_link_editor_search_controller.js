@@ -1,10 +1,43 @@
 'use strict';
 
-angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', 'Paginator', 'notification', 'PromisedLoader', '$q', 'searchQueryHelper', function($scope, Paginator, notification, PromisedLoader, $q, searchQueryHelper) {
+angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$attrs', '$injector', function($scope, $attrs, $injector) {
+  var $q                = $injector.get('$q');
+  var mimetype          = $injector.get('mimetype');
+  var Paginator         = $injector.get('Paginator');
+  var PromisedLoader    = $injector.get('PromisedLoader');
+  var notification      = $injector.get('notification');
+  var searchQueryHelper = $injector.get('searchQueryHelper');
+
   var controller = this;
   var entityLoader = new PromisedLoader();
+  var fetchMethod;
   $scope.paginator = new Paginator();
 
+  $scope.$watch($attrs.entityType, function (entityType) {
+    $scope.entityType = entityType;
+    if (entityType === 'Entry'){
+      fetchMethod = 'getEntries';
+    } else if (entityType === 'Asset') {
+      fetchMethod = 'getAssets';
+    }
+  });
+  $scope.$watch($attrs.entityContentType, function (entityContentType) {
+    $scope.entityContentType = entityContentType;
+  });
+  $scope.$watch($attrs.entityMimeTypeGroup, function (entityMimeTypeGroup) {
+    $scope.entityMimeTypeGroup = entityMimeTypeGroup;
+  });
+  $scope.$watchCollection('[entityType, entityContentType, entityMimeTypeGroup]', updateEntityName);
+
+  function updateEntityName() {
+    if($scope.entityType == 'Entry' && $scope.entityContentType){
+      $scope.entityName = $scope.entityContentType.getName();
+    } else if ($scope.entityType == 'Asset' && $scope.entityMimeTypeGroup) {
+      $scope.entityName = mimetype.groupDisplayNames[$scope.entityMimeTypeGroup];
+    } else {
+      $scope.entityName = $scope.entityType;
+    }
+  }
 
   // STATES
   // CLEAR - Initial state, no search, no results
@@ -42,8 +75,8 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', 'Pa
   });
 
   $scope.$on('autocompleteResultPicked', function (event, index, entity) {
-    $scope.addLink(entity).then(function () {
-      if ($scope.linkSingle) controller.clearSearch();
+    addEntity(entity).then(function () {
+      if (!$scope.$eval($attrs.ngShow)) controller.clearSearch();
     });
   });
 
@@ -61,7 +94,7 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', 'Pa
   });
 
   $scope.pick = function (entity) {
-    $scope.addLink(entity).then(function () {
+    addEntity(entity).then(function () {
       controller.clearSearch();
     });
   };
@@ -71,7 +104,7 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', 'Pa
     $scope.spaceContext.space.createEntry(contentType.getId(), {}, cb);
     return cb.promise
     .then(function createEntityHandler(entry) {
-      return $scope.addLink(entry)
+      return addEntity(entry)
       .then(function addLinkHandler() {
         $scope.navigator.entryEditor(entry).goTo();
       })
@@ -95,7 +128,7 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', 'Pa
     $scope.spaceContext.space.createAsset({}, cb);
     return cb.promise
     .then(function createEntityHandler(asset) {
-      return $scope.addLink(asset)
+      return addEntity(asset)
       .then(function addLinkHandler() {
         $scope.navigator.assetEditor(asset).goTo();
       })
@@ -135,7 +168,7 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', 'Pa
   this._loadEntities = function () {
     return buildQuery()
     .then(function (query) {
-      return entityLoader.loadCallback($scope.spaceContext.space, $scope.fetchMethod, query);
+      return entityLoader.loadCallback($scope.spaceContext.space, fetchMethod, query);
     });
   };
 
@@ -152,15 +185,19 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', 'Pa
   };
 
   $scope.getSearchContentType = function () {
-    if ($scope.linkType === 'Asset')
+    if ($scope.entityType === 'Asset')
      return searchQueryHelper.assetContentType;
-    if ($scope.linkContentType)
-      return $scope.linkContentType;
+    if ($scope.entityContentType)
+      return $scope.entityContentType;
   };
 
   $scope.$on('$destroy', function () {
     $scope = null; //MEMLEAK FIX
   });
+
+  function addEntity(entity) {
+    return $q.when($scope.$eval($attrs.addEntity, {entity: entity}));
+  }
 
   function buildQuery() {
     var contentType;
@@ -170,15 +207,17 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', 'Pa
       skip: $scope.paginator.skipItems()
     };
 
-    if ($scope.linkType === 'Asset')
+    if ($scope.entityType === 'Asset') {
       contentType = searchQueryHelper.assetContentType;
-    if ($scope.linkContentType)
-      contentType = $scope.linkContentType;
-    if ($scope.linkMimetypeGroup)
-      queryObject['mimetype_group'] = $scope.linkMimetypeGroup;
-      //TODO well, actually when the linkMimeTypeGroup is predefined, we shouldn't allow searching for it
+      if ($scope.entityMimeTypeGroup)
+        queryObject['mimetype_group'] = $scope.entityMimeTypeGroup;
+        //TODO well, actually when the entityMimeTypeGroup is predefined, we shouldn't allow searching for it
+    } else if ($scope.entityType === 'Entry') {
+      if ($scope.entityContentType)
+        contentType = $scope.entityContentType;
+    }
 
-    return searchQueryHelper.buildQuery($scope.spaceContext.space, $scope.linkContentType, $scope.searchTerm)
+    return searchQueryHelper.buildQuery($scope.spaceContext.space, contentType, $scope.searchTerm)
     .then(function (searchQuery) {
       _.extend(searchQuery, queryObject);
       return searchQuery;

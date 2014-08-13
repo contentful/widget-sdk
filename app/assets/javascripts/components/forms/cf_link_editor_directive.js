@@ -21,26 +21,6 @@ angular.module('contentful').directive('cfLinkEditor', ['mimetype', function(mim
       scope.linkMultiple = !!attrs.linkMultiple;
       scope.linkSingle   = !scope.linkMultiple;
 
-      if(scope.linkType == 'Entry') {
-        scope.$watch('linkContentType', function (contentType) {
-          if(contentType){
-            scope.entityName = contentType ? contentType.getName() : undefined;
-          } else {
-            scope.entityName = scope.linkType;
-          }
-        });
-      }
-
-      if(scope.linkType == 'Asset') {
-        scope.$watch('linkMimetypeGroup', function (mimetypeName) {
-          if(mimetypeName){
-            scope.entityName = mimetype.groupDisplayNames[mimetypeName];
-          } else {
-            scope.entityName = scope.linkType;
-          }
-        });
-      }
-
       scope.updateModel = function () {
         ngModelCtrl.$setViewValue(scope.links);
       };

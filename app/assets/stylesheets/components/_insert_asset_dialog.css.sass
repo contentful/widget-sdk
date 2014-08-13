@@ -1,0 +1,47 @@
+.insert-asset-dialog
+  width: 60%
+  
+  .dialog-content
+    +pie-clearfix
+    +flexbox
+  .menu-with-buttons
+    +flex-basis(20%)
+    margin-right: 20px
+    height: initial
+  .main
+    +flex-basis(80%)
+    +flexbox
+    +flex-direction(column)
+  .search-with-resutls
+    +flex-basis(100px)
+  .assets
+    +flexbox
+    +flex-wrap(wrap)
+    overflow-y: auto
+    height: 500px
+  .asset
+    height: 150px
+    width: 150px
+    padding: 10px
+    text-align: center
+    position: relative
+  .ss-check
+    +stretch
+    font-size: 40px
+    line-height: 150px
+    color: $blue
+    background: rgba(255,255,255,0.7)
+  .cf-thumbnail
+    margin: auto
+    width: 100px
+    height: 100px
+    +flexbox
+    +align-items(flex-end)
+    +justify-content(center)
+  .icon
+    font-size: 60px
+    line-height: 100px
+  .asset-title
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
