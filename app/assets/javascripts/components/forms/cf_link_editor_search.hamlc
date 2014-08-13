@@ -9,14 +9,15 @@
 
   -# link to entry or entries
   .dropdown-btn.add-new(
+      cf-dropdown=""
       ng-if="entityType=='Entry' && !entityContentType"
       cf-can="create, Entry"
       tooltip="Add new {{entityType}}"
       tooltip-placement="left")
-    %button.form-button.default-button.dropdown-toggle(type="button")
+    %button.form-button.default-button.dropdown-toggle(cf-dropdown-toggle="" type="button")
       %i.ss-plus.button-icon
       New
-    %a.dropdown-menu
+    %a.dropdown-menu(cf-dropdown-menu)
       %ul.dropdown-menu-list
         %li.dropdown-menu-item(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
             ng-click="addNewEntry(contentType)"
