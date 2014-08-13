@@ -2,6 +2,7 @@
 
 angular.module('contentful').controller('ClientCtrl', ['$scope', '$injector', function ClientCtrl($scope, $injector) {
   var $rootScope         = $injector.get('$rootScope');
+  var $q                 = $injector.get('$q');
   var client             = $injector.get('client');
   var SpaceContext       = $injector.get('SpaceContext');
   var authentication     = $injector.get('authentication');
@@ -260,9 +261,26 @@ angular.module('contentful').controller('ClientCtrl', ['$scope', '$injector', fu
   };
 
   $scope.performTokenLookup = function () {
-    return authentication.getTokenLookup().then(function (tokenLookup) {
+    return authentication.getTokenLookup()
+    .then(function (tokenLookup) {
       $scope.user = tokenLookup.sys.createdBy;
       $scope.updateSpaces(tokenLookup.spaces);
+    })
+    .catch(function (err) {
+      if (err && err.statusCode === 401) {
+        modalDialog.open({
+          title: 'Your login token is invalid',
+          message: 'You need to login again to refresh your login token.',
+          scope: $scope,
+          cancelLabel: null,
+          confirmLabel: 'Login',
+          noBackgroundClose: true,
+          attachTo: 'body'
+        }).then(function () {
+          authentication.logout();
+        });
+      }
+      return $q.reject(err);
     });
   };
 
