@@ -18,7 +18,7 @@
           .asset(ng-repeat="asset in assets" ng-click="selectAsset(asset)")
             %i.ss-check(ng-show="selection.isSelected(asset)")
             .cf-thumbnail(file="spaceContext.localizedField(asset, 'data.fields.file')" size="100")
-            .asset-title {{spaceContext.assetTitle(asset)}}
+            .asset-title(title="{{spaceContext.assetTitle(asset)}}") {{spaceContext.assetTitle(asset)}}
     .buttons
       %button.default-button.cancel(type="button" ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")
         {{dialog.cancelLabel}}

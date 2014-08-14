@@ -1,6 +1,5 @@
 .tab-header.editor-configuration
-  %h1
-    {{headline()}}
+  %h1(title="{{headline()}}") {{headline()}}
   %a.cf-knowledge-base-icon(
     tooltip="Learn more about Assets in the Knowledge Base Pages"
     analytics-event="assets"

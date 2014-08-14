@@ -73,7 +73,7 @@
             %td.cell-content-type
               %span {{spaceContext.publishedTypeForEntry(entity).getName()}}
             %td.cell-name
-              %span {{spaceContext.entryTitle(entity)}}
+              %span(title="{{spaceContext.entryTitle(entity)}}") {{spaceContext.entryTitle(entity)}}
             %td.cell-updated
               %date.relative(ng-if="entity.getUpdatedAt()" datetime="{{entity.getUpdatedAt()}}")
       .loading(ng-hide="paginator.atLast()")
@@ -95,8 +95,8 @@
             %td.cell-preview
               %p.file-preview(cf-file-preview="" file="spaceContext.localizedField(entity, 'data.fields.file', locale.code)")
                 %span.cf-thumbnail(file="file" size="70" ng-show="file && file.url")
-            %td.cell-name
-              %p {{spaceContext.localizedField(entity, 'data.fields.title', locale.code) || 'Untitled'}}
+            %td.cell-name(ng-init="assetCellName=spaceContext.localizedField(entity, 'data.fields.title', locale.code) || 'Untitled'")
+              %p(title="{{assetCellName}}") {{assetCellName}}
               %p.lighter {{spaceContext.localizedField(entity, 'data.fields.description', locale.code)}}
             %td.cell-type(ng-init="file=spaceContext.localizedField(entity, 'data.fields.file', locale.code)")
               %p(ng-show="file && file.url") {{file|fileType}}
