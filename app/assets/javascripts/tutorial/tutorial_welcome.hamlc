@@ -50,7 +50,7 @@
           .buttons
             %button.default-button.repeat(type="button" ng-show="contentTypeDone" ng-click="goTo('contentTypeIntro')")
               Repeat Tutorial
-            %button.default-button.take(type="button" ng-hide="contentTypeDone" ng-click="goTo('contentTypeIntro')")
+            %button.default-button.primary-button(type="button" ng-hide="contentTypeDone" ng-click="goTo('contentTypeIntro')")
               Take Tutorial
 
         .tutorial-select-box.middle
@@ -62,7 +62,7 @@
           .buttons
             %button.default-button.repeat(type="button" ng-show="entryDone" ng-click="goTo('entryIntro')")
               Repeat Tutorial
-            %button.default-button.take(type="button" ng-hide="entryDone" ng-click="goTo('entryIntro')")
+            %button.default-button.primary-button(type="button" ng-hide="entryDone" ng-click="goTo('entryIntro')")
               Take Tutorial
 
         .tutorial-select-box.right
@@ -74,7 +74,7 @@
           .buttons
             %button.default-button.repeat(type="button" ng-show="apiKeyDone" ng-click="goTo('apiKeyIntro')")
               Repeat Tutorial
-            %button.default-button.take(type="button" ng-hide="apiKeyDone" ng-click="goTo('apiKeyIntro')")
+            %button.default-button.primary-button(type="button" ng-hide="apiKeyDone" ng-click="goTo('apiKeyIntro')")
               Take Tutorial
 
   .hide-x-button(ng-hide="atLastSlide()")

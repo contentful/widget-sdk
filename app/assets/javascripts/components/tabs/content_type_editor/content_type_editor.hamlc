@@ -12,11 +12,11 @@
             tooltip="Toggle additional details"
             tooltip-placement="bottom")
       Info
-    .dropdown-btn
-      %a.flat-button.dropdown-toggle
+    .dropdown-btn(cf-dropdown)
+      %a.flat-button.dropdown-toggle(cf-dropdown-toggle)
         %i.ss-dropdown.button-icon-right
         %span View
-      .dropdown-menu
+      .dropdown-menu(cf-dropdown-menu)
         %ul.dropdown-menu-list
           %li.dropdown-menu-item
             %label
@@ -28,7 +28,7 @@
     %h1 Content Type Information
   .entity-info-panel
 
-.tab-main
+.tab-main.tab-workbench
   .form-horizontal(name="contentTypeForm")
     .form-field
       %label
@@ -65,18 +65,18 @@
           %header.advice-title You have no Fields yet
           %p.advice-description
             Add Fields to configure which form inputs are available for your editors to work with.
-          .dropdown-btn
-            %button.dropdown-toggle.default-button.primary-button(ng-disabled="!otEditable || cfCanDisabled")
+          .dropdown-btn(cf-dropdown)
+            %button.default-button.primary-button(cf-dropdown-toggle="" ng-disabled="!otEditable || cfCanDisabled")
               Create Field
-            .dropdown-menu.type-menu(select-type="addField(type)")
+            .dropdown-menu.type-menu(cf-dropdown-menu="" select-type="addField(type)")
             %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
               Visit the Knowledge Base Pages
               %i.ss-help
-        .dropdown-btn(ng-show="hasFields")
-          %button.dropdown-toggle.add-field-button.default-button.primary-button(cf-can="create, ContentType" ng-disabled="!otEditable || cfCanDisabled")
+        .dropdown-btn(cf-dropdown="" ng-show="hasFields")
+          %button.dropdown-toggle.add-field-button.default-button.primary-button(cf-dropdown-toggle="" cf-can="create, ContentType" ng-disabled="!otEditable || cfCanDisabled")
             %i.ss-plus.button-icon
             Add Field
-          .dropdown-menu.type-menu(select-type="addField(type)")
+          .dropdown-menu.type-menu(cf-dropdown-menu="" select-type="addField(type)")
         .cf-form-box-error(cf-error-path="['fields']")
 .tab-actions(ng-controller="ContentTypeActionsCtrl")
   .button-set

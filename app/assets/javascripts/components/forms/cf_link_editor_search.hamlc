@@ -9,14 +9,15 @@
 
   -# link to entry or entries
   .dropdown-btn.add-new(
+      cf-dropdown=""
       ng-if="entityType=='Entry' && !entityContentType"
       cf-can="create, Entry"
       tooltip="Add new {{entityType}}"
       tooltip-placement="left")
-    %button.form-button.default-button.dropdown-toggle(type="button")
+    %button.form-button.default-button.dropdown-toggle(cf-dropdown-toggle="" type="button")
       %i.ss-plus.button-icon
       New
-    %a.dropdown-menu
+    %a.dropdown-menu(cf-dropdown-menu)
       %ul.dropdown-menu-list
         %li.dropdown-menu-item(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
             ng-click="addNewEntry(contentType)"
@@ -72,7 +73,7 @@
             %td.cell-content-type
               %span {{spaceContext.publishedTypeForEntry(entity).getName()}}
             %td.cell-name
-              %span {{spaceContext.entryTitle(entity)}}
+              %span(title="{{spaceContext.entryTitle(entity)}}") {{spaceContext.entryTitle(entity)}}
             %td.cell-updated
               %date.relative(ng-if="entity.getUpdatedAt()" datetime="{{entity.getUpdatedAt()}}")
       .loading(ng-hide="paginator.atLast()")
@@ -94,8 +95,8 @@
             %td.cell-preview
               %p.file-preview(cf-file-preview="" file="spaceContext.localizedField(entity, 'data.fields.file', locale.code)")
                 %span.cf-thumbnail(file="file" size="70" ng-show="file && file.url")
-            %td.cell-name
-              %p {{spaceContext.localizedField(entity, 'data.fields.title', locale.code) || 'Untitled'}}
+            %td.cell-name(ng-init="assetCellName=spaceContext.localizedField(entity, 'data.fields.title', locale.code) || 'Untitled'")
+              %p(title="{{assetCellName}}") {{assetCellName}}
               %p.lighter {{spaceContext.localizedField(entity, 'data.fields.description', locale.code)}}
             %td.cell-type(ng-init="file=spaceContext.localizedField(entity, 'data.fields.file', locale.code)")
               %p(ng-show="file && file.url") {{file|fileType}}

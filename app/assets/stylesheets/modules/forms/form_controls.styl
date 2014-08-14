@@ -1,0 +1,119 @@
+$textarea-max-height = 400px
+
+$form-control-look()
+  background-color: $gray-background
+  box-shadow: 0 1px 2px rgba(0,0,0,0.1) inset
+  transition: background-color 0.3s ease-in, border-color 0.3s ease-in
+
+$form-focus-look()
+  background-color: white
+  border-color: $link-blue
+  outline: none
+
+.form-look
+  border: 1px solid $lightest-gray
+  border-radius: 3px 3px 3px 3px
+  $form-control-look()
+  &:focus
+    $form-focus-look()
+
+.form-controls,
+.form-styled,
+$form-styled
+  p
+    margin: 11px 0
+  input[type="text"],
+  input[type="number"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="password"],
+  input[type="url"],
+  input.time,
+  textarea
+    display: block
+    margin: 0
+    padding: $form-textarea-padding
+    padding-top: 9px
+    font-family: 'Open Sans', Arial, sans-serif
+    font-size: 12px
+    width: $form-controlwidth-inner
+    border: 1px solid $lightest-gray
+    border-radius: 3px 3px 3px 3px
+    $form-control-look()
+    &[disabled]
+      background-color: white
+      border: none
+      box-shadow: none
+      transition: none
+    &.override-disabled
+      $form-control-look()
+    &:focus
+      $form-focus-look()
+    &.error-input:focus
+      border-color: darken($red, 10%)
+
+  .form-button
+    height: 35px
+
+  textarea
+    resize: vertical
+    max-height: $textarea-max-height
+
+  input[type="number"]
+    padding-top: 8px
+    padding-bottom: 8px
+
+  input.date,
+  input.time
+    width: 105px
+
+  .cf-location-editor
+    margin-top: 13px
+    margin-bottom: 5px
+    .gmaps-container,
+    .invalid-location-warning
+      width: $form-controlwidth-inner
+      height: 250px
+
+  .cf-datetime-editor
+    input
+      display: inline
+    .ss-calendar,
+    .ss-clock,
+    .ss-globe
+      font-size: 14px
+      color: $light-gray
+      vertical-align: middle
+      pointer-events: none
+      position: relative
+      left: -25px
+      top: 1px
+    .select-box
+      padding-right: 30px
+      .button-icon-right
+        right: 27px
+
+  .invalid-date,
+  .invalid-time
+    color: $red
+    font-size: 14px
+    position: relative
+    top: 3px
+
+  .sub-fields
+    width: $form-controlwidth-inner
+    position: relative
+    label
+      display: block
+      float: left
+      width: 40%
+      input,
+      input[type="text"]
+        width: 100%
+      span
+        display: block
+        margin-top: 5px
+        text-align: left
+    .form-button
+      margin-top: 11px
+

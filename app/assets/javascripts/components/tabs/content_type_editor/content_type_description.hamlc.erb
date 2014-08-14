@@ -87,8 +87,7 @@
 
   %div(ng-switch-when="Link")
     %div(ng-show="type.value.linkType == 'Entry'")
-      %h3
-        Link to an Entry
+      %h3 Link to an Entry
       %p
         Connect your current Entry to another already existing Entry. You can create relationships such as connecting a book to its author.
       %ul
@@ -97,8 +96,7 @@
       %img(src="<%= image_path('field_type/linktoentry.png') %>")
 
     %div(ng-show="type.value.linkType == 'Asset'")
-      %h3
-        Link to an Asset
+      %h3 Link to an Asset
       %p
         Link a previously uploaded media file to this Entry or add a new one directly when editing.
       %ul
@@ -109,8 +107,7 @@
 
   %div(ng-switch-when="Array")
     %div(ng-show="type.value.items.type == 'Link' && type.value.items.linkType == 'Entry'")
-      %h3
-        Links to multiple Entries
+      %h3 Links to multiple Entries
       %p
         Connect your current Entry to other already existing Entries. It works like the individual Entry but it allows you to connect more than one Entry.
       %ul
@@ -119,8 +116,7 @@
       %img(src="<%= image_path('field_type/linkstoentries.png') %>")
 
     %div(ng-show="type.value.items.type == 'Link' && type.value.items.linkType == 'Asset'")
-      %h3
-        Links to multiple Assets
+      %h3 Links to multiple Assets
       %p
         Link several previously uploaded media files to this Entry or add new ones directly when editing.
       %ul
@@ -130,8 +126,7 @@
       %img(src="<%= image_path('field_type/linkstoassets.png') %>")
 
     %div(ng-show="type.value.items.type == 'Symbol'")
-      %h3
-        List of multiple Symbols
+      %h3 List of multiple Symbols
       %p
         Create a lists of multiple Symbols. It works like an individual Symbol but allows you to add more than one Symbol.
       %ul

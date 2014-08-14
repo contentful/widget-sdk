@@ -1,0 +1,28 @@
+$flat-button($border-color = darken($dark-rule, 10), $hover-color = darken($dark-rule, 20), $active-color = darken($dark-rule, 30))
+  @extend .base-button
+  background: inherit
+  border: 1px solid $border-color
+  &:not(:disabled),
+  &:not([disabled])
+    &:hover
+      border: 1px solid $hover-color
+    &:active,
+    &.active
+      border: 1px solid $active-color
+
+$colored-button($color)
+  font-weight: 600
+  border-color: darken($color, 10%)
+  box-shadow: 0 1px 1px lighten($color, 7%) inset, 0 2px 1px rgba(0,0,0,0.03)
+  i
+    color: lighten($color, 40%)
+  &:not(:disabled),
+  &:not([disabled])
+    &:hover
+      $gradient(lighten($color, 5%), darken($color, 6%))
+      box-shadow: 0 4px 4px lighten($color, 47%) inset, 0 2px 1px rgba(0,0,0,0.03)
+  i
+    &:active
+      box-shadow: 0 1px 2px darken($color, 5%) inset
+      $gradient($color, darken($color, 4%))
+

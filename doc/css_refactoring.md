@@ -4,14 +4,14 @@
 
 Listed by lower to higher level:
 
+- **variables**: variables by theme
 - **base**: base styles and variables
 - **mixins**: standalone mixins
-- **utils**: generic utility classes
-- **vendor**: vendor components
 - **objects**: visual objects, with no further hierarchy below them
 - **modules**: modules composed by visual objects, with some level of
   hierarchy
 - **layouts**: layouts for pages or modules (not composed of modules)
+- **vendor**: vendor components
 
 ## Refactoring plan
 

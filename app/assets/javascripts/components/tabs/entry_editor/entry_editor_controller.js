@@ -31,7 +31,7 @@ angular.module('contentful')
 
   $scope.$watch('spaceContext.publishedTypeForEntry(entry).data', function(data) {
     if (!data) return;
-    var locales = $scope.spaceContext.space.getPublishLocales(); // TODO: watch this, too
+    var locales = $scope.spaceContext.space.data.locales; // TODO: watch this, too
     $scope.entrySchema = validation.fromContentType(data, locales);
   });
 

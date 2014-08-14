@@ -1,0 +1,57 @@
+$display-flexbox()
+  display: -webkit-box;
+  display: -moz-box;
+  display: -ms-flexbox;
+  display: -webkit-flex;
+  display: flex;
+
+flex($values...)
+  -moz-box-flex: $values;
+  -ms-flex: $values;
+  flex: $values;
+
+order($val)
+  -moz-box-ordinal-group: $val;     
+  -ms-flex-order: $val;     
+  order: $val;
+
+flex-grow($val)
+  -ms-flex-positive: $val
+  flex-grow: $val
+
+flex-direction($val)
+  -ms-flex-direction: $val
+  flex-direction: $val
+
+flex-wrap($val)
+  -ms-flex-wrap: $val
+  flex-wrap: $val
+
+flex-shrink($val)
+  -ms-flex-negative: $val
+  flex-shrink: $val
+
+flex-basis($val)
+  -ms-flex-preferred-size: $val
+  flex-basis: $val
+
+flex-flow($val...)
+  -ms-flex-flow: $val
+  flex-flow: $val
+
+justify-content($val)
+  -ms-flex-pack: $val
+  justify-content: $val
+
+align-self($val)
+  -ms-flex-item-align: $val
+  align-self: $val
+
+align-items($val)
+  -ms-flex-align: $val
+  align-items: $val
+
+align-content($val)
+  -ms-flex-line-pack: $val
+  align-content: $val
+

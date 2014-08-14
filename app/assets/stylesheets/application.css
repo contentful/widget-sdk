@@ -11,6 +11,7 @@
  *= require html5reset-1.6.1
  *= require ss-standard
  *= require icomoon
+ *= require formtastic
  *= require jquery.ui.autocomplete
  *= require jquery.ui.datepicker
  *= require_self

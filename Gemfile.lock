@@ -195,6 +195,10 @@ GEM
       tilt (~> 1.1, != 1.3.0)
     sprockets-browserify (0.3.0)
       sprockets (~> 2.1)
+    stylus (0.7.2)
+      execjs
+      stylus-source
+    stylus-source (0.42.2)
     terminal-table (1.4.5)
     therubyracer (0.10.2)
       libv8 (~> 3.3.10)
@@ -236,5 +240,6 @@ DEPENDENCIES
   sass-rails (~> 3.2.6)
   selenium-webdriver
   sprockets-browserify (~> 0.3.0)
+  stylus (~> 0.7.0)
   therubyracer
   uglifier (>= 1.0.3)

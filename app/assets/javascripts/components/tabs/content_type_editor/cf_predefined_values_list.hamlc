@@ -1,6 +1,6 @@
 %i.ss-directup(ng-hide="atTop()")
 %i.ss-dropdown(ng-hide="atBottom()")
 %ul.block-list(ui-sortable="validationSortOptions" ng-model="validation.in")
-  %li(ng-repeat="(index, value) in validation.in" index="{{index}}")
+  %li(ng-repeat="(index, value) in validation.in" index="{{index}}" title="{{value}}")
     {{value}}
     .close-button(ng-click="removeIndex(index)")
