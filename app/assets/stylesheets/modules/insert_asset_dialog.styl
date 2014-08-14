@@ -2,21 +2,21 @@
   width: 60%
   
   .dialog-content
-    +pie-clearfix
-    +flexbox
+    $pie-clearfix()
+    $display-flexbox()
   .menu-with-buttons
-    +flex-basis(20%)
+    flex-basis: 20%
     margin-right: 20px
     height: initial
   .main
-    +flex-basis(80%)
-    +flexbox
-    +flex-direction(column)
+    flex-basis: 80%
+    $display-flexbox()
+    flex-direction: column
   .search-with-resutls
-    +flex-basis(100px)
+    flex-basis: 100px
   .assets
-    +flexbox
-    +flex-wrap(wrap)
+    $display-flexbox()
+    flex-wrap: wrap
     overflow-y: auto
     height: 500px
   .asset
@@ -26,7 +26,7 @@
     text-align: center
     position: relative
   .ss-check
-    +stretch
+    $stretch()
     font-size: 40px
     line-height: 150px
     color: $blue
@@ -35,9 +35,9 @@
     margin: auto
     width: 100px
     height: 100px
-    +flexbox
-    +align-items(flex-end)
-    +justify-content(center)
+    $display-flexbox()
+    align-items: flex-end
+    justify-content: center
   .icon
     font-size: 60px
     line-height: 100px
@@ -45,3 +45,4 @@
     white-space: nowrap
     overflow: hidden
     text-overflow: ellipsis
+
