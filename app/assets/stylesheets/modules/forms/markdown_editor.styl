@@ -9,6 +9,7 @@ $markdown-guide-height = 25px
   padding: 7px 4px 1px
 
 .markdown-toolbar
+  $display-flexbox()
   position: relative
   height: 35px
   border-radius: 3px 3px 0 0
@@ -83,6 +84,10 @@ $markdown-guide-height = 25px
   cursor: pointer
   &:hover
     background-color: lighten($light-gray, 20%)
+.toolbar-button--flex
+  width: auto
+  flex-basis: 36px
+  flex-shrink: 1
 
 .preview-mode
   .toolbar-button:hover
