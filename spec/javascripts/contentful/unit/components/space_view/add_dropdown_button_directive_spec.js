@@ -25,7 +25,7 @@ describe('The add dropdown button directive', function () {
       canStub = sinon.stub();
 
       compileElement = function () {
-        container = $compile($('<div class="add-dropdown-button" space-context="spaceContext"></div>'))(scope);
+        container = $compile($('<div cf-add-dropdown-button class="add-dropdown-button" space-context="spaceContext"></div>'))(scope);
         scope.can = canStub;
         scope.$digest();
       };
