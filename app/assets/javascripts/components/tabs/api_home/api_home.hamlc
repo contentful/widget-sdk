@@ -31,7 +31,6 @@
         .box
           %a.box-image.cma(cf-marketing="/developers/documentation/content-management-api")
           %a.box-title(cf-marketing="/developers/documentation/content-management-api")
-            %h2 Content<br>Management API
             %h2.uppercase Content<br>Management API
           %p
             Import content from own servers, 3rd-party systems or your community. The Content Management API helps you create content.
