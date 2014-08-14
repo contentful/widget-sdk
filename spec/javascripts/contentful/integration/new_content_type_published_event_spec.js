@@ -1,6 +1,6 @@
 'use strict';
 
-describe('The Space context', function () {
+describe('New content type published', function () {
 
   var space, spaceContext, contentType;
   var broadcastSpy;
@@ -29,8 +29,8 @@ describe('The Space context', function () {
     var tooltipSpy, oneSpy;
     var container;
     beforeEach(inject(function ($rootScope, $compile) {
-      container = $('<div class="add-dropdown-button" />');
-      var dropdownToggle = $('<div class="dropdown-toggle" />');
+      container = $('<div class="add-dropdown-button" cf-add-dropdown-button />');
+      var dropdownToggle = $('<div cd-dropdown-toggle class="dropdown-toggle" />');
       container.append(dropdownToggle);
       container.appendTo($('body'));
 

@@ -1,8 +1,15 @@
 'use strict';
-angular.module('contentful').controller('ListViewsController',
-    ['$scope', 'modalDialog', 'notification', '$q', 'getBlankView', 'viewCollectionName', 'generateDefaultViews', 'resetList',
-      function($scope, modalDialog, notification, $q, getBlankView, viewCollectionName, generateDefaultViews, resetList){
-  $scope.tab.params.view = $scope.tab.params.view || getBlankView();
+angular.module('contentful').controller('ListViewsController', [
+'$scope', '$injector', 'generateDefaultViews', 'getBlankView', 'resetList', 'viewCollectionName', 'currentViewLocation',
+function($scope, $injector, generateDefaultViews, getBlankView, resetList, viewCollectionName, currentViewLocation){
+  var $q           = $injector.get('$q');
+  var notification = $injector.get('notification');
+  var $parse       = $injector.get('$parse');
+
+  var getCurrentView = $parse(currentViewLocation);
+  var setCurrentView = getCurrentView.assign;
+
+  setCurrentView($scope, getCurrentView($scope) || getBlankView());
 
   $scope.$watch('uiConfig', function (uiConfig) {
     if (uiConfig && !uiConfig[viewCollectionName]) {
@@ -16,13 +23,15 @@ angular.module('contentful').controller('ListViewsController',
   };
 
   $scope.clearView = function () {
-    $scope.tab.params.view = getBlankView();
+    setCurrentView($scope, getBlankView());
     resetList();
   };
 
   $scope.loadView = function (view) {
-    $scope.tab.params.view = _.cloneDeep(view);
-    $scope.tab.params.view.title = 'New View';
+    var newView;
+    newView = _.cloneDeep(view);
+    newView.title = 'New View';
+    setCurrentView($scope, newView);
     resetList();
   };
 

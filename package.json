@@ -1,0 +1,27 @@
+{
+  "name": "user_interface",
+  "version": "0.0.0",
+  "description": "",
+  "main": "",
+  "bin": {
+  },
+  "directories": {
+  },
+  "dependencies": {
+    "nib": "^1.0.3",
+    "stylus": "^0.47.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/contentful/user_interface.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/contentful/user_interface/issues"
+  },
+  "homepage": "https://github.com/contentful/user_interface"
+}

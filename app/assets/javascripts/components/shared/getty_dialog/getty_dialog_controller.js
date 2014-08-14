@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').controller('GettyDialogController',
-    ['$scope', 'gettyImagesFactory', 'PromisedLoader', 'Paginator', 'fileSize', 'stringUtils', 'sentry', function($scope, gettyImagesFactory, PromisedLoader, Paginator, fileSize, stringUtils, sentry) {
+    ['$scope', 'gettyImagesFactory', 'PromisedLoader', 'Paginator', 'fileSize', 'stringUtils', 'sentry', 'random', function($scope, gettyImagesFactory, PromisedLoader, Paginator, fileSize, stringUtils, sentry, random) {
 
   var IMAGES_PER_PAGE = 6;
 
@@ -308,5 +308,66 @@ angular.module('contentful').controller('GettyDialogController',
     }
     return obj;
   }
+
+  /**
+   * Test data
+   *
+   * The getty images test accounts have limited durations, so this code helps test the UI
+   * so we can make styling changes without having to use an actual test account.
+   *
+   * Use with care, don't leave uncommented when commiting code.
+  */
+
+  /*
+  function mockImageResult() {
+    var metadata = {
+      Title: 'Kitten',
+      ImageId: '12345678',
+      ApplicableProductOfferings: ['EasyAccess'],
+      ImageFamily: 'Photography',
+      LicensingModel: 'RoyaltyFree',
+      CollectionName: 'Kittens',
+      DateCreated: '\/Date(1294868991374-0800)\/',
+      Artist: 'Some fella',
+      ReleaseMessage: 'Away you go',
+      SizesDownloadableImages: [
+        {SizeKey: '123', PixelWidth: 340, PixelHeight: 200, ResolutionDpi: 1200, FileSizeInBytes: 12345671}
+      ]
+    };
+    return {
+      id: random.id(),
+      preview: _.assign({
+        fileName: 'kitten1.jpg',
+        url: 'http://placekitten.com/340/200',
+        external: true,
+        baseDimSize: 340,
+        details: {
+          image: {width: 340, height: 200}
+        },
+        UrlPreview: 'http://placekitten.com/340/200',
+      }, metadata),
+      thumb: _.assign({
+        fileName: 'kitten1.jpg',
+        url: 'http://placekitten.com/170/170',
+        external: true,
+        baseDimSize: 170,
+        details: {
+          image: {width: 170, height: 170}
+        }
+      }, metadata)
+    };
+  }
+  */
+
+  //$scope.imageDetail = mockImageResult().preview;
+
+  /*
+  $scope.imageResults = (new Array(6)).map(mockImageResult);
+
+  $scope.loadMore = function () {
+    _.times(6, function () { $scope.imageResults.push(mockImageResult()); });
+    $scope.paginator.numEntries = 36;
+  };
+  */
 
 }]);

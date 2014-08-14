@@ -3,6 +3,7 @@
 angular.module('contentful').directive('cfLinkEditorSearch', ['defer', function(defer) {
   return {
     restrict: 'AC',
+    template: JST.cf_link_editor_search(),
     controller: 'cfLinkEditorSearchCtrl',
     controllerAs: 'searchController',
     link: function (scope, element) {

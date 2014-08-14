@@ -18,22 +18,23 @@
     .search-with-results(cf-tokenized-search="tab.params.view.searchTerm"
       search-content-type="getSearchContentType()"
       placeholder="Search for {{typeNameOr('Entries')}}"
-      cf-on-blur-component="leftSearch($event)")
+      cf-on-blur-component="leftSearch($event)"
+      cf-on-blur-component-when="showAutocompletions")
 
   .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")
 
   .add-entity(ng-hide="spaceContext.publishedContentTypes.length == 0")
-    %button.dropdown-toggle.default-button.primary-button(
+    %button.default-button.primary-button(
             ng-hide="(!singleContentType || singleContentType && entries.length < 1) && (noCfCanCleanup = true)"
             cf-can="create, Entry"
             ng-click="createEntry(singleContentType, 'frameButton')")
       %i.ss-plus.button-icon
       Add New {{singleContentType.getName()}}
-    .dropdown-btn(ng-show="spaceContext.publishedContentTypes.length > 1")
-      %button.dropdown-toggle.default-button.primary-button(cf-can="create, Entry")
+    .dropdown-btn(cf-dropdown="" ng-show="spaceContext.publishedContentTypes.length > 1")
+      %button.dropdown-toggle.default-button.primary-button(cf-dropdown-toggle="" cf-can="create, Entry")
         %i.ss-plus.button-icon
         Add New Entry
-      .dropdown-menu(position="bottomcenter" container=".tab-content")
+      .dropdown-menu(cf-dropdown-menu="" position="bottomcenter" container=".tab-content")
         %ul.dropdown-menu-list
           %li.dropdown-menu-item.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
                    ng-click="createEntry(contentType, 'frameButton')"
@@ -88,13 +89,13 @@
         %button.default-button.primary-button(type="button" ng-click="createContentType('frameButton')" cf-can="create, ContentType" ng-hide="spaceContext.publishedContentTypes.length > 0 && (noCfCanCleanup = true)")
           Create a Content Type
         %p(ng-hide="spaceContext.publishedContentTypes.length == 0")
-          %button.dropdown-toggle.default-button.primary-button(
+          %button.default-button.primary-button(
                   ng-hide="!singleContentType && (noCfCanCleanup = true)"
                   cf-can="create, Entry"
                   ng-click="createEntry(singleContentType, 'frameButton')")
             %i.ss-plus.button-icon
             Add New {{singleContentType.getName()}}
-          %button.dropdown-toggle.default-button.primary-button.cf-dialog(
+          %button.default-button.primary-button.cf-dialog(
               ng-hide="singleContentType && (noCfCanCleanup = true)"
               cf-can="create, Entry" dialog-template="new_content_type_list")
             %i.ss-plus.button-icon
@@ -107,7 +108,7 @@
   .label {{selection.size()}} Entries selected
   .button-set(ng-controller="EntryListActionsCtrl" ng-hide="selection.isEmpty()")
     %button.default-button.duplicate(type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
-    %button.default-button.danger-button.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" ng-show="deleteConfirm" ng-click="deleteSelected()" tooltip="Click anywhere else to dismiss") Are you sure?
+    %button.default-button.danger-button.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" cf-click-outside-when="deleteConfirm" ng-show="deleteConfirm" ng-click="deleteSelected()" tooltip="Click anywhere else to dismiss") Are you sure?
     %button.default-button.delete(type="button" ng-click="deleteConfirm=true" tooltip="Permanently delete these Entries" ng-show="showDelete() && !deleteConfirm") Delete
     %button.default-button.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
     %button.default-button.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive

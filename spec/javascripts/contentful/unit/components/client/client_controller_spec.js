@@ -784,31 +784,38 @@ describe('Client Controller', function () {
   });
 
   describe('performs token lookup', function () {
-    beforeEach(function () {
-      var thenStub = sinon.stub();
-      thenStub.callsArgWith(0, {
-        sys: {
-          createdBy: 'user'
-        },
-        spaces: ['space']
-      });
-      stubs.getTokenLookup.returns({
-        then: thenStub
-      });
+    var $q;
+    var tokenDeferred;
+    var tokenLookup = { sys: { createdBy: 'user' }, spaces: ['space'] };
+    beforeEach(inject(function ($injector) {
+      $q = $injector.get('$q');
+      tokenDeferred = $q.defer();
+      stubs.getTokenLookup.returns(tokenDeferred.promise);
       scope.updateSpaces = sinon.stub();
       scope.performTokenLookup();
-    });
+    }));
 
     it('expect getTokenLookup to be called', function () {
       expect(stubs.getTokenLookup).toBeCalled();
     });
 
     it('user is set to the provided one', function () {
+      tokenDeferred.resolve(tokenLookup);
+      scope.$apply();
       expect(scope.user).toEqual('user');
     });
 
     it('spaces are updated', function () {
+      tokenDeferred.resolve(tokenLookup);
+      scope.$apply();
       expect(scope.updateSpaces).toBeCalledWith(['space']);
+    });
+
+    it('logs the user out on error 401', function () {
+      stubs.dialog.returns($q.when());
+      tokenDeferred.reject({statusCode: 401});
+      scope.$apply();
+      expect(stubs.logout).toBeCalled();
     });
   });
 

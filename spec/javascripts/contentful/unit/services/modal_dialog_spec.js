@@ -138,6 +138,28 @@ describe('Modal dialog service', function () {
 
     });
 
+    it('properly removes the global event listeners', inject(function ($window) {
+      expect($window[$.expando].events.keyup.length).toBe(1);
+      dialog._cleanup();
+      expect($window[$.expando].events.keyup).toBe(undefined);
+    }));
+
+    it('confirms with values', function () {
+      var result;
+      dialog.confirm('foo');
+      dialog.promise.then(function (value) { result = value; });
+      scope.$apply();
+      expect(result).toBe('foo');
+    });
+
+    it('cancels with values', function () {
+      var result;
+      dialog.cancel('bar');
+      dialog.promise.catch(function (value) { result = value; });
+      scope.$apply();
+      expect(result).toBe('bar');
+    });
+
     it('sets the dialog to invalid', function() {
       dialog.setInvalid(true);
       expect(dialog.invalid).toBeTruthy();

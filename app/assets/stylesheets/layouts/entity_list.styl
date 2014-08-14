@@ -1,0 +1,90 @@
+.entity-list
+  .main-header
+    $stretch(0, 0, false, 0)
+    width: 100%
+  .main-results-wrapper
+    $stretch(27px, 0, 0, 0)
+    overflow-y: auto
+    .main-results
+      border-left: none
+  .tab-header
+    $display-flexbox()
+    justify-content: space-between
+    align-content: stretch
+
+    .tab-title
+      width: $left-nav-width + 1%
+      $tab-header-title()
+
+    .add-entity
+      $display-flexbox()
+      flex-grow: 0
+      flex-basis: 12%
+      justify-content: flex-end
+      align-items: center
+      padding-right: 20px
+      .default-button,
+      .dropdown-btn
+        width: 100%
+        max-width: 200px
+      .default-button
+        overflow: hidden
+        margin: 0
+        height: $tab-header-field-height
+        white-space: nowrap
+        text-overflow: ellipsis
+
+    .dropdown-menu
+      $new-entities-dropdown-height = 600px
+      max-height: $new-entities-dropdown-height
+      .dropdown-menu-list
+        max-height: $new-entities-dropdown-height - 30px
+        overflow-y: auto
+
+  .tab-main
+    .left-nav
+      overflow-y: auto
+      overflow-x: hidden
+      @extend .tab-workbench
+      padding-left: 20px
+      padding-right: 20px
+      padding: $tab-main-margin-top 20px 0
+      .dropdown-menu
+        min-width: 150px
+    .with-left-nav
+      margin-top: $tab-main-margin-top // padding is ignored by absolute children
+      $stretch-y()
+      @extend .tab-workbench
+
+  .left-nav-bottom
+    position: absolute
+    background: white
+    bottom: 0
+    right: 0
+    width: 100%
+    padding: 1.5em 0 2em
+    span
+      color: $light-gray
+      line-height: 1.3em
+      padding: .1em 0
+      &:first-child
+        margin-left: 29px
+        margin-right: .6em
+        padding-right: .6em
+    span:hover
+      color: $dark-link-blue
+      cursor: pointer
+
+  .result-list
+    tbody tr
+      @extend $tr-clickable
+
+  .view-customizer
+    position: absolute
+    right: 0
+    top: 0
+    height: 27px
+    .dropdown-toggle
+      line-height: 28px
+      margin-right: 5px
+

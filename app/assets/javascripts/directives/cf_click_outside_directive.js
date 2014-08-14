@@ -6,6 +6,7 @@ angular.module('contentful').directive('cfClickOutside', ['$parse', '$document',
     link: function(scope, element, attr) {
       var fn = $parse(attr.cfClickOutside);
       var ignored = $(attr.cfClickOutsideIgnore);
+
       $document.bind('click', clickOutsideHandler);
       element.bind('remove', function () {
         $document.unbind('click', clickOutsideHandler);
@@ -18,6 +19,7 @@ angular.module('contentful').directive('cfClickOutside', ['$parse', '$document',
       }
 
       function clickOutsideHandler(event) {
+        if(!scope.$eval(attr.cfClickOutsideWhen)) return;
         event.stopPropagation();
         var targetParents = $(event.target).parents();
         var inside = targetParents.index(element) !== -1;

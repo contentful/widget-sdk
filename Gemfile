@@ -8,6 +8,7 @@ group :assets do
   gem 'haml_coffee_assets', '~> 1.13.0'
   gem 'execjs'
   gem 'sass-rails',   '~> 3.2.6'
+  gem 'stylus', '~> 0.7.0'
   gem 'coffee-rails', '~> 3.2.1'
   gem 'uglifier', '>= 1.0.3'
   gem 'asset_sync'

@@ -25,6 +25,7 @@
          placeholder="e.g. Product Name"
          ng-change="updateFieldId()"
          tooltip="Field title displayed to editors"
+         tooltip-container=".tab-main"
          tooltip-placement="top")
   %span.field-id-display(tooltip="Field ID used in API"
          ng-if="published") {{field.id}}
@@ -37,6 +38,7 @@
          ot-subdoc ot-bind-text type="text"
          placeholder="e.g. productName"
          tooltip="Field ID used in API"
+         tooltip-container=".tab-main"
          tooltip-placement="top")
   .field-errors(ng-hide="noErrors")
     %span(cf-error-path="['fields', index, 'name']")
@@ -45,10 +47,10 @@
     %span(cf-error-path="['fields', index, 'id']")
       Identifier: {{errorMessages.join(' ')}}
 
-.dropdown-btn.fieldtype-dropdown
-  .dropdown-toggle.flat-button.cf-fieldtype-icon(field="field" show-tooltip="" ng-disabled="published")
+.dropdown-btn.fieldtype-dropdown(cf-dropdown)
+  .dropdown-toggle.flat-button.cf-fieldtype-icon(cf-dropdown-toggle="" field="field" show-tooltip="" ng-disabled="published")
     %i.ss-help
-  .dropdown-menu.type-menu(select-type="changeFieldType(type)")
+  .dropdown-menu.type-menu(cf-dropdown-menu="" select-type="changeFieldType(type)")
 
 .status(ng-class="statusClass()" tooltip="{{statusTooltipText()}}" data-tooltip-container=".tab-main")
 .field-details

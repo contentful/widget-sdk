@@ -1,0 +1,35 @@
+@import 'nib/gradients'
+
+$gradient($start, $stop)
+  background: $start
+  background-image: linear-gradient($start, $stop)
+
+$gradient-op($color, $highlight, $operation)
+  if $operation == 'lighten'
+    $gradient($color, lighten($color, $highlight))
+  if $operation == 'darken'
+    $gradient($color, darken($color, $highlight))
+
+$blue-highlight($highlight = 6%, $operation = 'darken')
+  color: white
+  $gradient-op($blue, $highlight, $operation)
+
+$green-highlight($highlight = 6%, $operation = 'darken')
+  color: white
+  $gradient-op($green, $highlight, $operation)
+
+$gold-highlight($highlight = 6%, $operation = 'darken')
+  color: white
+  $gradient-op($gold, $highlight, $operation)
+
+$red-highlight($highlight = 6%, $operation = 'darken')
+  color: white
+  $gradient-op($red, $highlight, $operation)
+
+$gray-highlight()
+  color: $medium-gray
+  box-shadow: 0 8px 16px rgba(255,255,255,0.6) inset
+
+$fade-text-background($color)
+  background-image: linear-gradient(left, rgba($color, 0) 0%, $color 50%, $color 100%)
+

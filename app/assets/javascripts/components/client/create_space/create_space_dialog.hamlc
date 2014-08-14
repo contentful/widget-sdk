@@ -17,11 +17,11 @@
         .form-field
           %label Organization
           .form-controls
-            .dropdown-btn
-              %button.dropdown-toggle.flat-button(type="button")
+            .dropdown-btn(cf-dropdown)
+              %button.dropdown-toggle.flat-button(cf-dropdown-toggle="" type="button")
                 {{selectedOrganization.name}}
                 %i.button-icon-right.ss-dropdown
-              .dropdown-menu.fixed-position
+              .dropdown-menu.fixed-position(cf-dropdown-menu)
                 %ul.dropdown-menu-list(ng-repeat="org in writableOrganizations")
                   %li.dropdown-menu-item(ng-click="selectOrganization(org)" dropdown-close="") {{org.name}}
         .form-field

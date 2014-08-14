@@ -12,9 +12,26 @@ describe('Asset editor controller', function () {
         'getPublishLocales',
         'assetTitle',
         'isArchived',
-        'process'
+        'process',
+        'peek',
+        'mkpath',
+        'fileNameToTitle',
+        'serverError'
       ]);
       $provide.removeControllers('FormWidgetsController');
+
+      $provide.value('ShareJS', {
+        peek: stubs.peek,
+        mkpath: stubs.mkpath
+      });
+
+      $provide.value('stringUtils', {
+        fileNameToTitle: stubs.fileNameToTitle
+      });
+
+      $provide.value('notification', {
+        serverError: stubs.serverError
+      });
     });
     inject(function ($rootScope, $controller) {
       scope = $rootScope.$new();
@@ -124,11 +141,56 @@ describe('Asset editor controller', function () {
     });
   });
 
-  it('handles a fileUploaded event from CfFileEditor controller', function () {
-    scope.otDoc = { version: 123 };
-    var fileObj = {fileName: 'file.jpg'};
-    scope.$emit('fileUploaded', fileObj, {code: 'en-US'});
-    expect(scope.asset.process).toBeCalled();
+  describe('handles a fileUploaded event from CfFileEditor controller', function() {
+    var otPath;
+    beforeEach(function() {
+      scope.otDoc = { version: 123 };
+      otPath = ['fields', 'title', 'en-US'];
+      var fileObj = {fileName: 'file.jpg'};
+      scope.$emit('fileUploaded', fileObj, {code: 'en-US'});
+    });
+
+    it('calls asset processing', function () {
+      expect(scope.asset.process).toBeCalled();
+    });
+
+    describe('on success', function() {
+      beforeEach(function() {
+        scope.asset.process.yield(null, {});
+        stubs.peek.returns(null);
+        stubs.fileNameToTitle.returns('file');
+      });
+
+      it('looks for otDoc with locale', function() {
+        expect(stubs.peek).toBeCalledWith(scope.otDoc, otPath);
+      });
+
+      it('creates otDoc', function() {
+        expect(stubs.mkpath).toBeCalled();
+      });
+
+      it('creates otDoc with doc', function() {
+        expect(stubs.mkpath.args[0][0].doc).toEqual(scope.otDoc);
+      });
+
+      it('creates otDoc with path', function() {
+        expect(stubs.mkpath.args[0][0].path).toEqual(otPath);
+      });
+
+      it('creates otDoc with filename', function() {
+        expect(stubs.mkpath.args[0][0].value).toEqual('file');
+      });
+    });
+
+    describe('on error', function() {
+      beforeEach(function() {
+        scope.asset.process.yield({});
+      });
+
+      it('calls error notification', function() {
+        expect(stubs.serverError).toBeCalled();
+      });
+    });
   });
 
   // TODO test dirty flag

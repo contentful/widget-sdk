@@ -292,7 +292,7 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('does not show cf-link-editor-search', function () {
-        expect(element.find('.cf-link-editor-search .controls')).toBeNgHidden();
+        expect(element.find('.cf-link-editor-search')).toBeNgHidden();
       });
 
       it('drag-file is shown because there is multiple links', function () {
@@ -528,7 +528,7 @@ describe('cfLinkEditor Directive', function () {
       });
 
       it('does not show cf-link-editor-search', function () {
-        expect(element.find('.cf-link-editor-search .controls')).toBeNgHidden();
+        expect(element.find('.cf-link-editor-search')).toBeNgHidden();
       });
 
       it('has asset-link class on list', function () {

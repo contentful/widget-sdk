@@ -93,6 +93,7 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
     getBlankView: getBlankView,
     viewCollectionName: 'entryListViews',
     generateDefaultViews: generateDefaultViews,
+    currentViewLocation: 'tab.params.view',
     resetList: function () {
       $scope.resetEntries(true);
     }

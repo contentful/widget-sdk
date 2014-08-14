@@ -13,7 +13,7 @@
       search-content-type="assetContentType"
       placeholder="Search for Assets")
 
-  .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")
+  .search-results-position(paginator="searchController.paginator" ng-hide="!searchController.paginator.numEntries")
 
   .add-entity
     %button.default-button.primary-button(cf-can="create, Asset" ng-click="createAsset('frameButton')")
@@ -38,7 +38,7 @@
           %th.cell-author By
           %th.cell-status Status
 
-    .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
+    .main-results-wrapper.endless-container(at-bottom="searchController.loadMore()" num-elements="searchController.paginator.page")
       %table.result-list.main-results
         %tbody
           %tr(ng-repeat="asset in visibleAssets = (assets | filter:visibleInCurrentList) track by asset.getId()" cf-click-local="navigator.assetEditor(asset).goTo()")
@@ -60,7 +60,7 @@
               .draft-wrapper
                 .status-label {{statusClass(asset)}}
                 .status-bar
-      .loading(ng-hide="paginator.atLast()")
+      .loading(ng-hide="searchController.paginator.atLast()")
 
     .advice(ng-show="visibleAssets | isEmpty")
       %div(ng-show="hasQuery()")
@@ -79,7 +79,7 @@
 .tab-actions
   .label {{selection.size()}} Assets selected
   .button-set(ng-controller="AssetListActionsCtrl"   ng-hide="selection.isEmpty()")
-    %button.default-button.danger-button.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" ng-show="deleteConfirm" ng-click="deleteSelected()" tooltip="Click anywhere else to dismiss") Are you sure?
+    %button.default-button.danger-button.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" cf-click-outside-when="deleteConfirm" ng-show="deleteConfirm" ng-click="deleteSelected()" tooltip="Click anywhere else to dismiss") Are you sure?
     %button.default-button.delete(type="button" ng-click="deleteConfirm=true" tooltip="Permanently delete these Assets" ng-show="showDelete() && !deleteConfirm") Delete
     %button.default-button.archive(type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
     %button.default-button.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive

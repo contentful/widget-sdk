@@ -1,6 +1,5 @@
 .tab-header.editor-configuration
-  %h1
-    {{headline()}}
+  %h1(title="{{headline()}}") {{headline()}}
   %a.cf-knowledge-base-icon(
     tooltip="Learn more about Entries in the Knowledge Base Pages"
     analytics-event="entries"
@@ -12,11 +11,11 @@
             tooltip="Toggle additional details"
             tooltip-placement="bottom")
       Info
-    .dropdown-btn
-      %a.flat-button.dropdown-toggle
+    .dropdown-btn(cf-dropdown)
+      %a.flat-button.dropdown-toggle(cf-dropdown-toggle)
         %i.ss-dropdown.button-icon-right
         %span View
-      .dropdown-menu(style="display:none")
+      .dropdown-menu(cf-dropdown-menu="" style="display:none")
         %ul.dropdown-menu-list(ng-show="showLangSwitcher")
           %li.dropdown-menu-item(ng-repeat="locale in spaceContext.publishLocales track by locale.code")
             %label
@@ -34,7 +33,7 @@
     %h1 Entry Information
   .entity-info-panel
 
-.tab-main
+.tab-main.tab-workbench
   %form.form-horizontal(name="entryForm")
     .form-field(ng-show="hasErrorOnFields")
       %label
@@ -63,11 +62,11 @@
 
 .tab-actions(ng-controller="EntryActionsCtrl")
   .button-set
-    .dropdown-btn(on-close="deleteConfirm=false; disableTooltip=false" ng-show="canDelete() || canDuplicate()")
-      %a.dropdown-toggle.flat-button(tooltip="More actions" ng-click="disableTooltip=true")
+    .dropdown-btn(cf-dropdown="" on-close="deleteConfirm=false; disableTooltip=false" ng-show="canDelete() || canDuplicate()")
+      %button.flat-button(cf-dropdown-toggle="" tooltip="More actions" ng-click="disableTooltip=true")
         %i.ss-directup.button-icon-right
         More
-      .dropdown-menu(position="top")
+      .dropdown-menu(cf-dropdown-menu="" position="top")
         %ul.dropdown-menu-list
           %li.dropdown-menu-item.duplicate(type="button" ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this Entry" dropdown-close) Duplicate
           %li.dropdown-menu-item.delete-confirm.danger-button(type="button" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss" dropdown-close) Are you sure?

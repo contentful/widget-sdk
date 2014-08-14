@@ -51,7 +51,7 @@ angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector
   $scope.errorPaths = {};
   $scope.$watch('spaceContext.publishedTypeForEntry(entry).data', function(data) {
     if (!data) return;
-    var locales = $scope.spaceContext.space.getPublishLocales(); // TODO: watch this, too
+    var locales = $scope.spaceContext.space.data.locales; // TODO: watch this, too
     $scope.entrySchema = validation.fromContentType(data, locales);
   });
   $scope.$watch('entry.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {

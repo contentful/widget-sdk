@@ -1,6 +1,5 @@
 .tab-header.editor-configuration
-  %h1
-    {{headline()}}
+  %h1(title="{{headline()}}") {{headline()}}
   %a.cf-knowledge-base-icon(
     tooltip="Learn more about Assets in the Knowledge Base Pages"
     analytics-event="assets"
@@ -12,11 +11,11 @@
             tooltip="Toggle additional details"
             tooltip-placement="bottom")
       Info
-    .dropdown-btn(ng-show="showLangSwitcher")
-      %a.dropdown-toggle.flat-button
+    .dropdown-btn(cf-dropdown="" ng-show="showLangSwitcher")
+      %a.dropdown-toggle.flat-button(cf-dropdown-toggle)
         %i.ss-dropdown.button-icon-right
         %span View
-      .dropdown-menu(style="display:none")
+      .dropdown-menu(cf-dropdown-menu="" style="display:none")
         %ul.dropdown-menu-list
           %li.dropdown-menu-item(ng-repeat="locale in spaceContext.publishLocales track by locale.code")
             %label
@@ -29,7 +28,7 @@
     %h1 Asset Information
   .entity-info-panel
 
-.tab-main
+.tab-main.tab-workbench
   %form.form-horizontal(name="assetForm")
     .form-field(ng-show="hasErrorOnFields")
       %label
@@ -55,7 +54,7 @@
 
 .tab-actions(ng-controller="AssetActionsCtrl")
   .button-set
-    %button.default-button.danger-button.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss") Are you sure?
+    %button.default-button.danger-button.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" cf-click-outside-when="deleteConfirm" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss") Are you sure?
     %button.default-button.delete(   type="button" ng-show="canDelete() && !deleteConfirm" ng-click="deleteConfirm=true" tooltip="Permanently delete this Asset") Delete
     %button.default-button.archive(  type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
     %button.default-button.archive(  type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive

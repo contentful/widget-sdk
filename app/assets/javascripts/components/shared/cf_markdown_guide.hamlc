@@ -10,10 +10,10 @@
   %li(data-anchor="rules") Rules
 
 .markdown-guide-main
-  %h2 Markdown Basics
+  %h2.uppercase Markdown Basics
   %p Markdown allows you to write using an easy-to-read plain text format, which is then formatted for viewing on devices and browsers serving content from Contentful API. Think of it as a stripped down version of HTML. Scroll down below for tips on how to use markdown syntax.
 
-  %h2(data-anchor="paragraphs") Paragraphs
+  %h2.uppercase(data-anchor="paragraphs") Paragraphs
   %p Paragraphs in Markdown are just one or more lines of consecutive text followed by one or more blank lines.
   %code
     The raven paradox, also known as Hempel's paradox or Hempel's ravens, is a paradox arising from the question of what constitutes evidence for a statement. 
@@ -21,7 +21,7 @@
     %br
     Observing objects that are neither black nor ravens may formally increase the likelihood that all ravens are black – even though, intuitively, these observations are unrelated.
 
-  %h2 Line breaks
+  %h2.uppercase Line breaks
   %p If you wish to create a line break you need to leave two spaces at the end of a line, otherwise they will still be rendered on the same line
   %code
     This is a line with two spaces at the end
@@ -30,7 +30,7 @@
     %br
     This is one line with no spaces at the end And this is a second line after it
 
-  %h2(data-anchor="headings") Headings
+  %h2.uppercase(data-anchor="headings") Headings
   %p You can create a heading by adding one or more # symbols before your heading text. The number of # you use will determine the size of the heading.
   %code
     :plain 
@@ -38,7 +38,7 @@
       ## The second largest heading<br>
       ### The third largest heading
 
-  %h2(data-anchor="blockquotes") Blockquotes
+  %h2.uppercase(data-anchor="blockquotes") Blockquotes
   %p You can indicate blockquotes with a &gt;, just like you do in email.
   %code
     To quote topographic scholars:
@@ -46,7 +46,7 @@
     %br
     &gt; There are three types of people in this world: those who know how to count and those who don’t!
 
-  %h2(data-anchor="styling") Styling text
+  %h2.uppercase(data-anchor="styling") Styling text
   %p You can make text bold (one asterisk), italic (two asterisks), or strikethrough (two tilde signs).
   %code
     :plain
@@ -58,7 +58,7 @@
     :plain
       **Everyone _must_ attend the 5 o'clock tea at Lady Mae’s house.**
 
-  %h2(data-anchor="lists") Unordered lists
+  %h2.uppercase(data-anchor="lists") Unordered lists
   %p You can make an unordered list by preceding list items with either a * or a -.
   %code
     :plain
@@ -70,7 +70,7 @@
       - Item<br>
       - Item
 
-  %h2 Ordered lists
+  %h2.uppercase Ordered lists
   %p You can make an ordered list by preceding list items with a number.
   %code
     1. Item 1
@@ -79,7 +79,7 @@
     %br
     3. Item 3
 
-  %h2(data-anchor="links") Links
+  %h2.uppercase(data-anchor="links") Links
   %p There are two ways to create links - doing it inline or creating a reference. In both cases, the link text is delimited by [square brackets]. 
   %code
     This is [an example](http://example.com/ "Title") inline link. 
@@ -100,7 +100,7 @@
     %br
     [foo]: http://anotherexample.com/ (Optional Title with Parentheses Here)
 
-  %h2(data-anchor="images") Images
+  %h2.uppercase(data-anchor="images") Images
   %p To include images, use the following syntax to the define the image and the alt attribute:
   %code
     \![Alt text](http://example.com/image.jpg)
@@ -110,7 +110,7 @@
     \![Alt text](http://example.com/image.jpg "Title text")
 
 
-  %h2(data-anchor="code") Code blocks
+  %h2.uppercase(data-anchor="code") Code blocks
   %p
     To include examples of source code in the text, simply intend every line of the block by at least 4 spaces.
     Your text will be displayed as a code.
@@ -125,7 +125,7 @@
       bar('baz');<br>
       ```<br>
 
-  %h2(data-anchor="rules") Horizontal rules
+  %h2.uppercase(data-anchor="rules") Horizontal rules
   %p You can produce a horizontal rule by placing three or more hyphens, asterisks, or underscores on a line by themselves. 
   %code
     :plain
