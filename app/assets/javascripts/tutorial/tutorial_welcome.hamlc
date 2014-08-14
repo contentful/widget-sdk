@@ -48,9 +48,9 @@
           .welcome-text
             Learn how to set up Content Types, the foundation for your Entries.
           .buttons
-            %button.default-button.repeat(type="button" ng-show="contentTypeDone" ng-click="goTo('contentTypeIntro')")
+            %button.btn.default-button.repeat(type="button" ng-show="contentTypeDone" ng-click="goTo('contentTypeIntro')")
               Repeat Tutorial
-            %button.default-button.primary-button(type="button" ng-hide="contentTypeDone" ng-click="goTo('contentTypeIntro')")
+            %button.btn.default-button.primary-button(type="button" ng-hide="contentTypeDone" ng-click="goTo('contentTypeIntro')")
               Take Tutorial
 
         .tutorial-select-box.middle
@@ -60,9 +60,9 @@
           .welcome-text
             An intro to day to day content management tasks.
           .buttons
-            %button.default-button.repeat(type="button" ng-show="entryDone" ng-click="goTo('entryIntro')")
+            %button.btn.default-button.repeat(type="button" ng-show="entryDone" ng-click="goTo('entryIntro')")
               Repeat Tutorial
-            %button.default-button.primary-button(type="button" ng-hide="entryDone" ng-click="goTo('entryIntro')")
+            %button.btn.default-button.primary-button(type="button" ng-hide="entryDone" ng-click="goTo('entryIntro')")
               Take Tutorial
 
         .tutorial-select-box.right
@@ -72,9 +72,9 @@
           .welcome-text
             Learn how to configure the distribution of your content.
           .buttons
-            %button.default-button.repeat(type="button" ng-show="apiKeyDone" ng-click="goTo('apiKeyIntro')")
+            %button.btn.default-button.repeat(type="button" ng-show="apiKeyDone" ng-click="goTo('apiKeyIntro')")
               Repeat Tutorial
-            %button.default-button.primary-button(type="button" ng-hide="apiKeyDone" ng-click="goTo('apiKeyIntro')")
+            %button.btn.default-button.primary-button(type="button" ng-hide="apiKeyDone" ng-click="goTo('apiKeyIntro')")
               Take Tutorial
 
   .hide-x-button(ng-hide="atLastSlide()")

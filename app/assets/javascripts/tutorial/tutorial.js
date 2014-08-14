@@ -31,7 +31,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
   guiders.showImmediate = guiders.show;
   guiders.show = guiders.showDelayed;
 
-  var next = {name: '<i class="ss-navigateright"></i>', classString: 'default-button next-button', onclick: function(){guiders.next();}};
+  var next = {name: '<i class="ss-navigateright"></i>', classString: 'btn default-button next-button', onclick: function(){guiders.next();}};
 
   function Tutorial() {}
 
@@ -234,7 +234,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
         attachTo: '.account-menus .user',
         position: 5,
         xButton: false,
-        buttons: [{name: 'OK', classString: 'default-button primary-button', onclick: function(){guiders.hideAll();}}]
+        buttons: [{name: 'OK', classString: 'btn default-button primary-button', onclick: function(){guiders.hideAll();}}]
       });
 
 

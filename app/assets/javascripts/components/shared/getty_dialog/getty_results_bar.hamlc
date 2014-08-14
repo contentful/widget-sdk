@@ -3,11 +3,11 @@
   %span(ng-transclude)
 
 .sorting-options(ng-show="isActive() && isSortingActive()")
-  %button.flat-button(ng-click="sortBy('default')" ng-show="getty.families.editorial" ng-class="{active: currentSortOrder == 'Default'}")
+  %button.btn.flat-button(ng-click="sortBy('default')" ng-show="getty.families.editorial" ng-class="{active: currentSortOrder == 'Default'}")
     Best Match
-  %button.flat-button(ng-click="sortBy('MostRecent')" ng-class="{active: !hasBlendedSortOrder && currentSortOrder == 'MostRecent'}")
+  %button.btn.flat-button(ng-click="sortBy('MostRecent')" ng-class="{active: !hasBlendedSortOrder && currentSortOrder == 'MostRecent'}")
     Most Recent
-  %button.flat-button(ng-click="sortBy('MostPopular')" ng-class="{active: !hasBlendedSortOrder && currentSortOrder == 'MostPopular'}")
+  %button.btn.flat-button(ng-click="sortBy('MostPopular')" ng-class="{active: !hasBlendedSortOrder && currentSortOrder == 'MostPopular'}")
     Most Popular
 
 

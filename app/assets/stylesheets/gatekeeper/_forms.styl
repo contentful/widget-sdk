@@ -2,6 +2,9 @@ $formtastic-fieldwidth = 40%
 .tab-iframe .formtastic
   max-width: 80em
   // Overrides for things that formtastic styles too much
+  //TODO maybe we don't need this anymore
+  .btn
+    @extend .btn
   .default-button
     @extend .default-button
   .primary-button
@@ -94,15 +97,6 @@ $formtastic-fieldwidth = 40%
       display: inline-block
     ol
       float: left
-      /*
-      //button
-        //@extend .default-button
-        //height: $tab-actions-content-height
-    // Colors
-    //input[name="commit"]
-      //@extend .primary-button
-      */
-
   .in-form-margins
     margin-left: $form-labelwidth
     width: $field-editor-width

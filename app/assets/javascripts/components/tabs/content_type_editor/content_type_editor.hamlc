@@ -6,14 +6,14 @@
     href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
 
   .editor-top-right
-    %button.flat-button(type="button"
+    %button.btn.flat-button(type="button"
             ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
             tooltip-placement="bottom")
       Info
     .dropdown-btn(cf-dropdown)
-      %a.flat-button.dropdown-toggle(cf-dropdown-toggle)
+      %a.btn.flat-button.dropdown-toggle(cf-dropdown-toggle)
         %i.ss-dropdown.button-icon-right
         %span View
       .dropdown-menu(cf-dropdown-menu)
@@ -66,27 +66,27 @@
           %p.advice-description
             Add Fields to configure which form inputs are available for your editors to work with.
           .dropdown-btn(cf-dropdown)
-            %button.default-button.primary-button(cf-dropdown-toggle="" ng-disabled="!otEditable || cfCanDisabled")
+            %button.btn.default-button.primary-button(cf-dropdown-toggle="" ng-disabled="!otEditable || cfCanDisabled")
               Create Field
             .dropdown-menu.type-menu(cf-dropdown-menu="" select-type="addField(type)")
             %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
               Visit the Knowledge Base Pages
               %i.ss-help
         .dropdown-btn(cf-dropdown="" ng-show="hasFields")
-          %button.dropdown-toggle.add-field-button.default-button.primary-button(cf-dropdown-toggle="" cf-can="create, ContentType" ng-disabled="!otEditable || cfCanDisabled")
+          %button.dropdown-toggle.add-field-button.btn.default-button.primary-button(cf-dropdown-toggle="" cf-can="create, ContentType" ng-disabled="!otEditable || cfCanDisabled")
             %i.ss-plus.button-icon
             Add Field
           .dropdown-menu.type-menu(cf-dropdown-menu="" select-type="addField(type)")
         .cf-form-box-error(cf-error-path="['fields']")
 .tab-actions(ng-controller="ContentTypeActionsCtrl")
   .button-set
-    %button.default-button.deactivate(type="button"
+    %button.btn.default-button.deactivate(type="button"
                   ng-show="canUnpublish()"
                   ng-click="unpublish()"
                   tooltip="Deactivate this Content Type")
       Deactivate
 
-    %button.default-button.danger-button.delete-confirm(type="button"
+    %button.btn.default-button.danger-button.delete-confirm(type="button"
                   cf-click-outside="deleteConfirm=false"
                   cf-click-outside-ignore=".delete"
                   cf-click-outside-when="deleteConfirm"
@@ -94,12 +94,12 @@
                   ng-click="delete()"
                   tooltip="Click anywhere else to dismiss")
       Are you sure?
-    %button.default-button.delete(type="button"
+    %button.btn.default-button.delete(type="button"
                   ng-show="canDelete() && !deleteConfirm"
                   ng-click="deleteConfirm=true" 
                   tooltip="Delete this Content Type")
       Delete
-    %button.default-button.primary-button.publish(
+    %button.btn.default-button.primary-button.publish(
                   ng-disabled="!canPublish()"
                   ng-click="publish()"
                   tooltip="Make this Content Type available to editors")
