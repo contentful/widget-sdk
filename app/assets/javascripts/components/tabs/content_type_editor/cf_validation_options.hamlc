@@ -1,11 +1,11 @@
 .dropdown-btn.validation-type-select(cf-dropdown="" ng-hide="availableValidations | isEmpty")
-  %button.btn.flat-button.dropdown-toggle(cf-dropdown-toggle)
+  %button.btn.btn--flat.dropdown-toggle(cf-dropdown-toggle)
     %i.ss-dropdown.button-icon-right
     {{validationName(validation)}}
   .dropdown-menu.type-menu(cf-dropdown-menu="" select-validation="changeType(type)")
 
 .validation-type-select(ng-show="availableValidations | isEmpty")
-  %button.btn.flat-button(disabled) {{validationName(validation)}}
+  %button.btn.btn--flat(disabled) {{validationName(validation)}}
 
 .validation-controls.form-styled(ng-switch="validationType(validation)" ng-class="validationType(validation)")
   %div(ng-switch-when="size")
@@ -39,12 +39,12 @@
     .cf-form-inline-error(cf-error-path="validationListPath(validationIndex)")
     .cf-predefined-values-list
 
-  .btn.flat-button.select-box(ng-switch-when="linkContentType")
+  .btn.btn--flat.select-box(ng-switch-when="linkContentType")
     %select(ng-model="validation.linkContentType"
             ng-options="ct.getId() as ct.getName() for ct in spaceContext.publishedContentTypes" ng-change="updateDoc()" ng-disabled="!otEditable")
     %i.button-icon-right.ss-dropdown
 
-  .btn.flat-button.select-box(ng-switch-when="linkMimetypeGroup")
+  .btn.btn--flat.select-box(ng-switch-when="linkMimetypeGroup")
     %select(ng-model="validation.linkMimetypeGroup"
             ng-options="name as label for (name, label) in mimetypeGroups" ng-change="updateDoc()" ng-disabled="!otEditable")
     %i.button-icon-right.ss-dropdown

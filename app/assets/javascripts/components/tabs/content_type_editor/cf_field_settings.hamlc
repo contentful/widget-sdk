@@ -48,7 +48,7 @@
       Identifier: {{errorMessages.join(' ')}}
 
 .dropdown-btn.fieldtype-dropdown(cf-dropdown)
-  .dropdown-toggle.btn.flat-button.cf-fieldtype-icon(cf-dropdown-toggle="" field="field" show-tooltip="" ng-disabled="published")
+  .dropdown-toggle.btn.btn--flat.cf-fieldtype-icon(cf-dropdown-toggle="" field="field" show-tooltip="" ng-disabled="published")
     %i.ss-help
   .dropdown-menu.type-menu(cf-dropdown-menu="" select-type="changeFieldType(type)")
 

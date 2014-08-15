@@ -42,13 +42,13 @@ describe('The ContentType list directive', function () {
     it('is not shown', function() {
       canStub.withArgs('create', 'ContentType').returns(false);
       compileElement();
-      expect(container.find('.tab-header .add-entity .primary-button')).toBeNgHidden();
+      expect(container.find('.tab-header .add-entity .btn--primary')).toBeNgHidden();
     });
 
     it('is shown', function() {
       canStub.withArgs('create', 'ContentType').returns(true);
       compileElement();
-      expect(container.find('.tab-header .add-entity .primary-button')).not.toBeNgHidden();
+      expect(container.find('.tab-header .add-entity .btn--primary')).not.toBeNgHidden();
     });
   });
 
@@ -56,13 +56,13 @@ describe('The ContentType list directive', function () {
     canStub.withArgs('create', 'ContentType').returns(false);
     reasonsStub.returns(['usageExceeded']);
     compileElement();
-    expect(container.find('.advice .primary-button').attr('disabled')).toBe('disabled');
+    expect(container.find('.advice .btn--primary').attr('disabled')).toBe('disabled');
   });
 
   it('save button is enabled', function () {
     canStub.withArgs('create', 'ContentType').returns(true);
     compileElement();
-    expect(container.find('.advice .primary-button').attr('disabled')).toBeUndefined();
+    expect(container.find('.advice .btn--primary').attr('disabled')).toBeUndefined();
   });
 
   describe('list of content types is filtered', function() {

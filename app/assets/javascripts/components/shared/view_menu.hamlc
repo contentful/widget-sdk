@@ -9,7 +9,7 @@
       %strong This menu is empty
       %i.ss-redirect
       %p Add a folder or save a view to enable this menu
-      %button.btn.default-button.primary-button(ng-click="resetViews()")
+      %button.btn.btn--primary(ng-click="resetViews()")
         Restore default menu
 
   .free-views(ng-show="showTempFreeViews()")

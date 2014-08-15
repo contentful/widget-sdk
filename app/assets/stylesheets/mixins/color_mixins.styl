@@ -10,21 +10,36 @@ $gradient-op($color, $highlight, $operation)
   if $operation == 'darken'
     $gradient($color, darken($color, $highlight))
 
-$blue-highlight($highlight = 6%, $operation = 'darken')
+$action-button-text-color()
   color: white
+  &:link
+    color: white
+  &:hover
+    color: white
+
+$blue-highlight($highlight = 6%, $operation = 'darken')
+  $action-button-text-color()
   $gradient-op($blue, $highlight, $operation)
+  &:hover
+    $gradient-op($blue, $highlight, $operation)
 
 $green-highlight($highlight = 6%, $operation = 'darken')
-  color: white
+  $action-button-text-color()
   $gradient-op($green, $highlight, $operation)
+  &:hover
+    $gradient-op($green, $highlight, $operation)
 
 $gold-highlight($highlight = 6%, $operation = 'darken')
-  color: white
+  $action-button-text-color()
   $gradient-op($gold, $highlight, $operation)
+  &:hover
+    $gradient-op($gold, $highlight, $operation)
 
 $red-highlight($highlight = 6%, $operation = 'darken')
-  color: white
+  $action-button-text-color()
   $gradient-op($red, $highlight, $operation)
+  &:hover
+    $gradient-op($red, $highlight, $operation)
 
 $gray-highlight()
   color: $medium-gray

@@ -4,7 +4,7 @@
     .modal-dialog-close-button(ng-click="dialog.cancel()")
     %p.dialog-content.dialog-plaintext {{dialog.message}}
     .buttons
-      %button.btn.default-button.cancel(type="button" ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")
+      %button.btn.btn--default.cancel(type="button" ng-click="dialog.cancel()" ng-show="dialog.cancelLabel")
         {{dialog.cancelLabel}}
-      %button.btn.default-button.primary-button.confirm(ng-click="dialog.confirm()")
+      %button.btn.btn--primary.confirm(ng-click="dialog.confirm()")
         {{dialog.confirmLabel}}

@@ -1,4 +1,4 @@
-%button.back.btn.flat-button(ng-click="resetImageView()") &larr; Back
+%button.back.btn.btn--flat(ng-click="resetImageView()") &larr; Back
 
 .preview
   %img(ng-src="{{imageDetail.UrlPreview}}")
@@ -25,7 +25,7 @@
 
       %p.getty-downloads-error(ng-show="downloadsError") {{downloadsError}}
       .getty-download-button
-        %button.btn.default-button.primary-button(ng-disabled="!selectedSizeKey" ng-click="addImage()")
+        %button.btn.btn--primary(ng-disabled="!selectedSizeKey" ng-click="addImage()")
           Add image
         .loading(ng-show="gettyDownloading")
 

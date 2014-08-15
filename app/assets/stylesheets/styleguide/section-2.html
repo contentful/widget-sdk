@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]> <html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]>    <html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]>    <html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en"> <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <title>KSS: Living Styleguide</title>
+
+  <meta name="description" content="">
+  <meta name="generator" content="kss-node" />
+  <meta name="viewport" content="width=device-width">
+
+  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif">
+  <link rel="stylesheet" href="public/kss.css">
+  <link rel="stylesheet" href="public/style.css">
+</head>
+<body><div id="kss-wrapper">
+
+<div id="kss-nav">
+  <header id="kss-header">
+    <hgroup><h1>kss-node Styleguide</h1></hgroup>
+  </header>
+  <aside>
+    <nav><ul>
+      <li><a href="index.html">0.0: Overview</a></li>
+    
+      <li><a href="section-1.html">1.0: Colors</a></li>
+    
+      <li><a href="section-2.html">2.0: Buttons</a></li>
+    
+    </ul></nav>
+  </aside>
+</div>
+<div role="main" id="kss-main">
+  <article id="kss-content">
+  
+
+    
+    
+      
+
+      <h1 class="kss-title"><span class="kss-ref">2.0</span> - Buttons</h1>
+
+      
+
+      
+
+      
+    
+      
+      <section class="kss-depth-2">
+      
+
+      <h1 class="kss-title"><span class="kss-ref">2.1</span> - A button base class</h1>
+
+      
+
+      
+        <table class="kss-mod-list">
+          <tr class="kss-mod-desc-group">
+            <td class="kss-mod-desc"><p>Default styling</p></td>
+            <td class="kss-mod-name"></td>
+          </tr>
+          <tr class="kss-mod-example">
+            <td colspan="2"><button class="btn">button</button>
+<button class="btn" disabled>button</button></td>
+          </tr>
+        
+          <tr class="kss-mod-desc-group">
+            <td class="kss-mod-desc"><p>Disabled state</p>
+</td>
+            <td class="kss-mod-name"><p>:disabled</p></td>
+          </tr>
+          <tr class="kss-mod-example">
+            <td colspan="2"><button class="btn">button</button>
+<button class="btn" disabled>button</button></td>
+          </tr>
+        
+        </table>
+
+        <div class="kss-markup">
+          <pre class="prettyprint lang-html">&lt;button class=&quot;btn&quot;&gt;button&lt;/button&gt;
+&lt;button class=&quot;btn&quot; disabled&gt;button&lt;/button&gt;</pre>
+        </div>
+      
+
+      
+      </section>
+      
+    
+      
+      <section class="kss-depth-2">
+      
+
+      <h1 class="kss-title"><span class="kss-ref">2.2</span> - Default button</h1>
+
+      
+        <div class="kss-box"><p>Default button theme, with hover, active and disabled states</p>
+</div>
+      
+
+      
+        <table class="kss-mod-list">
+          <tr class="kss-mod-desc-group">
+            <td class="kss-mod-desc"><p>Default styling</p></td>
+            <td class="kss-mod-name"></td>
+          </tr>
+          <tr class="kss-mod-example">
+            <td colspan="2"><button class="btn btn--default {$modifiers}">text</div>
+<button class="btn btn--default {$modifiers}" disabled>text</div></td>
+          </tr>
+        
+          <tr class="kss-mod-desc-group">
+            <td class="kss-mod-desc"><p>active state</p>
+</td>
+            <td class="kss-mod-name"><p>.active</p></td>
+          </tr>
+          <tr class="kss-mod-example">
+            <td colspan="2"><button class="btn btn--default active">text</div>
+<button class="btn btn--default active" disabled>text</div></td>
+          </tr>
+        
+        </table>
+
+        <div class="kss-markup">
+          <pre class="prettyprint lang-html">&lt;button class=&quot;btn btn--default {$modifiers}&quot;&gt;text&lt;/div&gt;
+&lt;button class=&quot;btn btn--default {$modifiers}&quot; disabled&gt;text&lt;/div&gt;</pre>
+        </div>
+      
+
+      
+      </section>
+      
+    
+      
+      <section class="kss-depth-2">
+      
+
+      <h1 class="kss-title"><span class="kss-ref">2.3</span> - Flat button</h1>
+
+      
+        <div class="kss-box"><p>Flat button theme with hover and active states</p>
+</div>
+      
+
+      
+        <table class="kss-mod-list">
+          <tr class="kss-mod-desc-group">
+            <td class="kss-mod-desc"><p>Default styling</p></td>
+            <td class="kss-mod-name"></td>
+          </tr>
+          <tr class="kss-mod-example">
+            <td colspan="2"><button class="btn flat-button {$modifiers}">text</button>
+<button class="btn flat-button {$modifiers}" disabled>text</button></td>
+          </tr>
+        
+          <tr class="kss-mod-desc-group">
+            <td class="kss-mod-desc"><p>active state</p>
+</td>
+            <td class="kss-mod-name"><p>.active</p></td>
+          </tr>
+          <tr class="kss-mod-example">
+            <td colspan="2"><button class="btn flat-button active">text</button>
+<button class="btn flat-button active" disabled>text</button></td>
+          </tr>
+        
+        </table>
+
+        <div class="kss-markup">
+          <pre class="prettyprint lang-html">&lt;button class=&quot;btn flat-button {$modifiers}&quot;&gt;text&lt;/button&gt;
+&lt;button class=&quot;btn flat-button {$modifiers}&quot; disabled&gt;text&lt;/button&gt;</pre>
+        </div>
+      
+
+      
+      </section>
+      
+    
+      
+      <section class="kss-depth-2">
+      
+
+      <h1 class="kss-title"><span class="kss-ref">2.4</span> - Primary button</h1>
+
+      
+        <div class="kss-box"><p>Button for primary actions, with hover and active states</p>
+</div>
+      
+
+      
+        <table class="kss-mod-list">
+          <tr class="kss-mod-desc-group">
+            <td class="kss-mod-desc"><p>Default styling</p></td>
+            <td class="kss-mod-name"></td>
+          </tr>
+          <tr class="kss-mod-example">
+            <td colspan="2"><button class="btn primary-button {$modifiers}">text</button></td>
+          </tr>
+        
+        </table>
+
+        <div class="kss-markup">
+          <pre class="prettyprint lang-html">&lt;button class=&quot;btn primary-button {$modifiers}&quot;&gt;text&lt;/button&gt;</pre>
+        </div>
+      
+
+      
+      </section>
+      
+    
+      
+      <section class="kss-depth-2">
+      
+
+      <h1 class="kss-title"><span class="kss-ref">2.5</span> - Danger button</h1>
+
+      
+        <div class="kss-box"><p>A button for dangerous situations</p>
+</div>
+      
+
+      
+        <table class="kss-mod-list">
+          <tr class="kss-mod-desc-group">
+            <td class="kss-mod-desc"><p>Default styling</p></td>
+            <td class="kss-mod-name"></td>
+          </tr>
+          <tr class="kss-mod-example">
+            <td colspan="2"><button class="btn danger-button {$modifiers}">text</button></td>
+          </tr>
+        
+        </table>
+
+        <div class="kss-markup">
+          <pre class="prettyprint lang-html">&lt;button class=&quot;btn danger-button {$modifiers}&quot;&gt;text&lt;/button&gt;</pre>
+        </div>
+      
+
+      
+      </section>
+      
+    
+      
+      <section class="kss-depth-2">
+      
+
+      <h1 class="kss-title"><span class="kss-ref">2.6</span> - Success button</h1>
+
+      
+        <div class="kss-box"><p>A button for confirming actions (needs rename)</p>
+</div>
+      
+
+      
+        <table class="kss-mod-list">
+          <tr class="kss-mod-desc-group">
+            <td class="kss-mod-desc"><p>Default styling</p></td>
+            <td class="kss-mod-name"></td>
+          </tr>
+          <tr class="kss-mod-example">
+            <td colspan="2"><button class="btn success-button {$modifiers}">text</button></td>
+          </tr>
+        
+        </table>
+
+        <div class="kss-markup">
+          <pre class="prettyprint lang-html">&lt;button class=&quot;btn success-button {$modifiers}&quot;&gt;text&lt;/button&gt;</pre>
+        </div>
+      
+
+      
+      </section>
+      
+    
+  
+  </article>
+</div>
+
+
+
+<!-- SCRIPTS -->
+<script src="public/kss.js"></script>
+<script src="public/prettify.js"></script>
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+<script>
+  $(document).ready(function(){
+    var sidebarAdjust = function() {
+      // Match footer/body height
+      var height = Math.max($(window).height(), $('#kss-main').height());
+
+      if ($(window).width() <= 768) {
+        $('#kss-main, #kss-nav').height('auto');
+      } else {
+        $('#kss-main, #kss-nav').height(height);
+      }
+    };
+
+    $(window).resize(sidebarAdjust);
+    $(window).scroll(sidebarAdjust);
+    sidebarAdjust();
+
+    // Ensure code blocks are highlighted properly...
+    $('pre>code').addClass('prettyprint');
+    prettyPrint();
+  });
+</script>
+
+
+
+
+</div></body>
+</html>

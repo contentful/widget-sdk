@@ -16,7 +16,7 @@
   .search-results-position(paginator="searchController.paginator" ng-hide="!searchController.paginator.numEntries")
 
   .add-entity
-    %button.btn.default-button.primary-button(cf-can="create, Asset" ng-click="createAsset('frameButton')")
+    %button.btn.btn--primary(cf-can="create, Asset" ng-click="createAsset('frameButton')" ng-hide="assets.length == 0")
       %i.ss-plus.button-icon
       Add Asset
 
@@ -70,7 +70,7 @@
         %i.ss-attach.giant-icon
         %header.advice-title You have no Assets yet.
         %p.advice-description Assets are external documents that you can link to your Entries. They can be any file you wish, form sounds to images or videos to text documents.
-        %button.btn.default-button.primary-button(type="button" ng-click="createAsset('frameButton')" cf-can="create, Asset")
+        %button.btn.btn--primary(type="button" ng-click="createAsset('frameButton')" cf-can="create, Asset")
           Create an Asset
         %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
           Visit the Knowledge Base Pages
@@ -79,9 +79,9 @@
 .tab-actions
   .label {{selection.size()}} Assets selected
   .button-set(ng-controller="AssetListActionsCtrl"   ng-hide="selection.isEmpty()")
-    %button.btn.default-button.danger-button.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" cf-click-outside-when="deleteConfirm" ng-show="deleteConfirm" ng-click="deleteSelected()" tooltip="Click anywhere else to dismiss") Are you sure?
-    %button.btn.default-button.delete(type="button" ng-click="deleteConfirm=true" tooltip="Permanently delete these Assets" ng-show="showDelete() && !deleteConfirm") Delete
-    %button.btn.default-button.archive(type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
-    %button.btn.default-button.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
-    %button.btn.default-button.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
-    %button.btn.default-button.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}
+    %button.btn.btn--default.btn--danger.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" cf-click-outside-when="deleteConfirm" ng-show="deleteConfirm" ng-click="deleteSelected()" tooltip="Click anywhere else to dismiss") Are you sure?
+    %button.btn.btn--default.delete(type="button" ng-click="deleteConfirm=true" tooltip="Permanently delete these Assets" ng-show="showDelete() && !deleteConfirm") Delete
+    %button.btn.btn--default.archive(type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
+    %button.btn.btn--default.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
+    %button.btn.btn--default.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
+    %button.btn.btn--default.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}

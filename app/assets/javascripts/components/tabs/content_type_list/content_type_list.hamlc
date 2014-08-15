@@ -11,7 +11,7 @@
     .search-field(cf-search="searchTerm" placeholder="Search for Content Types")
 
   .add-entity(ng-hide="empty")
-    %button.btn.default-button.primary-button(cf-can="create, ContentType" ng-click="createContentType('frameButton')")
+    %button.btn.btn--primary(cf-can="create, ContentType" ng-click="createContentType('frameButton')")
       %i.ss-plus.button-icon
       Add Content Type
 
@@ -67,7 +67,7 @@
         %i.ss-database.giant-icon
         %header.advice-title You have no Content Types yet.
         %p.advice-description Content Types work like stencils that define which Entries you can create within a specific Space.
-        %button.btn.default-button.primary-button(type="button" ng-click="createContentType('frameButton')" cf-can="create, ContentType")
+        %button.btn.btn--primary(type="button" ng-click="createContentType('frameButton')" cf-can="create, ContentType")
           Create Content Type
         %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
           Visit the Knowledge Base Pages

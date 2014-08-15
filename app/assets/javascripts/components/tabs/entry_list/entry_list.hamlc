@@ -8,7 +8,7 @@
       href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
 
   .search-area.with-filter
-    .btn.flat-button.select-box
+    .btn.btn--flat.select-box
       %select(ng-model="tab.params.view.contentTypeId"
               ng-change="selectedContentType()"
               ng-options="ct.getId() as ct.getName() group by getGroupName() for ct in spaceContext.publishedContentTypes")
@@ -23,15 +23,15 @@
 
   .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")
 
-  .add-entity(ng-hide="spaceContext.publishedContentTypes.length == 0")
-    %button.btn.default-button.primary-button(
-            ng-hide="(!singleContentType || singleContentType && entries.length < 1) && (noCfCanCleanup = true)"
+  .add-entity(ng-hide="spaceContext.publishedContentTypes.length == 0 || entries.length == 0")
+    %button.btn.btn--primary(
+            ng-hide="!singleContentType && (noCfCanCleanup = true)"
             cf-can="create, Entry"
             ng-click="createEntry(singleContentType, 'frameButton')")
       %i.ss-plus.button-icon
       Add New {{singleContentType.getName()}}
-    .dropdown-btn(cf-dropdown="" ng-show="spaceContext.publishedContentTypes.length > 1")
-      %button.dropdown-toggle.btn.default-button.primary-button(cf-dropdown-toggle="" cf-can="create, Entry")
+    .dropdown-btn(cf-dropdown="" ng-hide="singleContentType")
+      %button.btn.btn--primary(cf-dropdown-toggle="" cf-can="create, Entry")
         %i.ss-plus.button-icon
         Add New Entry
       .dropdown-menu(cf-dropdown-menu="" position="bottomcenter" container=".tab-content")
@@ -86,16 +86,16 @@
         %header.advice-title You have no Entries yet.
         %p.advice-description(ng-show="spaceContext.publishedContentTypes.length == 0")
           Entries are your content itself. These depend on the field types you created in the Content Type editor.
-        %button.btn.default-button.primary-button(type="button" ng-click="createContentType('frameButton')" cf-can="create, ContentType" ng-hide="spaceContext.publishedContentTypes.length > 0 && (noCfCanCleanup = true)")
+        %button.btn.btn--primary(type="button" ng-click="createContentType('frameButton')" cf-can="create, ContentType" ng-hide="spaceContext.publishedContentTypes.length > 0 && (noCfCanCleanup = true)")
           Create a Content Type
         %p(ng-hide="spaceContext.publishedContentTypes.length == 0")
-          %button.btn.default-button.primary-button(
+          %button.btn.btn--primary(
                   ng-hide="!singleContentType && (noCfCanCleanup = true)"
                   cf-can="create, Entry"
                   ng-click="createEntry(singleContentType, 'frameButton')")
             %i.ss-plus.button-icon
             Add New {{singleContentType.getName()}}
-          %button.btn.default-button.primary-button.cf-dialog(
+          %button.btn.btn--primary.cf-dialog(
               ng-hide="singleContentType && (noCfCanCleanup = true)"
               cf-can="create, Entry" dialog-template="new_content_type_list")
             %i.ss-plus.button-icon
@@ -107,10 +107,10 @@
 .tab-actions
   .label {{selection.size()}} Entries selected
   .button-set(ng-controller="EntryListActionsCtrl" ng-hide="selection.isEmpty()")
-    %button.btn.default-button.duplicate(type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
-    %button.btn.default-button.danger-button.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" cf-click-outside-when="deleteConfirm" ng-show="deleteConfirm" ng-click="deleteSelected()" tooltip="Click anywhere else to dismiss") Are you sure?
-    %button.btn.default-button.delete(type="button" ng-click="deleteConfirm=true" tooltip="Permanently delete these Entries" ng-show="showDelete() && !deleteConfirm") Delete
-    %button.btn.default-button.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
-    %button.btn.default-button.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
-    %button.btn.default-button.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
-    %button.btn.default-button.primary-button.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}
+    %button.btn.btn--default.duplicate(type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
+    %button.btn.btn--default.btn--danger.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" cf-click-outside-when="deleteConfirm" ng-show="deleteConfirm" ng-click="deleteSelected()" tooltip="Click anywhere else to dismiss") Are you sure?
+    %button.btn.btn--default.delete(type="button" ng-click="deleteConfirm=true" tooltip="Permanently delete these Entries" ng-show="showDelete() && !deleteConfirm") Delete
+    %button.btn.btn--default.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
+    %button.btn.btn--default.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
+    %button.btn.btn--default.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
+    %button.btn.btn--primary.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}
