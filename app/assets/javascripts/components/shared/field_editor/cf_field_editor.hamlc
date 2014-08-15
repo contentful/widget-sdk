@@ -20,7 +20,7 @@
     %label
       %input(type="radio" ng-model="fieldData.value" ng-value="false" ot-bind-model="" ng-disabled="!otEditable")
       %span.no No
-  .cf-datetime-editor(ng-switch-when="datetimeEditor" ng-model="fieldData.value")
+  .cf-datetime-editor.widget-datetime-editor(ng-switch-when="datetimeEditor" ng-model="fieldData.value")
   %div(ng-switch-when="linksEditor"
     ng-model="fieldData.value"
     cf-link-editor="field.items.linkType"
@@ -33,7 +33,7 @@
     ot-bind-model=""
     ng-disabled="!otEditable")
   .cf-object-editor(ng-switch-when="objectEditor" ng-model="fieldData.value")
-  .cf-location-editor(ng-switch-when="locationEditor" ng-model="fieldData.value" ot-bind-internal="location")
+  .cf-location-editor.widget-location-editor(ng-switch-when="locationEditor" ng-model="fieldData.value" ot-bind-internal="location")
   .cf-number-editor(ng-switch-when="numberEditor")
   %div(ng-switch-when="linkEditor" ng-model="fieldData.value" cf-link-editor="field.linkType")
   .cf-file-editor(ng-switch-when="fileEditor" ng-model="fieldData.value" ot-bind-internal="file")

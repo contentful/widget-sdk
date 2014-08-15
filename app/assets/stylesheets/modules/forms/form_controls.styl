@@ -20,8 +20,6 @@ $form-focus-look()
 .form-controls,
 .form-styled,
 $form-styled
-  p
-    margin: 11px 0
   input[type="text"],
   input[type="number"],
   input[type="email"],
@@ -52,7 +50,7 @@ $form-styled
     &.error-input:focus
       border-color: darken($red, 10%)
 
-  .form-button
+  .forms__button
     height: 35px
 
   textarea
@@ -66,54 +64,4 @@ $form-styled
   input.date,
   input.time
     width: 105px
-
-  .cf-location-editor
-    margin-top: 13px
-    margin-bottom: 5px
-    .gmaps-container,
-    .invalid-location-warning
-      width: $form-controlwidth-inner
-      height: 250px
-
-  .cf-datetime-editor
-    input
-      display: inline
-    .ss-calendar,
-    .ss-clock,
-    .ss-globe
-      font-size: 14px
-      color: $light-gray
-      vertical-align: middle
-      pointer-events: none
-      position: relative
-      left: -25px
-      top: 1px
-    .select-box
-      padding-right: 30px
-      .button-icon-right
-        right: 27px
-
-  .invalid-date,
-  .invalid-time
-    color: $red
-    font-size: 14px
-    position: relative
-    top: 3px
-
-  .sub-fields
-    width: $form-controlwidth-inner
-    position: relative
-    label
-      display: block
-      float: left
-      width: 40%
-      input,
-      input[type="text"]
-        width: 100%
-      span
-        display: block
-        margin-top: 5px
-        text-align: left
-    .form-button
-      margin-top: 11px
 
