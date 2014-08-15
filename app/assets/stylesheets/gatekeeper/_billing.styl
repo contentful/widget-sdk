@@ -1,3 +1,4 @@
+$form-table-width = $calcPercentages('+', $form-labelwidth, $formtastic-fieldwidth)
 .subscription-progress-bar
   width: 100%
   line-height: 40px
@@ -28,14 +29,14 @@
 .formtastic .yellow-highlight
   background-color: $subscription-yellow
   padding: 10px 0
-  $scalefactor = 100% / ($form-labelwidth + $formtastic-fieldwidth + 3%)
+  $scalefactor = $calcPercentages('/', 100%, $calcPercentages('+', $form-table-width, 3%))
   label
-    width: $form-labelwidth * $scalefactor
+    width: $calcPercentages('*', $form-labelwidth, $scalefactor)
   input
-    width: $formtastic-fieldwidth * $scalefactor
+    width: $calcPercentages('*', $formtastic-fieldwidth, $scalefactor)
   .inline-hints
-    width: $formtastic-fieldwidth * $scalefactor
-    margin-left: $form-labelwidth * $scalefactor
+    width: $calcPercentages('*', $formtastic-fieldwidth, $scalefactor)
+    margin-left: $calcPercentages('*', $form-labelwidth, $scalefactor)
   p, ul
     margin: 10px 20px
   ul
@@ -45,14 +46,14 @@
   color: $medium-gray
 
 .form-table
-  width: $form-labelwidth + $formtastic-fieldwidth
+  width: $form-table-width
   tr
     line-height: 35px
     height: 35px
   // scalefactor to make th width relative to total form
   th
-    $scalefactor = 100% / ($form-labelwidth + $formtastic-fieldwidth)
-    width: $form-labelwidth * $scalefactor
+    $scalefactor = $calcPercentages('/', 100%, $form-table-width)
+    width: $calcPercentages('*', $form-labelwidth, $scalefactor)
     text-align: right
     padding-right: 12px
     font-weight: normal
@@ -67,7 +68,7 @@
   position: absolute
   right: 0
   margin-top: 20px
-  width: (100% - $form-labelwidth - $formtastic-fieldwidth) * 0.8
+  width: $calcPercentages('*', $calcPercentages('-', 100%, $calcPercentages('-', $form-labelwidth, $formtastic-fieldwidth)), 0.8)
 .billing-sidebar
   background-color: $subscription-yellow
   padding: 0 15px
