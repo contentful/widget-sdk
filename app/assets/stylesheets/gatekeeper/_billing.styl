@@ -68,7 +68,7 @@ $form-table-width = $calcPercentages('+', $form-labelwidth, $formtastic-fieldwid
   position: absolute
   right: 0
   margin-top: 20px
-  width: $calcPercentages('*', $calcPercentages('-', 100%, $calcPercentages('-', $form-labelwidth, $formtastic-fieldwidth)), 0.8)
+  width: $calcPercentages('*', $calcPercentages('-', $calcPercentages('-', 100%, $form-labelwidth), $formtastic-fieldwidth), 0.8)
 .billing-sidebar
   background-color: $subscription-yellow
   padding: 0 15px
