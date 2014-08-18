@@ -73,6 +73,15 @@ describe('cfDropdownEditor Directive', function () {
         expect(scope.dropdownWidthClass()).toEqual('small-dropdown');
       });
     });
+
+    describe('with empty values', function(){
+      it('is small', function() {
+        scope.getFieldValidationsOfType.returns([]);
+        compileElement();
+        expect(scope.dropdownWidthClass()).toEqual('small-dropdown');
+      });
+    });
+    
   });
 
 
