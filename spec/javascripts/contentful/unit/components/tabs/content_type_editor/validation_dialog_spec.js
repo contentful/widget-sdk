@@ -79,13 +79,13 @@ describe('Validation dialog service', function () {
     });
 
     it('create validation button is enabled', function() {
-      expect(dialog.domElement.find('.advice .primary-button').attr('disabled')).toBeFalsy();
+      expect(dialog.domElement.find('.advice .btn--primary').attr('disabled')).toBeFalsy();
     });
 
     it('create validation button is disabled', function() {
       scope.can.returns(false);
       scope.$digest();
-      expect(dialog.domElement.find('.advice .primary-button').attr('disabled')).toBeTruthy();
+      expect(dialog.domElement.find('.advice .btn--primary').attr('disabled')).toBeTruthy();
     });
 
   });
@@ -115,13 +115,13 @@ describe('Validation dialog service', function () {
     });
 
     it('add validation button is enabled', function() {
-      expect(dialog.domElement.find('.buttons .primary-button').attr('disabled')).toBeFalsy();
+      expect(dialog.domElement.find('.buttons .btn--primary').attr('disabled')).toBeFalsy();
     });
 
     it('add validation button is disabled', function() {
       scope.can.returns(false);
       scope.$digest();
-      expect(dialog.domElement.find('.buttons .primary-button').attr('disabled')).toBeTruthy();
+      expect(dialog.domElement.find('.buttons .btn--primary').attr('disabled')).toBeTruthy();
     });
 
 

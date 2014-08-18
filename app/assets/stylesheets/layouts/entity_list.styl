@@ -13,7 +13,7 @@
     align-content: stretch
 
     .tab-title
-      width: $left-nav-width + 1%
+      width: $calcPercentages('+', $left-nav-width,  1%)
       $tab-header-title()
 
     .add-entity
@@ -23,11 +23,11 @@
       justify-content: flex-end
       align-items: center
       padding-right: 20px
-      .default-button,
+      .btn--primary,
       .dropdown-btn
         width: 100%
         max-width: 200px
-      .default-button
+      .btn--primary
         overflow: hidden
         margin: 0
         height: $tab-header-field-height

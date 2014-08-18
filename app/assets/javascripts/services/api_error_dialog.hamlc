@@ -8,5 +8,5 @@
       %a(href="http://status.contentful.com/" target="_blank")our status page
       for incidents.
     .buttons
-      %button.default-button.primary-button.confirm(ng-click="dialog.confirm()")
+      %button.btn.btn--primary.confirm(ng-click="dialog.confirm()")
         {{dialog.confirmLabel}}

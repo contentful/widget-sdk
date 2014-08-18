@@ -32,20 +32,20 @@
     Asset does not exist anymore
 
   .file-buttons
-    %button.default-button.go-to-asset(type="button" ng-click="entity && !entity.isMissing && navigator.entityEditor(entity).goTo()" ng-show="!!(!enableUpload && entity && !entity.isMissing)" tooltip="Go to Asset")
+    %button.btn.btn--default.go-to-asset(type="button" ng-click="entity && !entity.isMissing && navigator.entityEditor(entity).goTo()" ng-show="!!(!enableUpload && entity && !entity.isMissing)" tooltip="Go to Asset")
       %i.ss-action
-    %a.default-button.download-file(type="button" href="{{file.url}}" target="_blank" ng-show="file|isFileReady" tooltip="Download file")
+    %a.btn.btn--default.download-file(type="button" href="{{file.url}}" target="_blank" ng-show="file|isFileReady" tooltip="Download file")
       %i.ss-download
-    %button.default-button.show-metadata(type="button" ng-click="toggleMeta()" ng-show="file" tooltip="Show file information")
+    %button.btn.btn--default.show-metadata(type="button" ng-click="toggleMeta()" ng-show="file" tooltip="Show file information")
       %i.ss-info
-    %button.default-button.edit-button(type="button" ng-show="file|isFileReady" ng-click="editFile()" tooltip="Edit file")
+    %button.btn.btn--default.edit-button(type="button" ng-show="file|isFileReady" ng-click="editFile()" tooltip="Edit file")
       %i.ss-picture
-    %button.default-button.delete-file(type="button" ng-show="!otDisabled && deleteFile && file|isFileReady" ng-click="deleteFile()" tooltip="Delete file")
+    %button.btn.btn--default.delete-file(type="button" ng-show="!otDisabled && deleteFile && file|isFileReady" ng-click="deleteFile()" tooltip="Delete file")
       %i.ss-trash
-    %button.default-button.remove-link(type="button" ng-show="!otDisabled && removeLink" ng-click="removeLink(index, entity)" tooltip="Remove link")
+    %button.btn.btn--default.remove-link(type="button" ng-show="!otDisabled && removeLink" ng-click="removeLink(index, entity)" tooltip="Remove link")
       %i.ss-delete
 
   .cf-file-drop(ng-show="!otDisabled && !file && enableUpload")
-    %button.default-button.upload-button(type="button" ng-click="uploadFile()") Or Open File Picker
-    %button.default-button.upload-button(type="button" ng-show="spaceContext.space.hasFeature('gettyImages')" ng-click="uploadFromGetty()") Or Pick From Getty Images
+    %button.btn.btn--default.upload-button(type="button" ng-click="uploadFile()") Or Open File Picker
+    %button.btn.btn--default.upload-button(type="button" ng-show="spaceContext.space.hasFeature('gettyImages')" ng-click="uploadFromGetty()") Or Pick From Getty Images
 

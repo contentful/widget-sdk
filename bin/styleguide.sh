@@ -1,5 +1,7 @@
 #!/bin/sh
 
 pushd app/assets/stylesheets
-kss-node -y ../../../node_modules/nib/index.styl .
+stylus --use ../../../node_modules/nib/ < main.styl > compiled.css
+kss-node --css compiled.css .
+rm -f compiled.css
 popd

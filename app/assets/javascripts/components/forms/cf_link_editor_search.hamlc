@@ -14,7 +14,7 @@
       cf-can="create, Entry"
       tooltip="Add new {{entityType}}"
       tooltip-placement="left")
-    %button.form-button.default-button.dropdown-toggle(cf-dropdown-toggle="" type="button")
+    %button.form-button.btn.btn--default.dropdown-toggle(cf-dropdown-toggle="" type="button")
       %i.ss-plus.button-icon
       New
     %a.dropdown-menu(cf-dropdown-menu)
@@ -25,7 +25,7 @@
           {{contentType.getName()}}
 
   -# link to entry or entries with restriction on the type
-  %button.form-button.default-button.add-new.with-link-content-type(type="button"
+  %button.form-button.btn.btn--default.add-new.with-link-content-type(type="button"
       ng-if="entityContentType"
       cf-can="create, Entry"
       ng-click="addNewEntry(entityContentType)")
@@ -33,7 +33,7 @@
     New
 
   -# link to asset (with or without restriction)
-  %button.form-button.default-button.add-new.with-link-content-type(type="button"
+  %button.form-button.btn.btn--default.add-new.with-link-content-type(type="button"
       ng-if="entityType=='Asset'"
       cf-can="create, Asset"
       ng-click="addNewAsset()")

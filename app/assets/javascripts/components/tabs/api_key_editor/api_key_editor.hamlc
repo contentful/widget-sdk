@@ -5,7 +5,7 @@
     analytics-event="api_keys"
     href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
   .editor-top-right
-    %button.flat-button(type="button"
+    %button.btn.btn--flat(type="button"
             ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
@@ -25,7 +25,7 @@
     %p The Content Delivery API is a REST API for delivering content from the Contentful platform to your apps, websites and other media. To activate the API you need to generate at least one API key. Just fill out the title and description fields below and we will auto-generate an access token for you when you 'Save'.
     %p We recommend using one key per supported device. For example, if you plan to serve content to a website, iPhone 8, iPad 7 and Android app, then you would generate four API keys. 
     %p.note-box-dismissal
-      %button.default-button(href="" ng-click="notes.dismiss('content-delivery-api-key')") Ok, got it
+      %button.btn.btn--default(href="" ng-click="notes.dismiss('content-delivery-api-key')") Ok, got it
   .ng-form.form-horizontal(name="apiKeyForm" submit="save()")
     .form-field
       %label Name
@@ -43,7 +43,7 @@
       .form-controls
         .field-editor
           %input.space-id(type="text" value="{{spaceContext.space.getId()}}" readonly="readonly")
-          %a.default-button.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".space-id")
+          %a.btn.btn--default.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".space-id")
             %i.ss-layers
             %i.ss-plus
     .form-field
@@ -51,7 +51,7 @@
       .form-controls
         .field-editor
           %input.access-token.cf-select-all-input(type="text" ng-model="apiKey.data.accessToken" ng-show="apiKey.data.accessToken")
-          %a.default-button.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token" ng-show="apiKey.data.accessToken")
+          %a.btn.btn--default.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token" ng-show="apiKey.data.accessToken")
             %i.ss-layers
             %i.ss-plus
           %input(type="text" ng-hide="apiKey.data.accessToken" readonly="readonly" value="Save this API Key to generate an OAuth Access Token and access your data.")
@@ -78,7 +78,7 @@
           %hr
           %h1 Authentication Code
           .tools
-            .select-box
+            .btn.btn--flat.select-box
               %select(ng-model="authCodeExampleLang")
                 %option(value="http" selected) HTTP (Curl)
                 %option(value="javascript") JavaScript
@@ -122,19 +122,19 @@
 
 .tab-actions
   .button-set
-    %button.default-button.danger-button.delete-confirm(type="button"
+    %button.btn.btn--default.btn--danger.delete-confirm(type="button"
                    cf-click-outside="deactivateDeleteConfirm()"
                    cf-click-outside-ignore=".delete"
                    cf-click-outside-when="deleteConfirm"
                    ng-show="deleteConfirm"
                    ng-click="delete()"
                    tooltip="Click anywhere else to dismiss") Are you sure?
-    %button.default-button.delete(type="button"
+    %button.btn.btn--default.delete(type="button"
                    tooltip="Permanently delete this API key"
                    ng-click="activateDeleteConfirm()"
                    ng-show="apiKey.getId() && !deleteConfirm")
       Delete
-    %button.default-button.primary-button.save(type="submit"
+    %button.btn.btn--primary.save(type="submit"
                  tooltip="Save this API key"
                  ng-click="save()"
                  ng-disabled="apiKeyForm.$invalid || cfCanDisabled"
