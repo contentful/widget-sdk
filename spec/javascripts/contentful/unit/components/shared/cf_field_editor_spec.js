@@ -88,12 +88,6 @@ describe('cfFieldEditor Directive', function () {
     });
   });
 
-  makeEditorTypeTests('linksEditor', 'div', function () {
-    it('has attr name', function() {
-      expect(ngSwitch.children().eq(0).attr('cf-link-editor')).toBeDefined();
-    });
-  });
-
   makeEditorTypeTests('listInput', 'input', function () {
     it('has attr name', function() {
       expect(ngSwitch.children().eq(0).attr('cf-list-identity-fix')).toBeDefined();
@@ -115,12 +109,6 @@ describe('cfFieldEditor Directive', function () {
   makeEditorTypeTests('numberEditor', 'div', function () {
     it('has class name', function() {
       expect(ngSwitch.children().eq(0)).toHaveClass('cf-number-editor');
-    });
-  });
-
-  makeEditorTypeTests('linkEditor', 'div', function () {
-    it('has attr name', function() {
-      expect(ngSwitch.children().eq(0).attr('cf-link-editor')).toBeDefined();
     });
   });
 
