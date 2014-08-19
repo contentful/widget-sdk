@@ -30,8 +30,59 @@
     position: relative
     top: 1px
 
-.cf-location-editor
+.cf-number-editor
   position: relative
+  .cf-field-alert
+    position: absolute
+    top: 0
+    right: 10px
+    line-height: 35px
+
+.data-field-boolean .form-controls,
+.data-field-string-list .form-controls
+  label
+    width: auto
+    position: relative
+    top: -2px
+  span
+    position: relative
+    top: 2px
+
+.data-field-boolean .form-controls
+  padding-top: 10px
+
+.data-field-array
+  .links 
+    $plain-list()
+    border-top: 1px solid $light-rule
+    margin-bottom: 15px
+    li
+      padding: 10px 7px
+      border-bottom: 1px solid $light-rule
+  .entry-info
+    overflow: hidden
+    &.with-handle
+      margin-left: 25px
+  .entry-info a, .entry-info span
+    float: left
+    width: 97%
+    overflow: hidden
+    white-space: nowrap
+    text-overflow: ellipsis
+  .ss-delete
+    @extend $delete-icon
+    float: right
+    margin-top: 1px
+    margin-right: 4px
+
+.widget-location-editor
+  position: relative
+  margin-top: 13px
+  margin-bottom: 5px
+  .gmaps-container,
+  .invalid-location-warning
+    width: $form-controlwidth-inner
+    height: 250px
   .invalid-location-warning
     background-color: rgba(255,255,255,0.9)
     text-align: center
@@ -73,6 +124,7 @@
   .search
     margin-bottom: 10px
 
+<<<<<<< HEAD
 cf-radio-editor
   display: block
 .cf-radio-editor__option
@@ -100,43 +152,47 @@ cf-rating-editor
 .clear-rating-button
   margin-top: -3px
 
-.cf-number-editor
+.widget-location-editor__sub-fields
+  width: $form-controlwidth-inner
   position: relative
-  .cf-field-alert
-    position: absolute
-    top: 0
-    right: 10px
-    line-height: 35px
-
-.data-field-string-list .form-controls
-  label
-    width: auto
-    position: relative
-    top: -2px
-  span
-    position: relative
-    top: 2px
-
-.data-field-array
-  .links 
-    $plain-list()
-    border-top: 1px solid $light-rule
-    margin-bottom: 15px
-    li
-      padding: 10px 7px
-      border-bottom: 1px solid $light-rule
-  .entry-info
-    overflow: hidden
-    &.with-handle
-      margin-left: 25px
-  .entry-info a, .entry-info span
+  .widget-location-editor__location-picker
+    display: block
     float: left
-    width: 97%
-    overflow: hidden
-    white-space: nowrap
-    text-overflow: ellipsis
-  .ss-delete
-    @extend $delete-icon
-    float: right
-    margin-top: 1px
-    margin-right: 4px
+    width: 40%
+    > input,
+    > input[type="text"]
+      width: 100%
+    > span
+      display: block
+      margin-top: 5px
+      text-align: left
+  .forms__button
+    margin-top: 11px
+
+.widget-datetime-editor
+  // TODO we can simplify this selector once we simplify form controls
+  > input[type="text"]
+    display: inline
+  .ss-calendar,
+  .ss-clock,
+  .ss-globe
+    font-size: 14px
+    color: $light-gray
+    vertical-align: middle
+    pointer-events: none
+    position: relative
+    left: -25px
+    top: 1px
+  > .select-box
+    padding-right: 30px
+    .button-icon-right
+      right: 27px
+
+
+.is-date-invalid,
+.is-time-invalid
+  position: relative
+  top: 3px
+  font-size: 14px
+  color: $red
+

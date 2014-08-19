@@ -1,4 +1,4 @@
-%textarea.input-cclarge(
+%textarea.form-control.input-cclarge(
   cf-input-autogrow=""
   ng-model="jsonData.value"
   ng-disabled="!otEditable")

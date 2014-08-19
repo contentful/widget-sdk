@@ -7,30 +7,30 @@
 .validation-type-select(ng-show="availableValidations | isEmpty")
   %button.btn.btn--flat(disabled) {{validationName(validation)}}
 
-.validation-controls.form-styled(ng-switch="validationType(validation)" ng-class="validationType(validation)")
+.validation-controls(ng-switch="validationType(validation)" ng-class="validationType(validation)")
   %div(ng-switch-when="size")
-    %input(type="number" ng-model="validation.size.min" placeholder="Minimum size" ng-change="updateDoc()" ng-disabled="!otEditable")
+    %input.form-control(type="number" ng-model="validation.size.min" placeholder="Minimum size" ng-change="updateDoc()" ng-disabled="!otEditable")
     \-
-    %input(type="number" ng-model="validation.size.max" placeholder="Maximum size" ng-change="updateDoc()" ng-disabled="!otEditable")
+    %input.form-control(type="number" ng-model="validation.size.max" placeholder="Maximum size" ng-change="updateDoc()" ng-disabled="!otEditable")
     .cf-form-inline-error(cf-error-path="validationListPath(validationIndex)")
 
 
   %div(ng-switch-when="range")
-    %input(type="number" ng-model="validation.range.min" placeholder="Minimum value" ng-change="updateDoc()" ng-disabled="!otEditable")
+    %input.form-control(type="number" ng-model="validation.range.min" placeholder="Minimum value" ng-change="updateDoc()" ng-disabled="!otEditable")
     \-
-    %input(type="number" ng-model="validation.range.max" placeholder="Maximum value" ng-change="updateDoc()" ng-disabled="!otEditable")
+    %input.form-control(type="number" ng-model="validation.range.max" placeholder="Maximum value" ng-change="updateDoc()" ng-disabled="!otEditable")
     .cf-form-inline-error(cf-error-path="validationListPath(validationIndex)")
 
 
   %div(ng-switch-when="regexp")
-    %input(type="text" ng-model="validation.regexp.pattern" placeholder="foo|bar[baz]" ng-change="updateDoc()" ng-required="true" ng-disabled="!otEditable")
+    %input.form-control(type="text" ng-model="validation.regexp.pattern" placeholder="foo|bar[baz]" ng-change="updateDoc()" ng-required="true" ng-disabled="!otEditable")
     %span Flags:
-    %input(type="text" ng-model="validation.regexp.flags" ng-change="updateDoc()" ng-required="true" ng-disabled="!otEditable")
+    %input.form-control(type="text" ng-model="validation.regexp.flags" ng-change="updateDoc()" ng-required="true" ng-disabled="!otEditable")
     .cf-form-inline-error(cf-error-path="validationListPath(validationIndex)")
 
 
   %div(ng-switch-when="in")
-    %input(type="text" ng-keypress="submitValue($event)")
+    %input.form-control(type="text" ng-keypress="submitValue($event)")
     %a.cf-knowledge-base-icon(
       tooltip="Learn more about Predefined Values in the Knowledge Base Pages"
       tooltip-container=".validation-dialog"

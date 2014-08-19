@@ -16,7 +16,7 @@
   .cf-fieldtype-icon(field="field" show-tooltip)
     %i.ss-help
 %form.field-form(name="fieldForm")
-  %input(name="fieldName"
+  %input.form-control(name="fieldName"
          ng-model="field.name" type="text" required=""
          ng-disabled="!otEditable"
          ot-path="['fields', index, 'name']"
@@ -29,7 +29,7 @@
          tooltip-placement="top")
   %span.field-id-display(tooltip="Field ID used in API"
          ng-if="published") {{field.id}}
-  %input(name="fieldId"
+  %input.form-control(name="fieldId"
          ng-if="!published"
          ng-model="field.id" type="text" required=""
          ng-disabled="!otEditable"

@@ -100,8 +100,11 @@ input.btn--input
 //
 // Styleguide 2.4
 .btn--primary
+  $action-button-text-color()
   $blue-highlight()
   $colored-button($blue)
+  &:hover
+    $blue-highlight()
 
 // Danger button
 // 
@@ -112,12 +115,18 @@ input.btn--input
 //
 // Styleguide 2.5
 .btn--danger
+  $action-button-text-color()
   $red-highlight()
   $colored-button($red)
+  &:hover
+    $red-highlight()
 
 li.btn--danger
+  $action-button-text-color()
   $red-highlight()
   $colored-button($red)
+  &:hover
+    $red-highlight()
 
 // Confirm button
 // 
@@ -128,8 +137,11 @@ li.btn--danger
 //
 // Styleguide 2.6
 .btn--confirm
+  $action-button-text-color()
   $green-highlight()
   $colored-button($green)
+  &:hover
+    $green-highlight()
 
 .transparent-button
   background: none

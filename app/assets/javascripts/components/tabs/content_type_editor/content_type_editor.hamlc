@@ -19,9 +19,8 @@
       .dropdown-menu(cf-dropdown-menu)
         %ul.dropdown-menu-list
           %li.dropdown-menu-item
-            %label
-              %input(type="checkbox" ng-model="preferences.showDisabledFields")
-              Show disabled fields
+            %input(type="checkbox" ng-model="preferences.showDisabledFields")
+            %label Show disabled fields
     %button.flat-button(type="button"
             ng-click="navigator.editingInterfaceEditor(contentType, defaultEditingInterface).goTo()"
             tooltip="Customize editing view"
@@ -34,34 +33,31 @@
   .entity-info-panel
 
 .tab-main.tab-workbench
-  .form-horizontal(name="contentTypeForm")
-    .form-field
+  .l-form-horizontal(name="contentTypeForm")
+    .l-form-field
       %label
         Name
         %sup *
       .form-controls(ot-path="['name']" ot-subdoc)
-        .field-editor
-          %input(type="text"
+        .l-field-editor
+          %input.form-control(type="text"
                  name="contentTypeName"
                  ng-disabled="!otEditable"
                  placeholder="Content Type Name (e.g. Product)"
                  ng-model="contentType.data.name"
                  ot-bind-text="")
         .cf-form-box-error(cf-error-path="['name']")
-    .form-field
+    .l-form-field
       %label Description
       .form-controls(ot-path="['description']" ot-subdoc)
-        .field-editor
-          %textarea(placeholder="Describe the purpose of Entries using this Content Type"
+        .l-field-editor
+          %textarea.form-control(placeholder="Describe the purpose of Entries using this Content Type"
                     name="contentTypeDescription"
                     ng-disabled="!otEditable"
                     ng-model="contentType.data.description"
                     ot-bind-text="")
         .cf-form-box-error(cf-error-path="['description']")
-    .form-field
-      %label 
-      .form-controls
-    .form-field
+    .l-form-field
       %label Fields
       .form-controls
         .content-type-field-list(ng-show="hasFields")

@@ -1,5 +1,5 @@
 %label.cf-radio-editor__option(ng-repeat="value in valuesController.valuesList track by value.value")
-  %input.cf-radio-editor__radio(type="radio"
+  %input.cf-radio-editor__radio.form-control-look(type="radio"
          ng-model="valuesController.selected"
          ng-change="otBindInternalChangeHandler()"
          ng-value="value.value"

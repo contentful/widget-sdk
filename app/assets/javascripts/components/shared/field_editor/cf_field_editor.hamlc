@@ -1,5 +1,5 @@
 %ng-switch(on="widget.widgetType")
-  %input(ng-switch-when="singleLine"
+  %input.form-control(ng-switch-when="singleLine"
     type="text"
     ng-model="fieldData.value"
     ot-subdoc=""
@@ -8,7 +8,7 @@
   .cf-dropdown-editor(ng-switch-when="dropdown" ng-model="fieldData.value" ot-bind-internal="valuesController.selected")
   %cf-radio-editor(ng-switch-when="radio" ng-model="fieldData.value" ot-bind-internal="valuesController.selected")
   .cf-markdown-editor(ng-switch-when="markdown")
-  %textarea(ng-switch-when="multipleLine"
+  %textarea.form-control(ng-switch-when="multipleLine"
     cf-input-autogrow=""
     ng-model="fieldData.value"
     ot-subdoc=""
@@ -19,7 +19,7 @@
     ng-model="fieldData.value"
     cf-link-editor="field.items.linkType"
     link-multiple="true")
-  %input(ng-switch-when="listInput"
+  %input.form-control(ng-switch-when="listInput"
     type="text"
     ng-list=""
     cf-list-identity-fix=""
@@ -27,7 +27,7 @@
     ot-bind-model=""
     ng-disabled="!otEditable")
   .cf-object-editor(ng-switch-when="objectEditor" ng-model="fieldData.value")
-  .cf-location-editor(ng-switch-when="locationEditor" ng-model="fieldData.value" ot-bind-internal="location")
+  .cf-location-editor.widget-location-editor(ng-switch-when="locationEditor" ng-model="fieldData.value" ot-bind-internal="location")
   .cf-number-editor(ng-switch-when="numberEditor")
   %div(ng-switch-when="linkEditor" ng-model="fieldData.value" cf-link-editor="field.linkType")
   .cf-file-editor(ng-switch-when="fileEditor" ng-model="fieldData.value" ot-bind-internal="file")

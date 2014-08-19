@@ -109,11 +109,14 @@
   li:hover
     $gradient-op(lighten($blue, 20), 6%, 'darken')
     color: white
-  .selected,
-  .selected:hover
-    $blue-highlight()
   .item-value
     color: $light-gray
+  .selected,
+  .selected:hover
+    color: white
+    $blue-highlight()
+    > .item-value
+      color: white
   .item-description
     color: $dark-gray
   .item-value,
