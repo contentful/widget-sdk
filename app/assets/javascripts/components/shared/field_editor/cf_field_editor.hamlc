@@ -1,5 +1,5 @@
 %ng-switch(on="field.widgetType")
-  %input(ng-switch-when="textfield"
+  %input.form-control(ng-switch-when="textfield"
     type="text"
     ng-model="fieldData.value"
     ot-subdoc=""
@@ -7,25 +7,23 @@
     ng-disabled="!otEditable")
   .cf-dropdown-editor(ng-switch-when="dropdown" ng-model="fieldData.value" ot-bind-internal="selected.value")
   .cf-markdown-editor(ng-switch-when="markdownEditor")
-  %textarea(ng-switch-when="textarea"
+  %textarea.form-control(ng-switch-when="textarea"
     cf-input-autogrow=""
     ng-model="fieldData.value"
     ot-subdoc=""
     ot-bind-text=""
     ng-disabled="!otEditable")
   %div(ng-switch-when="radiobuttons")
-    %label
-      %input(type="radio" ng-model="fieldData.value" ng-value="true" ot-bind-model="" ng-disabled="!otEditable")
-      %span.yes Yes
-    %label
-      %input(type="radio" ng-model="fieldData.value" ng-value="false" ot-bind-model="" ng-disabled="!otEditable")
-      %span.no No
+    %input.form-control-look(name="yes" type="radio" ng-model="fieldData.value" ng-value="true" ot-bind-model="" ng-disabled="!otEditable")
+    %label.yes(for="yes") Yes
+    %input.form-control-look(name="no" type="radio" ng-model="fieldData.value" ng-value="false" ot-bind-model="" ng-disabled="!otEditable")
+    %label.no(for="no") No
   .cf-datetime-editor.widget-datetime-editor(ng-switch-when="datetimeEditor" ng-model="fieldData.value")
   %div(ng-switch-when="linksEditor"
     ng-model="fieldData.value"
     cf-link-editor="field.items.linkType"
     link-multiple="true")
-  %input(ng-switch-when="listInput"
+  %input.form-control(ng-switch-when="listInput"
     type="text"
     ng-list=""
     cf-list-identity-fix=""

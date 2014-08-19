@@ -1,67 +1,47 @@
 $textarea-max-height = 400px
 
-$form-control-look()
+$form-control-theme
   background-color: $gray-background
   box-shadow: 0 1px 2px rgba(0,0,0,0.1) inset
   transition: background-color 0.3s ease-in, border-color 0.3s ease-in
 
-$form-focus-look()
-  background-color: white
-  border-color: $link-blue
-  outline: none
-
-.form-look
+.form-control-look,
+.form-control
+  padding: $form-textarea-padding
+  padding-top: 9px
+  font-family: 'Open Sans', Arial, sans-serif
+  font-size: 12px
   border: 1px solid $lightest-gray
   border-radius: 3px 3px 3px 3px
-  $form-control-look()
+  @extend $form-control-theme
   &:focus
-    $form-focus-look()
+    background-color: white
+    border-color: $link-blue
+    outline: none
+  &.error-input:focus
+    border-color: darken($red, 10%)
 
-.form-controls,
-.form-styled,
-$form-styled
-  input[type="text"],
-  input[type="number"],
-  input[type="email"],
-  input[type="tel"],
-  input[type="password"],
-  input[type="url"],
-  input.time,
-  textarea
-    display: block
-    margin: 0
-    padding: $form-textarea-padding
-    padding-top: 9px
-    font-family: 'Open Sans', Arial, sans-serif
-    font-size: 12px
-    width: $form-controlwidth-inner
-    border: 1px solid $lightest-gray
-    border-radius: 3px 3px 3px 3px
-    $form-control-look()
-    &[disabled]
-      background-color: white
-      border: none
-      box-shadow: none
-      transition: none
-    &.override-disabled
-      $form-control-look()
-    &:focus
-      $form-focus-look()
-    &.error-input:focus
-      border-color: darken($red, 10%)
+.form-control[disabled]
+  background-color: white
+  border: none
+  box-shadow: none
+  transition: none
 
-  .forms__button
-    height: 35px
+textarea.form-control
+  resize: vertical
+  max-height: $textarea-max-height
 
-  textarea
-    resize: vertical
-    max-height: $textarea-max-height
+input[type="number"].form-control
+  padding-top: 8px
+  padding-bottom: 8px
 
-  input[type="number"]
-    padding-top: 8px
-    padding-bottom: 8px
+input.date.form-control,
+input.time.form-control
+  width: 105px
 
-  input.date,
-  input.time
-    width: 105px
+input[type="checkbox"].form-control
+  margin-top: -1px
+
+.forms__button
+  height: 35px
 

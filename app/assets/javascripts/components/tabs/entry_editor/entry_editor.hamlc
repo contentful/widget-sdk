@@ -18,15 +18,14 @@
       .dropdown-menu(cf-dropdown-menu="" style="display:none")
         %ul.dropdown-menu-list(ng-show="showLangSwitcher")
           %li.dropdown-menu-item(ng-repeat="locale in spaceContext.publishLocales track by locale.code")
+            %input(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
             %label
-              %input(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
               {{locale.name}}
               %span(ng-show="locale == spaceContext.space.getDefaultLocale()") (default)
         %ul.dropdown-menu-list
           %li.dropdown-menu-item(ng-class="{'top-separator': showLangSwitcher}")
-            %label
-              %input(type="checkbox" ng-model="preferences.showDisabledFields")
-              Show disabled fields
+            %input(type="checkbox" ng-model="preferences.showDisabledFields")
+            %label Show disabled fields
 
 .aux-panel(ng-show="preferences.showAuxPanel")
   %header
@@ -34,12 +33,11 @@
   .entity-info-panel
 
 .tab-main.tab-workbench
-  %form.form-horizontal(name="entryForm")
-    .form-field(ng-show="hasErrorOnFields")
-      %label
+  %form.l-form-horizontal(name="entryForm")
+    .l-form-field--no-label(ng-show="hasErrorOnFields")
       .form-controls
         .cf-form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
-    .form-field(ng-repeat="field in fields track by field.id"
+    .l-form-field(ng-repeat="field in fields track by field.id"
         data-field-id="{{field.id}}"
         data-field-type="{{field.type}}"
         data-field-items-type="{{field.items.type}}"
@@ -49,7 +47,7 @@
         %sup(ng-show="field.required") *
       .form-controls
         .locale(ng-repeat="locale in field.locales track by locale.code" ot-field-presence="['fields', field.id, locale.code]" data-locale="{{locale.code}}")
-          .cf-field-editor(ot-path="['fields', field.id, locale.code]" cf-editor-entity="entry")
+          .cf-field-editor.l-field-editor(ot-path="['fields', field.id, locale.code]" cf-editor-entity="entry")
           .locale-label(ng-show="field.locales.length > 1") {{locale.name}}
           .field-collaborators
             %ul.field-list
