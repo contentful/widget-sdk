@@ -66,8 +66,9 @@
     .l-form-field--no-label(ng-show="apiKey.data.accessToken")
       .form-controls
         .l-field-editor
-          %input.form-control(type="checkbox" ng-model="apiKey.data.regenerateAccessToken" ng-disabled="!editable()" ng-click="showRegenerateWarning()")
-          %label Regenerate Access Token
+          %label
+            %input.form-control(type="checkbox" ng-model="apiKey.data.regenerateAccessToken" ng-disabled="!editable()" ng-click="showRegenerateWarning()")
+            Regenerate Access Token
 
     .l-form-field--no-label.authentication-code(ng-show="apiKey.data.accessToken")
       .form-controls

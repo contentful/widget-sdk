@@ -18,8 +18,8 @@
       .dropdown-menu(cf-dropdown-menu="" style="display:none")
         %ul.dropdown-menu-list
           %li.dropdown-menu-item(ng-repeat="locale in spaceContext.publishLocales track by locale.code")
-            %input.form-control(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
             %label
+              %input.form-control(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
               {{locale.name}}
               %span(ng-show="locale == spaceContext.space.getDefaultLocale()") (default)
 

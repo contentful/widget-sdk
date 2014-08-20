@@ -19,8 +19,9 @@
       .dropdown-menu(cf-dropdown-menu)
         %ul.dropdown-menu-list
           %li.dropdown-menu-item
-            %input(type="checkbox" ng-model="preferences.showDisabledFields")
-            %label Show disabled fields
+            %label 
+              %input(type="checkbox" ng-model="preferences.showDisabledFields")
+              Show disabled fields
     %button.flat-button(type="button"
             ng-click="navigator.editingInterfaceEditor(contentType, defaultEditingInterface).goTo()"
             tooltip="Customize editing view"
