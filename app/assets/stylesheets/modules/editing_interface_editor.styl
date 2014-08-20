@@ -1,4 +1,14 @@
 .editing-interface-editor
+  .editor-top-right //TODO duplicated from entity list
+    float: right
+    $display-flexbox()
+    justify-content: flex-end
+    align-items: center
+    width: 300px
+    height: $tab-header-height // TODO this shouldn't be necessary once container becomes flexible
+    > *
+      margin-right: 25px
+
   .left-nav,
   .with-left-nav
     margin-top: 20px

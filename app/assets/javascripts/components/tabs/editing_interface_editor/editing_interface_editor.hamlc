@@ -6,14 +6,8 @@
     href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
 
   .editor-top-right
-    %button.default-button(type="button"
-            ng-click="restoreDefaults()"
-            tooltip="Restore default view"
-            tooltip-placement="bottom")
-      %i.ss-replay.button-icon
-      Restore to defaults
     .dropdown-btn(cf-dropdown)
-      %a.flat-button.dropdown-toggle(cf-dropdown-toggle)
+      %a.btn.btn--flat(cf-dropdown-toggle)
         %i.ss-dropdown.button-icon-right
         %span View
       .dropdown-menu(cf-dropdown-menu)
@@ -22,6 +16,12 @@
             %label
               %input(type="checkbox" ng-model="preferences.showDisabledFields")
               Show disabled fields
+    %button.btn.btn--default(type="button"
+            ng-click="restoreDefaults()"
+            tooltip="Restore default view"
+            tooltip-placement="bottom")
+      %i.ss-replay.button-icon
+      Restore to defaults
 
 .tab-main
   .left-nav
@@ -35,20 +35,20 @@
 .tab-actions
   .button-set
     -# TODO: Only show delete if not default
-    -#%button.default-button.danger-button.delete-confirm(type="button"
+    -#%button.btn.btn--danger.delete-confirm(type="button"
                   cf-click-outside="deleteConfirm=false"
                   cf-click-outside-ignore=".delete"
                   ng-show="deleteConfirm"
                   ng-click="delete()"
                   tooltip="Click anywhere else to dismiss")
       Are you sure?
-    -#%button.default-button.delete(type="button"
+    -#%button.btn.btn--default.delete(type="button"
                   ng-show="canDelete() && !deleteConfirm"
                   ng-click="deleteConfirm=true" 
                   tooltip="Delete this Editing Interface")
       Delete
 
-    %button.default-button.primary-button.publish(
+    %button.btn.btn--primary.publish(
                   ng-click="update()"
                   tooltip="Update this Editing Interface")
       Update
