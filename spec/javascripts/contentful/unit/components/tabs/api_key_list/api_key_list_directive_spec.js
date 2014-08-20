@@ -41,13 +41,13 @@ describe('The ApiKey list directive', function () {
     it('is not shown', function() {
       canStub.withArgs('create', 'ApiKey').returns(false);
       compileElement();
-      expect(container.find('.tab-header .add-entity .primary-button')).toBeNgHidden();
+      expect(container.find('.tab-header .add-entity .btn--primary')).toBeNgHidden();
     });
 
     it('is shown', function() {
       canStub.withArgs('create', 'ApiKey').returns(true);
       compileElement();
-      expect(container.find('.tab-header .add-entity .primary-button')).not.toBeNgHidden();
+      expect(container.find('.tab-header .add-entity .btn--primary')).not.toBeNgHidden();
     });
   });
 

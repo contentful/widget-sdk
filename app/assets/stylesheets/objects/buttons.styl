@@ -1,34 +1,57 @@
+//Buttons
+//
+// Styleguide 2.0
 .transparent-button-layer
   background-color: transparent
   position: absolute
   z-index: 100
 
-.base-button
-  -webkit-appearance: none
+// A button base class
+//
+// Markup:
+//<button class="btn">button</button>
+//<button class="btn" disabled>button</button>
+//
+// :disabled - Disabled state
+//
+// Styleguide 2.1
+.btn
+  display: inline-block
+  position: relative
+  overflow: hidden
+  padding: 0.6em 1em
   font-size: 1em
   text-decoration: none
-  color: $medium-gray
-  display: inline-block
   vertical-align: middle
-  position: relative
-  padding: 0.6em 1em
-  overflow: hidden
+  border: 1px solid darken($gray-background, 10%)
   border-radius: 3px
   cursor: pointer
+  -webkit-appearance: none
+  color: $medium-gray
+  &:link
+    color: $medium-gray
   &:disabled,
   &[disabled]
     cursor: default
 
-a.base-button
-  color: inherit
+// Temporary override for gatekeeper usage
+input.btn--input
+  padding: 0.6em 1em
 
-.default-button
-  @extend .base-button
-  border: 1px solid darken($gray-background, 10%)
-  $gradient($gray-background, darken($gray-background, 4%))
+// Default button
+// 
+// Default button theme, with hover, active and disabled states
+//
+// Markup:
+// <button class="btn btn--default {$modifiers}">text</div>
+// <button class="btn btn--default {$modifiers}" disabled>text</div>
+// 
+// .active - active state
+//
+// Styleguide 2.2
+.btn--default
   box-shadow: 0 1px 1px rgba(255,255,255,0.8) inset, 0 2px 1px rgba(0,0,0,0.05)
-  &:link
-    color: inherit
+  $gradient($gray-background, darken($gray-background, 4%))
   &:not(:disabled),
   &:not([disabled])
     &:active,
@@ -46,74 +69,79 @@ a.base-button
     &:active
       top: 0px
 
-.slim-button
-  padding-top: 0
-  padding-bottom: 0
-
-.toggle-button-set
-  $display-flex
-
-.toggle-button
-  flex-grow: 1
-  border-radius: 0
-  &:first-child
-    border-radius: 3px 0 0 3px
-  &:last-child
-    border-radius: 0 3px 3px 0
-  cursor: pointer
-  margin: 0
-  &:active,
-  &.active
-    top: 0
-    box-shadow: 0 2px 2px darken($gray-background, 10%) inset
-    cursor: default
-  &:focus
-    outline: none !important
-
-.flat-button
-  $flat-button()
-
-// An Icon inside a button
-.button-icon
-  position: relative
-  top: 1px
-  right: 2px
-
-.button-icon-right
-  @extend .button-icon
-  float: right
-  right: 0
-  left: 3px
-
-// Tweaks for specific icons
-.button-icon,
-.button-icon-right
-  &.ss-dropdown
-    font-size: 0.8em
-  &.ss-plus
-    font-size: 0.9em
-  &.ss-navigateright
-    font-size: 0.9em
-
-.primary-button
-  &.default-button
-    $blue-highlight()
-    $colored-button($blue)
+// Flat button
+// 
+// Flat button theme with hover and active states
+//
+// Markup:
+// <button class="btn btn--flat {$modifiers}">text</button>
+// <button class="btn btn--flat {$modifiers}" disabled>text</button>
+//
+// .active - active state
+//
+// Styleguide 2.3
+.btn--flat
+  background: inherit
+  border: 1px solid darken($dark-rule, 10)
+  &:not(:disabled),
+  &:not([disabled])
     &:hover
-      $blue-highlight()
+      border: 1px solid darken($dark-rule, 20)
+    &:active,
+    &.active
+      border: 1px solid darken($dark-rule, 30)
 
-.danger-button
-  &.default-button
-    $red-highlight()
-    $colored-button($red)
-li.danger-button
+// Primary button
+// 
+// Button for primary actions, with hover and active states
+//
+// Markup:
+// <button class="btn btn--primary {$modifiers}">text</button>
+//
+// Styleguide 2.4
+.btn--primary
+  $action-button-text-color()
+  $blue-highlight()
+  $colored-button($blue)
+  &:hover
+    $blue-highlight()
+
+// Danger button
+// 
+// A button for dangerous situations
+//
+// Markup:
+// <button class="btn btn--danger {$modifiers}">text</button>
+//
+// Styleguide 2.5
+.btn--danger
+  $action-button-text-color()
   $red-highlight()
   $colored-button($red)
+  &:hover
+    $red-highlight()
 
-.success-button
-  &.default-button
+li.btn--danger
+  $action-button-text-color()
+  $red-highlight()
+  $colored-button($red)
+  &:hover
+    $red-highlight()
+
+// Confirm button
+// 
+// A button for confirming actions
+//
+// Markup:
+// <button class="btn btn--confirm {$modifiers}">text</button>
+//
+// Styleguide 2.6
+.btn--confirm
+  $action-button-text-color()
+  $green-highlight()
+  $colored-button($green)
+  &:hover
     $green-highlight()
-    $colored-button($green)
 
 .transparent-button
   background: none
@@ -161,5 +189,47 @@ li.danger-button
     font-size: 7px
     top: -10px
     left: -2px
+
+.toggle-button-set
+  $display-flex
+
+.toggle-button
+  flex-grow: 1
+  border-radius: 0
+  &:first-child
+    border-radius: 3px 0 0 3px
+  &:last-child
+    border-radius: 0 3px 3px 0
+  cursor: pointer
+  margin: 0
+  &:active,
+  &.active
+    top: 0
+    box-shadow: 0 2px 2px darken($gray-background, 10%) inset
+    cursor: default
+  &:focus
+    outline: none !important
+
+// An Icon inside a button
+.button-icon
+  position: relative
+  top: 1px
+  right: 2px
+
+.button-icon-right
+  @extend .button-icon
+  float: right
+  right: 0
+  left: 3px
+
+// Tweaks for specific icons
+.button-icon,
+.button-icon-right
+  &.ss-dropdown
+    font-size: 0.8em
+  &.ss-plus
+    font-size: 0.9em
+  &.ss-navigateright
+    font-size: 0.9em
 
 

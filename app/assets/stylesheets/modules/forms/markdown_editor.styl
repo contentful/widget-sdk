@@ -14,7 +14,7 @@ $markdown-guide-height = 25px
   height: 35px
   border-radius: 3px 3px 0 0
   border: 1px solid $dark-rule
-  $form-control-look()
+  @extend $form-control-theme
   &:focus, &.opaque
     border-top-left-radius: 3px
     border-top-right-radius: 3px
@@ -32,14 +32,12 @@ $markdown-guide-height = 25px
   $stretch-y()
   border-left: 1px solid $dark-rule
 
-.markdown-textarea,
-.form-controls .markdown-textarea
+.markdown-textarea
   border-radius: 0 0 0 0
   box-shadow: none
   min-height: $markdown-editor-height
   border-bottom: none
   border-top: none
-
 
 .markdown-preview
   position: relative

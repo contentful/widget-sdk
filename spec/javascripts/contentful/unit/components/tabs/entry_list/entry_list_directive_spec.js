@@ -52,16 +52,16 @@ describe('The Entry list directive', function () {
     it('is not shown if not allowed', function() {
       canStub.withArgs('create', 'Entry').returns(false);
       compileElement();
-      expect(container.find('.tab-header .add-entity .primary-button').eq(0)).toBeNgHidden();
+      expect(container.find('.tab-header .add-entity .btn--primary').eq(0)).toBeNgHidden();
     });
 
 
     it('is not shown if there are no entries', function() {
-      scope.singleContentType = {};
+      scope.singleContentType = null;
       scope.entries = [];
       canStub.withArgs('create', 'Entry').returns(true);
       compileElement();
-      expect(container.find('.tab-header .add-entity .primary-button').eq(0)).toBeNgHidden();
+      expect(container.find('.tab-header .add-entity .btn--primary').eq(0)).toBeNgHidden();
     });
 
     it('is not shown if there is no single content type', function() {
@@ -69,7 +69,7 @@ describe('The Entry list directive', function () {
       scope.entries = [{}];
       canStub.withArgs('create', 'Entry').returns(true);
       compileElement();
-      expect(container.find('.tab-header .add-entity .primary-button').eq(0)).toBeNgHidden();
+      expect(container.find('.tab-header .add-entity .btn--primary').eq(0)).toBeNgHidden();
     });
 
     it('is shown if all conditions are met', function() {
@@ -77,7 +77,7 @@ describe('The Entry list directive', function () {
       scope.entries = [{}];
       canStub.withArgs('create', 'Entry').returns(true);
       compileElement();
-      expect(container.find('.tab-header .add-entity .primary-button').eq(0)).not.toBeNgHidden();
+      expect(container.find('.tab-header .add-entity .btn--primary').eq(0)).not.toBeNgHidden();
     });
   });
 
@@ -87,13 +87,13 @@ describe('The Entry list directive', function () {
     it('is not shown', function() {
       canStub.withArgs('create', 'Entry').returns(false);
       compileElement();
-      expect(container.find('.tab-header .add-entity .primary-button').eq(1)).toBeNgHidden();
+      expect(container.find('.tab-header .add-entity .btn--primary').eq(1)).toBeNgHidden();
     });
 
     it('is shown', function() {
       canStub.withArgs('create', 'Entry').returns(true);
       compileElement();
-      expect(container.find('.tab-header .add-entity .primary-button').eq(1)).not.toBeNgHidden();
+      expect(container.find('.tab-header .add-entity .btn--primary').eq(1)).not.toBeNgHidden();
     });
 
     describe('has dropdown items', function() {
@@ -146,13 +146,13 @@ describe('The Entry list directive', function () {
     canStub.withArgs('create', 'Entry').returns(false);
     reasonsStub.returns(['usageExceeded']);
     compileElement();
-    expect(container.find('.advice .primary-button').attr('disabled')).toBe('disabled');
+    expect(container.find('.advice .btn--primary').attr('disabled')).toBe('disabled');
   });
 
   it('save button is enabled', function () {
     canStub.withArgs('create', 'Entry').returns(true);
     compileElement();
-    expect(container.find('.advice .primary-button').attr('disabled')).toBeUndefined();
+    expect(container.find('.advice .btn--primary').attr('disabled')).toBeUndefined();
   });
 
   describe('list of entries is filtered', function() {

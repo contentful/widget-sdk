@@ -5,7 +5,7 @@
     analytics-event="api_keys"
     href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
   .editor-top-right
-    %button.flat-button(type="button"
+    %button.btn.btn--flat(type="button"
             ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
@@ -25,60 +25,58 @@
     %p The Content Delivery API is a REST API for delivering content from the Contentful platform to your apps, websites and other media. To activate the API you need to generate at least one API key. Just fill out the title and description fields below and we will auto-generate an access token for you when you 'Save'.
     %p We recommend using one key per supported device. For example, if you plan to serve content to a website, iPhone 8, iPad 7 and Android app, then you would generate four API keys. 
     %p.note-box-dismissal
-      %button.default-button(href="" ng-click="notes.dismiss('content-delivery-api-key')") Ok, got it
-  .ng-form.form-horizontal(name="apiKeyForm" submit="save()")
-    .form-field
+      %button.btn.btn--default(href="" ng-click="notes.dismiss('content-delivery-api-key')") Ok, got it
+  .ng-form.l-form-horizontal(name="apiKeyForm" submit="save()")
+    .l-form-field
       %label Name
         %sup *
       .form-controls
-        .field-editor
-          %input(type="text" ng-model="apiKey.data.name" required="" ng-disabled="!editable()" placeholder="iOS iPad Application")
-    .form-field
+        .l-field-editor
+          %input.form-control(type="text" ng-model="apiKey.data.name" required="" ng-disabled="!editable()" placeholder="iOS iPad Application")
+    .l-form-field
       %label Description
       .form-controls
-        .field-editor
-          %textarea(ng-model="apiKey.data.description" ng-disabled="!editable()" placeholder="This API Key will grant the iOS iPad Application access to the content on Contentful.")
-    .form-field
+        .l-field-editor
+          %textarea.form-control(ng-model="apiKey.data.description" ng-disabled="!editable()" placeholder="This API Key will grant the iOS iPad Application access to the content on Contentful.")
+    .l-form-field
       %label Space ID
       .form-controls
-        .field-editor
-          %input.space-id(type="text" value="{{spaceContext.space.getId()}}" readonly="readonly")
-          %a.default-button.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".space-id")
+        .l-field-editor
+          %input.form-control.space-id(type="text" value="{{spaceContext.space.getId()}}" readonly="readonly")
+          %a.btn.btn--default.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".space-id")
             %i.ss-layers
             %i.ss-plus
-    .form-field
+    .l-form-field
       %label Access Token
       .form-controls
-        .field-editor
-          %input.access-token.cf-select-all-input(type="text" ng-model="apiKey.data.accessToken" ng-show="apiKey.data.accessToken")
-          %a.default-button.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token" ng-show="apiKey.data.accessToken")
+        .l-field-editor
+          %input.form-control.access-token.cf-select-all-input(type="text" ng-model="apiKey.data.accessToken" ng-show="apiKey.data.accessToken")
+          %a.btn.btn--default.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token" ng-show="apiKey.data.accessToken")
             %i.ss-layers
             %i.ss-plus
-          %input(type="text" ng-hide="apiKey.data.accessToken" readonly="readonly" value="Save this API Key to generate an OAuth Access Token and access your data.")
-    .form-field
-      %label
+          %input.form-control(type="text" ng-hide="apiKey.data.accessToken" readonly="readonly" value="Save this API Key to generate an OAuth Access Token and access your data.")
+    .l-form-field--no-label
       .form-controls
-        .field-editor(ng-if="isDevice('iOS')")
+        .l-field-editor(ng-if="isDevice('iOS')")
           %a(href="{{mobileAppUrl}}" target="_blank") Browse entries in the Discovery App
-        .field-editor(ng-if="isDevice('any')")
+        .l-field-editor(ng-if="isDevice('any')")
           %a(href="https://itunes.apple.com/au/app/contentful-discovery-cms-for/id892840015" target="_blank") Browse entries in the Discovery App
           %span (For iOS devices only)
 
-    .form-field(ng-show="apiKey.data.accessToken")
-      %label
+    .l-form-field--no-label(ng-show="apiKey.data.accessToken")
       .form-controls
-        .field-editor
-          %input(type="checkbox" ng-model="apiKey.data.regenerateAccessToken" ng-disabled="!editable()" ng-click="showRegenerateWarning()")
-          %label Regenerate Access Token
+        .l-field-editor
+          %label
+            %input.form-control(type="checkbox" ng-model="apiKey.data.regenerateAccessToken" ng-disabled="!editable()" ng-click="showRegenerateWarning()")
+            Regenerate Access Token
 
-    .form-field.authentication-code(ng-show="apiKey.data.accessToken")
-      %label
+    .l-form-field--no-label.authentication-code(ng-show="apiKey.data.accessToken")
       .form-controls
-        .field-editor
+        .l-field-editor
           %hr
           %h1 Authentication Code
           .tools
-            .select-box
+            .btn.btn--flat.select-box
               %select(ng-model="authCodeExampleLang")
                 %option(value="http" selected) HTTP (Curl)
                 %option(value="javascript") JavaScript
@@ -91,11 +89,11 @@
 
           %ng-switch(on="authCodeExampleLang")
             .http.code-example.curl-example(ng-switch-when="http")
-              %textarea(readonly="readonly")
+              %textarea.form-control(readonly="readonly")
                 :preserve
                   curl -X GET https://cdn.contentful.com/spaces/{{spaceContext.space.getId()}}?access_token={{apiKey.data.accessToken}}
             .javascript.code-example(ng-switch-when="javascript")
-              %textarea(readonly="readonly")
+              %textarea.form-control(readonly="readonly")
                 :preserve
                   var contentful = require('contentful');
                   var client = contentful.createClient({
@@ -103,12 +101,12 @@
                     space: '{{spaceContext.space.getId()}}'
                   });
             .objc.code-example(ng-switch-when="objc")
-              %textarea(readonly="readonly")
+              %textarea.form-control(readonly="readonly")
                 :preserve
                   CDAClient* client = [[CDAClient alloc] initWithSpaceKey:@"{{spaceContext.space.getId()}}"
                                             accessToken:@"{{apiKey.data.accessToken}}"];
             .ruby.code-example(ng-switch-when="ruby")
-              %textarea(readonly="readonly")
+              %textarea.form-control(readonly="readonly")
                 :preserve
                   require 'contentful'
                   client = Contentful::Client.new(
@@ -116,25 +114,25 @@
                     space: '{{spaceContext.space.getId()}}'
                   )
             .swift.code-example(ng-switch-when="swift")
-              %textarea(readonly="readonly")
+              %textarea.form-control(readonly="readonly")
                 :preserve
                   var client = CDAClient(spaceKey:"{{spaceContext.space.getId()}}", accessToken:"{{apiKey.data.accessToken}}")
 
 .tab-actions
   .button-set
-    %button.default-button.danger-button.delete-confirm(type="button"
+    %button.btn.btn--default.btn--danger.delete-confirm(type="button"
                    cf-click-outside="deactivateDeleteConfirm()"
                    cf-click-outside-ignore=".delete"
                    cf-click-outside-when="deleteConfirm"
                    ng-show="deleteConfirm"
                    ng-click="delete()"
                    tooltip="Click anywhere else to dismiss") Are you sure?
-    %button.default-button.delete(type="button"
+    %button.btn.btn--default.delete(type="button"
                    tooltip="Permanently delete this API key"
                    ng-click="activateDeleteConfirm()"
                    ng-show="apiKey.getId() && !deleteConfirm")
       Delete
-    %button.default-button.primary-button.save(type="submit"
+    %button.btn.btn--primary.save(type="submit"
                  tooltip="Save this API key"
                  ng-click="save()"
                  ng-disabled="apiKeyForm.$invalid || cfCanDisabled"

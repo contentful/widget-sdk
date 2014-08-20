@@ -30,7 +30,7 @@
         {{message.body}}
     %nav.account-menus
       .dropdown-btn.user(cf-dropdown="" label="")
-        %a.btn.dropdown-toggle(cf-dropdown-toggle="" ng-click="clickedProfileButton()" tabindex="0")
+        %a.dropdown-toggle(cf-dropdown-toggle="" ng-click="clickedProfileButton()" tabindex="0")
           %i.ss-dropdown.button-icon-right
           %img(ng-src="{{user.avatarUrl}}")
         .dropdown-menu.fixed-position.left-aligned(cf-dropdown-menu)
@@ -43,7 +43,7 @@
             %li.dropdown-menu-item(ng-click="logout()" dropdown-close="") Log out
 
       .dropdown-btn.project(cf-dropdown="" ng-show="organizations && organizations.length > 0" ng-hide="spaces.length == 0 && !canCreateSpaceInAnyOrg()")
-        %a.btn.dropdown-toggle(cf-dropdown-toggle="" ng-click="clickedSpaceSwitcher()" tabindex="0")
+        %a.dropdown-toggle(cf-dropdown-toggle="" ng-click="clickedSpaceSwitcher()" tabindex="0")
           %i.ss-dropdown.button-icon-right
           %span(ng-bind="spaceContext.space.data.name || 'Spaces'")
         .dropdown-menu.fixed-position.left-aligned(cf-dropdown-menu="")
@@ -73,7 +73,7 @@
       %header.advice-title Nothing to see yet.
       %p.advice-description(ng-show="!canCreateSpace()") You need to be part of an Organization to create a space.
       %p.advice-description(ng-show="canCreateSpace()") Why don't you create a space?
-      %button.default-button.primary-button(type="button" ng-show="canCreateSpace()" ng-click="showCreateSpaceDialog()") Create Space
+      %button.btn--default.btn--primary(type="button" ng-show="canCreateSpace()" ng-click="showCreateSpaceDialog()") Create Space
       %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513118-What-is-a-space-")
         Visit the Knowledge Base Pages
         %i.ss-help

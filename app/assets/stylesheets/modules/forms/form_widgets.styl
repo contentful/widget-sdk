@@ -30,49 +30,6 @@
     position: relative
     top: 1px
 
-.cf-location-editor
-  position: relative
-  .invalid-location-warning
-    background-color: rgba(255,255,255,0.9)
-    text-align: center
-    position: absolute
-    top: 0
-    .text
-      width: 30%
-      margin: auto
-      margin-top: 110px
-      font-size: 12px
-      background-color: white
-      box-shadow: 0 0 20px 12px white
-  .location-picker
-    position: relative
-  .cf-field-alert
-    position: absolute
-    top: 20px
-    right: 20px
-
-  .results
-    overflow-y: auto
-    max-height: 200px
-    right: 37px
-    li
-      padding: 5px 10px
-      border-bottom: 1px solid $light-rule
-      cursor: pointer
-      &:hover
-        background-color: $result-list-highlight
-    .address
-      display: block
-      margin-bottom: 4px
-    .lat,
-    .lon
-      font-size: 0.8em
-      display: inline-block
-      width: 12em
-      color: $light-gray
-  .search
-    margin-bottom: 10px
-
 .cf-number-editor
   position: relative
   .cf-field-alert
@@ -117,3 +74,97 @@
     float: right
     margin-top: 1px
     margin-right: 4px
+
+.widget-location-editor
+  position: relative
+  margin-top: 13px
+  margin-bottom: 5px
+  .gmaps-container,
+  .invalid-location-warning
+    width: $form-controlwidth-inner
+    height: 250px
+  .invalid-location-warning
+    background-color: rgba(255,255,255,0.9)
+    text-align: center
+    position: absolute
+    top: 0
+    .text
+      width: 30%
+      margin: auto
+      margin-top: 110px
+      font-size: 12px
+      background-color: white
+      box-shadow: 0 0 20px 12px white
+  .location-picker
+    position: relative
+  .cf-field-alert
+    position: absolute
+    top: 20px
+    right: 20px
+
+  .results
+    overflow-y: auto
+    max-height: 200px
+    right: 37px
+    li
+      padding: 5px 10px
+      border-bottom: 1px solid $light-rule
+      cursor: pointer
+      &:hover
+        background-color: $result-list-highlight
+    .address
+      display: block
+      margin-bottom: 4px
+    .lat,
+    .lon
+      font-size: 0.8em
+      display: inline-block
+      width: 12em
+      color: $light-gray
+  .search
+    margin-bottom: 10px
+
+.widget-location-editor__sub-fields
+  width: $form-controlwidth-inner
+  position: relative
+  .widget-location-editor__location-picker
+    display: block
+    float: left
+    width: 40%
+    > input,
+    > input[type="text"]
+      width: 100%
+    > span
+      display: block
+      margin-top: 5px
+      text-align: left
+  .forms__button
+    margin-top: 11px
+
+.widget-datetime-editor
+  > input[type="text"] // TODO we can simplify this selector once we simplify form controls
+    display: inline
+  .ss-calendar,
+  .ss-clock,
+  .ss-globe
+    font-size: 14px
+    color: $light-gray
+    vertical-align: middle
+    pointer-events: none
+    position: relative
+    left: -25px
+    top: 1px
+  > .select-box
+    padding-right: 30px
+    .button-icon-right
+      right: 27px
+
+
+.is-date-invalid,
+.is-time-invalid
+  position: relative
+  top: 3px
+  font-size: 14px
+  color: $red
+
+

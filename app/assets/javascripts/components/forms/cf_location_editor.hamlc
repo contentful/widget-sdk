@@ -2,7 +2,7 @@
 .invalid-location-warning(ng-hide="locationValid")
   .text
     Corrupt location data!
-.sub-fields(cf-autocomplete-results="results")
+.widget-location-editor__sub-fields(cf-autocomplete-results="results")
   .search(ng-show="otEditable")
     .search-field(placeholder="Search Address" cf-search="searchTerm" search-type-ahead)
     .results.search-options-on(ng-show="results.length > 0")
@@ -12,13 +12,13 @@
           %span.lat Lat: {{result.strippedLocation.lat}}
           %span.lon Lon: {{result.strippedLocation.lon}}
 
-  %label.location-picker
-    %input.lat(type="text" name="lat" ng-model="location.lat" ng-disabled="!otEditable")
+  %label.widget-location-editor__location-picker
+    %input.form-control.lat(type="text" name="lat" ng-model="location.lat" ng-disabled="!otEditable")
     %i(cf-field-alert="{{latAlert}}" tooltip-placement="left")
     %span Latitude
-  %label.location-picker
-    %input.lon(type="text" name="lon" ng-model="location.lon" ng-disabled="!otEditable")
+  %label.widget-location-editor__location-picker
+    %input.form-control.lon(type="text" name="lon" ng-model="location.lon" ng-disabled="!otEditable")
     %i(cf-field-alert="{{lonAlert}}" tooltip-placement="left")
     %span Longitude
-  %button.form-button.default-button.remove-location(type="button" ng-show="location && otEditable" ng-click="removeLocation()") Remove
+  %button.forms__button.btn.btn--default.remove-location(type="button" ng-show="location && otEditable" ng-click="removeLocation()") Remove
 

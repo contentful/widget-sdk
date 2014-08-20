@@ -5,14 +5,14 @@
     analytics-event="entries"
     href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
   .editor-top-right
-    %button.flat-button(type="button"
+    %button.btn.btn--flat(type="button"
             ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
             tooltip-placement="bottom")
       Info
     .dropdown-btn(cf-dropdown)
-      %a.flat-button.dropdown-toggle(cf-dropdown-toggle)
+      %a.btn.btn--flat.dropdown-toggle(cf-dropdown-toggle)
         %i.ss-dropdown.button-icon-right
         %span View
       .dropdown-menu(cf-dropdown-menu="" style="display:none")
@@ -34,12 +34,11 @@
   .entity-info-panel
 
 .tab-main.tab-workbench
-  %form.form-horizontal(name="entryForm")
-    .form-field(ng-show="hasErrorOnFields")
-      %label
+  %form.l-form-horizontal(name="entryForm")
+    .l-form-field--no-label(ng-show="hasErrorOnFields")
       .form-controls
         .cf-form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
-    .form-field(ng-repeat="field in fields track by field.id"
+    .l-form-field(ng-repeat="field in fields track by field.id"
         data-field-id="{{field.id}}"
         data-field-type="{{field.type}}"
         data-field-items-type="{{field.items.type}}"
@@ -49,7 +48,7 @@
         %sup(ng-show="field.required") *
       .form-controls
         .locale(ng-repeat="locale in field.locales track by locale.code" ot-field-presence="['fields', field.id, locale.code]" data-locale="{{locale.code}}")
-          .cf-field-editor(ot-path="['fields', field.id, locale.code]" cf-editor-entity="entry")
+          .cf-field-editor.l-field-editor(ot-path="['fields', field.id, locale.code]" cf-editor-entity="entry")
           .locale-label(ng-show="field.locales.length > 1") {{locale.name}}
           .field-collaborators
             %ul.field-list
@@ -63,18 +62,18 @@
 .tab-actions(ng-controller="EntryActionsCtrl")
   .button-set
     .dropdown-btn(cf-dropdown="" on-close="deleteConfirm=false; disableTooltip=false" ng-show="canDelete() || canDuplicate()")
-      %button.flat-button(cf-dropdown-toggle="" tooltip="More actions" ng-click="disableTooltip=true")
+      %button.btn.btn--flat(cf-dropdown-toggle="" tooltip="More actions" ng-click="disableTooltip=true")
         %i.ss-directup.button-icon-right
         More
       .dropdown-menu(cf-dropdown-menu="" position="top")
         %ul.dropdown-menu-list
           %li.dropdown-menu-item.duplicate(type="button" ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this Entry" dropdown-close) Duplicate
-          %li.dropdown-menu-item.delete-confirm.danger-button(type="button" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss" dropdown-close) Are you sure?
+          %li.dropdown-menu-item.delete-confirm.btn--danger(type="button" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss" dropdown-close) Are you sure?
           %li.dropdown-menu-item.delete(type="button" ng-show="canDelete() && !deleteConfirm" ng-click="deleteConfirm=true" tooltip="Permanently delete this Entry") Delete
-    %button.default-button.archive(type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry") Archive
-    %button.default-button.archive(type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry") Unarchive
-    %button.default-button.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry") Unpublish
-    %button.default-button.primary-button.publish(type="submit" ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Entry") {{publishButtonLabel()}}
+    %button.btn.btn--default.archive(type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry") Archive
+    %button.btn.btn--default.archive(type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry") Unarchive
+    %button.btn.btn--default.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry") Unpublish
+    %button.btn.btn--primary.publish(type="submit" ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Entry") {{publishButtonLabel()}}
   .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
                tooltip-placement="top")
   .other-users
@@ -86,7 +85,7 @@
                          link="link" as="presenceUser"
                          tooltip="{{presenceUser | userNameDisplay:user}}")
         %img(ng-src="{{presenceUser.data.avatarUrl}}")
-    %a.default-button.invite-users(
+    %a.btn.btn--default.invite-users(
       href="" ng-click="navigator.spaceSettings('/users/new').goTo()"
       tooltip="Add a user to this space")
       %i.ss-users

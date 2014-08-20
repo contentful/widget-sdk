@@ -31,7 +31,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
   guiders.showImmediate = guiders.show;
   guiders.show = guiders.showDelayed;
 
-  var next = {name: '<i class="ss-navigateright"></i>', classString: 'default-button next-button', onclick: function(){guiders.next();}};
+  var next = {name: '<i class="ss-navigateright"></i>', classString: 'btn btn--default next-button', onclick: function(){guiders.next();}};
 
   function Tutorial() {}
 
@@ -234,7 +234,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
         attachTo: '.account-menus .user',
         position: 5,
         xButton: false,
-        buttons: [{name: 'OK', classString: 'default-button primary-button', onclick: function(){guiders.hideAll();}}]
+        buttons: [{name: 'OK', classString: 'btn btn--default btn--primary', onclick: function(){guiders.hideAll();}}]
       });
 
 
@@ -354,7 +354,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
         id: 'contentTypeAddFields',
         title: 'Populate with fields',
         description: 'Let’s create your first Fields. You can add Fields which store content themselves or Fields that will attach other Entries or Assets to the Entry corresponding to this Content Type.',
-        attachTo: '.tab-content:visible [name="contentTypeForm"] .primary-button:visible',
+        attachTo: '.tab-content:visible [name="contentTypeForm"] .btn--primary:visible',
         position: '12',
         next: 'contentTypeAddText',
         onShow: function () {

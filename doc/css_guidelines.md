@@ -20,19 +20,6 @@ level will be linked at the bottom. **The first 2 links in the
 references are required reading to go with this guide**. SMACSS is also
 very recommended.
 
-## File structure
-
-Listed by lower to higher level:
-
-- **variables**: variables by theme
-- **base**: base styles and variables
-- **mixins**: standalone mixins
-- **objects**: visual objects, with no further hierarchy below them
-- **modules**: modules composed by visual objects, with some level of
-  hierarchy
-- **layouts**: layouts for pages or modules (not composed of modules)
-- **vendor**: vendor components
-
 ## Tools
 
 - At the moment we are using Stylus with nib.
@@ -63,17 +50,6 @@ Example:
 - `!important` should never be used, except for state rules (see below),
   and only when absolutely necessary and as a last resort.
 
-## Declaration order
-
-- **Positioning**: position, top, left, right, bottom, margin, z-index
-- **Flex**: flex-*
-- **Box model**: display, float, overflow, width, height, padding
-- **Typography**: font-*, text-*, break-*, word-*, line-*, list-*
-- **Visual**: border, background, shadows, colors, animation
-- **Misc**
-
-Reference (not strictly or closely followed): [Recess](https://github.com/twitter/recess/blob/master/lib/lint/strict-property-order.js)
-
 ## Methodology
 
 The methodology to be followed is an adaption of [SMACSS](https://smacss.com/) 
@@ -92,6 +68,30 @@ recommendations that don't belong anywhere else in the document:
 - Avoid writing rules that do too much
 - Never leave commented out code lying around. If you want to make a
   note of it, use a single commit to remove old code.
+
+## File structure
+
+Listed by lower to higher level:
+
+- **variables**: variables by theme
+- **base**: base styles and variables
+- **mixins**: standalone mixins
+- **objects**: visual objects, with no further hierarchy below them
+- **modules**: modules composed by visual objects, with some level of
+  hierarchy
+- **layouts**: layouts for pages or modules (not composed of modules)
+- **vendor**: vendor components
+
+## Declaration order
+
+- **Positioning**: position, top, left, right, bottom, margin, z-index
+- **Flex**: flex-*
+- **Box model**: display, float, overflow, width, height, padding
+- **Typography**: font-*, text-*, break-*, word-*, line-*, list-*
+- **Visual**: border, background, shadows, colors, animation
+- **Misc**
+
+Reference (not strictly or closely followed): [Recess](https://github.com/twitter/recess/blob/master/lib/lint/strict-property-order.js)
 
 ## Selectors
 

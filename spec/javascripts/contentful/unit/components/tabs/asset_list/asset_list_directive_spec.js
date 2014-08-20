@@ -54,13 +54,13 @@ describe('The Asset list directive', function () {
     it('is not shown', function() {
       canStub.withArgs('create', 'Asset').returns(false);
       compileElement();
-      expect(container.find('.tab-header .add-entity .primary-button')).toBeNgHidden();
+      expect(container.find('.tab-header .add-entity .btn--primary')).toBeNgHidden();
     });
 
     it('is shown', function() {
       canStub.withArgs('create', 'Asset').returns(true);
       compileElement();
-      expect(container.find('.tab-header .add-entity .primary-button')).not.toBeNgHidden();
+      expect(container.find('.tab-header .add-entity .btn--primary')).not.toBeNgHidden();
     });
   });
 
@@ -88,13 +88,13 @@ describe('The Asset list directive', function () {
     canStub.withArgs('create', 'Asset').returns(false);
     reasonsStub.returns(['usageExceeded']);
     compileElement();
-    expect(container.find('.advice .primary-button').attr('disabled')).toBe('disabled');
+    expect(container.find('.advice .btn--primary').attr('disabled')).toBe('disabled');
   });
 
   it('create button is enabled', function () {
     canStub.withArgs('create', 'Asset').returns(true);
     compileElement();
-    expect(container.find('.advice .primary-button').attr('disabled')).toBeUndefined();
+    expect(container.find('.advice .btn--primary').attr('disabled')).toBeUndefined();
   });
 
   describe('list of assets is filtered', function() {

@@ -41,7 +41,7 @@ describe('apiKeyEditor Directive', function () {
       compileElement = function () {
         element = $compile('<div class="api-key-editor"></div>')(scope);
         scope.$digest();
-        regenerateCheckbox = element.find('.form-field').eq(5);
+        regenerateCheckbox = element.find('input[type="checkbox"]').parents('.l-form-field--no-label');
       };
     });
   });

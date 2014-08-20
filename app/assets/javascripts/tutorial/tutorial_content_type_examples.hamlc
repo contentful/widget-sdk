@@ -4,8 +4,8 @@
   %p
     Want more examples? We can generate more examples for you to get a better feel for the realm of possibilities.
   .buttons
-    %button.default-button.primary-button(type="button" ng-click="createExampleContentTypes()") Yes, please!
-    %button.default-button(type="button" ng-click="skipExamples('content-types')") No, thanks
+    %button.btn.btn--primary(type="button" ng-click="createExampleContentTypes()") Yes, please!
+    %button.btn.btn--default(type="button" ng-click="skipExamples('content-types')") No, thanks
 %div(ng-show="standby")
   .loading
   Please wait, we're generating the examples. This should not take longer than a few seconds.

@@ -1,0 +1,51 @@
+.l-form-horizontal
+  width: 100%
+  max-width: 1400px
+  padding-top: $form-spacing
+
+  .locale
+    position: relative
+    clear: both
+
+  .search-field
+    width: 100%
+    margin-top: 1px
+    height: 35px
+
+.l-form-field,
+.l-form-field--no-label
+  $display-flexbox()
+  flex-direction: row
+  align-items: flex-start
+  margin-bottom: $form-spacing
+  .form-controls
+    width: $form-controlwidth-outer
+
+// layout where we have a label on the left side
+// as such, the 
+.l-form-field
+  label
+    width: $form-labelwidth
+    padding: $form-offset $form-gutter $form-offset 0
+    text-align: right
+  .form-control
+    display: block
+    margin: 0
+    width: $form-controlwidth-inner
+
+// layout where we have no label on the left side
+.l-form-field--no-label
+  .form-controls
+    margin-left: $form-labelwidth
+
+.l-field-editor
+  float: left
+  position: relative
+  width: $field-editor-width
+
+.l-locale-label
+  float: left
+  margin-left: $form-offset
+  padding-top: $form-offset
+
+
