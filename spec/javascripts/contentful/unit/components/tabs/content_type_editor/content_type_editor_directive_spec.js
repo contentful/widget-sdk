@@ -81,13 +81,13 @@ describe('The ContentType editor directive', function () {
   it('textarea is enabled', function () {
     scope.otEditable = true;
     compileElement();
-    expect(container.find('.form-field').eq(1).find('textarea').attr('disabled')).toBeFalsy();
+    expect(container.find('.l-form-field').eq(1).find('textarea').attr('disabled')).toBeFalsy();
   });
 
   it('textarea is enabled', function () {
     scope.otEditable = false;
     compileElement();
-    expect(container.find('.form-field').eq(1).find('textarea').attr('disabled')).toBeTruthy();
+    expect(container.find('.l-form-field').eq(1).find('textarea').attr('disabled')).toBeTruthy();
   });
 
   describe('if fields exist', function () {
