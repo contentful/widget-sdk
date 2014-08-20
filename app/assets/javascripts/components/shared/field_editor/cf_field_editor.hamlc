@@ -14,7 +14,7 @@
     ot-subdoc=""
     ot-bind-text=""
     ng-disabled="!otEditable")
-  .cf-datetime-editor(ng-switch-when="datePicker" ng-model="fieldData.value")
+  .cf-datetime-editor.widget-datetime-editor(ng-switch-when="datePicker" ng-model="fieldData.value")
   %div(ng-switch-when="linksEditor"
     ng-model="fieldData.value"
     cf-link-editor="field.items.linkType"
