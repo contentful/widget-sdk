@@ -9,7 +9,7 @@
   "dependencies": {
     "contentful-client": "~1.16.0",
     "worf": "~3.1.0",
-    "contentful-validation": "~2.0.1",
+    "contentful-validation": "~2.0.2",
     "contentful-mimetype": "~0.4.8",
     "share": "git+ssh://git@github.com:contentful/sharejs.git",
     "is-diacritical-mark": "~1.0.1",
