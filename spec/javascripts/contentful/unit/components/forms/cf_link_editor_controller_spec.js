@@ -11,19 +11,21 @@ describe('cfLinkEditor Controller', function () {
   }
 
   beforeEach(function () {
-    module('contentful/test');
-    inject(function ($rootScope, $controller, $parse, _$q_, cfStub, validation) {
+    module('contentful/test', function ($provide) {
+      shareJSMock = {
+        peek: sinon.stub(),
+        mkpath: sinon.stub()
+      };
+
+      $provide.value('ShareJS', shareJSMock);
+    });
+    inject(function ($rootScope, $controller, _$q_, cfStub, validation) {
       $q = _$q_;
       scope = $rootScope.$new();
 
       validationParseStub = sinon.stub(validation.Validation, 'parse', validationParser);
 
       attrs = {ngModel: 'fieldData.value'};
-      shareJSMock = {
-        peek: sinon.stub(),
-        mkpath: sinon.stub()
-      };
-
       var space = cfStub.space('test');
       var contentTypeData = cfStub.contentTypeData('content_type1');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
@@ -33,14 +35,14 @@ describe('cfLinkEditor Controller', function () {
         type: 'Link',
         validations: []
       };
+      scope.linkType = 'Entry';
 
       createController = function () {
         cfLinkEditorCtrl = $controller('cfLinkEditorCtrl', {
           $scope: scope,
-          $parse: $parse,
           $attrs: attrs,
-          ShareJS: shareJSMock
         });
+        scope.$apply();
       };
 
     });
@@ -83,13 +85,11 @@ describe('cfLinkEditor Controller', function () {
 
     describe('validations are defined', function () {
       beforeEach(function () {
-        scope.linkType = '';
         scope.field.validations = [
           {name: 'linkContentType', contentTypeId: 'content_type1'}
         ];
         createController();
-        scope.linkType = 'Entry';
-        scope.$digest();
+        scope.$apply();
       });
 
       it('sets linkContentType to type defined in validation', function () {
@@ -117,13 +117,12 @@ describe('cfLinkEditor Controller', function () {
 
     describe('validations are defined', function () {
       beforeEach(function () {
-        scope.linkType = '';
+        scope.linkType = 'Asset';
         scope.field.validations = [
           {name: 'linkMimetypeGroup', mimetypeGroupName: 'file'}
         ];
         createController();
-        scope.linkType = 'Asset';
-        scope.$digest();
+        scope.$apply();
       });
 
       it('sets linkMimetypeGroup to type defined in validation', function () {
@@ -141,7 +140,14 @@ describe('cfLinkEditor Controller methods', function () {
   var entry;
 
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', function ($provide) {
+      shareJSMock = {
+        peek: sinon.stub(),
+        mkpath: sinon.stub()
+      };
+
+      $provide.value('ShareJS', shareJSMock);
+    });
     inject(function ($rootScope, $controller, _$q_, cfStub) {
       $q = _$q_;
       scope = $rootScope.$new();
@@ -175,11 +181,6 @@ describe('cfLinkEditor Controller methods', function () {
 
       scope.otPath = [];
 
-      shareJSMock = {
-        peek: sinon.stub(),
-        mkpath: sinon.stub()
-      };
-
       attrs = {ngModel: 'fieldData.value'};
 
       var space = cfStub.space('test');
@@ -188,8 +189,8 @@ describe('cfLinkEditor Controller methods', function () {
       cfLinkEditorCtrl = $controller('cfLinkEditorCtrl', {
         $scope: scope,
         $attrs: attrs,
-        ShareJS: shareJSMock
       });
+      scope.$apply();
     });
   });
 

@@ -1,10 +1,17 @@
 'use strict';
 
-angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$parse', '$attrs', 'validation', 'cfSpinner', 'ShareJS', '$q', function ($scope, $parse, $attrs, validation, cfSpinner, ShareJS, $q) {
+angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs', '$injector', function ($scope, $attrs, $injector) {
+  var $parse                = $injector.get('$parse');
+  var $q                    = $injector.get('$q');
+  var ShareJS               = $injector.get('ShareJS');
+  var LinkEditorEntityCache = $injector.get('LinkEditorEntityCache');
+  
+  var validation = $injector.get('validation');
+
   $scope.links = [];
   $scope.linkedEntities = [];
 
-  var entityCache = {};
+  var entityCache;
 
   var ngModelGet = $parse($attrs.ngModel),
       ngModelSet = ngModelGet.assign;
@@ -17,6 +24,8 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$parse',
     var validationType;
     if(linkType == 'Entry') validationType = 'linkContentType';
     if(linkType == 'Asset') validationType = 'linkMimetypeGroup';
+
+    initCache(linkType);
 
     var linkTypeValidation = _(validations)
       .map(validation.Validation.parse)
@@ -41,7 +50,7 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$parse',
       type: 'Link',
       linkType: $scope.linkType,
       id: entity.getId() }};
-    saveEntityInCache(entity);
+    entityCache.save(entity);
 
     var cb, promise;
     if ($scope.linkSingle) {
@@ -92,40 +101,17 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$parse',
     }
   };
 
-  function saveEntityInCache(entity) {
-    // TODO no need to check for entityCache existence anymore after the Angular update
-    if (entity && entityCache) entityCache[entity.getId()] = entity;
+  function lookupEntities(links) {
+    var ids = _.map(links, function (link) { return link.sys.id; });
+    return entityCache.getAll(ids);
   }
 
-  function entityFromCache(id) {
-    // TODO no need to check for entityCache existence anymore after the Angular update
-    return entityCache ? entityCache[id] : undefined;
-  }
-
-  function lookupEntities(scope, links) {
-    var lookup = $q.defer();
-    var ids        = _.map(links, function (link) { return link.sys.id; });
-    var missingIds = _.reject(ids, function (id) { return !!entityFromCache(id); });
-    if(missingIds.length > 0){
-      // TODO use common entityCache (#70858522)
-      var stopSpinner = cfSpinner.start();
-      scope.spaceContext.space[scope.fetchMethod]({
-        'sys.id[in]': missingIds.join(','),
-        limit: 1000
-      }, function (err, entities) {
-        scope.$apply(function () {
-          stopSpinner();
-          if (err) return lookup.reject(err);
-          _.each(entities, saveEntityInCache);
-          lookup.resolve();
-        });
-      });
-    } else {
-      lookup.resolve();
-    }
-    return lookup.promise.then(function () {
-      return _.map(ids, entityFromCache);
-    });
+  function initCache(linkType) {
+    var fetchMethod = linkType === 'Entry' ? 'getEntries' :
+                      linkType === 'Asset' ? 'getAssets'  :
+                      undefined;
+    if (!fetchMethod) throw new Error('No linkType provided');
+    entityCache = new LinkEditorEntityCache($scope.spaceContext.space, fetchMethod);
   }
 
   function markMissing(entities) {
@@ -140,7 +126,7 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$parse',
     if (!links || links.length === 0) {
       $scope.linkedEntities = [];
     } else {
-      lookupEntities(scope, links).then(function (entities) {
+      lookupEntities(links).then(function (entities) {
         scope.linkedEntities = markMissing(entities);
       });
     }
