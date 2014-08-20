@@ -29,6 +29,7 @@ describe('cfLinkEditor Directive', function () {
       cfLinkEditorDirective[0].controller = ControllerMock;
       scope = $rootScope.$new();
       scope.can = stubs.can;
+      scope.linkType = 'Entry';
       scope.fieldData = { value: {
         sys: {id: 123}
       }};

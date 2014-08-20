@@ -67,7 +67,7 @@ angular.module('contentful').controller('ErrorPathController', function ErrorPat
     },
     unknown: function (v) {
       if (v.path.length == 3 && v.path[0] == 'fields') {
-        return 'Locale disabled. This field should not contain a value.';
+        return 'This field is not localized and should not contain a value.';
       } else if (v.path.length == 2 && v.path[0] == 'fields') {
         return 'Unknown field.';
       } else {

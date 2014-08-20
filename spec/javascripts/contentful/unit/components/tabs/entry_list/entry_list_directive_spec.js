@@ -57,7 +57,7 @@ describe('The Entry list directive', function () {
 
 
     it('is not shown if there are no entries', function() {
-      scope.singleContentType = {};
+      scope.singleContentType = null;
       scope.entries = [];
       canStub.withArgs('create', 'Entry').returns(true);
       compileElement();
