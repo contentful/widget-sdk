@@ -22,7 +22,7 @@ angular.module('contentful').
 
         function getOptions() {
           var options = {
-            title: attrs.tooltip,
+            title: function(){ return attrs.tooltip; },
             delay: {show: 100, hide: 100}
           };
           var newKey;
