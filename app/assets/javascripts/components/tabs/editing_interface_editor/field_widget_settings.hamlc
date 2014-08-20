@@ -7,28 +7,30 @@
     %i.ss-writingdisabled(ng-if="field.disabled")
     %a.toggle-collapse.on-right(ng-class="{open: isFieldOpen(field)}") ▶
 .details
-  .form-horizontal
-    .form-field
+  .l-form-horizontal
+    .l-form-field
       %label
         Help text
       .form-controls
-        .field-editor
-          %input(type="text"
+        .l-field-editor
+          %input.form-control(type="text"
                  name="helpText"
                  placeholder="This help text will show up below the field"
                  ng-model="widget.widgetParams.helpText")
-    .form-field
+    .l-form-field
       %label
         Widget Type
       .form-controls
-        .field-editor
-          %select(ng-model="widget.widgetType"
-                  ng-change="widgetTypeChanged()"
-                  ng-options="type.id as type.name for type in widgetTypesForType")
-    .form-field(ng-repeat="option in widgetOptions")
+        .l-field-editor
+          .btn.btn-flat.select-box
+            %select(ng-model="widget.widgetType"
+                    ng-change="widgetTypeChanged()"
+                    ng-options="type.id as type.name for type in widgetTypesForType")
+            %i.button-icon-right.ss-dropdown
+    .l-form-field(ng-repeat="option in widgetOptions")
       %label {{option.name}}
       .form-controls
-        .field-editor
-          %input(type="text"
+        .l-field-editor
+          %input.form-control(type="text"
                  placeholder="{{option.description}}"
                  ng-model="widget.widgetParams[option.param]")
