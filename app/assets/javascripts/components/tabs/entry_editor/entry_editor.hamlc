@@ -18,14 +18,15 @@
       .dropdown-menu(cf-dropdown-menu="" style="display:none")
         %ul.dropdown-menu-list(ng-show="showLangSwitcher")
           %li.dropdown-menu-item(ng-repeat="locale in spaceContext.publishLocales track by locale.code")
-            %input(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
             %label
+              %input(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
               {{locale.name}}
               %span(ng-show="locale == spaceContext.space.getDefaultLocale()") (default)
         %ul.dropdown-menu-list
           %li.dropdown-menu-item(ng-class="{'top-separator': showLangSwitcher}")
-            %input(type="checkbox" ng-model="preferences.showDisabledFields")
-            %label Show disabled fields
+            %label
+              %input(type="checkbox" ng-model="preferences.showDisabledFields")
+              Show disabled fields
 
 .aux-panel(ng-show="preferences.showAuxPanel")
   %header
