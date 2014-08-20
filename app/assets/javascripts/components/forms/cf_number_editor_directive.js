@@ -15,7 +15,11 @@ angular.module('contentful').directive('cfNumberEditor', function(){
           ngModel.$setValidity('integer', true);
         }
         modelVal = scope.field.type === 'Integer' ? intVal : floatVal;
-        if (modelVal.toString() !== viewValue) {
+        if (_.isEmpty(viewValue)) {
+          scope.parseWarning = '';
+        } else if (isNaN(modelVal)) {
+          scope.parseWarning = 'Unrecognized Number';
+        } else if (modelVal.toString() !== viewValue) {
           scope.parseWarning = 'Recognized value: ' + modelVal;
         } else {
           scope.parseWarning = '';
