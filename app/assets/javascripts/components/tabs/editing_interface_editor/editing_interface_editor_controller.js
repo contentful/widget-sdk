@@ -10,23 +10,36 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
   $scope.$watch('tab.params.editingInterface', 'editingInterface=tab.params.editingInterface');
 
-  $scope.getFieldForWidget = function(widget) {
-    return _.find($scope.contentType.data.fields, {id: widget.fieldId});
-  };
+  $scope.getFieldForWidget = getFieldForWidget;
+  $scope.restoreDefaults = restoreDefaults;
+  $scope.update = saveToServer;
+  $scope.delete = angular.noop; // TODO: implement when we have more than the default interface
 
-  $scope.restoreDefaults = function () {
+  function getFieldForWidget(widget) {
+    return _.find($scope.contentType.data.fields, {id: widget.fieldId});
+  }
+
+  function restoreDefaults() {
     $scope.closeAllFields();
     var editingInterface = editingInterfaces.defaultInterface($scope.contentType);
     editingInterface.sys = _.clone($scope.editingInterface.sys);
     $scope.editingInterface = editingInterface;
-  };
+  }
 
-  $scope.update = function () {
-    editingInterfaces.saveForContentType($scope.contentType, $scope.editingInterface);
-  };
+  function saveToServer() {
+    editingInterfaces.saveForContentType($scope.contentType, $scope.editingInterface)
+    .then(function(editingInterface) {
+      $scope.editingInterface = editingInterface;
+    }, function() {
+      return loadFromServer();
+    });
+  }
 
-  $scope.delete = function () {
-    // TODO: implement when we have more than the default interface
-  };
+  function loadFromServer () {
+    editingInterfaces.forContentTypeWithId($scope.contentType, $scope.editingInterface.id)
+    .then(function(interf) {
+      $scope.editingInterface = interf;
+    });
+  }
 
 }]);

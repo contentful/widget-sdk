@@ -1,9 +1,9 @@
 'use strict';
 angular.module('contentful').factory('editingInterfaces', ['$injector', function($injector){
-  var $q     = $injector.get('$q');
-  var random = $injector.get('random');
+  var $q           = $injector.get('$q');
+  var random       = $injector.get('random');
   var notification = $injector.get('notification');
-  var widgetTypes = $injector.get('widgetTypes');
+  var widgetTypes  = $injector.get('widgetTypes');
 
   return {
     forContentTypeWithId: function (contentType, interfaceId) {
@@ -22,8 +22,9 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
       var cb = $q.callback();
       contentType.saveEditorInterface(editingInterface.id, editingInterface, cb);
       return cb.promise
-      .then(function () {
+      .then(function (interf) {
         notification.info('Configuration saved successfully');
+        return interf;
       }, function (err) {
         if(dotty.get(err, 'body.sys.type') == 'Error' && dotty.get(err, 'body.sys.id') == 'VersionMismatch')
           notification.warn('This configuration has been changed by another user. Please reload and try again.');

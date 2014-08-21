@@ -123,10 +123,10 @@ describe('Editing interfaces service', function () {
   });
 
   describe('saves interface for a content type', function() {
-    var interf;
+    var interf, promise;
     beforeEach(function() {
       interf = {};
-      editingInterfaces.saveForContentType(contentType, interf);
+      promise = editingInterfaces.saveForContentType(contentType, interf);
       $rootScope.$apply();
     });
 
@@ -134,6 +134,14 @@ describe('Editing interfaces service', function () {
       contentType.saveEditorInterface.yield(null, {});
       expect(stubs.info).toBeCalled();
     });
+
+    it('returns the editing interface from the server', function(){
+      promise.then(function(interf) {
+        expect(interf.newVersion).toBe(true);
+      });
+      contentType.saveEditorInterface.yield(null, {newVersion: true});
+    });
+    
 
     it('fails to save because of version mismatch', function() {
       contentType.saveEditorInterface.yield({body: {sys: {type: 'Error', id: 'VersionMismatch'}}});
