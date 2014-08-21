@@ -14,10 +14,12 @@
     ot-bind-text=""
     ng-disabled="!otEditable")
   %div(ng-switch-when="radiobuttons")
-    %input.form-control-look(name="yes" type="radio" ng-model="fieldData.value" ng-value="true" ot-bind-model="" ng-disabled="!otEditable")
-    %label.yes(for="yes") Yes
-    %input.form-control-look(name="no" type="radio" ng-model="fieldData.value" ng-value="false" ot-bind-model="" ng-disabled="!otEditable")
-    %label.no(for="no") No
+    %label.yes
+      %input.form-control-look(type="radio" ng-model="fieldData.value" ng-value="true" ot-bind-model="" ng-disabled="!otEditable")
+      Yes
+    %label.no
+      %input.form-control-look(type="radio" ng-model="fieldData.value" ng-value="false" ot-bind-model="" ng-disabled="!otEditable")
+      No
   .cf-datetime-editor.widget-datetime-editor(ng-switch-when="datetimeEditor" ng-model="fieldData.value")
   %div(ng-switch-when="linksEditor"
     ng-model="fieldData.value"
