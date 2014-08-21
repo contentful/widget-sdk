@@ -18,7 +18,7 @@ angular.module('contentful').directive('cfRatingEditor', ['$injector', function(
       }
     },
     controller: ['$scope', function ($scope) {
-      $scope.stars = new Array($scope.widget.widgetParams.stars || 10);
+      $scope.stars = new Array(parseInt($scope.widget.widgetParams.stars, 10) || 10);
       $scope.pendingValue = -1;
 
       $scope.setPending = setPending;
