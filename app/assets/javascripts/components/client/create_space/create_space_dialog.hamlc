@@ -1,5 +1,5 @@
 .modal-background.create-space-dialog(ng-controller="CreateSpaceDialogCtrl")
-  .modal-dialog
+  %form.modal-dialog(name="newSpaceForm" ng-submit="createSpace()")
     .title
       Create Space
       %a.cf-knowledge-base-icon(
@@ -8,7 +8,7 @@
         href="https://contentful.zendesk.com/hc/en-us/articles/200513108-What-is-a-difference-between-a-Content-Type-and-a-Space-")
     .modal-dialog-close-button(ng-click="dialog.cancel()")
 
-    %form.l-form-horizontal(name="newSpaceForm" ng-submit="createSpace()")
+    .l-form-horizontal
       .l-form-field
         %label Name
         .form-controls
