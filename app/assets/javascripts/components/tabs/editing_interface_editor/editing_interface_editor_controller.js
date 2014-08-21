@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('EditingInterfaceEditorCtrl', ['$scope', '$injector', function EditingInterfaceEditorCtrl($scope, $injector) {
+angular.module('contentful').controller('EditingInterfaceEditorController', ['$scope', '$injector', function EditingInterfaceEditorController($scope, $injector) {
   var $controller = $injector.get('$controller');
   var editingInterfaces = $injector.get('editingInterfaces');
 
