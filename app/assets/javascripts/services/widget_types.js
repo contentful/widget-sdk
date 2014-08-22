@@ -134,8 +134,8 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
 
   function detectFieldType(field) {
     var type = field.type;
-    if(type === 'Array'){
-      var itemsType = field.items.type;
+    var itemsType = dotty.get(field, 'items.type');
+    if(type === 'Array' && itemsType){
       if (itemsType === 'Link'  ) return 'Links';
       if (itemsType === 'Symbol') return 'Symbols';
     }
