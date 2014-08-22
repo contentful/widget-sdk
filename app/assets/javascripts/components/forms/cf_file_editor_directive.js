@@ -72,18 +72,16 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
 
       scope.$on('cfFileDropped', fileEventHandler);
       scope.$on('gettyFileAuthorized', fileEventHandler);
+      scope.$on('fileProcessingFailed', function () {
+        setFPFile(null);
+      });
 
       function fileEventHandler(event, file) {
         setFPFile(file);
       }
 
       function setFPFile(FPFile) {
-        var file = FPFile ? {
-         upload:      FPFile.url,
-         fileName:    FPFile.filename,
-         contentType: FPFile.mimetype
-        } : null;
-        scope.file = file;
+        scope.file = filepicker.parseFPFile(FPFile);
         scope.otBindInternalChangeHandler().then(notify);
         aviary.close();
       }
