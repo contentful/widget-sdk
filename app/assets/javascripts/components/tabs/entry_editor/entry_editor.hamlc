@@ -42,6 +42,7 @@
         data-field-id="{{widget.field.id}}"
         data-field-type="{{widget.field.type}}"
         data-field-items-type="{{widget.field.items.type}}"
+        data-field-items-type="{{dotty.get(field, 'items.type')}}"
         ng-class="{'data-field-array': (widget.field|isFieldLink), 'data-field-boolean': (widget.field|isFieldBoolean), 'data-field-string-list': (widget.field|isFieldStringList)}")
       %label
         {{widget.field.name}}
