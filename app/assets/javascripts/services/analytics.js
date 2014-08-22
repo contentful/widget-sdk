@@ -175,7 +175,7 @@ angular.module('contentful').provider('analytics', ['environment', function (env
           fieldId: field.id,
           fieldName: field.name,
           fieldType: field.type,
-          fieldSubtype: field.items ? field.items.type : null,
+          fieldSubtype: dotty.get(field, 'items.type') || null,
           fieldLocalized: field.localized,
           fieldRequired: field.required
         });

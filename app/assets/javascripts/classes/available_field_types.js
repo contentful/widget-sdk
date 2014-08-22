@@ -84,11 +84,13 @@ angular.module('contentful').
 
     return function(field) {
       return _.result(_.find(availableFieldTypes, function(availableFieldType) {
+        var fieldItemsType = dotty.get(field, 'items.type');
+        var fieldType = dotty.get(field, 'type');
         if (!field ||
-            field.type !== availableFieldType.value.type ||
-            field.type === 'Link' && field.linkType !== availableFieldType.value.linkType ||
-            field.items && availableFieldType.value.items && field.items.type !== availableFieldType.value.items.type ||
-            field.type === 'Array' && field.items.type === 'Link' && field.items && availableFieldType.value.items && field.items.linkType !== availableFieldType.value.items.linkType
+            fieldType !== dotty.get(availableFieldType, 'value.type') ||
+            fieldType === 'Link' && dotty.get(field, 'linkType') !== dotty.get(availableFieldType, 'value.linkType') ||
+            fieldItemsType !== dotty.get(availableFieldType, 'value.items.type') ||
+            fieldType === 'Array' && fieldItemsType === 'Link' && dotty.get(field, 'items.linkType') !== dotty.get(availableFieldType, 'value.items.linkType')
            )
           return false;
         return true;
