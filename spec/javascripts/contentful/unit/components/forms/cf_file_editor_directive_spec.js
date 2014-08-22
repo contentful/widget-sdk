@@ -7,7 +7,7 @@ describe('cfFileEditor Directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'pick', 'then', 'serverError'
+        'pick', 'then', 'serverError', 'parseFPFile'
       ]);
       $provide.stubDirective('otPath', {
         controller: function ($scope, $q) {
@@ -16,7 +16,8 @@ describe('cfFileEditor Directive', function () {
       });
       $provide.removeDirectives('cfFileDrop');
       $provide.value('filepicker', {
-        pick: stubs.pick
+        pick: stubs.pick,
+        parseFPFile: stubs.parseFPFile
       });
       $provide.value('notification', {
         serverError: stubs.serverError
@@ -52,11 +53,18 @@ describe('cfFileEditor Directive', function () {
   });
 
   describe('uploading a file succeeds', function() {
+    var file;
     beforeEach(function() {
-      stubs.then.callsArgWith(0, {
+      file = {
         url: 'newurl',
         filename: 'newfilename',
         mimetype: 'newmimetype'
+      };
+      stubs.then.callsArgWith(0, file);
+      stubs.parseFPFile.returns({
+        upload: 'newurl',
+        fileName: 'newfilename',
+        contentType: 'newmimetype'
       });
     });
 
@@ -73,6 +81,10 @@ describe('cfFileEditor Directive', function () {
 
       it('calls otchangevalue', function() {
         expect(scope.otChangeValueP).toBeCalled();
+      });
+
+      it('file object is parsed', function() {
+        stubs.parseFPFile.calledWith(file);
       });
 
       it('file now has url', function() {
@@ -149,7 +161,7 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('file is null', function() {
-        expect(scope.file).toBeNull();
+        expect(scope.file).toBeFalsy();
       });
     });
   });
@@ -157,6 +169,11 @@ describe('cfFileEditor Directive', function () {
   describe('uploading a file via drop succeeds', function() {
     describe('and updating the otDoc value succeeds', function() {
       beforeEach(function() {
+        stubs.parseFPFile.returns({
+          upload: 'newurl',
+          fileName: 'newfilename',
+          contentType: 'newmimetype'
+        });
         scope.$broadcast('cfFileDropped', {
           url: 'newurl',
           filename: 'newfilename',

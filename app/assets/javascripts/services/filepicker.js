@@ -1,6 +1,8 @@
 'use strict';
 
 angular.module('contentful').factory('filepicker', ['$window', 'environment', '$q', '$rootScope', 'jsloader', function ($window, environment, $q, $rootScope, jsloader) {
+    var MULTIPLE_UPLOAD_MAXFILES = 20;
+
     if (!$window.filepicker) {
       var loadFile = jsloader.create('//api.filepicker.io/v1/');
       loadFile('filepicker.js');
@@ -30,14 +32,14 @@ angular.module('contentful').factory('filepicker', ['$window', 'environment', '$
 
     return {
       makeDropPane: function (dropPane, options) {
-        options = _.extend(_.clone(settings), options);
+        options = _.extend(_.clone(settings), options||{});
         return $window.filepicker.makeDropPane(dropPane, options);
       },
 
-      pick: function () {
+      pick: function (options) {
         var deferred = $q.defer();
 
-        $window.filepicker.pick(_.clone(settings), function(FPFile){
+        $window.filepicker.pick(_.extend(_.clone(settings), options||{}), function(FPFile){
           $rootScope.$apply(function () {
             deferred.resolve(FPFile);
           });
@@ -49,6 +51,24 @@ angular.module('contentful').factory('filepicker', ['$window', 'environment', '$
 
         return deferred.promise;
       },
+
+      pickMultiple: function (options) {
+        var deferred = $q.defer();
+        _.defaults(options||{}, {maxFiles: MULTIPLE_UPLOAD_MAXFILES});
+
+        $window.filepicker.pickMultiple(_.extend(_.clone(settings), options), function(FPFiles){
+          $rootScope.$apply(function () {
+            deferred.resolve(FPFiles);
+          });
+        }, function (FPError) {
+          $rootScope.$apply(function () {
+            deferred.reject(FPError);
+          });
+        });
+
+        return deferred.promise;
+      },
+
 
       store: function (newURL, file) {
         var deferred = $q.defer();
@@ -72,6 +92,14 @@ angular.module('contentful').factory('filepicker', ['$window', 'environment', '$
         });
 
         return deferred.promise;
+      },
+
+      parseFPFile: function (FPFile) {
+        return FPFile ? {
+         upload:      FPFile.url,
+         fileName:    FPFile.filename,
+         contentType: FPFile.mimetype
+        } : null;
       }
     };
 }]);
