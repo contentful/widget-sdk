@@ -3,17 +3,14 @@
   "version": "0.0.0",
   "description": "",
   "main": "",
-  "bin": {
-  },
-  "directories": {
-  },
+  "bin": {},
+  "directories": {},
   "dependencies": {
     "nib": "^1.0.3",
-    "stylus": "^0.47.3"
+    "stylus": "^0.48.0"
   },
   "devDependencies": {},
-  "scripts": {
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "https://github.com/contentful/user_interface.git"
