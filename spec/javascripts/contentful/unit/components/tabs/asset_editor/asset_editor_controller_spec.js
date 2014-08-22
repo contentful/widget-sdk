@@ -16,7 +16,9 @@ describe('Asset editor controller', function () {
         'peek',
         'mkpath',
         'fileNameToTitle',
-        'serverError'
+        'serverError',
+        'getPublishedVersion',
+        'fileProcessingFailed'
       ]);
       $provide.removeControllers('FormWidgetsController');
 
@@ -56,7 +58,8 @@ describe('Asset editor controller', function () {
 
       var asset = {
         isArchived: stubs.isArchived,
-        process: stubs.process
+        process: stubs.process,
+        getPublishedVersion: stubs.getPublishedVersion
       };
       scope.tab = {
         params: {
@@ -142,11 +145,13 @@ describe('Asset editor controller', function () {
   });
 
   describe('handles a fileUploaded event from CfFileEditor controller', function() {
-    var otPath;
+    var otPath, childScope;
     beforeEach(function() {
+      childScope = scope.$new();
       scope.otDoc = { version: 123 };
       otPath = ['fields', 'title', 'en-US'];
       var fileObj = {fileName: 'file.jpg'};
+      scope.$on('fileProcessingFailed', stubs.fileProcessingFailed);
       scope.$emit('fileUploaded', fileObj, {code: 'en-US'});
     });
 
@@ -189,6 +194,10 @@ describe('Asset editor controller', function () {
 
       it('calls error notification', function() {
         expect(stubs.serverError).toBeCalled();
+      });
+
+      it('emits file processing failure event', function() {
+        expect(stubs.fileProcessingFailed).toBeCalled();
       });
     });
   });
