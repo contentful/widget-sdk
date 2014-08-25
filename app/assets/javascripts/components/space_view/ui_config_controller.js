@@ -31,10 +31,11 @@ angular.module('contentful').controller('UiConfigController', ['$scope', '$q', '
       $scope.uiConfig = config;
       return config;
     }, function (err) {
-      if(err && err.statusCode === 404) {
+      var statusCode = dotty.get(err, 'statusCode');
+      if(statusCode === 404) {
         $scope.uiConfig = {};
         return $scope.uiConfig;
-      } else {
+      } else if(statusCode !== 502) {
         sentry.captureServerError('Could not load UIConfig', err);
       }
     });

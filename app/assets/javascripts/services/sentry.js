@@ -128,8 +128,8 @@ function ($injector , $window, environment, stringifySafe) {
         };
         window.Bugsnag.user = {
           id: user && user.sys.id,
-          firstName: user.firstName,
-          lastName: user.lastName
+          firstName: user && user.firstName,
+          lastName: user && user.lastName
         };
         window.Bugsnag.notifyException(exception);
       }

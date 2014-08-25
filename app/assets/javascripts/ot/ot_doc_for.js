@@ -44,8 +44,8 @@ angular.module('contentful').directive('otDocFor', function () {
             scope.otDoc = null;
             sentry.captureError('Failed to open sharejs doc', {
               data: {
-                entity: entity,
-                err: err
+                err: err,
+                entity: entity
               }
             });
           } else {

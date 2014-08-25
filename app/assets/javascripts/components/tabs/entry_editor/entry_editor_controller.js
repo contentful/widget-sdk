@@ -90,17 +90,9 @@ angular.module('contentful')
     }
 
     function makeUnique(locales) {
-      var uniqLocales = _.uniq(locales, 'code');
-      if(locales.length !== uniqLocales.length){
-        sentry.captureError('Locales have been duplicated', {
-          data: {
-            locales: locales,
-            activeLocales: scope.spaceContext.activeLocales
-          }
-        });
-      }
-      return uniqLocales;
+      return _.uniq(locales, 'code');
     }
+
     function getFieldLocales(field) {
       if (field.localized)
         return scope.spaceContext.activeLocales;

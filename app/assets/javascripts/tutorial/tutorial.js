@@ -78,7 +78,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
           tutorialScope.standby = false;
           guiders.next();
         }, function (err) {
-          notification.error('Something went wrong:' + err);
+          notification.serverError('Error creating tutorial content types', err);
           tutorialScope.standby = false;
         });
       };
@@ -96,7 +96,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
           }
           guiders.next();
         }, function (err) {
-          notification.error('Something went wrong:' + err);
+          notification.serverError('Error creating tutorial entries', err);
           tutorialScope.standby = false;
         });
       };

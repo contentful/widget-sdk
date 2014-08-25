@@ -120,7 +120,9 @@ angular.module('contentful').provider('authentication', ['$injector', function A
         if (data !== undefined) self.setTokenLookup(data);
         return self.tokenLookup;
       }, function (err) {
-        sentry.captureError('getTokenlookup failed', { data: err });
+        var statusCode = dotty.get(err, 'statusCode');
+        if(statusCode !== 502 && statusCode !== 401)
+          sentry.captureError('getTokenLookup failed', { data: err });
         return $q.reject(err);
       });
     },

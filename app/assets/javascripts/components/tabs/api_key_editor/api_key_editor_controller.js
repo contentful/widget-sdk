@@ -92,7 +92,8 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
       $scope.$apply(function() {
         if (err) {
           notification.warn(t + ' could not be saved');
-          sentry.captureServerError('ApiKey could not be saved', err);
+          if(dotty.get(err, 'statusCode') !== 422)
+            sentry.captureServerError('ApiKey could not be saved', err);
           return;
         }
         $scope.apiKeyForm.$setPristine();

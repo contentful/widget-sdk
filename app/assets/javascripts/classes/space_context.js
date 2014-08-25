@@ -104,7 +104,8 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
           if(message)
             notification.warn(message);
           else
-            notification.serverError('Could not get published Content Types', { data: err });
+            notification.warn('Could not get published Content Types');
+            notification.captureError('Could not get published Content Types', { data: err });
           return $q.reject(err);
         })
         .catch(ReloadNotification.apiErrorHandler);
@@ -155,7 +156,11 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
       displayFieldForType: function (contentTypeId) {
         var ct = this.getPublishedContentType(contentTypeId);
         if(!ct){
-          sentry.captureError('No content type available for '+contentTypeId);
+          sentry.captureError('No content type available', {
+            data: {
+              contentTypeId: contentTypeId
+            }
+          });
           return null;
         }
         return _.find(ct.data.fields, {id: ct.data.displayField});

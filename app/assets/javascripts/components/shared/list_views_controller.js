@@ -36,9 +36,9 @@ function($scope, $injector, generateDefaultViews, getBlankView, resetList, viewC
   };
 
   $scope.saveViews = function () {
-    return $scope.saveUiConfig().catch(function () {
-      notification.serverError('Error trying to save view');
-      return $q.reject();
+    return $scope.saveUiConfig().catch(function (err) {
+      notification.serverError('Error trying to save view', err);
+      return $q.reject(err);
     });
   };
 }]);
