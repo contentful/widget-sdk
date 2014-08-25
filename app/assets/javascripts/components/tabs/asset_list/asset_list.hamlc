@@ -16,7 +16,7 @@
   .search-results-position(paginator="searchController.paginator" ng-hide="!searchController.paginator.numEntries")
 
   .add-entity
-    .dropdown-btn(cf-dropdown="" ng-if="assets.length > 0")
+    .dropdown-btn(cf-dropdown="" ng-show="assets.length > 0")
       %button.btn.btn--primary(cf-dropdown-toggle="" cf-can="create, Asset")
         %i.ss-plus.button-icon
         Add New Asset
