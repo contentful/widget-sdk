@@ -13,16 +13,28 @@ angular.module('contentful').controller('DisplayedFieldsController', ['$scope', 
   $scope.refreshDisplayFields = function () {
     var displayedFieldIds = $scope.tab.params.view.displayedFieldIds;
     var fields = getAvailableFields($scope.tab.params.view.contentTypeId);
+    var unavailableFieldIds = [];
 
-    $scope.displayedFields = _.map(displayedFieldIds, function (id) {
-      return _.find(fields, {id: id});
-    });
+    $scope.displayedFields = _.filter(_.map(displayedFieldIds, function (id) {
+      var field = _.find(fields, {id: id});
+      if(!field) unavailableFieldIds.push(id);
+      return field;
+    }));
+
     $scope.hiddenFields    = _.sortBy(_.reject(fields, fieldIsDisplayed), 'name');
+
+    cleanDisplayedFieldIds(unavailableFieldIds);
 
     function fieldIsDisplayed(field) {
       return _.contains(displayedFieldIds, field.id);
     }
   };
+
+  function cleanDisplayedFieldIds(unavailableFieldIds) {
+    $scope.tab.params.view.displayedFieldIds = _.reject($scope.tab.params.view.displayedFieldIds, function (id) {
+      return _.contains(unavailableFieldIds, id);
+    });
+  }
 
   $scope.$watch('[tab.params.view.contentTypeId, tab.params.view.displayedFieldIds]', $scope.refreshDisplayFields, true);
 

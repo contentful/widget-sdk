@@ -146,8 +146,8 @@ angular.module('contentful')
     if (field.type === 'Boolean') return 'radiobuttons';
     if (field.type === 'Date'   ) return 'datetimeEditor';
     if (field.type === 'Array') {
-      if (field.items.type === 'Link'  ) return 'linksEditor';
-      if (field.items.type === 'Symbol') return 'listInput';
+      if (dotty.get(field, 'items.type') === 'Link'  ) return 'linksEditor';
+      if (dotty.get(field, 'items.type') === 'Symbol') return 'listInput';
     }
     if (field.type === 'Object'  ) return 'objectEditor';
     if (field.type === 'Location') return 'locationEditor';

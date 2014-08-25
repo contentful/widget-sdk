@@ -41,7 +41,7 @@
     .l-form-field(ng-repeat="field in fields track by field.id"
         data-field-id="{{field.id}}"
         data-field-type="{{field.type}}"
-        data-field-items-type="{{field.items.type}}"
+        data-field-items-type="{{dotty.get(field, 'items.type')}}"
         ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
       %label
         {{field.name}}

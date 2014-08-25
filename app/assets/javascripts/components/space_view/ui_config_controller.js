@@ -23,7 +23,7 @@ angular.module('contentful').controller('UiConfigController', ['$scope', '$q', '
     });
     return callback.promise;
   };
-  
+
   function loadUiConfig() {
     var callback = $q.callback();
     $scope.spaceContext.space.getUIConfig(callback);
