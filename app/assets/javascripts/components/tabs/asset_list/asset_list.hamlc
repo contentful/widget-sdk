@@ -16,11 +16,7 @@
   .search-results-position(paginator="searchController.paginator" ng-hide="!searchController.paginator.numEntries")
 
   .add-entity
-    %button.btn.btn--primary(cf-can="create, Asset" ng-click="createMultipleAssets()" ng-hide="assets.length > 0")
-      %i.ss-plus.button-icon
-      Add Multiple Assets
-
-    .dropdown-btn(cf-dropdown="" ng-hide="assets.length == 0")
+    .dropdown-btn(cf-dropdown="" ng-if="assets.length > 0")
       %button.btn.btn--primary(cf-dropdown-toggle="" cf-can="create, Asset")
         %i.ss-plus.button-icon
         Add New Asset
@@ -82,8 +78,19 @@
         %i.ss-attach.giant-icon
         %header.advice-title You have no Assets yet.
         %p.advice-description Assets are external documents that you can link to your Entries. They can be any file you wish, form sounds to images or videos to text documents.
-        %button.btn.btn--primary(type="button" ng-click="createAsset('frameButton')" cf-can="create, Asset")
-          Create an Asset
+        .dropdown-btn(cf-dropdown="")
+          %button.btn.btn--primary(cf-dropdown-toggle="" cf-can="create, Asset")
+            Create an Asset
+          .dropdown-menu(cf-dropdown-menu="" position="bottomcenter" container=".tab-content")
+            %ul.dropdown-menu-list
+              %li.dropdown-menu-item.type(ng-click="createAsset('frameButton')" dropdown-close="")
+                %i.ss-plus
+                Single Asset
+              %li.dropdown-menu-item.type(ng-click="createMultipleAssets()" dropdown-close="")
+                %i.ss-plus
+                Multiple Assets
+
+
         %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
           Visit the Knowledge Base Pages
           %i.ss-help
