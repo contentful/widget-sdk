@@ -4,27 +4,35 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
   var editingInterfaces = $injector.get('editingInterfaces');
   var logger            = $injector.get('logger');
 
-  $scope.$watch(function (scope) {
-    return _.pluck(scope.spaceContext.activeLocales, 'code');
-  }, updateWidgets, true);
+  $scope.$watch(getContentTypeFields,                    updateEditingInterface, true);
+  $scope.$watch(getAvailableWidgets,                     updateWidgets, true);
+  $scope.$watch(getActiveLocaleCodes,                    updateWidgets, true);
   $scope.$watch('spaceContext.space.getDefaultLocale()', updateWidgets);
   $scope.$watch('preferences.showDisabledFields',        updateWidgets);
   $scope.$watch('errorPaths',                            updateWidgets);
 
+  this.editingInterface = null;
   this.updateWidgets = updateWidgets;
   this.updateWidgetsFromInterface = updateWidgetsFromInterface;
 
-  function updateWidgets() {
-    if (controller.contentType)
+  function updateEditingInterface() {
+    if (controller.contentType) {
       editingInterfaces.forContentTypeWithId(controller.contentType, 'default')
-      .then(updateWidgetsFromInterface);
+      .then(function(interf) {
+        controller.editingInterface = interf;
+      });
+    }
+  }
+
+  function updateWidgets() {
+    updateWidgetsFromInterface(controller.editingInterface);
   }
 
   function updateWidgetsFromInterface(interf) {
-    $scope.widgets = _(interf.data.widgets)
+    $scope.widgets = interf ? _(interf.data.widgets)
       .filter(widgetIsVisible)
       .map(addLocalesAndFieldToWidget)
-      .value();
+      .value() : [];
   }
 
   function addLocalesAndFieldToWidget(widget) {
@@ -41,6 +49,18 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
         locales: [$scope.spaceContext.space.getDefaultLocale()]
       });
     }
+  }
+
+  function getAvailableWidgets() {
+    return dotty.get(controller, 'editingInterface.data.widgets');
+  }
+
+  function getContentTypeFields() {
+    return dotty.get(controller, 'contentType.data.fields');
+  }
+
+  function getActiveLocaleCodes() {
+    return _.pluck($scope.spaceContext.activeLocales, 'code');
   }
 
   function widgetIsVisible(widget) {

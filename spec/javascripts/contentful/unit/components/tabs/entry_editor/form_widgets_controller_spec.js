@@ -5,14 +5,20 @@ describe('Form Widgets Controller', function () {
 
   beforeEach(function () {
     module('contentful/test');
-    inject(function ($compile, $rootScope, $controller, cfStub){
+    inject(function ($compile, $rootScope, $controller, cfStub, editingInterfaces, $q){
       scope = $rootScope;
       var space = cfStub.space('testSpace');
-      var contentTypeData = cfStub.contentTypeData('testType');
-      scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
+      scope.spaceContext = cfStub.spaceContext(space, [
+        cfStub.contentTypeData('testType',  [cfStub.field('fieldA')]),
+        cfStub.contentTypeData('testType2', [cfStub.field('fieldB')]),
+      ]);
+      sinon.stub(editingInterfaces, 'forContentTypeWithId', function(contentType) {
+        // Do not attempt to load from remote
+        return $q.when(editingInterfaces.defaultInterface(contentType));
+      });
       controller = $controller('FormWidgetsController', {$scope: scope});
       controller.contentType = scope.spaceContext.publishedContentTypes[0];
-      scope.$digest();
+      scope.$apply();
     });
   });
 
@@ -20,32 +26,39 @@ describe('Form Widgets Controller', function () {
     $log.assertEmpty();
   }));
 
+  describe('the editing interface', function(){
+    it('updates the editing interface when the content type changes', function(){
+      expect(controller.editingInterface.data.widgets[0].fieldId).toBe('fieldA');
+      controller.contentType = scope.spaceContext.publishedContentTypes[1];
+      scope.$apply();
+      expect(controller.editingInterface.data.widgets[0].fieldId).toBe('fieldB');
+    });
+  });
+
   describe('the list of widgets', function () {
     var field;
     beforeEach(function () {
-      inject(function (cfStub, editingInterfaces, $q) {
+      inject(function (cfStub) {
         scope.preferences = {};
         controller.contentType.data.fields = [field = cfStub.field('foo', {disabled: true})];
-        interf = editingInterfaces.defaultInterface(controller.contentType);
-        sinon.stub(editingInterfaces ,'forContentTypeWithId').returns($q.when(interf));
-        controller.updateWidgets();
+        scope.$apply(); // Trigger updateEditingInterface
       });
     });
 
     it('should contain disabled fields if the flag is set', function () {
       scope.preferences.showDisabledFields = true;
-      scope.$digest();
+      scope.$apply();
       expect(scope.widgets.length).toBe(1);
     });
 
     it('should show fields that have errors even if disabled', function () {
       scope.errorPaths = {'foo': true};
-      scope.$digest();
+      scope.$apply();
       expect(scope.widgets.length).toBe(1);
     });
 
     it('should not show a field that is disabled', function () {
-      scope.$digest();
+      scope.$apply();
       expect(scope.widgets.length).toBe(0);
     });
 
@@ -58,13 +71,13 @@ describe('Form Widgets Controller', function () {
 
       it('should contain active locales if localized', function () {
         field.localized = true;
-        scope.$digest();
+        scope.$apply();
         expect(scope.widgets[0].locales.length).toBe(2);
       });
 
       it('should contain only default locale if not localized', function () {
         field.localized = false;
-        scope.$digest();
+        scope.$apply();
         expect(scope.widgets[0].locales.length).toBe(1);
         expect(scope.widgets[0].locales[0].code).toBe('en-US');
       });
@@ -72,20 +85,19 @@ describe('Form Widgets Controller', function () {
       it('should contain all error locales even if not localized', function () {
         scope.errorPaths = { foo: ['en-US', 'de-DE'] };
         field.localized = false;
-        scope.$digest();
+        scope.$apply();
         expect(scope.widgets[0].locales.length).toBe(2);
       });
     });
 
     describe('with validation errors', function () {
-      beforeEach(inject(function ($rootScope, $controller, cfStub, editingInterfaces){
+      beforeEach(inject(function (cfStub){
         scope.preferences = {};
         controller.contentType.data.fields = [
           cfStub.field('localized'),
           cfStub.field('nonlocalized', {localized: false})
         ];
-        interf.data.widgets = editingInterfaces.defaultInterface(controller.contentType).data.widgets;
-        controller.updateWidgets();
+        scope.$apply();
       }));
 
       describe('fields with errors', function () {
@@ -97,12 +109,12 @@ describe('Form Widgets Controller', function () {
         });
 
         it('should display all locales for localized fields', function () {
-          scope.$digest();
+          scope.$apply();
           expect(scope.widgets[0].locales.length).toBe(2);
         });
 
         it('should only display the default locale for non-localized fields', function () {
-          scope.$digest();
+          scope.$apply();
           expect(scope.widgets[1].locales.length).toBe(1);
         });
       });
@@ -118,7 +130,7 @@ describe('Form Widgets Controller', function () {
         });
 
         it('should show the field with the error', function () {
-          scope.$digest();
+          scope.$apply();
           expect(scope.widgets[0].locales.length).toBe(2);
         });
       });
