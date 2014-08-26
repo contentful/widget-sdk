@@ -55,11 +55,11 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs',
 
     var cb, promise;
     if ($scope.linkSingle) {
-      cb = $q.callbackWithoutApply();
+      cb = $q.callback();
       $scope.otChangeValue(link, cb);
       promise = cb.promise.then(function () { $scope.links = [link]; });
     } else {
-      cb = $q.callback();
+      cb = $q.callbackWithApply();
       if (_.isArray(ShareJS.peek($scope.otDoc, $scope.otPath))) {
         $scope.otDoc.at($scope.otPath).push(link, cb);
         promise = cb.promise.then(function () { $scope.links.push(link); });
@@ -81,7 +81,7 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs',
   $scope.removeLink = function(index, entity) {
     var cb;
     if ($scope.linkSingle) {
-      cb = $q.callbackWithoutApply();
+      cb = $q.callback();
       $scope.otChangeValue(null, cb);
       return cb.promise.then(function () {
         $scope.links.length = 0;
@@ -89,7 +89,7 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs',
       });
     } else {
       assertIndexMatches(index, entity);
-      cb = $q.callback();
+      cb = $q.callbackWithApply();
       $scope.otDoc.at($scope.otPath.concat(index)).remove(cb);
       return cb.promise.then(function () {
         $scope.links.splice(index,1);

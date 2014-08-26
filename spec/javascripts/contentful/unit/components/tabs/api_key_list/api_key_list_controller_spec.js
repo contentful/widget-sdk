@@ -41,6 +41,7 @@ describe('API Key List Controller', function () {
       getApiKeysStub = sinon.stub(scope.spaceContext.space, 'getApiKeys');
       scope.refreshApiKeys();
       getApiKeysStub.yield(null, {});
+      scope.$apply();
     });
 
     it('calls api keys getter', function() {
@@ -58,6 +59,7 @@ describe('API Key List Controller', function () {
       getApiKeysStub = sinon.stub(scope.spaceContext.space, 'getApiKeys');
       scope.refreshApiKeys();
       getApiKeysStub.yield({statusCode: 500}, null);
+      scope.$apply();
     });
 
     it('results in an error message', function () {

@@ -3,10 +3,40 @@
 
 var mocks = angular.module('contentful/mocks', []);
 
+mocks.factory('TestingAdapter', function ($rootScope) {
+  function Adapter() { }
 
-mocks.factory('cfStub', ['contentfulClient', 'SpaceContext', function (contentfulClient, SpaceContext) {
+  Adapter.prototype = {
+    request: function (options, callback) {
+      this._lastRequest = {
+        options: options,
+        callback: callback
+      };
+    },
+
+    respondWith: function () {
+      var args = arguments;
+      var callback = this._lastRequest.callback;
+      this._lastRequest = null;
+      $rootScope.$apply(function(){
+        callback.apply(null, args);
+      });
+    },
+
+    reset: function () {
+      this._lastRequest = null;
+    }
+  };
+
+  return Adapter;
+});
+
+mocks.factory('cfStub', function ($injector) {
+  var SpaceContext     = $injector.get('SpaceContext');
+  var contentfulClient = $injector.get('contentfulClient');
+  var Adapter          = $injector.get('TestingAdapter');
+  
   var Client = contentfulClient.Client;
-  var Adapter = contentfulClient.adapters.testing;
   var adapter = new Adapter();
 
   var cfStub = {};
@@ -183,7 +213,7 @@ mocks.factory('cfStub', ['contentfulClient', 'SpaceContext', function (contentfu
   };
 
   return cfStub;
-}]);
+});
 
 mocks.config(['$provide', function ($provide) {
   $provide.decorator('ShareJS', ['$delegate', function ($delegate) {

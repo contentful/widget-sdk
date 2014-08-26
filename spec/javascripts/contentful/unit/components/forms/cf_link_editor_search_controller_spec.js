@@ -170,6 +170,7 @@ describe('cfLinkEditorSearch Controller', function () {
           scope.addLink.returns($q.when(null));
           scope['addNew'+uppercasedEntityType](contentType);
           createEntityStub.yield(null, entity);
+          scope.$apply();
         });
 
         it('create '+entityType+' called', function() {
@@ -204,6 +205,7 @@ describe('cfLinkEditorSearch Controller', function () {
           scope.addLink.returns($q.when(null));
           scope['addNew'+uppercasedEntityType](contentType);
           createEntityStub.yield({});
+          scope.$apply();
         });
 
         it('create '+ entityType +' called', function() {
@@ -235,7 +237,9 @@ describe('cfLinkEditorSearch Controller', function () {
           sinon.stub(entity, 'delete');
           scope['addNew'+uppercasedEntityType](contentType);
           createEntityStub.yield(null, entity);
+          scope.$apply();
           entity.delete.yield(null);
+          scope.$apply();
         });
 
         it('create '+ entityType +' called', function() {
@@ -274,7 +278,9 @@ describe('cfLinkEditorSearch Controller', function () {
           sinon.stub(entity, 'delete');
           scope['addNew'+uppercasedEntityType](contentType);
           createEntityStub.yield(null, entity);
+          scope.$apply();
           entity.delete.yield({});
+          scope.$apply();
         });
 
         it('create '+ entityType +' called', function() {

@@ -11,7 +11,7 @@ angular.module('contentful').config(['$provide', function ($provide) {
     // asyncMethod(cb);
     // cb.promise.then(...)
     //
-    $q.callback = function () {
+    $q.callbackWithApply = function () {
       var deferred = $delegate.defer();
       var callbackFunction = function (err) {
         var args = _.rest(arguments);
@@ -27,7 +27,7 @@ angular.module('contentful').config(['$provide', function ($provide) {
       return callbackFunction;
     };
 
-    $q.callbackWithoutApply = function () {
+    $q.callback = function () {
       var deferred = $delegate.defer();
       var callbackFunction = function (err) {
         var args = _.rest(arguments);
