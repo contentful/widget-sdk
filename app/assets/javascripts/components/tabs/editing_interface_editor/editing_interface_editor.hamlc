@@ -1,5 +1,5 @@
 .tab-header.editor-configuration
-  %h1 {{contentType.getName()}} / {{editingInterface.title}}
+  %h1 {{contentType.getName()}} / {{editingInterface.data.title}}
   %a.cf-knowledge-base-icon(
     tooltip="Learn more about Content Types in the Knowledge Base Pages"
     analytics-event="content_types"
@@ -28,7 +28,7 @@
   .with-left-nav
 
     .field-widget-settings(
-        ng-repeat="widget in editingInterface.widgets track by widget.id"
+        ng-repeat="widget in editingInterface.data.widgets track by widget.id"
         ng-hide="getFieldForWidget(widget).disabled && !preferences.showDisabledFields"
         ng-class="{open: isFieldOpen(field), active: !field.disabled }")
 

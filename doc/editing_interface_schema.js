@@ -1,6 +1,9 @@
 {
+  sys: {
+    type: 'EditorInterface',
+    id: 'asdasdasd'
+  },
   title: 'Foo',
-  id: 'asdasdasd',
   contentTypeId: 'asdasd',
   widgets: [
     {

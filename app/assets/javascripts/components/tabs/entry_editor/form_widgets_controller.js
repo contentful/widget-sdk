@@ -21,7 +21,7 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
   }
 
   function updateWidgetsFromInterface(interf) {
-    $scope.widgets = _(interf.widgets)
+    $scope.widgets = _(interf.data.widgets)
       .filter(widgetIsVisible)
       .map(addLocalesAndFieldToWidget)
       .value();

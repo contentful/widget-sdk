@@ -5,7 +5,7 @@ describe('EditingInterfaceEditorController', function(){
   beforeEach(function() {
     module('contentful/test', function($provide) {
       editingInterfaces = {
-        saveForContentType:   sinon.stub(),
+        save: sinon.stub(),
         forContentTypeWithId: sinon.stub()
       };
       $provide.value('editingInterfaces', editingInterfaces);
@@ -14,8 +14,9 @@ describe('EditingInterfaceEditorController', function(){
       $q = _$q_;
       scope = $rootScope.$new();
       scope.tab = { params: {
-          editingInterface: {id: 'default', local: true}
-        } };
+          editingInterface: {
+            data: {id: 'default', local: true}
+          } } };
       controller = $controller('EditingInterfaceEditorController', {$scope: scope});
       scope.$apply();
     });
@@ -26,18 +27,18 @@ describe('EditingInterfaceEditorController', function(){
   }));
 
   it('should reset the interface when saving fails', function(){
-    editingInterfaces.saveForContentType.returns($q.reject());
-    editingInterfaces.forContentTypeWithId.returns($q.when({id: 'default', remote: true}));
+    editingInterfaces.save.returns($q.reject());
+    editingInterfaces.forContentTypeWithId.returns($q.when({data: {id: 'default', remote: true}}));
     scope.update();
     scope.$apply();
-    expect(scope.editingInterface.remote).toBe(true);
+    expect(scope.editingInterface.data.remote).toBe(true);
   });
 
   it('should update the interface after saving', function () {
-    editingInterfaces.saveForContentType.returns($q.when({id: 'default', remote: true}));
+    editingInterfaces.save.returns($q.when({data: {id: 'default', remote: true}}));
     scope.update();
     scope.$apply();
-    expect(scope.editingInterface.remote).toBe(true);
+    expect(scope.editingInterface.data.remote).toBe(true);
   });
   
   

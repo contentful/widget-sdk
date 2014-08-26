@@ -84,7 +84,7 @@ describe('Form Widgets Controller', function () {
           cfStub.field('localized'),
           cfStub.field('nonlocalized', {localized: false})
         ];
-        interf.widgets = editingInterfaces.defaultInterface(controller.contentType).widgets;
+        interf.data.widgets = editingInterfaces.defaultInterface(controller.contentType).data.widgets;
         controller.updateWidgets();
       }));
 

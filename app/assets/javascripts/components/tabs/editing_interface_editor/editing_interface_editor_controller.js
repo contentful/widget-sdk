@@ -22,15 +22,15 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
   function restoreDefaults() {
     $scope.closeAllFields();
     var editingInterface = editingInterfaces.defaultInterface($scope.contentType);
-    editingInterface.sys = _.clone($scope.editingInterface.sys);
-    $scope.editingInterface = editingInterface;
+    $scope.editingInterface.data.widgets = editingInterface.data.widgets;
   }
 
   function saveToServer() {
-    editingInterfaces.saveForContentType($scope.contentType, $scope.editingInterface)
-    .then(function(editingInterface) {
-      $scope.editingInterface = editingInterface;
-    }, function() {
+    editingInterfaces.save($scope.editingInterface)
+    .then(function(interf) {
+      $scope.editingInterface = interf;
+    })
+    .catch(function() {
       return loadFromServer();
     });
   }

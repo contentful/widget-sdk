@@ -8,9 +8,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   return {
     forContentTypeWithId: function (contentType, interfaceId) {
       return getEditorInterface(contentType, interfaceId)
-      .then(function (config) {
-        return config;
-      }, function (err) {
+      .catch(function (err) {
         if(err && err.statusCode === 404)
           return $q.when(defaultInterface(contentType));
         else
@@ -18,9 +16,9 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
       });
     },
 
-    saveForContentType: function (contentType, editingInterface) {
+    save: function (editingInterface) {
       var cb = $q.callback();
-      contentType.saveEditorInterface(editingInterface.id, editingInterface, cb);
+      editingInterface.save(cb);
       return cb.promise
       .then(function (interf) {
         notification.info('Configuration saved successfully');
@@ -47,15 +45,18 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   }
 
   function defaultInterface(contentType) {
-    var config = {
+    var data = {
+      sys: {
+        id: 'default',
+        type: 'EditorInterface'
+      },
       title: 'Default',
-      id: 'default',
       contentTypeId: contentType.getId(),
       widgets: []
     };
-    config.widgets = _.map(contentType.data.fields, _.partial(defaultWidget, contentType));
-
-    return config;
+    var interf = contentType.newEditorInterface(data);
+    interf.data.widgets = _.map(contentType.data.fields, _.partial(defaultWidget, contentType));
+    return interf;
   }
 
   function defaultWidget(contentType, field) {

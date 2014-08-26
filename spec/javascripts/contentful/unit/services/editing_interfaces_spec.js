@@ -20,6 +20,12 @@ describe('Editing interfaces service', function () {
       contentType = {
         getEditorInterface: sinon.stub(),
         saveEditorInterface: sinon.stub(),
+        newEditorInterface: function(data){
+          return {
+            getId: _.constant('default'),
+            data: data
+          };
+        },
         getId: sinon.stub(),
         data: {
           fields: [
@@ -106,15 +112,15 @@ describe('Editing interfaces service', function () {
     });
 
     it('has id', function() {
-      expect(interf.id).toBe('default');
+      expect(interf.getId()).toBe('default');
     });
 
     it('has widgets', function() {
-      expect(interf.widgets).toBeDefined();
+      expect(interf.data.widgets).toBeDefined();
     });
 
     it('has first field', function() {
-      expect(interf.widgets[0].fieldId).toBe('firstfield');
+      expect(interf.data.widgets[0].fieldId).toBe('firstfield');
     });
 
     it('gets widget type', function() {
@@ -125,13 +131,13 @@ describe('Editing interfaces service', function () {
   describe('saves interface for a content type', function() {
     var interf, promise;
     beforeEach(function() {
-      interf = {};
-      promise = editingInterfaces.saveForContentType(contentType, interf);
+      interf = { save: sinon.stub() };
+      promise = editingInterfaces.save(interf);
       $rootScope.$apply();
     });
 
     it('saves successfully', function() {
-      contentType.saveEditorInterface.yield(null, {});
+      interf.save.yield(null, {});
       expect(stubs.info).toBeCalled();
     });
 
@@ -139,17 +145,17 @@ describe('Editing interfaces service', function () {
       promise.then(function(interf) {
         expect(interf.newVersion).toBe(true);
       });
-      contentType.saveEditorInterface.yield(null, {newVersion: true});
+      interf.save.yield(null, {newVersion: true});
     });
     
 
     it('fails to save because of version mismatch', function() {
-      contentType.saveEditorInterface.yield({body: {sys: {type: 'Error', id: 'VersionMismatch'}}});
+      interf.save.yield({body: {sys: {type: 'Error', id: 'VersionMismatch'}}});
       expect(stubs.warn).toBeCalled();
     });
 
     it('fails to save because of other error', function() {
-      contentType.saveEditorInterface.yield({});
+      interf.save.yield({});
       expect(stubs.serverError).toBeCalled();
     });
 

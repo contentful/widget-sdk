@@ -65,7 +65,7 @@ angular.module('contentful').provider('routing', ['$routeProvider', function ($r
         } else if (tab.viewType == 'content-type-editor') {
           path = path + '/content_types/' + tab.params.contentType.getId();
         } else if (tab.viewType == 'editing-interface-editor') {
-          path = path + '/content_types/' + tab.params.contentType.getId() + '/editing_interface/' + tab.params.editingInterface.id;
+          path = path + '/content_types/' + tab.params.contentType.getId() + '/editing_interface/' + tab.params.editingInterface.getId();
         } else if (tab.viewType == 'content-type-list') {
           path = path + '/content_types';
         } else if (tab.viewType == 'content-model') {
