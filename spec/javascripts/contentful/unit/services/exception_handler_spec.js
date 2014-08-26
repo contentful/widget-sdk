@@ -12,10 +12,9 @@ describe('Exception handler service', function () {
       });
 
       exceptionStub = sinon.stub();
-      $provide.factory('sentry', function () {
+      $provide.factory('logger', function () {
         return {
-          captureException: exceptionStub,
-          captureBugSnag: exceptionStub
+          logException: exceptionStub,
         };
       });
 
@@ -41,7 +40,7 @@ describe('Exception handler service', function () {
     expect(errorStub).toBeCalledWith(exception);
   });
 
-  it('sentry captureException called', function () {
+  it('logger logException called', function () {
     expect(exceptionStub).toBeCalledWith(exception);
   });
 

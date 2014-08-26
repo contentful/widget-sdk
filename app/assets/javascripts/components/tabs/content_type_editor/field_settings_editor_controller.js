@@ -7,7 +7,7 @@ angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$
   var assert = $injector.get('assert');
   var notification = $injector.get('notification');
   var stringUtils = $injector.get('stringUtils');
-  var sentry = $injector.get('sentry');
+  var logger = $injector.get('logger');
   var defer = $injector.get('defer');
 
   $controller('FieldSettingsController', {$scope: $scope});
@@ -116,7 +116,7 @@ angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$
           analytics.modifiedContentType('Modified ContentType', scope.contentType, scope.field, 'toggled '+property);
         } else {
           notification.warn('Could not toggle "'+property+'"', err);
-          sentry.captureServerError('Could not toggle property on ContentType', err, {extra: {property: property}});
+          logger.logServerError('Could not toggle property on ContentType', err, {extra: {property: property}});
         }
       });
     });

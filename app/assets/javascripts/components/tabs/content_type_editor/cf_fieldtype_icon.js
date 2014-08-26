@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfFieldtypeIcon', ['getFieldTypeName', 'sentry', function(getFieldTypeName, sentry){
+angular.module('contentful').directive('cfFieldtypeIcon', ['getFieldTypeName', 'logger', function(getFieldTypeName, logger){
   var nameTemplates = _.each({
     'Text'           :'<strong>ABC</strong>',
     'Symbol'         :'<strong>USD</strong>',
@@ -41,9 +41,9 @@ angular.module('contentful').directive('cfFieldtypeIcon', ['getFieldTypeName', '
           fieldTemplate = nameTemplates[fieldTypeName].clone();
         } else {
           fieldTemplate = fallback;
-          sentry.captureError('Invalid field type template name', {
+          logger.logError('Invalid field type template name', {
+            fieldTypeName: fieldTypeName,
             data: {
-              fieldTypeName: fieldTypeName,
               fieldAttr: scope.$eval(attr.field)
             }
           });

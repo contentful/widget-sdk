@@ -2,7 +2,7 @@
 angular.module('contentful').controller('FormWidgetsController', ['$scope', '$injector', function FormWidgetsController($scope, $injector){
   var controller = this;
   var editingInterfaces = $injector.get('editingInterfaces');
-  var sentry            = $injector.get('sentry');
+  var logger            = $injector.get('logger');
 
   $scope.$watch(function (scope) {
     return _.pluck(scope.spaceContext.activeLocales, 'code');
@@ -54,7 +54,7 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
   function makeUnique(locales) {
     var uniqLocales = _.uniq(locales, 'code');
     if(locales.length !== uniqLocales.length){
-      sentry.captureError('Locales have been duplicated', {
+      logger.logError('Locales have been duplicated', {
         data: {
           locales: locales,
           activeLocales: $scope.spaceContext.activeLocales

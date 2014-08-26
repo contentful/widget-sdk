@@ -1,45 +1,45 @@
 'use strict';
 
-describe('Sentry service', function () {
-  var sentry;
+describe('logger service', function () {
+  var logger;
   var $httpBackend, $rootScope;
   var routeStub, userStub;
-  var sentryStubs = {};
+  var loggerStubs = {};
 
   function declareOptionTests(stubName) {
     it('has tags', function () {
-      expect(sentryStubs[stubName].args[0][1].tags).toBeDefined();
+      expect(loggerStubs[stubName].args[0][1].tags).toBeDefined();
     });
 
     it('has an url', function () {
-      expect(sentryStubs[stubName].args[0][1].culprit).toBe('protocol//host/viewType');
+      expect(loggerStubs[stubName].args[0][1].culprit).toBe('protocol//host/viewType');
     });
 
     it('has a logger param to identify the app', function () {
-      expect(sentryStubs[stubName].args[0][1].logger).toBe('user_interface');
+      expect(loggerStubs[stubName].args[0][1].logger).toBe('user_interface');
     });
 
     it('has an userId tag', function () {
-      expect(sentryStubs[stubName].args[0][1].tags.userId).toBe('userid');
+      expect(loggerStubs[stubName].args[0][1].tags.userId).toBe('userid');
     });
 
     it('has a git_revision tag', function () {
-      expect(sentryStubs[stubName].args[0][1].tags.git_revision).toBe('gitrevision');
+      expect(loggerStubs[stubName].args[0][1].tags.git_revision).toBe('gitrevision');
     });
 
     it('has a viewport tag', function () {
-      expect(sentryStubs[stubName].args[0][1].tags.viewport).toBe('innerWidth'+'x'+'innerHeight');
+      expect(loggerStubs[stubName].args[0][1].tags.viewport).toBe('innerWidth'+'x'+'innerHeight');
     });
 
     it('has a screensize tag', function () {
-      expect(sentryStubs[stubName].args[0][1].tags.screensize).toBe('screenWidth'+'x'+'screenHeight');
+      expect(loggerStubs[stubName].args[0][1].tags.screensize).toBe('screenWidth'+'x'+'screenHeight');
     });
   }
 
   beforeEach(function () {
-    sentryStubs = {
+    loggerStubs = {
       captureMessageStub: sinon.stub(),
-      captureExceptionStub: sinon.stub()
+      logExceptionStub: sinon.stub()
     };
     routeStub = sinon.stub();
     userStub = sinon.stub();
@@ -64,8 +64,8 @@ describe('Sentry service', function () {
           height: 'screenHeight'
         },
         Raven: {
-          captureMessage: sentryStubs.captureMessageStub,
-          captureException: sentryStubs.captureExceptionStub
+          captureMessage: loggerStubs.captureMessageStub,
+          logException: loggerStubs.logExceptionStub
         }
       });
 
@@ -78,10 +78,10 @@ describe('Sentry service', function () {
       });
 
     });
-    inject(function (_sentry_, _$httpBackend_, _$rootScope_) {
+    inject(function (_logger_, _$httpBackend_, _$rootScope_) {
       $httpBackend = _$httpBackend_;
       $rootScope = _$rootScope_;
-      sentry = _sentry_;
+      logger = _logger_;
 
       routeStub.returns({
         viewType: 'viewType'
@@ -105,7 +105,7 @@ describe('Sentry service', function () {
     var data;
     beforeEach(function () {
       data = {data: 'object'};
-      generatedId = sentry.logDataObject(data);
+      generatedId = logger.logDataObject(data);
     });
 
     it('generates an id', function () {
@@ -136,28 +136,28 @@ describe('Sentry service', function () {
       options = {
         data: _.clone(data)
       };
-      sentry.captureError(error, options);
+      logger.logError(error, options);
     });
 
-    it('calls sentry method', function () {
-      expect(sentryStubs.captureMessageStub).toBeCalled();
+    it('calls logger method', function () {
+      expect(loggerStubs.captureMessageStub).toBeCalled();
     });
 
-    it('sends error to sentry', function () {
-      expect(sentryStubs.captureMessageStub.args[0][0]).toBe(error);
+    it('sends error to logger', function () {
+      expect(loggerStubs.captureMessageStub.args[0][0]).toBe(error);
     });
 
     describe('on options', function () {
       it('has an error_message tag', function () {
-        expect(sentryStubs.captureMessageStub.args[0][1].tags.type).toBe('error_message');
+        expect(loggerStubs.captureMessageStub.args[0][1].tags.type).toBe('error_message');
       });
 
       it('has a dataId of an object sent to logger service', function () {
-        expect(typeof sentryStubs.captureMessageStub.args[0][1].extra.dataId).toBe('string');
+        expect(typeof loggerStubs.captureMessageStub.args[0][1].extra.dataId).toBe('string');
       });
 
       it('has no data property in options', function () {
-        expect(sentryStubs.captureMessageStub.args[0][1].data).toBeUndefined();
+        expect(loggerStubs.captureMessageStub.args[0][1].data).toBeUndefined();
       });
 
       declareOptionTests('captureMessageStub');
@@ -176,23 +176,23 @@ describe('Sentry service', function () {
     var error, options;
     beforeEach(function () {
       error = new Error('error object');
-      sentry.captureException(error, options);
+      logger.logException(error, options);
     });
 
-    it('calls sentry method', function () {
-      expect(sentryStubs.captureExceptionStub).toBeCalled();
+    it('calls logger method', function () {
+      expect(loggerStubs.logExceptionStub).toBeCalled();
     });
 
-    it('sends error to sentry', function () {
-      expect(sentryStubs.captureExceptionStub.args[0][0]).toBe(error);
+    it('sends error to logger', function () {
+      expect(loggerStubs.logExceptionStub.args[0][0]).toBe(error);
     });
 
     describe('on options', function () {
       it('has an exception tag', function () {
-        expect(sentryStubs.captureExceptionStub.args[0][1].tags.type).toBe('exception');
+        expect(loggerStubs.logExceptionStub.args[0][1].tags.type).toBe('exception');
       });
 
-      declareOptionTests('captureExceptionStub');
+      declareOptionTests('logExceptionStub');
     });
   });
 
@@ -200,24 +200,24 @@ describe('Sentry service', function () {
     var error, options;
     beforeEach(function () {
       error = new Error('error object');
-      sentry.captureServerError('message', error, options);
+      logger.logServerError('message', error, options);
     });
 
-    it('calls sentry method', function () {
-      expect(sentryStubs.captureMessageStub).toBeCalled();
+    it('calls logger method', function () {
+      expect(loggerStubs.captureMessageStub).toBeCalled();
     });
 
-    it('sends message to sentry', function () {
-      expect(sentryStubs.captureMessageStub.args[0][0]).toBe('message');
+    it('sends message to logger', function () {
+      expect(loggerStubs.captureMessageStub.args[0][0]).toBe('message');
     });
 
     describe('on options', function () {
       it('has an exception tag', function () {
-        expect(sentryStubs.captureMessageStub.args[0][1].tags.type).toBe('server_error');
+        expect(loggerStubs.captureMessageStub.args[0][1].tags.type).toBe('server_error');
       });
 
       it('has the error object on the extra object', function () {
-        expect(sentryStubs.captureMessageStub.args[0][1].extra.error).toBe(error);
+        expect(loggerStubs.captureMessageStub.args[0][1].extra.error).toBe(error);
       });
 
       declareOptionTests('captureMessageStub');

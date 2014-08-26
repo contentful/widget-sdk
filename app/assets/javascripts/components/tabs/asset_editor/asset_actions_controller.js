@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('AssetActionsCtrl', ['$scope', 'notification', 'sentry', function AssetActionsCtrl($scope, notification, sentry) {
+angular.module('contentful').controller('AssetActionsCtrl', ['$scope', 'notification', 'logger', function AssetActionsCtrl($scope, notification, logger) {
   // TODO If we are sure that the data in the asset has been updated from the ShareJS doc,
   // We can query the asset instead of reimplementing the checks heere
 
@@ -25,7 +25,7 @@ angular.module('contentful').controller('AssetActionsCtrl', ['$scope', 'notifica
       $scope.$apply(function() {
         if (err) {
           notification.warn('Error archiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-          sentry.captureServerError('Error archiving asset', err);
+          logger.logServerError('Error archiving asset', err);
         } else
           notification.info(title() + ' archived successfully');
       });
@@ -37,7 +37,7 @@ angular.module('contentful').controller('AssetActionsCtrl', ['$scope', 'notifica
       $scope.$apply(function() {
         if (err) {
           notification.warn('Error unarchiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-          sentry.captureServerError('Error unarchiving asset', err);
+          logger.logServerError('Error unarchiving asset', err);
         } else
           notification.info(title() + ' unarchived successfully');
       });
@@ -49,7 +49,7 @@ angular.module('contentful').controller('AssetActionsCtrl', ['$scope', 'notifica
       $scope.$apply(function(scope){
         if (err) {
           notification.warn('Error unpublishing ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-          sentry.captureServerError('Error unpublishing asset', err);
+          logger.logServerError('Error unpublishing asset', err);
         } else {
           notification.info(title() + ' unpublished successfully');
           scope.otUpdateEntity();

@@ -233,6 +233,7 @@ angular.module('contentful').controller('ClientCtrl', ['$scope', '$injector', fu
     } else if (data.type === 'flash') {
       var level = data.resource.type;
       if (!level.match(/info|error/)) level = 'info';
+      if (!level.match(/error/)) level = 'warn';
       notification[level](data.resource.message);
 
     } else if (msg('navigate', 'location')) {

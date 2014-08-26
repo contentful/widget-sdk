@@ -73,7 +73,7 @@ angular.module('contentful').controller('CreateSpaceDialogCtrl', [
               method = 'warn';
             }
 
-            notification[method](errorMessage);
+            notification[method](errorMessage, err);
 
             if(dismiss){
               scope.lockSubmit = false;

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').factory('tutorial', ['$compile', 'notification', 'tutorialExampledata', '$q', '$timeout', '$rootScope', 'analytics', 'sentry', 'environment', 'debounce', 'throttle', function ($compile, notification, tutorialExampledata, $q, $timeout, $rootScope, analytics, sentry, environment, debounce, throttle) {
+angular.module('contentful').factory('tutorial', ['$compile', 'notification', 'tutorialExampledata', '$q', '$timeout', '$rootScope', 'analytics', 'logger', 'environment', 'debounce', 'throttle', function ($compile, notification, tutorialExampledata, $q, $timeout, $rootScope, analytics, logger, environment, debounce, throttle) {
   var guiders = window.guiders;
   guiders._defaultSettings.buttons = null;
   guiders._defaultSettings.xButton = true;
@@ -17,7 +17,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
     function attach() {
       //console.log('attach', id, guider.attachTo, 'try', tries);
       if (tries-- === 0) {
-        sentry.captureError('Failed to find attachTo('+guider.attachTo+') for Guider '+id);
+        logger.logError('Failed to find attachTo('+guider.attachTo+') for Guider '+id);
         guiders.showImmediate(id);
         return;
       }
@@ -78,7 +78,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
           tutorialScope.standby = false;
           guiders.next();
         }, function (err) {
-          notification.error('Something went wrong:' + err);
+          notification.serverError('Error creating tutorial content types', err);
           tutorialScope.standby = false;
         });
       };
@@ -96,7 +96,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
           }
           guiders.next();
         }, function (err) {
-          notification.error('Something went wrong:' + err);
+          notification.serverError('Error creating tutorial entries', err);
           tutorialScope.standby = false;
         });
       };
@@ -165,7 +165,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
               if ($(guider.attachTo).parents('.tab-main').length > 0) scroll(guider.attachTo);
               guider.attachScope = $(guider.attachTo).scope().$new();
             } catch (e) {
-              sentry.captureError('Failed to attach guider '+guider.id+' to '+guider.attachTo);
+              logger.logError('Failed to attach guider '+guider.id+' to '+guider.attachTo);
             }
             if (onShow) onShow.call(guider, guider);
           });

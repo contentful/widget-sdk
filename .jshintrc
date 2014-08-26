@@ -26,7 +26,8 @@
     "JST",
     "$",
     "moment",
-    "dotty"
+    "dotty",
+    "Bugsnag"
   ],
   "browser": true,
   "quotmark": "single",

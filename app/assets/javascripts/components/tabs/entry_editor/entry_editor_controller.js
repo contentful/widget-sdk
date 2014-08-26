@@ -3,7 +3,7 @@
 angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector', function EntryEditorCtrl($scope, $injector) {
   var $controller       = $injector.get('$controller');
   var addCanMethods     = $injector.get('addCanMethods');
-  var sentry            = $injector.get('sentry');
+  var logger            = $injector.get('logger');
   var validation        = $injector.get('validation');
 
   // Initialization
@@ -57,12 +57,14 @@ angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector
   $scope.$watch('entry.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {
     if (publishedVersion > oldVersion) scope.validate();
   });
+
   var firstValidate = $scope.$on('otBecameEditable', function (event) {
     var scope = event.currentScope;
     if (!_.isEmpty(scope.entry.data.fields)) scope.validate();
     firstValidate();
     firstValidate = null;
   });
+
   $scope.$watch('validationResult.errors', function (errors) {
     var et = $scope.spaceContext.publishedTypeForEntry($scope.entry);
     $scope.errorPaths = {};
@@ -77,7 +79,7 @@ angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector
         $scope.errorPaths[fieldId] = $scope.errorPaths[fieldId] || [];
       }
 
-      if(!field) sentry.captureError('Field object does not exist', {
+      if(!field) logger.logError('Field object does not exist', {
         data: {
           fieldId: fieldId,
           field: field,
@@ -115,7 +117,7 @@ angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector
   $scope.$watch('widgets', function (widgets, old, scope) {
     scope.showLangSwitcher = _.some(widgets, function (widget) {
       if(!widget) {
-        sentry.captureError('widget object does not exist', {
+        logger.logError('widget object does not exist', {
           data: {
             widget: widget,
             widgets: widgets

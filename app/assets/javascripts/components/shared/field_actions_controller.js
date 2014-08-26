@@ -1,12 +1,12 @@
 'use strict';
 
 angular.module('contentful').controller('FieldActionsController', ['$scope', '$injector', function($scope, $injector) {
-  var sentry = $injector.get('sentry');
+  var logger = $injector.get('logger');
 
   var openFieldUIID;
   $scope.toggleField = function (field) {
     if(!field) {
-      sentry.captureError('field is not defined', {
+      logger.logError('field is not defined', {
         data: {
           fields: $scope.contentType.data.fields
         }

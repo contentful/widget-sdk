@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').controller('GettyDialogController',
-    ['$scope', 'gettyImagesFactory', 'PromisedLoader', 'Paginator', 'fileSize', 'stringUtils', 'sentry', 'random', function($scope, gettyImagesFactory, PromisedLoader, Paginator, fileSize, stringUtils, sentry, random) {
+    ['$scope', 'gettyImagesFactory', 'PromisedLoader', 'Paginator', 'fileSize', 'stringUtils', 'logger', 'random', function($scope, gettyImagesFactory, PromisedLoader, Paginator, fileSize, stringUtils, logger, random) {
 
   var IMAGES_PER_PAGE = 6;
 
@@ -289,7 +289,7 @@ angular.module('contentful').controller('GettyDialogController',
 
   function unknownError(message, data) {
     $scope.gettyLoading = false;
-    sentry.captureError(message, {
+    logger.logError(message, {
       data: data
     });
     $scope.searchError = 'An error occured and we have been notified. Please try again and contact us if the problem persists.';

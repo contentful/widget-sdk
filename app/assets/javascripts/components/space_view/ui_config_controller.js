@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('UiConfigController', ['$scope', '$q', 'notification', 'sentry', function($scope, $q, notification, sentry){
+angular.module('contentful').controller('UiConfigController', ['$scope', '$q', 'notification', 'logger', function($scope, $q, notification, logger){
 
   $scope.$watch('spaceContext.space', function (space) {
     $scope.uiConfig = null;
@@ -23,7 +23,7 @@ angular.module('contentful').controller('UiConfigController', ['$scope', '$q', '
     });
     return callback.promise;
   };
-  
+
   function loadUiConfig() {
     var callback = $q.callback();
     $scope.spaceContext.space.getUIConfig(callback);
@@ -31,11 +31,12 @@ angular.module('contentful').controller('UiConfigController', ['$scope', '$q', '
       $scope.uiConfig = config;
       return config;
     }, function (err) {
-      if(err && err.statusCode === 404) {
+      var statusCode = dotty.get(err, 'statusCode');
+      if(statusCode === 404) {
         $scope.uiConfig = {};
         return $scope.uiConfig;
-      } else {
-        sentry.captureServerError('Could not load UIConfig', err);
+      } else if(statusCode !== 502) {
+        logger.logServerError('Could not load UIConfig', err);
       }
     });
     return callback.promise;
