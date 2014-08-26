@@ -1,12 +1,12 @@
 'use strict';
-angular.module('contentful').factory('revision', ['$rootScope', '$http', '$q', 'environment', 'sentry', function RevisionFactory($rootScope, $http, $q, environment, sentry) {
+angular.module('contentful').factory('revision', ['$rootScope', '$http', '$q', 'environment', 'logger', function RevisionFactory($rootScope, $http, $q, environment, logger) {
   function hideManifestErrors(response, getHeader) {
     if(getHeader('Content-Type') === 'application/json' && _.isString(response)){
       try {
         JSON.parse(response);
         return response;
       } catch(err){
-        sentry.captureError('Failure to parse manifest.json', {
+        logger.logError('Failure to parse manifest.json', {
           data: {
             err: err
           }

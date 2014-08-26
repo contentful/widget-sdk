@@ -7,7 +7,7 @@ describe('Field Settings Controller', function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'perType', 'fieldTypeParams', 'fieldIsPublished', 'open', 'toIdentifier', 'warn',
-        'at', 'set', 'get', 'serverError', 'modifiedContentType', 'remove', 'captureServerError'
+        'at', 'set', 'get', 'serverError', 'modifiedContentType', 'remove', 'logServerError'
       ]);
 
       $provide.constant('validation', {
@@ -25,8 +25,8 @@ describe('Field Settings Controller', function () {
         warn: stubs.warn
       });
 
-      $provide.value('sentry', {
-        captureServerError: stubs.captureServerError
+      $provide.value('logger', {
+        logServerError: stubs.logServerError
       });
 
       $provide.value('analytics', {
@@ -482,7 +482,7 @@ describe('Field Settings Controller', function () {
         });
 
         it('shows error', function() {
-          expect(stubs.captureServerError).toBeCalled();
+          expect(stubs.logServerError).toBeCalled();
         });
       });
     });

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeFieldListCtrl', ['$scope', 'analytics', 'validation', '$q', 'random', 'sentry', function($scope, analytics, validation, $q, random, sentry) {
+angular.module('contentful').controller('ContentTypeFieldListCtrl', ['$scope', 'analytics', 'validation', '$q', 'random', 'logger', function($scope, analytics, validation, $q, random, logger) {
 
   $scope.$watchCollection('contentType.data.fields', function (fields, old, scope) {
     if (hasUIIDs(fields)) {
@@ -47,7 +47,7 @@ angular.module('contentful').controller('ContentTypeFieldListCtrl', ['$scope', '
   var openFieldUIID;
   $scope.toggleField = function (field) {
     if(!field) {
-      sentry.captureError('field is not defined', {
+      logger.logError('field is not defined', {
         data: {
           fields: $scope.contentType.data.fields
         }

@@ -3,8 +3,7 @@
 angular.module('contentful').provider('authentication', ['$injector', function AuthenticationProvider($injector) {
   var authApp, marketingApp, QueryLinkResolver;
 
-  var environment, contentfulClient, $window, $location, $q, $rootScope, notification;
-  var sentry;
+  var logger, environment, contentfulClient, $window, $location, $q, $rootScope, notification;
 
   this.setEnvVars = function() {
     environment       = $injector.get('environment');
@@ -122,7 +121,7 @@ angular.module('contentful').provider('authentication', ['$injector', function A
       }, function (err) {
         var statusCode = dotty.get(err, 'statusCode');
         if(statusCode !== 502 && statusCode !== 401)
-          sentry.captureError('getTokenLookup failed', { data: err });
+          logger.logError('getTokenLookup failed', { data: err });
         return $q.reject(err);
       });
     },
@@ -145,7 +144,7 @@ angular.module('contentful').provider('authentication', ['$injector', function A
     $rootScope         = $injector.get('$rootScope');
     $window            = $injector.get('$window');
     notification       = $injector.get('notification');
-    sentry             = $injector.get('sentry');
+    logger             = $injector.get('logger');
     var client         = $injector.get('client');
 
     var authentication = new Authentication(client);

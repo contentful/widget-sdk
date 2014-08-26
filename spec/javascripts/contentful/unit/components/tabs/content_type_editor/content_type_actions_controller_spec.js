@@ -7,7 +7,7 @@ describe('ContentType Actions Controller', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'serverError', 'warn', 'info', 'captureServerError', 'track',
+        'serverError', 'warn', 'info', 'logServerError', 'track',
         'updatePublishedContentType'
       ]);
 
@@ -17,8 +17,8 @@ describe('ContentType Actions Controller', function () {
         warn: stubs.warn
       });
 
-      $provide.value('sentry', {
-        captureServerError: stubs.captureServerError
+      $provide.value('logger', {
+        logServerError: stubs.logServerError
       });
 
       $provide.value('analytics', {
@@ -109,7 +109,7 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('captures server error', function() {
-        expect(stubs.captureServerError).toBeCalled();
+        expect(stubs.logServerError).toBeCalled();
       });
     });
 

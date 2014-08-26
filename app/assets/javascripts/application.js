@@ -38,7 +38,7 @@ angular.module('contentful/app', [
   'ui.sortable',
   'contentful/user_interface',
   'contentful'
-], ['$locationProvider', 'clientProvider', 'authenticationProvider', 'analyticsProvider', 'environment', '$sceDelegateProvider', '$compileProvider', 'timeRelativeConfig', 
+], ['$locationProvider', 'clientProvider', 'authenticationProvider', 'analyticsProvider', 'environment', '$sceDelegateProvider', '$compileProvider', 'timeRelativeConfig',
   function($locationProvider, clientProvider, authenticationProvider, analyticsProvider, environment, $sceDelegateProvider, $compileProvider, timeRelativeConfig){
   'use strict';
   var env = environment.settings;

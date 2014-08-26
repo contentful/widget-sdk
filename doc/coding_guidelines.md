@@ -45,7 +45,7 @@ require additional services:
 ```
 angular.module('contentful').controller('FooController', ['$scope', '$injector', function FooController($scope, $injector){
   var editingInterfaces = $injector.get('editingInterfaces');
-  var sentry            = $injector.get('sentry');
+  var logger            = $injector.get('logger');
 }]);
 ```
 
@@ -68,7 +68,7 @@ angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$
   var assert = $injector.get('assert');
   var notification = $injector.get('notification');
   var stringUtils = $injector.get('stringUtils');
-  var sentry = $injector.get('sentry');
+  var logger = $injector.get('logger');
   var defer = $injector.get('defer');
 ```
 
@@ -81,7 +81,7 @@ angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$
   var defer            = $injector.get('defer');
   var getFieldTypeName = $injector.get('getFieldTypeName');
   var notification     = $injector.get('notification');
-  var sentry           = $injector.get('sentry');
+  var logger           = $injector.get('logger');
   var stringUtils      = $injector.get('stringUtils');
   var validation       = $injector.get('validation');
 ```
@@ -138,7 +138,7 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
 
   // 2. requirements
   var editingInterfaces = $injector.get('editingInterfaces');
-  var sentry            = $injector.get('sentry');
+  var logger            = $injector.get('logger');
 
   // 3. Do scope stuff
   // It doesn't really matter in which order you perform a b or c,

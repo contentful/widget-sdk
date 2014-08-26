@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfAccountView', ['$window', '$rootScope', 'authentication', 'routing', 'sentry', function($window, $rootScope, authentication, routing, sentry){
+angular.module('contentful').directive('cfAccountView', ['$window', '$rootScope', 'authentication', 'routing', 'logger', function($window, $rootScope, authentication, routing, logger){
   return {
     template: JST['iframe_view'](),
     restrict: 'C',
@@ -41,7 +41,7 @@ angular.module('contentful').directive('cfAccountView', ['$window', '$rootScope'
       function internalNavigationTo(path, data) {
         // FIXME data param only for debugging purposes
         //console.log('path changed', path, elem.find('iframe').prop('src'));
-        if(!scope.url || !path) sentry.captureError('scope url or path not defined', {
+        if(!scope.url || !path) logger.logError('scope url or path not defined', {
           data: {
             currentPath: path,
             scopeUrl: scope.url,

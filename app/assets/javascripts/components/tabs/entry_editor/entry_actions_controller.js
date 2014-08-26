@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('EntryActionsCtrl', ['$scope', 'notification', 'sentry', function EntryActionsCtrl($scope, notification, sentry) {
+angular.module('contentful').controller('EntryActionsCtrl', ['$scope', 'notification', 'logger', function EntryActionsCtrl($scope, notification, logger) {
 
   // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,
   // We can query the entry instead of reimplementing the checks heere
@@ -41,7 +41,7 @@ angular.module('contentful').controller('EntryActionsCtrl', ['$scope', 'notifica
       $scope.$apply(function() {
         if (err) {
           notification.warn('Error archiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-          sentry.captureServerError('Error archiving entry', err);
+          logger.logServerError('Error archiving entry', err);
         } else {
           notification.info(title() + ' archived successfully');
         }
@@ -54,7 +54,7 @@ angular.module('contentful').controller('EntryActionsCtrl', ['$scope', 'notifica
       $scope.$apply(function() {
         if (err) {
           notification.warn('Error unarchiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-          sentry.captureServerError('Error unarchiving entry', err);
+          logger.logServerError('Error unarchiving entry', err);
         } else {
           notification.info(title() + ' unarchived successfully');
         }
@@ -67,7 +67,7 @@ angular.module('contentful').controller('EntryActionsCtrl', ['$scope', 'notifica
       $scope.$apply(function(scope){
         if (err) {
           notification.warn('Error unpublishing ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-          sentry.captureServerError('Error unpublishing entry', err);
+          logger.logServerError('Error unpublishing entry', err);
         } else {
           notification.info(title() + ' unpublished successfully');
           scope.otUpdateEntity();

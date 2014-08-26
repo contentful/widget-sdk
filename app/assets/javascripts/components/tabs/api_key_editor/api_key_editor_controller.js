@@ -3,7 +3,7 @@
 angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injector', function($scope, $injector) {
   var environment = $injector.get('environment');
   var notification = $injector.get('notification');
-  var sentry = $injector.get('sentry');
+  var logger = $injector.get('logger');
   var $window = $injector.get('$window');
   $scope.notes = $injector.get('notes');
 
@@ -69,7 +69,7 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
       $scope.$apply(function() {
         if (err) {
           notification.warn(t + ' could not be deleted');
-          sentry.captureServerError('ApiKey could not be deleted', err);
+          logger.logServerError('ApiKey could not be deleted', err);
           return;
         }
         notification.info(t + ' deleted successfully');
@@ -93,7 +93,7 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
         if (err) {
           notification.warn(t + ' could not be saved');
           if(dotty.get(err, 'statusCode') !== 422)
-            sentry.captureServerError('ApiKey could not be saved', err);
+            logger.logServerError('ApiKey could not be saved', err);
           return;
         }
         $scope.apiKeyForm.$setPristine();

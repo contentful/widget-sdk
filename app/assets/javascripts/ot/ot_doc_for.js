@@ -6,7 +6,7 @@ angular.module('contentful').directive('otDocFor', function () {
     priority: -100,
     controller: 'otDocForCtrl'
   };
-}).controller('otDocForCtrl', ['$scope', '$attrs', 'ShareJS', 'sentry', 'defer', function OtDocForCtrl($scope, $attrs, ShareJS, sentry, defer) {
+}).controller('otDocForCtrl', ['$scope', '$attrs', 'ShareJS', 'logger', 'defer', function OtDocForCtrl($scope, $attrs, ShareJS, logger, defer) {
   function remoteOpListener(ops) {
     $scope.$apply(function(scope) {
       _.each(ops, function (op) {
@@ -42,7 +42,7 @@ angular.module('contentful').directive('otDocFor', function () {
         scope.$apply(function(scope){
           if(err || !doc){
             scope.otDoc = null;
-            sentry.captureError('Failed to open sharejs doc', {
+            logger.logError('Failed to open sharejs doc', {
               data: {
                 err: err,
                 entity: entity
@@ -123,7 +123,7 @@ angular.module('contentful').directive('otDocFor', function () {
       data.sys.updatedAt = moment().toISOString();
       entity.update(data);
     } else {
-      sentry.captureError('otUpdateEntity did not update', {
+      logger.logError('otUpdateEntity did not update', {
         data: {
           entity: entity,
           otDoc: $scope.otDoc

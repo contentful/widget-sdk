@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful')
-  .controller('EntryEditorCtrl', ['$scope', 'validation', 'addCanMethods', 'notification', 'sentry', function EntryEditorCtrl($scope, validation, addCanMethods, notification, sentry) {
+  .controller('EntryEditorCtrl', ['$scope', 'validation', 'addCanMethods', 'notification', 'logger', function EntryEditorCtrl($scope, validation, addCanMethods, notification, logger) {
   $scope.$watch('tab.params.entry', 'entry=tab.params.entry');
   $scope.$watch(function entryEditorEnabledWatcher(scope) {
     return !scope.entry.isArchived() && scope.can('update', scope.entry.data);
@@ -160,7 +160,7 @@ angular.module('contentful')
   $scope.$watch('fields', function (fields, old, scope) {
     scope.showLangSwitcher = _.some(fields, function (field) {
       if(!field) {
-        sentry.captureError('Field object does not exist', {
+        logger.logError('Field object does not exist', {
           data: {
             field: field,
             fields: fields
@@ -187,7 +187,7 @@ angular.module('contentful')
         errorPaths[fieldId] = errorPaths[fieldId] || [];
       }
 
-      if(!field) sentry.captureError('Field object does not exist', {
+      if(!field) logger.logError('Field object does not exist', {
         data: {
           fieldId: fieldId,
           field: field,
