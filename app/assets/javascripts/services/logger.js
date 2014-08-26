@@ -8,14 +8,14 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
   if($window.Bugsnag){
     var authentication = $injector.get('authentication');
     var user = authentication.getUser();
-    Bugsnag.releaseStage = environment.env;
-    Bugsnag.notifyReleaseStages = [
+    $window.Bugsnag.releaseStage = environment.env;
+    $window.Bugsnag.notifyReleaseStages = [
       'development',
       'staging',
       'production'
     ];
-    Bugsnag.appVersion = environment.settings.git_revision;
-    Bugsnag.user = {
+    $window.Bugsnag.appVersion = environment.settings.git_revision;
+    $window.Bugsnag.user = {
       id: dotty.get(user, 'sys.id'),
       firstName: dotty.get(user, 'firstName'),
       lastName: dotty.get(user, 'lastName'),
@@ -87,7 +87,6 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
 
     logError: function (message, options) {
       if ($window.Bugsnag) {
-
         $window.Bugsnag.notify('Logged Error', message, getMetadata(options), 'error');
       }
     },

@@ -681,7 +681,7 @@ describe('Client Controller', function () {
     });
 
     describe('flash message', function () {
-      it('calls error notification', function () {
+      it('calls warn notification', function () {
         data = {
           type: 'flash',
           resource: {
@@ -690,7 +690,7 @@ describe('Client Controller', function () {
           }
         };
         childScope.$emit('iframeMessage', data);
-        expect(stubs.notificationError).toBeCalledWith('hai');
+        expect(stubs.notificationWarn).toBeCalledWith('hai');
       });
 
       it('calls info notification', function () {
