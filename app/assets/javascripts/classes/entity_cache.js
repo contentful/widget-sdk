@@ -1,4 +1,4 @@
-angular.module('contentful').factory('EntityCache', ['$rootScope', '$q', function($rootScope, $q){
+angular.module('contentful').factory('EntityCache', ['$rootScope', '$q', 'logger', function($rootScope, $q, logger){
   'use strict';
 
   // params:
@@ -86,19 +86,27 @@ angular.module('contentful').factory('EntityCache', ['$rootScope', '$q', functio
     determineMissingEntityIds: function (entities) {
       var self = this;
       _.forEach(entities, function (entity) {
-        _.forEach(entity.data.fields, function (field, fieldId) {
-          var locfield = field[self.locale];
-          if(!self.fieldIsDisplayed(fieldId)) return;
-
-          if(isLink(locfield))
-            self.pushFieldId(locfield);
-          if(isLinkArray(locfield)){
-            var limit = locfield.length > self.params.limit ? self.params.limit : locfield.length;
-            for(var i=0; i<limit; i++){
-              self.pushFieldId(locfield[i]);
+        if(_.isUndefined(entity.data)){
+          logger.logError('Entity data is undefined', {
+            data: {
+              entities: entities
             }
-          }
-        });
+          });
+        } else {
+          _.forEach(entity.data.fields, function (field, fieldId) {
+            var locfield = field[self.locale];
+            if(!self.fieldIsDisplayed(fieldId)) return;
+
+            if(isLink(locfield))
+              self.pushFieldId(locfield);
+            if(isLinkArray(locfield)){
+              var limit = locfield.length > self.params.limit ? self.params.limit : locfield.length;
+              for(var i=0; i<limit; i++){
+                self.pushFieldId(locfield[i]);
+              }
+            }
+          });
+        }
       });
     },
 
