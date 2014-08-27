@@ -1,18 +1,18 @@
 'use strict';
 
 angular.module('contentful').
-  service('notification', ['sentry', function(sentry) {
+  service('notification', ['logger', function(logger) {
     return {
       messages: [],
 
       error: function(body) {
         this._notify(body, 'error');
-        sentry.captureError(body);
+        logger.logError(body);
       },
 
-      serverError: function(message, body) {
-        this._notify(message, 'error');
-        sentry.captureServerError(message, body);
+      serverError: function(body, err) {
+        this._notify(body, 'error');
+        logger.logServerError(body, err);
       },
 
       warn: function(body) {

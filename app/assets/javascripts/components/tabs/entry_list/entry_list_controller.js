@@ -10,7 +10,7 @@ angular.module('contentful').controller('EntryListCtrl', ['$scope', '$injector',
   var Selection          = $injector.get('Selection');
   var analytics          = $injector.get('analytics');
   var searchQueryHelper  = $injector.get('searchQueryHelper');
-  var sentry             = $injector.get('sentry');
+  var logger             = $injector.get('logger');
 
   $controller('DisplayedFieldsController', {$scope: $scope});
   $controller('EntryListViewsController', {$scope: $scope});
@@ -90,7 +90,7 @@ angular.module('contentful').controller('EntryListCtrl', ['$scope', '$injector',
       if (!ct) return or;
       return ct.getName();
     } catch (e) {
-      sentry.captureException(e, {extra: {contentTypeId: $scope.tab.params.view.contentTypeId}});
+      logger.logException(e, {contentTypeId: $scope.tab.params.view.contentTypeId});
       return or;
     }
   };
@@ -183,7 +183,7 @@ angular.module('contentful').controller('EntryListCtrl', ['$scope', '$injector',
     })
     .then(function (entries) {
       if(!entries){
-        sentry.captureError('Failed to load more entries', {
+        logger.logError('Failed to load more entries', {
           data: {
             entries: entries,
             query: queryForDebug

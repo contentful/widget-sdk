@@ -7,7 +7,7 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
   var ReloadNotification = $injector.get('ReloadNotification');
   var analytics          = $injector.get('analytics');
   var searchQueryHelper  = $injector.get('searchQueryHelper');
-  var sentry             = $injector.get('sentry');
+  var logger             = $injector.get('logger');
 
   var assetLoader = new PromisedLoader();
 
@@ -48,7 +48,7 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
     })
     .then(function (assets) {
       if(!assets){
-        sentry.captureError('Failed to load more assets', {
+        logger.logError('Failed to load more assets', {
           data: {
             assets: assets,
             query: queryForDebug

@@ -8,7 +8,7 @@ describe('Authentication service', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide, authenticationProvider) {
       stubs = $provide.makeStubs([
-        'hash', 'search', 'path', 'info', 'sentryError', 'resolveQueryLinks',
+        'hash', 'search', 'path', 'info', 'loggerError', 'resolveQueryLinks',
       ]);
       $provide.constant('contentfulClient', {
         QueryLinkResolver: {
@@ -33,8 +33,8 @@ describe('Authentication service', function () {
         info: stubs.info
       });
 
-      $provide.value('sentry', {
-        captureError: stubs.sentryError
+      $provide.value('logger', {
+        logError: stubs.loggerError
       });
 
       $provide.value('$window', {
@@ -321,8 +321,8 @@ describe('Authentication service', function () {
         expect(clientTokenLookupStub).toBeCalled();
       });
 
-      it('sentry error is fired', function () {
-        expect(stubs.sentryError).toBeCalled();
+      it('logger error is fired', function () {
+        expect(stubs.loggerError).toBeCalled();
       });
 
       it('client token lookup promise fails', inject(function ($rootScope) {

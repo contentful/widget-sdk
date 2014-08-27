@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfFileDrop', ['filepicker', 'notification', 'sentry', function (filepicker, notification, sentry) {
+angular.module('contentful').directive('cfFileDrop', ['filepicker', 'notification', 'logger', function (filepicker, notification, logger) {
   var IGNORED_ERRORS = [
     'WrongType',
     'TooManyFiles',
@@ -58,10 +58,10 @@ angular.module('contentful').directive('cfFileDrop', ['filepicker', 'notificatio
             else
               notification.warn('Upload failed: '+message);
             if(!_.contains(IGNORED_ERRORS, type)){
-              sentry.captureError('Upload failed ('+type+'): ' + message, {
+              logger.logError('Upload failed:' + message, {
+                type: type,
+                message: message,
                 data: {
-                  type: type,
-                  message: message,
                   files: files
                 }
               });

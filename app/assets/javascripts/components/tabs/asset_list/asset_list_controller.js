@@ -94,10 +94,10 @@ angular.module('contentful').controller('AssetListCtrl',['$scope', '$injector', 
         processCallback.promise.then(function () {
           throttledListRefresh();
         }).catch(function () {
-          notification.error('Some assets failed to process');
+          notification.warn('Some assets failed to process');
         });
-      }).catch(function () {
-        notification.error('Some assets failed to upload');
+      }).catch(function (err) {
+        notification.serverError('Some assets failed to upload', err);
       });
     };
   }

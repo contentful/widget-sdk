@@ -8,7 +8,7 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
   var ReloadNotification = $injector.get('ReloadNotification');
   var TabList            = $injector.get('TabList');
   var notification       = $injector.get('notification');
-  var sentry             = $injector.get('sentry');
+  var logger             = $injector.get('logger');
 
   function SpaceContext(space){
     this.tabList = new TabList();
@@ -104,7 +104,8 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
           if(message)
             notification.warn(message);
           else
-            notification.serverError('Could not get published Content Types', { data: err });
+            notification.warn('Could not get published Content Types');
+            logger.logError('Could not get published Content Types', { data: err });
           return $q.reject(err);
         })
         .catch(ReloadNotification.apiErrorHandler);
@@ -155,7 +156,9 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
       displayFieldForType: function (contentTypeId) {
         var ct = this.getPublishedContentType(contentTypeId);
         if(!ct){
-          sentry.captureError('No content type available for '+contentTypeId);
+          logger.logError('No content type available', {
+            contentTypeId: contentTypeId
+          });
           return null;
         }
         return _.find(ct.data.fields, {id: ct.data.displayField});

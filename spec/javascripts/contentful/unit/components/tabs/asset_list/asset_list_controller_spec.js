@@ -22,10 +22,10 @@ describe('Asset List Controller', function () {
         'track',
         'loadCallback',
         'then',
-        'captureError'
+        'logError'
       ]);
-      $provide.value('sentry', {
-        captureError: stubs.captureError
+      $provide.value('logger', {
+        logError: stubs.logError
       });
 
       $provide.value('analytics', {
@@ -360,7 +360,7 @@ describe('Asset List Controller', function () {
       });
 
       it('sends an error', function() {
-        expect(stubs.captureError).toBeCalled();
+        expect(stubs.logError).toBeCalled();
       });
     });
 

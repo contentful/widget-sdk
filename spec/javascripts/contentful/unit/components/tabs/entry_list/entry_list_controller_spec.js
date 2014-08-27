@@ -26,13 +26,13 @@ describe('Entry List Controller', function () {
         'getContentTypeId',
         'track',
         'then',
-        'captureError',
+        'logError',
         'getUIConfig',
         'setUIConfig'
       ]);
       $provide.removeControllers('DisplayedFieldsController');
-      $provide.value('sentry', {
-        captureError: stubs.captureError
+      $provide.value('logger', {
+        logError: stubs.logError
       });
 
       $provide.value('analytics', {
@@ -432,7 +432,7 @@ describe('Entry List Controller', function () {
       });
 
       it('sends an error', function() {
-        expect(stubs.captureError).toBeCalled();
+        expect(stubs.logError).toBeCalled();
       });
     });
 
