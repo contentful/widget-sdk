@@ -2,7 +2,7 @@
 
 angular.module('contentful').provider('analytics', ['environment', function (environment) {
   var $window, $document, $q;
-  var analyticsLoaded;
+  var analyticsDeferred;
   var dontLoad = environment.env.match(/acceptance|development|test/) ? true : false;
 
   this.dontLoad = function () {
@@ -77,7 +77,7 @@ angular.module('contentful').provider('analytics', ['environment', function (env
     $window.analytics.load(environment.settings.segment_io);
 
     $window.analytics.ready(function () { // analytics.js object
-      analyticsLoaded();
+      analyticsDeferred.resolve();
       $window.ga('set', 'anonymizeIp', true);
     });
   }
@@ -266,8 +266,8 @@ angular.module('contentful').provider('analytics', ['environment', function (env
         return api;
       }, {});
     } else {
-      analyticsLoaded = $q.callbackWithoutApply();
-      api.whenAnalyticsLoaded = analyticsLoaded.promise;
+      analyticsDeferred = $q.defer();
+      api.whenAnalyticsLoaded = analyticsDeferred.promise;
       createAnalytics();
       return api;
     }
