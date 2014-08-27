@@ -298,7 +298,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
 
       function triggerUpdateEvents() {
         textarea.trigger('input').trigger('autosize');
-        textarea[0].dispatchEvent(new Event('paste'));
+        textarea.get(0).dispatchEvent(new Event('paste'));
       }
 
       function makeAssetLink(asset) {
