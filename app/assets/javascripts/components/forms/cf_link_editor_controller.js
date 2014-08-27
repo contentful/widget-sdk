@@ -98,7 +98,13 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs',
     }
 
     function assertIndexMatches(index, entity) {
-      if (entity && !entity.isMissing && entity.getId() && entity.getId() != $scope.links[index].sys.id) throw new Error('Index mismatch!');
+      if (entity && !entity.isMissing && entity.getId() && entity.getId() != $scope.links[index].sys.id)
+        logger.logError('Index mismatch', {
+          data: {
+            entity: entity,
+            links: $scope.links
+          }
+        });
     }
   };
 
