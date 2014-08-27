@@ -36,7 +36,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
 
   function getEditorInterface(contentType, interfaceId) {
     if (contentType.getId() === 'asset') {
-      return $q.when(defaultInterface(contentType));
+      return $q.when(assetInterface(contentType));
     } else {
       var cb = $q.callback();
       contentType.getEditorInterface(interfaceId, cb);
@@ -57,6 +57,19 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
     var interf = contentType.newEditorInterface(data);
     interf.data.widgets = _.map(contentType.data.fields, _.partial(defaultWidget, contentType));
     return interf;
+  }
+
+  function assetInterface(contentType) {
+    var data = {
+      sys: {
+        id: 'default',
+        type: 'EditorInterface'
+      },
+      title: 'Default',
+      contentTypeId: contentType.getId(),
+      widgets: _.map(contentType.data.fields, _.partial(defaultWidget, contentType))
+    };
+    return { data: data };
   }
 
   function defaultWidget(contentType, field) {
