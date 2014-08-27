@@ -5,21 +5,23 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
   var environment    = $injector.get('environment');
   var stringifySafe  = $injector.get('stringifySafe');
 
-  if($window.Bugsnag){
-    var authentication = $injector.get('authentication');
-    var user = authentication.getUser();
-    $window.Bugsnag.releaseStage = environment.env;
-    $window.Bugsnag.notifyReleaseStages = [
-      'development',
-      'staging',
-      'production'
-    ];
-    $window.Bugsnag.appVersion = environment.settings.git_revision;
-    $window.Bugsnag.user = {
-      id: dotty.get(user, 'sys.id'),
-      firstName: dotty.get(user, 'firstName'),
-      lastName: dotty.get(user, 'lastName'),
-    };
+  function onServiceReady() {
+    if($window.Bugsnag){
+      var authentication = $injector.get('authentication');
+      var user = authentication.getUser();
+      $window.Bugsnag.releaseStage = environment.env;
+      $window.Bugsnag.notifyReleaseStages = [
+        'development',
+        'staging',
+        'production'
+      ];
+      $window.Bugsnag.appVersion = environment.settings.git_revision;
+      $window.Bugsnag.user = {
+        id: dotty.get(user, 'sys.id'),
+        firstName: dotty.get(user, 'firstName'),
+        lastName: dotty.get(user, 'lastName'),
+      };
+    }
   }
 
   function rand(length, current){
@@ -77,6 +79,8 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
   }
 
   return {
+    onServiceReady: onServiceReady,
+
     logDataObject: logDataObject,
 
     logException: function (exception, extra) {
