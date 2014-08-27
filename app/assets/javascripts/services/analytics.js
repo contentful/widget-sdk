@@ -2,6 +2,7 @@
 
 angular.module('contentful').provider('analytics', ['environment', function (environment) {
   var $window, $document, $q;
+  var analyticsLoaded;
   var dontLoad = environment.env.match(/acceptance|development|test/) ? true : false;
 
   this.dontLoad = function () {
@@ -51,7 +52,6 @@ angular.module('contentful').provider('analytics', ['environment', function (env
 
     // Define a method that will asynchronously load analytics.js from our CDN.
     $window.analytics.load = function(apiKey) {
-
       injectAndLoadScript('d2dq2ahtl5zl1z.cloudfront.net/analytics.js/v1/' + apiKey + '/analytics.min.js');
       injectAndLoadScript('s3.amazonaws.com/totango-cdn/totango2.js', initializeTotango);
 
@@ -77,6 +77,7 @@ angular.module('contentful').provider('analytics', ['environment', function (env
     $window.analytics.load(environment.settings.segment_io);
 
     $window.analytics.ready(function () { // analytics.js object
+      analyticsLoaded();
       $window.ga('set', 'anonymizeIp', true);
     });
   }
@@ -250,7 +251,10 @@ angular.module('contentful').provider('analytics', ['environment', function (env
     }
   };
 
-  this.$get = ['$window', '$document', '$q', '$location', function (_$window_, _$document_, _$q_, $location) {
+  this.$get = [
+    '$window', '$document', '$q', '$location',
+    function (_$window_, _$document_, _$q_, $location) {
+
     $window = _$window_;
     $document = _$document_;
     $q = _$q_;
@@ -262,6 +266,8 @@ angular.module('contentful').provider('analytics', ['environment', function (env
         return api;
       }, {});
     } else {
+      analyticsLoaded = $q.callbackWithoutApply();
+      api.whenAnalyticsLoaded = analyticsLoaded.promise;
       createAnalytics();
       return api;
     }

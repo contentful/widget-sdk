@@ -64,8 +64,9 @@ angular.module('contentful/app', [
   timeRelativeConfig.calendar.en.sameElse = 'll';
   timeRelativeConfig.calendar.en.lastWeek = 'ddd, LT';
   timeRelativeConfig.calendar.en.nextWeek = 'Next ddd, LT';
-}]).run(['authentication', 'client', 'ShareJS', function(authentication, client, ShareJS) {
+}]).run(['authentication', 'client', 'ShareJS', 'analytics', 'logger', function(authentication, client, ShareJS, analytics, logger) {
   'use strict';
+  if(analytics.whenAnalyticsLoaded) analytics.whenAnalyticsLoaded.then(logger.onServiceReady);
   authentication.login();
   client.persistenceContext.adapter.token = authentication.token;
   ShareJS.connect();
