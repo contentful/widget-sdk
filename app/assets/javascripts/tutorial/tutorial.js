@@ -165,7 +165,10 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
               if ($(guider.attachTo).parents('.tab-main').length > 0) scroll(guider.attachTo);
               guider.attachScope = $(guider.attachTo).scope().$new();
             } catch (e) {
-              logger.logError('Failed to attach guider '+guider.id+' to '+guider.attachTo);
+              logger.logException(e, {
+                guiderId: guider.id,
+                guiderAttachTo: guider.attachTo
+              });
             }
             if (onShow) onShow.call(guider, guider);
           });

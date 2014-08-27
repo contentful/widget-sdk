@@ -90,7 +90,13 @@ angular.module('contentful')
     }
 
     function makeUnique(locales) {
-      return _.uniq(locales, 'code');
+      try {
+        return _.uniq(locales, 'code');
+      } catch(ex) {
+        logger.logException(ex, {
+          locales: locales
+        });
+      }
     }
 
     function getFieldLocales(field) {
