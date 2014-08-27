@@ -118,7 +118,8 @@ describe('logger service', function () {
         message = 'message';
         data = {
           key: 'value',
-          scope: scope
+          scope: scope,
+          undef: undefined
         };
         options = {
           data: _.clone(data)
@@ -161,7 +162,7 @@ describe('logger service', function () {
       it('sends data to logger service', function () {
         $httpBackend.expectPOST(
           /dataLoggerUrl/,
-          {'key':'value','scope':{'this':'[Circular ~]','scopeKey':'scopeValue'}}
+          {'key':'value','scope':{'this':'[Circular ~]','scopeKey':'scopeValue'}, 'undef': {}}
         ).respond(200);
         $httpBackend.flush();
       });
