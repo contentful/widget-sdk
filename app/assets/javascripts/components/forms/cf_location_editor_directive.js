@@ -1,8 +1,9 @@
-/*global google:false*/
 'use strict';
 
 angular.module('contentful').directive('cfLocationEditor', ['$injector', function($injector){
-  var defer = $injector.get('defer');
+  var defer        = $injector.get('defer');
+  var notification = $injector.get('notification');
+  var $window      = $injector.get('$window');
 
   return {
     restrict: 'C',
@@ -14,17 +15,21 @@ angular.module('contentful').directive('cfLocationEditor', ['$injector', functio
         marker.setVisible(!!showMarker);
       });
 
+      if($window.google){
+        notification.warn('An external service has failed to load. Please reload the application when possible');
+      }
+
       var locationController = elm.find('.gmaps-container').controller('ngModel');
       var latController      = elm.find('input.lat').controller('ngModel');
       var lonController      = elm.find('input.lon').controller('ngModel');
 
-      var map = new google.maps.Map(elm.find('.gmaps-container')[0], {
+      var map = new $window.google.maps.Map(elm.find('.gmaps-container')[0], {
         zoom: 6,
-        center: new google.maps.LatLng(51.16, 10.45),
-        mapTypeId: google.maps.MapTypeId.ROADMAP
+        center: new $window.google.maps.LatLng(51.16, 10.45),
+        mapTypeId: $window.google.maps.MapTypeId.ROADMAP
       });
 
-      var marker = new google.maps.Marker({
+      var marker = new $window.google.maps.Marker({
         map: map,
         position: map.getCenter(),
         draggable: true,
@@ -65,7 +70,7 @@ angular.module('contentful').directive('cfLocationEditor', ['$injector', functio
 
       var locationFormatter = function(location) {
         if (location && scope.locationIsValid(location)) {
-          return new google.maps.LatLng(location.lat, location.lon);
+          return new $window.google.maps.LatLng(location.lat, location.lon);
         } else {
           return null;
         }
@@ -104,11 +109,11 @@ angular.module('contentful').directive('cfLocationEditor', ['$injector', functio
         scope.updateLocation(null);
       };
 
-      google.maps.event.addListener(map, 'click', mapClick);
-      google.maps.event.addListener(marker, 'dragend', mapDrag);
+      $window.google.maps.event.addListener(map, 'click', mapClick);
+      $window.google.maps.event.addListener(marker, 'dragend', mapDrag);
       scope.$on('$destroy', function () {
-        google.maps.event.clearInstanceListeners(map);
-        google.maps.event.clearInstanceListeners(marker);
+        $window.google.maps.event.clearInstanceListeners(map);
+        $window.google.maps.event.clearInstanceListeners(marker);
         map = null;
         marker = null;
       });
@@ -172,7 +177,7 @@ angular.module('contentful').directive('cfLocationEditor', ['$injector', functio
       };
 
       scope.resetMapLocation = function () {
-        if(locationController.$viewValue instanceof google.maps.LatLng){
+        if(locationController.$viewValue instanceof $window.google.maps.LatLng){
           map.panTo(locationController.$viewValue);
         }
       };
