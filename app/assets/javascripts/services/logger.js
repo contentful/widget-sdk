@@ -73,7 +73,7 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
     var prop;
     for(var key in data){
       prop = data[key];
-      data[key] = JSON.parse(stringifySafe(prop));
+      data[key] = JSON.parse(stringifySafe(prop)||'{}');
     }
     return data;
   }
