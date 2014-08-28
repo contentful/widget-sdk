@@ -15,7 +15,7 @@ angular.module('contentful').directive('cfLocationEditor', ['$injector', functio
         marker.setVisible(!!showMarker);
       });
 
-      if($window.google){
+      if(!$window.google){
         notification.warn('An external service has failed to load. Please reload the application when possible');
       }
 
