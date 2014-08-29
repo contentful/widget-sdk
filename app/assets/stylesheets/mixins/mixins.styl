@@ -20,24 +20,24 @@ $tab-padding()
 $nav-bar-dropdowns()
   .separator,
   .dropdown-menu li.top-separator
-    border-top: 1px solid $medium-dark-gray
+    border-top: 1px solid $gray-dark
   .dropdown-menu
     border: none
-    background: darken($dark-gray, 10%)
+    background: darken($gray-darkest, 10%)
     .dropdown-menu-item
       color: white
       border: none
       box-shadow: none
   .no-content-types
-    background: $dark-gray
+    background: $gray-darkest
 
 // Delete Icon
 $delete-icon
   font-size: 8px
-  color: $lightest-gray
+  color: $gray-light
   text-shadow: 0 1px 0 rgba(255,255,255,0.6)
   &:hover
-    color: $medium-gray
+    color: $gray-medium
     cursor: pointer
 
 // State variations
@@ -66,5 +66,5 @@ $result-list-cell
 $result-list-border-bottom
   tbody
     tr:last-child
-      border-bottom: 1px solid $light-rule
+      border-bottom: 1px solid $gray-lightest
 

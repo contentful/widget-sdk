@@ -2,7 +2,7 @@
   width: 100%
   height: $tab-height
   z-index: 10
-  background: $medium-dark-gray
+  background: $gray-dark
   user-select: none
   &.hidden
     height: 0
@@ -20,8 +20,8 @@
     max-width: 200px
     position: relative
     padding: ($tab-height - 23px) 18px
-    color: $medium-gray
-    border-right: 1px solid $dark-gray
+    color: $gray-medium
+    border-right: 1px solid $gray-darkest
     .tooltip
       display: none !important
     &.dirty
@@ -36,13 +36,13 @@
   .fade-text
     $stretch(0, 0, 2px, false)
     width: 50px
-    $fade-text-background(darken($medium-dark-gray, 0%))
+    $fade-text-background(darken($gray-dark, 0%))
   .tab.active
     font-weight: normal
     color: white
-    background: darken($dark-gray, 20%)
+    background: darken($gray-darkest, 20%)
     .fade-text
-      $fade-text-background(darken($dark-gray, 15%))
+      $fade-text-background(darken($gray-darkest, 15%))
     i.close-icon
       opacity: 1
     i.ss-record
@@ -62,7 +62,7 @@
     width: 30px
     &:hover
       i.ss-delete
-        color: $medium-gray
+        color: $gray-medium
     &.hide-tooltip
       .tooltip
         display: none !important

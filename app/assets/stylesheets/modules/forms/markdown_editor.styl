@@ -13,12 +13,12 @@ $markdown-guide-height = 25px
   position: relative
   height: 35px
   border-radius: 3px 3px 0 0
-  border: 1px solid $dark-rule
+  border: 1px solid $gray-light
   @extend $form-control-theme
   &:focus, &.opaque
     border-top-left-radius: 3px
     border-top-right-radius: 3px
-    background-color: $gray-background
+    background-color: $gray-lightest
     border-color: $link-blue
     outline: none
   &.preview-mode
@@ -30,7 +30,7 @@ $markdown-guide-height = 25px
   position: absolute
   right: 0
   $stretch-y()
-  border-left: 1px solid $dark-rule
+  border-left: 1px solid $gray-light
 
 .markdown-textarea
   border-radius: 0 0 0 0
@@ -46,7 +46,7 @@ $markdown-guide-height = 25px
   min-height: $markdown-editor-height
   max-width: 700px
   max-height: $textarea-max-height + 20px
-  border: 1px solid $light-rule
+  border: 1px solid $gray-lightest
   word-wrap: break-word
   overflow-wrap: break-word
   p
@@ -57,17 +57,17 @@ $markdown-guide-height = 25px
   .markdown-image-placeholder
     margin-bottom: 22px
   hr
-    background-color: $medium-gray
+    background-color: $gray-medium
   ul > li
     list-style-type: square
   ol > li
     list-style-type: decimal
 
 .markdown-image-placeholder
-  border: 1px solid $dark-rule
+  border: 1px solid $gray-light
   text-align: center
   padding: 5px
-  background: $lightest-gray
+  background: $gray-light
 
 .toolbar-button
   width: 36px
@@ -81,7 +81,7 @@ $markdown-guide-height = 25px
   border-radius: 3px
   cursor: pointer
   &:hover
-    background-color: lighten($light-gray, 20%)
+    background-color: lighten($gray, 20%)
 .toolbar-button--flex
   width: auto
   flex-basis: 36px
@@ -136,14 +136,14 @@ $markdown-guide-height = 25px
   left: 0
   right: 0
   height: $markdown-guide-height
-  background-color: $lightest-gray
-  border-bottom: 1px solid $light-gray
+  background-color: $gray-light
+  border-bottom: 1px solid $gray
   padding: 3px 7px
   cursor: pointer
-  color: $dark-gray
-  border-top: 1px solid $light-gray
+  color: $gray-darkest
+  border-top: 1px solid $gray
   &:hover
-    background-color: darken($lightest-gray, 10%)
+    background-color: darken($gray-light, 10%)
   .toggle-collapse
     float: right
 
@@ -151,7 +151,7 @@ $markdown-guide-height = 25px
 .cf-markdown-guide
   position: relative
   height: $markdown-guide-height
-  border: 1px solid $light-gray
+  border: 1px solid $gray
   border-radius: 0 0 3px 3px
   border-top: none
   overflow: hidden
@@ -167,15 +167,15 @@ $markdown-guide-height = 25px
   width: 20%
   $plain-list()
   font-weight: bold
-  background-color: $lightest-gray
+  background-color: $gray-light
   overflow: hidden
   li
     cursor: pointer
-    color: $dark-gray
+    color: $gray-darkest
     padding: 5px
-    border-bottom: 1px solid $light-gray
+    border-bottom: 1px solid $gray
   li:hover:not(.active)
-    background-color: darken($lightest-gray, 10%)
+    background-color: darken($gray-light, 10%)
   li.active
     color: white
     background-color: $blue
