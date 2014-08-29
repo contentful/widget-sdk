@@ -147,6 +147,40 @@ describe('Widget types service', function () {
       expect(_.find(options, {param: 'stars'})).toBeTruthy();
     });
   });
+
+  describe('getParamForInstance', function(){
+    beforeEach(function() {
+      this.instance = {
+        widgetParams: {
+          stars: 5
+        }
+      };
+    });
+    it('should return the parameter value in the instance', function(){
+      expect(widgetTypes.getParamForInstance('rating', this.instance, 'stars')).toBe(5);
+    });
+    it('should return the default value if missing', function(){
+      this.instance.widgetParams = {};
+      expect(widgetTypes.getParamForInstance('rating', this.instance, 'stars')).toBe(10);
+    });
+    it('throws an error for unknown widget types', function () {
+      expect(function() {
+        widgetTypes.getParamForInstance('foobar', this.instance, 'helpText');
+      }).toThrow();
+    });
+    it('throws an error for unknown params', function () {
+      expect(function() {
+        widgetTypes.getParamForInstance('rating', this.instance, 'herpderp');
+      }).toThrow();
+    });
+    it('returns undefined for missing defaults', function () {
+      // TODO this is really hard to test since the widget types are hardcoded inside the
+      // widgetTypes service. Rewrite later when we have a proper API for defining the widgets
+      expect(widgetTypes.getParamForInstance('singleLine', this.instance, 'helpText')).toBe(undefined);
+    });
+    
+  });
+  
   
 
 });

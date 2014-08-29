@@ -159,10 +159,23 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
     return optionsForWidget(widget);
   }
 
+  function getParamForInstance(widgetType, widgetInstance, param) {
+    if (_.isUndefined(widgetInstance.widgetParams[param])) {
+      var options = optionsForWidgetType(widgetType);
+      var option  = _.find(options, {param: param});
+      if (!option) throw new Error('Option "'+param+'" not found for widgetType "'+widgetType+'"');
+      return option.default;
+    } else {
+      return widgetInstance.widgetParams[param];
+      //TODO typecast?
+    }
+  }
+
   return {
     forField:              widgetsForField,
     defaultType:           defaultWidgetType,
     optionsForWidgetType:  optionsForWidgetType,
+    getParamForInstance:   getParamForInstance
   };
 
 }]);

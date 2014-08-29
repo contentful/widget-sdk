@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').directive('cfRatingEditor', ['$injector', function(){
+angular.module('contentful').directive('cfRatingEditor', ['$injector', function($injector){
   return {
     restrict: 'E',
     scope: true,
@@ -18,7 +18,10 @@ angular.module('contentful').directive('cfRatingEditor', ['$injector', function(
       }
     },
     controller: ['$scope', function ($scope) {
-      $scope.stars = new Array(parseInt($scope.widget.widgetParams.stars, 10) || 10);
+      var widgetTypes = $injector.get('widgetTypes');
+      
+      var numStars = widgetTypes.getParamForInstance('rating', $scope.widget, 'stars');
+      $scope.stars = new Array(parseInt(numStars) || 10);
       $scope.pendingValue = -1;
 
       $scope.setPending = setPending;
