@@ -154,10 +154,15 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
     }
   }
 
+  function optionsForWidgetType(type) {
+    var widget = WIDGETS[type];
+    return optionsForWidget(widget);
+  }
+
   return {
-    forField: widgetsForField,
-    defaultType: defaultWidgetType,
-    optionsForWidget: optionsForWidget
+    forField:              widgetsForField,
+    defaultType:           defaultWidgetType,
+    optionsForWidgetType:  optionsForWidgetType,
   };
 
 }]);

@@ -133,18 +133,18 @@ describe('Widget types service', function () {
     });
   });
 
-  describe('optionsForWidget', function(){
+  describe('optionsForWidgetType', function(){
     it('should return empty array for missing widget', function () {
-      expect(widgetTypes.optionsForWidget(undefined)).toEqual([]);
-      expect(widgetTypes.optionsForWidget(null)).toEqual([]);
+      expect(widgetTypes.optionsForWidgetType('foobar')).toEqual([]);
+      expect(widgetTypes.optionsForWidgetType(null)).toEqual([]);
     });
     it('should contain common options', function () {
-      var options = widgetTypes.optionsForWidget({options: []});
+      var options = widgetTypes.optionsForWidgetType('singleLine');
       expect(_.find(options, {param: 'helpText'})).toBeTruthy();
     });
     it('should contain widget options', function () {
-      var options = widgetTypes.optionsForWidget({options: ['foo']});
-      expect(options).toContain('foo');
+      var options = widgetTypes.optionsForWidgetType('rating');
+      expect(_.find(options, {param: 'stars'})).toBeTruthy();
     });
   });
   
