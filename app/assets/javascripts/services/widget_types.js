@@ -3,8 +3,23 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
   var $q = $injector.get('$q');
 
   var COMMON_OPTIONS = [
-    {param: 'helpText', name: 'Help text', description: 'This help text will show up below the field'}
+    {
+      param: 'helpText',
+      name: 'Help text',
+      type: 'String',
+      description: 'This help text will show up below the field'
+    }
   ];
+
+  // Widget options:
+  // [{
+  //   param: '<PARAM KEY>'
+  //   name: '<NAME DISPLAYED IN FORM>'
+  //   default: <DEFAULT VALUE>
+  //   type: ['Text', 'Integer', 'Number', 'Boolean', 'Predefined']
+  //   values: if type is 'predefined' this contains the offered values
+  // }]
+
 
   var WIDGETS = {
     singleLine: {
@@ -35,7 +50,13 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
       fieldTypes: ['Integer', 'Number'],
       name: 'Rating',
       options: [
-        {param: 'stars', name: 'Number of stars', default: 10}
+        {
+          param: 'stars',
+          type: 'Predefined',
+          values: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
+          name: 'Number of stars',
+          default: 10
+        }
       ]
     },
     toggle: {
