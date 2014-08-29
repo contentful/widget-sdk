@@ -13,7 +13,8 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
           return $q.when(defaultInterface(contentType));
         else
           return $q.reject(err);
-      });
+      })
+      .then(addMissingFields(contentType));
     },
 
     save: function (editingInterface) {
@@ -33,6 +34,21 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
 
     defaultInterface: defaultInterface
   };
+
+  function addMissingFields(contentType) {
+    return function (interf) {
+      _(contentType.data.fields)
+        .reject(fieldHasWidget)
+        .map(_.partial(defaultWidget, contentType))
+        .each(function(widget) { interf.data.widgets.push(widget); });
+      return interf;
+
+      function fieldHasWidget(field) {
+        return _.any(interf.data.widgets, {fieldId: field.id});
+      }
+    };
+
+  }
 
   function getEditorInterface(contentType, interfaceId) {
     if (contentType.getId() === 'asset') {

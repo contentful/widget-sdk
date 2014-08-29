@@ -27,19 +27,19 @@ describe('Editing interfaces service', function () {
           };
         },
         getId: sinon.stub(),
-        data: {
-          fields: [
-            {id: 'firstfield'}
-          ]
-        }
+        data: {}
       };
 
     });
-    inject(function ($injector) {
-      editingInterfaces = $injector.get('editingInterfaces');
-      $rootScope = $injector.get('$rootScope');
-      $q = $injector.get('$q');
-    });
+    editingInterfaces = this.$inject('editingInterfaces');
+    $q                = this.$inject('$q');
+    $rootScope        = this.$inject('$rootScope');
+    var cfStub        = this.$inject('cfStub');
+
+    contentType.data.fields = [
+      cfStub.field('fieldA'),
+      cfStub.field('fieldB')
+    ];
   });
 
   afterEach(inject(function ($log) {
@@ -54,7 +54,9 @@ describe('Editing interfaces service', function () {
         editingInterfaces.forContentTypeWithId(contentType, 'edid').then(function (_config) {
           config = _config;
         });
-        contentType.getEditorInterface.yield(null, {});
+        contentType.getEditorInterface.yield(null, {
+          data: {widgets: []}
+        });
         $rootScope.$apply();
       });
 
@@ -64,6 +66,11 @@ describe('Editing interfaces service', function () {
 
       it('gets a config', function() {
         expect(config).toBeDefined();
+      });
+
+      it('should add fields from the content Type that are missing in the user interface', function(){
+        expect(config.data.widgets[0].fieldId).toBe('fieldA');
+        expect(config.data.widgets[1].fieldId).toBe('fieldB');
       });
     });
 
@@ -120,7 +127,7 @@ describe('Editing interfaces service', function () {
     });
 
     it('has first field', function() {
-      expect(interf.data.widgets[0].fieldId).toBe('firstfield');
+      expect(interf.data.widgets[0].fieldId).toBe('fieldA');
     });
 
     it('gets widget type', function() {
