@@ -107,14 +107,14 @@
     display: table-row 
     cursor: pointer
   li:hover
-    $gradient-op(lighten($blue, 20), 6%, 'darken')
+    $highlight(lighten($blue, 20), 6%, 'darken')
     color: white
   .item-value
     color: $gray
   .selected,
   .selected:hover
     color: white
-    $blue-highlight()
+    $highlight($blue)
     > .item-value
       color: white
   .item-description
