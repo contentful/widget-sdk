@@ -50,7 +50,7 @@
       %label Access Token
       .form-controls
         .l-field-editor
-          %input.form-control.access-token.cf-select-all-input(type="text" ng-model="apiKey.data.accessToken" ng-show="apiKey.data.accessToken")
+          %input.form-control.access-token.cf-select-all-input(type="text" ng-model="apiKey.data.accessToken" ng-show="apiKey.data.accessToken" readonly="readonly")
           %a.btn.btn--default.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token" ng-show="apiKey.data.accessToken")
             %i.ss-layers
             %i.ss-plus
