@@ -35,12 +35,16 @@ $form-control-theme
   &.error-input:focus
     border-color: darken($red, 10%)
 
-.form-control[disabled]
+.form-control[disabled],
+.form-control[readonly]
   background-color: $gray-lighter
   border: 1px solid $gray
-  color: $gray-medium
   box-shadow: none
   transition: none
+.form-control[disabled]
+  color: $gray-medium
+.form-control[readonly]
+  color: $metallic-gray-dark
 
 textarea.form-control
   resize: vertical
@@ -56,7 +60,4 @@ input.time.form-control
 
 input[type="checkbox"].form-control
   margin-top: -1px
-
-.forms__button
-  height: 35px
 
