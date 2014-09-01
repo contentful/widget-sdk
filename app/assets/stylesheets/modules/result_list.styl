@@ -9,7 +9,7 @@ $standalone-table
 .result-list-empty
   p
     font-size: 16px
-    color: $light-gray
+    color: $gray
     text-align: center
     line-height: 60px
 
@@ -23,15 +23,15 @@ $standalone-table
   th,
   th button
     font-weight: normal
-    color: $light-gray
+    color: $gray
   td
-    border-bottom: 1px solid $light-rule
+    border-bottom: 1px solid $gray-lightest
   thead
     .button-icon
-      color: $lightest-gray
+      color: $gray-light
     .active
       .button-icon
-        color: $light-gray
+        color: $gray
       .truncated-button
         font-weight: bold
   tr:last-child
@@ -63,7 +63,7 @@ $standalone-table
     right: 0
     width: 8px
     height: 100%
-    background-color: $light-gray
+    background-color: $gray
 
   .published
     color: $green
@@ -82,9 +82,9 @@ $standalone-table
       background-color: $gold
 
   .archived
-    color: $red
+    color: $orange
     .status-bar
-      background-color: $red
+      background-color: $orange
 
   .cell-select
     cursor: default
@@ -108,14 +108,14 @@ $standalone-table
   .cell-integer,
   .cell-number,
   .cell-boolean
-    color: $medium-gray
+    color: $gray-medium
 
   .cell-name
-    color: $dark-gray
+    color: $gray-darkest
     font-weight: 600
 
   .cell-anchor
-    color: $link-blue
+    color: $blue-link
 
   .cell-text,
   .cell-description
@@ -162,7 +162,7 @@ $standalone-table
 
   td.cell-status
     text-transform: uppercase
-    color: $light-gray
+    color: $gray
     font-size: 80%
 
   .collapsed
@@ -215,7 +215,7 @@ $standalone-table
       transform: translateX(100%)
 
 .inner-result-list
-  background-color: $gray-background
+  background-color: $gray-lightest
   padding-top: 5px
   padding-bottom: 3px
   padding-left: 2%
@@ -226,5 +226,5 @@ $standalone-table
   th, td
     padding-left: 20px
   td
-    border-bottom: 1px solid $dark-rule
+    border-bottom: 1px solid $gray-light
 

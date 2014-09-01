@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs', '$injector', function ($scope, $attrs, $injector) {
+  var logger                = $injector.get('logger');
   var $parse                = $injector.get('$parse');
   var $q                    = $injector.get('$q');
   var ShareJS               = $injector.get('ShareJS');
@@ -97,12 +98,27 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs',
     }
 
     function assertIndexMatches(index, entity) {
-      if (entity && !entity.isMissing && entity.getId() && entity.getId() != $scope.links[index].sys.id) throw new Error('Index mismatch!');
+      if (entity && !entity.isMissing && entity.getId() && entity.getId() != $scope.links[index].sys.id)
+        logger.logError('Index mismatch', {
+          data: {
+            entity: entity,
+            links: $scope.links
+          }
+        });
     }
   };
 
   function lookupEntities(links) {
-    var ids = _.map(links, function (link) { return link.sys.id; });
+    var ids = _.map(links, function (link) {
+      if(!link){
+        logger.logError('link object doesnt exist', {
+          data: {
+            links: links
+          }
+        });
+      }
+      return link.sys.id;
+    });
     return entityCache.getAll(ids);
   }
 

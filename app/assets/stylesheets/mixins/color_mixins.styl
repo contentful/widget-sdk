@@ -4,33 +4,14 @@ $gradient($start, $stop)
   background: $start
   background-image: linear-gradient($start, $stop)
 
-$gradient-op($color, $highlight, $operation)
+$highlight($color, $highlight = 6%, $operation = 'darken')
   if $operation == 'lighten'
     $gradient($color, lighten($color, $highlight))
   if $operation == 'darken'
     $gradient($color, darken($color, $highlight))
 
-$action-button-text-color()
-  color: white
-  &:link
-    color: white
-  &:hover
-    color: white
-
-$blue-highlight($highlight = 6%, $operation = 'darken')
-  $gradient-op($blue, $highlight, $operation)
-
-$green-highlight($highlight = 6%, $operation = 'darken')
-  $gradient-op($green, $highlight, $operation)
-
-$gold-highlight($highlight = 6%, $operation = 'darken')
-  $gradient-op($gold, $highlight, $operation)
-
-$red-highlight($highlight = 6%, $operation = 'darken')
-  $gradient-op($red, $highlight, $operation)
-
 $gray-highlight()
-  color: $medium-gray
+  color: $gray-medium
   box-shadow: 0 8px 16px rgba(255,255,255,0.6) inset
 
 $fade-text-background($color)

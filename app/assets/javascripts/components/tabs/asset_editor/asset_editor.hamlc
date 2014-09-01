@@ -37,7 +37,7 @@
         data-field-id="{{widget.field.id}}"
         ng-class="{'data-field-array': (widget.field|isFieldLink), 'data-field-boolean': (widget.field|isFieldBoolean), 'data-field-string-list': (widget.field|isFieldStringList)}")
       %label {{widget.field.name}}
-        %sup(ng-show="widget.field.required") *
+        %sup(ng-show="widget.field.required") (required)
       .form-controls
         .locale(ng-repeat="locale in widget.locales track by locale.code" ot-field-presence="['fields', widget.field.id, locale.code]" data-locale="{{locale.code}}")
           .cf-field-editor.l-field-editor(ot-path="['fields', widget.field.id, locale.code]" cf-editor-entity="asset")

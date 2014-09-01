@@ -1,7 +1,7 @@
 .tab-actions,
 $tab-actions-container
-  border-top: 1px solid $lightest-gray
-  background-color: $gray-background
+  border-top: 1px solid $gray-light
+  background-color: $gray-lightest
   box-shadow: 0 -1px 4px rgba(0,0,0,0.07), 0 1px 1px rgba(255,255,255,0.8) inset
 
 $tab-actions-vertical-padding = 10px
@@ -39,9 +39,9 @@ $tab-action-inner-components
     i.saving
       color: $gold
     i.not-allowed
-      color: $red
+      color: $orange
     i.no-connection
-      color: $red
+      color: $orange
     &.saved .saved
       display: inline
     &.saving .saving
@@ -59,7 +59,7 @@ $tab-action-inner-components
     margin-right: 15px
     line-height: $tab-actions-content-height
     font-size: 11px
-    color: $light-gray
+    color: $gray
     ul
       $plain-list()
       display: inline-block

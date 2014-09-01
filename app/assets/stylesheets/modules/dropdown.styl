@@ -3,7 +3,7 @@
   position: relative
 .dropdown-toggle
   position: relative
-  color: $light-gray
+  color: $gray
   display: block
   text-decoration: none
   cursor: pointer
@@ -12,11 +12,11 @@
     color: black
     box-shadow: 0 5px 15px rgba(255,255,255,0.6) inset
   &[disabled]
-    color: $light-gray
+    color: $gray
 .active .dropdown-toggle
-  color: $dark-gray
+  color: $gray-darkest
 
-$separator-style = 1px solid $light-rule
+$separator-style = 1px solid $gray-lightest
 
 .dropdown-row
   padding: 4px 12px
@@ -47,7 +47,7 @@ $separator-style = 1px solid $light-rule
       display: block
     a:link,
     a:visited
-      color: $medium-gray
+      color: $gray-medium
     label
       cursor: pointer
     &.top-separator
@@ -57,12 +57,12 @@ $separator-style = 1px solid $light-rule
     &.bottom-separator
       border-bottom: $separator-style
     &.hint
-      color: $light-gray
+      color: $gray
   .dropdown-menu-item:hover,
   .dropdown-menu-item.hover
     cursor: pointer
     color: white
-    $blue-highlight()
+    $highlight($blue)
     a:link
       color: white
   .subtitle
@@ -90,7 +90,7 @@ $separator-style = 1px solid $light-rule
   .menu-list
     width: 200px
     min-height: 250px
-    border-right: 1px solid $lightest-gray
+    border-right: 1px solid $gray-light
     .type,
     .group
       list-style-type: none
@@ -121,7 +121,7 @@ $separator-style = 1px solid $light-rule
   .content-type-description,
   .validation-type-description
     position: absolute
-    color: $light-gray
+    color: $gray
     display: none
     left: 200px
     top: 0
@@ -141,9 +141,9 @@ $separator-style = 1px solid $light-rule
         margin-left: 20px
       li:hover
         a:link
-          color: $dark-gray
+          color: $gray-darkest
     li:hover
-      color: $light-gray
+      color: $gray
       background: none
 
 

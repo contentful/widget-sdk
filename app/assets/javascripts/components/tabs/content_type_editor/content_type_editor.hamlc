@@ -38,7 +38,7 @@
     .l-form-field
       %label
         Name
-        %sup *
+        %sup (required)
       .form-controls(ot-path="['name']" ot-subdoc)
         .l-field-editor
           %input.form-control(type="text"
