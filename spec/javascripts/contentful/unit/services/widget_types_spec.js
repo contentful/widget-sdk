@@ -181,6 +181,35 @@ describe('Widget types service', function () {
     
   });
   
+  describe('registerWidget', function(){
+    it('adds a widget to the database so that it can be retrieved', function () {
+      widgetTypes.registerWidget('foo', {fieldTypes: ['Text']});
+      widgetTypes.forField({type: 'Text'}).then(function(widgets) {
+        expect(_.any(widgets, {id: 'foo'})).toBe(true);
+      });
+      $rootScope.$apply();
+    });
+    it('does not overwrite widgets', function () {
+      widgetTypes.registerWidget('foo', {fieldTypes: ['Text']});
+      widgetTypes.registerWidget('foo', {fieldTypes: ['Number']});
+      widgetTypes.forField({type: 'Number'}).then(function(widgets) {
+        expect(_.any(widgets, {id: 'foo'})).toBe(false);
+      });
+      $rootScope.$apply();
+    });
+  });
+
+  describe('widgetTemplate', function(){
+    it('returns the template property for a widget', function () {
+      widgetTypes.registerWidget('foo', {fieldTypes: ['Text'], template: 'bar'});
+      expect(widgetTypes.widgetTemplate('foo')).toBe('bar');
+    });
+    it('returns a warning for a missing widget', function () {
+      expect(widgetTypes.widgetTemplate('derp')).toBe('<div class="missing-widget-template">Unkown editor widget "derp"</div>');
+    });
+  });
+  
+  
   
 
 });

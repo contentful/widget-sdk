@@ -41,98 +41,33 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
 
 
   var WIDGETS = {
-    singleLine: {
-      fieldTypes: ['Text', 'Symbol'],
-      name: 'Single Line',
-    },
-    numberEditor: {
-      fieldTypes: ['Integer', 'Number'],
-      name: 'Single Line',
-    },
-    multipleLine: {
-      fieldTypes: ['Text'],
-      name: 'Multiple Line',
-    },
-    markdown: {
-      fieldTypes: ['Text'],
-      name: 'Markdown',
-    },
-    dropdown: {
-      fieldTypes: ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'],
-      name: 'Dropdown',
-    },
-    radio: {
-      fieldTypes: ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'],
-      name: 'Radio',
-    },
-    rating: {
-      fieldTypes: ['Integer', 'Number'],
-      name: 'Rating',
-      options: [
-        {
-          param: 'stars',
-          type: 'Predefined',
-          values: [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20],
-          name: 'Number of stars',
-          default: 10
-        }
-      ]
-    },
-    toggle: {
-      fieldTypes: ['Boolean'],
-      name: 'Toggle',
-    },
-    datePicker: {
-      fieldTypes: ['Date'],
-      name: 'Date Picker',
-    },
-    dateDropdown: {
-      fieldTypes: ['Date'],
-      name: 'Date Dropdown',
-    },
-    locationEditor: {
-      fieldTypes: ['Location'],
-      name: 'Location',
-    },
-    coordinates: {
-      fieldTypes: ['Location'],
-      name: 'Coordinates',
-    },
-    item: {
-      fieldTypes: ['Link', 'File'],
-      name: 'Item',
-    },
-    card: {
-      fieldTypes: ['Link'],
-      name: 'Card',
-    },
-    gallery: {
-      fieldTypes: ['File'],
-      name: 'Gallery',
-    },
-    //list: {
+    //toggle: {   NOT IMPLEMENTED
+      //fieldTypes: ['Boolean'],
+      //name: 'Toggle',
+    //},
+    //dateDropdown: { NOT IMPLEMENTED
+      //fieldTypes: ['Date'],
+      //name: 'Date Dropdown',
+    //},
+    //coordinates: { NOT IMPLEMENTED
+      //fieldTypes: ['Location'],
+      //name: 'Coordinates',
+    //},
+    //item: { NOT IMPLEMENTED
+      //fieldTypes: ['Link', 'File'],
+      //name: 'Item',
+    //},
+    //card: { NOT IMPLEMENTED
+      //fieldTypes: ['Link'],
+      //name: 'Card',
+    //},
+    //gallery: { NOT IMPLEMENTED
+      //fieldTypes: ['File'],
+      //name: 'Gallery',
+    //},
+    //list: { NOT IMPLEMENTED
       //name: 'List',
     //},
-    objectEditor: {
-      fieldTypes: ['Object'],
-      name: 'Object',
-    },
-    listInput: {
-      fieldTypes: ['Symbols'],
-      name: 'List',
-    },
-    //fileEditor: {
-      //name: 'File',
-      //fields: {}
-    //},
-    linkEditor: {
-      fieldTypes: ['Link'],
-      name: 'Link',
-    },
-    linksEditor: {
-      fieldTypes: ['Links'],
-      name: 'Links',
-    }
   };
 
   function widgetsForField(field) {
@@ -211,11 +146,27 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
     }
   }
 
+  function widgetTemplate(widgetType) {
+    var widget = WIDGETS[widgetType];
+    if (widget) {
+      return widget.template;
+    } else {
+      return '<div class="missing-widget-template">Unkown editor widget "'+widgetType+'"</div>';
+    }
+  }
+
+  function registerWidget(id, options) {
+    var descriptor = _.pick(options, ['fieldTypes', 'name', 'options', 'template']);
+    WIDGETS[id] = WIDGETS[id] || descriptor;
+  }
+
   return {
     forField:              widgetsForField,
     defaultType:           defaultWidgetType,
     optionsForWidgetType:  optionsForWidgetType,
-    getParamForInstance:   getParamForInstance
+    widgetTemplate:        widgetTemplate,
+    getParamForInstance:   getParamForInstance,
+    registerWidget:        registerWidget
   };
 
 }]);

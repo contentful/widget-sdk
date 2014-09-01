@@ -18,11 +18,37 @@
 // otValueChanged
 //   ngModelSet(scope, incomingValue)
 
-angular.module('contentful').directive('cfFieldEditor', [function() {
+angular.module('contentful').directive('cfFieldEditor', ['$injector', function($injector) {
+  var $compile    = $injector.get('$compile');
+  var widgetTypes = $injector.get('widgetTypes');
+  
   return {
     restrict: 'C',
     require: '^otPath',
-    template: JST['cf_field_editor'](),
     controller: 'CfFieldEditorController',
+    link: function (scope, element) {
+      var childScope;
+      scope.$watch('widget.widgetType', installWidget);
+      scope.$on('$destroy', clearChildScope);
+
+      function installWidget(widgetType) {
+        if (childScope) {
+          childScope.$destroy();
+          childScope = null;
+          element.empty();
+        }
+        if (widgetType) {
+          var template = widgetTypes.widgetTemplate(widgetType);
+          childScope = scope.$new();
+          var $widget = $(template);
+          element.append($widget);
+          $compile($widget)(childScope);
+        }
+      }
+
+      function clearChildScope() {
+        childScope = null;
+      }
+    }
   };
 }]);

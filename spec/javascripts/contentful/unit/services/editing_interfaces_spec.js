@@ -8,7 +8,8 @@ describe('Editing interfaces service', function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs(['defaultType', 'info', 'warn', 'serverError']);
       $provide.value('widgetTypes', {
-        defaultType: stubs.defaultType
+        defaultType: stubs.defaultType,
+        registerWidget: angular.noop
       });
 
       $provide.value('notification', {

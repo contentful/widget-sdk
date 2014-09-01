@@ -2,40 +2,27 @@
 
 describe('cfFieldEditor Directive', function () {
   var element, scope;
-  var compileElement, ngSwitch;
+  var compileElement;
   beforeEach(function () {
-    function ControllerMock() {}
-    module('contentful/test', function ($provide) {
+    module('contentful/test', function($provide) {
       $provide.stubDirective('otPath', {
-        controller: ControllerMock
+        controller: angular.noop
       });
-      $provide.removeDirectives(
-        'cfObjectEditor',
-        'cfLocationEditor',
-        'cfNumberEditor',
-        'cfFileEditor',
-        'cfDatetimeEditor',
-        'cfTokenizedSearch'
-      );
     });
-    inject(function ($compile, $rootScope) {
+    inject(function ($compile, $rootScope, widgetTypes) {
       scope = $rootScope.$new();
-
-      scope.entity = {
-        data: {
-          fields: {}
-        }
-      };
-
+      widgetTypes.registerWidget('testType', {template: '<span class="foo">bar</span>' });
+      widgetTypes.registerWidget('type2'   , {template: '<span class="bar">foo</span>' });
+      scope.entity = {data: {fields: []}};
       scope.widget = {
+        widgetType: 'testType',
         field: { id: 'fieldId' }
       };
       scope.getFieldValidationsOfType = sinon.stub();
 
       compileElement = function () {
         element = $compile('<div ot-path class="cf-field-editor" cf-editor-entity="entity"></div>')(scope);
-        scope.$digest();
-        ngSwitch = element.find('ng-switch');
+        scope.$apply();
       };
     });
   });
@@ -44,81 +31,24 @@ describe('cfFieldEditor Directive', function () {
     $log.assertEmpty();
   }));
 
-  function makeEditorTypeTests(editorName, elementType, additionalTests) {
-    describe('renders a '+editorName+' editor', function() {
-      beforeEach(function() {
-        scope.widget.widgetType = editorName;
-        compileElement();
-      });
-
-      it('only has one element', function() {
-        expect(ngSwitch.children().length).toBe(1);
-      });
-
-      it('element is defined', function () {
-        expect(ngSwitch.children().eq(0)).toHaveTagName(elementType);
-      });
-
-      if(additionalTests) additionalTests();
-    });
-  }
-
-  makeEditorTypeTests('singleLine', 'input');
-
-  makeEditorTypeTests('multipleLine', 'textarea');
-
-  makeEditorTypeTests('markdown', 'div', function () {
-    it('has class name', function() {
-      expect(ngSwitch.children().eq(0)).toHaveClass('cf-markdown-editor');
-    });
+  it('installs a widget', function() {
+    compileElement();
+    expect(element.find('.foo').length).toBe(1);
   });
 
-  // These tests will fail because the radio editor needs additional setup
-  // (validations or fieldType boolean) to display labels
-  makeEditorTypeTests('radio', 'cf-radio-editor', function () {
-    xit('has 2 labels', function() {
-      expect(ngSwitch.find('label').length).toBe(2);
-    });
-
-    xit('has 2 radio inputs', function() {
-      expect(ngSwitch.find('input[type=radio]').length).toBe(2);
-    });
+  it('exchanges a widget', function() {
+    compileElement();
+    expect(element.find('.foo').length).toBe(1);
+    scope.widget.widgetType = 'type2';
+    scope.$apply();
+    expect(element.find('.foo').length).toBe(0);
+    expect(element.find('.bar').length).toBe(1);
   });
 
-  makeEditorTypeTests('datePicker', 'div', function () {
-    it('has class name', function() {
-      expect(ngSwitch.children().eq(0)).toHaveClass('cf-datetime-editor');
-    });
-  });
-
-  makeEditorTypeTests('listInput', 'input', function () {
-    it('has attr name', function() {
-      expect(ngSwitch.children().eq(0).attr('cf-list-identity-fix')).toBeDefined();
-    });
-  });
-
-  makeEditorTypeTests('objectEditor', 'div', function () {
-    it('has class name', function() {
-      expect(ngSwitch.children().eq(0)).toHaveClass('cf-object-editor');
-    });
-  });
-
-  makeEditorTypeTests('locationEditor', 'div', function () {
-    it('has class name', function() {
-      expect(ngSwitch.children().eq(0)).toHaveClass('cf-location-editor');
-    });
-  });
-
-  makeEditorTypeTests('numberEditor', 'div', function () {
-    it('has class name', function() {
-      expect(ngSwitch.children().eq(0)).toHaveClass('cf-number-editor');
-    });
-  });
-
-  makeEditorTypeTests('fileEditor', 'div', function () {
-    it('has class name', function() {
-      expect(ngSwitch.children().eq(0)).toHaveClass('cf-file-editor');
-    });
+  it('displays a warning for unknown widgets', function() {
+    scope.widget.widgetType = 'lolwut';
+    compileElement();
+    expect(element.text()).toMatch('Unkown editor widget "lolwut"');
   });
 
 });
