@@ -6,9 +6,28 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
     {
       param: 'helpText',
       name: 'Help text',
-      type: 'String',
+      type: 'Text',
       description: 'This help text will show up below the field'
-    }
+    },
+    //{
+      //param: 'numberTest',
+      //name: 'Number Test',
+      //type: 'Number',
+      //description: 'This is a number test'
+    //},
+    //{
+      //param: 'booleanTest',
+      //name: 'Boolean Test',
+      //type: 'Boolean',
+      //description: 'This is a boolean test'
+    //},
+    //{
+      //param: 'predefinedTest',
+      //name: 'Predefined Test',
+      //type: 'Predefined',
+      //description: 'This is a predefined Test',
+      //values: [1,2,3, true, false]
+    //},
   ];
 
   // Widget options:
@@ -16,7 +35,7 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
   //   param: '<PARAM KEY>'
   //   name: '<NAME DISPLAYED IN FORM>'
   //   default: <DEFAULT VALUE>
-  //   type: ['Text', 'Integer', 'Number', 'Boolean', 'Predefined']
+  //   type: ['Text', 'Number', 'Boolean', 'Predefined']
   //   values: if type is 'predefined' this contains the offered values
   // }]
 
