@@ -7,10 +7,11 @@
   border: 0
 
   // Styling of the headline
-  .tab-header a.page-header-link
-    color: $gray-darkest
-    &:hover
-      color: $gray
+  .tab-header
+    a.page-header-link
+      color: $gray-darkest
+      &:hover
+        color: $gray
   .header-separator
     color: $gray-light
 
@@ -91,7 +92,7 @@
 
   // Add-Button
   button,
-  a.btn--default
+  a.btn--secondary
     &.new-resource
       margin-top: 34px //result list tr-height
       @extend .btn--primary

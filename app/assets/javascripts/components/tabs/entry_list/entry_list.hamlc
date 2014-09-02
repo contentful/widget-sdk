@@ -1,14 +1,15 @@
 .tab-header
-  .tab-title
-    %h1 Entries
-    %a.cf-knowledge-base-icon(
-      tooltip="Learn more about Entries in the Knowledge Base Pages"
-      tooltip-container=".entity-list"
-      analytics-event="entries"
-      href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
+  .tab-header__title
+    %h1
+      Entries
+      %a.cf-knowledge-base-icon(
+        tooltip="Learn more about Entries in the Knowledge Base Pages"
+        tooltip-container=".entity-list"
+        analytics-event="entries"
+        href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
 
-  .search-area.with-filter
-    .btn.btn--flat.select-box
+  .tab-header__search.search-area.with-filter
+    .btn.btn--tertiary.select-box
       %select(ng-model="tab.params.view.contentTypeId"
               ng-change="selectedContentType()"
               ng-options="ct.getId() as ct.getName() group by getGroupName() for ct in spaceContext.publishedContentTypes")
@@ -21,9 +22,9 @@
       cf-on-blur-component="leftSearch($event)"
       cf-on-blur-component-when="showAutocompletions")
 
-  .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")
+    .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")
 
-  .add-entity(ng-hide="spaceContext.publishedContentTypes.length == 0 || entries.length == 0")
+  .tab-header__actions.add-entity(ng-hide="spaceContext.publishedContentTypes.length == 0 || entries.length == 0")
     %button.btn.btn--primary(
             ng-hide="!singleContentType && (noCfCanCleanup = true)"
             cf-can="create, Entry"
@@ -107,10 +108,10 @@
 .tab-actions
   .label {{selection.size()}} Entries selected
   .button-set(ng-controller="EntryListActionsCtrl" ng-hide="selection.isEmpty()")
-    %button.btn.btn--default.duplicate(type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
-    %button.btn.btn--default.btn--danger.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" cf-click-outside-when="deleteConfirm" ng-show="deleteConfirm" ng-click="deleteSelected()" tooltip="Click anywhere else to dismiss") Are you sure?
-    %button.btn.btn--default.delete(type="button" ng-click="deleteConfirm=true" tooltip="Permanently delete these Entries" ng-show="showDelete() && !deleteConfirm") Delete
-    %button.btn.btn--default.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
-    %button.btn.btn--default.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
-    %button.btn.btn--default.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
+    %button.btn.btn--secondary.duplicate(type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
+    %button.btn.btn--secondary.btn--danger.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" cf-click-outside-when="deleteConfirm" ng-show="deleteConfirm" ng-click="deleteSelected()" tooltip="Click anywhere else to dismiss") Are you sure?
+    %button.btn.btn--secondary.delete(type="button" ng-click="deleteConfirm=true" tooltip="Permanently delete these Entries" ng-show="showDelete() && !deleteConfirm") Delete
+    %button.btn.btn--secondary.archive(  type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
+    %button.btn.btn--secondary.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
+    %button.btn.btn--secondary.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
     %button.btn.btn--primary.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}

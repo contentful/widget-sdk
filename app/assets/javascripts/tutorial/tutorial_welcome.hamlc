@@ -48,7 +48,7 @@
           .welcome-text
             Learn how to set up Content Types, the foundation for your Entries.
           .buttons
-            %button.btn.btn--default.repeat(type="button" ng-show="contentTypeDone" ng-click="goTo('contentTypeIntro')")
+            %button.btn.btn--secondary.repeat(type="button" ng-show="contentTypeDone" ng-click="goTo('contentTypeIntro')")
               Repeat Tutorial
             %button.btn.btn--primary(type="button" ng-hide="contentTypeDone" ng-click="goTo('contentTypeIntro')")
               Take Tutorial
@@ -60,7 +60,7 @@
           .welcome-text
             An intro to day to day content management tasks.
           .buttons
-            %button.btn.btn--default.repeat(type="button" ng-show="entryDone" ng-click="goTo('entryIntro')")
+            %button.btn.btn--secondary.repeat(type="button" ng-show="entryDone" ng-click="goTo('entryIntro')")
               Repeat Tutorial
             %button.btn.btn--primary(type="button" ng-hide="entryDone" ng-click="goTo('entryIntro')")
               Take Tutorial
@@ -72,7 +72,7 @@
           .welcome-text
             Learn how to configure the distribution of your content.
           .buttons
-            %button.btn.btn--default.repeat(type="button" ng-show="apiKeyDone" ng-click="goTo('apiKeyIntro')")
+            %button.btn.btn--secondary.repeat(type="button" ng-show="apiKeyDone" ng-click="goTo('apiKeyIntro')")
               Repeat Tutorial
             %button.btn.btn--primary(type="button" ng-hide="apiKeyDone" ng-click="goTo('apiKeyIntro')")
               Take Tutorial

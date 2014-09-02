@@ -16,7 +16,7 @@
             %label
               %input(type="checkbox" ng-model="preferences.showDisabledFields")
               Show disabled fields
-    %button.btn.btn--default(type="button"
+    %button.btn.btn--secondary(type="button"
             ng-click="restoreDefaults()"
             tooltip="Restore default view"
             tooltip-placement="bottom")
@@ -42,7 +42,7 @@
                   ng-click="delete()"
                   tooltip="Click anywhere else to dismiss")
       Are you sure?
-    -#%button.btn.btn--default.delete(type="button"
+    -#%button.btn.btn--secondary.delete(type="button"
                   ng-show="canDelete() && !deleteConfirm"
                   ng-click="deleteConfirm=true" 
                   tooltip="Delete this Editing Interface")

@@ -1,18 +1,21 @@
 .tab-header.editor-configuration
-  %h1(title="{{headline()}}") {{headline()}}
-  %a.cf-knowledge-base-icon(
-    tooltip="Learn more about Assets in the Knowledge Base Pages"
-    analytics-event="assets"
-    href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
-  .editor-top-right
-    %button.btn.btn--flat(type="button"
+  .tab-header__title
+    %h1(title="{{headline()}}")
+      {{headline()}}
+      %a.cf-knowledge-base-icon(
+        tooltip="Learn more about Assets in the Knowledge Base Pages"
+        analytics-event="assets"
+        href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
+
+  .tab-header__actions
+    %button.btn.btn--tertiary(type="button"
             ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
             tooltip-placement="bottom")
       Info
     .dropdown-btn(cf-dropdown="" ng-show="showLangSwitcher")
-      %button.btn.btn--flat(cf-dropdown-toggle)
+      %button.btn.btn--tertiary(cf-dropdown-toggle)
         %i.ss-dropdown.button-icon-right
         %span View
       .dropdown-menu(cf-dropdown-menu="" position="bottomcenter")
@@ -53,11 +56,11 @@
 
 .tab-actions(ng-controller="AssetActionsCtrl")
   .button-set
-    %button.btn.btn--default.btn--danger.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" cf-click-outside-when="deleteConfirm" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss") Are you sure?
-    %button.btn.btn--default.delete(   type="button" ng-show="canDelete() && !deleteConfirm" ng-click="deleteConfirm=true" tooltip="Permanently delete this Asset") Delete
-    %button.btn.btn--default.archive(  type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
-    %button.btn.btn--default.archive(  type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
-    %button.btn.btn--default.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish
+    %button.btn.btn--secondary.btn--danger.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" cf-click-outside-when="deleteConfirm" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss") Are you sure?
+    %button.btn.btn--secondary.delete(   type="button" ng-show="canDelete() && !deleteConfirm" ng-click="deleteConfirm=true" tooltip="Permanently delete this Asset") Delete
+    %button.btn.btn--secondary.archive(  type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
+    %button.btn.btn--secondary.archive(  type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
+    %button.btn.btn--secondary.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish
     %button.btn.btn--primary.publish(  type="submit" ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Asset") {{publishButtonLabel()}}
   .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
                tooltip-placement="top")
@@ -70,6 +73,6 @@
                          link="link" as="presenceUser"
                          tooltip="{{presenceUser | userNameDisplay:user}}")
         %img(ng-src="{{user.data.avatarUrl}}")
-    %a.btn.btn--default.invite-users(href="" ng-click="navigator.spaceSettings('/users/new').goTo()")
+    %a.btn.btn--secondary.invite-users(href="" ng-click="navigator.spaceSettings('/users/new').goTo()")
       %i.ss-users
       %i.ss-plus

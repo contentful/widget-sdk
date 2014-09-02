@@ -1,19 +1,21 @@
 .tab-header.editor-configuration
-  %h1 {{contentType.getName()}}
-  %a.cf-knowledge-base-icon(
-    tooltip="Learn more about Content Types in the Knowledge Base Pages"
-    analytics-event="content_types"
-    href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
+  .tab-header__title
+    %h1
+      {{contentType.getName()}}
+      %a.cf-knowledge-base-icon(
+        tooltip="Learn more about Content Types in the Knowledge Base Pages"
+        analytics-event="content_types"
+        href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
 
-  .editor-top-right
-    %button.btn.btn--flat(type="button"
+  .tab-header__actions
+    %button.btn.btn--tertiary(type="button"
             ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
             tooltip-placement="bottom")
       Info
     .dropdown-btn(cf-dropdown)
-      %button.btn.btn--flat(cf-dropdown-toggle)
+      %button.btn.btn--tertiary(cf-dropdown-toggle)
         %i.ss-dropdown.button-icon-right
         %span View
       .dropdown-menu(cf-dropdown-menu="" position="bottomcenter")
@@ -22,7 +24,7 @@
             %label 
               %input(type="checkbox" ng-model="preferences.showDisabledFields")
               Show disabled fields
-    %button.btn.btn--flat(type="button"
+    %button.btn.btn--tertiary(type="button"
             ng-click="navigator.editingInterfaceEditor(contentType, defaultEditingInterface).goTo()"
             tooltip="Customize editing view"
             tooltip-placement="bottom")
@@ -82,13 +84,13 @@
         .cf-form-box-error(cf-error-path="['fields']")
 .tab-actions(ng-controller="ContentTypeActionsCtrl")
   .button-set
-    %button.btn.btn--default.deactivate(type="button"
+    %button.btn.btn--secondary.deactivate(type="button"
                   ng-show="canUnpublish()"
                   ng-click="unpublish()"
                   tooltip="Deactivate this Content Type")
       Deactivate
 
-    %button.btn.btn--default.btn--danger.delete-confirm(type="button"
+    %button.btn.btn--secondary.btn--danger.delete-confirm(type="button"
                   cf-click-outside="deleteConfirm=false"
                   cf-click-outside-ignore=".delete"
                   cf-click-outside-when="deleteConfirm"
@@ -96,7 +98,7 @@
                   ng-click="delete()"
                   tooltip="Click anywhere else to dismiss")
       Are you sure?
-    %button.btn.btn--default.delete(type="button"
+    %button.btn.btn--secondary.delete(type="button"
                   ng-show="canDelete() && !deleteConfirm"
                   ng-click="deleteConfirm=true" 
                   tooltip="Delete this Content Type")

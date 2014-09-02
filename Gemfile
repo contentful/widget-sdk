@@ -21,7 +21,6 @@ group :assets do
 end
 
 group :development do
-  gem 'debugger'
   gem 'quiet_assets'
 end
 

@@ -65,7 +65,7 @@ feature 'Entry Editor', js: true do
     expect(page).to have_selector('.form-field[data-field-id=textField] textarea')
     expect(page).to have_selector('.form-field[data-field-id=localizedField] .locale[data-locale="en-US"] textarea')
 
-    find('.editor-top-right .dropdown-toggle').click
+    find('.entity-editor__top_right .dropdown-toggle').click
     find('label', text: 'German').click
     expect(page).to have_selector('.form-field[data-field-id=textField] textarea')
     expect(page).to have_selector('.form-field[data-field-id=localizedField] .locale[data-locale="en-US"] textarea')

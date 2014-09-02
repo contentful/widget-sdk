@@ -1,18 +1,21 @@
 .tab-header.editor-configuration
-  %h1(title="{{headline()}}") {{headline()}}
-  %a.cf-knowledge-base-icon(
-    tooltip="Learn more about Entries in the Knowledge Base Pages"
-    analytics-event="entries"
-    href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
-  .editor-top-right
-    %button.btn.btn--flat(type="button"
+  .tab-header__title
+    %h1(title="{{headline()}}")
+      {{headline()}}
+      %a.cf-knowledge-base-icon(
+        tooltip="Learn more about Entries in the Knowledge Base Pages"
+        analytics-event="entries"
+        href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
+
+  .tab-header__actions
+    %button.btn.btn--tertiary(type="button"
             ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
             tooltip-placement="bottom")
       Info
     .dropdown-btn(cf-dropdown)
-      %button.btn.btn--flat(cf-dropdown-toggle)
+      %button.btn.btn--tertiary(cf-dropdown-toggle)
         %i.ss-dropdown.button-icon-right
         %span View
       .dropdown-menu(cf-dropdown-menu="" position="bottomcenter")
@@ -63,7 +66,7 @@
 .tab-actions(ng-controller="EntryActionsCtrl")
   .button-set
     .dropdown-btn(cf-dropdown="" on-close="deleteConfirm=false; disableTooltip=false" ng-show="canDelete() || canDuplicate()")
-      %button.btn.btn--flat(cf-dropdown-toggle="" tooltip="More actions" ng-click="disableTooltip=true")
+      %button.btn.btn--tertiary(cf-dropdown-toggle="" tooltip="More actions" ng-click="disableTooltip=true")
         %i.ss-directup.button-icon-right
         More
       .dropdown-menu(cf-dropdown-menu="" position="top")
@@ -71,9 +74,9 @@
           %li.dropdown-menu-item.duplicate(type="button" ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this Entry" dropdown-close) Duplicate
           %li.dropdown-menu-item.delete-confirm.btn--danger(type="button" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss" dropdown-close) Are you sure?
           %li.dropdown-menu-item.delete(type="button" ng-show="canDelete() && !deleteConfirm" ng-click="deleteConfirm=true" tooltip="Permanently delete this Entry") Delete
-    %button.btn.btn--default.archive(type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry") Archive
-    %button.btn.btn--default.archive(type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry") Unarchive
-    %button.btn.btn--default.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry") Unpublish
+    %button.btn.btn--secondary.archive(type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry") Archive
+    %button.btn.btn--secondary.archive(type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry") Unarchive
+    %button.btn.btn--secondary.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry") Unpublish
     %button.btn.btn--primary.publish(type="submit" ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Entry") {{publishButtonLabel()}}
   .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
                tooltip-placement="top")
@@ -86,7 +89,7 @@
                          link="link" as="presenceUser"
                          tooltip="{{presenceUser | userNameDisplay:user}}")
         %img(ng-src="{{presenceUser.data.avatarUrl}}")
-    %a.btn.btn--default.invite-users(
+    %a.btn.btn--secondary.invite-users(
       href="" ng-click="navigator.spaceSettings('/users/new').goTo()"
       tooltip="Add a user to this space")
       %i.ss-users
