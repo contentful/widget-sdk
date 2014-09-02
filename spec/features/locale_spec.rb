@@ -37,8 +37,8 @@ feature 'Working with locales', js: true do
 
     add_button 'Entry with Text'
     wait_for_sharejs
-    find('.editor-top-right .dropdown-toggle').click
-    expect(find('.editor-top-right .dropdown-menu')).to_not have_text('French')
+    find('.entity-editor__top_right .dropdown-toggle').click
+    expect(find('.entity-editor__top_right .dropdown-menu')).to_not have_text('French')
     find('label', text: 'German').click
     expect(page).to have_selector('div[data-locale="de-DE"]')
   end

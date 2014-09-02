@@ -1,11 +1,13 @@
 .tab-header.editor-configuration
-  %h1 {{contentType.getName()}}
-  %a.cf-knowledge-base-icon(
-    tooltip="Learn more about Content Types in the Knowledge Base Pages"
-    analytics-event="content_types"
-    href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
+  .tab-header__title
+    %h1
+      {{contentType.getName()}}
+      %a.cf-knowledge-base-icon(
+        tooltip="Learn more about Content Types in the Knowledge Base Pages"
+        analytics-event="content_types"
+        href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
 
-  .editor-top-right
+  .tab-header__actions
     %button.btn.btn--flat(type="button"
             ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"

@@ -1,10 +1,13 @@
 .tab-header.editor-configuration
-  %h1(title="{{headline()}}") {{headline()}}
-  %a.cf-knowledge-base-icon(
-    tooltip="Learn more about Assets in the Knowledge Base Pages"
-    analytics-event="assets"
-    href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
-  .editor-top-right
+  .tab-header__title
+    %h1(title="{{headline()}}")
+      {{headline()}}
+      %a.cf-knowledge-base-icon(
+        tooltip="Learn more about Assets in the Knowledge Base Pages"
+        analytics-event="assets"
+        href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
+
+  .tab-header__actions
     %button.btn.btn--flat(type="button"
             ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"

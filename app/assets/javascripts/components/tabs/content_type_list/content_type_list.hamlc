@@ -1,16 +1,17 @@
 .tab-header
-  .tab-title
-    %h1 Content Types
-    %a.cf-knowledge-base-icon(
-      tooltip="Learn more about Content Types in the Knowledge Base Pages"
-      tooltip-container=".entity-list"
-      analytics-event="content_types"
-      href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
+  .tab-header__title
+    %h1
+      Content Types
+      %a.cf-knowledge-base-icon(
+        tooltip="Learn more about Content Types in the Knowledge Base Pages"
+        tooltip-container=".entity-list"
+        analytics-event="content_types"
+        href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
 
-  .search-area
+  .tab-header__search.search-area
     .search-field(cf-search="searchTerm" placeholder="Search for Content Types")
 
-  .add-entity(ng-hide="empty")
+  .tab-header__actions.add-entity(ng-hide="empty")
     %button.btn.btn--primary(cf-can="create, ContentType" ng-click="createContentType('frameButton')")
       %i.ss-plus.button-icon
       Add Content Type
