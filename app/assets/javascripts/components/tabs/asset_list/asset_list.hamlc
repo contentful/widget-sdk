@@ -99,9 +99,9 @@
 .tab-actions
   .label {{selection.size()}} Assets selected
   .button-set(ng-controller="AssetListActionsCtrl"   ng-hide="selection.isEmpty()")
-    %button.btn.btn--default.btn--danger.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" cf-click-outside-when="deleteConfirm" ng-show="deleteConfirm" ng-click="deleteSelected()" tooltip="Click anywhere else to dismiss") Are you sure?
-    %button.btn.btn--default.delete(type="button" ng-click="deleteConfirm=true" tooltip="Permanently delete these Assets" ng-show="showDelete() && !deleteConfirm") Delete
-    %button.btn.btn--default.archive(type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
-    %button.btn.btn--default.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
-    %button.btn.btn--default.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
-    %button.btn.btn--default.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}
+    %button.btn.btn--secondary.btn--danger.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" cf-click-outside-when="deleteConfirm" ng-show="deleteConfirm" ng-click="deleteSelected()" tooltip="Click anywhere else to dismiss") Are you sure?
+    %button.btn.btn--secondary.delete(type="button" ng-click="deleteConfirm=true" tooltip="Permanently delete these Assets" ng-show="showDelete() && !deleteConfirm") Delete
+    %button.btn.btn--secondary.archive(type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
+    %button.btn.btn--secondary.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
+    %button.btn.btn--secondary.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
+    %button.btn.btn--secondary.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}

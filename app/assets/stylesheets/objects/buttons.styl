@@ -43,25 +43,23 @@
 input.btn--input
   padding: 0.6em 1em
 
-// Default button
+// Secondary button
 // 
-// Default button theme, with hover, active and disabled states
+// Secondary button theme, with hover, active and disabled states
 //
 // Markup:
-// <p><button class="btn btn--default {$modifiers}">Default</button></p>
-// <p><button class="btn btn--default {$modifiers}" disabled>Default</button></p>
-// 
-// .active - active state
+// <p><button class="btn btn--secondary {$modifiers}">secondary</button></p>
+// <p><button class="btn btn--secondary {$modifiers}" disabled>secondary</button></p>
 //
-// Styleguide 2.2
-.btn--default
+// Styleguide 2.3
+.btn--secondary
   $colored-button(
     $metallic-gray-dark,
-    $gray-lightest,
-    $gray-gradient-from,
-    $gray-gradient-to,
+    $secondary-bg,
+    $secondary-gradient-from,
+    $secondary-gradient-to,
     $metallic-gray,
-    white,
+    $secondary-shadow,
     $gray,
     $gray-medium-light
   )
@@ -73,19 +71,22 @@ input.btn--input
 // Markup:
 // <p><button class="btn btn--tertiary {$modifiers}">Tertiary</button></p>
 // <p><button class="btn btn--tertiary {$modifiers}" disabled>Tertiary</button></p>
+// 
+// .active - active state
 //
-// Styleguide 2.3
+// Styleguide 2.2
 .btn--tertiary
   $colored-button(
     $metallic-gray-dark,
-    $tertiary-bg,
-    $tertiary-gradient-from,
-    $tertiary-gradient-to,
+    $gray-lightest,
+    $gray-gradient-from,
+    $gray-gradient-to,
     $metallic-gray,
-    $tertiary-shadow,
+    white,
     $gray,
     $gray-medium-light
   )
+
 
 // Flat button
 // 
@@ -96,6 +97,7 @@ input.btn--input
 // <p><button class="btn btn--flat {$modifiers}" disabled>Flat</button></p>
 //
 // .active - active state
+/*
 .btn--flat
   color: $gray-medium
   background: inherit
@@ -107,6 +109,7 @@ input.btn--input
     &:active,
     &.active
       border-color: darken($gray-light, 30)
+      */
 
 // Primary button
 // 

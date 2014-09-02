@@ -1,4 +1,4 @@
-%button.back.btn.btn--flat(ng-click="resetImageView()") &larr; Back
+%button.back.btn.btn--tertiary(ng-click="resetImageView()") &larr; Back
 
 .preview
   %img(ng-src="{{imageDetail.UrlPreview}}")
