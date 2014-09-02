@@ -58,7 +58,7 @@ describe('apiKeyEditor Directive', function () {
       }
     };
     compileElement();
-    expect(element.find('.tab-header h1').html()).toBe('headline text');
+    expect(element.find('.tab-header h1').html()).toMatch('headline text');
   });
 
   describe('with no existing access token', function () {
