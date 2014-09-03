@@ -1,0 +1,24 @@
+.delete-confirm
+  position: absolute
+  z-index: 1000
+  min-width: 260px
+  padding: 20px 30px
+  background-color: white
+  text-align: center
+  border-radius: 3px
+  font-size: $base-font-size
+  box-shadow: 0 1px 1px $gray-dark, 1px 0 1px $gray-dark
+  border-style: solid
+  border-color: $gray
+  border-top-width: 1px
+  border-left-width: 1px
+  > p
+    margin-bottom: 20px
+
+.delete-confirm.bottom-caret:before
+  bottom: -14px
+  font-size: 12px
+  text-shadow: 0 1px 1px $gray-dark
+
+.delete-confirm.no-caret.bottom-caret:before
+  display: none

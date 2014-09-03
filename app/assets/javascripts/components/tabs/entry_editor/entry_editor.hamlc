@@ -64,15 +64,19 @@
 
 .tab-actions(ng-controller="EntryActionsCtrl")
   .button-set
-    .dropdown-btn(cf-dropdown="" on-close="deleteConfirm=false; disableTooltip=false" ng-show="canDelete() || canDuplicate()")
-      %button.btn.btn--tertiary(cf-dropdown-toggle="" tooltip="More actions" ng-click="disableTooltip=true")
+    .dropdown-btn(cf-dropdown="actions" ng-show="canDelete() || canDuplicate()")
+      %button.btn.btn--tertiary(cf-dropdown-toggle="actions")
         %i.ss-directup.button-icon-right
         More
-      .dropdown-menu(cf-dropdown-menu="" position="top")
-        %ul.dropdown-menu-list
+      .dropdown-menu(cf-dropdown-menu="actions" position="top")
+        %ul.dropdown-menu-list(cf-dropdown="confirm")
           %li.dropdown-menu-item.duplicate(type="button" ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this Entry" dropdown-close) Duplicate
-          %li.dropdown-menu-item.delete-confirm.btn--danger(type="button" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss" dropdown-close) Are you sure?
-          %li.dropdown-menu-item.delete(type="button" ng-show="canDelete() && !deleteConfirm" ng-click="deleteConfirm=true" tooltip="Permanently delete this Entry") Delete
+          %li.dropdown-menu-item.delete(type="button" ng-show="canDelete()" cf-dropdown-toggle="confirm") Delete
+          .delete-confirm.no-caret(cf-dropdown-menu="confirm" position="topcenter")
+            %p You are about to delete {{headline()}}
+            %button.btn.btn--danger(type="button" ng-click="delete()" dropdown-close="") Delete 
+            %button.btn.btn--secondary(type="button" dropdown-close="") Don't Delete 
+
     %button.btn.btn--secondary.archive(type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry") Archive
     %button.btn.btn--secondary.archive(type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry") Unarchive
     %button.btn.btn--secondary.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry") Unpublish

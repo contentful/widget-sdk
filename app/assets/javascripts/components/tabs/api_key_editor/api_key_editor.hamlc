@@ -122,19 +122,12 @@
                   var client = CDAClient(spaceKey:"{{spaceContext.space.getId()}}", accessToken:"{{apiKey.data.accessToken}}")
 
 .tab-actions
-  .button-set
-    %button.btn.btn--secondary.btn--danger.delete-confirm(type="button"
-                   cf-click-outside="deactivateDeleteConfirm()"
-                   cf-click-outside-ignore=".delete"
-                   cf-click-outside-when="deleteConfirm"
-                   ng-show="deleteConfirm"
-                   ng-click="delete()"
-                   tooltip="Click anywhere else to dismiss") Are you sure?
-    %button.btn.btn--secondary.delete(type="button"
-                   tooltip="Permanently delete this API key"
-                   ng-click="activateDeleteConfirm()"
-                   ng-show="apiKey.getId() && !deleteConfirm")
-      Delete
+  .button-set(cf-dropdown)
+    %button.btn.btn--secondary.delete(type="button" ng-show="apiKey.getId()" cf-dropdown-toggle) Delete
+    .delete-confirm(cf-dropdown-menu="" position="topcenter")
+      %p You are about to delete {{headline}}
+      %button.btn.btn--danger(type="button" ng-click="delete()" dropdown-close="") Delete 
+      %button.btn.btn--secondary(type="button" dropdown-close="") Don't Delete 
     %button.btn.btn--primary.save(type="submit"
                  tooltip="Save this API key"
                  ng-click="save()"
