@@ -98,9 +98,12 @@
 
 .tab-actions
   .label {{selection.size()}} Assets selected
-  .button-set(ng-controller="AssetListActionsCtrl"   ng-hide="selection.isEmpty()")
-    %button.btn.btn--secondary.btn--danger.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" cf-click-outside-when="deleteConfirm" ng-show="deleteConfirm" ng-click="deleteSelected()" tooltip="Click anywhere else to dismiss") Are you sure?
-    %button.btn.btn--secondary.delete(type="button" ng-click="deleteConfirm=true" tooltip="Permanently delete these Assets" ng-show="showDelete() && !deleteConfirm") Delete
+  .button-set(ng-controller="AssetListActionsCtrl" ng-hide="selection.isEmpty()" cf-dropdown)
+    %button.btn.btn--secondary.delete(type="button" ng-show="showDelete()" cf-dropdown-toggle) Delete
+    .delete-confirm(cf-dropdown-menu="" position="topcenter")
+      %p You are about to delete {{selection.size()}} Assets
+      %button.btn.btn--danger(type="button" ng-click="deleteSelected()" dropdown-close="") Delete 
+      %button.btn.btn--secondary(type="button" dropdown-close="") Don't Delete 
     %button.btn.btn--secondary.archive(type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
     %button.btn.btn--secondary.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
     %button.btn.btn--secondary.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish

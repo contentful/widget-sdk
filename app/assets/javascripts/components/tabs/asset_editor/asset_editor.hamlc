@@ -55,9 +55,12 @@
         .cf-form-box-error(cf-error-path="['fields', widget.field.id]")
 
 .tab-actions(ng-controller="AssetActionsCtrl")
-  .button-set
-    %button.btn.btn--secondary.btn--danger.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" cf-click-outside-when="deleteConfirm" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss") Are you sure?
-    %button.btn.btn--secondary.delete(   type="button" ng-show="canDelete() && !deleteConfirm" ng-click="deleteConfirm=true" tooltip="Permanently delete this Asset") Delete
+  .button-set(cf-dropdown)
+    %button.btn.btn--secondary.delete(   type="button" ng-show="canDelete()" cf-dropdown-toggle) Delete
+    .delete-confirm(cf-dropdown-menu="" position="topcenter")
+      %p You are about to delete {{headline()}}
+      %button.btn.btn--danger(type="button" ng-click="delete()" dropdown-close="") Delete 
+      %button.btn.btn--secondary(type="button" dropdown-close="") Don't Delete 
     %button.btn.btn--secondary.archive(  type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
     %button.btn.btn--secondary.archive(  type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
     %button.btn.btn--secondary.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish
