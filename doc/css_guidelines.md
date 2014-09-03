@@ -27,6 +27,19 @@ very recommended.
   bin/css-tests.js (**TODO**: add more info on setup)
 - **TODO** outline use of KSS
 
+## Fonts
+
+TODO: this should also go in the styleguide
+
+https://www.google.com/fonts/specimen/Lato 13px
+Currently imported variants: 
+* 300
+* 300italic
+* 400
+* 400italic
+* 700
+* 700italic
+
 ## Syntax
 
 Because we are using Stylus which is very liberal in its syntax, the

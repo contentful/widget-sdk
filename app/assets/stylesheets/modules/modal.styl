@@ -18,31 +18,28 @@ $modal-dialog-padding = 20px
 .modal-dialog,
 $modal-dialog-chrome
   background-color: white
-  border: 1px solid $light-gray
+  border: 1px solid $gray
   border-radius: 3px
   box-shadow: 0 2px 6px rgba(0,0,0,0.1)
   line-height: 15px
 
-.modal-dialog .text,
-$modal-dialog-text
-  font-size: 12px
 .modal-dialog .title,
 $modal-dialog-title
   font-size: 14px
-  font-weight: 600
+  font-weight: bold
   color: black
-  border-bottom: 1px solid $light-rule
+  border-bottom: 1px solid $gray-lightest
   margin: -($modal-dialog-padding)
   margin-bottom: 0
   padding: $modal-dialog-padding
-  background: $gray-background
+  background: $gray-lightest
 
 .close-button
-  color: $lightest-gray
+  color: $gray-light
   cursor: pointer
-  font-weight: 200
+  font-weight: lighter
   &:hover
-    color: $light-gray
+    color: $gray
   &:after
     content: '×'
     font-size: 30px
@@ -63,7 +60,7 @@ $modal-dialog-content
   margin: $modal-dialog-padding 0
 .modal-dialog .buttons,
 $modal-dialog-buttons
-  border-top: 1px solid $light-rule
+  border-top: 1px solid $gray-lightest
   margin-left: -($modal-dialog-padding)
   margin-right: -($modal-dialog-padding)
   padding-right: $modal-dialog-padding

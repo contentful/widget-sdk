@@ -1,22 +1,24 @@
 .tab-header.editor-configuration
-  %h1 {{contentType.getName()}}
-  %a.cf-knowledge-base-icon(
-    tooltip="Learn more about Content Types in the Knowledge Base Pages"
-    analytics-event="content_types"
-    href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
+  .tab-header__title
+    %h1
+      {{contentType.getName()}}
+      %a.cf-knowledge-base-icon(
+        tooltip="Learn more about Content Types in the Knowledge Base Pages"
+        analytics-event="content_types"
+        href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
 
-  .editor-top-right
-    %button.btn.btn--flat(type="button"
+  .tab-header__actions
+    %button.btn.btn--tertiary(type="button"
             ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
             tooltip-placement="bottom")
       Info
     .dropdown-btn(cf-dropdown)
-      %a.btn.btn--flat.dropdown-toggle(cf-dropdown-toggle)
+      %button.btn.btn--tertiary(cf-dropdown-toggle)
         %i.ss-dropdown.button-icon-right
         %span View
-      .dropdown-menu(cf-dropdown-menu)
+      .dropdown-menu(cf-dropdown-menu="" position="bottomcenter")
         %ul.dropdown-menu-list
           %li.dropdown-menu-item
             %label 
@@ -33,7 +35,7 @@
     .l-form-field
       %label
         Name
-        %sup *
+        %sup (required)
       .form-controls(ot-path="['name']" ot-subdoc)
         .l-field-editor
           %input.form-control(type="text"
@@ -76,26 +78,17 @@
           .dropdown-menu.type-menu(cf-dropdown-menu="" select-type="addField(type)")
         .cf-form-box-error(cf-error-path="['fields']")
 .tab-actions(ng-controller="ContentTypeActionsCtrl")
-  .button-set
-    %button.btn.btn--default.deactivate(type="button"
+  .button-set(cf-dropdown)
+    %button.btn.btn--secondary.deactivate(type="button"
                   ng-show="canUnpublish()"
                   ng-click="unpublish()"
                   tooltip="Deactivate this Content Type")
       Deactivate
-
-    %button.btn.btn--default.btn--danger.delete-confirm(type="button"
-                  cf-click-outside="deleteConfirm=false"
-                  cf-click-outside-ignore=".delete"
-                  cf-click-outside-when="deleteConfirm"
-                  ng-show="deleteConfirm"
-                  ng-click="delete()"
-                  tooltip="Click anywhere else to dismiss")
-      Are you sure?
-    %button.btn.btn--default.delete(type="button"
-                  ng-show="canDelete() && !deleteConfirm"
-                  ng-click="deleteConfirm=true" 
-                  tooltip="Delete this Content Type")
-      Delete
+    %button.btn.btn--secondary.delete(type="button" ng-show="canDelete()" cf-dropdown-toggle) Delete
+    .delete-confirm(cf-dropdown-menu="" position="topcenter")
+      %p You are about to delete {{contentType.getName()}}
+      %button.btn.btn--danger(type="button" ng-click="delete()" dropdown-close="") Delete 
+      %button.btn.btn--secondary(type="button" dropdown-close="") Don't Delete 
     %button.btn.btn--primary.publish(
                   ng-disabled="!canPublish()"
                   ng-click="publish()"

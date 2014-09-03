@@ -58,7 +58,7 @@ describe('apiKeyEditor Directive', function () {
       }
     };
     compileElement();
-    expect(element.find('.tab-header h1').html()).toBe('headline text');
+    expect(element.find('.tab-header h1').html()).toMatch('headline text');
   });
 
   describe('with no existing access token', function () {
@@ -100,68 +100,6 @@ describe('apiKeyEditor Directive', function () {
     stubs.can.withArgs('create', 'ApiKey').returns(true);
     compileElement();
     expect(element.find('.tab-actions .delete').attr('disabled')).toBeUndefined();
-  });
-
-  describe('delete confirmation button is toggled', function() {
-    var idStub;
-
-    beforeEach(function() {
-      idStub = sinon.stub();
-      scope.tab.params.apiKey = {
-        getId: idStub
-      };
-      idStub.returns(1);
-      stubs.can.withArgs('create', 'ApiKey').returns(true);
-    });
-
-    describe('on the default state', function() {
-      beforeEach(function() {
-        compileElement();
-      });
-
-      it('delete button is shown', function() {
-        expect(element.find('button.delete')).not.toBeNgHidden();
-      });
-
-      it('confirm delete button is not shown', function() {
-        expect(element.find('button.delete-confirm')).toBeNgHidden();
-      });
-    });
-
-    describe('after toggled', function() {
-      beforeEach(function() {
-        compileElement();
-        scope.activateDeleteConfirm();
-        scope.$digest();
-      });
-
-      it('delete button is shown', function() {
-        expect(element.find('button.delete')).toBeNgHidden();
-      });
-
-      it('confirm delete button is not shown', function() {
-        expect(element.find('button.delete-confirm')).not.toBeNgHidden();
-      });
-    });
-
-    describe('on the default state after toggled back', function() {
-      beforeEach(function() {
-        compileElement();
-        scope.activateDeleteConfirm();
-        scope.$digest();
-        scope.deactivateDeleteConfirm();
-        scope.$digest();
-      });
-
-      it('delete button is shown', function() {
-        expect(element.find('button.delete')).not.toBeNgHidden();
-      });
-
-      it('confirm delete button is not shown', function() {
-        expect(element.find('button.delete-confirm')).toBeNgHidden();
-      });
-    });
-
   });
 
   it('save button is disabled', function () {

@@ -10,12 +10,12 @@
   padding: $modal-dialog-padding
   margin: 0
   position: relative
-  border-color: $medium-gray
+  border-color: $gray-medium
   box-shadow: 0 2px 60px rgba(0, 0, 0, 0.4)
 
 h1.guiders_title
   @extend $modal-dialog-title
-  $blue-highlight()
+  $highlight($blue)
   color: white
   border-bottom: none
 
@@ -51,8 +51,8 @@ $guider-size = 10px
   height: $guider-size
   background-color: $blue
   position: absolute
-  border-top: 1px solid $medium-gray
-  border-left: 1px solid $medium-gray
+  border-top: 1px solid $gray-medium
+  border-left: 1px solid $gray-medium
   display: none
 .guiders_arrow_left
   display: block
@@ -87,7 +87,7 @@ $welcome-slide-width = 800px
     height: 600px
 
 .welcome-slide
-  border-top: 1px solid $dark-rule
+  border-top: 1px solid $gray-light
   margin: -($modal-dialog-padding)
   margin-bottom: $modal-dialog-padding
   font-size: 110%
@@ -97,7 +97,7 @@ $welcome-slide-width = 800px
 .welcome-title
   @extend $modal-dialog-title
   color: white
-  $blue-highlight()
+  $highlight($blue)
   position: absolute
   top: 0
   left: 0
@@ -117,7 +117,7 @@ $welcome-slide-width = 800px
   font-size: 120%
   font-weight: bold
   margin-bottom: 1em
-  color: $dark-gray
+  color: $gray-darkest
 .welcome-image
   background-size: 100%
   background-repeat: no-repeat
@@ -136,7 +136,7 @@ $welcome-slide-width = 800px
   float: left
 .welcome-right
   float: right
-  border-left: 1px solid $dark-rule
+  border-left: 1px solid $gray-light
 
 // Adjustments for center
 .welcome-center
@@ -178,11 +178,11 @@ $welcome-slide-width = 800px
   right: 0
   bottom: 1.5 * $modal-dialog-padding
   .dot
-    color: $lightest-gray
+    color: $gray-light
     padding: .5em
     cursor: pointer
   .dot.active
-    color: $light-gray
+    color: $gray
     cursor: default
 .nav-left
   left: 0
@@ -198,23 +198,23 @@ $welcome-slide-width = 800px
   &:hover
     .nav-arrow-left,
     .nav-arrow-right
-      border-color: $dark-gray
+      border-color: $gray-darkest
 .nav-arrow-left,
 .nav-arrow-right
   position: absolute
   top: 50%
   width: 20px
   height: 20px
-  border-top: 3px solid $light-gray
+  border-top: 3px solid $gray
   cursor: pointer
 .nav-arrow-right
   transform: rotate(45deg)
   right: 20px
-  border-right: 3px solid $light-gray
+  border-right: 3px solid $gray
 .nav-arrow-left
   transform: rotate(-45deg)
   left: 20px
-  border-left: 3px solid $light-gray
+  border-left: 3px solid $gray
 .hide-x-button
   position: absolute
   top: 0
@@ -222,7 +222,7 @@ $welcome-slide-width = 800px
   height: 54px
   width: 40px
   color: white
-  $blue-highlight()
+  $highlight($blue)
 
 //  Tutorial-Boxes  //////////////////////////////////////////////////////////////////
 
@@ -239,11 +239,11 @@ $welcome-slide-width = 800px
     padding: ($modal-dialog-padding/2) (1.5 * $modal-dialog-padding)
   .left,
   .middle
-    border-right: 1px solid $light-rule
+    border-right: 1px solid $gray-lightest
   .background-icon
     display: block
     line-height: 60px
-    color: $light-gray
+    color: $gray
     font-size: 60px
     text-align: center
     margin-top: 3 * $modal-dialog-padding
@@ -265,11 +265,11 @@ $welcome-slide-width = 800px
 .guider#contentTypeFields
   li
     i
-      color: $lightest-gray
+      color: $gray-light
   li.done
-    color: $lightest-gray
+    color: $gray-light
     strong
-      color: $lightest-gray
+      color: $gray-light
     i
       color: $green
 

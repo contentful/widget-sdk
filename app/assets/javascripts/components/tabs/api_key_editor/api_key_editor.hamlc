@@ -1,11 +1,14 @@
 .tab-header.editor-configuration
-  %h1(title="{{headline}}") {{headline}}
-  %a.cf-knowledge-base-icon(
-    tooltip="Learn more about API Keys in the Knowledge Base Pages"
-    analytics-event="api_keys"
-    href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
-  .editor-top-right
-    %button.btn.btn--flat(type="button"
+  .tab-header__title
+    %h1(title="{{headline}}")
+      {{headline}}
+      %a.cf-knowledge-base-icon(
+        tooltip="Learn more about API Keys in the Knowledge Base Pages"
+        analytics-event="api_keys"
+        href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
+
+  .tab-header__actions
+    %button.btn.btn--tertiary(type="button"
             ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
@@ -23,13 +26,13 @@
   -#.note-box(ng-if="notes.isActive('content-delivery-api-key')")
     %h2 Content Delivery API Key
     %p The Content Delivery API is a REST API for delivering content from the Contentful platform to your apps, websites and other media. To activate the API you need to generate at least one API key. Just fill out the title and description fields below and we will auto-generate an access token for you when you 'Save'.
-    %p We recommend using one key per supported device. For example, if you plan to serve content to a website, iPhone 8, iPad 7 and Android app, then you would generate four API keys. 
+    %p We recommend using one key per supported device. For example, if you plan to serve content to a website, iPhone 8, iPad 7 and Android app, then you would generate four API keys.
     %p.note-box-dismissal
-      %button.btn.btn--default(href="" ng-click="notes.dismiss('content-delivery-api-key')") Ok, got it
+      %button.btn.btn--secondary(href="" ng-click="notes.dismiss('content-delivery-api-key')") Ok, got it
   .ng-form.l-form-horizontal(name="apiKeyForm" submit="save()")
     .l-form-field
       %label Name
-        %sup *
+        %sup (required)
       .form-controls
         .l-field-editor
           %input.form-control(type="text" ng-model="apiKey.data.name" required="" ng-disabled="!editable()" placeholder="iOS iPad Application")
@@ -43,15 +46,15 @@
       .form-controls
         .l-field-editor
           %input.form-control.space-id(type="text" value="{{spaceContext.space.getId()}}" readonly="readonly")
-          %a.btn.btn--default.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".space-id")
+          %a.btn.btn--secondary.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".space-id")
             %i.ss-layers
             %i.ss-plus
     .l-form-field
       %label Access Token
       .form-controls
         .l-field-editor
-          %input.form-control.access-token.cf-select-all-input(type="text" ng-model="apiKey.data.accessToken" ng-show="apiKey.data.accessToken")
-          %a.btn.btn--default.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token" ng-show="apiKey.data.accessToken")
+          %input.form-control.access-token.cf-select-all-input(type="text" ng-model="apiKey.data.accessToken" ng-show="apiKey.data.accessToken" readonly="readonly")
+          %a.btn.btn--secondary.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token" ng-show="apiKey.data.accessToken")
             %i.ss-layers
             %i.ss-plus
           %input.form-control(type="text" ng-hide="apiKey.data.accessToken" readonly="readonly" value="Save this API Key to generate an OAuth Access Token and access your data.")
@@ -76,7 +79,7 @@
           %hr
           %h1 Authentication Code
           .tools
-            .btn.btn--flat.select-box
+            .btn.btn--tertiary.select-box
               %select(ng-model="authCodeExampleLang")
                 %option(value="http" selected) HTTP (Curl)
                 %option(value="javascript") JavaScript
@@ -119,19 +122,12 @@
                   var client = CDAClient(spaceKey:"{{spaceContext.space.getId()}}", accessToken:"{{apiKey.data.accessToken}}")
 
 .tab-actions
-  .button-set
-    %button.btn.btn--default.btn--danger.delete-confirm(type="button"
-                   cf-click-outside="deactivateDeleteConfirm()"
-                   cf-click-outside-ignore=".delete"
-                   cf-click-outside-when="deleteConfirm"
-                   ng-show="deleteConfirm"
-                   ng-click="delete()"
-                   tooltip="Click anywhere else to dismiss") Are you sure?
-    %button.btn.btn--default.delete(type="button"
-                   tooltip="Permanently delete this API key"
-                   ng-click="activateDeleteConfirm()"
-                   ng-show="apiKey.getId() && !deleteConfirm")
-      Delete
+  .button-set(cf-dropdown)
+    %button.btn.btn--secondary.delete(type="button" ng-show="apiKey.getId()" cf-dropdown-toggle) Delete
+    .delete-confirm(cf-dropdown-menu="" position="topcenter")
+      %p You are about to delete {{headline}}
+      %button.btn.btn--danger(type="button" ng-click="delete()" dropdown-close="") Delete 
+      %button.btn.btn--secondary(type="button" dropdown-close="") Don't Delete 
     %button.btn.btn--primary.save(type="submit"
                  tooltip="Save this API key"
                  ng-click="save()"

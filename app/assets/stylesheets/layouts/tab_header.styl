@@ -1,27 +1,50 @@
-$tab-header-title()
-  h1
-    display: inline-block
-    font-size: $tab-header-font-size
-    margin-right: 10px
-    margin-top: 0px
-    color: $dark-gray
-    padding-left: 25px
-    vertical-align: middle
-
 .tab-header
   $stretch(0, 0, false, 0)
+  $display-flexbox()
   height: $tab-header-height
   border-radius: 3px 3px 0 0
-  border-bottom: 1px solid $lightest-gray
-  background-color: $gray-background
+  border-bottom: 1px solid $gray-light
+  background-color: $gray-lightest
   box-shadow: 0 1px 4px rgba(0,0,0,0.07)
   z-index: 10
-  $tab-header-title()
-  h1
-    line-height: $tab-header-line-height
   .knowledge-base-icon
+    padding-left: 10px
     vertical-align: middle
     font-size: $tab-header-font-size
     line-height: $tab-header-line-height
+
+.tab-header__title
+  width: $left-nav-width
+  > h1
+    width: 100%
+    display: inline-block
+    margin-right: 10px
+    margin-top: 0px
+    padding-left: 25px
+    vertical-align: middle
+    font-size: $tab-header-font-size
+    line-height: $tab-header-line-height
+    color: $gray-darkest
+    white-space: nowrap
+
+.tab-header__search
+  flex-basis: 60%
+  flex-grow: 3
+  max-width: 1100px
+  height: $tab-header-height
+  padding: $tab-header-padding 0
+  padding-right: 20px
+
+.tab-header__actions
+  $display-flexbox()
+  justify-content: flex-end
+  align-items: center
+  margin-left: auto
+  > *
+    margin-right: 25px
+  .btn--primary // TODO turn into u-truncated or move to btn base
+    overflow: hidden
+    white-space: nowrap
+    text-overflow: ellipsis
 
 

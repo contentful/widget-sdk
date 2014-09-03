@@ -8,7 +8,6 @@
     height: $nav-bar-height
     font-weight: $nav-bar-font-weight
     text-align: right
-  .dropdown-toggle
     float: right
     line-height: 27px
     padding: 10px 10px 0px
@@ -27,7 +26,7 @@
   $nav-bar-dropdowns()
   .dropdown-group
     > li
-      color: $light-gray
+      color: $gray
       span, .ss-users
         font-size: 1.1em
         font-weight: bold
@@ -38,7 +37,7 @@
     top: 45px
     .account-header
       color: white
-      font-weight: 600
+      font-weight: bold
       padding: 2px 12px 6px
       margin-bottom: 0px
   .project,
@@ -55,9 +54,9 @@
     .tooltip
       margin-left: -75px
     .hibernated
-      color: $medium-gray
+      color: $gray-medium
       &:hover
-        color: $lightest-gray
+        color: $gray-light
     .ss-record
       font-size: 7px
       float: right
@@ -77,7 +76,7 @@
   .project.active,
   .user.active
     padding-top: 1px
-    background: darken($dark-gray, 10%)
+    background: darken($gray-darkest, 10%)
 
 .cf-account-view
   &.with-tab-bar
@@ -94,7 +93,7 @@
   margin-right: 10px
   margin-top: 5px
   color: white
-  background-color: darken($dark-gray, 5%)
+  background-color: darken($gray-darkest, 5%)
   padding: 0px 11px 5px
   border-radius: 3px
   $bottom-white-shadow = rgba(255,255,255,0.2) 0px 1px

@@ -4,12 +4,14 @@
   box-sizing(border-box)
 
 body
-  font-family: 'Open Sans', Arial, sans-serif
-  font-size: 12px
+  font-family: Lato, Arial, sans-serif
+  text-rendering: optimizeLegibility
+  font-size: $base-font-size
   line-height: 18px
-  color: $medium-gray
-  background: url("/app/bg.jpg")
-  background-size: 200px 150px
+  color: $gray-darkest
+  background-image: url("/app/bg.jpg")
+  background-repeat: repeat
+  background-size: 200px 149px
   overflow: hidden
 
 button,
@@ -26,16 +28,19 @@ table
   border-collapse: separate
 
 a
-  color: $link-blue
+  color: $blue-link
   text-decoration: none
   &:link
-    color: $link-blue
+    color: $blue-link
     text-decoration: none
   &:hover
-    color: $dark-link-blue
+    color: $blue-dark-link
+
+i
+  font-style: normal
 
 h1, h2, h3, h4, h5, h6
-  color: $dark-gray
+  color: $gray-darkest
   line-height: 1em
   font-weight: bold
   margin: 18px 0 8px
@@ -52,7 +57,7 @@ h3
 
 hr
   height: 1px
-  background-color: $light-rule
+  background-color: $gray-lightest
   margin: 30px 0
   border: none
 
@@ -71,13 +76,13 @@ ol
     margin-bottom: 5px
 
 blockquote
-  border-left: 4px solid $light-rule
+  border-left: 4px solid $gray-lightest
   padding-left: 20px
   margin-top: 10px
   font-style: italic
 
 b, strong
-  color: $dark-gray
+  color: $gray-darkest
   font-weight: bold
 
 

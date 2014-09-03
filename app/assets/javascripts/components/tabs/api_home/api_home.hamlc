@@ -1,5 +1,5 @@
 .tab-header
-  .tab-title
+  .tab-header__title
     %h1 API
 
 .tab-main

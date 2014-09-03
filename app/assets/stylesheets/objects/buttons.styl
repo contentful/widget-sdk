@@ -9,8 +9,8 @@
 // A button base class
 //
 // Markup:
-//<button class="btn">button</button>
-//<button class="btn" disabled>button</button>
+//<p><button class="btn">button</button></p>
+//<p><button class="btn" disabled>button</button></p>
 //
 // :disabled - Disabled state
 //
@@ -19,129 +19,140 @@
   display: inline-block
   position: relative
   overflow: hidden
-  padding: 0.6em 1em
+  padding: 7px 10px
   font-size: 1em
   text-decoration: none
   vertical-align: middle
-  border: 1px solid darken($gray-background, 10%)
-  border-radius: 3px
   cursor: pointer
   -webkit-appearance: none
-  color: $medium-gray
+  border-radius: 3px
+  border-width: 1px
+  border-style: solid
   &:link
-    color: $medium-gray
+    color: $gray-medium
   &:disabled,
   &[disabled]
+    opacity: 0.5
     cursor: default
+    &:active
+      top: 0px
+
+
 
 // Temporary override for gatekeeper usage
 input.btn--input
   padding: 0.6em 1em
 
-// Default button
+// Secondary button
 // 
-// Default button theme, with hover, active and disabled states
+// Secondary button theme, with hover, active and disabled states
 //
 // Markup:
-// <button class="btn btn--default {$modifiers}">text</div>
-// <button class="btn btn--default {$modifiers}" disabled>text</div>
+// <p><button class="btn btn--secondary {$modifiers}">secondary</button></p>
+// <p><button class="btn btn--secondary {$modifiers}" disabled>secondary</button></p>
+//
+// Styleguide 2.3
+.btn--secondary
+  $colored-button(
+    $metallic-gray-dark,
+    $secondary-bg,
+    $secondary-gradient-from,
+    $secondary-gradient-to,
+    $metallic-gray,
+    $secondary-shadow,
+    $gray,
+    $gray-medium-light
+  )
+
+// Tertiary button
+// 
+// Tertiary button theme, with hover, active and disabled states
+//
+// Markup:
+// <p><button class="btn btn--tertiary {$modifiers}">Tertiary</button></p>
+// <p><button class="btn btn--tertiary {$modifiers}" disabled>Tertiary</button></p>
 // 
 // .active - active state
 //
 // Styleguide 2.2
-.btn--default
-  box-shadow: 0 1px 1px rgba(255,255,255,0.8) inset, 0 2px 1px rgba(0,0,0,0.05)
-  $gradient($gray-background, darken($gray-background, 4%))
-  &:not(:disabled),
-  &:not([disabled])
-    &:active,
-    &.active,
-    &:hover
-      $gradient($gray-background, darken($gray-background, 2%))
-    &:active,
-    &.active
-      top: 1px
-      box-shadow: 0 1px 2px darken($gray-background, 5%) inset
-  &:disabled,
-  &[disabled]
-    opacity: 0.5
-    pointer: default
-    &:active
-      top: 0px
+.btn--tertiary
+  $colored-button(
+    $metallic-gray-dark,
+    $gray-lightest,
+    $gray-gradient-from,
+    $gray-gradient-to,
+    $metallic-gray,
+    white,
+    $gray,
+    $gray-medium-light
+  )
 
-// Flat button
-// 
-// Flat button theme with hover and active states
-//
-// Markup:
-// <button class="btn btn--flat {$modifiers}">text</button>
-// <button class="btn btn--flat {$modifiers}" disabled>text</button>
-//
-// .active - active state
-//
-// Styleguide 2.3
-.btn--flat
-  background: inherit
-  border: 1px solid darken($dark-rule, 10)
-  &:not(:disabled),
-  &:not([disabled])
-    &:hover
-      border: 1px solid darken($dark-rule, 20)
-    &:active,
-    &.active
-      border: 1px solid darken($dark-rule, 30)
 
 // Primary button
 // 
 // Button for primary actions, with hover and active states
 //
 // Markup:
-// <button class="btn btn--primary {$modifiers}">text</button>
+// <p><button class="btn btn--primary {$modifiers}">Primary</button></p>
 //
 // Styleguide 2.4
 .btn--primary
-  $action-button-text-color()
-  $blue-highlight()
-  $colored-button($blue)
-  &:hover
-    $blue-highlight()
+  font-weight: bold
+  $colored-button(
+    white,
+    $blue-light,
+    $blue-gradient-from,
+    $blue-gradient-to,
+    $blue-dark-link,
+    $blue-lightest,
+    $gray,
+    $blue-dark
+  )
+  //text-transform: uppercase
+  //letter-spacing: 1px
 
 // Danger button
 // 
 // A button for dangerous situations
 //
 // Markup:
-// <button class="btn btn--danger {$modifiers}">text</button>
+// <p><button class="btn btn--danger {$modifiers}">Danger</button></p>
 //
 // Styleguide 2.5
-.btn--danger
-  $action-button-text-color()
-  $red-highlight()
-  $colored-button($red)
-  &:hover
-    $red-highlight()
-
+.btn--danger,
 li.btn--danger
-  $action-button-text-color()
-  $red-highlight()
-  $colored-button($red)
-  &:hover
-    $red-highlight()
+  font-weight: bold
+  $colored-button(
+    white,
+    $red,
+    $red-gradient-from,
+    $red-gradient-to,
+    $red-dark,
+    $red-light,
+    $gray,
+    $red-mexican
+  )
 
 // Confirm button
-// 
+//
 // A button for confirming actions
 //
 // Markup:
-// <button class="btn btn--confirm {$modifiers}">text</button>
+// <p><button class="btn btn--confirm {$modifiers}">Confirm</button></p>
 //
 // Styleguide 2.6
 .btn--confirm
-  $action-button-text-color()
-  $green-highlight()
-  $colored-button($green)
-  &:hover
-    $green-highlight()
+  font-weight: bold
+  $colored-button(
+    white,
+    $green,
+    lighten($green, 10%),
+    darken($green, 20%),
+    darken($green, 60%),
+    lighten($green, 80%),
+    $gray,
+    darken($green, 50%)
+  )
 
 .transparent-button
   background: none
@@ -205,7 +216,7 @@ li.btn--danger
   &:active,
   &.active
     top: 0
-    box-shadow: 0 2px 2px darken($gray-background, 10%) inset
+    box-shadow: 0 2px 2px darken($gray-lightest, 10%) inset
     cursor: default
   &:focus
     outline: none !important
@@ -219,6 +230,7 @@ li.btn--danger
 .button-icon-right
   @extend .button-icon
   float: right
+  top: 2px
   right: 0
   left: 3px
 

@@ -4,10 +4,8 @@
 .main-results
   border-left: none
   border-right: none
-  > thead > td:first-child,
-  > td:first-child,
-  > tbody > th:first-child,
-  > th:first-child
+  thead > tr > th:first-child,
+  tbody > tr > td:first-child
     padding-left: 10px
 
 .main-results-wrapper
@@ -18,7 +16,7 @@
 // style changes for main-results, compared to regular result-list
 .main-header.result-list
   border: 0
-  border-bottom: 1px solid $dark-rule
+  border-bottom: 1px solid $gray-light
 
 .main-header.result-list
   th, th button

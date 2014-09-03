@@ -2,19 +2,17 @@
 .content-type-field-list
   width: $field-editor-width
   padding-top: 5px
-  border-bottom: 1px solid $light-rule
+  border-bottom: 1px solid $gray-lightest
   line-height: 18px
 
 .content-type-editor
-  @extend $entity-editor
+  $inactive-row-color = $gray-light
+  $active-row-color = darken($gray, 30)
 
-  $inactive-row-color = $lightest-gray
-  $active-row-color = darken($light-gray, 30)
-
-  $active-row-icon-inactive-color = lighten($light-gray, 10)
+  $active-row-icon-inactive-color = lighten($gray, 10)
   $active-row-icon-active-color = darken($active-row-icon-inactive-color, 40)
 
-  $inactive-row-icon-inactive-color = lighten($lightest-gray, 5)
+  $inactive-row-icon-inactive-color = lighten($gray-light, 5)
   $inactive-row-icon-active-color = darken($inactive-row-icon-inactive-color,  20)
 
   $vertical-padding = 10px
@@ -59,7 +57,7 @@
     padding-left: 13px
     padding-top: $vertical-padding
     padding-bottom: $vertical-padding
-    border-top: 1px solid $light-rule
+    border-top: 1px solid $gray-lightest
     $pie-clearfix()
 
   // Positioning inside Field-row
@@ -102,7 +100,7 @@
       cursor: pointer
     &.open:hover
       cursor: auto
-      background-color: $gray-background
+      background-color: $gray-lightest
   .toggle-collapse
     color: $inactive-row-icon-inactive-color
 
@@ -125,9 +123,9 @@
     margin-bottom: 7px
 
   .field-errors
-    color: $red
+    color: $orange
     font-size: 0.8em
-    
+
 
   // Drag Handle Look and Feel
   .drag-handle
@@ -163,11 +161,12 @@
     font-size: 120%
   .cf-fieldtype-icon
     strong
+      font-size: 11px
       color: inherit
     color: $inactive-row-color // Adjust the color because <strong> makes the text appear darker
   .validation-alert
-    color: $red
-      
+    color: $orange
+
   // Fieldtype icon
   // Look / internal
   .cf-fieldtype-icon
@@ -176,7 +175,7 @@
     border-radius: 3px
     height: 18px + 2 * 3px
     line-height: 18px
-    padding: 3px 0
+    padding: 2px 0 3px
     width: 35px
     text-align: center
     i
@@ -205,7 +204,7 @@
 
   // Color varaitions for open fields
   .open
-    background-color: $gray-background
+    background-color: $gray-lightest
     color: $active-row-color
   .open .icons
     color: $active-row-icon-inactive-color
@@ -243,7 +242,7 @@
     text-transform: uppercase
     font-size: 11px
     clear: both
-    border-top: 1px solid $dark-rule
+    border-top: 1px solid $gray-light
     padding-top: $vertical-padding
     padding-left: 25px
 

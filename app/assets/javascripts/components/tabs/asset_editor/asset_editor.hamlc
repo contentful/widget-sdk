@@ -1,21 +1,24 @@
 .tab-header.editor-configuration
-  %h1(title="{{headline()}}") {{headline()}}
-  %a.cf-knowledge-base-icon(
-    tooltip="Learn more about Assets in the Knowledge Base Pages"
-    analytics-event="assets"
-    href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
-  .editor-top-right
-    %button.btn.btn--flat(type="button"
+  .tab-header__title
+    %h1(title="{{headline()}}")
+      {{headline()}}
+      %a.cf-knowledge-base-icon(
+        tooltip="Learn more about Assets in the Knowledge Base Pages"
+        analytics-event="assets"
+        href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
+
+  .tab-header__actions
+    %button.btn.btn--tertiary(type="button"
             ng-click="preferences.toggleAuxPanel()"
             ng-class="{active: preferences.showAuxPanel}"
             tooltip="Toggle additional details"
             tooltip-placement="bottom")
       Info
     .dropdown-btn(cf-dropdown="" ng-show="showLangSwitcher")
-      %a.dropdown-toggle.btn.btn--flat(cf-dropdown-toggle)
+      %button.btn.btn--tertiary(cf-dropdown-toggle)
         %i.ss-dropdown.button-icon-right
         %span View
-      .dropdown-menu(cf-dropdown-menu="" style="display:none")
+      .dropdown-menu(cf-dropdown-menu="" position="bottomcenter")
         %ul.dropdown-menu-list
           %li.dropdown-menu-item(ng-repeat="locale in spaceContext.publishLocales track by locale.code")
             %label
@@ -37,7 +40,7 @@
         data-field-id="{{field.id}}"
         ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
       %label {{field.name}}
-        %sup(ng-show="field.required") *
+        %sup(ng-show="field.required") (required)
       .form-controls
         .locale(ng-repeat="locale in field.locales track by locale.code" ot-field-presence="['fields', field.id, locale.code]" data-locale="{{locale.code}}")
           .cf-field-editor.l-field-editor(ot-path="['fields', field.id, locale.code]" cf-editor-entity="asset")
@@ -52,12 +55,15 @@
         .cf-form-box-error(cf-error-path="['fields', field.id]")
 
 .tab-actions(ng-controller="AssetActionsCtrl")
-  .button-set
-    %button.btn.btn--default.btn--danger.delete-confirm(type="button" cf-click-outside="deleteConfirm=false" cf-click-outside-ignore=".delete" cf-click-outside-when="deleteConfirm" ng-show="deleteConfirm" ng-click="delete()" tooltip="Click anywhere else to dismiss") Are you sure?
-    %button.btn.btn--default.delete(   type="button" ng-show="canDelete() && !deleteConfirm" ng-click="deleteConfirm=true" tooltip="Permanently delete this Asset") Delete
-    %button.btn.btn--default.archive(  type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
-    %button.btn.btn--default.archive(  type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
-    %button.btn.btn--default.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish
+  .button-set(cf-dropdown)
+    %button.btn.btn--secondary.delete(   type="button" ng-show="canDelete()" cf-dropdown-toggle) Delete
+    .delete-confirm(cf-dropdown-menu="" position="topcenter")
+      %p You are about to delete {{headline()}}
+      %button.btn.btn--danger(type="button" ng-click="delete()" dropdown-close="") Delete 
+      %button.btn.btn--secondary(type="button" dropdown-close="") Don't Delete 
+    %button.btn.btn--secondary.archive(  type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
+    %button.btn.btn--secondary.archive(  type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
+    %button.btn.btn--secondary.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish
     %button.btn.btn--primary.publish(  type="submit" ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Asset") {{publishButtonLabel()}}
   .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
                tooltip-placement="top")
@@ -70,6 +76,6 @@
                          link="link" as="presenceUser"
                          tooltip="{{presenceUser | userNameDisplay:user}}")
         %img(ng-src="{{user.data.avatarUrl}}")
-    %a.btn.btn--default.invite-users(href="" ng-click="navigator.spaceSettings('/users/new').goTo()")
+    %a.btn.btn--secondary.invite-users(href="" ng-click="navigator.spaceSettings('/users/new').goTo()")
       %i.ss-users
       %i.ss-plus

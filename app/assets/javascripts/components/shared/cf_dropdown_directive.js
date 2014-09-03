@@ -6,6 +6,8 @@ angular.module('contentful').directive('cfDropdown', ['$parse', function($parse)
     link: function(scope, element, attrs) {
       var onClose = attrs.onClose ? $parse(attrs.onClose) : undefined;
 
+      var dropdownId = attrs.cfDropdown;
+
       var isOpen = false;
 
       var open = function() {
@@ -27,10 +29,10 @@ angular.module('contentful').directive('cfDropdown', ['$parse', function($parse)
       };
 
       var isDisabled = function () {
-        return element.find('[cf-dropdown-toggle][disabled]').length > 0;
+        return element.find('[cf-dropdown-toggle'+getDropdownId()+'][disabled]').length > 0;
       };
 
-      element.find('[cf-dropdown-toggle]').click(function(event) {
+      element.find('[cf-dropdown-toggle'+getDropdownId()+']').click(function(event) {
         event.preventDefault();
         scope.$apply(toggle);
       });
@@ -39,7 +41,7 @@ angular.module('contentful').directive('cfDropdown', ['$parse', function($parse)
         return isOpen;
       }, function(isOpen) {
         var button = element;
-        var content = element.find('[cf-dropdown-menu]');
+        var content = element.find('[cf-dropdown-menu'+getDropdownId()+']');
         if (isOpen) {
           button.addClass('active');
           content.show();
@@ -67,36 +69,41 @@ angular.module('contentful').directive('cfDropdown', ['$parse', function($parse)
         });
       };
 
+      function getDropdownId() {
+        if(dropdownId) return '='+dropdownId;
+        else return '';
+      }
+
       function repositionMenu() {
         if (skipPositioning()) return;
         resetPosition();
-        element.find('[cf-dropdown-menu]').position(_.extend(getPositioning(),{
-          of: element.find('[cf-dropdown-toggle]'),
-          collision: element.find('[cf-dropdown-menu]').attr('collision') || 'flipfit',
+        element.find('[cf-dropdown-menu'+getDropdownId()+']').position(_.extend(getPositioning(),{
+          of: element.find('[cf-dropdown-toggle'+getDropdownId()+']'),
+          collision: element.find('[cf-dropdown-menu'+getDropdownId()+']').attr('collision') || 'flipfit',
           using: applyPosition,
           within: getMenuContainer()
         }));
       }
 
       function skipPositioning() {
-        return element.find('[cf-dropdown-menu]').hasClass('fixed-position');
+        return element.find('[cf-dropdown-menu'+getDropdownId()+']').hasClass('fixed-position');
       }
 
       function resetPosition() {
-        element.find('[cf-dropdown-menu]').css({
+        element.find('[cf-dropdown-menu'+getDropdownId()+']').css({
           top:    '',
           bottom: '',
           left:   '',
           right:  ''
         }).removeClass(function (index, oldClass) {
           return _.filter(oldClass.split(' '), function (className) {
-            return className.match(/-caret$|-aligned$/);
+            return className.match(/(top|bottom|left|right)-caret$|-aligned$/);
           }).join(' ');
         });
       }
 
       function getPositioning() {
-        var position = element.find('[cf-dropdown-menu]').attr('position');
+        var position = element.find('[cf-dropdown-menu'+getDropdownId()+']').attr('position');
         switch (position) {
           case 'topcenter':
             return {
@@ -137,7 +144,7 @@ angular.module('contentful').directive('cfDropdown', ['$parse', function($parse)
       }
 
       function getMenuContainer() {
-        var selector = element.find('[cf-dropdown-menu]').attr('container') || '.tab-main';
+        var selector = element.find('[cf-dropdown-menu'+getDropdownId()+']').attr('container') || '.tab-main';
         var container = element.parents(selector);
         if (container.length !== 0) {
           return container;

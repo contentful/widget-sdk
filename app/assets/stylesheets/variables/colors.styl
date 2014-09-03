@@ -3,101 +3,188 @@
 // Styleguide 1.0
 
 // Text and background colors
-// 
+//
 // Colors used throughout the site
 //
 // Markup: <div class="colors {$modifiers}">hello, text</div>
 //
-// colors__lighter-gray-background - $lighter-gray-background \#fbfbfb rgb(251, 251, 251)
-// colors__gray-background         - $gray-background \#f3f3f3 rgb(243, 243, 243)
-// colors__light-rule              - $light-rule \#efefef rgb(239, 239, 239)
-// colors__page-background         - $page-background \#eaeaea rgb(234, 234, 234)
-// colors__dark-rule               - $dark-rule \#e1e1e1 rgb(225, 225, 225)
-// colors__lightest-gray           - $lightest-gray \#dadada rgb(218, 218, 218)
-// colors__light-gray              - $light-gray \#acacac rgb(172, 172, 172)
-// colors__medium-gray             - $medium-gray \#858585 rgb(133, 133, 133)
-// colors__medium-dark-gray        - $medium-dark-gray \#545454 rgb(84, 84, 84)
-// colors__dark-gray               - $dark-gray \#333333 rgb(51, 51, 51)
-// colors__link-blue               - $link-blue \#1683d0
+// colors__gray-lightest         - $gray-lightest \#F5F5F5 rgb(245, 245, 245), used for light rules
+// colors__gray-lighter          - $gray-lighter \#EBEBEB rgb(235, 235, 235)
+// colors__gray-light            - $gray-light \#DEDEDE rgb(222, 222, 222), used for dark rules
+// colors__gray                  - $gray \#9B9B9B rgb(155, 155, 155)
+// colors__gray-medium-light     - $gray-medium-light \#8B8B8B rgb(139, 139, 139)
+// colors__gray-medium           - $gray-medium \#7F7F7F rgb(127, 127, 127)
+// colors__gray-dark             - $gray-dark \#545454 rgb(84, 84, 84)
+// colors__gray-darkest          - $gray-darkest \#2D2F31 rgb(45, 47, 49)
+// colors__metallic-gray         - $metallic-gray \#969FA6 rgb(150, 159, 166)
+// colors__metallic-gray-blueish - $metallic-gray-blueish \#768FAC rgb(118, 143, 172)
+// colors__metallic-gray-dark    - $metallic-gray-dark \#333A42 rgb(51, 58, 66)
+// colors__gray-gradient-from    - $gray-gradient-from \#F6F8F9 rgb(246, 248, 249)
+// colors__gray-gradient-to      - $gray-gradient-to \#EDEFF4 rgb(237, 239, 244)
+// colors__blue-lightest         - $blue-lightest \#98C4EF
+// colors__blue-light            - $blue-light \#4A90E2 rgb(74, 144, 226)
+// colors__blue                  - $blue \#3e97d6
+// colors__blue-dark             - $blue-dark \#2F5B85
+// colors__blue-link             - $blue-link \#1683d0 rgb(22, 131, 208)
+// colors__blue-dark-link        - $blue-dark-link \#0C2C52
+// colors__blue-gradient-from    - $blue-gradient-from \#68A9E8
+// colors__blue-gradient-to      - $blue-gradient-to \#4183DE
+// colors__green                 - $green \#33ca6c
+// colors__gold                  - $gold \#e6ae17
+// colors__orange                - $orange \#f2602e
+// colors__red                   - $red \#DF3537
+// colors__red-dark              - $red-dark \#6F020B
+// colors__red-gradient-from     - $red-gradient-from \#FB6974
+// colors__red-gradient-to       - $red-gradient-to \#BF171B
+// colors__red-light             - $red-light \#FDA9AF
+// colors__red-mexican           - $red-mexican \#964047
+// colors__secondary-bg              - $secondary-bg \#D4D4D4
+// colors__secondary-gradient-from   - $secondary-gradient-from \#F6F9FE
+// colors__secondary-gradient-to     - $secondary-gradient-to \#DEE8FF
+// colors__secondary-gradient-shadow - $secondary-gradient-shadow \#F7FAFD
 //
 // Styleguide 1.1
 .colors
   width: 100px
   height: 50px
 
-$lighter-gray-background = #fbfbfb
-.colors__lighter-gray-background
-  background-color: $lighter-gray-background
-$gray-background         = #f3f3f3
-.colors__gray-background
-  background-color: $gray-background
-$light-rule              = #efefef
-.colors__light-rule
-  background-color: $light-rule
-$page-background         = #eaeaea
-.colors__page-background
-  background-color: $page-background
-$dark-rule               = #e1e1e1
-.colors__dark-rule
-  background-color: $dark-rule
-$lightest-gray           = #dadada
-.colors__lightest-gray
-  background-color: $lightest-gray
-$light-gray              = #acacac
-.colors__light-gray
-  background-color: $light-gray
-$medium-gray             = #858585
-.colors__medium-gray
-  background-color: $medium-gray
-$medium-dark-gray        = #545454
-.colors__medium-dark-gray
-  background-color: $medium-dark-gray
-$dark-gray               = #333333
-.colors__dark-gray
-  background-color: $dark-gray
+$gray-lightest = #F5F5F5
+.colors__gray-lightest
+  background-color: $gray-lightest
 
-$link-blue = #1683d0
-.colors__link-blue
-  color: $link-blue
+$gray-lighter = #EBEBEB
+.colors__gray-lighter
+  background-color: $gray-lighter
 
-$dark-link-blue = darken($link-blue, 39%)
-.colors__dark-link-blue
-  color: $dark-link-blue
+$gray-light = #DEDEDE
+.colors__gray-light
+  background-color: $gray-light
 
-// Status colors
-//
-// Colors used to represent statuses
-//
-// $blue       - \#3e97d6
-// Markup: <div class="colors colors__blue"></div>
-// $light-blue - \lighten($blue, 20%)
-// Markup: <div class="colors colors__light-blue"></div>
-// $green      - \#33ca6c
-// Markup: <div class="colors colors__green"></div>
-// $gold       - \#e6ae17
-// Markup: <div class="colors colors__gold"></div>
-// $red        - \#f2602e
-// Markup: <div class="colors colors__red"></div>
-// $dark-red   - \#d1322b
-// Markup: <div class="colors colors__dark-red"></div>
-//
-// Styleguide 1.2
-$blue       = #3e97d6
+$gray = #9B9B9B
+.colors__gray
+  background-color: $gray
+
+$gray-medium-light = #8B8B8B
+.colors__gray-medium-light
+  background-color: $gray-medium-light
+
+$gray-medium = #7F7F7F
+.colors__gray-medium
+  background-color: $gray-medium
+
+$gray-dark = #545454
+.colors__gray-dark
+  background-color: $gray-dark
+
+$gray-darkest = #2D2F31
+.colors__gray-darkest
+  background-color: $gray-darkest
+
+$metallic-gray = #969FA6
+.colors__metallic-gray
+  background-color: $metallic-gray
+
+$metallic-gray-blueish = #768FAC
+.colors__metallic-gray-blueish
+  background-color: $metallic-gray-blueish
+
+$metallic-gray-dark = #333A42
+.colors__metallic-gray-dark
+  background-color: $metallic-gray-dark
+
+$gray-gradient-from = #F6F8F9
+.colors__gray-gradient-from
+  background-color: $gray-gradient-from
+
+$gray-gradient-to   = #EDEFF4
+.colors__gray-gradient-to
+  background-color: $gray-gradient-to
+
+$blue-lightest = #98C4EF
+.colors__blue-lightest
+  background-color: $blue-lightest
+
+$blue-light = #4A90E2
+.colors__blue-light
+  background-color: $blue-light
+
+$blue = #3e97d6
 .colors__blue
   background-color: $blue
-$light-blue = lighten($blue, 20%)
-.colors__light-blue
-  background-color: $light-blue
-$green      = #33ca6c
-.colors__green
-  background-color: $green
-$gold       = #e6ae17
-.colors__gold
-  background-color: $gold
-$red        = #f2602e
+
+$blue-dark = #2F5B85
+.colors__blue-dark
+  background-color: $blue-dark
+
+$blue-link = #1683d0
+.colors__blue-link
+  color: $blue-link
+
+$blue-dark-link = #0C2C52
+.colors__blue-dark-link
+  color: $blue-dark-link
+
+$blue-gradient-from = #68A9E8
+.colors__blue-gradient-from
+  color: $blue-gradient-from
+
+$blue-gradient-to = #4183DE
+.colors__blue-gradient-to
+  color: $blue-gradient-to
+
+$orange = #f2602e
+.colors__orange
+  background-color: $orange
+
+$red = #DF3537
 .colors__red
   background-color: $red
-$dark-red   = #d1322b
-.colors__dark-red
-  background-color: $dark-red
+
+$red-dark = #6F020B
+.colors__red-dark
+  background-color: $red-dark
+
+$red-gradient-from = #FB6974
+.colors__red-gradient-from
+  background-color: $red-gradient-from
+
+$red-gradient-to = #BF171B
+.colors__red-gradient-to
+  background-color: $red-gradient-to
+
+$red-light = #FDA9AF
+.colors__red-light
+  background-color: $red-light
+
+$red-mexican = #964047
+.colors__red-mexican
+  background-color: $red-mexican
+
+$green = #33ca6c
+.colors__green
+  background-color: $green
+
+$gold = #e6ae17
+.colors__gold
+  background-color: $gold
+
+$secondary-bg = #D4D4D4
+.colors__secondary-bg
+  background-color: $secondary-bg
+
+$secondary-border = #EAF1FE
+.colors__secondary-border
+  background-color: $secondary-border
+
+$secondary-gradient-from = #F6F9FE
+.colors__secondary-gradient-from
+  background-color: $secondary-gradient-from
+
+$secondary-gradient-to = #DEE8FF
+.colors__secondary-gradient-to
+  background-color: $secondary-gradient-to
+
+$secondary-shadow = #F7FAFD
+.colors__secondary-shadow
+  background-color: $secondary-shadow
 

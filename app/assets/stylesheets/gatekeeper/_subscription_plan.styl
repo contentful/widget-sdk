@@ -18,11 +18,11 @@ $subscription-yellow = #fffeec
   .current-plan-price
     float: left
     padding-left: 20px
-    border-left: 1px solid $dark-rule
+    border-left: 1px solid $gray-light
   .current-plan-billing
     float: left
     padding-left: 20px
-    border-left: 1px solid $dark-rule
+    border-left: 1px solid $gray-light
 
 .subscription-notice
   border: 1px solid gray
@@ -40,14 +40,14 @@ $subscription-yellow = #fffeec
     font-size: 35px
     padding: 14px 20px
     vertical-align: top
-    color: $light-gray
+    color: $gray
 
 .plan-header
   font-size: 25px
   font-weight: bold
   line-height: 30px
   height: 30px
-  color: $medium-dark-gray
+  color: $gray-dark
   &.muted
     color: inherit
     font-weight: normal
@@ -60,8 +60,8 @@ $subscription-yellow = #fffeec
   font-size: 90%
 .plan-subscript-header
   margin-top: .5em
-  color: $medium-dark-gray
-  font-weight: 600
+  color: $gray-dark
+  font-weight: bold
   font-size: 85%
 
 .billing-frequency
@@ -70,10 +70,10 @@ $subscription-yellow = #fffeec
   margin-bottom: 2em
 
 .available-plans
-  border-top: 1px solid $dark-rule
+  border-top: 1px solid $gray-light
 .subscription-plan
   width: 100%
-  border-bottom: 1px solid $dark-rule
+  border-bottom: 1px solid $gray-light
   padding: 15px 0 0 0
   clearfix()
   .col
@@ -97,7 +97,7 @@ $subscription-yellow = #fffeec
     text-align: right
     padding-top: 10px
     padding-right: 20px
-    .btn--default
+    .btn--secondary
       width: 100%
       max-width: 150px
       text-align: center
@@ -107,11 +107,11 @@ $subscription-yellow = #fffeec
       position: relative
       top: 2px
 .subscription-plan.disabled
-  color: $light-gray
+  color: $gray
   .plan-big-row,
   .plan-small-row,
   .plan-medium-row
-    color: $light-gray
+    color: $gray
 
 $plan-detail-gutter = 20px
 .plan-problem
@@ -119,21 +119,21 @@ $plan-detail-gutter = 20px
 .plan-big-row
   line-height: 30px
   font-size: 25px
-  font-weight: 600
-  color: $medium-dark-gray
+  font-weight: bold
+  color: $gray-dark
   .price &
     color: $blue
   .ss-info
     font-size: 14px
-    color: $light-gray
+    color: $gray
 .plan-medium-row
-  font-weight: 300
+  font-weight: lighter
   line-height: 18px
   font-size: 18px
 .plan-small-row
-  font-weight: 300
+  font-weight: lighter
   line-height: 14px
-  font-size: 12px
+  font-size: $base-font-size
   color: $blue
 .plan-details
   clear: both
@@ -158,28 +158,28 @@ $plan-detail-gutter = 20px
     color: $blue
     text-transform: uppercase
     font-size: 85%
-    font-weight: 600
+    font-weight: bold
   .details-show,
   .details-hide
-    color: $lightest-gray
+    color: $gray-light
     margin: auto
     width: 50px
     height: 20px
-    border: 1px solid $dark-rule
+    border: 1px solid $gray-light
     border-bottom-style: none
     text-align: center
     cursor: pointer
     line-height: 22px
     &:hover
-      color: $light-gray
-      background-color: $gray-background
+      color: $gray
+      background-color: $gray-lightest
   .details-show
     font-size: 15px
     line-height: 10px
 .details-content
   $display-flexbox()
   margin-bottom: $plan-detail-gutter
-  background-color: $gray-background
+  background-color: $gray-lightest
 .plan-summary
   width: 15em
   margin: $plan-detail-gutter
@@ -194,7 +194,7 @@ $plan-detail-gutter = 20px
     margin-right: 8px
   i.ss-plus
     font-size: 90%
-    color: $light-gray
+    color: $gray
   i.ss-cloud
     position: relative
     top: 2px
@@ -229,11 +229,11 @@ $plan-detail-gutter = 20px
   input[type=submit]
     width: 150px
 .enterprise-close-form-button
-  color: $medium-gray
+  color: $gray-medium
   font-size: 130%
   float: right
   &:hover
-    color: $dark-gray
+    color: $gray-darkest
 
 .plan-questions,
 .plan-cancel-account
@@ -249,6 +249,6 @@ $plan-detail-gutter = 20px
   margin-right: 20px
   text-align: right
   a
-    color: darken($red, 30%)
+    color: darken($orange, 30%)
 
 

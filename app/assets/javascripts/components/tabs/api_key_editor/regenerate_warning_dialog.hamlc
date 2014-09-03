@@ -10,7 +10,7 @@
     %p.dialog-content Resetting your access token can break the apps which currently use this access token.
     %p.dialog-content Are you sure you want to do this now?
     .buttons
-      %button.btn.btn--default.cancel(type="button" ng-click="dialog.cancel()")
+      %button.btn.btn--secondary.cancel(type="button" ng-click="dialog.cancel()")
         Cancel
       %button.btn.btn--primary.confirm(ng-click="dialog.confirm()")
         Reset Access Token

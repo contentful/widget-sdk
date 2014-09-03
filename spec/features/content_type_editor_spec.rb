@@ -119,7 +119,7 @@ feature 'Content Type Editor', js: true do
 
     click_button 'Update'
     expect(page).to_not have_selector('.cf-field-settings')
-    find('.editor-top-right .dropdown-toggle').click
+    find('.entity-editor__top_right .dropdown-toggle').click
     find('label', text: 'Show disabled fields').click
     expect(page).to have_selector('.cf-field-settings')
   end

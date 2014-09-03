@@ -103,12 +103,4 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
     });
   };
 
-  $scope.deleteConfirm = false;
-  $scope.activateDeleteConfirm = function () {
-    $scope.deleteConfirm = true;
-  };
-
-  $scope.deactivateDeleteConfirm = function () {
-    $scope.deleteConfirm = false;
-  };
-  }]);
+}]);

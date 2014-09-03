@@ -17,7 +17,7 @@
         %label Organization
         .form-controls
           .dropdown-btn(cf-dropdown)
-            %button.dropdown-toggle.btn.btn--flat(cf-dropdown-toggle="" type="button")
+            %button.dropdown-toggle.btn.btn--tertiary(cf-dropdown-toggle="" type="button")
               {{selectedOrganization.name}}
               %i.button-icon-right.ss-dropdown
             .dropdown-menu.fixed-position(cf-dropdown-menu)
@@ -28,7 +28,7 @@
         .form-controls
           %input.form-control(type="text" name="locale" ng-model="newSpaceData.defaultLocale")
     .buttons
-      %button.btn.btn--default.cancel(type="button" ng-click="dialog.cancel()")
+      %button.btn.btn--tertiary.cancel(type="button" ng-click="dialog.cancel()")
         Cancel
       %button.btn.btn--primary.confirm(ng-disabled="newSpaceForm.$invalid || lockSubmit")
         Create Space

@@ -5,11 +5,24 @@
   margin: 0
   margin-top: -1px
 
+// Select boxes
+//
+// Styled native select boxes (TODO: standardize this according to styleguide after buttons)
+//
+// Markup:
+// <div class="btn btn-flat select-box">
+//   <select>
+//     <option>value</option>
+//   </select>
+//   <i class="button-icon-right ss-dropdown">
+// </div>
+//
+// Styleguide 3.1
 .select-box
   padding: 0px
   select
     width: 200%
-    padding: 7.6px 12px
+    padding: 5px 12px
     margin: 0
     color: inherit
     font-size: inherit
@@ -21,13 +34,13 @@
     -moz-appearance: none
     appearance: none
   &:hover
-    border-color: $light-gray
+    border-color: $gray
   .button-icon-right
     position: absolute
     left: auto
     float: none
     right: 7px
-    top: 8px
+    top: 6px
     cursor: default
     pointer-events: none
 

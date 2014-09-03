@@ -7,19 +7,20 @@
   border: 0
 
   // Styling of the headline
-  .tab-header a.page-header-link
-    color: $dark-gray
-    &:hover
-      color: $light-gray
+  .tab-header
+    a.page-header-link
+      color: $gray-darkest
+      &:hover
+        color: $gray
   .header-separator
-    color: $lightest-gray
+    color: $gray-light
 
 .spaces .settings-panel
   margin-top: 0
   padding-top: $tab-main-margin-top
   padding-left: 25px
   background-color: #fdfcfc
-  border-right: 1px solid $light-rule
+  border-right: 1px solid $gray-lightest
   a
     color: #8d8c8c
   .active a
@@ -34,12 +35,12 @@
 .account .settings-panel
   padding: 0
   color: black
-  font-weight: 600
-  border-right: 1px solid $lightest-gray
+  font-weight: bold
+  border-right: 1px solid $gray-light
   ul
     $plain-list()
     padding: 10px 0
-    border-bottom: 1px solid $lightest-gray
+    border-bottom: 1px solid $gray-light
   a
     color: black
     &:hover
@@ -54,11 +55,11 @@
     color: $blue
   h3
     font-size: 16px
-    font-weight: 600
-    $gradient(lighten($gray-background, 4%), $gray-background)
+    font-weight: bold
+    $gradient(lighten($gray-lightest, 4%), $gray-lightest)
     line-height: 40px
     position: relative
-    border-bottom: 1px solid $lightest-gray
+    border-bottom: 1px solid $gray-light
     margin: 0
   img
     height: 15px
@@ -91,7 +92,7 @@
 
   // Add-Button
   button,
-  a.btn--default
+  a.btn--secondary
     &.new-resource
       margin-top: 34px //result list tr-height
       @extend .btn--primary
