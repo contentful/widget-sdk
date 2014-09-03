@@ -31,6 +31,7 @@
       %button.btn.btn--secondary(href="" ng-click="notes.dismiss('content-delivery-api-key')") Ok, got it
   .ng-form.l-form-horizontal--split(name="apiKeyForm" submit="save()")
     .l-form-left
+      %h2.section-title API General Info
       .l-form-field
         %label Name
           %sup (required)
@@ -52,8 +53,9 @@
               %i.ss-plus
 
     .l-form-right
+      %h2.section-title API Access Tokens
       .l-form-field
-        %label Access Token
+        %label Production
         .l-form-controls
           .l-field-editor
             %input.form-control.access-token.cf-select-all-input(type="text" ng-model="apiKey.data.accessToken" ng-show="apiKey.data.accessToken" readonly="readonly")
@@ -76,11 +78,10 @@
               %input.form-control(type="checkbox" ng-model="apiKey.data.regenerateAccessToken" ng-disabled="!editable()" ng-click="showRegenerateWarning()")
               Regenerate Access Token
 
+      %h2.section-title.u-separator Authentication Code
       .l-form-field--no-label.authentication-code(ng-show="apiKey.data.accessToken")
         .l-form-controls
           .l-field-editor
-            %hr
-            %h1 Authentication Code
             .tools
               .btn.btn--tertiary.select-box
                 %select(ng-model="authCodeExampleLang")
