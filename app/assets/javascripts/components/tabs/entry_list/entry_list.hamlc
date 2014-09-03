@@ -25,14 +25,14 @@
     .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")
 
   .tab-header__actions.add-entity(ng-hide="spaceContext.publishedContentTypes.length == 0 || entries.length == 0")
-    %button.btn.btn--primary(
+    %button.btn.btn--primary.u-truncate(
             ng-hide="!singleContentType && (noCfCanCleanup = true)"
             cf-can="create, Entry"
             ng-click="createEntry(singleContentType, 'frameButton')")
       %i.ss-plus.button-icon
       Add New {{singleContentType.getName()}}
     .dropdown-btn(cf-dropdown="" ng-hide="singleContentType")
-      %button.btn.btn--primary(cf-dropdown-toggle="" cf-can="create, Entry")
+      %button.btn.btn--primary.u-truncate(cf-dropdown-toggle="" cf-can="create, Entry")
         %i.ss-plus.button-icon
         Add New Entry
       .dropdown-menu(cf-dropdown-menu="" position="bottomcenter" container=".tab-content")

@@ -41,7 +41,7 @@
       %label
         Name
         %sup (required)
-      .form-controls(ot-path="['name']" ot-subdoc)
+      .l-form-controls(ot-path="['name']" ot-subdoc)
         .l-field-editor
           %input.form-control(type="text"
                  name="contentTypeName"
@@ -52,7 +52,7 @@
         .cf-form-box-error(cf-error-path="['name']")
     .l-form-field
       %label Description
-      .form-controls(ot-path="['description']" ot-subdoc)
+      .l-form-controls(ot-path="['description']" ot-subdoc)
         .l-field-editor
           %textarea.form-control(placeholder="Describe the purpose of Entries using this Content Type"
                     name="contentTypeDescription"
@@ -62,7 +62,7 @@
         .cf-form-box-error(cf-error-path="['description']")
     .l-form-field
       %label Fields
-      .form-controls
+      .l-form-controls
         .content-type-field-list(ng-show="hasFields")
         .advice.inner-advice(ng-hide="hasFields")
           %i.ss-layout.giant-icon

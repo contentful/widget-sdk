@@ -12,7 +12,7 @@
     .search-field(cf-search="searchTerm" placeholder="Search for Content Types")
 
   .tab-header__actions.add-entity(ng-hide="empty")
-    %button.btn.btn--primary(cf-can="create, ContentType" ng-click="createContentType('frameButton')")
+    %button.btn.btn--primary.u-truncate(cf-can="create, ContentType" ng-click="createContentType('frameButton')")
       %i.ss-plus.button-icon
       Add Content Type
 

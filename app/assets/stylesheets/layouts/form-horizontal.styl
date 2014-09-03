@@ -1,4 +1,6 @@
 .l-form-horizontal
+  $display-flexbox()
+  flex-direction: column
   width: 100%
   max-width: 1400px
   padding-top: $form-spacing
@@ -12,15 +14,28 @@
     margin-top: 1px
     height: 30px
 
+.l-form-left,
+.l-form-right
+  $display-flexbox()
+  flex-direction: column
+
+.l-form-left
+  margin-left: 10%
+  width: 35%
+.l-form-right
+  margin-left: 10%
+  width: 45%
+
 .l-form-field,
 .l-form-field--no-label
   $display-flexbox()
   flex-direction: row
   align-items: flex-start
   margin-bottom: $form-spacing
-  .form-controls
-    padding-top: 5px
-    width: $form-controlwidth-outer
+
+.l-form-controls
+  padding-top: 5px
+  width: $form-controlwidth-outer
 
 // layout where we have a label on the left side
 // as such, the 
@@ -36,7 +51,7 @@
 
 // layout where we have no label on the left side
 .l-form-field--no-label
-  .form-controls
+  .l-form-controls
     margin-left: $form-labelwidth
 
 .l-field-editor
@@ -48,5 +63,23 @@
   float: left
   margin-left: $form-offset
   padding-top: $form-offset
+
+.l-form-horizontal--split
+  @extend .l-form-horizontal
+  flex-direction: row
+  .l-field-editor
+    width: 100%
+  .l-form-field,
+  .l-form-field--no-label
+    flex-direction: column
+  .l-form-field label,
+  .l-form-controls
+    width: 100%
+  .l-form-field label
+    text-align: left
+    padding-bottom: 5px
+  .l-form-field--no-label
+    .l-form-controls
+      margin-left: 0
 
 

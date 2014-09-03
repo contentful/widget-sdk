@@ -46,7 +46,7 @@
     
       
 
-      <h1 class="kss-title"><span class="kss-ref">3.0</span> - Utilities</h1>
+      <h1 class="kss-title"><span class="kss-ref">5.0</span> - Forms</h1>
 
       
 
@@ -58,8 +58,11 @@
       <section class="kss-depth-2">
       
 
-      <h1 class="kss-title"><span class="kss-ref">3.1</span> - Invisible separator</h1>
+      <h1 class="kss-title"><span class="kss-ref">5.1</span> - Form controls</h1>
 
+      
+        <div class="kss-box"><p>Form control styling</p>
+</div>
       
 
       
@@ -69,13 +72,19 @@
             <td class="kss-mod-name"></td>
           </tr>
           <tr class="kss-mod-example">
-            <td colspan="2"><h2 class="u-separator">This is a title</h2></td>
+            <td colspan="2"><p><input type="text" class="form-control"></p>
+<p><input type="text" class="form-control" value="disabled" disabled></p>
+<p><textarea class="form-control"></textarea></p>
+<p><textarea class="form-control" disabled>content</textarea></p></td>
           </tr>
         
         </table>
 
         <div class="kss-markup">
-          <pre class="prettyprint lang-html">&lt;h2 class=&quot;u-separator&quot;&gt;This is a title&lt;/h2&gt;</pre>
+          <pre class="prettyprint lang-html">&lt;p&gt;&lt;input type=&quot;text&quot; class=&quot;form-control&quot;&gt;&lt;/p&gt;
+&lt;p&gt;&lt;input type=&quot;text&quot; class=&quot;form-control&quot; value=&quot;disabled&quot; disabled&gt;&lt;/p&gt;
+&lt;p&gt;&lt;textarea class=&quot;form-control&quot;&gt;&lt;/textarea&gt;&lt;/p&gt;
+&lt;p&gt;&lt;textarea class=&quot;form-control&quot; disabled&gt;content&lt;/textarea&gt;&lt;/p&gt;</pre>
         </div>
       
 
@@ -87,8 +96,11 @@
       <section class="kss-depth-2">
       
 
-      <h1 class="kss-title"><span class="kss-ref">3.2</span> - Truncater</h1>
+      <h1 class="kss-title"><span class="kss-ref">5.2</span> - Select boxes</h1>
 
+      
+        <div class="kss-box"><p>Styled native select boxes (TODO: standardize this according to styleguide after buttons)</p>
+</div>
       
 
       
@@ -98,13 +110,23 @@
             <td class="kss-mod-name"></td>
           </tr>
           <tr class="kss-mod-example">
-            <td colspan="2"><h2 class="u-truncated" style="width: 50px">This is a title</h2></td>
+            <td colspan="2"><div class="btn btn-flat select-box">
+  <select>
+    <option>value</option>
+  </select>
+  <i class="button-icon-right ss-dropdown">
+</div></td>
           </tr>
         
         </table>
 
         <div class="kss-markup">
-          <pre class="prettyprint lang-html">&lt;h2 class=&quot;u-truncated&quot; style=&quot;width: 50px&quot;&gt;This is a title&lt;/h2&gt;</pre>
+          <pre class="prettyprint lang-html">&lt;div class=&quot;btn btn-flat select-box&quot;&gt;
+  &lt;select&gt;
+    &lt;option&gt;value&lt;/option&gt;
+  &lt;/select&gt;
+  &lt;i class=&quot;button-icon-right ss-dropdown&quot;&gt;
+&lt;/div&gt;</pre>
         </div>
       
 
