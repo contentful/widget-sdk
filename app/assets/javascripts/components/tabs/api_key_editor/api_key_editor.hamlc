@@ -29,97 +29,100 @@
     %p We recommend using one key per supported device. For example, if you plan to serve content to a website, iPhone 8, iPad 7 and Android app, then you would generate four API keys.
     %p.note-box-dismissal
       %button.btn.btn--secondary(href="" ng-click="notes.dismiss('content-delivery-api-key')") Ok, got it
-  .ng-form.l-form-horizontal(name="apiKeyForm" submit="save()")
-    .l-form-field
-      %label Name
-        %sup (required)
-      .form-controls
-        .l-field-editor
-          %input.form-control(type="text" ng-model="apiKey.data.name" required="" ng-disabled="!editable()" placeholder="iOS iPad Application")
-    .l-form-field
-      %label Description
-      .form-controls
-        .l-field-editor
-          %textarea.form-control(ng-model="apiKey.data.description" ng-disabled="!editable()" placeholder="This API Key will grant the iOS iPad Application access to the content on Contentful.")
-    .l-form-field
-      %label Space ID
-      .form-controls
-        .l-field-editor
-          %input.form-control.space-id(type="text" value="{{spaceContext.space.getId()}}" readonly="readonly")
-          %a.btn.btn--secondary.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".space-id")
-            %i.ss-layers
-            %i.ss-plus
-    .l-form-field
-      %label Access Token
-      .form-controls
-        .l-field-editor
-          %input.form-control.access-token.cf-select-all-input(type="text" ng-model="apiKey.data.accessToken" ng-show="apiKey.data.accessToken" readonly="readonly")
-          %a.btn.btn--secondary.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token" ng-show="apiKey.data.accessToken")
-            %i.ss-layers
-            %i.ss-plus
-          %input.form-control(type="text" ng-hide="apiKey.data.accessToken" readonly="readonly" value="Save this API Key to generate an OAuth Access Token and access your data.")
-    .l-form-field--no-label
-      .form-controls
-        .l-field-editor(ng-if="isDevice('iOS')")
-          %a(href="{{mobileAppUrl}}" target="_blank") Browse entries in the Discovery App
-        .l-field-editor(ng-if="isDevice('any')")
-          %a(href="https://itunes.apple.com/au/app/contentful-discovery-cms-for/id892840015" target="_blank") Browse entries in the Discovery App
-          %span (For iOS devices only)
+  .ng-form.l-form-horizontal--split(name="apiKeyForm" submit="save()")
+    .l-form-left
+      .l-form-field
+        %label Name
+          %sup (required)
+        .l-form-controls
+          .l-field-editor
+            %input.form-control(type="text" ng-model="apiKey.data.name" required="" ng-disabled="!editable()" placeholder="iOS iPad Application")
+      .l-form-field
+        %label Description
+        .l-form-controls
+          .l-field-editor
+            %textarea.form-control(ng-model="apiKey.data.description" ng-disabled="!editable()" placeholder="This API Key will grant the iOS iPad Application access to the content on Contentful.")
+      .l-form-field
+        %label Space ID
+        .l-form-controls
+          .l-field-editor
+            %input.form-control.space-id(type="text" value="{{spaceContext.space.getId()}}" readonly="readonly")
+            %a.btn.btn--secondary.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".space-id")
+              %i.ss-layers
+              %i.ss-plus
 
-    .l-form-field--no-label(ng-show="apiKey.data.accessToken")
-      .form-controls
-        .l-field-editor
-          %label
-            %input.form-control(type="checkbox" ng-model="apiKey.data.regenerateAccessToken" ng-disabled="!editable()" ng-click="showRegenerateWarning()")
-            Regenerate Access Token
+    .l-form-right
+      .l-form-field
+        %label Access Token
+        .l-form-controls
+          .l-field-editor
+            %input.form-control.access-token.cf-select-all-input(type="text" ng-model="apiKey.data.accessToken" ng-show="apiKey.data.accessToken" readonly="readonly")
+            %a.btn.btn--secondary.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token" ng-show="apiKey.data.accessToken")
+              %i.ss-layers
+              %i.ss-plus
+            %input.form-control(type="text" ng-hide="apiKey.data.accessToken" readonly="readonly" value="Save this API Key to generate an OAuth Access Token and access your data.")
+      .l-form-field--no-label
+        .l-form-controls
+          .l-field-editor(ng-if="isDevice('iOS')")
+            %a(href="{{mobileAppUrl}}" target="_blank") Browse entries in the Discovery App
+          .l-field-editor(ng-if="isDevice('any')")
+            %a(href="https://itunes.apple.com/au/app/contentful-discovery-cms-for/id892840015" target="_blank") Browse entries in the Discovery App
+            %span (For iOS devices only)
 
-    .l-form-field--no-label.authentication-code(ng-show="apiKey.data.accessToken")
-      .form-controls
-        .l-field-editor
-          %hr
-          %h1 Authentication Code
-          .tools
-            .btn.btn--tertiary.select-box
-              %select(ng-model="authCodeExampleLang")
-                %option(value="http" selected) HTTP (Curl)
-                %option(value="javascript") JavaScript
-                %option(value="objc") Objective-C
-                %option(value="ruby") Ruby
-                %option(value="swift") Swift
-              %i.button-icon-right.ss-dropdown
-            %a.cf-copy-paste(href="#" clipboard-target-selector=".authentication-code .code-example textarea")
-              Copy to Clipboard
+      .l-form-field--no-label(ng-show="apiKey.data.accessToken")
+        .l-form-controls
+          .l-field-editor
+            %label
+              %input.form-control(type="checkbox" ng-model="apiKey.data.regenerateAccessToken" ng-disabled="!editable()" ng-click="showRegenerateWarning()")
+              Regenerate Access Token
 
-          %ng-switch(on="authCodeExampleLang")
-            .http.code-example.curl-example(ng-switch-when="http")
-              %textarea.form-control(readonly="readonly")
-                :preserve
-                  curl -X GET https://cdn.contentful.com/spaces/{{spaceContext.space.getId()}}?access_token={{apiKey.data.accessToken}}
-            .javascript.code-example(ng-switch-when="javascript")
-              %textarea.form-control(readonly="readonly")
-                :preserve
-                  var contentful = require('contentful');
-                  var client = contentful.createClient({
-                    accessToken: '{{apiKey.data.accessToken}}',
-                    space: '{{spaceContext.space.getId()}}'
-                  });
-            .objc.code-example(ng-switch-when="objc")
-              %textarea.form-control(readonly="readonly")
-                :preserve
-                  CDAClient* client = [[CDAClient alloc] initWithSpaceKey:@"{{spaceContext.space.getId()}}"
-                                            accessToken:@"{{apiKey.data.accessToken}}"];
-            .ruby.code-example(ng-switch-when="ruby")
-              %textarea.form-control(readonly="readonly")
-                :preserve
-                  require 'contentful'
-                  client = Contentful::Client.new(
-                    access_token: '{{apiKey.data.accessToken}}',
-                    space: '{{spaceContext.space.getId()}}'
-                  )
-            .swift.code-example(ng-switch-when="swift")
-              %textarea.form-control(readonly="readonly")
-                :preserve
-                  var client = CDAClient(spaceKey:"{{spaceContext.space.getId()}}", accessToken:"{{apiKey.data.accessToken}}")
+      .l-form-field--no-label.authentication-code(ng-show="apiKey.data.accessToken")
+        .l-form-controls
+          .l-field-editor
+            %hr
+            %h1 Authentication Code
+            .tools
+              .btn.btn--tertiary.select-box
+                %select(ng-model="authCodeExampleLang")
+                  %option(value="http" selected) HTTP (Curl)
+                  %option(value="javascript") JavaScript
+                  %option(value="objc") Objective-C
+                  %option(value="ruby") Ruby
+                  %option(value="swift") Swift
+                %i.button-icon-right.ss-dropdown
+              %a.cf-copy-paste(href="#" clipboard-target-selector=".authentication-code .code-example textarea")
+                Copy to Clipboard
+
+            %ng-switch(on="authCodeExampleLang")
+              .http.code-example.curl-example(ng-switch-when="http")
+                %textarea.form-control(readonly="readonly")
+                  :preserve
+                    curl -X GET https://cdn.contentful.com/spaces/{{spaceContext.space.getId()}}?access_token={{apiKey.data.accessToken}}
+              .javascript.code-example(ng-switch-when="javascript")
+                %textarea.form-control(readonly="readonly")
+                  :preserve
+                    var contentful = require('contentful');
+                    var client = contentful.createClient({
+                      accessToken: '{{apiKey.data.accessToken}}',
+                      space: '{{spaceContext.space.getId()}}'
+                    });
+              .objc.code-example(ng-switch-when="objc")
+                %textarea.form-control(readonly="readonly")
+                  :preserve
+                    CDAClient* client = [[CDAClient alloc] initWithSpaceKey:@"{{spaceContext.space.getId()}}"
+                                              accessToken:@"{{apiKey.data.accessToken}}"];
+              .ruby.code-example(ng-switch-when="ruby")
+                %textarea.form-control(readonly="readonly")
+                  :preserve
+                    require 'contentful'
+                    client = Contentful::Client.new(
+                      access_token: '{{apiKey.data.accessToken}}',
+                      space: '{{spaceContext.space.getId()}}'
+                    )
+              .swift.code-example(ng-switch-when="swift")
+                %textarea.form-control(readonly="readonly")
+                  :preserve
+                    var client = CDAClient(spaceKey:"{{spaceContext.space.getId()}}", accessToken:"{{apiKey.data.accessToken}}")
 
 .tab-actions
   .button-set(cf-dropdown)
