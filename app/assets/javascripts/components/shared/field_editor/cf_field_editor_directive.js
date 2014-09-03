@@ -17,6 +17,8 @@
 //
 // otValueChanged
 //   ngModelSet(scope, incomingValue)
+//
+// This is implemented in a generic fashion in otBindInternal
 
 angular.module('contentful').directive('cfFieldEditor', ['$injector', function($injector) {
   var $compile    = $injector.get('$compile');
