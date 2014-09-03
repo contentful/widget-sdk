@@ -18,7 +18,7 @@
 
   .tab-header__actions.add-entity
     .dropdown-btn(cf-dropdown="" ng-show="assets.length > 0")
-      %button.btn.btn--primary(cf-dropdown-toggle="" cf-can="create, Asset")
+      %button.btn.btn--primary.u-truncate(cf-dropdown-toggle="" cf-can="create, Asset")
         %i.ss-plus.button-icon
         Add New Asset
       .dropdown-menu(cf-dropdown-menu="" position="bottomcenter" container=".tab-content")
