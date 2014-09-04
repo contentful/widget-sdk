@@ -9,7 +9,8 @@ describe('Editing interfaces service', function () {
       stubs = $provide.makeStubs(['defaultType', 'info', 'warn', 'serverError']);
       $provide.value('widgetTypes', {
         defaultType: stubs.defaultType,
-        registerWidget: angular.noop
+        registerWidget: angular.noop,
+        paramDefaults: _.constant({})
       });
 
       $provide.value('notification', {
@@ -52,11 +53,15 @@ describe('Editing interfaces service', function () {
 
     describe('succeeds', function() {
       beforeEach(function() {
+        this.$inject('widgetTypes').paramDefaults = _.constant({foo: 'bar'});
         editingInterfaces.forContentTypeWithId(contentType, 'edid').then(function (_config) {
           config = _config;
         });
         contentType.getEditorInterface.yield(null, {
-          data: {widgets: []}
+          data: {widgets: [{
+            fieldId: 'fieldA',
+            widgetParams: {foo: 'baz'}
+          }]}
         });
         $rootScope.$apply();
       });
@@ -73,6 +78,12 @@ describe('Editing interfaces service', function () {
         expect(config.data.widgets[0].fieldId).toBe('fieldA');
         expect(config.data.widgets[1].fieldId).toBe('fieldB');
       });
+
+      it('should fill in defaults for parameters', function(){
+        expect(config.data.widgets[0].widgetParams.foo).toBe('baz');
+        expect(config.data.widgets[1].widgetParams.foo).toBe('bar');
+      });
+      
     });
 
     describe('fails with a 404 because config doesnt exist yet', function() {

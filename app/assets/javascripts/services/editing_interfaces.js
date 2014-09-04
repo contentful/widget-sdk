@@ -14,7 +14,8 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
         else
           return $q.reject(err);
       })
-      .then(addMissingFields(contentType));
+      .then(addMissingFields(contentType))
+      .then(addDefaultParams);
     },
 
     save: function (editingInterface) {
@@ -47,7 +48,14 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
         return _.any(interf.data.widgets, {fieldId: field.id});
       }
     };
+  }
 
+  function addDefaultParams(interf) {
+    _.each(interf.data.widgets, function (widget) {
+      var defaults = widgetTypes.paramDefaults(widget.widgetType);
+      _.defaults(widget.widgetParams, defaults);
+    });
+    return interf;
   }
 
   function getEditorInterface(contentType, interfaceId) {

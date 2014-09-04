@@ -148,39 +148,27 @@ describe('Widget types service', function () {
     });
   });
 
-  describe('getParamForInstance', function(){
-    beforeEach(function() {
-      this.instance = {
-        widgetParams: {
-          stars: 5
-        }
-      };
+  describe('paramDefaults', function(){
+    it('should contain the defaults for every param', function() {
+      widgetTypes.registerWidget('herp', {
+        options: [
+          {param: 'foo', default: 123 },
+          {param: 'bar', default: 'derp'},
+          {param: 'baz'}
+        ]
+      });
+
+      var d = widgetTypes.paramDefaults('herp');
+      expect(d.foo).toBe(123);
+      expect(d.bar).toBe('derp');
+      expect(d.baz).toBe(undefined);
     });
-    it('should return the parameter value in the instance', function(){
-      expect(widgetTypes.getParamForInstance('rating', this.instance, 'stars')).toBe(5);
+
+    it('should be an empty object for unknown widgetTypes', function(){
+      expect(widgetTypes.paramDefaults('lolnope')).toEqual({});
     });
-    it('should return the default value if missing', function(){
-      this.instance.widgetParams = {};
-      expect(widgetTypes.getParamForInstance('rating', this.instance, 'stars')).toBe(10);
-    });
-    it('throws an error for unknown widget types', function () {
-      expect(function() {
-        widgetTypes.getParamForInstance('foobar', this.instance, 'helpText');
-      }).toThrow();
-    });
-    it('throws an error for unknown params', function () {
-      expect(function() {
-        widgetTypes.getParamForInstance('rating', this.instance, 'herpderp');
-      }).toThrow();
-    });
-    it('returns undefined for missing defaults', function () {
-      // TODO this is really hard to test since the widget types are hardcoded inside the
-      // widgetTypes service. Rewrite later when we have a proper API for defining the widgets
-      expect(widgetTypes.getParamForInstance('singleLine', this.instance, 'helpText')).toBe(undefined);
-    });
-    
   });
-  
+
   describe('registerWidget', function(){
     it('adds a widget to the database so that it can be retrieved', function () {
       widgetTypes.registerWidget('foo', {fieldTypes: ['Text']});
