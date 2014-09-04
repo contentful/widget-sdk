@@ -70,12 +70,12 @@ angular.module('contentful').run(['widgetTypes', function(widgetTypes){
     template: '<div class="cf-file-editor" ng-model="fieldData.value" ot-bind-internal="file"></div>'
   });
   widgetTypes.registerWidget('linkEditor',{
-    fieldTypes: ['Link'],
+    fieldTypes: ['Asset', 'Entry'],
     name: 'Link',
     template: '<div cf-link-editor="field.linkType" ng-model="fieldData.value"></div>'
   });
   widgetTypes.registerWidget('linksEditor',{
-    fieldTypes: ['Links'],
+    fieldTypes: ['Assets', 'Entries'],
     name: 'Links',
     template: '<div cf-link-editor="field.items.linkType" link-multiple="true" ng-model="fieldData.value"></div>'
   });
@@ -92,11 +92,11 @@ angular.module('contentful').run(['widgetTypes', function(widgetTypes){
     //name: 'Coordinates',
   //},
   //item: { NOT IMPLEMENTED
-    //fieldTypes: ['Link', 'File'],
+    //fieldTypes: ['File'],
     //name: 'Item',
   //},
   //card: { NOT IMPLEMENTED
-    //fieldTypes: ['Link'],
+    //fieldTypes: [],
     //name: 'Card',
   //},
   //gallery: { NOT IMPLEMENTED

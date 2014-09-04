@@ -61,7 +61,8 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
         return 'markdown';
       }
     }
-    if (fieldType === 'Link' ) return 'linkEditor';
+    if (fieldType === 'Asset'  || fieldType === 'Entry'   ) return 'linkEditor';
+    if (fieldType === 'Assets' || fieldType === 'Entries' ) return 'linksEditor';
     if (fieldType === 'File' ) return 'fileEditor';
 
     return _.findKey(WIDGET_TYPES, function (widget) {
@@ -71,9 +72,15 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
 
   function detectFieldType(field) {
     var type = field.type;
-    var itemsType = dotty.get(field, 'items.type');
-    if(type === 'Array' && itemsType){
-      if (itemsType === 'Link'  ) return 'Links';
+    var linkType = field.linkType;
+    if(type === 'Link') return field.linkType;
+    if(type === 'Array'){
+      var itemsType = dotty.get(field, 'items.type');
+      if (itemsType === 'Link') {
+        linkType  = dotty.get(field, 'items.linkType');
+        if (linkType === 'Entry') return 'Entries';
+        if (linkType === 'Asset') return 'Assets';
+      }
       if (itemsType === 'Symbol') return 'Symbols';
     }
     return type;
