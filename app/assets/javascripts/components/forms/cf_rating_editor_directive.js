@@ -20,7 +20,7 @@ angular.module('contentful').directive('cfRatingEditor', ['$injector', function(
     controller: ['$scope', function ($scope) {
       var widgetTypes = $injector.get('widgetTypes');
       
-      $scope.$watch(getNumStars, setStars);
+      $scope.$watch('widget.widgetParams.stars', setStars);
       $scope.pendingValue = -1;
 
       $scope.setPending = setPending;
@@ -42,10 +42,6 @@ angular.module('contentful').directive('cfRatingEditor', ['$injector', function(
           $scope.rating = index;
         }
         $scope.otBindInternalChangeHandler();
-      }
-
-      function getNumStars() {
-       return widgetTypes.getParamForInstance('rating', $scope.widget, 'stars');
       }
 
       function setStars(numStars) {
