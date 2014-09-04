@@ -15,11 +15,6 @@ angular.module('contentful').controller('FieldWidgetSettingsCtrl', ['$scope', '$
 
   function assembleWidgetOptions(widgetType) {
     $scope.widgetOptions = widgetTypes.optionsForWidgetType(widgetType);
-    _.each($scope.widgetOptions, function (option) {
-      if (!_.has($scope.widget.widgetParams, option.param)) {
-        $scope.widget.widgetParams[option.param] = option.default;
-      }
-    });
   }
 
 }]);
