@@ -7,7 +7,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
 
   return {
     forContentTypeWithId: function (contentType, interfaceId) {
-      return getEditorInterface(contentType, interfaceId)
+      return getEditingInterface(contentType, interfaceId)
       .catch(function (err) {
         if(err && err.statusCode === 404)
           return $q.when(defaultInterface(contentType));
@@ -58,12 +58,12 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
     return interf;
   }
 
-  function getEditorInterface(contentType, interfaceId) {
+  function getEditingInterface(contentType, interfaceId) {
     if (contentType.getId() === 'asset') {
       return $q.when(assetInterface(contentType));
     } else {
       var cb = $q.callback();
-      contentType.getEditorInterface(interfaceId, cb);
+      contentType.getEditingInterface(interfaceId, cb);
       return cb.promise;
     }
   }
@@ -72,13 +72,13 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
     var data = {
       sys: {
         id: 'default',
-        type: 'EditorInterface'
+        type: 'EditingInterface'
       },
       title: 'Default',
       contentTypeId: contentType.getId(),
       widgets: []
     };
-    var interf = contentType.newEditorInterface(data);
+    var interf = contentType.newEditingInterface(data);
     interf.data.widgets = _.map(contentType.data.fields, _.partial(defaultWidget, contentType));
     return interf;
   }
@@ -87,7 +87,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
     var data = {
       sys: {
         id: 'default',
-        type: 'EditorInterface'
+        type: 'EditingInterface'
       },
       title: 'Default',
       contentTypeId: contentType.getId(),

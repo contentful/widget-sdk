@@ -1,6 +1,6 @@
 {
   sys: {
-    type: 'EditorInterface',
+    type: 'EditingInterface',
     id: 'asdasdasd'
   },
   title: 'Foo',

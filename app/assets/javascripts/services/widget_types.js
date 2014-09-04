@@ -30,30 +30,30 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
     //},
   ];
 
-  var WIDGETS = {};
+  var WIDGET_TYPES = {};
 
-  function widgetsForField(field) {
+  function typesForField(field) {
     var fieldType = detectFieldType(field);
-    var widgets =  _(WIDGETS)
-    .pick(function (widget) {
-      return _.contains(widget.fieldTypes, fieldType);
+    var widgetTypes =  _(WIDGET_TYPES)
+    .pick(function (widgetType) {
+      return _.contains(widgetType.fieldTypes, fieldType);
     })
-    .map(function (widget, widgetId) {
-      return _.extend({id: widgetId}, widget);
+    .map(function (widgetType, widgetTypeId) {
+      return _.extend({id: widgetTypeId}, widgetType);
     })
     .valueOf();
-    if (_.isEmpty(widgets)) {
-      return $q.reject(new Error('Field type '+fieldType+' is not supported.'));
+    if (_.isEmpty(widgetTypes)) {
+      return $q.reject(new Error('Field type '+fieldType+' is not supported by any widget.'));
     } else {
-      return $q.when(widgets);
+      return $q.when(widgetTypes);
     }
   }
 
   function defaultWidgetType(field, contentType) {
-    var type = detectFieldType(field);
+    var fieldType = detectFieldType(field);
     var hasValidations = getFieldValidationsOfType(field, 'in').length > 0;
-    if(hasValidations && _.contains(WIDGETS['dropdown'].fieldTypes, type)) return 'dropdown';
-    if (type === 'Text') {
+    if(hasValidations && _.contains(WIDGET_TYPES['dropdown'].fieldTypes, fieldType)) return 'dropdown';
+    if (fieldType === 'Text') {
       if (contentType.data.displayField === field.id ||
           contentType.getId() === 'asset') {
         return 'singleLine';
@@ -61,11 +61,11 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
         return 'markdown';
       }
     }
-    if (type === 'Link' ) return 'linkEditor';
-    if (type === 'File' ) return 'fileEditor';
+    if (fieldType === 'Link' ) return 'linkEditor';
+    if (fieldType === 'File' ) return 'fileEditor';
 
-    return _.findKey(WIDGETS, function (widget) {
-      return _.contains(widget.fieldTypes, type);
+    return _.findKey(WIDGET_TYPES, function (widget) {
+      return _.contains(widget.fieldTypes, fieldType);
     });
   }
 
@@ -83,17 +83,13 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
     return _.pluck(field.validations, type);
   }
 
-  function optionsForWidget(widget) {
+  function optionsForWidgetType(widgetType) {
+    var widget = WIDGET_TYPES[widgetType];
     if (widget) {
       return COMMON_OPTIONS.concat(widget.options || []);
     } else {
       return [];
     }
-  }
-
-  function optionsForWidgetType(type) {
-    var widget = WIDGETS[type];
-    return optionsForWidget(widget);
   }
 
   function paramDefaults(widgetType) {
@@ -103,7 +99,7 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
   }
 
   function widgetTemplate(widgetType) {
-    var widget = WIDGETS[widgetType];
+    var widget = WIDGET_TYPES[widgetType];
     if (widget) {
       return widget.template;
     } else {
@@ -113,11 +109,11 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
 
   function registerWidget(id, options) {
     var descriptor = _.pick(options, ['fieldTypes', 'name', 'options', 'template']);
-    WIDGETS[id] = WIDGETS[id] || descriptor;
+    WIDGET_TYPES[id] = WIDGET_TYPES[id] || descriptor;
   }
 
   return {
-    forField:              widgetsForField,
+    forField:              typesForField,
     defaultType:           defaultWidgetType,
     optionsForWidgetType:  optionsForWidgetType,
     widgetTemplate:        widgetTemplate,

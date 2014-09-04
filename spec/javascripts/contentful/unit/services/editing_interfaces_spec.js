@@ -20,9 +20,9 @@ describe('Editing interfaces service', function () {
       });
 
       contentType = {
-        getEditorInterface: sinon.stub(),
-        saveEditorInterface: sinon.stub(),
-        newEditorInterface: function(data){
+        getEditingInterface: sinon.stub(),
+        saveEditingInterface: sinon.stub(),
+        newEditingInterface: function(data){
           return {
             getId: _.constant('default'),
             data: data
@@ -57,7 +57,7 @@ describe('Editing interfaces service', function () {
         editingInterfaces.forContentTypeWithId(contentType, 'edid').then(function (_config) {
           config = _config;
         });
-        contentType.getEditorInterface.yield(null, {
+        contentType.getEditingInterface.yield(null, {
           data: {widgets: [{
             fieldId: 'fieldA',
             widgetParams: {foo: 'baz'}
@@ -67,7 +67,7 @@ describe('Editing interfaces service', function () {
       });
 
       it('requests the id', function() {
-        expect(contentType.getEditorInterface).toBeCalledWith('edid');
+        expect(contentType.getEditingInterface).toBeCalledWith('edid');
       });
 
       it('gets a config', function() {
@@ -91,12 +91,12 @@ describe('Editing interfaces service', function () {
         editingInterfaces.forContentTypeWithId(contentType, 'edid').then(function (_config) {
           config = _config;
         });
-        contentType.getEditorInterface.yield({statusCode: 404});
+        contentType.getEditingInterface.yield({statusCode: 404});
         $rootScope.$apply();
       });
 
       it('requests the id', function() {
-        expect(contentType.getEditorInterface).toBeCalledWith('edid');
+        expect(contentType.getEditingInterface).toBeCalledWith('edid');
       });
 
       it('gets a default config', function() {
@@ -109,12 +109,12 @@ describe('Editing interfaces service', function () {
         editingInterfaces.forContentTypeWithId(contentType, 'edid').catch(function (_err) {
           err = _err;
         });
-        contentType.getEditorInterface.yield({});
+        contentType.getEditingInterface.yield({});
         $rootScope.$apply();
       });
 
       it('requests the id', function() {
-        expect(contentType.getEditorInterface).toBeCalledWith('edid');
+        expect(contentType.getEditingInterface).toBeCalledWith('edid');
       });
 
       it('gets an error', function() {
