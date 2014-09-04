@@ -79,4 +79,31 @@ angular.module('contentful').run(['widgetTypes', function(widgetTypes){
     name: 'Links',
     template: '<div cf-link-editor="field.items.linkType" link-multiple="true" ng-model="fieldData.value"></div>'
   });
+  //toggle: {   NOT IMPLEMENTED
+    //fieldTypes: ['Boolean'],
+    //name: 'Toggle',
+  //},
+  //dateDropdown: { NOT IMPLEMENTED
+    //fieldTypes: ['Date'],
+    //name: 'Date Dropdown',
+  //},
+  //coordinates: { NOT IMPLEMENTED
+    //fieldTypes: ['Location'],
+    //name: 'Coordinates',
+  //},
+  //item: { NOT IMPLEMENTED
+    //fieldTypes: ['Link', 'File'],
+    //name: 'Item',
+  //},
+  //card: { NOT IMPLEMENTED
+    //fieldTypes: ['Link'],
+    //name: 'Card',
+  //},
+  //gallery: { NOT IMPLEMENTED
+    //fieldTypes: ['File'],
+    //name: 'Gallery',
+  //},
+  //list: { NOT IMPLEMENTED
+    //name: 'List',
+  //},
 }]);

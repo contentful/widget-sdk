@@ -30,45 +30,7 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
     //},
   ];
 
-  // Widget options:
-  // [{
-  //   param: '<PARAM KEY>'
-  //   name: '<NAME DISPLAYED IN FORM>'
-  //   default: <DEFAULT VALUE>
-  //   type: ['Text', 'Number', 'Boolean', 'Predefined']
-  //   values: if type is 'predefined' this contains the offered values
-  // }]
-
-
-  var WIDGETS = {
-    //toggle: {   NOT IMPLEMENTED
-      //fieldTypes: ['Boolean'],
-      //name: 'Toggle',
-    //},
-    //dateDropdown: { NOT IMPLEMENTED
-      //fieldTypes: ['Date'],
-      //name: 'Date Dropdown',
-    //},
-    //coordinates: { NOT IMPLEMENTED
-      //fieldTypes: ['Location'],
-      //name: 'Coordinates',
-    //},
-    //item: { NOT IMPLEMENTED
-      //fieldTypes: ['Link', 'File'],
-      //name: 'Item',
-    //},
-    //card: { NOT IMPLEMENTED
-      //fieldTypes: ['Link'],
-      //name: 'Card',
-    //},
-    //gallery: { NOT IMPLEMENTED
-      //fieldTypes: ['File'],
-      //name: 'Gallery',
-    //},
-    //list: { NOT IMPLEMENTED
-      //name: 'List',
-    //},
-  };
+  var WIDGETS = {};
 
   function widgetsForField(field) {
     var fieldType = detectFieldType(field);
