@@ -5,6 +5,7 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
   var notification = $injector.get('notification');
   var logger = $injector.get('logger');
   var $window = $injector.get('$window');
+  var $q = $injector.get('$q');
   $scope.notes = $injector.get('notes');
 
   var deviceRegexps = {
@@ -85,6 +86,15 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
         scope.tab.close();
     }
   });
+
+  $scope.regenerateAccessToken = function (type) {
+    var cb = $q.callback();
+    var apiKey = type == 'preview' ? $scope.previewApiKey : $scope.apiKey;
+    apiKey.regenerateAccessToken(cb);
+    cb.promise.then(function (res) {
+      apiKey.data.accessToken = res.data.accessToken;
+    });
+  };
 
   $scope.save = function() {
     var t = title();
