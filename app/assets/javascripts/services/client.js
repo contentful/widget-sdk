@@ -20,6 +20,7 @@ angular.module('contentful').provider('client', ['contentfulClient', function Cl
         var options = {
           method:       o.method,
           url:          '' + this.server + o.endpoint,
+          headers:      {},
           contentType:  'application/vnd.contentful.management.v1+json',
         };
         _.extend(options.headers, o.headers);
