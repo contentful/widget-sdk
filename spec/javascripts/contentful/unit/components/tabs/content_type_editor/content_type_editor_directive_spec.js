@@ -124,7 +124,7 @@ describe('The ContentType editor directive', function () {
     });
 
     it('fields dropdown is not shown', function () {
-      expect(container.find('.form-controls > .dropdown-btn')).toBeNgHidden();
+      expect(container.find('.l-form-controls > .dropdown-btn')).toBeNgHidden();
     });
   });
 
