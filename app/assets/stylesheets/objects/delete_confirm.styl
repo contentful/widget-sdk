@@ -1,6 +1,7 @@
 .delete-confirm
   position: absolute
   z-index: 1000
+  max-width: 400px
   min-width: 260px
   padding: 20px 30px
   background-color: white
@@ -12,13 +13,21 @@
   border-color: $gray
   border-top-width: 1px
   border-left-width: 1px
+  > h2,
   > p
     margin-bottom: 20px
 
+.delete-confirm.bottom-caret:before,
+.delete-confirm.top-caret:before
+  font-size: 12px
+
 .delete-confirm.bottom-caret:before
   bottom: -14px
-  font-size: 12px
   text-shadow: 0 1px 1px $gray-dark
+
+.delete-confirm.top-caret:before
+  top: -10px
+  text-shadow: 0 -1px 1px $gray-dark
 
 .delete-confirm.no-caret.bottom-caret:before
   display: none

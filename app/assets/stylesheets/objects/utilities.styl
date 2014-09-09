@@ -20,3 +20,19 @@
   white-space: nowrap
   text-overflow: ellipsis
 
+
+// Locked action
+//
+// Markup: <a href="#" class="u-locked-action">This action is locked</a>
+//
+// Styleguide 3.3
+.u-locked-action,
+.u-locked-action:link,
+.u-locked-action i
+  color: $red
+  .delete-confirm
+    color: $base-font-color
+    > p,
+    > h2
+      text-align: left
+
