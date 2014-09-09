@@ -88,12 +88,10 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
   });
 
   $scope.regenerateAccessToken = function (type) {
+    // not used, but necessary to trigger digest cycle
     var cb = $q.callback();
     var apiKey = type == 'preview' ? $scope.previewApiKey : $scope.apiKey;
     apiKey.regenerateAccessToken(cb);
-    cb.promise.then(function (res) {
-      apiKey.data.accessToken = res.data.accessToken;
-    });
   };
 
   $scope.save = function() {
