@@ -39,10 +39,13 @@
     .cf-form-inline-error(cf-error-path="validationListPath(validationIndex)")
     .cf-predefined-values-list
 
-  .btn.btn--tertiary.select-box(ng-switch-when="linkContentType")
-    %select(ng-model="validation.linkContentType"
-            ng-options="ct.getId() as ct.getName() for ct in spaceContext.publishedContentTypes" ng-change="updateDoc()" ng-disabled="!otEditable")
-    %i.button-icon-right.ss-dropdown
+  %div(ng-switch-when="linkContentType" ng-controller="LinkContentTypeValidationController as linkContentTypeController")
+    %label(ng-repeat="ct in spaceContext.publishedContentTypes")
+      %input(type="checkbox" 
+        ng-model="linkContentTypeController.contentTypes[ct.getId()]"
+        ng-change="linkContentTypeController.updateValidation()")
+      %span {{ct.getName()}}
+    .cf-form-inline-error(cf-error-path="validationListPath(validationIndex)")
 
   .btn.btn--tertiary.select-box(ng-switch-when="linkMimetypeGroup")
     %select(ng-model="validation.linkMimetypeGroup"
