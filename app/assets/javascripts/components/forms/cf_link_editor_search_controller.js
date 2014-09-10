@@ -28,10 +28,17 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$a
     $scope.entityMimeTypeGroup = entityMimeTypeGroup;
   });
   $scope.$watchCollection('[entityType, entityContentType, entityMimeTypeGroup]', updateEntityName);
+  $scope.$watch('entityContentType', function (contentTypes) {
+    if (_.isEmpty(contentTypes)) {
+      $scope.addableContentTypes = $scope.spaceContext.publishedContentTypes;
+    } else {
+      $scope.addableContentTypes = contentTypes;
+    }
+  });
 
   function updateEntityName() {
-    if($scope.entityType == 'Entry' && $scope.entityContentType){
-      $scope.entityName = $scope.entityContentType.getName();
+    if($scope.entityType == 'Entry' && singleContentType($scope.entityContentType)){
+      $scope.entityName = singleContentType($scope.entityContentType).getName();
     } else if ($scope.entityType == 'Asset' && $scope.entityMimeTypeGroup) {
       $scope.entityName = mimetype.groupDisplayNames[$scope.entityMimeTypeGroup];
     } else {
@@ -187,8 +194,8 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$a
   $scope.getSearchContentType = function () {
     if ($scope.entityType === 'Asset')
      return searchQueryHelper.assetContentType;
-    if ($scope.entityContentType)
-      return $scope.entityContentType;
+    if (singleContentType($scope.entityContentType))
+      return singleContentType($scope.entityContentType);
   };
 
   $scope.$on('$destroy', function () {
@@ -213,8 +220,13 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$a
         queryObject['mimetype_group'] = $scope.entityMimeTypeGroup;
         //TODO well, actually when the entityMimeTypeGroup is predefined, we shouldn't allow searching for it
     } else if ($scope.entityType === 'Entry') {
-      if ($scope.entityContentType)
-        contentType = $scope.entityContentType;
+      if (singleContentType($scope.entityContentType)) {
+        contentType = singleContentType($scope.entityContentType);
+      } else if ($scope.entityContentType.length > 1) {
+        queryObject['sys.contentType.sys.id[in]'] = _.map($scope.entityContentType, function (ct) {
+          return ct.getId();
+        }).join(',');
+      }
     }
 
     return searchQueryHelper.buildQuery($scope.spaceContext.space, contentType, $scope.searchTerm)
@@ -222,6 +234,13 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$a
       _.extend(searchQuery, queryObject);
       return searchQuery;
     });
+  }
+
+  function singleContentType(linkContentType) {
+    if (_.isArray(linkContentType) && linkContentType.length === 1) {
+      return linkContentType[0];
+    }
+    return false;
   }
 
 }]);

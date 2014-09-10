@@ -1,13 +1,12 @@
 'use strict';
 
 angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs', '$injector', function ($scope, $attrs, $injector) {
-  var logger                = $injector.get('logger');
   var $parse                = $injector.get('$parse');
   var $q                    = $injector.get('$q');
-  var ShareJS               = $injector.get('ShareJS');
   var LinkEditorEntityCache = $injector.get('LinkEditorEntityCache');
-  
-  var validation = $injector.get('validation');
+  var ShareJS               = $injector.get('ShareJS');
+  var logger                = $injector.get('logger');
+  var validation            = $injector.get('validation');
 
   $scope.links = [];
   $scope.linkedEntities = [];
@@ -35,12 +34,19 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs',
 
     if(linkTypeValidation){
       if (linkType == 'Entry') {
-        $scope.linkContentType = _.find($scope.spaceContext.publishedContentTypes, function(et) {
-          return et.getId() == linkTypeValidation.contentTypeId;
-        });
+        $scope.linkContentType = _(linkTypeValidation.contentTypeId)
+          .map(function (id) { return $scope.spaceContext.getPublishedContentType(id); })
+          .compact()
+          .value();
+        // TODO This means the validation contains unpublished content  types.
+        // It should never happen but I don't know how to deal with it here
+        if ($scope.linkContentType.length === 0) $scope.linkContentType = null;
       } else if (linkType == 'Asset') {
         $scope.linkMimetypeGroup = linkTypeValidation.mimetypeGroupName;
       }
+    } else {
+      $scope.linkContentType   = null;
+      $scope.linkMimetypeGroup = null;
     }
   });
 

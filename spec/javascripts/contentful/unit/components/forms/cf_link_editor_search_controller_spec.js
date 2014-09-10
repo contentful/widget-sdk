@@ -351,10 +351,10 @@ describe('cfLinkEditorSearch Controller', function () {
 
     it('for linked content type', function() {
       scope.linkType = 'Entry';
-      scope.linkContentType = {
+      scope.linkContentType = [{
         getName: sinon.stub().returns('123 Type'),
         getId:   sinon.stub().returns(123)
-      };
+      }];
       scope.$apply();
       performQuery();
       expect(query.content_type).toBe(123);

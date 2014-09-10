@@ -10,7 +10,7 @@
   -# link to entry or entries
   .dropdown-btn.add-new(
       cf-dropdown=""
-      ng-if="entityType=='Entry' && !entityContentType"
+      ng-if="entityType=='Entry' && addableContentTypes.length > 1"
       cf-can="create, Entry"
       tooltip="Add new {{entityType}}"
       tooltip-placement="left")
@@ -19,16 +19,16 @@
       New
     %a.dropdown-menu(cf-dropdown-menu)
       %ul.dropdown-menu-list
-        %li.dropdown-menu-item(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
+        %li.dropdown-menu-item(ng-repeat="contentType in addableContentTypes track by contentType.getId()"
             ng-click="addNewEntry(contentType)"
             dropdown-close="")
           {{contentType.getName()}}
 
   -# link to entry or entries with restriction on the type
   %button.forms__button.btn.btn--secondary.add-new.with-link-content-type(type="button"
-      ng-if="entityContentType"
+      ng-if="entityType=='Entry' && addableContentTypes.length === 1"
       cf-can="create, Entry"
-      ng-click="addNewEntry(entityContentType)")
+      ng-click="addNewEntry(addableContentTypes[0])")
     %i.ss-plus.button-icon
     New
 
