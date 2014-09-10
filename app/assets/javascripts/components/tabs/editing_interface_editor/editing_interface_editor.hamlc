@@ -4,7 +4,7 @@
 
   .tab-header__actions
     .dropdown-btn(cf-dropdown)
-      %a.btn.btn--flat(cf-dropdown-toggle)
+      %a.btn.btn--tertiary(cf-dropdown-toggle)
         %i.ss-dropdown.button-icon-right
         %span View
       .dropdown-menu(cf-dropdown-menu)
