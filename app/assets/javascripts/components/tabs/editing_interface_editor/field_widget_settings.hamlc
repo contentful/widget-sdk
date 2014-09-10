@@ -11,15 +11,15 @@
     .l-form-field
       %label
         Widget Type
-      .form-controls
+      .l-form-controls
         .l-field-editor
-          .btn.btn-flat.select-box
+          .btn.btn--tertiary.select-box
             %select(ng-model="widget.widgetType"
                     ng-options="type.id as type.name for type in widgetTypesForType")
             %i.button-icon-right.ss-dropdown
     .l-form-field(ng-repeat="option in widgetOptions")
       %label {{option.name}}
-      .form-controls
+      .l-form-controls
         .l-field-editor(ng-switch="option.type")
           %input.form-control(ng-switch-when="Text"
                  type="text"
