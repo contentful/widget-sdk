@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Asset List Controller', function () {
-  var controller, scope, stubs, $q;
+  var controller, scope, stubs, $q, $rootScope;
 
   var makeAsset = function (sys) {
     var asset;
@@ -22,19 +22,44 @@ describe('Asset List Controller', function () {
         'track',
         'loadCallback',
         'then',
-        'logError'
+        'logError',
+        'pickMultiple',
+        'parseFPFile',
+        'warn',
+        'info',
+        'serverError',
+        'process',
+        'getVersion',
+        'publish'
       ]);
       $provide.value('logger', {
         logError: stubs.logError
       });
 
+      $provide.value('notification', {
+        info: stubs.info,
+        warn: stubs.warn,
+        serverError: stubs.serverError
+      });
+
       $provide.value('analytics', {
         track: stubs.track
       });
+
+      $provide.value('filepicker', {
+        pickMultiple: stubs.pickMultiple,
+        parseFPFile: stubs.parseFPFile
+      });
+
     });
-    inject(function ($rootScope, $controller, cfStub, PromisedLoader, _$q_) {
+    inject(function ($injector) {
+      $rootScope = $injector.get('$rootScope');
+      $q = $injector.get('$q');
+      var $controller = $injector.get('$controller');
+      var cfStub = $injector.get('cfStub');
+      var PromisedLoader = $injector.get('PromisedLoader');
+
       scope = $rootScope.$new();
-      $q = _$q_;
 
       scope.tab = {
         params: {}
@@ -430,6 +455,46 @@ describe('Asset List Controller', function () {
       $rootScope.$broadcast('tabBecameActive', scope.tab);
       expect(scope.searchController.resetAssets).toBeCalled();
     }));
+  });
+
+  describe('creating multiple assets', function() {
+    var files, entity;
+    beforeEach(function() {
+      files = [{}, {}];
+      scope.searchController.resetAssets  = sinon.stub();
+      scope.spaceContext.space.getDefaultLocale = sinon.stub();
+      scope.spaceContext.space.getDefaultLocale.returns({code: 'en-US'});
+      scope.spaceContext.space.createAsset = sinon.stub();
+      stubs.pickMultiple.returns($q.when(files));
+      stubs.getVersion.returns(2);
+      stubs.parseFPFile.returns({fileName: 'file_name.jpg'});
+      entity = {process: stubs.process, getVersion: stubs.getVersion, publish: stubs.publish};
+
+      scope.createMultipleAssets();
+      $rootScope.$apply();
+      scope.spaceContext.space.createAsset.yield(null, entity);
+      scope.spaceContext.space.createAsset.yield(null, entity);
+      stubs.process.yield();
+      stubs.process.yield();
+      stubs.publish.yield();
+      stubs.publish.yield();
+    });
+
+    it('filepicker is called', function() {
+      expect(stubs.pickMultiple).toBeCalledOnce();
+    });
+
+    it('asset is created', function() {
+      expect(scope.spaceContext.space.createAsset).toBeCalledTwice();
+    });
+
+    it('process is triggered', function() {
+      expect(stubs.process).toBeCalledTwice();
+    });
+
+    it('publish is triggered', function() {
+      expect(stubs.publish).toBeCalledTwice();
+    });
   });
 
 });

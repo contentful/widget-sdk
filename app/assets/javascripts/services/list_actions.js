@@ -111,11 +111,8 @@ angular.module('contentful').factory('listActions', [
 
     calls = calls.concat();
     var call = calls.shift();
-    return call().then(function (result) {
-      return serialize(calls).then(function (otherResults) {
-        return [result].concat(otherResults);
-      });
-    }, function (err) {
+
+    function errorHandler(err) {
       if(err && err.statusCode === ERRORS.TOO_MANY_REQUESTS) {
         return $timeout(function () {
           calls.unshift(call);
@@ -124,7 +121,13 @@ angular.module('contentful').factory('listActions', [
       } else {
         return $q.reject(err);
       }
-    });
+    }
+
+    return call().then(function (result) {
+      return serialize(calls).then(function (otherResults) {
+        return [result].concat(otherResults);
+      }, errorHandler);
+    }, errorHandler);
   };
 
   return {
