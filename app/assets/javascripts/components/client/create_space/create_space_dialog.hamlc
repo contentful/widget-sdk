@@ -11,11 +11,11 @@
     .l-form-horizontal
       .l-form-field
         %label Name
-        .form-controls
+        .l-form-controls
           %input.form-control(type="text" name="name" ng-model="newSpaceData.name" required="")
       .l-form-field
         %label Organization
-        .form-controls
+        .l-form-controls
           .dropdown-btn(cf-dropdown)
             %button.dropdown-toggle.btn.btn--tertiary(cf-dropdown-toggle="" type="button")
               {{selectedOrganization.name}}
@@ -25,7 +25,7 @@
                 %li.dropdown-menu-item(ng-click="selectOrganization(org)" dropdown-close="") {{org.name}}
       .l-form-field
         %label Locale
-        .form-controls
+        .l-form-controls
           %input.form-control(type="text" name="locale" ng-model="newSpaceData.defaultLocale")
     .buttons
       %button.btn.btn--tertiary.cancel(type="button" ng-click="dialog.cancel()")

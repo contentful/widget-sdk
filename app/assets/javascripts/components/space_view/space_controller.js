@@ -147,7 +147,7 @@ angular.module('contentful').controller('SpaceCtrl',
     if(usage){
       return notification.serverError(usage, {});
     }
-    var apiKey = scope.spaceContext.space.createBlankApiKey();
+    var apiKey = scope.spaceContext.space.createBlankDeliveryApiKey();
     scope.navigator.apiKeyEditor(apiKey).openAndGoTo();
     analytics.track(getEventSource(source), {
       currentSection: scope.spaceContext.tabList.currentSection(),

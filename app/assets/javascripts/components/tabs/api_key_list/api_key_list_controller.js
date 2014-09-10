@@ -7,7 +7,7 @@ angular.module('contentful').
 
     $scope.refreshApiKeys = function() {
       var cb = $q.callback();
-      $scope.spaceContext.space.getApiKeys({limit: 1000}, cb);
+      $scope.spaceContext.space.getDeliveryApiKeys({limit: 1000}, cb);
       return cb.promise.then(function (apiKeys) {
         $scope.apiKeys = apiKeys;
       })

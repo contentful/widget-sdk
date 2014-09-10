@@ -39,7 +39,7 @@
 .tab-main.tab-workbench
   %form.l-form-horizontal(name="entryForm")
     .l-form-field--no-label(ng-show="hasErrorOnFields")
-      .form-controls
+      .l-form-controls
         .cf-form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
     .l-form-field(ng-repeat="field in fields track by field.id"
         data-field-id="{{field.id}}"
@@ -49,7 +49,7 @@
       %label
         {{field.name}}
         %sup(ng-show="field.required") (required)
-      .form-controls
+      .l-form-controls
         .locale(ng-repeat="locale in field.locales track by locale.code" ot-field-presence="['fields', field.id, locale.code]" data-locale="{{locale.code}}")
           .cf-field-editor.l-field-editor(ot-path="['fields', field.id, locale.code]" cf-editor-entity="entry")
           .locale-label(ng-show="field.locales.length > 1") {{locale.name}}

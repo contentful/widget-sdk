@@ -1,0 +1,38 @@
+// Utilities
+//
+// Styleguide 3.0
+
+// Invisible separator
+//
+// Markup: <h2 class="u-separator">This is a title</h2>
+//
+// Styleguide 3.1
+.u-separator
+  margin-top: 80px
+
+// Truncater
+//
+// Markup: <h2 class="u-truncate" style="width: 50px">This is a title</h2>
+//
+// Styleguide 3.2
+.u-truncate
+  overflow: hidden
+  white-space: nowrap
+  text-overflow: ellipsis
+
+
+// Locked action
+//
+// Markup: <a href="#" class="u-locked-action">This action is locked</a>
+//
+// Styleguide 3.3
+.u-locked-action,
+.u-locked-action:link,
+.u-locked-action i
+  color: $red
+  .delete-confirm
+    color: $base-font-color
+    > p,
+    > h2
+      text-align: left
+
