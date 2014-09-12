@@ -20,15 +20,15 @@ angular.module('contentful').provider('client', ['contentfulClient', function Cl
         var options = {
           method:       o.method,
           url:          '' + this.server + o.endpoint,
-          headers:      {},
-          contentType:  'application/vnd.contentful.management.v1+json',
+          headers: {
+            'Content-Type':  'application/vnd.contentful.management.v1+json',
+          },
         };
         _.extend(options.headers, o.headers);
         if (this.token) {
           options.headers = options.headers || {};
           options.headers['Authorization'] = 'Bearer '+this.token;
         }
-
 
         if (o.payload !== undefined) {
           if (o.method == 'GET') {
