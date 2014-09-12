@@ -17,7 +17,7 @@
 .cf-link-editor-search(cf-autocomplete-results="entities"
   add-entity="addLink(entity)"
   entity-type="linkType"
-  entity-content-type="linkContentTypes"
+  entity-content-types="linkContentTypes"
   entity-mime-type-group="linkMimetypeGroup"
   ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
 

@@ -34,7 +34,7 @@ describe('cfLinkEditorSearch Controller', function () {
         addEntity: 'addLink(entity)',
         ngShow: '__visible',
         entityType: 'linkType',
-        entityContentType: 'linkContentTypes',
+        entityContentTypes: 'linkContentTypes',
         entityMimeTypeGroup: 'linkMimetypeGroup'
       };
 

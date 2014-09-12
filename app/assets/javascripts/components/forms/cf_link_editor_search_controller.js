@@ -21,14 +21,14 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$a
       fetchMethod = 'getAssets';
     }
   });
-  $scope.$watch($attrs.entityContentType, function (entityContentType) {
-    $scope.entityContentType = entityContentType;
+  $scope.$watch($attrs.entityContentTypes, function (entityContentTypes) {
+    $scope.entityContentTypes = entityContentTypes;
   });
   $scope.$watch($attrs.entityMimeTypeGroup, function (entityMimeTypeGroup) {
     $scope.entityMimeTypeGroup = entityMimeTypeGroup;
   });
-  $scope.$watchCollection('[entityType, entityContentType, entityMimeTypeGroup]', updateEntityName);
-  $scope.$watch('entityContentType', function (contentTypes) {
+  $scope.$watchCollection('[entityType, entityContentTypes, entityMimeTypeGroup]', updateEntityName);
+  $scope.$watch('entityContentTypes', function (contentTypes) {
     if (_.isEmpty(contentTypes)) {
       $scope.addableContentTypes = $scope.spaceContext.publishedContentTypes;
     } else {
@@ -37,8 +37,8 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$a
   });
 
   function updateEntityName() {
-    if($scope.entityType == 'Entry' && singleContentType($scope.entityContentType)){
-      $scope.entityName = singleContentType($scope.entityContentType).getName();
+    if($scope.entityType == 'Entry' && singleContentType($scope.entityContentTypes)){
+      $scope.entityName = singleContentType($scope.entityContentTypes).getName();
     } else if ($scope.entityType == 'Asset' && $scope.entityMimeTypeGroup) {
       $scope.entityName = mimetype.groupDisplayNames[$scope.entityMimeTypeGroup];
     } else {
@@ -194,8 +194,8 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$a
   $scope.getSearchContentType = function () {
     if ($scope.entityType === 'Asset')
      return searchQueryHelper.assetContentType;
-    if (singleContentType($scope.entityContentType))
-      return singleContentType($scope.entityContentType);
+    if (singleContentType($scope.entityContentTypes))
+      return singleContentType($scope.entityContentTypes);
   };
 
   $scope.$on('$destroy', function () {
@@ -220,10 +220,10 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$a
         queryObject['mimetype_group'] = $scope.entityMimeTypeGroup;
         //TODO well, actually when the entityMimeTypeGroup is predefined, we shouldn't allow searching for it
     } else if ($scope.entityType === 'Entry') {
-      if (singleContentType($scope.entityContentType)) {
-        contentType = singleContentType($scope.entityContentType);
-      } else if ($scope.entityContentType && $scope.entityContentType.length > 1) {
-        queryObject['sys.contentType.sys.id[in]'] = _.map($scope.entityContentType, function (ct) {
+      if (singleContentType($scope.entityContentTypes)) {
+        contentType = singleContentType($scope.entityContentTypes);
+      } else if ($scope.entityContentTypes && $scope.entityContentTypes.length > 1) {
+        queryObject['sys.contentType.sys.id[in]'] = _.map($scope.entityContentTypes, function (ct) {
           return ct.getId();
         }).join(',');
       }
