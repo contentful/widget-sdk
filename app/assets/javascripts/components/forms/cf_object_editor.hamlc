@@ -5,5 +5,5 @@
 %button.btn.btn--secondary(ng-show="textFieldModel.$dirty" ng-click="saveJSON()" ng-disabled="textFieldModel.$invalid") Submit
 %button.btn.btn--secondary(ng-show="textFieldModel.$dirty" ng-click="revertJSON()") Revert
 %span(ng-hide="textFieldModel.$valid")
-  %i.ss-alert
+  %i.fa.fa-exclamation-triangle
   Invalid JSON

@@ -49,7 +49,7 @@
           .l-field-editor
             %input.form-control.with-copy-paste-button.space-id(type="text" value="{{spaceContext.space.getId()}}" readonly="readonly")
             %a.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".space-id")
-              %i.ss-layers
+              %i.fa.fa-copy
       .l-form-field--no-label
         .l-form-controls
           .l-field-editor(ng-if="isDevice('iOS')")
@@ -67,7 +67,7 @@
           .l-field-editor
             %input.form-control.with-copy-paste-button.access-token.cf-select-all-input(type="text" ng-model="apiKey.data.accessToken" readonly="readonly")
             %a.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token")
-              %i.ss-layers
+              %i.fa.fa-copy
             %input.form-control(type="text" ng-hide="apiKey.data.accessToken" readonly="readonly" value="Save this API Key to generate an OAuth Access Token and access your data.")
 
       .l-form-field--no-label(ng-show="apiKey.data.accessToken")
@@ -89,9 +89,9 @@
                   %option(value="objc") Objective-C
                   %option(value="ruby") Ruby
                   %option(value="swift") Swift
-                %i.button-icon-right.ss-dropdown
+                %i.button-icon-right.fa.fa-caret-down
               %a.cf-copy-paste(href="#" clipboard-target-selector=".authentication-code .code-example textarea")
-                %i.ss-layers
+                %i.fa.fa-copy
                 Copy to Clipboard
 
             %ng-switch(on="authCodeExampleLang")

@@ -1,6 +1,6 @@
 .dropdown-btn.validation-type-select(cf-dropdown="" ng-hide="availableValidations | isEmpty")
   %button.btn.btn--tertiary.dropdown-toggle(cf-dropdown-toggle)
-    %i.ss-dropdown.button-icon-right
+    %i.fa.fa-caret-down.button-icon-right
     {{validationName(validation)}}
   .dropdown-menu.type-menu(cf-dropdown-menu="" select-validation="changeType(type)")
 
@@ -42,12 +42,12 @@
   .btn.btn--tertiary.select-box(ng-switch-when="linkContentType")
     %select(ng-model="validation.linkContentType"
             ng-options="ct.getId() as ct.getName() for ct in spaceContext.publishedContentTypes" ng-change="updateDoc()" ng-disabled="!otEditable")
-    %i.button-icon-right.ss-dropdown
+    %i.button-icon-right.fa.fa-caret-down
 
   .btn.btn--tertiary.select-box(ng-switch-when="linkMimetypeGroup")
     %select(ng-model="validation.linkMimetypeGroup"
             ng-options="name as label for (name, label) in mimetypeGroups" ng-change="updateDoc()" ng-disabled="!otEditable")
-    %i.button-icon-right.ss-dropdown
+    %i.button-icon-right.fa.fa-caret-down
 
   %div(ng-switch-default="")
     Please select a type first

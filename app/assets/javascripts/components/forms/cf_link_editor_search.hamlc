@@ -15,7 +15,7 @@
       tooltip="Add new {{entityType}}"
       tooltip-placement="left")
     %button.forms__button.btn.btn--secondary(cf-dropdown-toggle="" type="button")
-      %i.ss-plus.button-icon
+      %i.fa.fa-plus.button-icon
       New
     %a.dropdown-menu(cf-dropdown-menu)
       %ul.dropdown-menu-list
@@ -29,7 +29,7 @@
       ng-if="entityContentType"
       cf-can="create, Entry"
       ng-click="addNewEntry(entityContentType)")
-    %i.ss-plus.button-icon
+    %i.fa.fa-plus.button-icon
     New
 
   -# link to asset (with or without restriction)
@@ -37,13 +37,13 @@
       ng-if="entityType=='Asset'"
       cf-can="create, Asset"
       ng-click="addNewAsset()")
-    %i.ss-plus.button-icon
+    %i.fa.fa-plus.button-icon
     New
 
 
 .results.search-options-on.result-list-empty(ng-show="searchController.isEmptyState()"
                            ng-switch="entityType"
-                           cf-click-outside-ignore=".search-button, .ss-search, .search-field input"
+                           cf-click-outside-ignore=".search-button, .fa-search, .search-field input"
                            cf-click-outside-when="searchController.areResultsVisible()"
                            cf-click-outside="clickOutsideHandler()")
   %div(ng-switch-when="Entry")
@@ -53,7 +53,7 @@
 
 .results.search-options-on(ng-show="searchController.isResultsState()"
                            ng-switch="entityType"
-                           cf-click-outside-ignore=".search-button, .ss-search, .search-field input"
+                           cf-click-outside-ignore=".search-button, .fa-search, .search-field input"
                            cf-click-outside-when="searchController.areResultsVisible()"
                            cf-click-outside="clickOutsideHandler()")
 

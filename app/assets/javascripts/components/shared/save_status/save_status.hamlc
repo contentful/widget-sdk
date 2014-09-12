@@ -1,12 +1,12 @@
-%i.ss-info.last-saved-at
+%i.fa.fa-info-circle.last-saved-at
 %span.last-saved-at(ng-if="lastSavedAt")
   Last change made
   %time.relative(datetime="{{lastSavedAt}}")
-%i.ss-check.saved
+%i.fa.fa-check.saved
 %span.saved All changes saved successfully
-%i.ss-sync.saving
+%i.fa.fa-refresh.saving
 %span.saving Saving…
-%i.ss-caution.not-allowed
+%i.fa.fa-minus-circle.not-allowed
 %span.not-allowed You're not allowed to edit this document
-%i.ss-alert.no-connection
+%i.fa.fa-exclamation-triangle.no-connection
 %span.no-connection Can't initialize editor due to connection problems

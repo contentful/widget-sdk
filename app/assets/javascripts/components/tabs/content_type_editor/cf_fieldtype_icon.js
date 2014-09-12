@@ -7,7 +7,7 @@ angular.module('contentful').directive('cfFieldtypeIcon', ['getFieldTypeName', '
     'Number'         :'<strong>12</strong>',
     'Decimal Number' :'<strong>1,45</strong>',
     'Yes/No'         :'<strong>Y/N</strong>',
-    'Date/Time'      :'<i class="ss-calendar"></i>',
+    'Date/Time'      :'<i class="fa fa-calendar"></i>',
     'Object'         :'<strong>{}</strong>',
     'Entry'          :'<i class="ss-file"></i>',
     'Asset'          :'<i class="ss-attach"></i>',

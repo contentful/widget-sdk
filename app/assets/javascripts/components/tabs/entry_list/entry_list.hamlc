@@ -14,7 +14,7 @@
               ng-change="selectedContentType()"
               ng-options="ct.getId() as ct.getName() group by getGroupName() for ct in spaceContext.publishedContentTypes")
         %option(value="") All
-      %i.button-icon-right.ss-dropdown
+      %i.button-icon-right.fa.fa-caret-down
 
     .search-with-results(cf-tokenized-search="tab.params.view.searchTerm"
       search-content-type="getSearchContentType()"
@@ -29,18 +29,18 @@
             ng-hide="!singleContentType && (noCfCanCleanup = true)"
             cf-can="create, Entry"
             ng-click="createEntry(singleContentType, 'frameButton')")
-      %i.ss-plus.button-icon
+      %i.fa.fa-plus.button-icon
       Add New {{singleContentType.getName()}}
     .dropdown-btn(cf-dropdown="" ng-hide="singleContentType")
       %button.btn.btn--primary.u-truncate(cf-dropdown-toggle="" cf-can="create, Entry")
-        %i.ss-plus.button-icon
+        %i.fa.fa-plus.button-icon
         Add New Entry
       .dropdown-menu(cf-dropdown-menu="" position="bottomcenter" container=".tab-content")
         %ul.dropdown-menu-list
           %li.dropdown-menu-item.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
                    ng-click="createEntry(contentType, 'frameButton')"
                    dropdown-close="")
-            %i.ss-plus
+            %i.fa.fa-plus
             {{contentType.getName()}}
 
 .tab-main
@@ -80,10 +80,10 @@
 
     .advice(ng-show="visibleEntries | isEmpty")
       %div(ng-show="hasQuery()")
-        %i.ss-search.giant-icon
+        %i.fa.fa-search.fa-flip-horizontal.giant-icon
         %header.advice-title There are no matches to your search
       %div(ng-show="!hasQuery()")
-        %i.ss-file.giant-icon
+        %i.fa.fa-file.giant-icon
         %header.advice-title You have no Entries yet.
         %p.advice-description(ng-show="spaceContext.publishedContentTypes.length == 0")
           Entries are your content itself. These depend on the field types you created in the Content Type editor.
@@ -94,16 +94,16 @@
                   ng-hide="!singleContentType && (noCfCanCleanup = true)"
                   cf-can="create, Entry"
                   ng-click="createEntry(singleContentType, 'frameButton')")
-            %i.ss-plus.button-icon
+            %i.fa.fa-plus.button-icon
             Add New {{singleContentType.getName()}}
           %button.btn.btn--primary.cf-dialog(
               ng-hide="singleContentType && (noCfCanCleanup = true)"
               cf-can="create, Entry" dialog-template="new_content_type_list")
-            %i.ss-plus.button-icon
+            %i.fa.fa-plus.button-icon
             Add New Entry
         %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
           Visit the Knowledge Base Pages
-          %i.ss-help
+          %i.fa.fa-question-circle
 
 .tab-actions
   .label {{selection.size()}} Entries selected
