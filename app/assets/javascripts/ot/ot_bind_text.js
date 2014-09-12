@@ -9,6 +9,7 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
   return {
     restrict: 'A',
     require: ['^otSubdoc', 'ngModel'],
+    priority: 10, //textarea / input[type=text] are 0
     link: function(scope, elm, attrs, controllers) {
       var ngModelCtrl = controllers[1];
       var unbindTextField;
