@@ -75,7 +75,7 @@ describe('cfLinkEditor Controller', function () {
       });
 
       it('sets no linkContentTypes', function () {
-        expect(scope.linkContentType).toBeFalsy();
+        expect(scope.linkContentTypes).toBeFalsy();
       });
 
       it('sets no linkMimetypeGroup', function () {
@@ -93,7 +93,7 @@ describe('cfLinkEditor Controller', function () {
       });
 
       it('sets linkContentType to type defined in validation', function () {
-        expect(scope.linkContentType[0].getId()).toBe('content_type1');
+        expect(scope.linkContentTypes[0].getId()).toBe('content_type1');
       });
     });
   });
@@ -106,11 +106,11 @@ describe('cfLinkEditor Controller', function () {
         createController();
       });
 
-      it('sets no linkContentType', function () {
-        expect(scope.linkContentType).toBeFalsy();
+      it('sets no linkContentTypes', function () {
+        expect(scope.linkContentTypes).toBeFalsy();
       });
 
-      it('sets no linkContentType', function () {
+      it('sets no linkMimeTypeGroup', function () {
         expect(scope.linkMimetypeGroup).toBeFalsy();
       });
     });

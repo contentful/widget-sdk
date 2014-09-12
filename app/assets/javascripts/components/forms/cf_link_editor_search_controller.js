@@ -236,9 +236,9 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$a
     });
   }
 
-  function singleContentType(linkContentType) {
-    if (_.isArray(linkContentType) && linkContentType.length === 1) {
-      return linkContentType[0];
+  function singleContentType(linkContentTypes) {
+    if (_.isArray(linkContentTypes) && linkContentTypes.length === 1) {
+      return linkContentTypes[0];
     }
     return false;
   }

@@ -34,7 +34,7 @@ describe('cfLinkEditorSearch Controller', function () {
         addEntity: 'addLink(entity)',
         ngShow: '__visible',
         entityType: 'linkType',
-        entityContentType: 'linkContentType',
+        entityContentType: 'linkContentTypes',
         entityMimeTypeGroup: 'linkMimetypeGroup'
       };
 
@@ -351,7 +351,7 @@ describe('cfLinkEditorSearch Controller', function () {
 
     it('for linked content type', function() {
       scope.linkType = 'Entry';
-      scope.linkContentType = [{
+      scope.linkContentTypes = [{
         getName: sinon.stub().returns('123 Type'),
         getId:   sinon.stub().returns(123)
       }];

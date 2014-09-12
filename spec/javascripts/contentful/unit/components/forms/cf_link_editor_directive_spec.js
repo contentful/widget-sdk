@@ -221,7 +221,7 @@ describe('cfLinkEditor Directive', function () {
 
     describe('has a known content type', function () {
       beforeEach(function () {
-        scope.linkContentType = [{
+        scope.linkContentTypes = [{
           getName: _.constant('Thing'),
           data: {
             fields: []
@@ -578,7 +578,7 @@ describe('cfLinkEditor Directive', function () {
     var newButton;
     beforeEach(function () {
       scope.field.items.linkType = 'Entry';
-      scope.linkContentType = [];
+      scope.linkContentTypes = [];
       scope.spaceContext.publishedContentTypes = [
         {
           getId:   _.constant('herp'),
@@ -633,7 +633,7 @@ describe('cfLinkEditor Directive', function () {
           getName: _.constant('Derp')
         }
       ];
-      scope.linkContentType = [{
+      scope.linkContentTypes = [{
         getName: _.constant('ContentTypeName'),
         getId: _.constant('contentypeId'),
         data: {
