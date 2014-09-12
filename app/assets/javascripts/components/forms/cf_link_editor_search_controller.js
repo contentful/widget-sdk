@@ -222,7 +222,7 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$a
     } else if ($scope.entityType === 'Entry') {
       if (singleContentType($scope.entityContentType)) {
         contentType = singleContentType($scope.entityContentType);
-      } else if ($scope.entityContentType.length > 1) {
+      } else if ($scope.entityContentType && $scope.entityContentType.length > 1) {
         queryObject['sys.contentType.sys.id[in]'] = _.map($scope.entityContentType, function (ct) {
           return ct.getId();
         }).join(',');
