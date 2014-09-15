@@ -38,7 +38,7 @@ describe('API Key List Controller', function () {
   describe('refreshing api keys', function() {
     var getApiKeysStub;
     beforeEach(function() {
-      getApiKeysStub = sinon.stub(scope.spaceContext.space, 'getApiKeys');
+      getApiKeysStub = sinon.stub(scope.spaceContext.space, 'getDeliveryApiKeys');
       scope.refreshApiKeys();
       getApiKeysStub.yield(null, {});
     });
@@ -55,7 +55,7 @@ describe('API Key List Controller', function () {
   describe('refreshing api keys fails', function () {
     var getApiKeysStub;
     beforeEach(function() {
-      getApiKeysStub = sinon.stub(scope.spaceContext.space, 'getApiKeys');
+      getApiKeysStub = sinon.stub(scope.spaceContext.space, 'getDeliveryApiKeys');
       scope.refreshApiKeys();
       getApiKeysStub.yield({statusCode: 500}, null);
     });

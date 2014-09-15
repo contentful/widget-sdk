@@ -155,7 +155,8 @@ angular.module('contentful').directive('otDocFor', function () {
   }
 
   function updateHandler(){
-    $scope.otGetEntity().setVersion($scope.otDoc.version);
+    if($scope.otDoc)
+      $scope.otGetEntity().setVersion($scope.otDoc.version);
   }
 
   function setVersionUpdater() {

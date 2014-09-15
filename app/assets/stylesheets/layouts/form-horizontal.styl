@@ -20,10 +20,10 @@
   flex-direction: column
 
 .l-form-left
-  margin-left: 10%
+  margin-left: 5%
   width: 35%
 .l-form-right
-  margin-left: 10%
+  margin-left: 5%
   width: 45%
 
 .l-form-field,
@@ -58,6 +58,12 @@
   float: left
   position: relative
   width: $field-editor-width
+.l-field-editor--with-action
+  @extend .l-field-editor
+  width: $field-editor-width - 37%
+.l-field-action
+  width: 35%
+  margin-left: 2%
 
 .l-locale-label
   float: left

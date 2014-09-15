@@ -65,7 +65,7 @@ angular.module('contentful').controller('TabViewCtrl', ['$scope', '$injector', f
         handleEditingInterface('contentTypeEditor', route.params.editingInterfaceId)
       );
     } else if (route.viewType == 'api-key-editor')
-      $scope.spaceContext.space.getApiKey(route.params.apiKeyId, handleFallback('apiKeyEditor', 'apiKeyList'));
+      $scope.spaceContext.space.getDeliveryApiKey(route.params.apiKeyId, handleFallback('apiKeyEditor', 'apiKeyList'));
     else
       $scope.spaceContext.space.getPublishedContentTypes(function(err, ets) {
         $scope.$apply(function (scope) {

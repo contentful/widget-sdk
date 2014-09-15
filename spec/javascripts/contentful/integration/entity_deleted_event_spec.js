@@ -170,7 +170,7 @@ describe('ApiKey List controller events', function () {
 
       apiKeysStub = sinon.stub();
       apiKeysStub.callsArgWith(1, null, apiKeys);
-      scope.spaceContext.space.getApiKeys = apiKeysStub;
+      scope.spaceContext.space.getDeliveryApiKeys = apiKeysStub;
 
       scope.apiKey = removedEntity;
       closeStub = sinon.stub();

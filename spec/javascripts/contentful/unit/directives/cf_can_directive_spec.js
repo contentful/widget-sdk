@@ -21,7 +21,7 @@ describe('The can directive', function () {
       enforcements.setSpaceContext({
         space: {
           data: {sys: {createdBy: {sys: {id: ''}}}},
-          getApiKeys: sinon.stub()
+          getDeliveryApiKeys: sinon.stub()
         }
       });
 

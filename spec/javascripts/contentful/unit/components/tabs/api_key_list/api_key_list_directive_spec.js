@@ -19,7 +19,7 @@ describe('The ApiKey list directive', function () {
       scope.spaceContext = {
         space: {
           data: {sys: {createdBy: {sys: {id: ''}}}},
-          getApiKeys: sinon.stub()
+          getDeliveryApiKeys: sinon.stub()
         }
       };
       enforcements.setSpaceContext(scope.spaceContext);
