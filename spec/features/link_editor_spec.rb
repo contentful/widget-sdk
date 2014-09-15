@@ -44,7 +44,7 @@ feature 'Link Editor', js: true do
       find('.result-list span', text: 'AAAA').click
       expect(page).to     have_selector('li')
       expect(page).to_not have_selector('input')
-      find('.ss-delete').click
+      find('.fa-close').click
       expect(page).to_not have_selector('li')
       expect(page).to     have_selector('input')
     end
@@ -61,7 +61,7 @@ feature 'Link Editor', js: true do
       expect(page).to have_selector('li', text: 'AAAA', count: 2)
       expect(page).to have_selector('li', text: 'BBBB', count: 1)
       expect(page).to have_selector('input')
-      first('.ss-delete').click
+      first('.fa-close').click
       unscope{ wait_for_sharejs }
       expect(page).to have_selector('li', text: 'AAAA', count: 1)
       expect(page).to have_selector('li', text: 'BBBB', count: 1)

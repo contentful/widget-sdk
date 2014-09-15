@@ -13,7 +13,7 @@
 
   .tab-header__actions.add-entity(ng-hide="empty")
     %button.btn.btn--primary.u-truncate(cf-can="create, ContentType" ng-click="createContentType('frameButton')")
-      %i.ss-plus.button-icon
+      %i.fa.fa-plus.button-icon
       Add Content Type
 
 .tab-main
@@ -62,14 +62,14 @@
 
     .advice(ng-show="visibleContentTypes | isEmpty")
       %div(ng-show="hasQuery()")
-        %i.ss-search.giant-icon
+        %i.fa.fa-search.fa-flip-horizontal.giant-icon
         %header.advice-title There are no matches to your search
       %div(ng-show="!hasQuery()")
-        %i.ss-database.giant-icon
+        %i.fa.fa-database.giant-icon
         %header.advice-title You have no Content Types yet.
         %p.advice-description Content Types work like stencils that define which Entries you can create within a specific Space.
         %button.btn.btn--primary(type="button" ng-click="createContentType('frameButton')" cf-can="create, ContentType")
           Create Content Type
         %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
           Visit the Knowledge Base Pages
-          %i.ss-help
+          %i.fa.fa-question-circle

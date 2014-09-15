@@ -183,11 +183,10 @@ li.btn--danger
   line-height: 30px
   padding: 0
   padding-left: 4px
-  padding-top: 4px
   text-align: center
   vertical-align: middle
   box-shadow: none
-  .ss-layers
+  .fa-copy
     font-size: 15px
 
 .toggle-button-set
@@ -213,7 +212,6 @@ li.btn--danger
 // An Icon inside a button
 .button-icon
   position: relative
-  top: 1px
   right: 2px
 
 .button-icon-right
@@ -224,13 +222,19 @@ li.btn--danger
   left: 3px
 
 // Tweaks for specific icons
+.button-icon
+  &.fa-caret-down
+    top: 5px
+.button-icon-right
+  &.fa-caret-down
+    top: 3px
 .button-icon,
 .button-icon-right
-  &.ss-dropdown
-    font-size: 0.8em
-  &.ss-plus
+  &.fa-caret-down
+    font-size: 13px
+  &.fa-plus
     font-size: 0.9em
-  &.ss-navigateright
+  &.fa-angle-right
     font-size: 0.9em
 
 

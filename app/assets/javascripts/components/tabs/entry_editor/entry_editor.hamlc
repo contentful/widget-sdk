@@ -16,7 +16,7 @@
       Info
     .dropdown-btn(cf-dropdown)
       %button.btn.btn--tertiary(cf-dropdown-toggle)
-        %i.ss-dropdown.button-icon-right
+        %i.fa.fa-caret-down.button-icon-right
         %span View
       .dropdown-menu(cf-dropdown-menu="" position="bottomcenter")
         %ul.dropdown-menu-list(ng-show="showLangSwitcher")
@@ -66,7 +66,7 @@
   .button-set
     .dropdown-btn(cf-dropdown="actions" ng-show="canDelete() || canDuplicate()")
       %button.btn.btn--tertiary(cf-dropdown-toggle="actions")
-        %i.ss-directup.button-icon-right
+        %i.fa.fa-caret-up.button-icon-right
         More
       .dropdown-menu(cf-dropdown-menu="actions" position="top")
         %ul.dropdown-menu-list(cf-dropdown="confirm")
@@ -95,5 +95,5 @@
     %a.btn.btn--secondary.invite-users(
       href="" ng-click="navigator.spaceSettings('/users/new').goTo()"
       tooltip="Add a user to this space")
-      %i.ss-users
-      %i.ss-plus
+      %i.fa.fa-users
+      %i.fa.fa-plus

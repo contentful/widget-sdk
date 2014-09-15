@@ -2,4 +2,4 @@
     tooltip-placement="{{placement}}"
     tooltip-container="{{container}}"
     target="_blank")
-  %i.ss-help
+  %i.fa.fa-question-circle

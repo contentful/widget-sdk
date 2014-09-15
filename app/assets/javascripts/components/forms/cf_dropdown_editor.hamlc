@@ -3,4 +3,4 @@
           ng-required="field.required"
           ng-options="value for value in valuesList")
     %option(value="") Choose a value
-  %i.button-icon-right.ss-dropdown
+  %i.button-icon-right.fa.fa-caret-down
