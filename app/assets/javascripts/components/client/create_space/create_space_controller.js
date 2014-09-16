@@ -52,48 +52,46 @@ angular.module('contentful').controller('CreateSpaceDialogCtrl', [
       }
 
       client.createSpace(data, orgId, function (err, newSpace) {
-        $scope.$apply(function (scope) {
-          if (err) {
-            var dismiss = true, method = 'serverError';
-            var errorMessage = 'Could not create Space';
-            var usage = enforcements.computeUsage('space');
-            if(usage){
-              errorMessage = usage;
-              var enforcement = enforcements.determineEnforcement('usageExceeded');
-              $rootScope.$broadcast('persistentNotification', {
-                message: enforcement.message,
-                tooltipMessage: enforcement.description,
-                actionMessage: enforcement.actionMessage,
-                action: enforcement.action
-              });
-              method = 'warn';
-            } else if(hasErrorOnField(err, 'length', 'name')){
-              errorMessage = 'Space name is too long';
-              dismiss = false;
-              method = 'warn';
-            }
-
-            notification[method](errorMessage, err);
-
-            if(dismiss){
-              scope.lockSubmit = false;
-              scope.dialog.cancel();
-              stopSpinner();
-            }
-          } else {
-            $scope.performTokenLookup().then(function () {
-              var space = _.find(scope.spaces, function (space) {
-                return space.getId() == newSpace.getId();
-              });
-              scope.selectSpace(space);
-              scope.lockSubmit = false;
-              scope.dialog.confirm();
-              notification.info('Created space "'+ space.data.name +'"');
-              resetNewSpaceData();
-              stopSpinner();
+        if (err) {
+          var dismiss = true, method = 'serverError';
+          var errorMessage = 'Could not create Space';
+          var usage = enforcements.computeUsage('space');
+          if(usage){
+            errorMessage = usage;
+            var enforcement = enforcements.determineEnforcement('usageExceeded');
+            $rootScope.$broadcast('persistentNotification', {
+              message: enforcement.message,
+              tooltipMessage: enforcement.description,
+              actionMessage: enforcement.actionMessage,
+              action: enforcement.action
             });
+            method = 'warn';
+          } else if(hasErrorOnField(err, 'length', 'name')){
+            errorMessage = 'Space name is too long';
+            dismiss = false;
+            method = 'warn';
           }
-        });
+
+          notification[method](errorMessage, err);
+
+          if(dismiss){
+            $scope.lockSubmit = false;
+            $scope.dialog.cancel();
+            stopSpinner();
+          }
+        } else {
+          $scope.performTokenLookup().then(function () {
+            var space = _.find($scope.spaces, function (space) {
+              return space.getId() == newSpace.getId();
+            });
+            $scope.selectSpace(space);
+            $scope.lockSubmit = false;
+            $scope.dialog.confirm();
+            notification.info('Created space "'+ space.data.name +'"');
+            resetNewSpaceData();
+            stopSpinner();
+          });
+        }
       });
     };
   }

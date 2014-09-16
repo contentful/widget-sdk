@@ -32,7 +32,7 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
       $scope.otChangeValueP = function (value) {
         if ($scope.otDoc) {
           var stopSpin = cfSpinner.start();
-          var cb = $q.callback();
+          var cb = $q.callbackWithApply();
           try {
             $scope.otDoc.setAt($scope.otPath, value, cb);
           } catch(e) {

@@ -48,18 +48,14 @@ angular.module('contentful').controller('TabViewCtrl', ['$scope', 'authenticatio
       $scope.spaceContext.space.getDeliveryApiKey(route.params.apiKeyId, handleFallback('apiKeyEditor', 'apiKeyList'));
     else
       $scope.spaceContext.space.getPublishedContentTypes(function(err, ets) {
-        $scope.$apply(function (scope) {
-          if (_.isEmpty(ets)) scope.navigator.contentTypeList().goTo();
-          else                scope.navigator.entryList().goTo();
-        });
+        if (_.isEmpty(ets)) $scope.navigator.contentTypeList().goTo();
+        else                $scope.navigator.entryList().goTo();
       });
 
     function handleFallback(defaultView, fallbackView){
       return function (err, obj) {
-        $scope.$apply(function (scope) {
-          if (err) scope.navigator[fallbackView]().goTo();
-          else     scope.navigator[defaultView](obj).open();
-        });
+        if (err) $scope.navigator[fallbackView]().goTo();
+        else     $scope.navigator[defaultView](obj).open();
       };
     }
   }

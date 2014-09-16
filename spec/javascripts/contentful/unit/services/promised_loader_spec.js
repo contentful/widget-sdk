@@ -30,6 +30,7 @@ describe('Promised loader service', function () {
       stubs.method.yields( null, {});
       loader.loadCallback(host, 'methodName', {}).then(stubs.success, stubs.error);
       loader._loadCallback.invokeDelayed();
+      $rootScope.$apply();
     });
 
     it('calls host method', function() {
@@ -54,6 +55,7 @@ describe('Promised loader service', function () {
       stubs.method.yields({});
       loader.loadCallback(host, 'methodName', {}).then(stubs.success, stubs.error);
       loader._loadCallback.invokeDelayed();
+      $rootScope.$apply();
     });
 
     it('calls host method', function() {

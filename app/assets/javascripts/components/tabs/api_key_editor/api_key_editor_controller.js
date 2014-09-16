@@ -66,15 +66,13 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
   $scope['delete'] = function() {
     var t = title();
     $scope.apiKey['delete'](function(err) {
-      $scope.$apply(function() {
-        if (err) {
-          notification.warn(t + ' could not be deleted');
-          logger.logServerError('ApiKey could not be deleted', err);
-          return;
-        }
-        notification.info(t + ' deleted successfully');
-        $scope.broadcastFromSpace('entityDeleted', $scope.apiKey);
-      });
+      if (err) {
+        notification.warn(t + ' could not be deleted');
+        logger.logServerError('ApiKey could not be deleted', err);
+        return;
+      }
+      notification.info(t + ' deleted successfully');
+      $scope.broadcastFromSpace('entityDeleted', $scope.apiKey);
     });
   };
 
@@ -89,17 +87,15 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
   $scope.save = function() {
     var t = title();
     $scope.apiKey.save(function(err) {
-      $scope.$apply(function() {
-        if (err) {
-          notification.warn(t + ' could not be saved');
-          if(dotty.get(err, 'statusCode') !== 422)
-            logger.logServerError('ApiKey could not be saved', err);
-          return;
-        }
-        $scope.apiKeyForm.$setPristine();
-        $scope.navigator.apiKeyEditor($scope.apiKey).goTo();
-        notification.info(t + ' saved successfully');
-      });
+      if (err) {
+        notification.warn(t + ' could not be saved');
+        if(dotty.get(err, 'statusCode') !== 422)
+          logger.logServerError('ApiKey could not be saved', err);
+        return;
+      }
+      $scope.apiKeyForm.$setPristine();
+      $scope.navigator.apiKeyEditor($scope.apiKey).goTo();
+      notification.info(t + ' saved successfully');
     });
   };
 

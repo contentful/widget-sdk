@@ -61,20 +61,18 @@ describe('ContentTypeEditor Controller', function () {
       var newContentType = cfStub.contentType(space, 'contentType2', 'Content Type 2');
       newContentType.getPublishedStatus = sinon.stub();
       publishedCT = {published:true};
-      newContentType.getPublishedStatus.callsArgWithAsync(0, null, publishedCT);
       scope.contentType = newContentType;
-      scope.$digest();
+      scope.$apply();
+      newContentType.getPublishedStatus.yield(null, publishedCT);
+      scope.$apply();
     }));
 
     it('gets published status', function () {
       expect(scope.contentType.getPublishedStatus).toBeCalled();
     });
 
-    it('sets the published content type', function (done) {
-      scope.$watch('publishedContentType', function (publishedContentType) {
-        expect(publishedContentType).toEqual(publishedCT);
-        done();
-      });
+    it('sets the published content type', function () {
+      expect(scope.publishedContentType).toEqual(publishedCT);
     });
   });
 
