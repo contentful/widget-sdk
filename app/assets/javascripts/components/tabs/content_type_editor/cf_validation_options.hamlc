@@ -39,8 +39,8 @@
     .cf-form-inline-error(cf-error-path="validationListPath(validationIndex)")
     .cf-predefined-values-list
 
-  %div(ng-switch-when="linkContentType" ng-controller="LinkContentTypeValidationController as linkContentTypeController")
-    %label(ng-repeat="ct in spaceContext.publishedContentTypes")
+  %div.checkbox-list(ng-switch-when="linkContentType" ng-controller="LinkContentTypeValidationController as linkContentTypeController")
+    %label.checkbox-list__item(ng-repeat="ct in spaceContext.publishedContentTypes")
       %input(type="checkbox" 
         ng-model="linkContentTypeController.contentTypes[ct.getId()]"
         ng-change="linkContentTypeController.updateValidation()")
