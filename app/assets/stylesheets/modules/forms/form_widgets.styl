@@ -70,10 +70,15 @@
     white-space: nowrap
     text-overflow: ellipsis
   .fa-close
-    @extend $delete-icon
     float: right
     margin-top: 1px
     margin-right: 4px
+    font-size: 1em
+    color: $gray-light
+    text-shadow: 0 1px 0 rgba(255,255,255,0.6)
+    &:hover
+      color: $gray-medium
+      cursor: pointer
 
 .widget-location-editor
   position: relative
@@ -145,7 +150,7 @@
   > input[type="text"] // TODO we can simplify this selector once we simplify form controls
     display: inline
   .fa-calendar,
-  .fa-clock,
+  .fa-clock-o,
   .fa-globe
     font-size: 14px
     color: $gray

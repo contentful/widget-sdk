@@ -51,7 +51,7 @@
             %li.dropdown-menu-item.no-highlight(ng-repeat="(orgId, org) in spacesByOrg"
                              ng-class="{'no-action': !canSelectOrg(orgId)}"
                              cf-click-local="selectOrg(orgId) && toggleDropdown()")
-              %i.fa.fa-users
+              %i.fa.fa-user
               %span {{getOrgName(orgId)}}
               %ul.dropdown-menu-list
                 %li.dropdown-menu-item(ng-repeat="space in org track by space.getId()" cf-click-local="selectSpace(space) && toggleDropdown()"
