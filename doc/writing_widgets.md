@@ -63,7 +63,7 @@ Every parameter has to be described in an option descriptor that looks like this
 ```
 
 | Key | Value
-| --
+| --- | -----
 | `param` | The internal name of the parameter
 | `name`  | The parameter name as displayed to the user
 | `default` | The default value for the parameter
