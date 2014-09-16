@@ -79,7 +79,7 @@ While you could theoretically write all your markup right in the template, you p
 ### APIs available to the widget template
 
 There are several ways to edit an Entry field through a widget. We will display an example for each way along with explanations.
-They one behavior they all share is that the data they manipulate is exposed on the scope as `fieldData.value`.
+The one behavior they all share is that the data they manipulate is exposed on the scope as `fieldData.value`.
 
 But since manipulation of entries has to be done through our realtime backend, changing `fieldData.value` is not sufficient. To also supply changes through the realtime backend use one of the following approaches.
 
@@ -99,7 +99,7 @@ To simply update the realtime entry everytime you change `fieldData.value`, add 
 <div class="preview" style="background-color: #{{fieldData.value}}"></div>
 ```
 
-That's it. Every change you make will be send through the realtime backend. Not however that every change will actually replace the old value, not edit it. That means that a text input box used in this fashion will not allow multiple users to edit text at the same time.
+That's it. Every change you make will be send through the realtime backend. Note however that every change will actually replace the old value, not edit it. That means that a text input box used in this fashion will not allow multiple users to edit text at the same time.
 
 #### Editing Text
 
