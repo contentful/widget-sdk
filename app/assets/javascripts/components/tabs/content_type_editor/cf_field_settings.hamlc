@@ -4,9 +4,9 @@
   .icons
     %i.fa.fa-exclamation-triangle.validation-alert(tooltip="This Field has errors"
                                  ng-show="validationResult.pathErrors.fields[index]")
-    %i.fa.fa-header(tooltip="Field used as title"
+    %i.title-icon(tooltip="Field used as title"
                class="enabled"
-               ng-show="isDisplayField(field)")
+               ng-show="isDisplayField(field)") T
     %i.required-icon(tooltip="Field is required"
                      ng-class="{enabled: field.required}") ✱
     %i.fa.fa-check(tooltip="Field has validations"
