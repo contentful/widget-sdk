@@ -221,14 +221,12 @@ describe('cfLinkEditor Directive', function () {
 
     describe('has a known content type', function () {
       beforeEach(function () {
-        var nameStub = sinon.stub();
-        nameStub.returns('Thing');
-        scope.linkContentType = {
-          getName: nameStub,
+        scope.linkContentTypes = [{
+          getName: _.constant('Thing'),
           data: {
             fields: []
           }
-        };
+        }];
 
         scope.$digest();
       });
@@ -578,15 +576,17 @@ describe('cfLinkEditor Directive', function () {
 
   describe('shows new button for link to entries with no validation', function () {
     var newButton;
-    var nameStub;
     beforeEach(function () {
       scope.field.items.linkType = 'Entry';
-      scope.linkContentType = null;
-      nameStub = sinon.stub();
+      scope.linkContentTypes = [];
       scope.spaceContext.publishedContentTypes = [
         {
-          getId: function(){return Math.random();},
-          getName: nameStub
+          getId:   _.constant('herp'),
+          getName: _.constant('Herp')
+        },
+        {
+          getId:   _.constant('derp'),
+          getName: _.constant('Derp')
         }
       ];
 
@@ -613,7 +613,8 @@ describe('cfLinkEditor Directive', function () {
     });
 
     it('gets the name of the content type', function () {
-      expect(nameStub).toBeCalled();
+      expect(newButton.text()).toMatch('Herp');
+      expect(newButton.text()).toMatch('Derp');
     });
 
   });
@@ -622,13 +623,23 @@ describe('cfLinkEditor Directive', function () {
     var newButton;
     beforeEach(function () {
       scope.field.items.linkType = 'Entry';
-      scope.linkContentType = {
-        getName: sinon.stub().returns('ContentTypeName'),
-        getId: sinon.stub().returns('contentypeId'),
+      scope.spaceContext.publishedContentTypes = [
+        {
+          getId:   _.constant('herp'),
+          getName: _.constant('Herp')
+        },
+        {
+          getId:   _.constant('derp'),
+          getName: _.constant('Derp')
+        }
+      ];
+      scope.linkContentTypes = [{
+        getName: _.constant('ContentTypeName'),
+        getId: _.constant('contentypeId'),
         data: {
           fields: []
         }
-      };
+      }];
 
       stubs.can.withArgs('create', 'Entry').returns(true);
 
