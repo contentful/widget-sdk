@@ -8,7 +8,7 @@ angular.module('contentful').directive('cfLinkEditorSearch', ['defer', function(
     controllerAs: 'searchController',
     link: function (scope, element) {
       scope.clickOutsideHandler = function () {
-        scope.searchController.hideSearchResults();
+        scope.searchController.clearSearch();
       };
 
       scope.$watch('selectedEntity', function () {

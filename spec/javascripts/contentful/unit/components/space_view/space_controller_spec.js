@@ -416,7 +416,7 @@ describe('Space Controller', function () {
   describe('creates an api key', function () {
     var createStub;
     beforeEach(function () {
-      createStub = sinon.stub(scope.spaceContext.space, 'createBlankApiKey');
+      createStub = sinon.stub(scope.spaceContext.space, 'createBlankDeliveryApiKey');
     });
 
     afterEach(function () {

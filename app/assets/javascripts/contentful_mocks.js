@@ -161,7 +161,7 @@ mocks.factory('cfStub', ['contentfulClient', 'SpaceContext', function (contentfu
 
   cfStub.apiKey = function (space, id, name, extraData) {
     var apiKey;
-    space.getApiKey(id, function (err, res) {
+    space.getDeliveryApiKey(id, function (err, res) {
       apiKey = res;
     });
     adapter.respondWith(null, _.merge({

@@ -7,7 +7,7 @@
   "author": "",
   "license": "BSD",
   "dependencies": {
-    "contentful-client": "~1.17.0",
+    "contentful-client": "~5.0.1",
     "contentful-mimetype": "~0.4.8",
     "contentful-validation": "~2.0.5",
     "worf": "~3.1.0",

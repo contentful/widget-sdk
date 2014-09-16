@@ -54,26 +54,46 @@ angular.module('contentful').controller('AssetListCtrl',['$scope', '$injector', 
     }
   };
 
+  var throttledListRefresh = _.throttle(function () {
+    _.delay(function () {
+      $scope.searchController.resetAssets();
+    }, 3000);
+  }, 2000);
+
   $scope.createMultipleAssets = function () {
     filepicker.pickMultiple().
     then(function (FPFiles) {
-      listActions.serialize(_.map(FPFiles, createAssetForFile));
-
-      _.defer(function () {
-        $scope.searchController.resetAssets();
-      }, 2000);
+      return listActions.serialize(_.map(FPFiles, createAssetForFile)).then(function (entities) {
+        entities = _.filter(entities);
+        notification.info('Assets uploaded. Processing...');
+        throttledListRefresh();
+        return listActions.serialize(_.map(entities, processAssetForFile)).then(function () {
+          notification.info('Assets processed');
+          throttledListRefresh();
+          return listActions.serialize(_.map(entities, publishAssetForFile)).then(function () {
+            notification.info('Assets saved');
+            throttledListRefresh();
+          }).catch(function (err) {
+            notification.warn('Some assets failed to save');
+            throttledListRefresh();
+            return $q.reject(err);
+          });
+        }).catch(function (err) {
+          notification.warn('Some assets failed to process');
+          throttledListRefresh();
+          return $q.reject(err);
+        });
+      }).catch(function (err) {
+        notification.serverError('Some assets failed to upload', err);
+        throttledListRefresh();
+        return $q.reject(err);
+      });
     }, function (FPError) {
       if (FPError.code !== 101) {
         throw new Error(FPError);
       }
     });
   };
-
-  var throttledListRefresh = _.throttle(function () {
-    _.delay(function () {
-      $scope.searchController.resetAssets();
-    }, 3000);
-  }, 2000);
 
   function createAssetForFile(FPFile) {
     return function () {
@@ -88,19 +108,27 @@ angular.module('contentful').controller('AssetListCtrl',['$scope', '$injector', 
       data.fields.title[locale] = stringUtils.fileNameToTitle(file.fileName);
 
       $scope.spaceContext.space.createAsset(data, assetCallback);
-      return assetCallback.promise.then(function (entity) {
-        var processCallback = $q.callback();
-        entity.process(entity.version, locale, processCallback);
-        processCallback.promise.then(function () {
-          throttledListRefresh();
-        }).catch(function () {
-          notification.warn('Some assets failed to process');
-        });
-      }).catch(function (err) {
-        notification.serverError('Some assets failed to upload', err);
-      });
+      return assetCallback.promise;
     };
   }
+
+  function processAssetForFile(entity) {
+    return function () {
+      var processCallback = $q.callback();
+      var locale = $scope.spaceContext.space.getDefaultLocale().code;
+      entity.process(entity.version, locale, processCallback);
+      return processCallback.promise;
+    };
+  }
+
+  function publishAssetForFile(entity) {
+    return function () {
+      var publishCallback = $q.callback();
+      entity.publish(entity.getVersion()+1, publishCallback);
+      return publishCallback.promise;
+    };
+  }
+
 
   $scope.$on('didResetAssets', function (event, assets) {
     $scope.selection.switchBaseSet(assets.length);

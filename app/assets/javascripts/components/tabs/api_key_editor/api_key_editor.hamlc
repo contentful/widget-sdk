@@ -47,10 +47,17 @@
         %label Space ID
         .l-form-controls
           .l-field-editor
-            %input.form-control.space-id(type="text" value="{{spaceContext.space.getId()}}" readonly="readonly")
-            %a.btn.btn--secondary.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".space-id")
+            %input.form-control.with-copy-paste-button.space-id(type="text" value="{{spaceContext.space.getId()}}" readonly="readonly")
+            %a.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".space-id")
               %i.ss-layers
-              %i.ss-plus
+      .l-form-field--no-label
+        .l-form-controls
+          .l-field-editor(ng-if="isDevice('iOS')")
+            %a(href="{{mobileAppUrl}}" target="_blank") Browse entries in the Discovery App
+          .l-field-editor(ng-if="isDevice('any')")
+            %a(href="https://itunes.apple.com/au/app/contentful-discovery-cms-for/id892840015" target="_blank")
+              Browse entries in the Discovery App
+            %span (For iOS devices only)
 
     .l-form-right
       %h2.section-title API Access Tokens
@@ -58,18 +65,10 @@
         %label Production
         .l-form-controls
           .l-field-editor
-            %input.form-control.access-token.cf-select-all-input(type="text" ng-model="apiKey.data.accessToken" ng-show="apiKey.data.accessToken" readonly="readonly")
-            %a.btn.btn--secondary.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token" ng-show="apiKey.data.accessToken")
+            %input.form-control.with-copy-paste-button.access-token.cf-select-all-input(type="text" ng-model="apiKey.data.accessToken" readonly="readonly")
+            %a.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token")
               %i.ss-layers
-              %i.ss-plus
             %input.form-control(type="text" ng-hide="apiKey.data.accessToken" readonly="readonly" value="Save this API Key to generate an OAuth Access Token and access your data.")
-      .l-form-field--no-label
-        .l-form-controls
-          .l-field-editor(ng-if="isDevice('iOS')")
-            %a(href="{{mobileAppUrl}}" target="_blank") Browse entries in the Discovery App
-          .l-field-editor(ng-if="isDevice('any')")
-            %a(href="https://itunes.apple.com/au/app/contentful-discovery-cms-for/id892840015" target="_blank") Browse entries in the Discovery App
-            %span (For iOS devices only)
 
       .l-form-field--no-label(ng-show="apiKey.data.accessToken")
         .l-form-controls
@@ -92,6 +91,7 @@
                   %option(value="swift") Swift
                 %i.button-icon-right.ss-dropdown
               %a.cf-copy-paste(href="#" clipboard-target-selector=".authentication-code .code-example textarea")
+                %i.ss-layers
                 Copy to Clipboard
 
             %ng-switch(on="authCodeExampleLang")
