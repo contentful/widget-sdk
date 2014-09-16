@@ -22,10 +22,13 @@ $user-detail-image
   .identity-well
     max-width: 2*$identity-well-padding + 3 * $identity-width + (3 - 1) * $identity-spacing
     margin-bottom: 2 * $identity-well-padding
+  .identity
+    width: 200px
+  .auth_provider
+    width: $identity-width
   .identity,
   .auth_provider
     display: inline-block
-    width: $identity-width
     height: $identity-image-size + 2 * $identity-padding
     border: 1px solid $gray-light
     border-radius: 3px
@@ -39,13 +42,17 @@ $user-detail-image
     .auth_provider_name
       word-break: break-all
       $offset-left = $identity-padding + $identity-image-size + $identity-image-padding
-      $stretch(false, $identity-padding, $identity-padding, $offset-left)
+      $stretch(false, $identity-padding, 20px, $offset-left)
       overflow: hidden
       text-overflow: ellipsis
     .remove
       .fa-close
-        @extend $delete-icon
         font-size: 1em
+        color: $gray
+        text-shadow: 0 1px 0 rgba(255,255,255,0.6)
+        &:hover
+          color: $gray-medium
+          cursor: pointer
       $stretch($identity-padding, $identity-padding, false, false)
       opacity: 0
       transition: opacity 0.1s ease-in-out
