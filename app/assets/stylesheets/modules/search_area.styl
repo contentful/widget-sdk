@@ -17,8 +17,6 @@
     border-color: $gray-light
     select
       padding-top: 7px
-      white-space: nowrap
-      overflow: hidden
 
 .with-filter
   .search-field
@@ -117,6 +115,23 @@
 
 // Search results position widget
 .search-results-position
+  $display-flexbox()
+  flex-wrap: wrap
   width: 30%
-  max-width: 160px
+  max-width: 180px
   margin-left: 16px
+  .inline-select
+    margin: auto 3px
+  .search-results-position__entries,
+  .search-results-position__pages
+    margin-bottom: 0
+
+@media (max-width: 1300px)
+  .search-results-position
+    .inline-select
+      margin: 0
+      margin-right: 3px
+  .search-results-position__entries
+    align-self: stretch
+    width: 100%
+    margin-bottom: 5px

@@ -1,26 +1,24 @@
 .validation-dialog .modal-dialog
-  width: 700px
+  width: 800px
   user-select: none
 
 .cf-validation-options
+  $display-flexbox()
   padding: ($modal-dialog-padding / 2) 0
   border-bottom: 1px solid $gray-lightest
   margin-left: -($modal-dialog-padding)
   margin-right: -($modal-dialog-padding)
   padding-left: $modal-dialog-padding
   padding-right: $modal-dialog-padding
+
 .cf-validation-options:last-child
   border-bottom: none
   padding-bottom: 0
 
 .validation-type-select
-  display: inline
+  margin-right: 3%
   button
     height: 34px
-
-.validation-controls
-  display: inline-block
-  vertical-align: top
 
 // TODO this should only need prefixing by validation controls
 // but the extension of form-styled creates a huge mess in
@@ -32,16 +30,6 @@
     .button-icon-right
       top: 10px
 
-  input[type]
-    display: inline
-
-  input[type], li
-    width: 250px
-
-  &.regexp
-    input[type]
-      width: 150px
-
   .block-list
     margin: 0
     padding: 0
@@ -51,6 +39,19 @@
     overflow-y: auto
     li
       text-align: left
+
+.validation-controls
+  flex-grow: 1
+  margin-right: 3%
+
+.checkbox-list
+  $display-flexbox()
+  flex-wrap: wrap
+  line-height: 35px
+.checkbox-list__item
+  flex-basis: 25%
+  flex-shrink: 1
+  flex-grow: 1
 
 .cf-predefined-values-list
   position: relative
@@ -66,7 +67,7 @@
 
 .delete-validation
   display: block
-  float: right
+  margin-left: auto
   text-transform: uppercase
   letter-spacing: 1px
   color: $gray

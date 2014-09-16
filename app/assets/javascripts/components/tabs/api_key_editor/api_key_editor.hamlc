@@ -69,13 +69,6 @@
             %a.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token")
               %i.ss-layers
             %input.form-control(type="text" ng-hide="apiKey.data.accessToken" readonly="readonly" value="Save this API Key to generate an OAuth Access Token and access your data.")
-      .l-form-field--no-label
-        .l-form-controls
-          .l-field-editor(ng-if="isDevice('iOS')")
-            %a(href="{{mobileAppUrl}}" target="_blank") Browse entries in the Discovery App
-          .l-field-editor(ng-if="isDevice('any')")
-            %a(href="https://itunes.apple.com/au/app/contentful-discovery-cms-for/id892840015" target="_blank") Browse entries in the Discovery App
-            %span (For iOS devices only)
 
       .l-form-field--no-label(ng-show="apiKey.data.accessToken")
         .l-form-controls

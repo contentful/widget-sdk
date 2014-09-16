@@ -10,10 +10,11 @@
 
   .tab-header__search.search-area.with-filter
     .btn.btn--tertiary.select-box
-      %select(ng-model="tab.params.view.contentTypeId"
-              ng-change="selectedContentType()"
-              ng-options="ct.getId() as ct.getName() group by getGroupName() for ct in spaceContext.publishedContentTypes")
-        %option(value="") All
+      .select-box__wrapper
+        %select.u-truncate(ng-model="tab.params.view.contentTypeId"
+                ng-change="selectedContentType()"
+                ng-options="ct.getId() as ct.getName() group by getGroupName() for ct in spaceContext.publishedContentTypes")
+          %option(value="") All
       %i.button-icon-right.ss-dropdown
 
     .search-with-results(cf-tokenized-search="tab.params.view.searchTerm"
