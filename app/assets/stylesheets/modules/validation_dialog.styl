@@ -10,13 +10,13 @@
   margin-right: -($modal-dialog-padding)
   padding-left: $modal-dialog-padding
   padding-right: $modal-dialog-padding
-  > *
-    margin-right: 3%
+
 .cf-validation-options:last-child
   border-bottom: none
   padding-bottom: 0
 
 .validation-type-select
+  margin-right: 3%
   button
     height: 34px
 
@@ -39,6 +39,19 @@
     overflow-y: auto
     li
       text-align: left
+
+.validation-controls
+  flex-grow: 1
+  margin-right: 3%
+
+.checkbox-list
+  $display-flexbox()
+  flex-wrap: wrap
+  line-height: 35px
+.checkbox-list__item
+  flex-basis: 25%
+  flex-shrink: 1
+  flex-grow: 1
 
 .cf-predefined-values-list
   position: relative

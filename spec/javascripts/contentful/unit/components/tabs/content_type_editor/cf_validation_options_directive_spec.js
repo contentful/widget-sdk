@@ -496,6 +496,12 @@ describe('The cfValidationOptions directive', function () {
     beforeEach(function() {
       scope.validationType = stubs.validationType;
       scope.validation = {in: []};
+      scope.spaceContext = {
+        publishedContentTypes: [{
+          getName: _.constant('Derp'),
+          getId:   _.constant('derp')
+        }]
+      };
     });
 
     function createFormTest(type, element) {
@@ -510,7 +516,7 @@ describe('The cfValidationOptions directive', function () {
     createFormTest('range', 'input');
     createFormTest('regexp', 'input');
     createFormTest('in', 'input');
-    createFormTest('linkContentType', 'select');
+    createFormTest('linkContentType', 'input');
     createFormTest('linkMimetypeGroup', 'select');
   });
 
