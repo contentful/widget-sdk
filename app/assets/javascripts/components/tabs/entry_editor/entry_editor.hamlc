@@ -95,5 +95,5 @@
     %a.btn.btn--secondary.invite-users(
       href="" ng-click="navigator.spaceSettings('/users/new').goTo()"
       tooltip="Add a user to this space")
-      %i.fa.fa-users
+      %i.fa.fa-user
       %i.fa.fa-plus
