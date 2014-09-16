@@ -44,7 +44,7 @@
         .tutorial-select-box.left
           .welcome-header
             Content Modeling
-          %i.ss-database.background-icon
+          %i.fa.fa-database.background-icon
           .welcome-text
             Learn how to set up Content Types, the foundation for your Entries.
           .buttons
@@ -56,7 +56,7 @@
         .tutorial-select-box.middle
           .welcome-header
             Content Management
-          %i.ss-file.background-icon
+          %i.fa.fa-file.background-icon
           .welcome-text
             An intro to day to day content management tasks.
           .buttons
@@ -68,7 +68,7 @@
         .tutorial-select-box.right
           .welcome-header
             Content Delivery
-          %i.ss-fork.background-icon
+          %i.fa.fa-random.background-icon
           .welcome-text
             Learn how to configure the distribution of your content.
           .buttons
@@ -84,7 +84,7 @@
   .nav-right(ng-hide="atLastSlide()" ng-click="moveSlide(+1)")
     .nav-arrow-right
   .nav-bubbles
-    %i.ss-record.dot(ng-repeat="(index, slide) in slides track by index"
+    %i.fa.fa-circle.dot(ng-repeat="(index, slide) in slides track by index"
       data-index="{{index}}"
       ng-class="{active: slide == currentSlide}"
       ng-click="setCurrent(slide)")

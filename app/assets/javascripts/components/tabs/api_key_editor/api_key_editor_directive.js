@@ -8,17 +8,6 @@ angular.module('contentful').directive('apiKeyEditor', ['modalDialog', 'keycodes
       elem.on('keydown', function(e) {
         if (e.keyCode === keycodes.ENTER) scope.save();
       });
-
-      scope.showRegenerateWarning = function () {
-        if(!scope.apiKey.data.regenerateAccessToken){
-          modalDialog.open({
-            scope: scope,
-            template: 'regenerate_warning_dialog'
-          }).catch(function () {
-            scope.apiKey.data.regenerateAccessToken = false;
-          });
-        }
-      };
     }
   };
 }]);

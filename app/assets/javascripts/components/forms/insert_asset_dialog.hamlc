@@ -16,7 +16,7 @@
           cf-on-blur-component="leftSearch($event)")
         .assets.endless-container(at-bottom="searchController.loadMore()" num-elements="searchController.paginator.page")
           .asset(ng-repeat="asset in assets" ng-click="selectAsset(asset)")
-            %i.ss-check(ng-show="selection.isSelected(asset)")
+            %i.fa.fa-check(ng-show="selection.isSelected(asset)")
             .cf-thumbnail(file="spaceContext.localizedField(asset, 'data.fields.file')" size="100")
             .asset-title(title="{{spaceContext.assetTitle(asset)}}") {{spaceContext.assetTitle(asset)}}
     .buttons

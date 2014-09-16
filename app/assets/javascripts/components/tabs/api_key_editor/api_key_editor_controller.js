@@ -5,6 +5,7 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
   var notification = $injector.get('notification');
   var logger = $injector.get('logger');
   var $window = $injector.get('$window');
+  var $q = $injector.get('$q');
   $scope.notes = $injector.get('notes');
 
   var deviceRegexps = {
@@ -25,7 +26,19 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
   $scope.tab.closingMessage = 'You have unsaved changes.';
   $scope.tab.closingMessageDisplayType = 'dialog';
 
-  $scope.authCodeExampleLang = 'http';
+  $scope.authCodeExample = {
+    lang: 'http',
+    api: 'production'
+  };
+
+  $scope.getSelectedAccessToken = function () {
+    var apiKey = $scope.isPreviewApiSelected() ? $scope.previewApiKey : $scope.apiKey;
+    return apiKey.data.accessToken;
+  };
+
+  $scope.isPreviewApiSelected = function () {
+    return $scope.authCodeExample.api == 'preview';
+  };
 
   $scope.$watch('apiKey.data.name', function(name) {
     $scope.headline = $scope.tab.title = name || 'Untitled';
@@ -45,6 +58,17 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
       $scope.spaceContext.space.getId() +
       '?access_token=' +
       accessToken;
+  });
+
+  $scope.$watch('apiKey.data.preview_api_key', function (previewApiKey) {
+    if(previewApiKey) {
+      var id = previewApiKey.sys.id;
+      var cb = $q.callback();
+      $scope.spaceContext.space.getPreviewApiKey(id, cb);
+      cb.promise.then(function (apiKey) {
+        $scope.previewApiKey = apiKey;
+      });
+    }
   });
 
   $scope.isDevice = function (id) {
@@ -83,6 +107,13 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
         scope.tab.close();
     }
   });
+
+  $scope.regenerateAccessToken = function (type) {
+    // not used, but necessary to trigger digest cycle
+    var cb = $q.callback();
+    var apiKey = type == 'preview' ? $scope.previewApiKey : $scope.apiKey;
+    apiKey.regenerateAccessToken(cb);
+  };
 
   $scope.save = function() {
     var t = title();
