@@ -69,7 +69,7 @@
         %label Production
         .l-form-controls--with-action
           .l-field-editor(ng-hide="apiKey.data.accessToken")
-            %input.form-control(type="text" readonly="readonly" value="Save this API Key to generate an OAuth Access Token and access your data.")
+            %input.form-control(type="text" readonly="readonly" value="The token will be automatically generated once you save the existing key.")
           .l-field-editor--with-action(ng-show="apiKey.data.accessToken")
             %input.form-control.with-copy-paste-button.access-token.cf-select-all-input(type="text" ng-model="apiKey.data.accessToken" readonly="readonly")
             %a.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token")
@@ -92,7 +92,7 @@
         %label Preview
         .l-form-controls--with-action
           .l-field-editor(ng-hide="previewApiKey.data.accessToken")
-            %input.form-control(type="text" readonly="readonly" value="Save this API Key to generate a Preview OAuth Access Token and access your data.")
+            %input.form-control(type="text" readonly="readonly" value="The token will be automatically generated once you save the existing key.")
           .l-field-editor--with-action(ng-show="previewApiKey.data.accessToken")
             %input.form-control.with-copy-paste-button.access-token.cf-select-all-input(type="text" ng-model="previewApiKey.data.accessToken" readonly="readonly")
             %a.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token")
