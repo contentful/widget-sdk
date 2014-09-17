@@ -19,15 +19,15 @@
   .tab-header__actions.add-entity
     .dropdown-btn(cf-dropdown="" ng-show="assets.length > 0")
       %button.btn.btn--primary.u-truncate(cf-dropdown-toggle="" cf-can="create, Asset")
-        %i.ss-plus.button-icon
+        %i.fa.fa-plus.button-icon
         Add New Asset
       .dropdown-menu(cf-dropdown-menu="" position="bottomcenter" container=".tab-content")
         %ul.dropdown-menu-list
           %li.dropdown-menu-item.type(ng-click="createAsset('frameButton')" dropdown-close="")
-            %i.ss-plus
+            %i.fa.fa-plus
             Single Asset
           %li.dropdown-menu-item.type(ng-click="createMultipleAssets()" dropdown-close="")
-            %i.ss-plus
+            %i.fa.fa-plus
             Multiple Assets
 
 .tab-main
@@ -73,10 +73,10 @@
 
     .advice(ng-show="visibleAssets | isEmpty")
       %div(ng-show="hasQuery()")
-        %i.ss-search.giant-icon
+        %i.fa.fa-search.fa-flip-horizontal.giant-icon
         %header.advice-title There are no matches to your search
       %div(ng-show="!hasQuery()")
-        %i.ss-attach.giant-icon
+        %i.fa.fa-paperclip.giant-icon
         %header.advice-title You have no Assets yet.
         %p.advice-description Assets are external documents that you can link to your Entries. They can be any file you wish, form sounds to images or videos to text documents.
         .dropdown-btn(cf-dropdown="")
@@ -85,16 +85,16 @@
           .dropdown-menu(cf-dropdown-menu="" position="bottomcenter" container=".tab-content")
             %ul.dropdown-menu-list
               %li.dropdown-menu-item.type(ng-click="createAsset('frameButton')" dropdown-close="")
-                %i.ss-plus
+                %i.fa.fa-plus
                 Single Asset
               %li.dropdown-menu-item.type(ng-click="createMultipleAssets()" dropdown-close="")
-                %i.ss-plus
+                %i.fa.fa-plus
                 Multiple Assets
 
 
         %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
           Visit the Knowledge Base Pages
-          %i.ss-help
+          %i.fa.fa-question-circle
 
 .tab-actions
   .label {{selection.size()}} Assets selected

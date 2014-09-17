@@ -65,12 +65,10 @@ angular.module('contentful').factory('EntityCache', ['$rootScope', '$q', 'logger
           'sys.id[in]': this.missingIds.join(','),
           limit: 250
         }, function (err, linkedEntities) {
-          $rootScope.$apply(function () {
-            if (err) return lookup.reject(err);
-            self.missingIds = [];
-            _.forEach(linkedEntities, self.save.bind(self));
-            lookup.resolve();
-          });
+          if (err) return lookup.reject(err);
+          self.missingIds = [];
+          _.forEach(linkedEntities, self.save.bind(self));
+          lookup.resolve();
         });
       } else {
         lookup.resolve();

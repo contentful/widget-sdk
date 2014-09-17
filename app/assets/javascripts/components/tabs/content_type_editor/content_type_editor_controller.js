@@ -17,9 +17,7 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', 'val
   function loadPublishedContentType() {
     // TODO replace with lookup in registry inside spaceContext
     $scope.contentType.getPublishedStatus(function(err, publishedContentType) {
-      $scope.$apply(function(scope) {
-        scope.publishedContentType = publishedContentType;
-      });
+      $scope.publishedContentType = publishedContentType;
     });
   }
 

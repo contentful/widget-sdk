@@ -12,15 +12,13 @@ angular.module('contentful').
 
   $scope['delete'] = function () {
     $scope.contentType['delete'](function (err, contentType) {
-      $scope.$apply(function (scope) {
-        if (err) return notification.serverError('Error deleting Content Type', err);
-        notification.info('Content type deleted successfully');
-        scope.broadcastFromSpace('entityDeleted', contentType);
-        // TODO this should happen automatically
-        // setup an event listener when the spaceContext instance is created
-        // on client controller or space context controller
-        scope.spaceContext.removeContentType($scope.contentType);
-      });
+      if (err) return notification.serverError('Error deleting Content Type', err);
+      notification.info('Content type deleted successfully');
+      $scope.broadcastFromSpace('entityDeleted', contentType);
+      // TODO this should happen automatically
+      // setup an event listener when the spaceContext instance is created
+      // on client controller or space context controller
+      $scope.spaceContext.removeContentType($scope.contentType);
     });
   };
 
@@ -32,61 +30,57 @@ angular.module('contentful').
       return;
     }
     $scope.contentType.publish(version, function (err, publishedContentType) {
-      $scope.$apply(function(scope){
-        if (err) {
-          var errorId = dotty.get(err, 'body.sys.id');
-          var method = 'serverError';
-          var reason = errorId;
-          if (errorId === 'ValidationFailed') {
-            reason = 'Validation failed';
-            scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
-            method = 'warn';
-          } else if (errorId === 'VersionMismatch') {
-            reason = 'Can only activate most recent version';
-            method = 'warn';
-          } else {
-            reason = dotty.get(err, 'body.message');
-          }
-          return notification[method]('Error activating ' + title() + ': ' + reason, err);
+      if (err) {
+        var errorId = dotty.get(err, 'body.sys.id');
+        var method = 'serverError';
+        var reason = errorId;
+        if (errorId === 'ValidationFailed') {
+          reason = 'Validation failed';
+          $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
+          method = 'warn';
+        } else if (errorId === 'VersionMismatch') {
+          reason = 'Can only activate most recent version';
+          method = 'warn';
+        } else {
+          reason = dotty.get(err, 'body.message');
         }
+        return notification[method]('Error activating ' + title() + ': ' + reason, err);
+      }
 
-        notification.info(title() + ' ' + verb + ' successfully');
-        analytics.track('Published ContentType', {
-          contentTypeId: $scope.contentType.getId(),
-          contentTypeName: $scope.contentType.getName(),
-          version: version
-        });
-        scope.contentType.setPublishedVersion(version);
-
-        //console.log('editor has published %o as %o', scope.contentType, publishedContentType);
-        scope.updatePublishedContentType(publishedContentType);
-        scope.spaceContext.registerPublishedContentType(publishedContentType);
-        scope.spaceContext.refreshContentTypes();
+      notification.info(title() + ' ' + verb + ' successfully');
+      analytics.track('Published ContentType', {
+        contentTypeId: $scope.contentType.getId(),
+        contentTypeName: $scope.contentType.getName(),
+        version: version
       });
+      $scope.contentType.setPublishedVersion(version);
+
+      //console.log('editor has published %o as %o', scope.contentType, publishedContentType);
+      $scope.updatePublishedContentType(publishedContentType);
+      $scope.spaceContext.registerPublishedContentType(publishedContentType);
+      $scope.spaceContext.refreshContentTypes();
     });
   };
 
   $scope.unpublish = function () {
     $scope.contentType.unpublish(function (err, publishedContentType) {
-      $scope.$apply(function(scope){
-        if (err) {
-          var reason = dotty.get(err, 'body.message');
-          if(!reason) logger.logServerError('Error deactivating Content Type', err);
-          return notification.warn('Error deactivating ' + title() + ': ' + reason, err);
-        }
+      if (err) {
+        var reason = dotty.get(err, 'body.message');
+        if(!reason) logger.logServerError('Error deactivating Content Type', err);
+        return notification.warn('Error deactivating ' + title() + ': ' + reason, err);
+      }
 
-        notification.info(title() + ' deactivated successfully');
-        analytics.track('Unpublished ContentType', {
-          contentTypeId: $scope.contentType.getId(),
-          contentTypeName: $scope.contentType.getName(),
-          version: $scope.contentType.getVersion()
-        });
-
-        //console.log('editor has unpublished %o as %o', scope.contentType, publishedContentType);
-        scope.updatePublishedContentType(null);
-        scope.spaceContext.unregisterPublishedContentType(publishedContentType);
-        scope.spaceContext.refreshContentTypes();
+      notification.info(title() + ' deactivated successfully');
+      analytics.track('Unpublished ContentType', {
+        contentTypeId: $scope.contentType.getId(),
+        contentTypeName: $scope.contentType.getName(),
+        version: $scope.contentType.getVersion()
       });
+
+      //console.log('editor has unpublished %o as %o', scope.contentType, publishedContentType);
+      $scope.updatePublishedContentType(null);
+      $scope.spaceContext.unregisterPublishedContentType(publishedContentType);
+      $scope.spaceContext.refreshContentTypes();
     });
   };
 

@@ -2,8 +2,6 @@
 
 describe('apiKeyEditor Directive', function () {
   var element, scope, compileElement, stubs;
-  var regenerateCheckbox;
-
   beforeEach(function () {
     module('contentful/test', function ($provide, cfCanStubsProvider) {
       stubs = $provide.makeStubs([
@@ -11,6 +9,7 @@ describe('apiKeyEditor Directive', function () {
         'reasons',
         'open',
         'catch',
+        'getId'
       ]);
       stubs.open.returns({
         catch: stubs.catch
@@ -34,14 +33,16 @@ describe('apiKeyEditor Directive', function () {
       scope.can = stubs.can;
       scope.tab = {
         params: {
-          apiKey: {}
+          apiKey: {
+            data: {},
+            getId: stubs.getId
+          }
         }
       };
 
       compileElement = function () {
         element = $compile('<div class="api-key-editor"></div>')(scope);
         scope.$digest();
-        regenerateCheckbox = element.find('input[type="checkbox"]').parents('.l-form-field--no-label');
       };
     });
   });
@@ -52,42 +53,9 @@ describe('apiKeyEditor Directive', function () {
 
 
   it('has a headline', function () {
-    scope.tab.params.apiKey = {
-      data: {
-       name: 'headline text'
-      }
-    };
+    scope.tab.params.apiKey.data.name = 'headline text';
     compileElement();
     expect(element.find('.tab-header h1').html()).toMatch('headline text');
-  });
-
-  describe('with no existing access token', function () {
-    beforeEach(function () {
-      scope.tab.params.apiKey = {
-        data: {}
-      };
-      compileElement();
-    });
-
-    it('does not show the regenerate form field', function () {
-      expect(regenerateCheckbox).toBeNgHidden();
-    });
-  });
-
-  describe('with an existing access token', function () {
-    beforeEach(function () {
-      scope.tab.params.apiKey = {
-        data: {
-          name: 'accessTokenName',
-          accessToken: 'accessTokenValue'
-        }
-      };
-      compileElement();
-    });
-
-    it('shows the regenerate form field', function () {
-      expect(regenerateCheckbox).not.toBeNgHidden();
-    });
   });
 
   it('delete button cant ever be disabled', function () {

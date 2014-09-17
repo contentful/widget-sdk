@@ -67,20 +67,18 @@ angular.module('contentful').controller('SpaceCtrl',
 
   function makeEntityResponseHandler(params) {
     return function entityResponseHandler(err, entity) {
-      $scope.$apply(function (scope) {
-        if (!err) {
-          scope.navigator[params.navigatorHandler](entity).goTo();
-        } else {
-          if(err && err.body && err.body.details && err.body.details.reasons){
-            var enforcement = enforcements.determineEnforcement(
-              err.body.details.reasons, params.entityType);
-            if(enforcement){
-              params.errorMessage = enforcement.tooltip || enforcement.message;
-            }
+      if (!err) {
+        $scope.navigator[params.navigatorHandler](entity).goTo();
+      } else {
+        if(err && err.body && err.body.details && err.body.details.reasons){
+          var enforcement = enforcements.determineEnforcement(
+            err.body.details.reasons, params.entityType);
+          if(enforcement){
+            params.errorMessage = enforcement.tooltip || enforcement.message;
           }
-          notification.serverError(params.errorMessage, err);
         }
-      });
+        notification.serverError(params.errorMessage, err);
+      }
       analytics.track(getEventSource(params.source), {
         currentSection: $scope.spaceContext.tabList.currentSection(),
         currentViewType: $scope.spaceContext.tabList.currentViewType(),

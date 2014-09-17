@@ -1,20 +1,20 @@
 .add-btn.dropdown-btn(cf-dropdown)
   %a.add.button.dropdown-toggle(cf-dropdown-toggle="" tabindex="0")
-    %i.ss-plus
+    %i.fa.fa-plus
   .dropdown-menu.fixed-position.left-aligned(cf-dropdown-menu)
     %ul.dropdown-menu-list.main-types
       %li.dropdown-menu-item.add-content-type.bottom-separator(ng-click="createContentType('addDropdown')" dropdown-close="" cf-can="create, ContentType")
-        %i.ss-database
+        %i.fa.fa-database
         Content Type
       %li.dropdown-menu-item.add-asset(ng-click="createAsset('addDropdown')" dropdown-close="" cf-can="create, Asset")
-        %i.ss-attach
+        %i.fa.fa-paperclip
         Asset
       %li.dropdown-menu-item.add-api-key(ng-click="createApiKey('addDropdown')" dropdown-close="" cf-can="create, ApiKey")
-        %i.ss-fork
+        %i.fa.fa-random
         API Key
     %ul.dropdown-menu-list.separator.no-highlight(cf-can="create, Entry")
       %li.dropdown-menu-item
-        %i.ss-file
+        %i.fa.fa-file
         Entries
     %ul.dropdown-menu-list.content-types(ng-hide="spaceContext.publishedContentTypes.length === 0 && (noCfCanCleanup = true)" cf-can="create, Entry")
       %li.dropdown-menu-item(ng-repeat="(index, contentType) in spaceContext.publishedContentTypes track by contentType.getId()"

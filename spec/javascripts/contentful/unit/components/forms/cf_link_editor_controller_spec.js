@@ -280,6 +280,7 @@ describe('cfLinkEditor Controller methods', function () {
         limit: 1000
       });
       getEntriesStub.yield(null, [entry, undefined]);
+      scope.$apply();
       expect(scope.linkedEntities.length).toBe(2);
       expect(scope.linkedEntities[1].isMissing).toBeTruthy();
     });

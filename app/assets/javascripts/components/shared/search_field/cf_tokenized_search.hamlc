@@ -10,6 +10,6 @@
       ng-focus="inputFocused($event)"
       ng-blur="inputBlurred($event)")
   .search-button(ng-click="updateFromButton()" tabindex="0")
-    %i.ss-search
+    %i.fa.fa-search.fa-flip-horizontal
 .results(cf-autocomplete-list="" ng-if="showAutocompletions && autocompletion.type === 'List'")
 .results.shrink-result-width(cf-autocomplete-date="" ng-if="showAutocompletions && autocompletion.type === 'Date'")

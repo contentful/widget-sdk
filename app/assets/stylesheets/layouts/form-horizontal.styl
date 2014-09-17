@@ -36,9 +36,12 @@
 .l-form-controls
   padding-top: 5px
   width: $form-controlwidth-outer
+.l-form-controls--with-action
+  @extend .l-form-controls
+  $display-flexbox()
+  align-items: center
 
 // layout where we have a label on the left side
-// as such, the 
 .l-form-field
   label
     width: $form-labelwidth
@@ -55,7 +58,6 @@
     margin-left: $form-labelwidth
 
 .l-field-editor
-  float: left
   position: relative
   width: $field-editor-width
 .l-field-editor--with-action
@@ -73,8 +75,11 @@
 .l-form-horizontal--split
   @extend .l-form-horizontal
   flex-direction: row
-  .l-field-editor
+  .l-field-editor,
+  .l-form-controls--with-action
     width: 100%
+  .l-field-editor--with-action
+    width: 65%
   .l-form-field,
   .l-form-field--no-label
     flex-direction: column

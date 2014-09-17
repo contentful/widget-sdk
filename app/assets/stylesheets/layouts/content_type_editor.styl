@@ -72,6 +72,9 @@
     position: absolute
     top: $vertical-padding
     right: 150px
+  .title-icon
+    font-size: 1.2em
+    font-weight: bold
   .drag-handle
     position: absolute
     $stretch(0, 20px, 0, null)
@@ -149,9 +152,9 @@
   // Icons
   .icons
     color: $inactive-row-icon-inactive-color
-    .ss-test,
-    .ss-check,
-    .ss-globe,
+    .fa-header,
+    .fa-check,
+    .fa-globe,
     .required-icon
       padding-left: 3px
     .enabled
@@ -234,11 +237,10 @@
     margin-right: 50px
     float: right
   .field-details
-    .ss-check,
-    .ss-globe,
-    .ss-text
+    .fa-check,
+    .fa-globe,
+    .fa-header
       position: relative
-      top: 1px
     text-transform: uppercase
     letter-spacing: 1px
     font-size: 11px

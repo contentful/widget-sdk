@@ -1,5 +1,5 @@
 .dropdown-btn(cf-dropdown)
-  %i.ss-columns.dropdown-toggle(cf-dropdown-toggle="" tooltip="Select visible columns" tooltip-placement="top" tooltip-container=".client")
+  %i.fa.fa-bars.fa-rotate-90.dropdown-toggle(cf-dropdown-toggle="" tooltip="Select visible columns" tooltip-placement="top" tooltip-container=".client")
   .dropdown-menu(cf-dropdown-menu="" position="left" container=".tab-content")
     %h3 Displayed columns
     .column-lists

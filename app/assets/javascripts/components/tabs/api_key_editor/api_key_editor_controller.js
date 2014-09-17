@@ -5,6 +5,7 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
   var notification = $injector.get('notification');
   var logger = $injector.get('logger');
   var $window = $injector.get('$window');
+  var $q = $injector.get('$q');
   $scope.notes = $injector.get('notes');
 
   var deviceRegexps = {
@@ -25,7 +26,19 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
   $scope.tab.closingMessage = 'You have unsaved changes.';
   $scope.tab.closingMessageDisplayType = 'dialog';
 
-  $scope.authCodeExampleLang = 'http';
+  $scope.authCodeExample = {
+    lang: 'http',
+    api: 'production'
+  };
+
+  $scope.getSelectedAccessToken = function () {
+    var apiKey = $scope.isPreviewApiSelected() ? $scope.previewApiKey : $scope.apiKey;
+    return apiKey.data.accessToken;
+  };
+
+  $scope.isPreviewApiSelected = function () {
+    return $scope.authCodeExample.api == 'preview';
+  };
 
   $scope.$watch('apiKey.data.name', function(name) {
     $scope.headline = $scope.tab.title = name || 'Untitled';
@@ -45,6 +58,19 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
       $scope.spaceContext.space.getId() +
       '?access_token=' +
       accessToken;
+
+    if($scope.apiKey.getId() && !dotty.exists($scope, 'apiKey.data.preview_api_key')) generatePreviewApiKey();
+  });
+
+  $scope.$watch('apiKey.data.preview_api_key', function (previewApiKey) {
+    if(previewApiKey) {
+      var id = previewApiKey.sys.id;
+      var cb = $q.callback();
+      $scope.spaceContext.space.getPreviewApiKey(id, cb);
+      cb.promise.then(function (apiKey) {
+        $scope.previewApiKey = apiKey;
+      });
+    }
   });
 
   $scope.isDevice = function (id) {
@@ -66,15 +92,13 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
   $scope['delete'] = function() {
     var t = title();
     $scope.apiKey['delete'](function(err) {
-      $scope.$apply(function() {
-        if (err) {
-          notification.warn(t + ' could not be deleted');
-          logger.logServerError('ApiKey could not be deleted', err);
-          return;
-        }
-        notification.info(t + ' deleted successfully');
-        $scope.broadcastFromSpace('entityDeleted', $scope.apiKey);
-      });
+      if (err) {
+        notification.warn(t + ' could not be deleted');
+        logger.logServerError('ApiKey could not be deleted', err);
+        return;
+      }
+      notification.info(t + ' deleted successfully');
+      $scope.broadcastFromSpace('entityDeleted', $scope.apiKey);
     });
   };
 
@@ -86,21 +110,35 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
     }
   });
 
+  $scope.regenerateAccessToken = function (type) {
+    // not used, but necessary to trigger digest cycle
+    var apiKey = type == 'preview' ? $scope.previewApiKey : $scope.apiKey;
+    apiKey.regenerateAccessToken();
+  };
+
   $scope.save = function() {
     var t = title();
     $scope.apiKey.save(function(err) {
-      $scope.$apply(function() {
-        if (err) {
-          notification.warn(t + ' could not be saved');
-          if(dotty.get(err, 'statusCode') !== 422)
-            logger.logServerError('ApiKey could not be saved', err);
-          return;
-        }
-        $scope.apiKeyForm.$setPristine();
-        $scope.navigator.apiKeyEditor($scope.apiKey).goTo();
-        notification.info(t + ' saved successfully');
-      });
+      if (err) {
+        notification.warn(t + ' could not be saved');
+        if(dotty.get(err, 'statusCode') !== 422)
+          logger.logServerError('ApiKey could not be saved', err);
+        return;
+      }
+      $scope.apiKeyForm.$setPristine();
+      $scope.navigator.apiKeyEditor($scope.apiKey).goTo();
+      notification.info(t + ' saved successfully');
     });
   };
+
+  function generatePreviewApiKey() {
+    var cb = $q.callback();
+    var data = _.omit($scope.apiKey.data, 'sys', 'preview_api_key', 'accessToken', 'policies');
+    data.apiKeyId = $scope.apiKey.getId();
+    $scope.spaceContext.space.createPreviewApiKey(data, cb);
+    cb.promise.then(function (previewApiKey) {
+      $scope.previewApiKey = previewApiKey;
+    });
+  }
 
 }]);
