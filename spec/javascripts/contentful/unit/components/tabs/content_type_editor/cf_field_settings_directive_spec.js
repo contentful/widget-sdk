@@ -58,7 +58,7 @@ describe('The cfFieldSettings directive', function () {
     });
 
     it('field used as title', function() {
-      expect(icons.find('.fa-header')).not.toBeNgHidden();
+      expect(icons.find('.title-icon')).not.toBeNgHidden();
     });
 
     it('required', function() {
@@ -93,7 +93,7 @@ describe('The cfFieldSettings directive', function () {
     });
 
     it('field used as title', function() {
-      expect(icons.find('.fa-header')).toBeNgHidden();
+      expect(icons.find('.title-icon')).toBeNgHidden();
     });
 
     it('required', function() {
