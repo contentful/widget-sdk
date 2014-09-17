@@ -9,15 +9,17 @@ describe('API key editor controller', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'id',
+        'spaceGetId',
         'delete',
         'save',
-        'name',
+        'apiGetId',
+        'getName',
         'info',
         'serverError',
         'warn',
         'broadcast',
-        'logServerError'
+        'logServerError',
+        'createPreviewApiKey'
       ]);
       $provide.constant('environment', {
         settings: {
@@ -41,19 +43,22 @@ describe('API key editor controller', function () {
       };
       scope.spaceContext = {
         space: {
-          getId: stubs.id
+          getId: stubs.spaceGetId,
+          createPreviewApiKey: stubs.createPreviewApiKey
         }
       };
       scope.broadcastFromSpace = stubs.broadcast;
 
       apiKey = {
-        getName: stubs.name,
+        data: {},
+        getName: stubs.getName,
+        getId: stubs.apiGetId,
         'delete': stubs.delete,
         save: stubs.save
       };
       scope.tab.params.apiKey = apiKey;
 
-      stubs.name.returns('apiKeyName');
+      stubs.getName.returns('apiKeyName');
 
       apiKeyEditorCtrl = $controller('ApiKeyEditorCtrl', {$scope: scope});
       scope.$apply();
@@ -80,19 +85,15 @@ describe('API key editor controller', function () {
   });
 
   it('sets a headline and a tab title', function () {
-    scope.apiKey = {
-      data: {name: 'tabName'}
-    };
+    scope.apiKey.data.name = 'api name';
     scope.$apply();
-    expect(scope.headline).toEqual('tabName');
-    expect(scope.tab.title).toEqual('tabName');
+    expect(scope.headline).toEqual('api name');
+    expect(scope.tab.title).toEqual('api name');
   });
 
   it('sets an example url', function () {
-    scope.apiKey = {
-      data: {accessToken: 'accessToken'}
-    };
-    stubs.id.returns('spaceid');
+    scope.apiKey.data.accessToken = 'accessToken';
+    stubs.spaceGetId.returns('spaceid');
     scope.$apply();
     expect(scope.exampleUrl).toEqual('http://cdn_host/spaces/spaceid/entries?access_token=accessToken');
   });
@@ -103,6 +104,26 @@ describe('API key editor controller', function () {
     };
     scope.$apply();
     expect(scope.tab.dirty).toBeTruthy();
+  });
+
+  it('does not create a preview api for a blank key', function() {
+    expect(stubs.createPreviewApiKey).not.toBeCalled();
+  });
+
+  describe('creates a preview api if none exists', function() {
+    beforeEach(function() {
+      scope.apiKey.data.accessToken = 'accessToken';
+      stubs.apiGetId.returns('123');
+      scope.$apply();
+    });
+
+    it('calls the creation method', function() {
+      expect(stubs.createPreviewApiKey).toBeCalled();
+    });
+
+    it('gets the delivery api key id', function() {
+      expect(stubs.createPreviewApiKey.args[0][0].apiKeyId).toBe('123');
+    });
   });
 
   describe('deletes an api key', function () {

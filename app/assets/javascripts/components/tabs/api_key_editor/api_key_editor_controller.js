@@ -58,6 +58,8 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
       $scope.spaceContext.space.getId() +
       '?access_token=' +
       accessToken;
+
+    if($scope.apiKey.getId() && !dotty.exists($scope, 'apiKey.data.preview_api_key')) generatePreviewApiKey();
   });
 
   $scope.$watch('apiKey.data.preview_api_key', function (previewApiKey) {
@@ -110,9 +112,8 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
 
   $scope.regenerateAccessToken = function (type) {
     // not used, but necessary to trigger digest cycle
-    var cb = $q.callback();
     var apiKey = type == 'preview' ? $scope.previewApiKey : $scope.apiKey;
-    apiKey.regenerateAccessToken(cb);
+    apiKey.regenerateAccessToken();
   };
 
   $scope.save = function() {
@@ -129,5 +130,15 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
       notification.info(t + ' saved successfully');
     });
   };
+
+  function generatePreviewApiKey() {
+    var cb = $q.callback();
+    var data = _.omit($scope.apiKey.data, 'sys', 'preview_api_key', 'accessToken', 'policies');
+    data.apiKeyId = $scope.apiKey.getId();
+    $scope.spaceContext.space.createPreviewApiKey(data, cb);
+    cb.promise.then(function (previewApiKey) {
+      $scope.previewApiKey = previewApiKey;
+    });
+  }
 
 }]);
