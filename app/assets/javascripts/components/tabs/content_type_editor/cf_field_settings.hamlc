@@ -78,7 +78,7 @@
                   ng-class="{active: isDisplayField()}"
                   ng-show="displayEnabled()"
                   tooltip="Use this Field as title of the Entry in the interface")
-    %i.fa.fa-header
+    %i.title-icon T
     {{isDisplayField(field) ? 'Used as title' : 'Use as title'}}
   %a.toggle-disabled(ng-click="toggle('disabled')"
     ng-class="{active: field.disabled}"
