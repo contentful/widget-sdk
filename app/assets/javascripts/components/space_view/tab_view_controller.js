@@ -9,6 +9,10 @@ angular.module('contentful').controller('TabViewCtrl', ['$scope', 'authenticatio
     else $scope.navigator.entryList().goTo();
   });
 
+  $scope.$on('tabBecameActive', function (event, tab) {
+    $scope.goToTab(tab);
+  });
+
   $scope.$watch('spaceContext', function(spaceContext, old, scope){
     var space = spaceContext.space;
     scope.spaceContext.tabList.closeAll();
@@ -89,10 +93,6 @@ angular.module('contentful').controller('TabViewCtrl', ['$scope', 'authenticatio
     assetList:         function () { return this._wrap(gen.assetList()); },
     forViewType:       function (viewType) { return this._wrap(gen.forViewType(viewType)); },
     spaceSettings:     function (pathSuffix) { return this._wrap(gen.spaceSettings(pathSuffix)); }
-  };
-
-  $scope.syncLocation = function () {
-    routing.goToTab($scope.spaceContext.tabList.current, $scope.spaceContext.space);
   };
 
   $scope.goToTab = function (tab) {
