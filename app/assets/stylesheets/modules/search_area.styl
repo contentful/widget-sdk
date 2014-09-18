@@ -17,8 +17,6 @@
     border-color: $gray-light
     select
       padding-top: 7px
-      white-space: nowrap
-      overflow: hidden
 
 .with-filter
   .search-field
@@ -72,10 +70,8 @@
   border-radius: 0 20px 20px 0
   &:active
     box-shadow: 0 1px 2px rgba(0,0,0,0.05) inset
-  .ss-search
+  .fa-search
     position: relative
-    top: 2px
-
 
 // When used inside the entry form, the form's border-spacing also
 // applies to the tables inside the autocomplete-results
@@ -117,6 +113,23 @@
 
 // Search results position widget
 .search-results-position
+  $display-flexbox()
+  flex-wrap: wrap
   width: 30%
-  max-width: 160px
+  max-width: 180px
   margin-left: 16px
+  .inline-select
+    margin: auto 3px
+  .search-results-position__entries,
+  .search-results-position__pages
+    margin-bottom: 0
+
+@media (max-width: 1300px)
+  .search-results-position
+    .inline-select
+      margin: 0
+      margin-right: 3px
+  .search-results-position__entries
+    align-self: stretch
+    width: 100%
+    margin-bottom: 5px

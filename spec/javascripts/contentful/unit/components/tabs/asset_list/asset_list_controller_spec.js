@@ -473,11 +473,17 @@ describe('Asset List Controller', function () {
       scope.createMultipleAssets();
       $rootScope.$apply();
       scope.spaceContext.space.createAsset.yield(null, entity);
+      $rootScope.$apply();
       scope.spaceContext.space.createAsset.yield(null, entity);
+      $rootScope.$apply();
       stubs.process.yield();
+      $rootScope.$apply();
       stubs.process.yield();
+      $rootScope.$apply();
       stubs.publish.yield();
+      $rootScope.$apply();
       stubs.publish.yield();
+      $rootScope.$apply();
     });
 
     it('filepicker is called', function() {

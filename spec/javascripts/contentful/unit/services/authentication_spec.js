@@ -315,6 +315,7 @@ describe('Authentication service', function () {
         errorResponse = {error: 'response'};
         tokenLookup = authentication.getTokenLookup();
         clientTokenLookupStub.yield(errorResponse);
+        $rootScope.$apply();
       });
 
       it('client token lookup is called', function () {

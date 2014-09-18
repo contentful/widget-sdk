@@ -1,7 +1,7 @@
 'use strict';
 angular.module('contentful').directive('cfFieldAlert', function(){
   return {
-    template: '<i class="cf-field-alert ss-alert" tooltip></i>',
+    template: '<i class="cf-field-alert fa fa-alert" tooltip></i>',
     replace: true,
     link: function(scope, elem, attr) {
       attr.$observe('cfFieldAlert', function (message) {

@@ -15,6 +15,8 @@
   %style#disable-outlines
   %style#chrome-temp-fix
 
+  %script(src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js" data-apikey="b253f10d5d0184a99e1773cec7b726e8")
+
   :javascript
     if (top != self) { top.location.replace(self.location.href); }
     // FIXME this is a temporary fix for a weird positioning issue that manifests only in Chrome versions below Chrome 38
@@ -31,7 +33,7 @@
     %nav.account-menus
       .dropdown-btn.user(cf-dropdown="" label="")
         %a.dropdown-toggle(cf-dropdown-toggle="" ng-click="clickedProfileButton()" tabindex="0")
-          %i.ss-dropdown.button-icon-right
+          %i.fa.fa-caret-down.button-icon-right
           %img(ng-src="{{user.avatarUrl}}")
         .dropdown-menu.fixed-position.left-aligned(cf-dropdown-menu)
           %p.account-header.dropdown-row
@@ -44,14 +46,14 @@
 
       .dropdown-btn.project(cf-dropdown="" ng-show="organizations && organizations.length > 0" ng-hide="spaces.length == 0 && !canCreateSpaceInAnyOrg()")
         %a.dropdown-toggle(cf-dropdown-toggle="" ng-click="clickedSpaceSwitcher()" tabindex="0")
-          %i.ss-dropdown.button-icon-right
+          %i.fa.fa-caret-down.button-icon-right
           %span(ng-bind="spaceContext.space.data.name || 'Spaces'")
         .dropdown-menu.fixed-position.left-aligned(cf-dropdown-menu="")
           %ul.dropdown-menu-list.dropdown-group
             %li.dropdown-menu-item.no-highlight(ng-repeat="(orgId, org) in spacesByOrg"
                              ng-class="{'no-action': !canSelectOrg(orgId)}"
                              cf-click-local="selectOrg(orgId) && toggleDropdown()")
-              %i.ss-users
+              %i.fa.fa-user
               %span {{getOrgName(orgId)}}
               %ul.dropdown-menu-list
                 %li.dropdown-menu-item(ng-repeat="space in org track by space.getId()" cf-click-local="selectSpace(space) && toggleDropdown()"
@@ -59,7 +61,7 @@
                     tooltip-container=".project" tooltip-placement="left"
                     tooltip="This space entered hibernation due to lack of use. It will be back online soon.")
                   {{space.data.name}}
-                  %i.ss-record(ng-show="space.isHibernated()")
+                  %i.fa.fa-circle(ng-show="space.isHibernated()")
             %li.dropdown-menu-item.emphasize(ng-show="canCreateSpace()"
                           ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close="")
               + Create Space
@@ -69,14 +71,14 @@
 
     %space-view(ng-controller="TabViewCtrl")
     .advice(ng-show="spaces.length == 0")
-      %i.ss-folder.giant-icon
+      %i.fa.fa-folder.giant-icon
       %header.advice-title Nothing to see yet.
       %p.advice-description(ng-show="!canCreateSpace()") You need to be part of an Organization to create a space.
       %p.advice-description(ng-show="canCreateSpace()") Why don't you create a space?
       %button.btn.btn--primary(type="button" ng-show="canCreateSpace()" ng-click="showCreateSpaceDialog()") Create Space
       %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513118-What-is-a-space-")
         Visit the Knowledge Base Pages
-        %i.ss-help
+        %i.fa.fa-question-circle
     .cf-account-view.tab-content(ng-class="{'with-tab-bar': !hideTabBar()}")
 
   = javascript_include_tag "application"

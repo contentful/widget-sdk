@@ -3,11 +3,11 @@
     %header.filter-list-header Views
     .filter-list-well(ng-if="!viewMenuEditable")
       %strong No views available
-      %i.ss-redirect
+      %i.fa.fa-share
       %p Your administrator has not set up any views or folders yet
     .filter-list-well(ng-if="viewMenuEditable")
       %strong This menu is empty
-      %i.ss-redirect
+      %i.fa.fa-share
       %p Add a folder or save a view to enable this menu
       %button.btn.btn--primary(ng-click="resetViews()")
         Restore default menu
@@ -23,7 +23,7 @@
 
 .view-menu-buttons.menu-with-buttons-bottom(ng-if="viewMenuEditable")
   .dropdown-btn(cf-dropdown)
-    %i.ss-plus.dropdown-toggle(cf-dropdown-toggle)
+    %i.fa.fa-plus.dropdown-toggle(cf-dropdown-toggle)
     .dropdown-menu(cf-dropdown-menu="" position="topright" collision="none")
       %ul.dropdown-menu-list
         %li.dropdown-menu-item(ng-click="addFolder()" dropdown-close="") Add Folder

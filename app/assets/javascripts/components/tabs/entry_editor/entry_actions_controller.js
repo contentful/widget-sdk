@@ -10,14 +10,12 @@ angular.module('contentful').controller('EntryActionsCtrl', ['$scope', 'notifica
 
   $scope['delete'] = function () {
     $scope.entry['delete'](function (err, entry) {
-      $scope.$apply(function (scope) {
-        if (err) {
-          notification.serverError('Error deleting Entry', err);
-        }else{
-          notification.info('Entry deleted successfully');
-          scope.broadcastFromSpace('entityDeleted', entry);
-        }
-      });
+      if (err) {
+        notification.serverError('Error deleting Entry', err);
+      }else{
+        notification.info('Entry deleted successfully');
+        $scope.broadcastFromSpace('entityDeleted', entry);
+      }
     });
   };
 
@@ -26,53 +24,45 @@ angular.module('contentful').controller('EntryActionsCtrl', ['$scope', 'notifica
     var data = _.omit($scope.entry.data, 'sys');
 
     $scope.spaceContext.space.createEntry(contentType, data, function(err, entry){
-      $scope.$apply(function (scope) {
-        if (!err) {
-          scope.navigator.entryEditor(entry).goTo();
-        } else {
-          notification.serverError('Could not duplicate Entry', err);
-        }
-      });
+      if (!err) {
+        $scope.navigator.entryEditor(entry).goTo();
+      } else {
+        notification.serverError('Could not duplicate Entry', err);
+      }
     });
   };
 
   $scope.archive = function() {
     $scope.entry.archive(function(err) {
-      $scope.$apply(function() {
-        if (err) {
-          notification.warn('Error archiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-          logger.logServerError('Error archiving entry', err);
-        } else {
-          notification.info(title() + ' archived successfully');
-        }
-      });
+      if (err) {
+        notification.warn('Error archiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
+        logger.logServerError('Error archiving entry', err);
+      } else {
+        notification.info(title() + ' archived successfully');
+      }
     });
   };
 
   $scope.unarchive = function() {
     $scope.entry.unarchive(function(err) {
-      $scope.$apply(function() {
-        if (err) {
-          notification.warn('Error unarchiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-          logger.logServerError('Error unarchiving entry', err);
-        } else {
-          notification.info(title() + ' unarchived successfully');
-        }
-      });
+      if (err) {
+        notification.warn('Error unarchiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
+        logger.logServerError('Error unarchiving entry', err);
+      } else {
+        notification.info(title() + ' unarchived successfully');
+      }
     });
   };
 
   $scope.unpublish = function () {
     $scope.entry.unpublish(function (err) {
-      $scope.$apply(function(scope){
-        if (err) {
-          notification.warn('Error unpublishing ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-          logger.logServerError('Error unpublishing entry', err);
-        } else {
-          notification.info(title() + ' unpublished successfully');
-          scope.otUpdateEntity();
-        }
-      });
+      if (err) {
+        notification.warn('Error unpublishing ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
+        logger.logServerError('Error unpublishing entry', err);
+      } else {
+        notification.info(title() + ' unpublished successfully');
+        $scope.otUpdateEntity();
+      }
     });
   };
 
@@ -83,22 +73,20 @@ angular.module('contentful').controller('EntryActionsCtrl', ['$scope', 'notifica
       return;
     }
     $scope.entry.publish(version, function (err) {
-      $scope.$apply(function(scope){
-        if (err) {
-          var errorId = dotty.get(err, 'body.sys.id');
-          if (errorId === 'ValidationFailed') {
-            scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
-            notification.warn('Error publishing ' + title() + ': Validation failed');
-          } else if (errorId === 'VersionMismatch'){
-            notification.warn('Error publishing ' + title() + ': Can only publish most recent version');
-          } else {
-            notification.serverError('Error publishing entry: ' + errorId, err);
-          }
+      if (err) {
+        var errorId = dotty.get(err, 'body.sys.id');
+        if (errorId === 'ValidationFailed') {
+          $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
+          notification.warn('Error publishing ' + title() + ': Validation failed');
+        } else if (errorId === 'VersionMismatch'){
+          notification.warn('Error publishing ' + title() + ': Can only publish most recent version');
         } else {
-          scope.entry.setPublishedVersion(version);
-          notification.info(title() + ' published successfully');
+          notification.serverError('Error publishing entry: ' + errorId, err);
         }
-      });
+      } else {
+        $scope.entry.setPublishedVersion(version);
+        notification.info(title() + ' published successfully');
+      }
     });
   };
 

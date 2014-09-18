@@ -234,6 +234,7 @@ describe('SpaceContext class with a space', function () {
 
       spaceContext.refreshContentTypes();
       getContentTypes.yield(null, contentTypes.concat().reverse());
+      rootScope.$apply();
       getPublishedContentTypes.yield(null, contentTypes);
       expect(spaceContext.contentTypes[0].getName()).toEqual('contentType1');
       expect(refreshPublishedContentTypesSpy).toBeCalled();
@@ -266,6 +267,7 @@ describe('SpaceContext class with a space', function () {
       it('has content types', function () {
         spaceContext.refreshPublishedContentTypes();
         getPublishedContentTypes.yield(null, contentTypes);
+        rootScope.$apply();
         expect(spaceContext.publishedContentTypes.length).toBeGreaterThan(0);
         expect(spaceContext.publishedContentTypes[0].getName()).toEqual('contentType1');
       });
@@ -274,6 +276,7 @@ describe('SpaceContext class with a space', function () {
         spaceContext.publishedContentTypes = [ contentTypes[0] ];
         spaceContext.refreshPublishedContentTypes();
         getPublishedContentTypes.yield(null, contentTypes);
+        rootScope.$apply();
         expect(spaceContext.publishedContentTypes.length).toBe(2);
       });
 
@@ -281,6 +284,7 @@ describe('SpaceContext class with a space', function () {
         sinon.stub(contentTypes[1], 'isDeleted').returns(true);
         spaceContext.refreshPublishedContentTypes();
         getPublishedContentTypes.yield(null, contentTypes);
+        rootScope.$apply();
         expect(spaceContext.publishedContentTypes.length).toBe(1);
         expect(_.contains(spaceContext.publishedContentTypes, contentTypes[1])).toBe(false);
       });
@@ -295,6 +299,7 @@ describe('SpaceContext class with a space', function () {
         // TODO test this without refresh calls
         spaceContext.refreshContentTypes();
         getContentTypes.yield(null, contentTypes);
+        rootScope.$apply();
         spaceContext.removeContentType(contentTypes[0]);
         expect(spaceContext.contentTypes[0].getName()).toEqual('contentType2');
       });
@@ -303,6 +308,7 @@ describe('SpaceContext class with a space', function () {
         // TODO test this without refresh calls
         spaceContext.refreshContentTypes();
         getContentTypes.yield(null, contentTypes);
+        rootScope.$apply();
         getPublishedContentTypes.yield(null, contentTypes);
         var entry = cfStub.entry(space, 'entry2', 'content_type1');
         expect(spaceContext.publishedTypeForEntry(entry)).toBe(contentTypes[0]);
@@ -316,7 +322,9 @@ describe('SpaceContext class with a space', function () {
                                { title: { 'en-US': 'the title' } });
           spaceContext.refreshContentTypes();
           getContentTypes.yield(null, contentTypes.concat().reverse());
+          rootScope.$apply();
           getPublishedContentTypes.yield(null, contentTypes.concat().reverse());
+          rootScope.$apply();
         });
 
         it('fetched successfully', function () {
@@ -537,6 +545,7 @@ describe('SpaceContext resolving missing ContentTypes', function () {
         data: { sys: {id: 'foo'} }
       }
     ]);
+    scope.$apply();
     expect(spaceContext._publishedContentTypeIsMissing['foo']).toBeFalsy();
   });
 

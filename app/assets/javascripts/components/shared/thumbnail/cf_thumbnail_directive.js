@@ -9,17 +9,21 @@ angular.module('contentful').directive('cfThumbnail', function () {
   var groupToIconMap = {
     image: 'image',
     video: 'video',
-    audio: 'music',
-    richtext: 'richtext',
-    presentation: 'presentation',
-    spreadsheet: 'spreadsheet',
+    audio: 'audio',
+    richtext: 'word',
+    presentation: 'powerpoint',
+    spreadsheet: 'excel',
     pdfdocument: 'pdf',
-    archive: 'archive',
+    archive: 'zip',
     plaintext: 'text',
     code: 'code',
-    markup: 'html',
-    attachment: 'attach'
+    markup: 'code'
   };
+
+  function groupToIcon(name) {
+    if(name in groupToIconMap) return 'fa fa-file-'+groupToIconMap[name]+'-o';
+    return 'fa fa-paperclip';
+  }
 
   return {
     restrict: 'CA',
@@ -90,7 +94,7 @@ angular.module('contentful').directive('cfThumbnail', function () {
             $scope.file.contentType
           );
 
-          return 'icon-'+groupToIconMap[groupName];
+          return groupToIcon(groupName);
         } else {
           return '';
         }

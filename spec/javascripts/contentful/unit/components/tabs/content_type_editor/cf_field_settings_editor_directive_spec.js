@@ -58,7 +58,7 @@ describe('The cfFieldSettingsEditor directive', function () {
     });
 
     it('field used as title', function() {
-      expect(icons.find('.ss-text')).not.toBeNgHidden();
+      expect(icons.find('.title-icon')).not.toBeNgHidden();
     });
 
     it('required', function() {
@@ -66,11 +66,11 @@ describe('The cfFieldSettingsEditor directive', function () {
     });
 
     it('has validations', function() {
-      expect(icons.find('.ss-check')).toHaveClass('enabled');
+      expect(icons.find('.fa-check')).toHaveClass('enabled');
     });
 
     it('is localized', function() {
-      expect(icons.find('.ss-globe')).toHaveClass('enabled');
+      expect(icons.find('.fa-globe')).toHaveClass('enabled');
     });
   });
 
@@ -93,7 +93,7 @@ describe('The cfFieldSettingsEditor directive', function () {
     });
 
     it('field used as title', function() {
-      expect(icons.find('.ss-text')).toBeNgHidden();
+      expect(icons.find('.title-icon')).toBeNgHidden();
     });
 
     it('required', function() {
@@ -101,11 +101,11 @@ describe('The cfFieldSettingsEditor directive', function () {
     });
 
     it('has validations', function() {
-      expect(icons.find('.ss-check')).not.toHaveClass('enabled');
+      expect(icons.find('.fa-check')).not.toHaveClass('enabled');
     });
 
     it('is localized', function() {
-      expect(icons.find('.ss-globe')).not.toHaveClass('enabled');
+      expect(icons.find('.fa-globe')).not.toHaveClass('enabled');
     });
   });
 

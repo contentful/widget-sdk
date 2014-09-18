@@ -15,6 +15,10 @@ angular.module('contentful').controller('TabViewCtrl', ['$scope', '$injector', f
     else $scope.navigator.entryList().goTo();
   });
 
+  $scope.$on('tabBecameActive', function (event, tab) {
+    $scope.goToTab(tab);
+  });
+
   $scope.$watch('spaceContext', function(spaceContext, old, scope){
     var space = spaceContext.space;
     scope.spaceContext.tabList.closeAll();
@@ -68,38 +72,32 @@ angular.module('contentful').controller('TabViewCtrl', ['$scope', '$injector', f
       $scope.spaceContext.space.getDeliveryApiKey(route.params.apiKeyId, handleFallback('apiKeyEditor', 'apiKeyList'));
     else
       $scope.spaceContext.space.getPublishedContentTypes(function(err, ets) {
-        $scope.$apply(function (scope) {
-          if (_.isEmpty(ets)) scope.navigator.contentTypeList().goTo();
-          else                scope.navigator.entryList().goTo();
-        });
+        if (_.isEmpty(ets)) $scope.navigator.contentTypeList().goTo();
+        else                $scope.navigator.entryList().goTo();
       });
 
     function handleFallback(defaultView, fallbackView){
       return function (err, obj) {
-        $scope.$apply(function (scope) {
-          if (err)
-            scope.navigator[fallbackView]().goTo();
-          else
-            scope.navigator[defaultView](obj).open();
-        });
+        if (err)
+          $scope.navigator[fallbackView]().goTo();
+        else
+          $scope.navigator[defaultView](obj).open();
       };
     }
 
     function handleEditingInterface(fallbackView, editingInterfaceId) {
       return function (err, contentType) {
-        $scope.$apply(function (scope) {
-          if (err)
-            scope.navigator[fallbackView](contentType).goTo();
-          else {
-            editingInterfaces.forContentTypeWithId(contentType, editingInterfaceId)
-            .then(function (editingInterface) {
-              scope.navigator.editingInterfaceEditor(contentType, editingInterface).open();
-            })
-            .catch(function(){
-              scope.navigator[fallbackView](contentType).goTo();
-            });
-          }
-        });
+        if (err)
+          $scope.navigator[fallbackView](contentType).goTo();
+        else {
+          editingInterfaces.forContentTypeWithId(contentType, editingInterfaceId)
+          .then(function (editingInterface) {
+            $scope.navigator.editingInterfaceEditor(contentType, editingInterface).open();
+          })
+          .catch(function(){
+            $scope.navigator[fallbackView](contentType).goTo();
+          });
+        }
       };
     }
   }
@@ -134,10 +132,6 @@ angular.module('contentful').controller('TabViewCtrl', ['$scope', '$injector', f
     assetList:               function () { return this._wrap(gen.assetList()); },
     forViewType:             function (viewType) { return this._wrap(gen.forViewType(viewType)); },
     spaceSettings:           function (pathSuffix) { return this._wrap(gen.spaceSettings(pathSuffix)); }
-  };
-
-  $scope.syncLocation = function () {
-    routing.goToTab($scope.spaceContext.tabList.current, $scope.spaceContext.space);
   };
 
   $scope.goToTab = function (tab) {

@@ -7,15 +7,21 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
 
   function onServiceReady() {
     if($window.Bugsnag){
-      var authentication = $injector.get('authentication');
-      var user = authentication.getUser();
       $window.Bugsnag.releaseStage = environment.env;
       $window.Bugsnag.notifyReleaseStages = [
-        'development',
+        //'development',
         'staging',
         'production'
       ];
+      setUserInfo();
       $window.Bugsnag.appVersion = environment.settings.git_revision;
+    }
+  }
+
+  function setUserInfo() {
+    var authentication = $injector.get('authentication');
+    var user = authentication.getUser();
+    if(dotty.exists(user, 'sys.id') && !$window.Bugsnag.user){
       $window.Bugsnag.user = {
         id: dotty.get(user, 'sys.id'),
         firstName: dotty.get(user, 'firstName'),
@@ -85,12 +91,14 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
 
     logException: function (exception, extra) {
       if($window.Bugsnag){
+        setUserInfo();
         $window.Bugsnag.notifyException(exception, getMetadata(extra));
       }
     },
 
     logError: function (message, options) {
       if ($window.Bugsnag) {
+        setUserInfo();
         $window.Bugsnag.notify('Logged Error', message, getMetadata(options), 'error');
       }
     },
@@ -99,18 +107,21 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
       if ($window.Bugsnag) {
         options = options || {};
         options.error = error;
+        setUserInfo();
         $window.Bugsnag.notify('Logged Server Error', message, getMetadata(options), 'error');
       }
     },
 
     logWarn: function (message, options) {
       if ($window.Bugsnag) {
+        setUserInfo();
         $window.Bugsnag.notify('Logged Warning', message, getMetadata(options), 'warning');
       }
     },
 
     log: function (message, options) {
       if ($window.Bugsnag) {
+        setUserInfo();
         $window.Bugsnag.notify('Logged Info', message, getMetadata(options), 'info');
       }
     }

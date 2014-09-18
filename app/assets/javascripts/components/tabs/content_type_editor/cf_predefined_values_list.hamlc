@@ -1,5 +1,5 @@
-%i.ss-directup(ng-hide="atTop()")
-%i.ss-dropdown(ng-hide="atBottom()")
+%i.fa.fa-caret-up(ng-hide="atTop()")
+%i.fa.fa-caret-down(ng-hide="atBottom()")
 %ul.block-list(ui-sortable="validationSortOptions" ng-model="validation.in")
   %li(ng-repeat="(index, value) in validation.in" index="{{index}}" title="{{value}}")
     {{value}}

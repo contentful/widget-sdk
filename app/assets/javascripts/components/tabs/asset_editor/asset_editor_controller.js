@@ -93,12 +93,10 @@ angular.module('contentful').controller('AssetEditorCtrl', ['$scope', '$injector
   $scope.$on('fileUploaded', function (event, file, locale) {
     setTitleOnDoc(file, locale.code);
     $scope.asset.process($scope.otDoc.version, locale.code, function (err) {
-      $scope.$apply(function (scope) {
-        if (err) {
-          scope.$emit('fileProcessingFailed');
-          notification.serverError('There has been a problem processing the Asset.', err);
-        }
-      });
+      if (err) {
+        $scope.$emit('fileProcessingFailed');
+        notification.serverError('There has been a problem processing the Asset.', err);
+      }
     });
   });
   function setTitleOnDoc(file, localeCode) {

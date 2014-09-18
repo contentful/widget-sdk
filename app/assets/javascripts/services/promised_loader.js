@@ -39,17 +39,15 @@ angular.module('contentful').factory('PromisedLoader', ['$q', '$rootScope', 'cfS
       }
 
       args.push(function callback(err, res, stats) {
-        $rootScope.$apply(function () {
-          if (err) {
-            deferred.reject(err);
-          } else {
-            if (_.isObject(stats)) _.each(stats, function (stat, name) {
-              Object.defineProperty(res, name, {value: stat});
-            });
-            deferred.resolve(res);
-          }
-          loader.endLoading();
-        });
+        if (err) {
+          deferred.reject(err);
+        } else {
+          if (_.isObject(stats)) _.each(stats, function (stat, name) {
+            Object.defineProperty(res, name, {value: stat});
+          });
+          deferred.resolve(res);
+        }
+        loader.endLoading();
       });
       loader._loadCallback(host, methodName, args);
 

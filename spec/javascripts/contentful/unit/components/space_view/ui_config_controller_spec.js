@@ -24,11 +24,13 @@ describe('UiConfigController', function () {
     describe('loads ui config', function() {
       it('initializes a non existing config', function() {
         scope.spaceContext.space.getUIConfig.yield({statusCode: 404}, null);
+        scope.$apply();
         expect(scope.uiConfig).toEqual({});
       });
 
       it('loads an existing config', function() {
         scope.spaceContext.space.getUIConfig.yield(null, 'config');
+        scope.$apply();
         expect(scope.uiConfig).toBe('config');
       });
     });
@@ -37,6 +39,7 @@ describe('UiConfigController', function () {
   describe('unloading a space', function () {
     beforeEach(function () {
       scope.spaceContext.space.getUIConfig.yield(null, 'config');
+      scope.$apply();
       expect(scope.uiConfig).toBe('config');
     });
 
@@ -61,13 +64,16 @@ describe('UiConfigController', function () {
         expect(config).toBe('config');
       });
       scope.spaceContext.space.setUIConfig.yield(null, 'config');
+      scope.$apply();
       expect(scope.uiConfig).toBe('config');
     });
 
     it('should load ui config on failure', function () {
       scope.saveUiConfig();
       scope.spaceContext.space.setUIConfig.yield('error', null);
+      scope.$apply();
       scope.spaceContext.space.getUIConfig.yield(null, 'oldConfig');
+      scope.$apply();
       expect(scope.uiConfig).toBe('oldConfig');
     });
   });

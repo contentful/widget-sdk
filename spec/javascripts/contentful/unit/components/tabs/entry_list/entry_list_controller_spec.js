@@ -329,6 +329,7 @@ describe('Entry List Controller', function () {
       createController();
       scope.$apply();
       scope.spaceContext.space.getEntries.yield(null, entries);
+      scope.$apply();
 
       entries = [];
       Object.defineProperty(entries, 'total', {value: 30});
@@ -390,20 +391,18 @@ describe('Entry List Controller', function () {
         scope.loadMore();
         scope.$apply();
         scope.spaceContext.space.getEntries.yield(null, entries);
+        scope.$apply();
       });
 
       it('sets num entries', function() {
-        scope.$apply();
         expect(scope.paginator.numEntries).toEqual(30);
       });
 
       it('appends entries to scope', function () {
-        scope.$apply();
         expect(scope.entries.slice(60)).toEqual(entries);
       });
 
       it('sets selection base size', function () {
-        scope.$apply();
         expect(scope.selection.setBaseSize.args[0][0]).toBe(60);
       });
 
@@ -417,6 +416,7 @@ describe('Entry List Controller', function () {
       scope.loadMore();
       scope.$apply();
       scope.spaceContext.space.getEntries.yield(null, entries);
+      scope.$apply();
       expect(scope.entries).toEqual(['a', 'b', 'c']);
     });
 
@@ -425,6 +425,7 @@ describe('Entry List Controller', function () {
         scope.loadMore();
         scope.$apply();
         scope.spaceContext.space.getEntries.yield(null, null);
+        scope.$apply();
       });
 
       it('appends no entries to scope', function () {
@@ -449,12 +450,14 @@ describe('Entry List Controller', function () {
     it('should cause resetEntries to show an error message', function () {
       scope.resetEntries();
       scope.spaceContext.space.getEntries.yield({statusCode: 500}, null);
+      scope.$apply();
       expect(apiErrorHandler).toBeCalled();
     });
 
     it('should cause loadMore to show an error message', function () {
       scope.loadMore();
       scope.spaceContext.space.getEntries.yield({statusCode: 500}, null);
+      scope.$apply();
       expect(apiErrorHandler).toBeCalled();
     });
   });

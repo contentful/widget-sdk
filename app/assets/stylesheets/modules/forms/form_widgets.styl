@@ -26,7 +26,7 @@
   span
     position: relative
     top: 1px
-  .ss-alert
+  .fa-exclamation-triangle
     position: relative
     top: 1px
 
@@ -66,11 +66,16 @@
     overflow: hidden
     white-space: nowrap
     text-overflow: ellipsis
-  .ss-delete
-    @extend $delete-icon
+  .fa-close
     float: right
     margin-top: 1px
     margin-right: 4px
+    font-size: 1em
+    color: $gray-light
+    text-shadow: 0 1px 0 rgba(255,255,255,0.6)
+    &:hover
+      color: $gray-medium
+      cursor: pointer
 
 .widget-location-editor
   position: relative
@@ -168,9 +173,9 @@ cf-rating-editor
 .widget-datetime-editor
   > input[type="text"] // TODO we can simplify this selector once we simplify form controls
     display: inline
-  .ss-calendar,
-  .ss-clock,
-  .ss-globe
+  .fa-calendar,
+  .fa-clock-o,
+  .fa-globe
     font-size: 14px
     color: $gray
     vertical-align: middle

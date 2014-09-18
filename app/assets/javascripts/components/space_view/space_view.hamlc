@@ -16,7 +16,7 @@
         tooltip="Content Model"
         tooltip-placement="bottom"
         tabindex="0")
-      %i.ss-database
+      %i.fa.fa-database
       %span Content Model
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'entries',
                   'section-index': spaceContext.tabList.currentViewType() == 'entry-list'}"
@@ -25,7 +25,7 @@
         tooltip="Entries"
         tooltip-placement="bottom"
         tabindex="0")
-      %i.ss-file
+      %i.fa.fa-file
       %span Entries
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'assets',
                  'section-index': spaceContext.tabList.currentViewType() == 'asset-list'}"
@@ -34,7 +34,7 @@
         tooltip="Assets"
         tooltip-placement="bottom"
         tabindex="0")
-      %i.ss-attach
+      %i.fa.fa-paperclip
       %span Assets
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'apiHome',
                    'section-index': spaceContext.tabList.currentViewType() == 'api-home'}"
@@ -45,7 +45,7 @@
         tooltip="API"
         tooltip-placement="bottom"
         tabindex="0")
-      %i.ss-fork
+      %i.fa.fa-random
       %span API
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'spaceSettings',
                   'section-index': spaceContext.tabList.currentSection() == 'spaceSettings'}"
@@ -56,7 +56,7 @@
         tooltip="Space Settings"
         tooltip-placement="bottom"
         tabindex="0")
-      %i.ss-settings
+      %i.fa.fa-gear
       %span Space Settings
 %nav.tab-list(ng-show="spaceContext.space && !spaceContext.space.isHibernated() && !locationInAccount" ng-class="{hidden: hideTabBar()}")
   %ul
@@ -76,7 +76,7 @@
                                 tooltip="{{tabItem.closingMessage}}"
                                 tooltip-placement="bottom")
           &times;
-        %i.ss-record.close-icon(ng-show="tabItem.dirty && !tabItem.hovered"
+        %i.fa.fa-circle.close-icon(ng-show="tabItem.dirty && !tabItem.hovered"
                                 ng-class="{draft: tabItem.dirty == 'draft'}"
                                 ng-mouseover="tabItem.setHovering(true)")
 .tab-content(ng-repeat="tab in spaceContext.tabList.items"
@@ -110,7 +110,7 @@
   %div(ng-switch-default="")
     Unhandled case: viewType = {{spaceContext.tabList.currentViewType()}}
 .advice(ng-show="spaceContext.space && spaceContext.space.isHibernated()")
-  %i.ss-cloudupload.giant-icon
+  %i.fa.fa-cloud-upload.giant-icon
   %header.advice-title Hold on! We're bringing your space back
   %div.advice-description.top-advice
     %p You haven't been here for a while, so your Space slipped into hibernation.

@@ -31,7 +31,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
   guiders.showImmediate = guiders.show;
   guiders.show = guiders.showDelayed;
 
-  var next = {name: '<i class="ss-navigateright"></i>', classString: 'btn btn--secondary next-button', onclick: function(){guiders.next();}};
+  var next = {name: '<i class="fa fa-angle-right"></i>', classString: 'btn btn--secondary next-button', onclick: function(){guiders.next();}};
 
   function Tutorial() {}
 
