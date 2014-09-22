@@ -15,6 +15,8 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
   $scope.update = saveToServer;
   $scope.delete = angular.noop; // TODO: implement when we have more than the default interface
 
+  $scope.$on('entityDeleted', contentTypeDeletedEventHandler);
+
   function getFieldForWidget(widget) {
     return _.find($scope.contentType.data.fields, {id: widget.fieldId});
   }
@@ -40,6 +42,12 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
     .then(function(interf) {
       $scope.editingInterface = interf;
     });
+  }
+
+  function contentTypeDeletedEventHandler(event, contentType) {
+    if (contentType === $scope.tab.params.contentType) {
+      $scope.tab.close();
+    }
   }
 
 }]);
