@@ -40,9 +40,8 @@ The second parameter is an options hash with the following keys:
 || - Date
 || - Location
 || - Object
-|| - Link (for a single link to an Asset or an Entry)
-|| - Links (for an Array of links to an Asset or an Entry)
-|| TODO: break these up into Entry/Entries Asset/Assets
+|| - Asset/Entry (for a single link to an Asset or an Entry)
+|| - Assets/Entries (for an Array of links to an Asset or an Entry)
 || - Symbols (for an Array of Symbols) 
 | `options` | An array of option descriptors (see below). You can leave this one away entirely if there are no options to configure |
 
