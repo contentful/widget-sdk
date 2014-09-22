@@ -157,6 +157,7 @@ describe('Editing interfaces service', function () {
 
     it('saves successfully', function() {
       interf.save.yield(null, {});
+      $rootScope.$apply();
       expect(stubs.info).toBeCalled();
     });
 
@@ -165,16 +166,19 @@ describe('Editing interfaces service', function () {
         expect(interf.newVersion).toBe(true);
       });
       interf.save.yield(null, {newVersion: true});
+      $rootScope.$apply();
     });
     
 
     it('fails to save because of version mismatch', function() {
       interf.save.yield({body: {sys: {type: 'Error', id: 'VersionMismatch'}}});
+      $rootScope.$apply();
       expect(stubs.warn).toBeCalled();
     });
 
     it('fails to save because of other error', function() {
       interf.save.yield({});
+      $rootScope.$apply();
       expect(stubs.serverError).toBeCalled();
     });
 
