@@ -25,6 +25,7 @@
               %input(type="checkbox" ng-model="preferences.showDisabledFields")
               Show disabled fields
     %button.btn.btn--tertiary(type="button"
+            ng-if="enableInterfaceEditor"
             ng-click="navigator.editingInterfaceEditor(contentType, defaultEditingInterface).goTo()"
             tooltip="Customize editing view"
             tooltip-placement="bottom")
