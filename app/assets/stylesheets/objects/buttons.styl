@@ -37,6 +37,13 @@
     &:active
       top: 0px
 
+// the webkit-transform fixes a glitch caused by google maps
+// usage of the same property in their iframe container
+.btn--form
+  padding-top: 6px
+  padding-bottom: 5px
+  -webkit-transform: translate3d(-1px, 1px, 0px)
+
 
 
 // Temporary override for gatekeeper usage
