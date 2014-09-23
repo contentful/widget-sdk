@@ -20,15 +20,15 @@ angular.module('contentful').run(['widgetTypes', function(widgetTypes){
     name: 'Markdown',
     template: '<div class="cf-markdown-editor"></div>'
   });
-  widgetTypes.registerWidget('dropdown',{
-    fieldTypes: ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'],
-    name: 'Dropdown',
-    template: '<div class="cf-dropdown-editor" ng-model="fieldData.value" ot-bind-internal="valuesController.selected"></div>'
-  });
   widgetTypes.registerWidget('radio',{
     fieldTypes: ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'],
     name: 'Radio',
     template: '<cf-radio-editor ng-model="fieldData.value" ot-bind-internal="valuesController.selected"></cf-radio-editor>'
+  });
+  widgetTypes.registerWidget('dropdown',{
+    fieldTypes: ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'],
+    name: 'Dropdown',
+    template: '<div class="cf-dropdown-editor" ng-model="fieldData.value" ot-bind-internal="valuesController.selected"></div>'
   });
   widgetTypes.registerWidget('rating',{
     fieldTypes: ['Integer', 'Number'],
