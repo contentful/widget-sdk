@@ -1,0 +1,5 @@
+%input.form-control(
+  ng-model="url"
+  ng-change="handleChange()")
+
+#youtube-player
