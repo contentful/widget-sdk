@@ -1,10 +1,12 @@
 .field-widget-header(ng-click="toggleField(field)")
   .cf-fieldtype-icon(field="field" show-tooltip)
-    %i.ss-help
+    %i.fa.fa-question-circle
   .widget-label
     {{displayedFieldName(field)}}
   .tools
-    %i.ss-writingdisabled(ng-if="field.disabled")
+    %span.fa-stack(ng-if="field.disabled")
+      %i.fa.fa-pencil.fa-flip-horizontal.fa-stack-1x
+      %i.fa.fa-ban.fa-stack-2x
     %a.toggle-collapse.on-right(ng-class="{open: isFieldOpen(field)}") ▶
 .details
   .l-form-horizontal
@@ -16,7 +18,7 @@
           .btn.btn--tertiary.select-box
             %select(ng-model="widget.widgetType"
                     ng-options="type.id as type.name for type in widgetTypesForType")
-            %i.button-icon-right.ss-dropdown
+            %i.fa.fa-caret-down.button-icon-right
     .l-form-field(ng-repeat="option in widgetOptions")
       %label {{option.name}}
       .l-form-controls

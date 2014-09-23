@@ -8,24 +8,26 @@
     $stretch(0, 30%, 0, $left-nav-width)
     padding: 50px 30px
 
-  .l-form-field
-    .select-box
-      select
-        width: 110%
-
 .field-widget-header
+  $display-flexbox()
   padding: 10px
+  color: $gray-dark
 
-  .widget-label,
   .cf-fieldtype-icon
-    display: inline-block
+    width: 5%
+    strong
+      color: $gray-dark
 
   .widget-label
     font-weight: bold
     margin-left: 15px
 
   .tools
-    float: right
+    margin-left: auto
+    .fa-stack
+      width: 1.8em
+      height: 1.8em
+      color: $gray-medium
 
 .field-widget-settings
   margin-bottom: 20px

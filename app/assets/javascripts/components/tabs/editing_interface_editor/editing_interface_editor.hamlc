@@ -5,7 +5,7 @@
   .tab-header__actions
     .dropdown-btn(cf-dropdown)
       %a.btn.btn--tertiary(cf-dropdown-toggle)
-        %i.ss-dropdown.button-icon-right
+        %i.fa.fa-caret-down.button-icon-right
         %span View
       .dropdown-menu(cf-dropdown-menu)
         %ul.dropdown-menu-list
@@ -17,7 +17,7 @@
             ng-click="restoreDefaults()"
             tooltip="Restore default view"
             tooltip-placement="bottom")
-      %i.ss-replay.button-icon
+      %i.fa.fa-rotate-left.button-icon
       Restore to defaults
 
 .tab-main
