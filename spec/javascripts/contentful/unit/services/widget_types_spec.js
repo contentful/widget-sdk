@@ -81,9 +81,25 @@ describe('Widget types service', function () {
       expect(widgetTypes.defaultType(field, contentType)).toBeUndefined();
     });
 
+    describe('if validations exist but are different', function() {
+      beforeEach(function() {
+        field.validations = [{'size': {max: 500, min: 0}}];
+      });
+
+      it('for a type with a dropdown widget', function() {
+        field.type = 'Symbol';
+        expect(widgetTypes.defaultType(field, contentType)).toBe('singleLine');
+      });
+
+      it('for a type with no dropdown widget', function() {
+        field.type = 'Date';
+        expect(widgetTypes.defaultType(field, contentType)).toBe('datePicker');
+      });
+    });
+
     describe('if validations exist', function() {
       beforeEach(function() {
-        field.validations = {'in': ['']};
+        field.validations = [{'in': ['123']}];
       });
 
       it('for a type with a dropdown widget', function() {
