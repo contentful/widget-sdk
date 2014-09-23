@@ -1,0 +1,43 @@
+.editing-interface-editor
+  .left-nav,
+  .with-left-nav
+    margin-top: 20px
+    border-right: 1px solid $gray-light
+
+  .with-left-nav
+    $stretch(0, 30%, 0, $left-nav-width)
+    padding: 50px 30px
+
+  .l-form-field
+    .select-box
+      select
+        width: 110%
+
+.field-widget-header
+  padding: 10px
+
+  .widget-label,
+  .cf-fieldtype-icon
+    display: inline-block
+
+  .widget-label
+    font-weight: bold
+    margin-left: 15px
+
+  .tools
+    float: right
+
+.field-widget-settings
+  margin-bottom: 20px
+  border: 1px solid $gray-light
+
+  .details
+    display: none
+
+  &.open
+    .details
+      display: block
+      padding-top: 20px
+      padding-bottom: 20px
+      background-color: $gray-lightest
+

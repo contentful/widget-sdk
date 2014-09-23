@@ -20,7 +20,7 @@ describe('cfDropdownEditor Directive', function () {
       scope.getFieldValidationsOfType = sinon.stub().returns([]);
 
       compileElement = function () {
-        element = $compile('<div class="cf-dropdown-editor" ot-bind-internal="selected.value" ot-path="" ng-model="fieldData.value"></div>')(scope);
+        element = $compile('<div class="cf-dropdown-editor" ot-bind-internal="valuesController.selected" ot-path="" ng-model="fieldData.value"></div>')(scope);
         scope.$apply();
         controller = element.controller('cfDropdownEditorController');
       };
@@ -73,6 +73,15 @@ describe('cfDropdownEditor Directive', function () {
         expect(scope.dropdownWidthClass()).toEqual('small-dropdown');
       });
     });
+
+    describe('with empty values', function(){
+      it('is small', function() {
+        scope.getFieldValidationsOfType.returns([]);
+        compileElement();
+        expect(scope.dropdownWidthClass()).toEqual('small-dropdown');
+      });
+    });
+    
   });
 
 
@@ -89,28 +98,13 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('values list is set', function() {
-      expect(scope.valuesList).toEqual(valuesList);
+      expect(scope.valuesController.valuesList).toEqual([
+        {label: 'banana'    , value: 'banana'},
+        {label: 'orange'    , value: 'orange'},
+        {label: 'strawberry', value: 'strawberry'},
+      ]);
     });
   });
-
-  describe('renders a list with a required validation', function() {
-    var valuesList;
-    beforeEach(function() {
-      scope.field.required = true;
-      valuesList = ['banana', 'orange', 'strawberry'];
-      scope.getFieldValidationsOfType.returns(valuesList);
-      compileElement();
-    });
-
-    it('has 3 elements', function() {
-      expect(element.find('option').length).toBe(4);
-    });
-
-    it('values list is set', function() {
-      expect(scope.valuesList).toEqual(valuesList);
-    });
-  });
-
 
   describe('selects dropdown value', function() {
     beforeEach(function() {
@@ -125,7 +119,7 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('sets the selected value', function() {
-      expect(scope.selected.value).toEqual('orange');
+      expect(scope.valuesController.selected).toEqual('orange');
     });
   });
 
@@ -143,7 +137,7 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('sets the selected value', function() {
-      expect(scope.selected.value).toEqual(1);
+      expect(scope.valuesController.selected).toEqual(1);
     });
   });
 
@@ -161,13 +155,15 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('sets the selected value', function() {
-      expect(scope.selected.value).toEqual(1.2);
+      expect(scope.valuesController.selected).toEqual(1.2);
     });
   });
 
 
   describe('handles the ot value changed event', function() {
     beforeEach(inject(function($rootScope) {
+      var valuesList = [0.2,1.2,2.2,3.2];
+      scope.getFieldValidationsOfType.returns(valuesList);
       compileElement();
       scope.otPath = 'path';
       $rootScope.$broadcast('otValueChanged', 'path', 'newvalue');
@@ -175,7 +171,7 @@ describe('cfDropdownEditor Directive', function () {
     }));
 
     it('sets the selected value', function() {
-      expect(scope.selected.value).toEqual('newvalue');
+      expect(scope.valuesController.selected).toEqual('newvalue');
     });
   });
 

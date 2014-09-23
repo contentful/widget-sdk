@@ -1,7 +1,16 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', 'validation', 'notification', 'analytics', 'addCanMethods', 'random', function ContentTypeEditorCtrl($scope, validation, notification, analytics, addCanMethods, random) {
+angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', '$injector', function ContentTypeEditorCtrl($scope, $injector) {
+  var addCanMethods     = $injector.get('addCanMethods');
+  var analytics         = $injector.get('analytics');
+  var editingInterfaces = $injector.get('editingInterfaces');
+  var environment       = $injector.get('environment');
+  var notification      = $injector.get('notification');
+  var random            = $injector.get('random');
+  var validation        = $injector.get('validation');
+
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
+  $scope.enableInterfaceEditor = environment.env !== 'production';
 
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
 
@@ -21,8 +30,18 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', 'val
     });
   }
 
+  function loadDefaultEditingInterface() {
+    editingInterfaces.forContentTypeWithId($scope.contentType, 'default')
+    .then(function (interf) {
+      $scope.defaultEditingInterface = interf;
+    });
+  }
+
   $scope.$watch('contentType', function(contentType){
-    if (contentType) loadPublishedContentType();
+    if (contentType){
+      loadPublishedContentType();
+      loadDefaultEditingInterface();
+    }
   });
 
   $scope.$on('entityDeleted', function (event, contentType) {

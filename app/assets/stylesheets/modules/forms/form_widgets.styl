@@ -48,9 +48,6 @@
     position: relative
     top: 2px
 
-.data-field-boolean .l-form-controls
-  padding-top: 10px
-
 .data-field-array
   .links 
     $plain-list()
@@ -125,6 +122,33 @@
   .search
     margin-bottom: 10px
 
+cf-radio-editor
+  display: block
+.cf-radio-editor__option
+  line-height: 40px
+.cf-radio-editor__radio
+  vertical-align: initial
+
+cf-rating-editor
+  display: block
+  margin-top: 10px
+  margin-bottom: 10px
+  padding-top: 2px
+  cursor: pointer
+.cf-rating-editor__star
+  display: inline-block
+  width: 10px
+  height: 10px
+  border-radius: 5px
+  border: 1px solid $gray-light
+  margin-right: 5px
+  &.is-active
+    background-color: $gray-medium
+  &.is-pending
+    background-color: $gray
+.clear-rating-button
+  margin-top: -3px
+
 .widget-location-editor__sub-fields
   position: relative
   $display-flexbox()
@@ -170,5 +194,4 @@
   top: 3px
   font-size: 14px
   color: $orange
-
 

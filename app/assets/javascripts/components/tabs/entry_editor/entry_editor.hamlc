@@ -41,26 +41,27 @@
     .l-form-field--no-label(ng-show="hasErrorOnFields")
       .l-form-controls
         .cf-form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
-    .l-form-field(ng-repeat="field in fields track by field.id"
-        data-field-id="{{field.id}}"
-        data-field-type="{{field.type}}"
+    .l-form-field(ng-repeat="widget in widgets track by widget.id"
+        data-field-id="{{widget.field.id}}"
+        data-field-type="{{widget.field.type}}"
+        data-field-items-type="{{widget.field.items.type}}"
         data-field-items-type="{{dotty.get(field, 'items.type')}}"
-        ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
+        ng-class="{'data-field-array': (widget.field|isFieldLink), 'data-field-boolean': (widget.field|isFieldBoolean), 'data-field-string-list': (widget.field|isFieldStringList)}")
       %label
-        {{field.name}}
-        %sup(ng-show="field.required") (required)
+        {{widget.field.name}}
+        %sup(ng-show="widget.field.required") (required)
       .l-form-controls
-        .l-form-locale(ng-repeat="locale in field.locales track by locale.code" ot-field-presence="['fields', field.id, locale.code]" data-locale="{{locale.code}}")
-          .cf-field-editor.l-field-editor(ot-path="['fields', field.id, locale.code]" cf-editor-entity="entry")
-          .locale-label(ng-show="field.locales.length > 1") {{locale.name}}
+        .l-form-locale(ng-repeat="locale in widget.locales track by locale.code" ot-field-presence="['fields', widget.field.id, locale.code]" data-locale="{{locale.code}}")
+          .cf-field-editor.l-field-editor(ot-path="['fields', widget.field.id, locale.code]" cf-editor-entity="entry")
+          .locale-label(ng-show="widget.locales.length > 1") {{locale.name}}
           .field-collaborators
             %ul.field-list
               %li.avatar.cf-user(ng-repeat="link in fieldPresence.users track by link.sys.id"
                                  link="link" as="presenceUser"
                                  tooltip="{{presenceUser | userNameDisplay:user}}")
                 %img(ng-src="{{user.avatarUrl}}")
-          .cf-form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
-        .cf-form-box-error(cf-error-path="['fields', field.id]")
+          .cf-form-box-error(cf-error-path="['fields', widget.field.id, locale.code,'*']")
+        .cf-form-box-error(cf-error-path="['fields', widget.field.id]")
 
 .tab-actions(ng-controller="EntryActionsCtrl")
   .button-set

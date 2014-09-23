@@ -7,7 +7,7 @@ describe('The ContentTypeFieldList directive', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      $provide.removeDirectives('cfFieldSettings');
+      $provide.removeDirectives('cfFieldSettingsEditor');
     });
 
     function ControllerMock(){}
@@ -41,43 +41,43 @@ describe('The ContentTypeFieldList directive', function () {
 
   it('has two fields', function () {
     compileElement();
-    expect(container.find('.cf-field-settings').length).toBe(2);
+    expect(container.find('.cf-field-settings-editor').length).toBe(2);
   });
 
   it('first field is active', function () {
     compileElement();
-    expect(container.find('.cf-field-settings').eq(0)).toHaveClass('active');
+    expect(container.find('.cf-field-settings-editor').eq(0)).toHaveClass('active');
   });
 
   it('second field is inactive', function () {
     compileElement();
-    expect(container.find('.cf-field-settings').eq(1)).not.toHaveClass('active');
+    expect(container.find('.cf-field-settings-editor').eq(1)).not.toHaveClass('active');
   });
 
   it('first field is open', function () {
     compileElement();
-    expect(container.find('.cf-field-settings').eq(0)).toHaveClass('open');
+    expect(container.find('.cf-field-settings-editor').eq(0)).toHaveClass('open');
   });
 
   it('second field is closed', function () {
     compileElement();
-    expect(container.find('.cf-field-settings').eq(1)).not.toHaveClass('open');
+    expect(container.find('.cf-field-settings-editor').eq(1)).not.toHaveClass('open');
   });
 
   it('first field is not hidden', function () {
     compileElement();
-    expect(container.find('.cf-field-settings').eq(0)).not.toBeNgHidden();
+    expect(container.find('.cf-field-settings-editor').eq(0)).not.toBeNgHidden();
   });
 
   it('second field is hidden', function () {
     compileElement();
-    expect(container.find('.cf-field-settings').eq(1)).toBeNgHidden();
+    expect(container.find('.cf-field-settings-editor').eq(1)).toBeNgHidden();
   });
 
   it('if preference setting is active second field is not hidden', function () {
     scope.preferences.showDisabledFields = true;
     compileElement();
-    expect(container.find('.cf-field-settings').eq(1)).not.toBeNgHidden();
+    expect(container.find('.cf-field-settings-editor').eq(1)).not.toBeNgHidden();
   });
 
 });

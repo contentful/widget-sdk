@@ -20,6 +20,7 @@ describe('Asset editor controller', function () {
         'getPublishedVersion',
         'fileProcessingFailed'
       ]);
+      $provide.removeControllers('FormWidgetsController');
 
       $provide.value('ShareJS', {
         peek: stubs.peek,
