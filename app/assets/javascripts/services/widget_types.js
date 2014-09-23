@@ -87,7 +87,7 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
   }
 
   function getFieldValidationsOfType(field, type) {
-    return _.pluck(field.validations, type);
+    return _.filter(_.pluck(field.validations, type));
   }
 
   function optionsForWidgetType(widgetType) {
