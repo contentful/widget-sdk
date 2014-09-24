@@ -17,6 +17,8 @@ angular.module('contentful').factory('YoutubePlayerAdapter', ['$q', function($q)
     },
 
     play: function(params, delegator){
+      if (!this._isPlayerInstalled()) return;
+
       console.log('play video', params.videoId);
 
       function extractVideoIdFromUrl(url){
