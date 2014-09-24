@@ -19,7 +19,7 @@ angular.module('contentful').directive('cfFieldtypeIcon', ['getFieldTypeName', '
     templates[title] = $(html);
   });
 
-  var fallback = $('<i class="ss-help"></i>');
+  var fallback = $('<i class="fa fa-question-circle"></i>');
 
   return {
     restrict: 'C',

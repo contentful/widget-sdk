@@ -1,52 +1,124 @@
+// TODO move me to styleguide CSS ?
+.styleguide-opaque-box1
+  border: 1px solid lightblue
+.styleguide-opaque-box2
+  border: 1px solid indigo
+.styleguide-opaque-box3
+  border: 1px solid deepskyblue
+.styleguide-opaque-box4
+  border: 1px solid chocolate
+.styleguide-filled-box1
+  background-color: indianred
+.styleguide-filled-box2
+  background-color: khaki
+.styleguide-filled-box3
+  background-color: lavender
+.styleguide-filled-box4
+  background-color: lightsalmon
+
+
+// Form Horizontal Container
+//
+// Inner structure: Label on the left, field on the right, single column
+//
+// Markup:
+// <div class="l-form-horizontal styleguide-opaque-box1">
+//   <div class="styleguide-filled-box1">row 1</div>
+//   <div class="styleguide-filled-box2">row 2</div>
+// </div>
+//
+// Styleguide 6.1
 .l-form-horizontal
   $display-flexbox()
   flex-direction: column
   width: 100%
-  max-width: 1400px
-  padding-top: $form-spacing
-
-  .locale
-    position: relative
-    clear: both
+  max-width: 800px
+  margin-left: $form-gutter
 
   .search-field
     width: 100%
     margin-top: 1px
     height: 30px
 
+// Form Horizontal Container Split (Should be renamed to vertical)
+// 
+// Inner structure: Label on top, field on the bottom, 2 columns. 
+//
+// Markup:
+// <div class="l-form-horizontal--split styleguide-opaque-box1">
+//   <div class="styleguide-filled-box1">row 1</div>
+//   <div class="styleguide-filled-box2">row 2</div>
+// </div>
+//
+// Styleguide 6.2
+.l-form-horizontal--split
+  @extend .l-form-horizontal
+  flex-direction: row
+  width: 90%
+  max-width: 1200px
+  margin-left: $form-gutter / 2
+
+// Form Horizontal Split Containers (same rename as above)
+// 
+// Markup:
+// <div class="l-form-horizontal--split styleguide-opaque-box1">
+//   <div class="l-form-left">
+//     <div class="styleguide-filled-box1">row 1</div>
+//     <div class="styleguide-filled-box2">row 2</div>
+//   </div>
+//   <div class="l-form-right">
+//     <div class="styleguide-filled-box3">row 1</div>
+//     <div class="styleguide-filled-box4">row 2</div>
+//   </div>
+// </div>
+//
+// modifier - modifier description
+//
+// Styleguide 6.3
 .l-form-left,
 .l-form-right
   $display-flexbox()
   flex-direction: column
 
 .l-form-left
-  margin-left: 5%
-  width: 35%
+  width: 40%
 .l-form-right
   margin-left: 5%
-  width: 45%
+  width: 55%
 
+// Form Field (should be renamed to rows maybe)
+//
+// Form row fields inside form container
+//
+// Markup:
+// <div class="l-form-horizontal styleguide-opaque-box1">
+//   <div class="l-form-field styleguide-filled-box1">
+//     <div class="styleguide-filled-box2">row 1</div>
+//     <div class="styleguide-filled-box3">row 2</div>
+//   </div>
+//   <div class="l-form-field styleguide-filled-box1">
+//     <div class="styleguide-filled-box2">row 1</div>
+//     <div class="styleguide-filled-box3">row 2</div>
+//   </div>
+// </div>
+//
+// Styleguide 6.4
 .l-form-field,
 .l-form-field--no-label
   $display-flexbox()
-  flex-direction: row
+  flex-direction: column
   align-items: flex-start
-  margin-bottom: $form-spacing
-
-.l-form-controls
-  padding-top: 5px
-  width: $form-controlwidth-outer
-.l-form-controls--with-action
-  @extend .l-form-controls
-  $display-flexbox()
-  align-items: center
+  margin-bottom: 25px
+.l-form-horizontal--split
+  .l-form-field,
+  .l-form-field--no-label
+    margin-left: 0
 
 // layout where we have a label on the left side
 .l-form-field
   label
-    width: $form-labelwidth
-    padding: $form-offset $form-gutter $form-offset 0
-    text-align: right
+    width: 100%
+    padding-bottom: 10px
   .form-control
     display: block
     margin: 0
@@ -56,6 +128,42 @@
 .l-form-field--no-label
   .l-form-controls
     margin-left: $form-labelwidth
+.l-form-horizontal--split
+  .l-form-field--no-label
+    .l-form-controls
+      margin-left: 0
+
+// Form controls
+//
+// Form control container
+//
+// Markup:
+// <div class="l-form-horizontal styleguide-opaque-box1">
+//   <div class="l-form-field styleguide-filled-box1">
+//     <label>label</label>
+//     <div class="l-form-controls styleguide-filled-box2">controls</div>
+//   </div>
+//
+// Styleguide 6.5
+.l-form-controls
+  width: 100%
+
+.l-form-controls--with-action
+  @extend .l-form-controls
+  $display-flexbox()
+  align-items: center
+.l-form-horizontal--split
+  .l-form-controls--with-action
+    width: 100%
+
+.l-form-locale
+  $display-flexbox()
+  flex-wrap: wrap
+  justify-content: space-between
+  align-items: center
+  margin-top: 20px
+.l-form-locale:first-child
+  margin-top: 0px
 
 .l-field-editor
   position: relative
@@ -63,34 +171,13 @@
 .l-field-editor--with-action
   @extend .l-field-editor
   width: $field-editor-width - 37%
-.l-field-action
-  width: 35%
-  margin-left: 2%
-
-.l-locale-label
-  float: left
-  margin-left: $form-offset
-  padding-top: $form-offset
-
 .l-form-horizontal--split
-  @extend .l-form-horizontal
-  flex-direction: row
-  .l-field-editor,
-  .l-form-controls--with-action
+  .l-field-editor
     width: 100%
   .l-field-editor--with-action
     width: 65%
-  .l-form-field,
-  .l-form-field--no-label
-    flex-direction: column
-  .l-form-field label,
-  .l-form-controls
-    width: 100%
-  .l-form-field label
-    text-align: left
-    padding-bottom: 5px
-  .l-form-field--no-label
-    .l-form-controls
-      margin-left: 0
 
+.l-field-action
+  width: 35%
+  margin-left: 2%
 

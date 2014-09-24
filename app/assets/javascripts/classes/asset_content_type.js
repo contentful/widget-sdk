@@ -11,7 +11,6 @@ angular.module('contentful').constant('AssetContentType', {
       localized: true,
       disabled: false,
       required: true,
-      widgetType: 'textfield'
     },
     {
       id: 'description',
@@ -19,7 +18,6 @@ angular.module('contentful').constant('AssetContentType', {
       type: 'Text',
       localized: true,
       disabled: false,
-      widgetType: 'textarea'
     },
     {
       id: 'file',
@@ -28,7 +26,6 @@ angular.module('contentful').constant('AssetContentType', {
       localized: true,
       disabled: false,
       required: true,
-      widgetType: 'fileEditor'
     }
   ]
 });

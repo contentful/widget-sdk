@@ -1,6 +1,6 @@
 'use strict';
 
-describe('The cfFieldSettings directive', function () {
+describe('The cfFieldSettingsEditor directive', function () {
 
   var container, scope;
   var compileElement;
@@ -11,14 +11,14 @@ describe('The cfFieldSettings directive', function () {
     });
 
     function ControllerMock(){}
-    inject(function ($rootScope, $compile, cfFieldSettingsDirective) {
-      cfFieldSettingsDirective[0].controller = ControllerMock;
+    inject(function ($rootScope, $compile, cfFieldSettingsEditorDirective) {
+      cfFieldSettingsEditorDirective[0].controller = ControllerMock;
       scope = $rootScope.$new();
 
       scope.field = {};
 
       compileElement = function () {
-        container = $('<div class="cf-field-settings"></div>');
+        container = $('<div class="cf-field-settings-editor"></div>');
         $compile(container)(scope);
         scope.$digest();
       };

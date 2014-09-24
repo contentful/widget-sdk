@@ -1,0 +1,41 @@
+.field-widget-header(ng-click="toggleField(field)")
+  .cf-fieldtype-icon(field="field" show-tooltip)
+    %i.fa.fa-question-circle
+  .widget-label
+    {{displayedFieldName(field)}}
+  .tools
+    %span.fa-stack(ng-if="field.disabled")
+      %i.fa.fa-pencil.fa-flip-horizontal.fa-stack-1x
+      %i.fa.fa-ban.fa-stack-2x
+    %a.toggle-collapse.on-right(ng-class="{open: isFieldOpen(field)}") ▶
+.details
+  .l-form-horizontal
+    .l-form-field
+      %label
+        Widget Type
+      .l-form-controls
+        .l-field-editor
+          .btn.btn--tertiary.select-box
+            %select(ng-model="widget.widgetType"
+                    ng-options="type.id as type.name for type in widgetTypesForType")
+            %i.fa.fa-caret-down.button-icon-right
+    .l-form-field(ng-repeat="option in widgetOptions")
+      %label {{option.name}}
+      .l-form-controls
+        .l-field-editor(ng-switch="option.type")
+          %input.form-control(ng-switch-when="Text"
+                 type="text"
+                 placeholder="{{option.description}}"
+                 ng-model="widget.widgetParams[option.param]")
+          %input.form-control(ng-switch-when="Number"
+                 type="text"
+                 placeholder="{{option.description}}"
+                 ng-model="widget.widgetParams[option.param]")
+          %div.form-control(ng-switch-when="Boolean")
+            %input(type="checkbox"
+                   ng-model="widget.widgetParams[option.param]")
+            %span(ng-bind="option.description")
+          %div.form-control(ng-switch-when="Predefined")
+            %select(ng-options="value for value in option.values"
+                    ng-model="widget.widgetParams[option.param]")
+            %span(ng-bind="option.description")

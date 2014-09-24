@@ -1,6 +1,11 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeFieldListCtrl', ['$scope', 'analytics', 'validation', '$q', 'random', 'logger', function($scope, analytics, validation, $q, random, logger) {
+angular.module('contentful').controller('ContentTypeFieldListCtrl', ['$scope', '$injector', function($scope, $injector) {
+  var $controller = $injector.get('$controller');
+  var $q = $injector.get('$q');
+  var random = $injector.get('random');
+
+  $controller('FieldActionsController', {$scope: $scope});
 
   $scope.$watchCollection('contentType.data.fields', function (fields, old, scope) {
     if (hasUIIDs(fields)) {
@@ -43,38 +48,6 @@ angular.module('contentful').controller('ContentTypeFieldListCtrl', ['$scope', '
       $scope.otUpdateEntity();
     });
   }
-
-  var openFieldUIID;
-  $scope.toggleField = function (field) {
-    if(!field) {
-      logger.logError('field is not defined', {
-        data: {
-          fields: $scope.contentType.data.fields
-        }
-      });
-    }
-    if (openFieldUIID == field.uiid){
-      openFieldUIID = null;
-    } else {
-      openFieldUIID = field.uiid;
-    }
-  };
-
-  $scope.fieldClicked = function (field) {
-    if (!$scope.isFieldOpen(field)) $scope.openField(field);
-  };
-
-  $scope.openField = function (field) {
-    openFieldUIID = field.uiid;
-  };
-
-  $scope.closeAllFields = function () {
-    openFieldUIID = null;
-  };
-
-  $scope.isFieldOpen = function (field) {
-    return openFieldUIID == field.uiid;
-  };
 
   $scope.fieldTypeParams = function (f) {
     var params = [f.type, f.linkType];

@@ -67,6 +67,16 @@ var timingReporter = {
 
 beforeEach(function() {
 
+  this.$inject = function(serviceName){
+    if (!this.$injector) {
+      var self = this;
+      inject(function($injector){
+        self.$injector = $injector;
+      });
+    }
+    return this.$injector.get(serviceName);
+  };
+
   jasmine.addMatchers({
 
     toLookEqual: function() {

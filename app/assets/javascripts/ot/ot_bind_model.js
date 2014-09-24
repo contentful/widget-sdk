@@ -17,6 +17,7 @@ angular.module('contentful').directive('otBindModel', ['$parse', function($parse
           ngModelSet = ngModelGet.assign;
       ngModelCtrl.$viewChangeListeners.push(function(){
         scope.otChangeValue(ngModelCtrl.$modelValue);
+        // TODO this is wrong because it does not handle the error case
       });
       scope.$on('otValueChanged', function(event, path, val) {
         if (path === event.currentScope.otPath) ngModelSet(event.currentScope, val);

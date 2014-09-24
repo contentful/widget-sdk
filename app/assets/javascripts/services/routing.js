@@ -8,6 +8,7 @@ angular.module('contentful').provider('routing', ['$routeProvider', function ($r
   $routeProvider.when('/spaces/:spaceId/assets/:assetId', {viewType: 'asset-editor'});
   $routeProvider.when('/spaces/:spaceId/content_types', {viewType: 'content-type-list'});
   $routeProvider.when('/spaces/:spaceId/content_types/:contentTypeId', {viewType: 'content-type-editor'});
+  $routeProvider.when('/spaces/:spaceId/content_types/:contentTypeId/editing_interface/:editingInterfaceId', {viewType: 'editing-interface-editor'});
   $routeProvider.when('/spaces/:spaceId/content_model', {viewType: 'content-model'});
   $routeProvider.when('/spaces/:spaceId/api', {viewType: 'api-home'});
   $routeProvider.when('/spaces/:spaceId/api_keys', {viewType: 'api-key-list'});
@@ -63,6 +64,8 @@ angular.module('contentful').provider('routing', ['$routeProvider', function ($r
           path = path + '/assets';
         } else if (tab.viewType == 'content-type-editor') {
           path = path + '/content_types/' + tab.params.contentType.getId();
+        } else if (tab.viewType == 'editing-interface-editor') {
+          path = path + '/content_types/' + tab.params.contentType.getId() + '/editing_interface/' + tab.params.editingInterface.getId();
         } else if (tab.viewType == 'content-type-list') {
           path = path + '/content_types';
         } else if (tab.viewType == 'content-model') {

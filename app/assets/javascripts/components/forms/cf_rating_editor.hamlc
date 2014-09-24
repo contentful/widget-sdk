@@ -1,0 +1,6 @@
+.cf-rating-editor__star(
+  ng-repeat="(index, star) in stars track by index"
+  ng-class="{'is-active': (index < rating && pendingValue < 0), 'is-pending': index <= pendingValue}"
+  ng-mouseenter="setPending(index)"
+  ng-click="setRating(index)")
+%button.btn.btn--default.clear-rating-button(ng-click="setRating(null)" ng-disabled="!hasRating()") Clear

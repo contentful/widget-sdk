@@ -1,0 +1,45 @@
+.editing-interface-editor
+  .left-nav,
+  .with-left-nav
+    margin-top: 20px
+    border-right: 1px solid $gray-light
+
+  .with-left-nav
+    $stretch(0, 30%, 0, $left-nav-width)
+    padding: 50px 30px
+
+.field-widget-header
+  $display-flexbox()
+  padding: 10px
+  color: $gray-dark
+
+  .cf-fieldtype-icon
+    width: 5%
+    strong
+      color: $gray-dark
+
+  .widget-label
+    font-weight: bold
+    margin-left: 15px
+
+  .tools
+    margin-left: auto
+    .fa-stack
+      width: 1.8em
+      height: 1.8em
+      color: $gray-medium
+
+.field-widget-settings
+  margin-bottom: 20px
+  border: 1px solid $gray-light
+
+  .details
+    display: none
+
+  &.open
+    .details
+      display: block
+      padding-top: 20px
+      padding-bottom: 20px
+      background-color: $gray-lightest
+

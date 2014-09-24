@@ -48,7 +48,7 @@
         border-width: 0
 
   // Layout for Field-row
-  .cf-field-settings
+  .cf-field-settings-editor
     @extend $result-list-cell
     white-space: normal
     color: $inactive-row-color
@@ -96,7 +96,7 @@
     width: 6px
 
   // Field settings Look and Feel
-  .cf-field-settings
+  .cf-field-settings-editor
     background-color: white
     &:hover
       background-color: $result-list-highlight
@@ -112,7 +112,7 @@
   .field-details,
   .fieldtype-dropdown
     display: none
-  .cf-field-settings.open
+  .cf-field-settings-editor.open
     .field-form,
     .field-details,
     .fieldtype-dropdown
@@ -137,7 +137,7 @@
     cursor: -moz-grab
     cursor: -moz-grabbing
     opacity: 0.2
-  .cf-field-settings:hover .drag-handle
+  .cf-field-settings-editor:hover .drag-handle
     opacity: 1
 
   // Colored Status-Bar at the end of the row
@@ -150,6 +150,7 @@
       background-color: $blue
 
   // Icons
+  // TODO maybe rename this to tools and make it more consistent with stuff in editing interfaces
   .icons
     color: $inactive-row-icon-inactive-color
     .title-icon,
@@ -162,28 +163,26 @@
   .required-icon
     font-style: normal
     font-size: 120%
-  .cf-fieldtype-icon
-    strong
-      font-size: 11px
-      color: inherit
-    color: $inactive-row-color // Adjust the color because <strong> makes the text appear darker
   .validation-alert
     color: $orange
 
   // Fieldtype icon
-  // Look / internal
   .cf-fieldtype-icon
     cursor: default
-    border: 1px solid $inactive-row-color
+    border: 1px solid $gray-dark
     border-radius: 3px
     height: 18px + 2 * 3px
     line-height: 18px
     padding: 2px 0 3px
     width: 35px
     text-align: center
+    color: $gray-dark // Adjust the color because <strong> makes the text appear darker
     i
       position: relative
       top: 1px
+    strong
+      font-size: 10px
+      color: inherit
   .dropdown-toggle.cf-fieldtype-icon:not([disabled])
     width: 45px
     padding-left: 13px
@@ -201,9 +200,6 @@
     color: $active-row-icon-inactive-color
     .enabled
       color: $active-row-icon-active-color
-  .active .cf-fieldtype-icon
-    color: lighten($active-row-color, 10)
-    border-color: $active-row-color
 
   // Color varaitions for open fields
   .open
@@ -250,7 +246,7 @@
 
   // Advice/Add-Button
   .advice
-    width: 60%
+    width: 80%
     margin: 0
   .add-field-button
     margin-top: 1em

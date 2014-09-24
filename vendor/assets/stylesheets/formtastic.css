@@ -108,13 +108,6 @@ This stylesheet forms part of the Formtastic Rails Plugin
 
 /* LEFT ALIGNED LABELS
 --------------------------------------------------------------------------------------------------*/
-.formtastic .input .label {
-  display:block;
-  width:25%;
-  float:left;
-  padding-top:.2em;
-}
-
 .formtastic .fragments .label,
 .formtastic .choices .label {
   position:absolute;
@@ -137,7 +130,6 @@ This stylesheet forms part of the Formtastic Rails Plugin
   float:left;
   width:74%;
   margin:0;
-  padding:0 0 0 25%;
 }
 
 .formtastic .choice {
@@ -202,14 +194,6 @@ This stylesheet forms part of the Formtastic Rails Plugin
 --------------------------------------------------------------------------------------------------*/
 .formtastic .hidden {
   display:none;
-}
-
-
-/* BOOLEAN LABELS
---------------------------------------------------------------------------------------------------*/
-.formtastic .boolean label {
-  padding-left:25%;
-  display:block;
 }
 
 

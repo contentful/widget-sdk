@@ -12,14 +12,18 @@ $formtastic-fieldwidth = 40%
   .input
     padding: 0
     .label
+      display: block
       position: relative
       color: inherit
-      width: $form-labelwidth
-      text-align: right
-      padding: $form-offset $form-gutter $form-offset 0
+      margin-left: $form-gutter
+      padding-bottom: 10px
+    .form-control
+      width: $formtastic-fieldwidth
+      margin-left: $form-gutter
     input[type="checkbox"],
     input[type="radio"]
       vertical-align: baseline
+      width: auto
     input[type="checkbox"]
       position: relative
       top: -1px
@@ -29,50 +33,40 @@ $formtastic-fieldwidth = 40%
     .inline-errors
       margin-left: $form-labelwidth
   .input.info > div
-    padding-top: $form-offset
+    margin-left: $form-gutter
   .input > select
     margin-top: $form-offset
   .fragment
     padding-right: 10px
-  .input input
-    margin-top: 2px
   .input.boolean
     padding-top: $form-offset
     padding-bottom: $form-offset
     .tooltip.top
       left: $form-labelwidth !important
-  .input.boolean label
-    padding-left: $form-labelwidth
   .input.table
     .result-list
       margin-top: $form-offset
+      margin-left: $form-gutter
       width: 100% - $form-labelwidth
       float: left
       th
         padding-top: 0
+      .form-control
+        margin-left: 0
   .choices,
   .fragments
     .label label
       position: static
+    .choice .form-control
+      margin-left: 0
     .choices-group,
     .fragments-group
+      margin-left: $form-gutter
       padding-left: 0
       margin-bottom: 0
       padding-bottom: 5px
       li
         margin-top: $form-offset
-
-  // Style form elements
-  .input
-    input[type="text"],
-    input[type="number"],
-    input[type="email"],
-    input[type="tel"],
-    input[type="password"],
-    input[type="url"],
-    input.time,
-    textarea
-      width: $formtastic-fieldwidth
 
   // Make form actions look a little more like tab-actions
   fieldset.actions
