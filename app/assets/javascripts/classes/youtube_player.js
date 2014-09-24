@@ -2,27 +2,14 @@
 angular.module('contentful').factory('YoutubePlayerAdapter', ['$q', function($q){
   function YoutubePlayerAdapter(YoutubePlayer){
     this.YoutubePlayer = YoutubePlayer;
-    this.installed = false;
   }
 
   YoutubePlayerAdapter.prototype = {
     install: function(el){
-      var defer = $q.defer(),
-          self  = this;
+      var defer = $q.defer();
 
-      if (!this.installed) {
-        this.player = new this.YoutubePlayer(el, {
-          events: {
-            'onError': function(){
-              console.log(arguments)
-
-            },
-            'onReady': function(){
-              self.installed = true;
-              defer.resolve(self);
-            }
-          }
-        });
+      if (!this._isPlayerInstalled()) {
+        this._installPlayer(el, defer);
       } else
         defer.resolve(this);
 
@@ -39,6 +26,26 @@ angular.module('contentful').factory('YoutubePlayerAdapter', ['$q', function($q)
       }
 
       this.player.loadVideoById(extractVideoIdFromUrl(params.videoId));
+    },
+
+    _installPlayer: function(el, defer){
+      var self = this;
+
+      new this.YoutubePlayer(el, {
+        events: {
+          'onError': function(){
+            console.log(arguments);
+          },
+          'onReady': function(event){
+            self.player = event.target;
+            defer.resolve(self);
+          }
+        }
+      });
+    },
+
+    _isPlayerInstalled: function(){
+      return this.player !== undefined;
     }
   };
 
