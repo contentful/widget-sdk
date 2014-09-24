@@ -2,4 +2,4 @@
   ng-model="url"
   ng-change="handleChange()")
 
-#youtube-player
+%cf-youtube-player
