@@ -1,5 +1,5 @@
 'use strict';
-var NullPlayer = { play: function(){} };
+var NullPlayer = { install: function(){}, play: function(){} };
 
 angular.module('contentful').directive('cfYoutubePlayer', ['youtubePlayerLoader', function(youtubePlayerLoader){
   return {
@@ -43,6 +43,7 @@ angular.module('contentful').directive('cfYoutubePlayer', ['youtubePlayerLoader'
       };
 
       $scope.$watch('videoURL', function(newVal, oldVal){
+        console.log("newVal ", newVal, " oldVal ", oldVal);
         if (newVal === oldVal) return;
 
         console.log('change in the video url');
