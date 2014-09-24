@@ -29,7 +29,7 @@ angular.module('contentful').factory('YoutubePlayerAdapter', ['$q', function($q)
         return match && match[2];
       }
 
-      this.player.loadVideoById(extractVideoIdFromUrl(params.videoId));
+      this.player.cueVideoById(extractVideoIdFromUrl(params.videoId));
     },
 
     _installPlayer: function(el, defer){
