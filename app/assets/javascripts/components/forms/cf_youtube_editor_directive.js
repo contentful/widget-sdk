@@ -11,6 +11,7 @@ angular.module('contentful').directive('cfYoutubeEditor', [function(){
 
       function handleInputChange(){
         $scope.videoURL = $scope.url;
+        $scope.otBindInternalChangeHandler();
       }
     }],
 
