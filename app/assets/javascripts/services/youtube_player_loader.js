@@ -6,6 +6,7 @@ angular.module('contentful').factory('youtubePlayerLoader', ['$q', 'YoutubePlaye
 
   window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
 
+  // Global function expected by YouTube iframe player
   function onYouTubeIframeAPIReady() {
     _.each(deferreds, function(defer){ defer.resolve(new YoutubePlayerAdapter(YT.Player)); });
   }

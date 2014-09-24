@@ -11,6 +11,27 @@ angular.module('contentful').directive('cfYoutubePlayer', ['youtubePlayerLoader'
       scope.player = NullPlayer;
       youtubePlayerLoader.player().then(function(player){
         scope.player = player;
+
+        console.log(scope.videoURL);
+        if (scope.videoURL){
+          console.log('play now')
+          var delegator = {
+            handlePlayerError: function(){
+              console.log("Error playing video");
+            }
+          };
+
+          scope.player
+            .install('youtube-player')
+            .then(function(player){
+              player.play({
+                el: 'youtube-player',
+                width: 640,
+                height: 390,
+                videoId: scope.videoURL
+              }, delegator);
+            });
+        }
       });
     },
 
@@ -25,13 +46,16 @@ angular.module('contentful').directive('cfYoutubePlayer', ['youtubePlayerLoader'
         if (newVal === oldVal) return;
 
         console.log('change in the video url');
-        $scope.player.play({
-            el: 'youtube-player',
-            width: 640,
-            height: 390,
-            videoId: $scope.videoURL
-          }, delegator
-        );
+        $scope.player
+          .install('youtube-player')
+          .then(function(player){
+            player.play({
+              el: 'youtube-player',
+              width: 640,
+              height: 390,
+              videoId: $scope.videoURL
+            }, delegator);
+          });
       });
     }]
   };
