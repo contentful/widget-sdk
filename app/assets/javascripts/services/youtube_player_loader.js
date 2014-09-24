@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').factory('youtubePlayer', ['$q', 'YoutubePlayerAdapter', function($q, YoutubePlayerAdapter){
+angular.module('contentful').factory('youtubePlayerLoader', ['$q', 'YoutubePlayerAdapter', function($q, YoutubePlayerAdapter){
   var player,
       loading   = false,
       deferreds = [];

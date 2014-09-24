@@ -1,7 +1,7 @@
 'use strict';
 var NullPlayer = { play: function(){} };
 
-angular.module('contentful').directive('cfYoutubePlayer', ['youtubePlayer', function(youtubePlayer){
+angular.module('contentful').directive('cfYoutubePlayer', ['youtubePlayerLoader', function(youtubePlayerLoader){
   return {
     restrict: 'E',
     scope: true,
@@ -9,7 +9,7 @@ angular.module('contentful').directive('cfYoutubePlayer', ['youtubePlayer', func
 
     link: function(scope, elem) {
       scope.player = NullPlayer;
-      youtubePlayer.player().then(function(player){
+      youtubePlayerLoader.player().then(function(player){
         scope.player = player;
       });
     },
