@@ -22,7 +22,7 @@ angular.module('contentful').directive('cfYoutubePlayer', ['youtubePlayerLoader'
 
         scope.player = player;
         scope.player
-          .install(YOUTUBE_DOM_ELEMENT_ID)
+          .install(YOUTUBE_DOM_ELEMENT_ID, scope.youtubePlayerDelegate)
           .then(function(player){
             if (nullPlayer.pending) player.play(nullPlayer.pending);
           });

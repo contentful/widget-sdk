@@ -5,10 +5,12 @@ angular.module('contentful').factory('YoutubePlayerAdapter', ['$q', function($q)
   }
 
   YoutubePlayerAdapter.prototype = {
-    install: function(el){
+    install: function(el, delegate){
       var defer = $q.defer();
 
+
       if (!this._isPlayerInstalled()) {
+        this.delegate = delegate;
         this._installPlayer(el, defer);
       } else
         defer.resolve(this);
@@ -36,9 +38,14 @@ angular.module('contentful').factory('YoutubePlayerAdapter', ['$q', function($q)
       new this.YoutubePlayer(el, {
         events: {
           'onError': function(){
-            console.log(arguments);
+            self.delegate.handlePlayerFailedToLoadVideo();
+          },
+          'onStateChange': function(event){
+            if (event.data == YT.PlayerState.UNSTARTED)
+              self.delegate.handlePlayerReadyToPlayVideo();
           },
           'onReady': function(event){
+            self.delegate.handlePlayerReady();
             self.player = event.target;
             defer.resolve(self);
           }
