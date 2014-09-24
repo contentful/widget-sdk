@@ -11,16 +11,30 @@ Player.prototype.reset = function(){
 };
 
 Player.prototype.load = function(videoId, options) {
-  new this.YoutubePlayer(this.element, {
+  var p  = new this.YoutubePlayer(this.element, {
       height: '390',
       width: '640',
       videoId: videoId,
       events: {
-        'onReady' : function(){console.log("Player Ready")},
-        'onError' : function(){console.log("Player error")}
+        'onReady' : function(){
+          console.log("READYYYYYYYYYYYYYYY");
+        },
+        'onStateChange' : function(state){
+          console.log("STATE CHANGEEEEEEE ", state);
+          if (state == -1) { //magic numbers ugh
+            options.ready();
+          }
+        },
+        'onError' : function(){
+          console.log("///////////////////////////////////////////")
+          options.error();
+        }
       }
     }
-  );
+   );
+   p.addEventListener("onError", function(){console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>")});
+
+   return p;
 };
 
 angular.module('contentful').directive('cfYoutubeEditor', ['youtubePlayer', function(youtubePlayer){
@@ -41,10 +55,21 @@ angular.module('contentful').directive('cfYoutubeEditor', ['youtubePlayer', func
 
         if ($scope.player){
           console.log($scope.url);
-          $scope.player.reset().load($scope.url);
+          $scope.player.reset().load($scope.url, {
+            ready: handleVideoPlayerReady,
+            error: handleVideoPlayerError
+          });
         }
       }
-    }
-    ]
+
+      function handleVideoPlayerReady(){
+        console.log("READY");
+      }
+
+      function handleVideoPlayerError(){
+        console.log("ERROR");
+      }
+    }],
+
   };
 }]);
