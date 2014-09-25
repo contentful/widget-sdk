@@ -1,4 +1,6 @@
 %input.form-control(
   ng-model="url"
 
+%span {{title}}
+
 %cf-youtube-player
