@@ -6,20 +6,17 @@ angular.module('contentful').factory('YoutubePlayerAdapter', ['$q', function($q)
 
   YoutubePlayerAdapter.prototype = {
     install: function(el, delegate){
-      var defer = $q.defer();
-
       this.delegate = delegate;
-      this._installPlayer(el, defer);
-
-      return defer.promise;
+      return this._installPlayer(el);
     },
 
     play: function(params, delegator){
       this.player.cueVideoById(params.videoId);
     },
 
-    _installPlayer: function(el, defer){
-      var self = this;
+    _installPlayer: function(el){
+      var self  = this,
+          defer = $q.defer();
 
       new this.YoutubePlayer(el, {
         events: {
@@ -37,11 +34,10 @@ angular.module('contentful').factory('YoutubePlayerAdapter', ['$q', function($q)
           }
         }
       });
-    },
 
-    _isPlayerInstalled: function(){
-      return this.player !== undefined;
+      return defer.promise;
     }
+
   };
 
   return YoutubePlayerAdapter;
