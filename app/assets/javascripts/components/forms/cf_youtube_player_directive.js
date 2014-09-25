@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('contentful').directive('cfYoutubePlayer', ['youtubePlayerLoader', function(youtubePlayerLoader){
+angular.module('contentful').directive('cfYoutubePlayer', [
+  'youtubePlayerLoader', 'youtubeGAPIAdapter', function(youtubePlayerLoader, youtubeGAPIAdapter){
   var YOUTUBE_DOM_ELEMENT_ID = 'youtube-player';
 
   return {
@@ -22,10 +23,14 @@ angular.module('contentful').directive('cfYoutubePlayer', ['youtubePlayerLoader'
     },
 
     controller: ['$scope', function($scope){
-      $scope.$watch('videoURL', function(newVal, oldVal){
+      $scope.$watch('youtubeUrl', function(newVal, oldVal){
         if (newVal === oldVal || !$scope.player) return;
 
-        $scope.player.play({videoId: $scope.videoURL});
+        youtubeGAPIAdapter.videoInfo($scope.youtubeUrl.videoId()).then(function(items){
+          $scope.title = items[0].snippet.title;
+        });
+
+        $scope.player.play({videoId: $scope.youtubeUrl.videoId()});
       });
     }]
   };

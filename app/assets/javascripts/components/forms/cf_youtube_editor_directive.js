@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfYoutubeEditor', ['youtubeGAPIAdapter', function(youtubeGAPIAdapter){
+angular.module('contentful').directive('cfYoutubeEditor', ['YoutubeUrl', function(YoutubeUrl){
   return {
     restrict: 'E',
     scope: true,
@@ -22,13 +22,7 @@ angular.module('contentful').directive('cfYoutubeEditor', ['youtubeGAPIAdapter',
 
     controller: ['$scope', function($scope){
       $scope.$watch("url", function(){
-        console.log('url', $scope.url);
-        $scope.videoURL = $scope.url;
-
-        youtubeGAPIAdapter.videoInfo('ZAg7NTSL8ow').then(function(items){
-          $scope.title = items[0].snippet.title;
-        });
-
+        $scope.youtubeUrl = new YoutubeUrl($scope.url);
       });
     }],
 

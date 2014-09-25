@@ -21,15 +21,8 @@ angular.module('contentful').factory('YoutubePlayerAdapter', ['$q', function($q)
     play: function(params, delegator){
       if (!this._isPlayerInstalled()) return;
 
-      console.log('play video', params.videoId);
 
-      function extractVideoIdFromUrl(url){
-        var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-        var match = url.match(regExp);
-        return match && match[2];
-      }
-
-      this.player.cueVideoById(extractVideoIdFromUrl(params.videoId));
+      this.player.cueVideoById(params.videoId);
     },
 
     _installPlayer: function(el, defer){
