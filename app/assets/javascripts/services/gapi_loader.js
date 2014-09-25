@@ -24,7 +24,7 @@ angular.module('contentful').factory('gapiLoader', ['$q', 'GAPIAdapter', functio
     load : function(){
       var defer = $q.defer();
 
-      loaded ? defer.resolve(gapi) : deferreds.push(defer);
+      loaded ? defer.resolve(GAPIAdapter.instance()) : deferreds.push(defer);
 
       if (!loading) loadGapi();
 

@@ -1,11 +1,5 @@
 'use strict';
 
-var NullPlayer = {
-  play: function(params){
-   this.pending = params;
-  }
-};
-
 angular.module('contentful').directive('cfYoutubePlayer', ['youtubePlayerLoader', function(youtubePlayerLoader){
   var YOUTUBE_DOM_ELEMENT_ID = 'youtube-player';
 
@@ -15,16 +9,13 @@ angular.module('contentful').directive('cfYoutubePlayer', ['youtubePlayerLoader'
     template: JST['cf_youtube_player'](),
 
     link: function(scope) {
-      scope.player = NullPlayer;
 
       youtubePlayerLoader.player().then(function(player){
-        var nullPlayer = scope.player;
-
         scope.player = player;
         scope.player
           .install(YOUTUBE_DOM_ELEMENT_ID, scope.youtubePlayerDelegate)
           .then(function(player){
-            if (nullPlayer.pending) player.play(nullPlayer.pending);
+            player.play({videoId: scope.videoURL});
           });
 
       });
@@ -32,7 +23,7 @@ angular.module('contentful').directive('cfYoutubePlayer', ['youtubePlayerLoader'
 
     controller: ['$scope', function($scope){
       $scope.$watch('videoURL', function(newVal, oldVal){
-        if (newVal === oldVal) return;
+        if (newVal === oldVal || !$scope.player) return;
 
         $scope.player.play({videoId: $scope.videoURL});
       });

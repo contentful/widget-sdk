@@ -1,6 +1,6 @@
 'use strict';
 angular.module('contentful').factory('youtubePlayerLoader', ['$q', 'YoutubePlayerAdapter', function($q, YoutubePlayerAdapter){
-  var player,
+  var loaded,
       loading   = false,
       deferreds = [];
 
@@ -8,6 +8,7 @@ angular.module('contentful').factory('youtubePlayerLoader', ['$q', 'YoutubePlaye
 
   // Global function expected by YouTube iframe player
   function onYouTubeIframeAPIReady() {
+    loaded = true;
     _.each(deferreds, function(defer){ defer.resolve(new YoutubePlayerAdapter(YT.Player)); });
   }
 
@@ -24,7 +25,7 @@ angular.module('contentful').factory('youtubePlayerLoader', ['$q', 'YoutubePlaye
     player : function(){
       var defer = $q.defer();
 
-      player ? defer.resolve(player) : deferreds.push(defer);
+      loaded ? defer.resolve(new YoutubePlayerAdapter(YT.Player)) : deferreds.push(defer);
 
       if (!loading) loadPlayer();
 
