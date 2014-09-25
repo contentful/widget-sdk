@@ -8,20 +8,13 @@ angular.module('contentful').factory('YoutubePlayerAdapter', ['$q', function($q)
     install: function(el, delegate){
       var defer = $q.defer();
 
-
-      if (!this._isPlayerInstalled()) {
-        this.delegate = delegate;
-        this._installPlayer(el, defer);
-      } else
-        defer.resolve(this);
+      this.delegate = delegate;
+      this._installPlayer(el, defer);
 
       return defer.promise;
     },
 
     play: function(params, delegator){
-      if (!this._isPlayerInstalled()) return;
-
-
       this.player.cueVideoById(params.videoId);
     },
 
