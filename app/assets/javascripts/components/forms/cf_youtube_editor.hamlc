@@ -3,4 +3,4 @@
 
 %span {{title}}
 
-%cf-youtube-player
+%cf-youtube-player(ng-if="url")

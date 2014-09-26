@@ -31,6 +31,7 @@ angular.module('contentful').directive('cfYoutubePlayer', [
         });
 
         $scope.player.play({videoId: $scope.youtubeUrl.videoId()});
+
       });
     }]
   };
