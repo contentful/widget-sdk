@@ -19,6 +19,7 @@ angular.module('contentful').factory('YoutubePlayerAdapter', ['$q', function($q)
           defer = $q.defer();
 
       new this.YoutubePlayer(el, {
+        width: '100%',
         events: {
           'onError': function(){
             self.delegate.handlePlayerFailedToLoadVideo();
