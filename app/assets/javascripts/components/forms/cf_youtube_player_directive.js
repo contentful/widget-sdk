@@ -16,8 +16,8 @@ angular.module('contentful').directive('cfYoutubePlayer', [
         scope.player
           .install(YOUTUBE_DOM_ELEMENT_ID, scope.youtubePlayerDelegate)
           .then(function(player){
-            youtubeGAPIAdapter.videoInfo(scope.youtubeUrl.videoId()).then(function(items){
-              scope.title = items[0].snippet.title;
+            youtubeGAPIAdapter.videoInfo(scope.youtubeUrl.videoId()).then(function(info){
+              scope.title = info.title;
             });
             player.play({videoId: scope.youtubeUrl.videoId()});
           });
@@ -29,8 +29,8 @@ angular.module('contentful').directive('cfYoutubePlayer', [
       $scope.$watch('youtubeUrl', function(newVal, oldVal){
         if (newVal === oldVal || !$scope.player) return;
 
-        youtubeGAPIAdapter.videoInfo($scope.youtubeUrl.videoId()).then(function(items){
-          $scope.title = items[0].snippet.title;
+        youtubeGAPIAdapter.videoInfo($scope.youtubeUrl.videoId()).then(function(info){
+          $scope.title = info.title;
         });
 
         $scope.player.play({videoId: $scope.youtubeUrl.videoId()});

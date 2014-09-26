@@ -11,7 +11,14 @@ angular.module('contentful').factory('youtubeGAPIAdapter', ['$q', 'gapiLoader', 
       };
 
       return gapiLoader.load().then(function(gapi){
-        return gapi.request(params);
+        return gapi.request(params).then(function(items){
+          if (items[0]){
+            return {title: items[0].snippet.title};
+          }
+          else {
+            return {title : undefined};
+          }
+        });
       });
     }
   };
