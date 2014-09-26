@@ -16,7 +16,7 @@ angular.module('contentful').directive('cfYoutubePlayer', [
         scope.player
           .install(YOUTUBE_DOM_ELEMENT_ID, scope.youtubePlayerDelegate)
           .then(function(player){
-            player.play({videoId: scope.videoURL});
+            player.play({videoId: scope.youtubeUrl.videoId()});
           });
 
       });
