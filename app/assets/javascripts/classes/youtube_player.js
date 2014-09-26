@@ -24,7 +24,7 @@ angular.module('contentful').factory('YoutubePlayerAdapter', ['$q', function($q)
             self.delegate.handlePlayerFailedToLoadVideo();
           },
           'onStateChange': function(event){
-            if (event.data == YT.PlayerState.UNSTARTED)
+            if (event.data == YT.PlayerState.CUED)
               self.delegate.handlePlayerReadyToPlayVideo();
           },
           'onReady': function(event){
