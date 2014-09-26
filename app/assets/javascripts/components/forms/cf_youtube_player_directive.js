@@ -16,6 +16,9 @@ angular.module('contentful').directive('cfYoutubePlayer', [
         scope.player
           .install(YOUTUBE_DOM_ELEMENT_ID, scope.youtubePlayerDelegate)
           .then(function(player){
+            youtubeGAPIAdapter.videoInfo(scope.youtubeUrl.videoId()).then(function(items){
+              scope.title = items[0].snippet.title;
+            });
             player.play({videoId: scope.youtubeUrl.videoId()});
           });
 
