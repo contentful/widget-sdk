@@ -27,9 +27,10 @@ angular.module('contentful').directive('cfYoutubeEditor', ['YoutubeUrl', functio
       $scope.$watch("url", function(newVal, oldVal){
         if (newVal == oldVal) return;
 
-        console.log("URL CHANGE")
         $scope.isPlayerLoading = true;
         $scope.youtubeUrl = new YoutubeUrl($scope.url);
+
+        $scope.otBindInternalChangeHandler();
       });
     }],
 
