@@ -30,4 +30,5 @@ public/app
 
 webdrivercss
 webdrivercss.tar.gz
+app/assets/stylesheets/styleguide
 app/assets/stylesheets/compiled.css
