@@ -20,7 +20,7 @@
 
 <div id="kss-nav">
   <header id="kss-header">
-    <hgroup><h1>kss-node Styleguide</h1></hgroup>
+    <hgroup><h1>Contentful Styleguide</h1></hgroup>
   </header>
   <aside>
     <nav><ul>
@@ -32,10 +32,11 @@
   </aside>
 </div>
 <div role="main" id="kss-main">
-  <article id="kss-content">
   {{#if overview}}
+  <article id="kss-content" class="overview">
     {{{overview}}}
   {{else}}
+  <article id="kss-content">
 
     {{!
       Find each section, in order.
