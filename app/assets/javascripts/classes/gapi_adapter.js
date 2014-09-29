@@ -1,7 +1,9 @@
 'use strict';
-angular.module('contentful').factory('GAPIAdapter', ['$q', function($q){
-  var API_KEY = 'AIzaSyAJi3XBLmzo1lOzZ0RncjVQWVlF_wkC4ow';
+angular.module('contentful').factory('GAPIAdapter', ['$injector', function($injector){
 
+  var $q = $injector.get('$q');
+
+  var API_KEY = 'AIzaSyAJi3XBLmzo1lOzZ0RncjVQWVlF_wkC4ow';
 
   function GAPIAdapter(){
     gapi.client.setApiKey(API_KEY);

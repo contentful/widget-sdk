@@ -1,8 +1,12 @@
 'use strict';
-angular.module('contentful').factory('youtubePlayerLoader', ['$q', 'YoutubePlayerAdapter', function($q, YoutubePlayerAdapter){
-  var loaded,
-      loading   = false,
-      deferreds = [];
+angular.module('contentful').factory('youtubePlayerLoader', ['$injector', function($injector){
+
+  var YoutubePlayerAdapter = $injector.get('YoutubePlayerAdapter');
+  var $q                   = $injector.get('$q');
+
+  var deferreds = [];
+  var loaded;
+  var loading   = false;
 
   window.onYouTubeIframeAPIReady = onYouTubeIframeAPIReady;
 

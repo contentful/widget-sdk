@@ -1,5 +1,8 @@
 'use strict';
-angular.module('contentful').factory('YoutubePlayerAdapter', ['$q', function($q){
+angular.module('contentful').factory('YoutubePlayerAdapter', ['$injector', function($injector){
+
+  var $q = $injector.get('$q');
+
   function YoutubePlayerAdapter(YoutubePlayer){
     this.YoutubePlayer = YoutubePlayer;
   }

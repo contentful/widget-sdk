@@ -1,8 +1,12 @@
 'use strict';
-angular.module('contentful').factory('gapiLoader', ['$q', 'GAPIAdapter', function($q, GAPIAdapter){
-  var loading   = false,
-      loaded    = false,
-      deferreds = [];
+angular.module('contentful').factory('gapiLoader', ['$injector', function($injector){
+
+  var $q          = $injector.get('$q');
+  var GAPIAdapter = $injector.get('GAPIAdapter');
+
+  var deferreds = [];
+  var loaded    = false;
+  var loading   = false;
 
   window.OnLoadCallback = OnLoadCallback;
 

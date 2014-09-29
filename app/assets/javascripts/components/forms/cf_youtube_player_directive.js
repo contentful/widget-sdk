@@ -1,41 +1,13 @@
 'use strict';
 
-angular.module('contentful').directive('cfYoutubePlayer', [
-  'youtubePlayerLoader', 'youtubeGAPIAdapter', function(youtubePlayerLoader, youtubeGAPIAdapter){
-  var YOUTUBE_DOM_ELEMENT_ID = 'youtube-player';
+angular.module('contentful').directive('cfYoutubePlayer', ['$injector', function($injector){
+
 
   return {
-    restrict: 'E',
-    scope: true,
-    template: JST['cf_youtube_player'](),
-
-    link: function(scope) {
-
-      youtubePlayerLoader.player().then(function(player){
-        scope.player = player;
-        scope.player
-          .install(YOUTUBE_DOM_ELEMENT_ID, scope.youtubePlayerDelegate)
-          .then(function(player){
-            youtubeGAPIAdapter.videoInfo(scope.youtubeUrl.videoId()).then(function(info){
-              scope.title = info.title;
-            });
-            player.play({videoId: scope.youtubeUrl.videoId()});
-          });
-
-      });
-    },
-
-    controller: ['$scope', function($scope){
-      $scope.$watch('youtubeUrl', function(newVal, oldVal){
-        if (newVal === oldVal || !$scope.player) return;
-
-        youtubeGAPIAdapter.videoInfo($scope.youtubeUrl.videoId()).then(function(info){
-          $scope.title = info.title;
-        });
-
-        $scope.player.play({videoId: $scope.youtubeUrl.videoId()});
-
-      });
-    }]
+    restrict   : 'E',
+    scope      : true,
+    template   : JST['cf_youtube_player'](),
+    controller : 'cfYoutubePlayerController'
   };
+
 }]);
