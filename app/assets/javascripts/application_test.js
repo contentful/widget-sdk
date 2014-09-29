@@ -24,6 +24,7 @@
 //= require angular-sanitize
 //= require angular-route
 //= require angular-ui/sortable
+//= require angular-load
 //= require contentful
 //= require environment
 //= require user_interface

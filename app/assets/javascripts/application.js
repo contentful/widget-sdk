@@ -24,6 +24,7 @@
 //= require angular-sanitize
 //= require angular-route
 //= require angular-ui/sortable
+//= require angular-load
 //= require contentful
 //= require environment
 //= require user_interface
@@ -37,6 +38,7 @@ angular.module('contentful/app', [
   'timeRelative',
   'ui.sortable',
   'contentful/user_interface',
+  'angularLoad',
   'contentful'
 ], ['$locationProvider', 'clientProvider', 'authenticationProvider', 'analyticsProvider', 'environment', '$sceDelegateProvider', '$compileProvider', 'timeRelativeConfig',
   function($locationProvider, clientProvider, authenticationProvider, analyticsProvider, environment, $sceDelegateProvider, $compileProvider, timeRelativeConfig){
