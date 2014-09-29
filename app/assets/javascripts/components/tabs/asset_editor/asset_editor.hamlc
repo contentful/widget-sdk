@@ -32,11 +32,11 @@
   .entity-info-panel
 
 .tab-main.tab-workbench
-  %form.l-form-horizontal(name="assetForm")
-    .l-form-field--no-label(ng-show="hasErrorOnFields")
+  %form.l-form(name="assetForm")
+    .l-form-row--no-label(ng-show="hasErrorOnFields")
       .l-form-controls
         .cf-form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
-    .l-form-field(ng-repeat="widget in widgets track by widget.id"
+    .l-form-row(ng-repeat="widget in widgets track by widget.id"
         data-field-id="{{widget.field.id}}"
         ng-class="{'data-field-array': (widget.field|isFieldLink), 'data-field-boolean': (widget.field|isFieldBoolean), 'data-field-string-list': (widget.field|isFieldStringList)}")
       %label {{widget.field.name}}

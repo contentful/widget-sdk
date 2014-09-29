@@ -29,28 +29,28 @@
     %p We recommend using one key per supported device. For example, if you plan to serve content to a website, iPhone 8, iPad 7 and Android app, then you would generate four API keys.
     %p.note-box-dismissal
       %button.btn.btn--secondary(href="" ng-click="notes.dismiss('content-delivery-api-key')") Ok, got it
-  .ng-form.l-form-horizontal--split(name="apiKeyForm" submit="save()")
+  .ng-form.l-form--split(name="apiKeyForm" submit="save()")
     .l-form-left
       %h2.section-title API General Info
-      .l-form-field
+      .l-form-row
         %label Name
           %sup (required)
         .l-form-controls
           .l-field-editor
             %input.form-control(type="text" ng-model="apiKey.data.name" required="" ng-disabled="!editable()" placeholder="iOS iPad Application")
-      .l-form-field
+      .l-form-row
         %label Description
         .l-form-controls
           .l-field-editor
             %textarea.form-control(ng-model="apiKey.data.description" ng-disabled="!editable()" placeholder="This API Key will grant the iOS iPad Application access to the content on Contentful.")
-      .l-form-field
+      .l-form-row
         %label Space ID
         .l-form-controls
           .l-field-editor
             %input.form-control.with-copy-paste-button.space-id(type="text" value="{{spaceContext.space.getId()}}" readonly="readonly")
             %a.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".space-id")
               %i.fa.fa-copy
-      .l-form-field--no-label.device-link
+      .l-form-row.device-link
         .l-form-controls
           .l-field-editor(ng-if="isDevice('iOS')")
             %a(href="{{mobileAppUrl}}" target="_blank")
@@ -65,7 +65,7 @@
     .l-form-right
       %h2.section-title API Access Tokens
 
-      .l-form-field
+      .l-form-row
         %label Production
         .l-form-controls--with-action
           .l-field-editor(ng-hide="apiKey.data.accessToken")
@@ -103,7 +103,7 @@
               Regenerate Access Token
 
       %h2.section-title.u-separator(ng-show="apiKey.data.accessToken") Authentication Code
-      .l-form-field--no-label.authentication-code(ng-show="apiKey.data.accessToken")
+      .l-form-row.authentication-code(ng-show="apiKey.data.accessToken")
         .l-form-controls
           .l-field-editor
             .tools

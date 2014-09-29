@@ -8,12 +8,12 @@
         href="https://contentful.zendesk.com/hc/en-us/articles/200513108-What-is-a-difference-between-a-Content-Type-and-a-Space-")
     .modal-dialog-close-button(ng-click="dialog.cancel()")
 
-    .l-form-horizontal
-      .l-form-field
+    .l-form
+      .l-form-row
         %label Name
         .l-form-controls
           %input.form-control(type="text" name="name" ng-model="newSpaceData.name" required="")
-      .l-form-field
+      .l-form-row
         %label Organization
         .l-form-controls
           .dropdown-btn(cf-dropdown)
@@ -23,7 +23,7 @@
             .dropdown-menu.fixed-position(cf-dropdown-menu)
               %ul.dropdown-menu-list(ng-repeat="org in writableOrganizations")
                 %li.dropdown-menu-item(ng-click="selectOrganization(org)" dropdown-close="") {{org.name}}
-      .l-form-field
+      .l-form-row
         %label Locale
         .l-form-controls
           %input.form-control(type="text" name="locale" ng-model="newSpaceData.defaultLocale")

@@ -37,8 +37,8 @@
   .entity-info-panel
 
 .tab-main.tab-workbench
-  .l-form-horizontal(name="contentTypeForm")
-    .l-form-field
+  .l-form(name="contentTypeForm")
+    .l-form-row
       %label
         Name
         %sup (required)
@@ -51,7 +51,7 @@
                  ng-model="contentType.data.name"
                  ot-bind-text="")
         .cf-form-box-error(cf-error-path="['name']")
-    .l-form-field
+    .l-form-row
       %label Description
       .l-form-controls(ot-path="['description']" ot-subdoc)
         .l-field-editor
@@ -61,7 +61,7 @@
                     ng-model="contentType.data.description"
                     ot-bind-text="")
         .cf-form-box-error(cf-error-path="['description']")
-    .l-form-field
+    .l-form-row
       %label Fields
       .l-form-controls
         .content-type-field-list(ng-show="hasFields")

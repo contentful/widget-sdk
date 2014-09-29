@@ -11,9 +11,10 @@
   <meta name="generator" content="kss-node" />
   <meta name="viewport" content="width=device-width">
 
-  <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Droid+Serif">
+  <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="public/kss.css">
   <link rel="stylesheet" href="public/style.css">
+  <link rel="stylesheet" href="public/custom.css">
 </head>
 <body><div id="kss-wrapper">
 
@@ -60,10 +61,13 @@
       <section class="kss-depth-2">
       
 
-      <h1 class="kss-title"><span class="kss-ref">6.1</span> - Form Horizontal Container</h1>
+      <h1 class="kss-title"><span class="kss-ref">6.1</span> - Standard Form, with locales</h1>
 
       
-        <div class="kss-box"><p>Inner structure: Label on the left, field on the right, single column</p>
+        <div class="kss-box"><p>A form where all the fields are laid out vertically on top of each other,
+with a container for each field, a container for the form controls themselves,
+a container for the locale which has the field type editor, locale label and
+field collaborators</p>
 </div>
       
 
@@ -74,212 +78,231 @@
             <td class="kss-mod-name"></td>
           </tr>
           <tr class="kss-mod-example">
-            <td colspan="2"><div class="l-form-horizontal styleguide-opaque-box1">
-  <div class="styleguide-filled-box1">row 1</div>
-  <div class="styleguide-filled-box2">row 2</div>
-</div></td>
-          </tr>
-        
-        </table>
-
-        <div class="kss-markup">
-          <pre class="prettyprint lang-html">&lt;div class=&quot;l-form-horizontal styleguide-opaque-box1&quot;&gt;
-  &lt;div class=&quot;styleguide-filled-box1&quot;&gt;row 1&lt;/div&gt;
-  &lt;div class=&quot;styleguide-filled-box2&quot;&gt;row 2&lt;/div&gt;
-&lt;/div&gt;</pre>
-        </div>
-      
-
-      
-      </section>
-      
-    
-      
-      <section class="kss-depth-2">
-      
-
-      <h1 class="kss-title"><span class="kss-ref">6.2</span> - Form Horizontal Container Split (Should be renamed to vertical)</h1>
-
-      
-        <div class="kss-box"><p>Inner structure: Label on top, field on the bottom, 2 columns. </p>
-</div>
-      
-
-      
-        <table class="kss-mod-list">
-          <tr class="kss-mod-desc-group">
-            <td class="kss-mod-desc"><p>Default styling</p></td>
-            <td class="kss-mod-name"></td>
-          </tr>
-          <tr class="kss-mod-example">
-            <td colspan="2"><div class="l-form-horizontal--split styleguide-opaque-box1">
-  <div class="styleguide-filled-box1">row 1</div>
-  <div class="styleguide-filled-box2">row 2</div>
-</div></td>
-          </tr>
-        
-        </table>
-
-        <div class="kss-markup">
-          <pre class="prettyprint lang-html">&lt;div class=&quot;l-form-horizontal--split styleguide-opaque-box1&quot;&gt;
-  &lt;div class=&quot;styleguide-filled-box1&quot;&gt;row 1&lt;/div&gt;
-  &lt;div class=&quot;styleguide-filled-box2&quot;&gt;row 2&lt;/div&gt;
-&lt;/div&gt;</pre>
-        </div>
-      
-
-      
-      </section>
-      
-    
-      
-      <section class="kss-depth-2">
-      
-
-      <h1 class="kss-title"><span class="kss-ref">6.3</span> - Form Horizontal Split Containers (same rename as above)</h1>
-
-      
-
-      
-        <table class="kss-mod-list">
-          <tr class="kss-mod-desc-group">
-            <td class="kss-mod-desc"><p>Default styling</p></td>
-            <td class="kss-mod-name"></td>
-          </tr>
-          <tr class="kss-mod-example">
-            <td colspan="2"><div class="l-form-horizontal--split styleguide-opaque-box1">
-  <div class="l-form-left">
-    <div class="styleguide-filled-box1">row 1</div>
-    <div class="styleguide-filled-box2">row 2</div>
-  </div>
-  <div class="l-form-right">
-    <div class="styleguide-filled-box3">row 1</div>
-    <div class="styleguide-filled-box4">row 2</div>
-  </div>
-</div></td>
-          </tr>
-        
-          <tr class="kss-mod-desc-group">
-            <td class="kss-mod-desc"><p>modifier description</p>
-</td>
-            <td class="kss-mod-name"><p>modifier</p></td>
-          </tr>
-          <tr class="kss-mod-example">
-            <td colspan="2"><div class="l-form-horizontal--split styleguide-opaque-box1">
-  <div class="l-form-left">
-    <div class="styleguide-filled-box1">row 1</div>
-    <div class="styleguide-filled-box2">row 2</div>
-  </div>
-  <div class="l-form-right">
-    <div class="styleguide-filled-box3">row 1</div>
-    <div class="styleguide-filled-box4">row 2</div>
-  </div>
-</div></td>
-          </tr>
-        
-        </table>
-
-        <div class="kss-markup">
-          <pre class="prettyprint lang-html">&lt;div class=&quot;l-form-horizontal--split styleguide-opaque-box1&quot;&gt;
-  &lt;div class=&quot;l-form-left&quot;&gt;
-    &lt;div class=&quot;styleguide-filled-box1&quot;&gt;row 1&lt;/div&gt;
-    &lt;div class=&quot;styleguide-filled-box2&quot;&gt;row 2&lt;/div&gt;
-  &lt;/div&gt;
-  &lt;div class=&quot;l-form-right&quot;&gt;
-    &lt;div class=&quot;styleguide-filled-box3&quot;&gt;row 1&lt;/div&gt;
-    &lt;div class=&quot;styleguide-filled-box4&quot;&gt;row 2&lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;</pre>
-        </div>
-      
-
-      
-      </section>
-      
-    
-      
-      <section class="kss-depth-2">
-      
-
-      <h1 class="kss-title"><span class="kss-ref">6.4</span> - Form Field (should be renamed to rows maybe)</h1>
-
-      
-        <div class="kss-box"><p>Form row fields inside form container</p>
-</div>
-      
-
-      
-        <table class="kss-mod-list">
-          <tr class="kss-mod-desc-group">
-            <td class="kss-mod-desc"><p>Default styling</p></td>
-            <td class="kss-mod-name"></td>
-          </tr>
-          <tr class="kss-mod-example">
-            <td colspan="2"><div class="l-form-horizontal styleguide-opaque-box1">
-  <div class="l-form-field styleguide-filled-box1">
-    <div class="styleguide-filled-box2">row 1</div>
-    <div class="styleguide-filled-box3">row 2</div>
-  </div>
-  <div class="l-form-field styleguide-filled-box1">
-    <div class="styleguide-filled-box2">row 1</div>
-    <div class="styleguide-filled-box3">row 2</div>
-  </div>
-</div></td>
-          </tr>
-        
-        </table>
-
-        <div class="kss-markup">
-          <pre class="prettyprint lang-html">&lt;div class=&quot;l-form-horizontal styleguide-opaque-box1&quot;&gt;
-  &lt;div class=&quot;l-form-field styleguide-filled-box1&quot;&gt;
-    &lt;div class=&quot;styleguide-filled-box2&quot;&gt;row 1&lt;/div&gt;
-    &lt;div class=&quot;styleguide-filled-box3&quot;&gt;row 2&lt;/div&gt;
-  &lt;/div&gt;
-  &lt;div class=&quot;l-form-field styleguide-filled-box1&quot;&gt;
-    &lt;div class=&quot;styleguide-filled-box2&quot;&gt;row 1&lt;/div&gt;
-    &lt;div class=&quot;styleguide-filled-box3&quot;&gt;row 2&lt;/div&gt;
-  &lt;/div&gt;
-&lt;/div&gt;</pre>
-        </div>
-      
-
-      
-      </section>
-      
-    
-      
-      <section class="kss-depth-2">
-      
-
-      <h1 class="kss-title"><span class="kss-ref">6.5</span> - Form controls</h1>
-
-      
-        <div class="kss-box"><p>Form control container</p>
-</div>
-      
-
-      
-        <table class="kss-mod-list">
-          <tr class="kss-mod-desc-group">
-            <td class="kss-mod-desc"><p>Default styling</p></td>
-            <td class="kss-mod-name"></td>
-          </tr>
-          <tr class="kss-mod-example">
-            <td colspan="2"><div class="l-form-horizontal styleguide-opaque-box1">
-  <div class="l-form-field styleguide-filled-box1">
+            <td colspan="2"><div class="l-form styleguide-opaque-box1">
+  <div class="l-form-row styleguide-opaque-box2">
     <label>label</label>
-    <div class="l-form-controls styleguide-filled-box2">controls</div>
-  </div></td>
+    <div class="l-form-controls styleguide-opaque-box3">
+      <div class="l-form-locale styleguide-opaque-box4">
+        <div class="l-field-editor styleguide-opaque-box1">form control</div>
+        <div class="locale-label styleguide-opaque-box2">locale label</div>
+        <div class="field-collaborators styleguide-opaque-box3">collaborators</div>
+      </div>
+    </div>
+  </div>
+  <div class="l-form-row styleguide-opaque-box2">
+    <label>label</label>
+    <div class="l-form-controls styleguide-opaque-box3">
+      <div class="l-form-locale styleguide-opaque-box4">
+        <div class="l-field-editor styleguide-opaque-box1">form control</div>
+        <div class="locale-label styleguide-opaque-box2">locale label</div>
+        <div class="field-collaborators styleguide-opaque-box3">collaborators</div>
+      </div>
+    </div>
+  </div>
+</div></td>
           </tr>
         
         </table>
 
         <div class="kss-markup">
-          <pre class="prettyprint lang-html">&lt;div class=&quot;l-form-horizontal styleguide-opaque-box1&quot;&gt;
-  &lt;div class=&quot;l-form-field styleguide-filled-box1&quot;&gt;
+          <pre class="prettyprint lang-html">&lt;div class=&quot;l-form styleguide-opaque-box1&quot;&gt;
+  &lt;div class=&quot;l-form-row styleguide-opaque-box2&quot;&gt;
     &lt;label&gt;label&lt;/label&gt;
-    &lt;div class=&quot;l-form-controls styleguide-filled-box2&quot;&gt;controls&lt;/div&gt;
-  &lt;/div&gt;</pre>
+    &lt;div class=&quot;l-form-controls styleguide-opaque-box3&quot;&gt;
+      &lt;div class=&quot;l-form-locale styleguide-opaque-box4&quot;&gt;
+        &lt;div class=&quot;l-field-editor styleguide-opaque-box1&quot;&gt;form control&lt;/div&gt;
+        &lt;div class=&quot;locale-label styleguide-opaque-box2&quot;&gt;locale label&lt;/div&gt;
+        &lt;div class=&quot;field-collaborators styleguide-opaque-box3&quot;&gt;collaborators&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;l-form-row styleguide-opaque-box2&quot;&gt;
+    &lt;label&gt;label&lt;/label&gt;
+    &lt;div class=&quot;l-form-controls styleguide-opaque-box3&quot;&gt;
+      &lt;div class=&quot;l-form-locale styleguide-opaque-box4&quot;&gt;
+        &lt;div class=&quot;l-field-editor styleguide-opaque-box1&quot;&gt;form control&lt;/div&gt;
+        &lt;div class=&quot;locale-label styleguide-opaque-box2&quot;&gt;locale label&lt;/div&gt;
+        &lt;div class=&quot;field-collaborators styleguide-opaque-box3&quot;&gt;collaborators&lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+        </div>
+      
+
+      
+      </section>
+      
+    
+      
+      <section class="kss-depth-2">
+      
+
+      <h1 class="kss-title"><span class="kss-ref">6.2</span> - Standard Form, no locales</h1>
+
+      
+        <div class="kss-box"><p>A form where all the fields are laid out vertically on top of each other,
+with a container for each field, a container for the form controls themselves
+and a container for the actual field type editor</p>
+</div>
+      
+
+      
+        <table class="kss-mod-list">
+          <tr class="kss-mod-desc-group">
+            <td class="kss-mod-desc"><p>Default styling</p></td>
+            <td class="kss-mod-name"></td>
+          </tr>
+          <tr class="kss-mod-example">
+            <td colspan="2"><div class="l-form styleguide-opaque-box1">
+  <div class="l-form-row styleguide-opaque-box2">
+    <label>label</label>
+    <div class="l-form-controls styleguide-opaque-box3">
+      <div class="l-field-editor styleguide-opaque-box4">
+        form control
+      </div>
+    </div>
+  </div>
+  <div class="l-form-row styleguide-opaque-box2">
+    <label>label</label>
+    <div class="l-form-controls styleguide-opaque-box3">
+      <div class="l-field-editor styleguide-opaque-box4">
+        form control
+      </div>
+    </div>
+  </div>
+</div></td>
+          </tr>
+        
+        </table>
+
+        <div class="kss-markup">
+          <pre class="prettyprint lang-html">&lt;div class=&quot;l-form styleguide-opaque-box1&quot;&gt;
+  &lt;div class=&quot;l-form-row styleguide-opaque-box2&quot;&gt;
+    &lt;label&gt;label&lt;/label&gt;
+    &lt;div class=&quot;l-form-controls styleguide-opaque-box3&quot;&gt;
+      &lt;div class=&quot;l-field-editor styleguide-opaque-box4&quot;&gt;
+        form control
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;l-form-row styleguide-opaque-box2&quot;&gt;
+    &lt;label&gt;label&lt;/label&gt;
+    &lt;div class=&quot;l-form-controls styleguide-opaque-box3&quot;&gt;
+      &lt;div class=&quot;l-field-editor styleguide-opaque-box4&quot;&gt;
+        form control
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
+        </div>
+      
+
+      
+      </section>
+      
+    
+      
+      <section class="kss-depth-2">
+      
+
+      <h1 class="kss-title"><span class="kss-ref">6.3</span> - Split Form, no locales</h1>
+
+      
+        <div class="kss-box"><p>A form where all the fields are laid out vertically on top of each other
+over two columns, with a container for each field, a container for the form
+controls themselves and a container for the actual field type editor</p>
+</div>
+      
+
+      
+        <table class="kss-mod-list">
+          <tr class="kss-mod-desc-group">
+            <td class="kss-mod-desc"><p>Default styling</p></td>
+            <td class="kss-mod-name"></td>
+          </tr>
+          <tr class="kss-mod-example">
+            <td colspan="2"><div class="l-form--split styleguide-opaque-box1">
+  <div class="l-form-left styleguide-opaque-box1">
+    <div class="l-form-row styleguide-opaque-box2">
+      <label>label</label>
+      <div class="l-form-controls styleguide-opaque-box3">
+        <div class="l-field-editor styleguide-opaque-box4">
+          form control
+        </div>
+      </div>
+    </div>
+    <div class="l-form-row styleguide-opaque-box2">
+      <label>label</label>
+      <div class="l-form-controls styleguide-opaque-box3">
+        <div class="l-field-editor styleguide-opaque-box4">
+          form control
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="l-form-right styleguide-opaque-box1">
+    <div class="l-form-row styleguide-opaque-box2">
+      <label>label</label>
+      <div class="l-form-controls styleguide-opaque-box3">
+        <div class="l-field-editor styleguide-opaque-box4">
+          form control
+        </div>
+      </div>
+    </div>
+    <div class="l-form-row styleguide-opaque-box2">
+      <label>label</label>
+      <div class="l-form-controls styleguide-opaque-box3">
+        <div class="l-field-editor styleguide-opaque-box4">
+          form control
+        </div>
+      </div>
+    </div>
+  </div>
+</div></td>
+          </tr>
+        
+        </table>
+
+        <div class="kss-markup">
+          <pre class="prettyprint lang-html">&lt;div class=&quot;l-form--split styleguide-opaque-box1&quot;&gt;
+  &lt;div class=&quot;l-form-left styleguide-opaque-box1&quot;&gt;
+    &lt;div class=&quot;l-form-row styleguide-opaque-box2&quot;&gt;
+      &lt;label&gt;label&lt;/label&gt;
+      &lt;div class=&quot;l-form-controls styleguide-opaque-box3&quot;&gt;
+        &lt;div class=&quot;l-field-editor styleguide-opaque-box4&quot;&gt;
+          form control
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;l-form-row styleguide-opaque-box2&quot;&gt;
+      &lt;label&gt;label&lt;/label&gt;
+      &lt;div class=&quot;l-form-controls styleguide-opaque-box3&quot;&gt;
+        &lt;div class=&quot;l-field-editor styleguide-opaque-box4&quot;&gt;
+          form control
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&quot;l-form-right styleguide-opaque-box1&quot;&gt;
+    &lt;div class=&quot;l-form-row styleguide-opaque-box2&quot;&gt;
+      &lt;label&gt;label&lt;/label&gt;
+      &lt;div class=&quot;l-form-controls styleguide-opaque-box3&quot;&gt;
+        &lt;div class=&quot;l-field-editor styleguide-opaque-box4&quot;&gt;
+          form control
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+    &lt;div class=&quot;l-form-row styleguide-opaque-box2&quot;&gt;
+      &lt;label&gt;label&lt;/label&gt;
+      &lt;div class=&quot;l-form-controls styleguide-opaque-box3&quot;&gt;
+        &lt;div class=&quot;l-field-editor styleguide-opaque-box4&quot;&gt;
+          form control
+        &lt;/div&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</pre>
         </div>
       
 
