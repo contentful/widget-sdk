@@ -53,16 +53,16 @@ describe('Space Controller', function () {
   }));
 
   describe('watches for new locales', function () {
-    var publishStub, refreshStub;
+    var privateStub, refreshStub;
     beforeEach(function () {
-      publishStub = sinon.stub();
+      privateStub = sinon.stub();
       refreshStub = sinon.stub();
-      scope.spaceContext.space.getPublishLocales = publishStub;
+      scope.spaceContext.space.getPrivateLocales = privateStub;
       scope.spaceContext.refreshLocales = refreshStub;
     });
 
     it('refreshes locales if new locales are available', function () {
-      publishStub.returns([
+      privateStub.returns([
         {code: 'en-US'},
         {code: 'pt-PT'}
       ]);

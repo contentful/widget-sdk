@@ -8,7 +8,7 @@ angular.module('contentful').controller('SpaceCtrl',
 
   $scope.$watch(function (scope) {
     if (scope.spaceContext && scope.spaceContext.space) {
-      return _.map(scope.spaceContext.space.getPublishLocales(), function (locale) {
+      return _.map(scope.spaceContext.space.getPrivateLocales(), function (locale) {
         return locale.code;
       });
     }

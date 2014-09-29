@@ -7,9 +7,9 @@
   "author": "",
   "license": "BSD",
   "dependencies": {
-    "contentful-client": "~5.0.1",
+    "contentful-client": "~6.0.0",
     "contentful-mimetype": "~0.5.1",
-    "contentful-validation": "~2.0.5",
+    "contentful-validation": "~3.0.0",
     "worf": "~3.1.0",
     "dotty": "0.0.2",
     "file-size": "git+ssh://git@github.com:trodrigues/file-size.git",

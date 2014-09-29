@@ -26,18 +26,18 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
       publishedContentTypes: [],
       _publishedContentTypesHash: {},
 
-      publishLocales: [],
+      privateLocales: [],
       defaultLocale: null,
       localeStates: {},
       activeLocales: [],
 
       refreshLocales: function () {
         if (this.space) {
-          this.publishLocales = this.space.getPublishLocales();
+          this.privateLocales = this.space.getPrivateLocales();
           this.defaultLocale  = this.space.getDefaultLocale();
           this.localeStates[this.defaultLocale.code] = true;
         } else {
-          this.publishLocales = [];
+          this.privateLocales = [];
           this.defaultLocale  = null;
         }
         this.refreshActiveLocales();
@@ -45,7 +45,7 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
 
       refreshActiveLocales: function () {
         var newLocaleStates = {}, newActiveLocales = [];
-        _.each(this.publishLocales, function (locale) {
+        _.each(this.privateLocales, function (locale) {
           if (this.localeStates[locale.code]) {
             newLocaleStates[locale.code] = true;
             newActiveLocales.push(locale);
@@ -55,8 +55,8 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
         this.activeLocales = _.uniq(newActiveLocales, function(locale){return locale.code;});
       },
 
-      getPublishLocale: function(code) {
-        return _.find(this.publishLocales, {'code': code});
+      getPrivateLocale: function(code) {
+        return _.find(this.privateLocales, {'code': code});
       },
 
       refreshContentTypes: function() {

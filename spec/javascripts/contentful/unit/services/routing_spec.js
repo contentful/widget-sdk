@@ -14,7 +14,7 @@ describe('Routing service', function () {
     beforeEach(inject(function ($controller, $rootScope, SpaceContext) {
       $rootScope.spaceContext = new SpaceContext({
         iAmASpace: true,
-        getPublishLocales: function () {
+        getPrivateLocales: function () {
           return [];
         },
         getDefaultLocale: function () {

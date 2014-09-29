@@ -18,12 +18,12 @@ describe('SpaceContext class with no space', function () {
     expect(spaceContext.space).toBeUndefined();
   });
 
-  it('publishLocales exists', function () {
-    expect(_.isArray(spaceContext.publishLocales)).toBeTruthy();
+  it('privateLocales exists', function () {
+    expect(_.isArray(spaceContext.privateLocales)).toBeTruthy();
   });
 
-  it('publish locales is empty', function () {
-    expect(spaceContext.publishLocales.length).toBe(0);
+  it('private locales is empty', function () {
+    expect(spaceContext.privateLocales.length).toBe(0);
   });
 
   it('no default locale is defined', function () {
@@ -40,12 +40,12 @@ describe('SpaceContext class with no space', function () {
       spaceContext.refreshLocales();
     });
 
-    it('publishLocales exists', function () {
-      expect(_.isArray(spaceContext.publishLocales)).toBeTruthy();
+    it('privateLocales exists', function () {
+      expect(_.isArray(spaceContext.privateLocales)).toBeTruthy();
     });
 
-    it('publish locales is empty', function () {
-      expect(spaceContext.publishLocales.length).toBe(0);
+    it('private locales is empty', function () {
+      expect(spaceContext.privateLocales.length).toBe(0);
     });
 
     it('no default locale is defined', function () {
@@ -97,11 +97,11 @@ describe('SpaceContext class with a space', function () {
   });
 
   it('gets an array of published locales', function () {
-    expect(_.isArray(spaceContext.publishLocales)).toBeTruthy();
+    expect(_.isArray(spaceContext.privateLocales)).toBeTruthy();
   });
 
   it('has a published locale with a code', function () {
-    expect(spaceContext.publishLocales[0].code).toBeDefined();
+    expect(spaceContext.privateLocales[0].code).toBeDefined();
   });
 
   it('has a default locale', function () {
@@ -125,28 +125,28 @@ describe('SpaceContext class with a space', function () {
   });
 
   describe('refreshes locales', function () {
-    var publishLocales, defaultLocale;
+    var privateLocales, defaultLocale;
     beforeEach(function () {
-      publishLocales = ['publishLocales'];
+      privateLocales = ['privateLocales'];
       defaultLocale = {code: 'en-US'};
-      spaceContext.space.getPublishLocales = sinon.stub();
-      spaceContext.space.getPublishLocales.returns(publishLocales);
+      spaceContext.space.getPrivateLocales = sinon.stub();
+      spaceContext.space.getPrivateLocales.returns(privateLocales);
       spaceContext.space.getDefaultLocale = sinon.stub();
       spaceContext.space.getDefaultLocale.returns(defaultLocale);
       spaceContext.refreshActiveLocales = sinon.stub();
       spaceContext.refreshLocales();
     });
 
-    it('calls publish locales space getter', function () {
-      expect(spaceContext.space.getPublishLocales).toBeCalled();
+    it('calls private locales space getter', function () {
+      expect(spaceContext.space.getPrivateLocales).toBeCalled();
     });
 
-    it('publishLocales exists', function () {
-      expect(_.isArray(spaceContext.publishLocales)).toBeTruthy();
+    it('privateLocales exists', function () {
+      expect(_.isArray(spaceContext.privateLocales)).toBeTruthy();
     });
 
-    it('publish locales is the supplied array', function () {
-      expect(spaceContext.publishLocales).toBe(publishLocales);
+    it('private locales is the supplied array', function () {
+      expect(spaceContext.privateLocales).toBe(privateLocales);
     });
 
     it('calls default locale space getter', function () {
@@ -168,7 +168,7 @@ describe('SpaceContext class with a space', function () {
 
   describe('refresh active locales', function () {
     beforeEach(function () {
-      spaceContext.publishLocales = [
+      spaceContext.privateLocales = [
         {code: 'en-US'},
         {code: 'pt-PT'},
         {code: 'pt-BR'}
@@ -196,22 +196,22 @@ describe('SpaceContext class with a space', function () {
     });
   });
 
-  describe('gets a publish locale and', function () {
-    var publishLocale;
+  describe('gets a private locale and', function () {
+    var privateLocale;
     beforeEach(function () {
-      publishLocale = spaceContext.getPublishLocale('en-US');
+      privateLocale = spaceContext.getPrivateLocale('en-US');
     });
 
     it('it exists', function () {
-      expect(publishLocale).toBeDefined();
+      expect(privateLocale).toBeDefined();
     });
 
     it('has a name', function () {
-      expect(publishLocale.name).toEqual('en-US');
+      expect(privateLocale.name).toEqual('en-US');
     });
 
     it('has a code', function () {
-      expect(publishLocale.code).toEqual('en-US');
+      expect(privateLocale.code).toEqual('en-US');
     });
   });
 
