@@ -1,16 +1,16 @@
 'use strict';
 
-angular.module('contentful').controller('cfYoutubePlayerController', ['$injector', '$scope', function($injector, $scope){
+angular.module('contentful').controller('cfYoutubePlayerController', ['$injector', '$scope', '$element', function($injector, $scope, $element){
 
   var youtubeGAPIAdapter     = $injector.get('youtubeGAPIAdapter');
   var youtubePlayerLoader    = $injector.get('youtubePlayerLoader');
 
-  var YOUTUBE_DOM_ELEMENT_ID = 'youtube-player';
+  var YOUTUBE_DOM_ELEMENT_CLASS = '.youtube-player';
 
   youtubePlayerLoader.load().then(function(player){
     $scope.player = player;
     $scope.player
-      .install(YOUTUBE_DOM_ELEMENT_ID, $scope.youtubePlayerDelegate)
+      .install($(YOUTUBE_DOM_ELEMENT_CLASS, $element)[0], $scope.youtubePlayerDelegate)
       .then(updateYoutubePlayer);
   });
 
