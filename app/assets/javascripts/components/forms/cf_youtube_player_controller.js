@@ -7,8 +7,7 @@ angular.module('contentful').controller('cfYoutubePlayerController', ['$injector
 
   var YOUTUBE_DOM_ELEMENT_ID = 'youtube-player';
 
-  //TODO: rename 'player' to 'load'
-  youtubePlayerLoader.player().then(function(player){
+  youtubePlayerLoader.load().then(function(player){
     $scope.player = player;
     $scope.player
       .install(YOUTUBE_DOM_ELEMENT_ID, $scope.youtubePlayerDelegate)
