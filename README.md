@@ -39,3 +39,17 @@ Possible ENV VARS:
   instead of localhost
 - `USE_SAUCE=true` to use sauce labs instead of local firefox.
   Implies `USE_QUIRELY`
+
+### Styleguide
+
+In order to generate the styleguide run:
+```
+./bin/styleguide.sh
+```
+
+This will generate the styleguide in app/assets/stylesheets/styleguide
+
+If you'd like to publish the newly generated and updated styleguide:
+```
+./bin/styleguide.sh push
+```

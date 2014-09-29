@@ -8,6 +8,8 @@ angular.module('contentful').controller('AssetListCtrl',['$scope', '$injector', 
   var $q          = $injector.get('$q');
   var listActions = $injector.get('listActions');
   var notification= $injector.get('notification');
+  var delay       = $injector.get('delay');
+  var throttle    = $injector.get('throttle');
 
   $controller('AssetListViewsController', {
     $scope: $scope,
@@ -54,8 +56,8 @@ angular.module('contentful').controller('AssetListCtrl',['$scope', '$injector', 
     }
   };
 
-  var throttledListRefresh = _.throttle(function () {
-    _.delay(function () {
+  var throttledListRefresh = throttle(function () {
+    delay(function () {
       $scope.searchController.resetAssets();
     }, 3000);
   }, 2000);

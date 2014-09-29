@@ -1,6 +1,10 @@
 'use strict';
 
-angular.module('contentful').controller('EntryListActionsCtrl', ['$scope', '$timeout', 'listActions', function EntryListActionsCtrl($scope, $timeout, listActions) {
+angular.module('contentful').controller('EntryListActionsCtrl',
+  ['$scope', '$injector', function EntryListActionsCtrl($scope, $injector) {
+  var $timeout    = $injector.get('$timeout');
+  var listActions = $injector.get('listActions');
+  var logger      = $injector.get('logger');
 
   var _cacheSelected;
 
@@ -63,7 +67,15 @@ angular.module('contentful').controller('EntryListActionsCtrl', ['$scope', '$tim
   };
 
   function duplicateCallback(entry, params, deferred) {
-    var contentType = entry.getSys().contentType.sys.id;
+    var sys = entry.getSys();
+    if(!dotty.exists(sys, 'contentType.sys.id')){
+      logger.logWarn('content type does not exist', {
+        data: {
+          entry: entry
+        }
+      });
+    }
+    var contentType = dotty.get(sys, 'contentType.sys.id');
     var data = _.omit(entry.data, 'sys');
     $scope.spaceContext.space.createEntry(contentType, data, function (err, newEntry) {
       if(err) {

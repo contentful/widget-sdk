@@ -29,7 +29,7 @@ describe('The Space view directive', function () {
       scope = $rootScope.$new();
       scope.spaceContext = {
         space: {
-          getPublishLocales: sinon.stub(),
+          getPrivateLocales: sinon.stub(),
           isHibernated: stubs.isHibernated
         },
         refreshContentTypes: sinon.stub(),

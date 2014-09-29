@@ -1,34 +1,113 @@
-// TODO move me to styleguide CSS ?
-.styleguide-opaque-box1
-  border: 1px solid lightblue
-.styleguide-opaque-box2
-  border: 1px solid indigo
-.styleguide-opaque-box3
-  border: 1px solid deepskyblue
-.styleguide-opaque-box4
-  border: 1px solid chocolate
-.styleguide-filled-box1
-  background-color: indianred
-.styleguide-filled-box2
-  background-color: khaki
-.styleguide-filled-box3
-  background-color: lavender
-.styleguide-filled-box4
-  background-color: lightsalmon
-
-
-// Form Horizontal Container
+// Standard Form, with locales
 //
-// Inner structure: Label on the left, field on the right, single column
+// A form where all the fields are laid out vertically on top of each other,
+// with a container for each row, a container for the form controls themselves,
+// a container for the locale which has the field type editor, locale label and
+// field collaborators
 //
 // Markup:
-// <div class="l-form-horizontal styleguide-opaque-box1">
-//   <div class="styleguide-filled-box1">row 1</div>
-//   <div class="styleguide-filled-box2">row 2</div>
+// <div class="l-form styleguide-opaque-box1">
+//   <div class="l-form-row styleguide-opaque-box2">
+//     <label>label</label>
+//     <div class="l-form-controls styleguide-opaque-box3">
+//       <div class="l-form-locale styleguide-opaque-box4">
+//         <div class="l-field-editor styleguide-opaque-box1">form control</div>
+//         <div class="locale-label styleguide-opaque-box2">locale label</div>
+//         <div class="field-collaborators styleguide-opaque-box3">collaborators</div>
+//       </div>
+//     </div>
+//   </div>
+//   <div class="l-form-row styleguide-opaque-box2">
+//     <label>label</label>
+//     <div class="l-form-controls styleguide-opaque-box3">
+//       <div class="l-form-locale styleguide-opaque-box4">
+//         <div class="l-field-editor styleguide-opaque-box1">form control</div>
+//         <div class="locale-label styleguide-opaque-box2">locale label</div>
+//         <div class="field-collaborators styleguide-opaque-box3">collaborators</div>
+//       </div>
+//     </div>
+//   </div>
 // </div>
 //
 // Styleguide 6.1
-.l-form-horizontal
+
+// Standard Form, no locales
+//
+// A form where all the fields are laid out vertically on top of each other,
+// with a container for each row, a container for the form controls themselves
+// and a container for the actual field type editor
+//
+// Markup:
+// <div class="l-form styleguide-opaque-box1">
+//   <div class="l-form-row styleguide-opaque-box2">
+//     <label>label</label>
+//     <div class="l-form-controls styleguide-opaque-box3">
+//       <div class="l-field-editor styleguide-opaque-box4">
+//         form control
+//       </div>
+//     </div>
+//   </div>
+//   <div class="l-form-row styleguide-opaque-box2">
+//     <label>label</label>
+//     <div class="l-form-controls styleguide-opaque-box3">
+//       <div class="l-field-editor styleguide-opaque-box4">
+//         form control
+//       </div>
+//     </div>
+//   </div>
+// </div>
+//
+// Styleguide 6.2
+
+// Split Form, no locales
+//
+// A form where all the fields are laid out vertically on top of each other
+// over two columns, with a container for each row, a container for the form
+// controls themselves and a container for the actual field type editor
+//
+// Markup:
+// <div class="l-form--split styleguide-opaque-box1">
+//   <div class="l-form-left styleguide-opaque-box1">
+//     <div class="l-form-row styleguide-opaque-box2">
+//       <label>label</label>
+//       <div class="l-form-controls styleguide-opaque-box3">
+//         <div class="l-field-editor styleguide-opaque-box4">
+//           form control
+//         </div>
+//       </div>
+//     </div>
+//     <div class="l-form-row styleguide-opaque-box2">
+//       <label>label</label>
+//       <div class="l-form-controls styleguide-opaque-box3">
+//         <div class="l-field-editor styleguide-opaque-box4">
+//           form control
+//         </div>
+//       </div>
+//     </div>
+//   </div>
+//   <div class="l-form-right styleguide-opaque-box1">
+//     <div class="l-form-row styleguide-opaque-box2">
+//       <label>label</label>
+//       <div class="l-form-controls styleguide-opaque-box3">
+//         <div class="l-field-editor styleguide-opaque-box4">
+//           form control
+//         </div>
+//       </div>
+//     </div>
+//     <div class="l-form-row styleguide-opaque-box2">
+//       <label>label</label>
+//       <div class="l-form-controls styleguide-opaque-box3">
+//         <div class="l-field-editor styleguide-opaque-box4">
+//           form control
+//         </div>
+//       </div>
+//     </div>
+//   </div>
+// </div>
+//
+// Styleguide 6.3
+
+.l-form
   $display-flexbox()
   flex-direction: column
   width: 100%
@@ -40,41 +119,13 @@
     margin-top: 1px
     height: 30px
 
-// Form Horizontal Container Split (Should be renamed to vertical)
-// 
-// Inner structure: Label on top, field on the bottom, 2 columns. 
-//
-// Markup:
-// <div class="l-form-horizontal--split styleguide-opaque-box1">
-//   <div class="styleguide-filled-box1">row 1</div>
-//   <div class="styleguide-filled-box2">row 2</div>
-// </div>
-//
-// Styleguide 6.2
-.l-form-horizontal--split
-  @extend .l-form-horizontal
+.l-form--split
+  @extend .l-form
   flex-direction: row
   width: 90%
   max-width: 1200px
   margin-left: $form-gutter / 2
 
-// Form Horizontal Split Containers (same rename as above)
-// 
-// Markup:
-// <div class="l-form-horizontal--split styleguide-opaque-box1">
-//   <div class="l-form-left">
-//     <div class="styleguide-filled-box1">row 1</div>
-//     <div class="styleguide-filled-box2">row 2</div>
-//   </div>
-//   <div class="l-form-right">
-//     <div class="styleguide-filled-box3">row 1</div>
-//     <div class="styleguide-filled-box4">row 2</div>
-//   </div>
-// </div>
-//
-// modifier - modifier description
-//
-// Styleguide 6.3
 .l-form-left,
 .l-form-right
   $display-flexbox()
@@ -86,65 +137,21 @@
   margin-left: 5%
   width: 55%
 
-// Form Field (should be renamed to rows maybe)
-//
-// Form row fields inside form container
-//
-// Markup:
-// <div class="l-form-horizontal styleguide-opaque-box1">
-//   <div class="l-form-field styleguide-filled-box1">
-//     <div class="styleguide-filled-box2">row 1</div>
-//     <div class="styleguide-filled-box3">row 2</div>
-//   </div>
-//   <div class="l-form-field styleguide-filled-box1">
-//     <div class="styleguide-filled-box2">row 1</div>
-//     <div class="styleguide-filled-box3">row 2</div>
-//   </div>
-// </div>
-//
-// Styleguide 6.4
-.l-form-field,
-.l-form-field--no-label
+.l-form-row
   $display-flexbox()
   flex-direction: column
   align-items: flex-start
   margin-bottom: 25px
-.l-form-horizontal--split
-  .l-form-field,
-  .l-form-field--no-label
-    margin-left: 0
 
-// layout where we have a label on the left side
-.l-form-field
   label
     width: 100%
     padding-bottom: 10px
+
   .form-control
     display: block
     margin: 0
     width: $form-controlwidth-inner
 
-// layout where we have no label on the left side
-.l-form-field--no-label
-  .l-form-controls
-    margin-left: $form-labelwidth
-.l-form-horizontal--split
-  .l-form-field--no-label
-    .l-form-controls
-      margin-left: 0
-
-// Form controls
-//
-// Form control container
-//
-// Markup:
-// <div class="l-form-horizontal styleguide-opaque-box1">
-//   <div class="l-form-field styleguide-filled-box1">
-//     <label>label</label>
-//     <div class="l-form-controls styleguide-filled-box2">controls</div>
-//   </div>
-//
-// Styleguide 6.5
 .l-form-controls
   width: 100%
 
@@ -152,7 +159,7 @@
   @extend .l-form-controls
   $display-flexbox()
   align-items: center
-.l-form-horizontal--split
+.l-form--split
   .l-form-controls--with-action
     width: 100%
 
@@ -171,7 +178,7 @@
 .l-field-editor--with-action
   @extend .l-field-editor
   width: $field-editor-width - 37%
-.l-form-horizontal--split
+.l-form--split
   .l-field-editor
     width: 100%
   .l-field-editor--with-action

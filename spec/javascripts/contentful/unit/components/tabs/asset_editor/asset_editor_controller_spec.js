@@ -9,7 +9,7 @@ describe('Asset editor controller', function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'can',
-        'getPublishLocales',
+        'getPrivateLocales',
         'assetTitle',
         'isArchived',
         'process',
@@ -47,11 +47,11 @@ describe('Asset editor controller', function () {
         name: 'en-US',
         publish: true
       };
-      stubs.getPublishLocales.returns([locale]);
+      stubs.getPrivateLocales.returns([locale]);
       scope.spaceContext = {
         assetTitle: stubs.assetTitle,
         space: {
-          getPublishLocales: stubs.getPublishLocales
+          getPrivateLocales: stubs.getPrivateLocales
         }
       };
       scope.validate = sinon.stub();
@@ -124,7 +124,7 @@ describe('Asset editor controller', function () {
       scope.spaceContext = {
         activeLocales: sinon.stub().returns([locale]),
         space: {
-          getPublishLocales: sinon.stub().returns([locale])
+          getPrivateLocales: sinon.stub().returns([locale])
         }
       };
       scope.tab = {
