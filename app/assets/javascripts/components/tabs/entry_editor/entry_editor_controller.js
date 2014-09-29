@@ -90,7 +90,7 @@ angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector
       if (error.path.length == 1 && error.path[0] == 'fields') {
         $scope.hasErrorOnFields = error.path.length == 1 && error.path[0] == 'fields';
       } else if (error.path.length == 2) {
-        var locales = field.localized ? $scope.spaceContext.publishLocales : [$scope.spaceContext.space.getDefaultLocale()];
+        var locales = field.localized ? $scope.spaceContext.privateLocales : [$scope.spaceContext.space.getDefaultLocale()];
         var allCodes = _.pluck(locales, 'code');
         $scope.errorPaths[fieldId].push.apply($scope.errorPaths[fieldId], allCodes);
       } else {

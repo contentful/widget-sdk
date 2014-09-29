@@ -52,7 +52,7 @@ angular.module('contentful').controller('AssetEditorCtrl', ['$scope', '$injector
 
   // Validations
   $scope.errorPaths = {};
-  $scope.assetSchema = validation.schemas.Asset($scope.spaceContext.space.getPublishLocales());
+  $scope.assetSchema = validation.schemas.Asset($scope.spaceContext.space.getPrivateLocales());
   $scope.$watch('asset.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {
     if (publishedVersion > oldVersion) scope.validate();
   });
@@ -113,7 +113,7 @@ angular.module('contentful').controller('AssetEditorCtrl', ['$scope', '$injector
     if (file !== old) scope.validate();
   }, true);
 
-  $scope.showLangSwitcher = $scope.spaceContext.space.getPublishLocales().length > 1;
+  $scope.showLangSwitcher = $scope.spaceContext.space.getPrivateLocales().length > 1;
 
   $scope.headline = function(){
     return this.spaceContext.assetTitle(this.asset);
