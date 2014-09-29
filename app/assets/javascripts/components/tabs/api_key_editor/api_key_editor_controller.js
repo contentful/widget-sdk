@@ -26,6 +26,8 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
   $scope.tab.closingMessage = 'You have unsaved changes.';
   $scope.tab.closingMessageDisplayType = 'dialog';
 
+  $scope.environment = environment;
+
   $scope.authCodeExample = {
     lang: 'http',
     api: 'production'
