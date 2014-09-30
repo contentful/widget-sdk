@@ -10,6 +10,7 @@ angular.module('contentful').factory('aviary', ['$window', 'environment', '$q', 
 
     function createEditor() {
       var initDeferred = $q.defer();
+      var saveButtonWasClicked = false;
       if(featherEditor)
         initDeferred.resolve();
       else
@@ -24,12 +25,18 @@ angular.module('contentful').factory('aviary', ['$window', 'environment', '$q', 
             initDeferred.resolve();
           },
           onSaveButtonClicked: function () {
+            saveButtonWasClicked = true;
             featherEditor.saveHiRes();
             return false;
           },
-          onClose: function () {
+          onClose: function (dirty) {
             // The asynchronicity of this method is very unpredictable
-            if(onClose) delay(onClose, 0);
+            if(onClose) delay(function () {
+              onClose({
+                dirty: dirty,
+                saveWasClicked: saveButtonWasClicked
+              });
+            }, 0);
           },
           onSaveHiRes: onSave,
           onError: onError

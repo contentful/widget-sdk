@@ -50,10 +50,11 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
             file: scope.file,
             image: preview,
             url: imgUrl,
-            onClose: function () {
-              scope.$apply(function () {
-                scope.loadingEditor = false;
-              });
+            onClose: function (params) {
+              if(!params.saveWasClicked)
+                scope.$apply(function () {
+                  scope.loadingEditor = false;
+                });
             }
           }).then(function (FPFile) {
             setFPFile(FPFile);
