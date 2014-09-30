@@ -137,13 +137,13 @@ describe('Widget types service', function () {
     it('if field is Entry', function() {
       field.type = 'Link';
       field.linkType = 'Entry';
-      expect(widgetTypes.defaultType(field, contentType)).toBe('linkEditor');
+      expect(widgetTypes.defaultType(field, contentType)).toBe('entryLinkEditor');
     });
 
     it('if field is Asset', function() {
       field.type = 'Link';
       field.linkType = 'Asset';
-      expect(widgetTypes.defaultType(field, contentType)).toBe('linkEditor');
+      expect(widgetTypes.defaultType(field, contentType)).toBe('assetLinkEditor');
     });
 
     it('if field is File', function() {
@@ -154,13 +154,13 @@ describe('Widget types service', function () {
     it('if field is a list of Assets', function() {
       field.type = 'Array';
       field.items = {type: 'Link', linkType: 'Asset'};
-      expect(widgetTypes.defaultType(field, contentType)).toBe('linksEditor');
+      expect(widgetTypes.defaultType(field, contentType)).toBe('assetLinksEditor');
     });
 
     it('if field is a list of Entries', function() {
       field.type = 'Array';
       field.items = {type: 'Link', linkType: 'Entry'};
-      expect(widgetTypes.defaultType(field, contentType)).toBe('linksEditor');
+      expect(widgetTypes.defaultType(field, contentType)).toBe('entryLinksEditor');
     });
   });
 

@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs', '$injector', function ($scope, $attrs, $injector) {
+angular.module('contentful').controller('LinkEditorController',
+  ['$scope', '$injector', 'ngModel', 'linkParams', function ($scope, $injector, ngModel, linkParams) {
   var controller = this;
 
   var $parse                = $injector.get('$parse');
@@ -12,7 +13,7 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs',
 
   var entityCache;
 
-  var ngModelGet = $parse($attrs.ngModel),
+  var ngModelGet = $parse(ngModel),
       ngModelSet = ngModelGet.assign;
 
   var validations = $scope.field.type === 'Array' && $scope.field.items.validations ?
@@ -22,10 +23,10 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs',
   $scope.links = [];
   $scope.linkedEntities = [];
 
-  $scope.linkType     = $attrs.cfLinkEditor;
+  $scope.linkType     = linkParams.type;
   $scope.fetchMethod  = $scope.linkType === 'Entry' ? 'getEntries' : 'getAssets';
 
-  $scope.linkMultiple = !!$attrs.linkMultiple;
+  $scope.linkMultiple = linkParams.multiple;
   $scope.linkSingle   = !$scope.linkMultiple;
 
   $scope.$watch('linkType', function (linkType) {

@@ -1,10 +1,11 @@
 'use strict';
 
 describe('cfLinkEditor Controller', function () {
-  var cfLinkEditorCtrl, createController;
-  var scope, attrs, entry, $q;
+  var linkEditorCtrl, createController;
+  var scope, entry, $q;
   var shareJSMock;
   var validationParseStub;
+  var linkParams;
 
   function validationParser(arg) {
     return arg;
@@ -25,10 +26,6 @@ describe('cfLinkEditor Controller', function () {
 
       validationParseStub = sinon.stub(validation.Validation, 'parse', validationParser);
 
-      attrs = {
-        ngModel: 'fieldData.value',
-        cfLinkEditor: 'Entry'
-      };
       var space = cfStub.space('test');
       var contentTypeData = cfStub.contentTypeData('content_type1');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
@@ -38,10 +35,17 @@ describe('cfLinkEditor Controller', function () {
         type: 'Link',
         validations: []
       };
+
+      linkParams = {
+        type: 'Entry',
+        multiple: false
+      };
+
       createController = function () {
-        cfLinkEditorCtrl = $controller('cfLinkEditorCtrl', {
+        linkEditorCtrl = $controller('LinkEditorController', {
           $scope: scope,
-          $attrs: attrs,
+          ngModel: 'fieldData.value',
+          linkParams: linkParams
         });
         scope.$apply();
       };
@@ -103,7 +107,7 @@ describe('cfLinkEditor Controller', function () {
 
     describe('no validations defined', function () {
       beforeEach(function () {
-        attrs.cfLinkEditor = 'Asset';
+        linkParams.type = 'Asset';
         createController();
       });
 
@@ -118,7 +122,7 @@ describe('cfLinkEditor Controller', function () {
 
     describe('validations are defined', function () {
       beforeEach(function () {
-        attrs.cfLinkEditor = 'Asset';
+        linkParams.type = 'Asset';
         scope.field.validations = [
           {name: 'linkMimetypeGroup', mimetypeGroupName: 'file'}
         ];
@@ -135,9 +139,10 @@ describe('cfLinkEditor Controller', function () {
 });
 
 describe('cfLinkEditor Controller methods', function () {
-  var scope, attrs, $q;
+  var scope, $q;
   var getEntriesStub, otDocPushStub, removeStub, shareJSMock;
-  var cfLinkEditorCtrl;
+  var linkEditorCtrl;
+  var linkParams;
   var entry;
   var createController;
 
@@ -182,18 +187,19 @@ describe('cfLinkEditor Controller methods', function () {
 
       scope.otPath = [];
 
-      attrs = {
-        ngModel: 'fieldData.value',
-        cfLinkEditor: 'Entry'
-      };
-
       var space = cfStub.space('test');
       entry = cfStub.entry(space, 'entry1', 'content_type1');
 
+      linkParams = {
+        type: 'Entry',
+        multiple: false
+      };
+
       createController = function () {
-        cfLinkEditorCtrl = $controller('cfLinkEditorCtrl', {
+        linkEditorCtrl = $controller('LinkEditorController', {
           $scope: scope,
-          $attrs: attrs,
+          ngModel: 'fieldData.value',
+          linkParams: linkParams
         });
         scope.$apply();
       };
@@ -207,8 +213,8 @@ describe('cfLinkEditor Controller methods', function () {
 
   describe('in single entry mode', function () {
     beforeEach(function () {
-      attrs.cfLinkEditor = 'Entry';
-      attrs.linkMultiple = false;
+      linkParams.type = 'Entry';
+      linkParams.multiple = false;
       createController();
     });
 
@@ -239,8 +245,8 @@ describe('cfLinkEditor Controller methods', function () {
 
   describe('in multiple entry mode', function () {
     beforeEach(function () {
-      attrs.cfLinkEditor = 'Entry';
-      attrs.linkMultiple = true;
+      linkParams.type = 'Entry';
+      linkParams.multiple = true;
       createController();
     });
 
