@@ -84,7 +84,7 @@ angular.module('contentful').factory('aviary', ['$window', 'environment', '$q', 
       close: function () {
         if(featherEditor) {
           featherEditor.hideWaitIndicator();
-          if(onClose) onClose();
+          if(onClose) onClose({});
           featherEditor.close();
         }
       },
