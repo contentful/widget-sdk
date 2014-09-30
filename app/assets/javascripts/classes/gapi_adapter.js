@@ -2,11 +2,10 @@
 angular.module('contentful').factory('GAPIAdapter', ['$injector', function($injector){
 
   var $q = $injector.get('$q');
-
-  var API_KEY = 'AIzaSyAJi3XBLmzo1lOzZ0RncjVQWVlF_wkC4ow';
+  var environment = $injector.get('environment');
 
   function GAPIAdapter(){
-    gapi.client.setApiKey(API_KEY);
+    gapi.client.setApiKey(environment.settings.google.gapi_key);
   }
 
   GAPIAdapter.instance = function(){

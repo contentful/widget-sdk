@@ -31,5 +31,8 @@
   },
   "segment_io": "uwr64jkg06",
   "totango": "SP-6959-01",
-  "git_revision": "OVERRIDE_FROM_CONFIG_JSON"
+  "git_revision": "OVERRIDE_FROM_CONFIG_JSON",
+  "google" : {
+    "gapi_key" : "AIzaSyAJi3XBLmzo1lOzZ0RncjVQWVlF_wkC4ow"
+  }
 }
