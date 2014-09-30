@@ -1,24 +1,14 @@
 'use strict';
 
 angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs', '$injector', function ($scope, $attrs, $injector) {
+  var controller = this;
+
   var $parse                = $injector.get('$parse');
   var $q                    = $injector.get('$q');
   var LinkEditorEntityCache = $injector.get('LinkEditorEntityCache');
   var ShareJS               = $injector.get('ShareJS');
   var logger                = $injector.get('logger');
   var validation            = $injector.get('validation');
-
-  $scope.links = [];
-  $scope.linkedEntities = [];
-
-  var entityCache;
-
-  var ngModelGet = $parse($attrs.ngModel),
-      ngModelSet = ngModelGet.assign;
-
-  var validations = $scope.field.type === 'Array' && $scope.field.items.validations ?
-      $scope.field.items.validations :
-      $scope.field.validations;
 
   $scope.$watch('linkType', function (linkType) {
     var validationType;
@@ -49,6 +39,39 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs',
       $scope.linkMimetypeGroup = null;
     }
   });
+
+  $scope.$watch('links', function (links, old, scope) {
+    if (!links || links.length === 0) {
+      $scope.linkedEntities = [];
+    } else {
+      lookupEntities(links).then(function (entities) {
+        scope.linkedEntities = markMissing(entities);
+      });
+    }
+  }, true);
+
+  $scope.$on('otValueChanged', function(event, path, value) {
+    if (path === event.currentScope.otPath) ngModelSet(event.currentScope, value);
+  });
+
+  $scope.$on('$destroy', function () {
+    entityCache =
+    ngModelSet =
+    ngModelGet =
+    validations = null;
+  });
+
+  $scope.links = [];
+  $scope.linkedEntities = [];
+
+  var entityCache;
+
+  var ngModelGet = $parse($attrs.ngModel),
+      ngModelSet = ngModelGet.assign;
+
+  var validations = $scope.field.type === 'Array' && $scope.field.items.validations ?
+      $scope.field.items.validations :
+      $scope.field.validations;
 
   $scope.addLink = function (entity) {
     // TODO this still looks like too much manual work
@@ -114,6 +137,16 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs',
     }
   };
 
+  $scope.linkDescription = function(entity) {
+    if (entity && !entity.isMissing && entity.getId()) {
+      return $scope.linkType === 'Entry' ?
+        $scope.spaceContext.entryTitle(entity, $scope.locale.code) :
+        $scope.spaceContext.assetTitle(entity, $scope.locale.code) ;
+    } else {
+      return '(Missing entity)';
+    }
+  };
+
   function lookupEntities(links) {
     var ids = _.map(links, function (link) {
       if(!link){
@@ -144,34 +177,4 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs',
     });
   }
 
-  $scope.$watch('links', function (links, old, scope) {
-    if (!links || links.length === 0) {
-      $scope.linkedEntities = [];
-    } else {
-      lookupEntities(links).then(function (entities) {
-        scope.linkedEntities = markMissing(entities);
-      });
-    }
-  }, true);
-
-  $scope.$on('otValueChanged', function(event, path, value) {
-    if (path === event.currentScope.otPath) ngModelSet(event.currentScope, value);
-  });
-
-  $scope.linkDescription = function(entity) {
-    if (entity && !entity.isMissing && entity.getId()) {
-      return $scope.linkType === 'Entry' ?
-        $scope.spaceContext.entryTitle(entity, $scope.locale.code) :
-        $scope.spaceContext.assetTitle(entity, $scope.locale.code) ;
-    } else {
-      return '(Missing entity)';
-    }
-  };
-
-  $scope.$on('$destroy', function () {
-    entityCache =
-    ngModelSet =
-    ngModelGet =
-    validations = null;
-  });
 }]);
