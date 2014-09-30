@@ -40,7 +40,8 @@ angular.module('contentful/test', [
   'ui.sortable',
   'contentful/user_interface',
   'contentful',
-  'contentful/mocks'
+  'contentful/mocks',
+  'angularLoad',
 ], ['$locationProvider', 'clientProvider', 'authenticationProvider', 'environment', '$sceDelegateProvider', '$compileProvider', 'timeRelativeConfig', 
   function($locationProvider, clientProvider, authenticationProvider, environment, $sceDelegateProvider, $compileProvider, timeRelativeConfig){
   'use strict';
