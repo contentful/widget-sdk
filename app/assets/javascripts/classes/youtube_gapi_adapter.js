@@ -18,8 +18,7 @@ angular.module('contentful').factory('youtubeGAPIAdapter', ['$injector', functio
         return gapi.request(params).then(function(items){
           if (items[0]){
             return {title: items[0].snippet.title};
-          }
-          else {
+          } else {
             return {title : undefined};
           }
         });
