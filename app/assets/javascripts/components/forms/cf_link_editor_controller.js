@@ -10,6 +10,24 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs',
   var logger                = $injector.get('logger');
   var validation            = $injector.get('validation');
 
+  var entityCache;
+
+  var ngModelGet = $parse($attrs.ngModel),
+      ngModelSet = ngModelGet.assign;
+
+  var validations = $scope.field.type === 'Array' && $scope.field.items.validations ?
+      $scope.field.items.validations :
+      $scope.field.validations;
+
+  $scope.links = [];
+  $scope.linkedEntities = [];
+
+  $scope.linkType     = $attrs.cfLinkEditor;
+  $scope.fetchMethod  = $scope.linkType === 'Entry' ? 'getEntries' : 'getAssets';
+
+  $scope.linkMultiple = !!$attrs.linkMultiple;
+  $scope.linkSingle   = !$scope.linkMultiple;
+
   $scope.$watch('linkType', function (linkType) {
     var validationType;
     if(linkType == 'Entry') validationType = 'linkContentType';
@@ -60,18 +78,6 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs',
     ngModelGet =
     validations = null;
   });
-
-  $scope.links = [];
-  $scope.linkedEntities = [];
-
-  var entityCache;
-
-  var ngModelGet = $parse($attrs.ngModel),
-      ngModelSet = ngModelGet.assign;
-
-  var validations = $scope.field.type === 'Array' && $scope.field.items.validations ?
-      $scope.field.items.validations :
-      $scope.field.validations;
 
   $scope.addLink = function (entity) {
     // TODO this still looks like too much manual work

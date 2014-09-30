@@ -497,6 +497,4 @@ describe('cfLinkEditorSearch Controller', function () {
     });
   });
 
-
-
 });

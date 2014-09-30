@@ -71,28 +71,6 @@ describe('cfLinkEditor Directive', function () {
   }));
 
 
-  describe('model controller gets updated for single links', function () {
-    beforeEach(function () {
-      compileElement();
-      scope.fieldData = { value: {
-        sys: {id: 456}
-      }};
-      scope.$digest();
-    });
-
-    it('expects link single to be set', function () {
-      expect(scope.linkSingle).toBeTruthy();
-    });
-
-    it('expects link multiple to be unset', function () {
-      expect(scope.linkMultiple).toBeFalsy();
-    });
-
-    it('links is updated', function () {
-      expect(scope.links[0].sys.id).toBe(456);
-    });
-  });
-
   describe('model controller gets updated with multiple links', function () {
     beforeEach(function () {
       scope.fieldData = { value: [
@@ -107,14 +85,6 @@ describe('cfLinkEditor Directive', function () {
       scope.$digest();
     });
 
-    it('expects link single to be unset', function () {
-      expect(scope.linkSingle).toBeFalsy();
-    });
-
-    it('expects link multiple to be unset', function () {
-      expect(scope.linkMultiple).toBeTruthy();
-    });
-
     it('first link is updated', function () {
       expect(scope.links[0].sys.id).toBe(456);
     });
@@ -127,6 +97,7 @@ describe('cfLinkEditor Directive', function () {
 
   describe('updating the model manually', function () {
     beforeEach(function () {
+      scope.linkSingle = true;
       compileElement();
       scope.links = [{ sys: {id: 456} }];
       scope.updateModel();
@@ -141,18 +112,11 @@ describe('cfLinkEditor Directive', function () {
   describe('for entry links', function () {
     beforeEach(function () {
       scope.otEditable = true;
+      scope.linkType = 'Entry';
       scope.field.items.linkType = 'Entry';
       scope.linkedEntities = [];
       scope.entities = [];
       compileElement();
-    });
-
-    it('has a linktype', function () {
-      expect(scope.linkType).toBe('Entry');
-    });
-
-    it('has a fetchMethod', function () {
-      expect(scope.fetchMethod).toBe('getEntries');
     });
 
     it('does not show links list', function () {
@@ -362,17 +326,10 @@ describe('cfLinkEditor Directive', function () {
     beforeEach(function () {
       scope.otEditable = true;
       scope.field.items.linkType = 'Asset';
+      scope.linkType = 'Asset';
       scope.linkedEntities = [];
       scope.entities = [];
       compileElement();
-    });
-
-    it('has a linktype', function () {
-      expect(scope.linkType).toBe('Asset');
-    });
-
-    it('has a fetchMethod', function () {
-      expect(scope.fetchMethod).toBe('getAssets');
     });
 
     it('does not show links list', function () {
@@ -573,106 +530,5 @@ describe('cfLinkEditor Directive', function () {
 
   });
 
-
-  describe('shows new button for link to entries with no validation', function () {
-    var newButton;
-    beforeEach(function () {
-      scope.field.items.linkType = 'Entry';
-      scope.linkContentTypes = [];
-      scope.spaceContext.publishedContentTypes = [
-        {
-          getId:   _.constant('herp'),
-          getName: _.constant('Herp')
-        },
-        {
-          getId:   _.constant('derp'),
-          getName: _.constant('Derp')
-        }
-      ];
-
-      stubs.can.withArgs('create', 'Entry').returns(true);
-
-      compileElement();
-      newButton = element.find('.add-new');
-    });
-
-    it('to have button', function () {
-      expect(newButton.get(0)).toBeDefined();
-    });
-
-    it('has dropdown menu', function () {
-      expect(newButton.find('.dropdown-menu').get(0)).toBeDefined();
-    });
-
-    it('has menu elements', function () {
-      expect(newButton.find('.dropdown-menu li').get(0)).toBeDefined();
-    });
-
-    it('has action on menu elements', function () {
-      expect(newButton.find('.dropdown-menu li').attr('ng-click')).toMatch('addNewEntry');
-    });
-
-    it('gets the name of the content type', function () {
-      expect(newButton.text()).toMatch('Herp');
-      expect(newButton.text()).toMatch('Derp');
-    });
-
-  });
-
-  describe('shows new button for link to entries with validations', function () {
-    var newButton;
-    beforeEach(function () {
-      scope.field.items.linkType = 'Entry';
-      scope.spaceContext.publishedContentTypes = [
-        {
-          getId:   _.constant('herp'),
-          getName: _.constant('Herp')
-        },
-        {
-          getId:   _.constant('derp'),
-          getName: _.constant('Derp')
-        }
-      ];
-      scope.linkContentTypes = [{
-        getName: _.constant('ContentTypeName'),
-        getId: _.constant('contentypeId'),
-        data: {
-          fields: []
-        }
-      }];
-
-      stubs.can.withArgs('create', 'Entry').returns(true);
-
-      compileElement();
-      newButton = element.find('.add-new');
-    });
-
-    it('to have button', function () {
-      expect(newButton.get(0)).toBeDefined();
-    });
-
-    it('has action on button', function () {
-      expect(newButton.attr('ng-click')).toMatch('addNewEntry');
-    });
-  });
-
-  describe('shows new button for link to assets with no validations', function () {
-    var newButton;
-    beforeEach(function () {
-      scope.field.items.linkType = 'Asset';
-      stubs.can.withArgs('create', 'Asset').returns(true);
-
-      compileElement();
-      newButton = element.find('.add-new');
-    });
-
-    it('to have button', function () {
-      expect(newButton.get(0)).toBeDefined();
-    });
-
-    it('has action on button', function () {
-      expect(newButton.attr('ng-click')).toMatch('addNewAsset');
-    });
-  });
 
 });
