@@ -10,7 +10,7 @@ angular.module('contentful').factory('youtubePlayerLoader', ['$injector', functi
     load : function(){
       return googleScriptLoader.load(SCRIPT_SRC, {name: 'onYouTubeIframeAPIReady'})
       .then(function(){
-        return new YoutubePlayerAdapter(YT.Player);
+        return YT.Player;
       });
     }
   };

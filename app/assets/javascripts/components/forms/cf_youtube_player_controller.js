@@ -1,30 +1,25 @@
 'use strict';
 
-angular.module('contentful').controller('cfYoutubePlayerController', ['$injector', '$scope', '$element', function($injector, $scope, $element){
+angular.module('contentful').controller('cfYoutubePlayerController', ['$injector', '$scope', function($injector, $scope){
 
   var youtubeGAPIAdapter     = $injector.get('youtubeGAPIAdapter');
-  var youtubePlayerLoader    = $injector.get('youtubePlayerLoader');
-
-  var YOUTUBE_DOM_ELEMENT_CLASS = '.youtube-player';
-
-  youtubePlayerLoader.load().then(function(player){
-    $scope.player = player;
-    $scope.player
-      .install($(YOUTUBE_DOM_ELEMENT_CLASS, $element)[0], $scope.youtubePlayerDelegate)
-      .then(updateYoutubePlayer);
-  });
 
   $scope.$watch('youtubeUrl', handleUpdateInYoutubeUrl);
+  $scope.handlePlayerInstalled = handlePlayerInstalled;
+
+  function handlePlayerInstalled(e) {
+    if ($scope.youtubeUrl) updateYoutubePlayer();
+  }
 
   function handleUpdateInYoutubeUrl(newVal, oldVal) {
     if (newVal === oldVal || !$scope.player) return;
 
-    updateYoutubePlayer($scope.player);
+    updateYoutubePlayer();
   }
 
-  function updateYoutubePlayer(player){
+  function updateYoutubePlayer(){
     youtubeGAPIAdapter.videoInfo($scope.youtubeUrl.videoId()).then(updateVideoInfo);
-    $scope.player.play({videoId: $scope.youtubeUrl.videoId()});
+    $scope.player.cueVideoById($scope.youtubeUrl.videoId());
   }
 
   function updateVideoInfo(info){

@@ -6,15 +6,17 @@ angular.module('contentful').controller('cfYoutubeEditorController', ['$injector
   $scope.$watch('url', updateYoutubeUrl);
 
   $scope.isPlayerLoading = false;
-  $scope.youtubePlayerDelegate = {
-    handlePlayerReady: function(){},
-    handlePlayerReadyToPlayVideo: function(){
-      $scope.$apply('isPlayerLoading = false');
-    },
-    handlePlayerFailedToLoadVideo: function() {
-      $scope.$apply('isPlayerLoading = false');
-    }
-  };
+
+  $scope.handlePlayerFailedToLoadVideo = handlePlayerFailedToLoadVideo;
+  $scope.handlePlayerReadyToPlayVideo  = handlePlayerReadyToPlayVideo;
+
+  function handlePlayerReadyToPlayVideo() {
+    $scope.isPlayerLoading = false;
+  }
+
+  function handlePlayerFailedToLoadVideo() {
+    $scope.isPlayerLoading = false;
+  }
 
   function updateYoutubeUrl(newVal, oldVal) {
     if (newVal == oldVal) return;
