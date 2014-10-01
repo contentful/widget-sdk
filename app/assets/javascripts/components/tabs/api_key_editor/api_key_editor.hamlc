@@ -53,7 +53,7 @@
       .l-form-row.device-link
         .l-form-controls
           .l-field-editor(ng-if="apiKey.data.accessToken")
-            %a(href="{{environment.settings.marketing_url}}/api-console/?#/?space={{spaceContext.space.getId()}}&token={{apiKey.data.accessToken}}&features=credentials,action-list,search-params.category.add,search-params.delete" target="_blank")
+            %a(href="{{environment.settings.marketing_url}}/api-console/?space={{spaceContext.space.getId()}}&token={{apiKey.data.accessToken}}&features=credentials,action-list,search-params.category.add,search-params.delete" target="_blank")
               %i.fa.fa-terminal.fa-2x
               Try it out on our API Console
           .l-field-editor.u-separator--small(ng-if="isDevice('iOS')")
