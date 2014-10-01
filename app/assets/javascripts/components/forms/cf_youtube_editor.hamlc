@@ -1,7 +1,10 @@
-%input.form-control(
-  ng-model="url"
+%input.form-control.cf-youtube-editor(
+  ng-model="url")
 
 %i.fa.fa-spinner.fa-spin(ng-show="isPlayerLoading")
+%i.fa.fa-times-circle(
+  ng-click="handleClickOnRemoveSign()"
+  ng-show="url && !isPlayerLoading")
 
 %cf-youtube-player(
   ng-if="url"

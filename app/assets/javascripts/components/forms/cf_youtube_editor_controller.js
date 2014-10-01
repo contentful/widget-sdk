@@ -9,6 +9,7 @@ angular.module('contentful').controller('cfYoutubeEditorController', ['$injector
 
   $scope.handlePlayerFailedToLoadVideo = handlePlayerFailedToLoadVideo;
   $scope.handlePlayerReadyToPlayVideo  = handlePlayerReadyToPlayVideo;
+  $scope.handleClickOnRemoveSign       = handleClickOnRemoveSign;
 
   function handlePlayerReadyToPlayVideo() {
     $scope.isPlayerLoading = false;
@@ -19,12 +20,16 @@ angular.module('contentful').controller('cfYoutubeEditorController', ['$injector
   }
 
   function updateYoutubeUrl(newVal, oldVal) {
-    if (newVal == oldVal) return;
+    if (newVal == oldVal || newVal === null) return;
 
     $scope.isPlayerLoading = true;
     $scope.youtubeUrl      = new YoutubeUrl($scope.url);
 
     $scope.otBindInternalChangeHandler();
+  }
+
+  function handleClickOnRemoveSign() {
+    $scope.url = null;
   }
 
 }]);
