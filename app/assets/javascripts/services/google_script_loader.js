@@ -14,14 +14,32 @@ angular.module('contentful').factory('googleScriptLoader', ['$injector', functio
 
   var $q          = $injector.get('$q');
   var angularLoad = $injector.get('angularLoad');
+  var $window     = $injector.get('$window');
+  var $rootScope  = $injector.get('$rootScope');
 
   var cache = {};
 
+  function removeCallback(callback) {
+    delete $window[callback.name];
+  }
+
   function callbackWrapper(callback, defer){
     return function(){
-      if(callback) callback();
+      _.result(callback, callback.fn);
 
-      defer.resolve();
+      removeCallback(callback);
+      $rootScope.$apply(function(){
+        defer.resolve();
+      });
+    };
+  }
+
+  function handleLoadErrorWrapper(callback, defer) {
+    return function(){
+      removeCallback(callback);
+      $rootScope.$apply(function(){
+        defer.reject();
+      });
     };
   }
 
@@ -29,13 +47,13 @@ angular.module('contentful').factory('googleScriptLoader', ['$injector', functio
     load : function(src, callback){
       var defer;
 
-      if (cache[src]) return cache[src];
+      if (!cache[src]){
+        defer                  = $q.defer();
+        cache[src]             = defer.promise;
+        $window[callback.name] = callbackWrapper(callback, defer);
 
-      defer                 = $q.defer();
-      cache[src]            = defer.promise;
-      window[callback.name] = callbackWrapper(callback.fn, defer);
-
-      angularLoad.loadScript(src);
+        angularLoad.loadScript(src).then(angular.noop, handleLoadErrorWrapper);
+      }
 
       return cache[src];
     }
