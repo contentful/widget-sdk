@@ -52,11 +52,15 @@
               %i.fa.fa-copy
       .l-form-row.device-link
         .l-form-controls
-          .l-field-editor(ng-if="isDevice('iOS')")
+          .l-field-editor(ng-if="apiKey.data.accessToken")
+            %a(href="{{environment.settings.marketing_url}}/api-console/?space={{spaceContext.space.getId()}}&token={{apiKey.data.accessToken}}&features=credentials,action-list,search-params.category.add,search-params.delete" target="_blank")
+              %i.fa.fa-terminal.fa-2x
+              Try it out on our API Console
+          .l-field-editor.u-separator--small(ng-if="isDevice('iOS')")
             %a(href="{{mobileAppUrl}}" target="_blank")
               %i.fa.fa-apple.fa-2x
               Browse entries in the Discovery App
-          .l-field-editor(ng-if="isDevice('any')")
+          .l-field-editor.u-separator--small(ng-if="isDevice('any')")
             %a(href="https://itunes.apple.com/au/app/contentful-discovery-cms-for/id892840015" target="_blank")
               %i.fa.fa-apple.fa-2x
               Browse entries in the Discovery App
@@ -89,7 +93,7 @@
               %i.fa.fa-refresh
               Regenerate Access Token
 
-        %label Preview
+        %label.u-separator Preview
         .l-form-controls--with-action
           .l-field-editor(ng-hide="previewApiKey.data.accessToken")
             %input.form-control(type="text" readonly="readonly" value="The token will be automatically generated once you save the existing key.")
@@ -102,7 +106,7 @@
               %i.fa.fa-refresh
               Regenerate Access Token
 
-      %h2.section-title.u-separator(ng-show="apiKey.data.accessToken") Authentication Code
+      %h2.section-title.u-separator--large(ng-show="apiKey.data.accessToken") Authentication Code
       .l-form-row.authentication-code(ng-show="apiKey.data.accessToken")
         .l-form-controls
           .l-field-editor
