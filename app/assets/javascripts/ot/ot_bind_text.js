@@ -4,6 +4,7 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
   var $parse            = $injector.get('$parse');
   var ShareJS           = $injector.get('ShareJS');
   var defer             = $injector.get('defer');
+  var logger            = $injector.get('logger');
   var isDiacriticalMark = $injector.get('isDiacriticalMark');
 
   return {
@@ -111,15 +112,25 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
 
       function makeAndAttach(subdoc, text){
         text = text === undefined ? '' : text;
+        var loggingData = {
+          subdoc: subdoc,
+          text: text,
+          otDoc: scope.otDoc
+        };
         ShareJS.mkpath({
           doc: scope.otDoc,
           path: subdoc.path,
           types: subdoc.types,
           value: text
         }, function(err) {
-          if (err) scope.$apply(function(){
-            throw new Error('makeAndAttach mkpath failed');
-          });
+          if (err){
+            logger.logError('failure on makeAndAttach', {
+              data: loggingData
+            });
+            scope.$apply(function(){
+              throw new Error('makeAndAttach mkpath failed');
+            });
+          }
         });
         unbindTextField = subdoc.attach_textarea(elm[0]);
       }
