@@ -23,41 +23,39 @@ angular.module('contentful').controller('LinkEditorController',
   $scope.links = [];
   $scope.linkedEntities = [];
 
-  $scope.linkType     = linkParams.type;
-  $scope.fetchMethod  = $scope.linkType === 'Entry' ? 'getEntries' : 'getAssets';
+  var linkType = linkParams.type;
+  $scope.fetchMethod  = linkType === 'Entry' ? 'getEntries' : 'getAssets';
 
   $scope.linkMultiple = linkParams.multiple;
   $scope.linkSingle   = !$scope.linkMultiple;
 
-  $scope.$watch('linkType', function (linkType) {
-    var validationType;
-    if(linkType == 'Entry') validationType = 'linkContentType';
-    if(linkType == 'Asset') validationType = 'linkMimetypeGroup';
+  var validationType;
+  if(linkType == 'Entry') validationType = 'linkContentType';
+  if(linkType == 'Asset') validationType = 'linkMimetypeGroup';
 
-    initCache(linkType);
+  initCache(linkType);
 
-    var linkTypeValidation = _(validations)
-      .map(validation.Validation.parse)
-      .where({name: validationType})
-      .first();
+  var linkTypeValidation = _(validations)
+    .map(validation.Validation.parse)
+    .where({name: validationType})
+    .first();
 
-    if(linkTypeValidation){
-      if (linkType == 'Entry') {
-        $scope.linkContentTypes = _(linkTypeValidation.contentTypeId)
-          .map(function (id) { return $scope.spaceContext.getPublishedContentType(id); })
-          .compact()
-          .value();
-        // TODO This means the validation contains unpublished content  types.
-        // It should never happen but I don't know how to deal with it here
-        if ($scope.linkContentTypes.length === 0) $scope.linkContentTypes = null;
-      } else if (linkType == 'Asset') {
-        $scope.linkMimetypeGroup = linkTypeValidation.mimetypeGroupName;
-      }
-    } else {
-      $scope.linkContentTypes  = null;
-      $scope.linkMimetypeGroup = null;
+  if(linkTypeValidation){
+    if (linkType == 'Entry') {
+      $scope.linkContentTypes = _(linkTypeValidation.contentTypeId)
+        .map(function (id) { return $scope.spaceContext.getPublishedContentType(id); })
+        .compact()
+        .value();
+      // TODO This means the validation contains unpublished content  types.
+      // It should never happen but I don't know how to deal with it here
+      if ($scope.linkContentTypes.length === 0) $scope.linkContentTypes = null;
+    } else if (linkType == 'Asset') {
+      $scope.linkMimetypeGroup = linkTypeValidation.mimetypeGroupName;
     }
-  });
+  } else {
+    $scope.linkContentTypes  = null;
+    $scope.linkMimetypeGroup = null;
+  }
 
   $scope.$watch('links', function (links, old, scope) {
     if (!links || links.length === 0) {
@@ -85,7 +83,7 @@ angular.module('contentful').controller('LinkEditorController',
     // Should just be the ShareJS operation, then the model should update itself from that
     var link = { sys: {
       type: 'Link',
-      linkType: $scope.linkType,
+      linkType: linkType,
       id: entity.getId() }};
     entityCache.save(entity);
 
@@ -146,7 +144,7 @@ angular.module('contentful').controller('LinkEditorController',
 
   $scope.linkDescription = function(entity) {
     if (entity && !entity.isMissing && entity.getId()) {
-      return $scope.linkType === 'Entry' ?
+      return linkType === 'Entry' ?
         $scope.spaceContext.entryTitle(entity, $scope.locale.code) :
         $scope.spaceContext.assetTitle(entity, $scope.locale.code) ;
     } else {

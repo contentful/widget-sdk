@@ -3,7 +3,7 @@
 describe('cfLinkEditor Controller', function () {
   var linkEditorCtrl, createController;
   var scope, entry, $q, stubs;
-  var shareJSMock, validationParseStub, linkParams;
+  var shareJSMock, linkEditorCacheMock, validationParseStub, linkParams;
 
   function validationParser(arg) {
     return arg;
@@ -11,18 +11,27 @@ describe('cfLinkEditor Controller', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
+      stubs = $provide.makeStubs([
+        'getEntries',
+        'otDocPush',
+        'remove',
+        'save',
+        'getAll'
+      ]);
+
       shareJSMock = {
         peek: sinon.stub(),
         mkpath: sinon.stub()
       };
 
-      stubs = $provide.makeStubs([
-        'getEntries',
-        'otDocPush',
-        'remove'
-      ]);
+      linkEditorCacheMock = sinon.stub();
+      linkEditorCacheMock.returns({
+        save: stubs.save,
+        getAll: stubs.getAll
+      });
 
       $provide.value('ShareJS', shareJSMock);
+      $provide.value('LinkEditorEntityCache', linkEditorCacheMock);
     });
 
     inject(function ($rootScope, $controller, _$q_, cfStub, validation) {
@@ -76,6 +85,19 @@ describe('cfLinkEditor Controller', function () {
     it('linkedEntities are empty', function () {
       expect(scope.linkedEntities).toEqual([]);
     });
+
+    it('initializes entity cache', function() {
+      expect(linkEditorCacheMock).toBeCalled();
+    });
+
+    it('initializes link content types', function() {
+      expect(scope.linkContentTypes).toBeNull();
+    });
+
+    it('initializes link mimetype group', function() {
+      expect(scope.linkMimetypeGroup).toBeNull();
+    });
+
   });
 
   describe('linkType is Entry', function () {
@@ -189,6 +211,7 @@ describe('cfLinkEditor Controller', function () {
     describe('in single entry mode', function () {
       beforeEach(function () {
         linkParams.multiple = false;
+        stubs.getAll.returns($q.when([entry]));
         createController();
       });
 
@@ -231,6 +254,7 @@ describe('cfLinkEditor Controller', function () {
     describe('in multiple entry mode', function () {
       beforeEach(function () {
         linkParams.multiple = true;
+        stubs.getAll.returns($q.when([entry]));
         createController();
       });
 
@@ -279,33 +303,20 @@ describe('cfLinkEditor Controller', function () {
     describe('attaches a list of previously loaded entries', function () {
       beforeEach(function() {
         createController();
+        stubs.getAll.returns($q.when([entry, undefined]));
         scope.links = [
           { sys: { id: 'entry1', linkType: 'Entry', type: 'Link' } },
           { sys: { id: 'entry2', linkType: 'Entry', type: 'Link' } }
         ];
         scope.$apply();
-        stubs.getEntries.yield(null, [entry, undefined]);
       });
 
-      it('and fetches them for caching', function () {
-        expect(stubs.getEntries).toBeCalledWith({
-          'sys.id[in]': 'entry1,entry2',
-          limit: 1000
-        });
+      it('has linked entities', function() {
+        expect(scope.linkedEntities.length).toBe(2);
       });
 
-      describe('after they get processed', function() {
-        beforeEach(function() {
-          scope.$apply();
-        });
-
-        it('has linked entities', function() {
-          expect(scope.linkedEntities.length).toBe(2);
-        });
-
-        it('one of the entities is missing', function() {
-          expect(scope.linkedEntities[1].isMissing).toBeTruthy();
-        });
+      it('one of the entities is missing', function() {
+        expect(scope.linkedEntities[1].isMissing).toBeTruthy();
       });
     });
 

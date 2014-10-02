@@ -1,8 +1,8 @@
 'use strict';
 
 describe('cfLinkEditorSearch Controller', function () {
-  var cfLinkEditorSearchCtrl;
-  var scope, stubs;
+  var cfLinkEditorSearchCtrl, createController;
+  var scope, stubs, attrs;
   var space;
   var $q;
 
@@ -30,7 +30,7 @@ describe('cfLinkEditorSearch Controller', function () {
         then: stubs.then
       });
 
-      var attrs = {
+      attrs = {
         addEntity: 'addLink(entity)',
         ngShow: '__visible',
         entityType: 'linkType',
@@ -38,7 +38,10 @@ describe('cfLinkEditorSearch Controller', function () {
         entityMimeTypeGroup: 'linkMimetypeGroup'
       };
 
-      cfLinkEditorSearchCtrl = $controller('cfLinkEditorSearchCtrl', { $scope: scope, $attrs: attrs });
+      createController = function() {
+        cfLinkEditorSearchCtrl = $controller('cfLinkEditorSearchCtrl', { $scope: scope, $attrs: attrs });
+        scope.$digest();
+      };
     });
   });
 
@@ -47,106 +50,112 @@ describe('cfLinkEditorSearch Controller', function () {
     $log.assertEmpty();
   }));
 
-  it('when autocomplete result is selected sets the selected entity on the scope', inject(function ($rootScope) {
-    var result = {result: true};
-    $rootScope.$broadcast('autocompleteResultSelected', 0, result);
-    expect(scope.selectedEntity).toBe(result);
-  }));
+  describe('creates a controller', function() {
+    beforeEach(function() {
+      createController();
+    });
 
-  describe('when autocomplete result is picked', function() {
-    beforeEach(inject(function($rootScope) {
-      spyOn(cfLinkEditorSearchCtrl, 'clearSearch');
+    it('when autocomplete result is selected sets the selected entity on the scope', inject(function ($rootScope) {
       var result = {result: true};
-      scope.addLink = sinon.stub().returns($q.when());
-      $rootScope.$broadcast('autocompleteResultPicked', 0, result);
+      $rootScope.$broadcast('autocompleteResultSelected', 0, result);
+      expect(scope.selectedEntity).toBe(result);
     }));
 
-    it('calls the addLink method', function() {
-      scope.$apply();
-      expect(scope.addLink).toBeCalled();
+    describe('when autocomplete result is picked', function() {
+      beforeEach(inject(function($rootScope) {
+        spyOn(cfLinkEditorSearchCtrl, 'clearSearch');
+        var result = {result: true};
+        scope.addLink = sinon.stub().returns($q.when());
+        $rootScope.$broadcast('autocompleteResultPicked', 0, result);
+      }));
+
+      it('calls the addLink method', function() {
+        scope.$apply();
+        expect(scope.addLink).toBeCalled();
+      });
+
+      it('clears the search when invisible', function () {
+        scope.__visible = false;
+        scope.$apply();
+        expect(cfLinkEditorSearchCtrl.clearSearch).toHaveBeenCalled();
+      });
+
+      it('does not clear the search when visible', function () {
+        scope.__visible = true;
+        scope.$apply();
+        expect(cfLinkEditorSearchCtrl.clearSearch).not.toHaveBeenCalled();
+      });
     });
 
-    it('clears the search when invisible', function () {
-      scope.__visible = false;
-      scope.$apply();
-      expect(cfLinkEditorSearchCtrl.clearSearch).toHaveBeenCalled();
+    it('should clear the search when autocompleteResults are canceled', function () {
+      sinon.stub(cfLinkEditorSearchCtrl, 'clearSearch');
+      scope.$broadcast('autocompleteResultsCancel');
+      expect(cfLinkEditorSearchCtrl.clearSearch).toBeCalled();
     });
 
-    it('does not clear the search when visible', function () {
-      scope.__visible = true;
-      scope.$apply();
-      expect(cfLinkEditorSearchCtrl.clearSearch).not.toHaveBeenCalled();
-    });
-  });
+    it('should prevent the default action on the cancel event when search is already clear', function () {
+      var event;
+      cfLinkEditorSearchCtrl._searchResultsVisible = true;
+      event = scope.$broadcast('autocompleteResultsCancel');
+      expect(event.defaultPrevented).toBe(false);
 
-  it('should clear the search when autocompleteResults are canceled', function () {
-    sinon.stub(cfLinkEditorSearchCtrl, 'clearSearch');
-    scope.$broadcast('autocompleteResultsCancel');
-    expect(cfLinkEditorSearchCtrl.clearSearch).toBeCalled();
-  });
-
-  it('should prevent the default action on the cancel event when search is already clear', function () {
-    var event;
-    cfLinkEditorSearchCtrl._searchResultsVisible = true;
-    event = scope.$broadcast('autocompleteResultsCancel');
-    expect(event.defaultPrevented).toBe(false);
-
-    cfLinkEditorSearchCtrl._searchResultsVisible = false;
-    event = scope.$broadcast('autocompleteResultsCancel');
-    expect(event.defaultPrevented).toBe(true);
-  });
-
-  it('should emit a searchResultsHidden event when hiding the search results', function () {
-    spyOn(scope, '$emit');
-    cfLinkEditorSearchCtrl.hideSearchResults();
-    expect(scope.$emit).toHaveBeenCalledWith('searchResultsHidden');
-  });
-
-  it('should clear the search when the tokenized search displays its dropdown', function () {
-    spyOn(cfLinkEditorSearchCtrl, 'clearSearch');
-    scope.$emit('tokenizedSearchShowAutocompletions', true);
-    expect(cfLinkEditorSearchCtrl.clearSearch).toHaveBeenCalled();
-  });
-
-  it('should clear the search when the tokenized search changes its input', function () {
-    spyOn(cfLinkEditorSearchCtrl, 'clearSearch');
-    scope.$emit('tokenizedSearchInputChanged');
-    expect(cfLinkEditorSearchCtrl.clearSearch).toHaveBeenCalled();
-  });
-
-  describe('on searchSubmitted event', function() {
-    var childScope;
-    beforeEach(function() {
-      cfLinkEditorSearchCtrl._resetEntities = sinon.stub();
-      childScope = scope.$new();
+      cfLinkEditorSearchCtrl._searchResultsVisible = false;
+      event = scope.$broadcast('autocompleteResultsCancel');
+      expect(event.defaultPrevented).toBe(true);
     });
 
-    it('refreshes search if button was clicked', function() {
-      childScope.$emit('searchSubmitted');
-      expect(cfLinkEditorSearchCtrl._resetEntities).toBeCalled();
+    it('should emit a searchResultsHidden event when hiding the search results', function () {
+      spyOn(scope, '$emit');
+      cfLinkEditorSearchCtrl.hideSearchResults();
+      expect(scope.$emit).toHaveBeenCalledWith('searchResultsHidden');
     });
-  });
 
-  describe('the pick method', function() {
-    var entity;
-    beforeEach(function() {
+    it('should clear the search when the tokenized search displays its dropdown', function () {
       spyOn(cfLinkEditorSearchCtrl, 'clearSearch');
-      entity = {entity: true};
-      scope.addLink = sinon.stub().returns($q.when());
-      scope.pick(entity);
-      scope.$apply();
-    });
-
-    it('calls add link with the given entity', function () {
-      expect(scope.addLink).toBeCalledWith(entity);
-    });
-
-    it('clears the search', function () {
+      scope.$emit('tokenizedSearchShowAutocompletions', true);
       expect(cfLinkEditorSearchCtrl.clearSearch).toHaveBeenCalled();
     });
 
-  });
+    it('should clear the search when the tokenized search changes its input', function () {
+      spyOn(cfLinkEditorSearchCtrl, 'clearSearch');
+      scope.$emit('tokenizedSearchInputChanged');
+      expect(cfLinkEditorSearchCtrl.clearSearch).toHaveBeenCalled();
+    });
 
+    describe('on searchSubmitted event', function() {
+      var childScope;
+      beforeEach(function() {
+        cfLinkEditorSearchCtrl._resetEntities = sinon.stub();
+        childScope = scope.$new();
+      });
+
+      it('refreshes search if button was clicked', function() {
+        childScope.$emit('searchSubmitted');
+        expect(cfLinkEditorSearchCtrl._resetEntities).toBeCalled();
+      });
+    });
+
+    describe('the pick method', function() {
+      var entity;
+      beforeEach(function() {
+        spyOn(cfLinkEditorSearchCtrl, 'clearSearch');
+        entity = {entity: true};
+        scope.addLink = sinon.stub().returns($q.when());
+        scope.pick(entity);
+        scope.$apply();
+      });
+
+      it('calls add link with the given entity', function () {
+        expect(scope.addLink).toBeCalledWith(entity);
+      });
+
+      it('clears the search', function () {
+        expect(cfLinkEditorSearchCtrl.clearSearch).toHaveBeenCalled();
+      });
+
+    });
+
+  });
 
   function makeAddMethodTests(entityType) {
 
@@ -155,6 +164,7 @@ describe('cfLinkEditorSearch Controller', function () {
       var contentType, entity;
       var createEntityStub, entityEditorStub;
       beforeEach(inject(function(cfStub) {
+        createController();
         scope.addLink = sinon.stub();
         entityEditorStub = sinon.stub();
         scope.navigator = {};
@@ -324,21 +334,20 @@ describe('cfLinkEditorSearch Controller', function () {
   describe('_loadEntities', function () {
     it('should still be tested');
   });
+
   describe('_buildQuery', function () {
     var query;
 
     function performQuery() {
+      createController();
+      scope.paginator.pageLength = 3;
+      scope.paginator.skipItems = sinon.stub();
+      scope.paginator.skipItems.returns(true);
       stubs.loadCallback.reset();
       cfLinkEditorSearchCtrl._loadEntities();
       scope.$apply();
       query = stubs.loadCallback.args[0][2];
     }
-
-    beforeEach(function () {
-      scope.paginator.pageLength = 3;
-      scope.paginator.skipItems = sinon.stub();
-      scope.paginator.skipItems.returns(true);
-    });
 
     it('with a defined order', function() {
       performQuery();
@@ -356,7 +365,7 @@ describe('cfLinkEditorSearch Controller', function () {
     });
 
     it('for linked content type', function() {
-      scope.linkType = 'Entry';
+      attrs.entityType = 'Entry';
       scope.linkContentTypes = [{
         getName: sinon.stub().returns('123 Type'),
         getId:   sinon.stub().returns(123)
@@ -367,7 +376,7 @@ describe('cfLinkEditorSearch Controller', function () {
     });
 
     it('for mimetype group', function() {
-      scope.linkType = 'Asset';
+      attrs.entityType = 'Asset';
       scope.linkMimetypeGroup = 'files';
       scope.$apply();
       performQuery();
@@ -384,6 +393,7 @@ describe('cfLinkEditorSearch Controller', function () {
   describe('resetting entities', function() {
     var entities, entity;
     beforeEach(function() {
+      createController();
       entity = {entity: true};
       entities = {
         0: entity,
@@ -418,10 +428,10 @@ describe('cfLinkEditorSearch Controller', function () {
   });
 
 
-
   describe('loadMore', function () {
     var entities;
     beforeEach(function() {
+      createController();
       scope.$apply();
       entities = {
         total: 30
