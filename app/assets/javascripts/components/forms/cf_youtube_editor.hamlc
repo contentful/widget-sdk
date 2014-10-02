@@ -7,6 +7,7 @@
   ng-show="url && !isPlayerLoading")
 
 %cf-youtube-player(
-  ng-if="url"
+  ng-show="url && isPlayerReady"
+  on-ready="handlePlayerReady"
   on-ready-to-play-video="handlePlayerReadyToPlayVideo"
   on-failed-to-play-video="handlePlayerFailedToLoadVideo")

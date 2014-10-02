@@ -13,7 +13,10 @@ angular.module('contentful').directive('cfYoutubePlayer', ['$injector', function
 
   function handlePlayerReady(scope, attrs, event) {
     scope.player = event.target;
-    scope.handlePlayerInstalled();
+    scope.$apply(function(){
+      scope.handlePlayerInstalled();
+      _.result(scope, attrs.onReady);
+    });
   }
 
   function handlePlayerStateChange(scope, attrs, event) {
