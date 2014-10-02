@@ -2,10 +2,8 @@
 
 describe('cfLinkEditor Controller', function () {
   var linkEditorCtrl, createController;
-  var scope, entry, $q;
-  var shareJSMock;
-  var validationParseStub;
-  var linkParams;
+  var scope, entry, $q, stubs;
+  var shareJSMock, validationParseStub, linkParams;
 
   function validationParser(arg) {
     return arg;
@@ -18,8 +16,15 @@ describe('cfLinkEditor Controller', function () {
         mkpath: sinon.stub()
       };
 
+      stubs = $provide.makeStubs([
+        'getEntries',
+        'otDocPush',
+        'remove'
+      ]);
+
       $provide.value('ShareJS', shareJSMock);
     });
+
     inject(function ($rootScope, $controller, _$q_, cfStub, validation) {
       $q = _$q_;
       scope = $rootScope.$new();
@@ -30,6 +35,7 @@ describe('cfLinkEditor Controller', function () {
       var contentTypeData = cfStub.contentTypeData('content_type1');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
       entry = cfStub.entry(space, 'entry1', 'content_type1');
+      scope.spaceContext.space.getEntries = stubs.getEntries;
 
       scope.field = {
         type: 'Link',
@@ -47,7 +53,7 @@ describe('cfLinkEditor Controller', function () {
           ngModel: 'fieldData.value',
           linkParams: linkParams
         });
-        scope.$apply();
+        scope.$digest();
       };
 
     });
@@ -62,6 +68,7 @@ describe('cfLinkEditor Controller', function () {
     beforeEach(function () {
       createController();
     });
+
     it('links are empty', function () {
       expect(scope.links).toEqual([]);
     });
@@ -72,10 +79,12 @@ describe('cfLinkEditor Controller', function () {
   });
 
   describe('linkType is Entry', function () {
+    beforeEach(function() {
+      linkParams.type = 'Entry';
+    });
 
     describe('no validations defined', function () {
       beforeEach(function () {
-        scope.linkType = 'Entry';
         createController();
       });
 
@@ -94,7 +103,6 @@ describe('cfLinkEditor Controller', function () {
           {name: 'linkContentType', contentTypeId: ['content_type1']}
         ];
         createController();
-        scope.$apply();
       });
 
       it('sets linkContentType to type defined in validation', function () {
@@ -104,10 +112,12 @@ describe('cfLinkEditor Controller', function () {
   });
 
   describe('linkType is Asset', function () {
+    beforeEach(function() {
+      linkParams.type = 'Asset';
+    });
 
     describe('no validations defined', function () {
       beforeEach(function () {
-        linkParams.type = 'Asset';
         createController();
       });
 
@@ -122,191 +132,183 @@ describe('cfLinkEditor Controller', function () {
 
     describe('validations are defined', function () {
       beforeEach(function () {
-        linkParams.type = 'Asset';
         scope.field.validations = [
           {name: 'linkMimetypeGroup', mimetypeGroupName: 'file'}
         ];
         createController();
-        scope.$apply();
       });
 
       it('sets linkMimetypeGroup to type defined in validation', function () {
         expect(scope.linkMimetypeGroup).toBe('file');
       });
     });
-
   });
-});
 
-describe('cfLinkEditor Controller methods', function () {
-  var scope, $q;
-  var getEntriesStub, otDocPushStub, removeStub, shareJSMock;
-  var linkEditorCtrl;
-  var linkParams;
-  var entry;
-  var createController;
+  describe('methods', function() {
+    function addEntryExpectations() {
+      it('updates model', function() {
+        expect(scope.updateModel).toBeCalled();
+      });
 
-  beforeEach(function () {
-    module('contentful/test', function ($provide) {
-      shareJSMock = {
-        peek: sinon.stub(),
-        mkpath: sinon.stub()
-      };
+      it('does not get entries', function() {
+        expect(stubs.getEntries).not.toBeCalled();
+      });
 
-      $provide.value('ShareJS', shareJSMock);
-    });
-    inject(function ($rootScope, $controller, _$q_, cfStub) {
-      $q = _$q_;
-      scope = $rootScope.$new();
+      it('link is the supplied entry', function() {
+        expect(scope.links[0].sys.id).toEqual('entry1');
+      });
 
+      it('linked entities length is 1', function() {
+        expect(scope.linkedEntities.length).toBe(1);
+      });
+    }
+
+    beforeEach(function() {
       scope.fetchMethod = 'getEntries';
+      linkParams.type = 'Entry';
+
       scope.fieldData = {value: 'formfieldvalue'};
       scope.field = {
         type: 'Link',
         validations: []
       };
+
       scope.otChangeValue = sinon.stub();
       scope.updateModel = sinon.stub();
-
-      getEntriesStub = sinon.stub();
-      scope.spaceContext = {
-        space: {
-          getEntries : getEntriesStub
-        }
-      };
 
       scope.otDoc = {
         at: sinon.stub()
       };
-      otDocPushStub = sinon.stub();
-      removeStub = sinon.stub();
       scope.otDoc.at.returns({
-        push: otDocPushStub,
-        remove: removeStub
+        push: stubs.otDocPush,
+        remove: stubs.remove
       });
-
       scope.otPath = [];
-
-      var space = cfStub.space('test');
-      entry = cfStub.entry(space, 'entry1', 'content_type1');
-
-      linkParams = {
-        type: 'Entry',
-        multiple: false
-      };
-
-      createController = function () {
-        linkEditorCtrl = $controller('LinkEditorController', {
-          $scope: scope,
-          ngModel: 'fieldData.value',
-          linkParams: linkParams
-        });
-        scope.$apply();
-      };
-    });
-  });
-
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
-
-  describe('in single entry mode', function () {
-    beforeEach(function () {
-      linkParams.type = 'Entry';
-      linkParams.multiple = false;
-      createController();
     });
 
-    it('add an entry', function () {
-      scope.addLink(entry);
-      scope.otChangeValue.yield();
-      scope.$apply();
-      expect(scope.links.length).toBe(1);
-      expect(scope.updateModel).toBeCalled();
-      expect(getEntriesStub).not.toBeCalled();
-      expect(scope.links[0].sys.id).toEqual('entry1');
-      expect(scope.linkedEntities.length).toBe(1);
-    });
-
-    it('removes an entry', function () {
-        scope.links = [
-          {sys: {id: 'entry1'}},
-          {sys: {id: 'entry2'}},
-          {sys: {id: 'entry3'}}
-        ];
-        scope.removeLink(0, entry);
-        scope.otChangeValue.yield();
-        scope.$apply();
-        expect(scope.updateModel).toBeCalled();
-        expect(scope.links.length).toBe(0);
-    });
-  });
-
-  describe('in multiple entry mode', function () {
-    beforeEach(function () {
-      linkParams.type = 'Entry';
-      linkParams.multiple = true;
-      createController();
-    });
-
-    it('add an entry to an existing list', function () {
-      shareJSMock.peek.returns([]);
-
-      scope.addLink(entry);
-      otDocPushStub.yield();
-
-      expect(scope.updateModel).toBeCalled();
-      expect(getEntriesStub).not.toBeCalled();
-      expect(scope.links[0].sys.id).toEqual('entry1');
-      expect(scope.linkedEntities.length).toBe(1);
-    });
-
-    it('add an entry to a nonexisting list', function () {
-      shareJSMock.peek.returns({});
-
-      scope.addLink(entry);
-      shareJSMock.mkpath.yield();
-
-      expect(scope.updateModel).toBeCalled();
-      expect(getEntriesStub).not.toBeCalled();
-      expect(scope.links[0].sys.id).toEqual('entry1');
-      expect(scope.linkedEntities.length).toBe(1);
-    });
-
-    it('removes an entry from a list', function () {
-      shareJSMock.peek.returns([]);
-
-      scope.addLink(entry);
-      otDocPushStub.yield();
-
-      expect(scope.updateModel).toBeCalled();
-      scope.removeLink(0, entry);
-      removeStub.yield();
-      expect(scope.links.length).toBe(0);
-    });
-  });
-
-  describe('attaches a list of previously loaded entries', function () {
-    beforeEach(function() {
-      createController();
-    });
-
-    it('and fetches them for caching', function () {
-      scope.links = [
-        { sys: { id: 'entry1', linkType: 'Entry', type: 'Link' } },
-        { sys: { id: 'entry2', linkType: 'Entry', type: 'Link' } }
-      ];
-      scope.$apply();
-      expect(getEntriesStub).toBeCalledWith({
-        'sys.id[in]': 'entry1,entry2',
-        limit: 1000
+    describe('in single entry mode', function () {
+      beforeEach(function () {
+        linkParams.multiple = false;
+        createController();
       });
-      getEntriesStub.yield(null, [entry, undefined]);
-      scope.$apply();
-      expect(scope.linkedEntities.length).toBe(2);
-      expect(scope.linkedEntities[1].isMissing).toBeTruthy();
+
+      describe('add an entry', function () {
+        beforeEach(function() {
+          scope.addLink(entry);
+          scope.otChangeValue.yield();
+          scope.$apply();
+        });
+
+        it('has one link', function() {
+          expect(scope.links.length).toBe(1);
+        });
+
+        addEntryExpectations();
+      });
+
+      describe('removes an entry', function () {
+        beforeEach(function() {
+          scope.links = [
+            {sys: {id: 'entry1'}},
+            {sys: {id: 'entry2'}},
+            {sys: {id: 'entry3'}}
+          ];
+          scope.removeLink(0, entry);
+          scope.otChangeValue.yield();
+          scope.$apply();
+        });
+
+        it('updates model', function() {
+          expect(scope.updateModel).toBeCalled();
+        });
+
+        it('has 0 links', function() {
+          expect(scope.links.length).toBe(0);
+        });
+      });
     });
+
+    describe('in multiple entry mode', function () {
+      beforeEach(function () {
+        linkParams.multiple = true;
+        createController();
+      });
+
+      describe('add an entry to an existing list', function () {
+        beforeEach(function() {
+          shareJSMock.peek.returns([]);
+
+          scope.addLink(entry);
+          stubs.otDocPush.yield();
+        });
+
+        addEntryExpectations();
+      });
+
+      describe('add an entry to a nonexisting list', function () {
+        beforeEach(function() {
+          shareJSMock.peek.returns({});
+
+          scope.addLink(entry);
+          shareJSMock.mkpath.yield();
+        });
+
+        addEntryExpectations();
+      });
+
+      describe('removes an entry from a list', function () {
+        beforeEach(function() {
+          shareJSMock.peek.returns([]);
+
+          scope.addLink(entry);
+          stubs.otDocPush.yield();
+        });
+
+        it('updates model', function() {
+          expect(scope.updateModel).toBeCalled();
+        });
+
+        it('removes link', function() {
+          scope.removeLink(0, entry);
+          stubs.remove.yield();
+          expect(scope.links.length).toBe(0);
+        });
+      });
+    });
+
+    describe('attaches a list of previously loaded entries', function () {
+      beforeEach(function() {
+        createController();
+        scope.links = [
+          { sys: { id: 'entry1', linkType: 'Entry', type: 'Link' } },
+          { sys: { id: 'entry2', linkType: 'Entry', type: 'Link' } }
+        ];
+        scope.$apply();
+        stubs.getEntries.yield(null, [entry, undefined]);
+      });
+
+      it('and fetches them for caching', function () {
+        expect(stubs.getEntries).toBeCalledWith({
+          'sys.id[in]': 'entry1,entry2',
+          limit: 1000
+        });
+      });
+
+      describe('after they get processed', function() {
+        beforeEach(function() {
+          scope.$apply();
+        });
+
+        it('has linked entities', function() {
+          expect(scope.linkedEntities.length).toBe(2);
+        });
+
+        it('one of the entities is missing', function() {
+          expect(scope.linkedEntities[1].isMissing).toBeTruthy();
+        });
+      });
+    });
+
   });
 
 });
