@@ -6,8 +6,16 @@
   ng-click="handleClickOnRemoveSign()"
   ng-show="url && !isPlayerLoading")
 
+%div(ng-show="hasPlayerFailedToLoad || hasPlayerFailedToLoadVideo" class="warning")
+  %i.fa.fa-exclamation-triangle
+    %span(ng-if="hasPlayerFailedToLoad")
+      Can't load the Youtube player. Try reloading the application
+    %span(ng-if="hasPlayerFailedToLoadVideo")
+      Can't load the video. Please check the url
+
 %cf-youtube-player(
   ng-show="url && isPlayerReady"
   on-ready="handlePlayerReady"
+  on-failure="handlePlayerFailure"
   on-ready-to-play-video="handlePlayerReadyToPlayVideo"
   on-failed-to-play-video="handlePlayerFailedToLoadVideo")

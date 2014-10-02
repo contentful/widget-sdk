@@ -1,2 +1,2 @@
-%div title: {{title}}
+%div(class="title") Title: {{title}}
 .youtube-player

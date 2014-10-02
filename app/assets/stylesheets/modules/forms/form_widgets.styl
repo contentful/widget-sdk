@@ -196,13 +196,21 @@ cf-rating-editor
   font-size: 14px
   color: $orange
 
-cf-youtube-editor .fa
-  position: absolute
-  top: 9px
-  right: 9px
+cf-youtube-editor
+  .fa.fa-times-circle,
+  .fa.fa-spinner
+    position: absolute
+    top: 9px
+    right: 9px
 
-  &.fa-times-circle
+  .fa.fa-times-circle
     color: $red
+
+  .fa.fa-exclamation-triangle
+    color: $orange
+
+  .warning
+    margin-top: 7px;
 
 cf-youtube-player.ng-animate
   transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s
@@ -211,6 +219,9 @@ cf-youtube-player
   &.ng-hide-add,
   &.ng-hide-remove
     display: block!important;
+
+  .title
+    margin: 7px 0;
 
 cf-youtube-player.ng-hide-add,
 cf-youtube-player.ng-hide-remove.ng-hide-remove-active
