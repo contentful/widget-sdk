@@ -24,23 +24,19 @@ angular.module('contentful').controller('LinkEditorController',
   $scope.linkedEntities = [];
 
   var linkType = linkParams.type;
-  $scope.fetchMethod  = linkType === 'Entry' ? 'getEntries' : 'getAssets';
 
   $scope.linkMultiple = linkParams.multiple;
   $scope.linkSingle   = !$scope.linkMultiple;
 
-  var validationType;
-  if(linkType == 'Entry') validationType = 'linkContentType';
-  if(linkType == 'Asset') validationType = 'linkMimetypeGroup';
-
-  initCache(linkType);
+  initCache(linkParams.type);
 
   var linkTypeValidation = _(validations)
     .map(validation.Validation.parse)
-    .where({name: validationType})
+    .where({name: linkParams.validationType})
     .first();
 
   if(linkTypeValidation){
+    // TODO these should be methods passed along
     if (linkType == 'Entry') {
       $scope.linkContentTypes = _(linkTypeValidation.contentTypeId)
         .map(function (id) { return $scope.spaceContext.getPublishedContentType(id); })
@@ -83,7 +79,7 @@ angular.module('contentful').controller('LinkEditorController',
     // Should just be the ShareJS operation, then the model should update itself from that
     var link = { sys: {
       type: 'Link',
-      linkType: linkType,
+      linkType: linkParams.type,
       id: entity.getId() }};
     entityCache.save(entity);
 
@@ -144,6 +140,7 @@ angular.module('contentful').controller('LinkEditorController',
 
   $scope.linkDescription = function(entity) {
     if (entity && !entity.isMissing && entity.getId()) {
+      // TODO this should be a method passed along
       return linkType === 'Entry' ?
         $scope.spaceContext.entryTitle(entity, $scope.locale.code) :
         $scope.spaceContext.assetTitle(entity, $scope.locale.code) ;
@@ -166,12 +163,8 @@ angular.module('contentful').controller('LinkEditorController',
     return entityCache.getAll(ids);
   }
 
-  function initCache(linkType) {
-    var fetchMethod = linkType === 'Entry' ? 'getEntries' :
-                      linkType === 'Asset' ? 'getAssets'  :
-                      undefined;
-    if (!fetchMethod) throw new Error('No linkType provided');
-    entityCache = new LinkEditorEntityCache($scope.spaceContext.space, fetchMethod);
+  function initCache() {
+    entityCache = new LinkEditorEntityCache($scope.spaceContext.space, linkParams.fetchMethod);
   }
 
   function markMissing(entities) {

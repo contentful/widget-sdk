@@ -72,22 +72,22 @@ angular.module('contentful').run(['widgetTypes', function(widgetTypes){
   widgetTypes.registerWidget('entryLinkEditor',{
     fieldTypes: ['Entry'],
     name: 'EntryLink',
-    template: '<div cf-entry-link-editor cf-link-editor="Entry" ng-model="fieldData.value"></div>'
+    template: '<div cf-entry-link-editor cf-link-editor ng-model="fieldData.value"></div>'
   });
   widgetTypes.registerWidget('assetLinkEditor',{
     fieldTypes: ['Asset'],
     name: 'AssetLink',
-    template: '<div cf-asset-link-editor cf-link-editor="Asset" ng-model="fieldData.value"></div>'
+    template: '<div cf-asset-link-editor cf-link-editor ng-model="fieldData.value"></div>'
   });
   widgetTypes.registerWidget('entryLinksEditor',{
     fieldTypes: ['Entries'],
     name: 'EntryLinks',
-    template: '<div cf-entry-link-editor cf-link-editor="Entry" link-multiple="true" ng-model="fieldData.value"></div>'
+    template: '<div cf-entry-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
   widgetTypes.registerWidget('assetLinksEditor',{
     fieldTypes: ['Assets'],
     name: 'AssetLinks',
-    template: '<div cf-asset-link-editor cf-link-editor="Asset" link-multiple="true" ng-model="fieldData.value"></div>'
+    template: '<div cf-asset-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
   //toggle: {   NOT IMPLEMENTED
     //fieldTypes: ['Boolean'],

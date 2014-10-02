@@ -3,7 +3,7 @@
 describe('cfLinkEditor Controller', function () {
   var linkEditorCtrl, createController;
   var scope, entry, $q, stubs;
-  var shareJSMock, linkEditorCacheMock, validationParseStub, linkParams;
+  var shareJSMock, linkEditorCacheMock, linkParams;
 
   function validationParser(arg) {
     return arg;
@@ -32,13 +32,16 @@ describe('cfLinkEditor Controller', function () {
 
       $provide.value('ShareJS', shareJSMock);
       $provide.value('LinkEditorEntityCache', linkEditorCacheMock);
+      $provide.constant('validation', {
+        Validation: {
+          parse: validationParser
+        }
+      });
     });
 
-    inject(function ($rootScope, $controller, _$q_, cfStub, validation) {
+    inject(function ($rootScope, $controller, _$q_, cfStub) {
       $q = _$q_;
       scope = $rootScope.$new();
-
-      validationParseStub = sinon.stub(validation.Validation, 'parse', validationParser);
 
       var space = cfStub.space('test');
       var contentTypeData = cfStub.contentTypeData('content_type1');
@@ -69,7 +72,6 @@ describe('cfLinkEditor Controller', function () {
   });
 
   afterEach(inject(function ($log) {
-    validationParseStub.restore();
     $log.assertEmpty();
   }));
 
@@ -103,6 +105,7 @@ describe('cfLinkEditor Controller', function () {
   describe('linkType is Entry', function () {
     beforeEach(function() {
       linkParams.type = 'Entry';
+      linkParams.validationType = 'linkContentType';
     });
 
     describe('no validations defined', function () {
@@ -136,6 +139,7 @@ describe('cfLinkEditor Controller', function () {
   describe('linkType is Asset', function () {
     beforeEach(function() {
       linkParams.type = 'Asset';
+      linkParams.validationType = 'linkMimetypeGroup';
     });
 
     describe('no validations defined', function () {

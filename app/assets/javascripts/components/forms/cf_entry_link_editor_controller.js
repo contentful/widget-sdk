@@ -5,7 +5,9 @@ angular.module('contentful').controller('EntryLinkEditorController', ['$scope', 
     $scope: $scope,
     ngModel: $attrs.ngModel,
     linkParams: {
-      type: $attrs.cfLinkEditor,
+      type: 'Entry',
+      fetchMethod: 'getEntries',
+      validationType: 'linkContentType',
       multiple: $attrs.linkMultiple
     }
   });

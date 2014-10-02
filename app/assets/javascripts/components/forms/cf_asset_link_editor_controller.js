@@ -5,7 +5,9 @@ angular.module('contentful').controller('AssetLinkEditorController', ['$scope', 
     $scope: $scope,
     ngModel: $attrs.ngModel,
     linkParams: {
-      type: $attrs.cfLinkEditor,
+      type: 'Asset',
+      fetchMethod: 'getAssets',
+      validationType: 'linkMimetypeGroup',
       multiple: $attrs.linkMultiple
     }
   });
