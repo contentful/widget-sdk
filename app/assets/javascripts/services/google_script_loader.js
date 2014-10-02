@@ -16,6 +16,7 @@ angular.module('contentful').factory('googleScriptLoader', ['$injector', functio
   var angularLoad = $injector.get('angularLoad');
   var $window     = $injector.get('$window');
   var $rootScope  = $injector.get('$rootScope');
+  var $timeout    = $injector.get('$timeout');
 
   var cache = {};
 
@@ -28,18 +29,14 @@ angular.module('contentful').factory('googleScriptLoader', ['$injector', functio
       _.result(callback, callback.fn);
 
       removeCallback(callback);
-      $rootScope.$apply(function(){
-        defer.resolve();
-      });
+      defer.resolve();
     };
   }
 
   function handleLoadErrorWrapper(callback, defer) {
     return function(){
       removeCallback(callback);
-      $rootScope.$apply(function(){
-        defer.reject();
-      });
+      defer.reject();
     };
   }
 
@@ -52,7 +49,7 @@ angular.module('contentful').factory('googleScriptLoader', ['$injector', functio
         cache[src]             = defer.promise;
         $window[callback.name] = callbackWrapper(callback, defer);
 
-        angularLoad.loadScript(src).then(angular.noop, handleLoadErrorWrapper);
+        angularLoad.loadScript(src).then(angular.noop, handleLoadErrorWrapper(callback, defer));
       }
 
       return cache[src];
