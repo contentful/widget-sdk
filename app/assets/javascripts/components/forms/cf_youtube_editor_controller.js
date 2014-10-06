@@ -35,18 +35,22 @@ angular.module('contentful').controller('cfYoutubeEditorController', ['$injector
   }
 
   function updateYoutubeUrl(newVal, oldVal) {
-    if (newVal == oldVal || newVal === null) return;
+    if (oldVal == newVal) return;
 
-    $scope.isPlayerLoading            = true;
+    if (oldVal && (newVal == "")){
+      $scope.isPlayerLoading = false;
+    } else {
+      $scope.isPlayerLoading = true;
+      $scope.youtubeUrl      = new YoutubeUrl($scope.url);
+    }
+
     $scope.hasPlayerFailedToLoad      = false;
     $scope.hasPlayerFailedToLoadVideo = false;
-    $scope.youtubeUrl                 = new YoutubeUrl($scope.url);
-
     $scope.otBindInternalChangeHandler();
   }
 
   function handleClickOnRemoveSign() {
-    $scope.url = null;
+    $scope.url = "";
   }
 
 }]);
