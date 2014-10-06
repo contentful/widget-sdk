@@ -5,10 +5,9 @@ angular.module('contentful').controller('cfYoutubeEditorController', ['$injector
 
   $scope.$watch('url', updateYoutubeUrl);
 
-  $scope.isPlayerLoading            = false;
-  $scope.isPlayerReady              = false;
-  $scope.hasPlayerFailedToLoad      = false;
-  $scope.hasPlayerFailedToLoadVideo = false;
+  $scope.isPlayerLoading = false;
+  $scope.isPlayerReady   = false;
+  $scope.errorMessage    = undefined;
 
   $scope.handlePlayerFailure           = handlePlayerFailure;
   $scope.handlePlayerReady             = handlePlayerReady;
@@ -18,7 +17,7 @@ angular.module('contentful').controller('cfYoutubeEditorController', ['$injector
 
   function handlePlayerFailure() {
     $scope.isPlayerLoading       = false;
-    $scope.hasPlayerFailedToLoad = true;
+    $scope.errorMessage = 'Can not load the Youtube player. Try reloading the application';
   }
 
   function handlePlayerReady() {
@@ -31,7 +30,7 @@ angular.module('contentful').controller('cfYoutubeEditorController', ['$injector
 
   function handlePlayerFailedToLoadVideo() {
     $scope.isPlayerLoading            = false;
-    $scope.hasPlayerFailedToLoadVideo = true;
+    $scope.errorMessage = 'Can not load the video. Please check the url';
   }
 
   function updateYoutubeUrl(url) {
@@ -42,8 +41,7 @@ angular.module('contentful').controller('cfYoutubeEditorController', ['$injector
       $scope.youtubeUrl      = new YoutubeUrl(url);
     }
 
-    $scope.hasPlayerFailedToLoad      = false;
-    $scope.hasPlayerFailedToLoadVideo = false;
+    $scope.errorMessage = '';
     $scope.otBindInternalChangeHandler();
   }
 
