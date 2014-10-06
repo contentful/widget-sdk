@@ -11,6 +11,7 @@ angular.module('contentful').directive('cfYoutubePlayer', ['$injector', function
     scope      : true,
     template   : JST['cf_youtube_player'](),
     controller : 'cfYoutubePlayerController',
+    controllerAs : 'playerController',
     link       : function link(scope, elem, attrs){
       youtubePlayerLoader.load()
       .then(function(YoutubePlayer){

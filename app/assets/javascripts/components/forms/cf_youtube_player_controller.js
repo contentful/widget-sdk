@@ -4,7 +4,7 @@ angular.module('contentful').controller('cfYoutubePlayerController', ['$injector
 
   var youtubeGAPIAdapter     = $injector.get('youtubeGAPIAdapter');
 
-  $scope.startWatchingYoutubeUrl = startWatchingYoutubeUrl;
+  this.startWatchingYoutubeUrl = startWatchingYoutubeUrl;
 
   function startWatchingYoutubeUrl() {
     $scope.$watch('youtubeUrl', youtubeUrlChanged);

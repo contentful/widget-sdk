@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').controller('cfYoutubeEditorController', ['$injector', '$scope', function($injector, $scope){
-  var YoutubeUrl = $injector.get('YoutubeUrl');
+  var YoutubeUrl       = $injector.get('YoutubeUrl');
 
   $scope.$watch('url', updateYoutubeUrl);
 
