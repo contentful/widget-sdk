@@ -11,6 +11,7 @@ angular.module('contentful').controller('cfYoutubePlayerController', ['$injector
   }
 
   function youtubeUrlChanged(youtubeUrl){
+    if (!youtubeUrl) return;
     youtubeGAPIAdapter.videoInfo(youtubeUrl.videoId())
     .then(updateVideoInfo);
     $scope.cueVideoById(youtubeUrl.videoId());

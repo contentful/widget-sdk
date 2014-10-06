@@ -34,14 +34,12 @@ angular.module('contentful').controller('cfYoutubeEditorController', ['$injector
     $scope.hasPlayerFailedToLoadVideo = true;
   }
 
-  function updateYoutubeUrl(newVal, oldVal) {
-    if (oldVal == newVal) return;
-
-    if (oldVal && (newVal == "")){
+  function updateYoutubeUrl(url) {
+    if (_.isEmpty(url)){
       $scope.isPlayerLoading = false;
     } else {
       $scope.isPlayerLoading = true;
-      $scope.youtubeUrl      = new YoutubeUrl($scope.url);
+      $scope.youtubeUrl      = new YoutubeUrl(url);
     }
 
     $scope.hasPlayerFailedToLoad      = false;
@@ -50,7 +48,7 @@ angular.module('contentful').controller('cfYoutubeEditorController', ['$injector
   }
 
   function handleClickOnRemoveSign() {
-    $scope.url = "";
+    $scope.url = '';
   }
 
 }]);
