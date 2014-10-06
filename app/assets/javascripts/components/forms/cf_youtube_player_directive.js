@@ -18,6 +18,8 @@ angular.module('contentful').directive('cfYoutubePlayer', ['$injector', function
         player.addEventListener('onReady',       handlePlayerReady);
         player.addEventListener('onStateChange', handlePlayerStateChange);
         player.addEventListener('onError',       handlePlayerError);
+
+        scope.cueVideoById = function(id){ player.cueVideoById(id); };
       })
       .catch(function(){
         scope.$apply(attrs.onFailure);
@@ -27,12 +29,8 @@ angular.module('contentful').directive('cfYoutubePlayer', ['$injector', function
         return new YoutubePlayer(element, { width: '100%' });
       }
 
-      function handlePlayerReady(event) {
-        scope.player = event.target;
-        scope.$apply(function(){
-          scope.handlePlayerInstalled();
-          scope.$eval(attrs.onReady);
-        });
+      function handlePlayerReady() {
+        scope.$apply(attrs.onReady);
       }
 
       function handlePlayerStateChange(event) {

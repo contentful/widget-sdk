@@ -4,22 +4,16 @@ angular.module('contentful').controller('cfYoutubePlayerController', ['$injector
 
   var youtubeGAPIAdapter     = $injector.get('youtubeGAPIAdapter');
 
-  $scope.$watch('youtubeUrl', handleUpdateInYoutubeUrl);
-  $scope.handlePlayerInstalled = handlePlayerInstalled;
+  $scope.startWatchingYoutubeUrl = startWatchingYoutubeUrl;
 
-  function handlePlayerInstalled(e) {
-    if ($scope.youtubeUrl) updateYoutubePlayer();
+  function startWatchingYoutubeUrl() {
+    $scope.$watch('youtubeUrl', youtubeUrlChanged);
   }
 
-  function handleUpdateInYoutubeUrl(newVal, oldVal) {
-    if (newVal === oldVal || !$scope.player) return;
-
-    updateYoutubePlayer();
-  }
-
-  function updateYoutubePlayer(){
-    youtubeGAPIAdapter.videoInfo($scope.youtubeUrl.videoId()).then(updateVideoInfo);
-    $scope.player.cueVideoById($scope.youtubeUrl.videoId());
+  function youtubeUrlChanged(youtubeUrl){
+    youtubeGAPIAdapter.videoInfo(youtubeUrl.videoId())
+    .then(updateVideoInfo);
+    $scope.cueVideoById(youtubeUrl.videoId());
   }
 
   function updateVideoInfo(info){
