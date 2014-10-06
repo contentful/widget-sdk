@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('contentful').controller('LinkEditorController',
-  ['$scope', '$injector', 'ngModel', 'linkParams', function ($scope, $injector, ngModel, linkParams) {
-  var controller = this;
+  ['$scope', '$injector', 'ngModel', 'linkParams', 'setValidationType', 'getLinkDescription',
+    function ($scope, $injector, ngModel, linkParams, setValidationType, getLinkDescription) {
 
   var $parse                = $injector.get('$parse');
   var $q                    = $injector.get('$q');
@@ -23,35 +23,11 @@ angular.module('contentful').controller('LinkEditorController',
   $scope.links = [];
   $scope.linkedEntities = [];
 
-  var linkType = linkParams.type;
-
   $scope.linkMultiple = linkParams.multiple;
   $scope.linkSingle   = !$scope.linkMultiple;
 
   initCache(linkParams.type);
-
-  var linkTypeValidation = _(validations)
-    .map(validation.Validation.parse)
-    .where({name: linkParams.validationType})
-    .first();
-
-  if(linkTypeValidation){
-    // TODO these should be methods passed along
-    if (linkType == 'Entry') {
-      $scope.linkContentTypes = _(linkTypeValidation.contentTypeId)
-        .map(function (id) { return $scope.spaceContext.getPublishedContentType(id); })
-        .compact()
-        .value();
-      // TODO This means the validation contains unpublished content  types.
-      // It should never happen but I don't know how to deal with it here
-      if ($scope.linkContentTypes.length === 0) $scope.linkContentTypes = null;
-    } else if (linkType == 'Asset') {
-      $scope.linkMimetypeGroup = linkTypeValidation.mimetypeGroupName;
-    }
-  } else {
-    $scope.linkContentTypes  = null;
-    $scope.linkMimetypeGroup = null;
-  }
+  initValidations();
 
   $scope.$watch('links', function (links, old, scope) {
     if (!links || links.length === 0) {
@@ -81,6 +57,7 @@ angular.module('contentful').controller('LinkEditorController',
       type: 'Link',
       linkType: linkParams.type,
       id: entity.getId() }};
+
     entityCache.save(entity);
 
     var cb, promise;
@@ -140,10 +117,7 @@ angular.module('contentful').controller('LinkEditorController',
 
   $scope.linkDescription = function(entity) {
     if (entity && !entity.isMissing && entity.getId()) {
-      // TODO this should be a method passed along
-      return linkType === 'Entry' ?
-        $scope.spaceContext.entryTitle(entity, $scope.locale.code) :
-        $scope.spaceContext.assetTitle(entity, $scope.locale.code) ;
+      return getLinkDescription(entity);
     } else {
       return '(Missing entity)';
     }
@@ -165,6 +139,16 @@ angular.module('contentful').controller('LinkEditorController',
 
   function initCache() {
     entityCache = new LinkEditorEntityCache($scope.spaceContext.space, linkParams.fetchMethod);
+  }
+
+  function initValidations() {
+    var linkTypeValidation = _(validations)
+      .map(validation.Validation.parse)
+      .where({name: linkParams.validationType})
+      .first();
+
+    if(linkTypeValidation)
+      setValidationType(linkTypeValidation);
   }
 
   function markMissing(entities) {
