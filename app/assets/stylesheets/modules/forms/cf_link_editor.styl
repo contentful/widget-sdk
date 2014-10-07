@@ -1,121 +1,110 @@
-//.form-field *[cf-link-editor]
-// TODO use a class for this
 *[cf-link-editor]
   display: block
   position: relative
   width: $form-controlwidth-inner
 
-  .drag-handle
-    position: absolute
-    font-size: 10px
-    color: $gray-light
-    cursor: -webkit-grabbing
-    cursor: -moz-grab
-    cursor: -moz-grabbing
-    &[disabled]
-      cursor: auto
-    padding-right: 10px
+.linked-entities
+  margin: 0 0 15px 0
 
-  .drag-file
-    position: absolute
+  .tooltip
+    width: 200px
+
+  .fa-times-circle
+    float: right
+    margin-top: 3px
+    margin-right: 6px
+    font-size: 1em
+    color: $blue-dark
+    &:hover
+      color: $gray-medium
+      cursor: pointer
+
+.linked-entities__item
+  $display-flexbox()
+  align-items: center
+  background-color: $gray-lighter
+  margin-bottom: 3px
+.asset-link
+  .linked-entities__item
+    border-top: none
+    border-bottom: none
+    background-color: none
+
+.linked-entities__handle
+  width: 4%
+  padding-top: 3px
+  padding-left: 7px
+  cursor: -webkit-grabbing
+  cursor: -moz-grab
+  cursor: -moz-grabbing
+  &[disabled]
+    cursor: auto
+  .fa-ellipsis-v
+    color: $gray
+    opacity: 0.7
+    font-size: 15px
+.asset-link
+  .linked-entities__handle
     top: 50%
     left: 20px
     font-size: 13px
     z-index: 10
 
-  .asset-link
-    border-top: none
-    border-bottom: none
-    li
-      padding-right: 0px
-      padding-left: 0px
+.linked-entities__info
+  width: 100%
+  position: relative
+  padding: 10px 7px 10px 4%
+  > a,
+  > span
+    float: left
+    width: 97%
+    overflow: hidden
+    white-space: nowrap
+    text-overflow: ellipsis
+    color: $base-font-color
+.linked-entities--with-handle
+  .linked-entities__info
+    width: 96%
+    padding-left: 7px
+.asset-link
+  .linked-entities__info
+    padding: 0
+  .file-info .file-preview
+    border: none
+    background: none
+    box-shadow: none
+    border-radius: 0
 
-  .unpublished
-    position: absolute
-    right: 0
-    top: 0
-    bottom: 0
-    width: 6px
-    background: lighten($orange, 10%)
 
-  .tooltip
-    width: 200px
+.linked-entities__unpublished
+  position: absolute
+  right: 0
+  top: 0
+  bottom: 0
+  width: 8px
+  background: $blue-light
 
-  .links li
-    position: relative
+.link-editor__controls
+  position: relative
+  $display-flexbox()
 
-.cf-link-editor-search
+.l-link-editor-search
   position: relative
 
-  .controls
-    position: relative
-    $display-flexbox()
-
-  .search-with-results
+  .l-search-w-autocomplete
     width: 80%
     float: left
 
   .add-new
     margin-left: auto
+  .add-new
+    .btn,
+    &.btn
+      padding-top: 7px
+      padding-bottom: 6px
 
   .endless-container
     max-height: 350px
     overflow-x: hidden
 
-  .results
-    top: 35px
-
-  table
-    border: none // border provided by .results container
-
-  .endless-container
-    table
-      border: none
-      border-bottom: none
-      border-top: none
-
-
-
-  tr:hover
-    background-color: $result-list-highlight
-    cursor: pointer
-
-  .result-list
-    .thin-row
-      td
-        padding-top: 4px
-        padding-bottom: 4px
-        line-height: 12px
-
-  .cell-content-type
-    width: 140px
-    padding-right: 15px
-    padding-left: 5px
-
-  .cell-preview
-    width: 80px
-    text-align: center
-    padding-left: 0
-    .icon
-      font-size: 40px
-    p
-      margin: 0
-
-  .cell-name
-    width: 40%
-    vertical-align: top
-    p
-      max-width: 200px
-      overflow-x: hidden
-      text-overflow: ellipsis
-      margin: 5px 0
-
-  .cell-type
-    color: $gray-darkest
-    width: 100px
-    vertical-align: top
-
-  .lighter
-    color: $gray-medium
-    font-weight: normal
 

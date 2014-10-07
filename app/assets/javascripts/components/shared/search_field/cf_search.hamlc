@@ -1,4 +1,4 @@
-.input
-  %input(type="search" ng-model="inner.term" placeholder="{{placeholder}}" ng-focus="searchFieldFocused()")
-.search-button(ng-click="updateFromButton()" tabindex="0")
+.search-field__input
+  %input.form-control(type="search" ng-model="inner.term" placeholder="{{placeholder}}" ng-focus="searchFieldFocused()")
+.search-field__button.btn.btn--tertiary(ng-click="updateFromButton()" tabindex="0")
   %i.fa.fa-search.fa-flip-horizontal

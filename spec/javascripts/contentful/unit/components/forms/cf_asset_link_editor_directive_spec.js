@@ -110,7 +110,7 @@ describe('cfAssetLinkEditor Directive', function () {
     });
 
     it('does not show links list', function () {
-      expect(element.find('.links')).toBeNgHidden();
+      expect(element.find('.linked-entities')).toBeNgHidden();
     });
 
     describe('if field type is array', function () {
@@ -121,7 +121,7 @@ describe('cfAssetLinkEditor Directive', function () {
       });
 
       it('shows cf-link-editor-search', function () {
-        expect(element.find('.cf-link-editor-search .controls')).not.toBeNgHidden();
+        expect(element.find('[cf-link-editor-search] .link-editor__controls')).not.toBeNgHidden();
       });
     });
 
@@ -133,7 +133,7 @@ describe('cfAssetLinkEditor Directive', function () {
       });
 
       it('drag-file is hidden because there is only one link', function () {
-        expect(element.find('.drag-handle')).toBeNgHidden();
+        expect(element.find('[cf-drag-handle]')).toBeNgHidden();
       });
     });
 
@@ -148,27 +148,19 @@ describe('cfAssetLinkEditor Directive', function () {
       });
 
       it('shows links list', function () {
-        expect(element.find('.links')).not.toBeNgHidden();
+        expect(element.find('.linked-entities')).not.toBeNgHidden();
       });
 
       it('does not show cf-link-editor-search', function () {
-        expect(element.find('.cf-link-editor-search')).toBeNgHidden();
+        expect(element.find('[cf-link-editor-search]')).toBeNgHidden();
       });
 
       it('has asset-link class on list', function () {
-        expect(element.find('.links')).toHaveClass('asset-link');
-      });
-
-      it('has asset-link class on list items', function () {
-        expect(element.find('.links li')).toHaveClass('asset-link');
-      });
-
-      it('has drag-file class on drag handle', function () {
-        expect(element.find('.drag-handle')).toHaveClass('drag-file');
+        expect(element.find('.linked-entities')).toHaveClass('asset-link');
       });
 
       it('drag-file is shown because there is multiple links', function () {
-        expect(element.find('.drag-handle')).not.toBeNgHidden();
+        expect(element.find('[cf-drag-handle]')).not.toBeNgHidden();
       });
 
       it('cf-file-info is shown', function () {

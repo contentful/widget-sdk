@@ -55,8 +55,8 @@
           .cf-field-editor.l-field-editor(ot-path="['fields', widget.field.id, locale.code]" cf-editor-entity="entry")
           .locale-label(ng-show="widget.locales.length > 1") {{locale.name}}
           .field-collaborators
-            %ul.field-list
-              %li.avatar.cf-user(ng-repeat="link in fieldPresence.users track by link.sys.id"
+            %ul.plain-list.field-list
+              %li.plain-list--item.avatar.cf-user(ng-repeat="link in fieldPresence.users track by link.sys.id"
                                  link="link" as="presenceUser"
                                  tooltip="{{presenceUser | userNameDisplay:user}}")
                 %img(ng-src="{{user.avatarUrl}}")
@@ -88,8 +88,8 @@
     %span(ng-show="presence.users.length == 0"
           tooltip="Edit collaboratively by inviting more users into your space. Go to Settings → Users → Invite New User to invite people.")
       No other users online
-    %ul(ng-show="presence.users.length > 0")
-      %li.avatar.cf-user(ng-repeat="link in presence.users track by link.sys.id"
+    %ul.plain-list(ng-show="presence.users.length > 0")
+      %li.plain-list--item.avatar.cf-user(ng-repeat="link in presence.users track by link.sys.id"
                          link="link" as="presenceUser"
                          tooltip="{{presenceUser | userNameDisplay:user}}")
         %img(ng-src="{{presenceUser.data.avatarUrl}}")

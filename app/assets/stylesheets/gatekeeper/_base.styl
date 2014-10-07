@@ -38,9 +38,15 @@
   font-weight: bold
   border-right: 1px solid $gray-light
   ul
-    $plain-list()
+    @extend .plain-list
     padding: 10px 0
     border-bottom: 1px solid $gray-light
+  li
+    @extend .plain-list--item
+    padding-top: 8px
+    padding-bottom: 8px
+    &.active a
+      color: $blue
   a
     color: black
     &:hover
@@ -48,11 +54,6 @@
   h3,
   li
     padding-left: 40px
-  li
-    padding-top: 8px
-    padding-bottom: 8px
-  li.active a
-    color: $blue
   h3
     font-size: 16px
     font-weight: bold

@@ -56,7 +56,7 @@ describe('cfEntryLinkEditor Directive', function () {
                            extra+
                            '></div>')(scope);
         scope.$digest();
-        searchField = element.find('.search-with-results');
+        searchField = element.find('.l-search-w-autocomplete');
       };
     });
   });
@@ -113,11 +113,11 @@ describe('cfEntryLinkEditor Directive', function () {
     });
 
     it('does not show links list', function () {
-      expect(element.find('.links')).toBeNgHidden();
+      expect(element.find('.linked-entities')).toBeNgHidden();
     });
 
     it('shows cf-link-editor-search', function () {
-      expect(element.find('.cf-link-editor-search .controls')).not.toBeNgHidden();
+      expect(element.find('[cf-link-editor-search] .link-editor__controls')).not.toBeNgHidden();
     });
 
     describe('has multiple links with no array field', function () {
@@ -137,43 +137,43 @@ describe('cfEntryLinkEditor Directive', function () {
       });
 
       it('shows links list', function () {
-        expect(element.find('.links')).not.toBeNgHidden();
+        expect(element.find('.linked-entities')).not.toBeNgHidden();
       });
 
       it('drag-file is shown because there is multiple links', function () {
-        expect(element.find('.drag-handle')).not.toBeNgHidden();
+        expect(element.find('[cf-drag-handle]')).not.toBeNgHidden();
       });
 
       it('cf-file-info is not shown', function () {
         expect(element.find('.cf-file-info').get(0)).toBeUndefined();
       });
 
-      it('entry-info is shown', function () {
-        expect(element.find('.entry-info').get(0)).toBeDefined();
+      it('linked-entities__info is shown', function () {
+        expect(element.find('.linked-entities__info').get(0)).toBeDefined();
       });
 
       it('link with description is shown for 1st entity', function () {
-        expect(element.find('.entry-info a').eq(0)).not.toBeNgHidden();
+        expect(element.find('.linked-entities__info a').eq(0)).not.toBeNgHidden();
       });
 
       it('link with description is shown for 2nd entity', function () {
-        expect(element.find('.entry-info a').eq(1)).not.toBeNgHidden();
+        expect(element.find('.linked-entities__info a').eq(1)).not.toBeNgHidden();
       });
 
       it('link with description is not shown for 3rd entity', function () {
-        expect(element.find('.entry-info a').eq(2)).toBeNgHidden();
+        expect(element.find('.linked-entities__info a').eq(2)).toBeNgHidden();
       });
 
       it('span with description is not shown for 1st entity', function () {
-        expect(element.find('.entry-info span').eq(0)).toBeNgHidden();
+        expect(element.find('.linked-entities__info span').eq(0)).toBeNgHidden();
       });
 
       it('span with description is not shown for 2nd entity', function () {
-        expect(element.find('.entry-info span').eq(1)).toBeNgHidden();
+        expect(element.find('.linked-entities__info span').eq(1)).toBeNgHidden();
       });
 
       it('span with description is shown for 3rd entity', function () {
-        expect(element.find('.entry-info span').eq(2)).not.toBeNgHidden();
+        expect(element.find('.linked-entities__info span').eq(2)).not.toBeNgHidden();
       });
 
       it('description method is called for first entity', function () {
@@ -189,15 +189,15 @@ describe('cfEntryLinkEditor Directive', function () {
       });
 
       it('first entity has no unpublished marker', function () {
-        expect(element.find('.entry-info .unpublished').eq(0)).toBeNgHidden();
+        expect(element.find('.linked-entities__info .linked-entities__unpublished').eq(0)).toBeNgHidden();
       });
 
       it('second entity has unpublished marker', function () {
-        expect(element.find('.entry-info .unpublished').eq(1)).not.toBeNgHidden();
+        expect(element.find('.linked-entities__info .linked-entities__unpublished').eq(1)).not.toBeNgHidden();
       });
 
       it('third entity has no unpublished marker', function () {
-        expect(element.find('.entry-info .unpublished').eq(2)).toBeNgHidden();
+        expect(element.find('.linked-entities__info .linked-entities__unpublished').eq(2)).toBeNgHidden();
       });
 
     });

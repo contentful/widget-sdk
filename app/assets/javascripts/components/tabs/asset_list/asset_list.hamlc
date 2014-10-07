@@ -10,7 +10,8 @@
 
 
   .tab-header__search.search-area
-    .search-with-results(cf-tokenized-search="tab.params.view.searchTerm"
+    .l-search-w-autocomplete(
+      cf-tokenized-search="tab.params.view.searchTerm"
       search-content-type="assetContentType"
       placeholder="Search for Assets")
 

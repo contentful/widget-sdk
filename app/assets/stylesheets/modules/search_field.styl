@@ -1,0 +1,60 @@
+.search-field
+  position: relative
+  width: 100%
+  height: $tab-header-field-height + 2px
+
+.search-field__input
+  $stretch(0, 35px, 0, 0)
+  .form-control
+    width: 100%
+    height: 100%
+    font-size: $base-font-size
+    border-top-right-radius: 0
+    border-bottom-right-radius: 0
+    border-right-width: 0
+  .form-control::-webkit-search-cancel-button
+    -webkit-appearance: none
+  .form-control::-webkit-search-cancel-button::after
+    font-family: 'FontAwesome'
+    content: "\f057";
+    color: red
+
+.search-field__button
+  position: absolute
+  top: 0
+  right: 0
+  bottom: 0
+  padding: 0 7px 0 9px
+  width: 35px
+  font-size: $base-font-size
+  line-height: $tab-header-field-height - 2px
+  cursor: pointer
+  &.btn
+    border-top-left-radius: 0
+    border-bottom-left-radius: 0
+  .fa-search
+    position: relative
+    top: 1px
+
+.search-area,
+.search-area--with-filter
+  .search-field
+    height: $tab-header-field-height
+  .search-field__button
+    background-color: $gray-lightest
+    box-shadow: 0 1px 3px rgba(255,255,255,0.8) inset
+    border-color: $gray-light
+    border-left: 1px solid $gray-light
+    border-radius: 0 20px 20px 0
+    &:active
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05) inset
+
+.search-area--with-filter
+  .search-field
+    border-left: none
+    border-top-left-radius: 0px
+    border-bottom-left-radius: 0px
+  .search-field__input
+    input[type="search"]
+      border-radius: 0px
+

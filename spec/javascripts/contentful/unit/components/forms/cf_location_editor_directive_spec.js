@@ -360,15 +360,15 @@ describe('cfLocationEditor Directive', function () {
     });
 
     it('results has 2 elements', function() {
-      expect(element.find('.results li').length).toBe(2);
+      expect(element.find('.search-results li').length).toBe(2);
     });
 
     it('first element is selected', function() {
-      expect(element.find('.results li').eq(0)).toHaveClass('selected');
+      expect(element.find('.search-results li').eq(0)).toHaveClass('selected');
     });
 
     it('second element is not selected', function() {
-      expect(element.find('.results li').eq(1)).not.toHaveClass('selected');
+      expect(element.find('.search-results li').eq(1)).not.toHaveClass('selected');
     });
   });
 

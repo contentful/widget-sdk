@@ -1,0 +1,33 @@
+.l-search-w-autocomplete
+  position: relative
+  width: 100%
+  .search-results.shrink-result-width
+    right: auto
+  .search-results
+    right: 35px
+    margin-right: 0
+
+.search-autocomplete-list
+  display: table
+  width: 100%
+  > li
+    display: table-row 
+    cursor: pointer
+  > li:hover
+    $highlight(lighten($blue, 20), 6%, 'darken')
+    color: white
+  .item-value
+    color: $gray
+  .selected,
+  .selected:hover
+    color: white
+    $highlight($blue)
+    > .item-value
+      color: white
+  .item-description
+    color: $gray-darkest
+  .item-value,
+  .item-description
+    padding: 2px 5px
+    display: table-cell
+
