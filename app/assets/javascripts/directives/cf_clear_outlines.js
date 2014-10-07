@@ -1,6 +1,6 @@
-angular.module('contentful').directive('cfClearOutlines', ['$document', function ($document) {
-  'use strict';
+'use strict';
 
+angular.module('contentful').directive('cfClearOutlines', ['$document', function ($document) {
   return {
     restrict: 'C',
     link: function () {

@@ -1,4 +1,5 @@
 'use strict';
+
 angular.module('contentful').directive('cfRatingEditor', ['$injector', function($injector){
   return {
     restrict: 'E',

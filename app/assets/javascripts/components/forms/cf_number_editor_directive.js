@@ -1,4 +1,5 @@
 'use strict';
+
 angular.module('contentful').directive('cfNumberEditor', function(){
   return {
     restrict: 'C',

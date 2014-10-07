@@ -1,8 +1,8 @@
+'use strict';
+
 angular.module('contentful').factory('cfSpinner', ['throttle', function (throttle) {
-  'use strict';
 
   var counter = 0;
-
   var increaseSpin = function () {
     counter++;
     //console.log('increase spinner', counter);

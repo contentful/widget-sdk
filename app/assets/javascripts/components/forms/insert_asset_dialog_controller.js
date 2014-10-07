@@ -1,4 +1,5 @@
 'use strict';
+
 angular.module('contentful').controller('InsertAssetDialogController', ['$scope', '$injector', function($scope, $injector){
   var $controller       = $injector.get('$controller');
   var keycodes          = $injector.get('keycodes');

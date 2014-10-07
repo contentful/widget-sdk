@@ -1,7 +1,8 @@
+'use strict';
+
 angular.module('contentful').controller('CreateSpaceDialogCtrl', [
   '$scope', 'client', 'notification', 'cfSpinner', 'enforcements', '$rootScope',
   function CreateSpaceDialogCtrl($scope, client, notification, cfSpinner, enforcements, $rootScope) {
-    'use strict';
 
     function resetNewSpaceData() {
       $scope.newSpaceData = _.cloneDeep({defaultLocale: 'en-US'});

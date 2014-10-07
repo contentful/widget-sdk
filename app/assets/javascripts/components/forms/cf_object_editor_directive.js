@@ -1,4 +1,5 @@
 'use strict';
+
 angular.module('contentful').directive('cfObjectEditor', ['defer', function(defer){
   return {
     restrict: 'C',

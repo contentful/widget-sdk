@@ -1,4 +1,5 @@
 'use strict';
+
 angular.module('contentful').directive('cfMarkdownEditor', ['$injector', function($injector){
   var $document   = $injector.get('$document');
   var $timeout    = $injector.get('$timeout');

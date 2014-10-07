@@ -1,5 +1,6 @@
+'use strict';
+
 angular.module('contentful').factory('TabList', ['$rootScope', 'analytics', 'modalDialog', function($rootScope, analytics, modalDialog){
-  'use strict';
 
   function TabList() {
     this.items = [];

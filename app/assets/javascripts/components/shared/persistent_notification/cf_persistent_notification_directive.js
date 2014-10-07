@@ -1,6 +1,6 @@
-angular.module('contentful').directive('cfPersistentNotification', ['$sce', 'throttle', function ($sce, throttle) {
-  'use strict';
+'use strict';
 
+angular.module('contentful').directive('cfPersistentNotification', ['$sce', 'throttle', function ($sce, throttle) {
   return {
     restrict: 'C',
     template: JST.cf_persistent_notification(),

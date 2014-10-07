@@ -1,6 +1,6 @@
-angular.module('contentful').directive('cfKnowledgeBaseIcon', ['analytics', function (analytics) {
-  'use strict';
+'use strict';
 
+angular.module('contentful').directive('cfKnowledgeBaseIcon', ['analytics', function (analytics) {
   return {
     restrict: 'C',
     template: JST.cf_knowledge_base_icon(),

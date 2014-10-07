@@ -1,4 +1,5 @@
 'use strict';
+
 angular.module('contentful').controller('MultipleValuesController', ['$scope', function MultipleValuesController($scope){
   this.valuesList = getValues($scope.field);
   this.selected   = {value: null};

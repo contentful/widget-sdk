@@ -1,4 +1,5 @@
 'use strict';
+
 angular.module('contentful').directive('cfDropdownEditor', function(){
   return {
     restrict: 'C',

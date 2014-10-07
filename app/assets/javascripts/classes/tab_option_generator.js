@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').factory('TabOptionsGenerator', function () {
-  
+
   function TabOptionsGenerator(clientScope) {
     this.clientScope = clientScope;
   }

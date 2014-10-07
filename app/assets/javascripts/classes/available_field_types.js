@@ -1,3 +1,4 @@
+'use strict';
 angular.module('contentful').
   constant('availableFieldTypes', [
     {
@@ -80,8 +81,6 @@ angular.module('contentful').
     }
   ]).
   factory('getFieldTypeName', ['availableFieldTypes', function(availableFieldTypes) {
-    'use strict';
-
     return function(field) {
       return _.result(_.find(availableFieldTypes, function(availableFieldType) {
         var fieldItemsType = dotty.get(field, 'items.type');

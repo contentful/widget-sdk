@@ -1,6 +1,6 @@
-angular.module('contentful').directive('cfLinkEditor', [function(){
-  'use strict';
+'use strict';
 
+angular.module('contentful').directive('cfLinkEditor', [function(){
   return {
     restrict: 'A',
     require: 'ngModel',
