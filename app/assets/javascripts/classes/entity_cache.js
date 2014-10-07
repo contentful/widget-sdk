@@ -56,25 +56,21 @@ angular.module('contentful').factory('EntityCache', ['$rootScope', '$q', 'logger
     },
 
     getLinkedEntities: function (entities) {
-      var lookup = $q.defer();
       var self = this;
       this.determineMissingEntityIds(entities);
 
       if(this.missingIds.length) {
-        this.params.space[this.fetchMethod]({
+        return this.params.space[this.fetchMethod]({
           'sys.id[in]': this.missingIds.join(','),
           limit: 250
-        }, function (err, linkedEntities) {
-          if (err) return lookup.reject(err);
+        })
+        .then(function(linkedEntities){
           self.missingIds = [];
           _.forEach(linkedEntities, self.save.bind(self));
-          lookup.resolve();
         });
       } else {
-        lookup.resolve();
+        return $q.when();
       }
-
-      return lookup.promise;
     },
 
     fieldIsDisplayed: function (fieldId) {

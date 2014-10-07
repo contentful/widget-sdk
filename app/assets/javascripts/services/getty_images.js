@@ -90,8 +90,8 @@ angular.module('contentful').factory('gettyImagesFactory', ['$http', '$q', 'clie
 
   function getNewToken (spaceId, result) {
     var path = 'getty_images/' + space.getOrganizationId();
-    client.getIntegrationToken(path, function (err, data) {
-      if (err) return result.reject(err);
+    client.getIntegrationToken(path)
+    .then(function(data){
       result.resolve(data.access_token);
       var expiresIn = parseInt(data.expires_in, 10);
       if (isNaN(expiresIn)) {
@@ -99,6 +99,9 @@ angular.module('contentful').factory('gettyImagesFactory', ['$http', '$q', 'clie
       }
       accessTokens[spaceId] = data.access_token;
       setTimeout(function () { delete accessTokens[spaceId]; }, 1000 * expiresIn);
+    })
+    .catch(function(err){
+      result.reject(err);
     });
   }
 

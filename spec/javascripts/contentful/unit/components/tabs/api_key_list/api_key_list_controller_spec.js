@@ -1,11 +1,12 @@
 'use strict';
 
 describe('API Key List Controller', function () {
-  var controller, scope, apiErrorHandler;
+  var controller, scope, apiErrorHandler, $q;
 
   beforeEach(function () {
     module('contentful/test');
-    inject(function ($rootScope, $controller, cfStub, ReloadNotification) {
+    inject(function ($rootScope, $controller, cfStub, ReloadNotification, _$q_) {
+      $q = _$q_;
       scope = $rootScope.$new();
       apiErrorHandler = ReloadNotification.apiErrorHandler;
 
@@ -39,8 +40,8 @@ describe('API Key List Controller', function () {
     var getApiKeysStub;
     beforeEach(function() {
       getApiKeysStub = sinon.stub(scope.spaceContext.space, 'getDeliveryApiKeys');
+      getApiKeysStub.returns($q.when({}));
       scope.refreshApiKeys();
-      getApiKeysStub.yield(null, {});
       scope.$apply();
     });
 
@@ -57,8 +58,8 @@ describe('API Key List Controller', function () {
     var getApiKeysStub;
     beforeEach(function() {
       getApiKeysStub = sinon.stub(scope.spaceContext.space, 'getDeliveryApiKeys');
+      getApiKeysStub.returns($q.reject({statusCode: 500}));
       scope.refreshApiKeys();
-      getApiKeysStub.yield({statusCode: 500}, null);
       scope.$apply();
     });
 

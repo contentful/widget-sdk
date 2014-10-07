@@ -1,7 +1,7 @@
 'use strict';
 
 describe('ContentType Actions Controller', function () {
-  var controller, scope, stubs;
+  var controller, scope, stubs, action;
   var space, contentType;
 
   beforeEach(function () {
@@ -26,10 +26,11 @@ describe('ContentType Actions Controller', function () {
       });
 
     });
-    inject(function ($controller, $rootScope, cfStub) {
+    inject(function ($controller, $rootScope, cfStub, $q) {
       space = cfStub.space('spaceid');
       var contentTypeData = cfStub.contentTypeData('type1');
       contentType = cfStub.contentType(space, 'typeid', 'typename');
+      action = $q.defer();
 
       scope = $rootScope.$new();
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
@@ -45,14 +46,15 @@ describe('ContentType Actions Controller', function () {
 
   describe('when deleting', function() {
     beforeEach(function() {
-      stubs.action = sinon.stub(contentType, 'delete');
+      stubs.action = sinon.stub(contentType, 'delete').returns(action.promise);
       stubs.removeContentType = sinon.stub(scope.spaceContext, 'removeContentType');
     });
 
     describe('fails with an error', function() {
       beforeEach(function() {
-        stubs.action.callsArgWith(0, {error: true});
-        scope['delete']();
+        action.reject({error: true});
+        scope.delete();
+        scope.$apply();
       });
 
       it('calls action', function() {
@@ -67,8 +69,9 @@ describe('ContentType Actions Controller', function () {
 
     describe('succeeds', function() {
       beforeEach(function() {
-        stubs.action.callsArgWith(0, null, {contentType: true});
-        scope['delete']();
+        action.resolve({contentType: true});
+        scope.delete();
+        scope.$apply();
       });
 
       it('calls action', function() {
@@ -91,13 +94,14 @@ describe('ContentType Actions Controller', function () {
 
   describe('when unpublishing', function() {
     beforeEach(function() {
-      stubs.action = sinon.stub(contentType, 'unpublish');
+      stubs.action = sinon.stub(contentType, 'unpublish').returns(action.promise);
     });
 
     describe('fails with an error', function() {
       beforeEach(function() {
-        stubs.action.callsArgWith(0, {body: {message: ''}});
+        action.reject({body: {message: ''}});
         scope.unpublish();
+        scope.$apply();
       });
 
       it('calls action', function() {
@@ -115,11 +119,12 @@ describe('ContentType Actions Controller', function () {
 
     describe('succeeds', function() {
       beforeEach(function() {
-        stubs.action.callsArgWith(0, null, {contentType: true});
+        action.resolve({contentType: true});
         scope.updatePublishedContentType = stubs.updatePublishedContentType;
         stubs.unregisterPublishedContentType = sinon.stub(scope.spaceContext, 'unregisterPublishedContentType');
         stubs.refreshContentTypes = sinon.stub(scope.spaceContext, 'refreshContentTypes');
         scope.unpublish();
+        scope.$apply();
       });
 
       it('calls action', function() {
@@ -150,15 +155,16 @@ describe('ContentType Actions Controller', function () {
 
   describe('when publishing', function() {
     beforeEach(function() {
-      stubs.action = sinon.stub(contentType, 'publish');
+      stubs.action = sinon.stub(contentType, 'publish').returns(action.promise);
       scope.validate = sinon.stub();
     });
 
     describe('fails due to validation', function() {
       beforeEach(function() {
-        stubs.action.callsArgWith(1, {body: {sys: {}}});
+        action.reject({body: {sys: {}}});
         scope.validate.returns(false);
         scope.publish();
+        scope.$apply();
       });
 
       it('calls validation', function() {
@@ -175,7 +181,7 @@ describe('ContentType Actions Controller', function () {
       var errors;
       beforeEach(function() {
         errors = {errors: true};
-        stubs.action.callsArgWith(1, {
+        action.reject({
           body: {
             sys: {
               id: 'ValidationFailed'
@@ -188,6 +194,7 @@ describe('ContentType Actions Controller', function () {
         scope.validate.returns(true);
         scope.setValidationErrors = sinon.stub();
         scope.publish();
+        scope.$apply();
       });
 
       it('calls validation', function() {
@@ -211,7 +218,7 @@ describe('ContentType Actions Controller', function () {
       var errors;
       beforeEach(function() {
         errors = {errors: true};
-        stubs.action.callsArgWith(1, {
+        action.reject({
           body: {
             sys: {
               id: 'VersionMismatch'
@@ -223,6 +230,7 @@ describe('ContentType Actions Controller', function () {
         });
         scope.validate.returns(true);
         scope.publish();
+        scope.$apply();
       });
 
       it('calls validation', function() {
@@ -246,7 +254,7 @@ describe('ContentType Actions Controller', function () {
       var errors;
       beforeEach(function() {
         errors = {errors: true};
-        stubs.action.callsArgWith(1, {
+        action.reject({
           body: {
             sys: {},
             message: 'remote error'
@@ -254,6 +262,7 @@ describe('ContentType Actions Controller', function () {
         });
         scope.validate.returns(true);
         scope.publish();
+        scope.$apply();
       });
 
       it('calls validation', function() {
@@ -276,12 +285,13 @@ describe('ContentType Actions Controller', function () {
 
     describe('succeeds', function() {
       beforeEach(function() {
-        stubs.action.callsArgWith(1, null, {contentType: true});
+        action.resolve({contentType: true});
         scope.validate.returns(true);
         scope.updatePublishedContentType = stubs.updatePublishedContentType;
         stubs.registerPublishedContentType = sinon.stub(scope.spaceContext, 'registerPublishedContentType');
         stubs.refreshContentTypes = sinon.stub(scope.spaceContext, 'refreshContentTypes');
         scope.publish();
+        scope.$apply();
       });
 
       it('calls validation', function() {

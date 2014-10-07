@@ -13,13 +13,13 @@ describe('The ApiKey list directive', function () {
       cfCanStubsProvider.setup(reasonsStub);
       $provide.removeDirectives('relative');
     });
-    inject(function ($rootScope, $compile, enforcements) {
+    inject(function ($rootScope, $compile, enforcements, $q) {
       scope = $rootScope.$new();
       scope.can = canStub;
       scope.spaceContext = {
         space: {
           data: {sys: {createdBy: {sys: {id: ''}}}},
-          getDeliveryApiKeys: sinon.stub()
+          getDeliveryApiKeys: sinon.stub().returns($q.defer().promise)
         }
       };
       enforcements.setSpaceContext(scope.spaceContext);

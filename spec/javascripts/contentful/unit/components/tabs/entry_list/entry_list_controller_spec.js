@@ -2,7 +2,7 @@
 
 describe('Entry List Controller', function () {
   var controller, scope;
-  var stubs;
+  var stubs, getEntries;
   var createController;
   var $q;
 
@@ -52,7 +52,8 @@ describe('Entry List Controller', function () {
       space.setUIConfig = stubs.setUIConfig;
       var contentTypeData = cfStub.contentTypeData('testType');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
-      sinon.stub(scope.spaceContext.space, 'getEntries');
+      getEntries = $q.defer();
+      sinon.stub(scope.spaceContext.space, 'getEntries').returns(getEntries.promise);
 
       createController = function() {
         controller = $controller('EntryListCtrl', {$scope: scope});
@@ -200,7 +201,7 @@ describe('Entry List Controller', function () {
       };
       createController();
       scope.$apply();
-      scope.spaceContext.space.getEntries.yield(null, entries);
+      getEntries.resolve(entries);
       stubs.switch = sinon.stub();
 
       scope.selection = {
@@ -216,7 +217,7 @@ describe('Entry List Controller', function () {
     it('sets entries num on the paginator', function() {
       scope.resetEntries();
       scope.$apply();
-      scope.spaceContext.space.getEntries.yield(null, entries);
+      getEntries.resolve(entries);
       expect(scope.paginator.numEntries).toEqual(30);
     });
 
@@ -229,7 +230,7 @@ describe('Entry List Controller', function () {
     it('switches the selection base set', function() {
       scope.resetEntries();
       scope.$apply();
-      scope.spaceContext.space.getEntries.yield(null, entries);
+      getEntries.resolve(entries);
       expect(stubs.switch).toBeCalled();
     });
 
@@ -243,7 +244,7 @@ describe('Entry List Controller', function () {
       it('with a defined limit', function() {
         scope.resetEntries();
         scope.$apply();
-        scope.spaceContext.space.getEntries.yield(null, entries);
+      getEntries.resolve(entries);
         expect(scope.spaceContext.space.getEntries.args[0][0].limit).toEqual(3);
       });
 
@@ -328,7 +329,7 @@ describe('Entry List Controller', function () {
 
       createController();
       scope.$apply();
-      scope.spaceContext.space.getEntries.yield(null, entries);
+      getEntries.resolve(entries);
       scope.$apply();
 
       entries = [];
@@ -349,7 +350,9 @@ describe('Entry List Controller', function () {
 
       scope.paginator.atLast = sinon.stub();
       scope.paginator.atLast.returns(false);
+      getEntries = $q.defer();
       scope.spaceContext.space.getEntries.reset();
+      scope.spaceContext.space.getEntries.returns(getEntries.promise);
     });
 
     it('doesnt load if on last page', function() {
@@ -390,7 +393,7 @@ describe('Entry List Controller', function () {
         scope.paginator.page = 1;
         scope.loadMore();
         scope.$apply();
-        scope.spaceContext.space.getEntries.yield(null, entries);
+        getEntries.resolve(entries);
         scope.$apply();
       });
 
@@ -415,7 +418,7 @@ describe('Entry List Controller', function () {
       scope.paginator.page = 2;
       scope.loadMore();
       scope.$apply();
-      scope.spaceContext.space.getEntries.yield(null, entries);
+      getEntries.resolve(entries);
       scope.$apply();
       expect(scope.entries).toEqual(['a', 'b', 'c']);
     });
@@ -424,7 +427,7 @@ describe('Entry List Controller', function () {
       beforeEach(function() {
         scope.loadMore();
         scope.$apply();
-        scope.spaceContext.space.getEntries.yield(null, null);
+        getEntries.resolve(null);
         scope.$apply();
       });
 
@@ -449,14 +452,14 @@ describe('Entry List Controller', function () {
 
     it('should cause resetEntries to show an error message', function () {
       scope.resetEntries();
-      scope.spaceContext.space.getEntries.yield({statusCode: 500}, null);
+      getEntries.reject({statusCode: 500});
       scope.$apply();
       expect(apiErrorHandler).toBeCalled();
     });
 
     it('should cause loadMore to show an error message', function () {
       scope.loadMore();
-      scope.spaceContext.space.getEntries.yield({statusCode: 500}, null);
+      getEntries.reject({statusCode: 500});
       scope.$apply();
       expect(apiErrorHandler).toBeCalled();
     });

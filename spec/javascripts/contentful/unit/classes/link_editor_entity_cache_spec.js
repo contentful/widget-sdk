@@ -48,7 +48,7 @@ describe('LinkEditor entity cache', function(){
         expect(entities[4].getId()).toBe(11);
         expect(entities[5].getId()).toBe(12);
       });
-      space.getEntries.yield(null, _.first(remotes, 4));
+      space.getEntries.returns(_.first(remotes, 4));
     });
     
     it('should make a call to the space', function () {
@@ -64,8 +64,8 @@ describe('LinkEditor entity cache', function(){
       .then(function (entities) {
         expect(entities.length).toBe(300);
       });
-      space.getEntries.yield(null, makeEntities(  0, 200));
-      space.getEntries.yield(null, makeEntities(200, 300));
+      space.getEntries.returns(makeEntities(  0, 200));
+      space.getEntries.returns(makeEntities(200, 300));
       expect(space.getEntries.calledTwice).toBe(true);
     });
   });

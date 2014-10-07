@@ -13,21 +13,18 @@ angular.module('contentful').controller('UiConfigController', ['$scope', '$q', '
   $scope.saveUiConfig = function() {
     if (!$scope.canEditUiConfig) return $q.reject('Not allowed');
     // TODO client-side verification
-    var callback = $q.callback();
-    $scope.spaceContext.space.setUIConfig($scope.uiConfig, callback);
-    callback.promise.then(function (config) {
+    return $scope.spaceContext.space.setUIConfig($scope.uiConfig)
+    .then(function (config) {
       $scope.uiConfig = config;
       return $scope.uiConfig;
     }, function () {
       loadUiConfig();
     });
-    return callback.promise;
   };
 
   function loadUiConfig() {
-    var callback = $q.callback();
-    $scope.spaceContext.space.getUIConfig(callback);
-    callback.promise.then(function (config) {
+    return $scope.spaceContext.space.getUIConfig()
+    .then(function (config) {
       $scope.uiConfig = config;
       return config;
     }, function (err) {
@@ -39,7 +36,6 @@ angular.module('contentful').controller('UiConfigController', ['$scope', '$q', '
         logger.logServerError('Could not load UIConfig', err);
       }
     });
-    return callback.promise;
   }
 
 }]);

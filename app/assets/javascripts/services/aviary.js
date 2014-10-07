@@ -72,12 +72,7 @@ angular.module('contentful').factory('aviary', ['$window', 'environment', '$q', 
     }
 
     function getIntegrationToken() {
-      var token = $q.defer();
-      client.getIntegrationToken('aviary', function (err, data) {
-        if(err) token.reject(err);
-        else token.resolve(data);
-      });
-      return token.promise;
+      return client.getIntegrationToken('aviary');
     }
 
     return {

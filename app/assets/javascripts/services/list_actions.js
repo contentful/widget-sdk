@@ -1,8 +1,12 @@
 'use strict';
 
-angular.module('contentful').factory('listActions', [
-  '$q', '$timeout', '$rootScope', 'notification', 'analytics', 'cfSpinner',
-  function($q, $timeout, $rootScope, notification, analytics, cfSpinner){
+angular.module('contentful').factory('listActions', ['$injector', function($injector){
+  var $q           = $injector.get('$q');
+  var $rootScope   = $injector.get('$rootScope');
+  var $timeout     = $injector.get('$timeout');
+  var analytics    = $injector.get('analytics');
+  var cfSpinner    = $injector.get('cfSpinner');
+  var notification = $injector.get('notification');
 
   var RETRY_TIMEOUT = 1000;
 
@@ -37,24 +41,9 @@ angular.module('contentful').factory('listActions', [
       };
     },
 
-    callAction: function (entity, params, deferred) {
+    callAction: function (entity, params) {
       var self = this;
-      var args = [function(err, changedEntity){
-        if(err){
-          if(err.statusCode === ERRORS.TOO_MANY_REQUESTS)
-            $timeout(_.partial(self.callAction, entity, params, deferred), RETRY_TIMEOUT);
-          else if(err.statusCode === ERRORS.NOT_FOUND){
-            entity.setDeleted();
-            $rootScope.$broadcast('entityDeleted', entity);
-            deferred.resolve();
-          } else
-            deferred.reject({err: err});
-        } else {
-          if(params.event)
-            $rootScope.$broadcast(params.event, changedEntity);
-          deferred.resolve();
-        }
-      }];
+      var args = [];
 
       if(params.getterForMethodArgs){
         args.unshift.apply(args, _.map(params.getterForMethodArgs, function (getter) {
@@ -62,7 +51,21 @@ angular.module('contentful').factory('listActions', [
         }));
       }
 
-      entity[params.method].apply(entity, args);
+      return entity[params.method].apply(entity, args)
+      .then(function(changedEntity){
+        if(params.event)
+          $rootScope.$broadcast(params.event, changedEntity);
+      })
+      .catch(function(err){
+        if(err.statusCode === ERRORS.TOO_MANY_REQUESTS)
+          return $timeout(_.partial(self.callAction, entity, params), RETRY_TIMEOUT);
+        else if(err.statusCode === ERRORS.NOT_FOUND){
+          entity.setDeleted();
+          $rootScope.$broadcast('entityDeleted', entity);
+          return $q.when();
+        } else
+          return $q.reject({err: err});
+      });
     },
 
     perform: function(params) {
@@ -72,19 +75,21 @@ angular.module('contentful').factory('listActions', [
       var results = [];
 
       var actionCalls = _.map(selected, function (entity, idx, selected) {
-        var deferred = $q.defer();
         var stopSpinner = cfSpinner.start();
 
         var handler = function actionHandler(res) {
           stopSpinner();
           results.push(res || {});
           var next = actionCalls[idx+1];
-          if(next) next(res);
+          if(next) next();
           else self.handlePerformResult(results, params, selected.length);
         };
 
-        deferred.promise.then(handler).catch(handler);
-        return _.partial(actionCallback, entity, params, deferred);
+        return function actionCall(){
+          actionCallback(entity, params)
+          .then(handler)
+          .catch(handler);
+        };
       });
 
       if(actionCalls.length) {
@@ -136,5 +141,4 @@ angular.module('contentful').factory('listActions', [
       return new BatchPerformer(params);
     }
   };
-  }]
-);
+}]);

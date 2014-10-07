@@ -19,9 +19,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
     },
 
     save: function (editingInterface) {
-      var cb = $q.callback();
-      editingInterface.save(cb);
-      return cb.promise
+      return editingInterface.save()
       .then(function (interf) {
         notification.info('Configuration saved successfully');
         return interf;
@@ -62,9 +60,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
     if (contentType.getId() === 'asset') {
       return $q.when(assetInterface(contentType));
     } else {
-      var cb = $q.callback();
-      contentType.getEditingInterface(interfaceId, cb);
-      return cb.promise;
+      return contentType.getEditingInterface(interfaceId);
     }
   }
 

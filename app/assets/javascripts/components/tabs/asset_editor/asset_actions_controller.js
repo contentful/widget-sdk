@@ -7,46 +7,48 @@ angular.module('contentful').controller('AssetActionsCtrl', ['$scope', 'notifica
     return '"' + $scope.spaceContext.assetTitle($scope.asset) + '"';
   }
 
-  $scope['delete'] = function () {
-    $scope.asset['delete'](function (err, asset) {
-      if (err) {
-        notification.serverError('Error deleting Asset', err);
-      }else{
-        notification.info('Asset deleted successfully');
-        $scope.broadcastFromSpace('entityDeleted', asset);
-      }
+  $scope.delete = function () {
+    $scope.asset.delete()
+    .then(function(asset){
+      notification.info('Asset deleted successfully');
+      $scope.broadcastFromSpace('entityDeleted', asset);
+    })
+    .catch(function(err){
+      notification.serverError('Error deleting Asset', err);
     });
   };
 
   $scope.archive = function() {
-    $scope.asset.archive(function(err) {
-      if (err) {
-        notification.warn('Error archiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-        logger.logServerError('Error archiving asset', err);
-      } else
-        notification.info(title() + ' archived successfully');
+    $scope.asset.archive()
+    .then(function(){
+      notification.info(title() + ' archived successfully');
+    })
+    .catch(function(err){
+      notification.warn('Error archiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
+      logger.logServerError('Error archiving asset', err);
     });
   };
 
   $scope.unarchive = function() {
-    $scope.asset.unarchive(function(err) {
-      if (err) {
-        notification.warn('Error unarchiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-        logger.logServerError('Error unarchiving asset', err);
-      } else
-        notification.info(title() + ' unarchived successfully');
+    $scope.asset.unarchive()
+    .then(function(){
+      notification.info(title() + ' unarchived successfully');
+    })
+    .catch(function(err){
+      notification.warn('Error unarchiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
+      logger.logServerError('Error unarchiving asset', err);
     });
   };
 
   $scope.unpublish = function () {
-    $scope.asset.unpublish(function (err) {
-      if (err) {
-        notification.warn('Error unpublishing ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-        logger.logServerError('Error unpublishing asset', err);
-      } else {
-        notification.info(title() + ' unpublished successfully');
-        $scope.otUpdateEntity();
-      }
+    $scope.asset.unpublish()
+    .then(function(){
+      notification.info(title() + ' unpublished successfully');
+      $scope.otUpdateEntity();
+    })
+    .catch(function(err){
+      notification.warn('Error unpublishing ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
+      logger.logServerError('Error unpublishing asset', err);
     });
   };
 
@@ -56,20 +58,20 @@ angular.module('contentful').controller('AssetActionsCtrl', ['$scope', 'notifica
       notification.warn('Error publishing ' + title() + ': ' + 'Validation failed');
       return;
     }
-    $scope.asset.publish(version, function (err) {
-      if (err) {
-        var errorId = dotty.get(err, 'body.sys.id');
-        if (errorId === 'ValidationFailed') {
-          $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
-          notification.warn('Error publishing ' + title() + ': Validation failed');
-        } else if (errorId === 'VersionMismatch'){
-          notification.warn('Error publishing ' + title() + ': Can only publish most recent version');
-        } else {
-          notification.serverError('Error publishing asset: ' + errorId, err);
-        }
+    $scope.asset.publish(version)
+    .then(function(){
+      $scope.asset.setPublishedVersion(version);
+      notification.info(title() + ' published successfully');
+    })
+    .catch(function(err){
+      var errorId = dotty.get(err, 'body.sys.id');
+      if (errorId === 'ValidationFailed') {
+        $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
+        notification.warn('Error publishing ' + title() + ': Validation failed');
+      } else if (errorId === 'VersionMismatch'){
+        notification.warn('Error publishing ' + title() + ': Can only publish most recent version');
       } else {
-        $scope.asset.setPublishedVersion(version);
-        notification.info(title() + ' published successfully');
+        notification.serverError('Error publishing asset: ' + errorId, err);
       }
     });
   };

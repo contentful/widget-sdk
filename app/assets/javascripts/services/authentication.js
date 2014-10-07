@@ -112,9 +112,8 @@ angular.module('contentful').provider('authentication', ['$injector', function A
         return $q.defer().promise; // never resolved lol
       }
       var self = this;
-      var cb = $q.callback();
-      this.client.getTokenLookup(cb);
-      return cb.promise.then(function (data) {
+      return this.client.getTokenLookup()
+      .then(function (data) {
         // Data === undefined is in cases of notmodified
         if (data !== undefined) self.setTokenLookup(data);
         return self.tokenLookup;

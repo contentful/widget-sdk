@@ -65,6 +65,7 @@ angular.module('contentful').controller('SpaceCtrl',
     }[source];
   }
 
+
   function makeEntityResponseHandler(params) {
     return function entityResponseHandler(err, entity) {
       if (!err) {
@@ -90,30 +91,20 @@ angular.module('contentful').controller('SpaceCtrl',
   }
 
   $scope.createEntry = function(contentType, source) {
-    var scope = this;
-    scope.spaceContext.space.createEntry(
-      contentType.getId(),
-      {},
-      makeEntityResponseHandler({
-        source: source,
-        entityType: 'entry',
-        entitySubType: contentType.getId(),
-        navigatorHandler: 'entryEditor',
-        errorMessage: 'Could not create Entry'
-      })
-    );
+    var handler = makeEntityResponseHandler({
+      source: source,
+      entityType: 'entry',
+      entitySubType: contentType.getId(),
+      navigatorHandler: 'entryEditor',
+      errorMessage: 'Could not create Entry'
+    });
+
+    $scope.spaceContext.space.createEntry(contentType.getId(), {})
+    .then(_.partial(handler, null), handler);
   };
 
   $scope.createAsset = function(source) {
-    var scope = this;
-    var data = {
-      sys: {
-        type: 'Asset'
-      },
-      fields: {}
-    };
-
-    scope.spaceContext.space.createAsset(data, makeEntityResponseHandler({
+    var handler = makeEntityResponseHandler({
       source: source,
       entityType: 'asset',
       entitySubType: function (entity) {
@@ -121,35 +112,35 @@ angular.module('contentful').controller('SpaceCtrl',
       },
       navigatorHandler: 'assetEditor',
       errorMessage: 'Could not create Asset'
-    }));
+    });
+    var data = { sys: { type: 'Asset' }, fields: {} };
+
+    $scope.spaceContext.space.createAsset(data)
+    .then(_.partial(handler, null), handler);
   };
 
   $scope.createContentType = function(source) {
-    var scope = this;
-    var data = {
-      sys: {},
-      fields: [],
-      name: ''
-    };
-    scope.spaceContext.space.createContentType(data, makeEntityResponseHandler({
+    var handler = makeEntityResponseHandler({
       source: source,
       entityType: 'contentType',
       navigatorHandler: 'contentTypeEditor',
       errorMessage: 'Could not create Content Type'
-    }));
+    });
+    var data = { sys: {}, fields: [], name: '' };
+    $scope.spaceContext.space.createContentType(data)
+    .then(_.partial(handler, null), handler);
   };
 
   $scope.createApiKey = function(source) {
-    var scope = this;
     var usage = enforcements.computeUsage('apiKey');
     if(usage){
       return notification.serverError(usage, {});
     }
-    var apiKey = scope.spaceContext.space.createBlankDeliveryApiKey();
-    scope.navigator.apiKeyEditor(apiKey).openAndGoTo();
+    var apiKey = $scope.spaceContext.space.createBlankDeliveryApiKey();
+    $scope.navigator.apiKeyEditor(apiKey).openAndGoTo();
     analytics.track(getEventSource(source), {
-      currentSection: scope.spaceContext.tabList.currentSection(),
-      currentViewType: scope.spaceContext.tabList.currentViewType(),
+      currentSection: $scope.spaceContext.tabList.currentSection(),
+      currentViewType: $scope.spaceContext.tabList.currentViewType(),
       entityType: 'apiKey'
     });
   };

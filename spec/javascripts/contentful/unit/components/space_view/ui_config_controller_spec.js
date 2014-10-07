@@ -1,15 +1,17 @@
 'use strict';
 
 describe('UiConfigController', function () {
-  var scope, controller;
+  var scope, controller, get, set;
 
   beforeEach(module('contentful/test'));
-  beforeEach(inject(function ($controller, $rootScope) {
+  beforeEach(inject(function ($controller, $rootScope, $q) {
     scope = $rootScope.$new();
+    get = $q.defer();
+    set = $q.defer();
     scope.spaceContext = {
       space: {
-        getUIConfig: sinon.stub(),
-        setUIConfig: sinon.stub(),
+        getUIConfig: sinon.stub().returns(get.promise),
+        setUIConfig: sinon.stub().returns(set.promise),
         isAdmin: sinon.stub().returns(true)
       }
     };
@@ -23,13 +25,13 @@ describe('UiConfigController', function () {
   describe('loading a space', function () {
     describe('loads ui config', function() {
       it('initializes a non existing config', function() {
-        scope.spaceContext.space.getUIConfig.yield({statusCode: 404}, null);
+        get.reject({statusCode: 404});
         scope.$apply();
         expect(scope.uiConfig).toEqual({});
       });
 
       it('loads an existing config', function() {
-        scope.spaceContext.space.getUIConfig.yield(null, 'config');
+        get.resolve('config');
         scope.$apply();
         expect(scope.uiConfig).toBe('config');
       });
@@ -38,7 +40,7 @@ describe('UiConfigController', function () {
 
   describe('unloading a space', function () {
     beforeEach(function () {
-      scope.spaceContext.space.getUIConfig.yield(null, 'config');
+      get.resolve('config');
       scope.$apply();
       expect(scope.uiConfig).toBe('config');
     });
@@ -63,16 +65,16 @@ describe('UiConfigController', function () {
       scope.saveUiConfig().then(function (config) {
         expect(config).toBe('config');
       });
-      scope.spaceContext.space.setUIConfig.yield(null, 'config');
+      set.resolve('config');
       scope.$apply();
       expect(scope.uiConfig).toBe('config');
     });
 
     it('should load ui config on failure', function () {
       scope.saveUiConfig();
-      scope.spaceContext.space.setUIConfig.yield('error', null);
+      set.reject('error');
       scope.$apply();
-      scope.spaceContext.space.getUIConfig.yield(null, 'oldConfig');
+      get.resolve('oldConfig');
       scope.$apply();
       expect(scope.uiConfig).toBe('oldConfig');
     });

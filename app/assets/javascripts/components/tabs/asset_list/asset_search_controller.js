@@ -26,7 +26,9 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
     if (resetPage) this.paginator.page = 0;
     return buildQuery()
     .then(function (query) {
-      return assetLoader.loadCallback($scope.spaceContext.space, 'getAssets', query);
+      return assetLoader.loadPromise(function(){
+        return $scope.spaceContext.space.getAssets(query);
+      });
     })
     .then(function (assets) {
       controller.paginator.numEntries = assets.total;
@@ -44,7 +46,9 @@ angular.module('contentful').controller('AssetSearchController', ['$scope', '$in
     .then(function (query) {
       analytics.track('Scrolled AssetList');
       queryForDebug = query;
-      return assetLoader.loadCallback($scope.spaceContext.space, 'getAssets', query);
+      return assetLoader.loadPromise(function(){
+        return $scope.spaceContext.space.getAssets(query);
+      });
     })
     .then(function (assets) {
       if(!assets){

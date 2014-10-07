@@ -31,12 +31,10 @@ angular.module('contentful').factory('LinkEditorEntityCache', ['$injector', func
       return !!this._cache[id];
     },
     _resolveBatch: function (ids) {
-      var cb = $q.callback();
-      this._space[this._fetchMethod]({
+      return this._space[this._fetchMethod]({
         'sys.id[in]': ids.join(','),
         limit: 1000
-      }, cb);
-      return cb.promise;
+      });
     },
     _resolveAll: function (ids) {
       var self = this;

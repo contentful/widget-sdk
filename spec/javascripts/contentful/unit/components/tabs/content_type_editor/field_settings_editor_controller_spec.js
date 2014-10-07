@@ -478,7 +478,7 @@ describe('Field Settings Editor Controller', function () {
             field = deletedField;
             done();
           });
-          scope['delete']();
+          scope.delete();
         });
 
         it('gets otdoc', function() {
@@ -509,7 +509,7 @@ describe('Field Settings Editor Controller', function () {
       describe('update fails', function() {
         beforeEach(function() {
           stubs.remove.callsArgWith(0, {});
-          scope['delete']();
+          scope.delete();
         });
 
         it('does not update ot entity', function() {

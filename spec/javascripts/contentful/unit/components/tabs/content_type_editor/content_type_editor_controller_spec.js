@@ -1,7 +1,7 @@
 'use strict';
 
 describe('ContentTypeEditor Controller', function () {
-  var scope, controller;
+  var scope, controller, $q;
   var space, contentType;
   var modifiedContentTypeStub, serverErrorStub;
   beforeEach(function () {
@@ -17,10 +17,11 @@ describe('ContentTypeEditor Controller', function () {
       });
     });
 
-    inject(function ($rootScope, $controller, cfStub){
+    inject(function ($rootScope, $controller, cfStub, $injector){
       scope = $rootScope.$new();
       space = cfStub.space('space');
       contentType = cfStub.contentType(space, 'contentType', 'Content Type');
+      $q = $injector.get('$q');
 
       scope.tab = {
         params: {
@@ -59,11 +60,9 @@ describe('ContentTypeEditor Controller', function () {
     var publishedCT;
     beforeEach(inject(function (cfStub){
       var newContentType = cfStub.contentType(space, 'contentType2', 'Content Type 2');
-      newContentType.getPublishedStatus = sinon.stub();
       publishedCT = {published:true};
+      newContentType.getPublishedStatus = sinon.stub().returns($q.when(publishedCT));
       scope.contentType = newContentType;
-      scope.$apply();
-      newContentType.getPublishedStatus.yield(null, publishedCT);
       scope.$apply();
     }));
 

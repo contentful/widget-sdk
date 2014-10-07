@@ -2,7 +2,7 @@
 
 describe('API key editor controller', function () {
 
-  var scope, stubs;
+  var scope, stubs, $q;
   var apiKeyEditorCtrl;
   var apiKey;
 
@@ -35,7 +35,8 @@ describe('API key editor controller', function () {
         logServerError: stubs.logServerError
       });
     });
-    inject(function (_$rootScope_, $controller) {
+    inject(function (_$rootScope_, $controller, _$q_) {
+      $q = _$q_;
       scope = _$rootScope_;
 
       scope.tab = {
@@ -59,6 +60,7 @@ describe('API key editor controller', function () {
       scope.tab.params.apiKey = apiKey;
 
       stubs.getName.returns('apiKeyName');
+      stubs.createPreviewApiKey.returns($q.defer().promise);
 
       apiKeyEditorCtrl = $controller('ApiKeyEditorCtrl', {$scope: scope});
       scope.$apply();
@@ -128,8 +130,9 @@ describe('API key editor controller', function () {
 
   describe('deletes an api key', function () {
     beforeEach(function () {
-      stubs.delete.callsArg(0);
-      scope['delete']();
+      stubs.delete.returns($q.when());
+      scope.delete();
+      scope.$apply();
     });
 
     it('info notification is shown', function () {
@@ -146,8 +149,9 @@ describe('API key editor controller', function () {
 
   describe('fails to delete an api key', function () {
     beforeEach(function () {
-      stubs.delete.callsArgWith(0, {});
-      scope['delete']();
+      stubs.delete.returns($q.reject({}));
+      scope.delete();
+      scope.$apply();
     });
 
     it('error notification is shown', function () {
@@ -166,7 +170,7 @@ describe('API key editor controller', function () {
       apiKeyEditorStub.returns({
         goTo: goToStub
       });
-      stubs.save.callsArg(0);
+      stubs.save.returns($q.when());
 
       scope.apiKeyForm = {
         '$setPristine': pristineStub
@@ -175,6 +179,7 @@ describe('API key editor controller', function () {
         apiKeyEditor: apiKeyEditorStub
       };
       scope.save();
+      scope.$apply();
     });
 
     it('info notification is shown', function () {
@@ -199,8 +204,9 @@ describe('API key editor controller', function () {
 
   describe('fails to save an api key', function () {
     beforeEach(function () {
-      stubs.save.callsArgWith(0, {});
+      stubs.save.returns($q.reject({}));
       scope.save();
+      scope.$apply();
     });
 
     it('error notification is shown', function () {

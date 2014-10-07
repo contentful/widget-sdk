@@ -9,16 +9,16 @@ angular.module('contentful').
       getAll: function(space) {
         if (!_.isEmpty(cache)) return $q.when(cache);
 
-        if (inflight) return inflight.promise;
-
-        inflight = $q.callback();
-        space.getUsers(null, inflight);
-        return inflight.promise.then(function (users) {
-          _.forEach(users, function(user) {
-            cache[user.getId()] = user;
-          });
-          inflight = false;
-        });
+        if (!inflight) {
+          inflight = space.getUsers(null)
+            .then(function (users) {
+              _.forEach(users, function(user) {
+                cache[user.getId()] = user;
+              });
+              inflight = false;
+            });
+        }
+        return inflight;
       },
 
       get: function (space, id) {

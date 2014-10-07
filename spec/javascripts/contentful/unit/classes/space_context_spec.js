@@ -129,10 +129,8 @@ describe('SpaceContext class with a space', function () {
     beforeEach(function () {
       privateLocales = ['privateLocales'];
       defaultLocale = {code: 'en-US'};
-      spaceContext.space.getPrivateLocales = sinon.stub();
-      spaceContext.space.getPrivateLocales.returns(privateLocales);
-      spaceContext.space.getDefaultLocale = sinon.stub();
-      spaceContext.space.getDefaultLocale.returns(defaultLocale);
+      spaceContext.space.getPrivateLocales = sinon.stub().returns(privateLocales);
+      spaceContext.space.getDefaultLocale  = sinon.stub().returns(defaultLocale);
       spaceContext.refreshActiveLocales = sinon.stub();
       spaceContext.refreshLocales();
     });
@@ -225,17 +223,17 @@ describe('SpaceContext class with a space', function () {
                            { displayField: 'title' }),
         cfStub.contentType(space, 'content_type2', 'contentType2')
       ];
-      spaceContext.space.getContentTypes = getContentTypes = sinon.stub();
-      spaceContext.space.getPublishedContentTypes = getPublishedContentTypes = sinon.stub();
+      spaceContext.space.getContentTypes = getContentTypes = sinon.stub().returns($q.defer().promise);
+      spaceContext.space.getPublishedContentTypes = getPublishedContentTypes = sinon.stub().returns($q.defer().promise);
     });
 
     it('refreshes content types', function () {
       var refreshPublishedContentTypesSpy = sinon.spy(spaceContext, 'refreshPublishedContentTypes');
 
+      getContentTypes.returns($q.when(contentTypes.concat().reverse()));
+      getPublishedContentTypes.returns($q.when(contentTypes));
       spaceContext.refreshContentTypes();
-      getContentTypes.yield(null, contentTypes.concat().reverse());
       rootScope.$apply();
-      getPublishedContentTypes.yield(null, contentTypes);
       expect(spaceContext.contentTypes[0].getName()).toEqual('contentType1');
       expect(refreshPublishedContentTypesSpy).toBeCalled();
     });
@@ -251,7 +249,7 @@ describe('SpaceContext class with a space', function () {
       inject(function (ReloadNotification) {
         handler = ReloadNotification.apiErrorHandler;
       });
-      sinon.stub(spaceContext._contentTypeLoader, 'loadCallback').returns($q.reject({statusCode: 500}));
+      sinon.stub(spaceContext._contentTypeLoader, 'loadPromise').returns($q.reject({statusCode: 500}));
       spaceContext.refreshContentTypes();
       rootScope.$apply();
       expect(handler).toBeCalled();
@@ -265,8 +263,8 @@ describe('SpaceContext class with a space', function () {
       });
 
       it('has content types', function () {
+        getPublishedContentTypes.returns($q.when(contentTypes));
         spaceContext.refreshPublishedContentTypes();
-        getPublishedContentTypes.yield(null, contentTypes);
         rootScope.$apply();
         expect(spaceContext.publishedContentTypes.length).toBeGreaterThan(0);
         expect(spaceContext.publishedContentTypes[0].getName()).toEqual('contentType1');
@@ -274,16 +272,16 @@ describe('SpaceContext class with a space', function () {
 
       it('merges context types from client and server together', function () {
         spaceContext.publishedContentTypes = [ contentTypes[0] ];
+        getPublishedContentTypes.returns($q.when(contentTypes));
         spaceContext.refreshPublishedContentTypes();
-        getPublishedContentTypes.yield(null, contentTypes);
         rootScope.$apply();
         expect(spaceContext.publishedContentTypes.length).toBe(2);
       });
 
       it('does not include deleted published content Types', function () {
         sinon.stub(contentTypes[1], 'isDeleted').returns(true);
+        getPublishedContentTypes.returns($q.when(contentTypes));
         spaceContext.refreshPublishedContentTypes();
-        getPublishedContentTypes.yield(null, contentTypes);
         rootScope.$apply();
         expect(spaceContext.publishedContentTypes.length).toBe(1);
         expect(_.contains(spaceContext.publishedContentTypes, contentTypes[1])).toBe(false);
@@ -297,8 +295,8 @@ describe('SpaceContext class with a space', function () {
 
       it('removes a content type', function () {
         // TODO test this without refresh calls
+        getContentTypes.returns($q.when(contentTypes));
         spaceContext.refreshContentTypes();
-        getContentTypes.yield(null, contentTypes);
         rootScope.$apply();
         spaceContext.removeContentType(contentTypes[0]);
         expect(spaceContext.contentTypes[0].getName()).toEqual('contentType2');
@@ -306,10 +304,10 @@ describe('SpaceContext class with a space', function () {
 
       it('gets a published type for a given entry', function () {
         // TODO test this without refresh calls
+        getContentTypes.returns($q.when(contentTypes));
+        getPublishedContentTypes.returns($q.when(contentTypes));
         spaceContext.refreshContentTypes();
-        getContentTypes.yield(null, contentTypes);
         rootScope.$apply();
-        getPublishedContentTypes.yield(null, contentTypes);
         var entry = cfStub.entry(space, 'entry2', 'content_type1');
         expect(spaceContext.publishedTypeForEntry(entry)).toBe(contentTypes[0]);
       });
@@ -320,10 +318,9 @@ describe('SpaceContext class with a space', function () {
           entry = cfStub.entry(space, 'entry1',
                                'content_type1',
                                { title: { 'en-US': 'the title' } });
+          getContentTypes.returns($q.when(contentTypes.concat().reverse()));
+          getPublishedContentTypes.returns($q.when(contentTypes.concat().reverse()));
           spaceContext.refreshContentTypes();
-          getContentTypes.yield(null, contentTypes.concat().reverse());
-          rootScope.$apply();
-          getPublishedContentTypes.yield(null, contentTypes.concat().reverse());
           rootScope.$apply();
         });
 
@@ -506,10 +503,11 @@ describe('SpaceContext class with a space', function () {
 
 
 describe('SpaceContext resolving missing ContentTypes', function () {
-  var spaceContext, scope, entry;
+  var spaceContext, scope, entry, $q;
 
   beforeEach(module('contentful/test'));
-  beforeEach(inject(function ($rootScope, SpaceContext) {
+  beforeEach(inject(function ($rootScope, SpaceContext, _$q_) {
+    $q = _$q_;
     scope = $rootScope;
     spaceContext = new SpaceContext(); // Not passing argument to avoid initializing the locales
     spaceContext.space = {};
@@ -535,16 +533,15 @@ describe('SpaceContext resolving missing ContentTypes', function () {
 
   it('should mark a published type as not missing after retrieval', function () {
     spaceContext._publishedContentTypeIsMissing['foo'] = true;
-    spaceContext.space.getPublishedContentTypes = sinon.stub();
-    spaceContext.refreshPublishedContentTypes();
-    spaceContext.space.getPublishedContentTypes.yield(null, [
+    spaceContext.space.getPublishedContentTypes = sinon.stub().returns($q.when([
       {
         getName: function(){return '';},
         getId: function () { return 'foo'; },
         isDeleted: sinon.stub().returns(false),
         data: { sys: {id: 'foo'} }
       }
-    ]);
+    ]));
+    spaceContext.refreshPublishedContentTypes();
     scope.$apply();
     expect(spaceContext._publishedContentTypeIsMissing['foo']).toBeFalsy();
   });
