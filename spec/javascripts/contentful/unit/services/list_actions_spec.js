@@ -91,8 +91,8 @@ describe('List Actions Service', function () {
         entity.getVersion.returns(2);
         this.promise = performer.callAction(entity, params)
         .then(
-          (function(res){ this.result = res; }).bind(this),
-          (function(err){ this.error  = err; }).bind(this)
+          _.bind(function(res){ this.result = res; }, this),
+          _.bind(function(err){ this.error  = err; }, this)
         );
       });
 
