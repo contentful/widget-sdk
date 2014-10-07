@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Authentication service', function () {
-  var authentication, $rootScope;
+  var authentication, $rootScope, $q;
   var cookiesSetStub, cookiesGetStub, cookiesDelStub;
   var stubs;
 
@@ -43,9 +43,10 @@ describe('Authentication service', function () {
 
       authenticationProvider.setEnvVars();
     });
-    inject(function (_$rootScope_, _authentication_) {
+    inject(function (_$rootScope_, _authentication_, _$q_) {
       $rootScope = _$rootScope_;
       authentication = _authentication_;
+      $q = _$q_;
 
       cookiesSetStub = sinon.stub($.cookies, 'set');
       cookiesGetStub = sinon.stub($.cookies, 'get');
@@ -313,8 +314,8 @@ describe('Authentication service', function () {
       var tokenLookup, errorResponse;
       beforeEach(function () {
         errorResponse = {error: 'response'};
+        clientTokenLookupStub.returns($q.reject(errorResponse));
         tokenLookup = authentication.getTokenLookup();
-        clientTokenLookupStub.yield(errorResponse);
         $rootScope.$apply();
       });
 
@@ -339,11 +340,12 @@ describe('Authentication service', function () {
       var tokenLookup, tokenLookupObj, dataResponse, setTokenStub;
       beforeEach(function () {
         dataResponse = {token: 'lookup'};
-        clientTokenLookupStub.callsArgWith(0, null, dataResponse);
+        clientTokenLookupStub.returns($q.when(dataResponse));
         setTokenStub = sinon.stub(authentication, 'setTokenLookup');
         tokenLookupObj = {parsed: 'lookup'};
         authentication.tokenLookup = tokenLookupObj;
         tokenLookup = authentication.getTokenLookup();
+        $rootScope.$apply();
       });
 
       it('client token lookup is called', function () {

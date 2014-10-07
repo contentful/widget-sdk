@@ -2,13 +2,11 @@
 
 angular.module('contentful').
   controller('ApiKeyListCtrl', ['$scope', '$injector', function($scope, $injector) {
-    var $q                 = $injector.get('$q');
     var ReloadNotification = $injector.get('ReloadNotification');
 
     $scope.refreshApiKeys = function() {
-      var cb = $q.callback();
-      $scope.spaceContext.space.getDeliveryApiKeys({limit: 1000}, cb);
-      return cb.promise.then(function (apiKeys) {
+      return $scope.spaceContext.space.getDeliveryApiKeys({limit: 1000})
+      .then(function (apiKeys) {
         $scope.apiKeys = apiKeys;
       })
       .catch(ReloadNotification.apiErrorHandler);

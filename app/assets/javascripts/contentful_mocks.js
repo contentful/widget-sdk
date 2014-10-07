@@ -3,28 +3,45 @@
 
 var mocks = angular.module('contentful/mocks', []);
 
-mocks.factory('TestingAdapter', function ($rootScope) {
-  function Adapter() { }
+mocks.factory('TestingAdapter', function ($q) {
+  function Adapter() {
+    this.requests = [];
+  }
 
   Adapter.prototype = {
-    request: function (options, callback) {
-      this._lastRequest = {
+    requests: null, // initialized in constructor
+
+    request: function(options) {
+      var self = this;
+      var deferred = $q.defer();
+      self.requests.push({
         options: options,
-        callback: callback
-      };
-    },
-
-    respondWith: function () {
-      var args = arguments;
-      var callback = this._lastRequest.callback;
-      this._lastRequest = null;
-      $rootScope.$apply(function(){
-        callback.apply(null, args);
+        resolve: _.bind(deferred.resolve, deferred),
+        reject:  _.bind(deferred.reject , deferred)
       });
+      return deferred.promise;
     },
 
-    reset: function () {
-      this._lastRequest = null;
+    resolve: function (value) {
+      var req = this.requests.shift();
+      req.resolve(value);
+    },
+
+    resolveLast: function(value) {
+      var req = this.requests.pop();
+      this.requests.length = 0;
+      req.resolve(value);
+    },
+
+    reject: function (error) {
+      var req = this.requests.shift();
+      req.reject(error);
+    },
+
+    rejectLast: function(value) {
+      var req = this.requests.pop();
+      this.requests.length = 0;
+      req.resolve(value);
     }
   };
 
@@ -32,6 +49,7 @@ mocks.factory('TestingAdapter', function ($rootScope) {
 });
 
 mocks.factory('cfStub', function ($injector) {
+  var $rootScope       = $injector.get('$rootScope');
   var SpaceContext     = $injector.get('SpaceContext');
   var contentfulClient = $injector.get('contentfulClient');
   var Adapter          = $injector.get('TestingAdapter');
@@ -63,10 +81,11 @@ mocks.factory('cfStub', function ($injector) {
     id = id || 'testSpace';
     var client = new Client(adapter);
     var testSpace;
-    client.getSpace(id, function (err, space) {
+    client.getSpace(id)
+    .then(function(space) {
       testSpace = space;
     });
-    adapter.respondWith(null, _.merge({
+    adapter.resolveLast(_.merge({
       sys: {
         id: id,
         createdBy: { sys: {id: 123} }
@@ -80,26 +99,29 @@ mocks.factory('cfStub', function ($injector) {
         subscriptionPlan: {limits: {}}
       }
     }, extraData || {}));
+    $rootScope.$apply();
     return testSpace;
   };
 
   cfStub.spaceContext = function (space, contentTypes) {
     var spaceContext = new SpaceContext(space);
     spaceContext.refreshContentTypes();
-    adapter.respondWith(null, {
+    adapter.resolveLast({
       sys: {
         type: 'Array'
       },
       items: contentTypes,
       total: contentTypes.length
     });
-    adapter.respondWith(null, {
+    $rootScope.$apply();
+    adapter.resolveLast({
       sys: {
         type: 'Array'
       },
       items: contentTypes,
       total: contentTypes.length
     });
+    $rootScope.$apply();
     return spaceContext;
   };
 
@@ -122,16 +144,16 @@ mocks.factory('cfStub', function ($injector) {
 
   cfStub.contentType = function (space, id, name, fields, extraData) {
     var contentType;
-    space.getContentType(id, function (err, res) {
+    space.getContentType(id)
+    .then(function(res){
       contentType = res;
     });
     var data = cfStub.contentTypeData(id, fields, {
       name: name,
-      sys: {
-        version: 1
-      }
+      sys: { version: 1 }
     });
-    adapter.respondWith(null, _.merge(data, extraData || {}));
+    adapter.resolveLast(_.merge(data, extraData || {}));
+    $rootScope.$apply();
     return contentType;
   };
 
@@ -148,10 +170,11 @@ mocks.factory('cfStub', function ($injector) {
   cfStub.entry = function (space, id, contentTypeId, fields, extraData) {
     fields = fields || {};
     var entry;
-    space.getEntry(id, function (err, res) {
+    space.getEntry(id)
+    .then(function (res) {
       entry = res;
     });
-    adapter.respondWith(null, _.merge({
+    adapter.resolveLast(_.merge({
       fields: fields,
       sys: {
         id: id,
@@ -166,15 +189,16 @@ mocks.factory('cfStub', function ($injector) {
         }
       }
     }, extraData || {}));
+    $rootScope.$apply();
     return entry;
   };
 
   cfStub.asset = function (space, id, fields, extraData) {
     var asset;
-    space.getAsset(id, function (err, res) {
+    space.getAsset(id).then(function (res) {
       asset = res;
     });
-    adapter.respondWith(null, _.merge({
+    adapter.resolveLast(_.merge({
       sys: {
         id: id,
         type: 'Asset',
@@ -186,15 +210,16 @@ mocks.factory('cfStub', function ($injector) {
         file: {}
       }, fields || {})
     }, extraData || {}));
+    $rootScope.$apply();
     return asset;
   };
 
   cfStub.apiKey = function (space, id, name, extraData) {
     var apiKey;
-    space.getDeliveryApiKey(id, function (err, res) {
+    space.getDeliveryApiKey(id).then(function (res) {
       apiKey = res;
     });
-    adapter.respondWith(null, _.merge({
+    adapter.resolveLast(_.merge({
       name: name,
       sys: {
         id: id,
@@ -202,6 +227,7 @@ mocks.factory('cfStub', function ($injector) {
         type: 'ApiKey',
       }
     }, extraData || {}));
+    $rootScope.$apply();
     return apiKey;
   };
 

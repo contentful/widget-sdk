@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Asset List Controller', function () {
-  var controller, scope, stubs, $q, $rootScope;
+  var controller, scope, stubs, $q, $rootScope, getAssets;
 
   var makeAsset = function (sys) {
     var asset;
@@ -20,7 +20,7 @@ describe('Asset List Controller', function () {
       stubs = $provide.makeStubs([
         'archived',
         'track',
-        'loadCallback',
+        'getAssets',
         'then',
         'logError',
         'pickMultiple',
@@ -53,12 +53,12 @@ describe('Asset List Controller', function () {
 
     });
     inject(function ($injector) {
-      $rootScope = $injector.get('$rootScope');
-      $q = $injector.get('$q');
-      var $controller = $injector.get('$controller');
-      var cfStub = $injector.get('cfStub');
-      var PromisedLoader = $injector.get('PromisedLoader');
+      $rootScope         = $injector.get('$rootScope');
+      $q                 = $injector.get('$q');
+      var $controller    = $injector.get('$controller');
+      var cfStub         = $injector.get('cfStub');
 
+      getAssets = $q.defer();
       scope = $rootScope.$new();
 
       scope.tab = {
@@ -69,10 +69,8 @@ describe('Asset List Controller', function () {
       var contentTypeData = cfStub.contentTypeData('testType');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
 
-      stubs.loadCallback = sinon.stub(PromisedLoader.prototype, 'loadCallback');
-      stubs.loadCallback.returns({
-        then: stubs.then
-      });
+      stubs.getAssets.returns(getAssets.promise);
+      space.getAssets = stubs.getAssets;
 
       controller = $controller('AssetListCtrl', {$scope: scope});
     });
@@ -80,7 +78,6 @@ describe('Asset List Controller', function () {
 
 
   afterEach(inject(function ($log) {
-    stubs.loadCallback.restore();
     $log.assertEmpty();
   }));
 
@@ -165,7 +162,7 @@ describe('Asset List Controller', function () {
       assets = {
         total: 30
       };
-      stubs.then.callsArgWith(0, assets);
+      getAssets.resolve(assets);
 
       scope.selection = {
         switchBaseSet: stubs.switch
@@ -179,7 +176,7 @@ describe('Asset List Controller', function () {
     it('loads assets', function() {
       scope.searchController.resetAssets();
       scope.$apply();
-      expect(stubs.loadCallback).toBeCalled();
+      expect(stubs.getAssets).toBeCalled();
     });
 
     it('sets assets num on the paginator', function() {
@@ -206,55 +203,55 @@ describe('Asset List Controller', function () {
         scope.tab.params.list = 'all';
         scope.searchController.resetAssets();
         scope.$apply();
-        expect(stubs.loadCallback.args[0][2].order).toEqual('-sys.updatedAt');
+        expect(stubs.getAssets.args[0][0].order).toEqual('-sys.updatedAt');
       });
 
       it('with a defined limit', function() {
         scope.searchController.resetAssets();
         scope.$apply();
-        expect(stubs.loadCallback.args[0][2].limit).toEqual(3);
+        expect(stubs.getAssets.args[0][0].limit).toEqual(3);
       });
 
       it('with a defined skip param', function() {
         scope.searchController.resetAssets();
         scope.$apply();
-        expect(stubs.loadCallback.args[0][2].skip).toBeTruthy();
+        expect(stubs.getAssets.args[0][0].skip).toBeTruthy();
       });
 
       // TODO these tests should go into a test for the search query helper
       it('for all list', function() {
         scope.searchController.resetAssets();
         scope.$apply();
-        expect(stubs.loadCallback.args[0][2]['sys.archivedAt[exists]']).toBe('false');
+        expect(stubs.getAssets.args[0][0]['sys.archivedAt[exists]']).toBe('false');
       });
 
       it('for published list', function() {
         scope.tab.params.view.searchTerm = 'status:published';
         scope.searchController.resetAssets();
         scope.$apply();
-        expect(stubs.loadCallback.args[0][2]['sys.publishedAt[exists]']).toBe('true');
+        expect(stubs.getAssets.args[0][0]['sys.publishedAt[exists]']).toBe('true');
       });
 
       it('for changed list', function() {
         scope.tab.params.view.searchTerm = 'status:changed';
         scope.searchController.resetAssets();
         scope.$apply();
-        expect(stubs.loadCallback.args[0][2]['sys.archivedAt[exists]']).toBe('false');
-        expect(stubs.loadCallback.args[0][2].changed).toBe('true');
+        expect(stubs.getAssets.args[0][0]['sys.archivedAt[exists]']).toBe('false');
+        expect(stubs.getAssets.args[0][0].changed).toBe('true');
       });
 
       it('for archived list', function() {
         scope.tab.params.view.searchTerm = 'status:archived';
         scope.searchController.resetAssets();
         scope.$apply();
-        expect(stubs.loadCallback.args[0][2]['sys.archivedAt[exists]']).toBe('true');
+        expect(stubs.getAssets.args[0][0]['sys.archivedAt[exists]']).toBe('true');
       });
 
       it('for search term', function() {
         scope.tab.params.view.searchTerm = 'term';
         scope.searchController.resetAssets();
         scope.$apply();
-        expect(stubs.loadCallback.args[0][2].query).toBe('term');
+        expect(stubs.getAssets.args[0][0].query).toBe('term');
       });
     });
   });
@@ -275,7 +272,7 @@ describe('Asset List Controller', function () {
     var apiErrorHandler;
     beforeEach(inject(function (ReloadNotification){
       apiErrorHandler = ReloadNotification.apiErrorHandler;
-      stubs.loadCallback.returns($q.reject({statusCode: 500}));
+      stubs.getAssets.returns($q.reject({statusCode: 500}));
     }));
 
     it('should cause resetAssets to show an error message', function () {
@@ -317,7 +314,7 @@ describe('Asset List Controller', function () {
     it('doesnt load if on last page', function() {
       scope.searchController.paginator.atLast.returns(true);
       scope.searchController.loadMore();
-      expect(stubs.loadCallback).not.toBeCalled();
+      expect(stubs.getAssets).not.toBeCalled();
     });
 
     it('paginator count is increased', function() {
@@ -329,7 +326,7 @@ describe('Asset List Controller', function () {
     it('gets query params', function () {
       scope.searchController.loadMore();
       scope.$apply();
-      expect(stubs.loadCallback.args[0][2]).toBeDefined();
+      expect(stubs.getAssets.args[0][0]).toBeDefined();
     });
 
     it('should work on the page before the last', function () {
@@ -338,7 +335,7 @@ describe('Asset List Controller', function () {
       scope.searchController.paginator.page = 0;
       scope.searchController.loadMore();
       scope.$apply();
-      expect(stubs.loadCallback).toBeCalled();
+      expect(stubs.getAssets).toBeCalled();
     });
 
     it('triggers analytics event', function () {
@@ -349,7 +346,8 @@ describe('Asset List Controller', function () {
 
     describe('on successful load response', function() {
       beforeEach(function() {
-        stubs.then.callsArgWith(0, assets);
+        getAssets.resolve(assets);
+        scope.$apply();
         scope.searchController.paginator.page = 1;
         scope.searchController.loadMore();
       });
@@ -372,10 +370,10 @@ describe('Asset List Controller', function () {
 
     describe('on failed load response', function() {
       beforeEach(function() {
-        stubs.loadCallback.returns(assets);
+        getAssets.resolve(assets);
         scope.searchController.paginator.page = 1;
         scope.$apply(); //trigger resetAssets
-        stubs.loadCallback.returns(null);
+        stubs.getAssets.returns($q.when());
         scope.searchController.loadMore();
         scope.$apply(); //trigger loadMore promises
       });
@@ -392,7 +390,8 @@ describe('Asset List Controller', function () {
     describe('on previous page', function() {
       beforeEach(function() {
         scope.$apply(); // trigger resetAssets
-        stubs.then.callsArg(1);
+        getAssets.reject();
+        scope.$apply();
         scope.searchController.paginator.page = 1;
         scope.searchController.loadMore();
         scope.$apply();
@@ -470,19 +469,20 @@ describe('Asset List Controller', function () {
       stubs.parseFPFile.returns({fileName: 'file_name.jpg'});
       entity = {process: stubs.process, getVersion: stubs.getVersion, publish: stubs.publish};
 
+
+      scope.spaceContext.space.createAsset
+        .onCall(0).returns($q.when(entity))
+        .onCall(1).returns($q.when(entity));
+      stubs.publish
+        .onCall(0).returns($q.when())
+        .onCall(1).returns($q.when());
+      stubs.process
+        .onCall(0).returns($q.when())
+        .onCall(1).returns($q.when())
+        .onCall(2).returns($q.when())
+        .onCall(3).returns($q.when());
+
       scope.createMultipleAssets();
-      $rootScope.$apply();
-      scope.spaceContext.space.createAsset.yield(null, entity);
-      $rootScope.$apply();
-      scope.spaceContext.space.createAsset.yield(null, entity);
-      $rootScope.$apply();
-      stubs.process.yield();
-      $rootScope.$apply();
-      stubs.process.yield();
-      $rootScope.$apply();
-      stubs.publish.yield();
-      $rootScope.$apply();
-      stubs.publish.yield();
       $rootScope.$apply();
     });
 

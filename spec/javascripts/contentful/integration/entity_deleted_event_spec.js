@@ -53,7 +53,8 @@ describe('Entry list controller events', function () {
     beforeEach(inject(function (cfStub) {
       childScope.selection.toggle(removedEntity);
       childScope.deleteSelected();
-      cfStub.adapter.respondWith(null, null);
+      cfStub.adapter.resolveLast(null);
+      scope.$apply();
     }));
 
     it('has 2 entries after deletion', function () {
@@ -71,8 +72,9 @@ describe('Entry list controller events', function () {
 
   describe('handles an entityDeleted event from EntryActions controller', function () {
     beforeEach(inject(function (cfStub) {
-      childScope['delete']();
-      cfStub.adapter.respondWith(null, null);
+      childScope.delete();
+      cfStub.adapter.resolveLast(null);
+      scope.$apply();
     }));
 
     it('closes the tab', function () {
@@ -130,8 +132,9 @@ describe('Content Type Actions controller events', function () {
       scope.$digest();
       childScope.$digest();
 
-      childScope['delete']();
-      cfStub.adapter.respondWith(null, {name: 'contentType', sys: {}});
+      childScope.delete();
+      cfStub.adapter.resolveLast({name: 'contentType', sys: {}});
+      scope.$apply();
     });
   });
 
@@ -151,48 +154,42 @@ describe('ApiKey List controller events', function () {
 
   var spaceCtrl, apiKeyListCtrl, apiKeyEditorCtrl;
   var scope, childScope;
-  var closeStub, apiKeysStub;
-  var removedEntity;
 
   beforeEach(function () {
     module('contentful/test');
-    inject(function ($rootScope, $controller, cfStub) {
+    inject(function ($rootScope, $controller, cfStub, $q) {
       scope = $rootScope.$new();
       var space = cfStub.space('test');
       var contentTypeData = cfStub.contentTypeData('testType');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
-      removedEntity = cfStub.apiKey(space, 'apikey2', 'apiKey 2');
+      var removedEntity = cfStub.apiKey(space, 'apikey2', 'apiKey 2');
       var apiKeys = [
         cfStub.apiKey(space, 'apikey1', 'apiKey 1'),
         removedEntity,
         cfStub.apiKey(space, 'apikey3', 'apiKey 3')
       ];
 
-      apiKeysStub = sinon.stub();
-      apiKeysStub.callsArgWith(1, null, apiKeys);
-      scope.spaceContext.space.getDeliveryApiKeys = apiKeysStub;
+      scope.spaceContext.space.getDeliveryApiKeys = sinon.stub().returns($q.when(apiKeys));
 
       scope.apiKey = removedEntity;
-      closeStub = sinon.stub();
       scope.tab = {
-        close: closeStub,
+        close: sinon.stub(),
         params: {
           apiKey: removedEntity
         }
       };
 
       // Space Controller necessary for space broadcast method
-      spaceCtrl = $controller('SpaceCtrl', {$scope: scope});
-
+      spaceCtrl      = $controller('SpaceCtrl', {$scope: scope});
       apiKeyListCtrl = $controller('ApiKeyListCtrl', {$scope: scope});
 
       childScope = scope.$new();
       apiKeyEditorCtrl = $controller('ApiKeyEditorCtrl', {$scope: childScope});
-      scope.$digest();
-      childScope.$digest();
+      scope.$apply();
 
-      childScope['delete']();
-      cfStub.adapter.respondWith(null, null);
+      childScope.delete();
+      cfStub.adapter.resolveLast(null);
+      scope.$apply();
     });
   });
 
@@ -201,7 +198,7 @@ describe('ApiKey List controller events', function () {
   }));
 
   it('handles an entityDeleted event from ApiKeyEditor controller', function () {
-    expect(closeStub).toBeCalled();
+    expect(scope.tab.close).toBeCalled();
   });
 
   it('number of apikeys is now 2', function () {

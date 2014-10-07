@@ -3,15 +3,14 @@
 describe('cfLinkEditorSearch Controller', function () {
   var cfLinkEditorSearchCtrl;
   var scope, stubs;
-  var space;
+  var space, attrs;
   var $q;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'serverError',
-        'loadCallback',
-        'then'
+        'loadPromise'
       ]);
       $provide.value('notification', {
         serverError: stubs.serverError
@@ -25,12 +24,10 @@ describe('cfLinkEditorSearch Controller', function () {
       var contentTypeData = cfStub.contentTypeData('content_type1');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
 
-      stubs.loadCallback = sinon.stub(PromisedLoader.prototype, 'loadCallback');
-      stubs.loadCallback.returns({
-        then: stubs.then
-      });
 
-      var attrs = {
+      stubs.loadPromise = sinon.stub(PromisedLoader.prototype, 'loadPromise').returns($q.defer().promise);
+
+      attrs = {
         addEntity: 'addLink(entity)',
         ngShow: '__visible',
         entityType: 'linkType',
@@ -43,7 +40,7 @@ describe('cfLinkEditorSearch Controller', function () {
   });
 
   afterEach(inject(function ($log) {
-    stubs.loadCallback.restore();
+    stubs.loadPromise.restore();
     $log.assertEmpty();
   }));
 
@@ -168,8 +165,8 @@ describe('cfLinkEditorSearch Controller', function () {
       describe('successfully', function() {
         beforeEach(function() {
           scope.addLink.returns($q.when(null));
+          createEntityStub.returns($q.when(entity));
           scope['addNew'+uppercasedEntityType](contentType);
-          createEntityStub.yield(null, entity);
           scope.$apply();
         });
 
@@ -203,8 +200,8 @@ describe('cfLinkEditorSearch Controller', function () {
       describe('fails on create'+uppercasedEntityType, function() {
         beforeEach(function() {
           scope.addLink.returns($q.when(null));
+          createEntityStub.returns($q.reject({}));
           scope['addNew'+uppercasedEntityType](contentType);
-          createEntityStub.yield({});
           scope.$apply();
         });
 
@@ -235,10 +232,9 @@ describe('cfLinkEditorSearch Controller', function () {
         beforeEach(function() {
           scope.addLink.returns($q.reject({}));
           sinon.stub(entity, 'delete');
+          createEntityStub.returns($q.when(entity));
+          entity.delete.returns($q.when());
           scope['addNew'+uppercasedEntityType](contentType);
-          createEntityStub.yield(null, entity);
-          scope.$apply();
-          entity.delete.yield(null);
           scope.$apply();
         });
 
@@ -276,10 +272,9 @@ describe('cfLinkEditorSearch Controller', function () {
         beforeEach(function() {
           scope.addLink.returns($q.reject({}));
           sinon.stub(entity, 'delete');
+          createEntityStub.returns($q.when(entity));
           scope['addNew'+uppercasedEntityType](contentType);
-          createEntityStub.yield(null, entity);
-          scope.$apply();
-          entity.delete.yield({});
+          entity.delete.returns($q.reject({}));
           scope.$apply();
         });
 
@@ -325,16 +320,20 @@ describe('cfLinkEditorSearch Controller', function () {
     it('should still be tested');
   });
   describe('_buildQuery', function () {
-    var query;
+    var query, getterMethod;
 
     function performQuery() {
-      stubs.loadCallback.reset();
+      stubs.loadPromise.restore();
       cfLinkEditorSearchCtrl._loadEntities();
+      sinon.spy(scope.spaceContext.space, getterMethod);
       scope.$apply();
-      query = stubs.loadCallback.args[0][2];
+      query = scope.spaceContext.space[getterMethod].args[0][0];
     }
 
     beforeEach(function () {
+      scope.linkType = 'Entry';
+      getterMethod = 'getEntries';
+      scope.$apply();
       scope.paginator.pageLength = 3;
       scope.paginator.skipItems = sinon.stub();
       scope.paginator.skipItems.returns(true);
@@ -356,7 +355,6 @@ describe('cfLinkEditorSearch Controller', function () {
     });
 
     it('for linked content type', function() {
-      scope.linkType = 'Entry';
       scope.linkContentTypes = [{
         getName: sinon.stub().returns('123 Type'),
         getId:   sinon.stub().returns(123)
@@ -368,6 +366,7 @@ describe('cfLinkEditorSearch Controller', function () {
 
     it('for mimetype group', function() {
       scope.linkType = 'Asset';
+      getterMethod = 'getAssets';
       scope.linkMimetypeGroup = 'files';
       scope.$apply();
       performQuery();
@@ -446,7 +445,7 @@ describe('cfLinkEditorSearch Controller', function () {
     it('doesnt load if on last page', function() {
       scope.paginator.atLast.returns(true);
       cfLinkEditorSearchCtrl.loadMore();
-      expect(stubs.loadCallback).not.toBeCalled();
+      expect(stubs.loadPromise).not.toBeCalled();
     });
 
     it('paginator count is increased', function() {

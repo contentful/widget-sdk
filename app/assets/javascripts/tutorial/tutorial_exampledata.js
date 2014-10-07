@@ -19,7 +19,7 @@ angular.module('contentful').factory('tutorialExampledata', ['$q', 'environment'
     },
 
     switchToTutorialSpace: function (clientScope, tries) {
-      var ccb, newSpaceId, self = this;
+      var newSpaceId, self = this;
       var tutorialSpace = _.find(clientScope.spaces, function (space) {
         var isTutorialSpace = space.data.tutorial;
         var isCurrentUsersSpace = space.data.sys.createdBy.sys.id === clientScope.user.sys.id;
@@ -39,8 +39,8 @@ angular.module('contentful').factory('tutorialExampledata', ['$q', 'environment'
       if (!tutorialOrg) return $q.reject();
 
       // Run Space creation
-      client.createSpace({name: 'Playground', tutorial: true}, tutorialOrg.sys.id, ccb = $q.callback());
-      return ccb.promise.then(function (newSpace) {
+      return client.createSpace({name: 'Playground', tutorial: true}, tutorialOrg.sys.id)
+      .then(function (newSpace) {
         newSpaceId = newSpace.getId();
         return clientScope.performTokenLookup();
       }).then(function () {
@@ -68,9 +68,7 @@ angular.module('contentful').factory('tutorialExampledata', ['$q', 'environment'
       then(function(newContentTypeData){
         var createCalls = _.map(newContentTypeData, function (data) {
           return function call() {
-            var ccb = $q.callback();
-            spaceContext.space.createContentType(data, ccb);
-            return ccb.promise;
+            return spaceContext.space.createContentType(data);
           };
         });
         return listActions.serialize(createCalls);
@@ -78,9 +76,7 @@ angular.module('contentful').factory('tutorialExampledata', ['$q', 'environment'
       then(function (contentTypes) {
         var publishCalls = _.map(contentTypes, function (contentType) {
           return function () {
-            var pcb = $q.callback();
-            contentType.publish(contentType.getVersion(), pcb);
-            return pcb.promise;
+            return contentType.publish(contentType.getVersion());
           };
         });
         return listActions.serialize(publishCalls);
@@ -100,9 +96,8 @@ angular.module('contentful').factory('tutorialExampledata', ['$q', 'environment'
       then(function(entryData) {
         var createCalls = _.map(entryData, function (entry) {
           return function () {
-            var ccb = $q.callback();
-            spaceContext.space.createEntry(entry.sys.contentType.sys.id, entry, ccb);
-            return ccb.promise.catch(function (err) {
+            return spaceContext.space.createEntry(entry.sys.contentType.sys.id, entry)
+            .catch(function (err) {
               if (dotty.get(err, 'body.sys.id') == 'VersionMismatch'){
                 return null;
               } else {
@@ -122,9 +117,7 @@ angular.module('contentful').factory('tutorialExampledata', ['$q', 'environment'
       then(function publishEntries(entries) {
         var publishCalls = _.map(entries, function (entry) {
           return function () {
-            var pcb = $q.callback();
-            entry.publish(entry.getVersion(), pcb);
-            return pcb.promise;
+            return entry.publish(entry.getVersion());
           };
         });
         return listActions.serialize(publishCalls);

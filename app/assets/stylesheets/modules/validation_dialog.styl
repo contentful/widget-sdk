@@ -43,15 +43,25 @@
 .validation-controls
   flex-grow: 1
   margin-right: 3%
+  max-width: 70%
 
 .checkbox-list
   $display-flexbox()
   flex-wrap: wrap
-  line-height: 35px
 .checkbox-list__item
-  flex-basis: 25%
-  flex-shrink: 1
-  flex-grow: 1
+  padding: 15px 0px
+  margin-right: 3%
+  input
+    float: left
+    margin: 0
+  &:nth-child(3n+3)
+    margin-right: 0
+  .u-truncate
+    float: left
+    margin-left: 4px
+    margin-top: -5px
+    line-height: initial
+    width: 130px
 
 .cf-predefined-values-list
   position: relative

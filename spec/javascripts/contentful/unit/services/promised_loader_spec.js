@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Promised loader service', function () {
-  var loader, stubs, $rootScope;
+  var loader, stubs, $rootScope, $q;
   var host;
 
   beforeEach(function () {
@@ -10,10 +10,13 @@ describe('Promised loader service', function () {
         'method', 'success', 'error', 'success2', 'error2'
       ]);
     });
-    inject(function (PromisedLoader, _$rootScope_, delayedInvocationStub) {
-      $rootScope = _$rootScope_;
+    inject(function ($injector) {
+      var PromisedLoader        = $injector.get('PromisedLoader');
+      var delayedInvocationStub = $injector.get('delayedInvocationStub');
+      $rootScope                = $injector.get('$rootScope');
+      $q                        = $injector.get('$q');
       loader = new PromisedLoader();
-      sinon.stub(loader, '_loadCallback', delayedInvocationStub(loader._loadCallback));
+      sinon.stub(loader, '_loadPromise', delayedInvocationStub(loader._loadPromise));
 
       host = {
         methodName: stubs.method
@@ -27,9 +30,9 @@ describe('Promised loader service', function () {
 
   describe('load entities successfully', function() {
     beforeEach(function() {
-      stubs.method.yields( null, {});
-      loader.loadCallback(host, 'methodName', {}).then(stubs.success, stubs.error);
-      loader._loadCallback.invokeDelayed();
+      stubs.method.returns($q.when({}));
+      loader.loadPromise(stubs.method).then(stubs.success, stubs.error);
+      loader._loadPromise.invokeDelayed();
       $rootScope.$apply();
     });
 
@@ -52,13 +55,13 @@ describe('Promised loader service', function () {
 
   describe('load entities with a server error', function() {
     beforeEach(function() {
-      stubs.method.yields({});
-      loader.loadCallback(host, 'methodName', {}).then(stubs.success, stubs.error);
-      loader._loadCallback.invokeDelayed();
+      stubs.method.returns($q.reject({}));
+      loader.loadPromise(stubs.method).then(stubs.success, stubs.error);
+      loader._loadPromise.invokeDelayed();
       $rootScope.$apply();
     });
 
-    it('calls host method', function() {
+    it('calls method', function() {
       expect(stubs.method).toBeCalled();
     });
 
@@ -76,21 +79,28 @@ describe('Promised loader service', function () {
   });
 
   it('loader in progress', function() {
-    loader.loadCallback(host, 'methodName', {}).then(stubs.success, stubs.error);
-    loader._loadCallback.invokeDelayed();
+    stubs.method.returns($q.defer().promise);
+    loader.loadPromise(stubs.method);
+    $rootScope.$apply();
+    loader._loadPromise.invokeDelayed();
     expect(loader.inProgress).toBeTruthy();
   });
 
   describe('attempt to load more than once simultaneously', function() {
     beforeEach(function() {
-      loader.loadCallback(host, 'methodName', {}).then(stubs.success, stubs.error);
-      loader._loadCallback.invokeDelayed();
-      loader.loadCallback(host, 'methodName', {}).then(stubs.success2, stubs.error2);
-      stubs.method.yield(null, {});
+      this.first  = $q.defer();
+      this.second = $q.defer();
+      stubs.method
+        .onCall(0).returns(this.first.promise)
+        .onCall(1).returns(this.second.promise);
+      loader.loadPromise(stubs.method).then(stubs.success, stubs.error);
+      loader._loadPromise.invokeDelayed();
+      loader.loadPromise(stubs.method).then(stubs.success2, stubs.error2);
+      this.first.resolve({});
       $rootScope.$digest();
     });
 
-    it('calls host method', function() {
+    it('calls method', function() {
       expect(stubs.method).toBeCalledOnce();
     });
 
@@ -131,7 +141,7 @@ describe('PromisedLoader service', function () {
   }));
 
   it('The debounced function in two Promised Loaders should be distinct', function () {
-    expect(a._loadCallback).not.toBe(b._loadCallback);
+    expect(a._loadPromise).not.toBe(b._loadPromise);
   });
 
 });

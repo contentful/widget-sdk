@@ -10,15 +10,18 @@ angular.module('contentful').
     return '"' + $scope.contentType.getName()+ '"';
   }
 
-  $scope['delete'] = function () {
-    $scope.contentType['delete'](function (err, contentType) {
-      if (err) return notification.serverError('Error deleting Content Type', err);
+  $scope.delete = function () {
+    $scope.contentType.delete()
+    .then(function(contentType){
       notification.info('Content type deleted successfully');
       $scope.broadcastFromSpace('entityDeleted', contentType);
       // TODO this should happen automatically
       // setup an event listener when the spaceContext instance is created
       // on client controller or space context controller
       $scope.spaceContext.removeContentType($scope.contentType);
+    })
+    .catch(function(err){
+      notification.serverError('Error deleting Content Type', err);
     });
   };
 
@@ -29,24 +32,8 @@ angular.module('contentful').
       notification.warn('Error activating ' + title() + ': ' + 'Validation failed');
       return;
     }
-    $scope.contentType.publish(version, function (err, publishedContentType) {
-      if (err) {
-        var errorId = dotty.get(err, 'body.sys.id');
-        var method = 'serverError';
-        var reason = errorId;
-        if (errorId === 'ValidationFailed') {
-          reason = 'Validation failed';
-          $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
-          method = 'warn';
-        } else if (errorId === 'VersionMismatch') {
-          reason = 'Can only activate most recent version';
-          method = 'warn';
-        } else {
-          reason = dotty.get(err, 'body.message');
-        }
-        return notification[method]('Error activating ' + title() + ': ' + reason, err);
-      }
-
+    $scope.contentType.publish(version)
+    .then(function(publishedContentType){
       notification.info(title() + ' ' + verb + ' successfully');
       analytics.track('Published ContentType', {
         contentTypeId: $scope.contentType.getId(),
@@ -59,17 +46,28 @@ angular.module('contentful').
       $scope.updatePublishedContentType(publishedContentType);
       $scope.spaceContext.registerPublishedContentType(publishedContentType);
       $scope.spaceContext.refreshContentTypes();
+    })
+    .catch(function(err){
+      var errorId = dotty.get(err, 'body.sys.id');
+      var method = 'serverError';
+      var reason = errorId;
+      if (errorId === 'ValidationFailed') {
+        reason = 'Validation failed';
+        $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
+        method = 'warn';
+      } else if (errorId === 'VersionMismatch') {
+        reason = 'Can only activate most recent version';
+        method = 'warn';
+      } else {
+        reason = dotty.get(err, 'body.message');
+      }
+      notification[method]('Error activating ' + title() + ': ' + reason, err);
     });
   };
 
   $scope.unpublish = function () {
-    $scope.contentType.unpublish(function (err, publishedContentType) {
-      if (err) {
-        var reason = dotty.get(err, 'body.message');
-        if(!reason) logger.logServerError('Error deactivating Content Type', err);
-        return notification.warn('Error deactivating ' + title() + ': ' + reason, err);
-      }
-
+    $scope.contentType.unpublish()
+    .then(function(publishedContentType){
       notification.info(title() + ' deactivated successfully');
       analytics.track('Unpublished ContentType', {
         contentTypeId: $scope.contentType.getId(),
@@ -81,6 +79,11 @@ angular.module('contentful').
       $scope.updatePublishedContentType(null);
       $scope.spaceContext.unregisterPublishedContentType(publishedContentType);
       $scope.spaceContext.refreshContentTypes();
+    })
+    .catch(function(err){
+      var reason = dotty.get(err, 'body.message');
+      if(!reason) logger.logServerError('Error deactivating Content Type', err);
+      notification.warn('Error deactivating ' + title() + ': ' + reason, err);
     });
   };
 

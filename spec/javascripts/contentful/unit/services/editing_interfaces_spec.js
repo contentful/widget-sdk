@@ -54,14 +54,14 @@ describe('Editing interfaces service', function () {
     describe('succeeds', function() {
       beforeEach(function() {
         this.$inject('widgetTypes').paramDefaults = _.constant({foo: 'bar'});
-        editingInterfaces.forContentTypeWithId(contentType, 'edid').then(function (_config) {
-          config = _config;
-        });
-        contentType.getEditingInterface.yield(null, {
+        contentType.getEditingInterface.returns($q.when({
           data: {widgets: [{
             fieldId: 'fieldA',
             widgetParams: {foo: 'baz'}
           }]}
+        }));
+        editingInterfaces.forContentTypeWithId(contentType, 'edid').then(function (_config) {
+          config = _config;
         });
         $rootScope.$apply();
       });
@@ -88,10 +88,10 @@ describe('Editing interfaces service', function () {
 
     describe('fails with a 404 because config doesnt exist yet', function() {
       beforeEach(function() {
+        contentType.getEditingInterface.returns($q.reject({statusCode: 404}));
         editingInterfaces.forContentTypeWithId(contentType, 'edid').then(function (_config) {
           config = _config;
         });
-        contentType.getEditingInterface.yield({statusCode: 404});
         $rootScope.$apply();
       });
 
@@ -106,10 +106,10 @@ describe('Editing interfaces service', function () {
 
     describe('fails', function() {
       beforeEach(function() {
+        contentType.getEditingInterface.returns($q.reject({}));
         editingInterfaces.forContentTypeWithId(contentType, 'edid').catch(function (_err) {
           err = _err;
         });
-        contentType.getEditingInterface.yield({});
         $rootScope.$apply();
       });
 
@@ -148,15 +148,16 @@ describe('Editing interfaces service', function () {
   });
 
   describe('saves interface for a content type', function() {
-    var interf, promise;
+    var interf, promise, save;
     beforeEach(function() {
-      interf = { save: sinon.stub() };
+      save = $q.defer();
+      interf = { save: sinon.stub().returns(save.promise) };
       promise = editingInterfaces.save(interf);
       $rootScope.$apply();
     });
 
     it('saves successfully', function() {
-      interf.save.yield(null, {});
+      save.resolve({});
       $rootScope.$apply();
       expect(stubs.info).toBeCalled();
     });
@@ -165,19 +166,21 @@ describe('Editing interfaces service', function () {
       promise.then(function(interf) {
         expect(interf.newVersion).toBe(true);
       });
-      interf.save.yield(null, {newVersion: true});
+      save.resolve({newVersion: true});
       $rootScope.$apply();
     });
     
 
     it('fails to save because of version mismatch', function() {
-      interf.save.yield({body: {sys: {type: 'Error', id: 'VersionMismatch'}}});
+      save.reject({body: {sys: {type: 'Error', id: 'VersionMismatch'}}});
+      //interf.save.yield({body: {sys: {type: 'Error', id: 'VersionMismatch'}}});
       $rootScope.$apply();
       expect(stubs.warn).toBeCalled();
     });
 
     it('fails to save because of other error', function() {
-      interf.save.yield({});
+      //interf.save.yield({});
+      save.reject({});
       $rootScope.$apply();
       expect(stubs.serverError).toBeCalled();
     });

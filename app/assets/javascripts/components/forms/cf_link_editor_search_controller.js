@@ -107,9 +107,7 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$a
   };
 
   $scope.addNewEntry = function(contentType) {
-    var cb = $q.callback(), cbDelete = $q.callback();
-    $scope.spaceContext.space.createEntry(contentType.getId(), {}, cb);
-    return cb.promise
+    return $scope.spaceContext.space.createEntry(contentType.getId(), {})
     .then(function createEntityHandler(entry) {
       return addEntity(entry)
       .then(function addLinkHandler() {
@@ -117,8 +115,7 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$a
       })
       .catch(function addLinkErrorHandler(errSetLink) {
         notification.serverError('Error linking Entry', errSetLink);
-        entry['delete'](cbDelete);
-        return cbDelete.promise;
+        return entry.delete();
       })
       .catch(function deleteEntityErrorHandler(errDelete) {
         notification.serverError('Error deleting Entry again', errDelete);
@@ -131,9 +128,7 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$a
   };
 
   $scope.addNewAsset = function() {
-    var cb = $q.callback(), cbDelete = $q.callback();
-    $scope.spaceContext.space.createAsset({}, cb);
-    return cb.promise
+    $scope.spaceContext.space.createAsset({})
     .then(function createEntityHandler(asset) {
       return addEntity(asset)
       .then(function addLinkHandler() {
@@ -141,8 +136,7 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$a
       })
       .catch(function addLinkErrorHandler(errSetLink) {
         notification.serverError('Error linking Asset', errSetLink);
-        asset['delete'](cbDelete);
-        return cbDelete.promise;
+        return asset.delete();
       })
       .catch(function deleteEntityErrorHandler(errDelete) {
         notification.serverError('Error deleting Asset again', errDelete);
@@ -175,7 +169,9 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$a
   this._loadEntities = function () {
     return buildQuery()
     .then(function (query) {
-      return entityLoader.loadCallback($scope.spaceContext.space, fetchMethod, query);
+      return entityLoader.loadPromise(function(){
+        return $scope.spaceContext.space[fetchMethod](query);
+      });
     });
   };
 

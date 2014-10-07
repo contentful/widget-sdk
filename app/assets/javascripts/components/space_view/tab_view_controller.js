@@ -49,57 +49,47 @@ angular.module('contentful').controller('TabViewCtrl', ['$scope', '$injector', f
     else if (route.viewType == 'space-settings')
       $scope.navigator.spaceSettings(route.params.pathSuffix).open();
     else if (route.viewType == 'entry-editor')
-      $scope.spaceContext.space.getEntry(
-        route.params.entryId,
-        handleFallback('entryEditor', 'entryList')
-      );
+      handleFallback('entryEditor', 'entryList',
+        $scope.spaceContext.space.getEntry(route.params.entryId));
     else if (route.viewType == 'asset-editor')
-      $scope.spaceContext.space.getAsset(
-        route.params.assetId,
-        handleFallback('assetEditor', 'assetList')
-      );
+      handleFallback('assetEditor', 'assetList',
+        $scope.spaceContext.space.getAsset(route.params.assetId));
     else if (route.viewType == 'content-type-editor')
-      $scope.spaceContext.space.getContentType(
-        route.params.contentTypeId,
-        handleFallback('contentTypeEditor', 'contentTypeList')
-      );
+      handleFallback('contentTypeEditor', 'contentTypeList',
+        $scope.spaceContext.space.getContentType(route.params.contentTypeId));
     else if (route.viewType == 'editing-interface-editor'){
-      $scope.spaceContext.space.getContentType(
-        route.params.contentTypeId,
-        handleEditingInterface('contentTypeEditor', route.params.editingInterfaceId)
-      );
+      $scope.spaceContext.space.getContentType(route.params.contentTypeId)
+      .then(function(contentType){
+        editingInterfaces.forContentTypeWithId(contentType, route.params.editingInterfaceId)
+        .then(function (editingInterface) {
+          $scope.navigator.editingInterfaceEditor(contentType, editingInterface).open();
+        }, function(){
+          $scope.navigator.contentTypeEditor(contentType).goTo();
+        });
+      }, function(){
+        $scope.navigator.contentTypeList().goTo();
+      });
     } else if (route.viewType == 'api-key-editor')
-      $scope.spaceContext.space.getDeliveryApiKey(route.params.apiKeyId, handleFallback('apiKeyEditor', 'apiKeyList'));
+      handleFallback('apiKeyEditor', 'apiKeyList',
+        $scope.spaceContext.space.getDeliveryApiKey(route.params.apiKeyId));
     else
-      $scope.spaceContext.space.getPublishedContentTypes(function(err, ets) {
+      $scope.spaceContext.space.getPublishedContentTypes()
+      .then(function(ets){
         if (_.isEmpty(ets)) $scope.navigator.contentTypeList().goTo();
         else                $scope.navigator.entryList().goTo();
+      }, function(){
+        $scope.navigator.entryList().goTo();
       });
 
-    function handleFallback(defaultView, fallbackView){
-      return function (err, obj) {
-        if (err)
-          $scope.navigator[fallbackView]().goTo();
-        else
-          $scope.navigator[defaultView](obj).open();
-      };
+    function handleFallback(defaultView, fallbackView, promise) {
+      return promise
+      .then(function(obj){
+        $scope.navigator[defaultView](obj).open();
+      }, function(){
+        $scope.navigator[fallbackView]().goTo();
+      });
     }
 
-    function handleEditingInterface(fallbackView, editingInterfaceId) {
-      return function (err, contentType) {
-        if (err)
-          $scope.navigator[fallbackView](contentType).goTo();
-        else {
-          editingInterfaces.forContentTypeWithId(contentType, editingInterfaceId)
-          .then(function (editingInterface) {
-            $scope.navigator.editingInterfaceEditor(contentType, editingInterface).open();
-          })
-          .catch(function(){
-            $scope.navigator[fallbackView](contentType).goTo();
-          });
-        }
-      };
-    }
   }
 
   $scope.navigator = {

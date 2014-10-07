@@ -62,7 +62,9 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
       refreshContentTypes: function() {
         if (this.space) {
           var spaceContext = this;
-          return this._contentTypeLoader.loadCallback(this.space, 'getContentTypes', {order: 'name', limit: 1000})
+          return this._contentTypeLoader.loadPromise(function(){
+            return spaceContext.space.getContentTypes({order: 'name', limit: 1000});
+          })
           .then(function (contentTypes) {
             contentTypes = _.reject(contentTypes, function (ct) { return ct.isDeleted(); });
             contentTypes.sort(function (a,b) {
@@ -84,7 +86,9 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
 
       refreshPublishedContentTypes: function() {
         var spaceContext = this;
-        return this._publishedContentTypeLoader.loadCallback(this.space, 'getPublishedContentTypes')
+        return this._publishedContentTypeLoader.loadPromise(function(){
+          return spaceContext.space.getPublishedContentTypes();
+        })
         .then(function (contentTypes) {
           spaceContext.publishedContentTypes = _(contentTypes)
             .reject(function (ct) { return ct.isDeleted(); })

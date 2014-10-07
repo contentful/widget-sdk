@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Space Controller', function () {
-  var spaceController, scope, stubs;
+  var spaceController, scope, stubs, $q;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -37,7 +37,8 @@ describe('Space Controller', function () {
         serverError: stubs.error
       });
     });
-    inject(function ($controller, $rootScope, cfStub){
+    inject(function ($controller, $rootScope, cfStub, _$q_){
+      $q = _$q_;
       scope = $rootScope.$new();
 
       var space = cfStub.space('test');
@@ -229,7 +230,7 @@ describe('Space Controller', function () {
     var createStub;
     var contentType;
     beforeEach(inject(function (cfStub) {
-      createStub = sinon.stub(scope.spaceContext.space, 'createEntry');
+      createStub = sinon.stub(scope.spaceContext.space, 'createEntry').returns($q.defer().promise);
       contentType = cfStub.contentType(scope.spaceContext.space, 'thing', 'Thing');
     }));
 
@@ -244,14 +245,15 @@ describe('Space Controller', function () {
 
     describe('creation fails', function () {
       beforeEach(function () {
-        createStub.callsArgWith(2, {
+        createStub.returns($q.reject({
           body: {
             details: {
               reasons: []
             }
           }
-        });
+        }));
         scope.createEntry(contentType);
+        scope.$apply();
       });
 
       it('determines enforcements', function () {
@@ -275,8 +277,9 @@ describe('Space Controller', function () {
         scope.navigator = {
           entryEditor: editorStub
         };
-        createStub.callsArgWith(2, null, {});
+        createStub.returns($q.when({}));
         scope.createEntry(contentType);
+        scope.$apply();
       });
 
       it('navigates to editor', function () {
@@ -292,7 +295,7 @@ describe('Space Controller', function () {
   describe('creates an asset', function () {
     var createStub;
     beforeEach(function () {
-      createStub = sinon.stub(scope.spaceContext.space, 'createAsset');
+      createStub = sinon.stub(scope.spaceContext.space, 'createAsset').returns($q.defer().promise);
     });
 
     afterEach(function () {
@@ -306,14 +309,15 @@ describe('Space Controller', function () {
 
     describe('creation fails', function () {
       beforeEach(function () {
-        createStub.callsArgWith(1, {
+        createStub.returns($q.reject({
           body: {
             details: {
               reasons: []
             }
           }
-        });
+        }));
         scope.createAsset();
+        scope.$apply();
       });
 
       it('determines enforcements', function () {
@@ -337,8 +341,9 @@ describe('Space Controller', function () {
         scope.navigator = {
           assetEditor: editorStub
         };
-        createStub.callsArgWith(1, null, cfStub.asset(scope.spaceContext.space, 'image'));
+        createStub.returns($q.when(cfStub.asset(scope.spaceContext.space, 'image')));
         scope.createAsset();
+        scope.$apply();
       }));
 
       it('navigates to editor', function () {
@@ -354,7 +359,7 @@ describe('Space Controller', function () {
   describe('creates a content type', function () {
     var createStub;
     beforeEach(function () {
-      createStub = sinon.stub(scope.spaceContext.space, 'createContentType');
+      createStub = sinon.stub(scope.spaceContext.space, 'createContentType').returns($q.defer().promise);
     });
 
     afterEach(function () {
@@ -368,14 +373,15 @@ describe('Space Controller', function () {
 
     describe('creation fails', function () {
       beforeEach(function () {
-        createStub.callsArgWith(1, {
+        createStub.returns($q.reject({
           body: {
             details: {
               reasons: []
             }
           }
-        });
+        }));
         scope.createContentType();
+        scope.$apply();
       });
 
       it('determines enforcements', function () {
@@ -399,8 +405,9 @@ describe('Space Controller', function () {
         scope.navigator = {
           contentTypeEditor: editorStub
         };
-        createStub.callsArgWith(1, null, {});
+        createStub.returns($q.when({}));
         scope.createContentType();
+        scope.$apply();
       });
 
       it('navigates to editor', function () {

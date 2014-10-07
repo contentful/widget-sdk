@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('contentful').controller('EntryListActionsCtrl',
-  ['$scope', '$injector', function EntryListActionsCtrl($scope, $injector) {
+angular.module('contentful').controller('EntryListActionsCtrl', ['$scope', '$injector', function EntryListActionsCtrl($scope, $injector) {
+  var $q          = $injector.get('$q');
   var $timeout    = $injector.get('$timeout');
   var listActions = $injector.get('listActions');
   var logger      = $injector.get('logger');
@@ -66,7 +66,7 @@ angular.module('contentful').controller('EntryListActionsCtrl',
     });
   };
 
-  function duplicateCallback(entry, params, deferred) {
+  function duplicateCallback(entry, params) {
     var sys = entry.getSys();
     if(!dotty.exists(sys, 'contentType.sys.id')){
       logger.logWarn('content type does not exist', {
@@ -77,14 +77,12 @@ angular.module('contentful').controller('EntryListActionsCtrl',
     }
     var contentType = dotty.get(sys, 'contentType.sys.id');
     var data = _.omit(entry.data, 'sys');
-    $scope.spaceContext.space.createEntry(contentType, data, function (err, newEntry) {
-      if(err) {
-        if(err.statusCode === batchPerformer.getErrors().TOO_MANY_REQUESTS)
-          $timeout(_.partial(duplicateCallback, entry, params, deferred), batchPerformer.getRetryTimeout());
-        else
-          deferred.reject({err: err});
-      } else
-        deferred.resolve(newEntry);
+    return $scope.spaceContext.space.createEntry(contentType, data)
+    .catch(function(err){
+      if(err.statusCode === batchPerformer.getErrors().TOO_MANY_REQUESTS)
+        return $timeout(_.partial(duplicateCallback, entry, params), batchPerformer.getRetryTimeout());
+      else
+        return $q.reject({err: err});
     });
   }
 

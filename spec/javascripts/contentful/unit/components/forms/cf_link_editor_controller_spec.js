@@ -274,12 +274,12 @@ describe('cfLinkEditor Controller methods', function () {
         { sys: { id: 'entry1', linkType: 'Entry', type: 'Link' } },
         { sys: { id: 'entry2', linkType: 'Entry', type: 'Link' } }
       ];
+      getEntriesStub.returns($q.when([entry, undefined]));
       scope.$apply();
       expect(getEntriesStub).toBeCalledWith({
         'sys.id[in]': 'entry1,entry2',
         limit: 1000
       });
-      getEntriesStub.yield(null, [entry, undefined]);
       scope.$apply();
       expect(scope.linkedEntities.length).toBe(2);
       expect(scope.linkedEntities[1].isMissing).toBeTruthy();

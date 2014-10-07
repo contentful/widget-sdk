@@ -4,6 +4,7 @@ describe('Asset editor controller', function () {
 
   var scope, stubs;
   var assetEditorCtrl;
+  var process;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -35,9 +36,10 @@ describe('Asset editor controller', function () {
         serverError: stubs.serverError
       });
     });
-    inject(function ($rootScope, $controller) {
+    inject(function ($rootScope, $controller, $q) {
       scope = $rootScope.$new();
       scope.can = stubs.can;
+      process = $q.defer();
 
       var locale = {
         code: 'en-US',
@@ -58,7 +60,7 @@ describe('Asset editor controller', function () {
 
       var asset = {
         isArchived: stubs.isArchived,
-        process: stubs.process,
+        process: stubs.process.returns(process.promise),
         getPublishedVersion: stubs.getPublishedVersion
       };
       scope.tab = {
@@ -161,9 +163,10 @@ describe('Asset editor controller', function () {
 
     describe('on success', function() {
       beforeEach(function() {
-        scope.asset.process.yield(null, {});
+        process.resolve({});
         stubs.peek.returns(null);
         stubs.fileNameToTitle.returns('file');
+        scope.$apply();
       });
 
       it('looks for otDoc with locale', function() {
@@ -189,7 +192,8 @@ describe('Asset editor controller', function () {
 
     describe('on error', function() {
       beforeEach(function() {
-        scope.asset.process.yield({});
+        process.reject({});
+        scope.$apply();
       });
 
       it('calls error notification', function() {

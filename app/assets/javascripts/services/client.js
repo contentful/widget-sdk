@@ -1,6 +1,6 @@
-angular.module('contentful').provider('client', ['contentfulClient', function ClientProvider(contentfulClient) {
-  'use strict';
+'use strict';
 
+angular.module('contentful').provider('client', ['contentfulClient', function ClientProvider(contentfulClient) {
   var endpoint = null;
 
   this.endpoint = function(e) {
@@ -11,12 +11,13 @@ angular.module('contentful').provider('client', ['contentfulClient', function Cl
 
   this.$get = ['$injector', function($injector) {
     var $http = $injector.get('$http');
+    var $q    = $injector.get('$q');
     
     function AngularAdapter(server, token) {
       this.server = server;
       this.token  = token;
 
-      this._performRequest = function (o, callback) {
+      this._performRequest = function (o) {
         var options = {
           method:       o.method,
           url:          '' + this.server + o.endpoint,
@@ -38,16 +39,18 @@ angular.module('contentful').provider('client', ['contentfulClient', function Cl
           }
         }
 
+        var deferred = $q.defer();
         $http(options)
         .success(function(data) {
-          if (typeof callback == 'function') callback(null, data);
+          deferred.resolve(data);
         })
         .error(function(data, status) {
-          if (typeof callback == 'function') callback({
+          deferred.reject({
             statusCode: status,
             body: data
           });
         });
+        return deferred.promise;
       };
     }
     _.extend(AngularAdapter.prototype, contentfulClient.adapters.jquery.prototype);

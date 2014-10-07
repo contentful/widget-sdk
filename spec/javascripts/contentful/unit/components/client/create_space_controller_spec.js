@@ -3,6 +3,7 @@
 describe('Create Space Dialog controller', function () {
   var scope, createSpaceCtrl, stubs, createController;
   var org;
+  var $q;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -32,7 +33,8 @@ describe('Create Space Dialog controller', function () {
       });
 
     });
-    inject(function ($rootScope, $controller) {
+    inject(function ($rootScope, $controller, _$q_) {
+      $q = _$q_;
       scope = $rootScope.$new();
       scope.dialog = {
         setInvalid: stubs.setInvalid,
@@ -169,14 +171,15 @@ describe('Create Space Dialog controller', function () {
 
         describe('if remote call fails with no specific error', function() {
           beforeEach(function() {
-            stubs.createSpace.callsArgWith(2, {
+            stubs.createSpace.returns($q.reject({
               body: {
                 details: {
                   errors: []
                 }
               }
-            });
+            }));
             scope.createSpace();
+            scope.$apply();
           });
 
           it('starts spinner', function() {
@@ -218,7 +221,7 @@ describe('Create Space Dialog controller', function () {
 
         describe('if remote call fails with a specific error', function() {
           beforeEach(function() {
-            stubs.createSpace.callsArgWith(2, {
+            stubs.createSpace.returns($q.reject({
               body: {
                 details: {
                   errors: [
@@ -226,8 +229,9 @@ describe('Create Space Dialog controller', function () {
                   ]
                 }
               }
-            });
+            }));
             scope.createSpace();
+            scope.$apply();
           });
 
           it('starts spinner', function() {
@@ -258,8 +262,8 @@ describe('Create Space Dialog controller', function () {
             expect(stubs.cancel).not.toBeCalled();
           });
 
-          it('does not stop spinner', function() {
-            expect(stubs.stop).not.toBeCalled();
+          it('does stop spinner', function() {
+            expect(stubs.stop).toBeCalled();
           });
 
           it('does not unlock submit', function() {
@@ -272,13 +276,12 @@ describe('Create Space Dialog controller', function () {
           beforeEach(function() {
             space = {getId: stubs.getId, data: {name: 'newspace'}};
             scope.spaces = [space];
-            stubs.createSpace.callsArgWith(2, null, space);
+            stubs.createSpace.returns($q.when(space));
             stubs.getId.returns('spaceid');
-            scope.performTokenLookup = sinon.stub();
-            scope.performTokenLookup.returns({then: stubs.then});
+            scope.performTokenLookup = sinon.stub().returns($q.when());
             scope.selectSpace = sinon.stub();
-            stubs.then.callsArg(0);
             scope.createSpace();
+            scope.$apply();
           });
 
           it('starts spinner', function() {

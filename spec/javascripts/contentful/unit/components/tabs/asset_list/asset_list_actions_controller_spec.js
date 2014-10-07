@@ -2,6 +2,7 @@
 
 describe('Asset List Actions Controller', function () {
   var controller, scope, stubs;
+  var action1, action2, action3, action3call2, action4;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -34,9 +35,19 @@ describe('Asset List Actions Controller', function () {
       $provide.value('$timeout', stubs.timeout);
     });
 
-    inject(function ($rootScope, $controller) {
+    inject(function ($rootScope, $controller, $q) {
       $rootScope.$broadcast = stubs.broadcast;
       scope = $rootScope.$new();
+
+      action1 = $q.defer();
+      action2 = $q.defer();
+      action3 = $q.defer();
+      action3call2 = $q.defer();
+      action4 = $q.defer();
+      stubs.action1.returns(action1.promise);
+      stubs.action2.returns(action2.promise);
+      stubs.action3.returns(action3.promise);
+      stubs.action4.returns(action4.promise);
 
       scope.selection = {
         size: stubs.size,
@@ -74,12 +85,14 @@ describe('Asset List Actions Controller', function () {
       beforeEach(function () {
         stubs.getVersion.returns(3);
         stubs.size.returns(2);
-        stubs.action1.callsArg(actionIndex);
-        stubs.action2.callsArgWith(actionIndex, {});
+        action1.resolve();
+        action2.reject({});
         stubs.action3
-          .onFirstCall().callsArgWith(actionIndex, {statusCode: 429})
-          .onSecondCall().callsArgWith(actionIndex);
-        stubs.action4.callsArg(actionIndex);
+          .onFirstCall().returns(action3.promise)
+          .onSecondCall().returns(action3call2.promise);
+        action3.reject({statusCode: 429});
+        action3call2.resolve();
+        action4.resolve();
         stubs.getSelected.returns([
           makeEntity(action, stubs.action1),
           makeEntity(action, stubs.action2),
@@ -89,7 +102,7 @@ describe('Asset List Actions Controller', function () {
         stubs.timeout.callsArg(0);
 
         scope[action+'Selected']();
-        scope.$digest();
+        scope.$apply();
       });
 
       it('calls '+action+' on first selected entry', function () {

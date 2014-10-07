@@ -122,7 +122,7 @@ angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$
     });
   };
 
-  $scope['delete'] = function() {
+  $scope.delete = function() {
     if (!$scope.otDoc) return false;
     var field = $scope.field;
     $scope.otDoc.at(['fields', $scope.index]).remove(function (err) {

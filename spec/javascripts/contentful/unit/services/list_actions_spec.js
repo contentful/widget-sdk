@@ -1,33 +1,29 @@
 'use strict';
 
-describe('List Actions', function () {
-  var listActions, stubs, $timeout, $q;
+describe('List Actions Service', function () {
+  var listActions, $timeout, $q, $rootScope, startSpinner, stopSpinner;
 
   beforeEach(function() {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs([
-        'info', 'warn', 'setDeleted', 'getVersion', 'resolve', 'reject', 'then', 'catch',
-        'action', 'getSelected', 'start', 'stopSpinner'
-      ]);
       $provide.value('notification', {
-        info: stubs.info,
-        warn: stubs.warn
+        info: sinon.stub(),
+        warn: sinon.stub()
       });
-      stubs.start.returns(stubs.stopSpinner);
       $provide.value('cfSpinner', {
-        start: stubs.start
+        start: startSpinner = sinon.stub().returns(stopSpinner = sinon.stub())
       });
     });
-    inject(function (_listActions_, $rootScope, _$timeout_, _$q_) {
-      $timeout = _$timeout_;
-      $q = _$q_;
-      stubs.broadcast = sinon.stub($rootScope, '$broadcast');
-      listActions = _listActions_;
+    inject(function ($injector) {
+      $rootScope  = $injector.get('$rootScope');
+      $timeout    = $injector.get('$timeout');
+      $q          = $injector.get('$q');
+      listActions = $injector.get('listActions');
+      sinon.stub($rootScope, '$broadcast');
     });
   });
 
   afterEach(function () {
-    stubs.broadcast.restore();
+    $rootScope.$broadcast.restore();
   });
 
   describe('batch performer', function() {
@@ -43,8 +39,9 @@ describe('List Actions', function () {
     });
 
     describe('batch results notifier', function() {
-      var notifier;
+      var notifier, notification;
       beforeEach(function() {
+        notification = this.$inject('notification');
         notifier = performer.makeBatchResultsNotifier('action');
       });
 
@@ -62,12 +59,12 @@ describe('List Actions', function () {
         });
 
         it('success notification called for 2 entities', function() {
-          expect(stubs.info.args[0][0]).toMatch('2 entities action');
+          expect(notification.info.args[0][0]).toMatch('2 entities action');
         });
 
         it('warn notification called for 1 entity', function() {
-          expect(stubs.warn.args[0][0]).toMatch('1 entities');
-          expect(stubs.warn.args[0][0]).toMatch('action');
+          expect(notification.warn.args[0][0]).toMatch('1 entities');
+          expect(notification.warn.args[0][0]).toMatch('action');
         });
 
       });
@@ -75,108 +72,112 @@ describe('List Actions', function () {
     });
 
     describe('call action', function() {
-      var entity, err, params, deferred, changedEntity;
+      var entity, params, changedEntity, errorResponse;
 
       beforeEach(function() {
+        this.action = $q.defer();
         entity = {
-          setDeleted: stubs.setDeleted,
-          getVersion: stubs.getVersion,
-          action: stubs.action
+          setDeleted: sinon.stub(),
+          getVersion: sinon.stub(),
+          action: sinon.stub().returns(this.action.promise)
         };
-        err = {};
+        errorResponse = {};
         changedEntity = {};
         params = {
           method: 'action'
         };
-        deferred = {
-          resolve: stubs.resolve,
-          reject: stubs.reject
-        };
+        params.event = 'eventname';
+        params.getterForMethodArgs = ['getVersion'];
+        entity.getVersion.returns(2);
+        this.promise = performer.callAction(entity, params)
+        .then(
+          _.bind(function(res){ this.result = res; }, this),
+          _.bind(function(err){ this.error  = err; }, this)
+        );
       });
 
       describe('successfully', function() {
         beforeEach(function() {
-          params.event = 'eventname';
-          params.getterForMethodArgs = ['getVersion'];
-          stubs.getVersion.returns(2);
-          performer.callAction(entity, params, deferred);
-          stubs.action.yield(null, changedEntity);
+          this.action.resolve(changedEntity);
+          $rootScope.$apply();
         });
 
         it('calls action', function() {
-          expect(stubs.action).toBeCalled();
+          expect(entity.action).toBeCalled();
         });
 
         it('gets version', function() {
-          expect(stubs.getVersion).toBeCalled();
+          expect(entity.getVersion).toBeCalled();
         });
 
         it('calls action with version as first arg', function() {
-          expect(stubs.action.args[0][0]).toBe(2);
+          expect(entity.action.args[0][0]).toBe(2);
         });
 
-        it('deferred gets resolved', function() {
-          expect(stubs.resolve).toBeCalledOnce();
+        it('returns a resolved promise', function() {
+          var resolved;
+          this.promise.then(function(){ resolved = true; });
+          $rootScope.$apply();
+          expect(resolved).toBe(true);
         });
 
         it('event is broadcasted', function() {
-          expect(stubs.broadcast).toBeCalledWith('eventname', changedEntity);
+          expect($rootScope.$broadcast).toBeCalledWith('eventname', changedEntity);
         });
       });
 
       describe('unsuccessfully', function() {
         beforeEach(function() {
-          performer.callAction(entity, params, deferred);
-          stubs.action.yield(err);
+          this.action.reject(errorResponse);
+          $rootScope.$apply();
         });
 
         it('calls action', function() {
-          expect(stubs.action).toBeCalled();
+          expect(entity.action).toBeCalled();
         });
 
-        it('deferred gets rejected', function() {
-          expect(stubs.reject).toBeCalledOnce();
-        });
-
-        it('deferred gets error', function() {
-          expect(stubs.reject.args[0][0]).toEqual({err: err});
+        it('returns the error', function() {
+          expect(this.error).toEqual({err: errorResponse});
         });
       });
 
       describe('unsuccessfully because entity is gone', function() {
         beforeEach(function() {
-          err.statusCode = performer.getErrors().NOT_FOUND;
-          performer.callAction(entity, params, deferred);
-          stubs.action.yield(err);
+          errorResponse.statusCode = performer.getErrors().NOT_FOUND;
+          this.action.reject(errorResponse);
+          $rootScope.$apply();
         });
 
         it('calls action', function() {
-          expect(stubs.action).toBeCalled();
-        });
-
-        it('deferred gets resolved', function() {
-          expect(stubs.resolve).toBeCalledOnce();
+          expect(entity.action).toBeCalled();
         });
 
         it('sets deleted flag on entity', function() {
-          expect(stubs.setDeleted).toBeCalled();
+          expect(entity.setDeleted).toBeCalled();
+        });
+
+        it('returns a resolved promise', function() {
+          var resolved;
+          this.promise.then(function(){ resolved = true; });
+          $rootScope.$apply();
+          expect(resolved).toBe(true);
         });
 
         it('entityDeleted event is broadcasted', function() {
-          expect(stubs.broadcast).toBeCalledWith('entityDeleted', entity);
+          expect($rootScope.$broadcast).toBeCalledWith('entityDeleted', entity);
         });
       });
 
       describe('unsuccessfully because too many requests', function() {
         beforeEach(function() {
-          err.statusCode = performer.getErrors().TOO_MANY_REQUESTS;
-          performer.callAction(entity, params, deferred);
-          stubs.action.yield(err);
+          errorResponse.statusCode = performer.getErrors().TOO_MANY_REQUESTS;
+          this.action.reject(errorResponse);
+          $rootScope.$apply();
           $timeout.flush();
         });
 
         it('calls action', function() {
-          expect(stubs.action).toBeCalledTwice();
+          expect(entity.action).toBeCalledTwice();
         });
       });
 
@@ -190,70 +191,69 @@ describe('List Actions', function () {
           {res1: true},
           {res2: true}
         ];
-        stubs.handlePerformResult = sinon.stub(performer, 'handlePerformResult');
-        performer.params.getSelected = stubs.getSelected;
+        sinon.stub(performer, 'handlePerformResult');
+        performer.params.getSelected = sinon.stub();
       });
 
       describe('with a supplied action callback and multiple results', function() {
-        beforeEach(inject(function($rootScope) {
-          stubs.action = sinon.spy(function (entity, params, deferred) {
-            deferred.resolve(results[entity.index]);
-            $rootScope.$apply();
+        beforeEach(inject(function() {
+          params.actionCallback = sinon.spy(function (entity) {
+            return $q.when(results[entity.index]);
           });
-          params.actionCallback = stubs.action;
-          stubs.getSelected.returns([{index: 0}, {index: 1}]);
+          performer.params.getSelected.returns([{index: 0}, {index: 1}]);
           performer.perform(params);
+          $rootScope.$apply();
         }));
 
         it('gets selected items', function() {
-          expect(stubs.getSelected).toBeCalled();
+          expect(performer.params.getSelected).toBeCalled();
         });
 
         it('calls action callback', function() {
-          expect(stubs.action).toBeCalled();
+          expect(params.actionCallback).toBeCalled();
         });
 
         it('starts spinner', function() {
-          expect(stubs.start).toBeCalled();
+          expect(startSpinner).toBeCalled();
         });
 
         it('stops spinner', function() {
-          expect(stubs.stopSpinner).toBeCalled();
+          expect(stopSpinner).toBeCalled();
         });
 
         it('handles results', function() {
-          expect(stubs.handlePerformResult).toBeCalledWith(results, params, 2);
+          expect(performer.handlePerformResult).toBeCalledWith(results, params, 2);
         });
       });
 
       describe('with the default action callback', function() {
-        beforeEach(inject(function($rootScope) {
-          stubs.callAction = sinon.stub(performer, 'callAction', function (entity, params, deferred) {
-            deferred.resolve(results[0]);
-            $rootScope.$apply();
+        beforeEach(inject(function() {
+          sinon.stub(performer, 'callAction', function () {
+            return $q.when(results[0]);
           });
-          stubs.getSelected.returns([{}]);
+          performer.params.getSelected.returns([{}]);
           performer.perform(params);
+          $rootScope.$apply();
         }));
 
         it('gets selected items', function() {
-          expect(stubs.getSelected).toBeCalled();
+          expect(performer.params.getSelected).toBeCalled();
         });
 
         it('calls call action', function() {
-          expect(stubs.callAction).toBeCalled();
+          expect(performer.callAction).toBeCalled();
         });
 
         it('starts spinner', function() {
-          expect(stubs.start).toBeCalled();
+          expect(startSpinner).toBeCalled();
         });
 
         it('stops spinner', function() {
-          expect(stubs.stopSpinner).toBeCalled();
+          expect(stopSpinner).toBeCalled();
         });
 
         it('handles results', function() {
-          expect(stubs.handlePerformResult).toBeCalledWith([results[0]], params, 1);
+          expect(performer.handlePerformResult).toBeCalledWith([results[0]], params, 1);
         });
       });
 

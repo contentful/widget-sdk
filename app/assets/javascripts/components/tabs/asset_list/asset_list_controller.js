@@ -99,7 +99,6 @@ angular.module('contentful').controller('AssetListCtrl',['$scope', '$injector', 
 
   function createAssetForFile(FPFile) {
     return function () {
-      var assetCallback = $q.callback();
       var file = filepicker.parseFPFile(FPFile);
       var locale = $scope.spaceContext.space.getDefaultLocale().code;
       var data = {
@@ -109,25 +108,20 @@ angular.module('contentful').controller('AssetListCtrl',['$scope', '$injector', 
       data.fields.file[locale] = file;
       data.fields.title[locale] = stringUtils.fileNameToTitle(file.fileName);
 
-      $scope.spaceContext.space.createAsset(data, assetCallback);
-      return assetCallback.promise;
+      return $scope.spaceContext.space.createAsset(data);
     };
   }
 
   function processAssetForFile(entity) {
     return function () {
-      var processCallback = $q.callback();
       var locale = $scope.spaceContext.space.getDefaultLocale().code;
-      entity.process(entity.version, locale, processCallback);
-      return processCallback.promise;
+      return entity.process(entity.version, locale);
     };
   }
 
   function publishAssetForFile(entity) {
     return function () {
-      var publishCallback = $q.callback();
-      entity.publish(entity.getVersion()+1, publishCallback);
-      return publishCallback.promise;
+      return entity.publish(entity.getVersion()+1);
     };
   }
 
