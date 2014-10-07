@@ -1,6 +1,9 @@
 'use strict';
 
-angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs', '$injector', function ($scope, $attrs, $injector) {
+angular.module('contentful').controller('LinkEditorController',
+  ['$scope', '$injector', 'ngModel', 'linkParams', 'setValidationType', 'getLinkDescription',
+    function ($scope, $injector, ngModel, linkParams, setValidationType, getLinkDescription) {
+
   var $parse                = $injector.get('$parse');
   var $q                    = $injector.get('$q');
   var LinkEditorEntityCache = $injector.get('LinkEditorEntityCache');
@@ -8,46 +11,43 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs',
   var logger                = $injector.get('logger');
   var validation            = $injector.get('validation');
 
-  $scope.links = [];
-  $scope.linkedEntities = [];
-
   var entityCache;
 
-  var ngModelGet = $parse($attrs.ngModel),
+  var ngModelGet = $parse(ngModel),
       ngModelSet = ngModelGet.assign;
 
   var validations = $scope.field.type === 'Array' && $scope.field.items.validations ?
       $scope.field.items.validations :
       $scope.field.validations;
 
-  $scope.$watch('linkType', function (linkType) {
-    var validationType;
-    if(linkType == 'Entry') validationType = 'linkContentType';
-    if(linkType == 'Asset') validationType = 'linkMimetypeGroup';
+  $scope.links = [];
+  $scope.linkedEntities = [];
 
-    initCache(linkType);
+  $scope.linkMultiple = linkParams.multiple;
+  $scope.linkSingle   = !$scope.linkMultiple;
 
-    var linkTypeValidation = _(validations)
-      .map(validation.Validation.parse)
-      .where({name: validationType})
-      .first();
+  initCache(linkParams.type);
+  initValidations();
 
-    if(linkTypeValidation){
-      if (linkType == 'Entry') {
-        $scope.linkContentTypes = _(linkTypeValidation.contentTypeId)
-          .map(function (id) { return $scope.spaceContext.getPublishedContentType(id); })
-          .compact()
-          .value();
-        // TODO This means the validation contains unpublished content  types.
-        // It should never happen but I don't know how to deal with it here
-        if ($scope.linkContentTypes.length === 0) $scope.linkContentTypes = null;
-      } else if (linkType == 'Asset') {
-        $scope.linkMimetypeGroup = linkTypeValidation.mimetypeGroupName;
-      }
+  $scope.$watch('links', function (links, old, scope) {
+    if (!links || links.length === 0) {
+      $scope.linkedEntities = [];
     } else {
-      $scope.linkContentTypes  = null;
-      $scope.linkMimetypeGroup = null;
+      lookupEntities(links).then(function (entities) {
+        scope.linkedEntities = markMissing(entities);
+      });
     }
+  }, true);
+
+  $scope.$on('otValueChanged', function(event, path, value) {
+    if (path === event.currentScope.otPath) ngModelSet(event.currentScope, value);
+  });
+
+  $scope.$on('$destroy', function () {
+    entityCache =
+    ngModelSet =
+    ngModelGet =
+    validations = null;
   });
 
   $scope.addLink = function (entity) {
@@ -55,8 +55,9 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs',
     // Should just be the ShareJS operation, then the model should update itself from that
     var link = { sys: {
       type: 'Link',
-      linkType: $scope.linkType,
+      linkType: linkParams.type,
       id: entity.getId() }};
+
     entityCache.save(entity);
 
     var cb, promise;
@@ -114,6 +115,14 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs',
     }
   };
 
+  $scope.linkDescription = function(entity) {
+    if (entity && !entity.isMissing && entity.getId()) {
+      return getLinkDescription(entity);
+    } else {
+      return '(Missing entity)';
+    }
+  };
+
   function lookupEntities(links) {
     var ids = _.map(links, function (link) {
       if(!link){
@@ -128,12 +137,18 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs',
     return entityCache.getAll(ids);
   }
 
-  function initCache(linkType) {
-    var fetchMethod = linkType === 'Entry' ? 'getEntries' :
-                      linkType === 'Asset' ? 'getAssets'  :
-                      undefined;
-    if (!fetchMethod) throw new Error('No linkType provided');
-    entityCache = new LinkEditorEntityCache($scope.spaceContext.space, fetchMethod);
+  function initCache() {
+    entityCache = new LinkEditorEntityCache($scope.spaceContext.space, linkParams.fetchMethod);
+  }
+
+  function initValidations() {
+    var linkTypeValidation = _(validations)
+      .map(validation.Validation.parse)
+      .where({name: linkParams.validationType})
+      .first();
+
+    if(linkTypeValidation)
+      setValidationType(linkTypeValidation);
   }
 
   function markMissing(entities) {
@@ -144,34 +159,4 @@ angular.module('contentful').controller('cfLinkEditorCtrl', ['$scope', '$attrs',
     });
   }
 
-  $scope.$watch('links', function (links, old, scope) {
-    if (!links || links.length === 0) {
-      $scope.linkedEntities = [];
-    } else {
-      lookupEntities(links).then(function (entities) {
-        scope.linkedEntities = markMissing(entities);
-      });
-    }
-  }, true);
-
-  $scope.$on('otValueChanged', function(event, path, value) {
-    if (path === event.currentScope.otPath) ngModelSet(event.currentScope, value);
-  });
-
-  $scope.linkDescription = function(entity) {
-    if (entity && !entity.isMissing && entity.getId()) {
-      return $scope.linkType === 'Entry' ?
-        $scope.spaceContext.entryTitle(entity, $scope.locale.code) :
-        $scope.spaceContext.assetTitle(entity, $scope.locale.code) ;
-    } else {
-      return '(Missing entity)';
-    }
-  };
-
-  $scope.$on('$destroy', function () {
-    entityCache =
-    ngModelSet =
-    ngModelGet =
-    validations = null;
-  });
 }]);

@@ -13,14 +13,12 @@ angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$a
   var fetchMethod;
   $scope.paginator = new Paginator();
 
-  $scope.$watch($attrs.entityType, function (entityType) {
-    $scope.entityType = entityType;
-    if (entityType === 'Entry'){
-      fetchMethod = 'getEntries';
-    } else if (entityType === 'Asset') {
-      fetchMethod = 'getAssets';
-    }
-  });
+  $scope.entityType = $attrs.entityType;
+  if ($scope.entityType === 'Entry'){
+    fetchMethod = 'getEntries';
+  } else if ($scope.entityType === 'Asset') {
+    fetchMethod = 'getAssets';
+  }
   $scope.$watch($attrs.entityContentTypes, function (entityContentTypes) {
     $scope.entityContentTypes = entityContentTypes;
   });

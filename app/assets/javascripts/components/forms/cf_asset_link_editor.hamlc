@@ -1,0 +1,14 @@
+%ul.links.asset-link(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide="linkedEntities.length == 0")
+  %li.asset-link(ng-repeat="(index, entity) in linkedEntities track by index")
+    %i.fa.fa-bars.drag-handle.drag-file(ng-disabled="!otEditable"
+                           ng-hide="linkedEntities.length==1")
+    .cf-file-info(entity-title="spaceContext.localizedField(entity, 'data.fields.title', locale.code)"
+                  file="spaceContext.localizedField(entity, 'data.fields.file', locale.code)")
+
+.cf-link-editor-search(cf-autocomplete-results="entities"
+  add-entity="addLink(entity)"
+  entity-type="Asset"
+  entity-content-types="linkContentTypes"
+  entity-mime-type-group="linkMimetypeGroup"
+  ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
+

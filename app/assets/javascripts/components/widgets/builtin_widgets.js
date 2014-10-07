@@ -69,15 +69,25 @@ angular.module('contentful').run(['widgetTypes', function(widgetTypes){
     name: 'File',
     template: '<div class="cf-file-editor" ng-model="fieldData.value" ot-bind-internal="file"></div>'
   });
-  widgetTypes.registerWidget('linkEditor',{
-    fieldTypes: ['Asset', 'Entry'],
-    name: 'Link',
-    template: '<div cf-link-editor="field.linkType" ng-model="fieldData.value"></div>'
+  widgetTypes.registerWidget('entryLinkEditor',{
+    fieldTypes: ['Entry'],
+    name: 'EntryLink',
+    template: '<div cf-entry-link-editor cf-link-editor ng-model="fieldData.value"></div>'
   });
-  widgetTypes.registerWidget('linksEditor',{
-    fieldTypes: ['Assets', 'Entries'],
-    name: 'Links',
-    template: '<div cf-link-editor="field.items.linkType" link-multiple="true" ng-model="fieldData.value"></div>'
+  widgetTypes.registerWidget('assetLinkEditor',{
+    fieldTypes: ['Asset'],
+    name: 'AssetLink',
+    template: '<div cf-asset-link-editor cf-link-editor ng-model="fieldData.value"></div>'
+  });
+  widgetTypes.registerWidget('entryLinksEditor',{
+    fieldTypes: ['Entries'],
+    name: 'EntryLinks',
+    template: '<div cf-entry-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
+  });
+  widgetTypes.registerWidget('assetLinksEditor',{
+    fieldTypes: ['Assets'],
+    name: 'AssetLinks',
+    template: '<div cf-asset-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
   //toggle: {   NOT IMPLEMENTED
     //fieldTypes: ['Boolean'],
