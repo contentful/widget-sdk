@@ -5,9 +5,6 @@ describe('cfAssetLinkEditor Directive', function () {
   var compileElement;
   var stubs;
 
-  function ControllerMock() {
-  }
-
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
@@ -25,7 +22,7 @@ describe('cfAssetLinkEditor Directive', function () {
     });
 
     inject(function ($compile, $rootScope, cfAssetLinkEditorDirective) {
-      cfAssetLinkEditorDirective[0].controller = ControllerMock;
+      cfAssetLinkEditorDirective[0].controller = angular.noop;
       scope = $rootScope.$new();
       scope.can = stubs.can;
       scope.fieldData = { value: {

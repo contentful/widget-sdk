@@ -5,9 +5,6 @@ describe('cfLocationEditor Directive', function () {
   var compileElement;
   var stubs;
 
-  function ControllerMock() {
-  }
-
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
@@ -27,7 +24,7 @@ describe('cfLocationEditor Directive', function () {
       });
     });
     inject(function ($compile, $rootScope, $window, cfLocationEditorDirective) {
-      cfLocationEditorDirective[0].controller = ControllerMock;
+      cfLocationEditorDirective[0].controller = angular.noop;
       scope = $rootScope.$new();
 
       scope.locationIsValid = stubs.locationIsValid;

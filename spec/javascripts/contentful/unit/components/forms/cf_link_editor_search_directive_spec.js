@@ -3,9 +3,6 @@
 describe('cfLinkEditorSearch Directive', function () {
   var element, scope, stubs, compileElement, searchField;
 
-  function ControllerMock() {
-  }
-
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
@@ -20,7 +17,7 @@ describe('cfLinkEditorSearch Directive', function () {
     });
 
     inject(function ($compile, $rootScope, cfLinkEditorSearchDirective) {
-      cfLinkEditorSearchDirective[0].controller = ControllerMock;
+      cfLinkEditorSearchDirective[0].controller = angular.noop;
       scope = $rootScope.$new();
 
       scope.locale = {

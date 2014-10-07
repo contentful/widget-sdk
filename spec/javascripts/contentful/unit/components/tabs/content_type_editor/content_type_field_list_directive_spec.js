@@ -10,10 +10,8 @@ describe('The ContentTypeFieldList directive', function () {
       $provide.removeDirectives('cfFieldSettingsEditor');
     });
 
-    function ControllerMock(){}
-
     inject(function ($rootScope, $compile, contentTypeFieldListDirective) {
-      contentTypeFieldListDirective[0].controller = ControllerMock;
+      contentTypeFieldListDirective[0].controller = angular.noop;
       scope = $rootScope.$new();
       scope.preferences = {};
 

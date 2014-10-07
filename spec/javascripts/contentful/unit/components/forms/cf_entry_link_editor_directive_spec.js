@@ -6,9 +6,6 @@ describe('cfEntryLinkEditor Directive', function () {
   var searchField;
   var stubs;
 
-  function ControllerMock() {
-  }
-
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
@@ -26,7 +23,7 @@ describe('cfEntryLinkEditor Directive', function () {
     });
 
     inject(function ($compile, $rootScope, cfEntryLinkEditorDirective) {
-      cfEntryLinkEditorDirective[0].controller = ControllerMock;
+      cfEntryLinkEditorDirective[0].controller = angular.noop;
       scope = $rootScope.$new();
       scope.can = stubs.can;
       scope.fieldData = { value: {
