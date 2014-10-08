@@ -1,11 +1,10 @@
-angular.module('contentful').directive('cfLinkEditor', ['mimetype', function(mimetype){
-  'use strict';
+'use strict';
 
+angular.module('contentful').directive('cfLinkEditor', [function(){
   return {
     restrict: 'A',
     require: 'ngModel',
     template: JST['cf_link_editor'],
-    controller: 'cfLinkEditorCtrl',
     link: function(scope, elem, attrs, ngModelCtrl) {
 
       ngModelCtrl.$render = function () {
@@ -13,13 +12,6 @@ angular.module('contentful').directive('cfLinkEditor', ['mimetype', function(mim
           scope.links = ngModelCtrl.$viewValue;
         }
       };
-
-      // TODO move this into the controller for gods sake
-      scope.linkType     = scope.$eval(attrs.cfLinkEditor);
-      scope.fetchMethod  = scope.linkType === 'Entry' ? 'getEntries' : 'getAssets';
-
-      scope.linkMultiple = !!attrs.linkMultiple;
-      scope.linkSingle   = !scope.linkMultiple;
 
       scope.updateModel = function () {
         ngModelCtrl.$setViewValue(scope.links);

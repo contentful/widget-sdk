@@ -1,7 +1,7 @@
 'use strict';
 angular.module('contentful').controller('CfFieldEditorController', ['$scope', '$attrs', '$injector', function CfFieldEditorController($scope, $attrs, $injector){
   var $parse = $injector.get('$parse');
-  
+
   // Write back local value changes to the entity
   // Necessary because the widgets can't access the entry directly, only the value variable
   var getEntity = $parse($attrs.cfEditorEntity);

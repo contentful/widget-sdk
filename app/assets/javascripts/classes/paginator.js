@@ -1,5 +1,5 @@
+'use strict';
 angular.module('contentful').factory('Paginator', function(){
-  'use strict';
 
   // TODO rename numEntries to numEntities
   function Paginator(numEntries) {

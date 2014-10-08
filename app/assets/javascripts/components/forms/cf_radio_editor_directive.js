@@ -1,4 +1,5 @@
 'use strict';
+
 angular.module('contentful').directive('cfRadioEditor', function(){
   return {
     restrict: 'E',

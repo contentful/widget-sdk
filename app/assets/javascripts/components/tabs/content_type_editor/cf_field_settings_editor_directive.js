@@ -1,6 +1,6 @@
-angular.module('contentful').directive('cfFieldSettingsEditor', function() {
-  'use strict';
+'use strict';
 
+angular.module('contentful').directive('cfFieldSettingsEditor', function() {
   return {
     restrict: 'C',
     template: JST['cf_field_settings_editor'](),

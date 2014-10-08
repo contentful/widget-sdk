@@ -1,7 +1,8 @@
+'use strict';
+
 angular.module('contentful').directive('cfCan', [
   'enforcements', 'authorization', 'reasonsDenied',
   function (enforcements, authorization, reasonsDenied) {
-  'use strict';
 
   var canGroupsRe = /\[\s*(\w*)\s*,\s*(\w*)\s*\]/g;
 

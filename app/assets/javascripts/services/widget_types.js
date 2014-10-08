@@ -61,8 +61,10 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
         return 'markdown';
       }
     }
-    if (fieldType === 'Asset'  || fieldType === 'Entry'   ) return 'linkEditor';
-    if (fieldType === 'Assets' || fieldType === 'Entries' ) return 'linksEditor';
+    if (fieldType === 'Entry') return 'entryLinkEditor';
+    if (fieldType === 'Asset') return 'assetLinkEditor';
+    if (fieldType === 'Entries') return 'entryLinksEditor';
+    if (fieldType === 'Assets' ) return 'assetLinksEditor';
     if (fieldType === 'File' ) return 'fileEditor';
 
     return _.findKey(WIDGET_TYPES, function (widget) {

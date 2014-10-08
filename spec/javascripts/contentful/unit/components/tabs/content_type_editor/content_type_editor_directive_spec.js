@@ -20,11 +20,9 @@ describe('The ContentType editor directive', function () {
       cfCanStubsProvider.setup(reasonsStub);
     });
 
-    function ControllerMock(){}
-    ControllerMock.prototype.canPublish = sinon.stub();
-
     inject(function ($rootScope, $compile, contentTypeEditorDirective, enforcements) {
-      contentTypeEditorDirective[0].controller = ControllerMock;
+      contentTypeEditorDirective[0].controller = angular.noop;
+      contentTypeEditorDirective[0].controller.prototype.canPublish = sinon.stub();
       scope = $rootScope.$new();
 
       scope.can = canStub;

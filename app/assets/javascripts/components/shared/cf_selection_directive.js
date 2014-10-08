@@ -1,6 +1,5 @@
+'use strict';
 angular.module('contentful').directive('cfSelection', ['Selection', function(Selection){
-  'use strict';
-
   return {
     restrict: 'A',
     link: function($scope, element, attr) {

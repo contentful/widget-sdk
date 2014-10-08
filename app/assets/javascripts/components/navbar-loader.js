@@ -1,6 +1,6 @@
-angular.module('contentful').directive('navbarLoader', ['cfSpinner', function (cfSpinner) {
-  'use strict';
+'use strict';
 
+angular.module('contentful').directive('navbarLoader', ['cfSpinner', function (cfSpinner) {
   return {
     restrict: 'C',
     link: function (scope, element) {

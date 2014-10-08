@@ -1,9 +1,9 @@
 'use strict';
 
-describe('cfLinkEditor Controller', function () {
+describe('EntryLinkEditorController', function () {
   var linkEditorCtrl, createController;
-  var scope, entry, $q, stubs;
-  var shareJSMock, linkEditorCacheMock, linkParams;
+  var scope, entry, $q, stubs, attrs;
+  var shareJSMock, linkEditorCacheMock;
 
   function validationParser(arg) {
     return arg;
@@ -12,12 +12,11 @@ describe('cfLinkEditor Controller', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
+        'getEntries',
         'otDocPush',
         'remove',
         'save',
-        'getAll',
-        'setValidationType',
-        'getLinkDescription'
+        'getAll'
       ]);
 
       shareJSMock = {
@@ -48,25 +47,22 @@ describe('cfLinkEditor Controller', function () {
       var contentTypeData = cfStub.contentTypeData('content_type1');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
       entry = cfStub.entry(space, 'entry1', 'content_type1');
+      scope.spaceContext.space.getEntries = stubs.getEntries;
 
       scope.field = {
         type: 'Link',
         validations: []
       };
 
-      linkParams = {
-        type: 'Entry',
-        fetchMethod: 'getEntries',
-        multiple: false
+      attrs = {
+        ngModel: 'fieldData.value',
+        linkMultiple: false
       };
 
       createController = function () {
-        linkEditorCtrl = $controller('LinkEditorController', {
+        linkEditorCtrl = $controller('EntryLinkEditorController', {
           $scope: scope,
-          ngModel: 'fieldData.value',
-          linkParams: linkParams,
-          setValidationType: stubs.setValidationType,
-          getLinkDescription: stubs.getLinkDescription
+          $attrs: attrs
         });
         scope.$digest();
       };
@@ -105,10 +101,41 @@ describe('cfLinkEditor Controller', function () {
 
   });
 
+  describe('no validations defined', function () {
+    beforeEach(function () {
+      createController();
+    });
+
+    it('sets no linkContentTypes', function () {
+      expect(scope.linkContentTypes).toBeFalsy();
+    });
+
+    it('sets no linkMimetypeGroup', function () {
+      expect(scope.linkMimetypeGroup).toBeFalsy();
+    });
+  });
+
+  describe('validations are defined', function () {
+    beforeEach(function () {
+      scope.field.validations = [
+        {name: 'linkContentType', contentTypeId: ['content_type1']}
+      ];
+      createController();
+    });
+
+    it('sets linkContentType to type defined in validation', function () {
+      expect(scope.linkContentTypes[0].getId()).toBe('content_type1');
+    });
+  });
+
   describe('methods', function() {
     function addEntryExpectations() {
       it('updates model', function() {
         expect(scope.updateModel).toBeCalled();
+      });
+
+      it('does not get entries', function() {
+        expect(stubs.getEntries).not.toBeCalled();
       });
 
       it('link is the supplied entry', function() {
@@ -121,8 +148,6 @@ describe('cfLinkEditor Controller', function () {
     }
 
     beforeEach(function() {
-      linkParams.type = 'Entry';
-
       scope.fieldData = {value: 'formfieldvalue'};
       scope.field = {
         type: 'Link',
@@ -144,7 +169,7 @@ describe('cfLinkEditor Controller', function () {
 
     describe('in single entry mode', function () {
       beforeEach(function () {
-        linkParams.multiple = false;
+        attrs.linkMultiple = false;
         stubs.getAll.returns($q.when([entry]));
         createController();
       });
@@ -187,7 +212,7 @@ describe('cfLinkEditor Controller', function () {
 
     describe('in multiple entry mode', function () {
       beforeEach(function () {
-        linkParams.multiple = true;
+        attrs.linkMultiple = true;
         stubs.getAll.returns($q.when([entry]));
         createController();
       });

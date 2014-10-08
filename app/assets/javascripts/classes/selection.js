@@ -1,6 +1,7 @@
+'use strict';
+
 angular.module('contentful').factory('Selection', ['analytics', function(analytics){
-  'use strict';
-  
+
   function Selection() {
     this.mode = Selection.INDIVIDUAL;
     this.entities = {};

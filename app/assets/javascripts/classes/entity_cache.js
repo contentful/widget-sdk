@@ -1,5 +1,5 @@
+'use strict';
 angular.module('contentful').factory('EntityCache', ['$rootScope', '$q', 'logger', function($rootScope, $q, logger){
-  'use strict';
 
   // params:
   // - space

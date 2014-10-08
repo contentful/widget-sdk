@@ -1,5 +1,7 @@
 'use strict';
+
 angular.module('contentful').directive('cfAccountView', ['$window', '$rootScope', 'authentication', 'routing', 'logger', function($window, $rootScope, authentication, routing, logger){
+
   return {
     template: JST['iframe_view'](),
     restrict: 'C',

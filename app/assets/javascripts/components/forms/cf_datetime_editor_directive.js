@@ -1,6 +1,7 @@
 /*global moment:false*/
+'use strict';
+
 angular.module('contentful').directive('cfDatetimeEditor', ['$parse', 'zoneOffsets', function($parse, zoneOffsets){
-  'use strict';
 
   return {
     restrict: 'C',

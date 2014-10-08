@@ -10,9 +10,8 @@ describe('The cfFieldSettingsEditor directive', function () {
       $provide.removeDirectives('tooltip', 'otDocFor', 'otPath', 'otSubdoc', 'otBind', 'otBindText');
     });
 
-    function ControllerMock(){}
     inject(function ($rootScope, $compile, cfFieldSettingsEditorDirective) {
-      cfFieldSettingsEditorDirective[0].controller = ControllerMock;
+      cfFieldSettingsEditorDirective[0].controller = angular.noop;
       scope = $rootScope.$new();
 
       scope.field = {};
