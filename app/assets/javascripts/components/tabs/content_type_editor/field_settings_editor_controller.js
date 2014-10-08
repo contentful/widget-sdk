@@ -1,35 +1,48 @@
 'use strict';
 angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$injector', function ($scope, $injector) {
-  var $controller = $injector.get('$controller');
+  var $controller      = $injector.get('$controller');
+  var analytics        = $injector.get('analytics');
+  var assert           = $injector.get('assert');
+  var defer            = $injector.get('defer');
   var getFieldTypeName = $injector.get('getFieldTypeName');
-  var analytics = $injector.get('analytics');
-  var validation = $injector.get('validation');
-  var assert = $injector.get('assert');
-  var notification = $injector.get('notification');
-  var stringUtils = $injector.get('stringUtils');
-  var logger = $injector.get('logger');
-  var defer = $injector.get('defer');
+  var logger           = $injector.get('logger');
+  var notification     = $injector.get('notification');
+  var stringUtils      = $injector.get('stringUtils');
+  var validation       = $injector.get('validation');
 
   $controller('FieldSettingsController', {$scope: $scope});
 
-  $scope.$watch(function (scope) {
+  $scope.$watch(hasValidationsWatcher,     hasValidationsChanged);
+  $scope.$watch('fieldTypeParams(field)',  paramsChanged, true);
+  $scope.$watch('fieldIsPublished(field)', publishedChanged);
+
+  $scope.getFieldTypeName  = getFieldTypeName;
+  $scope.delete            = _delete; angular.noop(_delete); //TODO the noop prevents a bug in JSHint
+  $scope.toggle            = toggle;
+  $scope.changeFieldType   = changeFieldType;
+  $scope.updateFieldId     = updateFieldId;
+  $scope.isDisplayField    = isDisplayField;
+  $scope.statusTooltipText = statusTooltipText;
+  $scope.statusClass       = statusClass;
+
+  function hasValidationsWatcher(scope){
     var f = scope.field;
     return _.isEmpty(f.validations) && _.isEmpty(f.items && f.items.validations);
-  }, function (noValidations, old, scope) {
+  }
+
+  function hasValidationsChanged(noValidations, old, scope) {
     scope.hasValidations = !noValidations;
-  });
+  }
 
-  $scope.$watch('fieldTypeParams(field)', function (typeParams, old, scope) {
+  function paramsChanged(typeParams, old, scope) {
     scope.validationsAvailable = !_.isEmpty(validation.Validation.perType($scope.field));
-  }, true);
+  }
 
-  $scope.$watch('fieldIsPublished(field)', function(published, old, scope) {
+  function publishedChanged(published, old, scope) {
     scope.published = published;
-  });
+  }
 
-  $scope.getFieldTypeName = getFieldTypeName;
-
-  $scope.statusTooltipText = function () {
+  function statusTooltipText() {
     if ($scope.published)
       if ($scope.field.disabled)
         return 'Disabled - this Field is not shown to editors by default.';
@@ -37,9 +50,9 @@ angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$
         return 'Active - this Field is visible to editors.';
     else
       return 'New - this Field is new and the Content Type needs to be activated again to make it available for editors.';
-  };
+  }
 
-  $scope.statusClass = function () {
+  function statusClass() {
     if ($scope.published)
       if ($scope.field.disabled)
         return 'disabled';
@@ -47,20 +60,20 @@ angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$
         return 'published';
     else
       return 'unpublished';
-  };
+  }
 
-  $scope.isDisplayField = function () {
+  function isDisplayField() {
     return $scope.contentType.data.displayField === $scope.field.id;
-  };
+  }
 
   var oldName = $scope.field.name || '';
-  $scope.updateFieldId = function () {
+  function updateFieldId() {
     var currentId = $scope.field.id || '';
     if (!$scope.published && stringUtils.toIdentifier(oldName) == currentId){
       otUpdateFieldId($scope.field.name ? stringUtils.toIdentifier($scope.field.name) : '');
     }
     oldName = $scope.field.name || '';
-  };
+  }
 
   function otUpdateFieldId(newId) {
     var isDisplayField = $scope.isDisplayField();
@@ -83,7 +96,7 @@ angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$
     });
   }
 
-  $scope.changeFieldType = function (newType) {
+  function changeFieldType(newType) {
     if (!$scope.otDoc) return false;
 
     var newField = _.extend({
@@ -103,9 +116,9 @@ angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$
         }
       });
     });
-  };
+  }
 
-  $scope.toggle = function(property) {
+  function toggle(property) {
     assert.truthy(property, 'need a property to toggle');
     if (!$scope.otDoc) return false;
     var subdoc = $scope.otDoc.at(['fields', $scope.index, property]);
@@ -120,9 +133,9 @@ angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$
         }
       });
     });
-  };
+  }
 
-  $scope.delete = function() {
+  function _delete() {
     if (!$scope.otDoc) return false;
     var field = $scope.field;
     $scope.otDoc.at(['fields', $scope.index]).remove(function (err) {
@@ -133,6 +146,6 @@ angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$
         defer($scope.pickNewDisplayField);
       });
     });
-  };
+  }
 
 }]);
