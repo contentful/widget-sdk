@@ -38,8 +38,8 @@ angular.module('contentful/app', [
   'ui.sortable',
   'contentful/user_interface',
   'contentful'
-], ['$locationProvider', 'clientProvider', 'authenticationProvider', 'analyticsProvider', 'environment', '$sceDelegateProvider', '$compileProvider', 'timeRelativeConfig',
-  function($locationProvider, clientProvider, authenticationProvider, analyticsProvider, environment, $sceDelegateProvider, $compileProvider, timeRelativeConfig){
+], ['$locationProvider', 'clientAdapterProvider', 'authenticationProvider', 'analyticsProvider', 'environment', '$sceDelegateProvider', '$compileProvider', 'timeRelativeConfig',
+  function($locationProvider, clientAdapterProvider, authenticationProvider, analyticsProvider, environment, $sceDelegateProvider, $compileProvider, timeRelativeConfig){
   'use strict';
   var env = environment.settings;
 
@@ -58,7 +58,7 @@ angular.module('contentful/app', [
   $locationProvider.html5Mode(true).hashPrefix('!');
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
   $sceDelegateProvider.resourceUrlWhitelist(env.resourceUrlWhiteListRegexp);
-  clientProvider.endpoint('//'+env.api_host);
+  clientAdapterProvider.server('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');
   //analyticsProvider.forceLoad();
   timeRelativeConfig.calendar.en.sameElse = 'll';
