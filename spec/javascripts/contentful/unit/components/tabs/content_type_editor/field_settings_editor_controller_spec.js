@@ -6,9 +6,11 @@ describe('Field Settings Editor Controller', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'perType', 'fieldTypeParams', 'fieldIsPublished', 'open', 'toIdentifier', 'warn',
+        'perType', 'fieldTypeParams', 'fieldIsPublished', 'open', 'warn',
         'at', 'set', 'get', 'serverError', 'modifiedContentType', 'remove', 'logServerError'
       ]);
+
+      $provide.removeControllers('ApiNameController');
 
       $provide.constant('validation', {
         Validation: {
@@ -33,7 +35,6 @@ describe('Field Settings Editor Controller', function () {
         modifiedContentType: stubs.modifiedContentType
       });
 
-      $provide.constant('stringUtils', {toIdentifier: stubs.toIdentifier});
     });
     inject(function ($controller, $rootScope) {
       scope = $rootScope.$new();
@@ -167,153 +168,6 @@ describe('Field Settings Editor Controller', function () {
       scope.$digest();
       expect(scope.isDisplayField()).toBeFalsy();
     });
-  });
-
-  describe('update apiName', function() {
-    beforeEach(function() {
-      scope.field.name = 'fieldname';
-      scope.isDisplayField = sinon.stub();
-    });
-
-    it('if published, stores the old field name', function() {
-      scope.published = true;
-      scope.$digest();
-      scope.updateApiName();
-      expect(scope.isDisplayField).not.toBeCalled();
-    });
-
-    it('if not published, but id different from old name, stores the old field name', function() {
-      scope.published = false;
-      scope.field.id = 'fieldid';
-      stubs.toIdentifier.returns('fieldname');
-      scope.$digest();
-      scope.updateApiName();
-      expect(scope.isDisplayField).not.toBeCalled();
-    });
-
-    describe('if not published, and id same as old name', function() {
-      beforeEach(function() {
-        scope.published = false;
-        scope.field.id = 'fieldId';
-        scope.field.apiName = 'fieldname';
-        stubs.toIdentifier.returns('fieldname');
-        scope.setDisplayField = sinon.stub();
-      });
-
-      it('checks if its display field', function() {
-        scope.$digest();
-        scope.updateApiName();
-        expect(scope.isDisplayField).toBeCalled();
-      });
-
-      it('stores field apiName', function() {
-        scope.$digest();
-        scope.updateApiName();
-        expect(scope.field.apiName).toEqual('fieldname');
-      });
-
-      it('if no otdoc gets no otdoc value', function() {
-        scope.$digest();
-        scope.updateApiName();
-        expect(stubs.at).not.toBeCalled();
-      });
-
-      describe('with an otDoc', function() {
-        beforeEach(function() {
-          scope.otDoc = {
-            at: stubs.at
-          };
-          stubs.at.returns({
-            set: stubs.set,
-            get: stubs.get
-          });
-        });
-
-        describe('sets value on otdoc successfully', function() {
-          beforeEach(function() {
-            stubs.set.callsArgWith(1, null);
-          });
-
-          describe('if already display field', function() {
-            beforeEach(function() {
-              scope.isDisplayField.returns(true);
-              scope.$digest();
-              scope.updateApiName();
-            });
-
-            it('gets otdoc value for id', function() {
-              expect(stubs.at).toBeCalled();
-            });
-
-            it('id is set on subdoc', function() {
-              expect(stubs.set).toBeCalledWith('fieldname');
-            });
-
-            it('sets display field', function() {
-              expect(scope.setDisplayField).toBeCalledWith(scope.field);
-            });
-          });
-
-          describe('if not already display field', function() {
-            beforeEach(function() {
-              scope.isDisplayField.returns(false);
-              scope.displayEnabled = sinon.stub();
-              scope.displayEnabled.returns(true);
-              scope.contentType = {
-                data: {
-                  displayField: ''
-                }
-              };
-              scope.$digest();
-              scope.updateApiName();
-            });
-
-            it('gets otdoc value for id', function() {
-              expect(stubs.at).toBeCalled();
-            });
-
-            it('id is set on subdoc', function() {
-              expect(stubs.set).toBeCalledWith('fieldname');
-            });
-
-            it('sets display field', function() {
-              expect(scope.setDisplayField).toBeCalledWith(scope.field);
-            });
-          });
-        });
-
-        describe('fails to set value on otdoc', function() {
-          beforeEach(function() {
-            stubs.set.callsArgWith(1, {});
-            stubs.get.returns('newApiName');
-            scope.$digest();
-            scope.updateApiName();
-          });
-
-          it('gets otdoc value for id', function() {
-            expect(stubs.at).toBeCalled();
-          });
-
-          it('id is set on subdoc', function() {
-            expect(stubs.set).toBeCalledWith('fieldname');
-          });
-
-          it('gets id from subdoc', function() {
-            expect(stubs.get).toBeCalled();
-          });
-
-          it('sets new id on field', function() {
-            expect(scope.field.apiName).toEqual('newApiName');
-          });
-
-          it('shows error', function() {
-            expect(stubs.serverError).toBeCalled();
-          });
-        });
-      });
-
-    });
-
   });
 
   describe('change field type', function() {

@@ -7,10 +7,10 @@ angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$
   var getFieldTypeName = $injector.get('getFieldTypeName');
   var logger           = $injector.get('logger');
   var notification     = $injector.get('notification');
-  var stringUtils      = $injector.get('stringUtils');
   var validation       = $injector.get('validation');
 
   $controller('FieldSettingsController', {$scope: $scope});
+  $scope.apiNameController = $controller('ApiNameController', {$scope: $scope});
 
   $scope.$watch(hasValidationsWatcher,     hasValidationsChanged);
   $scope.$watch('fieldTypeParams(field)',  paramsChanged, true);
@@ -20,7 +20,6 @@ angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$
   $scope.delete            = _delete; angular.noop(_delete); //TODO the noop prevents a bug in JSHint
   $scope.toggle            = toggle;
   $scope.changeFieldType   = changeFieldType;
-  $scope.updateApiName     = updateApiName;
   $scope.isDisplayField    = isDisplayField;
   $scope.statusTooltipText = statusTooltipText;
   $scope.statusClass       = statusClass;
@@ -64,36 +63,6 @@ angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$
 
   function isDisplayField() {
     return $scope.contentType.data.displayField === $scope.field.id;
-  }
-
-  var oldName = $scope.field.name || '';
-  function updateApiName() {
-    var currentApiName = $scope.field.apiName || '';
-    if (!$scope.published && stringUtils.toIdentifier(oldName) == currentApiName){
-      otUpdateApiName($scope.field.name ? stringUtils.toIdentifier($scope.field.name) : '');
-    }
-    oldName = $scope.field.name || '';
-  }
-
-  function otUpdateApiName(newApiName) {
-    var isDisplayField = $scope.isDisplayField();
-    $scope.field.apiName = newApiName;
-
-    if (!$scope.otDoc) return false;
-    var subdoc = $scope.otDoc.at(['fields', $scope.index, 'apiName']);
-    subdoc.set(newApiName, function(err) {
-      $scope.$apply(function (scope) {
-        if (err) {
-          scope.field.apiName = subdoc.get();
-          notification.serverError('Error updating ID', err);
-          return;
-        }
-        if (isDisplayField ||
-            _.isEmpty($scope.contentType.data.displayField) && $scope.displayEnabled($scope.field)) {
-          $scope.setDisplayField($scope.field);
-        }
-      });
-    });
   }
 
   function changeFieldType(newType) {

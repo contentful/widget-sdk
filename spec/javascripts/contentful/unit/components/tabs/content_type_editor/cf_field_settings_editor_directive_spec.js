@@ -108,38 +108,6 @@ describe('The cfFieldSettingsEditor directive', function () {
     });
   });
 
-  describe('field id', function() {
-    describe('if published', function() {
-      beforeEach(function() {
-        scope.published = true;
-        compileElement();
-      });
-
-      it('rendered for reading', function() {
-        expect(container.find('.field-id-display').get(0)).toBeDefined();
-      });
-
-      it('not rendered for editing', function() {
-        expect(container.find('.field-form input[name=fieldId]').get(0)).not.toBeDefined();
-      });
-    });
-
-    describe('if not published', function() {
-      beforeEach(function() {
-        scope.published = false;
-        compileElement();
-      });
-
-      it('not rendered for reading', function() {
-        expect(container.find('.field-id-display').get(0)).not.toBeDefined();
-      });
-
-      it('rendered for editing', function() {
-        expect(container.find('.field-form input[name=fieldApiName]').get(0)).toBeDefined();
-      });
-    });
-  });
-
   it('hides field errors if no errors exist', function() {
     scope.noErrors = true;
     compileElement();

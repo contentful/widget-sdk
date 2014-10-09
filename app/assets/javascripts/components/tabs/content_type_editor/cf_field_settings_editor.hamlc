@@ -23,16 +23,13 @@
          ot-path-types="['Array', 'Object', 'String']"
          ot-subdoc ot-bind-text type="text"
          placeholder="e.g. Product Name"
-         ng-change="updateApiName()"
+         ng-change="apiNameController.updateFromName()"
          tooltip="Field title displayed to editors"
          tooltip-container=".tab-main"
          tooltip-placement="top")
-  %span.field-id-display(tooltip="Field ID used in API"
-         ng-if="published") {{field.apiName}}
   %input.form-control(name="fieldApiName"
-         ng-if="!published"
          ng-model="field.apiName" type="text" required=""
-         ng-disabled="!otEditable"
+         ng-disabled="!(otEditable && apiNameController.isEditable())"
          ot-path="['fields', index, 'apiName']"
          ot-path-types="['Array', 'Object', 'String']"
          ot-subdoc ot-bind-text type="text"
@@ -40,8 +37,10 @@
          tooltip="Field ID used in API"
          tooltip-container=".tab-main"
          tooltip-placement="top")
-  %button.btn.btn--tertiary
-    %i.fa.fa-pencil-square-o
+  %button.btn.btn--field-settings(ng-click="apiNameController.unlockEditing()" ng-disabled="apiNameController.isEditable()" ng-show="otEditable")
+    %i.fa.fa-lock(ng-class="{'fa-unlock-alt': apiNameController.isEditable()}")
+  %button.btn.btn--field-settings(ng-click="apiNameController.revert()" ng-if="apiNameController.isRevertable()")
+    %i.fa.fa-undo
   .field-errors(ng-hide="noErrors")
     %span(cf-error-path="['fields', index, 'name']")
       Name: {{errorMessages.join(' ')}}
