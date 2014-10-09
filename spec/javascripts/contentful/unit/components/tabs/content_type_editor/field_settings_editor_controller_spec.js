@@ -169,7 +169,7 @@ describe('Field Settings Editor Controller', function () {
     });
   });
 
-  describe('update field id', function() {
+  describe('update apiName', function() {
     beforeEach(function() {
       scope.field.name = 'fieldname';
       scope.isDisplayField = sinon.stub();
@@ -178,7 +178,7 @@ describe('Field Settings Editor Controller', function () {
     it('if published, stores the old field name', function() {
       scope.published = true;
       scope.$digest();
-      scope.updateFieldId();
+      scope.updateApiName();
       expect(scope.isDisplayField).not.toBeCalled();
     });
 
@@ -187,33 +187,34 @@ describe('Field Settings Editor Controller', function () {
       scope.field.id = 'fieldid';
       stubs.toIdentifier.returns('fieldname');
       scope.$digest();
-      scope.updateFieldId();
+      scope.updateApiName();
       expect(scope.isDisplayField).not.toBeCalled();
     });
 
     describe('if not published, and id same as old name', function() {
       beforeEach(function() {
         scope.published = false;
-        scope.field.id = 'fieldname';
+        scope.field.id = 'fieldId';
+        scope.field.apiName = 'fieldname';
         stubs.toIdentifier.returns('fieldname');
         scope.setDisplayField = sinon.stub();
       });
 
       it('checks if its display field', function() {
         scope.$digest();
-        scope.updateFieldId();
+        scope.updateApiName();
         expect(scope.isDisplayField).toBeCalled();
       });
 
-      it('stores field id', function() {
+      it('stores field apiName', function() {
         scope.$digest();
-        scope.updateFieldId();
-        expect(scope.field.id).toEqual('fieldname');
+        scope.updateApiName();
+        expect(scope.field.apiName).toEqual('fieldname');
       });
 
       it('if no otdoc gets no otdoc value', function() {
         scope.$digest();
-        scope.updateFieldId();
+        scope.updateApiName();
         expect(stubs.at).not.toBeCalled();
       });
 
@@ -237,7 +238,7 @@ describe('Field Settings Editor Controller', function () {
             beforeEach(function() {
               scope.isDisplayField.returns(true);
               scope.$digest();
-              scope.updateFieldId();
+              scope.updateApiName();
             });
 
             it('gets otdoc value for id', function() {
@@ -264,7 +265,7 @@ describe('Field Settings Editor Controller', function () {
                 }
               };
               scope.$digest();
-              scope.updateFieldId();
+              scope.updateApiName();
             });
 
             it('gets otdoc value for id', function() {
@@ -284,9 +285,9 @@ describe('Field Settings Editor Controller', function () {
         describe('fails to set value on otdoc', function() {
           beforeEach(function() {
             stubs.set.callsArgWith(1, {});
-            stubs.get.returns('newid');
+            stubs.get.returns('newApiName');
             scope.$digest();
-            scope.updateFieldId();
+            scope.updateApiName();
           });
 
           it('gets otdoc value for id', function() {
@@ -302,7 +303,7 @@ describe('Field Settings Editor Controller', function () {
           });
 
           it('sets new id on field', function() {
-            expect(scope.field.id).toEqual('newid');
+            expect(scope.field.apiName).toEqual('newApiName');
           });
 
           it('shows error', function() {
@@ -333,7 +334,7 @@ describe('Field Settings Editor Controller', function () {
         scope.field = {
           name: 'fieldname',
           id: 'fieldid',
-          uiid: 'fielduiid'
+          apiName: 'fieldApiName'
         };
 
         scope.otUpdateEntity = sinon.stub();

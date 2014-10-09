@@ -221,21 +221,21 @@ describe('ContentTypeEditor Controller', function () {
       scope.publishedContentType = {
         data: {
           fields: [
-            {id: 1, uiid: 'u1'},
-            {id: 2, uiid: 'u2'},
-            {id: 3, uiid: 'u3'}
+            {apiName: 'a1', id: 'i1'},
+            {apiName: 'a2', id: 'i2'},
+            {apiName: 'a3', id: 'i3'}
           ]
         },
       };
       scope.$digest();
     });
 
-    it('for field ids', function () {
-      expect(scope.publishedIds).toEqual([1,2,3]);
+    it('for field apiNames', function () {
+      expect(scope.publishedApiNames).toEqual(['a1', 'a2', 'a3']);
     });
 
-    it('for field UIIDs', function () {
-      expect(scope.publishedUIIDs).toEqual(['u1', 'u2', 'u3']);
+    it('for field IDs', function () {
+      expect(scope.publishedIds).toEqual(['i1', 'i2', 'i3']);
     });
   });
 

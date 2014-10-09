@@ -3,7 +3,7 @@
 angular.module('contentful').controller('FieldActionsController', ['$scope', '$injector', function($scope, $injector) {
   var logger = $injector.get('logger');
 
-  var openFieldUIID;
+  var openFieldID;
   $scope.toggleField = function (field) {
     if(!field) {
       logger.logError('field is not defined', {
@@ -12,10 +12,10 @@ angular.module('contentful').controller('FieldActionsController', ['$scope', '$i
         }
       });
     }
-    if (openFieldUIID == field.uiid){
-      openFieldUIID = null;
+    if (openFieldID == field.id){
+      openFieldID = null;
     } else {
-      openFieldUIID = field.uiid;
+      openFieldID = field.id;
     }
   };
 
@@ -24,15 +24,15 @@ angular.module('contentful').controller('FieldActionsController', ['$scope', '$i
   };
 
   $scope.openField = function (field) {
-    openFieldUIID = field.uiid;
+    openFieldID = field.id;
   };
 
   $scope.closeAllFields = function () {
-    openFieldUIID = null;
+    openFieldID = null;
   };
 
   $scope.isFieldOpen = function (field) {
-    return openFieldUIID == field.uiid;
+    return openFieldID == field.id;
   };
 
 }]);

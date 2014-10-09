@@ -20,7 +20,7 @@ angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$
   $scope.delete            = _delete; angular.noop(_delete); //TODO the noop prevents a bug in JSHint
   $scope.toggle            = toggle;
   $scope.changeFieldType   = changeFieldType;
-  $scope.updateFieldId     = updateFieldId;
+  $scope.updateApiName     = updateApiName;
   $scope.isDisplayField    = isDisplayField;
   $scope.statusTooltipText = statusTooltipText;
   $scope.statusClass       = statusClass;
@@ -67,24 +67,24 @@ angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$
   }
 
   var oldName = $scope.field.name || '';
-  function updateFieldId() {
-    var currentId = $scope.field.id || '';
-    if (!$scope.published && stringUtils.toIdentifier(oldName) == currentId){
-      otUpdateFieldId($scope.field.name ? stringUtils.toIdentifier($scope.field.name) : '');
+  function updateApiName() {
+    var currentApiName = $scope.field.apiName || '';
+    if (!$scope.published && stringUtils.toIdentifier(oldName) == currentApiName){
+      otUpdateApiName($scope.field.name ? stringUtils.toIdentifier($scope.field.name) : '');
     }
     oldName = $scope.field.name || '';
   }
 
-  function otUpdateFieldId(newId) {
+  function otUpdateApiName(newApiName) {
     var isDisplayField = $scope.isDisplayField();
-    $scope.field.id = newId;
+    $scope.field.apiName = newApiName;
 
     if (!$scope.otDoc) return false;
-    var subdoc = $scope.otDoc.at(['fields', $scope.index, 'id']);
-    subdoc.set(newId, function(err) {
+    var subdoc = $scope.otDoc.at(['fields', $scope.index, 'apiName']);
+    subdoc.set(newApiName, function(err) {
       $scope.$apply(function (scope) {
         if (err) {
-          scope.field.id = subdoc.get();
+          scope.field.apiName = subdoc.get();
           notification.serverError('Error updating ID', err);
           return;
         }
@@ -102,7 +102,7 @@ angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$
     var newField = _.extend({
       name: $scope.field.name,
       id: $scope.field.id,
-      uiid: $scope.field.uiid
+      apiName: $scope.field.apiName
     }, newType);
 
     var subdoc = $scope.otDoc.at(['fields', $scope.index]);

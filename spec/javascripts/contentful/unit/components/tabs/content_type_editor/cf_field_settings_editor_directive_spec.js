@@ -135,7 +135,7 @@ describe('The cfFieldSettingsEditor directive', function () {
       });
 
       it('rendered for editing', function() {
-        expect(container.find('.field-form input[name=fieldId]').get(0)).toBeDefined();
+        expect(container.find('.field-form input[name=fieldApiName]').get(0)).toBeDefined();
       });
     });
   });

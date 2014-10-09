@@ -14,85 +14,6 @@ describe('ContentTypeFieldList Controller', function () {
     $log.assertEmpty();
   }));
 
-  describe('UIID', function () {
-    beforeEach(function () {
-      scope.contentType = {
-        data: {
-          fields: [
-            {id: 'foo'},
-            {id: 'bar', uiid: 'aaa'}
-          ]
-        }
-      };
-    });
-
-    it('should create and return uiids for fields that don\'t have one', function () {
-      scope.$apply();
-      expect(scope.fieldList[0].uiid).toBeTruthy();
-    });
-
-    it('should not create, just return uiids for fields that already have one', function () {
-      scope.$apply();
-      expect(scope.fieldList[1].uiid).toBe('aaa');
-    });
-  });
-
-  describe('sets UIIDs on otDoc', function () {
-    beforeEach(function () {
-      scope.contentType = {
-        data: {
-          fields: [
-            {id: 'foo'},
-            {id: 'yawn'},
-            {id: 'bar', uiid: 'aaa'}
-          ]
-        }
-      };
-      scope.otUpdateEntity = sinon.stub();
-      scope.$apply();
-      scope.otDoc = {
-        setAt: sinon.stub().yields(null)
-      };
-      scope.$digest();
-    });
-
-    it('sets uiid on otdoc fields', function () {
-      expect(scope.otDoc.setAt).toBeCalledTwice();
-    });
-
-    it('updates the entity', function () {
-      expect(scope.otUpdateEntity).toBeCalledOnce();
-    });
-  });
-
-  describe('does not set UIIDs on otDoc if already there', function () {
-    beforeEach(function () {
-      scope.contentType = {
-        data: {
-          fields: [
-            {id: 'foo', uiid: 'bbb'},
-            {id: 'bar', uiid: 'aaa'}
-          ]
-        },
-
-      };
-      scope.otUpdateEntity = sinon.stub();
-      scope.$apply();
-      scope.otDoc = {
-        setAt: sinon.stub().yields(null)
-      };
-      scope.$digest();
-    });
-
-    it('sets uiid on otdoc fields', function () {
-      expect(scope.otDoc.setAt).not.toBeCalled();
-    });
-
-    it('updates the entity', function () {
-      expect(scope.otUpdateEntity).not.toBeCalledOnce();
-    });
-  });
-
   it('get field type params', function () {
     expect(scope.fieldTypeParams({
       type: 'type',
@@ -107,36 +28,36 @@ describe('ContentTypeFieldList Controller', function () {
   });
 
   it('field is not published', function () {
-    expect(scope.fieldIsPublished({uiid: 123})).toBeFalsy();
+    expect(scope.fieldIsPublished({id: 123})).toBeFalsy();
   });
 
-  it('field is published with uiids', function () {
+  it('field is published with ids', function () {
     scope.publishedContentType = {
       data: {
         fields: [
-          {uiid: 123}
+          {id: 123}
         ]
       }
     };
-    scope.publishedUIIDs = [123];
+    scope.publishedIds = [123];
     scope.$digest();
-    expect(scope.fieldIsPublished({uiid: 123})).toBeTruthy();
+    expect(scope.fieldIsPublished({id: 123})).toBeTruthy();
   });
 
-  it('field is not published with uiids', function () {
+  it('field is not published with ids', function () {
     scope.publishedContentType = {
       data: {
         fields: [
-          {uiid: 123}
+          {id: 123}
         ]
       }
     };
-    scope.publishedUIIDs = [];
+    scope.publishedIds = [];
     scope.$digest();
-    expect(scope.fieldIsPublished({uiid: 123})).toBeFalsy();
+    expect(scope.fieldIsPublished({id: 123})).toBeFalsy();
   });
 
-  describe('if fields have no uiids', function () {
+  describe('if fields have no ids', function () {
     beforeEach(function () {
       scope.contentType = {
         data: {
@@ -174,34 +95,6 @@ describe('ContentTypeFieldList Controller', function () {
       scope.publishedIds = [123, 456];
       scope.$digest();
       expect(scope.fieldIsPublished({id: 123, type: 'text'})).toBeTruthy();
-    });
-
-    it('field is not published when fields exist with same ids and various fields exist with the same type', function () {
-      scope.contentType.data.fields.push({id: 123, type: 'int'});
-      scope.publishedContentType = {
-        data: {
-          fields: [
-            {id: 123, type: 'text'}
-          ]
-        }
-      };
-      scope.publishedIds = [123];
-      scope.$digest();
-      expect(scope.fieldIsPublished({id: 123, type: 'text'})).toBeFalsy();
-    });
-
-    it('field is not published when type of the field doesnt match the published fields with same id', function () {
-      scope.contentType.data.fields.push({id: 123, type: 'int'});
-      scope.publishedContentType = {
-        data: {
-          fields: [
-            {id: 123, type: 'int'}
-          ]
-        }
-      };
-      scope.publishedIds = [123];
-      scope.$digest();
-      expect(scope.fieldIsPublished({id: 123, type: 'text'})).toBeFalsy();
     });
   });
 

@@ -17,7 +17,7 @@ describe('Field Actions Controller', function () {
   describe('toggle a field', function () {
     var field;
     beforeEach(function () {
-      field = {uiid: 123};
+      field = {id: 123};
       scope.toggleField(field);
     });
 
@@ -34,7 +34,7 @@ describe('Field Actions Controller', function () {
   describe('open a field', function () {
     var field;
     beforeEach(function () {
-      field = {uiid: 123};
+      field = {id: 123};
     });
 
     it('field is closed', function () {
@@ -50,7 +50,7 @@ describe('Field Actions Controller', function () {
   describe('click a field', function () {
     var field;
     beforeEach(function () {
-      field = {uiid: 123};
+      field = {id: 123};
       scope.openField = sinon.stub();
       scope.fieldClicked(field);
     });

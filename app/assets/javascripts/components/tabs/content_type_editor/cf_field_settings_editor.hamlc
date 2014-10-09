@@ -23,28 +23,30 @@
          ot-path-types="['Array', 'Object', 'String']"
          ot-subdoc ot-bind-text type="text"
          placeholder="e.g. Product Name"
-         ng-change="updateFieldId()"
+         ng-change="updateApiName()"
          tooltip="Field title displayed to editors"
          tooltip-container=".tab-main"
          tooltip-placement="top")
   %span.field-id-display(tooltip="Field ID used in API"
-         ng-if="published") {{field.id}}
-  %input.form-control(name="fieldId"
+         ng-if="published") {{field.apiName}}
+  %input.form-control(name="fieldApiName"
          ng-if="!published"
-         ng-model="field.id" type="text" required=""
+         ng-model="field.apiName" type="text" required=""
          ng-disabled="!otEditable"
-         ot-path="['fields', index, 'id']"
+         ot-path="['fields', index, 'apiName']"
          ot-path-types="['Array', 'Object', 'String']"
          ot-subdoc ot-bind-text type="text"
          placeholder="e.g. productName"
          tooltip="Field ID used in API"
          tooltip-container=".tab-main"
          tooltip-placement="top")
+  %button.btn.btn--tertiary
+    %i.fa.fa-pencil-square-o
   .field-errors(ng-hide="noErrors")
     %span(cf-error-path="['fields', index, 'name']")
       Name: {{errorMessages.join(' ')}}
       %br
-    %span(cf-error-path="['fields', index, 'id']")
+    %span(cf-error-path="['fields', index, 'apiName']")
       Identifier: {{errorMessages.join(' ')}}
 
 .dropdown-btn.fieldtype-dropdown(cf-dropdown)
