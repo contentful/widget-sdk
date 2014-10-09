@@ -2,66 +2,67 @@
 
 angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '$injector', function($scope, $injector){
 
-  var ooyalaClient = $injector.get('ooyalaClient');
-  var debounce     = $injector.get('debounce');
+  var OoyalaErrorMessages = $injector.get('OoyalaErrorMessages');
+  var ooyalaClient        = $injector.get('ooyalaClient');
+  var debounce            = $injector.get('debounce');
+  var modalDialog         = $injector.get('modalDialog');
 
-  var errorMessages = {
-    invalidAssetID     : 'Cannot load the video. Please check the content id',
-    playerFailedToLoad : 'Cannot load the player. Please reload the page',
-    playerFailedToPlayVideo : 'Cannot play the video. Please reload the page'
-  };
+  ooyalaClient.setOrganizationId($scope.spaceContext.space.getOrganizationId());
 
   var debouncedFetchAssetInfoFromOoyala = debounce(fetchAssetInfoFromOoyala, 750);
 
   $scope.$watch('fieldData.value', fetchAssetInfo);
 
-  $scope.isLoading   = false;
-  $scope.playerReady = false;
+  $scope.isLoading     = false;
+  $scope.playerReady   = false;
+  $scope.selectedVideo = {};
 
+  $scope.handleClickOnSearchButton     = handleClickOnSearchButton;
   $scope.handleClickOnRemoveSign       = handleClickOnRemoveSign;
   $scope.handlePlayerReady             = handlePlayerReady;
   $scope.handlePlayerLoadFailure       = handlePlayerLoadFailure;
   $scope.handlePlayerFailedToPlayVideo = handlePlayerFailedToPlayVideo;
 
   function fetchAssetInfo(assetId) {
-    $scope.assetId = assetId;
+    $scope.selectedVideo.assetId = assetId;
 
     if(!_.isEmpty(assetId)){
-      $scope.errorMessage = undefined;
-      $scope.isLoading    = true;
-      $scope.playerId     = undefined; //reset from previous player
+      $scope.errorMessage           = undefined;
+      $scope.isLoading              = true;
+      $scope.selectedVideo.playerId = undefined; //reset from previous player
 
       debouncedFetchAssetInfoFromOoyala();
     }
   }
 
   function fetchAssetInfoFromOoyala() {
-    ooyalaClient.asset($scope.spaceContext.space.getOrganizationId(), $scope.assetId)
+    ooyalaClient.asset($scope.selectedVideo.assetId)
       .then(function(response){
-        $scope.playerId    = response.player_id;
         $scope.playerReady = false;
+        $scope.selectedVideo.playerId = response.player_id;
       })
       .catch(function(error){
-        if (error.code){
-          if (error.code == ooyalaClient.errorCodes.MISSING_CREDENTIALS)
-            $scope.errorMessage = errorMessages.missingCredentials;
-
-          if (error.code == ooyalaClient.errorCodes.INVALID_ASSET_ID)
-            $scope.errorMessage = errorMessages.invalidAssetID;
-        }
-        else {
-          $scope.errorMessage = errorMessages.playerFailedToPlayVideo;
-        }
-
-        $scope.isLoading = false;
+        $scope.errorMessage = error.message;
+        $scope.isLoading    = false;
       });
+  }
+
+  function handleClickOnSearchButton() {
+    modalDialog.open({
+      scope: $scope,
+      template: 'cf_ooyala_search_dialog'
+    }).then(function(video){
+      $scope.otChangeValueP(video.id).then(function(){
+        $scope.fieldData.value = video.id;
+      });
+    });
   }
 
   function handleClickOnRemoveSign() {
     $scope.otChangeValueP(undefined).then(function(){
+      $scope.selectedVideo   = {};
       $scope.fieldData.value = undefined;
       $scope.errorMessage    = undefined;
-      $scope.playerId        = undefined;
     });
   }
 
@@ -87,12 +88,12 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
   }
 
   function handlePlayerLoadFailure() {
-    $scope.errorMessage = errorMessages.playerFailedToLoad;
-    $scope.isLoading    = false;
-    $scope.playerId     = undefined;
+    $scope.errorMessage           = OoyalaErrorMessages.playerFailedToLoad;
+    $scope.isLoading              = false;
+    $scope.selectedVideo.playerId = undefined;
   }
 
   function handlePlayerFailedToPlayVideo() {
-    $scope.errorMessage = errorMessages.playerFailedToPlayVideo;
+    $scope.errorMessage = OoyalaErrorMessages.playerFailedToPlayVideo;
   }
 }]);

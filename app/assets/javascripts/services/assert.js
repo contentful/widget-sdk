@@ -40,6 +40,10 @@ angular.module('contentful').service('assert', ['$parse', function($parse) {
 
     truthy: function (value, message) {
       if(!value) throw makeException(value, message);
+    },
+
+    defined: function(value, message) {
+      this.truthy(value, message);
     }
   };
 }]);

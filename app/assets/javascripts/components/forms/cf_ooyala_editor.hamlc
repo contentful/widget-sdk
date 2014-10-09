@@ -1,22 +1,30 @@
-%input.form-control.cf-ooyala-editor(
-  ng-model="fieldData.value"
-  ot-bind-text=''
-  ot-subdoc=''
-  type="text")
+%.video-widget-selection
+  %input.form-control.video-widget-selection__video-id(
+    ng-model="fieldData.value"
+    ot-bind-text=''
+    ot-subdoc=''
+    type="text")
 
-%i.fa.fa-spinner.fa-spin(ng-show="isLoading")
-%i.fa.fa-times-circle(
-  ng-click="handleClickOnRemoveSign()"
-  ng-show="assetId && !isLoading")
+  %i.fa.fa-spinner.fa-spin(ng-show="isLoading")
+  %i.fa.fa-times-circle(
+    ng-click="handleClickOnRemoveSign()"
+    ng-show="selectedVideo.assetId && !isLoading")
 
-%div(ng-show="errorMessage" class="warning")
+  %button.btn.btn--form.btn--tertiary.add-new.video-widget-selection__search(type="button"
+    ng-click="handleClickOnSearchButton()")
+    %i.fa.fa-search
+    Search
+
+.video-widget-editor__warning(ng-show="errorMessage")
   %i.fa.fa-exclamation-triangle
-    %span
-      {{errorMessage}}
+  .video-widget-warning__message
+    %p {{errorMessage}}
 
-%cf-ooyala-player(
-  ng-if="playerId"
+%cf-ooyala-player.widget-ooyala-player(
+  ng-if="selectedVideo.playerId"
   ng-hide="!playerReady"
+  asset-id="selectedVideo.assetId"
+  player-id="selectedVideo.playerId"
   on-ready="handlePlayerReady()"
   on-load-failure="handlePlayerLoadFailure()"
   on-failed-to-play-video="handlePlayerFailedToPlayVideo()")

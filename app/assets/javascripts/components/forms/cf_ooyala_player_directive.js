@@ -6,31 +6,43 @@ angular.module('contentful').directive('cfOoyalaPlayer', ['$injector', function(
 
   var ID_PREFIX = 'ooyala-player-';
 
+  var defaults = {
+    showTitle   : true,
+    playOnReady : false
+  };
+
   return {
     restrict   : 'E',
     scope      : true,
     template   : JST['cf_ooyala_player'](),
     controller : 'cfOoyalaPlayerController',
     link: function(scope, elem, attrs) {
-      var player, ooyala;
+      var player, ooyala, options, playerId, assetId;
 
-      scope.playerDOMId = _.uniqueId(ID_PREFIX);
+      assetId  = scope.$eval(attrs.assetId);
+      playerId = scope.$eval(attrs.playerId);
+      options  = _.defaults( {
+        showTitle: scope.$eval(attrs.showTitle),
+        playOnReady: scope.$eval(attrs.playOnReady)
+      }, defaults);
 
-      ooyalaPlayerLoader.load(scope.playerId)
+      scope.showTitle     = options.showTitle;
+      scope.playerDOMId   = _.uniqueId(ID_PREFIX);
+      scope.createPlayer  = createOoyalaPlayer;
+      scope.destroyPlayer = destroyOoyalaPlayer;
+
+      ooyalaPlayerLoader.load(playerId)
         .then(function(_ooyala_){
           ooyala = _ooyala_;
 
-          scope.createPlayer  = createOoyalaPlayer;
-          scope.destroyPlayer = destroyOoyalaPlayer;
-
-          scope.$emit('player:loaded'); //no need to call $apply. Already in angular land
+          createOoyalaPlayer();
         })
         .catch(function(){
           scope.destroyPlayer = angular.noop;
           scope.$eval(attrs.onLoadFailure);
         });
 
-      function createOoyalaPlayer(assetId) {
+      function createOoyalaPlayer() {
         ooyala.Player.create(scope.playerDOMId, assetId,{
           onCreate: handlePlayerCreated
         });
@@ -54,6 +66,8 @@ angular.module('contentful').directive('cfOoyalaPlayer', ['$injector', function(
         scope.$apply(function(){
           scope.$emit('player:ready', {title: player.getTitle()});
           scope.$eval(attrs.onReady);
+
+          if (options.playOnReady) player.play();
         });
       }
 
@@ -62,7 +76,4 @@ angular.module('contentful').directive('cfOoyalaPlayer', ['$injector', function(
       }
     }
   };
-
-
 }]);
-
