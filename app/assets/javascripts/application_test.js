@@ -40,14 +40,14 @@ angular.module('contentful/test', [
   'contentful/user_interface',
   'contentful',
   'contentful/mocks'
-], ['$locationProvider', 'clientProvider', 'authenticationProvider', 'environment', '$sceDelegateProvider', '$compileProvider', 'timeRelativeConfig', 
-  function($locationProvider, clientProvider, authenticationProvider, environment, $sceDelegateProvider, $compileProvider, timeRelativeConfig){
+], ['$locationProvider', 'clientAdapterProvider', 'authenticationProvider', 'environment', '$sceDelegateProvider', '$compileProvider', 'timeRelativeConfig', 
+  function($locationProvider, clientAdapterProvider, authenticationProvider, environment, $sceDelegateProvider, $compileProvider, timeRelativeConfig){
   'use strict';
   var env = environment.settings;
   $locationProvider.html5Mode(true);
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
   $sceDelegateProvider.resourceUrlWhitelist([/(https?:)?\/\/([^:\/.?&;]*\.)?(staticflinkly-thriventures\.netdna-ssl\.com|quirely.com|flinkly.com|joistio.com|contentful.com)(:\d+)?\/.*/, 'self' ]);
-  clientProvider.endpoint('//'+env.api_host);
+  clientAdapterProvider.server('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');
   timeRelativeConfig.calendar.en.sameElse = 'll';
   timeRelativeConfig.calendar.en.lastWeek = 'ddd, LT';
