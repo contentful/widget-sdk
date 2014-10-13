@@ -71,22 +71,22 @@ angular.module('contentful').run(['widgetTypes', function(widgetTypes){
   });
   widgetTypes.registerWidget('entryLinkEditor',{
     fieldTypes: ['Entry'],
-    name: 'EntryLink',
+    name: 'Entry Link',
     template: '<div cf-entry-link-editor cf-link-editor ng-model="fieldData.value"></div>'
   });
   widgetTypes.registerWidget('assetLinkEditor',{
     fieldTypes: ['Asset'],
-    name: 'AssetLink',
+    name: 'Asset Link',
     template: '<div cf-asset-link-editor cf-link-editor ng-model="fieldData.value"></div>'
   });
   widgetTypes.registerWidget('entryLinksEditor',{
     fieldTypes: ['Entries'],
-    name: 'EntryLinks',
+    name: 'Entry Links List',
     template: '<div cf-entry-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
   widgetTypes.registerWidget('assetLinksEditor',{
     fieldTypes: ['Assets'],
-    name: 'AssetLinks',
+    name: 'Asset Links List',
     template: '<div cf-asset-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
   //toggle: {   NOT IMPLEMENTED
