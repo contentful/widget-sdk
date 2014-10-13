@@ -1,7 +1,8 @@
 'use strict';
 
-angular.module('contentful').provider('clientAdapter', [function ClientAdapter() {
-  var server = null;
+angular.module('contentful').provider('clientAdapter', ['$injector', function ClientAdapter($injector) {
+  var contentfulClient = $injector.get('contentfulClient');
+  var server           = null;
 
   this.server = function(s) { server = s; };
 
@@ -15,7 +16,7 @@ angular.module('contentful').provider('clientAdapter', [function ClientAdapter()
     }
 
     Adapter.prototype = {
-      request: function(options) {
+      _performRequest: function(options) {
         var defaults = {
           url     : '' + this.server + options.endpoint,
           headers : {
@@ -52,7 +53,12 @@ angular.module('contentful').provider('clientAdapter', [function ClientAdapter()
         return deferred.promise;
       },
 
-      _performRequest: this.request
+      /* The request method in the jquery adapter is inherited
+       * from the Base adapter.
+       *
+       * This method adds a new header to version updates to a resource
+       */
+      request: contentfulClient.adapters.jquery.prototype.request
     };
 
     return new Adapter(server);
