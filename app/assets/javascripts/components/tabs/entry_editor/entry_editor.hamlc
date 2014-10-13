@@ -60,8 +60,8 @@
                                  link="link" as="presenceUser"
                                  tooltip="{{presenceUser | userNameDisplay:user}}")
                 %img(ng-src="{{user.avatarUrl}}")
-          .l-field-help-text.field-help-text(ng-if="widget.widgetParams.helpText") {{widget.widgetParams.helpText}}
           .cf-form-box-error(cf-error-path="['fields', widget.field.id, locale.code,'*']")
+        .l-field-help-text.field-help-text(ng-if="widget.widgetParams.helpText") {{widget.widgetParams.helpText}}
         .cf-form-box-error(cf-error-path="['fields', widget.field.id]")
 
 .tab-actions(ng-controller="EntryActionsCtrl")
