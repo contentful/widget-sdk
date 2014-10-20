@@ -5,6 +5,8 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   var notification = $injector.get('notification');
   var widgetTypes  = $injector.get('widgetTypes');
 
+  var widgetIdsByContentType = {};
+
   return {
     forContentTypeWithId: function (contentType, interfaceId) {
       return getEditingInterface(contentType, interfaceId)
@@ -94,12 +96,22 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
 
   function defaultWidget(contentType, field) {
     return {
-      id: random.id(),
+      id: generateWidgetId(field.id, contentType.getId()),
       type: 'field',
       fieldId: field.id, // TODO use internal id (field renaming)
       widgetType: widgetTypes.defaultType(field, contentType),
       widgetParams: {}
     };
+  }
+
+  function generateWidgetId(fieldId, ctId) {
+    if(!widgetIdsByContentType[ctId])
+      widgetIdsByContentType[ctId] = {};
+
+    if(!widgetIdsByContentType[ctId][fieldId])
+      widgetIdsByContentType[ctId][fieldId] = fieldId + random.id();
+
+    return widgetIdsByContentType[ctId][fieldId];
   }
 
 }]);
