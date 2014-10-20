@@ -24,10 +24,11 @@
   .left-nav
   .with-left-nav
 
-    .field-widget-settings(
-        ng-repeat="widget in editingInterface.data.widgets track by widget.id"
-        ng-hide="getFieldForWidget(widget).disabled && !preferences.showDisabledFields"
-        ng-class="{open: isFieldOpen(field), active: !field.disabled }")
+    %div(ng-model="editingInterface.data.widgets" ui-sortable="widgetSortOptions")
+      .field-widget-settings(
+          ng-repeat="widget in editingInterface.data.widgets track by widget.id"
+          ng-hide="getFieldForWidget(widget).disabled && !preferences.showDisabledFields"
+          ng-class="{open: isFieldOpen(field), active: !field.disabled }")
 
 .tab-actions
   .button-set
