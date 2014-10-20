@@ -1,5 +1,5 @@
 .modal-background.create-space-dialog(ng-controller="CreateSpaceDialogCtrl")
-  %form.modal-dialog(name="newSpaceForm" ng-submit="createSpace()")
+  %form.modal-dialog(name="newSpaceForm" ng-submit="createSpace()" cf-center-on=".modal-background")
     .title
       Create Space
       %a.cf-knowledge-base-icon(

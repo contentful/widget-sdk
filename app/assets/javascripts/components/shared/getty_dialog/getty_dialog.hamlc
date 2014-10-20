@@ -1,5 +1,5 @@
 .modal-background
-  .modal-dialog.getty-dialog(ng-controller="GettyDialogController")
+  .modal-dialog.getty-dialog(ng-controller="GettyDialogController" cf-center-on=".modal-background")
     .title Getty Images
     .modal-dialog-close-button(ng-click="dialog.cancel()")
     .getty-results-bar(active-when="fixedResults" ng-show="fixedResults && !imageDetail")
