@@ -42,20 +42,11 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       scope.dialog = _.extend(this, this.params);
       $compile(this.domElement)(scope);
 
-      this._centerDialogWindow();
       this.domElement.on('click', _.bind(this._closeOnBackground, this));
     },
 
     setInvalid: function (state) {
       this.invalid = !!state;
-    },
-
-    _centerDialogWindow: function () {
-      var dialogElement = this.domElement.find('.modal-dialog');
-      var height = dialogElement.height();
-      var windowHeight = $($window).height();
-
-      dialogElement.css('top', (windowHeight - height) / 2);
     },
 
     _closeOnBackground: function (ev) {
