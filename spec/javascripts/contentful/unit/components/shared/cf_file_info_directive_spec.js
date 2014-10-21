@@ -62,7 +62,7 @@ describe('cfFileInfo Directive', function () {
       });
 
       it('unpublished marker', function() {
-        expect(element.find('.file-preview .unpublished')).toBeNgHidden();
+        expect(element.find('.file-preview .linked-entities__unpublished')).toBeNgHidden();
       });
     });
 

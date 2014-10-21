@@ -1,5 +1,5 @@
 .modal-background.new-content-type-dialog
-  .modal-dialog
+  .modal-dialog(cf-center-on=".modal-background")
     .title
       Choose the type of Entry
     .modal-dialog-close-button(ng-click="dialog.cancel()")

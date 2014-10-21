@@ -8,7 +8,7 @@ describe('Authentication service', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide, authenticationProvider) {
       stubs = $provide.makeStubs([
-        'hash', 'search', 'path', 'info', 'loggerError', 'resolveQueryLinks',
+        'hash', 'search', 'path', 'info', 'loggerError', 'resolveQueryLinks'
       ]);
       $provide.constant('contentfulClient', {
         QueryLinkResolver: {

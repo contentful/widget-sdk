@@ -155,7 +155,7 @@ angular.module('contentful').directive('cfLocationEditor', ['$injector', functio
       function scrollToSelected() {
         var $selected = elm.find('.selected');
         if ($selected.length === 0) return;
-        var $container = elm.find('.results');
+        var $container = elm.find('.search-results');
         var above = $selected.prop('offsetTop') <= $container.scrollTop();
         var below = $container.scrollTop() + $container.height() <= $selected.prop('offsetTop');
         if (above) {

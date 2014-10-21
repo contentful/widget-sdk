@@ -1,5 +1,5 @@
 .modal-background.validation-dialog
-  .modal-dialog(ng-controller="FieldValidationDialogController")
+  .modal-dialog(ng-controller="FieldValidationDialogController" cf-center-on=".modal-background")
     .title
       Validations for {{field.name}}
       %a.cf-knowledge-base-icon(

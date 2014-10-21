@@ -7,8 +7,8 @@
         view-menu="uiConfig.assetListViews"
         current-view="currentView"
         ng-show="uiConfig")
-      .main
-        .search-with-results(cf-tokenized-search="currentView.searchTerm"
+      .main.search-area
+        .l-search-w-autocomplete(cf-tokenized-search="currentView.searchTerm"
           tooltip-placement="top"
           tooltip="Search for existing asset"
           search-content-type="assetContentType"

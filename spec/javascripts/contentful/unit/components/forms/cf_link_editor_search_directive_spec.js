@@ -30,9 +30,9 @@ describe('cfLinkEditorSearch Directive', function () {
       };
 
       compileElement = function () {
-        element = $compile('<div class="cf-link-editor-search"></div>')(scope);
+        element = $compile('<div cf-link-editor-search></div>')(scope);
         scope.$digest();
-        searchField = element.find('.search-with-results');
+        searchField = element.find('.l-search-w-autocomplete');
       };
     });
   });
@@ -140,11 +140,11 @@ describe('cfLinkEditorSearch Directive', function () {
     });
 
     it('shows cf-link-editor-search', function () {
-      expect(element.find('.controls')).not.toBeNgHidden();
+      expect(element.find('.link-editor__controls')).not.toBeNgHidden();
     });
 
     it('results are not shown', function () {
-      expect(element.find('.results')).toBeNgHidden();
+      expect(element.find('.search-results')).toBeNgHidden();
     });
 
     describe('if search results exist', function () {
@@ -164,12 +164,12 @@ describe('cfLinkEditorSearch Directive', function () {
         scope.$digest();
       }));
 
-      it('has 2 assets (plus a header)', function () {
-        expect(element.find('.cell-preview').length).toBe(3);
+      it('has 2 assets', function () {
+        expect(element.find('.cell-preview').length).toBe(2);
       });
 
       it('first asset is selected', function () {
-        expect(element.find('.cell-preview').eq(1).parent()).toHaveClass('selected');
+        expect(element.find('.cell-preview').eq(0).parent()).toHaveClass('selected');
       });
 
       it('cf-thumbnail is not shown for first asset', function () {
@@ -226,11 +226,11 @@ describe('cfLinkEditorSearch Directive', function () {
     });
 
     it('shows cf-link-editor-search', function () {
-      expect(element.find('.controls')).not.toBeNgHidden();
+      expect(element.find('.link-editor__controls')).not.toBeNgHidden();
     });
 
     it('results are not shown', function () {
-      expect(element.find('.results')).toBeNgHidden();
+      expect(element.find('.search-results')).toBeNgHidden();
     });
 
     describe('if search results exist', function () {
@@ -243,12 +243,12 @@ describe('cfLinkEditorSearch Directive', function () {
         scope.$digest();
       });
 
-      it('has 2 entry items (plus a header)', function () {
-        expect(element.find('.cell-content-type').length).toBe(3);
+      it('has 2 entry items', function () {
+        expect(element.find('.cell-content-type').length).toBe(2);
       });
 
       it('first entry is selected', function () {
-        expect(element.find('.cell-content-type').eq(1).parent()).toHaveClass('selected');
+        expect(element.find('.cell-content-type').eq(0).parent()).toHaveClass('selected');
       });
 
       it('gets published type for first entry', function () {

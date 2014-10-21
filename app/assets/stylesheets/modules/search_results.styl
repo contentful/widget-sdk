@@ -1,0 +1,77 @@
+.search-results
+  $stretch-x(0px, 53px)
+  top: 33px
+  font-size: 12px
+  margin-right: 17%
+  margin-bottom: 20px
+  z-index: 20
+  border-radius: 0 0 3px 3px
+  background-color: $gray-lightest
+  border: 1px solid $metallic-gray-blueish
+
+.search-results__list
+  width: 100%
+  table-layout: fixed
+  color: $gray-darkest
+  tbody tr:hover,
+  .selected
+    color: white
+    background-color: $blue-light
+    cursor: pointer
+    td
+      border-color: transparent
+    .cell--lighter
+      color: $gray-lightest
+  td
+    line-height: 18px
+    vertical-align: middle
+    padding-right: 10px
+    text-align: left
+    white-space: nowrap
+    overflow: hidden
+    text-overflow: ellipsis
+    border-bottom: 1px solid $gray-light
+    span
+      white-space: nowrap
+      overflow: hidden
+      text-overflow: ellipsis
+  td
+    padding: 8px 0px
+
+  .cell-name
+    width: 40%
+    padding-left: 10px
+    vertical-align: top
+    p
+      max-width: 200px
+      overflow-x: hidden
+      text-overflow: ellipsis
+      margin: 5px 0
+
+  .cell-content-type
+    width: 140px
+    padding-left: 15px
+
+  .cell-preview
+    width: 80px
+    text-align: center
+    padding-left: 0
+    .icon
+      font-size: 40px
+    p
+      margin: 0
+
+  .cell-type
+    width: 100px
+    vertical-align: top
+
+  .cell--lighter
+    color: $gray-medium
+    font-weight: normal
+
+.search-results__length
+  text-align: center
+  width: 100%
+  margin: 5px 0
+
+

@@ -145,6 +145,22 @@ describe('Editing interfaces service', function () {
     it('gets widget type', function() {
       expect(stubs.defaultType).toBeCalled();
     });
+
+    describe('gets a default interface again', function() {
+      var interf2;
+      beforeEach(function() {
+        interf2 = editingInterfaces.defaultInterface(contentType);
+      });
+
+      it('has same field ids', function() {
+        expect(interf2.data.widgets[0].fieldId).toBe('fieldA');
+      });
+
+      it('has same widget ids', function() {
+        expect(interf2.data.widgets[0].id).toBe(interf.data.widgets[0].id);
+      });
+
+    });
   });
 
   describe('saves interface for a content type', function() {

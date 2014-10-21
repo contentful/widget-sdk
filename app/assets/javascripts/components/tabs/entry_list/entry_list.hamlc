@@ -8,7 +8,7 @@
         analytics-event="entries"
         href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
 
-  .tab-header__search.search-area.with-filter
+  .tab-header__search.search-area--with-filter
     .btn.btn--tertiary.select-box
       .select-box__wrapper
         %select.u-truncate(ng-model="tab.params.view.contentTypeId"
@@ -17,7 +17,8 @@
           %option(value="") All
       %i.button-icon-right.fa.fa-caret-down
 
-    .search-with-results(cf-tokenized-search="tab.params.view.searchTerm"
+    .l-search-w-autocomplete(
+      cf-tokenized-search="tab.params.view.searchTerm"
       search-content-type="getSearchContentType()"
       placeholder="Search for {{typeNameOr('Entries')}}"
       cf-on-blur-component="leftSearch($event)"

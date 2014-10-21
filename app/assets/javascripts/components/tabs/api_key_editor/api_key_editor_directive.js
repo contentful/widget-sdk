@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('apiKeyEditor', ['modalDialog', 'keycodes', 'defer', function(modalDialog, keycodes) {
+angular.module('contentful').directive('apiKeyEditor', ['keycodes', 'defer', function(keycodes) {
   return {
     template: JST.api_key_editor(),
     restrict: 'C',

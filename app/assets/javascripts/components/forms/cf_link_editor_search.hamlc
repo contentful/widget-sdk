@@ -1,5 +1,5 @@
-.controls
-  .search-with-results(cf-tokenized-search="searchTerm" 
+.link-editor__controls
+  .l-search-w-autocomplete(cf-tokenized-search="searchTerm" 
     tooltip-placement="top"
     tooltip="Search for existing {{entityName}}"
     search-content-type="getSearchContentType()"
@@ -9,14 +9,14 @@
 
   -# link to entry or entries
   .dropdown-btn.add-new(
-      cf-dropdown=""
       ng-if="entityType=='Entry' && addableContentTypes.length > 1"
+      cf-dropdown=""
       cf-can="create, Entry"
       tooltip="Add new {{entityType}}"
       tooltip-placement="left")
-    %button.btn.btn--form.btn--secondary(cf-dropdown-toggle="" type="button")
-      %i.fa.fa-plus.button-icon
-      New
+    %button.btn.btn--form.btn--tertiary(cf-dropdown-toggle="" type="button")
+      %i.fa.fa-plus-circle.button-icon
+      Add New
     %a.dropdown-menu(cf-dropdown-menu)
       %ul.dropdown-menu-list
         %li.dropdown-menu-item(ng-repeat="contentType in addableContentTypes track by contentType.getId()"
@@ -25,71 +25,61 @@
           {{contentType.getName()}}
 
   -# link to entry or entries with restriction on the type
-  %button.btn.btn--form.btn--secondary.add-new.with-link-content-type(type="button"
+  %button.btn.btn--form.btn--tertiary.add-new.with-link-content-type(type="button"
       ng-if="entityType=='Entry' && addableContentTypes.length === 1"
       cf-can="create, Entry"
       ng-click="addNewEntry(addableContentTypes[0])")
-    %i.fa.fa-plus.button-icon
-    New
+    %i.fa.fa-plus-circle.button-icon
+    Add New
 
   -# link to asset (with or without restriction)
-  %button.btn.btn--form.btn--secondary.add-new.with-link-content-type(type="button"
+  %button.btn.btn--form.btn--tertiary.add-new.with-link-content-type(type="button"
       ng-if="entityType=='Asset'"
       cf-can="create, Asset"
       ng-click="addNewAsset()")
-    %i.fa.fa-plus.button-icon
-    New
+    %i.fa.fa-plus-circle.button-icon
+    Add New
 
 
-.results.search-options-on.result-list-empty(ng-show="searchController.isEmptyState()"
-                           ng-switch="entityType"
-                           cf-click-outside-ignore=".search-button, .fa-search, .search-field input"
-                           cf-click-outside-when="searchController.areResultsVisible()"
-                           cf-click-outside="clickOutsideHandler()")
+.search-results.search-options-on.result-list-empty(
+     ng-show="searchController.isEmptyState()"
+     ng-switch="entityType"
+     cf-click-outside-ignore=".search-button, .fa-search, .search-field input"
+     cf-click-outside-when="searchController.areResultsVisible()"
+     cf-click-outside="clickOutsideHandler()")
   %div(ng-switch-when="Entry")
     %p No Entries created yet.
   %div(ng-switch-when="Asset")
     %p No Assets created yet.
 
-.results.search-options-on(ng-show="searchController.isResultsState()"
+
+.search-results.search-options-on(ng-show="searchController.isResultsState()"
                            ng-switch="entityType"
                            cf-click-outside-ignore=".search-button, .fa-search, .search-field input"
                            cf-click-outside-when="searchController.areResultsVisible()"
                            cf-click-outside="clickOutsideHandler()")
 
   %div(ng-switch-when="Entry")
-    %table.result-list
-      %thead
-        %tr
-          %th.cell-content-type Content Type
-          %th.cell-name Name
-          %th.cell-updated Updated
     .endless-container(at-bottom="searchController.loadMore()" num-elements="paginator.page")
-      %table.result-list
+      %table.search-results__list
         %tbody
           %tr(ng-repeat="entity in entities track by entity.getId()"
               cf-click-local="pick(entity)"
               ng-class="{selected: entity==selectedEntity}")
-            %td.cell-content-type
-              %span {{spaceContext.publishedTypeForEntry(entity).getName()}}
             %td.cell-name
               %span(title="{{spaceContext.entryTitle(entity)}}") {{spaceContext.entryTitle(entity)}}
+            %td.cell-content-type
+              %span {{spaceContext.publishedTypeForEntry(entity).getName()}}
             %td.cell-updated
               %date.relative(ng-if="entity.getUpdatedAt()" datetime="{{entity.getUpdatedAt()}}")
       .loading(ng-hide="paginator.atLast()")
-    %p.result-length Showing {{entities.length}} of {{paginator.numEntries}} entries
+    %p.search-results__length Showing {{entities.length}} of {{paginator.numEntries}} entries
 
   %div(ng-switch-when="Asset")
-    %table.result-list
-      %thead
-        %tr
-          %th.cell-preview Preview
-          %th.cell-name Title / Description
-          %th.cell-type Type / Updated
     .endless-container(at-bottom="searchController.loadMore()" num-elements="paginator.page")
-      %table.result-list
+      %table.search-results__list
         %tbody
-          %tr.thin-row(ng-repeat="entity in entities track by entity.getId()"
+          %tr(ng-repeat="entity in entities track by entity.getId()"
               cf-click-local="pick(entity)"
               ng-class="{selected: entity==selectedEntity}")
             %td.cell-preview
@@ -101,8 +91,8 @@
             %td.cell-type(ng-init="file=spaceContext.localizedField(entity, 'data.fields.file', locale.code)")
               %p(ng-show="file && file.url") {{file|fileType}}
                 %span.lighter {{file|fileExtension}}
-              %p.lighter
+              %p.cell--lighter
                 %date.relative(ng-if="entity.getUpdatedAt()" datetime="{{entity.getUpdatedAt()}}")
       .loading(ng-hide="paginator.atLast()")
-    %p.result-length Showing {{entities.length}} of {{paginator.numEntries}} assets
+    %p.search-results__length Showing {{entities.length}} of {{paginator.numEntries}} assets
 

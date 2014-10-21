@@ -59,8 +59,8 @@
       %i.fa.fa-gear
       %span Space Settings
 %nav.tab-list(ng-show="spaceContext.space && !spaceContext.space.isHibernated() && !locationInAccount" ng-class="{hidden: hideTabBar()}")
-  %ul
-    %li.tab(ng-repeat="tabItem in spaceContext.tabList.items"
+  %ul.plain-list
+    %li.plain-list--item.tab(ng-repeat="tabItem in spaceContext.tabList.items"
             ng-class="{active: tabItem.active(), dirty: tabItem.dirty}"
             ng-click="goToTab(tabItem)"
             ng-hide="tabItem.hidden"

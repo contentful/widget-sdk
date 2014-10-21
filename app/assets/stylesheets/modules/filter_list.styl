@@ -1,14 +1,14 @@
 .filter-list
-  $plain-list()
+  @extend .plain-list
   margin-bottom: 10px
-
-.filter-list.ui-sortable
-  min-height: 18px
+  &.ui-sortable
+    min-height: 18px
 
 .filter-list-nogap
   margin-top: -10px
 
 .filter-list-item
+  @extend .plain-list--item
   position: relative
   padding: 4px $left-nav-padding
   border: 1px solid transparent
