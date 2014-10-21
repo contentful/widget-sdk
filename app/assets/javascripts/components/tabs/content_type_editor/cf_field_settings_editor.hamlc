@@ -28,6 +28,7 @@
          tooltip-container=".tab-main"
          tooltip-placement="top")
   %input.form-control(name="fieldApiName"
+         cf-api-name-shadow="field"
          ng-model="field.apiName" type="text" required=""
          ng-disabled="!(otEditable && apiNameController.isEditable())"
          ot-path="['fields', index, 'apiName']"

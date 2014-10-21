@@ -17,7 +17,7 @@ angular.module('contentful').controller('ApiNameController', ['$scope', '$inject
   this.lockEditing    = lockEditing;
   this.revert         = revert;
 
-  $scope.$watch(publishedApiName, publishedApiNameChanged);
+  $scope.$watch('publishedContentType.data.sys.revision', publishedCounterChanged);
 
   function updateFromName() {
     var currentApiName = $scope.field.apiName || '';
@@ -88,12 +88,16 @@ angular.module('contentful').controller('ApiNameController', ['$scope', '$inject
     return field && field.apiName;
   }
 
-  function publishedApiNameChanged(newName, oldName, scope) {
-    controller._publishedName = newName;
-    if (newName !== oldName && scope.field.apiName === newName) lockEditing();
+  function publishedCounterChanged(newCount, oldCount) {
+    controller._publishedName = publishedApiName();
+    if (newCount !== oldCount) lockEditing();
   }
 
   function apiNamePublished() {
-    return $scope.field.apiName === controller._publishedName;
+    /*jshint eqnull: true*/
+    var effectivePublishedName = controller._publishedName == null ? $scope.field.id : controller._publishedName;
+    var effectiveName = $scope.field.apiName == null ? $scope.field.id : $scope.field.apiName;
+
+    return effectiveName === effectivePublishedName;
   }
 }]);
