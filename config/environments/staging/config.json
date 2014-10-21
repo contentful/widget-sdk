@@ -30,5 +30,8 @@
         "region": "us-east-1"
       }
     }
+  },
+  "google" : {
+    "gapi_key" : "AIzaSyAJi3XBLmzo1lOzZ0RncjVQWVlF_wkC4ow"
   }
 }
