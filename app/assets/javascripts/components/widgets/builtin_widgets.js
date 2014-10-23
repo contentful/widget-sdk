@@ -89,6 +89,11 @@ angular.module('contentful').run(['widgetTypes', function(widgetTypes){
     name: 'Asset Links List',
     template: '<div cf-asset-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
+  widgetTypes.registerWidget('youtubeEditor',{
+    fieldTypes: ['Symbol'],
+    name: 'Youtube',
+    template: '<cf-youtube-editor ng-model="fieldData.value" ot-bind-internal="url"></cf-youtube-editor>'
+  });
   //toggle: {   NOT IMPLEMENTED
     //fieldTypes: ['Boolean'],
     //name: 'Toggle',
