@@ -32,7 +32,7 @@ describe('cfFieldEditor Controller', function () {
   describe('fieldData is set', function() {
     beforeEach(function() {
       scope.widget.field.type = 'Symbol';
-      scope.widget.widgetType = 'textfield';
+      scope.widget.widgetId = 'textfield';
       scope.entity = {
         data: {
           fields: {
@@ -87,7 +87,7 @@ describe('cfFieldEditor Controller', function () {
   describe('with no fields', function() {
     beforeEach(function() {
       scope.widget.field.type = 'Symbol';
-      scope.widget.field.widgetType = 'textfield';
+      scope.widget.field.widgetId = 'textfield';
       scope.entity = {
         data: {}
       };
@@ -116,7 +116,7 @@ describe('cfFieldEditor Controller', function () {
   describe('if field does not exist', function() {
     beforeEach(function() {
       scope.widget.field.type = 'Symbol';
-      scope.widget.widgetType = 'textfield';
+      scope.widget.widgetId = 'textfield';
       scope.entity = {
         data: {}
       };

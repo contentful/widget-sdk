@@ -3,7 +3,7 @@
 angular.module('contentful').controller('EditingInterfaceEditorController', ['$scope', '$injector', function EditingInterfaceEditorController($scope, $injector) {
   var $controller = $injector.get('$controller');
   var editingInterfaces = $injector.get('editingInterfaces');
-  var widgetTypes = $injector.get('widgetTypes');
+  var widgets = $injector.get('widgets');
   var random = $injector.get('random');
 
   $controller('AccordionController', {$scope: $scope});
@@ -55,16 +55,16 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
     }
   }
 
-  function addLayoutItem(widgetType, itemIndex) {
+  function addLayoutItem(widgetId, itemIndex) {
     var layoutItem = {
       id: random.id(), // TODO change this to use the field generation method from the service on master
       fieldId: '',
-      type: 'static',
-      widgetType: widgetType,
+      widgetType: 'static',
+      widgetId: widgetId,
       widgetParams: {}
     };
 
-    var widgetOptions = widgetTypes.optionsForWidgetType(widgetType, 'static');
+    var widgetOptions = widgets.optionsForWidget(widgetId, 'static');
     _.each(widgetOptions, function (option) {
       layoutItem.widgetParams[option.param] = '';
     });

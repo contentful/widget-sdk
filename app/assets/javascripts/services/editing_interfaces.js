@@ -3,7 +3,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   var $q           = $injector.get('$q');
   var random       = $injector.get('random');
   var notification = $injector.get('notification');
-  var widgetTypes  = $injector.get('widgetTypes');
+  var widgets  = $injector.get('widgets');
 
   return {
     forContentTypeWithId: function (contentType, interfaceId) {
@@ -50,7 +50,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
 
   function addDefaultParams(interf) {
     _.each(interf.data.widgets, function (widget) {
-      var defaults = widgetTypes.paramDefaults(widget.widgetType, widget.type);
+      var defaults = widgets.paramDefaults(widget.widgetId, widget.widgetType);
       _.defaults(widget.widgetParams, defaults);
     });
     return interf;
@@ -95,9 +95,9 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   function defaultWidget(contentType, field) {
     return {
       id: random.id(),
-      type: 'field',
+      widgetType: 'field',
       fieldId: field.id, // TODO use internal id (field renaming)
-      widgetType: widgetTypes.defaultType(field, contentType),
+      widgetId: widgets.defaultWidget(field, contentType),
       widgetParams: {}
     };
   }

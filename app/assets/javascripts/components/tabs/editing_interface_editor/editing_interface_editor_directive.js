@@ -21,12 +21,12 @@ angular.module('contentful').directive('editingInterfaceEditor', [function(){
         update: function (event, ui) {
           if(sortableItemReceived) {
             var dropIndex = ui.item.sortable.dropindex;
-            var widgetType = ui.item.attr('data-layout-item');
+            var widgetId = ui.item.attr('data-layout-item');
             ui.item.remove();
-            if(widgetType) {
+            if(widgetId) {
               ui.item.sortable.received = true;
               scope.$apply(function () {
-                scope.addLayoutItem(widgetType, dropIndex);
+                scope.addLayoutItem(widgetId, dropIndex);
               });
             }
           }

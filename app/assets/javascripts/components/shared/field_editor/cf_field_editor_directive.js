@@ -22,7 +22,7 @@
 
 angular.module('contentful').directive('cfFieldEditor', ['$injector', function($injector) {
   var $compile    = $injector.get('$compile');
-  var widgetTypes = $injector.get('widgetTypes');
+  var widgets = $injector.get('widgets');
 
   return {
     restrict: 'C',
@@ -30,17 +30,17 @@ angular.module('contentful').directive('cfFieldEditor', ['$injector', function($
     controller: 'CfFieldEditorController',
     link: function (scope, element) {
       var childScope;
-      scope.$watch('widget.widgetType', installWidget);
+      scope.$watch('widget.widgetId', installWidget);
       scope.$on('$destroy', clearChildScope);
 
-      function installWidget(widgetType) {
+      function installWidget(widgetId) {
         if (childScope) {
           childScope.$destroy();
           childScope = null;
           element.empty();
         }
-        if (widgetType) {
-          var template = widgetTypes.widgetTemplate(widgetType);
+        if (widgetId) {
+          var template = widgets.widgetTemplate(widgetId);
           childScope = scope.$new();
           var $widget = $(template);
           element.append($widget);

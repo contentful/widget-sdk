@@ -1,23 +1,23 @@
 'use strict';
 
 angular.module('contentful').controller('FieldWidgetSettingsCtrl', ['$scope', '$injector', function FieldWidgetSettingsCtrl($scope, $injector) {
-  var widgetTypes = $injector.get('widgetTypes');
+  var widgets = $injector.get('widgets');
 
   $scope.field = $scope.getFieldForWidget($scope.widget);
 
-  if($scope.widget.type == 'field') {
-    $scope.$watch('widget.widgetType', assembleWidgetOptions);
-    widgetTypes.forField($scope.field)
+  if($scope.widget.widgetType == 'field') {
+    $scope.$watch('widget.widgetId', assembleWidgetOptions);
+    widgets.forField($scope.field)
     .then(function (types) {
-      $scope.widgetTypesForType = types;
-      assembleWidgetOptions($scope.widget.widgetType, $scope.widget.type);
+      $scope.widgetsForType = types;
+      assembleWidgetOptions($scope.widget.widgetId, $scope.widget.widgetType);
     });
-  } else if($scope.widget.type == 'static') {
-    assembleWidgetOptions($scope.widget.widgetType, $scope.widget.type);
+  } else if($scope.widget.widgetType == 'static') {
+    assembleWidgetOptions($scope.widget.widgetId, $scope.widget.widgetType);
   }
 
-  function assembleWidgetOptions(widgetType, fieldType) {
-    $scope.widgetOptions = widgetTypes.optionsForWidgetType(widgetType, fieldType);
+  function assembleWidgetOptions(widgetId, widgetType) {
+    $scope.widgetOptions = widgets.optionsForWidget(widgetId, widgetType);
   }
 
 }]);

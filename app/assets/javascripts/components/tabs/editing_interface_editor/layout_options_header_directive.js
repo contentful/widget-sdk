@@ -8,9 +8,9 @@ angular.module('contentful').directive('layoutOptionsHeader', [function(){
     transclude: true,
     link: function (scope, elem) {
       if(!scope.widget) {
-        var widgetType = elem.attr('data-layout-item');
+        var widgetId = elem.attr('data-layout-item');
         scope.widget = {
-          widgetType: widgetType
+          widgetId: widgetId
         };
       }
     }
