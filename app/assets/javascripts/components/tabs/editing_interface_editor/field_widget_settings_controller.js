@@ -5,16 +5,19 @@ angular.module('contentful').controller('FieldWidgetSettingsCtrl', ['$scope', '$
 
   $scope.field = $scope.getFieldForWidget($scope.widget);
 
-  $scope.$watch('widget.widgetType', assembleWidgetOptions);
+  if($scope.widget.type == 'field') {
+    $scope.$watch('widget.widgetType', assembleWidgetOptions);
+    widgetTypes.forField($scope.field)
+    .then(function (types) {
+      $scope.widgetTypesForType = types;
+      assembleWidgetOptions($scope.widget.widgetType, $scope.widget.type);
+    });
+  } else if($scope.widget.type == 'static') {
+    assembleWidgetOptions($scope.widget.widgetType, $scope.widget.type);
+  }
 
-  widgetTypes.forField($scope.field)
-  .then(function (types) {
-    $scope.widgetTypesForType = types;
-    assembleWidgetOptions($scope.widget.widgetType);
-  });
-
-  function assembleWidgetOptions(widgetType) {
-    $scope.widgetOptions = widgetTypes.optionsForWidgetType(widgetType);
+  function assembleWidgetOptions(widgetType, fieldType) {
+    $scope.widgetOptions = widgetTypes.optionsForWidgetType(widgetType, fieldType);
   }
 
 }]);

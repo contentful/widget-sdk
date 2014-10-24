@@ -3,7 +3,7 @@
 angular.module('contentful').controller('ContentTypeFieldListCtrl', ['$scope', '$injector', function($scope, $injector) {
   var $controller = $injector.get('$controller');
 
-  $controller('FieldActionsController', {$scope: $scope});
+  $controller('AccordionController', {$scope: $scope});
 
   $scope.$watchCollection('contentType.data.fields', function (fields, old, scope) {
     scope.fieldList = fields;
@@ -61,6 +61,6 @@ angular.module('contentful').controller('ContentTypeFieldListCtrl', ['$scope', '
 
   $scope.$on('fieldAdded', function (event, index) {
     var scope = event.currentScope;
-    scope.openField(scope.contentType.data.fields[index]);
+    scope.openAccordionItem(scope.contentType.data.fields[index]);
   });
 }]);

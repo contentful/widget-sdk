@@ -1,16 +1,20 @@
-.field-widget-header(ng-click="toggleField(field)")
-  .cf-fieldtype-icon(field="field" show-tooltip)
+.field-widget-settings__header(ng-if="widget.type == 'field'" ng-click="toggleAccordionItem(widget)")
+  .field-widget-settings__icon.cf-fieldtype-icon(field="field" show-tooltip)
     %i.fa.fa-question-circle
-  .widget-label
-    {{displayedFieldName(field)}}
-  .tools
+  .field-widget-settings__label
+    {{field | displayedFieldName}}
+  .field-widget-settings__tools
     %span.fa-stack(ng-if="field.disabled")
       %i.fa.fa-pencil.fa-flip-horizontal.fa-stack-1x
       %i.fa.fa-ban.fa-stack-2x
-    %a.toggle-collapse.on-right(ng-class="{open: isFieldOpen(field)}") ▶
-.details
+    %a.toggle-collapse.on-right(ng-class="{open: isAccordionItemOpen(widget)}") ▶
+
+%layout-options-header.u-bce(ng-if="widget.type == 'static'" has-details="true")
+
+.field-widget-settings__details
   .l-form
-    .l-form-row
+
+    .l-form-row(ng-if="widget.type == 'field'")
       %label
         Widget Type
       .l-form-controls
@@ -19,6 +23,7 @@
             %select(ng-model="widget.widgetType"
                     ng-options="type.id as type.name for type in widgetTypesForType")
             %i.fa.fa-caret-down.button-icon-right
+
     .l-form-row(ng-repeat="option in widgetOptions")
       %label {{option.name}}
       .l-form-controls
@@ -39,3 +44,13 @@
             %select(ng-options="value for value in option.values"
                     ng-model="widget.widgetParams[option.param]")
             %span(ng-bind="option.description")
+
+    .l-form-row(ng-if="widget.type == 'static'" cf-dropdown)
+      %a.u-locked-action(href="#" cf-dropdown-toggle)
+        %i.fa.fa-trash
+        Delete Widget
+        .delete-confirm(cf-dropdown-menu="" position="topcenter")
+          %p Are you sure you want to remove this widget?
+          %button.btn.btn--danger(type="button" ng-click="removeWidget(widget)" dropdown-close="") Delete
+          %button.btn.btn--secondary(type="button" dropdown-close="") Cancel
+

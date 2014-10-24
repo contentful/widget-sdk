@@ -5,8 +5,9 @@ describe('ApiNameController', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs(['toIdentifier', 'at', 'set', 'get', 'serverError']);
+      stubs = $provide.makeStubs(['toIdentifier', 'at', 'set', 'get', 'serverError', 'isDisplayableAsTitleFilter']);
       $provide.value('notification', { serverError: stubs.serverError });
+      $provide.value('isDisplayableAsTitleFilter', stubs.isDisplayableAsTitleFilter);
       $provide.constant('stringUtils', {toIdentifier: stubs.toIdentifier});
     });
     inject(function ($controller, $rootScope) {
@@ -111,8 +112,7 @@ describe('ApiNameController', function () {
           describe('if not already display field', function() {
             beforeEach(function() {
               scope.isDisplayField.returns(false);
-              scope.displayEnabled = sinon.stub();
-              scope.displayEnabled.returns(true);
+              stubs.isDisplayableAsTitleFilter.returns(true);
               scope.contentType = {
                 data: {
                   displayField: ''

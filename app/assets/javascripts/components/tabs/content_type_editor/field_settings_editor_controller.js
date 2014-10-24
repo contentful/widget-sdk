@@ -9,7 +9,6 @@ angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$
   var notification     = $injector.get('notification');
   var validation       = $injector.get('validation');
 
-  $controller('FieldSettingsController', {$scope: $scope});
   $scope.apiNameController = $controller('ApiNameController', {$scope: $scope});
 
   $scope.$watch(hasValidationsWatcher,     hasValidationsChanged);

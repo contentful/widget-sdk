@@ -23,7 +23,7 @@
 angular.module('contentful').directive('cfFieldEditor', ['$injector', function($injector) {
   var $compile    = $injector.get('$compile');
   var widgetTypes = $injector.get('widgetTypes');
-  
+
   return {
     restrict: 'C',
     require: '^otPath',

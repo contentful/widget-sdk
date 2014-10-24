@@ -1,6 +1,6 @@
-%a.toggle-collapse(cf-click-local="toggleField(field)" ng-class="{open: isFieldOpen(field)}") ▶
+%a.toggle-collapse(cf-click-local="toggleAccordionItem(field)" ng-class="{open: isAccordionItemOpen(field)}") ▶
 .display
-  %span.name {{displayedFieldName(field)}}
+  %span.name {{field | displayedFieldName}}
   .icons
     %i.fa.fa-exclamation-triangle.validation-alert(tooltip="This Field has errors"
                                  ng-show="validationResult.pathErrors.fields[index]")
@@ -78,7 +78,7 @@
     {{field.localized ? 'Localized' : 'Localize'}}
   %a.toggle-title(ng-click="isDisplayField() ? null : setDisplayField(field)"
                   ng-class="{active: isDisplayField()}"
-                  ng-show="displayEnabled(field)"
+                  ng-show="field | isDisplayableAsTitle"
                   tooltip="Use this Field as title of the Entry in the interface")
     %i.title-icon T
     {{isDisplayField(field) ? 'Used as title' : 'Use as title'}}

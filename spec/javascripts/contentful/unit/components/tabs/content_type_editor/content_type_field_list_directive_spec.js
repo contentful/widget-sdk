@@ -15,9 +15,9 @@ describe('The ContentTypeFieldList directive', function () {
       scope = $rootScope.$new();
       scope.preferences = {};
 
-      scope.isFieldOpen = sinon.stub();
-      scope.isFieldOpen.withArgs({id: 'foo'}).returns(true);
-      scope.isFieldOpen.withArgs({id: 'bar', disabled: true}).returns(false);
+      scope.isAccordionItemOpen = sinon.stub();
+      scope.isAccordionItemOpen.withArgs({id: 'foo'}).returns(true);
+      scope.isAccordionItemOpen.withArgs({id: 'bar', disabled: true}).returns(false);
 
 
       compileElement = function () {

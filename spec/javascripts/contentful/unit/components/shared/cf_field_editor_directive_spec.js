@@ -48,7 +48,7 @@ describe('cfFieldEditor Directive', function () {
   it('displays a warning for unknown widgets', function() {
     scope.widget.widgetType = 'lolwut';
     compileElement();
-    expect(element.text()).toMatch('Unkown editor widget "lolwut"');
+    expect(element.text()).toMatch('Unknown editor widget "lolwut"');
   });
 
 });

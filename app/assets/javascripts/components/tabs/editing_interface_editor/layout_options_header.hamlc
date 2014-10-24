@@ -1,0 +1,17 @@
+.field-widget-settings__header(ng-click="toggleAccordionItem(widget)")
+  .field-widget-settings__icon(ng-switch="widget.widgetType")
+    %i.fa.fa-header(ng-switch-when="sectionHeader")
+    %i.fa.fa-align-center(ng-switch-when="infoText")
+    %i.fa.fa-minus(ng-switch-when="sectionBreak")
+  .field-widget-settings__label(ng-switch="widget.widgetType")
+    %span(ng-switch-when="sectionHeader")
+      Section header
+    %span(ng-switch-when="infoText")
+      Info text
+    %span(ng-switch-when="sectionBreak")
+      Section break
+  -# TODO: this should be transcluded instead when we update to Angular 1.3
+  .field-widget-settings__tools(ng-if="hasDetails")
+    %a.toggle-collapse.on-right(ng-class="{open: isAccordionItemOpen(widget)}") ▶
+
+

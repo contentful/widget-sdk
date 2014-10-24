@@ -92,17 +92,19 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
     return _.filter(_.pluck(field.validations, type));
   }
 
-  function optionsForWidgetType(widgetType) {
+  // TODO fieldType to be renamed
+  function optionsForWidgetType(widgetType, fieldType) {
     var widget = WIDGET_TYPES[widgetType];
-    if (widget) {
+    if (widget && fieldType == 'field') {
       return COMMON_OPTIONS.concat(widget.options || []);
-    } else {
-      return [];
+    } else if(fieldType == 'static'){
+      return widget.options;
     }
+    return [];
   }
 
-  function paramDefaults(widgetType) {
-    return _.transform(optionsForWidgetType(widgetType), function (defaults, option) {
+  function paramDefaults(widgetType, fieldType) {
+    return _.transform(optionsForWidgetType(widgetType, fieldType), function (defaults, option) {
       defaults[option.param] = option.default;
     }, {});
   }
@@ -112,7 +114,7 @@ angular.module('contentful').factory('widgetTypes', ['$injector', function($inje
     if (widget) {
       return widget.template;
     } else {
-      return '<div class="missing-widget-template">Unkown editor widget "'+widgetType+'"</div>';
+      return '<div class="missing-widget-template">Unknown editor widget "'+widgetType+'"</div>';
     }
   }
 

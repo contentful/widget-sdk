@@ -3,15 +3,20 @@
 angular.module('contentful').controller('EditingInterfaceEditorController', ['$scope', '$injector', function EditingInterfaceEditorController($scope, $injector) {
   var $controller = $injector.get('$controller');
   var editingInterfaces = $injector.get('editingInterfaces');
+  var widgetTypes = $injector.get('widgetTypes');
+  var random = $injector.get('random');
 
-  $controller('FieldSettingsController', {$scope: $scope});
-  $controller('FieldActionsController', {$scope: $scope});
+  $controller('AccordionController', {$scope: $scope});
 
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
   $scope.$watch('tab.params.editingInterface', 'editingInterface=tab.params.editingInterface');
 
   $scope.getFieldForWidget = getFieldForWidget;
   $scope.restoreDefaults = restoreDefaults;
+
+  $scope.addLayoutItem = addLayoutItem;
+  $scope.removeWidget = removeWidget;
+
   $scope.update = saveToServer;
   $scope.delete = angular.noop; // TODO: implement when we have more than the default interface
 
@@ -22,7 +27,7 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
   }
 
   function restoreDefaults() {
-    $scope.closeAllFields();
+    $scope.closeAllAccordionItems();
     var editingInterface = editingInterfaces.defaultInterface($scope.contentType);
     $scope.editingInterface.data.widgets = editingInterface.data.widgets;
   }
@@ -48,6 +53,29 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
     if (contentType === $scope.tab.params.contentType) {
       $scope.tab.close();
     }
+  }
+
+  function addLayoutItem(widgetType, itemIndex) {
+    var layoutItem = {
+      id: random.id(), // TODO change this to use the field generation method from the service on master
+      fieldId: '',
+      type: 'static',
+      widgetType: widgetType,
+      widgetParams: {}
+    };
+
+    var widgetOptions = widgetTypes.optionsForWidgetType(widgetType, 'static');
+    _.each(widgetOptions, function (option) {
+      layoutItem.widgetParams[option.param] = '';
+    });
+
+    $scope.editingInterface.data.widgets.splice(itemIndex, 0, layoutItem);
+  }
+
+  function removeWidget(widgetToRemove) {
+    _.remove($scope.editingInterface.data.widgets, function (widget) {
+      return widget === widgetToRemove;
+    });
   }
 
 }]);

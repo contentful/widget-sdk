@@ -248,14 +248,14 @@ describe('ContentTypeFieldList Controller', function () {
           ]
         }
       };
-      scope.openField = sinon.stub();
+      scope.openAccordionItem = sinon.stub();
       scope.$digest();
 
       $rootScope.$broadcast('fieldAdded', 0);
     }));
 
-    it('calls openField with new field', function () {
-      expect(scope.openField).toBeCalledWith({id: 'foo'});
+    it('calls openAccordionItem with new field', function () {
+      expect(scope.openAccordionItem).toBeCalledWith({id: 'foo'});
     });
   });
 

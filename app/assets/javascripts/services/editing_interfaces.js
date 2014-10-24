@@ -50,7 +50,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
 
   function addDefaultParams(interf) {
     _.each(interf.data.widgets, function (widget) {
-      var defaults = widgetTypes.paramDefaults(widget.widgetType);
+      var defaults = widgetTypes.paramDefaults(widget.widgetType, widget.type);
       _.defaults(widget.widgetParams, defaults);
     });
     return interf;

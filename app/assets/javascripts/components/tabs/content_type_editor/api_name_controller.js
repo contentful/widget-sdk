@@ -5,6 +5,7 @@ angular.module('contentful').controller('ApiNameController', ['$scope', '$inject
   var notification = $injector.get('notification');
   var modalDialog  = $injector.get('modalDialog');
   var stringUtils  = $injector.get('stringUtils');
+  var isDisplayableAsTitleFilter = $injector.get('isDisplayableAsTitleFilter');
 
   this._publishedName = publishedApiName();
   this._oldName       = $scope.field.name || '';
@@ -41,7 +42,7 @@ angular.module('contentful').controller('ApiNameController', ['$scope', '$inject
           return;
         }
         if (isDisplayField ||
-            _.isEmpty($scope.contentType.data.displayField) && $scope.displayEnabled($scope.field)) {
+            _.isEmpty($scope.contentType.data.displayField) && isDisplayableAsTitleFilter($scope.field)) {
           $scope.setDisplayField($scope.field);
         }
       });

@@ -170,12 +170,16 @@ describe('Widget types service', function () {
       expect(widgetTypes.optionsForWidgetType(null)).toEqual([]);
     });
     it('should contain common options', function () {
-      var options = widgetTypes.optionsForWidgetType('singleLine');
+      var options = widgetTypes.optionsForWidgetType('singleLine', 'field');
       expect(_.find(options, {param: 'helpText'})).toBeTruthy();
     });
-    it('should contain widget options', function () {
-      var options = widgetTypes.optionsForWidgetType('rating');
+    it('should contain field widget options', function () {
+      var options = widgetTypes.optionsForWidgetType('rating', 'field');
       expect(_.find(options, {param: 'stars'})).toBeTruthy();
+    });
+    it('should contain static widget options', function () {
+      var options = widgetTypes.optionsForWidgetType('infoText', 'static');
+      expect(_.find(options, {param: 'text'})).toBeTruthy();
     });
   });
 
@@ -189,7 +193,7 @@ describe('Widget types service', function () {
         ]
       });
 
-      var d = widgetTypes.paramDefaults('herp');
+      var d = widgetTypes.paramDefaults('herp', 'field');
       expect(d.foo).toBe(123);
       expect(d.bar).toBe('derp');
       expect(d.baz).toBe(undefined);
@@ -224,7 +228,7 @@ describe('Widget types service', function () {
       expect(widgetTypes.widgetTemplate('foo')).toBe('bar');
     });
     it('returns a warning for a missing widget', function () {
-      expect(widgetTypes.widgetTemplate('derp')).toBe('<div class="missing-widget-template">Unkown editor widget "derp"</div>');
+      expect(widgetTypes.widgetTemplate('derp')).toBe('<div class="missing-widget-template">Unknown editor widget "derp"</div>');
     });
   });
   

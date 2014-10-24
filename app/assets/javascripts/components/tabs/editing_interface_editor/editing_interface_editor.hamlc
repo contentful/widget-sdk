@@ -22,13 +22,20 @@
 
 .tab-main
   .left-nav
-  .with-left-nav
+    %h2 Layout options
+    %div(data-layout-options)
+      %layout-options-header.u-bce.field-widget-settings(data-layout-item="sectionHeader")
+      %layout-options-header.u-bce.field-widget-settings(data-layout-item="infoText")
+      %layout-options-header.u-bce.field-widget-settings(data-layout-item="sectionBreak")
 
-    %div(ng-model="editingInterface.data.widgets" ui-sortable="widgetSortOptions")
+  .with-left-nav
+    %h2 Editing interface widgets
+    %div(ng-model="editingInterface.data.widgets" ui-sortable="widgetSortOptions" data-widget-settings)
       .field-widget-settings(
+          cf-field-widget-settings=""
           ng-repeat="widget in editingInterface.data.widgets track by widget.id"
           ng-hide="getFieldForWidget(widget).disabled && !preferences.showDisabledFields"
-          ng-class="{open: isFieldOpen(field), active: !field.disabled }")
+          ng-class="{open: isAccordionItemOpen(widget), active: !field || field && !field.disabled }")
 
 .tab-actions
   .button-set
