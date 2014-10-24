@@ -7,15 +7,24 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
   $controller('FieldSettingsController', {$scope: $scope});
   $controller('FieldActionsController', {$scope: $scope});
 
+  // TODO this is redundant, the editingInterface contains the contentType id
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
   $scope.$watch('tab.params.editingInterface', 'editingInterface=tab.params.editingInterface');
 
   $scope.getFieldForWidget = getFieldForWidget;
-  $scope.restoreDefaults = restoreDefaults;
-  $scope.update = saveToServer;
+  $scope.restoreDefaults   = restoreDefaults;
+  $scope.update            = saveToServer;
   $scope.delete = angular.noop; // TODO: implement when we have more than the default interface
 
   $scope.$on('entityDeleted', contentTypeDeletedEventHandler);
+
+  this.isWidgetVisible = isWidgetVisible;
+
+
+  function isWidgetVisible(widget) {
+    var field = getFieldForWidget(widget);
+    return field && (!field.disabled || $scope.preferences.showDisabledFields);
+  }
 
   function getFieldForWidget(widget) {
     return _.find($scope.contentType.data.fields, {id: widget.fieldId});
