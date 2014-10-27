@@ -3,7 +3,6 @@
 angular.module('contentful').factory('listActions', ['$injector', function($injector){
   var $q           = $injector.get('$q');
   var $rootScope   = $injector.get('$rootScope');
-  var $timeout     = $injector.get('$timeout');
   var analytics    = $injector.get('analytics');
   var cfSpinner    = $injector.get('cfSpinner');
   var notification = $injector.get('notification');
@@ -42,7 +41,6 @@ angular.module('contentful').factory('listActions', ['$injector', function($inje
     },
 
     callAction: function (entity, params) {
-      var self = this;
       var args = [];
 
       if(params.getterForMethodArgs){
@@ -57,9 +55,7 @@ angular.module('contentful').factory('listActions', ['$injector', function($inje
           $rootScope.$broadcast(params.event, changedEntity);
       })
       .catch(function(err){
-        if(err.statusCode === ERRORS.TOO_MANY_REQUESTS)
-          return $timeout(_.partial(self.callAction, entity, params), RETRY_TIMEOUT);
-        else if(err.statusCode === ERRORS.NOT_FOUND){
+        if(err.statusCode === ERRORS.NOT_FOUND){
           entity.setDeleted();
           $rootScope.$broadcast('entityDeleted', entity);
           return $q.when();
@@ -74,27 +70,21 @@ angular.module('contentful').factory('listActions', ['$injector', function($inje
       var actionCallback = params.actionCallback || _.bind(this.callAction, this);
       var results = [];
 
-      var actionCalls = _.map(selected, function (entity, idx, selected) {
+      $q.all(_.map(selected, function (entity) {
         var stopSpinner = cfSpinner.start();
 
         var handler = function actionHandler(res) {
           stopSpinner();
           results.push(res || {});
-          var next = actionCalls[idx+1];
-          if(next) next();
-          else self.handlePerformResult(results, params, selected.length);
         };
 
-        return function actionCall(){
-          actionCallback(entity, params)
+        return actionCallback(entity, params)
           .then(handler)
           .catch(handler);
-        };
+      }))
+      .then(function(){
+        self.handlePerformResult(results, params, selected.length);
       });
-
-      if(actionCalls.length) {
-        actionCalls[0]();
-      }
     },
 
     handlePerformResult: function (results, params, length) {
@@ -104,39 +94,7 @@ angular.module('contentful').factory('listActions', ['$injector', function($inje
     }
   };
 
-
-  /**
-   * Pass an array of functions. The function are expected to return promises.
-   *
-   * They will be called in serial. If a call fails and error.statusCode is 429 (Too many requests)
-   * it will be retried.
-   */
-  var serialize = function (calls) {
-    if (calls.length === 0) return $q.when([]);
-
-    calls = calls.concat();
-    var call = calls.shift();
-
-    function errorHandler(err) {
-      if(err && err.statusCode === ERRORS.TOO_MANY_REQUESTS) {
-        return $timeout(function () {
-          calls.unshift(call);
-          return serialize(calls);
-        }, RETRY_TIMEOUT);
-      } else {
-        return $q.reject(err);
-      }
-    }
-
-    return call().then(function (result) {
-      return serialize(calls).then(function (otherResults) {
-        return [result].concat(otherResults);
-      }, errorHandler);
-    }, errorHandler);
-  };
-
   return {
-    serialize: serialize,
     createBatchPerformer: function (params) {
       return new BatchPerformer(params);
     }

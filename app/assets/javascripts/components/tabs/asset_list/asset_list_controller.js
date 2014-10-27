@@ -6,7 +6,6 @@ angular.module('contentful').controller('AssetListCtrl',['$scope', '$injector', 
   var filepicker  = $injector.get('filepicker');
   var stringUtils = $injector.get('stringUtils');
   var $q          = $injector.get('$q');
-  var listActions = $injector.get('listActions');
   var notification= $injector.get('notification');
   var delay       = $injector.get('delay');
   var throttle    = $injector.get('throttle');
@@ -65,14 +64,14 @@ angular.module('contentful').controller('AssetListCtrl',['$scope', '$injector', 
   $scope.createMultipleAssets = function () {
     filepicker.pickMultiple().
     then(function (FPFiles) {
-      return listActions.serialize(_.map(FPFiles, createAssetForFile)).then(function (entities) {
+      return $q.all(_.map(FPFiles, createAssetForFile)).then(function (entities) {
         entities = _.filter(entities);
         notification.info('Assets uploaded. Processing...');
         throttledListRefresh();
-        return listActions.serialize(_.map(entities, processAssetForFile)).then(function () {
+        return $q.all(_.map(entities, processAssetForFile)).then(function () {
           notification.info('Assets processed');
           throttledListRefresh();
-          return listActions.serialize(_.map(entities, publishAssetForFile)).then(function () {
+          return $q.all(_.map(entities, publishAssetForFile)).then(function () {
             notification.info('Assets saved');
             throttledListRefresh();
           }).catch(function (err) {
@@ -98,31 +97,25 @@ angular.module('contentful').controller('AssetListCtrl',['$scope', '$injector', 
   };
 
   function createAssetForFile(FPFile) {
-    return function () {
-      var file = filepicker.parseFPFile(FPFile);
-      var locale = $scope.spaceContext.space.getDefaultLocale().code;
-      var data = {
-        sys: { type: 'Asset' },
-        fields: { file: {}, title: {} }
-      };
-      data.fields.file[locale] = file;
-      data.fields.title[locale] = stringUtils.fileNameToTitle(file.fileName);
-
-      return $scope.spaceContext.space.createAsset(data);
+    var file = filepicker.parseFPFile(FPFile);
+    var locale = $scope.spaceContext.space.getDefaultLocale().code;
+    var data = {
+      sys: { type: 'Asset' },
+      fields: { file: {}, title: {} }
     };
+    data.fields.file[locale] = file;
+    data.fields.title[locale] = stringUtils.fileNameToTitle(file.fileName);
+
+    return $scope.spaceContext.space.createAsset(data);
   }
 
   function processAssetForFile(entity) {
-    return function () {
-      var locale = $scope.spaceContext.space.getDefaultLocale().code;
-      return entity.process(entity.version, locale);
-    };
+    var locale = $scope.spaceContext.space.getDefaultLocale().code;
+    return entity.process(entity.version, locale);
   }
 
   function publishAssetForFile(entity) {
-    return function () {
-      return entity.publish(entity.getVersion()+1);
-    };
+    return entity.publish(entity.getVersion()+1);
   }
 
 
