@@ -1,6 +1,12 @@
 'use strict';
 
-angular.module('contentful').factory('tutorialExampledata', ['$q', 'environment', '$rootScope', '$timeout', 'sampleEntries', 'sampleContentTypes', 'client', 'listActions', function ($q, environment, $rootScope, $timeout, sampleEntries, sampleContentTypes, client, listActions) {
+angular.module('contentful').factory('tutorialExampledata', ['$injector', function($injector) {
+  var $q                 = $injector.get('$q');
+  var $timeout           = $injector.get('$timeout');
+  var client             = $injector.get('client');
+  var sampleContentTypes = $injector.get('sampleContentTypes');
+  var sampleEntries      = $injector.get('sampleEntries');
+
   return {
     load: function () {
       var deferred = $q.defer();
@@ -67,19 +73,15 @@ angular.module('contentful').factory('tutorialExampledata', ['$q', 'environment'
       }).
       then(function(newContentTypeData){
         var createCalls = _.map(newContentTypeData, function (data) {
-          return function call() {
-            return spaceContext.space.createContentType(data);
-          };
+          return spaceContext.space.createContentType(data);
         });
-        return listActions.serialize(createCalls);
+        return $q.all(createCalls);
       }).
       then(function (contentTypes) {
         var publishCalls = _.map(contentTypes, function (contentType) {
-          return function () {
-            return contentType.publish(contentType.getVersion());
-          };
+          return contentType.publish(contentType.getVersion());
         });
-        return listActions.serialize(publishCalls);
+        return $q.all(publishCalls);
       }).
       then(function (contentTypes) {
         if (contentTypes.length > 0) return $timeout(function () {
@@ -95,18 +97,16 @@ angular.module('contentful').factory('tutorialExampledata', ['$q', 'environment'
       }).
       then(function(entryData) {
         var createCalls = _.map(entryData, function (entry) {
-          return function () {
-            return spaceContext.space.createEntry(entry.sys.contentType.sys.id, entry)
-            .catch(function (err) {
-              if (dotty.get(err, 'body.sys.id') == 'VersionMismatch'){
-                return null;
-              } else {
-                return $q.reject();
-              }
-            });
-          };
+          return spaceContext.space.createEntry(entry.sys.contentType.sys.id, entry)
+          .catch(function (err) {
+            if (dotty.get(err, 'body.sys.id') == 'VersionMismatch'){
+              return null;
+            } else {
+              return $q.reject();
+            }
+          });
         });
-        return listActions.serialize(createCalls);
+        return $q.all(createCalls);
       }).
       then(function (entries) {
         return _.compact(entries);
@@ -116,11 +116,9 @@ angular.module('contentful').factory('tutorialExampledata', ['$q', 'environment'
       }).
       then(function publishEntries(entries) {
         var publishCalls = _.map(entries, function (entry) {
-          return function () {
-            return entry.publish(entry.getVersion());
-          };
+          return entry.publish(entry.getVersion());
         });
-        return listActions.serialize(publishCalls);
+        return $q.all(publishCalls);
       });
     },
 

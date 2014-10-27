@@ -2,7 +2,7 @@
 
 describe('Asset List Actions Controller', function () {
   var controller, scope, stubs;
-  var action1, action2, action3, action3call2, action4;
+  var action1, action2, action3, action4;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -42,7 +42,6 @@ describe('Asset List Actions Controller', function () {
       action1 = $q.defer();
       action2 = $q.defer();
       action3 = $q.defer();
-      action3call2 = $q.defer();
       action4 = $q.defer();
       stubs.action1.returns(action1.promise);
       stubs.action2.returns(action2.promise);
@@ -87,11 +86,7 @@ describe('Asset List Actions Controller', function () {
         stubs.size.returns(2);
         action1.resolve();
         action2.reject({});
-        stubs.action3
-          .onFirstCall().returns(action3.promise)
-          .onSecondCall().returns(action3call2.promise);
-        action3.reject({statusCode: 429});
-        action3call2.resolve();
+        action3.resolve();
         action4.resolve();
         stubs.getSelected.returns([
           makeEntity(action, stubs.action1),
@@ -151,7 +146,7 @@ describe('Asset List Actions Controller', function () {
 
   makePerformTests('publish', 1, function () {
     it('gets version of selected assets', function () {
-      expect(stubs.getVersion.callCount).toBe(5);
+      expect(stubs.getVersion.callCount).toBe(4);
     });
 
     it('publishes 3rd version', function () {
