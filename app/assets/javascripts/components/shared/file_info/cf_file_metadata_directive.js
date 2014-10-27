@@ -1,9 +1,8 @@
 'use strict';
 
-angular.module('contentful').directive('cfFileInfo', function () {
+angular.module('contentful').directive('cfFileMetadata', ['mimetype', function (mimetype) {
   return {
-    restrict: 'C',
-    template: JST['cf_file_info'],
+    restrict: 'A',
     scope: true,
     link: function (scope, elem, attrs) {
       scope.$watch(attrs.file, function (val) {
@@ -19,6 +18,13 @@ angular.module('contentful').directive('cfFileInfo', function () {
         scope.showMeta = !scope.showMeta;
       };
 
+      scope.isImage = function () {
+        return scope.file && mimetype.getGroupName(
+            mimetype.getExtension(scope.file.fileName),
+            scope.file.contentType
+          ) == 'image';
+      };
+
     }
   };
-});
+}]);

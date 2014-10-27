@@ -1,0 +1,76 @@
+.asset-gallery
+  overflow: hidden
+  margin: 30px 0 0
+
+.asset-gallery__item
+  float: left
+  display: block
+  overflow: hidden
+  width: 120px
+  height: 120px
+  margin-right: 20px
+  margin-bottom: 20px
+  border: 1px solid $metallic-gray
+  border-radius: 5px
+
+.asset-gallery__info
+  position: relative
+
+.asset-gallery__file
+  img
+    display: block
+  .fa
+    display: block
+    width: 120px
+    line-height: 105px
+    padding-bottom: 15px
+    font-size: 50px
+    text-align: center
+    vertical-align: middle
+    color: lighten($metallic-gray-blueish, 85%)
+
+.asset-gallery__no-file
+  width: 120px
+  height: 120px
+  text-align: center
+  vertical-align: middle
+  padding: 33px 20px 0px
+  word-wrap: normal
+
+.asset-gallery__title
+  position: absolute
+  bottom: 0
+  top: 70px
+  left: 0px
+  right: 0px
+  padding: 5px 2px 0px
+  text-align: center
+  word-wrap: break-word
+  border-bottom: 1px solid $metallic-gray
+  background-color: transparentify(lighten($metallic-gray-blueish, 70%), 0.3)
+
+
+.asset-gallery__handle
+  position: absolute
+  top: 5px
+  left: 5px
+  color: white
+  cursor: -webkit-grabbing
+  cursor: -moz-grab
+  cursor: -moz-grabbing
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.6)
+
+.asset-gallery__buttons
+  position: absolute
+  top: 2px
+  right: 2px
+  padding: 3px 3px 0px
+  border-radius: 5px
+  background-color: transparentify(darken($metallic-gray-blueish, 40%), 0.7)
+  .btn
+    padding: 3px 5px
+    color: white
+    background: none
+    border: none
+  .fa
+    font-size: 16px

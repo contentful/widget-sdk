@@ -8,9 +8,8 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
   var stringUtils  = $injector.get('stringUtils');
 
   return {
-    restrict: 'C',
+    restrict: 'A',
     require: ['ngModel', '^otPath'],
-    template: JST['cf_file_info'],
     link: function (scope, elem) {
       scope.enableUpload = true;
       scope.showMeta = false;

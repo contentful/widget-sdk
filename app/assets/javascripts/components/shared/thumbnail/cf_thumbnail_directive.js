@@ -2,7 +2,16 @@
 
 /**
  * Check all available options for thumbnailing service at:
- * https://github.com/contentful/image-manipulation-proxy/blob/master/app_engine_proxy/test_page/test.js
+ * https://github.com/contentful/image-manipulation-proxy/blob/master/test_page/test.js
+ *
+ * Usage:
+ * <div cf-thumbnail
+ *   file="fileObject"
+ *   size="pixels"
+ *   format="square|<empty>"
+ *   fit="scale|crop|pad|thumb"
+ *   focus="bottom|right|bottom_right|face|faces|..."
+ *   ></div>
  */
 
 angular.module('contentful').directive('cfThumbnail', function () {

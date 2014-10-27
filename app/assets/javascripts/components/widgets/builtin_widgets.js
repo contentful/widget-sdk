@@ -67,7 +67,7 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('fileEditor',{
     fieldTypes: ['File'],
     name: 'File',
-    template: '<div class="cf-file-editor" ng-model="fieldData.value" ot-bind-internal="file"></div>'
+    template: '<div class="widget-file-editor" cf-file-display cf-file-editor ng-model="fieldData.value" ot-bind-internal="file"></div>'
   });
   widgets.registerWidget('entryLinkEditor',{
     fieldTypes: ['Entry'],
@@ -89,11 +89,10 @@ angular.module('contentful').run(['widgets', function(widgets){
     name: 'Asset Links List',
     template: '<div cf-asset-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
-
-  widgets.registerWidget('youtubeEditor',{
-    fieldTypes: ['Symbol'],
-    name: 'Youtube',
-    template: '<cf-youtube-editor ng-model="fieldData.value" ot-bind-internal="url"></cf-youtube-editor>'
+  widgets.registerWidget('assetGalleryEditor',{
+    fieldTypes: ['Assets'],
+    name: 'Asset Gallery',
+    template: '<div cf-asset-gallery-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
   widgets.registerWidget('sectionHeader',{
     name: 'Section Header',
@@ -112,6 +111,11 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('sectionBreak',{
     name: 'Section Break',
     template: '<hr class="layout-field--section-break" />'
+  });
+  widgets.registerWidget('youtubeEditor',{
+    fieldTypes: ['Symbol'],
+    name: 'Youtube',
+    template: '<cf-youtube-editor ng-model="fieldData.value" ot-bind-internal="url"></cf-youtube-editor>'
   });
   //toggle: {   NOT IMPLEMENTED
     //fieldTypes: ['Boolean'],
