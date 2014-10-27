@@ -47,6 +47,30 @@ describe('EditingInterfaceEditorController', function(){
     scope.$broadcast('entityDeleted', scope.tab.params.contentType);
     expect(scope.tab.close).toBeCalled();
   });
+
+  it('should mark widgets without fields as invisible', function() {
+    scope.contentType = {
+      data: {fields: [
+        {id: 'foo', disabled: true}
+      ]}
+    };
+    var visibility = controller.isWidgetVisible({fieldId: 'bar'});
+    expect(visibility).toBeFalsy()
+  });
+
+  it('should mark disabled widgets as invisible', function() {
+    scope.preferences = {showDisabledFields:  false};
+    scope.contentType = {
+      data: {fields: [
+        {id: 'foo', disabled: true}
+      ]}
+    };
+    var visibility = controller.isWidgetVisible({fieldId: 'foo'});
+    expect(visibility).toBeFalsy();
+    scope.preferences.showDisabledFields = true;
+    visibility = controller.isWidgetVisible({fieldId: 'foo'});
+    expect(visibility).toBeTruthy();
+  });
   
 });
 

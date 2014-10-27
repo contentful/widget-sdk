@@ -26,7 +26,7 @@
 
     .field-widget-settings(
         ng-repeat="widget in editingInterface.data.widgets track by widget.id"
-        ng-hide="getFieldForWidget(widget).disabled && !preferences.showDisabledFields"
+        ng-hide="!editorController.isWidgetVisible(widget)"
         ng-class="{open: isFieldOpen(field), active: !field.disabled }")
 
 .tab-actions
