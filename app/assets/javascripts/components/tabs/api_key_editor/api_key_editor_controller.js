@@ -29,16 +29,16 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
 
   $scope.authCodeExample = {
     lang: 'http',
-    api: 'production'
+    api: 'cda'
   };
 
   $scope.getSelectedAccessToken = function () {
-    var apiKey = $scope.isPreviewApiSelected() ? $scope.previewApiKey : $scope.apiKey;
+    var apiKey = isPreviewApiSelected() ? $scope.previewApiKey : $scope.apiKey;
     return apiKey.data.accessToken;
   };
 
-  $scope.isPreviewApiSelected = function () {
-    return $scope.authCodeExample.api == 'preview';
+  $scope.getApiUrl = function () {
+    return environment.settings.cdn_host.replace('cdn', isPreviewApiSelected() ? 'preview': 'cdn');
   };
 
   $scope.$watch('apiKey.data.name', function(name) {
@@ -139,5 +139,11 @@ angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injecto
       $scope.previewApiKey = previewApiKey;
     });
   }
+
+  function isPreviewApiSelected() {
+    return $scope.authCodeExample.api == 'preview';
+  }
+
+
 
 }]);

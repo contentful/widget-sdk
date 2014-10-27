@@ -108,6 +108,15 @@ describe('API key editor controller', function () {
     expect(scope.tab.dirty).toBeTruthy();
   });
 
+  it('gets the api url', function() {
+    expect(scope.getApiUrl()).toEqual('cdn_host');
+  });
+
+  it('gets the api url for the preview api', function() {
+    scope.authCodeExample.api = 'preview';
+    expect(scope.getApiUrl()).toEqual('preview_host');
+  });
+
   it('does not create a preview api for a blank key', function() {
     expect(stubs.createPreviewApiKey).not.toBeCalled();
   });

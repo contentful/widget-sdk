@@ -120,7 +120,7 @@
                   %option(value="swift") Swift
                 %i.button-icon-right.fa.fa-caret-down
               %label
-                %input.form-control-look(type="radio" name="codeexampleapi" ng-model="authCodeExample.api" value="production")
+                %input.form-control-look(type="radio" name="codeexampleapi" ng-model="authCodeExample.api" value="cda")
                 Production
               %label
                 %input.form-control-look(type="radio" name="codeexampleapi" ng-model="authCodeExample.api" value="preview")
@@ -133,17 +133,17 @@
               .http.code-example.curl-example(ng-switch-when="http")
                 %textarea.form-control(readonly="readonly")
                   :preserve
-                    curl -X GET https://{{isPreviewApiSelected() ? 'preview': 'cdn'}}.contentful.com/spaces/{{spaceContext.space.getId()}}?access_token={{getSelectedAccessToken()}}
+                    curl -X GET {{environment.env == 'development' ? 'http' : 'https'}}://{{getApiUrl()}}/spaces/{{spaceContext.space.getId()}}?access_token={{getSelectedAccessToken()}}
               .javascript.code-example(ng-switch-when="javascript")
-                %textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'preview'")
+                %textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'preview' || environment.env != 'production'")
                   :preserve
                     var contentful = require('contentful');
                     var client = contentful.createClient({
                       accessToken: '{{getSelectedAccessToken()}}',
-                      host: 'preview.contentful.com',
+                      host: '{{getApiUrl()}}',
                       space: '{{spaceContext.space.getId()}}'
                     });
-                %textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'production'")
+                %textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'cda' && environment.env == 'production'")
                   :preserve
                     var contentful = require('contentful');
                     var client = contentful.createClient({
@@ -151,24 +151,24 @@
                       space: '{{spaceContext.space.getId()}}'
                     });
               .objc.code-example(ng-switch-when="objc")
-                %textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'preview'")
+                %textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'preview' || environment.env != 'production'")
                   :preserve
                     CDAConfiguration* config = [CDAConfiguration defaultConfiguration];
-                    config.server = @"preview.contentful.com";
+                    config.server = @"{{getApiUrl()}}";
                     CDAClient* client = [[CDAClient alloc] initWithSpaceKey:@"{{spaceContext.space.getId()}}" accessToken:@"{{getSelectedAccessToken()}}" config: config];
-                %textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'production'")
+                %textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'cda' && environment.env == 'production'")
                   :preserve
                     CDAClient* client = [[CDAClient alloc] initWithSpaceKey:@"{{spaceContext.space.getId()}}" accessToken:@"{{getSelectedAccessToken()}}"];
               .ruby.code-example(ng-switch-when="ruby")
-                %textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'preview'")
+                %textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'preview' || environment.env != 'production'")
                   :preserve
                     require 'contentful'
                     client = Contentful::Client.new(
                       access_token: '{{getSelectedAccessToken()}}',
-                      api_url: 'preview.contentful.com',
+                      api_url: '{{getApiUrl()}}',
                       space: '{{spaceContext.space.getId()}}'
                     )
-                %textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'production'")
+                %textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'cda' && environment.env == 'production'")
                   :preserve
                     require 'contentful'
                     client = Contentful::Client.new(
@@ -176,12 +176,12 @@
                       space: '{{spaceContext.space.getId()}}'
                     )
               .swift.code-example(ng-switch-when="swift")
-                %textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'preview'")
+                %textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'preview' || environment.env != 'production'")
                   :preserve
                     var config = CDAConfiguration.defaultConfiguration()
-                    config.server = "preview.contentful.com"
+                    config.server = "{{getApiUrl()}}"
                     var client = CDAClient(spaceKey:"{{spaceContext.space.getId()}}", accessToken:"{{getSelectedAccessToken()}}", configuration:config)
-                %textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'production'")
+                %textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'cda' && environment.env == 'production'")
                   :preserve
                     var client = CDAClient(spaceKey:"{{spaceContext.space.getId()}}", accessToken:"{{getSelectedAccessToken()}}")
 

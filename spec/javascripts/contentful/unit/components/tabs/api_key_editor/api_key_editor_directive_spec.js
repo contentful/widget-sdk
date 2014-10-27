@@ -1,7 +1,7 @@
 'use strict';
 
 describe('apiKeyEditor Directive', function () {
-  var element, scope, compileElement, stubs;
+  var element, scope, compileElement, stubs, environmentMock;
   beforeEach(function () {
     module('contentful/test', function ($provide, cfCanStubsProvider) {
       stubs = $provide.makeStubs([
@@ -9,15 +9,27 @@ describe('apiKeyEditor Directive', function () {
         'reasons',
         'open',
         'catch',
-        'getId'
+        'apiKeyGetId',
+        'spaceGetId'
       ]);
       stubs.open.returns({
         catch: stubs.catch
       });
       cfCanStubsProvider.setup(stubs.reasons);
+
       $provide.value('modalDialog', {
         open: stubs.open
       });
+
+      environmentMock = {
+        env: 'development',
+        settings: {
+          cdn_host: 'cdn_host',
+          marketing_url: 'marketing_url',
+        }
+      };
+
+      $provide.constant('environment', environmentMock);
     });
 
     inject(function ($compile, $rootScope, enforcements) {
@@ -26,22 +38,26 @@ describe('apiKeyEditor Directive', function () {
       scope.spaceContext = {
         space: {
           data: {sys: {createdBy: {sys: {id: ''}}}},
-          getId: sinon.stub()
+          getId: stubs.spaceGetId
         }
       };
+      stubs.spaceGetId.returns('spaceid');
       enforcements.setSpaceContext(scope.spaceContext);
       scope.can = stubs.can;
       scope.tab = {
-        params: {
-          apiKey: {
-            data: {},
-            getId: stubs.getId
-          }
-        }
+        params: {}
+      };
+      scope.previewApiKey = {
+        data: {},
+        getId: stubs.apiKeyGetId
       };
 
       compileElement = function () {
         element = $compile('<div class="api-key-editor"></div>')(scope);
+        scope.tab.params.apiKey = {
+          data: {},
+          getId: stubs.apiKeyGetId
+        };
         scope.$digest();
       };
     });
@@ -53,8 +69,9 @@ describe('apiKeyEditor Directive', function () {
 
 
   it('has a headline', function () {
-    scope.tab.params.apiKey.data.name = 'headline text';
     compileElement();
+    scope.tab.params.apiKey.data.name = 'headline text';
+    scope.$digest();
     expect(element.find('.tab-header h1').html()).toMatch('headline text');
   });
 
@@ -89,6 +106,164 @@ describe('apiKeyEditor Directive', function () {
     };
     scope.$digest();
     expect(element.find('.tab-actions .save').attr('disabled')).toBeUndefined();
+  });
+
+  describe('code examples for', function() {
+    var getVal, lang;
+    function setupCodeExample(env, api) {
+      environmentMock.env = env;
+      compileElement();
+      scope.authCodeExample.lang = lang;
+      scope.authCodeExample.api = api;
+      scope.$digest();
+    }
+
+    describe('http', function() {
+      beforeEach(function() {
+        getVal = function () {
+          return element.find('.http.code-example textarea').val();
+        };
+        lang = 'http';
+      });
+
+      it('in development env with CDA', function() {
+        setupCodeExample('development', 'cda');
+        expect(getVal()).toMatch('http://cdn_host');
+      });
+
+      it('in development env with preview API', function() {
+        setupCodeExample('development', 'preview');
+        expect(getVal()).toMatch('http://preview_host');
+      });
+
+      it('in production env with CDA', function() {
+        setupCodeExample('production', 'cda');
+        expect(getVal()).toMatch('https://cdn_host');
+      });
+
+      it('in production env with preview API', function() {
+        setupCodeExample('production', 'preview');
+        expect(getVal()).toMatch('https://preview_host');
+      });
+    });
+
+    describe('javascript', function() {
+      beforeEach(function() {
+        getVal = function () {
+          return element.find('.javascript.code-example textarea').val();
+        };
+        lang = 'javascript';
+      });
+
+      it('in production env with preview API', function() {
+        setupCodeExample('production', 'preview');
+        expect(getVal()).toMatch('preview_host');
+      });
+
+      it('in development env with preview API', function() {
+        setupCodeExample('development', 'preview');
+        expect(getVal()).toMatch('preview_host');
+      });
+
+      it('in development env with CDA', function() {
+        setupCodeExample('development', 'cda');
+        expect(getVal()).toMatch('cdn_host');
+      });
+
+      it('in production env with CDA', function() {
+        setupCodeExample('production', 'cda');
+        expect(getVal()).not.toMatch('host');
+      });
+    });
+
+    describe('objc', function() {
+      beforeEach(function() {
+        getVal = function () {
+          return element.find('.objc.code-example textarea').val();
+        };
+        lang = 'objc';
+      });
+
+      it('in production env with preview API', function() {
+        setupCodeExample('production', 'preview');
+        expect(getVal()).toMatch('preview_host');
+      });
+
+      it('in development env with preview API', function() {
+        setupCodeExample('development', 'preview');
+        expect(getVal()).toMatch('preview_host');
+      });
+
+      it('in development env with CDA', function() {
+        setupCodeExample('development', 'cda');
+        expect(getVal()).toMatch('cdn_host');
+      });
+
+      it('in production env with CDA', function() {
+        setupCodeExample('production', 'cda');
+        expect(getVal()).not.toMatch('host');
+      });
+    });
+
+    describe('ruby', function() {
+      beforeEach(function() {
+        getVal = function () {
+          return element.find('.ruby.code-example textarea').val();
+        };
+        lang = 'ruby';
+      });
+
+      it('in production env with preview API', function() {
+        setupCodeExample('production', 'preview');
+        expect(getVal()).toMatch('preview_host');
+      });
+
+      it('in development env with preview API', function() {
+        setupCodeExample('development', 'preview');
+        expect(getVal()).toMatch('preview_host');
+      });
+
+      it('in development env with CDA', function() {
+        setupCodeExample('development', 'cda');
+        expect(getVal()).toMatch('cdn_host');
+      });
+
+      it('in production env with CDA', function() {
+        setupCodeExample('production', 'cda');
+        expect(getVal()).not.toMatch('host');
+      });
+    });
+
+    describe('swift', function() {
+      beforeEach(function() {
+        getVal = function () {
+          return element.find('.swift.code-example textarea').val();
+        };
+        lang = 'swift';
+      });
+
+      it('in production env with preview API', function() {
+        setupCodeExample('production', 'preview');
+        expect(getVal()).toMatch('preview_host');
+      });
+
+      it('in development env with preview API', function() {
+        setupCodeExample('development', 'preview');
+        expect(getVal()).toMatch('preview_host');
+      });
+
+      it('in development env with CDA', function() {
+        setupCodeExample('development', 'cda');
+        expect(getVal()).toMatch('cdn_host');
+      });
+
+      it('in production env with CDA', function() {
+        setupCodeExample('production', 'cda');
+        expect(getVal()).not.toMatch('host');
+      });
+    });
+
+
   });
 
 });
