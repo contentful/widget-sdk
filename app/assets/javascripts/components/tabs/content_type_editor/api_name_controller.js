@@ -61,12 +61,13 @@ angular.module('contentful').controller('ApiNameController', ['$scope', '$inject
     if (!controller._locked) return;
     modalDialog.open({
       title: 'Warning!',
-      message: 'Changing the ID of a published field also requires you to\n'+
-        'update your client applications, so that they use the new id.\n\n'+
-        'Only do this if you\'re absolutely sure you know what you are doing.',
+      message: 'Changing the ID of a published field will interrupt the delivery of your content to applications that currently display it.<br><br>'+
+        'Change field ID only if you plan to update your client applications as well.<br><br>'+
+        'Consult our <a href="https://support.contentful.com/hc/en-us/articles/204101273">Knowledge base</a> for more information on updating published Content Types.',
+      html: true,
       scope: $scope,
-      cancelLabel: 'No, don\'t edit the ID',
-      confirmLabel: 'Yes, I know what I\'m doing',
+      cancelLabel: 'Skip editing',
+      confirmLabel: 'Edit field ID',
       noBackgroundClose: true,
     }).then(function () {
       controller._locked = false;
