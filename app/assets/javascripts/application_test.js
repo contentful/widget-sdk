@@ -39,9 +39,9 @@ angular.module('contentful/test', [
   'timeRelative',
   'ui.sortable',
   'contentful/user_interface',
+  'angularLoad',
   'contentful',
-  'contentful/mocks',
-  'angularLoad'
+  'contentful/mocks'
 ], ['$locationProvider', 'clientAdapterProvider', 'authenticationProvider', 'environment', '$sceDelegateProvider', '$compileProvider', 'timeRelativeConfig', 
   function($locationProvider, clientAdapterProvider, authenticationProvider, environment, $sceDelegateProvider, $compileProvider, timeRelativeConfig){
   'use strict';
