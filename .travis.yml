@@ -22,7 +22,7 @@ after_script: >
   fi
 script: "bundle exec rake jasmine:ci"
 notifications:
-  flowdock: 726d6d512b8f3964f885df79c88387fa
+  slack: contentful:yIvk7tShq4Pt4R898DQCfjBy
 cache:
   bundler: true
   directories:
