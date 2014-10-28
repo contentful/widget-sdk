@@ -23,7 +23,7 @@ angular.module('contentful').directive('cfYoutubePlayer', ['$injector', function
         scope.cueVideoById = function(id){ player.cueVideoById(id); };
       })
       .catch(function(){
-        scope.$apply(attrs.onFailure);
+        scope.$eval(attrs.onFailure);
       });
 
       function installPlayerInDOM(element, YoutubePlayer) {

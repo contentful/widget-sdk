@@ -3,7 +3,7 @@ angular.module('contentful').factory('gapiLoader', ['$injector', function($injec
 
   var googleScriptLoader = $injector.get('googleScriptLoader');
 
-  var SCRIPT_SRC = "https://apis.google.com/js/client.js?onload=OnLoadCallback";
+  var SCRIPT_SRC = 'https://apis.google.com/js/client.js?onload=OnLoadCallback';
 
   return {
     load : function(){

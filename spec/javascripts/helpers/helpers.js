@@ -201,5 +201,21 @@ beforeEach(function() {
       };
     },
 
+    toBeInstanceOf: function() {
+      return {
+        compare: function(actual, expected) {
+          var pass, notText;
+
+          pass    = (actual instanceof expected);
+          notText = pass ? ' not' : '';
+
+          return {
+            pass    : pass,
+            message : 'Expected ' + actual.constructor.name + notText + ' to be an instance of ' + expected.name
+          };
+        }
+      };
+    }
+
   });
 });

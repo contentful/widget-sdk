@@ -15,7 +15,7 @@ angular.module('contentful').factory('GAPIAdapter', ['$injector', function($inje
       var deferred = $q.defer(),
           request;
 
-      request = gapi.client.request(params);
+      request = $window.gapi.client.request(params);
       request.execute(function(json){
         $rootScope.$apply(function(){
           json.error ? deferred.reject() : deferred.resolve(json.items);
