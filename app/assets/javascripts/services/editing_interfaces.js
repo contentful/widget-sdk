@@ -116,15 +116,15 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
 
   function defaultWidget(contentType, field) {
     return {
-      id: generateWidgetId(field.id, contentType.getId()),
+      id: generateId(field.id, contentType.getId()),
       widgetType: 'field',
       fieldId: field.id,
-      widgetId: widgets.defaultWidget(field, contentType),
+      widgetId: widgets.defaultWidgetId(field, contentType),
       widgetParams: {}
     };
   }
 
-  function generateWidgetId(fieldId, ctId) {
+  function generateId(fieldId, ctId) {
     if(!widgetIdsByContentType[ctId])
       widgetIdsByContentType[ctId] = {};
 

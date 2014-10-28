@@ -49,7 +49,7 @@ angular.module('contentful').factory('widgets', ['$injector', function($injector
     }
   }
 
-  function defaultWidget(field, contentType) {
+  function defaultWidgetId(field, contentType) {
     var fieldType = detectFieldType(field);
     var hasValidations = getFieldValidationsOfType(field, 'in').length > 0;
     if(hasValidations && _.contains(WIDGETS['dropdown'].fieldTypes, fieldType)) return 'dropdown';
@@ -124,7 +124,7 @@ angular.module('contentful').factory('widgets', ['$injector', function($injector
 
   return {
     forField:          typesForField,
-    defaultWidget:     defaultWidget,
+    defaultWidgetId:   defaultWidgetId,
     optionsForWidget:  optionsForWidget,
     widgetTemplate:    widgetTemplate,
     paramDefaults:     paramDefaults,

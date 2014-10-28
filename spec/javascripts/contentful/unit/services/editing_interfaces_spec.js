@@ -6,9 +6,9 @@ describe('Editing interfaces service', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs(['defaultWidget', 'info', 'warn', 'serverError']);
+      stubs = $provide.makeStubs(['defaultWidgetId', 'info', 'warn', 'serverError']);
       $provide.value('widgets', {
-        defaultWidget: stubs.defaultWidget,
+        defaultWidgetId: stubs.defaultWidgetId,
         registerWidget: angular.noop,
         paramDefaults: _.constant({})
       });
@@ -142,7 +142,7 @@ describe('Editing interfaces service', function () {
     });
 
     it('gets widget type', function() {
-      expect(stubs.defaultWidget).toBeCalled();
+      expect(stubs.defaultWidgetId).toBeCalled();
     });
 
     describe('gets a default interface again', function() {

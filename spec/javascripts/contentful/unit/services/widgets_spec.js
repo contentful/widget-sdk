@@ -63,7 +63,7 @@ describe('Widget types service', function () {
     });
   });
 
-  describe('defaultWidget', function() {
+  describe('defaultWidgetId', function() {
     var contentType, field, idStub;
 
     beforeEach(function() {
@@ -78,7 +78,7 @@ describe('Widget types service', function () {
 
     it('with an unexistent field', function() {
       field.type = 'unsupportedtype';
-      expect(widgets.defaultWidget(field, contentType)).toBeUndefined();
+      expect(widgets.defaultWidgetId(field, contentType)).toBeUndefined();
     });
 
     describe('if validations exist but are different', function() {
@@ -88,12 +88,12 @@ describe('Widget types service', function () {
 
       it('for a type with a dropdown widget', function() {
         field.type = 'Symbol';
-        expect(widgets.defaultWidget(field, contentType)).toBe('singleLine');
+        expect(widgets.defaultWidgetId(field, contentType)).toBe('singleLine');
       });
 
       it('for a type with no dropdown widget', function() {
         field.type = 'Date';
-        expect(widgets.defaultWidget(field, contentType)).toBe('datePicker');
+        expect(widgets.defaultWidgetId(field, contentType)).toBe('datePicker');
       });
     });
 
@@ -104,12 +104,12 @@ describe('Widget types service', function () {
 
       it('for a type with a dropdown widget', function() {
         field.type = 'Symbol';
-        expect(widgets.defaultWidget(field, contentType)).toBe('dropdown');
+        expect(widgets.defaultWidgetId(field, contentType)).toBe('dropdown');
       });
 
       it('for a type with no dropdown widget', function() {
         field.type = 'Date';
-        expect(widgets.defaultWidget(field, contentType)).toBe('datePicker');
+        expect(widgets.defaultWidgetId(field, contentType)).toBe('datePicker');
       });
     });
 
@@ -121,46 +121,46 @@ describe('Widget types service', function () {
 
       it('and is display field', function() {
         contentType.data.displayField = 'textfield';
-        expect(widgets.defaultWidget(field, contentType)).toBe('singleLine');
+        expect(widgets.defaultWidgetId(field, contentType)).toBe('singleLine');
       });
 
       it('and is asset', function() {
         idStub.returns('asset');
-        expect(widgets.defaultWidget(field, contentType)).toBe('singleLine');
+        expect(widgets.defaultWidgetId(field, contentType)).toBe('singleLine');
       });
 
       it('is no display field or asset', function() {
-        expect(widgets.defaultWidget(field, contentType)).toBe('markdown');
+        expect(widgets.defaultWidgetId(field, contentType)).toBe('markdown');
       });
     });
 
     it('if field is Entry', function() {
       field.type = 'Link';
       field.linkType = 'Entry';
-      expect(widgets.defaultWidget(field, contentType)).toBe('entryLinkEditor');
+      expect(widgets.defaultWidgetId(field, contentType)).toBe('entryLinkEditor');
     });
 
     it('if field is Asset', function() {
       field.type = 'Link';
       field.linkType = 'Asset';
-      expect(widgets.defaultWidget(field, contentType)).toBe('assetLinkEditor');
+      expect(widgets.defaultWidgetId(field, contentType)).toBe('assetLinkEditor');
     });
 
     it('if field is File', function() {
       field.type = 'File';
-      expect(widgets.defaultWidget(field, contentType)).toBe('fileEditor');
+      expect(widgets.defaultWidgetId(field, contentType)).toBe('fileEditor');
     });
 
     it('if field is a list of Assets', function() {
       field.type = 'Array';
       field.items = {type: 'Link', linkType: 'Asset'};
-      expect(widgets.defaultWidget(field, contentType)).toBe('assetLinksEditor');
+      expect(widgets.defaultWidgetId(field, contentType)).toBe('assetLinksEditor');
     });
 
     it('if field is a list of Entries', function() {
       field.type = 'Array';
       field.items = {type: 'Link', linkType: 'Entry'};
-      expect(widgets.defaultWidget(field, contentType)).toBe('entryLinksEditor');
+      expect(widgets.defaultWidgetId(field, contentType)).toBe('entryLinksEditor');
     });
   });
 
