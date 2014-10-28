@@ -89,37 +89,27 @@ angular.module('contentful').run(['widgets', function(widgets){
     name: 'Asset Links List',
     template: '<div cf-asset-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
+
   widgets.registerWidget('youtubeEditor',{
     fieldTypes: ['Symbol'],
     name: 'Youtube',
     template: '<cf-youtube-editor ng-model="fieldData.value" ot-bind-internal="url"></cf-youtube-editor>'
   });
   widgets.registerWidget('sectionHeader',{
-    fieldTypes: [],
     name: 'Section Header',
     template: '<h1 class="layout-field--section-header">{{widget.widgetParams.text}}</h1>',
     options: [
-      {
-        param: 'text',
-        type: 'Text',
-        name: 'Text'
-      }
+      { param: 'text', type: 'Text', name: 'Text' }
     ]
   });
   widgets.registerWidget('infoText',{
-    fieldTypes: [],
     name: 'Info Text',
     template: '<p class="layout-field--info-text">{{widget.widgetParams.text}}</p>',
     options: [
-      {
-        param: 'text',
-        type: 'Text',
-        name: 'Text'
-      }
+      { param: 'text', type: 'Text', name: 'Text' }
     ]
   });
   widgets.registerWidget('sectionBreak',{
-    fieldTypes: [],
     name: 'Section Break',
     template: '<hr class="layout-field--section-break" />'
   });

@@ -27,7 +27,7 @@ angular.module('contentful').directive('editingInterfaceEditor', [function(){
             if(widgetId) {
               ui.item.sortable.received = true;
               scope.$apply(function () {
-                scope.addLayoutItem(widgetId, dropIndex);
+                scope.addStaticWidget(widgetId, dropIndex);
               });
             }
           }

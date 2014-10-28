@@ -35,7 +35,8 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
 
     syncWidgets: syncWidgets,
 
-    defaultInterface: defaultInterface
+    defaultInterface: defaultInterface,
+    staticWidget: staticWidget
   };
 
   function syncWidgets(contentType, interf) {
@@ -120,6 +121,15 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
       widgetType: 'field',
       fieldId: field.id,
       widgetId: widgets.defaultWidgetId(field, contentType),
+      widgetParams: {}
+    };
+  }
+
+  function staticWidget(widgetId) {
+    return {
+      id: random.id(),
+      widgetType: 'static',
+      widgetId: widgetId,
       widgetParams: {}
     };
   }

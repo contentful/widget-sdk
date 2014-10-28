@@ -64,6 +64,7 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
   }
 
   function widgetIsVisible(widget) {
+    if (widget.widgetType === 'static') return true;
     var field = getFieldForWidget(widget);
     return widget.widgetType === 'static' || field && fieldIsEditable(field);
   }
