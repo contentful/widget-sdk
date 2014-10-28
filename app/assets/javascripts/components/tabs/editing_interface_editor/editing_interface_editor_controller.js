@@ -10,6 +10,7 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
 
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
   $scope.$watch('tab.params.editingInterface', 'editingInterface=tab.params.editingInterface');
+  $scope.$watch('contentType.data.fields', syncWidgets, true);
 
   $scope.getFieldForWidget = getFieldForWidget;
   $scope.restoreDefaults = restoreDefaults;
@@ -24,6 +25,10 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
 
   function getFieldForWidget(widget) {
     return _.find($scope.contentType.data.fields, {id: widget.fieldId});
+  }
+
+  function syncWidgets() {
+    editingInterfaces.syncWidgets($scope.contentType, $scope.editingInterface);
   }
 
   function restoreDefaults() {

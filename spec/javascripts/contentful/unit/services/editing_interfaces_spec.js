@@ -183,7 +183,31 @@ describe('Editing interfaces service', function () {
       $rootScope.$apply();
       expect(stubs.serverError).toBeCalled();
     });
+  });
 
+  describe('syncs an interface to a contentType', function() {
+    beforeEach(function(){
+      this.editingInterface = {data: {widgets: [
+        {fieldId: 'aaa'},
+        {fieldId: 'bbb'}
+      ]}};
+      this.contentType = {data: {fields: [
+        {id: 'aaa'},
+        {id: 'bbb'}
+      ]}};
+    });
+
+    it('add widgets for missing fields', function() {
+      this.contentType.data.fields.push({id: 'ccc', type: 'Symbol'});
+      editingInterfaces.syncWidgets(this.contentType, this.editingInterface);
+      expect(this.editingInterface.data.widgets[2].fieldId).toBe('ccc');
+    });
+
+    it('removes widgets without fields', function() {
+      this.editingInterface.data.widgets.push({id: 'ccc'});
+      editingInterfaces.syncWidgets(this.contentType, this.editingInterface);
+      expect(this.editingInterface.data.widgets.length).toBe(2);
+    });
   });
 
 });

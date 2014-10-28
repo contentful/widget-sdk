@@ -14,7 +14,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
         else
           return $q.reject(err);
       })
-      .then(addMissingFields(contentType))
+      .then(_.partial(addMissingFields, contentType))
       .then(addDefaultParams);
     },
 
@@ -31,21 +31,41 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
       });
     },
 
+    syncWidgets: syncWidgets,
+
     defaultInterface: defaultInterface
   };
 
-  function addMissingFields(contentType) {
-    return function (interf) {
-      _(contentType.data.fields)
-        .reject(fieldHasWidget)
-        .map(_.partial(defaultWidget, contentType))
-        .each(function(widget) { interf.data.widgets.push(widget); });
-      return interf;
+  function syncWidgets(contentType, interf) {
+    pruneWidgets(contentType, interf);
+    addMissingFields(contentType, interf);
+    return interf;
+  }
 
-      function fieldHasWidget(field) {
-        return _.any(interf.data.widgets, {fieldId: field.id});
-      }
-    };
+  function addMissingFields(contentType, interf) {
+    _(contentType.data.fields)
+      .reject(fieldHasWidget)
+      .map(_.partial(defaultWidget, contentType))
+      .each(addWidget);
+    return interf;
+
+    function fieldHasWidget(field) {
+      return _.any(interf.data.widgets, {fieldId: field.id});
+    }
+
+    function addWidget(widget){
+      interf.data.widgets.push(widget); 
+    }
+  }
+
+  function pruneWidgets(contentType, interf) {
+    _.remove(interf.data.widgets, function(widget){
+      return !hasField(widget);
+    });
+
+    function hasField(widget) {
+      return _.any(contentType.data.fields, {id: widget.fieldId});
+    }
   }
 
   function addDefaultParams(interf) {
