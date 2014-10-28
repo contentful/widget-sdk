@@ -79,19 +79,19 @@ filters.filter('fileExtension', ['mimetype', function (mimetype) {
 
 filters.filter('isFieldLink', function () {
   return function (field) {
-    return field.type == 'Link' || field.type == 'Array' && dotty.get(field, 'items.type') == 'Link';
+    return field && (field.type == 'Link' || field.type == 'Array' && dotty.get(field, 'items.type') == 'Link');
   };
 });
 
 filters.filter('isFieldBoolean', function () {
   return function (field) {
-    return field.type == 'Boolean';
+    return field && field.type == 'Boolean';
   };
 });
 
 filters.filter('isFieldStringList', function () {
   return function (field) {
-    return field.type == 'Array' && dotty.get(field, 'items.type') == 'String';
+    return field && field.type == 'Array' && dotty.get(field, 'items.type') == 'String';
   };
 });
 
@@ -110,6 +110,20 @@ filters.filter('decimalMarks', function () {
       markedStr = str.slice(bound, i) + (i < str.length ? ',' : '') + markedStr;
     }
     return str.slice(0, i<0 ? 3+i : i) + (str.length>3 ? markedStr : '');
+  };
+});
+
+filters.filter('displayedFieldName', function () {
+  return function (field) {
+    return _.isEmpty(field.name) ?
+             _.isEmpty(field.id) ?  'Untitled field' : 'ID: '+field.id
+           : field.name;
+  };
+});
+
+filters.filter('isDisplayableAsTitle', function () {
+  return function (field) {
+    return field.type === 'Symbol' || field.type === 'Text';
   };
 });
 

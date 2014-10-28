@@ -8,12 +8,12 @@ angular.module('contentful').directive('cfFieldSettingsEditor', function() {
     link: function (scope, elem) {
       //elem.on('click', clickHandler);
 
-      var unwatch = scope.$watch('isFieldOpen(field)', function (open) {
+      var unwatch = scope.$watch('isAccordionItemOpen(field)', function (open) {
         if (open) { elem.find('input[name="fieldName"]').focus(); }
       });
 
       function clickHandler() {
-        if (!scope.isFieldOpen(scope.field)) scope.toggleField(scope.field);
+        if (!scope.isAccordionItemOpen(scope.field)) scope.toggleAccordionItem(scope.field);
       }
 
       scope.$on('$destroy', function () {

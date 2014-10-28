@@ -3,7 +3,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   var $q           = $injector.get('$q');
   var random       = $injector.get('random');
   var notification = $injector.get('notification');
-  var widgetTypes  = $injector.get('widgetTypes');
+  var widgets  = $injector.get('widgets');
 
   var widgetIdsByContentType = {};
 
@@ -16,7 +16,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
         else
           return $q.reject(err);
       })
-      .then(addMissingFields(contentType))
+      .then(_.partial(addMissingFields, contentType))
       .then(addDefaultParams);
     },
 
@@ -33,26 +33,46 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
       });
     },
 
+    syncWidgets: syncWidgets,
+
     defaultInterface: defaultInterface
   };
 
-  function addMissingFields(contentType) {
-    return function (interf) {
-      _(contentType.data.fields)
-        .reject(fieldHasWidget)
-        .map(_.partial(defaultWidget, contentType))
-        .each(function(widget) { interf.data.widgets.push(widget); });
-      return interf;
+  function syncWidgets(contentType, interf) {
+    pruneWidgets(contentType, interf);
+    addMissingFields(contentType, interf);
+    return interf;
+  }
 
-      function fieldHasWidget(field) {
-        return _.any(interf.data.widgets, {fieldId: field.id});
-      }
-    };
+  function addMissingFields(contentType, interf) {
+    _(contentType.data.fields)
+      .reject(fieldHasWidget)
+      .map(_.partial(defaultWidget, contentType))
+      .each(addWidget);
+    return interf;
+
+    function fieldHasWidget(field) {
+      return _.any(interf.data.widgets, {fieldId: field.id});
+    }
+
+    function addWidget(widget){
+      interf.data.widgets.push(widget); 
+    }
+  }
+
+  function pruneWidgets(contentType, interf) {
+    _.remove(interf.data.widgets, function(widget){
+      return !hasField(widget);
+    });
+
+    function hasField(widget) {
+      return _.any(contentType.data.fields, {id: widget.fieldId});
+    }
   }
 
   function addDefaultParams(interf) {
     _.each(interf.data.widgets, function (widget) {
-      var defaults = widgetTypes.paramDefaults(widget.widgetType);
+      var defaults = widgets.paramDefaults(widget.widgetId, widget.widgetType);
       _.defaults(widget.widgetParams, defaults);
     });
     return interf;
@@ -97,9 +117,9 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   function defaultWidget(contentType, field) {
     return {
       id: generateWidgetId(field.id, contentType.getId()),
-      type: 'field',
-      fieldId: field.id, // TODO use internal id (field renaming)
-      widgetType: widgetTypes.defaultType(field, contentType),
+      widgetType: 'field',
+      fieldId: field.id,
+      widgetId: widgets.defaultWidget(field, contentType),
       widgetParams: {}
     };
   }

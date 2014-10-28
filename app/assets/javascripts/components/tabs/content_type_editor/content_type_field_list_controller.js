@@ -2,52 +2,12 @@
 
 angular.module('contentful').controller('ContentTypeFieldListCtrl', ['$scope', '$injector', function($scope, $injector) {
   var $controller = $injector.get('$controller');
-  var $q = $injector.get('$q');
-  var random = $injector.get('random');
 
-  $controller('FieldActionsController', {$scope: $scope});
+  $controller('AccordionController', {$scope: $scope});
 
   $scope.$watchCollection('contentType.data.fields', function (fields, old, scope) {
-    if (hasUIIDs(fields)) {
-      scope.fieldList = fields;
-    } else {
-      scope.fieldList = _.map(fields, function (field) {
-        if (field.uiid) {
-          return field;
-        } else {
-          field = Object.create(field);
-          field.uiid = random.id();
-          return field;
-        }
-      });
-    }
+    scope.fieldList = fields;
   });
-
-  $scope.$watch('otDoc', function (otDoc, old, scope) {
-    var otBecameActive = otDoc && !old;
-    if (otBecameActive && !hasUIIDs(scope.contentType.data.fields)) {
-      prepareUIIDs(scope.contentType);
-    }
-  });
-
-  function hasUIIDs(fields) {
-    return _.all(fields, 'uiid');
-  }
-
-  function prepareUIIDs(contentType) {
-    return $scope.waitFor('otDoc').then(function (otDoc) {
-      return $q.all(_(contentType.data.fields).reject('uiid').map(function (field, index) {
-        var d = $q.defer();
-        otDoc.setAt(['fields', index, 'uiid'], random.id(), function (err, res) {
-          if (err) d.reject(err);
-          else d.resolve(res);
-        });
-        return d.promise;
-      }).value());
-    }).finally(function () {
-      $scope.otUpdateEntity();
-    });
-  }
 
   $scope.fieldTypeParams = function (f) {
     var params = [f.type, f.linkType];
@@ -57,33 +17,8 @@ angular.module('contentful').controller('ContentTypeFieldListCtrl', ['$scope', '
 
   $scope.fieldIsPublished = function (field) {
     if (!$scope.publishedContentType || !$scope.publishedContentType.data) return false;
-
-    if (hasUIIDs($scope.publishedContentType.data.fields)) {
-      // should be the default case
-      return _.contains($scope.publishedUIIDs, field.uiid);
-    } else {
-      // Fallback for published content types that don't yet have uiids
-      var idIsPublished = _.contains($scope.publishedIds, field.id);
-      return idIsPublished && (idIsUnique(field) || (typeMatchesPublished(field) && typeIsUnique(field)));
-    }
+    return _.contains($scope.publishedIds, field.id);
   };
-
-  function idIsUnique(field) {
-    return _.countBy($scope.fieldList, 'id')[field.id] < 2;
-  }
-
-  function typeMatchesPublished(field) {
-    var publishedField = _.find($scope.publishedContentType.data.fields, {id: field.id});
-    return angular.equals($scope.fieldTypeParams(field), $scope.fieldTypeParams(publishedField));
-  }
-
-  function typeIsUnique(field) {
-    var fieldType = $scope.fieldTypeParams(field);
-    return _.every($scope.fieldList, function isDifferent(other) {
-      if (field === other) return true; // always equal to self but that doesn't count so treat it as different
-      return other.id !== field.id || !angular.equals(fieldType, $scope.fieldTypeParams(other));
-    });
-  }
 
   $scope.pickNewDisplayField = function () {
     var current = _.find($scope.contentType.data.fields, {id: $scope.contentType.data.displayField});
@@ -126,6 +61,6 @@ angular.module('contentful').controller('ContentTypeFieldListCtrl', ['$scope', '
 
   $scope.$on('fieldAdded', function (event, index) {
     var scope = event.currentScope;
-    scope.openField(scope.contentType.data.fields[index]);
+    scope.openAccordionItem(scope.contentType.data.fields[index]);
   });
 }]);

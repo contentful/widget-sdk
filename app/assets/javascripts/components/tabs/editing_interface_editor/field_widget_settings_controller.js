@@ -1,20 +1,23 @@
 'use strict';
 
 angular.module('contentful').controller('FieldWidgetSettingsCtrl', ['$scope', '$injector', function FieldWidgetSettingsCtrl($scope, $injector) {
-  var widgetTypes = $injector.get('widgetTypes');
+  var widgets = $injector.get('widgets');
 
   $scope.field = $scope.getFieldForWidget($scope.widget);
 
-  $scope.$watch('widget.widgetType', assembleWidgetOptions);
+  if($scope.widget.widgetType == 'field') {
+    $scope.$watch('widget.widgetId', assembleWidgetOptions);
+    widgets.forField($scope.field)
+    .then(function (types) {
+      $scope.widgetsForType = types;
+      assembleWidgetOptions($scope.widget.widgetId, $scope.widget.widgetType);
+    });
+  } else if($scope.widget.widgetType == 'static') {
+    assembleWidgetOptions($scope.widget.widgetId, $scope.widget.widgetType);
+  }
 
-  widgetTypes.forField($scope.field)
-  .then(function (types) {
-    $scope.widgetTypesForType = types;
-    assembleWidgetOptions($scope.widget.widgetType);
-  });
-
-  function assembleWidgetOptions(widgetType) {
-    $scope.widgetOptions = widgetTypes.optionsForWidgetType(widgetType);
+  function assembleWidgetOptions(widgetId, widgetType) {
+    $scope.widgetOptions = widgets.optionsForWidget(widgetId, widgetType);
   }
 
 }]);

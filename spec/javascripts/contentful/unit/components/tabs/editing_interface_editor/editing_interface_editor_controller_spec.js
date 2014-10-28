@@ -6,6 +6,7 @@ describe('EditingInterfaceEditorController', function(){
     module('contentful/test', function($provide) {
       editingInterfaces = {
         save: sinon.stub(),
+        syncWidgets: sinon.stub(),
         forContentTypeWithId: sinon.stub()
       };
       $provide.value('editingInterfaces', editingInterfaces);
@@ -25,6 +26,13 @@ describe('EditingInterfaceEditorController', function(){
   afterEach(inject(function($log) {
     $log.assertEmpty();
   }));
+
+  it('should sync the widgets when the fields change', function() {
+    editingInterfaces.syncWidgets.reset();
+    scope.contentType = {data: {fields: ['newField']}};
+    scope.$apply();
+    expect(editingInterfaces.syncWidgets).toBeCalled();
+  });
 
   it('should reset the interface when saving fails', function(){
     editingInterfaces.save.returns($q.reject());

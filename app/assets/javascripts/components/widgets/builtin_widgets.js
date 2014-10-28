@@ -1,36 +1,36 @@
 'use strict';
-angular.module('contentful').run(['widgetTypes', function(widgetTypes){
-  widgetTypes.registerWidget('singleLine',{
+angular.module('contentful').run(['widgets', function(widgets){
+  widgets.registerWidget('singleLine',{
     fieldTypes: ['Text', 'Symbol'],
     name: 'Single Line',
     template: '<input class="form-control" ng-disabled="!otEditable" ng-model="fieldData.value" ot-bind-text="" ot-subdoc="" type="text">'
   });
-  widgetTypes.registerWidget('numberEditor',{
+  widgets.registerWidget('numberEditor',{
     fieldTypes: ['Integer', 'Number'],
     name: 'Number Editor',
     template: '<div class="cf-number-editor"></div>'
   });
-  widgetTypes.registerWidget('multipleLine',{
+  widgets.registerWidget('multipleLine',{
     fieldTypes: ['Text'],
     name: 'Multiple Line',
     template: '<textarea cf-input-autogrow class="form-control" ng-disabled="!otEditable" ng-model="fieldData.value" ot-bind-text ot-subdoc></textarea>'
   });
-  widgetTypes.registerWidget('markdown',{
+  widgets.registerWidget('markdown',{
     fieldTypes: ['Text'],
     name: 'Markdown',
     template: '<div class="cf-markdown-editor"></div>'
   });
-  widgetTypes.registerWidget('radio',{
+  widgets.registerWidget('radio',{
     fieldTypes: ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'],
     name: 'Radio',
     template: '<cf-radio-editor ng-model="fieldData.value" ot-bind-internal="valuesController.selected"></cf-radio-editor>'
   });
-  widgetTypes.registerWidget('dropdown',{
+  widgets.registerWidget('dropdown',{
     fieldTypes: ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'],
     name: 'Dropdown',
     template: '<div class="cf-dropdown-editor" ng-model="fieldData.value" ot-bind-internal="valuesController.selected"></div>'
   });
-  widgetTypes.registerWidget('rating',{
+  widgets.registerWidget('rating',{
     fieldTypes: ['Integer', 'Number'],
     name: 'Rating',
     options: [
@@ -44,55 +44,84 @@ angular.module('contentful').run(['widgetTypes', function(widgetTypes){
     ],
     template: '<cf-rating-editor ng-model="fieldData.value" ot-bind-internal="rating"></cf-rating-editor>'
   });
-  widgetTypes.registerWidget('datePicker',{
+  widgets.registerWidget('datePicker',{
     fieldTypes: ['Date'],
     name: 'Date Picker',
     template: '<div class="cf-datetime-editor widget-datetime-editor" ng-model="fieldData.value"></div>'
   });
-  widgetTypes.registerWidget('locationEditor',{
+  widgets.registerWidget('locationEditor',{
     fieldTypes: ['Location'],
     name: 'Location',
     template: '<div class="cf-location-editor widget-location-editor" ng-model="fieldData.value" ot-bind-internal="location"></div>'
   });
-  widgetTypes.registerWidget('objectEditor',{
+  widgets.registerWidget('objectEditor',{
     fieldTypes: ['Object'],
     name: 'Object',
     template: '<div class="cf-object-editor" ng-model="fieldData.value"></div>'
   });
-  widgetTypes.registerWidget('listInput',{
+  widgets.registerWidget('listInput',{
     fieldTypes: ['Symbols'],
     name: 'List',
     template: '<input cf-list-identity-fix="" class="form-control" ng-disabled="!otEditable" ng-list="" ng-model="fieldData.value" ot-bind-model="" type="text">'
   });
-  widgetTypes.registerWidget('fileEditor',{
+  widgets.registerWidget('fileEditor',{
     fieldTypes: ['File'],
     name: 'File',
     template: '<div class="cf-file-editor" ng-model="fieldData.value" ot-bind-internal="file"></div>'
   });
-  widgetTypes.registerWidget('entryLinkEditor',{
+  widgets.registerWidget('entryLinkEditor',{
     fieldTypes: ['Entry'],
     name: 'Entry Link',
     template: '<div cf-entry-link-editor cf-link-editor ng-model="fieldData.value"></div>'
   });
-  widgetTypes.registerWidget('assetLinkEditor',{
+  widgets.registerWidget('assetLinkEditor',{
     fieldTypes: ['Asset'],
     name: 'Asset Link',
     template: '<div cf-asset-link-editor cf-link-editor ng-model="fieldData.value"></div>'
   });
-  widgetTypes.registerWidget('entryLinksEditor',{
+  widgets.registerWidget('entryLinksEditor',{
     fieldTypes: ['Entries'],
     name: 'Entry Links List',
     template: '<div cf-entry-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
-  widgetTypes.registerWidget('assetLinksEditor',{
+  widgets.registerWidget('assetLinksEditor',{
     fieldTypes: ['Assets'],
     name: 'Asset Links List',
     template: '<div cf-asset-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
-  widgetTypes.registerWidget('youtubeEditor',{
+  widgets.registerWidget('youtubeEditor',{
     fieldTypes: ['Symbol'],
     name: 'Youtube',
     template: '<cf-youtube-editor ng-model="fieldData.value" ot-bind-internal="url"></cf-youtube-editor>'
+  });
+  widgets.registerWidget('sectionHeader',{
+    fieldTypes: [],
+    name: 'Section Header',
+    template: '<h1 class="layout-field--section-header">{{widget.widgetParams.text}}</h1>',
+    options: [
+      {
+        param: 'text',
+        type: 'Text',
+        name: 'Text'
+      }
+    ]
+  });
+  widgets.registerWidget('infoText',{
+    fieldTypes: [],
+    name: 'Info Text',
+    template: '<p class="layout-field--info-text">{{widget.widgetParams.text}}</p>',
+    options: [
+      {
+        param: 'text',
+        type: 'Text',
+        name: 'Text'
+      }
+    ]
+  });
+  widgets.registerWidget('sectionBreak',{
+    fieldTypes: [],
+    name: 'Section Break',
+    template: '<hr class="layout-field--section-break" />'
   });
   //toggle: {   NOT IMPLEMENTED
     //fieldTypes: ['Boolean'],

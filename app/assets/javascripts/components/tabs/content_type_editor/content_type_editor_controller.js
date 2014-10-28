@@ -101,7 +101,7 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', '$in
 
   $scope.$watch('publishedContentType.data.fields', function (fields, old, scope) {
     scope.publishedIds = _.pluck(fields, 'id');
-    scope.publishedUIIDs = _.pluck(fields, 'uiid');
+    scope.publishedApiNames = _.pluck(fields, 'apiName');
   });
 
   $scope.$watch('contentType.getName()', function(title) {
@@ -113,9 +113,9 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', '$in
 
     var newField = _.extend({
       name: '',
-      id: '',
+      id: random.id(),
       type: 'String',
-      uiid: random.id()
+      apiName: ''
     }, typeFieldTemplate);
 
     fieldDoc.push(newField, function(err, ops) {

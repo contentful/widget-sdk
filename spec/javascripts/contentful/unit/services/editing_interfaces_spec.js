@@ -6,9 +6,9 @@ describe('Editing interfaces service', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs(['defaultType', 'info', 'warn', 'serverError']);
-      $provide.value('widgetTypes', {
-        defaultType: stubs.defaultType,
+      stubs = $provide.makeStubs(['defaultWidget', 'info', 'warn', 'serverError']);
+      $provide.value('widgets', {
+        defaultWidget: stubs.defaultWidget,
         registerWidget: angular.noop,
         paramDefaults: _.constant({})
       });
@@ -53,7 +53,7 @@ describe('Editing interfaces service', function () {
 
     describe('succeeds', function() {
       beforeEach(function() {
-        this.$inject('widgetTypes').paramDefaults = _.constant({foo: 'bar'});
+        this.$inject('widgets').paramDefaults = _.constant({foo: 'bar'});
         contentType.getEditingInterface.returns($q.when({
           data: {widgets: [{
             fieldId: 'fieldA',
@@ -83,7 +83,6 @@ describe('Editing interfaces service', function () {
         expect(config.data.widgets[0].widgetParams.foo).toBe('baz');
         expect(config.data.widgets[1].widgetParams.foo).toBe('bar');
       });
-      
     });
 
     describe('fails with a 404 because config doesnt exist yet', function() {
@@ -143,7 +142,7 @@ describe('Editing interfaces service', function () {
     });
 
     it('gets widget type', function() {
-      expect(stubs.defaultType).toBeCalled();
+      expect(stubs.defaultWidget).toBeCalled();
     });
 
     describe('gets a default interface again', function() {
@@ -200,7 +199,34 @@ describe('Editing interfaces service', function () {
       $rootScope.$apply();
       expect(stubs.serverError).toBeCalled();
     });
+  });
 
+  describe('syncs an interface to a contentType', function() {
+    beforeEach(function(){
+      this.editingInterface = {data: {widgets: [
+        {fieldId: 'aaa'},
+        {fieldId: 'bbb'}
+      ]}};
+      this.contentType = {
+        data: {fields: [
+          {id: 'aaa'},
+          {id: 'bbb'},
+        ]},
+        getId: sinon.stub().returns('fieldid')
+      };
+    });
+
+    it('add widgets for missing fields', function() {
+      this.contentType.data.fields.push({id: 'ccc', type: 'Symbol'});
+      editingInterfaces.syncWidgets(this.contentType, this.editingInterface);
+      expect(this.editingInterface.data.widgets[2].fieldId).toBe('ccc');
+    });
+
+    it('removes widgets without fields', function() {
+      this.editingInterface.data.widgets.push({id: 'ccc'});
+      editingInterfaces.syncWidgets(this.contentType, this.editingInterface);
+      expect(this.editingInterface.data.widgets.length).toBe(2);
+    });
   });
 
 });

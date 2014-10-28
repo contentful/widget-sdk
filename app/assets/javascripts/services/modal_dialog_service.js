@@ -20,7 +20,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
         attachTo: '.client'
       },
       _.pick(params,
-             'title', 'message', 'template',
+             'title', 'message', 'html', 'template',
              'cancelLabel', 'confirmLabel', 'deactivateConfirmKey', 'deactivateCancelKey',
              'noBackgroundClose', 'attachTo')
     );
