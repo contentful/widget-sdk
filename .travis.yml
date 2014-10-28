@@ -22,7 +22,8 @@ after_script: >
   fi
 script: "bundle exec rake jasmine:ci"
 notifications:
-  slack: contentful:yIvk7tShq4Pt4R898DQCfjBy
+  slack:
+    secure: SFaWsbImfZvdyE/C+1MBxPmue91IyzesgKYTiZoBOi6XWDG+kctQ2DzcWMnNaEpYi7oFxwn1QPEc9bgM0aDsMIprnxr+SsfX7HpWfesoVCTJowT8oz9oeTC0OwYHlvr
 cache:
   bundler: true
   directories:
