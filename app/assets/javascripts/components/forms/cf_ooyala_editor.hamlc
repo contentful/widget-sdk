@@ -1,12 +1,12 @@
 %cf-ooyala-input(
   value="{{fieldData.value}}"
   search-config="searchConfig"
-  on-change="ooyalaEditorController.resetErrorsAndCurrentAsset(); ooyalaEditorController.persistInput(input)"
+  on-change="ooyalaEditorController.resetErrors(); ooyalaEditorController.resetAsset(); ooyalaEditorController.persistInput(input)"
   on-reset="ooyalaEditorController.resetEditorInput()"
   on-valid-asset-id="ooyalaEditorController.addAsset(asset)"
   on-invalid-asset-id="ooyalaEditorController.showErrors(error)")
 
-.video-widget-editor__content-wrapper(ng-show="fieldData.value")
+.video-widget-editor__content-wrapper(ng-show="errorMessage || selectedVideo.playerId")
   .video-widget-editor__warning(ng-show="errorMessage")
     %i.fa.fa-exclamation-triangle
     .video-widget-warning__message
@@ -21,6 +21,6 @@
     ng-hide="!isPlayerReady"
     asset-id="selectedVideo.assetId"
     player-id="selectedVideo.playerId"
-    on-ready="handlePlayerReady()"
-    on-load-failure="handlePlayerLoadFailure()"
-    on-failed-to-play-video="handlePlayerFailedToPlayVideo()")
+    on-ready="ooyalaEditorController.resetErrors(); ooyalaEditorController.setPlayerReady()"
+    on-load-failure="ooyalaEditorController.resetErrors(); ooyalaEditorController.resetAsset(); ooyalaEditorController.showFailedToLoadVideoError()"
+    on-failed-to-play-video="ooyalaEditorController.showFailedToPlayVideoError()")
