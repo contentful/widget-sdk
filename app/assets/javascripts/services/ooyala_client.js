@@ -3,11 +3,14 @@
 angular.module('contentful').factory('ooyalaClient', ['$injector', function($injector){
   var assert              = $injector.get('assert');
   var OoyalaErrorMessages = $injector.get('OoyalaErrorMessages');
+  var clientAdapter       = $injector.get('clientAdapter');
   var $q                  = $injector.get('$q');
+
+  var BASE_URL = '/integrations/ooyala';
 
   function OoyalaClient(){
     this.organizationId = null;
-    this.clientAdapter  = $injector.get('clientAdapter');
+    this.clientAdapter  = clientAdapter;
   }
 
   OoyalaClient.prototype = {
@@ -51,7 +54,7 @@ angular.module('contentful').factory('ooyalaClient', ['$injector', function($inj
     },
 
     _endpoint: function(path) {
-      return '/integrations/ooyala' + path;
+      return BASE_URL + path;
     },
 
     /*
