@@ -30,6 +30,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
           notification.warn('This configuration has been changed by another user. Please reload and try again.');
         else
           notification.serverError('There was a problem saving the configuration', err);
+        return $q.reject(err);
       });
     },
 

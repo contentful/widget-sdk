@@ -50,13 +50,14 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
     .then(function(interf) {
       $scope.editingInterface = interf;
     })
-    .catch(function() {
-      return loadFromServer();
+    .catch(function(error) {
+      if (dotty.get(error, 'body.sys.id') == 'VersionMismatch')
+        return loadFromServer();
     });
   }
 
   function loadFromServer () {
-    editingInterfaces.forContentTypeWithId($scope.contentType, $scope.editingInterface.id)
+    editingInterfaces.forContentTypeWithId($scope.contentType, $scope.editingInterface.getId())
     .then(function(interf) {
       $scope.editingInterface = interf;
     });
