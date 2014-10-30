@@ -23,7 +23,7 @@ describe('cfThumbnailDirective Directive', function () {
     attrs        = _.defaults(attrs || {}, defaults);
 
     element = $('<div class="cf-thumbnail"></div>');
-    _.forIn(attrs, function(v, k){ element.attr(k, v); });
+    element.attr(attrs);
     element.css({height: '10px', width: '10px'});
 
     $compile(element)(scope);
