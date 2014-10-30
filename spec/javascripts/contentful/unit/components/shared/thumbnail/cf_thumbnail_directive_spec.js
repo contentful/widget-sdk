@@ -34,20 +34,37 @@ describe('cfThumbnailDirective Directive', function () {
 
   describe('any asset', function() {
     describe('size attr', function() {
-      var size = 100;
-
       beforeEach(function() {
         asset.details ={ image: { width: 5000, height: 9999 } };
 
-        createElement({size: size});
+        createElement({size: 100});
       });
 
+    /*
+     * The expected values for 'width' and 'height' on these tests have
+     * been manually calculated using the 'setDimensions' function inside the controller.
+     */
+
       it('sets the max width for the thumbnail', function() {
-        expect(scope.$$childHead.width <= size).toBeTruthy();
+        expect(src).toMatch(/w=50/);
       });
 
       it('sets the max height for the thumbnail', function() {
-        expect(scope.$$childHead.height <= size).toBeTruthy();
+        expect(src).toMatch(/h=100/);
+      });
+
+      describe('when the format is "square"', function() {
+        beforeEach(function() {
+          createElement({size: 100, format: 'square'});
+        });
+
+        it('sets the max width for the thumbnail', function() {
+          expect(src).toMatch(/w=100/);
+        });
+
+        it('sets the max height for the thumbnail', function() {
+          expect(src).toMatch(/h=100/);
+        });
       });
     });
   });
@@ -58,12 +75,17 @@ describe('cfThumbnailDirective Directive', function () {
       createElement();
     });
 
+    /*
+     * The expected values for 'width' and 'height' on these tests have
+     * been manually calculated using the 'setDimensions' function inside the controller.
+     */
+
     it('sets the width parameter in the querystring to scope.width', function() {
-      expect(src).toMatch(new RegExp('w=' + scope.$$childHead.width));
+      expect(src).toMatch(/w=3/);
     });
 
     it('sets the height parameter in the querystring to scope.height', function() {
-      expect(src).toMatch(new RegExp('h=' + scope.$$childHead.height));
+      expect(src).toMatch(/h=10/);
     });
 
     it('sets the fit parameter in the querystring to the value on attrs.fit', function() {
