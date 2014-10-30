@@ -23,7 +23,7 @@ angular.module('contentful').directive('cfSearch', ['keycodes', 'debounce', func
 
       var debouncedUpdate = debounce(update, 300);
 
-      element.on('keydown', function(ev) {
+      element.on('keyup', function(ev) {
         if (typeAhead && scope.inner.term) return debouncedUpdate();
         var pressedReturn = ev.keyCode === keycodes.ENTER;
         if (pressedReturn) {
