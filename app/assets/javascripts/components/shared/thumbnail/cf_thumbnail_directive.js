@@ -97,20 +97,16 @@ angular.module('contentful').directive('cfThumbnail', function () {
     controller: ['$scope', 'mimetype', function ($scope, mimetype) {
 
       $scope.getIconName = function() {
-        if ($scope.file) {
-          var groupName = mimetype.getGroupName(
-            mimetype.getExtension($scope.file.fileName),
-            $scope.file.contentType
-          );
+        var groupName = mimetype.getGroupName(
+          mimetype.getExtension($scope.file.fileName),
+          $scope.file.contentType
+        );
 
-          return groupToIcon(groupName);
-        } else {
-          return '';
-        }
+        return groupToIcon(groupName);
       };
 
       $scope.hasPreview = function(){
-        return $scope.file && ($scope.file.external || hasPreview() && hasDimensions());
+        return $scope.file.external || hasPreview() && hasDimensions();
       };
 
       $scope.thumbnailUrl = function () {
