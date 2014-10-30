@@ -58,7 +58,7 @@ describe('cfFileInfo Directive', function () {
       });
 
       it('inner container', function() {
-        expect(element.find('.file-preview .vcenter')).toBeNgHidden();
+        expect(element.find('.file-preview .vcenter')[0]).toBeUndefined();
       });
 
       it('unpublished marker', function() {

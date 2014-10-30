@@ -105,8 +105,6 @@ angular.module('contentful').directive('cfThumbnail', function () {
       };
 
       $scope.thumbnailUrl = function () {
-        if (!$scope.file) return;
-
         if ($scope.file.external) return $scope.file.url;
 
         if ($scope.file.url && $scope.width  && $scope.height ) {
