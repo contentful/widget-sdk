@@ -2,7 +2,7 @@
 
 /**
  * Check all available options for thumbnailing service at:
- * https://github.com/contentful/media_system/blob/master/app_engine_proxy/test_page/test.js
+ * https://github.com/contentful/image-manipulation-proxy/blob/master/app_engine_proxy/test_page/test.js
  */
 
 angular.module('contentful').directive('cfThumbnail', function () {
@@ -69,13 +69,13 @@ angular.module('contentful').directive('cfThumbnail', function () {
           var aspect = resizeWidth / resizeHeight;
 
           if (resizeWidth > maxWidth) {
-              resizeWidth = maxWidth;
-              resizeHeight = resizeWidth / aspect;
+            resizeWidth = maxWidth;
+            resizeHeight = resizeWidth / aspect;
           }
           if (resizeHeight > maxHeight) {
-              aspect = resizeWidth / resizeHeight;
-              resizeHeight = maxHeight;
-              resizeWidth = resizeHeight * aspect;
+            aspect = resizeWidth / resizeHeight;
+            resizeHeight = maxHeight;
+            resizeWidth = resizeHeight * aspect;
           }
         }
 
@@ -105,8 +105,10 @@ angular.module('contentful').directive('cfThumbnail', function () {
       };
 
       $scope.thumbnailUrl = function () {
-        if ($scope.file && $scope.file.url && $scope.width && $scope.height) {
-          var sizeQueryString = $scope.file.external ? '' : '?w=' + $scope.width + '&h=' + $scope.height;
+        if ($scope.file.external) return $scope.file.url;
+
+        if ($scope.file.url && $scope.width  && $scope.height ) {
+          var sizeQueryString = '?w=' + $scope.width + '&h=' + $scope.height;
           if($scope.fit) sizeQueryString += '&fit='+$scope.fit;
           if($scope.focus) sizeQueryString += '&f='+$scope.focus;
           return '' + $scope.file.url + sizeQueryString;
