@@ -1,13 +1,19 @@
 'use strict';
 
-describe('cfThumbnailDirective Directive', function () {
-  var scope, asset, element, src, $compile;
+describe('cfThumbnailDirective', function () {
+  var scope, asset, element, src, $compile, stubs;
 
   beforeEach(function() {
-    module('contentful/test');
-    asset = {url: 'url'};
-
+    module('contentful/test', function ($provide) {
+      stubs = $provide.makeStubs(['hasPreview', 'getExtension', 'getGroupName']);
+      $provide.constant('mimetype', {
+        hasPreview: stubs.hasPreview,
+        getExtension: stubs.getExtension,
+        getGroupName: stubs.getGroupName
+      });
+    });
     inject(function($injector, $rootScope){
+      asset = {url: 'url'};
       $compile    = $injector.get('$compile');
       scope       = $rootScope.$new();
       scope.asset = asset;
@@ -35,7 +41,8 @@ describe('cfThumbnailDirective Directive', function () {
   describe('any asset', function() {
     describe('size attr', function() {
       beforeEach(function() {
-        asset.details ={ image: { width: 5000, height: 9999 } };
+        asset.details = { image: { width: 5000, height: 9999 } };
+        stubs.hasPreview.returns(true);
 
         createElement({size: 100});
       });
@@ -72,6 +79,7 @@ describe('cfThumbnailDirective Directive', function () {
   describe('contentful assets', function() {
     beforeEach(function() {
       asset.details = { image: { width: 100, height: 300 } };
+      stubs.hasPreview.returns(true);
       createElement();
     });
 
