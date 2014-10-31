@@ -1,12 +1,14 @@
 'use strict';
 
-angular.module('contentful').controller('FieldWidgetSettingsCtrl', ['$scope', '$injector', function FieldWidgetSettingsCtrl($scope, $injector) {
+angular.module('contentful').controller('FieldWidgetSettingsController', ['$scope', '$injector', function FieldWidgetSettingsController($scope, $injector) {
   var widgets = $injector.get('widgets');
 
   $scope.field = $scope.getFieldForWidget($scope.widget);
 
   if($scope.widget.widgetType == 'field') {
-    $scope.$watch('widget.widgetId', assembleWidgetOptions);
+    $scope.$watch('widget.widgetId', function (widgetId) {
+      if(widgetId) assembleWidgetOptions(widgetId, 'field');
+    });
     widgets.forField($scope.field)
     .then(function (types) {
       $scope.widgetsForType = types;
