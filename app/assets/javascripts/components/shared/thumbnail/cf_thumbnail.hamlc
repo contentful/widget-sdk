@@ -1,2 +1,2 @@
-%img.thumbnail(ng-if="file" ng-src="{{thumbnailUrl()}}")
+%img.thumbnail(ng-if="file && hasPreview()" ng-src="{{thumbnailUrl()}}")
 %i.icon(ng-if="file && !hasPreview()" ng-class="getIconName()")
