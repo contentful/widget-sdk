@@ -1,8 +1,11 @@
 'use strict';
 
 angular.module('contentful').controller('EditingInterfaceEditorController', ['$scope', '$injector', function EditingInterfaceEditorController($scope, $injector) {
-  var $controller = $injector.get('$controller');
+  var $controller       = $injector.get('$controller');
   var editingInterfaces = $injector.get('editingInterfaces');
+  var environment       = $injector.get('environment');
+
+  $scope.enableLayoutElements = environment.env !== 'production';
 
   $controller('AccordionController', {$scope: $scope});
 
