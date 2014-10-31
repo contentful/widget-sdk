@@ -204,8 +204,8 @@ describe('Editing interfaces service', function () {
   describe('syncs an interface to a contentType', function() {
     beforeEach(function(){
       this.editingInterface = {data: {widgets: [
-        {fieldId: 'aaa'},
-        {fieldId: 'bbb'}
+        {fieldId: 'aaa', widgetType: 'field'},
+        {fieldId: 'bbb', widgetType: 'field'}
       ]}};
       this.contentType = {
         data: {fields: [
@@ -223,9 +223,15 @@ describe('Editing interfaces service', function () {
     });
 
     it('removes widgets without fields', function() {
-      this.editingInterface.data.widgets.push({id: 'ccc'});
+      this.editingInterface.data.widgets.push({id: 'ccc', widgetType: 'field'});
       editingInterfaces.syncWidgets(this.contentType, this.editingInterface);
       expect(this.editingInterface.data.widgets.length).toBe(2);
+    });
+
+    it('does not remove static widgets', function() {
+      this.editingInterface.data.widgets.push({id: 'ccc', widgetType: 'static'});
+      editingInterfaces.syncWidgets(this.contentType, this.editingInterface);
+      expect(this.editingInterface.data.widgets.length).toBe(3);
     });
   });
 

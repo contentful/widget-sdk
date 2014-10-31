@@ -64,7 +64,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
 
   function pruneWidgets(contentType, interf) {
     _.remove(interf.data.widgets, function(widget){
-      return !hasField(widget);
+      return widget.widgetType === 'field' && !hasField(widget);
     });
 
     function hasField(widget) {
