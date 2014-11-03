@@ -1,9 +1,10 @@
 'use strict';
 angular.module('contentful').factory('editingInterfaces', ['$injector', function($injector){
   var $q           = $injector.get('$q');
-  var random       = $injector.get('random');
+  var environment  = $injector.get('environment');
   var notification = $injector.get('notification');
-  var widgets  = $injector.get('widgets');
+  var random       = $injector.get('random');
+  var widgets      = $injector.get('widgets');
 
   var widgetIdsByContentType = {};
 
@@ -16,7 +17,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
         else
           return $q.reject(err);
       })
-      .then(_.partial(addMissingFields, contentType))
+      .then(_.partial(syncWidgets, contentType))
       .then(addDefaultParams);
     },
 
@@ -43,6 +44,8 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   function syncWidgets(contentType, interf) {
     pruneWidgets(contentType, interf);
     addMissingFields(contentType, interf);
+    // TODO temporary:
+    if (environment.env !== 'production') syncOrder(contentType, interf);
     return interf;
   }
 
@@ -70,6 +73,16 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
     function hasField(widget) {
       return _.any(contentType.data.fields, {id: widget.fieldId});
     }
+  }
+
+  // TODO temporary function. This forces widgets order to always reflect fields
+  function syncOrder(contentType, interf) {
+    var newOrder = _.map(contentType.data.fields, function (field) {
+      return _.find(interf.data.widgets, {fieldId: field.id});
+    });
+    var widgets = interf.data.widgets;
+    widgets.splice.apply([0, widgets.length].concat(newOrder));
+    return interf;
   }
 
   function addDefaultParams(interf) {
