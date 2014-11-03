@@ -23,6 +23,8 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', '$in
   $scope.tab.closingMessage = 'You have unpublished changes.';
   $scope.tab.closingMessageDisplayType = 'tooltip';
 
+  $scope.openEditingInterfaceEditor = openEditingInterfaceEditor;
+
   function loadPublishedContentType() {
     // TODO replace with lookup in registry inside spaceContext
     $scope.contentType.getPublishedStatus()
@@ -31,17 +33,16 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', '$in
     });
   }
 
-  function loadDefaultEditingInterface() {
+  function openEditingInterfaceEditor() {
     editingInterfaces.forContentTypeWithId($scope.contentType, 'default')
     .then(function (interf) {
-      $scope.defaultEditingInterface = interf;
+      $scope.navigator.editingInterfaceEditor($scope.contentType, interf).goTo();
     });
   }
 
   $scope.$watch('contentType', function(contentType){
     if (contentType){
       loadPublishedContentType();
-      loadDefaultEditingInterface();
     }
   });
 

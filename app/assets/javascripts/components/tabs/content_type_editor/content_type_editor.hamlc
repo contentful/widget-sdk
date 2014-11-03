@@ -26,7 +26,8 @@
               Show disabled fields
     %button.btn.btn--tertiary(type="button"
             ng-if="enableInterfaceEditor"
-            ng-click="navigator.editingInterfaceEditor(contentType, defaultEditingInterface).goTo()"
+            ng-disabled="!publishedContentType"
+            ng-click="openEditingInterfaceEditor()"
             tooltip="Customize editing view"
             tooltip-placement="bottom")
       Customize View
