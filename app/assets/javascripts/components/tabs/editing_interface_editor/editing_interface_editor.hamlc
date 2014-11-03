@@ -21,7 +21,7 @@
       Restore to defaults
 
 .tab-main
-  .left-nav(ng-if="editorController.layoutElementsEnabled")
+  .left-nav(ng-show="editorController.layoutElementsEnabled")
     %h2 Layout options
     %div(data-layout-options)
       %layout-options-header.u-bce.field-widget-settings(data-layout-item="sectionHeader")
