@@ -5,8 +5,6 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
   var editingInterfaces = $injector.get('editingInterfaces');
   var environment       = $injector.get('environment');
 
-  $scope.enableLayoutElements = environment.env !== 'production';
-
   $controller('AccordionController', {$scope: $scope});
 
   // TODO this is redundant, the editingInterface contains the contentType id
@@ -26,7 +24,7 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
   $scope.$on('entityDeleted', contentTypeDeletedEventHandler);
 
   this.isWidgetVisible = isWidgetVisible;
-
+  this.layoutElementsEnabled = environment.env !== 'production';
 
   function isWidgetVisible(widget) {
     if (widget.widgetType === 'static') return true;

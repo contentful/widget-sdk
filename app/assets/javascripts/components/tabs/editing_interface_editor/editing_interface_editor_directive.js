@@ -12,7 +12,7 @@ angular.module('contentful').directive('editingInterfaceEditor', [function(){
       var sortableItemReceived = false;
 
       scope.widgetSortOptions = {
-        //handle: '[cf-drag-handle]',
+        disabled: scope.editorController.layoutElementsEnabled,
         forceHelperSize: true,
 
         receive: function () {

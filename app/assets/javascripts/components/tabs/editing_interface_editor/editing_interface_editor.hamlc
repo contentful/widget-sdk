@@ -21,17 +21,16 @@
       Restore to defaults
 
 .tab-main
-  .left-nav
-    %h2(ng-if="enableLayoutElements") Layout options
-    %div(ng-if="enableLayoutElements" data-layout-options)
+  .left-nav(ng-if="editorController.layoutElementsEnabled")
+    %h2 Layout options
+    %div(data-layout-options)
       %layout-options-header.u-bce.field-widget-settings(data-layout-item="sectionHeader")
       %layout-options-header.u-bce.field-widget-settings(data-layout-item="infoText")
       %layout-options-header.u-bce.field-widget-settings(data-layout-item="sectionBreak")
 
   .with-left-nav
     %h2 Editing interface widgets
-    %div(ng-if="enableLayoutElements" ng-model="editingInterface.data.widgets" ui-sortable="widgetSortOptions" data-widget-settings)
-    %div(ng-if="!enableLayoutElements" ng-model="editingInterface.data.widgets" data-widget-settings)
+    %div(ng-model="editingInterface.data.widgets" ui-sortable="widgetSortOptions" data-widget-settings)
       .field-widget-settings(
           cf-field-widget-settings=""
           ng-repeat="widget in editingInterface.data.widgets track by widget.id"
