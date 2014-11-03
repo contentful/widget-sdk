@@ -45,7 +45,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
     pruneWidgets(contentType, interf);
     addMissingFields(contentType, interf);
     // TODO temporary:
-    if (environment.env !== 'production') syncOrder(contentType, interf);
+    if (environment.env === 'production') syncOrder(contentType, interf);
     return interf;
   }
 
@@ -81,7 +81,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
       return _.find(interf.data.widgets, {fieldId: field.id});
     });
     var widgets = interf.data.widgets;
-    widgets.splice.apply([0, widgets.length].concat(newOrder));
+    widgets.splice.apply(widgets, [0, widgets.length].concat(newOrder));
     return interf;
   }
 
