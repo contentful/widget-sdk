@@ -94,7 +94,6 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
     // Available params: template, cancelLabel, confirmLabel, title, message, scope, noBackgroundClose
     open: function (params) {
       var dialog = new Dialog(params);
-      dialog = _.extend(dialog, dialog.promise);
       dialog.attach();
       return dialog;
     }

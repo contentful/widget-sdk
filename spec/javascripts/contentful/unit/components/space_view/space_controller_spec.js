@@ -12,7 +12,8 @@ describe('Space Controller', function () {
         'setSpaceContext',
         'enforcement',
         'track',
-        'error'
+        'error',
+        'localesStub'
       ]);
 
       $provide.value('authorization', {
@@ -102,7 +103,8 @@ describe('Space Controller', function () {
       scope.$digest();
       refreshStub = sinon.stub();
       scope.spaceContext = {
-        refreshContentTypes: refreshStub
+        refreshContentTypes: refreshStub,
+        refreshActiveLocales: stubs.localesStub
       };
       scope.$digest();
     });

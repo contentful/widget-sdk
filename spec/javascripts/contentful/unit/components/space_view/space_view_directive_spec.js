@@ -32,6 +32,7 @@ describe('The Space view directive', function () {
           getPrivateLocales: sinon.stub(),
           isHibernated: stubs.isHibernated
         },
+        refreshActiveLocales: sinon.stub(),
         refreshContentTypes: sinon.stub(),
         refreshLocales: sinon.stub(),
         tabList: {

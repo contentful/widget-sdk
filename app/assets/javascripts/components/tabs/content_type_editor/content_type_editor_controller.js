@@ -14,7 +14,7 @@ angular.module('contentful').controller('ContentTypeEditorController', ['$scope'
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
   this.interfaceEditorEnabled = $scope.user.features.showPreview || environment.env !== 'production';
 
-  $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
+  $scope.$watch('tab.params.contentType', function (contentType) { $scope.contentType = contentType; });
 
   $scope.$watch(function contentTypeEditorEnabledWatcher(scope) {
     return scope.contentType && scope.can('update', scope.contentType.data);

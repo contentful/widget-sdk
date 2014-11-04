@@ -162,7 +162,7 @@ describe('logger service', function () {
       it('sends data to logger service', function () {
         $httpBackend.expectPOST(
           /dataLoggerUrl/,
-          {'key':'value','scope':{'this':'[Circular ~]','scopeKey':'scopeValue'}, 'undef': {}}
+          {'key':'value','scope':{'$id':2,'$parent':{'$id':1,'$parent':null,'$root':'[Circular ~.$parent]'},'scopeKey':'scopeValue'}, 'undef': {}}
         ).respond(200);
         $httpBackend.flush();
       });

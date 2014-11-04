@@ -7,7 +7,7 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
   var validation        = $injector.get('validation');
 
   // Initialization
-  $scope.$watch('tab.params.entry', 'entry=tab.params.entry');
+  $scope.$watch('tab.params.entry', function (entry) { $scope.entry = entry; });
   addCanMethods($scope, 'entry');
 
   // Tab related stuff
@@ -106,7 +106,9 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
   $scope.$watch('spaceContext.publishedTypeForEntry(entry)', function (contentType) {
     $scope.formWidgetsController.contentType = contentType;
   });
-  $scope.$watch('spaceContext.publishedTypeForEntry(entry).data.fields', 'formWidgetsController.updateWidgets()', true);
+  $scope.$watch('spaceContext.publishedTypeForEntry(entry).data.fields', function () {
+    $scope.formWidgetsController.updateWidgets();
+  }, true);
 
 
   // Helper methods on the scope

@@ -25,8 +25,8 @@ describe('Modal dialog service', function () {
         scope: scope,
         message: 'dialog message'
       });
-      dialog.then(successStub)
-            .catch(errorStub);
+      dialog.promise.then(successStub)
+                    .catch(errorStub);
       scope.$digest();
     });
 
@@ -171,7 +171,7 @@ describe('Modal dialog service', function () {
     });
 
     it('calls the success stub', function () {
-      dialog.confirm().finally(function () {
+      dialog.confirm().promise.finally(function () {
         expect(successStub).toBeCalled();
       });
     });
@@ -181,13 +181,13 @@ describe('Modal dialog service', function () {
     });
 
     it('calls the success stub', function () {
-      dialog.cancel().finally(function () {
+      dialog.cancel().promise.finally(function () {
         expect(errorStub).toBeCalled();
       });
     });
 
     it('dom element gets cleaned up', function () {
-      dialog.confirm().finally(function () {
+      dialog.confirm().promise.finally(function () {
         expect(dialog.domElement).toBeNull();
       });
     });

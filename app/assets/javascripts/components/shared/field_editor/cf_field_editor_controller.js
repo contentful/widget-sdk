@@ -11,7 +11,7 @@ angular.module('contentful').controller('CfFieldEditorController', ['$scope', '$
   var oldValue = $scope.fieldData.value;
 
 
-  $scope.$watch('widget.field', 'field=widget.field');
+  $scope.$watch('widget.field', function (field) { $scope.field = field; });
   $scope.$watch(function (scope) {
     var external = getExternal();
     if (external === scope.fieldData.value) {

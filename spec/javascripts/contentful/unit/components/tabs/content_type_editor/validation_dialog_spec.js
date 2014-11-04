@@ -26,8 +26,8 @@ describe('Validation dialog service', function () {
 
         container.click();
         dialog = container.scope().dialog;
-        dialog.then(successStub)
-              .catch(errorStub);
+        dialog.promise.then(successStub)
+                      .catch(errorStub);
         scope.$digest();
       };
     });

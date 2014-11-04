@@ -10,7 +10,7 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
   var validation        = $injector.get('validation');
 
   //Initialization
-  $scope.$watch('tab.params.asset', 'asset=tab.params.asset');
+  $scope.$watch('tab.params.asset', function (asset) { $scope.asset = asset; });
   addCanMethods($scope, 'asset');
 
   // Tab related stuff

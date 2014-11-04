@@ -168,6 +168,8 @@ angular.module('contentful').
       var id = $scope.otFieldPresenceId = v.join('.');
       var fp = 'presence.fields["' + id + '"]';
       if (unregister) unregister();
-      unregister = $scope.$watch(fp, 'fieldPresence=' + fp);
+      unregister = $scope.$watch(fp, function (fp) {
+        $scope.fieldPresence = fp;
+      });
     }, true);
   }]);

@@ -20,7 +20,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     }
   });
 
-  $scope.$watch('tab.params.apiKey', 'apiKey=tab.params.apiKey');
+  $scope.$watch('tab.params.apiKey', function (apiKey) { $scope.apiKey = apiKey; });
 
   $scope.tab.closingMessage = 'You have unsaved changes.';
   $scope.tab.closingMessageDisplayType = 'dialog';

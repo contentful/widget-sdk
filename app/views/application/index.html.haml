@@ -1,6 +1,8 @@
 !!!
 %html
   %meta(charset="UTF-8")
+  -# https://docs.angularjs.org/error/$location/nobase
+  %base(href="/")
   %title Contentful
   = stylesheet_link_tag "application", :media => "all"
   = csrf_meta_tags
