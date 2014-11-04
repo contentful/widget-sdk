@@ -1,6 +1,8 @@
 'use strict';
 
 angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', '$injector', function ContentTypeEditorCtrl($scope, $injector) {
+  var $q                = $injector.get('$q');
+  var ShareJS           = $injector.get('ShareJS');
   var addCanMethods     = $injector.get('addCanMethods');
   var analytics         = $injector.get('analytics');
   var editingInterfaces = $injector.get('editingInterfaces');
@@ -23,6 +25,7 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', '$in
   $scope.tab.closingMessageDisplayType = 'tooltip';
 
   $scope.openEditingInterfaceEditor = openEditingInterfaceEditor;
+  $scope.sanitizeDisplayField = sanitizeDisplayField;
 
   function loadPublishedContentType() {
     // TODO replace with lookup in registry inside spaceContext
@@ -90,6 +93,20 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', '$in
     firstValidate();
     firstValidate = null;
   });
+
+  function sanitizeDisplayField() {
+    /*jshint eqnull:true */
+    var displayField = ShareJS.peek($scope.otDoc, ['displayField']);
+    var valid = displayField == null || _.any($scope.contentType.data.fields, {id: displayField});
+    if (!valid) {
+      var cb = $q.callback();
+      $scope.otDoc.at('displayField').set(null, cb);
+      return cb.promise.then(function(){
+        $scope.otUpdateEntity();
+      });
+    }
+    return $q.when();
+  }
 
   $scope.updatePublishedContentType = function (publishedContentType) {
     $scope.publishedContentType = publishedContentType;
