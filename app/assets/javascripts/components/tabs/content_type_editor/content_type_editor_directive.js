@@ -5,6 +5,7 @@ angular.module('contentful').directive('contentTypeEditor', ['defer', function(d
     template: JST.content_type_editor(),
     restrict: 'C',
     controller: 'ContentTypeEditorCtrl',
+    controllerAs: 'ctEditorController',
     link: function (scope, elem) {
 
       function focus() {
