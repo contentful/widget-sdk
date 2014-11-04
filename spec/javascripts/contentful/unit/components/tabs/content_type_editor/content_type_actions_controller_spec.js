@@ -1,7 +1,7 @@
 'use strict';
 
 describe('ContentType Actions Controller', function () {
-  var controller, scope, stubs, action;
+  var controller, scope, stubs, action, $q;
   var space, contentType;
 
   beforeEach(function () {
@@ -26,7 +26,8 @@ describe('ContentType Actions Controller', function () {
       });
 
     });
-    inject(function ($controller, $rootScope, cfStub, $q) {
+    inject(function ($controller, $rootScope, cfStub, _$q_) {
+      $q = _$q_;
       space = cfStub.space('spaceid');
       var contentTypeData = cfStub.contentTypeData('type1');
       contentType = cfStub.contentType(space, 'typeid', 'typename');
@@ -36,6 +37,8 @@ describe('ContentType Actions Controller', function () {
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
       scope.contentType = contentType;
       scope.broadcastFromSpace = sinon.stub();
+      scope.sanitizeDisplayField = sinon.stub();
+      scope.sanitizeDisplayField.returns($q.when());
       controller = $controller('ContentTypeActionsCtrl', {$scope: scope});
     });
   });
