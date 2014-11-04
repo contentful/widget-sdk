@@ -39,7 +39,7 @@ describe('ContentType Actions Controller', function () {
       scope.broadcastFromSpace = sinon.stub();
       scope.sanitizeDisplayField = sinon.stub();
       scope.sanitizeDisplayField.returns($q.when());
-      controller = $controller('ContentTypeActionsCtrl', {$scope: scope});
+      controller = $controller('ContentTypeActionsController', {$scope: scope});
     });
   });
 

@@ -26,7 +26,7 @@
     }
 
 %body.cf-clear-outlines(ng-app="contentful/app")
-  .client.ng-hide(ng-controller="ClientCtrl" ng-init="initClient()" ng-show="user")
+  .client.ng-hide(ng-controller="ClientController" ng-init="initClient()" ng-show="user")
     .notifications
       .notification(class="{{message.severity}}" ng-repeat="(index, message) in notification.unseen() track by index")
         {{message.body}}
@@ -69,7 +69,7 @@
       .cf-persistent-notification(ng-show="persistentNotification")
       .navbar-loader
 
-    %space-view(ng-controller="TabViewCtrl")
+    %space-view(ng-controller="TabViewController")
     .advice(ng-show="spaces.length == 0")
       %i.fa.fa-folder.giant-icon
       %header.advice-title Nothing to see yet.

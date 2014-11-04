@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('AssetEditorCtrl', ['$scope', '$injector', function AssetEditorCtrl($scope, $injector) {
+angular.module('contentful').controller('AssetEditorController', ['$scope', '$injector', function AssetEditorController($scope, $injector) {
   var $controller       = $injector.get('$controller');
   var AssetContentType  = $injector.get('AssetContentType');
   var ShareJS           = $injector.get('ShareJS');

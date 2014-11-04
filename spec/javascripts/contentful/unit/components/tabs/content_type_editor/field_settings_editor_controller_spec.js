@@ -42,7 +42,7 @@ describe('Field Settings Editor Controller', function () {
       scope.field = {};
       scope.pickNewDisplayField = sinon.stub();
 
-      controller = $controller('FieldSettingsEditorCtrl', {$scope: scope});
+      controller = $controller('FieldSettingsEditorController', {$scope: scope});
       scope.$digest();
     });
   });

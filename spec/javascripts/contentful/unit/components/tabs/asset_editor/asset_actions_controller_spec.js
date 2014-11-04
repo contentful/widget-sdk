@@ -30,7 +30,7 @@ describe('Asset Actions Controller', function () {
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
       scope.asset = asset;
       scope.broadcastFromSpace = sinon.stub();
-      controller = $controller('AssetActionsCtrl', {$scope: scope});
+      controller = $controller('AssetActionsController', {$scope: scope});
     });
   });
 

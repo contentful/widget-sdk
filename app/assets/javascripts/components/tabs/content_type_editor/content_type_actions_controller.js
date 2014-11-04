@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  controller('ContentTypeActionsCtrl', ['$scope', '$injector', function ContentTypeActionsCtrl($scope, $injector) {
+  controller('ContentTypeActionsController', ['$scope', '$injector', function ContentTypeActionsController($scope, $injector) {
   var analytics    = $injector.get('analytics');
   var logger       = $injector.get('logger');
   var notification = $injector.get('notification');

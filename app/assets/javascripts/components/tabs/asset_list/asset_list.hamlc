@@ -99,7 +99,7 @@
 
 .tab-actions
   .label {{selection.size()}} Assets selected
-  .button-set(ng-controller="AssetListActionsCtrl" ng-hide="selection.isEmpty()" cf-dropdown)
+  .button-set(ng-controller="AssetListActionsController" ng-hide="selection.isEmpty()" cf-dropdown)
     %button.btn.btn--secondary.delete(type="button" ng-show="showDelete()" cf-dropdown-toggle) Delete
     .delete-confirm(cf-dropdown-menu="" position="topcenter")
       %p You are about to delete {{selection.size()}} Assets

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeFieldListCtrl', ['$scope', '$injector', function($scope, $injector) {
+angular.module('contentful').controller('ContentTypeFieldListController', ['$scope', '$injector', function($scope, $injector) {
   var $controller = $injector.get('$controller');
 
   $controller('AccordionController', {$scope: $scope});

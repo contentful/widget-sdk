@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('AssetListCtrl',['$scope', '$injector', function AssetListCtrl($scope, $injector) {
+angular.module('contentful').controller('AssetListController',['$scope', '$injector', function AssetListController($scope, $injector) {
   var $controller = $injector.get('$controller');
   var Selection   = $injector.get('Selection');
   var filepicker  = $injector.get('filepicker');

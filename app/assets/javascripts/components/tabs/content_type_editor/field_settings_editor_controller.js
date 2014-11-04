@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('FieldSettingsEditorCtrl', ['$scope', '$injector', function ($scope, $injector) {
+angular.module('contentful').controller('FieldSettingsEditorController', ['$scope', '$injector', function ($scope, $injector) {
   var $controller      = $injector.get('$controller');
   var analytics        = $injector.get('analytics');
   var assert           = $injector.get('assert');

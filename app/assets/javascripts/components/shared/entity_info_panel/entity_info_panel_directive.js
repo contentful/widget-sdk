@@ -4,7 +4,7 @@ angular.module('contentful').
   directive('entityInfoPanel', function() {
     return {
       restrict: 'C',
-      controller: function EntityInfoPanelCtrl($scope) {
+      controller: function EntityInfoPanelController($scope) {
         $scope.$watch('entry && spaceContext.publishedTypeForEntry(entry).getName()', function(name, old, scope) {
           scope.contentTypeName = name;
         });

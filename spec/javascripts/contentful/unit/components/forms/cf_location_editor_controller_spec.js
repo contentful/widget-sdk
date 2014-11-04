@@ -26,7 +26,7 @@ describe('cfLocationEditor Controller', function () {
         }
       };
 
-      controller = $controller('cfLocationEditorCtrl', { $scope: scope });
+      controller = $controller('cfLocationEditorController', { $scope: scope });
       scope.$digest();
     });
   });

@@ -4,7 +4,7 @@ angular.module('contentful').directive('cfFieldSettingsEditor', function() {
   return {
     restrict: 'C',
     template: JST['cf_field_settings_editor'](),
-    controller: 'FieldSettingsEditorCtrl',
+    controller: 'FieldSettingsEditorController',
     link: function (scope, elem) {
       //elem.on('click', clickHandler);
 

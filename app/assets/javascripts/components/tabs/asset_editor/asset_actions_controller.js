@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('AssetActionsCtrl', ['$scope', 'notification', 'logger', function AssetActionsCtrl($scope, notification, logger) {
+angular.module('contentful').controller('AssetActionsController', ['$scope', 'notification', 'logger', function AssetActionsController($scope, notification, logger) {
   // TODO If we are sure that the data in the asset has been updated from the ShareJS doc,
   // We can query the asset instead of reimplementing the checks heere
 

@@ -157,7 +157,7 @@ describe('Client Controller', function () {
     inject(function ($controller, $rootScope, tutorial, $q){
       tutorial.start.returns($q.when());
       scope = $rootScope.$new();
-      clientController = $controller('ClientCtrl', {$scope: scope});
+      clientController = $controller('ClientController', {$scope: scope});
     });
   });
 

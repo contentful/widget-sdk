@@ -35,7 +35,7 @@ describe('ContentTypeEditor Controller', function () {
 
       scope.can = sinon.stub();
 
-      controller = $controller('ContentTypeEditorCtrl', {$scope: scope});
+      controller = $controller('ContentTypeEditorController', {$scope: scope});
       scope.$digest();
     });
   });

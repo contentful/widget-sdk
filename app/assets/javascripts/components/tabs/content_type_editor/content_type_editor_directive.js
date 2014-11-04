@@ -4,7 +4,7 @@ angular.module('contentful').directive('contentTypeEditor', ['defer', function(d
   return {
     template: JST.content_type_editor(),
     restrict: 'C',
-    controller: 'ContentTypeEditorCtrl',
+    controller: 'ContentTypeEditorController',
     controllerAs: 'ctEditorController',
     link: function (scope, elem) {
 

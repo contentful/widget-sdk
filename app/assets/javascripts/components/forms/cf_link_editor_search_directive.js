@@ -4,7 +4,7 @@ angular.module('contentful').directive('cfLinkEditorSearch', ['defer', function(
   return {
     restrict: 'A',
     template: JST.cf_link_editor_search(),
-    controller: 'cfLinkEditorSearchCtrl',
+    controller: 'cfLinkEditorSearchController',
     controllerAs: 'searchController',
     link: function (scope, element) {
       scope.clickOutsideHandler = function () {

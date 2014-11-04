@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('EntryEditorCtrl', ['$scope', '$injector', function EntryEditorCtrl($scope, $injector) {
+angular.module('contentful').controller('EntryEditorController', ['$scope', '$injector', function EntryEditorController($scope, $injector) {
   var $controller       = $injector.get('$controller');
   var addCanMethods     = $injector.get('addCanMethods');
   var logger            = $injector.get('logger');

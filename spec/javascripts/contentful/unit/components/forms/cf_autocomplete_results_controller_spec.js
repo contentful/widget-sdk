@@ -10,7 +10,7 @@ describe('cfAutocompleteResultsController', function () {
     scope.searchController = {
       clearSearch: sinon.stub()
     };
-    controller = $controller('CfAutocompleteResultsCtrl', {
+    controller = $controller('CfAutocompleteResultsController', {
       $scope: $rootScope,
       $attrs: {cfAutocompleteResults: 'results'}});
   }));

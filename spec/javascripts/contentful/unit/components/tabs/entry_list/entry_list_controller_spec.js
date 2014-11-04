@@ -56,7 +56,7 @@ describe('Entry List Controller', function () {
       sinon.stub(scope.spaceContext.space, 'getEntries').returns(getEntries.promise);
 
       createController = function() {
-        controller = $controller('EntryListCtrl', {$scope: scope});
+        controller = $controller('EntryListController', {$scope: scope});
       };
     });
   });

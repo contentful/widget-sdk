@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('cfLinkEditorSearchCtrl', ['$scope', '$attrs', '$injector', function($scope, $attrs, $injector) {
+angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope', '$attrs', '$injector', function($scope, $attrs, $injector) {
   var $q                = $injector.get('$q');
   var mimetype          = $injector.get('mimetype');
   var Paginator         = $injector.get('Paginator');

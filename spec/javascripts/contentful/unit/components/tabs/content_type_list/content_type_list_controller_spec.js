@@ -37,7 +37,7 @@ describe('Content Type List Controller', function () {
       };
       scope.searchTerm = null;
 
-      controller = $controller('ContentTypeListCtrl', {$scope: scope});
+      controller = $controller('ContentTypeListController', {$scope: scope});
       scope.$digest();
     });
   });

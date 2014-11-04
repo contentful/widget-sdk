@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ApiKeyEditorCtrl', ['$scope', '$injector', function($scope, $injector) {
+angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$injector', function($scope, $injector) {
   var environment = $injector.get('environment');
   var notification = $injector.get('notification');
   var logger = $injector.get('logger');

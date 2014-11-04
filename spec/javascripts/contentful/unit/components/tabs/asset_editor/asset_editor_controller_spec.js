@@ -69,7 +69,7 @@ describe('Asset editor controller', function () {
         }
       };
 
-      assetEditorCtrl = $controller('AssetEditorCtrl', {$scope: scope});
+      assetEditorCtrl = $controller('AssetEditorController', {$scope: scope});
       scope.$apply();
     });
   });
@@ -134,7 +134,7 @@ describe('Asset editor controller', function () {
           asset: asset
         }
       };
-      assetEditorCtrl = $controller('AssetEditorCtrl', {$scope: scope});
+      assetEditorCtrl = $controller('AssetEditorController', {$scope: scope});
       scope.$digest();
     }));
 

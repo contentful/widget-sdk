@@ -62,7 +62,7 @@ describe('Asset List Actions Controller', function () {
 
       scope.can = stubs.can;
 
-      controller = $controller('AssetListActionsCtrl', {$scope: scope});
+      controller = $controller('AssetListActionsController', {$scope: scope});
     });
   });
 

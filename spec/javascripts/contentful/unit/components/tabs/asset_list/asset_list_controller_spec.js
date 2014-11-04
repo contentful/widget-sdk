@@ -72,7 +72,7 @@ describe('Asset List Controller', function () {
       stubs.getAssets.returns(getAssets.promise);
       space.getAssets = stubs.getAssets;
 
-      controller = $controller('AssetListCtrl', {$scope: scope});
+      controller = $controller('AssetListController', {$scope: scope});
     });
   });
 

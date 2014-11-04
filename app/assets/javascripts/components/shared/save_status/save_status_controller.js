@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('SaveStatusCtrl', ['$scope', 'defer', function ($scope, defer) {
+angular.module('contentful').controller('SaveStatusController', ['$scope', 'defer', function ($scope, defer) {
   $scope.saveStatus = 'no_connection';
 
   $scope.$watch(function (scope) {

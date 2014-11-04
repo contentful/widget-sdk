@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('EntryListActionsCtrl', ['$scope', '$injector', function EntryListActionsCtrl($scope, $injector) {
+angular.module('contentful').controller('EntryListActionsController', ['$scope', '$injector', function EntryListActionsController($scope, $injector) {
   var $q          = $injector.get('$q');
   var $timeout    = $injector.get('$timeout');
   var listActions = $injector.get('listActions');

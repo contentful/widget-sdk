@@ -5,6 +5,6 @@ angular.module('contentful').
     return {
       template: JST['api_key_list'](),
       restrict: 'C',
-      controller: 'ApiKeyListCtrl'
+      controller: 'ApiKeyListController'
     };
   });

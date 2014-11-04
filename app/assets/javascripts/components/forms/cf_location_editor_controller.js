@@ -1,7 +1,7 @@
 /*global google*/
 'use strict';
 
-angular.module('contentful').controller('cfLocationEditorCtrl', ['$scope', 'cfSpinner', function ($scope, cfSpinner) {
+angular.module('contentful').controller('cfLocationEditorController', ['$scope', 'cfSpinner', function ($scope, cfSpinner) {
 
   $scope.$watch('location', function(loc, old, scope) {
     //console.log('location changed', loc);

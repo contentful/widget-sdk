@@ -63,7 +63,7 @@ describe('Entry List Actions Controller', function () {
 
       scope.can = stubs.can;
 
-      controller = $controller('EntryListActionsCtrl', {$scope: scope});
+      controller = $controller('EntryListActionsController', {$scope: scope});
     });
   });
 

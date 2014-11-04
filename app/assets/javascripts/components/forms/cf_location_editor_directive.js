@@ -9,7 +9,7 @@ angular.module('contentful').directive('cfLocationEditor', ['$injector', functio
     restrict: 'C',
     require: 'ngModel',
     template: JST['cf_location_editor'],
-    controller: 'cfLocationEditorCtrl',
+    controller: 'cfLocationEditorController',
     link: function(scope, elm) {
       scope.$watch('location && locationValid', function (showMarker) {
         marker.setVisible(!!showMarker);

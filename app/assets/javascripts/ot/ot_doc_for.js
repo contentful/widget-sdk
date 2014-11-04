@@ -4,9 +4,9 @@ angular.module('contentful').directive('otDocFor', function () {
   return {
     restrict: 'A',
     priority: -100,
-    controller: 'otDocForCtrl'
+    controller: 'otDocForController'
   };
-}).controller('otDocForCtrl', ['$scope', '$attrs', 'ShareJS', 'logger', 'defer', function OtDocForCtrl($scope, $attrs, ShareJS, logger, defer) {
+}).controller('otDocForController', ['$scope', '$attrs', 'ShareJS', 'logger', 'defer', function OtDocForController($scope, $attrs, ShareJS, logger, defer) {
   function remoteOpListener(ops) {
     $scope.$apply(function(scope) {
       _.each(ops, function (op) {

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', '$injector', function ContentTypeEditorCtrl($scope, $injector) {
+angular.module('contentful').controller('ContentTypeEditorController', ['$scope', '$injector', function ContentTypeEditorController($scope, $injector) {
   var $q                = $injector.get('$q');
   var ShareJS           = $injector.get('ShareJS');
   var addCanMethods     = $injector.get('addCanMethods');
