@@ -46,7 +46,7 @@ describe('Client Controller', function () {
         'setSpaceContext'
       ]);
 
-      $controllerProvider.register('TrialWatchController', function () {});
+      $controllerProvider.register('TrialWatchController', angular.noop);
 
       $provide.factory('SpaceContext', function () {
         return function(){

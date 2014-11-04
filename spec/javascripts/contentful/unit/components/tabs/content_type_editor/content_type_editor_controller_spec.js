@@ -29,6 +29,10 @@ describe('ContentTypeEditor Controller', function () {
         }
       };
 
+      scope.user = {
+        features: {}
+      };
+
       scope.can = sinon.stub();
 
       controller = $controller('ContentTypeEditorCtrl', {$scope: scope});

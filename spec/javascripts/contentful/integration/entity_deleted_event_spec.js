@@ -106,7 +106,9 @@ describe('Content Type Actions controller events', function () {
   var closeStub;
 
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', function ($controllerProvider) {
+      $controllerProvider.register('UiConfigController', angular.noop);
+    });
     inject(function ($rootScope, $controller, cfStub) {
       scope = $rootScope.$new();
       var space = cfStub.space('test');
@@ -124,6 +126,9 @@ describe('Content Type Actions controller events', function () {
         params: {
           contentType: removedEntity
         }
+      };
+      scope.user = {
+        features: {}
       };
       childScope = scope.$new();
       contentTypeEditorCtrl = $controller('ContentTypeEditorCtrl', {$scope: childScope});
