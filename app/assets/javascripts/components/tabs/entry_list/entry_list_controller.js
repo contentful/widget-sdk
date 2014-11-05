@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('EntryListCtrl', ['$scope', '$injector', function EntryListCtrl($scope, $injector) {
+angular.module('contentful').controller('EntryListController', ['$scope', '$injector', function EntryListController($scope, $injector) {
   var $controller        = $injector.get('$controller');
   var $q                 = $injector.get('$q');
   var EntityCache        = $injector.get('EntityCache');

@@ -35,7 +35,7 @@ describe('cfLinkEditorSearch Controller', function () {
       };
 
       createController = function() {
-        cfLinkEditorSearchCtrl = $controller('cfLinkEditorSearchCtrl', { $scope: scope, $attrs: attrs });
+        cfLinkEditorSearchCtrl = $controller('cfLinkEditorSearchController', { $scope: scope, $attrs: attrs });
         scope.$digest();
       };
     });

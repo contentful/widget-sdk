@@ -56,7 +56,7 @@
               %input(type="checkbox" cf-selection="asset" tabindex="-1")
             %td.cell-preview(ng-class="{'no-padding': (!!file)}")
               %div.file-preview(cf-file-preview="" file="spaceContext.localizedField(asset, 'data.fields.file')" preview-size="400")
-                %span.cf-thumbnail(file="file" size="30")
+                %span.cf-thumbnail(file="file" size="30" ng-if="file")
             %td.cell-name
               %span {{spaceContext.assetTitle(asset)}}
             %td.cell-type(ng-init="file=spaceContext.localizedField(asset, 'data.fields.file')")
@@ -99,7 +99,7 @@
 
 .tab-actions
   .label {{selection.size()}} Assets selected
-  .button-set(ng-controller="AssetListActionsCtrl" ng-hide="selection.isEmpty()" cf-dropdown)
+  .button-set(ng-controller="AssetListActionsController" ng-hide="selection.isEmpty()" cf-dropdown)
     %button.btn.btn--secondary.delete(type="button" ng-show="showDelete()" cf-dropdown-toggle) Delete
     .delete-confirm(cf-dropdown-menu="" position="topcenter")
       %p You are about to delete {{selection.size()}} Assets

@@ -31,15 +31,15 @@ describe('Entry list controller events', function () {
       };
 
       // Space Controller necessary for space broadcast method
-      spaceCtrl = $controller('SpaceCtrl', {$scope: scope});
+      spaceCtrl = $controller('SpaceController', {$scope: scope});
 
-      entryListCtrl = $controller('EntryListCtrl', {$scope: scope});
+      entryListCtrl = $controller('EntryListController', {$scope: scope});
 
       childScope = scope.$new();
-      entryEditorCtrl = $controller('EntryEditorCtrl', {$scope: childScope});
-      entryListActionsCtrl = $controller('EntryListActionsCtrl', {$scope: childScope});
+      entryEditorCtrl = $controller('EntryEditorController', {$scope: childScope});
+      entryListActionsCtrl = $controller('EntryListActionsController', {$scope: childScope});
 
-      entryActionsCtrl = $controller('EntryActionsCtrl', {$scope: childScope});
+      entryActionsCtrl = $controller('EntryActionsController', {$scope: childScope});
       scope.$digest();
       childScope.$digest();
     });
@@ -106,7 +106,9 @@ describe('Content Type Actions controller events', function () {
   var closeStub;
 
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', function ($controllerProvider) {
+      $controllerProvider.register('UiConfigController', angular.noop);
+    });
     inject(function ($rootScope, $controller, cfStub) {
       scope = $rootScope.$new();
       var space = cfStub.space('test');
@@ -116,7 +118,7 @@ describe('Content Type Actions controller events', function () {
       scope.contentType = removedEntity;
 
       // Space Controller necessary for space broadcast method
-      spaceCtrl = $controller('SpaceCtrl', {$scope: scope});
+      spaceCtrl = $controller('SpaceController', {$scope: scope});
 
       closeStub = sinon.stub();
       scope.tab = {
@@ -125,9 +127,12 @@ describe('Content Type Actions controller events', function () {
           contentType: removedEntity
         }
       };
+      scope.user = {
+        features: {}
+      };
       childScope = scope.$new();
-      contentTypeEditorCtrl = $controller('ContentTypeEditorCtrl', {$scope: childScope});
-      contentTypeActionsCtrl = $controller('ContentTypeActionsCtrl', {$scope: childScope});
+      contentTypeEditorCtrl = $controller('ContentTypeEditorController', {$scope: childScope});
+      contentTypeActionsCtrl = $controller('ContentTypeActionsController', {$scope: childScope});
 
       scope.$digest();
       childScope.$digest();
@@ -180,11 +185,11 @@ describe('ApiKey List controller events', function () {
       };
 
       // Space Controller necessary for space broadcast method
-      spaceCtrl      = $controller('SpaceCtrl', {$scope: scope});
-      apiKeyListCtrl = $controller('ApiKeyListCtrl', {$scope: scope});
+      spaceCtrl      = $controller('SpaceController', {$scope: scope});
+      apiKeyListCtrl = $controller('ApiKeyListController', {$scope: scope});
 
       childScope = scope.$new();
-      apiKeyEditorCtrl = $controller('ApiKeyEditorCtrl', {$scope: childScope});
+      apiKeyEditorCtrl = $controller('ApiKeyEditorController', {$scope: childScope});
       scope.$apply();
 
       childScope.delete();

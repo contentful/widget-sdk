@@ -10,7 +10,7 @@ angular.module('contentful').directive('entryList', ['$timeout', function($timeo
   return {
     template: JST.entry_list(),
     restrict: 'C',
-    controller: 'EntryListCtrl',
+    controller: 'EntryListController',
     link: function (scope, elem) {
 
       scope.$watch('selection.isEmpty()', function (empty) {

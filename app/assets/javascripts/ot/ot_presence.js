@@ -4,7 +4,7 @@ angular.module('contentful').
   directive('otDocPresence', function() {
     return {
       require: '^otDocFor',
-      controller: 'otDocPresenceCtrl'
+      controller: 'otDocPresenceController'
     };
   }).
 
@@ -13,7 +13,7 @@ angular.module('contentful').
     pingTimeout: 60e3
   }).
 
-  controller('otDocPresenceCtrl', ['$scope', '$timeout', 'otPresenceConfig', function($scope, $timeout, otPresenceConfig) {
+  controller('otDocPresenceController', ['$scope', '$timeout', 'otPresenceConfig', function($scope, $timeout, otPresenceConfig) {
     var presence = {};
     var ownPresence = {};
     var user  = $scope.user.sys.id;
@@ -150,11 +150,11 @@ angular.module('contentful').
   directive('otFieldPresence', function() {
     return {
       require: '^otDocPresence',
-      controller: 'otFieldPresenceCtrl',
-      link: function(scope, element, attrs, otPresenceCtrl) {
+      controller: 'otFieldPresenceController',
+      link: function(scope, element, attrs, otPresenceController) {
         function focus() {
           if (!scope.otFieldPresenceId) return;
-          otPresenceCtrl.focus(scope.otFieldPresenceId);
+          otPresenceController.focus(scope.otFieldPresenceId);
         }
 
         element.on('focus keydown', 'input, textarea', focus);
@@ -162,7 +162,7 @@ angular.module('contentful').
     };
   }).
 
-  controller('otFieldPresenceCtrl', ['$scope', '$attrs', function($scope, $attrs) {
+  controller('otFieldPresenceController', ['$scope', '$attrs', function($scope, $attrs) {
     var unregister;
     $scope.$watch($attrs.otFieldPresence, function(v) {
       var id = $scope.otFieldPresenceId = v.join('.');

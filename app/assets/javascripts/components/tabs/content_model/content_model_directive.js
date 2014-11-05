@@ -4,7 +4,7 @@ angular.module('contentful').directive('contentModel', ['$injector', function($i
   var contentModelFieldTypes = $injector.get('contentModelFieldTypes');
   return {
     template: JST['content_model'](),
-    controller: 'ContentTypeListCtrl',
+    controller: 'ContentTypeListController',
     restrict: 'C',
     link: function (scope) {
       scope.searchTerm = null;

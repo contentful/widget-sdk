@@ -23,7 +23,7 @@ angular.module('contentful').directive('cfValidationOptions', ['keycodes', funct
 
     },
 
-    controller: ['$scope', 'mimetype', 'notification', function CfValidationOptionsCtrl($scope, mimetype, notification) {
+    controller: ['$scope', 'mimetype', 'notification', function CfValidationOptionsController($scope, mimetype, notification) {
       $scope.mimetypeGroups = mimetype.groupDisplayNames;
 
       function fieldIsNumeric() {

@@ -62,7 +62,7 @@ describe('API key editor controller', function () {
       stubs.getName.returns('apiKeyName');
       stubs.createPreviewApiKey.returns($q.defer().promise);
 
-      apiKeyEditorCtrl = $controller('ApiKeyEditorCtrl', {$scope: scope});
+      apiKeyEditorCtrl = $controller('ApiKeyEditorController', {$scope: scope});
       scope.$apply();
     });
   });

@@ -1,6 +1,7 @@
 //= require jquery
 //
 //= require jquery.ui.sortable
+//= require jquery.ui.draggable
 //= require jquery.ui.autocomplete
 //= require jquery.ui.datepicker
 //

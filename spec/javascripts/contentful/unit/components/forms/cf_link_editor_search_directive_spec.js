@@ -172,12 +172,8 @@ describe('cfLinkEditorSearch Directive', function () {
         expect(element.find('.cell-preview').eq(0).parent()).toHaveClass('selected');
       });
 
-      it('cf-thumbnail is not shown for first asset', function () {
-        expect(element.find('.cf-thumbnail').eq(0)).toBeNgHidden();
-      });
-
-      it('cf-thumbnail is shown for second asset', function () {
-        expect(element.find('.cf-thumbnail').eq(1)).not.toBeNgHidden();
+      it('shows only one cf-thumbnail', function(){
+        expect(element.find('.cf-thumbnail').size()).toBe(1);
       });
 
       it('file type is not shown for first asset', function () {

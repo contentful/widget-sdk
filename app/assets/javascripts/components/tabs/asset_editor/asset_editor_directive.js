@@ -4,7 +4,7 @@ angular.module('contentful').directive('assetEditor', ['defer', function(defer){
   return {
     template: JST.asset_editor(),
     restrict: 'C',
-    controller: 'AssetEditorCtrl',
+    controller: 'AssetEditorController',
     link: function (scope, elem) {
       function focus() {
         if (scope.fields && scope.otEditable) {

@@ -34,7 +34,7 @@ describe('Routing service', function () {
       spyOn($rootScope.spaceContext.tabList, 'add').and.returnValue({
         activate: function () { }
       });
-      $controller('TabViewCtrl', {$scope: $rootScope});
+      $controller('TabViewController', {$scope: $rootScope});
     }));
 
     // TODO randomly failing for some unknown reason
@@ -45,7 +45,7 @@ describe('Routing service', function () {
         $rootScope.$apply(); // Create route
 
         spyOn($rootScope, 'visitView');
-        spaceController = $controller('SpaceCtrl', {$scope: $rootScope});
+        spaceController = $controller('SpaceController', {$scope: $rootScope});
         $rootScope.$apply(); // Trigger watcher initializing the Controller
         _.defer(function () { // Give callbacks a chance to return
           try {

@@ -15,16 +15,16 @@ describe('The ContentTypeFieldList directive', function () {
       scope = $rootScope.$new();
       scope.preferences = {};
 
-      scope.isFieldOpen = sinon.stub();
-      scope.isFieldOpen.withArgs({uiid: 'foo'}).returns(true);
-      scope.isFieldOpen.withArgs({uiid: 'bar', disabled: true}).returns(false);
+      scope.isAccordionItemOpen = sinon.stub();
+      scope.isAccordionItemOpen.withArgs({id: 'foo'}).returns(true);
+      scope.isAccordionItemOpen.withArgs({id: 'bar', disabled: true}).returns(false);
 
 
       compileElement = function () {
         container = $('<div class="content-type-field-list"></div>');
         scope.fieldList = [
-          {uiid: 'foo'},
-          {uiid: 'bar', disabled: true}
+          {id: 'foo'},
+          {id: 'bar', disabled: true}
         ];
         $compile(container)(scope);
         scope.$digest();

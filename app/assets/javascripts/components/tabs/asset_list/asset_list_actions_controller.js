@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('AssetListActionsCtrl', ['$scope', 'listActions', function AssetListActionsCtrl($scope, listActions) {
+angular.module('contentful').controller('AssetListActionsController', ['$scope', 'listActions', function AssetListActionsController($scope, listActions) {
 
   var _cacheSelected;
 

@@ -1,7 +1,10 @@
 'use strict';
 
 angular.module('contentful').
-  controller('ContentTypeActionsCtrl', ['$scope', 'notification', 'analytics', 'logger', function ContentTypeActionsCtrl($scope, notification, analytics, logger) {
+  controller('ContentTypeActionsController', ['$scope', '$injector', function ContentTypeActionsController($scope, $injector) {
+  var analytics    = $injector.get('analytics');
+  var logger       = $injector.get('logger');
+  var notification = $injector.get('notification');
 
   // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,
   // We can query the entry instead of reimplementing the checks heere
@@ -26,42 +29,45 @@ angular.module('contentful').
   };
 
   $scope.publish = function () {
-    var version = $scope.contentType.getVersion();
-    var verb = $scope.contentType.isPublished() ? 'updated' : 'activated';
-    if (!$scope.validate()) {
-      notification.warn('Error activating ' + title() + ': ' + 'Validation failed');
-      return;
-    }
-    $scope.contentType.publish(version)
-    .then(function(publishedContentType){
-      notification.info(title() + ' ' + verb + ' successfully');
-      analytics.track('Published ContentType', {
-        contentTypeId: $scope.contentType.getId(),
-        contentTypeName: $scope.contentType.getName(),
-        version: version
-      });
-      $scope.contentType.setPublishedVersion(version);
-
-      //console.log('editor has published %o as %o', scope.contentType, publishedContentType);
-      $scope.updatePublishedContentType(publishedContentType);
-      $scope.spaceContext.registerPublishedContentType(publishedContentType);
-      $scope.spaceContext.refreshContentTypes();
-    })
-    .catch(function(err){
-      var errorId = dotty.get(err, 'body.sys.id');
-      var method = 'serverError';
-      var reason = errorId;
-      if (errorId === 'ValidationFailed') {
-        reason = 'Validation failed';
-        $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
-        method = 'warn';
-      } else if (errorId === 'VersionMismatch') {
-        reason = 'Can only activate most recent version';
-        method = 'warn';
-      } else {
-        reason = dotty.get(err, 'body.message');
+    $scope.sanitizeDisplayField()
+    .then(function(){
+      if (!$scope.validate()) {
+        notification.warn('Error activating ' + title() + ': ' + 'Validation failed');
+        return;
       }
-      notification[method]('Error activating ' + title() + ': ' + reason, err);
+      var verb = $scope.contentType.isPublished() ? 'updated' : 'activated';
+      var version = $scope.contentType.getVersion();
+      $scope.contentType.publish(version)
+      .then(function(publishedContentType){
+        notification.info(title() + ' ' + verb + ' successfully');
+        analytics.track('Published ContentType', {
+          contentTypeId: $scope.contentType.getId(),
+          contentTypeName: $scope.contentType.getName(),
+          version: version
+        });
+        $scope.contentType.setPublishedVersion(version);
+
+        //console.log('editor has published %o as %o', scope.contentType, publishedContentType);
+        $scope.updatePublishedContentType(publishedContentType);
+        $scope.spaceContext.registerPublishedContentType(publishedContentType);
+        $scope.spaceContext.refreshContentTypes();
+      })
+      .catch(function(err){
+        var errorId = dotty.get(err, 'body.sys.id');
+        var method = 'serverError';
+        var reason = errorId;
+        if (errorId === 'ValidationFailed') {
+          reason = 'Validation failed';
+          $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
+          method = 'warn';
+        } else if (errorId === 'VersionMismatch') {
+          reason = 'Can only activate most recent version';
+          method = 'warn';
+        } else {
+          reason = dotty.get(err, 'body.message');
+        }
+        notification[method]('Error activating ' + title() + ': ' + reason, err);
+      });
     });
   };
 

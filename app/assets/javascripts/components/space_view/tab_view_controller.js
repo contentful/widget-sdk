@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('TabViewCtrl', ['$scope', '$injector', function ($scope, $injector) {
+angular.module('contentful').controller('TabViewController', ['$scope', '$injector', function ($scope, $injector) {
   var analytics = $injector.get('analytics');
   var routing = $injector.get('routing');
   var TabOptionsGenerator = $injector.get('TabOptionsGenerator');

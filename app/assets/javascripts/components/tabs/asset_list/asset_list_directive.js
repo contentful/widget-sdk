@@ -4,7 +4,7 @@ angular.module('contentful').directive('assetList', function(){
   return {
     template: JST.asset_list(),
     restrict: 'C',
-    controller: 'AssetListCtrl',
+    controller: 'AssetListController',
     link: function (scope, elem) {
       scope.$watch('selection.isEmpty()', function (empty) {
         if (empty) {

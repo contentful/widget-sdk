@@ -109,7 +109,7 @@
 
 .tab-actions
   .label {{selection.size()}} Entries selected
-  .button-set(ng-controller="EntryListActionsCtrl" ng-hide="selection.isEmpty()" cf-dropdown)
+  .button-set(ng-controller="EntryListActionsController" ng-hide="selection.isEmpty()" cf-dropdown)
     %button.btn.btn--secondary.duplicate(type="button" ng-click="duplicateSelected()" ng-show="showDuplicate()") Duplicate
     %button.btn.btn--secondary.delete(type="button" ng-show="showDelete()" cf-dropdown-toggle) Delete
     .delete-confirm(cf-dropdown-menu="" position="topcenter")

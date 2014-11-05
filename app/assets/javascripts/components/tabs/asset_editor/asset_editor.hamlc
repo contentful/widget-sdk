@@ -54,7 +54,7 @@
           .cf-form-box-error(cf-error-path="['fields', widget.field.id, locale.code,'*']")
         .cf-form-box-error(cf-error-path="['fields', widget.field.id]")
 
-.tab-actions(ng-controller="AssetActionsCtrl")
+.tab-actions(ng-controller="AssetActionsController")
   .button-set(cf-dropdown)
     %button.btn.btn--secondary.delete(   type="button" ng-show="canDelete()" cf-dropdown-toggle) Delete
     .delete-confirm(cf-dropdown-menu="" position="topcenter")

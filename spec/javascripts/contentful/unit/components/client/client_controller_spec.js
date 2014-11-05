@@ -46,7 +46,7 @@ describe('Client Controller', function () {
         'setSpaceContext'
       ]);
 
-      $controllerProvider.register('TrialWatchController', function () {});
+      $controllerProvider.register('TrialWatchController', angular.noop);
 
       $provide.factory('SpaceContext', function () {
         return function(){
@@ -157,7 +157,7 @@ describe('Client Controller', function () {
     inject(function ($controller, $rootScope, tutorial, $q){
       tutorial.start.returns($q.when());
       scope = $rootScope.$new();
-      clientController = $controller('ClientCtrl', {$scope: scope});
+      clientController = $controller('ClientController', {$scope: scope});
     });
   });
 

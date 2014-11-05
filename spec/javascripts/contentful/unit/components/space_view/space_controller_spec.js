@@ -45,7 +45,7 @@ describe('Space Controller', function () {
       var contentTypeData = cfStub.contentTypeData('testType');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
 
-      spaceController = $controller('SpaceCtrl', {$scope: scope});
+      spaceController = $controller('SpaceController', {$scope: scope});
     });
   });
 

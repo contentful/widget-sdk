@@ -9,7 +9,7 @@
   "dependencies": {
     "contentful-client": "~9.0.0",
     "contentful-mimetype": "~0.5.1",
-    "contentful-validation": "~3.0.0",
+    "contentful-validation": "~3.2.2",
     "worf": "~3.1.0",
     "dotty": "0.0.2",
     "file-size": "git+ssh://git@github.com:trodrigues/file-size.git",

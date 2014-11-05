@@ -25,8 +25,9 @@
               %input(type="checkbox" ng-model="preferences.showDisabledFields")
               Show disabled fields
     %button.btn.btn--tertiary(type="button"
-            ng-if="enableInterfaceEditor"
-            ng-click="navigator.editingInterfaceEditor(contentType, defaultEditingInterface).goTo()"
+            ng-if="ctEditorController.interfaceEditorEnabled"
+            ng-disabled="!publishedContentType"
+            ng-click="openEditingInterfaceEditor()"
             tooltip="Customize editing view"
             tooltip-placement="bottom")
       Customize View
@@ -83,7 +84,7 @@
             Add Field
           .dropdown-menu.type-menu(cf-dropdown-menu="" select-type="addField(type)")
         .cf-form-box-error(cf-error-path="['fields']")
-.tab-actions(ng-controller="ContentTypeActionsCtrl")
+.tab-actions(ng-controller="ContentTypeActionsController")
   .button-set(cf-dropdown)
     %button.btn.btn--secondary.deactivate(type="button"
                   ng-show="canUnpublish()"

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  controller('ApiKeyListCtrl', ['$scope', '$injector', function($scope, $injector) {
+  controller('ApiKeyListController', ['$scope', '$injector', function($scope, $injector) {
     var ReloadNotification = $injector.get('ReloadNotification');
 
     $scope.refreshApiKeys = function() {

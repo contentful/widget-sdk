@@ -1,0 +1,41 @@
+.l-link-editor-search(cf-link-editor-search=""
+  cf-autocomplete-results="entities"
+  add-entity="addLink(entity)"
+  entity-type="Asset"
+  entity-content-types="linkContentTypes"
+  entity-mime-type-group="linkMimetypeGroup"
+  ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
+
+%ul.asset-gallery(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide="linkedEntities.length == 0")
+  %li.asset-gallery__item(ng-repeat="(index, entity) in linkedEntities track by index")
+    .asset-gallery__info(cf-file-metadata=""
+                  ng-mouseover="hoveringImage=true"
+                  ng-mouseleave="hoveringImage=false"
+                  entity-title="spaceContext.localizedField(entity, 'data.fields.title', locale.code)"
+                  file="spaceContext.localizedField(entity, 'data.fields.file', locale.code)")
+      .asset-gallery__file
+        %div(cf-thumbnail="" file="file" size="120" format="square" fit="thumb" ng-if="file && file.url")
+
+      .asset-gallery__handle(cf-drag-handle="" ng-disabled="!otEditable" ng-hide="linkedEntities.length==1")
+        %i.fa.fa-ellipsis-v
+        %i.fa.fa-ellipsis-v
+
+      .asset-gallery__title(ng-show="file && !entity.isMissing && !isImage()")
+        {{file.fileName | truncateMiddle:24:7}}
+
+      .asset-gallery__no-file(ng-show="!file && entity && !entity.isMissing")
+        Asset has no file
+      .asset-gallery__no-file(ng-show="entity && entity.isMissing")
+        Asset does not exist anymore
+
+      .asset-gallery__buttons(ng-show="hoveringImage")
+        %button.btn(type="button" cf-file-preview="" ng-if="file && file.url && isImage()" preview-size="fullscreen" tooltip="Show image" tooltip-container=".entry-editor")
+          %i.fa.fa-search-plus
+        %a.btn(type="button" ng-if="!isImage()" href="{{file.url}}" target="_blank" ng-show="file|isFileReady" tooltip="Download file" tooltip-container=".entry-editor")
+          %i.fa.fa-download
+        %button.btn(type="button" ng-click="entity && !entity.isMissing && navigator.entityEditor(entity).goTo()" ng-show="!!(!enableUpload && entity && !entity.isMissing)" tooltip="Go to Asset" tooltip-container=".entry-editor")
+          %i.fa.fa-edit
+        %button.btn(type="button" ng-show="!otDisabled && removeLink" ng-click="removeLink(index, entity)" tooltip="Remove link" tooltip-container=".entry-editor")
+          %i.fa.fa-times-circle
+
+

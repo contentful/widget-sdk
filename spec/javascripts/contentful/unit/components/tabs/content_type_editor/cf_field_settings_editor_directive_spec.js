@@ -2,12 +2,14 @@
 
 describe('The cfFieldSettingsEditor directive', function () {
 
-  var container, scope;
+  var container, scope, stubs;
   var compileElement;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
+      stubs = $provide.makeStubs(['isDisplayableAsTitleFilter']);
       $provide.removeDirectives('tooltip', 'otDocFor', 'otPath', 'otSubdoc', 'otBind', 'otBindText');
+      $provide.value('isDisplayableAsTitleFilter', stubs.isDisplayableAsTitleFilter);
     });
 
     inject(function ($rootScope, $compile, cfFieldSettingsEditorDirective) {
@@ -108,38 +110,6 @@ describe('The cfFieldSettingsEditor directive', function () {
     });
   });
 
-  describe('field id', function() {
-    describe('if published', function() {
-      beforeEach(function() {
-        scope.published = true;
-        compileElement();
-      });
-
-      it('rendered for reading', function() {
-        expect(container.find('.field-id-display').get(0)).toBeDefined();
-      });
-
-      it('not rendered for editing', function() {
-        expect(container.find('.field-form input[name=fieldId]').get(0)).not.toBeDefined();
-      });
-    });
-
-    describe('if not published', function() {
-      beforeEach(function() {
-        scope.published = false;
-        compileElement();
-      });
-
-      it('not rendered for reading', function() {
-        expect(container.find('.field-id-display').get(0)).not.toBeDefined();
-      });
-
-      it('rendered for editing', function() {
-        expect(container.find('.field-form input[name=fieldId]').get(0)).toBeDefined();
-      });
-    });
-  });
-
   it('hides field errors if no errors exist', function() {
     scope.noErrors = true;
     compileElement();
@@ -164,8 +134,7 @@ describe('The cfFieldSettingsEditor directive', function () {
       };
       scope.isDisplayField = sinon.stub();
       scope.isDisplayField.returns(true);
-      scope.displayEnabled = sinon.stub();
-      scope.displayEnabled.returns(true);
+      stubs.isDisplayableAsTitleFilter.returns(true);
       scope.hasValidations = true;
       scope.validationsAvailable = true;
       scope.published = true;
@@ -219,8 +188,7 @@ describe('The cfFieldSettingsEditor directive', function () {
       scope.validationResult = {};
       scope.isDisplayField = sinon.stub();
       scope.isDisplayField.returns(false);
-      scope.displayEnabled = sinon.stub();
-      scope.displayEnabled.returns(false);
+      stubs.isDisplayableAsTitleFilter.returns(false);
       scope.hasValidations = false;
       scope.validationsAvailable = false;
 

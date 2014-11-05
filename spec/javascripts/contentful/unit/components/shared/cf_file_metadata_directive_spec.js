@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfFileInfo Directive', function () {
+describe('cfFileMetadata Directive', function () {
   var element, scope, parentScope;
   var stubs;
   var compileElement;
@@ -23,7 +23,7 @@ describe('cfFileInfo Directive', function () {
       };
 
       compileElement = function () {
-        element = $compile('<div class="cf-file-info" file="fileData" entity-title="someTitle">')(parentScope);
+        element = $compile('<div cf-file-display cf-file-metadata file="fileData" entity-title="someTitle">')(parentScope);
         parentScope.$digest();
         scope = element.scope();
       };
@@ -58,7 +58,7 @@ describe('cfFileInfo Directive', function () {
       });
 
       it('inner container', function() {
-        expect(element.find('.file-preview .vcenter')).toBeNgHidden();
+        expect(element.find('.file-preview .vcenter')[0]).toBeUndefined();
       });
 
       it('unpublished marker', function() {

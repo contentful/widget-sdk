@@ -18,7 +18,7 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
       scope.otPath = scope.$eval(attr['otPath']);
       scope.otPathTypes = scope.$eval(attr['otPathTypes']);
     },
-    controller: ['$scope', function OtPathCtrl($scope) {
+    controller: ['$scope', function OtPathController($scope) {
       $scope.$on('otRemoteOp', function (event, op) {
         var scope = event.currentScope;
         //if (isSubPath(op.p)) {

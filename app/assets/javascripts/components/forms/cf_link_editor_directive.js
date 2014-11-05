@@ -29,7 +29,11 @@ angular.module('contentful').directive('cfLinkEditor', [function(){
       scope.linkSortOptions = {
         disabled: scope.linkSingle,
         handle: '[cf-drag-handle]',
+        cursor: 'move',
         forceHelperSize: true,
+        forcePlaceholderSize: true,
+        tolerance: 'pointer',
+        containment: 'document',
         update: function(e, ui) {
           var oldIndex = ui.item.sortable.index;
           var newIndex = ui.item.sortable.dropindex;

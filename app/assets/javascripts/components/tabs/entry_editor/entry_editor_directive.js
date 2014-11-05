@@ -4,7 +4,7 @@ angular.module('contentful').directive('entryEditor', ['defer', function(defer){
   return {
     template: JST.entry_editor(),
     restrict: 'C',
-    controller: 'EntryEditorCtrl',
+    controller: 'EntryEditorController',
     link: function (scope, elem) {
       function focus() {
         if (scope.fields && scope.otEditable) {

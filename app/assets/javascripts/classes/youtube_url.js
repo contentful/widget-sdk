@@ -8,7 +8,7 @@ angular.module('contentful').factory('YoutubeUrl', [function(){
 
   YoutubeUrl.prototype = {
     isValid: function(){
-      return this.videoId() !== undefined;
+      return this.videoId() != null;
     },
 
     videoId: function(){

@@ -163,8 +163,8 @@ describe('cfAssetLinkEditor Directive', function () {
         expect(element.find('[cf-drag-handle]')).not.toBeNgHidden();
       });
 
-      it('cf-file-info is shown', function () {
-        expect(element.find('.cf-file-info').get(0)).toBeDefined();
+      it('cf-file-display is shown', function () {
+        expect(element.find('[cf-file-display]').get(0)).toBeDefined();
       });
 
       it('entry-info is not shown', function () {

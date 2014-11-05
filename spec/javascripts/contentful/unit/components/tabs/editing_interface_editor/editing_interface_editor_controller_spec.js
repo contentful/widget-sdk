@@ -6,6 +6,7 @@ describe('EditingInterfaceEditorController', function(){
     module('contentful/test', function($provide) {
       editingInterfaces = {
         save: sinon.stub(),
+        syncWidgets: sinon.stub(),
         forContentTypeWithId: sinon.stub()
       };
       $provide.value('editingInterfaces', editingInterfaces);
@@ -15,7 +16,8 @@ describe('EditingInterfaceEditorController', function(){
       scope = $rootScope.$new();
       scope.tab = { params: {
           editingInterface: {
-            data: {id: 'default', local: true}
+            data: {id: 'default', local: true},
+            getId: _.constant('default')
           } } };
       controller = $controller('EditingInterfaceEditorController', {$scope: scope});
       scope.$apply();
@@ -26,12 +28,26 @@ describe('EditingInterfaceEditorController', function(){
     $log.assertEmpty();
   }));
 
-  it('should reset the interface when saving fails', function(){
-    editingInterfaces.save.returns($q.reject());
+  it('should sync the widgets when the fields change', function() {
+    editingInterfaces.syncWidgets.reset();
+    scope.contentType = {data: {fields: ['newField']}};
+    scope.$apply();
+    expect(editingInterfaces.syncWidgets).toBeCalled();
+  });
+
+  it('should reset the interface when saving fails with VersionMismatch', function(){
+    editingInterfaces.save.returns($q.reject({body: {sys: {id: 'VersionMismatch'}}}));
     editingInterfaces.forContentTypeWithId.returns($q.when({data: {id: 'default', remote: true}}));
     scope.update();
     scope.$apply();
     expect(scope.editingInterface.data.remote).toBe(true);
+  });
+
+  it('should not reset the interface when saving fails', function(){
+    editingInterfaces.save.returns($q.reject());
+    scope.update();
+    scope.$apply();
+    expect(editingInterfaces.forContentTypeWithId).not.toBeCalled();
   });
 
   it('should update the interface after saving', function () {
@@ -55,7 +71,7 @@ describe('EditingInterfaceEditorController', function(){
       ]}
     };
     var visibility = controller.isWidgetVisible({fieldId: 'bar'});
-    expect(visibility).toBeFalsy()
+    expect(visibility).toBeFalsy();
   });
 
   it('should mark disabled widgets as invisible', function() {

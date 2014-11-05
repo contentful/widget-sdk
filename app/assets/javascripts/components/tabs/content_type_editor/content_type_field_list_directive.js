@@ -26,6 +26,6 @@ angular.module('contentful').directive('contentTypeFieldList', function() {
       });
 
     },
-    controller: 'ContentTypeFieldListCtrl'
+    controller: 'ContentTypeFieldListController'
   };
 });

@@ -8,39 +8,39 @@
   widgets: [
     {
       id: random.id(),
-      type: 'field'
+      widgetType: 'field'
       fieldId: 'asdf'
-      widgetType: 'widgetType',
+      widgetId: 'widgetId',
       widgetParams: {...}
     },
     {
       id: random.id(),
-      type: 'static'
-      widgetType: 'sectionHeader'
+      widgetType: 'static'
+      widgetId: 'sectionHeader'
       widgetParams: {
         text: 'Foobar'
       }
     },
     {
       id: random.id(),
-      type: 'static'
-      widgetType: 'infoText'
+      widgetType: 'static'
+      widgetId: 'infoText'
       widgetParams: {
         text: 'Foobar'
       }
     },
     {
       id: random.id(),
-      type: 'static'
-      widgetType: 'sectionBreak'
+      widgetType: 'static'
+      widgetId: 'sectionBreak'
       widgetParams: {
         text: 'Foobar'
       }
     },
     {
       id: random.id(),
-      type: 'static'
-      widgetType: 'image'
+      widgetType: 'static'
+      widgetId: 'image'
       widgetParams: {
         href: '...'
         altText: 'Foobar'

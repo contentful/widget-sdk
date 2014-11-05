@@ -1,12 +1,12 @@
 'use strict';
 
 describe('Widget types service', function () {
-  var widgetTypes, $rootScope;
+  var widgets, $rootScope;
 
   beforeEach(function () {
     module('contentful/test');
     inject(function ($injector) {
-      widgetTypes = $injector.get('widgetTypes');
+      widgets = $injector.get('widgets');
       $rootScope = $injector.get('$rootScope');
     });
   });
@@ -20,7 +20,7 @@ describe('Widget types service', function () {
       describe('gets widget types for a field with type '+fieldType, function() {
         var types;
         beforeEach(function() {
-          widgetTypes.forField({type: fieldType}).then(function (_types) {
+          widgets.forField({type: fieldType}).then(function (_types) {
             types = _types;
           });
           $rootScope.$apply();
@@ -55,15 +55,15 @@ describe('Widget types service', function () {
 
     it('fails to get widget for an unknown type', function() {
       var err;
-      widgetTypes.forField({type: 'unsupportedtype'}).catch(function (_err) {
+      widgets.forField({type: 'unsupportedtype'}).catch(function (_err) {
         err = _err;
       });
       $rootScope.$apply();
       expect(err).not.toBeUndefined();
     });
   });
-  
-  describe('defaultType', function() {
+
+  describe('defaultWidgetId', function() {
     var contentType, field, idStub;
 
     beforeEach(function() {
@@ -78,7 +78,7 @@ describe('Widget types service', function () {
 
     it('with an unexistent field', function() {
       field.type = 'unsupportedtype';
-      expect(widgetTypes.defaultType(field, contentType)).toBeUndefined();
+      expect(widgets.defaultWidgetId(field, contentType)).toBeUndefined();
     });
 
     describe('if validations exist but are different', function() {
@@ -88,12 +88,12 @@ describe('Widget types service', function () {
 
       it('for a type with a dropdown widget', function() {
         field.type = 'Symbol';
-        expect(widgetTypes.defaultType(field, contentType)).toBe('singleLine');
+        expect(widgets.defaultWidgetId(field, contentType)).toBe('singleLine');
       });
 
       it('for a type with no dropdown widget', function() {
         field.type = 'Date';
-        expect(widgetTypes.defaultType(field, contentType)).toBe('datePicker');
+        expect(widgets.defaultWidgetId(field, contentType)).toBe('datePicker');
       });
     });
 
@@ -104,12 +104,12 @@ describe('Widget types service', function () {
 
       it('for a type with a dropdown widget', function() {
         field.type = 'Symbol';
-        expect(widgetTypes.defaultType(field, contentType)).toBe('dropdown');
+        expect(widgets.defaultWidgetId(field, contentType)).toBe('dropdown');
       });
 
       it('for a type with no dropdown widget', function() {
         field.type = 'Date';
-        expect(widgetTypes.defaultType(field, contentType)).toBe('datePicker');
+        expect(widgets.defaultWidgetId(field, contentType)).toBe('datePicker');
       });
     });
 
@@ -121,67 +121,71 @@ describe('Widget types service', function () {
 
       it('and is display field', function() {
         contentType.data.displayField = 'textfield';
-        expect(widgetTypes.defaultType(field, contentType)).toBe('singleLine');
+        expect(widgets.defaultWidgetId(field, contentType)).toBe('singleLine');
       });
 
       it('and is asset', function() {
         idStub.returns('asset');
-        expect(widgetTypes.defaultType(field, contentType)).toBe('singleLine');
+        expect(widgets.defaultWidgetId(field, contentType)).toBe('singleLine');
       });
 
       it('is no display field or asset', function() {
-        expect(widgetTypes.defaultType(field, contentType)).toBe('markdown');
+        expect(widgets.defaultWidgetId(field, contentType)).toBe('markdown');
       });
     });
 
     it('if field is Entry', function() {
       field.type = 'Link';
       field.linkType = 'Entry';
-      expect(widgetTypes.defaultType(field, contentType)).toBe('entryLinkEditor');
+      expect(widgets.defaultWidgetId(field, contentType)).toBe('entryLinkEditor');
     });
 
     it('if field is Asset', function() {
       field.type = 'Link';
       field.linkType = 'Asset';
-      expect(widgetTypes.defaultType(field, contentType)).toBe('assetLinkEditor');
+      expect(widgets.defaultWidgetId(field, contentType)).toBe('assetLinkEditor');
     });
 
     it('if field is File', function() {
       field.type = 'File';
-      expect(widgetTypes.defaultType(field, contentType)).toBe('fileEditor');
+      expect(widgets.defaultWidgetId(field, contentType)).toBe('fileEditor');
     });
 
     it('if field is a list of Assets', function() {
       field.type = 'Array';
       field.items = {type: 'Link', linkType: 'Asset'};
-      expect(widgetTypes.defaultType(field, contentType)).toBe('assetLinksEditor');
+      expect(widgets.defaultWidgetId(field, contentType)).toBe('assetLinksEditor');
     });
 
     it('if field is a list of Entries', function() {
       field.type = 'Array';
       field.items = {type: 'Link', linkType: 'Entry'};
-      expect(widgetTypes.defaultType(field, contentType)).toBe('entryLinksEditor');
+      expect(widgets.defaultWidgetId(field, contentType)).toBe('entryLinksEditor');
     });
   });
 
-  describe('optionsForWidgetType', function(){
+  describe('optionsForWidget', function(){
     it('should return empty array for missing widget', function () {
-      expect(widgetTypes.optionsForWidgetType('foobar')).toEqual([]);
-      expect(widgetTypes.optionsForWidgetType(null)).toEqual([]);
+      expect(widgets.optionsForWidget('foobar')).toEqual([]);
+      expect(widgets.optionsForWidget(null)).toEqual([]);
     });
     it('should contain common options', function () {
-      var options = widgetTypes.optionsForWidgetType('singleLine');
+      var options = widgets.optionsForWidget('singleLine', 'field');
       expect(_.find(options, {param: 'helpText'})).toBeTruthy();
     });
-    it('should contain widget options', function () {
-      var options = widgetTypes.optionsForWidgetType('rating');
+    it('should contain field widget options', function () {
+      var options = widgets.optionsForWidget('rating', 'field');
       expect(_.find(options, {param: 'stars'})).toBeTruthy();
+    });
+    it('should contain static widget options', function () {
+      var options = widgets.optionsForWidget('infoText', 'static');
+      expect(_.find(options, {param: 'text'})).toBeTruthy();
     });
   });
 
   describe('paramDefaults', function(){
     it('should contain the defaults for every param', function() {
-      widgetTypes.registerWidget('herp', {
+      widgets.registerWidget('herp', {
         options: [
           {param: 'foo', default: 123 },
           {param: 'bar', default: 'derp'},
@@ -189,29 +193,29 @@ describe('Widget types service', function () {
         ]
       });
 
-      var d = widgetTypes.paramDefaults('herp');
+      var d = widgets.paramDefaults('herp', 'field');
       expect(d.foo).toBe(123);
       expect(d.bar).toBe('derp');
       expect(d.baz).toBe(undefined);
     });
 
-    it('should be an empty object for unknown widgetTypes', function(){
-      expect(widgetTypes.paramDefaults('lolnope')).toEqual({});
+    it('should be an empty object for unknown widgets', function(){
+      expect(widgets.paramDefaults('lolnope')).toEqual({});
     });
   });
 
   describe('registerWidget', function(){
     it('adds a widget to the database so that it can be retrieved', function () {
-      widgetTypes.registerWidget('foo', {fieldTypes: ['Text']});
-      widgetTypes.forField({type: 'Text'}).then(function(widgets) {
+      widgets.registerWidget('foo', {fieldTypes: ['Text']});
+      widgets.forField({type: 'Text'}).then(function(widgets) {
         expect(_.any(widgets, {id: 'foo'})).toBe(true);
       });
       $rootScope.$apply();
     });
     it('does not overwrite widgets', function () {
-      widgetTypes.registerWidget('foo', {fieldTypes: ['Text']});
-      widgetTypes.registerWidget('foo', {fieldTypes: ['Number']});
-      widgetTypes.forField({type: 'Number'}).then(function(widgets) {
+      widgets.registerWidget('foo', {fieldTypes: ['Text']});
+      widgets.registerWidget('foo', {fieldTypes: ['Number']});
+      widgets.forField({type: 'Number'}).then(function(widgets) {
         expect(_.any(widgets, {id: 'foo'})).toBe(false);
       });
       $rootScope.$apply();
@@ -220,11 +224,11 @@ describe('Widget types service', function () {
 
   describe('widgetTemplate', function(){
     it('returns the template property for a widget', function () {
-      widgetTypes.registerWidget('foo', {fieldTypes: ['Text'], template: 'bar'});
-      expect(widgetTypes.widgetTemplate('foo')).toBe('bar');
+      widgets.registerWidget('foo', {fieldTypes: ['Text'], template: 'bar'});
+      expect(widgets.widgetTemplate('foo')).toBe('bar');
     });
     it('returns a warning for a missing widget', function () {
-      expect(widgetTypes.widgetTemplate('derp')).toBe('<div class="missing-widget-template">Unkown editor widget "derp"</div>');
+      expect(widgets.widgetTemplate('derp')).toBe('<div class="missing-widget-template">Unknown editor widget "derp"</div>');
     });
   });
   

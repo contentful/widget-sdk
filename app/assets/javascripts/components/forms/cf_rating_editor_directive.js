@@ -19,8 +19,6 @@ angular.module('contentful').directive('cfRatingEditor', ['$injector', function(
       }
     },
     controller: ['$scope', function ($scope) {
-      var widgetTypes = $injector.get('widgetTypes');
-      
       $scope.$watch('widget.widgetParams.stars', setStars);
       $scope.pendingValue = -1;
 

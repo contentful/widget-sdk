@@ -47,10 +47,10 @@
         data-field-items-type="{{widget.field.items.type}}"
         data-field-items-type="{{dotty.get(field, 'items.type')}}"
         ng-class="{'data-field-array': (widget.field|isFieldLink), 'data-field-boolean': (widget.field|isFieldBoolean), 'data-field-string-list': (widget.field|isFieldStringList)}")
-      %label
+      %label(ng-if="widget.field")
         {{widget.field.name}}
         %sup(ng-show="widget.field.required") (required)
-      .l-form-controls
+      .l-form-controls(ng-if="widget.field")
         .l-form-locale(ng-repeat="locale in widget.locales track by locale.code" ot-field-presence="['fields', widget.field.id, locale.code]" data-locale="{{locale.code}}")
           .cf-field-editor.l-field-editor(ot-path="['fields', widget.field.id, locale.code]" cf-editor-entity="entry")
           .locale-label(ng-show="widget.locales.length > 1") {{locale.name}}
@@ -61,10 +61,12 @@
                                  tooltip="{{presenceUser | userNameDisplay:user}}")
                 %img(ng-src="{{user.avatarUrl}}")
           .cf-form-box-error(cf-error-path="['fields', widget.field.id, locale.code,'*']")
-        .l-field-help-text.field-help-text(ng-if="widget.widgetParams.helpText") {{widget.widgetParams.helpText}}
+        .l-field-help-text.layout-field--help-text(ng-if="widget.widgetParams.helpText") {{widget.widgetParams.helpText}}
         .cf-form-box-error(cf-error-path="['fields', widget.field.id]")
+      .l-form-controls(ng-if="!widget.field")
+        .cf-field-editor.l-field-editor(ot-path="" cf-editor-entity="entry")
 
-.tab-actions(ng-controller="EntryActionsCtrl")
+.tab-actions(ng-controller="EntryActionsController")
   .button-set
     .dropdown-btn(cf-dropdown="actions" ng-show="canDelete() || canDuplicate()")
       %button.btn.btn--tertiary(cf-dropdown-toggle="actions")

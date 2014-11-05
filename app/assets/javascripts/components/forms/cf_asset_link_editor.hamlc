@@ -3,7 +3,7 @@
     .linked-entities__handle(cf-drag-handle="" ng-disabled="!otEditable" ng-hide="linkedEntities.length==1")
       %i.fa.fa-ellipsis-v
       %i.fa.fa-ellipsis-v
-    .linked-entities__info.cf-file-info(entity-title="spaceContext.localizedField(entity, 'data.fields.title', locale.code)"
+    .linked-entities__info(cf-file-display="" cf-file-metadata="" entity-title="spaceContext.localizedField(entity, 'data.fields.title', locale.code)"
                   file="spaceContext.localizedField(entity, 'data.fields.file', locale.code)")
 
 .l-link-editor-search(cf-link-editor-search=""

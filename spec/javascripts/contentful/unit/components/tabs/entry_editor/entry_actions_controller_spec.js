@@ -28,7 +28,7 @@ describe('Entry Actions Controller', function () {
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
       scope.entry = entry;
       scope.broadcastFromSpace = sinon.stub();
-      controller = $controller('EntryActionsCtrl', {$scope: scope});
+      controller = $controller('EntryActionsController', {$scope: scope});
     });
   });
 

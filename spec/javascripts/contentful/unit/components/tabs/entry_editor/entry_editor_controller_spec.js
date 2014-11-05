@@ -20,7 +20,7 @@ describe('Entry Editor Controller', function () {
         sys: { publishedVersion: 1 }
       });
       scope.tab = { params: { entry: entry } };
-      controller = $controller('EntryEditorCtrl', {$scope: scope});
+      controller = $controller('EntryEditorController', {$scope: scope});
       scope.$digest();
     });
   });

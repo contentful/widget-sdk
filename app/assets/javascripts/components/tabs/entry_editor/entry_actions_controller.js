@@ -1,5 +1,5 @@
 'use strict';
-angular.module('contentful').controller('EntryActionsCtrl', ['$scope', 'notification', 'logger', function EntryActionsCtrl($scope, notification, logger) {
+angular.module('contentful').controller('EntryActionsController', ['$scope', 'notification', 'logger', function EntryActionsController($scope, notification, logger) {
 
   // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,
   // We can query the entry instead of reimplementing the checks heere

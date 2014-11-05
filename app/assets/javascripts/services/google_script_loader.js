@@ -12,11 +12,9 @@
 
 angular.module('contentful').factory('googleScriptLoader', ['$injector', function($injector){
 
-  var $q          = $injector.get('$q');
   var angularLoad = $injector.get('angularLoad');
+  var $q          = $injector.get('$q');
   var $window     = $injector.get('$window');
-  var $rootScope  = $injector.get('$rootScope');
-  var $timeout    = $injector.get('$timeout');
 
   var cache = {};
 

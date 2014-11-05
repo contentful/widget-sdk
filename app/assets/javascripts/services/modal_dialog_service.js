@@ -15,13 +15,11 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
         cancelLabel: 'Cancel',
         confirmLabel: 'OK',
         noBackgroundClose: false,
-        deactivateConfirmKey: false,
-        deactivateCancelKey: false,
         attachTo: '.client'
       },
       _.pick(params,
-             'title', 'message', 'template',
-             'cancelLabel', 'confirmLabel', 'deactivateConfirmKey', 'deactivateCancelKey',
+             'title', 'message', 'html', 'template',
+             'cancelLabel', 'confirmLabel',
              'noBackgroundClose', 'attachTo')
     );
     this._deferred = $q.defer();
@@ -63,9 +61,9 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       var dialog = this;
       dialog.scope.$apply(function(){
         if (ev.target.tagName.toLowerCase() == 'select') return;
-        if (!dialog.params.deactivateCancelKey && ev.keyCode === keycodes.ESC)
+        if (ev.keyCode === keycodes.ESC)
           dialog.cancel();
-        if (!dialog.params.deactivateConfirmKey && dialog.invalid !== true && ev.keyCode === keycodes.ENTER)
+        if (dialog.invalid !== true && ev.keyCode === keycodes.ENTER)
           dialog.confirm();
       });
     },

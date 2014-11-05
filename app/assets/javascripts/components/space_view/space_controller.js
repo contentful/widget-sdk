@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('contentful').controller('SpaceCtrl',
+angular.module('contentful').controller('SpaceController',
   ['$scope', '$rootScope', 'analytics', 'routing', 'notification', 'authorization', 'enforcements', 'authentication', '$controller',
-    function SpaceCtrl($scope, $rootScope, analytics, routing, notification, authorization, enforcements, authentication, $controller) {
+    function SpaceController($scope, $rootScope, analytics, routing, notification, authorization, enforcements, authentication, $controller) {
 
   $controller('UiConfigController', {$scope: $scope});
 

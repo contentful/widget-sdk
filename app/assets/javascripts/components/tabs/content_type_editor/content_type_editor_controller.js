@@ -1,16 +1,17 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', '$injector', function ContentTypeEditorCtrl($scope, $injector) {
+angular.module('contentful').controller('ContentTypeEditorController', ['$scope', '$injector', function ContentTypeEditorController($scope, $injector) {
+  var $q                = $injector.get('$q');
+  var ShareJS           = $injector.get('ShareJS');
   var addCanMethods     = $injector.get('addCanMethods');
   var analytics         = $injector.get('analytics');
   var editingInterfaces = $injector.get('editingInterfaces');
-  var environment       = $injector.get('environment');
   var notification      = $injector.get('notification');
   var random            = $injector.get('random');
   var validation        = $injector.get('validation');
 
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
-  $scope.enableInterfaceEditor = environment.env !== 'production';
+  this.interfaceEditorEnabled = $scope.user.features.showPreview;
 
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
 
@@ -23,6 +24,9 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', '$in
   $scope.tab.closingMessage = 'You have unpublished changes.';
   $scope.tab.closingMessageDisplayType = 'tooltip';
 
+  $scope.openEditingInterfaceEditor = openEditingInterfaceEditor;
+  $scope.sanitizeDisplayField = sanitizeDisplayField;
+
   function loadPublishedContentType() {
     // TODO replace with lookup in registry inside spaceContext
     $scope.contentType.getPublishedStatus()
@@ -31,17 +35,16 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', '$in
     });
   }
 
-  function loadDefaultEditingInterface() {
+  function openEditingInterfaceEditor() {
     editingInterfaces.forContentTypeWithId($scope.contentType, 'default')
     .then(function (interf) {
-      $scope.defaultEditingInterface = interf;
+      $scope.navigator.editingInterfaceEditor($scope.contentType, interf).goTo();
     });
   }
 
   $scope.$watch('contentType', function(contentType){
     if (contentType){
       loadPublishedContentType();
-      loadDefaultEditingInterface();
     }
   });
 
@@ -91,6 +94,20 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', '$in
     firstValidate = null;
   });
 
+  function sanitizeDisplayField() {
+    /*jshint eqnull:true */
+    var displayField = ShareJS.peek($scope.otDoc, ['displayField']);
+    var valid = displayField == null || _.any($scope.contentType.data.fields, {id: displayField});
+    if (!valid) {
+      var cb = $q.callback();
+      $scope.otDoc.at('displayField').set(null, cb);
+      return cb.promise.then(function(){
+        $scope.otUpdateEntity();
+      });
+    }
+    return $q.when();
+  }
+
   $scope.updatePublishedContentType = function (publishedContentType) {
     $scope.publishedContentType = publishedContentType;
   };
@@ -101,7 +118,7 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', '$in
 
   $scope.$watch('publishedContentType.data.fields', function (fields, old, scope) {
     scope.publishedIds = _.pluck(fields, 'id');
-    scope.publishedUIIDs = _.pluck(fields, 'uiid');
+    scope.publishedApiNames = _.pluck(fields, 'apiName');
   });
 
   $scope.$watch('contentType.getName()', function(title) {
@@ -113,9 +130,9 @@ angular.module('contentful').controller('ContentTypeEditorCtrl', ['$scope', '$in
 
     var newField = _.extend({
       name: '',
-      id: '',
+      id: random.id(),
       type: 'String',
-      uiid: random.id()
+      apiName: ''
     }, typeFieldTemplate);
 
     fieldDoc.push(newField, function(err, ops) {

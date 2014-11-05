@@ -20,6 +20,7 @@ angular.module('contentful').provider('clientAdapter', ['$injector', function Cl
       var defaults = {
         url     : '' + this.server + options.endpoint,
         headers : {
+          'X-Contentful-Skip-Transformation': true,
           'Content-Type':  'application/vnd.contentful.management.v1+json',
         }
       };

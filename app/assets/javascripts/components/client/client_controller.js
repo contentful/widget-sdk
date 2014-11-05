@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ClientCtrl', ['$scope', '$injector', function ClientCtrl($scope, $injector) {
+angular.module('contentful').controller('ClientController', ['$scope', '$injector', function ClientController($scope, $injector) {
   var $rootScope         = $injector.get('$rootScope');
   var $q                 = $injector.get('$q');
   var client             = $injector.get('client');

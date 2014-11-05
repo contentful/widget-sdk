@@ -49,7 +49,7 @@ describe('Create Space Dialog controller', function () {
       scope.newSpaceForm = {};
 
       createController = function () {
-        createSpaceCtrl = $controller('CreateSpaceDialogCtrl', {$scope: scope});
+        createSpaceCtrl = $controller('CreateSpaceDialogController', {$scope: scope});
       };
     });
   });

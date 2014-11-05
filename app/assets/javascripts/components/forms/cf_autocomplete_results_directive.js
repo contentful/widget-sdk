@@ -2,7 +2,7 @@
 
 angular.module('contentful').directive('cfAutocompleteResults', ['keycodes', function (keycodes) {
   return {
-    controller: 'CfAutocompleteResultsCtrl',
+    controller: 'CfAutocompleteResultsController',
     controllerAs: 'resultsController',
     link: function (scope, elem) {
       var navigateResultList = function navigateResultList(event) {

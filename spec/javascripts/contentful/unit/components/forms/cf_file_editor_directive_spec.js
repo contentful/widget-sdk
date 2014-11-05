@@ -34,7 +34,7 @@ describe('cfFileEditor Directive', function () {
         fileType: 'image/jpeg'
       };
 
-      element = $compile('<div ot-path=""><div class="cf-file-editor" ng-model="fieldData" ot-bind-internal="file"></div></div>')(scope);
+      element = $compile('<div ot-path=""><div cf-file-editor cf-file-display ng-model="fieldData" ot-bind-internal="file"></div></div>')(scope);
       scope.$apply();
     });
   });
