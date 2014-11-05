@@ -649,7 +649,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
         position: '1',
         next: 'contentTypeList',
         onShow: function (guider) {
-          guider.attachScope.$on('newContentTypePublished', function (event, contentType) {
+          guider.attachScope.$on('contentTypePublished', function (event, contentType) {
             var scope = event.currentScope;
             if (contentType.getId() == scope.contentType.getId()) {
               tutorialScope.contentTypeDone = true;

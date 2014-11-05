@@ -119,7 +119,7 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
         if (!_.contains(this.publishedContentTypes, publishedContentType)) {
           this.publishedContentTypes.push(publishedContentType);
           this._publishedContentTypesHash[publishedContentType.getId()] = publishedContentType;
-          $rootScope.$broadcast('newContentTypePublished', publishedContentType);
+          $rootScope.$broadcast('contentTypePublished', publishedContentType);
         }
       },
 
@@ -131,6 +131,7 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
         this._publishedContentTypesHash = _.omit(this._publishedContentTypesHash, function (ct) {
           return ct === publishedContentType;
         });
+        $rootScope.$broadcast('contentTypeUnpublished', publishedContentType);
       },
 
       removeContentType: function(contentType) {
