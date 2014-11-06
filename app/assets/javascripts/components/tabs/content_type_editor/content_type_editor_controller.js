@@ -6,12 +6,13 @@ angular.module('contentful').controller('ContentTypeEditorController', ['$scope'
   var addCanMethods     = $injector.get('addCanMethods');
   var analytics         = $injector.get('analytics');
   var editingInterfaces = $injector.get('editingInterfaces');
+  var environment       = $injector.get('environment');
   var notification      = $injector.get('notification');
   var random            = $injector.get('random');
   var validation        = $injector.get('validation');
 
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
-  this.interfaceEditorEnabled = $scope.user.features.showPreview;
+  this.interfaceEditorEnabled = $scope.user.features.showPreview || environment.env !== 'production';
 
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
 
