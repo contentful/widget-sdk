@@ -21,7 +21,7 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
   $scope.update = saveToServer;
   $scope.delete = angular.noop; // TODO: implement when we have more than the default interface
 
-  $scope.$on('entityDeleted', contentTypeDeletedEventHandler);
+  $scope.$on('contentTypeUnpublished', contentTypeUnpublishedEventHandler);
 
   this.isWidgetVisible = isWidgetVisible;
   this.layoutElementsEnabled = environment.env !== 'production';
@@ -64,7 +64,7 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
     });
   }
 
-  function contentTypeDeletedEventHandler(event, contentType) {
+  function contentTypeUnpublishedEventHandler(event, contentType) {
     if (contentType === $scope.tab.params.contentType) {
       $scope.tab.close();
     }

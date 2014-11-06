@@ -60,6 +60,9 @@ angular.module('contentful').controller('TabViewController', ['$scope', '$inject
     else if (route.viewType == 'editing-interface-editor'){
       $scope.spaceContext.space.getContentType(route.params.contentTypeId)
       .then(function(contentType){
+        return contentType.getPublishedStatus();
+      })
+      .then(function(contentType){
         editingInterfaces.forContentTypeWithId(contentType, route.params.editingInterfaceId)
         .then(function (editingInterface) {
           $scope.navigator.editingInterfaceEditor(contentType, editingInterface).open();

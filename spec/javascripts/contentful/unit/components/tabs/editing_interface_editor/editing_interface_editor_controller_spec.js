@@ -57,10 +57,10 @@ describe('EditingInterfaceEditorController', function(){
     expect(scope.editingInterface.data.remote).toBe(true);
   });
   
-  it('should close the tab when the content type is deleted', function () {
+  it('should close the tab when the content type is unpublished', function () {
     scope.tab.params.contentType = {};
     scope.tab.close = sinon.stub();
-    scope.$broadcast('entityDeleted', scope.tab.params.contentType);
+    scope.$broadcast('contentTypeUnpublished', scope.tab.params.contentType);
     expect(scope.tab.close).toBeCalled();
   });
 
