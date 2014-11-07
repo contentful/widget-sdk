@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('contentful').controller('ContentTypeEditorController', ['$scope', '$injector', function ContentTypeEditorController($scope, $injector) {
+  var $controller       = $injector.get('$controller');
   var $q                = $injector.get('$q');
   var ShareJS           = $injector.get('ShareJS');
-  var addCanMethods     = $injector.get('addCanMethods');
   var analytics         = $injector.get('analytics');
   var editingInterfaces = $injector.get('editingInterfaces');
   var environment       = $injector.get('environment');
@@ -11,22 +11,43 @@ angular.module('contentful').controller('ContentTypeEditorController', ['$scope'
   var random            = $injector.get('random');
   var validation        = $injector.get('validation');
 
-  $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
+  $controller('EntityActionsController', {
+    $scope: $scope,
+    params: {
+      entityType: 'contentType',
+      methodOverrides: {
+        canPublish: function() {
+          if (!$scope.otDoc) return false;
+          var version = $scope.otDoc.version;
+          var publishedVersion = $scope.otDoc.getAt(['sys', 'publishedVersion']);
+          var notPublishedYet = !publishedVersion;
+          var updatedSincePublishing = version !== publishedVersion + 1;
+          var fields = $scope.otDoc.getAt(['fields']);
+          var hasFields = fields && fields.length > 0;
+          return $scope.contentType.canPublish() &&
+            (notPublishedYet || updatedSincePublishing) &&
+            hasFields &&
+            $scope.permissionController.can('publish', $scope.contentType.data).can;
+        }
+      }
+    }
+  });
+
   this.interfaceEditorEnabled = $scope.user.features.showPreview || environment.env !== 'production';
+
+  $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
+  $scope.tab.closingMessage = 'You have unpublished changes.';
+  $scope.tab.closingMessageDisplayType = 'tooltip';
+  $scope.openEditingInterfaceEditor = openEditingInterfaceEditor;
+  $scope.sanitizeDisplayField = sanitizeDisplayField;
 
   $scope.$watch('tab.params.contentType', function (contentType) { $scope.contentType = contentType; });
 
   $scope.$watch(function contentTypeEditorEnabledWatcher(scope) {
-    return scope.contentType && scope.can('update', scope.contentType.data);
+    return scope.contentType && scope.permissionController.can('update', scope.contentType.data).can;
   }, function contentTypeEditorEnabledHandler(enabled, old, scope) {
     scope.otDisabled = !enabled;
   });
-
-  $scope.tab.closingMessage = 'You have unpublished changes.';
-  $scope.tab.closingMessageDisplayType = 'tooltip';
-
-  $scope.openEditingInterfaceEditor = openEditingInterfaceEditor;
-  $scope.sanitizeDisplayField = sanitizeDisplayField;
 
   function loadPublishedContentType() {
     // TODO replace with lookup in registry inside spaceContext
@@ -83,22 +104,6 @@ angular.module('contentful').controller('ContentTypeEditorController', ['$scope'
     }
   }, function (modified, old, scope) {
     if (modified !== undefined) scope.tab.dirty = modified;
-  });
-
-  addCanMethods($scope, 'contentType', {
-    canPublish: function() {
-      if (!$scope.otDoc) return false;
-      var version = $scope.otDoc.version;
-      var publishedVersion = $scope.otDoc.getAt(['sys', 'publishedVersion']);
-      var notPublishedYet = !publishedVersion;
-      var updatedSincePublishing = version !== publishedVersion + 1;
-      var fields = $scope.otDoc.getAt(['fields']);
-      var hasFields = fields && fields.length > 0;
-      return $scope.contentType.canPublish() &&
-        (notPublishedYet || updatedSincePublishing) &&
-        hasFields &&
-        $scope.can('publish', $scope.contentType.data);
-    }
   });
 
   var firstValidate = $scope.$on('otBecameEditable', function (event) {

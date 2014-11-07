@@ -3,19 +3,14 @@
 describe('The Entry list directive', function () {
 
   var container, scope;
-  var canStub, reasonsStub;
   var compileElement;
 
   beforeEach(function () {
-    canStub = sinon.stub();
-    reasonsStub = sinon.stub();
-    module('contentful/test', function ($provide, cfCanStubsProvider) {
-      cfCanStubsProvider.setup(reasonsStub);
+    module('contentful/test', function ($provide) {
       $provide.removeDirectives('viewCustomizer');
     });
     inject(function ($rootScope, $compile, entryListDirective, enforcements) {
       scope = $rootScope.$new();
-      scope.can = canStub;
 
       entryListDirective[0].controller = function () {};
 
@@ -31,6 +26,16 @@ describe('The Entry list directive', function () {
           data: {sys: {createdBy: {sys: {id: ''}}}},
           getId: sinon.stub()
         }
+      };
+
+      scope.permissionController = {
+        createContentType: { shouldHide: false, shouldDisable: false },
+        createEntry: { shouldHide: false, shouldDisable: false },
+        deleteEntry: { shouldHide: false },
+        archiveEntry: { shouldHide: false },
+        unarchiveEntry: { shouldHide: false },
+        publishEntry: { shouldHide: false },
+        unpublishEntry: { shouldHide: false }
       };
 
       enforcements.setSpaceContext(scope.spaceContext);
@@ -50,7 +55,7 @@ describe('The Entry list directive', function () {
 
   describe('the tab header first add button', function() {
     it('is not shown if not allowed', function() {
-      canStub.withArgs('create', 'Entry').returns(false);
+      scope.permissionController.createEntry.shouldHide = true;
       compileElement();
       expect(container.find('.tab-header .add-entity .btn--primary').eq(0)).toBeNgHidden();
     });
@@ -59,7 +64,6 @@ describe('The Entry list directive', function () {
     it('is not shown if there are no entries', function() {
       scope.singleContentType = null;
       scope.entries = [];
-      canStub.withArgs('create', 'Entry').returns(true);
       compileElement();
       expect(container.find('.tab-header .add-entity .btn--primary').eq(0)).toBeNgHidden();
     });
@@ -67,7 +71,6 @@ describe('The Entry list directive', function () {
     it('is not shown if there is no single content type', function() {
       scope.singleContentType = null;
       scope.entries = [{}];
-      canStub.withArgs('create', 'Entry').returns(true);
       compileElement();
       expect(container.find('.tab-header .add-entity .btn--primary').eq(0)).toBeNgHidden();
     });
@@ -75,7 +78,6 @@ describe('The Entry list directive', function () {
     it('is shown if all conditions are met', function() {
       scope.singleContentType = {};
       scope.entries = [{}];
-      canStub.withArgs('create', 'Entry').returns(true);
       compileElement();
       expect(container.find('.tab-header .add-entity .btn--primary').eq(0)).not.toBeNgHidden();
     });
@@ -85,13 +87,12 @@ describe('The Entry list directive', function () {
   describe('the tab header add dropdown button', function() {
 
     it('is not shown', function() {
-      canStub.withArgs('create', 'Entry').returns(false);
+      scope.permissionController.createEntry.shouldHide = true;
       compileElement();
       expect(container.find('.tab-header .add-entity .btn--primary').eq(1)).toBeNgHidden();
     });
 
     it('is shown', function() {
-      canStub.withArgs('create', 'Entry').returns(true);
       compileElement();
       expect(container.find('.tab-header .add-entity .btn--primary').eq(1)).not.toBeNgHidden();
     });
@@ -99,7 +100,6 @@ describe('The Entry list directive', function () {
     describe('has dropdown items', function() {
       var idStub1, idStub2, nameStub;
       beforeEach(function() {
-        canStub.withArgs('create', 'Entry').returns(true);
         idStub1 = sinon.stub();
         idStub1.returns(1);
         idStub2 = sinon.stub();
@@ -123,13 +123,12 @@ describe('The Entry list directive', function () {
 
   function makeActionTest(button, action) {
     it(button+' button not shown', function () {
-      canStub.withArgs(action, 'Entry').returns(false);
+      scope.permissionController[action+'Entry'].shouldHide = true;
       compileElement();
       expect(container.find('.tab-actions .'+button)).toBeNgHidden();
     });
 
     it(button+' button shown', function () {
-      canStub.withArgs(action, 'Entry').returns(true);
       compileElement();
       expect(container.find('.tab-actions .'+button)).not.toBeNgHidden();
     });
@@ -142,15 +141,13 @@ describe('The Entry list directive', function () {
   makeActionTest('unpublish', 'unpublish');
   makeActionTest('publish', 'publish');
 
-  it('save button is disabled', function () {
-    canStub.withArgs('create', 'Entry').returns(false);
-    reasonsStub.returns(['usageExceeded']);
+  it('content type button is disabled', function () {
+    scope.permissionController.createContentType.shouldDisable = true;
     compileElement();
     expect(container.find('.advice .btn--primary').attr('disabled')).toBe('disabled');
   });
 
-  it('save button is enabled', function () {
-    canStub.withArgs('create', 'Entry').returns(true);
+  it('content type button is enabled', function () {
     compileElement();
     expect(container.find('.advice .btn--primary').attr('disabled')).toBeUndefined();
   });

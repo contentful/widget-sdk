@@ -29,8 +29,11 @@ describe('ContentType field validation dialog Controller', function () {
         'type': 'Text',
         'uiid': '4718xi6vshs'
       };
+
+      scope.permissionController = { can: sinon.stub() };
+      scope.permissionController.can.returns({can: true});
+
       scope.index = 2;
-      scope.can = stubs.can;
       controller = $controller('FieldValidationDialogController', {$scope: scope});
       scope.$digest();
     });
@@ -390,14 +393,14 @@ describe('ContentType field validation dialog Controller', function () {
   });
 
   it('can add validations', function () {
-    stubs.can.withArgs('create', 'ContentType').returns(true);
+    scope.permissionController.can.returns({can: true});
     scope.availableValidations = [{}];
     scope.$digest();
     expect(scope.canAddValidations()).toBeTruthy();
   });
 
   it('cannot add validations', function () {
-    stubs.can.withArgs('create', 'ContentType').returns(false);
+    scope.permissionController.can.returns({can: false});
     scope.availableValidations = [{}];
     scope.$digest();
     expect(scope.canAddValidations()).toBeFalsy();

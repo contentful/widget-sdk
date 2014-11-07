@@ -3,8 +3,8 @@
 describe('otPath', function() {
   var elem, scope, aValue={}, peekValue={};
   beforeEach(function() {
-    module('contentful/test', function ($controllerProvider) {
-      $controllerProvider.register('otDocForController',function () { });
+    module('contentful/test', function ($provide) {
+      $provide.removeControllers('otDocForController');
     });
     inject(function ($compile, $rootScope, ShareJS) {
       $rootScope.$apply(function () {

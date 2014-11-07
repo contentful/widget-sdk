@@ -4,14 +4,11 @@
   %ul(ng-show="!locationInAccount && spaces.length > 0 && spaceContext.space && !spaceContext.space.isHibernated()")
     %li.add-dropdown-button(cf-add-dropdown-button=""
       space-context="spaceContext"
-      cf-can-no-disable=""
-      cf-can-no-hide=""
-      cf-can="[create, ContentType], [create, Asset], [create, Entry], [create, ApiKey]")
+      ng-hide="permissionController.createContentType.shouldHide && permissionController.createEntry.shouldHide && permissionController.createAsset.shouldHide && permissionController.createApiKey.shouldHide")
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'contentTypes',
                   'section-index': spaceContext.tabList.currentViewType() == 'content-type-list'}"
         ng-click="goToView('content-type-list')"
-        cf-can-no-disable=""
-        cf-can="update, ContentType"
+        ng-hide="permissionController.updateContentType.shouldHide"
         data-view-type="content-type-list"
         tooltip="Content Model"
         tooltip-placement="bottom"
@@ -20,6 +17,7 @@
       %span Content Model
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'entries',
                   'section-index': spaceContext.tabList.currentViewType() == 'entry-list'}"
+        ng-hide="permissionController.readEntry.shouldHide"
         ng-click="goToView('entry-list')"
         data-view-type="entry-list"
         tooltip="Entries"
@@ -30,6 +28,7 @@
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'assets',
                  'section-index': spaceContext.tabList.currentViewType() == 'asset-list'}"
         ng-click="goToView('asset-list')"
+        ng-hide="permissionController.readAsset.shouldHide"
         data-view-type="asset-list"
         tooltip="Assets"
         tooltip-placement="bottom"
@@ -39,8 +38,7 @@
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'apiHome',
                    'section-index': spaceContext.tabList.currentViewType() == 'api-home'}"
         ng-click="goToView('api-home')"
-        cf-can-no-disable=""
-        cf-can="read, ApiKey"
+        ng-hide="permissionController.readApiKey.shouldHide"
         data-view-type="api-home"
         tooltip="API"
         tooltip-placement="bottom"
@@ -50,8 +48,7 @@
     %li(ng-class="{section: spaceContext.tabList.currentSection() == 'spaceSettings',
                   'section-index': spaceContext.tabList.currentSection() == 'spaceSettings'}"
         ng-click="goToView('space-settings')"
-        cf-can-no-disable=""
-        cf-can="update, Settings"
+        ng-hide="permissionController.updateSettings.shouldHide"
         data-view-type="space-settings"
         tooltip="Space Settings"
         tooltip-placement="bottom"

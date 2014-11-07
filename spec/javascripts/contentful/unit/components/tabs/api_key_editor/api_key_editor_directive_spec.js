@@ -3,10 +3,10 @@
 describe('apiKeyEditor Directive', function () {
   var element, scope, compileElement, stubs, environmentMock;
   beforeEach(function () {
-    module('contentful/test', function ($provide, cfCanStubsProvider) {
+    module('contentful/test', function ($provide) {
+      $provide.removeControllers('PermissionController');
+
       stubs = $provide.makeStubs([
-        'can',
-        'reasons',
         'open',
         'catch',
         'apiKeyGetId',
@@ -15,7 +15,6 @@ describe('apiKeyEditor Directive', function () {
       stubs.open.returns({
         catch: stubs.catch
       });
-      cfCanStubsProvider.setup(stubs.reasons);
 
       $provide.value('modalDialog', {
         open: stubs.open
@@ -42,14 +41,18 @@ describe('apiKeyEditor Directive', function () {
         }
       };
       stubs.spaceGetId.returns('spaceid');
-      enforcements.setSpaceContext(scope.spaceContext);
-      scope.can = stubs.can;
       scope.tab = {
         params: {}
       };
       scope.previewApiKey = {
         data: {},
         getId: stubs.apiKeyGetId
+      };
+
+      enforcements.setSpaceContext(scope.spaceContext);
+
+      scope.permissionController = {
+        createApiKey: { shouldHide: false, shouldDisable: false, reasons: [] }
       };
 
       compileElement = function () {
@@ -76,20 +79,18 @@ describe('apiKeyEditor Directive', function () {
   });
 
   it('delete button cant ever be disabled', function () {
-    stubs.can.withArgs('create', 'ApiKey').returns(false);
+    scope.permissionController.createApiKey.shouldDisable = true;
     compileElement();
     expect(element.find('.tab-actions .delete').attr('disabled')).toBeUndefined();
   });
 
   it('delete button is enabled', function () {
-    stubs.can.withArgs('create', 'ApiKey').returns(true);
     compileElement();
     expect(element.find('.tab-actions .delete').attr('disabled')).toBeUndefined();
   });
 
   it('save button is disabled', function () {
-    stubs.can.withArgs('create', 'ApiKey').returns(false);
-    stubs.reasons.returns(['usageExceeded']);
+    scope.permissionController.createApiKey.shouldDisable = true;
     compileElement();
     scope.apiKeyForm = {
       $invalid: false
@@ -99,7 +100,6 @@ describe('apiKeyEditor Directive', function () {
   });
 
   it('save button is enabled', function () {
-    stubs.can.withArgs('create', 'ApiKey').returns(true);
     compileElement();
     scope.apiKeyForm = {
       $invalid: false

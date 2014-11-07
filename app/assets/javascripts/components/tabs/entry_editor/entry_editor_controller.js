@@ -2,13 +2,17 @@
 
 angular.module('contentful').controller('EntryEditorController', ['$scope', '$injector', function EntryEditorController($scope, $injector) {
   var $controller       = $injector.get('$controller');
-  var addCanMethods     = $injector.get('addCanMethods');
   var logger            = $injector.get('logger');
   var validation        = $injector.get('validation');
 
   // Initialization
   $scope.$watch('tab.params.entry', function (entry) { $scope.entry = entry; });
-  addCanMethods($scope, 'entry');
+  $controller('EntityActionsController', {
+    $scope: $scope,
+    params: {
+      entityType: 'entry'
+    }
+  });
 
   // Tab related stuff
   $scope.tab.closingMessage = 'You have unpublished changes.';
@@ -39,7 +43,7 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
 
   // OT Stuff
   $scope.$watch(function entryEditorEnabledWatcher(scope) {
-    return !scope.entry.isArchived() && scope.can('update', scope.entry.data);
+    return !scope.entry.isArchived() && scope.permissionController.can('update', scope.entry.data).can;
   }, function entryEditorEnabledHandler(enabled, old, scope) {
     scope.otDisabled = !enabled;
   });

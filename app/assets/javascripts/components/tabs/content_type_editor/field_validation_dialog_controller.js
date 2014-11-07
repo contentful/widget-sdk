@@ -92,7 +92,7 @@ angular.module('contentful').controller('FieldValidationDialogController', ['$sc
   };
 
   $scope.canAddValidations = function () {
-    return $scope.can('create', 'ContentType') && !_.isEmpty($scope.availableValidations);
+    return $scope.permissionController.can('create', 'ContentType').can && !_.isEmpty($scope.availableValidations);
   };
 
 }]);

@@ -5,7 +5,9 @@ describe('Validation dialog service', function () {
   var successStub, errorStub;
   var dialog, makeDialog;
   beforeEach(function () {
-    module('contentful/test');
+    module('contentful/test', function ($provide) {
+      $provide.removeControllers('PermissionController');
+    });
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
       successStub = sinon.stub();
@@ -15,8 +17,8 @@ describe('Validation dialog service', function () {
         type: 'Text'
       };
 
-      scope.can = sinon.stub();
-      scope.can.returns(true);
+      scope.permissionController = { can: sinon.stub() };
+      scope.permissionController.can.returns({can: true});
 
       makeDialog = function () {
         $('<div class="client"></div>').appendTo('body');
@@ -83,7 +85,7 @@ describe('Validation dialog service', function () {
     });
 
     it('create validation button is disabled', function() {
-      scope.can.returns(false);
+      scope.permissionController.can.returns({can: false});
       scope.$digest();
       expect(dialog.domElement.find('.advice .btn--primary').attr('disabled')).toBeTruthy();
     });
@@ -119,7 +121,7 @@ describe('Validation dialog service', function () {
     });
 
     it('add validation button is disabled', function() {
-      scope.can.returns(false);
+      scope.permissionController.can.returns({can: false});
       scope.$digest();
       expect(dialog.domElement.find('.buttons .btn--primary').attr('disabled')).toBeTruthy();
     });

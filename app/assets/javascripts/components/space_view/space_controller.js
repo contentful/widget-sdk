@@ -41,17 +41,6 @@ angular.module('contentful').controller('SpaceController',
     }
   });
 
-  $scope.can = function (action, entity) {
-    if (authorization.spaceContext){
-      var response = entity && authorization.spaceContext.can.apply(authorization.spaceContext, arguments);
-      if(!response){
-        $scope.checkForEnforcements.apply($scope, arguments);
-      }
-      return response;
-    }
-    return false;
-  };
-
   $scope.logoClicked = function () {
     analytics.track('Clicked Logo');
   };

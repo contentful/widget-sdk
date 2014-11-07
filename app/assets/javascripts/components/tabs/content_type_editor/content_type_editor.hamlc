@@ -79,7 +79,7 @@
               Visit the Knowledge Base Pages
               %i.fa.fa-question-circle
         .dropdown-btn(cf-dropdown="" ng-show="hasFields")
-          %button.btn.btn--primary.add-field-button(cf-dropdown-toggle="" cf-can="create, ContentType" ng-disabled="!otEditable || cfCanDisabled")
+          %button.btn.btn--primary.add-field-button(cf-dropdown-toggle="" ng-disabled="!otEditable")
             %i.fa.fa-plus.button-icon
             Add Field
           .dropdown-menu.type-menu(cf-dropdown-menu="" select-type="addField(type)")

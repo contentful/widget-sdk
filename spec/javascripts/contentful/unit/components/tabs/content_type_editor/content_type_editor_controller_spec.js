@@ -15,6 +15,8 @@ describe('ContentTypeEditor Controller', function () {
       $provide.value('notification', {
         serverError: serverErrorStub
       });
+
+      $provide.removeControllers('PermissionController');
     });
 
     inject(function ($rootScope, $controller, cfStub, $injector){
@@ -33,7 +35,8 @@ describe('ContentTypeEditor Controller', function () {
         features: {}
       };
 
-      scope.can = sinon.stub();
+      scope.permissionController = { can: sinon.stub() };
+      scope.permissionController.can.returns({can: true});
 
       controller = $controller('ContentTypeEditorController', {$scope: scope});
       scope.$digest();
@@ -49,13 +52,13 @@ describe('ContentTypeEditor Controller', function () {
   });
 
   it('enables ot', function () {
-    scope.can.returns(true);
+    scope.permissionController.can.returns({can: true});
     scope.$digest();
     expect(scope.otDisabled).toBeFalsy();
   });
 
   it('disables ot', function () {
-    scope.can.returns(false);
+    scope.permissionController.can.returns({can: false});
     scope.$digest();
     expect(scope.otDisabled).toBeTruthy();
   });
@@ -143,7 +146,7 @@ describe('ContentTypeEditor Controller', function () {
       getAtStub.withArgs(['sys', 'publishedVersion']).returns(undefined);
       getAtStub.withArgs(['fields']).returns({length: 2});
       canPublishStub.returns(true);
-      scope.can.returns(true);
+      scope.permissionController.can.returns({can: true});
       expect(scope.canPublish()).toBeFalsy();
     });
 
@@ -152,7 +155,7 @@ describe('ContentTypeEditor Controller', function () {
       getAtStub.withArgs(['sys', 'publishedVersion']).returns(1);
       getAtStub.withArgs(['fields']).returns({length: 2});
       canPublishStub.returns(true);
-      scope.can.returns(true);
+      scope.permissionController.can.returns({can: true});
       expect(scope.canPublish()).toBeFalsy();
     });
 
@@ -160,7 +163,7 @@ describe('ContentTypeEditor Controller', function () {
       getAtStub.withArgs(['sys', 'publishedVersion']).returns(1);
       getAtStub.withArgs(['fields']).returns({length: 0});
       canPublishStub.returns(true);
-      scope.can.returns(true);
+      scope.permissionController.can.returns({can: true});
       expect(scope.canPublish()).toBeFalsy();
     });
 
@@ -168,7 +171,7 @@ describe('ContentTypeEditor Controller', function () {
       getAtStub.withArgs(['sys', 'publishedVersion']).returns(1);
       getAtStub.withArgs(['fields']).returns({length: 2});
       canPublishStub.returns(false);
-      scope.can.returns(true);
+      scope.permissionController.can.returns({can: true});
       expect(scope.canPublish()).toBeFalsy();
     });
 
@@ -176,7 +179,7 @@ describe('ContentTypeEditor Controller', function () {
       getAtStub.withArgs(['sys', 'publishedVersion']).returns(1);
       getAtStub.withArgs(['fields']).returns({length: 2});
       canPublishStub.returns(true);
-      scope.can.returns(false);
+      scope.permissionController.can.returns({can: false});
       expect(scope.canPublish()).toBeFalsy();
     });
 
@@ -184,7 +187,7 @@ describe('ContentTypeEditor Controller', function () {
       getAtStub.withArgs(['sys', 'publishedVersion']).returns(1);
       getAtStub.withArgs(['fields']).returns({length: 2});
       canPublishStub.returns(true);
-      scope.can.returns(true);
+      scope.permissionController.can.returns({can: true});
       expect(scope.canPublish()).toBeFalsy();
     });
   });

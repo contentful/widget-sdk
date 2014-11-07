@@ -19,7 +19,6 @@ describe('Asset List Actions Controller', function () {
         'action3',
         'action4',
         'getVersion',
-        'can',
         'timeout',
         'broadcast'
       ]);
@@ -60,7 +59,13 @@ describe('Asset List Actions Controller', function () {
         }
       };
 
-      scope.can = stubs.can;
+      scope.permissionController = {
+        deleteAsset: { shouldHide: false },
+        archiveAsset: { shouldHide: false },
+        unarchiveAsset: { shouldHide: false },
+        unpublishAsset: { shouldHide: false },
+        publishAsset: { shouldHide: false }
+      };
 
       controller = $controller('AssetListActionsController', {$scope: scope});
     });
@@ -168,7 +173,6 @@ describe('Asset List Actions Controller', function () {
     var methodName = 'show'+action.charAt(0).toUpperCase()+action.substr(1);
     var canMethodName = 'can'+action.charAt(0).toUpperCase()+action.substr(1);
     it('can show '+action+' action', function () {
-      stubs.can.withArgs(action, 'Asset').returns(true);
       stubs.action1.returns(true);
       stubs.action2.returns(true);
       stubs.getSelected.returns([
@@ -180,7 +184,7 @@ describe('Asset List Actions Controller', function () {
     });
 
     it('cannot show delete '+action+' because no general permission', function () {
-      stubs.can.withArgs(action, 'Asset').returns(false);
+      scope.permissionController[action+'Asset'].shouldHide = true;
       stubs.action1.returns(true);
       stubs.action2.returns(true);
       stubs.getSelected.returns([
@@ -192,7 +196,6 @@ describe('Asset List Actions Controller', function () {
     });
 
     it('cannot show '+action+' action because no permission on item', function () {
-      stubs.can.withArgs(action, 'Asset').returns(true);
       stubs.action1.returns(true);
       stubs.action2.returns(false);
       stubs.getSelected.returns([

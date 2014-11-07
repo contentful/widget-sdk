@@ -4,20 +4,23 @@ describe('The ContentType list directive', function () {
 
   var container, scope;
   var compileElement;
-  var canStub, reasonsStub;
 
   beforeEach(function () {
-    canStub = sinon.stub();
-    reasonsStub = sinon.stub();
-    module('contentful/test', function (cfCanStubsProvider, $provide) {
-      cfCanStubsProvider.setup(reasonsStub);
+    module('contentful/test', function ($provide) {
       $provide.removeDirectives('relative');
+      $provide.removeControllers('PermissionController');
     });
     inject(function ($rootScope, $compile, contentTypeListDirective, enforcements) {
       scope = $rootScope.$new();
-      scope.can = canStub;
 
       contentTypeListDirective[0].controller = function () {};
+
+      scope.permissionController = {
+        createContentType: {
+          shouldHide: false,
+          shouldDisable: false
+        }
+      };
 
       enforcements.setSpaceContext({
         space: {
@@ -40,27 +43,24 @@ describe('The ContentType list directive', function () {
 
   describe('the tab header add button', function() {
     it('is not shown', function() {
-      canStub.withArgs('create', 'ContentType').returns(false);
+      scope.permissionController.createContentType.shouldHide = true;
       compileElement();
       expect(container.find('.tab-header .add-entity .btn--primary')).toBeNgHidden();
     });
 
     it('is shown', function() {
-      canStub.withArgs('create', 'ContentType').returns(true);
       compileElement();
       expect(container.find('.tab-header .add-entity .btn--primary')).not.toBeNgHidden();
     });
   });
 
   it('save button is disabled', function () {
-    canStub.withArgs('create', 'ContentType').returns(false);
-    reasonsStub.returns(['usageExceeded']);
+    scope.permissionController.createContentType.shouldDisable = true;
     compileElement();
     expect(container.find('.advice .btn--primary').attr('disabled')).toBe('disabled');
   });
 
   it('save button is enabled', function () {
-    canStub.withArgs('create', 'ContentType').returns(true);
     compileElement();
     expect(container.find('.advice .btn--primary').attr('disabled')).toBeUndefined();
   });

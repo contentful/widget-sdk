@@ -4,24 +4,25 @@ describe('The ApiKey list directive', function () {
 
   var container, scope;
   var compileElement;
-  var canStub, reasonsStub;
 
   beforeEach(function () {
-    canStub = sinon.stub();
-    reasonsStub = sinon.stub();
-    module('contentful/test', function (cfCanStubsProvider, $provide) {
-      cfCanStubsProvider.setup(reasonsStub);
+    module('contentful/test', function ($provide) {
       $provide.removeDirectives('relative');
+      $provide.removeControllers('PermissionController');
     });
     inject(function ($rootScope, $compile, enforcements, $q) {
       scope = $rootScope.$new();
-      scope.can = canStub;
       scope.spaceContext = {
         space: {
           data: {sys: {createdBy: {sys: {id: ''}}}},
           getDeliveryApiKeys: sinon.stub().returns($q.defer().promise)
         }
       };
+
+      scope.permissionController = {
+        createApiKey: { shouldHide: false, shouldDisable: false }
+      };
+
       enforcements.setSpaceContext(scope.spaceContext);
 
       compileElement = function () {
@@ -39,13 +40,12 @@ describe('The ApiKey list directive', function () {
 
   describe('the tab header add button', function() {
     it('is not shown', function() {
-      canStub.withArgs('create', 'ApiKey').returns(false);
+      scope.permissionController.createApiKey.shouldHide = true;
       compileElement();
       expect(container.find('.tab-header .add-entity .btn--primary')).toBeNgHidden();
     });
 
     it('is shown', function() {
-      canStub.withArgs('create', 'ApiKey').returns(true);
       compileElement();
       expect(container.find('.tab-header .add-entity .btn--primary')).not.toBeNgHidden();
     });
@@ -77,14 +77,12 @@ describe('The ApiKey list directive', function () {
   });
 
   it('save button is disabled', function () {
-    canStub.withArgs('create', 'ApiKey').returns(false);
-    reasonsStub.returns(['usageExceeded']);
+    scope.permissionController.createApiKey.shouldDisable = true;
     compileElement();
     expect(container.find('.advice button').attr('disabled')).toBe('disabled');
   });
 
   it('save button is enabled', function () {
-    canStub.withArgs('create', 'ApiKey').returns(true);
     compileElement();
     expect(container.find('.advice button').attr('disabled')).toBeUndefined();
   });
