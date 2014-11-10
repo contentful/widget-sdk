@@ -115,12 +115,12 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('youtubeEditor',{
     fieldTypes: ['Symbol'],
     name: 'Youtube',
-    template: '<cf-youtube-editor ng-model="fieldData.value" ot-bind-internal="url"></cf-youtube-editor>'
+    template: '<cf-youtube-editor></cf-youtube-editor>'
   });
   widgets.registerWidget('ooyalaEditor',{
     fieldTypes: ['Symbol'],
     name: 'Ooyala',
-    template: '<cf-ooyala-editor ng-model="fieldData.value" ot-bind-internal="assetId"></cf-ooyala-editor>'
+    template: '<cf-ooyala-editor></cf-ooyala-editor>'
   });
   //toggle: {   NOT IMPLEMENTED
     //fieldTypes: ['Boolean'],

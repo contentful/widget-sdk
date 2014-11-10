@@ -1,15 +1,19 @@
 'use strict';
 
 describe('cfYoutubeEditor Controller', function() {
-  var controller, scope, YoutubeUrl;
+  var controller, deferred, scope, YoutubeUrl;
 
   beforeEach(function() {
     module('contentful/test');
-    inject(function($injector, $controller, $rootScope){
+    inject(function($injector, $controller, $rootScope, $q){
       YoutubeUrl = $injector.get('YoutubeUrl');
-      scope      = $rootScope.$new();
-      scope.otBindInternalChangeHandler = function(){};
-      controller = $controller('cfYoutubeEditorController', { $scope : scope });
+      deferred   = $q.defer();
+
+      scope                = $rootScope.$new();
+      scope.fieldData      = {};
+      scope.otChangeValueP = jasmine.createSpy().and.returnValue(deferred.promise);
+
+      controller           = $controller('cfYoutubeEditorController', { $scope : scope });
       scope.$apply();
     });
   });
@@ -37,7 +41,7 @@ describe('cfYoutubeEditor Controller', function() {
       scope.errorMessage = 'error';
       expect(scope.errorMessage).toEqual('error');
 
-      scope.url = 'url';
+      scope.fieldData.value = 'url';
       scope.$apply();
 
       expect(scope.errorMessage).toEqual('');
@@ -45,7 +49,7 @@ describe('cfYoutubeEditor Controller', function() {
 
     describe('and the url ends up empty', function() {
       it('sets the loading flag to false', function() {
-        scope.url = '';
+        scope.fieldData.value = '';
         scope.$apply();
         expect(scope.isPlayerLoading).toBeFalsy();
       });
@@ -53,7 +57,7 @@ describe('cfYoutubeEditor Controller', function() {
 
     describe('and the url ends up with text', function() {
       beforeEach(function() {
-        scope.url ='url';
+        scope.fieldData.value ='url';
         scope.$apply();
       });
 
@@ -78,6 +82,33 @@ describe('cfYoutubeEditor Controller', function() {
         expect(scope.isPlayerLoading).toBeFalsy();
       });
     }
+
+    describe('handleClickOnRemoveSign', function() {
+      beforeEach(function() {
+        scope.handleClickOnRemoveSign();
+      });
+
+      describe('uses otChangeValueP to persist the change', function() {
+        it('and calls it with undefined', function() {
+          expect(scope.otChangeValueP).toHaveBeenCalledWith(undefined);
+        });
+
+        describe('on successful save', function() {
+          beforeEach(function() {
+            deferred.resolve();
+            scope.$apply();
+          });
+
+          it('sets fieldData.value to undefined', function() {
+            expect(scope.fieldData.value).toBeUndefined();
+          });
+
+          it('sets youtubeUrl to undefined', function() {
+            expect(scope.youtubeUrl).toBeUndefined();
+          });
+        });
+      });
+    });
 
     describe('handlePlayerFailure', function() {
       expectPlayerIsLoadingToBeFalsyAfter('handlePlayerFailure');

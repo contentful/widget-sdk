@@ -1,10 +1,13 @@
 %input.form-control.cf-youtube-editor(
-  ng-model="url")
+  ng-model="fieldData.value"
+  ot-bind-text=''
+  ot-subdoc=''
+  type="text")
 
 %i.fa.fa-spinner.fa-spin(ng-show="isPlayerLoading")
 %i.fa.fa-times-circle(
   ng-click="handleClickOnRemoveSign()"
-  ng-show="url && !isPlayerLoading")
+  ng-show="youtubeUrl && !isPlayerLoading")
 
 %div(ng-show="errorMessage" class="warning")
   %i.fa.fa-exclamation-triangle
@@ -12,7 +15,7 @@
       {{errorMessage}}
 
 %cf-youtube-player(
-  ng-show="url && isPlayerReady"
+  ng-show="youtubeUrl && isPlayerReady"
   on-ready="handlePlayerReady(); playerController.startWatchingYoutubeUrl()"
   on-failure="handlePlayerFailure()"
   on-ready-to-play-video="handlePlayerReadyToPlayVideo()"

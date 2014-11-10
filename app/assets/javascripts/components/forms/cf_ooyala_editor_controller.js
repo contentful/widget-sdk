@@ -14,18 +14,19 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
 
   var debouncedFetchAssetInfoFromOoyala = debounce(fetchAssetInfoFromOoyala, 750);
 
-  $scope.$watch('assetId', watchAssetId);
+  $scope.$watch('fieldData.value', fetchAssetInfo);
 
-  $scope.isLoading = false;
+  $scope.isLoading   = false;
   $scope.playerReady = false;
 
-  $scope.handleClickOnRemoveSign = handleClickOnRemoveSign;
-  $scope.handlePlayerReady       = handlePlayerReady;
-  $scope.handlePlayerLoadFailure = handlePlayerLoadFailure;
+  $scope.handleClickOnRemoveSign       = handleClickOnRemoveSign;
+  $scope.handlePlayerReady             = handlePlayerReady;
+  $scope.handlePlayerLoadFailure       = handlePlayerLoadFailure;
   $scope.handlePlayerFailedToPlayVideo = handlePlayerFailedToPlayVideo;
 
+  function fetchAssetInfo(assetId) {
+    $scope.assetId = assetId;
 
-  function watchAssetId(assetId) {
     if(!_.isEmpty(assetId)){
       $scope.errorMessage = undefined;
       $scope.isLoading    = true;
@@ -33,8 +34,6 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
 
       debouncedFetchAssetInfoFromOoyala();
     }
-
-    $scope.otBindInternalChangeHandler();
   }
 
   function fetchAssetInfoFromOoyala() {
@@ -60,9 +59,11 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
   }
 
   function handleClickOnRemoveSign() {
-    $scope.assetId      = undefined;
-    $scope.errorMessage = undefined;
-    $scope.playerId     = undefined;
+    $scope.otChangeValueP(undefined).then(function(){
+      $scope.fieldData.value = undefined;
+      $scope.errorMessage    = undefined;
+      $scope.playerId        = undefined;
+    });
   }
 
   function handlePlayerReady() {

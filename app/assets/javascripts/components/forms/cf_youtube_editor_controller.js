@@ -3,7 +3,7 @@
 angular.module('contentful').controller('cfYoutubeEditorController', ['$injector', '$scope', function($injector, $scope){
   var YoutubeUrl       = $injector.get('YoutubeUrl');
 
-  $scope.$watch('url', updateYoutubeUrl);
+  $scope.$watch('fieldData.value', updateYoutubeUrl);
 
   $scope.isPlayerLoading = false;
   $scope.isPlayerReady   = false;
@@ -42,11 +42,13 @@ angular.module('contentful').controller('cfYoutubeEditorController', ['$injector
     }
 
     $scope.errorMessage = '';
-    $scope.otBindInternalChangeHandler();
   }
 
   function handleClickOnRemoveSign() {
-    $scope.url = '';
+    $scope.otChangeValueP(undefined).then(function(){
+      $scope.fieldData.value = undefined;
+      $scope.youtubeUrl      = undefined;
+    });
   }
 
 }]);
