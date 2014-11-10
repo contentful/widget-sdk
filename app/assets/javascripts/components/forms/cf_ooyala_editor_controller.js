@@ -7,6 +7,7 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
 
   var errorMessages = {
     invalidAssetID     : 'Can not load the video. Please check the content id',
+    missingCredentials : 'Missing or invalid Ooyala credentials. Please check your organizational settings or contact our support',
     playerFailedToLoad : 'Can not load the player. Please reload the page',
     playerFailedToPlayVideo : 'Can not play the video. Please reload the page'
   };
@@ -42,9 +43,19 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
         $scope.playerId    = response.player_id;
         $scope.playerReady = false;
       })
-      .catch(function(){
-        $scope.errorMessage = errorMessages.invalidAssetID;
-        $scope.isLoading    = false;
+      .catch(function(error){
+        if (error.code){
+          if (error.code == ooyalaClient.errorCodes.MISSING_CREDENTIALS)
+            $scope.errorMessage = errorMessages.missingCredentials;
+
+          if (error.code == ooyalaClient.errorCodes.INVALID_ASSET_ID)
+            $scope.errorMessage = errorMessages.invalidAssetID;
+        }
+        else {
+          $scope.errorMessage = errorMessages.playerFailedToPlayVideo;
+        }
+
+        $scope.isLoading = false;
       });
   }
 
