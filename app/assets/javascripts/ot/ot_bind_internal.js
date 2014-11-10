@@ -15,6 +15,11 @@
 //   c) Adding it to an internal ngModelController using $viewChangeListeners.$push
 // That's it. This is the procedure outlined in
 // cf_field_editor_directive.js, but simplified in a neat package.
+//
+// DO NOT CALL otBindInternalChangeHandler in a watcher on the internal value!
+// That would also trigger a ShareJS update during initialization
+// with a possibly undefined value. This is ONLY supposed to be called
+// in response to a user-change to he internal value.
 angular.module('contentful').directive('otBindInternal', ['$injector', function($injector){
   var $parse = $injector.get('$parse');
   var $q     = $injector.get('$q');
