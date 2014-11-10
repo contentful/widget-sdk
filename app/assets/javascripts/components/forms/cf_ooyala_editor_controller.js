@@ -6,10 +6,9 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
   var debounce     = $injector.get('debounce');
 
   var errorMessages = {
-    invalidAssetID     : 'Can not load the video. Please check the content id',
-    missingCredentials : 'Missing or invalid Ooyala credentials. Please check your organizational settings or contact our support',
-    playerFailedToLoad : 'Can not load the player. Please reload the page',
-    playerFailedToPlayVideo : 'Can not play the video. Please reload the page'
+    invalidAssetID     : 'Cannot load the video. Please check the content id',
+    playerFailedToLoad : 'Cannot load the player. Please reload the page',
+    playerFailedToPlayVideo : 'Cannot play the video. Please reload the page'
   };
 
   var debouncedFetchAssetInfoFromOoyala = debounce(fetchAssetInfoFromOoyala, 750);
