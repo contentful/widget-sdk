@@ -6,12 +6,13 @@ angular.module('contentful').controller('ContentTypeEditorController', ['$scope'
   var addCanMethods     = $injector.get('addCanMethods');
   var analytics         = $injector.get('analytics');
   var editingInterfaces = $injector.get('editingInterfaces');
+  var environment       = $injector.get('environment');
   var notification      = $injector.get('notification');
   var random            = $injector.get('random');
   var validation        = $injector.get('validation');
 
   $scope.fieldSchema = validation(validation.schemas.ContentType.at(['fields']).items);
-  this.interfaceEditorEnabled = $scope.user.features.showPreview;
+  this.interfaceEditorEnabled = $scope.user.features.showPreview || environment.env !== 'production';
 
   $scope.$watch('tab.params.contentType', 'contentType=tab.params.contentType');
 
@@ -36,9 +37,22 @@ angular.module('contentful').controller('ContentTypeEditorController', ['$scope'
   }
 
   function openEditingInterfaceEditor() {
-    editingInterfaces.forContentTypeWithId($scope.contentType, 'default')
+    // TODO This is a mess. We're doing four calls:
+    // 1. here getting the editinginterface
+    // 2. In TabViewController#openTab we get the contenType
+    // 3. Then we get the published Version
+    // 4. Then we get the editingInterface again
+    //
+    // First improvement would be to provide Space#getPublishedContentType
+    // Better would be to get at the content Types through the spaceContext
+    // if they are already loaded, so we don't need a ajax call at all OR, use
+    // what we have and asynchronously trigger a call to update the .data
+    // property after we have already opened the editor
+    //
+    // https://www.pivotaltracker.com/story/show/82148572
+    editingInterfaces.forContentTypeWithId($scope.publishedContentType, 'default')
     .then(function (interf) {
-      $scope.navigator.editingInterfaceEditor($scope.contentType, interf).goTo();
+      $scope.navigator.editingInterfaceEditor($scope.publishedContentType, interf).goTo();
     });
   }
 

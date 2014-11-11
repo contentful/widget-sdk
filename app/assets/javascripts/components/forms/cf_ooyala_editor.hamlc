@@ -1,0 +1,22 @@
+%input.form-control.cf-ooyala-editor(
+  ng-model="fieldData.value"
+  ot-bind-text=''
+  ot-subdoc=''
+  type="text")
+
+%i.fa.fa-spinner.fa-spin(ng-show="isLoading")
+%i.fa.fa-times-circle(
+  ng-click="handleClickOnRemoveSign()"
+  ng-show="assetId && !isLoading")
+
+%div(ng-show="errorMessage" class="warning")
+  %i.fa.fa-exclamation-triangle
+    %span
+      {{errorMessage}}
+
+%cf-ooyala-player(
+  ng-if="playerId"
+  ng-hide="!playerReady"
+  on-ready="handlePlayerReady()"
+  on-load-failure="handlePlayerLoadFailure()"
+  on-failed-to-play-video="handlePlayerFailedToPlayVideo()")

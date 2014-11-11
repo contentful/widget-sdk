@@ -14,7 +14,7 @@ angular.module('contentful').directive('cfAddDropdownButton', ['analytics', func
         }
       });
 
-      scope.$on('newContentTypePublished', function (event, contentType) {
+      scope.$on('contentTypePublished', function (event, contentType) {
         var toggle = elem.find('[cf-dropdown-toggle]');
         toggle.tooltip({
           delay: {show: 100, hide: 100},

@@ -8,6 +8,9 @@ angular.module('contentful').
 
   // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,
   // We can query the entry instead of reimplementing the checks heere
+  //
+  // TODO Most of this stuff (the actual actions, not the notifications and all the logistics around it)
+  // should be in the SpaceContext (later to become ContentTypesController)
 
   function title() {
     return '"' + $scope.contentType.getName()+ '"';
