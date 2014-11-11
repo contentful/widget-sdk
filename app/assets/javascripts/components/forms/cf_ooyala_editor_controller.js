@@ -6,25 +6,26 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
   var debounce     = $injector.get('debounce');
 
   var errorMessages = {
-    invalidAssetID     : 'Can not load the video. Please check the content id',
-    playerFailedToLoad : 'Can not load the player. Please reload the page',
-    playerFailedToPlayVideo : 'Can not play the video. Please reload the page'
+    invalidAssetID     : 'Cannot load the video. Please check the content id',
+    playerFailedToLoad : 'Cannot load the player. Please reload the page',
+    playerFailedToPlayVideo : 'Cannot play the video. Please reload the page'
   };
 
   var debouncedFetchAssetInfoFromOoyala = debounce(fetchAssetInfoFromOoyala, 750);
 
-  $scope.$watch('assetId', watchAssetId);
+  $scope.$watch('fieldData.value', fetchAssetInfo);
 
-  $scope.isLoading = false;
+  $scope.isLoading   = false;
   $scope.playerReady = false;
 
-  $scope.handleClickOnRemoveSign = handleClickOnRemoveSign;
-  $scope.handlePlayerReady       = handlePlayerReady;
-  $scope.handlePlayerLoadFailure = handlePlayerLoadFailure;
+  $scope.handleClickOnRemoveSign       = handleClickOnRemoveSign;
+  $scope.handlePlayerReady             = handlePlayerReady;
+  $scope.handlePlayerLoadFailure       = handlePlayerLoadFailure;
   $scope.handlePlayerFailedToPlayVideo = handlePlayerFailedToPlayVideo;
 
+  function fetchAssetInfo(assetId) {
+    $scope.assetId = assetId;
 
-  function watchAssetId(assetId) {
     if(!_.isEmpty(assetId)){
       $scope.errorMessage = undefined;
       $scope.isLoading    = true;
@@ -32,8 +33,6 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
 
       debouncedFetchAssetInfoFromOoyala();
     }
-
-    $scope.otBindInternalChangeHandler();
   }
 
   function fetchAssetInfoFromOoyala() {
@@ -42,16 +41,28 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
         $scope.playerId    = response.player_id;
         $scope.playerReady = false;
       })
-      .catch(function(){
-        $scope.errorMessage = errorMessages.invalidAssetID;
-        $scope.isLoading    = false;
+      .catch(function(error){
+        if (error.code){
+          if (error.code == ooyalaClient.errorCodes.MISSING_CREDENTIALS)
+            $scope.errorMessage = errorMessages.missingCredentials;
+
+          if (error.code == ooyalaClient.errorCodes.INVALID_ASSET_ID)
+            $scope.errorMessage = errorMessages.invalidAssetID;
+        }
+        else {
+          $scope.errorMessage = errorMessages.playerFailedToPlayVideo;
+        }
+
+        $scope.isLoading = false;
       });
   }
 
   function handleClickOnRemoveSign() {
-    $scope.assetId      = undefined;
-    $scope.errorMessage = undefined;
-    $scope.playerId     = undefined;
+    $scope.otChangeValueP(undefined).then(function(){
+      $scope.fieldData.value = undefined;
+      $scope.errorMessage    = undefined;
+      $scope.playerId        = undefined;
+    });
   }
 
   function handlePlayerReady() {

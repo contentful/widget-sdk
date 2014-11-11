@@ -1,5 +1,8 @@
 %input.form-control.cf-ooyala-editor(
-  ng-model="assetId")
+  ng-model="fieldData.value"
+  ot-bind-text=''
+  ot-subdoc=''
+  type="text")
 
 %i.fa.fa-spinner.fa-spin(ng-show="isLoading")
 %i.fa.fa-times-circle(
