@@ -1,11 +1,11 @@
 'use strict';
 
-describe('LinkEditor entity cache', function(){
-  var LinkEditorEntityCache, $rootScope, space;
+describe('Entity cache', function(){
+  var EntityCache, $rootScope, space;
   beforeEach(function () {
     module('contentful/test');
     inject(function ($injector) {
-      LinkEditorEntityCache = $injector.get('LinkEditorEntityCache');
+      EntityCache = $injector.get('EntityCache');
       $rootScope = $injector.get('$rootScope');
       space = {
         getEntries: sinon.stub(),
@@ -16,7 +16,7 @@ describe('LinkEditor entity cache', function(){
 
   describe('save', function(){
     it('should add an entity to the cache', function(){
-      var entityCache = new LinkEditorEntityCache(space, 'getEntries');
+      var entityCache = new EntityCache(space, 'getEntries');
       var entity = {getId:_.constant(5)};
       entityCache.save(entity);
       entityCache.getAll([5])
@@ -27,12 +27,12 @@ describe('LinkEditor entity cache', function(){
       $rootScope.$apply();
     });
   });
-  
+
   describe('getAll', function(){
     var entityCache, locals, remotes;
 
     beforeEach(function () {
-      entityCache = new LinkEditorEntityCache(space, 'getEntries');
+      entityCache = new EntityCache(space, 'getEntries');
       locals  = makeEntities( 0,10);
       remotes = makeEntities(10,20);
     });
@@ -50,7 +50,7 @@ describe('LinkEditor entity cache', function(){
       });
       space.getEntries.returns(_.first(remotes, 4));
     });
-    
+
     it('should make a call to the space', function () {
       entityCache.getAll([2,4,6,8]);
       expect(space.getEntries.args[0][0]).toEqual({
@@ -69,7 +69,44 @@ describe('LinkEditor entity cache', function(){
       expect(space.getEntries.calledTwice).toBe(true);
     });
   });
-    
+
+  describe('get', function() {
+    it('should get an entity from the cache', function(){
+      var entityCache = new EntityCache(space, 'getEntries');
+      var entity = {getId:_.constant(5)};
+      entityCache.save(entity);
+      expect(entityCache.get(5)).toBe(entity);
+      expect(space.getEntries).not.toBeCalled();
+      $rootScope.$apply();
+    });
+
+    it('should not get an entity from the cache', function(){
+      var entityCache = new EntityCache(space, 'getEntries');
+      var entity = {getId:_.constant(5)};
+      expect(entityCache.get(5)).not.toBe(entity);
+      expect(space.getEntries).not.toBeCalled();
+      $rootScope.$apply();
+    });
+  });
+
+  describe('has', function() {
+    it('should check if an entity is in the cache', function(){
+      var entityCache = new EntityCache(space, 'getEntries');
+      var entity = {getId:_.constant(5)};
+      entityCache.save(entity);
+      expect(entityCache.has(5)).toBe(true);
+      expect(space.getEntries).not.toBeCalled();
+      $rootScope.$apply();
+    });
+
+    it('should not check if an entity is not in cache', function(){
+      var entityCache = new EntityCache(space, 'getEntries');
+      expect(entityCache.has(5)).toBe(false);
+      expect(space.getEntries).not.toBeCalled();
+      $rootScope.$apply();
+    });
+  });
+
   function makeEntities(min, max) {
     var entities = new Array(max-min);
     for(var i = min; i < max; i++) {

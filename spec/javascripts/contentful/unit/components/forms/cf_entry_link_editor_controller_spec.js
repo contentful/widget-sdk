@@ -3,7 +3,7 @@
 describe('EntryLinkEditorController', function () {
   var linkEditorCtrl, createController;
   var scope, entry, $q, stubs, attrs;
-  var shareJSMock, linkEditorCacheMock;
+  var shareJSMock, entityCacheMock;
 
   function validationParser(arg) {
     return arg;
@@ -24,14 +24,14 @@ describe('EntryLinkEditorController', function () {
         mkpath: sinon.stub()
       };
 
-      linkEditorCacheMock = sinon.stub();
-      linkEditorCacheMock.returns({
+      entityCacheMock = sinon.stub();
+      entityCacheMock.returns({
         save: stubs.save,
         getAll: stubs.getAll
       });
 
       $provide.value('ShareJS', shareJSMock);
-      $provide.value('LinkEditorEntityCache', linkEditorCacheMock);
+      $provide.value('EntityCache', entityCacheMock);
       $provide.constant('validation', {
         Validation: {
           parse: validationParser
@@ -88,7 +88,7 @@ describe('EntryLinkEditorController', function () {
     });
 
     it('initializes entity cache', function() {
-      expect(linkEditorCacheMock).toBeCalledWith(scope.spaceContext.space, 'getEntries');
+      expect(entityCacheMock).toBeCalledWith(scope.spaceContext.space, 'getEntries');
     });
 
     it('initializes link content types', function() {

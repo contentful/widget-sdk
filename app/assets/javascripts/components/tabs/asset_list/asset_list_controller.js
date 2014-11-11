@@ -14,6 +14,9 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
     $scope: $scope,
     currentViewLocation: 'tab.params.view'
   });
+
+  $scope.entityStatusController = $controller('EntityStatusController', {$scope: $scope});
+
   $scope.searchController = $controller('AssetSearchController', {
     $scope:         $scope,
     getSearchTerm:  getSearchTerm
@@ -39,20 +42,6 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
 
   $scope.hasQuery = function () {
     return !_.isEmpty($scope.tab.params.view.searchTerm);
-  };
-
-  $scope.statusClass = function(asset){
-    if (asset.isPublished()) {
-      if (asset.hasUnpublishedChanges()) {
-        return 'updated';
-      } else {
-        return 'published';
-      }
-    } else if (asset.isArchived()) {
-      return 'archived';
-    } else {
-      return 'draft';
-    }
   };
 
   var throttledListRefresh = throttle(function () {

@@ -3,7 +3,9 @@
   .file-preview(cf-file-preview="" ng-show="file && file.url" preview-size="fullscreen")
     .loading(ng-show="loadingEditor")
     .vcenter(cf-thumbnail="" file="file" ng-if="file && !loadingEditor")
-    .linked-entities__unpublished(ng-show="entity && entity.canPublish()" tooltip-placement="right" tooltip="This asset hasn't been published")
+    .linked-entities__status(ng-show="entity" ng-class="entityStatusController.getClassname(entity)")
+      .status-bar
+
 
   .file-progress.progress.center(ng-show="file|isFileProcessing")
     %p Processing…

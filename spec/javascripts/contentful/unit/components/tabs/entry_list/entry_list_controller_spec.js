@@ -466,40 +466,6 @@ describe('Entry List Controller', function () {
   });
 
 
-  describe('status class', function () {
-    beforeEach(function() {
-      createController();
-    });
-
-    it('is updated', function () {
-      var entry = makeEntry();
-      stubs.published.returns(true);
-      stubs.hasUnpublishedChanges.returns(true);
-      expect(scope.statusClass(entry)).toBe('updated');
-    });
-
-    it('is published', function () {
-      var entry = makeEntry();
-      stubs.published.returns(true);
-      stubs.hasUnpublishedChanges.returns(false);
-      expect(scope.statusClass(entry)).toBe('published');
-    });
-
-    it('is archived', function () {
-      var entry = makeEntry();
-      stubs.published.returns(false);
-      stubs.archived.returns(true);
-      expect(scope.statusClass(entry)).toBe('archived');
-    });
-
-    it('is draft', function () {
-      var entry = makeEntry();
-      stubs.published.returns(false);
-      stubs.archived.returns(false);
-      expect(scope.statusClass(entry)).toBe('draft');
-    });
-  });
-
   describe('when tab becomes active', function () {
     beforeEach(function() {
       createController();

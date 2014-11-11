@@ -131,6 +131,16 @@ filters.filter('isDisplayableAsTitle', function () {
   };
 });
 
+filters.filter('truncate', function () {
+  return function (str, length) {
+    if(str && str.length > length) {
+      return str.substr(0, length)+'…';
+    }
+    return str;
+  };
+});
+
+
 filters.filter('truncateMiddle', function () {
   return function (str, maxLength, endOfStrLength) {
     if(str && str.length > maxLength) {

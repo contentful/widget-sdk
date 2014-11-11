@@ -1,10 +1,10 @@
 'use strict';
-angular.module('contentful').factory('EntityCache', ['$rootScope', '$q', 'logger', function($rootScope, $q, logger){
+angular.module('contentful').factory('EntityListCache', ['$rootScope', '$q', 'logger', function($rootScope, $q, logger){
 
   // params:
   // - space
   // - entityType
-  function EntityCache(params){
+  function EntityListCache(params){
     this.params = params;
     this.fetchMethod = getFetchMethod(params.entityType);
     this.locale = params.space.getDefaultLocale().code;
@@ -14,7 +14,7 @@ angular.module('contentful').factory('EntityCache', ['$rootScope', '$q', 'logger
     this.inProgress = false;
   }
 
-  EntityCache.prototype = {
+  EntityListCache.prototype = {
     has: function (id) {
       return !!this.cache[id];
     },
@@ -136,5 +136,5 @@ angular.module('contentful').factory('EntityCache', ['$rootScope', '$q', 'logger
     return (entity.sys ? entity.sys.id : entity.data.sys.id) || null;
   }
 
-  return EntityCache;
+  return EntityListCache;
 }]);

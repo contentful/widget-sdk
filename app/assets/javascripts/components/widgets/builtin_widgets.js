@@ -129,6 +129,16 @@ angular.module('contentful').run(['widgets', function(widgets){
     name: 'Entry Links List',
     template: '<div cf-entry-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
+  widgets.registerWidget('entryCardEditor',{
+    fieldTypes: ['Entry'],
+    name: 'Entry Card',
+    template: '<div cf-entry-card-editor cf-link-editor ng-model="fieldData.value"></div>'
+  });
+  widgets.registerWidget('entryCardsEditor',{
+    fieldTypes: ['Entries'],
+    name: 'Entry Cards',
+    template: '<div cf-entry-card-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
+  });
   widgets.registerWidget('assetLinksEditor',{
     fieldTypes: ['Assets'],
     name: 'Asset Links List',

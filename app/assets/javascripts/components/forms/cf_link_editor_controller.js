@@ -1,12 +1,13 @@
 'use strict';
 
 angular.module('contentful').controller('LinkEditorController',
-  ['$scope', '$injector', 'ngModel', 'linkParams', 'setValidationType', 'getLinkDescription',
-    function ($scope, $injector, ngModel, linkParams, setValidationType, getLinkDescription) {
+  ['$scope', '$injector', 'ngModel', 'linkParams', 'setValidationType',
+    function ($scope, $injector, ngModel, linkParams, setValidationType) {
 
   var $parse                = $injector.get('$parse');
+  var $controller           = $injector.get('$controller');
   var $q                    = $injector.get('$q');
-  var LinkEditorEntityCache = $injector.get('LinkEditorEntityCache');
+  var EntityCache           = $injector.get('EntityCache');
   var ShareJS               = $injector.get('ShareJS');
   var logger                = $injector.get('logger');
   var validation            = $injector.get('validation');
@@ -20,20 +21,24 @@ angular.module('contentful').controller('LinkEditorController',
       $scope.field.items.validations :
       $scope.field.validations;
 
+  $scope.entityStatusController = $controller('EntityStatusController', {$scope: $scope});
+
   $scope.links = [];
   $scope.linkedEntities = [];
 
   $scope.linkMultiple = linkParams.multiple;
   $scope.linkSingle   = !$scope.linkMultiple;
 
-  initCache(linkParams.type);
+  this.lookupEntitiesForCache = lookupEntitiesForCache;
+
+  entityCache = new EntityCache($scope.spaceContext.space, linkParams.fetchMethod);
   initValidations();
 
   $scope.$watch('links', function (links, old, scope) {
     if (!links || links.length === 0) {
       $scope.linkedEntities = [];
     } else {
-      lookupEntities(links).then(function (entities) {
+      lookupEntitiesForCache(links, entityCache).then(function (entities) {
         scope.linkedEntities = markMissing(entities);
       });
     }
@@ -115,15 +120,7 @@ angular.module('contentful').controller('LinkEditorController',
     }
   };
 
-  $scope.linkDescription = function(entity) {
-    if (entity && !entity.isMissing && entity.getId()) {
-      return getLinkDescription(entity);
-    } else {
-      return '(Missing entity)';
-    }
-  };
-
-  function lookupEntities(links) {
+  function lookupEntitiesForCache(links, cache) {
     var ids = _.map(links, function (link) {
       if(!link){
         logger.logError('link object doesnt exist', {
@@ -135,11 +132,7 @@ angular.module('contentful').controller('LinkEditorController',
       }
       return link.sys.id;
     });
-    return entityCache.getAll(ids);
-  }
-
-  function initCache() {
-    entityCache = new LinkEditorEntityCache($scope.spaceContext.space, linkParams.fetchMethod);
+    return cache.getAll(ids);
   }
 
   function initValidations() {
