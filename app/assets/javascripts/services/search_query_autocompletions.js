@@ -184,7 +184,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
 
     // Tells if a field is searchable or not
     function fieldSearchable(field) {
-      return !field.disabled && !field.type.match(/Location|Object|Array|File/);
+      return !field.disabled && !field.type.match(/Location|Object|File/);
     }
   }
 
@@ -286,7 +286,12 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
         var queryKey = 'fields.'+ apiNameOrId(field) + queryOperator(operator);
         if (field.type === 'Text') queryKey = queryKey + '[match]';
         if (field.type === 'Boolean') value = value.match(/yes|true/i) ? 'true' : false;
-        if (field.type === 'Link') queryKey = 'fields.'+apiNameOrId(field)+'.sys.id';
+        if (field.type === 'Link') {
+          queryKey = 'fields.'+apiNameOrId(field)+'.sys.id';
+        }
+        if (field.type === 'Array' && field.items.type == 'Link') {
+          queryKey = 'fields.'+apiNameOrId(field)+'.sys.id';
+        }
         q[queryKey] = value;
       });
     }
