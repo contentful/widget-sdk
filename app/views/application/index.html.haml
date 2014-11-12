@@ -3,6 +3,8 @@
   %meta(charset="UTF-8")
   %title Contentful
   = stylesheet_link_tag "application", :media => "all"
+  /[if IE 9]
+    = stylesheet_link_tag "ie9", :media => "all"
   = csrf_meta_tags
   %link{:rel => "shortcut icon",    :href => asset_path("favicons/favicon32x32.png"),       :type => "image/png"}
   %link{:rel => "apple-touch-icon", :href => asset_path("favicons/apple_icon57x57.png"),    :type => "image/png"}
