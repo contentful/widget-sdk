@@ -1,0 +1,44 @@
+.tab-header__title {
+  float: left;
+}
+
+.tab-header__search {
+  float: left;
+  width: 60%;
+}
+
+.tab-header__actions {
+  float: right;
+  width: 17%;
+  height: 66px;
+  padding-top: 20px;
+}
+
+.tab-header__actions > * {
+  float: right
+}
+
+.tab-header__search .select-box,
+.tab-header__search .l-search-w-autocomplete,
+.tab-header__search .search-results-position {
+  float: left;
+}
+
+.tab-header__search .select-box {
+  width: 20%;
+}
+
+.tab-header__search .l-search-w-autocomplete {
+  width: 55%;
+}
+
+.tab-header__search .search-results-position {
+  width: 18%;
+}
+.tab-header__search .search-results-position > * {
+  float: left;
+}
+
+.tab-list .plain-list--item {
+  float: left;
+}
