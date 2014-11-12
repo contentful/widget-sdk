@@ -177,7 +177,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
       if (!contentType) return [];
       return _.transform(contentType.data.fields, function (fieldIds, field) {
         if (fieldSearchable(field)) fieldIds.push({
-          value: field.id,
+          value: apiNameOrId(field),
           description: field.name});
       });
     }
@@ -281,7 +281,9 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
     function createFieldQuery(key, operator, value, contentType) {
       var field = findField(key, contentType);
       if (field) return _.tap({}, function (q) {
-        var queryKey = 'fields.'+field.id + queryOperator(operator);
+        // TODO Using apiNameOrId here is a temporary solution while the backend doesn't honor
+        // the Skip-Transformation header for field.ids in searches
+        var queryKey = 'fields.'+ apiNameOrId(field) + queryOperator(operator);
         if (field.type === 'Text') queryKey = queryKey + '[match]';
         if (field.type === 'Boolean') value = value.match(/yes|true/i) ? 'true' : false;
         q[queryKey] = value;
@@ -300,6 +302,14 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
            op == '>'  ? '[gt]'  :
            op == '!=' ? '[ne]'  :
            '';
+  }
+
+  function apiNameOrId(field) {
+    if (field.apiName) {
+      return field.apiName;
+    } else {
+      return field.id;
+    }
   }
 
   function sizeParser(exp) {
@@ -323,9 +333,13 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
   // COMPLETIONS + PAIRTOREQUESTOBJECT
   function findField(key, contentType) {
     var fields = contentType ? contentType.data.fields : [];
-    return _.find(fields, {id: key}) || _.find(fields, function (field) {
+    return _.find(fields, match) || _.find(fields, function (field) {
       return field.name.toLowerCase() == key.toLowerCase();
     });
+
+    function match(field) {
+      return apiNameOrId(field) === key;
+    }
   }
 
   function makeListCompletion(values) {
