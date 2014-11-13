@@ -71,7 +71,8 @@ angular.module('contentful').controller('cfOoyalaMultiAssetEditorController', ['
     modalDialog.open({
       scope: $scope,
       template: 'cf_ooyala_search_dialog'
-    }).then(function(selection){
+    })
+    .promise.then(function(selection){
       _.each(selection, function(video){ addAsset({assetId: video.id}); });
     });
   }

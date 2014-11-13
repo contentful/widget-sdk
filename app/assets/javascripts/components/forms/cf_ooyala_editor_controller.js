@@ -51,7 +51,8 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
     modalDialog.open({
       scope: $scope,
       template: 'cf_ooyala_search_dialog'
-    }).then(function(video){
+    })
+    .promise.then(function(video){
       $scope.otChangeValueP(video.id).then(function(){
         $scope.fieldData.value = video.id;
       });
