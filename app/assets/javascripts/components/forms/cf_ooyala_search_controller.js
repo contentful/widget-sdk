@@ -35,7 +35,7 @@ angular.module('contentful').controller('cfOoyalaSearchController', ['$scope', '
 
   function queryOoyala() {
     search = new OoyalaSearch({organizationId: $scope.spaceContext.space.getOrganizationId()});
-    search.where('description', $scope.ooyala.search).limit(10);
+    search.where('name', $scope.ooyala.search).limit(10);
     search.run()
       .then(searchDone)
       .catch(processError);
