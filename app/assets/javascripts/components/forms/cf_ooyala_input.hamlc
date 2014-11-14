@@ -1,5 +1,5 @@
 .video-widget-input
-  %input.form-control.video-widget-selection__video-id(
+  %input.form-control.video-widget-input__video-id(
     ng-class="{videoInput.searchEnabled: video-widget-input--search-enabled}"
     ng-model="videoInput.assetId")
 
@@ -8,7 +8,7 @@
     ng-click="inputController.resetField()"
     ng-show="videoInput.assetId && !videoInput.isLoading")
 
-  %button.btn.btn--form.btn--tertiary.add-new.video-widget-selection__search(type="button"
+  %button.btn.btn--form.btn--tertiary.add-new.video-widget-input__search(type="button"
     ng-class="{videoInput.searchEnabled: video-widget-input--search-enabled}"
     ng-click="inputController.launchSearchDialog()")
     %i.fa.fa-search

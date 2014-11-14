@@ -4,7 +4,7 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
 
   var OoyalaErrorMessages = $injector.get('OoyalaErrorMessages');
 
-  $scope.playerReady   = false;
+  $scope.isPlayerReady = false;
   $scope.selectedVideo = {};
   $scope.searchConfig  = {
     onSelection : useSelectedAsset,
@@ -23,7 +23,7 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
   this.showErrors                 = showErrors;
 
   function addAsset(asset) {
-    $scope.playerReady            = false;
+    $scope.isPlayerReady          = false;
     $scope.selectedVideo.assetId  = asset.assetId;
     $scope.selectedVideo.playerId = asset.playerId;
   }
@@ -63,8 +63,8 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
      *
      * */
 
-    $scope.errorMessage = undefined;
-    $scope.playerReady  = true;
+    $scope.errorMessage  = undefined;
+    $scope.isPlayerReady = true;
   }
 
   function handlePlayerLoadFailure() {

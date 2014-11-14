@@ -10,39 +10,40 @@
   .video-widget-warning__message
     %p {{ooyalaMulti.error}}
 
-%ul.multi-video-widget__items(ui-sortable="linkSortOptions" ng-model="ooyalaMulti.assets")
-  %li.multi-video-widget__item(
-    ng-repeat="asset in ooyalaMulti.assets track by asset._trackId"
-    ng-controller="cfOoyalaMultiAssetItemController as multiAssetItemController")
+.video-widget-editor__content-wrapper(ng-show="ooyalaMulti.assets.length > 0")
+  %ul.multi-video-widget__items(ui-sortable="linkSortOptions" ng-model="ooyalaMulti.assets")
+    %li.multi-video-widget__item(
+      ng-repeat="asset in ooyalaMulti.assets track by asset._trackId"
+      ng-controller="cfOoyalaMultiAssetItemController as multiAssetItemController")
 
-    .video-widget-editor__warning(ng-show="error")
-      %i.fa.fa-exclamation-triangle
-      .video-widget-warning__message
-        %p An error happened while loading the player for the asset {{asset.assetId}}
-        %p {{error}}
+      .video-widget-editor__warning(ng-show="error")
+        %i.fa.fa-exclamation-triangle
+        .video-widget-warning__message
+          %p An error happened while loading the player for the asset {{asset.assetId}}
+          %p {{error}}
 
-        %i.fa.fa-times-circle(
-          title="Remove asset"
-          ng-click="multiAssetEditorController.removeAsset($index, asset)")
+          %i.fa.fa-times-circle(
+            title="Remove asset"
+            ng-click="multiAssetEditorController.removeAsset($index, asset)")
 
-    .video-widget-editor__loading-info(ng-show="!isPlayerReady && !error")
-      Loading player for asset {{asset.assetId}}
-      %i.fa.fa-spinner.fa-spin
+      .video-widget-editor__loading-info(ng-show="!isPlayerReady && !error")
+        Loading player for asset {{asset.assetId}}
+        %i.fa.fa-spinner.fa-spin
 
-    %div(ng-show="isPlayerReady")
+      %div(ng-show="isPlayerReady")
 
-      %i.fa.fa-times-circle(ng-click="multiAssetEditorController.removeAsset($index, asset)")
+        %i.fa.fa-times-circle(ng-click="multiAssetEditorController.removeAsset($index, asset)")
 
-      .multi-video-widget-item__handle(cf-drag-handle="")
-        %i.fa.fa-ellipsis-v
-        %i.fa.fa-ellipsis-v
+        .multi-video-widget-item__handle(cf-drag-handle="")
+          %i.fa.fa-ellipsis-v
+          %i.fa.fa-ellipsis-v
 
-      .multi-video-widget-item__title
-        {{asset.title}}
+        .multi-video-widget-item__title
+          {{asset.title}}
 
-      %cf-ooyala-player.widget-ooyala-player.multi-video-widget-item__player(
-        ng-if="asset.playerId"
-        asset-id="asset.assetId"
-        player-id="asset.playerId"
-        show-title="false"
-        on-ready="multiAssetItemController.notifyPlayerIsReady()")
+        %cf-ooyala-player.widget-ooyala-player.multi-video-widget-item__player(
+          ng-if="asset.playerId"
+          asset-id="asset.assetId"
+          player-id="asset.playerId"
+          show-title="false"
+          on-ready="multiAssetItemController.notifyPlayerIsReady()")
