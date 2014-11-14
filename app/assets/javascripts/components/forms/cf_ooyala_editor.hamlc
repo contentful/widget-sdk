@@ -1,19 +1,10 @@
-%.video-widget-selection
-  %input.form-control.video-widget-selection__video-id(
-    ng-model="fieldData.value"
-    ot-bind-text=''
-    ot-subdoc=''
-    type="text")
-
-  %i.fa.fa-spinner.fa-spin(ng-show="isLoading")
-  %i.fa.fa-times-circle(
-    ng-click="handleClickOnRemoveSign()"
-    ng-show="selectedVideo.assetId && !isLoading")
-
-  %button.btn.btn--form.btn--tertiary.add-new.video-widget-selection__search(type="button"
-    ng-click="handleClickOnSearchButton()")
-    %i.fa.fa-search
-    Search
+%cf-ooyala-input(
+  value="{{fieldData.value}}"
+  search-config="searchConfig"
+  on-change="ooyalaEditorController.resetErrorsAndCurrentAsset(); ooyalaEditorController.persistInput(input)"
+  on-reset="ooyalaEditorController.resetEditorInput()"
+  on-valid-asset-id="ooyalaEditorController.addAsset(asset)"
+  on-invalid-asset-id="ooyalaEditorController.showErrors(error)")
 
 .video-widget-editor__warning(ng-show="errorMessage")
   %i.fa.fa-exclamation-triangle

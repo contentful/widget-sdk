@@ -1,7 +1,9 @@
 %cf-ooyala-input(
+  search-config="searchConfig"
+  on-change="multiAssetEditorController.resetErrors()"
   on-reset="multiAssetEditorController.resetEditorInput()"
   on-valid-asset-id="multiAssetEditorController.addAsset(asset)"
-  on-invalid-asset-id="multiAssetEditorController.showError(error)")
+  on-invalid-asset-id="multiAssetEditorController.showErrors(error)")
 
 .video-widget-editor__warning(ng-show="ooyalaMulti.error")
   %i.fa.fa-exclamation-triangle

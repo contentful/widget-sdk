@@ -79,12 +79,12 @@ angular.module('contentful').controller('cfOoyalaSearchController', ['$scope', '
   }
 
   function selectVideo(video) {
-    $scope.selection.unshift(video);
-
     if (!isMultipleSelectionEnabled()){
       $scope.selection.pop();
       $scope.$broadcast('video:selected', {video: video});
     }
+
+    $scope.selection.unshift(video);
   }
 
   function deselectVideo(video) {

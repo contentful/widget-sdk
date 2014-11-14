@@ -3,28 +3,35 @@
 angular.module('contentful').controller('cfOoyalaInputController', ['$attrs', '$scope', '$injector', function($attrs, $scope, $injector){
 
   var debounce                          = $injector.get('debounce');
-  var ooyalaClient            = $injector.get('ooyalaClient');
+  var ooyalaClient                      = $injector.get('ooyalaClient');
+  var modalDialog                       = $injector.get('modalDialog');
   var debouncedFetchAssetInfoFromOoyala = debounce(fetchAssetInfoFromOoyala, 750);
 
   ooyalaClient.setOrganizationId($scope.spaceContext.space.getOrganizationId());
 
-  $scope.ooyalaInput = {isLoading: false};
+  $scope.videoInput = _.extend({isLoading: false}, {
+    assetId       : $attrs.value,
+    searchEnabled : $scope.$eval($attrs.searchEnabled),
+    searchConfig  : $scope.$eval($attrs.searchConfig)
+  });
 
-  $scope.$watch('ooyalaInput.assetId', fetchAssetInfo);
+  $attrs.$observe('value', updateAssetId);
+  $scope.$watch('videoInput.assetId', fetchAssetInfo);
 
   this.clearField = clearField;
   this.resetField = resetField;
+  this.launchSearchDialog = launchSearchDialog;
 
   function clearField() {
-    $scope.ooyalaInput.assetId   = undefined;
+    $scope.videoInput.assetId   = undefined;
   }
 
   function clearLoadingFlag(){
-    $scope.ooyalaInput.isLoading = false;
+    $scope.videoInput.isLoading = false;
   }
 
   function setLoadingFlag() {
-    $scope.ooyalaInput.isLoading = true;
+    $scope.videoInput.isLoading = true;
   }
 
   function resetField() {
@@ -32,7 +39,27 @@ angular.module('contentful').controller('cfOoyalaInputController', ['$attrs', '$
     evalOnResetFieldCallback();
   }
 
+  function updateAssetId(assetId) {
+    $scope.videoInput.assetId = assetId;
+  }
+
+  function launchSearchDialog() {
+    $scope.searchConfig.scope.ooyalaSearch = {
+      isMultipleSelectionEnabled: $scope.searchConfig.isMultipleSelectionEnabled
+    };
+
+    modalDialog.open({
+      scope: $scope.searchConfig.scope,
+      template: $scope.searchConfig.template
+    })
+    .promise.then(function(selection){
+      $scope.searchConfig.onSelection(selection);
+    });
+  }
+
   function fetchAssetInfo(assetId) {
+    $scope.$eval($attrs.onChange, {input: assetId});
+
     if (assetId) {
       setLoadingFlag();
       debouncedFetchAssetInfoFromOoyala();
@@ -48,8 +75,8 @@ angular.module('contentful').controller('cfOoyalaInputController', ['$attrs', '$
      * this function is called (after the debouncing period)
      * the field can be empty
      */
-    if (!_.isEmpty($scope.ooyalaInput.assetId)){
-      ooyalaClient.asset($scope.ooyalaInput.assetId)
+    if (!_.isEmpty($scope.videoInput.assetId)){
+      ooyalaClient.asset($scope.videoInput.assetId)
         .then(evalOnValidAssetIdCallback)
         .catch(evalOnInvalidAssetIdCallback)
         .finally(clearLoadingFlag);
@@ -58,7 +85,7 @@ angular.module('contentful').controller('cfOoyalaInputController', ['$attrs', '$
 
   function evalOnValidAssetIdCallback(response) {
     $scope.$eval($attrs.onValidAssetId, { asset: {
-      assetId: $scope.ooyalaInput.assetId,
+      assetId: $scope.videoInput.assetId,
       playerId: response.player_id }
     });
   }

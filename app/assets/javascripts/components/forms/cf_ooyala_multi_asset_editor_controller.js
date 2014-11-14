@@ -6,6 +6,12 @@ angular.module('contentful').controller('cfOoyalaMultiAssetEditorController', ['
   var modalDialog = $injector.get('modalDialog');
 
   $scope.ooyalaMulti = {assets: []};
+  $scope.searchConfig  = {
+    isMultipleSelectionEnabled: true,
+    onSelection : useSelectedAssets,
+    scope       : $scope,
+    template    : 'cf_ooyala_search_dialog'
+  };
 
   $scope.$watch('fielData.value', function(){
     if (_.isArray($scope.fieldData.value)) {
@@ -14,10 +20,10 @@ angular.module('contentful').controller('cfOoyalaMultiAssetEditorController', ['
   });
 
   this.addAsset         = addAsset;
-  this.showError        = showError;
+  this.showErrors       = showErrors;
   this.removeAsset      = removeAsset;
+  this.resetErrors      = resetErrors;
   this.resetEditorInput = resetEditorInput;
-  this.showSearchDialog = showSearchDialog;
 
   function addAsset(asset) {
     var assetObject, cb, promise;
@@ -51,6 +57,10 @@ angular.module('contentful').controller('cfOoyalaMultiAssetEditorController', ['
     cb.promise.then(function () { $scope.ooyalaMulti.assets.splice(index,1); });
   }
 
+  function resetErrors() {
+    $scope.ooyalaMulti.error = undefined;
+  }
+
   function resetEditorInput() {
     $scope.ooyalaMulti.error = undefined;
   }
@@ -62,19 +72,12 @@ angular.module('contentful').controller('cfOoyalaMultiAssetEditorController', ['
     };
   }
 
-  function showError(error){
+  function showErrors(error){
     $scope.ooyalaMulti.error = error.message;
   }
 
-  function showSearchDialog() {
-    $scope.ooyalaSearch = {isMultipleSelectionEnabled: true};
-    modalDialog.open({
-      scope: $scope,
-      template: 'cf_ooyala_search_dialog'
-    })
-    .promise.then(function(selection){
-      _.each(selection, function(video){ addAsset({assetId: video.id}); });
-    });
+  function useSelectedAssets(selection) {
+    _.each(selection, function(video){ addAsset({assetId: video.id}); });
   }
 
   function createAssetObjects(assetIds) {
