@@ -95,7 +95,7 @@ $input-width    = 80%
     display: none
 
   .oo_promo
-    top: 0px;
+    top: 0px
 
   .oo_controls_wrap
     position: static !important
@@ -173,6 +173,14 @@ $input-width    = 80%
   float : left
   margin: 5px 10px 20px
 
+  .video-dialog-result__controls-bar
+    height: 26px
+    width: 100%
+    background-color: $gray-lighter
+    position: absolute
+    top: 0
+    opacity: 0.55
+
   .fa-stack, .fa-play, .fa-close
     display: none
     position: absolute
@@ -186,28 +194,19 @@ $input-width    = 80%
     top: 7px
     left: 8px
 
-  .controls-bar
-    display: none
-    height: 26px
-    width: 100%
-    background-color: $gray-lighter
-    position: absolute
-    top: 0
-    opacity: 0.55
-
   &.hover
-    .controls-bar, .fa-stack, .fa-play
+    .fa-stack, .fa-play
       display: block
 
   &.selected
-    .controls-bar, .fa-stack
+    .video-dialog-result__controls-bar, .fa-stack
       display: block
 
     .fa-stack
       color: $green
 
   &.playing
-    .controls-bar, .fa-close
+    .video-dialog-result__controls-bar, .fa-close
       display: block
       z-index: 99999
 
@@ -218,6 +217,23 @@ $input-width    = 80%
     .fa-stack, .fa-play
       display: none
 
+  .video-dialog-result__controls-bar
+    &.ng-hide-remove,
+    &.ng-hide-add
+      display: block !important
+      transition:0s linear all;
+
+    &.ng-hide-remove,
+    &.ng-hide-add.ng-hide-add-active
+      opacity: 0
+
+    &.ng-hide-add,
+    &.ng-hide-remove.ng-hide-remove-active
+      opacity: 0.55
+
+    &.ng-hide-remove.ng-hide-remove-active,
+    &.ng-hide-add.ng-hide-add-active
+      transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s
 
 .multi-video-widget__items
   margin-left: 0

@@ -7,6 +7,7 @@ angular.module('contentful').directive('cfOoyalaSearchResult', ['$injector', fun
     controller: 'cfOoyalaSearchResultController',
     link: function(scope, elem, attr) {
       scope.selected            = false;
+      scope.isMouseOver         = false;
       scope.showLoadingFeedback = false;
       scope.showPreview         = true;
 
@@ -23,12 +24,18 @@ angular.module('contentful').directive('cfOoyalaSearchResult', ['$injector', fun
         if (data.video != scope.video) scope.selected = false;
       }
 
-      function handleMouseOver() {
-        elem.addClass('hover');
+      function handleMouseOver(e) {
+        scope.isMouseOver = isCursorOverResult(e);
       }
 
-      function handleMouseOut() {
-        elem.removeClass('hover');
+      function handleMouseOut(e) {
+        scope.isMouseOver = isCursorOverResult(e);
+      }
+
+      function isCursorOverResult(event) {
+        var elUnderCursor = document.elementFromPoint(event.clientX, event.clientY);
+
+        return elem[0].contains(elUnderCursor);
       }
 
       function handleSelection() {
