@@ -16,6 +16,7 @@ angular.module('contentful').directive('cfOoyalaPlayer', ['$injector', function(
     scope      : true,
     template   : JST['cf_ooyala_player'](),
     controller : 'cfOoyalaPlayerController',
+    controllerAs: 'ooyalaPlayerController',
     link: function(scope, elem, attrs) {
       var player, ooyala, options, playerId, assetId;
 
@@ -30,6 +31,8 @@ angular.module('contentful').directive('cfOoyalaPlayer', ['$injector', function(
       scope.playerDOMId   = _.uniqueId(ID_PREFIX);
       scope.createPlayer  = createOoyalaPlayer;
       scope.destroyPlayer = destroyOoyalaPlayer;
+      scope.pause         = pause;
+      scope.play          = play;
 
       ooyalaPlayerLoader.load(playerId)
         .then(function(_ooyala_){
@@ -42,7 +45,7 @@ angular.module('contentful').directive('cfOoyalaPlayer', ['$injector', function(
           scope.$eval(attrs.onLoadFailure);
         });
 
-      function createOoyalaPlayer() {
+       function createOoyalaPlayer() {
         ooyala.Player.create(scope.playerDOMId, assetId,{
           onCreate: handlePlayerCreated
         });
@@ -52,6 +55,14 @@ angular.module('contentful').directive('cfOoyalaPlayer', ['$injector', function(
         player.mb.unsubscribe(OO.EVENTS.PLAYBACK_READY, 'cfOoyalaPlayer', handlePlaybackReady);
         player.destroy();
         player = undefined;
+      }
+
+      function pause() {
+        player.pause();
+      }
+
+      function play() {
+        player.play();
       }
 
       function handlePlayerCreated(_player_) {

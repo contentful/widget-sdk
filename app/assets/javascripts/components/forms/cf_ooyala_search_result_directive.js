@@ -5,18 +5,16 @@ angular.module('contentful').directive('cfOoyalaSearchResult', ['$injector', fun
   return {
     restrict: 'C',
     controller: 'cfOoyalaSearchResultController',
+    controllerAs: 'ooyalaSearchResultController',
     link: function(scope, elem, attr) {
       scope.isResultSelected    = false;
       scope.isMouseOver         = false;
-      scope.showLoadingFeedback = false;
       scope.showPreview         = true;
 
-      scope.hideFeedbackInfo = hideFeedbackInfo;
       scope.handleSelection  = handleSelection;
-      scope.handlePlay       = handlePlay;
-      scope.handleClose      = handleClose;
       scope.handleMouseOver  = handleMouseOver;
       scope.handleMouseOut   = handleMouseOut;
+      scope.ooyalaPlayerController = ooyalaPlayerController;
 
       scope.$on('video:selected', deselectCurrentVideo);
 
@@ -48,27 +46,8 @@ angular.module('contentful').directive('cfOoyalaSearchResult', ['$injector', fun
         }
       }
 
-      function handlePlay() {
-        scope.playerId    = scope.video.playerId;
-        scope.assetId     = scope.video.id;
-        scope.showPreview = false;
-        showFeebackInfo();
-        elem.addClass('playing');
-      }
-
-      function hideFeedbackInfo() {
-        scope.isPlayerLoading = false;
-      }
-
-      function showFeebackInfo() {
-        scope.isPlayerLoading = true;
-      }
-
-      function handleClose() {
-        elem.removeClass('playing');
-        scope.playerId    = undefined;
-        scope.assetId     = undefined;
-        scope.showPreview = true;
+      function ooyalaPlayerController() {
+        return elem.find('cf-ooyala-player').scope().ooyalaPlayerController;
       }
 
     }

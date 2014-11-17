@@ -19,15 +19,15 @@
         ng-repeat="video in videos"
         ng-mouseover="handleMouseOver($event)"
         ng-mouseout="handleMouseOut($event)"
-        ng-class="{selected: isResultSelected, hover: isMouseOver}")
+        ng-class="{selected: isResultSelected, hover: isMouseOver, playing: isPlaying}")
 
       .video-dialog-result__controls-bar(
-        ng-hide="!isResultSelected && (!isMouseOver || isPlayerLoading)")
+        ng-hide="isPlayerLoading || (!isResultSelected && !isMouseOver)")
         %span(class="fa-stack" ng-click="handleSelection()")
           %i(class="fa fa-circle-o fa-stack-2x")
           %i(class="fa fa-check fa-stack-1x")
-        %i(class="fa fa-play" ng-click="handlePlay()")
-        %i(class="fa fa-close" ng-click="handleClose()" ng-hide="isPlayerLoading")
+        %i(class="fa fa-play" ng-click="ooyalaSearchResultController.playVideo()")
+        %i(class="fa fa-pause" ng-click="ooyalaSearchResultController.pauseVideo()" ng-hide="isPlayerLoading")
 
       .loading.video-dialog-result__loading(ng-show="isPlayerLoading")
         .video-dialog-result__loading-message Loading video
