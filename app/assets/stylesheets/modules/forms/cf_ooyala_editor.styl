@@ -177,11 +177,10 @@ $controls-bar-background-color = rgba(235, 235, 235, 0.55)
 
   &.hover
     .fa-stack, .fa-play
-      z-index: 9999999
       display: block
 
   &.selected
-    .video-dialog-result__controls-bar, .fa-stack
+    .fa-stack
       display: block
 
     .fa-stack
@@ -191,7 +190,6 @@ $controls-bar-background-color = rgba(235, 235, 235, 0.55)
     .fa-pause
       color: white
       display: block
-      z-index: 99999
 
     .fa-stack, .fa-play
       display: none
@@ -223,6 +221,9 @@ $controls-bar-background-color = rgba(235, 235, 235, 0.55)
   background-color: $controls-bar-background-color;
   position: absolute
   top: 0
+
+  .fa
+    z-index: 9999999
 
   .fa-stack, .fa-play, .fa-pause
     display: none
