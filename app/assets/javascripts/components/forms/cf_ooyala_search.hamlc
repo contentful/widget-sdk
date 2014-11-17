@@ -43,5 +43,5 @@
         on-ready="handlePlayerReady()")
 
       %.video-dialog-result-info
-        %div.video-dialog-result-info__title {{video.name}}
+        %div.video-dialog-result-info__title(title="{{video.name}}") {{video.name}}
         %div.video-dialog-result-info__duration {{formattedDuration}}
