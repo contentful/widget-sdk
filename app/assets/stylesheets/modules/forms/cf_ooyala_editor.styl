@@ -176,13 +176,10 @@ $controls-bar-background-color = rgba(235, 235, 235, 0.8)
   margin: 5px 10px 20px
 
   &.hover
-    .fa-stack, .fa-play
+    .fa-play
       display: block
 
   &.selected
-    .fa-stack
-      display: block
-
     .fa-stack
       color: $blue-light;
 
@@ -190,12 +187,8 @@ $controls-bar-background-color = rgba(235, 235, 235, 0.8)
     .fa-pause
       display: block
 
-    .fa-stack, .fa-play
+    .fa-play
       display: none
-
-  &.selected.playing
-    .fa-stack
-      display: block
 
   .video-dialog-result__controls-bar
     &.ng-hide-remove,
@@ -234,6 +227,7 @@ $controls-bar-background-color = rgba(235, 235, 235, 0.8)
     color: $gray-medium-light;
 
   .fa-stack
+    display: block;
     top: 1px
     right: 6px
 
