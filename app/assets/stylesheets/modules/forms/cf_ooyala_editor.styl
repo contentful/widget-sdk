@@ -1,6 +1,8 @@
 $player-height            = 350px
 $player-height--thumbnail = 100px
-$input-width    = 80%
+$input-width              = 80%
+// Use the rgba color to set transparency on it
+$controls-bar-background-color = rgba(235, 235, 235, 0.55)
 
 .dialog-content.ooyala-search
   overflow: hidden
@@ -173,27 +175,6 @@ $input-width    = 80%
   float : left
   margin: 5px 10px 20px
 
-  .video-dialog-result__controls-bar
-    height: 26px
-    width: 100%
-    background-color: $gray-lighter
-    position: absolute
-    top: 0
-    opacity: 0.55
-
-  .fa-stack, .fa-play, .fa-close
-    display: none
-    position: absolute
-    color: $gray-medium
-
-  .fa-stack
-    top: 1px
-    right: 6px
-
-  .fa-play, .fa-close
-    top: 7px
-    left: 8px
-
   &.hover
     .fa-stack, .fa-play
       display: block
@@ -225,15 +206,37 @@ $input-width    = 80%
 
     &.ng-hide-remove,
     &.ng-hide-add.ng-hide-add-active
+      background-color: $controls-bar-background-color;
       opacity: 0
 
     &.ng-hide-add,
     &.ng-hide-remove.ng-hide-remove-active
-      opacity: 0.55
+      background-color: $controls-bar-background-color;
+      opacity: 1
 
     &.ng-hide-remove.ng-hide-remove-active,
     &.ng-hide-add.ng-hide-add-active
-      transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s
+      transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.3s
+
+.video-dialog-result__controls-bar
+  height: 26px
+  width: 100%
+  background-color: $controls-bar-background-color;
+  position: absolute
+  top: 0
+
+.fa-stack, .fa-play, .fa-close
+  display: none
+  position: absolute
+  color: $gray-medium
+
+.fa-stack
+  top: 1px
+  right: 6px
+
+.fa-play, .fa-close
+  top: 7px
+  left: 8px
 
 .multi-video-widget__items
   margin-left: 0
