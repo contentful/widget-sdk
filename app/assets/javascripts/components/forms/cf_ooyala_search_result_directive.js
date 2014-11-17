@@ -6,7 +6,7 @@ angular.module('contentful').directive('cfOoyalaSearchResult', ['$injector', fun
     restrict: 'C',
     controller: 'cfOoyalaSearchResultController',
     link: function(scope, elem, attr) {
-      scope.selected            = false;
+      scope.isResultSelected    = false;
       scope.isMouseOver         = false;
       scope.showLoadingFeedback = false;
       scope.showPreview         = true;
@@ -21,7 +21,7 @@ angular.module('contentful').directive('cfOoyalaSearchResult', ['$injector', fun
       scope.$on('video:selected', deselectCurrentVideo);
 
       function deselectCurrentVideo(e, data) {
-        if (data.video != scope.video) scope.selected = false;
+        if (data.video != scope.video) scope.isResultSelected = false;
       }
 
       function handleMouseOver(e) {
@@ -39,9 +39,9 @@ angular.module('contentful').directive('cfOoyalaSearchResult', ['$injector', fun
       }
 
       function handleSelection() {
-        scope.selected = scope.selected != true;
+        scope.isResultSelected = scope.isResultSelected != true;
 
-        if (scope.selected) {
+        if (scope.isResultSelected) {
           scope.selectVideo(scope.video);
         } else {
           scope.deselectVideo(scope.video);
