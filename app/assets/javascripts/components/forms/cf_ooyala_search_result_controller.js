@@ -2,16 +2,19 @@
 
 angular.module('contentful').controller('cfOoyalaSearchResultController', ['$scope', function($scope){
 
-  $scope.showPlayer      = false;
-  $scope.isPlayerLoading = false;
+  $scope.isPlayerLoading  = false;
+  $scope.isResultSelected = false;
+  $scope.showPlayer       = false;
+  $scope.showPreview      = true;
 
-  $scope.$watch('playerId', updatePlayerId);
+  $scope.$on('video:selected', deselectVideo);
 
   $scope.handlePlayerReady = handlePlayerReady;
   $scope.formattedDuration = formatVideoDuration('%h:%m:%s');
 
-  this.pauseVideo = pauseVideo;
-  this.playVideo  = playVideo;
+  this.pauseVideo  = pauseVideo;
+  this.playVideo   = playVideo;
+  this.selectVideo = selectVideo;
 
   function pauseVideo() {
     $scope.isPlaying = false;
@@ -28,16 +31,26 @@ angular.module('contentful').controller('cfOoyalaSearchResultController', ['$sco
     }
 
     $scope.showPreview = false;
-    $scope.isPlaying = true;
+    $scope.isPlaying   = true;
   }
 
-  function updatePlayerId(playerId) {
-    if (!playerId)  $scope.showPlayer = false;
+  function selectVideo() {
+    $scope.isResultSelected = $scope.isResultSelected != true;
+
+    if ($scope.isResultSelected) {
+      $scope.selectVideo($scope.video);
+    } else {
+      $scope.deselectVideo($scope.video);
+    }
+  }
+
+  function deselectVideo(e, data) {
+    if (data.video != $scope.video) $scope.isResultSelected = false;
   }
 
   function handlePlayerReady() {
     $scope.isPlayerLoading = false;
-    $scope.showPlayer = true;
+    $scope.showPlayer      = true;
   }
 
   function formatVideoDuration(format) {

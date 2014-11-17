@@ -23,7 +23,7 @@
 
       .video-dialog-result__controls-bar(
         ng-hide="isPlayerLoading || (!isResultSelected && !isMouseOver)")
-        %span(class="fa-stack" ng-click="handleSelection()")
+        %span(class="fa-stack" ng-click="ooyalaSearchResultController.selectVideo()")
           %i(class="fa fa-circle-o fa-stack-2x")
           %i(class="fa fa-check fa-stack-1x")
         %i(class="fa fa-play" ng-click="ooyalaSearchResultController.playVideo()")
@@ -35,9 +35,9 @@
       .cf-thumbnail.video-dialog-result__thumbnail(file="video.thumbnail" size="100" ng-show="showPreview")
       %cf-ooyala-player.widget-ooyala-player.widget-ooyala-player--embedded.video-dialog-result__player(
         ng-if="playerId"
+        ng-show="showPlayer"
         asset-id="assetId"
         player-id="playerId"
-        ng-show="showPlayer"
         play-on-ready="true"
         show-title="false"
         on-ready="handlePlayerReady()")
