@@ -6,7 +6,7 @@ angular.module('contentful').controller('cfOoyalaSearchController', ['$scope', '
 
   var debouncedQueryOoyala = debounce(queryOoyala, 750);
 
-  var search;
+  var search, currentPlayer;
 
   $scope.videos         = [];
   $scope.selection      = [];
@@ -15,9 +15,10 @@ angular.module('contentful').controller('cfOoyalaSearchController', ['$scope', '
 
   $scope.$watch('ooyala.search', updateSearchTerm);
 
-  $scope.loadMore      = loadMore;
-  $scope.selectVideo   = selectVideo;
-  $scope.deselectVideo = deselectVideo;
+  $scope.loadMore           = loadMore;
+  $scope.selectVideo        = selectVideo;
+  $scope.deselectVideo      = deselectVideo;
+  $scope.pauseCurrentPlayer = pauseCurrentPlayer;
 
   this.getSelected     = getSelected;
 
@@ -71,6 +72,11 @@ angular.module('contentful').controller('cfOoyalaSearchController', ['$scope', '
     $scope.isSearching    = false;
     $scope.searchFinished = true;
     insertResults(response);
+  }
+
+  function pauseCurrentPlayer(player) {
+    if (currentPlayer && currentPlayer != player) currentPlayer.pauseVideo();
+    currentPlayer = player;
   }
 
   function processError(error) {

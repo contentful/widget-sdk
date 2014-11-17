@@ -30,6 +30,7 @@ angular.module('contentful').controller('cfOoyalaSearchResultController', ['$sco
       $scope.ooyalaPlayerController().play();
     }
 
+    $scope.pauseCurrentPlayer(this);
     $scope.showPreview = false;
     $scope.isPlaying   = true;
   }
