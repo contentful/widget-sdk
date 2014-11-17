@@ -2,7 +2,7 @@ $player-height            = 350px
 $player-height--thumbnail = 100px
 $input-width              = 80%
 // Use the rgba color to set transparency on it
-$controls-bar-background-color = rgba(235, 235, 235, 0.55)
+$controls-bar-background-color = rgba(235, 235, 235, 0.8)
 
 .dialog-content.ooyala-search
   overflow: hidden
@@ -184,11 +184,10 @@ $controls-bar-background-color = rgba(235, 235, 235, 0.55)
       display: block
 
     .fa-stack
-      color: $green
+      color: $blue-light;
 
   &.playing
     .fa-pause
-      color: white
       display: block
 
     .fa-stack, .fa-play
@@ -216,7 +215,7 @@ $controls-bar-background-color = rgba(235, 235, 235, 0.55)
 
 .video-dialog-result__controls-bar
   z-index: 99999
-  height: 26px
+  height: 27px
   width: 100%
   background-color: $controls-bar-background-color;
   position: absolute
@@ -228,7 +227,7 @@ $controls-bar-background-color = rgba(235, 235, 235, 0.55)
   .fa-stack, .fa-play, .fa-pause
     display: none
     position: absolute
-    color: $gray
+    color: $gray-medium-light;
 
   .fa-stack
     top: 1px
