@@ -195,8 +195,8 @@
     %button.btn.btn--primary.save(type="submit"
                  tooltip="Save this API key"
                  ng-click="save()"
-                 ng-disabled="apiKeyForm.$invalid || cfCanDisabled"
-                 cf-can="create, ApiKey")
+                 cf-when-disabled="permissionController.createApiKey"
+                 ng-disabled="apiKeyForm.$invalid || permissionController.createApiKey.shouldDisable")
       Save
   .rest-save-status
     Hit Save to save changes to this API Key.

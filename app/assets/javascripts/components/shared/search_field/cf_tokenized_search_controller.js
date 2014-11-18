@@ -36,7 +36,7 @@ angular.module('contentful').controller('cfTokenizedSearchController', ['$scope'
     toggleAutocompletions(false);
   };
 
-  $scope.$watch('getContentType()', 'updateAutocompletions()');
+  $scope.$watch('getContentType()', _.bind($scope.updateAutocompletions, $scope));
 
   $scope.inputChanged = function () {
     // TODO: This is necessary because $scope.position will only be updated in the next digtest cycle.

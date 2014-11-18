@@ -15,6 +15,11 @@ angular.module('contentful').constant('stringUtils', (function(){
     return string[0].toUpperCase() + string.slice(1).toLowerCase();
   }
 
+  function capitalizeFirst(string) {
+    if (_.isEmpty(string)) return '';
+    return string[0].toUpperCase() + string.slice(1);
+  }
+
   function uncapitalize(str) {
     if (_.isEmpty(str)) return '';
     return str[0].toLowerCase() + str.substr(1);
@@ -57,6 +62,7 @@ angular.module('contentful').constant('stringUtils', (function(){
   return {
     toIdentifier: toIdentifier,
     capitalize: capitalize,
+    capitalizeFirst: capitalizeFirst,
     uncapitalize: uncapitalize,
     splitIntoWords: splitIntoWords,
     stripInvalidChars: stripInvalidChars,

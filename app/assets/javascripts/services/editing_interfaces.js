@@ -44,8 +44,8 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   function syncWidgets(contentType, interf) {
     pruneWidgets(contentType, interf);
     addMissingFields(contentType, interf);
-    // TODO temporary:
-    if (environment.env === 'production') syncOrder(contentType, interf);
+    // TODO temporary order sync
+    syncOrder(contentType, interf);
     return interf;
   }
 

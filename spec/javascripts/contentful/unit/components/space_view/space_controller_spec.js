@@ -12,7 +12,8 @@ describe('Space Controller', function () {
         'setSpaceContext',
         'enforcement',
         'track',
-        'error'
+        'error',
+        'localesStub'
       ]);
 
       $provide.value('authorization', {
@@ -102,7 +103,8 @@ describe('Space Controller', function () {
       scope.$digest();
       refreshStub = sinon.stub();
       scope.spaceContext = {
-        refreshContentTypes: refreshStub
+        refreshContentTypes: refreshStub,
+        refreshActiveLocales: stubs.localesStub
       };
       scope.$digest();
     });
@@ -133,76 +135,6 @@ describe('Space Controller', function () {
     it('broadcasts event if usage exceeded', function () {
       expect(broadcastStub).toBeCalled();
     });
-  });
-
-  describe('can method for permissions', function () {
-    var canStub;
-    var result, args;
-    beforeEach(inject(function (authorization) {
-      args = [1, 2];
-      canStub = sinon.stub();
-      authorization.spaceContext = {
-        can: canStub
-      };
-      scope.checkForEnforcements = sinon.stub();
-    }));
-
-    describe('if there is no space context', function () {
-      beforeEach(inject(function (authorization) {
-        authorization.spaceContext = null;
-      }));
-
-      it('can is not called', function () {
-        expect(canStub).not.toBeCalled();
-      });
-
-      it('response is returned', function () {
-        expect(result).toBeFalsy();
-      });
-
-      it('doesnt check for enforcements', function() {
-        expect(scope.checkForEnforcements).not.toBeCalled();
-      });
-    });
-
-    describe('if permission succeeds', function () {
-      beforeEach(function () {
-        canStub.returns(true);
-        result = scope.can(args, {});
-      });
-
-      it('can is called', function () {
-        expect(canStub).toBeCalledWith(args);
-      });
-
-      it('response is returned', function () {
-        expect(result).toBeTruthy();
-      });
-
-      it('doesnt check for enforcements', function() {
-        expect(scope.checkForEnforcements).not.toBeCalled();
-      });
-    });
-
-    describe('if permission fails', function () {
-      beforeEach(function () {
-        canStub.returns(false);
-        result = scope.can(args, {});
-      });
-
-      it('can is called', function () {
-        expect(canStub).toBeCalledWith(args);
-      });
-
-      it('response is returned', function () {
-        expect(result).toBeFalsy();
-      });
-
-      it('checks for enforcements', function() {
-        expect(scope.checkForEnforcements).toBeCalled();
-      });
-    });
-
   });
 
   it('analytics event fired on logo clicked', function () {

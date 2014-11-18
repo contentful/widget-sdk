@@ -8,13 +8,12 @@ describe('The Space view directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'reasons', 'section', 'viewType', 'can', 'isHibernated'
+        'section', 'viewType', 'isHibernated'
       ]);
       $provide.value('authorization', {
         isUpdated: sinon.stub(),
         spaceContext: {}
       });
-      $provide.value('reasonsDenied', stubs.reasons);
       $provide.value('environment', {
         settings: {
           filepicker: {
@@ -23,7 +22,7 @@ describe('The Space view directive', function () {
         }
       });
       $provide.removeDirectives('otDocFor', 'otDocPresence', 'entryEditor', 'apiKeyEditor', 'entryList');
-      $provide.removeControllers('UiConfigController');
+      $provide.removeControllers('UiConfigController', 'PermissionController');
     });
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
@@ -32,6 +31,7 @@ describe('The Space view directive', function () {
           getPrivateLocales: sinon.stub(),
           isHibernated: stubs.isHibernated
         },
+        refreshActiveLocales: sinon.stub(),
         refreshContentTypes: sinon.stub(),
         refreshLocales: sinon.stub(),
         tabList: {
@@ -40,13 +40,24 @@ describe('The Space view directive', function () {
         }
       };
 
+      scope.permissionController = {
+        createContentType: { shouldHide: false},
+        updateContentType: { shouldHide: false},
+        createEntry: { shouldHide: false},
+        readEntry: { shouldHide: false},
+        createAsset: { shouldHide: false},
+        readAsset: { shouldHide: false},
+        createApiKey: { shouldHide: false},
+        readApiKey: { shouldHide: false},
+        updateSettings: { shouldHide: false}
+      };
+
       scope.spaces = [{}];
       scope.locationInAccount = false;
 
       compileElement = function () {
         container = $('<space-view></space-view>');
         $compile(container)(scope);
-        scope.can = stubs.can;
         scope.$digest();
       };
     });
@@ -86,17 +97,21 @@ describe('The Space view directive', function () {
     expect(container.find('.nav-bar > ul')).toBeNgHidden();
   });
 
-  it('add button always shown even if no create permissions exist', function () {
-    stubs.can.returns(false);
+  it('add button not shown even if no create permissions exist', function () {
+    scope.permissionController = {
+      createContentType: { shouldHide: true},
+      createEntry: { shouldHide: true},
+      createAsset: { shouldHide: true},
+      createApiKey: { shouldHide: true}
+    };
     compileElement();
-    expect(container.find('.add-dropdown-button')).not.toBeNgHidden();
+    expect(container.find('.add-dropdown-button')).toBeNgHidden();
   });
 
   function makeShownButtonTest(type) {
     describe('if user can create a '+type, function () {
       var addDropdownButton;
       beforeEach(function () {
-        stubs.can.withArgs('create', type).returns(true);
         compileElement();
         addDropdownButton = container.find('.add-dropdown-button');
       });
@@ -119,13 +134,13 @@ describe('The Space view directive', function () {
       var selector = 'li[data-view-type="'+viewType+'"]';
 
       it('is hidden', function () {
-        stubs.can.withArgs(action, type).returns(false);
+        scope.permissionController[action+type].shouldHide = true;
         compileElement();
         expect(container.find(selector)).toBeNgHidden();
       });
 
       it('is shown', function () {
-        stubs.can.withArgs(action, type).returns(true);
+        scope.permissionController[action+type].shouldHide = false;
         compileElement();
         expect(container.find(selector)).not.toBeNgHidden();
       });

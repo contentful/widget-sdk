@@ -22,6 +22,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var $window            = $injector.get('$window');
 
   $controller('TrialWatchController', {$scope: $scope});
+  $scope.permissionController = $controller('PermissionController', {$scope: $scope});
+
   $scope.spaces = null;
   $scope.spaceContext = new SpaceContext();
 
@@ -74,6 +76,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       authorization.setTokenLookup(collection.tokenLookup);
       if (collection.space && authorization.authContext && authorization.authContext.hasSpace(collection.space.getId()))
         authorization.setSpace(collection.space);
+        $scope.permissionController.initialize(authorization.spaceContext);
     }
   });
 

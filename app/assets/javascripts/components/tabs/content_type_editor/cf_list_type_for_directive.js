@@ -3,6 +3,7 @@
 angular.module('contentful').directive('cfListTypeFor', function () {
   return {
     require: 'ngModel',
+    priority: 101, // Right above ng-list
     link: function (scope, elem, attr, ngModel) {
       ngModel.$parsers.push(function (viewValue) {
         var field = scope.$eval(attr.cfListTypeFor);

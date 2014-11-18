@@ -2,13 +2,17 @@
 
 angular.module('contentful').controller('EntryEditorController', ['$scope', '$injector', function EntryEditorController($scope, $injector) {
   var $controller       = $injector.get('$controller');
-  var addCanMethods     = $injector.get('addCanMethods');
   var logger            = $injector.get('logger');
   var validation        = $injector.get('validation');
 
   // Initialization
-  $scope.$watch('tab.params.entry', 'entry=tab.params.entry');
-  addCanMethods($scope, 'entry');
+  $scope.$watch('tab.params.entry', function (entry) { $scope.entry = entry; });
+  $controller('EntityActionsController', {
+    $scope: $scope,
+    params: {
+      entityType: 'entry'
+    }
+  });
 
   // Tab related stuff
   $scope.tab.closingMessage = 'You have unpublished changes.';
@@ -39,7 +43,7 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
 
   // OT Stuff
   $scope.$watch(function entryEditorEnabledWatcher(scope) {
-    return !scope.entry.isArchived() && scope.can('update', scope.entry.data);
+    return !scope.entry.isArchived() && scope.permissionController.can('update', scope.entry.data).can;
   }, function entryEditorEnabledHandler(enabled, old, scope) {
     scope.otDisabled = !enabled;
   });
@@ -106,7 +110,9 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
   $scope.$watch('spaceContext.publishedTypeForEntry(entry)', function (contentType) {
     $scope.formWidgetsController.contentType = contentType;
   });
-  $scope.$watch('spaceContext.publishedTypeForEntry(entry).data.fields', 'formWidgetsController.updateWidgets()', true);
+  $scope.$watch('spaceContext.publishedTypeForEntry(entry).data.fields', function () {
+    $scope.formWidgetsController.updateWidgets();
+  }, true);
 
 
   // Helper methods on the scope

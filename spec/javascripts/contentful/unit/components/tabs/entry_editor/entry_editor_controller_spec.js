@@ -2,14 +2,13 @@
 
 describe('Entry Editor Controller', function () {
   var controller, scope;
-  var canStub;
 
   beforeEach(function () {
-    canStub = sinon.stub();
-    module('contentful/test');
+    module('contentful/test', function ($provide) {
+      $provide.removeControllers('PermissionController');
+    });
     inject(function ($compile, $rootScope, $controller, cfStub){
       scope = $rootScope;
-      scope.can = canStub;
       scope.user = {
         features: {}
       };
@@ -20,6 +19,8 @@ describe('Entry Editor Controller', function () {
         sys: { publishedVersion: 1 }
       });
       scope.tab = { params: { entry: entry } };
+      scope.permissionController = { can: sinon.stub() };
+      scope.permissionController.can.returns({can: true});
       controller = $controller('EntryEditorController', {$scope: scope});
       scope.$digest();
     });
@@ -38,13 +39,13 @@ describe('Entry Editor Controller', function () {
 
   describe('sets the otDisabled flag', function () {
     it('to disabled', function () {
-      canStub.withArgs('update', scope.entry.data).returns(true);
+      scope.permissionController.can.withArgs('update', scope.entry.data).returns({can: true});
       scope.$apply();
       expect(scope.otDisabled).toBe(false);
     });
 
     it('to enabled', function () {
-      canStub.withArgs('update', scope.entry.data).returns(false);
+      scope.permissionController.can.withArgs('update', scope.entry.data).returns({can: false});
       scope.$apply();
       expect(scope.otDisabled).toBe(true);
     });

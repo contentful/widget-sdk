@@ -16,7 +16,10 @@ angular.module('contentful').controller('SpaceController',
     if (codes) scope.spaceContext.refreshLocales();
   }, true);
 
-  $scope.$watch('spaceContext.localeStates', 'spaceContext.refreshActiveLocales()', true);
+  $scope.$watch('spaceContext.localeStates', function () {
+    $scope.spaceContext.refreshActiveLocales();
+  }, true);
+
   $scope.$watch('spaceContext', function(space, o, scope) {
     enforcements.setSpaceContext(scope.spaceContext);
     scope.spaceContext.refreshContentTypes();
@@ -37,17 +40,6 @@ angular.module('contentful').controller('SpaceController',
       }
     }
   });
-
-  $scope.can = function (action, entity) {
-    if (authorization.spaceContext){
-      var response = entity && authorization.spaceContext.can.apply(authorization.spaceContext, arguments);
-      if(!response){
-        $scope.checkForEnforcements.apply($scope, arguments);
-      }
-      return response;
-    }
-    return false;
-  };
 
   $scope.logoClicked = function () {
     analytics.track('Clicked Logo');

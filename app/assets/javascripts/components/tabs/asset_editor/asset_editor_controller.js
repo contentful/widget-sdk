@@ -4,14 +4,18 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
   var $controller       = $injector.get('$controller');
   var AssetContentType  = $injector.get('AssetContentType');
   var ShareJS           = $injector.get('ShareJS');
-  var addCanMethods     = $injector.get('addCanMethods');
   var notification      = $injector.get('notification');
   var stringUtils       = $injector.get('stringUtils');
   var validation        = $injector.get('validation');
 
   //Initialization
-  $scope.$watch('tab.params.asset', 'asset=tab.params.asset');
-  addCanMethods($scope, 'asset');
+  $scope.$watch('tab.params.asset', function (asset) { $scope.asset = asset; });
+  $controller('EntityActionsController', {
+    $scope: $scope,
+    params: {
+      entityType: 'asset'
+    }
+  });
 
   // Tab related stuff
   $scope.tab.closingMessage = 'You have unpublished changes.';
@@ -42,7 +46,7 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
 
   // OT Stuff
   $scope.$watch(function assetEditorEnabledWatcher(scope) {
-    return !scope.asset.isArchived() && scope.can('update', scope.asset.data);
+    return !scope.asset.isArchived() && scope.permissionController.can('update', scope.asset.data).can;
   }, function assetEditorEnabledHandler(enabled, old, scope) {
     scope.otDisabled = !enabled;
   });

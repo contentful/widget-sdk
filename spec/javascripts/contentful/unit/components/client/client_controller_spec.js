@@ -5,7 +5,7 @@ describe('Client Controller', function () {
   var stubs;
 
   beforeEach(function () {
-    module('contentful/test', function ($provide, $controllerProvider) {
+    module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'numVisible',
         'spaceId',
@@ -46,7 +46,7 @@ describe('Client Controller', function () {
         'setSpaceContext'
       ]);
 
-      $controllerProvider.register('TrialWatchController', angular.noop);
+      $provide.removeControllers('TrialWatchController');
 
       $provide.factory('SpaceContext', function () {
         return function(){

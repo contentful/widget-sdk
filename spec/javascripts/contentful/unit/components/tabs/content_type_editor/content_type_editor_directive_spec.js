@@ -4,35 +4,31 @@ describe('The ContentType editor directive', function () {
 
   var container, scope;
   var compileElement;
-  var canStub, reasonsStub;
 
   beforeEach(function () {
-    canStub = sinon.stub();
-    reasonsStub = sinon.stub();
-
-    module('contentful/test', function ($provide, cfCanStubsProvider) {
+    module('contentful/test', function ($provide) {
       $provide.value('ShareJS', {
         connection: {},
         peek: sinon.stub(),
         mkpath: sinon.stub()
       });
       $provide.removeDirectives('otDocFor', 'otDocPresence', 'otSubdoc', 'otBindText', 'otPath', 'saveStatus', 'contentTypeFieldList');
-      cfCanStubsProvider.setup(reasonsStub);
+      $provide.removeControllers('PermissionController');
     });
 
-    inject(function ($rootScope, $compile, contentTypeEditorDirective, enforcements) {
+    inject(function ($rootScope, $compile, contentTypeEditorDirective) {
       contentTypeEditorDirective[0].controller = angular.noop;
       contentTypeEditorDirective[0].controller.prototype.canPublish = sinon.stub();
       scope = $rootScope.$new();
 
-      scope.can = canStub;
       scope.otEditable = true;
 
-      enforcements.setSpaceContext({
-        space: {
-          data: {sys: {createdBy: {sys: {id: ''}}}}
+      scope.permissionController = {
+        createContentType: {
+          shouldHide: false,
+          shouldDisable: false
         }
-      });
+      };
 
       compileElement = function () {
         container = $('<div class="content-type-editor"></div>');
@@ -49,7 +45,6 @@ describe('The ContentType editor directive', function () {
 
   describe('when otEditable is false', function () {
     beforeEach(function () {
-      canStub.withArgs('create', 'ContentType').returns(true);
       scope.otEditable = false;
       compileElement();
     });
@@ -61,19 +56,6 @@ describe('The ContentType editor directive', function () {
     it('Add Field button should be disabled', function () {
       expect(container.find('.advice button').is(':disabled')).toBe(true);
     });
-  });
-
-  it('create button is disabled', function () {
-    canStub.withArgs('create', 'ContentType').returns(false);
-    reasonsStub.returns(['usageExceeded']);
-    compileElement();
-    expect(container.find('.add-field-button').attr('disabled')).toBe('disabled');
-  });
-
-  it('create button is enabled', function () {
-    canStub.withArgs('create', 'ContentType').returns(true);
-    compileElement();
-    expect(container.find('.add-field-button').attr('disabled')).toBeUndefined();
   });
 
   it('textarea is enabled', function () {

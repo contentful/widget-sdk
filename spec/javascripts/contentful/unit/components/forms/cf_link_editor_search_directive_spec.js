@@ -6,7 +6,6 @@ describe('cfLinkEditorSearch Directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'can',
         'localizedField',
         'publishedEntryName',
         'publishedType',
@@ -22,6 +21,17 @@ describe('cfLinkEditorSearch Directive', function () {
 
       scope.locale = {
         code: 'en-US'
+      };
+
+      scope.permissionController = {
+        createEntry: {
+          shouldHide: false,
+          shouldDisable: false
+        },
+        createAsset: {
+          shouldHide: false,
+          shouldDisable: false
+        }
       };
 
       scope.spaceContext = {
@@ -55,8 +65,6 @@ describe('cfLinkEditorSearch Directive', function () {
           getName: _.constant('Derp')
         }
       ];
-
-      stubs.can.withArgs('create', 'Entry').returns(true);
 
       compileElement();
       newButton = element.find('.add-new');
@@ -96,8 +104,6 @@ describe('cfLinkEditorSearch Directive', function () {
         }
       ];
 
-      stubs.can.withArgs('create', 'Entry').returns(true);
-
       compileElement();
       newButton = element.find('.add-new');
     });
@@ -115,7 +121,6 @@ describe('cfLinkEditorSearch Directive', function () {
     var newButton;
     beforeEach(function () {
       scope.entityType = 'Asset';
-      stubs.can.withArgs('create', 'Asset').returns(true);
 
       compileElement();
       newButton = element.find('.add-new');

@@ -2,14 +2,17 @@
 
 describe('Number widgets', function () {
   var elem, scope;
-  beforeEach(module('contentful/test'));
-  beforeEach(inject(function ($rootScope) {
-    scope = $rootScope;
-    scope.fieldData = {value: null};
-    scope.field = {type: null};
-    scope.otEditable = true;
-  }));
-
+  beforeEach(function() {
+    module('contentful/test', function ($provide) {
+      $provide.removeDirectives('otBindModel');
+    });
+    inject(function ($rootScope) {
+      scope = $rootScope;
+      scope.fieldData = {value: null};
+      scope.field = {type: null};
+      scope.otEditable = true;
+    });
+  });
   /*
    * TODO some issue with otPath
   afterEach(inject(function ($log) {

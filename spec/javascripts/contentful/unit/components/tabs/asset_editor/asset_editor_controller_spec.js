@@ -9,7 +9,6 @@ describe('Asset editor controller', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'can',
         'getPrivateLocales',
         'assetTitle',
         'isArchived',
@@ -21,7 +20,7 @@ describe('Asset editor controller', function () {
         'getPublishedVersion',
         'fileProcessingFailed'
       ]);
-      $provide.removeControllers('FormWidgetsController');
+      $provide.removeControllers('FormWidgetsController', 'PermissionController');
 
       $provide.value('ShareJS', {
         peek: stubs.peek,
@@ -38,7 +37,9 @@ describe('Asset editor controller', function () {
     });
     inject(function ($rootScope, $controller, $q) {
       scope = $rootScope.$new();
-      scope.can = stubs.can;
+      scope.permissionController = { can: sinon.stub() };
+      scope.permissionController.can.returns({can: true});
+
       process = $q.defer();
 
       var locale = {
@@ -90,13 +91,13 @@ describe('Asset editor controller', function () {
     });
 
     it('to disabled', function () {
-      stubs.can.returns(true);
+      scope.permissionController.can.returns({can: true});
       scope.$apply();
       expect(scope.otDisabled).toBe(false);
     });
 
     it('to enabled', function () {
-      stubs.can.returns(false);
+      scope.permissionController.can.returns({can: false});
       scope.$apply();
       expect(scope.otDisabled).toBe(true);
     });
@@ -105,8 +106,9 @@ describe('Asset editor controller', function () {
   describe('validation on publish', function () {
     beforeEach(inject(function ($compile, $rootScope, $controller, cfStub){
       scope = $rootScope.$new();
-      stubs.can = sinon.stub();
-      scope.can = stubs.can;
+      scope.permissionController = { can: sinon.stub() };
+      scope.permissionController.can.returns({can: true});
+
       var locale = {
         code: 'en-US',
         contentDeliveryApi: true,

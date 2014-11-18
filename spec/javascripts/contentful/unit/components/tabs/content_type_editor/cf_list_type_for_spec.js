@@ -1,13 +1,14 @@
 'use strict';
 
-describe('cfListTypeFor Directve', function () {
+describe('cfListTypeFor Directive', function () {
   var element, scope;
   beforeEach(module('contentful/test'));
 
   beforeEach(inject(function ($compile, $rootScope) {
     scope = $rootScope;
     scope.field = {};
-    element = $compile('<input type="text" ng-model="list" ng-list cf-list-type-for="field"/>')(scope);
+    scope.list = [];
+    element = $compile('<input type="text" ng-model="list" ng-list cf-list-type-for="field" />')(scope);
   }));
 
   afterEach(inject(function ($log) {

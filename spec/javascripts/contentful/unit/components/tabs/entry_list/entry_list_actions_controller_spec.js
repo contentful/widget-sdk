@@ -6,6 +6,8 @@ describe('Entry List Actions Controller', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
+      $provide.removeControllers('PermissionController');
+
       stubs = $provide.makeStubs([
         'track',
         'info',
@@ -19,7 +21,6 @@ describe('Entry List Actions Controller', function () {
         'action3',
         'action4',
         'getVersion',
-        'can',
         'timeout',
         'broadcast'
       ]);
@@ -61,7 +62,15 @@ describe('Entry List Actions Controller', function () {
         }
       };
 
-      scope.can = stubs.can;
+      scope.permissionController = {
+        createContentType: { shouldHide: false, shouldDisable: false },
+        createEntry: { shouldHide: false, shouldDisable: false },
+        deleteEntry: { shouldHide: false },
+        archiveEntry: { shouldHide: false },
+        unarchiveEntry: { shouldHide: false },
+        publishEntry: { shouldHide: false },
+        unpublishEntry: { shouldHide: false }
+      };
 
       controller = $controller('EntryListActionsController', {$scope: scope});
     });
@@ -218,12 +227,11 @@ describe('Entry List Actions Controller', function () {
   });
 
   it('can show duplicate action', function () {
-    stubs.can.withArgs('create', 'Entry').returns(true);
     expect(scope.showDuplicate()).toBeTruthy();
   });
 
   it('cannot show duplicate action', function () {
-    stubs.can.withArgs('create', 'Entry').returns(false);
+    scope.permissionController.createEntry.shouldHide = true;
     expect(scope.showDuplicate()).toBeFalsy();
   });
 
@@ -231,7 +239,6 @@ describe('Entry List Actions Controller', function () {
     var methodName = 'show'+action.charAt(0).toUpperCase()+action.substr(1);
     var canMethodName = 'can'+action.charAt(0).toUpperCase()+action.substr(1);
     it('can show '+action+' action', function () {
-      stubs.can.withArgs(action, 'Entry').returns(true);
       stubs.action1.returns(true);
       stubs.action2.returns(true);
       stubs.getSelected.returns([
@@ -243,7 +250,7 @@ describe('Entry List Actions Controller', function () {
     });
 
     it('cannot show delete '+action+' because no general permission', function () {
-      stubs.can.withArgs(action, 'Entry').returns(false);
+      scope.permissionController[action+'Entry'].shouldHide = true;
       stubs.action1.returns(true);
       stubs.action2.returns(true);
       stubs.getSelected.returns([
@@ -255,7 +262,6 @@ describe('Entry List Actions Controller', function () {
     });
 
     it('cannot show '+action+' action because no permission on item', function () {
-      stubs.can.withArgs(action, 'Entry').returns(true);
       stubs.action1.returns(true);
       stubs.action2.returns(false);
       stubs.getSelected.returns([

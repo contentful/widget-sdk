@@ -12,7 +12,11 @@
     .search-field(cf-search="searchTerm" placeholder="Search for Content Types")
 
   .tab-header__actions.add-entity(ng-hide="empty")
-    %button.btn.btn--primary.u-truncate(cf-can="create, ContentType" ng-click="createContentType('frameButton')")
+    %button.btn.btn--primary.u-truncate(
+        ng-click="createContentType('frameButton')"
+        ng-hide="permissionController.createContentType.shouldHide"
+        ng-disabled="permissionController.createContentType.shouldDisable"
+        cf-when-disabled="permissionController.createContentType")
       %i.fa.fa-plus.button-icon
       Add Content Type
 
@@ -68,7 +72,11 @@
         %i.fa.fa-database.giant-icon
         %header.advice-title You have no Content Types yet.
         %p.advice-description Content Types work like stencils that define which Entries you can create within a specific Space.
-        %button.btn.btn--primary(type="button" ng-click="createContentType('frameButton')" cf-can="create, ContentType")
+        %button.btn.btn--primary(type="button"
+            ng-click="createContentType('frameButton')"
+            ng-hide="permissionController.createContentType.shouldHide"
+            ng-disabled="permissionController.createContentType.shouldDisable"
+            cf-when-disabled="permissionController.createContentType")
           Create Content Type
         %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
           Visit the Knowledge Base Pages

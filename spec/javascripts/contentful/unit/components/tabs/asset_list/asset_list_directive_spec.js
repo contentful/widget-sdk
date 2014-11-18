@@ -4,15 +4,11 @@ describe('The Asset list directive', function () {
 
   var container, scope;
   var compileElement;
-  var canStub;
-  var reasonsStub;
 
   beforeEach(function () {
-    canStub = sinon.stub();
-    reasonsStub = sinon.stub();
-    module('contentful/test', function (cfCanStubsProvider, $provide) {
-      cfCanStubsProvider.setup(reasonsStub);
+    module('contentful/test', function ($provide) {
       $provide.removeDirectives('relative');
+      $provide.removeControllers('PermissionController');
     });
     inject(function ($rootScope, $compile, assetListDirective, enforcements) {
       scope = $rootScope.$new();
@@ -24,7 +20,6 @@ describe('The Asset list directive', function () {
         isSelected: sinon.stub()
       };
 
-      scope.can = canStub;
       scope.tab = {
         params: {}
       };
@@ -34,8 +29,18 @@ describe('The Asset list directive', function () {
           getId: sinon.stub()
         }
       };
-      enforcements.setSpaceContext(scope.spaceContext);
       scope.validate = sinon.stub();
+
+      enforcements.setSpaceContext(scope.spaceContext);
+
+      scope.permissionController = {
+        createAsset: { shouldHide: false, shouldDisable: false },
+        deleteAsset: { shouldHide: false, shouldDisable: false },
+        unarchiveAsset: { shouldHide: false, shouldDisable: false },
+        archiveAsset: { shouldHide: false, shouldDisable: false },
+        publishAsset: { shouldHide: false, shouldDisable: false },
+        unpublishAsset: { shouldHide: false, shouldDisable: false }
+      };
 
       compileElement = function () {
         container = $('<div class="asset-list"></div>');
@@ -52,13 +57,12 @@ describe('The Asset list directive', function () {
 
   describe('the tab header add button', function() {
     it('is not shown', function() {
-      canStub.withArgs('create', 'Asset').returns(false);
+      scope.permissionController.createAsset.shouldHide = true;
       compileElement();
       expect(container.find('.tab-header .add-entity .btn--primary')).toBeNgHidden();
     });
 
     it('is shown', function() {
-      canStub.withArgs('create', 'Asset').returns(true);
       compileElement();
       expect(container.find('.tab-header .add-entity .btn--primary')).not.toBeNgHidden();
     });
@@ -66,13 +70,12 @@ describe('The Asset list directive', function () {
 
   function makeActionTest(button, action) {
     it(button+' button not shown', function () {
-      canStub.withArgs(action, 'Asset').returns(false);
+      scope.permissionController[action+'Asset'].shouldHide = true;
       compileElement();
       expect(container.find('.tab-actions .'+button)).toBeNgHidden();
     });
 
     it(button+' button shown', function () {
-      canStub.withArgs(action, 'Asset').returns(true);
       compileElement();
       expect(container.find('.tab-actions .'+button)).not.toBeNgHidden();
     });
@@ -85,14 +88,12 @@ describe('The Asset list directive', function () {
   makeActionTest('publish', 'publish');
 
   it('create button is disabled', function () {
-    canStub.withArgs('create', 'Asset').returns(false);
-    reasonsStub.returns(['usageExceeded']);
+    scope.permissionController.createAsset.shouldDisable = true;
     compileElement();
     expect(container.find('.advice .btn--primary').attr('disabled')).toBe('disabled');
   });
 
   it('create button is enabled', function () {
-    canStub.withArgs('create', 'Asset').returns(true);
     compileElement();
     expect(container.find('.advice .btn--primary').attr('disabled')).toBeUndefined();
   });

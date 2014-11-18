@@ -30,6 +30,9 @@ describe('Entry list controller events', function () {
         }
       };
 
+      scope.permissionController = { can: sinon.stub() };
+      scope.permissionController.can.returns({can: true});
+
       // Space Controller necessary for space broadcast method
       spaceCtrl = $controller('SpaceController', {$scope: scope});
 
@@ -106,8 +109,8 @@ describe('Content Type Actions controller events', function () {
   var closeStub;
 
   beforeEach(function () {
-    module('contentful/test', function ($controllerProvider) {
-      $controllerProvider.register('UiConfigController', angular.noop);
+    module('contentful/test', function ($provide) {
+      $provide.removeControllers('UiConfigController', 'PermissionController');
     });
     inject(function ($rootScope, $controller, cfStub) {
       scope = $rootScope.$new();
@@ -130,6 +133,10 @@ describe('Content Type Actions controller events', function () {
       scope.user = {
         features: {}
       };
+
+      scope.permissionController = { can: sinon.stub() };
+      scope.permissionController.can.returns({can: true});
+
       childScope = scope.$new();
       contentTypeEditorCtrl = $controller('ContentTypeEditorController', {$scope: childScope});
       contentTypeActionsCtrl = $controller('ContentTypeActionsController', {$scope: childScope});

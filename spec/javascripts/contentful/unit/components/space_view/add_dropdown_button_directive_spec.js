@@ -3,31 +3,34 @@
 describe('The add dropdown button directive', function () {
 
   var container, scope;
-  var canStub, reasonsStub;
   var compileElement;
 
   beforeEach(function () {
-    reasonsStub = sinon.stub();
     module('contentful/test', function ($provide) {
       $provide.value('authorization', {
         isUpdated: sinon.stub(),
         spaceContext: {}
       });
-      $provide.value('reasonsDenied', reasonsStub);
+
+      $provide.removeControllers('PermissionController');
     });
-    inject(function ($rootScope, $compile, cfStub, enforcements) {
+    inject(function ($rootScope, $compile, cfStub) {
       scope = $rootScope.$new();
       var space = cfStub.space('testSpace');
       var contentTypeData = cfStub.contentTypeData('testType');
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
-      enforcements.setSpaceContext(scope.spaceContext);
 
-      canStub = sinon.stub();
+      scope.permissionController = {
+        createContentType: { shouldHide: false },
+        createEntry: { shouldHide: false },
+        createAsset: { shouldHide: false },
+        createApiKey: { shouldHide: false }
+      };
 
       compileElement = function () {
         container = $compile($('<div cf-add-dropdown-button class="add-dropdown-button" space-context="spaceContext"></div>'))(scope);
-        scope.can = canStub;
         scope.$digest();
+
       };
     });
   });
@@ -47,7 +50,14 @@ describe('The add dropdown button directive', function () {
     ];
     describe('if user can create a '+type, function () {
       beforeEach(function () {
-        canStub.withArgs('create', type).returns(true);
+        scope.permissionController = {
+          createContentType: { shouldHide: true },
+          createEntry: { shouldHide: true },
+          createAsset: { shouldHide: true },
+          createApiKey: { shouldHide: true }
+        };
+        scope.permissionController['create'+type].shouldHide = false;
+
         compileElement();
       });
 
@@ -80,7 +90,7 @@ describe('The add dropdown button directive', function () {
 
   describe('if a user can not create an Entry and no published content types exist', function () {
     beforeEach(function () {
-      canStub.withArgs('create', 'Entry').returns(false);
+      scope.permissionController.createEntry.shouldHide = true;
       scope.spaceContext.publishedContentTypes = [];
       compileElement();
     });
@@ -97,8 +107,8 @@ describe('The add dropdown button directive', function () {
   describe('if user can create an Entry but no published content types exist', function () {
     describe('and the user can not create Content Types', function () {
       beforeEach(function () {
-        canStub.withArgs('create', 'Entry').returns(true);
         scope.spaceContext.publishedContentTypes = [];
+        scope.permissionController.createContentType.shouldHide = true;
         compileElement();
       });
 
@@ -114,8 +124,6 @@ describe('The add dropdown button directive', function () {
 
     describe('and the user can create Content Types', function () {
       beforeEach(function () {
-        canStub.withArgs('create', 'Entry').returns(true);
-        canStub.withArgs('create', 'ContentType').returns(true);
         scope.spaceContext.publishedContentTypes = [];
         compileElement();
       });
