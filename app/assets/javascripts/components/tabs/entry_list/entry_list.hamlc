@@ -109,7 +109,7 @@
           %button.btn.btn--primary.cf-dialog(
               ng-hide="singleContentType || permissionController.createEntry.shouldHide"
               ng-disabled="permissionController.createEntry.shouldDisable"
-              cf-when-disabled="permissionController.createEntry")
+              cf-when-disabled="permissionController.createEntry"
               dialog-template="new_content_type_list")
             %i.fa.fa-plus.button-icon
             Add New Entry
