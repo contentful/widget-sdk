@@ -68,7 +68,7 @@ angular.module('contentful').controller('ViewMenuController', ['$scope', '$attrs
       message: 'Deleting this Folder will also delete all the saved Views inside.\nIf you want to keep your views, please drag them into another folder before deleting the Folder.',
       confirmLabel: 'Delete Folder',
       scope: $scope
-    }).then(function () {
+    }).promise.then(function () {
       _.remove($scope.folders, {id: folder.id});
       analytics.trackTotango('Deleted View Folder');
       return $scope.saveViews();

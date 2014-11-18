@@ -69,7 +69,7 @@ angular.module('contentful').controller('ApiNameController', ['$scope', '$inject
       cancelLabel: 'Skip editing',
       confirmLabel: 'Edit field ID',
       noBackgroundClose: true,
-    }).then(function () {
+    }).promise.then(function () {
       controller._locked = false;
     });
   }

@@ -280,7 +280,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
           confirmLabel: 'Login',
           noBackgroundClose: true,
           attachTo: 'body'
-        }).then(function () {
+        }).promise.then(function () {
           authentication.logout();
         });
       }

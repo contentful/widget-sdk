@@ -54,7 +54,7 @@ angular.module('contentful').factory('TabList', ['$rootScope', 'analytics', 'mod
           confirmLabel: 'Close Tab',
           message: tab.closingMessage,
           scope: $rootScope
-        }).then(function () {
+        }).promise.then(function () {
           list.closeTab(tab);
         });
       } else {

@@ -33,8 +33,7 @@ angular.module('contentful').factory('ReloadNotification', ['$injector', functio
       confirmLabel: 'Reload application',
       noBackgroundClose: true
     });
-    modalDialog.open(options)
-    .then(reloadWithCacheBuster);
+    modalDialog.open(options).promise.then(reloadWithCacheBuster);
   }
 
   function isApiError(error) {
