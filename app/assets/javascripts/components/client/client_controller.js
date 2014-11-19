@@ -233,10 +233,10 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     } else if (msg('new', 'space')) {
       $scope.showCreateSpaceDialog(data.organizationId);
 
-    } else if (data.type === 'flash' && dotty.get(data, 'resource.type')) {
+    } else if (data.type === 'flash') {
       var level = data.resource.type;
-      if (level.match(/error/)) level = 'warn';
-      else if (!level.match(/info/)) level = 'info';
+      if (level && level.match(/error/)) level = 'warn';
+      else if (level && !level.match(/info/) || !level) level = 'info';
       notification[level](data.resource.message);
 
     } else if (msg('navigate', 'location')) {
