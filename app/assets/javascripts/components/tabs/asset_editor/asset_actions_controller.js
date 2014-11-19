@@ -71,7 +71,7 @@ angular.module('contentful').controller('AssetActionsController', ['$scope', 'no
       } else if (errorId === 'VersionMismatch'){
         notification.warn('Error publishing ' + title() + ': Can only publish most recent version');
       } else {
-        notification.serverError('Error publishing asset: ' + errorId, err);
+        notification.serverError('Publishing the asset has failed due to a server issue. We have been notified.', err);
       }
     });
   };

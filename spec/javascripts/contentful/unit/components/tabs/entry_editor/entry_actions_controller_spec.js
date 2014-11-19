@@ -338,16 +338,17 @@ describe('Entry Actions Controller', function () {
     });
 
     describe('fails with a remote error', function() {
-      var errors;
+      var errors, err;
       beforeEach(function() {
         errors = {errors: true};
-        action.reject({
+        err = {
           body: {
             sys: {
               id: 'remote error'
             },
           }
-        });
+        };
+        action.reject(err);
         scope.validate.returns(true);
         scope.publish();
         scope.$apply();
@@ -366,7 +367,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('gets contextual error message', function() {
-        expect(stubs.serverError.args[0][0]).toMatch(/remote/i);
+        expect(stubs.serverError.args[0][1]).toEqual(err);
       });
     });
 

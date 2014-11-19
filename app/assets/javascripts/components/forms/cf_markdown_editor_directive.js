@@ -240,7 +240,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         modalDialog.open({
           scope: scope,
           template: 'insert_asset_dialog'
-        }).then(function (assets) {
+        }).promise.then(function (assets) {
           if (_.isEmpty(assets)) return;
           var links = _.map(assets, makeAssetLink).join('\n');
           var range = lineRange();

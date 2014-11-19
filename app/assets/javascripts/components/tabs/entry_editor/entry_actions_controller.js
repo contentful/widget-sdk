@@ -85,7 +85,7 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', 'no
       } else if (errorId === 'VersionMismatch'){
         notification.warn('Error publishing ' + title() + ': Can only publish most recent version');
       } else {
-        notification.serverError('Error publishing entry: ' + errorId, err);
+        notification.serverError('Publishing the entry has failed due to a server issue. We have been notified.', err);
       }
     });
   };

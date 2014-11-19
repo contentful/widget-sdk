@@ -105,7 +105,7 @@ angular.module('contentful').controller('LinkEditorController',
     }
 
     function assertIndexMatches(index, entity) {
-      if (entity && !entity.isMissing && entity.getId() && entity.getId() != $scope.links[index].sys.id)
+      if (entity && !entity.isMissing && entity.getId() && entity.getId() != dotty.get($scope.links[index], 'sys.id'))
         logger.logError('Index mismatch', {
           data: {
             entity: entity,
