@@ -16,6 +16,10 @@ filters.filter('isEmpty', function() {
   return _.isEmpty;
 });
 
+filters.filter('isArray', function(){
+  return _.isArray;
+});
+
 filters.filter('fileSize', function () {
   return function (fileSizeInBytes) {
     var i = -1;
