@@ -233,7 +233,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     } else if (msg('new', 'space')) {
       $scope.showCreateSpaceDialog(data.organizationId);
 
-    } else if (data.type === 'flash') {
+    } else if (data.type === 'flash' && dotty.get(data, 'resource.type')) {
       var level = data.resource.type;
       if (level.match(/error/)) level = 'warn';
       else if (!level.match(/info/)) level = 'info';
