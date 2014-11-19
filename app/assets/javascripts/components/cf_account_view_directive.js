@@ -41,9 +41,7 @@ angular.module('contentful').directive('cfAccountView', ['$window', '$rootScope'
       }
 
       function internalNavigationTo(path, data) {
-        // FIXME data param only for debugging purposes
-        //console.log('path changed', path, elem.find('iframe').prop('src'));
-        if(!scope.url || !path) logger.logError('scope url or path not defined', {
+        if(!scope.url || !path) logger.logError('scope url or path not defined in account view', {
           data: {
             currentPath: path,
             scopeUrl: scope.url,
