@@ -131,6 +131,7 @@ angular.module('contentful').controller('LinkEditorController',
             links: links
           }
         });
+        return null;
       }
       return link.sys.id;
     });
