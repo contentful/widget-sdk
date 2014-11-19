@@ -110,7 +110,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   };
 
   function isOrgOwner(org) {
-    return org.sys.createdBy.sys.id === $scope.user.sys.id;
+    return dotty.get(org, 'sys.createdBy.sys.id') === dotty.get($scope.user, 'sys.id');
   }
 
   $scope.selectOrg = function(orgId) {
