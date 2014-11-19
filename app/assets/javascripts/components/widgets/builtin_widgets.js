@@ -1,5 +1,26 @@
 'use strict';
 angular.module('contentful').run(['widgets', function(widgets){
+  // Static widgets
+  widgets.registerWidget('sectionHeader',{
+    name: 'Section Header',
+    template: '<h1 class="layout-field--section-header">{{widget.widgetParams.text}}</h1>',
+    options: [
+      { param: 'text', type: 'Text', name: 'Text' }
+    ]
+  });
+  widgets.registerWidget('infoText',{
+    name: 'Info Text',
+    template: '<p class="layout-field--info-text">{{widget.widgetParams.text}}</p>',
+    options: [
+      { param: 'text', type: 'Text', name: 'Text' }
+    ]
+  });
+
+  // Field widgets
+  widgets.registerWidget('sectionBreak',{
+    name: 'Section Break',
+    template: '<hr class="layout-field--section-break" />'
+  });
   widgets.registerWidget('singleLine',{
     fieldTypes: ['Text', 'Symbol'],
     name: 'Single Line',
@@ -47,7 +68,31 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('datePicker',{
     fieldTypes: ['Date'],
     name: 'Date Picker',
-    template: '<div class="cf-datetime-editor widget-datetime-editor" ng-model="fieldData.value"></div>'
+    template: '<div class="cf-datetime-editor widget-datetime-editor" ng-model="fieldData.value"></div>',
+    options: [
+      {
+        param: 'format',
+        name: 'Format',
+        type: 'Predefined',
+        values: {
+          dateonly: 'Date only',
+          time:     'Date and time without timezone',
+          timeZ:    'Date and time with timezone',
+          //unixtime: 'Unix Timestamp'
+        },
+        default: 'timeZ'
+      },
+      {
+        param: 'ampm',
+        name: 'Time Mode',
+        type: 'Predefined',
+        values: {
+          '12': 'AM/PM',
+          '24': '24 Hour'
+        },
+        default: '24'
+      }
+    ]
   });
   widgets.registerWidget('locationEditor',{
     fieldTypes: ['Location'],
@@ -93,24 +138,6 @@ angular.module('contentful').run(['widgets', function(widgets){
     fieldTypes: ['Assets'],
     name: 'Asset Gallery',
     template: '<div cf-asset-gallery-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
-  });
-  widgets.registerWidget('sectionHeader',{
-    name: 'Section Header',
-    template: '<h1 class="layout-field--section-header">{{widget.widgetParams.text}}</h1>',
-    options: [
-      { param: 'text', type: 'Text', name: 'Text' }
-    ]
-  });
-  widgets.registerWidget('infoText',{
-    name: 'Info Text',
-    template: '<p class="layout-field--info-text">{{widget.widgetParams.text}}</p>',
-    options: [
-      { param: 'text', type: 'Text', name: 'Text' }
-    ]
-  });
-  widgets.registerWidget('sectionBreak',{
-    name: 'Section Break',
-    template: '<hr class="layout-field--section-break" />'
   });
   widgets.registerWidget('youtubeEditor',{
     fieldTypes: ['Symbol'],
