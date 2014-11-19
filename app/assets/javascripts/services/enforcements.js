@@ -10,7 +10,7 @@ angular.module('contentful').factory('enforcements', ['$injector', '$location', 
 
   function isOwner() {
     if(!user.sys) throw new Error('Bad user object');
-    if(!dotty.has(spaceContext, 'space.data.sys')) throw new Error('Bad space object');
+    if(!dotty.exists(spaceContext, 'space.data.sys')) throw new Error('Bad space object');
     return dotty.get(user, 'sys.id') === dotty.get(spaceContext, 'space.data.sys.createdBy.sys.id');
   }
 
