@@ -110,7 +110,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   };
 
   function isOrgOwner(org) {
-    return org.sys.createdBy.sys.id === $scope.user.sys.id;
+    return dotty.get(org, 'sys.createdBy.sys.id') === dotty.get($scope.user, 'sys.id');
   }
 
   $scope.selectOrg = function(orgId) {
@@ -235,8 +235,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
     } else if (data.type === 'flash') {
       var level = data.resource.type;
-      if (level.match(/error/)) level = 'warn';
-      else if (!level.match(/info/)) level = 'info';
+      if (level && level.match(/error/)) level = 'warn';
+      else if (level && !level.match(/info/) || !level) level = 'info';
       notification[level](data.resource.message);
 
     } else if (msg('navigate', 'location')) {

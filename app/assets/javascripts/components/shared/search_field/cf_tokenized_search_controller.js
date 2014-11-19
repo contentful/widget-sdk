@@ -159,6 +159,7 @@ angular.module('contentful').controller('cfTokenizedSearchController', ['$scope'
 
   $scope.confirmAutocompletion = function () {
     var token = $scope.getCurrentToken();
+    if(!token) return;
     var originalString = $scope.inner.term || '';
     var appendString = token.type === 'Value'    ? ' ' :
                        token.type === 'Operator' ? '' :

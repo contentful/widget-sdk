@@ -8,7 +8,7 @@ describe('ReloadNotification service', function () {
     $rootScope         = $injector.get('$rootScope');
     ReloadNotification = $injector.get('ReloadNotification');
     open               = sinon.stub($injector.get('modalDialog'), 'open');
-    open.returns({then: sinon.stub()});
+    open.returns({promise: $q.defer().promise});
     ReloadNotification.apiErrorHandler.restore();
   }));
 

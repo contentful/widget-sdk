@@ -39,7 +39,7 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
     if (widget.widgetType === 'field') {
       var field = getFieldForWidget(widget);
       var locales = _.union(getFieldLocales(field), getErrorLocales(field));
-      locales = makeUnique(locales);
+      locales = _.uniq(locales, 'code');
       return inherit(widget, {
         field: getFieldForWidget(widget),
         locales: locales
@@ -71,19 +71,6 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
 
   function fieldIsEditable(field) {
     return !field.disabled || $scope.preferences.showDisabledFields || $scope.errorPaths && $scope.errorPaths[field.id];
-  }
-
-  function makeUnique(locales) {
-    var uniqLocales = _.uniq(locales, 'code');
-    if(locales.length !== uniqLocales.length){
-      logger.logError('Locales have been duplicated', {
-        data: {
-          locales: locales,
-          activeLocales: $scope.spaceContext.activeLocales
-        }
-      });
-    }
-    return uniqLocales;
   }
 
   function getFieldForWidget(widget) {

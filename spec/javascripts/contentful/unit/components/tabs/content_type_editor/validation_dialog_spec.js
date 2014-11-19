@@ -65,6 +65,7 @@ describe('Validation dialog service', function () {
   describe('shows advice if no validations are set', function () {
     beforeEach(function () {
       scope.field.validations = [];
+      scope.otEditable = true;
       makeDialog();
     });
 
@@ -84,8 +85,14 @@ describe('Validation dialog service', function () {
       expect(dialog.domElement.find('.advice .btn--primary').attr('disabled')).toBeFalsy();
     });
 
-    it('create validation button is disabled', function() {
+    it('create validation button is disabled due to permissions', function() {
       scope.permissionController.can.returns({can: false});
+      scope.$digest();
+      expect(dialog.domElement.find('.advice .btn--primary').attr('disabled')).toBeTruthy();
+    });
+
+    it('create validation button if doc is not ready', function() {
+      scope.otEditable = false;
       scope.$digest();
       expect(dialog.domElement.find('.advice .btn--primary').attr('disabled')).toBeTruthy();
     });
@@ -97,6 +104,7 @@ describe('Validation dialog service', function () {
       scope.field.validations = [
         {'Length': {size: {min: null, max: null}}},
       ];
+      scope.otEditable = true;
       makeDialog();
     });
 
@@ -120,8 +128,14 @@ describe('Validation dialog service', function () {
       expect(dialog.domElement.find('.buttons .btn--primary').attr('disabled')).toBeFalsy();
     });
 
-    it('add validation button is disabled', function() {
+    it('add validation button is disabled if not allowed', function() {
       scope.permissionController.can.returns({can: false});
+      scope.$digest();
+      expect(dialog.domElement.find('.buttons .btn--primary').attr('disabled')).toBeTruthy();
+    });
+
+    it('add validation button is disabled if document is not ready', function() {
+      scope.otEditable = false;
       scope.$digest();
       expect(dialog.domElement.find('.buttons .btn--primary').attr('disabled')).toBeTruthy();
     });

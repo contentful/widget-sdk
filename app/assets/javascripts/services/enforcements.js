@@ -10,8 +10,8 @@ angular.module('contentful').factory('enforcements', ['$injector', '$location', 
 
   function isOwner() {
     if(!user.sys) throw new Error('Bad user object');
-    if(!spaceContext.space.data.sys) throw new Error('Bad space object');
-    return user.sys.id === spaceContext.space.data.sys.createdBy.sys.id;
+    if(!dotty.exists(spaceContext, 'space.data.sys')) throw new Error('Bad space object');
+    return dotty.get(user, 'sys.id') === dotty.get(spaceContext, 'space.data.sys.createdBy.sys.id');
   }
 
   function getOrgId() {

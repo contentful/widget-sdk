@@ -812,7 +812,7 @@ describe('Client Controller', function () {
     });
 
     it('logs the user out on error 401', function () {
-      stubs.dialog.returns($q.when());
+      stubs.dialog.returns({promise: $q.when()});
       tokenDeferred.reject({statusCode: 401});
       scope.$apply();
       expect(stubs.logout).toBeCalled();

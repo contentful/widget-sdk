@@ -28,8 +28,8 @@ angular.module('contentful').factory('tutorialExampledata', ['$injector', functi
       var newSpaceId, self = this;
       var tutorialSpace = _.find(clientScope.spaces, function (space) {
         var isTutorialSpace = space.data.tutorial;
-        var isCurrentUsersSpace = space.data.sys.createdBy.sys.id === clientScope.user.sys.id;
-        var isCurrentUsersOrganization = space.data.organization.sys.createdBy.sys.id === clientScope.user.sys.id;
+        var isCurrentUsersSpace = dotty.get(space, 'data.sys.createdBy.sys.id') === dotty.get(clientScope, 'user.sys.id');
+        var isCurrentUsersOrganization = dotty.get(space, 'data.organization.sys.createdBy.sys.id') === dotty.get(clientScope, 'user.sys.id');
         return isTutorialSpace && (isCurrentUsersSpace || isCurrentUsersOrganization);
       });
       if (tutorialSpace) {
@@ -40,12 +40,12 @@ angular.module('contentful').factory('tutorialExampledata', ['$injector', functi
       // Prepare Space creation
       if (_.isUndefined(tries)) tries = 2;
       var tutorialOrg = _.find(clientScope.organizations, function (organization) {
-        return clientScope.canCreateSpaceInOrg(organization.sys.id);
+        return clientScope.canCreateSpaceInOrg(dotty.get(organization, 'sys.id'));
       });
       if (!tutorialOrg) return $q.reject();
 
       // Run Space creation
-      return client.createSpace({name: 'Playground', tutorial: true}, tutorialOrg.sys.id)
+      return client.createSpace({name: 'Playground', tutorial: true}, dotty.get(tutorialOrg, 'sys.id'))
       .then(function (newSpace) {
         newSpaceId = newSpace.getId();
         return clientScope.performTokenLookup();
@@ -67,7 +67,7 @@ angular.module('contentful').factory('tutorialExampledata', ['$injector', functi
       then(function createContentTypes(data) {
         return _.reject(data.contentTypes, function (newContentType) {
           return !!_.find(spaceContext.contentTypes, function (existingContentType) {
-            return existingContentType.getId() == newContentType.sys.id;
+            return existingContentType.getId() === dotty.get(newContentType, 'sys.id');
           });
         });
       }).
@@ -97,7 +97,7 @@ angular.module('contentful').factory('tutorialExampledata', ['$injector', functi
       }).
       then(function(entryData) {
         var createCalls = _.map(entryData, function (entry) {
-          return spaceContext.space.createEntry(entry.sys.contentType.sys.id, entry)
+          return spaceContext.space.createEntry(dotty.get(entry, 'sys.contentType.sys.id'), entry)
           .catch(function (err) {
             if (dotty.get(err, 'body.sys.id') == 'VersionMismatch'){
               return null;
