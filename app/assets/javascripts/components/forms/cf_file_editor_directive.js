@@ -49,7 +49,7 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
             image: preview,
             url: imgUrl,
             onClose: function (params) {
-              if(!params && params.saveWasClicked)
+              if(params && !params.saveWasClicked)
                 scope.$apply(function () {
                   scope.loadingEditor = false;
                 });
