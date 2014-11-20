@@ -77,17 +77,7 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', 'no
       $scope.entry.setPublishedVersion(version);
       notification.info(title() + ' published successfully');
     })
-    .catch(function(err){
-      var errorId = dotty.get(err, 'body.sys.id');
-      if (errorId === 'ValidationFailed') {
-        $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
-        notification.warn('Error publishing ' + title() + ': Validation failed');
-      } else if (errorId === 'VersionMismatch'){
-        notification.warn('Error publishing ' + title() + ': Can only publish most recent version');
-      } else {
-        notification.serverError('Publishing the entry has failed due to a server issue. We have been notified.', err);
-      }
-    });
+    .catch(handlePublishErrors);
   };
 
   $scope.publishButtonLabel = function () {
@@ -102,6 +92,27 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', 'no
       return 'Publish';
     }
   };
+
+  function handlePublishErrors(err) {
+    var errorId = dotty.get(err, 'body.sys.id');
+    if (errorId === 'ValidationFailed') {
+      $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
+      notification.warn('Error publishing ' + title() + ': Validation failed');
+    } else if (errorId === 'VersionMismatch'){
+      notification.warn('Error publishing ' + title() + ': Can only publish most recent version');
+    } else if (errorId === 'InvalidEntry'){
+      var errors = dotty.get(err, 'body.details.errors');
+      var details;
+      if(errors.length > 0 && errors[0].name == 'linkContentType'){
+        details = errors[0].details;
+      } else {
+        details = err.body.message;
+      }
+      notification.warn('Error publishing ' + title() + ':' + details);
+    } else {
+      notification.serverError('Publishing the entry has failed due to a server issue. We have been notified.', err);
+    }
+  }
 
 }]);
 
