@@ -107,7 +107,7 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('listInput',{
     fieldTypes: ['Symbols'],
     name: 'List',
-    template: '<input cf-list-identity-fix="" class="form-control" ng-disabled="!otEditable" ng-list="" ng-model="fieldData.value" ot-bind-model="" type="text">'
+    template: '<input cf-list-identity-fix="" class="form-control" ng-disabled="!otEditable" ng-list="" cf-empty-list="" ng-model="fieldData.value" ot-bind-model="" type="text">'
   });
   widgets.registerWidget('fileEditor',{
     fieldTypes: ['File'],
