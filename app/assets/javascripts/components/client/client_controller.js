@@ -4,6 +4,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var $rootScope         = $injector.get('$rootScope');
   var $q                 = $injector.get('$q');
   var client             = $injector.get('client');
+  var logger             = $injector.get('logger');
   var SpaceContext       = $injector.get('SpaceContext');
   var authentication     = $injector.get('authentication');
   var notification       = $injector.get('notification');
@@ -247,8 +248,16 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
     } else if (data.token) {
       authentication.setTokenLookup(data.token);
-      $scope.user = authentication.tokenLookup.sys.createdBy;
-      $scope.updateSpaces(authentication.tokenLookup.spaces);
+      if(authentication.tokenLookup) {
+        $scope.user = authentication.tokenLookup.sys.createdBy;
+        $scope.updateSpaces(authentication.tokenLookup.spaces);
+      } else {
+        logger.logError('Token Lookup has not been set properly', {
+          data: {
+            iframeData: data
+          }
+        });
+      }
 
     } else {
       $scope.performTokenLookup();
