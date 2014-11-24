@@ -25,7 +25,6 @@ describe('cfEntryLinkEditor Directive', function () {
     });
 
     inject(function ($compile, $rootScope, cfEntryLinkEditorDirective) {
-      //cfEntryLinkEditorDirective[0].controller = angular.noop;
       scope = $rootScope.$new();
       scope.can = stubs.can;
       scope.fieldData = { value: {
@@ -131,10 +130,12 @@ describe('cfEntryLinkEditor Directive', function () {
         scope.linkedEntities = [
           {data: {}, getId: sinon.stub() },
           {data: {}, getId: sinon.stub(), canPublish: publishStub},
-          {getId: sinon.stub() }
+          {isMissing: true, getId: sinon.stub() }
         ];
         scope.linkedEntities[0].getId.returns('entity0');
         scope.linkedEntities[1].getId.returns('entity1');
+        scope.spaceContext.entryTitle.withArgs(scope.linkedEntities[0], 'en-US').returns('entity title 1');
+        scope.spaceContext.entryTitle.withArgs(scope.linkedEntities[1], 'en-US').returns('entity title 2');
         linkTitleSpy = sinon.spy(scope.entryLinkController, 'linkTitle');
         scope.$digest();
       });
@@ -159,12 +160,16 @@ describe('cfEntryLinkEditor Directive', function () {
         expect(element.find('.linked-entities__info a').eq(0)).not.toBeNgHidden();
       });
 
+      it('link with title for 1st entity has supplied title', function () {
+        expect(element.find('.linked-entities__info a').eq(0).html()).toMatch('entity title 1');
+      });
+
       it('link with title is shown for 2nd entity', function () {
         expect(element.find('.linked-entities__info a').eq(1)).not.toBeNgHidden();
       });
 
       it('link with title for 2nd entity has supplied title', function () {
-        expect(element.find('.linked-entities__info a').eq(1).html()).toMatch('');
+        expect(element.find('.linked-entities__info a').eq(1).html()).toMatch('entity title 2');
       });
 
       it('link with title is not shown for 3rd entity', function () {
@@ -183,6 +188,10 @@ describe('cfEntryLinkEditor Directive', function () {
         expect(element.find('.linked-entities__info span').eq(2)).not.toBeNgHidden();
       });
 
+      it('span with title for 3rd entity has supplied title', function () {
+        expect(element.find('.linked-entities__info span').eq(2).html()).toMatch('Missing entity');
+      });
+
       it('linkTitle is called for 1st entity', function() {
         expect(linkTitleSpy).toBeCalledWith(scope.linkedEntities[0]);
       });
@@ -193,10 +202,6 @@ describe('cfEntryLinkEditor Directive', function () {
 
       it('linkTitle is called for 3rd entity', function() {
         expect(linkTitleSpy).toBeCalledWith(scope.linkedEntities[2]);
-      });
-
-      it('span with title for 3rd entity has supplied title', function () {
-        expect(element.find('.linked-entities__info span').eq(2).html()).toMatch('');
       });
 
     });
