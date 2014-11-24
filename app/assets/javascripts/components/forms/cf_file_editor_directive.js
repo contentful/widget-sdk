@@ -10,6 +10,7 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
   return {
     restrict: 'A',
     require: ['ngModel', '^otPath'],
+    controller: 'ThumbnailController',
     link: function (scope, elem) {
       scope.enableUpload = true;
       scope.showMeta = false;

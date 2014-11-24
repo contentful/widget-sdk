@@ -173,13 +173,13 @@ describe('cfFileMetadata Directive', function () {
     });
 
     it('file is not processing', function() {
-      expect(element.find('.file-progress')).toBeNgHidden();
+      expect(element.find('.file-progress').eq(1)).toBeNgHidden();
     });
 
     it('file is not processing', function() {
       scope.file.upload = 'http://uploadurl';
       scope.$digest();
-      expect(element.find('.file-progress')).not.toBeNgHidden();
+      expect(element.find('.file-progress').eq(1)).not.toBeNgHidden();
     });
 
     it('hides meta info', function() {

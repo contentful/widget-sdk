@@ -6,6 +6,9 @@
     .linked-entities__status(ng-show="entity" ng-class="entityStatusController.getClassname(entity)")
       .status-bar
 
+  .file-progress.progress.center(ng-show="file && file.url && hasPreview() && !imageHasLoaded")
+    %p Loading…
+    .cf-progress-bar.gold(percentage=100)
 
   .file-progress.progress.center(ng-show="file|isFileProcessing")
     %p Processing…
