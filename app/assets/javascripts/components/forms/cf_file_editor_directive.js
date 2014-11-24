@@ -39,6 +39,7 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
 
       scope.editFile = function () {
         scope.loadingEditor = true;
+        scope.imageHasLoaded = false;
         var img = elem.find('.thumbnail').get(0);
         if(!img) {
           notification.warn('The image editor has failed to load.');
