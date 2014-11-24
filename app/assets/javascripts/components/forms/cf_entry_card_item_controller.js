@@ -1,6 +1,8 @@
 'use strict';
 
-angular.module('contentful').controller('EntryCardItemController', ['$scope', function ($scope) {
+angular.module('contentful').controller('EntryCardItemController', ['$scope', '$injector', function ($scope, $injector) {
+
+  var lookupLinksForEntityCache = $injector.get('lookupLinksForEntityCache');
 
   var entityExists = $scope.entryLinkController.entityExists;
   var linkedAssetsCache = $scope.entryLinkController.linkedAssetsCache;
@@ -26,7 +28,7 @@ angular.module('contentful').controller('EntryCardItemController', ['$scope', fu
       var asset = linkedAssetsCache.get(assets[0].sys.id);
       $scope.cardImage = $scope.spaceContext.localizedField(asset, 'data.fields.file');
     } else {
-      $scope.entryLinkController.lookupEntitiesForCache(assets, linkedAssetsCache).then(function (assets) {
+      lookupLinksForEntityCache(assets, linkedAssetsCache).then(function (assets) {
         if(assets.length > 0) $scope.cardImage = $scope.spaceContext.localizedField(assets[0], 'data.fields.file');
       });
     }

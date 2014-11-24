@@ -11,6 +11,7 @@ angular.module('contentful').controller('LinkEditorController',
   var ShareJS               = $injector.get('ShareJS');
   var logger                = $injector.get('logger');
   var validation            = $injector.get('validation');
+  var lookupLinksForEntityCache = $injector.get('lookupLinksForEntityCache');
 
   var entityCache;
 
@@ -29,8 +30,6 @@ angular.module('contentful').controller('LinkEditorController',
   $scope.linkMultiple = linkParams.multiple;
   $scope.linkSingle   = !$scope.linkMultiple;
 
-  this.lookupEntitiesForCache = lookupEntitiesForCache;
-
   entityCache = new EntityCache($scope.spaceContext.space, linkParams.fetchMethod);
   initValidations();
 
@@ -38,7 +37,7 @@ angular.module('contentful').controller('LinkEditorController',
     if (!links || links.length === 0) {
       $scope.linkedEntities = [];
     } else {
-      lookupEntitiesForCache(links, entityCache).then(function (entities) {
+      lookupLinksForEntityCache(links, entityCache).then(function (entities) {
         scope.linkedEntities = markMissing(entities);
       });
     }
@@ -119,21 +118,6 @@ angular.module('contentful').controller('LinkEditorController',
         });
     }
   };
-
-  function lookupEntitiesForCache(links, cache) {
-    var ids = _.map(links, function (link) {
-      if(!link){
-        logger.logError('link object doesnt exist', {
-          data: {
-            links: links
-          }
-        });
-        return null;
-      }
-      return link.sys.id;
-    });
-    return cache.getAll(ids);
-  }
 
   function initValidations() {
     var linkTypeValidation = _(validations)

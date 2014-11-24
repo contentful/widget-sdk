@@ -1,6 +1,6 @@
 'use strict';
 
-describe('cfLinkEditor Controller', function () {
+describe('LinkEditorController', function () {
   var linkEditorCtrl, createController;
   var scope, entry, $q, stubs;
   var shareJSMock, entityCacheMock, linkParams;
