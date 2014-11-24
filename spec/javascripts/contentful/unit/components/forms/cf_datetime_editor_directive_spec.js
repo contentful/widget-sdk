@@ -106,15 +106,6 @@ describe('DateTime Editor', function () {
     expect(scope.localTime).toBe(null);
   });
 
-  it('should parse from slightly misaligned ISOs', function() {
-    if (navigator.userAgent.match(/phantom/i)) return pending();
-    scope.setFromISO('2014-11-6 8:33Z');
-    expectScope('2014-11-06', '08:33', '+00:00');
-
-    scope.setFromISO('2014-11-6 8:33:12.45+0100');
-    expectScope('2014-11-06', '08:33:12.450', '+01:00');
-  });
-
   it('should assume local time when no timezone given in ISO', function () {
     var iso = '2013-12-24T05:23:00';
     scope.setFromISO(iso);
