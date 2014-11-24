@@ -20,10 +20,12 @@ describe('cfEntryLinkEditor Directive', function () {
       $provide.value('fileExtensionFilter', function () {return '';});
 
       $provide.removeDirectives('cfLinkEditorSearch');
+
+      $provide.removeControllers('LinkEditorController', 'EntityStatusController');
     });
 
     inject(function ($compile, $rootScope, cfEntryLinkEditorDirective) {
-      cfEntryLinkEditorDirective[0].controller = angular.noop;
+      //cfEntryLinkEditorDirective[0].controller = angular.noop;
       scope = $rootScope.$new();
       scope.can = stubs.can;
       scope.fieldData = { value: {
@@ -121,20 +123,19 @@ describe('cfEntryLinkEditor Directive', function () {
     });
 
     describe('has multiple links with no array field', function () {
-      var titleStub;
+      var linkTitleSpy;
       beforeEach(function () {
         scope.field.type = 'Link';
         var publishStub = sinon.stub();
         publishStub.returns(true);
         scope.linkedEntities = [
-          {data: '1'},
-          {data: '2', canPublish: publishStub},
-          {}
+          {data: {}, getId: sinon.stub() },
+          {data: {}, getId: sinon.stub(), canPublish: publishStub},
+          {getId: sinon.stub() }
         ];
-        titleStub = sinon.stub();
-        scope.entryLinkController = {
-          linkTitle: titleStub
-        };
+        scope.linkedEntities[0].getId.returns('entity0');
+        scope.linkedEntities[1].getId.returns('entity1');
+        linkTitleSpy = sinon.spy(scope.entryLinkController, 'linkTitle');
         scope.$digest();
       });
 
@@ -162,6 +163,10 @@ describe('cfEntryLinkEditor Directive', function () {
         expect(element.find('.linked-entities__info a').eq(1)).not.toBeNgHidden();
       });
 
+      it('link with title for 2nd entity has supplied title', function () {
+        expect(element.find('.linked-entities__info a').eq(1).html()).toMatch('');
+      });
+
       it('link with title is not shown for 3rd entity', function () {
         expect(element.find('.linked-entities__info a').eq(2)).toBeNgHidden();
       });
@@ -178,16 +183,20 @@ describe('cfEntryLinkEditor Directive', function () {
         expect(element.find('.linked-entities__info span').eq(2)).not.toBeNgHidden();
       });
 
-      it('title method is called for first entity', function () {
-        expect(titleStub).toBeCalledWith(scope.linkedEntities[0]);
+      it('linkTitle is called for 1st entity', function() {
+        expect(linkTitleSpy).toBeCalledWith(scope.linkedEntities[0]);
       });
 
-      it('title method is called for second entity', function () {
-        expect(titleStub).toBeCalledWith(scope.linkedEntities[1]);
+      it('linkTitle is called for 2nd entity', function() {
+        expect(linkTitleSpy).toBeCalledWith(scope.linkedEntities[1]);
       });
 
-      it('title method is called for third entity', function () {
-        expect(titleStub).toBeCalledWith(scope.linkedEntities[2]);
+      it('linkTitle is called for 3rd entity', function() {
+        expect(linkTitleSpy).toBeCalledWith(scope.linkedEntities[2]);
+      });
+
+      it('span with title for 3rd entity has supplied title', function () {
+        expect(element.find('.linked-entities__info span').eq(2).html()).toMatch('');
       });
 
     });
