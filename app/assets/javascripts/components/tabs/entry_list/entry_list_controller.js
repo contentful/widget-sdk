@@ -3,7 +3,7 @@
 angular.module('contentful').controller('EntryListController', ['$scope', '$injector', function EntryListController($scope, $injector) {
   var $controller        = $injector.get('$controller');
   var $q                 = $injector.get('$q');
-  var EntityCache        = $injector.get('EntityCache');
+  var EntityListCache    = $injector.get('EntityListCache');
   var Paginator          = $injector.get('Paginator');
   var PromisedLoader     = $injector.get('PromisedLoader');
   var ReloadNotification = $injector.get('ReloadNotification');
@@ -14,6 +14,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
 
   $controller('DisplayedFieldsController', {$scope: $scope});
   $controller('EntryListViewsController', {$scope: $scope});
+  $scope.entityStatusController = $controller('EntityStatusController', {$scope: $scope});
 
   var ORDER_PREFIXES = {
     'descending': '-',
@@ -27,13 +28,13 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
   $scope.paginator = new Paginator();
   $scope.selection = new Selection();
 
-  $scope.entryCache = new EntityCache({
+  $scope.entryCache = new EntityListCache({
     space: $scope.spaceContext.space,
     entityType: 'Entry',
     limit: 5
   });
 
-  $scope.assetCache = new EntityCache({
+  $scope.assetCache = new EntityListCache({
     space: $scope.spaceContext.space,
     entityType: 'Asset',
     limit: 3
@@ -204,20 +205,6 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
       return $q.reject(err);
     })
     .catch(ReloadNotification.apiErrorHandler);
-  };
-
-  $scope.statusClass = function(entry){
-    if (entry.isPublished()) {
-      if (entry.hasUnpublishedChanges()) {
-        return 'updated';
-      } else {
-        return 'published';
-      }
-    } else if (entry.isArchived()) {
-      return 'archived';
-    } else {
-      return 'draft';
-    }
   };
 
   var narrowFieldTypes = [

@@ -13,10 +13,10 @@
                   ng-mouseleave="hoveringImage=false"
                   entity-title="spaceContext.localizedField(entity, 'data.fields.title', locale.code)"
                   file="spaceContext.localizedField(entity, 'data.fields.file', locale.code)")
-      .asset-gallery__file
+      .asset-gallery__file.gallery-file
         %div(cf-thumbnail="" file="file" size="120" format="square" fit="thumb" ng-if="file && file.url")
 
-      .asset-gallery__handle(cf-drag-handle="" ng-disabled="!otEditable" ng-hide="linkedEntities.length==1")
+      .asset-gallery__handle.dragging-handle(cf-drag-handle="" ng-disabled="!otEditable" ng-hide="linkedEntities.length==1")
         %i.fa.fa-ellipsis-v
         %i.fa.fa-ellipsis-v
 
@@ -28,7 +28,7 @@
       .asset-gallery__no-file(ng-show="entity && entity.isMissing")
         Asset does not exist anymore
 
-      .asset-gallery__buttons(ng-show="hoveringImage")
+      .gallery-buttons(ng-show="hoveringImage")
         %button.btn(type="button"
             cf-file-preview=""
             ng-if="file && file.url && isImage()"

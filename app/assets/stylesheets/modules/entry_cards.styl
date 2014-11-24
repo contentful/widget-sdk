@@ -1,0 +1,99 @@
+.entry-cards
+  margin: 0
+
+.entry-cards__item
+  position: relative
+  display: block
+  overflow: hidden
+  padding: 10px
+  border: 1px solid $metallic-gray
+  border-radius: 3px
+  box-shadow: 1px 1px 1px rgba(0,0,0,0.3)
+  background-color: white
+  &.entry-cards__item--narrow
+    float: left
+
+.entry-cards__handle
+  &.dragging-handle
+    top: 10px
+    left: 10px
+    font-size: 16px
+
+.entry-cards__item--narrow
+  height: 290px
+  padding: 30px 10px
+  width: 30%
+  margin-right: 5%
+  margin-bottom: 20px
+  $display-flexbox()
+  flex-direction: column
+  align-items: center
+  justify-content: center
+  &:nth-child(3n+3)
+    margin-right: 0
+
+.entry-cards__item--wide
+  width: 100%
+
+// file, title, description
+.entry-cards__item--wide
+  .entry-cards__file,
+  .entry-cards__title,
+  .entry-cards__description
+    float: left
+.entry-cards__item--narrow
+  .entry-cards__file,
+  .entry-cards__title,
+  .entry-cards__description
+    float: none
+
+// file
+.entry-cards__item--wide
+  .entry-cards__file
+    margin-right: 2%
+.entry-cards__item--narrow
+  .entry-cards__file
+    margin: 10px 0 0
+    order: 2
+    width: 80px
+    .fa
+      width: 80px
+      line-height: 80px
+      font-size: 50px
+      padding-bottom: 0
+    img
+      width: 80px
+
+// title, description
+.entry-cards__item--wide
+  .entry-cards__title,
+  .entry-cards__description
+    width: 75%
+
+// title
+.entry-cards__title
+  font-weight: bold
+  font-size: 1.1em
+.entry-cards__item--narrow
+  .entry-cards__title
+    width: 60%
+    text-align: center
+    order: 1
+
+// description
+.entry-cards__description
+  color: $gray-medium
+  font-size: 0.9em
+  line-height: 1.6em
+.entry-cards__item--narrow
+  .entry-cards__description
+    padding: 0 0 0 10px
+    margin: 10px 0 0
+    order: 3
+
+// status
+.entry-cards__status
+  position: absolute
+  top: 5px
+  right: 8px
+  font-size: 10px

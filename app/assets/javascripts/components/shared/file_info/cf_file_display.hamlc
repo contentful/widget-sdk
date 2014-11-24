@@ -3,7 +3,9 @@
   .file-preview(cf-file-preview="" ng-show="file && file.url" preview-size="fullscreen")
     .loading(ng-show="loadingEditor")
     .vcenter(cf-thumbnail="" file="file" ng-if="file && !loadingEditor")
-    .linked-entities__unpublished(ng-show="entity && entity.canPublish()" tooltip-placement="right" tooltip="This asset hasn't been published")
+    .linked-entities__status(ng-show="entity" ng-class="entityStatusController.getClassname(entity)")
+      .status-bar
+
 
   .file-progress.progress.center(ng-show="file|isFileProcessing")
     %p Processing…
@@ -38,7 +40,7 @@
       %i.fa.fa-download
     %button.btn.btn--secondary.show-metadata(type="button" ng-click="toggleMeta()" ng-show="file" tooltip="Show file information")
       %i.fa.fa-info-circle
-    %button.btn.btn--secondary.edit-button(type="button" ng-show="enableUpload && file|isFileReady" ng-click="editFile()" tooltip="Edit file")
+    %button.btn.btn--secondary.edit-button(type="button" ng-show="enableUpload && imageHasLoaded && file|isFileReady" ng-click="editFile()" tooltip="Edit file")
       %i.fa.fa-picture-o
     %button.btn.btn--secondary.delete-file(type="button" ng-show="!otDisabled && deleteFile && file|isFileReady" ng-click="deleteFile()" tooltip="Delete file")
       %i.fa.fa-trash

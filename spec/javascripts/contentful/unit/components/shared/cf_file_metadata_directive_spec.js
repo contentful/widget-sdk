@@ -60,10 +60,6 @@ describe('cfFileMetadata Directive', function () {
       it('inner container', function() {
         expect(element.find('.file-preview .vcenter')[0]).toBeUndefined();
       });
-
-      it('unpublished marker', function() {
-        expect(element.find('.file-preview .linked-entities__unpublished')).toBeNgHidden();
-      });
     });
 
     it('title overlay is shown', function() {

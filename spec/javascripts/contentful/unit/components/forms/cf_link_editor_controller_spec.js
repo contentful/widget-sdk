@@ -1,9 +1,9 @@
 'use strict';
 
-describe('cfLinkEditor Controller', function () {
+describe('LinkEditorController', function () {
   var linkEditorCtrl, createController;
   var scope, entry, $q, stubs;
-  var shareJSMock, linkEditorCacheMock, linkParams;
+  var shareJSMock, entityCacheMock, linkParams;
 
   function validationParser(arg) {
     return arg;
@@ -16,8 +16,7 @@ describe('cfLinkEditor Controller', function () {
         'remove',
         'save',
         'getAll',
-        'setValidationType',
-        'getLinkDescription'
+        'setValidationType'
       ]);
 
       shareJSMock = {
@@ -25,14 +24,14 @@ describe('cfLinkEditor Controller', function () {
         mkpath: sinon.stub()
       };
 
-      linkEditorCacheMock = sinon.stub();
-      linkEditorCacheMock.returns({
+      entityCacheMock = sinon.stub();
+      entityCacheMock.returns({
         save: stubs.save,
         getAll: stubs.getAll
       });
 
       $provide.value('ShareJS', shareJSMock);
-      $provide.value('LinkEditorEntityCache', linkEditorCacheMock);
+      $provide.value('EntityCache', entityCacheMock);
       $provide.constant('validation', {
         Validation: {
           parse: validationParser
@@ -65,8 +64,7 @@ describe('cfLinkEditor Controller', function () {
           $scope: scope,
           ngModel: 'fieldData.value',
           linkParams: linkParams,
-          setValidationType: stubs.setValidationType,
-          getLinkDescription: stubs.getLinkDescription
+          setValidationType: stubs.setValidationType
         });
         scope.$digest();
       };
@@ -92,7 +90,7 @@ describe('cfLinkEditor Controller', function () {
     });
 
     it('initializes entity cache', function() {
-      expect(linkEditorCacheMock).toBeCalledWith(scope.spaceContext.space, 'getEntries');
+      expect(entityCacheMock).toBeCalledWith(scope.spaceContext.space, 'getEntries');
     });
 
     it('initializes link content types', function() {

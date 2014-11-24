@@ -1,2 +1,2 @@
-%img.thumbnail(ng-if="file && hasPreview()" ng-src="{{thumbnailUrl()}}")
+%img.thumbnail(ng-if="file && hasPreview()" ng-src="{{thumbnailUrl()}}" cf-img-load-event)
 %i.icon(ng-if="file && !hasPreview()" ng-class="getIconName()")
