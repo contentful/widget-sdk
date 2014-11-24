@@ -16,9 +16,10 @@ describe('cfOoyalaEditorController', function () {
 
       otChangeValuePDeferred = $q.defer();
 
-      scope           = $rootScope.$new();
-      scope.fieldData = {value : 1};
-      controller      = $controller('cfOoyalaEditorController', {$scope: scope});
+      scope                = $rootScope.$new();
+      scope.fieldData      = {value : 1};
+      scope.otChangeValueP = jasmine.createSpy().and.returnValue(otChangeValuePDeferred.promise);
+      controller           = $controller('cfOoyalaEditorController', {$scope: scope});
     });
   });
 
@@ -78,7 +79,6 @@ describe('cfOoyalaEditorController', function () {
   describe('#resetEditorInput', function() {
     describe('to persist the change in Share JS', function() {
       beforeEach(function() {
-        scope.otChangeValueP = jasmine.createSpy().and.returnValue(otChangeValuePDeferred.promise);
         spyOn(controller, 'resetErrors');
         spyOn(controller, 'resetAsset');
 
@@ -114,7 +114,6 @@ describe('cfOoyalaEditorController', function () {
   describe('#persistInput', function() {
     describe('to persist the change in Share JS', function() {
       beforeEach(function() {
-        scope.otChangeValueP = jasmine.createSpy().and.returnValue(otChangeValuePDeferred.promise);
 
         controller.persistInput('input-value');
       });

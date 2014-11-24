@@ -31,15 +31,15 @@ describe('ooyalaPlayerLoader', function() {
   }));
 
   describe('#load', function() {
-    var expectedUrl;
+    var expectedUrl, url;
 
     beforeEach(function() {
       ooyalaPlayerLoaderPromise = ooyalaPlayerLoader.load('123');
-      expectedUrl = baseUrl.replace(':player_id', '123');
+      expectedUrl               = baseUrl.replace(':player_id', '123');
+      url                       = angularLoadSpy.loadScript.calls.mostRecent().args[0];
     });
 
     it('uses the right url', function() {
-      var url = angularLoadSpy.loadScript.calls.mostRecent().args[0];
       expect(url).toBe(expectedUrl);
     });
 
@@ -57,14 +57,12 @@ describe('ooyalaPlayerLoader', function() {
         var player;
 
         beforeEach(function() {
-          var readyCallback = $window.OO.ready.calls.mostRecent().args[0];
           ooyalaPlayerLoaderPromise.then(function(_player_){ player = _player_; });
-          readyCallback();
+          $window.OO.ready.calls.mostRecent().args[0](); // call the 'readyCallback'
           $rootScope.$apply();
         });
 
         it('resolves the promise passing the player as parameter', function() {
-
           expect(player).toBe($window.OO);
         });
       });

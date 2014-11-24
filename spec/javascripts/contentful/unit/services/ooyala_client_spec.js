@@ -62,7 +62,6 @@ describe('Ooyala Client', function () {
 
       function failedRequest(response) {
         beforeEach(function() {
-
           ooyalaClient.setOrganizationId('ORG-ID');
           ooyalaClient.request('bla', 'bla', 'bla').catch(function(_error_){ error = _error_; });
           clientAdapterDeferred.reject(response);
