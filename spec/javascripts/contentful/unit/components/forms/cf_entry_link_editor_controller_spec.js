@@ -16,7 +16,10 @@ describe('EntryLinkEditorController', function () {
         'otDocPush',
         'remove',
         'save',
-        'getAll'
+        'getAll',
+        'entryTitle',
+        'publishedTypeForEntry',
+        'localizedField'
       ]);
 
       shareJSMock = {
@@ -48,6 +51,13 @@ describe('EntryLinkEditorController', function () {
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
       entry = cfStub.entry(space, 'entry1', 'content_type1');
       scope.spaceContext.space.getEntries = stubs.getEntries;
+      scope.spaceContext.entryTitle = stubs.entryTitle;
+      scope.spaceContext.localizedField = stubs.localizedField;
+      scope.spaceContext.publishedTypeForEntry = stubs.publishedTypeForEntry;
+
+      scope.locale = {
+        code: 'en-US'
+      };
 
       scope.field = {
         type: 'Link',
@@ -279,6 +289,124 @@ describe('EntryLinkEditorController', function () {
       });
     });
 
+  });
+
+  describe('link title', function() {
+    var entity, title;
+    beforeEach(function() {
+      entity = {
+        getId: sinon.stub()
+      };
+      createController();
+    });
+
+    describe('for existing entity', function() {
+      beforeEach(function() {
+        entity.getId.returns('123');
+        stubs.entryTitle.returns('entry title');
+        title = linkEditorCtrl.linkTitle(entity);
+      });
+
+      it('gets existing title', function() {
+        expect(stubs.entryTitle).toBeCalledWith(entity, 'en-US');
+      });
+
+      it('returns existing title', function() {
+        expect(title).toBe('entry title');
+      });
+    });
+
+    describe('for non existing entity', function() {
+      beforeEach(function() {
+        entity.isMissing = true;
+        title = linkEditorCtrl.linkTitle(entity);
+      });
+
+      it('does not get existing title', function() {
+        expect(stubs.entryTitle).not.toBeCalled();
+      });
+
+      it('returns missing title', function() {
+        expect(title).toMatch('Missing entity');
+      });
+    });
+  });
+
+  describe('link description', function() {
+    var entity, description;
+    beforeEach(function() {
+      entity = {
+        getId: sinon.stub()
+      };
+      createController();
+    });
+
+    describe('for existing entity', function() {
+      beforeEach(function() {
+        entity.getId.returns('123');
+      });
+
+      describe('if an eligible description field is found', function() {
+        beforeEach(function() {
+          stubs.publishedTypeForEntry.returns({
+            data: {
+              displayField: 'displayme',
+              fields: [
+                {id: 'displayme', type: 'Text'},
+                {id: 'description', type: 'Text'},
+              ]
+            }
+          });
+          stubs.localizedField.returns('description text');
+          description = linkEditorCtrl.linkDescription(entity);
+        });
+
+        it('gets existing description', function() {
+          expect(stubs.localizedField).toBeCalledWith(entity, 'data.fields.description');
+        });
+
+        it('returns existing description', function() {
+          expect(description).toBe('description text');
+        });
+      });
+
+      describe('if no eligible description field is found', function() {
+        beforeEach(function() {
+          stubs.publishedTypeForEntry.returns({
+            data: {
+              displayField: 'displayme',
+              fields: [
+                {id: 'displayme', type: 'Text'},
+              ]
+            }
+          });
+          description = linkEditorCtrl.linkDescription(entity);
+        });
+
+        it('does not get existing description', function() {
+          expect(stubs.localizedField).not.toBeCalled();
+        });
+
+        it('returns missing description', function() {
+          expect(description).toBeNull();
+        });
+      });
+    });
+
+    describe('for non existing entity', function() {
+      beforeEach(function() {
+        entity.isMissing = true;
+        description = linkEditorCtrl.linkDescription(entity);
+      });
+
+      it('does not get existing description', function() {
+        expect(stubs.localizedField).not.toBeCalled();
+      });
+
+      it('returns missing description', function() {
+        expect(description).toBeNull();
+      });
+    });
   });
 
 });
