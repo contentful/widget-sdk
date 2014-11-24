@@ -75,11 +75,22 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
         scope.validate();
       };
 
+      scope.$watch('file', function (file) {
+        if(!file) scope.imageHasLoaded = false;
+      });
+
       scope.$on('cfFileDropped', fileEventHandler);
       scope.$on('gettyFileAuthorized', fileEventHandler);
       scope.$on('fileProcessingFailed', function () {
         setFPFile(null);
       });
+      scope.$on('imageLoaded', function () {
+        scope.imageHasLoaded = true;
+      });
+      scope.$on('imageUnloaded', function () {
+        scope.imageHasLoaded = false;
+      });
+
 
       function fileEventHandler(event, file) {
         setFPFile(file);
