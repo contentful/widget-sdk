@@ -1,7 +1,7 @@
 'use strict';
 
 describe('cfOoyalaPlayer Directive', function() {
-  var directive, ooyalaPlayerLoaderDeferred, scope, $compile, $rootScope, $window;
+  var directive, ooyalaPlayerLoaderDeferred, scope, $compile, $window;
 
   function compileDirective(scope) {
     return  $compile('<cf-ooyala-player asset-id="assetId" player-id="playerId" on-failed-to-play-video="handleFailedToPlayVideo()" on-ready="handleReady()" on-load-failure="handleLoadFailure()"><cf-youtube-player>')(scope);
@@ -10,13 +10,11 @@ describe('cfOoyalaPlayer Directive', function() {
   beforeEach(function() {
     module('contentful/test');
     module(function($provide){
-      var ooyalaPlayerLoaderStub = jasmine.createSpyObj('ooyalaPlayerLoaderStub', ['load']);
-      $provide.value('ooyalaPlayerLoader', ooyalaPlayerLoaderStub);
+      $provide.value('ooyalaPlayerLoader', jasmine.createSpyObj('ooyalaPlayerLoaderStub', ['load']));
     });
 
-    inject(function($injector, $q, ooyalaPlayerLoader){
+    inject(function($injector, $q, $rootScope, ooyalaPlayerLoader){
       $compile   = $injector.get('$compile');
-      $rootScope = $injector.get('$rootScope');
       $window    = $injector.get('$window');
 
       $window.OO = { EVENTS: { PLAYBACK_READY: 0, PLAY_FAILED: 1, STREAM_PLAY_FAILED: 2, ERROR: 3 }};
@@ -41,9 +39,7 @@ describe('cfOoyalaPlayer Directive', function() {
   }));
 
   it('generates different DOM ids for each new player', function() {
-    var otherDirective;
-
-    otherDirective = compileDirective(scope);
+    var otherDirective = compileDirective(scope);
     scope.$apply();
 
     expect(directive.scope().playerDOMId).not.toEqual(otherDirective.scope().playerDOMId);
@@ -69,8 +65,26 @@ describe('cfOoyalaPlayer Directive', function() {
       scope.$apply();
     });
 
-    it('creates the player', function() {
-      expect(ooyalaStub.Player.create).toHaveBeenCalledWith(jasmine.any(String), scope.assetId, jasmine.any(Object));
+    describe('creates the player', function() {
+      var args;
+
+      beforeEach(function() { args = ooyalaStub.Player.create.calls.mostRecent().args; });
+
+      it('calls the #create method on the oolaya object', function() {
+        expect(ooyalaStub.Player.create).toHaveBeenCalled();
+      });
+
+      it('passes the DOM id as the first argument', function(){
+        expect(args[0]).toMatch(/ooyala-player/);
+      });
+
+      it('passes the asset id as the second argument', function(){
+        expect(args[1]).toEqual(scope.assetId);
+      });
+
+      it('passes an options object as the third argument', function() {
+        expect(args[2].onCreate).toEqual(jasmine.any(Function));
+      });
     });
 
     describe('on player creation', function() {
@@ -81,10 +95,10 @@ describe('cfOoyalaPlayer Directive', function() {
         ooyalaStub.Player.create.calls.argsFor(0)[2].onCreate(playerStub);
       });
 
-      function findCallbackForEvent(event) {
-         return _.find(playerStub.mb.subscribe.calls.all(), function(call){
-            return call.args[0] == event;
-           }).args[2];
+      function executeCallbackForEvent(event) {
+        _.find(playerStub.mb.subscribe.calls.all(), function(call){
+          return call.args[0] == event;
+        }).args[2]();
       }
 
       function itSubscribesTo(event) {
@@ -104,7 +118,7 @@ describe('cfOoyalaPlayer Directive', function() {
           eventHandlerSpy = jasmine.createSpy();
           scope.$on('player:ready', eventHandlerSpy);
 
-          findCallbackForEvent($window.OO.EVENTS.PLAYBACK_READY)();
+          executeCallbackForEvent($window.OO.EVENTS.PLAYBACK_READY);
         });
 
         it('emits the player:ready event', function(){
@@ -116,25 +130,20 @@ describe('cfOoyalaPlayer Directive', function() {
         });
       });
 
-
       it('executes the onPlayFailedToPlayVideo callback on playback error', function() {
-        findCallbackForEvent($window.OO.EVENTS.ERROR)();
+        executeCallbackForEvent($window.OO.EVENTS.ERROR);
         expect(scope.handleFailedToPlayVideo).toHaveBeenCalled();
       });
 
       it('executes the onPlayFailedToPlayVideo callback on stream play error', function() {
-        findCallbackForEvent($window.OO.EVENTS.STREAM_PLAY_FAILED)();
+        executeCallbackForEvent($window.OO.EVENTS.STREAM_PLAY_FAILED);
         expect(scope.handleFailedToPlayVideo).toHaveBeenCalled();
       });
 
       it('executes the onPlayFailedToPlayVideo callback on general error', function() {
-        findCallbackForEvent($window.OO.EVENTS.ERROR)();
+        executeCallbackForEvent($window.OO.EVENTS.ERROR);
         expect(scope.handleFailedToPlayVideo).toHaveBeenCalled();
       });
-
     });
-
   });
-
-  //TODO: unique ids
 });
