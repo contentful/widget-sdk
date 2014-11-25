@@ -16,6 +16,10 @@ filters.filter('isEmpty', function() {
   return _.isEmpty;
 });
 
+filters.filter('isArray', function(){
+  return _.isArray;
+});
+
 filters.filter('fileSize', function () {
   return function (fileSizeInBytes) {
     var i = -1;
@@ -126,6 +130,16 @@ filters.filter('isDisplayableAsTitle', function () {
     return field.type === 'Symbol' || field.type === 'Text';
   };
 });
+
+filters.filter('truncate', function () {
+  return function (str, length) {
+    if(str && str.length > length) {
+      return str.substr(0, length)+'…';
+    }
+    return str;
+  };
+});
+
 
 filters.filter('truncateMiddle', function () {
   return function (str, maxLength, endOfStrLength) {

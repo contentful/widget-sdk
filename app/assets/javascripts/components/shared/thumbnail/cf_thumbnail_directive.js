@@ -15,31 +15,13 @@
  */
 
 angular.module('contentful').directive('cfThumbnail', function () {
-  var groupToIconMap = {
-    image: 'image',
-    video: 'video',
-    audio: 'audio',
-    richtext: 'word',
-    presentation: 'powerpoint',
-    spreadsheet: 'excel',
-    pdfdocument: 'pdf',
-    archive: 'zip',
-    plaintext: 'text',
-    code: 'code',
-    markup: 'code'
-  };
-
-  function groupToIcon(name) {
-    if(name in groupToIconMap) return 'fa fa-file-'+groupToIconMap[name]+'-o';
-    return 'fa fa-paperclip';
-  }
-
   return {
     restrict: 'CA',
     template: JST['cf_thumbnail'],
     scope: {
       file: '=file'
     },
+    controller: 'ThumbnailController',
     link: function (scope, el, attrs) {
       var maxWidth, maxHeight;
 
@@ -58,6 +40,25 @@ angular.module('contentful').directive('cfThumbnail', function () {
       }
 
       scope.$watch('file', dimensionsChanged, true);
+
+      scope.hasPreviewAndDimensions = function(){
+        return scope.file.external || scope.hasPreview() && hasDimensions();
+      };
+
+      scope.thumbnailUrl = function () {
+        if (scope.file.external) return scope.file.url;
+
+        if (scope.file.url && scope.width  && scope.height ) {
+          var sizeQueryString = '?w=' + scope.width + '&h=' + scope.height;
+          if(scope.fit) sizeQueryString += '&fit='+scope.fit;
+          if(scope.focus) sizeQueryString += '&f='+scope.focus;
+          return '' + scope.file.url + sizeQueryString;
+        }
+      };
+
+      function hasDimensions () {
+        return 0 < scope.width && 0 < scope.height;
+      }
 
       function dimensionsChanged() {
         if (scope.file && scope.file.details && scope.file.details.image) {
@@ -91,46 +92,6 @@ angular.module('contentful').directive('cfThumbnail', function () {
         scope.width  = Math.round(resizeWidth);
         scope.height = Math.round(resizeHeight);
       }
-    },
-
-
-    controller: ['$scope', 'mimetype', function ($scope, mimetype) {
-
-      $scope.getIconName = function() {
-        var groupName = mimetype.getGroupName(
-          mimetype.getExtension($scope.file.fileName),
-          $scope.file.contentType
-        );
-
-        return groupToIcon(groupName);
-      };
-
-      $scope.hasPreview = function(){
-        return $scope.file.external || hasPreview() && hasDimensions();
-      };
-
-      $scope.thumbnailUrl = function () {
-        if ($scope.file.external) return $scope.file.url;
-
-        if ($scope.file.url && $scope.width  && $scope.height ) {
-          var sizeQueryString = '?w=' + $scope.width + '&h=' + $scope.height;
-          if($scope.fit) sizeQueryString += '&fit='+$scope.fit;
-          if($scope.focus) sizeQueryString += '&f='+$scope.focus;
-          return '' + $scope.file.url + sizeQueryString;
-        }
-      };
-
-      function hasDimensions () {
-        return 0 < $scope.width && 0 < $scope.height;
-      }
-
-      function hasPreview() {
-        return mimetype.hasPreview(
-          mimetype.getExtension($scope.file.fileName),
-          $scope.file.contentType
-        );
-      }
-
-    }]
+    }
   };
 });

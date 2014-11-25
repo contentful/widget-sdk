@@ -60,10 +60,6 @@ describe('cfFileMetadata Directive', function () {
       it('inner container', function() {
         expect(element.find('.file-preview .vcenter')[0]).toBeUndefined();
       });
-
-      it('unpublished marker', function() {
-        expect(element.find('.file-preview .linked-entities__unpublished')).toBeNgHidden();
-      });
     });
 
     it('title overlay is shown', function() {
@@ -177,13 +173,13 @@ describe('cfFileMetadata Directive', function () {
     });
 
     it('file is not processing', function() {
-      expect(element.find('.file-progress')).toBeNgHidden();
+      expect(element.find('.file-progress').eq(1)).toBeNgHidden();
     });
 
     it('file is not processing', function() {
       scope.file.upload = 'http://uploadurl';
       scope.$digest();
-      expect(element.find('.file-progress')).not.toBeNgHidden();
+      expect(element.find('.file-progress').eq(1)).not.toBeNgHidden();
     });
 
     it('hides meta info', function() {

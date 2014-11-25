@@ -10,6 +10,7 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
   return {
     restrict: 'A',
     require: ['ngModel', '^otPath'],
+    controller: 'ThumbnailController',
     link: function (scope, elem) {
       scope.enableUpload = true;
       scope.showMeta = false;
@@ -39,7 +40,12 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
 
       scope.editFile = function () {
         scope.loadingEditor = true;
+        scope.imageHasLoaded = false;
         var img = elem.find('.thumbnail').get(0);
+        if(!img) {
+          notification.warn('The image editor has failed to load.');
+          return;
+        }
         var preview = elem.find('.editor-preview').get(0);
         preview.src = '';
         var imgUrl = stringUtils.removeQueryString(img.src);
@@ -49,7 +55,7 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
             image: preview,
             url: imgUrl,
             onClose: function (params) {
-              if(!params && params.saveWasClicked)
+              if(params && !params.saveWasClicked)
                 scope.$apply(function () {
                   scope.loadingEditor = false;
                 });
@@ -71,11 +77,22 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
         scope.validate();
       };
 
+      scope.$watch('file', function (file) {
+        if(!file) scope.imageHasLoaded = false;
+      });
+
       scope.$on('cfFileDropped', fileEventHandler);
       scope.$on('gettyFileAuthorized', fileEventHandler);
       scope.$on('fileProcessingFailed', function () {
         setFPFile(null);
       });
+      scope.$on('imageLoaded', function () {
+        scope.imageHasLoaded = true;
+      });
+      scope.$on('imageUnloaded', function () {
+        scope.imageHasLoaded = false;
+      });
+
 
       function fileEventHandler(event, file) {
         setFPFile(file);

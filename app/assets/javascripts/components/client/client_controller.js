@@ -4,6 +4,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var $rootScope         = $injector.get('$rootScope');
   var $q                 = $injector.get('$q');
   var client             = $injector.get('client');
+  var logger             = $injector.get('logger');
   var SpaceContext       = $injector.get('SpaceContext');
   var authentication     = $injector.get('authentication');
   var notification       = $injector.get('notification');
@@ -110,7 +111,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   };
 
   function isOrgOwner(org) {
-    return org.sys.createdBy.sys.id === $scope.user.sys.id;
+    return dotty.get(org, 'sys.createdBy.sys.id') === dotty.get($scope.user, 'sys.id');
   }
 
   $scope.selectOrg = function(orgId) {
@@ -235,8 +236,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
     } else if (data.type === 'flash') {
       var level = data.resource.type;
-      if (level.match(/error/)) level = 'warn';
-      else if (!level.match(/info/)) level = 'info';
+      if (level && level.match(/error/)) level = 'warn';
+      else if (level && !level.match(/info/) || !level) level = 'info';
       notification[level](data.resource.message);
 
     } else if (msg('navigate', 'location')) {
@@ -247,8 +248,16 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
     } else if (data.token) {
       authentication.setTokenLookup(data.token);
-      $scope.user = authentication.tokenLookup.sys.createdBy;
-      $scope.updateSpaces(authentication.tokenLookup.spaces);
+      if(authentication.tokenLookup) {
+        $scope.user = authentication.tokenLookup.sys.createdBy;
+        $scope.updateSpaces(authentication.tokenLookup.spaces);
+      } else {
+        logger.logError('Token Lookup has not been set properly', {
+          data: {
+            iframeData: data
+          }
+        });
+      }
 
     } else {
       $scope.performTokenLookup();
@@ -280,7 +289,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
           confirmLabel: 'Login',
           noBackgroundClose: true,
           attachTo: 'body'
-        }).then(function () {
+        }).promise.then(function () {
           authentication.logout();
         });
       }

@@ -20,10 +20,11 @@ describe('cfEntryLinkEditor Directive', function () {
       $provide.value('fileExtensionFilter', function () {return '';});
 
       $provide.removeDirectives('cfLinkEditorSearch');
+
+      $provide.removeControllers('LinkEditorController', 'EntityStatusController');
     });
 
     inject(function ($compile, $rootScope, cfEntryLinkEditorDirective) {
-      cfEntryLinkEditorDirective[0].controller = angular.noop;
       scope = $rootScope.$new();
       scope.can = stubs.can;
       scope.fieldData = { value: {
@@ -121,18 +122,21 @@ describe('cfEntryLinkEditor Directive', function () {
     });
 
     describe('has multiple links with no array field', function () {
-      var descriptionStub;
+      var linkTitleSpy;
       beforeEach(function () {
         scope.field.type = 'Link';
         var publishStub = sinon.stub();
         publishStub.returns(true);
         scope.linkedEntities = [
-          {data: '1'},
-          {data: '2', canPublish: publishStub},
-          {}
+          {data: {}, getId: sinon.stub() },
+          {data: {}, getId: sinon.stub(), canPublish: publishStub},
+          {isMissing: true, getId: sinon.stub() }
         ];
-        descriptionStub = sinon.stub();
-        scope.linkDescription = descriptionStub;
+        scope.linkedEntities[0].getId.returns('entity0');
+        scope.linkedEntities[1].getId.returns('entity1');
+        scope.spaceContext.entryTitle.withArgs(scope.linkedEntities[0], 'en-US').returns('entity title 1');
+        scope.spaceContext.entryTitle.withArgs(scope.linkedEntities[1], 'en-US').returns('entity title 2');
+        linkTitleSpy = sinon.spy(scope.entryLinkController, 'linkTitle');
         scope.$digest();
       });
 
@@ -152,52 +156,52 @@ describe('cfEntryLinkEditor Directive', function () {
         expect(element.find('.linked-entities__info').get(0)).toBeDefined();
       });
 
-      it('link with description is shown for 1st entity', function () {
+      it('link with title is shown for 1st entity', function () {
         expect(element.find('.linked-entities__info a').eq(0)).not.toBeNgHidden();
       });
 
-      it('link with description is shown for 2nd entity', function () {
+      it('link with title for 1st entity has supplied title', function () {
+        expect(element.find('.linked-entities__info a').eq(0).html()).toMatch('entity title 1');
+      });
+
+      it('link with title is shown for 2nd entity', function () {
         expect(element.find('.linked-entities__info a').eq(1)).not.toBeNgHidden();
       });
 
-      it('link with description is not shown for 3rd entity', function () {
+      it('link with title for 2nd entity has supplied title', function () {
+        expect(element.find('.linked-entities__info a').eq(1).html()).toMatch('entity title 2');
+      });
+
+      it('link with title is not shown for 3rd entity', function () {
         expect(element.find('.linked-entities__info a').eq(2)).toBeNgHidden();
       });
 
-      it('span with description is not shown for 1st entity', function () {
+      it('span with title is not shown for 1st entity', function () {
         expect(element.find('.linked-entities__info span').eq(0)).toBeNgHidden();
       });
 
-      it('span with description is not shown for 2nd entity', function () {
+      it('span with title is not shown for 2nd entity', function () {
         expect(element.find('.linked-entities__info span').eq(1)).toBeNgHidden();
       });
 
-      it('span with description is shown for 3rd entity', function () {
+      it('span with title is shown for 3rd entity', function () {
         expect(element.find('.linked-entities__info span').eq(2)).not.toBeNgHidden();
       });
 
-      it('description method is called for first entity', function () {
-        expect(descriptionStub).toBeCalledWith(scope.linkedEntities[0]);
+      it('span with title for 3rd entity has supplied title', function () {
+        expect(element.find('.linked-entities__info span').eq(2).html()).toMatch('Missing entity');
       });
 
-      it('description method is called for second entity', function () {
-        expect(descriptionStub).toBeCalledWith(scope.linkedEntities[1]);
+      it('linkTitle is called for 1st entity', function() {
+        expect(linkTitleSpy).toBeCalledWith(scope.linkedEntities[0]);
       });
 
-      it('description method is called for third entity', function () {
-        expect(descriptionStub).toBeCalledWith(scope.linkedEntities[2]);
+      it('linkTitle is called for 2nd entity', function() {
+        expect(linkTitleSpy).toBeCalledWith(scope.linkedEntities[1]);
       });
 
-      it('first entity has no unpublished marker', function () {
-        expect(element.find('.linked-entities__info .linked-entities__unpublished').eq(0)).toBeNgHidden();
-      });
-
-      it('second entity has unpublished marker', function () {
-        expect(element.find('.linked-entities__info .linked-entities__unpublished').eq(1)).not.toBeNgHidden();
-      });
-
-      it('third entity has no unpublished marker', function () {
-        expect(element.find('.linked-entities__info .linked-entities__unpublished').eq(2)).toBeNgHidden();
+      it('linkTitle is called for 3rd entity', function() {
+        expect(linkTitleSpy).toBeCalledWith(scope.linkedEntities[2]);
       });
 
     });

@@ -79,8 +79,8 @@
               %cf-field-display(ng-hide="isFieldCollapsed(field)")
               %button.transparent-button(cf-click-local="expandColumn(field)" ng-show="isFieldCollapsed(field)")
                 &hellip;
-            %td.cell-status(ng-class="statusClass(entry)")
-              .status-label {{statusClass(entry)}}
+            %td.cell-status(ng-class="entityStatusController.getClassname(entry)")
+              .status-label {{entityStatusController.getLabel(entry)}}
               .status-bar
       .loading(ng-hide="paginator.atLast()")
 

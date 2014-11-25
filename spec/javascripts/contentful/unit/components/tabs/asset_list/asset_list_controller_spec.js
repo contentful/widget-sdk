@@ -407,37 +407,6 @@ describe('Asset List Controller', function () {
     });
   });
 
-  describe('status class', function () {
-    it('is updated', function () {
-      var asset = makeAsset();
-      asset.hasUnpublishedChanges();
-      stubs.published.returns(true);
-      stubs.hasUnpublishedChanges.returns(true);
-      expect(scope.statusClass(asset)).toBe('updated');
-    });
-
-    it('is published', function () {
-      var asset = makeAsset();
-      stubs.published.returns(true);
-      stubs.hasUnpublishedChanges.returns(false);
-      expect(scope.statusClass(asset)).toBe('published');
-    });
-
-    it('is archived', function () {
-      var asset = makeAsset();
-      stubs.published.returns(false);
-      stubs.archived.returns(true);
-      expect(scope.statusClass(asset)).toBe('archived');
-    });
-
-    it('is draft', function () {
-      var asset = makeAsset();
-      stubs.published.returns(false);
-      stubs.archived.returns(false);
-      expect(scope.statusClass(asset)).toBe('draft');
-    });
-  });
-
   describe('when tab becomes active', function () {
     beforeEach(function() {
       scope.searchController.resetAssets = sinon.stub();

@@ -10,7 +10,7 @@ angular.module('contentful').controller('CfViewFolderController', ['$scope', 'mo
       message: 'Do you really want to delete the View "'+view.title+'"?',
       confirmLabel: 'Delete View',
       scope: $scope
-    }).then(function () {
+    }).promise.then(function () {
       _.remove(folder.views, {id: view.id});
       $scope.cleanDefaultFolder();
       analytics.trackTotango('Deleted View');

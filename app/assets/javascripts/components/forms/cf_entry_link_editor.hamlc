@@ -1,3 +1,11 @@
+.l-link-editor-search(cf-link-editor-search=""
+  cf-autocomplete-results="entities"
+  add-entity="addLink(entity)"
+  entity-type="Entry"
+  entity-content-types="linkContentTypes"
+  entity-mime-type-group="linkMimetypeGroup"
+  ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
+
 %ul.linked-entities(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide="linkedEntities.length == 0")
   %li.linked-entities__item(
       ng-repeat="(index, entity) in linkedEntities track by index"
@@ -6,17 +14,9 @@
       %i.fa.fa-ellipsis-v
       %i.fa.fa-ellipsis-v
     .linked-entities__info
-      %a(href="" ng-click="navigator.entityEditor(entity).goTo()" ng-show="entity && entity.data" title="{{linkDescription(entity)}}") {{linkDescription(entity)}}
-      %span(ng-hide="entity && entity.data" title="{{linkDescription(entity)}}") {{linkDescription(entity)}}
+      %a(href="" ng-click="navigator.entityEditor(entity).goTo()" ng-show="entity && entity.data" title="{{entryLinkController.linkTitle(entity)}}") {{entryLinkController.linkTitle(entity)}}
+      %span(ng-hide="entity && entity.data" title="{{entryLinkController.linkTitle(entity)}}") {{entryLinkController.linkTitle(entity)}}
       %i.fa.fa-times-circle(ng-click="removeLink(index, entity)" ng-show="otEditable")
-      .linked-entities__unpublished(ng-show="entity.canPublish()" tooltip-placement="right" tooltip="This entry hasn't been published")
-
-
-.l-link-editor-search(cf-link-editor-search=""
-  cf-autocomplete-results="entities"
-  add-entity="addLink(entity)"
-  entity-type="Entry"
-  entity-content-types="linkContentTypes"
-  entity-mime-type-group="linkMimetypeGroup"
-  ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
+      .linked-entities__status(ng-class="entityStatusController.getClassname(entity)")
+        .status-bar
 

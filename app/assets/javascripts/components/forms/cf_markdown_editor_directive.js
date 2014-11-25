@@ -240,7 +240,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         modalDialog.open({
           scope: scope,
           template: 'insert_asset_dialog'
-        }).then(function (assets) {
+        }).promise.then(function (assets) {
           if (_.isEmpty(assets)) return;
           var links = _.map(assets, makeAssetLink).join('\n');
           var range = lineRange();
@@ -299,7 +299,9 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
 
       function triggerUpdateEvents() {
         textarea.trigger('input').trigger('autosize');
-        textarea.get(0).dispatchEvent(new Event('paste'));
+        var textareaElem = textarea.get(0);
+        if(textareaElem && textareaElem.dispatchEvent)
+          textareaElem.dispatchEvent(new Event('paste'));
       }
 
       function makeAssetLink(asset) {

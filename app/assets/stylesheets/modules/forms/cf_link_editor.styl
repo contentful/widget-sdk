@@ -76,13 +76,14 @@
     border-radius: 0
 
 
-.linked-entities__unpublished
+.linked-entities__status
   position: absolute
   right: 0
   top: 0
   bottom: 0
   width: 8px
-  background: $blue-light
+  .status-bar
+    $stretch(0, 0, 0, 0)
 
 .link-editor__controls
   position: relative
@@ -90,6 +91,7 @@
 
 .l-link-editor-search
   position: relative
+  margin-bottom: 30px
 
   .l-search-w-autocomplete
     width: 80%
