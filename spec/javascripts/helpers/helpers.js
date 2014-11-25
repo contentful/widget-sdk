@@ -1,4 +1,4 @@
-/*global performance*/
+/*global performance */
 'use strict';
 
 var timingReporter = {
@@ -217,6 +217,42 @@ beforeEach(function() {
             pass    : pass,
             message : 'Expected ' + actual.constructor.name + notText + ' to be an instance of ' + expected.name
           };
+        }
+      };
+    },
+
+    toEqualObj: function () {
+      var KINDS = {
+        'N': 'newly added property/element',
+        'D': 'property/element was deleted',
+        'E': 'property/element was edited',
+        'A': 'change occurred within an array'
+      };
+
+      function formatDiff(objdiff) {
+        return objdiff.map(function (diff) {
+          return '\t'+diff.kind +' at '+ diff.path.join('.') +'\n'+
+                 '\t'+diff.actual +' should be '+ diff.expected;
+        }).join('\n\n');
+      }
+
+      return {
+        compare: function (actual, expected) {
+          var objdiff = (deepDiff(expected, actual) || []).map(function (diff) {
+            return {
+              kind: KINDS[diff.kind],
+              path: diff.path,
+              expected: diff.lhs,
+              actual: diff.rhs
+            };
+          });
+
+          //console.log(actual, expected, objdiff);
+          return {
+            pass    : objdiff.length === 0,
+            message : 'Expected object not to have differences\n\n' + formatDiff(objdiff)
+          };
+
         }
       };
     }

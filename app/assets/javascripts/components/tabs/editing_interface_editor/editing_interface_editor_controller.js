@@ -4,6 +4,7 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
   var $controller       = $injector.get('$controller');
   var editingInterfaces = $injector.get('editingInterfaces');
   var environment       = $injector.get('environment');
+  var notification      = $injector.get('notification');
 
   $controller('AccordionController', {$scope: $scope});
 
@@ -42,23 +43,27 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
 
   function restoreDefaults() {
     $scope.closeAllAccordionItems();
-    var editingInterface = editingInterfaces.defaultInterface($scope.contentType);
+    var editingInterface = editingInterfaces.defaultInterface($scope.spaceContext.space, $scope.contentType);
     $scope.editingInterface.data.widgets = editingInterface.data.widgets;
   }
 
   function saveToServer() {
     editingInterfaces.save($scope.editingInterface)
     .then(function(interf) {
+      notification.info('Configuration saved successfully');
       $scope.editingInterface = interf;
     })
-    .catch(function(error) {
-      if (dotty.get(error, 'body.sys.id') == 'VersionMismatch')
+    .catch(function(err) {
+      if(dotty.get(err, 'body.sys.type') == 'Error' && dotty.get(err, 'body.sys.id') == 'VersionMismatch'){
+        notification.warn('This configuration has been changed by another user. Please reload and try again.');
         return loadFromServer();
+      } else
+        notification.serverError('There was a problem saving the configuration', err);
     });
   }
 
   function loadFromServer () {
-    editingInterfaces.forContentTypeWithId($scope.contentType, $scope.editingInterface.getId())
+    editingInterfaces.forContentTypeWithId($scope.spaceContext.space, $scope.contentType, $scope.editingInterface.getId())
     .then(function(interf) {
       $scope.editingInterface = interf;
     });

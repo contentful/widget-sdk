@@ -1,16 +1,14 @@
 'use strict';
 
 describe('Space Controller', function () {
-  var spaceController, scope, stubs, $q, logger, notification;
+  var spaceController, scope, stubs, $q, logger;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'authUpdated',
         'periodUsage',
-        'computeUsage',
         'setSpaceContext',
-        'enforcement',
         'track',
         'localesStub'
       ]);
@@ -24,8 +22,6 @@ describe('Space Controller', function () {
 
       $provide.value('enforcements', {
         getPeriodUsage: stubs.periodUsage,
-        computeUsage: stubs.computeUsage,
-        determineEnforcement: stubs.enforcement,
         setSpaceContext: stubs.setSpaceContext
       });
 
@@ -36,7 +32,6 @@ describe('Space Controller', function () {
     inject(function ($controller, $rootScope, cfStub, $injector){
       $q = $injector.get('$q');
       logger = $injector.get('logger');
-      notification = $injector.get('notification');
       scope = $rootScope.$new();
 
       var space = cfStub.space('test');
@@ -150,259 +145,5 @@ describe('Space Controller', function () {
       expect(broadcastStub).toBeCalled();
     });
   });
-
-  describe('creates an entry', function () {
-    var createStub;
-    var contentType;
-    beforeEach(inject(function (cfStub) {
-      createStub = sinon.stub(scope.spaceContext.space, 'createEntry').returns($q.defer().promise);
-      contentType = cfStub.contentType(scope.spaceContext.space, 'thing', 'Thing');
-    }));
-
-    afterEach(function () {
-      createStub.restore();
-    });
-
-    it('calls the space create method', function () {
-      scope.createEntry(contentType);
-      expect(createStub).toBeCalled();
-    });
-
-    describe('creation fails', function () {
-      beforeEach(function () {
-        createStub.returns($q.reject({
-          body: {
-            details: {
-              reasons: []
-            }
-          }
-        }));
-        scope.createEntry(contentType);
-        scope.$apply();
-      });
-
-      it('determines enforcements', function () {
-        expect(stubs.enforcement).toBeCalledWith([], 'entry');
-      });
-
-      it('notifies of the error', function () {
-        expect(logger.logServerError).toBeCalled();
-        expect(notification.error).toBeCalled();
-      });
-
-      it('tracks analytics', function () {
-        expect(stubs.track).toBeCalled();
-      });
-    });
-
-    describe('creation suceeds', function () {
-      var editorStub;
-      beforeEach(function () {
-        editorStub = sinon.stub();
-        editorStub.returns({goTo: sinon.stub()});
-        scope.navigator = {
-          entryEditor: editorStub
-        };
-        createStub.returns($q.when({}));
-        scope.createEntry(contentType);
-        scope.$apply();
-      });
-
-      it('navigates to editor', function () {
-        expect(editorStub).toBeCalled();
-      });
-
-      it('tracks analytics', function () {
-        expect(stubs.track).toBeCalled();
-      });
-    });
-  });
-
-  describe('creates an asset', function () {
-    var createStub;
-    beforeEach(function () {
-      createStub = sinon.stub(scope.spaceContext.space, 'createAsset').returns($q.defer().promise);
-    });
-
-    afterEach(function () {
-      createStub.restore();
-    });
-
-    it('calls the space create method', function () {
-      scope.createAsset();
-      expect(createStub).toBeCalled();
-    });
-
-    describe('creation fails', function () {
-      beforeEach(function () {
-        createStub.returns($q.reject({
-          body: {
-            details: {
-              reasons: []
-            }
-          }
-        }));
-        scope.createAsset();
-        scope.$apply();
-      });
-
-      it('determines enforcements', function () {
-        expect(stubs.enforcement).toBeCalledWith([], 'asset');
-      });
-
-      it('notifies of the error', function () {
-        expect(logger.logServerError).toBeCalled();
-        expect(notification.error).toBeCalled();
-      });
-
-      it('tracks analytics', function () {
-        expect(stubs.track).toBeCalled();
-      });
-    });
-
-    describe('creation suceeds', function () {
-      var editorStub;
-      beforeEach(inject(function (cfStub) {
-        editorStub = sinon.stub();
-        editorStub.returns({goTo: sinon.stub()});
-        scope.navigator = {
-          assetEditor: editorStub
-        };
-        createStub.returns($q.when(cfStub.asset(scope.spaceContext.space, 'image')));
-        scope.createAsset();
-        scope.$apply();
-      }));
-
-      it('navigates to editor', function () {
-        expect(editorStub).toBeCalled();
-      });
-
-      it('tracks analytics', function () {
-        expect(stubs.track).toBeCalled();
-      });
-    });
-  });
-
-  describe('creates a content type', function () {
-    var createStub;
-    beforeEach(function () {
-      createStub = sinon.stub(scope.spaceContext.space, 'createContentType').returns($q.defer().promise);
-    });
-
-    afterEach(function () {
-      createStub.restore();
-    });
-
-    it('calls the space create method', function () {
-      scope.createContentType();
-      expect(createStub).toBeCalled();
-    });
-
-    describe('creation fails', function () {
-      beforeEach(function () {
-        createStub.returns($q.reject({
-          body: {
-            details: {
-              reasons: []
-            }
-          }
-        }));
-        scope.createContentType();
-        scope.$apply();
-      });
-
-      it('determines enforcements', function () {
-        expect(stubs.enforcement).toBeCalledWith([], 'contentType');
-      });
-
-      it('notifies of the error', function () {
-        expect(logger.logServerError).toBeCalled();
-        expect(notification.error).toBeCalled();
-      });
-
-      it('tracks analytics', function () {
-        expect(stubs.track).toBeCalled();
-      });
-    });
-
-    describe('creation suceeds', function () {
-      var editorStub;
-      beforeEach(function () {
-        editorStub = sinon.stub();
-        editorStub.returns({goTo: sinon.stub()});
-        scope.navigator = {
-          contentTypeEditor: editorStub
-        };
-        createStub.returns($q.when({}));
-        scope.createContentType();
-        scope.$apply();
-      });
-
-      it('navigates to editor', function () {
-        expect(editorStub).toBeCalled();
-      });
-
-      it('tracks analytics', function () {
-        expect(stubs.track).toBeCalled();
-      });
-    });
-  });
-
-  describe('creates an api key', function () {
-    var createStub;
-    beforeEach(function () {
-      createStub = sinon.stub(scope.spaceContext.space, 'createBlankDeliveryApiKey');
-    });
-
-    afterEach(function () {
-      createStub.restore();
-    });
-
-    describe('creation fails', function () {
-      beforeEach(function () {
-        stubs.computeUsage.returns({});
-        scope.createApiKey();
-      });
-
-      it('computes the api key usage', function () {
-        expect(stubs.computeUsage).toBeCalledWith('apiKey');
-      });
-
-      it('notifies of the error', function () {
-        expect(logger.logServerError).toBeCalled();
-        expect(notification.error).toBeCalled();
-      });
-    });
-
-    describe('creation suceeds', function () {
-      var editorStub;
-      beforeEach(function () {
-        editorStub = sinon.stub();
-        editorStub.returns({openAndGoTo: sinon.stub()});
-        scope.navigator = {
-          apiKeyEditor: editorStub
-        };
-        stubs.computeUsage.returns(null);
-        scope.createApiKey();
-      });
-
-      it('computes the api key usage', function () {
-        expect(stubs.computeUsage).toBeCalledWith('apiKey');
-      });
-
-      it('calls the space create method', function () {
-        expect(createStub).toBeCalled();
-      });
-
-      it('navigates to editor', function () {
-        expect(editorStub).toBeCalled();
-      });
-
-      it('tracks analytics', function () {
-        expect(stubs.track).toBeCalled();
-      });
-    });
-  });
-
 
 });

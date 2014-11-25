@@ -30,6 +30,7 @@ angular.module('contentful/app', [
   $sceDelegateProvider.resourceUrlWhitelist(env.resourceUrlWhiteListRegexp);
   clientAdapterProvider.server('//'+env.api_host);
   authenticationProvider.authApp('//'+env.base_host+'/');
+
   //analyticsProvider.forceLoad();
   timeRelativeConfig.calendar.en.sameElse = 'll';
   timeRelativeConfig.calendar.en.lastWeek = 'ddd, LT';

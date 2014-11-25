@@ -7,7 +7,7 @@ angular.module('contentful').provider('authentication', ['$injector', function A
 
   this.setEnvVars = function() {
     environment       = $injector.get('environment');
-    contentfulClient  = $injector.get('contentfulClient');
+    contentfulClient  = $injector.get('privateContentfulClient');
     authApp           = '//'+environment.settings.base_host+'/';
     marketingApp      = environment.settings.marketing_url+'/';
     QueryLinkResolver = contentfulClient.QueryLinkResolver;

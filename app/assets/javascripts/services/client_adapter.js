@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').provider('clientAdapter', ['$injector', function ClientAdapter($injector) {
-  var contentfulClient = $injector.get('contentfulClient');
+  var contentfulClient = $injector.get('privateContentfulClient');
   var server           = null;
 
   this.server = function(s) { server = s; };

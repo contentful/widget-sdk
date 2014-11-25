@@ -5,18 +5,18 @@
     ul.dropdown-menu-list.main-types
       li.dropdown-menu-item.add-content-type.bottom-separator(
           dropdown-close
-          ng-click="createContentType('addDropdown')"
-          ng-hide="permissionController.createContentType.shouldHide")
+          ng-click="entityCreationController.newContentType('addDropdown')"
+          ng-hide="spaceContext.contentTypes.length === 0 || permissionController.createContentType.shouldHide")
         i.fa.fa-database
         | Content Type
       li.dropdown-menu-item.add-asset(
           dropdown-close
-          ng-click="createAsset('addDropdown')"
+          ng-click="entityCreationController.newAsset('addDropdown')"
           ng-hide="permissionController.createAsset.shouldHide")
         i.fa.fa-paperclip
         | Asset
       li.dropdown-menu-item.add-api-key(
-          ng-click="createApiKey('addDropdown')"
+          ng-click="entityCreationController.newApiKey('addDropdown')"
           dropdown-close
           ng-hide="permissionController.createApiKey.shouldHide")
         i.fa.fa-random
@@ -27,12 +27,13 @@
         | Entries
     ul.dropdown-menu-list.content-types(ng-hide="spaceContext.publishedContentTypes.length === 0 || permissionController.createEntry.shouldHide")
       li.dropdown-menu-item(ng-repeat="(index, contentType) in spaceContext.publishedContentTypes track by contentType.getId()"
-        ng-click="createEntry(contentType, 'addDropdown')"
+        ng-click="entityCreationController.newEntry(contentType, 'addDropdown')"
         data-content-type-id="{{contentType.getId()}}"
         dropdown-close)
         | {{contentType.getName()}}
     ul.dropdown-menu-list.highlight.no-content-types(ng-hide="spaceContext.publishedContentTypes.length > 0 || permissionController.createEntry.shouldHide")
-      li.dropdown-menu-item.hint(ng-click="createContentType('addDropdown')" dropdown-close ng-hide="permissionController.createContentType.shouldHide")
+      li.dropdown-menu-item.hint(dropdown-close ng-hide="permissionController.createContentType.shouldHide")
+
         | (Create and activate a Content Type before creating Entries)
       li.dropdown-menu-item.hint(dropdown-close ng-hide="!permissionController.createContentType.shouldHide")
         | (No Content Types available. An admin needs to create a Content Type before you can add Entries)

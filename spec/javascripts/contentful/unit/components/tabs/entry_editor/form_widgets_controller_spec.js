@@ -12,9 +12,9 @@ describe('Form Widgets Controller', function () {
         cfStub.contentTypeData('testType',  [cfStub.field('fieldA')]),
         cfStub.contentTypeData('testType2', [cfStub.field('fieldB')]),
       ]);
-      sinon.stub(editingInterfaces, 'forContentTypeWithId', function(contentType) {
+      sinon.stub(editingInterfaces, 'forContentTypeWithId', function(space, contentType) {
         // Do not attempt to load from remote
-        return $q.when(editingInterfaces.defaultInterface(contentType));
+        return $q.when(editingInterfaces.defaultInterface(space, contentType));
       });
       controller = $controller('FormWidgetsController', {$scope: scope});
       controller.contentType = scope.spaceContext.publishedContentTypes[0];

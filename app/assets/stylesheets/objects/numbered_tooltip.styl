@@ -1,0 +1,34 @@
+$numbered-tooltip-color = lighten($gold, 20%)
+.numbered-tooltip
+  &.tooltip
+    font-size: 16px
+    line-height: 0.5
+  &.tooltip.in
+    opacity: 0.9
+  &.tooltip.right
+    .tooltip-arrow
+      border-right-color: $numbered-tooltip-color
+  &.tooltip.bottom
+    .tooltip-arrow
+      border-bottom-color: $numbered-tooltip-color
+  &.tooltip.top
+    .tooltip-arrow
+      border-top-color: $numbered-tooltip-color
+  &.tooltip.left
+    .tooltip-arrow
+      border-left-color: $numbered-tooltip-color
+  .tooltip-arrow
+    color: $numbered-tooltip-color
+  .tooltip-inner
+    padding: 18px
+    border-radius: 30px
+    background-color: $numbered-tooltip-color
+    color: darken($base-font-color, 30%)
+
+.numbered-tooltip__label
+  font-size: 16px
+  padding: 18px
+  line-height: 0.5
+  border-radius: 30px
+  background-color: $numbered-tooltip-color
+  color: darken($base-font-color, 30%)

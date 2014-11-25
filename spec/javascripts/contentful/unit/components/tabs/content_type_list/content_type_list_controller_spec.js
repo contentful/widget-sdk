@@ -5,8 +5,8 @@ describe('Content Type List Controller', function () {
 
   var makeCT = function (sys) {
     var ct;
-    inject(function (contentfulClient) {
-      ct = new contentfulClient.Entity({ sys: sys || {} });
+    inject(function (privateContentfulClient) {
+      ct = new privateContentfulClient.Entity({ sys: sys || {} });
     });
     stubs.deleted = sinon.stub(ct, 'isDeleted');
     stubs.published = sinon.stub(ct, 'isPublished');

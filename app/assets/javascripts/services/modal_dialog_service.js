@@ -33,7 +33,10 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       var scope = this.scope;
       this.domElement = $(JST[this.params.template]()).prependTo(this.params.attachTo);
 
-      this.domElement.find('input').eq(0).focus();
+      if(this.domElement.find('input').length > 0)
+        this.domElement.find('input').eq(0).focus();
+      else
+        $(':focus').blur();
 
       $($window).on('keyup', this._handleKeys);
 

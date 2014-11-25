@@ -6,6 +6,6 @@
 
     ul.block-list
       li(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
-               ng-click="dialog.confirm() && createEntry(contentType, 'frameButton')")
+               ng-click="dialog.confirm() && entityCreationController.newEntry(contentType, 'frameButton')")
         | {{contentType.getName()}}
 

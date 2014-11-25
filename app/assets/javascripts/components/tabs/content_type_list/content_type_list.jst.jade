@@ -13,7 +13,7 @@
 
   .tab-header__actions.add-entity(ng-hide="empty")
     button.btn.btn--primary.u-truncate(
-        ng-click="createContentType('frameButton')"
+        ng-click="entityCreationController.newContentType('frameButton')"
         ng-hide="permissionController.createContentType.shouldHide"
         ng-disabled="permissionController.createContentType.shouldDisable"
         cf-when-disabled="permissionController.createContentType")
@@ -73,7 +73,7 @@
         header.advice-title You have no Content Types yet.
         p.advice-description Content Types work like stencils that define which Entries you can create within a specific Space.
         button.btn.btn--primary(type="button"
-            ng-click="createContentType('frameButton')"
+            ng-click="entityCreationController.firstContentType()"
             ng-hide="permissionController.createContentType.shouldHide"
             ng-disabled="permissionController.createContentType.shouldDisable"
             cf-when-disabled="permissionController.createContentType")

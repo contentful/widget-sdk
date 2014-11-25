@@ -9,6 +9,11 @@
   "segment_io": "2z8un4c6u4",
   "totango": "SP-6959-01",
   "git_revision": "e1658431",
+  "contentful": {
+    "space": "l1ay9bp8gv68",
+    "accessToken": "0c783036ae7540a10db86150e1cb564c8c0bad53482794604f227dc199e6dde1",
+    "previewAccessToken": "2fcfe1abd171477eabd73e64088fe1c1eb2578ac0158332902a1d8e5279356e4"
+  },
   "filepicker": {
     "api_key": "AhHWTqaWRiG08OT14xd5Qz",
     "policy": "eyJleHBpcnkiOjE1MzQ3NTcwMjgsImNhbGwiOlsicGljayIsInN0b3JlIl19",

@@ -2,7 +2,7 @@
 
 angular.module('contentful/environment', []).constant('environment', {
   env: 'development',
-  settings: {filepicker: {}, aviary: {}, google: {}}
+  settings: {filepicker: {}, aviary: {}, google: {}, contentful: {}}
 }).config(['environment', function (environment) {
   var s = environment.settings;
 

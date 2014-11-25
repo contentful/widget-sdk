@@ -1,19 +1,28 @@
 'use strict';
 describe('EditingInterfaceEditorController', function(){
-  var scope, controller, editingInterfaces, $q;
+  var scope, controller, editingInterfaces, $q, stubs;
 
   beforeEach(function() {
     module('contentful/test', function($provide) {
+      stubs = $provide.makeStubs(['info', 'warn', 'serverError']);
+
       editingInterfaces = {
         save: sinon.stub(),
         syncWidgets: sinon.stub(),
         forContentTypeWithId: sinon.stub()
       };
       $provide.value('editingInterfaces', editingInterfaces);
+
+      $provide.value('notification', {
+        info: stubs.info,
+        warn: stubs.warn,
+        serverError: stubs.serverError
+      });
     });
     inject(function($rootScope, $controller, _$q_) {
       $q = _$q_;
       scope = $rootScope.$new();
+      scope.spaceContext = {space: {}};
       scope.tab = { params: {
           editingInterface: {
             data: {id: 'default', local: true},
@@ -31,28 +40,56 @@ describe('EditingInterfaceEditorController', function(){
     expect(editingInterfaces.syncWidgets).toBeCalled();
   });
 
-  it('should reset the interface when saving fails with VersionMismatch', function(){
-    editingInterfaces.save.returns($q.reject({body: {sys: {id: 'VersionMismatch'}}}));
-    editingInterfaces.forContentTypeWithId.returns($q.when({data: {id: 'default', remote: true}}));
-    scope.update();
-    scope.$apply();
-    expect(scope.editingInterface.data.remote).toBe(true);
+  describe('saving the interface but failing with VersionMismatch', function() {
+    beforeEach(function() {
+      editingInterfaces.save.returns($q.reject({body: {sys: {type: 'Error', id: 'VersionMismatch'}}}));
+      editingInterfaces.forContentTypeWithId.returns($q.when({data: {id: 'default', remote: true}}));
+      scope.update();
+      scope.$apply();
+    });
+
+    it('should reset the interface', function(){
+      expect(scope.editingInterface.data.remote).toBe(true);
+    });
+
+    it('should show a warning', function() {
+      expect(stubs.warn).toBeCalled();
+    });
   });
 
-  it('should not reset the interface when saving fails', function(){
-    editingInterfaces.save.returns($q.reject());
-    scope.update();
-    scope.$apply();
-    expect(editingInterfaces.forContentTypeWithId).not.toBeCalled();
+  describe('saving the interface but failing with other errors', function() {
+    beforeEach(function() {
+      editingInterfaces.save.returns($q.reject());
+      scope.update();
+      scope.$apply();
+    });
+
+    it('should not reset the interface', function(){
+      expect(editingInterfaces.forContentTypeWithId).not.toBeCalled();
+    });
+
+    it('show show a server error', function() {
+      expect(stubs.serverError).toBeCalled();
+    });
   });
 
-  it('should update the interface after saving', function () {
-    editingInterfaces.save.returns($q.when({data: {id: 'default', remote: true}}));
-    scope.update();
-    scope.$apply();
-    expect(scope.editingInterface.data.remote).toBe(true);
+  describe('saving the interface successfully', function () {
+    beforeEach(function() {
+      editingInterfaces.save.returns($q.when({data: {id: 'default', remote: true}}));
+      scope.update();
+      scope.$apply();
+    });
+
+    it('should update the interface', function () {
+      expect(scope.editingInterface.data.remote).toBe(true);
+    });
+
+    it('should show a notification', function() {
+      expect(stubs.info).toBeCalled();
+    });
+
   });
-  
+
   it('should close the tab when the content type is unpublished', function () {
     scope.tab.params.contentType = {};
     scope.tab.close = sinon.stub();

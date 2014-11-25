@@ -6,6 +6,15 @@
   "marketing_url": "http://static.joistio.com:8888",
   "asset_host": null,
   "ot_host": "ot.joistio.com:8888",
+  "contentful": {
+    "apiUrl": "",
+    "previewApiUrl": "",
+    "space": "",
+    "accessToken": "",
+    "previewAccessToken": "",
+    "spaceTemplatesUserReadOnlyToken": "",
+    "spaceTemplateEntryContentTypeId": ""
+  },
   "filepicker": {
     "api_key": "",
     "policy": "",

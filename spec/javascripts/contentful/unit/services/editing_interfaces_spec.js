@@ -2,7 +2,7 @@
 
 describe('Editing interfaces service', function () {
   var editingInterfaces, $rootScope, $q, logger, notification;
-  var contentType, stubs;
+  var contentType, stubs, space;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -16,17 +16,21 @@ describe('Editing interfaces service', function () {
       contentType = {
         getEditingInterface: sinon.stub(),
         saveEditingInterface: sinon.stub(),
-        newEditingInterface: function(data){
-          return {
-            getId: _.constant('default'),
-            data: data
-          };
-        },
         getId: sinon.stub(),
         data: {}
       };
 
     });
+
+    space = {
+      newEditingInterface: function(data){
+        return {
+          getId: _.constant('default'),
+          data: data
+        };
+      }
+    };
+
     editingInterfaces = this.$inject('editingInterfaces');
     $q                = this.$inject('$q');
     $rootScope        = this.$inject('$rootScope');
@@ -52,7 +56,7 @@ describe('Editing interfaces service', function () {
             widgetParams: {foo: 'baz'}
           }]}
         }));
-        editingInterfaces.forContentTypeWithId(contentType, 'edid').then(function (_config) {
+        editingInterfaces.forContentTypeWithId(space, contentType, 'edid').then(function (_config) {
           config = _config;
         });
         $rootScope.$apply();
@@ -80,7 +84,7 @@ describe('Editing interfaces service', function () {
     describe('fails with a 404 because config doesnt exist yet', function() {
       beforeEach(function() {
         contentType.getEditingInterface.returns($q.reject({statusCode: 404}));
-        editingInterfaces.forContentTypeWithId(contentType, 'edid').then(function (_config) {
+        editingInterfaces.forContentTypeWithId(space, contentType, 'edid').then(function (_config) {
           config = _config;
         });
         $rootScope.$apply();
@@ -98,7 +102,7 @@ describe('Editing interfaces service', function () {
     describe('fails', function() {
       beforeEach(function() {
         contentType.getEditingInterface.returns($q.reject({}));
-        editingInterfaces.forContentTypeWithId(contentType, 'edid').catch(function (_err) {
+        editingInterfaces.forContentTypeWithId(space, contentType, 'edid').catch(function (_err) {
           err = _err;
         });
         $rootScope.$apply();
@@ -118,7 +122,7 @@ describe('Editing interfaces service', function () {
   describe('gets a default interface', function() {
     var interf;
     beforeEach(function() {
-      interf = editingInterfaces.defaultInterface(contentType);
+      interf = editingInterfaces.defaultInterface(space, contentType);
     });
 
     it('has id', function() {
@@ -140,7 +144,7 @@ describe('Editing interfaces service', function () {
     describe('gets a default interface again', function() {
       var interf2;
       beforeEach(function() {
-        interf2 = editingInterfaces.defaultInterface(contentType);
+        interf2 = editingInterfaces.defaultInterface(space, contentType);
       });
 
       it('has same field ids', function() {
@@ -163,12 +167,6 @@ describe('Editing interfaces service', function () {
       $rootScope.$apply();
     });
 
-    it('saves successfully', function() {
-      save.resolve({});
-      $rootScope.$apply();
-      expect(notification.info).toBeCalled();
-    });
-
     it('returns the editing interface from the server', function(){
       promise.then(function(interf) {
         expect(interf.newVersion).toBe(true);
@@ -176,7 +174,6 @@ describe('Editing interfaces service', function () {
       save.resolve({newVersion: true});
       $rootScope.$apply();
     });
-    
 
     it('fails to save because of version mismatch', function() {
       save.reject({body: {sys: {type: 'Error', id: 'VersionMismatch'}}});

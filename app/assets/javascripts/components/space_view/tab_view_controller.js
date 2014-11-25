@@ -65,7 +65,7 @@ angular.module('contentful').controller('TabViewController', ['$scope', '$inject
         return contentType.getPublishedStatus();
       })
       .then(function(contentType){
-        editingInterfaces.forContentTypeWithId(contentType, route.params.editingInterfaceId)
+        editingInterfaces.forContentTypeWithId($scope.spaceContext.space, contentType, route.params.editingInterfaceId)
         .then(function (editingInterface) {
           $scope.navigator.editingInterfaceEditor(contentType, editingInterface).open();
         }, function(){

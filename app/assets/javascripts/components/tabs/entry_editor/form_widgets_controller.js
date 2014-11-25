@@ -16,7 +16,7 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
 
   function updateEditingInterface() {
     if (controller.contentType) {
-      editingInterfaces.forContentTypeWithId(controller.contentType, 'default')
+      editingInterfaces.forContentTypeWithId($scope.spaceContext.space, controller.contentType, 'default')
       .then(function(interf) {
         controller.editingInterface = interf;
       });

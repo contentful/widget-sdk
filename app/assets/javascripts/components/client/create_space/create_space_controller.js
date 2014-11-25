@@ -8,11 +8,6 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
     var logger       = $injector.get('logger');
     var notification = $injector.get('notification');
 
-    function resetNewSpaceData() {
-      $scope.newSpaceData = _.cloneDeep({defaultLocale: 'en-US'});
-      $scope.lockSubmit = false;
-    }
-
     $scope.writableOrganizations = _.filter($scope.organizations, function (org) {
       return org && org.sys ? $scope.canCreateSpaceInOrg(org.sys.id) : false;
     });
@@ -25,15 +20,6 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
 
     if($scope.writableOrganizations.length > 0){
       $scope.selectOrganization($scope.writableOrganizations[0]);
-    }
-
-    function hasErrorOnField(err, error, field) {
-      var errors = dotty.get(err, 'body.details.errors');
-      if(errors && errors.length > 0){
-        return errors[0].path == field &&
-               errors[0].name == error;
-      }
-      return false;
     }
 
     $scope.createSpace = function () {
@@ -64,6 +50,7 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
           $scope.dialog.confirm();
           notification.info('Created space "'+ space.data.name +'"');
           resetNewSpaceData();
+          $rootScope.$broadcast('spaceCreated');
         });
       })
       .catch(function(err){
@@ -94,7 +81,21 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
       .finally(function(){
         stopSpinner();
       });
-
     };
+
+    function hasErrorOnField(err, error, field) {
+      var errors = dotty.get(err, 'body.details.errors');
+      if(errors && errors.length > 0){
+        return errors[0].path == field &&
+               errors[0].name == error;
+      }
+      return false;
+    }
+
+    function resetNewSpaceData() {
+      $scope.newSpaceData = _.cloneDeep({defaultLocale: 'en-US'});
+      $scope.lockSubmit = false;
+    }
+
   }
 ]);

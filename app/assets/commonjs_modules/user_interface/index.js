@@ -8,7 +8,10 @@ var UserInterface = {
   stringifySafe: require('json-stringify-safe'),
   isDiacriticalMark: require('is-diacritical-mark'),
   searchParser: require('./search.pegjs'),
-  fileSize: require('file-size')
+  fileSize: require('file-size'),
+  redefine: require('redefine'),
+  resolveResponse: require('contentful-resolve-response'),
+  querystring: require('querystring')
 };
 
 module.exports = UserInterface;
@@ -23,14 +26,18 @@ if(window){
 if (angular) {
   require('ng-time-relative');
   angular.module('contentful/user_interface', []).
-    constant('contentfulClient', UserInterface.contentfulClient).
+    constant('privateContentfulClient', UserInterface.contentfulClient).
     constant('validation', UserInterface.validation).
     constant('mimetype', UserInterface.mimetype).
     constant('worf', UserInterface.worf).
     constant('stringifySafe', UserInterface.stringifySafe).
+    constant('isDiacriticalMark', UserInterface.isDiacriticalMark).
     constant('searchParser', UserInterface.searchParser).
     constant('fileSize', UserInterface.fileSize).
-    constant('isDiacriticalMark', UserInterface.isDiacriticalMark);
+    constant('redefine', UserInterface.redefine).
+    constant('resolveResponse', UserInterface.resolveResponse).
+    constant('querystring', UserInterface.querystring);
+
   angular.module('contentful/user_interface').factory('marked', function () {
     var marked = require('marked');
     marked.setOptions({

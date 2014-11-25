@@ -1,0 +1,45 @@
+.modal-background
+  .modal-dialog.space-template__dialog(ng-controller="SpaceTemplatesController" cf-center-on=".modal-background")
+    .title {{dialog.title}}
+    .dialog-content.space-template__dialog-content
+
+      .loading(ng-show="isTemplateListLoading()")
+
+      .space-template__list(ng-show="isTemplateListVisible()")
+        .space-template__item(ng-click="newContentType()")
+          .space-template__icon
+            i.fa.fa-plus-circle
+          p.space-template__label Blank
+        .space-template__item(
+            ng-repeat="template in spaceTemplates"
+            ng-click="selectTemplate(template)"
+            ng-class="{'space-template--item-selected': template === selectedTemplate}")
+          .space-template__icon
+            img(ng-src="{{template.icon.fields.file.url}}")
+          p.space-template__label {{template.name}}
+
+      .space-template__detail(ng-show="isTemplateListVisible()")
+        .space-template__detail-content(ng-show="!selectedTemplate")
+          p Please select template on the left see details.
+          p Need help? Read more about it in the Knowledge Database.
+        .space-template__detail-content(ng-show="selectedTemplate")
+          h1 {{selectedTemplate.name}}
+          p {{selectedTemplate.description}}
+        button.btn.btn--primary(ng-show="selectedTemplate" ng-click="loadSelectedTemplate()") Use this template
+
+      .space-template__queue(ng-show="isTemplateQueueVisible()")
+        h1 Creating template entities
+        .space-template__queue-item(ng-repeat="item in completedQueue" ng-class="queueItemClass(item.status)" cf-scroll-into-view)
+          i.fa.fa-check(ng-if="item.status == 'success'")
+          i.fa.fa-times(ng-if="item.status == 'error'")
+          | {{entityStatusString(item)}}
+          span.space-template__item-status(ng-show="item.status == 'error'")
+            | Failed
+        .space-template__queue-status(ng-if="isTemplateFailed()" cf-scroll-into-view)
+          | Some errors ocurred while creating your template. You can 
+          a(ng-click="dialog.cancel()" href="#") continue 
+          | and use the template as it is or you can 
+          a(ng-click="retryFailedTemplate()" href="#") try again
+          | .
+
+

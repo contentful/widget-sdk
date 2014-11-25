@@ -10,7 +10,7 @@ describe('Authentication service', function () {
       stubs = $provide.makeStubs([
         'hash', 'search', 'path', 'info', 'loggerError', 'resolveQueryLinks'
       ]);
-      $provide.constant('contentfulClient', {
+      $provide.constant('privateContentfulClient', {
         QueryLinkResolver: {
           resolveQueryLinks: stubs.resolveQueryLinks
         }

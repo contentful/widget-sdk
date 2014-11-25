@@ -9,11 +9,11 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   var widgetIdsByContentType = {};
 
   return {
-    forContentTypeWithId: function (contentType, interfaceId) {
+    forContentTypeWithId: function (space, contentType, interfaceId) {
       return getEditingInterface(contentType, interfaceId)
       .catch(function (err) {
         if(err && err.statusCode === 404)
-          return $q.when(defaultInterface(contentType));
+          return $q.when(defaultInterface(space, contentType));
         else
           return $q.reject(err);
       })
@@ -24,7 +24,6 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
     save: function (editingInterface) {
       return editingInterface.save()
       .then(function (interf) {
-        notification.info('Configuration saved successfully');
         return interf;
       }, function (err) {
         if(dotty.get(err, 'body.sys.type') == 'Error' && dotty.get(err, 'body.sys.id') == 'VersionMismatch')
@@ -63,7 +62,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
     }
 
     function addWidget(widget){
-      interf.data.widgets.push(widget); 
+      interf.data.widgets.push(widget);
     }
   }
 
@@ -103,7 +102,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
     }
   }
 
-  function defaultInterface(contentType) {
+  function defaultInterface(space, contentType) {
     var data = {
       sys: {
         id: 'default',
@@ -113,7 +112,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
       contentTypeId: contentType.getId(),
       widgets: []
     };
-    var interf = contentType.newEditingInterface(data);
+    var interf = space.newEditingInterface(data);
     interf.data.widgets = _.map(contentType.data.fields, _.partial(defaultWidget, contentType));
     return interf;
   }

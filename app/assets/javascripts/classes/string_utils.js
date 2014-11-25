@@ -59,6 +59,17 @@ angular.module('contentful').constant('stringUtils', (function(){
     return str.replace(/\s/g, spacer||'').replace(/[^\w]*/g, '');
   }
 
+  var entitiesToLabels = {
+    ContentType: 'Content Type',
+    Entry: 'Entry',
+    Asset: 'Asset',
+    ApiKey: 'API Key',
+    EditingInterface: 'Editing Interface'
+  };
+  function getEntityLabel(id) {
+    return entitiesToLabels[id];
+  }
+
   return {
     toIdentifier: toIdentifier,
     capitalize: capitalize,
@@ -69,6 +80,7 @@ angular.module('contentful').constant('stringUtils', (function(){
     removeQueryString: removeQueryString,
     removeExtension: removeExtension,
     fileNameToTitle: fileNameToTitle,
-    titleToFileName: titleToFileName
+    titleToFileName: titleToFileName,
+    getEntityLabel: getEntityLabel
   };
 })());

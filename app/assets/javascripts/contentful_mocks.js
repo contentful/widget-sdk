@@ -51,9 +51,9 @@ mocks.factory('TestingAdapter', function ($q) {
 mocks.factory('cfStub', function ($injector) {
   var $rootScope       = $injector.get('$rootScope');
   var SpaceContext     = $injector.get('SpaceContext');
-  var contentfulClient = $injector.get('contentfulClient');
+  var contentfulClient = $injector.get('privateContentfulClient');
   var Adapter          = $injector.get('TestingAdapter');
-  
+
   var Client = contentfulClient.Client;
   var adapter = new Adapter();
 
