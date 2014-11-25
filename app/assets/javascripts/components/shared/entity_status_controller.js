@@ -5,6 +5,7 @@ angular.module('contentful').controller('EntityStatusController', ['$scope', fun
   var PREFIX = 'entity-status--';
 
   this.getClassname = function(entity){
+    if (entity.isMissing) return '';
     if (entity.isPublished()) {
       if (entity.hasUnpublishedChanges()) {
         return PREFIX+'updated';
@@ -19,6 +20,7 @@ angular.module('contentful').controller('EntityStatusController', ['$scope', fun
   };
 
   this.getLabel = function(entity){
+    if (entity.isMissing) return '';
     if (entity.isPublished()) {
       if (entity.hasUnpublishedChanges()) {
         return 'updated';
