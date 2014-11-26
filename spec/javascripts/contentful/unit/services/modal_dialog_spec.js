@@ -160,16 +160,6 @@ describe('Modal dialog service', function () {
       expect(result).toBe('bar');
     });
 
-    it('sets the dialog to invalid', function() {
-      dialog.setInvalid(true);
-      expect(dialog.invalid).toBeTruthy();
-    });
-
-    it('sets the dialog to valid', function() {
-      dialog.setInvalid(false);
-      expect(dialog.invalid).toBeFalsy();
-    });
-
     it('calls the success stub', function () {
       dialog.confirm().promise.finally(function () {
         expect(successStub).toBeCalled();

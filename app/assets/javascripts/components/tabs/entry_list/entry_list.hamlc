@@ -106,11 +106,11 @@
                   ng-click="createEntry(singleContentType, 'frameButton')")
             %i.fa.fa-plus.button-icon
             Add New {{singleContentType.getName()}}
-          %button.btn.btn--primary.cf-dialog(
+          %button.btn.btn--primary(
               ng-hide="singleContentType || permissionController.createEntry.shouldHide"
               ng-disabled="permissionController.createEntry.shouldDisable"
               cf-when-disabled="permissionController.createEntry"
-              dialog-template="new_content_type_list")
+              ng-click="showNewContentTypeDialog()")
             %i.fa.fa-plus.button-icon
             Add New Entry
         %a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")

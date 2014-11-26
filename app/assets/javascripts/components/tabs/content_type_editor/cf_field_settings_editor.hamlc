@@ -61,10 +61,8 @@
                      tooltip="Make Field mandatory when filling in content")
     %i.required-icon ✱
     {{field.required ? 'Required' : 'Require'}}
-  %a.toggle-validate.cf-dialog(
-        dialog-title="Validations"
-        dialog-template="validation_dialog"
-        dialog-deactivate-confirm-key="true"
+  %a.toggle-validate(
+        ng-click="openValidationDialog()"
         ng-class="{active: hasValidations}"
         ng-show="validationsAvailable"
         tooltip="Add Validations to the content in this Field")

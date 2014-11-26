@@ -15,16 +15,16 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
         cancelLabel: 'Cancel',
         confirmLabel: 'OK',
         noBackgroundClose: false,
-        attachTo: '.client'
+        attachTo: '.client',
+        ignoreEnter: false,
       },
       _.pick(params,
              'title', 'message', 'html', 'template',
              'cancelLabel', 'confirmLabel',
-             'noBackgroundClose', 'attachTo')
+             'noBackgroundClose', 'attachTo', 'ignoreEnter')
     );
     this._deferred = $q.defer();
     this.promise = this._deferred.promise;
-    this.invalid = undefined;
   }
 
   Dialog.prototype = {
@@ -43,10 +43,6 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       this.domElement.on('click', _.bind(this._closeOnBackground, this));
     },
 
-    setInvalid: function (state) {
-      this.invalid = !!state;
-    },
-
     _closeOnBackground: function (ev) {
       var target = $(ev.target);
       if(target.hasClass('modal-background') &&
@@ -63,7 +59,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
         if (ev.target.tagName.toLowerCase() == 'select') return;
         if (ev.keyCode === keycodes.ESC)
           dialog.cancel();
-        if (dialog.invalid !== true && ev.keyCode === keycodes.ENTER)
+        if (!dialog.params.ignoreEnter && ev.keyCode === keycodes.ENTER)
           dialog.confirm();
       });
     },

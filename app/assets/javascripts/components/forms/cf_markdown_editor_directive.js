@@ -239,7 +239,8 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       scope.insertAsset = function () {
         modalDialog.open({
           scope: scope,
-          template: 'insert_asset_dialog'
+          template: 'insert_asset_dialog',
+          ignoreEnter: true
         }).promise.then(function (assets) {
           if (_.isEmpty(assets)) return;
           var links = _.map(assets, makeAssetLink).join('\n');
