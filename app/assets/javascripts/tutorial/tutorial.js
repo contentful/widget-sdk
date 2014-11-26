@@ -1051,8 +1051,10 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
         next: 'apiKeyTest',
         onShow: function () {
           this.attachScope.waitFor('apiKey.data.accessToken', function () {
-            tutorialScope.apiKeyDone = true;
-            guiders.next();
+            setTimeout(function(){
+              tutorialScope.apiKeyDone = true;
+              guiders.next();
+            }, 500);
           });
         }
       });
@@ -1062,18 +1064,21 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
         id: 'apiKeyTest',
         title: 'Tadaa! This is your Access Token',
         description: '<p>The Access Token enables you to authenticate the API calls your distribution platform makes on Contentful to retrieve your content. Access Tokens make sure that your content can only be used from your own applications.</p><p>You can test this by using this token by either clicking the link or via CURL by using the command line.</p>',
-        attachTo: '.api-key-editor:visible .curl-example',
-        position: 2,
+        attachTo: '.api-key-editor:visible input.access-token:first',
+        position: '6',
         next: 'apiKeyList',
-        buttons: [next]
+        buttons: [next],
+        //onShow: function () {
+          //repositionLater();
+        //}
       });
 
       createGuider({
         category: 'apiKeys',
         id: 'apiKeyList',
         title: 'The home to your API Keys',
-        description: '<p>Access and edit your API Keys anytime from the Content Delivery Menu.</p><p>Click <strong>Content Delivery</strong> now.</p>',
-        attachTo: '.nav-bar ul li[data-view-type=api-key-list]',
+        description: '<p>Access and edit your API Keys anytime from the Content Delivery Menu.</p><p>Click <strong>API</strong> now.</p>',
+        attachTo: '.nav-bar ul li[data-view-type=api-home]',
         position: '6',
         next: 'apiKeyDone',
         onShow: function () {
