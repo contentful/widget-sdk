@@ -6,6 +6,7 @@ angular.module('contentful').controller('FieldSettingsEditorController', ['$scop
   var defer            = $injector.get('defer');
   var getFieldTypeName = $injector.get('getFieldTypeName');
   var logger           = $injector.get('logger');
+  var modalDialog      = $injector.get('modalDialog');
   var notification     = $injector.get('notification');
   var validation       = $injector.get('validation');
 
@@ -22,6 +23,7 @@ angular.module('contentful').controller('FieldSettingsEditorController', ['$scop
   $scope.isDisplayField    = isDisplayField;
   $scope.statusTooltipText = statusTooltipText;
   $scope.statusClass       = statusClass;
+  $scope.openValidationDialog = openValidationDialog;
 
   function hasValidationsWatcher(scope){
     var f = scope.field;
@@ -116,4 +118,12 @@ angular.module('contentful').controller('FieldSettingsEditorController', ['$scop
     });
   }
 
+  function openValidationDialog() {
+    modalDialog.open({
+      scope: $scope,
+      title: 'Validations',
+      template: 'validation_dialog',
+      ignoreEnter: true
+    });
+  }
 }]);

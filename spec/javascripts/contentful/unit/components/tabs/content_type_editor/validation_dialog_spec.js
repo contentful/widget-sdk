@@ -1,14 +1,14 @@
 'use strict';
 
 describe('Validation dialog service', function () {
-  var scope, container;
+  var scope;
   var successStub, errorStub;
   var dialog, makeDialog;
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeControllers('PermissionController');
     });
-    inject(function ($rootScope, $compile) {
+    inject(function ($rootScope, $compile, modalDialog) {
       scope = $rootScope.$new();
       successStub = sinon.stub();
       errorStub = sinon.stub();
@@ -22,12 +22,10 @@ describe('Validation dialog service', function () {
 
       makeDialog = function () {
         $('<div class="client"></div>').appendTo('body');
-        container = $('<div class="cf-dialog" dialog-template="validation_dialog"></div>');
-        $compile(container)(scope);
-        scope.$digest();
-
-        container.click();
-        dialog = container.scope().dialog;
+        dialog = modalDialog.open({
+          scope: scope,
+          template: 'validation_dialog'
+        });
         dialog.promise.then(successStub)
                       .catch(errorStub);
         scope.$digest();

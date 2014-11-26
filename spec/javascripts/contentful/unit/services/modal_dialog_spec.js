@@ -127,15 +127,6 @@ describe('Modal dialog service', function () {
         expect(confirmStub).toBeCalled();
       });
 
-      it('confirm is not called with Enter key if dialog invalid', function () {
-        event.keyCode = 13;
-        event.target = {tagName: ''};
-        dialog.invalid = true;
-        dialog._handleKeys(event);
-        dialog.scope.$digest();
-        expect(confirmStub).not.toBeCalled();
-      });
-
     });
 
     it('properly removes the global event listeners', inject(function ($window) {
@@ -158,16 +149,6 @@ describe('Modal dialog service', function () {
       dialog.promise.catch(function (value) { result = value; });
       scope.$apply();
       expect(result).toBe('bar');
-    });
-
-    it('sets the dialog to invalid', function() {
-      dialog.setInvalid(true);
-      expect(dialog.invalid).toBeTruthy();
-    });
-
-    it('sets the dialog to valid', function() {
-      dialog.setInvalid(false);
-      expect(dialog.invalid).toBeFalsy();
     });
 
     it('calls the success stub', function () {

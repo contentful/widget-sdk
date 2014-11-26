@@ -8,7 +8,7 @@ describe('Create Space Dialog controller', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'setInvalid', 'start', 'stop', 'error', 'info', 'createSpace', 'serverError', 'warn', 'then',
+        'start', 'stop', 'error', 'info', 'createSpace', 'serverError', 'warn', 'then',
         'getId', 'computeUsage', 'confirm', 'cancel'
       ]);
 
@@ -37,7 +37,6 @@ describe('Create Space Dialog controller', function () {
       $q = _$q_;
       scope = $rootScope.$new();
       scope.dialog = {
-        setInvalid: stubs.setInvalid,
         confirm: stubs.confirm,
         cancel: stubs.cancel
       };
@@ -87,10 +86,6 @@ describe('Create Space Dialog controller', function () {
       createController();
     });
 
-    it('dialog state is set to invalid', function() {
-      expect(stubs.setInvalid).toBeCalledWith(true);
-    });
-
     it('submit is unlocked', function() {
       expect(scope.lockSubmit).toBeFalsy();
     });
@@ -108,7 +103,6 @@ describe('Create Space Dialog controller', function () {
     createController();
     scope.newSpaceForm.$invalid = false;
     scope.$digest();
-    expect(stubs.setInvalid).toBeCalledWith(false);
   });
 
   it('selects an organization', function() {

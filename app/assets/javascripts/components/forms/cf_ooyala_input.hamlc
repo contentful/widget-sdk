@@ -1,6 +1,6 @@
 .video-widget-input
   %input.form-control.video-widget-input__video-id(
-    ng-class="{videoInput.searchEnabled: video-widget-input--search-enabled}"
+    ng-class="{'video-widget-input--search-enabled' : 'videoInput.searchEnabled'}"
     ng-model="videoInput.assetId")
 
   %i.fa.fa-spinner.fa-spin(ng-show="videoInput.isLoading")
@@ -9,7 +9,7 @@
     ng-show="videoInput.assetId && !videoInput.isLoading")
 
   %button.btn.btn--form.btn--tertiary.add-new.video-widget-input__search(type="button"
-    ng-class="{videoInput.searchEnabled: video-widget-input--search-enabled}"
+    ng-class="{'video-widget-input--search-enabled ': 'videoInput.searchEnabled'}"
     ng-click="inputController.launchSearchDialog()")
     %i.fa.fa-search
     Search

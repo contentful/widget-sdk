@@ -365,7 +365,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     }
     modalDialog.open({
       scope: scope,
-      template: 'create_space_dialog'
+      template: 'create_space_dialog',
+      ignoreEnter: true
     });
     analytics.track('Clicked Create-Space');
   };

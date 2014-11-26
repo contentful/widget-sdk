@@ -34,7 +34,8 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
       scope.uploadFromGetty = function () {
         modalDialog.open({
           scope: scope,
-          template: 'getty_dialog'
+          template: 'getty_dialog',
+          ignoreEnter: true
         });
       };
 

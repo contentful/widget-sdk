@@ -7,7 +7,7 @@
   on-invalid-asset-id="ooyalaEditorController.showErrors(error)")
 
 .video-widget-editor__content-wrapper(
-  ng-class="{'video-widget-content-wrapper--not-empty': errorMessage || selectedVideo.playerId}")
+  ng-class="{'video-widget-content-wrapper--not-empty': 'errorMessage || selectedVideo.playerId'}")
   .video-widget-editor__warning(ng-show="errorMessage")
     %i.fa.fa-exclamation-triangle
     .video-widget-warning__message
