@@ -42,6 +42,7 @@ angular.module('contentful/test', [
   'contentful/user_interface',
   'angularLoad',
   'contentful',
+  'angularLoad',
   'contentful/mocks'
 ], ['$locationProvider', 'clientAdapterProvider', 'authenticationProvider', 'environment', '$sceDelegateProvider', '$compileProvider', 'timeRelativeConfig', 
   function($locationProvider, clientAdapterProvider, authenticationProvider, environment, $sceDelegateProvider, $compileProvider, timeRelativeConfig){

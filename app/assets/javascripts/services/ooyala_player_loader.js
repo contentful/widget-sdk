@@ -17,8 +17,17 @@ angular.module('contentful').factory('ooyalaPlayerLoader', ['$injector', functio
   var defer           = $q.defer();
   var promise;
 
+  /*
+   * We are loading the player only once. No matter the player Id.
+   *
+   * After browsing the code fetched using the URL above it's clear
+   * that the player Id is only used when creating the Flash version
+   * (to enable customizations and things like tha) but not for the
+   * HTML5 version. Caching it leads to a performance/speed gain
+   */
   return {
     load : function(playerId){
+
       if (!promise) {
           angularLoad.loadScript(SCRIPT_BASE_SRC.replace(':player_id', playerId)).then(handlePlayerLoad, handleLoadError);
           promise = defer.promise;

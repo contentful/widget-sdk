@@ -27,7 +27,8 @@
     "$",
     "moment",
     "dotty",
-    "Bugsnag"
+    "Bugsnag",
+    "OO"
   ],
   "browser": true,
   "quotmark": "single",

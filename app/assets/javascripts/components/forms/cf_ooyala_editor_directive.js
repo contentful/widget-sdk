@@ -6,7 +6,7 @@ angular.module('contentful').directive('cfOoyalaEditor', [function(){
     restrict   : 'E',
     scope      : true,
     template   : JST['cf_ooyala_editor'](),
-    controller : 'cfOoyalaEditorController'
+    controller : 'cfOoyalaEditorController',
+    controllerAs : 'ooyalaEditorController'
   };
-
 }]);
