@@ -7,12 +7,6 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
 
   function onServiceReady() {
     if($window.Bugsnag){
-      $window.Bugsnag.releaseStage = environment.env;
-      $window.Bugsnag.notifyReleaseStages = [
-        //'development',
-        'staging',
-        'production'
-      ];
       setUserInfo();
       $window.Bugsnag.appVersion = environment.settings.git_revision;
     }
