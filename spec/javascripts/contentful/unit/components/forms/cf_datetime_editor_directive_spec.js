@@ -2,6 +2,7 @@
 
 describe('DateTime Editor', function () {
   var element, scope;
+  var localZone = moment().format('Z');
   beforeEach(module('contentful/test'));
 
   beforeEach(inject(function ($compile, $rootScope){
@@ -119,8 +120,8 @@ describe('DateTime Editor', function () {
     expect(scope.fieldData.value).toBe('2013-12-24');
     // Time formats
     enter('2013-12-24', '1:23');
-    expect(scope.fieldData.value).toBe('2013-12-24T01:23');
-    enter('2013-12-24', '01:23');
+    expect(scope.fieldData.value).toBe('2013-12-24T01:23'+localZone);
+    enter('2013-12-24', '01:23', '');
     expect(scope.fieldData.value).toBe('2013-12-24T01:23');
     enter('2013-12-24', '1:23:45');
     expect(scope.fieldData.value).toBe('2013-12-24T01:23:45');

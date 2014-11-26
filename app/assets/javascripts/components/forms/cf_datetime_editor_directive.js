@@ -30,6 +30,8 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$parse', 'zoneOffse
                        ':([0-5][\\d])'+ //minutes
                        '(?::([0-5][\\d])(?:\\.(\\d{3}))?)?';  //seconds + milliseconds :XX.YYY
 
+      var defaultTzOffset = moment().format('Z');
+
       var ngModelGet = $parse(attr.ngModel),
           ngModelSet = ngModelGet.assign;
 
@@ -44,7 +46,7 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$parse', 'zoneOffse
       scope.hasTimezone = widgetFormat == 'timeZ';
 
       scope.timezones = zoneOffsets;
-      scope.tzOffset = null;
+      scope.tzOffset = defaultTzOffset;
       scope.ampm = 'am';
       scope.maxTime = scope.widget.widgetParams.ampm == '12' ? '12:59:59' : '24:59:59';
 
@@ -146,7 +148,7 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$parse', 'zoneOffse
           scope.localDate = null;
           scope.localTime = null;
           scope.ampm      = 'am';
-          scope.tzOffset  = null;
+          scope.tzOffset  = defaultTzOffset;
         }
       };
 
