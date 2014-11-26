@@ -149,8 +149,7 @@ cf-rating-editor
   font-size: 14px
   color: $orange
 
-cf-youtube-editor,
-cf-ooyala-editor
+cf-youtube-editor
   .fa.fa-times-circle,
   .fa.fa-spinner
     position: absolute
@@ -186,39 +185,3 @@ cf-youtube-player.ng-hide-remove,
 cf-youtube-player.ng-hide-add.ng-hide-add-active
   opacity: 0
   height: 0%
-
-cf-ooyala-player
-  display: block
-
-  &.ng-hide-remove
-    display: block !important
-
-  &.ng-hide-remove,
-  &.ng-leave.ng-leave-active
-    opacity: 0
-    height: 0%
-
-  &.ng-leave,
-  &.ng-hide-remove.ng-hide-remove-active
-    opacity: 1
-    height: 100%
-
-  &.ng-leave.ng-animate,
-  &.ng-hide-remove.ng-animate
-    transition:all cubic-bezier(0.250, 0.460, 0.450, 0.940) 0.5s
-
-  .title
-    margin: 7px 0
-
-  video
-    height: 350px !important
-    position: static !important;
-
-    &.midroll
-      display: none
-
-  .oo_promo
-    position: static !important;
-
-  .oo_controls_wrap
-    position: static !important;
