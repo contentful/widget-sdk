@@ -12,6 +12,7 @@ describe('The select type directive', function () {
         {name: 'type3', group: 'Multiple'},
         {name: 'type4', group: 'Multiple'}
       ]);
+      $provide.removeDirectives('contentTypeDescription', 'cfFieldtypeIcon');
     });
 
     inject(function ($rootScope, $compile) {
