@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+<head>
   <meta charset='UTF-8'>
   <base href='/'>
   <title>Contentful</title>
@@ -34,7 +35,7 @@
       }
     //]]>
   </script>
-</html>
+</head>
 <body class='cf-clear-outlines' ng-app='contentful/app'>
   <div class='client ng-hide' ng-controller='ClientController' ng-init='initClient()' ng-show='user'>
     <div class='notifications'>
@@ -103,3 +104,4 @@
   <%= javascript_include_tag "application" %>
   <%= javascript_include_tag 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDskFlzw1ujRovNWNG3K64EUsncYTbRPfM&sensor=false' %>
 </body>
+</html>
