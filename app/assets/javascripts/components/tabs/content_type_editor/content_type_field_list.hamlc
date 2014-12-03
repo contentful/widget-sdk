@@ -1,6 +1,0 @@
-%div(ui-sortable="fieldListSortOptions" ng-model="fieldList")
-  .cf-field-settings-editor(ng-repeat="(index, field) in fieldList track by field.id"
-    ng-class="{open: isAccordionItemOpen(field), active: !field.disabled }"
-    ng-hide="field.disabled && !preferences.showDisabledFields"
-    data-field-id="{{field.id}}"
-    ng-click="accordionItemClicked(field)")

@@ -1,0 +1,15 @@
+.search-field
+  .search-field__input
+    input.form-control(type="search"
+      ng-model="inner.term"
+      ng-trim="false"
+      placeholder="{{placeholder}}"
+      ng-change="inputChanged()"
+      ng-keydown="keyPressed($event)"
+      ng-keyup="keyReleased($event)"
+      ng-focus="inputFocused($event)"
+      ng-blur="inputBlurred($event)")
+  .search-field__button.btn.btn--tertiary(ng-click="updateFromButton()" tabindex="0")
+    i.fa.fa-search.fa-flip-horizontal
+.search-results(cf-autocomplete-list ng-if="showAutocompletions && autocompletion.type === 'List'")
+.search-results.shrink-result-width(cf-autocomplete-date ng-if="showAutocompletions && autocompletion.type === 'Date'")

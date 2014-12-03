@@ -1,0 +1,61 @@
+.file-info
+  img.editor-preview
+  .file-preview(cf-file-preview ng-show="file && file.url" preview-size="fullscreen")
+    .loading(ng-show="loadingEditor")
+    .vcenter(cf-thumbnail file="file" ng-if="file && !loadingEditor")
+    .linked-entities__status(ng-show="entity" ng-class="entityStatusController.getClassname(entity)")
+      .status-bar
+
+  .file-progress.progress.center(ng-show="file && file.url && hasPreview() && !imageHasLoaded")
+    p Loading…
+    .cf-progress-bar.gold(percentage=100)
+
+  .file-progress.progress.center(ng-show="file|isFileProcessing")
+    p Processing…
+    .cf-progress-bar.green(percentage=100)
+
+  .file-metadata(ng-show="showMeta")
+    table
+      tr
+        th Filename
+        td {{file.fileName}}
+      tr
+        th Type
+        td(title="{{file.contentType}}") {{file | mimeGroup}}
+      tr(ng-show="file.details.size")
+        th Size
+        td(title="{{file.details.size}} Bytes") {{file.details.size | fileSize}}
+      tr(ng-show="file.details.image")
+        th Width<br>Height
+        td {{file.details.image.width}}&thinsp;px<br>{{file.details.image.height}}&thinsp;px
+
+  .title-overlay(ng-hide="file || enableUpload")
+    | {{title}}
+  .no-file.center.vcenter(ng-hide="(file || enableUpload)")
+    | Asset has no file
+  .no-file.center.vcenter(ng-show="entity && entity.isMissing")
+    | Asset does not exist anymore
+
+  .file-buttons
+    button.btn.btn--secondary.go-to-asset(type="button" ng-click="entity && !entity.isMissing && navigator.entityEditor(entity).goTo()" ng-show="!!(!enableUpload && entity && !entity.isMissing)" tooltip="Open Asset")
+      i.fa.fa-share-square-o
+    | 
+    a.btn.btn--secondary.download-file(type="button" href="{{file.url}}" target="_blank" ng-show="file|isFileReady" tooltip="Download file")
+      i.fa.fa-download
+    | 
+    button.btn.btn--secondary.show-metadata(type="button" ng-click="toggleMeta()" ng-show="file" tooltip="Show file information")
+      i.fa.fa-info-circle
+    | 
+    button.btn.btn--secondary.edit-button(type="button" ng-show="enableUpload && imageHasLoaded && file|isFileReady" ng-click="editFile()" tooltip="Edit file")
+      i.fa.fa-picture-o
+    | 
+    button.btn.btn--secondary.delete-file(type="button" ng-show="!otDisabled && deleteFile && file|isFileReady" ng-click="deleteFile()" tooltip="Delete file")
+      i.fa.fa-trash
+    | 
+    button.btn.btn--secondary.remove-link(type="button" ng-show="!otDisabled && removeLink" ng-click="removeLink(index, entity)" tooltip="Remove Asset")
+      i.fa.fa-close
+
+  .cf-file-drop(ng-show="!otDisabled && !file && enableUpload")
+    button.btn.btn--secondary.upload-button(type="button" ng-click="uploadFile()") Or Open File Picker
+    button.btn.btn--secondary.upload-button(type="button" ng-show="spaceContext.space.hasFeature('gettyImages')" ng-click="uploadFromGetty()") Or Pick From Getty Images
+

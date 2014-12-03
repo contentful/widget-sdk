@@ -69,11 +69,6 @@ module Contentful
     config.assets.enabled = true
     config.assets.prefix = "/app"
 
-    if defined? ::HamlCoffeeAssets
-      config.hamlcoffee.placement = 'global'
-      config.hamlcoffee.basename = true
-    end
-
     config.assets.precompile = %w(*.png *.jpg *.woff *.ttf *.gif *.eot *.svg *.swf) +
       [Proc.new{ |path| !File.extname(path) == '.css' }, /(?:\/|\\|\A)(application|ie9)\.(css|js)$/]
 

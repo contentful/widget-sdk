@@ -1,0 +1,31 @@
+.tab-content(ng-repeat="tab in spaceContext.tabList.items"
+             ng-show="spaceContext.space && !spaceContext.space.isHibernated() && tab.active()"
+             ng-class="{'with-tab-bar': !hideTabBar()}"
+             ng-switch="tab.viewType")
+  .space-settings(ng-switch-when="space-settings")
+  .entry-list.entity-list(ng-switch-when="entry-list")
+  .asset-list.entity-list(ng-switch-when="asset-list")
+  .content-type-list.entity-list(ng-switch-when="content-type-list")
+  .entry-editor.entity-editor.with-tab-actions(ng-switch-when="entry-editor"
+    ot-doc-for="tab.params.entry"
+    cf-validate="tab.params.entry.data" with-schema="entrySchema"
+    ng-class="{'with-aux-panel': preferences.showAuxPanel}"
+    ot-doc-presence)
+  .asset-editor.entity-editor.with-tab-actions(ng-switch-when="asset-editor"
+    ot-doc-for="tab.params.asset"
+    cf-validate="tab.params.asset.data" with-schema="assetSchema"
+    ng-class="{'with-aux-panel': preferences.showAuxPanel}"
+    ot-doc-presence)
+  .content-type-editor.entity-editor.with-tab-actions(ng-switch-when="content-type-editor"
+    ot-doc-for="tab.params.contentType"
+    cf-validate="tab.params.contentType.data"
+    ng-class="{'with-aux-panel': preferences.showAuxPanel}")
+  .editing-interface-editor.with-tab-actions(ng-switch-when="editing-interface-editor")
+  .content-model.entity-list(ng-switch-when="content-model")
+  .api-home(ng-switch-when="api-home" )
+  .api-key-list.entity-list(ng-switch-when="api-key-list" )
+  .api-key-editor.entity-editor.with-tab-actions(ng-switch-when="api-key-editor"
+    ng-class="{'with-aux-panel': preferences.showAuxPanel}")
+  div(ng-switch-default)
+    | Unhandled case: viewType = {{spaceContext.tabList.currentViewType()}}
+

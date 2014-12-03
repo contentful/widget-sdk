@@ -1,0 +1,104 @@
+.link-editor__controls
+  .l-search-w-autocomplete(cf-tokenized-search="searchTerm"
+    tooltip-placement="top"
+    tooltip="Search for existing {{entityName}}"
+    search-content-type="getSearchContentType()"
+    placeholder="Search for {{entityName}}"
+    cf-on-blur-component="leftSearch($event)"
+    cf-on-blur-component-when="showAutocompletions")
+
+  //- link to entry or entries
+  .dropdown-btn.add-new(
+      ng-if="entityType=='Entry' && addableContentTypes.length > 1"
+      cf-dropdown
+      ng-hide="permissionController.createEntry.shouldHide"
+      ng-disabled="permissionController.createEntry.shouldDisable"
+      cf-when-disabled="permissionController.createEntry"
+      tooltip="Add new {{entityType}}"
+      tooltip-placement="left")
+    button.btn.btn--form.btn--tertiary(cf-dropdown-toggle type="button")
+      i.fa.fa-plus-circle.button-icon
+      | Add New
+    a.dropdown-menu(cf-dropdown-menu)
+      ul.dropdown-menu-list
+        li.dropdown-menu-item(ng-repeat="contentType in addableContentTypes track by contentType.getId()"
+            ng-click="addNewEntry(contentType)"
+            dropdown-close)
+          | {{contentType.getName()}}
+
+  //- link to entry or entries with restriction on the type
+  button.btn.btn--form.btn--tertiary.add-new.with-link-content-type(type="button"
+      ng-if="entityType=='Entry' && addableContentTypes.length === 1"
+      ng-hide="permissionController.createEntry.shouldHide"
+      ng-disabled="permissionController.createEntry.shouldDisable"
+      cf-when-disabled="permissionController.createEntry"
+      ng-click="addNewEntry(addableContentTypes[0])")
+    i.fa.fa-plus-circle.button-icon
+    | Add New
+
+  //- link to asset (with or without restriction)
+  button.btn.btn--form.btn--tertiary.add-new.with-link-content-type(type="button"
+      ng-if="entityType=='Asset'"
+      ng-hide="permissionController.createAsset.shouldHide"
+      ng-disabled="permissionController.createAsset.shouldDisable"
+      cf-when-disabled="permissionController.createAsset"
+      ng-click="addNewAsset()")
+    i.fa.fa-plus-circle.button-icon
+    | Add New
+
+
+.search-results.search-options-on.result-list-empty(
+     ng-show="searchController.isEmptyState()"
+     ng-switch="entityType"
+     cf-click-outside-ignore=".search-button, .fa-search, .search-field input"
+     cf-click-outside-when="searchController.areResultsVisible()"
+     cf-click-outside="clickOutsideHandler()")
+  div(ng-switch-when="Entry")
+    p No Entries created yet.
+  div(ng-switch-when="Asset")
+    p No Assets created yet.
+
+
+.search-results.search-options-on(ng-show="searchController.isResultsState()"
+                           ng-switch="entityType"
+                           cf-click-outside-ignore=".search-button, .fa-search, .search-field input"
+                           cf-click-outside-when="searchController.areResultsVisible()"
+                           cf-click-outside="clickOutsideHandler()")
+
+  div(ng-switch-when="Entry")
+    .endless-container(at-bottom="searchController.loadMore()" num-elements="paginator.page")
+      table.search-results__list
+        tbody
+          tr(ng-repeat="entity in entities track by entity.getId()"
+              cf-click-local="pick(entity)"
+              ng-class="{selected: entity==selectedEntity}")
+            td.cell-name
+              span(title="{{spaceContext.entryTitle(entity)}}") {{spaceContext.entryTitle(entity)}}
+            td.cell-content-type
+              span {{spaceContext.publishedTypeForEntry(entity).getName()}}
+            td.cell-updated
+              date.relative(ng-if="entity.getUpdatedAt()" datetime="{{entity.getUpdatedAt()}}")
+      .loading(ng-hide="paginator.atLast()")
+    p.search-results__length Showing {{entities.length}} of {{paginator.numEntries}} entries
+
+  div(ng-switch-when="Asset")
+    .endless-container(at-bottom="searchController.loadMore()" num-elements="paginator.page")
+      table.search-results__list
+        tbody
+          tr(ng-repeat="entity in entities track by entity.getId()"
+              cf-click-local="pick(entity)"
+              ng-class="{selected: entity==selectedEntity}")
+            td.cell-preview
+              p.file-preview(cf-file-preview file="spaceContext.localizedField(entity, 'data.fields.file', locale.code)")
+                span.cf-thumbnail(file="file" size="70" ng-if="file")
+            td.cell-name(ng-init="assetCellName=spaceContext.localizedField(entity, 'data.fields.title', locale.code) || 'Untitled'")
+              p(title="{{assetCellName}}") {{assetCellName}}
+              p.lighter {{spaceContext.localizedField(entity, 'data.fields.description', locale.code)}}
+            td.cell-type(ng-init="file=spaceContext.localizedField(entity, 'data.fields.file', locale.code)")
+              p(ng-show="file && file.url") {{file|fileType}}
+                span.lighter {{file|fileExtension}}
+              p.cell--lighter
+                date.relative(ng-if="entity.getUpdatedAt()" datetime="{{entity.getUpdatedAt()}}")
+      .loading(ng-hide="paginator.atLast()")
+    p.search-results__length Showing {{entities.length}} of {{paginator.numEntries}} assets
+

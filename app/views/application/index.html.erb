@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+  <meta charset='UTF-8'>
+  <base href='/'>
+  <title>Contentful</title>
+  <%= stylesheet_link_tag "application", :media => "all" %>
+  <!--[if IE 9]>
+    <%= stylesheet_link_tag "ie9", :media => "all" %>
+  <![endif]-->
+  <%= csrf_meta_tags %>
+  <link rel="shortcut icon"    href="<%= asset_path("favicons/favicon32x32.png") %>"      type="image/png">
+  <link rel="apple-touch-icon" href="<%= asset_path("favicons/apple_icon57x57.png") %>"   type="image/png">
+  <link rel="apple-touch-icon" href="<%= asset_path("favicons/apple_icon72x72.png") %>"   type="image/png">
+  <link rel="apple-touch-icon" href="<%= asset_path("favicons/apple_icon114x114.png") %>" type="image/png">
+  <meta content='IE=edge' http-equiv='x-ua-compatible'>
+  <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic' rel='stylesheet' type='text/css'>
+  <style id='disable-outlines'></style>
+  <style id='chrome-temp-fix'></style>
+  <script data-apikey='b253f10d5d0184a99e1773cec7b726e8' src='//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js'></script>
+  <script>
+    //<![CDATA[
+      window.Bugsnag.releaseStage = "<%= Rails.env %>";
+      window.Bugsnag.notifyReleaseStages = [
+        //'development',
+        'staging',
+        'production'
+      ];
+      
+      if (top != self) { top.location.replace(self.location.href); }
+      // FIXME this is a temporary fix for a weird positioning issue that manifests only in Chrome versions below Chrome 38
+      // It should be removed some weeks after Chrome 38 is released as stable (possibly mid August 2014)
+      if (/Chrome\/(35|36|37)/g.test(window.navigator.userAgent)){
+        document.getElementById('chrome-temp-fix').innerHTML = '.entity-list.api-key-list .main-results-wrapper{right: 60px !important}.entity-list.content-model .main-results-wrapper{right: 120px !important}';
+      }
+    //]]>
+  </script>
+</html>
+<body class='cf-clear-outlines' ng-app='contentful/app'>
+  <div class='client ng-hide' ng-controller='ClientController' ng-init='initClient()' ng-show='user'>
+    <div class='notifications'>
+      <div class='notification {{message.severity}}' ng-repeat='(index, message) in notification.unseen() track by index'>
+        {{message.body}}
+      </div>
+    </div>
+    <nav class='account-menus'>
+      <div cf-dropdown='' class='dropdown-btn user' label=''>
+        <a cf-dropdown-toggle='' class='dropdown-toggle' ng-click='clickedProfileButton()' tabindex='0'>
+          <i class='fa fa-caret-down button-icon-right'></i>
+          <img ng-src='{{user.avatarUrl}}'>
+        </a>
+        <div cf-dropdown-menu class='dropdown-menu fixed-position left-aligned'>
+          <p class='account-header dropdown-row'>
+            Logged in as {{user.firstName}} {{user.lastName}}
+          </p>
+          <ul class='dropdown-menu-list separator'>
+            <li class='dropdown-menu-item' dropdown-close='' ng-click='goToAccount()'>Account Settings</li>
+            <li class='dropdown-menu-item' dropdown-close='' ng-click='startTutorial()' ng-if='canCreateSpace()'>Start Tutorial</li>
+            <li class='dropdown-menu-item' dropdown-close='' ng-click='openSupport()'>Support</li>
+            <li class='dropdown-menu-item' dropdown-close='' ng-click='logout()'>Log out</li>
+          </ul>
+        </div>
+      </div>
+      <div cf-dropdown='' class='dropdown-btn project' ng-hide='spaces.length == 0 &amp;&amp; !canCreateSpaceInAnyOrg()' ng-show='organizations &amp;&amp; organizations.length &gt; 0'>
+        <a cf-dropdown-toggle='' class='dropdown-toggle' ng-click='clickedSpaceSwitcher()' tabindex='0'>
+          <i class='fa fa-caret-down button-icon-right'></i>
+          <span ng-bind="spaceContext.space.data.name || 'Spaces'"></span>
+        </a>
+        <div cf-dropdown-menu='' class='dropdown-menu fixed-position left-aligned'>
+          <ul class='dropdown-menu-list dropdown-group'>
+            <li cf-click-local='selectOrg(orgId) &amp;&amp; toggleDropdown()' class='dropdown-menu-item no-highlight' ng-class="{'no-action': !canSelectOrg(orgId)}" ng-repeat='(orgId, org) in spacesByOrg'>
+              <i class='fa fa-user'></i>
+              <span>{{getOrgName(orgId)}}</span>
+              <ul class='dropdown-menu-list'>
+                <li cf-click-local='selectSpace(space) &amp;&amp; toggleDropdown()' class='dropdown-menu-item' ng-class='{hibernated: space.isHibernated()}' ng-disabled='!space.isHibernated()' ng-repeat='space in org track by space.getId()' tooltip-container='.project' tooltip-placement='left' tooltip='This space entered hibernation due to lack of use. It will be back online soon.'>
+                  {{space.data.name}}
+                  <i class='fa fa-circle' ng-show='space.isHibernated()'></i>
+                </li>
+              </ul>
+            </li>
+            <li class='dropdown-menu-item emphasize' dropdown-close='' ng-class="{'top-separator': spaces.length &gt; 0}" ng-click='showCreateSpaceDialog()' ng-show='canCreateSpace()'>
+              + Create Space
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div class='cf-persistent-notification' ng-show='persistentNotification'></div>
+      <div class='navbar-loader'></div>
+    </nav>
+    <space-view ng-controller='TabViewController'></space-view>
+    <div class='advice' ng-show='spaces.length == 0'>
+      <i class='fa fa-folder giant-icon'></i>
+      <header class='advice-title'>Nothing to see yet.</header>
+      <p class='advice-description' ng-show='!canCreateSpace()'>You need to be part of an Organization to create a space.</p>
+      <p class='advice-description' ng-show='canCreateSpace()'>Why don't you create a space?</p>
+      <button class='btn btn--primary' ng-click='showCreateSpaceDialog()' ng-show='canCreateSpace()' type='button'>Create Space</button>
+      <a class='knowledge-base-link' href='https://contentful.zendesk.com/hc/en-us/articles/200513118-What-is-a-space-' target='_blank'>
+        Visit the Knowledge Base Pages
+        <i class='fa fa-question-circle'></i>
+      </a>
+    </div>
+    <div class='cf-account-view tab-content' ng-class="{'with-tab-bar': !hideTabBar()}"></div>
+  </div>
+  <%= javascript_include_tag "application" %>
+  <%= javascript_include_tag 'https://maps.googleapis.com/maps/api/js?key=AIzaSyDskFlzw1ujRovNWNG3K64EUsncYTbRPfM&sensor=false' %>
+</body>

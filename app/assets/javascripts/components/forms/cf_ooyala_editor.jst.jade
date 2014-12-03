@@ -1,0 +1,27 @@
+cf-ooyala-input(
+  value="{{fieldData.value}}"
+  search-config="searchConfig"
+  on-change="ooyalaEditorController.resetErrors(); ooyalaEditorController.resetAsset(); ooyalaEditorController.persistInput(input)"
+  on-reset="ooyalaEditorController.resetEditorInput()"
+  on-valid-asset-id="ooyalaEditorController.addAsset(asset)"
+  on-invalid-asset-id="ooyalaEditorController.showErrors(error)")
+
+.video-widget-editor__content-wrapper(
+  ng-class="{'video-widget-content-wrapper--not-empty': 'errorMessage || selectedVideo.playerId'}")
+  .video-widget-editor__warning(ng-show="errorMessage")
+    i.fa.fa-exclamation-triangle
+    .video-widget-warning__message
+      p {{errorMessage}}
+
+  .video-widget-editor__loading-info(ng-show="selectedVideo.playerId && !isPlayerReady && !errorMessage")
+    p Loading player for asset {{selectedVideo.assetId}}
+    i.fa.fa-spinner.fa-spin
+
+  cf-ooyala-player.widget-ooyala-player(
+    ng-if="selectedVideo.playerId"
+    ng-hide="!isPlayerReady"
+    asset-id="selectedVideo.assetId"
+    player-id="selectedVideo.playerId"
+    on-ready="ooyalaEditorController.resetErrors(); ooyalaEditorController.setPlayerReady()"
+    on-load-failure="ooyalaEditorController.resetErrors(); ooyalaEditorController.resetAsset(); ooyalaEditorController.showFailedToLoadVideoError()"
+    on-failed-to-play-video="ooyalaEditorController.showFailedToPlayVideoError()")

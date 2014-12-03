@@ -2,10 +2,9 @@ source 'https://rubygems.org'
 
 gem 'rails', '3.2.12'
 gem 'json', '>= 1.7.7' # Explicit version requirement because security
-gem "haml"
+gem "jade", :git => 'http://github.com/janv/jade.git'
 
 group :assets do
-  gem 'haml_coffee_assets', '~> 1.13.0'
   gem 'execjs'
   gem 'sass-rails',   '~> 3.2.6'
   gem 'stylus', '~> 0.7.0'

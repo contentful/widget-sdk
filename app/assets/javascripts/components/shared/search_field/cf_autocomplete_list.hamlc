@@ -1,6 +1,0 @@
-%ul.plain-list.search-autocomplete-list
-  %li.plain-list--item(ng-repeat="(index, item) in autocompletion.items"
-      ng-class="{selected: item.value === selectedAutocompletion.value}"
-      ng-click="selectAutocompletion(item, $event)")
-    %span.item-value {{item.value}}
-    %span.item-description {{item.description}}

@@ -1,0 +1,12 @@
+i.fa.fa-info-circle.last-saved-at
+span.last-saved-at(ng-if="lastSavedAt")
+  | Last change made
+  time.relative(datetime="{{lastSavedAt}}")
+i.fa.fa-check.saved
+span.saved All changes saved successfully
+i.fa.fa-refresh.saving
+span.saving Saving…
+i.fa.fa-minus-circle.not-allowed
+span.not-allowed You're not allowed to edit this document
+i.fa.fa-exclamation-triangle.no-connection
+span.no-connection Can't initialize editor due to connection problems

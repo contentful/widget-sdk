@@ -1,0 +1,193 @@
+.tab-header.editor-configuration
+  .tab-header__title
+    h1(title="{{headline}}")
+      | {{headline}}
+      a.cf-knowledge-base-icon(
+        tooltip="Learn more about API Keys in the Knowledge Base Pages"
+        analytics-event="api_keys"
+        href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
+
+  .tab-header__actions
+    button.btn.btn--tertiary(type="button"
+            ng-click="preferences.toggleAuxPanel()"
+            ng-class="{active: preferences.showAuxPanel}"
+            tooltip="Toggle additional details"
+            tooltip-placement="left")
+      | Info
+
+
+.aux-panel(ng-show="preferences.showAuxPanel")
+  header
+    span API Key Information
+  .entity-info-panel
+
+
+.tab-main.tab-workbench
+  //-.note-box(ng-if="notes.isActive('content-delivery-api-key')")
+    h2 Content Delivery API Key
+    p The Content Delivery API is a REST API for delivering content from the Contentful platform to your apps, websites and other media. To activate the API you need to generate at least one API key. Just fill out the title and description fields below and we will auto-generate an access token for you when you 'Save'.
+    p We recommend using one key per supported device. For example, if you plan to serve content to a website, iPhone 8, iPad 7 and Android app, then you would generate four API keys.
+    p.note-box-dismissal
+      button.btn.btn--secondary(href="" ng-click="notes.dismiss('content-delivery-api-key')") Ok, got it
+  .ng-form.l-form--split(name="apiKeyForm" submit="save()")
+    .l-form-left
+      h2.section-title API General Info
+      .l-form-row
+        label Name
+          sup (required)
+        .l-form-controls
+          .l-field-editor
+            input.form-control(type="text" ng-model="apiKey.data.name" required ng-disabled="!editable()" placeholder="iOS iPad Application")
+      .l-form-row
+        label Description
+        .l-form-controls
+          .l-field-editor
+            textarea.form-control(ng-model="apiKey.data.description" ng-disabled="!editable()" placeholder="This API Key will grant the iOS iPad Application access to the content on Contentful.")
+      .l-form-row
+        label Space ID
+        .l-form-controls
+          .l-field-editor
+            input.form-control.with-copy-paste-button.space-id(type="text" value="{{spaceContext.space.getId()}}" readonly="readonly")
+            a.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".space-id")
+              i.fa.fa-copy
+      .l-form-row.device-link
+        .l-form-controls
+          .l-field-editor(ng-if="apiKey.data.accessToken")
+            a(href="{{environment.settings.marketing_url}}/api-console/?space={{spaceContext.space.getId()}}&token={{apiKey.data.accessToken}}&features=credentials,action-list,search-params.category.add,search-params.delete" target="_blank")
+              i.fa.fa-terminal.fa-2x
+              |  Try it out on our API Console
+          .l-field-editor.u-separator--small(ng-if="isDevice('iOS')")
+            a(href="{{mobileAppUrl}}" target="_blank")
+              i.fa.fa-apple.fa-2x
+              |  Browse entries in the Discovery App
+          .l-field-editor.u-separator--small(ng-if="isDevice('any')")
+            a(href="https://itunes.apple.com/au/app/contentful-discovery-cms-for/id892840015" target="_blank")
+              i.fa.fa-apple.fa-2x
+              |  Browse entries in the Discovery App
+            span (For iOS devices only)
+
+    .l-form-right
+      h2.section-title API Access Tokens
+
+      .l-form-row
+        label Production
+        .l-form-controls--with-action
+          .l-field-editor(ng-hide="apiKey.data.accessToken")
+            input.form-control(type="text" readonly="readonly" value="The token will be automatically generated once you save the existing key.")
+          .l-field-editor--with-action(ng-show="apiKey.data.accessToken")
+            input.form-control.with-copy-paste-button.access-token.cf-select-all-input(type="text" ng-model="apiKey.data.accessToken" readonly="readonly")
+            a.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token")
+              i.fa.fa-copy
+          .l-field-action(ng-show="apiKey.data.accessToken" cf-dropdown)
+            a.u-locked-action(ng-show="!regenerateProductionToken" href="#" cf-dropdown-toggle)
+              i.fa.fa-lock
+              |  Unlock Access Token Regeneration
+              .delete-confirm(cf-dropdown-menu position="topcenter")
+                h2
+                  i.fa.fa-exclamation-circle
+                  |  Warning
+                p Regenerating the production API access token will break the connection to your apps
+                button.btn.btn--danger(type="button" ng-click="regenerateProductionToken=true" dropdown-close) Unlock
+                button.btn.btn--secondary(type="button" dropdown-close) Cancel
+            a(ng-click="regenerateAccessToken()" ng-show="regenerateProductionToken" href="#")
+              i.fa.fa-refresh
+              |  Regenerate Access Token
+
+        label.u-separator Preview
+        .l-form-controls--with-action
+          .l-field-editor(ng-hide="previewApiKey.data.accessToken")
+            input.form-control(type="text" readonly="readonly" value="The token will be automatically generated once you save the existing key.")
+          .l-field-editor--with-action(ng-show="previewApiKey.data.accessToken")
+            input.form-control.with-copy-paste-button.access-token.cf-select-all-input(type="text" ng-model="previewApiKey.data.accessToken" readonly="readonly")
+            a.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token")
+              i.fa.fa-copy
+          .l-field-action(ng-show="previewApiKey.data.accessToken")
+            a(ng-click="regenerateAccessToken('preview')" href="#")
+              i.fa.fa-refresh
+              |  Regenerate Access Token
+
+      h2.section-title.u-separator--large(ng-show="apiKey.data.accessToken") Authentication Code
+      .l-form-row.authentication-code(ng-show="apiKey.data.accessToken")
+        .l-form-controls
+          .l-field-editor
+            .tools
+              .btn.btn--tertiary.select-box
+                select(ng-model="authCodeExample.lang")
+                  option(value="http" selected) HTTP (Curl)
+                  option(value="javascript") JavaScript
+                  option(value="objc") Objective-C
+                  option(value="ruby") Ruby
+                  option(value="swift") Swift
+                i.button-icon-right.fa.fa-caret-down
+              label
+                input.form-control-look(type="radio" name="codeexampleapi" ng-model="authCodeExample.api" value="cda")
+                | Production
+              label
+                input.form-control-look(type="radio" name="codeexampleapi" ng-model="authCodeExample.api" value="preview")
+                | Preview
+              a.cf-copy-paste(href="#" clipboard-target-selector=".authentication-code .code-example textarea")
+                i.fa.fa-copy
+                |  Copy to Clipboard
+
+            ng-switch(on="authCodeExample.lang")
+              .http.code-example.curl-example(ng-switch-when="http")
+                textarea.form-control(readonly="readonly").
+                  curl -X GET {{environment.env == 'development' ? 'http' : 'https'}}://{{getApiUrl()}}/spaces/{{spaceContext.space.getId()}}?access_token={{getSelectedAccessToken()}}
+              .javascript.code-example(ng-switch-when="javascript")
+                textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'preview' || environment.env != 'production'").
+                  var contentful = require('contentful');
+                  var client = contentful.createClient({
+                    accessToken: '{{getSelectedAccessToken()}}',
+                    host: '{{getApiUrl()}}',
+                    space: '{{spaceContext.space.getId()}}'
+                  });
+                textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'cda' && environment.env == 'production'").
+                  var contentful = require('contentful');
+                  var client = contentful.createClient({
+                    accessToken: '{{getSelectedAccessToken()}}',
+                    space: '{{spaceContext.space.getId()}}'
+                  });
+              .objc.code-example(ng-switch-when="objc")
+                textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'preview' || environment.env != 'production'").
+                  CDAConfiguration* config = [CDAConfiguration defaultConfiguration];
+                  config.server = @"{{getApiUrl()}}";
+                  CDAClient* client = [[CDAClient alloc] initWithSpaceKey:@"{{spaceContext.space.getId()}}" accessToken:@"{{getSelectedAccessToken()}}" config: config];
+                textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'cda' && environment.env == 'production'").
+                  CDAClient* client = [[CDAClient alloc] initWithSpaceKey:@"{{spaceContext.space.getId()}}" accessToken:@"{{getSelectedAccessToken()}}"];
+              .ruby.code-example(ng-switch-when="ruby")
+                textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'preview' || environment.env != 'production'").
+                  require 'contentful'
+                  client = Contentful::Client.new(
+                    access_token: '{{getSelectedAccessToken()}}',
+                    api_url: '{{getApiUrl()}}',
+                    space: '{{spaceContext.space.getId()}}'
+                  )
+                textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'cda' && environment.env == 'production'").
+                  require 'contentful'
+                  client = Contentful::Client.new(
+                    access_token: '{{getSelectedAccessToken()}}',
+                    space: '{{spaceContext.space.getId()}}'
+                  )
+              .swift.code-example(ng-switch-when="swift")
+                textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'preview' || environment.env != 'production'").
+                  var config = CDAConfiguration.defaultConfiguration()
+                  config.server = "{{getApiUrl()}}"
+                  var client = CDAClient(spaceKey:"{{spaceContext.space.getId()}}", accessToken:"{{getSelectedAccessToken()}}", configuration:config)
+                textarea.form-control(readonly="readonly" ng-if="authCodeExample.api == 'cda' && environment.env == 'production'").
+                  var client = CDAClient(spaceKey:"{{spaceContext.space.getId()}}", accessToken:"{{getSelectedAccessToken()}}")
+
+.tab-actions
+  .button-set(cf-dropdown)
+    button.btn.btn--secondary.delete(type="button" ng-show="apiKey.getId()" cf-dropdown-toggle) Delete
+    .delete-confirm(cf-dropdown-menu position="topcenter")
+      p You are about to delete {{headline}}
+      button.btn.btn--danger(type="button" ng-click="delete()" dropdown-close) Delete 
+      button.btn.btn--secondary(type="button" dropdown-close) Don't Delete 
+    button.btn.btn--primary.save(type="submit"
+                 tooltip="Save this API key"
+                 ng-click="save()"
+                 cf-when-disabled="permissionController.createApiKey"
+                 ng-disabled="apiKeyForm.$invalid || permissionController.createApiKey.shouldDisable")
+      | Save
+  .rest-save-status
+    | Hit Save to save changes to this API Key.

@@ -1,0 +1,19 @@
+span(ng-class="{active: isOrderField(field)}")
+  button.transparent-button(ng-show="fieldIsSortable(field) && !isFieldCollapsed(field)" ng-click="orderColumnBy(field)")
+    i.button-icon.fa.fa-caret-up(ng-show="tab.params.view.order.direction == 'ascending' && isOrderField(field)")
+    i.button-icon.fa.fa-caret-down(ng-show="tab.params.view.order.direction == 'descending' || !isOrderField(field)")
+  span(ng-if="isDisplayField"
+    ng-disabled="!fieldIsSortable(field)"
+    ng-click="orderColumnBy(field)")
+    | Name
+  button.transparent-button.truncated-button(
+    ng-if="!isDisplayField" ng-hide="isFieldCollapsed(field)"
+    ng-disabled="!fieldIsSortable(field)"
+    ng-click="orderColumnBy(field)")
+    | {{field.name}}
+  button.transparent-button.truncated-button(
+    ng-if="!isDisplayField" ng-show="isFieldCollapsed(field)"
+    ng-click="expandColumn(field)"
+    tooltip="{{field.name}}" tooltip-placement="bottom" tooltip-container=".main-header")
+    | {{field.name}}
+

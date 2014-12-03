@@ -1,0 +1,20 @@
+ul.dropdown-menu-list.menu-list
+  li.dropdown-menu-item.group
+    h3 Single
+  li.dropdown-menu-item.type(ng-repeat="type in availableTypes.Single track by type.name"
+      ng-click="typeClicked(type.value)"
+      data-type-name="{{type.name}}"
+      dropdown-close)
+    .cf-fieldtype-icon(field="type.value")
+    span {{type.name}}
+    .content-type-description
+  li.dropdown-menu-item.group
+    h3 Multiple
+  li.dropdown-menu-item.type(ng-repeat="type in availableTypes.Multiple track by type.name"
+      ng-click="typeClicked(type.value)"
+      data-type-name="{{type.name}}"
+      dropdown-close)
+    .cf-fieldtype-icon(field="type.value")
+    span {{type.name}}
+    .content-type-description
+

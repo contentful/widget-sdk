@@ -1,0 +1,59 @@
+.tab-header.editor-configuration
+  .tab-header__title
+    h1 {{contentType.getName()}} / {{editingInterface.data.title}}
+
+  .tab-header__actions
+    .dropdown-btn(cf-dropdown)
+      a.btn.btn--tertiary(cf-dropdown-toggle)
+        i.fa.fa-caret-down.button-icon-right
+        span View
+      .dropdown-menu(cf-dropdown-menu)
+        ul.dropdown-menu-list
+          li.dropdown-menu-item
+            label
+              input(type="checkbox" ng-model="preferences.showDisabledFields")
+              | Show disabled fields
+    button.btn.btn--secondary(type="button"
+            ng-click="restoreDefaults()"
+            tooltip="Restore default view"
+            tooltip-placement="bottom")
+      i.fa.fa-rotate-left.button-icon
+      | Restore to defaults
+
+.tab-main
+  .left-nav(ng-show="editorController.layoutElementsEnabled")
+    h2 Layout options
+    div(data-layout-options)
+      layout-options-header.u-bce.field-widget-settings(data-layout-item="sectionHeader")
+      layout-options-header.u-bce.field-widget-settings(data-layout-item="infoText")
+      layout-options-header.u-bce.field-widget-settings(data-layout-item="sectionBreak")
+
+  .with-left-nav
+    h2 Editing interface widgets
+    div(ng-model="editingInterface.data.widgets" ui-sortable="widgetSortOptions" data-widget-settings)
+      .field-widget-settings(
+          cf-field-widget-settings
+          ng-repeat="widget in editingInterface.data.widgets track by widget.id"
+          ng-hide="!editorController.isWidgetVisible(widget)"
+          ng-class="{open: isAccordionItemOpen(widget), active: !field || field && !field.disabled }")
+
+.tab-actions
+  .button-set
+    //- TODO: Only show delete if not default
+    //- button.btn.btn--danger.delete-confirm(type="button"
+        cf-click-outside="deleteConfirm=false"
+        cf-click-outside-ignore=".delete"
+        ng-show="deleteConfirm"
+        ng-click="delete()"
+        tooltip="Click anywhere else to dismiss")
+        Are you sure?
+    //- button.btn.btn--secondary.delete(type="button"
+        ng-show="canDelete() && !deleteConfirm"
+        ng-click="deleteConfirm=true" 
+        tooltip="Delete this Editing Interface")
+        Delete
+
+    button.btn.btn--primary.publish(
+        ng-click="update()"
+        tooltip="Update this Editing Interface")
+      | Update
