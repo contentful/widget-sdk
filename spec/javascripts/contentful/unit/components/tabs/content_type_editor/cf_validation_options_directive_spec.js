@@ -13,6 +13,8 @@ describe('The cfValidationOptions directive', function () {
       $provide.value('notification', {
         warn: stubs.warn
       });
+
+      $provide.removeDirectives('selectValidation', 'cfFormInlineError', 'cfPredefinedValuesList', 'cfKnowledgeBaseIcon');
     });
 
     inject(function ($rootScope, $compile) {
