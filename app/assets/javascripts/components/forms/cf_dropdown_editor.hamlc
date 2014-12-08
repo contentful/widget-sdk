@@ -1,6 +1,0 @@
-.btn.btn--tertiary.select-box.dropdown-editor(ng-class="dropdownWidthClass()")
-  %select(ng-model="valuesController.selected"
-          ng-required="field.required"
-          ng-options="v.value as v.label for v in valuesController.valuesList")
-    %option(value="") Choose a value
-  %i.button-icon-right.fa.fa-caret-down

@@ -24,7 +24,7 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('singleLine',{
     fieldTypes: ['Text', 'Symbol'],
     name: 'Single Line',
-    template: '<input class="form-control" ng-disabled="!otEditable" ng-model="fieldData.value" ot-bind-text="" ot-subdoc="" type="text">'
+    template: '<input class="form-control" ng-disabled="!otEditable" ng-model="fieldData.value" ot-bind-text ot-subdoc type="text">'
   });
   widgets.registerWidget('numberEditor',{
     fieldTypes: ['Integer', 'Number'],
@@ -107,7 +107,7 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('listInput',{
     fieldTypes: ['Symbols'],
     name: 'List',
-    template: '<input cf-list-identity-fix="" class="form-control" ng-disabled="!otEditable" ng-list="" cf-empty-list="" ng-model="fieldData.value" ot-bind-model="" type="text">'
+    template: '<input cf-list-identity-fix class="form-control" ng-disabled="!otEditable" ng-list cf-empty-list ng-model="fieldData.value" ot-bind-model type="text">'
   });
   widgets.registerWidget('fileEditor',{
     fieldTypes: ['File'],

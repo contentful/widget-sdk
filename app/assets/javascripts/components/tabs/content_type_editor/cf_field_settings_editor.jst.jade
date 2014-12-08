@@ -1,0 +1,99 @@
+a.toggle-collapse(cf-click-local="toggleAccordionItem(field)" ng-class="{open: isAccordionItemOpen(field)}") ▶
+.display
+  span.name {{field | displayedFieldName}}
+  .icons
+    i.fa.fa-exclamation-triangle.validation-alert(tooltip="This Field has errors"
+                                 ng-show="validationResult.pathErrors.fields[index]")
+    i.title-icon(tooltip="Field used as title"
+               class="enabled"
+               ng-show="isDisplayField(field)") T
+    i.required-icon(tooltip="Field is required"
+                     ng-class="{enabled: field.required}") ✱
+    i.fa.fa-check(tooltip="Field has validations"
+                ng-class="{enabled: hasValidations}")
+    i.fa.fa-globe(tooltip="Field is localized"
+                ng-class="{enabled: field.localized}")
+  .cf-fieldtype-icon(field="field" show-tooltip)
+    i.fa.fa-question-circle
+form.field-form(name="fieldForm")
+  input.form-control(name="fieldName"
+         ng-model="field.name" type="text" required
+         ng-disabled="!otEditable"
+         ot-path="['fields', index, 'name']"
+         ot-path-types="['Array', 'Object', 'String']"
+         ot-subdoc ot-bind-text
+         placeholder="e.g. Product Name"
+         ng-change="apiNameController.updateFromName()"
+         tooltip="Field title displayed to editors"
+         tooltip-container=".tab-main"
+         tooltip-placement="top")
+  | 
+  input.form-control(name="fieldApiName"
+         cf-api-name-shadow="field"
+         ng-model="field.apiName" type="text" required
+         ng-disabled="!(otEditable && apiNameController.isEditable())"
+         ot-path="['fields', index, 'apiName']"
+         ot-path-types="['Array', 'Object', 'String']"
+         ot-subdoc ot-bind-text
+         placeholder="e.g. productName"
+         tooltip="Field ID used in API"
+         tooltip-container=".tab-main"
+         tooltip-placement="top")
+  | 
+  button.btn.btn--field-settings(ng-click="apiNameController.unlockEditing()" ng-disabled="apiNameController.isEditable()" ng-show="otEditable")
+    i.fa.fa-lock(ng-class="{'fa-unlock-alt': apiNameController.isEditable()}")
+  | 
+  button.btn.btn--field-settings(ng-click="apiNameController.revert()" ng-if="apiNameController.isRevertable()")
+    i.fa.fa-undo
+  | 
+  .field-errors(ng-hide="noErrors")
+    span(cf-error-path="['fields', index, 'name']")
+      | Name: {{errorMessages.join(' ')}}
+      br
+    span(cf-error-path="['fields', index, 'apiName']")
+      | Identifier: {{errorMessages.join(' ')}}
+
+.dropdown-btn.fieldtype-dropdown(cf-dropdown)
+  .dropdown-toggle.btn.btn--tertiary.cf-fieldtype-icon(cf-dropdown-toggle field="field" show-tooltip ng-disabled="published")
+    i.fa.fa-question-circle
+  .dropdown-menu.type-menu(cf-dropdown-menu select-type="changeFieldType(type)")
+
+.status(ng-class="statusClass()" tooltip="{{statusTooltipText()}}" data-tooltip-container=".tab-main")
+.field-details
+  a.toggle-required(ng-click="toggle('required')"
+                     ng-class="{active: field.required}"
+                     tooltip="Make Field mandatory when filling in content")
+    i.required-icon ✱
+    | 
+    | {{field.required ? 'Required' : 'Require'}}
+  a.toggle-validate(
+        ng-click="openValidationDialog()"
+        ng-class="{active: hasValidations}"
+        ng-show="validationsAvailable"
+        tooltip="Add Validations to the content in this Field")
+    i.fa.fa-check
+    | 
+    | {{hasValidations? 'Validated' : 'Validate'}}
+    i.fa.fa-exclamation-triangle.validation-alert(ng-show="validationResult.pathErrors.fields[index].validations || validationResult.pathErrors.fields[index].items.validations" tooltip="There are errors in the validations")
+  a.toggle-localized(ng-click="toggle('localized')"
+                      ng-class="{active: field.localized}"
+                      tooltip="Translate the content in this Field to multiple languages")
+    i.fa.fa-globe
+    | 
+    | {{field.localized ? 'Localized' : 'Localize'}}
+  a.toggle-title(ng-click="isDisplayField() ? null : setDisplayField(field)"
+                  ng-class="{active: isDisplayField()}"
+                  ng-show="field | isDisplayableAsTitle"
+                  tooltip="Use this Field as title of the Entry in the interface")
+    i.title-icon T
+    | 
+    | {{isDisplayField(field) ? 'Used as title' : 'Use as title'}}
+  a.toggle-disabled(ng-click="toggle('disabled')"
+    ng-class="{active: field.disabled}"
+    ng-show="!otDisabled && published"
+    tooltip="{{field.disabled ? 'Enable this field for editors' : 'Disable this field for editors'}}")
+    | {{field.disabled ? 'Enable Field' : 'Disable Field'}}
+  a.toggle-disabled(ng-click="delete()" ng-show="!otPublished" ng-hide="published")
+    | Delete Field
+.drag-handle(ng-hide="otDisabled")
+  i.fa.fa-bars

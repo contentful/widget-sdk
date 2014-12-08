@@ -18,8 +18,6 @@
 //= require user_interface/node_modules/share/webclient/json.uncompressed
 //= require user_interface/node_modules/share/webclient/textarea.js
 //
-//= require hamlcoffee
-//
 //= require angular
 //= require angular-animate
 //= require angular-sanitize
@@ -46,6 +44,12 @@ angular.module('contentful/app', [
   'use strict';
   var env = environment.settings;
 
+  // TODO this piece of code is temporary until the switch to gulp:
+  window.JST = _.transform(window.JST, function(jst, template, key){
+    key = _.last(key.split('/'));
+    jst[key] = template;
+  }, {});
+
   $.cookies.setOptions({
     secure: environment.env != 'development'
   });
@@ -67,7 +71,7 @@ angular.module('contentful/app', [
   timeRelativeConfig.calendar.en.sameElse = 'll';
   timeRelativeConfig.calendar.en.lastWeek = 'ddd, LT';
   timeRelativeConfig.calendar.en.nextWeek = 'Next ddd, LT';
-}]).run(['authentication', 'client', 'ShareJS', 'analytics', 'logger', '$timeout', function(authentication, client, ShareJS, analytics, logger, $timeout) {
+}]).run(['authentication', 'client', 'ShareJS', 'analytics', 'logger', function(authentication, client, ShareJS, analytics, logger) {
   'use strict';
   authentication.login();
   client.persistenceContext.adapter.token = authentication.token;

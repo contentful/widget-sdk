@@ -1,0 +1,12 @@
+.modal-background
+  .modal-dialog(cf-center-on=".modal-background")
+    .title {{dialog.title}}
+    .modal-dialog-close-button(ng-click="dialog.cancel()")
+    p.dialog-content.dialog-plaintext(ng-if="dialog.message") {{dialog.message}}
+    p.dialog-content.
+      If this problem persists after reloading, please check
+      <a href="http://status.contentful.com/" target="_blank">our status page</a>
+      for incidents.
+    .buttons
+      button.btn.btn--primary.confirm(ng-click="dialog.confirm()")
+        | {{dialog.confirmLabel}}

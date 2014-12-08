@@ -1,0 +1,117 @@
+.tab-header
+  .tab-header__title
+    h1
+      | Assets
+      a.cf-knowledge-base-icon(
+        tooltip="Learn more about Assets in the Knowledge Base Pages"
+        tooltip-container=".entity-list"
+        analytics-event="assets"
+        href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
+
+
+  .tab-header__search.search-area
+    .l-search-w-autocomplete(
+      cf-tokenized-search="tab.params.view.searchTerm"
+      search-content-type="assetContentType"
+      placeholder="Search for Assets")
+
+    .search-results-position(paginator="searchController.paginator" ng-hide="!searchController.paginator.numEntries")
+
+  .tab-header__actions.add-entity
+    .dropdown-btn(cf-dropdown ng-show="assets.length > 0")
+      button.btn.btn--primary.u-truncate(cf-dropdown-toggle
+          ng-hide="permissionController.createAsset.shouldHide"
+          ng-disabled="permissionController.createAsset.shouldDisable"
+          cf-when-disabled="permissionController.createAsset")
+        i.fa.fa-plus.button-icon
+        | Add New Asset
+      .dropdown-menu(cf-dropdown-menu position="bottomcenter" container=".tab-content")
+        ul.dropdown-menu-list
+          li.dropdown-menu-item.type(ng-click="createAsset('frameButton')" dropdown-close)
+            i.fa.fa-plus
+            | Single Asset
+          li.dropdown-menu-item.type(ng-click="createMultipleAssets()" dropdown-close)
+            i.fa.fa-plus
+            | Multiple Assets
+
+.tab-main
+  .left-nav
+    div.menu-with-buttons(view-menu="uiConfig.assetListViews" current-view="tab.params.view" ng-show="uiConfig")
+
+  .with-left-nav
+    table.result-list.main-results.main-header
+      thead
+        tr
+          th.cell-select
+            input(type="checkbox" cf-selection ng-show="assets.length > 0" tabindex="-1")
+          th.cell-preview Preview
+          th.cell-name Name
+          th.cell-type Type
+          th.cell-updated Updated
+          th.cell-author By
+          th.cell-status Status
+
+    .main-results-wrapper.endless-container(at-bottom="searchController.loadMore()" num-elements="searchController.paginator.page")
+      table.result-list.main-results
+        tbody
+          tr(ng-repeat="asset in visibleAssets = (assets | filter:visibleInCurrentList) track by asset.getId()" cf-click-local="navigator.assetEditor(asset).goTo()")
+            td.cell-select(ng-click="selection.toggle(asset);$event.stopPropagation()")
+              input(type="checkbox" cf-selection="asset" tabindex="-1")
+            td.cell-preview(ng-class="{'no-padding': (!!file)}")
+              div.file-preview(cf-file-preview file="spaceContext.localizedField(asset, 'data.fields.file')" preview-size="400")
+                span.cf-thumbnail(file="file" size="30" ng-if="file")
+            td.cell-name
+              span {{spaceContext.assetTitle(asset)}}
+            td.cell-type(ng-init="file=spaceContext.localizedField(asset, 'data.fields.file')")
+              span {{file|fileType}}
+              span.extension {{file|fileExtension}}
+            td.cell-updated
+              date.relative(ng-if="asset.getUpdatedAt()" datetime="{{asset.getUpdatedAt()}}")
+            td.cell-author
+              span.cf-user(link="asset.getUpdatedBy()" as="updater") {{updater | userNameDisplay:user}}
+            td.cell-status(ng-class="entityStatusController.getClassname(asset)")
+              .draft-wrapper
+                .status-label {{entityStatusController.getLabel(asset)}}
+                .status-bar
+      .loading(ng-hide="searchController.paginator.atLast()")
+
+    .advice(ng-show="visibleAssets | isEmpty")
+      div(ng-show="hasQuery()")
+        i.fa.fa-search.fa-flip-horizontal.giant-icon
+        header.advice-title There are no matches to your search
+      div(ng-show="!hasQuery()")
+        i.fa.fa-paperclip.giant-icon
+        header.advice-title You have no Assets yet.
+        p.advice-description Assets are external documents that you can link to your Entries. They can be any file you wish, form sounds to images or videos to text documents.
+        .dropdown-btn(cf-dropdown)
+          button.btn.btn--primary(cf-dropdown-toggle
+            ng-hide="permissionController.createAsset.shouldHide"
+            ng-disabled="permissionController.createAsset.shouldDisable"
+            cf-when-disabled="permissionController.createAsset")
+            | Create an Asset
+          .dropdown-menu(cf-dropdown-menu position="bottomcenter" container=".tab-content")
+            ul.dropdown-menu-list
+              li.dropdown-menu-item.type(ng-click="createAsset('frameButton')" dropdown-close)
+                i.fa.fa-plus
+                | Single Asset
+              li.dropdown-menu-item.type(ng-click="createMultipleAssets()" dropdown-close)
+                i.fa.fa-plus
+                | Multiple Assets
+
+
+        a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513308-What-is-an-Asset-")
+          | Visit the Knowledge Base Pages
+          i.fa.fa-question-circle
+
+.tab-actions
+  .label {{selection.size()}} Assets selected
+  .button-set(ng-controller="AssetListActionsController" ng-hide="selection.isEmpty()" cf-dropdown)
+    button.btn.btn--secondary.delete(type="button" ng-show="showDelete()" cf-dropdown-toggle) Delete
+    .delete-confirm(cf-dropdown-menu position="topcenter")
+      p You are about to delete {{selection.size()}} Assets
+      button.btn.btn--danger(type="button" ng-click="deleteSelected()" dropdown-close) Delete 
+      button.btn.btn--secondary(type="button" dropdown-close) Don't Delete 
+    button.btn.btn--secondary.archive(type="button" ng-click="archiveSelected()"   ng-show="showArchive()"  ) Archive
+    button.btn.btn--secondary.unarchive(type="button" ng-click="unarchiveSelected()" ng-show="showUnarchive()") Unarchive
+    button.btn.btn--secondary.unpublish(type="button" ng-click="unpublishSelected()" ng-show="showUnpublish()") Unpublish
+    button.btn.btn--secondary.publish(  type="submit" ng-click="publishSelected()"   ng-show="showPublish()"  ) {{publishButtonName()}}

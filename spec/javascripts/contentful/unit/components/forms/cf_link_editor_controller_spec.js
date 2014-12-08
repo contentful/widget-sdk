@@ -212,24 +212,46 @@ describe('LinkEditorController', function () {
         addEntryExpectations();
       });
 
-      describe('removes an entry from a list', function () {
+      describe('removes an entry', function () {
         beforeEach(function() {
-          shareJSMock.peek.returns([]);
-
-          scope.addLink(entry);
-          stubs.otDocPush.yield();
+          scope.links = [
+            {sys: {id: 'entry1'}},
+            {sys: {id: 'entry2'}},
+            {sys: {id: 'entry3'}}
+          ];
+          scope.removeLink(0, entry);
+          stubs.remove.yield();
+          scope.$apply();
         });
 
         it('updates model', function() {
           expect(scope.updateModel).toBeCalled();
         });
 
-        it('removes link', function() {
-          scope.removeLink(0, entry);
-          stubs.remove.yield();
-          expect(scope.links.length).toBe(0);
+        it('has 0 links', function() {
+          expect(scope.links).toEqual([{sys: {id: 'entry2'}}, {sys: {id: 'entry3'}}]);
         });
       });
+
+      describe('removes the last entry', function () {
+        beforeEach(function() {
+          scope.links = [
+            {sys: {id: 'entry1'}}
+          ];
+          scope.removeLink(0, entry);
+          scope.otChangeValue.yield();
+          scope.$apply();
+        });
+
+        it('updates model', function() {
+          expect(scope.updateModel).toBeCalled();
+        });
+
+        it('has 0 links', function() {
+          expect(scope.links).toEqual([]);
+        });
+      });
+
     });
 
     describe('attaches a list of previously loaded entries', function () {

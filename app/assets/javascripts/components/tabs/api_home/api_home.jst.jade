@@ -1,0 +1,71 @@
+.tab-header
+  .tab-header__title
+    h1 API
+
+.tab-main
+  .left-nav
+    header.filter-list-header
+      | Content Delivery API
+    ul.cf-cda-links
+    header.filter-list-header
+      | Content Management API
+    ul.cf-cma-links
+
+  .with-left-nav
+    .main-results-wrapper
+      //- %header.hero
+        h1 Contentful Developers
+        p(ng-if="notes.isActive('developers-hero')")
+          | Contentful offers RESTful APIs and a growing list of libraries for managing and delivering your content. Use the Delivery API to deliver content to mobile apps, interactive websites, and connected devices. The Management API allows you to upload JSON and binary content, which is fully indexed and open to querying minutes later.
+          a.close-button(href="" ng-click="notes.dismiss('developers-hero')")
+
+      .boxes
+        .box
+          a.box-image.cda(cf-marketing="/developers/documentation/content-delivery-api")
+          a.box-title(cf-marketing="/developers/documentation/content-delivery-api")
+            h2.uppercase Content<br>Delivery API
+          p
+            | Deliver content to mobile apps, websites and connected devices. The Content Delivery API is designed to help you display content to end users.
+          ul.cf-cda-links
+
+        .box
+          a.box-image.cma(cf-marketing="/developers/documentation/content-management-api")
+          a.box-title(cf-marketing="/developers/documentation/content-management-api")
+            h2.uppercase Content<br>Management API
+          p
+            | Import content from own servers, 3rd-party systems or your community. The Content Management API helps you create content.
+          ul.cf-cma-links
+
+        .box
+          a.box-image.demo(href="http://contentful.github.io/contentful.js/example")
+          a.box-title(href="http://contentful.github.io/contentful.js/example")
+            h2.uppercase Contentful<br>Showcase
+          p
+            | We assembled a collection of demo apps &amp; interactive examples to help you explore the possibilities opened up by our platform.
+          ul.content-list
+            li
+              a(href="http://contentful.github.io/contentful.js/example/browser")
+                | Space Browser
+            li
+              a(href="http://contentful.github.io/contentful.js/example/ufos")
+                | UFO Sightings
+            li
+              a(href="https://github.com/contentful/contentful-management.js#cloning-a-spaces-content-model")
+                | Cloning a Content Model between Spaces
+            li
+              a(href="https://github.com/contentful/cosmonaut")
+                | Cosmonaut
+            li
+              a(href="https://github.com/contentful/guide-app")
+                | Guide App
+            li
+              a(href="https://github.com/contentful/guide-app-ios")
+                | iOS Guide App
+            li
+              a(href="https://github.com/contentful")
+                | See more in our Github
+
+
+      .note-box
+        | This page is only visible to Space Admins and Developers.
+

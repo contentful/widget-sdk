@@ -1,0 +1,106 @@
+.tab-header.editor-configuration
+  .tab-header__title
+    h1(title="{{headline()}}")
+      | {{headline()}}
+      a.cf-knowledge-base-icon(
+        tooltip="Learn more about Entries in the Knowledge Base Pages"
+        analytics-event="entries"
+        href="https://contentful.zendesk.com/hc/en-us/articles/200513208-What-is-an-Entry-")
+
+  .tab-header__actions
+    button.btn.btn--tertiary(type="button"
+            ng-click="preferences.toggleAuxPanel()"
+            ng-class="{active: preferences.showAuxPanel}"
+            tooltip="Toggle additional details"
+            tooltip-placement="bottom")
+      | Info
+    .dropdown-btn(cf-dropdown)
+      button.btn.btn--tertiary(cf-dropdown-toggle)
+        i.fa.fa-caret-down.button-icon-right
+        span View
+      .dropdown-menu(cf-dropdown-menu position="bottomcenter")
+        ul.dropdown-menu-list(ng-show="showLangSwitcher")
+          li.dropdown-menu-item(ng-repeat="locale in spaceContext.privateLocales track by locale.code")
+            label
+              input(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
+              | {{locale.name}}
+              span(ng-show="locale == spaceContext.space.getDefaultLocale()") (default)
+        ul.dropdown-menu-list
+          li.dropdown-menu-item(ng-class="{'top-separator': showLangSwitcher}")
+            label
+              input(type="checkbox" ng-model="preferences.showDisabledFields")
+              | Show disabled fields
+
+.aux-panel(ng-show="preferences.showAuxPanel")
+  header
+    h1 Entry Information
+  .entity-info-panel
+
+.tab-main.tab-workbench
+  form.l-form(name="entryForm")
+    .l-form-row--no-label(ng-show="hasErrorOnFields")
+      .l-form-controls
+        .cf-form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
+    .l-form-row(ng-repeat="widget in widgets track by widget.id"
+        data-field-id="{{widget.field.id}}"
+        data-field-type="{{widget.field.type}}"
+        data-field-items-type="{{widget.field.items.type}}"
+        ng-class="{'data-field-array': (widget.field|isFieldLink), 'data-field-boolean': (widget.field|isFieldBoolean), 'data-field-string-list': (widget.field|isFieldStringList)}")
+      label(ng-if="widget.field")
+        | {{widget.field.name}}
+        sup(ng-show="widget.field.required") (required)
+      .l-form-controls(ng-if="widget.field")
+        .l-form-locale(ng-repeat="locale in widget.locales track by locale.code" ot-field-presence="['fields', widget.field.id, locale.code]" data-locale="{{locale.code}}")
+          .cf-field-editor.l-field-editor(ot-path="['fields', widget.field.id, locale.code]" cf-editor-entity="entry")
+          .locale-label(ng-show="widget.locales.length > 1") {{locale.name}}
+          .field-collaborators
+            ul.plain-list.field-list
+              li.plain-list--item.avatar.cf-user(ng-repeat="link in fieldPresence.users track by link.sys.id"
+                                 link="link" as="presenceUser"
+                                 tooltip="{{presenceUser | userNameDisplay:user}}")
+                img(ng-src="{{user.avatarUrl}}")
+          .cf-form-box-error(cf-error-path="['fields', widget.field.id, locale.code,'*']")
+        .l-field-help-text.layout-field--help-text(ng-if="widget.widgetParams.helpText") {{widget.widgetParams.helpText}}
+        .cf-form-box-error(cf-error-path="['fields', widget.field.id]")
+      .l-form-controls(ng-if="!widget.field")
+        .cf-field-editor.l-field-editor(ot-path cf-editor-entity="entry")
+
+.tab-actions(ng-controller="EntryActionsController")
+  .button-set
+    .dropdown-btn(cf-dropdown="actions" ng-show="canDelete() || canDuplicate()")
+      button.btn.btn--tertiary(cf-dropdown-toggle="actions")
+        i.fa.fa-caret-up.button-icon-right
+        | More
+      .dropdown-menu(cf-dropdown-menu="actions" position="top")
+        ul.dropdown-menu-list(cf-dropdown="confirm")
+          li.dropdown-menu-item.duplicate(type="button" ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this Entry" dropdown-close) Duplicate
+          li.dropdown-menu-item.delete(type="button" ng-show="canDelete()" cf-dropdown-toggle="confirm") Delete
+          .delete-confirm.no-caret(cf-dropdown-menu="confirm" position="topcenter")
+            p You are about to delete {{headline()}}
+            button.btn.btn--danger(type="button" ng-click="delete()" dropdown-close) Delete 
+            button.btn.btn--secondary(type="button" dropdown-close) Don't Delete 
+
+    | 
+    button.btn.btn--secondary.archive(type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry") Archive
+    | 
+    button.btn.btn--secondary.archive(type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry") Unarchive
+    | 
+    button.btn.btn--secondary.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry") Unpublish
+    | 
+    button.btn.btn--primary.publish(type="submit" ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Entry") {{publishButtonLabel()}}
+  .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
+               tooltip-placement="top")
+  .other-users
+    span(ng-show="presence.users.length == 0"
+          tooltip="Edit collaboratively by inviting more users into your space. Go to Settings → Users → Invite New User to invite people.")
+      | No other users online
+    ul.plain-list(ng-show="presence.users.length > 0")
+      li.plain-list--item.avatar.cf-user(ng-repeat="link in presence.users track by link.sys.id"
+                         link="link" as="presenceUser"
+                         tooltip="{{presenceUser | userNameDisplay:user}}")
+        img(ng-src="{{presenceUser.data.avatarUrl}}")
+    a.btn.btn--secondary.invite-users(
+      href="" ng-click="navigator.spaceSettings('/users/new').goTo()"
+      tooltip="Add a user to this space")
+      i.fa.fa-user
+      i.fa.fa-plus

@@ -1,3 +1,0 @@
-%ul.plain-list
-  %li(ng-repeat="(index, error) in errorMessages track by index")
-    {{error}}
