@@ -263,8 +263,9 @@ describe('EntryLinkEditorController', function () {
 
         it('removes link', function() {
           scope.removeLink(0, entry);
-          stubs.remove.yield();
-          expect(scope.links.length).toBe(0);
+          scope.otChangeValue.yield();
+          scope.$apply();
+          expect(scope.links).toEqual([]);
         });
       });
     });

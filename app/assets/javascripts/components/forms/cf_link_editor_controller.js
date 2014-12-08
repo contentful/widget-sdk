@@ -92,20 +92,14 @@ angular.module('contentful').controller('LinkEditorController',
   $scope.removeLink = function(index, entity) {
     var cb;
     if ($scope.linkSingle) {
-      cb = $q.callback();
-      $scope.otChangeValue(null, cb);
-      return cb.promise.then(function () {
-        $scope.links.length = 0;
-        $scope.updateModel();
-      });
+      return removeValue();
     } else {
       assertIndexMatches(index, entity);
-      cb = $q.callbackWithApply();
-      $scope.otDoc.at($scope.otPath.concat(index)).remove(cb);
-      return cb.promise.then(function () {
-        $scope.links.splice(index,1);
-        $scope.updateModel();
-      });
+      if (isLastLink()) {
+        return removeValue();
+      } else {
+        return removeLink(index);
+      }
     }
 
     function assertIndexMatches(index, entity) {
@@ -116,6 +110,28 @@ angular.module('contentful').controller('LinkEditorController',
             links: $scope.links
           }
         });
+    }
+
+    function isLastLink() {
+      return dotty.get($scope, 'links.length') === 1;
+    }
+
+    function removeValue() {
+      cb = $q.callback();
+      $scope.otChangeValue(null, cb);
+      return cb.promise.then(function () {
+        $scope.links.length = 0;
+        $scope.updateModel();
+      });
+    }
+
+    function removeLink(index) {
+      cb = $q.callbackWithApply();
+      $scope.otDoc.at($scope.otPath.concat(index)).remove(cb);
+      return cb.promise.then(function () {
+        $scope.links.splice(index,1);
+        $scope.updateModel();
+      });
     }
   };
 
