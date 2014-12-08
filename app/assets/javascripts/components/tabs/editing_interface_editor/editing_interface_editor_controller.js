@@ -24,7 +24,7 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
   $scope.$on('contentTypeUnpublished', contentTypeUnpublishedEventHandler);
 
   this.isWidgetVisible = isWidgetVisible;
-  this.layoutElementsEnabled = (environment.env !== 'production' || environment.env !== 'staging');
+  this.layoutElementsEnabled = (environment.env !== 'production' && environment.env !== 'staging');
 
   function isWidgetVisible(widget) {
     if (widget.widgetType === 'static') return true;
