@@ -101,14 +101,19 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', 'no
     } else if (errorId === 'VersionMismatch'){
       notification.warn('Error publishing ' + title() + ': Can only publish most recent version');
     } else if (errorId === 'InvalidEntry'){
-      var errors = dotty.get(err, 'body.details.errors');
-      var details;
-      if(errors.length > 0 && errors[0].name == 'linkContentType'){
-        details = errors[0].details;
+      if (err.body.message === 'Validation error') {
+        $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
+        notification.warn('Error publishing ' + title() + ': Validation failed');
       } else {
-        details = err.body.message;
+        var errors = dotty.get(err, 'body.details.errors');
+        var details;
+        if(errors.length > 0 && errors[0].name == 'linkContentType'){
+          details = errors[0].details;
+        } else {
+          details = err.body.message;
+        }
+        notification.warn('Error publishing ' + title() + ':' + details);
       }
-      notification.warn('Error publishing ' + title() + ':' + details);
     } else {
       notification.serverError('Publishing the entry has failed due to a server issue. We have been notified.', err);
     }

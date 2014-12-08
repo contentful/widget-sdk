@@ -301,6 +301,32 @@ describe('Entry Actions Controller', function () {
       });
     });
 
+    describe('fails with an invalid entry error (Validation error)', function() {
+      var errors;
+      beforeEach(function() {
+        errors = {errors: true};
+        action.reject({
+          body: {
+            message: 'Validation error',
+            sys: {
+              id: 'InvalidEntry'
+            },
+            details: {
+              errors: errors
+            }
+          }
+        });
+        scope.validate.returns(true);
+        scope.setValidationErrors = sinon.stub();
+        scope.publish();
+        scope.$apply();
+      });
+
+      it('sets validation errors', function() {
+        expect(scope.setValidationErrors).toBeCalledWith(errors);
+      });
+    });
+
     describe('fails with a version mismatch', function() {
       var errors;
       beforeEach(function() {
