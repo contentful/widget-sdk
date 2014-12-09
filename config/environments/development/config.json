@@ -7,6 +7,8 @@
   "marketing_url": "http://www.joistio.com:8888",
   "asset_host": "static.joistio.com:8888",
   "ot_host": "ot.joistio.com:8888",
+  "main_domain": "joistio.com:8888",
+  "additional_domains": ["joistio.com", "app.joistio.com", "static.joistio.com"],
   "filepicker": {
     "api_key": "AQGV4TMRPGovR9AIjMi6Az",
     "policy": "eyJleHBpcnkiOjE1MzQ3NTM0NjIsImNhbGwiOlsicGljayIsInN0b3JlIl19",
