@@ -3,34 +3,39 @@
   "api_host": "api.joistio.com:8888",
   "app_host": "app.joistio.com:8888",
   "cdn_host": "cdn.joistio.com:8888",
-  "marketing_url": "http://static.joistio.com:8888",
-  "asset_host": null,
+  "exception_tracking_host": "cf-track-107d49294b11c1.appspot.com",
+  "marketing_url": "http://www.joistio.com:8888",
+  "asset_host": "static.joistio.com:8888",
   "ot_host": "ot.joistio.com:8888",
+  "main_domain": "joistio.com:8888",
+  "additional_domains": ["joistio.com", "app.joistio.com", "static.joistio.com"],
   "filepicker": {
-    "api_key": "",
-    "policy": "",
-    "signature": ""
+    "api_key": "AQGV4TMRPGovR9AIjMi6Az",
+    "policy": "eyJleHBpcnkiOjE1MzQ3NTM0NjIsImNhbGwiOlsicGljayIsInN0b3JlIl19",
+    "signature": "abc143fa9ea5fe44c399343c5c6e44f3b46ca63d751a6be6396a2124edb62af7"
   },
   "aviary": {
-    "api_key": ""
+    "api_key": "cc79d8ec6cacbf11"
   },
   "fog": {
     "s3": {
       "options": {
         "provider": "AWS",
-        "aws_access_key_id": "AKIAIIESR5EOHHFGBBGQ",
-        "aws_secret_access_key": "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",
+        "aws_access_key_id": "AKIAJX4BNHAICVWQI4HA",
+        "aws_secret_access_key": "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",
         "region": "us-east-1"
       },
       "asset_sync": {
-        "bucket": "assets-development.contentful-test.com",
+        "bucket": "static.cdnorigin.joistio.com",
         "region": "us-east-1"
       }
     }
   },
   "segment_io": "uwr64jkg06",
   "totango": "SP-6959-01",
+  "git_revision": "OVERRIDE_FROM_CONFIG_JSON",
   "google" : {
     "gapi_key" : "AIzaSyAJi3XBLmzo1lOzZ0RncjVQWVlF_wkC4ow"
   }
 }
+
