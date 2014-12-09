@@ -21,6 +21,7 @@ angular.module('contentful/environment', []).constant('environment', {
   // for sceDelegateProvider
   var domains = _([s.asset_host, s.main_domain])
     .union(s.additional_domains)
+    .compact()
     .map(function(domain){ return domain.replace('.', '\\.').replace(/:\d+$/, ''); })
     .uniq()
     .value()
