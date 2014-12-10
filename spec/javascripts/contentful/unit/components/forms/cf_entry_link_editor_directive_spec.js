@@ -24,7 +24,7 @@ describe('cfEntryLinkEditor Directive', function () {
       $provide.removeControllers('LinkEditorController', 'EntityStatusController');
     });
 
-    inject(function ($compile, $rootScope, cfEntryLinkEditorDirective) {
+    inject(function ($compile, $rootScope) {
       scope = $rootScope.$new();
       scope.can = stubs.can;
       scope.fieldData = { value: {

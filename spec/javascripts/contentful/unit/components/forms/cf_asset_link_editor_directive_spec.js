@@ -19,10 +19,10 @@ describe('cfAssetLinkEditor Directive', function () {
       $provide.stubFilter('fileExtension');
 
       $provide.removeDirectives('cfThumbnail', 'cfLinkEditorSearch');
+      $provide.removeControllers('AssetLinkEditorController');
     });
 
-    inject(function ($compile, $rootScope, cfAssetLinkEditorDirective) {
-      cfAssetLinkEditorDirective[0].controller = angular.noop;
+    inject(function ($compile, $rootScope) {
       scope = $rootScope.$new();
       scope.can = stubs.can;
       scope.fieldData = { value: {
