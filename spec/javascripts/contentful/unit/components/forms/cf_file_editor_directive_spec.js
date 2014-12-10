@@ -9,6 +9,7 @@ describe('cfFileEditor Directive', function () {
       stubs = $provide.makeStubs([
         'pick', 'then', 'serverError', 'parseFPFile'
       ]);
+      $provide.removeControllers('NgModelCtrl');
       $provide.stubDirective('otPath', {
         controller: function ($scope, $q) {
           $scope.otChangeValueP = sinon.stub().returns($q.when());
@@ -25,9 +26,8 @@ describe('cfFileEditor Directive', function () {
       stubs.pick.returns({then: stubs.then});
     });
 
-    inject(function ($compile, $rootScope, cfFileEditorDirective) {
+    inject(function ($compile, $rootScope) {
       scope = $rootScope.$new();
-      cfFileEditorDirective[0].controller = function () {};
 
       scope.fieldData = {
         fileName: 'file.jpg',

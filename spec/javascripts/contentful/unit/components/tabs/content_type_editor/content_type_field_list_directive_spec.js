@@ -8,10 +8,10 @@ describe('The ContentTypeFieldList directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('cfFieldSettingsEditor');
+      $provide.removeControllers('ContentTypeFieldListController');
     });
 
-    inject(function ($rootScope, $compile, contentTypeFieldListDirective) {
-      contentTypeFieldListDirective[0].controller = angular.noop;
+    inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
       scope.preferences = {};
 

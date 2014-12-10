@@ -13,10 +13,10 @@ describe('cfLinkEditorSearch Directive', function () {
       ]);
 
       $provide.removeDirectives('cfTokenizedSearch');
+      $provide.removeControllers('cfLinkEditorSearchController');
     });
 
-    inject(function ($compile, $rootScope, cfLinkEditorSearchDirective) {
-      cfLinkEditorSearchDirective[0].controller = angular.noop;
+    inject(function ($compile, $rootScope) {
       scope = $rootScope.$new();
 
       scope.locale = {

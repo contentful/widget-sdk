@@ -6,7 +6,7 @@ describe('The ContentType editor directive', function () {
   var compileElement;
 
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
+    module('contentful/test', function ($provide, $controllerProvider) {
       $provide.value('ShareJS', {
         connection: {},
         peek: sinon.stub(),
@@ -14,11 +14,12 @@ describe('The ContentType editor directive', function () {
       });
       $provide.removeDirectives('otDocFor', 'otDocPresence', 'otSubdoc', 'otBindText', 'otPath', 'saveStatus', 'contentTypeFieldList');
       $provide.removeControllers('PermissionController');
+      var controllerMock = angular.noop;
+      controllerMock.prototype.canPublish = sinon.stub();
+      $controllerProvider.register('ContentTypeEditorController', controllerMock);
     });
 
-    inject(function ($rootScope, $compile, contentTypeEditorDirective) {
-      contentTypeEditorDirective[0].controller = angular.noop;
-      contentTypeEditorDirective[0].controller.prototype.canPublish = sinon.stub();
+    inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
 
       scope.otEditable = true;

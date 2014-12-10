@@ -8,12 +8,10 @@ describe('The ContentType list directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('relative');
-      $provide.removeControllers('PermissionController');
+      $provide.removeControllers('PermissionController', 'ContentTypeListController');
     });
-    inject(function ($rootScope, $compile, contentTypeListDirective, enforcements) {
+    inject(function ($rootScope, $compile, enforcements) {
       scope = $rootScope.$new();
-
-      contentTypeListDirective[0].controller = function () {};
 
       scope.permissionController = {
         createContentType: {

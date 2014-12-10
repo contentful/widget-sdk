@@ -8,12 +8,12 @@ describe('The cfFieldSettingsEditor directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs(['isDisplayableAsTitleFilter']);
+      $provide.removeControllers('FieldSettingsEditorController');
       $provide.removeDirectives('tooltip', 'otDocFor', 'otPath', 'otSubdoc', 'otBind', 'otBindText');
       $provide.value('isDisplayableAsTitleFilter', stubs.isDisplayableAsTitleFilter);
     });
 
-    inject(function ($rootScope, $compile, cfFieldSettingsEditorDirective) {
-      cfFieldSettingsEditorDirective[0].controller = angular.noop;
+    inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
 
       scope.field = {};

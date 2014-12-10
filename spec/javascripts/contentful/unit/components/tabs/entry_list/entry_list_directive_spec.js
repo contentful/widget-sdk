@@ -8,11 +8,10 @@ describe('The Entry list directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('viewCustomizer');
+      $provide.removeControllers('EntryListController');
     });
-    inject(function ($rootScope, $compile, entryListDirective, enforcements) {
+    inject(function ($rootScope, $compile, enforcements) {
       scope = $rootScope.$new();
-
-      entryListDirective[0].controller = function () {};
 
       scope.selection = {
         getSelected: sinon.stub(),
