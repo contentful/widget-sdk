@@ -16,8 +16,8 @@ describe('cfEntryLinkEditor Directive', function () {
         'entryTitle'
       ]);
 
-      $provide.value('fileTypeFilter', function () {return '';});
-      $provide.value('fileExtensionFilter', function () {return '';});
+      $provide.stubFilter('fileTypeFilter');
+      $provide.stubFilter('fileExtensionFilter');
 
       $provide.removeDirectives('cfLinkEditorSearch');
 

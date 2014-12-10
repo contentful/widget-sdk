@@ -15,8 +15,8 @@ describe('cfAssetLinkEditor Directive', function () {
         'entryTitle'
       ]);
 
-      $provide.value('fileTypeFilter', function () {return '';});
-      $provide.value('fileExtensionFilter', function () {return '';});
+      $provide.stubFilter('fileType');
+      $provide.stubFilter('fileExtension');
 
       $provide.removeDirectives('cfThumbnail', 'cfLinkEditorSearch');
     });
