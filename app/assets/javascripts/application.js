@@ -35,7 +35,7 @@ angular.module('contentful/app', [
   'ngSanitize',
   'contentful/environment',
   'timeRelative',
-  'ui.sortable',
+  'ui.directives',
   'contentful/user_interface',
   'angularLoad',
   'contentful'
@@ -43,12 +43,6 @@ angular.module('contentful/app', [
   function($locationProvider, clientAdapterProvider, authenticationProvider, analyticsProvider, environment, $sceDelegateProvider, $compileProvider, timeRelativeConfig){
   'use strict';
   var env = environment.settings;
-
-  // TODO this piece of code is temporary until the switch to gulp:
-  window.JST = _.transform(window.JST, function(jst, template, key){
-    key = _.last(key.split('/'));
-    jst[key] = template;
-  }, {});
 
   $.cookies.setOptions({
     secure: environment.env != 'development'

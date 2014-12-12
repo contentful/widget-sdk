@@ -18,7 +18,7 @@
  * Enjoy!
  */
 
-var guiders = (function($) {
+window.guiders = (function($) {
   var guiders = {};
   
   guiders.version = "1.3.0";

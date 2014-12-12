@@ -27,7 +27,7 @@ describe('App version service', function () {
 
   it('has a new version', function () {
     var stub = sinon.stub();
-    $httpBackend.when('GET', /manifest\.json/).respond(
+    $httpBackend.when('GET', /revision\.json/).respond(
       {git_revision: 'new_git_revision'},
       {'Content-Type': 'application/json'}
     );
@@ -42,7 +42,7 @@ describe('App version service', function () {
   it('has no new version', function () {
     var successStub = sinon.stub();
     var failStub = sinon.stub();
-    $httpBackend.when('GET', /manifest\.json/).respond(
+    $httpBackend.when('GET', /revision\.json/).respond(
       {git_revision: 'git_revision'},
       {'Content-Type': 'application/json'}
     );

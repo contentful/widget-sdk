@@ -4,7 +4,7 @@ angular.module('contentful').
   directive('entityInfoPanel', function() {
     return {
       restrict: 'C',
-      controller: function EntityInfoPanelController($scope) {
+      controller: ['$scope', function EntityInfoPanelController($scope) {
         $scope.$watch('entry && spaceContext.publishedTypeForEntry(entry).getName()', function(name, old, scope) {
           scope.contentTypeName = name;
         });
@@ -29,7 +29,7 @@ angular.module('contentful').
           return '';
         };
 
-      },
+      }],
       template: JST['entity_info_panel']
     };
   });

@@ -130,9 +130,13 @@ describe('Modal dialog service', function () {
     });
 
     it('properly removes the global event listeners', inject(function ($window) {
-      expect($window[$.expando].events.keyup.length).toBe(1);
+      dialog.scope = {$apply: sinon.stub()};
+      $(window).trigger('keyup');
+      expect(dialog.scope.$apply).toBeCalled();
       dialog._cleanup();
-      expect($window[$.expando].events.keyup).toBe(undefined);
+      dialog.scope = {$apply: sinon.stub()};
+      $(window).trigger('keyup');
+      expect(dialog.scope.$apply).not.toBeCalled();
     }));
 
     it('confirms with values', function () {

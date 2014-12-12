@@ -1,0 +1,15 @@
+{
+  "globalstrict": true,
+  "node": true,
+  "browser": true,
+  "predef": [
+    "angular",
+    "_",
+    "JST",
+    "$",
+    "moment",
+    "dotty",
+    "Bugsnag",
+    "OO"
+  ]
+}

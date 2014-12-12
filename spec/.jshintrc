@@ -1,0 +1,37 @@
+{
+  "globalstrict": true,
+  "node": true,
+  "browser": true,
+  "predef": [
+    "angular",
+    "_",
+    "JST",
+    "$",
+    "moment",
+    "dotty",
+    "Bugsnag",
+    "OO",
+
+    "Event",
+    "describe",
+    "ddescribe",
+    "xdescribe",
+    "beforeEach",
+    "afterEach",
+    "jasmine",
+    "it",
+    "iit",
+    "xit",
+    "inject",
+    "expect",
+    "pending",
+    "spyOn",
+    "runs",
+    "waits",
+    "waitsFor",
+    "assert",
+    "refute",
+    "sinon",
+    "define"
+  ]
+}

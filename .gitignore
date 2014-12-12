@@ -25,7 +25,10 @@ Vagrantfile
 vagrant_bootstrap.sh
 .vagrant
 run_vagrant_build.sh
+bower_components
+build/*
 
+public/index.html
 public/app
 
 webdrivercss

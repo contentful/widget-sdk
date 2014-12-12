@@ -7,7 +7,7 @@ var UserInterface = {
   contentfulClient: require('contentful-client'),
   stringifySafe: require('json-stringify-safe'),
   isDiacriticalMark: require('is-diacritical-mark'),
-  searchParser: require('./search'),
+  searchParser: require('./search.pegjs'),
   fileSize: require('file-size')
 };
 

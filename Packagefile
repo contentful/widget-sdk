@@ -1,0 +1,51 @@
+#!/bin/bash
+
+set -x
+set -e
+umask 0022
+
+package_name="cf-user-interface"
+version=$(date '+%s')
+version=${version:1}
+
+if [ -z "$BUILD_ROOT" ]; then
+  BUILD_ROOT=$(mktemp -d -t user-interface.XXXX.$version);
+  echo "Warning: BUILD_ROOT was not set. building package in $BUILD_ROOT"
+fi
+
+package_dest=$BUILD_ROOT/opt/contentful/$package_name
+mkdir -p $package_dest
+
+ref=$(cat .git/HEAD | cut -s -d/ -f3)
+if [ -z "$ref" ]; then
+  ref=$(git ls-remote --heads origin | grep $(git log -1 --pretty=format:%H) | cut -d/ -s -f3)
+fi
+case "$ref" in
+  "staging")
+    export UI_ENV="staging"
+    ;;
+  "production")
+    export UI_ENV="production"
+    ;;
+  *)
+    export UI_ENV=$ref
+esac
+
+export SRC=$(pwd) #Needed?
+
+pushd app/assets/commonjs_modules/user_interface
+npm install --production
+popd
+
+npm install --production
+node_modules/bower/bin/bower install
+
+node_modules/.bin/gulp build
+
+rsync -avz build/ $package_dest
+
+fpm -t deb -s dir \
+  -n $package_name \
+  --version $version \
+  -C $BUILD_ROOT \
+  .
