@@ -186,7 +186,7 @@ gulp.task('clean', function () {
     .pipe(clean());
 });
 
-gulp.task('serve', function () {
+gulp.task('serve', ['build'], function () {
   gulp.watch(src.components, ['components']);
   gulp.watch(src.templates , ['templates']);
   gulp.watch(src.stylesheets , ['stylesheets']);
