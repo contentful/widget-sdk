@@ -37,9 +37,11 @@ var src = {
   vendorScripts: [
     'bower_components/jquery/dist/jquery.js',
     'bower_components/jquery-ui/ui/jquery.ui.core.js',
+    'bower_components/jquery-ui/ui/jquery.ui.position.js',
     'bower_components/jquery-ui/ui/jquery.ui.widget.js',
     'bower_components/jquery-ui/ui/jquery.ui.mouse.js',
     'bower_components/jquery-ui/ui/jquery.ui.sortable.js',
+    'bower_components/jquery-ui/ui/jquery.ui.draggable.js',
     'bower_components/jquery-ui/ui/jquery.ui.autocomplete.js',
     'bower_components/jquery-ui/ui/jquery.ui.datepicker.js',
     'bower_components/angular/angular.js',
@@ -47,8 +49,7 @@ var src = {
     'bower_components/angular-load/angular-load.js',
     'bower_components/angular-sanitize/angular-sanitize.js',
     'bower_components/angular-route/angular-route.js',
-    'bower_components/angular-ui/common/module.js',
-    'bower_components/angular-ui/modules/directives/sortable/sortable.js',
+    'bower_components/angular-ui-sortable/sortable.js',
     'bower_components/bootstrap/js/tooltip.js',
 
     'vendor/assets/javascripts/jquery.autosize.js',
