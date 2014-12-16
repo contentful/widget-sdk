@@ -248,9 +248,11 @@ gulp.task('rev-dynamic', function(){
     .pipe(filterCss.restore())
     .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(fingerprint(
-      'build/static-manifest.json',
-      { mode: 'replace', verbose: false, prefix: '/'}
-    ))
+      'build/static-manifest.json', {
+        mode: 'replace',
+        verbose: false,
+        prefix: '//'+config.asset_host+'/'
+      }))
     .pipe(sourceMaps.write())
     .pipe(gulp.dest('build'))
     .pipe(rev())
