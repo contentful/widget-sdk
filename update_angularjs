@@ -1,6 +1,11 @@
 #!/bin/sh
-
 set -e
+bower install -F --save angular#latest \
+                        angular-animate#latest \
+                        angular-sanitize#latest \
+                        angular-route#latest \
+                        angular-mocks#latest
+
 
 die () {
     echo >&2 "$@"

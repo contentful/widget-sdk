@@ -21,6 +21,7 @@ module.exports = function(config) {
       'app/assets/javascripts/*.js',
       'app/assets/javascripts/*/**/*.js',
       'spec/javascripts/helpers/**/*.js',
+      'bower_components/angular-mocks/angular-mocks.js',
       'spec/javascripts/contentful/**/*.js'
     ],
 
