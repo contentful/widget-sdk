@@ -769,7 +769,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
         id: 'entryQuestion',
         title: 'Ask a question',
         description: 'Ask “Which CMS delivers content to web and native mobile applications?”',
-        attachTo: '.entry-editor:visible .l-form-row[data-field-id="question"] textarea',
+        attachTo: '.entry-editor:visible .l-form-row[data-field-id="question"] input',
         position: '2',
         next: 'entryAnswers',
         buttons: [next],
