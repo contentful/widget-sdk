@@ -1,7 +1,7 @@
 'use strict';
 
 describe('ContentType field validation dialog Controller', function () {
-  var controller, scope, stubs;
+  var controller, scope, stubs, notification, logger;
   beforeEach(function() {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
@@ -16,12 +16,11 @@ describe('ContentType field validation dialog Controller', function () {
       $provide.value('analytics', {
         track: stubs.track
       });
-      $provide.value('notification', {
-        serverError: stubs.serverError
-      });
     });
 
-    inject(function ($compile, $rootScope, $controller){
+    inject(function ($compile, $rootScope, $controller, $injector){
+      notification = $injector.get('notification');
+      logger = $injector.get('logger');
       scope = $rootScope.$new();
       scope.field = {
         'name': 'aaa',
@@ -278,7 +277,8 @@ describe('ContentType field validation dialog Controller', function () {
         });
 
         it('shows server error', function() {
-          expect(stubs.serverError).toBeCalled();
+          expect(notification.error).toBeCalled();
+          expect(logger.logServerError).toBeCalled();
         });
 
         it('does not update validations from doc', function() {
@@ -334,7 +334,8 @@ describe('ContentType field validation dialog Controller', function () {
         });
 
         it('shows server error', function() {
-          expect(stubs.serverError).toBeCalled();
+          expect(notification.error).toBeCalled();
+          expect(logger.logServerError).toBeCalled();
         });
 
         it('does not update validations from doc', function() {

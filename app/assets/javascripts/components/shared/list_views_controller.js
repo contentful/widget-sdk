@@ -3,6 +3,7 @@ angular.module('contentful').controller('ListViewsController', [
 '$scope', '$injector', 'generateDefaultViews', 'getBlankView', 'resetList', 'viewCollectionName', 'currentViewLocation',
 function($scope, $injector, generateDefaultViews, getBlankView, resetList, viewCollectionName, currentViewLocation){
   var $q           = $injector.get('$q');
+  var logger       = $injector.get('logger');
   var notification = $injector.get('notification');
   var $parse       = $injector.get('$parse');
 
@@ -37,7 +38,8 @@ function($scope, $injector, generateDefaultViews, getBlankView, resetList, viewC
 
   $scope.saveViews = function () {
     return $scope.saveUiConfig().catch(function (err) {
-      notification.serverError('Error trying to save view', err);
+      logger.logServerError('Error trying to save view', {error: err });
+      notification.error('Error trying to save view');
       return $q.reject(err);
     });
   };

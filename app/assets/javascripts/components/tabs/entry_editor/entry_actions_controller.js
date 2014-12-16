@@ -15,7 +15,8 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', 'no
       $scope.broadcastFromSpace('entityDeleted', entry);
     })
     .catch(function(err){
-      notification.serverError('Error deleting Entry', err);
+      logger.logServerError('Error deleting Entry', {error: err });
+      notification.error('Error deleting Entry');
     });
   };
 
@@ -28,7 +29,8 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', 'no
       $scope.navigator.entryEditor(entry).goTo();
     })
     .catch(function(err){
-      notification.serverError('Could not duplicate Entry', err);
+      logger.logServerError('Could not duplicate Entry', {error: err });
+      notification.error('Could not duplicate Entry');
     });
   };
 
@@ -39,7 +41,7 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', 'no
     })
     .catch(function(err){
       notification.warn('Error archiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logServerError('Error archiving entry', err);
+      logger.logServerError('Error archiving entry', {error: err });
     });
   };
 
@@ -50,7 +52,7 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', 'no
     })
     .catch(function(err){
       notification.warn('Error unarchiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logServerError('Error unarchiving entry', err);
+      logger.logServerError('Error unarchiving entry', {error: err });
     });
   };
 
@@ -62,7 +64,7 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', 'no
     })
     .catch(function(err){
       notification.warn('Error unpublishing ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logServerError('Error unpublishing entry', err);
+      logger.logServerError('Error unpublishing entry', {error: err });
     });
   };
 
@@ -115,7 +117,8 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', 'no
         notification.warn('Error publishing ' + title() + ':' + details);
       }
     } else {
-      notification.serverError('Publishing the entry has failed due to a server issue. We have been notified.', err);
+      logger.logServerError('Publishing the entry has failed due to a server issue. We have been notified.', {error: err });
+      notification.error('Publishing the entry has failed due to a server issue. We have been notified.');
     }
   }
 

@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Space Controller', function () {
-  var spaceController, scope, stubs, $q;
+  var spaceController, scope, stubs, $q, logger, notification;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
@@ -12,7 +12,6 @@ describe('Space Controller', function () {
         'setSpaceContext',
         'enforcement',
         'track',
-        'error',
         'localesStub'
       ]);
 
@@ -33,13 +32,11 @@ describe('Space Controller', function () {
       $provide.value('analytics', {
         track: stubs.track
       });
-
-      $provide.value('notification', {
-        serverError: stubs.error
-      });
     });
-    inject(function ($controller, $rootScope, cfStub, _$q_){
-      $q = _$q_;
+    inject(function ($controller, $rootScope, cfStub, $injector){
+      $q = $injector.get('$q');
+      logger = $injector.get('logger');
+      notification = $injector.get('notification');
       scope = $rootScope.$new();
 
       var space = cfStub.space('test');
@@ -189,7 +186,8 @@ describe('Space Controller', function () {
       });
 
       it('notifies of the error', function () {
-        expect(stubs.error).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
+        expect(notification.error).toBeCalled();
       });
 
       it('tracks analytics', function () {
@@ -253,7 +251,8 @@ describe('Space Controller', function () {
       });
 
       it('notifies of the error', function () {
-        expect(stubs.error).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
+        expect(notification.error).toBeCalled();
       });
 
       it('tracks analytics', function () {
@@ -317,7 +316,8 @@ describe('Space Controller', function () {
       });
 
       it('notifies of the error', function () {
-        expect(stubs.error).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
+        expect(notification.error).toBeCalled();
       });
 
       it('tracks analytics', function () {
@@ -369,7 +369,8 @@ describe('Space Controller', function () {
       });
 
       it('notifies of the error', function () {
-        expect(stubs.error).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
+        expect(notification.error).toBeCalled();
       });
     });
 

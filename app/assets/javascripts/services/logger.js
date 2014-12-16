@@ -81,6 +81,7 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
   return {
     onServiceReady: onServiceReady,
 
+    // TODO prefix _
     logDataObject: logDataObject,
 
     logException: function (exception, extra) {
@@ -91,32 +92,26 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
     },
 
     logError: function (message, options) {
-      if ($window.Bugsnag) {
-        setUserInfo();
-        $window.Bugsnag.notify('Logged Error', message, getMetadata(options), 'error');
-      }
+      this._log('Logged Error', 'error', message, options);
     },
 
-    logServerError: function (message, error, options) {
-      if ($window.Bugsnag) {
-        options = options || {};
-        options.error = error;
-        setUserInfo();
-        $window.Bugsnag.notify('Logged Server Error', message, getMetadata(options), 'error');
-      }
+    logServerError: function (message, options) {
+      this._log('Logged Server Error', 'error', message, options);
     },
 
     logWarn: function (message, options) {
-      if ($window.Bugsnag) {
-        setUserInfo();
-        $window.Bugsnag.notify('Logged Warning', message, getMetadata(options), 'warning');
-      }
+      this._log('Logged Warning', 'warning', message, options);
     },
 
     log: function (message, options) {
+      this._log('Logged Info', 'info', message, options);
+    },
+
+    _log: function(type, severity, message, options) {
       if ($window.Bugsnag) {
+        options = options || {};
         setUserInfo();
-        $window.Bugsnag.notify('Logged Info', message, getMetadata(options), 'info');
+        $window.Bugsnag.notify(type, message, getMetadata(options), severity);
       }
     }
 

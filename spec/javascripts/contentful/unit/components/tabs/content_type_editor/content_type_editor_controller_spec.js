@@ -1,19 +1,14 @@
 'use strict';
 
 describe('ContentTypeEditor Controller', function () {
-  var scope, controller, $q;
+  var scope, controller, $q, logger, notification;
   var space, contentType;
-  var modifiedContentTypeStub, serverErrorStub;
+  var modifiedContentTypeStub;
   beforeEach(function () {
     modifiedContentTypeStub = sinon.stub();
-    serverErrorStub = sinon.stub();
     module('contentful/test', function ($provide) {
       $provide.value('analytics', {
         modifiedContentType: modifiedContentTypeStub
-      });
-
-      $provide.value('notification', {
-        serverError: serverErrorStub
       });
 
       $provide.removeControllers('PermissionController');
@@ -24,6 +19,8 @@ describe('ContentTypeEditor Controller', function () {
       space = cfStub.space('space');
       contentType = cfStub.contentType(space, 'contentType', 'Content Type');
       $q = $injector.get('$q');
+      logger = $injector.get('logger');
+      notification = $injector.get('notification');
 
       scope.tab = {
         params: {
@@ -297,7 +294,8 @@ describe('ContentTypeEditor Controller', function () {
       });
 
       it('fires server error notification', function () {
-        expect(serverErrorStub).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
+        expect(notification.error).toBeCalled();
       });
     });
 

@@ -3,6 +3,7 @@
 angular.module('contentful').directive('cfFileEditor', ['$injector', function ($injector) {
   var aviary       = $injector.get('aviary');
   var filepicker   = $injector.get('filepicker');
+  var logger       = $injector.get('logger');
   var modalDialog  = $injector.get('modalDialog');
   var notification = $injector.get('notification');
   var stringUtils  = $injector.get('stringUtils');
@@ -65,7 +66,8 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
             setFPFile(FPFile);
             scope.loadingEditor = false;
           }).catch(function (err) {
-            notification.serverError(err.message, err.error);
+            notification.error(err.message);
+            logger.logServerError(err.message, {error: err.error});
             scope.loadingEditor = false;
             aviary.close();
           });

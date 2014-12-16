@@ -73,16 +73,15 @@ describe('ListViewsController', function () {
       expect(handler).toBeCalled();
     });
     it('should show an error notification', function () {
-      var serverError;
-      inject(function (notification) {
-        serverError = sinon.stub(notification, 'serverError');
-      });
+      var notification = this.$inject('notification');
+      var logger = this.$inject('logger');
       var errorHandler = sinon.stub();
       scope.saveUiConfig = sinon.stub().returns($q.reject());
       scope.saveViews().catch(errorHandler);
       scope.$apply();
       expect(errorHandler).toBeCalled();
-      expect(serverError).toBeCalled();
+      expect(notification.error).toBeCalled();
+      expect(logger.logServerError).toBeCalled();
     });
   });
 });

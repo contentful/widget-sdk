@@ -2,6 +2,7 @@
 
 angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope', '$attrs', '$injector', function($scope, $attrs, $injector) {
   var $q                = $injector.get('$q');
+  var logger            = $injector.get('logger');
   var mimetype          = $injector.get('mimetype');
   var Paginator         = $injector.get('Paginator');
   var PromisedLoader    = $injector.get('PromisedLoader');
@@ -112,15 +113,18 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
         $scope.navigator.entryEditor(entry).goTo();
       })
       .catch(function addLinkErrorHandler(errSetLink) {
-        notification.serverError('Error linking Entry', errSetLink);
+        notification.error('Error linking Entry');
+        logger.logServerError('Error linking Entry', errSetLink);
         return entry.delete();
       })
       .catch(function deleteEntityErrorHandler(errDelete) {
-        notification.serverError('Error deleting Entry again', errDelete);
+        logger.logServerError('Error deleting Entry again', {error: errDelete });
+        notification.error('Error deleting Entry again');
         return $q.reject(errDelete);
       });
     }, function createEntityErrorHandler(errCreate) {
-      notification.serverError('Error creating Entry', errCreate);
+      logger.logServerError('Error creating Entry', {error: errCreate });
+      notification.error('Error creating Entry');
       return $q.reject(errCreate);
     });
   };
@@ -133,15 +137,18 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
         $scope.navigator.assetEditor(asset).goTo();
       })
       .catch(function addLinkErrorHandler(errSetLink) {
-        notification.serverError('Error linking Asset', errSetLink);
+        logger.logServerError('Error linking Asset', {error: errSetLink });
+        notification.error('Error linking Asset');
         return asset.delete();
       })
       .catch(function deleteEntityErrorHandler(errDelete) {
-        notification.serverError('Error deleting Asset again', errDelete);
+        logger.logServerError('Error deleting Asset again', {error: errDelete });
+        notification.error('Error deleting Asset again');
         return $q.reject(errDelete);
       });
     }, function createEntityErrorHandler(errCreate) {
-      notification.serverError('Error creating Asset', errCreate);
+      logger.logServerError('Error creating Asset', {error: errCreate });
+      notification.error('Error creating Asset');
       return $q.reject(errCreate);
     });
   };

@@ -14,7 +14,8 @@ angular.module('contentful').controller('AssetActionsController', ['$scope', 'no
       $scope.broadcastFromSpace('entityDeleted', asset);
     })
     .catch(function(err){
-      notification.serverError('Error deleting Asset', err);
+      notification.error('Error deleting Asset');
+      logger.logServerError('Error deleting Asset', {error: err });
     });
   };
 
@@ -25,7 +26,7 @@ angular.module('contentful').controller('AssetActionsController', ['$scope', 'no
     })
     .catch(function(err){
       notification.warn('Error archiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logServerError('Error archiving asset', err);
+      logger.logServerError('Error archiving asset', {error: err });
     });
   };
 
@@ -36,7 +37,7 @@ angular.module('contentful').controller('AssetActionsController', ['$scope', 'no
     })
     .catch(function(err){
       notification.warn('Error unarchiving ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logServerError('Error unarchiving asset', err);
+      logger.logServerError('Error unarchiving asset', {error: err });
     });
   };
 
@@ -48,7 +49,7 @@ angular.module('contentful').controller('AssetActionsController', ['$scope', 'no
     })
     .catch(function(err){
       notification.warn('Error unpublishing ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
-      logger.logServerError('Error unpublishing asset', err);
+      logger.logServerError('Error unpublishing asset', {error: err });
     });
   };
 
@@ -71,7 +72,8 @@ angular.module('contentful').controller('AssetActionsController', ['$scope', 'no
       } else if (errorId === 'VersionMismatch'){
         notification.warn('Error publishing ' + title() + ': Can only publish most recent version');
       } else {
-        notification.serverError('Publishing the asset has failed due to a server issue. We have been notified.', err);
+        notification.error('Publishing the asset has failed due to a server issue. We have been notified.');
+        logger.logServerError('Publishing the asset has failed due to a server issue. We have been notified.', {error: err });
       }
     });
   };

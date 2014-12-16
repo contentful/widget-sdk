@@ -63,10 +63,10 @@ describe('logger service', function () {
       });
 
     });
-    inject(function (_logger_, _$httpBackend_, _$rootScope_) {
+    inject(function (realLogger, _$httpBackend_, _$rootScope_) {
       $httpBackend = _$httpBackend_;
       $rootScope = _$rootScope_;
-      logger = _logger_;
+      logger = realLogger;
 
       routeStub.returns({
         viewType: 'viewType'
@@ -169,7 +169,9 @@ describe('logger service', function () {
     var error, options;
     beforeEach(function () {
       error = new Error('error object');
-      logger.logServerError('message', error, options);
+      options = options || {};
+      options.error = error;
+      logger.logServerError('message', options);
     });
 
     it('calls logger method', function () {

@@ -82,7 +82,8 @@ angular.module('contentful').controller('FieldSettingsEditorController', ['$scop
           scope.otUpdateEntity();
           defer($scope.pickNewDisplayField);
         } else {
-          notification.serverError('Could not change type.', err);
+          logger.logServerError('Could not change type.', {error: err });
+          notification.error('Could not change type.');
         }
       });
     });
@@ -99,7 +100,9 @@ angular.module('contentful').controller('FieldSettingsEditorController', ['$scop
           analytics.modifiedContentType('Modified ContentType', scope.contentType, scope.field, 'toggled '+property);
         } else {
           notification.warn('Could not toggle "'+property+'"', err);
-          logger.logServerError('Could not toggle property on ContentType', err, {extra: {property: property}});
+          logger.logServerError('Could not toggle property on ContentType', {
+            error: err,
+            extra: {property: property}});
         }
       });
     });

@@ -1,22 +1,16 @@
 'use strict';
 
 describe('Editing interfaces service', function () {
-  var editingInterfaces, $rootScope, $q;
+  var editingInterfaces, $rootScope, $q, logger, notification;
   var contentType, stubs;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs(['defaultWidgetId', 'info', 'warn', 'serverError']);
+      stubs = $provide.makeStubs(['defaultWidgetId']);
       $provide.value('widgets', {
         defaultWidgetId: stubs.defaultWidgetId,
         registerWidget: angular.noop,
         paramDefaults: _.constant({})
-      });
-
-      $provide.value('notification', {
-        info: stubs.info,
-        warn: stubs.warn,
-        serverError: stubs.serverError
       });
 
       contentType = {
@@ -36,6 +30,8 @@ describe('Editing interfaces service', function () {
     editingInterfaces = this.$inject('editingInterfaces');
     $q                = this.$inject('$q');
     $rootScope        = this.$inject('$rootScope');
+    logger            = this.$inject('logger');
+    notification      = this.$inject('notification');
     var cfStub        = this.$inject('cfStub');
 
     contentType.data.fields = [
@@ -170,7 +166,7 @@ describe('Editing interfaces service', function () {
     it('saves successfully', function() {
       save.resolve({});
       $rootScope.$apply();
-      expect(stubs.info).toBeCalled();
+      expect(notification.info).toBeCalled();
     });
 
     it('returns the editing interface from the server', function(){
@@ -186,14 +182,15 @@ describe('Editing interfaces service', function () {
       save.reject({body: {sys: {type: 'Error', id: 'VersionMismatch'}}});
       //interf.save.yield({body: {sys: {type: 'Error', id: 'VersionMismatch'}}});
       $rootScope.$apply();
-      expect(stubs.warn).toBeCalled();
+      expect(notification.warn).toBeCalled();
     });
 
     it('fails to save because of other error', function() {
       //interf.save.yield({});
       save.reject({});
       $rootScope.$apply();
-      expect(stubs.serverError).toBeCalled();
+      expect(logger.logServerError).toBeCalled();
+      expect(notification.error).toBeCalled();
     });
   });
 

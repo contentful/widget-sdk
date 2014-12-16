@@ -1,14 +1,14 @@
 'use strict';
 
 describe('Create Space Dialog controller', function () {
-  var scope, createSpaceCtrl, stubs, createController;
+  var scope, createSpaceCtrl, stubs, createController, logger, notification;
   var org;
   var $q;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'start', 'stop', 'error', 'info', 'createSpace', 'serverError', 'warn', 'then',
+        'start', 'stop', 'createSpace', 'then',
         'getId', 'computeUsage', 'confirm', 'cancel'
       ]);
 
@@ -16,13 +16,6 @@ describe('Create Space Dialog controller', function () {
         start: stubs.start
       });
       stubs.start.returns(stubs.stop);
-
-      $provide.value('notification', {
-        serverError: stubs.serverError,
-        warn: stubs.warn,
-        error: stubs.error,
-        info: stubs.info
-      });
 
       $provide.value('client', {
         createSpace: stubs.createSpace
@@ -33,8 +26,10 @@ describe('Create Space Dialog controller', function () {
       });
 
     });
-    inject(function ($rootScope, $controller, _$q_) {
-      $q = _$q_;
+    inject(function ($rootScope, $controller, $injector) {
+      logger = $injector.get('logger');
+      notification = $injector.get('notification');
+      $q = $injector.get('$q');
       scope = $rootScope.$new();
       scope.dialog = {
         confirm: stubs.confirm,
@@ -149,7 +144,8 @@ describe('Create Space Dialog controller', function () {
         });
 
         it('shows error', function() {
-          expect(stubs.error).toBeCalled();
+          expect(notification.error).toBeCalled();
+          expect(logger.logError).toBeCalled();
         });
       });
 
@@ -192,8 +188,9 @@ describe('Create Space Dialog controller', function () {
             expect(stubs.computeUsage).toBeCalled();
           });
 
-          it('shows server error', function() {
-            expect(stubs.serverError).toBeCalled();
+          it('shows error', function() {
+            expect(notification.error).toBeCalled();
+            expect(logger.logServerError).toBeCalled();
           });
 
           it('cancels dialog', function() {
@@ -245,7 +242,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('shows server error', function() {
-            expect(stubs.warn).toBeCalled();
+            expect(notification.warn).toBeCalled();
           });
 
           it('does not cancel dialog', function() {
@@ -307,7 +304,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('notification is shown', function() {
-            expect(stubs.info).toBeCalled();
+            expect(notification.info).toBeCalled();
           });
 
           it('space data is reset', function() {
