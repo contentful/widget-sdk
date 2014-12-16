@@ -1,47 +1,16 @@
-//= require jquery
-//
-//= require jquery.ui.sortable
-//= require jquery.ui.draggable
-//= require jquery.ui.autocomplete
-//= require jquery.ui.datepicker
-//
-//= require jquery.autosize
-//= require jquery.cookies.2.2.0
-//= require jquery-textrange
-//
-//= require guiders-1.3.0
-//
-//= require bootstrap-tooltip
-//
-//= require user_interface/node_modules/share/node_modules/browserchannel/dist/bcsocket-uncompressed
-//= require user_interface/node_modules/share/webclient/share.uncompressed
-//= require user_interface/node_modules/share/webclient/json.uncompressed
-//= require user_interface/node_modules/share/webclient/textarea.js
-//
-//= require angular
-//= require angular-animate
-//= require angular-sanitize
-//= require angular-route
-//= require angular-ui/sortable
-//= require angular-load
-//= require contentful
-//= require environment
-//= require user_interface
-//
-//= require_self
+'use strict';
 
 angular.module('contentful/app', [
   'ngAnimate',
   'ngSanitize',
   'contentful/environment',
   'timeRelative',
-  'ui.directives',
+  'ui.sortable',
   'contentful/user_interface',
   'angularLoad',
   'contentful'
 ], ['$locationProvider', 'clientAdapterProvider', 'authenticationProvider', 'analyticsProvider', 'environment', '$sceDelegateProvider', '$compileProvider', 'timeRelativeConfig',
   function($locationProvider, clientAdapterProvider, authenticationProvider, analyticsProvider, environment, $sceDelegateProvider, $compileProvider, timeRelativeConfig){
-  'use strict';
   var env = environment.settings;
 
   $.cookies.setOptions({
@@ -66,7 +35,6 @@ angular.module('contentful/app', [
   timeRelativeConfig.calendar.en.lastWeek = 'ddd, LT';
   timeRelativeConfig.calendar.en.nextWeek = 'Next ddd, LT';
 }]).run(['authentication', 'client', 'ShareJS', 'analytics', 'logger', function(authentication, client, ShareJS, analytics, logger) {
-  'use strict';
   authentication.login();
   client.persistenceContext.adapter.token = authentication.token;
   // FIXME when the custom tab issue gets fixed on Segment.io, use this again

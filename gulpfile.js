@@ -49,8 +49,7 @@ var src = {
     'bower_components/angular-load/angular-load.js',
     'bower_components/angular-sanitize/angular-sanitize.js',
     'bower_components/angular-route/angular-route.js',
-    'bower_components/angular-ui/common/module.js',
-    'bower_components/angular-ui/modules/directives/sortable/sortable.js',
+    'bower_components/angular-ui-sortable/sortable.js',
     'bower_components/bootstrap/js/tooltip.js',
 
     'vendor/assets/javascripts/jquery.autosize.js',
