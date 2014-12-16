@@ -40,6 +40,7 @@ var src = {
     'bower_components/jquery-ui/ui/jquery.ui.widget.js',
     'bower_components/jquery-ui/ui/jquery.ui.mouse.js',
     'bower_components/jquery-ui/ui/jquery.ui.sortable.js',
+    'bower_components/jquery-ui/ui/jquery.ui.draggable.js',
     'bower_components/jquery-ui/ui/jquery.ui.autocomplete.js',
     'bower_components/jquery-ui/ui/jquery.ui.datepicker.js',
     'bower_components/angular/angular.js',
