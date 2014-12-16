@@ -20,7 +20,7 @@ angular.module('contentful').factory('revision', ['$rootScope', '$http', '$q', '
     hasNewVersion: function() {
       $http.defaults.transformResponse.unshift(hideManifestErrors);
 
-      return $http.get('/manifest.json?cfv='+Math.ceil(Math.random()*10000000)).
+      return $http.get('/revision.json?cfv='+Math.ceil(Math.random()*10000000)).
       then(function (response) {
         if(response && response.data &&
            response.data.git_revision &&

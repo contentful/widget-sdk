@@ -16,15 +16,15 @@ describe('cfEntryLinkEditor Directive', function () {
         'entryTitle'
       ]);
 
-      $provide.value('fileTypeFilter', function () {return '';});
-      $provide.value('fileExtensionFilter', function () {return '';});
+      $provide.stubFilter('fileTypeFilter');
+      $provide.stubFilter('fileExtensionFilter');
 
       $provide.removeDirectives('cfLinkEditorSearch');
 
       $provide.removeControllers('LinkEditorController', 'EntityStatusController');
     });
 
-    inject(function ($compile, $rootScope, cfEntryLinkEditorDirective) {
+    inject(function ($compile, $rootScope) {
       scope = $rootScope.$new();
       scope.can = stubs.can;
       scope.fieldData = { value: {

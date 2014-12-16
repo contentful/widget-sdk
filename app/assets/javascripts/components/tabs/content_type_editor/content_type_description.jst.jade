@@ -1,0 +1,133 @@
+ng-switch(on="type.value.type")
+  div(ng-switch-when="Text")
+    h3 Text of any length
+
+    p.
+      Add any type of longer form text that’s written by editors, usually including spaces. 
+      Enables you to search for words in the text but not exact matches for the entire text. 
+      Use Symbols for short tokens of text like URLs or tags (<a href="http://support.contentful.com/entries/28062416-What-s-the-difference-between-Text-and-Symbol-Fields-">more information</a>).
+    ul
+      li Blog post title
+      li Product descriptions
+      li Article bodies
+    img(src="/app/images/field_type/text.png")
+
+  div(ng-switch-when="Symbol")
+    h3 Short token of text
+
+    p.
+      Represent unbreakable and relatively short tokens of text, often made for machine consumption. You can only search for full Symbols, not parts of it like individual words.
+    ul
+      li URL
+      li Tag
+      li Postal code
+      li Phone number
+    img(src="/app/images/field_type/symbol.png")
+
+  div(ng-switch-when="Integer")
+    h3 Number without decimals
+
+    p.
+      Insert numbers without decimals. Use validations to constrain the range or to only allow specific values.
+    ul
+      li Priority
+      li Calorie count
+      li Age
+    img(src="/app/images/field_type/integer.png")
+
+  div(ng-switch-when="Number")
+    h3 Number with decimals
+
+    p.
+      Insert a number with as many decimal figures as needed. Use validations to constrain the ranges or to only allow specific values.
+    ul
+      li Weights
+      li Temperatures
+    img(src="/app/images/field_type/floating.png")
+
+  div(ng-switch-when="Boolean")
+    h3 Boolean value
+
+    p.
+      Insert a boolean value with two choices: either yes or no.
+    ul
+      li Open
+      li Vegetarian menu
+    img(src="/app/images/field_type/boolean.png")
+
+  div(ng-switch-when="Date")
+    h3 Date with time of day
+
+    p
+      | Specify a given date and time. Like the start or end time of an event.
+      //- Either the date or the time can be left blank.
+    ul
+      li Event start time
+      li Holiday date
+    img(src="/app/images/field_type/date.png")
+
+  div(ng-switch-when="Location")
+    h3 Geographical coordinates
+
+    p.
+      The latitude and longitude of any place. Locations can be added by entering their coordinates or by searching the location directly on a map.
+    ul
+      li Geographical location of a venue
+    img(src="/app/images/field_type/location.png")
+
+  div(ng-switch-when="Object")
+    h3 Embedded JSON object
+
+    p.
+      Add an arbitrary JSON structure that you can write and read through the API.
+    ul
+      li Custom data from another system
+    img(src="/app/images/field_type/jsonobject.png")
+
+  div(ng-switch-when="Link")
+    div(ng-show="type.value.linkType == 'Entry'")
+      h3 Link to an Entry
+      p.
+        Connect your current Entry to another already existing Entry. You can create relationships such as connecting a book to its author.
+      ul
+        li Author
+        li Category
+      img(src="/app/images/field_type/linktoentry.png")
+
+    div(ng-show="type.value.linkType == 'Asset'")
+      h3 Link to an Asset
+      p.
+        Link a previously uploaded media file to this Entry or add a new one directly when editing.
+      ul
+        li Image
+        li Attachment
+        li Media of any kind
+      img(src="/app/images/field_type/linktoasset.png")
+
+  div(ng-switch-when="Array")
+    div(ng-show="type.value.items.type == 'Link' && type.value.items.linkType == 'Entry'")
+      h3 Links to multiple Entries
+      p.
+        Connect your current Entry to other already existing Entries. It works like the individual Entry but it allows you to connect more than one Entry.
+      ul
+        li Multiple authors
+        li Multiple categories
+      img(src="/app/images/field_type/linkstoentries.png")
+
+    div(ng-show="type.value.items.type == 'Link' && type.value.items.linkType == 'Asset'")
+      h3 Links to multiple Assets
+      p.
+        Link several previously uploaded media files to this Entry or add new ones directly when editing.
+      ul
+        li Multiple images
+        li Multiple attachments
+        li Multiple media files of any kind
+      img(src="/app/images/field_type/linkstoassets.png")
+
+    div(ng-show="type.value.items.type == 'Symbol'")
+      h3 List of multiple Symbols
+      p.
+        Create a lists of multiple Symbols. It works like an individual Symbol but allows you to add more than one Symbol.
+      ul
+        li Multiple tags of a blog post
+      img(src="/app/images/field_type/list.png")

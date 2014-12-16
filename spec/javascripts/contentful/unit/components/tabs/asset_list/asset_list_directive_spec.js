@@ -8,12 +8,10 @@ describe('The Asset list directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeDirectives('relative');
-      $provide.removeControllers('PermissionController');
+      $provide.removeControllers('PermissionController', 'AssetListController');
     });
-    inject(function ($rootScope, $compile, assetListDirective, enforcements) {
+    inject(function ($rootScope, $compile, enforcements) {
       scope = $rootScope.$new();
-
-      assetListDirective[0].controller = function () {};
 
       scope.selection = {
         getSelected: sinon.stub(),

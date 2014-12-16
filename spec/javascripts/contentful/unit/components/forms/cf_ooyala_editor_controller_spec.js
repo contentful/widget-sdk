@@ -7,8 +7,7 @@ describe('cfOoyalaEditorController', function () {
   beforeEach(function() {
     module('contentful/test');
     module(function($provide){
-      $provide.stubDirective('cfOoyalaInput', {});
-      $provide.stubDirective('cfOoyalaPlayer', {});
+      $provide.removeDirectives('cfOoyalaInput', 'cfOoyalaPlayer');
     });
 
     inject(function ($controller, $injector, $q, $rootScope) {

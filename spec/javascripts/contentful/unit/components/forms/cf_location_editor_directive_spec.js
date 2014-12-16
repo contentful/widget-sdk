@@ -13,6 +13,8 @@ describe('cfLocationEditor Directive', function () {
         'locationIsValid', 'serverError', 'otChangeValueP'
       ]);
 
+      $provide.removeControllers('cfLocationEditorController');
+
       $provide.value('notification', {
         serverError: stubs.serverError
       });
@@ -23,8 +25,7 @@ describe('cfLocationEditor Directive', function () {
         }
       });
     });
-    inject(function ($compile, $rootScope, $window, cfLocationEditorDirective) {
-      cfLocationEditorDirective[0].controller = angular.noop;
+    inject(function ($compile, $rootScope, $window) {
       scope = $rootScope.$new();
 
       scope.locationIsValid = stubs.locationIsValid;

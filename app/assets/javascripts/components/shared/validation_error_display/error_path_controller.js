@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('ErrorPathController', function ErrorPathController($scope, $attrs, mimetype) {
+angular.module('contentful').controller('ErrorPathController', ['$scope', '$attrs', 'mimetype', function ErrorPathController($scope, $attrs, mimetype) {
   $scope.errorMessages = [];
 
   var messages = {
@@ -124,4 +124,4 @@ angular.module('contentful').controller('ErrorPathController', function ErrorPat
     unwatch();
     unwatch = null;
   });
-});
+}]);

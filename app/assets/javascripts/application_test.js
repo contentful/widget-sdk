@@ -36,7 +36,7 @@ angular.module('contentful/test', [
   'ngSanitize',
   'contentful/environment',
   'timeRelative',
-  'ui.sortable',
+  'ui.directives',
   'contentful/user_interface',
   'angularLoad',
   'contentful',
@@ -46,12 +46,6 @@ angular.module('contentful/test', [
   function($locationProvider, clientAdapterProvider, authenticationProvider, environment, $sceDelegateProvider, $compileProvider, timeRelativeConfig){
   'use strict';
   var env = environment.settings;
-
-  // TODO this piece of code is temporary until the switch to gulp:
-  window.JST = _.transform(window.JST, function(jst, template, key){
-    key = _.last(key.split('/'));
-    jst[key] = template;
-  }, {});
 
   $locationProvider.html5Mode(true);
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
