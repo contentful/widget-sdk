@@ -37,6 +37,7 @@ var src = {
   vendorScripts: [
     'bower_components/jquery/dist/jquery.js',
     'bower_components/jquery-ui/ui/jquery.ui.core.js',
+    'bower_components/jquery-ui/ui/jquery.ui.position.js',
     'bower_components/jquery-ui/ui/jquery.ui.widget.js',
     'bower_components/jquery-ui/ui/jquery.ui.mouse.js',
     'bower_components/jquery-ui/ui/jquery.ui.sortable.js',
