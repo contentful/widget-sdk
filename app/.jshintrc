@@ -16,6 +16,7 @@
     "moment",
     "dotty",
     "Bugsnag",
-    "OO"
+    "OO",
+    "sinon"
   ]
 }

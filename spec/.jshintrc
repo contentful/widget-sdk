@@ -17,6 +17,7 @@
     "dotty",
     "Bugsnag",
     "OO",
+    "sinon",
 
     "Event",
     "describe",
@@ -37,7 +38,6 @@
     "waitsFor",
     "assert",
     "refute",
-    "sinon",
     "define"
   ]
 }
