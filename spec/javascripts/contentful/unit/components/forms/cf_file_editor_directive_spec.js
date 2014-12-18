@@ -39,10 +39,6 @@ describe('cfFileEditor Directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   it('file is defined', function() {
     expect(scope.file).toBeDefined();
   });

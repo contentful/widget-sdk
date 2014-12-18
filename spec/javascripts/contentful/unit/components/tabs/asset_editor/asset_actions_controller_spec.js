@@ -34,10 +34,6 @@ describe('Asset Actions Controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('when deleting', function() {
     beforeEach(function() {
       stubs.action = sinon.stub(asset, 'delete').returns(action.promise);

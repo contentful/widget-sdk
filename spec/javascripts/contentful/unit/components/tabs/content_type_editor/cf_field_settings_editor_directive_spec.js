@@ -26,10 +26,9 @@ describe('The cfFieldSettingsEditor directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     container.remove();
-    $log.assertEmpty();
-  }));
+  });
 
   describe('icons are displayed', function() {
     var icons;

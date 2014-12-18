@@ -11,10 +11,6 @@ describe('cfListTypeFor Directive', function () {
     element = $compile('<input type="text" ng-model="list" ng-list cf-list-type-for="field" />')(scope);
   }));
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   it('should convert numbers to numbers', function () {
     scope.field.type = 'Number';
     element.val('1,2,3.5').trigger('input');

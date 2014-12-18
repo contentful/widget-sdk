@@ -67,10 +67,6 @@ describe('API key editor controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   it('has a closing message', function () {
     expect(scope.tab.closingMessage).toBeDefined();
     expect(scope.tab.closingMessageDisplayType).toEqual('dialog');

@@ -28,10 +28,9 @@ describe('The cfFieldtypeIcon directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     container.remove();
-    $log.assertEmpty();
-  }));
+  });
 
   it('shows a tooltip', function() {
     var tooltipStub = sinon.stub($.fn, 'tooltip');

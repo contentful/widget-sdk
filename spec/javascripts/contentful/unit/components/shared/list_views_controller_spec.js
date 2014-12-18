@@ -19,9 +19,6 @@ describe('ListViewsController', function () {
     });
     scope.$apply();
   }));
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
 
   describe('when the uiConfig changes', function () {
     it('should generate the default views', function () {

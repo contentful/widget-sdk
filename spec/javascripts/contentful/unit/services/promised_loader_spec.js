@@ -24,10 +24,6 @@ describe('Promised loader service', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('load entities successfully', function() {
     beforeEach(function() {
       stubs.method.returns($q.when({}));
@@ -135,10 +131,6 @@ describe('PromisedLoader service', function () {
       b = new PromisedLoader();
     });
   });
-
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
 
   it('The debounced function in two Promised Loaders should be distinct', function () {
     expect(a._loadPromise).not.toBe(b._loadPromise);

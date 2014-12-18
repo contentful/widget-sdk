@@ -27,10 +27,6 @@ describe('cfDropdownEditor Directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('dropdown width class', function() {
     describe('with strings', function() {
       it('is small', function() {

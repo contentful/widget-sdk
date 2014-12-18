@@ -5,10 +5,6 @@ describe('Routing service', function () {
     module('contentful/test');
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('Space Controller', function () {
     var spaceController;
     beforeEach(inject(function ($controller, $rootScope, SpaceContext) {

@@ -43,10 +43,6 @@ describe('ContentTypeEditor Controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   it('sets contentType on the scope', function () {
     expect(scope.contentType).toEqual(contentType);
   });

@@ -44,10 +44,6 @@ describe('Editing interfaces service', function () {
     ];
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('gets an interface for a content type with an id', function() {
     var config, err;
 

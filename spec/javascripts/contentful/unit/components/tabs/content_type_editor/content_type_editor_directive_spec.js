@@ -39,10 +39,9 @@ describe('The ContentType editor directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     container.remove();
-    $log.assertEmpty();
-  }));
+  });
 
   describe('when otEditable is false', function () {
     beforeEach(function () {

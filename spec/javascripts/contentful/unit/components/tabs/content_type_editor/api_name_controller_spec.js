@@ -20,10 +20,6 @@ describe('ApiNameController', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('update apiName', function() {
     beforeEach(function() {
       scope.field.name = 'fieldname';

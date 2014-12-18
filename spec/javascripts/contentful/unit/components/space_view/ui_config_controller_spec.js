@@ -18,9 +18,6 @@ describe('UiConfigController', function () {
     controller = $controller('UiConfigController', {$scope: scope});
     scope.$apply();
   }));
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
 
   describe('loading a space', function () {
     describe('loads ui config', function() {

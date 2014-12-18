@@ -79,18 +79,20 @@ describe('logger service', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
+  afterEach(function () {
     $httpBackend.verifyNoOutstandingExpectation();
     $httpBackend.verifyNoOutstandingRequest();
-  }));
+  });
 
   describe('logs a data object', function () {
     var generatedId;
     var data;
+
     beforeEach(function () {
       data = {data: 'object'};
       generatedId = logger.logDataObject(data);
+      $httpBackend.expectPOST(/dataLoggerUrl/, data).respond(200);
+      $httpBackend.flush();
     });
 
     it('generates an id', function () {
@@ -100,15 +102,11 @@ describe('logger service', function () {
     it('id is a string', function () {
       expect(typeof generatedId).toBe('string');
     });
-
-    it('sends data to logger service', function () {
-      $httpBackend.expectPOST(/dataLoggerUrl/, data).respond(200);
-      $httpBackend.flush();
-    });
   });
 
   function createLogLevelTest(level, methodName) {
     var levelCapitalized = level.charAt(0).toUpperCase() + level.substr(1, level.length);
+    var loggedData = {'key':'value','scope':{'$id':2,'$parent':{'$id':1,'$parent':null,'$root':'[Circular ~.$parent]'},'scopeKey':'scopeValue'}, 'undef': {}};
     describe('logs a '+level, function () {
       var message, options;
       var data;
@@ -125,6 +123,8 @@ describe('logger service', function () {
           data: _.clone(data)
         };
         logger[methodName](message, options);
+        $httpBackend.expectPOST( /dataLoggerUrl/, loggedData).respond(200);
+        $httpBackend.flush();
       });
 
       it('calls logger method', function () {
@@ -157,14 +157,6 @@ describe('logger service', function () {
         });
 
         declareOptionTests('notifyStub');
-      });
-
-      it('sends data to logger service', function () {
-        $httpBackend.expectPOST(
-          /dataLoggerUrl/,
-          {'key':'value','scope':{'$id':2,'$parent':{'$id':1,'$parent':null,'$root':'[Circular ~.$parent]'},'scopeKey':'scopeValue'}, 'undef': {}}
-        ).respond(200);
-        $httpBackend.flush();
       });
     });
   }

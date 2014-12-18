@@ -47,10 +47,6 @@ describe('Field Settings Editor Controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   it('has no validations', function() {
     expect(scope.hasValidations).toBeFalsy();
   });

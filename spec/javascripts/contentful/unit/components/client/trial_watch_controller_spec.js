@@ -33,11 +33,9 @@ describe('Trial Watch controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     broadcastStub.restore();
-    $log.assertEmpty();
-  }));
-
+  });
 
   it('gets no persistent notification', function () {
     scope.user = null;

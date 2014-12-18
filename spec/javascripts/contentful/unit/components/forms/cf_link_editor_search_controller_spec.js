@@ -41,10 +41,9 @@ describe('cfLinkEditorSearch Controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     stubs.loadPromise.restore();
-    $log.assertEmpty();
-  }));
+  });
 
   describe('creates a controller', function() {
     beforeEach(function() {

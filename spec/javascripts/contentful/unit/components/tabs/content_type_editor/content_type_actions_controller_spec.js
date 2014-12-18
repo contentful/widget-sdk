@@ -43,10 +43,6 @@ describe('ContentType Actions Controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('when deleting', function() {
     beforeEach(function() {
       stubs.action = sinon.stub(contentType, 'delete').returns(action.promise);

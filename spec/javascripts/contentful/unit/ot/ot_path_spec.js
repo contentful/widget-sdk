@@ -24,10 +24,6 @@ describe('otPath', function() {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   it('should provide otPath on the scope', function() {
     expect(scope.otPath).toLookEqual(['FOO', 'bar']);
   });

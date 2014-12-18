@@ -21,10 +21,6 @@ describe('YoutubeGAPIAdapter', function() {
     });
   });
 
-  afterEach(inject(function($log){
-    $log.assertEmpty();
-  }));
-
   describe('#videoInfo', function() {
     describe('on successful request', function() {
       beforeEach(function() {

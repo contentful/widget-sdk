@@ -39,10 +39,6 @@ describe('ContentType field validation dialog Controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('validation list watcher', function() {
     beforeEach(function() {
       scope.validationList = sinon.stub();

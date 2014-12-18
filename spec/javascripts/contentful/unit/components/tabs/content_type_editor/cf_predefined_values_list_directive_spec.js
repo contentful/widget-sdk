@@ -26,10 +26,9 @@ describe('The cfPredefinedValuesList directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     container.remove();
-    $log.assertEmpty();
-  }));
+  });
 
   describe('renders existing values', function() {
     beforeEach(function() {

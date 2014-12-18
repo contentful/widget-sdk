@@ -25,10 +25,9 @@ describe('The select type directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     container.remove();
-    $log.assertEmpty();
-  }));
+  });
 
   it('has first single type', function() {
     expect(container.find('[data-type-name="type1"]').get(0)).toBeDefined();

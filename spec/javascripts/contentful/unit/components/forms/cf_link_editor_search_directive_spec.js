@@ -47,10 +47,6 @@ describe('cfLinkEditorSearch Directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('shows new button for link to entries with no validation', function () {
     var newButton;
     beforeEach(function () {

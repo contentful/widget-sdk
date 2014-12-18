@@ -46,10 +46,6 @@ describe('Enforcements service', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('determines enforcements', function () {
 
     it('throws if no space context is defined', function() {

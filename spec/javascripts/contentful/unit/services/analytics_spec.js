@@ -55,10 +55,6 @@ describe('Analytics service', function () {
 
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   var apiMethods = [
     'disable', 'login', 'setSpaceData', 'tabAdded', 'tabActivated',
     'knowledgeBase', 'modifiedContentType', 'tabClosed', 'toggleAuxPanel',

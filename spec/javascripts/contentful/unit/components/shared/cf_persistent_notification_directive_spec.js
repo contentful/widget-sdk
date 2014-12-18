@@ -13,10 +13,6 @@ describe('cfPersistentNotification Directive', function () {
     element = $compile('<div class="cf-persistent-notification"></div>')(scope);
   }));
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   it('should show message', function () {
     $rootScope.$broadcast('persistentNotification', {
       message: 'some message'

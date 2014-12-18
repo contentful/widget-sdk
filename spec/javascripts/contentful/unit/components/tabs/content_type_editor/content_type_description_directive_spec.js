@@ -19,10 +19,9 @@ describe('The contentTypeDescription directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     container.remove();
-    $log.assertEmpty();
-  }));
+  });
 
   function makeDescriptionTest(type) {
     it('renders '+type+' description', function() {

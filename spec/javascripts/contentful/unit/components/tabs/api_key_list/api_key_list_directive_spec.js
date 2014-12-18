@@ -33,10 +33,9 @@ describe('The ApiKey list directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
+  afterEach(function () {
     container.remove();
-  }));
+  });
 
   describe('the tab header add button', function() {
     it('is not shown', function() {

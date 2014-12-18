@@ -14,10 +14,6 @@ describe('Youtube Player Loader', function() {
     });
   });
 
-  afterEach(inject(function($log){
-    $log.assertEmpty();
-  }));
-
   it('sets the expected callback function', function(){
     spyOn(googleScriptLoader, 'load').and.callThrough();
 

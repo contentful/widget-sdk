@@ -242,6 +242,10 @@ mocks.factory('cfStub', function ($injector) {
 });
 
 mocks.config(['$provide', function ($provide) {
+  $provide.value('$exceptionHandler', function(e){
+    throw e;
+  });
+
   $provide.decorator('ShareJS', ['$delegate', function ($delegate) {
     function FakeShareJSDoc(entity) {
       this.entity = entity;

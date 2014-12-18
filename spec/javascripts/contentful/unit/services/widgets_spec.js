@@ -11,10 +11,6 @@ describe('Widget types service', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('forField', function(){
     function testTypesFor(fieldType) {
       describe('gets widget types for a field with type '+fieldType, function() {

@@ -16,10 +16,6 @@ describe('Available validations', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   it('validations are exposed', function() {
     expect(availableValidations.all).toBeDefined();
   });

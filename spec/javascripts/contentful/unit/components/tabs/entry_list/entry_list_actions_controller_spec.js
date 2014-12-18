@@ -76,10 +76,6 @@ describe('Entry List Actions Controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   function makeEntity(action, stub) {
     var entity = {};
     entity[action] = stub;

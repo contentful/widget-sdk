@@ -16,11 +16,6 @@ describe('otDocFor', function () {
     elem = $compile('<div ot-doc-for="entity"></div>')($rootScope);
   }));
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
-
   describe('updating entity', function () {
     it('should update the entity with a copy of the snapshot', function () {
       scope.otUpdateEntity();

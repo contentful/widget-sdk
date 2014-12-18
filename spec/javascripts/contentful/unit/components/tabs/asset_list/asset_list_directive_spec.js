@@ -48,10 +48,9 @@ describe('The Asset list directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     container.remove();
-    $log.assertEmpty();
-  }));
+  });
 
   describe('the tab header add button', function() {
     it('is not shown', function() {

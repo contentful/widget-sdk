@@ -22,10 +22,6 @@ describe('cfOoyalaEditorController', function () {
     });
   });
 
-  afterEach(inject(function($log){
-    $log.assertEmpty();
-  }));
-
   describe('#addAsset', function() {
     beforeEach(function() {
       scope.selectedVideo = {};

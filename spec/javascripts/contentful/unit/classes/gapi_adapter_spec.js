@@ -16,10 +16,6 @@ describe('GAPI Adapter', function() {
     });
   });
 
-  afterEach(inject(function($log){
-    $log.assertEmpty();
-  }));
-
   it('sets the Google API key', function(){
     expect(client.setApiKey).toHaveBeenCalledWith(environment.settings.google.gapi_key);
   });

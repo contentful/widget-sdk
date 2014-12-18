@@ -48,10 +48,6 @@ describe('Entry list controller events', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('handles an entityDeleted event from EntryListActions controller', function () {
     beforeEach(inject(function (cfStub) {
       childScope.selection.toggle(removedEntity);
@@ -150,11 +146,6 @@ describe('Content Type Actions controller events', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
-
   it('handles an entityDeleted event from ContentTypeActions controller', function () {
     expect(closeStub).toBeCalled();
   });
@@ -204,10 +195,6 @@ describe('ApiKey List controller events', function () {
       scope.$apply();
     });
   });
-
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
 
   it('handles an entityDeleted event from ApiKeyEditor controller', function () {
     expect(scope.tab.close).toBeCalled();

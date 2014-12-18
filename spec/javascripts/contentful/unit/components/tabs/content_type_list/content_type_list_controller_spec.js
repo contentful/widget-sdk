@@ -269,10 +269,4 @@ describe('Content Type List Controller', function () {
     }));
   });
 
-
-
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
 });

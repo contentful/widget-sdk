@@ -18,10 +18,6 @@ describe('ErrorPathController', function () {
     });
   }));
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('data-dependent message generation', function () {
     beforeEach(function () {
       attrs.cfErrorPath = '["foo", "bar"]';

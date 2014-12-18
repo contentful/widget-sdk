@@ -61,10 +61,6 @@ describe('Entry List Controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('loads a ui config view', function() {
     var view;
 

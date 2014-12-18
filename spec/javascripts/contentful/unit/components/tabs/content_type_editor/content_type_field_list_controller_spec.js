@@ -10,10 +10,6 @@ describe('ContentTypeFieldList Controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   it('get field type params', function () {
     expect(scope.fieldTypeParams({
       type: 'type',

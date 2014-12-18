@@ -22,12 +22,6 @@ describe('otBindValue', function () {
   });
 
 
-  afterEach(function () {
-    inject(function ($log) {
-      $log.assertEmpty();
-    });
-  });
-
   it('should call otChangeValue whenever the value is changed', function () {
     scope.fieldData.value = 'b';
     scope.$apply();

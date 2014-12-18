@@ -26,10 +26,6 @@ describe('Entry Editor Controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   it('should validate if the published version has changed', function () {
     scope.validate = sinon.spy();
     scope.entry.data.sys.publishedVersion = 2;

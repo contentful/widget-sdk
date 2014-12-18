@@ -18,10 +18,6 @@ describe('API Key List Controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('empty marker', function() {
     it('is true', function() {
       scope.apiKeys = [];

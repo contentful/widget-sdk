@@ -31,10 +31,6 @@ describe('cfLocationEditor Controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   it('location is valid', function() {
     expect(scope.locationIsValid({
       lat: 123.456,

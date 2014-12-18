@@ -26,10 +26,6 @@ describe('ooyalaPlayerLoader', function() {
     baseUrl =  '//player.ooyala.com/v3/:player_id?platform=priority-html5';
   });
 
-  afterEach(inject(function($log){
-    $log.assertEmpty();
-  }));
-
   describe('#load', function() {
     var expectedUrl, url;
 

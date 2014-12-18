@@ -25,10 +25,6 @@ describe('Entity Actions Controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('for an entity', function() {
     beforeEach(function() {
       createController();

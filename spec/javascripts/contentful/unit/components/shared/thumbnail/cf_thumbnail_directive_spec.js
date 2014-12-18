@@ -20,10 +20,6 @@ describe('cfThumbnailDirective', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   function createElement(attrs) {
     var defaults = { file: 'asset' };
     attrs        = _.defaults(attrs || {}, defaults);

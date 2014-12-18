@@ -19,10 +19,6 @@ describe('cfObjectEditor', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('internal data', function () {
     it('should turn blank strings into undefined', function () {
       textarea.val('');

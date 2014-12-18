@@ -77,10 +77,6 @@ describe('Asset List Controller', function () {
   });
 
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('on search term change', function () {
 
     describe('if term is null', function () {

@@ -63,10 +63,9 @@ describe('Space view directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     container.remove();
-    $log.assertEmpty();
-  }));
+  });
 
   it('main navigation shown if space is defined', function () {
     compileElement();

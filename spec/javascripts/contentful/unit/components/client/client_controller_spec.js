@@ -161,10 +161,6 @@ describe('Client Controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   it('aux panel is off', function () {
     expect(scope.preferences.showAuxPanel).toBeFalsy();
   });

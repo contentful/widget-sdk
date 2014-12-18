@@ -53,10 +53,6 @@ describe('Create Space Dialog controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   it('does not preselect if no organizations exist', function() {
     scope.organizations = [];
     createController();

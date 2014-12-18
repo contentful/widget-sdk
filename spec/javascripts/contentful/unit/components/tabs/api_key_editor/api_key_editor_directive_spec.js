@@ -66,11 +66,6 @@ describe('apiKeyEditor Directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
-
   it('has a headline', function () {
     compileElement();
     scope.tab.params.apiKey.data.name = 'headline text';

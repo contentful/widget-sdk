@@ -50,10 +50,6 @@ describe('Space Controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('watches for new locales', function () {
     var privateStub, refreshStub;
     beforeEach(function () {

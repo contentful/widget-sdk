@@ -16,9 +16,6 @@ describe('ViewMenuController', function () {
     });
     scope.$apply();
   }));
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
 
   describe('viewIsActive', function () {
     it('should return true if view matches tab view', function () {
