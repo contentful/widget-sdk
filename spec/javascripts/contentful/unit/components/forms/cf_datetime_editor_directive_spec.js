@@ -22,11 +22,10 @@ describe('DateTime Editor', function () {
     scope.$apply();
   }));
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     element.find('.date').datepicker('destroy');
     element.remove();
-    $log.assertEmpty();
-  }));
+  });
 
   function enter(date, time, zone, ampm) {
     /*jshint eqnull:true*/

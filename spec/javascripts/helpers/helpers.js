@@ -77,6 +77,10 @@ beforeEach(function() {
     return this.$injector.get(serviceName);
   };
 
+  this.$apply = function(){
+    this.$inject('$rootScope').$apply();
+  };
+
   jasmine.addMatchers({
 
     toLookEqual: function() {

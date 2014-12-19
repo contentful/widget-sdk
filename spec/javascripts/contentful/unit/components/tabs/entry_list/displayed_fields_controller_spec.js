@@ -28,10 +28,6 @@ describe('Displayed Fields Controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('refreshes displayed fields', function() {
     beforeEach(function() {
       scope.tab.params.view.displayedFieldIds = ['id1', 'id2', 'id5', 'display1'];

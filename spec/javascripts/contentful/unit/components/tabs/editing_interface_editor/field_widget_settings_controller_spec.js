@@ -24,10 +24,6 @@ describe('FieldWidgetSettingsController', function(){
     });
   });
 
-  afterEach(inject(function($log) {
-    $log.assertEmpty();
-  }));
-
   describe('for a field widget', function() {
     var widgetsForType, optionsForWidget2;
     beforeEach(function() {

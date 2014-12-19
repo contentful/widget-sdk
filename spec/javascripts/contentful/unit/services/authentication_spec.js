@@ -54,12 +54,11 @@ describe('Authentication service', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     cookiesGetStub.restore();
     cookiesSetStub.restore();
     cookiesDelStub.restore();
-    $log.assertEmpty();
-  }));
+  });
 
   it('has a client', function () {
     expect(authentication.client).toBeDefined();

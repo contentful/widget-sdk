@@ -18,10 +18,6 @@ describe('cfYoutubeEditor Controller', function() {
     });
   });
 
-  afterEach(inject(function($log){
-    $log.assertEmpty();
-  }));
-
   describe('initial state', function() {
     it('has the loading flag set to false', function() {
       expect(scope.isPlayerLoading).toBeFalsy();

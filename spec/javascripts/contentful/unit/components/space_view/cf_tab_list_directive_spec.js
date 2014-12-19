@@ -31,10 +31,9 @@ describe('cfTabList directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     container.remove();
-    $log.assertEmpty();
-  }));
+  });
 
   it('has 3 tabs', function () {
     expect(container.find('li.tab').length).toBe(3);

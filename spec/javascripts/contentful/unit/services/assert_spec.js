@@ -10,10 +10,6 @@ describe('Assert service', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('asserts', function () {
     it('object throws', function () {
       expect(function () {

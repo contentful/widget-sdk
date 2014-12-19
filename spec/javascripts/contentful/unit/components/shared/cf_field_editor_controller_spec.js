@@ -25,10 +25,6 @@ describe('cfFieldEditor Controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('fieldData is set', function() {
     beforeEach(function() {
       scope.widget.field.type = 'Symbol';

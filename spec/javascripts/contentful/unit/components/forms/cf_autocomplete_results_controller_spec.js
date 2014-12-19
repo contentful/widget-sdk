@@ -15,10 +15,6 @@ describe('cfAutocompleteResultsController', function () {
       $attrs: {cfAutocompleteResults: 'results'}});
   }));
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   it('should adjust selectedIndex, numResults when results change', function () {
     scope.results = [1,2,3,4];
     scope.$apply();

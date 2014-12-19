@@ -18,13 +18,9 @@ describe('Filepicker service', function () {
       });
     });
 
-    afterEach(function () {
-      inject(function ($log, $window) {
-        delete $window.filepicker;
-        $log.assertEmpty();
-      });
-    });
-
+    afterEach(inject(function($window){
+      delete $window.filepicker;
+    }));
   });
 
   describe('returns filepicker object', function () {
@@ -51,13 +47,10 @@ describe('Filepicker service', function () {
       });
     });
 
-    afterEach(function () {
-      inject(function ($log) {
-        makeDropPaneStub.restore();
-        pickStub.restore();
-        storeStub.restore();
-        $log.assertEmpty();
-      });
+    afterEach(function(){
+      makeDropPaneStub.restore();
+      pickStub.restore();
+      storeStub.restore();
     });
 
     it('filepicker service exists', function () {

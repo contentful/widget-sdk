@@ -10,10 +10,6 @@ describe('Accordion Controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('toggle an item', function () {
     var item;
     beforeEach(function () {

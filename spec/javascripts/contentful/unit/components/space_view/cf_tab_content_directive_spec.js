@@ -41,10 +41,9 @@ describe('cfTabContent directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     container.remove();
-    $log.assertEmpty();
-  }));
+  });
 
   describe('rendering tab lists', function () {
     var activeStub, inactiveStub;

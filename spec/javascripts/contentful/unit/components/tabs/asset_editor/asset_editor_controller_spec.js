@@ -75,10 +75,6 @@ describe('Asset editor controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   it('gets a title set on a tab', function () {
     stubs.assetTitle.returns('title');
     scope.$apply();

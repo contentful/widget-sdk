@@ -22,10 +22,6 @@ describe('Form Widgets Controller', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('the editing interface', function(){
     it('updates the editing interface when the content type changes', function(){
       expect(controller.editingInterface.data.widgets[0].fieldId).toBe('fieldA');

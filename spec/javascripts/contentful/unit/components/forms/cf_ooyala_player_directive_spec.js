@@ -34,10 +34,6 @@ describe('cfOoyalaPlayer Directive', function() {
     });
   });
 
-  afterEach(inject(function($log){
-    $log.assertEmpty();
-  }));
-
   it('generates different DOM ids for each new player', function() {
     var otherDirective = compileDirective(scope);
     scope.$apply();

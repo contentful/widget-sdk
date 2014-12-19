@@ -25,10 +25,6 @@ describe('Ooyala Client', function () {
     baseUrl =  '/integrations/ooyala';
   });
 
-  afterEach(inject(function($log){
-    $log.assertEmpty();
-  }));
-
   describe('#request', function() {
     describe('when no organization id has been set', function() {
       it('raises an exception', function() {

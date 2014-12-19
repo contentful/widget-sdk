@@ -21,10 +21,6 @@ describe('cfYoutubePlayerController Controller', function() {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('when the youtubeUrl changes', function() {
     var youtubeUrl, videoId;
 

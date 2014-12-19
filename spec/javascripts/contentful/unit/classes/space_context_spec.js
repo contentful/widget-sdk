@@ -9,11 +9,6 @@ describe('SpaceContext class with no space', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
-
   it('has no space', function () {
     expect(spaceContext.space).toBeUndefined();
   });
@@ -86,11 +81,6 @@ describe('SpaceContext class with a space', function () {
       spaceContext = new SpaceContext(space);
     });
   });
-
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
 
   it('has a space', function () {
     expect(spaceContext.space).toBeDefined();
@@ -513,10 +503,6 @@ describe('SpaceContext resolving missing ContentTypes', function () {
     spaceContext.space = {};
     entry = { getContentTypeId: function () { return 'foo'; } };
     spyOn(spaceContext, 'refreshContentTypes');
-  }));
-
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
   }));
 
   it('should not trigger a refresh when resolving a known published content type', function () {

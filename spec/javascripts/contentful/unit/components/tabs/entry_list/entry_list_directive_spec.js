@@ -47,10 +47,9 @@ describe('The Entry list directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     container.remove();
-    $log.assertEmpty();
-  }));
+  });
 
   describe('the tab header first add button', function() {
     it('is not shown if not allowed', function() {

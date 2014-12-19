@@ -12,10 +12,6 @@ describe('ReloadNotification service', function () {
     ReloadNotification.apiErrorHandler.restore();
   }));
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('trigger', function () {
     it('should not open the notification twice');
     it('should send the correct message');

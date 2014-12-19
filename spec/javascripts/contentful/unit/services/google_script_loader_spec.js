@@ -15,10 +15,6 @@ describe('Google Script Loader', function () {
     callback = {name: 'randomName', fn: angular.noop};
   });
 
-  afterEach(inject(function($log){
-    $log.assertEmpty();
-  }));
-
   describe('#load', function() {
     it('returns the same deferred to calls loading the same script', function(){
       var pro_1 = loader.load('file.js', callback);

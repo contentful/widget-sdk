@@ -30,10 +30,9 @@ describe('otBindText', function () {
     controller = elem.controller('ngModel');
   }));
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     jasmine.clock().uninstall();
-    $log.assertEmpty();
-  }));
+  });
 
   it('should not insert an accent into the text field', function () {
     expect(controller.$parsers[0]('´')).toBeNull();
@@ -63,17 +62,16 @@ describe('otBindText', function () {
   });
 
   describe('when mkPath fails', function () {
-    it('should throw an error', inject(function (ShareJS, $rootScope, environment, $log){
-      $log.assertEmpty();
+    it('should throw an error', inject(function (ShareJS, $rootScope, environment){
       ShareJS.mkpath = sinon.stub().yieldsAsync('error');
       ShareJS.peek.withArgs(undefined, ['value']).returns(undefined);
       $rootScope.entity.value = null;
 
       scope.$apply();
       elem.val('a').trigger('input');
-      jasmine.clock().tick(10);
-      expect($log.error.logs.length).toBe(1);
-      $log.reset();
+      expect(function(){
+        jasmine.clock().tick(10);
+      }).toThrow(new Error('makeAndAttach mkpath failed'));
     }));
   });
 

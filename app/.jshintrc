@@ -2,6 +2,12 @@
   "globalstrict": true,
   "node": true,
   "browser": true,
+  "quotmark": "single",
+  "strict": true,
+  "trailing": true,
+  "unused": true,
+  "sub": true,
+
   "predef": [
     "angular",
     "_",
@@ -10,6 +16,7 @@
     "moment",
     "dotty",
     "Bugsnag",
-    "OO"
+    "OO",
+    "sinon"
   ]
 }

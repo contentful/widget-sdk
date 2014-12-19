@@ -30,10 +30,9 @@ describe('The cfValidationOptions directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     container.remove();
-    $log.assertEmpty();
-  }));
+  });
 
   describe('the controller', function() {
     beforeEach(function() {

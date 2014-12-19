@@ -14,10 +14,6 @@ describe('cfSearch Directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('sets properties on scope', function() {
     beforeEach(function() {
       scope.searchTerm = 'term';

@@ -10,10 +10,6 @@ describe('YoutubeUrl', function() {
     });
   });
 
-  afterEach(inject(function($log){
-    $log.assertEmpty();
-  }));
-
   describe('#isValid', function() {
     function testIsValidYoutubeUrl(url) {
       it('returns true if the base wrapped url is a valid Youtube URL', function(){

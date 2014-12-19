@@ -13,12 +13,6 @@ describe('Number widgets', function () {
       scope.otEditable = true;
     });
   });
-  /*
-   * TODO some issue with otPath
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
- */
 
   describe('Number widget', function () {
     beforeEach(inject(function ($rootScope, $compile){

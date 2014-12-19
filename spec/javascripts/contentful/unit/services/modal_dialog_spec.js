@@ -13,10 +13,6 @@ describe('Modal dialog service', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('create a dialog', function () {
     var dialog;
     beforeEach(function () {

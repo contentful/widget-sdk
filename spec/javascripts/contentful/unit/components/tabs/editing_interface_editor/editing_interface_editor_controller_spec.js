@@ -24,10 +24,6 @@ describe('EditingInterfaceEditorController', function(){
     });
   });
 
-  afterEach(inject(function($log) {
-    $log.assertEmpty();
-  }));
-
   it('should sync the widgets when the fields change', function() {
     editingInterfaces.syncWidgets.reset();
     scope.contentType = {data: {fields: ['newField']}};

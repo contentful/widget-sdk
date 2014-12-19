@@ -32,10 +32,9 @@ describe('The ContentTypeFieldList directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     container.remove();
-    $log.assertEmpty();
-  }));
+  });
 
   it('has two fields', function () {
     compileElement();

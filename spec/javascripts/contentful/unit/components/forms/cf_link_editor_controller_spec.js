@@ -72,10 +72,6 @@ describe('LinkEditorController', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('initial state', function () {
     beforeEach(function () {
       createController();

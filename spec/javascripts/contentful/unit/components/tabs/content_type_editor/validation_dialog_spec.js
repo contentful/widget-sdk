@@ -33,10 +33,9 @@ describe('Validation dialog service', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     $('.client').remove();
-    $log.assertEmpty();
-  }));
+  });
 
   describe('create a dialog', function () {
     beforeEach(function () {

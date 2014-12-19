@@ -20,10 +20,6 @@ describe('cfKnowledgeBaseIcon Directve', function () {
     scope.$digest();
   }));
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   it('has tooltip text', function () {
     expect(element.attr('tooltip')).toBe('tooltip text');
   });

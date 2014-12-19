@@ -65,10 +65,6 @@ describe('cfLocationEditor Directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('watches for location change and location validity', function() {
     it('when location exists and is valid', function() {
       scope.location = {};

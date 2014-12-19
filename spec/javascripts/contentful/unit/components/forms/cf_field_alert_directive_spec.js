@@ -14,10 +14,6 @@ describe('cfFieldAlert Directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   it('element exists', function() {
     expect(element.get(0)).toBeDefined();
   });

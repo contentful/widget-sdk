@@ -27,10 +27,6 @@ describe('cfFieldEditor Directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   it('installs a widget', function() {
     compileElement();
     expect(element.find('.foo').length).toBe(1);

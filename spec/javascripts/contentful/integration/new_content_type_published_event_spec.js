@@ -15,10 +15,9 @@ describe('New content type published', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
+  afterEach(function () {
     broadcastSpy.restore();
-    $log.assertEmpty();
-  }));
+  });
 
   it('registers a new published content type', function () {
     spaceContext.registerPublishedContentType(contentType);

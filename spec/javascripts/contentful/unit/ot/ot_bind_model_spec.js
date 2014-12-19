@@ -20,12 +20,6 @@ describe('otBindModel', function () {
   });
 
 
-  afterEach(function () {
-    inject(function ($log) {
-      $log.assertEmpty();
-    });
-  });
-
   it('should call otChangeValue whenever the value is changed', function () {
     scope.otChangeValue = sinon.stub();
     elem.val('b').trigger('input');

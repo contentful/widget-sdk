@@ -28,10 +28,6 @@ describe('cfYoutubePlayer Directive', function() {
     });
   });
 
-  afterEach(inject(function($log){
-    $log.assertEmpty();
-  }));
-
   describe('Youtube Player load fails', function() {
     beforeEach(function() {
       defer.reject();

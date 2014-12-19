@@ -19,13 +19,6 @@ describe('otSubdoc', function () {
     });
   });
 
-
-  afterEach(function () {
-    inject(function ($log) {
-      $log.assertEmpty();
-    });
-  });
-
   it('should install subdoc on the scope', function () {
     expect(scope.otSubdoc).toBe(subdoc);
   });

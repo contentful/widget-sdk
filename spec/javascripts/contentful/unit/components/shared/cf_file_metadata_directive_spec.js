@@ -30,10 +30,6 @@ describe('cfFileMetadata Directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   describe('default state with no attrs set', function() {
     beforeEach(function() {
       compileElement();

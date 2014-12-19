@@ -13,10 +13,6 @@ describe('Authorization service', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
   it('creates an instance', function () {
     expect(authorization).toBeDefined();
   });
@@ -115,10 +111,6 @@ describe('reasonsDenied service', function () {
       reasonsDenied = _reasonsDenied_;
     });
   });
-
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
 
   it('calls reasonsDenied from authorization', function () {
     reasonsDenied();

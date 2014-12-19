@@ -26,18 +26,19 @@ angular.module('contentful').
 
         var request = $q.defer();
         pending.push(request);
-        request.promise.then(function () {
-          if (!cache[id]) return $q.reject(new Error('User not found'));
-          return cache[id];
-        });
-
-        return this.getAll(space).then(function () {
+        this.getAll(space).then(function () {
           _.invoke(pending, 'resolve');
           pending = [];
         }, function (err) {
           _.invoke(pending, 'reject', err);
           pending = [];
         });
+
+        return request.promise.then(function () {
+          if (!cache[id]) return $q.reject(new Error('User not found'));
+          return cache[id];
+        });
+
       },
     };
   }]);

@@ -19,11 +19,10 @@ describe('App version service', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
+  afterEach(function () {
     $httpBackend.verifyNoOutstandingExpectation();
     $httpBackend.verifyNoOutstandingRequest();
-  }));
+  });
 
   it('has a new version', function () {
     var stub = sinon.stub();

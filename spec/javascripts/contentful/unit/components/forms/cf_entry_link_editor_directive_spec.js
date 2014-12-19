@@ -62,11 +62,6 @@ describe('cfEntryLinkEditor Directive', function () {
     });
   });
 
-  afterEach(inject(function ($log) {
-    $log.assertEmpty();
-  }));
-
-
   describe('model controller gets updated with multiple links', function () {
     beforeEach(function () {
       scope.fieldData = { value: [

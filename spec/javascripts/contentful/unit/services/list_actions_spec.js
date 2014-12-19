@@ -18,7 +18,7 @@ describe('List Actions Service', function () {
       $timeout    = $injector.get('$timeout');
       $q          = $injector.get('$q');
       listActions = $injector.get('listActions');
-      sinon.stub($rootScope, '$broadcast');
+      sinon.spy($rootScope, '$broadcast');
     });
   });
 
