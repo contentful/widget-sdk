@@ -190,14 +190,16 @@ gulp.task('clean', function () {
 gulp.task('serve', function () {
   gulp.watch(src.components, ['components']);
   gulp.watch(src.templates , ['templates']);
-  gulp.watch(src.stylesheets , ['stylesheets']);
+  //gulp.watch(src.stylesheets , ['stylesheets']);
   // TODO: use watchify for user_interface
 
   var app = express();
   app.use(ecstatic({ root: __dirname + '/public', handleError: false, showDir: false }));
   app.all('*', function(req, res) {
     var index = fs.readFileSync('public/index.html', 'utf8');
-    res.status(200).send(index);
+    runSequence(['templates', 'stylesheets', 'components'], function(){
+      res.status(200).send(index);
+    });
   });
   http.createServer(app).listen(3001);
 });
