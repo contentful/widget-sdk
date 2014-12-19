@@ -58,7 +58,7 @@
               li.plain-list--item.avatar.cf-user(ng-repeat="link in fieldPresence.users track by link.sys.id"
                                  link="link" as="presenceUser"
                                  tooltip="{{presenceUser | userNameDisplay:user}}")
-                img(ng-src="{{user.avatarUrl}}")
+                img(ng-src="{{presenceUser.avatarUrl}}")
           .cf-form-box-error(cf-error-path="['fields', widget.field.id, locale.code,'*']")
         .l-field-help-text.layout-field--help-text(ng-if="widget.widgetParams.helpText") {{widget.widgetParams.helpText}}
         .cf-form-box-error(cf-error-path="['fields', widget.field.id]")
