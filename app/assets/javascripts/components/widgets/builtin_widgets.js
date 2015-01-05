@@ -164,6 +164,11 @@ angular.module('contentful').run(['widgets', function(widgets){
     name: 'Ooyala (multiple assets)',
     template: '<cf-ooyala-multi-asset-editor ng-model="fieldData.value" ot-bind-internal="selectedAssets"></cf-ooyala-editor>'
   });
+  widgets.registerWidget('slugEditor', {
+    fieldTypes: ['Symbol'],
+    name: 'Slug',
+    template: '<cf-slug-editor></cf-slug-editor>'
+  });
   //toggle: {   NOT IMPLEMENTED
     //fieldTypes: ['Boolean'],
     //name: 'Toggle',
