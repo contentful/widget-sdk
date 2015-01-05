@@ -17,7 +17,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
     function attach() {
       //console.log('attach', id, guider.attachTo, 'try', tries);
       if (tries-- === 0) {
-        logger.logError('Failed to find attachTo('+guider.attachTo+') for Guider '+id);
+        logger.logError('Failed to find attachTo('+guider.attachTo+') for Guider '+id, {groupingHash: 'attachToNotFound'});
         guiders.showImmediate(id);
         return;
       }

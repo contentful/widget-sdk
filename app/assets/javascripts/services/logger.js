@@ -87,8 +87,13 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
     logException: function (exception, extra) {
       if($window.Bugsnag){
         setUserInfo();
-        $window.Bugsnag.notifyException(exception, getMetadata(extra));
+        var options = _.extend({severity: 'error'}, getMetadata(extra));
+        $window.Bugsnag.notifyException(exception, null, options);
       }
+    },
+
+    tabChanged: function(){
+      $window.Bugsnag.refresh();
     },
 
     logError: function (message, options) {
@@ -110,6 +115,7 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
     _log: function(type, severity, message, options) {
       if ($window.Bugsnag) {
         options = options || {};
+        options.groupingHash = options.groupingHash || message;
         setUserInfo();
         $window.Bugsnag.notify(type, message, getMetadata(options), severity);
       }

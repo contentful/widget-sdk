@@ -6,8 +6,8 @@ describe('logger service', function () {
   var routeStub, userStub;
   var loggerStubs = {};
 
-  function declareOptionTests(stubName, metadataIndex) {
-    metadataIndex = metadataIndex || 2;
+  function declareOptionTests(stubName) {
+    var metadataIndex = 2;
     it('has tags', function () {
       expect(loggerStubs[stubName].args[0][metadataIndex].params).toBeDefined();
     });
@@ -219,7 +219,7 @@ describe('logger service', function () {
     });
 
     describe('on options', function () {
-      declareOptionTests('notifyExceptionStub', 1);
+      declareOptionTests('notifyExceptionStub');
     });
   });
 
