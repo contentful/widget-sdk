@@ -171,8 +171,13 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
         return (field && field[locale]) || field && field[defaultLocale];
       },
 
-      entryTitle: function(entry, localeCode) {
-        var defaultTitle = 'Untitled';
+      /**
+       * The `modelValue` flag, if true, causes `null` to be returned
+       * when no title is present. If false or left unspecified, the
+       * UI string indicating that is returned, which is 'Untitled'.
+       */
+      entryTitle: function(entry, localeCode, modelValue) {
+        var defaultTitle = Boolean(modelValue) ? null : 'Untitled';
 
         try {
           var displayField = this.publishedTypeForEntry(entry).data.displayField;
