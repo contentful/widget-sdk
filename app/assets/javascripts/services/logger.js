@@ -21,6 +21,7 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
         id: dotty.get(user, 'sys.id'),
         firstName: dotty.get(user, 'firstName'),
         lastName: dotty.get(user, 'lastName'),
+        adminLink: getAdminLink(user),
         organizations: getOrganizations(),
       };
     }
@@ -32,7 +33,12 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
     var organizationNames = _.map(user.organizationMemberships, function(m){
       return m.organization.name;
     });
-    return organizationNames.join(',');
+    return organizationNames.join(', ');
+  }
+
+  function getAdminLink(user) {
+    var id = dotty.get(user, 'sys.id');
+    return 'https://admin.'+environment.settings.main_domain+'/admin/users/'+id;
   }
 
   function getRoute() {
