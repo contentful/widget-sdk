@@ -2,6 +2,7 @@
 angular.module('contentful').controller('ApiNameController', ['$scope', '$injector', function ApiNameController($scope, $injector){
   var controller = this;
 
+  var logger       = $injector.get('logger');
   var notification = $injector.get('notification');
   var modalDialog  = $injector.get('modalDialog');
   var stringUtils  = $injector.get('stringUtils');
@@ -38,7 +39,8 @@ angular.module('contentful').controller('ApiNameController', ['$scope', '$inject
       $scope.$apply(function (scope) {
         if (err) {
           scope.field.apiName = subdoc.get();
-          notification.serverError('Error updating ID', err);
+          logger.logServerError('Error updating ID', {error: err });
+          notification.error('Error updating ID');
           return;
         }
         if (isDisplayField ||

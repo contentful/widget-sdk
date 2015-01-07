@@ -1,8 +1,15 @@
 'use strict';
 
-angular.module('contentful').controller('SpaceController',
-  ['$scope', '$rootScope', 'analytics', 'routing', 'notification', 'authorization', 'enforcements', 'authentication', '$controller',
-    function SpaceController($scope, $rootScope, analytics, routing, notification, authorization, enforcements, authentication, $controller) {
+angular.module('contentful').controller('SpaceController', ['$scope', '$injector', function SpaceController($scope, $injector) {
+  var $controller    = $injector.get('$controller');
+  var $rootScope     = $injector.get('$rootScope');
+  var analytics      = $injector.get('analytics');
+  var authentication = $injector.get('authentication');
+  var authorization  = $injector.get('authorization');
+  var enforcements   = $injector.get('enforcements');
+  var logger         = $injector.get('logger');
+  var notification   = $injector.get('notification');
+  var routing        = $injector.get('routing');
 
   $controller('UiConfigController', {$scope: $scope});
 
@@ -70,7 +77,8 @@ angular.module('contentful').controller('SpaceController',
             params.errorMessage = enforcement.tooltip || enforcement.message;
           }
         }
-        notification.serverError(params.errorMessage, err);
+        logger.logServerError(params.errorMessage, {error: err });
+        notification.error(params.errorMessage);
       }
       analytics.track(getEventSource(params.source), {
         currentSection: $scope.spaceContext.tabList.currentSection(),
@@ -126,7 +134,8 @@ angular.module('contentful').controller('SpaceController',
   $scope.createApiKey = function(source) {
     var usage = enforcements.computeUsage('apiKey');
     if(usage){
-      return notification.serverError(usage, {});
+      logger.logServerError(usage);
+      return notification.error(usage);
     }
     var apiKey = $scope.spaceContext.space.createBlankDeliveryApiKey();
     $scope.navigator.apiKeyEditor(apiKey).openAndGoTo();

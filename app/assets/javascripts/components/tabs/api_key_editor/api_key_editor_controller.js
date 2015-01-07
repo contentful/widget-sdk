@@ -98,7 +98,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     })
     .catch(function(err){
       notification.warn(t + ' could not be deleted');
-      logger.logServerError('ApiKey could not be deleted', err);
+      logger.logServerError('ApiKey could not be deleted', {error: err});
     });
   };
 
@@ -127,7 +127,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     .catch(function(err){
       notification.warn(t + ' could not be saved');
       if(dotty.get(err, 'statusCode') !== 422)
-        logger.logServerError('ApiKey could not be saved', err);
+        logger.logServerError('ApiKey could not be saved', {error: err });
     });
   };
 

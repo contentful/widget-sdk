@@ -3,22 +3,18 @@
 describe('Entry Actions Controller', function () {
   var controller, scope, stubs, action;
   var space, entry;
+  var notification, logger;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'serverError', 'warn', 'info', 'entryEditor', 'otUpdateEntity', 'getAt', 'logServerError'
+        'entryEditor', 'otUpdateEntity', 'getAt'
       ]);
-      $provide.value('notification', {
-        serverError: stubs.serverError,
-        info: stubs.info,
-        warn: stubs.warn
-      });
-      $provide.value('logger', {
-        logServerError: stubs.logServerError
-      });
     });
-    inject(function ($controller, $rootScope, cfStub, $q) {
+    inject(function ($controller, $rootScope, cfStub, $q, $injector) {
+      notification = $injector.get('notification');
+      logger = $injector.get('logger');
+
       space = cfStub.space('spaceid');
       var contentTypeData = cfStub.contentTypeData('type1');
       entry = cfStub.entry(space, 'entryid', 'typeid', {}, {sys: {version: 1}});
@@ -48,9 +44,9 @@ describe('Entry Actions Controller', function () {
         expect(stubs.action).toBeCalled();
       });
 
-
       it('shows error notification', function() {
-        expect(stubs.serverError).toBeCalled();
+        expect(notification.error).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
       });
     });
 
@@ -66,7 +62,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows notification', function() {
-        expect(stubs.info).toBeCalled();
+        expect(notification.info).toBeCalled();
       });
 
       it('broadcasts event', function() {
@@ -92,7 +88,8 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.serverError).toBeCalled();
+        expect(notification.error).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
       });
     });
 
@@ -134,7 +131,8 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.logServerError).toBeCalled();
+        expect(notification.warn).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
       });
     });
 
@@ -150,7 +148,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows notification', function() {
-        expect(stubs.info).toBeCalled();
+        expect(notification.info).toBeCalled();
       });
     });
   });
@@ -172,7 +170,8 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.logServerError).toBeCalled();
+        expect(notification.warn).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
       });
     });
 
@@ -188,7 +187,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows notification', function() {
-        expect(stubs.info).toBeCalled();
+        expect(notification.info).toBeCalled();
       });
     });
   });
@@ -210,7 +209,8 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.logServerError).toBeCalled();
+        expect(notification.warn).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
       });
     });
 
@@ -227,7 +227,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows notification', function() {
-        expect(stubs.info).toBeCalled();
+        expect(notification.info).toBeCalled();
       });
 
       it('updates ot entity', function() {
@@ -255,7 +255,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows warn notification', function() {
-        expect(stubs.warn).toBeCalled();
+        expect(notification.warn).toBeCalled();
       });
     });
 
@@ -293,7 +293,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.warn).toBeCalled();
+        expect(notification.warn).toBeCalled();
       });
     });
 
@@ -351,11 +351,11 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.warn).toBeCalled();
+        expect(notification.warn).toBeCalled();
       });
 
       it('gets contextual error message', function() {
-        expect(stubs.warn.args[0][0]).toMatch(/version/i);
+        expect(notification.warn.args[0][0]).toMatch(/version/i);
       });
     });
 
@@ -385,11 +385,12 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.serverError).toBeCalled();
+        expect(notification.error).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
       });
 
       it('gets contextual error message', function() {
-        expect(stubs.serverError.args[0][1]).toEqual(err);
+        expect(logger.logServerError.args[0][1].error).toEqual(err);
       });
     });
 
@@ -413,7 +414,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('shows notification', function() {
-        expect(stubs.info).toBeCalled();
+        expect(notification.info).toBeCalled();
       });
 
       it('updates ot entity', function() {

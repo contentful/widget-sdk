@@ -1,33 +1,22 @@
 'use strict';
 
 describe('ContentType Actions Controller', function () {
-  var controller, scope, stubs, action, $q;
+  var controller, scope, stubs, action, $q, logger, notification;
   var space, contentType;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs([
-        'serverError', 'warn', 'info', 'logServerError', 'track',
-        'updatePublishedContentType'
-      ]);
-
-      $provide.value('notification', {
-        serverError: stubs.serverError,
-        info: stubs.info,
-        warn: stubs.warn
-      });
-
-      $provide.value('logger', {
-        logServerError: stubs.logServerError
-      });
+      stubs = $provide.makeStubs([ 'track', 'updatePublishedContentType' ]);
 
       $provide.value('analytics', {
         track: stubs.track
       });
 
     });
-    inject(function ($controller, $rootScope, cfStub, _$q_) {
-      $q = _$q_;
+    inject(function ($controller, $rootScope, cfStub, $injector) {
+      $q           = $injector.get('$q');
+      logger       = $injector.get('logger');
+      notification = $injector.get('notification');
       space = cfStub.space('spaceid');
       var contentTypeData = cfStub.contentTypeData('type1');
       contentType = cfStub.contentType(space, 'typeid', 'typename');
@@ -62,7 +51,8 @@ describe('ContentType Actions Controller', function () {
 
 
       it('shows error notification', function() {
-        expect(stubs.serverError).toBeCalled();
+        expect(notification.error).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
       });
     });
 
@@ -78,7 +68,7 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('shows notification', function() {
-        expect(stubs.info).toBeCalled();
+        expect(notification.info).toBeCalled();
       });
 
       it('broadcasts event', function() {
@@ -108,11 +98,12 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.warn).toBeCalled();
+        expect(notification.warn).toBeCalled();
       });
 
       it('captures server error', function() {
-        expect(stubs.logServerError).toBeCalled();
+        expect(notification.warn).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
       });
     });
 
@@ -131,7 +122,7 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('shows notification', function() {
-        expect(stubs.info).toBeCalled();
+        expect(notification.info).toBeCalled();
       });
 
       it('tracks analytics event', function() {
@@ -171,7 +162,7 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('shows warn notification', function() {
-        expect(stubs.warn).toBeCalled();
+        expect(notification.warn).toBeCalled();
       });
     });
 
@@ -209,7 +200,7 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.warn).toBeCalled();
+        expect(notification.warn).toBeCalled();
       });
     });
 
@@ -241,11 +232,11 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.warn).toBeCalled();
+        expect(notification.warn).toBeCalled();
       });
 
       it('gets contextual error message', function() {
-        expect(stubs.warn.args[0][0]).toMatch(/version/i);
+        expect(notification.warn.args[0][0]).toMatch(/version/i);
       });
     });
 
@@ -273,11 +264,12 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.serverError).toBeCalled();
+        expect(notification.error).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
       });
 
       it('gets contextual error message', function() {
-        expect(stubs.serverError.args[0][0]).toMatch(/remote/i);
+        expect(notification.error.args[0][0]).toMatch(/remote/i);
       });
     });
 
@@ -302,7 +294,7 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('shows notification', function() {
-        expect(stubs.info).toBeCalled();
+        expect(notification.info).toBeCalled();
       });
 
       it('tracks analytics event', function() {

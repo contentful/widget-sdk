@@ -1,16 +1,17 @@
 'use strict';
 
 describe('ApiNameController', function () {
-  var controller, scope, stubs;
+  var controller, scope, stubs, logger, notification;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs(['toIdentifier', 'at', 'set', 'get', 'serverError', 'isDisplayableAsTitleFilter']);
-      $provide.value('notification', { serverError: stubs.serverError });
+      stubs = $provide.makeStubs(['toIdentifier', 'at', 'set', 'get', 'isDisplayableAsTitleFilter']);
       $provide.value('isDisplayableAsTitleFilter', stubs.isDisplayableAsTitleFilter);
       $provide.constant('stringUtils', {toIdentifier: stubs.toIdentifier});
     });
-    inject(function ($controller, $rootScope) {
+    inject(function ($controller, $rootScope, $injector) {
+      logger = $injector.get('logger');
+      notification = $injector.get('notification');
       scope = $rootScope.$new();
 
       scope.field = {};
@@ -157,7 +158,8 @@ describe('ApiNameController', function () {
           });
 
           it('shows error', function() {
-            expect(stubs.serverError).toBeCalled();
+            expect(notification.error).toBeCalled();
+            expect(logger.logServerError).toBeCalled();
           });
         });
       });

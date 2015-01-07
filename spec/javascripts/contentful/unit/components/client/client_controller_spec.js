@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Client Controller', function () {
-  var clientController, scope;
+  var clientController, scope, notification;
   var stubs;
 
   beforeEach(function () {
@@ -17,9 +17,6 @@ describe('Client Controller', function () {
         'getTokenLookup',
         'setSpace',
         'hasSpace',
-        'notificationInfo',
-        'notificationError',
-        'notificationWarn',
         'gatekeeperErrorHandler',
         'goToSpace',
         'goToOrganization',
@@ -103,12 +100,6 @@ describe('Client Controller', function () {
       });
 
 
-      $provide.value('notification', {
-        info: stubs.notificationInfo,
-        error: stubs.notificationError,
-        warn: stubs.notificationWarn
-      });
-
       $provide.value('routing', {
         goToSpace: stubs.goToSpace,
         goToOrganization: stubs.goToOrganization,
@@ -154,7 +145,8 @@ describe('Client Controller', function () {
       $provide.value('reasonsDenied', stubs.reasons);
 
     });
-    inject(function ($controller, $rootScope, tutorial, $q){
+    inject(function ($controller, $rootScope, tutorial, $q, $injector){
+      notification = $injector.get('notification');
       tutorial.start.returns($q.when());
       scope = $rootScope.$new();
       clientController = $controller('ClientController', {$scope: scope});
@@ -241,7 +233,7 @@ describe('Client Controller', function () {
 
     it('with no space triggers an error notification', function () {
       scope.selectSpace();
-      expect(stubs.notificationWarn).toBeCalled();
+      expect(notification.warn).toBeCalled();
     });
 
     describe('if we are selecting the current space', function () {
@@ -686,7 +678,7 @@ describe('Client Controller', function () {
           }
         };
         childScope.$emit('iframeMessage', data);
-        expect(stubs.notificationWarn).toBeCalledWith('hai');
+        expect(notification.warn).toBeCalledWith('hai');
       });
 
       it('calls info notification', function () {
@@ -698,7 +690,7 @@ describe('Client Controller', function () {
           }
         };
         childScope.$emit('iframeMessage', data);
-        expect(stubs.notificationInfo).toBeCalledWith('hai');
+        expect(notification.info).toBeCalledWith('hai');
       });
     });
 
@@ -1260,7 +1252,7 @@ describe('Client Controller', function () {
     });
     scope.startTutorial();
     scope.$apply();
-    expect(stubs.notificationError).toBeCalled();
+    expect(notification.error).toBeCalled();
   });
 
 

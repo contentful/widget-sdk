@@ -2,12 +2,13 @@
 
 angular.module('contentful').controller('AssetListController',['$scope', '$injector', function AssetListController($scope, $injector) {
   var $controller = $injector.get('$controller');
-  var Selection   = $injector.get('Selection');
-  var filepicker  = $injector.get('filepicker');
-  var stringUtils = $injector.get('stringUtils');
   var $q          = $injector.get('$q');
-  var notification= $injector.get('notification');
+  var Selection   = $injector.get('Selection');
   var delay       = $injector.get('delay');
+  var filepicker  = $injector.get('filepicker');
+  var logger      = $injector.get('logger');
+  var notification= $injector.get('notification');
+  var stringUtils = $injector.get('stringUtils');
   var throttle    = $injector.get('throttle');
 
   $controller('AssetListViewsController', {
@@ -74,7 +75,8 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
           return $q.reject(err);
         });
       }).catch(function (err) {
-        notification.serverError('Some assets failed to upload', err);
+        logger.logServerError('Some assets failed to upload', {error: err });
+        notification.error('Some assets failed to upload');
         throttledListRefresh();
         return $q.reject(err);
       });

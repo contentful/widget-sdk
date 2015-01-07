@@ -31,8 +31,9 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.notification = notification;
 
   $scope.startTutorial = function () {
-    tutorial.start().catch(function () {
+    tutorial.start().catch(function (err) {
       notification.error('Could not create tutorial space');
+      logger.logError('Could not create tutorial space', {error: err});
     });
   };
 

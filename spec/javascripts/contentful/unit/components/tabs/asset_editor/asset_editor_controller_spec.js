@@ -2,7 +2,7 @@
 
 describe('Asset editor controller', function () {
 
-  var scope, stubs;
+  var scope, stubs, logger, notification;
   var assetEditorCtrl;
   var process;
 
@@ -30,12 +30,10 @@ describe('Asset editor controller', function () {
       $provide.value('stringUtils', {
         fileNameToTitle: stubs.fileNameToTitle
       });
-
-      $provide.value('notification', {
-        serverError: stubs.serverError
-      });
     });
-    inject(function ($rootScope, $controller, $q) {
+    inject(function ($rootScope, $controller, $q, $injector) {
+      logger = $injector.get('logger');
+      notification = $injector.get('notification');
       scope = $rootScope.$new();
       scope.permissionController = { can: sinon.stub() };
       scope.permissionController.can.returns({can: true});
@@ -195,7 +193,8 @@ describe('Asset editor controller', function () {
       });
 
       it('calls error notification', function() {
-        expect(stubs.serverError).toBeCalled();
+        expect(notification.error).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
       });
 
       it('emits file processing failure event', function() {

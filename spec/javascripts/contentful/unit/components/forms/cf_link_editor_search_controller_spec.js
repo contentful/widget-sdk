@@ -3,20 +3,18 @@
 describe('cfLinkEditorSearch Controller', function () {
   var cfLinkEditorSearchCtrl, createController;
   var scope, stubs, attrs, space;
-  var $q;
+  var $q, notification, logger;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'serverError',
         'loadPromise'
       ]);
-      $provide.value('notification', {
-        serverError: stubs.serverError
-      });
     });
-    inject(function ($rootScope, $controller, cfStub, PromisedLoader, _$q_) {
-      $q = _$q_;
+    inject(function ($rootScope, $controller, cfStub, PromisedLoader, $injector) {
+      $q = $injector.get('$q');
+      notification = $injector.get('notification');
+      logger = $injector.get('logger');
       scope = $rootScope.$new();
 
       space = cfStub.space('test');
@@ -197,7 +195,8 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it('server error not called', function() {
-          expect(stubs.serverError).not.toBeCalled();
+          expect(notification.error).not.toBeCalled();
+          expect(logger.logServerError).not.toBeCalled();
         });
 
         it(entityType +' editor called', function() {
@@ -228,7 +227,8 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it('server error called', function() {
-          expect(stubs.serverError).toBeCalled();
+          expect(notification.error).toBeCalled();
+          expect(logger.logServerError).toBeCalled();
         });
 
         it(entityType +' editor not called', function() {
@@ -266,7 +266,8 @@ describe('cfLinkEditorSearch Controller', function () {
 
         it('server error called', function(done) {
           _.defer(function () {
-            expect(stubs.serverError).toBeCalled();
+            expect(notification.error).toBeCalled();
+            expect(logger.logServerError).toBeCalled();
             done();
           });
         });
@@ -307,7 +308,8 @@ describe('cfLinkEditorSearch Controller', function () {
         it('server error called', function(done) {
           _.defer(function () {
             _.defer(function () {
-              expect(stubs.serverError).toBeCalledTwice();
+              expect(notification.error).toBeCalledTwice();
+              expect(logger.logServerError).toBeCalledTwice();
               done();
             });
           });

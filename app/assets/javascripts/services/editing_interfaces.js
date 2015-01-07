@@ -3,6 +3,7 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   var $q           = $injector.get('$q');
   var environment  = $injector.get('environment');
   var notification = $injector.get('notification');
+  var logger       = $injector.get('logger');
   var random       = $injector.get('random');
   var widgets      = $injector.get('widgets');
 
@@ -29,8 +30,10 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
       }, function (err) {
         if(dotty.get(err, 'body.sys.type') == 'Error' && dotty.get(err, 'body.sys.id') == 'VersionMismatch')
           notification.warn('This configuration has been changed by another user. Please reload and try again.');
-        else
-          notification.serverError('There was a problem saving the configuration', err);
+        else {
+          logger.logServerError('There was a problem saving the configuration', {error: err });
+          notification.error('There was a problem saving the configuration');
+        }
         return $q.reject(err);
       });
     },

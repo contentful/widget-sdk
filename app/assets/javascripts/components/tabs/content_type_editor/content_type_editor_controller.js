@@ -7,6 +7,7 @@ angular.module('contentful').controller('ContentTypeEditorController', ['$scope'
   var analytics         = $injector.get('analytics');
   var editingInterfaces = $injector.get('editingInterfaces');
   var environment       = $injector.get('environment');
+  var logger            = $injector.get('logger');
   var notification      = $injector.get('notification');
   var random            = $injector.get('random');
   var validation        = $injector.get('validation');
@@ -157,7 +158,8 @@ angular.module('contentful').controller('ContentTypeEditorController', ['$scope'
     fieldDoc.push(newField, function(err, ops) {
       $scope.$apply(function(scope) {
         if (err) {
-          notification.serverError('Could not add field', err);
+          logger.logServerError('Could not add field', {error: err });
+          notification.error('Could not add field');
         } else {
             scope.otUpdateEntity();
             scope.$broadcast('fieldAdded', ops[0].p[1]);

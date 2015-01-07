@@ -126,7 +126,7 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
           if (err){
             logger.logError('failure on makeAndAttach', {
               data: loggingData,
-              err: err
+              error: err
             });
             scope.$apply(function(){
               throw new Error('makeAndAttach mkpath failed');

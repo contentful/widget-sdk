@@ -1,6 +1,7 @@
 'use strict';
 
 var _           = require('lodash-node/modern');
+var Promise     = require('promise');
 var awspublish  = require('gulp-awspublish');
 var browserify  = require('browserify');
 var clean       = require('gulp-clean');
@@ -188,17 +189,26 @@ gulp.task('clean', function () {
 });
 
 gulp.task('serve', function () {
-  gulp.watch(src.components, ['components']);
-  gulp.watch(src.templates , ['templates']);
-  //gulp.watch(src.stylesheets , ['stylesheets']);
-  // TODO: use watchify for user_interface
+  var promises = [];
+  watchTask('components');
+  watchTask('templates');
+  watchTask('stylesheets');
+
+ function watchTask(taskName) {
+  gulp.watch(src[taskName], function () {
+    promises.push(new Promise(function (resolve) {
+      runSequence(taskName, resolve);
+    }));
+  });
+ }
 
   var app = express();
   app.use(ecstatic({ root: __dirname + '/public', handleError: false, showDir: false }));
   app.all('*', function(req, res) {
     var index = fs.readFileSync('public/index.html', 'utf8');
-    runSequence(['templates', 'stylesheets', 'components'], function(){
+    Promise.all(promises).then(function () {
       res.status(200).send(index);
+      promises = [];
     });
   });
   http.createServer(app).listen(3001);

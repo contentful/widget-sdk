@@ -1,10 +1,11 @@
 'use strict';
 angular.module('contentful').controller('TabViewController', ['$scope', '$injector', function ($scope, $injector) {
-  var analytics = $injector.get('analytics');
-  var routing = $injector.get('routing');
+  var analytics           = $injector.get('analytics');
+  var logger              = $injector.get('logger');
+  var routing             = $injector.get('routing');
   var TabOptionsGenerator = $injector.get('TabOptionsGenerator');
-  var $document = $injector.get('$document');
-  var editingInterfaces = $injector.get('editingInterfaces');
+  var $document           = $injector.get('$document');
+  var editingInterfaces   = $injector.get('editingInterfaces');
 
   var gen = TabOptionsGenerator;
   $scope.$on('tabClosed', function (event, tab) {
@@ -16,6 +17,7 @@ angular.module('contentful').controller('TabViewController', ['$scope', '$inject
   });
 
   $scope.$on('tabBecameActive', function (event, tab) {
+    logger.tabChanged();
     $scope.goToTab(tab);
   });
 
