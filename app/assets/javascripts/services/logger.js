@@ -92,7 +92,7 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
     },
 
     tabChanged: function(){
-      $window.Bugsnag.refresh();
+      if ($window.Bugsnag) $window.Bugsnag.refresh();
     },
 
     logError: function (message, metaData) {
