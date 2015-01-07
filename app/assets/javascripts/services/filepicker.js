@@ -1,105 +1,110 @@
 'use strict';
 
-angular.module('contentful').factory('filepicker', ['$window', 'environment', '$q', '$rootScope', 'jsloader', function ($window, environment, $q, $rootScope, jsloader) {
-    var MULTIPLE_UPLOAD_MAXFILES = 20;
+angular.module('contentful').factory('filepicker', ['$injector', function ($injector) {
+  var $q          = $injector.get('$q');
+  var $rootScope  = $injector.get('$rootScope');
+  var $window     = $injector.get('$window');
+  var angularLoad = $injector.get('angularLoad');
+  var environment = $injector.get('environment');
 
-    if (!$window.filepicker) {
-      var loadFile = jsloader.create('//api.filepicker.io/v1/');
-      loadFile('filepicker.js');
-      if(environment.env == 'development'){
-        loadFile('filepicker_debug.js');
-      }
-      var d = {};
-      d._queue = [];
-      var e = 'pick,pickMultiple,pickAndStore,read,write,writeUrl,export,convert,store,storeUrl,remove,stat,setKey,constructWidget,makeDropPane'.split(',');
-      var f = function (a, b) {
-          return function () {
-              b.push([a, arguments]);
-          };
-      };
-      for (var g = 0; g < e.length; g++) {
-          d[e[g]] = f(e[g], d._queue);
-      }
-      $window.filepicker = d;
+  var MULTIPLE_UPLOAD_MAXFILES = 20;
 
-      d.setKey(environment.settings.filepicker.api_key);
+  if (!$window.filepicker) {
+    angularLoad.loadScript('https://api.filepicker.io/v1/filepicker.js');
+    if(environment.env == 'development') {
+      angularLoad.loadScript('https://api.filepicker.io/v1/filepicker_debug.js');
     }
-
-    var settings = {
-      policy: environment.settings.filepicker.policy,
-      signature: environment.settings.filepicker.signature
+    var d = {};
+    d._queue = [];
+    var e = 'pick,pickMultiple,pickAndStore,read,write,writeUrl,export,convert,store,storeUrl,remove,stat,setKey,constructWidget,makeDropPane'.split(',');
+    var f = function (a, b) {
+        return function () {
+            b.push([a, arguments]);
+        };
     };
+    for (var g = 0; g < e.length; g++) {
+        d[e[g]] = f(e[g], d._queue);
+    }
+    $window.filepicker = d;
 
-    return {
-      makeDropPane: function (dropPane, options) {
-        options = _.extend(_.clone(settings), options||{});
-        return $window.filepicker.makeDropPane(dropPane, options);
-      },
+    d.setKey(environment.settings.filepicker.api_key);
+  }
 
-      pick: function (options) {
-        var deferred = $q.defer();
+  var settings = {
+    policy: environment.settings.filepicker.policy,
+    signature: environment.settings.filepicker.signature
+  };
 
-        $window.filepicker.pick(_.extend(_.clone(settings), options||{}), function(FPFile){
-          $rootScope.$apply(function () {
-            deferred.resolve(FPFile);
-          });
-        }, function (FPError) {
-          $rootScope.$apply(function () {
-            deferred.reject(FPError);
-          });
+  return {
+    makeDropPane: function (dropPane, options) {
+      options = _.extend(_.clone(settings), options||{});
+      return $window.filepicker.makeDropPane(dropPane, options);
+    },
+
+    pick: function (options) {
+      var deferred = $q.defer();
+
+      $window.filepicker.pick(_.extend(_.clone(settings), options||{}), function(FPFile){
+        $rootScope.$apply(function () {
+          deferred.resolve(FPFile);
         });
-
-        return deferred.promise;
-      },
-
-      pickMultiple: function (options) {
-        var deferred = $q.defer();
-        _.defaults(options||{}, {maxFiles: MULTIPLE_UPLOAD_MAXFILES});
-
-        $window.filepicker.pickMultiple(_.extend(_.clone(settings), options), function(FPFiles){
-          $rootScope.$apply(function () {
-            deferred.resolve(FPFiles);
-          });
-        }, function (FPError) {
-          $rootScope.$apply(function () {
-            deferred.reject(FPError);
-          });
+      }, function (FPError) {
+        $rootScope.$apply(function () {
+          deferred.reject(FPError);
         });
+      });
 
-        return deferred.promise;
-      },
+      return deferred.promise;
+    },
 
+    pickMultiple: function (options) {
+      var deferred = $q.defer();
+      _.defaults(options||{}, {maxFiles: MULTIPLE_UPLOAD_MAXFILES});
 
-      store: function (newURL, file) {
-        var deferred = $q.defer();
-
-        $window.filepicker.store({
-          url: newURL,
-          filename: file.fileName,
-          mimetype: file.contentType,
-          isWriteable: true,
-          size: file.details.size
-        },
-        _.clone(settings),
-        function(FPFile){
-          $rootScope.$apply(function () {
-            deferred.resolve(FPFile);
-          });
-        }, function (FPError) {
-          $rootScope.$apply(function () {
-            deferred.reject(FPError);
-          });
+      $window.filepicker.pickMultiple(_.extend(_.clone(settings), options), function(FPFiles){
+        $rootScope.$apply(function () {
+          deferred.resolve(FPFiles);
         });
+      }, function (FPError) {
+        $rootScope.$apply(function () {
+          deferred.reject(FPError);
+        });
+      });
 
-        return deferred.promise;
+      return deferred.promise;
+    },
+
+
+    store: function (newURL, file) {
+      var deferred = $q.defer();
+
+      $window.filepicker.store({
+        url: newURL,
+        filename: file.fileName,
+        mimetype: file.contentType,
+        isWriteable: true,
+        size: file.details.size
       },
+      _.clone(settings),
+      function(FPFile){
+        $rootScope.$apply(function () {
+          deferred.resolve(FPFile);
+        });
+      }, function (FPError) {
+        $rootScope.$apply(function () {
+          deferred.reject(FPError);
+        });
+      });
 
-      parseFPFile: function (FPFile) {
-        return FPFile ? {
-         upload:      FPFile.url,
-         fileName:    FPFile.filename,
-         contentType: FPFile.mimetype
-        } : null;
-      }
-    };
+      return deferred.promise;
+    },
+
+    parseFPFile: function (FPFile) {
+      return FPFile ? {
+       upload:      FPFile.url,
+       fileName:    FPFile.filename,
+       contentType: FPFile.mimetype
+      } : null;
+    }
+  };
 }]);
