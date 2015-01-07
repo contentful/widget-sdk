@@ -1,8 +1,8 @@
 'use strict';
 
 describe('logger service', function () {
-  var logger;
-  var $httpBackend, $rootScope;
+  var logger, stringifySafe, toJsonReplacer;
+  var $rootScope;
   var routeStub, userStub;
   var loggerStubs = {};
 
@@ -63,8 +63,9 @@ describe('logger service', function () {
       });
 
     });
-    inject(function (realLogger, _$httpBackend_, _$rootScope_) {
-      $httpBackend = _$httpBackend_;
+    inject(function (realLogger, _$rootScope_, $injector) {
+      stringifySafe = $injector.get('stringifySafe');
+      toJsonReplacer = $injector.get('toJsonReplacer');
       $rootScope = _$rootScope_;
       logger = realLogger;
 
@@ -79,36 +80,11 @@ describe('logger service', function () {
     });
   });
 
-  afterEach(function () {
-    $httpBackend.verifyNoOutstandingExpectation();
-    $httpBackend.verifyNoOutstandingRequest();
-  });
-
-  describe('logs a data object', function () {
-    var generatedId;
-    var data;
-
-    beforeEach(function () {
-      data = {data: 'object'};
-      generatedId = logger.logDataObject(data);
-      $httpBackend.expectPOST(/dataLoggerUrl/, data).respond(200);
-      $httpBackend.flush();
-    });
-
-    it('generates an id', function () {
-      expect(generatedId).toBeDefined();
-    });
-
-    it('id is a string', function () {
-      expect(typeof generatedId).toBe('string');
-    });
-  });
-
   function createLogLevelTest(level, methodName) {
     var levelCapitalized = level.charAt(0).toUpperCase() + level.substr(1, level.length);
-    var loggedData = {'key':'value','scope':{'$id':2,'$parent':{'$id':1,'$parent':null,'$root':'[Circular ~.$parent]'},'scopeKey':'scopeValue'}, 'undef': {}};
+    var loggedData;
     describe('logs a '+level, function () {
-      var message, options;
+      var message, metaData;
       var data;
       beforeEach(function () {
         var scope = $rootScope.$new();
@@ -119,12 +95,13 @@ describe('logger service', function () {
           scope: scope,
           undef: undefined
         };
-        options = {
+        metaData = {
           data: _.clone(data)
         };
-        logger[methodName](message, options);
-        $httpBackend.expectPOST( /dataLoggerUrl/, loggedData).respond(200);
-        $httpBackend.flush();
+        loggedData = _.mapValues(data, function(v){
+          return JSON.parse(stringifySafe(v)||'{}', toJsonReplacer);
+        });
+        logger[methodName](message, metaData);
       });
 
       it('calls logger method', function () {
@@ -147,13 +124,9 @@ describe('logger service', function () {
         expect(loggerStubs.notifyStub.args[0][3]).toEqual(level);
       });
 
-      describe('on options', function () {
-        it('has a dataId of an object sent to logger service', function () {
-          expect(typeof loggerStubs.notifyStub.args[0][2].dataId).toBe('string');
-        });
-
-        it('has no data property in options', function () {
-          expect(loggerStubs.notifyStub.args[0][2].data).toBeUndefined();
+      describe('on metaData', function () {
+        it('has data property in metaData', function () {
+          expect(loggerStubs.notifyStub.args[0][2].data).toEqual(loggedData);
         });
 
         declareOptionTests('notifyStub');
@@ -166,12 +139,12 @@ describe('logger service', function () {
   createLogLevelTest('info', 'log');
 
   describe('captures a server error', function () {
-    var error, options;
+    var error, metaData;
     beforeEach(function () {
       error = new Error('error object');
-      options = options || {};
-      options.error = error;
-      logger.logServerError('message', options);
+      metaData = metaData || {};
+      metaData.error = error;
+      logger.logServerError('message', metaData);
     });
 
     it('calls logger method', function () {
@@ -194,7 +167,7 @@ describe('logger service', function () {
       expect(loggerStubs.notifyStub.args[0][3]).toEqual('error');
     });
 
-    describe('on options', function () {
+    describe('on metaData', function () {
       it('has the error object on the metadata', function () {
         expect(loggerStubs.notifyStub.args[0][2].error).toBe(error);
       });
@@ -204,10 +177,10 @@ describe('logger service', function () {
   });
 
   describe('captures an exception', function () {
-    var error, options;
+    var error, metaData;
     beforeEach(function () {
       error = new Error('error object');
-      logger.logException(error, options);
+      logger.logException(error, metaData);
     });
 
     it('calls logger method', function () {
@@ -218,7 +191,7 @@ describe('logger service', function () {
       expect(loggerStubs.notifyExceptionStub.args[0][0]).toBe(error);
     });
 
-    describe('on options', function () {
+    describe('on metaData', function () {
       declareOptionTests('notifyExceptionStub');
     });
   });
