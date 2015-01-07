@@ -4,6 +4,7 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
   var $controller       = $injector.get('$controller');
   var AssetContentType  = $injector.get('AssetContentType');
   var ShareJS           = $injector.get('ShareJS');
+  var logger            = $injector.get('logger');
   var notification      = $injector.get('notification');
   var stringUtils       = $injector.get('stringUtils');
   var validation        = $injector.get('validation');
@@ -99,7 +100,8 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
     $scope.asset.process($scope.otDoc.version, locale.code)
     .catch(function (err) {
       $scope.$emit('fileProcessingFailed');
-      notification.serverError('There has been a problem processing the Asset.', err);
+      notification.error('There has been a problem processing the Asset.');
+      logger.logServerError('There has been a problem processing the Asset.', err);
     });
   });
   function setTitleOnDoc(file, localeCode) {

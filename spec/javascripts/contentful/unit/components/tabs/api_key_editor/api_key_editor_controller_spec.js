@@ -161,7 +161,7 @@ describe('API key editor controller', function () {
 
     it('error notification is shown', function () {
       expect(stubs.logServerError).toBeCalled();
-      expect(stubs.logServerError.args[0][1]).toEqual({});
+      expect(stubs.logServerError.args[0][1]).toEqual({error: {}});
       expect(stubs.warn.args[0][0]).toEqual('"apiKeyName" could not be deleted');
     });
   });
@@ -216,7 +216,7 @@ describe('API key editor controller', function () {
 
     it('error notification is shown', function () {
       expect(stubs.logServerError).toBeCalled();
-      expect(stubs.logServerError.args[0][1]).toEqual({});
+      expect(stubs.logServerError.args[0][1]).toEqual({error: {}});
       expect(stubs.warn.args[0][0]).toEqual('"apiKeyName" could not be saved');
     });
   });

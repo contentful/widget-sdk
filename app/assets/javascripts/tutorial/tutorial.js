@@ -17,7 +17,7 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
     function attach() {
       //console.log('attach', id, guider.attachTo, 'try', tries);
       if (tries-- === 0) {
-        logger.logError('Failed to find attachTo('+guider.attachTo+') for Guider '+id);
+        logger.logError('Failed to find attachTo('+guider.attachTo+') for Guider '+id, {groupingHash: 'attachToNotFound'});
         guiders.showImmediate(id);
         return;
       }
@@ -78,7 +78,8 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
           tutorialScope.standby = false;
           guiders.next();
         }, function (err) {
-          notification.serverError('Error creating tutorial content types', err);
+          logger.logServerError('Error creating tutorial content types', {error: err });
+          notification.error('Error creating tutorial content types');
           tutorialScope.standby = false;
         });
       };
@@ -96,7 +97,8 @@ angular.module('contentful').factory('tutorial', ['$compile', 'notification', 't
           }
           guiders.next();
         }, function (err) {
-          notification.serverError('Error creating tutorial entries', err);
+          logger.logServerError('Error creating tutorial entries', {error: err });
+          notification.error('Error creating tutorial entries');
           tutorialScope.standby = false;
         });
       };

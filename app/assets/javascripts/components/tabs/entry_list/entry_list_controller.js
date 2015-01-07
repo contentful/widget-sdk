@@ -99,7 +99,7 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
       if (!ct) return or;
       return ct.getName();
     } catch (e) {
-      logger.logException(e, {contentTypeId: $scope.tab.params.view.contentTypeId});
+      logger.logException(e, {contentTypeId: $scope.tab.params.view.contentTypeId, severity: 'warning'});
       return or;
     }
   };

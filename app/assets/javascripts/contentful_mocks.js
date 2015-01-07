@@ -278,6 +278,40 @@ mocks.config(['$provide', function ($provide) {
     return $delegate;
   }]);
 
+  $provide.provider('realLogger', function(loggerProvider){
+    return loggerProvider;
+  });
+
+  $provide.provider('realNotification', function(notificationProvider){
+    return notificationProvider;
+  });
+
+  $provide.factory('logger', function(){
+    return {
+      logException:    sinon.stub(),
+      logError:        sinon.stub(),
+      logServerError:  sinon.stub(),
+      logWarn:         sinon.stub(),
+      log:             sinon.stub()
+    };
+  });
+
+  $provide.factory('notification', function(){
+    return {
+      error: sinon.stub(),
+      warn:  sinon.stub(),
+      info:  sinon.stub(),
+    };
+  });
+
+  //$provide.decorator('logger', function($delegate){
+    //sinon.stub($delegate, '_log');
+    //return $delegate;
+  //});
+
+  //$provide.decorator('notification', function($delegate){
+    //sinon.stub($delegate, '_notify')
+  //});
 }]);
 
 mocks.config(function ($provide) {

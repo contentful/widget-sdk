@@ -44,7 +44,7 @@ angular.module('contentful').directive('otDocFor', function () {
             scope.otDoc = null;
             logger.logError('Failed to open sharejs doc', {
               data: {
-                err: err,
+                error: err,
                 entity: entity
               }
             });

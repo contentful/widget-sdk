@@ -6,8 +6,8 @@ describe('logger service', function () {
   var routeStub, userStub;
   var loggerStubs = {};
 
-  function declareOptionTests(stubName, metadataIndex) {
-    metadataIndex = metadataIndex || 2;
+  function declareOptionTests(stubName) {
+    var metadataIndex = 2;
     it('has tags', function () {
       expect(loggerStubs[stubName].args[0][metadataIndex].params).toBeDefined();
     });
@@ -63,10 +63,10 @@ describe('logger service', function () {
       });
 
     });
-    inject(function (_logger_, _$httpBackend_, _$rootScope_) {
+    inject(function (realLogger, _$httpBackend_, _$rootScope_) {
       $httpBackend = _$httpBackend_;
       $rootScope = _$rootScope_;
-      logger = _logger_;
+      logger = realLogger;
 
       routeStub.returns({
         viewType: 'viewType'
@@ -169,7 +169,9 @@ describe('logger service', function () {
     var error, options;
     beforeEach(function () {
       error = new Error('error object');
-      logger.logServerError('message', error, options);
+      options = options || {};
+      options.error = error;
+      logger.logServerError('message', options);
     });
 
     it('calls logger method', function () {
@@ -217,7 +219,7 @@ describe('logger service', function () {
     });
 
     describe('on options', function () {
-      declareOptionTests('notifyExceptionStub', 1);
+      declareOptionTests('notifyExceptionStub');
     });
   });
 

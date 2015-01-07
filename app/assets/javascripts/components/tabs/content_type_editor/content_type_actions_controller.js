@@ -27,7 +27,8 @@ angular.module('contentful').
       $scope.spaceContext.removeContentType($scope.contentType);
     })
     .catch(function(err){
-      notification.serverError('Error deleting Content Type', err);
+      logger.logServerError('Error deleting Content Type', {error: err });
+      notification.error('Error deleting Content Type');
     });
   };
 
@@ -57,19 +58,16 @@ angular.module('contentful').
       })
       .catch(function(err){
         var errorId = dotty.get(err, 'body.sys.id');
-        var method = 'serverError';
-        var reason = errorId;
         if (errorId === 'ValidationFailed') {
-          reason = 'Validation failed';
           $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
-          method = 'warn';
+          notification.warn('Error activating ' + title() + ': Validation failed');
         } else if (errorId === 'VersionMismatch') {
-          reason = 'Can only activate most recent version';
-          method = 'warn';
+          notification.warn('Error activating ' + title() + ': Can only activate most recent version');
         } else {
-          reason = dotty.get(err, 'body.message');
+          var reason = dotty.get(err, 'body.message');
+          notification.error('Error activating ' + title() + ': ' + reason);
+          logger.logServerError('Error activating Content Type', {error: err});
         }
-        notification[method]('Error activating ' + title() + ': ' + reason, err);
       });
     });
   };
@@ -91,7 +89,7 @@ angular.module('contentful').
     })
     .catch(function(err){
       var reason = dotty.get(err, 'body.message');
-      if(!reason) logger.logServerError('Error deactivating Content Type', err);
+      if(!reason) logger.logServerError('Error deactivating Content Type', {error: err });
       notification.warn('Error deactivating ' + title() + ': ' + reason, err);
     });
   };

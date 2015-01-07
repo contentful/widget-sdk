@@ -2,12 +2,13 @@
 
 describe('Field Settings Editor Controller', function () {
   var controller, scope, stubs;
+  var logger, notification;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'perType', 'fieldTypeParams', 'fieldIsPublished', 'open', 'warn',
-        'at', 'set', 'get', 'serverError', 'modifiedContentType', 'remove', 'logServerError'
+        'perType', 'fieldTypeParams', 'fieldIsPublished', 'open',
+        'at', 'set', 'get', 'serverError', 'modifiedContentType', 'remove'
       ]);
 
       $provide.removeControllers('ApiNameController');
@@ -22,22 +23,15 @@ describe('Field Settings Editor Controller', function () {
         open: stubs.open
       });
 
-      $provide.value('notification', {
-        serverError: stubs.serverError,
-        warn: stubs.warn
-      });
-
-      $provide.value('logger', {
-        logServerError: stubs.logServerError
-      });
-
       $provide.value('analytics', {
         modifiedContentType: stubs.modifiedContentType
       });
 
     });
-    inject(function ($controller, $rootScope) {
+    inject(function ($controller, $rootScope, $injector) {
       scope = $rootScope.$new();
+      logger       = $injector.get('logger');
+      notification = $injector.get('notification');
 
       scope.field = {};
       scope.pickNewDisplayField = sinon.stub();
@@ -224,7 +218,8 @@ describe('Field Settings Editor Controller', function () {
         });
 
         it('shows error', function() {
-          expect(stubs.serverError).toBeCalled();
+          expect(logger.logServerError).toBeCalled();
+          expect(notification.error).toBeCalled();
         });
       });
     });
@@ -292,7 +287,8 @@ describe('Field Settings Editor Controller', function () {
         });
 
         it('shows error', function() {
-          expect(stubs.logServerError).toBeCalled();
+          expect(logger.logServerError).toBeCalled();
+          expect(notification.warn).toBeCalled();
         });
       });
     });

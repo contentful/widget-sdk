@@ -7,12 +7,6 @@ angular.module('contentful').
 
       error: function(body) {
         this._notify(body, 'error');
-        logger.logError(body);
-      },
-
-      serverError: function(body, err) {
-        this._notify(body, 'error');
-        logger.logServerError(body, err);
       },
 
       warn: function(body) {

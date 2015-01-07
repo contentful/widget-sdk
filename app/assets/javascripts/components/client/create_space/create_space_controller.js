@@ -1,8 +1,12 @@
 'use strict';
 
-angular.module('contentful').controller('CreateSpaceDialogController', [
-  '$scope', 'client', 'notification', 'cfSpinner', 'enforcements', '$rootScope',
-  function CreateSpaceDialogController($scope, client, notification, cfSpinner, enforcements, $rootScope) {
+angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope', '$injector', function CreateSpaceDialogController($scope, $injector) {
+    var $rootScope   = $injector.get('$rootScope');
+    var cfSpinner    = $injector.get('cfSpinner');
+    var client       = $injector.get('client');
+    var enforcements = $injector.get('enforcements');
+    var logger       = $injector.get('logger');
+    var notification = $injector.get('notification');
 
     function resetNewSpaceData() {
       $scope.newSpaceData = _.cloneDeep({defaultLocale: 'en-US'});
@@ -44,6 +48,7 @@ angular.module('contentful').controller('CreateSpaceDialogController', [
       if(!$scope.canCreateSpaceInOrg(orgId)){
         stopSpinner();
         $scope.dialog.cancel();
+        logger.logError('You can\'t create a Space in this Organization');
         return notification.error('You can\'t create a Space in this Organization');
       }
 
@@ -62,11 +67,9 @@ angular.module('contentful').controller('CreateSpaceDialogController', [
         });
       })
       .catch(function(err){
-        var dismiss = true, method = 'serverError';
-        var errorMessage = 'Could not create Space';
+        var dismiss = true;
         var usage = enforcements.computeUsage('space');
         if(usage){
-          errorMessage = usage;
           var enforcement = enforcements.determineEnforcement('usageExceeded');
           $rootScope.$broadcast('persistentNotification', {
             message: enforcement.message,
@@ -74,14 +77,14 @@ angular.module('contentful').controller('CreateSpaceDialogController', [
             actionMessage: enforcement.actionMessage,
             action: enforcement.action
           });
-          method = 'warn';
+          notification.warn(usage);
         } else if(hasErrorOnField(err, 'length', 'name')){
-          errorMessage = 'Space name is too long';
           dismiss = false;
-          method = 'warn';
+          notification.warn('Space name is too long');
+        } else {
+          notification.error('Could not create Space');
+          logger.logServerError('Could not create Space', {error: err});
         }
-
-        notification[method](errorMessage, err);
 
         if(dismiss){
           $scope.lockSubmit = false;

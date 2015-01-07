@@ -1,26 +1,18 @@
 'use strict';
 
 describe('Asset Actions Controller', function () {
-  var controller, scope, stubs;
+  var controller, scope, stubs, logger, notification;
   var space, asset;
   var $q, action;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs([
-        'serverError', 'warn', 'info', 'otUpdateEntity', 'getAt', 'logServerError'
-      ]);
-      $provide.value('notification', {
-        serverError: stubs.serverError,
-        info: stubs.info,
-        warn: stubs.warn
-      });
-      $provide.value('logger', {
-        logServerError: stubs.logServerError
-      });
+      stubs = $provide.makeStubs([ 'otUpdateEntity', 'getAt' ]);
     });
-    inject(function ($controller, $rootScope, cfStub, _$q_) {
-      $q = _$q_;
+    inject(function ($controller, $rootScope, cfStub, $injector) {
+      $q = $injector.get('$q');
+      logger = $injector.get('logger');
+      notification = $injector.get('notification');
       space = cfStub.space('spaceid');
       var contentTypeData = cfStub.contentTypeData('type1');
       asset = cfStub.asset(space, 'assetid');
@@ -52,7 +44,8 @@ describe('Asset Actions Controller', function () {
 
 
       it('shows error notification', function() {
-        expect(stubs.serverError).toBeCalled();
+        expect(notification.error).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
       });
     });
 
@@ -68,7 +61,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows notification', function() {
-        expect(stubs.info).toBeCalled();
+        expect(notification.info).toBeCalled();
       });
 
       it('broadcasts event', function() {
@@ -94,7 +87,8 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.logServerError).toBeCalled();
+        expect(notification.warn).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
       });
     });
 
@@ -110,7 +104,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows notification', function() {
-        expect(stubs.info).toBeCalled();
+        expect(notification.info).toBeCalled();
       });
     });
   });
@@ -132,7 +126,8 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.logServerError).toBeCalled();
+        expect(notification.warn).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
       });
     });
 
@@ -148,7 +143,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows notification', function() {
-        expect(stubs.info).toBeCalled();
+        expect(notification.info).toBeCalled();
       });
     });
   });
@@ -170,7 +165,8 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.logServerError).toBeCalled();
+        expect(notification.warn).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
       });
     });
 
@@ -187,7 +183,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows notification', function() {
-        expect(stubs.info).toBeCalled();
+        expect(notification.info).toBeCalled();
       });
 
       it('updates ot entity', function() {
@@ -215,7 +211,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows warn notification', function() {
-        expect(stubs.warn).toBeCalled();
+        expect(notification.warn).toBeCalled();
       });
     });
 
@@ -253,7 +249,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.warn).toBeCalled();
+        expect(notification.warn).toBeCalled();
       });
     });
 
@@ -285,11 +281,11 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.warn).toBeCalled();
+        expect(notification.warn).toBeCalled();
       });
 
       it('gets contextual error message', function() {
-        expect(stubs.warn.args[0][0]).toMatch(/version/i);
+        expect(notification.warn.args[0][0]).toMatch(/version/i);
       });
     });
 
@@ -319,11 +315,12 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows error notification', function() {
-        expect(stubs.serverError).toBeCalled();
+        expect(notification.error).toBeCalled();
+        expect(logger.logServerError).toBeCalled();
       });
 
       it('gets contextual error message', function() {
-        expect(stubs.serverError.args[0][1]).toEqual(err);
+        expect(logger.logServerError.args[0][1]).toEqual({error: err});
       });
     });
 
@@ -347,7 +344,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('shows notification', function() {
-        expect(stubs.info).toBeCalled();
+        expect(notification.info).toBeCalled();
       });
 
       it('updates ot entity', function() {
