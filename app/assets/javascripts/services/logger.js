@@ -4,6 +4,7 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
   var $window        = $injector.get('$window');
   var environment    = $injector.get('environment');
   var stringifySafe  = $injector.get('stringifySafe');
+  var toJsonReplacer = $injector.get('toJsonReplacer');
 
   function onServiceReady() {
     if($window.Bugsnag){
@@ -20,14 +21,18 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
         id: dotty.get(user, 'sys.id'),
         firstName: dotty.get(user, 'firstName'),
         lastName: dotty.get(user, 'lastName'),
+        organizations: getOrganizations(),
       };
     }
   }
 
-  function rand(length, current){
-   current = current ? current : '';
-
-   return length ? rand( --length , '0123456789ABCDEFabcdef'.charAt( Math.floor( Math.random() * 22 ) ) + current ) : current;
+  function getOrganizations() {
+    var authentication = $injector.get('authentication');
+    var user = authentication.getUser();
+    var organizationNames = _.map(user.organizationMemberships, function(m){
+      return m.organization.name;
+    });
+    return organizationNames.join(',');
   }
 
   function getRoute() {
@@ -38,42 +43,33 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
 
   function getParams() {
     var route = getRoute();
-    var params = _.pick(route.params, 'spaceId', 'entryId', 'contentTypeId', 'apiKeyId');
-    return _.extend(params, {
-      viewport: ''+$window.innerWidth+'x'+$window.innerHeight,
-      screensize: ''+$window.screen.width+'x'+$window.screen.height
+    return _.extend({}, 
+      route.params,
+      route.pathParams,
+      {
+        viewport: ''+$window.innerWidth+'x'+$window.innerHeight,
+        screensize: ''+$window.screen.width+'x'+$window.screen.height
+      });
+  }
+
+  function augmentMetadata(metaData) {
+    metaData = metaData ? metaData : {};
+    // params tab
+    _.extend(metaData, {
+      params: getParams()
     });
-  }
-
-  // extra metadata is shown in Bugsnag's "custom" tab
-  function getMetadata(extra) {
-    return _.extend({
-      params: getParams(),
-    }, addDataId(extra || {}));
-  }
-
-  function addDataId(options) {
-    var dataId = null;
-    if(options && options.data){
-      dataId = logDataObject(preParseData(options.data));
-      options.dataId = dataId;
-      delete options.data;
+    // data tab
+    if (metaData.data) {
+      metaData.data = preParseData(metaData.data);
     }
-    return options;
-  }
-
-  function logDataObject(data) {
-    var id = rand(64);
-    var $http = $injector.get('$http');
-    $http.post(environment.settings.dataLoggerUrl+id, data);
-    return id;
+    return metaData;
   }
 
   function preParseData(data) {
     var prop;
     for(var key in data){
       prop = data[key];
-      data[key] = JSON.parse(stringifySafe(prop)||'{}');
+      data[key] = JSON.parse(stringifySafe(prop)||'{}', toJsonReplacer);
     }
     return data;
   }
@@ -81,14 +77,11 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
   return {
     onServiceReady: onServiceReady,
 
-    // TODO prefix _
-    logDataObject: logDataObject,
-
-    logException: function (exception, extra) {
+    logException: function (exception, metaData) {
       if($window.Bugsnag){
         setUserInfo();
-        var options = _.extend({severity: 'error'}, getMetadata(extra));
-        $window.Bugsnag.notifyException(exception, null, options);
+        var augmented = _.extend({severity: 'error'}, augmentMetadata(metaData));
+        $window.Bugsnag.notifyException(exception, null, augmented);
       }
     },
 
@@ -96,28 +89,28 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
       $window.Bugsnag.refresh();
     },
 
-    logError: function (message, options) {
-      this._log('Logged Error', 'error', message, options);
+    logError: function (message, metaData) {
+      this._log('Logged Error', 'error', message, metaData);
     },
 
-    logServerError: function (message, options) {
-      this._log('Logged Server Error', 'error', message, options);
+    logServerError: function (message, metaData) {
+      this._log('Logged Server Error', 'error', message, metaData);
     },
 
-    logWarn: function (message, options) {
-      this._log('Logged Warning', 'warning', message, options);
+    logWarn: function (message, metaData) {
+      this._log('Logged Warning', 'warning', message, metaData);
     },
 
-    log: function (message, options) {
-      this._log('Logged Info', 'info', message, options);
+    log: function (message, metaData) {
+      this._log('Logged Info', 'info', message, metaData);
     },
 
-    _log: function(type, severity, message, options) {
+    _log: function(type, severity, message, metaData) {
       if ($window.Bugsnag) {
-        options = options || {};
-        options.groupingHash = options.groupingHash || message;
+        metaData = metaData || {};
+        metaData.groupingHash = metaData.groupingHash || message;
         setUserInfo();
-        $window.Bugsnag.notify(type, message, getMetadata(options), severity);
+        $window.Bugsnag.notify(type, message, augmentMetadata(metaData), severity);
       }
     }
 
