@@ -167,7 +167,7 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('slugEditor', {
     fieldTypes: ['Symbol'],
     name: 'Slug',
-    template: '<cf-slug-editor></cf-slug-editor>'
+    template: '<cf-slug-editor class="widget-slug-editor"></cf-slug-editor>'
   });
   //toggle: {   NOT IMPLEMENTED
     //fieldTypes: ['Boolean'],

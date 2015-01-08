@@ -3,11 +3,13 @@
 angular.module('contentful').controller('SlugEditorController', [
   '$scope', '$injector', function ($scope, $injector) {
 
-  var slugUtils = $injector.get('slug');
+  var slugUtils = $injector.get('slug'),
+      debounce = $injector.get('debounce');
 
   var spaceContext = $scope.spaceContext,
       currentLocale = $scope.locale, //locale for slug widget
       defaultLocale = spaceContext.defaultLocale,
+      debouncedPerformDuplicityCheck = debounce(performDuplicityCheck, 500),
       unwatchers = [];
 
   $scope.$watch('otEditable', function (otEditable) {
@@ -60,6 +62,11 @@ angular.module('contentful').controller('SlugEditorController', [
    * information about uniqueness from the server.
    */
   function updateStateFromSlug() {
+    delete $scope.state;
+    if ($scope.fieldData.value) {
+      $scope.state = 'checking';
+      debouncedPerformDuplicityCheck();
+    }
     updateDivergedStatus();
   }
 
@@ -91,4 +98,27 @@ angular.module('contentful').controller('SlugEditorController', [
     return spaceContext.entryTitle($scope.entry, currentLocale.code, true) ||
            spaceContext.entryTitle($scope.entry, defaultLocale.code, true);
   }
+
+  /**
+   * Check the uniqueness of the slug in the current space.
+   * The slug is unique if there is no published entry other than the
+   * current one, with the same slug.
+   * TODO: Currently for searches, we use the API Name of the field,
+   * but this is an anti-pattern and will likely change in the future.
+   */
+  function performDuplicityCheck() {
+    var value = $scope.fieldData.value,
+        req = {};
+
+    if (value) {
+      req['content_type'] = $scope.entry.getContentTypeId();
+      req['fields.' + $scope.field.apiName || $scope.field.id] = value;
+      req['sys.id[ne]'] = $scope.entry.getId();
+      req['sys.publishedAt[exists]'] = true;
+      $scope.spaceContext.space.getEntries(req).then(function (res) {
+        $scope.state = (res.total !== 0) ? 'duplicate' : 'unique';
+      });
+    }
+  }
+
 }]);

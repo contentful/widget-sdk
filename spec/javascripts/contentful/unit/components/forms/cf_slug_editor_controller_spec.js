@@ -12,6 +12,7 @@ describe('SlugEditorController', function () {
         scope = this.scope,
         $q = this.$inject('$q');
 
+    this.$q = $q;
     dotty.put(this.scope, 'fieldData.value', null);
     dotty.put(this.scope, 'locale.code', 'en_US');
     dotty.put(this.scope, 'field.apiName', 'slug');
@@ -82,6 +83,57 @@ describe('SlugEditorController', function () {
       this.$apply();
       // Notice the slug is still the first title
       expect(this.scope.fieldData.value).toEqual('this-is-the-first-title');
+    });
+  });
+
+  describe('#uniqueness', function () {
+    beforeEach(function () {
+      this.scope.spaceContext.entryTitle = sinon.stub().returns(null);
+      this.$apply();
+    });
+
+    it('should show uniqueness when there are no other entries in the query result', function () {
+      var $q = this.$q;
+      // Let the server respond with zero entries
+      this.scope.spaceContext.space.getEntries = function () {
+        return $q.when({ total: 0 });
+      };
+      // Set a new title.
+      this.scope.spaceContext.entryTitle = sinon.stub().returns('New Title');
+      this.$apply();
+      expect(this.scope.state).toEqual('unique');
+      expect(this.scope.fieldData.value).toEqual('new-title');
+    });
+
+    it('should show the state as unique when there are matching entries in the query result', function () {
+      var $q = this.$q;
+      // Let the server respond with one entry
+      this.scope.spaceContext.space.getEntries = function () {
+        return $q.when({ total: 1 });
+      };
+      // Set a new title.
+      this.scope.spaceContext.entryTitle = sinon.stub().returns('New Title');
+      this.$apply();
+      expect(this.scope.state).toEqual('duplicate');
+      expect(this.scope.fieldData.value).toEqual('new-title');
+    });
+
+    it('should show the state as "checking" when the query has not been resolved', function () {
+      var $q = this.$q,
+          responsePDeferred = $q.defer();
+      // Return a promise without resolving it yet, to mimic a delay in the server's response
+      this.scope.spaceContext.space.getEntries = function () {
+        return responsePDeferred.promise;
+      };
+      // Set a new title.
+      this.scope.spaceContext.entryTitle = sinon.stub().returns('New Title');
+      this.$apply();
+      expect(this.scope.state).toEqual('checking');
+      // Now 'receive' the server response by resolving the promise.
+      responsePDeferred.resolve({ total: 0 });
+      this.$apply();
+      expect(this.scope.state).toEqual('unique');
+      expect(this.scope.fieldData.value).toEqual('new-title');
     });
   });
 });
