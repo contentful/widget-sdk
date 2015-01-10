@@ -1,7 +1,5 @@
 'use strict';
 angular.module('contentful').factory('youtubeGAPIAdapter', ['$injector', function($injector){
-
-  var $q         = $injector.get('$q');
   var gapiLoader = $injector.get('gapiLoader');
 
   return {

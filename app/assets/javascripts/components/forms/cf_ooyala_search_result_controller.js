@@ -22,6 +22,7 @@ angular.module('contentful').controller('cfOoyalaSearchResultController', ['$sco
   }
 
   function playVideo() {
+    /*jshint validthis:true*/
     if( !$scope.playerId ) {
       $scope.playerId    = $scope.video.playerId;
       $scope.assetId     = $scope.video.id;
@@ -36,7 +37,7 @@ angular.module('contentful').controller('cfOoyalaSearchResultController', ['$sco
   }
 
   function selectVideo() {
-    $scope.isResultSelected = $scope.isResultSelected != true;
+    $scope.isResultSelected = !$scope.isResultSelected;
 
     if ($scope.isResultSelected) {
       $scope.selectVideo($scope.video);

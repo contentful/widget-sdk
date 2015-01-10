@@ -1,7 +1,7 @@
 'use strict';
 
 describe('Form Widgets Controller', function () {
-  var controller, scope, interf;
+  var controller, scope;
 
   beforeEach(function () {
     module('contentful/test');

@@ -5,7 +5,7 @@ angular.module('contentful').directive('cfCopyPaste', ['$injector', function($in
   var environment = $injector.get('environment');
   var $window = $injector.get('$window');
   ZeroClipboard.config({
-    moviePath: "/app/ZeroClipboard.swf",
+    moviePath: '/app/ZeroClipboard.swf',
     forceHandCursor: true,
     allowScriptAccess: 'always',
     useNoCache: true,
@@ -51,7 +51,7 @@ angular.module('contentful').directive('cfCopyPaste', ['$injector', function($in
         }
 
 
-        function mouseoverHandler(client, args) {
+        function mouseoverHandler(/*client, args*/) {
           /*jshint validthis: true*/
           $(this).attr('copy-status', 'default');
           $(this).tooltip('show');
@@ -62,14 +62,14 @@ angular.module('contentful').directive('cfCopyPaste', ['$injector', function($in
         }
         clip.on('mouseover', mouseoverHandler);
 
-        function mouseoutHandler(client, args) {
+        function mouseoutHandler(/*client, args*/) {
           /*jshint validthis: true*/
           $(this).tooltip('hide');
           $(this).attr('copy-status', 'default');
         }
         clip.on('mouseout', mouseoutHandler);
 
-        function dataRequestedHandler(client, args) {
+        function dataRequestedHandler(client/*, args*/) {
           /*jshint validthis: true*/
           var clipboardTarget;
           $(this).tooltip('hide');
@@ -86,7 +86,7 @@ angular.module('contentful').directive('cfCopyPaste', ['$injector', function($in
         }
         clip.on('dataRequested', dataRequestedHandler);
 
-        function completeHandler(client, args) {
+        function completeHandler(/*client, args*/) {
           /*jshint validthis: true*/
           $(this).tooltip('hide');
           $(this).attr('copy-status', 'copied');

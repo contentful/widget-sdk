@@ -6,7 +6,7 @@ angular.module('contentful').directive('cfOoyalaSearchResult', [function(){
     restrict: 'C',
     controller: 'cfOoyalaSearchResultController',
     controllerAs: 'ooyalaSearchResultController',
-    link: function(scope, elem, attr) {
+    link: function(scope, elem) {
       scope.isMouseOver         = false;
 
       scope.handleMouseOver  = handleMouseOver;

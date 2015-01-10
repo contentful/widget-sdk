@@ -1,7 +1,6 @@
 'use strict';
 angular.module('contentful').factory('editingInterfaces', ['$injector', function($injector){
   var $q           = $injector.get('$q');
-  var environment  = $injector.get('environment');
   var notification = $injector.get('notification');
   var logger       = $injector.get('logger');
   var random       = $injector.get('random');

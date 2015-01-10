@@ -9,7 +9,6 @@ angular.module('contentful').controller('SpaceController', ['$scope', '$injector
   var enforcements   = $injector.get('enforcements');
   var logger         = $injector.get('logger');
   var notification   = $injector.get('notification');
-  var routing        = $injector.get('routing');
 
   $controller('UiConfigController', {$scope: $scope});
 

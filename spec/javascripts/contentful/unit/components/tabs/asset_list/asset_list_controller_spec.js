@@ -3,18 +3,6 @@
 describe('Asset List Controller', function () {
   var controller, scope, stubs, $q, $rootScope, getAssets;
 
-  var makeAsset = function (sys) {
-    var asset;
-    inject(function (contentfulClient) {
-      asset = new contentfulClient.Entity({ sys: sys || {} });
-    });
-    stubs.deleted = sinon.stub(asset, 'isDeleted');
-    stubs.published = sinon.stub(asset, 'isPublished');
-    stubs.hasUnpublishedChanges = sinon.stub(asset, 'hasUnpublishedChanges');
-    asset.isArchived = stubs.archived;
-    return asset;
-  };
-
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([

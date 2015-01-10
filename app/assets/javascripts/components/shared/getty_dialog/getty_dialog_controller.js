@@ -1,7 +1,12 @@
 'use strict';
 
-angular.module('contentful').controller('GettyDialogController',
-    ['$scope', 'gettyImagesFactory', 'PromisedLoader', 'Paginator', 'fileSize', 'stringUtils', 'logger', 'random', function($scope, gettyImagesFactory, PromisedLoader, Paginator, fileSize, stringUtils, logger, random) {
+angular.module('contentful').controller('GettyDialogController', ['$scope', '$injector', function($scope, $injector) {
+  var Paginator          = $injector.get('Paginator');
+  var PromisedLoader     = $injector.get('PromisedLoader');
+  var fileSize           = $injector.get('fileSize');
+  var gettyImagesFactory = $injector.get('gettyImagesFactory');
+  var logger             = $injector.get('logger');
+  var stringUtils        = $injector.get('stringUtils');
 
   var IMAGES_PER_PAGE = 6;
 
@@ -300,6 +305,7 @@ angular.module('contentful').controller('GettyDialogController',
   }
 
   function getPath(obj, path) {
+    /*jshint boss:true*/
     var segment;
     path = path.split('.');
     while(segment = path.shift()){

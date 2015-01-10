@@ -14,7 +14,8 @@ function Where(property, value){
 }
 
 Where.prototype.toQueryStringElement = function(){
-  return 'where=' + escape(this.property + '=' + "'" + this.value + "'");
+  /*global escape*/
+  return 'where=' + escape(this.property + '=' + '\'' + this.value + '\'');
 };
 
 angular.module('contentful').factory('OoyalaQuery', function(){

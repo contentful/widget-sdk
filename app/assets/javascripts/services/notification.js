@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('contentful').
-  service('notification', ['logger', function(logger) {
+  service('notification', [function() {
     return {
       messages: [],
 

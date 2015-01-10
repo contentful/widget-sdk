@@ -62,7 +62,7 @@ describe('otBindText', function () {
   });
 
   describe('when mkPath fails', function () {
-    it('should throw an error', inject(function (ShareJS, $rootScope, environment){
+    it('should throw an error', inject(function (ShareJS, $rootScope){
       ShareJS.mkpath = sinon.stub().yieldsAsync('error');
       ShareJS.peek.withArgs(undefined, ['value']).returns(undefined);
       $rootScope.entity.value = null;

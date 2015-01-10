@@ -2,7 +2,6 @@
 angular.module('contentful').controller('FormWidgetsController', ['$scope', '$injector', function FormWidgetsController($scope, $injector){
   var controller = this;
   var editingInterfaces = $injector.get('editingInterfaces');
-  var logger            = $injector.get('logger');
 
   $scope.$watch(getContentTypeFields,                    updateEditingInterface, true);
   $scope.$watch(getAvailableWidgets,                     updateWidgets, true);

@@ -83,7 +83,7 @@ angular.module('contentful').controller('ErrorPathController', ['$scope', '$attr
 
   var NO_DATA = {};
 
-  function getEntityType(error) {
+  function getEntityType(/*error*/) {
     var object = $scope.validationResult.data;
     return object && object.sys && object.sys.type;
   }

@@ -6,19 +6,6 @@ describe('Entry List Controller', function () {
   var createController;
   var $q;
 
-  var makeEntry = function (sys) {
-    var entry;
-    inject(function (contentfulClient) {
-      entry = new contentfulClient.Entity({ sys: sys || {} });
-    });
-    stubs.deleted = sinon.stub(entry, 'isDeleted');
-    stubs.published = sinon.stub(entry, 'isPublished');
-    stubs.hasUnpublishedChanges = sinon.stub(entry, 'hasUnpublishedChanges');
-    entry.isArchived = stubs.archived;
-    entry.getContentTypeId = stubs.getContentTypeId;
-    return entry;
-  };
-
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([

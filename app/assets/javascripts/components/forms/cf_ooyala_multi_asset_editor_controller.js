@@ -3,7 +3,6 @@
 angular.module('contentful').controller('cfOoyalaMultiAssetEditorController', ['$scope', '$injector', function($scope, $injector){
   var ShareJS     = $injector.get('ShareJS');
   var $q          = $injector.get('$q');
-  var modalDialog = $injector.get('modalDialog');
 
   $scope.ooyalaMulti = {assets: []};
   $scope.searchConfig  = {

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('EntityStatusController', ['$scope', function EntityStatusController($scope) {
+angular.module('contentful').controller('EntityStatusController', [function EntityStatusController() {
 
   var PREFIX = 'entity-status--';
 

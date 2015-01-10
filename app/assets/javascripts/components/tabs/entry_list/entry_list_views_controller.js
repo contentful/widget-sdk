@@ -42,11 +42,13 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
     sys: true
   };
 
+  /*
   var contentTypeField = {
     id: 'contentType',
     name: 'Content Type',
     type: 'Symbol'
   };
+ */
 
   $scope.systemFields = [
     updatedAtField,

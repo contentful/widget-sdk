@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').directive('cfRatingEditor', ['$injector', function($injector){
+angular.module('contentful').directive('cfRatingEditor', [function(){
   return {
     restrict: 'E',
     scope: true,
