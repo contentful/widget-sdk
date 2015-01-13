@@ -165,15 +165,12 @@ gulp.task('vendor_stylesheets', function () {
 
 gulp.task('stylesheets', function () {
   return gulp.src(src.mainStylesheets)
+    .pipe(sourceMaps.init())
     .pipe(stylus({
       use: nib(),
-      sourcemap: {
-        inline: true,
-        sourceRoot: '/stylesheets',
-        basePath: 'app/assets/stylesheets'
-      }
       //compress: true
     }))
+    .pipe(sourceMaps.write({sourceRoot: '/stylesheets'}))
     .pipe(gulp.dest('./public/app'));
 });
 
