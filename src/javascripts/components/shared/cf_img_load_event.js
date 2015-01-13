@@ -3,8 +3,10 @@
 angular.module('contentful').directive('cfImgLoadEvent', [function () {
   return {
     link: function (scope, elem, attrs) {
-      scope.$watch(attrs.src, function () {
-        scope.$emit('imageUnloaded', elem);
+      scope.$watch(function(){
+        return attrs.src;
+      }, function(src, old){
+        if (src !== old) scope.$emit('imageUnloaded', elem);
       });
 
       elem.on('load', function () {
