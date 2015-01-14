@@ -343,125 +343,125 @@ describe('Space Template loading service', function () {
 
   sourceContentTypes = [
     {
-      "sys": {
-        "id": "68VvdXqINiM0MCoqwa8CQC",
-        "revision": 1,
-        "type": "ContentType",
-        "locale": "en-US",
-        "createdAt": "2014-12-03T16:31:33.179Z",
-        "updatedAt": "2014-12-03T16:31:51.674Z",
-        "space": {
-          "sys": {
-            "id": "4o9zrkqge2wv",
-            "type": "Link",
-            "linkType": "Space"
+      'sys': {
+        'id': '68VvdXqINiM0MCoqwa8CQC',
+        'revision': 1,
+        'type': 'ContentType',
+        'locale': 'en-US',
+        'createdAt': '2014-12-03T16:31:33.179Z',
+        'updatedAt': '2014-12-03T16:31:51.674Z',
+        'space': {
+          'sys': {
+            'id': '4o9zrkqge2wv',
+            'type': 'Link',
+            'linkType': 'Space'
           }
         }
       },
-      "fields": [
+      'fields': [
         {
-          "name": "Name",
-          "id": "name",
-          "type": "Text",
-          "required": true
+          'name': 'Name',
+          'id': 'name',
+          'type': 'Text',
+          'required': true
         }
       ],
-      "name": "Category",
-      "displayField": "name"
+      'name': 'Category',
+      'displayField': 'name'
     },
     {
-      "sys": {
-        "id": "1Lkju6MyzqSIcwEaAOeM4s",
-        "revision": 4,
-        "type": "ContentType",
-        "locale": "en-US",
-        "createdAt": "2014-12-03T16:30:13.990Z",
-        "updatedAt": "2014-12-04T11:36:31.381Z",
-        "space": {
-          "sys": {
-            "id": "4o9zrkqge2wv",
-            "type": "Link",
-            "linkType": "Space"
+      'sys': {
+        'id': '1Lkju6MyzqSIcwEaAOeM4s',
+        'revision': 4,
+        'type': 'ContentType',
+        'locale': 'en-US',
+        'createdAt': '2014-12-03T16:30:13.990Z',
+        'updatedAt': '2014-12-04T11:36:31.381Z',
+        'space': {
+          'sys': {
+            'id': '4o9zrkqge2wv',
+            'type': 'Link',
+            'linkType': 'Space'
           }
         }
       },
-      "fields": [
+      'fields': [
         {
-          "name": "Title",
-          "id": "title",
-          "type": "Text",
-          "required": true,
-          "localized": true
+          'name': 'Title',
+          'id': 'title',
+          'type': 'Text',
+          'required': true,
+          'localized': true
         },
         {
-          "name": "Content",
-          "id": "content",
-          "type": "Text",
-          "localized": true
+          'name': 'Content',
+          'id': 'content',
+          'type': 'Text',
+          'localized': true
         },
         {
-          "name": "Category",
-          "id": "category",
-          "type": "Link",
-          "linkType": "Entry"
+          'name': 'Category',
+          'id': 'category',
+          'type': 'Link',
+          'linkType': 'Entry'
         },
         {
-          "name": "Image",
-          "id": "image",
-          "type": "Link",
-          "linkType": "Asset"
+          'name': 'Image',
+          'id': 'image',
+          'type': 'Link',
+          'linkType': 'Asset'
         }
       ],
-      "name": "Post",
-      "displayField": "title"
+      'name': 'Post',
+      'displayField': 'title'
     }
   ];
 
   sourceEditingInterfaces = [
     {
-      "title": "Default",
-      "contentTypeId": "68VvdXqINiM0MCoqwa8CQC",
-      "widgets": [
+      'title': 'Default',
+      'contentTypeId': '68VvdXqINiM0MCoqwa8CQC',
+      'widgets': [
         {
-          "id": "ljZpnZHxIk2voQXaz8h83ggfM3zPgayp",
-          "widgetType": "field",
-          "fieldId": "ljZpnZHxIk2voQXa",
-          "widgetId": "multipleLine",
-          "widgetParams": {}
+          'id': 'ljZpnZHxIk2voQXaz8h83ggfM3zPgayp',
+          'widgetType': 'field',
+          'fieldId': 'ljZpnZHxIk2voQXa',
+          'widgetId': 'multipleLine',
+          'widgetParams': {}
         }
       ],
-      "sys": {
-        "id": "default",
-        "type": "EditorInterface",
-        "version": 2,
-        "createdAt": "2015-01-07T13:57:01.414Z",
-        "createdBy": {
-          "sys": {
-            "type": "Link",
-            "linkType": "User",
-            "id": "2u3AlPOpmEvvt47kzdCclj"
+      'sys': {
+        'id': 'default',
+        'type': 'EditorInterface',
+        'version': 2,
+        'createdAt': '2015-01-07T13:57:01.414Z',
+        'createdBy': {
+          'sys': {
+            'type': 'Link',
+            'linkType': 'User',
+            'id': '2u3AlPOpmEvvt47kzdCclj'
           }
         },
-        "space": {
-          "sys": {
-            "type": "Link",
-            "linkType": "Space",
-            "id": "4o9zrkqge2wv"
+        'space': {
+          'sys': {
+            'type': 'Link',
+            'linkType': 'Space',
+            'id': '4o9zrkqge2wv'
           }
         },
-        "contentType": {
-          "sys": {
-            "type": "Link",
-            "linkType": "ContentType",
-            "id": "68VvdXqINiM0MCoqwa8CQC"
+        'contentType': {
+          'sys': {
+            'type': 'Link',
+            'linkType': 'ContentType',
+            'id': '68VvdXqINiM0MCoqwa8CQC'
           }
         },
-        "updatedAt": "2015-01-07T14:05:19.146Z",
-        "updatedBy": {
-          "sys": {
-            "type": "Link",
-            "linkType": "User",
-            "id": "2u3AlPOpmEvvt47kzdCclj"
+        'updatedAt': '2015-01-07T14:05:19.146Z',
+        'updatedBy': {
+          'sys': {
+            'type': 'Link',
+            'linkType': 'User',
+            'id': '2u3AlPOpmEvvt47kzdCclj'
           }
         }
       }
@@ -470,91 +470,91 @@ describe('Space Template loading service', function () {
 
   sourceEntries = [
     {
-      "sys": {
-        "id": "4Gwo3bNWc8UW2ycWiswGsM",
-        "revision": 2,
-        "type": "Entry",
-        "contentType": {
-          "sys": {
-            "id": "1Lkju6MyzqSIcwEaAOeM4s",
-            "type": "Link",
-            "linkType": "ContentType"
+      'sys': {
+        'id': '4Gwo3bNWc8UW2ycWiswGsM',
+        'revision': 2,
+        'type': 'Entry',
+        'contentType': {
+          'sys': {
+            'id': '1Lkju6MyzqSIcwEaAOeM4s',
+            'type': 'Link',
+            'linkType': 'ContentType'
           }
         },
-        "createdAt": "2014-12-04T11:41:06.595Z",
-        "updatedAt": "2014-12-04T11:41:43.968Z",
-        "space": {
-          "sys": {
-            "id": "4o9zrkqge2wv",
-            "type": "Link",
-            "linkType": "Space"
+        'createdAt': '2014-12-04T11:41:06.595Z',
+        'updatedAt': '2014-12-04T11:41:43.968Z',
+        'space': {
+          'sys': {
+            'id': '4o9zrkqge2wv',
+            'type': 'Link',
+            'linkType': 'Space'
           }
         }
       },
-      "fields": {
-        "content": {"en-US": "..."},
-        "title": {"en-US": "Lick butt jump off balcony, onto stranger head"},
-        "category": {"en-US":
+      'fields': {
+        'content': {'en-US': '...'},
+        'title': {'en-US': 'Lick butt jump off balcony, onto stranger head'},
+        'category': {'en-US':
           {
-            "sys": {
-              "id": "5AMisZG9BmqqYWge0Acmik",
-              "revision": 1,
-              "type": "Entry",
-              "locale": "en-US",
-              "contentType": {
-                "sys": {
-                  "id": "68VvdXqINiM0MCoqwa8CQC",
-                  "type": "Link",
-                  "linkType": "ContentType"
+            'sys': {
+              'id': '5AMisZG9BmqqYWge0Acmik',
+              'revision': 1,
+              'type': 'Entry',
+              'locale': 'en-US',
+              'contentType': {
+                'sys': {
+                  'id': '68VvdXqINiM0MCoqwa8CQC',
+                  'type': 'Link',
+                  'linkType': 'ContentType'
                 }
               },
-              "createdAt": "2014-12-04T11:37:12.087Z",
-              "updatedAt": "2014-12-04T11:37:19.040Z",
-              "space": {
-                "sys": {
-                  "id": "4o9zrkqge2wv",
-                  "type": "Link",
-                  "linkType": "Space"
+              'createdAt': '2014-12-04T11:37:12.087Z',
+              'updatedAt': '2014-12-04T11:37:19.040Z',
+              'space': {
+                'sys': {
+                  'id': '4o9zrkqge2wv',
+                  'type': 'Link',
+                  'linkType': 'Space'
                 }
               }
             },
-            "fields": {
-              "name": "Animals"
+            'fields': {
+              'name': 'Animals'
             }
           }
         },
-        "image": {"en-US":
+        'image': {'en-US':
           {
-            "sys": {
-              "id": "1C0dHUP04kAgYwm0G2WiQE",
-              "revision": 1,
-              "type": "Link",
-              "linkType": "Asset",
-              "locale": "en-US",
-              "createdAt": "2014-12-04T11:36:53.762Z",
-              "updatedAt": "2014-12-04T11:36:54.708Z",
-              "space": {
-                "sys": {
-                  "id": "4o9zrkqge2wv",
-                  "type": "Link",
-                  "linkType": "Space"
+            'sys': {
+              'id': '1C0dHUP04kAgYwm0G2WiQE',
+              'revision': 1,
+              'type': 'Link',
+              'linkType': 'Asset',
+              'locale': 'en-US',
+              'createdAt': '2014-12-04T11:36:53.762Z',
+              'updatedAt': '2014-12-04T11:36:54.708Z',
+              'space': {
+                'sys': {
+                  'id': '4o9zrkqge2wv',
+                  'type': 'Link',
+                  'linkType': 'Space'
                 }
               }
             },
-            "fields": {
-              "file": {
-                "fileName": "soon-cat-pillows.jpeg",
-                "contentType": "image/jpeg",
-                "details": {
-                  "image": {
-                    "width": 258,
-                    "height": 196
+            'fields': {
+              'file': {
+                'fileName': 'soon-cat-pillows.jpeg',
+                'contentType': 'image/jpeg',
+                'details': {
+                  'image': {
+                    'width': 258,
+                    'height': 196
                   },
-                  "size": 5923
+                  'size': 5923
                 },
-                "url": "//images.contentful.com/4o9zrkqge2wv/1C0dHUP04kAgYwm0G2WiQE/7e5ddcdeac0c632e6f19780c35dd55a9/soon-cat-pillows.jpeg"
+                'url': '//images.contentful.com/4o9zrkqge2wv/1C0dHUP04kAgYwm0G2WiQE/7e5ddcdeac0c632e6f19780c35dd55a9/soon-cat-pillows.jpeg'
               },
-              "title": "soon-cat-pillows"
+              'title': 'soon-cat-pillows'
             }
           }
         }
@@ -562,207 +562,207 @@ describe('Space Template loading service', function () {
     },
 
     {
-      "sys": {
-        "id": "6kMpB6YZz2EeEuqYMqYQaM",
-        "revision": 2,
-        "type": "Entry",
-        "contentType": {
-          "sys": {
-            "id": "1v2MUtzrg8oQAw0ogCwwE8",
-            "type": "Link",
-            "linkType": "ContentType"
+      'sys': {
+        'id': '6kMpB6YZz2EeEuqYMqYQaM',
+        'revision': 2,
+        'type': 'Entry',
+        'contentType': {
+          'sys': {
+            'id': '1v2MUtzrg8oQAw0ogCwwE8',
+            'type': 'Link',
+            'linkType': 'ContentType'
           }
         },
-        "createdAt": "2014-12-04T16:44:42.603Z",
-        "updatedAt": "2014-12-04T16:53:08.092Z",
-        "space": {
-          "sys": {
-            "id": "4o9zrkqge2wv",
-            "type": "Link",
-            "linkType": "Space"
+        'createdAt': '2014-12-04T16:44:42.603Z',
+        'updatedAt': '2014-12-04T16:53:08.092Z',
+        'space': {
+          'sys': {
+            'id': '4o9zrkqge2wv',
+            'type': 'Link',
+            'linkType': 'Space'
           }
         }
       },
-      "fields": {
-        "text": {"en-US": "akshdljashdlaihsd"},
-        "symbol": {"en-US": "content"},
-        "number": {"en-US": 2},
-        "decimal": {"en-US": 2.2},
-        "bool": {"en-US": true},
-        "cal": {"en-US": "2014-12-11T12:00+03:00"},
-        "loc": {"en-US": 
+      'fields': {
+        'text': {'en-US': 'akshdljashdlaihsd'},
+        'symbol': {'en-US': 'content'},
+        'number': {'en-US': 2},
+        'decimal': {'en-US': 2.2},
+        'bool': {'en-US': true},
+        'cal': {'en-US': '2014-12-11T12:00+03:00'},
+        'loc': {'en-US':
           {
-            "lat": 51.08282186160978,
-            "lon": 8.600234985351562
+            'lat': 51.08282186160978,
+            'lon': 8.600234985351562
           }
         },
-        "entry": {"en-US": 
+        'entry': {'en-US':
           {
-            "sys": {
-              "id": "5AMisZG9BmqqYWge0Acmik",
-              "revision": 1,
-              "type": "Entry",
-              "locale": "en-US",
-              "contentType": {
-                "sys": {
-                  "id": "68VvdXqINiM0MCoqwa8CQC",
-                  "type": "Link",
-                  "linkType": "ContentType"
+            'sys': {
+              'id': '5AMisZG9BmqqYWge0Acmik',
+              'revision': 1,
+              'type': 'Entry',
+              'locale': 'en-US',
+              'contentType': {
+                'sys': {
+                  'id': '68VvdXqINiM0MCoqwa8CQC',
+                  'type': 'Link',
+                  'linkType': 'ContentType'
                 }
               },
-              "createdAt": "2014-12-04T11:37:12.087Z",
-              "updatedAt": "2014-12-04T11:37:19.040Z",
-              "space": {
-                "sys": {
-                  "id": "4o9zrkqge2wv",
-                  "type": "Link",
-                  "linkType": "Space"
+              'createdAt': '2014-12-04T11:37:12.087Z',
+              'updatedAt': '2014-12-04T11:37:19.040Z',
+              'space': {
+                'sys': {
+                  'id': '4o9zrkqge2wv',
+                  'type': 'Link',
+                  'linkType': 'Space'
                 }
               }
             },
-            "fields": {
-              "name": "Animals"
+            'fields': {
+              'name': 'Animals'
             }
           }
         },
-        "asset": {"en-US":
+        'asset': {'en-US':
           {
-            "sys": {
-              "id": "5o4iPgRgYMmaGac8SckKCc",
-              "revision": 0,
-              "type": "Link",
-              "linkType": "Asset",
-              "locale": "en-US",
-              "createdAt": "2014-12-04T11:36:53.850Z",
-              "updatedAt": "2014-12-04T11:36:54.718Z",
-              "space": {
-                "sys": {
-                  "id": "4o9zrkqge2wv",
-                  "type": "Link",
-                  "linkType": "Space"
+            'sys': {
+              'id': '5o4iPgRgYMmaGac8SckKCc',
+              'revision': 0,
+              'type': 'Link',
+              'linkType': 'Asset',
+              'locale': 'en-US',
+              'createdAt': '2014-12-04T11:36:53.850Z',
+              'updatedAt': '2014-12-04T11:36:54.718Z',
+              'space': {
+                'sys': {
+                  'id': '4o9zrkqge2wv',
+                  'type': 'Link',
+                  'linkType': 'Space'
                 }
               }
             },
-            "fields": {
-              "file": {
-                "fileName": "soon-horse.jpg",
-                "contentType": "image/jpeg",
-                "details": {
-                  "image": {
-                    "width": 400,
-                    "height": 279
+            'fields': {
+              'file': {
+                'fileName': 'soon-horse.jpg',
+                'contentType': 'image/jpeg',
+                'details': {
+                  'image': {
+                    'width': 400,
+                    'height': 279
                   },
-                  "size": 89415
+                  'size': 89415
                 },
-                "url": "//images.contentful.com/4o9zrkqge2wv/5o4iPgRgYMmaGac8SckKCc/ab03f95234ce91a878e27408192d35b5/soon-horse.jpg"
+                'url': '//images.contentful.com/4o9zrkqge2wv/5o4iPgRgYMmaGac8SckKCc/ab03f95234ce91a878e27408192d35b5/soon-horse.jpg'
               },
-              "title": "soon-horse"
+              'title': 'soon-horse'
             }
           }
         },
-        "obj": {"en-US": { "value": 123 }},
-        "entries": {"en-US": 
+        'obj': {'en-US': { 'value': 123 }},
+        'entries': {'en-US': 
           [
             {
-              "sys": {
-                "id": "pBTk6jJsoSaWmCic0OAeO",
-                "revision": 1,
-                "type": "Entry",
-                "locale": "en-US",
-                "contentType": {
-                  "sys": {
-                    "id": "68VvdXqINiM0MCoqwa8CQC",
-                    "type": "Link",
-                    "linkType": "ContentType"
+              'sys': {
+                'id': 'pBTk6jJsoSaWmCic0OAeO',
+                'revision': 1,
+                'type': 'Entry',
+                'locale': 'en-US',
+                'contentType': {
+                  'sys': {
+                    'id': '68VvdXqINiM0MCoqwa8CQC',
+                    'type': 'Link',
+                    'linkType': 'ContentType'
                   }
                 },
-                "createdAt": "2014-12-04T11:37:26.526Z",
-                "updatedAt": "2014-12-04T11:37:30.896Z",
-                "space": {
-                  "sys": {
-                    "id": "4o9zrkqge2wv",
-                    "type": "Link",
-                    "linkType": "Space"
+                'createdAt': '2014-12-04T11:37:26.526Z',
+                'updatedAt': '2014-12-04T11:37:30.896Z',
+                'space': {
+                  'sys': {
+                    'id': '4o9zrkqge2wv',
+                    'type': 'Link',
+                    'linkType': 'Space'
                   }
                 }
               },
-              "fields": {
-                "name": "Memes"
+              'fields': {
+                'name': 'Memes'
               }
             }
           ]
         },
-        "assets": {"en-US": 
+        'assets': {'en-US':
           [
             {
-              "sys": {
-                "id": "1GdRqUQ0V2yCU2Ee00eoq6",
-                "revision": 0,
-                "type": "Link",
-                "linkType": "Asset",
-                "locale": "en-US",
-                "createdAt": "2014-12-04T11:36:53.827Z",
-                "updatedAt": "2014-12-04T11:36:55.028Z",
-                "space": {
-                  "sys": {
-                    "id": "4o9zrkqge2wv",
-                    "type": "Link",
-                    "linkType": "Space"
+              'sys': {
+                'id': '1GdRqUQ0V2yCU2Ee00eoq6',
+                'revision': 0,
+                'type': 'Link',
+                'linkType': 'Asset',
+                'locale': 'en-US',
+                'createdAt': '2014-12-04T11:36:53.827Z',
+                'updatedAt': '2014-12-04T11:36:55.028Z',
+                'space': {
+                  'sys': {
+                    'id': '4o9zrkqge2wv',
+                    'type': 'Link',
+                    'linkType': 'Space'
                   }
                 }
               },
-              "fields": {
-                "file": {
-                  "fileName": "soon-cat-parrot.jpeg",
-                  "contentType": "image/jpeg",
-                  "details": {
-                    "image": {
-                      "width": 350,
-                      "height": 230
+              'fields': {
+                'file': {
+                  'fileName': 'soon-cat-parrot.jpeg',
+                  'contentType': 'image/jpeg',
+                  'details': {
+                    'image': {
+                      'width': 350,
+                      'height': 230
                     },
-                    "size": 47757
+                    'size': 47757
                   },
-                  "url": "//images.contentful.com/4o9zrkqge2wv/1GdRqUQ0V2yCU2Ee00eoq6/8a20a9aaf3ef74fc0fd5b3656e6bb975/soon-cat-parrot.jpeg"
+                  'url': '//images.contentful.com/4o9zrkqge2wv/1GdRqUQ0V2yCU2Ee00eoq6/8a20a9aaf3ef74fc0fd5b3656e6bb975/soon-cat-parrot.jpeg'
                 },
-                "title": "soon-cat-parrot"
+                'title': 'soon-cat-parrot'
               }
             }
           ]
         },
-        "symbolList": {"en-US": [ "this", "that", "something" ]}
+        'symbolList': {'en-US': [ 'this', 'that', 'something' ]}
       }
     },
 
     {
-      "sys": {
-        "id": "3rdct",
-        "revision": 1,
-        "type": "Entry",
-        "contentType": {
-          "sys": {
-            "id": "1v2MUtzrg8oQAw0ogCwwE8",
-            "type": "Link",
-            "linkType": "ContentType"
+      'sys': {
+        'id': '3rdct',
+        'revision': 1,
+        'type': 'Entry',
+        'contentType': {
+          'sys': {
+            'id': '1v2MUtzrg8oQAw0ogCwwE8',
+            'type': 'Link',
+            'linkType': 'ContentType'
           }
         }
       },
-      "fields": {
-        "entry": {"en-US": 
+      'fields': {
+        'entry': {'en-US':
           {
-            "sys": {
-              "id": "4thct",
-              "type": "Entry",
-              "locale": "en-US"
+            'sys': {
+              'id': '4thct',
+              'type': 'Entry',
+              'locale': 'en-US'
             }
           },
         },
-        "entries": {"en-US": 
+        'entries': {'en-US':
           [
             {
-              "sys": {
-                "id": "5thct",
-                "type": "Entry",
-                "locale": "en-US"
+              'sys': {
+                'id': '5thct',
+                'type': 'Entry',
+                'locale': 'en-US'
               }
             }
           ]
@@ -771,25 +771,25 @@ describe('Space Template loading service', function () {
     },
 
     {
-      "sys": {
-        "id": "4thct",
-        "revision": 1,
-        "type": "Entry",
-        "contentType": {
-          "sys": {
-            "id": "1v2MUtzrg8oQAw0ogCwwE8",
-            "type": "Link",
-            "linkType": "ContentType"
+      'sys': {
+        'id': '4thct',
+        'revision': 1,
+        'type': 'Entry',
+        'contentType': {
+          'sys': {
+            'id': '1v2MUtzrg8oQAw0ogCwwE8',
+            'type': 'Link',
+            'linkType': 'ContentType'
           }
         }
       },
-      "fields": {
-        "entry": {"en-US": 
+      'fields': {
+        'entry': {'en-US':
           {
-            "sys": {
-              "id": "5thct",
-              "type": "Entry",
-              "locale": "en-US"
+            'sys': {
+              'id': '5thct',
+              'type': 'Entry',
+              'locale': 'en-US'
             }
           }
         }
@@ -797,88 +797,88 @@ describe('Space Template loading service', function () {
     },
 
     {
-      "sys": {
-        "id": "5thct",
-        "revision": 1,
-        "type": "Entry",
-        "contentType": {
-          "sys": {
-            "id": "1v2MUtzrg8oQAw0ogCwwE8",
-            "type": "Link",
-            "linkType": "ContentType"
+      'sys': {
+        'id': '5thct',
+        'revision': 1,
+        'type': 'Entry',
+        'contentType': {
+          'sys': {
+            'id': '1v2MUtzrg8oQAw0ogCwwE8',
+            'type': 'Link',
+            'linkType': 'ContentType'
           }
         }
       },
-      "fields": {}
+      'fields': {}
     }
 
   ];
 
   sourceAssets = [
     {
-      "sys": {
-        "id": "5o4iPgRgYMmaGac8SckKCc",
-        "revision": 0,
-        "type": "Asset",
-        "createdAt": "2014-12-04T11:36:53.850Z",
-        "updatedAt": "2014-12-04T11:36:54.718Z",
-        "space": {
-          "sys": {
-            "id": "4o9zrkqge2wv",
-            "type": "Link",
-            "linkType": "Space"
+      'sys': {
+        'id': '5o4iPgRgYMmaGac8SckKCc',
+        'revision': 0,
+        'type': 'Asset',
+        'createdAt': '2014-12-04T11:36:53.850Z',
+        'updatedAt': '2014-12-04T11:36:54.718Z',
+        'space': {
+          'sys': {
+            'id': '4o9zrkqge2wv',
+            'type': 'Link',
+            'linkType': 'Space'
           }
         }
       },
-      "fields": {
-        "file": {"en-US": 
+      'fields': {
+        'file': {'en-US':
           {
-            "fileName": "soon-horse.jpg",
-            "contentType": "image/jpeg",
-            "details": {
-              "image": {
-                "width": 400,
-                "height": 279
+            'fileName': 'soon-horse.jpg',
+            'contentType': 'image/jpeg',
+            'details': {
+              'image': {
+                'width': 400,
+                'height': 279
               },
-              "size": 89415
+              'size': 89415
             },
-            "url": "//images.contentful.com/4o9zrkqge2wv/5o4iPgRgYMmaGac8SckKCc/ab03f95234ce91a878e27408192d35b5/soon-horse.jpg"
+            'url': '//images.contentful.com/4o9zrkqge2wv/5o4iPgRgYMmaGac8SckKCc/ab03f95234ce91a878e27408192d35b5/soon-horse.jpg'
           }
         },
-        "title": {"en-US": "soon-horse"}
+        'title': {'en-US': 'soon-horse'}
       }
     },
     {
-      "sys": {
-        "id": "367wIzFbCwmWs6mQKeM6Mu",
-        "revision": 0,
-        "type": "Asset",
-        "createdAt": "2014-12-04T11:36:53.794Z",
-        "updatedAt": "2014-12-04T11:36:54.632Z",
-        "space": {
-          "sys": {
-            "id": "4o9zrkqge2wv",
-            "type": "Link",
-            "linkType": "Space"
+      'sys': {
+        'id': '367wIzFbCwmWs6mQKeM6Mu',
+        'revision': 0,
+        'type': 'Asset',
+        'createdAt': '2014-12-04T11:36:53.794Z',
+        'updatedAt': '2014-12-04T11:36:54.632Z',
+        'space': {
+          'sys': {
+            'id': '4o9zrkqge2wv',
+            'type': 'Link',
+            'linkType': 'Space'
           }
         }
       },
-      "fields": {
-        "file": {"en-US":
+      'fields': {
+        'file': {'en-US':
           {
-            "fileName": "soon-meme.jpg",
-            "contentType": "image/jpeg",
-            "details": {
-              "image": {
-                "width": 500,
-                "height": 341
+            'fileName': 'soon-meme.jpg',
+            'contentType': 'image/jpeg',
+            'details': {
+              'image': {
+                'width': 500,
+                'height': 341
               },
-              "size": 26373
+              'size': 26373
             },
-            "url": "//images.contentful.com/4o9zrkqge2wv/367wIzFbCwmWs6mQKeM6Mu/4f1c6ee48df8a13dc07552597cf99c48/soon-meme.jpg"
+            'url': '//images.contentful.com/4o9zrkqge2wv/367wIzFbCwmWs6mQKeM6Mu/4f1c6ee48df8a13dc07552597cf99c48/soon-meme.jpg'
           }
         },
-        "title": {"en-US": "soon-meme"}
+        'title': {'en-US': 'soon-meme'}
       }
     }
   ];
