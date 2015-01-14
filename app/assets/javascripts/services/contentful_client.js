@@ -239,7 +239,8 @@ angular.module('contentful').provider('contentfulClient', ['$injector', function
   }];
 
   function exists(value) {
-    return value !== null;
+    /*jshint eqnull:true*/
+    return value != null;
   }
 
   function truthy(value) {
