@@ -40,12 +40,12 @@
     "karma": "~0.12.21",
     "karma-chrome-launcher": "~0.1.4",
     "karma-jasmine": "~0.2.0",
-    "karma-story-reporter": "~0.2.2",
     "karma-osx-reporter": "~0.1.0",
-    "karma-phantomjs-launcher": "~0.1.4"
+    "karma-slimerjs-launcher": "^0.1.2",
+    "karma-story-reporter": "~0.2.2"
   },
   "scripts": {
-    "test": "node_modules/karma/bin/karma start --single-run --browsers PhantomJS --reporters dots",
+    "test": "xvfb-run node_modules/karma/bin/karma start --single-run --browsers SlimerJS --reporters dots",
     "hint": "jshint app/assets/javascripts spec/javascripts/contentful"
   },
   "repository": {
