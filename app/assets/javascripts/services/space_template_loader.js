@@ -6,6 +6,7 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
   var contentfulClient = $injector.get('contentfulClient');
   var $q               = $injector.get('$q');
   var environment      = $injector.get('environment');
+  var mergeSort        = $injector.get('mergeSort');
 
   var contentfulConfig = environment.settings.contentful;
 
@@ -102,10 +103,11 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
   function sortEntries(entries) {
     var linkedEntries = getLinkedEntries(entries);
 
-    linkedEntries.sort(function (a) {
-      if(hasLinkedIndexesInFront(a)) return -1;
-      if(!hasLinkedIndexesInFront(a)) return 1;
-      if(!hasLinkedIndexes(a)) return 0;
+    linkedEntries = mergeSort(linkedEntries, function (a) {
+      var hli = hasLinkedIndexesInFront(a);
+      if(hli) return -1;
+      if(!hli) return 1;
+      if(!hasLinkedIndexes(a)) return -1;
     });
 
     return _.map(linkedEntries, function (linkInfo) {
