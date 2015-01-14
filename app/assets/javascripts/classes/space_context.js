@@ -160,13 +160,7 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
 
       displayFieldForType: function (contentTypeId) {
         var ct = this.getPublishedContentType(contentTypeId);
-        if(!ct){
-          logger.logError('No content type available', {
-            contentTypeId: contentTypeId
-          });
-          return null;
-        }
-        return _.find(ct.data.fields, {id: ct.data.displayField});
+        return ct && _.find(ct.data.fields, {id: ct.data.displayField});
       },
 
       localizedField: function(entity, path, locale) {
