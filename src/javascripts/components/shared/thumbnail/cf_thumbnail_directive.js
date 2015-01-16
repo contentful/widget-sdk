@@ -41,6 +41,8 @@ angular.module('contentful').directive('cfThumbnail', function () {
 
       scope.$watch('file', dimensionsChanged, true);
 
+      scope.$on('imageLoaded', dimensionsChanged);
+
       scope.hasPreviewAndDimensions = function(){
         return scope.file.external || scope.hasPreview() && hasDimensions();
       };
