@@ -16,20 +16,10 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
       scope.enableUpload = true;
       scope.showMeta = false;
 
-      scope.$watch('file', function (file) {
-        if(!file) scope.imageHasLoaded = false;
-      });
-
       scope.$on('cfFileDropped', fileEventHandler);
       scope.$on('gettyFileAuthorized', fileEventHandler);
       scope.$on('fileProcessingFailed', function () {
         setFPFile(null);
-      });
-      scope.$on('imageLoaded', function () {
-        scope.imageHasLoaded = true;
-      });
-      scope.$on('imageUnloaded', function () {
-        scope.imageHasLoaded = false;
       });
 
       scope.toggleMeta = toggleMeta;

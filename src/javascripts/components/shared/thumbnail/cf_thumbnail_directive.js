@@ -59,7 +59,7 @@ angular.module('contentful').directive('cfThumbnail', function () {
       };
 
       function hasDimensions () {
-        return 0 < scope.width && 0 < scope.height;
+        return scope.width > 0 && scope.height > 0;
       }
 
       function dimensionsChanged() {

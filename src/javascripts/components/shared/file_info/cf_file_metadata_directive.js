@@ -4,6 +4,7 @@ angular.module('contentful').directive('cfFileMetadata', ['mimetype', function (
   return {
     restrict: 'A',
     scope: true,
+    controller: 'ThumbnailController',
     link: function (scope, elem, attrs) {
       scope.$watch(attrs.file, function (val) {
         if(val) scope.file = val;
