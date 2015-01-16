@@ -90,7 +90,7 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
           notification.warn('The image editor has failed to load.');
           return;
         }
-        var preview = elem.find('.editor-preview').get(0);
+        var preview = elem.find('[aviary-editor-preview]').get(0);
         preview.src = '';
         var imgUrl = stringUtils.removeQueryString(img.src);
         preview.onload = function () {

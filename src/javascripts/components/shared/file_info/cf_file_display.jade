@@ -1,5 +1,6 @@
 .file-info
-  img.editor-preview
+  img(aviary-editor-preview)
+
   .file-preview(cf-file-preview ng-show="file && file.url" preview-size="fullscreen")
     .loading(ng-show="loadingEditor")
     .vcenter(cf-thumbnail file="file" ng-if="file && !loadingEditor")
