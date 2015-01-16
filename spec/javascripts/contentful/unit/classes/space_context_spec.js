@@ -335,9 +335,19 @@ describe('SpaceContext class with a space', function () {
           expect(spaceContext.entryTitle(entry)).toEqual('Untitled');
         });
 
+        it('fetched title successfully but title is empty (modelValue)', function () {
+          entry.data.fields.title = '     ';
+          expect(spaceContext.entryTitle(entry, undefined, true)).toEqual(null);
+        });
+
         it('fetched successfully but title doesn\'t exist', function () {
           delete entry.data.fields.title;
           expect(spaceContext.entryTitle(entry)).toEqual('Untitled');
+        });
+
+        it('fetched title successfully but title doesn\'t exist (modelValue)', function () {
+          delete entry.data.fields.title;
+          expect(spaceContext.entryTitle(entry, undefined, true)).toEqual(null);
         });
 
         describe('unregistering a published Content Type', function () {
