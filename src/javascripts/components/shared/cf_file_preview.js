@@ -27,26 +27,6 @@ angular.module('contentful').directive('cfFilePreview', ['$compile', '$window', 
 
       scope.$watch('file', setSizes, true);
 
-      function setSizes() {
-        if(isImage()) {
-          if (fullscreen) {
-            windowWidth  = $(window).width();
-            windowHeight = $(window).height();
-            maxWidth  = windowWidth  - windowGap;
-            maxHeight = windowHeight - windowGap;
-            setDimensions(scope.file.details.image.width, scope.file.details.image.height);
-            xOffset = (windowWidth - scope.width) / 2;
-            yOffset = (windowHeight - scope.height) / 2;
-          } else {
-            maxWidth  = parseInt(attrs.previewSize, 10) || 200;
-            maxHeight = parseInt(attrs.previewSize, 10) || 200;
-            setDimensions(scope.file.details.image.width, scope.file.details.image.height);
-            xOffset = Math.round(scope.width/2);
-            yOffset = 15 + scope.height;
-          }
-        }
-      }
-
       function showFullscreen() {
         if (!isImage()) return;
         makePreview();
@@ -89,7 +69,11 @@ angular.module('contentful').directive('cfFilePreview', ['$compile', '$window', 
         $($window).on('resize', resizeHandler);
         setSizes();
         var sizeQueryString = scope.file.external ? '' : '?w={{width}}&h={{height}}';
-        $preview = $compile('<img ng-src="{{file.url}}'+sizeQueryString+'" class="cf-file-preview" style="display:block; position: fixed; width: {{width}}px; height: {{height}}px; background: white">')(scope);
+        $preview = $compile(
+          '<img ng-src="{{file.url}}'+sizeQueryString+
+          '" class="cf-file-preview" style="display:block; position: fixed; background: white; '+
+          'width: {{width}}px; height: {{height}}px;">'
+        )(scope);
         $document.find('body').append($preview);
         scope.$digest();
 
@@ -103,6 +87,26 @@ angular.module('contentful').directive('cfFilePreview', ['$compile', '$window', 
         }
         $document.off('click', removePreview);
         $($window).off('resize', resizeHandler);
+      }
+
+      function setSizes() {
+        if(isImage()) {
+          if (fullscreen) {
+            windowWidth  = $(window).width();
+            windowHeight = $(window).height();
+            maxWidth  = windowWidth  - windowGap;
+            maxHeight = windowHeight - windowGap;
+            setDimensions(scope.file.details.image.width, scope.file.details.image.height);
+            xOffset = (windowWidth - scope.width) / 2;
+            yOffset = (windowHeight - scope.height) / 2;
+          } else {
+            maxWidth  = parseInt(attrs.previewSize, 10) || 200;
+            maxHeight = parseInt(attrs.previewSize, 10) || 200;
+            setDimensions(scope.file.details.image.width, scope.file.details.image.height);
+            xOffset = Math.round(scope.width/2);
+            yOffset = 15 + scope.height;
+          }
+        }
       }
 
       function setDimensions(srcWidth, srcHeight) {
