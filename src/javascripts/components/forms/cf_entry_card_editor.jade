@@ -23,7 +23,7 @@ ul.entry-cards(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide="
         tooltip-placement="right"
         tooltip="This entry hasn't been published")
       i.fa.fa-circle
-    .entry-cards__file.gallery-file(cf-thumbnail file="cardImage" size="120" format="square" fit="thumb" ng-if="cardImage")
+    .entry-cards__file.gallery-file(cf-thumbnail file="cardImage" size="120" fit="thumb" ng-if="cardImage")
     .entry-cards__title(title="{{title}}" ng-if="title=entryLinkController.linkTitle(entity)") {{title | truncate:30}}
     .entry-cards__description(title="{{description}}" ng-if="description=entryLinkController.linkDescription(entity)") {{description | truncate:descriptionLength}}
     .gallery-buttons(ng-show="hoveringItem")

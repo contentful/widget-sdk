@@ -10,7 +10,7 @@ button.btn.btn--secondary.show-metadata(type="button" ng-click="toggleMeta()" ng
 button.btn.btn--secondary.edit-button(type="button" ng-show="enableUpload && imageHasLoaded && file|isFileReady" ng-click="editFile()" tooltip="Edit file")
   i.fa.fa-picture-o
 | 
-button.btn.btn--secondary.delete-file(type="button" ng-show="!otDisabled && deleteFile && file|isFileReady" ng-click="deleteFile()" tooltip="Delete file")
+button.btn.btn--secondary.delete-file(type="button" ng-show="!otDisabled && deleteFile && ((file|isFileReady) || (file|isFileProcessing))" ng-click="deleteFile()" tooltip="Delete file")
   i.fa.fa-trash
 | 
 button.btn.btn--secondary.remove-link(type="button" ng-show="!otDisabled && removeLink" ng-click="removeLink(index, entity)" tooltip="Remove Asset")

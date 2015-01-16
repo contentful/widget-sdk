@@ -1,20 +1,19 @@
 'use strict';
 
 describe('cfThumbnailDirective', function () {
-  var scope, asset, element, src, $compile, stubs;
+  var scope, asset, element, src, $compile, hasPreviewStub;
 
   beforeEach(function() {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs(['hasPreview', 'getExtension', 'getGroupName']);
-      $provide.constant('mimetype', {
-        hasPreview: stubs.hasPreview,
-        getExtension: stubs.getExtension,
-        getGroupName: stubs.getGroupName
+      hasPreviewStub = sinon.stub();
+      $provide.removeController('ThumbnailController', function ($scope) {
+        $scope.hasPreview = hasPreviewStub;
       });
     });
     inject(function($injector, $rootScope){
       asset = {url: 'url'};
-      $compile    = $injector.get('$compile');
+      $compile = $injector.get('$compile');
+
       scope       = $rootScope.$new();
       scope.asset = asset;
     });
@@ -26,7 +25,6 @@ describe('cfThumbnailDirective', function () {
 
     element = $('<div class="cf-thumbnail"></div>');
     element.attr(attrs);
-    element.css({height: '10px', width: '10px'});
 
     $compile(element)(scope);
     scope.$apply();
@@ -34,83 +32,88 @@ describe('cfThumbnailDirective', function () {
     src = element.find('img').attr('src');
   }
 
-  describe('any asset', function() {
-    describe('size attr', function() {
-      beforeEach(function() {
-        asset.details = { image: { width: 5000, height: 9999 } };
-        stubs.hasPreview.returns(true);
+  describe('icons', function() {
+    beforeEach(function() {
+      hasPreviewStub.returns(false);
+      createElement();
+    });
 
-        createElement({size: 100});
-      });
+    it('does not render image', function() {
+      expect(element.find('img').get(0)).toBeUndefined();
+    });
 
-    /*
-     * The expected values for 'width' and 'height' on these tests have
-     * been manually calculated using the 'setDimensions' function inside the controller.
-     */
-
-      it('sets the max width for the thumbnail', function() {
-        expect(src).toMatch(/w=50/);
-      });
-
-      it('sets the max height for the thumbnail', function() {
-        expect(src).toMatch(/h=100/);
-      });
-
-      describe('when the format is "square"', function() {
-        beforeEach(function() {
-          createElement({size: 100, format: 'square'});
-        });
-
-        it('sets the max width for the thumbnail', function() {
-          expect(src).toMatch(/w=100/);
-        });
-
-        it('sets the max height for the thumbnail', function() {
-          expect(src).toMatch(/h=100/);
-        });
-      });
+    it('renders icon', function() {
+      expect(element.find('i').get(0)).toBeDefined();
     });
   });
 
   describe('contentful assets', function() {
     beforeEach(function() {
-      asset.details = { image: { width: 100, height: 300 } };
-      stubs.hasPreview.returns(true);
+      hasPreviewStub.returns(true);
+    });
+
+    it('does not render icon', function() {
       createElement();
+      expect(element.find('i').get(0)).toBeUndefined();
     });
 
-    /*
-     * The expected values for 'width' and 'height' on these tests have
-     * been manually calculated using the 'setDimensions' function inside the controller.
-     */
-
-    it('sets the width parameter in the querystring to scope.width', function() {
-      expect(src).toMatch(/w=3/);
+    it('fails with no size params', function() {
+      createElement();
+      expect(src).toBeUndefined();
     });
 
-    it('sets the height parameter in the querystring to scope.height', function() {
-      expect(src).toMatch(/h=10/);
+    it('with size', function() {
+      createElement({ size: 300 });
+      expect(src).toBe('url?w=300&h=300&');
     });
 
-    it('sets the fit parameter in the querystring to the value on attrs.fit', function() {
-      createElement({fit: 'crop'});
-
-      expect(src).toMatch(/fit=crop/);
+    it('with width and height', function() {
+      createElement({ width: 300, height: 300 });
+      expect(src).toBe('url?w=300&h=300&');
     });
 
-    it('sets the f parameter in the querystring to the value on attrs.focus', function() {
-      createElement({focus: 'faces'});
-
-      expect(src).toMatch(/f=faces/);
+    it('with width', function() {
+      createElement({ width: 300 });
+      expect(src).toBe('url?w=300&');
     });
 
+    it('with height', function() {
+      createElement({ height: 300 });
+      expect(src).toBe('url?h=300&');
+    });
+
+    it('with fit', function() {
+      createElement({ size: 300, fit: 'scale'});
+      expect(src).toBe('url?w=300&h=300&fit=scale&');
+    });
+
+    it('fails silently with fit and one dimension', function() {
+      createElement({ width: 300, fit: 'scale'});
+      expect(src).toBe('url?w=300&');
+    });
+
+    it('with focus', function() {
+      createElement({ size: 300, focus: 'bottom'});
+      expect(src).toBe('url?w=300&h=300&f=bottom&');
+    });
+
+    it('fails silently with focus and one dimension', function() {
+      createElement({ width: 300, focus: 'bottom'});
+      expect(src).toBe('url?w=300&');
+    });
   });
 
   describe('external assets', function() {
-    it('uses the asset url property as the value for the src attribute', function() {
+    beforeEach(function() {
       asset.external = true;
       createElement();
+    });
 
+    it('does not render icon', function() {
+      expect(element.find('i').get(0)).toBeUndefined();
+    });
+
+    it('uses the asset url property as the value for the src attribute', function() {
       expect(src).toBe(asset.url);
     });
   });

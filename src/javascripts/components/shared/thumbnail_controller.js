@@ -7,25 +7,24 @@ angular.module('contentful').controller('ThumbnailController', ['$scope', 'mimet
   });
 
   $scope.$on('imageLoaded', function () {
-    console.log('image loaded');
     $scope.imageHasLoaded = true;
   });
   $scope.$on('imageUnloaded', function () {
-    console.log('image unloaded');
     $scope.imageHasLoaded = false;
   });
 
-  $scope.getIconName = getIconName;
-  $scope.hasPreview = hasPreview;
   $scope.isFileLoading = isFileLoading;
   $scope.isFilePreviewable = isFilePreviewable;
+  $scope.hasPreview = hasPreview;
+  $scope.getIconName = getIconName;
 
-  function getIconName() {
-    var groupName = mimetype.getGroupName(
-      mimetype.getExtension($scope.file.fileName),
-      $scope.file.contentType
-    );
-    return groupToIcon(groupName);
+  function isFileLoading() {
+    return $scope.hasPreview() && !$scope.imageHasLoaded;
+  }
+
+  function isFilePreviewable() {
+    return !$scope.hasPreview() ||
+           $scope.hasPreview() && $scope.imageHasLoaded;
   }
 
   function hasPreview() {
@@ -35,13 +34,12 @@ angular.module('contentful').controller('ThumbnailController', ['$scope', 'mimet
     );
   }
 
-  function isFileLoading() {
-    return $scope.file && $scope.file.url && $scope.hasPreview() && !$scope.imageHasLoaded;
-  }
-
-  function isFilePreviewable() {
-    return ($scope.file && $scope.file.url && $scope.hasPreview() && $scope.imageHasLoaded) ||
-           ($scope.file && $scope.file.url && !$scope.hasPreview());
+  function getIconName() {
+    var groupName = mimetype.getGroupName(
+      mimetype.getExtension($scope.file.fileName),
+      $scope.file.contentType
+    );
+    return groupToIcon(groupName);
   }
 
   var groupToIconMap = {

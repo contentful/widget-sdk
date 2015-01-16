@@ -1,13 +1,13 @@
 .file-info
   img(aviary-editor-preview)
 
-  .file-preview(cf-file-preview ng-show="isFilePreviewable()" preview-size="fullscreen")
+  .file-preview(cf-file-preview ng-show="(file|isFileReady) && isFilePreviewable()" preview-size="fullscreen")
     .loading(ng-show="loadingEditor")
-    .vcenter(cf-thumbnail file="file" ng-if="file && !loadingEditor")
+    .vcenter(cf-thumbnail file="file" height="250" ng-if="file && !loadingEditor")
     .linked-entities__status(ng-show="entity" ng-class="entityStatusController.getClassname(entity)")
       .status-bar
 
-  .file-progress.progress.center(ng-show="isFileLoading()")
+  .file-progress.progress.center(ng-show="(file|isFileReady) && isFileLoading()")
     p Loading…
     .cf-progress-bar.gold(percentage=100)
 

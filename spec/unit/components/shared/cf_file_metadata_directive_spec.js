@@ -2,15 +2,12 @@
 
 describe('cfFileMetadata Directive', function () {
   var element, scope, parentScope;
-  var stubs;
   var compileElement;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs([
-        'canPublish'
-      ]);
-      $provide.removeDirectives('cfFileDrop');
+      $provide.removeDirectives('cfFileDrop', 'cfThumbnail');
+      $provide.removeControllers('ThumbnailController');
     });
 
     inject(function ($compile, $rootScope) {
@@ -19,8 +16,12 @@ describe('cfFileMetadata Directive', function () {
       parentScope.fileData = null;
       parentScope.someTitle = null;
       parentScope.entity = {
-        canPublish: stubs.canPublish
+        canPublish: sinon.stub()
       };
+
+      parentScope.isFilePreviewable = sinon.stub();
+      parentScope.isFileLoading = sinon.stub();
+      parentScope.hasPreview = sinon.stub();
 
       compileElement = function () {
         element = $compile('<div cf-file-display cf-file-metadata file="fileData" entity-title="someTitle">')(parentScope);
@@ -133,8 +134,31 @@ describe('cfFileMetadata Directive', function () {
     });
   });
 
+  describe('file exists and is processing', function() {
+    beforeEach(function() {
+      parentScope.fileData = {
+        fileName: 'file.jpg',
+        fileType: 'image/jpeg',
+        upload: 'http://url'
+      };
 
-  describe('file exists', function() {
+      parentScope.isFilePreviewable.returns(false);
+      parentScope.isFileLoading.returns(false);
+      compileElement();
+    });
+
+    it('container', function() {
+      expect(element.find('.file-progress').eq(1)).not.toBeNgHidden();
+    });
+
+    it('delete button is shown', function() {
+      scope.deleteFile = function () {};
+      scope.$digest();
+      expect(element.find('.delete-file')).not.toBeNgHidden();
+    });
+  });
+
+  describe('file exists and is loading', function() {
     beforeEach(function() {
       parentScope.fileData = {
         fileName: 'file.jpg',
@@ -142,7 +166,26 @@ describe('cfFileMetadata Directive', function () {
         url: 'http://url'
       };
 
-      stubs.canPublish.returns(true);
+      parentScope.isFilePreviewable.returns(false);
+      parentScope.isFileLoading.returns(true);
+      compileElement();
+    });
+
+    it('container', function() {
+      expect(element.find('.file-progress').eq(0)).not.toBeNgHidden();
+    });
+  });
+
+  describe('file exists and is visible', function() {
+    beforeEach(function() {
+      parentScope.fileData = {
+        fileName: 'file.jpg',
+        fileType: 'image/jpeg',
+        url: 'http://url'
+      };
+
+      parentScope.entity.canPublish.returns(true);
+      parentScope.isFilePreviewable.returns(true);
       compileElement();
     });
 
