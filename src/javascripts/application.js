@@ -1,18 +1,7 @@
 'use strict';
 
-angular.module('contentful/app', [
-  'ngAnimate',
-  'ngSanitize',
-  'contentful/environment',
-  'timeRelative',
-  'ui.sortable',
-  'contentful/user_interface',
-  'angularLoad',
-  'contentful'
-], ['$locationProvider', 'clientAdapterProvider', 'authenticationProvider', 'analyticsProvider', 'environment', '$sceDelegateProvider', '$compileProvider', 'timeRelativeConfig',
-  function($locationProvider, clientAdapterProvider, authenticationProvider, analyticsProvider, environment, $sceDelegateProvider, $compileProvider, timeRelativeConfig){
-  var env = environment.settings;
-
+angular.module('contentful/app', ['contentful'])
+.config(['analyticsProvider', 'environment', function(analyticsProvider, environment){
   $.cookies.setOptions({
     secure: environment.env != 'development'
   });
@@ -25,17 +14,9 @@ angular.module('contentful/app', [
     }
   }
 
-  $locationProvider.html5Mode(true).hashPrefix('!');
-  $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
-  $sceDelegateProvider.resourceUrlWhitelist(env.resourceUrlWhiteListRegexp);
-  clientAdapterProvider.server('//'+env.api_host);
-  authenticationProvider.authApp('//'+env.base_host+'/');
-
   //analyticsProvider.forceLoad();
-  timeRelativeConfig.calendar.en.sameElse = 'll';
-  timeRelativeConfig.calendar.en.lastWeek = 'ddd, LT';
-  timeRelativeConfig.calendar.en.nextWeek = 'Next ddd, LT';
-}]).run(['authentication', 'clientAdapter', 'ShareJS', 'analytics', 'logger', function(authentication, clientAdapter, ShareJS, analytics, logger) {
+}])
+.run(['authentication', 'clientAdapter', 'ShareJS', 'analytics', 'logger', function(authentication, clientAdapter, ShareJS, analytics, logger) {
   authentication.login();
   clientAdapter.token = authentication.token;
   // FIXME when the custom tab issue gets fixed on Segment.io, use this again
