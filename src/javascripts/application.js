@@ -35,9 +35,9 @@ angular.module('contentful/app', [
   timeRelativeConfig.calendar.en.sameElse = 'll';
   timeRelativeConfig.calendar.en.lastWeek = 'ddd, LT';
   timeRelativeConfig.calendar.en.nextWeek = 'Next ddd, LT';
-}]).run(['authentication', 'client', 'ShareJS', 'analytics', 'logger', function(authentication, client, ShareJS, analytics, logger) {
+}]).run(['authentication', 'clientAdapter', 'ShareJS', 'analytics', 'logger', function(authentication, clientAdapter, ShareJS, analytics, logger) {
   authentication.login();
-  client.persistenceContext.adapter.token = authentication.token;
+  clientAdapter.token = authentication.token;
   // FIXME when the custom tab issue gets fixed on Segment.io, use this again
   //if(analytics.whenAnalyticsLoaded) analytics.whenAnalyticsLoaded.then(logger.onServiceReady);
   logger.onServiceReady();
