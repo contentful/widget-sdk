@@ -2,8 +2,7 @@
 
 ## Preparations
 
-Run `./Installfile`. This file ensures that both npm modules (one in
-`/` and one in `/app/assets/commonjs_modules/user_interface`) are
+Run `./Installfile`. This file ensures that both npm and bower modules are
 installed.
 
 ## Gulp
@@ -30,6 +29,24 @@ That'll put all required files into the `/build` directory.
 
 To serve those, run `gulp serve-production` instead of `gulp serve`
 
+## Misc. npm tasks
+
+### npm test
+
+Used to run Tests on Travis in SlimerJS.
+
+### npm run hint
+
+Used to run jshint in the relevant directories.
+
+### npm run cloc
+
+Count Lines of Code. (Run `brew install cloc` to install cloc).
+
+### npm run clean
+
+Removes installed bower and node modules.
+
 ## Karma tests
 
 To execute the unit tests, you need to install karma-cli globally:
@@ -44,11 +61,8 @@ To select only a subsect of specs to run, replace their respective
 
 ## Environments
 
-The Gulpfile honors the `UI_ENV` environment
-variable. It is used to:
-
-- inject the `env.environment` value in the client
-- pick a config.json from `/config/environments/$UI_ENV/config.json`
+The Gulpfile uses then value of the `UI_ENV` environment variable to
+populate the `env.environment` value in the client.
 
 If no `UI_ENV` is specified, `development` is assumed.
 
