@@ -9,11 +9,11 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
   var widgetIdsByContentType = {};
 
   return {
-    forContentTypeWithId: function (space, contentType, interfaceId) {
+    forContentTypeWithId: function (contentType, interfaceId) {
       return getEditingInterface(contentType, interfaceId)
       .catch(function (err) {
         if(err && err.statusCode === 404)
-          return $q.when(defaultInterface(space, contentType));
+          return $q.when(defaultInterface(contentType));
         else
           return $q.reject(err);
       })
@@ -102,17 +102,16 @@ angular.module('contentful').factory('editingInterfaces', ['$injector', function
     }
   }
 
-  function defaultInterface(space, contentType) {
+  function defaultInterface(contentType) {
     var data = {
       sys: {
         id: 'default',
         type: 'EditingInterface'
       },
       title: 'Default',
-      contentTypeId: contentType.getId(),
       widgets: []
     };
-    var interf = space.newEditingInterface(data);
+    var interf = contentType.newEditingInterface(data);
     interf.data.widgets = _.map(contentType.data.fields, _.partial(defaultWidget, contentType));
     return interf;
   }

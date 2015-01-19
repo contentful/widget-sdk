@@ -90,7 +90,7 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
       logger.logServerError(usage);
       return notification.error(usage);
     }
-    var apiKey = $scope.spaceContext.space.createBlankDeliveryApiKey();
+    var apiKey = $scope.spaceContext.space.newDeliveryApiKey();
     $scope.navigator.apiKeyEditor(apiKey).openAndGoTo();
     analytics.track(getEventSource(source), {
       currentSection: $scope.spaceContext.tabList.currentSection(),

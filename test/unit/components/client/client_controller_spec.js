@@ -29,7 +29,7 @@ describe('Client Controller', function () {
         'goodbye',
         'supportUrl',
         'open',
-        'wrapSpace',
+        'newSpace',
         'dialog',
         'presenceActive',
         'trigger',
@@ -110,7 +110,7 @@ describe('Client Controller', function () {
       });
 
       $provide.value('client', {
-        wrapSpace: stubs.wrapSpace
+        newSpace: stubs.newSpace
       });
 
       $provide.value('modalDialog', {
@@ -678,7 +678,7 @@ describe('Client Controller', function () {
 
       describe('if the space is not on the client', function() {
         beforeEach(function() {
-          stubs.wrapSpace.returns(mockSpace);
+          stubs.newSpace.returns(mockSpace);
           childScope.$emit('iframeMessage', data);
         });
 
@@ -691,7 +691,7 @@ describe('Client Controller', function () {
         });
 
         it('wraps the space', function() {
-          expect(stubs.wrapSpace).toBeCalledWith(token.spaces[0]);
+          expect(stubs.newSpace).toBeCalledWith(token.spaces[0]);
         });
       });
     });

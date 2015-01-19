@@ -233,7 +233,7 @@ describe('EntityCreationController', function () {
   describe('creates an api key', function () {
     var createStub;
     beforeEach(function () {
-      createStub = sinon.stub(this.scope.spaceContext.space, 'createBlankDeliveryApiKey');
+      createStub = sinon.stub(this.scope.spaceContext.space, 'newDeliveryApiKey');
     });
 
     afterEach(function () {

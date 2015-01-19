@@ -179,7 +179,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
         existing.update(rawSpace);
         return existing;
       } else {
-        var space = client.wrapSpace(rawSpace);
+        var space = client.newSpace(rawSpace);
         space.save = function () { throw new Error('Saving space not allowed'); };
         return space;
       }
