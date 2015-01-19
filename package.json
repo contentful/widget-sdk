@@ -62,7 +62,9 @@
   },
   "scripts": {
     "test": "xvfb-run node_modules/karma/bin/karma start --single-run --browsers SlimerJS --reporters dots",
-    "hint": "jshint app/assets/javascripts spec/javascripts/contentful"
+    "hint": "jshint app/assets/javascripts spec/javascripts/contentful",
+    "cloc": "cloc --read-lang-def .cloc.def src",
+    "clean": "rm -rf bower_components node_modules"
   },
   "repository": {
     "type": "git",
