@@ -18,11 +18,10 @@ module.exports = function(config) {
       'public/app/vendor.js',
       'public/app/templates.js',
       'public/app/user_interface.js',
-      'app/assets/javascripts/*.js',
-      'app/assets/javascripts/*/**/*.js',
-      'spec/javascripts/helpers/**/*.js',
+      'src/javascripts/*.js',
+      'src/javascripts/*/**/*.js',
       'bower_components/angular-mocks/angular-mocks.js',
-      'spec/javascripts/contentful/**/*.js'
+      'spec/**/*.js'
     ],
 
 

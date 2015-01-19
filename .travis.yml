@@ -13,9 +13,6 @@ before_install:
 install:
   - "npm install -g jshint"
   - "npm install -g slimerjs"
-  - "pushd ./app/assets/commonjs_modules/user_interface"
-  - "npm install"
-  - "popd"
   - "npm install"
   - "bower install"
 before_script:
