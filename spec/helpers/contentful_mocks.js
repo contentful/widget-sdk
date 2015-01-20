@@ -384,6 +384,10 @@ mocks.config(['$provide', '$controllerProvider', function ($provide, $controller
     });
   };
 
+  $provide.removeController = function (label, fakeController) {
+    $controllerProvider.register(label, fakeController || angular.noop);
+  };
+
   $provide.removeControllers = function () {
     _.flatten(arguments).forEach(function (controller) {
       $controllerProvider.register(controller, angular.noop);

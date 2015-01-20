@@ -16,11 +16,23 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
       scope.enableUpload = true;
       scope.showMeta = false;
 
-      scope.toggleMeta = function () {
-        scope.showMeta = !scope.showMeta;
-      };
+      scope.$on('cfFileDropped', fileEventHandler);
+      scope.$on('gettyFileAuthorized', fileEventHandler);
+      scope.$on('fileProcessingFailed', function () {
+        setFPFile(null);
+      });
 
-      scope.uploadFile = function () {
+      scope.toggleMeta = toggleMeta;
+      scope.uploadFile = uploadFile;
+      scope.uploadFromGetty = uploadFromGetty;
+      scope.editFile = editFile;
+      scope.deleteFile = deleteFile;
+
+      function toggleMeta() {
+        scope.showMeta = !scope.showMeta;
+      }
+
+      function uploadFile() {
         filepicker.pick().
         then(function (FPFile) {
           setFPFile(FPFile);
@@ -30,17 +42,37 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
           }
           scope.validate();
         });
-      };
+      }
 
-      scope.uploadFromGetty = function () {
+      function uploadFromGetty() {
         modalDialog.open({
           scope: scope,
           template: 'getty_dialog',
           ignoreEnter: true
         });
-      };
+      }
 
-      scope.editFile = function () {
+      function deleteFile() {
+        setFPFile(null);
+        scope.validate();
+      }
+
+      function fileEventHandler(event, file) {
+        setFPFile(file);
+      }
+
+      function setFPFile(FPFile) {
+        scope.file = filepicker.parseFPFile(FPFile);
+        scope.otBindInternalChangeHandler().then(notify);
+        aviary.close();
+      }
+
+      function notify() {
+        // dependency on scope.locale feels weird
+        if (scope.file) scope.$emit('fileUploaded', scope.file, scope.locale);
+      }
+
+      function editFile() {
         scope.loadingEditor = true;
         scope.imageHasLoaded = false;
         var img = elem.find('.thumbnail').get(0);
@@ -48,7 +80,7 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
           notification.warn('The image editor has failed to load.');
           return;
         }
-        var preview = elem.find('.editor-preview').get(0);
+        var preview = elem.find('[aviary-editor-preview]').get(0);
         preview.src = '';
         var imgUrl = stringUtils.removeQueryString(img.src);
         preview.onload = function () {
@@ -73,43 +105,6 @@ angular.module('contentful').directive('cfFileEditor', ['$injector', function ($
           });
         };
         preview.src = imgUrl;
-      };
-
-      scope.deleteFile = function () {
-        setFPFile(null);
-        scope.validate();
-      };
-
-      scope.$watch('file', function (file) {
-        if(!file) scope.imageHasLoaded = false;
-      });
-
-      scope.$on('cfFileDropped', fileEventHandler);
-      scope.$on('gettyFileAuthorized', fileEventHandler);
-      scope.$on('fileProcessingFailed', function () {
-        setFPFile(null);
-      });
-      scope.$on('imageLoaded', function () {
-        scope.imageHasLoaded = true;
-      });
-      scope.$on('imageUnloaded', function () {
-        scope.imageHasLoaded = false;
-      });
-
-
-      function fileEventHandler(event, file) {
-        setFPFile(file);
-      }
-
-      function setFPFile(FPFile) {
-        scope.file = filepicker.parseFPFile(FPFile);
-        scope.otBindInternalChangeHandler().then(notify);
-        aviary.close();
-      }
-
-      function notify() {
-        // dependency on scope.locale feels weird
-        if (scope.file) scope.$emit('fileUploaded', scope.file, scope.locale);
       }
 
     }
