@@ -18,13 +18,14 @@
     "jquery": "~2.1.1",
     "jquery-ui": "~1.10.4",
     "bootstrap": "~3.1.1",
-    "angular": "~1.3.8",
-    "angular-animate": "~1.3.8",
-    "angular-sanitize": "~1.3.8",
-    "angular-route": "~1.3.8",
+    "angular": "~1.3.9",
+    "angular-animate": "~1.3.9",
+    "angular-sanitize": "~1.3.9",
+    "angular-route": "~1.3.9",
     "angular-load": "~0.2.0",
     "zeroclipboard": "1.3.5",
     "angular-ui-sortable": "~0.13.1",
-    "angular-mocks": "~1.3.8"
+    "angular-mocks": "~1.3.9",
+    "speakingurl": "~0.19.0"
   }
 }

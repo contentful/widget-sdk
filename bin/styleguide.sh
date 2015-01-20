@@ -9,7 +9,7 @@
 
 set -e
 
-pushd app/assets/stylesheets
+pushd src/stylesheets
 
 # get the gh-pages branch of the repo
 if [ ! -d styleguide ] ; then
@@ -17,8 +17,8 @@ if [ ! -d styleguide ] ; then
 fi
 
 # CSS and Styleguide generation
-stylus --use ../../../node_modules/nib/ < main.styl > compiled.css
-stylus --use ../../../node_modules/nib/ < styleguide_template/public/custom.styl > styleguide_template/public/custom.css 
+stylus --use ../../node_modules/nib/ < main.styl > compiled.css
+stylus --use ../../node_modules/nib/ < styleguide_template/public/custom.styl > styleguide_template/public/custom.css 
 kss-node --css compiled.css --template styleguide_template .
 rm -f compiled.css
 

@@ -7,19 +7,20 @@ branches:
 node_js:
   - "0.10"
 before_install:
-  - npm config set always-auth true
-  - npm config set _auth Y2ZkOjBlOWNhYWYyYjExMTliYjdkZjY=
-  - npm config set always-auth true
-install:
+  - "npm config set always-auth true"
+  - "npm config set _auth Y2ZkOjBlOWNhYWYyYjExMTliYjdkZjY="
   - "npm config set registry https://contentful.registry.nodejitsu.com/"
-  - "pushd ./app/assets/commonjs_modules/user_interface"
-  - "npm install"
-  - "popd"
+install:
+  - "npm install -g jshint"
+  - "npm install -g slimerjs"
   - "npm install"
   - "bower install"
 before_script:
   - "npm install -g travis-notify-geckoboard"
   - "gulp vendor-js templates user_interface"
+script:
+  - "npm test"
+  - "npm run hint"
 after_script: >
   if [ $TRAVIS_BRANCH == 'master' ]; then
     travis-notify-geckoboard -a ed5192f6255498bc3fe120e1fd5f1983 -w 49147-989e9c70-495c-0131-abd5-22000a9e0b33

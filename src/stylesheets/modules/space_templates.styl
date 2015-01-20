@@ -1,0 +1,168 @@
+// Space templates
+//
+// Styleguide 7.0
+.space-template__dialog
+  padding: 0
+  .title
+    margin: 0
+
+// Space template list
+//
+// A module which contains a list of icons and labels for Space Templates
+// with a detail view on the right
+// 
+// Markup:
+// <div class="space-template__dialog" style="width: 700px; height: 600px;">
+//   <div class="space-template__list">
+//     <div class="space-template__item">
+//       <img class="space-template__icon">
+//       <p class="space-template__label">Template name</p>
+//     </div>
+//     <div class="space-template__item">
+//       <img class="space-template__icon">
+//       <p class="space-template__label">Template name</p>
+//     </div>
+//   </div>
+//   <div class="space-template__detail">
+//     <div class="space-template__detail-content">
+//       <h1>Template name</h1>
+//       <p>Sleep on keyboard. Chase mice leave hair everywhere sleep in the bathroom sink hate dog, and peer out window, chatter at birds, lure them to mouth so ears back wide eyed shove bum in owner's face like camera lens. Play time. Flop over. Run in circles. Always hungry stick butt in face, and hunt by meowing loudly at 5am next to human slave food dispenser but peer out window, chatter at birds, lure them to mouth find empty spot in cupboard and sleep all day. Sun bathe claw drapes have secret plans give attitude hate dog always hungry. Chase dog then run away always hungry, for inspect anything brought into the house lick butt, but intently stare at the same spot. Give attitude curl into a furry donut. Stick butt in face scratch the furniture chase imaginary bugs all of a sudden cat goes crazy loves cheeseburgers bathe private parts with tongue then lick owner's face but sleep nap. Nap all day cat snacks, for attack feet, for give attitude, and attack feet, but have secret plans need to chase tail.</p>
+//     </div>
+//   </div>
+// </div>
+//
+// Styleguide 7.1
+.space-template__dialog-content
+  display: flex
+  height: 600px
+  width: 900px
+  &.dialog-content
+    margin: 0
+  .loading
+    margin: auto
+
+.space-template__list,
+.space-template__detail
+  font-size: 1.1em
+  padding-top: 20px
+  padding-bottom: 20px
+
+.space-template__list
+  width: 70%
+.space-template__detail
+  width: 30%
+  padding-left: 30px
+  padding-right: 30px
+  background-color: $gray-lighter
+
+.space-template__list,
+.space-template__detail-content
+  overflow-y: auto
+
+.space-template__detail-content
+  height: 498px
+  margin-bottom: 10px
+  h1
+    font-size: 1.3em
+    margin-bottom: 25px
+
+.space-template__item
+  float: left
+  width: 140px
+  text-align: center
+
+.space-template--item-selected
+  .space-template__icon
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3), 1px 1px 1px transparentify($metallic-gray-blueish, 0.3) inset, -1px -1px 1px transparentify($metallic-gray-blueish, 0.3) inset
+
+.space-template__icon
+  $display-flexbox()
+  width: 100px
+  height: 135px
+  margin: 0 auto 8px
+  border: 1px solid $metallic-gray-blueish
+  border-radius: 2px
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3)
+  img
+    margin: auto
+  .fa-plus-circle
+    margin: auto
+    font-size: 50px
+    color: $metallic-gray-blueish
+
+// Space Template Queue
+//
+// A view which shows a queue of actions performed when creating space
+// template items, with variations of success and error for each item
+//
+// Markup:
+// <div class="space-template__dialog" style="width: 700px; height: 600px;">
+//   <div class="space-template__queue">
+//     <h1>Creating template entities</h1>
+//     <div class="space-template__queue-item space-template--item-success">
+//       Content Type
+//     </div>
+//     <div class="space-template__queue-item space-template--item-error">
+//       Content Type
+//       <span>Failed</span>
+//     </div>
+//     <div class="space-template__queue-status">Failed</div>
+//   </div>
+// </div>
+//
+// Styleguide 7.2
+.space-template__queue
+  padding: 0px 20px
+  margin-top: 10px
+  height: 560px
+  overflow-y: auto
+
+.space-template__queue-item
+  padding: 4px 0px
+  .fa
+    margin-right: 4px
+
+.space-template__item-status
+  margin-left: 4px
+
+.space-template--item-success
+  .fa
+    color: $green
+.space-template--item-error
+  .fa,
+  .space-template__item-status
+    color: $red
+
+.space-template__queue-status
+  font-size: 1.1em
+  margin: 10px 0px
+
+
+.space-template__post-dialog
+  position: absolute
+  top: 160px
+  right: 380px
+  width: 450px
+  padding: 10px 20px
+  border: 1px solid $metallic-gray-blueish
+  border-radius: 2px
+  box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3)
+  background-color: transparentify($gray-lightest, 0.9)
+  z-index: 10
+
+
+.space-template__tips-list
+  margin-left: 0
+  li
+    overflow: hidden
+    vertical-align: middle
+    line-height: 42px
+  .numbered-tooltip__label, p
+    float: left
+  .numbered-tooltip__label
+    margin-right: 10px
+  p
+    font-size: 1.1em
+    line-height: 1.2em
+    width: 85%
+

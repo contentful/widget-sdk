@@ -1,0 +1,9 @@
+Jade
+    filter remove_matches ^\s*-#
+    filter remove_inline //.*$
+    extension jade
+    3rd_gen_scale 1.00
+Stylus
+    extension styl
+    filter remove_matches ^\s*//
+    3rd_gen_scale 1.00

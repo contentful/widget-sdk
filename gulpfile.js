@@ -29,12 +29,12 @@ var stylus      = require('gulp-stylus');
 var uglify      = require('gulp-uglify');
 
 var env = process.env.UI_ENV || 'development';
-var config = require('./config/environments/'+env+'/config.json');
+var config = require('./config/environment.json');
 
 var src = {
-  templates: './app/assets/javascripts/**/*.jst.jade',
-  components: './app/assets/javascripts/**/*.js',
-  stylesheets: './app/assets/stylesheets/**/*',
+  templates:   'src/javascripts/**/*.jade',
+  components:  'src/javascripts/**/*.js',
+  stylesheets: 'src/stylesheets/**/*',
   vendorScripts: [
     'bower_components/jquery/dist/jquery.js',
     'bower_components/jquery-ui/ui/jquery.ui.core.js',
@@ -52,38 +52,32 @@ var src = {
     'bower_components/angular-route/angular-route.js',
     'bower_components/angular-ui-sortable/sortable.js',
     'bower_components/bootstrap/js/tooltip.js',
+    'bower_components/speakingurl/lib/index.js',
 
-    'vendor/assets/javascripts/jquery.autosize.js',
-    'vendor/assets/javascripts/jquery.cookies*.js',
-    'vendor/assets/javascripts/jquery-textrange.js',
-    'vendor/assets/javascripts/guiders*.js',
+    'vendor/**/*.js',
 
-    'app/assets/commonjs_modules/user_interface/node_modules/share/node_modules/browserchannel/dist/bcsocket-uncompressed.js',
-    'app/assets/commonjs_modules/user_interface/node_modules/share/webclient/share.uncompressed.js',
-    'app/assets/commonjs_modules/user_interface/node_modules/share/webclient/json.uncompressed.js',
-    'app/assets/commonjs_modules/user_interface/node_modules/share/webclient/textarea.js',
+    'node_modules/share/node_modules/browserchannel/dist/bcsocket-uncompressed.js',
+    'node_modules/share/webclient/share.uncompressed.js',
+    'node_modules/share/webclient/json.uncompressed.js',
+    'node_modules/share/webclient/textarea.js',
   ],
   images: [
-    './app/assets/images/**/*',
+    'src/images/**/*',
     './bower_components/jquery-ui/themes/base/images/*'
   ],
-  fonts: [
-    './app/assets/font-awesome/*.+(eot|svg|ttf|woff)',
-  ],
   static: [
-    './app/assets/commonjs_modules/user_interface/node_modules/zeroclipboard/ZeroClipboard.swf'
+    'vendor/font-awesome/*.+(eot|svg|ttf|woff)',
+    'node_modules/zeroclipboard/ZeroClipboard.swf'
   ],
   vendorStylesheets: [
-    './app/assets/stylesheets/html5reset*',
-    './app/assets/font-awesome/font-awesome.css',
-    './vendor/assets/stylesheets/formtastic.css',
+    './vendor/**/*.css',
     './bower_components/jquery-ui/themes/base/jquery-ui.css',
     './bower_components/jquery-ui/themes/base/jquery.ui.autocomplete.css',
     './bower_components/jquery-ui/themes/base/jquery.ui.datepicker.css',
   ],
   mainStylesheets: [
-    './app/assets/stylesheets/main.styl',
-    './app/assets/stylesheets/ie9.css'
+    'src/stylesheets/main.styl',
+    'src/stylesheets/ie9.css'
   ]
 };
 
@@ -97,13 +91,8 @@ gulp.task('copy-images', function () {
     .pipe(gulp.dest('./public/app/images'));
 });
 
-gulp.task('copy-fonts', function () {
-  return gulp.src(src.fonts)
-    .pipe(gulp.dest('./public/app/fonts'));
-});
-
 gulp.task('index', function(){
-  return gulp.src('./app/views/application/index.html')
+  return gulp.src('src/index.html')
     .pipe(replace( { regex: '<!-- releaseStage -->', replace: '<script>window.Bugsnag.releaseStage = "'+env+'";</script>'}))
     .pipe(gulp.dest('./public'));
 });
@@ -112,7 +101,7 @@ gulp.task('templates', function () {
   return gulp.src(src.templates)
     .pipe(jade({doctype: 'html'}))
     .pipe(jstConcat('templates.js', {
-      renameKeys: ['^.*/(.*?)(\\.jst)?.html$', '$1']
+      renameKeys: ['^.*/(.*?).html$', '$1']
     }))
     .pipe(gulp.dest('./public/app'));
 
@@ -127,8 +116,7 @@ gulp.task('vendor-js', function () {
 });
 
 gulp.task('user_interface', function () {
-  return browserify('./', {
-      basedir: './app/assets/commonjs_modules/user_interface/'})
+  return browserify('./src/user_interface.js')
     .transform({optimize: 'size'}, 'browserify-pegjs')
     .bundle({debug: true})
     .pipe(source('user_interface.js'))
@@ -165,19 +153,16 @@ gulp.task('vendor_stylesheets', function () {
 
 gulp.task('stylesheets', function () {
   return gulp.src(src.mainStylesheets)
+    .pipe(sourceMaps.init())
     .pipe(stylus({
       use: nib(),
-      sourcemap: {
-        inline: true,
-        sourceRoot: '/stylesheets',
-        basePath: 'app/assets/stylesheets'
-      }
       //compress: true
     }))
+    .pipe(sourceMaps.write({sourceRoot: '/stylesheets'}))
     .pipe(gulp.dest('./public/app'));
 });
 
-gulp.task('all', ['index', 'templates', 'vendor-js', 'user_interface', 'components', 'copy-images', 'copy-fonts', 'copy-static', 'stylesheets', 'vendor_stylesheets']);
+gulp.task('all', ['index', 'templates', 'vendor-js', 'user_interface', 'components', 'copy-images', 'copy-static', 'stylesheets', 'vendor_stylesheets']);
 
 gulp.task('clean', function () {
   return gulp.src([
@@ -229,11 +214,7 @@ gulp.task('serve-production', function(){
 // PRODUCTION: //////////////////////////////////////////
 
 gulp.task('rev-static', function(){
-  return gulp.src([
-    'public/app/images/**',
-    'public/app/fonts/**',
-    'public/app/ZeroClipboard.swf',
-  ], {base: 'public'})
+  return gulp.src([ 'public/app/**', '!**/*.js', '!**/*.css'], {base: 'public'})
     .pipe(gulp.dest('build'))
     .pipe(rev())
     .pipe(gulp.dest('build'))
