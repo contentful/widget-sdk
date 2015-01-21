@@ -7,7 +7,7 @@ angular.module('contentful').controller('ThumbnailController', ['$scope', 'mimet
   });
 
   $scope.$on('imageLoaded', function () {
-    $scope.imageHasLoaded = true;
+    if($scope.file) $scope.imageHasLoaded = true;
   });
   $scope.$on('imageUnloaded', function () {
     $scope.imageHasLoaded = false;
@@ -28,10 +28,10 @@ angular.module('contentful').controller('ThumbnailController', ['$scope', 'mimet
   }
 
   function hasPreview() {
-    return mimetype.hasPreview({
+    return !!($scope.file && mimetype.hasPreview({
       type: $scope.file.contentType,
       fallbackFileName: $scope.file.fileName
-    });
+    }));
   }
 
   function getIconName() {
