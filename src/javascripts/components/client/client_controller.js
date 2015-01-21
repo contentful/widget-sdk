@@ -11,7 +11,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var analytics          = $injector.get('analytics');
   var routing            = $injector.get('routing');
   var authorization      = $injector.get('authorization');
-  var tutorial           = $injector.get('tutorial');
   var modalDialog        = $injector.get('modalDialog');
   var presence           = $injector.get('presence');
   var $location          = $injector.get('$location');
@@ -29,13 +28,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.spaceContext = new SpaceContext();
 
   $scope.notification = notification;
-
-  $scope.startTutorial = function () {
-    tutorial.start().catch(function (err) {
-      notification.error('Could not create tutorial space');
-      logger.logError('Could not create tutorial space', {error: err});
-    });
-  };
 
   $scope.preferences = {
     showAuxPanel: false,
@@ -376,7 +368,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     $scope.performTokenLookup()
     .then(function () {
       analytics.login($scope.user);
-      showTutorialIfNecessary();
     }, ReloadNotification.gatekeeperErrorHandler);
 
     setTimeout(newVersionCheck, 5000);
@@ -391,17 +382,5 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       }
     }, 5 * 60 * 1000);
   };
-
-  function showTutorialIfNecessary() {
-    var now = moment();
-    var created = moment($scope.user.sys.createdAt);
-    var age = now.diff(created, 'days');
-    var seenTutorial = tutorial.getSeen();
-    if (age < 7 && !seenTutorial && !_.isEmpty($scope.spaces)) {
-      tutorial.start().catch(function () {
-        tutorial.setSeen();
-      });
-    }
-  }
 
 }]);

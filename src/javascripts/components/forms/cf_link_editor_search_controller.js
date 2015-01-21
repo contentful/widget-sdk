@@ -39,7 +39,7 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
     if($scope.entityType == 'Entry' && singleContentType($scope.entityContentTypes)){
       $scope.entityName = singleContentType($scope.entityContentTypes).getName();
     } else if ($scope.entityType == 'Asset' && $scope.entityMimeTypeGroup) {
-      $scope.entityName = mimetype.groupDisplayNames[$scope.entityMimeTypeGroup];
+      $scope.entityName = mimetype.getGroupNames()[$scope.entityMimeTypeGroup];
     } else {
       $scope.entityName = $scope.entityType;
     }

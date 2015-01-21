@@ -31,8 +31,6 @@ describe('Client Controller', function () {
         'open',
         'wrapSpace',
         'dialog',
-        'tutorialStart',
-        'tutorialSeen',
         'presenceActive',
         'trigger',
         'hasNewVersion',
@@ -119,11 +117,6 @@ describe('Client Controller', function () {
         open: stubs.dialog
       });
 
-      $provide.value('tutorial', {
-        start: stubs.tutorialStart,
-        getSeen: stubs.tutorialSeen
-      });
-
       $provide.value('presence', {
         isActive: stubs.presenceActive
       });
@@ -145,9 +138,8 @@ describe('Client Controller', function () {
       $provide.value('reasonsDenied', stubs.reasons);
 
     });
-    inject(function ($controller, $rootScope, tutorial, $q, $injector){
+    inject(function ($controller, $rootScope, $q, $injector){
       notification = $injector.get('notification');
-      tutorial.start.returns($q.when());
       scope = $rootScope.$new();
       clientController = $controller('ClientController', {$scope: scope});
     });
@@ -1109,25 +1101,6 @@ describe('Client Controller', function () {
         expect(stubs.loginTrack).toBeCalled();
       });
 
-      it('tutorial seen check is called', function () {
-        scope.initClient();
-        expect(stubs.tutorialSeen).toBeCalled();
-      });
-
-      it('tutorial start is called', function () {
-        scope.initClient();
-        expect(stubs.tutorialStart).toBeCalled();
-      });
-
-      it('sets tutorial to be seen if tutorial fails to start', function () {
-        inject(function (tutorial, $q) {
-          tutorial.start.returns($q.when($q.reject()));
-        });
-        scope.initClient();
-        expect(stubs.tutorialSeen).toBeCalled();
-        expect(stubs.tutorialStart).toBeCalled();
-      });
-
       describe('fires an initial version check', function () {
         var broadcastStub;
         beforeEach(inject(function ($rootScope) {
@@ -1245,15 +1218,5 @@ describe('Client Controller', function () {
     scope.$digest();
     expect(scope.getOrgName('123')).toEqual('');
   });
-
-  it('should display an error if the tutorial fails to start', function () {
-    inject(function ($q, tutorial) {
-      tutorial.start.returns($q.when($q.reject()));
-    });
-    scope.startTutorial();
-    scope.$apply();
-    expect(notification.error).toBeCalled();
-  });
-
 
 });

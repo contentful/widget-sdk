@@ -14,13 +14,13 @@ ul.asset-gallery(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide
                   entity-title="spaceContext.localizedField(entity, 'data.fields.title', locale.code)"
                   file="spaceContext.localizedField(entity, 'data.fields.file', locale.code)")
       .asset-gallery__file.gallery-file
-        div(cf-thumbnail file="file" size="120" format="square" fit="thumb" ng-if="file && file.url")
+        div(cf-thumbnail file="file" size="120" fit="thumb" ng-if="file && file.url")
 
       .asset-gallery__handle.dragging-handle(cf-drag-handle ng-disabled="!otEditable" ng-hide="linkedEntities.length==1")
         i.fa.fa-ellipsis-v
         i.fa.fa-ellipsis-v
 
-      .asset-gallery__title(ng-show="file && !entity.isMissing && !isImage()")
+      .asset-gallery__title(ng-show="file && !entity.isMissing && !hasPreview()")
         | {{file.fileName | truncateMiddle:24:7}}
 
       .asset-gallery__no-file(ng-show="!file && entity && !entity.isMissing")
@@ -31,13 +31,13 @@ ul.asset-gallery(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide
       .gallery-buttons(ng-show="hoveringImage")
         button.btn(type="button"
             cf-file-preview
-            ng-if="file && file.url && isImage()"
+            ng-if="file && file.url && hasPreview()"
             preview-size="fullscreen"
             tooltip="Image zoom"
             tooltip-container=".entry-editor")
           i.fa.fa-search-plus
         a.btn(type="button"
-            ng-if="!isImage()"
+            ng-if="!hasPreview()"
             href="{{file.url}}"
             target="_blank"
             ng-show="file|isFileReady"

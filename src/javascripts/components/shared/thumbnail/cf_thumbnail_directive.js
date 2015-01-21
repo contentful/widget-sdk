@@ -7,8 +7,9 @@
  * Usage:
  * <div cf-thumbnail
  *   file="fileObject"
- *   size="pixels"
- *   format="square|<empty>"
+ *   size="pixels" // if size is used, width and height are ignored
+ *   width="pixels" // can be used with height or by itself
+ *   height="pixels" // can be used with width or by itself
  *   fit="scale|crop|pad|thumb"
  *   focus="bottom|right|bottom_right|face|faces|..."
  *   ></div>
@@ -23,75 +24,41 @@ angular.module('contentful').directive('cfThumbnail', function () {
     },
     controller: 'ThumbnailController',
     link: function (scope, el, attrs) {
-      var maxWidth, maxHeight;
+      var width, height;
 
-      scope.format = attrs.format;
       scope.fit = attrs.fit;
       scope.focus = attrs.focus;
 
       if (parseInt(attrs.size, 10) > 0) {
-        maxWidth = maxHeight = parseInt(attrs.size, 10);
+        width = height = parseInt(attrs.size, 10);
       } else {
-        scope.$watch(function () {
-          maxWidth  = el.width();
-          maxHeight = el.height();
-          return [maxWidth, maxHeight];
-        }, dimensionsChanged, true);
+        width = attrs.width || undefined;
+        height = attrs.height || undefined;
       }
 
-      scope.$watch('file', dimensionsChanged, true);
-
-      scope.hasPreviewAndDimensions = function(){
-        return scope.file.external || scope.hasPreview() && hasDimensions();
+      scope.isImage = function(){
+        return scope.file.external || scope.hasPreview();
       };
 
       scope.thumbnailUrl = function () {
         if (scope.file.external) return scope.file.url;
 
-        if (scope.file.url && scope.width  && scope.height ) {
-          var sizeQueryString = '?w=' + scope.width + '&h=' + scope.height;
-          if(scope.fit) sizeQueryString += '&fit='+scope.fit;
-          if(scope.focus) sizeQueryString += '&f='+scope.focus;
+        var sizeQueryString = '?';
+        if (scope.file.url && (width || height)) {
+          if(width)  addQSParam('w', width);
+          if(height) addQSParam('h', height);
+          if(width && height){
+            if(scope.fit)   addQSParam('fit', scope.fit);
+            if(scope.focus) addQSParam('f', scope.focus);
+          }
           return '' + scope.file.url + sizeQueryString;
+        }
+
+        function addQSParam(label, value) {
+          sizeQueryString += label+'=' + value +'&';
         }
       };
 
-      function hasDimensions () {
-        return 0 < scope.width && 0 < scope.height;
-      }
-
-      function dimensionsChanged() {
-        if (scope.file && scope.file.details && scope.file.details.image) {
-          setDimensions(scope.file.details.image.width, scope.file.details.image.height);
-        } else {
-          setDimensions(0, 0);
-        }
-      }
-
-      function setDimensions(srcWidth, srcHeight) {
-        var resizeWidth = srcWidth;
-        var resizeHeight = srcHeight;
-
-        if(scope.format == 'square') {
-          resizeWidth = maxWidth;
-          resizeHeight = maxHeight;
-        } else {
-          var aspect = resizeWidth / resizeHeight;
-
-          if (resizeWidth > maxWidth) {
-            resizeWidth = maxWidth;
-            resizeHeight = resizeWidth / aspect;
-          }
-          if (resizeHeight > maxHeight) {
-            aspect = resizeWidth / resizeHeight;
-            resizeHeight = maxHeight;
-            resizeWidth = resizeHeight * aspect;
-          }
-        }
-
-        scope.width  = Math.round(resizeWidth);
-        scope.height = Math.round(resizeHeight);
-      }
     }
   };
 });
