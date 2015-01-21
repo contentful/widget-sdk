@@ -35,10 +35,10 @@ filters.filter('fileSize', function () {
 
 filters.filter('mimeGroup', ['mimetype', function (mimetype) {
   return function (file) {
-    if (file) return mimetype.getGroupDisplayName(
-      mimetype.getExtension(file.fileName),
-      file.contentType
-    );
+    if (file) return mimetype.getGroupName({
+      type: file.contentType,
+      fallbackFileName: file.fileName
+    });
   };
 }]);
 
@@ -63,10 +63,10 @@ filters.filter('isFileReady', function () {
 filters.filter('fileType', ['mimetype', function (mimetype) {
   return function (file) {
     if(file)
-      return mimetype.getGroupDisplayName(
-        mimetype.getExtension(file.fileName),
-        file.contentType
-      );
+      return mimetype.getGroupName({
+        type: file.contentType,
+        fallbackFileName: file.fileName
+      });
     return '';
   };
 }]);

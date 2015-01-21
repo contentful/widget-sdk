@@ -52,7 +52,7 @@ function($scope, $controller, mimetype, random, currentViewLocation){
     ];
 
     function fileTypeViews() {
-      return _.map(mimetype.groupDisplayNames, function (name, label) {
+      return _.map(mimetype.getGroupNames(), function (name, label) {
         return {
           title: name,
           searchTerm: 'type:'+label,

@@ -5,7 +5,7 @@ angular.module('contentful').controller('ErrorPathController', ['$scope', '$attr
 
   var messages = {
     linkMimetypeGroup: function (v) {
-      return 'Linked Asset file type must be ' + mimetype.groupDisplayNames[v.mimetypeGroupName] + '.';
+      return 'Linked Asset file type must be ' + mimetype.getGroupNames()[v.mimetypeGroupName] + '.';
     },
     linkContentType: function(v) {
       var ct = $scope.spaceContext.getPublishedContentType(v.contentTypeId);
