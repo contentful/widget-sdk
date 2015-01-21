@@ -59,7 +59,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
     height: imageDimensionCompletion('height', 'Height of an image in pixels'),
     type: {
       description: 'The filetype of the item',
-      complete: makeListCompletion(_.map(mimetype.groupDisplayNames, function (name, id) {
+      complete: makeListCompletion(_.map(mimetype.getGroupNames(), function (name, id) {
         return {value: id, description: name};
       })),
       convert: function (operator, value) {

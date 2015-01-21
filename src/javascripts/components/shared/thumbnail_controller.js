@@ -28,17 +28,17 @@ angular.module('contentful').controller('ThumbnailController', ['$scope', 'mimet
   }
 
   function hasPreview() {
-    return mimetype.hasPreview(
-      mimetype.getExtension($scope.file.fileName),
-      $scope.file.contentType
-    );
+    return mimetype.hasPreview({
+      type: $scope.file.contentType,
+      fallbackFileName: $scope.file.fileName
+    });
   }
 
   function getIconName() {
-    var groupName = mimetype.getGroupName(
-      mimetype.getExtension($scope.file.fileName),
-      $scope.file.contentType
-    );
+    var groupName = mimetype.getGroupLabel({
+      type: $scope.file.contentType,
+      fallbackFileName: $scope.file.fileName
+    });
     return groupToIcon(groupName);
   }
 
