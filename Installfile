@@ -4,4 +4,4 @@ set -ev
 
 npm install
 
-node_modules/bower/bin/bower install -F
+node_modules/bower/bin/bower install
