@@ -10,7 +10,7 @@ describe('cfLocationEditor Directive', function () {
       stubs = $provide.makeStubs([
         'getCenter', 'panTo', 'setDraggable', 'setPosition', 'setVisible',
         'fitBounds', 'map', 'latLng', 'marker', 'addListener',
-        'locationIsValid', 'serverError', 'otChangeValueP'
+        'locationIsValid', 'serverError', 'otChangeValue'
       ]);
 
       $provide.removeControllers('cfLocationEditorController');
@@ -21,7 +21,7 @@ describe('cfLocationEditor Directive', function () {
 
       $provide.stubDirective('otPath', {
         controller: function ($scope, $q) {
-          $scope.otChangeValueP = stubs.otChangeValueP.returns($q.when());
+          $scope.otChangeValue = stubs.otChangeValue.returns($q.when());
         }
       });
     });
@@ -134,7 +134,7 @@ describe('cfLocationEditor Directive', function () {
       });
 
       it('calls ot change value with location', function() {
-        expect(scope.otChangeValueP).toBeCalledWith(location);
+        expect(scope.otChangeValue).toBeCalledWith(location);
       });
 
       it('update external value', function() {
@@ -144,7 +144,7 @@ describe('cfLocationEditor Directive', function () {
 
     describe('fails to update', function() {
       beforeEach(inject(function($q) {
-        stubs.otChangeValueP.returns($q.reject());
+        stubs.otChangeValue.returns($q.reject());
         scope.updateLocation(location);
         scope.$apply();
       }));
@@ -154,7 +154,7 @@ describe('cfLocationEditor Directive', function () {
       });
 
       it('calls ot change value with location', function() {
-        expect(scope.otChangeValueP).toBeCalledWith(location);
+        expect(scope.otChangeValue).toBeCalledWith(location);
       });
 
       it('resets external value', function() {

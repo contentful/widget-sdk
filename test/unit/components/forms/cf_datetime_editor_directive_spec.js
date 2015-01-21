@@ -5,13 +5,9 @@ describe('DateTime Editor', function () {
   var localZone = moment().format('Z');
   beforeEach(module('contentful/test'));
 
-  beforeEach(inject(function ($compile, $rootScope){
+  beforeEach(inject(function ($compile, $rootScope, $q){
     scope = $rootScope;
-    scope.otChangeValue = function (value, callback) {
-      scope.$evalAsync(function () {
-        callback();
-      });
-    };
+    scope.otChangeValue = sinon.stub().returns($q.when());
     scope.widget = {widgetParams: {
       format: 'timeZ',
       ampm: '24'

@@ -40,13 +40,12 @@ angular.module('contentful').directive('cfObjectEditor', ['defer', function(defe
       };
 
       scope.saveJSON = function () {
-        scope.otChangeValue(scope.jsonData.value, function (err) {
-          if (!err) {
-            ngModel.$setViewValue(scope.jsonData.value);
-            ngModel.$render();
-          } else {
-            ngModel.$render();
-          }
+        scope.otChangeValue(scope.jsonData.value)
+        .then(function(){
+          ngModel.$setViewValue(scope.jsonData.value);
+          ngModel.$render();
+        }, function(){
+          ngModel.$render();
         });
       };
 

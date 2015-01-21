@@ -12,7 +12,7 @@ describe('cfFileEditor Directive', function () {
       $provide.removeControllers('NgModelCtrl');
       $provide.stubDirective('otPath', {
         controller: function ($scope, $q) {
-          $scope.otChangeValueP = sinon.stub().returns($q.when());
+          $scope.otChangeValue = sinon.stub().returns($q.when());
         }
       });
       $provide.removeDirectives('cfFileDrop');
@@ -76,7 +76,7 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('calls otchangevalue', function() {
-        expect(scope.otChangeValueP).toBeCalled();
+        expect(scope.otChangeValue).toBeCalled();
       });
 
       it('file object is parsed', function() {
@@ -153,7 +153,7 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('calls otchangevalue', function() {
-        expect(scope.otChangeValueP).toBeCalled();
+        expect(scope.otChangeValue).toBeCalled();
       });
 
       it('file is null', function() {
@@ -178,7 +178,7 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('calls otchangevalue', function() {
-        expect(scope.otChangeValueP).toBeCalled();
+        expect(scope.otChangeValue).toBeCalled();
       });
 
       it('file now has url', function() {

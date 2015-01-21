@@ -8,10 +8,10 @@ describe('cfObjectEditor', function () {
       $provide.removeDirectives('otBindModel');
     });
 
-    inject(function ($rootScope, $compile) {
+    inject(function ($rootScope, $compile, $q) {
       $rootScope.otEditable = true;
       $rootScope.fieldData = {value: null};
-      $rootScope.otChangeValue = sinon.stub().yields();
+      $rootScope.otChangeValue = sinon.stub().returns($q.when());
       elem = $compile('<div class="cf-object-editor" ng-model="fieldData.value"></div>')($rootScope);
       textarea = elem.find('textarea');
       scope = elem.scope();

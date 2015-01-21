@@ -1,7 +1,7 @@
 'use strict';
 
 describe('cfOoyalaEditorController', function () {
-  var controller, scope, otChangeValuePDeferred, OoyalaErrorMessages;
+  var controller, scope, otChangeValueDeferred, OoyalaErrorMessages;
 
 
   beforeEach(function() {
@@ -13,12 +13,12 @@ describe('cfOoyalaEditorController', function () {
     inject(function ($controller, $injector, $q, $rootScope) {
       OoyalaErrorMessages    = $injector.get('OoyalaErrorMessages');
 
-      otChangeValuePDeferred = $q.defer();
+      otChangeValueDeferred = $q.defer();
 
-      scope                = $rootScope.$new();
-      scope.fieldData      = {value : 1};
-      scope.otChangeValueP = jasmine.createSpy().and.returnValue(otChangeValuePDeferred.promise);
-      controller           = $controller('cfOoyalaEditorController', {$scope: scope});
+      scope               = $rootScope.$new();
+      scope.fieldData     = {value : 1};
+      scope.otChangeValue = jasmine.createSpy().and.returnValue(otChangeValueDeferred.promise);
+      controller          = $controller('cfOoyalaEditorController', {$scope: scope});
     });
   });
 
@@ -80,13 +80,13 @@ describe('cfOoyalaEditorController', function () {
         controller.resetEditorInput();
       });
 
-      it('calls otChangeValueP passing undefined', function() {
-        expect(scope.otChangeValueP).toHaveBeenCalledWith(undefined);
+      it('calls otChangeValue passing undefined', function() {
+        expect(scope.otChangeValue).toHaveBeenCalledWith(undefined);
       });
 
       describe('on successful save', function() {
         beforeEach(function() {
-          otChangeValuePDeferred.resolve();
+          otChangeValueDeferred.resolve();
           scope.$apply();
         });
 
@@ -113,8 +113,8 @@ describe('cfOoyalaEditorController', function () {
         controller.persistInput('input-value');
       });
 
-      it('calls otChangeValueP passing the given input', function() {
-        expect(scope.otChangeValueP).toHaveBeenCalledWith('input-value');
+      it('calls otChangeValue passing the given input', function() {
+        expect(scope.otChangeValue).toHaveBeenCalledWith('input-value');
       });
     });
   });

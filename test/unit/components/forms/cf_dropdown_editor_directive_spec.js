@@ -7,7 +7,7 @@ describe('cfDropdownEditor Directive', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.stubDirective('otPath', {controller: function ($scope, $q) {
-        $scope.otChangeValueP = sinon.stub().returns($q.when());
+        $scope.otChangeValue = sinon.stub().returns($q.when());
       }});
     });
 
@@ -111,7 +111,7 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('changes ot value', function() {
-      expect(scope.otChangeValueP).toBeCalledWith('orange');
+      expect(scope.otChangeValue).toBeCalledWith('orange');
     });
 
     it('sets the selected value', function() {
@@ -129,7 +129,7 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('changes ot value', function() {
-      expect(scope.otChangeValueP).toBeCalledWith(1);
+      expect(scope.otChangeValue).toBeCalledWith(1);
     });
 
     it('sets the selected value', function() {
@@ -147,7 +147,7 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('changes ot value', function() {
-      expect(scope.otChangeValueP).toBeCalledWith(1.2);
+      expect(scope.otChangeValue).toBeCalledWith(1.2);
     });
 
     it('sets the selected value', function() {

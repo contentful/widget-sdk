@@ -31,7 +31,7 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
   }
 
   function persistInput(input) {
-    $scope.otChangeValueP(input);
+    $scope.otChangeValue(input);
   }
 
   function resetAsset() {
@@ -43,7 +43,7 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
   }
 
   function resetEditorInput() {
-    $scope.otChangeValueP(undefined).then(function(){
+    $scope.otChangeValue(undefined).then(function(){
       controller.resetErrors();
       controller.resetAsset();
       $scope.fieldData.value = undefined;

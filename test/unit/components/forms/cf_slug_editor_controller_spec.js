@@ -19,7 +19,7 @@ describe('SlugEditorController', function () {
     this.scope.otEditable = true;
     this.scope.otGetValue = sinon.stub().returns(null);
 
-    this.scope.otChangeStringP = function (value) {
+    this.scope.otChangeString = function (value) {
       scope.otGetValue.returns(value || null);
       return $q.when();
     };

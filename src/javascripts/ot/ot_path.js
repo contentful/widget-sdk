@@ -42,7 +42,7 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
        * TL;DR - Simulates manual editing of the old string into the new string
        * for more natural collaboration.
        */
-      $scope.otChangeStringP = function (newValue) {
+      $scope.otChangeString = function (newValue) {
         if ($scope.otDoc) {
           var oldValue = $scope.otGetValue();
           var cb = $q.callbackWithApply(),
@@ -86,7 +86,7 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
         }
       };
 
-      $scope.otChangeValueP = function (value) {
+      $scope.otChangeValue = function (value) {
         if ($scope.otDoc) {
           var stopSpin = cfSpinner.start();
           var cb = $q.callbackWithApply();
@@ -105,39 +105,6 @@ angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', 
           }
         } else {
           return $q.reject('No otDoc to push to');
-        }
-      };
-
-      $scope.otChangeValue = function(value, callback) {
-        //console.log('changing value %o -> %o in %o, %o', $scope.otDoc.getAt($scope.otPath), value, $scope.otPath, $scope.otDoc);
-        if ($scope.otDoc) {
-          callback = callback || angular.noop;
-          try {
-            var stopSpin = cfSpinner.start();
-            $scope.otDoc.setAt($scope.otPath, value, function () {
-              var callbackArgs = arguments;
-              $scope.$apply(function () {
-                callback.apply(undefined, callbackArgs);
-                stopSpin();
-              });
-            });
-            //console.log('changin value returned %o %o in doc %o version %o', err, data, scope.otDoc, scope.otDoc.version);
-          } catch(e) {
-            ShareJS.mkpath({
-              doc: $scope.otDoc,
-              path: $scope.otPath,
-              types: $scope.otPathTypes,
-              value: value
-            }, function () {
-              var callbackArgs = arguments;
-              $scope.$apply(function () {
-                callback.apply(undefined, callbackArgs);
-                stopSpin();
-              });
-            });
-          }
-        //} else {
-          //console.error('No otDoc to push %o to', value);
         }
       };
 
