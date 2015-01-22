@@ -1,16 +1,4 @@
-.gmaps-container(ng-model="location")
-.invalid-location-warning(ng-hide="locationValid")
-  .text Corrupt location data!
-.widget-location-editor__sub-fields(cf-autocomplete-results="results")
-  .search(ng-show="otEditable")
-    .search-field(placeholder="Search Address" cf-search="searchTerm" search-type-ahead)
-    .search-results.search-options-on(ng-show="results.length > 0")
-      ul.plain-list
-        li.plain-list--item(ng-repeat="(index, result) in results track by index" ng-click="pickResult(result)" ng-class="{selected: result==selectedResult}")
-          span.address {{result.address}}
-          span.lat Lat: {{result.strippedLocation.lat}}
-          span.lon Lon: {{result.strippedLocation.lon}}
-
+div.location-fields
   label.widget-location-editor__location-picker
     p Latitude
     input.form-control.lat(type="text" name="lat" ng-model="location.lat" ng-disabled="!otEditable")
