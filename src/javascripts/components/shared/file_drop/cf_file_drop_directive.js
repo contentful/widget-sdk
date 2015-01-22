@@ -59,9 +59,9 @@ angular.module('contentful').directive('cfFileDrop', ['filepicker', 'notificatio
               notification.warn('Upload failed: '+message);
             if(!_.contains(IGNORED_ERRORS, type)){
               logger.logError('Upload failed', {
-                type: type,
-                message: message,
                 data: {
+                  type: type,
+                  message: message,
                   files: files
                 }
               });
