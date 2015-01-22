@@ -1,6 +1,6 @@
 'use strict';
 
-ddescribe('Thumbnail Controller', function () {
+describe('Thumbnail Controller', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.constant('mimetype', {
