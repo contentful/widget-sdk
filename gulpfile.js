@@ -15,6 +15,7 @@ var fingerprint = require('gulp-fingerprint');
 var fs          = require('fs');
 var gulp        = require('gulp');
 var gulpif      = require('gulp-if');
+var gutil       = require('gulp-util');
 var http        = require('http');
 var inject      = require('gulp-inject');
 var jade        = require('gulp-jade');
@@ -27,6 +28,7 @@ var source      = require('vinyl-source-stream');
 var sourceMaps  = require('gulp-sourcemaps');
 var stylus      = require('gulp-stylus');
 var uglify      = require('gulp-uglify');
+var watchify    = require('watchify');
 
 var env = process.env.UI_ENV || 'development';
 var config = require('./config/environment.json');
@@ -116,12 +118,20 @@ gulp.task('vendor-js', function () {
 });
 
 gulp.task('user_interface', function () {
-  return browserify('./src/user_interface.js')
-    .transform({optimize: 'size'}, 'browserify-pegjs')
-    .bundle({debug: true})
+  return bundleBrowserify(createBrowserify());
+});
+
+function createBrowserify() {
+  return browserify(_.extend(watchify.args, {debug: true}))
+    .add('./src/user_interface')
+    .transform({optimize: 'size'}, 'browserify-pegjs');
+}
+
+function bundleBrowserify(b, cb) {
+  return b.bundle(cb)
     .pipe(source('user_interface.js'))
     .pipe(gulp.dest('./public/app/'));
-});
+}
 
 gulp.task('config-revision', function(cb){
   exec('git log -1 --pretty=format:%H', function(err, sha){
@@ -174,26 +184,41 @@ gulp.task('clean', function () {
 });
 
 gulp.task('serve', function () {
-  var promises = [];
+  var builds = [];
   watchTask('components');
   watchTask('templates');
   watchTask('stylesheets');
 
- function watchTask(taskName) {
-  gulp.watch(src[taskName], function () {
-    promises.push(new Promise(function (resolve) {
-      runSequence(taskName, resolve);
+  function watchTask(taskName) {
+    gulp.watch(src[taskName], function () {
+      builds.push(new Promise(function (resolve) {
+        runSequence(taskName, resolve);
+      }));
+    });
+  }
+
+  var ui = watchify(createBrowserify());
+  bundleBrowserify(ui);
+
+  ui.on('update', function() {
+    builds.push(new Promise(function (resolve, reject) {
+      gutil.log('Rebuilding \'user_interface\' bundle...');
+      bundleBrowserify(ui, function(err) {
+        if (err)
+          reject(err);
+        else
+          resolve();
+      });
     }));
   });
- }
 
   var app = express();
   app.use(ecstatic({ root: __dirname + '/public', handleError: false, showDir: false }));
   app.all('*', function(req, res) {
     var index = fs.readFileSync('public/index.html', 'utf8');
-    Promise.all(promises).then(function () {
+    Promise.all(builds).then(function () {
       res.status(200).send(index);
-      promises = [];
+      builds = [];
     });
   });
   http.createServer(app).listen(3001);
@@ -283,7 +308,7 @@ gulp.task('rev-index', function(){
   return gulp.src('public/index.html')
     .pipe(fingerprint(manifest, { prefix: '//'+config.asset_host+'/'}))
     .pipe(inject(
-      gulp.src('app/application.min-*.js', {read: false, cwd: 'build'}), 
+      gulp.src('app/application.min-*.js', {read: false, cwd: 'build'}),
       {
         addPrefix: '//'+config.asset_host,
         addRootSlash: false
