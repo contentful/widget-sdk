@@ -22,42 +22,21 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var $window            = $injector.get('$window');
 
   $controller('TrialWatchController', {$scope: $scope});
+
   $scope.permissionController = $controller('PermissionController', {$scope: $scope});
-
   $scope.spaces = null;
+  $scope.user = null;
+  $scope.organizations = null;
   $scope.spaceContext = new SpaceContext();
-
   $scope.notification = notification;
 
   $scope.preferences = {
     showAuxPanel: false,
-
     toggleAuxPanel: function() {
       $scope.preferences.showAuxPanel = !$scope.preferences.showAuxPanel;
       analytics.toggleAuxPanel($scope.preferences.showAuxPanel, $scope.spaceContext.tabList.current);
     },
-
     showDisabledFields: false
-  };
-
-  $scope.user = null;
-  $scope.organizations = null;
-
-  function newVersionCheck() {
-    revision.hasNewVersion().catch(function (err) {
-      if(err === 'APP_REVISION_CHANGED'){
-        $rootScope.$broadcast('persistentNotification', {
-          message: 'New application version',
-          tooltipMessage: 'Please reload to get a new version of the application',
-          action: ReloadNotification.triggerImmediateReload,
-          actionMessage: 'Reload'
-        });
-      }
-    });
-  }
-
-  $scope.clickedSpaceSwitcher = function () {
-    analytics.track('Clicked Space-Switcher');
   };
 
   $scope.$watchCollection(function (scope) {
@@ -65,65 +44,35 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       space: scope.spaceContext.space,
       tokenLookup: authentication.tokenLookup
     };
-  }, function (collection) {
-    if (collection.tokenLookup){
-      authorization.setTokenLookup(collection.tokenLookup);
-      if (collection.space && authorization.authContext && authorization.authContext.hasSpace(collection.space.getId()))
-        authorization.setSpace(collection.space);
-        $scope.permissionController.initialize(authorization.spaceContext);
-    }
-  });
+  }, spaceAndTokenWatchHandler);
 
-  $scope.hideTabBar = function () {
-    return $scope.spaceContext.tabList.numVisible() === 0 || $scope.locationInAccount;
-  };
+  $scope.$watch('spaces', spaceWatchHandler);
+  $scope.$watch('user', userWatchHandler);
 
-  function setSpace(space) {
-    analytics.setSpaceData(space);
-    $scope.spaceContext = new SpaceContext(space);
-    enforcements.setSpaceContext($scope.spaceContext);
-  }
+  $scope.$on('iframeMessage', iframeMessageWatchHandler);
+  $scope.$on('$routeChangeSuccess', routeChangeSuccessHandler);
 
-  $scope.getCurrentSpaceId = function () {
-    return $scope.spaceContext &&
-           $scope.spaceContext.space &&
-           $scope.spaceContext.space.getId();
-  };
+  $scope.initClient = initClient;
+  $scope.clickedSpaceSwitcher = clickedSpaceSwitcher;
+  $scope.hideTabBar = hideTabBar;
+  $scope.getCurrentSpaceId = getCurrentSpaceId;
+  $scope.selectSpace = selectSpace;
+  $scope.selectOrg = selectOrg;
+  $scope.canSelectOrg = canSelectOrg;
+  $scope.getOrgName = getOrgName;
+  $scope.logout = logout;
+  $scope.openSupport = openSupport;
+  $scope.clickedProfileButton = clickedProfileButton;
+  $scope.goToAccount = goToAccount;
+  $scope.performTokenLookup = performTokenLookup;
+  $scope.updateSpaces = updateSpaces;
+  $scope.canCreateSpace = canCreateSpace;
+  $scope.canCreateSpaceInAnyOrg = canCreateSpaceInAnyOrg;
+  $scope.canCreateSpaceInOrg = canCreateSpaceInOrg;
+  $scope.checkForEnforcements = checkForEnforcements;
+  $scope.showCreateSpaceDialog = showCreateSpaceDialog;
 
-  $scope.selectSpace = function(space) {
-    if(!space){
-      return notification.warn('Selected space does not exist');
-    }
-    if (!$scope.locationInAccount && $scope.getCurrentSpaceId() === space.getId()) return true;
-    analytics.track('Switched Space', {
-      spaceId: space.getId(),
-      spaceName: space.data.name
-    });
-    routing.goToSpace(space);
-    return true;
-  };
-
-  function isOrgOwner(org) {
-    return dotty.get(org, 'sys.createdBy.sys.id') === dotty.get($scope.user, 'sys.id');
-  }
-
-  $scope.selectOrg = function(orgId) {
-    if(!$scope.canSelectOrg(orgId)) return false;
-    var org = getOrgById(orgId);
-    analytics.track('Switched Organization', {
-      organizationId: orgId,
-      organizationName: $scope.getOrgName(orgId)
-    });
-    routing.goToOrganization(orgId, isOrgOwner(org));
-    return true;
-  };
-
-  $scope.canSelectOrg = function (orgId) {
-    var query = _.where($scope.user.organizationMemberships, {organization: {sys: {id: orgId}}});
-    return query.length > 0 && (query[0].role == 'admin' || query[0].role == 'owner');
-  };
-
-  $scope.$on('$routeChangeSuccess', function (event, route) {
+  function routeChangeSuccessHandler(event, route) {
     $scope.locationInAccount = route.viewType === 'account';
 
     if ($scope.spaces !== null && route.params.spaceId != $scope.getCurrentSpaceId()) {
@@ -132,87 +81,9 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       });
       if (space) setSpace(space);
     }
-  });
-
-  function getOrgById(id) {
-    var query = _.where($scope.organizations, {sys: {id: id}});
-    if(query.length > 0){
-      return query[0];
-    }
-    return null;
   }
 
-  $scope.getOrgName = function (orgId) {
-    var org = getOrgById(orgId);
-    if(org){
-      return org.name;
-    }
-    return '';
-  };
-
-  function groupSpacesByOrg(spaces) {
-    return _.groupBy(spaces, function(space){
-      return space.data.organization.sys.id;
-    });
-  }
-
-  $scope.$watch('spaces', function(spaces, old, scope) {
-    var routeSpaceId = routing.getSpaceId();
-    var newSpace;
-
-    if (spaces === old) return; // $watch init
-
-    if(spaces) {
-      scope.spacesByOrg = groupSpacesByOrg(spaces);
-    }
-
-    if (routeSpaceId) {
-      newSpace = _.find(spaces, function (space) {
-        return space.getId() == routeSpaceId;
-      });
-      if (!newSpace) {
-        if (old === null) notification.warn('Space does not exist or is unaccessable');
-        newSpace = spaces[0];
-      }
-    } else if (routing.getRoute().root) { // no Space requested, pick first
-      newSpace = spaces[0];
-    } else {
-      return; // we don't want to see a space (but the profile or something else)
-    }
-
-    if (!newSpace) {
-      $location.path('/');
-      setSpace();
-      return;
-    }
-
-    if (newSpace != scope.spaceContext.space) {
-      // we need to change something
-      if (routeSpaceId != newSpace.getId()) { // trigger switch by chaning location
-        routing.goToSpace(newSpace);
-      } else { // location is already correct, just load the space
-        setSpace(newSpace);
-      }
-    }
-  });
-
-  $scope.$watch('user', function (user) {
-    if(user){
-      $scope.organizations = _.pluck(user.organizationMemberships, 'organization');
-      analytics.setUserData(user);
-    }
-  });
-
-  $scope.logout = function() {
-    analytics.track('Clicked Logout');
-    authentication.logout();
-  };
-
-  $scope.openSupport = function() {
-    $window.open(authentication.supportUrl());
-  };
-
-  $scope.$on('iframeMessage', function (event, data) {
+  function iframeMessageWatchHandler(event, data) {
     //console.log('iframe message: ', data);
 
     function msg(action, type) {
@@ -255,18 +126,190 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     } else {
       $scope.performTokenLookup();
     }
-  });
+  }
 
-  $scope.clickedProfileButton = function () {
+  function spaceAndTokenWatchHandler(collection) {
+    if (collection.tokenLookup){
+      authorization.setTokenLookup(collection.tokenLookup);
+      if (collection.space && authorization.authContext && authorization.authContext.hasSpace(collection.space.getId()))
+        authorization.setSpace(collection.space);
+        $scope.permissionController.initialize(authorization.spaceContext);
+    }
+  }
+
+  function userWatchHandler(user) {
+    if(user){
+      $scope.organizations = _.pluck(user.organizationMemberships, 'organization');
+      analytics.setUserData(user);
+    }
+  }
+
+  function spaceWatchHandler(spaces, old, scope) {
+    var routeSpaceId = routing.getSpaceId();
+    var newSpace;
+
+    if (spaces === old) return; // $watch init
+
+    if(spaces) {
+      scope.spacesByOrg = groupSpacesByOrg(spaces);
+    }
+
+    if (routeSpaceId) {
+      newSpace = _.find(spaces, function (space) {
+        return space.getId() == routeSpaceId;
+      });
+      if (!newSpace) {
+        if (old === null) notification.warn('Space does not exist or is unaccessable');
+        newSpace = spaces[0];
+      }
+    } else if (routing.getRoute().root) { // no Space requested, pick first
+      newSpace = spaces[0];
+    } else {
+      return; // we don't want to see a space (but the profile or something else)
+    }
+
+    if (!newSpace) {
+      $location.path('/');
+      setSpace();
+      return;
+    }
+
+    if (newSpace != scope.spaceContext.space) {
+      // we need to change something
+      if (routeSpaceId != newSpace.getId()) { // trigger switch by chaning location
+        routing.goToSpace(newSpace);
+      } else { // location is already correct, just load the space
+        setSpace(newSpace);
+      }
+    }
+  }
+
+  function setSpace(space) {
+    analytics.setSpaceData(space);
+    $scope.spaceContext = new SpaceContext(space);
+    enforcements.setSpaceContext($scope.spaceContext);
+  }
+
+  function groupSpacesByOrg(spaces) {
+    return _.groupBy(spaces, function(space){
+      return space.data.organization.sys.id;
+    });
+  }
+
+  function initClient() {
+    $scope.performTokenLookup()
+    .then(function () {
+      analytics.login($scope.user);
+    }, ReloadNotification.gatekeeperErrorHandler);
+
+    setTimeout(newVersionCheck, 5000);
+
+    setInterval(function () {
+      if (presence.isActive()) {
+        newVersionCheck();
+        $scope.performTokenLookup().
+        catch(function () {
+          ReloadNotification.trigger('Your authentication data needs to be refreshed. Please try logging in again.');
+        });
+      }
+    }, 5 * 60 * 1000);
+  }
+
+  function newVersionCheck() {
+    revision.hasNewVersion().catch(function (err) {
+      if(err === 'APP_REVISION_CHANGED'){
+        $rootScope.$broadcast('persistentNotification', {
+          message: 'New application version',
+          tooltipMessage: 'Please reload to get a new version of the application',
+          action: ReloadNotification.triggerImmediateReload,
+          actionMessage: 'Reload'
+        });
+      }
+    });
+  }
+
+  function clickedSpaceSwitcher() {
+    analytics.track('Clicked Space-Switcher');
+  }
+
+  function hideTabBar() {
+    return $scope.spaceContext.tabList.numVisible() === 0 || $scope.locationInAccount;
+  }
+
+  function getCurrentSpaceId() {
+    return $scope.spaceContext &&
+           $scope.spaceContext.space &&
+           $scope.spaceContext.space.getId();
+  }
+
+  function selectSpace(space) {
+    if(!space){
+      return notification.warn('Selected space does not exist');
+    }
+    if (!$scope.locationInAccount && $scope.getCurrentSpaceId() === space.getId()) return true;
+    analytics.track('Switched Space', {
+      spaceId: space.getId(),
+      spaceName: space.data.name
+    });
+    routing.goToSpace(space);
+    return true;
+  }
+
+  function selectOrg(orgId) {
+    if(!$scope.canSelectOrg(orgId)) return false;
+    var org = getOrgById(orgId);
+    analytics.track('Switched Organization', {
+      organizationId: orgId,
+      organizationName: $scope.getOrgName(orgId)
+    });
+    routing.goToOrganization(orgId, isOrgOwner(org));
+    return true;
+  }
+
+  function canSelectOrg(orgId) {
+    var query = _.where($scope.user.organizationMemberships, {organization: {sys: {id: orgId}}});
+    return query.length > 0 && (query[0].role == 'admin' || query[0].role == 'owner');
+  }
+
+  function getOrgName(orgId) {
+    var org = getOrgById(orgId);
+    if(org){
+      return org.name;
+    }
+    return '';
+  }
+
+  function getOrgById(id) {
+    var query = _.where($scope.organizations, {sys: {id: id}});
+    if(query.length > 0){
+      return query[0];
+    }
+    return null;
+  }
+
+  function isOrgOwner(org) {
+    return dotty.get(org, 'sys.createdBy.sys.id') === dotty.get($scope.user, 'sys.id');
+  }
+
+  function logout() {
+    analytics.track('Clicked Logout');
+    authentication.logout();
+  }
+
+  function openSupport() {
+    $window.open(authentication.supportUrl());
+  }
+
+  function clickedProfileButton() {
     analytics.track('Clicked Profile Button');
-  };
+  }
 
-  $scope.goToAccount = function (pathSuffix) {
+  function goToAccount(pathSuffix) {
     pathSuffix = pathSuffix || 'profile/user';
     $location.path('/account' + '/' + pathSuffix);
-  };
+  }
 
-  $scope.performTokenLookup = function () {
+  function performTokenLookup() {
     return authentication.getTokenLookup()
     .then(function (tokenLookup) {
       $scope.user = tokenLookup.sys.createdBy;
@@ -288,9 +331,9 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       }
       return $q.reject(err);
     });
-  };
+  }
 
-  $scope.updateSpaces = function (rawSpaces) {
+  function updateSpaces(rawSpaces) {
     var newSpaceList = _.map(rawSpaces, function (rawSpace) {
       var existing = _.find($scope.spaces, function (existingSpace) {
         return existingSpace.getId() == rawSpace.sys.id;
@@ -308,9 +351,9 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       return a.data.name.localeCompare(b.data.name);
     });
     $scope.spaces = newSpaceList;
-  };
+  }
 
-  $scope.canCreateSpace = function () {
+  function canCreateSpace() {
     var response;
     if(authorization.authContext && $scope.organizations && $scope.organizations.length > 0){
       if(!$scope.canCreateSpaceInAnyOrg()) return false;
@@ -321,19 +364,19 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       }
     }
     return !!response;
-  };
+  }
 
-  $scope.canCreateSpaceInAnyOrg = function () {
+  function canCreateSpaceInAnyOrg() {
     return _.some($scope.organizations, function (org) {
       return $scope.canCreateSpaceInOrg(org.sys.id);
     });
-  };
+  }
 
-  $scope.canCreateSpaceInOrg = function (orgId) {
+  function canCreateSpaceInOrg(orgId) {
     return authorization.authContext && authorization.authContext.organization(orgId).can('create', 'Space');
-  };
+  }
 
-  $scope.checkForEnforcements = function () {
+  function checkForEnforcements() {
     var enforcement = enforcements.determineEnforcement(reasonsDenied.apply(null, arguments), arguments[1]);
     if(enforcement) {
       $rootScope.$broadcast('persistentNotification', {
@@ -343,9 +386,9 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
         action: enforcement.action
       });
     }
-  };
+  }
 
-  $scope.showCreateSpaceDialog = function (organizationId) {
+  function showCreateSpaceDialog(organizationId) {
     var scope = $scope;
     if (organizationId) {
       scope = $scope.$new();
@@ -362,25 +405,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       ignoreEnter: true
     });
     analytics.track('Clicked Create-Space');
-  };
-
-  $scope.initClient = function () {
-    $scope.performTokenLookup()
-    .then(function () {
-      analytics.login($scope.user);
-    }, ReloadNotification.gatekeeperErrorHandler);
-
-    setTimeout(newVersionCheck, 5000);
-
-    setInterval(function () {
-      if (presence.isActive()) {
-        newVersionCheck();
-        $scope.performTokenLookup().
-        catch(function () {
-          ReloadNotification.trigger('Your authentication data needs to be refreshed. Please try logging in again.');
-        });
-      }
-    }, 5 * 60 * 1000);
-  };
+  }
 
 }]);
