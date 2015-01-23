@@ -28,7 +28,6 @@ var source      = require('vinyl-source-stream');
 var sourceMaps  = require('gulp-sourcemaps');
 var stylus      = require('gulp-stylus');
 var uglify      = require('gulp-uglify');
-var watchify    = require('watchify');
 
 var env = process.env.UI_ENV || 'development';
 var config = require('./config/environment.json');
@@ -121,8 +120,8 @@ gulp.task('user_interface', function () {
   return bundleBrowserify(createBrowserify());
 });
 
-function createBrowserify() {
-  return browserify(_.extend(watchify.args, {debug: true}))
+function createBrowserify(args) {
+  return browserify(_.extend({debug: true}, args))
     .add('./src/user_interface')
     .transform({optimize: 'size'}, 'browserify-pegjs');
 }
@@ -197,7 +196,8 @@ gulp.task('serve', function () {
     });
   }
 
-  var ui = watchify(createBrowserify());
+  var watchify = require('watchify');
+  var ui = watchify(createBrowserify(watchify.args));
   bundleBrowserify(ui);
 
   ui.on('update', function() {
