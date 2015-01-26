@@ -591,23 +591,13 @@ describe('Client Controller', function () {
   });
 
   describe('handle iframe messages', function () {
-    var childScope, data, token, user, spaces;
-    beforeEach(inject(function (authentication) {
-      childScope = scope.$new();
-      scope.updateSpaces = sinon.stub();
+    var childScope, data, user, spaces;
+    beforeEach(function () {
       scope.showCreateSpaceDialog = sinon.stub();
 
-      token = {token: true};
       user = { user: true };
-      spaces = [{space: true}];
-
-      authentication.tokenLookup = {
-        sys: {
-          createdBy: user
-        },
-        spaces: spaces
-      };
-    }));
+      childScope = scope.$new();
+    });
 
 
     describe('new space', function () {
@@ -640,23 +630,102 @@ describe('Client Controller', function () {
     });
 
     describe('on token change', function() {
-      beforeEach(function () {
-        data = {
-          token: token
+      var token, mockSpace;
+      beforeEach(inject(function (authentication) {
+        spaces = [{
+          sys: {id: 123}
+        }];
+
+        token = {
+          sys: {
+            createdBy: user
+          },
+          spaces: spaces
         };
+        authentication.tokenLookup = token;
+
+        data = {
+          token: authentication.tokenLookup
+        };
+
+        mockSpace = {
+          getId: sinon.stub(),
+          update: sinon.stub()
+        };
+
+      }));
+
+      describe('if the space already exists on the client', function() {
+        beforeEach(function() {
+          scope.spaces = [mockSpace];
+          scope.spaces[0].getId.returns(123);
+
+          childScope.$emit('iframeMessage', data);
+        });
+
+        it('sets token lookup', function() {
+          expect(stubs.authenticationTokenLookup).toBeCalledWith(token);
+        });
+
+        it('sets user', function() {
+          expect(scope.user).toBe(user);
+        });
+
+        it('updates spaces', function() {
+          expect(scope.spaces[0].update).toBeCalledWith(spaces[0]);
+        });
+      });
+
+      describe('if the space is not on the client', function() {
+        beforeEach(function() {
+          stubs.wrapSpace.returns(mockSpace);
+          childScope.$emit('iframeMessage', data);
+        });
+
+        it('sets token lookup', function() {
+          expect(stubs.authenticationTokenLookup).toBeCalledWith(token);
+        });
+
+        it('sets user', function() {
+          expect(scope.user).toBe(user);
+        });
+
+        it('wraps the space', function() {
+          expect(stubs.wrapSpace).toBeCalledWith(token.spaces[0]);
+        });
+      });
+    });
+
+    describe('update a space', function() {
+      beforeEach(function() {
+        data = {
+          action: 'update',
+          type: 'Space',
+          resource: {
+            sys: {
+              id: 123,
+              name: 'new name'
+            }
+          }
+        };
+
+        scope.spaces = [{
+          getId: sinon.stub(),
+          update: sinon.stub(),
+          data: {
+            sys: {
+              name: 'old name'
+            }
+          }
+        }];
+
+        scope.spaces[0].getId.returns(123);
+
         childScope.$emit('iframeMessage', data);
       });
 
-      it('sets token lookup', function() {
-        expect(stubs.authenticationTokenLookup).toBeCalledWith(token);
-      });
-
-      it('sets user', function() {
-        expect(scope.user).toBe(user);
-      });
-
-      it('updates spaces', function() {
-        expect(scope.updateSpaces).toBeCalledWith(spaces);
+      it('updates the data', function() {
+        expect(scope.spaces[0].data.sys.name).toEqual('new name');
       });
     });
 
@@ -766,11 +835,21 @@ describe('Client Controller', function () {
   describe('performs token lookup', function () {
     var $q;
     var tokenDeferred;
-    var tokenLookup = { sys: { createdBy: 'user' }, spaces: ['space'] };
+    var tokenLookup = {
+      sys: { createdBy: 'user' },
+      spaces: [{sys: {id: 123}}]
+    };
     beforeEach(inject(function ($injector) {
       $q = $injector.get('$q');
       tokenDeferred = $q.defer();
       stubs.getTokenLookup.returns(tokenDeferred.promise);
+
+      scope.spaces = [{
+        getId: sinon.stub(),
+        update: sinon.stub()
+      }];
+      scope.spaces[0].getId.returns(123);
+
       scope.updateSpaces = sinon.stub();
       scope.performTokenLookup();
     }));
@@ -779,16 +858,19 @@ describe('Client Controller', function () {
       expect(stubs.getTokenLookup).toBeCalled();
     });
 
-    it('user is set to the provided one', function () {
+    describe('if token lookup resolves', function() {
+      beforeEach(function() {
       tokenDeferred.resolve(tokenLookup);
-      scope.$apply();
-      expect(scope.user).toEqual('user');
-    });
+      scope.$digest();
+      });
 
-    it('spaces are updated', function () {
-      tokenDeferred.resolve(tokenLookup);
-      scope.$apply();
-      expect(scope.updateSpaces).toBeCalledWith(['space']);
+      it('user is set to the provided one', function () {
+        expect(scope.user).toEqual('user');
+      });
+
+      it('updates spaces', function() {
+        expect(scope.spaces[0].update).toBeCalledWith(tokenLookup.spaces[0]);
+      });
     });
 
     it('logs the user out on error 401', function () {
@@ -796,81 +878,6 @@ describe('Client Controller', function () {
       tokenDeferred.reject({statusCode: 401});
       scope.$apply();
       expect(stubs.logout).toBeCalled();
-    });
-  });
-
-  describe('updates existing spaces and a new space', function () {
-    var idStub1, idStub2, updateStub, compareStub;
-    var spaces;
-    beforeEach(function () {
-      idStub1 = sinon.stub();
-      idStub2 = sinon.stub();
-      updateStub = sinon.stub();
-      compareStub = sinon.stub();
-      scope.spaces = [
-        {
-          getId: idStub1,
-          update: updateStub,
-          data: {
-            name: {
-              name: 'space2',
-              localeCompare: compareStub
-            }
-          }
-        },
-        {
-          getId: idStub2,
-          update: updateStub,
-          data: {
-            name: {
-              name: 'space1',
-              localeCompare: compareStub
-            }
-          }
-        }
-      ];
-      scope.$digest();
-      var newSpace = {
-        data: {
-          name: {
-            name: 'space3',
-            localeCompare: compareStub
-          }
-        }
-      };
-      stubs.wrapSpace.returns(newSpace);
-
-      idStub1.returns(123);
-      idStub2.returns(456);
-      spaces = [
-        {sys: {id: 123}},
-        {sys: {id: 456}},
-        {sys: {id: 789}}
-      ];
-      compareStub.withArgs(scope.spaces[1].data.name).returns(true);
-      compareStub.withArgs(scope.spaces[0].data.name).returns(false);
-      compareStub.withArgs(newSpace.data.name).returns(false);
-      scope.updateSpaces(spaces);
-    });
-
-    it('update is called twice', function () {
-      expect(updateStub).toBeCalledTwice();
-    });
-
-    it('update is called with first raw space', function () {
-      expect(updateStub.args[0][0]).toEqual(spaces[0]);
-    });
-
-    it('update is called with second raw space', function () {
-      expect(updateStub.args[1][0]).toEqual(spaces[1]);
-    });
-
-    it('new space is wrapped', function () {
-      expect(stubs.wrapSpace).toBeCalledWith(spaces[2]);
-    });
-
-    it('third space has a save method', function () {
-      expect(scope.spaces[2].save).toBeDefined();
     });
   });
 
