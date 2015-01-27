@@ -20,8 +20,9 @@ describe('The ApiKey list directive', function () {
       };
 
       scope.permissionController = {
-        createApiKey: { shouldHide: false, shouldDisable: false }
+        get: sinon.stub()
       };
+      scope.permissionController.get.returns(false);
 
       enforcements.setSpaceContext(scope.spaceContext);
 
@@ -39,7 +40,7 @@ describe('The ApiKey list directive', function () {
 
   describe('the tab header add button', function() {
     it('is not shown', function() {
-      scope.permissionController.createApiKey.shouldHide = true;
+      scope.permissionController.get.withArgs('createApiKey', 'shouldHide').returns(true);
       compileElement();
       expect(container.find('.tab-header .add-entity .btn--primary')).toBeNgHidden();
     });
@@ -76,7 +77,7 @@ describe('The ApiKey list directive', function () {
   });
 
   it('save button is disabled', function () {
-    scope.permissionController.createApiKey.shouldDisable = true;
+    scope.permissionController.get.withArgs('createApiKey', 'shouldDisable').returns(true);
     compileElement();
     expect(container.find('.advice button').attr('disabled')).toBe('disabled');
   });

@@ -32,13 +32,9 @@ describe('The Asset list directive', function () {
       enforcements.setSpaceContext(scope.spaceContext);
 
       scope.permissionController = {
-        createAsset: { shouldHide: false, shouldDisable: false },
-        deleteAsset: { shouldHide: false, shouldDisable: false },
-        unarchiveAsset: { shouldHide: false, shouldDisable: false },
-        archiveAsset: { shouldHide: false, shouldDisable: false },
-        publishAsset: { shouldHide: false, shouldDisable: false },
-        unpublishAsset: { shouldHide: false, shouldDisable: false }
+        get: sinon.stub()
       };
+      scope.permissionController.get.returns(false);
 
       compileElement = function () {
         container = $('<div class="asset-list"></div>');
@@ -54,7 +50,7 @@ describe('The Asset list directive', function () {
 
   describe('the tab header add button', function() {
     it('is not shown', function() {
-      scope.permissionController.createAsset.shouldHide = true;
+      scope.permissionController.get.withArgs('createAsset', 'shouldHide').returns(true);
       compileElement();
       expect(container.find('.tab-header .add-entity .btn--primary')).toBeNgHidden();
     });
@@ -67,7 +63,7 @@ describe('The Asset list directive', function () {
 
   function makeActionTest(button, action) {
     it(button+' button not shown', function () {
-      scope.permissionController[action+'Asset'].shouldHide = true;
+      scope.permissionController.get.withArgs(action+'Asset', 'shouldHide').returns(true);
       compileElement();
       expect(container.find('.tab-actions .'+button)).toBeNgHidden();
     });
@@ -85,7 +81,7 @@ describe('The Asset list directive', function () {
   makeActionTest('publish', 'publish');
 
   it('create button is disabled', function () {
-    scope.permissionController.createAsset.shouldDisable = true;
+    scope.permissionController.get.withArgs('createAsset', 'shouldDisable').returns(true);
     compileElement();
     expect(container.find('.advice .btn--primary').attr('disabled')).toBe('disabled');
   });

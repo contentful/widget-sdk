@@ -14,7 +14,9 @@ angular.module('contentful').controller('PermissionController', ['$scope', '$inj
 
   var controller = this;
   controller.initialize = initialize;
+  controller.get = getEntityActionPermission;
   controller.can = can;
+  controller.entityActions = {};
 
   function initialize(spaceContext) {
     controller.spaceContext = spaceContext;
@@ -22,9 +24,14 @@ angular.module('contentful').controller('PermissionController', ['$scope', '$inj
       entityName = stringUtils.capitalizeFirst(entityName);
       _.forEach(actions, function (actionName) {
         var entityAction = actionName + entityName;
-        controller[entityAction] = can(actionName, entityName);
+        controller.entityActions[entityAction] = can(actionName, entityName);
       });
     });
+  }
+
+  function getEntityActionPermission(label, permission) {
+    var entityAction = controller.entityActions[label];
+    return (entityAction && permission in entityAction) ? entityAction[permission] : false;
   }
 
   function can(action, entity) {

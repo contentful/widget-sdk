@@ -52,7 +52,8 @@ describe('apiKeyEditor Directive', function () {
       enforcements.setSpaceContext(scope.spaceContext);
 
       scope.permissionController = {
-        createApiKey: { shouldHide: false, shouldDisable: false, reasons: [] }
+        get: sinon.stub(),
+        entityActions: {}
       };
 
       compileElement = function () {
@@ -74,7 +75,7 @@ describe('apiKeyEditor Directive', function () {
   });
 
   it('delete button cant ever be disabled', function () {
-    scope.permissionController.createApiKey.shouldDisable = true;
+    scope.permissionController.get.withArgs('createApiKey', 'shouldDisable').returns(true);
     compileElement();
     expect(element.find('.tab-actions .delete').attr('disabled')).toBeUndefined();
   });
@@ -85,7 +86,7 @@ describe('apiKeyEditor Directive', function () {
   });
 
   it('save button is disabled', function () {
-    scope.permissionController.createApiKey.shouldDisable = true;
+    scope.permissionController.get.withArgs('createApiKey', 'shouldDisable').returns(true);
     compileElement();
     scope.apiKeyForm = {
       $invalid: false

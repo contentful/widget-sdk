@@ -109,27 +109,27 @@ angular.module('contentful').controller('EntryListActionsController', ['$scope',
   };
 
   $scope.showDuplicate = function () {
-    return !$scope.permissionController.createEntry.shouldHide;
+    return !$scope.permissionController.get('createEntry', 'shouldHide');
   };
 
   $scope.showDelete = function () {
-    return !$scope.permissionController.deleteEntry.shouldHide && every('canDelete');
+    return !$scope.permissionController.get('deleteEntry', 'shouldHide') && every('canDelete');
   };
 
   $scope.showArchive = function () {
-    return !$scope.permissionController.archiveEntry.shouldHide && every('canArchive');
+    return !$scope.permissionController.get('archiveEntry', 'shouldHide') && every('canArchive');
   };
 
   $scope.showUnarchive = function () {
-    return !$scope.permissionController.unarchiveEntry.shouldHide && every('canUnarchive');
+    return !$scope.permissionController.get('unarchiveEntry', 'shouldHide') && every('canUnarchive');
   };
 
   $scope.showUnpublish = function () {
-    return !$scope.permissionController.unpublishEntry.shouldHide && every('canUnpublish');
+    return !$scope.permissionController.get('unpublishEntry', 'shouldHide') && every('canUnpublish');
   };
 
   $scope.showPublish = function () {
-    return !$scope.permissionController.publishEntry.shouldHide && every('canPublish');
+    return !$scope.permissionController.get('publishEntry', 'shouldHide') && every('canPublish');
   };
 
   $scope.publishButtonName = function () {

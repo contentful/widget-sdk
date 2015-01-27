@@ -71,23 +71,23 @@ angular.module('contentful').controller('AssetListActionsController', ['$scope',
   };
 
   $scope.showDelete = function () {
-    return !$scope.permissionController.deleteAsset.shouldHide && every('canDelete');
+    return !$scope.permissionController.get('deleteAsset', 'shouldHide') && every('canDelete');
   };
 
   $scope.showArchive = function () {
-    return !$scope.permissionController.archiveAsset.shouldHide && every('canArchive');
+    return !$scope.permissionController.get('archiveAsset', 'shouldHide') && every('canArchive');
   };
 
   $scope.showUnarchive = function () {
-    return !$scope.permissionController.unarchiveAsset.shouldHide && every('canUnarchive');
+    return !$scope.permissionController.get('unarchiveAsset', 'shouldHide') && every('canUnarchive');
   };
 
   $scope.showUnpublish = function () {
-    return !$scope.permissionController.unpublishAsset.shouldHide && every('canUnpublish');
+    return !$scope.permissionController.get('unpublishAsset', 'shouldHide') && every('canUnpublish');
   };
 
   $scope.showPublish = function () {
-    return !$scope.permissionController.publishAsset.shouldHide && every('canPublish');
+    return !$scope.permissionController.get('publishAsset', 'shouldHide') && every('canPublish');
   };
 
   $scope.publishButtonName = function () {

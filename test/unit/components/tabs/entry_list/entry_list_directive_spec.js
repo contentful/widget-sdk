@@ -28,14 +28,9 @@ describe('The Entry list directive', function () {
       };
 
       scope.permissionController = {
-        createContentType: { shouldHide: false, shouldDisable: false },
-        createEntry: { shouldHide: false, shouldDisable: false },
-        deleteEntry: { shouldHide: false },
-        archiveEntry: { shouldHide: false },
-        unarchiveEntry: { shouldHide: false },
-        publishEntry: { shouldHide: false },
-        unpublishEntry: { shouldHide: false }
+        get: sinon.stub()
       };
+      scope.permissionController.get.returns(false);
 
       enforcements.setSpaceContext(scope.spaceContext);
 
@@ -53,7 +48,7 @@ describe('The Entry list directive', function () {
 
   describe('the tab header first add button', function() {
     it('is not shown if not allowed', function() {
-      scope.permissionController.createEntry.shouldHide = true;
+      scope.permissionController.get.withArgs('createEntry', 'shouldHide').returns(true);
       compileElement();
       expect(container.find('.tab-header .add-entity .btn--primary').eq(0)).toBeNgHidden();
     });
@@ -85,7 +80,7 @@ describe('The Entry list directive', function () {
   describe('the tab header add dropdown button', function() {
 
     it('is not shown', function() {
-      scope.permissionController.createEntry.shouldHide = true;
+      scope.permissionController.get.withArgs('createEntry', 'shouldHide').returns(true);
       compileElement();
       expect(container.find('.tab-header .add-entity .btn--primary').eq(1)).toBeNgHidden();
     });
@@ -121,7 +116,7 @@ describe('The Entry list directive', function () {
 
   function makeActionTest(button, action) {
     it(button+' button not shown', function () {
-      scope.permissionController[action+'Entry'].shouldHide = true;
+      scope.permissionController.get.withArgs(action+'Entry', 'shouldHide').returns(true);
       compileElement();
       expect(container.find('.tab-actions .'+button)).toBeNgHidden();
     });
@@ -140,7 +135,7 @@ describe('The Entry list directive', function () {
   makeActionTest('publish', 'publish');
 
   it('content type button is disabled', function () {
-    scope.permissionController.createContentType.shouldDisable = true;
+    scope.permissionController.get.withArgs('createContentType', 'shouldDisable').returns(true);
     compileElement();
     expect(container.find('.advice .btn--primary').attr('disabled')).toBe('disabled');
   });

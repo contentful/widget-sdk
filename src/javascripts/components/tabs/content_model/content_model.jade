@@ -56,9 +56,9 @@
           header.advice-title You have no Content Types yet.
           p.advice-description Content Types work like stencils that define which Entries you can create within a specific Space.
           button.btn.btn--primary(type="button" ng-click="entityCreationController.firstContentType()"
-              ng-hide="permissionController.createContentType.shouldHide"
-              ng-disabled="permissionController.createContentType.shouldDisable"
-              cf-when-disabled="permissionController.createContentType")
+              ng-hide="permissionController.get('createContentType', 'shouldHide')"
+              ng-disabled="permissionController.get('createContentType', 'shouldDisable')"
+              cf-when-disabled="permissionController.entityActions.createContentType")
             | Create Content Type
           a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
             | Visit the Knowledge Base Pages
