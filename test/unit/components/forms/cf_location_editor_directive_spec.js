@@ -1,18 +1,13 @@
 'use strict';
 
 describe('cfLocationEditor Directive', function () {
-  var element, scope;
-  var compileElement;
-  var stubs;
-
   beforeEach(function () {
-    module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs([
-        'getCenter', 'panTo', 'setDraggable', 'setPosition', 'setVisible',
-        'fitBounds', 'map', 'latLng', 'marker', 'addListener',
-        'locationIsValid', 'serverError', 'otChangeValue'
-      ]);
+    var stubs = {};
 
+    stubs.serverError = sinon.stub();
+    stubs.otChangeValue = sinon.stub();
+
+    module('contentful/test', function ($provide) {
       $provide.removeControllers('cfLocationEditorController');
 
       $provide.value('notification', {
@@ -25,348 +20,181 @@ describe('cfLocationEditor Directive', function () {
         }
       });
     });
-    inject(function ($compile, $rootScope, $window) {
-      scope = $rootScope.$new();
 
-      scope.locationIsValid = stubs.locationIsValid;
-
-      scope.fieldData = { value: {}};
-
-      stubs.map.returns({
-        getCenter: stubs.getCenter,
-        panTo: stubs.panTo,
-        fitBounds: stubs.fitBounds
-      });
-
-      stubs.marker.returns({
-        setDraggable: stubs.setDraggable,
-        setPosition: stubs.setPosition,
-        setVisible: stubs.setVisible
-      });
-
-      $window.google = {
-        maps: {
-          Map: stubs.map,
-          LatLng: stubs.latLng,
-          Marker: stubs.marker,
-          MapTypeId: {
-            ROADMAP: 'roadmap'
-          },
-          event: {
-            addListener: stubs.addListener
-          }
-        }
-      };
-
-      compileElement = function () {
-        element = $compile('<div class="cf-location-editor" ot-path="" ot-bind-internal="location" ng-model="fieldData.value"></div>')(scope);
-        scope.$apply();
-      };
-    });
-  });
-
-  describe('watches for location change and location validity', function() {
-    it('when location exists and is valid', function() {
-      scope.location = {};
-      scope.locationValid = true;
-      compileElement();
-      expect(stubs.setVisible.args[0][0]).toBeTruthy();
-    });
-
-    it('when location exists but not valid', function() {
-      scope.location = {};
-      scope.locationValid = false;
-      compileElement();
-      expect(stubs.setVisible.args[0][0]).toBeFalsy();
-    });
-
-    it('when location does not exist and is valid its still true because of other watchers', function() {
-      scope.location = null;
-      scope.locationValid = true;
-      compileElement();
-      expect(stubs.setVisible.args[0][0]).toBeTruthy();
-    });
-  });
-
-  describe('watches for otEditable status', function() {
-    it('makes marker draggable', function () {
-      scope.otEditable = true;
-      compileElement();
-      expect(stubs.setDraggable.args[0][0]).toBeTruthy();
-    });
-
-    it('makes marker not draggable', function () {
-      scope.otEditable = false;
-      compileElement();
-      expect(stubs.setDraggable.args[0][0]).toBeFalsy();
-    });
-  });
-
-  it('$render method updates location', function() {
-    compileElement();
-    element.controller('ngModel').$viewValue = {lat: 123, lon: 456};
-    element.controller('ngModel').$render();
-    expect(scope.location).toEqual({
-      lat: 123, lon: 456
-    });
+    this.stubs = stubs;
+    this.scope = this.$inject('$rootScope').$new();
+    this.scope.locationIsValid = sinon.stub();
+    dotty.put(this.scope, 'fieldData.value', {});
+    this.compileElement = function () {
+      this.element = this.$inject('$compile')('<div class="cf-location-editor" ot-path="" ot-bind-internal="location" ng-model="fieldData.value"></div>')(this.scope);
+      this.$apply();
+    };
+    this.compileElement.bind(this);
   });
 
   describe('updateLocation method', function() {
     var location, oldLocation;
     beforeEach(function() {
-      compileElement();
+      this.compileElement();
       location    = {lat: 123, lon: 456};
       oldLocation = {lat: 789, lon: 321};
-      scope.location        = location;
-      scope.fieldData.value = oldLocation;
+      this.scope.location        = location;
+      this.scope.fieldData.value = oldLocation;
       //element.controller('ngModel').$setViewValue = viewValueStub = sinon.stub();
       //element.controller('ngModel').$modelValue = oldLocation;
     });
 
     describe('updates successfully', function() {
       beforeEach(function() {
-        scope.updateLocation(location);
-        scope.$apply();
+        this.scope.updateLocation(location);
+        this.scope.$apply();
       });
 
       it('sets location on scope', function() {
-        expect(scope.location).toEqual(location);
+        expect(this.scope.location).toEqual(location);
       });
 
       it('calls ot change value with location', function() {
-        expect(scope.otChangeValue).toBeCalledWith(location);
+        expect(this.scope.otChangeValue).toBeCalledWith(location);
       });
 
       it('update external value', function() {
-        expect(scope.fieldData.value).toEqual(location);
+        expect(this.scope.fieldData.value).toEqual(location);
       });
     });
 
     describe('fails to update', function() {
       beforeEach(inject(function($q) {
-        stubs.otChangeValue.returns($q.reject());
-        scope.updateLocation(location);
-        scope.$apply();
+        this.stubs.otChangeValue.returns($q.reject());
+        this.scope.updateLocation(location);
+        this.scope.$apply();
       }));
 
       it('sets location back to ngModel value', function() {
-        expect(scope.location).toEqual(oldLocation);
+        expect(this.scope.location).toEqual(oldLocation);
       });
 
       it('calls ot change value with location', function() {
-        expect(scope.otChangeValue).toBeCalledWith(location);
+        expect(this.scope.otChangeValue).toBeCalledWith(location);
       });
 
       it('resets external value', function() {
-        expect(scope.fieldData.value).toEqual(oldLocation);
+        expect(this.scope.fieldData.value).toEqual(oldLocation);
       });
     });
   });
 
   it('removes the location', function() {
-    compileElement();
-    scope.updateLocation = sinon.stub();
-    scope.removeLocation();
-    expect(scope.updateLocation).toBeCalledWith(null);
+    this.compileElement();
+    this.scope.updateLocation = sinon.stub();
+    this.scope.removeLocation();
+    expect(this.scope.updateLocation).toBeCalledWith(null);
   });
 
   describe('watches for location validity', function() {
     beforeEach(function() {
-      compileElement();
+      this.compileElement();
     });
 
     describe('sets alerts for both', function() {
       beforeEach(function() {
-        scope.location = {lat: '', lon: ''};
-        scope.$digest();
+        this.scope.location = {lat: '', lon: ''};
+        this.scope.$digest();
       });
 
       it('alert for latitude', function() {
-        expect(scope.latAlert).toBeDefined();
+        expect(this.scope.latAlert).toBeDefined();
       });
 
       it('alert for longitude', function() {
-        expect(scope.lonAlert).toBeDefined();
+        expect(this.scope.lonAlert).toBeDefined();
       });
     });
 
     describe('sets alerts for none', function() {
       beforeEach(function() {
-        scope.location = {lat: 123, lon: 456};
-        scope.$digest();
+        this.scope.location = {lat: 123, lon: 456};
+        this.scope.$digest();
       });
 
       it('alert for latitude', function() {
-        expect(scope.latAlert).toBeNull();
+        expect(this.scope.latAlert).toBeNull();
       });
 
       it('alert for longitude', function() {
-        expect(scope.lonAlert).toBeNull();
+        expect(this.scope.lonAlert).toBeNull();
       });
     });
 
     describe('sets alerts for latitude', function() {
       beforeEach(function() {
-        scope.location = {lat: '', lon: 456};
-        scope.$digest();
+        this.scope.location = {lat: '', lon: 456};
+        this.scope.$digest();
       });
 
       it('alert for latitude', function() {
-        expect(scope.latAlert).toBeDefined();
+        expect(this.scope.latAlert).toBeDefined();
       });
 
       it('alert for longitude', function() {
-        expect(scope.lonAlert).toBeNull();
+        expect(this.scope.lonAlert).toBeNull();
       });
     });
 
     describe('sets alerts for longitude', function() {
       beforeEach(function() {
-        scope.location = {lat: 123, lon: ''};
-        scope.$digest();
+        this.scope.location = {lat: 123, lon: ''};
+        this.scope.$digest();
       });
 
       it('alert for latitude', function() {
-        expect(scope.latAlert).toBeNull();
+        expect(this.scope.latAlert).toBeNull();
       });
 
       it('alert for longitude', function() {
-        expect(scope.lonAlert).toBeTruthy();
+        expect(this.scope.lonAlert).toBeTruthy();
       });
     });
 
-  });
-
-  describe('selected result watcher', function() {
-    var result;
-    beforeEach(function() {
-      result = {viewport: 'viewport'};
-      compileElement();
-      scope.selectedResult = result;
-      scope.$digest();
-    });
-
-    it('sends viewport to fitBounds method', function() {
-      expect(stubs.fitBounds).toBeCalledWith('viewport');
-    });
-  });
-
-  describe('pick result method', function() {
-    var result;
-    beforeEach(function() {
-      result = {location: 'location', viewport: 'viewport'};
-      compileElement();
-      scope.updateLocation = sinon.stub();
-      scope.pickResult(result);
-    });
-
-    it('updates location', function() {
-      expect(scope.updateLocation).toBeCalledWith('location');
-    });
-
-    it('sets fit bounds', function() {
-      expect(stubs.fitBounds).toBeCalledWith('viewport');
-    });
-
-    it('searchTerm is empty', function() {
-      expect(scope.searchTerm).toBe('');
-    });
-  });
-
-  it('resets map location', function() {
-    compileElement();
-    var locationController = element.find('.gmaps-container').controller('ngModel');
-    locationController.$viewValue = new stubs.latLng();
-    scope.resetMapLocation();
-    expect(stubs.panTo).toBeCalled();
-  });
-
-  it('shows corrupt location warning', function () {
-    compileElement();
-    scope.locationValid = false;
-    scope.$digest();
-    expect(element.find('.invalid-location-warning')).not.toBeNgHidden();
-  });
-
-  it('does not show corrupt location warning', function () {
-    compileElement();
-    scope.locationValid = true;
-    scope.$digest();
-    expect(element.find('.invalid-location-warning')).toBeNgHidden();
   });
 
   describe('if otEditable is not initiated', function() {
     beforeEach(function() {
-      compileElement();
-      scope.otEditable = false;
-      scope.$digest();
-    });
-
-    it('search is not shown', function () {
-      expect(element.find('.search')).toBeNgHidden();
+      this.compileElement();
+      this.scope.otEditable = false;
+      this.scope.$digest();
     });
 
     it('latitude input is disabled', function () {
-      expect(element.find('input.lat').attr('disabled')).toBeTruthy();
+      expect(this.element.find('input.lat').attr('disabled')).toBeTruthy();
     });
 
     it('latitude input is disabled', function () {
-      expect(element.find('input.lon').attr('disabled')).toBeTruthy();
+      expect(this.element.find('input.lon').attr('disabled')).toBeTruthy();
     });
-
 
     it('remove button is not shown', function () {
-      expect(element.find('.remove-location')).toBeNgHidden();
+      expect(this.element.find('.remove-location')).toBeNgHidden();
     });
   });
 
   describe('if otEditable is initiated', function() {
     beforeEach(function() {
-      compileElement();
-      scope.otEditable = true;
-      scope.$digest();
-    });
-
-    it('search is shown', function () {
-      expect(element.find('.search')).not.toBeNgHidden();
+      this.compileElement();
+      this.scope.otEditable = true;
+      this.scope.$digest();
     });
 
     it('latitude input is enabled', function () {
-      expect(element.find('input.lat').attr('disabled')).toBeFalsy();
+      expect(this.element.find('input.lat').attr('disabled')).toBeFalsy();
     });
 
     it('latitude input is enabled', function () {
-      expect(element.find('input.lon').attr('disabled')).toBeFalsy();
+      expect(this.element.find('input.lon').attr('disabled')).toBeFalsy();
     });
 
     it('remove button is shown', function () {
-      expect(element.find('.remove-location')).not.toBeNgHidden();
+      expect(this.element.find('.remove-location')).not.toBeNgHidden();
     });
   });
-
-  describe('rendering results', function() {
-    beforeEach(function() {
-      compileElement();
-      scope.otEditable = true;
-      scope.selectedResult = {address: 'address', strippedLocation: {lat: 123, lon: 456}};
-      scope.results = [
-        scope.selectedResult,
-        {address: 'address2', strippedLocation: {lat: 789, lon: 321}}
-      ];
-      scope.$digest();
-    });
-
-    it('results has 2 elements', function() {
-      expect(element.find('.search-results li').length).toBe(2);
-    });
-
-    it('first element is selected', function() {
-      expect(element.find('.search-results li').eq(0)).toHaveClass('selected');
-    });
-
-    it('second element is not selected', function() {
-      expect(element.find('.search-results li').eq(1)).not.toHaveClass('selected');
-    });
-  });
-
 });
