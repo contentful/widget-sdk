@@ -65,7 +65,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.clickedProfileButton = clickedProfileButton;
   $scope.goToAccount = goToAccount;
   $scope.performTokenLookup = performTokenLookup;
-  $scope.updateSpaces = updateSpaces;
   $scope.canCreateSpace = canCreateSpace;
   $scope.canCreateSpaceInAnyOrg = canCreateSpaceInAnyOrg;
   $scope.canCreateSpaceInOrg = canCreateSpaceInOrg;
@@ -84,13 +83,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function iframeMessageWatchHandler(event, data) {
-    //console.log('iframe message: ', data);
-
-    function msg(action, type) {
-      return data &&
-        data.action && data.action.toLowerCase() === action.toLowerCase() &&
-        data.type && data.type.toLowerCase() === type.toLowerCase();
-    }
+    var msg = makeMsgResponder(data);
 
     if (msg('create', 'UserCancellation')) {
       authentication.goodbye();
@@ -99,10 +92,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       $scope.showCreateSpaceDialog(data.organizationId);
 
     } else if (data.type === 'flash') {
-      var level = data.resource.type;
-      if (level && level.match(/error/)) level = 'warn';
-      else if (level && !level.match(/info/) || !level) level = 'info';
-      notification[level](data.resource.message);
+      showFlashMessage(data);
 
     } else if (msg('navigate', 'location')) {
       $location.path(data.path);
@@ -110,22 +100,100 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     } else if (msg('update', 'location')) {
       return;
 
+    } else if (msg('update', 'Space')) {
+      updateSpace(data.resource);
+
     } else if (data.token) {
-      authentication.setTokenLookup(data.token);
-      if(authentication.tokenLookup) {
-        $scope.user = authentication.tokenLookup.sys.createdBy;
-        $scope.updateSpaces(authentication.tokenLookup.spaces);
-      } else {
-        logger.logError('Token Lookup has not been set properly', {
-          data: {
-            iframeData: data
-          }
-        });
-      }
+      updateToken(data);
 
     } else {
       $scope.performTokenLookup();
     }
+  }
+
+  function makeMsgResponder(data) {
+    //console.log('iframe message: ', data);
+    return function msg(action, type) {
+      return data &&
+        data.action && data.action.toLowerCase() === action.toLowerCase() &&
+        data.type && data.type.toLowerCase() === type.toLowerCase();
+    };
+  }
+
+  function showFlashMessage(data) {
+    var level = data.resource.type;
+    if (level && level.match(/error/)) level = 'warn';
+    else if (level && !level.match(/info/) || !level) level = 'info';
+    notification[level](data.resource.message);
+  }
+
+  function updateSpace(updatedSpaceData) {
+    var space = getExistingSpace(updatedSpaceData.sys.id);
+    if(space){
+      _.merge(space.data, updatedSpaceData);
+    }
+  }
+
+  function updateToken(data) {
+    authentication.setTokenLookup(data.token);
+    if(authentication.tokenLookup) {
+      $scope.user = authentication.tokenLookup.sys.createdBy;
+      updateSpaces(authentication.tokenLookup.spaces);
+    } else {
+      logger.logError('Token Lookup has not been set properly', {
+        data: {
+          iframeData: data
+        }
+      });
+    }
+  }
+
+  function performTokenLookup() {
+    return authentication.getTokenLookup()
+    .then(function (tokenLookup) {
+      $scope.user = tokenLookup.sys.createdBy;
+      updateSpaces(tokenLookup.spaces);
+    })
+    .catch(function (err) {
+      if (err && err.statusCode === 401) {
+        modalDialog.open({
+          title: 'Your login token is invalid',
+          message: 'You need to login again to refresh your login token.',
+          scope: $scope,
+          cancelLabel: null,
+          confirmLabel: 'Login',
+          noBackgroundClose: true,
+          attachTo: 'body'
+        }).promise.then(function () {
+          authentication.logout();
+        });
+      }
+      return $q.reject(err);
+    });
+  }
+
+  function updateSpaces(rawSpaces) {
+    var newSpaceList = _.map(rawSpaces, function (rawSpace) {
+      var existing = getExistingSpace(rawSpace.sys.id);
+      if (existing) {
+        existing.update(rawSpace);
+        return existing;
+      } else {
+        var space = client.wrapSpace(rawSpace);
+        space.save = function () { throw new Error('Saving space not allowed'); };
+        return space;
+      }
+    });
+    newSpaceList.sort(function (a,b) {
+      return a.data.name.localeCompare(b.data.name);
+    });
+    $scope.spaces = newSpaceList;
+  }
+
+  function getExistingSpace(id) {
+    return _.find($scope.spaces, function (existingSpace) {
+      return existingSpace.getId() === id;
+    });
   }
 
   function spaceAndTokenWatchHandler(collection) {
@@ -307,50 +375,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   function goToAccount(pathSuffix) {
     pathSuffix = pathSuffix || 'profile/user';
     $location.path('/account' + '/' + pathSuffix);
-  }
-
-  function performTokenLookup() {
-    return authentication.getTokenLookup()
-    .then(function (tokenLookup) {
-      $scope.user = tokenLookup.sys.createdBy;
-      $scope.updateSpaces(tokenLookup.spaces);
-    })
-    .catch(function (err) {
-      if (err && err.statusCode === 401) {
-        modalDialog.open({
-          title: 'Your login token is invalid',
-          message: 'You need to login again to refresh your login token.',
-          scope: $scope,
-          cancelLabel: null,
-          confirmLabel: 'Login',
-          noBackgroundClose: true,
-          attachTo: 'body'
-        }).promise.then(function () {
-          authentication.logout();
-        });
-      }
-      return $q.reject(err);
-    });
-  }
-
-  function updateSpaces(rawSpaces) {
-    var newSpaceList = _.map(rawSpaces, function (rawSpace) {
-      var existing = _.find($scope.spaces, function (existingSpace) {
-        return existingSpace.getId() == rawSpace.sys.id;
-      });
-      if (existing) {
-        existing.update(rawSpace);
-        return existing;
-      } else {
-        var space = client.wrapSpace(rawSpace);
-        space.save = function () { throw new Error('Saving space not allowed'); };
-        return space;
-      }
-    });
-    newSpaceList.sort(function (a,b) {
-      return a.data.name.localeCompare(b.data.name);
-    });
-    $scope.spaces = newSpaceList;
   }
 
   function canCreateSpace() {
