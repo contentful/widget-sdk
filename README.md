@@ -29,6 +29,20 @@ That'll put all required files into the `/build` directory.
 
 To serve those, run `gulp serve-production` instead of `gulp serve`
 
+### Client library development
+
+If you are working on the client library and want to rapidly iterate and
+see client library changes in the user interface build, use the `watchify`
+task in combination with `serve`: `gulp watchify serve`
+
+That will recompile the `user_interface.js` whenever you modify
+something in the source tree.
+
+The reason this is a separate task and not part of `serve` is that the
+way browserify/watchify operate is pretty complicated, leads to
+potential problems and modifying the client library is not something
+that happens often anyway.
+
 ## Misc. npm tasks
 
 ### npm test
