@@ -49,8 +49,10 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
       })
       .promise
       .then(function (template) {
-        newTemplateInfoDialog(template.name);
-        refreshContentTypes();
+        if(template){
+          newTemplateInfoDialog(template.name);
+          refreshContentTypes();
+        }
       })
       .catch(refreshContentTypes);
     } else {
