@@ -84,6 +84,24 @@ describe('SlugEditorController', function () {
       // Notice the slug is still the first title
       expect(this.scope.fieldData.value).toEqual('this-is-the-first-title');
     });
+
+    it('should resume tracking title if the entry has been published and unpublished', function () {
+      // Write a title
+      this.scope.spaceContext.entryTitle = sinon.stub().returns('This is the first title');
+      this.$apply();
+      // Publish the entry
+      this.scope.entry.isPublished = sinon.stub().returns(true);
+      this.$apply();
+      // Unpublish the entry
+      this.scope.entry.isPublished = sinon.stub().returns(false);
+      this.$apply();
+      // Change the title
+      this.scope.spaceContext.entryTitle = sinon.stub().returns('This is the second title');
+      this.$apply();
+      // Notice the slug is updated
+      expect(this.scope.fieldData.value).toEqual('this-is-the-second-title');
+    });
+
   });
 
   describe('#uniqueness', function () {
