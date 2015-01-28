@@ -97,7 +97,8 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('locationEditor',{
     fieldTypes: ['Location'],
     name: 'Location',
-    template: '<div class="cf-location-editor widget-location-editor" ng-model="fieldData.value" ot-bind-internal="location"></div>'
+    // Show the google maps widget alongwith the location editor widget. They share the same 'location' model.
+    template: '<cf-google-maps ng-model="location" ot-bind-internal="location"></cf-google-maps><div class="cf-location-editor widget-location-editor" ng-model="fieldData.value" ot-bind-internal="location"></div>'
   });
   widgets.registerWidget('objectEditor',{
     fieldTypes: ['Object'],

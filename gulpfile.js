@@ -15,6 +15,7 @@ var fingerprint = require('gulp-fingerprint');
 var fs          = require('fs');
 var gulp        = require('gulp');
 var gulpif      = require('gulp-if');
+var gutil       = require('gulp-util');
 var http        = require('http');
 var inject      = require('gulp-inject');
 var jade        = require('gulp-jade');
@@ -116,12 +117,37 @@ gulp.task('vendor-js', function () {
 });
 
 gulp.task('user_interface', function () {
-  return browserify('./src/user_interface.js')
-    .transform({optimize: 'size'}, 'browserify-pegjs')
-    .bundle({debug: true})
+  return bundleBrowserify(createBrowserify());
+});
+
+gulp.task('watchify', function(){
+  var watchify = require('watchify');
+  var ui = watchify(createBrowserify(watchify.args));
+  bundleBrowserify(ui);
+
+  ui.on('update', function() {
+    gutil.log('Rebuilding \'user_interface\' bundle...');
+    bundleBrowserify(ui)
+    .on('end', function(){
+      gutil.log('Rebuilding \'user_interface\' bundle done');
+    });
+  });
+});
+
+function createBrowserify(args) {
+  return browserify(_.extend({debug: true}, args))
+    .add('./src/user_interface')
+    .transform({optimize: 'size'}, 'browserify-pegjs');
+}
+
+function bundleBrowserify(browserify) {
+  return browserify.bundle()
+    .on('error', function(e){
+      gutil.log(gutil.colors.red('Browserify error'), e.message);
+    })
     .pipe(source('user_interface.js'))
     .pipe(gulp.dest('./public/app/'));
-});
+}
 
 gulp.task('config-revision', function(cb){
   exec('git log -1 --pretty=format:%H', function(err, sha){
@@ -174,26 +200,26 @@ gulp.task('clean', function () {
 });
 
 gulp.task('serve', function () {
-  var promises = [];
+  var builds = [];
   watchTask('components');
   watchTask('templates');
   watchTask('stylesheets');
 
- function watchTask(taskName) {
-  gulp.watch(src[taskName], function () {
-    promises.push(new Promise(function (resolve) {
-      runSequence(taskName, resolve);
-    }));
-  });
- }
+  function watchTask(taskName) {
+    gulp.watch(src[taskName], function () {
+      builds.push(new Promise(function (resolve) {
+        runSequence(taskName, resolve);
+      }));
+    });
+  }
 
   var app = express();
   app.use(ecstatic({ root: __dirname + '/public', handleError: false, showDir: false }));
   app.all('*', function(req, res) {
     var index = fs.readFileSync('public/index.html', 'utf8');
-    Promise.all(promises).then(function () {
+    Promise.all(builds).then(function () {
       res.status(200).send(index);
-      promises = [];
+      builds = [];
     });
   });
   http.createServer(app).listen(3001);
@@ -283,7 +309,7 @@ gulp.task('rev-index', function(){
   return gulp.src('public/index.html')
     .pipe(fingerprint(manifest, { prefix: '//'+config.asset_host+'/'}))
     .pipe(inject(
-      gulp.src('app/application.min-*.js', {read: false, cwd: 'build'}), 
+      gulp.src('app/application.min-*.js', {read: false, cwd: 'build'}),
       {
         addPrefix: '//'+config.asset_host,
         addRootSlash: false

@@ -38,7 +38,7 @@ ul.asset-gallery(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide
           i.fa.fa-search-plus
         a.btn(type="button"
             ng-if="!hasPreview()"
-            href="{{file.url}}"
+            href="{{file.url|assetUrl}}"
             target="_blank"
             ng-show="file|isFileReady"
             tooltip="Download file"

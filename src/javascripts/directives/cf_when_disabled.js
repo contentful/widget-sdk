@@ -36,7 +36,7 @@ angular.module('contentful').directive('cfWhenDisabled', [ 'enforcements', funct
       scope.$watch(attrs.cfWhenDisabled, addTooltip, true);
 
       function addTooltip(params) {
-        if(params.shouldDisable){
+        if(params && params.shouldDisable){
           var enforcement = enforcements.determineEnforcement(params.reasons, params.entity);
 
           if(enforcement){

@@ -86,8 +86,7 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
     logException: function (exception, metaData) {
       if($window.Bugsnag){
         setUserInfo();
-        var augmented = _.extend({severity: 'error'}, augmentMetadata(metaData));
-        $window.Bugsnag.notifyException(exception, null, augmented);
+        $window.Bugsnag.notifyException(exception, null, augmentMetadata(metaData), 'error');
       }
     },
 

@@ -1,19 +1,38 @@
 'use strict';
 
-angular.module('contentful').directive('cfFileDrop', ['filepicker', 'notification', 'logger', function (filepicker, notification, logger) {
-  var IGNORED_ERRORS = [
-    'WrongType',
-    'TooManyFiles',
-    'WrongSize'
-  ];
+angular.module('contentful').directive('cfFileDrop', ['$injector', function ($injector) {
+  var filepicker   = $injector.get('filepicker');
+  var logger       = $injector.get('logger');
+  var notification = $injector.get('notification');
+
+  var errorHandlers = {
+    TooManyFiles: function(){
+      notification.warn('Please drag only one file onto the file picker');
+    },
+    WrongType: function(){
+      notification.warn('Could not upload: File type not supported');
+    },
+    WrongSize: function(){
+      notification.warn('Could not upload: File too large');
+    },
+    NoFilesFound: function(){
+      notification.warn('Could not upload: No file selected');
+    },
+    UploadError: function(message){
+      notification.warn('Upload error: ' + message);
+      logger.logWarn('Filedrop UploadError', {data: {message: message} });
+    },
+    _unknown: function(message, type) {
+      notification.warn('Upload error: ' + message);
+      logger.logWarn('Filedrop UnkownError', {data: {type: type, message: message} });
+    }
+  };
 
   return {
     restrict: 'C',
     transclude: true,
     template: JST['cf_file_drop'],
     link: function (scope, elem) {
-      var files;
-
       scope.state = 'drag';
       var inOutSemaphore = 0;
       elem.on('drop', function (event) {
@@ -53,19 +72,8 @@ angular.module('contentful').directive('cfFileDrop', ['filepicker', 'notificatio
           scope.$apply(function (scope) {
             scope.state = 'drag';
             elem.attr('disabled', false);
-            if(_.contains(IGNORED_ERRORS, type))
-              notification.warn('Upload failed due to an unknown error. We have been notified.');
-            else
-              notification.warn('Upload failed: '+message);
-            if(!_.contains(IGNORED_ERRORS, type)){
-              logger.logError('Upload failed', {
-                type: type,
-                message: message,
-                data: {
-                  files: files
-                }
-              });
-            }
+            var handler = errorHandlers[type] || errorHandlers._unknown;
+            handler(message, type);
           });
         },
         onStart: function (files) {

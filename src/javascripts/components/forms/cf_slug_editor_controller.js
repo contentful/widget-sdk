@@ -25,11 +25,14 @@ angular.module('contentful').controller('SlugEditorController', [
     }
   });
 
+  function untitledSlug() {
+      return slugUtils.slugify('Untitled entry ' + moment.utc($scope.entry.data.sys.createdAt).format('YYYY MM DD [at] hh mm ss'), 'en-US');
+  }
   /**
    * Sets the slug to a new value through OT-friendly string updating.
    */
   function setSlug(value) {
-    $scope.otChangeStringP(value).then(function() {
+    $scope.otChangeString(value).then(function() {
       $scope.fieldData.value = $scope.otGetValue();
     });
   }
@@ -42,18 +45,17 @@ angular.module('contentful').controller('SlugEditorController', [
    * If the entry is already published, then the slug should not be changed
    * automatically, hence that is also treated as divergence.
    */
-  function updateDivergedStatus() {
-    if ($scope.hasDiverged) {
-      return;
-    }
-
+  function updateDivergedStatus(newPublishedState) {
     var value = $scope.fieldData.value;
 
-    if ($scope.entry.isPublished() ||
-        value &&
-        value !== $scope.entry.getId() &&
+    if (newPublishedState === true) {
+      $scope.hasDiverged = true;
+    } else if (value &&
+        value !== untitledSlug() &&
         value !== slugUtils.slugify(currentTitle(), $scope.locale.code)) {
       $scope.hasDiverged = true;
+    } else {
+      $scope.hasDiverged = false;
     }
   }
 
@@ -83,7 +85,7 @@ angular.module('contentful').controller('SlugEditorController', [
     }
 
     if (!currentTitle) {
-      setSlug($scope.entry.getId());
+      setSlug(untitledSlug());
     } else {
       setSlug(slugUtils.slugify(currentTitle, $scope.locale.code));
     }

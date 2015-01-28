@@ -111,12 +111,11 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$parse', 'zoneOffse
 
       function changeHandler() {
         var value = buildValue(scope.localDate, scope.localTime, scope.ampm, scope.tzOffset);
-        scope.otChangeValue(value, function (err) {
-          if (!err) {
+        scope.otChangeValue(value)
+        .then(function(){
             ngModelCtrl.$setViewValue(value);
-          } else {
+        }, function(){
             scope.setFromISO(ngModelCtrl.$modelValue);
-          }
         });
       }
 

@@ -66,9 +66,7 @@ angular.module('contentful').controller('LinkEditorController',
 
     var cb, promise;
     if ($scope.linkSingle) {
-      cb = $q.callback();
-      $scope.otChangeValue(link, cb);
-      promise = cb.promise.then(function () { $scope.links = [link]; });
+      promise = $scope.otChangeValue(link).then(function () { $scope.links = [link]; });
     } else {
       cb = $q.callbackWithApply();
       if (_.isArray(ShareJS.peek($scope.otDoc, $scope.otPath))) {
@@ -117,9 +115,8 @@ angular.module('contentful').controller('LinkEditorController',
     }
 
     function removeValue() {
-      cb = $q.callback();
-      $scope.otChangeValue(null, cb);
-      return cb.promise.then(function () {
+      return $scope.otChangeValue(null)
+      .then(function(){
         $scope.links.length = 0;
         $scope.updateModel();
       });

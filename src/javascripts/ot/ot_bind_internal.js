@@ -35,7 +35,7 @@ angular.module('contentful').directive('otBindInternal', ['$injector', function(
           setInternal = getInternal.assign;
 
       scope.otBindInternalChangeHandler = function() {
-        return scope.otChangeValueP(getInternal(scope))
+        return scope.otChangeValue(getInternal(scope))
         .then(function(){
           ngModelCtrl.$setViewValue(getInternal(scope));
           return getInternal(scope);

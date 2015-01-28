@@ -31,9 +31,8 @@
     position: relative
     top: 2px
 
-.widget-location-editor
-  position: relative
-  .gmaps-container,
+cf-google-maps
+  .google-map,
   .invalid-location-warning
     width: $form-controlwidth-inner
     height: 250px
@@ -49,11 +48,6 @@
       font-size: $base-font-size
       background-color: white
       box-shadow: 0 0 20px 12px white
-  .cf-field-alert
-    position: absolute
-    top: 20px
-    right: 20px
-
   .search-results
     overflow-y: auto
     max-height: 200px
@@ -75,6 +69,46 @@
       color: $gray
   .search
     margin-bottom: 10px
+  .sub-fields
+    position: relative
+    $display-flexbox()
+    flex-wrap: wrap
+    align-items: flex-end
+    width: $form-controlwidth-inner
+    margin-top: 5px
+    .search
+      width: 100%
+    .btn--form
+      margin-left: auto
+
+.widget-location-editor
+  position: relative
+  .cf-field-alert
+    position: absolute
+    top: 20px
+    right: 20px
+
+.location-fields
+  position: relative
+  $display-flexbox()
+  flex-wrap: wrap
+  align-items: flex-end
+  width: $form-controlwidth-inner
+  .search
+    width: 100%
+  .btn--form
+    margin-left: auto
+
+.widget-location-editor__location-picker
+  display: block
+  width: 37% !important
+  padding-bottom: 0 !important
+  margin-right: 5%
+  > input,
+  > input[type="text"]
+    width: 100%
+    margin-top: 5px
+
 
 cf-radio-editor
   display: block
@@ -102,27 +136,6 @@ cf-rating-editor
     background-color: $gray
 .clear-rating-button
   margin-top: -3px
-
-.widget-location-editor__sub-fields
-  position: relative
-  $display-flexbox()
-  flex-wrap: wrap
-  align-items: flex-end
-  width: $form-controlwidth-inner
-  margin-top: 5px
-  .search
-    width: 100%
-  .widget-location-editor__location-picker
-    display: block
-    width: 37%
-    margin-right: 5%
-    padding-bottom: 0
-    > input,
-    > input[type="text"]
-      width: 100%
-      margin-top: 5px
-  .btn--form
-    margin-left: auto
 
 .widget-datetime-editor
   input[type="text"] // TODO we can simplify this selector once we simplify form controls
