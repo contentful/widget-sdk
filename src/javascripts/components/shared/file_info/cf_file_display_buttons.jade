@@ -1,7 +1,7 @@
 button.btn.btn--secondary.go-to-asset(type="button" ng-click="entity && !entity.isMissing && navigator.entityEditor(entity).goTo()" ng-show="!!(!enableUpload && entity && !entity.isMissing)" tooltip="Open Asset")
   i.fa.fa-share-square-o
 | 
-a.btn.btn--secondary.download-file(type="button" href="{{file.url}}" target="_blank" ng-show="file|isFileReady" tooltip="Download file")
+a.btn.btn--secondary.download-file(type="button" href="{{file.url|assetUrl}}" target="_blank" ng-show="file|isFileReady" tooltip="Download file")
   i.fa.fa-download
 | 
 button.btn.btn--secondary.show-metadata(type="button" ng-click="toggleMeta()" ng-show="file" tooltip="Show file information")

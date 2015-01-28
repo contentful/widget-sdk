@@ -4,6 +4,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
   var $document   = $injector.get('$document');
   var $timeout    = $injector.get('$timeout');
   var $window     = $injector.get('$window');
+  var assetUrl    = $injector.get('$filter')('assetUrl');
   var delay       = $injector.get('delay');
   var keycodes    = $injector.get('keycodes');
   var modalDialog = $injector.get('modalDialog');
@@ -311,7 +312,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       function makeAssetLink(asset) {
         try {
           asset = localizedAsset(asset, scope.locale);
-          return '!['+asset.title+']('+asset.file.url+')';
+          return '!['+asset.title+']('+assetUrl(asset.file.url)+')';
         } catch (e) {
           return null;
         }

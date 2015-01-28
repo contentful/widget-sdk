@@ -5,6 +5,7 @@ var UserInterface = {
   validation: require('contentful-validation'),
   mimetype: require('contentful-mimetype'),
   contentfulClient: require('contentful-client'),
+  hostnameTransformer: require('contentful-hostname-transformer'),
   stringifySafe: require('json-stringify-safe'),
   isDiacriticalMark: require('is-diacritical-mark'),
   searchParser: require('./search.pegjs'),
@@ -27,6 +28,7 @@ if (angular) {
   require('ng-time-relative');
   angular.module('contentful/user_interface', []).
     constant('privateContentfulClient', UserInterface.contentfulClient).
+    constant('hostnameTransformer', UserInterface.hostnameTransformer).
     constant('validation', UserInterface.validation).
     constant('mimetype', UserInterface.mimetype).
     constant('worf', UserInterface.worf).
