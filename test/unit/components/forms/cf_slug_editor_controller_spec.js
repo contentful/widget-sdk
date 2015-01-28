@@ -25,7 +25,10 @@ describe('SlugEditorController', function () {
     };
     this.scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
     this.scope.entry = cfStub.entry(space, '__ID__', 'testType', {}, {
-      sys: { publishedVersion: 1 }
+      sys: {
+        publishedVersion: 1,
+        createdAt: '2015-01-28T10:38:28.989Z'
+      }
     });
     this.scope.entry.isPublished = sinon.stub().returns(false);
     this.scope.spaceContext.entryTitle = sinon.stub().returns(null);
@@ -40,8 +43,8 @@ describe('SlugEditorController', function () {
       this.$apply();
     });
 
-    it('should use the ID for the slug when the title is empty', function () {
-      expect(this.scope.fieldData.value).toEqual('__ID__');
+    it('should use an "untitled" slug with the entry creation time, when the title is empty', function () {
+      expect(this.scope.fieldData.value).toEqual('untitled-entry-2015-01-28-at-10-38-28');
     });
 
     it('should set the slug to a representation of the title', function () {
@@ -84,6 +87,24 @@ describe('SlugEditorController', function () {
       // Notice the slug is still the first title
       expect(this.scope.fieldData.value).toEqual('this-is-the-first-title');
     });
+
+    it('should resume tracking title if the entry has been published and unpublished', function () {
+      // Write a title
+      this.scope.spaceContext.entryTitle = sinon.stub().returns('This is the first title');
+      this.$apply();
+      // Publish the entry
+      this.scope.entry.isPublished = sinon.stub().returns(true);
+      this.$apply();
+      // Unpublish the entry
+      this.scope.entry.isPublished = sinon.stub().returns(false);
+      this.$apply();
+      // Change the title
+      this.scope.spaceContext.entryTitle = sinon.stub().returns('This is the second title');
+      this.$apply();
+      // Notice the slug is updated
+      expect(this.scope.fieldData.value).toEqual('this-is-the-second-title');
+    });
+
   });
 
   describe('#uniqueness', function () {
