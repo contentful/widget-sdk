@@ -36,8 +36,9 @@
           span.space-template__item-status(ng-show="item.status == 'error'")
             | Failed
         .space-template__queue-status(ng-if="isTemplateFailed()" cf-scroll-into-view)
-          | Some errors ocurred while creating your template. You can 
-          a(ng-click="dialog.cancel()" href="#") continue 
-          | and use the template as it is or you can 
+          | Some items could not be created properly right now, but don't worry, your space will work
+          | normally, just with less pre created items, or you might need to publish some manually.
+          button.btn.btn--primary(ng-click="dismissDialog()") Continue
+
 
 

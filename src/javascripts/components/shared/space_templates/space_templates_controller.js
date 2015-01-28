@@ -25,6 +25,7 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   $scope.isTemplateFailed = isTemplateFailed;
   $scope.selectTemplate = selectTemplate;
   $scope.newContentType = newContentType;
+  $scope.dismissDialog = dismissDialog;
   $scope.loadSelectedTemplate = loadSelectedTemplate;
   $scope.queueItemClass = queueItemClass;
   $scope.entityStatusString = entityStatusString;
@@ -49,6 +50,7 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
     $scope.selectedTemplate = template;
   }
 
+  //TODO deprecated
   function newContentType() {
     $scope.entityCreationController.newContentType('frame');
     $scope.dialog.confirm();
@@ -66,21 +68,22 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   function createTemplate(template) {
     contentTypeToDisplayFieldMap = contentTypeToDisplayFieldMap || mapDisplayFields(template.contentTypes);
     $scope.templateCreator.create(template)
-    .then(postTemplateCreation)
+    .then(function () {
+      templateLoadingStatus = 'finished';
+      dismissDialog();
+    })
     .catch(function (data) {
       if(retryAttempts === 0){
         retryAttempts++;
         createTemplate(data.template);
       } else {
-        postTemplateCreation('withErrors');
+        templateLoadingStatus = 'failed';
       }
     });
   }
 
-  function postTemplateCreation(status) {
-    // TODO do something with status
-    templateLoadingStatus = 'finished';
-    $scope.dialog.confirm($scope.selectedTemplate, status);
+  function dismissDialog() {
+    $scope.dialog.confirm($scope.selectedTemplate);
   }
 
   function itemDone(id, data) {
