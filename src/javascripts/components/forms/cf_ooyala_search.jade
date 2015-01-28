@@ -32,7 +32,7 @@
       .loading.video-dialog-result__loading(ng-show="isPlayerLoading")
         .video-dialog-result__loading-message Loading video
 
-      .cf-thumbnail.video-dialog-result__thumbnail(file="video.thumbnail" size="100" ng-show="showPreview")
+      img.video-dialog-result__thumbnail(ng-src="{{video.thumbnailUrl}}" size="100" ng-show="showPreview")
       cf-ooyala-player.widget-ooyala-player.widget-ooyala-player--embedded.video-dialog-result__player(
         ng-if="playerId"
         ng-show="showPlayer"
