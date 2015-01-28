@@ -51,7 +51,6 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
   this.newApiKey = function(source) {
     var usage = enforcements.computeUsage('apiKey');
     if(usage){
-      logger.logServerError(usage);
       return notification.error(usage);
     }
     var apiKey = $scope.spaceContext.space.newDeliveryApiKey();
@@ -76,14 +75,14 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
       if (!err) {
         $scope.navigator[params.navigatorHandler](entity).goTo();
       } else {
-        if(err && err.body && err.body.details && err.body.details.reasons){
+        if(dotty.get(err, 'body.details.reasons')){
           var enforcement = enforcements.determineEnforcement(
             err.body.details.reasons, params.entityType);
           if(enforcement){
             params.errorMessage = enforcement.tooltip || enforcement.message;
           }
         }
-        logger.logServerError(params.errorMessage, {error: err });
+        logger.logServerWarn(params.errorMessage, {error: err });
         notification.error(params.errorMessage);
       }
       analytics.track(getEventSource(params.source), {

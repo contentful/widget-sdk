@@ -101,7 +101,7 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
     .catch(function (err) {
       $scope.$emit('fileProcessingFailed');
       notification.error('There has been a problem processing the Asset.');
-      logger.logServerError('There has been a problem processing the Asset.', err);
+      logger.logServerWarn('There has been a problem processing the Asset.', err);
     });
   });
   function setTitleOnDoc(file, localeCode) {

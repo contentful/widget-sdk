@@ -188,7 +188,7 @@ describe('Create Space Dialog controller', function () {
 
           it('shows error', function() {
             expect(this.notification.error).toBeCalled();
-            expect(this.logger.logServerError).toBeCalled();
+            expect(this.logger.logServerWarn).toBeCalled();
           });
 
           it('stops spinner', function() {

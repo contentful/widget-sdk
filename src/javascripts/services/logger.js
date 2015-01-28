@@ -98,12 +98,16 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
       this._log('Logged Error', 'error', message, metaData);
     },
 
+    logWarn: function (message, metaData) {
+      this._log('Logged Warning', 'warning', message, metaData);
+    },
+
     logServerError: function (message, metaData) {
       this._log('Logged Server Error', 'error', message, metaData);
     },
 
-    logWarn: function (message, metaData) {
-      this._log('Logged Warning', 'warning', message, metaData);
+    logServerWarn: function (message, metaData) {
+      this._log('Logged Server Warning', 'warning', message, metaData);
     },
 
     log: function (message, metaData) {

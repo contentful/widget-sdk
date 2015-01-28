@@ -291,6 +291,7 @@ mocks.config(['$provide', function ($provide) {
       logException:    sinon.stub(),
       logError:        sinon.stub(),
       logServerError:  sinon.stub(),
+      logServerWarn:   sinon.stub(),
       logWarn:         sinon.stub(),
       log:             sinon.stub()
     };
