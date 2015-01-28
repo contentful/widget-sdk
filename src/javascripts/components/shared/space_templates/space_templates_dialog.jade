@@ -35,6 +35,7 @@
           | {{entityStatusString(item)}}
           span.space-template__item-status(ng-show="item.status == 'error'")
             | Failed
+        .loading(ng-show="!isTemplateFailed()")
         .space-template__queue-status(ng-if="isTemplateFailed()" cf-scroll-into-view)
           | Some items could not be created properly right now, but don't worry, your space will work
           | normally, just with less pre created items, or you might need to publish some manually.
