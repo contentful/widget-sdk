@@ -1,26 +1,19 @@
 'use strict';
 describe('EditingInterfaceEditorController', function(){
-  var scope, controller, editingInterfaces, $q, stubs;
+  var scope, controller, editingInterfaces, $q, notification;
 
   beforeEach(function() {
     module('contentful/test', function($provide) {
-      stubs = $provide.makeStubs(['info', 'warn', 'serverError']);
-
       editingInterfaces = {
         save: sinon.stub(),
         syncWidgets: sinon.stub(),
         forContentTypeWithId: sinon.stub()
       };
       $provide.value('editingInterfaces', editingInterfaces);
-
-      $provide.value('notification', {
-        info: stubs.info,
-        warn: stubs.warn,
-        serverError: stubs.serverError
-      });
     });
-    inject(function($rootScope, $controller, _$q_) {
+    inject(function($rootScope, $controller, _$q_, _notification_) {
       $q = _$q_;
+      notification = _notification_;
       scope = $rootScope.$new();
       scope.spaceContext = {space: {}};
       scope.tab = { params: {
@@ -53,7 +46,7 @@ describe('EditingInterfaceEditorController', function(){
     });
 
     it('should show a warning', function() {
-      expect(stubs.warn).toBeCalled();
+      expect(notification.warn).toBeCalled();
     });
   });
 
@@ -68,8 +61,8 @@ describe('EditingInterfaceEditorController', function(){
       expect(editingInterfaces.forContentTypeWithId).not.toBeCalled();
     });
 
-    it('show show a server error', function() {
-      expect(stubs.serverError).toBeCalled();
+    it('show show an error', function() {
+      expect(notification.error).toBeCalled();
     });
   });
 
@@ -85,7 +78,7 @@ describe('EditingInterfaceEditorController', function(){
     });
 
     it('should show a notification', function() {
-      expect(stubs.info).toBeCalled();
+      expect(notification.info).toBeCalled();
     });
 
   });
