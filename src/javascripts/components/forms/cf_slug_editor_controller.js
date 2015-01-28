@@ -25,6 +25,9 @@ angular.module('contentful').controller('SlugEditorController', [
     }
   });
 
+  function untitledSlug() {
+      return slugUtils.slugify('Untitled entry ' + moment.utc($scope.entry.data.sys.createdAt).format('YYYY MM DD [at] hh mm ss'), 'en-US');
+  }
   /**
    * Sets the slug to a new value through OT-friendly string updating.
    */
@@ -48,7 +51,7 @@ angular.module('contentful').controller('SlugEditorController', [
     if (newPublishedState === true) {
       $scope.hasDiverged = true;
     } else if (value &&
-        value !== $scope.entry.getId() &&
+        value !== untitledSlug() &&
         value !== slugUtils.slugify(currentTitle(), $scope.locale.code)) {
       $scope.hasDiverged = true;
     } else {
@@ -82,7 +85,7 @@ angular.module('contentful').controller('SlugEditorController', [
     }
 
     if (!currentTitle) {
-      setSlug($scope.entry.getId());
+      setSlug(untitledSlug());
     } else {
       setSlug(slugUtils.slugify(currentTitle, $scope.locale.code));
     }
