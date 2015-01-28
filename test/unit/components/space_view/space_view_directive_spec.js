@@ -41,16 +41,9 @@ describe('Space view directive', function () {
       };
 
       scope.permissionController = {
-        createContentType: { shouldHide: false},
-        updateContentType: { shouldHide: false},
-        createEntry: { shouldHide: false},
-        readEntry: { shouldHide: false},
-        createAsset: { shouldHide: false},
-        readAsset: { shouldHide: false},
-        createApiKey: { shouldHide: false},
-        readApiKey: { shouldHide: false},
-        updateSettings: { shouldHide: false}
+        get: sinon.stub()
       };
+      scope.permissionController.get.returns(false);
 
       scope.spaces = [{}];
       scope.locationInAccount = false;
@@ -97,12 +90,10 @@ describe('Space view directive', function () {
   });
 
   it('add button not shown even if no create permissions exist', function () {
-    scope.permissionController = {
-      createContentType: { shouldHide: true},
-      createEntry: { shouldHide: true},
-      createAsset: { shouldHide: true},
-      createApiKey: { shouldHide: true}
-    };
+    scope.permissionController.get.withArgs('createContentType', 'shouldHide').returns(true);
+    scope.permissionController.get.withArgs('createEntry', 'shouldHide').returns(true);
+    scope.permissionController.get.withArgs('createAsset', 'shouldHide').returns(true);
+    scope.permissionController.get.withArgs('createApiKey', 'shouldHide').returns(true);
     compileElement();
     expect(container.find('.add-dropdown-button')).toBeNgHidden();
   });
@@ -133,13 +124,13 @@ describe('Space view directive', function () {
       var selector = 'li[data-view-type="'+viewType+'"]';
 
       it('is hidden', function () {
-        scope.permissionController[action+type].shouldHide = true;
+        scope.permissionController.get.withArgs(action+type, 'shouldHide').returns(true);
         compileElement();
         expect(container.find(selector)).toBeNgHidden();
       });
 
       it('is shown', function () {
-        scope.permissionController[action+type].shouldHide = false;
+        scope.permissionController.get.withArgs(action+type, 'shouldHide').returns(false);
         compileElement();
         expect(container.find(selector)).not.toBeNgHidden();
       });

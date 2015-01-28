@@ -10,9 +10,9 @@
 
   .tab-header__actions.add-entity.u-truncate(ng-class="{'with-pagination': paginator.numPages() > 1}" ng-hide="empty")
     button.btn.btn--primary(ng-click="entityCreationController.newApiKey('frameButton')"
-        ng-hide="permissionController.createApiKey.shouldHide"
-        ng-disabled="permissionController.createApiKey.shouldDisable"
-        cf-when-disabled="permissionController.createApiKey")
+        ng-hide="permissionController.get('createApiKey', 'shouldHide')"
+        ng-disabled="permissionController.get('createApiKey', 'shouldDisable')"
+        cf-when-disabled="permissionController.entityActions.createApiKey")
       i.fa.fa-plus.button-icon
       | Add API Key
 
@@ -53,9 +53,9 @@
       header.advice-title There are no API Keys yet.
       p.advice-description API Keys open the door to your content. One should be created for each application that accesses your content.
       button.btn.btn--primary(type="button" ng-click="entityCreationController.newApiKey('frameButton')"
-          ng-hide="permissionController.createApiKey.shouldHide"
-          ng-disabled="permissionController.createApiKey.shouldDisable"
-          cf-when-disabled="permissionController.createApiKey")
+          ng-hide="permissionController.get('createApiKey', 'shouldHide')"
+          ng-disabled="permissionController.get('createApiKey', 'shouldDisable')"
+          cf-when-disabled="permissionController.entityActions.createApiKey")
         | Create API Key
       a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
         | Visit the Knowledge Base Pages

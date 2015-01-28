@@ -14,11 +14,9 @@ describe('The ContentType list directive', function () {
       scope = $rootScope.$new();
 
       scope.permissionController = {
-        createContentType: {
-          shouldHide: false,
-          shouldDisable: false
-        }
+        get: sinon.stub()
       };
+      scope.permissionController.get.returns(false);
 
       enforcements.setSpaceContext({
         space: {
@@ -40,7 +38,7 @@ describe('The ContentType list directive', function () {
 
   describe('the tab header add button', function() {
     it('is not shown', function() {
-      scope.permissionController.createContentType.shouldHide = true;
+      scope.permissionController.get.withArgs('createContentType', 'shouldHide').returns(true);
       compileElement();
       expect(container.find('.tab-header .add-entity .btn--primary')).toBeNgHidden();
     });
@@ -52,7 +50,7 @@ describe('The ContentType list directive', function () {
   });
 
   it('save button is disabled', function () {
-    scope.permissionController.createContentType.shouldDisable = true;
+    scope.permissionController.get.withArgs('createContentType', 'shouldDisable').returns(true);
     compileElement();
     expect(container.find('.advice .btn--primary').attr('disabled')).toBe('disabled');
   });

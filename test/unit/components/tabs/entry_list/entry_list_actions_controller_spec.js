@@ -63,14 +63,9 @@ describe('Entry List Actions Controller', function () {
       };
 
       scope.permissionController = {
-        createContentType: { shouldHide: false, shouldDisable: false },
-        createEntry: { shouldHide: false, shouldDisable: false },
-        deleteEntry: { shouldHide: false },
-        archiveEntry: { shouldHide: false },
-        unarchiveEntry: { shouldHide: false },
-        publishEntry: { shouldHide: false },
-        unpublishEntry: { shouldHide: false }
+        get: sinon.stub()
       };
+      scope.permissionController.get.returns(false);
 
       controller = $controller('EntryListActionsController', {$scope: scope});
     });
@@ -227,7 +222,7 @@ describe('Entry List Actions Controller', function () {
   });
 
   it('cannot show duplicate action', function () {
-    scope.permissionController.createEntry.shouldHide = true;
+    scope.permissionController.get.withArgs('createEntry', 'shouldHide').returns(true);
     expect(scope.showDuplicate()).toBeFalsy();
   });
 
@@ -246,7 +241,7 @@ describe('Entry List Actions Controller', function () {
     });
 
     it('cannot show delete '+action+' because no general permission', function () {
-      scope.permissionController[action+'Entry'].shouldHide = true;
+      scope.permissionController.get.withArgs(action+'Entry', 'shouldHide').returns(true);
       stubs.action1.returns(true);
       stubs.action2.returns(true);
       stubs.getSelected.returns([

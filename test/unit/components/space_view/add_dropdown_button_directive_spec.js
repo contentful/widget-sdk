@@ -21,11 +21,9 @@ describe('The add dropdown button directive', function () {
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
 
       scope.permissionController = {
-        createContentType: { shouldHide: false },
-        createEntry: { shouldHide: false },
-        createAsset: { shouldHide: false },
-        createApiKey: { shouldHide: false }
+        get: sinon.stub()
       };
+      scope.permissionController.get.returns(false);
 
       compileElement = function () {
         container = $compile($('<div cf-add-dropdown-button class="add-dropdown-button" space-context="spaceContext"></div>'))(scope);
@@ -48,13 +46,11 @@ describe('The add dropdown button directive', function () {
     ];
     describe('if user can create a '+type, function () {
       beforeEach(function () {
-        scope.permissionController = {
-          createContentType: { shouldHide: true },
-          createEntry: { shouldHide: true },
-          createAsset: { shouldHide: true },
-          createApiKey: { shouldHide: true }
-        };
-        scope.permissionController['create'+type].shouldHide = false;
+        scope.permissionController.get.withArgs('createContentType', 'shouldHide').returns(true);
+        scope.permissionController.get.withArgs('createEntry', 'shouldHide').returns(true);
+        scope.permissionController.get.withArgs('createAsset', 'shouldHide').returns(true);
+        scope.permissionController.get.withArgs('createApiKey', 'shouldHide').returns(true);
+        scope.permissionController.get.withArgs('create'+type, 'shouldHide').returns(false);
 
         compileElement();
       });
@@ -88,7 +84,7 @@ describe('The add dropdown button directive', function () {
 
   describe('if a user can not create an Entry and no published content types exist', function () {
     beforeEach(function () {
-      scope.permissionController.createEntry.shouldHide = true;
+      scope.permissionController.get.withArgs('createEntry', 'shouldHide').returns(true);
       scope.spaceContext.publishedContentTypes = [];
       compileElement();
     });
@@ -106,7 +102,7 @@ describe('The add dropdown button directive', function () {
     describe('and the user can not create Content Types', function () {
       beforeEach(function () {
         scope.spaceContext.publishedContentTypes = [];
-        scope.permissionController.createContentType.shouldHide = true;
+        scope.permissionController.get.withArgs('createContentType', 'shouldHide').returns(true);
         compileElement();
       });
 
