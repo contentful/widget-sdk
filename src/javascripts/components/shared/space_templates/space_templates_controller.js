@@ -8,7 +8,8 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
 
   var templateListLoadingStatus = 'loading';
   var templateLoadingStatus = null;
-
+  var contentTypeToDisplayFieldMap;
+  var retryAttempts = 0;
 
   spaceTemplateLoader.getTemplatesList().then(function (templates) {
     templateListLoadingStatus = 'finished';
@@ -17,7 +18,7 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
     $scope.dialog.cancel();
   });
 
-  $scope.completedQueue = [];
+  $scope.completedItems = {};
   $scope.isTemplateListLoading = isTemplateListLoading;
   $scope.isTemplateListVisible = isTemplateListVisible;
   $scope.isTemplateQueueVisible = isTemplateQueueVisible;
@@ -25,7 +26,6 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   $scope.selectTemplate = selectTemplate;
   $scope.newContentType = newContentType;
   $scope.loadSelectedTemplate = loadSelectedTemplate;
-  $scope.retryFailedTemplate = retryFailedTemplate;
   $scope.queueItemClass = queueItemClass;
   $scope.entityStatusString = entityStatusString;
 
@@ -63,9 +63,49 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
     spaceTemplateLoader.getTemplate($scope.selectedTemplate).then(createTemplate);
   }
 
-  function retryFailedTemplate() {
-    templateLoadingStatus = 'loading';
-    createTemplate($scope.attemptedTemplate);
+  function createTemplate(template) {
+    contentTypeToDisplayFieldMap = contentTypeToDisplayFieldMap || mapDisplayFields(template.contentTypes);
+    $scope.templateCreator.create(template)
+    .then(postTemplateCreation)
+    .catch(function (data) {
+      if(retryAttempts === 0){
+        retryAttempts++;
+        createTemplate(data.template);
+      } else {
+        postTemplateCreation('withErrors');
+      }
+    });
+  }
+
+  function postTemplateCreation(status) {
+    // TODO do something with status
+    templateLoadingStatus = 'finished';
+    $scope.dialog.confirm($scope.selectedTemplate, status);
+  }
+
+  function itemDone(id, data) {
+    console.info(id, data.actionData.action, data.actionData.entity);
+    $scope.completedItems[id] = {
+      status: 'success',
+      templateItem: data.item,
+      actionData: data.actionData
+    };
+  }
+
+  function itemError(id, data) {
+    console.warn(id, data.actionData.action, data.actionData.entity);
+    $scope.completedItems[id] = {
+      status: 'error',
+      templateItem: data.item,
+      actionData: data.actionData
+    };
+  }
+
+  function mapDisplayFields(contentTypes) {
+    return _.reduce(contentTypes, function (displayFieldsMap, contentType) {
+      displayFieldsMap[contentType.sys.id] = contentType.displayField;
+      return displayFieldsMap;
+    }, {});
   }
 
   function queueItemClass(status) {
@@ -73,36 +113,25 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   }
 
   function entityStatusString(item) {
-    var str = getActionLabel(item.metadata.action) +' '+ stringUtils.getEntityLabel(item.metadata.entity);
-    if(item.template.name) str += ' '+item.template.name;
-    return str;
+    return getActionLabel(item.actionData.action) +' '+
+      stringUtils.getEntityLabel(item.actionData.entity)+
+      getEntityDisplayName(item.templateItem, item.actionData.entity);
   }
 
-  function createTemplate(template) {
-    $scope.templateCreator.create(template)
-    .then(function () {
-      templateLoadingStatus = 'finished';
-      $scope.dialog.confirm($scope.selectedTemplate);
-    }, function (data) {
-      templateLoadingStatus = 'failed';
-      $scope.attemptedTemplate = data.template;
-    });
+  function getEntityDisplayName(item, entityType) {
+    if(entityType == 'Asset')
+      return ' '+getFirstLocaleField(item.fields.title);
+    if(entityType == 'Entry'){
+      var displayFieldId = contentTypeToDisplayFieldMap[item.sys.contentType.sys.id];
+      return ' '+getFirstLocaleField(item.fields[displayFieldId]);
+    }
+    if(item.name)
+      return ' '+item.name;
   }
 
-  function itemDone(item, metadata) {
-    $scope.completedQueue.push({
-      status: 'success',
-      template: item,
-      metadata: metadata
-    });
-  }
-
-  function itemError(item, metadata) {
-    $scope.completedQueue.push({
-      status: 'error',
-      template: item,
-      metadata: metadata
-    });
+  function getFirstLocaleField(field) {
+    var localeField = _.values(field);
+    return localeField.length > 0 ? localeField[0] : null;
   }
 
   var actionsToLabels = {

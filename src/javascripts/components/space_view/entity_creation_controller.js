@@ -45,6 +45,7 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
         title: 'Space templates',
         template: 'space_templates_dialog',
         ignoreEnter: true,
+        noBackgroundClose: true,
         scope: $scope
       })
       .promise

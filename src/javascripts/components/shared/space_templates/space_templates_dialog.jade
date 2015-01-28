@@ -29,7 +29,7 @@
 
       .space-template__queue(ng-show="isTemplateQueueVisible()")
         h1 Creating template entities
-        .space-template__queue-item(ng-repeat="item in completedQueue" ng-class="queueItemClass(item.status)" cf-scroll-into-view)
+        .space-template__queue-item(ng-repeat="(id, item) in completedItems" ng-class="queueItemClass(item.status)" cf-scroll-into-view)
           i.fa.fa-check(ng-if="item.status == 'success'")
           i.fa.fa-times(ng-if="item.status == 'error'")
           | {{entityStatusString(item)}}
@@ -39,7 +39,5 @@
           | Some errors ocurred while creating your template. You can 
           a(ng-click="dialog.cancel()" href="#") continue 
           | and use the template as it is or you can 
-          a(ng-click="retryFailedTemplate()" href="#") try again
-          | .
 
 
