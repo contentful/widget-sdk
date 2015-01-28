@@ -60,10 +60,7 @@ angular.module('contentful').controller('cfOoyalaSearchController', ['$scope', '
         playerId: i.player_id,
         name: i.name,
         duration: i.duration,
-        thumbnail: {
-          external: true,
-          url: i.preview_image_url
-        }
+        thumbnailUrl: i.preview_image_url
       };
     }));
   }
