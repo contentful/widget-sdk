@@ -120,14 +120,31 @@ gulp.task('user_interface', function () {
   return bundleBrowserify(createBrowserify());
 });
 
+gulp.task('watchify', function(){
+  var watchify = require('watchify');
+  var ui = watchify(createBrowserify(watchify.args));
+  bundleBrowserify(ui);
+
+  ui.on('update', function() {
+    gutil.log('Rebuilding \'user_interface\' bundle...');
+    bundleBrowserify(ui)
+    .on('end', function(){
+      gutil.log('Rebuilding \'user_interface\' bundle done');
+    });
+  });
+});
+
 function createBrowserify(args) {
   return browserify(_.extend({debug: true}, args))
     .add('./src/user_interface')
     .transform({optimize: 'size'}, 'browserify-pegjs');
 }
 
-function bundleBrowserify(b, cb) {
-  return b.bundle(cb)
+function bundleBrowserify(browserify) {
+  return browserify.bundle()
+    .on('error', function(e){
+      gutil.log(gutil.colors.red('Browserify error'), e.message);
+    })
     .pipe(source('user_interface.js'))
     .pipe(gulp.dest('./public/app/'));
 }
@@ -195,22 +212,6 @@ gulp.task('serve', function () {
       }));
     });
   }
-
-  var watchify = require('watchify');
-  var ui = watchify(createBrowserify(watchify.args));
-  bundleBrowserify(ui);
-
-  ui.on('update', function() {
-    builds.push(new Promise(function (resolve, reject) {
-      gutil.log('Rebuilding \'user_interface\' bundle...');
-      bundleBrowserify(ui, function(err) {
-        if (err)
-          reject(err);
-        else
-          resolve();
-      });
-    }));
-  });
 
   var app = express();
   app.use(ecstatic({ root: __dirname + '/public', handleError: false, showDir: false }));
