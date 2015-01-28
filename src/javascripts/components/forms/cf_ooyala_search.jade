@@ -33,7 +33,7 @@
         .video-dialog-result__loading-message Loading video
 
       img.video-dialog-result__thumbnail(ng-src="{{video.thumbnailUrl}}" size="100" ng-show="showPreview")
-      cf-ooyala-player.widget-ooyala-player.widget-ooyala-player--embedded.video-dialog-result__player(
+      cf-ooyala-player.widget-ooyala-player.video-player--embedded.video-dialog-result__player(
         ng-if="playerId"
         ng-show="showPlayer"
         asset-id="assetId"

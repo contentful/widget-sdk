@@ -1,0 +1,32 @@
+.video-widget-editor__warning(ng-show="multiVideoItem.errorMessage")
+  i.fa.fa-exclamation-triangle
+  .video-widget-warning__message
+    | {{multiVideoItem.errorMessage}}
+
+    i.fa.fa-times-circle(
+      title="Remove asset"
+      ng-click="multiVideoItemController.removeAsset()")
+
+.video-widget-editor__loading-info(
+  ng-show="!multiVideoItem.isPlayerReady && !multiVideoItem.errorMessage"
+  ng-class="{'video-widget-editor__loading-info--wide': !multiVideoEditor.searchConfig.isSearchEnabled}")
+  | Loading player for video with id {{asset.assetId}}
+  i.fa.fa-spinner.fa-spin
+
+div(ng-show="multiVideoItem.isPlayerReady")
+
+  i.fa.fa-times-circle(ng-click="multiVideoItemController.removeAsset()")
+
+  .multi-video-widget-item__handle(ng-if="multiVideoItem.isSortingEnabled")
+    i.fa.fa-ellipsis-v
+    i.fa.fa-ellipsis-v
+
+  .multi-video-widget-item__title
+    | {{asset.title}}
+
+  cf-video-player.video-player(
+    widget-player-directive='multiVideoItem.widgetPlayerDirective'
+    ng-if="multiVideoItem.isAssetValid && multiVideoItem.asset.assetId"
+    custom-attrs='multiVideoItem.customAttrsForPlayer'
+    on-failed-to-load-video="multiVideoItemController.showFailedToLoadVideoError()"
+    on-ready="multiVideoItemController.notifyPlayerIsReady()")

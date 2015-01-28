@@ -1,17 +1,17 @@
 'use strict';
 
-angular.module('contentful').controller('cfOoyalaSearchController', ['$scope', '$injector', function($scope, $injector){
-  var OoyalaSearch = $injector.get('OoyalaSearch');
-  var debounce     = $injector.get('debounce');
-
+angular.module('contentful').controller('cfOoyalaSearchController', ['$attrs', '$scope', '$injector', function($attrs, $scope, $injector){
+  var OoyalaSearch         = $injector.get('OoyalaSearch');
+  var debounce             = $injector.get('debounce');
   var debouncedQueryOoyala = debounce(queryOoyala, 750);
 
   var search, currentPlayer;
 
-  $scope.videos         = [];
-  $scope.selection      = [];
-  $scope.searchFinished = false;
-  $scope.isSearching    = false;
+  $scope.videos                     = [];
+  $scope.selection                  = [];
+  $scope.searchFinished             = false;
+  $scope.isSearching                = false;
+  $scope.isMultipleSelectionEnabled = $scope.$eval($attrs.isMultipleSelectionEnabled);
 
   $scope.$watch('ooyala.search', updateSearchTerm);
 
@@ -49,10 +49,6 @@ angular.module('contentful').controller('cfOoyalaSearchController', ['$scope', '
     }
   }
 
-  function isMultipleSelectionEnabled(){
-    return $scope.ooyalaSearch ? $scope.ooyalaSearch.isMultipleSelectionEnabled : false;
-  }
-
   function insertResults(response) {
     $scope.videos = $scope.videos.concat(response.map(function(i){
       return {
@@ -82,8 +78,10 @@ angular.module('contentful').controller('cfOoyalaSearchController', ['$scope', '
   }
 
   function selectVideo(video) {
-    if (!isMultipleSelectionEnabled()){
+    if (!$scope.isMultipleSelectionEnabled){
       $scope.selection.pop();
+      //TODO: rename this event followin naming conventions
+      //https://contentful.atlassian.net/wiki/display/ENG/AngularJS+Coding+Guidelines#AngularJSCodingGuidelines-Namingthings
       $scope.$broadcast('video:selected', {video: video});
     }
 

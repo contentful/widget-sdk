@@ -4,6 +4,9 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
   var controller = this;
 
   var OoyalaErrorMessages = $injector.get('OoyalaErrorMessages');
+  var ooyalaClient        = $injector.get('ooyalaClient');
+
+  ooyalaClient.setOrganizationId($scope.spaceContext.space.getOrganizationId());
 
   $scope.errorMessage  = undefined;
   $scope.isPlayerReady = false;
@@ -11,10 +14,12 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
   $scope.searchConfig  = {
     onSelection : useSelectedAsset,
     scope       : $scope,
-    template    : 'cf_ooyala_search_dialog'
+    template    : 'cf_ooyala_search_dialog',
+    isSearchEnabled: true
   };
 
   this.addAsset                   = addAsset;
+  this.lookupAsset                = lookupAsset;
   this.persistInput               = persistInput;
   this.resetAsset                 = resetAsset;
   this.resetEditorInput           = resetEditorInput;
@@ -27,7 +32,11 @@ angular.module('contentful').controller('cfOoyalaEditorController', ['$scope', '
   function addAsset(asset) {
     $scope.isPlayerReady          = false;
     $scope.selectedVideo.assetId  = asset.assetId;
-    $scope.selectedVideo.playerId = asset.playerId;
+    $scope.selectedVideo.playerId = asset.player_id;
+  }
+
+  function lookupAsset(assetId) {
+    return ooyalaClient.asset(assetId);
   }
 
   function persistInput(input) {

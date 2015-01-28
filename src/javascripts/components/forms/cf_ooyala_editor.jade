@@ -1,5 +1,6 @@
-cf-ooyala-input(
+cf-video-input(
   value="{{fieldData.value}}"
+  asset-lookup="ooyalaEditorController.lookupAsset(assetId)"
   search-config="searchConfig"
   on-change="ooyalaEditorController.resetErrors(); ooyalaEditorController.resetAsset(); ooyalaEditorController.persistInput(input)"
   on-reset="ooyalaEditorController.resetEditorInput()"
@@ -17,7 +18,7 @@ cf-ooyala-input(
     p Loading player for asset {{selectedVideo.assetId}}
     i.fa.fa-spinner.fa-spin
 
-  cf-ooyala-player.widget-ooyala-player(
+  cf-ooyala-player.widget-ooyala-player.video-player(
     ng-if="selectedVideo.playerId"
     ng-hide="!isPlayerReady"
     asset-id="selectedVideo.assetId"

@@ -62,6 +62,17 @@ var src = {
     'node_modules/share/webclient/json.uncompressed.js',
     'node_modules/share/webclient/textarea.js',
   ],
+  vendorScriptsNonEssential: {
+    kaltura: [
+      'kaltura*/webtoolkit.md5.js',
+      'kaltura*/ox.ajast.js',
+      'kaltura*/KalturaClientBase.js',
+      'kaltura*/KalturaTypes.js',
+      'kaltura*/KalturaVO.js',
+      'kaltura*/KalturaServices.js',
+      'kaltura*/KalturaClient.js'
+    ]
+  },
   images: [
     'src/images/**/*',
     './bower_components/jquery-ui/themes/base/images/*'
@@ -113,6 +124,16 @@ gulp.task('vendor-js', function () {
     .pipe(sourceMaps.init())
     .pipe(concat('vendor.js'))
     .pipe(sourceMaps.write({sourceRoot: '/vendor'}))
+    .pipe(gulp.dest('./public/app'));
+});
+
+gulp.task('vendored-js-non-essential', function () {
+  // Hardcoded to kaltura. Fix this when needed
+  return gulp.src(src.vendorScriptsNonEssential.kaltura)
+    .pipe(sourceMaps.init())
+    .pipe(uglify())
+    .pipe(concat('kaltura.js'))
+    .pipe(sourceMaps.write({sourceRoot: '/vendor/kaltura'}))
     .pipe(gulp.dest('./public/app'));
 });
 
@@ -188,7 +209,7 @@ gulp.task('stylesheets', function () {
     .pipe(gulp.dest('./public/app'));
 });
 
-gulp.task('all', ['index', 'templates', 'vendor-js', 'user_interface', 'components', 'copy-images', 'copy-static', 'stylesheets', 'vendor_stylesheets']);
+gulp.task('all', ['index', 'templates', 'vendor-js', 'vendored-js-non-essential', 'user_interface', 'components', 'copy-images', 'copy-static', 'stylesheets', 'vendor_stylesheets']);
 
 gulp.task('clean', function () {
   return gulp.src([
@@ -241,6 +262,7 @@ gulp.task('serve-production', function(){
 
 gulp.task('rev-static', function(){
   return gulp.src([ 'public/app/**', '!**/*.js', '!**/*.css'], {base: 'public'})
+    .pipe(gulp.src('public/app/kaltura.js', {base: 'public'}))
     .pipe(gulp.dest('build'))
     .pipe(rev())
     .pipe(gulp.dest('build'))
