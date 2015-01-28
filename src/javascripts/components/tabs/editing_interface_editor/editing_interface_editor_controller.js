@@ -4,6 +4,7 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
   var $controller       = $injector.get('$controller');
   var editingInterfaces = $injector.get('editingInterfaces');
   var environment       = $injector.get('environment');
+  var logger            = $injector.get('logger');
   var notification      = $injector.get('notification');
 
   $controller('AccordionController', {$scope: $scope});
@@ -58,7 +59,8 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
         notification.warn('This configuration has been changed by another user. Please reload and try again.');
         return loadFromServer();
       } else
-        notification.serverError('There was a problem saving the configuration', err);
+        logger.logServerError('There was a problem saving the configuration', {data: {error: err}});
+        notification.error('There was a problem saving the configuration');
     });
   }
 
