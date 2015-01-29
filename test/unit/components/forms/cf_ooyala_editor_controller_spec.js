@@ -15,17 +15,18 @@ describe('cfOoyalaEditorController', function () {
 
       otChangeValueDeferred = $q.defer();
 
-      scope               = $rootScope.$new();
-      scope.fieldData     = {value : 1};
+      scope                = $rootScope.$new();
+      scope.fieldData      = {value : 1};
+      scope.spaceContext   = {space: {getOrganizationId: sinon.stub()}};
       scope.otChangeValue = jasmine.createSpy().and.returnValue(otChangeValueDeferred.promise);
-      controller          = $controller('cfOoyalaEditorController', {$scope: scope});
+      controller           = $controller('cfOoyalaEditorController', {$scope: scope});
     });
   });
 
   describe('#addAsset', function() {
     beforeEach(function() {
       scope.selectedVideo = {};
-      controller.addAsset({playerId: 1, assetId: 2});
+      controller.addAsset({player_id: 1, assetId: 2});
     });
 
     it('sets the player id of the given asset', function() {

@@ -1,12 +1,16 @@
 'use strict';
 
 angular.module('contentful').controller('cfOoyalaMultiAssetEditorController', ['$scope', '$injector', function($scope, $injector){
-  var ShareJS     = $injector.get('ShareJS');
-  var $q          = $injector.get('$q');
+  var ShareJS      = $injector.get('ShareJS');
+  var $q           = $injector.get('$q');
+  var ooyalaClient = $injector.get('ooyalaClient');
 
-  $scope.ooyalaMulti = {assets: []};
-  $scope.searchConfig  = {
+  ooyalaClient.setOrganizationId($scope.spaceContext.space.getOrganizationId());
+
+  $scope.ooyalaMulti  = {assets: []};
+  $scope.searchConfig = {
     isMultipleSelectionEnabled: true,
+    isSearchEnabled: true,
     onSelection : useSelectedAssets,
     scope       : $scope,
     template    : 'cf_ooyala_search_dialog'
@@ -19,6 +23,7 @@ angular.module('contentful').controller('cfOoyalaMultiAssetEditorController', ['
   });
 
   this.addAsset         = addAsset;
+  this.lookupAsset      = lookupAsset;
   this.showErrors       = showErrors;
   this.removeAsset      = removeAsset;
   this.resetErrors      = resetErrors;
@@ -34,7 +39,7 @@ angular.module('contentful').controller('cfOoyalaMultiAssetEditorController', ['
       $scope.otDoc.at($scope.otPath).insert(0, asset.assetId, cb);
       promise = cb.promise.then(function () {
         $scope.ooyalaMulti.assets.unshift(assetObject);
-        $scope.inputController.clearField();
+        $scope.videoInputController.clearField();
       });
     } else {
       ShareJS.mkpath({
@@ -45,7 +50,7 @@ angular.module('contentful').controller('cfOoyalaMultiAssetEditorController', ['
       }, cb);
       promise = cb.promise.then(function () {
         $scope.ooyalaMulti.assets.unshift(assetObject);
-        $scope.inputController.clearField();
+        $scope.videoInputController.clearField();
       });
     }
   }
@@ -54,6 +59,10 @@ angular.module('contentful').controller('cfOoyalaMultiAssetEditorController', ['
     var cb = $q.callbackWithApply();
     $scope.otDoc.at($scope.otPath.concat(index)).remove(cb);
     cb.promise.then(function () { $scope.ooyalaMulti.assets.splice(index,1); });
+  }
+
+  function lookupAsset(assetId) {
+    return ooyalaClient.asset(assetId);
   }
 
   function resetErrors() {

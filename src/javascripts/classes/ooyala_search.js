@@ -4,6 +4,8 @@ angular.module('contentful').factory('OoyalaSearch', ['$injector', function($inj
   var ooyalaClient        = $injector.get('ooyalaClient');
   var OoyalaQuery         = $injector.get('OoyalaQuery');
 
+  var PAGE_TOKEN_REGEXP = /page_token=([^?]+)&?.*$/;
+
   function OoyalaSearch(options) {
     ooyalaClient.setOrganizationId(options.organizationId);
     this.query       = new OoyalaQuery();
@@ -26,9 +28,10 @@ angular.module('contentful').factory('OoyalaSearch', ['$injector', function($inj
     },
 
     nextPage: function() {
-      if (!this.nextPageUrl) return;
+      var pageTokenMatch = this.nextPageUrl.match(PAGE_TOKEN_REGEXP);
+      this.query.parameter('page_token', pageTokenMatch[1]);
 
-      return this._query('raw', this.nextPageUrl);
+      return this;
     },
 
     run: function() {

@@ -165,6 +165,16 @@ angular.module('contentful').run(['widgets', function(widgets){
     name: 'Ooyala (multiple assets)',
     template: '<cf-ooyala-multi-asset-editor ng-model="fieldData.value" ot-bind-internal="selectedAssets"></cf-ooyala-editor>'
   });
+  widgets.registerWidget('kalturaEditor',{
+    fieldTypes: ['Symbol'],
+    name: 'Kaltura',
+    template: '<cf-kaltura-editor></cf-kaltura-editor>'
+  });
+  widgets.registerWidget('kalturaMultiVideoEditor',{
+    fieldTypes: ['Symbols'],
+    name: 'Kaltura (multiple videos)',
+    template: '<cf-kaltura-multi-video-editor ng-model="fieldData.value" ot-bind-internal="selectedAssets"></cf-kaltura-multi-video-editor>'
+  });
   widgets.registerWidget('slugEditor', {
     fieldTypes: ['Symbol'],
     name: 'Slug',

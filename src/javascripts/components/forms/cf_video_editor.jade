@@ -1,0 +1,37 @@
+.video-widget-loading(ng-if="!videoEditorController.isVideoWidgetReady()")
+  p Initializing video widget
+    i.fa.fa-spinner.fa-spin
+
+div(ng-if="videoEditorController.isVideoWidgetReady()")
+  cf-video-input(
+    value="{{fieldData.value}}"
+    asset-lookup="videoEditorController.lookupAsset(assetId)"
+    search-config="videoEditor.searchConfig"
+    on-change="videoEditorController.resetErrors(); videoEditorController.resetAsset(); videoEditorController.persistInput(input)"
+    on-reset="videoEditorController.resetEditorInput()"
+    on-valid-asset-id="videoEditorController.setPlayerNotReady(); videoEditorController.addAsset(asset)"
+    on-invalid-asset-id="videoEditorController.showErrors(error)")
+
+  .video-widget-editor__content-wrapper(
+    ng-class="{'video-widget-content-wrapper--not-empty': 'videoEditor.errorMessage || videoEditor.selectedAsset.playerId'}")
+    .video-widget-editor__warning(ng-show="videoEditor.errorMessage")
+      i.fa.fa-exclamation-triangle
+      .video-widget-warning__message
+        p {{videoEditor.errorMessage}}
+
+    .video-widget-editor__loading-info(
+      ng-if="videoEditorController.shouldShowPlayerLoadingFeedback()"
+      ng-class="{'video-widget-editor__loading-info--wide': !videoEditor.searchConfig.isSearchEnabled}")
+      p {{videoEditorController.loadingPlayerFeedbackMessage()}}
+      i.fa.fa-spinner.fa-spin
+
+    p(ng-show='videoEditor.isPlayerReady') {{videoEditor.selectedAsset.name}}
+
+    cf-video-player.video-player(
+      widget-player-directive='videoEditor.widgetPlayerDirective'
+      ng-if="videoEditorController.shouldRenderVideoPlayer()"
+      custom-attrs='videoEditorController.customAttrsForPlayer()'
+      ng-hide="!videoEditor.isPlayerReady"
+      entry-id="videoEditor.selectedAsset.entryId"
+      on-init="videoEditorController.setPlayerIsLoading()"
+      on-ready="videoEditorController.resetErrors(); videoEditorController.setPlayerIsNotLoading(); videoEditorController.setPlayerReady()")

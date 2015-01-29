@@ -1,5 +1,6 @@
-cf-ooyala-input(
+cf-video-input(
   search-config="searchConfig"
+  asset-lookup="multiAssetEditorController.lookupAsset(assetId)"
   on-change="multiAssetEditorController.resetErrors()"
   on-reset="multiAssetEditorController.resetEditorInput()"
   on-valid-asset-id="multiAssetEditorController.addAsset(asset)"
@@ -42,7 +43,7 @@ cf-ooyala-input(
         .multi-video-widget-item__title
           | {{asset.title}}
 
-        cf-ooyala-player.widget-ooyala-player.multi-video-widget-item__player(
+        cf-ooyala-player.widget-ooyala-player.video-player.multi-video-widget-item__player(
           ng-if="asset.playerId"
           asset-id="asset.assetId"
           player-id="asset.playerId"
