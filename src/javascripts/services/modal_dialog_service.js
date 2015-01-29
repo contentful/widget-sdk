@@ -17,11 +17,12 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
         noBackgroundClose: false,
         attachTo: '.client',
         ignoreEnter: false,
+        ignoreEsc: false
       },
       _.pick(params,
              'title', 'message', 'html', 'template',
              'cancelLabel', 'confirmLabel',
-             'noBackgroundClose', 'attachTo', 'ignoreEnter')
+             'noBackgroundClose', 'attachTo', 'ignoreEnter', 'ignoreEsc')
     );
     this._deferred = $q.defer();
     this.promise = this._deferred.promise;
@@ -60,7 +61,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       var dialog = this;
       dialog.scope.$apply(function(){
         if (ev.target.tagName.toLowerCase() == 'select') return;
-        if (ev.keyCode === keycodes.ESC)
+        if (!dialog.params.ignoreEsc && ev.keyCode === keycodes.ESC)
           dialog.cancel();
         if (!dialog.params.ignoreEnter && ev.keyCode === keycodes.ENTER)
           dialog.confirm();

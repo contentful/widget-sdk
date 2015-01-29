@@ -34,17 +34,17 @@
 
       .space-template__queue(ng-show="isTemplateQueueVisible()")
         h1 Creating template entities
-        .space-template__queue-item(ng-repeat="(id, item) in completedItems" ng-class="queueItemClass(item.status)" cf-scroll-into-view)
-          i.fa.fa-check(ng-if="item.status == 'success'")
-          i.fa.fa-times(ng-if="item.status == 'error'")
-          | {{entityStatusString(item)}}
-          span.space-template__item-status(ng-show="item.status == 'error'")
-            | Failed
-        .loading(ng-show="!isTemplateFailed()")
+        .space-template__queue-container
+          .space-template__queue-item(ng-repeat="(id, item) in completedItems" ng-class="queueItemClass(item.status)" cf-scroll-into-view)
+            i.fa.fa-check(ng-if="item.status == 'success'")
+            i.fa.fa-times(ng-if="item.status == 'error'")
+            | {{entityStatusString(item)}}
+            span.space-template__item-status(ng-show="item.status == 'error'")
+              | Failed
+          .loading(ng-show="!isTemplateFailed()")
         .space-template__queue-status(ng-if="isTemplateFailed()" cf-scroll-into-view)
-          | Some items could not be created properly right now, but don't worry, your space will work
-          | normally, just with less pre created items, or you might need to publish some manually.
+          p
+            | Some items could not be created properly right now, but don't worry, your space will work
+            | normally, just with less pre created items, or you might need to publish some manually.
           button.btn.btn--primary(ng-click="dismissDialog()") Continue
-
-
 

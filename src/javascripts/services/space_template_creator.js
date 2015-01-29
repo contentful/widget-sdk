@@ -7,7 +7,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
   var $timeout = $injector.get('$timeout');
   var ShareJS = $injector.get('ShareJS');
 
-  var ASSET_PROCESSING_TIMEOUT = 40000;
+  var ASSET_PROCESSING_TIMEOUT = 60000;
   var PUBLISHING_WAIT = 5000;
 
   function TemplateCreator(spaceContext) {
