@@ -84,8 +84,9 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
         this.domElement.scope().$destroy();
         this.domElement.remove();
         $($window).off('keyup', this._handleKeys);
-        this.domElement = this.scope = null;
       }
+      if(this.scope) this.scope.$destroy();
+      this.domElement = this.scope = null;
     }
   };
 
