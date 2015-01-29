@@ -56,8 +56,6 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
         }
       })
       .catch(refreshContentTypes);
-    } else {
-      this.newContentType('frameButton');
     }
   };
 

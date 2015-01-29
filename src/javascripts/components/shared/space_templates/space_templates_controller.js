@@ -24,7 +24,6 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   $scope.isTemplateQueueVisible = isTemplateQueueVisible;
   $scope.isTemplateFailed = isTemplateFailed;
   $scope.selectTemplate = selectTemplate;
-  $scope.newContentType = newContentType;
   $scope.dismissDialog = dismissDialog;
   $scope.loadSelectedTemplate = loadSelectedTemplate;
   $scope.queueItemClass = queueItemClass;
@@ -48,12 +47,6 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
 
   function selectTemplate(template) {
     $scope.selectedTemplate = template;
-  }
-
-  //TODO deprecated
-  function newContentType() {
-    $scope.entityCreationController.newContentType('frame');
-    $scope.dialog.confirm();
   }
 
   function loadSelectedTemplate() {
