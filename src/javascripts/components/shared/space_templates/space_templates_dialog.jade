@@ -29,7 +29,7 @@
           p Need help? Read more about it in the Knowledge Database.
         .space-template__detail-content(ng-show="selectedTemplate")
           h1 {{selectedTemplate.name}}
-          div {{selectedTemplate.description}}
+          div(ng-bind-html="selectedTemplate.description | markdown")
         button.btn.btn--primary(ng-show="selectedTemplate" ng-click="loadSelectedTemplate()") Use this template
 
       .space-template__queue(ng-show="isTemplateQueueVisible()")
