@@ -8,10 +8,10 @@ describe('The cfFieldtypeIcon directive', function () {
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
-      stubs = $provide.makeStubs(['getFieldTypeName', 'logError']);
+      stubs = $provide.makeStubs(['getFieldTypeName', 'logWarn']);
       $provide.value('getFieldTypeName', stubs.getFieldTypeName);
       $provide.value('logger', {
-        logError: stubs.logError
+        logWarn: stubs.logWarn
       });
     });
 
@@ -49,7 +49,7 @@ describe('The cfFieldtypeIcon directive', function () {
       });
 
       it('does not trigger error', function() {
-        expect(stubs.logError).not.toBeCalled();
+        expect(stubs.logWarn).not.toBeCalled();
       });
 
       it('has an inner element', function() {
@@ -83,7 +83,7 @@ describe('The cfFieldtypeIcon directive', function () {
     });
 
     it('does not trigger error', function() {
-      expect(stubs.logError).toBeCalled();
+      expect(stubs.logWarn).toBeCalled();
     });
 
     it('has an inner element', function() {
