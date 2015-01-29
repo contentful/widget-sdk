@@ -3,6 +3,7 @@
 angular.module('contentful').controller('SpaceTemplatesController', ['$injector', '$scope', function SpaceController($injector, $scope) {
 
   var stringUtils          = $injector.get('stringUtils');
+  var analytics            = $injector.get('analytics');
   var spaceTemplateCreator = $injector.get('spaceTemplateCreator');
   var spaceTemplateLoader  = $injector.get('spaceTemplateLoader');
 
@@ -50,6 +51,10 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   }
 
   function loadSelectedTemplate() {
+    analytics.track('Selected Space Template', {
+      template: $scope.selectedTemplate.name
+    });
+    analytics.trackTotango('Selected Space Template: '+ $scope.selectedTemplate.name);
     templateLoadingStatus = 'loading';
     $scope.templateCreator = spaceTemplateCreator.getCreator($scope.spaceContext, {
       onItemSuccess: itemDone,
@@ -71,6 +76,12 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
         createTemplate(data.template);
       } else {
         templateLoadingStatus = 'failed';
+        _.each(data.errors, function (error) {
+          analytics.track('Created Errored Space Template', {
+            entityType: error.entityType,
+            entityId: error.entityId
+          });
+        });
       }
     });
   }

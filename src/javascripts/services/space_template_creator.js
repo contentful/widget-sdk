@@ -104,7 +104,11 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
     makeItemErrorHandler: function (item, actionData) {
       var self = this;
       return function (error) {
-        self.creationErrors.push(error);
+        self.creationErrors.push({
+          error: error,
+          entityType: actionData.entity,
+          entityId: getItemId(item)
+        });
         self.itemHandlers.onItemError(generateItemId(item, actionData), {
           item: item,
           actionData: actionData,
@@ -272,7 +276,11 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
   };
 
   function generateItemId(item, actionData) {
-    return actionData.entity + (dotty.get(item, 'sys.id') || item.name);
+    return actionData.entity + getItemId(item);
+  }
+
+  function getItemId(item) {
+    return dotty.get(item, 'sys.id') || item.name;
   }
 
   return {
