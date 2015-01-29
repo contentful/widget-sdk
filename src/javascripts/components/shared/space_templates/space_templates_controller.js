@@ -80,7 +80,6 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   }
 
   function itemDone(id, data) {
-    console.info(id, data.actionData.action, data.actionData.entity);
     $scope.completedItems[id] = {
       status: 'success',
       templateItem: data.item,
@@ -89,7 +88,6 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   }
 
   function itemError(id, data) {
-    console.warn(id, data.actionData.action, data.actionData.entity);
     $scope.completedItems[id] = {
       status: 'error',
       templateItem: data.item,

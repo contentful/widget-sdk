@@ -18,13 +18,18 @@
             img(ng-src="{{template.icon.fields.file.url}}")
           p.space-template__label {{template.name}}
 
+      .space-template__contact(ng-show="isTemplateListVisible()")
+        p
+          | Missing a template? 
+          a(href="mailto:support@contentful.com" target="_blank") Let us know.
+
       .space-template__detail(ng-show="isTemplateListVisible()")
         .space-template__detail-content(ng-show="!selectedTemplate")
           p Please select template on the left see details.
           p Need help? Read more about it in the Knowledge Database.
         .space-template__detail-content(ng-show="selectedTemplate")
           h1 {{selectedTemplate.name}}
-          p {{selectedTemplate.description}}
+          div {{selectedTemplate.description}}
         button.btn.btn--primary(ng-show="selectedTemplate" ng-click="loadSelectedTemplate()") Use this template
 
       .space-template__queue(ng-show="isTemplateQueueVisible()")

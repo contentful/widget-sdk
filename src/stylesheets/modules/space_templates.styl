@@ -34,10 +34,13 @@
 // Styleguide 7.1
 .space-template__dialog-content
   display: flex
+  position: relative
   height: 600px
   width: 900px
   &.dialog-content
     margin: 0
+  > .loading
+    margin: auto
 
 .space-template__list,
 .space-template__detail
@@ -63,6 +66,8 @@
   h1
     font-size: 1.3em
     margin-bottom: 25px
+  > div, > p
+    line-height: 1.4em
 
 .space-template__item
   float: left
@@ -71,7 +76,7 @@
 
 .space-template--item-selected
   .space-template__icon
-    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3), 1px 1px 1px transparentify($metallic-gray-blueish, 0.3) inset, -1px -1px 1px transparentify($metallic-gray-blueish, 0.3) inset
+    box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.4), 1px 1px 1px transparentify($metallic-gray-blueish, 0.4) inset, -1px -1px 1px transparentify($metallic-gray-blueish, 0.4) inset
 
 .space-template__icon
   $display-flexbox()
@@ -87,6 +92,17 @@
     margin: auto
     font-size: 50px
     color: $metallic-gray-blueish
+  &:hover
+    border-color: $blue-link
+    box-shadow: 0px 1px 1px transparentify($blue-link, 0.3)
+
+.space-template__contact
+  position: absolute
+  bottom: 0
+  left: 0
+  right: 30%
+  text-align: center
+  padding: 5px
 
 // Space Template Queue
 //
@@ -154,13 +170,20 @@
   li
     overflow: hidden
     vertical-align: middle
-    line-height: 42px
+    height: 50px
+    margin-bottom: 10px
   .numbered-tooltip__label, p
     float: left
   .numbered-tooltip__label
     margin-right: 10px
+  .numbered-tooltip__description
+    $display-flexbox()
+    flex-direction: column
+    justify-content: center
+    height: 100%
   p
     font-size: 1.1em
     line-height: 1.2em
     width: 85%
+    margin: auto 0
 
