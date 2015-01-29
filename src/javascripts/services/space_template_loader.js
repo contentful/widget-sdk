@@ -125,8 +125,6 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
     function hasLinkedIndexes(item) {
       return item.linkIndexes.length > 0;
     }
-
-    return entries;
   }
 
   function getLinkedEntries(entries) {
