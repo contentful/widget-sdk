@@ -1,5 +1,7 @@
 'use strict';
-angular.module('contentful').factory('features', ['environment', function FeaturesFactory(environment) {
+angular.module('contentful').factory('features', ['$injector', function FeaturesFactory() {
+
+  //var environment = $injector.get('environment');
 
   var featureChecks = {
     // Leaving this as a flag for now in case we need to turn it off quickly.
