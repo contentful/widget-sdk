@@ -132,6 +132,7 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
     }
     if(item.name)
       return ' '+item.name;
+    return '';
   }
 
   function getFirstLocaleField(field) {
