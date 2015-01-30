@@ -6,7 +6,7 @@
       .loading(ng-show="isTemplateListLoading()")
 
       .space-template__list(ng-show="isTemplateListVisible()")
-        .space-template__item(ng-click="newContentType()")
+        .space-template__item(ng-click="dialog.cancel()")
           .space-template__icon
             i.fa.fa-plus-circle
           p.space-template__label Blank
