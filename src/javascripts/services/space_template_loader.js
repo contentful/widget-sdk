@@ -50,7 +50,6 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
 
   function getClientParams(space, accessToken, previewAccessToken) {
     var isProduction = environment.env == 'production';
-    contentfulConfig.cdaApiUrl = 'cdn.contentful.com';
     var params = {
       space: space,
       accessToken: isProduction ?  accessToken : previewAccessToken,

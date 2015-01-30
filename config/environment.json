@@ -11,6 +11,7 @@
   "additional_domains": ["joistio.com", "app.joistio.com", "static.joistio.com"],
   "contentful": {
     "apiUrl": "api.contentful.com",
+    "cdaApiUrl": "cdn.contentful.com",
     "previewApiUrl": "preview.contentful.com",
     "space": "l1ay9bp8gv68",
     "accessToken": "0c783036ae7540a10db86150e1cb564c8c0bad53482794604f227dc199e6dde1",
