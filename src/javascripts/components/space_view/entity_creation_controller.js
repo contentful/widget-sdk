@@ -41,20 +41,28 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
 
   this.firstContentType = function () {
     if(features.isEnabled('spaceTemplates')){
+      if(!$.cookies.get('seenSpaceTemplateDialog')){
+        $.cookies.set('seenSpaceTemplateDialog', true, {
+          expiresAt: moment().add('y', 10).toDate()
+        });
+        analytics.track('Viewed Space Template Selection Modal First Time');
+      }
       modalDialog.open({
         title: 'Space templates',
         template: 'space_templates_dialog',
         ignoreEnter: true,
+        ignoreEsc: true,
+        noBackgroundClose: true,
         scope: $scope
       })
       .promise
       .then(function (template) {
-        newTemplateInfoDialog(template.name);
-        refreshContentTypes();
+        if(template){
+          newTemplateInfoDialog(template.name);
+          refreshContentTypes();
+        }
       })
       .catch(refreshContentTypes);
-    } else {
-      this.newContentType('frameButton');
     }
   };
 
@@ -92,6 +100,7 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
   };
 
   function newTemplateInfoDialog(templateName) {
+    analytics.track('Created Successful Space Template');
     $scope.navigator.entryList().goTo();
     if(!$.cookies.get('seenSpaceTemplateInfoDialog')){
       $scope.newContentTemplateName = templateName;

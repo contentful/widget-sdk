@@ -59,12 +59,12 @@ angular.module('contentful').directive('cfNumberedTooltips', ['$timeout', functi
       }
 
       function removeTooltips() {
+        $('.numbered-tooltip').remove();
         _.each(sourceElements, function (el) {
           var originalTitle = el.attr('data-existing-title');
-          el.attr('title', originalTitle);
+          if(originalTitle) el.attr('title', originalTitle);
         });
         sourceElements = null;
-        $('.numbered-tooltip').remove();
       }
     }
   };
