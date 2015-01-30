@@ -73,7 +73,7 @@
         header.advice-title You have no Content Types yet.
         p.advice-description Content Types work like stencils that define which Entries you can create within a specific Space.
         button.btn.btn--primary(type="button"
-            ng-click="entityCreationController.firstContentType()"
+            ng-click="entityCreationController.newContentType('frameButton')"
             ng-hide="permissionController.get('createContentType', 'shouldHide')"
             ng-disabled="permissionController.get('createContentType', 'shouldDisable')"
             cf-when-disabled="permissionController.entityActions.createContentType")
