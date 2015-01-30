@@ -7,7 +7,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
   var $timeout = $injector.get('$timeout');
   var ShareJS = $injector.get('ShareJS');
 
-  var ASSET_PROCESSING_TIMEOUT = 10000;
+  var ASSET_PROCESSING_TIMEOUT = 60000;
   var PUBLISHING_WAIT = 5000;
 
   function TemplateCreator(spaceContext) {
@@ -92,7 +92,11 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
       var self = this;
       return function (response) {
         self.handleItem(item, actionData, response);
-        self.itemHandlers.onItemSuccess(item, actionData, response);
+        self.itemHandlers.onItemSuccess(generateItemId(item, actionData), {
+          item: item,
+          actionData: actionData,
+          response: response
+        });
         return response;
       };
     },
@@ -100,8 +104,16 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
     makeItemErrorHandler: function (item, actionData) {
       var self = this;
       return function (error) {
-        self.creationErrors.push(error);
-        self.itemHandlers.onItemError(item, actionData, error);
+        self.creationErrors.push({
+          error: error,
+          entityType: actionData.entity,
+          entityId: getItemId(item)
+        });
+        self.itemHandlers.onItemError(generateItemId(item, actionData), {
+          item: item,
+          actionData: actionData,
+          error: error
+        });
         // not rejecting the promise (see comment on create method)
         return null;
       };
@@ -109,6 +121,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
 
     makeHandlers: function (item, action, entity) {
       var data = { action: action, entity: entity };
+      item = item.data || item;
       return {
         success: this.makeItemSuccessHandler(item, data),
         error: this.makeItemErrorHandler(item, data),
@@ -176,7 +189,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
 
       var processingTimeout = $timeout(function () {
         if(listener && doc) doc.removeListener(listener);
-        deferred.reject({error: 'timeout getting a doc'});
+        deferred.reject({error: 'timeout processing'});
       }, ASSET_PROCESSING_TIMEOUT);
 
       ShareJS.open(asset, function (err, _doc) {
@@ -195,6 +208,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
 
       function remoteOpHandler(ops) {
         $rootScope.$apply(function () {
+          $timeout.cancel(processingTimeout);
           var op = ops && ops.length > 0 ? ops[0] : null;
           if(op && op.p && op.oi){
             var path = op.p;
@@ -202,7 +216,6 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
             if (path[0] == 'fields' && path[1] == 'file' && 'url' in inserted){
               doc.removeListener(listener);
               doc.close();
-              $timeout.cancel(processingTimeout);
               deferred.resolve(asset);
             }
           }
@@ -263,7 +276,11 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
   };
 
   function generateItemId(item, actionData) {
-    return actionData.entity + (dotty.get(item, 'sys.id') || item.name);
+    return actionData.entity + getItemId(item);
+  }
+
+  function getItemId(item) {
+    return dotty.get(item, 'sys.id') || item.name;
   }
 
   return {

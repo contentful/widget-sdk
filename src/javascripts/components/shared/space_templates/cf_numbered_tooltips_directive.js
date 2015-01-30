@@ -18,9 +18,9 @@ angular.module('contentful').directive('cfNumberedTooltips', ['$timeout', functi
         position: 'right'
       });
       createNumberedTooltip({
-        selector: '.entry-list .main-results-wrapper .main-results tbody tr:eq(0) .cell-content-type span',
+        selector: '.nav-bar [data-view-type="api-home"] span',
         title: '3',
-        position: 'right'
+        position: 'bottom'
       });
       createNumberedTooltip({
         selector: '.view-customizer [cf-dropdown-toggle]',
@@ -59,12 +59,12 @@ angular.module('contentful').directive('cfNumberedTooltips', ['$timeout', functi
       }
 
       function removeTooltips() {
+        $('.numbered-tooltip').remove();
         _.each(sourceElements, function (el) {
           var originalTitle = el.attr('data-existing-title');
-          el.attr('title', originalTitle);
+          if(originalTitle) el.attr('title', originalTitle);
         });
         sourceElements = null;
-        $('.numbered-tooltip').remove();
       }
     }
   };

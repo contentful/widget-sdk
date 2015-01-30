@@ -125,51 +125,56 @@ describe('Modal dialog service', function () {
 
     });
 
-    it('properly removes the global event listeners', function () {
-      dialog.scope = {$apply: sinon.stub()};
-      $(window).trigger('keyup');
-      expect(dialog.scope.$apply).toBeCalled();
-      dialog._cleanup();
-      dialog.scope = {$apply: sinon.stub()};
-      $(window).trigger('keyup');
-      expect(dialog.scope.$apply).not.toBeCalled();
-    });
-
-    it('confirms with values', function () {
-      var result;
-      dialog.confirm('foo');
-      dialog.promise.then(function (value) { result = value; });
-      scope.$apply();
-      expect(result).toBe('foo');
-    });
-
-    it('cancels with values', function () {
-      var result;
-      dialog.cancel('bar');
-      dialog.promise.catch(function (value) { result = value; });
-      scope.$apply();
-      expect(result).toBe('bar');
-    });
-
-    it('calls the success stub', function () {
-      dialog.confirm().promise.finally(function () {
-        expect(successStub).toBeCalled();
+    describe('with a scope', function() {
+      beforeEach(function() {
+        dialog.scope = {$apply: sinon.stub(), $destroy: sinon.stub()};
       });
-    });
 
-    it('modal background exists', function () {
-      expect($('.modal-background').length).toBe(1);
-    });
-
-    it('calls the success stub', function () {
-      dialog.cancel().promise.finally(function () {
-        expect(errorStub).toBeCalled();
+      it('properly removes the global event listeners', function () {
+        $(window).trigger('keyup');
+        expect(dialog.scope.$apply).toBeCalled();
+        dialog._cleanup();
+        dialog.scope = {$apply: sinon.stub(), $destroy: sinon.stub()};
+        $(window).trigger('keyup');
+        expect(dialog.scope.$apply).not.toBeCalled();
       });
-    });
 
-    it('dom element gets cleaned up', function () {
-      dialog.confirm().promise.finally(function () {
-        expect(dialog.domElement).toBeNull();
+      it('confirms with values', function () {
+        var result;
+        dialog.confirm('foo');
+        dialog.promise.then(function (value) { result = value; });
+        scope.$apply();
+        expect(result).toBe('foo');
+      });
+
+      it('cancels with values', function () {
+        var result;
+        dialog.cancel('bar');
+        dialog.promise.catch(function (value) { result = value; });
+        scope.$apply();
+        expect(result).toBe('bar');
+      });
+
+      it('calls the success stub', function () {
+        dialog.confirm().promise.finally(function () {
+          expect(successStub).toBeCalled();
+        });
+      });
+
+      it('modal background exists', function () {
+        expect($('.modal-background').length).toBe(1);
+      });
+
+      it('calls the success stub', function () {
+        dialog.cancel().promise.finally(function () {
+          expect(errorStub).toBeCalled();
+        });
+      });
+
+      it('dom element gets cleaned up', function () {
+        dialog.confirm().promise.finally(function () {
+          expect(dialog.domElement).toBeNull();
+        });
       });
     });
 

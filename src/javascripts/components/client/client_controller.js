@@ -413,16 +413,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function showCreateSpaceDialog(organizationId) {
-    var scope = $scope;
-    if (organizationId) {
-      scope = $scope.$new();
-      scope.organizations = scope.organizations.concat();
-      scope.organizations.sort(function (a, b) {
-        if (a.sys.id === organizationId) return -1;
-        if (b.sys.id === organizationId) return 1;
-        else return 0;
-      });
-    }
+    var scope = $scope.$new();
+    setOrganizationsOnScope(scope, organizationId);
     modalDialog.open({
       scope: scope,
       template: 'create_space_dialog',
@@ -430,5 +422,17 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     });
     analytics.track('Clicked Create-Space');
   }
+
+  function setOrganizationsOnScope(scope, organizationId){
+    if (organizationId) {
+      scope.organizations = scope.organizations.concat();
+      scope.organizations.sort(function (a, b) {
+        if (a.sys.id === organizationId) return -1;
+        if (b.sys.id === organizationId) return 1;
+        else return 0;
+      });
+    }
+  }
+
 
 }]);
