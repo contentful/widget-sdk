@@ -150,11 +150,15 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     return ORDER_PREFIXES[p.order.direction] + getFieldPath(p.order.fieldId);
 
     function getFieldPath(fieldId) {
-      if (_.find($scope.systemFields, {id: fieldId})) {
+      /* jshint boss:true */
+      var field;
+      if (field = _.find($scope.systemFields, {id: fieldId})) {
         return 'sys.'+fieldId;
       } else {
+        var contentType = $scope.spaceContext.getPublishedContentType($scope.tab.params.view.contentTypeId);
+        field = _.find(contentType.data.fields, {id: fieldId});
         var defaultLocale = $scope.spaceContext.space.getDefaultLocale().code;
-        return 'fields.'+fieldId+'.'+defaultLocale;
+        return 'fields.'+apiNameOrId(field)+'.'+defaultLocale;
       }
     }
   }
@@ -242,4 +246,12 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     if (tab !== $scope.tab) return;
     $scope.resetEntries();
   });
+
+  function apiNameOrId(field) {
+    if (field.apiName) {
+      return field.apiName;
+    } else {
+      return field.id;
+    }
+  }
 }]);
