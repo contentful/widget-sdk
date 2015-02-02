@@ -6,94 +6,42 @@ describe('cfFieldEditor Controller', function () {
     module('contentful/test');
     inject(function ($controller, $rootScope) {
       scope = $rootScope.$new();
-
-      scope.entity = {
-        data: {
-          fields: {}
-        }
-      };
-
-      scope.widget = {
-        field: { id: 'fieldId' }
-      };
-      scope.getFieldValidationsOfType = sinon.stub();
+      scope.external = {data: {}};
 
       createController = function () {
-        $controller('CfFieldEditorController', {$scope: scope, $attrs: {cfEditorEntity: 'entity'}});
+        $controller('CfFieldEditorController', {
+          $scope: scope,
+          $attrs: {cfFieldEditor: 'external.data'}
+        });
         scope.$apply();
       };
     });
   });
 
-  describe('fieldData is set', function() {
-    beforeEach(function() {
-      scope.widget.field.type = 'Symbol';
-      scope.widget.widgetId = 'textfield';
-      scope.entity = {
-        data: {
-          fields: {
-            fieldId: {
-              'en-US': 'fieldvalue'
-            }
-          }
-        }
-      };
+  it('updates fieldData from external', function () {
+    scope.external.data = 'external';
+    createController();
+    expect(scope.fieldData.value).toEqual('external');
 
-      scope.widget = {
-        field : { id: 'fieldId' }
-      };
-
-      scope.locale = {
-        code: 'en-US'
-      };
-
-      createController();
-    });
-
-    it('sets fieldData value', function() {
-      expect(scope.fieldData.value).toEqual('fieldvalue');
-    });
-
-    it('updates fieldData value to same value', function () {
-      scope.entity.data.fields.fieldId['en-US'] = 'fieldvalue';
-      scope.$digest();
-      expect(scope.fieldData.value).toEqual('fieldvalue');
-    });
-
-    it('updates fieldData value to current value if both changed', function () {
-      scope.entity.data.fields.fieldId['en-US'] = 'newfieldvalue';
-      scope.fieldData.value = 'randomfieldvalue';
-      scope.$digest();
-      expect(scope.fieldData.value).toEqual('randomfieldvalue');
-    });
-
-    it('updates fieldData value to new value', function () {
-      scope.entity.data.fields.fieldId['en-US'] = 'newfieldvalue';
-      scope.$digest();
-      expect(scope.fieldData.value).toEqual('newfieldvalue');
-    });
-
-    it('updates external entity value', function () {
-      scope.fieldData.value = 'updatefrominternal';
-      scope.$digest();
-      expect(scope.entity.data.fields.fieldId['en-US']).toEqual('updatefrominternal');
-    });
+    scope.external.data = 'updated external';
+    scope.$digest();
+    expect(scope.fieldData.value).toEqual('updated external');
   });
 
-  describe('with no fields', function() {
+  it('updates external data from fieldData', function () {
+    scope.external.data = 'external';
+    createController();
+    expect(scope.fieldData.value).toEqual('external');
+
+    scope.fieldData.value = 'updated field';
+    scope.$digest();
+    expect(scope.external.data).toEqual('updated field');
+  });
+
+
+  describe('without external data', function() {
     beforeEach(function() {
-      scope.widget.field.type = 'Symbol';
-      scope.widget.field.widgetId = 'textfield';
-      scope.entity = {
-        data: {}
-      };
-
-      scope.widget = {field:{}};
-
-      scope.locale = {
-        code: 'en-US'
-      };
-
+      delete scope.external;
       createController();
     });
 
@@ -102,39 +50,9 @@ describe('cfFieldEditor Controller', function () {
     });
 
     it('updates external value on change and creates field', function() {
-      scope.fieldData.value = 'newfieldvalue';
-      scope.widget.field.id = 'fieldId';
+      scope.external = {data: 'external'};
       scope.$digest();
-      expect(scope.entity.data.fields.fieldId['en-US']).toBe('newfieldvalue');
-    });
-  });
-
-  describe('if field does not exist', function() {
-    beforeEach(function() {
-      scope.widget.field.type = 'Symbol';
-      scope.widget.widgetId = 'textfield';
-      scope.entity = {
-        data: {}
-      };
-
-      scope.widget = {field: {id: 'randomfield'}};
-
-      scope.locale = {
-        code: 'en-US'
-      };
-
-      createController();
-    });
-
-    it('does not set fieldData value on init', function() {
-      expect(scope.fieldData.value).toBeUndefined();
-    });
-
-    it('updates external value on change and creates field', function() {
-      scope.fieldData.value = 'newfieldvalue';
-      scope.widget.field.id = 'fieldId';
-      scope.$digest();
-      expect(scope.entity.data.fields.fieldId['en-US']).toBe('newfieldvalue');
+      expect(scope.fieldData.value).toBe('external');
     });
   });
 

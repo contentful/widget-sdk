@@ -1,19 +1,24 @@
 'use strict';
-angular.module('contentful').controller('CfFieldEditorController', ['$scope', '$attrs', '$injector', function CfFieldEditorController($scope, $attrs, $injector){
-  var $parse = $injector.get('$parse');
 
-  // Write back local value changes to the entity
-  // Necessary because the widgets can't access the entry directly, only the value variable
-  var getEntity = $parse($attrs.cfEditorEntity);
+//
+// Sync external field data and and Form Widget data.
+//
+// The path to the external field data is given by the
+// 'cf-field-editor' attribute. The data for the form widget is
+// provided on `scope.fieldData`.
+//
 
-  $scope.field = $scope.widget && $scope.widget.field;
+angular.module('contentful').controller('CfFieldEditorController', ['$scope', '$attrs', '$parse', function CfFieldEditorController($scope, $attrs, $parse){
+
+  var getExternal = $parse($attrs.cfFieldEditor),
+      setExternal = getExternal.assign;
+
   $scope.fieldData = {value: getExternal()};
   var oldValue = $scope.fieldData.value;
 
 
-  $scope.$watch('widget.field', function (field) { $scope.field = field; });
   $scope.$watch(function (scope) {
-    var external = getExternal();
+    var external = getExternal($scope);
     if (external === scope.fieldData.value) {
       if (oldValue === scope.fieldData.value) {
         // Everything in sync, nothing changed
@@ -27,41 +32,16 @@ angular.module('contentful').controller('CfFieldEditorController', ['$scope', '$
       }
     } else if (external !== oldValue && scope.fieldData.value !== oldValue) {
       // Both changed. shouldn't happen
-      //$log.warn('External and internal value changed in cfFieldEditor', scope);
       external = oldValue = scope.fieldData.value;
-      setExternal(external);
+      setExternal($scope, external);
     } else if (external !== oldValue) {
       // external changed, update internal
       scope.fieldData.value = oldValue = external;
-      //$log.log('update internal', scope.field.id, scope.fieldData.value);
     } else if (scope.fieldData.value !== oldValue) {
       // internal changed, update external
-      setExternal(oldValue = scope.fieldData.value);
-      //$log.log('update external', scope.field.id, scope.fieldData.value);
+      setExternal($scope, oldValue = scope.fieldData.value);
     }
   });
 
-  function setExternal(value) {
-    var entity = getEntity($scope);
-    if (!entity.data.fields) {
-      entity.data.fields = {};
-    }
-    if (!entity.data.fields[$scope.field.id]) {
-      entity.data.fields[$scope.field.id] = {};
-    }
-    entity.data.fields[$scope.field.id][$scope.locale.code] = value;
-    return value;
-  }
-
-  function getExternal() {
-    var entity = getEntity($scope);
-    if (!entity.data.fields) {
-      return undefined;
-    }
-    if (!entity.data.fields[$scope.field.id]) {
-      return undefined;
-    }
-    return entity.data.fields[$scope.field.id][$scope.locale.code];
-  }
 
 }]);

@@ -43,7 +43,9 @@
         sup(ng-show="widget.field.required") (required)
       .l-form-controls
         .l-form-locale(ng-repeat="locale in widget.locales track by locale.code" ot-field-presence="['fields', widget.field.id, locale.code]" data-locale="{{locale.code}}")
-          .cf-field-editor.l-field-editor(ot-path="['fields', widget.field.id, locale.code]" cf-editor-entity="asset")
+          cf-widget-renderer.l-field-editor(
+            cf-field-editor="asset.data.fields[field.id][locale.code]"
+            ot-path="['fields', widget.field.id, locale.code]")
           .locale-label(ng-show="widget.locales.length > 1") {{locale.name}}
           .field-collaborators
             ul.plain-list
