@@ -6,7 +6,7 @@
       li.dropdown-menu-item.add-content-type.bottom-separator(
           dropdown-close
           ng-click="entityCreationController.newContentType('addDropdown')"
-          ng-hide="spaceContext.contentTypes.length === 0 || permissionController.get('createContentType', 'shouldHide')")
+          ng-hide="permissionController.get('createContentType', 'shouldHide')")
         i.fa.fa-database
         | Content Type
       li.dropdown-menu-item.add-asset(
