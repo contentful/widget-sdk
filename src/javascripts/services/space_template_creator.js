@@ -106,6 +106,7 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
       return function (error) {
         self.creationErrors.push({
           error: error,
+          action: actionData.action,
           entityType: actionData.entity,
           entityId: getItemId(item)
         });

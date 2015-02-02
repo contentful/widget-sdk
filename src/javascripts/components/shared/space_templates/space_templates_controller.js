@@ -79,7 +79,8 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
         _.each(data.errors, function (error) {
           analytics.track('Created Errored Space Template', {
             entityType: error.entityType,
-            entityId: error.entityId
+            entityId: error.entityId,
+            action: error.action
           });
         });
       }

@@ -41,12 +41,7 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
 
   this.firstContentType = function () {
     if(features.isEnabled('spaceTemplates')){
-      if(!$.cookies.get('seenSpaceTemplateDialog')){
-        $.cookies.set('seenSpaceTemplateDialog', true, {
-          expiresAt: moment().add('y', 10).toDate()
-        });
-        analytics.track('Viewed Space Template Selection Modal First Time');
-      }
+      analytics.track('Viewed Space Template Selection Modal');
       modalDialog.open({
         title: 'Space templates',
         template: 'space_templates_dialog',
