@@ -1,45 +1,60 @@
 'use strict';
 
-//
-// Obtain the widget template and render it. Provides `scope.field` for
-// form widgets.
-//
-
+/**
+ * Render the widget template in the element. Provides `scope.field` for
+ * form widgets.
+ */
 angular.module('contentful').directive('cfWidgetRenderer', ['$injector', function($injector) {
   var $compile = $injector.get('$compile');
-  var widgets  = $injector.get('widgets');
 
   return {
     restrict: 'E',
     link: function (scope, element) {
-      var widgetScope;
-      scope.$on('$destroy', destroyWidget);
-
-      scope.$watch('widget.widgetId', installWidget);
+      var widgetManager = createWidgetManager(scope, element);
+      scope.$on('$destroy', widgetManager.destroy);
+      scope.$watch('widget.template', widgetManager.install);
 
       scope.field = scope.widget && scope.widget.field;
       scope.$watch('widget.field', function (field) {
         scope.field = field;
       });
-
-      function installWidget(widgetId) {
-        if (widgetScope) {
-          destroyWidget();
-        }
-        if (widgetId) {
-          var template = widgets.widgetTemplate(widgetId);
-          widgetScope = scope.$new();
-          var $widget = $(template);
-          element.append($widget);
-          $compile($widget)(widgetScope);
-        }
-      }
-
-      function destroyWidget() {
-        widgetScope.$destroy();
-        widgetScope = null;
-        element.empty();
-      }
     }
   };
+
+  /**
+   * Return an object that renders widget templates in the element.
+   *
+   * The `install` method on the object takes a template string and
+   * renders it on `element` with a new child scope.
+   *
+   * The `destroy` method deletes the child scope and clears the
+   * element.
+   */
+  function createWidgetManager(parentScope, element) {
+    var scope = null;
+    return {
+      install: install,
+      destroy: destroy,
+    };
+
+    function install(template) {
+      destroy();
+
+      if (!template)
+        return;
+
+      scope = parentScope.$new();
+      var $widget = $(template);
+      element.append($widget);
+      $compile($widget)(scope);
+    }
+
+    function destroy() {
+      if (scope)
+        scope.$destroy();
+      scope = null;
+      element.empty();
+    }
+
+  }
 }]);

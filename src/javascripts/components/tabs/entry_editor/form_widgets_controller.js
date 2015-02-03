@@ -1,7 +1,8 @@
 'use strict';
 angular.module('contentful').controller('FormWidgetsController', ['$scope', '$injector', function FormWidgetsController($scope, $injector){
-  var controller = this;
+  var controller        = this;
   var editingInterfaces = $injector.get('editingInterfaces');
+  var widgets           = $injector.get('widgets');
 
   $scope.$watch(getContentTypeFields,                    updateEditingInterface, true);
   $scope.$watch(getAvailableWidgets,                     updateWidgets, true);
@@ -40,6 +41,10 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
 
   function buildWidget(widget) {
     widget = Object.create(widget);
+
+    var template = widgets.widgetTemplate(widget.widgetId);
+    widget.template = template;
+
     if (widget.widgetType === 'field')
       buildFieldWidget(widget);
     else
