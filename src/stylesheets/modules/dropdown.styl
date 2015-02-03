@@ -20,6 +20,7 @@ $separator-style = 1px solid $gray-lightest
 
 .dropdown-row
   padding: 4px 12px
+  display: block
 
 // Dropdown Menu base and general modifiers
 .dropdown-menu
@@ -39,32 +40,6 @@ $separator-style = 1px solid $gray-lightest
   .dropdown-menu-list
     margin: 0
     padding: 0
-  .dropdown-menu-item
-    @extend .dropdown-row
-    list-style-type: none
-    margin: 0
-    a
-      display: block
-    a:link,
-    a:visited
-      color: $gray-medium
-    label
-      cursor: pointer
-    &.top-separator
-      height: auto
-      background: inherit
-      border-top: $separator-style
-    &.bottom-separator
-      border-bottom: $separator-style
-    &.hint
-      color: $gray
-  .dropdown-menu-item:hover,
-  .dropdown-menu-item.hover
-    cursor: pointer
-    color: white
-    $highlight($blue)
-    a:link
-      color: white
   .subtitle
     font-size: 14px
     padding-top: 3px
@@ -81,6 +56,38 @@ $separator-style = 1px solid $gray-lightest
   .fa-plus
     font-size: 0.7em
     margin-right: 0.5em
+
+.dropdown-menu-item
+  @extend .dropdown-row
+  list-style-type: none
+  margin: 0
+  a
+    display: block
+  a:link,
+  a:visited
+    color: $gray-medium
+  label
+    cursor: pointer
+  &.top-separator
+    height: auto
+    background: inherit
+    border-top: $separator-style
+  &.bottom-separator
+    border-bottom: $separator-style
+  &.hint
+    color: $gray
+  &:hover, &.hover
+    cursor: pointer
+    color: white
+    $highlight($blue)
+    a:link
+      color: white
+
+.dropdown-menu-item--label
+  @extend .dropdown-menu-item
+  padding: 0
+  > label
+    @extend .dropdown-row
 
 // For the wide type menus
 .type-menu
