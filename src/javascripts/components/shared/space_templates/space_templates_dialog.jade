@@ -6,7 +6,7 @@
       .loading(ng-show="isTemplateListLoading()")
 
       .space-template__list(ng-show="isTemplateListVisible()")
-        .space-template__item(ng-click="dialog.cancel()")
+        .space-template__item(ng-click="selectBlankTemplate()")
           .space-template__icon
             i.fa.fa-plus-circle
           p.space-template__label Blank
@@ -20,7 +20,7 @@
 
       .space-template__contact(ng-show="isTemplateListVisible()")
         p
-          | Missing a template? 
+          | Missing a template?
           a(href="mailto:support@contentful.com" target="_blank") Let us know.
 
       .space-template__detail(ng-show="isTemplateListVisible()")

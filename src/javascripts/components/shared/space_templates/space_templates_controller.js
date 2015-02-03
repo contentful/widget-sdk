@@ -25,6 +25,7 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   $scope.isTemplateQueueVisible = isTemplateQueueVisible;
   $scope.isTemplateFailed = isTemplateFailed;
   $scope.selectTemplate = selectTemplate;
+  $scope.selectBlankTemplate = selectBlankTemplate;
   $scope.dismissDialog = dismissDialog;
   $scope.loadSelectedTemplate = loadSelectedTemplate;
   $scope.queueItemClass = queueItemClass;
@@ -46,21 +47,30 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
     return templateLoadingStatus === 'failed';
   }
 
+  function selectBlankTemplate() {
+    sendTemplateSelectedAnalyticsEvent('Blank');
+    $scope.dialog.cancel();
+  }
+
   function selectTemplate(template) {
     $scope.selectedTemplate = template;
   }
 
   function loadSelectedTemplate() {
-    analytics.track('Selected Space Template', {
-      template: $scope.selectedTemplate.name
-    });
-    analytics.trackTotango('Selected Space Template: '+ $scope.selectedTemplate.name);
     templateLoadingStatus = 'loading';
+    sendTemplateSelectedAnalyticsEvent($scope.selectedTemplate.name);
     $scope.templateCreator = spaceTemplateCreator.getCreator($scope.spaceContext, {
       onItemSuccess: itemDone,
       onItemError: itemError
     });
     spaceTemplateLoader.getTemplate($scope.selectedTemplate).then(createTemplate);
+  }
+
+  function sendTemplateSelectedAnalyticsEvent(templateName) {
+    analytics.track('Selected Space Template', {
+      template: templateName
+    });
+    analytics.trackTotango('Selected Space Template: '+ templateName);
   }
 
   function createTemplate(template) {
