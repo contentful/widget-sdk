@@ -11,7 +11,7 @@ angular.module('contentful').provider('ShareJS', ['environment', function ShareJ
     url = e;
   };
 
-  this.$get = ['client', '$rootScope', function(client, $rootScope) {
+  this.$get = ['client', 'clientAdapter', '$rootScope', function(client, clientAdapter, $rootScope) {
     function ShareJSClient(url, token) {
       this.token = token;
       this.url = url;
@@ -84,7 +84,7 @@ angular.module('contentful').provider('ShareJS', ['environment', function ShareJ
       client : null,
 
       connect: function () {
-        ShareJS.client = ShareJS.client || new ShareJSClient(url, token || client.persistenceContext.adapter.token);
+        ShareJS.client = ShareJS.client || new ShareJSClient(url, token || clientAdapter.token);
       },
 
       open: function () {
@@ -137,6 +137,6 @@ angular.module('contentful').provider('ShareJS', ['environment', function ShareJ
     };
 
     return ShareJS;
-  
+
   }];
 }]);

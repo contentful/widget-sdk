@@ -72,7 +72,7 @@ angular.module('contentful').controller('ContentTypeEditorController', ['$scope'
     // property after we have already opened the editor
     //
     // https://www.pivotaltracker.com/story/show/82148572
-    editingInterfaces.forContentTypeWithId($scope.spaceContext.space, $scope.publishedContentType, 'default')
+    editingInterfaces.forContentTypeWithId($scope.publishedContentType, 'default')
     .then(function (interf) {
       $scope.navigator.editingInterfaceEditor($scope.publishedContentType, interf).goTo();
     });
