@@ -12,7 +12,6 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
 
   this.editingInterface = null;
   this.updateWidgets = updateWidgets;
-  this.updateWidgetsFromInterface = updateWidgetsFromInterface;
 
   function updateEditingInterface() {
     if (controller.contentType) {
@@ -23,15 +22,20 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
     }
   }
 
+  /**
+   * Retrieve the widgets from the current editingInterface, extend
+   * them and add them to the scope.
+   */
   function updateWidgets() {
-    updateWidgetsFromInterface(controller.editingInterface);
-  }
+    if (!controller.editingInterface) {
+      $scope.widgets = [];
+      return;
+    }
 
-  function updateWidgetsFromInterface(interf) {
-    $scope.widgets = interf ? _(interf.data.widgets)
+    $scope.widgets = _(controller.editingInterface.data.widgets)
       .filter(widgetIsVisible)
       .map(addLocalesAndFieldToWidget)
-      .value() : [];
+      .value();
   }
 
   function addLocalesAndFieldToWidget(widget) {
