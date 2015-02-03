@@ -65,10 +65,10 @@
               .status-bar
 
     .advice(ng-show="visibleContentTypes | isEmpty")
-      div(ng-show="hasQuery()")
+      .advice__frame(ng-show="hasQuery()")
         i.fa.fa-search.fa-flip-horizontal.giant-icon
         header.advice-title There are no matches to your search
-      div(ng-show="!hasQuery()")
+      .advice__frame(ng-show="!hasQuery()")
         i.fa.fa-database.giant-icon
         header.advice-title You have no Content Types yet.
         p.advice-description Content Types work like stencils that define which Entries you can create within a specific Space.

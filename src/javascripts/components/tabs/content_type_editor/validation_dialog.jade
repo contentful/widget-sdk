@@ -10,15 +10,16 @@
     .modal-dialog-close-button(ng-click="dialog.cancel()")
 
     .validation-list
-      .advice.inner-advice(ng-hide="validationList().length > 0")
-        i.fa.fa-check.giant-icon
-        header.advice-title You have no Validations yet.
-        p.advice-description
-          | Select Validations and narrow further what type of content should be added to your Fields.
-        .dropdown-btn(cf-dropdown)
-          button.btn.btn--primary(cf-dropdown-toggle ng-disabled="!canAddValidations() || !otEditable")
-            | Create Validation
-          .dropdown-menu.type-menu(cf-dropdown-menu select-validation="addValidation(type)")
+      .advice(ng-hide="validationList().length > 0")
+        .advice__frame
+          i.fa.fa-check.medium-icon
+          header.advice-title You have no Validations yet.
+          p.advice-description
+            | Select Validations and narrow further what type of content should be added to your Fields.
+          .dropdown-btn(cf-dropdown)
+            button.btn.btn--primary(cf-dropdown-toggle ng-disabled="!canAddValidations() || !otEditable")
+              | Create Validation
+            .dropdown-menu.type-menu(cf-dropdown-menu select-validation="addValidation(type)")
       .cf-validation-options(ng-repeat="(validationIndex, validation) in validationList() track by validationIndex" ng-model="validation")
 
     .buttons(ng-show="validationList().length > 0 && canAddValidations()")

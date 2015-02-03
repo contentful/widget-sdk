@@ -85,10 +85,10 @@
       .loading(ng-hide="paginator.atLast()")
 
     .advice(ng-show="visibleEntries | isEmpty")
-      div(ng-show="hasQuery()")
+      .advice__frame(ng-show="hasQuery()")
         i.fa.fa-search.fa-flip-horizontal.giant-icon
         header.advice-title There are no matches to your search
-      div(ng-show="!hasQuery()")
+      .advice__frame(ng-show="!hasQuery()")
         i.fa.fa-file.giant-icon
         header.advice-title You have no Entries yet.
         p.advice-description(ng-show="spaceContext.publishedContentTypes.length == 0")

@@ -89,15 +89,17 @@
     </nav>
     <space-view ng-controller='TabViewController'></space-view>
     <div class='advice' ng-show='spaces.length == 0'>
-      <i class='fa fa-folder giant-icon'></i>
-      <header class='advice-title'>Nothing to see yet.</header>
-      <p class='advice-description' ng-show='!canCreateSpace()'>You need to be part of an Organization to create a space.</p>
-      <p class='advice-description' ng-show='canCreateSpace()'>Why don't you create a space?</p>
-      <button class='btn btn--primary' type='button' ng-show='canCreateSpace()' ng-click='showCreateSpaceDialog()'>Create Space</button>
-      <a class='knowledge-base-link' target='_blank' href='https://contentful.zendesk.com/hc/en-us/articles/200513118-What-is-a-space-'>
-        Visit the Knowledge Base Pages
-        <i class='fa fa-question-circle'></i>
-      </a>
+      <div class='advice__frame'>
+        <i class='fa fa-folder giant-icon'></i>
+        <header class='advice-title'>Nothing to see yet.</header>
+        <p class='advice-description' ng-show='!canCreateSpace()'>You need to be part of an Organization to create a space.</p>
+        <p class='advice-description' ng-show='canCreateSpace()'>Why don't you create a space?</p>
+        <button class='btn btn--primary' type='button' ng-show='canCreateSpace()' ng-click='showCreateSpaceDialog()'>Create Space</button>
+        <a class='knowledge-base-link' target='_blank' href='https://contentful.zendesk.com/hc/en-us/articles/200513118-What-is-a-space-'>
+          Visit the Knowledge Base Pages
+          <i class='fa fa-question-circle'></i>
+        </a>
+      </div>
     </div>
     <div class='cf-account-view tab-content' ng-class="{'with-tab-bar': !hideTabBar()}"></div>
   </div>
