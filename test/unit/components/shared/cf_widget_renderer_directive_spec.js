@@ -38,19 +38,4 @@ describe('cfWidgetRenderer Directive', function () {
     expect(el.find('.bar').length).toBe(1);
   });
 
-  it('sets field', function() {
-    var widgetField = {};
-    scope.widget.field = widgetField;
-    compileWidgetElement();
-    expect(scope.field).toEqual(widgetField);
-  });
-
-  it('updates field', function() {
-    compileWidgetElement();
-    var newField = {};
-    scope.widget.field = newField;
-    scope.$apply();
-    expect(scope.field).toEqual(newField);
-  });
-
 });

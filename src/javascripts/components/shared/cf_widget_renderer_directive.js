@@ -13,11 +13,6 @@ angular.module('contentful').directive('cfWidgetRenderer', ['$injector', functio
       var widgetManager = createWidgetManager(scope, element);
       scope.$on('$destroy', widgetManager.destroy);
       scope.$watch('widget.template', widgetManager.install);
-
-      scope.field = scope.widget && scope.widget.field;
-      scope.$watch('widget.field', function (field) {
-        scope.field = field;
-      });
     }
   };
 
