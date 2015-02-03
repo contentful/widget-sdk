@@ -92,7 +92,7 @@
         i.fa.fa-file.giant-icon
         header.advice-title You have no Entries yet.
         p.advice-description(ng-show="spaceContext.publishedContentTypes.length == 0")
-          Entries are your content itself. These depend on the field types you created in the Content Type editor.
+          | Entries are your content itself. These depend on the field types you created in the Content Type editor.
         button.btn.btn--primary(type="button" ng-click="entityCreationController.firstContentType()"
             ng-hide="spaceContext.publishedContentTypes.length > 0 || permissionController.get('createContentType', 'shouldHide')"
             ng-disabled="permissionController.get('createContentType', 'shouldDisable')"
