@@ -112,6 +112,7 @@ gulp.task('index', function(){
 gulp.task('templates', function () {
   return gulp.src(src.templates)
     .pipe(jade({doctype: 'html'}))
+    .on('error', errorHandler('Jade'))
     .pipe(jstConcat('templates.js', {
       renameKeys: ['^.*/(.*?).html$', '$1']
     }))
@@ -163,9 +164,7 @@ function createBrowserify(args) {
 
 function bundleBrowserify(browserify) {
   return browserify.bundle()
-    .on('error', function(e){
-      gutil.log(gutil.colors.red('Browserify error'), e.message);
-    })
+    .on('error', errorHandler('Browserify'))
     .pipe(source('user_interface.js'))
     .pipe(gulp.dest('./public/app/'));
 }
@@ -205,6 +204,7 @@ gulp.task('stylesheets', function () {
       use: nib(),
       //compress: true
     }))
+    .on('error', errorHandler('Stylus'))
     .pipe(sourceMaps.write({sourceRoot: '/stylesheets'}))
     .pipe(gulp.dest('./public/app'));
 });
@@ -388,3 +388,10 @@ gulp.task('build', function(done){
     done
   );
 });
+
+
+function errorHandler(label) {
+  return function handleError(e) {
+    gutil.log(gutil.colors.red(label + ' error:'), e.message);
+  };
+}
