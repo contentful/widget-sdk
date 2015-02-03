@@ -23,8 +23,8 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
   }
 
   /**
-   * Retrieve the widgets from the current editingInterface, extend
-   * them and add them to the scope.
+   * Retrieve the widgets from the current editingInterface, build the
+   * form widgets, and add them to the scope.
    */
   function updateWidgets() {
     if (!controller.editingInterface) {
@@ -34,24 +34,29 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
 
     $scope.widgets = _(controller.editingInterface.data.widgets)
       .filter(widgetIsVisible)
-      .map(addLocalesAndFieldToWidget)
+      .map(buildWidget)
       .value();
   }
 
-  function addLocalesAndFieldToWidget(widget) {
-    if (widget.widgetType === 'field') {
-      var field = getFieldForWidget(widget);
-      var locales = _.union(getFieldLocales(field), getErrorLocales(field));
-      locales = _.uniq(locales, 'code');
-      return inherit(widget, {
-        field: getFieldForWidget(widget),
-        locales: locales
-      });
-    } else {
-      return inherit(widget, {
-        locales: [$scope.spaceContext.space.getDefaultLocale()]
-      });
-    }
+  function buildWidget(widget) {
+    widget = Object.create(widget);
+    if (widget.widgetType === 'field')
+      buildFieldWidget(widget);
+    else
+      buildStaticWidget(widget);
+    return widget;
+  }
+
+  function buildFieldWidget(widget) {
+    var field = getFieldForWidget(widget);
+    var locales = _.union(getFieldLocales(field), getErrorLocales(field));
+    locales = _.uniq(locales, 'code');
+    widget.locales = locales;
+    widget.field = field;
+  }
+
+  function buildStaticWidget(widget) {
+    widget.locales = [$scope.spaceContext.space.getDefaultLocale()];
   }
 
   function getAvailableWidgets() {
@@ -91,13 +96,6 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
     return $scope.errorPaths && _.map($scope.errorPaths[field.id], function (code) {
       return _.find($scope.spaceContext.space.data.locales, {code: code});
     });
-  }
-
-  function inherit(source, extensions){
-    var Clone = function () { };
-    Clone.prototype = source;
-    var clone = new Clone();
-    return _.extend(clone, extensions);
   }
 
 }]);
