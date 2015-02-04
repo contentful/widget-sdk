@@ -33,7 +33,8 @@
         button.btn.btn--primary(ng-show="selectedTemplate" ng-click="showSpaceCreation()") Use this template
 
       .space-template__space-creation(ng-show="dialogViewIs('spaceCreation')" ng-controller="CreateSpaceDialogController")
-        form(name="newSpaceForm" ng-submit="createSpace()")
+        h1 Create Space
+        form.space-template__space-creation-form(name="newSpaceForm" ng-submit="createSpace()")
           .l-form
             .l-form-row
               label Name
