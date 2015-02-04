@@ -24,7 +24,8 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('singleLine',{
     fieldTypes: ['Text', 'Symbol'],
     name: 'Single Line',
-    template: '<input class="form-control" ng-disabled="!otEditable" ng-model="fieldData.value" ot-bind-text ot-subdoc type="text"><cf-embedly-preview ng-model="fieldData.value"></cf-embedly-preview>'
+    //template: '<input class="form-control" ng-disabled="!otEditable" ng-model="fieldData.value" ot-bind-text ot-subdoc type="text"><cf-embedly-preview ng-model="fieldData.value"></cf-embedly-preview>'
+    template: '<input class="form-control" ng-disabled="!otEditable" ng-model="fieldData.value" ot-bind-text ot-subdoc type="text">'
   });
   widgets.registerWidget('numberEditor',{
     fieldTypes: ['Integer', 'Number'],
