@@ -14,9 +14,13 @@ angular.module('contentful').directive('cfGoogleMaps', ['$injector', function ($
       googleMapsLoader.load().then(function (GMaps) {
         var locationController = element.find(MAP_DOM_ELEMENT_CLASS).controller('ngModel');
 
+        /*
+         * Center the map by default to a nicely zoomed out
+         * Contentful HQ
+         */
         var map = new GMaps.Map(element.find(MAP_DOM_ELEMENT_CLASS)[0], {
           zoom: 6,
-          center: new GMaps.LatLng(0, 0),
+          center: new GMaps.LatLng(52.5018, 13.41115439),
           mapTypeId: GMaps.MapTypeId.ROADMAP
         });
         var marker = new GMaps.Marker({
