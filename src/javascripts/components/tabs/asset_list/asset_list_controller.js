@@ -36,9 +36,9 @@ angular.module('contentful').controller('AssetListController',['$scope', '$injec
     scope.searchController.resetAssets(pageParameters.page === old.page);
   }, true);
 
-  $scope.visibleInCurrentList = function(){
+  $scope.visibleInCurrentList = function(asset){
     // TODO: This needs to basically emulate the API :(
-    return true;
+    return !asset.isDeleted();
   };
 
   $scope.hasQuery = function () {
