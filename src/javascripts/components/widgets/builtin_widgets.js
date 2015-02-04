@@ -118,36 +118,43 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('entryLinkEditor',{
     fieldTypes: ['Entry'],
     name: 'Entry Link',
+    rendersHelpText: true,
     template: '<div cf-entry-link-editor cf-link-editor ng-model="fieldData.value"></div>'
   });
   widgets.registerWidget('assetLinkEditor',{
     fieldTypes: ['Asset'],
     name: 'Asset Link',
+    rendersHelpText: true,
     template: '<div cf-asset-link-editor cf-link-editor ng-model="fieldData.value"></div>'
   });
   widgets.registerWidget('entryLinksEditor',{
     fieldTypes: ['Entries'],
     name: 'Entry Links List',
+    rendersHelpText: true,
     template: '<div cf-entry-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
   widgets.registerWidget('entryCardEditor',{
     fieldTypes: ['Entry'],
     name: 'Entry Card',
+    rendersHelpText: true,
     template: '<div cf-entry-card-editor cf-link-editor ng-model="fieldData.value"></div>'
   });
   widgets.registerWidget('entryCardsEditor',{
     fieldTypes: ['Entries'],
     name: 'Entry Cards',
+    rendersHelpText: true,
     template: '<div cf-entry-card-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
   widgets.registerWidget('assetLinksEditor',{
     fieldTypes: ['Assets'],
     name: 'Asset Links List',
+    rendersHelpText: true,
     template: '<div cf-asset-link-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
   widgets.registerWidget('assetGalleryEditor',{
     fieldTypes: ['Assets'],
     name: 'Asset Gallery',
+    rendersHelpText: true,
     template: '<div cf-asset-gallery-editor cf-link-editor link-multiple="true" ng-model="fieldData.value"></div>'
   });
   widgets.registerWidget('youtubeEditor',{

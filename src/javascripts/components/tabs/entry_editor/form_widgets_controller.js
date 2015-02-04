@@ -58,6 +58,7 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
     locales = _.uniq(locales, 'code');
     widget.locales = locales;
     widget.field = field;
+    widget.rendersHelpText = widgets.get(widget.widgetId).rendersHelpText;
   }
 
   function buildStaticWidget(widget) {

@@ -15,6 +15,10 @@ angular.module('contentful').directive('cfFormWidget', function() {
       $scope.$watch('widget.locales', function(locales) {
         $scope.locales = locales;
       });
+
+      $scope.$watch('widget.rendersHelpText', function (rendersHelpText) {
+        $scope.showHelpText = !rendersHelpText;
+      });
     }
   };
 });
