@@ -261,8 +261,7 @@ gulp.task('serve-production', function(){
 // PRODUCTION: //////////////////////////////////////////
 
 gulp.task('rev-static', function(){
-  return gulp.src([ 'public/app/**', '!**/*.js', '!**/*.css'], {base: 'public'})
-    .pipe(gulp.src('public/app/kaltura.js', {base: 'public'}))
+  return gulp.src(['public/app/**', '!**/!(kaltura).js', '!**/*.css'], {base: 'public'})
     .pipe(gulp.dest('build'))
     .pipe(rev())
     .pipe(gulp.dest('build'))
