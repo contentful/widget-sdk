@@ -113,9 +113,9 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     return $scope.spaceContext.displayFieldForType($scope.tab.params.view.contentTypeId);
   };
 
-  $scope.visibleInCurrentList = function(){
+  $scope.visibleInCurrentList = function(entry){
     // TODO: This needs to basically emulate the API :(
-    return true;
+    return !entry.isDeleted();
   };
 
   $scope.resetEntries = function(resetPage) {
