@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('contentful').provider('clientAdapter', ['$injector', function ClientAdapter($injector) {
-  var contentfulClient = $injector.get('privateContentfulClient');
-  var server           = null;
+  var BaseAdapter = $injector.get('privateContentfulClient').Adapter;
+  var server      = null;
 
   this.server = function(s) { server = s; };
 
@@ -10,35 +10,8 @@ angular.module('contentful').provider('clientAdapter', ['$injector', function Cl
     var $http = $injector.get('$http');
     var $q    = $injector.get('$q');
 
-    function Adapter(server, token) {
-      this.server = server;
-      this.token  = token;
-    }
-
-    Adapter.prototype = new contentfulClient.adapters.Base();
-    Adapter.prototype._performRequest = function(options) {
-      var defaults = {
-        url     : '' + this.server + options.endpoint,
-        headers : {
-          'X-Contentful-Skip-Transformation': true,
-          'Content-Type':  'application/vnd.contentful.management.v1+json',
-        }
-      };
-
-      var request  = {};
+    function performRequest(request) {
       var deferred = $q.defer();
-
-      _.extend(defaults.headers, options.headers);
-      _.extend(request, options, defaults);
-
-      if (this.token)
-        request.headers['Authorization'] = 'Bearer '+this.token;
-
-      if (options.method == 'GET') {
-        request.params = options.payload;
-      } else {
-        request.data = options.payload;
-      }
 
       $http(request)
       .success(function(data) {
@@ -52,10 +25,21 @@ angular.module('contentful').provider('clientAdapter', ['$injector', function Cl
       });
 
       return deferred.promise;
-    };
-    var originalRequest = Adapter.prototype.request;
+    }
+
+    function Adapter(server) {
+      BaseAdapter.call(this, server, performRequest);
+      this.setHeader('X-Contentful-Skip-Transformation', true);
+      this.setHeader('Content-Type', 'application/vnd.contentful.management.v1+json');
+    }
+
+    Adapter.prototype = Object.create(BaseAdapter.prototype);
+
     Adapter.prototype.request = function(){
-      return $q.when(originalRequest.apply(this, arguments));
+      if (this.token)
+        this.setHeader('Authorization', 'Bearer ' + this.token);
+      var response = BaseAdapter.prototype.request.apply(this, arguments);
+      return $q.when(response);
     };
 
     return new Adapter(server);

@@ -49,15 +49,16 @@
               span.cf-user(link="apiKey.getCreatedBy()" as="creator") {{creator | userNameDisplay:user}}
 
     .advice(ng-show="empty")
-      i.fa.fa-random.giant-icon
-      header.advice-title There are no API Keys yet.
-      p.advice-description API Keys open the door to your content. One should be created for each application that accesses your content.
-      button.btn.btn--primary(type="button" ng-click="entityCreationController.newApiKey('frameButton')"
-          ng-hide="permissionController.get('createApiKey', 'shouldHide')"
-          ng-disabled="permissionController.get('createApiKey', 'shouldDisable')"
-          cf-when-disabled="permissionController.entityActions.createApiKey")
-        | Create API Key
-      a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
-        | Visit the Knowledge Base Pages
-        i.fa.fa-question-circle
+      .advice__frame
+        i.fa.fa-random.giant-icon
+        header.advice-title There are no API Keys yet.
+        p.advice-description API Keys open the door to your content. One should be created for each application that accesses your content.
+        button.btn.btn--primary(type="button" ng-click="entityCreationController.newApiKey('frameButton')"
+            ng-hide="permissionController.get('createApiKey', 'shouldHide')"
+            ng-disabled="permissionController.get('createApiKey', 'shouldDisable')"
+            cf-when-disabled="permissionController.entityActions.createApiKey")
+          | Create API Key
+        a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
+          | Visit the Knowledge Base Pages
+          i.fa.fa-question-circle
 

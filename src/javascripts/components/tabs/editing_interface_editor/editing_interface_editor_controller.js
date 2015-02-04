@@ -44,7 +44,7 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
 
   function restoreDefaults() {
     $scope.closeAllAccordionItems();
-    var editingInterface = editingInterfaces.defaultInterface($scope.spaceContext.space, $scope.contentType);
+    var editingInterface = editingInterfaces.defaultInterface($scope.contentType);
     $scope.editingInterface.data.widgets = editingInterface.data.widgets;
   }
 
@@ -65,7 +65,7 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
   }
 
   function loadFromServer () {
-    editingInterfaces.forContentTypeWithId($scope.spaceContext.space, $scope.contentType, $scope.editingInterface.getId())
+    editingInterfaces.forContentTypeWithId($scope.contentType, $scope.editingInterface.getId())
     .then(function(interf) {
       $scope.editingInterface = interf;
     });

@@ -39,20 +39,6 @@
 
 .tab-actions
   .button-set
-    //- TODO: Only show delete if not default
-    //- button.btn.btn--danger.delete-confirm(type="button"
-        cf-click-outside="deleteConfirm=false"
-        cf-click-outside-ignore=".delete"
-        ng-show="deleteConfirm"
-        ng-click="delete()"
-        tooltip="Click anywhere else to dismiss")
-        Are you sure?
-    //- button.btn.btn--secondary.delete(type="button"
-        ng-show="canDelete() && !deleteConfirm"
-        ng-click="deleteConfirm=true" 
-        tooltip="Delete this Editing Interface")
-        Delete
-
     button.btn.btn--primary.publish(
         ng-click="update()"
         tooltip="Update this Editing Interface")

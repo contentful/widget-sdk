@@ -20,13 +20,13 @@
         span View
       .dropdown-menu(cf-dropdown-menu position="bottomcenter")
         ul.dropdown-menu-list(ng-show="showLangSwitcher")
-          li.dropdown-menu-item(ng-repeat="locale in spaceContext.privateLocales track by locale.code")
+          li.dropdown-menu-item--label(ng-repeat="locale in spaceContext.privateLocales track by locale.code")
             label
               input(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
               | {{locale.name}}
               span(ng-show="locale == spaceContext.space.getDefaultLocale()") (default)
         ul.dropdown-menu-list
-          li.dropdown-menu-item(ng-class="{'top-separator': showLangSwitcher}")
+          li.dropdown-menu-item--label(ng-class="{'top-separator': showLangSwitcher}")
             label
               input(type="checkbox" ng-model="preferences.showDisabledFields")
               | Show disabled fields
@@ -65,7 +65,7 @@
         .l-field-help-text.layout-field--help-text(ng-if="widget.widgetParams.helpText") {{widget.widgetParams.helpText}}
         .cf-form-box-error(cf-error-path="['fields', widget.field.id]")
       .l-form-controls(ng-if="!widget.field")
-        cf-widget-renderer.l-field-editor(ot-path)
+        cf-widget-renderer
 
 .tab-actions(ng-controller="EntryActionsController")
   .button-set

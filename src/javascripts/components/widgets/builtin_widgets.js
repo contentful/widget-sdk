@@ -180,6 +180,12 @@ angular.module('contentful').run(['widgets', function(widgets){
     name: 'Slug',
     template: '<cf-slug-editor class="widget-slug-editor"></cf-slug-editor>'
   });
+  widgets.registerWidget('previewUrl',{
+    fieldTypes: ['Text', 'Symbol'],
+    name: 'Preview Url',
+    template: '<input class="form-control" ng-disabled="!otEditable" ng-model="fieldData.value" ot-bind-text ot-subdoc type="text"><cf-embedly-preview ng-model="fieldData.value"></cf-embedly-preview>'
+  });
+
   //toggle: {   NOT IMPLEMENTED
     //fieldTypes: ['Boolean'],
     //name: 'Toggle',

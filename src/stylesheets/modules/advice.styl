@@ -1,8 +1,13 @@
 .advice
-  position: relative
-  margin: 20% auto
+  $stretch()
+  $display-flexbox()
+  flex-direction: column
+  justify-content: center
   text-align: center
-  width: 600px
+
+  .advice__frame
+    width: 600px
+    margin: 0 auto
 
   p
     margin-bottom: 4px
@@ -22,19 +27,17 @@
   .top-advice
     margin-bottom: 10em
 
+  .medium-icon
+    font-size: 125px
+
   .giant-icon
     font-size: 200px
+
+  .giant-icon, .medium-icon
     color: $gray-medium
     text-shadow: 0 -1px 0px rgba(0,0,0,0.7)
 
   .btn--primary
     margin-bottom: 15px
 
-.advice.inner-advice
-  position: static
-  margin: auto
-  padding-top: 80px
-
-  .giant-icon
-    font-size: 125px
 

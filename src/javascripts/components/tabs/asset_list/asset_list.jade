@@ -76,10 +76,10 @@
       .loading(ng-hide="searchController.paginator.atLast()")
 
     .advice(ng-show="visibleAssets | isEmpty")
-      div(ng-show="hasQuery()")
+      .advice__frame(ng-show="hasQuery()")
         i.fa.fa-search.fa-flip-horizontal.giant-icon
         header.advice-title There are no matches to your search
-      div(ng-show="!hasQuery()")
+      .advice__frame(ng-show="!hasQuery()")
         i.fa.fa-paperclip.giant-icon
         header.advice-title You have no Assets yet.
         p.advice-description Assets are external documents that you can link to your Entries. They can be any file you wish, form sounds to images or videos to text documents.

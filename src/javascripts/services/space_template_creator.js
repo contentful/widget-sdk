@@ -156,7 +156,11 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
     createEditingInterface: function(editingInterface) {
       var handlers = this.makeHandlers(editingInterface, 'create', 'EditingInterface');
       if(handlers.itemWasHandled) return $q.when(handlers.response);
-      return this.spaceContext.space.createEditingInterface(editingInterface)
+      var space = this.spaceContext.space;
+      return space.getContentType(editingInterface.contentTypeId)
+      .then(function(contentType) {
+        return contentType.createEditingInterface(editingInterface);
+      })
       .then(handlers.success)
       .catch(handlers.error);
     },

@@ -51,12 +51,17 @@ describe('Space Template creation service', function () {
       };
 
       spaceContext = {
+        createEditingInterface: sinon.stub(),
         space: {
           createContentType: sinon.stub(),
-          createEditingInterface: sinon.stub(),
           createEntry: sinon.stub(),
           createAsset: sinon.stub(),
-          createDeliveryApiKey: sinon.stub()
+          createDeliveryApiKey: sinon.stub(),
+          getContentType: function() {
+            return $q.when({
+              createEditingInterface: spaceContext.createEditingInterface
+            });
+          }
         }
       };
 
@@ -66,8 +71,8 @@ describe('Space Template creation service', function () {
       spaceContext.space.createContentType.onThirdCall().returns($q.reject());
       stubs.ctPublish.returns($q.when());
 
-      spaceContext.space.createEditingInterface.returns($q.when());
-      spaceContext.space.createEditingInterface.onSecondCall().returns($q.reject());
+      spaceContext.createEditingInterface.returns($q.when());
+      spaceContext.createEditingInterface.onSecondCall().returns($q.reject());
 
       _.times(2, function (n) {
         spaceContext.space.createAsset.onCall(n).returns($q.when(template.assets[n]));
@@ -118,7 +123,7 @@ describe('Space Template creation service', function () {
     });
 
     it('attempts to create 2 editing interface', function() {
-      expect(spaceContext.space.createEditingInterface.callCount).toBe(2);
+      expect(spaceContext.createEditingInterface.callCount).toBe(2);
     });
 
     it('attempts to create 3 assets', function() {
@@ -170,11 +175,12 @@ describe('Space Template creation service', function () {
         spaceContext.space.createEntry            = sinon.stub();
         spaceContext.space.createAsset            = sinon.stub();
         spaceContext.space.createDeliveryApiKey   = sinon.stub();
+        spaceContext.createEditingInterface       = sinon.stub();
 
         spaceContext.space.createContentType.returns($q.when({sys: {id: 'ct3'}, publish: stubs.ctPublish}));
         stubs.ctPublish.returns($q.when());
 
-        spaceContext.space.createEditingInterface.returns($q.when());
+        spaceContext.createEditingInterface.returns($q.when());
 
         spaceContext.space.createAsset.returns($q.when({
           sys: {id: 'a3'},
@@ -217,7 +223,7 @@ describe('Space Template creation service', function () {
       });
 
       it('creates 1 editing interface', function() {
-        expect(spaceContext.space.createEditingInterface.callCount).toBe(1);
+        expect(spaceContext.createEditingInterface.callCount).toBe(1);
       });
 
       it('creates 1 asset', function() {

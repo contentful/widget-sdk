@@ -17,18 +17,19 @@ describe('Editing interfaces service', function () {
         getEditingInterface: sinon.stub(),
         saveEditingInterface: sinon.stub(),
         getId: sinon.stub(),
-        data: {}
+        data: {},
+        newEditingInterface: function(data){
+          data.contentTypId = contentType.getId();
+          return {
+            getId: _.constant('default'),
+            data: data
+          };
+        }
       };
 
     });
 
     space = {
-      newEditingInterface: function(data){
-        return {
-          getId: _.constant('default'),
-          data: data
-        };
-      }
     };
 
     editingInterfaces = this.$inject('editingInterfaces');
@@ -56,7 +57,7 @@ describe('Editing interfaces service', function () {
             widgetParams: {foo: 'baz'}
           }]}
         }));
-        editingInterfaces.forContentTypeWithId(space, contentType, 'edid').then(function (_config) {
+        editingInterfaces.forContentTypeWithId(contentType, 'edid').then(function (_config) {
           config = _config;
         });
         $rootScope.$apply();
@@ -84,7 +85,7 @@ describe('Editing interfaces service', function () {
     describe('fails with a 404 because config doesnt exist yet', function() {
       beforeEach(function() {
         contentType.getEditingInterface.returns($q.reject({statusCode: 404}));
-        editingInterfaces.forContentTypeWithId(space, contentType, 'edid').then(function (_config) {
+        editingInterfaces.forContentTypeWithId(contentType, 'edid').then(function (_config) {
           config = _config;
         });
         $rootScope.$apply();
@@ -102,7 +103,7 @@ describe('Editing interfaces service', function () {
     describe('fails', function() {
       beforeEach(function() {
         contentType.getEditingInterface.returns($q.reject({}));
-        editingInterfaces.forContentTypeWithId(space, contentType, 'edid').catch(function (_err) {
+        editingInterfaces.forContentTypeWithId(contentType, 'edid').catch(function (_err) {
           err = _err;
         });
         $rootScope.$apply();
@@ -122,7 +123,7 @@ describe('Editing interfaces service', function () {
   describe('gets a default interface', function() {
     var interf;
     beforeEach(function() {
-      interf = editingInterfaces.defaultInterface(space, contentType);
+      interf = editingInterfaces.defaultInterface(contentType);
     });
 
     it('has id', function() {
@@ -144,7 +145,7 @@ describe('Editing interfaces service', function () {
     describe('gets a default interface again', function() {
       var interf2;
       beforeEach(function() {
-        interf2 = editingInterfaces.defaultInterface(space, contentType);
+        interf2 = editingInterfaces.defaultInterface(contentType);
       });
 
       it('has same field ids', function() {
