@@ -8,6 +8,7 @@ angular.module('contentful').controller('TabViewController', ['$scope', '$inject
   var editingInterfaces   = $injector.get('editingInterfaces');
 
   var gen = TabOptionsGenerator;
+
   $scope.$on('tabClosed', function (event, tab) {
     if (tab.list.numVisible() > 0) return;
     if      (tab.viewType == 'asset-editor')        $scope.navigator.assetList().goTo();
@@ -21,12 +22,6 @@ angular.module('contentful').controller('TabViewController', ['$scope', '$inject
     $scope.goToTab(tab);
   });
 
-  $scope.$watch('spaceContext', function(spaceContext, old, scope){
-    var space = spaceContext.space;
-    scope.spaceContext.tabList.closeAll();
-    if (space) openRoute();
-  });
-
   $scope.$on('$routeChangeSuccess', function () {
     if ($scope.spaceContext && $scope.spaceContext.space && $scope.spaceContext.space.isHibernated())
       analytics.track('Viewed Placeholder Page');
@@ -34,6 +29,24 @@ angular.module('contentful').controller('TabViewController', ['$scope', '$inject
       openRoute();
     else
       if ($scope.spaceContext) $scope.spaceContext.tabList.current = null;
+  });
+
+  $scope.$watch('spaceContext', function(spaceContext, old, scope){
+    var space = spaceContext.space;
+    scope.spaceContext.tabList.closeAll();
+    if (space) openRoute();
+  });
+
+  $scope.$watch('spaceContext.tabList.current.title', function (title, old, scope) {
+    try {
+      if (title) {
+        $document[0].title = scope.spaceContext.space.data.name + ' - ' + title;
+      } else {
+        $document[0].title = scope.spaceContext.space.data.name;
+      }
+    } catch (e) {
+      $document[0].title = 'Contentful';
+    }
   });
 
   function openRoute() {
@@ -158,17 +171,5 @@ angular.module('contentful').controller('TabViewController', ['$scope', '$inject
 
     return tab;
   }
-
-  $scope.$watch('spaceContext.tabList.current.title', function (title, old, scope) {
-    try {
-      if (title) {
-        $document[0].title = scope.spaceContext.space.data.name + ' - ' + title;
-      } else {
-        $document[0].title = scope.spaceContext.space.data.name;
-      }
-    } catch (e) {
-      $document[0].title = 'Contentful';
-    }
-  });
 
 }]);
