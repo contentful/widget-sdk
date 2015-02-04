@@ -3,9 +3,9 @@
     .title {{dialog.title}}
     .dialog-content.space-template__dialog-content
 
-      .loading(ng-show="isTemplateListLoading()")
+      .loading(ng-show="dialogViewIs('loading')")
 
-      .space-template__list(ng-show="isTemplateListVisible()")
+      .space-template__list(ng-show="dialogViewIs('spaceTemplateList')")
         .space-template__item(ng-click="selectBlankTemplate()")
           .space-template__icon
             i.fa.fa-plus-circle
@@ -23,16 +23,44 @@
           | Missing a template?
           a(href="mailto:support@contentful.com" target="_blank") Let us know.
 
-      .space-template__detail(ng-show="isTemplateListVisible()")
+      .space-template__detail(ng-show="dialogViewIs('spaceTemplateList')")
         .space-template__detail-content(ng-show="!selectedTemplate")
           p Please select template on the left see details.
           p Need help? Read more about it in the Knowledge Database.
         .space-template__detail-content(ng-show="selectedTemplate")
           h1 {{selectedTemplate.name}}
           div(ng-bind-html="selectedTemplate.description | markdown")
-        button.btn.btn--primary(ng-show="selectedTemplate" ng-click="loadSelectedTemplate()") Use this template
+        button.btn.btn--primary(ng-show="selectedTemplate" ng-click="showSpaceCreation()") Use this template
 
-      .space-template__queue(ng-show="isTemplateQueueVisible()")
+      .space-template__space-creation(ng-show="dialogViewIs('spaceCreation')" ng-controller="CreateSpaceDialogController")
+        form(name="newSpaceForm" ng-submit="createSpace()")
+          .l-form
+            .l-form-row
+              label Name
+              .l-form-controls
+                input.form-control(type="text" name="name" ng-model="newSpaceData.name" required)
+            .l-form-row
+              label Organization
+              .l-form-controls
+                .dropdown-btn(cf-dropdown)
+                  button.dropdown-toggle.btn.btn--tertiary(cf-dropdown-toggle type="button")
+                    | {{selectedOrganization.name}}
+                    i.button-icon-right.fa.fa-caret-down
+                  .dropdown-menu.fixed-position(cf-dropdown-menu)
+                    ul.dropdown-menu-list(ng-repeat="org in writableOrganizations")
+                      li.dropdown-menu-item(ng-click="selectOrganization(org)" dropdown-close) {{org.name}}
+            .l-form-row
+              label Locale
+              .l-form-controls
+                input.form-control(type="text" name="locale" ng-model="newSpaceData.defaultLocale")
+          .buttons
+            button.btn.btn--tertiary.cancel(type="button" ng-click="dialog.cancel()")
+              | Cancel
+            | 
+            button.btn.btn--primary.confirm(type="submit" ng-disabled="newSpaceForm.$invalid || lockSubmit")
+              | Create Space
+
+      .space-template__queue(ng-show="dialogViewIs('spaceTemplateQueue')")
         h1 Creating template entities
         .space-template__queue-container
           .space-template__queue-item(ng-repeat="(id, item) in completedItems" ng-class="queueItemClass(item.status)" cf-scroll-into-view)
@@ -41,8 +69,8 @@
             | {{entityStatusString(item)}}
             span.space-template__item-status(ng-show="item.status == 'error'")
               | Failed
-          .loading(ng-show="!isTemplateFailed()")
-        .space-template__queue-status(ng-if="isTemplateFailed()" cf-scroll-into-view)
+          .loading(ng-show="!templateCreationFailed")
+        .space-template__queue-status(ng-if="templateCreationFailed" cf-scroll-into-view)
           p
             | Some items could not be created properly right now, but don't worry, your space will work
             | normally, just with less pre created items, or you might need to publish some manually.

@@ -6,9 +6,6 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
   var notification = $injector.get('notification');
   var logger       = $injector.get('logger');
   var enforcements = $injector.get('enforcements');
-  var features     = $injector.get('features');
-  var modalDialog  = $injector.get('modalDialog');
-  var $timeout     = $injector.get('$timeout');
 
   this.newEntry = function(contentType, source) {
     var handler = makeEntityResponseHandler({
@@ -39,32 +36,6 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
     .then(_.partial(handler, null), handler);
   };
 
-  this.firstContentType = function () {
-    analytics.track('Viewed Space Template Selection Modal');
-    modalDialog.open({
-      title: 'Space templates',
-      template: 'space_templates_dialog',
-      ignoreEnter: true,
-      ignoreEsc: true,
-      noBackgroundClose: true,
-      scope: $scope
-    })
-    .promise
-    .then(function (template) {
-      if(template){
-        newTemplateInfoDialog(template.name);
-        refreshContentTypes();
-      }
-    })
-    .catch(refreshContentTypes);
-  };
-
-  function refreshContentTypes() {
-    $timeout(function () {
-      $scope.spaceContext.refreshContentTypes();
-    }, 1000);
-  }
-
   this.newContentType = function(source) {
     var handler = makeEntityResponseHandler({
       source: source,
@@ -91,21 +62,6 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
       entityType: 'apiKey'
     });
   };
-
-  function newTemplateInfoDialog(templateName) {
-    analytics.track('Created Successful Space Template');
-    $scope.navigator.entryList().goTo();
-    if(!$.cookies.get('seenSpaceTemplateInfoDialog')){
-      $scope.newContentTemplateName = templateName;
-      $timeout(function () {
-        modalDialog.open({
-          template: 'space_templates_post_dialog',
-          scope: $scope
-        });
-      }, 1500);
-    }
-  }
-
 
   function getEventSource(source) {
     return {

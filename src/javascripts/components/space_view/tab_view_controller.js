@@ -31,6 +31,10 @@ angular.module('contentful').controller('TabViewController', ['$scope', '$inject
       if ($scope.spaceContext) $scope.spaceContext.tabList.current = null;
   });
 
+  $scope.$on('templateWasCreated', function () {
+    $scope.navigator.entryList().goTo();
+  });
+
   $scope.$watch('spaceContext', function(spaceContext, old, scope){
     var space = spaceContext.space;
     scope.spaceContext.tabList.closeAll();

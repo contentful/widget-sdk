@@ -20,6 +20,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var ReloadNotification = $injector.get('ReloadNotification');
   var $controller        = $injector.get('$controller');
   var $window            = $injector.get('$window');
+  var $timeout           = $injector.get('$timeout');
 
   $controller('TrialWatchController', {$scope: $scope});
 
@@ -415,12 +416,25 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   function showCreateSpaceDialog(organizationId) {
     var scope = $scope.$new();
     setOrganizationsOnScope(scope, organizationId);
-    modalDialog.open({
-      scope: scope,
-      template: 'create_space_dialog',
-      ignoreEnter: true
-    });
+    // TODO allow this to only be fired when button is clicked
     analytics.track('Clicked Create-Space');
+    analytics.track('Viewed Space Template Selection Modal');
+    modalDialog.open({
+      title: 'Space templates',
+      template: 'space_templates_dialog',
+      ignoreEnter: true,
+      ignoreEsc: true,
+      noBackgroundClose: true,
+      scope: $scope
+    })
+    .promise
+    .then(function (template) {
+      if(template){
+        newTemplateInfoDialog(template.name);
+        refreshContentTypes();
+      }
+    })
+    .catch(refreshContentTypes);
   }
 
   function setOrganizationsOnScope(scope, organizationId){
@@ -434,5 +448,24 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     }
   }
 
+  function refreshContentTypes() {
+    $timeout(function () {
+      $scope.spaceContext.refreshContentTypes();
+    }, 1000);
+  }
+
+  function newTemplateInfoDialog(templateName) {
+    analytics.track('Created Successful Space Template');
+    $rootScope.$broadcast('templateWasCreated');
+    if(!$.cookies.get('seenSpaceTemplateInfoDialog')){
+      $scope.newContentTemplateName = templateName;
+      $timeout(function () {
+        modalDialog.open({
+          template: 'space_templates_post_dialog',
+          scope: $scope
+        });
+      }, 1500);
+    }
+  }
 
 }]);

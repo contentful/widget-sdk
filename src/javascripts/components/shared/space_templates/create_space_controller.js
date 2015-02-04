@@ -30,6 +30,8 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
         return notification.error('You can\'t create a Space in this Organization');
       }
 
+      $rootScope.$broadcast('spaceCreationRequested');
+
       client.createSpace(data, orgId)
       .then(function(newSpace){
         $scope.performTokenLookup()
@@ -47,13 +49,11 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
       });
       $scope.selectSpace(space);
       $scope.lockSubmit = false;
-      $scope.dialog.confirm();
-      notification.info('Created space "'+ space.data.name +'"');
-      resetNewSpaceData();
-      $rootScope.$broadcast('spaceCreated');
+      $rootScope.$broadcast('spaceCreated', space);
     }
 
     function handleSpaceCreationFailure(err){
+      $rootScope.$broadcast('spaceCreationFailed');
       var dismiss = true;
       var usage = enforcements.computeUsage('space');
       if(usage){
@@ -107,7 +107,6 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
 
     function resetNewSpaceData() {
       $scope.newSpaceData = _.cloneDeep({defaultLocale: 'en-US'});
-      $scope.lockSubmit = false;
     }
 
   }
