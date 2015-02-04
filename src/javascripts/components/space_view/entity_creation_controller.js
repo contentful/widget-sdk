@@ -40,25 +40,23 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
   };
 
   this.firstContentType = function () {
-    if(features.isEnabled('spaceTemplates')){
-      analytics.track('Viewed Space Template Selection Modal');
-      modalDialog.open({
-        title: 'Space templates',
-        template: 'space_templates_dialog',
-        ignoreEnter: true,
-        ignoreEsc: true,
-        noBackgroundClose: true,
-        scope: $scope
-      })
-      .promise
-      .then(function (template) {
-        if(template){
-          newTemplateInfoDialog(template.name);
-          refreshContentTypes();
-        }
-      })
-      .catch(refreshContentTypes);
-    }
+    analytics.track('Viewed Space Template Selection Modal');
+    modalDialog.open({
+      title: 'Space templates',
+      template: 'space_templates_dialog',
+      ignoreEnter: true,
+      ignoreEsc: true,
+      noBackgroundClose: true,
+      scope: $scope
+    })
+    .promise
+    .then(function (template) {
+      if(template){
+        newTemplateInfoDialog(template.name);
+        refreshContentTypes();
+      }
+    })
+    .catch(refreshContentTypes);
   };
 
   function refreshContentTypes() {
