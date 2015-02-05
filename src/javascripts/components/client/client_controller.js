@@ -268,6 +268,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   function initClient() {
     $scope.performTokenLookup()
     .then(function () {
+      showOnboardingIfNecessary();
       analytics.login($scope.user);
     }, ReloadNotification.gatekeeperErrorHandler);
 
@@ -299,6 +300,22 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
   function clickedSpaceSwitcher() {
     analytics.track('Clicked Space-Switcher');
+  }
+
+  function showOnboardingIfNecessary() {
+    var now = moment();
+    var created = moment($scope.user.sys.createdAt);
+    var age = now.diff(created, 'days');
+    var seenOnboarding = $.cookies.get('seenOnboarding');
+    if (age < 7 && !seenOnboarding && _.isEmpty($scope.spaces)) {
+      $.cookies.set('seenOnboarding', true, {
+        expiresAt: moment().add('y', 1).toDate()
+      });
+      $timeout(function () {
+        analytics.track('Viewed Onboarding');
+        showSpaceTemplatesModal();
+      }, 750);
+    }
   }
 
   function hideTabBar() {
@@ -414,10 +431,13 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function showCreateSpaceDialog(organizationId) {
+    analytics.track('Clicked Create-Space');
+    showSpaceTemplatesModal(organizationId);
+  }
+
+  function showSpaceTemplatesModal(organizationId) {
     var scope = $scope.$new();
     setOrganizationsOnScope(scope, organizationId);
-    // TODO allow this to only be fired when button is clicked
-    analytics.track('Clicked Create-Space');
     analytics.track('Viewed Space Template Selection Modal');
     modalDialog.open({
       title: 'Space templates',

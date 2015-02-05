@@ -55,14 +55,14 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
 
   function waitForSpace(ev, space) {
     var existingSpace = dotty.get($scope, 'spaceContext.space');
-    if(existingSpace && existingSpace.getId() !== space.getId()){
+    if(existingSpace && existingSpace.getId() === space.getId()){
+      loadSelectedTemplate();
+    } else {
       $scope.$watch('::spaceContext.space', function (updatedSpace) {
-        if(updatedSpace.getId() === space.getId()){
+        if(updatedSpace && updatedSpace.getId() === space.getId()){
           loadSelectedTemplate();
         }
       });
-    } else {
-      loadSelectedTemplate();
     }
   }
 

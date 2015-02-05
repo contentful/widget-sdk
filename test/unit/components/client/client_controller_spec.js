@@ -1039,12 +1039,13 @@ describe('Client Controller', function () {
 
 
   describe('shows create space dialog', function () {
-    beforeEach(function () {
+    beforeEach(inject(function ($q) {
       scope.organizations = [
         {sys: {id: 'abc'}},
         {sys: {id: 'def'}},
       ];
-    });
+      stubs.dialog.returns({promise: $q.when()});
+    }));
     it('opens dialog', function () {
       scope.showCreateSpaceDialog();
       expect(stubs.dialog).toBeCalled();
@@ -1058,7 +1059,7 @@ describe('Client Controller', function () {
     describe('with an organizationId', function () {
       it('displays that organization first in the dropdown', function () {
         scope.showCreateSpaceDialog('def');
-        expect(stubs.dialog.args[0][0].scope.organizations[0].sys.id).toBe('def');
+        expect(stubs.dialog.args[0][0].scope.organizations[1].sys.id).toBe('def');
       });
     });
 
