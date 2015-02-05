@@ -66,8 +66,8 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
         logger.logServerError('Could not create Space', {error: err});
       }
 
+      $scope.lockSubmit = false;
       if(dismiss){
-        $scope.lockSubmit = false;
         $scope.dialog.cancel();
       }
     }
