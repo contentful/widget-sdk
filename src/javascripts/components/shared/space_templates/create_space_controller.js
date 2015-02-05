@@ -15,8 +15,7 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
     setupOrganizations();
 
     function createSpace() {
-      if ($scope.lockSubmit) return;
-      $scope.lockSubmit = true;
+      $rootScope.$broadcast('spaceCreationRequested');
       var stopSpinner = cfSpinner.start();
       var data = {name: $scope.newSpaceData.name};
       if ($scope.newSpaceData.defaultLocale)
@@ -25,12 +24,11 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
       var orgId = $scope.selectedOrganization.sys.id;
       if(!$scope.canCreateSpaceInOrg(orgId)){
         stopSpinner();
-        $scope.dialog.cancel();
+        $rootScope.$broadcast('spaceCreationFailed');
         logger.logError('You can\'t create a Space in this Organization');
         return notification.error('You can\'t create a Space in this Organization');
       }
 
-      $rootScope.$broadcast('spaceCreationRequested');
 
       client.createSpace(data, orgId)
       .then(function(newSpace){
@@ -48,27 +46,19 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
         return space.getId() == newSpace.getId();
       });
       $scope.selectSpace(space);
-      $scope.lockSubmit = false;
       $rootScope.$broadcast('spaceCreated', space);
     }
 
     function handleSpaceCreationFailure(err){
       $rootScope.$broadcast('spaceCreationFailed');
-      var dismiss = true;
       var usage = enforcements.computeUsage('space');
       if(usage){
         handleUsageWarning(usage);
       } else if(hasErrorOnField(err, 'length', 'name')){
-        dismiss = false;
         notification.warn('Space name is too long');
       } else {
         notification.error('Could not create Space');
         logger.logServerError('Could not create Space', {error: err});
-      }
-
-      $scope.lockSubmit = false;
-      if(dismiss){
-        $scope.dialog.cancel();
       }
     }
 

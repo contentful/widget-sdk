@@ -7,7 +7,7 @@ describe('Create Space Dialog controller', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'stop', 'then', 'getId', 'confirm', 'cancel'
+        'stop', 'then', 'getId'
       ]);
 
     });
@@ -28,10 +28,6 @@ describe('Create Space Dialog controller', function () {
       this.enforcements.determineEnforcement = sinon.stub();
 
       scope = this.$rootScope.$new();
-      scope.dialog = {
-        confirm: stubs.confirm,
-        cancel: stubs.cancel
-      };
       org = {sys: {id: 'orgid'}};
       scope.organizations = [
         org
@@ -75,10 +71,6 @@ describe('Create Space Dialog controller', function () {
       createController();
     });
 
-    it('submit is unlocked', function() {
-      expect(scope.lockSubmit).toBeFalsy();
-    });
-
     it('new space data has default locale', function() {
       expect(scope.newSpaceData.defaultLocale).toBeDefined();
     });
@@ -106,12 +98,6 @@ describe('Create Space Dialog controller', function () {
       createController();
     });
 
-    it('does nothing if submit is locked', function() {
-      scope.lockSubmit = true;
-      scope.createSpace();
-      expect(this.cfSpinner.start).not.toBeCalled();
-    });
-
     describe('if submit is unlocked', function() {
       beforeEach(function() {
         scope.selectedOrganization = {
@@ -125,16 +111,16 @@ describe('Create Space Dialog controller', function () {
           scope.createSpace();
         });
 
+        it('broadcasts space creation request', function() {
+          expect(this.broadcastSpy).toBeCalledWith('spaceCreationRequested');
+        });
+
         it('starts spinner', function() {
           expect(this.cfSpinner.start).toBeCalled();
         });
 
         it('checks for creation permission', function() {
           expect(scope.canCreateSpaceInOrg).toBeCalledWith('orgid');
-        });
-
-        it('cancels dialog', function() {
-          expect(stubs.cancel).toBeCalled();
         });
 
         it('stops spinner', function() {
@@ -144,6 +130,10 @@ describe('Create Space Dialog controller', function () {
         it('shows error', function() {
           expect(this.notification.error).toBeCalled();
           expect(this.logger.logError).toBeCalled();
+        });
+
+        it('broadcasts space creation failure', function() {
+          expect(this.broadcastSpy).toBeCalledWith('spaceCreationFailed');
         });
       });
 
@@ -164,6 +154,10 @@ describe('Create Space Dialog controller', function () {
             }));
             scope.createSpace();
             scope.$apply();
+          });
+
+          it('broadcasts space creation request', function() {
+            expect(this.broadcastSpy).toBeCalledWith('spaceCreationRequested');
           });
 
           it('starts spinner', function() {
@@ -191,16 +185,12 @@ describe('Create Space Dialog controller', function () {
             expect(this.logger.logServerError).toBeCalled();
           });
 
-          it('cancels dialog', function() {
-            expect(stubs.cancel).toBeCalled();
-          });
-
           it('stops spinner', function() {
             expect(stubs.stop).toBeCalled();
           });
 
-          it('unlocks submit', function() {
-            expect(scope.lockSubmit).toBeFalsy();
+          it('broadcasts space creation failure', function() {
+            expect(this.broadcastSpy).toBeCalledWith('spaceCreationFailed');
           });
         });
 
@@ -217,6 +207,10 @@ describe('Create Space Dialog controller', function () {
             }));
             scope.createSpace();
             scope.$apply();
+          });
+
+          it('broadcasts space creation request', function() {
+            expect(this.broadcastSpy).toBeCalledWith('spaceCreationRequested');
           });
 
           it('starts spinner', function() {
@@ -243,16 +237,12 @@ describe('Create Space Dialog controller', function () {
             expect(this.notification.warn).toBeCalled();
           });
 
-          it('does not cancel dialog', function() {
-            expect(stubs.cancel).not.toBeCalled();
-          });
-
           it('does stop spinner', function() {
             expect(stubs.stop).toBeCalled();
           });
 
-          it('does not unlock submit', function() {
-            expect(scope.lockSubmit).toBeTruthy();
+          it('broadcasts space creation failure', function() {
+            expect(this.broadcastSpy).toBeCalledWith('spaceCreationFailed');
           });
         });
 
@@ -267,6 +257,10 @@ describe('Create Space Dialog controller', function () {
             scope.selectSpace = sinon.stub();
             scope.createSpace();
             scope.$apply();
+          });
+
+          it('broadcasts space creation request', function() {
+            expect(this.broadcastSpy).toBeCalledWith('spaceCreationRequested');
           });
 
           it('starts spinner', function() {
@@ -297,16 +291,12 @@ describe('Create Space Dialog controller', function () {
             expect(scope.selectSpace).toBeCalledWith(space);
           });
 
-          it('confirms dialog', function() {
-            expect(this.broadcastSpy).toBeCalledWith('spaceCreated');
-          });
-
           it('stops spinner', function() {
             expect(stubs.stop).toBeCalled();
           });
 
-          it('unlocks submit', function() {
-            expect(scope.lockSubmit).toBeFalsy();
+          it('broadcasts space creation', function() {
+            expect(this.broadcastSpy).toBeCalledWith('spaceCreated');
           });
         });
 
