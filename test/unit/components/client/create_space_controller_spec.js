@@ -1,46 +1,40 @@
 'use strict';
 
 describe('Create Space Dialog controller', function () {
-  var scope, createSpaceCtrl, stubs, createController, logger, notification;
+  var scope, createSpaceCtrl, stubs, createController;
   var org;
-  var $q;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'start', 'stop', 'createSpace', 'then',
-        'getId', 'computeUsage', 'confirm', 'cancel'
+        'stop', 'then', 'getId'
       ]);
 
-      $provide.value('cfSpinner', {
-        start: stubs.start
-      });
-      stubs.start.returns(stubs.stop);
-
-      $provide.value('client', {
-        createSpace: stubs.createSpace
-      });
-
-      $provide.value('enforcements', {
-        computeUsage: stubs.computeUsage
-      });
-
     });
-    inject(function ($rootScope, $controller, $injector) {
-      logger = $injector.get('logger');
-      notification = $injector.get('notification');
-      $q = $injector.get('$q');
-      scope = $rootScope.$new();
-      scope.dialog = {
-        confirm: stubs.confirm,
-        cancel: stubs.cancel
-      };
+    inject(function ($controller, $injector) {
+      this.$rootScope = $injector.get('$rootScope');
+      this.logger = $injector.get('logger');
+      this.notification = $injector.get('notification');
+      this.$q = $injector.get('$q');
+      this.client = $injector.get('client');
+      this.enforcements = $injector.get('enforcements');
+      this.cfSpinner = $injector.get('cfSpinner');
+
+      this.broadcastSpy = sinon.spy(this.$rootScope, '$broadcast');
+      this.cfSpinner.start = sinon.stub();
+      this.cfSpinner.start.returns(stubs.stop);
+      this.client.createSpace = sinon.stub();
+      this.enforcements.computeUsage = sinon.stub();
+      this.enforcements.determineEnforcement = sinon.stub();
+
+      scope = this.$rootScope.$new();
       org = {sys: {id: 'orgid'}};
       scope.organizations = [
         org
       ];
       scope.canCreateSpaceInOrg = sinon.stub();
       scope.newSpaceForm = {};
+
 
       createController = function () {
         createSpaceCtrl = $controller('CreateSpaceDialogController', {$scope: scope});
@@ -77,10 +71,6 @@ describe('Create Space Dialog controller', function () {
       createController();
     });
 
-    it('submit is unlocked', function() {
-      expect(scope.lockSubmit).toBeFalsy();
-    });
-
     it('new space data has default locale', function() {
       expect(scope.newSpaceData.defaultLocale).toBeDefined();
     });
@@ -108,12 +98,6 @@ describe('Create Space Dialog controller', function () {
       createController();
     });
 
-    it('does nothing if submit is locked', function() {
-      scope.lockSubmit = true;
-      scope.createSpace();
-      expect(stubs.start).not.toBeCalled();
-    });
-
     describe('if submit is unlocked', function() {
       beforeEach(function() {
         scope.selectedOrganization = {
@@ -127,16 +111,16 @@ describe('Create Space Dialog controller', function () {
           scope.createSpace();
         });
 
+        it('broadcasts space creation request', function() {
+          expect(this.broadcastSpy).toBeCalledWith('spaceCreationRequested');
+        });
+
         it('starts spinner', function() {
-          expect(stubs.start).toBeCalled();
+          expect(this.cfSpinner.start).toBeCalled();
         });
 
         it('checks for creation permission', function() {
           expect(scope.canCreateSpaceInOrg).toBeCalledWith('orgid');
-        });
-
-        it('cancels dialog', function() {
-          expect(stubs.cancel).toBeCalled();
         });
 
         it('stops spinner', function() {
@@ -144,8 +128,12 @@ describe('Create Space Dialog controller', function () {
         });
 
         it('shows error', function() {
-          expect(notification.error).toBeCalled();
-          expect(logger.logError).toBeCalled();
+          expect(this.notification.error).toBeCalled();
+          expect(this.logger.logError).toBeCalled();
+        });
+
+        it('broadcasts space creation failure', function() {
+          expect(this.broadcastSpy).toBeCalledWith('spaceCreationFailed');
         });
       });
 
@@ -157,7 +145,7 @@ describe('Create Space Dialog controller', function () {
 
         describe('if remote call fails with no specific error', function() {
           beforeEach(function() {
-            stubs.createSpace.returns($q.reject({
+            this.client.createSpace.returns(this.$q.reject({
               body: {
                 details: {
                   errors: []
@@ -168,8 +156,12 @@ describe('Create Space Dialog controller', function () {
             scope.$apply();
           });
 
+          it('broadcasts space creation request', function() {
+            expect(this.broadcastSpy).toBeCalledWith('spaceCreationRequested');
+          });
+
           it('starts spinner', function() {
-            expect(stubs.start).toBeCalled();
+            expect(this.cfSpinner.start).toBeCalled();
           });
 
           it('checks for creation permission', function() {
@@ -177,38 +169,34 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('calls client lib with data', function() {
-            expect(stubs.createSpace.args[0][0].name).toEqual('name');
+            expect(this.client.createSpace.args[0][0].name).toEqual('name');
           });
 
           it('calls client lib with org id', function() {
-            expect(stubs.createSpace.args[0][1]).toEqual('orgid');
+            expect(this.client.createSpace.args[0][1]).toEqual('orgid');
           });
 
           it('computes usage', function() {
-            expect(stubs.computeUsage).toBeCalled();
+            expect(this.enforcements.computeUsage).toBeCalled();
           });
 
           it('shows error', function() {
-            expect(notification.error).toBeCalled();
-            expect(logger.logServerError).toBeCalled();
-          });
-
-          it('cancels dialog', function() {
-            expect(stubs.cancel).toBeCalled();
+            expect(this.notification.error).toBeCalled();
+            expect(this.logger.logServerError).toBeCalled();
           });
 
           it('stops spinner', function() {
             expect(stubs.stop).toBeCalled();
           });
 
-          it('unlocks submit', function() {
-            expect(scope.lockSubmit).toBeFalsy();
+          it('broadcasts space creation failure', function() {
+            expect(this.broadcastSpy).toBeCalledWith('spaceCreationFailed');
           });
         });
 
         describe('if remote call fails with a specific error', function() {
           beforeEach(function() {
-            stubs.createSpace.returns($q.reject({
+            this.client.createSpace.returns(this.$q.reject({
               body: {
                 details: {
                   errors: [
@@ -221,8 +209,12 @@ describe('Create Space Dialog controller', function () {
             scope.$apply();
           });
 
+          it('broadcasts space creation request', function() {
+            expect(this.broadcastSpy).toBeCalledWith('spaceCreationRequested');
+          });
+
           it('starts spinner', function() {
-            expect(stubs.start).toBeCalled();
+            expect(this.cfSpinner.start).toBeCalled();
           });
 
           it('checks for creation permission', function() {
@@ -230,31 +222,27 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('calls client lib with data', function() {
-            expect(stubs.createSpace.args[0][0].name).toEqual('name');
+            expect(this.client.createSpace.args[0][0].name).toEqual('name');
           });
 
           it('calls client lib with org id', function() {
-            expect(stubs.createSpace.args[0][1]).toEqual('orgid');
+            expect(this.client.createSpace.args[0][1]).toEqual('orgid');
           });
 
           it('computes usage', function() {
-            expect(stubs.computeUsage).toBeCalled();
+            expect(this.enforcements.computeUsage).toBeCalled();
           });
 
           it('shows server error', function() {
-            expect(notification.warn).toBeCalled();
-          });
-
-          it('does not cancel dialog', function() {
-            expect(stubs.cancel).not.toBeCalled();
+            expect(this.notification.warn).toBeCalled();
           });
 
           it('does stop spinner', function() {
             expect(stubs.stop).toBeCalled();
           });
 
-          it('does not unlock submit', function() {
-            expect(scope.lockSubmit).toBeTruthy();
+          it('broadcasts space creation failure', function() {
+            expect(this.broadcastSpy).toBeCalledWith('spaceCreationFailed');
           });
         });
 
@@ -263,16 +251,20 @@ describe('Create Space Dialog controller', function () {
           beforeEach(function() {
             space = {getId: stubs.getId, data: {name: 'newspace'}};
             scope.spaces = [space];
-            stubs.createSpace.returns($q.when(space));
+            this.client.createSpace.returns(this.$q.when(space));
             stubs.getId.returns('spaceid');
-            scope.performTokenLookup = sinon.stub().returns($q.when());
+            scope.performTokenLookup = sinon.stub().returns(this.$q.when());
             scope.selectSpace = sinon.stub();
             scope.createSpace();
             scope.$apply();
           });
 
+          it('broadcasts space creation request', function() {
+            expect(this.broadcastSpy).toBeCalledWith('spaceCreationRequested');
+          });
+
           it('starts spinner', function() {
-            expect(stubs.start).toBeCalled();
+            expect(this.cfSpinner.start).toBeCalled();
           });
 
           it('checks for creation permission', function() {
@@ -280,11 +272,11 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('calls client lib with data', function() {
-            expect(stubs.createSpace.args[0][0].name).toEqual('name');
+            expect(this.client.createSpace.args[0][0].name).toEqual('name');
           });
 
           it('calls client lib with org id', function() {
-            expect(stubs.createSpace.args[0][1]).toEqual('orgid');
+            expect(this.client.createSpace.args[0][1]).toEqual('orgid');
           });
 
           it('performs token lookup', function() {
@@ -299,24 +291,12 @@ describe('Create Space Dialog controller', function () {
             expect(scope.selectSpace).toBeCalledWith(space);
           });
 
-          it('confirms dialog', function() {
-            expect(stubs.confirm).toBeCalled();
-          });
-
-          it('notification is shown', function() {
-            expect(notification.info).toBeCalled();
-          });
-
-          it('space data is reset', function() {
-            expect(scope.newSpaceData.name).toBeUndefined();
-          });
-
           it('stops spinner', function() {
             expect(stubs.stop).toBeCalled();
           });
 
-          it('unlocks submit', function() {
-            expect(scope.lockSubmit).toBeFalsy();
+          it('broadcasts space creation', function() {
+            expect(this.broadcastSpy).toBeCalledWith('spaceCreated');
           });
         });
 

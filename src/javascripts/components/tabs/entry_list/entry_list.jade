@@ -93,7 +93,7 @@
         header.advice-title You have no Entries yet.
         p.advice-description(ng-show="spaceContext.publishedContentTypes.length == 0")
           | Entries are your content itself. These depend on the field types you created in the Content Type editor.
-        button.btn.btn--primary(type="button" ng-click="entityCreationController.firstContentType()"
+        button.btn.btn--primary(type="button" ng-click="entityCreationController.newContentType('frameButton')"
             ng-hide="spaceContext.publishedContentTypes.length > 0 || permissionController.get('createContentType', 'shouldHide')"
             ng-disabled="permissionController.get('createContentType', 'shouldDisable')"
             cf-when-disabled="permissionController.entityActions.createContentType")
