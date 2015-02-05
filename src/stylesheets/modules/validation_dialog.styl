@@ -1,75 +1,119 @@
+/**
+ * Concerns:
+ *
+ * - validation-dialog.jade
+ * - validation-values.jade
+ * - validation-settings.jade
+ * - validation-link.jade
+ *
+ * Components:
+ *
+ * - .validation-dialog
+ * - .validation-settings
+ * - .validation-controls
+ * - .validation-values
+ */
+
+// Width of the left margin where the toggle checkbox sits.
+$validation-indent = 30px
+
+/**
+ * @component .validation-dialog
+ */
 .validation-dialog .modal-dialog
   width: 800px
   user-select: none
 
-.validation-list
-  min-height: 450px
-  position: relative
+.validation-dialog__title
+  em
+    font-style: normal
+    &:before
+      content: "“"
+    &:after
+      content: "” "
+  .cf-knowledge-base-icon
+    margin-left: 0.3em
 
-.cf-validation-options
-  $display-flexbox()
-  padding: ($modal-dialog-padding / 2) 0
-  border-bottom: 1px solid $gray-lightest
-  margin-left: -($modal-dialog-padding)
-  margin-right: -($modal-dialog-padding)
-  padding-left: $modal-dialog-padding
-  padding-right: $modal-dialog-padding
 
-.cf-validation-options:last-child
-  border-bottom: none
-  padding-bottom: 0
+/**
+ * @component .validation-settings
+ */
+.validation-settings
+  margin-top: 0.5em
+  min-height: 250px
 
-.validation-type-select
-  margin-right: 3%
-  button
-    height: 34px
+cf-validation-setting
+  display: block;
 
-// TODO this should only need prefixing by validation controls
-// but the extension of form-styled creates a huge mess in
-// terms of cascading
-.cf-validation-options .validation-controls
-  .select-box
-    padding-right: 12px
+.validation-settings__header
+  margin: 0;
+  font-size: 1.2em
+  line-height: 3
 
-    .button-icon-right
-      top: 10px
+.validation-settings__toggle
+  cursor: pointer
+  display: inline-block;
 
-  .block-list
+.validation-settings__toggle-input-wrapper
+  display: inline-block;
+  width: $validation-indent
+  > input
     margin: 0
-    padding: 0
-    margin-top: 10px
-    width: 270px
-    max-height: 240px
-    overflow-y: auto
-    li
-      text-align: left
 
+
+/**
+ * @component .validation-controls
+ */
 .validation-controls
-  flex-grow: 1
-  margin-right: 3%
-  max-width: 70%
+  margin-left: $validation-indent
+  margin-bottom: 1.2em;
+  margin-top: 0.2em;
 
-.checkbox-list
+  .cf-form-inline-error
+    font-size: 1em;
+    padding-top: 0.8em;
+
+  input[type=number]
+    width: 6em
+
+.validation-controls__select-box
+  padding-right: 12px
+
+  .button-icon-right
+    top: 10px
+
+.validation-controls__re-pattern
+  width: 22em
+
+.validation-controls__re-flags
+  width: 4em
+
+.validation-controls__content-types
   $display-flexbox()
   flex-wrap: wrap
-.checkbox-list__item
-  padding: 15px 0px
-  margin-right: 3%
-  input
-    float: left
-    margin: 0
-  &:nth-child(3n+3)
-    margin-right: 0
-  .u-truncate
-    float: left
-    margin-left: 4px
-    margin-top: -5px
-    line-height: initial
-    width: 130px
+  margin: 0
+  line-height: 2.8
+  list-style: none
 
-.cf-predefined-values-list
+  > li
+    margin: 0 1.8em 0 0
+
+  input
+    margin: 0 0.6em 0 0
+
+
+/**
+ * @component .validation-values
+ */
+
+// Width of the value input and a value list item.
+$validation-values-width = 350px
+
+.validation-value-list
+  margin-top: 10px
+  width: $validation-values-width
   position: relative
-  width: 270px
+
   .fa-caret-down, .fa-caret-up
     position: absolute
     right: -20px
@@ -79,14 +123,44 @@
   .fa-caret-up
     top: 0px
 
-.delete-validation
-  display: block
-  margin-left: auto
-  text-transform: uppercase
-  letter-spacing: 1px
-  color: $gray
-  line-height: 38px
-  cursor: pointer
-  &:hover
-    color: $gray-medium
+.validation-value-list__add
+  width: $validation-values-width
+  margin-right: 1em
 
+.validation-value-list__scroll-frame
+  max-height: 240px
+  overflow-y: auto
+  > ul
+    margin: 0
+    padding: 0
+
+.validation-value-list__item
+  $display-flexbox()
+  padding: 0 0 0 0.8em
+  border-radius: 5px
+  color: inherit
+  background: hsl(0,0%, 94%)
+  cursor: move
+  cursor: -webkit-grabbing
+  cursor: -moz-grab
+  cursor: -moz-grabbing
+
+.validation-value-list__value
+  padding: 0.8em 0;
+  flex-grow: 1;
+  white-space: normal
+
+.validation-value-list__remove
+  width: 2.5em
+  flex-shrink: 0
+  cursor: pointer
+
+  $display-flexbox()
+  align-items: center
+  justify-content: space-around
+  &:after
+    content: '\00d7' // Unicode MULTIPLICATION SIGN
+    font-size: 20px
+    font-weight: lighter
+  &:hover
+    color: $blue
