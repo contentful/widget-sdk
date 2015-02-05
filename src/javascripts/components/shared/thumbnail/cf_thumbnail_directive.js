@@ -37,12 +37,10 @@ angular.module('contentful').directive('cfThumbnail', function () {
       }
 
       scope.isImage = function(){
-        return scope.file.external || scope.hasPreview();
+        return scope.hasPreview();
       };
 
       scope.thumbnailUrl = function () {
-        if (scope.file.external) return scope.file.url;
-
         var sizeQueryString = '?';
         if (scope.file.url && (width || height)) {
           if(width)  addQSParam('w', width);
