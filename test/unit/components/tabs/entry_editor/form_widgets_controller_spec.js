@@ -58,6 +58,29 @@ describe('Form Widgets Controller', function () {
       expect(scope.widgets.length).toBe(0);
     });
 
+
+    it('should update the widget template', function() {
+      field.disabled = false;
+      inject(function(widgets) {
+        widgets.registerWidget('foo', {
+          template: '<span class=foo></span>',
+          fieldTypes: ['foo']
+        });
+        widgets.registerWidget('bar', {
+          template: '<span class=bar></span>',
+          fieldTypes: ['bar']
+        });
+      });
+
+      field.type = 'foo';
+      scope.$apply();
+      expect(scope.widgets[0].template).toBe('<span class=foo></span>');
+
+      field.type = 'bar';
+      scope.$apply();
+      expect(scope.widgets[0].template).toBe('<span class=bar></span>');
+    });
+
     describe('locales for a field', function () {
       beforeEach(function () {
         field.disabled = false;

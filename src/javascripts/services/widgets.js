@@ -32,6 +32,10 @@ angular.module('contentful').factory('widgets', ['$injector', function($injector
 
   var WIDGETS = {};
 
+  function getWidget(id) {
+    return WIDGETS[id];
+  }
+
   function typesForField(field) {
     var fieldType = detectFieldType(field);
     var widgets =  _(WIDGETS)
@@ -117,12 +121,12 @@ angular.module('contentful').factory('widgets', ['$injector', function($injector
     }
   }
 
-  function registerWidget(id, options) {
-    var descriptor = _.pick(options, ['fieldTypes', 'name', 'options', 'template']);
+  function registerWidget(id, descriptor) {
     WIDGETS[id] = WIDGETS[id] || descriptor;
   }
 
   return {
+    get:               getWidget,
     forField:          typesForField,
     defaultWidgetId:   defaultWidgetId,
     optionsForWidget:  optionsForWidget,

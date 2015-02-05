@@ -21,44 +21,21 @@ describe('cfWidgetRenderer Directive', function () {
   });
 
   it('renders widget', function() {
-    scope.widget.widgetId = 'foo';
+    scope.widget.template = '<p class=foo>';
     var el = compileWidgetElement();
     expect(el.find('.foo').length).toBe(1);
   });
 
   it('exchanges a rendered widget', function() {
-    scope.widget.widgetId = 'foo';
+    scope.widget.template = '<p class=foo>';
     var el = compileWidgetElement();
     expect(el.find('.foo').length).toBe(1);
 
-    scope.widget.widgetId = 'bar';
+    scope.widget.template = '<p class=bar>';
     scope.$apply();
 
     expect(el.find('.foo').length).toBe(0);
     expect(el.find('.bar').length).toBe(1);
-  });
-
-  it('displays a warning for unknown widgets', function() {
-    var el = compileWidgetElement();
-
-    scope.widget.widgetId = 'lolwut';
-    scope.$apply();
-    expect(el.text()).toMatch('Unknown editor widget "lolwut"');
-  });
-
-  it('sets field', function() {
-    var widgetField = {};
-    scope.widget.field = widgetField;
-    compileWidgetElement();
-    expect(scope.field).toEqual(widgetField);
-  });
-
-  it('updates field', function() {
-    compileWidgetElement();
-    var newField = {};
-    scope.widget.field = newField;
-    scope.$apply();
-    expect(scope.field).toEqual(newField);
   });
 
 });
