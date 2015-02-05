@@ -33,7 +33,12 @@
         button.btn.btn--primary(ng-show="selectedTemplate" ng-click="showSpaceCreation()") Use this template
 
       .space-template__space-creation(ng-show="dialogViewIs('spaceCreation')" ng-controller="CreateSpaceDialogController")
-        h1 Create Space
+        h1
+          | Create Space
+          a.cf-knowledge-base-icon(
+            tooltip="Learn more about Spaces in the Knowledge Base Pages"
+            analytics-event="space_creation"
+            href="https://contentful.zendesk.com/hc/en-us/articles/200513108-What-is-a-difference-between-a-Content-Type-and-a-Space-")
         form.space-template__space-creation-form(name="newSpaceForm" ng-submit="createSpace()")
           .l-form
             .l-form-row
