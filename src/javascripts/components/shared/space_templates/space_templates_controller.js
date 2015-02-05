@@ -7,23 +7,24 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   var spaceTemplateCreator = $injector.get('spaceTemplateCreator');
   var spaceTemplateLoader  = $injector.get('spaceTemplateLoader');
 
-  var templateListLoadingStatus = 'loading';
-  var templateLoadingStatus = null;
+  var dialogView = 'loading';
   var contentTypeToDisplayFieldMap;
   var retryAttempts = 0;
 
   spaceTemplateLoader.getTemplatesList().then(function (templates) {
-    templateListLoadingStatus = 'finished';
+    dialogView = 'spaceTemplateList';
     $scope.spaceTemplates = _.map(templates, 'fields');
   }).catch(function () {
     $scope.dialog.cancel();
   });
 
+  $scope.$on('spaceCreationRequested', showLoadingState);
+  $scope.$on('spaceCreationFailed', showSpaceCreation);
+  $scope.$on('spaceCreated', waitForSpace);
+
   $scope.completedItems = {};
-  $scope.isTemplateListLoading = isTemplateListLoading;
-  $scope.isTemplateListVisible = isTemplateListVisible;
-  $scope.isTemplateQueueVisible = isTemplateQueueVisible;
-  $scope.isTemplateFailed = isTemplateFailed;
+  $scope.dialogViewIs = dialogViewIs;
+  $scope.showSpaceCreation = showSpaceCreation;
   $scope.selectTemplate = selectTemplate;
   $scope.selectBlankTemplate = selectBlankTemplate;
   $scope.dismissDialog = dismissDialog;
@@ -31,20 +32,8 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   $scope.queueItemClass = queueItemClass;
   $scope.entityStatusString = entityStatusString;
 
-  function isTemplateListLoading() {
-    return templateListLoadingStatus === 'loading';
-  }
-
-  function isTemplateListVisible() {
-    return templateListLoadingStatus === 'finished' && !templateLoadingStatus;
-  }
-
-  function isTemplateQueueVisible() {
-    return templateListLoadingStatus === 'finished' && (templateLoadingStatus === 'loading' || templateLoadingStatus === 'failed');
-  }
-
-  function isTemplateFailed() {
-    return templateLoadingStatus === 'failed';
+  function dialogViewIs(expectedView) {
+    return expectedView === dialogView;
   }
 
   function selectBlankTemplate() {
@@ -56,8 +45,29 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
     $scope.selectedTemplate = template;
   }
 
+  function showSpaceCreation() {
+    dialogView = 'spaceCreation';
+  }
+
+  function showLoadingState() {
+    dialogView = 'loading';
+  }
+
+  function waitForSpace(ev, space) {
+    var existingSpace = dotty.get($scope, 'spaceContext.space');
+    if(existingSpace && existingSpace.getId() === space.getId()){
+      loadSelectedTemplate();
+    } else {
+      $scope.$watch('::spaceContext.space', function (updatedSpace) {
+        if(updatedSpace && updatedSpace.getId() === space.getId()){
+          loadSelectedTemplate();
+        }
+      });
+    }
+  }
+
   function loadSelectedTemplate() {
-    templateLoadingStatus = 'loading';
+    showLoadingState();
     sendTemplateSelectedAnalyticsEvent($scope.selectedTemplate.name);
     $scope.templateCreator = spaceTemplateCreator.getCreator($scope.spaceContext, {
       onItemSuccess: itemDone,
@@ -74,10 +84,10 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   }
 
   function createTemplate(template) {
+    dialogView = 'spaceTemplateQueue';
     contentTypeToDisplayFieldMap = contentTypeToDisplayFieldMap || mapDisplayFields(template.contentTypes);
     $scope.templateCreator.create(template)
     .then(function () {
-      templateLoadingStatus = 'finished';
       dismissDialog();
     })
     .catch(function (data) {
@@ -85,7 +95,7 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
         retryAttempts++;
         createTemplate(data.template);
       } else {
-        templateLoadingStatus = 'failed';
+        $scope.templateCreationFailed = true;
         _.each(data.errors, function (error) {
           analytics.track('Created Errored Space Template', {
             entityType: error.entityType,

@@ -54,9 +54,4 @@ angular.module('contentful').controller('SpaceController', ['$scope', '$injector
     $scope.$broadcast.apply($scope, arguments);
   };
 
-  $scope.$on('spaceCreated', function () {
-    $scope.entityCreationController.firstContentType();
-  });
-
-
 }]);

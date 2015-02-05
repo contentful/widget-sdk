@@ -20,6 +20,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var ReloadNotification = $injector.get('ReloadNotification');
   var $controller        = $injector.get('$controller');
   var $window            = $injector.get('$window');
+  var $timeout           = $injector.get('$timeout');
 
   $controller('TrialWatchController', {$scope: $scope});
 
@@ -267,6 +268,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   function initClient() {
     $scope.performTokenLookup()
     .then(function () {
+      showOnboardingIfNecessary();
       analytics.login($scope.user);
     }, ReloadNotification.gatekeeperErrorHandler);
 
@@ -298,6 +300,22 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
   function clickedSpaceSwitcher() {
     analytics.track('Clicked Space-Switcher');
+  }
+
+  function showOnboardingIfNecessary() {
+    var now = moment();
+    var created = moment($scope.user.sys.createdAt);
+    var age = now.diff(created, 'days');
+    var seenOnboarding = $.cookies.get('seenOnboarding');
+    if (age < 7 && !seenOnboarding && _.isEmpty($scope.spaces)) {
+      $.cookies.set('seenOnboarding', true, {
+        expiresAt: moment().add('y', 1).toDate()
+      });
+      $timeout(function () {
+        analytics.track('Viewed Onboarding');
+        showSpaceTemplatesModal();
+      }, 750);
+    }
   }
 
   function hideTabBar() {
@@ -413,14 +431,30 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function showCreateSpaceDialog(organizationId) {
+    analytics.track('Clicked Create-Space');
+    showSpaceTemplatesModal(organizationId);
+  }
+
+  function showSpaceTemplatesModal(organizationId) {
     var scope = $scope.$new();
     setOrganizationsOnScope(scope, organizationId);
+    analytics.track('Viewed Space Template Selection Modal');
     modalDialog.open({
-      scope: scope,
-      template: 'create_space_dialog',
-      ignoreEnter: true
-    });
-    analytics.track('Clicked Create-Space');
+      title: 'Space templates',
+      template: 'space_templates_dialog',
+      ignoreEnter: true,
+      ignoreEsc: true,
+      noBackgroundClose: true,
+      scope: $scope
+    })
+    .promise
+    .then(function (template) {
+      if(template){
+        newTemplateInfoDialog(template.name);
+        refreshContentTypes();
+      }
+    })
+    .catch(refreshContentTypes);
   }
 
   function setOrganizationsOnScope(scope, organizationId){
@@ -434,5 +468,24 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     }
   }
 
+  function refreshContentTypes() {
+    $timeout(function () {
+      $scope.spaceContext.refreshContentTypes();
+    }, 1000);
+  }
+
+  function newTemplateInfoDialog(templateName) {
+    analytics.track('Created Successful Space Template');
+    $rootScope.$broadcast('templateWasCreated');
+    if(!$.cookies.get('seenSpaceTemplateInfoDialog')){
+      $scope.newContentTemplateName = templateName;
+      $timeout(function () {
+        modalDialog.open({
+          template: 'space_templates_post_dialog',
+          scope: $scope
+        });
+      }, 1500);
+    }
+  }
 
 }]);
