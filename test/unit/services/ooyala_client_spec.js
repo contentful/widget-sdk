@@ -45,7 +45,7 @@ describe('Ooyala Client', function () {
       it('uses the client adapter to execute a API request', function() {
         expect(ooyalaClient.clientAdapter.request).toHaveBeenCalledWith({
           method   : 'POST',
-          endpoint : '/integrations/ooyala/v2/players',
+          path     : '/integrations/ooyala/v2/players',
           payload  : 'random stuff',
           headers  : {'X-Contentful-Organization' : 'ORG-ID'}
         });
@@ -122,7 +122,7 @@ describe('Ooyala Client', function () {
     describe('#assets', function() {
       callHelperMethod('assets', 'query');
 
-      it('calls the #request method using the assets endpoint and the parameter as a querystring', function() {
+      it('calls the #request method using the assets path and the parameter as a querystring', function() {
         expect(ooyalaClient.request).toHaveBeenCalledWith('GET', baseUrl + '/v2/assets?query');
       });
     });
@@ -130,7 +130,7 @@ describe('Ooyala Client', function () {
     describe('#raw', function() {
       callHelperMethod('raw', '/raw');
 
-      it('calls the #request method using the paramater as the ooyala endpoint', function() {
+      it('calls the #request method using the paramater as the ooyala path', function() {
         expect(ooyalaClient.request).toHaveBeenCalledWith('GET', baseUrl + '/raw');
       });
     });
@@ -138,7 +138,7 @@ describe('Ooyala Client', function () {
     describe('#asset', function() {
       callHelperMethod('asset', 1);
 
-      it('calls the #request method using the assets endpoint and the asset id', function() {
+      it('calls the #request method using the assets path and the asset id', function() {
         expect(ooyalaClient.request).toHaveBeenCalledWith('GET', baseUrl + '/v2/assets/1');
       });
     });
