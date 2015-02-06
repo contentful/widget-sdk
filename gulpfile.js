@@ -30,6 +30,7 @@ var stylus      = require('gulp-stylus');
 var uglify      = require('gulp-uglify');
 
 var env = process.env.UI_ENV || 'development';
+var gitRevision;
 var settings      = _.omit(require('./config/environment.json'), 'fog');
 var s3credentials = require('./config/environment.json').fog.s3;
 
@@ -172,7 +173,7 @@ function bundleBrowserify(browserify) {
 
 gulp.task('git-revision', function(cb){
   exec('git log -1 --pretty=format:%H', function(err, sha){
-    settings.git_revision = sha;
+    gitRevision = sha;
     cb(err);
   });
 });
@@ -182,7 +183,8 @@ gulp.task('components', ['git-revision'], function () {
     .pipe(gulpif('**/environment.js',
       replace([
         { regex: 'env: .+',      replace: 'env: \''+env+'\','},
-        { regex: 'settings: .+', replace: 'settings: '+JSON.stringify(settings)}
+        { regex: 'settings: .+', replace: 'settings: '+JSON.stringify(settings)},
+        { regex: 'GULP_GIT_REVISION', replace: gitRevision}
       ])))
     .pipe(sourceMaps.init())
     .pipe(concat('components.js'))
@@ -342,7 +344,7 @@ gulp.task('rev-index', function(){
 
 gulp.task('revision', ['git-revision'], function(){
   var stream = source('revision.json');
-  stream.write(JSON.stringify({revision: settings.git_revision}));
+  stream.write(JSON.stringify({revision: gitRevision}));
   return stream.pipe(gulp.dest('build'));
 });
 

@@ -3,6 +3,7 @@
 angular.module('contentful/environment', []).constant('environment', {
   env: 'development',
   settings: {filepicker: {}, aviary: {}, google: {}, contentful: {}}
+  gitRevision: 'GULP_GIT_REVISION'
 }).config(['environment', function (environment) {
   var s = environment.settings;
 

@@ -9,7 +9,7 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
   function onServiceReady() {
     if($window.Bugsnag){
       setUserInfo();
-      $window.Bugsnag.appVersion = environment.settings.git_revision;
+      $window.Bugsnag.appVersion = environment.gitRevision;
     }
   }
 
