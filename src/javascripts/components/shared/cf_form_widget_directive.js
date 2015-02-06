@@ -3,7 +3,7 @@
 angular.module('contentful').directive('cfFormWidget', function() {
   return {
     restrict: 'E',
-    controller: function($scope) {
+    controller: ['$scope', function($scope) {
       $scope.$watch('widget.field', function (field) {
         $scope.field = field;
       });
@@ -19,6 +19,6 @@ angular.module('contentful').directive('cfFormWidget', function() {
       $scope.$watch('widget.rendersHelpText', function (rendersHelpText) {
         $scope.showHelpText = !rendersHelpText;
       });
-    }
+    }]
   };
 });
