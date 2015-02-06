@@ -66,7 +66,8 @@
     "test": "xvfb-run node_modules/karma/bin/karma start --single-run --browsers SlimerJS --reporters dots",
     "hint": "jshint src/javascripts test/unit test/integration",
     "cloc": "cloc --read-lang-def .cloc.def src",
-    "clean": "rm -rf bower_components node_modules"
+    "clean": "rm -rf bower_components node_modules",
+    "build": "node_modules/bower/bin/bower install && node_modules/gulp/bin/gulp.js build"
   },
   "repository": {
     "type": "git",

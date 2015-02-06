@@ -29,8 +29,8 @@ var sourceMaps  = require('gulp-sourcemaps');
 var stylus      = require('gulp-stylus');
 var uglify      = require('gulp-uglify');
 
-var env = process.env.UI_ENV || 'development';
 var gitRevision;
+var packaging     = false;
 var settings      = _.omit(require('./config/environment.json'), 'fog');
 var s3credentials = require('./config/environment.json').fog.s3;
 
@@ -106,9 +106,9 @@ gulp.task('copy-images', function () {
 });
 
 gulp.task('index', function(){
-  return gulp.src('src/index.html')
-    .pipe(replace( { regex: '<!-- releaseStage -->', replace: '<script>window.Bugsnag.releaseStage = "'+env+'";</script>'}))
-    .pipe(gulp.dest('./public'));
+  gulp.src('src/index.html')
+    .pipe(replace({regex: 'window.CF_CONFIG =.*', replace: 'window.CF_CONFIG = '+JSON.stringify(settings)+';'}))
+    .pipe(gulp.dest('public'));
 });
 
 gulp.task('templates', function () {
@@ -181,11 +181,7 @@ gulp.task('git-revision', function(cb){
 gulp.task('components', ['git-revision'], function () {
   return gulp.src(src.components)
     .pipe(gulpif('**/environment.js',
-      replace([
-        { regex: 'env: .+',      replace: 'env: \''+env+'\','},
-        { regex: 'settings: .+', replace: 'settings: '+JSON.stringify(settings)},
-        { regex: 'GULP_GIT_REVISION', replace: gitRevision}
-      ])))
+      replace({ regex: 'GULP_GIT_REVISION', replace: gitRevision})))
     .pipe(sourceMaps.init())
     .pipe(concat('components.js'))
     .pipe(sourceMaps.write({sourceRoot: '/components'}))
@@ -295,7 +291,7 @@ gulp.task('rev-dynamic', function(){
       'build/static-manifest.json', {
         mode: 'replace',
         verbose: false,
-        prefix: '//'+settings.asset_host+'/'
+        prefix: '/'
       }))
     .pipe(sourceMaps.write())
     .pipe(gulp.dest('build'))
@@ -330,7 +326,7 @@ gulp.task('rev-index', function(){
     require('./build/static-manifest.json'),
     require('./build/dynamic-manifest.json')
   );
-  return gulp.src('public/index.html')
+  return gulp.src(packaging ? 'src/index.html' : 'public/index.html')
     .pipe(fingerprint(manifest, { prefix: '//'+settings.asset_host+'/'}))
     .pipe(inject(
       gulp.src('app/application.min-*.js', {read: false, cwd: 'build'}),
@@ -391,6 +387,10 @@ gulp.task('build', function(done){
   );
 });
 
+gulp.task('package', function(done){
+  packaging = true;
+  runSequence('build', done);
+});
 
 function errorHandler(label) {
   return function handleError(e) {

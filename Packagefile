@@ -5,47 +5,47 @@ set -e
 umask 0022
 
 package_name="cf-user-interface"
-version=$(date '+%s')
-version=${version:1}
+version="0.$(date '+%s')-g$(git log -1 --pretty=format:%h)"
+# strip first character from version
+#version=${version:1}
 
 if [ -z "$BUILD_ROOT" ]; then
   BUILD_ROOT=$(mktemp -d -t user-interface.XXXX.$version);
   echo "Warning: BUILD_ROOT was not set. building package in $BUILD_ROOT"
 fi
 
-package_dest=$BUILD_ROOT/opt/contentful/$package_name
-mkdir -p $package_dest
+# We will regret this!
+#node_version=$(jq -r '.dist?.nodeVersion? // "v0.10.31"' package.json)
+node_version="v0.10.33"
+node_tarball="node-${node_version}-linux-x64.tar.gz"
+#node_checksum=$(grep $node_tarball $node_checksum_file)
+node_checksum="4eba69caf7368d7f388700eb02996f85b06f457a  node-v0.10.33-linux-x64.tar.gz"
 
-ref=$(cat .git/HEAD | cut -s -d/ -f3)
-if [ -z "$ref" ]; then
-  ref=$(git ls-remote --heads origin | grep $(git log -1 --pretty=format:%H) | cut -d/ -s -f3)
-fi
-case "$ref" in
-  "staging")
-    export UI_ENV="staging"
-    ;;
-  "production")
-    export UI_ENV="production"
-    ;;
-  *)
-    export UI_ENV=$ref
-esac
 
-export SRC=$(pwd) #Needed?
+PACKAGE_ROOT=$BUILD_ROOT/opt/contentful/$package_name
+mkdir -p $PACKAGE_ROOT
 
-pushd app/assets/commonjs_modules/user_interface
-npm install --production
-popd
-
+wget -nv http://nodejs.org/dist/${node_version}/${node_tarball}
+sha1sum --strict -c <(echo "$node_checksum")
+tar xz --strip-components=1 -f $node_tarball
+rm $node_tarball
+export PATH="$(pwd)/bin:$PATH"
+npm install -g --prefix $(pwd) npm@~1.4.28
 npm install --production
 node_modules/bower/bin/bower install
 
-node_modules/.bin/gulp build
+node_modules/.bin/gulp package
 
-rsync -avz build/ $package_dest
+pushd $PACKAGE_ROOT
+  mkdir build bin
+popd
+
+rsync -avz build/. $PACKAGE_ROOT/build/.
+cp -p bin/process_hosts $PACKAGE_ROOT/bin
 
 fpm -t deb -s dir \
   -n $package_name \
   --version $version \
+  --exclude '**/.nfs*' \
   -C $BUILD_ROOT \
-  .
+  opt

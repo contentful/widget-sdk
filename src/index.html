@@ -18,14 +18,14 @@
   <style id='disable-outlines'></style>
   <style id='chrome-temp-fix'></style>
   <script src='//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js' data-apikey='b253f10d5d0184a99e1773cec7b726e8'></script>
+  <script id="cf-config">
+    window.CF_CONFIG = {};
+    window.CF_ENV = 'development';
+  </script>
   <script>
     //<![CDATA[
-      window.Bugsnag.releaseStage = "development";
-      window.Bugsnag.notifyReleaseStages = [
-        //'development',
-        'staging',
-        'production'
-      ];
+      window.Bugsnag.notifyReleaseStages = ['staging', 'production'];
+      window.Bugsnag.releaseStage = window.CF_ENV;
 
       if (top != self) { top.location.replace(self.location.href); }
       // FIXME this is a temporary fix for a weird positioning issue that manifests only in Chrome versions below Chrome 38
@@ -35,7 +35,6 @@
       }
     //]]>
   </script>
-  <!-- releaseStage -->
 </head>
 <body class='cf-clear-outlines' ng-app='contentful/app'>
   <div class='client ng-hide' ng-controller='ClientController' ng-init='initClient()' ng-show='user'>
