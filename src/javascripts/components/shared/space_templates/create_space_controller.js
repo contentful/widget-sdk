@@ -2,6 +2,7 @@
 
 angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope', '$injector', function CreateSpaceDialogController($scope, $injector) {
     var $rootScope   = $injector.get('$rootScope');
+    var $timeout     = $injector.get('$timeout');
     var cfSpinner    = $injector.get('cfSpinner');
     var client       = $injector.get('client');
     var enforcements = $injector.get('enforcements');
@@ -45,8 +46,13 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
       var space = _.find($scope.spaces, function (space) {
         return space.getId() == newSpace.getId();
       });
+      var broadcastSpaceCreated = $scope.$on('$routeChangeSuccess', function () {
+        broadcastSpaceCreated();
+        $timeout(function () {
+          $scope.$emit('spaceCreated', space);
+        }, 500);
+      });
       $scope.selectSpace(space);
-      $rootScope.$broadcast('spaceCreated', space);
     }
 
     function handleSpaceCreationFailure(err){

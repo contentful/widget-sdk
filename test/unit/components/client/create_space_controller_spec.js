@@ -7,9 +7,11 @@ describe('Create Space Dialog controller', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'stop', 'then', 'getId'
+        'stop', 'then', 'getId', 'timeout'
       ]);
 
+      $provide.value('$timeout', stubs.timeout);
+      stubs.timeout.callsArg(0);
     });
     inject(function ($controller, $injector) {
       this.$rootScope = $injector.get('$rootScope');
@@ -28,6 +30,10 @@ describe('Create Space Dialog controller', function () {
       this.enforcements.determineEnforcement = sinon.stub();
 
       scope = this.$rootScope.$new();
+      scope.$emit = sinon.stub();
+      scope.$on = sinon.stub();
+      scope.$on.withArgs('$routeChangeSuccess').returns(angular.noop);
+
       org = {sys: {id: 'orgid'}};
       scope.organizations = [
         org
@@ -257,6 +263,7 @@ describe('Create Space Dialog controller', function () {
             scope.selectSpace = sinon.stub();
             scope.createSpace();
             scope.$apply();
+            scope.$on.yield();
           });
 
           it('broadcasts space creation request', function() {
@@ -296,7 +303,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('broadcasts space creation', function() {
-            expect(this.broadcastSpy).toBeCalledWith('spaceCreated');
+            expect(scope.$emit).toBeCalledWith('spaceCreated');
           });
         });
 
