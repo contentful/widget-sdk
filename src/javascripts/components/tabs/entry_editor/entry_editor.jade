@@ -41,30 +41,32 @@
     .l-form-row--no-label(ng-show="hasErrorOnFields")
       .l-form-controls
         .cf-form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
-    .l-form-row(ng-repeat="widget in widgets track by widget.id"
-        data-field-id="{{widget.field.id}}"
-        data-field-type="{{widget.field.type}}"
-        data-field-items-type="{{widget.field.items.type}}"
-        ng-class="{'data-field-array': (widget.field|isFieldLink), 'data-field-boolean': (widget.field|isFieldBoolean), 'data-field-string-list': (widget.field|isFieldStringList)}")
-      label(ng-if="widget.field")
-        | {{widget.field.name}}
-        sup(ng-show="widget.field.required") (required)
-      .l-form-controls(ng-if="widget.field")
-        .l-form-locale(ng-repeat="locale in widget.locales track by locale.code" ot-field-presence="['fields', widget.field.id, locale.code]" data-locale="{{locale.code}}")
+    cf-form-widget.l-form-row(ng-repeat="widget in widgets track by widget.id"
+        data-field-id="{{field.id}}"
+        data-field-type="{{field.type}}"
+        data-field-items-type="{{field.items.type}}"
+        ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
+      label(ng-if="field")
+        | {{field.name}} 
+        sup(ng-show="field.required") (required)
+      .l-form-controls(ng-if="field")
+        .l-form-locale(ng-repeat="locale in locales track by locale.code"
+            ot-field-presence="['fields', field.id, locale.code]"
+            data-locale="{{locale.code}}")
           cf-widget-renderer.l-field-editor(
-            ot-path="['fields', widget.field.id, locale.code]"
+            ot-path="['fields', field.id, locale.code]"
             cf-field-editor="entry.data.fields[field.id][locale.code]")
-          .locale-label(ng-show="widget.locales.length > 1") {{locale.name}}
+          .locale-label(ng-show="locales.length > 1") {{locale.name}}
           .field-collaborators
             ul.plain-list.field-list
               li.plain-list--item.avatar.cf-user(ng-repeat="link in fieldPresence.users track by link.sys.id"
                                  link="link" as="presenceUser"
                                  tooltip="{{presenceUser | userNameDisplay:user}}")
                 img(ng-src="{{presenceUser.avatarUrl}}")
-          .cf-form-box-error(cf-error-path="['fields', widget.field.id, locale.code,'*']")
-        .l-field-help-text.layout-field--help-text(ng-if="widget.widgetParams.helpText") {{widget.widgetParams.helpText}}
-        .cf-form-box-error(cf-error-path="['fields', widget.field.id]")
-      .l-form-controls(ng-if="!widget.field")
+          .cf-form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
+        .l-field-help-text.layout-field--help-text(ng-if="showHelpText") {{helpText}}
+        .cf-form-box-error(cf-error-path="['fields', field.id]")
+      .l-form-controls(ng-if="!field")
         cf-widget-renderer
 
 .tab-actions(ng-controller="EntryActionsController")

@@ -313,7 +313,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       });
       $timeout(function () {
         analytics.track('Viewed Onboarding');
-        showSpaceTemplatesModal();
+        $timeout(showSpaceTemplatesModal, 1500);
       }, 750);
     }
   }
@@ -450,8 +450,10 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     .promise
     .then(function (template) {
       if(template){
-        newTemplateInfoDialog(template.name);
-        refreshContentTypes();
+        analytics.track('Created Successful Space Template');
+        $rootScope.$broadcast('templateWasCreated');
+        refreshContentTypes()
+        .then(_.partial(newTemplateInfoDialog, template.name));
       }
     })
     .catch(refreshContentTypes);
@@ -469,14 +471,12 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function refreshContentTypes() {
-    $timeout(function () {
+    return $timeout(function () {
       $scope.spaceContext.refreshContentTypes();
     }, 1000);
   }
 
   function newTemplateInfoDialog(templateName) {
-    analytics.track('Created Successful Space Template');
-    $rootScope.$broadcast('templateWasCreated');
     if(!$.cookies.get('seenSpaceTemplateInfoDialog')){
       $scope.newContentTemplateName = templateName;
       $timeout(function () {
@@ -484,7 +484,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
           template: 'space_templates_post_dialog',
           scope: $scope
         });
-      }, 1500);
+      }, 1000);
     }
   }
 

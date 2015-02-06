@@ -37,8 +37,8 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   }
 
   function selectBlankTemplate() {
-    sendTemplateSelectedAnalyticsEvent('Blank');
-    $scope.dialog.cancel();
+    selectTemplate('Blank');
+    showSpaceCreation();
   }
 
   function selectTemplate(template) {
@@ -69,6 +69,9 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   function loadSelectedTemplate() {
     showLoadingState();
     sendTemplateSelectedAnalyticsEvent($scope.selectedTemplate.name);
+    if($scope.selectedTemplate === 'Blank'){
+      return dismissDialog();
+    }
     $scope.templateCreator = spaceTemplateCreator.getCreator($scope.spaceContext, {
       onItemSuccess: itemDone,
       onItemError: itemError

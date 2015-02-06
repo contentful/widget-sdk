@@ -1,7 +1,8 @@
 'use strict';
 angular.module('contentful').controller('FormWidgetsController', ['$scope', '$injector', function FormWidgetsController($scope, $injector){
-  var controller = this;
+  var controller        = this;
   var editingInterfaces = $injector.get('editingInterfaces');
+  var widgets           = $injector.get('widgets');
 
   $scope.$watch(getContentTypeFields,                    updateEditingInterface, true);
   $scope.$watch(getAvailableWidgets,                     updateWidgets, true);
@@ -12,7 +13,6 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
 
   this.editingInterface = null;
   this.updateWidgets = updateWidgets;
-  this.updateWidgetsFromInterface = updateWidgetsFromInterface;
 
   function updateEditingInterface() {
     if (controller.contentType) {
@@ -23,31 +23,49 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
     }
   }
 
+  /**
+   * Retrieve the widgets from the current editingInterface, build the
+   * form widgets, and add them to the scope.
+   */
   function updateWidgets() {
-    updateWidgetsFromInterface(controller.editingInterface);
-  }
-
-  function updateWidgetsFromInterface(interf) {
-    $scope.widgets = interf ? _(interf.data.widgets)
-      .filter(widgetIsVisible)
-      .map(addLocalesAndFieldToWidget)
-      .value() : [];
-  }
-
-  function addLocalesAndFieldToWidget(widget) {
-    if (widget.widgetType === 'field') {
-      var field = getFieldForWidget(widget);
-      var locales = _.union(getFieldLocales(field), getErrorLocales(field));
-      locales = _.uniq(locales, 'code');
-      return inherit(widget, {
-        field: getFieldForWidget(widget),
-        locales: locales
-      });
-    } else {
-      return inherit(widget, {
-        locales: [$scope.spaceContext.space.getDefaultLocale()]
-      });
+    if (!controller.editingInterface) {
+      $scope.widgets = [];
+      return;
     }
+
+    $scope.widgets = _(controller.editingInterface.data.widgets)
+      .filter(widgetIsVisible)
+      .map(buildWidget)
+      .value();
+  }
+
+  function buildWidget(widget) {
+    widget = Object.create(widget);
+
+    var template = widgets.widgetTemplate(widget.widgetId);
+    widget.template = template;
+
+    if (widget.widgetType === 'field')
+      buildFieldWidget(widget);
+    else
+      buildStaticWidget(widget);
+    return widget;
+  }
+
+  function buildFieldWidget(widget) {
+    var field = getFieldForWidget(widget);
+    var locales = _.union(getFieldLocales(field), getErrorLocales(field));
+    locales = _.uniq(locales, 'code');
+    widget.locales = locales;
+    widget.field = field;
+
+    var widgetDescription = widgets.get(widget.widgetId);
+    if (widgetDescription)
+      widget.rendersHelpText = widgetDescription.rendersHelpText;
+  }
+
+  function buildStaticWidget(widget) {
+    widget.locales = [$scope.spaceContext.space.getDefaultLocale()];
   }
 
   function getAvailableWidgets() {
@@ -87,13 +105,6 @@ angular.module('contentful').controller('FormWidgetsController', ['$scope', '$in
     return $scope.errorPaths && _.map($scope.errorPaths[field.id], function (code) {
       return _.find($scope.spaceContext.space.data.locales, {code: code});
     });
-  }
-
-  function inherit(source, extensions){
-    var Clone = function () { };
-    Clone.prototype = source;
-    var clone = new Clone();
-    return _.extend(clone, extensions);
   }
 
 }]);
