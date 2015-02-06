@@ -24,12 +24,12 @@ angular.module('contentful').factory('ooyalaClient', ['$injector', function($inj
       this.organizationId = organizationId;
     },
 
-    request: function(method, endpoint, payload) {
+    request: function(method, path, payload) {
       assert.defined(this.organizationId, 'Ooyala Client needs the current organization id');
 
       return this.clientAdapter.request({
         method   : method,
-        endpoint : endpoint,
+        path     : path,
         payload  : payload,
         headers: {
           'X-Contentful-Organization' : this.organizationId
@@ -38,22 +38,22 @@ angular.module('contentful').factory('ooyalaClient', ['$injector', function($inj
     },
 
     raw: function(url) {
-      return this._GET(this._endpoint(url));
+      return this._GET(this._composePath(url));
     },
 
     assets: function(query) {
-      return this._GET(this._endpoint('/v2/assets?' + query));
+      return this._GET(this._composePath('/v2/assets?' + query));
     },
 
     asset: function(assetId) {
-      return this._GET(this._endpoint('/v2/assets/' + assetId));
+      return this._GET(this._composePath('/v2/assets/' + assetId));
     },
 
     _GET: function(path) {
       return this.request('GET', path);
     },
 
-    _endpoint: function(path) {
+    _composePath: function(path) {
       return BASE_URL + path;
     },
 
