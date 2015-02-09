@@ -46,7 +46,7 @@ form.field-form(name="fieldForm")
   button.btn.btn--field-settings(ng-click="apiNameController.revert()" ng-if="apiNameController.isRevertable()")
     i.fa.fa-undo
   | 
-  .field-errors(ng-hide="noErrors")
+  .field-errors
     span(cf-error-path="['fields', index, 'name']")
       | Name: {{errors.messages.join(' ')}}
       br
