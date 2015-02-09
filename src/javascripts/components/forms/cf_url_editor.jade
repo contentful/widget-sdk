@@ -1,0 +1,11 @@
+input.form-control(
+  type="text"
+  ng-model="fieldData.value"
+  ot-bind-text
+  ot-subdoc
+  ng-disabled="!otEditable"
+)
+
+i.fa.fa-exclamation-triangle.is-url-invalid(ng-show="state === 'invalid'" tooltip="Invalid URL" tooltip-placement="bottom")
+i.fa.fa-spin.fa-spinner.is-preview-loading(ng-show="state === 'loading'" tooltip="Loading preview..." tooltip-placement="bottom")
+i.fa.fa-chain-broken.is-url-broken(ng-show="state === 'broken'" tooltip="Cannot access URL, possibly broken" tooltip-placement="bottom")
