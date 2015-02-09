@@ -35,7 +35,7 @@
   form.l-form(name="assetForm")
     .l-form-row--no-label(ng-show="hasErrorOnFields")
       .l-form-controls
-        .cf-form-box-error(cf-error-path="['fields']" ng-show="errorMessages.length > 0")
+        .cf-form-box-error(cf-error-path="['fields']")
     cf-form-widget.l-form-row(ng-repeat="widget in widgets track by widget.id"
         data-field-id="{{field.id}}"
         ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")

@@ -1,0 +1,5 @@
+.checkbox-list
+  label.checkbox-list__item(ng-repeat="ct in contentTypes")
+    input(type="checkbox" ng-model="ct.selected" ng-change="update()")
+    span.u-truncate {{ct.name}}
+.cf-form-inline-error(cf-error-path="errorPath")

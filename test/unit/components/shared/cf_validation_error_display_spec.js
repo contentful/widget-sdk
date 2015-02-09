@@ -37,13 +37,13 @@ describe('ErrorPathController', function () {
     it('should say "Length" for strings', function () {
       scope.entity.foo.bar = 'asdasd';
       scope.$apply();
-      expect(scope.errorMessages[0]).toBe('Length must be at least 10.');
+      expect(controller.messages[0]).toBe('Length must be at least 10.');
     });
 
     it('should say "Size" for strings', function () {
       scope.entity.foo.bar = [1,2,3];
       scope.$apply();
-      expect(scope.errorMessages[0]).toBe('Size must be at least 10.');
+      expect(controller.messages[0]).toBe('Size must be at least 10.');
     });
   });
 
@@ -65,7 +65,7 @@ describe('ErrorPathController', function () {
         min: 10
       });
       scope.$apply();
-      expect(scope.errorMessages[0]).toBe('Size must be at least 10.');
+      expect(controller.messages[0]).toBe('Size must be at least 10.');
     });
 
     it('should show sub-errors', function () {
@@ -75,7 +75,7 @@ describe('ErrorPathController', function () {
         min: 10
       });
       scope.$apply();
-      expect(scope.errorMessages[0]).toBe('Length must be at least 10.');
+      expect(controller.messages[0]).toBe('Length must be at least 10.');
     });
   });
 });

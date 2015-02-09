@@ -1,7 +1,10 @@
 'use strict';
 
-angular.module('contentful').controller('ErrorPathController', ['$scope', '$attrs', 'mimetype', function ErrorPathController($scope, $attrs, mimetype) {
-  $scope.errorMessages = [];
+angular.module('contentful')
+.controller('ErrorPathController', ['$scope', '$attrs', 'mimetype',
+function ErrorPathController($scope, $attrs, mimetype) {
+  var controller = this;
+  controller.messages = [];
 
   var messages = {
     linkMimetypeGroup: function (error) {
@@ -119,13 +122,13 @@ angular.module('contentful').controller('ErrorPathController', ['$scope', '$attr
       return matchesPath(pathPattern, error.path);
     });
 
-    $scope.errorMessages = fieldErrors.map(function(error) {
+    controller.messages = fieldErrors.map(function(error) {
       return getErrorMessage(error, $scope.validationResult.data, $scope.spaceContext);
     });
 
-    var hasErrors = 0 < fieldErrors.length;
-    $scope.hasErrors = hasErrors;
-    $scope.noErrors = !hasErrors;
+    var hasErrors = fieldErrors.length > 0;
+    controller.hasErrors = hasErrors;
+    controller.isEmpty = !hasErrors;
   });
 
   $scope.$on('$destroy', function () {

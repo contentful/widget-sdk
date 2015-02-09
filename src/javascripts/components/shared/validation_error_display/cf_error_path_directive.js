@@ -5,11 +5,12 @@
  * `validate` directive.
  *
  * The directive exposes the errors for the part of the document corresponding to
- * the `cf-error-path` attribute. It provides the following scope properties:
+ * the `cf-error-path` attribute. It provides the following properties
+ * on the `errors` controller:
  *
- * - `errorMessages` A list of error message strings.
- * - `hasErrors` True if and only if there are any error messages.
- * - `noErrors` Complement of `hasErrors`
+ * - `messages` A list of error message strings.
+ * - `isEmpty` True if and only if there are any error messages.
+ * - `hasErrors` Complement of `hasErrors`
  *
  * In addition it hides the element if there are no error messages.
  *
@@ -18,9 +19,10 @@ angular.module('contentful').directive('cfErrorPath', function () {
   return {
     scope: true,
     controller: 'ErrorPathController',
+    controllerAs: 'errors',
     require: 'cfErrorPath',
     link: function (scope, elem, attrs) {
-      scope.$watch('hasErrors', function (hasErrors) {
+      scope.$watch('errors.hasErrors', function (hasErrors) {
         if (!attrs['ngHide'] && !attrs['ngShow'])
           elem.toggle(hasErrors);
       });

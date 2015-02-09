@@ -48,10 +48,10 @@ form.field-form(name="fieldForm")
   | 
   .field-errors(ng-hide="noErrors")
     span(cf-error-path="['fields', index, 'name']")
-      | Name: {{errorMessages.join(' ')}}
+      | Name: {{errors.messages.join(' ')}}
       br
     span(cf-error-path="['fields', index, 'apiName']")
-      | Identifier: {{errorMessages.join(' ')}}
+      | Identifier: {{error.messages.join(' ')}}
 
 .dropdown-btn.fieldtype-dropdown(cf-dropdown)
   .dropdown-toggle.btn.btn--tertiary.cf-fieldtype-icon(cf-dropdown-toggle field="field" show-tooltip ng-disabled="published")
