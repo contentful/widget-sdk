@@ -110,6 +110,14 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
       this._log('Logged Server Warning', 'warning', message, metaData);
     },
 
+    logSharejsError: function (message, metaData) {
+      this._log('Logged ShareJS Error', 'error', message, metaData);
+    },
+
+    logSharejsWarn: function (message, metaData) {
+      this._log('Logged ShareJS Warning', 'warning', message, metaData);
+    },
+
     log: function (message, metaData) {
       this._log('Logged Info', 'info', message, metaData);
     },

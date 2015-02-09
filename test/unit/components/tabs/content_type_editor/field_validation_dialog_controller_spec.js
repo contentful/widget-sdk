@@ -5,8 +5,7 @@ describe('ContentType field validation dialog Controller', function () {
   beforeEach(function() {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'can', 'forField', 'type', 'at', 'remove', 'track', 'get', 'set', 'push',
-        'serverError'
+        'can', 'forField', 'type', 'at', 'remove', 'track', 'get', 'set', 'push'
       ]);
       $provide.value('can', stubs.can);
       $provide.value('availableValidations', {
@@ -278,7 +277,7 @@ describe('ContentType field validation dialog Controller', function () {
 
         it('shows server error', function() {
           expect(notification.error).toBeCalled();
-          expect(logger.logServerError).toBeCalled();
+          expect(logger.logSharejsWarn).toBeCalled();
         });
 
         it('does not update validations from doc', function() {
@@ -335,7 +334,7 @@ describe('ContentType field validation dialog Controller', function () {
 
         it('shows server error', function() {
           expect(notification.error).toBeCalled();
-          expect(logger.logServerError).toBeCalled();
+          expect(logger.logSharejsWarn).toBeCalled();
         });
 
         it('does not update validations from doc', function() {
