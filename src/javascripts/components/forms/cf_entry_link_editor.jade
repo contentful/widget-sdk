@@ -6,7 +6,7 @@
   entity-mime-type-group="linkMimetypeGroup"
   ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
 
-.l-field-help-text.link-editor__help-text(ng-if="helpText") {{helpText}}
+.l-field-help-text.widget-help-text(ng-if="helpText") {{helpText}}
 
 ul.linked-entities(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide="linkedEntities.length == 0")
   li.linked-entities__item(
