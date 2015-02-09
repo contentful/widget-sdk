@@ -162,8 +162,7 @@ describe('Kaltura Editor Controller Mixin', function() {
           expect(descriptor.id).toEqual(result.id);
           expect(descriptor.duration).toEqual(result.msDuration);
           expect(descriptor.name).toEqual(result.name);
-          expect(descriptor.thumbnail.external).toBeTruthy();
-          expect(descriptor.thumbnail.url).toEqual(result.thumbnailUrl);
+          expect(descriptor.thumbnailUrl).toEqual(result.thumbnailUrl);
         });
       });
     });
