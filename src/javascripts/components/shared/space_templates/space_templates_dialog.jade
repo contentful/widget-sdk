@@ -25,8 +25,10 @@
 
       .space-template__detail(ng-show="dialogViewIs('spaceTemplateList')")
         .space-template__detail-content(ng-show="!selectedTemplate")
-          p Please select template on the left see details.
-          p Need help? Read more about it in the Knowledge Database.
+          p Publish content in seconds with predefined templates for common scenarios.
+          p Or build your model from scratch by going with a blank template.
+          p.
+            Need help? Read more about it in the <a href="https://support.contentful.com/hc/en-us/articles/203905588-What-is-a-Space-template-" target="_blank">Knowledge Database</a>.
         .space-template__detail-content(ng-show="selectedTemplate")
           h1 {{selectedTemplate.name}}
           div(ng-bind-html="selectedTemplate.description | markdown")
