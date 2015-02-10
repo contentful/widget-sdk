@@ -4,10 +4,9 @@ angular.module('contentful').factory('OoyalaSearch', ['$injector', function($inj
   var ooyalaClient        = $injector.get('ooyalaClient');
   var OoyalaQuery         = $injector.get('OoyalaQuery');
 
-  var PAGE_TOKEN_REGEXP = /page_token=([^?]+)&?.*$/;
+  var PAGE_TOKEN_REGEXP = /page_token=([^&]+).*$/;
 
-  function OoyalaSearch(options) {
-    ooyalaClient.setOrganizationId(options.organizationId);
+  function OoyalaSearch() {
     this.query       = new OoyalaQuery();
     this.nextPageUrl = undefined;
   }

@@ -6,28 +6,19 @@ angular.module('contentful').directive('cfOoyalaPlayer', ['$injector', function(
 
   var ID_PREFIX = 'ooyala-player-';
 
-  var defaults = {
-    showTitle   : true,
-    playOnReady : false
-  };
-
   return {
     restrict   : 'E',
     scope      : true,
     template   : JST['cf_ooyala_player'](),
-    controller : 'cfOoyalaPlayerController',
-    controllerAs: 'ooyalaPlayerController',
-    link: function(scope, elem, attrs) {
-      var player, ooyala, options, playerId, assetId;
+    link: function(scope) {
+      var player, ooyala, playOnReady, playerId, assetId;
 
-      assetId  = scope.$eval(attrs.assetId);
-      playerId = scope.$eval(attrs.playerId);
-      options  = _.defaults( {
-        showTitle: scope.$eval(attrs.showTitle),
-        playOnReady: scope.$eval(attrs.playOnReady)
-      }, defaults);
+      scope.$eval(scope.videoWidgetPlayer.callbacks.onInit);
 
-      scope.showTitle     = options.showTitle;
+      assetId     = scope.videoWidgetPlayer.attrs.assetId;
+      playerId    = scope.videoWidgetPlayer.attrs.playerId;
+      playOnReady = scope.videoWidgetPlayer.attrs.embedded;
+
       scope.playerDOMId   = _.uniqueId(ID_PREFIX);
       scope.pause         = pause;
       scope.play          = play;
@@ -37,9 +28,6 @@ angular.module('contentful').directive('cfOoyalaPlayer', ['$injector', function(
           ooyala = _ooyala_;
 
           createOoyalaPlayer();
-        })
-        .catch(function(){
-          scope.$eval(attrs.onLoadFailure);
         });
 
        function createOoyalaPlayer() {
@@ -67,14 +55,14 @@ angular.module('contentful').directive('cfOoyalaPlayer', ['$injector', function(
       function handlePlaybackReady() {
         scope.$apply(function(){
           scope.$emit('player:ready', {title: player.getTitle()});
-          scope.$eval(attrs.onReady);
+          scope.$eval(scope.videoWidgetPlayer.callbacks.onReady);
 
-          if (options.playOnReady) player.play();
+          if (playOnReady) player.play();
         });
       }
 
       function handlePlayFailed() {
-        scope.$apply(attrs.onFailedToPlayVideo);
+        scope.$apply(scope.videoWidgetPlayer.callbacks.onFailedToPlayVideo);
       }
     }
   };
