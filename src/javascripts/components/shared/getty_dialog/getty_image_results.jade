@@ -2,7 +2,7 @@
 
 .image-result(ng-repeat="image in imageResults track by image.id")
   .file-preview(cf-file-preview file="image.preview" preview-size="{{image.preview.baseDimSize}}")
-    .cf-thumbnail(file="image.thumb" size="{{image.thumb.baseDimSize}}" ng-click="showImageDetail(image.thumb)")
+    img.thumbnail(ng-src="{{image.thumb.url}}" ng-click="showImageDetail(image.thumb)")
   .getty-metadata(image="image.thumb")
 
 .loading(ng-hide="paginator.atLast()")
