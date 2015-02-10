@@ -190,7 +190,10 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('urlEditor', {
     fieldTypes: ['Symbol'],
     name: 'URL',
-    template: '<cf-url-editor class="widget-url-editor"></cf-url-editor><cf-embedly-preview></cf-embedly-preview>'
+    rendersHelpText: true,
+    template: '<cf-url-editor class="widget-url-editor"></cf-url-editor>' +
+              '<div class="l-field-help-text widget-help-text">{{helpText}}</div>' +
+              '<cf-embedly-preview></cf-embedly-preview>'
   });
 
   //toggle: {   NOT IMPLEMENTED
