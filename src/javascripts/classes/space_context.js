@@ -109,7 +109,7 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
             notification.warn(message);
           } else {
             notification.warn('Could not get published Content Types');
-            logger.logError('Could not get published Content Types', { data: err });
+            logger.logServerError('Could not get published Content Types', { error: err });
           }
           return $q.reject(err);
         })
