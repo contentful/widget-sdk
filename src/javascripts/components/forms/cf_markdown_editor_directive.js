@@ -131,10 +131,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
       scope.toggleItalic = function () { toggleWrapper('*', '\\*'); };
 
       scope.indent = function () {
-        var range = textarea.textrange('get');
-        if(!isLineStart(range)){
-          textarea.textrange('setcursor', range.start);
-        }
+        var range = lineRange();
         textarea.textrange('replace', mapLines(range.text, function (line) {
           return '  ' + line;
         }));
@@ -285,18 +282,6 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
         range.text = text.substr(range.start, range.length);
 
         return range;
-      }
-
-      function isLineStart(range) {
-        var position = range.position-1;
-        if(position > 0 && textarea.val()[position] === '\n') return true;
-        var chr;
-        while(position > 0 && (chr = textarea.val()[position])){
-          if(chr === ' ') position--;
-          else if(chr === '\n') return true;
-          else return false;
-        }
-        return false;
       }
 
       function triggerUpdateEvents() {
