@@ -10,10 +10,10 @@ vagrant_bootstrap.sh
 .vagrant
 run_vagrant_build.sh
 bower_components
-build
+build/
 
 public/index.html
-public/app/*
+public/app/
 
 webdrivercss
 webdrivercss.tar.gz
