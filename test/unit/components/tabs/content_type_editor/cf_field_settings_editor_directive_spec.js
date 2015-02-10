@@ -109,12 +109,6 @@ describe('The cfFieldSettingsEditor directive', function () {
     });
   });
 
-  it('hides field errors if no errors exist', function() {
-    scope.noErrors = true;
-    compileElement();
-    expect(container.find('.field-errors')).toBeNgHidden();
-  });
-
   describe('field details are active', function() {
     var details;
     beforeEach(function() {

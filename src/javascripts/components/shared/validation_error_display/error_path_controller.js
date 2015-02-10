@@ -1,74 +1,91 @@
 'use strict';
 
-angular.module('contentful').controller('ErrorPathController', ['$scope', '$attrs', 'mimetype', function ErrorPathController($scope, $attrs, mimetype) {
-  $scope.errorMessages = [];
+angular.module('contentful')
+.controller('ErrorPathController', ['$scope', '$attrs', 'mimetype',
+function ErrorPathController($scope, $attrs, mimetype) {
+  var controller = this;
+  controller.messages = [];
 
   var messages = {
-    linkMimetypeGroup: function (v) {
-      return 'Linked Asset file type must be ' + mimetype.getGroupNames()[v.mimetypeGroupName] + '.';
+    linkMimetypeGroup: function (error) {
+      var mimetypeGroupName = mimetype.getGroupNames()[error.mimetypeGroupName];
+      return 'Linked Asset file type must be ' + mimetypeGroupName + '.';
     },
-    linkContentType: function(v) {
-      var ct = $scope.spaceContext.getPublishedContentType(v.contentTypeId);
-      if (!ct) return 'Invalid Content Type';
-      return 'Linked Entry\'s Content Type must be ' + ct.getName() + '.';
-    },
-    size: function (v) {
-      var data = getData(v);
-      var type = _.isString(data) ? 'Length' : 'Size';
-      if (getEntityType(v) === 'ContentType' && v.path[0] === 'fields') type = 'Number of fields';
 
-      if (_.isNumber(v.min) && _.isNumber(v.max)) {
-        return type + ' must be between ' + v.min + ' and ' + v.max + '.';
-      } else if(_.isNumber(v.min)) {
-        return type + ' must be at least ' + v.min + '.';
+    linkContentType: function(error, _, spaceContext) {
+      var ct = spaceContext.getPublishedContentType(error.contentTypeId);
+      if (!ct)
+        return 'Invalid Content Type';
+      else
+        return 'Linked Entry\'s Content Type must be ' + ct.getName() + '.';
+    },
+
+    size: function (error, validatedData) {
+      var entityType = getEntityType(validatedData);
+      var data = dotty.get(validatedData, error.path);
+      var type = _.isString(data) ? 'Length' : 'Size';
+      if (entityType === 'ContentType' && error.path[0] === 'fields')
+        type = 'Number of fields';
+
+      if (_.isNumber(error.min) && _.isNumber(error.max)) {
+        return type + ' must be between ' + error.min + ' and ' + error.max + '.';
+      } else if(_.isNumber(error.min)) {
+        return type + ' must be at least ' + error.min + '.';
       } else {
-        return type + ' must be at most ' + v.max + '.';
+        return type + ' must be at most ' + error.max + '.';
       }
     },
-    range: function (v) {
-      if (_.isNumber(v.min) && _.isNumber(v.max)) {
-        return 'Must be between ' + v.min + ' and ' + v.max + '.';
-      } else if(_.isNumber(v.min)) {
-        return 'Must be at least ' + v.min + '.';
+
+    range: function (error) {
+      if (_.isNumber(error.min) && _.isNumber(error.max)) {
+        return 'Must be between ' + error.min + ' and ' + error.max + '.';
+      } else if(_.isNumber(error.min)) {
+        return 'Must be at least ' + error.min + '.';
       } else {
-        return 'Must be at most ' + v.max + '.';
+        return 'Must be at most ' + error.max + '.';
       }
     },
-    regexp: function (v) {
-      if (v.path[1] === 'file' && v.path[3] === 'url') {
+
+    regexp: function (error) {
+      if (error.path[1] === 'file' && error.path[3] === 'url') {
         return 'Has an invalid url';
       } else {
         return 'Has an invalid format.';
       }
     },
-    'in': function (v) {
-      return 'Must be one of ' + v.expected.join(', ') + '.';
+
+    'in': function (error) {
+      return 'Must be one of ' + error.expected.join(', ') + '.';
     },
-    required: function(v) {
-      if (v.path.length == 1 && v.path[0] == 'fields') {
+
+    required: function(error) {
+      if (error.path.length == 1 && error.path[0] == 'fields') {
         return 'All fields are empty. Please fill out some fields.';
-      } else if (v.path.length == 4 && v.path[1] == 'file' && v.path[3] == 'url') {
+      } else if (error.path.length == 4 && error.path[1] == 'file' && error.path[3] == 'url') {
         return 'Cannot publish until processing has finished.';
       } else {
         return 'Required';
       }
     },
-    type: function(v) {
-      if (v.details && (v.type == 'Validation' || v.type == 'Text')) {
-        return v.details;
-      } else if (v.type.match(/^aeio/i)) {
-        return 'Must be an ' + v.type + '.';
+
+    type: function(error) {
+      if (error.details && (error.type == 'Validation' || error.type == 'Text')) {
+        return error.details;
+      } else if (error.type.match(/^aeio/i)) {
+        return 'Must be an ' + error.type + '.';
       } else {
-        return 'Must be a ' + v.type + '.';
+        return 'Must be a ' + error.type + '.';
       }
     },
+
     uniqueFieldIds: function () {
       return 'Field ID must be unique';
     },
-    unknown: function (v) {
-      if (v.path.length == 3 && v.path[0] == 'fields') {
+
+    unknown: function (error) {
+      if (error.path.length == 3 && error.path[0] == 'fields') {
         return 'This field is not localized and should not contain a value.';
-      } else if (v.path.length == 2 && v.path[0] == 'fields') {
+      } else if (error.path.length == 2 && error.path[0] == 'fields') {
         return 'Unknown field.';
       } else {
         return 'Unkown property.';
@@ -76,52 +93,46 @@ angular.module('contentful').controller('ErrorPathController', ['$scope', '$attr
     }
   };
 
-  function toErrorMessage(error) {
-    if (!messages[error.name]) return 'Error: ' + error.name;
-    return messages[error.name](error);
+  function defaultMessage(error) {
+    return 'Error: ' + error.name;
   }
 
-  var NO_DATA = {};
+  function getErrorMessage(error, validatedData, spaceContext) {
+    var getMessage = messages[error.name] || defaultMessage;
+    return getMessage(error, validatedData, spaceContext);
+  }
 
-  function getEntityType(/*error*/) {
-    var object = $scope.validationResult.data;
+  function getEntityType(object) {
     return object && object.sys && object.sys.type;
   }
 
-  function getData(error) {
-    var object = $scope.validationResult.data;
-    var path = error.path.concat();
-    while (path.length > 0) {
-      var pathSeg = path.shift();
-      if (_.isObject(object) && object.hasOwnProperty(pathSeg)) {
-        object = object[pathSeg];
-      } else {
-        return NO_DATA;
-      }
-    }
-    return object;
-  }
-
-  function matches(errorPath, path) {
-    if (path[path.length-1] === '*') {
-      var prefixLen = path.length - 1;
-      return _.isEqual(errorPath.slice(0, prefixLen), path.slice(0, prefixLen));
+  function matchesPath(pattern, target) {
+    var prefixLen = pattern.length - 1;
+    if (pattern[prefixLen] === '*') {
+      return _.isEqual(target.slice(0, prefixLen), pattern.slice(0, prefixLen));
     } else {
-      return _.isEqual(errorPath, path);
+      return _.isEqual(target, pattern);
     }
   }
 
-  var unwatch = $scope.$watch('validationResult.errors', function(errors) {
-    var path = $scope.$eval($attrs.cfErrorPath);
+  var unwatchValidationErrors = $scope.$watch('validationResult.errors', function(errors) {
+    var pathPattern = $scope.$eval($attrs.cfErrorPath);
 
     var fieldErrors = _.filter(errors, function(error) {
-      return matches(error.path, path);
+      return matchesPath(pathPattern, error.path);
     });
-    $scope.errorMessages = fieldErrors.map(toErrorMessage);
+
+    controller.messages = fieldErrors.map(function(error) {
+      return getErrorMessage(error, $scope.validationResult.data, $scope.spaceContext);
+    });
+
+    var hasErrors = fieldErrors.length > 0;
+    controller.hasErrors = hasErrors;
+    controller.isEmpty = !hasErrors;
   });
 
   $scope.$on('$destroy', function () {
-    unwatch();
-    unwatch = null;
+    unwatchValidationErrors();
+    unwatchValidationErrors = null;
   });
 }]);
