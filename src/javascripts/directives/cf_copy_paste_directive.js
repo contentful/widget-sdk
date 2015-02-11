@@ -5,7 +5,7 @@ angular.module('contentful').directive('cfCopyPaste', ['$injector', function($in
   var environment = $injector.get('environment');
   var $window = $injector.get('$window');
   ZeroClipboard.config({
-    moviePath: '/app/ZeroClipboard.swf',
+    moviePath: '//' + environment.settings.asset_host + '/app/ZeroClipboard.swf',
     forceHandCursor: true,
     allowScriptAccess: 'always',
     useNoCache: true,

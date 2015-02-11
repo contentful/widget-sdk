@@ -171,6 +171,12 @@ filters.filter('truncateMiddle', function () {
   };
 });
 
+filters.filter('prefixAssetHost', ['environment', function(environment){
+  return function (path) {
+    return '//' + environment.settings.asset_host + path;
+  };
+}]);
+
 filters.filter('markdown', ['marked', '$sanitize', function (marked, $sanitize) {
   var renderer = new marked.Renderer();
   return function (source) {

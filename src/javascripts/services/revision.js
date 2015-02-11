@@ -24,7 +24,7 @@ angular.module('contentful').factory('revision', ['$rootScope', '$http', '$q', '
       then(function (response) {
         if(response && response.data &&
            response.data.git_revision &&
-           response.data.git_revision !== environment.settings.git_revision){
+           response.data.git_revision !== environment.gitRevision){
           return $q.reject('APP_REVISION_CHANGED');
         }
       }).

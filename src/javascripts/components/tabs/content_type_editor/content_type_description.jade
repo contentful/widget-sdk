@@ -10,7 +10,7 @@ ng-switch(on="type.value.type")
       li Blog post title
       li Product descriptions
       li Article bodies
-    img(src="/app/images/field_type/text.png")
+    img(ng-src="{{::'/app/images/field_type/text.png'|prefixAssetHost}}")
 
   div(ng-switch-when="Symbol")
     h3 Short token of text
@@ -22,7 +22,7 @@ ng-switch(on="type.value.type")
       li Tag
       li Postal code
       li Phone number
-    img(src="/app/images/field_type/symbol.png")
+    img(ng-src="{{::'/app/images/field_type/symbol.png'|prefixAssetHost}}")
 
   div(ng-switch-when="Integer")
     h3 Number without decimals
@@ -33,7 +33,7 @@ ng-switch(on="type.value.type")
       li Priority
       li Calorie count
       li Age
-    img(src="/app/images/field_type/integer.png")
+    img(ng-src="{{::'/app/images/field_type/integer.png'|prefixAssetHost}}")
 
   div(ng-switch-when="Number")
     h3 Number with decimals
@@ -43,7 +43,7 @@ ng-switch(on="type.value.type")
     ul
       li Weights
       li Temperatures
-    img(src="/app/images/field_type/floating.png")
+    img(ng-src="{{::'/app/images/field_type/floating.png'|prefixAssetHost}}")
 
   div(ng-switch-when="Boolean")
     h3 Boolean value
@@ -53,7 +53,7 @@ ng-switch(on="type.value.type")
     ul
       li Open
       li Vegetarian menu
-    img(src="/app/images/field_type/boolean.png")
+    img(ng-src="{{::'/app/images/field_type/boolean.png'|prefixAssetHost}}")
 
   div(ng-switch-when="Date")
     h3 Date with time of day
@@ -64,7 +64,7 @@ ng-switch(on="type.value.type")
     ul
       li Event start time
       li Holiday date
-    img(src="/app/images/field_type/date.png")
+    img(ng-src="{{::'/app/images/field_type/date.png'|prefixAssetHost}}")
 
   div(ng-switch-when="Location")
     h3 Geographical coordinates
@@ -73,7 +73,7 @@ ng-switch(on="type.value.type")
       The latitude and longitude of any place. Locations can be added by entering their coordinates or by searching the location directly on a map.
     ul
       li Geographical location of a venue
-    img(src="/app/images/field_type/location.png")
+    img(ng-src="{{::'/app/images/field_type/location.png'|prefixAssetHost}}")
 
   div(ng-switch-when="Object")
     h3 Embedded JSON object
@@ -82,7 +82,7 @@ ng-switch(on="type.value.type")
       Add an arbitrary JSON structure that you can write and read through the API.
     ul
       li Custom data from another system
-    img(src="/app/images/field_type/jsonobject.png")
+    img(ng-src="{{::'/app/images/field_type/jsonobject.png'|prefixAssetHost}}")
 
   div(ng-switch-when="Link")
     div(ng-show="type.value.linkType == 'Entry'")
@@ -92,7 +92,7 @@ ng-switch(on="type.value.type")
       ul
         li Author
         li Category
-      img(src="/app/images/field_type/linktoentry.png")
+      img(ng-src="{{::'/app/images/field_type/linktoentry.png'|prefixAssetHost}}")
 
     div(ng-show="type.value.linkType == 'Asset'")
       h3 Link to an Asset
@@ -102,7 +102,7 @@ ng-switch(on="type.value.type")
         li Image
         li Attachment
         li Media of any kind
-      img(src="/app/images/field_type/linktoasset.png")
+      img(ng-src="{{::'/app/images/field_type/linktoasset.png'|prefixAssetHost}}")
 
   div(ng-switch-when="Array")
     div(ng-show="type.value.items.type == 'Link' && type.value.items.linkType == 'Entry'")
@@ -112,7 +112,7 @@ ng-switch(on="type.value.type")
       ul
         li Multiple authors
         li Multiple categories
-      img(src="/app/images/field_type/linkstoentries.png")
+      img(ng-src="{{::'/app/images/field_type/linkstoentries.png'|prefixAssetHost}}")
 
     div(ng-show="type.value.items.type == 'Link' && type.value.items.linkType == 'Asset'")
       h3 Links to multiple Assets
@@ -122,7 +122,7 @@ ng-switch(on="type.value.type")
         li Multiple images
         li Multiple attachments
         li Multiple media files of any kind
-      img(src="/app/images/field_type/linkstoassets.png")
+      img(ng-src="{{::'/app/images/field_type/linkstoassets.png'|prefixAssetHost}}")
 
     div(ng-show="type.value.items.type == 'Symbol'")
       h3 List of multiple Symbols
@@ -130,4 +130,4 @@ ng-switch(on="type.value.type")
         Create a lists of multiple Symbols. It works like an individual Symbol but allows you to add more than one Symbol.
       ul
         li Multiple tags of a blog post
-      img(src="/app/images/field_type/list.png")
+      img(ng-src="{{::'/app/images/field_type/list.png'|prefixAssetHost}}")

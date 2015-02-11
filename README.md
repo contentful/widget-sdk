@@ -29,6 +29,22 @@ That'll put all required files into the `/build` directory.
 
 To serve those, run `gulp serve-production` instead of `gulp serve`
 
+### Package builds
+
+To build what the package bot generates, run `gulp package`.
+This will
+
+* not process the `index.html` to include correct hosts for the current
+  environment
+* not replace the sourceMap url in the `application.min.js` to point to
+  the correct app host
+
+The main observable difference in development will be that a `package`
+run will not include `CF_ENV` and `CF_CONFIG` in the `index.html`,
+whereas a `build` run will.
+
+This task is only really intended to be used in the package-bot.
+
 ### Client library development
 
 If you are working on the client library and want to rapidly iterate and

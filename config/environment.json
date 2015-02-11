@@ -27,23 +27,8 @@
   "aviary": {
     "api_key": "cc79d8ec6cacbf11"
   },
-  "fog": {
-    "s3": {
-      "options": {
-        "provider": "AWS",
-        "aws_access_key_id": "AKIAJX4BNHAICVWQI4HA",
-        "aws_secret_access_key": "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",
-        "region": "us-east-1"
-      },
-      "asset_sync": {
-        "bucket": "static.cdnorigin.joistio.com",
-        "region": "us-east-1"
-      }
-    }
-  },
   "segment_io": "uwr64jkg06",
   "totango": "SP-6959-01",
-  "git_revision": "OVERRIDE_FROM_CONFIG_JSON",
   "google" : {
     "gapi_key" : "AIzaSyAJi3XBLmzo1lOzZ0RncjVQWVlF_wkC4ow"
   }
