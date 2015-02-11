@@ -89,6 +89,16 @@
     | 
     button.btn.btn--secondary.archive(type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry") Unarchive
     | 
+
+    .dropdown-btn(cf-dropdown="revertActions" ng-show="canUpdate() && (canRevertToPublishedState() || canRevertToPreviousState())")
+      button.btn.btn--tertiary(cf-dropdown-toggle="revertActions")
+        i.fa.fa-caret-up.button-icon-right
+        | Revert...
+      .dropdown-menu.revert-actions__dropdown-menu(cf-dropdown-menu="revertActions" position="topcenter")
+        ul.dropdown-menu-list
+          li.dropdown-menu-item(type="button" ng-show="canRevertToPublishedState()" ng-click="revertToPublishedState()" dropdown-close) Revert to published version ({{publishedAt}})
+          li.dropdown-menu-item(type="button" ng-show="canRevertToPreviousState()" ng-click="revertToPreviousState()" dropdown-close) Discard my changes ({{updatedAt}})
+
     button.btn.btn--secondary.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry") Unpublish
     | 
     button.btn.btn--primary.publish(type="submit" ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Entry") {{publishButtonLabel()}}

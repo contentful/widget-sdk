@@ -11,6 +11,7 @@ describe('Entity Actions Controller', function () {
       scope = $rootScope.$new();
       scope.permissionController = { can: sinon.stub() };
       scope.entity = {};
+      scope.entity.getVersion = sinon.stub().returns(123);
 
       createController = function(methodOverrides) {
         controller = $controller('EntityActionsController', {
