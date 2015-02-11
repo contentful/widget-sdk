@@ -69,7 +69,7 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   function loadSelectedTemplate() {
     showLoadingState();
     sendTemplateSelectedAnalyticsEvent($scope.selectedTemplate.name);
-    if($scope.selectedTemplate === 'Blank'){
+    if($scope.selectedTemplate.name === 'Blank'){
       return dismissDialog();
     }
     $scope.templateCreator = spaceTemplateCreator.getCreator($scope.spaceContext, {
