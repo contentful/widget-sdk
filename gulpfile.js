@@ -2,6 +2,7 @@
 
 var _           = require('lodash-node/modern');
 var Promise     = require('promise');
+var awspublish  = require('gulp-awspublish');
 var browserify  = require('browserify');
 var clean       = require('gulp-clean');
 var concat      = require('gulp-concat');
@@ -31,6 +32,7 @@ var uglify      = require('gulp-uglify');
 var gitRevision;
 var packaging     = false;
 var settings      = _.omit(require('./config/environment.json'), 'fog');
+var s3credentials = require('./config/environment.json').fog.s3;
 
 var src = {
   templates:   'src/javascripts/**/*.jade',
@@ -340,6 +342,25 @@ gulp.task('revision', ['git-revision'], function(){
   var stream = source('revision.json');
   stream.write(JSON.stringify({revision: gitRevision}));
   return stream.pipe(gulp.dest('build'));
+});
+
+gulp.task('aws-publish', function(){
+  var publisher = awspublish.create({
+    key:    s3credentials.options.aws_access_key_id,
+    secret: s3credentials.options.aws_secret_access_key,
+    bucket: s3credentials.asset_sync.bucket,
+    region: s3credentials.asset_sync.region,
+  });
+
+  return gulp.src(['build/**', '!**/*.js.map'])
+    .pipe(gulpif('index.html',
+       publisher.publish({
+         'Cache-Control': 'no-cache, no-store, must-revalidate, max-age=0'
+       }, {force: true}),
+       publisher.publish({
+         'Cache-Control': 'max-age=315360000, public'
+       }, {force: true})))
+    .pipe(awspublish.reporter());
 });
 
 gulp.task('prod', function(done){
