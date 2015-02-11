@@ -37,7 +37,7 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   }
 
   function selectBlankTemplate() {
-    selectTemplate('Blank');
+    selectTemplate({name: 'Blank'});
     showSpaceCreation();
   }
 
