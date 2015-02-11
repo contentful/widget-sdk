@@ -22,6 +22,21 @@ Not watched are the `user_interface` module and all the vendor stuff
 (stylesheets and scripts). If you update one of those, run `gulp all`
 again.
 
+## Styleguide
+
+The styleguide is generated automatically when running `gulp serve` and
+is served by gulp at `/styleguide`.
+
+If you wish to generate it manually, you can run `gulp
+generate-styleguide` and then check `public/styleguide`
+
+If you wish to publish the styleguide, run `gulp publish-styleguide`,
+which will generate the styleguide and publish it to the `gh-pages`
+branch which will make it available at [http://contentful.github.io/user_interface/](http://contentful.github.io/user_interface/).
+
+Don't forget to provide an appropriate commit message outlining the
+changes.
+
 ### Production builds
 
 To build the production version of the assets, run `gulp build`.
