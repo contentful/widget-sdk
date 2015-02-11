@@ -54,12 +54,14 @@
     "contentful-client": "~11.0.1"
   },
   "devDependencies": {
+    "gulp-run": "^1.6.6",
     "karma": "~0.12.21",
     "karma-chrome-launcher": "~0.1.4",
     "karma-jasmine": "~0.2.0",
     "karma-osx-reporter": "~0.1.0",
     "karma-slimerjs-launcher": "^0.1.2",
     "karma-story-reporter": "~0.2.2",
+    "kss": "^2.0.1",
     "watchify": "2.1.x"
   },
   "scripts": {

@@ -28,6 +28,7 @@ var source      = require('vinyl-source-stream');
 var sourceMaps  = require('gulp-sourcemaps');
 var stylus      = require('gulp-stylus');
 var uglify      = require('gulp-uglify');
+var run         = require('gulp-run');
 
 var env = process.env.UI_ENV || 'development';
 var config = require('./config/environment.json');
@@ -90,6 +91,10 @@ var src = {
   mainStylesheets: [
     'src/stylesheets/main.styl',
     'src/stylesheets/ie9.css'
+  ],
+  styleguideTemplate: 'src/stylesheets/styleguide_template/*',
+  styleguideStylesheets: [
+    'src/stylesheets/styleguide_template/public/custom.styl'
   ]
 };
 
@@ -198,7 +203,27 @@ gulp.task('vendor_stylesheets', function () {
 });
 
 gulp.task('stylesheets', function () {
-  return gulp.src(src.mainStylesheets)
+  return buildStylus(src.mainStylesheets, './public/app');
+});
+
+gulp.task('styleguide-stylesheets', function () {
+  return buildStylus(src.styleguideStylesheets, './public/styleguide/public');
+});
+
+gulp.task('generate-styleguide', ['styleguide-stylesheets'], function () {
+  run('./node_modules/.bin/kss-node '+
+      '--source src/stylesheets '+
+      '--template src/stylesheets/styleguide_template '+
+      '--destination public/styleguide'
+     ).exec();
+});
+
+gulp.task('publish-styleguide', ['generate-styleguide'], function () {
+  run('./bin/publish-styleguide.sh').exec();
+});
+
+function buildStylus(sources, dest) {
+  return gulp.src(sources)
     .pipe(sourceMaps.init())
     .pipe(stylus({
       use: nib(),
@@ -206,10 +231,10 @@ gulp.task('stylesheets', function () {
     }))
     .on('error', errorHandler('Stylus'))
     .pipe(sourceMaps.write({sourceRoot: '/stylesheets'}))
-    .pipe(gulp.dest('./public/app'));
-});
+    .pipe(gulp.dest(dest));
+}
 
-gulp.task('all', ['index', 'templates', 'vendor-js', 'vendored-js-non-essential', 'user_interface', 'components', 'copy-images', 'copy-static', 'stylesheets', 'vendor_stylesheets']);
+gulp.task('all', ['index', 'templates', 'vendor-js', 'vendored-js-non-essential', 'user_interface', 'components', 'copy-images', 'copy-static', 'stylesheets', 'vendor_stylesheets', 'generate-styleguide']);
 
 gulp.task('clean', function () {
   return gulp.src([
@@ -222,12 +247,16 @@ gulp.task('clean', function () {
 
 gulp.task('serve', function () {
   var builds = [];
-  watchTask('components');
-  watchTask('templates');
-  watchTask('stylesheets');
+  watchTask(src['components'], 'components');
+  watchTask(src['templates'], 'templates');
+  gulp.watch(src['stylesheets'], function () {
+    builds.push(new Promise(function (resolve) {
+      runSequence('stylesheets', 'generate-styleguide', resolve);
+    }));
+  });
 
-  function watchTask(taskName) {
-    gulp.watch(src[taskName], function () {
+  function watchTask(source, taskName) {
+    gulp.watch(source, function () {
       builds.push(new Promise(function (resolve) {
         runSequence(taskName, resolve);
       }));
@@ -236,6 +265,10 @@ gulp.task('serve', function () {
 
   var app = express();
   app.use(ecstatic({ root: __dirname + '/public', handleError: false, showDir: false }));
+  app.all('/styleguide/*', function (req, res) {
+    var index = fs.readFileSync('public/styleguide/index.html', 'utf8');
+    res.status(200).send(index);
+  });
   app.all('*', function(req, res) {
     var index = fs.readFileSync('public/index.html', 'utf8');
     Promise.all(builds).then(function () {
