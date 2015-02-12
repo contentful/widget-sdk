@@ -2,7 +2,7 @@
  * The following rules tweak the apperance
  * of the HTML5 player that ooyala provides
 */
-.widget-ooyala-player
+.ooyala-video-player__container
   video
     top: 0
     left: 0
@@ -16,14 +16,13 @@
   .oo_controls_wrap
     position: static !important
 
+.video-player--embedded
+  .ooyala-video-player__container
+    .oo_controls_wrap
+      display: none !important
 
-.widget-ooyala-player.video-player--embedded
-  .oo_controls_wrap
-    display: none !important
-
-  .oo_replay
-    width: 40px !important
-    height: 35px !important
-    top: 35px !important
-    left: 69px !important
-
+    .oo_replay
+      width: 40px !important
+      height: 35px !important
+      top: 35px !important
+      left: 69px !important

@@ -103,19 +103,5 @@ describe('cfThumbnailDirective', function () {
     });
   });
 
-  describe('external assets', function() {
-    beforeEach(function() {
-      asset.external = true;
-      createElement();
-    });
-
-    it('does not render icon', function() {
-      expect(element.find('i').get(0)).toBeUndefined();
-    });
-
-    it('uses the asset url property as the value for the src attribute', function() {
-      expect(src).toBe(asset.url);
-    });
-  });
 });
 

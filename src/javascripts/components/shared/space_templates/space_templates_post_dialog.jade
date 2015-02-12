@@ -1,25 +1,26 @@
-.space-template__post-dialog(ng-controller="SpaceTemplatesPostController" cf-numbered-tooltips)
-  h2 Your {{newContentTemplateName}} has been created
-  p Quick tips for getting started
-  ol.space-template__tips-list
-    li
-      .numbered-tooltip__label 1
-      .numbered-tooltip__description
-        p Tweak your entry structure by adding, removing or changing fields under the Content Model.
-    li
-      .numbered-tooltip__label 2
-      .numbered-tooltip__description
-        p As the entry list grows bigger, use the sidebar menu to filter the relevant items.
-    li
-      .numbered-tooltip__label 3
-      .numbered-tooltip__description
-        p Make the content available for delivery, add new API keys or revoke access under the API section.
-    li
-      .numbered-tooltip__label 4
-      .numbered-tooltip__description
-        p Customize the look of the entry list, by adding, removing or rearranging the columns.
-  p.centered
-    button.btn.btn--primary(ng-click="dialog.confirm()") Got it!
-  p.centered
-    a(href="#" ng-click="dismissInfoDialogForever()") In the future, hide this window
+.space-template__post-dialog-bg
+  .space-template__post-dialog(ng-controller="SpaceTemplatesPostController" cf-numbered-tooltips)
+    h2 Your {{newContentTemplateName}} has been created
+    p Quick tips for getting started
+    ol.space-template__tips-list
+      li
+        .numbered-tooltip__label 1
+        .numbered-tooltip__description
+          p Tweak your entry structure by adding, removing or changing fields under the Content Model.
+      li
+        .numbered-tooltip__label 2
+        .numbered-tooltip__description
+          p As the entry list grows bigger, use the sidebar menu to filter the relevant items.
+      li
+        .numbered-tooltip__label 3
+        .numbered-tooltip__description
+          p Make the content available for delivery, add new API keys or revoke access under the API section.
+      li
+        .numbered-tooltip__label 4
+        .numbered-tooltip__description
+          p Customize the look of the entry list, by adding, removing or rearranging the columns.
+    p.centered
+      button.btn.btn--primary(ng-click="dialog.confirm()") Got it!
+    p.centered
+      a(href="#" ng-click="dismissInfoDialogForever()") In the future, hide this window
 

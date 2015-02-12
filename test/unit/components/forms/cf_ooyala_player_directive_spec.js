@@ -4,7 +4,7 @@ describe('cfOoyalaPlayer Directive', function() {
   var directive, ooyalaPlayerLoaderDeferred, scope, $compile, $window;
 
   function compileDirective(scope) {
-    return  $compile('<cf-ooyala-player asset-id="assetId" player-id="playerId" on-failed-to-play-video="handleFailedToPlayVideo()" on-ready="handleReady()" on-load-failure="handleLoadFailure()"><cf-youtube-player>')(scope);
+    return  $compile('<cf-ooyala-player/>')(scope);
   }
 
   beforeEach(function() {
@@ -23,15 +23,25 @@ describe('cfOoyalaPlayer Directive', function() {
       ooyalaPlayerLoader.load.and.returnValue(ooyalaPlayerLoaderDeferred.promise);
 
       scope                         = $rootScope.$new();
-      scope.playerId                = 1;
-      scope.assetId                 = 2;
-      scope.handleFailedToPlayVideo = jasmine.createSpy();
-      scope.handleLoadFailure       = jasmine.createSpy();
-      scope.handleReady             = jasmine.createSpy();
+      scope.videoWidgetPlayer = {
+        callbacks: {
+          onInit              : jasmine.createSpy(),
+          onFailedToPlayVideo : jasmine.createSpy(),
+          onReady             : jasmine.createSpy()
+        },
+        attrs : {
+          assetId  : 2,
+          playerId : 1
+        }
+      };
 
       directive = compileDirective(scope);
       scope.$apply();
     });
+  });
+
+  it('calls the "onInit" callback', function() {
+    expect(scope.videoWidgetPlayer.callbacks.onInit).toHaveBeenCalled();
   });
 
   it('generates different DOM ids for each new player', function() {
@@ -39,17 +49,6 @@ describe('cfOoyalaPlayer Directive', function() {
     scope.$apply();
 
     expect(directive.scope().playerDOMId).not.toEqual(otherDirective.scope().playerDOMId);
-  });
-
-  describe('Ooyala player fails to load', function() {
-    beforeEach(function() {
-      ooyalaPlayerLoaderDeferred.reject();
-      scope.$apply();
-    });
-
-    it('executes the onLoadFailure callback', function() {
-      expect(scope.handleLoadFailure).toHaveBeenCalled();
-    });
   });
 
   describe('Ooyala player loads successfully', function() {
@@ -75,7 +74,7 @@ describe('cfOoyalaPlayer Directive', function() {
       });
 
       it('passes the asset id as the second argument', function(){
-        expect(args[1]).toEqual(scope.assetId);
+        expect(args[1]).toEqual(scope.videoWidgetPlayer.attrs.assetId);
       });
 
       it('passes an options object as the third argument', function() {
@@ -122,23 +121,23 @@ describe('cfOoyalaPlayer Directive', function() {
         });
 
         it('executes the onReady callback', function() {
-          expect(scope.handleReady).toHaveBeenCalled();
+          expect(scope.videoWidgetPlayer.callbacks.onReady).toHaveBeenCalled();
         });
       });
 
       it('executes the onPlayFailedToPlayVideo callback on playback error', function() {
         executeCallbackForEvent($window.OO.EVENTS.ERROR);
-        expect(scope.handleFailedToPlayVideo).toHaveBeenCalled();
+        expect(scope.videoWidgetPlayer.callbacks.onFailedToPlayVideo).toHaveBeenCalled();
       });
 
       it('executes the onPlayFailedToPlayVideo callback on stream play error', function() {
         executeCallbackForEvent($window.OO.EVENTS.STREAM_PLAY_FAILED);
-        expect(scope.handleFailedToPlayVideo).toHaveBeenCalled();
+        expect(scope.videoWidgetPlayer.callbacks.onFailedToPlayVideo).toHaveBeenCalled();
       });
 
       it('executes the onPlayFailedToPlayVideo callback on general error', function() {
         executeCallbackForEvent($window.OO.EVENTS.ERROR);
-        expect(scope.handleFailedToPlayVideo).toHaveBeenCalled();
+        expect(scope.videoWidgetPlayer.callbacks.onFailedToPlayVideo).toHaveBeenCalled();
       });
     });
   });

@@ -151,7 +151,7 @@ angular.module('contentful').controller('GettyDialogController', ['$scope', '$in
   }
 
   function pushExistingKey(res, val, key) {
-    if(val) res.push(stringUtils.capitalize(key));
+    if(val) res.push(stringUtils.capitalizeFirst(key));
     return res;
   }
 

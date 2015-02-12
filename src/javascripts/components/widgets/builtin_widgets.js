@@ -170,7 +170,7 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('ooyalaMultiAssetEditor',{
     fieldTypes: ['Symbols'],
     name: 'Ooyala (multiple assets)',
-    template: '<cf-ooyala-multi-asset-editor ng-model="fieldData.value" ot-bind-internal="selectedAssets"></cf-ooyala-editor>'
+    template: '<cf-ooyala-multi-video-editor ng-model="fieldData.value" ot-bind-internal="selectedAssets"></cf-ooyala-multi-video-editor>'
   });
   widgets.registerWidget('kalturaEditor',{
     fieldTypes: ['Symbol'],
@@ -190,7 +190,10 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('urlEditor', {
     fieldTypes: ['Symbol'],
     name: 'URL',
-    template: '<cf-url-editor class="widget-url-editor"></cf-url-editor><cf-embedly-preview></cf-embedly-preview>'
+    rendersHelpText: true,
+    template: '<cf-url-editor class="widget-url-editor"></cf-url-editor>' +
+              '<div class="l-field-help-text widget-help-text">{{helpText}}</div>' +
+              '<cf-embedly-preview></cf-embedly-preview>'
   });
 
   //toggle: {   NOT IMPLEMENTED

@@ -3,7 +3,7 @@ branches:
   only:
     - master
     - production
-    - gulp
+    - staging
 node_js:
   - "0.10"
 before_install:
@@ -21,10 +21,13 @@ before_script:
 script:
   - "npm test"
   - "npm run hint"
-after_script: >
-  if [ $TRAVIS_BRANCH == 'master' ]; then
-    travis-notify-geckoboard -a ed5192f6255498bc3fe120e1fd5f1983 -w 49147-989e9c70-495c-0131-abd5-22000a9e0b33
-  fi
+after_script:
+  - >
+    if [ $TRAVIS_BRANCH == 'master' ]; then
+      travis-notify-geckoboard -a ed5192f6255498bc3fe120e1fd5f1983 -w 49147-989e9c70-495c-0131-abd5-22000a9e0b33
+    fi
+  - bin/trigger-packagebot
+
 notifications:
   slack:
     secure: SFaWsbImfZvdyE/C+1MBxPmue91IyzesgKYTiZoBOi6XWDG+kctQ2DzcWMnNaEpYi7oFxwn1QPEc9bgM0aDsMIprnxr+SsfX7HpWfesoVCTJowT8oz9oeTC0OwYHlvr

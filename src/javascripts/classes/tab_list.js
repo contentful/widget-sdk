@@ -69,10 +69,10 @@ angular.module('contentful').factory('TabList', ['$rootScope', 'analytics', 'mod
       if (item.active()) {
         if (this.items.length == 1) {
           newCurrent = null;
-        } else if (0 < index) {
-          newCurrent = this.items[index-1];
         } else {
-          newCurrent = this.items[index+1];
+          newCurrent = _.findLast(this.items.slice(0, index), function (tab) { return !tab.hidden; })      ||
+            _.find(this.items.slice(index + 1, this.items.length), function (tab) { return !tab.hidden; }) ||
+            null;
         }
       }
 

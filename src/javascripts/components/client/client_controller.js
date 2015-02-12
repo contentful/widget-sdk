@@ -268,8 +268,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   function initClient() {
     $scope.performTokenLookup()
     .then(function () {
-      showOnboardingIfNecessary();
       analytics.login($scope.user);
+      showOnboardingIfNecessary();
     }, ReloadNotification.gatekeeperErrorHandler);
 
     setTimeout(newVersionCheck, 5000);

@@ -3,9 +3,10 @@
 angular.module('contentful').factory('kalturaLoader', ['$injector', function($injector){
 
   var angularLoad = $injector.get('angularLoad');
+  var environment = $injector.get('environment');
   var $q          = $injector.get('$q');
 
-  var SCRIPT_SRC = '/app/kaltura.js';
+  var SCRIPT_SRC = '//' + environment.settings.asset_host + '/app/kaltura.js';
   var defer      = $q.defer();
   var promise;
 

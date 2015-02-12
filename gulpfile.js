@@ -29,8 +29,10 @@ var sourceMaps  = require('gulp-sourcemaps');
 var stylus      = require('gulp-stylus');
 var uglify      = require('gulp-uglify');
 
-var env = process.env.UI_ENV || 'development';
-var config = require('./config/environment.json');
+var gitRevision;
+var packaging     = false;
+var settings      = _.omit(require('./config/environment.json'), 'fog');
+var s3credentials = require('./config/environment.json').fog.s3;
 
 var src = {
   templates:   'src/javascripts/**/*.jade',
@@ -104,9 +106,9 @@ gulp.task('copy-images', function () {
 });
 
 gulp.task('index', function(){
-  return gulp.src('src/index.html')
-    .pipe(replace( { regex: '<!-- releaseStage -->', replace: '<script>window.Bugsnag.releaseStage = "'+env+'";</script>'}))
-    .pipe(gulp.dest('./public'));
+  gulp.src('src/index.html')
+    .pipe(replace({regex: 'window.CF_CONFIG =.*', replace: 'window.CF_CONFIG = '+JSON.stringify(settings)+';'}))
+    .pipe(gulp.dest('public'));
 });
 
 gulp.task('templates', function () {
@@ -169,20 +171,17 @@ function bundleBrowserify(browserify) {
     .pipe(gulp.dest('./public/app/'));
 }
 
-gulp.task('config-revision', function(cb){
+gulp.task('git-revision', function(cb){
   exec('git log -1 --pretty=format:%H', function(err, sha){
-    config.git_revision = sha;
+    gitRevision = sha;
     cb(err);
   });
 });
 
-gulp.task('components', ['config-revision'], function () {
+gulp.task('components', ['git-revision'], function () {
   return gulp.src(src.components)
     .pipe(gulpif('**/environment.js',
-      replace([
-        { regex: 'env: .+',      replace: 'env: \''+env+'\','},
-        { regex: 'settings: .+', replace: 'settings: '+JSON.stringify(_.omit(config, 'fog'))}
-      ])))
+      replace({ regex: 'GULP_GIT_REVISION', replace: gitRevision})))
     .pipe(sourceMaps.init())
     .pipe(concat('components.js'))
     .pipe(sourceMaps.write({sourceRoot: '/components'}))
@@ -292,7 +291,7 @@ gulp.task('rev-dynamic', function(){
       'build/static-manifest.json', {
         mode: 'replace',
         verbose: false,
-        prefix: '//'+config.asset_host+'/'
+        prefix: '/'
       }))
     .pipe(sourceMaps.write())
     .pipe(gulp.dest('build'))
@@ -315,7 +314,7 @@ gulp.task('rev-app', function () {
     .pipe(rev())
     .pipe(sourceMaps.write('.', {
       sourceRoot: '/javascript',
-      sourceMappingURLPrefix: '//'+config.app_host+'/app/'
+      sourceMappingURLPrefix: '//'+settings.app_host+'/app/'
     }))
     .pipe(gulp.dest('build/app'))
     .pipe(rev.manifest({path: 'app-manifest.json'}))
@@ -327,30 +326,30 @@ gulp.task('rev-index', function(){
     require('./build/static-manifest.json'),
     require('./build/dynamic-manifest.json')
   );
-  return gulp.src('public/index.html')
-    .pipe(fingerprint(manifest, { prefix: '//'+config.asset_host+'/'}))
+  return gulp.src(packaging ? 'src/index.html' : 'public/index.html')
+    .pipe(fingerprint(manifest, { prefix: '//'+settings.asset_host+'/'}))
     .pipe(inject(
       gulp.src('app/application.min-*.js', {read: false, cwd: 'build'}),
       {
-        addPrefix: '//'+config.asset_host,
+        addPrefix: '//'+settings.asset_host,
         addRootSlash: false
       }
     ))
     .pipe(gulp.dest('build'));
 });
 
-gulp.task('revision', ['config-revision'], function(){
+gulp.task('revision', ['git-revision'], function(){
   var stream = source('revision.json');
-  stream.write(JSON.stringify({revision: config.git_revision}));
+  stream.write(JSON.stringify({revision: gitRevision}));
   return stream.pipe(gulp.dest('build'));
 });
 
 gulp.task('aws-publish', function(){
   var publisher = awspublish.create({
-    key:    config.fog.s3.options.aws_access_key_id,
-    secret: config.fog.s3.options.aws_secret_access_key,
-    bucket: config.fog.s3.asset_sync.bucket,
-    region: config.fog.s3.asset_sync.region,
+    key:    s3credentials.options.aws_access_key_id,
+    secret: s3credentials.options.aws_secret_access_key,
+    bucket: s3credentials.asset_sync.bucket,
+    region: s3credentials.asset_sync.region,
   });
 
   return gulp.src(['build/**', '!**/*.js.map'])
@@ -388,6 +387,10 @@ gulp.task('build', function(done){
   );
 });
 
+gulp.task('package', function(done){
+  packaging = true;
+  runSequence('build', done);
+});
 
 function errorHandler(label) {
   return function handleError(e) {

@@ -1,0 +1,31 @@
+#!/usr/bin/env ruby
+#encoding: UTF-8
+
+require 'json'
+
+config   = File.read('config/environment.json').gsub(/^\s+|\n/, '')
+env      = ENV['UI_ENV'] || 'development'
+settings = JSON.parse(config)
+
+configScript = <<-EOT
+  <script id="cf-config">
+    window.CF_CONFIG = #{config};
+    window.CF_ENV = "#{env}"
+  </script>
+  EOT
+
+APPJS = Dir["build/app/application.min-*.js"][0]
+INDEX = "build/index.html"
+
+appjs = File.read(APPJS, encoding: 'utf-8')
+appjs.gsub!('app.joistio.com:8888', settings['app_host'])
+File.open(APPJS, 'w') do |file|
+  file.write(appjs)
+end
+
+index = File.read(INDEX, encoding: 'utf-8')
+index.gsub!(/<script id="cf-config">.*?<\/script>/m, configScript)
+index.gsub!('static.joistio.com:8888', settings['asset_host'])
+File.open(INDEX, 'w') do |file|
+  file.write(index)
+end

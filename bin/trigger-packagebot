@@ -1,0 +1,13 @@
+#!/bin/bash
+set -v
+
+# abort if pull request
+if [ "$TRAVIS_PULL_REQUEST" != "false" ]; then exit 0; fi
+
+# abort if not staging or production
+if [[ ! "$TRAVIS_BRANCH" =~ (staging|production) ]]; then exit 0; fi
+
+curl -XPOST https://packages.quirely.com/builds -u "cfpb:$PACKAGEBOT_PASSWORD" -d "{
+  \"sha\":\"$TRAVIS_COMMIT\",
+  \"remote\":\"git@github.com:$TRAVIS_REPO_SLUG.git\"
+}"

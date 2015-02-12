@@ -7,9 +7,7 @@ describe('App version service', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.constant('environment', {
-        settings: {
-          git_revision: 'git_revision'
-        }
+        gitRevision: 'git_revision'
       });
     });
     inject(function (_revision_, _$httpBackend_, _$rootScope_) {
