@@ -210,7 +210,7 @@ gulp.task('styleguide-stylesheets', function () {
 gulp.task('generate-styleguide', ['styleguide-stylesheets'], function () {
   run('./node_modules/.bin/kss-node '+
       '--source src/stylesheets '+
-      '--template src/stylesheets/styleguide_template '+
+      '--template styleguide_template '+
       '--destination public/styleguide'
      ).exec();
 });
