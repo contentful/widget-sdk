@@ -209,8 +209,9 @@ gulp.task('styleguide-stylesheets', function () {
 
 gulp.task('generate-styleguide', ['styleguide-stylesheets'], function () {
   run('./node_modules/.bin/kss-node '+
-      '--source src/stylesheets '+
       '--template styleguide_template '+
+      '--helpers styleguide_template/helpers '+
+      '--source src/stylesheets '+
       '--destination public/styleguide'
      ).exec();
 });
