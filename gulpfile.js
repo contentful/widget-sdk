@@ -231,7 +231,7 @@ function buildStylus(sources, dest) {
     .pipe(gulp.dest(dest));
 }
 
-gulp.task('all', ['index', 'templates', 'vendor-js', 'vendored-js-non-essential', 'user_interface', 'components', 'copy-images', 'copy-static', 'stylesheets', 'vendor_stylesheets', 'generate-styleguide']);
+gulp.task('all', ['index', 'templates', 'vendor-js', 'vendored-js-non-essential', 'user_interface', 'components', 'copy-images', 'copy-static', 'stylesheets', 'vendor_stylesheets']);
 
 gulp.task('clean', function () {
   return gulp.src([
