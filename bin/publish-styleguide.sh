@@ -1,6 +1,6 @@
 #!/bin/bash
 # This script pushes the styleguide into the gh-pages branch
-set -e
+echo "Publishing styleguide"
 
 # get the gh-pages branch of the repo
 if [ ! -d styleguide ] ; then
@@ -12,7 +12,11 @@ cp -r public/styleguide/* styleguide/
 pushd styleguide
 git add .
 git commit -a
-git push origin gh-pages
+if [ $? -eq 1 ] ; then
+  echo "Nothing to update"
+else
+  git push origin gh-pages
+fi
 popd
 
 rm -rf styleguide
