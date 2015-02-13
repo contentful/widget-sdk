@@ -207,19 +207,6 @@ gulp.task('styleguide-stylesheets', function () {
   return buildStylus(src.styleguideStylesheets, './public/styleguide_custom');
 });
 
-gulp.task('generate-styleguide', ['styleguide-stylesheets'], function () {
-  run('./node_modules/.bin/kss-node '+
-      '--template styleguide_template '+
-      '--helpers styleguide_template/helpers '+
-      '--source src/stylesheets '+
-      '--destination public/styleguide'
-     ).exec();
-});
-
-gulp.task('publish-styleguide', ['generate-styleguide'], function () {
-  run('./bin/publish-styleguide.sh').exec();
-});
-
 function buildStylus(sources, dest) {
   return gulp.src(sources)
     .pipe(sourceMaps.init())
@@ -232,11 +219,21 @@ function buildStylus(sources, dest) {
     .pipe(gulp.dest(dest));
 }
 
+gulp.task('generate-styleguide', ['styleguide-stylesheets'], function (cb) {
+  run('kss-node '+
+      '--template styleguide_template '+
+      '--helpers styleguide_template/helpers '+
+      '--source src/stylesheets '+
+      '--destination public/styleguide'
+     ).exec(cb);
+});
+
 gulp.task('all', ['index', 'templates', 'vendor-js', 'vendored-js-non-essential', 'user_interface', 'components', 'copy-images', 'copy-static', 'stylesheets', 'vendor_stylesheets', 'generate-styleguide']);
 
 gulp.task('clean', function () {
   return gulp.src([
     './public/app',
+    './public/styleguide*',
     './build/*',
     './public/index.html'
   ], {read: false})

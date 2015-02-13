@@ -69,7 +69,8 @@
     "hint": "jshint src/javascripts test/unit test/integration",
     "cloc": "cloc --read-lang-def .cloc.def src",
     "clean": "rm -rf bower_components node_modules",
-    "build": "node_modules/bower/bin/bower install && node_modules/gulp/bin/gulp.js build"
+    "build": "node_modules/bower/bin/bower install && node_modules/gulp/bin/gulp.js build",
+    "publish-styleguide": "./bin/publish-styleguide.sh"
   },
   "repository": {
     "type": "git",
