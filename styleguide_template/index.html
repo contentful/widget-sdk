@@ -14,6 +14,7 @@
 
   <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic' rel='stylesheet' type='text/css'>
   <link rel="stylesheet" href="public/kss.css">
+  <link rel="stylesheet" href="public/prism.css">
   <link rel="stylesheet" href="../styleguide_custom/custom.css">
   <link rel="stylesheet" href="../app/main.css">
 </head>
@@ -130,7 +131,7 @@
       </div>
 
       <div class="kss-markup kss-style">
-        <pre class="prettyprint linenums lang-html"><code data-language="html">{{markup}}</code></pre>
+        <pre><code class="language-jade">{{markup}}</code></pre>
       </div>
     {{/if}}
 
@@ -145,10 +146,7 @@
 
 <!-- SCRIPTS -->
 <script src="public/kss.js"></script>
-<script src="public/prettify.js"></script>
-<script>
-  prettyPrint();
-</script>
+<script src="public/prism.js"></script>
 {{{scripts}}}
 
 <!-- Automatically generated using <a href="https://github.com/kss-node/kss-node">kss-node</a>. -->
