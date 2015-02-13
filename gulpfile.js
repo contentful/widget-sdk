@@ -92,7 +92,10 @@ var src = {
     'src/stylesheets/main.styl',
     'src/stylesheets/ie9.css'
   ],
-  styleguideTemplate: 'styleguide_template/*',
+  styleguideTemplate: [
+    'styleguide_template/*',
+    'styleguide_template/public/*'
+  ],
   styleguideStylesheets: [
     'styleguide_template/public/custom.styl'
   ]
@@ -240,7 +243,7 @@ gulp.task('clean', function () {
     .pipe(clean());
 });
 
-gulp.task('serve', function () {
+gulp.task('serve', ['generate-styleguide'], function () {
   var builds = [];
   watchTask(src['components'], 'components');
   watchTask(src['templates'], 'templates');
