@@ -35,7 +35,7 @@
   form.l-form(name="assetForm")
     .l-form-row--no-label(ng-show="hasErrorOnFields")
       .l-form-controls
-        .cf-form-box-error(cf-error-path="['fields']")
+        cf-error-list.form-box-error(cf-error-path="['fields']")
     cf-form-widget.l-form-row(ng-repeat="widget in widgets track by widget.id"
         data-field-id="{{field.id}}"
         ng-class="{'data-field-array': (field|isFieldLink), 'data-field-boolean': (field|isFieldBoolean), 'data-field-string-list': (field|isFieldStringList)}")
@@ -55,8 +55,8 @@
                                  link="link" as="presenceUser"
                                  tooltip="{{presenceUser | userNameDisplay:user}}")
                 img(ng-src="{{presenceUser.avatarUrl}}")
-          .cf-form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
-        .cf-form-box-error(cf-error-path="['fields', field.id]")
+          cf-error-list.form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
+        cf-error-list.form-box-error(cf-error-path="['fields', field.id]")
 
 .tab-actions(ng-controller="AssetActionsController")
   .button-set(cf-dropdown)

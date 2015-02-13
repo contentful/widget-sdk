@@ -40,7 +40,7 @@
   form.l-form(name="entryForm")
     .l-form-row--no-label(ng-show="hasErrorOnFields")
       .l-form-controls
-        .cf-form-box-error(cf-error-path="['fields']")
+        cf-error-list.form-box-error(cf-error-path="['fields']")
     cf-form-widget.l-form-row(ng-repeat="widget in widgets track by widget.id"
         data-field-id="{{field.id}}"
         data-field-type="{{field.type}}"
@@ -63,9 +63,9 @@
                                  link="link" as="presenceUser"
                                  tooltip="{{presenceUser | userNameDisplay:user}}")
                 img(ng-src="{{presenceUser.avatarUrl}}")
-          .cf-form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
+          cf-error-list.form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
         .l-field-help-text.widget-help-text(ng-if="showHelpText") {{helpText}}
-        .cf-form-box-error(cf-error-path="['fields', field.id]")
+        cf-error-list.form-box-error(cf-error-path="['fields', field.id]")
       .l-form-controls(ng-if="!field")
         cf-widget-renderer
 

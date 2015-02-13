@@ -51,7 +51,7 @@
                  placeholder="Content Type Name (e.g. Product)"
                  ng-model="contentType.data.name"
                  ot-bind-text)
-        .cf-form-box-error(cf-error-path="['name']")
+        cf-error-list.form-box-error(cf-error-path="['name']")
     .l-form-row
       label Description
       .l-form-controls(ot-path="['description']" ot-subdoc)
@@ -61,7 +61,7 @@
                     ng-disabled="!otEditable"
                     ng-model="contentType.data.description"
                     ot-bind-text)
-        .cf-form-box-error(cf-error-path="['description']")
+        cf-error-list.form-box-error(cf-error-path="['description']")
     .l-form-row
       label Fields
       .l-form-controls
@@ -84,7 +84,7 @@
             i.fa.fa-plus.button-icon
             | Add Field
           .dropdown-menu.type-menu(cf-dropdown-menu select-type="addField(type)")
-        .cf-form-box-error(cf-error-path="['fields']")
+        cf-error-list.form-box-error(cf-error-path="['fields']")
 .tab-actions(ng-controller="ContentTypeActionsController")
   .button-set(cf-dropdown)
     button.btn.btn--secondary.deactivate(type="button"
