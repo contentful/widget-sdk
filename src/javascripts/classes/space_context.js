@@ -105,11 +105,12 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
         }, function (err) {
           if (err === PromisedLoader.IN_PROGRESS) return;
           var message = dotty.get(err, 'body.message');
-          if(message)
+          if(message) {
             notification.warn(message);
-          else
+          } else {
             notification.warn('Could not get published Content Types');
-            logger.logError('Could not get published Content Types', { data: err });
+            logger.logServerError('Could not get published Content Types', { error: err });
+          }
           return $q.reject(err);
         })
         .catch(ReloadNotification.apiErrorHandler);

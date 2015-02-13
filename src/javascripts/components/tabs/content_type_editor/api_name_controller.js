@@ -39,7 +39,7 @@ angular.module('contentful').controller('ApiNameController', ['$scope', '$inject
       $scope.$apply(function (scope) {
         if (err) {
           scope.field.apiName = subdoc.get();
-          logger.logServerError('Error updating ID', {error: err });
+          logger.logSharejsWarn('Error updating apiName', {error: err });
           notification.error('Error updating ID');
           return;
         }

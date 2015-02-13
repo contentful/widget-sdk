@@ -4,7 +4,6 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
   var $parse            = $injector.get('$parse');
   var ShareJS           = $injector.get('ShareJS');
   var defer             = $injector.get('defer');
-  var logger            = $injector.get('logger');
   var isDiacriticalMark = $injector.get('isDiacriticalMark');
 
   return {
@@ -124,12 +123,13 @@ angular.module('contentful').directive('otBindText', ['$injector', function($inj
           value: text
         }, function(err) {
           if (err){
-            loggingData.err = err;
-            logger.logError('failure on makeAndAttach', {
-              data: loggingData
-            });
             scope.$apply(function(){
-              throw new Error('makeAndAttach mkpath failed');
+              var error = new Error('makeAndAttach mkpath failed');
+              error.metaData = {
+                data: loggingData,
+                error: err
+              };
+              throw error;
             });
           }
         });

@@ -81,7 +81,7 @@ describe('ListViewsController', function () {
       scope.$apply();
       expect(errorHandler).toBeCalled();
       expect(notification.error).toBeCalled();
-      expect(logger.logServerError).toBeCalled();
+      expect(logger.logServerWarn).toBeCalled();
     });
   });
 });

@@ -93,13 +93,13 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
 
   $scope.typeNameOr = function (or) {
     try {
-      var id = $scope.tab.params.view.contentTypeId;
+      var id = dotty.get($scope, 'tab.params.view.contentTypeId');
       if (!id) return or;
-      var ct = $scope.spaceContext.getPublishedContentType($scope.tab.params.view.contentTypeId);
+      var ct = $scope.spaceContext.getPublishedContentType(id);
       if (!ct) return or;
       return ct.getName();
     } catch (e) {
-      logger.logException(e, {contentTypeId: $scope.tab.params.view.contentTypeId, severity: 'warning'});
+      logger.logException(e, {data: {contentTypeId: id}});
       return or;
     }
   };

@@ -194,7 +194,7 @@ describe('Asset editor controller', function () {
 
       it('calls error notification', function() {
         expect(notification.error).toBeCalled();
-        expect(logger.logServerError).toBeCalled();
+        expect(logger.logServerWarn).toBeCalled();
       });
 
       it('emits file processing failure event', function() {

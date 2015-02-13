@@ -288,11 +288,14 @@ mocks.config(['$provide', function ($provide) {
 
   $provide.factory('logger', function(){
     return {
-      logException:    sinon.stub(),
-      logError:        sinon.stub(),
-      logServerError:  sinon.stub(),
-      logWarn:         sinon.stub(),
-      log:             sinon.stub()
+      logException:     sinon.stub(),
+      logError:         sinon.stub(),
+      logServerError:   sinon.stub(),
+      logServerWarn:    sinon.stub(),
+      logSharejsError:  sinon.stub(),
+      logSharejsWarn:   sinon.stub(),
+      logWarn:          sinon.stub(),
+      log:              sinon.stub()
     };
   });
 

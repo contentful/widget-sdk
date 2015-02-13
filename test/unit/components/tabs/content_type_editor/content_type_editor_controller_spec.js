@@ -294,7 +294,7 @@ describe('ContentTypeEditor Controller', function () {
       });
 
       it('fires server error notification', function () {
-        expect(logger.logServerError).toBeCalled();
+        expect(logger.logSharejsWarn).toBeCalled();
         expect(notification.error).toBeCalled();
       });
     });

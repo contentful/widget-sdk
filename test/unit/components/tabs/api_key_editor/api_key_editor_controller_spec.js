@@ -18,7 +18,7 @@ describe('API key editor controller', function () {
         'serverError',
         'warn',
         'broadcast',
-        'logServerError',
+        'logServerWarn',
         'createPreviewApiKey'
       ]);
       $provide.constant('environment', {
@@ -32,7 +32,7 @@ describe('API key editor controller', function () {
         serverError: stubs.serverError
       });
       $provide.value('logger', {
-        logServerError: stubs.logServerError
+        logServerWarn: stubs.logServerWarn
       });
     });
     inject(function (_$rootScope_, $controller, _$q_) {
@@ -160,8 +160,8 @@ describe('API key editor controller', function () {
     });
 
     it('error notification is shown', function () {
-      expect(stubs.logServerError).toBeCalled();
-      expect(stubs.logServerError.args[0][1]).toEqual({error: {}});
+      expect(stubs.logServerWarn).toBeCalled();
+      expect(stubs.logServerWarn.args[0][1]).toEqual({error: {}});
       expect(stubs.warn.args[0][0]).toEqual('"apiKeyName" could not be deleted');
     });
   });
@@ -215,8 +215,8 @@ describe('API key editor controller', function () {
     });
 
     it('error notification is shown', function () {
-      expect(stubs.logServerError).toBeCalled();
-      expect(stubs.logServerError.args[0][1]).toEqual({error: {}});
+      expect(stubs.logServerWarn).toBeCalled();
+      expect(stubs.logServerWarn.args[0][1]).toEqual({error: {}});
       expect(stubs.warn.args[0][0]).toEqual('"apiKeyName" could not be saved');
     });
   });

@@ -6,11 +6,7 @@ angular.module('contentful').factory('revision', ['$rootScope', '$http', '$q', '
         JSON.parse(response);
         return response;
       } catch(err){
-        logger.logError('Failure to parse revision.json', {
-          data: {
-            err: err
-          }
-        });
+        logger.logError('Failure to parse revision.json', { error: err });
       }
     }
     return response;

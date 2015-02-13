@@ -8,7 +8,7 @@ describe('Field Settings Editor Controller', function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'perType', 'fieldTypeParams', 'fieldIsPublished', 'open',
-        'at', 'set', 'get', 'serverError', 'modifiedContentType', 'remove'
+        'at', 'set', 'get', 'modifiedContentType', 'remove'
       ]);
 
       $provide.removeControllers('ApiNameController');
@@ -218,7 +218,7 @@ describe('Field Settings Editor Controller', function () {
         });
 
         it('shows error', function() {
-          expect(logger.logServerError).toBeCalled();
+          expect(logger.logSharejsWarn).toBeCalled();
           expect(notification.error).toBeCalled();
         });
       });
@@ -287,7 +287,7 @@ describe('Field Settings Editor Controller', function () {
         });
 
         it('shows error', function() {
-          expect(logger.logServerError).toBeCalled();
+          expect(logger.logSharejsWarn).toBeCalled();
           expect(notification.warn).toBeCalled();
         });
       });
