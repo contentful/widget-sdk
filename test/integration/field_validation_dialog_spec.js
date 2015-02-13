@@ -83,22 +83,33 @@ describe('validation dialog', function() {
     }
   });
 
+  function clickSave() {
+    dialog.domElement
+    .find('button:contains(Save)')
+    .click();
+  }
+
 
   describe('length validation', function() {
 
-    it('can be enabled and set', function() {
-      var settings = dialog.domElement.find('[aria-label=Length]');
-      expect(settings.find('.validation-controls').is(':hidden')).toBe(true);
+    function settings() {
+      return dialog.domElement.find('[aria-label="Length"]');
+    }
 
-      settings
+    it('can be enabled and set', function() {
+      expect(settings().find('.validation-controls').is(':hidden')).toBe(true);
+
+      settings()
       .find('[aria-label="Enable validation"]')
       .click();
-      expect(settings.find('.validation-controls').is(':hidden')).toBe(false);
+      expect(settings().find('.validation-controls').is(':hidden')).toBe(false);
 
-      var minInput = settings.find('[aria-label="Minimum size"]');
+      var minInput = settings().find('[aria-label="Minimum size"]');
       minInput.val('10').trigger('input');
-      var maxInput = settings.find('[aria-label="Maximum size"]');
+      var maxInput = settings().find('[aria-label="Maximum size"]');
       maxInput.val('20').trigger('input');
+
+      clickSave();
 
       expect(scope.field.validations)
       .toEqual([{size: {min: 10, max: 20}}]);
@@ -108,16 +119,20 @@ describe('validation dialog', function() {
 
     it('can be toggled', function() {
       expect(scope.field.validations).toBeUndefined();
-      var settings = dialog.domElement.find('[aria-label=Length]');
-      settings
+
+      settings()
       .find('[aria-label="Enable validation"]')
       .click();
+      clickSave();
+
       expect(scope.field.validations.length).toBe(1);
       expect(validationsDoc(scope).get().length).toBe(1);
 
-      settings
+      openDialog();
+      settings()
       .find('[aria-label="Disable validation"]')
       .click();
+      clickSave();
       expect(scope.field.validations).toEqual([]);
       expect(validationsDoc(scope).get()).toEqual([]);
     });
@@ -126,15 +141,15 @@ describe('validation dialog', function() {
       scope.field.validations = [{size: {min: 10, max: 20}}];
       openDialog();
 
-      var settings = dialog.domElement.find('[aria-label=Length]');
-      var minInput = settings.find('[aria-label="Minimum size"]');
+      var minInput = settings().find('[aria-label="Minimum size"]');
       expect(minInput.val()).toBe('10');
-      var maxInput = settings.find('[aria-label="Maximum size"]');
+      var maxInput = settings().find('[aria-label="Maximum size"]');
       expect(maxInput.val()).toBe('20');
 
-      settings
+      settings()
       .find('[aria-label="Disable validation"]')
       .click();
+      clickSave();
       expect(scope.field.validations).toEqual([]);
       expect(validationsDoc(scope).get()).toEqual([]);
     });
@@ -162,6 +177,8 @@ describe('validation dialog', function() {
       var maxValue = settings().find('[aria-label="Maximum value"]');
       maxValue.val('0.2').trigger('input');
 
+      clickSave();
+
       expect(scope.field.validations)
       .toEqual([{range: {min: -0.1, max: 0.2}}]);
       expect(validationsDoc(scope).get())
@@ -169,17 +186,19 @@ describe('validation dialog', function() {
     });
 
     it('it can be disabled', function() {
-      scope.field.validations = [{range: {min: 0.1, max: 0.2}}];
+      scope.field.validations = [{range: {min: -0.1, max: 0.2}}];
       openDialog();
 
-      var minValue = settings().find('[aria-label="Minimum value"]');
-      minValue.val('0.1').trigger('input');
-      var maxValue = settings().find('[aria-label="Maximum value"]');
-      maxValue.val('0.2').trigger('input');
+      var minInput = settings().find('[aria-label="Minimum value"]');
+      expect(minInput.val()).toBe('-0.1');
+      var maxInput = settings().find('[aria-label="Maximum value"]');
+      expect(maxInput.val()).toBe('0.2');
 
       settings()
       .find('[aria-label="Disable validation"]')
       .click();
+      clickSave();
+
       expect(scope.field.validations).toEqual([]);
       expect(validationsDoc(scope).get()).toEqual([]);
     });
@@ -201,6 +220,8 @@ describe('validation dialog', function() {
       settings
       .find('[aria-label="Regular Expression flags"]')
       .val('i').trigger('input');
+
+      clickSave();
 
       expect(scope.field.validations)
       .toEqual([{regexp: {pattern: 'foo|bar', flags: 'i'}}]);
@@ -228,13 +249,13 @@ describe('validation dialog', function() {
       .click();
 
       var valueInput = settings().find('[aria-label="Add a value"]');
-      valueInput.val('a value').trigger(enterKeypressEvent());
 
-      expect(scope.field.validations).toEqual([{in: ['a value']}]);
-      expect(validationsDoc(scope).get()).toEqual([{in: ['a value']}]);
+      valueInput.val('a value').trigger(enterKeypressEvent());
       expect(valueInput.val()).toBe('');
 
       valueInput.val('another value').trigger(enterKeypressEvent());
+
+      clickSave();
       expect(scope.field.validations).toEqual([{in: ['a value', 'another value']}]);
       expect(validationsDoc(scope).get()).toEqual([{in: ['a value', 'another value']}]);
     });
@@ -251,6 +272,8 @@ describe('validation dialog', function() {
       .val('a value').trigger(enterKeypressEvent());
 
       expect(notification.warn).toBeCalledWith('This value already exists on the list');
+
+      clickSave();
       expect(scope.field.validations).toEqual([{in: ['a value']}]);
       expect(validationsDoc(scope).get()).toEqual([{in: ['a value']}]);
     });
@@ -277,6 +300,7 @@ describe('validation dialog', function() {
       .find('[aria-label="Remove value"]')
       .click();
 
+      clickSave();
       expect(scope.field.validations).toEqual([{in: ['a value', 'even more value']}]);
       expect(validationsDoc(scope).get()).toEqual([{in: ['a value', 'even more value']}]);
     });
@@ -293,6 +317,7 @@ describe('validation dialog', function() {
         .find('[aria-label="Add a value"]')
         .val('12.34').trigger(enterKeypressEvent());
 
+        clickSave();
         expect(scope.field.validations).toEqual([{in: [12.34]}]);
       });
 
@@ -350,6 +375,7 @@ describe('validation dialog', function() {
       .find('label:contains("CT 3") input')
       .click();
 
+      clickSave();
       expect(scope.field.validations).toEqual([{linkContentType: ['2', '3']}]);
       expect(validationsDoc(scope).get()).toEqual([{linkContentType: ['2', '3']}]);
     });
@@ -380,6 +406,7 @@ describe('validation dialog', function() {
       .val('image')
       .trigger('change');
 
+      clickSave();
       expect(scope.field.validations).toEqual([{linkMimetypeGroup: 'image'}]);
       expect(validationsDoc(scope).get()).toEqual([{linkMimetypeGroup: 'image'}]);
     });

@@ -26,19 +26,20 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
   $scope.validations = _.map(availableFieldValidations, decorateValidation);
   updateValidationsFromField();
 
+  $scope.cancel = function() {
+    $scope.dialog.cancel();
+  };
 
-  /**
-   * Default update method. Maybe overwritten by child directives.
-   */
-  $scope.update = function() {
-    controller.update();
+  $scope.save = function() {
+    $scope.dialog.confirm();
+    controller.save();
   };
 
   /**
    * Write the scope validations to the OT Document and the Content
    * Type's field.
    */
-  controller.update = function() {
+  controller.save = function() {
     var validations =
       _($scope.validations).filter('enabled').map(extractDecoratedValidation).value();
 
@@ -68,7 +69,7 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
 
   function extractDecoratedValidation(validation) {
     var extracted = {};
-    extracted[validation.type] = validation.settings;
+    extracted[validation.type] = _.cloneDeep(validation.settings);
     return extracted;
   }
 
@@ -88,7 +89,7 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
       var enabledValidation = getFieldValidation(validation.type);
       if (enabledValidation) {
         validation.enabled = true;
-        validation.settings = enabledValidation.settings;
+        validation.settings = _.cloneDeep(enabledValidation.settings);
         validation.errorPath = validationListPath().concat([enabledValidation.index]);
       } else {
         validation.enabled = false;
@@ -104,6 +105,10 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
       return $scope.field.validations;
   }
 
+  /**
+   * Return the index and the settings for the validation of type
+   * `type` from `scope.field.validations`.
+   */
   function getFieldValidation(type) {
     var fieldValidations = getFieldValidations();
     var index = _.findIndex(fieldValidations, function(validation) {

@@ -25,6 +25,7 @@ $validation-indent = 30px
   user-select: none
 
 .validation-dialog__title
+  position: relative;
   em
     font-style: normal
     &:before
@@ -34,6 +35,15 @@ $validation-indent = 30px
   .cf-knowledge-base-icon
     margin-left: 0.3em
 
+
+.validation-dialog__actions
+  position: absolute
+  top: 0
+  bottom: 0
+  right: 0.9em
+
+  $display-flexbox()
+  align-items: center
 
 /**
  * @component .validation-settings
@@ -69,7 +79,8 @@ cf-validation-setting
   margin-bottom: 1.2em;
   margin-top: 0.2em;
 
-  .cf-form-inline-error
+  .form-inline-error
+    display: block
     font-size: 1em;
     padding-top: 0.8em;
 
@@ -139,7 +150,7 @@ $validation-values-width = 350px
   padding: 0 0 0 0.8em
   border-radius: 5px
   color: inherit
-  background: hsl(0,0%, 94%)
+  background: $gray-lighter
   cursor: move
   cursor: -webkit-grabbing
   cursor: -moz-grab

@@ -17,7 +17,6 @@ angular.module('contentful')
 
       $scope.update = function() {
         $scope.validation.settings = getSelectedIDs();
-        $scope.validationsController.update();
       };
 
       function decorateContentType(ct) {

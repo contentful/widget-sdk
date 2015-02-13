@@ -1,6 +1,6 @@
 .modal-background.validation-dialog
   .modal-dialog(ng-controller="ValidationDialogController as validationsController" cf-center-on=".modal-background")
-    .title.validation-dialog__title
+    header.title.validation-dialog__title
       | Validations for 
       em {{field.name}}
       | field 
@@ -9,7 +9,9 @@
         tooltip-container=".validation-dialog"
         analytics-event="content_type_validations"
         href="https://contentful.zendesk.com/hc/en-us/articles/200513248-What-are-validations-")
-    .modal-dialog-close-button(ng-click="dialog.cancel()")
+      .validation-dialog__actions.button-set
+        button.btn.btn--secondary(ng-click="cancel()") Cancel
+        button.btn.btn--primary(ng-click="save()") Save
 
     ul.validation-settings
       li(ng-repeat="validation in validations" aria-label="{{validation.name}}")

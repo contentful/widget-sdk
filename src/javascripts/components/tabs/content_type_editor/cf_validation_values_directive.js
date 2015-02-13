@@ -34,8 +34,8 @@ angular.module('contentful')
        */
       $scope.remove = function(index) {
         $scope.valueList.splice(index, 1);
-        $scope.update();
       };
+
 
       /**
        * Handles an 'Enter' keypress in order to add the current value
@@ -51,13 +51,11 @@ angular.module('contentful')
         }
       };
 
+
       /**
        * Options for `ui-sortable`.
        */
-      $scope.sortOptions = {
-        axis: 'y',
-        stop: $scope.update
-      };
+      $scope.sortOptions = { axis: 'y' };
 
 
       /**
@@ -102,7 +100,6 @@ angular.module('contentful')
           notification.warn('This value already exists on the list');
         } else {
           $scope.valueList.push(value);
-          $scope.update();
           return true;
         }
       }
