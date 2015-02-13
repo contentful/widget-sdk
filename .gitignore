@@ -12,9 +12,7 @@ run_vagrant_build.sh
 bower_components
 build/
 
-public/index.html
-public/app/
-public/styleguide/
+public/*
 
 webdrivercss
 webdrivercss.tar.gz

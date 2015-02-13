@@ -92,9 +92,9 @@ var src = {
     'src/stylesheets/main.styl',
     'src/stylesheets/ie9.css'
   ],
-  styleguideTemplate: 'src/stylesheets/styleguide_template/*',
+  styleguideTemplate: 'styleguide_template/*',
   styleguideStylesheets: [
-    'src/stylesheets/styleguide_template/public/custom.styl'
+    'styleguide_template/public/custom.styl'
   ]
 };
 
@@ -204,19 +204,7 @@ gulp.task('stylesheets', function () {
 });
 
 gulp.task('styleguide-stylesheets', function () {
-  return buildStylus(src.styleguideStylesheets, './public/styleguide/public');
-});
-
-gulp.task('generate-styleguide', ['styleguide-stylesheets'], function () {
-  run('./node_modules/.bin/kss-node '+
-      '--source src/stylesheets '+
-      '--template src/stylesheets/styleguide_template '+
-      '--destination public/styleguide'
-     ).exec();
-});
-
-gulp.task('publish-styleguide', ['generate-styleguide'], function () {
-  run('./bin/publish-styleguide.sh').exec();
+  return buildStylus(src.styleguideStylesheets, './public/styleguide_custom');
 });
 
 function buildStylus(sources, dest) {
@@ -231,11 +219,21 @@ function buildStylus(sources, dest) {
     .pipe(gulp.dest(dest));
 }
 
+gulp.task('generate-styleguide', ['styleguide-stylesheets'], function (cb) {
+  run('kss-node '+
+      '--template styleguide_template '+
+      '--helpers styleguide_template/helpers '+
+      '--source src/stylesheets '+
+      '--destination public/styleguide'
+     ).exec(cb);
+});
+
 gulp.task('all', ['index', 'templates', 'vendor-js', 'vendored-js-non-essential', 'user_interface', 'components', 'copy-images', 'copy-static', 'stylesheets', 'vendor_stylesheets']);
 
 gulp.task('clean', function () {
   return gulp.src([
     './public/app',
+    './public/styleguide*',
     './build/*',
     './public/index.html'
   ], {read: false})
@@ -246,6 +244,11 @@ gulp.task('serve', function () {
   var builds = [];
   watchTask(src['components'], 'components');
   watchTask(src['templates'], 'templates');
+  gulp.watch(src['styleguideTemplate'], function () {
+    builds.push(new Promise(function (resolve) {
+      runSequence('generate-styleguide', resolve);
+    }));
+  });
   gulp.watch(src['stylesheets'], function () {
     builds.push(new Promise(function (resolve) {
       runSequence('stylesheets', 'generate-styleguide', resolve);
@@ -262,10 +265,8 @@ gulp.task('serve', function () {
 
   var app = express();
   app.use(ecstatic({ root: __dirname + '/public', handleError: false, showDir: false }));
-  app.all('/styleguide/*', function (req, res) {
-    var index = fs.readFileSync('public/styleguide/index.html', 'utf8');
-    res.status(200).send(index);
-  });
+  app.all('/styleguide_custom/(.*)', makeServer('public/styleguide_custom'));
+  app.all('/styleguide/(.*)', makeServer('public/styleguide/'));
   app.all('*', function(req, res) {
     var index = fs.readFileSync('public/index.html', 'utf8');
     Promise.all(builds).then(function () {
@@ -274,6 +275,17 @@ gulp.task('serve', function () {
     });
   });
   http.createServer(app).listen(3001);
+
+  function makeServer(path) {
+    return function (req, res) {
+      try {
+        var index = fs.readFileSync(path+req.params[0], 'utf8');
+        res.status(200).send(index);
+      } catch(e) {
+        res.status(404).send();
+      }
+    };
+  }
 });
 
 gulp.task('serve-production', function(){
