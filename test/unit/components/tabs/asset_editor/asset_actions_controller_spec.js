@@ -45,7 +45,7 @@ describe('Asset Actions Controller', function () {
 
       it('shows error notification', function() {
         expect(notification.error).toBeCalled();
-        expect(logger.logServerError).toBeCalled();
+        expect(logger.logServerWarn).toBeCalled();
       });
     });
 
@@ -88,7 +88,7 @@ describe('Asset Actions Controller', function () {
 
       it('shows error notification', function() {
         expect(notification.warn).toBeCalled();
-        expect(logger.logServerError).toBeCalled();
+        expect(logger.logServerWarn).toBeCalled();
       });
     });
 
@@ -127,7 +127,7 @@ describe('Asset Actions Controller', function () {
 
       it('shows error notification', function() {
         expect(notification.warn).toBeCalled();
-        expect(logger.logServerError).toBeCalled();
+        expect(logger.logServerWarn).toBeCalled();
       });
     });
 
@@ -166,7 +166,7 @@ describe('Asset Actions Controller', function () {
 
       it('shows error notification', function() {
         expect(notification.warn).toBeCalled();
-        expect(logger.logServerError).toBeCalled();
+        expect(logger.logServerWarn).toBeCalled();
       });
     });
 
@@ -316,11 +316,11 @@ describe('Asset Actions Controller', function () {
 
       it('shows error notification', function() {
         expect(notification.error).toBeCalled();
-        expect(logger.logServerError).toBeCalled();
+        expect(logger.logServerWarn).toBeCalled();
       });
 
       it('gets contextual error message', function() {
-        expect(logger.logServerError.args[0][1]).toEqual({error: err});
+        expect(logger.logServerWarn.args[0][1]).toEqual({error: err});
       });
     });
 

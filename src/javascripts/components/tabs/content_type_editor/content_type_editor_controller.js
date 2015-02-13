@@ -158,7 +158,7 @@ angular.module('contentful').controller('ContentTypeEditorController', ['$scope'
     fieldDoc.push(newField, function(err, ops) {
       $scope.$apply(function(scope) {
         if (err) {
-          logger.logServerError('Could not add field', {error: err });
+          logger.logSharejsWarn('Could not add field', {error: err });
           notification.error('Could not add field');
         } else {
             scope.otUpdateEntity();

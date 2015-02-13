@@ -38,7 +38,7 @@ function($scope, $injector, generateDefaultViews, getBlankView, resetList, viewC
 
   $scope.saveViews = function () {
     return $scope.saveUiConfig().catch(function (err) {
-      logger.logServerError('Error trying to save view', {error: err });
+      logger.logServerWarn('Error trying to save view', {error: err });
       notification.error('Error trying to save view');
       return $q.reject(err);
     });

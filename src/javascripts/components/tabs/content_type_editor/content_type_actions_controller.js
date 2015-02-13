@@ -27,7 +27,7 @@ angular.module('contentful').
       $scope.spaceContext.removeContentType($scope.contentType);
     })
     .catch(function(err){
-      logger.logServerError('Error deleting Content Type', {error: err });
+      logger.logServerWarn('Error deleting Content Type', {error: err });
       notification.error('Error deleting Content Type');
     });
   };
@@ -66,7 +66,7 @@ angular.module('contentful').
         } else {
           var reason = dotty.get(err, 'body.message');
           notification.error('Error activating ' + title() + ': ' + reason);
-          logger.logServerError('Error activating Content Type', {error: err});
+          logger.logServerWarn('Error activating Content Type', {error: err});
         }
       });
     });
@@ -89,7 +89,7 @@ angular.module('contentful').
     })
     .catch(function(err){
       var reason = dotty.get(err, 'body.message');
-      if(!reason) logger.logServerError('Error deactivating Content Type', {error: err });
+      if(!reason) logger.logServerWarn('Error deactivating Content Type', {error: err });
       notification.warn('Error deactivating ' + title() + ': ' + reason, err);
     });
   };

@@ -187,7 +187,7 @@ describe('Editing interfaces service', function () {
       //interf.save.yield({});
       save.reject({});
       $rootScope.$apply();
-      expect(logger.logServerError).toBeCalled();
+      expect(logger.logServerWarn).toBeCalled();
       expect(notification.error).toBeCalled();
     });
   });

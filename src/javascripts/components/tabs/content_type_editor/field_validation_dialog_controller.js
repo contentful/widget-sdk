@@ -69,7 +69,7 @@ angular.module('contentful').controller('FieldValidationDialogController', ['$sc
       doc.push(validation, function (err) {
         $scope.$apply(function (scope) {
           if (err) {
-            logger.logServerError('Could not add validation', {error: err });
+            logger.logSharejsWarn('Could not add validation', {error: err });
             notification.error('Could not add validation');
           } else {
             scope.updateValidationsFromDoc();
@@ -80,7 +80,7 @@ angular.module('contentful').controller('FieldValidationDialogController', ['$sc
       doc.set([validation], function (err) {
         $scope.$apply(function (scope) {
           if (err) {
-            logger.logServerError('Could not add validation', {error: err });
+            logger.logSharejsWarn('Could not set validations', {error: err });
             notification.error('Could not add validation');
           } else {
             scope.updateValidationsFromDoc();

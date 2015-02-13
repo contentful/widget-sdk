@@ -196,7 +196,7 @@ describe('cfLinkEditorSearch Controller', function () {
 
         it('server error not called', function() {
           expect(notification.error).not.toBeCalled();
-          expect(logger.logServerError).not.toBeCalled();
+          expect(logger.logServerWarn).not.toBeCalled();
         });
 
         it(entityType +' editor called', function() {
@@ -228,7 +228,7 @@ describe('cfLinkEditorSearch Controller', function () {
 
         it('server error called', function() {
           expect(notification.error).toBeCalled();
-          expect(logger.logServerError).toBeCalled();
+          expect(logger.logServerWarn).toBeCalled();
         });
 
         it(entityType +' editor not called', function() {
@@ -267,7 +267,7 @@ describe('cfLinkEditorSearch Controller', function () {
         it('server error called', function(done) {
           _.defer(function () {
             expect(notification.error).toBeCalled();
-            expect(logger.logServerError).toBeCalled();
+            expect(logger.logServerWarn).toBeCalled();
             done();
           });
         });
@@ -309,7 +309,7 @@ describe('cfLinkEditorSearch Controller', function () {
           _.defer(function () {
             _.defer(function () {
               expect(notification.error).toBeCalledTwice();
-              expect(logger.logServerError).toBeCalledTwice();
+              expect(logger.logServerWarn).toBeCalledTwice();
               done();
             });
           });

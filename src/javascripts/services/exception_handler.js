@@ -5,7 +5,8 @@ angular.module('contentful').provider('$exceptionHandler', function () {
     function($injector, $log, logger, environment) {
       return function(exception) {
         $log.error.apply($log, arguments);
-        logger.logException(exception, {promptedReload: true});
+        var metaData = _.extend({promptedReload: true}, exception.metaData);
+        logger.logException(exception, metaData);
         if (environment.env != 'development') {
           var ReloadNotification = $injector.get('ReloadNotification');
           ReloadNotification.trigger();

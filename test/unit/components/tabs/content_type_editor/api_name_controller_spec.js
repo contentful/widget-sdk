@@ -159,7 +159,7 @@ describe('ApiNameController', function () {
 
           it('shows error', function() {
             expect(notification.error).toBeCalled();
-            expect(logger.logServerError).toBeCalled();
+            expect(logger.logSharejsWarn).toBeCalled();
           });
         });
       });

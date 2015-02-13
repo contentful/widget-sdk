@@ -52,7 +52,7 @@ describe('ContentType Actions Controller', function () {
 
       it('shows error notification', function() {
         expect(notification.error).toBeCalled();
-        expect(logger.logServerError).toBeCalled();
+        expect(logger.logServerWarn).toBeCalled();
       });
     });
 
@@ -103,7 +103,7 @@ describe('ContentType Actions Controller', function () {
 
       it('captures server error', function() {
         expect(notification.warn).toBeCalled();
-        expect(logger.logServerError).toBeCalled();
+        expect(logger.logServerWarn).toBeCalled();
       });
     });
 
@@ -265,7 +265,7 @@ describe('ContentType Actions Controller', function () {
 
       it('shows error notification', function() {
         expect(notification.error).toBeCalled();
-        expect(logger.logServerError).toBeCalled();
+        expect(logger.logServerWarn).toBeCalled();
       });
 
       it('gets contextual error message', function() {

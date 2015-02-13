@@ -42,7 +42,7 @@ angular.module('contentful').directive('otDocFor', function () {
         scope.$apply(function(scope){
           if(err || !doc){
             scope.otDoc = null;
-            logger.logError('Failed to open sharejs doc', {
+            logger.logSharejsError('Failed to open sharejs doc', {
               data: {
                 error: err,
                 entity: entity
@@ -123,7 +123,7 @@ angular.module('contentful').directive('otDocFor', function () {
       data.sys.updatedAt = moment().toISOString();
       entity.update(data);
     } else {
-      logger.logError('otUpdateEntity did not update', {
+      logger.logSharejsError('otUpdateEntity did not update', {
         data: {
           entity: entity,
           otDoc: $scope.otDoc

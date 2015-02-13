@@ -41,7 +41,7 @@ angular.module('contentful').directive('cfFieldtypeIcon', ['getFieldTypeName', '
           fieldTemplate = nameTemplates[fieldTypeName].clone();
         } else {
           fieldTemplate = fallback;
-          logger.logError('Invalid field type template name', {
+          logger.logWarn('Invalid field type template name', {
             data: {
               fieldTypeName: fieldTypeName,
               fieldAttr: scope.$eval(attr.field)

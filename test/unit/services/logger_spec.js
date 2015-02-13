@@ -196,4 +196,18 @@ describe('logger service', function () {
     });
   });
 
+  describe('captures CORS errors', function(){
+    it('when receiving a serverError', function(){
+      logger.logServerError('Foobar', {error: {statusCode: 0}});
+      expect(loggerStubs.notifyStub.args[0][0]).toBe('CORS Warning');
+      expect(loggerStubs.notifyStub.args[0][3]).toBe('warning');
+    });
+
+    it('when receiving a serverWarn', function(){
+      logger.logServerWarn('Foobar', {error: {statusCode: 0}});
+      expect(loggerStubs.notifyStub.args[0][0]).toBe('CORS Warning');
+      expect(loggerStubs.notifyStub.args[0][3]).toBe('warning');
+    });
+  });
+
 });

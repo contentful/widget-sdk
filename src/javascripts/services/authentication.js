@@ -120,7 +120,7 @@ angular.module('contentful').provider('authentication', ['$injector', function A
       }, function (err) {
         var statusCode = dotty.get(err, 'statusCode');
         if(statusCode !== 502 && statusCode !== 401)
-          logger.logError('getTokenLookup failed', { data: err });
+          logger.logError('getTokenLookup failed', { error: err });
         return $q.reject(err);
       });
     },
