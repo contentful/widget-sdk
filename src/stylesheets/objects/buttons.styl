@@ -1,23 +1,27 @@
-//Buttons
-//
-// Styleguide 4.0
+/*
+Buttons
+
+Styleguide 4.0
+*/
 .transparent-button-layer
   background-color: transparent
   position: absolute
   z-index: 100
   margin: 0 !important
 
-// A button base class
-//
-// Markup:
-// p
-//   button(class="btn") button
-// p
-//   button(class="btn" disabled) button
-//
-// :disabled - Disabled state
-//
-// Styleguide 4.1
+/*
+A button base class
+
+Markup:
+p
+  button(class="btn") button
+p
+  button(class="btn" disabled) button
+
+:disabled - Disabled state
+
+Styleguide 4.1
+*/
 .btn
   display: inline-block
   position: relative
@@ -41,8 +45,10 @@
     &:active
       top: 0px
 
-// the webkit-transform fixes a glitch caused by google maps
-// usage of the same property in their iframe container
+/*
+the webkit-transform fixes a glitch caused by google maps
+usage of the same property in their iframe container
+*/
 .btn--form
   padding-top: 6px
   padding-bottom: 5px
@@ -58,17 +64,19 @@
 input.btn--input
   padding: 0.6em 1em
 
-// Secondary button
-//
-// Secondary button theme, with hover, active and disabled states
-//
-// Markup:
-// p
-//   button(class="btn btn--secondary {$modifiers}") secondary
-// p
-//   button(class="btn btn--secondary {$modifiers}" disabled) secondary
-//
-// Styleguide 4.3
+/*
+Secondary button
+
+Secondary button theme, with hover, active and disabled states
+
+Markup:
+p
+  button(class="btn btn--secondary {$modifiers}") secondary
+p
+  button(class="btn btn--secondary {$modifiers}" disabled) secondary
+
+Styleguide 4.3
+*/
 .btn--secondary
   $colored-button(
     $metallic-gray-dark,
@@ -81,19 +89,21 @@ input.btn--input
     $gray-medium-light
   )
 
-// Tertiary button
-//
-// Tertiary button theme, with hover, active and disabled states
-//
-// Markup:
-// p
-//   button(class="btn btn--tertiary {$modifiers}") Tertiary
-// p
-//   button(class="btn btn--tertiary {$modifiers}" disabled) Tertiary
-//
-// .active - active state
-//
-// Styleguide 4.2
+/*
+Tertiary button
+
+Tertiary button theme, with hover, active and disabled states
+
+Markup:
+p
+  button(class="btn btn--tertiary {$modifiers}") Tertiary
+p
+  button(class="btn btn--tertiary {$modifiers}" disabled) Tertiary
+
+.active - active state
+
+Styleguide 4.2
+*/
 .btn--tertiary
   $colored-button(
     $metallic-gray-dark,
@@ -107,15 +117,17 @@ input.btn--input
   )
 
 
-// Primary button
-//
-// Button for primary actions, with hover and active states
-//
-// Markup:
-// p
-//   button(class="btn btn--primary {$modifiers}") Primary
-//
-// Styleguide 4.4
+/*
+Primary button
+
+Button for primary actions, with hover and active states
+
+Markup:
+p
+  button(class="btn btn--primary {$modifiers}") Primary
+
+Styleguide 4.4
+*/
 .btn--primary
   font-weight: bold
   $colored-button(
@@ -129,15 +141,17 @@ input.btn--input
     $blue-dark
   )
 
-// Danger button
-//
-// A button for dangerous situations
-//
-// Markup:
-// p
-//   button(class="btn btn--danger {$modifiers}") Danger
-//
-// Styleguide 4.5
+/*
+Danger button
+
+A button for dangerous situations
+
+Markup:
+p
+  button(class="btn btn--danger {$modifiers}") Danger
+
+Styleguide 4.5
+*/
 .btn--danger,
 li.btn--danger
   font-weight: bold
@@ -152,15 +166,17 @@ li.btn--danger
     $red-mexican
   )
 
-// Confirm button
-//
-// A button for confirming actions
-//
-// Markup:
-// p
-//   button(class="btn btn--confirm {$modifiers}") Confirm
-//
-// Styleguide 4.6
+/*
+Confirm button
+
+A button for confirming actions
+
+Markup:
+p
+  button(class="btn btn--confirm {$modifiers}") Confirm
+
+Styleguide 4.6
+*/
 .btn--confirm
   font-weight: bold
   $colored-button(
