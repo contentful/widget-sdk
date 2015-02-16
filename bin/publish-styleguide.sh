@@ -13,12 +13,12 @@ fi
 git clone --single-branch --branch gh-pages git@github.com:contentful/user_interface.git styleguide
 
 cp -r public/styleguide/* styleguide/
-cp -r public/app/main.css styleguide/
-cp -r public/styleguide_custom/custom.css styleguide/
+cp -r public/app/main.css styleguide/public/
+cp -r public/styleguide_custom/custom.css styleguide/public/
 
-sed -i.bak -e 's/<link rel="stylesheet" href="\.\.\/styleguide_custom/<link rel="stylesheet" href="public/' public/styleguide/index.html
-sed -i.bak -e 's/<link rel="stylesheet" href="\.\.\/app/<link rel="stylesheet" href="public/' public/styleguide/index.html
-find public/styleguide/ -name *.bak -exec rm -f \{\} \;
+sed -i.bak -e 's/<link rel="stylesheet" href="\.\.\/styleguide_custom/<link rel="stylesheet" href="public/' styleguide/*.html
+sed -i.bak -e 's/<link rel="stylesheet" href="\.\.\/app/<link rel="stylesheet" href="public/' styleguide/*.html
+find styleguide/ -name *.bak -exec rm -f \{\} \;
 
 pushd styleguide
 git add .
