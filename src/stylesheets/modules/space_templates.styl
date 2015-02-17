@@ -169,7 +169,7 @@ Styleguide 7.2
 .space-template__post-dialog-bg
   $stretch()
   background-color: transparent
-  z-index: 1
+  $layer('modalBackground')
 
 .space-template__post-dialog
   position: absolute
@@ -181,7 +181,7 @@ Styleguide 7.2
   border-radius: 2px
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3)
   background-color: transparentify($gray-lightest, 0.9)
-  z-index: 10
+  $layer('modalDialog')
   > h2, p
     text-align: center
 
