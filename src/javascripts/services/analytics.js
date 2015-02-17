@@ -1,8 +1,6 @@
 'use strict';
 
 angular.module('contentful').provider('analytics', ['environment', function (environment) {
-  var $window, $document, $q;
-  var analyticsDeferred;
   var dontLoad = environment.env.match(/acceptance|development|test/) ? true : false;
 
   this.dontLoad = function () {
@@ -13,97 +11,37 @@ angular.module('contentful').provider('analytics', ['environment', function (env
     dontLoad = false;
   };
 
-  var totangoModuleNames = {
-    apiKeys: 'API Keys',
-    assets: 'Assets',
-    contentTypes: 'Content Types',
-    entries: 'Entries'
-  };
+  this.$get = [ '$injector', function ($injector) {
+    var segment   = $injector.get('segment');
+    var totango   = $injector.get('totango');
+    var $location = $injector.get('$location');
 
-  function injectAndLoadScript(path, onLoad) {
-    var doc = $document.get(0);
-    var script = doc.createElement('script');
-    script.type = 'text/javascript';
-    script.async = true;
-    script.src = ('https:' === doc.location.protocol ? 'https://' : 'http://') + path;
-    if(onLoad) script.onload = onLoad;
+    if (shouldLoadAnalytics()) {
+      segment.load();
+      totango.load().then(function(){
+        api._initializeTotango();
+      });
+      api._segment = segment;
+      api._totango = totango;
+      return api;
+    } else {
+      return _.mapValues(api, _.constant(_.noop));
+    }
 
-    // Find the first script element on the page and insert our script next to it.
-    var firstScript = doc.getElementsByTagName('script')[0];
-    firstScript.parentNode.insertBefore(script, firstScript);
-  }
-
-  function createAnalytics() {
-    // Create a queue, but don't obliterate an existing one!
-    $window.analytics = $window.analytics || [];
-
-    $window.totango = {
-      go: function(){return -1;},
-      track: function(){},
-      identify: function(){},
-      setAccountAttributes: function(){}
-    };
-
-    $window.totango_options = {
-      service_id: environment.settings.totango,
-      allow_empty_accounts: false,
-      account: {}
-     };
-
-    // Define a method that will asynchronously load analytics.js from our CDN.
-    $window.analytics.load = function(apiKey) {
-      injectAndLoadScript('d2dq2ahtl5zl1z.cloudfront.net/analytics.js/v1/' + apiKey + '/analytics.min.js');
-      injectAndLoadScript('s3.amazonaws.com/totango-cdn/totango2.js', initializeTotango);
-
-      // Define a factory that generates wrapper methods to push arrays of
-      // arguments onto our `analytics` queue, where the first element of the arrays
-      // is always the name of the analytics.js method itself (eg. `track`).
-      var methodFactory = function (type) {
-        return function () {
-          $window.analytics.push([type].concat(Array.prototype.slice.call(arguments, 0)));
-        };
-      };
-
-      // Loop through analytics.js' methods and generate a wrapper method for each.
-      var methods = ['identify', 'track', 'trackLink', 'trackForm', 'trackClick',
-                     'trackSubmit', 'pageview', 'ab', 'alias', 'ready'];
-      for (var i = 0; i < methods.length; i++) {
-        $window.analytics[methods[i]] = methodFactory(methods[i]);
-      }
-    };
-
-    // Load analytics.js with your API key, which will automatically load all of the
-    // analytics integrations you've turned on for your account. Boosh!
-    $window.analytics.load(environment.settings.segment_io);
-
-    $window.analytics.ready(function () { // analytics.js object
-      analyticsDeferred.resolve();
-      $window.ga('set', 'anonymizeIp', true);
-    });
-  }
-
-  function initializeTotango() {
-    $q.all([api._spaceDeferred.promise, api._userDeferred.promise]).then(function () {
-      var orgId = api._organizationData ? api._organizationData.sys.id : 'noorg';
-      $window.totango_options.username = api._userData.sys.id +'-'+ orgId;
-      $window.totango_options.account.id = orgId;
-      $window.totango_options.module = totangoModuleNames.entries;
-      $window.totango.go($window.totango_options);
-    });
-  }
+    function shouldLoadAnalytics() {
+      return !(dontLoad && !$location.search().forceAnalytics);
+    }
+  }];
 
   var api = {
-    disable: function () {
-      this._disabled = true;
-    },
-
     login: function(user){
-      $window.analytics.identify(user.sys.id, {
+      this._segment.identify(user.sys.id, {
         firstName: user.firstName,
         lastName:  user.lastName
       });
+      // TODO Move this check outside of the analytics.js
       if (user.features.logAnalytics === false) {
-        this.disable();
+        this._disable();
         return;
       }
     },
@@ -119,16 +57,16 @@ angular.module('contentful').provider('analytics', ['environment', function (env
           spaceSubscriptionSubscriptionPlanKey:  space.data.organization.subscriptionPlan.sys.id,
           spaceSubscriptionSubscriptionPlanName: space.data.organization.subscriptionPlan.name
         };
+        this._initializeTotango();
       } else {
         this._spaceData = null;
         this._organizationData = null;
       }
-      this._spaceDeferred.resolve(this._spaceData);
     },
 
     setUserData: function (user) {
       this._userData = user;
-      this._userDeferred.resolve(this._userData);
+      this._initializeTotango();
     },
 
     tabAdded: function (tab) {
@@ -141,7 +79,7 @@ angular.module('contentful').provider('analytics', ['environment', function (env
     },
 
     tabActivated: function (tab, oldTab) {
-      this._setTotangoModule(tab.section);
+      this._totango.setSection(tab.section);
       this.track('Switched Tab', {
         viewType: tab.viewType,
         section: tab.section,
@@ -149,12 +87,6 @@ angular.module('contentful').provider('analytics', ['environment', function (env
         fromViewType: oldTab ? oldTab.viewType : null,
         fromSection: oldTab ? oldTab.section : null
       });
-    },
-
-    _setTotangoModule: function (sectionName) {
-      if($window.totango_options){
-        $window.totango_options.module = totangoModuleNames[sectionName];
-      }
     },
 
     knowledgeBase: function (section) {
@@ -206,6 +138,8 @@ angular.module('contentful').provider('analytics', ['environment', function (env
     _idFromTab: function (tab) {
       if (tab.viewType === 'entry-editor') {
         return tab.params.entry.getId();
+      } else if (tab.viewType === 'asset-editor'){
+        return tab.params.asset.getId();
       } else if (tab.viewType === 'content-type-editor'){
         return tab.params.contentType.getId();
       }
@@ -239,38 +173,25 @@ angular.module('contentful').provider('analytics', ['environment', function (env
       }
     },
 
-    track: function (event, data) {
-      if (!this._disabled) {
-        $window.analytics.track(event, _.merge({}, data, this._spaceData));
+    _disable: function(){
+      _.forEach(this, function(value, key){
+        this[key] = _.noop;
+      }, this);
+    },
+
+    _initializeTotango: function(){
+      if (this._userData && this._organizationData){
+        this._totango.initialize(this._userData, this._organizationData);
       }
-      //console.log('analytics.track', event, data);
+    },
+
+    track: function (event, data) {
+      this._segment.track(event, _.merge({}, data, this._spaceData));
     },
 
     trackTotango: function (event) {
-      $window.totango.track(event);
+      return this._totango.track(event);
     }
   };
-
-  this.$get = [
-    '$window', '$document', '$q', '$location',
-    function (_$window_, _$document_, _$q_, $location) {
-
-    $window = _$window_;
-    $document = _$document_;
-    $q = _$q_;
-    api._spaceDeferred = $q.defer();
-    api._userDeferred = $q.defer();
-    if (dontLoad && !$location.search().forceAnalytics) {
-      return _.reduce(api, function (api, fun, name) {
-        api[name] = angular.noop;
-        return api;
-      }, {});
-    } else {
-      analyticsDeferred = $q.defer();
-      api.whenAnalyticsLoaded = analyticsDeferred.promise;
-      createAnalytics();
-      return api;
-    }
-  }];
 
 }]);
