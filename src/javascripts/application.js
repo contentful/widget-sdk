@@ -16,11 +16,10 @@ angular.module('contentful/app', ['contentful'])
 
   //analyticsProvider.forceLoad();
 }])
-.run(['authentication', 'clientAdapter', 'ShareJS', 'analytics', 'logger', function(authentication, clientAdapter, ShareJS, analytics, logger) {
+.run(['authentication', 'clientAdapter', 'ShareJS', 'analytics', 'logger', function(authentication, clientAdapter, ShareJS) {
   authentication.login();
   clientAdapter.token = authentication.token;
   // FIXME when the custom tab issue gets fixed on Segment.io, use this again
   //if(analytics.whenAnalyticsLoaded) analytics.whenAnalyticsLoaded.then(logger.onServiceReady);
-  logger.onServiceReady();
   ShareJS.connect();
 }]);
