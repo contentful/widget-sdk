@@ -28,16 +28,16 @@ some stuff here should go into components, other into layout
     .left-nav
       overflow-y: auto
       overflow-x: hidden
-      @extend .tab-workbench
+      $tab-workbench()
       padding-left: 20px
       padding-right: 20px
-      padding: $tab-main-margin-top 20px 0
+      padding-bottom: 0
       .dropdown-menu
         min-width: 150px
     .with-left-nav
       margin-top: $tab-main-margin-top // padding is ignored by absolute children
       $stretch-y()
-      @extend .tab-workbench
+      $tab-workbench()
 
   .left-nav-bottom
     position: absolute
@@ -60,7 +60,7 @@ some stuff here should go into components, other into layout
 
   .result-list
     tbody tr
-      @extend $tr-clickable
+      $tr-clickable()
 
   .view-customizer
     position: absolute

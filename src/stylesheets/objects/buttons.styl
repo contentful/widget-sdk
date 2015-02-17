@@ -128,7 +128,7 @@ p
 
 Styleguide 4.4
 */
-.btn--primary
+$btn--primary()
   font-weight: bold
   $colored-button(
     white,
@@ -140,6 +140,9 @@ Styleguide 4.4
     $gray,
     $blue-dark
   )
+
+.btn--primary
+  $btn--primary()
 
 /*
 Danger button
@@ -248,12 +251,21 @@ Styleguide 4.6
     outline: none !important
 
 // An Icon inside a button
-.button-icon
+$button-icon()
   position: relative
   right: 2px
 
+.button-icon
+  $button-icon()
+  &.fa-caret-down
+    font-size: 13px
+  &.fa-plus
+    font-size: 0.9em
+  &.fa-angle-right
+    font-size: 0.9em
+
 .button-icon-right
-  @extend .button-icon
+  $button-icon()
   float: right
   top: 2px
   right: 0
@@ -263,13 +275,4 @@ Styleguide 4.6
 .button-icon-right
   &.fa-caret-down
     top: 3px
-.button-icon,
-.button-icon-right
-  &.fa-caret-down
-    font-size: 13px
-  &.fa-plus
-    font-size: 0.9em
-  &.fa-angle-right
-    font-size: 0.9em
-
 

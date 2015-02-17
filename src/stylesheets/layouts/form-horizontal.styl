@@ -78,19 +78,22 @@ div(class="l-form--split styleguide-opaque-box1")
 Styleguide 6.3
 */
 
-.l-form
+$l-form()
   $display-flexbox()
   flex-direction: column
   width: 100%
   max-width: 800px
   margin-left: $form-gutter
 
-.l-form--split
-  @extend .l-form
-  flex-direction: row
-  width: 90%
-  max-width: 1200px
-  margin-left: $form-gutter / 2
+.l-form
+  $l-form()
+
+  &--split
+    $l-form()
+    flex-direction: row
+    width: 90%
+    max-width: 1200px
+    margin-left: ($form-gutter / 2)
 
 .l-form-left,
 .l-form-right
@@ -118,14 +121,18 @@ Styleguide 6.3
     margin: 0
     width: $form-controlwidth-inner
 
-.l-form-controls
+$l-form-controls()
   width: 100%
   position: relative
 
+.l-form-controls
+  $l-form-controls()
+
 .l-form-controls--with-action
-  @extend .l-form-controls
+  $l-form-controls()
   $display-flexbox()
   align-items: center
+
 .l-form--split
   .l-form-controls--with-action
     width: 100%
@@ -139,12 +146,17 @@ Styleguide 6.3
 .l-form-locale:first-child
   margin-top: 0px
 
-.l-field-editor
+$l-field-editor()
   position: relative
   width: $field-editor-width
+
+.l-field-editor
+  $l-field-editor()
+
 .l-field-editor--with-action
-  @extend .l-field-editor
+  $l-field-editor()
   width: $field-editor-width - 37%
+
 .l-form--split
   .l-field-editor
     width: 100%

@@ -33,7 +33,7 @@ $modal-dialog-title
   padding: $modal-dialog-padding
   background: $gray-lightest
 
-.close-button
+$close-button()
   color: $gray-light
   cursor: pointer
   font-weight: lighter
@@ -43,15 +43,17 @@ $modal-dialog-title
     content: '×'
     font-size: 30px
 
+.close-button
+  $close-button()
+
 .dialog-plaintext
   white-space: pre
 
 .dialog-richtext
   max-width: 40em
 
-.modal-dialog-close-button,
-$modal-dialog-close-button
-  @extend .close-button
+.modal-dialog-close-button
+  $close-button()
   position: absolute
   top: 0
   right: 0
