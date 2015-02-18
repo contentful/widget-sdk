@@ -7,7 +7,6 @@
 angular.module('contentful')
 .directive('cfValidationValues', ['$injector', function($injector) {
   var keycodes = $injector.get('keycodes');
-  var notification = $injector.get('notification');
 
   // If precision is larger than this number is only represented in exponential
   // because lol javascript
@@ -45,6 +44,7 @@ angular.module('contentful')
         ev.stopPropagation();
         var input = $(ev.target);
         if (ev.keyCode === keycodes.ENTER && input.val()) {
+          delete $scope.validation.errors;
           ev.preventDefault();
           if (addValue(input.val()))
             input.val('');
@@ -90,18 +90,22 @@ angular.module('contentful')
         try {
           value = parseValue(value, $scope.field.type);
         } catch (e) {
-          notification.warn(e.message);
+          setError(e.message);
           return;
         }
 
         if ($scope.valueList.length == 50){
-          notification.warn('You can only add up to 50 predefined values');
+          setError('You can only add up to 50 predefined values');
         } else if (_.contains($scope.valueList, value)){
-          notification.warn('This value already exists on the list');
+          setError('This value already exists on the list');
         } else {
           $scope.valueList.push(value);
           return true;
         }
+      }
+
+      function setError(error) {
+        $scope.validation.errors = [error];
       }
     }]
   };

@@ -8,11 +8,10 @@
  * - `cfValidationValues`
  * - `cfValidationLinkType`
  *
- * Stubs the scope's `field`, `index` and `otDoc` and the notifictaion
- * service.
+ * Stubs the scope's `field`, `index`, and `otDoc`.
  */
 describe('validation dialog', function() {
-  var openDialog, dialog, scope, notification;
+  var openDialog, dialog, scope;
 
   function validationsDoc(scope) {
     return scope.otDoc.at(['fields', scope.index, 'validations']);
@@ -46,7 +45,6 @@ describe('validation dialog', function() {
     inject(function($rootScope, $injector) {
       scope        = $rootScope.$new();
       modalDialog  = $injector.get('modalDialog');
-      notification = $injector.get('notification');
     });
 
     openDialog = function() {
@@ -248,7 +246,7 @@ describe('validation dialog', function() {
 
   describe('predefined values', function() {
     function enterKeypressEvent() {
-      return $.Event('keypress', {keyCode: $.ui.keyCode.ENTER} );
+      return $.Event('keydown', {keyCode: $.ui.keyCode.ENTER} );
     }
 
     function settings() {
@@ -275,7 +273,6 @@ describe('validation dialog', function() {
     });
 
     it('shows warning for existing values', function() {
-      notification.warn = sinon.stub();
       settings()
       .find('[aria-label="Enable validation"]')
       .click();
@@ -284,8 +281,10 @@ describe('validation dialog', function() {
       valueInput
       .val('a value').trigger(enterKeypressEvent())
       .val('a value').trigger(enterKeypressEvent());
+      scope.$digest();
 
-      expect(notification.warn).toBeCalledWith('This value already exists on the list');
+      var errors = settings().find('[aria-label="Errors"] li');
+      expect(errors.text()).toEqual('This value already exists on the list');
 
       clickSave();
       expect(scope.field.validations).toEqual([{in: ['a value']}]);
@@ -340,7 +339,8 @@ describe('validation dialog', function() {
         .find('[aria-label="Add a value"]')
         .val('not a number').trigger(enterKeypressEvent());
 
-        expect(notification.warn).toBeCalledWith('You can only add number values.');
+        var errors = settings().find('[aria-label="Errors"] li');
+        expect(errors.text()).toEqual('You can only add number values.');
       });
     });
   });
