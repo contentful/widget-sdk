@@ -1,90 +1,99 @@
-// Standard Form, with locales
-//
-// A form where all the fields are laid out vertically on top of each other,
-// with a container for each row, a container for the form controls themselves,
-// a container for the locale which has the field type editor, locale label and
-// field collaborators
-//
-// Markup:
-// div(class="l-form styleguide-opaque-box1")
-//   div(class="l-form-row styleguide-opaque-box2")
-//     label label
-//     div(class="l-form-controls styleguide-opaque-box3")
-//       div(class="l-form-locale styleguide-opaque-box4")
-//         div(class="l-field-editor styleguide-opaque-box1") form control
-//         div(class="locale-label styleguide-opaque-box2") locale label
-//         div(class="field-collaborators styleguide-opaque-box3") collaborators
-//   div(class="l-form-row styleguide-opaque-box2")
-//     label label
-//     div(class="l-form-controls styleguide-opaque-box3")
-//       div(class="l-form-locale styleguide-opaque-box4")
-//         div(class="l-field-editor styleguide-opaque-box1") form control
-//         div(class="locale-label styleguide-opaque-box2") locale label
-//         div(class="field-collaborators styleguide-opaque-box3") collaborators
-//
-// Styleguide 6.1
+/*
+Standard Form, with locales
 
-// Standard Form, no locales
-//
-// A form where all the fields are laid out vertically on top of each other,
-// with a container for each row, a container for the form controls themselves
-// and a container for the actual field type editor
-//
-// Markup:
-// div(class="l-form styleguide-opaque-box1")
-//   div(class="l-form-row styleguide-opaque-box2")
-//     label label
-//     div(class="l-form-controls styleguide-opaque-box3")
-//       div(class="l-field-editor styleguide-opaque-box4") form control
-//   div(class="l-form-row styleguide-opaque-box2")
-//     label label
-//     div(class="l-form-controls styleguide-opaque-box3")
-//       div(class="l-field-editor styleguide-opaque-box4") form control
-//
-// Styleguide 6.2
+A form where all the fields are laid out vertically on top of each other,
+with a container for each row, a container for the form controls themselves,
+a container for the locale which has the field type editor, locale label and
+field collaborators
 
-// Split Form, no locales
-//
-// A form where all the fields are laid out vertically on top of each other
-// over two columns, with a container for each row, a container for the form
-// controls themselves and a container for the actual field type editor
-//
-// Markup:
-// div(class="l-form--split styleguide-opaque-box1")
-//   div(class="l-form-left styleguide-opaque-box1")
-//     div(class="l-form-row styleguide-opaque-box2")
-//       label label
-//       div(class="l-form-controls styleguide-opaque-box3")
-//         div(class="l-field-editor styleguide-opaque-box4") form control
-//     div(class="l-form-row styleguide-opaque-box2")
-//       label label
-//       div(class="l-form-controls styleguide-opaque-box3")
-//         div(class="l-field-editor styleguide-opaque-box4") form control
-//   div(class="l-form-right styleguide-opaque-box1")
-//     div(class="l-form-row styleguide-opaque-box2")
-//       label label
-//       div(class="l-form-controls styleguide-opaque-box3")
-//         div(class="l-field-editor styleguide-opaque-box4") form control
-//     div(class="l-form-row styleguide-opaque-box2")
-//       label label
-//       div(class="l-form-controls styleguide-opaque-box3")
-//         div(class="l-field-editor styleguide-opaque-box4") form control
-//
-// Styleguide 6.3
+Markup:
+div(class="l-form styleguide-opaque-box1")
+  div(class="l-form-row styleguide-opaque-box2")
+    label label
+    div(class="l-form-controls styleguide-opaque-box3")
+      div(class="l-form-locale styleguide-opaque-box4")
+        div(class="l-field-editor styleguide-opaque-box1") form control
+        div(class="locale-label styleguide-opaque-box2") locale label
+        div(class="field-collaborators styleguide-opaque-box3") collaborators
+  div(class="l-form-row styleguide-opaque-box2")
+    label label
+    div(class="l-form-controls styleguide-opaque-box3")
+      div(class="l-form-locale styleguide-opaque-box4")
+        div(class="l-field-editor styleguide-opaque-box1") form control
+        div(class="locale-label styleguide-opaque-box2") locale label
+        div(class="field-collaborators styleguide-opaque-box3") collaborators
 
-.l-form
+Styleguide 6.1
+*/
+
+/*
+Standard Form, no locales
+
+A form where all the fields are laid out vertically on top of each other,
+with a container for each row, a container for the form controls themselves
+and a container for the actual field type editor
+
+Markup:
+div(class="l-form styleguide-opaque-box1")
+  div(class="l-form-row styleguide-opaque-box2")
+    label label
+    div(class="l-form-controls styleguide-opaque-box3")
+      div(class="l-field-editor styleguide-opaque-box4") form control
+  div(class="l-form-row styleguide-opaque-box2")
+    label label
+    div(class="l-form-controls styleguide-opaque-box3")
+      div(class="l-field-editor styleguide-opaque-box4") form control
+
+Styleguide 6.2
+*/
+
+/*
+Split Form, no locales
+
+A form where all the fields are laid out vertically on top of each other
+over two columns, with a container for each row, a container for the form
+controls themselves and a container for the actual field type editor
+
+Markup:
+div(class="l-form--split styleguide-opaque-box1")
+  div(class="l-form-left styleguide-opaque-box1")
+    div(class="l-form-row styleguide-opaque-box2")
+      label label
+      div(class="l-form-controls styleguide-opaque-box3")
+        div(class="l-field-editor styleguide-opaque-box4") form control
+    div(class="l-form-row styleguide-opaque-box2")
+      label label
+      div(class="l-form-controls styleguide-opaque-box3")
+        div(class="l-field-editor styleguide-opaque-box4") form control
+  div(class="l-form-right styleguide-opaque-box1")
+    div(class="l-form-row styleguide-opaque-box2")
+      label label
+      div(class="l-form-controls styleguide-opaque-box3")
+        div(class="l-field-editor styleguide-opaque-box4") form control
+    div(class="l-form-row styleguide-opaque-box2")
+      label label
+      div(class="l-form-controls styleguide-opaque-box3")
+        div(class="l-field-editor styleguide-opaque-box4") form control
+
+Styleguide 6.3
+*/
+
+$l-form()
   $display-flexbox()
   flex-direction: column
   width: 100%
   max-width: 800px
   margin-left: $form-gutter
 
-.l-form--split
-  @extend .l-form
-  flex-direction: row
-  width: 90%
-  max-width: 1200px
-  margin-left: $form-gutter / 2
+.l-form
+  $l-form()
+
+  &--split
+    $l-form()
+    flex-direction: row
+    width: 90%
+    max-width: 1200px
+    margin-left: ($form-gutter / 2)
 
 .l-form-left,
 .l-form-right
@@ -112,14 +121,18 @@
     margin: 0
     width: $form-controlwidth-inner
 
-.l-form-controls
+$l-form-controls()
   width: 100%
   position: relative
 
+.l-form-controls
+  $l-form-controls()
+
 .l-form-controls--with-action
-  @extend .l-form-controls
+  $l-form-controls()
   $display-flexbox()
   align-items: center
+
 .l-form--split
   .l-form-controls--with-action
     width: 100%
@@ -133,12 +146,17 @@
 .l-form-locale:first-child
   margin-top: 0px
 
-.l-field-editor
+$l-field-editor()
   position: relative
   width: $field-editor-width
+
+.l-field-editor
+  $l-field-editor()
+
 .l-field-editor--with-action
-  @extend .l-field-editor
+  $l-field-editor()
   width: $field-editor-width - 37%
+
 .l-form--split
   .l-field-editor
     width: 100%

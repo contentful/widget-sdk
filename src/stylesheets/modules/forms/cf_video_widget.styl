@@ -189,7 +189,7 @@ $controls-bar-background-color = rgba(235, 235, 235, 0.8)
       display: none
 
 .video-dialog-result__controls-bar
-  z-index: 99999
+  $layer('videoWidgetControls')
   height: 27px
   width: 100%
   background-color: $controls-bar-background-color;
@@ -197,7 +197,7 @@ $controls-bar-background-color = rgba(235, 235, 235, 0.8)
   top: 0
 
   .fa
-    z-index: 9999999
+    $layer('videoWidgetControls')
 
   .fa-stack, .fa-play, .fa-pause
     display: none
@@ -252,7 +252,7 @@ $controls-bar-background-color = rgba(235, 235, 235, 0.8)
   color: white
   top: 30px
   left: 9px
-  z-index: 99999
+  $layer('videoWidgetControls')
   cursor: -webkit-grabbing
   cursor: -moz-grab
   cursor: -moz-grabbing

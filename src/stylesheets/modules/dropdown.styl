@@ -18,17 +18,17 @@
 
 $separator-style = 1px solid $gray-lightest
 
-.dropdown-row
+$dropdown-row()
   padding: 4px 12px
   display: block
 
 // Dropdown Menu base and general modifiers
 .dropdown-menu
+  $layer('dropdown')
   position: absolute
   text-align: left
   font-size: 11px
   line-height: 2.2em
-  z-index: 1000
   min-width: 198px
   background: white
   background: rgba(255,255,255,0.96)
@@ -57,8 +57,8 @@ $separator-style = 1px solid $gray-lightest
     font-size: 0.7em
     margin-right: 0.5em
 
-.dropdown-menu-item
-  @extend .dropdown-row
+$dropdown-menu-item()
+  $dropdown-row()
   list-style-type: none
   margin: 0
   a
@@ -83,11 +83,14 @@ $separator-style = 1px solid $gray-lightest
     a:link
       color: white
 
+.dropdown-menu-item
+  $dropdown-menu-item()
+
 .dropdown-menu-item--label
-  @extend .dropdown-menu-item
+  $dropdown-menu-item()
   padding: 0
   > label
-    @extend .dropdown-row
+    $dropdown-row()
 
 // For the wide type menus
 .type-menu

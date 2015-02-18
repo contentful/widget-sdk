@@ -38,11 +38,11 @@
   font-weight: bold
   border-right: 1px solid $gray-light
   ul
-    @extend .plain-list
+    $plain-list()
     padding: 10px 0
     border-bottom: 1px solid $gray-light
   li
-    @extend .plain-list--item
+    $plain-list--item()
     padding-top: 8px
     padding-bottom: 8px
     &.active a
@@ -84,7 +84,7 @@
     position: fixed
     top: $tab-header-height
   .with-left-nav
-    @extend .tab-workbench
+    $tab-workbench()
     $tab-padding()
 
   .button_to
@@ -97,13 +97,12 @@
   a.btn--secondary
     &.new-resource
       margin-top: 34px //result list tr-height
-      @extend .btn--primary
+      $btn--primary()
     .fa-plus
-      @extend .button-icon
+      $button-icon()
 
   // Main tables
   .result-list
-    @extend $result-list-border-bottom
     border-left: none
     border-right: none
     border-top: none
@@ -112,7 +111,10 @@
       letter-spacing: 1px
     .clickable
       tr
-        @extend $tr-clickable
+        $tr-clickable()
+    tbody
+      tr:last-child
+        border-bottom: 1px solid $gray-lightest
   .result-list-thumbnail
     vertical-align: middle
 

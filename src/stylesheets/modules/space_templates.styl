@@ -1,31 +1,35 @@
-// Space templates
-//
-// Styleguide 7.0
+/*
+Space templates
+
+Styleguide 7.0
+*/
 .space-template__dialog
   padding: 0
   .title
     margin: 0
 
-// Space template list
-//
-// A module which contains a list of icons and labels for Space Templates
-// with a detail view on the right
-// 
-// Markup:
-// div(class="space-template__dialog" style="width: 700px; height: 600px;")
-//   div(class="space-template__list")
-//     div(class="space-template__item")
-//       img(class="space-template__icon")
-//       p(class="space-template__label") Template name
-//     div(class="space-template__item")
-//       img(class="space-template__icon")
-//       p(class="space-template__label") Template name
-//   div(class="space-template__detail")
-//     div(class="space-template__detail-content")
-//       h1 Template name
-//       p Sleep on keyboard. Chase mice leave hair everywhere sleep in the bathroom sink hate dog, and peer out window, chatter at birds, lure them to mouth so ears back wide eyed shove bum in owner's face like camera lens. Play time. Flop over. Run in circles. Always hungry stick butt in face, and hunt by meowing loudly at 5am next to human slave food dispenser but peer out window, chatter at birds, lure them to mouth find empty spot in cupboard and sleep all day. Sun bathe claw drapes have secret plans give attitude hate dog always hungry. Chase dog then run away always hungry, for inspect anything brought into the house lick butt, but intently stare at the same spot. Give attitude curl into a furry donut. Stick butt in face scratch the furniture chase imaginary bugs all of a sudden cat goes crazy loves cheeseburgers bathe private parts with tongue then lick owner's face but sleep nap. Nap all day cat snacks, for attack feet, for give attitude, and attack feet, but have secret plans need to chase tail.
-//
-// Styleguide 7.1
+/*
+Space template list
+
+A module which contains a list of icons and labels for Space Templates
+with a detail view on the right
+
+Markup:
+div(class="space-template__dialog" style="width: 700px; height: 600px;")
+  div(class="space-template__list")
+    div(class="space-template__item")
+      img(class="space-template__icon")
+      p(class="space-template__label") Template name
+    div(class="space-template__item")
+      img(class="space-template__icon")
+      p(class="space-template__label") Template name
+  div(class="space-template__detail")
+    div(class="space-template__detail-content")
+      h1 Template name
+      p Sleep on keyboard. Chase mice leave hair everywhere sleep in the bathroom sink hate dog, and peer out window, chatter at birds, lure them to mouth so ears back wide eyed shove bum in owner's face like camera lens. Play time. Flop over. Run in circles. Always hungry stick butt in face, and hunt by meowing loudly at 5am next to human slave food dispenser but peer out window, chatter at birds, lure them to mouth find empty spot in cupboard and sleep all day. Sun bathe claw drapes have secret plans give attitude hate dog always hungry. Chase dog then run away always hungry, for inspect anything brought into the house lick butt, but intently stare at the same spot. Give attitude curl into a furry donut. Stick butt in face scratch the furniture chase imaginary bugs all of a sudden cat goes crazy loves cheeseburgers bathe private parts with tongue then lick owner's face but sleep nap. Nap all day cat snacks, for attack feet, for give attitude, and attack feet, but have secret plans need to chase tail.
+
+Styleguide 7.1
+*/
 .space-template__dialog-content
   $display-flexbox()
   position: relative
@@ -115,21 +119,23 @@
     width: 100%
   .buttons
     border: none
-// Space Template Queue
-//
-// A view which shows a queue of actions performed when creating space
-// template items, with variations of success and error for each item
-//
-// Markup:
-// div(class="space-template__dialog" style="width: 700px; height: 600px;")
-//   div(class="space-template__queue")
-//     h1 Creating template entities
-//     div(class="space-template__queue-item space-template--item-success") Content Type
-//     div(class="space-template__queue-item space-template--item-error") Content Type
-//       span Failed
-//     div(class="space-template__queue-status") Failed
-//
-// Styleguide 7.2
+/*
+Space Template Queue
+
+A view which shows a queue of actions performed when creating space
+template items, with variations of success and error for each item
+
+Markup:
+div(class="space-template__dialog" style="width: 700px; height: 600px;")
+  div(class="space-template__queue")
+    h1 Creating template entities
+    div(class="space-template__queue-item space-template--item-success") Content Type
+    div(class="space-template__queue-item space-template--item-error") Content Type
+      span Failed
+    div(class="space-template__queue-status") Failed
+
+Styleguide 7.2
+*/
 .space-template__queue
   width: 100%
   padding: 0px 20px
@@ -163,7 +169,7 @@
 .space-template__post-dialog-bg
   $stretch()
   background-color: transparent
-  z-index: 1
+  $layer('modalBackground')
 
 .space-template__post-dialog
   position: absolute
@@ -175,7 +181,7 @@
   border-radius: 2px
   box-shadow: 0px 1px 1px rgba(0, 0, 0, 0.3)
   background-color: transparentify($gray-lightest, 0.9)
-  z-index: 10
+  $layer('modalDialog')
   > h2, p
     text-align: center
 

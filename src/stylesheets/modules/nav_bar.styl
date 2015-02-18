@@ -3,7 +3,6 @@
   height: $nav-bar-height
   user-select: none
   background: $gray-darkest
-  z-index: 20
   box-shadow: $nav-bar-box-shadow
   .logo,
   ul
@@ -39,11 +38,6 @@
       text-shadow: 0 1px 0 rgba(255,255,255,0.1)
   li:focus
     $focus-styles
-  li:hover,
-  li:focus
-    .tip
-      opacity: 1
-      left: 58px
   li:hover
     color: white
     cursor: pointer
@@ -54,12 +48,6 @@
   .bottom
     position: absolute
     bottom: 0
-
-.outlines-enabled
-  .nav-bar
-    li:focus
-      .tip
-        opacity: 0
 
 $hide-navbar-text()
   li

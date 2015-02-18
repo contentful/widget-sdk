@@ -31,16 +31,14 @@ $nav-bar-dropdowns()
   .no-content-types
     background: $gray-darkest
 
-// State variations
-// TODO lol nope
-$tr-clickable
+// TODO would be good to see this used more as a class but nesting
+$tr-clickable()
   &:hover
     background-color: $result-list-highlight
     cursor: pointer
 
 // Main styles
-// TODO nope_octopus.gif
-$result-list-cell
+$result-list-cell()
   line-height: 18px
   vertical-align: middle
   padding: 8px 0px
@@ -53,9 +51,3 @@ $result-list-cell
     white-space: nowrap
     overflow: hidden
     text-overflow: ellipsis
-
-$result-list-border-bottom
-  tbody
-    tr:last-child
-      border-bottom: 1px solid $gray-lightest
-
