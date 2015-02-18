@@ -1,9 +1,12 @@
+/* Cleanup notes
+we should probably only use layouts here
+*/
 .api-key-list.entity-list
   .tab-main > *
     $stretch-y()
   .with-left-nav
-    @extend .tab-workbench
+    $tab-workbench()
     $tab-padding()
   .result-list
     tbody tr
-      @extend $tr-clickable
+      $tr-clickable()

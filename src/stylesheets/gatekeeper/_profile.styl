@@ -5,7 +5,7 @@ $identity-image-padding = 10px
 $identity-spacing = 10px
 $identity-width = 140px
 
-$user-detail-image
+$user-detail-image()
   height: $identity-image-size
   width: $identity-image-size
   float: left
@@ -17,7 +17,7 @@ $user-detail-image
     margin-bottom: 30px
   .user-details
     > img
-      @extend $user-detail-image
+      $user-detail-image()
       margin-bottom: 10px
   .identity-well
     max-width: 2*$identity-well-padding + 3 * $identity-width + (3 - 1) * $identity-spacing
@@ -37,7 +37,7 @@ $user-detail-image
     position: relative
     margin-right: $identity-spacing
     img
-      @extend $user-detail-image
+      $user-detail-image()
     .uid,
     .auth_provider_name
       word-break: break-all

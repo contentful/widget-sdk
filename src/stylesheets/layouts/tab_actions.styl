@@ -7,9 +7,11 @@ $tab-actions-container
 $tab-actions-vertical-padding = 10px
 $tab-actions-content-height = $tab-actions-height - (2 * $tab-actions-vertical-padding)
 
-.tab-actions,
-$tab-actions-padding
+$tab-actions-padding()
   padding: ($tab-actions-vertical-padding - 1) 20px $tab-actions-vertical-padding // -1 on top to make up for the border
+
+.tab-actions
+  $tab-actions-padding()
 
 // text label
 .tab-actions,
@@ -71,32 +73,14 @@ $tab-action-inner-components
       position: relative
       margin-left: 3px
       border-radius: 3px
-      .tip-container
-        width: 200px
-        margin-left: -100px
-        position: absolute
-        top: -50px
-        left: ($image-size / 2)
-        text-align: center
-      .tip
-        position: relative
-        display: inline-block
-        text-align: center
-        margin: 0 auto
-        line-height: 10px
-        padding: 5px 8px 6px
-        opacity: 0
-        transition: opacity 0.3s ease-in
       padding-top: 2px
-      img 
+      img
         height: $image-size
         width: $image-size
         opacity: .2
         box-shadow: 0 1px 2px rgba(0,0,0,0.3) inset, 0 1px 0 rgba(255,255,255,1)
         transition: opacity 0.3s ease-in
     .avatar:hover
-      .tip
-        opacity: 1
       img
         opacity: 1
 
@@ -107,7 +91,7 @@ $tab-action-inner-components
     .dropdown-menu
       min-width: 110px
       a
-        @extend .dropdown-row
+        $dropdown-row()
         display: block
         margin: 5px auto
 

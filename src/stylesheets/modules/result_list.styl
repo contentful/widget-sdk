@@ -12,10 +12,6 @@ $standalone-table
 .result-list
   width: 100%
   table-layout: fixed
-  th
-    padding-top: 4px
-    padding-bottom: 3px
-    font-size: 90%
   th,
   th button
     font-weight: normal
@@ -35,7 +31,11 @@ $standalone-table
       border-bottom: none
   td,
   th
-    @extend $result-list-cell
+    $result-list-cell()
+  th
+    padding-top: 4px
+    padding-bottom: 3px
+    font-size: 90%
   td,
   th,
   th button

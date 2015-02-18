@@ -1,32 +1,40 @@
-// Forms
-//
-// Styleguide 5.0
+/*
+Forms
+
+Styleguide 5.0
+*/
 $textarea-max-height = 400px
 
-$form-control-theme
+$form-control-theme()
   background-color: white
   box-shadow: 0 1px 2px rgba(0,0,0,0.1) inset
   transition: box-shadow 0.3s ease-in, border-color 0.3s ease-in
 
-// Form controls
-//
-// Form control styling
-//
-// Markup:
-// <p><input type="text" class="form-control"></p>
-// <p><input type="text" class="form-control" value="disabled" disabled></p>
-// <p><textarea class="form-control"></textarea></p>
-// <p><textarea class="form-control" disabled>content</textarea></p>
-//
-// Styleguide 5.1
+/*
+Form controls
+
+Form control styling
+
+Markup:
+p
+  input(type="text" class="form-control")
+p
+  input(type="text" class="form-control" value="disabled" disabled)
+p
+  textarea(class="form-control")
+p
+  textarea(class="form-control" disabled) content
+
+Styleguide 5.1
+*/
 .form-control-look,
 .form-control
+  $form-control-theme()
   padding: $form-textarea-padding
   padding-top: 7px
   font-size: $base-font-size
   border: 1px solid $metallic-gray
   border-radius: 3px 3px 3px 3px
-  @extend $form-control-theme
   &:focus
     background-color: white
     border-color: $blue-link

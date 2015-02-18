@@ -6,7 +6,7 @@
   left: 25px
   bottom: 23px
   margin-top: 0px
-  z-index: 0
+  $layer('bottom')
   background-color: white
   border: 1px solid #dbdbdb
   border-color: rgba(0,0,0,0.17)
@@ -14,5 +14,8 @@
   &.with-tab-bar
     margin-top: 30px
 
-.tab-workbench
+$tab-workbench()
   padding-top: $tab-main-margin-top
+
+.tab-workbench
+  $tab-workbench()

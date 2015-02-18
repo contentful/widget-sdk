@@ -30,7 +30,7 @@ is served by gulp at `/styleguide`.
 If you wish to generate it manually, you can run `gulp
 generate-styleguide` and then check `public/styleguide`
 
-If you wish to publish the styleguide, run `gulp publish-styleguide`,
+If you wish to publish the styleguide, run `npm run publish-styleguide`,
 which will generate the styleguide and publish it to the `gh-pages`
 branch which will make it available at [http://contentful.github.io/user_interface/](http://contentful.github.io/user_interface/).
 
@@ -111,19 +111,6 @@ populate the `env.environment` value in the client.
 
 If no `UI_ENV` is specified, `development` is assumed.
 
-## Styleguide
-
-In order to generate the styleguide run:
-```
-./bin/styleguide.sh
-```
-
-This will generate the styleguide in `app/assets/stylesheets/styleguide`
-
-If you'd like to publish the newly generated and updated styleguide:
-```
-./bin/styleguide.sh push
-```
 ## Acceptance tests
 
 Those were deleted and can be found in pre-gulp revisions on the Repo.
