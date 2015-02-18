@@ -35,7 +35,7 @@ describe('The Entry list directive', function () {
       enforcements.setSpaceContext(scope.spaceContext);
 
       compileElement = function () {
-        container = $('<div class="entry-list"></div>');
+        container = $('<div cf-entry-list></div>');
         $compile(container)(scope);
         scope.$digest();
       };

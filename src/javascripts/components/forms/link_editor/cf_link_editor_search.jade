@@ -66,7 +66,7 @@
                            cf-click-outside="clickOutsideHandler()")
 
   div(ng-switch-when="Entry")
-    .endless-container(at-bottom="searchController.loadMore()" num-elements="paginator.page")
+    .endless-container(cf-endless-container at-bottom="searchController.loadMore()" num-elements="paginator.page")
       table.search-results__list
         tbody
           tr(ng-repeat="entity in entities track by entity.getId()"
@@ -82,7 +82,7 @@
     p.search-results__length Showing {{entities.length}} of {{paginator.numEntries}} entries
 
   div(ng-switch-when="Asset")
-    .endless-container(at-bottom="searchController.loadMore()" num-elements="paginator.page")
+    .endless-container(cf-endless-container at-bottom="searchController.loadMore()" num-elements="paginator.page")
       table.search-results__list
         tbody
           tr(ng-repeat="entity in entities track by entity.getId()"
@@ -90,7 +90,7 @@
               ng-class="{selected: entity==selectedEntity}")
             td.cell-preview
               p.file-preview(cf-file-preview file="spaceContext.localizedField(entity, 'data.fields.file', locale.code)")
-                span.cf-thumbnail(file="file" size="70" ng-if="file")
+                span.cf-thumbnail(cf-thumbnail file="file" size="70" ng-if="file")
             td.cell-name(ng-init="assetCellName=spaceContext.localizedField(entity, 'data.fields.title', locale.code) || 'Untitled'")
               p(title="{{assetCellName}}") {{assetCellName}}
               p.lighter {{spaceContext.localizedField(entity, 'data.fields.description', locale.code)}}

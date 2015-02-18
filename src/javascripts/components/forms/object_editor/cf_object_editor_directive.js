@@ -2,7 +2,7 @@
 
 angular.module('contentful').directive('cfObjectEditor', ['defer', function(defer){
   return {
-    restrict: 'C',
+    restrict: 'A',
     template: JST['cf_object_editor'](),
     require: 'ngModel',
     link: function(scope, elem, attr, ngModel){

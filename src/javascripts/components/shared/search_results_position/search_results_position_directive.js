@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('contentful').directive('searchResultsPosition', function() {
+angular.module('contentful').directive('cfSearchResultsPosition', function() {
   return {
-    restrict: 'C',
+    restrict: 'A',
     template: JST['search_results_position'],
     scope: {
       paginator: '='

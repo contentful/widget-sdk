@@ -1,9 +1,9 @@
 'use strict';
 
-angular.module('contentful').directive('apiHome', ['notes', function(notes) {
+angular.module('contentful').directive('cfApiHome', ['notes', function(notes) {
   return {
     template: JST['api_home'](),
-    restrict: 'C',
+    restrict: 'A',
     link: function (scope) {
       scope.notes = notes;
     }

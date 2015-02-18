@@ -2,7 +2,7 @@
 
 angular.module('contentful').directive('cfProgressBar', function () {
   return {
-    restrict: 'C',
+    restrict: 'A',
     template: '<span></span>',
     link: function (scope, elem, attrs) {
       var bar = elem.children('span');

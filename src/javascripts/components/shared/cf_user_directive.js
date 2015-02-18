@@ -3,7 +3,7 @@
 angular.module('contentful').
   directive('cfUser', function() {
     return {
-      restrict: 'C',
+      restrict: 'A',
       controller: ['$scope', '$attrs', 'userCache', function($scope, $attrs, userCache) {
         $scope.$watch($attrs.link, function(link) {
           if (!link || !$attrs.as) return;

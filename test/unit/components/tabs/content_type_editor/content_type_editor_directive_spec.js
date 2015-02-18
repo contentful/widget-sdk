@@ -32,7 +32,7 @@ describe('The ContentType editor directive', function () {
       };
 
       compileElement = function () {
-        container = $('<div class="content-type-editor"></div>');
+        container = $('<div cf-content-type-editor></div>');
         $compile(container)(scope);
         scope.$digest();
       };

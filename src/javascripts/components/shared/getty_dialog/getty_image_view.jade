@@ -4,7 +4,7 @@ button.back.btn.btn--tertiary(ng-click="resetImageView()") &larr; Back
   img(ng-src="{{imageDetail.UrlPreview}}")
 
 .image-data
-  .getty-metadata(image="imageDetail" full)
+  .getty-metadata(getty-metadata image="imageDetail" full)
 
   .image-sizes
     form(name="imageSizes")

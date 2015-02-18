@@ -2,7 +2,7 @@
 
 angular.module('contentful').directive('cfDropdownEditor', function(){
   return {
-    restrict: 'C',
+    restrict: 'A',
     template: JST['cf_dropdown_editor'](),
     require: 'ngModel',
     controller: 'MultipleValuesController',

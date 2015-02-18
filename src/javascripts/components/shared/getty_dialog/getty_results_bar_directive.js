@@ -3,7 +3,7 @@
 angular.module('contentful').directive('gettyResultsBar', function(){
   return {
     template: JST.getty_results_bar(),
-    restrict: 'C',
+    restrict: 'A',
     scope: true,
     transclude: true,
     link: function (scope, elem, attrs) {

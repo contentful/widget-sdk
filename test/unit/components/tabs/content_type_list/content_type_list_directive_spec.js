@@ -25,7 +25,7 @@ describe('The ContentType list directive', function () {
       });
 
       compileElement = function () {
-        container = $('<div class="content-type-list"></div>');
+        container = $('<div cf-content-type-list></div>');
         $compile(container)(scope);
         scope.$digest();
       };

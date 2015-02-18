@@ -4,6 +4,7 @@ angular.module('contentful').directive('cfSearch', ['keycodes', 'debounce', func
 
   return {
     template: JST['cf_search'](),
+    restrict: 'A',
     scope: {
       placeholder: '@',
       search: '=cfSearch',

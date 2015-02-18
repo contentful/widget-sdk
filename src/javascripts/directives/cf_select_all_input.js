@@ -2,7 +2,7 @@
 
 angular.module('contentful').directive('cfSelectAllInput', function() {
   return {
-    restrict: 'AC',
+    restrict: 'A',
     link: function(scope, element) {
       function clickHandler() {
         element.get(0).setSelectionRange(0, element.val().length);

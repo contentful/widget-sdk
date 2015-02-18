@@ -2,7 +2,7 @@
   .tab-header__title
     h1
       | Assets
-      a.cf-knowledge-base-icon(
+      a(cf-knowledge-base-icon
         tooltip="Learn more about Assets in the Knowledge Base Pages"
         tooltip-container=".entity-list"
         analytics-event="assets"
@@ -15,7 +15,7 @@
       search-content-type="assetContentType"
       placeholder="Search for Assets")
 
-    .search-results-position(paginator="searchController.paginator" ng-hide="!searchController.paginator.numEntries")
+    .search-results-position(cf-search-results-position paginator="searchController.paginator" ng-hide="!searchController.paginator.numEntries")
 
   .tab-header__actions.add-entity
     .dropdown-btn(cf-dropdown ng-show="assets.length > 0")
@@ -51,7 +51,7 @@
           th.cell-author By
           th.cell-status Status
 
-    .main-results-wrapper.endless-container(at-bottom="searchController.loadMore()" num-elements="searchController.paginator.page")
+    .main-results-wrapper.endless-container(cf-endless-container at-bottom="searchController.loadMore()" num-elements="searchController.paginator.page")
       table.result-list.main-results
         tbody
           tr(ng-repeat="asset in visibleAssets = (assets | filter:visibleInCurrentList) track by asset.getId()" cf-click-local="navigator.assetEditor(asset).goTo()")
@@ -59,7 +59,7 @@
               input(type="checkbox" cf-selection="asset" tabindex="-1")
             td.cell-preview(ng-class="{'no-padding': (!!file)}")
               div.file-preview(cf-file-preview file="spaceContext.localizedField(asset, 'data.fields.file')" preview-size="400")
-                span.cf-thumbnail(file="file" size="30" ng-if="file")
+                span.cf-thumbnail(cf-thumbnail file="file" size="30" ng-if="file")
             td.cell-name
               span {{spaceContext.assetTitle(asset)}}
             td.cell-type(ng-init="file=spaceContext.localizedField(asset, 'data.fields.file')")
@@ -68,7 +68,7 @@
             td.cell-updated
               date.relative(ng-if="asset.getUpdatedAt()" datetime="{{asset.getUpdatedAt()}}")
             td.cell-author
-              span.cf-user(link="asset.getUpdatedBy()" as="updater") {{updater | userNameDisplay:user}}
+              span(cf-user link="asset.getUpdatedBy()" as="updater") {{updater | userNameDisplay:user}}
             td.cell-status(ng-class="entityStatusController.getClassname(asset)")
               .draft-wrapper
                 .status-label {{entityStatusController.getLabel(asset)}}
