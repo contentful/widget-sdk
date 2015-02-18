@@ -36,7 +36,7 @@
     //]]>
   </script>
 </head>
-<body class='cf-clear-outlines' ng-app='contentful/app'>
+<body cf-clear-outlines ng-app='contentful/app'>
   <div class='client ng-hide' ng-controller='ClientController' ng-init='initClient()' ng-show='user'>
     <div class='notifications'>
       <div class='notification {{message.severity}}' ng-repeat='(index, message) in notification.unseen() track by index'>
@@ -83,8 +83,8 @@
           </ul>
         </div>
       </div>
-      <div class='cf-persistent-notification' ng-show='persistentNotification'></div>
-      <div class='navbar-loader'></div>
+      <div cf-persistent-notification class='cf-persistent-notification' ng-show='persistentNotification'></div>
+      <div cf-navbar-loader class='navbar-loader'></div>
     </nav>
     <space-view ng-controller='TabViewController'></space-view>
     <div class='advice advice--no-spaces' ng-show='spaces.length == 0'>

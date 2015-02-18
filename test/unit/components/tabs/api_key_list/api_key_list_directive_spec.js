@@ -27,7 +27,7 @@ describe('The ApiKey list directive', function () {
       enforcements.setSpaceContext(scope.spaceContext);
 
       compileElement = function () {
-        container = $('<div class="api-key-list"></div>');
+        container = $('<div cf-api-key-list></div>');
         $compile(container)(scope);
         scope.$digest();
       };

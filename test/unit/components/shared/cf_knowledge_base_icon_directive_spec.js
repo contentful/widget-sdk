@@ -13,7 +13,7 @@ describe('cfKnowledgeBaseIcon Directve', function () {
   beforeEach(inject(function ($compile, $rootScope) {
     scope = $rootScope;
     element = $compile(
-      '<div class="cf-knowledge-base-icon" '+
+      '<div cf-knowledge-base-icon '+
       'tooltip="tooltip text" analytics-event="eventname" '+
       'href="http://contentful.com"></div>'
     )(scope);
@@ -29,7 +29,7 @@ describe('cfKnowledgeBaseIcon Directve', function () {
   });
 
   it('has tooltip container', function () {
-    expect(element.attr('tooltip-container')).toBe('.cf-knowledge-base-icon');
+    expect(element.attr('tooltip-container')).toBe('[cf-knowledge-base-icon]');
   });
 
   it('has href', function () {

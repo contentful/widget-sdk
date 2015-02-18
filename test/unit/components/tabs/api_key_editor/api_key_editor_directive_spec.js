@@ -57,7 +57,7 @@ describe('apiKeyEditor Directive', function () {
       };
 
       compileElement = function () {
-        element = $compile('<div class="api-key-editor"></div>')(scope);
+        element = $compile('<div cf-api-key-editor></div>')(scope);
         scope.tab.params.apiKey = {
           data: {},
           getId: stubs.apiKeyGetId

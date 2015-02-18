@@ -6,7 +6,7 @@ angular.module('contentful').directive('gettyImageResults', function(){
 
   return {
     template: JST.getty_image_results(),
-    restrict: 'C',
+    restrict: 'A',
     link: function (scope, elem) {
       var container = elem.parents('.endless-container');
       scope.fixedResults = false;

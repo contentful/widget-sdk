@@ -1,9 +1,9 @@
 'use strict';
 
 angular.module('contentful').
-  directive('entityInfoPanel', function() {
+  directive('cfEntityInfoPanel', function() {
     return {
-      restrict: 'C',
+      restrict: 'A',
       controller: ['$scope', function EntityInfoPanelController($scope) {
         $scope.$watch('entry && spaceContext.publishedTypeForEntry(entry).getName()', function(name, old, scope) {
           scope.contentTypeName = name;

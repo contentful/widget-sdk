@@ -29,7 +29,7 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('numberEditor',{
     fieldTypes: ['Integer', 'Number'],
     name: 'Number Editor',
-    template: '<div class="cf-number-editor"></div>'
+    template: '<div cf-number-editor class="cf-number-editor"></div>'
   });
   widgets.registerWidget('multipleLine',{
     fieldTypes: ['Text'],
@@ -39,7 +39,7 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('markdown',{
     fieldTypes: ['Text'],
     name: 'Markdown',
-    template: '<div class="cf-markdown-editor"></div>'
+    template: '<div cf-markdown-editor class="cf-markdown-editor"></div>'
   });
   widgets.registerWidget('radio',{
     fieldTypes: ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'],
@@ -49,7 +49,7 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('dropdown',{
     fieldTypes: ['Text', 'Symbol', 'Integer', 'Number', 'Boolean'],
     name: 'Dropdown',
-    template: '<div class="cf-dropdown-editor" ng-model="fieldData.value" ot-bind-internal="valuesController.selected"></div>'
+    template: '<div cf-dropdown-editor ng-model="fieldData.value" ot-bind-internal="valuesController.selected"></div>'
   });
   widgets.registerWidget('rating',{
     fieldTypes: ['Integer', 'Number'],
@@ -68,7 +68,7 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('datePicker',{
     fieldTypes: ['Date'],
     name: 'Date Picker',
-    template: '<div class="cf-datetime-editor widget-datetime-editor" ng-model="fieldData.value"></div>',
+    template: '<div cf-datetime-editor class="widget-datetime-editor" ng-model="fieldData.value"></div>',
     options: [
       {
         param: 'format',
@@ -98,12 +98,12 @@ angular.module('contentful').run(['widgets', function(widgets){
     fieldTypes: ['Location'],
     name: 'Location',
     // Show the google maps widget alongwith the location editor widget. They share the same 'location' model.
-    template: '<cf-google-maps ng-model="location" ot-bind-internal="location"></cf-google-maps><div class="cf-location-editor widget-location-editor" ng-model="fieldData.value" ot-bind-internal="location"></div>'
+    template: '<cf-google-maps ng-model="location" ot-bind-internal="location"></cf-google-maps><div cf-location-editor class="widget-location-editor" ng-model="fieldData.value" ot-bind-internal="location"></div>'
   });
   widgets.registerWidget('objectEditor',{
     fieldTypes: ['Object'],
     name: 'Object',
-    template: '<div class="cf-object-editor" ng-model="fieldData.value"></div>'
+    template: '<div cf-object-editor class="cf-object-editor" ng-model="fieldData.value"></div>'
   });
   widgets.registerWidget('listInput',{
     fieldTypes: ['Symbols'],

@@ -2,7 +2,7 @@
 
 angular.module('contentful').directive('cfLocationEditor', function(){
   return {
-    restrict: 'C',
+    restrict: 'A',
     require: 'ngModel',
     template: JST['cf_location_editor'],
     controller: 'cfLocationEditorController',

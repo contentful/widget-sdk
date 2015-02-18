@@ -21,7 +21,7 @@ table
     tr
       th Created by
       td
-        span.cf-user(link="sys.createdBy" as="creator")
+        span(cf-user link="sys.createdBy" as="creator")
           | {{creator | userNameDisplay:user}}
 
   tbody(ng-if="sys.updatedAt")
@@ -32,7 +32,7 @@ table
     tr
       th Updated by
       td
-        span.cf-user(link="sys.updatedBy" as="updater")
+        span(cf-user link="sys.updatedBy" as="updater")
           | {{updater | userNameDisplay:user}}
 
   tbody(ng-if="sys.archivedVersion")
@@ -55,7 +55,7 @@ table
     tr
       th Published by
       td
-        span.cf-user(link="sys.publishedBy" as="publisher")
+        span(cf-user link="sys.publishedBy" as="publisher")
           | {{publisher | userNameDisplay:user}}
     tr
       th Published version

@@ -23,7 +23,7 @@ describe('cfThumbnailDirective', function () {
     var defaults = { file: 'asset' };
     attrs        = _.defaults(attrs || {}, defaults);
 
-    element = $('<div class="cf-thumbnail"></div>');
+    element = $('<div cf-thumbnail></div>');
     element.attr(attrs);
 
     $compile(element)(scope);

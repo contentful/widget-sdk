@@ -1,8 +1,8 @@
 'use strict';
-angular.module('contentful').directive('spaceSettings', ['$window', '$rootScope', 'authentication', 'routing', 'logger', function($window, $rootScope, authentication, routing, logger){
+angular.module('contentful').directive('cfSpaceSettings', ['$window', '$rootScope', 'authentication', 'routing', 'logger', function($window, $rootScope, authentication, routing, logger){
   return {
     template: JST['iframe_view'](),
-    restrict: 'C',
+    restrict: 'A',
     scope: true,
     link: function (scope, elem) {
       scope.$on('$routeChangeSuccess', function (event, route, previous) {

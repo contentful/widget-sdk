@@ -2,7 +2,7 @@
   .tab-header__title
     h1
       | {{contentType.getName()}}
-      a.cf-knowledge-base-icon(
+      a(cf-knowledge-base-icon
         tooltip="Learn more about Content Types in the Knowledge Base Pages"
         analytics-event="content_types"
         href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
@@ -35,7 +35,7 @@
 .aux-panel(ng-show="preferences.showAuxPanel")
   header
     h1 Content Type Information
-  .entity-info-panel
+  .entity-info-panel(cf-entity-info-panel)
 
 .tab-main.tab-workbench
   .l-form(name="contentTypeForm")
@@ -102,5 +102,5 @@
                   ng-click="publish()"
                   tooltip="Make this Content Type available to editors")
       | {{publishButtonLabel()}}
-  .save-status(tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to create Entries of this Content Type."
+  .save-status(cf-save-status tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to create Entries of this Content Type."
                tooltip-placement="top")

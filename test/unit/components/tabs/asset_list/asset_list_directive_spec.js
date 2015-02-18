@@ -37,7 +37,7 @@ describe('The Asset list directive', function () {
       scope.permissionController.get.returns(false);
 
       compileElement = function () {
-        container = $('<div class="asset-list"></div>');
+        container = $('<div cf-asset-list></div>');
         $compile(container)(scope);
         scope.$digest();
       };

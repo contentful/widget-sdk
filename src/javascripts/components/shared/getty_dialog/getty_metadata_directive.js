@@ -3,7 +3,7 @@
 angular.module('contentful').directive('gettyMetadata', function(){
   return {
     template: JST.getty_metadata(),
-    restrict: 'C',
+    restrict: 'A',
     scope: {
       image: '=image',
       full: '=full'

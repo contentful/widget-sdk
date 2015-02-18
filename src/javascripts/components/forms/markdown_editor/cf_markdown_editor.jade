@@ -73,7 +73,7 @@ textarea.form-control.markdown-textarea(cf-input-autogrow
   ng-disabled="!otEditable"
   ng-hide="inPreviewMode()")
 
-.cf-markdown-guide(ng-if="inEditMode()")
+.cf-markdown-guide(cf-markdown-guide ng-if="inEditMode()")
 
 .markdown-preview(
   tabindex="0"

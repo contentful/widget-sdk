@@ -17,7 +17,7 @@ describe('Number widgets', function () {
   describe('Number widget', function () {
     beforeEach(inject(function ($rootScope, $compile){
       scope.field = {type: 'Number'};
-      elem = $compile('<div class="cf-number-editor"></div>')(scope);
+      elem = $compile('<div cf-number-editor></div>')(scope);
     }));
 
     it('should generate 0', function () {
@@ -46,7 +46,7 @@ describe('Number widgets', function () {
   describe('Integer widget', function () {
     beforeEach(inject(function ($rootScope, $compile){
       scope.field = {type: 'Number'};
-      elem = $compile('<div class="cf-number-editor"></div>')(scope);
+      elem = $compile('<div cf-number-editor></div>')(scope);
     }));
 
     it('should generate 0', function () {

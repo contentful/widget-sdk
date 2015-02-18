@@ -2,7 +2,7 @@
   .tab-header__title
     h1
       | Content Types
-      a.cf-knowledge-base-icon(
+      a(cf-knowledge-base-icon
         tooltip="Learn more about Content Types in the Knowledge Base Pages"
         tooltip-container=".entity-list"
         analytics-event="content_types"
@@ -58,7 +58,7 @@
             td.cell-date
               date.relative(ng-if="contentType.getUpdatedAt()" datetime="{{contentType.getUpdatedAt()}}")
             td.cell-symbol
-              span.cf-user(link="contentType.getUpdatedBy()" as="updater")
+              span(cf-user link="contentType.getUpdatedBy()" as="updater")
                 | {{updater | userNameDisplay:user}}
             td.cell-status(ng-class="statusClass(contentType)")
               .status-label {{statusLabel(contentType)}}

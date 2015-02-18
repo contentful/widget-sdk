@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('contentful').directive('navbarLoader', ['cfSpinner', function (cfSpinner) {
+angular.module('contentful').directive('cfNavbarLoader', ['cfSpinner', function (cfSpinner) {
   return {
-    restrict: 'C',
+    restrict: 'A',
     link: function (scope, element) {
       element.hide();
       cfSpinner.setCallback(function (state) {

@@ -3,6 +3,7 @@
 angular.module('contentful').directive('cfFilePreview', ['$compile', '$window', '$document', 'defer', function ($compile, $window, $document, defer) {
   return {
     scope: true,
+    restrict: 'A',
     link: function (scope, elem, attrs) {
       var $preview;
       var xOffset, yOffset;
@@ -71,7 +72,7 @@ angular.module('contentful').directive('cfFilePreview', ['$compile', '$window', 
         var urlString = scope.file.external ? '{{file.url}}' : '{{file.url|assetUrl}}?w={{width}}&h={{height}}';
         $preview = $compile(
           '<img ng-src="'+urlString+
-          '" class="cf-file-preview" style="display:block; position: fixed; background: white; '+
+          '" cf-file-preview class="cf-file-preview" style="display:block; position: fixed; background: white; '+
           'width: {{width}}px; height: {{height}}px;">'
         )(scope);
         $document.find('body').append($preview);

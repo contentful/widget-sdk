@@ -1,10 +1,9 @@
 'use strict';
 
-angular.module('contentful').
-  directive('apiKeyList', function() {
+angular.module('contentful').directive('cfApiKeyList', function() {
     return {
       template: JST['api_key_list'](),
-      restrict: 'C',
+      restrict: 'A',
       controller: 'ApiKeyListController'
     };
   });

@@ -17,7 +17,7 @@
 
 angular.module('contentful').directive('cfThumbnail', function () {
   return {
-    restrict: 'CA',
+    restrict: 'A',
     template: JST['cf_thumbnail'],
     scope: {
       file: '=file'

@@ -2,7 +2,7 @@
   .modal-dialog(ng-controller="FieldValidationDialogController" cf-center-on=".modal-background")
     .title
       | Validations for {{field.name}} 
-      a.cf-knowledge-base-icon(
+      a(cf-knowledge-base-icon
         tooltip="Learn more about Validations in the Knowledge Base Pages"
         tooltip-container=".validation-dialog"
         analytics-event="content_type_validations"

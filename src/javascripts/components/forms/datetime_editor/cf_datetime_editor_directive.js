@@ -3,7 +3,7 @@
 angular.module('contentful').directive('cfDatetimeEditor', ['$parse', 'zoneOffsets', function($parse, zoneOffsets){
 
   return {
-    restrict: 'C',
+    restrict: 'A',
     template: JST['cf_datetime_editor'],
     require: 'ngModel',
     link: function(scope, elm, attr, ngModelCtrl) {

@@ -20,7 +20,7 @@ angular.module('contentful').directive('cfMarkdownEditor', ['$injector', functio
   };
 
   return {
-    restrict: 'C',
+    restrict: 'A',
     template: JST['cf_markdown_editor'](),
     link: function(scope, elem){
       var textarea = elem.find('textarea');

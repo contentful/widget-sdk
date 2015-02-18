@@ -14,7 +14,7 @@
   h2.video-dialog-results__notice(ng-if="videoSearch.searchFinished && !videoSearch.videos.length")
     | No videos match your search
 
-  .video-dialog-results__results-container.endless-container(at-bottom="videoSearchController.loadMore()" threshold="0")
+  .video-dialog-results__results-container.endless-container(cf-endless-container at-bottom="videoSearchController.loadMore()" threshold="0")
     .cf-video-search-result.video-dialog-result(
         ng-repeat="video in videoSearch.videos"
         ng-mouseover="handleMouseOver($event)"
