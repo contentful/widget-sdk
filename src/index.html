@@ -44,8 +44,8 @@
       </div>
     </div>
     <nav class='account-bar'>
-      <div class='dropdown-btn avatar user' cf-dropdown='' label=''>
-        <a class='dropdown-toggle' cf-dropdown-toggle='' ng-click='clickedProfileButton()' tabindex='0'>
+      <div class='account-bar__dropdown-btn dropdown-btn avatar user' cf-dropdown='' label=''>
+        <a class='account-bar__dropdown-toggle dropdown-toggle' cf-dropdown-toggle='' ng-click='clickedProfileButton()' tabindex='0'>
           <i class='button-icon-right fa fa-caret-down'></i>
           <img ng-src='{{user.avatarUrl}}'>
         </a>
@@ -60,8 +60,8 @@
           </ul>
         </div>
       </div>
-      <div class='dropdown-btn project' cf-dropdown='' ng-show='organizations && organizations.length > 0' ng-hide='spaces.length == 0 && !canCreateSpaceInAnyOrg()'>
-        <a class='dropdown-toggle' cf-dropdown-toggle='' ng-click='clickedSpaceSwitcher()' tabindex='0'>
+      <div class='account-bar__dropdown-btn dropdown-btn project' cf-dropdown='' ng-show='organizations && organizations.length > 0' ng-hide='spaces.length == 0 && !canCreateSpaceInAnyOrg()'>
+        <a class='account-bar__dropdown-toggle dropdown-toggle' cf-dropdown-toggle='' ng-click='clickedSpaceSwitcher()' tabindex='0'>
           <i class='button-icon-right fa fa-caret-down'></i>
           <span ng-bind="spaceContext.space.data.name || 'Spaces'"></span>
         </a>
@@ -84,7 +84,7 @@
         </div>
       </div>
       <div cf-persistent-notification class='cf-persistent-notification' ng-show='persistentNotification'></div>
-      <div cf-navbar-loader class='navbar-loader'></div>
+      <div cf-navbar-loader class='account-bar__loader'></div>
     </nav>
     <space-view ng-controller='TabViewController'></space-view>
     <div class='advice advice--no-spaces' ng-show='spaces.length == 0'>

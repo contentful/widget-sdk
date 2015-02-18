@@ -4,22 +4,6 @@
   right: 20px
   top: 0px
   height: $nav-bar-height
-  .dropdown-toggle
-    height: $nav-bar-height
-    font-weight: $nav-bar-font-weight
-    text-align: right
-    float: right
-    line-height: 27px
-    padding: 10px 10px 0px
-    border-bottom: none
-    .button-icon-right
-      left: 10px
-      top: 7px
-  .dropdown-toggle:hover
-    color: white
-    box-shadow: none
-  .active .dropdown-toggle
-    color: white
   $nav-bar-dropdowns()
   .dropdown-group
     > li
@@ -37,9 +21,6 @@
       font-weight: bold
       padding: 2px 12px 6px
       margin-bottom: 0px
-  .project,
-  .user
-    float: right
   .project
     position: relative
     margin-right: 10px
@@ -70,12 +51,32 @@
       margin-top: -4px
     .dropdown-menu
       right: 0
-  .project.active,
-  .user.active
+
+.account-bar__dropdown-btn
+  float: right
+  .active &
     padding-top: 1px
     background: darken($gray-darkest, 10%)
 
-.navbar-loader
+.account-bar__dropdown-toggle
+  color: $gray
+  height: $nav-bar-height
+  font-weight: $nav-bar-font-weight
+  text-align: right
+  float: right
+  line-height: 27px
+  padding: 10px 10px 0px
+  border-bottom: none
+  .button-icon-right
+    left: 10px
+    top: 7px
+  &:hover
+    color: white
+    box-shadow: none
+  .active &
+    color: white
+
+.account-bar__loader
   float: right
   width: 50px
   height: 50px
