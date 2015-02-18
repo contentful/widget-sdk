@@ -110,6 +110,7 @@ describe('validation dialog', function() {
       maxInput.val('20').trigger('input');
 
       clickSave();
+      expect(dialog.open).toBe(false);
 
       expect(scope.field.validations)
       .toEqual([{size: {min: 10, max: 20}}]);
@@ -117,27 +118,7 @@ describe('validation dialog', function() {
       .toEqual([{size: {min: 10, max: 20}}]);
     });
 
-    it('can be toggled', function() {
-      expect(scope.field.validations).toBeUndefined();
-
-      settings()
-      .find('[aria-label="Enable validation"]')
-      .click();
-      clickSave();
-
-      expect(scope.field.validations.length).toBe(1);
-      expect(validationsDoc(scope).get().length).toBe(1);
-
-      openDialog();
-      settings()
-      .find('[aria-label="Disable validation"]')
-      .click();
-      clickSave();
-      expect(scope.field.validations).toEqual([]);
-      expect(validationsDoc(scope).get()).toEqual([]);
-    });
-
-    it('existing validation is shown', function() {
+    it('existing validation is shown and can be disabled', function() {
       scope.field.validations = [{size: {min: 10, max: 20}}];
       openDialog();
 
@@ -154,12 +135,42 @@ describe('validation dialog', function() {
       expect(validationsDoc(scope).get()).toEqual([]);
     });
 
+    it('shows errors when opened', function() {
+      scope.field.validations = [{size: {min: null, max: null}}];
+      openDialog();
+
+      clickSave();
+      expect(dialog.open).toBe(true);
+
+      var errors = settings()
+      .find('[aria-label="Errors"] li');
+      expect(errors.text()).toEqual('Expected min and/or max boundaries');
+    });
+
+    it('does not save invalid validations', function() {
+      scope.field.validations = [{size: {min: 10, max: null}}];
+      openDialog();
+
+      settings()
+      .find('[aria-label="Minimum size"]')
+      .val('')
+      .trigger('input');
+
+      clickSave();
+      expect(dialog.open).toBe(true);
+
+      var errors = settings()
+      .find('[aria-label="Errors"] li');
+      expect(errors.text()).toEqual('Expected min and/or max boundaries');
+    });
+
   });
 
   describe('range validation', function() {
+    // TODO Number validation with decimals
 
     beforeEach(function() {
-      scope.field.type = 'Number';
+      scope.field.type = 'Integer';
       openDialog();
     });
 
@@ -171,28 +182,31 @@ describe('validation dialog', function() {
       settings()
       .find('[aria-label="Enable validation"]')
       .click();
+      settings()
+      .find('[aria-label="Enable validation"]')
+      .click();
 
       var minValue = settings().find('[aria-label="Minimum value"]');
-      minValue.val('-0.1').trigger('input');
+      minValue.val('-1').trigger('input');
       var maxValue = settings().find('[aria-label="Maximum value"]');
-      maxValue.val('0.2').trigger('input');
+      maxValue.val('2').trigger('input');
 
       clickSave();
 
       expect(scope.field.validations)
-      .toEqual([{range: {min: -0.1, max: 0.2}}]);
+      .toEqual([{range: {min: -1, max: 2}}]);
       expect(validationsDoc(scope).get())
-      .toEqual([{range: {min: -0.1, max: 0.2}}]);
+      .toEqual([{range: {min: -1, max: 2}}]);
     });
 
     it('it can be disabled', function() {
-      scope.field.validations = [{range: {min: -0.1, max: 0.2}}];
+      scope.field.validations = [{range: {min: -1, max: 2}}];
       openDialog();
 
       var minInput = settings().find('[aria-label="Minimum value"]');
-      expect(minInput.val()).toBe('-0.1');
+      expect(minInput.val()).toBe('-1');
       var maxInput = settings().find('[aria-label="Maximum value"]');
-      expect(maxInput.val()).toBe('0.2');
+      expect(maxInput.val()).toBe('2');
 
       settings()
       .find('[aria-label="Disable validation"]')

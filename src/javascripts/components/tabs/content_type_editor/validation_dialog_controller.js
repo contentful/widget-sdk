@@ -18,6 +18,7 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
   var validationName       = availableValidations.name;
   var logger               = $injector.get('logger');
   var notification         = $injector.get('notification');
+  var createSchema         = $injector.get('validation');
   var controller           = this;
 
 
@@ -25,14 +26,18 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
   var availableFieldValidations = availableValidations.forField($scope.field);
   $scope.validations = _.map(availableFieldValidations, decorateValidation);
   updateValidationsFromField();
+  validateValidations();
 
   $scope.cancel = function() {
     $scope.dialog.cancel();
   };
 
   $scope.save = function() {
-    $scope.dialog.confirm();
-    controller.save();
+    var valid = validateValidations();
+    if (valid) {
+      controller.save();
+      $scope.dialog.confirm();
+    }
   };
 
   /**
@@ -81,8 +86,31 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
   }
 
   /**
-   * Sets the 'enabled' falg and the 'errorPath' for the decorated
-   * validations according to their presence in `field.validations`.
+   * Validates each enabled validation.
+   *
+   * If the validation fails, the errors are added to decorated
+   * validations `errors` property. This property is delted otherwise.
+   *
+   * Returns `true` if and only if all validations are valid.
+   */
+  function validateValidations() {
+    var schema = createSchema({type: 'Validation'});
+    return _.reduce($scope.validations, function(valid, validation) {
+      if (!validation.enabled) {
+        delete validation.errors;
+        return valid;
+      }
+
+      var errors = schema.errors(extractDecoratedValidation(validation));
+      validation.errors = _.map(errors, 'details');
+      return valid && _.isEmpty(errors);
+    }, true);
+  }
+
+
+  /**
+   * Sets the 'enabled' flag for the decorated validations according to
+   * their presence in `field.validations`.
    */
   function updateValidationsFromField() {
     _.forEach($scope.validations, function(validation) {
@@ -90,10 +118,8 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
       if (enabledValidation) {
         validation.enabled = true;
         validation.settings = _.cloneDeep(enabledValidation.settings);
-        validation.errorPath = validationListPath().concat([enabledValidation.index]);
       } else {
         validation.enabled = false;
-        validation.errorPath = [];
       }
     });
   }

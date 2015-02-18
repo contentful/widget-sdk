@@ -13,7 +13,7 @@ h2.validation-settings__header
     | &nbsp;&ndash;&nbsp;
     input.form-control(type="number" placeholder="Max" aria-label="Maximum size"
                        ng-model="validation.settings.max" ng-disabled="!otEditable")
-    cf-error-list.form-inline-error(cf-error-path="validation.errorPath")
+    cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label="Errors")
 
 
   div(ng-switch-when="range")
@@ -22,8 +22,7 @@ h2.validation-settings__header
     | &nbsp;&ndash;&nbsp;
     input.form-control(type="number" placeholder="Max" aria-label="Maximum value"
                        ng-model="validation.settings.max" ng-disabled="!otEditable")
-    cf-error-list.form-inline-error(cf-error-path="validation.errorPath")
-
+    cf-error-list.form-inline-error(cf-error-messages="validation.errors")
 
   div(ng-switch-when="regexp")
     input.form-control.validation-controls__re-pattern(
@@ -35,7 +34,7 @@ h2.validation-settings__header
       type="text" aria-label="Regular Expression flags"
       ng-model="validation.settings.flags"
       ng-required="true" ng-disabled="!otEditable")
-    cf-error-list.form-inline-error(cf-error-path="validation.errorPath")
+    cf-error-list.form-inline-error(cf-error-messages="validation.errors")
 
 
   cf-validation-values(ng-switch-when="in")
