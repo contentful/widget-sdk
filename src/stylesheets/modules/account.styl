@@ -1,28 +1,8 @@
-.account-menus
+.account-bar
   position: absolute
-  width: 100%
   right: 20px
   top: 0px
   height: $nav-bar-height
-  .dropdown-toggle
-    height: $nav-bar-height
-    font-weight: $nav-bar-font-weight
-    text-align: right
-    float: right
-    line-height: 27px
-    padding: 10px 10px 0px
-    border-bottom: none
-    .button-icon-right
-      left: 10px
-      top: 7px
-  .dropdown-toggle:hover
-    color: white
-    box-shadow: none
-  .active .dropdown-toggle
-    color: white
-
-// Concrete project and user buttons
-.account-menus
   $nav-bar-dropdowns()
   .dropdown-group
     > li
@@ -40,9 +20,6 @@
       font-weight: bold
       padding: 2px 12px 6px
       margin-bottom: 0px
-  .project,
-  .user
-    float: right
   .project
     position: relative
     margin-right: 10px
@@ -73,44 +50,34 @@
       margin-top: -4px
     .dropdown-menu
       right: 0
-  .project.active,
-  .user.active
+
+.account-bar__dropdown-btn
+  float: right
+  .active &
     padding-top: 1px
     background: darken($gray-darkest, 10%)
 
-.cf-account-view
-  &.with-tab-bar
-    margin-top: 30px
+.account-bar__dropdown-toggle
+  color: $gray
+  height: $nav-bar-height
+  font-weight: $nav-bar-font-weight
+  text-align: right
+  float: right
+  line-height: 27px
+  padding: 10px 10px 0px
+  border-bottom: none
+  .button-icon-right
+    left: 10px
+    top: 7px
+  &:hover
+    color: white
+    box-shadow: none
+  .active &
+    color: white
 
-.navbar-loader
+.account-bar__loader
   float: right
   width: 50px
   height: 50px
   background: url('/app/images/navbar-loader.gif') center no-repeat
 
-.cf-persistent-notification
-  float: right
-  margin-right: 10px
-  margin-top: 5px
-  color: white
-  background-color: darken($gray-darkest, 5%)
-  padding: 0px 11px 5px
-  border-radius: 3px
-  $bottom-white-shadow = rgba(255,255,255,0.2) 0px 1px
-  $top-black-shadow = rgba(0,0,0,0.5) 0px -1px
-  $left-black-shadow = rgba(0,0,0,0.3) 1px 0px 1px inset
-  box-shadow: $bottom-white-shadow, $top-black-shadow, $left-black-shadow
-  strong
-    color: white
-  p, button
-    float: left
-    margin-bottom: 0px
-  p
-    line-height: 25px
-    margin-top: 4px
-    margin-right: 10px
-    vertical-align: middle
-  button
-    margin-top: 3px
-    padding: 3px 7px
-  $tooltip-opaque()

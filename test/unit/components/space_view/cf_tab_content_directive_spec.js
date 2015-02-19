@@ -34,7 +34,7 @@ describe('cfTabContent directive', function () {
       scope.locationInAccount = false;
 
       compileElement = function () {
-        container = $('<div><div cf-tab-content></div></div>');
+        container = $('<div><cf-tab-content></cf-tab-content></div>');
         $compile(container)(scope);
         scope.$digest();
       };

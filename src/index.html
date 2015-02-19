@@ -1,23 +1,23 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <meta charset='UTF-8'>
-  <base href='/'>
+  <meta charset="UTF-8">
+  <base href="/">
   <title>Contentful</title>
-  <link href='/app/vendor.css' media='all' rel='stylesheet' type='text/css'>
-  <link href='/app/main.css' media='all' rel='stylesheet' type='text/css'>
+  <link href="/app/vendor.css" media="all" rel="stylesheet" type="text/css">
+  <link href="/app/main.css" media="all" rel="stylesheet" type="text/css">
   <!--[if IE 9]>
-    <link href='/app/ie9.css' media='all' rel='stylesheet' type='text/css'>
+    <link href="/app/ie9.css" media="all" rel="stylesheet" type="text/css">
   <![endif]-->
-  <link rel='shortcut icon'    href='/app/images/favicons/favicon32x32.png'      type='image/png'>
-  <link rel='apple-touch-icon' href='/app/images/favicons/apple_icon57x57.png'   type='image/png'>
-  <link rel='apple-touch-icon' href='/app/images/favicons/apple_icon72x72.png'   type='image/png'>
-  <link rel='apple-touch-icon' href='/app/images/favicons/apple_icon114x114.png' type='image/png'>
-  <meta http-equiv='x-ua-compatible' content='IE=edge'>
-  <link href='//fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic' rel='stylesheet' type='text/css'>
-  <style id='disable-outlines'></style>
-  <style id='chrome-temp-fix'></style>
-  <script src='//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js' data-apikey='b253f10d5d0184a99e1773cec7b726e8'></script>
+  <link rel="shortcut icon"    href="/app/images/favicons/favicon32x32.png"      type="image/png">
+  <link rel="apple-touch-icon" href="/app/images/favicons/apple_icon57x57.png"   type="image/png">
+  <link rel="apple-touch-icon" href="/app/images/favicons/apple_icon72x72.png"   type="image/png">
+  <link rel="apple-touch-icon" href="/app/images/favicons/apple_icon114x114.png" type="image/png">
+  <meta http-equiv="x-ua-compatible" content="IE=edge">
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+  <style id="disable-outlines"></style>
+  <style id="chrome-temp-fix"></style>
+  <script src="//d2wy8f7a9ursnm.cloudfront.net/bugsnag-2.min.js" data-apikey="b253f10d5d0184a99e1773cec7b726e8"></script>
   <script id="cf-config">
     window.CF_CONFIG = {};
     window.CF_ENV = 'development';
@@ -36,77 +36,16 @@
     //]]>
   </script>
 </head>
-<body cf-clear-outlines ng-app='contentful/app'>
-  <div class='client ng-hide' ng-controller='ClientController' ng-init='initClient()' ng-show='user'>
-    <div class='notifications'>
-      <div class='notification {{message.severity}}' ng-repeat='(index, message) in notification.unseen() track by index'>
-        {{message.body}}
-      </div>
-    </div>
-    <nav class='account-menus'>
-      <div class='dropdown-btn user' cf-dropdown='' label=''>
-        <a class='dropdown-toggle' cf-dropdown-toggle='' ng-click='clickedProfileButton()' tabindex='0'>
-          <i class='button-icon-right fa fa-caret-down'></i>
-          <img ng-src='{{user.avatarUrl}}'>
-        </a>
-        <div class='dropdown-menu fixed-position left-aligned' cf-dropdown-menu>
-          <p class='account-header dropdown-row'>
-            Logged in as {{user.firstName}} {{user.lastName}}
-          </p>
-          <ul class='dropdown-menu-list separator'>
-            <li class='dropdown-menu-item' ng-click='goToAccount()' dropdown-close=''>Account Settings</li>
-            <li class='dropdown-menu-item' ng-click='openSupport()' dropdown-close=''>Support</li>
-            <li class='dropdown-menu-item' ng-click='logout()' dropdown-close=''>Log out</li>
-          </ul>
-        </div>
-      </div>
-      <div class='dropdown-btn project' cf-dropdown='' ng-show='organizations && organizations.length > 0' ng-hide='spaces.length == 0 && !canCreateSpaceInAnyOrg()'>
-        <a class='dropdown-toggle' cf-dropdown-toggle='' ng-click='clickedSpaceSwitcher()' tabindex='0'>
-          <i class='button-icon-right fa fa-caret-down'></i>
-          <span ng-bind="spaceContext.space.data.name || 'Spaces'"></span>
-        </a>
-        <div class='dropdown-menu fixed-position left-aligned' cf-dropdown-menu=''>
-          <ul class='dropdown-group dropdown-menu-list'>
-            <li class='dropdown-menu-item no-highlight' ng-repeat='(orgId, org) in spacesByOrg' ng-class="{'no-action': !canSelectOrg(orgId)}" cf-click-local='selectOrg(orgId) && toggleDropdown()'>
-              <i class='fa fa-user'></i>
-              <span>{{getOrgName(orgId)}}</span>
-              <ul class='dropdown-menu-list'>
-                <li class='dropdown-menu-item' ng-repeat='space in org track by space.getId()' cf-click-local='selectSpace(space) && toggleDropdown()' ng-class='{hibernated: space.isHibernated()}' ng-disabled='!space.isHibernated()' tooltip-container='.project' tooltip-placement='left' tooltip='This space entered hibernation due to lack of use. It will be back online soon.'>
-                  {{space.data.name}}
-                  <i class='fa fa-circle' ng-show='space.isHibernated()'></i>
-                </li>
-              </ul>
-            </li>
-            <li class='dropdown-menu-item emphasize' ng-show='canCreateSpace()' ng-click='showCreateSpaceDialog()' ng-class="{'top-separator': spaces.length > 0}" dropdown-close=''>
-              + Create Space
-            </li>
-          </ul>
-        </div>
-      </div>
-      <div cf-persistent-notification class='cf-persistent-notification' ng-show='persistentNotification'></div>
-      <div cf-navbar-loader class='navbar-loader'></div>
-    </nav>
-    <space-view ng-controller='TabViewController'></space-view>
-    <div class='advice advice--no-spaces' ng-show='spaces.length == 0'>
-      <div class='advice__frame'>
-        <i class='fa fa-folder giant-icon'></i>
-        <header class='advice-title'>Nothing to see yet.</header>
-        <p class='advice-description' ng-show='!canCreateSpace()'>You need to be part of an Organization to create a space.</p>
-        <p class='advice-description' ng-show='canCreateSpace()'>Why don't you create a space?</p>
-        <button class='btn btn--primary' type='button' ng-show='canCreateSpace()' ng-click='showCreateSpaceDialog()'>Create Space</button>
-        <a class='knowledge-base-link' target='_blank' href='https://contentful.zendesk.com/hc/en-us/articles/200513118-What-is-a-space-'>
-          Visit the Knowledge Base Pages
-          <i class='fa fa-question-circle'></i>
-        </a>
-      </div>
-    </div>
-    <div class='cf-account-view tab-content' ng-class="{'with-tab-bar': !hideTabBar()}"></div>
+<body cf-clear-outlines ng-app="contentful/app">
+  <div class="client ng-hide" ng-controller="ClientController" ng-init="initClient()" ng-show="user">
+    <cf-notifications></cf-notifications>
+    <space-view ng-controller="TabViewController"></space-view>
   </div>
   <!-- inject:js -->
-  <script src='/app/vendor.js' type='text/javascript'></script>
-  <script src='/app/templates.js' type='text/javascript'></script>
-  <script src='/app/user_interface.js' type='text/javascript'></script>
-  <script src='/app/components.js' type='text/javascript'></script>
+  <script src="/app/vendor.js" type="text/javascript"></script>
+  <script src="/app/templates.js" type="text/javascript"></script>
+  <script src="/app/user_interface.js" type="text/javascript"></script>
+  <script src="/app/components.js" type="text/javascript"></script>
   <!-- endinject -->
 </body>
 </html>
