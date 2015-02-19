@@ -1,6 +1,6 @@
 .video-widget-editor__warning(ng-show="multiVideoItem.errorMessage")
   i.fa.fa-exclamation-triangle
-  .video-widget-warning__message
+  .video-widget-editor__warning-message
     | {{multiVideoItem.errorMessage}}
 
     i.fa.fa-times-circle(
@@ -21,7 +21,7 @@ div(ng-show="multiVideoItem.isPlayerReady")
     i.fa.fa-ellipsis-v
     i.fa.fa-ellipsis-v
 
-  .multi-video-widget-item__title
+  .video-widget-player__title
     | {{asset.title}}
 
   cf-video-player.video-player(

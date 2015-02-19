@@ -1,10 +1,12 @@
 $input-width                     = 100%
 $input-width-with-search-enabled = 80%
-$video-player-height                   = 350px
-$video-player-height--thumbnail        = 100px
-$video-player-width--thumbnail         = 178px
-// Use the rgba color to set transparency on it
-$controls-bar-background-color = rgba(235, 235, 235, 0.8)
+$video-player-height             = 350px
+$video-player-height--thumbnail  = 100px
+$video-player-width--thumbnail   = 178px
+$controls-bar-background-color   = rgba(235, 235, 235, 0.8)
+
+cf-video-input
+  display: block;
 
 .video-widget-loading
   .fa-spinner
@@ -35,12 +37,8 @@ $controls-bar-background-color = rgba(235, 235, 235, 0.8)
 .video-widget-input--search-enabled
   width: $input-width-with-search-enabled !important
 
-
-.video-widget-content-wrapper--not-empty
-  margin-top: 24px
-
 .video-widget-editor__warning
-  margin-top: 7px
+  margin: $rhythm(0.5) 0
   color: $orange
 
   .fa.fa-exclamation-triangle
@@ -53,11 +51,8 @@ $controls-bar-background-color = rgba(235, 235, 235, 0.8)
     top: 3px
     right: 0px
 
-.video-widget-warning__message
+.video-widget-editor__warning-message
   margin-left: 20px
-
-  & > p
-    margin-bottom: 0px
 
 .video-widget-editor__loading-info
   width: $input-width-with-search-enabled;
@@ -72,11 +67,11 @@ $controls-bar-background-color = rgba(235, 235, 235, 0.8)
   width: $input-width;
 
 .video-widget-player__title
-    margin: 7px 0
+  margin-bottom: $rhythm(0.5)
 
 .video-player
   display: block
-  margin-top: 7px
+  margin-top: $rhythm(0.5)
 
   &.ng-hide-remove
     display: block !important
