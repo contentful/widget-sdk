@@ -192,7 +192,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     name: 'URL',
     rendersHelpText: true,
     template: '<cf-url-editor class="widget-url-editor"></cf-url-editor>' +
-              '<div class="l-field-help-text widget-help-text">{{helpText}}</div>' +
+              '<div class="form-widget__help-text">{{helpText}}</div>' +
               '<cf-embedly-preview></cf-embedly-preview>'
   });
 

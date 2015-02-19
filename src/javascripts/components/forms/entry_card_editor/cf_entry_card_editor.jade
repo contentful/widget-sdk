@@ -1,4 +1,4 @@
-.l-link-editor-search(cf-link-editor-search
+.link-editor__search.form-widget__input-row(cf-link-editor-search
   cf-autocomplete-results="entities"
   add-entity="addLink(entity)"
   entity-type="Entry"
@@ -6,7 +6,7 @@
   entity-mime-type-group="linkMimetypeGroup"
   ng-show="otEditable && (linkedEntities.length == 0 || field.type == 'Array')")
 
-.l-field-help-text.widget-help-text(ng-if="helpText") {{helpText}}
+.form-widget__help-text(ng-if="helpText") {{helpText}}
 
 ul.entry-cards(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide="linkedEntities.length == 0")
   li.entry-cards__item(

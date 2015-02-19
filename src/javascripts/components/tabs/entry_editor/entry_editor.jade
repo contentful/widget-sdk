@@ -64,7 +64,7 @@
                                  tooltip="{{presenceUser | userNameDisplay:user}}")
                 img(ng-src="{{presenceUser.avatarUrl}}")
           cf-error-list.form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
-        .l-field-help-text.widget-help-text(ng-if="showHelpText") {{helpText}}
+        .form-widget__help-text(ng-if="showHelpText") {{helpText}}
         cf-error-list.form-box-error(cf-error-path="['fields', field.id]")
       .l-form-controls(ng-if="!field")
         cf-widget-renderer
