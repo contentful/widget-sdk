@@ -1,4 +1,4 @@
-div(class="notifications")
-  div(class="notification {{message.severity}}" ng-repeat="(index, message) in notification.unseen() track by index")
+.notifications
+  .notification(ng-class="{{message.severity}}" ng-repeat="(index, message) in notification.unseen() track by index")
     | {{message.body}}
 
