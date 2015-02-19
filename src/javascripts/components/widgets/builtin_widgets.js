@@ -160,6 +160,7 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('youtubeEditor',{
     fieldTypes: ['Symbol'],
     name: 'Youtube',
+    rendersHelpText: true,
     template: '<cf-youtube-editor></cf-youtube-editor>'
   });
   widgets.registerWidget('ooyalaEditor',{

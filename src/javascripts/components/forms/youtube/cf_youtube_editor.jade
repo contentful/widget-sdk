@@ -1,19 +1,23 @@
-input.form-control.cf-youtube-editor(
-  ng-model="fieldData.value"
-  ot-bind-text
-  ot-subdoc
-  type="text")
+.form-widget__input-row
+  input.form-control(
+    ng-model="fieldData.value"
+    ot-bind-text
+    ot-subdoc
+    type="text")
 
-i.fa.fa-spinner.fa-spin(ng-show="isPlayerLoading")
-i.fa.fa-times-circle(
-  ng-click="handleClickOnRemoveSign()"
-  ng-show="youtubeUrl && !isPlayerLoading")
+  i.youtube-editor__loading.fa.fa-spinner.fa-spin(
+    ng-show="isPlayerLoading")
+  i.youtube-editor__remove.fa.fa-times-circle(
+    ng-click="handleClickOnRemoveSign()"
+    ng-show="youtubeUrl && !isPlayerLoading")
 
-div(ng-show="errorMessage" class="warning")
+.form-widget__help-text(ng-if="helpText") {{helpText}}
+
+.youtube-editor__warning(ng-show="errorMessage")
   i.fa.fa-exclamation-triangle
-    span {{errorMessage}}
+  | {{errorMessage}}
 
-cf-youtube-player(
+cf-youtube-player.youtube-player(
   ng-show="youtubeUrl && isPlayerReady"
   on-ready="handlePlayerReady(); playerController.startWatchingYoutubeUrl()"
   on-failure="handlePlayerFailure()"
