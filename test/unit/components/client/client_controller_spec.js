@@ -11,7 +11,6 @@ describe('Client Controller', function () {
         'spaceId',
         'auxPanel',
         'track',
-        'loginTrack',
         'authorizationTokenLookup',
         'authenticationTokenLookup',
         'getTokenLookup',
@@ -38,7 +37,8 @@ describe('Client Controller', function () {
         'reasons',
         'organization',
         'can',
-        'setSpaceContext'
+        'setSpaceContext',
+        'shouldAllowAnalytics'
       ]);
 
       $provide.removeControllers('TrialWatchController');
@@ -69,7 +69,6 @@ describe('Client Controller', function () {
         track: stubs.track,
         setSpaceData: stubs.setSpaceData,
         setUserData: stubs.setUserData,
-        login: stubs.loginTrack
       });
 
       $provide.value('authorization', {
@@ -83,6 +82,10 @@ describe('Client Controller', function () {
       });
 
       stubs.organization.returns({can: stubs.can});
+
+      $provide.value('features', {
+        shouldAllowAnalytics: stubs.shouldAllowAnalytics.returns(true)
+      });
 
       $provide.value('authentication', {
         logout: stubs.logout,
@@ -1106,7 +1109,7 @@ describe('Client Controller', function () {
 
       it('tracks login', function () {
         scope.initClient();
-        expect(stubs.loginTrack).toBeCalled();
+        expect(stubs.setUserData).toBeCalled();
       });
 
       describe('fires an initial version check', function () {

@@ -4,6 +4,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var $rootScope         = $injector.get('$rootScope');
   var $q                 = $injector.get('$q');
   var client             = $injector.get('client');
+  var features           = $injector.get('features');
   var logger             = $injector.get('logger');
   var SpaceContext       = $injector.get('SpaceContext');
   var authentication     = $injector.get('authentication');
@@ -25,6 +26,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $controller('TrialWatchController', {$scope: $scope});
 
   $scope.permissionController = $controller('PermissionController', {$scope: $scope});
+  $scope.featureController    = $controller('FeatureController'   , {$scope: $scope});
   $scope.spaces = null;
   $scope.user = null;
   $scope.organizations = null;
@@ -209,7 +211,11 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   function userWatchHandler(user) {
     if(user){
       $scope.organizations = _.pluck(user.organizationMemberships, 'organization');
-      analytics.setUserData(user);
+      if (features.shouldAllowAnalytics()) {
+        analytics.setUserData(user);
+      } else {
+        analytics.disable();
+      }
     }
   }
 
@@ -268,7 +274,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   function initClient() {
     $scope.performTokenLookup()
     .then(function () {
-      analytics.login($scope.user);
+      analytics.setUserData($scope.user);
       showOnboardingIfNecessary();
     }, ReloadNotification.gatekeeperErrorHandler);
 
