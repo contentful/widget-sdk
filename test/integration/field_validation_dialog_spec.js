@@ -162,6 +162,16 @@ describe('validation dialog', function() {
       expect(errors.text()).toEqual('Expected min and/or max boundaries');
     });
 
+    it('selects the correct initial view', function() {
+      scope.field.validations = [{size: {min: 10, max: null}}];
+      openDialog();
+
+      var selectedView = settings()
+      .find('select[aria-label="Select condition"]')
+      .find('option:selected').text();
+      expect(selectedView).toEqual('At least');
+    });
+
   });
 
   describe('range validation', function() {
@@ -241,6 +251,9 @@ describe('validation dialog', function() {
       .toEqual([{regexp: {pattern: 'foo|bar', flags: 'i'}}]);
     });
 
+    it('can select predefined patterns');
+
+    it('selects the correct initial view');
   });
 
 

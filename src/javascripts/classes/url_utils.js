@@ -14,6 +14,7 @@ angular.module('contentful').constant('urlUtils', (function () {
   }
 
   return {
-    isValid: isValid
+    isValid: isValid,
+    regexp:  URL_REGEX
   };
 })());

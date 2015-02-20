@@ -19,8 +19,8 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
   var logger               = $injector.get('logger');
   var notification         = $injector.get('notification');
   var createSchema         = $injector.get('validation');
+  var validationViews      = $injector.get('validationViews');
   var controller           = this;
-
 
   // Create decorated validations from field
   var availableFieldValidations = availableValidations.forField($scope.field);
@@ -60,15 +60,18 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
     });
   };
 
-
   function decorateValidation(backendValidation) {
     var type = validationType(backendValidation);
     var settings = _.cloneDeep(backendValidation[type]);
+    var views = validationViews.get(type);
+    var currentView = views && views[0].name;
     return {
       name: validationName(backendValidation),
       type: type,
       enabled: false,
-      settings: settings
+      settings: settings,
+      views: views,
+      currentView: currentView
     };
   }
 

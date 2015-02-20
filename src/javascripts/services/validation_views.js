@@ -1,0 +1,104 @@
+'use strict';
+
+/**
+ * This module translates between serialized validations that are send
+ * to the backend and the front end validation views.
+ */
+angular.module('contentful').service('validationViews', ['$injector', function($injector) {
+  var urlRegexp = $injector.get('urlUtils').regexp;
+
+  /**
+   * Map from validation types to input views.
+   */
+  var views = {
+    size: [
+      {name: 'min-max', label: 'Between'},
+      {name: 'min',     label: 'At least'},
+      {name: 'max',     label: 'Not more than'}
+    ],
+    range: [
+      {name: 'min-max', label: 'Between'},
+      {name: 'min',     label: 'Greater or equal than'},
+      {name: 'max',     label: 'Less or equal than'}
+    ],
+    regexp: [
+      { name: 'custom', label: 'Custom' },
+      { name: 'email',  label: 'E-Mail',
+        pattern: /^\w[\w.-]*@([\w-]+\.)+[\w-]+$/.source },
+      { name: 'url', label: 'URL',
+        pattern: urlRegexp.source },
+      { name: 'date-us', label: 'Date (US)',
+        pattern: /^[01]?[0-9]\/[0123]?[0-9]\/(\d{2}|\d{4})$/.source },
+      { name: 'date-eu', label: 'Date (EU)',
+        pattern: /^[0123]?[0-9][/.][01]?[0-9][/.](\d{2}|\d{4})$/.source },
+      { name: 'us-phone', label: 'US phone number',
+        pattern: /^\d[ -.]?\(?\d\d\d\)?[ -.]?\d\d\d[ -.]?\d\d\d\d$/.source },
+      { name: 'us-zip-code', label: 'US zip code',
+        pattern: /^\d{5}$|^\d{5}-\d{4}$}/.source }
+    ]
+  };
+
+
+  function findViewByName(views, name) {
+    return _.find(views, function(v) {
+      return v.name == name;
+    });
+  }
+
+
+  /**
+   * Remove validation settings that are not editable in the
+   * view.
+   */
+  function updateSettings(validation) {
+    var viewName = validation.currentView;
+    if (validation.type == 'size' || validation.type == 'range') {
+      if (viewName == 'min')
+        delete validation.settings.max;
+      if (viewName == 'max')
+        delete validation.settings.min;
+    } else if (validation.type == 'regexp') {
+      var view = findViewByName(validation.views, viewName);
+      if (view.pattern)
+        validation.settings = {pattern: view.pattern};
+    }
+  }
+
+
+  /**
+   * Returns the name of a view appropriate for the current
+   * validation settings.
+   *
+   * If the view could not be determined by the heuristics it
+   * returns the validations current view.
+   */
+  function getInitialView(validation) {
+    var type = validation.type;
+    var settings = validation.settings;
+    if (type == 'size' || type == 'range') {
+      var hasMin = typeof settings.min == 'number';
+      var hasMax = typeof settings.max == 'number';
+      if (hasMin && hasMax)
+        return 'min-max';
+      if (hasMin)
+        return 'min';
+      if (hasMax)
+        return 'max';
+    } else if (type == 'regexp') {
+      var view = _.find(validation.views, function(view) {
+        return view.pattern == settings.pattern;
+      });
+      if (view)
+        return view.name;
+    }
+
+    return validation.currentView;
+  }
+
+
+  return {
+    get: function(type) { return views[type]; },
+    updateSettings: updateSettings,
+    getInitial: getInitialView
+  };
+}]);

@@ -7,24 +7,60 @@ h2.validation-settings__header
       | {{validation.name}}
 
 .validation-controls(ng-switch="validation.type" ng-show="validation.enabled")
+
   div(ng-switch-when="size")
-    input.form-control(type="number" placeholder="Min" aria-label="Minimum size"
-                       ng-model="validation.settings.min" ng-disabled="!otEditable")
-    | &nbsp;&ndash;&nbsp;
-    input.form-control(type="number" placeholder="Max" aria-label="Maximum size"
-                       ng-model="validation.settings.max" ng-disabled="!otEditable")
+    .validation-controls__view-select.btn.btn--tertiary.select-box
+      select(aria-label="Select condition"
+             ng-model="validation.currentView"
+             ng-options="v.name as v.label for v in validation.views" ng-disabled="!otEditable")
+      i.button-icon-right.fa.fa-caret-down
+
+    span(ng-switch="validation.currentView")
+      span(ng-switch-when="min")
+        input.form-control(type="number" placeholder="Min" aria-label="Minimum size"
+                           ng-model="validation.settings.min" ng-disabled="!otEditable")
+      span(ng-switch-when="max")
+        input.form-control(type="number" placeholder="Max" aria-label="Maximum size"
+                           ng-model="validation.settings.max" ng-disabled="!otEditable")
+      span(ng-switch-when="min-max")
+        input.form-control(type="number" placeholder="Min" aria-label="Minimum size"
+                           ng-model="validation.settings.min" ng-disabled="!otEditable")
+        span.validation-controls__input-separator and
+        input.form-control(type="number" placeholder="Max" aria-label="Maximum size"
+                           ng-model="validation.settings.max" ng-disabled="!otEditable")
     cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label="Errors")
 
 
   div(ng-switch-when="range")
-    input.form-control(type="number" placeholder="Min" aria-label="Minimum value"
-                       ng-model="validation.settings.min" ng-disabled="!otEditable")
-    | &nbsp;&ndash;&nbsp;
-    input.form-control(type="number" placeholder="Max" aria-label="Maximum value"
-                       ng-model="validation.settings.max" ng-disabled="!otEditable")
+    .validation-controls__view-select.btn.btn--tertiary.select-box
+      select(aria-label="Select condition"
+             ng-model="validation.currentView"
+             ng-options="v.name as v.label for v in validation.views" ng-disabled="!otEditable")
+      i.button-icon-right.fa.fa-caret-down
+
+    span(ng-switch="validation.currentView")
+      span(ng-switch-when="min")
+        input.form-control(type="number" placeholder="Min" aria-label="Minimum value"
+                           ng-model="validation.settings.min" ng-disabled="!otEditable")
+      span(ng-switch-when="max")
+        input.form-control(type="number" placeholder="Max" aria-label="Maximum value"
+                           ng-model="validation.settings.max" ng-disabled="!otEditable")
+      span(ng-switch-when="min-max")
+        input.form-control(type="number" placeholder="Min" aria-label="Minimum value"
+                           ng-model="validation.settings.min" ng-disabled="!otEditable")
+        span.validation-controls__input-separator and
+        input.form-control(type="number" placeholder="Max" aria-label="Maximum value"
+                           ng-model="validation.settings.max" ng-disabled="!otEditable")
     cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label="Errors")
 
+
   div(ng-switch-when="regexp")
+    .validation-controls__view-select.btn.btn--tertiary.select-box
+      select(aria-label="Select condition"
+             ng-model="validation.currentView"
+             ng-options="v.name as v.label for v in validation.views" ng-disabled="!otEditable")
+      i.button-icon-right.fa.fa-caret-down
+
     input.form-control.validation-controls__re-pattern(
       type="text" placeholder="foo|bar[baz]" aria-label="Regular Expression pattern"
       ng-model="validation.settings.pattern"
