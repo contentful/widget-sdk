@@ -56,20 +56,22 @@ h2.validation-settings__header
 
   div(ng-switch-when="regexp")
     .validation-controls__view-select.btn.btn--tertiary.select-box
-      select(aria-label="Select condition"
+      select(aria-label="Select pattern"
              ng-model="validation.currentView"
              ng-options="v.name as v.label for v in validation.views" ng-disabled="!otEditable")
       i.button-icon-right.fa.fa-caret-down
 
     input.form-control.validation-controls__re-pattern(
       type="text" placeholder="foo|bar[baz]" aria-label="Regular Expression pattern"
-      ng-model="validation.settings.pattern"
+      ng-model="validation.settings.pattern" ng-change="setMatchingView()"
       ng-required="true" ng-disabled="!otEditable")
-    span &nbsp;Flags&nbsp;
-    input.form-control.validation-controls__re-flags(
-      type="text" aria-label="Regular Expression flags"
-      ng-model="validation.settings.flags"
-      ng-required="true" ng-disabled="!otEditable")
+    label
+      span.validation-controls__re-flags-label Flags
+      input.form-control.validation-controls__re-flags(
+        type="text" aria-label="Regular Expression flags"
+        pattern="[gim]*"
+        ng-model="validation.settings.flags" ng-change="setMatchingView()"
+        ng-disabled="!otEditable")
     cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label="Errors")
 
 

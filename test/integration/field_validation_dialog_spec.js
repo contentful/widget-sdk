@@ -228,18 +228,20 @@ describe('validation dialog', function() {
   });
 
   describe('regexp validation', function() {
+    function settings() {
+      return dialog.domElement.find('[aria-label="Regular Expression"]');
+    }
 
     it('can be enabled and set', function() {
-      var settings = dialog.domElement.find('[aria-label="Regular Expression"]');
-      settings
+      settings()
       .find('[aria-label="Enable validation"]')
       .click();
 
-      settings
+      settings()
       .find('[aria-label="Regular Expression pattern"]')
       .val('foo|bar').trigger('input');
 
-      settings
+      settings()
       .find('[aria-label="Regular Expression flags"]')
       .val('i').trigger('input');
 
@@ -254,6 +256,30 @@ describe('validation dialog', function() {
     it('can select predefined patterns');
 
     it('selects the correct initial view');
+
+    it('changes view to "custom" on change', function() {
+      scope.field.validation = {regexp: {pattern: ''}};
+      openDialog();
+      settings()
+      .find('select[aria-label="Select pattern"]')
+      .val('1');
+
+      var selected = settings()
+      .find('select[aria-label="Select pattern"] option:selected')
+      .text();
+      expect(selected).not.toEqual('Custom');
+
+      settings()
+      .find('[aria-label="Regular Expression pattern"]')
+      .val('foo|bar').trigger('input');
+      scope.$digest();
+
+      selected = settings()
+      .find('select[aria-label="Select pattern"]')
+      .controller('ngModel')
+      .$viewValue;
+      expect(selected).toEqual('custom');
+    });
   });
 
 

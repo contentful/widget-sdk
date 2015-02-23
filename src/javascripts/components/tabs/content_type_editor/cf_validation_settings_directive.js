@@ -9,10 +9,14 @@ angular.module('contentful').directive('cfValidationSetting', ['$injector', func
     controller: ['$scope', function($scope) {
       $scope.mimetypeGroups = mimetype.getGroupNames();
 
-      $scope.validation.currentView = validationViews.getInitial($scope.validation);
       $scope.$watch('validation.currentView', function() {
         validationViews.updateSettings($scope.validation);
       });
+
+      $scope.setMatchingView = function() {
+        $scope.validation.currentView = validationViews.getInitial($scope.validation);
+      };
+      $scope.setMatchingView();
     }]
   };
 }]);

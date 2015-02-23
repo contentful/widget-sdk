@@ -90,6 +90,8 @@ angular.module('contentful').service('validationViews', ['$injector', function($
       });
       if (view)
         return view.name;
+      else
+        return 'custom';
     }
 
     return validation.currentView;
