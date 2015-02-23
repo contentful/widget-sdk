@@ -9,6 +9,8 @@ describe('Client Controller', function () {
       stubs = $provide.makeStubs([
         'numVisible',
         'spaceId',
+        'enableAnalytics',
+        'disableAnalytics',
         'auxPanel',
         'track',
         'authorizationTokenLookup',
@@ -65,6 +67,8 @@ describe('Client Controller', function () {
       });
 
       $provide.value('analytics', {
+        enable: stubs.enableAnalytics,
+        disable: stubs.disableAnalytics,
         toggleAuxPanel: stubs.auxPanel,
         track: stubs.track,
         setSpaceData: stubs.setSpaceData,
@@ -1200,19 +1204,35 @@ describe('Client Controller', function () {
             {organization: org3},
           ]
         };
-        scope.$digest();
+        this.logger = this.$inject('logger');
       });
 
       it('are set', function() {
+        scope.$digest();
         expect(scope.organizations).toEqual([
           org1, org2, org3
         ]);
       });
 
-      it('sets analytics user data', function() {
-        expect(stubs.setUserData).toBeCalled();
+      it('sets analytics user data and enables tracking', function() {
+        scope.$digest();
+        sinon.assert.called(stubs.setUserData);
+        sinon.assert.called(stubs.enableAnalytics);
+        sinon.assert.called(this.logger.enable);
       });
 
+      describe('when analytics are disallowed', function() {
+        beforeEach(function() {
+          stubs.shouldAllowAnalytics.returns(false);
+        });
+
+        it('should not set or enable anything', function() {
+          scope.$digest();
+          sinon.assert.notCalled(stubs.setUserData);
+          sinon.assert.called(stubs.disableAnalytics);
+          sinon.assert.called(this.logger.disable);
+        });
+      });
     });
   });
 

@@ -212,8 +212,11 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     if(user){
       $scope.organizations = _.pluck(user.organizationMemberships, 'organization');
       if (features.shouldAllowAnalytics()) {
+        logger.enable();
+        analytics.enable();
         analytics.setUserData(user);
       } else {
+        logger.disable();
         analytics.disable();
       }
     }
