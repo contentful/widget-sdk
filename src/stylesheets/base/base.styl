@@ -4,10 +4,9 @@
   box-sizing(border-box)
 
 body
-  font-family: Lato, Arial, sans-serif
+  $sans-font()
   text-rendering: optimizeLegibility
-  font-size: $base-font-size
-  line-height: 18px
+  $establish-baseline()
   color: $base-font-color
   background-image: url("/app/images/bg.jpg")
   background-repeat: repeat
@@ -84,5 +83,3 @@ blockquote
 b, strong
   color: $gray-darkest
   font-weight: bold
-
-

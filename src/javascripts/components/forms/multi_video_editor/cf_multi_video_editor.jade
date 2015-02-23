@@ -11,22 +11,22 @@ div(ng-if="multiVideoEditorController.isVideoWidgetReady()")
     on-valid-asset-id="multiVideoEditorController.storeAsset(asset)"
     on-invalid-asset-id="multiVideoEditorController.showErrors(error)")
 
+  .form-widget__help-text(ng-if="helpText") {{helpText}}
+
   .video-widget-editor__warning(ng-show="multiVideoEditor.error")
     i.fa.fa-exclamation-triangle
-    .video-widget-warning__message
-      p {{multiVideoEditor.error}}
+    .video-widget-editor__warning-message
+      | {{multiVideoEditor.error}}
 
-  .video-widget-editor__content-wrapper(
-    ng-class="{'video-widget-content-wrapper--not-empty': 'multiVideoEditor.assets.length > 0'}")
-    ul.multi-video-widget__items(ui-sortable="linkSortOptions" ng-model="multiVideoEditor.assets")
-      li.multi-video-widget__item(
-        ng-repeat="asset in multiVideoEditor.assets track by asset._trackId")
+  ul.multi-video-widget__items(ui-sortable="linkSortOptions" ng-model="multiVideoEditor.assets")
+    li.multi-video-widget__item(
+      ng-repeat="asset in multiVideoEditor.assets track by asset._trackId")
 
-        cf-multi-video-item(
-          cf-drag-handle
-          is-sorting-enabled="multiVideoEditor.isSortingEnabled"
-          asset="asset"
-          widget-player-directive="multiVideoEditor.widgetPlayerDirective"
-          widget-player-custom-attrs="multiVideoEditorController.customAttrsForPlayer(asset)"
-          remove-asset="multiVideoEditorController.removeAsset($index, asset)"
-          lookup-asset="multiVideoEditorController.lookupAsset(asset.assetId)")
+      cf-multi-video-item(
+        cf-drag-handle
+        is-sorting-enabled="multiVideoEditor.isSortingEnabled"
+        asset="asset"
+        widget-player-directive="multiVideoEditor.widgetPlayerDirective"
+        widget-player-custom-attrs="multiVideoEditorController.customAttrsForPlayer(asset)"
+        remove-asset="multiVideoEditorController.removeAsset($index, asset)"
+        lookup-asset="multiVideoEditorController.lookupAsset(asset.assetId)")

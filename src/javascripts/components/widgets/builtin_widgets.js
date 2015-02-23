@@ -160,26 +160,31 @@ angular.module('contentful').run(['widgets', function(widgets){
   widgets.registerWidget('youtubeEditor',{
     fieldTypes: ['Symbol'],
     name: 'Youtube',
+    rendersHelpText: true,
     template: '<cf-youtube-editor></cf-youtube-editor>'
   });
   widgets.registerWidget('ooyalaEditor',{
     fieldTypes: ['Symbol'],
     name: 'Ooyala',
+    rendersHelpText: true,
     template: '<cf-ooyala-editor></cf-ooyala-editor>'
   });
   widgets.registerWidget('ooyalaMultiAssetEditor',{
     fieldTypes: ['Symbols'],
     name: 'Ooyala (multiple assets)',
+    rendersHelpText: true,
     template: '<cf-ooyala-multi-video-editor ng-model="fieldData.value" ot-bind-internal="selectedAssets"></cf-ooyala-multi-video-editor>'
   });
   widgets.registerWidget('kalturaEditor',{
     fieldTypes: ['Symbol'],
     name: 'Kaltura',
+    rendersHelpText: true,
     template: '<cf-kaltura-editor></cf-kaltura-editor>'
   });
   widgets.registerWidget('kalturaMultiVideoEditor',{
     fieldTypes: ['Symbols'],
     name: 'Kaltura (multiple videos)',
+    rendersHelpText: true,
     template: '<cf-kaltura-multi-video-editor ng-model="fieldData.value" ot-bind-internal="selectedAssets"></cf-kaltura-multi-video-editor>'
   });
   widgets.registerWidget('slugEditor', {
@@ -192,7 +197,7 @@ angular.module('contentful').run(['widgets', function(widgets){
     name: 'URL',
     rendersHelpText: true,
     template: '<cf-url-editor class="widget-url-editor"></cf-url-editor>' +
-              '<div class="l-field-help-text widget-help-text">{{helpText}}</div>' +
+              '<div class="form-widget__help-text">{{helpText}}</div>' +
               '<cf-embedly-preview></cf-embedly-preview>'
   });
 

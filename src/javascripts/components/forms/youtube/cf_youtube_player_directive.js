@@ -4,7 +4,7 @@ angular.module('contentful').directive('cfYoutubePlayer', ['$injector', function
   var $window = $injector.get('$window');
   var youtubePlayerLoader = $injector.get('youtubePlayerLoader');
 
-  var YOUTUBE_DOM_ELEMENT_CLASS = '.youtube-player';
+  var YOUTUBE_DOM_ELEMENT_CLASS = '.youtube-player__target';
 
   return {
     restrict   : 'E',
