@@ -1,9 +1,9 @@
 'use strict';
 
-angular.module('contentful').directive('editingInterfaceEditor', [function(){
+angular.module('contentful').directive('cfEditingInterfaceEditor', [function(){
   return {
     template: JST.editing_interface_editor(),
-    restrict: 'C',
+    restrict: 'A',
     controller: 'EditingInterfaceEditorController',
     controllerAs: 'editorController',
     link: function(scope){

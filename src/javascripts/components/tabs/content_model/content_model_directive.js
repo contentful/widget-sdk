@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('contentful').directive('contentModel', ['$injector', function($injector) {
+angular.module('contentful').directive('cfContentModel', ['$injector', function($injector) {
   var contentModelFieldTypes = $injector.get('contentModelFieldTypes');
   return {
     template: JST['content_model'](),
     controller: 'ContentTypeListController',
-    restrict: 'C',
+    restrict: 'A',
     link: function (scope) {
       scope.searchTerm = null;
 

@@ -1,6 +1,7 @@
 'use strict';
 angular.module('contentful').directive('cfCustomLogo', function(){
   return {
+    restrict: 'A',
     link: function(scope, elem){
       var themeExpression = 'spaceContext.space.data.organization.subscriptionPlan.limits.features.customTheme && spaceContext.space.data.theme';
       scope.$watch(themeExpression, function (theme) {

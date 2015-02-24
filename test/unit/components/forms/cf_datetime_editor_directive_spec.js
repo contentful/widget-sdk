@@ -14,7 +14,7 @@ describe('DateTime Editor', function () {
     }};
     scope.otPath = [];
     scope.fieldData = {value: null};
-    element = $compile('<div class="cf-datetime-editor" ng-model="fieldData.value"></div>')(scope);
+    element = $compile('<div cf-datetime-editor ng-model="fieldData.value"></div>')(scope);
     scope.$apply();
   }));
 

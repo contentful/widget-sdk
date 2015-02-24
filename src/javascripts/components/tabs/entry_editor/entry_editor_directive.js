@@ -1,9 +1,9 @@
 'use strict';
 
-angular.module('contentful').directive('entryEditor', ['defer', function(defer){
+angular.module('contentful').directive('cfEntryEditor', ['defer', function(defer){
   return {
     template: JST.entry_editor(),
-    restrict: 'C',
+    restrict: 'A',
     controller: 'EntryEditorController',
     link: function (scope, elem) {
       function focus() {

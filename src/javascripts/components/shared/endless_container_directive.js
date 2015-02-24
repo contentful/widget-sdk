@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('contentful').directive('endlessContainer', function(){
+angular.module('contentful').directive('cfEndlessContainer', function(){
   return {
-    restrict: 'C',
+    restrict: 'A',
     link: function(scope, elem, attr) {
       elem.css({
         'overflow-y': 'auto'

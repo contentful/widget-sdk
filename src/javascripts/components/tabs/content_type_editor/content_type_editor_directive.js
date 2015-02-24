@@ -1,9 +1,9 @@
 'use strict';
 
-angular.module('contentful').directive('contentTypeEditor', ['defer', function(defer){
+angular.module('contentful').directive('cfContentTypeEditor', ['defer', function(defer){
   return {
     template: JST.content_type_editor(),
-    restrict: 'C',
+    restrict: 'A',
     controller: 'ContentTypeEditorController',
     controllerAs: 'ctEditorController',
     link: function (scope, elem) {

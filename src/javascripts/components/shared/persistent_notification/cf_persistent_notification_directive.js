@@ -2,7 +2,7 @@
 
 angular.module('contentful').directive('cfPersistentNotification', ['$sce', 'throttle', function ($sce, throttle) {
   return {
-    restrict: 'C',
+    restrict: 'A',
     template: JST.cf_persistent_notification(),
     link: function (scope, elem) {
       scope.message = null;
@@ -26,7 +26,7 @@ angular.module('contentful').directive('cfPersistentNotification', ['$sce', 'thr
           elem.tooltip({
             title: scope.tooltipMessage,
             placement: 'bottom',
-            container: '.cf-persistent-notification'
+            container: '[cf-persistent-notification]'
           });
         }
       }

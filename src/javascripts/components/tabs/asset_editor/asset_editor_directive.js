@@ -1,9 +1,9 @@
 'use strict';
 
-angular.module('contentful').directive('assetEditor', ['defer', function(defer){
+angular.module('contentful').directive('cfAssetEditor', ['defer', function(defer){
   return {
     template: JST.asset_editor(),
-    restrict: 'C',
+    restrict: 'A',
     controller: 'AssetEditorController',
     link: function (scope, elem) {
       function focus() {

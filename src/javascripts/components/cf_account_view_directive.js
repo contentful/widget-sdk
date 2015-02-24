@@ -3,8 +3,8 @@
 angular.module('contentful').directive('cfAccountView', ['$window', '$rootScope', 'authentication', 'routing', 'logger', function($window, $rootScope, authentication, routing, logger){
 
   return {
-    template: JST['iframe_view'](),
-    restrict: 'C',
+    template: JST.iframe_view(),
+    restrict: 'A',
     scope: true,
     link: function (scope, elem) {
       scope.tab = {params: {fullscreen: true}};

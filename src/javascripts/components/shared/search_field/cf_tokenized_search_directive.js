@@ -3,6 +3,7 @@
 angular.module('contentful').directive('cfTokenizedSearch', ['$parse', 'searchQueryHelper', '$timeout', function($parse, searchQueryHelper, $timeout){
   return {
     template: JST['cf_tokenized_search'](),
+    restrict: 'A',
     scope: true,
     controller: 'cfTokenizedSearchController',
     controllerAs: 'tokenizedSearchController',

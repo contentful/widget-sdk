@@ -12,11 +12,11 @@ describe('cfTabContent directive', function () {
       ]);
       $provide.removeDirectives(
         'otDocFor', 'otDocPresence',
-        'entryList', 'entryEditor',
-        'apiKeyList', 'apiKeyEditor',
-        'assetList', 'assetEditor', 'apiHome',
-        'contentTypeList', 'contentTypeEditor',
-        'contentModel','editingInterfaceEditor', 'spaceSettings'
+        'cfEntryList', 'cfEntryEditor',
+        'cfApiKeyList', 'cfApiKeyEditor',
+        'cfAssetList', 'cfAssetEditor', 'cfApiHome',
+        'cgContentTypeList', 'cfContentTypeEditor',
+        'cfContentModel','cfEditingInterfaceEditor', 'cfSpaceSettings'
       );
     });
     inject(function ($rootScope, $compile) {
@@ -34,7 +34,7 @@ describe('cfTabContent directive', function () {
       scope.locationInAccount = false;
 
       compileElement = function () {
-        container = $('<div><div cf-tab-content></div></div>');
+        container = $('<div><cf-tab-content></cf-tab-content></div>');
         $compile(container)(scope);
         scope.$digest();
       };
@@ -82,27 +82,27 @@ describe('cfTabContent directive', function () {
     });
 
     it('has entry editor', function () {
-      expect(container.find('.tab-content .entry-editor').get(0)).toBeDefined();
+      expect(container.find('.tab-content [cf-entry-editor]').get(0)).toBeDefined();
     });
 
     it('has api key editor', function () {
-      expect(container.find('.tab-content .api-key-editor').get(0)).toBeDefined();
+      expect(container.find('.tab-content [cf-api-key-editor]').get(0)).toBeDefined();
     });
 
     it('has entry list', function () {
-      expect(container.find('.tab-content .entry-list').get(0)).toBeDefined();
+      expect(container.find('.tab-content [cf-entry-list]').get(0)).toBeDefined();
     });
 
     it('entry editor is shown', function () {
-      expect(container.find('.tab-content .entry-editor').parent()).not.toBeNgHidden();
+      expect(container.find('.tab-content [cf-entry-editor]').parent()).not.toBeNgHidden();
     });
 
     it('api key editor is not shown', function () {
-      expect(container.find('.tab-content .api-key-editor').parent()).toBeNgHidden();
+      expect(container.find('.tab-content [cf-api-key-editor]').parent()).toBeNgHidden();
     });
 
     it('entry list is not shown', function () {
-      expect(container.find('.tab-content .entry-list').parent()).toBeNgHidden();
+      expect(container.find('.tab-content [cf-entry-list]').parent()).toBeNgHidden();
     });
 
   });

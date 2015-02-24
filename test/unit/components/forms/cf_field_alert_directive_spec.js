@@ -9,7 +9,7 @@ describe('cfFieldAlert Directive', function () {
     inject(function ($compile, $rootScope) {
       scope = $rootScope.$new();
 
-      element = $compile('<div cf-field-alert="message"></div>')(scope);
+      element = $compile('<div cf-field-alert="message" class="cf-field-alert"></div>')(scope);
       scope.$digest();
     });
   });

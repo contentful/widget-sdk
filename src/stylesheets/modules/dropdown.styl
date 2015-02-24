@@ -1,20 +1,12 @@
 // Dropdown base
 .dropdown-btn
   position: relative
+
 .dropdown-toggle
   position: relative
-  color: $gray
   display: block
   text-decoration: none
   cursor: pointer
-  // TODO this style overrides the primary buttons it's used on
-  &:hover
-    color: black
-    box-shadow: 0 5px 15px rgba(255,255,255,0.6) inset
-  &[disabled]
-    color: $gray
-.active .dropdown-toggle
-  color: $gray-darkest
 
 $separator-style = 1px solid $gray-lightest
 

@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('contentful').directive('saveStatus', function () {
+angular.module('contentful').directive('cfSaveStatus', function () {
   return {
-    restrict: 'C',
+    restrict: 'A',
     template: JST['save_status'](),
     controller: 'SaveStatusController',
     link: function (scope, elem) {

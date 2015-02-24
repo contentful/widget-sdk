@@ -29,7 +29,7 @@ angular.module('contentful').directive('cfFileDrop', ['$injector', function ($in
   };
 
   return {
-    restrict: 'C',
+    restrict: 'A',
     transclude: true,
     template: JST['cf_file_drop'],
     link: function (scope, elem) {

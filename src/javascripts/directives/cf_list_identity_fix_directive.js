@@ -8,6 +8,7 @@ angular.module('contentful').directive('cfListIdentityFix', function () {
   return {
     require: ['ngModel', 'cfListIdentityFix'],
     priority: 100,
+    restrict: 'A',
     controller: ['$scope', '$attrs', '$parse', function ($scope, $attrs, $parse) {
       var ngModelGet = $parse($attrs.ngModel);
       var ctrl = this;

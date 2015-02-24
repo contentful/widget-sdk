@@ -1,0 +1,13 @@
+$sans-font()
+  font-family: Lato, Arial, sans-serif
+
+$monospace-font()
+  font-family: "Andale mono", "Monaco", monospace
+
+$establish-baseline()
+  font-size: $base-font-size
+  line-height: $base-line-height
+
+$rhythm(n = 1)
+  return n * unit($base-line-height / $base-font-size, em);
+

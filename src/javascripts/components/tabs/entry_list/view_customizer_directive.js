@@ -1,9 +1,9 @@
 'use strict';
 
-angular.module('contentful').directive('viewCustomizer', ['defer', function(defer){
+angular.module('contentful').directive('cfViewCustomizer', ['defer', function(defer){
   return {
     template: JST.view_customizer(),
-    restrict: 'C',
+    restrict: 'A',
     link: function (scope) {
       scope.displayField = function (ev, field) {
         ev.stopPropagation();

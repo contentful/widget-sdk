@@ -2,7 +2,7 @@
   .tab-header__title
     h1
       | Entries
-      a.cf-knowledge-base-icon(
+      a(cf-knowledge-base-icon
         tooltip="Learn more about Entries in the Knowledge Base Pages"
         tooltip-container=".entity-list"
         analytics-event="entries"
@@ -63,9 +63,9 @@
           th.cell-display-name(ng-if="tab.params.view.contentTypeId && displayFieldForFilteredContentType()" ng-init="field=displayFieldForFilteredContentType()" cf-field-order-header="displayField")
           th(ng-repeat="field in displayedFields track by field.id" cf-field-order-header data-field-id="{{field.id}}" ng-class="[getFieldClass(field)]")
           th.cell-status Status
-    .view-customizer
+    .view-customizer(cf-view-customizer)
 
-    .main-results-wrapper.endless-container(at-bottom="loadMore()" num-elements="paginator.page")
+    .main-results-wrapper.endless-container(cf-endless-container at-bottom="loadMore()" num-elements="paginator.page")
       table.result-list.main-results.animated
         tbody
           tr(ng-repeat="entry in visibleEntries = (entries | filter:visibleInCurrentList) track by entry.getId()" cf-click-local="navigator.entryEditor(entry).goTo()")

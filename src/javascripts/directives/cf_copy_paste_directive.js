@@ -13,7 +13,7 @@ angular.module('contentful').directive('cfCopyPaste', ['$injector', function($in
   });
 
   return {
-    restrict: 'AC',
+    restrict: 'A',
     link: function(scope, element, attrs) {
       scope.$evalAsync(function(){
         var clip = new ZeroClipboard(element.get(0));

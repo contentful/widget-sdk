@@ -3,7 +3,7 @@
 angular.module('contentful').directive('cfTabContent', function(){
   return {
     template: JST.cf_tab_content(),
-    restrict: 'A',
+    restrict: 'E',
     replace: true
   };
 });

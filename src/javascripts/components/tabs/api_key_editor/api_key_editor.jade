@@ -2,7 +2,7 @@
   .tab-header__title
     h1(title="{{headline}}")
       | {{headline}}
-      a.cf-knowledge-base-icon(
+      a(cf-knowledge-base-icon
         tooltip="Learn more about API Keys in the Knowledge Base Pages"
         analytics-event="api_keys"
         href="https://contentful.zendesk.com/hc/en-us/articles/200513178-What-is-an-API-Key-")
@@ -19,7 +19,7 @@
 .aux-panel(ng-show="preferences.showAuxPanel")
   header
     span API Key Information
-  .entity-info-panel
+  .entity-info-panel(cf-entity-info-panel)
 
 
 .tab-main.tab-workbench
@@ -48,7 +48,7 @@
         .l-form-controls
           .l-field-editor
             input.form-control.with-copy-paste-button.space-id(type="text" value="{{spaceContext.space.getId()}}" readonly="readonly")
-            a.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".space-id")
+            a.copy-paste-button.cf-copy-paste(href="#" cf-copy-paste clipboard-sibling-selector=".space-id")
               i.fa.fa-copy
       .l-form-row.device-link
         .l-form-controls
@@ -75,8 +75,8 @@
           .l-field-editor(ng-hide="apiKey.data.accessToken")
             input.form-control(type="text" readonly="readonly" value="The token will be automatically generated once you save the existing key.")
           .l-field-editor--with-action(ng-show="apiKey.data.accessToken")
-            input.form-control.with-copy-paste-button.access-token.cf-select-all-input(type="text" ng-model="apiKey.data.accessToken" readonly="readonly")
-            a.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token")
+            input.form-control.with-copy-paste-button.access-token(type="text" cf-select-all-input ng-model="apiKey.data.accessToken" readonly="readonly")
+            a.copy-paste-button.cf-copy-paste(href="#" cf-copy-paste clipboard-sibling-selector=".access-token")
               i.fa.fa-copy
           .l-field-action(ng-show="apiKey.data.accessToken" cf-dropdown)
             a.u-locked-action(ng-show="!regenerateProductionToken" href="#" cf-dropdown-toggle)
@@ -98,8 +98,8 @@
           .l-field-editor(ng-hide="previewApiKey.data.accessToken")
             input.form-control(type="text" readonly="readonly" value="The token will be automatically generated once you save the existing key.")
           .l-field-editor--with-action(ng-show="previewApiKey.data.accessToken")
-            input.form-control.with-copy-paste-button.access-token.cf-select-all-input(type="text" ng-model="previewApiKey.data.accessToken" readonly="readonly")
-            a.copy-paste-button.cf-copy-paste(href="#" clipboard-sibling-selector=".access-token")
+            input.form-control.with-copy-paste-button.access-token(type="text" cf-select-all-input ng-model="previewApiKey.data.accessToken" readonly="readonly")
+            a.copy-paste-button.cf-copy-paste(href="#" cf-copy-paste clipboard-sibling-selector=".access-token")
               i.fa.fa-copy
           .l-field-action(ng-show="previewApiKey.data.accessToken")
             a(ng-click="regenerateAccessToken('preview')" href="#")
@@ -125,7 +125,7 @@
               label
                 input.form-control-look(type="radio" name="codeexampleapi" ng-model="authCodeExample.api" value="preview")
                 | Preview
-              a.cf-copy-paste(href="#" clipboard-target-selector=".authentication-code .code-example textarea")
+              a.cf-copy-paste(href="#" cf-copy-paste clipboard-target-selector=".authentication-code .code-example textarea")
                 i.fa.fa-copy
                 |  Copy to Clipboard
 

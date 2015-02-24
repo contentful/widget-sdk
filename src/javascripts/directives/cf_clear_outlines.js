@@ -2,7 +2,7 @@
 
 angular.module('contentful').directive('cfClearOutlines', ['$document', function ($document) {
   return {
-    restrict: 'C',
+    restrict: 'A',
     link: function () {
       var $body = $document.find('body');
       var disableOutlines = $('#disable-outlines');
