@@ -55,6 +55,7 @@
     "contentful-client": "~11.0.3"
   },
   "devDependencies": {
+    "fb-flo": "^0.4.0",
     "jade": "^1.9.2",
     "karma": "~0.12.21",
     "karma-chrome-launcher": "~0.1.4",

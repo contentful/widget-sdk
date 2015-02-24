@@ -37,6 +37,22 @@ branch which will make it available at [http://contentful.github.io/user_interfa
 Don't forget to provide an appropriate commit message outlining the
 changes.
 
+## Live Reloading
+
+We have setup live reloading for CSS only, both in the app and the
+styleguide. It uses [fb-flo](https://facebook.github.io/fb-flo/) so make
+sure you install [the extension](https://chrome.google.com/webstore/detail/fb-flo/ahkfhobdidabddlalamkkiafpipdfchp).
+
+Set it up by adding a new site in the Configuration pane, with settings:
+- hostname pattern: app.joistio.com
+- flo server hostname: 10.11.12.13
+- flo server port: 9000
+
+Once `gulp serve` is running, go to the flo tab in the developer tools
+and make sure it has connected. The connection will probably drop when
+you kill `gulp serve` so remember to refresh the page or click the "try
+again" button.
+
 ### Production builds
 
 To build the production version of the assets, run `gulp build`.
