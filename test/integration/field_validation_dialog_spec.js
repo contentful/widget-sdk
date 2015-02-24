@@ -9,6 +9,11 @@
  * - `cfValidationLinkType`
  *
  * Stubs the scope's `field`, `index`, and `otDoc`.
+ *
+ * TODO
+ *
+ * - Duplicate validation tests for Array type fields. Use a test case
+ *   factory for that.
  */
 describe('validation dialog', function() {
   var openDialog, dialog, scope;
@@ -471,5 +476,37 @@ describe('validation dialog', function() {
       .find('option:selected');
       expect(selected.text()).toEqual('Markup');
     });
+  });
+
+  describe('array length validation', function() {
+    beforeEach(function() {
+      scope.otEditable = true;
+      scope.field = {type: 'Array', items: {type: 'Symbol'}};
+      openDialog();
+    });
+
+    function settings() {
+      return dialog.domElement.find('[aria-label="Enforce number of Symbols"]');
+    }
+
+    it('can be set', function() {
+      settings()
+      .find('[aria-label="Enable validation"]')
+      .click();
+
+      var minInput = settings().find('[aria-label="Minimum size"]');
+      minInput.val('10').trigger('input');
+      var maxInput = settings().find('[aria-label="Maximum size"]');
+      maxInput.val('20').trigger('input');
+
+      clickSave();
+      expect(dialog.open).toBe(false);
+
+      expect(scope.field.validations)
+      .toEqual([{size: {min: 10, max: 20}}]);
+      expect(validationsDoc(scope).get())
+      .toEqual([{size: {min: 10, max: 20}}]);
+    });
+
   });
 });
