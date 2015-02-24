@@ -10,7 +10,7 @@ angular.module('contentful').factory('aviary', ['$injector', function ($injector
   var filepicker  = $injector.get('filepicker');
 
   if (!$window.Aviary) {
-    angularLoad.loadScript('https://dme0ih8comzn4.cloudfront.net/js/feather.js');
+    angularLoad.loadScript('https://dme0ih8comzn4.cloudfront.net/imaging/v1/editor.js');
   }
 
   var featherEditor, file, createDeferred, onClose;
@@ -23,7 +23,6 @@ angular.module('contentful').factory('aviary', ['$injector', function ($injector
     else
       featherEditor = new $window.Aviary.Feather({
         apiKey: environment.settings.aviary.api_key,
-        apiVersion: 2,
         isPremiumPartner: 1,
         encryptionMethod: 'sha1',
         appendTo: '',
