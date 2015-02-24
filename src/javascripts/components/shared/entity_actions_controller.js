@@ -32,6 +32,10 @@ angular.module('contentful').controller('EntityActionsController',
         return !!(entity.canUnarchive() && $scope.permissionController.can('unarchive', entity.data).can);
       },
 
+      canUpdate: function () {
+        return !!($scope.permissionController.can('update', entity.data).can);
+      },
+
       canUnpublish: function () {
         return !!(entity.canUnpublish() && $scope.permissionController.can('unpublish', entity.data).can);
       },

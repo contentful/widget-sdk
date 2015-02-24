@@ -17,7 +17,7 @@ describe('Entry Actions Controller', function () {
 
       space = cfStub.space('spaceid');
       var contentTypeData = cfStub.contentTypeData('type1');
-      entry = cfStub.entry(space, 'entryid', 'typeid', {}, {sys: {version: 1}});
+      entry = cfStub.entry(space, 'entryid', 'typeid', {field1: 'one'}, {sys: {version: 1}});
       action = $q.defer();
 
       scope = $rootScope.$new();
@@ -233,6 +233,91 @@ describe('Entry Actions Controller', function () {
       it('updates ot entity', function() {
         expect(scope.otUpdateEntity).toBeCalled();
       });
+    });
+  });
+
+  describe('reverting', function () {
+    var $q,
+        setStub;
+
+    beforeEach(function () {
+      var entry = scope.entry;
+
+      $q = this.$inject('$q');
+
+      scope.otEditable = true;
+      scope.otGetEntity = sinon.stub().returns(scope.entry);
+      entry.save = function () { entry.data.sys.version += 1; };
+      entry.publish = function () {
+        entry.data.sys.publishedVersion += 1;
+        entry.save();
+        return $q.when();
+      };
+      entry.setPublishedVersion = function (version) {
+        entry.data.sys.publishedVersion = version;
+      };
+      scope.otDoc = {
+        at: sinon.stub().returns({
+          set: setStub = sinon.stub()
+        })
+      };
+      scope.$apply();
+      scope.otUpdateEntity = entry.save;
+      scope.validate = sinon.stub().returns(true);
+    });
+
+    // Does a bunch of reverts in the same test
+    // because breakability here can be more easily
+    // detected if we *don't* start with a clean slate
+    // for each action.
+    it('changes revertable state', function () {
+      var entry = scope.entry,
+          publishedData;
+
+      expect(entry.isPublished()).toBeFalsy();
+      expect(scope.canRevertToPublishedState()).toBeFalsy();
+      expect(scope.canRevertToPreviousState()).toBeFalsy();
+
+      entry.data.fields.field1 = 'two';
+      entry.save();
+      scope.$apply();
+
+      expect(scope.canRevertToPublishedState()).toBeFalsy();
+      expect(scope.canRevertToPreviousState()).toBeTruthy();
+
+      scope.revertToPreviousState();
+      entry.data.fields = setStub.args[0][0];
+      setStub.yield();
+
+      expect(entry.data.fields.field1).toBe('one');
+      expect(scope.canRevertToPublishedState()).toBeFalsy();
+      expect(scope.canRevertToPreviousState()).toBeFalsy();
+
+      entry.data.fields.field1 = 'three';
+      entry.save();
+      publishedData = _.cloneDeep(entry.data);
+      scope.publish();
+      scope.$apply();
+
+      expect(scope.canRevertToPublishedState()).toBeFalsy();
+      expect(scope.canRevertToPreviousState()).toBeTruthy();
+
+      entry.data.fields.field1 = 'four';
+      entry.save();
+      scope.$apply();
+
+      expect(scope.canRevertToPublishedState()).toBeTruthy();
+      expect(scope.canRevertToPreviousState()).toBeTruthy();
+
+      entry.getPublishedState = sinon.stub().returns($q.when(publishedData));
+      scope.revertToPublishedState();
+      scope.$apply();
+      entry.data.fields = setStub.args[1][0];
+      setStub.yield();
+
+      expect(entry.data.fields.field1).toBe('three');
+      expect(scope.canRevertToPublishedState()).toBeFalsy();
+      expect(scope.canRevertToPreviousState()).toBeTruthy();
     });
   });
 

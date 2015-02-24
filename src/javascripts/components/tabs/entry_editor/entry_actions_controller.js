@@ -1,5 +1,20 @@
 'use strict';
-angular.module('contentful').controller('EntryActionsController', ['$scope', 'notification', 'logger', function EntryActionsController($scope, notification, logger) {
+angular.module('contentful').controller('EntryActionsController', ['$scope', '$q', 'notification', 'logger', function EntryActionsController($scope, $q, notification, logger) {
+
+  var originalEntryData, trackedPublishedVersion, trackedPreviousVersion;
+
+  $scope.$watch('otEditable', function (otEditable) {
+    if (otEditable && !originalEntryData) {
+      var originalEntry = $scope.otGetEntity();
+      originalEntryData = _.cloneDeep(originalEntry.data);
+
+      trackedPublishedVersion = originalEntry.getPublishedVersion();
+      trackedPreviousVersion = originalEntry.getVersion();
+
+      $scope.publishedAt = moment(originalEntry.getPublishedAt()).format('h:mma [on] MMM DD, YYYY');
+      $scope.updatedAt = moment(originalEntry.getUpdatedAt()).format('h:mma [on] MMM DD, YYYY');
+    }
+  });
 
   // TODO If we are sure that the data in the entry has been updated from the ShareJS doc,
   // We can query the entry instead of reimplementing the checks heere
@@ -56,6 +71,58 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', 'no
     });
   };
 
+  $scope.canRevertToPublishedState = function () {
+    var entry = $scope.entry;
+
+    return (entry.isPublished() &&
+           entry.getVersion() > (trackedPublishedVersion + 1));
+  };
+
+  $scope.revertToPublishedState = function () {
+    function flashError(err) {
+      notification.warn('Error reverting to the last published state of ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
+      logger.logSharejsWarn('Error reverting entry to published state', {error: err});
+    }
+
+    $scope.entry.getPublishedState().then(function (data) {
+      var cb = $q.callbackWithApply();
+      $scope.otDoc.at('fields').set(data.fields, cb);
+      cb.promise
+      .then(function () {
+        $scope.otUpdateEntity();
+        if (trackedPreviousVersion === (trackedPublishedVersion + 1)) {
+          trackedPreviousVersion = $scope.entry.getVersion() + 1;
+        }
+        trackedPublishedVersion = $scope.entry.getVersion();
+        notification.info('Entry reverted to the last published state successfully');
+      }, flashError);
+    })
+    .catch(flashError);
+  };
+
+  $scope.canRevertToPreviousState = function () {
+    var entry = $scope.entry;
+
+    return entry.getVersion() > trackedPreviousVersion;
+  };
+
+  $scope.revertToPreviousState = function () {
+    var cb = $q.callbackWithApply();
+    $scope.otDoc.at('fields').set(originalEntryData.fields, cb);
+    cb.promise
+    .then(function () {
+      $scope.otUpdateEntity();
+      if (trackedPreviousVersion === (trackedPublishedVersion + 1)) {
+        trackedPublishedVersion = $scope.entry.getVersion() - 1;
+      }
+      trackedPreviousVersion = $scope.entry.getVersion();
+      notification.info('Entry reverted to the previous state successfully');
+    }, function(err){
+      notification.warn('Error reverting to the previous state of ' + title() + ' (' + dotty.get(err, 'body.sys.id') + ')');
+      logger.logSharejsWarn('Error reverting entry to previous state', {error: err});
+    });
+  };
+
   $scope.unpublish = function () {
     $scope.entry.unpublish()
     .then(function(){
@@ -77,6 +144,10 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', 'no
     $scope.entry.publish(version)
     .then(function(){
       $scope.entry.setPublishedVersion(version);
+      if (trackedPreviousVersion === version) {
+        trackedPreviousVersion = version + 1;
+      }
+      trackedPublishedVersion = version;
       notification.info(title() + ' published successfully');
     })
     .catch(handlePublishErrors);
