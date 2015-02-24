@@ -455,26 +455,38 @@ describe('validation dialog', function() {
       .find('[aria-label="Enable validation"]')
       .click();
 
-      var selected = settings()
-      .find('option:selected');
-      expect(selected.text()).toEqual('');
+      settings()
+      .find('label:contains("Image") input')
+      .click();
 
       settings()
-      .find('select')
-      .val('image')
-      .trigger('change');
+      .find('label:contains("Code") input')
+      .click();
 
       clickSave();
-      expect(scope.field.validations).toEqual([{linkMimetypeGroup: 'image'}]);
-      expect(validationsDoc(scope).get()).toEqual([{linkMimetypeGroup: 'image'}]);
+      expect(scope.field.validations).toEqual([{linkMimetypeGroup: ['image', 'code']}]);
+      expect(validationsDoc(scope).get()).toEqual([{linkMimetypeGroup: ['image', 'code']}]);
     });
 
     it('shows previously selected type', function() {
       scope.field.validations = [{linkMimetypeGroup: 'markup'}];
       openDialog();
       var selected = settings()
-      .find('option:selected');
-      expect(selected.text()).toEqual('Markup');
+      .find('label:contains("Markup") input');
+      expect(selected.is(':checked')).toBe(true);
+    });
+
+    it('shows error if no type slected', function() {
+      scope.field.validations = [{linkMimetypeGroup: 'markup'}];
+      openDialog();
+      settings()
+      .find('label:contains("Markup") input')
+      .click();
+
+      clickSave();
+      var errors = settings()
+      .find('[aria-label="Errors"] li');
+      expect(errors.length).toEqual(1);
     });
   });
 

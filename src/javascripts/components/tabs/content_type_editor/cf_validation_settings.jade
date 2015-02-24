@@ -79,8 +79,12 @@ h2.validation-settings__header
 
   cf-validation-link-type(ng-switch-when="linkContentType")
 
-  div.btn.btn--tertiary.select-box.validation-controls__select-box(ng-switch-when="linkMimetypeGroup")
-    select(aria-label="Select asset type"
-           ng-model="validation.settings"
-           ng-options="name as label for (name, label) in mimetypeGroups" ng-disabled="!otEditable")
-    i.button-icon-right.fa.fa-caret-down
+  div(ng-switch-when="linkMimetypeGroup")
+    ul.validation-controls__option-list(
+        aria-label="Available Asset Types"
+        ng-controller="ValidationAssetTypesController as assetTypes")
+      li(ng-repeat="at in assetTypes.types")
+        label
+          input(type="checkbox" ng-model="at.selected" ng-change="assetTypes.update()")
+          span.u-truncate {{at.label}}
+    cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label="Errors")
