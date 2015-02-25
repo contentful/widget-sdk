@@ -1,0 +1,17 @@
+input.form-control.validation-value-list__add(type="text" placeholder="Add a value" aria-label="Add a value" ng-keydown="onInputKey($event)")
+a(cf-knowledge-base-icon
+  tooltip="Learn more about Predefined Values in the Knowledge Base Pages"
+  tooltip-container=".validation-dialog"
+  analytics-event="predefined_values"
+  href="https://contentful.zendesk.com/hc/en-us/articles/201551466")
+cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label="Errors")
+
+.validation-value-list
+  i.fa.fa-caret-up
+  i.fa.fa-caret-down
+
+  .validation-value-list__scroll-frame
+    ul(ui-sortable="sortOptions" ng-model="valueList" aria-label="List of predefined values")
+      li.validation-value-list__item(ng-repeat="(index, value) in valueList" index="{{index}}")
+        .validation-value-list__value {{value}}
+        .validation-value-list__remove(ng-click="remove(index)" aria-label="Remove value")

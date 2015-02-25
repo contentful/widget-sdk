@@ -45,6 +45,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       $compile(this.domElement)(scope);
 
       this.domElement.on('click', _.bind(this._closeOnBackground, this));
+      this.open = true;
     },
 
     _closeOnBackground: function (ev) {
@@ -70,17 +71,17 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
 
     confirm: function () {
       this._deferred.resolve.apply(this, arguments);
-      this._cleanup();
+      this.destroy();
       return this;
     },
 
     cancel: function () {
       this._deferred.reject.apply(this, arguments);
-      this._cleanup();
+      this.destroy();
       return this;
     },
 
-    _cleanup: function () {
+    destroy: function () {
       if(this.domElement){
         this.domElement.scope().$destroy();
         this.domElement.remove();
@@ -88,6 +89,7 @@ angular.module('contentful').factory('modalDialog', ['$injector', function ($inj
       }
       if(this.scope) this.scope.$destroy();
       this.domElement = this.scope = null;
+      this.open = false;
     }
   };
 
