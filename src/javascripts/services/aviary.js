@@ -23,10 +23,9 @@ angular.module('contentful').factory('aviary', ['$injector', function ($injector
     else
       featherEditor = new $window.Aviary.Feather({
         apiKey: environment.settings.aviary.api_key,
-        isPremiumPartner: 1,
-        encryptionMethod: 'sha1',
         appendTo: '',
         displayImageSize: true,
+        enableCORS: true,
         onLoad: function () {
           initDeferred.resolve();
         },
@@ -95,12 +94,13 @@ angular.module('contentful').factory('aviary', ['$injector', function ($injector
         var aviaryToken = results[0];
         file = params.file; delete params.file;
         onClose = params.onClose; delete params.onClose;
-        params.hiresUrl = params.url;
-        params.timestamp = aviaryToken.timestamp;
-        params.signature = aviaryToken.signature;
-        params.salt = aviaryToken.salt;
+        params.encryptionMethod = 'sha1';
+        params.hiresUrl         = params.url;
+        params.timestamp        = aviaryToken.timestamp;
+        params.signature        = aviaryToken.signature;
+        params.salt             = aviaryToken.salt;
 
-        featherEditor.launch(params);
+        featherEditor.launch(_.clone(params));
       }).catch(function (errors) {
         createDeferred.reject({
           message: 'There was a problem initializing the editor',

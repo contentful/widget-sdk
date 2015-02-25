@@ -279,6 +279,29 @@ gulp.task('serve', ['generate-styleguide'], function () {
   });
   http.createServer(app).listen(3001);
 
+
+  var flo = require('fb-flo');
+  var floServer = flo(
+    './public/app/',
+    {
+      port: 9000,
+      verbose: false,
+      glob: [
+        '**/*.css',
+      ]
+    },
+    function resolver(filepath, cb) {
+      gutil.log('Live reloading', filepath);
+      cb({
+        resourceURL: '/app/main.css',
+        contents: fs.readFileSync('./public/app/main.css', 'utf-8')
+      });
+    }
+  );
+  floServer.once('ready', function () {
+    gutil.log('FB Flo is ready!');
+  });
+
   function makeServer(path) {
     return function (req, res) {
       try {
