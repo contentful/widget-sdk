@@ -39,7 +39,7 @@
 <body cf-clear-outlines ng-app="contentful/app">
   <div class="client ng-hide" ng-controller="ClientController" ng-init="initClient()" ng-show="user">
     <cf-notifications></cf-notifications>
-    <space-view ng-controller="TabViewController"></space-view>
+    <space-view class="space-view" ng-controller="TabViewController"></space-view>
   </div>
   <!-- inject:js -->
   <script src="/app/vendor.js" type="text/javascript"></script>

@@ -1,6 +1,4 @@
 nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
-  .logo(ng-click="logoClicked()")
-    .cf-logo(cf-custom-logo)
   ul(ng-show="!locationInAccount && spaces.length > 0 && spaceContext.space && !spaceContext.space.isHibernated()")
     li.add-dropdown-button(cf-add-dropdown-button space-context="spaceContext"
       ng-hide="permissionController.get('createContentType', 'shouldHide') && permissionController.get('createEntry', 'shouldHide') && permissionController.get('createAsset', 'shouldHide') && permissionController.get('createApiKey', 'shouldHide')")

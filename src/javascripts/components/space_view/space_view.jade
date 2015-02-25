@@ -1,33 +1,35 @@
 .main-top-bar
+  .main-top-bar__logo(ng-click="logoClicked()")
+    .main-top-bar__logo-element(cf-custom-logo)
   cf-main-nav-bar
   cf-account-bar
 
 nav.tab-list(cf-tab-list ng-show="spaceContext.space && !spaceContext.space.isHibernated() && !locationInAccount" ng-class="{hidden: hideTabBar()}")
 
-cf-tab-content
+.space-container
+  cf-tab-content
+  .tab-content.cf-account-view(ng-class="{'with-tab-bar': !hideTabBar()}" cf-account-view)
 
-.tab-content.cf-account-view(ng-class="{'with-tab-bar': !hideTabBar()}" cf-account-view)
+  .advice(ng-show="spaceContext.space && spaceContext.space.isHibernated()")
+    .advice__frame
+      i.fa.fa-cloud-upload.giant-icon
+      header.advice-title Hold on! We're bringing your space back
+      div.advice-description.top-advice
+        p You haven't been here for a while, so your Space slipped into hibernation.
+        p Don't worry, all your content is safe and shall be available for use in a few moments.
+      div.advice-description
+        p Refresh your browser window in a minute or
+        a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/201316206")
+          | Learn more about hibernation in our Help Center
 
-.advice(ng-show="spaceContext.space && spaceContext.space.isHibernated()")
-  .advice__frame
-    i.fa.fa-cloud-upload.giant-icon
-    header.advice-title Hold on! We're bringing your space back
-    div.advice-description.top-advice
-      p You haven't been here for a while, so your Space slipped into hibernation.
-      p Don't worry, all your content is safe and shall be available for use in a few moments.
-    div.advice-description
-      p Refresh your browser window in a minute or
-      a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/201316206")
-        | Learn more about hibernation in our Help Center
-
-.advice.advice--no-spaces(ng-show="spaces.length == 0")
-  .advice__frame
-    i.fa.fa-folder.giant-icon
-    header.advice-title Nothing to see yet.
-    p.advice-description(ng-show="!canCreateSpace()") You need to be part of an Organization to create a space.
-    p.advice-description(ng-show="canCreateSpace()") Why don't you create a space?
-    button.btn.btn--primary(type="button" ng-show="canCreateSpace()" ng-click="showCreateSpaceDialog()")
-      | Create Space
-    a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513118-What-is-a-space-")
-      | Visit the Knowledge Base Pages
-      i.fa.fa-question-circle
+  .advice.advice--no-spaces(ng-show="spaces.length == 0")
+    .advice__frame
+      i.fa.fa-folder.giant-icon
+      header.advice-title Nothing to see yet.
+      p.advice-description(ng-show="!canCreateSpace()") You need to be part of an Organization to create a space.
+      p.advice-description(ng-show="canCreateSpace()") Why don't you create a space?
+      button.btn.btn--primary(type="button" ng-show="canCreateSpace()" ng-click="showCreateSpaceDialog()")
+        | Create Space
+      a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513118-What-is-a-space-")
+        | Visit the Knowledge Base Pages
+        i.fa.fa-question-circle
