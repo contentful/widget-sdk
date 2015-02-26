@@ -23,7 +23,7 @@ describe('Client Controller', function () {
         'goToOrganization',
         'routingSpaceId',
         'setUserData',
-        'setSpaceData',
+        'setSpace',
         'getRoute',
         'path',
         'logout',
@@ -71,7 +71,7 @@ describe('Client Controller', function () {
         disable: stubs.disableAnalytics,
         toggleAuxPanel: stubs.auxPanel,
         track: stubs.track,
-        setSpaceData: stubs.setSpaceData,
+        setSpace: stubs.setSpace,
         setUserData: stubs.setUserData,
       });
 
@@ -409,7 +409,7 @@ describe('Client Controller', function () {
       });
 
       it('sets no space data on analytics', function () {
-        expect(stubs.setSpaceData).not.toBeCalled();
+        expect(stubs.setSpace).not.toBeCalled();
       });
     });
 
@@ -420,7 +420,7 @@ describe('Client Controller', function () {
       });
 
       it('sets no space data on analytics', function () {
-        expect(stubs.setSpaceData).not.toBeCalled();
+        expect(stubs.setSpace).not.toBeCalled();
       });
 
       it('location in account flag is false', function() {
@@ -440,7 +440,7 @@ describe('Client Controller', function () {
       });
 
       it('space data is set on analytics', function () {
-        expect(stubs.setSpaceData).toBeCalledWith(scope.spaces[0]);
+        expect(stubs.setSpace).toBeCalledWith(scope.spaces[0]);
       });
 
       it('location in account flag is false', function() {
@@ -479,7 +479,7 @@ describe('Client Controller', function () {
     it('space data is set on analytics', function () {
       stubs.routingSpaceId.returns(456);
       scope.$digest();
-      expect(stubs.setSpaceData).toBeCalledWith(scope.spaces[1]);
+      expect(stubs.setSpace).toBeCalledWith(scope.spaces[1]);
     });
 
     it('redirects to a non existent space and defaults to first space', function () {
@@ -510,7 +510,7 @@ describe('Client Controller', function () {
       });
 
       it('doesnt set analytics data', function () {
-        expect(stubs.setSpaceData).not.toBeCalled();
+        expect(stubs.setSpace).not.toBeCalled();
       });
 
       it('doesnt set a location path', function () {
@@ -530,7 +530,7 @@ describe('Client Controller', function () {
       });
 
       it('sets analytics data', function () {
-        expect(stubs.setSpaceData).toBeCalled();
+        expect(stubs.setSpace).toBeCalled();
       });
 
       it('sets a location path', function () {
@@ -549,7 +549,7 @@ describe('Client Controller', function () {
       });
 
       it('doesnt set analytics data', function () {
-        expect(stubs.setSpaceData).not.toBeCalled();
+        expect(stubs.setSpace).not.toBeCalled();
       });
     });
 
@@ -564,7 +564,7 @@ describe('Client Controller', function () {
       });
 
       it('doesnt set analytics data', function () {
-        expect(stubs.setSpaceData).not.toBeCalled();
+        expect(stubs.setSpace).not.toBeCalled();
       });
     });
   });

@@ -24,7 +24,7 @@ angular.module('contentful').provider('analytics', ['environment', function (env
         }, this);
       },
 
-      setSpaceData: function (space) {
+      setSpace: function (space) {
         if (space) {
           this._organizationData = space.data.organization;
           this._spaceData = {

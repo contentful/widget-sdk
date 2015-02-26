@@ -263,7 +263,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function setSpace(space) {
-    analytics.setSpaceData(space);
+    analytics.setSpace(space);
     $scope.spaceContext = new SpaceContext(space);
     enforcements.setSpaceContext($scope.spaceContext);
   }

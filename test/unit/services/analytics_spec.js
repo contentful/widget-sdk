@@ -23,7 +23,7 @@ describe('Analytics service', function () {
       sys: {id: 'h4nswur5t'}
     };
 
-    this.spaceData = {
+    this.space = {data: {
       tutorial: false,
       organization: {
         sys: {id: 'orgId'},
@@ -31,7 +31,7 @@ describe('Analytics service', function () {
         invoiceState: 'invoiceStateValue',
         subscriptionPlan: {
           sys: {id: 'subscriptionPlanId'},
-          name: 'subscriptionPlanName' } } };
+          name: 'subscriptionPlanName' } } }};
 
     this.segment   = this.$inject('segment') ;
     sinon.stub(this.segment, 'enable');
@@ -62,30 +62,30 @@ describe('Analytics service', function () {
     expect(this.analytics.track).toBe(_.noop);
   });
 
-  describe('setSpaceData', function(){
+  describe('setSpace', function(){
     beforeEach(function(){
       this.analytics.setUserData(this.userData);
     });
 
-    it('setSpaceData should set space data and initialize', function() {
+    it('setSpace should set space data and initialize', function() {
       sinon.assert.calledWith(this.segment.identify, 'h4nswur5t', {firstName: 'Hans', lastName: 'Wurst'});
       sinon.assert.notCalled(this.totango.initialize);
-      this.analytics.setSpaceData({data: this.spaceData});
-      sinon.assert.calledWith(this.totango.initialize, this.userData, this.spaceData.organization);
+      this.analytics.setSpace(this.space);
+      sinon.assert.calledWith(this.totango.initialize, this.userData, this.space.data.organization);
     });
   });
 
   describe('setUserData', function(){
     beforeEach(function(){
-      this.analytics.setSpaceData({data: this.spaceData});
+      this.analytics.setSpace(this.space);
     });
 
-    it('setSpaceData should set space data and initialize', function() {
+    it('setSpace should set space data and initialize', function() {
       sinon.assert.notCalled(this.segment.identify);
       sinon.assert.notCalled(this.totango.initialize);
       this.analytics.setUserData(this.userData);
       sinon.assert.calledWith(this.segment.identify, 'h4nswur5t', {firstName: 'Hans', lastName: 'Wurst'});
-      sinon.assert.calledWith(this.totango.initialize, this.userData, this.spaceData.organization);
+      sinon.assert.calledWith(this.totango.initialize, this.userData, this.space.data.organization);
     });
   });
 
