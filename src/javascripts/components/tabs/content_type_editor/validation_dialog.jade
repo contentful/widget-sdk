@@ -1,30 +1,18 @@
 .modal-background.validation-dialog
-  .modal-dialog(ng-controller="FieldValidationDialogController" cf-center-on=".modal-background")
-    .title
-      | Validations for {{field.name}} 
+  .modal-dialog(ng-controller="ValidationDialogController as validationsController" cf-center-on=".modal-background")
+    header.title.validation-dialog__title
+      | Validations for 
+      em {{field.name}}
+      | field 
       a(cf-knowledge-base-icon
         tooltip="Learn more about Validations in the Knowledge Base Pages"
         tooltip-container=".validation-dialog"
         analytics-event="content_type_validations"
         href="https://contentful.zendesk.com/hc/en-us/articles/200513248-What-are-validations-")
-    .modal-dialog-close-button(ng-click="dialog.cancel()")
+      .validation-dialog__actions.button-set
+        button.btn.btn--secondary(ng-click="cancel()") Cancel
+        button.btn.btn--primary(ng-click="save()") Save
 
-    .validation-list
-      .advice(ng-hide="validationList().length > 0")
-        .advice__frame
-          i.fa.fa-check.medium-icon
-          header.advice-title You have no Validations yet.
-          p.advice-description
-            | Select Validations and narrow further what type of content should be added to your Fields.
-          .dropdown-btn(cf-dropdown)
-            button.btn.btn--primary(cf-dropdown-toggle ng-disabled="!canAddValidations() || !otEditable")
-              | Create Validation
-            .dropdown-menu.type-menu(cf-dropdown-menu select-validation="addValidation(type)")
-      .cf-validation-options(ng-repeat="(validationIndex, validation) in validationList() track by validationIndex" ng-model="validation")
-
-    .buttons(ng-show="validationList().length > 0 && canAddValidations()")
-      .dropdown-btn(cf-dropdown)
-        button.btn.btn--primary(cf-dropdown-toggle ng-disabled="!canAddValidations() || !otEditable")
-          i.fa.fa-plus.button-icon
-          | Add Validation
-        .dropdown-menu.type-menu(cf-dropdown-menu select-validation="addValidation(type)")
+    ul.validation-settings
+      li(ng-repeat="validation in validations" aria-label="{{validation.name}}")
+        cf-validation-setting

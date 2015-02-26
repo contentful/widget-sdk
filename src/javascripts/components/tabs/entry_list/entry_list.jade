@@ -24,7 +24,7 @@
       cf-on-blur-component="leftSearch($event)"
       cf-on-blur-component-when="showAutocompletions")
 
-    .search-results-position(paginator="paginator" ng-hide="!paginator.numEntries")
+    .search-results-position(cf-search-results-position paginator="paginator" ng-hide="!paginator.numEntries")
 
   .tab-header__actions.add-entity(ng-hide="spaceContext.publishedContentTypes.length == 0 || entries.length == 0")
     button.btn.btn--primary.u-truncate(

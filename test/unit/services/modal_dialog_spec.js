@@ -27,7 +27,7 @@ describe('Modal dialog service', function () {
     });
 
     afterEach(function () {
-      dialog._cleanup();
+      dialog.destroy();
       $('.client').remove();
     });
 
@@ -133,7 +133,7 @@ describe('Modal dialog service', function () {
       it('properly removes the global event listeners', function () {
         $(window).trigger('keyup');
         expect(dialog.scope.$apply).toBeCalled();
-        dialog._cleanup();
+        dialog.destroy();
         dialog.scope = {$apply: sinon.stub(), $destroy: sinon.stub()};
         $(window).trigger('keyup');
         expect(dialog.scope.$apply).not.toBeCalled();

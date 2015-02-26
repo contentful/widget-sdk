@@ -1,0 +1,48 @@
+h2.validation-settings__header
+  label.validation-settings__toggle
+    span.validation-settings__toggle-input-wrapper
+      input(type="checkbox" aria-label="{{validation.enabled ? 'Disable' : 'Enable'}} validation"
+            ng-model="validation.enabled")
+    span
+      | {{validation.name}}
+
+.validation-controls(ng-switch="validation.type" ng-show="validation.enabled")
+  div(ng-switch-when="size")
+    input.form-control(type="number" placeholder="Min" aria-label="Minimum size"
+                       ng-model="validation.settings.min" ng-disabled="!otEditable")
+    | &nbsp;&ndash;&nbsp;
+    input.form-control(type="number" placeholder="Max" aria-label="Maximum size"
+                       ng-model="validation.settings.max" ng-disabled="!otEditable")
+    cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label="Errors")
+
+
+  div(ng-switch-when="range")
+    input.form-control(type="number" placeholder="Min" aria-label="Minimum value"
+                       ng-model="validation.settings.min" ng-disabled="!otEditable")
+    | &nbsp;&ndash;&nbsp;
+    input.form-control(type="number" placeholder="Max" aria-label="Maximum value"
+                       ng-model="validation.settings.max" ng-disabled="!otEditable")
+    cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label="Errors")
+
+  div(ng-switch-when="regexp")
+    input.form-control.validation-controls__re-pattern(
+      type="text" placeholder="foo|bar[baz]" aria-label="Regular Expression pattern"
+      ng-model="validation.settings.pattern"
+      ng-required="true" ng-disabled="!otEditable")
+    span &nbsp;Flags&nbsp;
+    input.form-control.validation-controls__re-flags(
+      type="text" aria-label="Regular Expression flags"
+      ng-model="validation.settings.flags"
+      ng-required="true" ng-disabled="!otEditable")
+    cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label="Errors")
+
+
+  cf-validation-values(ng-switch-when="in")
+
+  cf-validation-link-type(ng-switch-when="linkContentType")
+
+  div.btn.btn--tertiary.select-box.validation-controls__select-box(ng-switch-when="linkMimetypeGroup")
+    select(aria-label="Select asset type"
+           ng-model="validation.settings"
+           ng-options="name as label for (name, label) in mimetypeGroups" ng-disabled="!otEditable")
+    i.button-icon-right.fa.fa-caret-down
