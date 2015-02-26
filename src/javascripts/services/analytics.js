@@ -11,6 +11,19 @@ angular.module('contentful').provider('analytics', ['environment', function (env
     var $location = $injector.get('$location');
 
     var analytics = {
+      enable: function(){
+        segment.enable();
+        totango.enable();
+      },
+
+      disable: function(){
+        segment.disable();
+        totango.disable();
+        _.forEach(this, function(value, key){
+          this[key] = _.noop;
+        }, this);
+      },
+
       setSpaceData: function (space) {
         if (space) {
           this._organizationData = space.data.organization;
@@ -34,6 +47,14 @@ angular.module('contentful').provider('analytics', ['environment', function (env
         this._initialize();
       },
 
+      track: function (event, data) {
+        segment.track(event, _.merge({}, data, this._spaceData));
+      },
+
+      trackTotango: function (event) {
+        return totango.track(event);
+      },
+
       tabAdded: function (tab) {
         this.track('Opened Tab', {
           viewType: tab.viewType,
@@ -41,6 +62,14 @@ angular.module('contentful').provider('analytics', ['environment', function (env
           id: this._idFromTab(tab)
         });
         this._trackView(tab);
+      },
+
+      tabClosed: function (tab) {
+        this.track('Closed Tab', {
+          viewType: tab.viewType,
+          section: tab.section,
+          id: this._idFromTab(tab)
+        });
       },
 
       tabActivated: function (tab, oldTab) {
@@ -84,20 +113,24 @@ angular.module('contentful').provider('analytics', ['environment', function (env
         this.track(event, data);
       },
 
-      tabClosed: function (tab) {
-        this.track('Closed Tab', {
-          viewType: tab.viewType,
-          section: tab.section,
-          id: this._idFromTab(tab)
-        });
-      },
-
       toggleAuxPanel: function (visible, tab) {
         var action = visible ? 'Opened Aux-Panel' : 'Closed Aux-Panel';
         this.track(action, {
           currentSection: tab.section,
           currentViewType: tab.viewType
         });
+      },
+
+      _initialize: function(){
+        if (this._userData) {
+          segment.identify(this._userData.sys.id, {
+            firstName: this._userData.firstName,
+            lastName:  this._userData.lastName
+          });
+        }
+        if (this._userData && this._organizationData){
+          totango.initialize(this._userData, this._organizationData);
+        }
       },
 
       _idFromTab: function (tab) {
@@ -136,40 +169,8 @@ angular.module('contentful').provider('analytics', ['environment', function (env
             pathSuffix: tab.params.pathSuffix
           });
         }
-      },
-
-      enable: function(){
-        segment.enable();
-        totango.enable();
-      },
-
-      disable: function(){
-        segment.disable();
-        totango.disable();
-        _.forEach(this, function(value, key){
-          this[key] = _.noop;
-        }, this);
-      },
-
-      _initialize: function(){
-        if (this._userData) {
-          segment.identify(this._userData.sys.id, {
-            firstName: this._userData.firstName,
-            lastName:  this._userData.lastName
-          });
-        }
-        if (this._userData && this._organizationData){
-          totango.initialize(this._userData, this._organizationData);
-        }
-      },
-
-      track: function (event, data) {
-        segment.track(event, _.merge({}, data, this._spaceData));
-      },
-
-      trackTotango: function (event) {
-        return totango.track(event);
       }
+
     };
 
     if (shouldLoadAnalytics()) {

@@ -49,6 +49,19 @@ describe('Analytics service', function () {
     this.analytics = this.$inject('analytics');
   });
 
+  it('should enable', function() {
+    this.analytics.enable();
+    sinon.assert.called(this.segment.enable);
+    sinon.assert.called(this.totango.enable);
+  });
+
+  it('should disable', function() {
+    this.analytics.disable();
+    sinon.assert.called(this.segment.disable);
+    sinon.assert.called(this.totango.disable);
+    expect(this.analytics.track).toBe(_.noop);
+  });
+
   describe('setSpaceData', function(){
     beforeEach(function(){
       this.analytics.setUserData(this.userData);
@@ -76,17 +89,14 @@ describe('Analytics service', function () {
     });
   });
 
-  it('should enable', function() {
-    this.analytics.enable();
-    sinon.assert.called(this.segment.enable);
-    sinon.assert.called(this.totango.enable);
+  it('should track', function(){
+    this.analytics.track('Event', {data: 'foobar'});
+    sinon.assert.calledWith(this.segment.track, 'Event', {data: 'foobar'});
   });
 
-  it('should disable', function() {
-    this.analytics.disable();
-    sinon.assert.called(this.segment.disable);
-    sinon.assert.called(this.totango.disable);
-    expect(this.analytics.track).toBe(_.noop);
+  it('should track totango', function(){
+    this.analytics.trackTotango('Event');
+    sinon.assert.calledWith(this.totango.track, 'Event');
   });
 
   describe('tabAdded', function() {
@@ -116,6 +126,18 @@ describe('Analytics service', function () {
     });
   });
 
+  it('should track tab closed', function(){
+    this.analytics.tabClosed({
+      viewType: 'viewTypeValue',
+      section: 'sectionValue'
+    });
+    sinon.assert.calledWith(this.segment.track, 'Closed Tab', {
+      section: 'sectionValue',
+      viewType: 'viewTypeValue',
+      id: undefined
+    });
+  });
+
   describe('tabActivated', function() {
     beforeEach(function(){
       this.tab = {
@@ -131,39 +153,6 @@ describe('Analytics service', function () {
 
     it('should track segment', function(){
       sinon.assert.called(this.segment.track);
-    });
-  });
-
-  it('should track tab closed', function(){
-    this.analytics.tabClosed({
-      viewType: 'viewTypeValue',
-      section: 'sectionValue'
-    });
-    sinon.assert.calledWith(this.segment.track, 'Closed Tab', {
-      section: 'sectionValue',
-      viewType: 'viewTypeValue',
-      id: undefined
-    });
-  });
-
-  describe('id calculation', function(){
-    _.each({
-      'entry-editor': 'entry',
-      'asset-editor': 'asset',
-      'content-type-editor': 'contentType'
-    }, function(param, viewType){
-
-      it('should extract the id from a '+viewType, function(){
-        var tab = {
-          viewType: viewType,
-          section: 'sectionValue',
-          params: {}
-        };
-        tab.params[param] = {getId: _.constant('theId')};
-        this.analytics.tabActivated(tab);
-        expect(this.segment.track.args[0][1].id).toBe('theId');
-      });
-
     });
   });
 
@@ -212,14 +201,25 @@ describe('Analytics service', function () {
     });
   });
 
-  it('should track', function(){
-    this.analytics.track('Event', {data: 'foobar'});
-    sinon.assert.calledWith(this.segment.track, 'Event', {data: 'foobar'});
-  });
+  describe('id calculation', function(){
+    _.each({
+      'entry-editor': 'entry',
+      'asset-editor': 'asset',
+      'content-type-editor': 'contentType'
+    }, function(param, viewType){
 
-  it('should track totango', function(){
-    this.analytics.trackTotango('Event');
-    sinon.assert.calledWith(this.totango.track, 'Event');
+      it('should extract the id from a '+viewType, function(){
+        var tab = {
+          viewType: viewType,
+          section: 'sectionValue',
+          params: {}
+        };
+        tab.params[param] = {getId: _.constant('theId')};
+        this.analytics.tabActivated(tab);
+        expect(this.segment.track.args[0][1].id).toBe('theId');
+      });
+
+    });
   });
 
 });
