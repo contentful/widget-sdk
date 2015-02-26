@@ -52,15 +52,9 @@ describe('Totango service', function(){
       this.$apply(); // Totango done loading
     });
 
-    it('translates module names', function(){
-      this.totango.setSection('apiKeys');
+    it('sets module names', function(){
+      this.totango.setModule('API Keys');
       expect(this.$window.totango_options.module).toBe('API Keys');
-      this.totango.setSection('assets');
-      expect(this.$window.totango_options.module).toBe('Assets');
-      this.totango.setSection('contentTypes');
-      expect(this.$window.totango_options.module).toBe('Content Types');
-      this.totango.setSection('entries');
-      expect(this.$window.totango_options.module).toBe('Entries');
     });
   });
 });

@@ -73,11 +73,14 @@ angular.module('contentful').provider('analytics', ['environment', function (env
       },
 
       tabActivated: function (tab, oldTab) {
-        totango.setSection(tab.section);
+        var module = this._moduleFromTab(tab);
+        var id     = this._idFromTab(tab);
+        totango.setModule(module);
+        segment.page(module, tab.viewType, { id: id});
         this.track('Switched Tab', {
           viewType: tab.viewType,
           section: tab.section,
-          id: this._idFromTab(tab),
+          id: id,
           fromViewType: oldTab ? oldTab.viewType : null,
           fromSection: oldTab ? oldTab.section : null
         });
@@ -141,6 +144,15 @@ angular.module('contentful').provider('analytics', ['environment', function (env
         } else if (tab.viewType === 'content-type-editor'){
           return tab.params.contentType.getId();
         }
+      },
+
+      _moduleFromTab: function (tab) {
+        return tab.section === 'apiKeys'       ? 'API Keys'       :
+               tab.section === 'assets'        ? 'Assets'         :
+               tab.section === 'contentTypes'  ? 'Content Types'  :
+               tab.section === 'entries'       ? 'Entries'        :
+               tab.section === 'spaceSettings' ? 'Space Settings' :
+               tab.section;
       },
 
       _trackView: function (tab) {

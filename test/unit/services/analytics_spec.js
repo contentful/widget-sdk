@@ -38,12 +38,13 @@ describe('Analytics service', function () {
     sinon.stub(this.segment, 'disable');
     sinon.stub(this.segment, 'identify');
     sinon.stub(this.segment, 'track');
+    sinon.stub(this.segment, 'page');
 
     this.totango   = this.$inject('totango') ;
     sinon.stub(this.totango, 'enable');
     sinon.stub(this.totango, 'disable');
     sinon.stub(this.totango, 'initialize');
-    sinon.stub(this.totango, 'setSection');
+    sinon.stub(this.totango, 'setModule');
     sinon.stub(this.totango, 'track');
 
     this.analytics = this.$inject('analytics');
@@ -141,14 +142,21 @@ describe('Analytics service', function () {
   describe('tabActivated', function() {
     beforeEach(function(){
       this.tab = {
-        viewType: 'viewTypeValue',
-        section: 'sectionValue'
+        viewType: 'entry-editor',
+        section: 'entries',
+        params: {
+          entry: {getId: _.constant('entryId')}
+        }
       };
       this.analytics.tabActivated(this.tab);
     });
 
     it('should set the section in totango', function(){
-      sinon.assert.calledWith(this.totango.setSection, 'sectionValue');
+      sinon.assert.calledWith(this.totango.setModule, 'Entries');
+    });
+
+    it('should set the page in segment', function() {
+      sinon.assert.calledWith(this.segment.page, 'Entries', 'entry-editor', {id: 'entryId'});
     });
 
     it('should track segment', function(){
@@ -217,6 +225,28 @@ describe('Analytics service', function () {
         tab.params[param] = {getId: _.constant('theId')};
         this.analytics.tabActivated(tab);
         expect(this.segment.track.args[0][1].id).toBe('theId');
+      });
+
+    });
+  });
+
+  describe('module name calculation', function() {
+    _.each({
+      'apiKeys'       : 'API Keys'       ,
+      'assets'        : 'Assets'         ,
+      'contentTypes'  : 'Content Types'  ,
+      'entries'       : 'Entries'        ,
+      'spaceSettings' : 'Space Settings' ,
+      'something'     : 'something'
+    }, function(module, section){
+
+      it('should extract the module from a '+section, function(){
+        var tab = {
+          viewType: 'irrelevant',
+          section: section,
+        };
+        this.analytics.tabActivated(tab);
+        expect(this.totango.setModule.args[0][0]).toBe(module);
       });
 
     });

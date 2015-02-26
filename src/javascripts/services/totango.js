@@ -9,13 +9,6 @@ angular.module('contentful').factory('totango', ['$injector', function($injector
   var apiKey = dotty.get(environment, 'settings.totango');
   var SCRIPT_SRC = '//s3.amazonaws.com/totango-cdn/totango2.js';
 
-  var totangoModuleNames = {
-    apiKeys: 'API Keys',
-    assets: 'Assets',
-    contentTypes: 'Content Types',
-    entries: 'Entries'
-  };
-
   var loaderPromise;
 
   return {
@@ -52,16 +45,16 @@ angular.module('contentful').factory('totango', ['$injector', function($injector
           var orgId = organization ? organization.sys.id : 'noorg';
           $window.totango_options.username = user.sys.id +'-'+ orgId;
           $window.totango_options.account.id = orgId;
-          $window.totango_options.module = totangoModuleNames.entries;
+          $window.totango_options.module = $window.totango_options.module || 'Entries';
           $window.totango.go($window.totango_options);
         }
       });
     },
 
-    setSection: function(sectionName){
+    setModule: function(module){
       this._buffer.call(function(){
         if($window.totango_options){
-          $window.totango_options.module = totangoModuleNames[sectionName];
+          $window.totango_options.module = module;
         }
       });
     },
