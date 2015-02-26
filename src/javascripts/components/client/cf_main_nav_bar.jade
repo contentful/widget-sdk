@@ -1,8 +1,8 @@
 nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
-  ul(ng-show="!locationInAccount && spaces.length > 0 && spaceContext.space && !spaceContext.space.isHibernated()")
-    li.add-dropdown-button(cf-add-dropdown-button space-context="spaceContext"
+  ul.nav-bar__list(ng-show="!locationInAccount && spaces.length > 0 && spaceContext.space && !spaceContext.space.isHibernated()")
+    li.add-dropdown.nav-bar__list-item(cf-add-dropdown-button space-context="spaceContext"
       ng-hide="permissionController.get('createContentType', 'shouldHide') && permissionController.get('createEntry', 'shouldHide') && permissionController.get('createAsset', 'shouldHide') && permissionController.get('createApiKey', 'shouldHide')")
-    li(ng-class="{section: spaceContext.tabList.currentSection() == 'contentTypes',\
+    li.nav-bar__list-item(ng-class="{section: spaceContext.tabList.currentSection() == 'contentTypes',\
                   'section-index': spaceContext.tabList.currentViewType() == 'content-type-list'}"
         ng-click="goToView('content-type-list')"
         ng-hide="permissionController.get('updateContentType', 'shouldHide')"
@@ -12,7 +12,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
         tabindex="0")
       i.fa.fa-database
       span Content Model
-    li(ng-class="{section: spaceContext.tabList.currentSection() == 'entries',\
+    li.nav-bar__list-item(ng-class="{section: spaceContext.tabList.currentSection() == 'entries',\
                   'section-index': spaceContext.tabList.currentViewType() == 'entry-list'}"
         ng-hide="permissionController.get('readEntry', 'shouldHide')"
         ng-click="goToView('entry-list')"
@@ -22,7 +22,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
         tabindex="0")
       i.fa.fa-file
       span Entries
-    li(ng-class="{section: spaceContext.tabList.currentSection() == 'assets',\
+    li.nav-bar__list-item(ng-class="{section: spaceContext.tabList.currentSection() == 'assets',\
                  'section-index': spaceContext.tabList.currentViewType() == 'asset-list'}"
         ng-click="goToView('asset-list')"
         ng-hide="permissionController.get('readAsset', 'shouldHide')"
@@ -32,7 +32,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
         tabindex="0")
       i.fa.fa-paperclip
       span Assets
-    li(ng-class="{section: spaceContext.tabList.currentSection() == 'apiHome',\
+    li.nav-bar__list-item(ng-class="{section: spaceContext.tabList.currentSection() == 'apiHome',\
                    'section-index': spaceContext.tabList.currentViewType() == 'api-home'}"
         ng-click="goToView('api-home')"
         ng-hide="permissionController.get('readApiKey', 'shouldHide')"
@@ -42,7 +42,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
         tabindex="0")
       i.fa.fa-random
       span API
-    li(ng-class="{section: spaceContext.tabList.currentSection() == 'spaceSettings',\
+    li.nav-bar__list-item(ng-class="{section: spaceContext.tabList.currentSection() == 'spaceSettings',\
                   'section-index': spaceContext.tabList.currentSection() == 'spaceSettings'}"
         ng-click="goToView('space-settings')"
         ng-hide="permissionController.get('updateSettings', 'shouldHide')"

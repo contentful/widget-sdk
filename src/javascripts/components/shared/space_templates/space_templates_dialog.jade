@@ -55,7 +55,7 @@
                     | {{selectedOrganization.name}}
                     i.button-icon-right.fa.fa-caret-down
                   .dropdown-menu.fixed-position(cf-dropdown-menu)
-                    ul.dropdown-menu-list(ng-repeat="org in writableOrganizations")
+                    ul(ng-repeat="org in writableOrganizations")
                       li.dropdown-menu-item(ng-click="selectOrganization(org)" dropdown-close) {{org.name}}
             .l-form-row
               label Locale

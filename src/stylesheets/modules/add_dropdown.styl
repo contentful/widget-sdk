@@ -1,41 +1,15 @@
-.nav-bar
-  .dropdown-toggle
-    height: $nav-bar-height
-  .dropdown-toggle:hover
-    $highlight($blue, 5%, 'lighten')
-    box-shadow: none
-  .add-dropdown-button
-    $highlight($blue)
-    padding: 0
-    flex-grow: 0
-    $nav-bar-dropdowns()
-    .dropdown-menu
-      width: 210px
-      max-height: 700px
-      overflow-y: auto
-      .dropdown-menu-item
-        display: block
-        line-height: 40px
-        height: auto
-        padding-top: 0
-        padding-bottom: 0
-        &.hint
-          line-height: inherit
-      .dropdown-menu-list,
-      .dropdown-menu-item,
-      h3
-        text-align: left
-        width: 100%
-    .tooltip.bottom
-      width: 200px
-    .content-types
-      max-height: 450px
-      overflow-y: auto
-      li
-        padding-left: 40px
-        font-weight: normal
-  .add.button
+.add-dropdown
+  padding: 0
+  flex-grow: 0
+  $nav-bar-dropdowns()
+
+  &__container
+    &.active
+      box-shadow: inset 0px 0px 30px 30px rgba(0,0,0,0.3)
+
+  &__toggle
     color: white
+    $highlight($blue)
     padding: 2px 10px 0px
     i
       top: 0px
@@ -46,13 +20,21 @@
       top: 1px
     &:focus
       $focus-styles()
+    &:hover
+      color: white
+      $highlight($blue, 5%, 'lighten')
+      box-shadow: none
 
-.add-btn
-  height: $nav-bar-height
-  .add.button
-    .fa-caret-down
-      float: none
-      margin-left: 10px
-      margin-right: 0px
-  &.active
-    box-shadow: inset 0px 0px 30px 30px rgba(0,0,0,0.3)
+  &__list
+    color: white
+    > .dropdown-menu-item
+      line-height: 40px
+      padding-top: 0
+      padding-bottom: 0
+
+  &__content-types
+    max-height: 450px
+    overflow-y: auto
+    > .dropdown-menu-item
+      padding-left: 32px
+      font-weight: normal
