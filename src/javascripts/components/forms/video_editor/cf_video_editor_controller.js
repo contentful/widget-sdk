@@ -28,6 +28,7 @@ angular.module('contentful').controller('cfVideoEditorController', ['$scope', '$
   this.lookupAsset                     = lookupAsset;
   this.persistInput                    = persistInput;
   this.resetAsset                      = resetAsset;
+  this.resetEditorInput                = resetEditorInput;
   this.resetErrors                     = resetErrors;
   this.setPlayerIsNotLoading           = setPlayerIsNotLoading;
   this.setPlayerIsLoading              = setPlayerIsLoading;
@@ -62,6 +63,10 @@ angular.module('contentful').controller('cfVideoEditorController', ['$scope', '$
 
   function resetAsset() {
     $scope.videoEditor.selectedAsset = {};
+  }
+
+  function resetEditorInput() {
+    $scope.otChangeValue(null);
   }
 
   function resetErrors() {
