@@ -54,6 +54,12 @@ h2.validation-settings__header
     cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label="Errors")
 
 
+  div(ng-switch-when="dateRange")
+    cf-validation-date-select(aria-label="Later than" data="validation.settings.min")
+    cf-validation-date-select(aria-label="Earlier than" data="validation.settings.max")
+    cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label="Errors")
+
+
   div(ng-switch-when="regexp")
     .validation-controls__view-select.btn.btn--tertiary.select-box
       select(aria-label="Select pattern"
