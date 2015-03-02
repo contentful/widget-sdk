@@ -33,6 +33,16 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
     linkMimetypeGroup: null
   };
 
+  var validationsOrder = [
+    'size',
+    'range',
+    'dateRange',
+    'regexp',
+    'linkContentType',
+    'linkMimeType',
+    'in'
+  ];
+
   var validationLabels = {
     size: 'Length',
     range: 'Numerical Range',
@@ -92,7 +102,10 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
   };
 
   function getDecoratedValidations(field) {
-    return _.map(validationTypesForField(field), decorateValidation);
+    var decorated = _.map(validationTypesForField(field), decorateValidation);
+    return _.sortBy(decorated, function(validation) {
+      return validationsOrder.indexOf(validation.type);
+    });
 
     function decorateValidation(type) {
       var name = getValidationLabel(field, type);
