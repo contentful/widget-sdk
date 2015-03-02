@@ -207,6 +207,25 @@ describe('validation dialog', function() {
       expect(selectedView).toEqual('At least');
     });
 
+    it('changes custom error message', function() {
+      setFieldProperty(scope, validationPath, [{
+        size: {min: 10, max: null},
+        message: 'my custom error message'
+      }]);
+      openDialog();
+
+      var errorMessage = settings()
+      .find('input[aria-label="Custom error message"]');
+      expect(errorMessage.val()).toEqual('my custom error message');
+
+      errorMessage.val('a new error message').trigger('input');
+      clickSave();
+      expect(getFieldProperty(scope, validationPath)).toEqual([{
+        size: {min: 10},
+        message: 'a new error message'
+      }]);
+    });
+
   }
 
   describe('range validation', function() {

@@ -97,8 +97,16 @@ function ErrorPathController($scope, $attrs, mimetype) {
     return 'Error: ' + error.name;
   }
 
+  function customMessage(error) {
+    return error.customMessage;
+  }
+
   function getErrorMessage(error, validatedData, spaceContext) {
-    var getMessage = messages[error.name] || defaultMessage;
+    var getMessage;
+    if (error.customMessage)
+      getMessage = customMessage;
+    else
+      getMessage = messages[error.name] || defaultMessage;
     return getMessage(error, validatedData, spaceContext);
   }
 
