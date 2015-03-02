@@ -7,19 +7,30 @@
  * - `cfValidationsettings`
  * - `cfValidationValues`
  * - `cfValidationLinkType`
+ * - `cfValidationDateSelect`
  *
  * Stubs the scope's `field`, `index`, and `otDoc`.
- *
- * TODO
- *
- * - Duplicate validation tests for Array type fields. Use a test case
- *   factory for that.
  */
 describe('validation dialog', function() {
   var openDialog, dialog, scope;
 
-  function validationsDoc(scope) {
-    return scope.otDoc.at(['fields', scope.index, 'validations']);
+  function validationsDoc(scope, path) {
+    return scope.otDoc.at(['fields', scope.index, 'validations'].concat(path || []));
+  }
+
+  function getOtDocField(scope, path) {
+    if (_.isString(path))
+      path = path.split('.');
+    var basePath = ['fields', scope.index];
+    return scope.otDoc.at(basePath.concat(path)).get();
+  }
+
+  function getFieldProperty(scope, path) {
+    return dotty.get(scope, ['field', path].join('.'));
+  }
+
+  function setFieldProperty(scope, path, value) {
+    return dotty.put(scope, ['field', path].join('.'), value);
   }
 
   /**
@@ -93,7 +104,26 @@ describe('validation dialog', function() {
   }
 
 
-  describe('length validation', function() {
+  describe('text length validation', function() {
+    beforeEach(function() {
+      scope.field.type = 'Text';
+      openDialog();
+    });
+
+    describeLengthValidation('validations');
+  });
+
+  describe('multiple symbols length validation', function() {
+    beforeEach(function() {
+      scope.field.type = 'Array';
+      scope.field.items = {type: 'Symbol'};
+      openDialog();
+    });
+
+    describeLengthValidation('items.validations');
+  });
+
+  function describeLengthValidation(validationPath) {
 
     function settings() {
       return dialog.domElement.find('[aria-label="Length"]');
@@ -115,14 +145,14 @@ describe('validation dialog', function() {
       clickSave();
       expect(dialog.open).toBe(false);
 
-      expect(scope.field.validations)
+      expect(getFieldProperty(scope, validationPath))
       .toEqual([{size: {min: 10, max: 20}}]);
-      expect(validationsDoc(scope).get())
+      expect(getOtDocField(scope, validationPath))
       .toEqual([{size: {min: 10, max: 20}}]);
     });
 
     it('existing validation is shown and can be disabled', function() {
-      scope.field.validations = [{size: {min: 10, max: 20}}];
+      setFieldProperty(scope, validationPath, [{size: {min: 10, max: 20}}]);
       openDialog();
 
       var minInput = settings().find('[aria-label="Minimum size"]');
@@ -134,12 +164,12 @@ describe('validation dialog', function() {
       .find('[aria-label="Disable validation"]')
       .click();
       clickSave();
-      expect(scope.field.validations).toEqual([]);
-      expect(validationsDoc(scope).get()).toEqual([]);
+      expect(getFieldProperty(scope, validationPath)).toEqual([]);
+      expect(getOtDocField(scope, validationPath)).toEqual([]);
     });
 
     it('shows errors when opened', function() {
-      scope.field.validations = [{size: {min: null, max: null}}];
+      setFieldProperty(scope, validationPath, [{size: {min: null, max: null}}]);
       openDialog();
 
       clickSave();
@@ -151,7 +181,7 @@ describe('validation dialog', function() {
     });
 
     it('does not save invalid validations', function() {
-      scope.field.validations = [{size: {min: 10, max: null}}];
+      setFieldProperty(scope, validationPath, [{size: {min: 10, max: null}}]);
       openDialog();
 
       settings()
@@ -168,7 +198,7 @@ describe('validation dialog', function() {
     });
 
     it('selects the correct initial view', function() {
-      scope.field.validations = [{size: {min: 10, max: null}}];
+      setFieldProperty(scope, validationPath, [{size: {min: 10, max: null}}]);
       openDialog();
 
       var selectedView = settings()
@@ -177,13 +207,11 @@ describe('validation dialog', function() {
       expect(selectedView).toEqual('At least');
     });
 
-  });
+  }
 
   describe('range validation', function() {
-    // TODO Number validation with decimals
-
     beforeEach(function() {
-      scope.field.type = 'Integer';
+      scope.field.type = 'Number';
       openDialog();
     });
 
@@ -200,16 +228,16 @@ describe('validation dialog', function() {
       .click();
 
       var minValue = settings().find('[aria-label="Minimum value"]');
-      minValue.val('-1').trigger('input');
+      minValue.val('-0.1').trigger('input');
       var maxValue = settings().find('[aria-label="Maximum value"]');
-      maxValue.val('2').trigger('input');
+      maxValue.val('0.1').trigger('input');
 
       clickSave();
 
       expect(scope.field.validations)
-      .toEqual([{range: {min: -1, max: 2}}]);
+      .toEqual([{range: {min: -0.1, max: 0.1}}]);
       expect(validationsDoc(scope).get())
-      .toEqual([{range: {min: -1, max: 2}}]);
+      .toEqual([{range: {min: -0.1, max: 0.1}}]);
     });
 
     it('it can be disabled', function() {
