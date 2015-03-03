@@ -27,7 +27,7 @@
     button.btn.btn--tertiary(type="button"
             ng-if="ctEditorController.interfaceEditorEnabled"
             ng-disabled="!publishedContentType"
-            ng-click="openEditingInterfaceEditor()"
+            ng-click="$state.go('spaces.detail.content_types.detail.editing_interface')"
             tooltip="Customize editing view"
             tooltip-placement="bottom")
       | Customize View

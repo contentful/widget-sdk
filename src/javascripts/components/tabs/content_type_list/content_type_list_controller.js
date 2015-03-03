@@ -20,19 +20,18 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
 
   $scope.$watch('searchTerm',  function (term) {
     if (term === null) return;
-    $scope.tab.params.list = 'all';
+    $scope.context.list = 'all';
     $scope.resetContentTypes();
   });
 
   $scope.switchList = function(list){
     $scope.searchTerm = null;
-    var params = $scope.tab.params;
-    var shouldReset = params.list == list;
+    var shouldReset = $scope.context.list == list;
 
     if (shouldReset) {
       this.resetContentTypes();
     } else {
-      params.list = list;
+      $scope.context.list = list;
     }
   };
 
@@ -41,7 +40,7 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
       var searchTermRe = new RegExp($scope.searchTerm.toLowerCase(), 'gi');
       return searchTermRe.test(contentType.getName());
     }
-    switch ($scope.tab.params.list) {
+    switch ($scope.context.list) {
       case 'all':
         return !contentType.isDeleted();
       case 'changed':
@@ -60,7 +59,7 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
   };
 
   $scope.hasQuery = function () {
-    var noQuery = $scope.tab.params.list == 'all' && _.isEmpty($scope.searchTerm);
+    var noQuery = $scope.context.list == 'all' && _.isEmpty($scope.searchTerm);
     return !noQuery;
   };
 

@@ -10,7 +10,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var authentication     = $injector.get('authentication');
   var notification       = $injector.get('notification');
   var analytics          = $injector.get('analytics');
-  var routing            = $injector.get('routing');
   var authorization      = $injector.get('authorization');
   var modalDialog        = $injector.get('modalDialog');
   var presence           = $injector.get('presence');
@@ -53,7 +52,9 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.$watch('user', userWatchHandler);
 
   $scope.$on('iframeMessage', iframeMessageWatchHandler);
-  $scope.$on('$routeChangeSuccess', routeChangeSuccessHandler);
+  $scope.$on('$stateChangeSuccess', stateChangeSuccessHandler);
+  $scope.$on('$stateChangeError', stateChangeErrorHandler);
+  $scope.$on('$stateNotFound', stateChangeErrorHandler);
 
   $scope.initClient = initClient;
   $scope.clickedSpaceSwitcher = clickedSpaceSwitcher;
@@ -74,14 +75,29 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.checkForEnforcements = checkForEnforcements;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
 
-  function routeChangeSuccessHandler(event, route) {
-    $scope.locationInAccount = route.viewType === 'account';
+  function stateChangeSuccessHandler() {
+    $scope.locationInAccount = $scope.$state.includes('account');
 
-    if ($scope.spaces !== null && route.params.spaceId != $scope.getCurrentSpaceId()) {
+    if ($scope.spaces !== null && $scope.$stateParams.spaceId != $scope.getCurrentSpaceId()) {
       var space = _.find($scope.spaces, function (space) {
-        return space.getId() == route.params.spaceId;
+        return space.getId() == $scope.$stateParams.spaceId;
       });
       if (space) setSpace(space);
+    }
+  }
+
+  /**
+   * Switches to the first space's entry list if there is a navigation error
+   */
+  function stateChangeErrorHandler(event, toState, toStateParams) {
+    event.preventDefault();
+
+    if ($scope.spaces !== null) {
+      var targetSpace = _.find($scope.spaces, function (space) {
+        return space.getId() === toStateParams.spaceId;
+      });
+      var targetSpaceId = (targetSpace && targetSpace.getId() ) || $scope.$stateParams.spaceId || $scope.spaces[0].getId();
+      $scope.$state.go('spaces.detail.entries.list', { spaceId: targetSpaceId });
     }
   }
 
@@ -184,6 +200,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       return a.data.name.localeCompare(b.data.name);
     });
     $scope.spaces = newSpaceList;
+    $rootScope.spacesLoaded = true;
   }
 
   function getExistingSpace(id) {
@@ -216,7 +233,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function spaceWatchHandler(spaces, old, scope) {
-    var routeSpaceId = routing.getSpaceId();
+    var stateSpaceId = scope.$stateParams.spaceId;
     var newSpace;
 
     if (spaces === old) return; // $watch init
@@ -225,18 +242,19 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       scope.spacesByOrg = groupSpacesByOrg(spaces);
     }
 
-    if (routeSpaceId) {
+    if (stateSpaceId) {
       newSpace = _.find(spaces, function (space) {
-        return space.getId() == routeSpaceId;
+        return space.getId() === stateSpaceId;
       });
       if (!newSpace) {
         if (old === null) notification.warn('Space does not exist or is unaccessable');
         newSpace = spaces[0];
       }
-    } else if (routing.getRoute().root) { // no Space requested, pick first
-      newSpace = spaces[0];
+    } else if (scope.$state.includes('account') || scope.$state.current.name === '') {
+      return; // No need to load a space if explicitly requested something through 'account'
     } else {
-      return; // we don't want to see a space (but the profile or something else)
+      // no Space requested, pick first
+      newSpace = spaces[0];
     }
 
     if (!newSpace) {
@@ -247,8 +265,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
     if (newSpace != scope.spaceContext.space) {
       // we need to change something
-      if (routeSpaceId != newSpace.getId()) { // trigger switch by chaning location
-        routing.goToSpace(newSpace);
+      if (stateSpaceId != newSpace.getId()) { // trigger switch by chaning location
+        scope.$state.go('spaces.detail.entries.list', { spaceId: newSpace.getId() });
       } else { // location is already correct, just load the space
         setSpace(newSpace);
       }
@@ -339,7 +357,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       spaceId: space.getId(),
       spaceName: space.data.name
     });
-    routing.goToSpace(space);
+    $scope.$state.go('spaces.detail', { spaceId: space.getId() });
     return true;
   }
 
@@ -350,7 +368,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       organizationId: orgId,
       organizationName: $scope.getOrgName(orgId)
     });
-    routing.goToOrganization(orgId, isOrgOwner(org));
+    $scope.$state.go('account.pathSuffix', { pathSuffix: '/organizations/' + orgId + '/' + isOrgOwner(org) ? 'edit' : 'usage' });
     return true;
   }
 
@@ -393,8 +411,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function goToAccount(pathSuffix) {
-    pathSuffix = pathSuffix || 'profile/user';
-    $location.path('/account' + '/' + pathSuffix);
+    $scope.$state.go('account.pathSuffix', { pathSuffix: pathSuffix });
   }
 
   function canCreateSpace() {

@@ -31,8 +31,8 @@ describe('Create Space Dialog controller', function () {
 
       scope = this.$rootScope.$new();
       scope.$emit = sinon.stub();
-      scope.$on = sinon.stub();
-      scope.$on.withArgs('$routeChangeSuccess').returns(angular.noop);
+      scope.$root.$on = sinon.stub();
+      scope.$root.$on.withArgs('$stateChangeSuccess').returns(angular.noop);
 
       org = {sys: {id: 'orgid'}};
       scope.organizations = [

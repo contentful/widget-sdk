@@ -67,6 +67,8 @@ describe('Client Controller', function () {
         };
       });
 
+      $provide.value('$document', [{ title: '' }]);
+
       $provide.value('analytics', {
         enable: stubs.enableAnalytics,
         disable: stubs.disableAnalytics,

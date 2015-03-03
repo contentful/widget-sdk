@@ -1,13 +1,10 @@
 .main-top-bar
   .main-top-bar__logo(ng-click="logoClicked()")
     .main-top-bar__logo-element(cf-custom-logo)
-  cf-main-nav-bar
+  div(ui-view="space-nav-bar")
   cf-account-bar
 
-nav.tab-list(cf-tab-list ng-show="spaceContext.space && !spaceContext.space.isHibernated() && !locationInAccount" ng-class="{hidden: hideTabBar()}")
-
-.space-container
-  cf-tab-content
+.main-container(ui-view="main-container")
   .advice(ng-show="spaceContext.space && spaceContext.space.isHibernated()")
     .advice__frame
       i.fa.fa-cloud-upload.advice__giant-icon
@@ -30,5 +27,3 @@ nav.tab-list(cf-tab-list ng-show="spaceContext.space && !spaceContext.space.isHi
       a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513118-What-is-a-space-")
         | Visit the Knowledge Base Pages
         i.fa.fa-question-circle
-
-  .tab-content.cf-account-view(ng-class="{'with-tab-bar': !hideTabBar()}" cf-account-view)

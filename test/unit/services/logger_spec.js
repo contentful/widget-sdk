@@ -4,17 +4,16 @@ describe('logger service', function () {
   beforeEach(function(){
     module('contentful/test');
     this.bugsnag = this.$inject('bugsnag');
+
     sinon.stub(this.bugsnag, 'enable');
     sinon.stub(this.bugsnag, 'disable');
     sinon.stub(this.bugsnag, 'notify');
     sinon.stub(this.bugsnag, 'notifyException');
     sinon.stub(this.bugsnag, 'refresh');
 
-    this.routing = this.$inject('routing');
-    sinon.stub(this.routing, 'getRoute').returns({
-      params: {viewType: 'testView'},
-      pathParams: {spaceId: '123456'}
-    });
+    this.rootScope = this.$inject('$rootScope');
+    this.rootScope.$state = { current: { name: 'some.state.name' } };
+    this.rootScope.$stateParams = { spaceId: '123456' };
 
     this.logger = this.$inject('realLogger');
   });
@@ -131,7 +130,7 @@ describe('logger service', function () {
         this.logger.log('derp', {groupingHash: 'grp'});
         var actual = this.bugsnag.notify.args[0][2];
         expect(actual.params.spaceId).toBe('123456');
-        expect(actual.params.viewType).toBe('testView');
+        expect(actual.params.state).toBe('some.state.name');
         expect(actual.groupingHash).toBe('grp');
         expect(actual.params.screensize).toMatch(/\d+x\d+/);
         expect(actual.params.viewport).toMatch(/\d+x\d+/);

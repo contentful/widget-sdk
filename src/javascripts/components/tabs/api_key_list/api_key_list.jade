@@ -38,7 +38,7 @@
       table.result-list.main-results
         tbody
           tr(ng-repeat="apiKey in apiKeys track by apiKey.getId()"
-              cf-click-local="navigator.apiKeyEditor(apiKey).goTo()")
+              ui-sref="spaces.detail.api.keys.detail({ apiKeyId: apiKey.getId() })")
             td.cell-name
               span {{apiKey.getName()}}
             td.cell-description

@@ -110,8 +110,7 @@ angular.module('contentful').factory('TabOptionsGenerator', function () {
         section: 'spaceSettings',
         hidden: true,
         params: {
-          pathSuffix: pathSuffix,
-          fullscreen: true
+          pathSuffix: pathSuffix
         },
         title: 'Settings'
       };

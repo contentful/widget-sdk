@@ -1,0 +1,17 @@
+.breadcrumbs.activity
+  li.breadcrumb(ng-repeat="entity in $root.contextHistory" ng-switch="$last" ng-class="{active: $last}")
+    span.divider >
+    a(
+      ng-switch-when="false"
+      ng-if="entity.getType() === 'Entry'"
+      ui-sref="spaces.detail.entries.detail({ entryId: entity.getId(), addToContext: true })")
+      | {{spaceContext.entryTitle(entity) + (entity.hasUnpublishedChanges() ? '*' : '')}}
+    a(
+      ng-switch-when="false"
+      ng-if="entity.getType() === 'Asset'"
+      ui-sref="spaces.detail.assets.detail({ assetId: entity.getId(), addToContext: true })")
+      | {{spaceContext.assetTitle(entity) + (entity.hasUnpublishedChanges() ? '*' : '')}}
+    span(ng-switch-when="true" ng-if="entity.getType()=== 'Entry'")
+      | {{spaceContext.entryTitle(entity) + (entity.hasUnpublishedChanges() ? "*" : "")}}
+    span(ng-switch-when="true" ng-if="entity.getType()=== 'Asset'")
+      | {{spaceContext.assetTitle(entity) + (entity.hasUnpublishedChanges() ? '*' : '')}}

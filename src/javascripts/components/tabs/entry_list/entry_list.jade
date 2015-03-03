@@ -68,7 +68,7 @@
     .main-results-wrapper.endless-container(cf-endless-container at-bottom="loadMore()" num-elements="paginator.page")
       table.result-list.main-results.animated
         tbody
-          tr(ng-repeat="entry in visibleEntries = (entries | filter:visibleInCurrentList) track by entry.getId()" cf-click-local="navigator.entryEditor(entry).goTo()")
+          tr(ng-repeat="entry in visibleEntries = (entries | filter:visibleInCurrentList) track by entry.getId()" ui-sref="spaces.detail.entries.detail({ entryId: entry.getId() })")
             td.cell-select(ng-click="selection.toggle(entry);$event.stopPropagation()")
               input(type="checkbox" cf-selection="entry" tabindex="-1")
             td.cell-content-type(ng-show="!tab.params.view.contentTypeId && !tab.params.view.contentTypeHidden")

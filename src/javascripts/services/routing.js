@@ -1,5 +1,5 @@
 'use strict';
-
+/*
 angular.module('contentful').provider('routing', ['$routeProvider', function ($routeProvider) {
   $routeProvider.when('/spaces/:spaceId', {viewType: null});
   $routeProvider.when('/spaces/:spaceId/entries', {viewType: 'entry-list'});
@@ -91,4 +91,4 @@ angular.module('contentful').provider('routing', ['$routeProvider', function ($r
 
     return new Routing();
   }];
-}]);
+}]);*/

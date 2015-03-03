@@ -9,9 +9,6 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
 
   $controller('AccordionController', {$scope: $scope});
 
-  // TODO this is redundant, the editingInterface contains the contentType id
-  $scope.$watch('tab.params.contentType', function (contentType) { $scope.contentType = contentType; });
-  $scope.$watch('tab.params.editingInterface', function (editingInterface) { $scope.editingInterface = editingInterface; });
   $scope.$watch('contentType.data.fields', syncWidgets, true);
 
   $scope.getFieldForWidget = getFieldForWidget;

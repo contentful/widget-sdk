@@ -247,6 +247,10 @@ angular.module('contentful').controller('EntryListController', ['$scope', '$inje
     $scope.resetEntries();
   });
 
+  $scope.$on('templateWasCreated', function () {
+    $scope.resetEntries();
+  });
+
   function apiNameOrId(field) {
     if (field.apiName) {
       return field.apiName;

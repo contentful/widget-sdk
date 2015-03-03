@@ -6,18 +6,15 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
   var validation        = $injector.get('validation');
 
   // Initialization
-  $scope.$watch('tab.params.entry', function (entry) { $scope.entry = entry; });
   $scope.entityActionsController = $controller('EntityActionsController', {
     $scope: $scope,
     entityType: 'entry'
   });
 
-  // Tab related stuff
-  $scope.tab.closingMessage = 'You have unpublished changes.';
-  $scope.tab.closingMessageDisplayType = 'tooltip';
-  $scope.$watch('spaceContext.entryTitle(entry)', function(title, old, scope) {
-    scope.tab.title = title;
-  });
+  // Context related stuff
+  $scope.context.closingMessage = 'You have unpublished changes.';
+  $scope.context.closingMessageDisplayType = 'tooltip';
+
   $scope.$watch(function (scope) {
     if (scope.otDoc && scope.entry) {
       if (angular.isDefined(scope.entry.getPublishedVersion()))
@@ -28,13 +25,13 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
       return undefined;
     }
   }, function (modified, old, scope) {
-    if (modified !== undefined) scope.tab.dirty = modified;
+    if (modified !== undefined) scope.context.dirty = modified;
   });
   $scope.$on('entityDeleted', function (event, entry) {
     if (event.currentScope !== event.targetScope) {
       var scope = event.currentScope;
       if (entry === scope.entry) {
-        scope.tab.close();
+        scope.closeState();
       }
     }
   });

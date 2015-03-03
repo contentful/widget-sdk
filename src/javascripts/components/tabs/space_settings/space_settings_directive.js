@@ -1,14 +1,10 @@
 'use strict';
-angular.module('contentful').directive('cfSpaceSettings', ['$window', '$rootScope', 'authentication', 'routing', 'logger', function($window, $rootScope, authentication, routing, logger){
+angular.module('contentful').directive('cfSpaceSettings', ['$window', '$rootScope', 'authentication', 'logger', function($window, $rootScope, authentication, logger){
   return {
     template: JST['iframe_view'](),
     restrict: 'A',
     scope: true,
     link: function (scope, elem) {
-      scope.$on('$routeChangeSuccess', function (event, route, previous) {
-        routeChanged(route, previous);
-      });
-
       scope.$on('iframeMessage', function (event, data, iframe) {
         if (iframe !== elem.find('iframe')[0]) return;
         scope.hasLoaded = true;
@@ -20,21 +16,7 @@ angular.module('contentful').directive('cfSpaceSettings', ['$window', '$rootScop
       init();
 
       function init() {
-        var pathSuffix = scope.tab.params.pathSuffix;
-        var url = buildUrl(pathSuffix);
-        if (!urlIsActive(url)) {
-          scope.url = url;
-          elem.find('iframe').prop('src', appendToken(scope.url));
-        }
-      }
-
-      function routeChanged(route) {
-        if (route.viewType !== 'space-settings') return;
-        updateFrameLocation();
-      }
-
-      function updateFrameLocation() {
-        var pathSuffix = routing.getRoute().params.pathSuffix || 'edit';
+        var pathSuffix = scope.$stateParams.pathSuffix;
         var url = buildUrl(pathSuffix);
         if (!urlIsActive(url)) {
           scope.url = url;
@@ -53,7 +35,7 @@ angular.module('contentful').directive('cfSpaceSettings', ['$window', '$rootScop
         var oldPathSuffix = extractPathSuffix(scope.url);
         var pathSuffix    = extractPathSuffix(path);
         scope.url = buildUrl(pathSuffix);
-        if (oldPathSuffix !== pathSuffix) scope.navigator.spaceSettings(pathSuffix).goTo();
+        if (oldPathSuffix !== pathSuffix) scope.$state.go('spaces.detail.settings.pathSuffix', { pathSuffix: pathSuffix });
       }
 
       function urlIsActive(url) {

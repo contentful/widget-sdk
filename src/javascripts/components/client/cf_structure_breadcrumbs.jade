@@ -1,0 +1,6 @@
+.breadcrumbs.structure
+  li.breadcrumb(
+    ng-repeat="step in ($root.contextHistory.length ? steps.slice(0, steps.length - 1): steps)"
+    ng-switch="$last || !!step.abstract" ng-class="{active: $last}")
+    a(href="{{step.ncyBreadcrumbLink}}") {{step.ncyBreadcrumbLabel}}
+    span.divider(ng-hide="$last") >

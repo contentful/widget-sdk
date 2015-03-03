@@ -81,6 +81,6 @@
                          link="link" as="presenceUser"
                          tooltip="{{presenceUser | userNameDisplay:user}}")
         img(ng-src="{{user.data.avatarUrl}}")
-    a.btn.btn--secondary.invite-users(href="" ng-click="navigator.spaceSettings('/users/new').goTo()")
+    a.btn.btn--secondary.invite-users(ui-sref="spaces.detail.settings.pathSuffix({ pathSuffix: 'users/new/' })")
       i.fa.fa-user
       i.fa.fa-plus

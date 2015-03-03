@@ -12,7 +12,8 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
       source: source,
       entityType: 'entry',
       entitySubType: contentType.getId(),
-      navigatorHandler: 'entryEditor',
+      stateName: 'spaces.detail.entries.detail',
+      stateParam: 'entryId',
       errorMessage: 'Could not create Entry'
     });
 
@@ -27,7 +28,8 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
       entitySubType: function (entity) {
         return entity && entity.getId();
       },
-      navigatorHandler: 'assetEditor',
+      stateName: 'spaces.detail.assets.detail',
+      stateParam: 'assetId',
       errorMessage: 'Could not create Asset'
     });
     var data = { sys: { type: 'Asset' }, fields: {} };
@@ -40,7 +42,8 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
     var handler = makeEntityResponseHandler({
       source: source,
       entityType: 'contentType',
-      navigatorHandler: 'contentTypeEditor',
+      stateName: 'spaces.detail.content_types.detail.editor',
+      stateParam: 'contentTypeId',
       errorMessage: 'Could not create Content Type'
     });
     var data = { sys: {}, fields: [], name: '' };
@@ -53,11 +56,9 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
     if(usage){
       return notification.error(usage);
     }
-    var apiKey = $scope.spaceContext.space.newDeliveryApiKey();
-    $scope.navigator.apiKeyEditor(apiKey).openAndGoTo();
+    $scope.$state.go('spaces.detail.api.keys.detail', { apiKeyId: 'new' });
     analytics.track(getEventSource(source), {
-      currentSection: $scope.spaceContext.tabList.currentSection(),
-      currentViewType: $scope.spaceContext.tabList.currentViewType(),
+      currentState: $scope.$state.current.name,
       entityType: 'apiKey'
     });
   };
@@ -65,15 +66,16 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
   function getEventSource(source) {
     return {
       addDropdown: 'Selected Add-Button',
-      frameButton: 'Selected Add-Button in the Frame',
-      frameLink: 'Selected Add-Link in the Frame'
+      frameButton: 'Selected Add-Button in the Frame'
     }[source];
   }
 
   function makeEntityResponseHandler(params) {
     return function entityResponseHandler(err, entity) {
+      var stateParams = {};
       if (!err) {
-        $scope.navigator[params.navigatorHandler](entity).goTo();
+        stateParams[params.stateParam] = entity.getId();
+        $scope.$state.go(params.stateName, stateParams);
       } else {
         if(dotty.get(err, 'body.details.reasons')){
           var enforcement = enforcements.determineEnforcement(
@@ -86,8 +88,7 @@ angular.module('contentful').controller('EntityCreationController', ['$injector'
         notification.error(params.errorMessage);
       }
       analytics.track(getEventSource(params.source), {
-        currentSection: $scope.spaceContext.tabList.currentSection(),
-        currentViewType: $scope.spaceContext.tabList.currentViewType(),
+        currentState: $scope.$state.current.name,
         entityType: params.entityType,
         entitySubType: (typeof params.entitySubType == 'function') ?
           params.entitySubType(entity) : params.entitySubType

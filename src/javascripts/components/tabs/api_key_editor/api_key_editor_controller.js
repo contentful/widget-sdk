@@ -20,10 +20,8 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     }
   });
 
-  $scope.$watch('tab.params.apiKey', function (apiKey) { $scope.apiKey = apiKey; });
-
-  $scope.tab.closingMessage = 'You have unsaved changes.';
-  $scope.tab.closingMessageDisplayType = 'dialog';
+  $scope.context.closingMessage = 'You have unsaved changes.';
+  $scope.context.closingMessageDisplayType = 'dialog';
 
   $scope.environment = environment;
 
@@ -40,10 +38,6 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   $scope.getApiUrl = function () {
     return environment.settings.cdn_host.replace('cdn', isPreviewApiSelected() ? 'preview': 'cdn');
   };
-
-  $scope.$watch('apiKey.data.name', function(name) {
-    $scope.headline = $scope.tab.title = name || 'Untitled';
-  });
 
   $scope.$watch('apiKey.data.accessToken', function(accessToken) {
     $scope.exampleUrl =
@@ -78,7 +72,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   };
 
   $scope.$watch('apiKeyForm.$dirty', function (modified) {
-    $scope.tab.dirty = modified;
+    $scope.context.dirty = modified;
   });
 
   function title() {
@@ -105,8 +99,9 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   $scope.$on('entityDeleted', function (event, apiKey) {
     if (event.currentScope !== event.targetScope) {
       var scope = event.currentScope;
-      if (apiKey === scope.apiKey)
-        scope.tab.close();
+      if (apiKey === scope.apiKey) {
+        scope.closeState();
+      }
     }
   });
 
@@ -121,7 +116,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     $scope.apiKey.save()
     .then(function(){
       $scope.apiKeyForm.$setPristine();
-      $scope.navigator.apiKeyEditor($scope.apiKey).goTo();
+      $scope.$state.go('spaces.detail.api.keys.detail', { apiKeyId: $scope.apiKey.getId() });
       notification.info(t + ' saved successfully');
     })
     .catch(function(err){

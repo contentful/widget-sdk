@@ -4,7 +4,6 @@ angular.module('contentful').controller('ContentTypeEditorController',
             ['$scope', '$injector', function ContentTypeEditorController($scope, $injector) {
   var $controller       = $injector.get('$controller');
   var analytics         = $injector.get('analytics');
-  var editingInterfaces = $injector.get('editingInterfaces');
   var environment       = $injector.get('environment');
   var random            = $injector.get('random');
   var validation        = $injector.get('validation');
@@ -14,21 +13,20 @@ angular.module('contentful').controller('ContentTypeEditorController',
     entityType: 'contentType'
   });
 
-  $scope.tab.closingMessage            = 'You have unpublished changes.';
-  $scope.tab.closingMessageDisplayType = 'dialog';
-  $scope.fieldSchema                   = validation(validation.schemas.ContentType.at(['fields']).items);
-  $scope.openEditingInterfaceEditor    = openEditingInterfaceEditor;
-  $scope.regulateDisplayField          = regulateDisplayField;
-  $scope.updatePublishedContentType    = updatePublishedContentType;
-  $scope.addField                      = addField;
+  $scope.context.closingMessage             = 'You have unpublished changes.';
+  $scope.context.closingMessageDisplayType  = 'dialog';
+  $scope.fieldSchema                        = validation(validation.schemas.ContentType.at(['fields']).items);
+  $scope.regulateDisplayField               = regulateDisplayField;
+  $scope.updatePublishedContentType         = updatePublishedContentType;
+  $scope.addField                           = addField;
 
-  $scope.$watch('tab.params.contentType',        loadContentType);
+  $scope.$watch('contentType', loadContentType);
   $scope.$watch('contentType.data.fields',       checkForDirtyForm, true);
   $scope.$watch('contentType.data.displayField', checkForDirtyForm);
 
   $scope.$watch('contentTypeForm.$dirty', function (modified) {
     reloadPublisedContentType(modified);
-    $scope.tab.dirty = modified;
+    $scope.context.dirty = modified;
   });
 
   $scope.$watch('contentType.data.fields.length', function(length) {
@@ -40,14 +38,10 @@ angular.module('contentful').controller('ContentTypeEditorController',
     scope.publishedApiNames = _.pluck(fields, 'apiName');
   });
 
-  $scope.$watch('contentType.getName()', function(title) {
-    $scope.tab.title = title;
-  });
-
   $scope.$watch(function contentTypeModifiedWatcher() {
     return contentTypeIsDirty() || $scope.contentTypeForm.$dirty;
   }, function (modified, old, scope) {
-    if (modified !== undefined) scope.tab.dirty = modified;
+    if (modified !== undefined) scope.context.dirty = modified;
   });
 
   $scope.$on('entityDeleted', handleEntityDeleted);
@@ -88,7 +82,7 @@ angular.module('contentful').controller('ContentTypeEditorController',
     if (event.currentScope !== event.targetScope) {
       var scope = event.currentScope;
       if (contentType === scope.contentType) {
-        scope.tab.close();
+        scope.closeState();
       }
     }
   }
@@ -122,26 +116,4 @@ angular.module('contentful').controller('ContentTypeEditorController',
     $scope.$broadcast('fieldAdded', $scope.contentType.data.fields.length - 1);
     analytics.modifiedContentType('Modified ContentType', $scope.contentType, newField, 'add');
   }
-
-  function openEditingInterfaceEditor() {
-    // TODO This is a mess. We're doing four calls:
-    // 1. here getting the editinginterface
-    // 2. In TabViewController#openTab we get the contenType
-    // 3. Then we get the published Version
-    // 4. Then we get the editingInterface again
-    //
-    // First improvement would be to provide Space#getPublishedContentType
-    // Better would be to get at the content Types through the spaceContext
-    // if they are already loaded, so we don't need a ajax call at all OR, use
-    // what we have and asynchronously trigger a call to update the .data
-    // property after we have already opened the editor
-    //
-    // https://www.pivotaltracker.com/story/show/82148572
-    editingInterfaces.forContentTypeWithId($scope.publishedContentType, 'default')
-    .then(function (interf) {
-      $scope.navigator.editingInterfaceEditor($scope.publishedContentType, interf).goTo();
-    });
-  }
-
-
 }]);
