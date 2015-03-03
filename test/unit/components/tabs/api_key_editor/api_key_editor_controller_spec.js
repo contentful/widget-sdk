@@ -114,7 +114,7 @@ describe('API key editor controller', function () {
   });
 
   it('does not create a preview api for a blank key', function() {
-    expect(stubs.createPreviewApiKey).not.toBeCalled();
+    sinon.assert.notCalled(stubs.createPreviewApiKey);
   });
 
   describe('creates a preview api if none exists', function() {

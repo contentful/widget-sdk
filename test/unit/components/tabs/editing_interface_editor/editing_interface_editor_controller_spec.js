@@ -58,7 +58,7 @@ describe('EditingInterfaceEditorController', function(){
     });
 
     it('should not reset the interface', function(){
-      expect(editingInterfaces.forContentTypeWithId).not.toBeCalled();
+      sinon.assert.notCalled(editingInterfaces.forContentTypeWithId);
     });
 
     it('show show an error', function() {

@@ -49,7 +49,7 @@ describe('The cfFieldtypeIcon directive', function () {
       });
 
       it('does not trigger error', function() {
-        expect(stubs.logWarn).not.toBeCalled();
+        sinon.assert.notCalled(stubs.logWarn);
       });
 
       it('has an inner element', function() {

@@ -341,7 +341,7 @@ describe('Entry List Controller', function () {
     it('doesnt load if on last page', function() {
       scope.paginator.atLast.returns(true);
       scope.loadMore();
-      expect(scope.spaceContext.space.getEntries).not.toBeCalled();
+      sinon.assert.notCalled(scope.spaceContext.space.getEntries);
     });
 
     it('paginator count is increased', function() {
@@ -415,7 +415,7 @@ describe('Entry List Controller', function () {
       });
 
       it('appends no entries to scope', function () {
-        expect(scope.entries.push).not.toBeCalled();
+        sinon.assert.notCalled(scope.entries.push);
       });
 
       it('sends an error', function() {
@@ -458,7 +458,7 @@ describe('Entry List Controller', function () {
     it('does nothing if its not the current scope tab', inject(function ($rootScope) {
       scope.tab = null;
       $rootScope.$broadcast('tabBecameActive', {});
-      expect(scope.resetEntries).not.toBeCalled();
+      sinon.assert.notCalled(scope.resetEntries);
     }));
 
     it('resets entries', inject(function($rootScope) {

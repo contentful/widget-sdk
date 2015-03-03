@@ -28,7 +28,7 @@ describe('Segment service', function(){
   it('should disable', function(){
     this.segment.disable();
     this.segment.enable();
-    expect(this.document.createElement).not.toBeCalled();
+    sinon.assert.notCalled(this.document.createElement);
   });
 
   it('buffers calls to analytics and runs them when enabled', function(){

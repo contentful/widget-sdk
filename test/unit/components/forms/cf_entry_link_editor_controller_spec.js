@@ -141,7 +141,7 @@ describe('EntryLinkEditorController', function () {
       });
 
       it('does not get entries', function() {
-        expect(stubs.getEntries).not.toBeCalled();
+        sinon.assert.notCalled(stubs.getEntries);
       });
 
       it('link is the supplied entry', function() {
@@ -321,7 +321,7 @@ describe('EntryLinkEditorController', function () {
       });
 
       it('does not get existing title', function() {
-        expect(stubs.entryTitle).not.toBeCalled();
+        sinon.assert.notCalled(stubs.entryTitle);
       });
 
       it('returns missing title', function() {
@@ -382,7 +382,7 @@ describe('EntryLinkEditorController', function () {
         });
 
         it('does not get existing description', function() {
-          expect(stubs.localizedField).not.toBeCalled();
+          sinon.assert.notCalled(stubs.localizedField);
         });
 
         it('returns missing description', function() {
@@ -398,7 +398,7 @@ describe('EntryLinkEditorController', function () {
       });
 
       it('does not get existing description', function() {
-        expect(stubs.localizedField).not.toBeCalled();
+        sinon.assert.notCalled(stubs.localizedField);
       });
 
       it('returns missing description', function() {

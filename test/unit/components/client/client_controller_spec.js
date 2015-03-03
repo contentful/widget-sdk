@@ -242,11 +242,11 @@ describe('Client Controller', function () {
       });
 
       it('dont track analytics', function () {
-        expect(stubs.track).not.toBeCalled();
+        sinon.assert.notCalled(stubs.track);
       });
 
       it('dont route to another space', function () {
-        expect(stubs.goToSpace).not.toBeCalled();
+        sinon.assert.notCalled(stubs.goToSpace);
       });
     });
 
@@ -320,11 +320,11 @@ describe('Client Controller', function () {
       });
 
       it('does not tracks analytics', function () {
-          expect(stubs.track).not.toBeCalled();
+          sinon.assert.notCalled(stubs.track);
         });
 
       it('does not route to another space', function () {
-        expect(stubs.goToOrganization).not.toBeCalled();
+        sinon.assert.notCalled(stubs.goToOrganization);
       });
 
     });
@@ -409,7 +409,7 @@ describe('Client Controller', function () {
       });
 
       it('sets no space data on analytics', function () {
-        expect(stubs.setSpace).not.toBeCalled();
+        sinon.assert.notCalled(stubs.setSpace);
       });
     });
 
@@ -420,7 +420,7 @@ describe('Client Controller', function () {
       });
 
       it('sets no space data on analytics', function () {
-        expect(stubs.setSpace).not.toBeCalled();
+        sinon.assert.notCalled(stubs.setSpace);
       });
 
       it('location in account flag is false', function() {
@@ -506,15 +506,15 @@ describe('Client Controller', function () {
       });
 
       it('doesnt redirect to another space', function () {
-        expect(stubs.goToSpace).not.toBeCalled();
+        sinon.assert.notCalled(stubs.goToSpace);
       });
 
       it('doesnt set analytics data', function () {
-        expect(stubs.setSpace).not.toBeCalled();
+        sinon.assert.notCalled(stubs.setSpace);
       });
 
       it('doesnt set a location path', function () {
-        expect(stubs.path).not.toBeCalled();
+        sinon.assert.notCalled(stubs.path);
       });
     });
 
@@ -526,7 +526,7 @@ describe('Client Controller', function () {
       });
 
       it('doesnt redirect to another space', function () {
-        expect(stubs.goToSpace).not.toBeCalled();
+        sinon.assert.notCalled(stubs.goToSpace);
       });
 
       it('sets analytics data', function () {
@@ -545,11 +545,11 @@ describe('Client Controller', function () {
       });
 
       it('doesnt redirect to another space', function () {
-        expect(stubs.goToSpace).not.toBeCalled();
+        sinon.assert.notCalled(stubs.goToSpace);
       });
 
       it('doesnt set analytics data', function () {
-        expect(stubs.setSpace).not.toBeCalled();
+        sinon.assert.notCalled(stubs.setSpace);
       });
     });
 
@@ -560,11 +560,11 @@ describe('Client Controller', function () {
       });
 
       it('doesnt redirect to another space', function () {
-        expect(stubs.goToSpace).not.toBeCalled();
+        sinon.assert.notCalled(stubs.goToSpace);
       });
 
       it('doesnt set analytics data', function () {
-        expect(stubs.setSpace).not.toBeCalled();
+        sinon.assert.notCalled(stubs.setSpace);
       });
     });
   });
@@ -790,7 +790,7 @@ describe('Client Controller', function () {
       });
 
       it('performs no token lookup', function() {
-        expect(scope.performTokenLookup).not.toBeCalled();
+        sinon.assert.notCalled(scope.performTokenLookup);
       });
     });
 
@@ -1038,7 +1038,7 @@ describe('Client Controller', function () {
       });
 
       it('event is not broadcast', function () {
-        expect(broadcastStub).not.toBeCalled();
+        sinon.assert.notCalled(broadcastStub);
       });
 
     });

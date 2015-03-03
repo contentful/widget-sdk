@@ -134,7 +134,7 @@ describe('cfFileEditor Directive', function () {
     });
 
     it('validate does not get called', function() {
-      expect(scope.validate).not.toBeCalled();
+      sinon.assert.notCalled(scope.validate);
     });
   });
 

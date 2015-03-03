@@ -41,7 +41,7 @@ describe('Promised loader service', function () {
     });
 
     it('does not call error callback', function() {
-      expect(stubs.error).not.toBeCalled();
+      sinon.assert.notCalled(stubs.error);
     });
 
     it('loader is not in progress at the end', function() {
@@ -62,7 +62,7 @@ describe('Promised loader service', function () {
     });
 
     it('does not call success callback', function() {
-      expect(stubs.success).not.toBeCalled();
+      sinon.assert.notCalled(stubs.success);
     });
 
     it('calls error callback', function() {
@@ -105,11 +105,11 @@ describe('Promised loader service', function () {
     });
 
     it('does not call error callback', function() {
-      expect(stubs.error).not.toBeCalled();
+      sinon.assert.notCalled(stubs.error);
     });
 
     it('does not call second success callback', function() {
-      expect(stubs.success2).not.toBeCalled();
+      sinon.assert.notCalled(stubs.success2);
     });
 
     it('calls second error callback', function() {

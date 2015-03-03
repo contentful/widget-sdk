@@ -68,9 +68,9 @@ describe('Entry Editor Controller', function () {
     });
     it('should close the tab', function () {
       otherScope.$emit('entityDeleted', null);
-      expect(closeSpy).not.toBeCalled(); // wrong entry
+      sinon.assert.notCalled(closeSpy); // wrong entry
       scope.$broadcast('entityDeleted', scope.entry);
-      expect(closeSpy).not.toBeCalled(); // own scope
+      sinon.assert.notCalled(closeSpy); // own scope
       otherScope.$emit('entityDeleted', scope.entry);
       expect(closeSpy).toBeCalled();
     });

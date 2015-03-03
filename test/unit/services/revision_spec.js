@@ -46,7 +46,7 @@ describe('App version service', function () {
     $rootScope.$apply(function () {
       revision.hasNewVersion().then(successStub).catch(failStub).finally(function () {
         expect(successStub).toBeCalled();
-        expect(failStub).not.toBeCalled();
+        sinon.assert.notCalled(failStub);
       });
     });
     $httpBackend.flush();

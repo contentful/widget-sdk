@@ -63,7 +63,7 @@ describe('Space Controller', function () {
     it('does not refresh locales if no new locales are available', function () {
       scope.spaceContext.space = null;
       scope.$digest();
-      expect(refreshStub).not.toBeCalled();
+      sinon.assert.notCalled(refreshStub);
     });
   });
 

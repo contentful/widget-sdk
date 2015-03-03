@@ -31,7 +31,7 @@ describe('ApiNameController', function () {
       scope.published = true;
       scope.$digest();
       controller.updateFromName();
-      expect(scope.isDisplayField).not.toBeCalled();
+      sinon.assert.notCalled(scope.isDisplayField);
     });
 
     it('if not published, but id different from old name, stores the old field name', function() {
@@ -40,7 +40,7 @@ describe('ApiNameController', function () {
       stubs.toIdentifier.returns('fieldname');
       scope.$digest();
       controller.updateFromName();
-      expect(scope.isDisplayField).not.toBeCalled();
+      sinon.assert.notCalled(scope.isDisplayField);
     });
 
     describe('if not published, and id same as old name', function() {
@@ -67,7 +67,7 @@ describe('ApiNameController', function () {
       it('if no otdoc gets no otdoc value', function() {
         scope.$digest();
         controller.updateFromName();
-        expect(stubs.at).not.toBeCalled();
+        sinon.assert.notCalled(stubs.at);
       });
 
       describe('with an otDoc', function() {

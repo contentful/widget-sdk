@@ -162,7 +162,7 @@ describe('Field Settings Editor Controller', function () {
 
   describe('change field type', function() {
     it('does nothing with no otDoc', function() {
-      expect(stubs.at).not.toBeCalled();
+      sinon.assert.notCalled(stubs.at);
     });
 
     describe('with an otDoc', function() {
@@ -214,7 +214,7 @@ describe('Field Settings Editor Controller', function () {
         });
 
         it('does not update ot entity', function() {
-          expect(scope.otUpdateEntity).not.toBeCalled();
+          sinon.assert.notCalled(scope.otUpdateEntity);
         });
 
         it('shows error', function() {
@@ -227,7 +227,7 @@ describe('Field Settings Editor Controller', function () {
 
   describe('toggling properties', function() {
     it('does nothing with no otDoc', function() {
-      expect(stubs.at).not.toBeCalled();
+      sinon.assert.notCalled(stubs.at);
     });
 
     describe('with an otDoc', function() {
@@ -283,7 +283,7 @@ describe('Field Settings Editor Controller', function () {
         });
 
         it('does not update ot entity', function() {
-          expect(scope.otUpdateEntity).not.toBeCalled();
+          sinon.assert.notCalled(scope.otUpdateEntity);
         });
 
         it('shows error', function() {
@@ -297,7 +297,7 @@ describe('Field Settings Editor Controller', function () {
 
   describe('deletes field setting', function() {
     it('does nothing with no otDoc', function() {
-      expect(stubs.at).not.toBeCalled();
+      sinon.assert.notCalled(stubs.at);
     });
 
     describe('with an otDoc', function() {
@@ -360,7 +360,7 @@ describe('Field Settings Editor Controller', function () {
         });
 
         it('does not update ot entity', function() {
-          expect(scope.otUpdateEntity).not.toBeCalled();
+          sinon.assert.notCalled(scope.otUpdateEntity);
         });
       });
     });

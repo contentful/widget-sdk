@@ -195,8 +195,8 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it('server error not called', function() {
-          expect(notification.error).not.toBeCalled();
-          expect(logger.logServerWarn).not.toBeCalled();
+          sinon.assert.notCalled(notification.error);
+          sinon.assert.notCalled(logger.logServerWarn);
         });
 
         it(entityType +' editor called', function() {
@@ -223,7 +223,7 @@ describe('cfLinkEditorSearch Controller', function () {
         }
 
         it('addLink not called', function() {
-          expect(scope.addLink).not.toBeCalled();
+          sinon.assert.notCalled(scope.addLink);
         });
 
         it('server error called', function() {
@@ -232,7 +232,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it(entityType +' editor not called', function() {
-          expect(entityEditorStub).not.toBeCalled();
+          sinon.assert.notCalled(entityEditorStub);
         });
       });
 
@@ -273,7 +273,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it(entityType +' editor not called', function() {
-          expect(entityEditorStub).not.toBeCalledOnce();
+          sinon.assert.notCalled(entityEditorStub);
         });
       });
 
@@ -316,7 +316,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it(entityType +' editor not called', function() {
-          expect(entityEditorStub).not.toBeCalled();
+          sinon.assert.notCalled(entityEditorStub);
         });
       });
     });
@@ -459,7 +459,7 @@ describe('cfLinkEditorSearch Controller', function () {
     it('doesnt load if on last page', function() {
       scope.paginator.atLast.returns(true);
       cfLinkEditorSearchCtrl.loadMore();
-      expect(stubs.loadPromise).not.toBeCalled();
+      sinon.assert.notCalled(stubs.loadPromise);
     });
 
     it('paginator count is increased', function() {
@@ -501,7 +501,7 @@ describe('cfLinkEditorSearch Controller', function () {
       });
 
       it('does not append entities', function () {
-        expect(scope.entities.push).not.toBeCalled();
+        sinon.assert.notCalled(scope.entities.push);
       });
 
       it('pagination count decreases', function() {

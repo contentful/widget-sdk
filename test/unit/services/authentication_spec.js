@@ -89,15 +89,15 @@ describe('Authentication service', function () {
       });
 
       it('shows no notification if already authenticated', function () {
-        expect(stubs.info).not.toBeCalled();
+        sinon.assert.notCalled(stubs.info);
       });
 
       it('does not delete a redirect cookie', function () {
-        expect(cookiesDelStub).not.toBeCalled();
+        sinon.assert.notCalled(cookiesDelStub);
       });
 
       it('does not attempt to redirect', function () {
-        expect(stubs.path).not.toBeCalled();
+        sinon.assert.notCalled(stubs.path);
       });
 
     });
@@ -148,15 +148,15 @@ describe('Authentication service', function () {
       });
 
       it('shows no notification if already authenticated', function () {
-        expect(stubs.info).not.toBeCalled();
+        sinon.assert.notCalled(stubs.info);
       });
 
       it('does not delete a redirect cookie', function () {
-        expect(cookiesDelStub).not.toBeCalled();
+        sinon.assert.notCalled(cookiesDelStub);
       });
 
       it('does not attempt to redirect', function () {
-        expect(stubs.path).not.toBeCalled();
+        sinon.assert.notCalled(stubs.path);
       });
 
     });
@@ -305,7 +305,7 @@ describe('Authentication service', function () {
       });
 
       it('client token lookup not called', function () {
-        expect(clientTokenLookupStub).not.toBeCalled();
+        sinon.assert.notCalled(clientTokenLookupStub);
       });
     });
 

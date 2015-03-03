@@ -298,7 +298,7 @@ describe('Asset List Controller', function () {
     it('doesnt load if on last page', function() {
       scope.searchController.paginator.atLast.returns(true);
       scope.searchController.loadMore();
-      expect(stubs.getAssets).not.toBeCalled();
+      sinon.assert.notCalled(stubs.getAssets);
     });
 
     it('paginator count is increased', function() {
@@ -363,7 +363,7 @@ describe('Asset List Controller', function () {
       });
 
       it('appends assets to scope', function () {
-        expect(scope.assets.push).not.toBeCalled();
+        sinon.assert.notCalled(scope.assets.push);
       });
 
       it('sends an error', function() {
@@ -382,7 +382,7 @@ describe('Asset List Controller', function () {
       });
 
       it('appends assets to scope', function () {
-        expect(scope.assets.push).not.toBeCalled();
+        sinon.assert.notCalled(scope.assets.push);
       });
 
       it('pagination count decreases', function() {
@@ -399,7 +399,7 @@ describe('Asset List Controller', function () {
     it('does nothing if its not the current scope tab', inject(function ($rootScope) {
       scope.tab = null;
       $rootScope.$broadcast('tabBecameActive', {});
-      expect(scope.searchController.resetAssets).not.toBeCalled();
+      sinon.assert.notCalled(scope.searchController.resetAssets);
     }));
 
     it('resets assets', inject(function($rootScope) {

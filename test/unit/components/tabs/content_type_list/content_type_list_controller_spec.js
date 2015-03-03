@@ -89,7 +89,7 @@ describe('Content Type List Controller', function () {
       });
 
       it('reset content types not called', function () {
-        expect(scope.resetContentTypes).not.toBeCalled();
+        sinon.assert.notCalled(scope.resetContentTypes);
       });
     });
 
@@ -191,7 +191,7 @@ describe('Content Type List Controller', function () {
     it('does not refresh content types if a spaceContext doesnt exist', function() {
       delete scope.spaceContext;
       scope.resetContentTypes();
-      expect(stubs.refreshContentTypes).not.toBeCalled();
+      sinon.assert.notCalled(stubs.refreshContentTypes);
     });
   });
 
@@ -259,7 +259,7 @@ describe('Content Type List Controller', function () {
     it('does nothing if its not the current scope tab', inject(function ($rootScope) {
       scope.tab = null;
       $rootScope.$broadcast('tabBecameActive', {});
-      expect(scope.resetContentTypes).not.toBeCalled();
+      sinon.assert.notCalled(scope.resetContentTypes);
     }));
 
     it('resets content types', inject(function($rootScope) {

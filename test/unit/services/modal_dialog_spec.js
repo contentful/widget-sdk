@@ -88,13 +88,13 @@ describe('Modal dialog service', function () {
       it('cancel is not called with html attr', function () {
         $(event.target).attr('no-background-close', true);
         dialog._closeOnBackground(event);
-        expect(cancelStub).not.toBeCalled();
+        sinon.assert.notCalled(cancelStub);
       });
 
       it('cancel is not called with params attr', function () {
         dialog.params.noBackgroundClose = true;
         dialog._closeOnBackground(event);
-        expect(cancelStub).not.toBeCalled();
+        sinon.assert.notCalled(cancelStub);
       });
     });
 
@@ -136,7 +136,7 @@ describe('Modal dialog service', function () {
         dialog.destroy();
         dialog.scope = {$apply: sinon.stub(), $destroy: sinon.stub()};
         $(window).trigger('keyup');
-        expect(dialog.scope.$apply).not.toBeCalled();
+        sinon.assert.notCalled(dialog.scope.$apply);
       });
 
       it('confirms with values', function () {

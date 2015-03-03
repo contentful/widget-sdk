@@ -43,7 +43,7 @@ describe('Trial Watch controller', function () {
       space: null
     };
     scope.$digest();
-    expect(broadcastStub).not.toBeCalled();
+    sinon.assert.notCalled(broadcastStub);
   });
 
   describe('removes an existing notification', function () {

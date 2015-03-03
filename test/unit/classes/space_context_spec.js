@@ -429,7 +429,7 @@ describe('SpaceContext class with a space', function () {
     });
 
     it('does not refresh content types', function () {
-      expect(spaceContext.refreshContentTypes).not.toBeCalled();
+      sinon.assert.notCalled(spaceContext.refreshContentTypes);
     });
 
     it('does not set a flag for the content type as being missing', function () {

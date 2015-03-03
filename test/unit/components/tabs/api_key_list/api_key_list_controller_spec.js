@@ -73,7 +73,7 @@ describe('API Key List Controller', function () {
     it('does nothing if its not the current scope tab', inject(function ($rootScope) {
       scope.tab = null;
       $rootScope.$broadcast('tabBecameActive', {});
-      expect(scope.refreshApiKeys).not.toBeCalled();
+      sinon.assert.notCalled(scope.refreshApiKeys);
     }));
 
     it('resets api keys', inject(function($rootScope) {
