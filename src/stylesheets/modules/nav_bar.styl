@@ -1,56 +1,51 @@
 .nav-bar
   user-select: none
-  .logo,
-  ul
-    float: left
-  ul
-    margin: 0
-    .tooltip
-      display: none !important
-  .logo
-    padding: 0 25px 0 20px
-    overflow: hidden
-  li,
-  .logo
-    height: $nav-bar-height
-    border-right: 1px solid rgba(0,0,0,0.45)
-    box-shadow: $nav-bar-box-shadow
-  li
-    position: relative
-    float: left
-    display: inline-block
-    line-height: $nav-bar-height
-    padding: 0 15px
-    margin: 0
-    list-style-type: none
-    text-align: center
-    color: $gray-medium
-    font-weight: $nav-bar-font-weight
-    i
-      position: relative
-      margin-right: 5px
-      font-size: 15px
-      text-shadow: 0 1px 0 rgba(255,255,255,0.1)
-  li:focus
-    $focus-styles
-  li:hover
-    color: white
-    cursor: pointer
-  li.section
-    background-image: linear-gradient(#000000 0%, #191919 4%, #171717 100%)
-  li.section-index
-    color: white
+  height: 100%
   .bottom
     position: absolute
     bottom: 0
 
+.nav-bar__list
+  margin: 0
+  float: left
+  .tooltip
+    display: none !important
+
+.nav-bar__list-item
+  height: 100%
+  position: relative
+  float: left
+  display: inline-block
+  line-height: $nav-bar-height
+  padding: 0 15px
+  margin: 0
+  list-style-type: none
+  text-align: center
+  color: $gray-medium
+  font-weight: $nav-bar-font-weight
+  $main-top-bar-visual-border()
+  i
+    position: relative
+    margin-right: 5px
+    font-size: 15px
+    text-shadow: 0 1px 0 rgba(255,255,255,0.1)
+  &:focus
+    $focus-styles
+  &:hover
+    color: white
+    cursor: pointer
+  &.section
+    background-image: linear-gradient(#000000 0%, #191919 4%, #171717 100%)
+  &.section-index
+    color: white
+
 $hide-navbar-text()
-  li
-    span
-      display: none
-  ul
+  .nav-bar__list
     .tooltip
       display: block !important
+  .nav-bar__list-item
+    span
+      display: none
 
 @media (max-width: 1300px)
   .nav-bar.with-persistent-notification

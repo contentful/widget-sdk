@@ -95,7 +95,7 @@ describe('Space view directive', function () {
     scope.permissionController.get.withArgs('createAsset', 'shouldHide').returns(true);
     scope.permissionController.get.withArgs('createApiKey', 'shouldHide').returns(true);
     compileElement();
-    expect(container.find('.add-dropdown-button')).toBeNgHidden();
+    expect(container.find('.add-dropdown')).toBeNgHidden();
   });
 
   function makeShownButtonTest(type) {

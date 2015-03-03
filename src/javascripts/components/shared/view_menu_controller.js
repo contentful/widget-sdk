@@ -4,7 +4,7 @@ angular.module('contentful').controller('ViewMenuController', ['$scope', '$attrs
   $scope.folderStates = loadFolderStates();
   var getCurrentView = $parse($attrs.currentView);
 
-  $scope.$watch($attrs.viewMenu, function (folders) {
+  $scope.$watch($attrs.cfViewMenu, function (folders) {
     $scope.folders = folders;
   });
 

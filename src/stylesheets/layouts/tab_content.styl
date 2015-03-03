@@ -1,18 +1,10 @@
-// Layout
 .tab-content
-  position: absolute
-  top: 70px
-  right: 25px
-  left: 25px
-  bottom: 23px
-  margin-top: 0px
+  $stretch(0, 0, 0, 0)
   $layer('bottom')
   background-color: white
   border: 1px solid #dbdbdb
   border-color: rgba(0,0,0,0.17)
   border-radius: 0 2px 2px 2px
-  &.with-tab-bar
-    margin-top: 30px
 
 $tab-workbench()
   padding-top: $tab-main-margin-top
