@@ -358,6 +358,7 @@ describe('Asset List Controller', function () {
         scope.searchController.paginator.page = 1;
         scope.$apply(); //trigger resetAssets
         stubs.getAssets.returns($q.when());
+        sinon.spy(scope.assets, 'push');
         scope.searchController.loadMore();
         scope.$apply(); //trigger loadMore promises
       });
@@ -377,6 +378,7 @@ describe('Asset List Controller', function () {
         getAssets.reject();
         scope.$apply();
         scope.searchController.paginator.page = 1;
+        sinon.spy(scope.assets, 'push');
         scope.searchController.loadMore();
         scope.$apply();
       });

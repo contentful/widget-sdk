@@ -496,6 +496,7 @@ describe('cfLinkEditorSearch Controller', function () {
       beforeEach(function() {
         cfLinkEditorSearchCtrl._loadEntities.returns($q.reject());
         scope.paginator.page = 1;
+        scope.entities.push = sinon.stub();
         cfLinkEditorSearchCtrl.loadMore();
         scope.$apply();
       });

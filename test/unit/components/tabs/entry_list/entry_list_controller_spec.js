@@ -408,6 +408,8 @@ describe('Entry List Controller', function () {
 
     describe('on empty load response', function() {
       beforeEach(function() {
+        scope.entries = [];
+        sinon.stub(scope.entries, 'push');
         scope.loadMore();
         scope.$apply();
         getEntries.resolve(null);
