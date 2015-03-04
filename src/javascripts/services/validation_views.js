@@ -10,12 +10,14 @@ angular.module('contentful').service('validationViews', ['$injector', function($
   /**
    * Map from validation types to input views.
    */
+  var sizeViews = [
+    {name: 'min-max', label: 'Between'},
+    {name: 'min',     label: 'At least'},
+    {name: 'max',     label: 'Not more than'}
+  ];
   var views = {
-    size: [
-      {name: 'min-max', label: 'Between'},
-      {name: 'min',     label: 'At least'},
-      {name: 'max',     label: 'Not more than'}
-    ],
+    size: sizeViews,
+    assetFileSize: sizeViews,
     range: [
       {name: 'min-max', label: 'Between'},
       {name: 'min',     label: 'Greater or equal than'},

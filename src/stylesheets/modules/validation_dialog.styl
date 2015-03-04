@@ -125,7 +125,6 @@ cf-validation-setting
   $monospace-font()
   width: 4em
 
-
 .validation-controls__option-list
   $display-flexbox()
   flex-wrap: wrap
@@ -147,6 +146,13 @@ cf-validation-setting
     display: inline-block
     min-width: 8em
     padding-right: 1em
+
+.validation-controls__unit-select
+  display: inline-block
+  margin-left: 1em;
+  &.select-box > select
+    width: auto;
+    padding-right: 2em
 
 /**
  * @component .validation-values

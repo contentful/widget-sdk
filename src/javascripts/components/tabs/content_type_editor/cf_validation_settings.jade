@@ -123,3 +123,60 @@ h2.validation-settings__header
     )
 
     div(cf-template="validation_error_message_input")
+
+  div(ng-switch-when="assetFileSize" ng-controlle="assetFileSizeValidationController")
+    .validation-controls__view-select.btn.btn--tertiary.select-box
+      select(aria-label="Select condition"
+             ng-model="validation.currentView"
+             ng-options="v.name as v.label for v in validation.views")
+      i.button-icon-right.fa.fa-caret-down
+
+    span(ng-switch="validation.currentView")
+
+      span(ng-switch-when="min")
+        span(ng-controller="DataSizeScaleController as scale" data-model="validation.settings.min")
+          input.form-control(type="number" placeholder="Min" aria-label="Minimum size"
+                             ng-model="value")
+          span.validation-controls__unit-select.btn.btn--tertiary.select-box
+            select(aria-label="Select size unit"
+                   ng-model="unitFactor"
+                   ng-options="u.factor as u.label for u in scale.units")
+            i.button-icon-right.fa.fa-caret-down
+
+      span(ng-switch-when="max")
+        span(ng-controller="DataSizeScaleController as scale" data-model="validation.settings.max")
+          input.form-control(type="number" placeholder="Max" aria-label="Maximum size"
+                             ng-model="value")
+          span.validation-controls__unit-select.btn.btn--tertiary.select-box
+            select(aria-label="Select size unit"
+                   ng-model="unitFactor"
+                   ng-options="u.factor as u.label for u in scale.units")
+            i.button-icon-right.fa.fa-caret-down
+
+      span(ng-switch-when="min-max")
+        span(ng-controller="DataSizeScaleController as scale" data-model="validation.settings.min")
+          input.form-control(type="number" placeholder="Min" aria-label="Minimum size"
+                             ng-model="value")
+          span.validation-controls__unit-select.btn.btn--tertiary.select-box
+            select(aria-label="Select size unit"
+                   ng-model="unitFactor"
+                   ng-options="u.factor as u.label for u in scale.units")
+            i.button-icon-right.fa.fa-caret-down
+
+        span.validation-controls__input-separator and
+
+        span(ng-controller="DataSizeScaleController as scale" data-model="validation.settings.max")
+          input.form-control(type="number" placeholder="Max" aria-label="Maximum size"
+                             ng-model="value")
+          span.validation-controls__unit-select.btn.btn--tertiary.select-box
+            select(aria-label="Select size unit"
+                   ng-model="unitFactor"
+                   ng-options="u.factor as u.label for u in scale.units")
+            i.button-icon-right.fa.fa-caret-down
+
+    cf-error-list.form-inline-error(
+      cf-error-messages="validation.errors"
+      aria-label="Errors"
+    )
+
+    div(cf-template="validation_error_message_input")

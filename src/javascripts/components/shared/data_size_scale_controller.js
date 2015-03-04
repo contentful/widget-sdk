@@ -20,13 +20,13 @@ angular.module('contentful')
   var getModelValue = _.partial($parse($attrs.model), $scope.$parent);
   var setModelValue = _.partial($parse($attrs.model).assign, $scope.$parent);
 
-  var units = controller.units = {
-    'Bytes': 1,
-    'kB':    1024,
-    'MB':    1024 * 1024,
-  };
+  var units = controller.units = [
+    {label: 'Bytes', factor: 1},
+    {label: 'KB',    factor: 1024},
+    {label: 'MB',    factor: 1024 * 1024},
+  ];
 
-  var unitFactors = _.sortBy(_.values(units));
+  var unitFactors = _.map(units, 'factor');
 
   $scope.unitFactor = getUnitFactor(getModelValue());
 
