@@ -147,31 +147,31 @@ describe('Entry List Controller', function () {
     it('search term', function () {
       scope.tab.params.searchTerm = 'thing';
       scope.$digest();
-      expect(stubs.reset).toBeCalledOnce();
+      sinon.assert.calledOnce(stubs.reset);
     });
 
     it('page', function () {
       scope.paginator.page = 1;
       scope.$digest();
-      expect(stubs.reset).toBeCalledOnce();
+      sinon.assert.calledOnce(stubs.reset);
     });
 
     it('page length', function () {
       scope.pageLength = 10;
       scope.$digest();
-      expect(stubs.reset).toBeCalledOnce();
+      sinon.assert.calledOnce(stubs.reset);
     });
 
     it('contentTypeId', function () {
       scope.tab.params.view.contentTypeId = 'something';
       scope.$digest();
-      expect(stubs.reset).toBeCalledOnce();
+      sinon.assert.calledOnce(stubs.reset);
     });
 
     it('space id', function () {
       stubs.id = sinon.stub(scope.spaceContext.space, 'getId').returns(123);
       scope.$digest();
-      expect(stubs.reset).toBeCalledOnce();
+      sinon.assert.calledOnce(stubs.reset);
       stubs.id.restore();
     });
   });

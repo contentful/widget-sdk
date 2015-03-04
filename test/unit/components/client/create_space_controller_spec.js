@@ -291,7 +291,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('reuses existing space with same id', function() {
-            expect(stubs.getId).toBeCalledTwice();
+            sinon.assert.calledTwice(stubs.getId);
           });
 
           it('selects space', function() {

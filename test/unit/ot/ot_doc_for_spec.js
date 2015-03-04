@@ -19,7 +19,7 @@ describe('otDocFor', function () {
   describe('updating entity', function () {
     it('should update the entity with a copy of the snapshot', function () {
       scope.otUpdateEntity();
-      expect(scope.entity.update).toBeCalledOnce();
+      sinon.assert.calledOnce(scope.entity.update);
       var data = scope.entity.update.args[0][0];
       expect(data).not.toBe(scope.otDoc.snapshot);
       expect(_.omit(data, 'sys')).toLookEqual(_.omit(scope.otDoc.snapshot, 'sys'));

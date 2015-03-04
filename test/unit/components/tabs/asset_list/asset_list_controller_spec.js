@@ -109,7 +109,7 @@ describe('Asset List Controller', function () {
       stubs.reset = sinon.stub(scope.searchController, 'resetAssets');
       scope.tab.params.view.searchTerm = 'thing';
       scope.$digest();
-      expect(stubs.reset).toBeCalledOnce();
+      sinon.assert.calledOnce(stubs.reset);
     });
 
     it('page', function () {
@@ -442,19 +442,19 @@ describe('Asset List Controller', function () {
     });
 
     it('filepicker is called', function() {
-      expect(stubs.pickMultiple).toBeCalledOnce();
+      sinon.assert.calledOnce(stubs.pickMultiple);
     });
 
     it('asset is created', function() {
-      expect(scope.spaceContext.space.createAsset).toBeCalledTwice();
+      sinon.assert.calledTwice(scope.spaceContext.space.createAsset);
     });
 
     it('process is triggered', function() {
-      expect(stubs.process).toBeCalledTwice();
+      sinon.assert.calledTwice(stubs.process);
     });
 
     it('publish is triggered', function() {
-      expect(stubs.publish).toBeCalledTwice();
+      sinon.assert.calledTwice(stubs.publish);
     });
   });
 

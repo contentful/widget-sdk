@@ -114,7 +114,7 @@ describe('Asset List Actions Controller', function () {
       });
 
       it('calls success notification', function () {
-        expect(stubs.info).toBeCalledOnce();
+        sinon.assert.calledOnce(stubs.info);
       });
 
       it('success notification shown for 3 items', function () {
@@ -122,7 +122,7 @@ describe('Asset List Actions Controller', function () {
       });
 
       it('calls warn notification', function () {
-        expect(stubs.warn).toBeCalledOnce();
+        sinon.assert.calledOnce(stubs.warn);
       });
 
       it('warn notification shown for 1 item', function () {

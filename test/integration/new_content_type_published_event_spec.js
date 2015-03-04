@@ -49,7 +49,7 @@ describe('New content type published', function () {
     });
 
     it('shows a tooltip', function () {
-      expect(tooltipSpy).toBeCalledTwice();
+      sinon.assert.calledTwice(tooltipSpy);
     });
 
     it('removes the menu', function () {

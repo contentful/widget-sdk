@@ -97,7 +97,7 @@ describe('Promised loader service', function () {
     });
 
     it('calls method', function() {
-      expect(stubs.method).toBeCalledOnce();
+      sinon.assert.calledOnce(stubs.method);
     });
 
     it('calls success callback', function() {

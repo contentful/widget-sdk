@@ -196,7 +196,7 @@ describe('ContentTypeEditor Controller', function () {
     }));
 
     it('fires validate', function () {
-      expect(validateStub).toBeCalledOnce();
+      sinon.assert.calledOnce(validateStub);
     });
   });
 

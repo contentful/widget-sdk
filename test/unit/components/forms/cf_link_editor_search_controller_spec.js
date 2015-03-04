@@ -308,8 +308,8 @@ describe('cfLinkEditorSearch Controller', function () {
         it('server error called', function(done) {
           _.defer(function () {
             _.defer(function () {
-              expect(notification.error).toBeCalledTwice();
-              expect(logger.logServerWarn).toBeCalledTwice();
+              sinon.assert.calledTwice(notification.error);
+              sinon.assert.calledTwice(logger.logServerWarn);
               done();
             });
           });
