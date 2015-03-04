@@ -103,11 +103,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     } else if (msg('update', 'location')) {
       return;
 
-    } else if (msg('update', 'Space')) {
-      updateSpace(data.resource);
-
     } else if (data.token) {
-      updateToken(data);
+      updateToken(data.token);
 
     } else {
       $scope.performTokenLookup();
@@ -130,15 +127,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     notification[level](data.resource.message);
   }
 
-  function updateSpace(updatedSpaceData) {
-    var space = getExistingSpace(updatedSpaceData.sys.id);
-    if(space){
-      _.merge(space.data, updatedSpaceData);
-    }
-  }
-
   function updateToken(data) {
-    authentication.setTokenLookup(data.token);
+    authentication.updateTokenLookup(data);
     if(authentication.tokenLookup) {
       $scope.user = authentication.tokenLookup.sys.createdBy;
       updateSpaces(authentication.tokenLookup.spaces);

@@ -3,7 +3,7 @@
 angular.module('contentful').provider('authentication', function AuthenticationProvider() {
   var authApp, marketingApp, QueryLinkResolver;
 
-  var logger, environment, contentfulClient, $window, $location, $q, $rootScope, notification;
+  var logger, environment, contentfulClient, $window, $location, $q, $rootScope, notification, assert;
 
   function setEnvVars($injector) {
     environment       = $injector.get('environment');
@@ -129,18 +129,53 @@ angular.module('contentful').provider('authentication', function AuthenticationP
       this._unresolvedTokenLookup = tokenLookup;
       tokenLookup = angular.copy(tokenLookup);
       this.tokenLookup = QueryLinkResolver.resolveQueryLinks(tokenLookup)[0];
+    },
+
+    updateTokenLookup: function(unresolvedUpdate){
+      assert.truthy(unresolvedUpdate.items.length === 1, 'Expected the token update to have exactly one element');
+      var tokenLookup = angular.copy(this._unresolvedTokenLookup);
+
+      //merge includes
+      _.each(unresolvedUpdate.includes, function(newArray, className){
+        if (!tokenLookup.includes[className]) {
+          tokenLookup.includes[className] = newArray;
+        } else {
+          var existingArray = tokenLookup.includes[className];
+          merge(existingArray, newArray);
+        }
+      });
+
+      // Update space
+      var existingSpaces = tokenLookup.items[0].spaces;
+      var newSpaces      = unresolvedUpdate.items[0].spaces;
+      merge(existingSpaces, newSpaces);
+      // We're skipping the other properties of the token,
+      // since only the spaces array should have changed
+
+      this.setTokenLookup(tokenLookup);
+
+      function merge(list, newList) {
+        _.each(newList, function(newEntity){
+          var index = _.findIndex(list, function(entity){
+            return entity.sys.id === newEntity.sys.id;
+          });
+          if (index >= 0) { list[index] = newEntity; }
+          else            { list.push(newEntity); }
+        });
+      }
     }
 
   };
 
   this.$get = ['$injector', function($injector){
-    $location          = $injector.get('$location');
-    $q                 = $injector.get('$q');
-    $rootScope         = $injector.get('$rootScope');
-    $window            = $injector.get('$window');
-    notification       = $injector.get('notification');
-    logger             = $injector.get('logger');
-    var client         = $injector.get('client');
+    $location    = $injector.get('$location');
+    $q           = $injector.get('$q');
+    $rootScope   = $injector.get('$rootScope');
+    $window      = $injector.get('$window');
+    assert       = $injector.get('assert');
+    notification = $injector.get('notification');
+    logger       = $injector.get('logger');
+    var client   = $injector.get('client');
 
     var authentication = new Authentication(client);
     setEnvVars($injector);
