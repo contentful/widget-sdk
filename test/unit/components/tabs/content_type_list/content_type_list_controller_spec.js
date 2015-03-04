@@ -104,7 +104,7 @@ describe('Content Type List Controller', function () {
       });
 
       it('reset content types is called', function() {
-        expect(scope.resetContentTypes).toBeCalled();
+        sinon.assert.called(scope.resetContentTypes);
       });
     });
 
@@ -126,7 +126,7 @@ describe('Content Type List Controller', function () {
     it('resets current list', function () {
       scope.tab.params.list = list;
       scope.switchList(list);
-      expect(scope.resetContentTypes).toBeCalled();
+      sinon.assert.called(scope.resetContentTypes);
     });
 
     it('switches current list', function () {
@@ -185,7 +185,7 @@ describe('Content Type List Controller', function () {
 
     it('refreshes content types if a spaceContext exists', function() {
       scope.resetContentTypes();
-      expect(stubs.refreshContentTypes).toBeCalled();
+      sinon.assert.called(stubs.refreshContentTypes);
     });
 
     it('does not refresh content types if a spaceContext doesnt exist', function() {
@@ -265,7 +265,7 @@ describe('Content Type List Controller', function () {
     it('resets content types', inject(function($rootScope) {
       scope.tab = {};
       $rootScope.$broadcast('tabBecameActive', scope.tab);
-      expect(scope.resetContentTypes).toBeCalled();
+      sinon.assert.called(scope.resetContentTypes);
     }));
   });
 

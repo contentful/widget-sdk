@@ -35,7 +35,7 @@ describe('ListViewsController', function () {
       sinon.stub(scope, 'saveViews');
       scope.resetViews();
       expect(scope.uiConfig.views).toEqual(['defaultViews']);
-      expect(scope.saveViews).toBeCalled();
+      sinon.assert.called(scope.saveViews);
     });
     xit('should do ??? when scope.uiConfig is missing', function () {
       sinon.stub(scope, 'saveViews');
@@ -48,7 +48,7 @@ describe('ListViewsController', function () {
     it('should assign the blank view to tab and reset the list', function () {
       scope.clearView();
       expect(scope.tab.params.view.id).toBe('blankView');
-      expect(resetList).toBeCalled();
+      sinon.assert.called(resetList);
     });
   });
 
@@ -59,7 +59,7 @@ describe('ListViewsController', function () {
       expect(scope.tab.params.view.id).toBe('foo');
       expect(scope.tab.params.view).not.toBe(view);
       expect(scope.tab.params.view.title).toBe('New View');
-      expect(resetList).toBeCalled();
+      sinon.assert.called(resetList);
     });
   });
 
@@ -69,8 +69,8 @@ describe('ListViewsController', function () {
       scope.saveUiConfig = sinon.stub().returns($q.when());
       scope.saveViews().then(handler);
       scope.$apply();
-      expect(scope.saveUiConfig).toBeCalled();
-      expect(handler).toBeCalled();
+      sinon.assert.called(scope.saveUiConfig);
+      sinon.assert.called(handler);
     });
     it('should show an error notification', function () {
       var notification = this.$inject('notification');
@@ -79,9 +79,9 @@ describe('ListViewsController', function () {
       scope.saveUiConfig = sinon.stub().returns($q.reject());
       scope.saveViews().catch(errorHandler);
       scope.$apply();
-      expect(errorHandler).toBeCalled();
-      expect(notification.error).toBeCalled();
-      expect(logger.logServerWarn).toBeCalled();
+      sinon.assert.called(errorHandler);
+      sinon.assert.called(notification.error);
+      sinon.assert.called(logger.logServerWarn);
     });
   });
 });

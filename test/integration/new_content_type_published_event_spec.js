@@ -53,7 +53,7 @@ describe('New content type published', function () {
     });
 
     it('removes the menu', function () {
-      expect(oneSpy).toBeCalled();
+      sinon.assert.called(oneSpy);
     });
   });
 

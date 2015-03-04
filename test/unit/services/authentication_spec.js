@@ -109,7 +109,7 @@ describe('Authentication service', function () {
       });
 
       it('shows a notification if already authenticated', function () {
-        expect(stubs.info).toBeCalled();
+        sinon.assert.called(stubs.info);
       });
     });
 
@@ -165,7 +165,7 @@ describe('Authentication service', function () {
       it('shows a notification if already authenticated', function () {
         stubs.search.returns({already_authenticated: true});
         authentication.login();
-        expect(stubs.info).toBeCalled();
+        sinon.assert.called(stubs.info);
       });
     });
 
@@ -201,13 +201,13 @@ describe('Authentication service', function () {
     it('redirect is called', function () {
       stubs.path.returns('/');
       authentication.login();
-      expect(redirectStub).toBeCalled();
+      sinon.assert.called(redirectStub);
     });
 
     it('redirect is called and cookie is set', function () {
       stubs.path.returns('/path');
       authentication.login();
-      expect(redirectStub).toBeCalled();
+      sinon.assert.called(redirectStub);
       expect(cookiesSetStub).toBeCalledWith('redirect_after_login', '/path');
     });
   });
@@ -319,11 +319,11 @@ describe('Authentication service', function () {
       });
 
       it('client token lookup is called', function () {
-        expect(clientTokenLookupStub).toBeCalled();
+        sinon.assert.called(clientTokenLookupStub);
       });
 
       it('logger error is fired', function () {
-        expect(stubs.loggerError).toBeCalled();
+        sinon.assert.called(stubs.loggerError);
       });
 
       it('client token lookup promise fails', inject(function ($rootScope) {
@@ -348,7 +348,7 @@ describe('Authentication service', function () {
       });
 
       it('client token lookup is called', function () {
-        expect(clientTokenLookupStub).toBeCalled();
+        sinon.assert.called(clientTokenLookupStub);
       });
 
       it('client token lookup promise resolves', inject(function ($rootScope) {

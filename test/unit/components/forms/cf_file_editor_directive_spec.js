@@ -72,11 +72,11 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('calls filepickers pick', function() {
-        expect(stubs.pick).toBeCalled();
+        sinon.assert.called(stubs.pick);
       });
 
       it('calls otchangevalue', function() {
-        expect(scope.otChangeValue).toBeCalled();
+        sinon.assert.called(scope.otChangeValue);
       });
 
       it('file object is parsed', function() {
@@ -119,7 +119,7 @@ describe('cfFileEditor Directive', function () {
 
     it('validate gets called', function() {
       scope.uploadFile();
-      expect(scope.validate).toBeCalled();
+      sinon.assert.called(scope.validate);
     });
   });
 
@@ -149,11 +149,11 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('validates scope', function() {
-        expect(scope.validate).toBeCalled();
+        sinon.assert.called(scope.validate);
       });
 
       it('calls otchangevalue', function() {
-        expect(scope.otChangeValue).toBeCalled();
+        sinon.assert.called(scope.otChangeValue);
       });
 
       it('file is null', function() {
@@ -178,7 +178,7 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('calls otchangevalue', function() {
-        expect(scope.otChangeValue).toBeCalled();
+        sinon.assert.called(scope.otChangeValue);
       });
 
       it('file now has url', function() {

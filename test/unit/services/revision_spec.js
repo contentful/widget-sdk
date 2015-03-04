@@ -30,7 +30,7 @@ describe('App version service', function () {
     );
     $rootScope.$apply(function () {
       revision.hasNewVersion().catch(stub).finally(function () {
-        expect(stub).toBeCalled();
+        sinon.assert.called(stub);
       });
     });
     $httpBackend.flush();
@@ -45,7 +45,7 @@ describe('App version service', function () {
     );
     $rootScope.$apply(function () {
       revision.hasNewVersion().then(successStub).catch(failStub).finally(function () {
-        expect(successStub).toBeCalled();
+        sinon.assert.called(successStub);
         sinon.assert.notCalled(failStub);
       });
     });

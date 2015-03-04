@@ -137,7 +137,7 @@ describe('EntryLinkEditorController', function () {
   describe('methods', function() {
     function addEntryExpectations() {
       it('updates model', function() {
-        expect(scope.updateModel).toBeCalled();
+        sinon.assert.called(scope.updateModel);
       });
 
       it('does not get entries', function() {
@@ -208,7 +208,7 @@ describe('EntryLinkEditorController', function () {
         });
 
         it('updates model', function() {
-          expect(scope.updateModel).toBeCalled();
+          sinon.assert.called(scope.updateModel);
         });
 
         it('has 0 links', function() {
@@ -255,7 +255,7 @@ describe('EntryLinkEditorController', function () {
         });
 
         it('updates model', function() {
-          expect(scope.updateModel).toBeCalled();
+          sinon.assert.called(scope.updateModel);
         });
 
         it('removes link', function() {

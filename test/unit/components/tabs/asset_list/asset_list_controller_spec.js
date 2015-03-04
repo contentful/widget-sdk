@@ -115,26 +115,26 @@ describe('Asset List Controller', function () {
     it('page', function () {
       scope.searchController.paginator.page = 1;
       scope.$digest();
-      expect(stubs.reset).toBeCalled();
+      sinon.assert.called(stubs.reset);
     });
 
     it('page length', function () {
       scope.pageLength = 10;
       scope.$digest();
-      expect(stubs.reset).toBeCalled();
+      sinon.assert.called(stubs.reset);
     });
 
     it('list', function () {
       scope.tab.params.list = 'all';
       scope.$digest();
-      expect(stubs.reset).toBeCalled();
+      sinon.assert.called(stubs.reset);
     });
 
     it('space id', function () {
       stubs.id = sinon.stub(scope.spaceContext.space, 'getId');
       stubs.id.returns(123);
       scope.$digest();
-      expect(stubs.reset).toBeCalled();
+      sinon.assert.called(stubs.reset);
       stubs.id.restore();
     });
   });
@@ -160,7 +160,7 @@ describe('Asset List Controller', function () {
     it('loads assets', function() {
       scope.searchController.resetAssets();
       scope.$apply();
-      expect(stubs.getAssets).toBeCalled();
+      sinon.assert.called(stubs.getAssets);
     });
 
     it('sets assets num on the paginator', function() {
@@ -178,7 +178,7 @@ describe('Asset List Controller', function () {
     it('switches the selection base set', function() {
       scope.searchController.resetAssets();
       scope.$apply();
-      expect(stubs.switch).toBeCalled();
+      sinon.assert.called(stubs.switch);
     });
 
     describe('creates a query object', function() {
@@ -262,13 +262,13 @@ describe('Asset List Controller', function () {
     it('should cause resetAssets to show an error message', function () {
       scope.searchController.resetAssets();
       scope.$apply();
-      expect(apiErrorHandler).toBeCalled();
+      sinon.assert.called(apiErrorHandler);
     });
 
     it('should cause loadMore to show an error message', function () {
       scope.searchController.loadMore();
       scope.$apply();
-      expect(apiErrorHandler).toBeCalled();
+      sinon.assert.called(apiErrorHandler);
     });
   });
 
@@ -319,13 +319,13 @@ describe('Asset List Controller', function () {
       scope.searchController.paginator.page = 0;
       scope.searchController.loadMore();
       scope.$apply();
-      expect(stubs.getAssets).toBeCalled();
+      sinon.assert.called(stubs.getAssets);
     });
 
     it('triggers analytics event', function () {
       scope.searchController.loadMore();
       scope.$apply();
-      expect(stubs.track).toBeCalled();
+      sinon.assert.called(stubs.track);
     });
 
     describe('on successful load response', function() {
@@ -368,7 +368,7 @@ describe('Asset List Controller', function () {
       });
 
       it('sends an error', function() {
-        expect(stubs.logError).toBeCalled();
+        sinon.assert.called(stubs.logError);
       });
     });
 
@@ -407,7 +407,7 @@ describe('Asset List Controller', function () {
     it('resets assets', inject(function($rootScope) {
       scope.tab = {};
       $rootScope.$broadcast('tabBecameActive', scope.tab);
-      expect(scope.searchController.resetAssets).toBeCalled();
+      sinon.assert.called(scope.searchController.resetAssets);
     }));
   });
 

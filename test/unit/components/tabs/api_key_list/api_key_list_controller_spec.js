@@ -42,7 +42,7 @@ describe('API Key List Controller', function () {
     });
 
     it('calls api keys getter', function() {
-      expect(getApiKeysStub).toBeCalled();
+      sinon.assert.called(getApiKeysStub);
     });
 
     it('saves api keys on scope', function() {
@@ -60,7 +60,7 @@ describe('API Key List Controller', function () {
     });
 
     it('results in an error message', function () {
-      expect(apiErrorHandler).toBeCalled();
+      sinon.assert.called(apiErrorHandler);
     });
 
   });
@@ -79,7 +79,7 @@ describe('API Key List Controller', function () {
     it('resets api keys', inject(function($rootScope) {
       scope.tab = {};
       $rootScope.$broadcast('tabBecameActive', scope.tab);
-      expect(scope.refreshApiKeys).toBeCalled();
+      sinon.assert.called(scope.refreshApiKeys);
     }));
   });
 

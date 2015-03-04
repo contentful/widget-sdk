@@ -22,7 +22,7 @@ describe('ReloadNotification service', function () {
     it('should trigger the api error for 500eds', function () {
       $q.reject({statusCode: 500}).catch(ReloadNotification.apiErrorHandler);
       $rootScope.$apply();
-      expect(open).toBeCalled();
+      sinon.assert.called(open);
     });
 
     it('should not trigger the api error for 502', function () {

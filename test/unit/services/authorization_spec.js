@@ -83,11 +83,11 @@ describe('Authorization service', function () {
       });
 
       it('calls space on auth context', function () {
-        expect(spaceStub).toBeCalled();
+        sinon.assert.called(spaceStub);
       });
 
       it('gets an id from the space', function () {
-        expect(idStub).toBeCalled();
+        sinon.assert.called(idStub);
       });
     });
   });
@@ -114,7 +114,7 @@ describe('reasonsDenied service', function () {
 
   it('calls reasonsDenied from authorization', function () {
     reasonsDenied();
-    expect(reasonsStub).toBeCalled();
+    sinon.assert.called(reasonsStub);
   });
 });
 

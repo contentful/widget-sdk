@@ -125,7 +125,7 @@ describe('API key editor controller', function () {
     });
 
     it('calls the creation method', function() {
-      expect(stubs.createPreviewApiKey).toBeCalled();
+      sinon.assert.called(stubs.createPreviewApiKey);
     });
 
     it('gets the delivery api key id', function() {
@@ -141,12 +141,12 @@ describe('API key editor controller', function () {
     });
 
     it('info notification is shown', function () {
-      expect(stubs.info).toBeCalled();
+      sinon.assert.called(stubs.info);
       expect(stubs.info.args[0][0]).toEqual('"apiKeyName" deleted successfully');
     });
 
     it('event is broadcasted from space', function () {
-      expect(stubs.broadcast).toBeCalled();
+      sinon.assert.called(stubs.broadcast);
       expect(stubs.broadcast.args[0][0]).toEqual('entityDeleted');
       expect(stubs.broadcast.args[0][1]).toBe(apiKey);
     });
@@ -160,7 +160,7 @@ describe('API key editor controller', function () {
     });
 
     it('error notification is shown', function () {
-      expect(stubs.logServerWarn).toBeCalled();
+      sinon.assert.called(stubs.logServerWarn);
       expect(stubs.logServerWarn.args[0][1]).toEqual({error: {}});
       expect(stubs.warn.args[0][0]).toEqual('"apiKeyName" could not be deleted');
     });
@@ -188,21 +188,21 @@ describe('API key editor controller', function () {
     });
 
     it('info notification is shown', function () {
-      expect(stubs.info).toBeCalled();
+      sinon.assert.called(stubs.info);
       expect(stubs.info.args[0][0]).toEqual('"apiKeyName" saved successfully');
     });
 
     it('form is reset as pristine', function () {
-      expect(pristineStub).toBeCalled();
+      sinon.assert.called(pristineStub);
     });
 
     it('gets api key editor from navigator', function () {
-      expect(apiKeyEditorStub).toBeCalled();
+      sinon.assert.called(apiKeyEditorStub);
       expect(apiKeyEditorStub.args[0][0]).toBe(apiKey);
     });
 
     it('reloads api key editor', function () {
-      expect(goToStub).toBeCalled();
+      sinon.assert.called(goToStub);
     });
 
   });
@@ -215,7 +215,7 @@ describe('API key editor controller', function () {
     });
 
     it('error notification is shown', function () {
-      expect(stubs.logServerWarn).toBeCalled();
+      sinon.assert.called(stubs.logServerWarn);
       expect(stubs.logServerWarn.args[0][1]).toEqual({error: {}});
       expect(stubs.warn.args[0][0]).toEqual('"apiKeyName" could not be saved');
     });

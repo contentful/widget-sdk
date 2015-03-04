@@ -78,7 +78,7 @@ describe('Entry List Controller', function () {
     });
 
     it('resets entries', function() {
-      expect(scope.resetEntries).toBeCalled();
+      sinon.assert.called(scope.resetEntries);
     });
 
   });
@@ -214,7 +214,7 @@ describe('Entry List Controller', function () {
       scope.resetEntries();
       scope.$apply();
       getEntries.resolve(entries);
-      expect(stubs.switch).toBeCalled();
+      sinon.assert.called(stubs.switch);
     });
 
     describe('creates a query object', function() {
@@ -362,13 +362,13 @@ describe('Entry List Controller', function () {
       scope.paginator.page = 0;
       scope.loadMore();
       scope.$apply();
-      expect(scope.spaceContext.space.getEntries).toBeCalled();
+      sinon.assert.called(scope.spaceContext.space.getEntries);
     });
 
     it('triggers analytics event', function () {
       scope.loadMore();
       scope.$apply();
-      expect(stubs.track).toBeCalled();
+      sinon.assert.called(stubs.track);
     });
 
     describe('on successful load response', function() {
@@ -421,7 +421,7 @@ describe('Entry List Controller', function () {
       });
 
       it('sends an error', function() {
-        expect(stubs.logError).toBeCalled();
+        sinon.assert.called(stubs.logError);
       });
     });
 
@@ -439,14 +439,14 @@ describe('Entry List Controller', function () {
       scope.resetEntries();
       getEntries.reject({statusCode: 500});
       scope.$apply();
-      expect(apiErrorHandler).toBeCalled();
+      sinon.assert.called(apiErrorHandler);
     });
 
     it('should cause loadMore to show an error message', function () {
       scope.loadMore();
       getEntries.reject({statusCode: 500});
       scope.$apply();
-      expect(apiErrorHandler).toBeCalled();
+      sinon.assert.called(apiErrorHandler);
     });
   });
 
@@ -466,7 +466,7 @@ describe('Entry List Controller', function () {
     it('resets entries', inject(function($rootScope) {
       scope.tab = {};
       $rootScope.$broadcast('tabBecameActive', scope.tab);
-      expect(scope.resetEntries).toBeCalled();
+      sinon.assert.called(scope.resetEntries);
     }));
   });
 

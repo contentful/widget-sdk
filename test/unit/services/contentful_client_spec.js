@@ -34,7 +34,7 @@ describe('Contentful Client', function () {
 
   it('gets a space', function() {
     client.space().then(successStub).catch(failStub).finally(function () {
-      expect(successStub).toBeCalled();
+      sinon.assert.called(successStub);
       sinon.assert.notCalled(failStub);
     });
     $httpBackend.expectGET(getUrl('')).respond(200, {});
@@ -44,7 +44,7 @@ describe('Contentful Client', function () {
   it('fails to get a space', function() {
     client.space().then(successStub).catch(failStub).finally(function () {
       sinon.assert.notCalled(successStub);
-      expect(failStub).toBeCalled();
+      sinon.assert.called(failStub);
     });
     $httpBackend.expectGET(getUrl('')).respond(404, {});
     $httpBackend.flush();
@@ -52,7 +52,7 @@ describe('Contentful Client', function () {
 
   it('gets content types', function() {
     client.contentTypes().then(successStub).catch(failStub).finally(function () {
-      expect(successStub).toBeCalled();
+      sinon.assert.called(successStub);
       sinon.assert.notCalled(failStub);
     });
     $httpBackend.expectGET(getUrl('/content_types')).respond(200, {});
@@ -62,7 +62,7 @@ describe('Contentful Client', function () {
   it('fails to get content types', function() {
     client.contentTypes().then(successStub).catch(failStub).finally(function () {
       sinon.assert.notCalled(successStub);
-      expect(failStub).toBeCalled();
+      sinon.assert.called(failStub);
     });
     $httpBackend.expectGET(getUrl('/content_types')).respond(404, {});
     $httpBackend.flush();
@@ -70,7 +70,7 @@ describe('Contentful Client', function () {
 
   it('gets a content type', function() {
     client.contentType('123').then(successStub).catch(failStub).finally(function () {
-      expect(successStub).toBeCalled();
+      sinon.assert.called(successStub);
       sinon.assert.notCalled(failStub);
     });
     $httpBackend.expectGET(getUrl('/content_types/123')).respond(200, {sys: {}, fields: []});
@@ -80,7 +80,7 @@ describe('Contentful Client', function () {
   it('fails to get a content type', function() {
     client.contentType('123').then(successStub).catch(failStub).finally(function () {
       sinon.assert.notCalled(successStub);
-      expect(failStub).toBeCalled();
+      sinon.assert.called(failStub);
     });
     $httpBackend.expectGET(getUrl('/content_types/123')).respond(404, {});
     $httpBackend.flush();
@@ -88,7 +88,7 @@ describe('Contentful Client', function () {
 
   it('gets an editing interface', function() {
     client.editingInterface('123', 'default').then(successStub).catch(failStub).finally(function () {
-      expect(successStub).toBeCalled();
+      sinon.assert.called(successStub);
       sinon.assert.notCalled(failStub);
     });
     $httpBackend.expectGET(getUrl('/content_types/123/editor_interfaces/default')).respond(200, {sys: {}, fields: []});
@@ -98,7 +98,7 @@ describe('Contentful Client', function () {
   it('fails to get an editing interface', function() {
     client.editingInterface('123', 'default').then(successStub).catch(failStub).finally(function () {
       sinon.assert.notCalled(successStub);
-      expect(failStub).toBeCalled();
+      sinon.assert.called(failStub);
     });
     $httpBackend.expectGET(getUrl('/content_types/123/editor_interfaces/default')).respond(404, {});
     $httpBackend.flush();
@@ -106,7 +106,7 @@ describe('Contentful Client', function () {
 
   it('gets entries', function() {
     client.entries().then(successStub).catch(failStub).finally(function () {
-      expect(successStub).toBeCalled();
+      sinon.assert.called(successStub);
       sinon.assert.notCalled(failStub);
     });
     $httpBackend.expectGET(getUrl('/entries')).respond(200, {});
@@ -116,7 +116,7 @@ describe('Contentful Client', function () {
   it('fails to get entries', function() {
     client.entries().then(successStub).catch(failStub).finally(function () {
       sinon.assert.notCalled(successStub);
-      expect(failStub).toBeCalled();
+      sinon.assert.called(failStub);
     });
     $httpBackend.expectGET(getUrl('/entries')).respond(404, {});
     $httpBackend.flush();
@@ -124,7 +124,7 @@ describe('Contentful Client', function () {
 
   it('gets an entry', function() {
     client.entry('123').then(successStub).catch(failStub).finally(function () {
-      expect(successStub).toBeCalled();
+      sinon.assert.called(successStub);
       sinon.assert.notCalled(failStub);
     });
     $httpBackend.expectGET(getUrl('/entries/123')).respond(200, {sys: {}, fields: {}});
@@ -134,7 +134,7 @@ describe('Contentful Client', function () {
   it('fails to get an entry', function() {
     client.entry('123').then(successStub).catch(failStub).finally(function () {
       sinon.assert.notCalled(successStub);
-      expect(failStub).toBeCalled();
+      sinon.assert.called(failStub);
     });
     $httpBackend.expectGET(getUrl('/entries/123')).respond(404, {});
     $httpBackend.flush();
@@ -142,7 +142,7 @@ describe('Contentful Client', function () {
 
   it('gets assets', function() {
     client.assets().then(successStub).catch(failStub).finally(function () {
-      expect(successStub).toBeCalled();
+      sinon.assert.called(successStub);
       sinon.assert.notCalled(failStub);
     });
     $httpBackend.expectGET(getUrl('/assets')).respond(200, {});
@@ -152,7 +152,7 @@ describe('Contentful Client', function () {
   it('fails to get assets', function() {
     client.assets().then(successStub).catch(failStub).finally(function () {
       sinon.assert.notCalled(successStub);
-      expect(failStub).toBeCalled();
+      sinon.assert.called(failStub);
     });
     $httpBackend.expectGET(getUrl('/assets')).respond(404, {});
     $httpBackend.flush();
@@ -160,7 +160,7 @@ describe('Contentful Client', function () {
 
   it('gets an asset', function() {
     client.asset('123').then(successStub).catch(failStub).finally(function () {
-      expect(successStub).toBeCalled();
+      sinon.assert.called(successStub);
       sinon.assert.notCalled(failStub);
     });
     $httpBackend.expectGET(getUrl('/assets/123')).respond(200, {sys: {}, fields: {}});
@@ -170,7 +170,7 @@ describe('Contentful Client', function () {
   it('fails to get an asset', function() {
     client.asset('123').then(successStub).catch(failStub).finally(function () {
       sinon.assert.notCalled(successStub);
-      expect(failStub).toBeCalled();
+      sinon.assert.called(failStub);
     });
     $httpBackend.expectGET(getUrl('/assets/123')).respond(404, {});
     $httpBackend.flush();

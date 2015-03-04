@@ -172,7 +172,7 @@ describe('Client Controller', function () {
 
   it('space switcher analytics tracking', function () {
     scope.clickedSpaceSwitcher();
-    expect(stubs.track).toBeCalled();
+    sinon.assert.called(stubs.track);
   });
 
   describe('on space and token lookup updates', function () {
@@ -185,15 +185,15 @@ describe('Client Controller', function () {
     }));
 
     it('token lookup is called', function () {
-      expect(stubs.authorizationTokenLookup).toBeCalled();
+      sinon.assert.called(stubs.authorizationTokenLookup);
     });
 
     it('space id is called', function () {
-      expect(stubs.spaceId).toBeCalled();
+      sinon.assert.called(stubs.spaceId);
     });
 
     it('hasSpace is called', function () {
-      expect(stubs.hasSpace).toBeCalled();
+      sinon.assert.called(stubs.hasSpace);
     });
 
     it('setSpace is called', function () {
@@ -232,7 +232,7 @@ describe('Client Controller', function () {
 
     it('with no space triggers an error notification', function () {
       scope.selectSpace();
-      expect(notification.warn).toBeCalled();
+      sinon.assert.called(notification.warn);
     });
 
     describe('if we are selecting the current space', function () {
@@ -258,7 +258,7 @@ describe('Client Controller', function () {
       });
 
       it('tracks analytics', function () {
-        expect(stubs.track).toBeCalled();
+        sinon.assert.called(stubs.track);
       });
 
       it('tracks the space properties', function () {
@@ -277,7 +277,7 @@ describe('Client Controller', function () {
       });
 
       it('tracks analytics', function () {
-        expect(stubs.track).toBeCalled();
+        sinon.assert.called(stubs.track);
       });
 
       it('tracks the space properties', function () {
@@ -336,7 +336,7 @@ describe('Client Controller', function () {
       });
 
       it('tracks analytics', function () {
-          expect(stubs.track).toBeCalled();
+          sinon.assert.called(stubs.track);
         });
 
       it('tracks the org properties', function () {
@@ -436,7 +436,7 @@ describe('Client Controller', function () {
       });
 
       it('gets the space id', function () {
-        expect(idStub).toBeCalled();
+        sinon.assert.called(idStub);
       });
 
       it('space data is set on analytics', function () {
@@ -530,11 +530,11 @@ describe('Client Controller', function () {
       });
 
       it('sets analytics data', function () {
-        expect(stubs.setSpace).toBeCalled();
+        sinon.assert.called(stubs.setSpace);
       });
 
       it('sets a location path', function () {
-        expect(stubs.path).toBeCalled();
+        sinon.assert.called(stubs.path);
       });
     });
 
@@ -575,11 +575,11 @@ describe('Client Controller', function () {
     });
 
     it('tracks analytics event', function () {
-      expect(stubs.track).toBeCalled();
+      sinon.assert.called(stubs.track);
     });
 
     it('logs out through authentication', function () {
-      expect(stubs.logout).toBeCalled();
+      sinon.assert.called(stubs.logout);
     });
   });
 
@@ -589,11 +589,11 @@ describe('Client Controller', function () {
     });
 
     it('opens new window', function () {
-      expect(stubs.open).toBeCalled();
+      sinon.assert.called(stubs.open);
     });
 
     it('gets support url', function () {
-      expect(stubs.supportUrl).toBeCalled();
+      sinon.assert.called(stubs.supportUrl);
     });
   });
 
@@ -632,7 +632,7 @@ describe('Client Controller', function () {
       });
 
       it('calls authentication goodbye', function () {
-        expect(stubs.goodbye).toBeCalled();
+        sinon.assert.called(stubs.goodbye);
       });
     });
 
@@ -803,7 +803,7 @@ describe('Client Controller', function () {
       });
 
       it('performs token lookup', function() {
-        expect(scope.performTokenLookup).toBeCalled();
+        sinon.assert.called(scope.performTokenLookup);
       });
     });
 
@@ -811,7 +811,7 @@ describe('Client Controller', function () {
 
   it('tracks profile button click event', function () {
     scope.clickedProfileButton();
-    expect(stubs.track).toBeCalled();
+    sinon.assert.called(stubs.track);
   });
 
   describe('redirects to profile', function () {
@@ -862,7 +862,7 @@ describe('Client Controller', function () {
     }));
 
     it('expect getTokenLookup to be called', function () {
-      expect(stubs.getTokenLookup).toBeCalled();
+      sinon.assert.called(stubs.getTokenLookup);
     });
 
     describe('if token lookup resolves', function() {
@@ -884,7 +884,7 @@ describe('Client Controller', function () {
       stubs.dialog.returns({promise: $q.when()});
       tokenDeferred.reject({statusCode: 401});
       scope.$apply();
-      expect(stubs.logout).toBeCalled();
+      sinon.assert.called(stubs.logout);
     });
   });
 
@@ -964,7 +964,7 @@ describe('Client Controller', function () {
         });
 
         it('checks for enforcements', function() {
-          expect(scope.checkForEnforcements).toBeCalled();
+          sinon.assert.called(scope.checkForEnforcements);
         });
       });
 
@@ -990,7 +990,7 @@ describe('Client Controller', function () {
       });
 
       it('checks for permission on organization', function() {
-        expect(stubs.can).toBeCalled();
+        sinon.assert.called(stubs.can);
       });
     });
   });
@@ -1011,15 +1011,15 @@ describe('Client Controller', function () {
       });
 
       it('enforcement is determined', function () {
-        expect(stubs.enforcement).toBeCalled();
+        sinon.assert.called(stubs.enforcement);
       });
 
       it('reasons are determined', function () {
-        expect(stubs.reasons).toBeCalled();
+        sinon.assert.called(stubs.reasons);
       });
 
       it('event is broadcast', function () {
-        expect(broadcastStub).toBeCalled();
+        sinon.assert.called(broadcastStub);
       });
     });
 
@@ -1030,11 +1030,11 @@ describe('Client Controller', function () {
       });
 
       it('enforcement is determined', function () {
-        expect(stubs.enforcement).toBeCalled();
+        sinon.assert.called(stubs.enforcement);
       });
 
       it('reasons are determined', function () {
-        expect(stubs.reasons).toBeCalled();
+        sinon.assert.called(stubs.reasons);
       });
 
       it('event is not broadcast', function () {
@@ -1055,12 +1055,12 @@ describe('Client Controller', function () {
     }));
     it('opens dialog', function () {
       scope.showCreateSpaceDialog();
-      expect(stubs.dialog).toBeCalled();
+      sinon.assert.called(stubs.dialog);
     });
 
     it('tracks analytics event', function () {
       scope.showCreateSpaceDialog();
-      expect(stubs.track).toBeCalled();
+      sinon.assert.called(stubs.track);
     });
 
     describe('with an organizationId', function () {
@@ -1094,7 +1094,7 @@ describe('Client Controller', function () {
 
     it('token lookup is called', function () {
       scope.initClient();
-      expect(scope.performTokenLookup).toBeCalled();
+      sinon.assert.called(scope.performTokenLookup);
     });
 
     describe('if lookup succeeds', function () {
@@ -1113,7 +1113,7 @@ describe('Client Controller', function () {
 
       it('tracks login', function () {
         scope.initClient();
-        expect(stubs.setUserData).toBeCalled();
+        sinon.assert.called(stubs.setUserData);
       });
 
       describe('fires an initial version check', function () {
@@ -1130,11 +1130,11 @@ describe('Client Controller', function () {
         });
 
         it('checks for new version', function () {
-          expect(stubs.hasNewVersion).toBeCalled();
+          sinon.assert.called(stubs.hasNewVersion);
         });
 
         it('broadcasts event if new version is available', function () {
-          expect(broadcastStub).toBeCalled();
+          sinon.assert.called(broadcastStub);
         });
       });
 
@@ -1155,19 +1155,19 @@ describe('Client Controller', function () {
         });
 
         it('checks for presence', function () {
-          expect(stubs.presenceActive).toBeCalled();
+          sinon.assert.called(stubs.presenceActive);
         });
 
         it('checks for new version', function () {
-          expect(stubs.hasNewVersion).toBeCalled();
+          sinon.assert.called(stubs.hasNewVersion);
         });
 
         it('reload is triggered if lookup fails', function () {
-          expect(stubs.trigger).toBeCalled();
+          sinon.assert.called(stubs.trigger);
         });
 
         it('broadcasts event if new version is available', function () {
-          expect(broadcastStub).toBeCalled();
+          sinon.assert.called(broadcastStub);
         });
       });
 
@@ -1180,7 +1180,7 @@ describe('Client Controller', function () {
       });
 
       it('error notification shown', function () {
-        expect(stubs.gatekeeperErrorHandler).toBeCalled();
+        sinon.assert.called(stubs.gatekeeperErrorHandler);
       });
     });
 

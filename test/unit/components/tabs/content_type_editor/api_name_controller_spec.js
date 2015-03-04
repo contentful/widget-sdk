@@ -55,7 +55,7 @@ describe('ApiNameController', function () {
       it('checks if its display field', function() {
         scope.$digest();
         controller.updateFromName();
-        expect(scope.isDisplayField).toBeCalled();
+        sinon.assert.called(scope.isDisplayField);
       });
 
       it('stores field apiName', function() {
@@ -94,7 +94,7 @@ describe('ApiNameController', function () {
             });
 
             it('gets otdoc value for id', function() {
-              expect(stubs.at).toBeCalled();
+              sinon.assert.called(stubs.at);
             });
 
             it('id is set on subdoc', function() {
@@ -120,7 +120,7 @@ describe('ApiNameController', function () {
             });
 
             it('gets otdoc value for id', function() {
-              expect(stubs.at).toBeCalled();
+              sinon.assert.called(stubs.at);
             });
 
             it('id is set on subdoc', function() {
@@ -142,7 +142,7 @@ describe('ApiNameController', function () {
           });
 
           it('gets otdoc value for id', function() {
-            expect(stubs.at).toBeCalled();
+            sinon.assert.called(stubs.at);
           });
 
           it('id is set on subdoc', function() {
@@ -150,7 +150,7 @@ describe('ApiNameController', function () {
           });
 
           it('gets id from subdoc', function() {
-            expect(stubs.get).toBeCalled();
+            sinon.assert.called(stubs.get);
           });
 
           it('sets new id on field', function() {
@@ -158,8 +158,8 @@ describe('ApiNameController', function () {
           });
 
           it('shows error', function() {
-            expect(notification.error).toBeCalled();
-            expect(logger.logSharejsWarn).toBeCalled();
+            sinon.assert.called(notification.error);
+            sinon.assert.called(logger.logSharejsWarn);
           });
         });
       });

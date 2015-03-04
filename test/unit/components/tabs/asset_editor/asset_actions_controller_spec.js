@@ -39,13 +39,13 @@ describe('Asset Actions Controller', function () {
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
 
       it('shows error notification', function() {
-        expect(notification.error).toBeCalled();
-        expect(logger.logServerWarn).toBeCalled();
+        sinon.assert.called(notification.error);
+        sinon.assert.called(logger.logServerWarn);
       });
     });
 
@@ -57,11 +57,11 @@ describe('Asset Actions Controller', function () {
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
       it('shows notification', function() {
-        expect(notification.info).toBeCalled();
+        sinon.assert.called(notification.info);
       });
 
       it('broadcasts event', function() {
@@ -83,12 +83,12 @@ describe('Asset Actions Controller', function () {
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
       it('shows error notification', function() {
-        expect(notification.warn).toBeCalled();
-        expect(logger.logServerWarn).toBeCalled();
+        sinon.assert.called(notification.warn);
+        sinon.assert.called(logger.logServerWarn);
       });
     });
 
@@ -100,11 +100,11 @@ describe('Asset Actions Controller', function () {
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
       it('shows notification', function() {
-        expect(notification.info).toBeCalled();
+        sinon.assert.called(notification.info);
       });
     });
   });
@@ -122,12 +122,12 @@ describe('Asset Actions Controller', function () {
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
       it('shows error notification', function() {
-        expect(notification.warn).toBeCalled();
-        expect(logger.logServerWarn).toBeCalled();
+        sinon.assert.called(notification.warn);
+        sinon.assert.called(logger.logServerWarn);
       });
     });
 
@@ -139,11 +139,11 @@ describe('Asset Actions Controller', function () {
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
       it('shows notification', function() {
-        expect(notification.info).toBeCalled();
+        sinon.assert.called(notification.info);
       });
     });
   });
@@ -161,12 +161,12 @@ describe('Asset Actions Controller', function () {
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
       it('shows error notification', function() {
-        expect(notification.warn).toBeCalled();
-        expect(logger.logServerWarn).toBeCalled();
+        sinon.assert.called(notification.warn);
+        sinon.assert.called(logger.logServerWarn);
       });
     });
 
@@ -179,15 +179,15 @@ describe('Asset Actions Controller', function () {
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
       it('shows notification', function() {
-        expect(notification.info).toBeCalled();
+        sinon.assert.called(notification.info);
       });
 
       it('updates ot entity', function() {
-        expect(scope.otUpdateEntity).toBeCalled();
+        sinon.assert.called(scope.otUpdateEntity);
       });
     });
   });
@@ -207,11 +207,11 @@ describe('Asset Actions Controller', function () {
       });
 
       it('calls validation', function() {
-        expect(scope.validate).toBeCalled();
+        sinon.assert.called(scope.validate);
       });
 
       it('shows warn notification', function() {
-        expect(notification.warn).toBeCalled();
+        sinon.assert.called(notification.warn);
       });
     });
 
@@ -237,7 +237,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('calls validation', function() {
-        expect(scope.validate).toBeCalled();
+        sinon.assert.called(scope.validate);
       });
 
       it('sets validation errors', function() {
@@ -245,11 +245,11 @@ describe('Asset Actions Controller', function () {
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
       it('shows error notification', function() {
-        expect(notification.warn).toBeCalled();
+        sinon.assert.called(notification.warn);
       });
     });
 
@@ -273,15 +273,15 @@ describe('Asset Actions Controller', function () {
       });
 
       it('calls validation', function() {
-        expect(scope.validate).toBeCalled();
+        sinon.assert.called(scope.validate);
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
       it('shows error notification', function() {
-        expect(notification.warn).toBeCalled();
+        sinon.assert.called(notification.warn);
       });
 
       it('gets contextual error message', function() {
@@ -307,16 +307,16 @@ describe('Asset Actions Controller', function () {
       });
 
       it('calls validation', function() {
-        expect(scope.validate).toBeCalled();
+        sinon.assert.called(scope.validate);
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
       it('shows error notification', function() {
-        expect(notification.error).toBeCalled();
-        expect(logger.logServerWarn).toBeCalled();
+        sinon.assert.called(notification.error);
+        sinon.assert.called(logger.logServerWarn);
       });
 
       it('gets contextual error message', function() {
@@ -336,15 +336,15 @@ describe('Asset Actions Controller', function () {
       });
 
       it('calls validation', function() {
-        expect(scope.validate).toBeCalled();
+        sinon.assert.called(scope.validate);
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
       it('shows notification', function() {
-        expect(notification.info).toBeCalled();
+        sinon.assert.called(notification.info);
       });
 
       it('updates ot entity', function() {

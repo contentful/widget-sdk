@@ -64,7 +64,7 @@ describe('cfLinkEditorSearch Controller', function () {
 
       it('calls the addLink method', function() {
         scope.$apply();
-        expect(scope.addLink).toBeCalled();
+        sinon.assert.called(scope.addLink);
       });
 
       it('clears the search when invisible', function () {
@@ -83,7 +83,7 @@ describe('cfLinkEditorSearch Controller', function () {
     it('should clear the search when autocompleteResults are canceled', function () {
       sinon.stub(cfLinkEditorSearchCtrl, 'clearSearch');
       scope.$broadcast('autocompleteResultsCancel');
-      expect(cfLinkEditorSearchCtrl.clearSearch).toBeCalled();
+      sinon.assert.called(cfLinkEditorSearchCtrl.clearSearch);
     });
 
     it('should prevent the default action on the cancel event when search is already clear', function () {
@@ -124,7 +124,7 @@ describe('cfLinkEditorSearch Controller', function () {
 
       it('refreshes search if button was clicked', function() {
         childScope.$emit('searchSubmitted');
-        expect(cfLinkEditorSearchCtrl._resetEntities).toBeCalled();
+        sinon.assert.called(cfLinkEditorSearchCtrl._resetEntities);
       });
     });
 
@@ -177,7 +177,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it('create '+entityType+' called', function() {
-          expect(createEntityStub).toBeCalled();
+          sinon.assert.called(createEntityStub);
         });
 
         if(entityType == 'entry') {
@@ -187,7 +187,7 @@ describe('cfLinkEditorSearch Controller', function () {
         }
 
         it('addLink called', function() {
-          expect(scope.addLink).toBeCalled();
+          sinon.assert.called(scope.addLink);
         });
 
         it('addLink called with '+ entityType, function() {
@@ -200,7 +200,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it(entityType +' editor called', function() {
-          expect(entityEditorStub).toBeCalled();
+          sinon.assert.called(entityEditorStub);
         });
       });
 
@@ -213,7 +213,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it('create '+ entityType +' called', function() {
-          expect(createEntityStub).toBeCalled();
+          sinon.assert.called(createEntityStub);
         });
 
         if(entityType == 'entry') {
@@ -227,8 +227,8 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it('server error called', function() {
-          expect(notification.error).toBeCalled();
-          expect(logger.logServerWarn).toBeCalled();
+          sinon.assert.called(notification.error);
+          sinon.assert.called(logger.logServerWarn);
         });
 
         it(entityType +' editor not called', function() {
@@ -247,7 +247,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it('create '+ entityType +' called', function() {
-          expect(createEntityStub).toBeCalled();
+          sinon.assert.called(createEntityStub);
         });
 
         if(entityType == 'entry') {
@@ -257,7 +257,7 @@ describe('cfLinkEditorSearch Controller', function () {
         }
 
         it('addLink called', function() {
-          expect(scope.addLink).toBeCalled();
+          sinon.assert.called(scope.addLink);
         });
 
         it('addLink called with '+ entityType, function() {
@@ -266,8 +266,8 @@ describe('cfLinkEditorSearch Controller', function () {
 
         it('server error called', function(done) {
           _.defer(function () {
-            expect(notification.error).toBeCalled();
-            expect(logger.logServerWarn).toBeCalled();
+            sinon.assert.called(notification.error);
+            sinon.assert.called(logger.logServerWarn);
             done();
           });
         });
@@ -288,7 +288,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it('create '+ entityType +' called', function() {
-          expect(createEntityStub).toBeCalled();
+          sinon.assert.called(createEntityStub);
         });
 
         if(entityType == 'entry') {
@@ -298,7 +298,7 @@ describe('cfLinkEditorSearch Controller', function () {
         }
 
         it('addLink called', function() {
-          expect(scope.addLink).toBeCalled();
+          sinon.assert.called(scope.addLink);
         });
 
         it('addLink called with '+ entityType, function() {
@@ -413,7 +413,7 @@ describe('cfLinkEditorSearch Controller', function () {
     });
 
     it('clear the searchResult', function () {
-      expect(cfLinkEditorSearchCtrl.clearSearch).toBeCalled();
+      sinon.assert.called(cfLinkEditorSearchCtrl.clearSearch);
     });
 
     it('sets entities num on the paginator', function() {
@@ -473,7 +473,7 @@ describe('cfLinkEditorSearch Controller', function () {
       scope.paginator.numEntries = 47;
       scope.paginator.page = 0;
       cfLinkEditorSearchCtrl.loadMore();
-      expect(cfLinkEditorSearchCtrl._loadEntities).toBeCalled();
+      sinon.assert.called(cfLinkEditorSearchCtrl._loadEntities);
     });
 
     describe('on successful load response', function() {

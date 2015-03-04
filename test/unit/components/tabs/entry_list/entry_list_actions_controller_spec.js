@@ -102,19 +102,19 @@ describe('Entry List Actions Controller', function () {
       });
 
       it('calls '+action+' on first selected entry', function () {
-        expect(stubs.action1).toBeCalled();
+        sinon.assert.called(stubs.action1);
       });
 
       it('calls '+action+' on second selected entry', function () {
-        expect(stubs.action2).toBeCalled();
+        sinon.assert.called(stubs.action2);
       });
 
       it('calls '+action+' on third selected entry', function () {
-        expect(stubs.action3).toBeCalled();
+        sinon.assert.called(stubs.action3);
       });
 
       it('calls '+action+' on fourth selected entry', function () {
-        expect(stubs.action4).toBeCalled();
+        sinon.assert.called(stubs.action4);
       });
 
       it('calls success notification', function () {
@@ -134,11 +134,11 @@ describe('Entry List Actions Controller', function () {
       });
 
       it('clears selection', function () {
-        expect(stubs.removeAll).toBeCalled();
+        sinon.assert.called(stubs.removeAll);
       });
 
       it('tracks analytics event', function () {
-        expect(stubs.track).toBeCalled();
+        sinon.assert.called(stubs.track);
       });
 
       if(extraSpecs){ extraSpecs(); }
@@ -185,11 +185,11 @@ describe('Entry List Actions Controller', function () {
     });
 
     it('calls getSys on first selected entry', function () {
-      expect(stubs.action1).toBeCalled();
+      sinon.assert.called(stubs.action1);
     });
 
     it('calls getSys on second selected entry', function () {
-      expect(stubs.action2).toBeCalled();
+      sinon.assert.called(stubs.action2);
     });
 
     it('attempts to create first entries', function () {
@@ -209,11 +209,11 @@ describe('Entry List Actions Controller', function () {
     });
 
     it('clears selection', function () {
-      expect(stubs.removeAll).toBeCalled();
+      sinon.assert.called(stubs.removeAll);
     });
 
     it('tracks analytics event', function () {
-      expect(stubs.track).toBeCalled();
+      sinon.assert.called(stubs.track);
     });
   });
 

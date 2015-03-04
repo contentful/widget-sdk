@@ -122,7 +122,7 @@ describe('Create Space Dialog controller', function () {
         });
 
         it('starts spinner', function() {
-          expect(this.cfSpinner.start).toBeCalled();
+          sinon.assert.called(this.cfSpinner.start);
         });
 
         it('checks for creation permission', function() {
@@ -130,12 +130,12 @@ describe('Create Space Dialog controller', function () {
         });
 
         it('stops spinner', function() {
-          expect(stubs.stop).toBeCalled();
+          sinon.assert.called(stubs.stop);
         });
 
         it('shows error', function() {
-          expect(this.notification.error).toBeCalled();
-          expect(this.logger.logError).toBeCalled();
+          sinon.assert.called(this.notification.error);
+          sinon.assert.called(this.logger.logError);
         });
 
         it('broadcasts space creation failure', function() {
@@ -167,7 +167,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('starts spinner', function() {
-            expect(this.cfSpinner.start).toBeCalled();
+            sinon.assert.called(this.cfSpinner.start);
           });
 
           it('checks for creation permission', function() {
@@ -183,16 +183,16 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('computes usage', function() {
-            expect(this.enforcements.computeUsage).toBeCalled();
+            sinon.assert.called(this.enforcements.computeUsage);
           });
 
           it('shows error', function() {
-            expect(this.notification.error).toBeCalled();
-            expect(this.logger.logServerWarn).toBeCalled();
+            sinon.assert.called(this.notification.error);
+            sinon.assert.called(this.logger.logServerWarn);
           });
 
           it('stops spinner', function() {
-            expect(stubs.stop).toBeCalled();
+            sinon.assert.called(stubs.stop);
           });
 
           it('broadcasts space creation failure', function() {
@@ -220,7 +220,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('starts spinner', function() {
-            expect(this.cfSpinner.start).toBeCalled();
+            sinon.assert.called(this.cfSpinner.start);
           });
 
           it('checks for creation permission', function() {
@@ -236,15 +236,15 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('computes usage', function() {
-            expect(this.enforcements.computeUsage).toBeCalled();
+            sinon.assert.called(this.enforcements.computeUsage);
           });
 
           it('shows server error', function() {
-            expect(this.notification.warn).toBeCalled();
+            sinon.assert.called(this.notification.warn);
           });
 
           it('does stop spinner', function() {
-            expect(stubs.stop).toBeCalled();
+            sinon.assert.called(stubs.stop);
           });
 
           it('broadcasts space creation failure', function() {
@@ -271,7 +271,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('starts spinner', function() {
-            expect(this.cfSpinner.start).toBeCalled();
+            sinon.assert.called(this.cfSpinner.start);
           });
 
           it('checks for creation permission', function() {
@@ -287,7 +287,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('performs token lookup', function() {
-            expect(scope.performTokenLookup).toBeCalled();
+            sinon.assert.called(scope.performTokenLookup);
           });
 
           it('reuses existing space with same id', function() {
@@ -299,7 +299,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('stops spinner', function() {
-            expect(stubs.stop).toBeCalled();
+            sinon.assert.called(stubs.stop);
           });
 
           it('broadcasts space creation', function() {

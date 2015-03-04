@@ -48,7 +48,7 @@ describe('cfPersistentNotification Directive', function () {
     });
 
     scope.$apply();
-    expect(tooltipStub).toBeCalled();
+    sinon.assert.called(tooltipStub);
     tooltipStub.restore();
   });
 

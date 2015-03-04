@@ -22,7 +22,7 @@ describe('Segment service', function(){
 
   it('should enable', function() {
     this.segment.enable();
-    expect(this.document.createElement).toBeCalled();
+    sinon.assert.called(this.document.createElement);
   });
 
   it('should disable', function(){

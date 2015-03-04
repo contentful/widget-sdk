@@ -56,7 +56,7 @@ describe('Trial Watch controller', function () {
     });
 
     it('calls broadcast', function () {
-      expect(broadcastStub).toBeCalled();
+      sinon.assert.called(broadcastStub);
     });
 
     it('calls broadcast with null', function () {

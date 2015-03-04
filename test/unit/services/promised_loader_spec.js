@@ -33,11 +33,11 @@ describe('Promised loader service', function () {
     });
 
     it('calls host method', function() {
-      expect(stubs.method).toBeCalled();
+      sinon.assert.called(stubs.method);
     });
 
     it('calls success callback', function() {
-      expect(stubs.success).toBeCalled();
+      sinon.assert.called(stubs.success);
     });
 
     it('does not call error callback', function() {
@@ -58,7 +58,7 @@ describe('Promised loader service', function () {
     });
 
     it('calls method', function() {
-      expect(stubs.method).toBeCalled();
+      sinon.assert.called(stubs.method);
     });
 
     it('does not call success callback', function() {
@@ -66,7 +66,7 @@ describe('Promised loader service', function () {
     });
 
     it('calls error callback', function() {
-      expect(stubs.error).toBeCalled();
+      sinon.assert.called(stubs.error);
     });
 
     it('loader is not in progress at the end', function() {
@@ -101,7 +101,7 @@ describe('Promised loader service', function () {
     });
 
     it('calls success callback', function() {
-      expect(stubs.success).toBeCalled();
+      sinon.assert.called(stubs.success);
     });
 
     it('does not call error callback', function() {
@@ -113,7 +113,7 @@ describe('Promised loader service', function () {
     });
 
     it('calls second error callback', function() {
-      expect(stubs.error2).toBeCalled();
+      sinon.assert.called(stubs.error2);
     });
 
   });

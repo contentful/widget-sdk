@@ -47,7 +47,7 @@ xdescribe('Exception handler service', function () {
   });
 
   it('ReloadNotification triggered', function () {
-    expect(triggerStub).toBeCalled();
+    sinon.assert.called(triggerStub);
   });
 
 

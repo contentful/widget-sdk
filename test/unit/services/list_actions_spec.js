@@ -103,11 +103,11 @@ describe('List Actions Service', function () {
         });
 
         it('calls action', function() {
-          expect(entity.action).toBeCalled();
+          sinon.assert.called(entity.action);
         });
 
         it('gets version', function() {
-          expect(entity.getVersion).toBeCalled();
+          sinon.assert.called(entity.getVersion);
         });
 
         it('calls action with version as first arg', function() {
@@ -133,7 +133,7 @@ describe('List Actions Service', function () {
         });
 
         it('calls action', function() {
-          expect(entity.action).toBeCalled();
+          sinon.assert.called(entity.action);
         });
 
         it('returns the error', function() {
@@ -149,11 +149,11 @@ describe('List Actions Service', function () {
         });
 
         it('calls action', function() {
-          expect(entity.action).toBeCalled();
+          sinon.assert.called(entity.action);
         });
 
         it('sets deleted flag on entity', function() {
-          expect(entity.setDeleted).toBeCalled();
+          sinon.assert.called(entity.setDeleted);
         });
 
         it('returns a resolved promise', function() {
@@ -192,19 +192,19 @@ describe('List Actions Service', function () {
         }));
 
         it('gets selected items', function() {
-          expect(performer.params.getSelected).toBeCalled();
+          sinon.assert.called(performer.params.getSelected);
         });
 
         it('calls action callback', function() {
-          expect(params.actionCallback).toBeCalled();
+          sinon.assert.called(params.actionCallback);
         });
 
         it('starts spinner', function() {
-          expect(startSpinner).toBeCalled();
+          sinon.assert.called(startSpinner);
         });
 
         it('stops spinner', function() {
-          expect(stopSpinner).toBeCalled();
+          sinon.assert.called(stopSpinner);
         });
 
         it('handles results', function() {
@@ -223,19 +223,19 @@ describe('List Actions Service', function () {
         }));
 
         it('gets selected items', function() {
-          expect(performer.params.getSelected).toBeCalled();
+          sinon.assert.called(performer.params.getSelected);
         });
 
         it('calls call action', function() {
-          expect(performer.callAction).toBeCalled();
+          sinon.assert.called(performer.callAction);
         });
 
         it('starts spinner', function() {
-          expect(startSpinner).toBeCalled();
+          sinon.assert.called(startSpinner);
         });
 
         it('stops spinner', function() {
-          expect(stopSpinner).toBeCalled();
+          sinon.assert.called(stopSpinner);
         });
 
         it('handles results', function() {

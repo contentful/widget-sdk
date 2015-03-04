@@ -67,7 +67,7 @@ describe('ContentTypeEditor Controller', function () {
     }));
 
     it('gets published status', function () {
-      expect(scope.contentType.getPublishedStatus).toBeCalled();
+      sinon.assert.called(scope.contentType.getPublishedStatus);
     });
 
     it('sets the published content type', function () {
@@ -84,7 +84,7 @@ describe('ContentTypeEditor Controller', function () {
     }));
 
     it('fires entity update', function () {
-      expect(updateEntityStub).toBeCalled();
+      sinon.assert.called(updateEntityStub);
     });
   });
 
@@ -267,11 +267,11 @@ describe('ContentTypeEditor Controller', function () {
       });
 
       it('push is called', function () {
-        expect(pushStub).toBeCalled();
+        sinon.assert.called(pushStub);
       });
 
       it('updates ot entity', function () {
-        expect(scope.otUpdateEntity).toBeCalled();
+        sinon.assert.called(scope.otUpdateEntity);
       });
 
       it('broadcasts event', function () {
@@ -279,7 +279,7 @@ describe('ContentTypeEditor Controller', function () {
       });
 
       it('fires analytics event', function () {
-        expect(modifiedContentTypeStub).toBeCalled();
+        sinon.assert.called(modifiedContentTypeStub);
       });
     });
 
@@ -290,12 +290,12 @@ describe('ContentTypeEditor Controller', function () {
       });
 
       it('push is called', function () {
-        expect(pushStub).toBeCalled();
+        sinon.assert.called(pushStub);
       });
 
       it('fires server error notification', function () {
-        expect(logger.logSharejsWarn).toBeCalled();
-        expect(notification.error).toBeCalled();
+        sinon.assert.called(logger.logSharejsWarn);
+        sinon.assert.called(notification.error);
       });
     });
 

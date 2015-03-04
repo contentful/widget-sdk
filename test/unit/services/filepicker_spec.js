@@ -68,7 +68,7 @@ describe('Filepicker service', function () {
       });
 
       it('filepicker method gets called', function () {
-        expect(makeDropPaneStub).toBeCalled();
+        sinon.assert.called(makeDropPaneStub);
       });
 
       it('filepicker method gets called with dropPane object', function () {
@@ -131,7 +131,7 @@ describe('Filepicker service', function () {
         var file = {fileName: 'name', mimetype: 'type', details: {size: 'size'}};
         storeStub.callsArgWith(2, file);
         filepicker.store('newurl', file).then(successStub).finally(function () {
-          expect(successStub).toBeCalled();
+          sinon.assert.called(successStub);
           expect(successStub.args[0][0]).toEqual({
             url: 'newurl',
             filename: 'name',
