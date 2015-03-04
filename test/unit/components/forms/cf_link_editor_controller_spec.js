@@ -86,7 +86,7 @@ describe('LinkEditorController', function () {
     });
 
     it('initializes entity cache', function() {
-      expect(entityCacheMock).toBeCalledWith(scope.spaceContext.space, 'getEntries');
+      sinon.assert.calledWith(entityCacheMock, scope.spaceContext.space, 'getEntries');
     });
 
     it('initializes link content types', function() {

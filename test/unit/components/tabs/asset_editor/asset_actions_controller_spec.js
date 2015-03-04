@@ -65,7 +65,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('broadcasts event', function() {
-        expect(scope.broadcastFromSpace).toBeCalledWith('entityDeleted');
+        sinon.assert.calledWith(scope.broadcastFromSpace, 'entityDeleted');
       });
     });
   });
@@ -241,7 +241,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('sets validation errors', function() {
-        expect(scope.setValidationErrors).toBeCalledWith(errors);
+        sinon.assert.calledWith(scope.setValidationErrors, errors);
       });
 
       it('calls action', function() {
@@ -348,7 +348,7 @@ describe('Asset Actions Controller', function () {
       });
 
       it('updates ot entity', function() {
-        expect(versionStub).toBeCalledWith(1);
+        sinon.assert.calledWith(versionStub, 1);
       });
     });
   });

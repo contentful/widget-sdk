@@ -41,11 +41,11 @@ describe('Authorization service', function () {
     });
 
     it('calls worf with tokenLookup', function () {
-      expect(worfStub).toBeCalledWith(tokenLookup);
+      sinon.assert.calledWith(worfStub, tokenLookup);
     });
 
     it('sets a space', function () {
-      expect(setSpaceStub).toBeCalledWith(space);
+      sinon.assert.calledWith(setSpaceStub, space);
     });
   });
 

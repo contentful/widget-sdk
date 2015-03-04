@@ -72,11 +72,11 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('broadcasts event', function() {
-        expect(scope.broadcastFromSpace).toBeCalledWith('entityDeleted');
+        sinon.assert.calledWith(scope.broadcastFromSpace, 'entityDeleted');
       });
 
       it('removes content type', function() {
-        expect(stubs.removeContentType).toBeCalledWith(contentType);
+        sinon.assert.calledWith(stubs.removeContentType, contentType);
       });
     });
   });
@@ -192,7 +192,7 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('sets validation errors', function() {
-        expect(scope.setValidationErrors).toBeCalledWith(errors);
+        sinon.assert.calledWith(scope.setValidationErrors, errors);
       });
 
       it('calls action', function() {

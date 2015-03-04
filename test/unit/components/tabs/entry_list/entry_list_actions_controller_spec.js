@@ -158,7 +158,7 @@ describe('Entry List Actions Controller', function () {
   makePerformTests('unpublish', 0);
   makePerformTests('delete', 0, function () {
     it('broadcasts event for sucessfully deleted entry', function () {
-      expect(stubs.broadcast).toBeCalledWith('entityDeleted');
+      sinon.assert.calledWith(stubs.broadcast, 'entityDeleted');
     });
   });
 
@@ -193,11 +193,11 @@ describe('Entry List Actions Controller', function () {
     });
 
     it('attempts to create first entries', function () {
-      expect(stubs.createEntry).toBeCalledWith('foo');
+      sinon.assert.calledWith(stubs.createEntry, 'foo');
     });
 
     it('attempts to create second entries', function () {
-      expect(stubs.createEntry).toBeCalledWith('bar');
+      sinon.assert.calledWith(stubs.createEntry, 'bar');
     });
 
     it('calls success notification', function () {

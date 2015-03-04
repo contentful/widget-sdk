@@ -195,11 +195,11 @@ describe('Field Settings Editor Controller', function () {
         });
 
         it('at called with field path', function() {
-          expect(stubs.at).toBeCalledWith(['fields', 2]);
+          sinon.assert.calledWith(stubs.at, ['fields', 2]);
         });
 
         it('sets new field on otdoc', function() {
-          expect(stubs.set).toBeCalledWith(scope.field);
+          sinon.assert.calledWith(stubs.set, scope.field);
         });
 
         it('updates ot entity', function() {
@@ -256,7 +256,7 @@ describe('Field Settings Editor Controller', function () {
         });
 
         it('at called with field path', function() {
-          expect(stubs.at).toBeCalledWith(['fields', 2, 'propname']);
+          sinon.assert.calledWith(stubs.at, ['fields', 2, 'propname']);
         });
 
         it('gets current property value for toggling', function() {
@@ -264,7 +264,7 @@ describe('Field Settings Editor Controller', function () {
         });
 
         it('sets new property on otdoc', function() {
-          expect(stubs.set).toBeCalledWith(false);
+          sinon.assert.calledWith(stubs.set, false);
         });
 
         it('updates ot entity', function() {
@@ -333,7 +333,7 @@ describe('Field Settings Editor Controller', function () {
         });
 
         it('at called with field path', function() {
-          expect(stubs.at).toBeCalledWith(['fields', 2]);
+          sinon.assert.calledWith(stubs.at, ['fields', 2]);
         });
 
         it('deletes property on otdoc', function() {

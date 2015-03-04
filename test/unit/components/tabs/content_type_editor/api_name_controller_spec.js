@@ -98,11 +98,11 @@ describe('ApiNameController', function () {
             });
 
             it('id is set on subdoc', function() {
-              expect(stubs.set).toBeCalledWith('fieldname');
+              sinon.assert.calledWith(stubs.set, 'fieldname');
             });
 
             it('sets display field', function() {
-              expect(scope.setDisplayField).toBeCalledWith(scope.field);
+              sinon.assert.calledWith(scope.setDisplayField, scope.field);
             });
           });
 
@@ -124,11 +124,11 @@ describe('ApiNameController', function () {
             });
 
             it('id is set on subdoc', function() {
-              expect(stubs.set).toBeCalledWith('fieldname');
+              sinon.assert.calledWith(stubs.set, 'fieldname');
             });
 
             it('sets display field', function() {
-              expect(scope.setDisplayField).toBeCalledWith(scope.field);
+              sinon.assert.calledWith(scope.setDisplayField, scope.field);
             });
           });
         });
@@ -146,7 +146,7 @@ describe('ApiNameController', function () {
           });
 
           it('id is set on subdoc', function() {
-            expect(stubs.set).toBeCalledWith('fieldname');
+            sinon.assert.calledWith(stubs.set, 'fieldname');
           });
 
           it('gets id from subdoc', function() {

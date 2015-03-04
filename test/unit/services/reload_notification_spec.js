@@ -67,21 +67,21 @@ describe('ReloadNotification service', function () {
 
       it('when success', function () {
         run($q.when('derp'));
-        expect(successHandler).toBeCalledWith('derp');
+        sinon.assert.calledWith(successHandler, 'derp');
         sinon.assert.notCalled(errorHandler);
       });
 
       it('when handled error', function () {
         run($q.reject(error));
         sinon.assert.notCalled(successHandler);
-        expect(errorHandler).toBeCalledWith(error);
+        sinon.assert.calledWith(errorHandler, error);
       });
 
       it('when unhandled error', function () {
         error = {};
         run($q.reject(error));
         sinon.assert.notCalled(successHandler);
-        expect(errorHandler).toBeCalledWith(error);
+        sinon.assert.calledWith(errorHandler, error);
       });
     });
 

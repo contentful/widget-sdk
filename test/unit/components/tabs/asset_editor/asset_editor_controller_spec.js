@@ -166,7 +166,7 @@ describe('Asset editor controller', function () {
       });
 
       it('looks for otDoc with locale', function() {
-        expect(stubs.peek).toBeCalledWith(scope.otDoc, otPath);
+        sinon.assert.calledWith(stubs.peek, scope.otDoc, otPath);
       });
 
       it('creates otDoc', function() {

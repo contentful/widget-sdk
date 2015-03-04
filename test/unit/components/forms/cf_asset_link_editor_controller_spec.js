@@ -84,7 +84,7 @@ describe('AssetLinkEditorController', function () {
     });
 
     it('initializes entity cache', function() {
-      expect(entityCacheMock).toBeCalledWith(scope.spaceContext.space, 'getAssets');
+      sinon.assert.calledWith(entityCacheMock, scope.spaceContext.space, 'getAssets');
     });
 
     it('initializes link content types', function() {

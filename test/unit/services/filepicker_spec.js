@@ -104,7 +104,7 @@ describe('Filepicker service', function () {
         var file = {file: 'name'};
         pickStub.callsArgWith(1, file);
         filepicker.pick().then(successStub).finally(function () {
-          expect(successStub).toBeCalledWith(file);
+          sinon.assert.calledWith(successStub, file);
         });
       });
 
@@ -113,7 +113,7 @@ describe('Filepicker service', function () {
         var error = new Error('fileerror');
         pickStub.callsArgWith(2, error);
         filepicker.pick().catch(errorStub).finally(function () {
-          expect(errorStub).toBeCalledWith(error);
+          sinon.assert.calledWith(errorStub, error);
         });
       });
 
@@ -147,7 +147,7 @@ describe('Filepicker service', function () {
         var error = new Error('fileerror');
         storeStub.callsArgWith(3, error);
         filepicker.store('', {details: {}}).catch(errorStub).finally(function () {
-          expect(errorStub).toBeCalledWith(error);
+          sinon.assert.calledWith(errorStub, error);
         });
       });
 

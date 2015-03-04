@@ -52,7 +52,7 @@ describe('Accordion Controller', function () {
     });
 
     it('item is opened', function () {
-      expect(scope.openAccordionItem).toBeCalledWith(item);
+      sinon.assert.calledWith(scope.openAccordionItem, item);
     });
   });
 

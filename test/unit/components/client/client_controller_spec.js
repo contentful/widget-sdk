@@ -166,7 +166,7 @@ describe('Client Controller', function () {
     });
 
     it('analytics is triggered', function () {
-      expect(stubs.auxPanel).toBeCalledWith(true, {});
+      sinon.assert.calledWith(stubs.auxPanel, true, {});
     });
   });
 
@@ -197,7 +197,7 @@ describe('Client Controller', function () {
     });
 
     it('setSpace is called', function () {
-      expect(stubs.setSpace).toBeCalledWith(scope.spaceContext.space);
+      sinon.assert.calledWith(stubs.setSpace, scope.spaceContext.space);
     });
   });
 
@@ -266,7 +266,7 @@ describe('Client Controller', function () {
       });
 
       it('route to another space', function () {
-        expect(stubs.goToSpace).toBeCalledWith(space);
+        sinon.assert.calledWith(stubs.goToSpace, space);
       });
     });
 
@@ -285,7 +285,7 @@ describe('Client Controller', function () {
       });
 
       it('route to another space', function () {
-        expect(stubs.goToSpace).toBeCalledWith(space);
+        sinon.assert.calledWith(stubs.goToSpace, space);
       });
 
       it('location in account set to false', function() {
@@ -346,7 +346,7 @@ describe('Client Controller', function () {
       });
 
       it('route to another space', function () {
-        expect(stubs.goToOrganization).toBeCalledWith('1234', true);
+        sinon.assert.calledWith(stubs.goToOrganization, '1234', true);
       });
     });
 
@@ -440,7 +440,7 @@ describe('Client Controller', function () {
       });
 
       it('space data is set on analytics', function () {
-        expect(stubs.setSpace).toBeCalledWith(scope.spaces[0]);
+        sinon.assert.calledWith(stubs.setSpace, scope.spaces[0]);
       });
 
       it('location in account flag is false', function() {
@@ -479,13 +479,13 @@ describe('Client Controller', function () {
     it('space data is set on analytics', function () {
       stubs.routingSpaceId.returns(456);
       scope.$digest();
-      expect(stubs.setSpace).toBeCalledWith(scope.spaces[1]);
+      sinon.assert.calledWith(stubs.setSpace, scope.spaces[1]);
     });
 
     it('redirects to a non existent space and defaults to first space', function () {
       stubs.routingSpaceId.returns(789);
       scope.$digest();
-      expect(stubs.goToSpace).toBeCalledWith(scope.spaces[0]);
+      sinon.assert.calledWith(stubs.goToSpace, scope.spaces[0]);
     });
 
     it('redirects to a space with no routing id and defaults to first space', function () {
@@ -494,7 +494,7 @@ describe('Client Controller', function () {
         root: true
       });
       scope.$digest();
-      expect(stubs.goToSpace).toBeCalledWith(scope.spaces[0]);
+      sinon.assert.calledWith(stubs.goToSpace, scope.spaces[0]);
     });
 
     describe('no space id for redirect provided and not redirecting to root', function () {
@@ -618,7 +618,7 @@ describe('Client Controller', function () {
       });
 
       it('shows create space dialog', function() {
-        expect(scope.showCreateSpaceDialog).toBeCalledWith('123abc');
+        sinon.assert.calledWith(scope.showCreateSpaceDialog, '123abc');
       });
     });
 
@@ -671,7 +671,7 @@ describe('Client Controller', function () {
         });
 
         it('sets token lookup', function() {
-          expect(stubs.authenticationTokenLookup).toBeCalledWith(token);
+          sinon.assert.calledWith(stubs.authenticationTokenLookup, token);
         });
 
         it('sets user', function() {
@@ -679,7 +679,7 @@ describe('Client Controller', function () {
         });
 
         it('updates spaces', function() {
-          expect(scope.spaces[0].update).toBeCalledWith(spaces[0]);
+          sinon.assert.calledWith(scope.spaces[0].update, spaces[0]);
         });
       });
 
@@ -690,7 +690,7 @@ describe('Client Controller', function () {
         });
 
         it('sets token lookup', function() {
-          expect(stubs.authenticationTokenLookup).toBeCalledWith(token);
+          sinon.assert.calledWith(stubs.authenticationTokenLookup, token);
         });
 
         it('sets user', function() {
@@ -698,7 +698,7 @@ describe('Client Controller', function () {
         });
 
         it('wraps the space', function() {
-          expect(stubs.newSpace).toBeCalledWith(token.spaces[0]);
+          sinon.assert.calledWith(stubs.newSpace, token.spaces[0]);
         });
       });
     });
@@ -746,7 +746,7 @@ describe('Client Controller', function () {
           }
         };
         childScope.$emit('iframeMessage', data);
-        expect(notification.warn).toBeCalledWith('hai');
+        sinon.assert.calledWith(notification.warn, 'hai');
       });
 
       it('calls info notification', function () {
@@ -758,7 +758,7 @@ describe('Client Controller', function () {
           }
         };
         childScope.$emit('iframeMessage', data);
-        expect(notification.info).toBeCalledWith('hai');
+        sinon.assert.calledWith(notification.info, 'hai');
       });
     });
 
@@ -774,7 +774,7 @@ describe('Client Controller', function () {
       });
 
       it('calls into location', function() {
-        expect(stubs.path).toBeCalledWith('/foobar/baz');
+        sinon.assert.calledWith(stubs.path, '/foobar/baz');
       });
     });
 
@@ -820,7 +820,7 @@ describe('Client Controller', function () {
     });
 
     it('sets the path', function() {
-      expect(stubs.path).toBeCalledWith('/account/profile/user');
+      sinon.assert.calledWith(stubs.path, '/account/profile/user');
     });
 
     it('sets account section flag', function() {
@@ -835,7 +835,7 @@ describe('Client Controller', function () {
     });
 
     it('sets the path', function() {
-      expect(stubs.path).toBeCalledWith('/account/section');
+      sinon.assert.calledWith(stubs.path, '/account/section');
     });
   });
 
@@ -876,7 +876,7 @@ describe('Client Controller', function () {
       });
 
       it('updates spaces', function() {
-        expect(scope.spaces[0].update).toBeCalledWith(tokenLookup.spaces[0]);
+        sinon.assert.calledWith(scope.spaces[0].update, tokenLookup.spaces[0]);
       });
     });
 
@@ -986,7 +986,7 @@ describe('Client Controller', function () {
       });
 
       it('gets an organization', function() {
-        expect(stubs.organization).toBeCalledWith('orgid');
+        sinon.assert.calledWith(stubs.organization, 'orgid');
       });
 
       it('checks for permission on organization', function() {

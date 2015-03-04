@@ -64,7 +64,7 @@ describe('Editing interfaces service', function () {
       });
 
       it('requests the id', function() {
-        expect(contentType.getEditingInterface).toBeCalledWith('edid');
+        sinon.assert.calledWith(contentType.getEditingInterface, 'edid');
       });
 
       it('gets a config', function() {
@@ -92,7 +92,7 @@ describe('Editing interfaces service', function () {
       });
 
       it('requests the id', function() {
-        expect(contentType.getEditingInterface).toBeCalledWith('edid');
+        sinon.assert.calledWith(contentType.getEditingInterface, 'edid');
       });
 
       it('gets a default config', function() {
@@ -110,7 +110,7 @@ describe('Editing interfaces service', function () {
       });
 
       it('requests the id', function() {
-        expect(contentType.getEditingInterface).toBeCalledWith('edid');
+        sinon.assert.calledWith(contentType.getEditingInterface, 'edid');
       });
 
       it('gets an error', function() {

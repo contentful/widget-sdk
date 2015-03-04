@@ -21,7 +21,7 @@ describe('New content type published', function () {
 
   it('registers a new published content type', function () {
     spaceContext.registerPublishedContentType(contentType);
-    expect(broadcastSpy).toBeCalledWith('contentTypePublished');
+    sinon.assert.calledWith(broadcastSpy, 'contentTypePublished');
   });
 
   describe('fires and handles an event on the addDropdownButton directive', function () {

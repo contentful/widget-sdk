@@ -154,7 +154,7 @@ describe('Asset List Actions Controller', function () {
   makePerformTests('unpublish', 0);
   makePerformTests('delete', 0, function () {
     it('broadcasts event for sucessfully deleted asset', function () {
-      expect(stubs.broadcast).toBeCalledWith('entityDeleted');
+      sinon.assert.calledWith(stubs.broadcast, 'entityDeleted');
     });
   });
 

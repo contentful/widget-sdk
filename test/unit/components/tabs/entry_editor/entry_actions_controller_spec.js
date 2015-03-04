@@ -66,7 +66,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('broadcasts event', function() {
-        expect(scope.broadcastFromSpace).toBeCalledWith('entityDeleted');
+        sinon.assert.calledWith(scope.broadcastFromSpace, 'entityDeleted');
       });
     });
   });
@@ -84,7 +84,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalledWith('typeid');
+        sinon.assert.calledWith(stubs.action, 'typeid');
       });
 
       it('shows error notification', function() {
@@ -105,11 +105,11 @@ describe('Entry Actions Controller', function () {
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalledWith('typeid');
+        sinon.assert.calledWith(stubs.action, 'typeid');
       });
 
       it('calls entryEditor', function() {
-        expect(stubs.entryEditor).toBeCalledWith(entry);
+        sinon.assert.calledWith(stubs.entryEditor, entry);
       });
     });
   });
@@ -370,7 +370,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('sets validation errors', function() {
-        expect(scope.setValidationErrors).toBeCalledWith(errors);
+        sinon.assert.calledWith(scope.setValidationErrors, errors);
       });
 
       it('calls action', function() {
@@ -404,7 +404,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('sets validation errors', function() {
-        expect(scope.setValidationErrors).toBeCalledWith(errors);
+        sinon.assert.calledWith(scope.setValidationErrors, errors);
       });
     });
 
@@ -503,7 +503,7 @@ describe('Entry Actions Controller', function () {
       });
 
       it('updates ot entity', function() {
-        expect(versionStub).toBeCalledWith(1);
+        sinon.assert.calledWith(versionStub, 1);
       });
     });
   });

@@ -94,7 +94,7 @@ describe('EntryLinkEditorController', function () {
     });
 
     it('initializes entity cache', function() {
-      expect(entityCacheMock).toBeCalledWith(scope.spaceContext.space, 'getEntries');
+      sinon.assert.calledWith(entityCacheMock, scope.spaceContext.space, 'getEntries');
     });
 
     it('initializes link content types', function() {
@@ -306,7 +306,7 @@ describe('EntryLinkEditorController', function () {
       });
 
       it('gets existing title', function() {
-        expect(stubs.entryTitle).toBeCalledWith(entity, 'en-US');
+        sinon.assert.calledWith(stubs.entryTitle, entity, 'en-US');
       });
 
       it('returns existing title', function() {
@@ -360,7 +360,7 @@ describe('EntryLinkEditorController', function () {
         });
 
         it('gets existing description', function() {
-          expect(stubs.localizedField).toBeCalledWith(entity, 'data.fields.description');
+          sinon.assert.calledWith(stubs.localizedField, entity, 'data.fields.description');
         });
 
         it('returns existing description', function() {

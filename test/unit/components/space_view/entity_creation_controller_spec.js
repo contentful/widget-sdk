@@ -67,7 +67,7 @@ describe('EntityCreationController', function () {
       });
 
       it('determines enforcements', function () {
-        expect(stubs.enforcement).toBeCalledWith([], 'entry');
+        sinon.assert.calledWith(stubs.enforcement, [], 'entry');
       });
 
       it('notifies of the error', function () {
@@ -131,7 +131,7 @@ describe('EntityCreationController', function () {
       });
 
       it('determines enforcements', function () {
-        expect(stubs.enforcement).toBeCalledWith([], 'asset');
+        sinon.assert.calledWith(stubs.enforcement, [], 'asset');
       });
 
       it('notifies of the error', function () {
@@ -195,7 +195,7 @@ describe('EntityCreationController', function () {
       });
 
       it('determines enforcements', function () {
-        expect(stubs.enforcement).toBeCalledWith([], 'contentType');
+        sinon.assert.calledWith(stubs.enforcement, [], 'contentType');
       });
 
       it('notifies of the error', function () {
@@ -247,7 +247,7 @@ describe('EntityCreationController', function () {
       });
 
       it('computes the api key usage', function () {
-        expect(stubs.computeUsage).toBeCalledWith('apiKey');
+        sinon.assert.calledWith(stubs.computeUsage, 'apiKey');
       });
 
       it('notifies of the error', function () {
@@ -268,7 +268,7 @@ describe('EntityCreationController', function () {
       });
 
       it('computes the api key usage', function () {
-        expect(stubs.computeUsage).toBeCalledWith('apiKey');
+        sinon.assert.calledWith(stubs.computeUsage, 'apiKey');
       });
 
       it('calls the space create method', function () {

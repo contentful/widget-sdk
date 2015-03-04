@@ -96,7 +96,7 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('emits fileUploaded event', function() {
-        expect(scope.$emit).toBeCalledWith('fileUploaded');
+        sinon.assert.calledWith(scope.$emit, 'fileUploaded');
         expect(scope.$emit.args[0][1]).toEqual({
           upload: 'newurl',
           fileName: 'newfilename',

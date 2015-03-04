@@ -118,7 +118,7 @@ describe('Create Space Dialog controller', function () {
         });
 
         it('broadcasts space creation request', function() {
-          expect(this.broadcastSpy).toBeCalledWith('spaceCreationRequested');
+          sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationRequested');
         });
 
         it('starts spinner', function() {
@@ -126,7 +126,7 @@ describe('Create Space Dialog controller', function () {
         });
 
         it('checks for creation permission', function() {
-          expect(scope.canCreateSpaceInOrg).toBeCalledWith('orgid');
+          sinon.assert.calledWith(scope.canCreateSpaceInOrg, 'orgid');
         });
 
         it('stops spinner', function() {
@@ -139,7 +139,7 @@ describe('Create Space Dialog controller', function () {
         });
 
         it('broadcasts space creation failure', function() {
-          expect(this.broadcastSpy).toBeCalledWith('spaceCreationFailed');
+          sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationFailed');
         });
       });
 
@@ -163,7 +163,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('broadcasts space creation request', function() {
-            expect(this.broadcastSpy).toBeCalledWith('spaceCreationRequested');
+            sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationRequested');
           });
 
           it('starts spinner', function() {
@@ -171,7 +171,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('checks for creation permission', function() {
-            expect(scope.canCreateSpaceInOrg).toBeCalledWith('orgid');
+            sinon.assert.calledWith(scope.canCreateSpaceInOrg, 'orgid');
           });
 
           it('calls client lib with data', function() {
@@ -196,7 +196,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('broadcasts space creation failure', function() {
-            expect(this.broadcastSpy).toBeCalledWith('spaceCreationFailed');
+            sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationFailed');
           });
         });
 
@@ -216,7 +216,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('broadcasts space creation request', function() {
-            expect(this.broadcastSpy).toBeCalledWith('spaceCreationRequested');
+            sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationRequested');
           });
 
           it('starts spinner', function() {
@@ -224,7 +224,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('checks for creation permission', function() {
-            expect(scope.canCreateSpaceInOrg).toBeCalledWith('orgid');
+            sinon.assert.calledWith(scope.canCreateSpaceInOrg, 'orgid');
           });
 
           it('calls client lib with data', function() {
@@ -248,7 +248,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('broadcasts space creation failure', function() {
-            expect(this.broadcastSpy).toBeCalledWith('spaceCreationFailed');
+            sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationFailed');
           });
         });
 
@@ -267,7 +267,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('broadcasts space creation request', function() {
-            expect(this.broadcastSpy).toBeCalledWith('spaceCreationRequested');
+            sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationRequested');
           });
 
           it('starts spinner', function() {
@@ -275,7 +275,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('checks for creation permission', function() {
-            expect(scope.canCreateSpaceInOrg).toBeCalledWith('orgid');
+            sinon.assert.calledWith(scope.canCreateSpaceInOrg, 'orgid');
           });
 
           it('calls client lib with data', function() {
@@ -295,7 +295,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('selects space', function() {
-            expect(scope.selectSpace).toBeCalledWith(space);
+            sinon.assert.calledWith(scope.selectSpace, space);
           });
 
           it('stops spinner', function() {
@@ -303,7 +303,7 @@ describe('Create Space Dialog controller', function () {
           });
 
           it('broadcasts space creation', function() {
-            expect(scope.$emit).toBeCalledWith('spaceCreated');
+            sinon.assert.calledWith(scope.$emit, 'spaceCreated');
           });
         });
 

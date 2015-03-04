@@ -122,7 +122,7 @@ describe('List Actions Service', function () {
         });
 
         it('event is broadcasted', function() {
-          expect($rootScope.$broadcast).toBeCalledWith('eventname', changedEntity);
+          sinon.assert.calledWith($rootScope.$broadcast, 'eventname', changedEntity);
         });
       });
 
@@ -164,7 +164,7 @@ describe('List Actions Service', function () {
         });
 
         it('entityDeleted event is broadcasted', function() {
-          expect($rootScope.$broadcast).toBeCalledWith('entityDeleted', entity);
+          sinon.assert.calledWith($rootScope.$broadcast, 'entityDeleted', entity);
         });
       });
     });
@@ -208,7 +208,7 @@ describe('List Actions Service', function () {
         });
 
         it('handles results', function() {
-          expect(performer.handlePerformResult).toBeCalledWith(results, params, 2);
+          sinon.assert.calledWith(performer.handlePerformResult, results, params, 2);
         });
       });
 
@@ -239,7 +239,7 @@ describe('List Actions Service', function () {
         });
 
         it('handles results', function() {
-          expect(performer.handlePerformResult).toBeCalledWith([results[0]], params, 1);
+          sinon.assert.calledWith(performer.handlePerformResult, [results[0]], params, 1);
         });
       });
 

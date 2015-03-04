@@ -139,7 +139,7 @@ describe('cfLinkEditorSearch Controller', function () {
       });
 
       it('calls add link with the given entity', function () {
-        expect(scope.addLink).toBeCalledWith(entity);
+        sinon.assert.calledWith(scope.addLink, entity);
       });
 
       it('clears the search', function () {
