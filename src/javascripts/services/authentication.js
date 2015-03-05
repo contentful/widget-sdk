@@ -1,21 +1,17 @@
 'use strict';
 
-angular.module('contentful').provider('authentication', ['$injector', function AuthenticationProvider($injector) {
+angular.module('contentful').provider('authentication', function AuthenticationProvider() {
   var authApp, marketingApp, QueryLinkResolver;
 
   var logger, environment, contentfulClient, $window, $location, $q, $rootScope, notification;
 
-  this.setEnvVars = function() {
+  function setEnvVars($injector) {
     environment       = $injector.get('environment');
     contentfulClient  = $injector.get('privateContentfulClient');
     authApp           = '//'+environment.settings.base_host+'/';
     marketingApp      = environment.settings.marketing_url+'/';
     QueryLinkResolver = contentfulClient.QueryLinkResolver;
-  };
-
-  this.authApp = function(e) {
-    authApp = e;
-  };
+  }
 
   function Authentication(client){
     this.client = client;
@@ -147,8 +143,8 @@ angular.module('contentful').provider('authentication', ['$injector', function A
     var client         = $injector.get('client');
 
     var authentication = new Authentication(client);
-    this.setEnvVars();
+    setEnvVars($injector);
     return authentication;
   }];
 
-}]);
+});
