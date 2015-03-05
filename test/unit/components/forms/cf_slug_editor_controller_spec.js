@@ -16,7 +16,6 @@ describe('SlugEditorController', function () {
     dotty.put(this.scope, 'fieldData.value', null);
     dotty.put(this.scope, 'locale.code', 'en_US');
     dotty.put(this.scope, 'field.apiName', 'slug');
-    this.scope.otEditable = true;
     this.scope.otGetValue = sinon.stub().returns(null);
 
     this.scope.otChangeString = function (value) {
@@ -30,15 +29,14 @@ describe('SlugEditorController', function () {
         createdAt: '2015-01-28T10:38:28.989Z'
       }
     });
-    this.scope.entry.isPublished = sinon.stub().returns(false);
-    this.scope.spaceContext.entryTitle = sinon.stub().returns(null);
-
     this.controller = this.$inject('$controller')('SlugEditorController', {$scope: this.scope});
     this.$apply();
   });
 
   describe('#titleToSlug', function () {
     beforeEach(function () {
+      this.scope.otEditable = true;
+      this.scope.entry.isPublished = sinon.stub().returns(false);
       this.scope.spaceContext.entryTitle = sinon.stub().returns(null);
       this.$apply();
     });
@@ -107,8 +105,26 @@ describe('SlugEditorController', function () {
 
   });
 
+  describe('#alreadyPublished', function () {
+    beforeEach(function () {
+      this.scope.otEditable = true;
+      this.scope.entry.isPublished = sinon.stub().returns(true);
+      this.scope.spaceContext.entryTitle = sinon.stub().returns('old title');
+      this.scope.fieldData.value = 'old-title';
+      this.$apply();
+    });
+
+    it('does not track title when entry is already published', function () {
+      this.scope.spaceContext.entryTitle = sinon.stub().returns('New title');
+      this.$apply();
+      expect(this.scope.fieldData.value).toEqual('old-title');
+    });
+  });
+
   describe('#uniqueness', function () {
     beforeEach(function () {
+      this.scope.otEditable = true;
+      this.scope.entry.isPublished = sinon.stub().returns(false);
       this.scope.spaceContext.entryTitle = sinon.stub().returns(null);
       this.$apply();
     });
