@@ -10,7 +10,7 @@ Text and background colors
 Colors used throughout the site
 
 Markup:
-div(class="colors {$modifiers}") hello, text
+div(class="colors {{modifier_class}}") hello, text
 
 colors__gray-lightest         - $gray-lightest \#F5F5F5 rgb(245, 245, 245), used for light rules
 colors__gray-lighter          - $gray-lighter \#EBEBEB rgb(235, 235, 235)
@@ -192,4 +192,61 @@ $secondary-gradient-to = #DEE8FF
 $secondary-shadow = #F7FAFD
 .colors__secondary-shadow
   background-color: $secondary-shadow
+
+/*
+New Colors
+
+Colors used on the redesign
+
+Markup:
+div(class="colors {{modifier_class}}") hello, text
+
+cfrd-colors__ - modifier description
+.colors__cfrd-dark-blue     - $cfrd-dark-blue \#21304A
+.colors__cfrd-blue          - $cfrd-blue \#28A8E9
+.colors__cfrd-light-blue    - $cfrd-light-blue \#A7E2FF
+.colors__cfrd-lightest-blue - $cfrd-lightest-blue \#E8F7FF
+.colors__cfrd-green         - $cfrd-green \#16C98D
+.colors__cfrd-dark-gray     - $cfrd-dark-gray \#2D2F31
+.colors__cfrd-gray          - $cfrd-gray \#A2A9B1
+.colors__cfrd-light-gray    - $cfrd-light-gray \#D6DCE4
+.colors__cfrd-white         - $cfrd-white \#F6F8FA
+
+Styleguide 1.2
+*/
+$cfrd-dark-blue     = #21304A
+.colors__cfrd-dark-blue
+  background-color: $cfrd-dark-blue
+
+$cfrd-blue          = #28A8E9
+.colors__cfrd-blue
+  background-color: $cfrd-blue
+
+$cfrd-light-blue    = #A7E2FF
+.colors__cfrd-light-blue
+  background-color: $cfrd-light-blue
+
+$cfrd-lightest-blue = #E8F7FF
+.colors__cfrd-lightest-blue
+  background-color: $cfrd-lightest-blue
+
+$cfrd-green         = #16C98D
+.colors__cfrd-green
+  background-color: $cfrd-green
+
+$cfrd-dark-gray     = #2D2F31
+.colors__cfrd-dark-gray
+  background-color: $cfrd-dark-gray
+
+$cfrd-gray          = #A2A9B1
+.colors__cfrd-gray
+  background-color: $cfrd-gray
+
+$cfrd-light-gray    = #D6DCE4
+.colors__cfrd-light-gray
+  background-color: $cfrd-light-gray
+
+$cfrd-white         = #F6F8FA
+.colors__cfrd-white
+  background-color: $cfrd-white
 
