@@ -1,212 +1,149 @@
 'use strict';
 
 describe('logger service', function () {
-  var logger, stringifySafe, toJsonReplacer;
-  var $rootScope;
-  var routeStub, userStub;
-  var loggerStubs = {};
+  beforeEach(function(){
+    module('contentful/test');
+    this.bugsnag = this.$inject('bugsnag');
+    sinon.stub(this.bugsnag, 'enable');
+    sinon.stub(this.bugsnag, 'disable');
+    sinon.stub(this.bugsnag, 'notify');
+    sinon.stub(this.bugsnag, 'notifyException');
+    sinon.stub(this.bugsnag, 'refresh');
 
-  function declareOptionTests(stubName) {
-    var metadataIndex = 2;
-    it('has tags', function () {
-      expect(loggerStubs[stubName].args[0][metadataIndex].params).toBeDefined();
+    this.routing = this.$inject('routing');
+    sinon.stub(this.routing, 'getRoute').returns({
+      params: {viewType: 'testView'},
+      pathParams: {spaceId: '123456'}
     });
 
-    it('has a viewport tag', function () {
-      expect(loggerStubs[stubName].args[0][metadataIndex].params.viewport).toBe('innerWidth'+'x'+'innerHeight');
+    this.logger = this.$inject('realLogger');
+  });
+  
+  it('should enable', function(){
+    this.logger.enable();
+    sinon.assert.called(this.bugsnag.enable);
+  });
+
+  it('should disable', function(){
+    this.logger.disable();
+    sinon.assert.called(this.bugsnag.disable);
+    this.logger.log('foo');
+    sinon.assert.notCalled(this.bugsnag.notify);
+  });
+
+  it('should log exceptions', function(){
+    var exception = new Error();
+    this.logger.logException(exception, {meta: 'Data'});
+    sinon.assert.calledWith(this.bugsnag.notifyException,
+      exception, null, sinon.match({meta: 'Data'}), 'error');
+  });
+
+  it('should refresh when a tab has changed', function(){
+    this.logger.tabChanged();
+    sinon.assert.called(this.bugsnag.refresh);
+  });
+
+  it('should log errors', function(){
+    this.logger.logError('omfg', {meta: 'Data'});
+    sinon.assert.calledWith(this.bugsnag.notify, 'Logged Error', 'omfg', sinon.match({meta: 'Data'}), 'error');
+  });
+
+  it('should log warnings', function(){
+    this.logger.logWarn('omfg', {meta: 'Data'});
+    sinon.assert.calledWith(this.bugsnag.notify, 'Logged Warning', 'omfg', sinon.match({meta: 'Data'}), 'warning');
+  });
+
+  it('should log server errors', function(){
+    this.logger.logServerError('omfg', {meta: 'Data'});
+    sinon.assert.calledWith(this.bugsnag.notify, 'Logged Server Error', 'omfg', sinon.match({meta: 'Data'}), 'error');
+  });
+
+  it('should log server warnings', function(){
+    this.logger.logServerWarn('omfg', {meta: 'Data'});
+    sinon.assert.calledWith(this.bugsnag.notify, 'Logged Server Warning', 'omfg', sinon.match({meta: 'Data'}), 'warning');
+  });
+
+  it('should log sharejs errors', function(){
+    this.logger.logSharejsError('omfg', {meta: 'Data'});
+    sinon.assert.calledWith(this.bugsnag.notify, 'Logged ShareJS Error', 'omfg', sinon.match({meta: 'Data'}), 'error');
+  });
+
+  it('should log sharejs warnings', function(){
+    this.logger.logSharejsWarn('omfg', {meta: 'Data'});
+    sinon.assert.calledWith(this.bugsnag.notify, 'Logged ShareJS Warning', 'omfg', sinon.match({meta: 'Data'}), 'warning');
+  });
+
+  it('should log info', function(){
+    this.logger.log('omfg', {meta: 'Data'});
+    sinon.assert.calledWith(this.bugsnag.notify, 'Logged Info', 'omfg', sinon.match({meta: 'Data'}), 'info');
+  });
+
+  describe('when receiving error with status code 0', function(){
+    it('should log errors as cors warnings', function(){
+      this.logger.logServerError('omfg', {meta: 'Data', error: {statusCode: 0}});
+      sinon.assert.calledWith(this.bugsnag.notify, 'CORS Warning', 'omfg', sinon.match({meta: 'Data'}), 'warning');
     });
-
-    it('has a screensize tag', function () {
-      expect(loggerStubs[stubName].args[0][metadataIndex].params.screensize).toBe('screenWidth'+'x'+'screenHeight');
-    });
-  }
-
-  beforeEach(function () {
-    loggerStubs = {
-      notifyStub: sinon.stub(),
-      notifyExceptionStub: sinon.stub()
-    };
-    routeStub = sinon.stub();
-    userStub = sinon.stub();
-    module('contentful/test', function ($provide) {
-      $provide.constant('environment', {
-        settings: {
-          dataLoggerUrl: 'dataLoggerUrl/',
-          git_revision: 'gitrevision'
-        }
-      });
-
-      $provide.value('$window', {
-        addEventListener: sinon.stub(),
-        location: {
-          protocol: 'protocol',
-          host: 'host'
-        },
-        innerWidth: 'innerWidth',
-        innerHeight: 'innerHeight',
-        screen: {
-          width: 'screenWidth',
-          height: 'screenHeight'
-        },
-        Bugsnag: {
-          notify: loggerStubs.notifyStub,
-          notifyException: loggerStubs.notifyExceptionStub
-        }
-      });
-
-      $provide.value('routing', {
-        getRoute: routeStub
-      });
-
-      $provide.value('authentication', {
-        getUser: userStub
-      });
-
-    });
-    inject(function (realLogger, _$rootScope_, $injector) {
-      stringifySafe = $injector.get('stringifySafe');
-      toJsonReplacer = $injector.get('toJsonReplacer');
-      $rootScope = _$rootScope_;
-      logger = realLogger;
-
-      routeStub.returns({
-        viewType: 'viewType'
-      });
-      userStub.returns({
-        sys: {
-          id: 'userid'
-        }
-      });
+    it('should log warnings as cors warnings', function(){
+      this.logger.logServerWarn('omfg', {meta: 'Data', error: {statusCode: 0}});
+      sinon.assert.calledWith(this.bugsnag.notify, 'CORS Warning', 'omfg', sinon.match({meta: 'Data'}), 'warning');
     });
   });
 
-  function createLogLevelTest(level, methodName) {
-    var levelCapitalized = level.charAt(0).toUpperCase() + level.substr(1, level.length);
-    var loggedData;
-    describe('logs a '+level, function () {
-      var message, metaData;
-      var data;
-      beforeEach(function () {
-        var scope = $rootScope.$new();
-        scope.scopeKey = 'scopeValue';
-        message = 'message';
-        data = {
-          key: 'value',
-          scope: scope,
-          undef: undefined
-        };
-        metaData = {
-          data: _.clone(data)
-        };
-        loggedData = _.mapValues(data, function(v){
-          return JSON.parse(stringifySafe(v)||'{}', toJsonReplacer);
-        });
-        logger[methodName](message, metaData);
+  describe('message processing', function(){
+    beforeEach(function(){
+      this.authentication = this.$inject('authentication');
+      sinon.stub(this.authentication, 'getUser').returns({
+        firstName: 'Hans',
+        lastName: 'Wurst',
+        sys: { id: 'h4nswur5t' },
+        organizationMemberships: [
+          {organization: {name: 'Conglom-O' }},
+          {organization: {name: 'ACME' }}
+        ]
+      });
+      sinon.stub(this.bugsnag, 'needsUser').returns(true);
+      sinon.stub(this.bugsnag, 'setUser');
+    });
+
+    it('should set user info before logging', function(){
+      this.logger.log('derp');
+      sinon.assert.calledWith(this.bugsnag.setUser, {
+        firstName:      'Hans',
+        lastName:       'Wurst',
+        id:             'h4nswur5t',
+        organizations:  'Conglom-O, ACME',
+        adminLink:      'https://admin.contentful.com/admin/users/h4nswur5t',
+      });
+      //sinon.assert.calledWith(this.bugsnag.notify,
+        //'Logged Info', 'omfg', sinon.match({
+          //meta: 'Data'
+        //}), 'info');
+    });
+
+    it('should derive the grouping hash from the message if none provided', function(){
+      this.logger.log('derp');
+      sinon.assert.calledWith(this.bugsnag.notify,
+        'Logged Info', 'derp', sinon.match({ groupingHash: 'derp' }), 'info');
+    });
+
+    describe('augmenting metadata', function(){
+      it('should add params', function(){
+        this.logger.log('derp', {groupingHash: 'grp'});
+        var actual = this.bugsnag.notify.args[0][2];
+        expect(actual.params.spaceId).toBe('123456');
+        expect(actual.params.viewType).toBe('testView');
+        expect(actual.groupingHash).toBe('grp');
+        expect(actual.params.screensize).toMatch(/\d+x\d+/);
+        expect(actual.params.viewport).toMatch(/\d+x\d+/);
       });
 
-      it('calls logger method', function () {
-        expect(loggerStubs.notifyStub).toBeCalled();
+      it('should preparse the data property', function(){
+        var data = { foo: { bar: {} } };
+        data.foo.bar.baz = data;
+        this.logger.log('derp', {data: data});
+        var actual = this.bugsnag.notify.args[0][2];
+        expect(actual.data).toEqual({ foo : { bar : { baz : { foo : '[Circular ~]' } } } });
       });
-
-      it('sends notification name to logger', function () {
-        expect(loggerStubs.notifyStub.args[0][0]).toEqual('Logged '+levelCapitalized);
-      });
-
-      it('sends message to logger', function () {
-        expect(loggerStubs.notifyStub.args[0][1]).toEqual(message);
-      });
-
-      it('sends metadata to logger', function () {
-        expect(typeof loggerStubs.notifyStub.args[0][2]).toEqual('object');
-      });
-
-      it('notifies with type', function () {
-        expect(loggerStubs.notifyStub.args[0][3]).toEqual(level);
-      });
-
-      describe('on metaData', function () {
-        it('has data property in metaData', function () {
-          expect(loggerStubs.notifyStub.args[0][2].data).toEqual(loggedData);
-        });
-
-        declareOptionTests('notifyStub');
-      });
-    });
-  }
-
-  createLogLevelTest('error', 'logError');
-  createLogLevelTest('warning', 'logWarn');
-  createLogLevelTest('info', 'log');
-
-  describe('captures a server error', function () {
-    var error, metaData;
-    beforeEach(function () {
-      error = new Error('error object');
-      metaData = metaData || {};
-      metaData.error = error;
-      logger.logServerError('message', metaData);
-    });
-
-    it('calls logger method', function () {
-      expect(loggerStubs.notifyStub).toBeCalled();
-    });
-
-    it('sends notification name to logger', function () {
-      expect(loggerStubs.notifyStub.args[0][0]).toEqual('Logged Server Error');
-    });
-
-    it('sends message to logger', function () {
-      expect(loggerStubs.notifyStub.args[0][1]).toEqual('message');
-    });
-
-    it('sends metadata to logger', function () {
-      expect(typeof loggerStubs.notifyStub.args[0][2]).toEqual('object');
-    });
-
-    it('notifies with type', function () {
-      expect(loggerStubs.notifyStub.args[0][3]).toEqual('error');
-    });
-
-    describe('on metaData', function () {
-      it('has the error object on the metadata', function () {
-        expect(loggerStubs.notifyStub.args[0][2].error).toBe(error);
-      });
-
-      declareOptionTests('notifyStub');
-    });
-  });
-
-  describe('captures an exception', function () {
-    var error, metaData;
-    beforeEach(function () {
-      error = new Error('error object');
-      logger.logException(error, metaData);
-    });
-
-    it('calls logger method', function () {
-      expect(loggerStubs.notifyExceptionStub).toBeCalled();
-    });
-
-    it('sends error to logger', function () {
-      expect(loggerStubs.notifyExceptionStub.args[0][0]).toBe(error);
-    });
-
-    describe('on metaData', function () {
-      declareOptionTests('notifyExceptionStub');
-    });
-  });
-
-  describe('captures CORS errors', function(){
-    it('when receiving a serverError', function(){
-      logger.logServerError('Foobar', {error: {statusCode: 0}});
-      expect(loggerStubs.notifyStub.args[0][0]).toBe('CORS Warning');
-      expect(loggerStubs.notifyStub.args[0][3]).toBe('warning');
-    });
-
-    it('when receiving a serverWarn', function(){
-      logger.logServerWarn('Foobar', {error: {statusCode: 0}});
-      expect(loggerStubs.notifyStub.args[0][0]).toBe('CORS Warning');
-      expect(loggerStubs.notifyStub.args[0][3]).toBe('warning');
     });
   });
 

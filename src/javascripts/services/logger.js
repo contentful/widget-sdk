@@ -2,28 +2,22 @@
 
 angular.module('contentful').factory('logger', ['$injector', function ($injector) {
   var $window        = $injector.get('$window');
+  var bugsnag        = $injector.get('bugsnag');
   var environment    = $injector.get('environment');
   var stringifySafe  = $injector.get('stringifySafe');
   var toJsonReplacer = $injector.get('toJsonReplacer');
 
-  function onServiceReady() {
-    if($window.Bugsnag){
-      setUserInfo();
-      $window.Bugsnag.appVersion = environment.gitRevision;
-    }
-  }
-
   function setUserInfo() {
     var authentication = $injector.get('authentication');
     var user = authentication.getUser();
-    if(dotty.exists(user, 'sys.id') && !$window.Bugsnag.user){
-      $window.Bugsnag.user = {
+    if(dotty.exists(user, 'sys.id') && bugsnag.needsUser()){
+      bugsnag.setUser({
         id: dotty.get(user, 'sys.id'),
         firstName: dotty.get(user, 'firstName'),
         lastName: dotty.get(user, 'lastName'),
         adminLink: getAdminLink(user),
         organizations: getOrganizations(),
-      };
+      });
     }
   }
 
@@ -81,17 +75,24 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
   }
 
   return {
-    onServiceReady: onServiceReady,
+    enable: function(){
+      bugsnag.enable();
+    },
+
+    disable: function(){
+      bugsnag.disable();
+      _.forEach(this, function(value, key){
+        this[key] = _.noop;
+      }, this);
+    },
 
     logException: function (exception, metaData) {
-      if($window.Bugsnag){
-        setUserInfo();
-        $window.Bugsnag.notifyException(exception, null, augmentMetadata(metaData), 'error');
-      }
+      setUserInfo();
+      bugsnag.notifyException(exception, null, augmentMetadata(metaData), 'error');
     },
 
     tabChanged: function(){
-      if ($window.Bugsnag) $window.Bugsnag.refresh();
+      bugsnag.refresh();
     },
 
     logError: function (message, metaData) {
@@ -135,12 +136,10 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
     },
 
     _log: function(type, severity, message, metaData) {
-      if ($window.Bugsnag) {
-        metaData = metaData || {};
-        metaData.groupingHash = metaData.groupingHash || message;
-        setUserInfo();
-        $window.Bugsnag.notify(type, message, augmentMetadata(metaData), severity);
-      }
+      metaData = metaData || {};
+      metaData.groupingHash = metaData.groupingHash || message;
+      setUserInfo();
+      bugsnag.notify(type, message, augmentMetadata(metaData), severity);
     }
 
   };

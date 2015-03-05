@@ -1,22 +1,20 @@
 'use strict';
-angular.module('contentful').factory('features', ['$injector', function FeaturesFactory() {
-
-  //var environment = $injector.get('environment');
-
-  var featureChecks = {
-    // TODO this is still not being used yet
-    //layoutElements: function () { return environment.env !== 'production' && environment.env !== 'staging'; },
-    //'interfaceEditor': interfaceEditor
-  };
-
-  function isEnabled(label) {
-    if(label in featureChecks){
-      return _.result(featureChecks, label);
-    }
-    return false;
-  }
+angular.module('contentful').factory('features', ['$injector', function FeaturesFactory($injector) {
+  var authentication = $injector.get('authentication');
 
   return {
-    isEnabled: isEnabled
+    shouldAllowAnalytics: shouldAllowAnalytics
   };
+
+  function shouldAllowAnalytics() {
+    var user          = authentication.getUser();
+    var organizations = _.pluck(user.organizationMemberships, 'organization');
+
+    var disallowAnalytics = dotty.get(user, 'features.logAnalytics') === false;
+    disallowAnalytics = disallowAnalytics || _.any(organizations, function(org){
+      return org.disableAnalytics === true;
+    });
+
+    return !disallowAnalytics;
+  }
 }]);

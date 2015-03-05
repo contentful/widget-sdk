@@ -9,9 +9,10 @@ describe('Client Controller', function () {
       stubs = $provide.makeStubs([
         'numVisible',
         'spaceId',
+        'enableAnalytics',
+        'disableAnalytics',
         'auxPanel',
         'track',
-        'loginTrack',
         'authorizationTokenLookup',
         'authenticationTokenLookup',
         'getTokenLookup',
@@ -22,7 +23,7 @@ describe('Client Controller', function () {
         'goToOrganization',
         'routingSpaceId',
         'setUserData',
-        'setSpaceData',
+        'setSpace',
         'getRoute',
         'path',
         'logout',
@@ -38,7 +39,8 @@ describe('Client Controller', function () {
         'reasons',
         'organization',
         'can',
-        'setSpaceContext'
+        'setSpaceContext',
+        'shouldAllowAnalytics'
       ]);
 
       $provide.removeControllers('TrialWatchController');
@@ -65,11 +67,12 @@ describe('Client Controller', function () {
       });
 
       $provide.value('analytics', {
+        enable: stubs.enableAnalytics,
+        disable: stubs.disableAnalytics,
         toggleAuxPanel: stubs.auxPanel,
         track: stubs.track,
-        setSpaceData: stubs.setSpaceData,
+        setSpace: stubs.setSpace,
         setUserData: stubs.setUserData,
-        login: stubs.loginTrack
       });
 
       $provide.value('authorization', {
@@ -83,6 +86,10 @@ describe('Client Controller', function () {
       });
 
       stubs.organization.returns({can: stubs.can});
+
+      $provide.value('features', {
+        shouldAllowAnalytics: stubs.shouldAllowAnalytics.returns(true)
+      });
 
       $provide.value('authentication', {
         logout: stubs.logout,
@@ -402,7 +409,7 @@ describe('Client Controller', function () {
       });
 
       it('sets no space data on analytics', function () {
-        expect(stubs.setSpaceData).not.toBeCalled();
+        expect(stubs.setSpace).not.toBeCalled();
       });
     });
 
@@ -413,7 +420,7 @@ describe('Client Controller', function () {
       });
 
       it('sets no space data on analytics', function () {
-        expect(stubs.setSpaceData).not.toBeCalled();
+        expect(stubs.setSpace).not.toBeCalled();
       });
 
       it('location in account flag is false', function() {
@@ -433,7 +440,7 @@ describe('Client Controller', function () {
       });
 
       it('space data is set on analytics', function () {
-        expect(stubs.setSpaceData).toBeCalledWith(scope.spaces[0]);
+        expect(stubs.setSpace).toBeCalledWith(scope.spaces[0]);
       });
 
       it('location in account flag is false', function() {
@@ -472,7 +479,7 @@ describe('Client Controller', function () {
     it('space data is set on analytics', function () {
       stubs.routingSpaceId.returns(456);
       scope.$digest();
-      expect(stubs.setSpaceData).toBeCalledWith(scope.spaces[1]);
+      expect(stubs.setSpace).toBeCalledWith(scope.spaces[1]);
     });
 
     it('redirects to a non existent space and defaults to first space', function () {
@@ -503,7 +510,7 @@ describe('Client Controller', function () {
       });
 
       it('doesnt set analytics data', function () {
-        expect(stubs.setSpaceData).not.toBeCalled();
+        expect(stubs.setSpace).not.toBeCalled();
       });
 
       it('doesnt set a location path', function () {
@@ -523,7 +530,7 @@ describe('Client Controller', function () {
       });
 
       it('sets analytics data', function () {
-        expect(stubs.setSpaceData).toBeCalled();
+        expect(stubs.setSpace).toBeCalled();
       });
 
       it('sets a location path', function () {
@@ -542,7 +549,7 @@ describe('Client Controller', function () {
       });
 
       it('doesnt set analytics data', function () {
-        expect(stubs.setSpaceData).not.toBeCalled();
+        expect(stubs.setSpace).not.toBeCalled();
       });
     });
 
@@ -557,7 +564,7 @@ describe('Client Controller', function () {
       });
 
       it('doesnt set analytics data', function () {
-        expect(stubs.setSpaceData).not.toBeCalled();
+        expect(stubs.setSpace).not.toBeCalled();
       });
     });
   });
@@ -1106,7 +1113,7 @@ describe('Client Controller', function () {
 
       it('tracks login', function () {
         scope.initClient();
-        expect(stubs.loginTrack).toBeCalled();
+        expect(stubs.setUserData).toBeCalled();
       });
 
       describe('fires an initial version check', function () {
@@ -1197,19 +1204,35 @@ describe('Client Controller', function () {
             {organization: org3},
           ]
         };
-        scope.$digest();
+        this.logger = this.$inject('logger');
       });
 
       it('are set', function() {
+        scope.$digest();
         expect(scope.organizations).toEqual([
           org1, org2, org3
         ]);
       });
 
-      it('sets analytics user data', function() {
-        expect(stubs.setUserData).toBeCalled();
+      it('sets analytics user data and enables tracking', function() {
+        scope.$digest();
+        sinon.assert.called(stubs.setUserData);
+        sinon.assert.called(stubs.enableAnalytics);
+        sinon.assert.called(this.logger.enable);
       });
 
+      describe('when analytics are disallowed', function() {
+        beforeEach(function() {
+          stubs.shouldAllowAnalytics.returns(false);
+        });
+
+        it('should not set or enable anything', function() {
+          scope.$digest();
+          sinon.assert.notCalled(stubs.setUserData);
+          sinon.assert.called(stubs.disableAnalytics);
+          sinon.assert.called(this.logger.disable);
+        });
+      });
     });
   });
 
