@@ -10,6 +10,12 @@ Styleguide 4.0
   margin: 0 !important
 
 /*
+Old Buttons
+
+Styleguide 4.1
+*/
+
+/*
 A button base class
 
 Markup:
@@ -20,7 +26,7 @@ p
 
 :disabled - Disabled state
 
-Styleguide 4.1
+Styleguide 4.1.1
 */
 .btn
   display: inline-block
@@ -71,11 +77,11 @@ Secondary button theme, with hover, active and disabled states
 
 Markup:
 p
-  button(class="btn btn--secondary {$modifiers}") secondary
+  button(class="btn btn--secondary {{modifier_class}}") secondary
 p
-  button(class="btn btn--secondary {$modifiers}" disabled) secondary
+  button(class="btn btn--secondary {{modifier_class}}" disabled) secondary
 
-Styleguide 4.3
+Styleguide 4.1.2
 */
 .btn--secondary
   $colored-button(
@@ -96,13 +102,13 @@ Tertiary button theme, with hover, active and disabled states
 
 Markup:
 p
-  button(class="btn btn--tertiary {$modifiers}") Tertiary
+  button(class="btn btn--tertiary {{modifier_class}}") Tertiary
 p
-  button(class="btn btn--tertiary {$modifiers}" disabled) Tertiary
+  button(class="btn btn--tertiary {{modifier_class}}" disabled) Tertiary
 
 .active - active state
 
-Styleguide 4.2
+Styleguide 4.1.3
 */
 .btn--tertiary
   $colored-button(
@@ -124,9 +130,9 @@ Button for primary actions, with hover and active states
 
 Markup:
 p
-  button(class="btn btn--primary {$modifiers}") Primary
+  button(class="btn btn--primary {{modifier_class}}") Primary
 
-Styleguide 4.4
+Styleguide 4.1.4
 */
 $btn--primary()
   font-weight: bold
@@ -151,9 +157,9 @@ A button for dangerous situations
 
 Markup:
 p
-  button(class="btn btn--danger {$modifiers}") Danger
+  button(class="btn btn--danger {{modifier_class}}") Danger
 
-Styleguide 4.5
+Styleguide 4.1.5
 */
 .btn--danger,
 li.btn--danger
@@ -176,9 +182,9 @@ A button for confirming actions
 
 Markup:
 p
-  button(class="btn btn--confirm {$modifiers}") Confirm
+  button(class="btn btn--confirm {{modifier_class}}") Confirm
 
-Styleguide 4.6
+Styleguide 4.1.6
 */
 .btn--confirm
   font-weight: bold
@@ -275,4 +281,106 @@ $button-icon()
 .button-icon-right
   &.fa-caret-down
     top: 3px
+
+/*
+New Buttons
+
+Styleguide 4.2
+*/
+$cfnext-button($color = false, $border-color = false)
+  font-size: 0.9rem
+  font-weight: bold
+  color: white
+  padding: 0.6rem 2rem
+  background-color: $color
+  border-radius: 2px
+  if $border-color
+    border-color: $border-color
+    border-width: 1px
+    border-style: solid
+  else
+    border: none
+  &:disabled,
+  &[disabled]
+    opacity: 0.4
+  &:active
+    padding-top: 0.7rem
+    padding-bottom: 0.5rem
+
+$cfnext-button-large()
+  font-size: 1.15rem
+  padding: 1rem 2.5rem
+  &:active
+    padding-top: 1.1rem
+    padding-bottom: 0.95rem
+
+/*
+Action Button
+
+This button should be used for actions which are important, but not necessarily
+the most important action in the current view
+
+Markup:
+p
+  button(class="cfnext-btn-action{{modifier_class}}") Action
+p
+  button(class="cfnext-btn-action{{modifier_class}}" disabled) Action
+
+--large - Large variation
+
+Styleguide 4.2.1
+*/
+.cfnext-btn-action
+  $cfnext-button($cfnext-blue)
+
+.cfnext-btn-action--large
+  $cfnext-button($cfnext-blue)
+  $cfnext-button-large()
+
+/*
+Primary Action Button
+
+Used for the most important action in a given context
+
+Markup:
+p
+  button(class="cfnext-btn-primary-action{{modifier_class}}") Action
+p
+  button(class="cfnext-btn-primary-action{{modifier_class}}" disabled) Action
+
+--large - Large variation
+
+Styleguide 4.2.2
+*/
+.cfnext-btn-primary-action
+  $cfnext-button($cfnext-green)
+
+.cfnext-btn-primary-action--large
+  $cfnext-button($cfnext-green)
+  $cfnext-button-large()
+
+/*
+Secondary Action Button
+
+Used for actions that should complement primary actions or visually less
+important actions
+
+Markup:
+p
+  button(class="cfnext-btn-secondary-action{{modifier_class}}") Action
+p
+  button(class="cfnext-btn-secondary-action{{modifier_class}}" disabled) Action
+
+--large - Large variation
+
+Styleguide 4.2.3
+*/
+.cfnext-btn-secondary-action
+  $cfnext-button(white, $border-color: $cfnext-blue)
+  color: $cfnext-blue
+
+.cfnext-btn-secondary-action--large
+  $cfnext-button(white, $border-color: $cfnext-blue)
+  $cfnext-button-large()
+  color: $cfnext-blue
 
