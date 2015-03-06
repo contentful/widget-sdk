@@ -1,3 +1,28 @@
+/*
+Advice
+
+Show advice to the user on empty views
+
+Styleguide 20.0
+*/
+
+/*
+Advice
+
+Advice is usually a whole block with the following structure
+
+Markup:
+.styleguide-stretch-container--medium
+  .advice
+    .advice__frame
+      i.fa.fa-cloud-upload.advice__giant-icon
+      header.advice__title Hold on! We're bringing your space back
+      p.advice__description You haven't been here for a while, so your Space slipped into hibernation.
+      p.advice__description Don't worry, all your content is safe and shall be available for use in a few moments.
+      p.advice__description--smaller Learn more about hibernation in our Help Center
+
+Styleguide 20.1
+*/
 .advice
   $stretch()
   $display-flexbox()
@@ -5,40 +30,42 @@
   justify-content: center
   text-align: center
 
-  .advice__frame
-    width: 600px
-    margin: 0 auto
-
-  p
-    margin-bottom: 4px
-
-  .advice-title
-    font-weight: bold
-    font-size: 25px
-    line-height: 25px
-    margin-top: 1em
-    margin-bottom: 2em
-
-  .advice-description
-    font-size: 1.2em
-    margin-bottom: 2em
-    margin-top: 1em
-
   .top-advice
     margin-bottom: 10em
-
-  .medium-icon
-    font-size: 125px
-
-  .giant-icon
-    font-size: 200px
-
-  .giant-icon, .medium-icon
-    color: $gray-medium
-    text-shadow: 0 -1px 0px rgba(0,0,0,0.7)
 
   .btn--primary
     margin-bottom: 15px
 
-.advice--no-spaces
-  top: 70px
+$advice-icon()
+  color: $gray-medium
+  text-shadow: 0 -1px 0px rgba(0,0,0,0.7)
+  margin-bottom: 1rem
+
+.advice__medium-icon
+  $advice-icon()
+  font-size: 9rem
+
+.advice__giant-icon
+  $advice-icon()
+  font-size: 14rem
+
+.advice__frame
+  width: 600px
+  margin: 0 auto
+
+.advice__title
+  font-weight: bold
+  font-size: 2em
+  margin-top: 0
+  margin-bottom: $rhythm(1)
+
+.advice__description
+  font-size: 1.2em
+  margin-top: 0
+  margin-bottom: $rhythm(1)
+
+.advice__description--smaller
+  font-size: 1.0em
+  margin-top: 0
+  margin-bottom: $rhythm(1)
+
