@@ -1,275 +1,198 @@
 'use strict';
 
 angular.module('contentful').provider('analytics', ['environment', function (environment) {
-  var $window, $document, $q;
-  var analyticsDeferred;
   var dontLoad = environment.env.match(/acceptance|development|test/) ? true : false;
+  this.dontLoad  = function () { dontLoad = true;  };
+  this.forceLoad = function () { dontLoad = false; };
 
-  this.dontLoad = function () {
-    dontLoad = true;
-  };
+  this.$get = [ '$injector', function ($injector) {
+    var segment   = $injector.get('segment');
+    var totango   = $injector.get('totango');
+    var $location = $injector.get('$location');
 
-  this.forceLoad = function () {
-    dontLoad = false;
-  };
+    var analytics = {
+      enable: function(){
+        segment.enable();
+        totango.enable();
+      },
 
-  var totangoModuleNames = {
-    apiKeys: 'API Keys',
-    assets: 'Assets',
-    contentTypes: 'Content Types',
-    entries: 'Entries'
-  };
+      disable: function(){
+        segment.disable();
+        totango.disable();
+        _.forEach(this, function(value, key){
+          this[key] = _.noop;
+        }, this);
+      },
 
-  function injectAndLoadScript(path, onLoad) {
-    var doc = $document.get(0);
-    var script = doc.createElement('script');
-    script.type = 'text/javascript';
-    script.async = true;
-    script.src = ('https:' === doc.location.protocol ? 'https://' : 'http://') + path;
-    if(onLoad) script.onload = onLoad;
+      setSpace: function (space) {
+        if (space) {
+          this._organizationData = space.data.organization;
+          this._spaceData = {
+            spaceIsTutorial:                       space.data.tutorial,
+            spaceSubscriptionKey:                  space.data.organization.sys.id,
+            spaceSubscriptionState:                space.data.organization.subscriptionState,
+            spaceSubscriptionInvoiceState:         space.data.organization.invoiceState,
+            spaceSubscriptionSubscriptionPlanKey:  space.data.organization.subscriptionPlan.sys.id,
+            spaceSubscriptionSubscriptionPlanName: space.data.organization.subscriptionPlan.name
+          };
+          this._initialize();
+        } else {
+          this._spaceData = null;
+          this._organizationData = null;
+        }
+      },
 
-    // Find the first script element on the page and insert our script next to it.
-    var firstScript = doc.getElementsByTagName('script')[0];
-    firstScript.parentNode.insertBefore(script, firstScript);
-  }
+      setUserData: function (user) {
+        this._userData = user;
+        this._initialize();
+      },
 
-  function createAnalytics() {
-    // Create a queue, but don't obliterate an existing one!
-    $window.analytics = $window.analytics || [];
+      track: function (event, data) {
+        segment.track(event, _.merge({}, data, this._spaceData));
+      },
 
-    $window.totango = {
-      go: function(){return -1;},
-      track: function(){},
-      identify: function(){},
-      setAccountAttributes: function(){}
+      trackTotango: function (event) {
+        return totango.track(event);
+      },
+
+      tabAdded: function (tab) {
+        this.track('Opened Tab', {
+          viewType: tab.viewType,
+          section: tab.section,
+          id: this._idFromTab(tab)
+        });
+        this._trackView(tab);
+      },
+
+      tabClosed: function (tab) {
+        this.track('Closed Tab', {
+          viewType: tab.viewType,
+          section: tab.section,
+          id: this._idFromTab(tab)
+        });
+      },
+
+      tabActivated: function (tab, oldTab) {
+        var module = this._moduleFromTab(tab);
+        var id     = this._idFromTab(tab);
+        totango.setModule(module);
+        segment.page(module, tab.viewType, { id: id});
+        this.track('Switched Tab', {
+          viewType: tab.viewType,
+          section: tab.section,
+          id: id,
+          fromViewType: oldTab ? oldTab.viewType : null,
+          fromSection: oldTab ? oldTab.section : null
+        });
+      },
+
+      knowledgeBase: function (section) {
+        this.track('Clicked KBP link', {
+          section: section
+        });
+      },
+
+      modifiedContentType: function (event, contentType, field, action) {
+        var data = {};
+        if (contentType) {
+          _.extend(data, {
+            contentTypeId: contentType.getId(),
+            contentTypeName: contentType.getName()
+          });
+        }
+        if (field) {
+          _.extend(data, {
+            fieldId: field.id,
+            fieldName: field.name,
+            fieldType: field.type,
+            fieldSubtype: dotty.get(field, 'items.type') || null,
+            fieldLocalized: field.localized,
+            fieldRequired: field.required
+          });
+        }
+        if (action) {
+          data.action = action;
+        }
+        this.track(event, data);
+      },
+
+      toggleAuxPanel: function (visible, tab) {
+        var action = visible ? 'Opened Aux-Panel' : 'Closed Aux-Panel';
+        this.track(action, {
+          currentSection: tab.section,
+          currentViewType: tab.viewType
+        });
+      },
+
+      _initialize: function(){
+        if (this._userData) {
+          segment.identify(this._userData.sys.id, {
+            firstName: this._userData.firstName,
+            lastName:  this._userData.lastName
+          });
+        }
+        if (this._userData && this._organizationData){
+          totango.initialize(this._userData, this._organizationData);
+        }
+      },
+
+      _idFromTab: function (tab) {
+        if (tab.viewType === 'entry-editor') {
+          return tab.params.entry.getId();
+        } else if (tab.viewType === 'asset-editor'){
+          return tab.params.asset.getId();
+        } else if (tab.viewType === 'content-type-editor'){
+          return tab.params.contentType.getId();
+        }
+      },
+
+      _moduleFromTab: function (tab) {
+        return tab.section === 'apiKeys'       ? 'API Keys'       :
+               tab.section === 'assets'        ? 'Assets'         :
+               tab.section === 'contentTypes'  ? 'Content Types'  :
+               tab.section === 'entries'       ? 'Entries'        :
+               tab.section === 'spaceSettings' ? 'Space Settings' :
+               tab.section;
+      },
+
+      _trackView: function (tab) {
+        var t = tab.viewType;
+        if (t == 'entry-list') {
+          this.track('Viewed Page', {
+            section: tab.section,
+            viewType: tab.viewType});
+        } else if (t == 'content-type-list') {
+          this.track('Viewed Page', {
+            section: tab.section,
+            viewType: tab.viewType});
+        } else if (t == 'entry-editor') {
+          this.track('Viewed Page', {
+            section: tab.section,
+            viewType: tab.viewType,
+            entryId: tab.params.entry.getId()});
+        } else if (t == 'content-type-editor') {
+          this.track('Viewed Page', {
+            section: tab.section,
+            viewType: tab.viewType,
+            entryId: tab.params.contentType.getId()});
+        } else if (t == 'space-settings') {
+          this.track('Viewed Page', {
+            viewType: tab.viewType,
+            pathSuffix: tab.params.pathSuffix
+          });
+        }
+      }
+
     };
 
-    $window.totango_options = {
-      service_id: environment.settings.totango,
-      allow_empty_accounts: false,
-      account: {}
-     };
-
-    // Define a method that will asynchronously load analytics.js from our CDN.
-    $window.analytics.load = function(apiKey) {
-      injectAndLoadScript('d2dq2ahtl5zl1z.cloudfront.net/analytics.js/v1/' + apiKey + '/analytics.min.js');
-      injectAndLoadScript('s3.amazonaws.com/totango-cdn/totango2.js', initializeTotango);
-
-      // Define a factory that generates wrapper methods to push arrays of
-      // arguments onto our `analytics` queue, where the first element of the arrays
-      // is always the name of the analytics.js method itself (eg. `track`).
-      var methodFactory = function (type) {
-        return function () {
-          $window.analytics.push([type].concat(Array.prototype.slice.call(arguments, 0)));
-        };
-      };
-
-      // Loop through analytics.js' methods and generate a wrapper method for each.
-      var methods = ['identify', 'track', 'trackLink', 'trackForm', 'trackClick',
-                     'trackSubmit', 'pageview', 'ab', 'alias', 'ready'];
-      for (var i = 0; i < methods.length; i++) {
-        $window.analytics[methods[i]] = methodFactory(methods[i]);
-      }
-    };
-
-    // Load analytics.js with your API key, which will automatically load all of the
-    // analytics integrations you've turned on for your account. Boosh!
-    $window.analytics.load(environment.settings.segment_io);
-
-    $window.analytics.ready(function () { // analytics.js object
-      analyticsDeferred.resolve();
-      $window.ga('set', 'anonymizeIp', true);
-    });
-  }
-
-  function initializeTotango() {
-    $q.all([api._spaceDeferred.promise, api._userDeferred.promise]).then(function () {
-      var orgId = api._organizationData ? api._organizationData.sys.id : 'noorg';
-      $window.totango_options.username = api._userData.sys.id +'-'+ orgId;
-      $window.totango_options.account.id = orgId;
-      $window.totango_options.module = totangoModuleNames.entries;
-      $window.totango.go($window.totango_options);
-    });
-  }
-
-  var api = {
-    disable: function () {
-      this._disabled = true;
-    },
-
-    login: function(user){
-      $window.analytics.identify(user.sys.id, {
-        firstName: user.firstName,
-        lastName:  user.lastName
-      });
-      if (user.features.logAnalytics === false) {
-        this.disable();
-        return;
-      }
-    },
-
-    setSpaceData: function (space) {
-      if (space) {
-        this._organizationData = space.data.organization;
-        this._spaceData = {
-          spaceIsTutorial:                       space.data.tutorial,
-          spaceSubscriptionKey:                  space.data.organization.sys.id,
-          spaceSubscriptionState:                space.data.organization.subscriptionState,
-          spaceSubscriptionInvoiceState:         space.data.organization.invoiceState,
-          spaceSubscriptionSubscriptionPlanKey:  space.data.organization.subscriptionPlan.sys.id,
-          spaceSubscriptionSubscriptionPlanName: space.data.organization.subscriptionPlan.name
-        };
-      } else {
-        this._spaceData = null;
-        this._organizationData = null;
-      }
-      this._spaceDeferred.resolve(this._spaceData);
-    },
-
-    setUserData: function (user) {
-      this._userData = user;
-      this._userDeferred.resolve(this._userData);
-    },
-
-    tabAdded: function (tab) {
-      this.track('Opened Tab', {
-        viewType: tab.viewType,
-        section: tab.section,
-        id: this._idFromTab(tab)
-      });
-      this._trackView(tab);
-    },
-
-    tabActivated: function (tab, oldTab) {
-      this._setTotangoModule(tab.section);
-      this.track('Switched Tab', {
-        viewType: tab.viewType,
-        section: tab.section,
-        id: this._idFromTab(tab),
-        fromViewType: oldTab ? oldTab.viewType : null,
-        fromSection: oldTab ? oldTab.section : null
-      });
-    },
-
-    _setTotangoModule: function (sectionName) {
-      if($window.totango_options){
-        $window.totango_options.module = totangoModuleNames[sectionName];
-      }
-    },
-
-    knowledgeBase: function (section) {
-      this.track('Clicked KBP link', {
-        section: section
-      });
-    },
-
-    modifiedContentType: function (event, contentType, field, action) {
-      var data = {};
-      if (contentType) {
-        _.extend(data, {
-          contentTypeId: contentType.getId(),
-          contentTypeName: contentType.getName()
-        });
-      }
-      if (field) {
-        _.extend(data, {
-          fieldId: field.id,
-          fieldName: field.name,
-          fieldType: field.type,
-          fieldSubtype: dotty.get(field, 'items.type') || null,
-          fieldLocalized: field.localized,
-          fieldRequired: field.required
-        });
-      }
-      if (action) {
-        data.action = action;
-      }
-      this.track(event, data);
-    },
-
-    tabClosed: function (tab) {
-      this.track('Closed Tab', {
-        viewType: tab.viewType,
-        section: tab.section,
-        id: this._idFromTab(tab)
-      });
-    },
-
-    toggleAuxPanel: function (visible, tab) {
-      var action = visible ? 'Opened Aux-Panel' : 'Closed Aux-Panel';
-      this.track(action, {
-        currentSection: tab.section,
-        currentViewType: tab.viewType
-      });
-    },
-
-    _idFromTab: function (tab) {
-      if (tab.viewType === 'entry-editor') {
-        return tab.params.entry.getId();
-      } else if (tab.viewType === 'content-type-editor'){
-        return tab.params.contentType.getId();
-      }
-    },
-
-    _trackView: function (tab) {
-      var t = tab.viewType;
-      if (t == 'entry-list') {
-        this.track('Viewed Page', {
-          section: tab.section,
-          viewType: tab.viewType});
-      } else if (t == 'content-type-list') {
-        this.track('Viewed Page', {
-          section: tab.section,
-          viewType: tab.viewType});
-      } else if (t == 'entry-editor') {
-        this.track('Viewed Page', {
-          section: tab.section,
-          viewType: tab.viewType,
-          entryId: tab.params.entry.getId()});
-      } else if (t == 'content-type-editor') {
-        this.track('Viewed Page', {
-          section: tab.section,
-          viewType: tab.viewType,
-          entryId: tab.params.contentType.getId()});
-      } else if (t == 'space-settings') {
-        this.track('Viewed Page', {
-          viewType: tab.viewType,
-          pathSuffix: tab.params.pathSuffix
-        });
-      }
-    },
-
-    track: function (event, data) {
-      if (!this._disabled) {
-        $window.analytics.track(event, _.merge({}, data, this._spaceData));
-      }
-      //console.log('analytics.track', event, data);
-    },
-
-    trackTotango: function (event) {
-      $window.totango.track(event);
-    }
-  };
-
-  this.$get = [
-    '$window', '$document', '$q', '$location',
-    function (_$window_, _$document_, _$q_, $location) {
-
-    $window = _$window_;
-    $document = _$document_;
-    $q = _$q_;
-    api._spaceDeferred = $q.defer();
-    api._userDeferred = $q.defer();
-    if (dontLoad && !$location.search().forceAnalytics) {
-      return _.reduce(api, function (api, fun, name) {
-        api[name] = angular.noop;
-        return api;
-      }, {});
+    if (shouldLoadAnalytics()) {
+      return analytics;
     } else {
-      analyticsDeferred = $q.defer();
-      api.whenAnalyticsLoaded = analyticsDeferred.promise;
-      createAnalytics();
-      return api;
+      return _.mapValues(analytics, _.constant(_.noop));
+    }
+
+    function shouldLoadAnalytics() {
+      return !(dontLoad && !$location.search().forceAnalytics);
     }
   }];
 

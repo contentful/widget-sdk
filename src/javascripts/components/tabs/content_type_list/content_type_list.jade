@@ -23,7 +23,7 @@
 .tab-main
   .left-nav
     header.filter-list-header Filter By Status
-    ul.filter-list.status-filters
+    ul.status-filters
       li.filter-list-item(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
         span.filter-list-title All
       li.filter-list-item(ng-class="{active: tab.params.list == 'changed'}" ng-click="switchList('changed')")

@@ -14,7 +14,7 @@
 
   .free-views(ng-show="showTempFreeViews()")
     header.filter-list-header Views
-    ul.filter-list(ui-sortable="viewSortOptions" ng-model="tempFreeViews")
+    ul.u-list(ui-sortable="viewSortOptions" ng-model="tempFreeViews")
 
   .view-folders(ui-sortable="folderSortOptions" ng-model="folders")
     .view-folder(ng-repeat="folder in folders track by folder.id"
@@ -25,7 +25,7 @@
   .dropdown-btn(cf-dropdown)
     i.fa.fa-plus.dropdown-toggle(cf-dropdown-toggle)
     .dropdown-menu(cf-dropdown-menu position="topright" collision="none")
-      ul.dropdown-menu-list
+      ul.u-list
         li.dropdown-menu-item(ng-click="addFolder()" dropdown-close) Add Folder
         li.dropdown-menu-item(ng-click="addViewToDefault()" dropdown-close) Save current view as…
 

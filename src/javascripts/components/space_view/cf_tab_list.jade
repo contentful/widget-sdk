@@ -1,5 +1,5 @@
-ul.plain-list
-  li.plain-list--item.tab(ng-repeat="tabItem in spaceContext.tabList.items"
+ul
+  li.tab(ng-repeat="tabItem in spaceContext.tabList.items"
       ng-class="{active: tabItem.active(), dirty: tabItem.dirty}"
       ng-click="goToTab(tabItem)"
       ng-hide="tabItem.hidden"

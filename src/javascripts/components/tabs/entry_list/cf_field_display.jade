@@ -12,7 +12,7 @@ ng-switch(on="displayType(field)")
     .cf-thumbnail(cf-thumbnail file="file" size="30" fit="thumb" focus="faces")
 
   div(ng-switch-when="Array")
-    ul(ng-class="{'linked-entries': isEntryArray(entry, field), 'linked-assets': isAssetArray(entry, field)}")
+    ul.u-list(ng-class="{'linked-entries': isEntryArray(entry, field), 'linked-assets': isAssetArray(entry, field)}")
 
       li(ng-repeat="(index, entity) in dataForArray(entry, field) track by index")
         span(ng-if="isEntryArray(entry, field)")

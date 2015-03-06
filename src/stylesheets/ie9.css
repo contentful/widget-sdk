@@ -1,3 +1,11 @@
+.space-container {
+  position: absolute;
+  top: 80px;
+  right: 0px;
+  bottom: 0px;
+  left: 0px;
+}
+
 .tab-header__title {
   float: left;
 }
@@ -39,6 +47,6 @@
   float: left;
 }
 
-.tab-list .plain-list--item {
+.tab-list .tab {
   float: left;
 }

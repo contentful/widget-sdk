@@ -45,10 +45,10 @@ angular.module('contentful').controller('SlugEditorController', [
    * If the entry is already published, then the slug should not be changed
    * automatically, hence that is also treated as divergence.
    */
-  function updateDivergedStatus(newPublishedState) {
+  function updateDivergedStatus() {
     var value = $scope.fieldData.value;
 
-    if (newPublishedState === true) {
+    if ($scope.entry.isPublished()) {
       $scope.hasDiverged = true;
     } else if (value &&
         value !== untitledSlug() &&

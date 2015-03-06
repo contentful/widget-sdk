@@ -19,7 +19,7 @@
         i.fa.fa-caret-down.button-icon-right
         span View
       .dropdown-menu(cf-dropdown-menu position="bottomcenter")
-        ul.dropdown-menu-list
+        ul
           li.dropdown-menu-item--label(ng-repeat="locale in spaceContext.privateLocales track by locale.code")
             label
               input.form-control(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
@@ -50,8 +50,8 @@
             ot-path="['fields', field.id, locale.code]")
           .locale-label(ng-show="locales.length > 1") {{locale.name}}
           .field-collaborators
-            ul.plain-list
-              li.plain-list--item.avatar(cf-user ng-repeat="link in fieldPresence.users track by link.sys.id"
+            ul
+              li.avatar(cf-user ng-repeat="link in fieldPresence.users track by link.sys.id"
                                  link="link" as="presenceUser"
                                  tooltip="{{presenceUser | userNameDisplay:user}}")
                 img(ng-src="{{presenceUser.avatarUrl}}")
@@ -75,8 +75,8 @@
     span(ng-show="presence.users.length == 0"
           tooltip="Edit collaboratively by inviting more users into your space. Go to Settings → Users → Invite New User to invite people.")
       | No other users online
-    ul.plain-list(ng-show="presence.users.length > 0")
-      li.plain-list--item.avatar(cf-user ng-repeat="link in presence.users track by link.sys.id"
+    ul(ng-show="presence.users.length > 0")
+      li.avatar(cf-user ng-repeat="link in presence.users track by link.sys.id"
                          link="link" as="presenceUser"
                          tooltip="{{presenceUser | userNameDisplay:user}}")
         img(ng-src="{{user.data.avatarUrl}}")

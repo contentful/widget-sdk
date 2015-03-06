@@ -81,6 +81,14 @@ beforeEach(function() {
     this.$inject('$rootScope').$apply();
   };
 
+  this.when = function(val){
+    return this.$inject('$q').when(val);
+  };
+
+  this.reject = function(val){
+    return this.$inject('$q').reject(val);
+  };
+
   jasmine.addMatchers({
 
     toLookEqual: function() {

@@ -26,7 +26,7 @@ describe('The add dropdown button directive', function () {
       scope.permissionController.get.returns(false);
 
       compileElement = function () {
-        container = $compile($('<div cf-add-dropdown-button class="add-dropdown-button" space-context="spaceContext"></div>'))(scope);
+        container = $compile($('<div cf-add-dropdown-button class="add-dropdown" space-context="spaceContext"></div>'))(scope);
         scope.$digest();
 
       };
@@ -40,7 +40,7 @@ describe('The add dropdown button directive', function () {
   function makeShownButtonTest(type, itemClass) {
     var menuItems = [
       'add-content-type',
-      'content-types',
+      'add-dropdown__content-types',
       'add-asset',
       'add-api-key'
     ];
@@ -78,7 +78,7 @@ describe('The add dropdown button directive', function () {
   }
 
   makeShownButtonTest('ContentType', 'add-content-type');
-  makeShownButtonTest('Entry', 'content-types');
+  makeShownButtonTest('Entry', 'add-dropdown__content-types');
   makeShownButtonTest('Asset', 'add-asset');
   makeShownButtonTest('ApiKey', 'add-api-key');
 
@@ -90,11 +90,11 @@ describe('The add dropdown button directive', function () {
     });
 
     it('add menu item with class content-types is hidden', function () {
-      expect(container.find('.content-types')).toBeNgHidden();
+      expect(container.find('.add-dropdown__content-types')).toBeNgHidden();
     });
 
     it('add menu item with class no-content-types is hidden', function () {
-      expect(container.find('.no-content-types')).toBeNgHidden();
+      expect(container.find('.add-dropdown__no-content-types')).toBeNgHidden();
     });
   });
 
@@ -107,12 +107,12 @@ describe('The add dropdown button directive', function () {
       });
 
       it('add menu item with class content-types is hidden', function () {
-        expect(container.find('.content-types')).toBeNgHidden();
+        expect(container.find('.add-dropdown__content-types')).toBeNgHidden();
       });
 
       it('add menu item with class no-content-types is not hidden', function () {
-        expect(container.find('.no-content-types')).not.toBeNgHidden();
-        expect(container.find('.no-content-types li:not(.ng-hide)').text()).toMatch(/No Content Types available/);
+        expect(container.find('.add-dropdown__no-content-types')).not.toBeNgHidden();
+        expect(container.find('.add-dropdown__no-content-types li:not(.ng-hide)').text()).toMatch(/No Content Types available/);
       });
     });
 
@@ -123,12 +123,12 @@ describe('The add dropdown button directive', function () {
       });
 
       it('add menu item with class content-types is hidden', function () {
-        expect(container.find('.content-types')).toBeNgHidden();
+        expect(container.find('.add-dropdown__content-types')).toBeNgHidden();
       });
 
       it('add menu item with class no-content-types is not hidden', function () {
-        expect(container.find('.no-content-types')).not.toBeNgHidden();
-        expect(container.find('.no-content-types li:not(.ng-hide)').text()).toMatch(/Create and activate/);
+        expect(container.find('.add-dropdown__no-content-types')).not.toBeNgHidden();
+        expect(container.find('.add-dropdown__no-content-types li:not(.ng-hide)').text()).toMatch(/Create and activate/);
       });
     });
 

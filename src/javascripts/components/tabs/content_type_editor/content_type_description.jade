@@ -6,7 +6,7 @@ ng-switch(on="type.value.type")
       Add any type of longer form text that’s written by editors, usually including spaces. 
       Enables you to search for words in the text but not exact matches for the entire text. 
       Use Symbols for short tokens of text like URLs or tags (<a href="http://support.contentful.com/entries/28062416-What-s-the-difference-between-Text-and-Symbol-Fields-">more information</a>).
-    ul
+    ul.u-list
       li Blog post title
       li Product descriptions
       li Article bodies
@@ -17,7 +17,7 @@ ng-switch(on="type.value.type")
 
     p.
       Represent unbreakable and relatively short tokens of text, often made for machine consumption. You can only search for full Symbols, not parts of it like individual words.
-    ul
+    ul.u-list
       li URL
       li Tag
       li Postal code
@@ -29,7 +29,7 @@ ng-switch(on="type.value.type")
 
     p.
       Insert numbers without decimals. Use validations to constrain the range or to only allow specific values.
-    ul
+    ul.u-list
       li Priority
       li Calorie count
       li Age
@@ -40,7 +40,7 @@ ng-switch(on="type.value.type")
 
     p.
       Insert a number with as many decimal figures as needed. Use validations to constrain the ranges or to only allow specific values.
-    ul
+    ul.u-list
       li Weights
       li Temperatures
     img(ng-src="{{::'/app/images/field_type/floating.png'|prefixAssetHost}}")
@@ -50,7 +50,7 @@ ng-switch(on="type.value.type")
 
     p.
       Insert a boolean value with two choices: either yes or no.
-    ul
+    ul.u-list
       li Open
       li Vegetarian menu
     img(ng-src="{{::'/app/images/field_type/boolean.png'|prefixAssetHost}}")
@@ -61,7 +61,7 @@ ng-switch(on="type.value.type")
     p
       | Specify a given date and time. Like the start or end time of an event.
       //- Either the date or the time can be left blank.
-    ul
+    ul.u-list
       li Event start time
       li Holiday date
     img(ng-src="{{::'/app/images/field_type/date.png'|prefixAssetHost}}")
@@ -71,7 +71,7 @@ ng-switch(on="type.value.type")
 
     p.
       The latitude and longitude of any place. Locations can be added by entering their coordinates or by searching the location directly on a map.
-    ul
+    ul.u-list
       li Geographical location of a venue
     img(ng-src="{{::'/app/images/field_type/location.png'|prefixAssetHost}}")
 
@@ -80,7 +80,7 @@ ng-switch(on="type.value.type")
 
     p.
       Add an arbitrary JSON structure that you can write and read through the API.
-    ul
+    ul.u-list
       li Custom data from another system
     img(ng-src="{{::'/app/images/field_type/jsonobject.png'|prefixAssetHost}}")
 
@@ -89,7 +89,7 @@ ng-switch(on="type.value.type")
       h3 Link to an Entry
       p.
         Connect your current Entry to another already existing Entry. You can create relationships such as connecting a book to its author.
-      ul
+      ul.u-list
         li Author
         li Category
       img(ng-src="{{::'/app/images/field_type/linktoentry.png'|prefixAssetHost}}")
@@ -98,7 +98,7 @@ ng-switch(on="type.value.type")
       h3 Link to an Asset
       p.
         Link a previously uploaded media file to this Entry or add a new one directly when editing.
-      ul
+      ul.u-list
         li Image
         li Attachment
         li Media of any kind
@@ -109,7 +109,7 @@ ng-switch(on="type.value.type")
       h3 Links to multiple Entries
       p.
         Connect your current Entry to other already existing Entries. It works like the individual Entry but it allows you to connect more than one Entry.
-      ul
+      ul.u-list
         li Multiple authors
         li Multiple categories
       img(ng-src="{{::'/app/images/field_type/linkstoentries.png'|prefixAssetHost}}")
@@ -118,7 +118,7 @@ ng-switch(on="type.value.type")
       h3 Links to multiple Assets
       p.
         Link several previously uploaded media files to this Entry or add new ones directly when editing.
-      ul
+      ul.u-list
         li Multiple images
         li Multiple attachments
         li Multiple media files of any kind
@@ -128,6 +128,6 @@ ng-switch(on="type.value.type")
       h3 List of multiple Symbols
       p.
         Create a lists of multiple Symbols. It works like an individual Symbol but allows you to add more than one Symbol.
-      ul
+      ul.u-list
         li Multiple tags of a blog post
       img(ng-src="{{::'/app/images/field_type/list.png'|prefixAssetHost}}")

@@ -14,44 +14,23 @@ $dropdown-row()
   padding: 4px 12px
   display: block
 
-// Dropdown Menu base and general modifiers
 .dropdown-menu
   $layer('dropdown')
   position: absolute
+  min-width: 198px
+  line-height: 2.2em
+  padding-top: 4px
+  padding-bottom: 4px
   text-align: left
   font-size: 11px
-  line-height: 2.2em
-  min-width: 198px
   background: white
   background: rgba(255,255,255,0.96)
   border: 1px solid shade(#FFFFFF, 10)
-  padding-top: 4px
-  padding-bottom: 4px
   box-shadow: 0 2px 6px rgba(0,0,0,0.1)
   border-radius: 0 0 3px 3px
-  .dropdown-menu-list
-    margin: 0
-    padding: 0
-  .subtitle
-    font-size: 14px
-    padding-top: 3px
-  .emphasize
-    font-weight: bold
-    color: white
-  .no-highlight:hover,
-  .no-highlight > li:hover
-    background: none
-  .no-action
-    &.no-highlight:hover,
-    &.no-highlight > li:hover
-      cursor: default
-  .fa-plus
-    font-size: 0.7em
-    margin-right: 0.5em
 
 $dropdown-menu-item()
   $dropdown-row()
-  list-style-type: none
   margin: 0
   a
     display: block
@@ -84,6 +63,16 @@ $dropdown-menu-item()
   > label
     $dropdown-row()
 
+.dropdown-menu-item--no-highlight
+  $dropdown-menu-item()
+  &:hover,
+  & > li:hover
+    background: none
+  &.has-no-action
+    &:hover,
+    & > li:hover
+      cursor: default
+
 // For the wide type menus
 .type-menu
   width: 500px
@@ -93,9 +82,6 @@ $dropdown-menu-item()
     width: 200px
     min-height: 250px
     border-right: 1px solid $gray-light
-    .type,
-    .group
-      list-style-type: none
     .type
       padding-left: 20px
       margin-left: 0

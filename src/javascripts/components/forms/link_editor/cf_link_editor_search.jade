@@ -20,7 +20,7 @@
       i.fa.fa-plus-circle.button-icon
       | Add New
     a.dropdown-menu(cf-dropdown-menu)
-      ul.dropdown-menu-list
+      ul
         li.dropdown-menu-item(ng-repeat="contentType in addableContentTypes track by contentType.getId()"
             ng-click="addNewEntry(contentType)"
             dropdown-close)

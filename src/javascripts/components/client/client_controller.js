@@ -4,6 +4,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var $rootScope         = $injector.get('$rootScope');
   var $q                 = $injector.get('$q');
   var client             = $injector.get('client');
+  var features           = $injector.get('features');
   var logger             = $injector.get('logger');
   var SpaceContext       = $injector.get('SpaceContext');
   var authentication     = $injector.get('authentication');
@@ -25,6 +26,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $controller('TrialWatchController', {$scope: $scope});
 
   $scope.permissionController = $controller('PermissionController', {$scope: $scope});
+  $scope.featureController    = $controller('FeatureController'   , {$scope: $scope});
   $scope.spaces = null;
   $scope.user = null;
   $scope.organizations = null;
@@ -209,7 +211,14 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   function userWatchHandler(user) {
     if(user){
       $scope.organizations = _.pluck(user.organizationMemberships, 'organization');
-      analytics.setUserData(user);
+      if (features.shouldAllowAnalytics()) {
+        logger.enable();
+        analytics.enable();
+        analytics.setUserData(user);
+      } else {
+        logger.disable();
+        analytics.disable();
+      }
     }
   }
 
@@ -254,7 +263,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function setSpace(space) {
-    analytics.setSpaceData(space);
+    analytics.setSpace(space);
     $scope.spaceContext = new SpaceContext(space);
     enforcements.setSpaceContext($scope.spaceContext);
   }
@@ -268,7 +277,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   function initClient() {
     $scope.performTokenLookup()
     .then(function () {
-      analytics.login($scope.user);
+      analytics.setUserData($scope.user);
       showOnboardingIfNecessary();
     }, ReloadNotification.gatekeeperErrorHandler);
 

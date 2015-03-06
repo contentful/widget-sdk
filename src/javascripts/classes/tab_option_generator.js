@@ -120,7 +120,7 @@ angular.module('contentful').factory('TabOptionsGenerator', function () {
     apiHome: function () {
       return {
         viewType: 'api-home',
-        section: 'apiHome',
+        section: 'apiKeys',
         hidden: true,
         title: 'API',
         canClose: true
@@ -140,7 +140,7 @@ angular.module('contentful').factory('TabOptionsGenerator', function () {
     contentModel: function () {
       return {
         viewType: 'content-model',
-        section: 'contentModel',
+        section: 'apiKeys',
         hidden: true,
         title: 'Content Model',
         canClose: true,

@@ -19,13 +19,13 @@
         i.fa.fa-caret-down.button-icon-right
         span View
       .dropdown-menu(cf-dropdown-menu position="bottomcenter")
-        ul.dropdown-menu-list(ng-show="showLangSwitcher")
+        ul(ng-show="showLangSwitcher")
           li.dropdown-menu-item--label(ng-repeat="locale in spaceContext.privateLocales track by locale.code")
             label
               input(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
               | {{locale.name}}
               span(ng-show="locale == spaceContext.space.getDefaultLocale()") (default)
-        ul.dropdown-menu-list
+        ul
           li.dropdown-menu-item--label(ng-class="{'top-separator': showLangSwitcher}")
             label
               input(type="checkbox" ng-model="preferences.showDisabledFields")
@@ -58,8 +58,8 @@
             cf-field-editor="entry.data.fields[field.id][locale.code]")
           .locale-label(ng-show="locales.length > 1") {{locale.name}}
           .field-collaborators
-            ul.plain-list.field-list
-              li.plain-list--item.avatar(cf-user ng-repeat="link in fieldPresence.users track by link.sys.id"
+            ul.field-list
+              li.avatar(cf-user ng-repeat="link in fieldPresence.users track by link.sys.id"
                                  link="link" as="presenceUser"
                                  tooltip="{{presenceUser | userNameDisplay:user}}")
                 img(ng-src="{{presenceUser.avatarUrl}}")
@@ -76,7 +76,7 @@
         i.fa.fa-caret-up.button-icon-right
         | More
       .dropdown-menu(cf-dropdown-menu="actions" position="top")
-        ul.dropdown-menu-list(cf-dropdown="confirm")
+        ul(cf-dropdown="confirm")
           li.dropdown-menu-item.duplicate(type="button" ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this Entry" dropdown-close) Duplicate
           li.dropdown-menu-item.delete(type="button" ng-show="canDelete()" cf-dropdown-toggle="confirm") Delete
           .delete-confirm.no-caret(cf-dropdown-menu="confirm" position="topcenter")
@@ -95,7 +95,7 @@
         i.fa.fa-caret-up.button-icon-right
         | Revert...
       .dropdown-menu.revert-actions__dropdown-menu(cf-dropdown-menu="revertActions" position="topcenter")
-        ul.dropdown-menu-list
+        ul
           li.dropdown-menu-item(type="button" ng-show="canRevertToPublishedState()" ng-click="revertToPublishedState()" dropdown-close) Revert to published version ({{publishedAt}})
           li.dropdown-menu-item(type="button" ng-show="canRevertToPreviousState()" ng-click="revertToPreviousState()" dropdown-close) Discard my changes ({{updatedAt}})
 
@@ -108,8 +108,8 @@
     span(ng-show="presence.users.length == 0"
           tooltip="Edit collaboratively by inviting more users into your space. Go to Settings → Users → Invite New User to invite people.")
       | No other users online
-    ul.plain-list(ng-show="presence.users.length > 0")
-      li.plain-list--item.avatar(cf-user ng-repeat="link in presence.users track by link.sys.id"
+    ul(ng-show="presence.users.length > 0")
+      li.avatar(cf-user ng-repeat="link in presence.users track by link.sys.id"
                          link="link" as="presenceUser"
                          tooltip="{{presenceUser | userNameDisplay:user}}")
         img(ng-src="{{presenceUser.data.avatarUrl}}")
