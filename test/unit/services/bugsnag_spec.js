@@ -38,6 +38,19 @@ describe('Bugsnag service', function(){
     this.$apply();
   });
 
+  describe('when script loading fails', function(){
+    beforeEach(function(){
+      sinon.stub(this.bugsnag._buffer, 'disable');
+      this.angularLoad.loadScript.returns(this.reject());
+    });
+
+    it('should disable the buffer', function(){
+      this.bugsnag.enable();
+      this.$apply();
+      sinon.assert.called(this.bugsnag._buffer.disable);
+    });
+  });
+
   it('buffers calls to bugsnag and runs them when enabled', function(){
     this.bugsnag.notify('foo');
     this.bugsnag.enable();

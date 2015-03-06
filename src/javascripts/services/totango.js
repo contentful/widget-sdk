@@ -30,6 +30,7 @@ angular.module('contentful').factory('totango', ['$injector', function($injector
         };
         loaderPromise = angularLoad.loadScript(SCRIPT_SRC)
           .then(_.bind(this._buffer.resolve, this._buffer));
+        loaderPromise.catch(_.bind(this._buffer.disable, this._buffer));
       }
       return loaderPromise;
     },

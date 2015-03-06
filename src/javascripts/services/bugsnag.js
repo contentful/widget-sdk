@@ -17,15 +17,16 @@ angular.module('contentful').factory('bugsnag', ['$injector', function($injector
         var angularLoad = $injector.get('angularLoad');
         var environment = $injector.get('environment');
         loaderPromise = angularLoad.loadScript(SCRIPT_SRC)
-        .then(function(){
-          bugsnag = $window.Bugsnag;//.noConflict();
-          bugsnag.apiKey              = apiKey;
-          bugsnag.notifyReleaseStages = ['staging', 'production'];
-          bugsnag.releaseStage        = environment.env;
-          bugsnag.appVersion          = environment.gitRevision;
-          return bugsnag;
-        })
-        .then(_.bind(this._buffer.resolve, this._buffer));
+          .then(function(){
+            bugsnag = $window.Bugsnag;//.noConflict();
+            bugsnag.apiKey              = apiKey;
+            bugsnag.notifyReleaseStages = ['staging', 'production'];
+            bugsnag.releaseStage        = environment.env;
+            bugsnag.appVersion          = environment.gitRevision;
+            return bugsnag;
+          })
+          .then(_.bind(this._buffer.resolve, this._buffer));
+        loaderPromise.catch(_.bind(this._buffer.disable, this._buffer));
       }
       return loaderPromise;
     },

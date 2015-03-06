@@ -37,6 +37,19 @@ describe('Totango service', function(){
     this.$apply();
   });
 
+  describe('when script loading fails', function(){
+    beforeEach(function(){
+      sinon.stub(this.totango._buffer, 'disable');
+      this.angularLoad.loadScript.returns(this.reject());
+    });
+
+    it('should disable the buffer', function(){
+      this.totango.enable();
+      this.$apply();
+      sinon.assert.called(this.totango._buffer.disable);
+    });
+  });
+
   it('buffers calls to totango and runs them when enabled', function(){
     this.totango.track('foo');
     this.totango.enable();
