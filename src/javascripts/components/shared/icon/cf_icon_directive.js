@@ -1,11 +1,14 @@
 'use strict';
 
-angular.module('contentful').directive('cfIcon', [function(){
+angular.module('contentful').directive('cfIcon', ['$compile', 'prefixAssetHostFilter', function($compile, prefixAssetHostFilter){
   return {
-    template: JST.cf_icon(),
     restrict: 'E',
-    scope: {
-      name: '@name'
+    link: function (scope, el, attrs) {
+      var imagePath = prefixAssetHostFilter('/app/images/contentful_icons.svg');
+      el.html($compile(
+        '<object class="cf-icon" type="image/svg+xml" data="'+
+        imagePath +'#'+ attrs.name +'"></object>'
+      )(scope));
     }
   };
 }]);
