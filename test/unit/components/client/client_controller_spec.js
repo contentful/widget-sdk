@@ -15,6 +15,7 @@ describe('Client Controller', function () {
         'track',
         'authorizationTokenLookup',
         'authenticationTokenLookup',
+        'updateTokenLookup',
         'getTokenLookup',
         'setSpace',
         'hasSpace',
@@ -96,6 +97,7 @@ describe('Client Controller', function () {
         supportUrl: stubs.supportUrl,
         goodbye: stubs.goodbye,
         setTokenLookup: stubs.authenticationTokenLookup,
+        updateTokenLookup: stubs.updateTokenLookup,
         getTokenLookup: stubs.getTokenLookup
       });
 
@@ -671,7 +673,7 @@ describe('Client Controller', function () {
         });
 
         it('sets token lookup', function() {
-          sinon.assert.calledWith(stubs.authenticationTokenLookup, token);
+          sinon.assert.calledWith(stubs.updateTokenLookup, token);
         });
 
         it('sets user', function() {
@@ -690,7 +692,7 @@ describe('Client Controller', function () {
         });
 
         it('sets token lookup', function() {
-          sinon.assert.calledWith(stubs.authenticationTokenLookup, token);
+          sinon.assert.calledWith(stubs.updateTokenLookup, token);
         });
 
         it('sets user', function() {
@@ -700,39 +702,6 @@ describe('Client Controller', function () {
         it('wraps the space', function() {
           sinon.assert.calledWith(stubs.newSpace, token.spaces[0]);
         });
-      });
-    });
-
-    describe('update a space', function() {
-      beforeEach(function() {
-        data = {
-          action: 'update',
-          type: 'Space',
-          resource: {
-            sys: {
-              id: 123,
-              name: 'new name'
-            }
-          }
-        };
-
-        scope.spaces = [{
-          getId: sinon.stub(),
-          update: sinon.stub(),
-          data: {
-            sys: {
-              name: 'old name'
-            }
-          }
-        }];
-
-        scope.spaces[0].getId.returns(123);
-
-        childScope.$emit('iframeMessage', data);
-      });
-
-      it('updates the data', function() {
-        expect(scope.spaces[0].data.sys.name).toEqual('new name');
       });
     });
 
@@ -791,6 +760,21 @@ describe('Client Controller', function () {
 
       it('performs no token lookup', function() {
         sinon.assert.notCalled(scope.performTokenLookup);
+      });
+    });
+
+    describe('space deleted', function () {
+      beforeEach(function () {
+        data = {
+          type: 'space',
+          action: 'delete',
+        };
+        scope.performTokenLookup = sinon.stub();
+        childScope.$emit('iframeMessage', data);
+      });
+
+      it('performs token lookup', function() {
+        sinon.assert.called(scope.performTokenLookup);
       });
     });
 

@@ -12,6 +12,7 @@ describe('Authentication service', function () {
 
       $provide.value('$window', { addEventListener: sinon.stub() });
     });
+
     this.logger = this.$inject('logger');
     this.authentication = this.$inject('authentication');
     this.notification = this.$inject('notification');
@@ -24,8 +25,7 @@ describe('Authentication service', function () {
     sinon.stub($.cookies, 'get');
     sinon.stub($.cookies, 'del');
 
-    var QueryLinkResolver = this.$inject('privateContentfulClient').QueryLinkResolver;
-    this.resolveQueryLinks = QueryLinkResolver.resolveQueryLinks;
+    this.QueryLinkResolver = this.$inject('privateContentfulClient').QueryLinkResolver;
   });
 
   afterEach(function () {
@@ -360,7 +360,7 @@ describe('Authentication service', function () {
     var tokenLookup;
     beforeEach(function () {
       tokenLookup = {token: 'lookup'};
-      this.resolveQueryLinks.returns(['resolvedLink']);
+      this.QueryLinkResolver.resolveQueryLinks.returns(['resolvedLink']);
       this.authentication.setTokenLookup(tokenLookup);
     });
 
@@ -369,12 +369,73 @@ describe('Authentication service', function () {
     });
 
     it('queryLinkResolver is called with tokenLookup', function () {
-      sinon.assert.calledWith(this.resolveQueryLinks, tokenLookup);
+      sinon.assert.calledWith(this.QueryLinkResolver.resolveQueryLinks, tokenLookup);
     });
 
     it('is parsed by querylink resolver', function () {
       expect(this.authentication.tokenLookup).toBe('resolvedLink');
     });
+  });
+
+  describe('update token lookup', function() {
+    beforeEach(function() {
+      this.QueryLinkResolver.resolveQueryLinks = function(u){ return [u]; };
+      this.oldTokenLookup = {
+        includes: {
+          Foo: [
+            {sys: {id: '1'}},
+            {sys: {id: '2'}} ]},
+        items: [{
+          spaces: [
+            {name: 'HerpSpace', sys: {id: 'herp'}},
+            {name: 'DerpSpace', sys: {id: 'derp'}} ]}]
+      };
+
+      this.newTokenLookup = {
+        includes: {
+          Foo: [
+            {sys: {id: '1'}},
+            {sys: {id: '2'}, updated: true}
+          ],
+          Bar: [
+            {sys: {id: '3'}}
+          ]},
+        items: [{
+          spaces: [
+            {name: 'HerpSpace', sys: {id: 'herp'}, updated: true}
+          ]}]
+      };
+
+      this.authentication._unresolvedTokenLookup = this.oldTokenLookup;
+      this.authentication.tokenLookup = this.oldTokenLookup;
+    });
+    
+    it('should merge includes', function(){
+      this.authentication.updateTokenLookup(this.newTokenLookup);
+      var t = this.authentication.tokenLookup;
+      expect(t.includes.Foo[0].updated).toBe(undefined);
+      expect(t.includes.Foo[1].updated).toBe(true);
+      expect(t.includes.Bar[0].sys.id).toBe('3');
+    });
+
+    it('should update spaces', function(){
+      this.authentication.updateTokenLookup(this.newTokenLookup);
+      var t = this.authentication.tokenLookup;
+      expect(t.items[0].spaces[0].updated).toBe(true);
+      expect(t.items[0].spaces[1].updated).toBe(undefined);
+    });
+
+    it('should append new includes and items', function(){
+      this.newTokenLookup.includes.Foo.push({sys: {id: 'new3'}});
+      this.newTokenLookup.items[0].spaces.push({
+        name: 'HerpDerp', sys: {id: 'herpderp'}
+      });
+      this.authentication.updateTokenLookup(this.newTokenLookup);
+      var t = this.authentication.tokenLookup;
+      expect(t.includes.Foo[2].sys.id).toBe('new3');
+      expect(t.items[0].spaces[2].name).toBe('HerpDerp');
+    });
+
   });
 
 });
