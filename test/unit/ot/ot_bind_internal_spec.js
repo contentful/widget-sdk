@@ -30,7 +30,7 @@ describe('otBindInternal', function () {
         scope.$apply();
       });
       it('should update OT', function(){
-        expect(scope.otChangeValue).toBeCalledWith('bar');
+        sinon.assert.calledWith(scope.otChangeValue, 'bar');
       });
       it('should update the external value', function(){
         expect(scope.external.value).toBe('bar');
@@ -43,7 +43,7 @@ describe('otBindInternal', function () {
         scope.$apply();
       }));
       it('should try to update OT', function(){
-        expect(scope.otChangeValue).toBeCalledWith('bar');
+        sinon.assert.calledWith(scope.otChangeValue, 'bar');
       });
       it('should reset the internal value', function(){
         expect(scope.internal.value).toBe('foo');

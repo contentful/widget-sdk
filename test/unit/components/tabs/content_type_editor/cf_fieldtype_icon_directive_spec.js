@@ -35,7 +35,7 @@ describe('The cfFieldtypeIcon directive', function () {
   it('shows a tooltip', function() {
     var tooltipStub = sinon.stub($.fn, 'tooltip');
     compileElement('show-tooltip');
-    expect(tooltipStub).toBeCalled();
+    sinon.assert.called(tooltipStub);
     tooltipStub.restore();
   });
 
@@ -49,7 +49,7 @@ describe('The cfFieldtypeIcon directive', function () {
       });
 
       it('does not trigger error', function() {
-        expect(stubs.logWarn).not.toBeCalled();
+        sinon.assert.notCalled(stubs.logWarn);
       });
 
       it('has an inner element', function() {
@@ -83,7 +83,7 @@ describe('The cfFieldtypeIcon directive', function () {
     });
 
     it('does not trigger error', function() {
-      expect(stubs.logWarn).toBeCalled();
+      sinon.assert.called(stubs.logWarn);
     });
 
     it('has an inner element', function() {

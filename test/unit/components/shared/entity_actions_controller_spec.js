@@ -119,7 +119,7 @@ describe('Entity Actions Controller', function () {
     createController({canDelete: deleteStub});
     scope.$digest();
     scope.canDelete();
-    expect(deleteStub).toBeCalled();
+    sinon.assert.called(deleteStub);
   });
 
 });

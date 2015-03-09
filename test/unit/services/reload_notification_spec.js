@@ -22,31 +22,31 @@ describe('ReloadNotification service', function () {
     it('should trigger the api error for 500eds', function () {
       $q.reject({statusCode: 500}).catch(ReloadNotification.apiErrorHandler);
       $rootScope.$apply();
-      expect(open).toBeCalled();
+      sinon.assert.called(open);
     });
 
     it('should not trigger the api error for 502', function () {
       $q.reject({statusCode: 502}).catch(ReloadNotification.apiErrorHandler);
       $rootScope.$apply();
-      expect(open).not.toBeCalled();
+      sinon.assert.notCalled(open);
     });
 
     it('should not trigger the api error for < 500eds', function () {
       $q.reject({statusCode: 404}).catch(ReloadNotification.apiErrorHandler);
       $rootScope.$apply();
-      expect(open).not.toBeCalled();
+      sinon.assert.notCalled(open);
     });
 
     it('should not trigger the api error for errors without statusCode', function () {
       $q.reject({}).catch(ReloadNotification.apiErrorHandler);
       $rootScope.$apply();
-      expect(open).not.toBeCalled();
+      sinon.assert.notCalled(open);
     });
 
     it('should not trigger the api error for errors that are Strings', function () {
       $q.reject('lolnope').catch(ReloadNotification.apiErrorHandler);
       $rootScope.$apply();
-      expect(open).not.toBeCalled();
+      sinon.assert.notCalled(open);
     });
 
     describe('should not interfere with further processing', function () {
@@ -67,21 +67,21 @@ describe('ReloadNotification service', function () {
 
       it('when success', function () {
         run($q.when('derp'));
-        expect(successHandler).toBeCalledWith('derp');
-        expect(errorHandler).not.toBeCalled();
+        sinon.assert.calledWith(successHandler, 'derp');
+        sinon.assert.notCalled(errorHandler);
       });
 
       it('when handled error', function () {
         run($q.reject(error));
-        expect(successHandler).not.toBeCalled();
-        expect(errorHandler).toBeCalledWith(error);
+        sinon.assert.notCalled(successHandler);
+        sinon.assert.calledWith(errorHandler, error);
       });
 
       it('when unhandled error', function () {
         error = {};
         run($q.reject(error));
-        expect(successHandler).not.toBeCalled();
-        expect(errorHandler).toBeCalledWith(error);
+        sinon.assert.notCalled(successHandler);
+        sinon.assert.calledWith(errorHandler, error);
       });
     });
 

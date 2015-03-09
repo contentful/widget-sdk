@@ -48,7 +48,7 @@ describe('SpaceContext class with no space', function () {
     });
 
     it('refreshes active locales', function () {
-      expect(spaceContext.refreshActiveLocales).toBeCalled();
+      sinon.assert.called(spaceContext.refreshActiveLocales);
     });
   });
 
@@ -126,7 +126,7 @@ describe('SpaceContext class with a space', function () {
     });
 
     it('calls private locales space getter', function () {
-      expect(spaceContext.space.getPrivateLocales).toBeCalled();
+      sinon.assert.called(spaceContext.space.getPrivateLocales);
     });
 
     it('privateLocales exists', function () {
@@ -138,7 +138,7 @@ describe('SpaceContext class with a space', function () {
     });
 
     it('calls default locale space getter', function () {
-      expect(spaceContext.space.getDefaultLocale).toBeCalled();
+      sinon.assert.called(spaceContext.space.getDefaultLocale);
     });
 
     it('default locale is defined', function () {
@@ -146,7 +146,7 @@ describe('SpaceContext class with a space', function () {
     });
 
     it('refreshes active locales', function () {
-      expect(spaceContext.refreshActiveLocales).toBeCalled();
+      sinon.assert.called(spaceContext.refreshActiveLocales);
     });
 
     it('sets locale state for default locale', function () {
@@ -225,7 +225,7 @@ describe('SpaceContext class with a space', function () {
       spaceContext.refreshContentTypes();
       rootScope.$apply();
       expect(spaceContext.contentTypes[0].getName()).toEqual('contentType1');
-      expect(refreshPublishedContentTypesSpy).toBeCalled();
+      sinon.assert.called(refreshPublishedContentTypesSpy);
     });
 
     it('makes only a single call to the server for quick refreshes', function () {
@@ -242,7 +242,7 @@ describe('SpaceContext class with a space', function () {
       sinon.stub(spaceContext._contentTypeLoader, 'loadPromise').returns($q.reject({statusCode: 500}));
       spaceContext.refreshContentTypes();
       rootScope.$apply();
-      expect(handler).toBeCalled();
+      sinon.assert.called(handler);
     });
 
     describe('refreshes published content types', function () {
@@ -429,7 +429,7 @@ describe('SpaceContext class with a space', function () {
     });
 
     it('does not refresh content types', function () {
-      expect(spaceContext.refreshContentTypes).not.toBeCalled();
+      sinon.assert.notCalled(spaceContext.refreshContentTypes);
     });
 
     it('does not set a flag for the content type as being missing', function () {
@@ -457,7 +457,7 @@ describe('SpaceContext class with a space', function () {
     });
 
     it('refreshes content types', function () {
-      expect(spaceContext.refreshContentTypes).toBeCalled();
+      sinon.assert.called(spaceContext.refreshContentTypes);
     });
 
     it('sets a flag for the content type as being missing', function () {

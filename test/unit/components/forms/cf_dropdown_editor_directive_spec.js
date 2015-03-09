@@ -111,7 +111,7 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('changes ot value', function() {
-      expect(scope.otChangeValue).toBeCalledWith('orange');
+      sinon.assert.calledWith(scope.otChangeValue, 'orange');
     });
 
     it('sets the selected value', function() {
@@ -129,7 +129,7 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('changes ot value', function() {
-      expect(scope.otChangeValue).toBeCalledWith(1);
+      sinon.assert.calledWith(scope.otChangeValue, 1);
     });
 
     it('sets the selected value', function() {
@@ -147,7 +147,7 @@ describe('cfDropdownEditor Directive', function () {
     });
 
     it('changes ot value', function() {
-      expect(scope.otChangeValue).toBeCalledWith(1.2);
+      sinon.assert.calledWith(scope.otChangeValue, 1.2);
     });
 
     it('sets the selected value', function() {

@@ -165,7 +165,7 @@ describe('Space Template creation service', function () {
     });
 
     it('rejects promise because some have failed', function() {
-      expect(stubs.error).toBeCalled();
+      sinon.assert.called(stubs.error);
     });
 
     describe('retries creating the failed entities', function() {
@@ -255,7 +255,7 @@ describe('Space Template creation service', function () {
       });
 
       it('rejects promise because some have failed', function() {
-        expect(stubs.retrySuccess).toBeCalled();
+        sinon.assert.called(stubs.retrySuccess);
       });
 
 

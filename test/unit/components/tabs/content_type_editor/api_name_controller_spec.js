@@ -31,7 +31,7 @@ describe('ApiNameController', function () {
       scope.published = true;
       scope.$digest();
       controller.updateFromName();
-      expect(scope.isDisplayField).not.toBeCalled();
+      sinon.assert.notCalled(scope.isDisplayField);
     });
 
     it('if not published, but id different from old name, stores the old field name', function() {
@@ -40,7 +40,7 @@ describe('ApiNameController', function () {
       stubs.toIdentifier.returns('fieldname');
       scope.$digest();
       controller.updateFromName();
-      expect(scope.isDisplayField).not.toBeCalled();
+      sinon.assert.notCalled(scope.isDisplayField);
     });
 
     describe('if not published, and id same as old name', function() {
@@ -55,7 +55,7 @@ describe('ApiNameController', function () {
       it('checks if its display field', function() {
         scope.$digest();
         controller.updateFromName();
-        expect(scope.isDisplayField).toBeCalled();
+        sinon.assert.called(scope.isDisplayField);
       });
 
       it('stores field apiName', function() {
@@ -67,7 +67,7 @@ describe('ApiNameController', function () {
       it('if no otdoc gets no otdoc value', function() {
         scope.$digest();
         controller.updateFromName();
-        expect(stubs.at).not.toBeCalled();
+        sinon.assert.notCalled(stubs.at);
       });
 
       describe('with an otDoc', function() {
@@ -94,15 +94,15 @@ describe('ApiNameController', function () {
             });
 
             it('gets otdoc value for id', function() {
-              expect(stubs.at).toBeCalled();
+              sinon.assert.called(stubs.at);
             });
 
             it('id is set on subdoc', function() {
-              expect(stubs.set).toBeCalledWith('fieldname');
+              sinon.assert.calledWith(stubs.set, 'fieldname');
             });
 
             it('sets display field', function() {
-              expect(scope.setDisplayField).toBeCalledWith(scope.field);
+              sinon.assert.calledWith(scope.setDisplayField, scope.field);
             });
           });
 
@@ -120,15 +120,15 @@ describe('ApiNameController', function () {
             });
 
             it('gets otdoc value for id', function() {
-              expect(stubs.at).toBeCalled();
+              sinon.assert.called(stubs.at);
             });
 
             it('id is set on subdoc', function() {
-              expect(stubs.set).toBeCalledWith('fieldname');
+              sinon.assert.calledWith(stubs.set, 'fieldname');
             });
 
             it('sets display field', function() {
-              expect(scope.setDisplayField).toBeCalledWith(scope.field);
+              sinon.assert.calledWith(scope.setDisplayField, scope.field);
             });
           });
         });
@@ -142,15 +142,15 @@ describe('ApiNameController', function () {
           });
 
           it('gets otdoc value for id', function() {
-            expect(stubs.at).toBeCalled();
+            sinon.assert.called(stubs.at);
           });
 
           it('id is set on subdoc', function() {
-            expect(stubs.set).toBeCalledWith('fieldname');
+            sinon.assert.calledWith(stubs.set, 'fieldname');
           });
 
           it('gets id from subdoc', function() {
-            expect(stubs.get).toBeCalled();
+            sinon.assert.called(stubs.get);
           });
 
           it('sets new id on field', function() {
@@ -158,8 +158,8 @@ describe('ApiNameController', function () {
           });
 
           it('shows error', function() {
-            expect(notification.error).toBeCalled();
-            expect(logger.logSharejsWarn).toBeCalled();
+            sinon.assert.called(notification.error);
+            sinon.assert.called(logger.logSharejsWarn);
           });
         });
       });

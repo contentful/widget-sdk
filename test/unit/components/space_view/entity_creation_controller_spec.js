@@ -50,7 +50,7 @@ describe('EntityCreationController', function () {
 
     it('calls the space create method', function () {
       this.entityCreationController.newEntry(contentType);
-      expect(createStub).toBeCalled();
+      sinon.assert.called(createStub);
     });
 
     describe('creation fails', function () {
@@ -67,15 +67,15 @@ describe('EntityCreationController', function () {
       });
 
       it('determines enforcements', function () {
-        expect(stubs.enforcement).toBeCalledWith([], 'entry');
+        sinon.assert.calledWith(stubs.enforcement, [], 'entry');
       });
 
       it('notifies of the error', function () {
-        expect(this.notification.error).toBeCalled();
+        sinon.assert.called(this.notification.error);
       });
 
       it('tracks analytics', function () {
-        expect(stubs.track).toBeCalled();
+        sinon.assert.called(stubs.track);
       });
     });
 
@@ -93,11 +93,11 @@ describe('EntityCreationController', function () {
       });
 
       it('navigates to editor', function () {
-        expect(editorStub).toBeCalled();
+        sinon.assert.called(editorStub);
       });
 
       it('tracks analytics', function () {
-        expect(stubs.track).toBeCalled();
+        sinon.assert.called(stubs.track);
       });
     });
   });
@@ -114,7 +114,7 @@ describe('EntityCreationController', function () {
 
     it('calls the space create method', function () {
       this.entityCreationController.newAsset();
-      expect(createStub).toBeCalled();
+      sinon.assert.called(createStub);
     });
 
     describe('creation fails', function () {
@@ -131,15 +131,15 @@ describe('EntityCreationController', function () {
       });
 
       it('determines enforcements', function () {
-        expect(stubs.enforcement).toBeCalledWith([], 'asset');
+        sinon.assert.calledWith(stubs.enforcement, [], 'asset');
       });
 
       it('notifies of the error', function () {
-        expect(this.notification.error).toBeCalled();
+        sinon.assert.called(this.notification.error);
       });
 
       it('tracks analytics', function () {
-        expect(stubs.track).toBeCalled();
+        sinon.assert.called(stubs.track);
       });
     });
 
@@ -157,11 +157,11 @@ describe('EntityCreationController', function () {
       }));
 
       it('navigates to editor', function () {
-        expect(editorStub).toBeCalled();
+        sinon.assert.called(editorStub);
       });
 
       it('tracks analytics', function () {
-        expect(stubs.track).toBeCalled();
+        sinon.assert.called(stubs.track);
       });
     });
   });
@@ -178,7 +178,7 @@ describe('EntityCreationController', function () {
 
     it('calls the space create method', function () {
       this.entityCreationController.newContentType();
-      expect(createStub).toBeCalled();
+      sinon.assert.called(createStub);
     });
 
     describe('creation fails', function () {
@@ -195,15 +195,15 @@ describe('EntityCreationController', function () {
       });
 
       it('determines enforcements', function () {
-        expect(stubs.enforcement).toBeCalledWith([], 'contentType');
+        sinon.assert.calledWith(stubs.enforcement, [], 'contentType');
       });
 
       it('notifies of the error', function () {
-        expect(this.notification.error).toBeCalled();
+        sinon.assert.called(this.notification.error);
       });
 
       it('tracks analytics', function () {
-        expect(stubs.track).toBeCalled();
+        sinon.assert.called(stubs.track);
       });
     });
 
@@ -221,11 +221,11 @@ describe('EntityCreationController', function () {
       });
 
       it('navigates to editor', function () {
-        expect(editorStub).toBeCalled();
+        sinon.assert.called(editorStub);
       });
 
       it('tracks analytics', function () {
-        expect(stubs.track).toBeCalled();
+        sinon.assert.called(stubs.track);
       });
     });
   });
@@ -247,11 +247,11 @@ describe('EntityCreationController', function () {
       });
 
       it('computes the api key usage', function () {
-        expect(stubs.computeUsage).toBeCalledWith('apiKey');
+        sinon.assert.calledWith(stubs.computeUsage, 'apiKey');
       });
 
       it('notifies of the error', function () {
-        expect(this.notification.error).toBeCalled();
+        sinon.assert.called(this.notification.error);
       });
     });
 
@@ -268,19 +268,19 @@ describe('EntityCreationController', function () {
       });
 
       it('computes the api key usage', function () {
-        expect(stubs.computeUsage).toBeCalledWith('apiKey');
+        sinon.assert.calledWith(stubs.computeUsage, 'apiKey');
       });
 
       it('calls the space create method', function () {
-        expect(createStub).toBeCalled();
+        sinon.assert.called(createStub);
       });
 
       it('navigates to editor', function () {
-        expect(editorStub).toBeCalled();
+        sinon.assert.called(editorStub);
       });
 
       it('tracks analytics', function () {
-        expect(stubs.track).toBeCalled();
+        sinon.assert.called(stubs.track);
       });
     });
   });

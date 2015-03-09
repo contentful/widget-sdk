@@ -40,7 +40,7 @@ describe('cfSearch Directive', function () {
       });
 
       it('updates state with button trigger', function() {
-        expect(isolateScope.update).toBeCalledWith({trigger: 'button'});
+        sinon.assert.calledWith(isolateScope.update, {trigger: 'button'});
       });
     });
 
@@ -70,7 +70,7 @@ describe('cfSearch Directive', function () {
       });
 
       it('emits event with given parans', function() {
-        expect(isolateScope.$emit).toBeCalledWith('refreshSearch', params);
+        sinon.assert.calledWith(isolateScope.$emit, 'refreshSearch', params);
       });
     });
 

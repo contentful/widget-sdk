@@ -161,7 +161,7 @@ describe('ContentTypeFieldList Controller', function () {
       });
 
       it('set is called with field id', function () {
-        expect(setStub).toBeCalledWith('foo');
+        sinon.assert.calledWith(setStub, 'foo');
       });
     });
 
@@ -176,7 +176,7 @@ describe('ContentTypeFieldList Controller', function () {
       });
 
       it('set is called with field id', function () {
-        expect(setStub).toBeCalledWith('foo');
+        sinon.assert.calledWith(setStub, 'foo');
       });
     });
 
@@ -192,7 +192,7 @@ describe('ContentTypeFieldList Controller', function () {
       });
 
       it('set is called with field id', function () {
-        expect(setStub).toBeCalledWith(null);
+        sinon.assert.calledWith(setStub, null);
       });
     });
 
@@ -208,7 +208,7 @@ describe('ContentTypeFieldList Controller', function () {
       });
 
       it('set is called with field id', function () {
-        expect(setStub).toBeCalledWith(null);
+        sinon.assert.calledWith(setStub, null);
       });
     });
 
@@ -251,7 +251,7 @@ describe('ContentTypeFieldList Controller', function () {
     }));
 
     it('calls openAccordionItem with new field', function () {
-      expect(scope.openAccordionItem).toBeCalledWith({id: 'foo'});
+      sinon.assert.calledWith(scope.openAccordionItem, {id: 'foo'});
     });
   });
 

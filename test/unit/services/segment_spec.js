@@ -22,13 +22,13 @@ describe('Segment service', function(){
 
   it('should enable', function() {
     this.segment.enable();
-    expect(this.document.createElement).toBeCalled();
+    sinon.assert.called(this.document.createElement);
   });
 
   it('should disable', function(){
     this.segment.disable();
     this.segment.enable();
-    expect(this.document.createElement).not.toBeCalled();
+    sinon.assert.notCalled(this.document.createElement);
   });
 
   it('buffers calls to analytics and runs them when enabled', function(){

@@ -109,32 +109,32 @@ describe('Asset List Controller', function () {
       stubs.reset = sinon.stub(scope.searchController, 'resetAssets');
       scope.tab.params.view.searchTerm = 'thing';
       scope.$digest();
-      expect(stubs.reset).toBeCalledOnce();
+      sinon.assert.calledOnce(stubs.reset);
     });
 
     it('page', function () {
       scope.searchController.paginator.page = 1;
       scope.$digest();
-      expect(stubs.reset).toBeCalled();
+      sinon.assert.called(stubs.reset);
     });
 
     it('page length', function () {
       scope.pageLength = 10;
       scope.$digest();
-      expect(stubs.reset).toBeCalled();
+      sinon.assert.called(stubs.reset);
     });
 
     it('list', function () {
       scope.tab.params.list = 'all';
       scope.$digest();
-      expect(stubs.reset).toBeCalled();
+      sinon.assert.called(stubs.reset);
     });
 
     it('space id', function () {
       stubs.id = sinon.stub(scope.spaceContext.space, 'getId');
       stubs.id.returns(123);
       scope.$digest();
-      expect(stubs.reset).toBeCalled();
+      sinon.assert.called(stubs.reset);
       stubs.id.restore();
     });
   });
@@ -160,7 +160,7 @@ describe('Asset List Controller', function () {
     it('loads assets', function() {
       scope.searchController.resetAssets();
       scope.$apply();
-      expect(stubs.getAssets).toBeCalled();
+      sinon.assert.called(stubs.getAssets);
     });
 
     it('sets assets num on the paginator', function() {
@@ -178,7 +178,7 @@ describe('Asset List Controller', function () {
     it('switches the selection base set', function() {
       scope.searchController.resetAssets();
       scope.$apply();
-      expect(stubs.switch).toBeCalled();
+      sinon.assert.called(stubs.switch);
     });
 
     describe('creates a query object', function() {
@@ -262,13 +262,13 @@ describe('Asset List Controller', function () {
     it('should cause resetAssets to show an error message', function () {
       scope.searchController.resetAssets();
       scope.$apply();
-      expect(apiErrorHandler).toBeCalled();
+      sinon.assert.called(apiErrorHandler);
     });
 
     it('should cause loadMore to show an error message', function () {
       scope.searchController.loadMore();
       scope.$apply();
-      expect(apiErrorHandler).toBeCalled();
+      sinon.assert.called(apiErrorHandler);
     });
   });
 
@@ -298,7 +298,7 @@ describe('Asset List Controller', function () {
     it('doesnt load if on last page', function() {
       scope.searchController.paginator.atLast.returns(true);
       scope.searchController.loadMore();
-      expect(stubs.getAssets).not.toBeCalled();
+      sinon.assert.notCalled(stubs.getAssets);
     });
 
     it('paginator count is increased', function() {
@@ -319,13 +319,13 @@ describe('Asset List Controller', function () {
       scope.searchController.paginator.page = 0;
       scope.searchController.loadMore();
       scope.$apply();
-      expect(stubs.getAssets).toBeCalled();
+      sinon.assert.called(stubs.getAssets);
     });
 
     it('triggers analytics event', function () {
       scope.searchController.loadMore();
       scope.$apply();
-      expect(stubs.track).toBeCalled();
+      sinon.assert.called(stubs.track);
     });
 
     describe('on successful load response', function() {
@@ -358,16 +358,17 @@ describe('Asset List Controller', function () {
         scope.searchController.paginator.page = 1;
         scope.$apply(); //trigger resetAssets
         stubs.getAssets.returns($q.when());
+        sinon.spy(scope.assets, 'push');
         scope.searchController.loadMore();
         scope.$apply(); //trigger loadMore promises
       });
 
       it('appends assets to scope', function () {
-        expect(scope.assets.push).not.toBeCalled();
+        sinon.assert.notCalled(scope.assets.push);
       });
 
       it('sends an error', function() {
-        expect(stubs.logError).toBeCalled();
+        sinon.assert.called(stubs.logError);
       });
     });
 
@@ -377,12 +378,13 @@ describe('Asset List Controller', function () {
         getAssets.reject();
         scope.$apply();
         scope.searchController.paginator.page = 1;
+        sinon.spy(scope.assets, 'push');
         scope.searchController.loadMore();
         scope.$apply();
       });
 
       it('appends assets to scope', function () {
-        expect(scope.assets.push).not.toBeCalled();
+        sinon.assert.notCalled(scope.assets.push);
       });
 
       it('pagination count decreases', function() {
@@ -399,13 +401,13 @@ describe('Asset List Controller', function () {
     it('does nothing if its not the current scope tab', inject(function ($rootScope) {
       scope.tab = null;
       $rootScope.$broadcast('tabBecameActive', {});
-      expect(scope.searchController.resetAssets).not.toBeCalled();
+      sinon.assert.notCalled(scope.searchController.resetAssets);
     }));
 
     it('resets assets', inject(function($rootScope) {
       scope.tab = {};
       $rootScope.$broadcast('tabBecameActive', scope.tab);
-      expect(scope.searchController.resetAssets).toBeCalled();
+      sinon.assert.called(scope.searchController.resetAssets);
     }));
   });
 
@@ -440,19 +442,19 @@ describe('Asset List Controller', function () {
     });
 
     it('filepicker is called', function() {
-      expect(stubs.pickMultiple).toBeCalledOnce();
+      sinon.assert.calledOnce(stubs.pickMultiple);
     });
 
     it('asset is created', function() {
-      expect(scope.spaceContext.space.createAsset).toBeCalledTwice();
+      sinon.assert.calledTwice(scope.spaceContext.space.createAsset);
     });
 
     it('process is triggered', function() {
-      expect(stubs.process).toBeCalledTwice();
+      sinon.assert.calledTwice(stubs.process);
     });
 
     it('publish is triggered', function() {
-      expect(stubs.publish).toBeCalledTwice();
+      sinon.assert.calledTwice(stubs.publish);
     });
   });
 

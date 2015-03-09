@@ -188,15 +188,15 @@ describe('cfEntryLinkEditor Directive', function () {
       });
 
       it('linkTitle is called for 1st entity', function() {
-        expect(linkTitleSpy).toBeCalledWith(scope.linkedEntities[0]);
+        sinon.assert.calledWith(linkTitleSpy, scope.linkedEntities[0]);
       });
 
       it('linkTitle is called for 2nd entity', function() {
-        expect(linkTitleSpy).toBeCalledWith(scope.linkedEntities[1]);
+        sinon.assert.calledWith(linkTitleSpy, scope.linkedEntities[1]);
       });
 
       it('linkTitle is called for 3rd entity', function() {
-        expect(linkTitleSpy).toBeCalledWith(scope.linkedEntities[2]);
+        sinon.assert.calledWith(linkTitleSpy, scope.linkedEntities[2]);
       });
 
     });

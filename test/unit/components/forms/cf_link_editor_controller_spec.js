@@ -86,7 +86,7 @@ describe('LinkEditorController', function () {
     });
 
     it('initializes entity cache', function() {
-      expect(entityCacheMock).toBeCalledWith(scope.spaceContext.space, 'getEntries');
+      sinon.assert.calledWith(entityCacheMock, scope.spaceContext.space, 'getEntries');
     });
 
     it('initializes link content types', function() {
@@ -102,7 +102,7 @@ describe('LinkEditorController', function () {
   describe('methods', function() {
     function addEntryExpectations() {
       it('updates model', function() {
-        expect(scope.updateModel).toBeCalled();
+        sinon.assert.called(scope.updateModel);
       });
 
       it('link is the supplied entry', function() {
@@ -171,7 +171,7 @@ describe('LinkEditorController', function () {
         });
 
         it('updates model', function() {
-          expect(scope.updateModel).toBeCalled();
+          sinon.assert.called(scope.updateModel);
         });
 
         it('has 0 links', function() {
@@ -222,7 +222,7 @@ describe('LinkEditorController', function () {
         });
 
         it('updates model', function() {
-          expect(scope.updateModel).toBeCalled();
+          sinon.assert.called(scope.updateModel);
         });
 
         it('has 0 links', function() {
@@ -241,7 +241,7 @@ describe('LinkEditorController', function () {
         });
 
         it('updates model', function() {
-          expect(scope.updateModel).toBeCalled();
+          sinon.assert.called(scope.updateModel);
         });
 
         it('has 0 links', function() {

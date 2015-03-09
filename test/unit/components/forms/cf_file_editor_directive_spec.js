@@ -72,11 +72,11 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('calls filepickers pick', function() {
-        expect(stubs.pick).toBeCalled();
+        sinon.assert.called(stubs.pick);
       });
 
       it('calls otchangevalue', function() {
-        expect(scope.otChangeValue).toBeCalled();
+        sinon.assert.called(scope.otChangeValue);
       });
 
       it('file object is parsed', function() {
@@ -96,7 +96,7 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('emits fileUploaded event', function() {
-        expect(scope.$emit).toBeCalledWith('fileUploaded');
+        sinon.assert.calledWith(scope.$emit, 'fileUploaded');
         expect(scope.$emit.args[0][1]).toEqual({
           upload: 'newurl',
           fileName: 'newfilename',
@@ -119,7 +119,7 @@ describe('cfFileEditor Directive', function () {
 
     it('validate gets called', function() {
       scope.uploadFile();
-      expect(scope.validate).toBeCalled();
+      sinon.assert.called(scope.validate);
     });
   });
 
@@ -134,7 +134,7 @@ describe('cfFileEditor Directive', function () {
     });
 
     it('validate does not get called', function() {
-      expect(scope.validate).not.toBeCalled();
+      sinon.assert.notCalled(scope.validate);
     });
   });
 
@@ -149,11 +149,11 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('validates scope', function() {
-        expect(scope.validate).toBeCalled();
+        sinon.assert.called(scope.validate);
       });
 
       it('calls otchangevalue', function() {
-        expect(scope.otChangeValue).toBeCalled();
+        sinon.assert.called(scope.otChangeValue);
       });
 
       it('file is null', function() {
@@ -178,7 +178,7 @@ describe('cfFileEditor Directive', function () {
       });
 
       it('calls otchangevalue', function() {
-        expect(scope.otChangeValue).toBeCalled();
+        sinon.assert.called(scope.otChangeValue);
       });
 
       it('file now has url', function() {

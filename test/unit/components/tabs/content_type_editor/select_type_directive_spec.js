@@ -47,7 +47,7 @@ describe('The select type directive', function () {
 
   it('calls action', function() {
     container.find('.menu-list').scope().testAction();
-    expect(scope.testAction).toBeCalled();
+    sinon.assert.called(scope.testAction);
   });
 
 });

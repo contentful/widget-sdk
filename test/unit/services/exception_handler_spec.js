@@ -39,15 +39,15 @@ xdescribe('Exception handler service', function () {
   });
 
   it('$log error called', function () {
-    expect(errorStub).toBeCalledWith(exception);
+    sinon.assert.calledWith(errorStub, exception);
   });
 
   it('logger logException called', function () {
-    expect(exceptionStub).toBeCalledWith(exception);
+    sinon.assert.calledWith(exceptionStub, exception);
   });
 
   it('ReloadNotification triggered', function () {
-    expect(triggerStub).toBeCalled();
+    sinon.assert.called(triggerStub);
   });
 
 

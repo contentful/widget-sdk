@@ -50,11 +50,11 @@ describe('GoogleMaps Controller', function () {
       });
 
       it('geocoder is created', function() {
-        expect(this.stubs.geocoder).toBeCalled();
+        sinon.assert.called(this.stubs.geocoder);
       });
 
       it('geocoder method is called', function() {
-        expect(this.stubs.geocode).toBeCalled();
+        sinon.assert.called(this.stubs.geocode);
       });
 
       it('address is sent to geocoder', function(done) {
@@ -103,7 +103,7 @@ describe('GoogleMaps Controller', function () {
       });
 
       it('map location is reset', function() {
-        expect(this.scope.resetMapLocation).toBeCalled();
+        sinon.assert.called(this.scope.resetMapLocation);
       });
     });
   });
@@ -165,7 +165,7 @@ describe('GoogleMaps Controller', function () {
     });
 
     it('calls result picker', function() {
-      expect(this.scope.pickResult).toBeCalled();
+      sinon.assert.called(this.scope.pickResult);
     });
   });
 });

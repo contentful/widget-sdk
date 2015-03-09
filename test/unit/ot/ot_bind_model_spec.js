@@ -23,7 +23,7 @@ describe('otBindModel', function () {
   it('should call otChangeValue whenever the value is changed', function () {
     scope.otChangeValue = sinon.stub();
     elem.val('b').trigger('input');
-    expect(scope.otChangeValue).toBeCalledWith('b');
+    sinon.assert.calledWith(scope.otChangeValue, 'b');
   });
 
   it('should update the model value in response to otValueChanged', function () {

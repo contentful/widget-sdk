@@ -39,7 +39,7 @@ describe('FieldWidgetSettingsController', function(){
     });
 
     it('initializes field', function() {
-      expect(scope.getFieldForWidget).toBeCalled();
+      sinon.assert.called(scope.getFieldForWidget);
     });
 
     it('initializes widgets for type', function() {

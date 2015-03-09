@@ -55,7 +55,7 @@ describe('cfLocationEditor Directive', function () {
       });
 
       it('calls ot change value with location', function() {
-        expect(this.scope.otChangeValue).toBeCalledWith(location);
+        sinon.assert.calledWith(this.scope.otChangeValue, location);
       });
 
       it('update external value', function() {
@@ -75,7 +75,7 @@ describe('cfLocationEditor Directive', function () {
       });
 
       it('calls ot change value with location', function() {
-        expect(this.scope.otChangeValue).toBeCalledWith(location);
+        sinon.assert.calledWith(this.scope.otChangeValue, location);
       });
 
       it('resets external value', function() {
@@ -88,7 +88,7 @@ describe('cfLocationEditor Directive', function () {
     this.compileElement();
     this.scope.updateLocation = sinon.stub();
     this.scope.removeLocation();
-    expect(this.scope.updateLocation).toBeCalledWith(null);
+    sinon.assert.calledWith(this.scope.updateLocation, null);
   });
 
   describe('watches for location validity', function() {

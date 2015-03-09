@@ -42,7 +42,7 @@ describe('API Key List Controller', function () {
     });
 
     it('calls api keys getter', function() {
-      expect(getApiKeysStub).toBeCalled();
+      sinon.assert.called(getApiKeysStub);
     });
 
     it('saves api keys on scope', function() {
@@ -60,7 +60,7 @@ describe('API Key List Controller', function () {
     });
 
     it('results in an error message', function () {
-      expect(apiErrorHandler).toBeCalled();
+      sinon.assert.called(apiErrorHandler);
     });
 
   });
@@ -73,13 +73,13 @@ describe('API Key List Controller', function () {
     it('does nothing if its not the current scope tab', inject(function ($rootScope) {
       scope.tab = null;
       $rootScope.$broadcast('tabBecameActive', {});
-      expect(scope.refreshApiKeys).not.toBeCalled();
+      sinon.assert.notCalled(scope.refreshApiKeys);
     }));
 
     it('resets api keys', inject(function($rootScope) {
       scope.tab = {};
       $rootScope.$broadcast('tabBecameActive', scope.tab);
-      expect(scope.refreshApiKeys).toBeCalled();
+      sinon.assert.called(scope.refreshApiKeys);
     }));
   });
 

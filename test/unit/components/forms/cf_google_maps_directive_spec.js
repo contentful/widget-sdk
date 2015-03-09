@@ -101,7 +101,7 @@ describe('cfGoogleMaps Directive', function () {
     });
 
     it('sends viewport to fitBounds method', function() {
-      expect(this.stubs.fitBounds).toBeCalledWith('viewport');
+      sinon.assert.calledWith(this.stubs.fitBounds, 'viewport');
     });
   });
 
@@ -118,7 +118,7 @@ describe('cfGoogleMaps Directive', function () {
     });
 
     it('sets fit bounds', function() {
-      expect(this.stubs.fitBounds).toBeCalledWith('viewport');
+      sinon.assert.calledWith(this.stubs.fitBounds, 'viewport');
     });
 
     it('searchTerm is empty', function() {
@@ -132,7 +132,7 @@ describe('cfGoogleMaps Directive', function () {
         latLng = new this.stubs.LatLng();
     locationController.$viewValue = latLng;
     this.scope.resetMapLocation();
-    expect(this.stubs.panTo).toBeCalledWith(latLng);
+    sinon.assert.calledWith(this.stubs.panTo, latLng);
   });
 
   it('shows invalid location warning when location exists but is invalid', function () {

@@ -102,23 +102,23 @@ describe('Entry List Actions Controller', function () {
       });
 
       it('calls '+action+' on first selected entry', function () {
-        expect(stubs.action1).toBeCalled();
+        sinon.assert.called(stubs.action1);
       });
 
       it('calls '+action+' on second selected entry', function () {
-        expect(stubs.action2).toBeCalled();
+        sinon.assert.called(stubs.action2);
       });
 
       it('calls '+action+' on third selected entry', function () {
-        expect(stubs.action3).toBeCalled();
+        sinon.assert.called(stubs.action3);
       });
 
       it('calls '+action+' on fourth selected entry', function () {
-        expect(stubs.action4).toBeCalled();
+        sinon.assert.called(stubs.action4);
       });
 
       it('calls success notification', function () {
-        expect(stubs.info).toBeCalledOnce();
+        sinon.assert.calledOnce(stubs.info);
       });
 
       it('success notification shown for 3 items', function () {
@@ -126,7 +126,7 @@ describe('Entry List Actions Controller', function () {
       });
 
       it('calls warn notification', function () {
-        expect(stubs.warn).toBeCalledOnce();
+        sinon.assert.calledOnce(stubs.warn);
       });
 
       it('warn notification shown for 1 item', function () {
@@ -134,11 +134,11 @@ describe('Entry List Actions Controller', function () {
       });
 
       it('clears selection', function () {
-        expect(stubs.removeAll).toBeCalled();
+        sinon.assert.called(stubs.removeAll);
       });
 
       it('tracks analytics event', function () {
-        expect(stubs.track).toBeCalled();
+        sinon.assert.called(stubs.track);
       });
 
       if(extraSpecs){ extraSpecs(); }
@@ -158,7 +158,7 @@ describe('Entry List Actions Controller', function () {
   makePerformTests('unpublish', 0);
   makePerformTests('delete', 0, function () {
     it('broadcasts event for sucessfully deleted entry', function () {
-      expect(stubs.broadcast).toBeCalledWith('entityDeleted');
+      sinon.assert.calledWith(stubs.broadcast, 'entityDeleted');
     });
   });
 
@@ -185,35 +185,35 @@ describe('Entry List Actions Controller', function () {
     });
 
     it('calls getSys on first selected entry', function () {
-      expect(stubs.action1).toBeCalled();
+      sinon.assert.called(stubs.action1);
     });
 
     it('calls getSys on second selected entry', function () {
-      expect(stubs.action2).toBeCalled();
+      sinon.assert.called(stubs.action2);
     });
 
     it('attempts to create first entries', function () {
-      expect(stubs.createEntry).toBeCalledWith('foo');
+      sinon.assert.calledWith(stubs.createEntry, 'foo');
     });
 
     it('attempts to create second entries', function () {
-      expect(stubs.createEntry).toBeCalledWith('bar');
+      sinon.assert.calledWith(stubs.createEntry, 'bar');
     });
 
     it('calls success notification', function () {
-      expect(stubs.info).toBeCalledOnce();
+      sinon.assert.calledOnce(stubs.info);
     });
 
     it('calls warn notification', function () {
-      expect(stubs.warn).toBeCalledOnce();
+      sinon.assert.calledOnce(stubs.warn);
     });
 
     it('clears selection', function () {
-      expect(stubs.removeAll).toBeCalled();
+      sinon.assert.called(stubs.removeAll);
     });
 
     it('tracks analytics event', function () {
-      expect(stubs.track).toBeCalled();
+      sinon.assert.called(stubs.track);
     });
   });
 
