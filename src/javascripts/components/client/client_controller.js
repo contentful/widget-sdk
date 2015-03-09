@@ -94,6 +94,9 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     } else if (msg('new', 'space')) {
       $scope.showCreateSpaceDialog(data.organizationId);
 
+    } else if (msg('delete', 'space')) {
+      $scope.performTokenLookup();
+
     } else if (data.type === 'flash') {
       showFlashMessage(data);
 

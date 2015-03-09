@@ -763,6 +763,21 @@ describe('Client Controller', function () {
       });
     });
 
+    describe('space deleted', function () {
+      beforeEach(function () {
+        data = {
+          type: 'space',
+          action: 'delete',
+        };
+        scope.performTokenLookup = sinon.stub();
+        childScope.$emit('iframeMessage', data);
+      });
+
+      it('performs token lookup', function() {
+        sinon.assert.called(scope.performTokenLookup);
+      });
+    });
+
 
     describe('for other messages', function () {
       beforeEach(function () {
