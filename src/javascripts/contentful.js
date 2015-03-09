@@ -18,7 +18,6 @@ angular.module('contentful', [
   $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|contentful):/);
   $sceDelegateProvider.resourceUrlWhitelist(env.resourceUrlWhiteListRegexp);
   clientAdapterProvider.server('//'+env.api_host);
-  authenticationProvider.authApp('//'+env.base_host+'/');
 
   timeRelativeConfig.calendar.en.sameElse = 'll';
   timeRelativeConfig.calendar.en.lastWeek = 'ddd, LT';
