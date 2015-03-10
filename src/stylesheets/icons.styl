@@ -4,16 +4,28 @@ Icons
 Styleguide 10.0
 */
 
-.cf-icon
-  width: 30px
-  height: 26px
-
 /*
 SVG Icons
 
-Description
+The SVG icons are specified in a separate file and can be included via a an
+Angular directive built for this purpose.
+
+The markup below which makes use of the object tag is used only for listing
+the icons and not for actually displaying them.
+
+The first 2 examples are examples of actual usage. You can either specify a scale,
+which is a multiplier on the base icon dimensions or you can specify dimensions,
+which should respect the ratio.
+
+See cf_icon_directive.js or /app/svg/contentful_icons for more info.
 
 Markup:
+p
+  cf-icon(name="contentTypes" scale="2")
+  object(type="image/svg+xml" width="60" height="52" data="/app/images/contentful_icons.svg#contentTypes")
+p
+  cf-icon(name="contentTypes" width="60" height="52")
+  object(type="image/svg+xml" width="60" height="52" data="/app/images/contentful_icons.svg#contentTypes")
 p
   object(type="image/svg+xml" data="/app/images/contentful_icons.svg#contentTypes")
 p
