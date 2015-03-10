@@ -24,6 +24,7 @@ var css = fs.readFileSync(cssFile, 'utf-8');
 svg2js(iconsSvg, parseContent);
 
 function parseContent(root){
+  var artboardContent;
   var svg = root.content[1];
   svg.attrs.width.value = '30px';
   svg.attrs.height.value = '26px';
@@ -33,11 +34,12 @@ function parseContent(root){
     if(nodeIsElAndId(node, 'g', 'Page-1'))
       node.content.forEach(function (node) {
         if(nodeIsElAndId(node, 'g', 'ContentfulIcons'))
-          parseArtboard(node);
+          artboardContent = parseArtboard(node.content);
       });
   });
   // Inject CSS in a style tag
   console.log('Injecting css from ', cssFile);
+  svg.content = artboardContent;
   svg.content.unshift(0, new JSAPI({
     elem: 'style',
     local: 'style',
@@ -47,6 +49,7 @@ function parseContent(root){
     ]
   }));
   // Output the modified file
+  root.content = [svg];
   fs.writeFileSync(
     outputFile,
     js2svg(root, {pretty: true}).data
@@ -55,8 +58,8 @@ function parseContent(root){
   process.exit(0);
 }
 
-function parseArtboard(node) {
-  node.content.forEach(function (node) {
+function parseArtboard(content) {
+  content.forEach(function (node) {
     console.log('Adding styling class to', node.attrs.id.value);
     // Adds icon class for styling
     node.attrs.class = {
@@ -71,9 +74,10 @@ function parseArtboard(node) {
       name: 'transform',
       local: 'transform',
       prefix: '',
-      value: 'translate(1.000000, 1.000000)'
+      value: 'translate(1 1)'
     };
   });
+  return content;
 }
 
 function nodeIsElAndId(node, el, id) {
