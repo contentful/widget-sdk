@@ -5,10 +5,10 @@ angular.module('contentful').directive('cfIcon', ['$compile', 'prefixAssetHostFi
     restrict: 'E',
     link: function (scope, el, attrs) {
       var imagePath = prefixAssetHostFilter('/app/images/contentful_icons.svg');
-      el.html($compile(
+      el.html(
         '<object class="cf-icon" type="image/svg+xml" data="'+
         imagePath +'#'+ attrs.name +'"></object>'
-      )(scope));
+      );
     }
   };
 }]);
