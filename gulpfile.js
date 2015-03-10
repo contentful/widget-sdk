@@ -78,6 +78,12 @@ var src = {
     'src/images/**/*',
     './bower_components/jquery-ui/themes/base/images/*'
   ],
+  svg: {
+    sourceIcons:    __dirname+ '/src/svg/contentful_icons.svg',
+    outputIcons:    __dirname+ '/public/app/images/contentful_icons.svg',
+    outputCssIcons: __dirname+ '/public/app/contentful_icons.css',
+    inputCssIcons:  __dirname+ '/src/stylesheets/contentful_icons.styl'
+  },
   static: [
     'vendor/font-awesome/*.+(eot|svg|ttf|woff)',
     'node_modules/zeroclipboard/ZeroClipboard.swf'
@@ -109,6 +115,21 @@ gulp.task('copy-static', function () {
 gulp.task('copy-images', function () {
   return gulp.src(src.images)
     .pipe(gulp.dest('./public/app/images'));
+});
+
+gulp.task('prepare-svg', ['svg-stylesheets'], function (cb) {
+  run('./bin/prepare_svg.js '+
+      src.svg.sourceIcons+' '+
+      src.svg.outputIcons+' '+
+      src.svg.outputCssIcons
+     ).exec(cb);
+});
+
+gulp.task('cleanup-svg', ['prepare-svg'], function (cb) {
+  run('svgo '+
+      '--disable cleanupIDs '+
+      '-i public/app/images/contentful_icons.svg'
+     ).exec(cb);
 });
 
 gulp.task('index', function(){
@@ -202,12 +223,16 @@ gulp.task('vendor_stylesheets', function () {
     .pipe(gulp.dest('./public/app'));
 });
 
-gulp.task('stylesheets', function () {
+gulp.task('stylesheets', ['cleanup-svg'], function () {
   return buildStylus(src.mainStylesheets, './public/app');
 });
 
 gulp.task('styleguide-stylesheets', function () {
   return buildStylus(src.styleguideStylesheets, './public/styleguide_custom');
+});
+
+gulp.task('svg-stylesheets', function () {
+  return buildStylus(src.svg.inputCssIcons, './public/app');
 });
 
 function buildStylus(sources, dest) {
@@ -231,7 +256,18 @@ gulp.task('generate-styleguide', ['styleguide-stylesheets'], function (cb) {
      ).exec(cb);
 });
 
-gulp.task('all', ['index', 'templates', 'vendor-js', 'vendored-js-non-essential', 'user_interface', 'components', 'copy-images', 'copy-static', 'stylesheets', 'vendor_stylesheets']);
+gulp.task('all', [
+  'index',
+  'templates',
+  'vendor-js',
+  'vendored-js-non-essential',
+  'user_interface',
+  'components',
+  'copy-images',
+  'copy-static',
+  'stylesheets',
+  'vendor_stylesheets'
+]);
 
 gulp.task('clean', function () {
   return gulp.src([
