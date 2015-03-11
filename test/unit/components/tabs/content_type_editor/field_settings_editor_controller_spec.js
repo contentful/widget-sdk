@@ -162,7 +162,7 @@ describe('Field Settings Editor Controller', function () {
 
   describe('change field type', function() {
     it('does nothing with no otDoc', function() {
-      expect(stubs.at).not.toBeCalled();
+      sinon.assert.notCalled(stubs.at);
     });
 
     describe('with an otDoc', function() {
@@ -191,19 +191,19 @@ describe('Field Settings Editor Controller', function () {
         });
 
         it('gets otdoc', function() {
-          expect(stubs.at).toBeCalled();
+          sinon.assert.called(stubs.at);
         });
 
         it('at called with field path', function() {
-          expect(stubs.at).toBeCalledWith(['fields', 2]);
+          sinon.assert.calledWith(stubs.at, ['fields', 2]);
         });
 
         it('sets new field on otdoc', function() {
-          expect(stubs.set).toBeCalledWith(scope.field);
+          sinon.assert.calledWith(stubs.set, scope.field);
         });
 
         it('updates ot entity', function() {
-          expect(scope.otUpdateEntity).toBeCalled();
+          sinon.assert.called(scope.otUpdateEntity);
         });
       });
 
@@ -214,12 +214,12 @@ describe('Field Settings Editor Controller', function () {
         });
 
         it('does not update ot entity', function() {
-          expect(scope.otUpdateEntity).not.toBeCalled();
+          sinon.assert.notCalled(scope.otUpdateEntity);
         });
 
         it('shows error', function() {
-          expect(logger.logSharejsWarn).toBeCalled();
-          expect(notification.error).toBeCalled();
+          sinon.assert.called(logger.logSharejsWarn);
+          sinon.assert.called(notification.error);
         });
       });
     });
@@ -227,7 +227,7 @@ describe('Field Settings Editor Controller', function () {
 
   describe('toggling properties', function() {
     it('does nothing with no otDoc', function() {
-      expect(stubs.at).not.toBeCalled();
+      sinon.assert.notCalled(stubs.at);
     });
 
     describe('with an otDoc', function() {
@@ -252,27 +252,27 @@ describe('Field Settings Editor Controller', function () {
         });
 
         it('gets otdoc', function() {
-          expect(stubs.at).toBeCalled();
+          sinon.assert.called(stubs.at);
         });
 
         it('at called with field path', function() {
-          expect(stubs.at).toBeCalledWith(['fields', 2, 'propname']);
+          sinon.assert.calledWith(stubs.at, ['fields', 2, 'propname']);
         });
 
         it('gets current property value for toggling', function() {
-          expect(stubs.get).toBeCalled();
+          sinon.assert.called(stubs.get);
         });
 
         it('sets new property on otdoc', function() {
-          expect(stubs.set).toBeCalledWith(false);
+          sinon.assert.calledWith(stubs.set, false);
         });
 
         it('updates ot entity', function() {
-          expect(scope.otUpdateEntity).toBeCalled();
+          sinon.assert.called(scope.otUpdateEntity);
         });
 
         it('fires analytics event', function() {
-          expect(stubs.modifiedContentType).toBeCalled();
+          sinon.assert.called(stubs.modifiedContentType);
         });
       });
 
@@ -283,12 +283,12 @@ describe('Field Settings Editor Controller', function () {
         });
 
         it('does not update ot entity', function() {
-          expect(scope.otUpdateEntity).not.toBeCalled();
+          sinon.assert.notCalled(scope.otUpdateEntity);
         });
 
         it('shows error', function() {
-          expect(logger.logSharejsWarn).toBeCalled();
-          expect(notification.warn).toBeCalled();
+          sinon.assert.called(logger.logSharejsWarn);
+          sinon.assert.called(notification.warn);
         });
       });
     });
@@ -297,7 +297,7 @@ describe('Field Settings Editor Controller', function () {
 
   describe('deletes field setting', function() {
     it('does nothing with no otDoc', function() {
-      expect(stubs.at).not.toBeCalled();
+      sinon.assert.notCalled(stubs.at);
     });
 
     describe('with an otDoc', function() {
@@ -329,23 +329,23 @@ describe('Field Settings Editor Controller', function () {
         });
 
         it('gets otdoc', function() {
-          expect(stubs.at).toBeCalled();
+          sinon.assert.called(stubs.at);
         });
 
         it('at called with field path', function() {
-          expect(stubs.at).toBeCalledWith(['fields', 2]);
+          sinon.assert.calledWith(stubs.at, ['fields', 2]);
         });
 
         it('deletes property on otdoc', function() {
-          expect(stubs.remove).toBeCalled();
+          sinon.assert.called(stubs.remove);
         });
 
         it('updates ot entity', function() {
-          expect(scope.otUpdateEntity).toBeCalled();
+          sinon.assert.called(scope.otUpdateEntity);
         });
 
         it('fires analytics event', function() {
-          expect(stubs.modifiedContentType).toBeCalled();
+          sinon.assert.called(stubs.modifiedContentType);
         });
 
         it('emits fieldDeleted event', function() {
@@ -360,7 +360,7 @@ describe('Field Settings Editor Controller', function () {
         });
 
         it('does not update ot entity', function() {
-          expect(scope.otUpdateEntity).not.toBeCalled();
+          sinon.assert.notCalled(scope.otUpdateEntity);
         });
       });
     });

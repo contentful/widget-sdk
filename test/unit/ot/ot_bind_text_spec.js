@@ -48,17 +48,17 @@ describe('otBindText', function () {
     jasmine.clock().tick(10);
     expect(scope.otSubdoc).not.toBe(null);
     expect(scope.otSubdoc).toBe(subdoc);
-    expect(subdoc.attach_textarea).toBeCalledOnce();
+    sinon.assert.calledOnce(subdoc.attach_textarea);
     subdoc.attach_textarea.reset();
 
     scope.otSubdoc = null;
     scope.$apply();
-    expect(unbindTextArea).toBeCalledOnce();
+    sinon.assert.calledOnce(unbindTextArea);
 
 
     scope.otSubdoc = subdoc;
     scope.$apply();
-    expect(subdoc.attach_textarea).toBeCalledOnce();
+    sinon.assert.calledOnce(subdoc.attach_textarea);
   });
 
   describe('when mkPath fails', function () {

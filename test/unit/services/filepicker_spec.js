@@ -68,7 +68,7 @@ describe('Filepicker service', function () {
       });
 
       it('filepicker method gets called', function () {
-        expect(makeDropPaneStub).toBeCalled();
+        sinon.assert.called(makeDropPaneStub);
       });
 
       it('filepicker method gets called with dropPane object', function () {
@@ -104,7 +104,7 @@ describe('Filepicker service', function () {
         var file = {file: 'name'};
         pickStub.callsArgWith(1, file);
         filepicker.pick().then(successStub).finally(function () {
-          expect(successStub).toBeCalledWith(file);
+          sinon.assert.calledWith(successStub, file);
         });
       });
 
@@ -113,7 +113,7 @@ describe('Filepicker service', function () {
         var error = new Error('fileerror');
         pickStub.callsArgWith(2, error);
         filepicker.pick().catch(errorStub).finally(function () {
-          expect(errorStub).toBeCalledWith(error);
+          sinon.assert.calledWith(errorStub, error);
         });
       });
 
@@ -131,7 +131,7 @@ describe('Filepicker service', function () {
         var file = {fileName: 'name', mimetype: 'type', details: {size: 'size'}};
         storeStub.callsArgWith(2, file);
         filepicker.store('newurl', file).then(successStub).finally(function () {
-          expect(successStub).toBeCalled();
+          sinon.assert.called(successStub);
           expect(successStub.args[0][0]).toEqual({
             url: 'newurl',
             filename: 'name',
@@ -147,7 +147,7 @@ describe('Filepicker service', function () {
         var error = new Error('fileerror');
         storeStub.callsArgWith(3, error);
         filepicker.store('', {details: {}}).catch(errorStub).finally(function () {
-          expect(errorStub).toBeCalledWith(error);
+          sinon.assert.calledWith(errorStub, error);
         });
       });
 

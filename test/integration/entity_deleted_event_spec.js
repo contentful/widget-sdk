@@ -77,7 +77,7 @@ describe('Entry list controller events', function () {
     }));
 
     it('closes the tab', function () {
-      expect(closeStub).toBeCalled();
+      sinon.assert.called(closeStub);
     });
 
     it('has 2 entries after deletion', function () {
@@ -147,7 +147,7 @@ describe('Content Type Actions controller events', function () {
   });
 
   it('handles an entityDeleted event from ContentTypeActions controller', function () {
-    expect(closeStub).toBeCalled();
+    sinon.assert.called(closeStub);
   });
 
 });
@@ -197,7 +197,7 @@ describe('ApiKey List controller events', function () {
   });
 
   it('handles an entityDeleted event from ApiKeyEditor controller', function () {
-    expect(scope.tab.close).toBeCalled();
+    sinon.assert.called(scope.tab.close);
   });
 
   it('number of apikeys is now 2', function () {

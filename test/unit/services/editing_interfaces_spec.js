@@ -64,7 +64,7 @@ describe('Editing interfaces service', function () {
       });
 
       it('requests the id', function() {
-        expect(contentType.getEditingInterface).toBeCalledWith('edid');
+        sinon.assert.calledWith(contentType.getEditingInterface, 'edid');
       });
 
       it('gets a config', function() {
@@ -92,7 +92,7 @@ describe('Editing interfaces service', function () {
       });
 
       it('requests the id', function() {
-        expect(contentType.getEditingInterface).toBeCalledWith('edid');
+        sinon.assert.calledWith(contentType.getEditingInterface, 'edid');
       });
 
       it('gets a default config', function() {
@@ -110,7 +110,7 @@ describe('Editing interfaces service', function () {
       });
 
       it('requests the id', function() {
-        expect(contentType.getEditingInterface).toBeCalledWith('edid');
+        sinon.assert.calledWith(contentType.getEditingInterface, 'edid');
       });
 
       it('gets an error', function() {
@@ -139,7 +139,7 @@ describe('Editing interfaces service', function () {
     });
 
     it('gets widget type', function() {
-      expect(stubs.defaultWidgetId).toBeCalled();
+      sinon.assert.called(stubs.defaultWidgetId);
     });
 
     describe('gets a default interface again', function() {
@@ -180,15 +180,15 @@ describe('Editing interfaces service', function () {
       save.reject({body: {sys: {type: 'Error', id: 'VersionMismatch'}}});
       //interf.save.yield({body: {sys: {type: 'Error', id: 'VersionMismatch'}}});
       $rootScope.$apply();
-      expect(notification.warn).toBeCalled();
+      sinon.assert.called(notification.warn);
     });
 
     it('fails to save because of other error', function() {
       //interf.save.yield({});
       save.reject({});
       $rootScope.$apply();
-      expect(logger.logServerWarn).toBeCalled();
-      expect(notification.error).toBeCalled();
+      sinon.assert.called(logger.logServerWarn);
+      sinon.assert.called(notification.error);
     });
   });
 

@@ -21,7 +21,7 @@ describe('New content type published', function () {
 
   it('registers a new published content type', function () {
     spaceContext.registerPublishedContentType(contentType);
-    expect(broadcastSpy).toBeCalledWith('contentTypePublished');
+    sinon.assert.calledWith(broadcastSpy, 'contentTypePublished');
   });
 
   describe('fires and handles an event on the addDropdownButton directive', function () {
@@ -49,11 +49,11 @@ describe('New content type published', function () {
     });
 
     it('shows a tooltip', function () {
-      expect(tooltipSpy).toBeCalledTwice();
+      sinon.assert.calledTwice(tooltipSpy);
     });
 
     it('removes the menu', function () {
-      expect(oneSpy).toBeCalled();
+      sinon.assert.called(oneSpy);
     });
   });
 

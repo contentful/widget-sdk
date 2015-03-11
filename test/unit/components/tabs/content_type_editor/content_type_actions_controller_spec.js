@@ -46,13 +46,13 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
 
       it('shows error notification', function() {
-        expect(notification.error).toBeCalled();
-        expect(logger.logServerWarn).toBeCalled();
+        sinon.assert.called(notification.error);
+        sinon.assert.called(logger.logServerWarn);
       });
     });
 
@@ -64,19 +64,19 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
       it('shows notification', function() {
-        expect(notification.info).toBeCalled();
+        sinon.assert.called(notification.info);
       });
 
       it('broadcasts event', function() {
-        expect(scope.broadcastFromSpace).toBeCalledWith('entityDeleted');
+        sinon.assert.calledWith(scope.broadcastFromSpace, 'entityDeleted');
       });
 
       it('removes content type', function() {
-        expect(stubs.removeContentType).toBeCalledWith(contentType);
+        sinon.assert.calledWith(stubs.removeContentType, contentType);
       });
     });
   });
@@ -94,16 +94,16 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
       it('shows error notification', function() {
-        expect(notification.warn).toBeCalled();
+        sinon.assert.called(notification.warn);
       });
 
       it('captures server error', function() {
-        expect(notification.warn).toBeCalled();
-        expect(logger.logServerWarn).toBeCalled();
+        sinon.assert.called(notification.warn);
+        sinon.assert.called(logger.logServerWarn);
       });
     });
 
@@ -118,27 +118,27 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
       it('shows notification', function() {
-        expect(notification.info).toBeCalled();
+        sinon.assert.called(notification.info);
       });
 
       it('tracks analytics event', function() {
-        expect(stubs.track).toBeCalled();
+        sinon.assert.called(stubs.track);
       });
 
       it('updated published content type', function() {
-        expect(stubs.updatePublishedContentType).toBeCalled();
+        sinon.assert.called(stubs.updatePublishedContentType);
       });
 
       it('unregisters published content type', function() {
-        expect(stubs.unregisterPublishedContentType).toBeCalled();
+        sinon.assert.called(stubs.unregisterPublishedContentType);
       });
 
       it('refreshes content types', function() {
-        expect(stubs.refreshContentTypes).toBeCalled();
+        sinon.assert.called(stubs.refreshContentTypes);
       });
     });
   });
@@ -158,11 +158,11 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('calls validation', function() {
-        expect(scope.validate).toBeCalled();
+        sinon.assert.called(scope.validate);
       });
 
       it('shows warn notification', function() {
-        expect(notification.warn).toBeCalled();
+        sinon.assert.called(notification.warn);
       });
     });
 
@@ -188,19 +188,19 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('calls validation', function() {
-        expect(scope.validate).toBeCalled();
+        sinon.assert.called(scope.validate);
       });
 
       it('sets validation errors', function() {
-        expect(scope.setValidationErrors).toBeCalledWith(errors);
+        sinon.assert.calledWith(scope.setValidationErrors, errors);
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
       it('shows error notification', function() {
-        expect(notification.warn).toBeCalled();
+        sinon.assert.called(notification.warn);
       });
     });
 
@@ -224,15 +224,15 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('calls validation', function() {
-        expect(scope.validate).toBeCalled();
+        sinon.assert.called(scope.validate);
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
       it('shows error notification', function() {
-        expect(notification.warn).toBeCalled();
+        sinon.assert.called(notification.warn);
       });
 
       it('gets contextual error message', function() {
@@ -256,16 +256,16 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('calls validation', function() {
-        expect(scope.validate).toBeCalled();
+        sinon.assert.called(scope.validate);
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
       it('shows error notification', function() {
-        expect(notification.error).toBeCalled();
-        expect(logger.logServerWarn).toBeCalled();
+        sinon.assert.called(notification.error);
+        sinon.assert.called(logger.logServerWarn);
       });
 
       it('gets contextual error message', function() {
@@ -286,31 +286,31 @@ describe('ContentType Actions Controller', function () {
       });
 
       it('calls validation', function() {
-        expect(scope.validate).toBeCalled();
+        sinon.assert.called(scope.validate);
       });
 
       it('calls action', function() {
-        expect(stubs.action).toBeCalled();
+        sinon.assert.called(stubs.action);
       });
 
       it('shows notification', function() {
-        expect(notification.info).toBeCalled();
+        sinon.assert.called(notification.info);
       });
 
       it('tracks analytics event', function() {
-        expect(stubs.track).toBeCalled();
+        sinon.assert.called(stubs.track);
       });
 
       it('updated published content type', function() {
-        expect(stubs.updatePublishedContentType).toBeCalled();
+        sinon.assert.called(stubs.updatePublishedContentType);
       });
 
       it('registers published content type', function() {
-        expect(stubs.registerPublishedContentType).toBeCalled();
+        sinon.assert.called(stubs.registerPublishedContentType);
       });
 
       it('refreshes content types', function() {
-        expect(stubs.refreshContentTypes).toBeCalled();
+        sinon.assert.called(stubs.refreshContentTypes);
       });
 
     });

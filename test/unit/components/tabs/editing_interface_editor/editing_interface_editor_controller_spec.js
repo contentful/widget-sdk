@@ -30,7 +30,7 @@ describe('EditingInterfaceEditorController', function(){
     editingInterfaces.syncWidgets.reset();
     scope.contentType = {data: {fields: ['newField']}};
     scope.$apply();
-    expect(editingInterfaces.syncWidgets).toBeCalled();
+    sinon.assert.called(editingInterfaces.syncWidgets);
   });
 
   describe('saving the interface but failing with VersionMismatch', function() {
@@ -46,7 +46,7 @@ describe('EditingInterfaceEditorController', function(){
     });
 
     it('should show a warning', function() {
-      expect(notification.warn).toBeCalled();
+      sinon.assert.called(notification.warn);
     });
   });
 
@@ -58,11 +58,11 @@ describe('EditingInterfaceEditorController', function(){
     });
 
     it('should not reset the interface', function(){
-      expect(editingInterfaces.forContentTypeWithId).not.toBeCalled();
+      sinon.assert.notCalled(editingInterfaces.forContentTypeWithId);
     });
 
     it('show show an error', function() {
-      expect(notification.error).toBeCalled();
+      sinon.assert.called(notification.error);
     });
   });
 
@@ -78,7 +78,7 @@ describe('EditingInterfaceEditorController', function(){
     });
 
     it('should show a notification', function() {
-      expect(notification.info).toBeCalled();
+      sinon.assert.called(notification.info);
     });
 
   });
@@ -87,7 +87,7 @@ describe('EditingInterfaceEditorController', function(){
     scope.tab.params.contentType = {};
     scope.tab.close = sinon.stub();
     scope.$broadcast('contentTypeUnpublished', scope.tab.params.contentType);
-    expect(scope.tab.close).toBeCalled();
+    sinon.assert.called(scope.tab.close);
   });
 
   it('should mark widgets without fields as invisible', function() {

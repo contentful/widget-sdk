@@ -34,7 +34,7 @@ describe('Space Template loading service', function () {
 
   it('gets template list from contentful', function() {
     this.spaceTemplateLoader.getTemplatesList();
-    expect(this.client.entries).toBeCalled();
+    sinon.assert.called(this.client.entries);
   });
 
   describe('gets a template from contentful', function() {
@@ -60,15 +60,15 @@ describe('Space Template loading service', function () {
     });
 
     it('gets content types', function() {
-      expect(this.client.contentTypes).toBeCalled();
+      sinon.assert.called(this.client.contentTypes);
     });
 
     it('gets entries', function() {
-      expect(this.client.entries).toBeCalled();
+      sinon.assert.called(this.client.entries);
     });
 
     it('gets assets', function() {
-      expect(this.client.assets).toBeCalled();
+      sinon.assert.called(this.client.assets);
     });
 
     it('returns a template', function() {

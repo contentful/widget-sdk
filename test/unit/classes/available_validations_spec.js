@@ -44,7 +44,7 @@ describe('Available validations', function () {
       });
 
       it('calls validation module', function() {
-        expect(stubs.perType).toBeCalled();
+        sinon.assert.called(stubs.perType);
       });
     });
 
@@ -58,7 +58,7 @@ describe('Available validations', function () {
       });
 
       it('calls validation module', function() {
-        expect(stubs.perType).toBeCalled();
+        sinon.assert.called(stubs.perType);
       });
     });
 

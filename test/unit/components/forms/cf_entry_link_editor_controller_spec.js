@@ -94,7 +94,7 @@ describe('EntryLinkEditorController', function () {
     });
 
     it('initializes entity cache', function() {
-      expect(entityCacheMock).toBeCalledWith(scope.spaceContext.space, 'getEntries');
+      sinon.assert.calledWith(entityCacheMock, scope.spaceContext.space, 'getEntries');
     });
 
     it('initializes link content types', function() {
@@ -137,11 +137,11 @@ describe('EntryLinkEditorController', function () {
   describe('methods', function() {
     function addEntryExpectations() {
       it('updates model', function() {
-        expect(scope.updateModel).toBeCalled();
+        sinon.assert.called(scope.updateModel);
       });
 
       it('does not get entries', function() {
-        expect(stubs.getEntries).not.toBeCalled();
+        sinon.assert.notCalled(stubs.getEntries);
       });
 
       it('link is the supplied entry', function() {
@@ -208,7 +208,7 @@ describe('EntryLinkEditorController', function () {
         });
 
         it('updates model', function() {
-          expect(scope.updateModel).toBeCalled();
+          sinon.assert.called(scope.updateModel);
         });
 
         it('has 0 links', function() {
@@ -255,7 +255,7 @@ describe('EntryLinkEditorController', function () {
         });
 
         it('updates model', function() {
-          expect(scope.updateModel).toBeCalled();
+          sinon.assert.called(scope.updateModel);
         });
 
         it('removes link', function() {
@@ -306,7 +306,7 @@ describe('EntryLinkEditorController', function () {
       });
 
       it('gets existing title', function() {
-        expect(stubs.entryTitle).toBeCalledWith(entity, 'en-US');
+        sinon.assert.calledWith(stubs.entryTitle, entity, 'en-US');
       });
 
       it('returns existing title', function() {
@@ -321,7 +321,7 @@ describe('EntryLinkEditorController', function () {
       });
 
       it('does not get existing title', function() {
-        expect(stubs.entryTitle).not.toBeCalled();
+        sinon.assert.notCalled(stubs.entryTitle);
       });
 
       it('returns missing title', function() {
@@ -360,7 +360,7 @@ describe('EntryLinkEditorController', function () {
         });
 
         it('gets existing description', function() {
-          expect(stubs.localizedField).toBeCalledWith(entity, 'data.fields.description');
+          sinon.assert.calledWith(stubs.localizedField, entity, 'data.fields.description');
         });
 
         it('returns existing description', function() {
@@ -382,7 +382,7 @@ describe('EntryLinkEditorController', function () {
         });
 
         it('does not get existing description', function() {
-          expect(stubs.localizedField).not.toBeCalled();
+          sinon.assert.notCalled(stubs.localizedField);
         });
 
         it('returns missing description', function() {
@@ -398,7 +398,7 @@ describe('EntryLinkEditorController', function () {
       });
 
       it('does not get existing description', function() {
-        expect(stubs.localizedField).not.toBeCalled();
+        sinon.assert.notCalled(stubs.localizedField);
       });
 
       it('returns missing description', function() {

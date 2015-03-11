@@ -23,7 +23,7 @@ describe('Entity cache', function(){
       .then(function (entities) {
         expect(entities[0]).toBe(entity);
       });
-      expect(space.getEntries).not.toBeCalled();
+      sinon.assert.notCalled(space.getEntries);
       $rootScope.$apply();
     });
   });
@@ -76,7 +76,7 @@ describe('Entity cache', function(){
       var entity = {getId:_.constant(5)};
       entityCache.save(entity);
       expect(entityCache.get(5)).toBe(entity);
-      expect(space.getEntries).not.toBeCalled();
+      sinon.assert.notCalled(space.getEntries);
       $rootScope.$apply();
     });
 
@@ -84,7 +84,7 @@ describe('Entity cache', function(){
       var entityCache = new EntityCache(space, 'getEntries');
       var entity = {getId:_.constant(5)};
       expect(entityCache.get(5)).not.toBe(entity);
-      expect(space.getEntries).not.toBeCalled();
+      sinon.assert.notCalled(space.getEntries);
       $rootScope.$apply();
     });
   });
@@ -95,14 +95,14 @@ describe('Entity cache', function(){
       var entity = {getId:_.constant(5)};
       entityCache.save(entity);
       expect(entityCache.has(5)).toBe(true);
-      expect(space.getEntries).not.toBeCalled();
+      sinon.assert.notCalled(space.getEntries);
       $rootScope.$apply();
     });
 
     it('should not check if an entity is not in cache', function(){
       var entityCache = new EntityCache(space, 'getEntries');
       expect(entityCache.has(5)).toBe(false);
-      expect(space.getEntries).not.toBeCalled();
+      sinon.assert.notCalled(space.getEntries);
       $rootScope.$apply();
     });
   });

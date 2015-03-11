@@ -78,7 +78,7 @@ describe('Entry List Controller', function () {
     });
 
     it('resets entries', function() {
-      expect(scope.resetEntries).toBeCalled();
+      sinon.assert.called(scope.resetEntries);
     });
 
   });
@@ -147,31 +147,31 @@ describe('Entry List Controller', function () {
     it('search term', function () {
       scope.tab.params.searchTerm = 'thing';
       scope.$digest();
-      expect(stubs.reset).toBeCalledOnce();
+      sinon.assert.calledOnce(stubs.reset);
     });
 
     it('page', function () {
       scope.paginator.page = 1;
       scope.$digest();
-      expect(stubs.reset).toBeCalledOnce();
+      sinon.assert.calledOnce(stubs.reset);
     });
 
     it('page length', function () {
       scope.pageLength = 10;
       scope.$digest();
-      expect(stubs.reset).toBeCalledOnce();
+      sinon.assert.calledOnce(stubs.reset);
     });
 
     it('contentTypeId', function () {
       scope.tab.params.view.contentTypeId = 'something';
       scope.$digest();
-      expect(stubs.reset).toBeCalledOnce();
+      sinon.assert.calledOnce(stubs.reset);
     });
 
     it('space id', function () {
       stubs.id = sinon.stub(scope.spaceContext.space, 'getId').returns(123);
       scope.$digest();
-      expect(stubs.reset).toBeCalledOnce();
+      sinon.assert.calledOnce(stubs.reset);
       stubs.id.restore();
     });
   });
@@ -214,7 +214,7 @@ describe('Entry List Controller', function () {
       scope.resetEntries();
       scope.$apply();
       getEntries.resolve(entries);
-      expect(stubs.switch).toBeCalled();
+      sinon.assert.called(stubs.switch);
     });
 
     describe('creates a query object', function() {
@@ -341,7 +341,7 @@ describe('Entry List Controller', function () {
     it('doesnt load if on last page', function() {
       scope.paginator.atLast.returns(true);
       scope.loadMore();
-      expect(scope.spaceContext.space.getEntries).not.toBeCalled();
+      sinon.assert.notCalled(scope.spaceContext.space.getEntries);
     });
 
     it('paginator count is increased', function() {
@@ -362,13 +362,13 @@ describe('Entry List Controller', function () {
       scope.paginator.page = 0;
       scope.loadMore();
       scope.$apply();
-      expect(scope.spaceContext.space.getEntries).toBeCalled();
+      sinon.assert.called(scope.spaceContext.space.getEntries);
     });
 
     it('triggers analytics event', function () {
       scope.loadMore();
       scope.$apply();
-      expect(stubs.track).toBeCalled();
+      sinon.assert.called(stubs.track);
     });
 
     describe('on successful load response', function() {
@@ -408,6 +408,8 @@ describe('Entry List Controller', function () {
 
     describe('on empty load response', function() {
       beforeEach(function() {
+        scope.entries = [];
+        sinon.stub(scope.entries, 'push');
         scope.loadMore();
         scope.$apply();
         getEntries.resolve(null);
@@ -415,11 +417,11 @@ describe('Entry List Controller', function () {
       });
 
       it('appends no entries to scope', function () {
-        expect(scope.entries.push).not.toBeCalled();
+        sinon.assert.notCalled(scope.entries.push);
       });
 
       it('sends an error', function() {
-        expect(stubs.logError).toBeCalled();
+        sinon.assert.called(stubs.logError);
       });
     });
 
@@ -437,14 +439,14 @@ describe('Entry List Controller', function () {
       scope.resetEntries();
       getEntries.reject({statusCode: 500});
       scope.$apply();
-      expect(apiErrorHandler).toBeCalled();
+      sinon.assert.called(apiErrorHandler);
     });
 
     it('should cause loadMore to show an error message', function () {
       scope.loadMore();
       getEntries.reject({statusCode: 500});
       scope.$apply();
-      expect(apiErrorHandler).toBeCalled();
+      sinon.assert.called(apiErrorHandler);
     });
   });
 
@@ -458,13 +460,13 @@ describe('Entry List Controller', function () {
     it('does nothing if its not the current scope tab', inject(function ($rootScope) {
       scope.tab = null;
       $rootScope.$broadcast('tabBecameActive', {});
-      expect(scope.resetEntries).not.toBeCalled();
+      sinon.assert.notCalled(scope.resetEntries);
     }));
 
     it('resets entries', inject(function($rootScope) {
       scope.tab = {};
       $rootScope.$broadcast('tabBecameActive', scope.tab);
-      expect(scope.resetEntries).toBeCalled();
+      sinon.assert.called(scope.resetEntries);
     }));
   });
 

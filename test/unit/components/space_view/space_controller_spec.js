@@ -57,13 +57,13 @@ describe('Space Controller', function () {
         {code: 'pt-PT'}
       ]);
       scope.$digest();
-      expect(refreshStub).toBeCalled();
+      sinon.assert.called(refreshStub);
     });
 
     it('does not refresh locales if no new locales are available', function () {
       scope.spaceContext.space = null;
       scope.$digest();
-      expect(refreshStub).not.toBeCalled();
+      sinon.assert.notCalled(refreshStub);
     });
   });
 
@@ -81,7 +81,7 @@ describe('Space Controller', function () {
     });
 
     it('calls refresh method', function () {
-      expect(refreshStub).toBeCalled();
+      sinon.assert.called(refreshStub);
     });
   });
 
@@ -98,7 +98,7 @@ describe('Space Controller', function () {
     });
 
     it('calls refresh method', function () {
-      expect(refreshStub).toBeCalled();
+      sinon.assert.called(refreshStub);
     });
   });
 
@@ -117,17 +117,17 @@ describe('Space Controller', function () {
     });
 
     it('gets period usage', function () {
-      expect(stubs.periodUsage).toBeCalled();
+      sinon.assert.called(stubs.periodUsage);
     });
 
     it('broadcasts event if usage exceeded', function () {
-      expect(broadcastStub).toBeCalled();
+      sinon.assert.called(broadcastStub);
     });
   });
 
   it('analytics event fired on logo clicked', function () {
     scope.logoClicked();
-    expect(stubs.track).toBeCalled();
+    sinon.assert.called(stubs.track);
   });
 
   describe('broadcasts an event from space', function () {
@@ -142,7 +142,7 @@ describe('Space Controller', function () {
 
     it('broadcast is called', function () {
       scope.broadcastFromSpace();
-      expect(broadcastStub).toBeCalled();
+      sinon.assert.called(broadcastStub);
     });
   });
 

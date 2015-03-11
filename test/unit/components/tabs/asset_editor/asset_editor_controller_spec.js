@@ -138,7 +138,7 @@ describe('Asset editor controller', function () {
       scope.validate = sinon.spy();
       scope.asset.data.sys.publishedVersion = 2;
       scope.$digest();
-      expect(scope.validate).toBeCalled();
+      sinon.assert.called(scope.validate);
     });
   });
 
@@ -154,7 +154,7 @@ describe('Asset editor controller', function () {
     });
 
     it('calls asset processing', function () {
-      expect(scope.asset.process).toBeCalled();
+      sinon.assert.called(scope.asset.process);
     });
 
     describe('on success', function() {
@@ -166,11 +166,11 @@ describe('Asset editor controller', function () {
       });
 
       it('looks for otDoc with locale', function() {
-        expect(stubs.peek).toBeCalledWith(scope.otDoc, otPath);
+        sinon.assert.calledWith(stubs.peek, scope.otDoc, otPath);
       });
 
       it('creates otDoc', function() {
-        expect(stubs.mkpath).toBeCalled();
+        sinon.assert.called(stubs.mkpath);
       });
 
       it('creates otDoc with doc', function() {
@@ -193,12 +193,12 @@ describe('Asset editor controller', function () {
       });
 
       it('calls error notification', function() {
-        expect(notification.error).toBeCalled();
-        expect(logger.logServerWarn).toBeCalled();
+        sinon.assert.called(notification.error);
+        sinon.assert.called(logger.logServerWarn);
       });
 
       it('emits file processing failure event', function() {
-        expect(stubs.fileProcessingFailed).toBeCalled();
+        sinon.assert.called(stubs.fileProcessingFailed);
       });
     });
   });

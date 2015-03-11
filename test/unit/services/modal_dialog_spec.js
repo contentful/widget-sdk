@@ -82,19 +82,19 @@ describe('Modal dialog service', function () {
 
       it('cancel is called', function () {
         dialog._closeOnBackground(event);
-        expect(cancelStub).toBeCalled();
+        sinon.assert.called(cancelStub);
       });
 
       it('cancel is not called with html attr', function () {
         $(event.target).attr('no-background-close', true);
         dialog._closeOnBackground(event);
-        expect(cancelStub).not.toBeCalled();
+        sinon.assert.notCalled(cancelStub);
       });
 
       it('cancel is not called with params attr', function () {
         dialog.params.noBackgroundClose = true;
         dialog._closeOnBackground(event);
-        expect(cancelStub).not.toBeCalled();
+        sinon.assert.notCalled(cancelStub);
       });
     });
 
@@ -112,7 +112,7 @@ describe('Modal dialog service', function () {
         event.target = {tagName: ''};
         dialog._handleKeys(event);
         dialog.scope.$digest();
-        expect(cancelStub).toBeCalled();
+        sinon.assert.called(cancelStub);
       });
 
       it('confirm is called with Enter key', function () {
@@ -120,7 +120,7 @@ describe('Modal dialog service', function () {
         event.target = {tagName: ''};
         dialog._handleKeys(event);
         dialog.scope.$digest();
-        expect(confirmStub).toBeCalled();
+        sinon.assert.called(confirmStub);
       });
 
     });
@@ -132,11 +132,11 @@ describe('Modal dialog service', function () {
 
       it('properly removes the global event listeners', function () {
         $(window).trigger('keyup');
-        expect(dialog.scope.$apply).toBeCalled();
+        sinon.assert.called(dialog.scope.$apply);
         dialog.destroy();
         dialog.scope = {$apply: sinon.stub(), $destroy: sinon.stub()};
         $(window).trigger('keyup');
-        expect(dialog.scope.$apply).not.toBeCalled();
+        sinon.assert.notCalled(dialog.scope.$apply);
       });
 
       it('confirms with values', function () {
@@ -157,7 +157,7 @@ describe('Modal dialog service', function () {
 
       it('calls the success stub', function () {
         dialog.confirm().promise.finally(function () {
-          expect(successStub).toBeCalled();
+          sinon.assert.called(successStub);
         });
       });
 
@@ -167,7 +167,7 @@ describe('Modal dialog service', function () {
 
       it('calls the success stub', function () {
         dialog.cancel().promise.finally(function () {
-          expect(errorStub).toBeCalled();
+          sinon.assert.called(errorStub);
         });
       });
 
