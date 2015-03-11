@@ -5,9 +5,7 @@ angular.module('contentful').controller('FieldSettingsEditorController', ['$scop
   var assert           = $injector.get('assert');
   var defer            = $injector.get('defer');
   var getFieldTypeName = $injector.get('getFieldTypeName');
-  var logger           = $injector.get('logger');
   var modalDialog      = $injector.get('modalDialog');
-  var notification     = $injector.get('notification');
   var validation       = $injector.get('validation');
 
   $scope.apiNameController = $controller('ApiNameController', {$scope: $scope});
@@ -67,58 +65,27 @@ angular.module('contentful').controller('FieldSettingsEditorController', ['$scop
   }
 
   function changeFieldType(newType) {
-    if (!$scope.otDoc) return false;
-
     var newField = _.extend({
       name: $scope.field.name,
       id: $scope.field.id,
       apiName: $scope.field.apiName
     }, newType);
 
-    var subdoc = $scope.otDoc.at(['fields', $scope.index]);
-    subdoc.set(newField, function(err) {
-      $scope.$apply(function (scope) {
-        if (!err) {
-          scope.otUpdateEntity();
-          defer($scope.pickNewDisplayField);
-        } else {
-          logger.logSharejsWarn('Could not change type.', {error: err });
-          notification.error('Could not change type.');
-        }
-      });
-    });
+    $scope.contentType.data.fields[$scope.index] = newField;
+    defer($scope.pickNewDisplayField);
   }
 
   function toggle(property) {
     assert.truthy(property, 'need a property to toggle');
-    if (!$scope.otDoc) return false;
-    var subdoc = $scope.otDoc.at(['fields', $scope.index, property]);
-    subdoc.set(!subdoc.get(), function(err) {
-      $scope.$apply(function (scope) {
-        if (!err) {
-          scope.otUpdateEntity();
-          analytics.modifiedContentType('Modified ContentType', scope.contentType, scope.field, 'toggled '+property);
-        } else {
-          notification.warn('Could not toggle "'+property+'"', err);
-          logger.logSharejsWarn('Could not toggle property on ContentType', {
-            error: err,
-            data: {property: property}});
-        }
-      });
-    });
+    $scope.contentType.data.fields[$scope.index][property] = !$scope.contentType.data.fields[$scope.index][property];
+    analytics.modifiedContentType('Modified ContentType', $scope.contentType, $scope.field, 'toggled '+property);
   }
 
   function _delete() {
-    if (!$scope.otDoc) return false;
-    var field = $scope.field;
-    $scope.otDoc.at(['fields', $scope.index]).remove(function (err) {
-      if (!err) $scope.$apply(function(scope) {
-        analytics.modifiedContentType('Modified ContentType', scope.contentType, field, 'delete');
-        scope.otUpdateEntity();
-        scope.$emit('fieldDeleted', field);
-        defer($scope.pickNewDisplayField);
-      });
-    });
+    var field = $scope.contentType.data.fields.splice($scope.index, 1)[0];
+    analytics.modifiedContentType('Modified ContentType', $scope.contentType, field, 'delete');
+    $scope.$emit('fieldDeleted', field);
+    defer($scope.pickNewDisplayField);
   }
 
   function openValidationDialog() {

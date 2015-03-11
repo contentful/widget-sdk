@@ -161,210 +161,76 @@ describe('Field Settings Editor Controller', function () {
   });
 
   describe('change field type', function() {
-    it('does nothing with no otDoc', function() {
-      sinon.assert.notCalled(stubs.at);
+    beforeEach(function() {
+      scope.pickNewDisplayField = sinon.stub();
+      scope.field = {
+        name: 'name',
+        id: 'id',
+        apiName: 'apiName',
+        type: 'Text'
+      };
+      scope.index = 1;
+      scope.contentType = {
+        data: { fields: [{}, _.clone(scope.field)] }
+      };
+      scope.changeFieldType({type: 'Symbol'});
     });
 
-    describe('with an otDoc', function() {
-      beforeEach(function() {
-        scope.otDoc = {
-          at: stubs.at
-        };
-        stubs.at.returns({
-          set: stubs.set
-        });
+    it('changes second field type', function() {
+      expect(scope.contentType.data.fields[1].type).toBe('Symbol');
+    });
 
-        scope.index = 2;
-        scope.field = {
-          name: 'fieldname',
-          id: 'fieldid',
-          apiName: 'fieldApiName'
-        };
-
-        scope.otUpdateEntity = sinon.stub();
-      });
-
-      describe('update suceeds', function() {
-        beforeEach(function() {
-          stubs.set.callsArgWith(1, null);
-          scope.changeFieldType({});
-        });
-
-        it('gets otdoc', function() {
-          sinon.assert.called(stubs.at);
-        });
-
-        it('at called with field path', function() {
-          sinon.assert.calledWith(stubs.at, ['fields', 2]);
-        });
-
-        it('sets new field on otdoc', function() {
-          sinon.assert.calledWith(stubs.set, scope.field);
-        });
-
-        it('updates ot entity', function() {
-          sinon.assert.called(scope.otUpdateEntity);
-        });
-      });
-
-      describe('update fails', function() {
-        beforeEach(function() {
-          stubs.set.callsArgWith(1, {});
-          scope.changeFieldType({});
-        });
-
-        it('does not update ot entity', function() {
-          sinon.assert.notCalled(scope.otUpdateEntity);
-        });
-
-        it('shows error', function() {
-          sinon.assert.called(logger.logSharejsWarn);
-          sinon.assert.called(notification.error);
-        });
-      });
+    it('picks new display field', function() {
+      sinon.assert.called(scope.pickNewDisplayField);
     });
   });
 
   describe('toggling properties', function() {
-    it('does nothing with no otDoc', function() {
-      sinon.assert.notCalled(stubs.at);
+    beforeEach(function() {
+      scope.index = 1;
+      scope.contentType = {
+        data: { fields: [{}, {required: false}] }
+      };
+      scope.contentTypeForm = {
+        $setDirty: sinon.stub()
+      };
+      scope.toggle('required');
     });
 
-    describe('with an otDoc', function() {
-      beforeEach(function() {
-        scope.otDoc = {
-          at: stubs.at
-        };
-        scope.index = 2;
-        stubs.at.returns({
-          set: stubs.set,
-          get: stubs.get
-        });
-        stubs.get.returns(true);
-
-        scope.otUpdateEntity = sinon.stub();
-      });
-
-      describe('update suceeds', function() {
-        beforeEach(function() {
-          stubs.set.callsArgWith(1, null);
-          scope.toggle('propname');
-        });
-
-        it('gets otdoc', function() {
-          sinon.assert.called(stubs.at);
-        });
-
-        it('at called with field path', function() {
-          sinon.assert.calledWith(stubs.at, ['fields', 2, 'propname']);
-        });
-
-        it('gets current property value for toggling', function() {
-          sinon.assert.called(stubs.get);
-        });
-
-        it('sets new property on otdoc', function() {
-          sinon.assert.calledWith(stubs.set, false);
-        });
-
-        it('updates ot entity', function() {
-          sinon.assert.called(scope.otUpdateEntity);
-        });
-
-        it('fires analytics event', function() {
-          sinon.assert.called(stubs.modifiedContentType);
-        });
-      });
-
-      describe('update fails', function() {
-        beforeEach(function() {
-          stubs.set.callsArgWith(1, {});
-          scope.toggle('propname');
-        });
-
-        it('does not update ot entity', function() {
-          sinon.assert.notCalled(scope.otUpdateEntity);
-        });
-
-        it('shows error', function() {
-          sinon.assert.called(logger.logSharejsWarn);
-          sinon.assert.called(notification.warn);
-        });
-      });
+    it('toggles property', function() {
+      expect(scope.contentType.data.fields[1].required).toBe(true);
     });
 
+    it('fires analytics event', function() {
+      sinon.assert.called(stubs.modifiedContentType);
+    });
   });
 
   describe('deletes field setting', function() {
-    it('does nothing with no otDoc', function() {
-      sinon.assert.notCalled(stubs.at);
+    beforeEach(function() {
+      scope.index = 1;
+      scope.contentType = {
+        data: { fields: [{id: 'field1'}, {id: 'field2'}] }
+      };
+      scope.$emit = sinon.stub();
+      scope.delete();
     });
 
-    describe('with an otDoc', function() {
-      beforeEach(function() {
-        scope.otDoc = {
-          at: stubs.at
-        };
-        stubs.at.returns({
-          remove: stubs.remove
-        });
-
-        scope.index = 2;
-        scope.field = {
-          field: true
-        };
-
-        scope.otUpdateEntity = sinon.stub();
-      });
-
-      describe('update suceeds', function() {
-        var field;
-        beforeEach(function(done) {
-          stubs.remove.callsArgWith(0, null);
-          scope.$on('fieldDeleted', function (event, deletedField) {
-            field = deletedField;
-            done();
-          });
-          scope.delete();
-        });
-
-        it('gets otdoc', function() {
-          sinon.assert.called(stubs.at);
-        });
-
-        it('at called with field path', function() {
-          sinon.assert.calledWith(stubs.at, ['fields', 2]);
-        });
-
-        it('deletes property on otdoc', function() {
-          sinon.assert.called(stubs.remove);
-        });
-
-        it('updates ot entity', function() {
-          sinon.assert.called(scope.otUpdateEntity);
-        });
-
-        it('fires analytics event', function() {
-          sinon.assert.called(stubs.modifiedContentType);
-        });
-
-        it('emits fieldDeleted event', function() {
-          expect(field).toBe(scope.field);
-        });
-      });
-
-      describe('update fails', function() {
-        beforeEach(function() {
-          stubs.remove.callsArgWith(0, {});
-          scope.delete();
-        });
-
-        it('does not update ot entity', function() {
-          sinon.assert.notCalled(scope.otUpdateEntity);
-        });
-      });
+    it('fields length is now 1', function() {
+      expect(scope.contentType.data.fields.length).toBe(1);
     });
 
+    it('fires analytics event', function() {
+      sinon.assert.called(stubs.modifiedContentType);
+    });
+
+    it('picks new display field', function() {
+      sinon.assert.called(scope.pickNewDisplayField);
+    });
+
+    it('emits field deleted event with removed field', function() {
+      sinon.assert.calledWith(scope.$emit, 'fieldDeleted', {id: 'field2'});
+    });
   });
 
 

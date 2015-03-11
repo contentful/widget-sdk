@@ -1,37 +1,18 @@
 'use strict';
 
-angular.module('contentful').controller('ContentTypeEditorController', ['$scope', '$injector', function ContentTypeEditorController($scope, $injector) {
+angular.module('contentful')
+.controller('ContentTypeEditorController',
+            ['$scope', '$injector', function ContentTypeEditorController($scope, $injector) {
   var $controller       = $injector.get('$controller');
-  var $q                = $injector.get('$q');
-  var ShareJS           = $injector.get('ShareJS');
   var analytics         = $injector.get('analytics');
   var editingInterfaces = $injector.get('editingInterfaces');
   var environment       = $injector.get('environment');
-  var logger            = $injector.get('logger');
-  var notification      = $injector.get('notification');
   var random            = $injector.get('random');
   var validation        = $injector.get('validation');
 
-  $controller('EntityActionsController', {
+  $scope.entityActionsController = $controller('EntityActionsController', {
     $scope: $scope,
-    params: {
-      entityType: 'contentType',
-      methodOverrides: {
-        canPublish: function() {
-          if (!$scope.otDoc) return false;
-          var version = $scope.otDoc.version;
-          var publishedVersion = $scope.otDoc.getAt(['sys', 'publishedVersion']);
-          var notPublishedYet = !publishedVersion;
-          var updatedSincePublishing = version !== publishedVersion + 1;
-          var fields = $scope.otDoc.getAt(['fields']);
-          var hasFields = fields && fields.length > 0;
-          return $scope.contentType.canPublish() &&
-            (notPublishedYet || updatedSincePublishing) &&
-            hasFields &&
-            $scope.permissionController.can('publish', $scope.contentType.data).can;
-        }
-      }
-    }
+    entityType: 'contentType'
   });
 
   this.interfaceEditorEnabled = $scope.user.features.showPreview || environment.env !== 'production';
@@ -40,15 +21,22 @@ angular.module('contentful').controller('ContentTypeEditorController', ['$scope'
   $scope.tab.closingMessage = 'You have unpublished changes.';
   $scope.tab.closingMessageDisplayType = 'tooltip';
   $scope.openEditingInterfaceEditor = openEditingInterfaceEditor;
-  $scope.sanitizeDisplayField = sanitizeDisplayField;
+  $scope.regulateDisplayField = regulateDisplayField;
 
-  $scope.$watch('tab.params.contentType', function (contentType) { $scope.contentType = contentType; });
-
-  $scope.$watch(function contentTypeEditorEnabledWatcher(scope) {
-    return scope.contentType && scope.permissionController.can('update', scope.contentType.data).can;
-  }, function contentTypeEditorEnabledHandler(enabled, old, scope) {
-    scope.otDisabled = !enabled;
+  $scope.$watch('tab.params.contentType', function (contentType) {
+    $scope.contentType = contentType;
+    if (!_.isEmpty($scope.contentType.data.fields)) $scope.validate();
+    loadPublishedContentType();
   });
+
+  $scope.$watch('contentType.data.fields', checkForDirtyForm, true);
+  $scope.$watch('contentType.data.displayField', checkForDirtyForm);
+
+  function checkForDirtyForm(newVal, oldVal) {
+    if(newVal !== oldVal) {
+      $scope.contentTypeForm.$setDirty();
+    }
+  }
 
   function loadPublishedContentType() {
     // TODO replace with lookup in registry inside spaceContext
@@ -78,8 +66,8 @@ angular.module('contentful').controller('ContentTypeEditorController', ['$scope'
     });
   }
 
-  $scope.$watch('contentType', function(contentType){
-    if (contentType){
+  $scope.$watch('contentTypeForm.$dirty', function(dirty){
+    if (dirty){
       loadPublishedContentType();
     }
   });
@@ -93,39 +81,25 @@ angular.module('contentful').controller('ContentTypeEditorController', ['$scope'
     }
   });
 
-  $scope.$on('otRemoteOp', function (event) {
-    event.currentScope.otUpdateEntity();
-  });
-
-  $scope.$watch(function contentTypeModifiedWatcher(scope) {
-    if (scope.otDoc && scope.contentType) {
-      return scope.otDoc.version > scope.contentType.getPublishedVersion() + 1;
-    } else {
-      return undefined;
-    }
+  $scope.$watch(function contentTypeModifiedWatcher() {
+    return contentTypeIsDirty() || $scope.contentTypeForm.$dirty;
   }, function (modified, old, scope) {
     if (modified !== undefined) scope.tab.dirty = modified;
   });
 
-  var firstValidate = $scope.$on('otBecameEditable', function (event) {
-    var scope = event.currentScope;
-    if (!_.isEmpty(scope.contentType.data.fields)) scope.validate();
-    firstValidate();
-    firstValidate = null;
-  });
+  function contentTypeIsDirty() {
+    return $scope.contentType && $scope.contentType.getVersion() > $scope.contentType.getPublishedVersion() + 1;
+  }
 
-  function sanitizeDisplayField() {
-    /*jshint eqnull:true */
-    var displayField = ShareJS.peek($scope.otDoc, ['displayField']);
-    var valid = displayField == null || _.any($scope.contentType.data.fields, {id: displayField});
-    if (!valid) {
-      var cb = $q.callback();
-      $scope.otDoc.at('displayField').set(null, cb);
-      return cb.promise.then(function(){
-        $scope.otUpdateEntity();
-      });
-    }
-    return $q.when();
+  /**
+   * Accounts for displayField value inconsistencies for content types which existed
+   * before the internal apiName content type property.
+   */
+  function regulateDisplayField() {
+    var displayField = $scope.contentType.data.displayField;
+    var valid = _.isUndefined(displayField) || displayField === null || _.any($scope.contentType.data.fields, {id: displayField});
+    if (!valid)
+      $scope.contentType.data.displayField = null;
   }
 
   $scope.updatePublishedContentType = function (publishedContentType) {
@@ -146,8 +120,6 @@ angular.module('contentful').controller('ContentTypeEditorController', ['$scope'
   });
 
   $scope.addField = function(typeFieldTemplate) {
-    var fieldDoc = $scope.otDoc.at(['fields']);
-
     var newField = _.extend({
       name: '',
       id: random.id(),
@@ -155,18 +127,11 @@ angular.module('contentful').controller('ContentTypeEditorController', ['$scope'
       apiName: ''
     }, typeFieldTemplate);
 
-    fieldDoc.push(newField, function(err, ops) {
-      $scope.$apply(function(scope) {
-        if (err) {
-          logger.logSharejsWarn('Could not add field', {error: err });
-          notification.error('Could not add field');
-        } else {
-            scope.otUpdateEntity();
-            scope.$broadcast('fieldAdded', ops[0].p[1]);
-            analytics.modifiedContentType('Modified ContentType', scope.contentType, newField, 'add');
-        }
-      });
-    });
+    if(!_.has($scope.contentType.data, 'fields'))
+      $scope.contentType.data.fields = [];
+    $scope.contentType.data.fields.push(newField);
+    $scope.$broadcast('fieldAdded', $scope.contentType.data.fields.length - 1);
+    analytics.modifiedContentType('Modified ContentType', $scope.contentType, newField, 'add');
   };
 
 }]);

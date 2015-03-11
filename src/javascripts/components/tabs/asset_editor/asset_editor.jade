@@ -60,15 +60,15 @@
 
 .tab-actions(ng-controller="AssetActionsController")
   .button-set(cf-dropdown)
-    button.btn.btn--secondary.delete(   type="button" ng-show="canDelete()" cf-dropdown-toggle) Delete
+    button.btn.btn--secondary.delete(type="button" ng-show="entityActionsController.canDelete()" cf-dropdown-toggle) Delete
     .delete-confirm(cf-dropdown-menu position="topcenter")
       p You are about to delete {{headline()}}
       button.btn.btn--danger(type="button" ng-click="delete()" dropdown-close) Delete 
       button.btn.btn--secondary(type="button" dropdown-close) Don't Delete 
-    button.btn.btn--secondary.archive(  type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
-    button.btn.btn--secondary.archive(  type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
-    button.btn.btn--secondary.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish
-    button.btn.btn--primary.publish(  type="submit" ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Asset") {{publishButtonLabel()}}
+    button.btn.btn--secondary.archive(  type="button" ng-show="entityActionsController.canArchive()"   ng-click="archive()"   tooltip="Archive this Asset"                 ) Archive
+    button.btn.btn--secondary.archive(  type="button" ng-show="entityActionsController.canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Asset"               ) Unarchive
+    button.btn.btn--secondary.unpublish(type="button" ng-show="entityActionsController.canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Asset"               ) Unpublish
+    button.btn.btn--primary.publish(    type="submit" ng-show="entityActionsController.canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Asset") {{publishButtonLabel()}}
   .save-status(cf-save-status tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
                tooltip-placement="top")
   .other-users

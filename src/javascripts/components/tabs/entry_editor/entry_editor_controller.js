@@ -7,11 +7,9 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
 
   // Initialization
   $scope.$watch('tab.params.entry', function (entry) { $scope.entry = entry; });
-  $controller('EntityActionsController', {
+  $scope.entityActionsController = $controller('EntityActionsController', {
     $scope: $scope,
-    params: {
-      entityType: 'entry'
-    }
+    entityType: 'entry'
   });
 
   // Tab related stuff

@@ -33,15 +33,16 @@ angular.module('contentful').
   };
 
   $scope.publish = function () {
-    $scope.sanitizeDisplayField()
-    .then(function(){
-      if (!$scope.validate()) {
-        notification.warn('Error activating ' + title() + ': ' + 'Validation failed');
-        return;
-      }
-      var verb = $scope.contentType.isPublished() ? 'updated' : 'activated';
-      var version = $scope.contentType.getVersion();
-      $scope.contentType.publish(version)
+    $scope.regulateDisplayField();
+    if (!$scope.validate()) {
+      notification.warn('Error activating ' + title() + ': ' + 'Validation failed');
+      return;
+    }
+    var verb = $scope.contentType.isPublished() ? 'updated' : 'activated';
+    //TODO handle this whole thing better
+    $scope.contentType.save().then(function (contentType) {
+      var version = contentType.getVersion();
+      contentType.publish(version)
       .then(function(publishedContentType){
         notification.info(title() + ' ' + verb + ' successfully');
         analytics.track('Published ContentType', {
@@ -49,12 +50,13 @@ angular.module('contentful').
           contentTypeName: $scope.contentType.getName(),
           version: version
         });
-        $scope.contentType.setPublishedVersion(version);
+        contentType.setPublishedVersion(version);
 
         //console.log('editor has published %o as %o', scope.contentType, publishedContentType);
         $scope.updatePublishedContentType(publishedContentType);
         $scope.spaceContext.registerPublishedContentType(publishedContentType);
         $scope.spaceContext.refreshContentTypes();
+        $scope.contentTypeForm.$setPristine();
       })
       .catch(function(err){
         var errorId = dotty.get(err, 'body.sys.id');

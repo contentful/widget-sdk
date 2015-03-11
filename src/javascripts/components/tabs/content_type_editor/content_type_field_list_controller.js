@@ -5,10 +5,6 @@ angular.module('contentful').controller('ContentTypeFieldListController', ['$sco
 
   $controller('AccordionController', {$scope: $scope});
 
-  $scope.$watchCollection('contentType.data.fields', function (fields, old, scope) {
-    scope.fieldList = fields;
-  });
-
   $scope.fieldTypeParams = function (f) {
     var params = [f.type, f.linkType];
     if (f.items) params.push(f.items.type, f.items.linkType);
@@ -35,19 +31,11 @@ angular.module('contentful').controller('ContentTypeFieldListController', ['$sco
   };
 
   $scope.setDisplayField = function (field) {
-    $scope.otDoc.at(['displayField']).set(field.id, function (err) {
-      if (!err) $scope.$apply(function (scope) {
-        scope.contentType.data.displayField = field.id;
-      });
-    });
+    $scope.contentType.data.displayField = field.id;
   };
 
   $scope.removeDisplayField = function () {
-    $scope.otDoc.at(['displayField']).set(null, function (err) {
-      if (!err) $scope.$apply(function (scope) {
-        scope.contentType.data.displayField = null;
-      });
-    });
+    $scope.contentType.data.displayField = null;
   };
 
   $scope.$watch('validationResult.errors', function activateErroredDisabledFields(errors, old, scope) {

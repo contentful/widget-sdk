@@ -11,11 +11,9 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
 
   //Initialization
   $scope.$watch('tab.params.asset', function (asset) { $scope.asset = asset; });
-  $controller('EntityActionsController', {
+  $scope.entityActionsController = $controller('EntityActionsController', {
     $scope: $scope,
-    params: {
-      entityType: 'asset'
-    }
+    entityType: 'asset'
   });
 
   // Tab related stuff

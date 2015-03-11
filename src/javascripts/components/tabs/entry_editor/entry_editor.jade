@@ -72,26 +72,26 @@
 
 .tab-actions(ng-controller="EntryActionsController")
   .button-set
-    .dropdown-btn(cf-dropdown="actions" ng-show="canDelete() || canDuplicate()")
+    .dropdown-btn(cf-dropdown="actions" ng-show="entityActionsController.canDelete() || entityActionsController.canDuplicate()")
       button.btn.btn--tertiary(cf-dropdown-toggle="actions")
         i.fa.fa-caret-up.button-icon-right
         | More
       .dropdown-menu(cf-dropdown-menu="actions" position="top")
         ul(cf-dropdown="confirm")
-          li.dropdown-menu-item.duplicate(type="button" ng-show="canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this Entry" dropdown-close) Duplicate
-          li.dropdown-menu-item.delete(type="button" ng-show="canDelete()" cf-dropdown-toggle="confirm") Delete
+          li.dropdown-menu-item.duplicate(type="button" ng-show="entityActionsController.canDuplicate()" ng-click="duplicate()" tooltip="Duplicate this Entry" dropdown-close) Duplicate
+          li.dropdown-menu-item.delete(type="button" ng-show="entityActionsController.canDelete()" cf-dropdown-toggle="confirm") Delete
           .delete-confirm.no-caret(cf-dropdown-menu="confirm" position="topcenter")
             p You are about to delete {{headline()}}
             button.btn.btn--danger(type="button" ng-click="delete()" dropdown-close) Delete 
             button.btn.btn--secondary(type="button" dropdown-close) Don't Delete 
 
     | 
-    button.btn.btn--secondary.archive(type="button" ng-show="canArchive()"   ng-click="archive()"   tooltip="Archive this Entry") Archive
+    button.btn.btn--secondary.archive(type="button" ng-show="entityActionsController.canArchive()"   ng-click="archive()"   tooltip="Archive this Entry") Archive
     | 
-    button.btn.btn--secondary.archive(type="button" ng-show="canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry") Unarchive
+    button.btn.btn--secondary.archive(type="button" ng-show="entityActionsController.canUnarchive()" ng-click="unarchive()" tooltip="Unarchive this Entry") Unarchive
     | 
 
-    .dropdown-btn(cf-dropdown="revertActions" ng-show="canUpdate() && (canRevertToPublishedState() || canRevertToPreviousState())")
+    .dropdown-btn(cf-dropdown="revertActions" ng-show="entityActionsController.canUpdate() && (canRevertToPublishedState() || canRevertToPreviousState())")
       button.btn.btn--tertiary(cf-dropdown-toggle="revertActions")
         i.fa.fa-caret-up.button-icon-right
         | Revert...
@@ -100,9 +100,9 @@
           li.dropdown-menu-item(type="button" ng-show="canRevertToPublishedState()" ng-click="revertToPublishedState()" dropdown-close) Revert to published version ({{publishedAt}})
           li.dropdown-menu-item(type="button" ng-show="canRevertToPreviousState()" ng-click="revertToPreviousState()" dropdown-close) Discard my changes ({{updatedAt}})
 
-    button.btn.btn--secondary.unpublish(type="button" ng-show="canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry") Unpublish
+    button.btn.btn--secondary.unpublish(type="button" ng-show="entityActionsController.canUnpublish()" ng-click="unpublish()" tooltip="Unpublish this Entry") Unpublish
     | 
-    button.btn.btn--primary.publish(type="submit" ng-show="canPublish()"   ng-click="publish()"   tooltip="{{publishButtonLabel()}} this Entry") {{publishButtonLabel()}}
+    button.btn.btn--primary.publish(type="submit" ng-show="entityActionsController.canPublish()" ng-click="publish()" tooltip="{{publishButtonLabel()}} this Entry") {{publishButtonLabel()}}
   .save-status(cf-save-status tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to distribute your changes."
                tooltip-placement="top")
   .other-users

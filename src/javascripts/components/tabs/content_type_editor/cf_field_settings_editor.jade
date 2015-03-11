@@ -18,10 +18,6 @@ a.toggle-collapse(cf-click-local="toggleAccordionItem(field)" ng-class="{open: i
 form.field-form(name="fieldForm")
   input.form-control(name="fieldName"
          ng-model="field.name" type="text" required
-         ng-disabled="!otEditable"
-         ot-path="['fields', index, 'name']"
-         ot-path-types="['Array', 'Object', 'String']"
-         ot-subdoc ot-bind-text
          placeholder="e.g. Product Name"
          ng-change="apiNameController.updateFromName()"
          tooltip="Field title displayed to editors"
@@ -31,16 +27,13 @@ form.field-form(name="fieldForm")
   input.form-control(name="fieldApiName"
          cf-api-name-shadow="field"
          ng-model="field.apiName" type="text" required
-         ng-disabled="!(otEditable && apiNameController.isEditable())"
-         ot-path="['fields', index, 'apiName']"
-         ot-path-types="['Array', 'Object', 'String']"
-         ot-subdoc ot-bind-text
+         ng-disabled="!apiNameController.isEditable()"
          placeholder="e.g. productName"
          tooltip="Field ID used in API"
          tooltip-container=".tab-main"
          tooltip-placement="top")
   | 
-  button.btn.btn--field-settings(ng-click="apiNameController.unlockEditing()" ng-disabled="apiNameController.isEditable()" ng-show="otEditable")
+  button.btn.btn--field-settings(ng-click="apiNameController.unlockEditing()" ng-disabled="apiNameController.isEditable()")
     i.fa.fa-lock(ng-class="{'fa-unlock-alt': apiNameController.isEditable()}")
   | 
   button.btn.btn--field-settings(ng-click="apiNameController.revert()" ng-if="apiNameController.isRevertable()")
@@ -90,10 +83,10 @@ form.field-form(name="fieldForm")
     | {{isDisplayField(field) ? 'Used as title' : 'Use as title'}}
   a.toggle-disabled(ng-click="toggle('disabled')"
     ng-class="{active: field.disabled}"
-    ng-show="!otDisabled && published"
+    ng-show="published"
     tooltip="{{field.disabled ? 'Enable this field for editors' : 'Disable this field for editors'}}")
     | {{field.disabled ? 'Enable Field' : 'Disable Field'}}
-  a.toggle-disabled(ng-click="delete()" ng-show="!otPublished" ng-hide="published")
+  a.toggle-disabled(ng-click="delete()" ng-hide="published")
     | Delete Field
-.drag-handle(ng-hide="otDisabled")
+.drag-handle
   i.fa.fa-bars
