@@ -44,13 +44,16 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
   ];
 
   var validationLabels = {
-    size: 'Length',
-    range: 'Numerical Range',
-    dateRange: 'Date Range',
-    regexp: 'Regular Expression',
+    size: {
+      Text: 'Enforce input length',
+      Symbol: 'Enforce input length',
+    },
+    range: 'Specify allowed number range',
+    dateRange: 'Specify allowed date range',
+    regexp: 'Match a specific pattern',
     'in': 'Predefined Values',
-    linkContentType: 'Content Type',
-    linkMimetypeGroup: 'File Type'
+    linkContentType: 'Specify allowed entry type',
+    linkMimetypeGroup: 'Specify allowed file types'
   };
 
   var typePlurals = {
@@ -201,10 +204,13 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
     if (field.type == 'Array' && type == 'size') {
       var itemType = field.items.type == 'Link' ? field.items.linkType : field.items.type;
       var typePlural = typePlurals[itemType] || itemType + 's';
-      return 'Enforce number of ' + typePlural;
-    } else {
-      return validationLabels[type];
+      return 'Specify number of ' + typePlural;
     }
+    var label = validationLabels[type];
+    if (typeof label == 'string')
+      return label;
+    else
+      return label[field.type] || label.default;
   }
 
   /**

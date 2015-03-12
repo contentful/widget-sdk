@@ -126,7 +126,7 @@ describe('validation dialog', function() {
   function describeLengthValidation(validationPath) {
 
     function settings() {
-      return dialog.domElement.find('[aria-label="Length"]');
+      return dialog.domElement.find('[aria-label="Enforce input length"]');
     }
 
     it('can be enabled and set', function() {
@@ -216,7 +216,7 @@ describe('validation dialog', function() {
     });
 
     function settings() {
-      return dialog.domElement.find('[aria-label="Numerical Range"]');
+      return dialog.domElement.find('[aria-label="Specify allowed number range"]');
     }
 
     it('can be enabled and set', function() {
@@ -262,7 +262,7 @@ describe('validation dialog', function() {
 
   describe('regexp validation', function() {
     function settings() {
-      return dialog.domElement.find('[aria-label="Regular Expression"]');
+      return dialog.domElement.find('[aria-label="Match a specific pattern"]');
     }
 
     it('can be enabled and set', function() {
@@ -419,7 +419,7 @@ describe('validation dialog', function() {
 
   describe('content type validation', function() {
     function settings() {
-      return dialog.domElement.find('[aria-label="Content Type"]');
+      return dialog.domElement.find('[aria-label="Specify allowed entry type"]');
     }
 
     beforeEach(function() {
@@ -469,7 +469,7 @@ describe('validation dialog', function() {
 
   describe('asset type validation', function() {
     function settings() {
-      return dialog.domElement.find('[aria-label="File Type"]');
+      return dialog.domElement.find('[aria-label="Specify allowed file types"]');
     }
 
     beforeEach(function() {
@@ -526,7 +526,7 @@ describe('validation dialog', function() {
     });
 
     function settings() {
-      return dialog.domElement.find('[aria-label="Enforce number of Symbols"]');
+      return dialog.domElement.find('[aria-label="Specify number of Symbols"]');
     }
 
     it('can be set', function() {
