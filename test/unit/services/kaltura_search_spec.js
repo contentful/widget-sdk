@@ -7,7 +7,7 @@ describe('Kaltura Search', function() {
   beforeEach(function() {
     module('contentful/test');
     inject(function($injector, $q, $window, KalturaSearch){
-      kalturaPager  = {};
+      kalturaPager  = { pageIndex: null };
       kalturaFilter = {};
 
       $window.KalturaFilterPager     = sinon.stub().returns(kalturaPager);
@@ -32,6 +32,12 @@ describe('Kaltura Search', function() {
   });
 
   describe('#isPaginable', function() {
+    describe('before running the search', function () {
+      it('returns false', function() {
+        expect(kalturaSearch.isPaginable()).toBeFalsy();
+      });
+    });
+
     describe('when the current page index is lower than the max', function() {
       setPaginationValues(2, 1);
 
