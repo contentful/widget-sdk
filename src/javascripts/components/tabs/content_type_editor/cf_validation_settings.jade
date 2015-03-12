@@ -12,74 +12,85 @@ h2.validation-settings__header
     .validation-controls__view-select.btn.btn--tertiary.select-box
       select(aria-label="Select condition"
              ng-model="validation.currentView"
-             ng-options="v.name as v.label for v in validation.views" ng-disabled="!otEditable")
+             ng-options="v.name as v.label for v in validation.views")
       i.button-icon-right.fa.fa-caret-down
 
     span(ng-switch="validation.currentView")
       span(ng-switch-when="min")
         input.form-control(type="number" placeholder="Min" aria-label="Minimum size"
-                           ng-model="validation.settings.min" ng-disabled="!otEditable")
+                           ng-model="validation.settings.min")
       span(ng-switch-when="max")
         input.form-control(type="number" placeholder="Max" aria-label="Maximum size"
-                           ng-model="validation.settings.max" ng-disabled="!otEditable")
+                           ng-model="validation.settings.max")
       span(ng-switch-when="min-max")
         input.form-control(type="number" placeholder="Min" aria-label="Minimum size"
-                           ng-model="validation.settings.min" ng-disabled="!otEditable")
+                           ng-model="validation.settings.min")
         span.validation-controls__input-separator and
         input.form-control(type="number" placeholder="Max" aria-label="Maximum size"
-                           ng-model="validation.settings.max" ng-disabled="!otEditable")
-    cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label="Errors")
+                           ng-model="validation.settings.max")
+    cf-error-list.form-inline-error(
+      cf-error-messages="validation.errors"
+      aria-label="Errors"
+    )
 
 
   div(ng-switch-when="range")
     .validation-controls__view-select.btn.btn--tertiary.select-box
       select(aria-label="Select condition"
              ng-model="validation.currentView"
-             ng-options="v.name as v.label for v in validation.views" ng-disabled="!otEditable")
+             ng-options="v.name as v.label for v in validation.views")
       i.button-icon-right.fa.fa-caret-down
 
     span(ng-switch="validation.currentView")
       span(ng-switch-when="min")
         input.form-control(type="number" placeholder="Min" aria-label="Minimum value"
-                           ng-model="validation.settings.min" ng-disabled="!otEditable")
+                           ng-model="validation.settings.min")
       span(ng-switch-when="max")
         input.form-control(type="number" placeholder="Max" aria-label="Maximum value"
-                           ng-model="validation.settings.max" ng-disabled="!otEditable")
+                           ng-model="validation.settings.max")
       span(ng-switch-when="min-max")
         input.form-control(type="number" placeholder="Min" aria-label="Minimum value"
-                           ng-model="validation.settings.min" ng-disabled="!otEditable")
+                           ng-model="validation.settings.min")
         span.validation-controls__input-separator and
         input.form-control(type="number" placeholder="Max" aria-label="Maximum value"
-                           ng-model="validation.settings.max" ng-disabled="!otEditable")
-    cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label="Errors")
+                           ng-model="validation.settings.max")
+    cf-error-list.form-inline-error(
+      cf-error-messages="validation.errors"
+      aria-label="Errors"
+    )
 
 
   div(ng-switch-when="dateRange")
     cf-validation-date-select(aria-label="Later than" data="validation.settings.min")
     cf-validation-date-select(aria-label="Earlier than" data="validation.settings.max")
-    cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label="Errors")
+    cf-error-list.form-inline-error(
+      cf-error-messages="validation.errors"
+      aria-label="Errors"
+    )
 
 
   div(ng-switch-when="regexp")
     .validation-controls__view-select.btn.btn--tertiary.select-box
       select(aria-label="Select pattern"
              ng-model="validation.currentView"
-             ng-options="v.name as v.label for v in validation.views" ng-disabled="!otEditable")
+             ng-options="v.name as v.label for v in validation.views")
       i.button-icon-right.fa.fa-caret-down
 
     input.form-control.validation-controls__re-pattern(
       type="text" placeholder="foo|bar[baz]" aria-label="Regular Expression pattern"
       ng-model="validation.settings.pattern" ng-change="setMatchingView()"
-      ng-required="true" ng-disabled="!otEditable")
+      ng-required="true")
     label
       span.validation-controls__re-flags-label Flags
       input.form-control.validation-controls__re-flags(
         type="text" aria-label="Regular Expression flags"
         pattern="[gim]*"
         ng-model="validation.settings.flags" ng-change="setMatchingView()"
-        ng-disabled="!otEditable")
-    cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label="Errors")
-
+       )
+    cf-error-list.form-inline-error(
+      cf-error-messages="validation.errors"
+      aria-label="Errors"
+    )
 
   cf-validation-values(ng-switch-when="in")
 
@@ -93,4 +104,7 @@ h2.validation-settings__header
         label
           input(type="checkbox" ng-model="at.selected" ng-change="assetTypes.update()")
           span.u-truncate {{at.label}}
-    cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label="Errors")
+    cf-error-list.form-inline-error(
+      cf-error-messages="validation.errors"
+      aria-label="Errors"
+    )
