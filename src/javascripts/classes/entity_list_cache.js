@@ -88,8 +88,8 @@ angular.module('contentful').factory('EntityListCache', ['$rootScope', '$q', 'lo
           });
         } else {
           _.forEach(entity.data.fields, function (field, fieldId) {
-            var locfield = field[self.locale];
             if(!self.fieldIsDisplayed(fieldId)) return;
+            var locfield = field && field[self.locale];
 
             if(isLink(locfield))
               self.pushFieldId(locfield);
