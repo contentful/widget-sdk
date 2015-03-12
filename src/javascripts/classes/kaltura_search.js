@@ -15,7 +15,7 @@ angular.module('contentful').factory('KalturaSearch', ['$injector', function($in
 
   KalturaSearch.prototype = {
     isPaginable: function() {
-      return this._numberOfPages && (this.pager.pageIndex < this._numberOfPages);
+      return this.pager.pageIndex && this._numberOfPages && (this.pager.pageIndex < this._numberOfPages);
     },
 
     limit: function(value) {
@@ -57,7 +57,7 @@ angular.module('contentful').factory('KalturaSearch', ['$injector', function($in
       this._numberOfPages = Math.ceil(this._numberOfMatchingEntries / this.pager.pageSize);
 
       if (this._numberOfFetchedEntries < this._numberOfMatchingEntries)
-        this.pager.pageIndex = (this._numberOfFetchedEntries / this.pager.pageSize);
+        this.pager.pageIndex = Math.ceil(this._numberOfFetchedEntries / this.pager.pageSize);
 
       return response.objects;
     }
