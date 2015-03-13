@@ -93,11 +93,7 @@ angular.module('contentful').controller('LinkEditorController',
       return removeValue();
     } else {
       assertIndexMatches(index, entity);
-      if (isLastLink()) {
-        return removeValue();
-      } else {
-        return removeLink(index);
-      }
+      return removeLink(index);
     }
 
     function assertIndexMatches(index, entity) {
@@ -108,10 +104,6 @@ angular.module('contentful').controller('LinkEditorController',
             links: $scope.links
           }
         });
-    }
-
-    function isLastLink() {
-      return dotty.get($scope, 'links.length') === 1;
     }
 
     function removeValue() {

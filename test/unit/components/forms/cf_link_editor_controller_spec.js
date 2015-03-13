@@ -236,12 +236,8 @@ describe('LinkEditorController', function () {
             {sys: {id: 'entry1'}}
           ];
           scope.removeLink(0, entry);
-          this.otChangeValueDeferred.resolve();
+          stubs.remove.yield();
           scope.$apply();
-        });
-
-        it('updates model', function() {
-          sinon.assert.called(scope.updateModel);
         });
 
         it('has 0 links', function() {

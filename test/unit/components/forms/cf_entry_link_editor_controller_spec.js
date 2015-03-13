@@ -260,8 +260,7 @@ describe('EntryLinkEditorController', function () {
 
         it('removes link', function() {
           scope.removeLink(0, entry);
-          this.otChangeValueDeferred.resolve();
-          scope.$apply();
+          stubs.remove.yield();
           expect(scope.links).toEqual([]);
         });
       });
