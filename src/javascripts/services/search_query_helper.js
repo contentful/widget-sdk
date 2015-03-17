@@ -4,10 +4,16 @@ angular.module('contentful').factory('searchQueryHelper', ['searchParser', 'user
   var lastQueryString, lastParseResult = [];
   var complete = searchQueryAutocompletions.complete;
   var api = {
+    // Dummy Content-Type object that can be used when searching for Assets
+    // Whenever we're searching for/in fields, the code around the search stuff
+    // needs a Content-Type to work with and build the queries
     assetContentType: {
       data: AssetContentType,
       getId: _.constant(undefined)
     },
+
+    // Parse the queryString and return the current top-level token
+    // This top-level token can have subtokens if it is a pair (key+operator+value)
     currentToken: function (queryString, cursorPos) {
       if (!queryString) return null;
 
@@ -60,10 +66,13 @@ angular.module('contentful').factory('searchQueryHelper', ['searchParser', 'user
       return complete.key(contentType);
     }),
 
-    operatorsForKey: function (key, contentType) {
+    // Gives the first valid operator for a key as a String
+    operatorForKey: function (key, contentType) {
       return complete.operator(key, contentType).items[0].value;
     },
 
+    // Build a Query for the CMA
+    // Returns a request object that can be passed into space.getEntries()
     buildQuery: function (space, contentType, queryString) {
       var requestObject = {};
       if (contentType) requestObject.content_type = contentType.getId();
@@ -105,6 +114,18 @@ angular.module('contentful').factory('searchQueryHelper', ['searchParser', 'user
     return lastParseResult;
   }
 
+  // Returns an objects that has a bunch of boolean flags
+  //
+  // before: strictly before the token but not touching it
+  // start: at the start of the token
+  // inside: strictly inside the token
+  // end: at the end of the token
+  // after: strictly after the token
+  //
+  // outside: stricly before or after
+  // pre: start or inside
+  // post end or inside
+  // touch: touching the token, either at the start or the end
   function tokenPosition(cursorPos, token) {
     var pos = {
       before: cursorPos     <  token.offset,
@@ -129,6 +150,7 @@ angular.module('contentful').factory('searchQueryHelper', ['searchParser', 'user
     });
   }
 
+  // Takes all tokens that are queries and joins them with spaces
   function extractQuery(tokens) {
     return _(tokens).filter(function (token) {
       return token.type == 'Query' && token.content.length > 0;
