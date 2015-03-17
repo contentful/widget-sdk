@@ -37,6 +37,12 @@ angular.module('contentful').service('validationViews', ['$injector', function($
         pattern: /^\d[ -.]?\(?\d\d\d\)?[ -.]?\d\d\d[ -.]?\d\d\d\d$/.source },
       { name: 'us-zip-code', label: 'US zip code',
         pattern: /^\d{5}$|^\d{5}-\d{4}$}/.source }
+    ],
+    assetImageDimensions: [
+      {name: 'min',     label: 'Minmum'},
+      {name: 'max',     label: 'Maximum'},
+      {name: 'min-max', label: 'Between'},
+      {name: 'exact',   label: 'Exactly'},
     ]
   };
 

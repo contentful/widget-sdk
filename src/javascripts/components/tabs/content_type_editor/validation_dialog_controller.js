@@ -31,7 +31,9 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
     'in': null,
     linkContentType: null,
     linkMimetypeGroup: null,
-    assetFileSize: {min: null, max: null}
+    assetFileSize: {min: null, max: null},
+    assetImageDimensions: { width:  {min: null, max: null},
+                            height: {min: null, max: null}}
   };
 
   var validationsOrder = [
@@ -57,6 +59,7 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
     linkContentType: 'Specify allowed entry type',
     linkMimetypeGroup: 'Specify allowed file types',
     assetFileSize: 'Specify allowed file size',
+    assetImageDimensions: 'Specify image dimensions'
   };
 
   var typePlurals = {

@@ -124,6 +124,7 @@ h2.validation-settings__header
 
     div(cf-template="validation_error_message_input")
 
+
   div(ng-switch-when="assetFileSize" ng-controlle="assetFileSizeValidationController")
     .validation-controls__view-select.btn.btn--tertiary.select-box
       select(aria-label="Select condition"
@@ -173,6 +174,57 @@ h2.validation-settings__header
                    ng-model="unitFactor"
                    ng-options="u.factor as u.label for u in scale.units")
             i.button-icon-right.fa.fa-caret-down
+
+    cf-error-list.form-inline-error(
+      cf-error-messages="validation.errors"
+      aria-label="Errors"
+    )
+
+    div(cf-template="validation_error_message_input")
+
+
+  div(ng-switch-when="assetImageDimensions")
+    div.validation-controls__setting(ng-repeat="(dimension, label) in {width: 'Width', height: 'Height'}")
+      div(ng-controller="ImageDimensionsValidationController as dimensions")
+        label.validation-controls__setting-toggle
+          input(type="checkbox" ng-model="enabled" ng-change="dimensions.update()")
+          | {{label}}
+
+        .validation-controls__view-select.btn.btn--tertiary.select-box(ng-disabled="!enabled")
+          select(aria-label="Select condition"
+                 ng-model="condition" ng-disabled="!enabled")
+            option(value="min") At least
+            option(value="max") At most
+            option(value="min-max") Between
+            option(value="exact") Exactly
+          i.button-icon-right.fa.fa-caret-down
+
+        span(ng-switch="condition")
+          span(ng-switch-when="min")
+            span.form-control.form-control--with-unit
+              input(type="number" ng-disabled="!enabled"
+                    ng-model="bounds.min" ng-change="dimensions.update()")
+              span.form-control__unit px
+          span(ng-switch-when="max")
+            span.form-control.form-control--with-unit
+              input(type="number" ng-disabled="!enabled"
+                                 ng-model="bounds.max" ng-change="dimensions.update()")
+              span.form-control__unit px
+          span(ng-switch-when="min-max")
+            span.form-control.form-control--with-unit
+              input(type="number" ng-disabled="!enabled"
+                                 ng-model="bounds.min" ng-change="dimensions.update()")
+              span.form-control__unit px
+            span.validation-controls__input-separator and
+            span.form-control.form-control--with-unit
+              input(type="number" ng-disabled="!enabled"
+                                 ng-model="bounds.max" ng-change="dimensions.update()")
+              span.form-control__unit px
+          span(ng-switch-when="exact")
+            span.form-control.form-control--with-unit
+              input(type="number" ng-disabled="!enabled"
+                                 ng-model="bounds.exact" ng-change="dimensions.update()")
+              span.form-control__unit px
 
     cf-error-list.form-inline-error(
       cf-error-messages="validation.errors"
