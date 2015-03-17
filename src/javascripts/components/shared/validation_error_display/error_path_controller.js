@@ -94,7 +94,10 @@ function ErrorPathController($scope, $attrs, mimetype) {
   };
 
   function defaultMessage(error) {
-    return 'Error: ' + error.name;
+    if (error.details)
+      return error.details;
+    else
+      return 'Error: ' + error.name;
   }
 
   function customMessage(error) {
