@@ -41,14 +41,17 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$parse', 'zoneOffse
       var zoneController = elm.find('.zone').controller('ngModel');
 
       // Format configuration
-      var widgetFormat = scope.widget.widgetParams.format || 'timeZ';
+      var widgetFormat = (scope.widget && scope.widget.widgetParams.format) || 'timeZ';
       scope.hasTime     = widgetFormat != 'dateonly';
       scope.hasTimezone = widgetFormat == 'timeZ';
 
       scope.timezones = zoneOffsets;
       scope.tzOffset = defaultTzOffset;
       scope.ampm = 'am';
-      scope.maxTime = scope.widget.widgetParams.ampm == '12' ? '12:59:59' : '24:59:59';
+      if (scope.widget && scope.widget.widgetParams.ampm == '12')
+        scope.maxTime = '12:59:59';
+      else
+        scope.maxTime = '24:59:59';
 
       scope.$watch('widget.widgetParams.ampm', function(){
         ngModelCtrl.$render();
@@ -111,12 +114,16 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$parse', 'zoneOffse
 
       function changeHandler() {
         var value = buildValue(scope.localDate, scope.localTime, scope.ampm, scope.tzOffset);
-        scope.otChangeValue(value)
-        .then(function(){
-            ngModelCtrl.$setViewValue(value);
-        }, function(){
-            scope.setFromISO(ngModelCtrl.$modelValue);
-        });
+        if (scope.otChangeValue) {
+          scope.otChangeValue(value)
+          .then(function() {
+              ngModelCtrl.$setViewValue(value);
+          }, function() {
+              scope.setFromISO(ngModelCtrl.$modelValue);
+          });
+        } else {
+          ngModelCtrl.$setViewValue(value);
+        }
       }
 
       function buildValue(localDate, localTime, ampm, tzOffset) {
@@ -207,11 +214,11 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$parse', 'zoneOffse
       }
 
       function timeRx() {
-        return scope.widget.widgetParams.ampm === '12' ? TIME_RX_12 : TIME_RX;
+        return (scope.widget && scope.widget.widgetParams.ampm === '12') ? TIME_RX_12 : TIME_RX;
       }
 
       function make24hTime(localTime, ampm) {
-        if (scope.widget.widgetParams.ampm === '12') {
+        if (scope.widget && scope.widget.widgetParams.ampm === '12') {
           var seg  = localTime.split(':');
           var hour = parseInt(seg[0], 10);
           hour   = ampm === 'am' && hour === 12 ? 0 :
@@ -227,7 +234,7 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$parse', 'zoneOffse
       }
 
       function makeLocalTime(timeStr) {
-        if (scope.widget.widgetParams.ampm === '12') {
+        if (scope.widget && scope.widget.widgetParams.ampm === '12') {
           var seg  = timeStr.split(':');
           var hour = parseInt(seg[0], 10);
           hour   = hour ===  0 ? 12 :

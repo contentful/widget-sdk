@@ -13,18 +13,57 @@
  * - `scope.otDoc`  ShareJS document for the Content Type.
  */
 angular.module('contentful').controller('ValidationDialogController', ['$scope', '$injector', function($scope, $injector) {
-  var availableValidations = $injector.get('availableValidations');
-  var validationType       = availableValidations.type;
-  var validationName       = availableValidations.name;
-  var logger               = $injector.get('logger');
-  var notification         = $injector.get('notification');
-  var createSchema         = $injector.get('validation');
-  var controller           = this;
+  var availableValidations    = $injector.get('availableValidations');
+  var validationType          = availableValidations.type;
+  var logger                  = $injector.get('logger');
+  var notification            = $injector.get('notification');
+  var createSchema            = $injector.get('validation');
+  var validationViews         = $injector.get('validationViews');
+  var validationTypesForField = $injector.get('validation').Validation.perType;
+  var $q                      = $injector.get('$q');
+  var controller              = this;
 
+  var validationSettings = {
+    size: {min: null, max: null},
+    range: {min: null, max: null},
+    dateRange: {after: null, before: null},
+    regexp: {pattern: null, flags: null},
+    'in': null,
+    linkContentType: null,
+    linkMimetypeGroup: null
+  };
+
+  var validationsOrder = [
+    'size',
+    'range',
+    'dateRange',
+    'regexp',
+    'linkContentType',
+    'linkMimeType',
+    'in'
+  ];
+
+  var validationLabels = {
+    size: {
+      Text: 'Enforce input length',
+      Symbol: 'Enforce input length',
+    },
+    range: 'Specify allowed number range',
+    dateRange: 'Specify allowed date range',
+    regexp: 'Match a specific pattern',
+    'in': 'Predefined Values',
+    linkContentType: 'Specify allowed entry type',
+    linkMimetypeGroup: 'Specify allowed file types'
+  };
+
+  var typePlurals = {
+    'Entry': 'Entries'
+  };
 
   // Create decorated validations from field
-  var availableFieldValidations = availableValidations.forField($scope.field);
-  $scope.validations = _.map(availableFieldValidations, decorateValidation);
+  $scope.fieldValidations = getDecoratedValidations($scope.field);
+  $scope.fieldItemValidations = getDecoratedValidations($scope.field.items || {});
+
   updateValidationsFromField();
   validateValidations();
 
@@ -43,33 +82,48 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
   /**
    * Write the scope validations to the OT Document and the Content
    * Type's field.
+   *
+   * FIXME consolidate code duplication
    */
   controller.save = function() {
-    var validations =
-      _($scope.validations).filter('enabled').map(extractDecoratedValidation).value();
+    var fieldValidations = extractEnabledValidations($scope.fieldValidations);
+    // TODO field path should be available on scope
+    var validationsDoc = $scope.otDoc.at(['fields', $scope.index, 'validations']);
+    var updatedFieldValidations =
+    validationsDocSet(validationsDoc, fieldValidations)
+    .then(function() { $scope.field.validations = fieldValidations; });
 
-    var validationsDoc = $scope.otDoc.at(validationListPath());
-    validationsDoc.set(validations, function(error) {
-      if (error) {
-        logger.logServerWarn('Could not save validations', {error: error });
-        notification.error('Could not save validations');
-      } else {
-        setFieldValidations(validations);
-        updateValidationsFromField();
-      }
-    });
+    if (!$scope.field.items)
+      return updatedFieldValidations;
+
+    var fieldItemValidations = extractEnabledValidations($scope.fieldItemValidations);
+    var itemValidationsDoc = $scope.otDoc.at(['fields', $scope.index, 'items', 'validations']);
+    var updatedFieldItemValidations =
+    validationsDocSet(itemValidationsDoc, fieldItemValidations)
+    .then(function() { $scope.field.items.validations = fieldItemValidations; });
+    return $q.all(updatedFieldValidations, updatedFieldItemValidations);
   };
 
+  function getDecoratedValidations(field) {
+    var decorated = _.map(validationTypesForField(field), decorateValidation);
+    return _.sortBy(decorated, function(validation) {
+      return validationsOrder.indexOf(validation.type);
+    });
 
-  function decorateValidation(backendValidation) {
-    var type = validationType(backendValidation);
-    var settings = _.cloneDeep(backendValidation[type]);
-    return {
-      name: validationName(backendValidation),
-      type: type,
-      enabled: false,
-      settings: settings
-    };
+    function decorateValidation(type) {
+      var name = getValidationLabel(field, type);
+      var settings = _.cloneDeep(validationSettings[type]);
+      var views = validationViews.get(type);
+      var currentView = views && views[0].name;
+      return {
+        name: name,
+        type: type,
+        enabled: false,
+        settings: settings,
+        views: views,
+        currentView: currentView
+      };
+    }
   }
 
   function extractDecoratedValidation(validation) {
@@ -78,11 +132,9 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
     return extracted;
   }
 
-  function validationListPath() {
-    if ($scope.field.type == 'Array')
-      return ['fields', $scope.index, 'items', 'validations'];
-    else
-      return ['fields', $scope.index, 'validations'];
+  function extractEnabledValidations(validations) {
+    var enabled = _.filter(validations, 'enabled');
+    return _.map(enabled, extractDecoratedValidation);
   }
 
   /**
@@ -95,7 +147,8 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
    */
   function validateValidations() {
     var schema = createSchema({type: 'Validation'});
-    return _.reduce($scope.validations, function(valid, validation) {
+    var validations = $scope.fieldValidations.concat($scope.fieldItemValidations);
+    return _.reduce(validations, function(valid, validation) {
       if (!validation.enabled) {
         delete validation.errors;
         return valid;
@@ -109,12 +162,17 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
 
 
   /**
-   * Sets the 'enabled' flag for the decorated validations according to
-   * their presence in `field.validations`.
+   * Sets the 'enabled' and 'settings' properties in the decorated
+   * validations to the values obtained from `field.validaitons`.
    */
   function updateValidationsFromField() {
-    _.forEach($scope.validations, function(validation) {
-      var enabledValidation = getFieldValidation(validation.type);
+    updateDecoratedValidations($scope.fieldValidations, $scope.field.validations);
+    updateDecoratedValidations($scope.fieldItemValidations, ($scope.field.items || {}).validations);
+  }
+
+  function updateDecoratedValidations(validations, enabledValidations) {
+    _.forEach(validations, function(validation) {
+      var enabledValidation = findValidationByType(enabledValidations, validation.type);
       if (enabledValidation) {
         validation.enabled = true;
         validation.settings = _.cloneDeep(enabledValidation.settings);
@@ -124,20 +182,12 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
     });
   }
 
-  function getFieldValidations() {
-    if ($scope.field.type == 'Array')
-      return $scope.field.items.validations;
-    else
-      return $scope.field.validations;
-  }
-
   /**
    * Return the index and the settings for the validation of type
-   * `type` from `scope.field.validations`.
+   * `type` from a list of `validations`.
    */
-  function getFieldValidation(type) {
-    var fieldValidations = getFieldValidations();
-    var index = _.findIndex(fieldValidations, function(validation) {
+  function findValidationByType(validations, type) {
+    var index = _.findIndex(validations, function(validation) {
       return validationType(validation) === type;
     });
 
@@ -146,15 +196,40 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
 
     return {
       index: index,
-      settings: fieldValidations[index][type]
+      settings: validations[index][type]
     };
   }
 
-  function setFieldValidations(validations) {
-    if ($scope.field.type == 'Array')
-      $scope.field.items.validations = validations;
+  function getValidationLabel(field, type) {
+    if (field.type == 'Array' && type == 'size') {
+      var itemType = field.items.type == 'Link' ? field.items.linkType : field.items.type;
+      var typePlural = typePlurals[itemType] || itemType + 's';
+      return 'Specify number of ' + typePlural;
+    }
+    var label = validationLabels[type];
+    if (typeof label == 'string')
+      return label;
     else
-      $scope.field.validations = validations;
+      return label[field.type] || label.default;
   }
 
+  /**
+   * Run `otDoc.set(validations)` and return a promise.
+   *
+   * Also logs errors thrown by the method.
+   */
+  function validationsDocSet(otDoc, validations) {
+    return $q(function(resolve, reject) {
+      otDoc.set(validations, function(error) {
+        if (error) {
+          logger.logServerWarn('Could not save validations', {error: error });
+          notification.error('Could not save validations');
+          reject(error);
+        }
+        else {
+          resolve();
+        }
+      });
+    });
+  }
 }]);

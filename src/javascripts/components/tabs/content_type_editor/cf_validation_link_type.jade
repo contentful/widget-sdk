@@ -1,4 +1,4 @@
-ul.validation-controls__content-types(aria-label="Available Content Types")
+ul.validation-controls__option-list(aria-label="Available Content Types")
   li(ng-repeat="ct in contentTypes")
     label
       input(type="checkbox" ng-model="ct.selected" ng-change="update()")
