@@ -1,17 +1,15 @@
 .breadcrumbs.activity
   li.breadcrumb(ng-repeat="entity in $root.contextHistory" ng-switch="$last" ng-class="{active: $last}")
-    span.divider >
-    a(
-      ng-switch-when="false"
-      ng-if="entity.getType() === 'Entry'"
+    span.divider(ng-if="$first && ($root.contextHistory.length > 1)") {
+    span.divider(ng-if="!($first && ($root.contextHistory.length > 1))") →
+    a(ng-switch-when="false" ng-if="entity.getType() === 'Entry'" tooltip="{{spaceContext.entryTitle(entity)}}" tooltip-placement="bottom"
       ui-sref="spaces.detail.entries.detail({ entryId: entity.getId(), addToContext: true })")
-      | {{spaceContext.entryTitle(entity) + (entity.hasUnpublishedChanges() ? '*' : '')}}
-    a(
-      ng-switch-when="false"
-      ng-if="entity.getType() === 'Asset'"
+      | {{spaceContext.entryTitle(entity) | truncate: 50 }} {{entity.hasUnpublishedChanges() ? '*' : ''}}
+    a(ng-switch-when="false" ng-if="entity.getType() === 'Asset'" tooltip="{{spaceContext.assetTitle(entity)}}" tooltip-placement="bottom"
       ui-sref="spaces.detail.assets.detail({ assetId: entity.getId(), addToContext: true })")
-      | {{spaceContext.assetTitle(entity) + (entity.hasUnpublishedChanges() ? '*' : '')}}
-    span(ng-switch-when="true" ng-if="entity.getType()=== 'Entry'")
-      | {{spaceContext.entryTitle(entity) + (entity.hasUnpublishedChanges() ? "*" : "")}}
-    span(ng-switch-when="true" ng-if="entity.getType()=== 'Asset'")
-      | {{spaceContext.assetTitle(entity) + (entity.hasUnpublishedChanges() ? '*' : '')}}
+      | {{spaceContext.assetTitle(entity) | truncate: 50 }} {{entity.hasUnpublishedChanges() ? '*' : ''}}
+    span(ng-switch-when="true" ng-if="entity.getType() === 'Entry'" tooltip="{{spaceContext.entryTitle(entity)}}" tooltip-placement="bottom")
+      | {{spaceContext.entryTitle(entity) | truncate: 50 }} {{entity.hasUnpublishedChanges() ? '*' : ''}}
+    span(ng-switch-when="true" ng-if="entity.getType() === 'Asset'" tooltip="{{spaceContext.assetTitle(entity)}}" tooltip-placement="bottom")
+      | {{spaceContext.assetTitle(entity) | truncate: 50 }} {{entity.hasUnpublishedChanges() ? '*' : ''}}
+    span.divider(ng-if="$last && ($root.contextHistory.length > 1)") }

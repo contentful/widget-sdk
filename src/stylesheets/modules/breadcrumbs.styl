@@ -1,8 +1,45 @@
-.breadcrumbs
-  display: inline-block
-  height: 100%;
-  line-height: $breadcrumbs-height
-  .breadcrumb
-    display: inline-block
-    .divider
-      margin: 5px
+.breadcrumbs-widget
+  display: flex;
+  height: 50px;
+  width: 100%;
+  flex-direction: row;
+  .breadcrumbs-arrow
+    display: inline-block;
+    height: 50px;
+    line-height: 50px;
+    font-size: 20px;
+    flex-shrink: 0;
+    color: $gray;
+    position: absolute;
+    &:hover
+      color: $gray-medium;
+      cursor: pointer;
+    &:active
+      color: $gray-dark;
+    &.left
+      left: 0;
+    &.right
+      right: 0;
+  .breadcrumbs-container
+    display: flex;
+    height: 50px;
+    flex-grow: 1;
+    line-height: 50px;
+    flex-direction: row;
+    width: 100%;
+    margin-left: 20px;
+    margin-right: 20px;
+    overflow: hidden;
+    .breadcrumbs
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: row;
+      height: 100%;
+      line-height: $breadcrumbs-height
+      .breadcrumb
+        display: inline-block
+        flex-shrink: 0;
+        .divider
+          margin: 5px
+      &.activity a
+          opacity: 0.5

@@ -54,7 +54,7 @@ angular.module('contentful').config([
     }
   })
   .state('spaces.detail', {
-    template: '<ncy-breadcrumb></ncy-breadcrumb><cf-activity-breadcrumbs></cf-activity-breadcrumbs><div class="tab-content" ui-view></div>',
+    template: '<cf-breadcrumbs></cf-breadcrumbs><div class="tab-content" ui-view></div>',
     url: '/:spaceId',
     ncyBreadcrumb: {
       label: '{{label}}'
