@@ -1,5 +1,34 @@
 'use strict';
 
+/**
+ * Directive that installs a otDoc property on the scope that corresponds to an entity
+ *
+ * Usage: <... ot-doc-for="entity">
+ *
+ * The controller installs several properties on the scope:
+ *
+ * - otDisable: Boolean that can be set to true/false to turn ot on or off for this component
+ * - otEditable: Readonly boolean indicating if the ot Document is available and editable
+ * - otGetEntity: Function that returns the entity for which the otDoc was opened
+ * - otDoc: The otDoc itself
+ * - otUpdateEntity: updates the entity with the data from the ot snapShot
+ *
+ * It emits the following events:
+ *
+ * - otRemoteOp(op), broadcast:
+ *   distribute every incoming remote ot operation to the component
+ * - otBecameEditable(entity), emit:
+ *   Whenever otEditable becomes true
+ * - otBecameReadonly(entity), emit:
+ *   Whenever otEditable becomes false
+ *
+ * The directive watches several conditions determining if the ShareJS doc should be
+ * opened or closed:
+ * - connected status of the sharejs service
+ * - otDisabled flag
+ *
+ * It also ensures that the version in the entity is always up-to-date
+ */
 angular.module('contentful').directive('otDocFor', function () {
   return {
     restrict: 'A',

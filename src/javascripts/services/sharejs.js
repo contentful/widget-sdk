@@ -1,4 +1,7 @@
 'use strict';
+/**
+ * Provide access to ShareJS
+ */
 angular.module('contentful').provider('ShareJS', ['environment', function ShareJSProvider(environment) {
   var token;
   var url = '//'+environment.settings.ot_host+'/channel';
@@ -12,6 +15,18 @@ angular.module('contentful').provider('ShareJS', ['environment', function ShareJ
   };
 
   this.$get = ['client', 'clientAdapter', '$rootScope', function(client, clientAdapter, $rootScope) {
+    /**
+     * Class that wraps the native ShareJS Client
+     *
+     * Adds state monitoring and event broadcasting as well as support for opening Contentful entities.
+     *
+     * VERY IMPORTANT:
+     * 
+     * What this _doesn't_ do is integration of ShareJS into Angular.
+     * In particular:
+     * - Callbacks are not wrapped and exposed as promises
+     * - Callback execution is not wrapped in $apply
+     */
     function ShareJSClient(url, token) {
       this.token = token;
       this.url = url;
@@ -80,6 +95,9 @@ angular.module('contentful').provider('ShareJS', ['environment', function ShareJ
       }
     }
 
+    /**
+     * Public API for the ShareJS service
+     */
     var ShareJS = {
       client : null,
 
@@ -87,13 +105,48 @@ angular.module('contentful').provider('ShareJS', ['environment', function ShareJ
         ShareJS.client = ShareJS.client || new ShareJSClient(url, token || clientAdapter.token);
       },
 
-      open: function () {
+      /**
+       * Open a ShareJS document for an entity
+       */
+      open: function (/* entity, callback */) {
         ShareJS.connect();
         return ShareJS.client.open.apply(ShareJS.client, arguments);
       },
       isConnected: function () {
         return ShareJS.client && ShareJS.client.connection.state == 'ok';
       },
+      /**
+       * Created a deeply nested property in a ShareJS JSON document
+       *
+       * The purpose is more on making sure that the path exists not
+       * that the value is the same value as supplied
+       * 
+       * Params are given as an object in the params argument
+       * with these properties:
+       * - value: The initial value we want to be at the end of the path
+       * - doc: The document to operate on
+       * - path: An array describing the path in the JSON doc
+       * - types: An array describing the type of each step in
+       *   the path as either "Object", "Array" or "String".
+       *   This information is used to create the correct
+       *   intermediate objects when creating the path.
+       *
+       * Example:
+       *
+       *   value: 'Foo'
+       *   path:  ['foo', '12']
+       *   types: ['Object', 'Array']
+       *
+       * would create a property foo on an object, assign it an Array
+       * and set foo[12] to be a String 'Foo' types are optional and
+       * assumed to be "Object" if missing.
+       *
+       * The behavior when the entire path exists already is to
+       * - keep the existing value when it is of the same type as the
+       *   `value` parameter
+       * - set it to the value parameter otherwise
+       *
+       */
       mkpath: function(params, callback){
         //jshint boss:true
         var doc = params.doc;
@@ -127,6 +180,9 @@ angular.module('contentful').provider('ShareJS', ['environment', function ShareJ
         doc.set(value, callback);
       },
 
+      // Read out the value at the path
+      //
+      // Returns undefined if missing
       peek: function(doc, path) {
         try {
           return doc.getAt(path);

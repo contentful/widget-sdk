@@ -1,5 +1,12 @@
 'use strict';
 
+/**
+ * Bind a text input to an ot string
+ *
+ * <input type="text" ng-model="fieldData.value" ot-subdoc ot-bind-text>
+ *
+ * Needs an otSubdoc and an ngModel. Everything else is handled automatically.
+ */
 angular.module('contentful').directive('otBindText', ['$injector', function($injector) {
   var $parse            = $injector.get('$parse');
   var ShareJS           = $injector.get('ShareJS');
