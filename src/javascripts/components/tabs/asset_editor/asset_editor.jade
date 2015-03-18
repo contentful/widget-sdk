@@ -19,7 +19,7 @@
         i.fa.fa-caret-down.button-icon-right
         span View
       .dropdown-menu(cf-dropdown-menu position="bottomcenter")
-        ul
+        ul.lang-switcher
           li.dropdown-menu-item--label(ng-repeat="locale in spaceContext.privateLocales track by locale.code")
             label
               input.form-control(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
