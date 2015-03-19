@@ -19,7 +19,7 @@ describe('The select type directive', function () {
       scope = $rootScope.$new();
       scope.testAction = sinon.stub();
 
-      container = $('<div select-type="testAction"></div>');
+      container = $('<cf-select-type on-type-selected="testAction"></cf-select-type>');
       $compile(container)(scope);
       scope.$digest();
     });

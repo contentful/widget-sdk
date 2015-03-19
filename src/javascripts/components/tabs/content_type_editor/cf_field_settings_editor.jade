@@ -49,7 +49,7 @@ form.field-form(name="fieldForm")
 .dropdown-btn.fieldtype-dropdown(cf-dropdown)
   .dropdown-toggle.btn.btn--tertiary.cf-fieldtype-icon(cf-dropdown-toggle field="field" show-tooltip ng-disabled="published")
     i.fa.fa-question-circle
-  .dropdown-menu.type-menu(cf-dropdown-menu select-type="changeFieldType(type)")
+  cf-select-type.dropdown-menu.type-menu(cf-dropdown-menu on-type-selected="changeFieldType(type)")
 
 .status(ng-class="statusClass()" tooltip="{{statusTooltipText()}}" data-tooltip-container=".tab-main")
 .field-details

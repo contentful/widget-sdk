@@ -71,7 +71,7 @@
             .dropdown-btn(cf-dropdown)
               button.btn.btn--primary(cf-dropdown-toggle ng-disabled="cfCanDisabled")
                 | Create Field
-              .dropdown-menu.type-menu(cf-dropdown-menu select-type="addField(type)")
+              cf-select-type.dropdown-menu.type-menu(cf-dropdown-menu on-type-selected="addField(type)")
               a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
                 | Visit the Knowledge Base Pages
                 i.fa.fa-question-circle
@@ -79,7 +79,7 @@
           button.btn.btn--primary.add-field-button(cf-dropdown-toggle)
             i.fa.fa-plus.button-icon
             | Add Field
-          .dropdown-menu.type-menu(cf-dropdown-menu select-type="addField(type)")
+          cf-select-type.dropdown-menu.type-menu(cf-dropdown-menu on-type-selected="addField(type)")
         cf-error-list.form-box-error(cf-error-path="['fields']")
 
 .tab-actions(ng-controller="ContentTypeActionsController")
