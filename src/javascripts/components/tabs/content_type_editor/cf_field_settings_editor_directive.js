@@ -2,8 +2,8 @@
 
 angular.module('contentful').directive('cfFieldSettingsEditor', function() {
   return {
-    restrict: 'C',
-    template: JST['cf_field_settings_editor'](),
+    restrict: 'E',
+    template: JST.cf_field_settings_editor(),
     controller: 'FieldSettingsEditorController',
     link: function (scope, elem) {
       var unwatch = scope.$watch('isAccordionItemOpen(field)', function (open) {

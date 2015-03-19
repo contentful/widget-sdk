@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module('contentful').directive('contentTypeFieldList', function() {
+angular.module('contentful').directive('cfContentTypeFieldList', function() {
   return {
-    restrict: 'C',
+    restrict: 'E',
     template: JST.content_type_field_list(),
     controller: 'ContentTypeFieldListController',
     link: function link(scope) {

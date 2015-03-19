@@ -15,6 +15,7 @@ a.toggle-collapse(cf-click-local="toggleAccordionItem(field)" ng-class="{open: i
                 ng-class="{enabled: field.localized}")
   .cf-fieldtype-icon(field="field" show-tooltip)
     i.fa.fa-question-circle
+
 form.field-form(name="fieldForm")
   input.form-control(name="fieldName"
          ng-model="field.name" type="text" required
@@ -49,7 +50,7 @@ form.field-form(name="fieldForm")
 .dropdown-btn.fieldtype-dropdown(cf-dropdown)
   .dropdown-toggle.btn.btn--tertiary.cf-fieldtype-icon(cf-dropdown-toggle field="field" show-tooltip ng-disabled="published")
     i.fa.fa-question-circle
-  cf-select-type.dropdown-menu.type-menu(cf-dropdown-menu on-type-selected="changeFieldType(type)")
+  cf-select-type.u-bce.dropdown-menu.type-menu(cf-dropdown-menu on-type-selected="changeFieldType(type)")
 
 .status(ng-class="statusClass()" tooltip="{{statusTooltipText()}}" data-tooltip-container=".tab-main")
 .field-details
