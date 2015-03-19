@@ -77,5 +77,23 @@ describe('ErrorPathController', function () {
       scope.$apply();
       expect(controller.messages[0]).toBe('Length must be at least 10.');
     });
+
+    it('should show custom error message', function () {
+      scope.validationResult.errors.push({
+        path: ['foo', 'bars'],
+        customMessage: 'CUSTOM MESSAGE'
+      });
+      scope.$apply();
+      expect(controller.messages[0]).toBe('CUSTOM MESSAGE');
+    });
+
+    it('should show "details" property', function () {
+      scope.validationResult.errors.push({
+        path: ['foo', 'bars'],
+        details: 'DETAILS'
+      });
+      scope.$apply();
+      expect(controller.messages[0]).toBe('DETAILS');
+    });
   });
 });
