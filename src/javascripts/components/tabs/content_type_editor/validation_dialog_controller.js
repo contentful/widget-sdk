@@ -129,6 +129,8 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
   function extractDecoratedValidation(validation) {
     var extracted = {};
     extracted[validation.type] = _.cloneDeep(validation.settings);
+    if (validation.message)
+      extracted.message = validation.message;
     return extracted;
   }
 
@@ -172,10 +174,12 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
 
   function updateDecoratedValidations(validations, enabledValidations) {
     _.forEach(validations, function(validation) {
-      var enabledValidation = findValidationByType(enabledValidations, validation.type);
+      var type = validation.type;
+      var enabledValidation = findValidationByType(enabledValidations, type);
       if (enabledValidation) {
         validation.enabled = true;
-        validation.settings = _.cloneDeep(enabledValidation.settings);
+        validation.settings = _.cloneDeep(enabledValidation[type]);
+        validation.message = enabledValidation.message;
       } else {
         validation.enabled = false;
       }
@@ -187,17 +191,9 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
    * `type` from a list of `validations`.
    */
   function findValidationByType(validations, type) {
-    var index = _.findIndex(validations, function(validation) {
+    return _.find(validations, function(validation) {
       return validationType(validation) === type;
     });
-
-    if (index == -1)
-      return null;
-
-    return {
-      index: index,
-      settings: validations[index][type]
-    };
   }
 
   function getValidationLabel(field, type) {
@@ -207,6 +203,8 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
       return 'Specify number of ' + typePlural;
     }
     var label = validationLabels[type];
+    if (!label)
+      return type;
     if (typeof label == 'string')
       return label;
     else

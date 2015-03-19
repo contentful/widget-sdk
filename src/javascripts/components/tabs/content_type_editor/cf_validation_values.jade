@@ -4,6 +4,7 @@ a(cf-knowledge-base-icon
   tooltip-container=".validation-dialog"
   analytics-event="predefined_values"
   href="https://contentful.zendesk.com/hc/en-us/articles/201551466")
+
 cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label="Errors")
 
 .validation-value-list
@@ -15,3 +16,5 @@ cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label
       li.validation-value-list__item(ng-repeat="(index, value) in valueList" index="{{index}}")
         .validation-value-list__value {{value}}
         .validation-value-list__remove(ng-click="remove(index)" aria-label="Remove value")
+
+div(cf-template="validation_error_message_input")

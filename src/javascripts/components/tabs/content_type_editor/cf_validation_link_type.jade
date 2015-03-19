@@ -3,4 +3,7 @@ ul.validation-controls__option-list(aria-label="Available Content Types")
     label
       input(type="checkbox" ng-model="ct.selected" ng-change="update()")
       span.u-truncate {{ct.name}}
+
 cf-error-list.form-inline-error(cf-error-messages="validation.errors" aria-label="Errors")
+
+div(cf-template="validation_error_message_input")
