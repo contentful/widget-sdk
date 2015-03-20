@@ -5,6 +5,15 @@ angular.module('contentful').controller('ContentTypeFieldListController', ['$sco
 
   $controller('AccordionController', {$scope: $scope});
 
+  $scope.$watch('validationResult.errors', function activateErroredDisabledFields(errors, old, scope) {
+    _.each(errors, function (error) {
+      if (error.path[0] === 'fields' && angular.isDefined(error.path[1])) {
+        var field = scope.contentType.data.fields[error.path[1]];
+        if (field.disabled) scope.preferences.showDisabledFields = true;
+      }
+    });
+  });
+
   $scope.fieldTypeParams = function (f) {
     var params = [f.type, f.linkType];
     if (f.items) params.push(f.items.type, f.items.linkType);
@@ -37,15 +46,6 @@ angular.module('contentful').controller('ContentTypeFieldListController', ['$sco
   $scope.removeDisplayField = function () {
     $scope.contentType.data.displayField = null;
   };
-
-  $scope.$watch('validationResult.errors', function activateErroredDisabledFields(errors, old, scope) {
-    _.each(errors, function (error) {
-      if (error.path[0] === 'fields' && angular.isDefined(error.path[1])) {
-        var field = scope.contentType.data.fields[error.path[1]];
-        if (field.disabled) scope.preferences.showDisabledFields = true;
-      }
-    });
-  });
 
   $scope.$on('fieldAdded', function (event, index) {
     var scope = event.currentScope;
