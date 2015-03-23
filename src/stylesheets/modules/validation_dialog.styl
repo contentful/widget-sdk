@@ -84,7 +84,7 @@ cf-validation-setting
   .form-inline-error
     display: block
     font-size: 1em;
-    padding-top: 0.8em;
+    padding-top: $rhythm(0.5)
 
   input[type=number]
     width: 6em
@@ -100,7 +100,7 @@ cf-validation-setting
   margin: 0 1em
 
 .validation-controls__error-message-input
-  margin-top: $rhythm(0.5);
+  margin-top: $rhythm(1);
   display: block;
   > input
     display: inline-block;
@@ -125,7 +125,6 @@ cf-validation-setting
   $monospace-font()
   width: 4em
 
-
 .validation-controls__option-list
   $display-flexbox()
   flex-wrap: wrap
@@ -147,6 +146,13 @@ cf-validation-setting
     display: inline-block
     min-width: 8em
     padding-right: 1em
+
+.validation-controls__unit-select
+  display: inline-block
+  margin-left: 1em;
+  &.select-box > select
+    width: auto;
+    padding-right: 2em
 
 /**
  * @component .validation-values

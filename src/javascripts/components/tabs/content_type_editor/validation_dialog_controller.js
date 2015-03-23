@@ -30,7 +30,8 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
     regexp: {pattern: null, flags: null},
     'in': null,
     linkContentType: null,
-    linkMimetypeGroup: null
+    linkMimetypeGroup: null,
+    assetFileSize: {min: null, max: null}
   };
 
   var validationsOrder = [
@@ -40,6 +41,7 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
     'regexp',
     'linkContentType',
     'linkMimeType',
+    'assetFileSize',
     'in'
   ];
 
@@ -53,7 +55,8 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
     regexp: 'Match a specific pattern',
     'in': 'Predefined Values',
     linkContentType: 'Specify allowed entry type',
-    linkMimetypeGroup: 'Specify allowed file types'
+    linkMimetypeGroup: 'Specify allowed file types',
+    assetFileSize: 'Specify allowed file size',
   };
 
   var typePlurals = {

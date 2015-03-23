@@ -568,4 +568,34 @@ describe('validation dialog', function() {
     });
 
   });
+
+  describe('file size validation', function() {
+    beforeEach(function() {
+      scope.field = {type: 'Link', linkType: 'Asset'};
+      openDialog();
+    });
+
+    function settings() {
+      return dialog.domElement.find('[aria-label="Specify allowed file size"]');
+    }
+
+    it('can be set', function() {
+      settings()
+      .find('[aria-label="Enable validation"]')
+      .click();
+
+      settings().find('[aria-label="Select condition"]').val('min');
+      var minInput = settings().find('[aria-label="Minimum size"]');
+      minInput.val('2').trigger('input');
+
+      var minScaleInput = settings().find('[aria-label="Select size unit"]');
+      minScaleInput.val('1').trigger('change');
+
+      clickSave();
+      expect(dialog.open).toBe(false);
+
+      expect(scope.field.validations)
+      .toEqual([{assetFileSize: {min: 2048, max: null}}]);
+    });
+  });
 });
