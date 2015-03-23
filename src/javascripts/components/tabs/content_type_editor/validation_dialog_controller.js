@@ -63,7 +63,6 @@ angular.module('contentful')
   var validationViews         = $injector.get('validationViews');
   var validationTypesForField = $injector.get('validation').Validation.perType;
   var $q                      = $injector.get('$q');
-  var controller              = this;
 
   var validationSettings = {
     size: {min: null, max: null},
@@ -120,9 +119,8 @@ angular.module('contentful')
   };
 
   $scope.save = function() {
-    var valid = validateValidations();
-    if (valid) {
-      controller.save();
+    if (validateValidations()) {
+      saveToFieldAndOtDoc();
       $scope.dialog.confirm();
     }
   };
@@ -133,7 +131,7 @@ angular.module('contentful')
    *
    * FIXME consolidate code duplication
    */
-  controller.save = function() {
+  function saveToFieldAndOtDoc() {
     var fieldValidations = extractEnabledValidations($scope.fieldValidations);
     // TODO field path should be available on scope
     var validationsDoc = $scope.otDoc.at(['fields', $scope.index, 'validations']);
@@ -150,7 +148,7 @@ angular.module('contentful')
     validationsDocSet(itemValidationsDoc, fieldItemValidations)
     .then(function() { $scope.field.items.validations = fieldItemValidations; });
     return $q.all(updatedFieldValidations, updatedFieldItemValidations);
-  };
+  }
 
   function getDecoratedValidations(field) {
     var types = _.filter(validationTypesForField(field), function (t) {
