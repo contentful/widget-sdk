@@ -3,16 +3,58 @@
 /**
  * Controls the 'Field Validations' dialog.
  *
- * The controller provides the `scope.validations` array and an
- * `update` function.
+ * The controller provides the decorated `scope.fieldValidations` and
+ * `scope.fieldItemValidations` arrays and syncs them with the
+ * serialized validations of the content type.
  *
- * Requires the following scope properties:
  *
+ * Decorated Validations
+ * =====================
+ *
+ * A decorated validation is an object that is exposed on the scope in
+ * order to simplify editing validations in the views.  A decorated
+ * validation has the following form:
+ *
+ * ~~~
+ * {
+ *   type: 'identifier',
+ *   name: 'A label for the validation',
+ *   enabled: false,
+ *   settings: settingsValue
+ *   views: [viewObject, anotherViewObject],
+ *   currentView: 'a name',
+ *   errors: ['this validation does not have the correct settings']
+ * }
+ * ~~~
+ *
+ * For each available validation of the current field a decorated
+ * validation is constructed and added to the `scope.fieldValidations`
+ * array. Also if a validation of a given type also exists on the
+ * content type, the decorated validation is populated with the
+ * settings.
+ *
+ *
+ * Exposed scope functions
+ * =======================
+ *
+ * - `cancel` Closes the underlying dialog.
+ * - `save`   Checks if the decorated validation settings are valid,
+ *   then converts them to validations for content type fields and
+ *   sets them on the field.
+ *
+ *
+ * Required scope properties
+ * =========================
+ *
+ * - `scope.dialog` A `Dialog` instance as created by the modal dialog
+ *   service.
  * - `scope.field`  A ContentType field property.
  * - `scope.index`  The index of the field in all Content Type fields.
  * - `scope.otDoc`  ShareJS document for the Content Type.
  */
-angular.module('contentful').controller('ValidationDialogController', ['$scope', '$injector', function($scope, $injector) {
+angular.module('contentful')
+.controller('ValidationDialogController',
+['$scope', '$injector', function($scope, $injector) {
   var availableValidations    = $injector.get('availableValidations');
   var validationType          = availableValidations.type;
   var logger                  = $injector.get('logger');
@@ -135,19 +177,6 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
     }
   }
 
-  function extractDecoratedValidation(validation) {
-    var extracted = {};
-    extracted[validation.type] = _.cloneDeep(validation.settings);
-    if (validation.message)
-      extracted.message = validation.message;
-    return extracted;
-  }
-
-  function extractEnabledValidations(validations) {
-    var enabled = _.filter(validations, 'enabled');
-    return _.map(enabled, extractDecoratedValidation);
-  }
-
   /**
    * Validates each enabled validation.
    *
@@ -172,6 +201,19 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
   }
 
 
+  function extractDecoratedValidation(validation) {
+    var extracted = {};
+    extracted[validation.type] = _.cloneDeep(validation.settings);
+    if (validation.message)
+      extracted.message = validation.message;
+    return extracted;
+  }
+
+  function extractEnabledValidations(validations) {
+    var enabled = _.filter(validations, 'enabled');
+    return _.map(enabled, extractDecoratedValidation);
+  }
+
   /**
    * Sets the 'enabled' and 'settings' properties in the decorated
    * validations to the values obtained from `field.validaitons`.
@@ -194,6 +236,7 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
       }
     });
   }
+
 
   /**
    * Return the index and the settings for the validation of type
