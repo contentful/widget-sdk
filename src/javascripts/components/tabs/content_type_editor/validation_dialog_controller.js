@@ -105,7 +105,10 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
   };
 
   function getDecoratedValidations(field) {
-    var decorated = _.map(validationTypesForField(field), decorateValidation);
+    var types = _.filter(validationTypesForField(field), function (t) {
+      return t in validationSettings;
+    });
+    var decorated = _.map(types, decorateValidation);
     return _.sortBy(decorated, function(validation) {
       return validationsOrder.indexOf(validation.type);
     });
@@ -202,13 +205,14 @@ angular.module('contentful').controller('ValidationDialogController', ['$scope',
       var typePlural = typePlurals[itemType] || itemType + 's';
       return 'Specify number of ' + typePlural;
     }
+
     var label = validationLabels[type];
     if (!label)
       return type;
     if (typeof label == 'string')
       return label;
     else
-      return label[field.type] || label.default;
+      return label[field.type];
   }
 
   /**
