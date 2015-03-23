@@ -77,8 +77,8 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     return id === detectedDevice;
   };
 
-  $scope.$watch('apiKeyForm.$dirty', function (modified, old, scope) {
-    scope.tab.dirty = modified;
+  $scope.$watch('apiKeyForm.$dirty', function (modified) {
+    $scope.tab.dirty = modified;
   });
 
   function title() {

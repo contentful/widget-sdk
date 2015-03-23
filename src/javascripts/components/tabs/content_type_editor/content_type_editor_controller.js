@@ -15,7 +15,7 @@ angular.module('contentful').controller('ContentTypeEditorController',
   });
 
   $scope.tab.closingMessage            = 'You have unpublished changes.';
-  $scope.tab.closingMessageDisplayType = 'tooltip';
+  $scope.tab.closingMessageDisplayType = 'dialog';
   $scope.fieldSchema                   = validation(validation.schemas.ContentType.at(['fields']).items);
   $scope.openEditingInterfaceEditor    = openEditingInterfaceEditor;
   $scope.regulateDisplayField          = regulateDisplayField;
@@ -25,7 +25,11 @@ angular.module('contentful').controller('ContentTypeEditorController',
   $scope.$watch('tab.params.contentType',        loadContentType);
   $scope.$watch('contentType.data.fields',       checkForDirtyForm, true);
   $scope.$watch('contentType.data.displayField', checkForDirtyForm);
-  $scope.$watch('contentTypeForm.$dirty',        reloadPublisedContentType);
+
+  $scope.$watch('contentTypeForm.$dirty', function (modified) {
+    reloadPublisedContentType(modified);
+    $scope.tab.dirty = modified;
+  });
 
   $scope.$watch('contentType.data.fields.length', function(length) {
     $scope.hasFields = length > 0;
