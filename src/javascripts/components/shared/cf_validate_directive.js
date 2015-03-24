@@ -54,9 +54,12 @@ angular.module('contentful').directive('cfValidate', ['validation', function (va
       }
 
       $scope.setValidationResult = function (schemaErrors, data, schema) {
-        var errors = _.reject(schemaErrors, function (error) {
-          if(error && !error.path || error.name == 'notResolvable') return true;
-          return error.path[error.path.length-1] == '$$hashKey';
+        var errors = _.filter(schemaErrors, function (error) {
+          if(error && error.path) {
+            return error.path[error.path.length - 1] != '$$hashKey';
+          } else {
+            return true;
+          }
         });
         var valid = _.isEmpty(errors);
         $scope.validationResult = {

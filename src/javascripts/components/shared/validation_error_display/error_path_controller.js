@@ -82,6 +82,11 @@ function ErrorPathController($scope, $attrs, mimetype) {
       return 'Field ID must be unique';
     },
 
+    notResolvable: function (error, validatedData) {
+      var type = dotty.get(validatedData, error.path.concat('sys', 'linkType'));
+      return 'Linked ' + type + ' does not exist';
+    },
+
     unknown: function (error) {
       if (error.path.length == 3 && error.path[0] == 'fields') {
         return 'This field is not localized and should not contain a value.';
