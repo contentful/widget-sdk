@@ -55,14 +55,13 @@
 angular.module('contentful')
 .controller('ValidationDialogController',
 ['$scope', '$injector', function($scope, $injector) {
-  var availableValidations    = $injector.get('availableValidations');
   var getErrorMessage         = $injector.get('validationDialogErrorMessages');
-  var validationType          = availableValidations.type;
   var logger                  = $injector.get('logger');
   var notification            = $injector.get('notification');
   var createSchema            = $injector.get('validation');
   var validationViews         = $injector.get('validationViews');
-  var validationTypesForField = $injector.get('validation').Validation.perType;
+  var validationName          = createSchema.Validation.getName;
+  var validationTypesForField = createSchema.Validation.forField;
   var $q                      = $injector.get('$q');
 
   var validationSettings = {
@@ -244,9 +243,9 @@ angular.module('contentful')
    * Return the index and the settings for the validation of type
    * `type` from a list of `validations`.
    */
-  function findValidationByType(validations, type) {
+  function findValidationByType(validations, name) {
     return _.find(validations, function(validation) {
-      return validationType(validation) === type;
+      return validationName(validation) === name;
     });
   }
 
@@ -285,4 +284,5 @@ angular.module('contentful')
       });
     });
   }
+
 }]);
