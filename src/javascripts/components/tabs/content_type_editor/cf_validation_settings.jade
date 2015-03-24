@@ -187,11 +187,12 @@ h2.validation-settings__header
     div.validation-controls__setting(ng-repeat="(dimension, label) in {width: 'Width', height: 'Height'}")
       div(ng-controller="ImageDimensionsValidationController as dimensions")
         label.validation-controls__setting-toggle
-          input(type="checkbox" ng-model="enabled" ng-change="dimensions.update()")
+          input(aria-label="Enable image {{dimension}} validation" type="checkbox"
+                ng-model="enabled" ng-change="dimensions.update()")
           | {{label}}
 
         .validation-controls__view-select.btn.btn--tertiary.select-box(ng-disabled="!enabled")
-          select(aria-label="Select condition"
+          select(aria-label="Select image {{dimension}} condition"
                  ng-model="condition" ng-disabled="!enabled")
             option(value="min") At least
             option(value="max") At most
@@ -202,28 +203,28 @@ h2.validation-settings__header
         span(ng-switch="condition")
           span(ng-switch-when="min")
             span.form-control.form-control--with-unit
-              input(type="number" ng-disabled="!enabled"
-                    ng-model="bounds.min" ng-change="dimensions.update()")
+              input(type="number" aria-label="Minimum image {{dimension}}"
+                    ng-model="bounds.min" ng-disabled="!enabled" ng-change="dimensions.update()")
               span.form-control__unit px
           span(ng-switch-when="max")
             span.form-control.form-control--with-unit
-              input(type="number" ng-disabled="!enabled"
-                                 ng-model="bounds.max" ng-change="dimensions.update()")
+              input(type="number" aria-label="Maximum image {{dimension}}"
+                    ng-model="bounds.max" ng-disabled="!enabled" ng-change="dimensions.update()")
               span.form-control__unit px
           span(ng-switch-when="min-max")
             span.form-control.form-control--with-unit
-              input(type="number" ng-disabled="!enabled"
-                                 ng-model="bounds.min" ng-change="dimensions.update()")
+              input(type="number" aria-label="Minimum image {{dimension}}"
+                    ng-model="bounds.min" ng-disabled="!enabled" ng-change="dimensions.update()")
               span.form-control__unit px
             span.validation-controls__input-separator and
             span.form-control.form-control--with-unit
-              input(type="number" ng-disabled="!enabled"
-                                 ng-model="bounds.max" ng-change="dimensions.update()")
+              input(type="number" aria-label="Maximum image {{dimension}}"
+                    ng-model="bounds.max" ng-disabled="!enabled" ng-change="dimensions.update()")
               span.form-control__unit px
           span(ng-switch-when="exact")
             span.form-control.form-control--with-unit
-              input(type="number" ng-disabled="!enabled"
-                                 ng-model="bounds.exact" ng-change="dimensions.update()")
+              input(type="number" aria-label="Exact image {{dimension}}"
+                    ng-model="bounds.exact" ng-disabled="!enabled" ng-change="dimensions.update()")
               span.form-control__unit px
 
     cf-error-list.form-inline-error(
