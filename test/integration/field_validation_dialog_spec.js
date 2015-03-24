@@ -177,7 +177,7 @@ describe('validation dialog', function() {
 
       var errors = settings()
       .find('[aria-label="Errors"] li');
-      expect(errors.text()).toEqual('Expected min and/or max boundaries');
+      expect(errors.text()).toEqual('Please provide a positive integer');
     });
 
     it('does not save invalid validations', function() {
@@ -194,7 +194,7 @@ describe('validation dialog', function() {
 
       var errors = settings()
       .find('[aria-label="Errors"] li');
-      expect(errors.text()).toEqual('Expected min and/or max boundaries');
+      expect(errors.text()).toEqual('Please provide a positive integer');
     });
 
     it('selects the correct initial view', function() {

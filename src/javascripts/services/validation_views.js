@@ -39,7 +39,7 @@ angular.module('contentful').service('validationViews', ['$injector', function($
         pattern: /^\d{5}$|^\d{5}-\d{4}$}/.source }
     ],
     assetImageDimensions: [
-      {name: 'min',     label: 'Minmum'},
+      {name: 'min',     label: 'Minimum'},
       {name: 'max',     label: 'Maximum'},
       {name: 'min-max', label: 'Between'},
       {name: 'exact',   label: 'Exactly'},

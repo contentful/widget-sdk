@@ -56,6 +56,7 @@ angular.module('contentful')
 .controller('ValidationDialogController',
 ['$scope', '$injector', function($scope, $injector) {
   var availableValidations    = $injector.get('availableValidations');
+  var getErrorMessage         = $injector.get('validationDialogErrorMessages');
   var validationType          = availableValidations.type;
   var logger                  = $injector.get('logger');
   var notification            = $injector.get('notification');
@@ -193,7 +194,9 @@ angular.module('contentful')
       }
 
       var errors = schema.errors(extractDecoratedValidation(validation));
-      validation.errors = _.map(errors, 'details');
+      validation.errors = _.map(errors, function (error) {
+        return getErrorMessage(validation.type, error);
+      });
       return valid && _.isEmpty(errors);
     }, true);
   }
