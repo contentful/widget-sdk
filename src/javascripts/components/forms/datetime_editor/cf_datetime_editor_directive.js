@@ -1,6 +1,9 @@
 'use strict';
 
-angular.module('contentful').directive('cfDatetimeEditor', ['$parse', 'zoneOffsets', function($parse, zoneOffsets){
+angular.module('contentful')
+.directive('cfDatetimeEditor', ['$injector', function($injector){
+  var $parse = $injector.get('$parse');
+  var zoneOffsets = $injector.get('zoneOffsets');
 
   return {
     restrict: 'A',
@@ -51,7 +54,7 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$parse', 'zoneOffse
       if (scope.widget && scope.widget.widgetParams.ampm == '12')
         scope.maxTime = '12:59:59';
       else
-        scope.maxTime = '24:59:59';
+        scope.maxTime = '23:59:59';
 
       scope.$watch('widget.widgetParams.ampm', function(){
         ngModelCtrl.$render();
@@ -252,6 +255,3 @@ angular.module('contentful').directive('cfDatetimeEditor', ['$parse', 'zoneOffse
     }
   };
 }]);
-
-
-
