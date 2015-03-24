@@ -19,7 +19,7 @@
 // DO NOT CALL otBindInternalChangeHandler in a watcher on the internal value!
 // That would also trigger a ShareJS update during initialization
 // with a possibly undefined value. This is ONLY supposed to be called
-// in response to a user-change to he internal value.
+// in response to a user-change to the internal value.
 angular.module('contentful').directive('otBindInternal', ['$injector', function($injector){
   var $parse = $injector.get('$parse');
   var $q     = $injector.get('$q');

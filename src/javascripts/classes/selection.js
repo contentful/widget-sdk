@@ -2,6 +2,21 @@
 
 angular.module('contentful').factory('Selection', ['analytics', function(analytics){
 
+  /**
+   * Service for managing which items of a set are selected
+   *
+   * Differentiates between two modes: INDIVIDUAL and ALL
+   *
+   * Individual means: All entities in the entities property are selected.
+   * All means: The entities in the entities property are NOT selected.
+   * The entities property has the ids as keys and the entities as values.
+   *
+   * To retrieve a working set of selected entities, use the getSelected() method
+   * and pass in the baseSet (all entities displayed in a list). The call will
+   * return only the entities that are selceted.
+   *
+   * To allow easy size calculations, use the setBaseSize method
+   */
   function Selection() {
     this.mode = Selection.INDIVIDUAL;
     this.entities = {};

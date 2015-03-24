@@ -1,8 +1,48 @@
 'use strict';
+// Service to generate autocompletions for the tokenized search
+//
+// The public API for this is at the bottom of the file.
+//
+// A "completion" looks like this:
+//
+//    {
+//      type: 'List',
+//      items: [
+//        {value: '...', description: '...'}
+//      ]
+//    }
+//
+// or like this:
+//   { type: 'Date' }
+//
+// These are the only two kinds right now. They are both handled by separate components.
+// The date completion obviously doesn't need a list, it uses a calendar widget instead.
+//
+// This file is separated into five parts (search for "{{{1")
+// - First, autocompletion factories are defined
+// - Then Completion functions
+// - Then PairToRequest function
+// - A couple of helper methods
+// - The public facing API, exposing some functions to the outside
 angular.module('contentful').factory('searchQueryAutocompletions', ['userCache', 'mimetype', 'AssetContentType', function(userCache, mimetype, AssetContentType){
   // Autocomplete object {{{1
+  //
+  // This part contains autocompletion factories for key/value pairs
+  // These factories have several properties
+  // - description: A description of meaning of the key
+  // - operators: valid operator completions
+  // - complete: valid value completions (format see at the top of this file)
+  // - convert: convert convert an operator and a value to a query object
+  //            that can be passed to the CMA
+  //
+  // The operators property can either be a "completions" object or a function that returns one.
+  // The complete property can either be a "completions" object or a function that returns one.
+  // The convert property can either be a map from searchfield value -> query object
+  //   or a function that returns a query object
+  //
+  // In this part the different factories are grouped together by topic
 
-  // Predefined keys and their completions/conversions
+  // Factories for predefined keys. These keys are available for every kind of query
   // PAIRTOREQUEST + COMPLETIONS
   var autocompletion = {
     updatedAt: dateCompletions('sys.updatedAt', 'Date the item was modified'),
@@ -54,6 +94,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
     }
   };
 
+  // Factories for assets
   var assetcompletions = {
     width: imageDimensionCompletion('width', 'Width of an image in pixels'),
     height: imageDimensionCompletion('height', 'Height of an image in pixels'),
@@ -86,6 +127,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
     }
   };
 
+  // Returns all the static autocompletions that are possible for the content Type.
   function staticAutocompletions(contentType) {
     if (contentType && contentType.data === AssetContentType) {
       return _.extend({}, autocompletion, assetcompletions);
@@ -94,6 +136,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
     }
   }
 
+  // All possible keys for a content Type
   function staticKeys(contentType) {
     var completions = staticAutocompletions(contentType);
     return _.map(completions, function (completion, key) {
@@ -101,6 +144,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
     });
   }
 
+  // Generates a factory for completing a key that contains a date
   function dateCompletions(key, description) {
     var RELATIVE = /(\d+) +days +ago/i;
     var DAY      = /^\s*\d{2,4}-\d{2}-\d{2}\s*$/;
@@ -134,6 +178,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
     }
   }
 
+  // Generates a factory for completing image dimensions (width, height)
   function imageDimensionCompletion(key, description) {
     return {
       description: description,
@@ -167,6 +212,9 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
   }
 
   // Completions {{{1
+  //
+  // The three completion methods exposed in the API for
+  // generating completions for keys, operators and values
 
   function keyCompletion(contentType) {
     return makeListCompletion(_.union(
@@ -250,6 +298,8 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
   }
 
   // Pair to RequestObject Conversion {{{1
+  //
+  // This part contains the function that turns a parsed key/value pair into a queryObject
 
   function pairToRequestObject(pair, contentType, space) {
     var key      = pair.content.key.content;
@@ -348,6 +398,9 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
     }
   }
 
+  // Helper for creating a listCompletion from values
+  //
+  // values can either be strings or {value, description} objects
   function makeListCompletion(values) {
     return {
       type: 'List',
@@ -357,6 +410,8 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
     };
   }
 
+  // Helper for creating a list completion with operators
+  // with descriptions based on the type of the key
   function makeOperatorList(operators, type) {
     return _.map(operators, function (op) {
       return {value: op, description: descriptions(op)};
@@ -392,6 +447,7 @@ angular.module('contentful').factory('searchQueryAutocompletions', ['userCache',
 
   // API {{{1
 
+  // The public facing API for this service
   return {
     complete: {
       key:      keyCompletion,

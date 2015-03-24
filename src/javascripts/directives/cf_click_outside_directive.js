@@ -1,5 +1,10 @@
 'use strict';
 
+// Works like ng-click but instead evaluates the argument
+// when the click is _outside_ of the element
+//
+// I don't know what the cfClickOutsideIgnore argument does, 
+// that was Tiago's invention.
 angular.module('contentful').directive('cfClickOutside', ['$parse', '$document', function($parse, $document){
   return {
     restrict: 'A',
