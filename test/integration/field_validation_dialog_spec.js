@@ -177,7 +177,7 @@ describe('validation dialog', function() {
 
       var errors = settings()
       .find('[aria-label="Errors"] li');
-      expect(errors.text()).toEqual('Expected min and/or max boundaries');
+      expect(errors.text()).toEqual('Please provide a positive integer');
     });
 
     it('does not save invalid validations', function() {
@@ -194,7 +194,7 @@ describe('validation dialog', function() {
 
       var errors = settings()
       .find('[aria-label="Errors"] li');
-      expect(errors.text()).toEqual('Expected min and/or max boundaries');
+      expect(errors.text()).toEqual('Please provide a positive integer');
     });
 
     it('selects the correct initial view', function() {
@@ -596,6 +596,47 @@ describe('validation dialog', function() {
 
       expect(scope.field.validations)
       .toEqual([{assetFileSize: {min: 2048, max: null}}]);
+    });
+  });
+
+  describe('image dimension validations', function () {
+    beforeEach(function() {
+      scope.field = {type: 'Link', linkType: 'Asset'};
+      openDialog();
+    });
+
+    function settings(selector) {
+      return dialog.domElement
+      .find('[aria-label="Specify image dimensions"]')
+      .find(selector);
+    }
+
+    it('can set width minimum and exact height', function () {
+      settings('[aria-label="Enable validation"]')
+      .click();
+
+      settings('input[aria-label="Enable image width validation"]')
+      .click();
+
+      settings('[aria-label="Minimum image width"]')
+      .val('100').trigger('input');
+
+      settings('input[aria-label="Enable image height validation"]')
+      .click();
+
+      settings('select[aria-label="Select image height condition"]')
+      .val('exact').trigger('change');
+
+      settings('input[aria-label="Exact image height"]')
+      .val('200').trigger('input');
+
+      clickSave();
+
+      expect(scope.field.validations)
+      .toEqual([{assetImageDimensions: {
+        width: {min: 100, max: null},
+        height: {min: 200, max: 200},
+      }}]);
     });
   });
 });
