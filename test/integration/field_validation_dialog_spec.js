@@ -284,10 +284,14 @@ describe('validation dialog', function() {
       return dialog.domElement.find('[aria-label="Match a specific pattern"]');
     }
 
-    it('can be enabled and set', function() {
+    function enable() {
       settings()
       .find('[aria-label="Enable validation"]')
       .click();
+    }
+
+    it('can be enabled and set', function() {
+      enable();
 
       settings()
       .find('[aria-label="Regular Expression pattern"]')
@@ -303,6 +307,23 @@ describe('validation dialog', function() {
       .toEqual([{regexp: {pattern: 'foo|bar', flags: 'i'}}]);
       expect(validationsDoc(scope).get())
       .toEqual([{regexp: {pattern: 'foo|bar', flags: 'i'}}]);
+    });
+
+    it('shows error for invalid flags', function () {
+      enable();
+
+      settings()
+      .find('[aria-label="Regular Expression pattern"]')
+      .val('foo|bar').trigger('input');
+
+      settings()
+      .find('[aria-label="Regular Expression flags"]')
+      .val('x').trigger('input');
+
+      clickSave();
+
+      var errors = settings().find('[aria-label="Errors"]').text();
+      expect(errors).toEqual('Please provide a valid regular expression with valid flags');
     });
 
     it('can select predefined patterns');
