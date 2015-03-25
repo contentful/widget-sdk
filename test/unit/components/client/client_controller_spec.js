@@ -20,13 +20,12 @@ describe('Client Controller', function () {
         'setSpace',
         'hasSpace',
         'gatekeeperErrorHandler',
-        'goToSpace',
-        'goToOrganization',
         'routingSpaceId',
         'setUserData',
         'setSpace',
         'getRoute',
-        'path',
+        'url',
+        'go',
         'logout',
         'goodbye',
         'supportUrl',
@@ -117,7 +116,7 @@ describe('Client Controller', function () {
       });
 
       $provide.value('$location', {
-        path: stubs.path
+        url: stubs.url
       });
 
       $provide.value('client', {
@@ -153,6 +152,7 @@ describe('Client Controller', function () {
       notification = $injector.get('notification');
       scope = $rootScope.$new();
       clientController = $controller('ClientController', {$scope: scope});
+      scope.$state.go = stubs.go;
     });
   });
 
@@ -250,7 +250,7 @@ describe('Client Controller', function () {
       });
 
       it('dont route to another space', function () {
-        sinon.assert.notCalled(stubs.goToSpace);
+        sinon.assert.notCalled(stubs.go);
       });
     });
 
@@ -270,7 +270,7 @@ describe('Client Controller', function () {
       });
 
       it('route to another space', function () {
-        sinon.assert.calledWith(stubs.goToSpace, space);
+        sinon.assert.calledWith(stubs.go, 'spaces.detail', { spaceId: 123 });
       });
     });
 
@@ -289,7 +289,7 @@ describe('Client Controller', function () {
       });
 
       it('route to another space', function () {
-        sinon.assert.calledWith(stubs.goToSpace, space);
+        sinon.assert.calledWith(stubs.go, 'spaces.detail', { spaceId: 456 });
       });
 
       it('location in account set to false', function() {
@@ -327,8 +327,8 @@ describe('Client Controller', function () {
           sinon.assert.notCalled(stubs.track);
         });
 
-      it('does not route to another space', function () {
-        sinon.assert.notCalled(stubs.goToOrganization);
+      it('does not route to anywhere', function () {
+        sinon.assert.notCalled(stubs.go);
       });
 
     });
@@ -349,8 +349,10 @@ describe('Client Controller', function () {
         });
       });
 
-      it('route to another space', function () {
-        sinon.assert.calledWith(stubs.goToOrganization, '1234', true);
+      it('routes to selected org', function () {
+        sinon.assert.calledWith(stubs.go, 'account.pathSuffix', {
+          pathSuffix: 'organizations/1234/edit'
+        });
       });
     });
 
@@ -436,14 +438,14 @@ describe('Client Controller', function () {
       beforeEach(function () {
         scope.spaces = [{getId: idStub}];
         idStub.returns(456);
-        childScope.$emit('$routeChangeSuccess', {params: {spaceId: 456}});
+        childScope.$emit('$stateChangeSuccess');
       });
 
       it('gets the space id', function () {
         sinon.assert.called(idStub);
       });
 
-      it('space data is set on analytics', function () {
+      it('switches to space', function () {
         sinon.assert.calledWith(stubs.setSpace, scope.spaces[0]);
       });
 
@@ -472,7 +474,7 @@ describe('Client Controller', function () {
     });
 
     it('spaces are grouped by organization', function() {
-      stubs.routingSpaceId.returns(123);
+      scope.$stateParams.spaceId = 123;
       scope.$digest();
       expect(scope.spacesByOrg).toEqual({
         132: [scope.spaces[0], scope.spaces[1]],
@@ -480,76 +482,42 @@ describe('Client Controller', function () {
       });
     });
 
-    it('space data is set on analytics', function () {
-      stubs.routingSpaceId.returns(456);
-      scope.$digest();
-      sinon.assert.calledWith(stubs.setSpace, scope.spaces[1]);
-    });
-
     it('redirects to a non existent space and defaults to first space', function () {
-      stubs.routingSpaceId.returns(789);
+      scope.$stateParams.spaceId = 789;
       scope.$digest();
-      sinon.assert.calledWith(stubs.goToSpace, scope.spaces[0]);
-    });
-
-    it('redirects to a space with no routing id and defaults to first space', function () {
-      stubs.routingSpaceId.returns();
-      stubs.getRoute.returns({
-        root: true
-      });
-      scope.$digest();
-      sinon.assert.calledWith(stubs.goToSpace, scope.spaces[0]);
-    });
-
-    describe('no space id for redirect provided and not redirecting to root', function () {
-      beforeEach(function () {
-        stubs.getRoute.returns({
-          root: false
-        });
-        scope.$digest();
-      });
-
-      it('doesnt redirect to another space', function () {
-        sinon.assert.notCalled(stubs.goToSpace);
-      });
-
-      it('doesnt set analytics data', function () {
-        sinon.assert.notCalled(stubs.setSpace);
-      });
-
-      it('doesnt set a location path', function () {
-        sinon.assert.notCalled(stubs.path);
+      sinon.assert.calledWith(stubs.go, 'spaces.detail', {
+        spaceId: scope.spaces[0].getId()
       });
     });
 
     describe('redirects to the current space', function () {
       beforeEach(function () {
         scope.spaces = [];
-        stubs.routingSpaceId.returns(321);
+        scope.$stateParams.spaceId = 321;
         scope.$digest();
       });
 
       it('doesnt redirect to another space', function () {
-        sinon.assert.notCalled(stubs.goToSpace);
+        sinon.assert.notCalled(stubs.go);
       });
 
       it('sets analytics data', function () {
         sinon.assert.called(stubs.setSpace);
       });
 
-      it('sets a location path', function () {
-        sinon.assert.called(stubs.path);
+      it('sets a location url', function () {
+        sinon.assert.called(stubs.url);
       });
     });
 
     describe('redirects to the current space', function () {
       beforeEach(function () {
-        stubs.routingSpaceId.returns(321);
+        scope.$stateParams.spaceId = 321;
         scope.$digest();
       });
 
       it('doesnt redirect to another space', function () {
-        sinon.assert.notCalled(stubs.goToSpace);
+        sinon.assert.notCalled(stubs.go);
       });
 
       it('doesnt set analytics data', function () {
@@ -559,12 +527,12 @@ describe('Client Controller', function () {
 
     describe('no space can be found', function () {
       beforeEach(function () {
-        stubs.routingSpaceId.returns(321);
+        scope.$stateParams.spaceId = 321;
         scope.$digest();
       });
 
       it('doesnt redirect to another space', function () {
-        sinon.assert.notCalled(stubs.goToSpace);
+        sinon.assert.notCalled(stubs.go);
       });
 
       it('doesnt set analytics data', function () {
@@ -745,7 +713,7 @@ describe('Client Controller', function () {
       });
 
       it('calls into location', function() {
-        sinon.assert.calledWith(stubs.path, '/foobar/baz');
+        sinon.assert.calledWith(stubs.url, '/foobar/baz');
       });
     });
 
@@ -805,13 +773,10 @@ describe('Client Controller', function () {
       scope.goToAccount();
     });
 
-    it('sets the path', function() {
-      sinon.assert.calledWith(stubs.path, '/account/profile/user');
-    });
-
-    it('sets account section flag', function() {
-      scope.$emit('$routeChangeSuccess', {viewType: 'account'});
-      expect(scope.locationInAccount).toBeTruthy();
+    it('goes there', function() {
+      sinon.assert.calledWith(stubs.go, 'account.pathSuffix', {
+        pathSuffix: undefined
+      });
     });
   });
 
@@ -820,8 +785,10 @@ describe('Client Controller', function () {
       scope.goToAccount('section');
     });
 
-    it('sets the path', function() {
-      sinon.assert.calledWith(stubs.path, '/account/section');
+    it('goes there', function() {
+      sinon.assert.calledWith(stubs.go, 'account.pathSuffix', {
+        pathSuffix: 'section' 
+      });
     });
   });
 

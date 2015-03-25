@@ -37,12 +37,9 @@ describe('ContentTypeEditor Controller', function () {
 
       createContentType = function (fields) {
         contentType = cfStub.contentType(space, 'contentType', 'Content Type', fields);
-        scope.tab = {
-          params: {
-            contentType: contentType
-          },
-          close: sinon.stub()
-        };
+        scope.contentType = contentType;
+        scope.closeState = sinon.stub();
+        scope.context = {};
         controller = $controller('ContentTypeEditorController', {$scope: scope});
         scope.$digest();
       };
@@ -78,10 +75,6 @@ describe('ContentTypeEditor Controller', function () {
       expect(scope.hasFields).toBeTruthy();
     });
 
-    it('sets tab title from content type', function () {
-      expect(scope.tab.title).toBe('Content Type');
-    });
-
     it('doesn\'t try to set the form to dirty', function() {
       sinon.assert.notCalled(scope.contentTypeForm.$setDirty);
     });
@@ -115,7 +108,7 @@ describe('ContentTypeEditor Controller', function () {
         var newContentType = cfStub.contentType(space, 'contentType2', 'Content Type 2');
         publishedCT = {published:true};
         newContentType.getPublishedStatus = sinon.stub().returns($q.when(publishedCT));
-        scope.tab.params.contentType = newContentType;
+        scope.contentType = newContentType;
         scope.$digest();
       }));
 
@@ -139,7 +132,7 @@ describe('ContentTypeEditor Controller', function () {
         scope.contentType.getPublishedVersion.returns(1);
         scope.contentType.getVersion.returns(2);
         scope.$digest();
-        expect(scope.tab.dirty).toBe(false);
+        expect(scope.context.dirty).toBe(false);
       });
 
 
@@ -147,7 +140,7 @@ describe('ContentTypeEditor Controller', function () {
         scope.contentType.getPublishedVersion.returns(1);
         scope.contentType.getVersion.returns(4);
         scope.$digest();
-        expect(scope.tab.dirty).toBe(true);
+        expect(scope.context.dirty).toBe(true);
       });
 
       it('set if form is dirty', function () {
@@ -155,7 +148,7 @@ describe('ContentTypeEditor Controller', function () {
         scope.contentType.getVersion.returns(2);
         scope.contentTypeForm.$dirty = true;
         scope.$digest();
-        expect(scope.tab.dirty).toBe(true);
+        expect(scope.context.dirty).toBe(true);
       });
     });
 
@@ -246,7 +239,7 @@ describe('ContentTypeEditor Controller', function () {
     });
 
     it('closes tab', function() {
-      sinon.assert.called(scope.tab.close);
+      sinon.assert.called(scope.closeState);
     });
   });
 

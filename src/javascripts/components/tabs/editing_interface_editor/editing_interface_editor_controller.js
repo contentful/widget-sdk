@@ -69,8 +69,8 @@ angular.module('contentful').controller('EditingInterfaceEditorController', ['$s
   }
 
   function contentTypeUnpublishedEventHandler(event, contentType) {
-    if (contentType === $scope.tab.params.contentType) {
-      $scope.tab.close();
+    if (contentType === $scope.contentType) {
+      $scope.closeState();
     }
   }
 

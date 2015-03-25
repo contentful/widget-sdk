@@ -179,7 +179,7 @@ describe('Entry List Actions Controller', function () {
       ]);
 
       scope.duplicateSelected();
-      scope.$apply();
+      scope.$digest();
     });
 
     it('calls getSys on first selected entry', function () {

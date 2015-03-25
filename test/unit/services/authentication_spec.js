@@ -11,6 +11,7 @@ describe('Authentication service', function () {
       });
 
       $provide.value('$window', { addEventListener: sinon.stub() });
+      $provide.value('$document', [{ label: '' }]);
     });
 
     this.logger = this.$inject('logger');

@@ -14,6 +14,9 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
   // Context related stuff
   $scope.context.closingMessage = 'You have unpublished changes.';
   $scope.context.closingMessageDisplayType = 'tooltip';
+  $scope.$watch('spaceContext.entryTitle(entry)', function (title) {
+    $scope.context.title = title;
+  });
 
   $scope.$watch(function (scope) {
     if (scope.otDoc && scope.entry) {

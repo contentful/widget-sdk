@@ -75,6 +75,10 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     $scope.context.dirty = modified;
   });
 
+  $scope.$watch('apiKey.data.name', function (title) {
+    $scope.context.title = title || 'Untitled';
+  });
+
   function title() {
     return '"' + $scope.apiKey.getName() + '"';
   }

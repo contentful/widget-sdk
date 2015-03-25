@@ -120,7 +120,6 @@ describe('Entry List Controller', function () {
     beforeEach(inject(function(cfStub) {
       createController();
       var space = cfStub.space('test');
-      var contentTypeData = cfStub.contentTypeData('testType');
       var removedEntity = cfStub.entry(space, 'entry2', 'type', {}, {sys: {version:1}});
       scope.entries = [
         cfStub.entry(space, 'entry1'),

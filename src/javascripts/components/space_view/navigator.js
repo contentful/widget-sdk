@@ -120,9 +120,7 @@ angular.module('contentful').config([
     controller: function ($scope, $stateParams, entry) {
       $scope.context = {};
       $scope.entry = entry;
-      $scope.$watch('spaceContext.entryTitle(entry)', function (title) {
-        $scope.context.title = title;
-      });
+
       if (!$scope.$root.contextHistory.length ||
           $stateParams.addToContext) {
         var index = _.findIndex($scope.$root.contextHistory, function (e) {
@@ -175,9 +173,7 @@ angular.module('contentful').config([
     controller: function ($scope, $stateParams, asset) {
       $scope.context = {};
       $scope.asset = asset;
-      $scope.$watch('spaceContext.assetTitle(asset)', function (title) {
-        $scope.context.title = title;
-      });
+
       if (!$scope.$root.contextHistory.length ||
           $stateParams.addToContext) {
         var index = _.findIndex($scope.$root.contextHistory, function (e) {
@@ -322,9 +318,6 @@ angular.module('contentful').config([
     controller: function ($scope, $stateParams, apiKey) {
       $scope.context = {};
       $scope.apiKey = apiKey;
-      $scope.$watch('apiKey.data.name', function (title) {
-        $scope.headline = $scope.context.title = title || 'Untitled';
-      });
     }
   })
   .state('spaces.detail.settings', {

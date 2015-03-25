@@ -23,7 +23,8 @@ describe('Entry Editor Controller', function () {
       var entry = cfStub.entry(space, 'testEntry', 'testType', {}, {
         sys: { publishedVersion: 1 }
       });
-      scope.tab = { params: { entry: entry } };
+      scope.context = {};
+      scope.entry = entry;
       scope.permissionController = { can: sinon.stub() };
       scope.permissionController.can.returns({can: true});
       controller = $controller('EntryEditorController', {$scope: scope});
@@ -57,18 +58,18 @@ describe('Entry Editor Controller', function () {
       scope.spaceContext.entryTitle = sinon.stub().returns('foo');
     });
     it('should update the tab title', function () {
-      var oldTitle = scope.tab.title;
+      var oldTitle = scope.context.title;
       scope.spaceContext.entryTitle.returns('bar');
       scope.$digest();
-      expect(scope.tab.title).toEqual('bar');
-      expect(scope.tab.title).not.toEqual(oldTitle);
+      expect(scope.context.title).toEqual('bar');
+      expect(scope.context.title).not.toEqual(oldTitle);
     });
   });
 
   describe('when it receives an entityDeleted event', function () {
     var closeSpy, otherScope;
     beforeEach(function () {
-      closeSpy = scope.tab.close = sinon.spy();
+      closeSpy = scope.closeState = sinon.spy();
       otherScope = scope.$new();
     });
     it('should close the tab', function () {
@@ -96,17 +97,17 @@ describe('Entry Editor Controller', function () {
       scope.$digest();
     });
     it('should be false by default', function () {
-      expect(scope.tab.dirty).toBe(false);
+      expect(scope.context.dirty).toBe(false);
     });
     it('should be true when modified', function () {
       scope.otDoc.version = scope.entry.getPublishedVersion() + 2;
       scope.$digest();
-      expect(scope.tab.dirty).toBe(true);
+      expect(scope.context.dirty).toBe(true);
     });
     it('should be "draft" when no published version available', function () {
       scope.entry.getPublishedVersion = sinon.stub().returns(undefined);
       scope.$digest();
-      expect(scope.tab.dirty).toBe('draft');
+      expect(scope.context.dirty).toBe('draft');
     });
   });
 

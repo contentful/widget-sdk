@@ -82,7 +82,11 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       var space = _.find($scope.spaces, function (space) {
         return space.getId() == $scope.$stateParams.spaceId;
       });
-      if (space) setSpace(space);
+      if (space) {
+        setSpace(space);
+      } else if (!$scope.$stateParams.spaceId) {
+        setSpace($scope.spaces[0]);
+      }
     }
   }
 
@@ -117,7 +121,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       showFlashMessage(data);
 
     } else if (msg('navigate', 'location')) {
-      $location.path(data.path);
+      $location.url(data.path);
 
     } else if (msg('update', 'location')) {
       return;
@@ -258,7 +262,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     }
 
     if (!newSpace) {
-      $location.path('/');
+      $location.url('/');
       setSpace();
       return;
     }
@@ -266,7 +270,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     if (newSpace != scope.spaceContext.space) {
       // we need to change something
       if (stateSpaceId != newSpace.getId()) { // trigger switch by chaning location
-        scope.$state.go('spaces.detail.entries.list', { spaceId: newSpace.getId() });
+        scope.$state.go('spaces.detail', { spaceId: newSpace.getId() });
       } else { // location is already correct, just load the space
         setSpace(newSpace);
       }
@@ -368,7 +372,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       organizationId: orgId,
       organizationName: $scope.getOrgName(orgId)
     });
-    $scope.$state.go('account.pathSuffix', { pathSuffix: '/organizations/' + orgId + '/' + isOrgOwner(org) ? 'edit' : 'usage' });
+    $scope.$state.go('account.pathSuffix', { pathSuffix: 'organizations/' + orgId + '/' + (isOrgOwner(org) ? 'edit' : 'usage') });
     return true;
   }
 
