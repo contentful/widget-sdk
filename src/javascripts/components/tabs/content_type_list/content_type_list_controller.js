@@ -14,7 +14,7 @@ angular.module('contentful').controller('ContentTypeListController', ['$scope', 
       return [];
     }
   }, function (contentTypes) {
-    $scope.contentTypes = contentTypes;
+    $scope.contentTypes = $scope.spaceContext.filterAndSortContentTypes(contentTypes);
     $scope.empty = contentTypes.length === 0;
   });
 

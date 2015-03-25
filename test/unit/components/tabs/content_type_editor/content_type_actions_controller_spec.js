@@ -35,7 +35,6 @@ describe('ContentType Actions Controller', function () {
   describe('when deleting', function() {
     beforeEach(function() {
       this.actionStub = sinon.stub(contentType, 'delete').returns(this.actionDeferred.promise);
-      this.removeContentTypeStub = sinon.stub(scope.spaceContext, 'removeContentType');
     });
 
     describe('fails with an error', function() {
@@ -73,10 +72,6 @@ describe('ContentType Actions Controller', function () {
 
       it('broadcasts event', function() {
         sinon.assert.calledWith(scope.broadcastFromSpace, 'entityDeleted');
-      });
-
-      it('removes content type', function() {
-        sinon.assert.calledWith(this.removeContentTypeStub, contentType);
       });
     });
   });

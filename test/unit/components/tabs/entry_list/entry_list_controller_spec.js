@@ -27,6 +27,7 @@ describe('Entry List Controller', function () {
       });
     });
     inject(function ($rootScope, $controller, cfStub, PromisedLoader, _$q_) {
+      this.$rootScope = $rootScope;
       $q = _$q_;
       scope = $rootScope.$new();
 
@@ -83,26 +84,6 @@ describe('Entry List Controller', function () {
 
   });
 
-  xdescribe('gets a path for the field content', function() {
-    // TODO turn into test for orderquery
-    beforeEach(function() {
-      createController();
-    });
-
-    it('for sys fields', function() {
-      expect(scope.getFieldPath({
-        id: 'fieldid',
-        sys: true
-      })).toEqual('sys.fieldid');
-    });
-
-    it('for regular fields', function() {
-      expect(scope.getFieldPath({
-        id: 'fieldid'
-      })).toEqual('fields.fieldid.en-US');
-    });
-  });
-
   describe('on search term change', function () {
     beforeEach(function() {
       createController();
@@ -133,7 +114,37 @@ describe('Entry List Controller', function () {
         expect(scope.paginator.page).toBe(0);
       });
     });
+  });
 
+  describe('handles entityDeleted event', function() {
+    beforeEach(inject(function(cfStub) {
+      createController();
+      var space = cfStub.space('test');
+      var contentTypeData = cfStub.contentTypeData('testType');
+      var removedEntity = cfStub.entry(space, 'entry2', 'type', {}, {sys: {version:1}});
+      scope.entries = [
+        cfStub.entry(space, 'entry1'),
+        removedEntity,
+        cfStub.entry(space, 'entry3')
+      ];
+
+      scope.entry = removedEntity;
+
+      this.$rootScope.$broadcast('entityDeleted', removedEntity);
+      scope.$digest();
+    }));
+
+    it('has 2 entries after deletion', function () {
+      expect(scope.entries.length).toEqual(2);
+    });
+
+    it('has entry1', function () {
+      expect(scope.entries[0].getId()).toEqual('entry1');
+    });
+
+    it('has entry3', function () {
+      expect(scope.entries[1].getId()).toEqual('entry3');
+    });
   });
 
   describe('page parameters change trigger entries reset', function () {

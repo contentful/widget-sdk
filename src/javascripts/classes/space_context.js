@@ -59,6 +59,14 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
         return _.find(this.privateLocales, {'code': code});
       },
 
+      filterAndSortContentTypes: function (contentTypes) {
+        contentTypes = _.reject(contentTypes, function (ct) { return ct.isDeleted(); });
+        contentTypes.sort(function (a,b) {
+          return a.getName().localeCompare(b.getName());
+        });
+        return contentTypes;
+      },
+
       refreshContentTypes: function() {
         if (this.space) {
           var spaceContext = this;
@@ -66,11 +74,7 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
             return spaceContext.space.getContentTypes({order: 'name', limit: 1000});
           })
           .then(function (contentTypes) {
-            contentTypes = _.reject(contentTypes, function (ct) { return ct.isDeleted(); });
-            contentTypes.sort(function (a,b) {
-              return a.getName().localeCompare(b.getName());
-            });
-            spaceContext.contentTypes = contentTypes;
+            spaceContext.contentTypes = spaceContext.filterAndSortContentTypes(contentTypes);
             return spaceContext.refreshPublishedContentTypes().then(function () {
               return contentTypes;
             });

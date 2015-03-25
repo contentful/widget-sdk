@@ -16,6 +16,7 @@ describe('ContentTypeEditor Controller', function () {
     });
 
     inject(function ($rootScope, $controller, cfStub, $injector){
+      this.$rootScope = $rootScope;
       scope = $rootScope.$new();
       space = cfStub.space('space');
       $q = $injector.get('$q');
@@ -39,7 +40,8 @@ describe('ContentTypeEditor Controller', function () {
         scope.tab = {
           params: {
             contentType: contentType
-          }
+          },
+          close: sinon.stub()
         };
         controller = $controller('ContentTypeEditorController', {$scope: scope});
         scope.$digest();
@@ -235,7 +237,17 @@ describe('ContentTypeEditor Controller', function () {
     it('has fields', function () {
       expect(scope.hasFields).toBeTruthy();
     });
+  });
 
+  describe('handles entityDeleted event', function() {
+    beforeEach(function() {
+      createContentType([{}]);
+      this.$rootScope.$broadcast('entityDeleted', scope.contentType);
+    });
+
+    it('closes tab', function() {
+      sinon.assert.called(scope.tab.close);
+    });
   });
 
 });
