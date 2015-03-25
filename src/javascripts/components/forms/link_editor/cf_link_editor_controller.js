@@ -18,9 +18,9 @@ angular.module('contentful').controller('LinkEditorController',
   var ngModelGet = $parse(ngModel),
       ngModelSet = ngModelGet.assign;
 
-  var validations = $scope.field.type === 'Array' && $scope.field.items.validations ?
-      $scope.field.items.validations :
-      $scope.field.validations;
+
+  var validationsPath = $scope.field.type == 'Array' ? 'field.items.validations' : 'field.validations';
+  $scope.$watchCollection(validationsPath, setLinkValidation);
 
   $scope.entityStatusController = $controller('EntityStatusController', {$scope: $scope});
 
@@ -31,7 +31,6 @@ angular.module('contentful').controller('LinkEditorController',
   $scope.linkSingle   = !$scope.linkMultiple;
 
   entityCache = new EntityCache($scope.spaceContext.space, linkParams.fetchMethod);
-  initValidations();
 
   $scope.$watch('links', function (links, old, scope) {
     if (!links || links.length === 0) {
@@ -50,8 +49,7 @@ angular.module('contentful').controller('LinkEditorController',
   $scope.$on('$destroy', function () {
     entityCache =
     ngModelSet =
-    ngModelGet =
-    validations = null;
+    ngModelGet = null;
   });
 
   $scope.addLink = function (entity) {
@@ -132,7 +130,7 @@ angular.module('contentful').controller('LinkEditorController',
     }
   };
 
-  function initValidations() {
+  function setLinkValidation(validations) {
     var linkTypeValidation = _(validations)
       .map(validation.Validation.parse)
       .where({name: linkParams.validationType})
