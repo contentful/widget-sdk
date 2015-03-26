@@ -66,11 +66,30 @@ angular.module('contentful').constant('stringUtils', (function(){
     ApiKey: 'API Key',
     EditingInterface: 'Editing Interface'
   };
+
   function getEntityLabel(id) {
     return entitiesToLabels[id];
   }
 
+  /**
+   * Join the strings with commas and a final 'and'.
+   */
+  function joinAnd (stringList) {
+    if (stringList.length === 0)
+      return '';
+
+    if (stringList.length === 1)
+      return stringList[0];
+
+    var lastPos = stringList.length - 1;
+    var head = stringList.slice(0, lastPos);
+    var last = stringList[lastPos];
+
+    return head.join(', ') + ' and ' + last;
+  }
+
   return {
+    joinAnd: joinAnd,
     toIdentifier: toIdentifier,
     capitalize: capitalize,
     capitalizeFirst: capitalizeFirst,
