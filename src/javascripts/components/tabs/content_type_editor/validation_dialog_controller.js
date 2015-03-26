@@ -93,6 +93,7 @@ angular.module('contentful')
     size: {
       Text: 'Enforce input length',
       Symbol: 'Enforce input length',
+      Object: 'Specify number of properties'
     },
     range: 'Specify allowed number range',
     dateRange: 'Specify allowed date range',
