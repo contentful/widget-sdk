@@ -20,7 +20,7 @@
 angular.module('contentful')
 .factory('validationDialogErrorMessages', function () {
   var sizeMessage = function (details) {
-    if (details == 'Expected max >= min') {
+    if (details === 'Expected max >= min') {
       return 'Minimum value has to be smaller than maximum value';
     } else {
       return 'Please provide a positive integer';
@@ -31,15 +31,19 @@ angular.module('contentful')
     'size': sizeMessage,
 
     'range': function (details) {
-      if (details == 'Expected max >= min') {
+      if (details === 'Expected max >= min') {
         return 'Minimum value has to be smaller than maximum value';
       } else {
         return 'Please provide at least a one number';
       }
     },
 
-    'regexp': function () {
-      return 'Please provide custom regular expression or select a predefined one';
+    'regexp': function (details) {
+      if (details === 'Invalid regular expression') {
+        return 'Please provide a valid regular expression with valid flags';
+      } else {
+        return 'Please provide custom regular expression or select a predefined one';
+      }
     },
 
     'dateRange': function () {
