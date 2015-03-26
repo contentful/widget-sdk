@@ -5,10 +5,6 @@ describe('AssetLinkEditorController', function () {
   var scope, entry, $q, stubs, attrs;
   var shareJSMock, entityCacheMock;
 
-  function validationParser(arg) {
-    return arg;
-  }
-
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
@@ -32,11 +28,6 @@ describe('AssetLinkEditorController', function () {
 
       $provide.value('ShareJS', shareJSMock);
       $provide.value('EntityCache', entityCacheMock);
-      $provide.constant('validation', {
-        Validation: {
-          parse: validationParser
-        }
-      });
     });
 
     inject(function ($rootScope, $controller, _$q_, cfStub) {
@@ -114,13 +105,13 @@ describe('AssetLinkEditorController', function () {
   describe('validations are defined', function () {
     beforeEach(function () {
       scope.field.validations = [
-        {name: 'linkMimetypeGroup', mimetypeGroupName: 'file'}
+        {linkMimetypeGroup: 'file'}
       ];
       createController();
     });
 
     it('sets linkMimetypeGroup to type defined in validation', function () {
-      expect(scope.linkMimetypeGroup).toBe('file');
+      expect(scope.linkMimetypeGroup).toEqual(['file']);
     });
   });
 
