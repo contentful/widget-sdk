@@ -10,8 +10,11 @@ angular.module('contentful').controller('AssetLinkEditorController', ['$scope', 
       validationType: 'linkMimetypeGroup',
       multiple: $attrs.linkMultiple
     },
-    setValidationType: function (linkTypeValidation) {
-      $scope.linkMimetypeGroup = linkTypeValidation.mimetypeGroupName;
+    setValidationType: function (mimetypeValidation) {
+      if (mimetypeValidation)
+        $scope.linkMimetypeGroup = mimetypeValidation.mimetypeGroupName;
+      else
+        $scope.linkMimetypeGroup = null;
     }
   });
 
