@@ -48,7 +48,8 @@
           input.form-control(type="text"
                  name="contentTypeName"
                  placeholder="Content Type Name (e.g. Product)"
-                 ng-model="contentType.data.name")
+                 ng-model="contentType.data.name"
+                 cf-focus-on-render)
         cf-error-list.form-box-error(cf-error-path="['name']")
     .l-form-row
       label Description
