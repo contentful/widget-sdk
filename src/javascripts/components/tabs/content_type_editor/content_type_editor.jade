@@ -96,7 +96,7 @@
       button.btn.btn--danger(type="button" ng-click="delete()" dropdown-close) Delete 
       button.btn.btn--secondary(type="button" dropdown-close) Don't Delete 
     button.btn.btn--primary.publish(
-                  ng-disabled="!entityActionsController.canPublish() || (entityActionsController.canPublish() && !contentTypeForm.$dirty)"
+                  ng-disabled="!entityActionsController.canPublish() || (entityActionsController.canPublish() && !contentTypeForm.$dirty && contentType.isPublished())"
                   ng-click="publish()"
                   tooltip="Make this Content Type available to editors")
       | {{publishButtonLabel()}}
