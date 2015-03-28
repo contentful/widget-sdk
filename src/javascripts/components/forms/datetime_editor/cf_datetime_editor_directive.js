@@ -134,8 +134,8 @@ angular.module('contentful')
       zoneController.$viewChangeListeners.push(changeHandler);
 
       scope.setFromISO = function(iso){
-        if (_.isString(iso) && moment(iso).isValid()) {
-          var tokens = parseIso(iso);
+        var tokens = parseIso(iso);
+        if (tokens) {
           var dateTime = tokens.tzString ? moment(iso).zone(iso) : moment(iso);
           scope.localDate = dateTime.format(DATE_FORMAT_INTERNAL);
           scope.localTime = tokens.time ? makeLocalTime(tokens.time) : null;
@@ -168,6 +168,10 @@ angular.module('contentful')
       });
 
       function parseIso(isoString) {
+        if (!_.isString(isoString) || !moment(isoString).isValid()) {
+          return null;
+        }
+
         var results = ISO_8601_RX.exec(isoString);
         if (results) {
           return {
