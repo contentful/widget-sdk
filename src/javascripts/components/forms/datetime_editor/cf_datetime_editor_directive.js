@@ -6,10 +6,17 @@ angular.module('contentful')
   var zoneOffsets = $injector.get('zoneOffsets');
   var moment = $injector.get('moment');
 
+
   // The format strings for datepicker and moment.js are different!
   var DATE_FORMAT = $.datepicker.ISO_8601; // datepicker format
   var DATE_FORMAT_INTERNAL = 'YYYY-MM-DD'; // moment.js format
   var LOCAL_TIMEZONE = moment().format('Z');
+
+  var datepickerDefaults = {
+    dateFormat: DATE_FORMAT,
+    firstDay: 1,
+    changeYear: true
+  };
 
   // Patterns to validate and parse user input
   var DATE_RX = '(\\d{4}-\\d{2}-\\d{2})';
@@ -38,10 +45,10 @@ angular.module('contentful')
       scope.timezones = zoneOffsets;
       scope.tzOffset = LOCAL_TIMEZONE;
       scope.ampm = 'am';
-      if (scope.widget && scope.widget.widgetParams.ampm == '12')
-        scope.maxTime = '12:59:59';
-      else
+      if (show24hClock())
         scope.maxTime = '23:59:59';
+      else
+        scope.maxTime = '12:59:59';
 
       scope.$watch('widget.widgetParams.ampm', function(){
         ngModelCtrl.$render();
@@ -56,16 +63,14 @@ angular.module('contentful')
         scope.setFromISO(ngModelCtrl.$modelValue);
       };
 
-      elm.find('.date').datepicker({
-        dateFormat: DATE_FORMAT,
-        firstDay: 1,
+      elm.find('.date').datepicker(_.extend(datepickerDefaults, {
         onSelect: function(dateString) {
           $(this).val(dateString);
           scope.$apply(function() {
             dateController.$setViewValue(dateString);
           });
         }
-      });
+      }));
 
       dateController.$parsers.unshift(function(viewValue) {
         var raw;
@@ -216,35 +221,37 @@ angular.module('contentful')
       }
 
       function make24hTime(localTime, ampm) {
-        if (scope.widget && scope.widget.widgetParams.ampm === '12') {
-          var seg  = localTime.split(':');
-          var hour = parseInt(seg[0], 10);
-          hour   = ampm === 'am' && hour === 12 ? 0 :
-                   ampm === 'pm' && hour  <  12 ? hour + 12 :
-                   hour;
-          seg[0] = hour ===  0 ? '00' :
-                   hour  <  10 ? '0' + String(hour) :
-                   String(hour);
-          return seg.join(':');
-        } else {
+        if (show24hClock())
           return localTime;
-        }
+
+        var seg  = localTime.split(':');
+        var hour = parseInt(seg[0], 10);
+        hour   = ampm === 'am' && hour === 12 ? 0 :
+                 ampm === 'pm' && hour  <  12 ? hour + 12 :
+                 hour;
+        seg[0] = hour ===  0 ? '00' :
+                 hour  <  10 ? '0' + String(hour) :
+                 String(hour);
+        return seg.join(':');
       }
 
       function makeLocalTime(timeStr) {
-        if (scope.widget && scope.widget.widgetParams.ampm === '12') {
-          var seg  = timeStr.split(':');
-          var hour = parseInt(seg[0], 10);
-          hour   = hour ===  0 ? 12 :
-                   hour  >  12 ? hour - 12 :
-                   hour;
-          seg[0] = hour ===  0 ? '00' :
-                   hour  <  10 ? '0' + String(hour) :
-                   String(hour);
-          return seg.join(':');
-        } else {
+        if (show24hClock())
           return timeStr;
-        }
+
+        var seg  = timeStr.split(':');
+        var hour = parseInt(seg[0], 10);
+        hour   = hour ===  0 ? 12 :
+                 hour  >  12 ? hour - 12 :
+                 hour;
+        seg[0] = hour ===  0 ? '00' :
+                 hour  <  10 ? '0' + String(hour) :
+                 String(hour);
+        return seg.join(':');
+      }
+
+      function show24hClock () {
+        return !(scope.widget && scope.widget.widgetParams.ampm === '12');
       }
 
     }
