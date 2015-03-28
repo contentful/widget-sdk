@@ -93,15 +93,10 @@ angular.module('contentful')
       };
 
       timeController.$parsers.push(function(viewValue){
-        var time_rx = timeRx();
-        var match = viewValue.match('^\\s*('+time_rx+')?\\s*$');
-        if (match) {
+        var time = parseTimeInput(viewValue);
+        if (time) {
           timeController.$setValidity('format', true);
-          var time = match[1];
-          if (time) {
-            time = time.match(/^\d:/) ? '0'+time : time;
-            return time;
-          }
+          return time;
         } else {
           timeController.$setValidity('format', false);
         }
@@ -207,8 +202,17 @@ angular.module('contentful')
         }
       }
 
-      function timeRx() {
-        return (scope.widget && scope.widget.widgetParams.ampm === '12') ? TIME_RX_12 : TIME_RX;
+      function parseTimeInput (value) {
+        var localTimeRx = TIME_RX;
+        if (scope.widget && scope.widget.widgetParams.ampm === '12')
+          localTimeRx = TIME_RX_12;
+
+        var inputMatcher = '^\\s*('+localTimeRx+')?\\s*$';
+        var match = value.match(inputMatcher);
+        var time = match && match[1];
+        if (time && time.match(/^\d:/))
+          time = '0' + time;
+        return time || null;
       }
 
       function make24hTime(localTime, ampm) {
