@@ -4,37 +4,29 @@ angular.module('contentful')
 .directive('cfDatetimeEditor', ['$injector', function($injector){
   var $parse = $injector.get('$parse');
   var zoneOffsets = $injector.get('zoneOffsets');
+  var moment = $injector.get('moment');
+
+  // The format strings for datepicker and moment.js are different!
+  var DATE_FORMAT = $.datepicker.ISO_8601; // datepicker format
+  var DATE_FORMAT_INTERNAL = 'YYYY-MM-DD'; // moment.js format
+  var LOCAL_TIMEZONE = moment().format('Z');
+
+  // Patterns to validate and parse user input
+  var DATE_RX = '(\\d{4}-\\d{2}-\\d{2})';
+  var ZONE_RX = '(Z|[+-]\\d{2}:?\\d{2})?';
+  var TIME_RX = '([0-1]?[0-9]|2[0-3])'+ // hours
+                ':([0-5][\\d])'+ //minutes
+                '(?::([0-5][\\d])(?:\\.(\\d{3}))?)?';  //seconds + milliseconds :XX.YYY
+  var ISO_8601_RX = new RegExp('^'+DATE_RX+'(?:T('+TIME_RX+')'+ZONE_RX+')?');
+  var TIME_RX_12 = '(0?[1-9]|1[0-2])'+ // hours
+                   ':([0-5][\\d])'+ //minutes
+                   '(?::([0-5][\\d])(?:\\.(\\d{3}))?)?';  //seconds + milliseconds :XX.YYY
 
   return {
     restrict: 'A',
     template: JST['cf_datetime_editor'],
     require: 'ngModel',
     link: function(scope, elm, attr, ngModelCtrl) {
-      // The format strings for datepicker and moment.js are different!
-      var DATE_FORMAT = $.datepicker.ISO_8601; // datepicker format
-      var DATE_FORMAT_INTERNAL = 'YYYY-MM-DD'; // moment.js format
-      // Prefer datepicker localization, this is just a shortcut
-      //var STORAGE_FORMATS = {
-        //'dateonly'       : 'YYYY-MM-DD',
-        //'time'           : 'YYYY-MM-DDTHH:mm',
-        //'timeSec'        : 'YYYY-MM-DDTHH:mm:ss',
-        //'timeSecMilli'   : 'YYYY-MM-DDTHH:mm:ss.SSS',
-        //'timeZ'          : 'YYYY-MM-DDTHH:mmZ',
-        //'timeZSec'       : 'YYYY-MM-DDTHH:mm:ssZ',
-        //'timeZSecMilli'  : 'YYYY-MM-DDTHH:mm:ss.SSSZ',
-        //'unixtime'       : 'X'
-      //};
-      var DATE_RX    = '(\\d{4}-\\d{2}-\\d{2})';
-      var ZONE_RX    = '(Z|[+-]\\d{2}:?\\d{2})?';
-      var TIME_RX    = '([0-1]?[0-9]|2[0-3])'+ // hours
-                       ':([0-5][\\d])'+ //minutes
-                       '(?::([0-5][\\d])(?:\\.(\\d{3}))?)?';  //seconds + milliseconds :XX.YYY
-      var TIME_RX_12 = '(0?[1-9]|1[0-2])'+ // hours
-                       ':([0-5][\\d])'+ //minutes
-                       '(?::([0-5][\\d])(?:\\.(\\d{3}))?)?';  //seconds + milliseconds :XX.YYY
-
-      var defaultTzOffset = moment().format('Z');
-
       var ngModelGet = $parse(attr.ngModel),
           ngModelSet = ngModelGet.assign;
 
@@ -44,7 +36,7 @@ angular.module('contentful')
       var zoneController = elm.find('.zone').controller('ngModel');
 
       scope.timezones = zoneOffsets;
-      scope.tzOffset = defaultTzOffset;
+      scope.tzOffset = LOCAL_TIMEZONE;
       scope.ampm = 'am';
       if (scope.widget && scope.widget.widgetParams.ampm == '12')
         scope.maxTime = '12:59:59';
@@ -153,7 +145,7 @@ angular.module('contentful')
           scope.localDate = null;
           scope.localTime = null;
           scope.ampm      = 'am';
-          scope.tzOffset  = defaultTzOffset;
+          scope.tzOffset  = LOCAL_TIMEZONE;
         }
       };
 
@@ -176,8 +168,7 @@ angular.module('contentful')
       });
 
       function parseIso(isoString) {
-        var allRx = new RegExp('^'+DATE_RX+'(?:T('+TIME_RX+')'+ZONE_RX+')?');
-        var results = allRx.exec(isoString);
+        var results = ISO_8601_RX.exec(isoString);
         if (results) {
           return {
             date:          results[1],
