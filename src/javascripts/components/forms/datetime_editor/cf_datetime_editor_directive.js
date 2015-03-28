@@ -141,10 +141,6 @@ angular.module('contentful')
       ampmController.$viewChangeListeners.push(changeHandler);
       zoneController.$viewChangeListeners.push(changeHandler);
 
-      ngModelCtrl.$render = function () {
-        scope.setFromISO(ngModelCtrl.$viewValue);
-      };
-
       scope.setFromISO = function(iso){
         if (_.isString(iso) && moment(iso).isValid()) {
           var tokens = parseIso(iso);
