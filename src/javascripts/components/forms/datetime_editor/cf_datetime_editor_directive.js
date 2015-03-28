@@ -43,11 +43,6 @@ angular.module('contentful')
       var ampmController = elm.find('.ampm').controller('ngModel');
       var zoneController = elm.find('.zone').controller('ngModel');
 
-      // Format configuration
-      var widgetFormat = (scope.widget && scope.widget.widgetParams.format) || 'timeZ';
-      scope.hasTime     = widgetFormat != 'dateonly';
-      scope.hasTimezone = widgetFormat == 'timeZ';
-
       scope.timezones = zoneOffsets;
       scope.tzOffset = defaultTzOffset;
       scope.ampm = 'am';
@@ -58,6 +53,11 @@ angular.module('contentful')
 
       scope.$watch('widget.widgetParams.ampm', function(){
         ngModelCtrl.$render();
+      });
+
+      scope.$watch('widget.widgetParams.format', function (format) {
+        scope.hasTime     = format != 'dateonly';
+        scope.hasTimezone = format == 'timeZ';
       });
 
       ngModelCtrl.$render = function () {
