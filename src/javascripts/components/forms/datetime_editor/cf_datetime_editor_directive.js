@@ -4,37 +4,36 @@ angular.module('contentful')
 .directive('cfDatetimeEditor', ['$injector', function($injector){
   var $parse = $injector.get('$parse');
   var zoneOffsets = $injector.get('zoneOffsets');
+  var moment = $injector.get('moment');
+
+
+  // The format strings for datepicker and moment.js are different!
+  var DATE_FORMAT = $.datepicker.ISO_8601; // datepicker format
+  var DATE_FORMAT_INTERNAL = 'YYYY-MM-DD'; // moment.js format
+  var LOCAL_TIMEZONE = moment().format('Z');
+
+  var datepickerDefaults = {
+    dateFormat: DATE_FORMAT,
+    firstDay: 1,
+    changeYear: true
+  };
+
+  // Patterns to validate and parse user input
+  var DATE_RX = '(\\d{4}-\\d{2}-\\d{2})';
+  var ZONE_RX = '(Z|[+-]\\d{2}:?\\d{2})?';
+  var TIME_RX = '([0-1]?[0-9]|2[0-3])'+ // hours
+                ':([0-5][\\d])'+ //minutes
+                '(?::([0-5][\\d])(?:\\.(\\d{3}))?)?';  //seconds + milliseconds :XX.YYY
+  var ISO_8601_RX = new RegExp('^'+DATE_RX+'(?:T('+TIME_RX+')'+ZONE_RX+')?');
+  var TIME_RX_12 = '(0?[1-9]|1[0-2])'+ // hours
+                   ':([0-5][\\d])'+ //minutes
+                   '(?::([0-5][\\d])(?:\\.(\\d{3}))?)?';  //seconds + milliseconds :XX.YYY
 
   return {
     restrict: 'A',
     template: JST['cf_datetime_editor'],
     require: 'ngModel',
     link: function(scope, elm, attr, ngModelCtrl) {
-      // The format strings for datepicker and moment.js are different!
-      var DATE_FORMAT = $.datepicker.ISO_8601; // datepicker format
-      var DATE_FORMAT_INTERNAL = 'YYYY-MM-DD'; // moment.js format
-      // Prefer datepicker localization, this is just a shortcut
-      //var STORAGE_FORMATS = {
-        //'dateonly'       : 'YYYY-MM-DD',
-        //'time'           : 'YYYY-MM-DDTHH:mm',
-        //'timeSec'        : 'YYYY-MM-DDTHH:mm:ss',
-        //'timeSecMilli'   : 'YYYY-MM-DDTHH:mm:ss.SSS',
-        //'timeZ'          : 'YYYY-MM-DDTHH:mmZ',
-        //'timeZSec'       : 'YYYY-MM-DDTHH:mm:ssZ',
-        //'timeZSecMilli'  : 'YYYY-MM-DDTHH:mm:ss.SSSZ',
-        //'unixtime'       : 'X'
-      //};
-      var DATE_RX    = '(\\d{4}-\\d{2}-\\d{2})';
-      var ZONE_RX    = '(Z|[+-]\\d{2}:?\\d{2})?';
-      var TIME_RX    = '([0-1]?[0-9]|2[0-3])'+ // hours
-                       ':([0-5][\\d])'+ //minutes
-                       '(?::([0-5][\\d])(?:\\.(\\d{3}))?)?';  //seconds + milliseconds :XX.YYY
-      var TIME_RX_12 = '(0?[1-9]|1[0-2])'+ // hours
-                       ':([0-5][\\d])'+ //minutes
-                       '(?::([0-5][\\d])(?:\\.(\\d{3}))?)?';  //seconds + milliseconds :XX.YYY
-
-      var defaultTzOffset = moment().format('Z');
-
       var ngModelGet = $parse(attr.ngModel),
           ngModelSet = ngModelGet.assign;
 
@@ -43,37 +42,35 @@ angular.module('contentful')
       var ampmController = elm.find('.ampm').controller('ngModel');
       var zoneController = elm.find('.zone').controller('ngModel');
 
-      // Format configuration
-      var widgetFormat = (scope.widget && scope.widget.widgetParams.format) || 'timeZ';
-      scope.hasTime     = widgetFormat != 'dateonly';
-      scope.hasTimezone = widgetFormat == 'timeZ';
-
       scope.timezones = zoneOffsets;
-      scope.tzOffset = defaultTzOffset;
+      scope.tzOffset = LOCAL_TIMEZONE;
       scope.ampm = 'am';
-      if (scope.widget && scope.widget.widgetParams.ampm == '12')
-        scope.maxTime = '12:59:59';
-      else
+      if (show24hClock())
         scope.maxTime = '23:59:59';
+      else
+        scope.maxTime = '12:59:59';
 
       scope.$watch('widget.widgetParams.ampm', function(){
         ngModelCtrl.$render();
+      });
+
+      scope.$watch('widget.widgetParams.format', function (format) {
+        scope.hasTime     = format != 'dateonly';
+        scope.hasTimezone = format == 'timeZ';
       });
 
       ngModelCtrl.$render = function () {
         scope.setFromISO(ngModelCtrl.$modelValue);
       };
 
-      elm.find('.date').datepicker({
-        dateFormat: DATE_FORMAT,
-        firstDay: 1,
+      elm.find('.date').datepicker(_.extend(datepickerDefaults, {
         onSelect: function(dateString) {
           $(this).val(dateString);
           scope.$apply(function() {
             dateController.$setViewValue(dateString);
           });
         }
-      });
+      }));
 
       dateController.$parsers.unshift(function(viewValue) {
         var raw;
@@ -101,15 +98,10 @@ angular.module('contentful')
       };
 
       timeController.$parsers.push(function(viewValue){
-        var time_rx = timeRx();
-        var match = viewValue.match('^\\s*('+time_rx+')?\\s*$');
-        if (match) {
+        var time = parseTimeInput(viewValue);
+        if (time) {
           timeController.$setValidity('format', true);
-          var time = match[1];
-          if (time) {
-            time = time.match(/^\d:/) ? '0'+time : time;
-            return time;
-          }
+          return time;
         } else {
           timeController.$setValidity('format', false);
         }
@@ -141,13 +133,9 @@ angular.module('contentful')
       ampmController.$viewChangeListeners.push(changeHandler);
       zoneController.$viewChangeListeners.push(changeHandler);
 
-      ngModelCtrl.$render = function () {
-        scope.setFromISO(ngModelCtrl.$viewValue);
-      };
-
       scope.setFromISO = function(iso){
-        if (_.isString(iso) && moment(iso).isValid()) {
-          var tokens = parseIso(iso);
+        var tokens = parseIso(iso);
+        if (tokens) {
           var dateTime = tokens.tzString ? moment(iso).zone(iso) : moment(iso);
           scope.localDate = dateTime.format(DATE_FORMAT_INTERNAL);
           scope.localTime = tokens.time ? makeLocalTime(tokens.time) : null;
@@ -157,7 +145,7 @@ angular.module('contentful')
           scope.localDate = null;
           scope.localTime = null;
           scope.ampm      = 'am';
-          scope.tzOffset  = defaultTzOffset;
+          scope.tzOffset  = LOCAL_TIMEZONE;
         }
       };
 
@@ -180,8 +168,11 @@ angular.module('contentful')
       });
 
       function parseIso(isoString) {
-        var allRx = new RegExp('^'+DATE_RX+'(?:T('+TIME_RX+')'+ZONE_RX+')?');
-        var results = allRx.exec(isoString);
+        if (!_.isString(isoString) || !moment(isoString).isValid()) {
+          return null;
+        }
+
+        var results = ISO_8601_RX.exec(isoString);
         if (results) {
           return {
             date:          results[1],
@@ -216,40 +207,51 @@ angular.module('contentful')
         }
       }
 
-      function timeRx() {
-        return (scope.widget && scope.widget.widgetParams.ampm === '12') ? TIME_RX_12 : TIME_RX;
+      function parseTimeInput (value) {
+        var localTimeRx = TIME_RX;
+        if (scope.widget && scope.widget.widgetParams.ampm === '12')
+          localTimeRx = TIME_RX_12;
+
+        var inputMatcher = '^\\s*('+localTimeRx+')?\\s*$';
+        var match = value.match(inputMatcher);
+        var time = match && match[1];
+        if (time && time.match(/^\d:/))
+          time = '0' + time;
+        return time || null;
       }
 
       function make24hTime(localTime, ampm) {
-        if (scope.widget && scope.widget.widgetParams.ampm === '12') {
-          var seg  = localTime.split(':');
-          var hour = parseInt(seg[0], 10);
-          hour   = ampm === 'am' && hour === 12 ? 0 :
-                   ampm === 'pm' && hour  <  12 ? hour + 12 :
-                   hour;
-          seg[0] = hour ===  0 ? '00' :
-                   hour  <  10 ? '0' + String(hour) :
-                   String(hour);
-          return seg.join(':');
-        } else {
+        if (show24hClock())
           return localTime;
-        }
+
+        var seg  = localTime.split(':');
+        var hour = parseInt(seg[0], 10);
+        hour   = ampm === 'am' && hour === 12 ? 0 :
+                 ampm === 'pm' && hour  <  12 ? hour + 12 :
+                 hour;
+        seg[0] = hour ===  0 ? '00' :
+                 hour  <  10 ? '0' + String(hour) :
+                 String(hour);
+        return seg.join(':');
       }
 
       function makeLocalTime(timeStr) {
-        if (scope.widget && scope.widget.widgetParams.ampm === '12') {
-          var seg  = timeStr.split(':');
-          var hour = parseInt(seg[0], 10);
-          hour   = hour ===  0 ? 12 :
-                   hour  >  12 ? hour - 12 :
-                   hour;
-          seg[0] = hour ===  0 ? '00' :
-                   hour  <  10 ? '0' + String(hour) :
-                   String(hour);
-          return seg.join(':');
-        } else {
+        if (show24hClock())
           return timeStr;
-        }
+
+        var seg  = timeStr.split(':');
+        var hour = parseInt(seg[0], 10);
+        hour   = hour ===  0 ? 12 :
+                 hour  >  12 ? hour - 12 :
+                 hour;
+        seg[0] = hour ===  0 ? '00' :
+                 hour  <  10 ? '0' + String(hour) :
+                 String(hour);
+        return seg.join(':');
+      }
+
+      function show24hClock () {
+        return !(scope.widget && scope.widget.widgetParams.ampm === '12');
       }
 
     }
