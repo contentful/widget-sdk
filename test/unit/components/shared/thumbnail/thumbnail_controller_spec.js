@@ -60,7 +60,9 @@ describe('Thumbnail Controller', function () {
 
   describe('with a file', function() {
     beforeEach(function() {
-      this.scope.file = {};
+      this.scope.file = {
+        url: '//images.domain.com/file.jpg'
+      };
     });
 
     it('image is loaded if an event is emitted', function() {
@@ -99,8 +101,25 @@ describe('Thumbnail Controller', function () {
         this.scope.imageHasLoaded = true;
         expect(this.scope.isFilePreviewable()).toBe(true);
       });
-
     });
+
+    describe('previewable, but not coming from the images server', function() {
+      beforeEach(function() {
+        this.mimetype.hasPreview.returns(true);
+        this.scope.file = {
+          url: '//downloads.domain.com/file.jpg'
+        };
+      });
+
+      it('image has no preview', function() {
+        expect(this.scope.hasPreview()).toBe(false);
+      });
+
+      it('file is previewable (because it has an icon instead)', function() {
+        expect(this.scope.isFilePreviewable()).toBe(true);
+      });
+    });
+
 
     describe('with no preview', function() {
       beforeEach(function() {
