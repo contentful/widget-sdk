@@ -2,7 +2,7 @@
 
 angular.module('contentful').directive('cfFieldAlert', function(){
   return {
-    template: '<i class="cf-field-alert fa fa-alert" tooltip></i>',
+    template: '<i class="cf-field-alert fa fa-exclamation-triangle" tooltip></i>',
     replace: true,
     restrict: 'A',
     link: function(scope, elem, attr) {
