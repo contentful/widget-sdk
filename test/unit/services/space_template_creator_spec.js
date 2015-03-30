@@ -35,14 +35,14 @@ describe('Space Template creation service', function () {
           {sys: {id: 'ct3'}, publish: stubs.ctPublish}],
         editingInterfaces: [{sys: {id: 'ei1'}}, {sys: {id: 'ei2'}}],
         assets: [
-          {sys: {id: 'a1'}, process: stubs.assetProcess, publish: stubs.assetPublish },
-          {sys: {id: 'a2'}, process: stubs.assetProcess, publish: stubs.assetPublish },
-          {sys: {id: 'a3'}, process: stubs.assetProcess, publish: stubs.assetPublish }
+          {sys: {id: 'a1'}, fields: {file: {'en-US': 'val'}}, process: stubs.assetProcess, publish: stubs.assetPublish },
+          {sys: {id: 'a2'}, fields: {file: {'en-US': 'val'}}, process: stubs.assetProcess, publish: stubs.assetPublish },
+          {sys: {id: 'a3'}, fields: {file: {'en-US': 'val'}}, process: stubs.assetProcess, publish: stubs.assetPublish }
         ],
         entries: [
-          { sys: { id: 'e1', contentType: {sys: {id: 'ct1'}} }, publish: stubs.entryPublish},
-          { sys: { id: 'e2', contentType: {sys: {id: 'ct2'}} }, publish: stubs.entryPublish},
-          { sys: { id: 'e3', contentType: {sys: {id: 'ct3'}} }, publish: stubs.entryPublish}
+          { sys: { id: 'e1', contentType: {sys: {id: 'ct1'}} }, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish},
+          { sys: { id: 'e2', contentType: {sys: {id: 'ct2'}} }, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish},
+          { sys: { id: 'e3', contentType: {sys: {id: 'ct3'}} }, fields: {file: {'en-US': 'val'}}, publish: stubs.entryPublish}
         ],
         apiKeys: [
           {sys: {id: 'ak1'}},
@@ -53,6 +53,11 @@ describe('Space Template creation service', function () {
       spaceContext = {
         createEditingInterface: sinon.stub(),
         space: {
+          data: {
+            locales: [
+              { code: 'de-DE' }
+            ]
+          },
           createContentType: sinon.stub(),
           createEntry: sinon.stub(),
           createAsset: sinon.stub(),
@@ -130,6 +135,12 @@ describe('Space Template creation service', function () {
       expect(spaceContext.space.createAsset.callCount).toBe(3);
     });
 
+    it('transforms assets locale', function() {
+      expect(_.keys(spaceContext.space.createAsset.args[0][0].fields.file)[0]).toEqual('de-DE');
+      expect(_.keys(spaceContext.space.createAsset.args[1][0].fields.file)[0]).toEqual('de-DE');
+      expect(_.keys(spaceContext.space.createAsset.args[2][0].fields.file)[0]).toEqual('de-DE');
+    });
+
     it('processes 2 assets', function() {
       expect(stubs.assetProcess.callCount).toBe(2);
     });
@@ -146,6 +157,12 @@ describe('Space Template creation service', function () {
       expect(spaceContext.space.createEntry.args[0][0]).toEqual('ct1');
       expect(spaceContext.space.createEntry.args[1][0]).toEqual('ct2');
       expect(spaceContext.space.createEntry.args[2][0]).toEqual('ct3');
+    });
+
+    it('transforms entries locale', function() {
+      expect(_.keys(spaceContext.space.createEntry.args[0][1].fields.file)[0]).toEqual('de-DE');
+      expect(_.keys(spaceContext.space.createEntry.args[1][1].fields.file)[0]).toEqual('de-DE');
+      expect(_.keys(spaceContext.space.createEntry.args[2][1].fields.file)[0]).toEqual('de-DE');
     });
 
     it('publishes 2 entries', function() {
