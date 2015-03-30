@@ -34,16 +34,18 @@ describe('ErrorPathController', function () {
       });
     });
 
-    it('should say "Length" for strings', function () {
+    it('shows error for string data', function () {
       scope.entity.foo.bar = 'asdasd';
       scope.$apply();
-      expect(controller.messages[0]).toBe('Length must be at least 10.');
+      expect(controller.messages[0])
+      .toBe('Please expand the text so it\'s no shorter than 10 characters');
     });
 
-    it('should say "Size" for strings', function () {
+    it('shows error for array data', function () {
       scope.entity.foo.bar = [1,2,3];
       scope.$apply();
-      expect(controller.messages[0]).toBe('Size must be at least 10.');
+      expect(controller.messages[0])
+      .toBe('Please provide at least 10 items');
     });
   });
 
@@ -65,7 +67,8 @@ describe('ErrorPathController', function () {
         min: 10
       });
       scope.$apply();
-      expect(controller.messages[0]).toBe('Size must be at least 10.');
+      expect(controller.messages)
+      .toEqual(['Please provide at least 10 items']);
     });
 
     it('shows custom error message', function () {
@@ -76,7 +79,7 @@ describe('ErrorPathController', function () {
         min: 10
       });
       scope.$apply();
-      expect(controller.messages[0]).toBe('CUSTOM MESSAGE');
+      expect(controller.messages).toEqual(['CUSTOM MESSAGE']);
     });
 
     it('falls back to "details" property', function () {
@@ -86,7 +89,7 @@ describe('ErrorPathController', function () {
         details: 'DETAILS'
       });
       scope.$apply();
-      expect(controller.messages[0]).toBe('DETAILS');
+      expect(controller.messages).toEqual(['DETAILS']);
     });
 
     it('falls back to error name property', function () {
@@ -95,7 +98,8 @@ describe('ErrorPathController', function () {
         path: ['foo', 'bars'],
       });
       scope.$apply();
-      expect(controller.messages[0]).toBe('Error: this is an unknown validation');
+      expect(controller.messages)
+      .toEqual(['Error: this is an unknown validation']);
     });
 
     it('shows errors in sub-path', function () {
@@ -105,7 +109,8 @@ describe('ErrorPathController', function () {
         min: 10
       });
       scope.$apply();
-      expect(controller.messages[0]).toBe('Length must be at least 10.');
+      expect(controller.messages)
+      .toEqual(['Please expand the text so it\'s no shorter than 10 characters']);
     });
   });
 });
