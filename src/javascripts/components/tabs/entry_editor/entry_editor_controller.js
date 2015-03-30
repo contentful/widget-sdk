@@ -146,22 +146,22 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
   // Prevents badly created fields via the API from breaking the editor
   function cleanupEntryFields(contentTypeFields) {
     $scope.$watchGroup(['::entry', '::otDoc'], function (values) {
-      if(hasFields($scope.entry.data.fields) && hasAllValues(values)){
-        _.each($scope.entry.data.fields, _.partial(cleanupField, contentTypeFields));
+      if(!_.isEmpty($scope.entry.data.fields) && areValuesDefined(values)){
+        _.each($scope.entry.data.fields, _.partial(setupFieldLocales, contentTypeFields));
       }
     });
   }
 
-  function hasAllValues(values) {
+  function areValuesDefined(values) {
     return _.all(values, function(val){return !_.isUndefined(val);});
   }
 
-  function hasFields(fields) {
-    return _.keys(fields).length > 0;
-  }
-
-  function cleanupField(contentTypeFields, field, fieldId) {
-    if(!_.isObject(field) || _.isObject(field) && _.keys(field).length === 0){
+  /*
+   * If a field is null or empty, initializes it with the necessary locale
+   * placeholder objects
+   */
+  function setupFieldLocales(contentTypeFields, field, fieldId) {
+    if(!_.isObject(field) || _.isEmpty(field)){
       var newField = {};
       var fieldType = _.find(contentTypeFields, {id: fieldId});
       if(fieldType.localized){
