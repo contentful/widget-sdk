@@ -1,6 +1,7 @@
 .modal-background
   .modal-dialog.space-template__dialog(ng-controller="SpaceTemplatesController" cf-center-on=".modal-background")
     .title {{dialog.title}}
+    .modal-dialog-close-button(ng-show="dialogViewIs('spaceTemplateList') || dialogViewIs('spaceCreation')" ng-click="dialog.cancel()")
     .dialog-content.space-template__dialog-content
 
       .loading(ng-show="dialogViewIs('loading')")
@@ -62,9 +63,6 @@
               .l-form-controls
                 input.form-control(type="text" name="locale" ng-model="newSpaceData.defaultLocale")
           .buttons
-            button.btn.btn--tertiary.cancel(type="button" ng-click="dialog.cancel()")
-              | Cancel
-            | 
             button.btn.btn--primary.confirm(type="submit" ng-disabled="newSpaceForm.$invalid || lockSubmit")
               | Create Space
 
