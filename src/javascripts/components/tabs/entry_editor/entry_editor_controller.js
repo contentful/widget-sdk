@@ -110,8 +110,11 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
   $scope.$watch('spaceContext.publishedTypeForEntry(entry)', function (contentType) {
     $scope.formWidgetsController.contentType = contentType;
   });
-  $scope.$watch('spaceContext.publishedTypeForEntry(entry).data.fields', function () {
+  $scope.$watch('spaceContext.publishedTypeForEntry(entry).data.fields', function (contentTypeFields) {
     $scope.formWidgetsController.updateWidgets();
+    if(contentTypeFields && contentTypeFields.length > 0){
+      cleanupEntryFields(contentTypeFields);
+    }
   }, true);
 
 
@@ -139,5 +142,37 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
   $scope.headline = function(){
     return this.spaceContext.entryTitle(this.entry);
   };
+
+  // Prevents badly created fields via the API from breaking the editor
+  function cleanupEntryFields(contentTypeFields) {
+    $scope.$watchGroup(['::entry', '::otDoc'], function (values) {
+      if(!_.isEmpty($scope.entry.data.fields) && areValuesDefined(values)){
+        _.each($scope.entry.data.fields, _.partial(setupFieldLocales, contentTypeFields));
+      }
+    });
+  }
+
+  function areValuesDefined(values) {
+    return _.all(values, function(val){return !_.isUndefined(val);});
+  }
+
+  /*
+   * If a field is null or empty, initializes it with the necessary locale
+   * placeholder objects
+   */
+  function setupFieldLocales(contentTypeFields, field, fieldId) {
+    if(!_.isObject(field) || _.isEmpty(field)){
+      var newField = {};
+      var fieldType = _.find(contentTypeFields, {id: fieldId});
+      if(fieldType.localized){
+        _.each($scope.spaceContext.space.data.locales, function (locale) {
+          newField[locale.code] = null;
+        });
+      } else {
+        newField[$scope.spaceContext.space.getDefaultLocale().code] = null;
+      }
+      $scope.otDoc.at(['fields', fieldId]).set(newField);
+    }
+  }
 
 }]);

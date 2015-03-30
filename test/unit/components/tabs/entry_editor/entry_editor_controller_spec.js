@@ -6,6 +6,11 @@ describe('Entry Editor Controller', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.removeControllers('PermissionController');
+      $provide.removeController('FormWidgetsController', function () {
+        return {
+          updateWidgets: sinon.stub()
+        };
+      });
     });
     inject(function ($compile, $rootScope, $controller, cfStub){
       scope = $rootScope;
@@ -110,6 +115,49 @@ describe('Entry Editor Controller', function () {
     scope.entry.data.fields = {foo: {'en-US': 'bar'}};
     scope.$broadcast('otBecameEditable');
     sinon.assert.called(scope.validate);
+  });
+
+  // Prevents badly created fields via the API from breaking the editor
+  describe('creates field structure if any fields are null', function() {
+    beforeEach(function() {
+      scope.spaceContext.publishedTypeForEntry = sinon.stub();
+      scope.spaceContext.publishedTypeForEntry.returns({
+        data: {
+          fields: [
+            {id: 'field1'},
+            {id: 'field2'},
+            {id: 'field3', localized: true}
+          ]
+        }
+      });
+      this.atStub = sinon.stub();
+      this.setStub = sinon.stub();
+      this.atStub.returns({
+        set: this.setStub
+      });
+      scope.otDoc = {
+        at: this.atStub
+      };
+      scope.entry.data.fields = {
+        field1: {'en-US': 'field1'},
+        field2: null,
+        field3: null
+      };
+      scope.$digest();
+    });
+
+    it('calls set twice', function() {
+      sinon.assert.calledTwice(this.setStub);
+    });
+
+    it('calls set for field2', function() {
+      sinon.assert.calledWith(this.setStub, {'en-US': null});
+    });
+
+    it('calls set for field3', function() {
+      sinon.assert.calledWith(this.setStub, {'en-US': null, 'de-DE': null});
+    });
+
   });
 
 });
