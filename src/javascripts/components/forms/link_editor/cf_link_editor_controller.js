@@ -2,7 +2,7 @@
 
 angular.module('contentful').controller('LinkEditorController',
   ['$scope', '$injector', 'ngModel', 'linkParams', 'setValidationType',
-    function ($scope, $injector, ngModel, linkParams, setValidationType) {
+    function ($scope, $injector, ngModel, linkParams, setValidation) {
 
   var $parse                = $injector.get('$parse');
   var $controller           = $injector.get('$controller');
@@ -136,8 +136,7 @@ angular.module('contentful').controller('LinkEditorController',
       .where({name: linkParams.validationType})
       .first();
 
-    if(linkTypeValidation)
-      setValidationType(linkTypeValidation);
+    setValidation(linkTypeValidation);
   }
 
   function markMissing(entities) {

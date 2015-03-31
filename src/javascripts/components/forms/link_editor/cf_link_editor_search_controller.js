@@ -217,9 +217,12 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
 
     if ($scope.entityType === 'Asset') {
       contentType = searchQueryHelper.assetContentType;
-      if ($scope.entityMimeTypeGroup)
-        queryObject['mimetype_group'] = $scope.entityMimeTypeGroup;
-        //TODO well, actually when the entityMimeTypeGroup is predefined, we shouldn't allow searching for it
+      if ($scope.entityMimeTypeGroup) {
+        var contentTypes = _.reduce($scope.entityMimeTypeGroup, function (contentTypes, mimetypeGroup) {
+          return contentTypes.concat(mimetype.getTypesForGroup(mimetypeGroup));
+        }, []);
+        queryObject['fields.file.contentType[in]'] = contentTypes.join(',');
+      }
     } else if ($scope.entityType === 'Entry') {
       if (singleContentType($scope.entityContentTypes)) {
         contentType = singleContentType($scope.entityContentTypes);
@@ -232,8 +235,7 @@ angular.module('contentful').controller('cfLinkEditorSearchController', ['$scope
 
     return searchQueryHelper.buildQuery($scope.spaceContext.space, contentType, $scope.searchTerm)
     .then(function (searchQuery) {
-      _.extend(searchQuery, queryObject);
-      return searchQuery;
+      return _.extend(searchQuery, queryObject);
     });
   }
 

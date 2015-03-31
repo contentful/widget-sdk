@@ -272,7 +272,7 @@ describe('LinkEditorController', function () {
     });
   });
 
-  describe('setValidationType', function () {
+  describe('setValidation', function () {
     it('is called with initial validation', function () {
       var validation = {linkContentType: ['ct-id']};
       scope.field.validations.push(validation);
@@ -298,6 +298,16 @@ describe('LinkEditorController', function () {
       scope.$apply();
       sinon.assert.calledWith(stubs.setValidationType,
                               {linkContentType: ['another-ct-id']});
+    });
+
+    it('is called when validation is removed', function () {
+      scope.field.validations = [{ linkContentType: ['ct-id']}];
+      createController();
+
+      scope.field.validations.pop();
+      scope.$apply();
+      var undef;
+      sinon.assert.calledWith(stubs.setValidationType, undef);
     });
   });
 
