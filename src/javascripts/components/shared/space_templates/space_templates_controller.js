@@ -26,7 +26,6 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   $scope.dialogViewIs = dialogViewIs;
   $scope.showSpaceCreation = showSpaceCreation;
   $scope.selectTemplate = selectTemplate;
-  $scope.selectBlankTemplate = selectBlankTemplate;
   $scope.dismissDialog = dismissDialog;
   $scope.loadSelectedTemplate = loadSelectedTemplate;
   $scope.queueItemClass = queueItemClass;
@@ -34,11 +33,6 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
 
   function dialogViewIs(expectedView) {
     return expectedView === dialogView;
-  }
-
-  function selectBlankTemplate() {
-    selectTemplate({name: 'Blank'});
-    showSpaceCreation();
   }
 
   function selectTemplate(template) {
@@ -69,7 +63,7 @@ angular.module('contentful').controller('SpaceTemplatesController', ['$injector'
   function loadSelectedTemplate() {
     showLoadingState();
     sendTemplateSelectedAnalyticsEvent($scope.selectedTemplate.name);
-    if($scope.selectedTemplate.name === 'Blank'){
+    if($scope.selectedTemplate.blank){
       return dismissDialog();
     }
     $scope.templateCreator = spaceTemplateCreator.getCreator($scope.spaceContext, {

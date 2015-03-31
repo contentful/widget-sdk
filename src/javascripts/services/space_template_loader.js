@@ -16,7 +16,15 @@ angular.module('contentful').factory('spaceTemplateLoader', ['$injector', functi
   return {
     getTemplatesList: function () {
       if(!client) client = getSpaceTemplatesClient();
-      return client.entries({'content_type': contentfulConfig.spaceTemplateEntryContentTypeId});
+      return client.entries({'content_type': contentfulConfig.spaceTemplateEntryContentTypeId})
+             .then(function (entries) {
+               _.each(entries, function (entry) {
+                 entry.fields.order = _.isFinite(entry.fields.order) ? entry.fields.order : 99;
+               });
+               return mergeSort(entries, function (a, b) {
+                 return a.fields.order > b.fields.order;
+               });
+             });
     },
 
     getTemplate: function (templateInfo) {

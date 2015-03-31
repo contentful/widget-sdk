@@ -7,17 +7,13 @@
       .loading(ng-show="dialogViewIs('loading')")
 
       .space-template__list(ng-show="dialogViewIs('spaceTemplateList')")
-        .space-template__item(ng-click="selectBlankTemplate()")
-          .space-template__icon
-            i.fa.fa-plus-circle
-          p.space-template__label Blank
         .space-template__item(
             ng-repeat="template in spaceTemplates"
             ng-click="selectTemplate(template)"
             ng-class="{'space-template--item-selected': template === selectedTemplate}")
           .space-template__icon
             img(ng-src="{{template.icon.fields.file.url}}")
-          p.space-template__label {{template.name}}
+          p.space-template__label {{template.name | truncate:30}}
 
       .space-template__contact(ng-show="isTemplateListVisible()")
         p
