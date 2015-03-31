@@ -35,7 +35,7 @@
 .aux-panel(ng-show="preferences.showAuxPanel")
   header
     h1 Content Type Information
-  .entity-info-panel(cf-entity-info-panel)
+  .entity-info-panel(cf-entity-info-panel="contentType.getSys()")
 
 .tab-main.tab-workbench
   .ng-form.l-form(name="contentTypeForm" submit="publish()")
