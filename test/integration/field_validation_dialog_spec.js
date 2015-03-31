@@ -596,20 +596,22 @@ describe('validation dialog', function() {
       openDialog();
     });
 
-    function settings() {
-      return dialog.domElement.find('[aria-label="Specify allowed file size"]');
+    function settings(locator) {
+      return dialog.domElement
+      .find('[aria-label="Specify allowed file size"]')
+      .find(locator);
     }
 
     it('can be set', function() {
-      settings()
-      .find('[aria-label="Enable validation"]')
+      settings('[aria-label="Enable validation"]')
       .click();
 
-      settings().find('[aria-label="Select condition"]').val('min');
-      var minInput = settings().find('[aria-label="Minimum size"]');
+      settings('[aria-label="Select condition"]').val('min');
+
+      var minInput = settings('[aria-label="Minimum size"]');
       minInput.val('2').trigger('input');
 
-      var minScaleInput = settings().find('[aria-label="Select size unit"]');
+      var minScaleInput = settings('[aria-label="Select size unit"]');
       minScaleInput.val('1').trigger('change');
 
       clickSave();
@@ -617,6 +619,26 @@ describe('validation dialog', function() {
 
       expect(scope.field.validations)
       .toEqual([{assetFileSize: {min: 2048, max: null}}]);
+    });
+
+    it('selects "at least" as initial view and changes to between', function () {
+      scope.field.validations = [{assetFileSize: {min: 1}}];
+      openDialog();
+
+      var condition = settings('[aria-label="Select condition"] option:selected').text();
+      expect(condition).toBe('At least');
+
+      settings('[aria-label="Select condition"]')
+      .val('0').trigger('change');
+
+      settings('[aria-label="Maximum size"]')
+      .val('2').trigger('input');
+
+      clickSave();
+      expect(dialog.open).toBe(false);
+
+      expect(scope.field.validations)
+      .toEqual([{assetFileSize: {min: 1, max: 2}}]);
     });
   });
 

@@ -15,6 +15,7 @@ angular.module('contentful').service('validationViews', ['$injector', function($
     {name: 'min',     label: 'At least'},
     {name: 'max',     label: 'Not more than'}
   ];
+
   var views = {
     size: sizeViews,
     assetFileSize: sizeViews,
@@ -55,12 +56,12 @@ angular.module('contentful').service('validationViews', ['$injector', function($
 
 
   /**
-   * Remove validation settings that are not editable in the
-   * view.
+   * Adapt `validation.settings` to the validation's current view.
    */
   function updateSettings(validation) {
     var viewName = validation.currentView;
-    if (validation.type == 'size' || validation.type == 'range') {
+    var type = validation.type;
+    if (type == 'size' || type == 'range' || type == 'assetFileSize') {
       if (viewName == 'min')
         delete validation.settings.max;
       if (viewName == 'max')
@@ -83,7 +84,7 @@ angular.module('contentful').service('validationViews', ['$injector', function($
   function getInitialView(validation) {
     var type = validation.type;
     var settings = validation.settings;
-    if (type == 'size' || type == 'range') {
+    if (type == 'size' || type == 'range' || type === 'assetFileSize') {
       var hasMin = typeof settings.min == 'number';
       var hasMax = typeof settings.max == 'number';
       if (hasMin && hasMax)
