@@ -32,9 +32,30 @@ describe('Space Template loading service', function () {
     $log.assertEmpty();
   }));
 
-  it('gets template list from contentful', function() {
-    this.spaceTemplateLoader.getTemplatesList();
-    sinon.assert.called(this.client.entries);
+  describe('gets template list from contentful', function() {
+    beforeEach(function() {
+      var self = this;
+      this.client.entries.returns(this.$q.when([
+        {fields: {id: 3}},
+        {fields: {id: 2, order: 1}},
+        {fields: {id: 1, order: 0}}
+      ]));
+      this.spaceTemplateLoader.getTemplatesList()
+      .then(function (entries) {
+        self.returnedEntries = entries;
+      });
+      this.$rootScope.$digest();
+    });
+
+    it('gets entries from client library', function() {
+      sinon.assert.called(this.client.entries);
+    });
+
+    it('sorts entries by order field', function() {
+      expect(this.returnedEntries[0].fields.id).toBe(1);
+      expect(this.returnedEntries[1].fields.id).toBe(2);
+      expect(this.returnedEntries[2].fields.id).toBe(3);
+    });
   });
 
   describe('gets a template from contentful', function() {

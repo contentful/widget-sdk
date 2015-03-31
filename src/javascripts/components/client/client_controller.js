@@ -455,7 +455,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
         analytics.track('Created Successful Space Template');
         $rootScope.$broadcast('templateWasCreated');
         refreshContentTypes()
-        .then(_.partial(newTemplateInfoDialog, template.name));
+        .then(_.partial(newTemplateInfoDialog, template));
       }
     })
     .catch(refreshContentTypes);
@@ -478,9 +478,9 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     }, 1000);
   }
 
-  function newTemplateInfoDialog(templateName) {
+  function newTemplateInfoDialog(template) {
     if(!$.cookies.get('seenSpaceTemplateInfoDialog')){
-      $scope.newContentTemplateName = templateName;
+      $scope.newContentTemplate = template;
       $timeout(function () {
         modalDialog.open({
           template: 'space_templates_post_dialog',

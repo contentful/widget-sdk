@@ -1,6 +1,7 @@
 .space-template__post-dialog-bg
   .space-template__post-dialog(ng-controller="SpaceTemplatesPostController" cf-numbered-tooltips)
-    h2 Your {{newContentTemplateName}} has been created
+    h2(ng-show="!newContentTemplate.blank") Your {{newContentTemplate.name}} has been created
+    h2(ng-show="newContentTemplate.blank") Your blank Space has been created
     p Quick tips for getting started
     ol.space-template__tips-list
       li

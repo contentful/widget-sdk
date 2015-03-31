@@ -43,13 +43,15 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
       })
       // assets
       .then(function () {
-        return $q.all(_.map(template.assets, self.createAsset, self));
+        var assets = setDefaultLocale(template.assets, self._getDefaultLocale());
+        return $q.all(_.map(assets, self.createAsset, self));
       })
       .then(_.bind(self.processAssets, self))
       .then(_.bind(self.publishAssets, self))
       // entries
       .then(function () {
-        return $q.all(_.map(template.entries, self.createEntry, self));
+        var entries = setDefaultLocale(template.entries, self._getDefaultLocale());
+        return $q.all(_.map(entries, self.createEntry, self));
       })
       .then(_.bind(self.publishEntries, self))
       // api keys
@@ -277,6 +279,11 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
       return this.spaceContext.space.createDeliveryApiKey(apiKey)
       .then(handlers.success)
       .catch(handlers.error);
+    },
+
+    _getDefaultLocale: function () {
+      var locales = this.spaceContext.space.data.locales;
+      return !_.isEmpty(locales) ? locales[0].code : 'en-US';
     }
   };
 
@@ -286,6 +293,17 @@ angular.module('contentful').factory('spaceTemplateCreator', ['$injector', funct
 
   function getItemId(item) {
     return dotty.get(item, 'sys.id') || item.name;
+  }
+
+  function setDefaultLocale(entities, locale) {
+    return _.map(_.clone(entities), function (entity) {
+      entity.fields = _.mapValues(entity.fields, function (field) {
+        var newField = {};
+        newField[locale] = _.values(field)[0];
+        return newField;
+      });
+      return entity;
+    });
   }
 
   return {
