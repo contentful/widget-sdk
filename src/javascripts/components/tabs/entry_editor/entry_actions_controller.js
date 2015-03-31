@@ -166,6 +166,14 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$q
     }
   };
 
+  /**
+   * TODO This is way to complicated: We should only care about the
+   * errors in `body.details.errors` and expose them to the scope so
+   * that they can be displayed at the proper location and show a
+   * simple notifictation.
+   *
+   * For this to happen the CMA needs to be refactored.
+   */
   function handlePublishErrors(err) {
     var errorId = dotty.get(err, 'body.sys.id');
     if (errorId === 'ValidationFailed') {
@@ -173,7 +181,7 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$q
       notification.warn('Error publishing ' + title() + ': Validation failed');
     } else if (errorId === 'VersionMismatch'){
       notification.warn('Error publishing ' + title() + ': Can only publish most recent version');
-    } else if (errorId === 'InvalidEntry'){
+    } else if (errorId === 'InvalidEntry' || errorId === 'UnresolvedLinks') {
       if (err.body.message === 'Validation error') {
         $scope.setValidationErrors(dotty.get(err, 'body.details.errors'));
         notification.warn('Error publishing ' + title() + ': Validation failed');

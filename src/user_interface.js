@@ -27,6 +27,7 @@ if(window){
 if (angular) {
   require('ng-time-relative');
   angular.module('contentful/user_interface', []).
+    constant('moment', window.moment).
     constant('privateContentfulClient', UserInterface.contentfulClient).
     constant('hostnameTransformer', UserInterface.hostnameTransformer).
     constant('validation', UserInterface.validation).

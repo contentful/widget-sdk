@@ -1,6 +1,10 @@
 'use strict';
 
-angular.module('contentful').controller('ThumbnailController', ['$scope', 'mimetype', function ($scope, mimetype) {
+angular.module('contentful').controller('ThumbnailController',
+                                        ['$scope', '$injector', function ($scope, $injector) {
+
+  var mimetype = $injector.get('mimetype');
+  var assetUrlFilter = $injector.get('assetUrlFilter');
 
   $scope.$watch('file', function (file) {
     if(!file) $scope.imageHasLoaded = false;
@@ -28,10 +32,18 @@ angular.module('contentful').controller('ThumbnailController', ['$scope', 'mimet
   }
 
   function hasPreview() {
-    return !!($scope.file && mimetype.hasPreview({
-      type: $scope.file.contentType,
-      fallbackFileName: $scope.file.fileName
-    }));
+    return !!(
+      $scope.file &&
+      hasImagesDomain() &&
+      mimetype.hasPreview({
+        type: $scope.file.contentType,
+        fallbackFileName: $scope.file.fileName
+      })
+    );
+  }
+
+  function hasImagesDomain() {
+    return /\/\/images/g.test(assetUrlFilter($scope.file.url));
   }
 
   function getIconName() {

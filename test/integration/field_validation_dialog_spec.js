@@ -7,14 +7,30 @@
  * - `cfValidationsettings`
  * - `cfValidationValues`
  * - `cfValidationLinkType`
+ * - `cfValidationDateSelect`
  *
  * Stubs the scope's `field`, `index`, and `otDoc`.
  */
 describe('validation dialog', function() {
   var openDialog, dialog, scope;
 
-  function validationsDoc(scope) {
-    return scope.otDoc.at(['fields', scope.index, 'validations']);
+  function validationsDoc(scope, path) {
+    return scope.otDoc.at(['fields', scope.index, 'validations'].concat(path || []));
+  }
+
+  function getOtDocField(scope, path) {
+    if (_.isString(path))
+      path = path.split('.');
+    var basePath = ['fields', scope.index];
+    return scope.otDoc.at(basePath.concat(path)).get();
+  }
+
+  function getFieldProperty(scope, path) {
+    return dotty.get(scope, ['field', path].join('.'));
+  }
+
+  function setFieldProperty(scope, path, value) {
+    return dotty.put(scope, ['field', path].join('.'), value);
   }
 
   /**
@@ -88,10 +104,29 @@ describe('validation dialog', function() {
   }
 
 
-  describe('length validation', function() {
+  describe('text length validation', function() {
+    beforeEach(function() {
+      scope.field.type = 'Text';
+      openDialog();
+    });
+
+    describeLengthValidation('validations');
+  });
+
+  describe('multiple symbols length validation', function() {
+    beforeEach(function() {
+      scope.field.type = 'Array';
+      scope.field.items = {type: 'Symbol'};
+      openDialog();
+    });
+
+    describeLengthValidation('items.validations');
+  });
+
+  function describeLengthValidation(validationPath) {
 
     function settings() {
-      return dialog.domElement.find('[aria-label="Length"]');
+      return dialog.domElement.find('[aria-label="Enforce input length"]');
     }
 
     it('can be enabled and set', function() {
@@ -110,14 +145,14 @@ describe('validation dialog', function() {
       clickSave();
       expect(dialog.open).toBe(false);
 
-      expect(scope.field.validations)
+      expect(getFieldProperty(scope, validationPath))
       .toEqual([{size: {min: 10, max: 20}}]);
-      expect(validationsDoc(scope).get())
+      expect(getOtDocField(scope, validationPath))
       .toEqual([{size: {min: 10, max: 20}}]);
     });
 
     it('existing validation is shown and can be disabled', function() {
-      scope.field.validations = [{size: {min: 10, max: 20}}];
+      setFieldProperty(scope, validationPath, [{size: {min: 10, max: 20}}]);
       openDialog();
 
       var minInput = settings().find('[aria-label="Minimum size"]');
@@ -129,12 +164,12 @@ describe('validation dialog', function() {
       .find('[aria-label="Disable validation"]')
       .click();
       clickSave();
-      expect(scope.field.validations).toEqual([]);
-      expect(validationsDoc(scope).get()).toEqual([]);
+      expect(getFieldProperty(scope, validationPath)).toEqual([]);
+      expect(getOtDocField(scope, validationPath)).toEqual([]);
     });
 
     it('shows errors when opened', function() {
-      scope.field.validations = [{size: {min: null, max: null}}];
+      setFieldProperty(scope, validationPath, [{size: {min: null, max: null}}]);
       openDialog();
 
       clickSave();
@@ -142,11 +177,11 @@ describe('validation dialog', function() {
 
       var errors = settings()
       .find('[aria-label="Errors"] li');
-      expect(errors.text()).toEqual('Expected min and/or max boundaries');
+      expect(errors.text()).toEqual('Please provide a positive integer');
     });
 
     it('does not save invalid validations', function() {
-      scope.field.validations = [{size: {min: 10, max: null}}];
+      setFieldProperty(scope, validationPath, [{size: {min: 10, max: null}}]);
       openDialog();
 
       settings()
@@ -159,21 +194,48 @@ describe('validation dialog', function() {
 
       var errors = settings()
       .find('[aria-label="Errors"] li');
-      expect(errors.text()).toEqual('Expected min and/or max boundaries');
+      expect(errors.text()).toEqual('Please provide a positive integer');
     });
 
-  });
+    it('selects the correct initial view', function() {
+      setFieldProperty(scope, validationPath, [{size: {min: 10, max: null}}]);
+      openDialog();
+
+      var selectedView = settings()
+      .find('select[aria-label="Select condition"]')
+      .find('option:selected').text();
+      expect(selectedView).toEqual('At least');
+    });
+
+    it('changes custom error message', function() {
+      setFieldProperty(scope, validationPath, [{
+        size: {min: 10, max: null},
+        message: 'my custom error message'
+      }]);
+      openDialog();
+
+      var errorMessage = settings()
+      .find('input[aria-label="Custom error message"]');
+      expect(errorMessage.val()).toEqual('my custom error message');
+
+      errorMessage.val('a new error message').trigger('input');
+      clickSave();
+      expect(getFieldProperty(scope, validationPath)).toEqual([{
+        size: {min: 10},
+        message: 'a new error message'
+      }]);
+    });
+
+  }
 
   describe('range validation', function() {
-    // TODO Number validation with decimals
-
     beforeEach(function() {
-      scope.field.type = 'Integer';
+      scope.field.type = 'Number';
       openDialog();
     });
 
     function settings() {
-      return dialog.domElement.find('[aria-label="Numerical Range"]');
+      return dialog.domElement.find('[aria-label="Specify allowed number range"]');
     }
 
     it('can be enabled and set', function() {
@@ -185,16 +247,16 @@ describe('validation dialog', function() {
       .click();
 
       var minValue = settings().find('[aria-label="Minimum value"]');
-      minValue.val('-1').trigger('input');
+      minValue.val('-0.1').trigger('input');
       var maxValue = settings().find('[aria-label="Maximum value"]');
-      maxValue.val('2').trigger('input');
+      maxValue.val('0.1').trigger('input');
 
       clickSave();
 
       expect(scope.field.validations)
-      .toEqual([{range: {min: -1, max: 2}}]);
+      .toEqual([{range: {min: -0.1, max: 0.1}}]);
       expect(validationsDoc(scope).get())
-      .toEqual([{range: {min: -1, max: 2}}]);
+      .toEqual([{range: {min: -0.1, max: 0.1}}]);
     });
 
     it('it can be disabled', function() {
@@ -218,18 +280,24 @@ describe('validation dialog', function() {
   });
 
   describe('regexp validation', function() {
+    function settings() {
+      return dialog.domElement.find('[aria-label="Match a specific pattern"]');
+    }
 
-    it('can be enabled and set', function() {
-      var settings = dialog.domElement.find('[aria-label="Regular Expression"]');
-      settings
+    function enable() {
+      settings()
       .find('[aria-label="Enable validation"]')
       .click();
+    }
 
-      settings
+    it('can be enabled and set', function() {
+      enable();
+
+      settings()
       .find('[aria-label="Regular Expression pattern"]')
       .val('foo|bar').trigger('input');
 
-      settings
+      settings()
       .find('[aria-label="Regular Expression flags"]')
       .val('i').trigger('input');
 
@@ -241,6 +309,50 @@ describe('validation dialog', function() {
       .toEqual([{regexp: {pattern: 'foo|bar', flags: 'i'}}]);
     });
 
+    it('shows error for invalid flags', function () {
+      enable();
+
+      settings()
+      .find('[aria-label="Regular Expression pattern"]')
+      .val('foo|bar').trigger('input');
+
+      settings()
+      .find('[aria-label="Regular Expression flags"]')
+      .val('x').trigger('input');
+
+      clickSave();
+
+      var errors = settings().find('[aria-label="Errors"]').text();
+      expect(errors).toEqual('Please provide a valid regular expression with valid flags');
+    });
+
+    it('can select predefined patterns');
+
+    it('selects the correct initial view');
+
+    it('changes view to "custom" on change', function() {
+      scope.field.validation = {regexp: {pattern: ''}};
+      openDialog();
+      settings()
+      .find('select[aria-label="Select pattern"]')
+      .val('1');
+
+      var selected = settings()
+      .find('select[aria-label="Select pattern"] option:selected')
+      .text();
+      expect(selected).not.toEqual('Custom');
+
+      settings()
+      .find('[aria-label="Regular Expression pattern"]')
+      .val('foo|bar').trigger('input');
+      scope.$digest();
+
+      selected = settings()
+      .find('select[aria-label="Select pattern"]')
+      .controller('ngModel')
+      .$viewValue;
+      expect(selected).toEqual('custom');
+    });
   });
 
 
@@ -347,7 +459,7 @@ describe('validation dialog', function() {
 
   describe('content type validation', function() {
     function settings() {
-      return dialog.domElement.find('[aria-label="Content Type"]');
+      return dialog.domElement.find('[aria-label="Specify allowed entry type"]');
     }
 
     beforeEach(function() {
@@ -397,7 +509,7 @@ describe('validation dialog', function() {
 
   describe('asset type validation', function() {
     function settings() {
-      return dialog.domElement.find('[aria-label="File Type"]');
+      return dialog.domElement.find('[aria-label="Specify allowed file types"]');
     }
 
     beforeEach(function() {
@@ -411,26 +523,163 @@ describe('validation dialog', function() {
       .find('[aria-label="Enable validation"]')
       .click();
 
-      var selected = settings()
-      .find('option:selected');
-      expect(selected.text()).toEqual('');
+      settings()
+      .find('label:contains("Image") input')
+      .click();
 
       settings()
-      .find('select')
-      .val('image')
-      .trigger('change');
+      .find('label:contains("Code") input')
+      .click();
 
       clickSave();
-      expect(scope.field.validations).toEqual([{linkMimetypeGroup: 'image'}]);
-      expect(validationsDoc(scope).get()).toEqual([{linkMimetypeGroup: 'image'}]);
+      expect(scope.field.validations).toEqual([{linkMimetypeGroup: ['image', 'code']}]);
+      expect(validationsDoc(scope).get()).toEqual([{linkMimetypeGroup: ['image', 'code']}]);
     });
 
     it('shows previously selected type', function() {
       scope.field.validations = [{linkMimetypeGroup: 'markup'}];
       openDialog();
       var selected = settings()
-      .find('option:selected');
-      expect(selected.text()).toEqual('Markup');
+      .find('label:contains("Markup") input');
+      expect(selected.is(':checked')).toBe(true);
+    });
+
+    it('shows error if no type slected', function() {
+      scope.field.validations = [{linkMimetypeGroup: 'markup'}];
+      openDialog();
+      settings()
+      .find('label:contains("Markup") input')
+      .click();
+
+      clickSave();
+      var errors = settings()
+      .find('[aria-label="Errors"] li');
+      expect(errors.length).toEqual(1);
+    });
+  });
+
+  describe('array length validation', function() {
+    beforeEach(function() {
+      scope.otEditable = true;
+      scope.field = {type: 'Array', items: {type: 'Symbol'}};
+      openDialog();
+    });
+
+    function settings() {
+      return dialog.domElement.find('[aria-label="Specify number of Symbols"]');
+    }
+
+    it('can be set', function() {
+      settings()
+      .find('[aria-label="Enable validation"]')
+      .click();
+
+      var minInput = settings().find('[aria-label="Minimum size"]');
+      minInput.val('10').trigger('input');
+      var maxInput = settings().find('[aria-label="Maximum size"]');
+      maxInput.val('20').trigger('input');
+
+      clickSave();
+      expect(dialog.open).toBe(false);
+
+      expect(scope.field.validations)
+      .toEqual([{size: {min: 10, max: 20}}]);
+      expect(validationsDoc(scope).get())
+      .toEqual([{size: {min: 10, max: 20}}]);
+    });
+
+  });
+
+  describe('file size validation', function() {
+    beforeEach(function() {
+      scope.field = {type: 'Link', linkType: 'Asset'};
+      openDialog();
+    });
+
+    function settings(locator) {
+      return dialog.domElement
+      .find('[aria-label="Specify allowed file size"]')
+      .find(locator);
+    }
+
+    it('can be set', function() {
+      settings('[aria-label="Enable validation"]')
+      .click();
+
+      settings('[aria-label="Select condition"]').val('min');
+
+      var minInput = settings('[aria-label="Minimum size"]');
+      minInput.val('2').trigger('input');
+
+      var minScaleInput = settings('[aria-label="Select size unit"]');
+      minScaleInput.val('1').trigger('change');
+
+      clickSave();
+      expect(dialog.open).toBe(false);
+
+      expect(scope.field.validations)
+      .toEqual([{assetFileSize: {min: 2048, max: null}}]);
+    });
+
+    it('selects "at least" as initial view and changes to between', function () {
+      scope.field.validations = [{assetFileSize: {min: 1}}];
+      openDialog();
+
+      var condition = settings('[aria-label="Select condition"] option:selected').text();
+      expect(condition).toBe('At least');
+
+      settings('[aria-label="Select condition"]')
+      .val('0').trigger('change');
+
+      settings('[aria-label="Maximum size"]')
+      .val('2').trigger('input');
+
+      clickSave();
+      expect(dialog.open).toBe(false);
+
+      expect(scope.field.validations)
+      .toEqual([{assetFileSize: {min: 1, max: 2}}]);
+    });
+  });
+
+  describe('image dimension validations', function () {
+    beforeEach(function() {
+      scope.field = {type: 'Link', linkType: 'Asset'};
+      openDialog();
+    });
+
+    function settings(selector) {
+      return dialog.domElement
+      .find('[aria-label="Specify image dimensions"]')
+      .find(selector);
+    }
+
+    it('can set width minimum and exact height', function () {
+      settings('[aria-label="Enable validation"]')
+      .click();
+
+      settings('input[aria-label="Enable image width validation"]')
+      .click();
+
+      settings('[aria-label="Minimum image width"]')
+      .val('100').trigger('input');
+
+      settings('input[aria-label="Enable image height validation"]')
+      .click();
+
+      settings('select[aria-label="Select image height condition"]')
+      .val('exact').trigger('change');
+
+      settings('input[aria-label="Exact image height"]')
+      .val('200').trigger('input');
+
+      clickSave();
+
+      expect(scope.field.validations)
+      .toEqual([{assetImageDimensions: {
+        width: {min: 100, max: null},
+        height: {min: 200, max: 200},
+      }}]);
     });
   });
 });

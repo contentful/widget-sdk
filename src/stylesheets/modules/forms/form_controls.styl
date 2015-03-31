@@ -24,6 +24,10 @@ p
   textarea(class="form-control")
 p
   textarea(class="form-control" disabled) content
+p
+  .form-control.form-control--with-unit
+    input(type="text")
+    span.form-control__unit px
 
 Styleguide 5.1
 */
@@ -54,6 +58,22 @@ Styleguide 5.1
 .form-control[readonly]
   color: $metallic-gray-dark
 
+.form-control--with-unit
+  line-height: 2.4em;
+  padding: 0;
+  display: inline-flex;
+  > input
+    margin: 0;
+    padding: 0 0 0 0.5em;
+    border: 0
+
+.form-control__unit
+  display: inline-block
+  align-self: baseline;
+  background-color: $gray-lighter
+  padding: 0 0.5em;
+  border-left: 1px solid $metallic-gray
+
 textarea.form-control
   resize: vertical
   max-height: $textarea-max-height
@@ -71,5 +91,3 @@ input[type="checkbox"].form-control
 
 .with-copy-paste-button
   padding-right: 30px
-
-

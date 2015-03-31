@@ -1,5 +1,27 @@
 'use strict';
 
+/**
+ * Scopes a part of an ot component to a path within the ot document
+ *
+ * Usage:
+ * <entity-editor ot-doc-for="entity">
+ *   <part-editor ot-path="['foo', 'bar', 'baz']" ot-path-types="['Array', 'Object', 'String']">
+ *
+ * The otPath attribute is evaluated against the scope and can contain variables or other expressions.
+ * The otPathTypes attribute is used to inform about the type of each step in the path. This information is used by ShareJS.mkPath
+ *
+ * This directive puts the following properties on the scope:
+ * - otPath: The evalualted otPath attribute
+ * - otPathTypes: The evaluated otPathTypes attribute
+ * - otGetValue(): Returns the value at the path in the document or undefined if the path is not found
+ * - otChangeValue(value): Updates the value at the path to the new value. Returns a promise
+ * - otChangeString(value): Update the string at the path to a new string.
+ *   Calculates the string difference using the algorithm from the ShareJS text binding to generate a insert and/or delete operation.
+ *   Returns a promise.
+ *
+ * Broadcasts the following events:
+ * - otValueChanged(path, newValue), broadcast: Whenever the value at this path changes
+ */
 angular.module('contentful').directive('otPath', ['ShareJS', 'cfSpinner', '$q', function(ShareJS, cfSpinner, $q) {
 
   return {

@@ -33,13 +33,20 @@ angular.module('contentful').controller('EntryLinkEditorController', [
   return controller;
 
   function setValidationType(linkTypeValidation) {
+    if (!linkTypeValidation) {
+      $scope.linkContentTypes = null;
+      return;
+    }
+
     $scope.linkContentTypes = _(linkTypeValidation.contentTypeId)
       .map(function (id) { return $scope.spaceContext.getPublishedContentType(id); })
       .compact()
       .value();
+
     // TODO This means the validation contains unpublished content  types.
     // It should never happen but I don't know how to deal with it here
-    if ($scope.linkContentTypes.length === 0) $scope.linkContentTypes = null;
+    if ($scope.linkContentTypes.length === 0)
+      $scope.linkContentTypes = null;
   }
 
   function linkTitle(entity) {

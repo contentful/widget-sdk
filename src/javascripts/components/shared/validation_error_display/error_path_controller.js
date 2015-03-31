@@ -1,15 +1,21 @@
 'use strict';
 
 angular.module('contentful')
-.controller('ErrorPathController', ['$scope', '$attrs', 'mimetype',
-function ErrorPathController($scope, $attrs, mimetype) {
+.controller('ErrorPathController', ['$scope', '$attrs', '$injector',
+function ErrorPathController($scope, $attrs, $injector) {
+  var moment = $injector.get('moment');
+  var joinAnd = $injector.get('stringUtils').joinAnd;
+  var mimetypeGroupNames = $injector.get('mimetype').getGroupNames();
   var controller = this;
+
   controller.messages = [];
 
   var messages = {
     linkMimetypeGroup: function (error) {
-      var mimetypeGroupName = mimetype.getGroupNames()[error.mimetypeGroupName];
-      return 'Linked Asset file type must be ' + mimetypeGroupName + '.';
+      var labels = _.map(error.mimetypeGroupName, function (name) {
+        return '“' + mimetypeGroupNames[name] + '”';
+      });
+      return '' + joinAnd(labels) + ' are the only acceptable file types';
     },
 
     linkContentType: function(error, _, spaceContext) {
@@ -21,28 +27,47 @@ function ErrorPathController($scope, $attrs, mimetype) {
     },
 
     size: function (error, validatedData) {
-      var entityType = getEntityType(validatedData);
+      var min = error.min;
+      var max = error.max;
       var data = dotty.get(validatedData, error.path);
-      var type = _.isString(data) ? 'Length' : 'Size';
-      if (entityType === 'ContentType' && error.path[0] === 'fields')
-        type = 'Number of fields';
+      if (_.isString(data))
+        return stringLengthMessage(min, max);
 
-      if (_.isNumber(error.min) && _.isNumber(error.max)) {
-        return type + ' must be between ' + error.min + ' and ' + error.max + '.';
-      } else if(_.isNumber(error.min)) {
-        return type + ' must be at least ' + error.min + '.';
+      var entityType = getEntityType(validatedData);
+      var itemsName = ' items';
+      if (entityType === 'ContentType' && error.path[0] === 'fields')
+        itemsName = ' fields';
+
+      if (_.isNumber(min) && _.isNumber(max)) {
+        return 'Please provide between ' + min + ' and ' + max + itemsName;
+      } else if(_.isNumber(min)) {
+        return 'Please provide at least ' + min + itemsName;
       } else {
-        return type + ' must be at most ' + error.max + '.';
+        return 'Please provide at most ' + max + itemsName;
       }
     },
 
     range: function (error) {
       if (_.isNumber(error.min) && _.isNumber(error.max)) {
-        return 'Must be between ' + error.min + ' and ' + error.max + '.';
+        return 'Please enter a number between ' + error.min + ' and ' + error.max;
       } else if(_.isNumber(error.min)) {
-        return 'Must be at least ' + error.min + '.';
+        return 'Please enter a number no less than ' + error.min;
       } else {
-        return 'Must be at most ' + error.max + '.';
+        return 'Please enter a number no greater than ' + error.max;
+      }
+    },
+
+    dateRange: function (error) {
+      var dateFormat = 'lll';
+      var min = error.min && moment(error.min).format(dateFormat);
+      var max = error.max && moment(error.max).format(dateFormat);
+
+      if (min && max ) {
+        return 'Please set a date between ' + min + ' and ' +  max;
+      } else if (min) {
+        return 'Please set a time no earlier than ' + min;
+      } else {
+        return 'Please set a time no later than ' + max;
       }
     },
 
@@ -50,7 +75,7 @@ function ErrorPathController($scope, $attrs, mimetype) {
       if (error.path[1] === 'file' && error.path[3] === 'url') {
         return 'Has an invalid url';
       } else {
-        return 'Has an invalid format.';
+        return 'Input does not match the expected format. Please edit and try again.';
       }
     },
 
@@ -82,6 +107,11 @@ function ErrorPathController($scope, $attrs, mimetype) {
       return 'Field ID must be unique';
     },
 
+    notResolvable: function (error, validatedData) {
+      var type = dotty.get(validatedData, error.path.concat('sys', 'linkType'));
+      return 'Linked ' + type + ' does not exist';
+    },
+
     unknown: function (error) {
       if (error.path.length == 3 && error.path[0] == 'fields') {
         return 'This field is not localized and should not contain a value.';
@@ -93,12 +123,33 @@ function ErrorPathController($scope, $attrs, mimetype) {
     }
   };
 
+  function stringLengthMessage (min, max) {
+    if (_.isNumber(min) && _.isNumber(max)) {
+      return 'Please edit the text so it\'s between ' + min + ' and ' + max + ' characters long';
+    } else if(_.isNumber(min)) {
+      return 'Please expand the text so it\'s no shorter than ' + min + ' characters';
+    } else {
+      return 'Please shorten the text so it\'s no longer than ' + max + ' characters';
+    }
+  }
+
   function defaultMessage(error) {
-    return 'Error: ' + error.name;
+    if (error.details)
+      return error.details;
+    else
+      return 'Error: ' + error.name;
+  }
+
+  function customMessage(error) {
+    return error.customMessage;
   }
 
   function getErrorMessage(error, validatedData, spaceContext) {
-    var getMessage = messages[error.name] || defaultMessage;
+    var getMessage;
+    if (error.customMessage)
+      getMessage = customMessage;
+    else
+      getMessage = messages[error.name] || defaultMessage;
     return getMessage(error, validatedData, spaceContext);
   }
 
@@ -135,4 +186,5 @@ function ErrorPathController($scope, $attrs, mimetype) {
     unwatchValidationErrors();
     unwatchValidationErrors = null;
   });
+
 }]);

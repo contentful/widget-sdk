@@ -270,7 +270,45 @@ describe('LinkEditorController', function () {
         expect(scope.linkedEntities[1].isMissing).toBeTruthy();
       });
     });
+  });
 
+  describe('setValidation', function () {
+    it('is called with initial validation', function () {
+      var validation = {linkContentType: ['ct-id']};
+      scope.field.validations.push(validation);
+      createController();
+      sinon.assert.calledWith(stubs.setValidationType, validation);
+    });
+
+    it('is called with initial item validation', function () {
+      var validation = {linkContentType: ['ct-id']};
+      scope.field.type = 'Array';
+      scope.field.items = {validations: [validation]};
+      createController();
+      sinon.assert.calledWith(stubs.setValidationType, validation);
+    });
+
+    it('is called when validation changes', function () {
+      scope.field.validations = [{ linkContentType: ['ct-id']}];
+      createController();
+      sinon.assert.calledWith(stubs.setValidationType,
+                              {linkContentType: ['ct-id']});
+
+      scope.field.validations[0] = {linkContentType: ['another-ct-id']};
+      scope.$apply();
+      sinon.assert.calledWith(stubs.setValidationType,
+                              {linkContentType: ['another-ct-id']});
+    });
+
+    it('is called when validation is removed', function () {
+      scope.field.validations = [{ linkContentType: ['ct-id']}];
+      createController();
+
+      scope.field.validations.pop();
+      scope.$apply();
+      var undef;
+      sinon.assert.calledWith(stubs.setValidationType, undef);
+    });
   });
 
 });

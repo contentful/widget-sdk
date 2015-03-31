@@ -18,12 +18,12 @@ describe('ErrorPathController', function () {
     });
   }));
 
-  describe('data-dependent message generation', function () {
+  describe('"size" error message', function () {
     beforeEach(function () {
       attrs.cfErrorPath = '["foo", "bar"]';
       scope.entity = {
         foo: {
-          bar: 'asdasd'
+          bar: null
         }
       };
       scope.validationResult.data = scope.entity;
@@ -34,16 +34,18 @@ describe('ErrorPathController', function () {
       });
     });
 
-    it('should say "Length" for strings', function () {
+    it('shows error for string data', function () {
       scope.entity.foo.bar = 'asdasd';
       scope.$apply();
-      expect(controller.messages[0]).toBe('Length must be at least 10.');
+      expect(controller.messages[0])
+      .toBe('Please expand the text so it\'s no shorter than 10 characters');
     });
 
-    it('should say "Size" for strings', function () {
+    it('shows error for array data', function () {
       scope.entity.foo.bar = [1,2,3];
       scope.$apply();
-      expect(controller.messages[0]).toBe('Size must be at least 10.');
+      expect(controller.messages[0])
+      .toBe('Please provide at least 10 items');
     });
   });
 
@@ -58,24 +60,57 @@ describe('ErrorPathController', function () {
       scope.validationResult.data = scope.entity;
     });
 
-    it('should show regular errors', function () {
+    it('builds size error message', function () {
       scope.validationResult.errors.push({
         name: 'size',
         path: ['foo', 'bars'],
         min: 10
       });
       scope.$apply();
-      expect(controller.messages[0]).toBe('Size must be at least 10.');
+      expect(controller.messages)
+      .toEqual(['Please provide at least 10 items']);
     });
 
-    it('should show sub-errors', function () {
+    it('shows custom error message', function () {
+      scope.validationResult.errors.push({
+        name: 'size',
+        path: ['foo', 'bars'],
+        customMessage: 'CUSTOM MESSAGE',
+        min: 10
+      });
+      scope.$apply();
+      expect(controller.messages).toEqual(['CUSTOM MESSAGE']);
+    });
+
+    it('falls back to "details" property', function () {
+      scope.validationResult.errors.push({
+        name: 'this is an unknown validation',
+        path: ['foo', 'bars'],
+        details: 'DETAILS'
+      });
+      scope.$apply();
+      expect(controller.messages).toEqual(['DETAILS']);
+    });
+
+    it('falls back to error name property', function () {
+      scope.validationResult.errors.push({
+        name: 'this is an unknown validation',
+        path: ['foo', 'bars'],
+      });
+      scope.$apply();
+      expect(controller.messages)
+      .toEqual(['Error: this is an unknown validation']);
+    });
+
+    it('shows errors in sub-path', function () {
       scope.validationResult.errors.push({
         name: 'size',
         path: ['foo', 'bars', 1],
         min: 10
       });
       scope.$apply();
-      expect(controller.messages[0]).toBe('Length must be at least 10.');
+      expect(controller.messages)
+      .toEqual(['Please expand the text so it\'s no shorter than 10 characters']);
     });
   });
 });

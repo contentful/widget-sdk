@@ -380,10 +380,11 @@ describe('cfLinkEditorSearch Controller', function () {
     it('for mimetype group', function() {
       getterMethod = 'getAssets';
       attrs.entityType = 'Asset';
-      scope.linkMimetypeGroup = 'files';
+      scope.linkMimetypeGroup = ['attachment', 'pdfdocument'];
       scope.$apply();
       performQuery();
-      expect(query['mimetype_group']).toBe('files');
+      expect(query['fields.file.contentType[in]'])
+      .toBe('application/octet-stream,application/pdf');
     });
 
     it('for search term', function() {

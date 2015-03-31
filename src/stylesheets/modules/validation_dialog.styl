@@ -5,6 +5,7 @@
  * - validation-values.jade
  * - validation-settings.jade
  * - validation-link.jade
+ * - validation-date-select.jade
  *
  * Components:
  *
@@ -22,7 +23,10 @@ $validation-indent = 30px
  */
 .validation-dialog .modal-dialog
   width: 800px
-  min-height: 500px;
+  min-height: 500px
+  max-height: 80%
+  overflow-y: auto
+  overflow-x: hidden
   user-select: none
 
 .validation-dialog__title
@@ -83,10 +87,37 @@ cf-validation-setting
   .form-inline-error
     display: block
     font-size: 1em;
-    padding-top: 0.8em;
+    padding-top: $rhythm(0.5)
 
   input[type=number]
     width: 6em
+
+.validation-controls__setting
+  margin-bottom: $rhythm(0.5)
+
+.validation-controls__setting-toggle
+  display: inline-block
+  min-width: 7em
+  > input
+    margin-right: 1em
+
+.validation-controls__view-select
+  display: inline-block
+  margin-right: 1.5em
+  &.select-box > select
+    width: auto;
+    padding-right: 2em
+
+.validation-controls__input-separator
+  margin: 0 1em
+
+.validation-controls__error-message-input
+  margin-top: $rhythm(1);
+  display: block;
+  > input
+    display: inline-block;
+    margin-left: 1.5em;
+    width: 30em;
 
 .validation-controls__select-box
   padding-right: 12px
@@ -95,12 +126,18 @@ cf-validation-setting
     top: 10px
 
 .validation-controls__re-pattern
-  width: 22em
+  $monospace-font()
+  width: 28em
+
+.validation-controls__re-flags-label
+  margin-left: 1.6em;
+  margin-right: 0.8em;
 
 .validation-controls__re-flags
+  $monospace-font()
   width: 4em
 
-.validation-controls__content-types
+.validation-controls__option-list
   $display-flexbox()
   flex-wrap: wrap
   margin: 0
@@ -113,6 +150,21 @@ cf-validation-setting
   input
     margin: 0 0.6em 0 0
 
+.validation-controls__datetime-editor
+  margin-bottom: $rhythm()
+  > label
+    > input[type="checkbox"]
+      margin-right: 0.8em
+    display: inline-block
+    min-width: 8em
+    padding-right: 1em
+
+.validation-controls__unit-select
+  display: inline-block
+  margin-left: 1em;
+  &.select-box > select
+    width: auto;
+    padding-right: 2em
 
 /**
  * @component .validation-values

@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+ * Inside (or on) an otPath component, this directive is used to actually expose an
+ * otSubdoc property on the scope that corresponds to the otPath.
+ */
 angular.module('contentful').directive('otSubdoc', function () {
   return {
     restrict: 'AC',
