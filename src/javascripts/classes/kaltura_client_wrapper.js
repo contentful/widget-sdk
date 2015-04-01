@@ -28,7 +28,12 @@ angular.module('contentful').factory('kalturaClientWrapper', ['$injector', funct
       return this._queryKalturaAPI('baseEntry', 'listAction', [filter, pager]);
     },
 
-    _init: function(){
+    getCategoryId: function () {
+      return this.client.categoryId;
+    },
+
+    init: function(){
+      return this._setupKalturaEnvironment();
     },
 
     _queryKalturaAPI: function(service, action, args) {
@@ -71,7 +76,7 @@ angular.module('contentful').factory('kalturaClientWrapper', ['$injector', funct
       }
     },
 
-    _initKalturaServices: function(partner_id, token) {
+    _initKalturaServices: function(partner_id, token, categoryId) {
         var config              = new $window.KalturaConfiguration(partner_id);
 
         config.serviceUrl = 'https://www.kaltura.com/';
@@ -94,6 +99,7 @@ angular.module('contentful').factory('kalturaClientWrapper', ['$injector', funct
          */
         this.client.callsQueue = [];
         this.client.ks         = token;
+        this.client.categoryId = categoryId;
     },
 
     _setupKalturaEnvironment: function() {
@@ -104,8 +110,9 @@ angular.module('contentful').factory('kalturaClientWrapper', ['$injector', funct
       .then(function(response){
         var kalturaPartnerId    = response.partner_id;
         var kalturaSessionToken = response.session_token;
+        var kalturaCategory     = response.category_id;
 
-        that._initKalturaServices(kalturaPartnerId, kalturaSessionToken);
+        that._initKalturaServices(kalturaPartnerId, kalturaSessionToken, kalturaCategory);
         deferred.resolve();
       })
       .catch(function(){
