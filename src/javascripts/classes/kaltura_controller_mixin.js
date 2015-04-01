@@ -58,10 +58,11 @@ angular.module('contentful').factory('KalturaEditorControllerMixin', ['$injector
   }
 
   function prepareSearch(query) {
-    return new KalturaSearch()
-      .where('nameLike', query)
-      .where('categoriesIdsMatchAnd', kalturaClientWrapper.getCategoryId())
-      .limit(10);
+    var search = new KalturaSearch().where('nameLike', query);
+    var categoryId = kalturaClientWrapper.getCategoryId();
+    if(categoryId)
+      search.where('categoriesIdsMatchAnd', categoryId);
+    return search.limit(10);
   }
 
   function processSearchResults(results) {
