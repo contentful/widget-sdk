@@ -7,7 +7,10 @@ angular.module('contentful').factory('KalturaEditorControllerMixin', ['$injector
     kalturaClientWrapper = $injector.get('kalturaClientWrapper');
     KalturaSearch        = $injector.get('KalturaSearch');
 
-    isReady = true;
+    kalturaClientWrapper.init()
+    .then(function () {
+      isReady = true;
+    });
   });
 
 
@@ -55,7 +58,10 @@ angular.module('contentful').factory('KalturaEditorControllerMixin', ['$injector
   }
 
   function prepareSearch(query) {
-    return new KalturaSearch().where('nameLike', query).limit(10);
+    return new KalturaSearch()
+      .where('nameLike', query)
+      .where('categoriesIdsMatchAnd', kalturaClientWrapper.getCategoryId())
+      .limit(10);
   }
 
   function processSearchResults(results) {
