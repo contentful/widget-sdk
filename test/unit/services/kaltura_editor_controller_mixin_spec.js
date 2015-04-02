@@ -7,7 +7,11 @@ describe('Kaltura Editor Controller Mixin', function() {
   beforeEach(function() {
     module('contentful/test');
     module(function($provide){
-      kalturaClientWrapperMock = jasmine.createSpyObj('kalturaClientWrapperMock', ['entry']);
+      kalturaClientWrapperMock = {
+        init: sinon.stub(),
+        entry: sinon.stub(),
+        getCategoryId: sinon.stub()
+      };
       kalturaSearchMock        = jasmine.createSpy('kalturaSearchMock');
       kalturaLoader            = jasmine.createSpyObj('kalturaLoaderSpy', ['load']);
 
@@ -19,6 +23,7 @@ describe('Kaltura Editor Controller Mixin', function() {
     inject(function($injector, $q){
       kalturaLoaderDeferred = $q.defer();
       kalturaLoader.load.and.returnValue(kalturaLoaderDeferred.promise);
+      kalturaClientWrapperMock.init.returns($q.when());
 
       $rootScope                   = $injector.get('$rootScope');
       KalturaEditorControllerMixin = $injector.get('KalturaEditorControllerMixin');
@@ -106,7 +111,7 @@ describe('Kaltura Editor Controller Mixin', function() {
       });
 
       it('calls #entry method in KalturaClientWrapper', function() {
-        expect(kalturaClientWrapperMock.entry).toHaveBeenCalledWith('entry-1');
+        sinon.assert.calledWith(kalturaClientWrapperMock.entry, 'entry-1');
       });
     });
 
