@@ -29,6 +29,7 @@ var uglify      = require('gulp-uglify');
 var run         = require('gulp-run');
 var path        = require('path');
 var through     = require('through2').obj;
+var ngAnnotate  = require('gulp-ng-annotate');
 
 var pexec = Promise.denodeify(exec);
 var gitRevision;
@@ -467,6 +468,7 @@ gulp.task('rev-app', function () {
   ], {base: 'build'})
     .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(concat('app/application.min.js'))
+    .pipe(ngAnnotate())
     .pipe(uglify())
     .pipe(sourceMaps.write('.', { sourceRoot: '/javascript' }))
     .pipe(writeBuild())

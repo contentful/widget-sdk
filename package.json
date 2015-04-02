@@ -36,6 +36,7 @@
     "gulp-stylus": "^2.0.1",
     "gulp-uglify": "~1.0.2",
     "gulp-util": "~3.0.1",
+    "gulp-ng-annotate": "~0.5.2",
     "is-diacritical-mark": "~1.0.1",
     "json-stringify-safe": "~5.0.0",
     "karma-mocha-reporter": "^1.0.2",
