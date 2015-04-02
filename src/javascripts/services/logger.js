@@ -74,6 +74,15 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
     return data;
   }
 
+  function flattenServerErrors(err) {
+    var flattened = dotty.get(err, 'body') || err;
+    if(flattened.details && flattened.details.reasons) {
+      flattened.reasons = _.clone(flattened.details.reasons);
+      delete flattened.details.reasons;
+    }
+    return flattened;
+  }
+
   return {
     enable: function(){
       bugsnag.enable();
@@ -107,7 +116,7 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
       if (dotty.get(metaData, 'error.statusCode') === 0) {
         this._logCorsWarn(message, metaData);
       } else {
-        this._log('Logged Server Error', 'error', message, metaData);
+        this._log('Logged Server Error', 'error', message, flattenServerErrors(metaData));
       }
     },
 
@@ -115,7 +124,7 @@ angular.module('contentful').factory('logger', ['$injector', function ($injector
       if (dotty.get(metaData, 'error.statusCode') === 0) {
         this._logCorsWarn(message, metaData);
       } else {
-        this._log('Logged Server Warning', 'warning', message, metaData);
+        this._log('Logged Server Warning', 'warning', message, flattenServerErrors(metaData));
       }
     },
 
