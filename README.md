@@ -120,6 +120,10 @@ re-run when you change them.
 To select only a subsect of specs to run, replace their respective
 `describe` or `it` call with `ddescribe` or `iit`.
 
+For the available test reporters see [karma.conf.js#L43](https://github.com/contentful/user_interface/blob/master/karma.conf.js#L43) or `package.json`
+
+If you use the `verbose` reporter you might want to set `set-option -g history-limit 5000` in your `tmux.conf`
+
 ## Environments
 
 The Gulpfile uses then value of the `UI_ENV` environment variable to
