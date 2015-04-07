@@ -15,10 +15,6 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
     entityType: 'asset'
   });
 
-  // Context related stuff
-  $scope.context.closingMessage = 'You have unpublished changes.';
-  $scope.context.closingMessageDisplayType = 'tooltip';
-
   $scope.$watch('spaceContext.assetTitle(asset)', function (title) {
     $scope.context.title = title;
   });

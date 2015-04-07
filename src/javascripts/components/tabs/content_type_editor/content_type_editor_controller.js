@@ -14,7 +14,6 @@ angular.module('contentful').controller('ContentTypeEditorController',
   });
 
   $scope.context.closingMessage             = 'You have unpublished changes.';
-  $scope.context.closingMessageDisplayType  = 'dialog';
   $scope.fieldSchema                        = validation(validation.schemas.ContentType.at(['fields']).items);
   $scope.regulateDisplayField               = regulateDisplayField;
   $scope.updatePublishedContentType         = updatePublishedContentType;
@@ -82,6 +81,7 @@ angular.module('contentful').controller('ContentTypeEditorController',
     if (event.currentScope !== event.targetScope) {
       var scope = event.currentScope;
       if (contentType === scope.contentType) {
+        $scope.context.dirty = false;
         scope.closeState();
       }
     }

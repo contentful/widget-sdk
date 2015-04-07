@@ -117,8 +117,8 @@ angular.module('contentful').config([
         return space.getEntry($stateParams.entryId);
       }
     },
-    controller: function ($scope, $stateParams, entry) {
-      $scope.context = {};
+    controller: function ($state, $scope, $stateParams, entry) {
+      $state.current.data = $scope.context = {};
       $scope.entry = entry;
 
       if (!$scope.$root.contextHistory.length ||
@@ -170,8 +170,8 @@ angular.module('contentful').config([
         return space.getAsset($stateParams.assetId);
       }
     },
-    controller: function ($scope, $stateParams, asset) {
-      $scope.context = {};
+    controller: function ($state, $scope, $stateParams, asset) {
+      $state.current.data = $scope.context = {};
       $scope.asset = asset;
 
       if (!$scope.$root.contextHistory.length ||
@@ -227,8 +227,8 @@ angular.module('contentful').config([
       parent: 'spaces.detail.content_types.list',
       label: '{{contentType.getName()}}'
     },
-    controller: function ($scope) {
-      $scope.context = {};
+    controller: function ($state, $scope) {
+      $state.current.data = $scope.context = {};
     }
   })
   .state('spaces.detail.content_types.detail.editing_interface', {
@@ -246,8 +246,8 @@ angular.module('contentful').config([
         return editingInterfaces.forContentTypeWithId(contentType, 'default');
       }
     },
-    controller: function ($scope, editingInterface) {
-      $scope.context = {};
+    controller: function ($state, $scope, editingInterface) {
+      $state.current.data = $scope.context = {};
       $scope.editingInterface = editingInterface;
     }
   })
@@ -315,8 +315,8 @@ angular.module('contentful').config([
         return space.getDeliveryApiKey($stateParams.apiKeyId);
       }
     },
-    controller: function ($scope, $stateParams, apiKey) {
-      $scope.context = {};
+    controller: function ($state, $scope, $stateParams, apiKey) {
+      $state.current.data = $scope.context = {};
       $scope.apiKey = apiKey;
     }
   })
@@ -362,11 +362,29 @@ angular.module('contentful').config([
     template: ''
   });
 }])
-.run(['$rootScope', '$state', '$stateParams', function ($rootScope, $state, $stateParams) {
+.run(['$rootScope', '$state', '$stateParams', '$injector', function ($rootScope, $state, $stateParams, $injector) {
   $rootScope.$state = $state;
   $rootScope.$stateParams = $stateParams;
   $rootScope.spacesLoaded = false;
   $rootScope.contextHistory = [];
+
+  var modalDialog = $injector.get('modalDialog'),
+      $q = $injector.get('$q'),
+      // Result of confirmation dialog
+      navigationConfirmed = false;
+
+  function confirmNavigation(state) {
+    if (state.data && state.data.dirty && state.data.closingMessage) {
+      return modalDialog.open({
+        title: 'Discard Changes?',
+        confirmLabel: 'Discard',
+        message: state.data.closingMessage,
+        scope: $rootScope
+      }).promise;
+    } else {
+      return $q.when('done');
+    }
+  } 
 
   $rootScope.goToEntityState = function (entity, addToContext) {
     if (entity.getType() === 'Entry') {
@@ -377,26 +395,46 @@ angular.module('contentful').config([
   };
 
   $rootScope.closeState = function () {
-    var currentState = this.$state.$current;
-    this.contextHistory.pop();
-    if (this.contextHistory.length) {
-      this.goToEntityState(this.contextHistory[this.contextHistory.length - 1], true);
-    } else {
-      this.$state.go((currentState.ncyBreadcrumb && currentState.ncyBreadcrumb.parent) || '');
-    }
-  };
-  $rootScope.$on('$stateChangeStart', function (event, toState, toStateParams) {
-    if (!toStateParams.addToContext) {
-      $rootScope.contextHistory.length = 0;
-    }
+    var currentState = this.$state.$current,
+        contextHistory = this.contextHistory;
 
-    switch(toState.name) {
-      case 'spaces.detail':
-        event.preventDefault();
-        $rootScope.$state.go('spaces.detail.entries.list', toStateParams); break;
-      case 'spaces':
-        event.preventDefault();
-        $rootScope.$state.go(''); break;
+    confirmNavigation(currentState).then(function () {
+      contextHistory.pop();
+      if (contextHistory.length) {
+        $rootScope.goToEntityState(contextHistory[contextHistory.length - 1], true);
+      } else {
+        $rootScope.$state.go((currentState.ncyBreadcrumb && currentState.ncyBreadcrumb.parent) || '');
+      }
+    });
+  };
+
+  $rootScope.$on('$stateChangeStart', function (event, toState, toStateParams, fromState) {
+    function preprocessChange() {
+      if (!toStateParams.addToContext) {
+        $rootScope.contextHistory.length = 0;
+      }
+      // Some redirects away from nonexistent pages
+      switch(toState.name) {
+        case 'spaces.detail':
+          event.preventDefault();
+          $rootScope.$state.go('spaces.detail.entries.list', toStateParams); break;
+        case 'spaces':
+          event.preventDefault();
+          $rootScope.$state.go(''); break;
+        default: if (navigationConfirmed) { $rootScope.$state.go(toState.name, toStateParams); }
+      }
+    }
+    // Decide if it is OK to do the transition (unsaved changes etc)
+    if (!navigationConfirmed && fromState.data && fromState.data.dirty && fromState.data.closingMessage) {
+      event.preventDefault();
+      navigationConfirmed = false;
+      confirmNavigation(fromState).then(function () {
+        navigationConfirmed = true;
+        preprocessChange();
+      });
+    } else {
+      navigationConfirmed = false;
+      preprocessChange();
     }
   });
 }]);

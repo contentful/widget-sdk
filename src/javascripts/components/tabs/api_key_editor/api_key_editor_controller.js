@@ -21,7 +21,6 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   });
 
   $scope.context.closingMessage = 'You have unsaved changes.';
-  $scope.context.closingMessageDisplayType = 'dialog';
 
   $scope.environment = environment;
 
@@ -104,6 +103,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     if (event.currentScope !== event.targetScope) {
       var scope = event.currentScope;
       if (apiKey === scope.apiKey) {
+        $scope.context.dirty = false;
         scope.closeState();
       }
     }
@@ -120,6 +120,7 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     $scope.apiKey.save()
     .then(function(){
       $scope.apiKeyForm.$setPristine();
+      $scope.context.dirty = false;
       $scope.$state.go('spaces.detail.api.keys.detail', { apiKeyId: $scope.apiKey.getId() });
       notification.info(t + ' saved successfully');
     })

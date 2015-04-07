@@ -11,9 +11,6 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
     entityType: 'entry'
   });
 
-  // Context related stuff
-  $scope.context.closingMessage = 'You have unpublished changes.';
-  $scope.context.closingMessageDisplayType = 'tooltip';
   $scope.$watch('spaceContext.entryTitle(entry)', function (title) {
     $scope.context.title = title;
   });
