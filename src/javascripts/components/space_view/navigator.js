@@ -408,7 +408,13 @@ angular.module('contentful').config([
     });
   };
 
-  $rootScope.$on('$stateChangeStart', function (event, toState, toStateParams, fromState) {
+  $rootScope.$on('$stateChangeStart', function (event, toState, toStateParams, fromState, fromStateParams) {
+    if (fromState.name === toState.name &&
+        JSON.stringify(_.omit(fromStateParams, 'addToContext')) === JSON.stringify(_.omit(toStateParams, 'addToContext'))) {
+      event.preventDefault();
+      return;
+    }
+
     function preprocessChange() {
       if (!toStateParams.addToContext) {
         $rootScope.contextHistory.length = 0;
