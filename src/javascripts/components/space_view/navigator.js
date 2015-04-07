@@ -334,7 +334,7 @@ angular.module('contentful').config([
       pathSuffix: 'edit'
     },
     ncyBreadcrumb: {
-      label: 'Settings'
+      label: 'Space Settings'
     }
   })
   .state('account', {
@@ -370,6 +370,7 @@ angular.module('contentful').config([
 
   var modalDialog = $injector.get('modalDialog'),
       $q = $injector.get('$q'),
+      $document = $injector.get('$document'),
       // Result of confirmation dialog
       navigationConfirmed = false;
 
@@ -442,5 +443,9 @@ angular.module('contentful').config([
       navigationConfirmed = false;
       preprocessChange();
     }
+  });
+
+  $rootScope.$watch('$state.current.ncyBreadcrumbLabel', function (label) {
+    $document[0].title = label || 'Contentful';
   });
 }]);
