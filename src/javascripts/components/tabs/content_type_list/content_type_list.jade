@@ -66,12 +66,12 @@
 
     .advice(ng-show="visibleContentTypes | isEmpty")
       .advice__frame(ng-show="hasQuery()")
-        i.fa.fa-search.fa-flip-horizontal.giant-icon
-        header.advice-title There are no matches to your search
+        i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
+        header.advice__title There are no matches to your search
       .advice__frame(ng-show="!hasQuery()")
-        i.fa.fa-database.giant-icon
-        header.advice-title You have no Content Types yet.
-        p.advice-description Content Types work like stencils that define which Entries you can create within a specific Space.
+        i.fa.fa-database.advice__giant-icon
+        header.advice__title You have no Content Types yet.
+        p.advice__description Content Types work like stencils that define which Entries you can create within a specific Space.
         button.btn.btn--primary(type="button"
             ng-click="entityCreationController.newContentType('frameButton')"
             ng-hide="permissionController.get('createContentType', 'shouldHide')"

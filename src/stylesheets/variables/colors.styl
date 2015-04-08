@@ -10,7 +10,7 @@ Text and background colors
 Colors used throughout the site
 
 Markup:
-div(class="colors {$modifiers}") hello, text
+div(class="colors {{modifier_class}}") hello, text
 
 colors__gray-lightest         - $gray-lightest \#F5F5F5 rgb(245, 245, 245), used for light rules
 colors__gray-lighter          - $gray-lighter \#EBEBEB rgb(235, 235, 235)
@@ -192,4 +192,61 @@ $secondary-gradient-to = #DEE8FF
 $secondary-shadow = #F7FAFD
 .colors__secondary-shadow
   background-color: $secondary-shadow
+
+/*
+New Colors
+
+Colors used on the redesign
+
+Markup:
+div(class="colors {{modifier_class}}") hello, text
+
+cfnext-colors__ - modifier description
+.colors__cfnext-dark-blue     - $cfnext-dark-blue \#21304A
+.colors__cfnext-blue          - $cfnext-blue \#28A8E9
+.colors__cfnext-light-blue    - $cfnext-light-blue \#A7E2FF
+.colors__cfnext-lightest-blue - $cfnext-lightest-blue \#E8F7FF
+.colors__cfnext-green         - $cfnext-green \#16C98D
+.colors__cfnext-dark-gray     - $cfnext-dark-gray \#2D2F31
+.colors__cfnext-gray          - $cfnext-gray \#A2A9B1
+.colors__cfnext-light-gray    - $cfnext-light-gray \#D6DCE4
+.colors__cfnext-white         - $cfnext-white \#F6F8FA
+
+Styleguide 1.2
+*/
+$cfnext-dark-blue     = #21304A
+.colors__cfnext-dark-blue
+  background-color: $cfnext-dark-blue
+
+$cfnext-blue          = #28A8E9
+.colors__cfnext-blue
+  background-color: $cfnext-blue
+
+$cfnext-light-blue    = #A7E2FF
+.colors__cfnext-light-blue
+  background-color: $cfnext-light-blue
+
+$cfnext-lightest-blue = #E8F7FF
+.colors__cfnext-lightest-blue
+  background-color: $cfnext-lightest-blue
+
+$cfnext-green         = #16C98D
+.colors__cfnext-green
+  background-color: $cfnext-green
+
+$cfnext-dark-gray     = #2D2F31
+.colors__cfnext-dark-gray
+  background-color: $cfnext-dark-gray
+
+$cfnext-gray          = #A2A9B1
+.colors__cfnext-gray
+  background-color: $cfnext-gray
+
+$cfnext-light-gray    = #D6DCE4
+.colors__cfnext-light-gray
+  background-color: $cfnext-light-gray
+
+$cfnext-white         = #F6F8FA
+.colors__cfnext-white
+  background-color: $cfnext-white
 
