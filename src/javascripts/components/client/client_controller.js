@@ -67,6 +67,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.openSupport = openSupport;
   $scope.clickedProfileButton = clickedProfileButton;
   $scope.goToAccount = goToAccount;
+  // FIXME: this method is exposed but shouldn't be. See notes on initClient method.
   $scope.performTokenLookup = performTokenLookup;
   $scope.canCreateSpace = canCreateSpace;
   $scope.canCreateSpaceInAnyOrg = canCreateSpaceInAnyOrg;
@@ -116,7 +117,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       $scope.showCreateSpaceDialog(data.organizationId);
 
     } else if (msg('delete', 'space')) {
-      $scope.performTokenLookup();
+      performTokenLookup();
 
     } else if (data.type === 'flash') {
       showFlashMessage(data);
@@ -131,7 +132,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
       updateToken(data.token);
 
     } else {
-      $scope.performTokenLookup();
+      performTokenLookup();
     }
   }
 
@@ -165,6 +166,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     }
   }
 
+  // FIXME: see notes in initClient method
   function performTokenLookup() {
     return authentication.getTokenLookup()
     .then(function (tokenLookup) {
@@ -290,6 +292,17 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     });
   }
 
+  // FIXME: This method performs a really large chain of actions and it should be refactored
+  // At the moment, the test for this mocks scope.performTokenLookup and doesn't actually test
+  // the outcome of the internal call to authentication.getTokenLookup.
+  // That outcome is being tested separately in the scope.performTokenLookup tests
+  // but that method doesn't need to be exposed.
+  // What should be done is, split the actions performed below into smaller modules that can be
+  // tested in isolation and mocked when testing the app initialization workflow
+  // This is no easy task so I'm leaving these notes here as guidance for when there's time to do this:
+  // - Refactor this method and the methods called by it into smaller modules
+  // - Fix initClient tests
+  // - Fix performLookupTests
   function initClient() {
     $scope.performTokenLookup()
     .then(function () {
