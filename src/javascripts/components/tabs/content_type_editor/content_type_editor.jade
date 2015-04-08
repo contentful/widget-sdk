@@ -98,5 +98,5 @@
     button.btn.btn--primary.publish(
                   ng-disabled="!entityActionsController.canPublish() || (entityActionsController.canPublish() && !contentTypeForm.$dirty && contentType.isPublished())"
                   ng-click="publish()"
-                  tooltip="Make this Content Type available to editors")
-      | {{publishButtonLabel()}}
+                  tooltip="Save changed and make this Content Type available to editors")
+      | Save

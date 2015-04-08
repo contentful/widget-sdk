@@ -110,14 +110,5 @@ angular.module('contentful').
     if(!reason) logger.logServerWarn('Error deactivating Content Type', {error: err });
     notification.warn('Error deactivating ' + title() + ': ' + reason, err);
   }
-
-  $scope.publishButtonLabel = function () {
-    if ($scope.contentType && $scope.contentType.isPublished()) {
-      return 'Update';
-    } else {
-      return 'Activate';
-    }
-  };
-
 }]);
 

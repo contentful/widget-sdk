@@ -311,21 +311,4 @@ describe('ContentType Actions Controller', function () {
 
     });
   });
-
-  describe('getting the publish button label', function() {
-    beforeEach(function() {
-      this.isPublishedStub = sinon.stub(scope.contentType, 'isPublished');
-    });
-
-    it('not published yet', function() {
-      this.isPublishedStub.returns(false);
-      expect(scope.publishButtonLabel()).toBe('Activate');
-    });
-
-    it('already published', function() {
-      this.isPublishedStub.returns(true);
-      expect(scope.publishButtonLabel()).toBe('Update');
-    });
-  });
-
 });
