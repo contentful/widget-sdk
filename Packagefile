@@ -16,10 +16,10 @@ fi
 
 # We will regret this!
 #node_version=$(jq -r '.dist?.nodeVersion? // "v0.10.31"' package.json)
-node_version="v0.10.33"
+node_version="v0.10.38"
 node_tarball="node-${node_version}-linux-x64.tar.gz"
 #node_checksum=$(grep $node_tarball $node_checksum_file)
-node_checksum="4eba69caf7368d7f388700eb02996f85b06f457a  node-v0.10.33-linux-x64.tar.gz"
+node_checksum="4eba69caf7368d7f388700eb02996f85b06f457a  node-${node_version}-linux-x64.tar.gz"
 
 
 PACKAGE_ROOT=$BUILD_ROOT/opt/contentful/$package_name
@@ -30,7 +30,7 @@ sha1sum --strict -c <(echo "$node_checksum")
 tar xz --strip-components=1 -f $node_tarball
 rm $node_tarball
 export PATH="$(pwd)/bin:$PATH"
-npm install -g --prefix $(pwd) npm@~2.4.8
+npm install -g --prefix $(pwd) npm@~2.7.6
 npm install --production
 node_modules/bower/bin/bower install
 
