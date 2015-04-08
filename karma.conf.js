@@ -41,8 +41,8 @@ module.exports = function(config) {
     // available reporters: https://npmjs.org/browse/keyword/karma-reporter
     // installed reporters:
     // - tape (tape output style)
-    // - specjson (outputs to a json file
-    // - verbose (shows a nested list of all tests, time, etc)
+    // - specjson (outputs to a json file)
+    // - mocha (shows a nested list of all tests)
     // - nested (shows a nested list of only the failing tests)
     // - nyan (nyan cat! shows a nested list of only the failing tests)
     // run with --reporters <name>
