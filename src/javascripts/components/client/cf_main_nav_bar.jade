@@ -2,7 +2,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
   ul.nav-bar__list(ng-show="!locationInAccount && spaces.length > 0 && spaceContext.space && !spaceContext.space.isHibernated()")
     li.add-dropdown.nav-bar__list-item(cf-add-dropdown-button space-context="spaceContext"
       ng-hide="permissionController.get('createContentType', 'shouldHide') && permissionController.get('createEntry', 'shouldHide') && permissionController.get('createAsset', 'shouldHide') && permissionController.get('createApiKey', 'shouldHide')")
-    li.nav-bar__list-item(
+    a.nav-bar__list-item(
         ng-class="{section: $state.includes('spaces.detail.content_types') ,\
                   'section-index': $state.$current.name === 'spaces.detail.content_types.list'}"
         ui-sref="spaces.detail.content_types.list"
@@ -13,7 +13,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
         tabindex="0")
       i.fa.fa-database
       span Content Model
-    li.nav-bar__list-item(
+    a.nav-bar__list-item(
       ng-class="{section: $state.includes('spaces.detail.entries') ,\
                   'section-index': $state.$current.name === 'spaces.detail.entries.list'}"
         ng-hide="permissionController.get('readEntry', 'shouldHide')"
@@ -24,7 +24,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
         tabindex="0")
       i.fa.fa-file
       span Entries
-    li.nav-bar__list-item(
+    a.nav-bar__list-item(
       ng-class="{section: $state.includes('spaces.detail.assets') ,\
                   'section-index': $state.$current.name === 'spaces.detail.assets.list'}"
         ui-sref="spaces.detail.assets.list"
@@ -35,7 +35,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
         tabindex="0")
       i.fa.fa-paperclip
       span Assets
-    li.nav-bar__list-item(
+    a.nav-bar__list-item(
       ng-class="{section: $state.includes('spaces.detail.api') ,\
                   'section-index': $state.$current.name === 'spaces.detail.api.home'}"
         ui-sref="spaces.detail.api.home"
@@ -46,7 +46,7 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
         tabindex="0")
       i.fa.fa-random
       span API
-    li.nav-bar__list-item(
+    a.nav-bar__list-item(
         ng-class="{section: $state.includes('spaces.detail.settings') ,\
           'section-index': $state.$current.name === 'spaces.detail.settings.pathSuffix'}"
         ui-sref="spaces.detail.settings.pathSuffix"
