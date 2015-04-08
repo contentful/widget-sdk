@@ -30,7 +30,7 @@ sha1sum --strict -c <(echo "$node_checksum")
 tar xz --strip-components=1 -f $node_tarball
 rm $node_tarball
 export PATH="$(pwd)/bin:$PATH"
-npm install -g --prefix $(pwd) npm@~1.4.28
+npm install -g --prefix $(pwd) npm@~2.4.8
 npm install --production
 node_modules/bower/bin/bower install
 
