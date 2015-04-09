@@ -143,7 +143,7 @@ angular.module('contentful').config([
   })
   .state('spaces.detail.assets.list', {
     url: '',
-    template: '<div cf-asset-list class="entry-list entity-list"></div>',
+    template: '<div cf-asset-list class="asset-list entity-list"></div>',
     ncyBreadcrumb: {
       label: 'Assets'
     }
@@ -196,7 +196,7 @@ angular.module('contentful').config([
   })
   .state('spaces.detail.content_types.list', {
     url: '',
-    template: '<div cf-content-type-list class="entry-list entity-list"></div>',
+    template: '<div cf-content-type-list class="content-type-list entity-list"></div>',
     ncyBreadcrumb: {
       label: 'Content Types'
     },
