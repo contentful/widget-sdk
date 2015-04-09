@@ -4,7 +4,7 @@
     h3 Displayed columns
     .column-lists
       ul.u-list.displayed-fields
-        li.non-customizable(ng-show="!tab.params.view.contentTypeId && !tab.params.view.contentTypeHidden")
+        li.non-customizable(ng-show="!context.view.contentTypeId && !context.view.contentTypeHidden")
           p Content Type
           .close-button(ng-click="toggleContentType($event)")
         li.non-customizable
@@ -21,7 +21,7 @@
 
       h3(ng-hide="hiddenFields.length == 0") Available Columns
       ul.u-list.hidden-fields(ng-hide="hiddenFields.length == 0")
-        li(ng-show="!tab.params.view.contentTypeId && tab.params.view.contentTypeHidden")
+        li(ng-show="!context.view.contentTypeId && context.view.contentTypeHidden")
           a(ng-click="toggleContentType($event)")
             | Content Type
         li(ng-repeat="field in hiddenFields track by field.id")

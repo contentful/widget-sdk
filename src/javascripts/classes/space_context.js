@@ -6,12 +6,10 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
   var $rootScope         = $injector.get('$rootScope');
   var PromisedLoader     = $injector.get('PromisedLoader');
   var ReloadNotification = $injector.get('ReloadNotification');
-  var TabList            = $injector.get('TabList');
   var notification       = $injector.get('notification');
   var logger             = $injector.get('logger');
 
   function SpaceContext(space){
-    this.tabList = new TabList();
     this.space = space;
     this._contentTypeLoader = new PromisedLoader();
     this._publishedContentTypeLoader = new PromisedLoader();
@@ -19,7 +17,6 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
   }
 
   SpaceContext.prototype = {
-      tabList: null,
       space: null,
 
       contentTypes: [],

@@ -22,6 +22,7 @@ describe('Client Controller', function () {
         'gatekeeperErrorHandler',
         'routingSpaceId',
         'setUserData',
+        'stateActivated',
         'setSpace',
         'getRoute',
         'url',
@@ -75,6 +76,7 @@ describe('Client Controller', function () {
         track: stubs.track,
         setSpace: stubs.setSpace,
         setUserData: stubs.setUserData,
+        stateActivated: stubs.stateActivated
       });
 
       $provide.value('authorization', {
@@ -170,7 +172,7 @@ describe('Client Controller', function () {
     });
 
     it('analytics is triggered', function () {
-      sinon.assert.calledWith(stubs.auxPanel, true, {});
+      sinon.assert.calledWith(stubs.auxPanel, true, '');
     });
   });
 
@@ -203,16 +205,6 @@ describe('Client Controller', function () {
     it('setSpace is called', function () {
       sinon.assert.calledWith(stubs.setSpace, scope.spaceContext.space);
     });
-  });
-
-  it('hideTabBar is true if no tabs are visible', function () {
-    stubs.numVisible.returns(0);
-    expect(scope.hideTabBar()).toBeTruthy();
-  });
-
-  it('hideTabBar is false if no tabs are visible', function () {
-    stubs.numVisible.returns(1);
-    expect(scope.hideTabBar()).toBeFalsy();
   });
 
   it('gets current space id', function () {

@@ -17,7 +17,7 @@ angular.module('contentful').directive('cfViewCustomizer', ['defer', function(de
 
       scope.toggleContentType = function (ev) {
         ev.stopPropagation();
-        scope.tab.params.view.contentTypeHidden = !scope.tab.params.view.contentTypeHidden;
+        scope.context.view.contentTypeHidden = !scope.context.view.contentTypeHidden;
       };
     },
     controller: ['$scope', function ($scope) {

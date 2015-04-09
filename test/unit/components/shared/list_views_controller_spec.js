@@ -8,12 +8,12 @@ describe('ListViewsController', function () {
   beforeEach(inject(function ($controller, $rootScope, _$q_) {
     $q = _$q_;
     scope = $rootScope.$new();
-    scope.tab = {params: {}};
+    scope.context = {};
     controller = $controller('ListViewsController', {
       $scope: scope,
       getBlankView: getBlankView = sinon.stub().returns({id: 'blankView'}),
       viewCollectionName: 'views',
-      currentViewLocation: 'tab.params.view',
+      currentViewLocation: 'context.view',
       generateDefaultViews: generateDefaultViews = sinon.stub().returns(['defaultViews']),
       resetList: resetList = sinon.stub()
     });
@@ -47,7 +47,7 @@ describe('ListViewsController', function () {
   describe('clearView', function () {
     it('should assign the blank view to tab and reset the list', function () {
       scope.clearView();
-      expect(scope.tab.params.view.id).toBe('blankView');
+      expect(scope.context.view.id).toBe('blankView');
       sinon.assert.called(resetList);
     });
   });
@@ -56,9 +56,9 @@ describe('ListViewsController', function () {
     it('should assign a deep copy of the view to the tab, reset the title and reset the list', function () {
       var view = {id: 'foo'};
       scope.loadView(view);
-      expect(scope.tab.params.view.id).toBe('foo');
-      expect(scope.tab.params.view).not.toBe(view);
-      expect(scope.tab.params.view.title).toBe('New View');
+      expect(scope.context.view.id).toBe('foo');
+      expect(scope.context.view).not.toBe(view);
+      expect(scope.context.view.title).toBe('New View');
       sinon.assert.called(resetList);
     });
   });

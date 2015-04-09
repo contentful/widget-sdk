@@ -41,9 +41,7 @@ xdescribe('apiKeyEditor Directive', function () {
         }
       };
       stubs.spaceGetId.returns('spaceid');
-      scope.tab = {
-        params: {}
-      };
+      scope.context = {};
       scope.previewApiKey = {
         data: {},
         getId: stubs.apiKeyGetId
@@ -58,7 +56,7 @@ xdescribe('apiKeyEditor Directive', function () {
 
       compileElement = function () {
         element = $compile('<div cf-api-key-editor></div>')(scope);
-        scope.tab.params.apiKey = {
+        scope.apiKey = {
           data: {},
           getId: stubs.apiKeyGetId
         };
@@ -69,7 +67,7 @@ xdescribe('apiKeyEditor Directive', function () {
 
   it('has a headline', function () {
     compileElement();
-    scope.tab.params.apiKey.data.name = 'headline text';
+    scope.apiKey.data.name = 'headline text';
     scope.$digest();
     expect(element.find('.tab-header h1').html()).toMatch('headline text');
   });

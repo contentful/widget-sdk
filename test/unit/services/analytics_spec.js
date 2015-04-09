@@ -100,63 +100,24 @@ describe('Analytics service', function () {
     sinon.assert.calledWith(this.totango.track, 'Event');
   });
 
-  describe('tabAdded', function() {
+  describe('stateActivated', function() {
     beforeEach(function(){
-      this.analytics.tabAdded({
-        viewType: 'entry-editor',
-        section: 'sectionValue',
-        params: {
-          entry: {getId: _.constant('entryId')}
-        }
-      });
-    });
-
-    it('should track Opened Tab', function(){
-      sinon.assert.calledWith(this.segment.track, 'Opened Tab',{
-        section: 'sectionValue',
-        viewType: 'entry-editor',
-        id: 'entryId'
-      });
-    });
-
-    it('should track page view', function(){
-      sinon.assert.calledWith(this.segment.track, 'Viewed Page', {
-        section: 'sectionValue',
-        viewType: 'entry-editor',
-        entryId: 'entryId'});
-    });
-  });
-
-  it('should track tab closed', function(){
-    this.analytics.tabClosed({
-      viewType: 'viewTypeValue',
-      section: 'sectionValue'
-    });
-    sinon.assert.calledWith(this.segment.track, 'Closed Tab', {
-      section: 'sectionValue',
-      viewType: 'viewTypeValue',
-      id: undefined
-    });
-  });
-
-  describe('tabActivated', function() {
-    beforeEach(function(){
-      this.tab = {
-        viewType: 'entry-editor',
-        section: 'entries',
-        params: {
-          entry: {getId: _.constant('entryId')}
-        }
+      this.state = {
+        name: 'spaces.detail.entries.detail',
       };
-      this.analytics.tabActivated(this.tab);
+      this.stateParams = {
+        spaceId: 'spaceId',
+        entryId: 'entryId'
+      };
+      this.analytics.stateActivated(this.state, this.stateParams);
     });
 
     it('should set the section in totango', function(){
-      sinon.assert.calledWith(this.totango.setModule, 'Entries');
+      sinon.assert.calledWith(this.totango.setModule, this.state.name);
     });
 
     it('should set the page in segment', function() {
-      sinon.assert.calledWith(this.segment.page, 'Entries', 'entry-editor', {id: 'entryId'});
+      sinon.assert.calledWith(this.segment.page, this.state.name, { spaceId: 'spaceId', entryId: 'entryId'});
     });
 
     it('should track segment', function(){
@@ -198,57 +159,14 @@ describe('Analytics service', function () {
   });
 
   it('should track toggleAuxPanel', function(){
-    this.analytics.toggleAuxPanel(true, { section: 's', viewType: 't' });
+    this.analytics.toggleAuxPanel(true, 'someStateName');
     sinon.assert.calledWith(this.segment.track, 'Opened Aux-Panel', {
-      currentSection: 's', currentViewType: 't'
+      currentState: 'someStateName'
     });
 
-    this.analytics.toggleAuxPanel(false, { section: 's', viewType: 't' });
+    this.analytics.toggleAuxPanel(false, 'someStateName');
     sinon.assert.calledWith(this.segment.track, 'Closed Aux-Panel', {
-      currentSection: 's', currentViewType: 't'
-    });
-  });
-
-  describe('id calculation', function(){
-    _.each({
-      'entry-editor': 'entry',
-      'asset-editor': 'asset',
-      'content-type-editor': 'contentType'
-    }, function(param, viewType){
-
-      it('should extract the id from a '+viewType, function(){
-        var tab = {
-          viewType: viewType,
-          section: 'sectionValue',
-          params: {}
-        };
-        tab.params[param] = {getId: _.constant('theId')};
-        this.analytics.tabActivated(tab);
-        expect(this.segment.track.args[0][1].id).toBe('theId');
-      });
-
-    });
-  });
-
-  describe('module name calculation', function() {
-    _.each({
-      'apiKeys'       : 'API Keys'       ,
-      'assets'        : 'Assets'         ,
-      'contentTypes'  : 'Content Types'  ,
-      'entries'       : 'Entries'        ,
-      'spaceSettings' : 'Space Settings' ,
-      'something'     : 'something'
-    }, function(module, section){
-
-      it('should extract the module from a '+section, function(){
-        var tab = {
-          viewType: 'irrelevant',
-          section: section,
-        };
-        this.analytics.tabActivated(tab);
-        expect(this.totango.setModule.args[0][0]).toBe(module);
-      });
-
+      currentState: 'someStateName'
     });
   });
 

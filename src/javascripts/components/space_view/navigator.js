@@ -90,6 +90,9 @@ angular.module('contentful').config([
     template: '<div cf-entry-list class="entry-list entity-list"></div>',
     ncyBreadcrumb: {
       label: 'Entries'
+    },
+    controller: function ($scope) {
+      $scope.context = {};
     }
   })
   .state('spaces.detail.entries.detail', {

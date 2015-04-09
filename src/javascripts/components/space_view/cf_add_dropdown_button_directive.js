@@ -8,8 +8,7 @@ angular.module('contentful').directive('cfAddDropdownButton', ['analytics', func
       elem.find('[cf-dropdown-toggle]').click(function (event) {
         if ($(event.currentTarget).parent().hasClass('active')) {
           analytics.track('Clicked Add-Button', {
-            currentSection: scope.spaceContext.tabList.currentSection(),
-            currentViewType: scope.spaceContext.tabList.currentViewType()
+            currentState: scope.$state.current.name
           });
         }
       });

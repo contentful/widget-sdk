@@ -36,7 +36,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     showAuxPanel: false,
     toggleAuxPanel: function() {
       $scope.preferences.showAuxPanel = !$scope.preferences.showAuxPanel;
-      analytics.toggleAuxPanel($scope.preferences.showAuxPanel, $scope.spaceContext.tabList.current);
+      analytics.toggleAuxPanel($scope.preferences.showAuxPanel, $scope.$state.current.name);
     },
     showDisabledFields: false
   };
@@ -58,7 +58,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
   $scope.initClient = initClient;
   $scope.clickedSpaceSwitcher = clickedSpaceSwitcher;
-  $scope.hideTabBar = hideTabBar;
   $scope.getCurrentSpaceId = getCurrentSpaceId;
   $scope.selectSpace = selectSpace;
   $scope.selectOrg = selectOrg;
@@ -75,8 +74,10 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.checkForEnforcements = checkForEnforcements;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
 
-  function stateChangeSuccessHandler() {
+  function stateChangeSuccessHandler(event, toState, toStateParams, fromState, fromStateParams) {
     $scope.locationInAccount = $scope.$state.includes('account');
+
+    analytics.stateActivated(toState, toStateParams, fromState, fromStateParams);
 
     if ($scope.spaces !== null && $scope.$stateParams.spaceId != $scope.getCurrentSpaceId()) {
       var space = _.find($scope.spaces, function (space) {
@@ -340,10 +341,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
         $timeout(showSpaceTemplatesModal, 1500);
       }, 750);
     }
-  }
-
-  function hideTabBar() {
-    return $scope.spaceContext.tabList.numVisible() === 0 || $scope.locationInAccount;
   }
 
   function getCurrentSpaceId() {

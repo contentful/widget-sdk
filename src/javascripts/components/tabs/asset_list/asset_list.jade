@@ -11,7 +11,7 @@
 
   .tab-header__search.search-area
     .l-search-w-autocomplete(
-      cf-tokenized-search="tab.params.view.searchTerm"
+      cf-tokenized-search="context.view.searchTerm"
       search-content-type="assetContentType"
       placeholder="Search for Assets")
 
@@ -36,7 +36,7 @@
 
 .tab-main
   .left-nav
-    div.menu-with-buttons(cf-view-menu="uiConfig.assetListViews" current-view="tab.params.view" ng-show="uiConfig")
+    div.menu-with-buttons(cf-view-menu="uiConfig.assetListViews" current-view="context.view" ng-show="uiConfig")
 
   .with-left-nav
     table.result-list.main-results.main-header
