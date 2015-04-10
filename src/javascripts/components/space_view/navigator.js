@@ -344,7 +344,8 @@ angular.module('contentful').config([
     url: '/account',
     abstract: true,
     views: {
-      'main-container': { template:
+      'main-container': {
+        template:
         '<div cf-account-view ' +
           'class="account-view tab-content">' +
         '</div>'
