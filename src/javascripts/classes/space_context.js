@@ -140,7 +140,7 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
         var index = _.indexOf(this.contentTypes, contentType);
         if (index === -1) return;
         this.contentTypes.splice(index, 1);
-        this.refreshPublishedContentTypes();
+        this.refreshContentTypes();
       },
 
       _publishedContentTypeIsMissing: {},
