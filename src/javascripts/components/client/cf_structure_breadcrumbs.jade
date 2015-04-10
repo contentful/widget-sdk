@@ -4,6 +4,6 @@
     ng-switch="$last || !!step.abstract" ng-class="{active: $last}")
     a(href="{{step.ncyBreadcrumbLink}}"
       tooltip-placement="bottom"
-      tooltip="{{step.ncyBreadcrumbLabel}}")
+      tooltip="{{step.ncyBreadcrumbLabel.length > 50 ? step.ncyBreadcrumbLabel : ''}}")
       | {{step.ncyBreadcrumbLabel | truncate: 50 }}
     span.divider(ng-hide="$last") →
