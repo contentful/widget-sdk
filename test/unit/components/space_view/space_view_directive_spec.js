@@ -21,7 +21,7 @@ describe('Space view directive', function () {
           }
         }
       });
-      $provide.removeDirectives('otDocFor', 'otDocPresence', 'entryEditor', 'apiKeyEditor', 'entryList', 'cfTabList', 'cfTabContent');
+      $provide.removeDirectives('otDocFor', 'otDocPresence', 'entryEditor', 'apiKeyEditor', 'entryList');
       $provide.removeControllers('UiConfigController', 'PermissionController');
     });
     inject(function ($rootScope, $compile) {
@@ -33,11 +33,7 @@ describe('Space view directive', function () {
         },
         refreshActiveLocales: sinon.stub(),
         refreshContentTypes: sinon.stub(),
-        refreshLocales: sinon.stub(),
-        tabList: {
-          currentSection: stubs.section,
-          currentViewType: stubs.viewType
-        }
+        refreshLocales: sinon.stub()
       };
 
       scope.permissionController = {
@@ -49,7 +45,7 @@ describe('Space view directive', function () {
       scope.locationInAccount = false;
 
       compileElement = function () {
-        container = $('<space-view></space-view>');
+        container = $('<cf-main-nav-bar></cf-main-nav-bar>');
         $compile(container)(scope);
         scope.$digest();
       };
@@ -63,11 +59,11 @@ describe('Space view directive', function () {
   it('main navigation not shown if space is defined but hibernated', function () {
     stubs.isHibernated.returns(true);
     compileElement();
-    expect(container.find('[ui-view="space-nav-bar"]')[0].children.length).toEqual(0);
+    expect(container.find('.nav-bar__list')).toBeNgHidden();
   });
 
   /** FIXME: Some of these tests are disabled because they don't make sense with the new routing */
-  xit('add button not shown even if no create permissions exist', function () {
+  it('add button not shown even if no create permissions exist', function () {
     scope.permissionController.get.withArgs('createContentType', 'shouldHide').returns(true);
     scope.permissionController.get.withArgs('createEntry', 'shouldHide').returns(true);
     scope.permissionController.get.withArgs('createAsset', 'shouldHide').returns(true);
@@ -77,7 +73,7 @@ describe('Space view directive', function () {
   });
 
   function makeShownButtonTest(type) {
-    xdescribe('if user can create a '+type, function () {
+    describe('if user can create a '+type, function () {
       var addDropdownButton;
       beforeEach(function () {
         compileElement();
@@ -98,8 +94,8 @@ describe('Space view directive', function () {
 
 
   function makeNavbarItemTest(type, action, viewType){
-    xdescribe('navbar item for '+type, function () {
-      var selector = 'li[data-view-type="'+viewType+'"]';
+    describe('navbar item for '+type, function () {
+      var selector = 'a[data-view-type="'+viewType+'"]';
 
       it('is hidden', function () {
         scope.permissionController.get.withArgs(action+type, 'shouldHide').returns(true);
@@ -121,7 +117,7 @@ describe('Space view directive', function () {
 
   function makeNavbarItemClassesTest(dataViewType, viewType, section) {
     xdescribe('defines classes on '+dataViewType+' for highlighted navigation', function () {
-      var selector = 'li[data-view-type="'+dataViewType+'"]';
+      var selector = 'a[data-view-type="'+dataViewType+'"]';
       beforeEach(function () {
         stubs.section.returns(section);
         stubs.viewType.returns(viewType);
