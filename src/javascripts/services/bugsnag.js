@@ -20,7 +20,7 @@ angular.module('contentful').factory('bugsnag', ['$injector', function($injector
           .then(function(){
             bugsnag = $window.Bugsnag;//.noConflict();
             bugsnag.apiKey              = apiKey;
-            bugsnag.notifyReleaseStages = ['staging', 'production'];
+            bugsnag.notifyReleaseStages = ['staging', 'preview', 'production'];
             bugsnag.releaseStage        = environment.env;
             bugsnag.appVersion          = environment.gitRevision;
             return bugsnag;
