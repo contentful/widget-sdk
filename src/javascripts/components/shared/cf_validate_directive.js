@@ -11,6 +11,7 @@ angular.module('contentful').directive('cfValidate', [function () {
 angular.module('contentful')
 .controller('ValidationController', ['$injector', '$scope', '$attrs',
 function ValidationController ($injector, $scope, $attrs) {
+  var errorMessageBuilder = $injector.get('errorMessageBuilder');
   var validation          = $injector.get('validation');
 
   $scope.validationResult = {};
@@ -68,6 +69,10 @@ function ValidationController ($injector, $scope, $attrs) {
       } else {
         return true;
       }
+    });
+
+    errors = _.forEach(errors, function (error) {
+      error.message = errorMessageBuilder(error, data, $scope.spaceContext);
     });
 
     var valid = _.isEmpty(errors);
