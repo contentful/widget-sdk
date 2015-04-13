@@ -113,7 +113,7 @@ angular.module('contentful').config([
     '</div>',
     ncyBreadcrumb: {
       parent: 'spaces.detail.entries.list',
-      label: '{{context.title}}'
+      label: '{{context.title + (context.dirty ? "*" : "")}}'
     },
     resolve: {
       entry: function ($stateParams, space) {
@@ -166,7 +166,7 @@ angular.module('contentful').config([
     '</div>',
     ncyBreadcrumb: {
       parent: 'spaces.detail.assets.list',
-      label: '{{context.title}}'
+      label: '{{context.title + (context.dirty ? "*" : "")}}'
     },
     resolve: {
       asset: function ($stateParams, space) {
@@ -228,7 +228,7 @@ angular.module('contentful').config([
     '</div>',
     ncyBreadcrumb: {
       parent: 'spaces.detail.content_types.list',
-      label: '{{contentType.getName()}}'
+      label: '{{contentType.getName() + (context.dirty ? "*" : "")}}'
     },
     controller: function ($state, $scope) {
       $state.current.data = $scope.context = {};
@@ -308,7 +308,7 @@ angular.module('contentful').config([
     '</div>',
     ncyBreadcrumb: {
       parent: 'spaces.detail.api.keys.list',
-      label: '{{context.title}}'
+      label: '{{context.title + (context.dirty ? "*" : "")}}'
     },
     resolve: {
       apiKey: function ($stateParams, space) {
