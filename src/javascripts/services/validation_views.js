@@ -32,12 +32,16 @@ angular.module('contentful').service('validationViews', ['$injector', function($
         pattern: urlRegexp.source },
       { name: 'date-us', label: 'Date (US)',
         pattern: /^(0?[1-9]|1[012])[- /.](0?[1-9]|[12][0-9]|3[01])[- /.](19|20)?\d\d$/.source },
-      { name: 'date-eu', label: 'Date (EU)',
+      { name: 'date-eu', label: 'Date (European)',
         pattern: /^(0?[1-9]|[12][0-9]|3[01])[- /.](0?[1-9]|1[012])[- /.](19|20)?\d\d$/.source },
+      { name: '12h-time', label: '12h Time',
+        pattern: /^(0?[1-9]|1[012]):[0-5][0-9](:[0-5][0-9])?\s*[aApP][mM]$/.source },
+      { name: '24h-time', label: '24h Time',
+        pattern: /^(0?[0-9]|1[0-9]|2[0-3]):[0-5][0-9](:[0-5][0-9])?$/.source },
       { name: 'us-phone', label: 'US phone number',
         pattern: /^\d[ -.]?\(?\d\d\d\)?[ -.]?\d\d\d[ -.]?\d\d\d\d$/.source },
       { name: 'us-zip-code', label: 'US zip code',
-        pattern: /^\d{5}$|^\d{5}-\d{4}$}/.source }
+        pattern: /^\d{5}$|^\d{5}-\d{4}$}/.source },
     ],
     assetImageDimensions: [
       {name: 'min',     label: 'Minimum'},
