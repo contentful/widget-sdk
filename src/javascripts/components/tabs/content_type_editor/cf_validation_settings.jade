@@ -114,7 +114,7 @@ h2.validation-settings__header
       li(ng-repeat="at in assetTypes.types")
         label
           input(type="checkbox" ng-model="at.selected" ng-change="assetTypes.update()")
-          span.u-truncate {{at.label}}
+          | {{at.label}}
 
     cf-error-list.form-inline-error(
       cf-error-messages="validation.errors"
