@@ -13,7 +13,7 @@
     "contentful-hostname-transformer": "~1.2.1",
     "contentful-mimetype": "^1.0.0",
     "contentful-resolve-response": "~0.1.0",
-    "contentful-validation": "^4.3.1",
+    "contentful-validation": "^4.4.0",
     "dotty": "0.0.2",
     "ecstatic": "~0.5.4",
     "express": "~4.4.4",
