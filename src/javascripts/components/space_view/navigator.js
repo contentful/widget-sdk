@@ -77,13 +77,14 @@ angular.module('contentful').config([
       }
     },
     template:
-    '<div cf-entry-editor ' +
-      'class="entry-editor entity-editor with-tab-actions"' +
-      'ot-doc-for="entry"' +
-      'cf-validate="entry.data" with-schema="entrySchema"' +
-      'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"' +
-      'ot-doc-presence>' +
-    '</div>',
+    '<div ' + [
+      'cf-entry-editor',
+      'class="entry-editor entity-editor with-tab-actions"',
+      'ot-doc-for="entry"',
+      'cf-validate="entry.data"', 'cf-entry-schema',
+      'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"',
+      'ot-doc-presence'
+    ].join(' ') + '></div>',
     ncyBreadcrumb: {
       parent: 'spaces.detail.entries.list',
       label: '{{context.title + (context.dirty ? "*" : "")}}'
@@ -130,13 +131,14 @@ angular.module('contentful').config([
       }
     },
     template:
-    '<div cf-asset-editor ' +
-      'class="asset-editor entity-editor with-tab-actions"' +
-      'ot-doc-for="asset"' +
-      'cf-validate="asset.data" with-schema="assetSchema"' +
-      'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"' +
-      'ot-doc-presence>' +
-    '</div>',
+    '<div cf-asset-editor ' + [
+      'cf-asset-editor',
+      'class="asset-editor entity-editor with-tab-actions"',
+      'ot-doc-for="asset"',
+      'cf-validate="asset.data"', 'cf-asset-schema',
+      'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"',
+      'ot-doc-presence',
+    ].join(' ') + '></div>',
     ncyBreadcrumb: {
       parent: 'spaces.detail.assets.list',
       label: '{{context.title + (context.dirty ? "*" : "")}}'
@@ -193,12 +195,13 @@ angular.module('contentful').config([
   .state('spaces.detail.content_types.detail.editor', {
     url: '',
     template:
-    '<div cf-content-type-editor ' +
-      'class="content-type-editor entity-editor with-tab-actions"' +
-      'ot-doc-for="contentType"' +
-      'cf-validate="contentType.data"' +
-      'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}">' +
-    '</div>',
+    '<div ' + [
+      'cf-content-type-editor',
+      'class="content-type-editor entity-editor with-tab-actions"',
+      'ot-doc-for="contentType"',
+      'cf-validate="contentType.data"', 'cf-content-type-schema',
+      'ng-class="{\'with-aux-panel\': preferences.showAuxPanel}"',
+    ].join(' ') + '></div>',
     ncyBreadcrumb: {
       parent: 'spaces.detail.content_types.list',
       label: '{{contentType.getName() + (context.dirty ? "*" : "")}}'

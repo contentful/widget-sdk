@@ -52,7 +52,6 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
 
   // Validations
   $scope.errorPaths = {};
-  $scope.assetSchema = validation.schemas.Asset($scope.spaceContext.space.getPrivateLocales());
   $scope.$watch('asset.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {
     if (publishedVersion > oldVersion) scope.validate();
   });

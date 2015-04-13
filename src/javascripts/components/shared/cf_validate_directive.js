@@ -11,33 +11,12 @@ angular.module('contentful').directive('cfValidate', [function () {
 angular.module('contentful')
 .controller('ValidationController', ['$injector', '$scope', '$attrs',
 function ValidationController ($injector, $scope, $attrs) {
-  var errorMessageBuilder = $injector.get('errorMessageBuilder');
-  var validation          = $injector.get('validation');
-
   $scope.validationResult = {};
 
   $scope.validate = function () {
-    validate(getData(), getSchema());
+    validate(getData(), $scope.schema);
     return $scope.validationResult.valid;
   };
-
-  function getSchema() {
-    if ('withSchema' in $attrs) {
-      return $scope.$eval($attrs.withSchema);
-    } else {
-      var data = getData();
-      switch (data && data.sys && data.sys.type) {
-        case 'ContentType':
-          return validation.schemas.ContentType;
-        case 'Asset':
-          throw new Error('Validating Assets requires passing a schema in the "withSchema"-attribute.');
-        case 'Entry':
-          throw new Error('Validating Entries requires passing a schema in the "withSchema"-attribute.');
-        default:
-          return null;
-      }
-    }
-  }
 
   function getData() {
     return $scope.$eval($attrs.cfValidate);
@@ -72,7 +51,7 @@ function ValidationController ($injector, $scope, $attrs) {
     });
 
     errors = _.forEach(errors, function (error) {
-      error.message = errorMessageBuilder(error, data, $scope.spaceContext);
+      error.message = schema.buildMessage(error, data);
     });
 
     var valid = _.isEmpty(errors);
@@ -86,11 +65,7 @@ function ValidationController ($injector, $scope, $attrs) {
   };
 
   $scope.setValidationErrors = function (schemaErrors) {
-    var data = getData();
-    var schema = getSchema();
-    if (!data || !schema) return;
-
-    $scope.setValidationResult(schemaErrors, data, schema);
+    $scope.setValidationResult(schemaErrors, getData(), $scope.schema);
   };
 
   $scope.$on('$destroy', function (event) {

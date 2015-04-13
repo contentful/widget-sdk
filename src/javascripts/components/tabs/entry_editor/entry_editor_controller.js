@@ -3,7 +3,6 @@
 angular.module('contentful').controller('EntryEditorController', ['$scope', '$injector', function EntryEditorController($scope, $injector) {
   var $controller       = $injector.get('$controller');
   var logger            = $injector.get('logger');
-  var validation        = $injector.get('validation');
 
   // Initialization
   $scope.entityActionsController = $controller('EntityActionsController', {
@@ -48,11 +47,6 @@ angular.module('contentful').controller('EntryEditorController', ['$scope', '$in
 
   // Validations
   $scope.errorPaths = {};
-  $scope.$watch('spaceContext.publishedTypeForEntry(entry).data', function(data) {
-    if (!data) return;
-    var locales = $scope.spaceContext.space.data.locales; // TODO: watch this, too
-    $scope.entrySchema = validation.fromContentType(data, locales);
-  });
   $scope.$watch('entry.getPublishedVersion()', function (publishedVersion, oldVersion, scope) {
     if (publishedVersion > oldVersion) scope.validate();
   });

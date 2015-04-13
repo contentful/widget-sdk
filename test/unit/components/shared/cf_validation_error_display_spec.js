@@ -8,17 +8,20 @@ describe('ErrorPathController', function () {
   beforeEach(function () {
     var $rootScope = this.$inject('$rootScope');
     var $controller = this.$inject('$controller');
+    var errorMessageBuilder = this.$inject('errorMessageBuilder');
 
     scope = $rootScope.$new();
 
     scope.entity = {};
-    scope.schema = {errors: sinon.stub()};
+    scope.schema = {
+      errors: sinon.stub(),
+      buildMessage: errorMessageBuilder(),
+    };
 
     $controller('ValidationController', {
       $scope: scope,
       $attrs: {
         cfValidate: 'entity',
-        withSchema: 'schema'
       }
     });
 

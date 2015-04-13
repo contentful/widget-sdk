@@ -143,7 +143,7 @@ angular.module('contentful')
     return error.customMessage;
   }
 
-  function buildErrorMessage(error, validatedData, spaceContext) {
+  function buildErrorMessage (error, validatedData, spaceContext) {
     var getMessage;
     if (error.customMessage)
       getMessage = customMessage;
@@ -152,5 +152,11 @@ angular.module('contentful')
     return getMessage(error, validatedData, spaceContext);
   }
 
-  return buildErrorMessage;
+  function errorMessageBuilder (spaceContext) {
+    return function (error, validatedData) {
+      return buildErrorMessage(error, validatedData, spaceContext);
+    };
+  }
+
+  return errorMessageBuilder;
 }]);
