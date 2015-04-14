@@ -60,9 +60,10 @@
                     ng-model="contentType.data.description")
         cf-error-list.form-box-error(cf-error-path="['description']")
     .l-form-row
-      label Fields
+      label(ng-show="hasFields") Fields
       .l-form-controls
         cf-content-type-field-list.u-bce.content-type-field-list(ng-show="hasFields")
+        cf-error-list.form-box-error(cf-error-path="['fields']")
         .advice(ng-hide="hasFields")
           .advice__frame
             i.fa.fa-list-alt.advice__medium-icon
@@ -81,7 +82,6 @@
             i.fa.fa-plus.button-icon
             | Add Field
           cf-select-type.u-bce.dropdown-menu.type-menu(cf-dropdown-menu on-type-selected="addField(type)")
-        cf-error-list.form-box-error(cf-error-path="['fields']")
 
 .tab-actions(ng-controller="ContentTypeActionsController")
   .button-set(cf-dropdown)
