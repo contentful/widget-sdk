@@ -55,12 +55,8 @@ angular.module('contentful')
       }
     },
 
-    regexp: function (error) {
-      if (error.path[1] === 'file' && error.path[3] === 'url') {
-        return 'Has an invalid url';
-      } else {
-        return 'Input does not match the expected format. Please edit and try again.';
-      }
+    regexp: function () {
+      return 'Input does not match the expected format. Please edit and try again.';
     },
 
     'in': function (error) {
@@ -70,8 +66,6 @@ angular.module('contentful')
     required: function(error) {
       if (error.path.length == 1 && error.path[0] == 'fields') {
         return 'All fields are empty. Please fill out some fields.';
-      } else if (error.path.length == 4 && error.path[1] == 'file' && error.path[3] == 'url') {
-        return 'Cannot publish until processing has finished.';
       } else {
         return 'Required';
       }
@@ -154,6 +148,16 @@ angular.module('contentful')
       return buildErrorMessage(error, validatedData);
   }
 
+  function buildAssetError (error, validatedData) {
+    if (error.name === 'regexp' && error.path[0] === 'file' && error.path[3] === 'url')
+      return 'Has an invalid url';
+    if (error.name === 'required' && error.path.length == 4 &&
+        error.path[1] == 'file' && error.path[3] == 'url')
+      return 'Cannot publish until processing has finished';
+    else
+      return buildErrorMessage(error, validatedData);
+  }
+
   function errorMessageBuilder (spaceContext) {
     return function (error, validatedData) {
       return buildErrorMessage(error, validatedData, spaceContext);
@@ -161,6 +165,7 @@ angular.module('contentful')
   }
 
   errorMessageBuilder.forContentType = buildContentTypeError;
+  errorMessageBuilder.forAsset = buildAssetError;
 
   return errorMessageBuilder;
 }]);

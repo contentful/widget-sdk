@@ -55,7 +55,7 @@ angular.module('contentful')
       var SchemaController    = $injector.get('SchemaController');
       var createAssetSchema   = $injector.get('validation').schemas.Asset;
 
-      var buildMessage = errorMessageBuilder($scope.spaceContext);
+      var buildMessage = errorMessageBuilder.forAsset;
       var schema = createAssetSchema($scope.spaceContext.space.getPrivateLocales());
       $scope.schema = new SchemaController(buildMessage, schema);
     }]

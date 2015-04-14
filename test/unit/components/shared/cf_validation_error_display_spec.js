@@ -1,6 +1,7 @@
 'use strict';
 
 describe('cfValidate', function () {
+  beforeEach(module('contentful/test'));
 
   describe('with cfContentTypeSchema', function () {
 
@@ -12,10 +13,8 @@ describe('cfValidate', function () {
     };
 
     beforeEach(function () {
-      module('contentful/test');
       var $compile = this.$inject('$compile');
       var $rootScope = this.$inject('$rootScope');
-
 
       var template = '<div cf-validate="contentType" cf-content-type-schema></div>';
       var element = $compile(template)($rootScope);
@@ -53,6 +52,47 @@ describe('cfValidate', function () {
       var error = this.scope.validationResult.errors[0];
       expect(error.name).toBe('required');
       expect(error.message).toBe('Required');
+    });
+  });
+
+  describe('with cfAssetSchema', function () {
+    beforeEach(function () {
+      var $compile = this.$inject('$compile');
+      var $rootScope = this.$inject('$rootScope');
+
+      var defaultLocale = {
+        code: 'default-locale',
+        default: true
+      };
+
+      $rootScope.spaceContext = {
+        space: {
+          getPrivateLocales: sinon.stub().returns([defaultLocale])
+        }
+      };
+
+      var template = '<div cf-validate="asset" cf-asset-schema></div>';
+      var element = $compile(template)($rootScope);
+      this.scope = element.scope();
+      this.$apply();
+    });
+
+    it('generates invalid url errror', function () {
+      this.scope.asset = {
+        fields: {
+          file: {
+            'default-locale': {
+              fileName: '',
+              contentType: 'ct'
+            }
+          }
+        }
+      };
+      this.scope.validate();
+      expect(this.scope.validationResult.errors.length).toBe(1);
+      var error = this.scope.validationResult.errors[0];
+      expect(error.name).toBe('required');
+      expect(error.message).toBe('Cannot publish until processing has finished');
     });
   });
 
