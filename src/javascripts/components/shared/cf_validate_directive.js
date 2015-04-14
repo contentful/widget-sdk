@@ -9,24 +9,57 @@ angular.module('contentful').directive('cfValidate', [function () {
 }]);
 
 angular.module('contentful')
-.controller('ValidationController', ['$injector', '$scope', '$attrs',
-function ValidationController ($injector, $scope, $attrs) {
+.controller('ValidationController', ['$scope', '$attrs',
+function ValidationController ($scope, $attrs) {
+
   $scope.validationResult = {};
 
   $scope.validate = function () {
-    validate(getData(), $scope.schema);
+    var data = getData();
+    var schema = $scope.schema;
+
+    if(!data || !schema)
+      return;
+
+    $scope.setValidationErrors(schema.errors(data));
     return $scope.validationResult.valid;
   };
+
+  $scope.setValidationErrors = function (errors) {
+    $scope.validationResult = makeValidationResult(errors, getData(), $scope.schema);
+  };
+
+  $scope.$on('$destroy', function (event) {
+    var scope = event.currentScope;
+    scope.validationResult = {};
+  });
+
 
   function getData() {
     return $scope.$eval($attrs.cfValidate);
   }
 
-  function validate(data, schema){
-    if(!data || !schema) return;
-    if(!data.fields) data.fields = {};
-    var schemaErrors = schema.errors(data);
-    $scope.setValidationResult(schemaErrors, data, schema);
+  function makeValidationResult (errors, data, schema) {
+    errors = _.filter(errors, function (error) {
+      if (error && error.path) {
+        return error.path[error.path.length - 1] != '$$hashKey';
+      } else {
+        return true;
+      }
+    });
+
+    errors = _.forEach(errors, function (error) {
+      error.message = schema.buildMessage(error, data);
+    });
+
+    var valid = _.isEmpty(errors);
+    return {
+      data: data,
+      schema: schema,
+      errors: errors,
+      valid:  valid,
+      pathErrors: pathErrors(errors)
+    };
   }
 
   function pathErrors(errors) {
@@ -40,37 +73,4 @@ function ValidationController ($injector, $scope, $attrs) {
     });
     return retval;
   }
-
-  $scope.setValidationResult = function (schemaErrors, data, schema) {
-    var errors = _.filter(schemaErrors, function (error) {
-      if (error && error.path) {
-        return error.path[error.path.length - 1] != '$$hashKey';
-      } else {
-        return true;
-      }
-    });
-
-    errors = _.forEach(errors, function (error) {
-      error.message = schema.buildMessage(error, data);
-    });
-
-    var valid = _.isEmpty(errors);
-    $scope.validationResult = {
-      data: data,
-      schema: schema,
-      errors: errors,
-      valid:  valid,
-      pathErrors: pathErrors(errors)
-    };
-  };
-
-  $scope.setValidationErrors = function (schemaErrors) {
-    $scope.setValidationResult(schemaErrors, getData(), $scope.schema);
-  };
-
-  $scope.$on('$destroy', function (event) {
-    var scope = event.currentScope;
-    scope.validationResult = {};
-  });
-
 }]);
