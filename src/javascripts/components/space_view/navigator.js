@@ -30,7 +30,7 @@ angular.module('contentful').config([
     url: '/spaces',
     resolve: {
       spaces: function (tokenStore) {
-        return tokenStore.getSpaces()
+        return tokenStore.getSpaces();
       }
     },
     views: {

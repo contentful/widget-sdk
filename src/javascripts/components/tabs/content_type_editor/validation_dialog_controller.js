@@ -59,7 +59,6 @@ angular.module('contentful')
   var validationViews         = $injector.get('validationViews');
   var validationName          = createSchema.Validation.getName;
   var validationTypesForField = createSchema.Validation.forField;
-  var $q                      = $injector.get('$q');
 
   var validationSettings = {
     size: {min: null, max: null},

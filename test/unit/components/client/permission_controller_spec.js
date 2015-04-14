@@ -27,7 +27,7 @@ describe('Permission Controller', function () {
 
       self.authorizationStubs.authContext.organization.returns({can: self.authorizationStubs.authContext.can});
     });
-    inject(function ($controller, $rootScope, $q, $injector){
+    inject(function ($controller, $rootScope, $q){
       this.$q = $q;
       scope = $rootScope.$new();
       controller = $controller('PermissionController', {$scope: scope});

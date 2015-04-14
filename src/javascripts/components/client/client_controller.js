@@ -6,7 +6,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   var $window            = $injector.get('$window');
   var $timeout           = $injector.get('$timeout');
   var $location          = $injector.get('$location');
-  var client             = $injector.get('client');
   var features           = $injector.get('features');
   var logger             = $injector.get('logger');
   var SpaceContext       = $injector.get('SpaceContext');
