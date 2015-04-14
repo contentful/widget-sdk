@@ -49,7 +49,7 @@ function ValidationController ($scope, $attrs) {
     });
 
     errors = _.forEach(errors, function (error) {
-      error.message = schema.buildMessage(error, data);
+      error.message = schema.buildMessage(error);
     });
 
     var valid = _.isEmpty(errors);

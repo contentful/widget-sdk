@@ -13,7 +13,7 @@ angular.module('contentful')
       return '' + joinAnd(labels) + ' are the only acceptable file types';
     },
 
-    linkContentType: function(error, _, spaceContext) {
+    linkContentType: function(error, spaceContext) {
       var ct = spaceContext.getPublishedContentType(error.contentTypeId);
       if (!ct)
         return 'Invalid Content Type';
@@ -21,14 +21,11 @@ angular.module('contentful')
         return 'Linked Entry\'s Content Type must be ' + ct.getName() + '.';
     },
 
-    size: function (error, validatedData) {
-      var min = error.min;
-      var max = error.max;
-      var data = dotty.get(validatedData, error.path);
-      if (_.isString(data))
-        return stringLengthMessage(min, max);
+    size: function (error) {
+      if (_.isString(error.value))
+        return stringLengthMessage(error.min, error.max);
       else
-        return sizeMessage(min, max, 'items');
+        return sizeMessage(error.min, error.max, 'items');
     },
 
     range: function (error) {
@@ -81,8 +78,8 @@ angular.module('contentful')
       }
     },
 
-    notResolvable: function (error, validatedData) {
-      var type = dotty.get(validatedData, error.path.concat('sys', 'linkType'));
+    notResolvable: function (error) {
+      var type = dotty.get(error.value, 'sys.linkType');
       return 'Linked ' + type + ' does not exist';
     },
 
@@ -128,16 +125,16 @@ angular.module('contentful')
     return error.customMessage;
   }
 
-  function buildErrorMessage (error, validatedData, spaceContext) {
+  function buildErrorMessage (error, spaceContext) {
     var getMessage;
     if (error.customMessage)
       getMessage = customMessage;
     else
       getMessage = messages[error.name] || defaultMessage;
-    return getMessage(error, validatedData, spaceContext);
+    return getMessage(error, spaceContext);
   }
 
-  function buildContentTypeError (error, validatedData) {
+  function buildContentTypeError (error) {
     if (error.name === 'size' && error.path[0] === 'fields')
       return sizeMessage(error.min, error.max, 'fields');
     if (error.name === 'uniqueFieldIds')
@@ -145,22 +142,22 @@ angular.module('contentful')
     if (error.name === 'uniqueFieldApiNames')
       return 'Field API Name must be unique';
     else
-      return buildErrorMessage(error, validatedData);
+      return buildErrorMessage(error);
   }
 
-  function buildAssetError (error, validatedData) {
+  function buildAssetError (error) {
     if (error.name === 'regexp' && error.path[0] === 'file' && error.path[3] === 'url')
       return 'Has an invalid url';
     if (error.name === 'required' && error.path.length == 4 &&
         error.path[1] == 'file' && error.path[3] == 'url')
       return 'Cannot publish until processing has finished';
     else
-      return buildErrorMessage(error, validatedData);
+      return buildErrorMessage(error);
   }
 
   function errorMessageBuilder (spaceContext) {
-    return function (error, validatedData) {
-      return buildErrorMessage(error, validatedData, spaceContext);
+    return function (error) {
+      return buildErrorMessage(error, spaceContext);
     };
   }
 

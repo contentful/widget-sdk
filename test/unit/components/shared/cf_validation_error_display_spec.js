@@ -141,29 +141,26 @@ describe('ErrorPathController', function () {
   describe('"size" error message', function () {
     beforeEach(function () {
       attrs.cfErrorPath = '["foo", "bar"]';
-      scope.entity = {
-        foo: {
-          bar: null
-        }
-      };
-
-      scope.schema.errors.returns([{
-        name: 'size',
-        path: ['foo', 'bar'],
-        min: 10
-      }]);
     });
 
     it('shows error for string data', function () {
-      scope.entity.foo.bar = 'asdasd';
-      this.processError();
+      this.processError({
+        name: 'size',
+        path: ['foo', 'bar'],
+        min: 10,
+        value: 'foobar'
+      });
       expect(controller.messages)
       .toEqual(['Please expand the text so it\'s no shorter than 10 characters']);
     });
 
     it('shows error for array data', function () {
-      scope.entity.foo.bar = [1,2,3];
-      this.processError();
+      this.processError({
+        name: 'size',
+        path: ['foo', 'bar'],
+        min: 10,
+        value: []
+      });
       expect(controller.messages)
       .toEqual(['Please provide at least 10 items']);
     });
@@ -172,18 +169,14 @@ describe('ErrorPathController', function () {
   describe('Errors in items', function () {
     beforeEach(function () {
       attrs.cfErrorPath = '["foo", "bars", "*"]';
-      scope.entity = {
-        foo: {
-          bars: ['asdasd', 'asdasd','asdasd']
-        }
-      };
     });
 
     it('builds size error message', function () {
       this.processError({
         name: 'size',
         path: ['foo', 'bars'],
-        min: 10
+        min: 10,
+        value: []
       });
       expect(controller.messages)
       .toEqual(['Please provide at least 10 items']);
@@ -221,7 +214,8 @@ describe('ErrorPathController', function () {
       this.processError({
         name: 'size',
         path: ['foo', 'bars', 1],
-        min: 10
+        min: 10,
+        value: 'foobars'
       });
       expect(controller.messages)
       .toEqual(['Please expand the text so it\'s no shorter than 10 characters']);
