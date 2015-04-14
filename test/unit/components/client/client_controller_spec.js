@@ -1,6 +1,6 @@
 'use strict';
 
-describe('Client Controller', function () {
+xdescribe('Client Controller', function () {
   var clientController, scope, notification;
   var stubs;
 
@@ -56,18 +56,15 @@ describe('Client Controller', function () {
       ]);
       $provide.value('analytics', self.analyticsStubs);
 
+      //FIXME cleanup
       self.authorizationStubs = {
         setTokenLookup: sinon.stub(),
         setSpace: sinon.stub(),
         authContext: {
           hasSpace: sinon.stub(),
-          organization: sinon.stub(),
-          can: sinon.stub()
         }
       };
       $provide.value('authorization', self.authorizationStubs);
-
-      self.authorizationStubs.authContext.organization.returns({can: self.authorizationStubs.authContext.can});
 
       self.featuresStubs = {
         shouldAllowAnalytics: sinon.stub()
@@ -124,7 +121,7 @@ describe('Client Controller', function () {
       self.reloadNotificationStubs = {
         trigger: sinon.stub(),
         gatekeeperErrorHandler: sinon.stub()
-      }
+      };
       $provide.value('ReloadNotification', self.reloadNotificationStubs);
 
       self.revisionStubs = {
@@ -133,14 +130,9 @@ describe('Client Controller', function () {
       $provide.value('revision', self.revisionStubs);
 
       self.enforcementsStubs = {
-        determineEnforcement: sinon.stub(),
         setSpaceContext: sinon.stub()
       };
       $provide.value('enforcements', self.enforcementsStubs);
-
-      self.reasonsDeniedStub = sinon.stub();
-      $provide.value('reasonsDenied', self.reasonsDeniedStub);
-
     });
     inject(function ($controller, $rootScope, $q, $injector){
       this.$q = $q;
@@ -299,12 +291,12 @@ describe('Client Controller', function () {
       scope.user = {
         sys: {id: '456'}
       };
-      scope.canSelectOrg = sinon.stub();
+      scope.permissionController.canSelectOrg = sinon.stub();
     });
 
     describe('cannot select org', function() {
       beforeEach(function() {
-        scope.canSelectOrg.returns(false);
+        scope.permissionController.canSelectOrg.returns(false);
         scope.selectOrg('1234');
       });
 
@@ -320,7 +312,7 @@ describe('Client Controller', function () {
 
     describe('can select org', function() {
       beforeEach(function() {
-        scope.canSelectOrg.returns(true);
+        scope.permissionController.canSelectOrg.returns(true);
         scope.selectOrg('1234');
       });
 
@@ -341,45 +333,6 @@ describe('Client Controller', function () {
       });
     });
 
-  });
-
-  describe('check if user can select an organization', function() {
-    beforeEach(function() {
-      scope.user = {
-        organizationMemberships: [{
-          organization: {
-            sys: {
-              id: '1234',
-              createdBy: {
-                sys: {
-                  id: '456'
-                }
-              }
-            }
-          }
-        }]
-      };
-    });
-
-    it('as an owner', function() {
-      scope.user.organizationMemberships[0].role = 'owner';
-      expect(scope.canSelectOrg('1234')).toBeTruthy();
-    });
-
-    it('as an admin', function() {
-      scope.user.organizationMemberships[0].role = 'admin';
-      expect(scope.canSelectOrg('1234')).toBeTruthy();
-    });
-
-    it('as an user', function() {
-      scope.user.organizationMemberships[0].role = 'user';
-      expect(scope.canSelectOrg('1234')).toBeFalsy();
-    });
-
-    it('with no memberships', function() {
-      scope.user.organizationMemberships = [];
-      expect(scope.canSelectOrg('1234')).toBeFalsy();
-    });
   });
 
   describe('handle route change', function () {
@@ -825,163 +778,6 @@ describe('Client Controller', function () {
       sinon.assert.called(this.authenticationStubs.logout);
     });
   });
-
-  describe('check if user can create a space in any org', function() {
-    beforeEach(function() {
-      scope.organizations = [
-        {sys: {id: 'abc'}},
-        {sys: {id: 'def'}},
-      ];
-      scope.canCreateSpaceInOrg = sinon.stub();
-    });
-
-    it('if user cant create spaces in any organizations', function() {
-      scope.canCreateSpaceInOrg.returns(false);
-      expect(scope.canCreateSpaceInAnyOrg()).toBeFalsy();
-    });
-
-    it('if user can create spaces in any organizations', function() {
-      scope.canCreateSpaceInOrg.returns(true);
-      expect(scope.canCreateSpaceInAnyOrg()).toBeTruthy();
-    });
-
-    it('if user can create spaces in some organizations', function() {
-      scope.canCreateSpaceInOrg.withArgs('abc').returns(false);
-      scope.canCreateSpaceInOrg.withArgs('def').returns(true);
-      expect(scope.canCreateSpaceInAnyOrg()).toBeTruthy();
-    });
-
-  });
-
-  describe('check if user can create a space', function() {
-    it('with no auth context', inject(function(authorization) {
-      delete authorization.authContext;
-      expect(scope.canCreateSpace()).toBeFalsy();
-    }));
-
-    it('with no organizations', function() {
-      expect(scope.canCreateSpace()).toBeFalsy();
-    });
-
-    it('with zero organizations', function() {
-      scope.organizations = [];
-      expect(scope.canCreateSpace()).toBeFalsy();
-    });
-
-    describe('with organizations', function() {
-      beforeEach(function() {
-        scope.organizations = [
-          {sys: {id: 'abc'}},
-          {sys: {id: 'def'}},
-        ];
-        scope.canCreateSpaceInAnyOrg = sinon.stub();
-      });
-
-      it('if user cant create spaces in any organizations', function() {
-        scope.canCreateSpaceInAnyOrg.returns(false);
-        expect(scope.canCreateSpace()).toBeFalsy();
-      });
-
-      it('if authorization allows', function() {
-        scope.canCreateSpaceInAnyOrg.returns(true);
-        this.authorizationStubs.authContext.can.returns(true);
-        expect(scope.canCreateSpace()).toBeTruthy();
-      });
-
-      describe('if authorization does not allow', function() {
-        var result;
-        beforeEach(function() {
-          scope.canCreateSpaceInAnyOrg.returns(true);
-          this.authorizationStubs.authContext.can.returns(false);
-          scope.checkForEnforcements = sinon.stub();
-          result = scope.canCreateSpace();
-        });
-
-        it('result is false', function() {
-          expect(result).toBeFalsy();
-        });
-
-        it('checks for enforcements', function() {
-          sinon.assert.called(scope.checkForEnforcements);
-        });
-      });
-
-    });
-
-  });
-
-
-  describe('check if user can create space in org', function() {
-
-    it('with no auth context', inject(function(authorization) {
-      delete authorization.authContext;
-      expect(scope.canCreateSpaceInOrg()).toBeFalsy();
-    }));
-
-    describe('with an auth context', function() {
-      beforeEach(function() {
-        scope.canCreateSpaceInOrg('orgid');
-      });
-
-      it('gets an organization', function() {
-        sinon.assert.calledWith(this.authorizationStubs.authContext.organization, 'orgid');
-      });
-
-      it('checks for permission on organization', function() {
-        sinon.assert.called(this.authorizationStubs.authContext.can);
-      });
-    });
-  });
-
-
-  describe('check for enforcements', function() {
-    var args, broadcastStub;
-
-    beforeEach(inject(function($rootScope) {
-      args = [1, 2];
-      broadcastStub = sinon.stub($rootScope, '$broadcast');
-    }));
-
-    describe('if there are reasons', function () {
-      beforeEach(function () {
-        this.enforcementsStubs.determineEnforcement.returns({});
-        scope.checkForEnforcements(args, {});
-      });
-
-      it('enforcement is determined', function () {
-        sinon.assert.called(this.enforcementsStubs.determineEnforcement);
-      });
-
-      it('reasons are determined', function () {
-        sinon.assert.called(this.reasonsDeniedStub);
-      });
-
-      it('event is broadcast', function () {
-        sinon.assert.called(broadcastStub);
-      });
-    });
-
-    describe('if there are no reasons', function () {
-      beforeEach(function () {
-        this.enforcementsStubs.determineEnforcement.returns(false);
-        scope.checkForEnforcements(args, {});
-      });
-
-      it('enforcement is determined', function () {
-        sinon.assert.called(this.enforcementsStubs.determineEnforcement);
-      });
-
-      it('reasons are determined', function () {
-        sinon.assert.called(this.reasonsDeniedStub);
-      });
-
-      it('event is not broadcast', function () {
-        sinon.assert.notCalled(broadcastStub);
-      });
-
-    });
-  });
-
 
   describe('shows create space dialog', function () {
     beforeEach(inject(function ($q) {

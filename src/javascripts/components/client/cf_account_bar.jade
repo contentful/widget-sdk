@@ -10,13 +10,13 @@ nav.account-bar
         li.dropdown-menu-item(ng-click="goToAccount()" dropdown-close="") Account Settings
         li.dropdown-menu-item(ng-click="openSupport()" dropdown-close="") Support
         li.dropdown-menu-item(ng-click="logout()" dropdown-close="") Log out
-  .account-bar__dropdown-btn.dropdown-btn.project(cf-dropdown="" ng-show="organizations && organizations.length > 0" ng-hide="spaces.length == 0 && !canCreateSpaceInAnyOrg()")
+  .account-bar__dropdown-btn.dropdown-btn.project(cf-dropdown="" ng-show="organizations && organizations.length > 0" ng-hide="spaces.length == 0 && !permissionController.canCreateSpaceInAnyOrg()")
     a.account-bar__dropdown-toggle.dropdown-toggle(cf-dropdown-toggle="" ng-click="clickedSpaceSwitcher()" tabindex="0")
       i.button-icon-right.fa.fa-caret-down
       span(ng-bind="spaceContext.space.data.name || 'Spaces'")
     .dropdown-menu.fixed-position.left-aligned(cf-dropdown-menu="")
       ul.dropdown-group
-        li.dropdown-menu-item--no-highlight(ng-repeat="(orgId, org) in spacesByOrg" ng-class="{'has-no-action': canSelectOrg(orgId)}" cf-click-local="selectOrg(orgId) && toggleDropdown()")
+        li.dropdown-menu-item--no-highlight(ng-repeat="(orgId, org) in spacesByOrg" ng-class="{'has-no-action': permissionController.canSelectOrg(orgId)}" cf-click-local="selectOrg(orgId) && toggleDropdown()")
           i.fa.fa-user
           span {{getOrgName(orgId)}}
           ul
@@ -27,7 +27,7 @@ nav.account-bar
               tooltip="This space entered hibernation due to lack of use. It will be back online soon.")
               | {{space.data.name}}
               i.fa.fa-circle(ng-show="space.isHibernated()")
-        li.dropdown-menu-item.account-bar__create-space(ng-show="canCreateSpace()" ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close="")
+        li.dropdown-menu-item.account-bar__create-space(ng-show="permissionController.canCreateSpace()" ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close="")
           | + Create Space
   .cf-persistent-notification(cf-persistent-notification ng-show="persistentNotification")
   .account-bar__loader(cf-navbar-loader)

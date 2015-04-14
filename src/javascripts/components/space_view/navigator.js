@@ -29,23 +29,8 @@ angular.module('contentful').config([
     abstract: true,
     url: '/spaces',
     resolve: {
-      /*
-       * This simply... checks or listens for an indication
-       * that spaces have been loaded through a token request.
-       * Descendant states are activated only once this resolve
-       * is finished.
-       */
-      waitForSpaces: function ($rootScope, $q) {
-        if (!$rootScope.spacesLoaded) {
-          var deferred = $q.defer();
-          var unListen = $rootScope.$watch('spacesLoaded', function (done) {
-            if (done) {
-              unListen();
-              deferred.resolve();
-            }
-          });
-          return deferred.promise;
-        }
+      spaces: function (tokenStore) {
+        return tokenStore.getSpaces()
       }
     },
     views: {
@@ -60,24 +45,12 @@ angular.module('contentful').config([
       label: '{{label}}'
     },
     resolve: {
-      space: function ($stateParams, client) {
-        return client.getSpace($stateParams.spaceId);
+      space: function (tokenStore, $stateParams) {
+        return tokenStore.getSpace($stateParams.spaceId);
       }
     },
-    controller: function ($scope, space, SpaceContext) {
-      if ($scope.spaces) {
-        var foundSpace = _.find($scope.spaces, function (space) {
-          return space.getId() === $scope.$stateParams.spaceId;
-        });
-        if (foundSpace) {
-          $scope.spaceContext = new SpaceContext(foundSpace);
-          $scope.spaceContext.refreshContentTypes();
-          $scope.label = foundSpace.data.name;
-        }
-      } else {
-        $scope.spaceContext = new SpaceContext(space);
-        $scope.label = space.data.name;
-      }
+    controller: function ($scope, space) {
+      $scope.label = space.data.name;
     }
   })
   .state('spaces.detail.entries', {
@@ -372,9 +345,12 @@ angular.module('contentful').config([
   $rootScope.spacesLoaded = false;
   $rootScope.contextHistory = [];
 
-  var modalDialog = $injector.get('modalDialog'),
-      $q = $injector.get('$q'),
-      $document = $injector.get('$document'),
+  var modalDialog  = $injector.get('modalDialog'),
+      $q           = $injector.get('$q'),
+      $document    = $injector.get('$document'),
+      $location    = $injector.get('$location'),
+      notification = $injector.get('notification'),
+      tokenStore   = $injector.get('tokenStore'),
       // Result of confirmation dialog
       navigationConfirmed = false;
 
@@ -389,7 +365,7 @@ angular.module('contentful').config([
     } else {
       return $q.when('done');
     }
-  } 
+  }
 
   $rootScope.goToEntityState = function (entity, addToContext) {
     if (entity.getType() === 'Entry') {
@@ -414,8 +390,7 @@ angular.module('contentful').config([
   };
 
   $rootScope.$on('$stateChangeStart', function (event, toState, toStateParams, fromState, fromStateParams) {
-    if (fromState.name === toState.name &&
-        JSON.stringify(_.omit(fromStateParams, 'addToContext')) === JSON.stringify(_.omit(toStateParams, 'addToContext'))) {
+    if (fromState.name === toState.name && getAddToContext(fromStateParams) === getAddToContext(toStateParams)) {
       event.preventDefault();
       return;
     }
@@ -429,12 +404,22 @@ angular.module('contentful').config([
         case 'spaces.detail':
           event.preventDefault();
           $rootScope.$state.go('spaces.detail.entries.list', toStateParams); break;
+        case 'otherwise':
         case 'spaces':
           event.preventDefault();
-          $rootScope.$state.go(''); break;
-        default: if (navigationConfirmed) { $rootScope.$state.go(toState.name, toStateParams); }
+          tokenStore.getSpaces().then(function (spaces) {
+            var space = determineInitialSpace(spaces, toStateParams.spaceId);
+            if(space)
+              $rootScope.$state.go('spaces.detail', { spaceId: space.getId() });
+            else
+              $location.url('/');
+          });
+          break;
+        default:
+          if (navigationConfirmed) { $rootScope.$state.go(toState.name, toStateParams); }
       }
     }
+
     // Decide if it is OK to do the transition (unsaved changes etc)
     if (!navigationConfirmed && fromState.data && fromState.data.dirty && fromState.data.closingMessage) {
       event.preventDefault();
@@ -452,4 +437,27 @@ angular.module('contentful').config([
   $rootScope.$watch('$state.current.ncyBreadcrumbLabel', function (label) {
     $document[0].title = label || 'Contentful';
   });
+
+  function determineInitialSpace(spaces, toSpaceId) {
+    var space;
+    if (toSpaceId) {
+      space = _.find(spaces, function (space) {
+        return space.getId() === toSpaceId;
+      });
+      if (!space) {
+        notification.warn('Space does not exist or is unaccessable');
+        space = spaces[0];
+      }
+    } else {
+      space = spaces[0];
+    }
+
+    return space;
+  }
+
+  function getAddToContext(params) {
+    return JSON.stringify(_.omit(params, 'addToContext'));
+  }
+
+
 }]);

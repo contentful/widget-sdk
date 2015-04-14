@@ -1,6 +1,6 @@
 'use strict';
 
-describe('App version service', function () {
+xdescribe('Revision service', function () {
   var revision;
   var $httpBackend, $rootScope;
 
