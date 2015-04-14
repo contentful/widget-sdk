@@ -27,19 +27,8 @@ angular.module('contentful')
       var data = dotty.get(validatedData, error.path);
       if (_.isString(data))
         return stringLengthMessage(min, max);
-
-      var entityType = getEntityType(validatedData);
-      var itemsName = ' items';
-      if (entityType === 'ContentType' && error.path[0] === 'fields')
-        itemsName = ' fields';
-
-      if (_.isNumber(min) && _.isNumber(max)) {
-        return 'Please provide between ' + min + ' and ' + max + itemsName;
-      } else if(_.isNumber(min)) {
-        return 'Please provide at least ' + min + itemsName;
-      } else {
-        return 'Please provide at most ' + max + itemsName;
-      }
+      else
+        return sizeMessage(min, max, 'items');
     },
 
     range: function (error) {
@@ -98,10 +87,6 @@ angular.module('contentful')
       }
     },
 
-    uniqueFieldIds: function () {
-      return 'Field ID must be unique';
-    },
-
     notResolvable: function (error, validatedData) {
       var type = dotty.get(validatedData, error.path.concat('sys', 'linkType'));
       return 'Linked ' + type + ' does not exist';
@@ -128,8 +113,14 @@ angular.module('contentful')
     }
   }
 
-  function getEntityType(object) {
-    return object && object.sys && object.sys.type;
+  function sizeMessage (min, max, itemsName) {
+    if (_.isNumber(min) && _.isNumber(max)) {
+      return 'Please provide between ' + min + ' and ' + max + ' ' +  itemsName;
+    } else if(_.isNumber(min)) {
+      return 'Please provide at least ' + min +  ' ' + itemsName;
+    } else {
+      return 'Please provide at most ' + max + ' ' + itemsName;
+    }
   }
 
   function defaultMessage(error) {
@@ -152,11 +143,24 @@ angular.module('contentful')
     return getMessage(error, validatedData, spaceContext);
   }
 
+  function buildContentTypeError (error, validatedData) {
+    if (error.name === 'size' && error.path[0] === 'fields')
+      return sizeMessage(error.min, error.max, 'fields');
+    if (error.name === 'uniqueFieldIds')
+      return 'Field ID must be unique';
+    if (error.name === 'uniqueFieldApiNames')
+      return 'Field API Name must be unique';
+    else
+      return buildErrorMessage(error, validatedData);
+  }
+
   function errorMessageBuilder (spaceContext) {
     return function (error, validatedData) {
       return buildErrorMessage(error, validatedData, spaceContext);
     };
   }
+
+  errorMessageBuilder.forContentType = buildContentTypeError;
 
   return errorMessageBuilder;
 }]);

@@ -1,5 +1,63 @@
 'use strict';
 
+describe('cfValidate', function () {
+
+  describe('with cfContentTypeSchema', function () {
+
+    var fieldFixture = {
+      id: 'fieldId',
+      apiName: 'fieldApiName',
+      name: 'fieldName',
+      type: 'Symbol'
+    };
+
+    beforeEach(function () {
+      module('contentful/test');
+      var $compile = this.$inject('$compile');
+      var $rootScope = this.$inject('$rootScope');
+
+
+      var template = '<div cf-validate="contentType" cf-content-type-schema></div>';
+      var element = $compile(template)($rootScope);
+      this.scope = element.scope();
+      this.$apply();
+    });
+
+    it('validates', function () {
+      this.scope.contentType = {
+        name: 'MyContentType',
+        fields: [fieldFixture]
+      };
+      this.scope.validate();
+      expect(this.scope.validationResult.valid).toBe(true);
+    });
+
+    it('generates missing fields error', function () {
+      this.scope.contentType = {
+        name: 'MyContentType',
+        fields: []
+      };
+      this.scope.validate();
+      expect(this.scope.validationResult.errors.length).toBe(1);
+      var error = this.scope.validationResult.errors[0];
+      expect(error.name).toBe('size');
+      expect(error.message).toBe('Please provide between 1 and 50 fields');
+    });
+
+    it('generates missing name error', function () {
+      this.scope.contentType = {
+        fields: [fieldFixture]
+      };
+      this.scope.validate();
+      expect(this.scope.validationResult.errors.length).toBe(1);
+      var error = this.scope.validationResult.errors[0];
+      expect(error.name).toBe('required');
+      expect(error.message).toBe('Required');
+    });
+  });
+
+});
+
 describe('ErrorPathController', function () {
   var controller, scope, attrs;
 

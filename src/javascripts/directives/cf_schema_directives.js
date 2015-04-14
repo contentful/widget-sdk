@@ -79,7 +79,7 @@ angular.module('contentful')
       var SchemaController    = $injector.get('SchemaController');
       var validation          = $injector.get('validation');
 
-      var buildMessage = errorMessageBuilder($scope.spaceContext);
+      var buildMessage = errorMessageBuilder.forContentType;
       $scope.schema = new SchemaController(buildMessage, validation.schemas.ContentType);
     }]
   };
