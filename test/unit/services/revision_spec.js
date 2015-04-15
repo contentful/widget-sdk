@@ -1,13 +1,14 @@
 'use strict';
 
-xdescribe('Revision service', function () {
+describe('Revision service', function () {
   var revision;
   var $httpBackend, $rootScope;
 
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       $provide.constant('environment', {
-        gitRevision: 'git_revision'
+        gitRevision: 'git_revision',
+        settings: {}
       });
     });
     inject(function (_revision_, _$httpBackend_, _$rootScope_) {
