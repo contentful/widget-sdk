@@ -428,9 +428,14 @@ angular.module('contentful').config([
   /**
    * Switches to the first space's entry list if there is a navigation error
    */
-  function stateChangeErrorHandler(event) {
+  function stateChangeErrorHandler(event, toState, toParams, fromState, fromParams, error) {
     event.preventDefault();
-    navigateToInitialSpace();
+    var matchedSection = /spaces.detail.(entries|assets|content_types|api\.keys).detail/.exec(toState.name);
+    if(matchedSection && error.statusCode == 404){
+      $rootScope.$state.go('spaces.detail.'+matchedSection[1]+'.list', { spaceId: toParams.spaceId });
+    } else {
+      navigateToInitialSpace();
+    }
   }
 
   function navigateToInitialSpace(spaceId) {
