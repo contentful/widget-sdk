@@ -354,19 +354,6 @@ angular.module('contentful').config([
       // Result of confirmation dialog
       navigationConfirmed = false;
 
-  function confirmNavigation(state) {
-    if (state.data && state.data.dirty && state.data.closingMessage) {
-      return modalDialog.open({
-        title: 'Discard Changes?',
-        confirmLabel: 'Discard',
-        message: state.data.closingMessage,
-        scope: $rootScope
-      }).promise;
-    } else {
-      return $q.when('done');
-    }
-  }
-
   $rootScope.goToEntityState = function (entity, addToContext) {
     if (entity.getType() === 'Entry') {
       this.$state.go('spaces.detail.entries.detail', { entryId: entity.getId(), addToContext: addToContext });
@@ -403,17 +390,14 @@ angular.module('contentful').config([
       switch(toState.name) {
         case 'spaces.detail':
           event.preventDefault();
-          $rootScope.$state.go('spaces.detail.entries.list', toStateParams); break;
+          if(_.isEmpty(toStateParams.spaceId))
+            navigateToInitialSpace();
+          else
+            $rootScope.$state.go('spaces.detail.entries.list', toStateParams); break;
         case 'otherwise':
         case 'spaces':
           event.preventDefault();
-          tokenStore.getSpaces().then(function (spaces) {
-            var space = determineInitialSpace(spaces, toStateParams.spaceId);
-            if(space)
-              $rootScope.$state.go('spaces.detail', { spaceId: space.getId() });
-            else
-              $location.url('/');
-          });
+          navigateToInitialSpace(toStateParams.spaceId);
           break;
         default:
           if (navigationConfirmed) { $rootScope.$state.go(toState.name, toStateParams); }
@@ -438,6 +422,16 @@ angular.module('contentful').config([
     $document[0].title = label || 'Contentful';
   });
 
+  function navigateToInitialSpace(spaceId) {
+    tokenStore.getSpaces().then(function (spaces) {
+      var space = determineInitialSpace(spaces, spaceId);
+      if(space)
+        $rootScope.$state.go('spaces.detail', { spaceId: space.getId() });
+      else
+        $location.url('/');
+    });
+  }
+
   function determineInitialSpace(spaces, toSpaceId) {
     var space;
     if (toSpaceId) {
@@ -457,6 +451,19 @@ angular.module('contentful').config([
 
   function getAddToContext(params) {
     return JSON.stringify(_.omit(params, 'addToContext'));
+  }
+
+  function confirmNavigation(state) {
+    if (state.data && state.data.dirty && state.data.closingMessage) {
+      return modalDialog.open({
+        title: 'Discard Changes?',
+        confirmLabel: 'Discard',
+        message: state.data.closingMessage,
+        scope: $rootScope
+      }).promise;
+    } else {
+      return $q.when('done');
+    }
   }
 
 
