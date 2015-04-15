@@ -135,12 +135,14 @@ angular.module('contentful')
   }
 
   function buildContentTypeError (error) {
-    if (error.name === 'size' && error.path[0] === 'fields')
+    if (error.name === 'size' && error.path.length === 1 && error.path[0] === 'fields')
       return sizeMessage(error.min, error.max, 'fields');
     if (error.name === 'uniqueFieldIds')
       return 'Field ID must be unique';
     if (error.name === 'uniqueFieldApiNames')
       return 'Field API Name must be unique';
+    if (error.name === 'regexp' && error.path[2] === 'apiName')
+      return 'Please provide input that only contains letters and digits';
     else
       return buildErrorMessage(error);
   }
