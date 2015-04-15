@@ -65,6 +65,56 @@ describe('Permission Controller', function () {
         reasons: null
       });
     });
+
+    describe('check for enforcements', function() {
+      var args, broadcastStub;
+
+      beforeEach(inject(function($rootScope) {
+        args = [1, 2];
+        broadcastStub = sinon.stub($rootScope, '$broadcast');
+        this.spaceContext.can = sinon.stub();
+        this.spaceContext.can.returns(false);
+      }));
+
+      describe('if there are reasons', function () {
+        beforeEach(function () {
+          this.enforcementsStubs.determineEnforcement.returns({});
+          controller.can(args, {});
+        });
+
+        it('enforcement is determined', function () {
+          sinon.assert.called(this.enforcementsStubs.determineEnforcement);
+        });
+
+        it('reasons are determined', function () {
+          sinon.assert.called(this.reasonsDeniedStub);
+        });
+
+        it('event is broadcast', function () {
+          sinon.assert.called(broadcastStub);
+        });
+      });
+
+      describe('if there are no reasons', function () {
+        beforeEach(function () {
+          this.enforcementsStubs.determineEnforcement.returns(false);
+          controller.can(args, {});
+        });
+
+        it('enforcement is determined', function () {
+          sinon.assert.called(this.enforcementsStubs.determineEnforcement);
+        });
+
+        it('reasons are determined', function () {
+          sinon.assert.called(this.reasonsDeniedStub);
+        });
+
+        it('event is not broadcast', function () {
+          sinon.assert.notCalled(broadcastStub);
+        });
+      });
+    });
+
   });
 
   describe('check if user can select an organization', function() {
@@ -160,11 +210,14 @@ describe('Permission Controller', function () {
         expect(controller.canCreateSpace()).toBeTruthy();
       });
 
-      //TODO finish me
-      xdescribe('if authorization does not allow', function() {
+      describe('if authorization does not allow', function() {
         var result;
         beforeEach(function() {
-          this.authorizationStubs.authContext.can.returns(true);
+          controller.canCreateSpaceInAnyOrg.returns(true);
+          var canStub = sinon.stub();
+          canStub.returns(true);
+          this.authorizationStubs.authContext.organization.returns({can: canStub});
+          this.authorizationStubs.authContext.can.returns(false);
           result = controller.canCreateSpace();
         });
 
@@ -181,16 +234,16 @@ describe('Permission Controller', function () {
   });
 
 
-  xdescribe('check if user can create space in org', function() {
+  describe('check if user can create space in org', function() {
 
     it('with no auth context', inject(function(authorization) {
       delete authorization.authContext;
-      expect(scope.canCreateSpaceInOrg()).toBeFalsy();
+      expect(controller.canCreateSpaceInOrg()).toBeFalsy();
     }));
 
     describe('with an auth context', function() {
       beforeEach(function() {
-        scope.canCreateSpaceInOrg('orgid');
+        controller.canCreateSpaceInOrg('orgid');
       });
 
       it('gets an organization', function() {
@@ -204,51 +257,4 @@ describe('Permission Controller', function () {
   });
 
 
-  xdescribe('check for enforcements', function() {
-    var args, broadcastStub;
-
-    beforeEach(inject(function($rootScope) {
-      args = [1, 2];
-      broadcastStub = sinon.stub($rootScope, '$broadcast');
-    }));
-
-    describe('if there are reasons', function () {
-      beforeEach(function () {
-        this.enforcementsStubs.determineEnforcement.returns({});
-        scope.checkForEnforcements(args, {});
-      });
-
-      it('enforcement is determined', function () {
-        sinon.assert.called(this.enforcementsStubs.determineEnforcement);
-      });
-
-      it('reasons are determined', function () {
-        sinon.assert.called(this.reasonsDeniedStub);
-      });
-
-      it('event is broadcast', function () {
-        sinon.assert.called(broadcastStub);
-      });
-    });
-
-    describe('if there are no reasons', function () {
-      beforeEach(function () {
-        this.enforcementsStubs.determineEnforcement.returns(false);
-        scope.checkForEnforcements(args, {});
-      });
-
-      it('enforcement is determined', function () {
-        sinon.assert.called(this.enforcementsStubs.determineEnforcement);
-      });
-
-      it('reasons are determined', function () {
-        sinon.assert.called(this.reasonsDeniedStub);
-      });
-
-      it('event is not broadcast', function () {
-        sinon.assert.notCalled(broadcastStub);
-      });
-
-    });
-  });
 });
