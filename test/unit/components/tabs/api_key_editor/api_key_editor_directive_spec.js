@@ -1,6 +1,6 @@
 'use strict';
 
-xdescribe('apiKeyEditor Directive', function () {
+describe('apiKeyEditor Directive', function () {
   var element, scope, compileElement, stubs, environmentMock;
   beforeEach(function () {
     module('contentful/test', function ($provide) {
