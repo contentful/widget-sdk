@@ -238,12 +238,9 @@ gulp.task('svg-stylesheets', function () {
 function buildStylus(sources, dest) {
   return gulp.src(sources)
     .pipe(sourceMaps.init())
-    .pipe(stylus({
-      use: nib(),
-      //compress: true
-    }))
+    .pipe(stylus({use: nib()}))
     .on('error', errorHandler('Stylus'))
-    .pipe(sourceMaps.write({sourceRoot: '/stylesheets'}))
+    .pipe(sourceMaps.write('.'))
     .pipe(gulp.dest(dest));
 }
 

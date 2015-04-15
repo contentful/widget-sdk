@@ -34,7 +34,7 @@
     "gulp-rev": "~2.0.1",
     "gulp-run": "^1.6.6",
     "gulp-sourcemaps": "~1.2.8",
-    "gulp-stylus": "~1.3.6",
+    "gulp-stylus": "^2.0.1",
     "gulp-uglify": "~1.0.2",
     "gulp-util": "~3.0.1",
     "is-diacritical-mark": "~1.0.1",
