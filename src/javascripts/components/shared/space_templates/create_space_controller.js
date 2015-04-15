@@ -5,6 +5,7 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
     var $timeout     = $injector.get('$timeout');
     var cfSpinner    = $injector.get('cfSpinner');
     var client       = $injector.get('client');
+    var tokenStore   = $injector.get('tokenStore');
     var enforcements = $injector.get('enforcements');
     var logger       = $injector.get('logger');
     var notification = $injector.get('notification');
@@ -33,8 +34,8 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
 
       client.createSpace(data, orgId)
       .then(function(newSpace){
-        $scope.performTokenLookup()
-        .then(_.partial(handleSpaceCreation, newSpace));
+        tokenStore.updateToken()
+        .then(_.partialRight(handleSpaceCreation, newSpace));
       })
       .catch(handleSpaceCreationFailure)
       .finally(function(){
@@ -42,17 +43,21 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
       });
     }
 
-    function handleSpaceCreation(newSpace) {
-      var space = _.find($scope.spaces, function (space) {
-        return space.getId() == newSpace.getId();
+    function handleSpaceCreation(token, newSpace) {
+      $scope.setTokenDataOnScope(token);
+      tokenStore.getSpaces()
+      .then(function () {
+        var space = _.find($scope.spaces, function (space) {
+          return space.getId() === newSpace.getId();
+        });
+        var broadcastSpaceCreated = $rootScope.$on('$stateChangeSuccess', function () {
+          broadcastSpaceCreated();
+          $timeout(function () {
+            $scope.$emit('spaceCreated', space);
+          }, 500);
+        });
+        $scope.selectSpace(space);
       });
-      var broadcastSpaceCreated = $rootScope.$on('$stateChangeSuccess', function () {
-        broadcastSpaceCreated();
-        $timeout(function () {
-          $scope.$emit('spaceCreated', space);
-        }, 500);
-      });
-      $scope.selectSpace(space);
     }
 
     function handleSpaceCreationFailure(err){

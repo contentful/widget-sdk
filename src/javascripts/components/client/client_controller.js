@@ -52,6 +52,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.$on('$stateNotFound', stateChangeErrorHandler);
 
   $scope.initClient = initClient;
+  $scope.setTokenDataOnScope = setTokenDataOnScope;
   $scope.clickedSpaceSwitcher = clickedSpaceSwitcher;
   $scope.getCurrentSpaceId = getCurrentSpaceId;
   $scope.selectSpace = selectSpace;
