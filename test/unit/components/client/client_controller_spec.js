@@ -1,6 +1,6 @@
 'use strict';
 
-xdescribe('Client Controller', function () {
+describe('Client Controller', function () {
   var clientController, scope, notification;
   var stubs;
 
@@ -56,7 +56,6 @@ xdescribe('Client Controller', function () {
       ]);
       $provide.value('analytics', self.analyticsStubs);
 
-      //FIXME cleanup
       self.authorizationStubs = {
         setTokenLookup: sinon.stub(),
         setSpace: sinon.stub(),
@@ -65,6 +64,13 @@ xdescribe('Client Controller', function () {
         }
       };
       $provide.value('authorization', self.authorizationStubs);
+
+      setMockOnContext(self, 'tokenStoreStubs', [
+        'updateTokenFromTokenLookup',
+        'getToken',
+        'getUpdatedToken'
+      ]);
+      $provide.value('tokenStore', self.tokenStoreStubs);
 
       self.featuresStubs = {
         shouldAllowAnalytics: sinon.stub()
@@ -136,6 +142,7 @@ xdescribe('Client Controller', function () {
     });
     inject(function ($controller, $rootScope, $q, $injector){
       this.$q = $q;
+      this.$rootScope = $rootScope;
       notification = $injector.get('notification');
       scope = $rootScope.$new();
       clientController = $controller('ClientController', {$scope: scope});
@@ -419,64 +426,6 @@ xdescribe('Client Controller', function () {
         456: [scope.spaces[2]]
       });
     });
-
-    it('redirects to a non existent space and defaults to first space', function () {
-      scope.$stateParams.spaceId = 789;
-      scope.$digest();
-      sinon.assert.calledWith(stubs.go, 'spaces.detail', {
-        spaceId: scope.spaces[0].getId()
-      });
-    });
-
-    describe('redirects to the current space', function () {
-      beforeEach(function () {
-        scope.spaces = [];
-        scope.$stateParams.spaceId = 321;
-        scope.$digest();
-      });
-
-      it('doesnt redirect to another space', function () {
-        sinon.assert.notCalled(stubs.go);
-      });
-
-      it('sets analytics data', function () {
-        sinon.assert.called(this.analyticsStubs.setSpace);
-      });
-
-      it('sets a location url', function () {
-        sinon.assert.called(this.locationStubs.url);
-      });
-    });
-
-    describe('redirects to the current space', function () {
-      beforeEach(function () {
-        scope.$stateParams.spaceId = 321;
-        scope.$digest();
-      });
-
-      it('doesnt redirect to another space', function () {
-        sinon.assert.notCalled(stubs.go);
-      });
-
-      it('doesnt set analytics data', function () {
-        sinon.assert.notCalled(this.analyticsStubs.setSpace);
-      });
-    });
-
-    describe('no space can be found', function () {
-      beforeEach(function () {
-        scope.$stateParams.spaceId = 321;
-        scope.$digest();
-      });
-
-      it('doesnt redirect to another space', function () {
-        sinon.assert.notCalled(stubs.go);
-      });
-
-      it('doesnt set analytics data', function () {
-        sinon.assert.notCalled(this.analyticsStubs.setSpace);
-      });
-    });
   });
 
   describe('calls logout', function () {
@@ -547,7 +496,7 @@ xdescribe('Client Controller', function () {
     });
 
     describe('on token change', function() {
-      var token, mockSpace;
+      var token;
       beforeEach(inject(function (authentication) {
         spaces = [{
           sys: {id: 123}
@@ -565,51 +514,16 @@ xdescribe('Client Controller', function () {
           token: authentication.tokenLookup
         };
 
-        mockSpace = {
-          getId: sinon.stub(),
-          update: sinon.stub()
-        };
-
+        this.tokenStoreStubs.getToken.returns({spaces: spaces, user: user});
+        childScope.$emit('iframeMessage', data);
       }));
 
-      describe('if the space already exists on the client', function() {
-        beforeEach(function() {
-          scope.spaces = [mockSpace];
-          scope.spaces[0].getId.returns(123);
-
-          childScope.$emit('iframeMessage', data);
-        });
-
-        it('sets token lookup', function() {
-          sinon.assert.calledWith(this.authenticationStubs.updateTokenLookup, token);
-        });
-
-        it('sets user', function() {
-          expect(scope.user).toBe(user);
-        });
-
-        it('updates spaces', function() {
-          sinon.assert.calledWith(scope.spaces[0].update, spaces[0]);
-        });
+      it('sets token lookup', function() {
+        sinon.assert.calledWith(this.authenticationStubs.updateTokenLookup, token);
       });
 
-      describe('if the space is not on the client', function() {
-        beforeEach(function() {
-          this.clientStubs.newSpace.returns(mockSpace);
-          childScope.$emit('iframeMessage', data);
-        });
-
-        it('sets token lookup', function() {
-          sinon.assert.calledWith(this.authenticationStubs.updateTokenLookup, token);
-        });
-
-        it('sets user', function() {
-          expect(scope.user).toBe(user);
-        });
-
-        it('wraps the space', function() {
-          sinon.assert.calledWith(this.clientStubs.newSpace, token.spaces[0]);
-        });
+      it('sets user', function() {
+        expect(scope.user).toBe(user);
       });
     });
 
@@ -676,12 +590,12 @@ xdescribe('Client Controller', function () {
           type: 'space',
           action: 'delete',
         };
-        this.authenticationStubs.getTokenLookup.returns(this.$q.when());
+        this.tokenStoreStubs.getUpdatedToken.returns(this.$q.when());
         childScope.$emit('iframeMessage', data);
       });
 
       it('performs token lookup', function() {
-        sinon.assert.called(this.authenticationStubs.getTokenLookup);
+        sinon.assert.called(this.tokenStoreStubs.getUpdatedToken);
       });
     });
 
@@ -689,12 +603,12 @@ xdescribe('Client Controller', function () {
     describe('for other messages', function () {
       beforeEach(function () {
         data = {};
-        this.authenticationStubs.getTokenLookup.returns(this.$q.when());
+        this.tokenStoreStubs.getUpdatedToken.returns(this.$q.when());
         childScope.$emit('iframeMessage', data);
       });
 
       it('performs token lookup', function() {
-        sinon.assert.called(this.authenticationStubs.getTokenLookup);
+        sinon.assert.called(this.tokenStoreStubs.getUpdatedToken);
       });
     });
 
@@ -726,56 +640,6 @@ xdescribe('Client Controller', function () {
       sinon.assert.calledWith(stubs.go, 'account.pathSuffix', {
         pathSuffix: 'section' 
       });
-    });
-  });
-
-  // FIXME: see refactoring notes in source code
-  describe('performs token lookup', function () {
-    var $q;
-    var tokenDeferred;
-    var tokenLookup = {
-      sys: { createdBy: 'user' },
-      spaces: [{sys: {id: 123}}]
-    };
-    beforeEach(inject(function ($injector) {
-      $q = $injector.get('$q');
-      tokenDeferred = $q.defer();
-      this.authenticationStubs.getTokenLookup.returns(tokenDeferred.promise);
-
-      scope.spaces = [{
-        getId: sinon.stub(),
-        update: sinon.stub()
-      }];
-      scope.spaces[0].getId.returns(123);
-
-      scope.updateSpaces = sinon.stub();
-      scope.performTokenLookup();
-    }));
-
-    it('expect getTokenLookup to be called', function () {
-      sinon.assert.called(this.authenticationStubs.getTokenLookup);
-    });
-
-    describe('if token lookup resolves', function() {
-      beforeEach(function() {
-      tokenDeferred.resolve(tokenLookup);
-      scope.$digest();
-      });
-
-      it('user is set to the provided one', function () {
-        expect(scope.user).toEqual('user');
-      });
-
-      it('updates spaces', function() {
-        sinon.assert.calledWith(scope.spaces[0].update, tokenLookup.spaces[0]);
-      });
-    });
-
-    it('logs the user out on error 401', function () {
-      this.modalDialogStubs.open.returns({promise: $q.when()});
-      tokenDeferred.reject({statusCode: 401});
-      scope.$apply();
-      sinon.assert.called(this.authenticationStubs.logout);
     });
   });
 
@@ -813,108 +677,66 @@ xdescribe('Client Controller', function () {
   });
 
   describe('initializes client', function () {
-    var thenStub, catchStub, revisionCatchStub;
     beforeEach(function () {
-      revisionCatchStub = sinon.stub();
-      this.revisionStubs.hasNewVersion.returns({catch: revisionCatchStub});
-      scope.performTokenLookup = sinon.stub();
-      thenStub = sinon.stub();
-      catchStub = sinon.stub();
-      scope.performTokenLookup.returns({
-        then: thenStub,
-        catch: catchStub
-      });
-    });
-
-    it('token lookup is called', function () {
+      this.spaces = [];
+      this.user = {sys: {}};
+      this.revisionStubs.hasNewVersion.returns(this.$q.reject('APP_REVISION_CHANGED'));
+      this.tokenStoreStubs.getUpdatedToken.returns(this.$q.when({
+        spaces: this.spaces,
+        user: this.user
+      }));
+      this.broadcastStub = sinon.stub(this.$rootScope, '$broadcast');
+      jasmine.clock().install();
       scope.initClient();
-      sinon.assert.called(scope.performTokenLookup);
+      scope.$digest();
     });
 
-    describe('if lookup succeeds', function () {
-      beforeEach(function () {
-        jasmine.clock().install();
-        thenStub.callsArg(0);
-        scope.user = {
-          sys: {}
-        };
-        scope.spaces = [{}];
-      });
-
-      afterEach(function () {
-        jasmine.clock().uninstall();
-      });
-
-      it('tracks login', function () {
-        scope.initClient();
-        sinon.assert.called(this.analyticsStubs.setUserData);
-      });
-
-      describe('fires an initial version check', function () {
-        var broadcastStub;
-        beforeEach(inject(function ($rootScope) {
-          broadcastStub = sinon.stub($rootScope, '$broadcast');
-          revisionCatchStub.callsArgWith(0, 'APP_REVISION_CHANGED');
-          scope.initClient();
-          jasmine.clock().tick(5000);
-        }));
-
-        afterEach(function () {
-          broadcastStub.restore();
-        });
-
-        it('checks for new version', function () {
-          sinon.assert.called(this.revisionStubs.hasNewVersion);
-        });
-
-        it('broadcasts event if new version is available', function () {
-          sinon.assert.called(broadcastStub);
-        });
-      });
-
-
-      describe('presence timeout is fired', function () {
-        var broadcastStub;
-        beforeEach(inject(function ($rootScope) {
-          this.presenceStubs.isActive.returns(true);
-          catchStub.callsArg(0);
-          broadcastStub = sinon.stub($rootScope, '$broadcast');
-          revisionCatchStub.callsArgWith(0, 'APP_REVISION_CHANGED');
-          scope.initClient();
-          jasmine.clock().tick(50*60*1000);
-        }));
-
-        afterEach(function () {
-          broadcastStub.restore();
-        });
-
-        it('checks for presence', function () {
-          sinon.assert.called(this.presenceStubs.isActive);
-        });
-
-        it('checks for new version', function () {
-          sinon.assert.called(this.revisionStubs.hasNewVersion);
-        });
-
-        it('reload is triggered if lookup fails', function () {
-          sinon.assert.called(this.reloadNotificationStubs.trigger);
-        });
-
-        it('broadcasts event if new version is available', function () {
-          sinon.assert.called(broadcastStub);
-        });
-      });
-
+    afterEach(function () {
+      jasmine.clock().uninstall();
+      this.broadcastStub.restore();
     });
 
-    describe('if lookup fails', function () {
-      beforeEach(function () {
-        thenStub.callsArg(1);
-        scope.initClient();
+    it('tracks login', function () {
+      sinon.assert.called(this.analyticsStubs.setUserData);
+    });
+
+    it('sets user', function() {
+      expect(scope.user).toEqual(this.user);
+    });
+
+    it('sets spaces', function() {
+      expect(scope.spaces).toEqual(this.spaces);
+    });
+
+    describe('fires an initial version check', function () {
+      beforeEach(function() {
+        jasmine.clock().tick(5000);
+        scope.$digest();
+      });
+      it('checks for new version', function () {
+        sinon.assert.called(this.revisionStubs.hasNewVersion);
       });
 
-      it('error notification shown', function () {
-        sinon.assert.called(this.reloadNotificationStubs.gatekeeperErrorHandler);
+      it('broadcasts event if new version is available', function () {
+        sinon.assert.called(this.broadcastStub);
+      });
+    });
+
+
+    describe('presence timeout is fired', function () {
+      beforeEach(function () {
+        this.presenceStubs.isActive.returns(true);
+        this.tokenStoreStubs.getUpdatedToken.returns(this.$q.reject());
+        jasmine.clock().tick(50*60*1000);
+        scope.$digest();
+      });
+
+      it('checks for presence', function () {
+        sinon.assert.called(this.presenceStubs.isActive);
+      });
+
+      it('reload is triggered if lookup fails', function () {
+        sinon.assert.called(this.reloadNotificationStubs.trigger);
       });
     });
 
@@ -922,7 +744,7 @@ xdescribe('Client Controller', function () {
 
   describe('organizations on the scope', function() {
     it('are not set', function() {
-      expect(scope.organizations).toBeNull();
+      expect(scope.organizations).toBeFalsy();
     });
 
     describe('if user exists', function() {
