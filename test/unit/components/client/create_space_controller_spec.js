@@ -1,14 +1,21 @@
 'use strict';
 
-xdescribe('Create Space controller', function () {
+describe('Create Space controller', function () {
   var scope, createSpaceCtrl, stubs, createController;
   var org;
 
   beforeEach(function () {
+    var self = this;
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
         'stop', 'then', 'getId', 'timeout'
       ]);
+
+      self.tokenStoreStubs = {
+        getUpdatedToken: sinon.stub(),
+        getSpace: sinon.stub()
+      };
+      $provide.value('tokenStore', self.tokenStoreStubs);
 
       $provide.value('$timeout', stubs.timeout);
       stubs.timeout.callsArg(0);
@@ -22,14 +29,15 @@ xdescribe('Create Space controller', function () {
       this.enforcements = $injector.get('enforcements');
       this.cfSpinner = $injector.get('cfSpinner');
 
-      this.broadcastSpy = sinon.spy(this.$rootScope, '$broadcast');
+      this.broadcastStub = sinon.stub(this.$rootScope, '$broadcast');
+      this.broadcastStub.returns(sinon.stub());
       this.cfSpinner.start = sinon.stub();
       this.cfSpinner.start.returns(stubs.stop);
       this.client.createSpace = sinon.stub();
       this.enforcements.computeUsage = sinon.stub();
       this.enforcements.determineEnforcement = sinon.stub();
 
-      scope = this.$rootScope.$new();
+      scope = this.$rootScope;
       scope.$emit = sinon.stub();
       scope.$root.$on = sinon.stub();
       scope.$root.$on.withArgs('$stateChangeSuccess').returns(angular.noop);
@@ -38,14 +46,20 @@ xdescribe('Create Space controller', function () {
       scope.organizations = [
         org
       ];
+      scope.permissionController = {};
       scope.permissionController.canCreateSpaceInOrg = sinon.stub();
       scope.newSpaceForm = {};
 
+      scope.setTokenDataOnScope = sinon.stub();
 
       createController = function () {
         createSpaceCtrl = $controller('CreateSpaceDialogController', {$scope: scope});
       };
     });
+  });
+
+  afterEach(function () {
+    this.broadcastStub.restore();
   });
 
   it('does not preselect if no organizations exist', function() {
@@ -118,7 +132,7 @@ xdescribe('Create Space controller', function () {
         });
 
         it('broadcasts space creation request', function() {
-          sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationRequested');
+          sinon.assert.calledWith(this.broadcastStub, 'spaceCreationRequested');
         });
 
         it('starts spinner', function() {
@@ -139,7 +153,7 @@ xdescribe('Create Space controller', function () {
         });
 
         it('broadcasts space creation failure', function() {
-          sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationFailed');
+          sinon.assert.calledWith(this.broadcastStub, 'spaceCreationFailed');
         });
       });
 
@@ -159,11 +173,11 @@ xdescribe('Create Space controller', function () {
               }
             }));
             scope.createSpace();
-            scope.$apply();
+            scope.$digest();
           });
 
           it('broadcasts space creation request', function() {
-            sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationRequested');
+            sinon.assert.calledWith(this.broadcastStub, 'spaceCreationRequested');
           });
 
           it('starts spinner', function() {
@@ -196,7 +210,7 @@ xdescribe('Create Space controller', function () {
           });
 
           it('broadcasts space creation failure', function() {
-            sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationFailed');
+            sinon.assert.calledWith(this.broadcastStub, 'spaceCreationFailed');
           });
         });
 
@@ -212,11 +226,11 @@ xdescribe('Create Space controller', function () {
               }
             }));
             scope.createSpace();
-            scope.$apply();
+            scope.$digest();
           });
 
           it('broadcasts space creation request', function() {
-            sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationRequested');
+            sinon.assert.calledWith(this.broadcastStub, 'spaceCreationRequested');
           });
 
           it('starts spinner', function() {
@@ -248,7 +262,7 @@ xdescribe('Create Space controller', function () {
           });
 
           it('broadcasts space creation failure', function() {
-            sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationFailed');
+            sinon.assert.calledWith(this.broadcastStub, 'spaceCreationFailed');
           });
         });
 
@@ -259,15 +273,16 @@ xdescribe('Create Space controller', function () {
             scope.spaces = [space];
             this.client.createSpace.returns(this.$q.when(space));
             stubs.getId.returns('spaceid');
-            scope.performTokenLookup = sinon.stub().returns(this.$q.when());
+            this.tokenStoreStubs.getUpdatedToken.returns(this.$q.when());
+            this.tokenStoreStubs.getSpace.returns(this.$q.when(space));
             scope.selectSpace = sinon.stub();
             scope.createSpace();
-            scope.$apply();
+            scope.$digest();
             scope.$on.yield();
           });
 
           it('broadcasts space creation request', function() {
-            sinon.assert.calledWith(this.broadcastSpy, 'spaceCreationRequested');
+            sinon.assert.calledWith(this.broadcastStub, 'spaceCreationRequested');
           });
 
           it('starts spinner', function() {
@@ -287,11 +302,19 @@ xdescribe('Create Space controller', function () {
           });
 
           it('performs token lookup', function() {
-            sinon.assert.called(scope.performTokenLookup);
+            sinon.assert.called(this.tokenStoreStubs.getUpdatedToken);
+          });
+
+          it('gets space', function() {
+            sinon.assert.called(this.tokenStoreStubs.getSpace);
+          });
+
+          it('sets token data on scope', function() {
+            sinon.assert.called(scope.setTokenDataOnScope);
           });
 
           it('reuses existing space with same id', function() {
-            sinon.assert.calledTwice(stubs.getId);
+            sinon.assert.calledOnce(stubs.getId);
           });
 
           it('selects space', function() {
