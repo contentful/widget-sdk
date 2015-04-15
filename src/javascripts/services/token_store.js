@@ -77,7 +77,11 @@ angular.module('contentful').service('tokenStore', ['$injector', function($injec
   }
 
   function getLoadedSpace(id) {
-    return getSpaceFromList(id, tokenStore._currentToken.spaces);
+    var space = getSpaceFromList(id, tokenStore._currentToken.spaces);
+    if(space)
+      return space;
+    else
+      return $q.reject(new Error('Space not found'));
   }
 
   function getSpaceFromList(id, existingSpaces) {

@@ -422,6 +422,17 @@ angular.module('contentful').config([
     $document[0].title = label || 'Contentful';
   });
 
+  $rootScope.$on('$stateChangeError', stateChangeErrorHandler);
+  $rootScope.$on('$stateNotFound', stateChangeErrorHandler);
+
+  /**
+   * Switches to the first space's entry list if there is a navigation error
+   */
+  function stateChangeErrorHandler(event) {
+    event.preventDefault();
+    navigateToInitialSpace();
+  }
+
   function navigateToInitialSpace(spaceId) {
     tokenStore.getSpaces().then(function (spaces) {
       var space = determineInitialSpace(spaces, spaceId);

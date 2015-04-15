@@ -48,8 +48,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
   $scope.$on('iframeMessage', iframeMessageWatchHandler);
   $scope.$on('$stateChangeSuccess', stateChangeSuccessHandler);
-  $scope.$on('$stateChangeError', stateChangeErrorHandler);
-  $scope.$on('$stateNotFound', stateChangeErrorHandler);
 
   $scope.initClient = initClient;
   $scope.setTokenDataOnScope = setTokenDataOnScope;
@@ -126,21 +124,6 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   function spacesWatchHandler(spaces, old, scope) {
     if(spaces) {
       scope.spacesByOrg = groupSpacesByOrg(spaces);
-    }
-  }
-
-  /**
-   * Switches to the first space's entry list if there is a navigation error
-   */
-  function stateChangeErrorHandler(event, toState, toStateParams) {
-    event.preventDefault();
-
-    if ($scope.spaces !== null) {
-      var targetSpace = _.find($scope.spaces, function (space) {
-        return space.getId() === toStateParams.spaceId;
-      });
-      var targetSpaceId = (targetSpace && targetSpace.getId() ) || $scope.$stateParams.spaceId || $scope.spaces[0].getId();
-      $scope.$state.go('spaces.detail.entries.list', { spaceId: targetSpaceId });
     }
   }
 
