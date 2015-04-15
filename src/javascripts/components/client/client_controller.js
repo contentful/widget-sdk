@@ -63,7 +63,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
 
   function initClient() {
-    tokenStore.updateToken()
+    tokenStore.getUpdatedToken()
     .then(function(data) {
       setTokenDataOnScope(data);
       analytics.setUserData($scope.user);
@@ -138,6 +138,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
 
     } else if (msg('delete', 'space')) {
       performTokenLookup();
+      $location.url('/');
 
     } else if (data.type === 'flash') {
       showFlashMessage(data);
@@ -175,10 +176,8 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   function updateToken(data) {
     authentication.updateTokenLookup(data);
     if(authentication.tokenLookup) {
-      setTokenDataOnScope({
-        user: authentication.tokenLookup.sys.createdBy,
-        spaces: authentication.tokenLookup.spaces
-      });
+      tokenStore.updateTokenFromTokenLookup(authentication.tokenLookup);
+      setTokenDataOnScope(tokenStore.getToken());
     } else {
       logger.logError('Token Lookup has not been set properly', {
         data: {
@@ -189,7 +188,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function performTokenLookup() {
-    return tokenStore.updateToken().then(setTokenDataOnScope);
+    return tokenStore.getUpdatedToken().then(setTokenDataOnScope);
   }
 
   function setTokenDataOnScope(token) {

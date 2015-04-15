@@ -16,17 +16,29 @@ angular.module('contentful').service('tokenStore', ['$injector', function($injec
     return !!tokenStore._currentToken;
   };
 
-  tokenStore.updateToken = function() {
+  tokenStore.updateToken = function(token) {
+    tokenStore._currentToken = token;
+  };
+
+  tokenStore.updateTokenFromTokenLookup = function(tokenLookup) {
+    var existingSpaces = tokenStore._currentToken ? tokenStore._currentToken.spaces : [];
+    tokenStore.updateToken({
+      user: tokenLookup.sys.createdBy,
+      spaces: updateSpaces(tokenLookup.spaces, existingSpaces)
+    });
+  };
+
+  tokenStore.getToken = function() {
+    return tokenStore._currentToken;
+  };
+
+  tokenStore.getUpdatedToken = function() {
     if(tokenStore._inFlightUpdate)
       return tokenStore._inFlightUpdate;
 
     tokenStore._inFlightUpdate = authentication.getTokenLookup()
     .then(function (tokenLookup) {
-      var existingSpaces = tokenStore._currentToken ? tokenStore._currentToken.spaces : [];
-      tokenStore._currentToken = {
-        user: tokenLookup.sys.createdBy,
-        spaces: updateSpaces(tokenLookup.spaces, existingSpaces)
-      };
+      tokenStore.updateTokenFromTokenLookup(tokenLookup);
       tokenStore._inFlightUpdate = null;
       return tokenStore._currentToken;
     })

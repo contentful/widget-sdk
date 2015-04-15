@@ -34,7 +34,7 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
 
       client.createSpace(data, orgId)
       .then(function(newSpace){
-        tokenStore.updateToken()
+        tokenStore.getUpdatedToken()
         .then(_.partialRight(handleSpaceCreation, newSpace));
       })
       .catch(handleSpaceCreationFailure)
