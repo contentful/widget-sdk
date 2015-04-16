@@ -148,8 +148,6 @@ angular.module('contentful')
   }
 
   function buildAssetError (error) {
-    if (error.name === 'regexp' && error.path[0] === 'file' && error.path[3] === 'url')
-      return 'Has an invalid url';
     if (error.name === 'required' && error.path.length == 4 &&
         error.path[1] == 'file' && error.path[3] == 'url')
       return 'Cannot publish until processing has finished';
