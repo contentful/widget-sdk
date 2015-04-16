@@ -34,8 +34,8 @@ angular.module('contentful').config([
       }
     },
     views: {
-      'main-container': { template: '<ui-view/>' },
-      'space-nav-bar': { template: '<cf-main-nav-bar/>' }
+      'app-container': { template: '<ui-view/>' },
+      'main-nav-bar': { template: '<cf-main-nav-bar/>' }
     }
   })
   .state('spaces.detail', {
@@ -320,7 +320,7 @@ angular.module('contentful').config([
     url: '/account',
     abstract: true,
     views: {
-      'main-container': {
+      'app-container': {
         template:
         '<div cf-account-view ' +
           'class="account-view view-content">' +

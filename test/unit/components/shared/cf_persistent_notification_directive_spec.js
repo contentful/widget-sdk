@@ -10,7 +10,7 @@ describe('cfPersistentNotification Directive', function () {
     $rootScope = _$rootScope_;
     scope = $rootScope.$new();
     scope.field = {};
-    element = $compile('<div cf-persistent-notification></div>')(scope);
+    element = $compile('<cf-persistent-notification></cf-persistent-notification>')(scope);
   }));
 
   it('should show message', function () {

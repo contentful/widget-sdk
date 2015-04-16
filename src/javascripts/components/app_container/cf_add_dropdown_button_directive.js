@@ -3,7 +3,8 @@
 angular.module('contentful').directive('cfAddDropdownButton', ['analytics', function(analytics) {
   return {
     template: JST.cf_add_dropdown_button(),
-    restrict: 'A',
+    restrict: 'E',
+    replace: true,
     link: function (scope, elem) {
       elem.find('[cf-dropdown-toggle]').click(function (event) {
         if ($(event.currentTarget).parent().hasClass('active')) {

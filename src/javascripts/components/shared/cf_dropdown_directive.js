@@ -1,8 +1,16 @@
 'use strict';
 
+/**
+ * Attributes:
+ * `cf-dropdown` - container for the dropdown system. Also the main hook into this directive.
+ * `cf-dropdown-toggle` - Toggles the dropdown state.
+ * `cf-dropdown-menu` - Identifies the element to be shown as a dropdown.
+ * `dropdown-close` - When an element with this attribute is clicked, it will toggle the dropdown off.
+ */
 angular.module('contentful').directive('cfDropdown', ['$parse', function($parse) {
   return {
     restrict: 'A',
+    scope: true,
     link: function(scope, element, attrs) {
       var onClose = attrs.onClose ? $parse(attrs.onClose) : undefined;
 

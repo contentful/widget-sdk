@@ -1,0 +1,12 @@
+.app-container__top-bar.app-top-bar
+  .app-top-bar__logo(ng-click="logoClicked()")
+    .app-top-bar__logo-element(cf-custom-logo)
+  cf-space-selector
+  div.app-top-bar__child(ui-view="main-nav-bar")
+  cf-navbar-loader.u-flex-pull-right
+  cf-persistent-notification.u-flex-pull-right
+  cf-add-dropdown.u-flex-pull-right
+  cf-account-dropdown.u-flex-pull-right
+
+.app-container__content(ui-view="app-container")
+cf-view-content-fallback

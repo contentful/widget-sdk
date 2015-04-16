@@ -1,0 +1,11 @@
+.account-dropdown.app-top-bar__child-action.app-top-bar--separator(cf-dropdown label="")
+  a.account-dropdown__toggle(cf-dropdown-toggle ng-click="clickedProfileButton()" tabindex="0")
+    img.account-dropdown__avatar(ng-src="{{user.avatarUrl}}")
+    span.account-dropdown__name.u-truncate {{user.firstName}}
+    i.account-dropdown__icon.fa.fa-caret-down
+  .cfnext-dropdown.fixed-position.left-aligned(cf-dropdown-menu)
+    ul.cfnext-dropdown__list
+      li.cfnext-dropdown__item(ng-click="goToAccount()" dropdown-close) Account Settings
+      li.cfnext-dropdown__item(ng-click="openSupport()" dropdown-close) Support
+      li.cfnext-dropdown__item(ng-click="logout()" dropdown-close) Log out
+

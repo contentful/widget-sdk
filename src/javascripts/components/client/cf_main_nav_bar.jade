@@ -1,60 +1,58 @@
-nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
+nav.nav-bar.app-top-bar--separator(ng-class="{'with-persistent-notification': persistentNotification}")
   ul.nav-bar__list(ng-show="!locationInAccount && spaces.length > 0 && spaceContext.space && !spaceContext.space.isHibernated()")
-    li.add-dropdown.nav-bar__list-item(cf-add-dropdown-button space-context="spaceContext"
-      ng-hide="permissionController.get('createContentType', 'shouldHide') && permissionController.get('createEntry', 'shouldHide') && permissionController.get('createAsset', 'shouldHide') && permissionController.get('createApiKey', 'shouldHide')")
-    a.nav-bar__list-item(
-        ng-class="{section: $state.includes('spaces.detail.content_types') ,\
-                  'section-index': $state.$current.name === 'spaces.detail.content_types.list'}"
-        ui-sref="spaces.detail.content_types.list"
-        ng-hide="permissionController.get('updateContentType', 'shouldHide')"
-        data-view-type="content-type-list"
-        tooltip="Content Model"
-        tooltip-placement="bottom"
-        tabindex="0")
-      i.fa.fa-database
-      span Content Model
-    a.nav-bar__list-item(
-      ng-class="{section: $state.includes('spaces.detail.entries') ,\
-                  'section-index': $state.$current.name === 'spaces.detail.entries.list'}"
-        ng-hide="permissionController.get('readEntry', 'shouldHide')"
-        ui-sref="spaces.detail.entries.list"
-        data-view-type="entry-list"
-        tooltip="Entries"
-        tooltip-placement="bottom"
-        tabindex="0")
-      i.fa.fa-file
-      span Entries
-    a.nav-bar__list-item(
-      ng-class="{section: $state.includes('spaces.detail.assets') ,\
-                  'section-index': $state.$current.name === 'spaces.detail.assets.list'}"
-        ui-sref="spaces.detail.assets.list"
-        ng-hide="permissionController.get('readAsset', 'shouldHide')"
-        data-view-type="asset-list"
-        tooltip="Assets"
-        tooltip-placement="bottom"
-        tabindex="0")
-      i.fa.fa-paperclip
-      span Assets
-    a.nav-bar__list-item(
-      ng-class="{section: $state.includes('spaces.detail.api') ,\
-                  'section-index': $state.$current.name === 'spaces.detail.api.home'}"
-        ui-sref="spaces.detail.api.home"
-        ng-hide="permissionController.get('readApiKey', 'shouldHide')"
-        data-view-type="api-home"
-        tooltip="API"
-        tooltip-placement="bottom"
-        tabindex="0")
-      i.fa.fa-random
-      span API
-    a.nav-bar__list-item(
-        ng-class="{section: $state.includes('spaces.detail.settings') ,\
-          'section-index': $state.$current.name === 'spaces.detail.settings.pathSuffix'}"
-        ui-sref="spaces.detail.settings.pathSuffix"
-        ng-hide="permissionController.get('updateSettings', 'shouldHide')"
-        data-view-type="space-settings"
-        tooltip="Space Settings"
-        tooltip-placement="bottom"
-        tabindex="0")
-      i.fa.fa-gear
-      span Space Settings
+    li.app-top-bar__action.nav-bar__list-item
+      a(ng-class="{section: $state.includes('spaces.detail.content_types') ,\
+                    'section-index': $state.$current.name === 'spaces.detail.content_types.list'}"
+          ui-sref="spaces.detail.content_types.list"
+          ng-hide="permissionController.get('updateContentType', 'shouldHide')"
+          data-view-type="content-type-list"
+          tooltip="Content Model"
+          tooltip-placement="bottom"
+          tabindex="0")
+        i.fa.fa-database
+        span.nav-bar__list-label Content Types
+    li.app-top-bar__action.nav-bar__list-item
+      a(ng-class="{section: $state.includes('spaces.detail.entries') ,\
+                    'section-index': $state.$current.name === 'spaces.detail.entries.list'}"
+          ng-hide="permissionController.get('readEntry', 'shouldHide')"
+          ui-sref="spaces.detail.entries.list"
+          data-view-type="entry-list"
+          tooltip="Entries"
+          tooltip-placement="bottom"
+          tabindex="0")
+        i.fa.fa-file
+        span.nav-bar__list-label Entries
+    li.app-top-bar__action.nav-bar__list-item
+      a(ng-class="{section: $state.includes('spaces.detail.assets') ,\
+                    'section-index': $state.$current.name === 'spaces.detail.assets.list'}"
+          ui-sref="spaces.detail.assets.list"
+          ng-hide="permissionController.get('readAsset', 'shouldHide')"
+          data-view-type="asset-list"
+          tooltip="Assets"
+          tooltip-placement="bottom"
+          tabindex="0")
+        i.fa.fa-paperclip
+        span.nav-bar__list-label Media Library
+    li.app-top-bar__action.nav-bar__list-item
+      a(ng-class="{section: $state.includes('spaces.detail.settings') ,\
+            'section-index': $state.$current.name === 'spaces.detail.settings.pathSuffix'}"
+          ui-sref="spaces.detail.settings.pathSuffix"
+          ng-hide="permissionController.get('updateSettings', 'shouldHide')"
+          data-view-type="space-settings"
+          tooltip="Settings"
+          tooltip-placement="bottom"
+          tabindex="0")
+        cf-icon.icon-dd-arrow-down(name="nav-settings" scale="0.6")
+        span.nav-bar__list-label Settings
+    li.app-top-bar__action.nav-bar__list-item
+      a(ng-class="{section: $state.includes('spaces.detail.api') ,\
+                    'section-index': $state.$current.name === 'spaces.detail.api.home'}"
+          ui-sref="spaces.detail.api.home"
+          ng-hide="permissionController.get('readApiKey', 'shouldHide')"
+          data-view-type="api-home"
+          tooltip="API"
+          tooltip-placement="bottom"
+          tabindex="0")
+        i.fa.fa-random
+        span.nav-bar__list-label APIs
 

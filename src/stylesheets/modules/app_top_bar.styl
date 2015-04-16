@@ -1,0 +1,53 @@
+.app-top-bar
+  $display-flexbox()
+  background-color: $cfnext-dark-blue
+
+  &__logo
+    $display-flexbox()
+    justify-content: center
+    align-items: center
+    width: 60px
+    height: 100%
+
+  &__logo-element
+    width: 29px
+    height: 29px
+    position: relative
+    background-image: url('/app/images/logo-label.png')
+    background-size: 29px 29px
+
+  &__child,
+  &__child-action
+    height: 70%
+    margin: auto 0
+
+  &__action,
+  &__child-action
+    $display-flexbox()
+    flex-direction: column
+    justify-content: center
+    padding: 0 15px
+    font-size: 15px
+    font-weight: normal
+    a
+      color: $cfnext-white
+      &:hover
+        color: $cfnext-blue
+    &:focus
+      $focus-styles
+    &:hover
+      cursor: pointer
+
+  &--separator
+    border-left: 1px solid transparentify($cfnext-white, 20%)
+
+  &__loader
+    width: 50px
+    height: 50px
+    background: url('/app/images/navbar-loader.gif') center no-repeat
+
+  @media (min-device-pixel-ratio: 2), (min-resolution: 192dpi)
+    &__logo-element
+      background-image: url('/app/images/logo-label@2x.png')
+
+
