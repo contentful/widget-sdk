@@ -350,11 +350,37 @@ angular.module('contentful').config([
   $stateProvider.state('spaces.detail.settings', {
     url: '/settings',
     abstract: true,
+    template: '<ui-view/>'
+  })
+  .state('spaces.detail.settings.locales', {
+    url: '/locales',
+    abstract: true,
+    template: '<ui-view/>'
+  })
+  .state('spaces.detail.settings.locales.list', {
+    url: '',
+    ncyBreadcrumb: {
+      label: 'Settings: Locales'
+    },
+    template:
+      '<div cf-locales-list ' +
+        'class="locales-list entity-list">' +
+      '</div>',
+    controller: function () {
+      console.log('here');
+    }
+  })
+  .state('spaces.detail.settings.locales.detail', {
+    url: '/:localeId'
+  })
+  .state('spaces.detail.settings.iframe', {
+    url: '',
+    abstract: true,
     template: '<div cf-space-settings class="space-settings"></div>'
   });
 
 
-  $stateProvider.state('spaces.detail.settings.pathSuffix', {
+  $stateProvider.state('spaces.detail.settings.iframe.pathSuffix', {
     url: '/{pathSuffix:PathSuffix}',
     params: {
       pathSuffix: 'edit'

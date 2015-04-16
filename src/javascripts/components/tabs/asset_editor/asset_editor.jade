@@ -87,6 +87,6 @@
                          link="link" as="presenceUser"
                          tooltip="{{presenceUser | userNameDisplay:user}}")
         img(ng-src="{{user.data.avatarUrl}}")
-    a.cfnext-btn-secondary-action.invite-users(ui-sref="spaces.detail.settings.pathSuffix({ pathSuffix: 'users/new/' })")
+    a.cfnext-btn-secondary-action.invite-users(ui-sref="spaces.detail.settings.iframe.pathSuffix({ pathSuffix: 'users/new/' })")
       i.fa.fa-user
       i.fa.fa-plus

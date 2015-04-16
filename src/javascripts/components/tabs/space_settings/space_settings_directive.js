@@ -37,7 +37,7 @@ angular.module('contentful').directive('cfSpaceSettings', ['$window', '$rootScop
         var oldPathSuffix = extractPathSuffix(scope.url);
         var pathSuffix    = extractPathSuffix(path);
         scope.url = buildUrl(pathSuffix);
-        if (oldPathSuffix !== pathSuffix) scope.$state.go('spaces.detail.settings.pathSuffix', { pathSuffix: pathSuffix });
+        if (oldPathSuffix !== pathSuffix) scope.$state.go('spaces.detail.settings.iframe.pathSuffix', { pathSuffix: pathSuffix });
       }
 
       function urlIsActive(url) {

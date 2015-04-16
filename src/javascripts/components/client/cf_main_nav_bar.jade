@@ -44,8 +44,9 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
       ng-if="canNavigateTo.settings")
       a.nav-bar__link(
           ng-class="{'is-active': $state.includes('spaces.detail.settings') ,\
-            'is-section-index': $state.$current.name === 'spaces.detail.settings.pathSuffix'}"
-          ui-sref="spaces.detail.settings.pathSuffix({ spaceId: $stateParams.spaceId })"
+            'is-section-index': $state.$current.name === 'spaces.detail.settings.iframe.pathSuffix'}"
+          ui-sref="spaces.detail.settings.iframe.pathSuffix({ spaceId: $stateParams.spaceId })"
+          ng-hide="permissionController.get('updateSettings', 'shouldHide')"
           data-view-type="space-settings"
           tabindex="0")
         cf-icon(name="nav-settings")
