@@ -5,6 +5,7 @@ branches:
   - production
   - staging
   - preview
+  - /^feature\//
 node_js:
 - '0.10'
 before_install:
