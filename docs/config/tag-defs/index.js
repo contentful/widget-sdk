@@ -4,6 +4,8 @@ module.exports = function tagDefs (extractTypeTransform, wholeTagTransform, extr
   return [{
     name: 'module',
     defaultFn: function (doc) {
+      if (doc.docType === 'module')
+        return doc.name;
       if (doc.area === 'api' && doc.docType !== 'overview')
         return 'contentful/app';
     }
