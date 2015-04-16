@@ -1,0 +1,42 @@
+{% macro typeList(types) -%}
+{% for typeName in types %}<a href="" class="{$ typeName | typeClass $}">{$ typeName | escape $}</a>{% endfor %}
+{%- endmacro -%}
+
+{%- macro paramTable(params) %}
+<table class="api-param-table">
+  <tbody>
+    {% for param in params %}
+    {% if param.description %}
+    <tr>
+      <td>
+        <code>
+          {$ param.name $} :
+          {$ param.typeExpression $}
+        </code>
+      </td>
+      <td>
+        {$ param.description | marked $}
+        {% if param.defaultValue %}<p><em>(default: {$ param.defaultValue $})</em></p>{% endif %}
+      </td>
+    </tr>
+    {% endif %}
+    {% endfor %}
+  </tbody>
+</table>
+{% endmacro -%}
+
+
+{%- macro directiveParam(name, type, join, sep) %}
+  {%- if type.optional %}[{% endif -%}
+  {$ name | dashCase $}{$ join $}{$ type.description $}{$ sep $}
+  {%- if type.optional %}]{% endif -%}
+{% endmacro -%}
+
+{%- macro typeInfo(fn) -%}
+<table class="variables-matrix return-arguments">
+  <tr>
+    <td>{$ typeList(fn.typeList) $}</td>
+    <td>{$ fn.description | marked $}</td>
+  </tr>
+</table>
+{%- endmacro -%}

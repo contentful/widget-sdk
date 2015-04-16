@@ -1,0 +1,21 @@
+{%- if doc.methods %}
+<h2>Methods</h2>
+<ul class="api-members">
+  {%- for method in doc.methods %}
+  <li id="{$ method.name $}">
+    <h3><code>{$ method | functionSyntax $}</code></h3>
+    <div>{$ method.description | marked $}</div>
+
+    {% if method.params %}
+    {$ paramTable(method.params) $}
+    {% endif %}
+
+    {% if method.this %}
+    <h4>Method's {% code %}this{% endcode %}</h4>
+    {$ method.this | marked $}
+    {% endif %}
+
+  </li>
+  {% endfor -%}
+</ul>
+{%- endif -%}
