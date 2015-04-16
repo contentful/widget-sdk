@@ -41,7 +41,7 @@
           cf-when-disabled="permissionController.entityActions.createEntry")
         i.fa.fa-plus.button-icon
         | Add New Entry
-      .dropdown-menu(cf-dropdown-menu position="bottomcenter" container=".tab-content")
+      .dropdown-menu(cf-dropdown-menu position="bottomcenter" container=".view-content")
         ul.add-entity__list
           li.dropdown-menu-item.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
                    ng-click="entityCreationController.newEntry(contentType, 'frameButton')"

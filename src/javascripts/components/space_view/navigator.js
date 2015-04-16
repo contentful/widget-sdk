@@ -39,7 +39,7 @@ angular.module('contentful').config([
     }
   })
   .state('spaces.detail', {
-    template: '<cf-breadcrumbs></cf-breadcrumbs><div class="tab-content" ui-view></div>',
+    template: '<cf-breadcrumbs></cf-breadcrumbs><div class="view-content" ui-view></div>',
     url: '/:spaceId',
     ncyBreadcrumb: {
       label: '{{label}}'
@@ -323,7 +323,7 @@ angular.module('contentful').config([
       'main-container': {
         template:
         '<div cf-account-view ' +
-          'class="account-view tab-content">' +
+          'class="account-view view-content">' +
         '</div>'
       }
     }
