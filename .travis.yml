@@ -4,6 +4,7 @@ branches:
   - master
   - production
   - staging
+  - preview
 node_js:
 - '0.10'
 before_install:
