@@ -23,7 +23,7 @@
         cf-icon.context-menu__arrow.x--top-right(name="arrow-up")
         ul.lang-switcher(ng-show="showLangSwitcher")
           label.context-menu__item(ng-repeat="locale in spaceContext.privateLocales track by locale.sys.id")
-            input(type="checkbox" ng-model="spaceContext.localeStates[locale.code]")
+            input(type="checkbox" ng-model="spaceContext.localeStates[locale.internal_code]")
             | {{locale.name}}
             span(ng-show="locale == spaceContext.space.getDefaultLocale()")
               | &nbsp;(default)
@@ -51,13 +51,13 @@
         | {{field.name}} 
         sup(ng-show="field.required") (required)
       .l-form-controls(ng-if="field")
-        .l-form-locale(ng-repeat="locale in locales track by locale.code"
-            ot-field-presence="['fields', field.id, locale.code]"
-            data-locale="{{locale.code}}")
+        .l-form-locale(ng-repeat="locale in locales track by locale.internal_code"
+            ot-field-presence="['fields', field.id, locale.internal_code]"
+            data-locale="{{locale.internal_code}}")
           cf-widget-renderer.l-field-editor(
             cf-focus-ot-input="shouldFocusField()"
-            ot-path="['fields', field.id, locale.code]"
-            cf-field-editor="entry.data.fields[field.id][locale.code]")
+            ot-path="['fields', field.id, locale.internal_code]"
+            cf-field-editor="entry.data.fields[field.id][locale.internal_code]")
           .locale-label(ng-show="locales.length > 1") {{locale.name}}
           .field-collaborators
             ul.field-list
@@ -65,7 +65,7 @@
                                  link="link" as="presenceUser"
                                  tooltip="{{presenceUser | userNameDisplay:user}}")
                 img(ng-src="{{presenceUser.avatarUrl}}")
-          cf-error-list.form-box-error(cf-error-path="['fields', field.id, locale.code,'*']")
+          cf-error-list.form-box-error(cf-error-path="['fields', field.id, locale.internal_code,'*']")
         .form-widget__help-text(ng-if="showHelpText") {{helpText}}
         cf-error-list.form-box-error(cf-error-path="['fields', field.id]")
       .l-form-controls(ng-if="!field")

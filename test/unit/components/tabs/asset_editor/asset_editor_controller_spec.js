@@ -42,6 +42,7 @@ describe('Asset editor controller', function () {
 
       var locale = {
         code: 'en-US',
+        internal_Code: 'en-US',
         contentDeliveryApi: true,
         contentManagementApi: true,
         'default': true,
@@ -102,6 +103,7 @@ describe('Asset editor controller', function () {
 
       var locale = {
         code: 'en-US',
+        internal_code: 'en-US',
         contentDeliveryApi: true,
         contentManagementApi: true,
         'default': true,
@@ -145,7 +147,7 @@ describe('Asset editor controller', function () {
       otPath = ['fields', 'title', 'en-US'];
       var fileObj = {fileName: 'file.jpg'};
       scope.$on('fileProcessingFailed', stubs.fileProcessingFailed);
-      scope.$emit('fileUploaded', fileObj, {code: 'en-US'});
+      scope.$emit('fileUploaded', fileObj, {internal_code: 'en-US'});
     });
 
     it('calls asset processing', function () {

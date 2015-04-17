@@ -42,12 +42,10 @@ nav.nav-bar(ng-class="{'with-persistent-notification': persistentNotification}")
         span.nav-bar__list-label APIs
     li.app-top-bar__action.nav-bar__list-item(
       ng-if="canNavigateTo.settings")
-      a.nav-bar__link(
-          ng-class="{'is-active': $state.includes('spaces.detail.settings') ,\
-            'is-section-index': $state.$current.name === 'spaces.detail.settings.iframe.pathSuffix'}"
-          ui-sref="spaces.detail.settings.iframe.pathSuffix({ spaceId: $stateParams.spaceId })"
-          ng-hide="permissionController.get('updateSettings', 'shouldHide')"
+      a.nav-bar__link.app-top-bar__dropdown-toggle(
           data-view-type="space-settings"
-          tabindex="0")
+          ng-hide="permissionController.get('updateSettings', 'shouldHide')"
+          cf-dropdown-toggle="navbar.settings"
+          ng-class="{'is-active': $state.includes('spaces.detail.settings')}")
         cf-icon(name="nav-settings")
         span.nav-bar__list-label Settings

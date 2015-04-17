@@ -1,0 +1,36 @@
+.tab-header
+  .tab-header__title
+    h1
+      | Languages
+      a(cf-knowledge-base-icon
+        tooltip="Learn more about Locales in the Knowledge Base Pages"
+        tooltip-container=".entity-list"
+        analytics-event="locales"
+        href="https://support.contentful.com/hc/en-us/articles/200513368-What-is-a-Locale-")
+
+  .tab-header__actions.add-entity.u-truncate(ng-class="{'with-pagination': paginator.numPages() > 1}" ng-hide="empty")
+    button.btn.btn--primary(ng-click="entityCreationController.newLocale('frameButton')")
+      i.fa.fa-plus.button-icon
+      | Add Language
+
+.tab-main
+  .without-left-nav
+    table.result-list.main-results.main-header
+      thead
+        tr
+          th.cell-name Language
+          th.cell-status
+            th.cell-enabled-for Enabled for
+    .main-results-wrapper
+      table.result-list.main-results
+        tbody
+          tr(ng-repeat="locale in locales track by locale.getId()"
+              ng-init="entityNavState='spaces.detail.settings.locales.detail({ localeId: locale.getId() })'"
+              ui-sref="{{entityNavState}}")
+            td.cell-name
+              a.entity-list-link(ui-sref="{{entityNavState}}") {{locale.getName() + " (" + locale.getCode() + ")"}}
+            td.cell-status
+              a.status-label.entity-list-link(ui-sref="{{entityNavState}}") {{locale.isDefault() ? "Default" : ""}}
+            td.cell-enabled-for
+              a.entity-list-link(ui-sref="{{entityNavState}}") {{getEnabledInfo(locale)}}
+

@@ -20,7 +20,8 @@ describe('cfLinkEditorSearch Directive', function () {
       scope = $rootScope.$new();
 
       scope.locale = {
-        code: 'en-US'
+        code: 'en-US',
+        internal_code: 'en-US'
       };
 
       scope.permissionController = {

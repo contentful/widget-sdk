@@ -360,18 +360,59 @@ angular.module('contentful').config([
   .state('spaces.detail.settings.locales.list', {
     url: '',
     ncyBreadcrumb: {
-      label: 'Settings: Locales'
+      label: 'Language Settings'
     },
     template:
-      '<div cf-locales-list ' +
-        'class="locales-list entity-list">' +
+      '<div cf-locale-list ' +
+        'class="locale-list entity-list">' +
       '</div>',
     controller: function () {
-      console.log('here');
     }
   })
   .state('spaces.detail.settings.locales.detail', {
-    url: '/:localeId'
+    url: '/:localeId',
+    params: {
+      addToContext: {
+        value: false,
+        squash: '~'
+      }
+    },
+    template:
+    '<div ' + [
+      'cf-locale-editor',
+      'class="locale-editor entity-editor with-tab-actions"'
+    ].join(' ') + '></div>',
+    ncyBreadcrumb: {
+      parent: 'spaces.detail.settings.locales.list',
+      label: '{{context.title + (context.dirty ? "*" : "")}}'
+    },
+    resolve: {
+      locale: function ($stateParams, space) {
+        if ($stateParams.localeId === 'new') {
+          return space.newLocale({
+            code: space.getDefaultLocale().code,
+            contentDeliveryApi: false,
+            contentManagementApi: false
+          });
+        }
+        return space.getLocale($stateParams.localeId);
+      }
+    },
+    controller: function ($state, $scope, $stateParams, locale) {
+      $state.current.data = $scope.context = {};
+      $scope.locale = locale;
+
+      if (!$scope.$root.contextHistory.length ||
+          $stateParams.addToContext) {
+        var index = _.findIndex($scope.$root.contextHistory, function (e) {
+          return e.sys.id === $scope.locale.getId();
+        });
+        if (index > -1) {
+          $scope.$root.contextHistory.length = index;
+        }
+        $scope.$root.contextHistory.push($scope.locale);
+      }
+    }
   })
   .state('spaces.detail.settings.iframe', {
     url: '',

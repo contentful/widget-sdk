@@ -36,7 +36,8 @@ describe('cfEntryLinkEditor Directive', function () {
       };
 
       scope.locale = {
-        code: 'en-US'
+        code: 'en-US',
+        internal_code: 'en-US'
       };
 
       stubs.publishedType.returns({

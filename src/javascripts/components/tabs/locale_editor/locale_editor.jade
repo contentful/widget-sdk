@@ -1,0 +1,55 @@
+.tab-header.editor-configuration
+  .tab-header__title
+    h1(title="{{context.title}}")
+      | {{context.title}}
+      a(cf-knowledge-base-icon
+        tooltip="Learn more about Languages in the Knowledge Base Pages"
+        analytics-event="locales"
+        href="https://support.contentful.com/hc/en-us/articles/200513368-What-is-a-Locale-")
+
+.tab-main.tab-workbench
+  .ng-form.l-form(name="localeForm" submit="save()")
+    .l-form-row
+      label
+        | Language and Code
+      .l-form-controls
+        .l-field-editor
+          .joint-field
+            .btn.btn--tertiary.select-box
+              select(ng-model="locale.data.code"
+                      ng-options="item.code as (item.name + ' (' + item.code + ')') for item in locales")
+                | Language
+              i.button-icon-right.fa.fa-caret-down
+            //
+              .field-right
+                button.btn.cfnext-btn-action(ng-if="canSetAsDefault()" ng-click="makeDefault") Make this language default
+                span.info-default Currently, {{getHumanDefault()}} is the default language.
+    .l-form-row
+      label
+        | Options
+      .l-form-controls
+        ul.l-field-editor
+          li
+            label
+              input(type="checkbox" ng-model="locale.data.contentDeliveryApi")
+              | Publish content for this language
+          li
+            label
+              input(type="checkbox" ng-model="locale.data.contentManagementApi")
+              | Enable editing for this language
+
+.tab-actions
+  .button-set
+    button.btn.btn--secondary.delete(type="button" ng-show="locale.getId()" cf-dropdown-toggle="localeEditor.delete") Delete
+    .delete-confirm(cf-dropdown-menu="localeEditor.delete" cf-dropdown-position="topcenter")
+      p You are about to delete {{context.title}}
+      button.btn.btn--danger(type="button" ng-click="delete()" cf-dropdown-close) Delete 
+      button.btn.btn--secondary(type="button" cf-dropdown-close) Don't Delete 
+    button.btn.btn--primary.save(type="submit"
+                 tooltip="Save this Language"
+                 ng-click="save()"
+                 cf-when-disabled="permissionController.entityActions.createLocale"
+                 ng-disabled="localeForm.$invalid || permissionController.get('createLocale', 'shouldDisable')")
+      | Save
+  .rest-save-status
+    | Hit Save to save changes to this Language.
