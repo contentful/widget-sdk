@@ -62,37 +62,6 @@ describe('Space view directive', function () {
     expect(container.find('.nav-bar__list')).toBeNgHidden();
   });
 
-  /** FIXME: Some of these tests are disabled because they don't make sense with the new routing */
-  it('add button not shown even if no create permissions exist', function () {
-    scope.permissionController.get.withArgs('createContentType', 'shouldHide').returns(true);
-    scope.permissionController.get.withArgs('createEntry', 'shouldHide').returns(true);
-    scope.permissionController.get.withArgs('createAsset', 'shouldHide').returns(true);
-    scope.permissionController.get.withArgs('createApiKey', 'shouldHide').returns(true);
-    compileElement();
-    expect(container.find('.add-dropdown')).toBeNgHidden();
-  });
-
-  function makeShownButtonTest(type) {
-    describe('if user can create a '+type, function () {
-      var addDropdownButton;
-      beforeEach(function () {
-        compileElement();
-        addDropdownButton = container.find('.add-dropdown-button');
-      });
-
-      it('show add button', function () {
-        expect(addDropdownButton).not.toBeNgHidden();
-      });
-
-    });
-  }
-
-  makeShownButtonTest('ContentType');
-  makeShownButtonTest('Entry');
-  makeShownButtonTest('Asset');
-  makeShownButtonTest('ApiKey');
-
-
   function makeNavbarItemTest(type, action, viewType){
     describe('navbar item for '+type, function () {
       var selector = 'a[data-view-type="'+viewType+'"]';
