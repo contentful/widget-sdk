@@ -7,7 +7,6 @@ angular.module('contentful').controller('AssetEditorController', ['$scope', '$in
   var logger            = $injector.get('logger');
   var notification      = $injector.get('notification');
   var stringUtils       = $injector.get('stringUtils');
-  var validation        = $injector.get('validation');
 
   //Initialization
   $scope.entityActionsController = $controller('EntityActionsController', {
