@@ -1,8 +1,9 @@
 .space-selector.app-top-bar__child-action.app-top-bar--separator(cf-dropdown ng-show="organizations && organizations.length > 0" ng-hide="spaces.length == 0 && !canCreateSpaceInAnyOrg()")
   a(cf-dropdown-toggle ng-click="clickedSpaceSwitcher()" tabindex="0")
-    i.button-icon-right.fa.fa-caret-down
+    cf-icon.icon-dd-arrow-down.pull-right(name="dd-arrow-down" size="10")
     span.space-selector__name.u-truncate(ng-bind="spaceContext.space.data.name || 'Spaces'")
-  .space-selector__dropdown.cfnext-dropdown.fixed-position.left-aligned(cf-dropdown-menu)
+  .space-selector__dropdown.cfnext-dropdown(cf-dropdown-menu position="top15center")
+    cf-icon.cfnext-dropdown__arrow(cf-dropdown-arrow name="arrow-up" size="15")
     ul.cfnext-dropdown__list
       li.cfnext-dropdown__item--no-highlight(ng-repeat="(orgId, org) in spacesByOrg" ng-class="{'has-no-action': canSelectOrg(orgId)}")
         span.u-truncate {{getOrgName(orgId)}}
