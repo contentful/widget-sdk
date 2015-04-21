@@ -1,3 +1,4 @@
+sudo: false
 language: node_js
 branches:
   only:
@@ -24,6 +25,24 @@ script:
 - npm run hint
 after_success:
 - bin/trigger-packagebot
+before_deploy:
+- gem install fpm
+- "./Packagefile.local"
+- mkdir -p archive/user_interface/git archive/user_interface/pool
+- echo "archive/user_interface/pool/$(ls cf-user-interface*.deb | head -n1)" > archive/user_interface/git/$TRAVIS_COMMIT
+- echo "archive/user_interface/pool/$(ls cf-user-interface*.deb | head -n1)" > archive/user_interface/git/$TRAVIS_BRANCH
+- mv cf-user-interface*.deb archive/user_interface/pool
+deploy:
+  provider: s3
+  access_key_id: AKIAJBRHNHEFAA552JLQ
+  secret_access_key:
+    secure: "IUQlzPFoJ1IdgbjTiHMzQBxS47ymlWTWUH40zgBUSaT2jIKEGWavxmYqdBWwfzDBb5nPOYALUX/+ZZ2mMb3mokaQPhn5BS1Pc7pb1xIwlLskRH6eeoN0JP9He3I8eX0PrnOJJU9lw9b2legopSLm7j7KXBz/pgC5wAwBDBH0bwo="
+  bucket: pkg.contentful.org
+  local-dir: archive
+  skip_cleanup: true
+  upload-dir: archive
+  on:
+    all_branches: true
 notifications:
   slack:
     secure: lc+kwmitAcp5htZI5ETV5x5ZwP0TGzJKwenaMMyqGCCUlDgK76hBirkg9LgBhG5500Kks+udT6flZLJ0p/gNvbgqEaCR1GZBmCdneqxpkow8kAy2HUGR1MmkA3+zs1YMJ4Rp3nC78ygVKPzreqgEpmfCovYls0PmpO37khqzBnY=

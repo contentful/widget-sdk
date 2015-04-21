@@ -1,0 +1,35 @@
+#!/bin/bash
+
+set -x
+set -e
+umask 0022
+
+package_name="cf-user-interface"
+version="0.$(date '+%s')-g$(git log -1 --pretty=format:%h)"
+# strip first character from version
+#version=${version:1}
+
+if [ -z "$BUILD_ROOT" ]; then
+  BUILD_ROOT=$(mktemp -d -t user-interface.XXXX.$version);
+  echo "Warning: BUILD_ROOT was not set. building package in $BUILD_ROOT"
+fi
+
+PACKAGE_ROOT=$BUILD_ROOT/opt/contentful/$package_name
+mkdir -p $PACKAGE_ROOT
+
+node_modules/.bin/gulp package
+
+pushd $PACKAGE_ROOT
+  mkdir build bin
+popd
+
+rsync -avz build/. $PACKAGE_ROOT/build/.
+cp -p bin/process_hosts $PACKAGE_ROOT/bin
+
+fpm -t deb -s dir \
+  -n $package_name \
+  --version $version \
+  --exclude '**/.nfs*' \
+  -C $BUILD_ROOT \
+  opt
+
