@@ -240,7 +240,7 @@ function buildStylus(sources, dest) {
     .pipe(sourceMaps.init())
     .pipe(stylus({use: nib()}))
     .on('error', errorHandler('Stylus'))
-    .pipe(sourceMaps.write('.'))
+    .pipe(sourceMaps.write({sourceRoot: '/stylesheets'}))
     .pipe(gulp.dest(dest));
 }
 
