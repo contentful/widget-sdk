@@ -17,8 +17,6 @@ fi
 PACKAGE_ROOT=$BUILD_ROOT/opt/contentful/$package_name
 mkdir -p $PACKAGE_ROOT
 
-node_modules/.bin/gulp package
-
 pushd $PACKAGE_ROOT
   mkdir build bin
 popd

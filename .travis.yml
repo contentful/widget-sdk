@@ -23,6 +23,7 @@ before_script:
 script:
 - npm test
 - npm run hint
+- gulp package
 after_success:
 - bin/trigger-packagebot
 before_deploy:
