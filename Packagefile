@@ -34,7 +34,7 @@ npm install -g --prefix $(pwd) npm@~2.7.6
 npm install --production
 node_modules/bower/bin/bower install
 
-node_modules/.bin/gulp package
+node_modules/.bin/gulp build
 
 pushd $PACKAGE_ROOT
   mkdir build bin
