@@ -1,10 +1,29 @@
 .space-selector
   position: relative
-  min-width: 80px
+  min-width: 170px
   max-width: 200px
   &__name
     display: block
     width: inherit
   &__dropdown
     left: 0
-    width: inherit
+    width: 240px
+  &__list
+    $scroll-vertically(500px)
+  &__add
+    .cfnext-dropdown__item--vcentered
+      margin-bottom: 0
+  &__group-label
+    text-transform: uppercase
+    letter-spacing: 0.1em
+    font-size: 0.8em
+  .selected
+    span
+      font-weight: bold
+    .icon-checkmark
+      display: inline-block
+      position: relative
+      margin-left: 4px
+      img
+        position: relative
+        top: 3px

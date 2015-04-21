@@ -4,17 +4,20 @@
     span.space-selector__name.u-truncate(ng-bind="spaceContext.space.data.name || 'Spaces'")
   .space-selector__dropdown.cfnext-dropdown(cf-dropdown-menu position="top15center")
     cf-icon.cfnext-dropdown__arrow(cf-dropdown-arrow name="arrow-up" size="15")
-    ul.cfnext-dropdown__list
+    ul.space-selector__list.cfnext-dropdown__list
       li.cfnext-dropdown__item--no-highlight(ng-repeat="(orgId, org) in spacesByOrg" ng-class="{'has-no-action': canSelectOrg(orgId)}")
-        span.u-truncate {{getOrgName(orgId)}}
+        span.u-truncate.space-selector__group-label {{getOrgName(orgId)}}
         ul.cfnext-dropdown__inner-list
           li.cfnext-dropdown__item(ng-repeat="space in org track by space.getId()"
               cf-click-local="selectSpace(space) && toggleDropdown()"
-              ng-class="{hibernated: space.isHibernated()}" ng-disabled="!space.isHibernated()"
+              ng-class="{hibernated: space.isHibernated(), selected: space.getId() === getCurrentSpaceId()}"
+              ng-disabled="!space.isHibernated()"
               tooltip-container=".project" tooltip-placement="left"
               tooltip="This space entered hibernation due to lack of use. It will be back online soon.")
-            span.u-truncate {{space.data.name}}
+            span {{space.data.name | truncate:25}}
+            cf-icon.icon-checkmark(name="checkmark" size="12" ng-show="space.getId() === getCurrentSpaceId()")
             i.fa.fa-circle(ng-show="space.isHibernated()")
-    ul.cfnext-dropdown__list
-      li.cfnext-dropdown__item(ng-show="permissionController.canCreateSpace()" ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close)
-        | + Create Space
+    ul.space-selector__add.cfnext-dropdown__list
+      li.cfnext-dropdown__item--vcentered(ng-show="permissionController.canCreateSpace()" ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close)
+        cf-icon(name="plus" size="22")
+        | Add new Space

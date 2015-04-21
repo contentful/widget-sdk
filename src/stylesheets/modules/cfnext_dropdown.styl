@@ -1,6 +1,9 @@
 $cfnext-dropdown__item()
+  margin-bottom: 1em
   line-height: 2em
   cursor: pointer
+  &:hover
+    font-weight: bold
 
 $cfnext-caret-size: 12px
 
@@ -28,16 +31,23 @@ $cfnext-caret-size: 12px
 
   &__inner-list
     padding-top: 5px
-    padding-left: 15px
+    padding-left: 5px
 
   &__item
     $cfnext-dropdown__item()
-    &:hover
-      font-weight: bold
 
   &__item--no-highlight
     $cfnext-dropdown__item()
     cursor: default
     &:hover
       font-weight: normal
+
+  &__item--vcentered
+    $cfnext-dropdown__item()
+    $display-flexbox()
+    align-items: center
+    cf-icon
+      line-height: normal
+      margin-right: 4px
+
 
