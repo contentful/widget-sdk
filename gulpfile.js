@@ -9,7 +9,6 @@ var concat      = require('gulp-concat');
 var ecstatic    = require('ecstatic');
 var exec        = require('child_process').exec;
 var express     = require('express');
-var filter      = require('gulp-filter');
 var fingerprint = require('gulp-fingerprint');
 var fs          = require('fs');
 var gulp        = require('gulp');
@@ -28,10 +27,12 @@ var sourceMaps  = require('gulp-sourcemaps');
 var stylus      = require('gulp-stylus');
 var uglify      = require('gulp-uglify');
 var run         = require('gulp-run');
+var path        = require('path');
+var through     = require('through2').obj;
 
+var pexec = Promise.denodeify(exec);
 var gitRevision;
-var packaging     = false;
-var settings      = _.omit(require('./config/environment.json'), 'fog');
+var settings = _.omit(require('./config/environment.json'), 'fog');
 
 var src = {
   templates:   'src/javascripts/**/*.jade',
@@ -134,7 +135,10 @@ gulp.task('cleanup-svg', ['prepare-svg'], function (cb) {
 
 gulp.task('index', function(){
   gulp.src('src/index.html')
-    .pipe(replace({regex: 'window.CF_CONFIG =.*', replace: 'window.CF_CONFIG = '+JSON.stringify(settings)+';'}))
+    .pipe(replace({
+      regex:   'window.CF_CONFIG =.*',
+      replace: 'window.CF_CONFIG = '+JSON.stringify(settings)+';'
+    }))
     .pipe(gulp.dest('public'));
 });
 
@@ -240,7 +244,7 @@ function buildStylus(sources, dest) {
     .pipe(sourceMaps.init())
     .pipe(stylus({use: nib()}))
     .on('error', errorHandler('Stylus'))
-    .pipe(sourceMaps.write('.'))
+    .pipe(sourceMaps.write({sourceRoot: '/stylesheets'}))
     .pipe(gulp.dest(dest));
 }
 
@@ -347,115 +351,8 @@ gulp.task('serve', ['generate-styleguide'], function () {
   }
 });
 
-gulp.task('serve-production', function(){
-  var app = express();
-  app.use(ecstatic({ root: __dirname + '/build', handleError: false, showDir: false }));
-  app.all('*', function(req, res) {
-    var index = fs.readFileSync('build/index.html', 'utf8');
-    res.status(200).send(index);
-  });
-  http.createServer(app).listen(3001);
-});
-
-
 
 // PRODUCTION: //////////////////////////////////////////
-
-gulp.task('rev-static', function(){
-  return gulp.src(['public/app/**', '!**/!(kaltura).js', '!**/*.css'], {base: 'public'})
-    .pipe(gulp.dest('build'))
-    .pipe(rev())
-    .pipe(gulp.dest('build'))
-    .pipe(rev.manifest({path: 'static-manifest.json'}))
-    .pipe(gulp.dest('build'));
-});
-
-gulp.task('rev-dynamic', function(){
-  var filterCss = filter('**/*.css');
-  var filterMaps = filter('**/*.css');
-  return gulp.src([
-    'public/app/main.css',
-    'public/app/ie9.css',
-    'public/app/vendor.css',
-
-    'public/app/templates.js',
-    'public/app/vendor.js',
-    'public/app/user_interface.js',
-    'public/app/components.js',
-  ], {base: 'public'})
-    .pipe(filterCss)
-      .pipe(sourceMaps.init({ loadMaps: true }))
-      .pipe(sourceMaps.write('.', {addComment: false}))
-      .pipe(filterMaps)
-    .pipe(filterCss.restore())
-    .pipe(sourceMaps.init({ loadMaps: true }))
-    .pipe(fingerprint(
-      'build/static-manifest.json', {
-        mode: 'replace',
-        verbose: false,
-        prefix: '/'
-      }))
-    .pipe(sourceMaps.write())
-    .pipe(gulp.dest('build'))
-    .pipe(rev())
-    .pipe(gulp.dest('build'))
-    .pipe(rev.manifest({path: 'dynamic-manifest.json'}))
-    .pipe(gulp.dest('build'));
-});
-
-gulp.task('rev-app', function () {
-  return gulp.src([
-    'build/app/vendor-*.js',
-    'build/app/user_interface-*.js',
-    'build/app/components-*.js',
-    'build/app/templates-*.js',
-  ])
-    .pipe(sourceMaps.init({ loadMaps: true }))
-    .pipe(concat('application.min.js'))
-    .pipe(uglify())
-    .pipe(rev())
-    .pipe(sourceMaps.write('.', {
-      sourceRoot: '/javascript',
-      sourceMappingURLPrefix: '//'+settings.app_host+'/app/'
-    }))
-    .pipe(gulp.dest('build/app'))
-    .pipe(rev.manifest({path: 'app-manifest.json'}))
-    .pipe(gulp.dest('build'));
-});
-
-gulp.task('rev-index', function(){
-  var manifest = _.extend(
-    require('./build/static-manifest.json'),
-    require('./build/dynamic-manifest.json')
-  );
-  return gulp.src(packaging ? 'src/index.html' : 'public/index.html')
-    .pipe(fingerprint(manifest, { prefix: '//'+settings.asset_host+'/'}))
-    .pipe(inject(
-      gulp.src('app/application.min-*.js', {read: false, cwd: 'build'}),
-      {
-        addPrefix: '//'+settings.asset_host,
-        addRootSlash: false
-      }
-    ))
-    .pipe(gulp.dest('build'));
-});
-
-gulp.task('revision', ['git-revision'], function(){
-  var stream = source('revision.json');
-  stream.write(JSON.stringify({revision: gitRevision}));
-  return stream.pipe(gulp.dest('build'));
-});
-
-gulp.task('prod', function(done){
-  runSequence(
-    'rev-static',
-    'rev-dynamic',
-    'rev-app',
-    'rev-index',
-    'revision',
-    done
-  );
-});
 
 gulp.task('build', function(done){
   runSequence(
@@ -470,13 +367,128 @@ gulp.task('build', function(done){
   );
 });
 
-gulp.task('package', function(done){
-  packaging = true;
-  runSequence('build', done);
+gulp.task('serve-production', function () {
+  var app = express();
+  app.use(ecstatic({ root: __dirname + '/build', handleError: false, showDir: false }));
+  app.all('*', function(req, res) {
+    var index = fs.readFileSync('build/index.html', 'utf8');
+    res.status(200).send(index);
+  });
+  http.createServer(app).listen(3001);
+  return pexec('./bin/process_hosts');
+});
+
+function writeBuild (dir) {
+  return gulp.dest(path.join('build', dir || ''));
+}
+
+/**
+ * Copy all non-JS and non-CS files from `public/app` to `build` and
+ * create a manifest for them.
+ */
+gulp.task('rev-static', function () {
+  return gulp.src(['public/app/**', '!**/!(kaltura).js', '!**/*.css'], {base: 'public'})
+    .pipe(writeBuild())
+    .pipe(rev())
+    .pipe(writeBuild())
+    .pipe(rev.manifest(('static-manifest.json')))
+    .pipe(writeBuild());
+});
+
+/**
+ * Copy the application’s main JS and CSS files from `public/app` to
+ * `build` and create a manifest for them.
+ *
+ * - Replaces references to assets with their fingerprinted version
+ *   from the `rev-static` manifest.
+ *
+ * - Extracts source maps contained in the files and writes them
+ *   to a separate `.maps` file.
+ */
+gulp.task('rev-dynamic', function(){
+  return gulp.src([
+    'public/app/main.css',
+    'public/app/ie9.css',
+    'public/app/vendor.css',
+
+    'public/app/templates.js',
+    'public/app/vendor.js',
+    'public/app/user_interface.js',
+    'public/app/components.js',
+  ], {base: 'public'})
+    .pipe(sourceMaps.init({ loadMaps: true }))
+    .pipe(removeSourceRoot())
+    .pipe(fingerprint(
+      'build/static-manifest.json', {
+        mode: 'replace',
+        verbose: false,
+        prefix: '/'
+      }))
+    .pipe(sourceMaps.write('.'))
+    .pipe(writeBuild())
+    .pipe(rev())
+    .pipe(writeBuild())
+    .pipe(rev.manifest('dynamic-manifest.json'))
+    .pipe(writeBuild());
+});
+
+/**
+ * Concatenates and minifies application JS files to
+ * `application.min.js` and creates a manifest.
+ */
+gulp.task('rev-app', function () {
+  return gulp.src([
+    'build/app/vendor-*.js',
+    'build/app/user_interface-*.js',
+    'build/app/components-*.js',
+    'build/app/templates-*.js',
+  ], {base: 'build'})
+    .pipe(sourceMaps.init({ loadMaps: true }))
+    .pipe(concat('app/application.min.js'))
+    .pipe(uglify())
+    .pipe(sourceMaps.write('.', { sourceRoot: '/javascript' }))
+    .pipe(writeBuild())
+    .pipe(rev())
+    .pipe(writeBuild())
+    .pipe(rev.manifest('app-manifest.json'))
+    .pipe(writeBuild());
+});
+
+/**
+ * Copy `index.html` to the build directory replace fingerprinted
+ * assets and inject the main `application.js` file.
+ */
+gulp.task('rev-index', function () {
+  var manifest = _.extend(
+    require('./build/static-manifest.json'),
+    require('./build/dynamic-manifest.json'),
+    require('./build/app-manifest.json')
+  );
+  return gulp.src('src/index.html')
+    .pipe(inject(
+      gulp.src('app/application.min.js', {read: false, cwd: 'build'})
+    ))
+    .pipe(fingerprint(manifest, { prefix: '//'+settings.asset_host+'/'}))
+    .pipe(writeBuild());
+});
+
+gulp.task('revision', ['git-revision'], function(){
+  var stream = source('revision.json');
+  stream.write(JSON.stringify({revision: gitRevision}));
+  return stream.pipe(writeBuild());
 });
 
 function errorHandler(label) {
   return function handleError(e) {
     gutil.log(gutil.colors.red(label + ' error:'), e.message);
   };
+}
+
+function removeSourceRoot () {
+  return through(function (file, e, push) {
+    if (file.sourceMap) {
+      file.sourceMap.sourceRoot = null;
+    }
+    push(null, file);
+  });
 }
