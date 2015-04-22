@@ -64,8 +64,10 @@
   "devDependencies": {
     "fb-flo": "^0.4.0",
     "jade": "^1.9.2",
+    "jshint": "^2.7.0",
     "karma": "~0.12.21",
     "karma-chrome-launcher": "~0.1.4",
+    "karma-cli": "0.0.4",
     "karma-jasmine": "~0.2.0",
     "karma-osx-reporter": "~0.1.0",
     "karma-slimerjs-launcher": "^0.1.2",
@@ -74,8 +76,8 @@
     "watchify": "2.1.x"
   },
   "scripts": {
-    "test": "xvfb-run node_modules/karma/bin/karma start --single-run --browsers SlimerJS --reporters dots",
-    "hint": "jshint src/javascripts test/unit test/integration",
+    "test": "xvfb-run karma start --single-run --browsers SlimerJS --reporters dots",
+    "hint": "jshint --reporter unix src/javascripts test/unit test/integration",
     "cloc": "cloc --read-lang-def .cloc.def src",
     "clean": "rm -rf bower_components node_modules",
     "publish-styleguide": "./bin/publish-styleguide.sh"
