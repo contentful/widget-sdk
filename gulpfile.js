@@ -352,8 +352,28 @@ gulp.task('serve', ['generate-styleguide'], function () {
 });
 
 
-// PRODUCTION: //////////////////////////////////////////
-
+/**
+ * Production Builds
+ * =================
+ *
+ * This task creates the production build in the `build` directory.
+ *
+ * It uses the files created by the `all` tasks in `public/app`.
+ * The `rev-static`, `rev-dynamic` and `rev-app` tasks fingerprint
+ * these files and create manfests for them. The `rev-index` task then
+ * inserts the fingerprinted links into the `index.html`
+ *
+ * Fingerprinting
+ * --------------
+ *
+ * We use `gulp-rev` for fingerprinting assets. This works as follows.
+ *
+ * - `rev()` is a transformer that calculates a checksum and renames
+ *   every file by appending the checksum to its name.
+ *
+ * - `rev.manifest()` is a transformer that creates a json file that
+ *   maps each non-fingerprinted file to its fingerprinted version.
+ */
 gulp.task('build', function(done){
   runSequence(
     'clean',
@@ -455,8 +475,10 @@ gulp.task('rev-app', function () {
 });
 
 /**
- * Copy `index.html` to the build directory replace fingerprinted
- * assets and inject the main `application.js` file.
+ * Copy `index.html` to the build directory and link to fingerprinted
+ * assets.
+ *
+ * Also replaces all JavaScripts with the single, concatenated file.
  */
 gulp.task('rev-index', function () {
   var manifest = _.extend(
@@ -464,10 +486,10 @@ gulp.task('rev-index', function () {
     require('./build/dynamic-manifest.json'),
     require('./build/app-manifest.json')
   );
+  var javascriptSrc = gulp.src('app/application.min.js', {read: false, cwd: 'build'});
+
   return gulp.src('src/index.html')
-    .pipe(inject(
-      gulp.src('app/application.min.js', {read: false, cwd: 'build'})
-    ))
+    .pipe(inject(javascriptSrc))
     .pipe(fingerprint(manifest, { prefix: '//'+settings.asset_host+'/'}))
     .pipe(writeBuild());
 });
@@ -484,6 +506,10 @@ function errorHandler(label) {
   };
 }
 
+/**
+ * Stream transformer that removes the `sourceRoot` property from a
+ * file’s source maps.
+ */
 function removeSourceRoot () {
   return through(function (file, e, push) {
     if (file.sourceMap) {
