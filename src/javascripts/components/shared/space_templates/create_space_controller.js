@@ -74,7 +74,6 @@ angular.module('contentful').controller('CreateSpaceDialogController', [ '$scope
       var enforcement = enforcements.determineEnforcement('usageExceeded');
       $rootScope.$broadcast('persistentNotification', {
         message: enforcement.message,
-        tooltipMessage: enforcement.description,
         actionMessage: enforcement.actionMessage,
         action: enforcement.action
       });

@@ -96,7 +96,6 @@ angular.module('contentful').controller('PermissionController', ['$scope', '$inj
     if(enforcement) {
       $rootScope.$broadcast('persistentNotification', {
         message: enforcement.message,
-        tooltipMessage: enforcement.description,
         actionMessage: enforcement.actionMessage,
         action: enforcement.action
       });

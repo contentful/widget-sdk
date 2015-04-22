@@ -76,17 +76,6 @@ describe('Enforcements service', function () {
           expect(enforcement.message).toBeDefined();
         });
 
-        it('has a description', function () {
-          expect(enforcement.description).toBeDefined();
-        });
-
-        it('has a tooltip', function () {
-          expect(enforcement.tooltip).toBeDefined();
-        });
-
-        it('tooltip equals error message', function () {
-          expect(enforcement.tooltip).toEqual(enforcement.message);
-        });
       });
 
       describe('returns maintenance message with multiple reasons', function () {
@@ -103,26 +92,6 @@ describe('Enforcements service', function () {
           expect(enforcement.message).toMatch(/system/gi);
         });
 
-        it('has a description', function () {
-          expect(enforcement.description).toBeDefined();
-        });
-
-        it('description matches reason', function () {
-          expect(enforcement.description).toMatch(/maintenance/gi);
-        });
-
-        it('has a tooltip', function () {
-          expect(enforcement.tooltip).toBeDefined();
-        });
-
-        it('tooltip equals error message', function () {
-          expect(enforcement.tooltip).toEqual(enforcement.message);
-        });
-
-        it('tooltip matches reason', function () {
-          expect(enforcement.tooltip).toMatch(/system/gi);
-        });
-
       });
 
       describe('returns subscription unsettled', function () {
@@ -135,17 +104,6 @@ describe('Enforcements service', function () {
           expect(enforcement.message).toBeDefined();
         });
 
-        it('has a description', function () {
-          expect(enforcement.description).toBeDefined();
-        });
-
-        it('has a tooltip', function () {
-          expect(enforcement.tooltip).toBeDefined();
-        });
-
-        it('tooltip equals error message', function () {
-          expect(enforcement.tooltip).toEqual(enforcement.message);
-        });
       });
 
       describe('returns period usage exceeded', function () {
@@ -158,17 +116,6 @@ describe('Enforcements service', function () {
           expect(enforcement.message).toBeDefined();
         });
 
-        it('has a description', function () {
-          expect(enforcement.description).toBeDefined();
-        });
-
-        it('has a tooltip', function () {
-          expect(enforcement.tooltip).toBeDefined();
-        });
-
-        it('tooltip is empty', function () {
-          expect(enforcement.tooltip).toBe('');
-        });
       });
 
       describe('returns usage exceeded', function () {
@@ -181,37 +128,6 @@ describe('Enforcements service', function () {
           expect(enforcement.message).toBeDefined();
         });
 
-        it('has a description', function () {
-          expect(enforcement.description).toBeDefined();
-        });
-
-        it('has a tooltip', function () {
-          expect(enforcement.tooltip).toBeDefined();
-        });
-
-        it('tooltip matches metric', function () {
-          expect(enforcement.tooltip).toMatch('API keys');
-        });
-
-        describe('with no specific metric', function () {
-          beforeEach(function () {
-            enforcement = enforcements.determineEnforcement(['usageExceeded']);
-          });
-
-          it('tooltip is the same as the message', function () {
-            expect(enforcement.tooltip).toEqual(enforcement.message);
-          });
-        });
-
-        describe('with various metrics', function () {
-          beforeEach(function () {
-            enforcement = enforcements.determineEnforcement(['usageExceeded'], 'Entry');
-          });
-
-          it('tooltip matches metric', function () {
-            expect(enforcement.tooltip).toMatch('Entries');
-          });
-        });
       });
 
     });
@@ -237,17 +153,6 @@ describe('Enforcements service', function () {
         expect(enforcement.message).toBeDefined();
       });
 
-      it('has a description', function () {
-        expect(enforcement.description).toBeDefined();
-      });
-
-      it('has a tooltip', function () {
-        expect(enforcement.tooltip).toBeDefined();
-      });
-
-      it('tooltip is empty', function () {
-        expect(enforcement.tooltip).toBe('');
-      });
     });
   });
 
@@ -270,12 +175,6 @@ describe('Enforcements service', function () {
       it('has an error', function () {
         expect(enforcement).toBeFalsy();
       });
-    });
-  });
-
-  describe('gets tooltip messages', function () {
-    it('gets an api key message', function () {
-      expect(enforcements.getTooltipMessage('apiKey')).toMatch('API keys');
     });
   });
 

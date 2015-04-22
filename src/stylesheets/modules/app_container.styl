@@ -9,3 +9,12 @@
 .app-container__content
   $stretch($nav-bar-height, 25px, 23px, 25px)
 
+/*
+ * FIXME: this should be a temporary measure until https://code.google.com/p/chromium/issues/detail?id=476840
+ * is fixed. When it's fixed, it should be used to let the stuff below this grow freely
+ * The fixed height requirement should also be removed from the persistent notification
+ */
+.app-container__content.with-persistent-notification
+  top: $nav-bar-height + 45px
+
+

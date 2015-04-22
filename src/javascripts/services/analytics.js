@@ -114,6 +114,12 @@ angular.module('contentful').provider('analytics', ['environment', function (env
           fromStateParams: fromStateParams || null
         });
       },
+
+      trackPersistentNotificationAction: function (name) {
+        this.track('Clicked Top Banner CTA Button', {
+          action: name
+        });
+      }
     };
 
     if (shouldLoadAnalytics()) {

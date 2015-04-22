@@ -38,7 +38,6 @@ angular.module('contentful').controller('SpaceController', ['$scope', '$injector
       if(enforcement) {
         $rootScope.$broadcast('persistentNotification', {
           message: enforcement.message,
-          tooltipMessage: enforcement.description,
           actionMessage: enforcement.actionMessage,
           action: enforcement.action
         });

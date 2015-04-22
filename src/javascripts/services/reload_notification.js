@@ -5,6 +5,7 @@ angular.module('contentful').factory('ReloadNotification', ['$injector', functio
   var $rootScope  = $injector.get('$rootScope');
   var $q          = $injector.get('$q');
   var modalDialog = $injector.get('modalDialog');
+  var analytics   = $injector.get('analytics');
 
   var open = false;
 
@@ -45,6 +46,7 @@ angular.module('contentful').factory('ReloadNotification', ['$injector', functio
 
   var ReloadNotificationService = {
     triggerImmediateReload: function () {
+      analytics.trackPersistentNotificationAction('App Reload');
       reloadWithCacheBuster();
     },
 

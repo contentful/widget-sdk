@@ -1,26 +1,19 @@
 .persistent-notification
-  float: right
-  margin-right: 10px
-  margin-top: 5px
-  color: white
-  background-color: darken($gray-darkest, 5%)
-  padding: 0px 11px 5px
-  border-radius: 3px
-  $bottom-white-shadow = rgba(255,255,255,0.2) 0px 1px
-  $top-black-shadow = rgba(0,0,0,0.5) 0px -1px
-  $left-black-shadow = rgba(0,0,0,0.3) 1px 0px 1px inset
-  box-shadow: $bottom-white-shadow, $top-black-shadow, $left-black-shadow
-  strong
-    color: white
-  p, button
-    float: left
-    margin-bottom: 0px
-  p
-    line-height: 25px
-    margin-top: 4px
+  $display-flexbox()
+  align-items: center
+  width: 100%
+  // FIXME: this should notbe necessary. See comment in app_container.styl
+  height: 45px
+  padding: 8px
+  background-color: $cfnext-yellow
+  &__message
     margin-right: 10px
-    vertical-align: middle
-  button
-    margin-top: 3px
-    padding: 3px 7px
-  $tooltip-opaque()
+  &__action
+    margin-bottom: 0px
+    padding: 0.4rem 1rem 0.3rem
+    &:active
+      padding: 0.5rem 1rem 0.2rem
+  &__dismiss
+    color: $cfnext-dark-gray
+    font-weight: bold
+    margin-left: auto

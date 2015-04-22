@@ -1,7 +1,12 @@
 'use strict';
-angular.module('contentful').factory('enforcements', ['$injector', '$location', '$window', 'stringUtils', function Enforcements($injector, $location, $window, stringUtils) {
+angular.module('contentful').factory('enforcements', ['$injector', function Enforcements($injector) {
 
   var spaceContext, user;
+
+  var $location   = $injector.get('$location');
+  var $window     = $injector.get('$window');
+  var stringUtils = $injector.get('stringUtils');
+  var analytics   = $injector.get('analytics');
 
   function setTokenObjects(newSpaceContext) {
     if(newSpaceContext) spaceContext = newSpaceContext;
@@ -23,6 +28,7 @@ angular.module('contentful').factory('enforcements', ['$injector', '$location', 
   }
 
   function upgradeAction() {
+    analytics.trackPersistentNotificationAction('Quota Increase');
     $location.path('/account/organizations/'+getOrgId()+'/subscription');
   }
 
@@ -30,48 +36,45 @@ angular.module('contentful').factory('enforcements', ['$injector', '$location', 
   var errorsByPriority = [
     {
       label: 'systemMaintenance',
-      message: 'System under maintenance',
-      description: 'The service is down for maintenance and accessible in read-only mode.',
+      message: '<strong>System under maintenance</strong> The service is down for maintenance and accessible in read-only mode.',
       actionMessage: 'Status',
       action: function () {
+        analytics.trackPersistentNotificationAction('Visit Status Page');
         $window.location = 'http://status.contentful.com';
       }
     },
     {
       label: 'subscriptionUnsettled',
-      message: 'Outstanding invoices',
-      description: function () {
-        return isOwner() ?
+      message: function () {
+        return '<strong>Outstanding invoices</strong> ' +
+          (isOwner() ?
           'To be able to edit content within your Organization, please update your billing details.':
-          'To be able to edit content within your Organization, the Organization Owner must update billing details.';
+          'To be able to edit content within your Organization, the Organization Owner must update billing details.');
       },
       actionMessage: function () {
         return isOwner() ?  'Update': undefined;
       },
       action: function () {
+        analytics.trackPersistentNotificationAction('Update Billing Details');
         $location.path('/account/organizations/'+getOrgId()+'/subscription/billing');
       }
     },
     {
       label: 'periodUsageExceeded',
-      message: 'Over usage limits',
-      description: 'You have exceeded the monthly usage quota for your pricing plan. Please upgrade to ensure an uninterrupted delivery of your content.',
-      tooltip: '',
+      message: '<strong>Over usage limits</strong> You have exceeded the monthly usage quota for your pricing plan. Please upgrade to ensure an uninterrupted delivery of your content.',
       actionMessage: upgradeActionMessage,
       action: upgradeAction
     },
     {
       label: 'usageExceeded',
-      message: 'Over usage limits',
-      description: 'You have exceeded the usage limits for your plan. Please upgrade to proceed with content creation & delivery.',
-      tooltip: getTooltipMessage,
+      message: '<strong>Over usage limits</strong> You have exceeded the usage limits for your plan. Please upgrade to proceed with content creation & delivery.',
+      tooltip: getMetricMessage,
       actionMessage: upgradeActionMessage,
       action: upgradeAction
     },
     {
       label: 'accessTokenScope',
-      message: 'Unknown error occurred',
-      description: ''
+      message: 'An unknown error occurred',
     }
   ];
 
@@ -99,7 +102,7 @@ angular.module('contentful').factory('enforcements', ['$injector', '$location', 
     if(!spaceContext) throw new Error('No space context defined');
   }
 
-  function getTooltipMessage(metricKey) {
+  function getMetricMessage(metricKey) {
     return 'You have exceeded your '+usageMetrics[stringUtils.uncapitalize(metricKey)]+' usage';
   }
 
@@ -120,7 +123,7 @@ angular.module('contentful').factory('enforcements', ['$injector', '$location', 
     });
 
     return metricKey ?
-      getTooltipMessage(metricKey) :
+      getMetricMessage(metricKey) :
       undefined;
   }
 
@@ -166,7 +169,6 @@ angular.module('contentful').factory('enforcements', ['$injector', '$location', 
     determineEnforcement: determineEnforcement,
     computeUsage: computeUsage,
     getPeriodUsage: getPeriodUsage,
-    getTooltipMessage: getTooltipMessage,
     setSpaceContext: function (spaceContext) {
       setTokenObjects(spaceContext);
     }
