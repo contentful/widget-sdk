@@ -21,18 +21,3 @@
 .nav-bar__list-label
   margin-left: 4px
 
-$hide-navbar-text()
-  .nav-bar__list
-    .tooltip
-      display: block !important
-  .nav-bar__list-label
-    display: none
-
-@media (max-width: 1200px)
-  .nav-bar.with-persistent-notification
-    $hide-navbar-text()
-
-@media (max-width: 1050px)
-  .nav-bar
-    $hide-navbar-text()
-

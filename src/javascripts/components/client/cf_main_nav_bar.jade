@@ -17,8 +17,6 @@ nav.nav-bar.app-top-bar--separator(ng-class="{'with-persistent-notification': pe
           ng-hide="permissionController.get('readEntry', 'shouldHide')"
           ui-sref="spaces.detail.entries.list"
           data-view-type="entry-list"
-          tooltip="Entries"
-          tooltip-placement="bottom"
           tabindex="0")
         cf-icon(name="nav-entries" scale="0.6")
         span.nav-bar__list-label Entries
@@ -28,8 +26,6 @@ nav.nav-bar.app-top-bar--separator(ng-class="{'with-persistent-notification': pe
           ui-sref="spaces.detail.assets.list"
           ng-hide="permissionController.get('readAsset', 'shouldHide')"
           data-view-type="asset-list"
-          tooltip="Assets"
-          tooltip-placement="bottom"
           tabindex="0")
         cf-icon(name="nav-media" scale="0.6")
         span.nav-bar__list-label Media Library
@@ -39,8 +35,6 @@ nav.nav-bar.app-top-bar--separator(ng-class="{'with-persistent-notification': pe
           ui-sref="spaces.detail.settings.pathSuffix"
           ng-hide="permissionController.get('updateSettings', 'shouldHide')"
           data-view-type="space-settings"
-          tooltip="Settings"
-          tooltip-placement="bottom"
           tabindex="0")
         cf-icon(name="nav-settings" scale="0.6")
         span.nav-bar__list-label Settings
@@ -50,8 +44,6 @@ nav.nav-bar.app-top-bar--separator(ng-class="{'with-persistent-notification': pe
           ui-sref="spaces.detail.api.home"
           ng-hide="permissionController.get('readApiKey', 'shouldHide')"
           data-view-type="api-home"
-          tooltip="API"
-          tooltip-placement="bottom"
           tabindex="0")
         cf-icon.icon-nav-api(name="nav-api" scale="0.6")
         span.nav-bar__list-label APIs
