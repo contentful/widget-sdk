@@ -77,12 +77,12 @@
 
     .advice(ng-show="visibleAssets | isEmpty")
       .advice__frame(ng-show="hasQuery()")
-        i.fa.fa-search.fa-flip-horizontal.giant-icon
-        header.advice-title There are no matches to your search
+        i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
+        header.advice__title There are no matches to your search
       .advice__frame(ng-show="!hasQuery()")
-        i.fa.fa-paperclip.giant-icon
-        header.advice-title You have no Assets yet.
-        p.advice-description Assets are external documents that you can link to your Entries. They can be any file you wish, form sounds to images or videos to text documents.
+        i.fa.fa-paperclip.advice__giant-icon
+        header.advice__title You have no Assets yet.
+        p.advice__description Assets are external documents that you can link to your Entries. They can be any file you wish, form sounds to images or videos to text documents.
         .dropdown-btn(cf-dropdown)
           button.btn.btn--primary(cf-dropdown-toggle
             ng-hide="permissionController.get('createAsset', 'shouldHide')"

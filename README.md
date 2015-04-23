@@ -53,30 +53,33 @@ and make sure it has connected. The connection will probably drop when
 you kill `gulp serve` so remember to refresh the page or click the "try
 again" button.
 
-### Production builds
+## Builds and Deployment
 
-To build the production version of the assets, run `gulp build`.
-That'll put all required files into the `/build` directory.
+We automatically deploy three branches to different hosts
 
-To serve those, run `gulp serve-production` instead of `gulp serve`
+* `preview` to `app.quirely.com`
+* `staging` to `app.flinkly.com`
+* `production` to `app.contentful.com`
 
-### Package builds
+Deployments are triggered by pushing commits to one of these branches.
+First the push will trigger a build on Travis. On success, this will
+run the `bin/trigger-packagebot` which will in turn tell the [package
+bot][] to build a package. The package bot will run the `Packagefile`
+script, collect all Debian packages and install them on the
+corresponding server.
 
-To build what the package bot generates, run `gulp package`.
-This will
+The package is created by `gulp build` and includes all the files
+from the `build` directory. To test the build you can run `gulp
+serve-production`
 
-* not process the `index.html` to include correct hosts for the current
-  environment
-* not replace the sourceMap url in the `application.min.js` to point to
-  the correct app host
+The built package still includes the dev host (i.e. `joistio.com`) in
+its files. The are replaced on the servers by the `bin/process_hosts`
+script.
 
-The main observable difference in development will be that a `package`
-run will not include `CF_ENV` and `CF_CONFIG` in the `index.html`,
-whereas a `build` run will.
+[package bot](https://github.com/contentful/package-bot)
 
-This task is only really intended to be used in the package-bot.
 
-### Client library development
+## Client library development
 
 If you are working on the client library and want to rapidly iterate and
 see client library changes in the user interface build, use the `watchify`
@@ -120,12 +123,9 @@ re-run when you change them.
 To select only a subsect of specs to run, replace their respective
 `describe` or `it` call with `ddescribe` or `iit`.
 
-## Environments
+For the available test reporters see [karma.conf.js#L43](https://github.com/contentful/user_interface/blob/master/karma.conf.js#L43) or `package.json`
 
-The Gulpfile uses then value of the `UI_ENV` environment variable to
-populate the `env.environment` value in the client.
-
-If no `UI_ENV` is specified, `development` is assumed.
+If you use the `verbose` reporter you might want to set `set-option -g history-limit 5000` in your `tmux.conf`
 
 ## Acceptance tests
 

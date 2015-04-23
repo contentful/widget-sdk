@@ -86,12 +86,12 @@
 
     .advice(ng-show="visibleEntries | isEmpty")
       .advice__frame(ng-show="hasQuery()")
-        i.fa.fa-search.fa-flip-horizontal.giant-icon
-        header.advice-title There are no matches to your search
+        i.fa.fa-search.fa-flip-horizontal.advice__giant-icon
+        header.advice__title There are no matches to your search
       .advice__frame(ng-show="!hasQuery()")
-        i.fa.fa-file.giant-icon
-        header.advice-title You have no Entries yet.
-        p.advice-description(ng-show="spaceContext.publishedContentTypes.length == 0")
+        i.fa.fa-file.advice__giant-icon
+        header.advice__title You have no Entries yet.
+        p.advice__description(ng-show="spaceContext.publishedContentTypes.length == 0")
           | Entries are your content itself. These depend on the field types you created in the Content Type editor.
         button.btn.btn--primary(type="button" ng-click="entityCreationController.newContentType('frameButton')"
             ng-hide="spaceContext.publishedContentTypes.length > 0 || permissionController.get('createContentType', 'shouldHide')"

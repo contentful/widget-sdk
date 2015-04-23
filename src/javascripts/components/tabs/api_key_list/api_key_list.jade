@@ -50,9 +50,9 @@
 
     .advice(ng-show="empty")
       .advice__frame
-        i.fa.fa-random.giant-icon
-        header.advice-title There are no API Keys yet.
-        p.advice-description API Keys open the door to your content. One should be created for each application that accesses your content.
+        i.fa.fa-random.advice__giant-icon
+        header.advice__title There are no API Keys yet.
+        p.advice__description API Keys open the door to your content. One should be created for each application that accesses your content.
         button.btn.btn--primary(type="button" ng-click="entityCreationController.newApiKey('frameButton')"
             ng-hide="permissionController.get('createApiKey', 'shouldHide')"
             ng-disabled="permissionController.get('createApiKey', 'shouldDisable')"

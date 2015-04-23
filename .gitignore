@@ -9,6 +9,7 @@ Vagrantfile
 vagrant_bootstrap.sh
 .vagrant
 run_vagrant_build.sh
+karma-specs.json
 bower_components
 build/
 

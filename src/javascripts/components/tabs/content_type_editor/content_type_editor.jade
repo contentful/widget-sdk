@@ -68,9 +68,9 @@
         .content-type-field-list(ng-show="hasFields")
         .advice(ng-hide="hasFields")
           .advice__frame
-            i.fa.fa-list-alt.medium-icon
-            header.advice-title You have no Fields yet
-            p.advice-description
+            i.fa.fa-list-alt.advice__medium-icon
+            header.advice__title You have no Fields yet
+            p.advice__description
               | Add Fields to configure which form inputs are available for your editors to work with.
             .dropdown-btn(cf-dropdown)
               button.btn.btn--primary(cf-dropdown-toggle ng-disabled="!otEditable || cfCanDisabled")
