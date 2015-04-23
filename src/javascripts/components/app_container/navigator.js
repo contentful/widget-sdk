@@ -119,7 +119,7 @@ angular.module('contentful').config([
     url: '',
     template: '<div cf-asset-list class="asset-list entity-list"></div>',
     ncyBreadcrumb: {
-      label: 'Assets'
+      label: 'Media Library'
     }
   })
   .state('spaces.detail.assets.detail', {
@@ -238,7 +238,7 @@ angular.module('contentful').config([
   .state('spaces.detail.api.home', {
     url: '',
     ncyBreadcrumb: {
-      label: 'API'
+      label: 'APIs'
     },
     template:
       '<div cf-api-home ' +
@@ -267,7 +267,7 @@ angular.module('contentful').config([
   .state('spaces.detail.api.keys.list', {
     url: '',
     ncyBreadcrumb: {
-      label: 'Keys',
+      label: 'Delivery Keys',
       parent: 'spaces.detail.api.home'
     },
     template:
@@ -313,7 +313,7 @@ angular.module('contentful').config([
       pathSuffix: 'edit'
     },
     ncyBreadcrumb: {
-      label: 'Space Settings'
+      label: 'Settings'
     }
   })
   .state('account', {
