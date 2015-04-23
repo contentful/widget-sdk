@@ -14,7 +14,7 @@
               ng-disabled="!space.isHibernated()"
               tooltip-container=".project" tooltip-placement="left"
               tooltip="This space entered hibernation due to lack of use. It will be back online soon.")
-            span {{space.data.name | truncate:25}}
+            span {{space.data.name | truncate:22}}
             cf-icon.icon-checkmark(name="checkmark" size="12" ng-show="space.getId() === getCurrentSpaceId()")
             i.fa.fa-circle(ng-show="space.isHibernated()")
     ul.space-selector__add.cfnext-dropdown__list
