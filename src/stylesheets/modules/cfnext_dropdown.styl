@@ -1,6 +1,6 @@
 $cfnext-dropdown__item()
-  margin-bottom: 1em
-  line-height: 2em
+  margin-bottom: $rhythm(0.7)
+  line-height: $rhythm(1.5)
   cursor: pointer
   &:hover
     font-weight: bold
@@ -26,14 +26,10 @@ $cfnext-caret-size: 12px
       left: 50%
 
   &__list
-    padding: 10px
+    padding: $rhythm(0.7) $rhythm(1)
     border-top: 1px solid $cfnext-light-blue
     &:last-child
       padding-bottom: 0
-
-  &__inner-list
-    padding-top: 5px
-    padding-left: 5px
 
   &__item
     $cfnext-dropdown__item()
