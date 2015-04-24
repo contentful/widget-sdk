@@ -30,15 +30,6 @@ nav.nav-bar.app-top-bar--separator(ng-class="{'with-persistent-notification': pe
         cf-icon(name="nav-media" scale="0.6")
         span.nav-bar__list-label Media Library
     li.app-top-bar__action.nav-bar__list-item
-      a.nav-bar__link(ng-class="{section: $state.includes('spaces.detail.settings') ,\
-            'section-index': $state.$current.name === 'spaces.detail.settings.pathSuffix'}"
-          ui-sref="spaces.detail.settings.pathSuffix"
-          ng-hide="permissionController.get('updateSettings', 'shouldHide')"
-          data-view-type="space-settings"
-          tabindex="0")
-        cf-icon(name="nav-settings" scale="0.6")
-        span.nav-bar__list-label Settings
-    li.app-top-bar__action.nav-bar__list-item
       a.nav-bar__link(ng-class="{section: $state.includes('spaces.detail.api') ,\
                     'section-index': $state.$current.name === 'spaces.detail.api.home'}"
           ui-sref="spaces.detail.api.home"
@@ -47,4 +38,13 @@ nav.nav-bar.app-top-bar--separator(ng-class="{'with-persistent-notification': pe
           tabindex="0")
         cf-icon.icon-nav-api(name="nav-api" scale="0.6")
         span.nav-bar__list-label APIs
+    li.app-top-bar__action.nav-bar__list-item
+      a.nav-bar__link(ng-class="{section: $state.includes('spaces.detail.settings') ,\
+            'section-index': $state.$current.name === 'spaces.detail.settings.pathSuffix'}"
+          ui-sref="spaces.detail.settings.pathSuffix"
+          ng-hide="permissionController.get('updateSettings', 'shouldHide')"
+          data-view-type="space-settings"
+          tabindex="0")
+        cf-icon(name="nav-settings" scale="0.6")
+        span.nav-bar__list-label Settings
 
