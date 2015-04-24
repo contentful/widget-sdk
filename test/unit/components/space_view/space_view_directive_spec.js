@@ -93,12 +93,12 @@ describe('Space view directive', function () {
         compileElement();
       });
 
-      it('defines section class', function () {
-        expect(container.find(selector)).toHaveClass('section');
+      it('defines is-active class', function () {
+        expect(container.find(selector)).toHaveClass('is-active');
       });
 
-      it('defines section-index class', function () {
-        expect(container.find(selector)).toHaveClass('section-index');
+      it('defines is-section-index class', function () {
+        expect(container.find(selector)).toHaveClass('is-section-index');
       });
     });
   }

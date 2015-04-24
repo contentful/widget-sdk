@@ -4,8 +4,6 @@
 
 .nav-bar__list
   height: inherit
-  .tooltip
-    display: none !important
 
 .nav-bar__list-item
   float: left
@@ -17,6 +15,8 @@
 .nav-bar__link
   $display-flexbox()
   align-items: center
+  &.is-active
+    color: $cfnext-blue
 
 .nav-bar__list-label
   margin-left: 4px
