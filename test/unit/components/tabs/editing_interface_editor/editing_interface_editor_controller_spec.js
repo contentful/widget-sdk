@@ -16,11 +16,11 @@ describe('EditingInterfaceEditorController', function(){
       notification = _notification_;
       scope = $rootScope.$new();
       scope.spaceContext = {space: {}};
-      scope.tab = { params: {
-          editingInterface: {
-            data: {id: 'default', local: true},
-            getId: _.constant('default')
-          } } };
+      scope.editingInterface = {
+        data: {id: 'default', local: true},
+        getId: _.constant('default')
+      };
+      scope.context = {};
       controller = $controller('EditingInterfaceEditorController', {$scope: scope});
       scope.$apply();
     });
@@ -84,10 +84,10 @@ describe('EditingInterfaceEditorController', function(){
   });
 
   it('should close the tab when the content type is unpublished', function () {
-    scope.tab.params.contentType = {};
-    scope.tab.close = sinon.stub();
-    scope.$broadcast('contentTypeUnpublished', scope.tab.params.contentType);
-    sinon.assert.called(scope.tab.close);
+    scope.contentType = {};
+    scope.closeState = sinon.stub();
+    scope.$broadcast('contentTypeUnpublished', scope.contentType);
+    sinon.assert.called(scope.closeState);
   });
 
   it('should mark widgets without fields as invisible', function() {

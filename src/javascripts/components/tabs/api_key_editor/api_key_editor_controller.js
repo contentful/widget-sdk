@@ -20,10 +20,10 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     }
   });
 
-  $scope.$watch('tab.params.apiKey', function (apiKey) { $scope.apiKey = apiKey; });
-
-  $scope.tab.closingMessage = 'You have unsaved changes.';
-  $scope.tab.closingMessageDisplayType = 'dialog';
+  $scope.context.closingMessage = [
+    'You edited the Api Key but didn\'t save your changes.',
+    'Please either save or discard them'
+  ];
 
   $scope.environment = environment;
 
@@ -40,10 +40,6 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   $scope.getApiUrl = function () {
     return environment.settings.cdn_host.replace('cdn', isPreviewApiSelected() ? 'preview': 'cdn');
   };
-
-  $scope.$watch('apiKey.data.name', function(name) {
-    $scope.headline = $scope.tab.title = name || 'Untitled';
-  });
 
   $scope.$watch('apiKey.data.accessToken', function(accessToken) {
     $scope.exampleUrl =
@@ -77,8 +73,12 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     return id === detectedDevice;
   };
 
-  $scope.$watch('apiKeyForm.$dirty', function (modified, old, scope) {
-    scope.tab.dirty = modified;
+  $scope.$watch('apiKeyForm.$dirty', function (modified) {
+    $scope.context.dirty = modified;
+  });
+
+  $scope.$watch('apiKey.data.name', function (title) {
+    $scope.context.title = title || 'Untitled';
   });
 
   function title() {
@@ -105,8 +105,10 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
   $scope.$on('entityDeleted', function (event, apiKey) {
     if (event.currentScope !== event.targetScope) {
       var scope = event.currentScope;
-      if (apiKey === scope.apiKey)
-        scope.tab.close();
+      if (apiKey === scope.apiKey) {
+        $scope.context.dirty = false;
+        scope.closeState();
+      }
     }
   });
 
@@ -121,7 +123,8 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     $scope.apiKey.save()
     .then(function(){
       $scope.apiKeyForm.$setPristine();
-      $scope.navigator.apiKeyEditor($scope.apiKey).goTo();
+      $scope.context.dirty = false;
+      $scope.$state.go('spaces.detail.api.keys.detail', { apiKeyId: $scope.apiKey.getId() });
       notification.info(t + ' saved successfully');
     })
     .catch(function(err){

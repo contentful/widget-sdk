@@ -41,7 +41,7 @@ angular.module('contentful').controller('EntryActionsController', ['$scope', '$q
 
     $scope.spaceContext.space.createEntry(contentType, data)
     .then(function(entry){
-      $scope.navigator.entryEditor(entry).goTo();
+      $scope.$state.go('spaces.detail.entries.detail', { entryId: entry.getId(), addToContext: true });
     })
     .catch(function(err){
       logger.logServerWarn('Could not duplicate Entry', {error: err });

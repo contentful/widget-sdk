@@ -94,7 +94,7 @@ describe('Asset List Actions Controller', function () {
         stubs.timeout.callsArg(0);
 
         scope[action+'Selected']();
-        scope.$apply();
+        scope.$digest();
       });
 
       it('calls '+action+' on first selected entry', function () {

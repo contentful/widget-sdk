@@ -1,15 +1,23 @@
 'use strict';
+/**
+ * This controller deals with locking/unlocking the editing mechanism for the apiName property of fields.
+ *
+ * It also takes care of automatically populating that property based on the field name when the field is first created
+ * or for fields that could've been created by users before we had the apiName property and which never
+ * had that field populated for them.
+ *
+ * However, when doing this automatically it will verify if the current api name we're operating on is empty or
+ * the same as the field name. If not, it's because the user has specified their own apiName and it won't touch the property.
+ */
 angular.module('contentful').controller('ApiNameController', ['$scope', '$injector', function ApiNameController($scope, $injector){
   var controller = this;
 
-  var logger       = $injector.get('logger');
-  var notification = $injector.get('notification');
   var modalDialog  = $injector.get('modalDialog');
   var stringUtils  = $injector.get('stringUtils');
   var isDisplayableAsTitleFilter = $injector.get('isDisplayableAsTitleFilter');
 
-  this._publishedName = publishedApiName();
-  this._oldName       = $scope.field.name || '';
+  this._publishedApiName  = publishedApiName();
+  this._originalFieldName = $scope.field.name || '';
   this._locked        = true;
 
   this.updateFromName = updateFromName;
@@ -23,40 +31,27 @@ angular.module('contentful').controller('ApiNameController', ['$scope', '$inject
 
   function updateFromName() {
     var currentApiName = $scope.field.apiName || '';
-    if (controller.isEditable() && stringUtils.toIdentifier(controller._oldName) == currentApiName){
-      otUpdateApiName($scope.field.name ? stringUtils.toIdentifier($scope.field.name) : '');
+    if (controller.isEditable() && stringUtils.toIdentifier(controller._originalFieldName) == currentApiName){
+      updateApiName($scope.field.name ? stringUtils.toIdentifier($scope.field.name) : '');
     }
-    controller._oldName = $scope.field.name || '';
+    controller._originalFieldName = $scope.field.name || '';
   }
 
-  function otUpdateApiName(newApiName) {
+  function updateApiName(newApiName) {
     var isDisplayField = $scope.isDisplayField();
     $scope.field.apiName = newApiName;
-
-    if (!$scope.otDoc) return false;
-    var subdoc = $scope.otDoc.at(['fields', $scope.index, 'apiName']);
-    subdoc.set(newApiName, function(err) {
-      $scope.$apply(function (scope) {
-        if (err) {
-          scope.field.apiName = subdoc.get();
-          logger.logSharejsWarn('Error updating apiName', {error: err });
-          notification.error('Error updating ID');
-          return;
-        }
-        if (isDisplayField ||
-            _.isEmpty($scope.contentType.data.displayField) && isDisplayableAsTitleFilter($scope.field)) {
-          $scope.setDisplayField($scope.field);
-        }
-      });
-    });
+    if (isDisplayField ||
+        _.isEmpty($scope.contentType.data.displayField) && isDisplayableAsTitleFilter($scope.field)) {
+      $scope.setDisplayField($scope.field);
+    }
   }
 
   function isEditable() {
-    return !apiNamePublished() || !(controller._locked);
+    return !isApiNamePublished() || !(controller._locked);
   }
 
   function isRevertable() {
-    return !apiNamePublished();
+    return !isApiNamePublished();
   }
 
   function unlockEditing() {
@@ -82,7 +77,7 @@ angular.module('contentful').controller('ApiNameController', ['$scope', '$inject
 
   function revert() {
     var oldName = publishedApiName();
-    otUpdateApiName(oldName);
+    updateApiName(oldName);
     lockEditing();
   }
 
@@ -93,15 +88,15 @@ angular.module('contentful').controller('ApiNameController', ['$scope', '$inject
   }
 
   function publishedCounterChanged(newCount, oldCount) {
-    controller._publishedName = publishedApiName();
+    controller._publishedApiName = publishedApiName();
     if (newCount !== oldCount) lockEditing();
   }
 
-  function apiNamePublished() {
+  function isApiNamePublished() {
     /*jshint eqnull: true*/
-    var effectivePublishedName = controller._publishedName == null ? $scope.field.id : controller._publishedName;
-    var effectiveName = $scope.field.apiName == null ? $scope.field.id : $scope.field.apiName;
+    var effectiveApiName = $scope.field.apiName == null ? $scope.field.id : $scope.field.apiName;
+    var effectivePublishedApiName = controller._publishedApiName == null ? $scope.field.id : controller._publishedApiName;
 
-    return effectiveName === effectivePublishedName;
+    return effectiveApiName === effectivePublishedApiName;
   }
 }]);

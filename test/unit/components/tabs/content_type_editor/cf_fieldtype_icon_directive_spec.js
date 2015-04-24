@@ -32,13 +32,6 @@ describe('The cfFieldtypeIcon directive', function () {
     container.remove();
   });
 
-  it('shows a tooltip', function() {
-    var tooltipStub = sinon.stub($.fn, 'tooltip');
-    compileElement('show-tooltip');
-    sinon.assert.called(tooltipStub);
-    tooltipStub.restore();
-  });
-
   function makeTemplateTest(fieldType) {
     var elementNumber = _.contains(['Entries', 'Assets'], fieldType) ? 2 : 1;
     describe('injects template for '+fieldType, function() {

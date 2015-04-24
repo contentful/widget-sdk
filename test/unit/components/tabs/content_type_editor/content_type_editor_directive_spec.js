@@ -22,8 +22,6 @@ describe('The ContentType editor directive', function () {
     inject(function ($rootScope, $compile) {
       scope = $rootScope.$new();
 
-      scope.otEditable = true;
-
       scope.permissionController = {
         createContentType: {
           shouldHide: false,
@@ -41,33 +39,6 @@ describe('The ContentType editor directive', function () {
 
   afterEach(function () {
     container.remove();
-  });
-
-  describe('when otEditable is false', function () {
-    beforeEach(function () {
-      scope.otEditable = false;
-      compileElement();
-    });
-
-    it('Create Field button should be disabled', function () {
-      expect(container.find('.advice button').is(':disabled')).toBe(true);
-    });
-
-    it('Add Field button should be disabled', function () {
-      expect(container.find('.advice button').is(':disabled')).toBe(true);
-    });
-  });
-
-  it('textarea is enabled', function () {
-    scope.otEditable = true;
-    compileElement();
-    expect(container.find('.l-form-row').eq(1).find('textarea').attr('disabled')).toBeFalsy();
-  });
-
-  it('textarea is enabled', function () {
-    scope.otEditable = false;
-    compileElement();
-    expect(container.find('.l-form-row').eq(1).find('textarea').attr('disabled')).toBeTruthy();
   });
 
   describe('if fields exist', function () {

@@ -153,16 +153,15 @@ describe('cfLinkEditorSearch Controller', function () {
   function makeAddMethodTests(entityType) {
 
     describe('adding a new '+entityType, function() {
-      var uppercasedEntityType = entityType.charAt(0).toUpperCase() + entityType.substr(1);
+      var uppercasedEntityType = entityType.charAt(0).toUpperCase() + entityType.substr(1),
+          entityTypeStateName = entityType === 'entry' ? 'spaces.detail.entries' : 'spaces.detail.assets';
+
       var contentType, entity;
-      var createEntityStub, entityEditorStub;
+      var createEntityStub;
       beforeEach(inject(function(cfStub) {
         createController();
         scope.addLink = sinon.stub();
-        entityEditorStub = sinon.stub();
-        scope.navigator = {};
-        scope.navigator[entityType+'Editor'] = entityEditorStub;
-        entityEditorStub.returns({goTo: sinon.stub()});
+        scope.$state.go = sinon.stub();
         createEntityStub = sinon.stub(scope.spaceContext.space, 'create'+uppercasedEntityType);
         contentType = cfStub.contentType(space, 'ct1', 'Content Type 1');
         entity = cfStub[entityType](space, 'entity1', entityType == 'entry' ? 'ct1' : []);
@@ -200,7 +199,10 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it(entityType +' editor called', function() {
-          sinon.assert.called(entityEditorStub);
+          var stateParams = {};
+          stateParams[entityType + 'Id'] = entity.getId();
+          stateParams.addToContext = true;
+          sinon.assert.called(scope.$state.go, entityTypeStateName + '.detail', stateParams);
         });
       });
 
@@ -232,7 +234,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it(entityType +' editor not called', function() {
-          sinon.assert.notCalled(entityEditorStub);
+          sinon.assert.notCalled(scope.$state.go);
         });
       });
 
@@ -273,7 +275,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it(entityType +' editor not called', function() {
-          sinon.assert.notCalled(entityEditorStub);
+          sinon.assert.notCalled(scope.$state.go);
         });
       });
 
@@ -316,7 +318,7 @@ describe('cfLinkEditorSearch Controller', function () {
         });
 
         it(entityType +' editor not called', function() {
-          sinon.assert.notCalled(entityEditorStub);
+          sinon.assert.notCalled(scope.$state.go);
         });
       });
     });

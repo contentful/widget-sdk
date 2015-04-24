@@ -1,7 +1,7 @@
 .tab-header.editor-configuration
   .tab-header__title
-    h1(title="{{headline}}")
-      | {{headline}}
+    h1(title="{{context.title}}")
+      | {{context.title}}
       a(cf-knowledge-base-icon
         tooltip="Learn more about API Keys in the Knowledge Base Pages"
         analytics-event="api_keys"
@@ -19,7 +19,7 @@
 .aux-panel(ng-show="preferences.showAuxPanel")
   header
     span API Key Information
-  .entity-info-panel(cf-entity-info-panel)
+  .entity-info-panel(cf-entity-info-panel="apiKey.getSys()")
 
 
 .tab-main.tab-workbench
@@ -174,7 +174,7 @@
   .button-set(cf-dropdown)
     button.btn.btn--secondary.delete(type="button" ng-show="apiKey.getId()" cf-dropdown-toggle) Delete
     .delete-confirm(cf-dropdown-menu position="topcenter")
-      p You are about to delete {{headline}}
+      p You are about to delete {{context.title}}
       button.btn.btn--danger(type="button" ng-click="delete()" dropdown-close) Delete 
       button.btn.btn--secondary(type="button" dropdown-close) Don't Delete 
     button.btn.btn--primary.save(type="submit"

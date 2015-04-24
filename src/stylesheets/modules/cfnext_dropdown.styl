@@ -1,0 +1,55 @@
+$cfnext-dropdown__item()
+  margin-bottom: 1em
+  line-height: 2em
+  cursor: pointer
+  &:hover
+    font-weight: bold
+
+$cfnext-caret-size: 12px
+
+.cfnext-dropdown
+  $layer('dropdown')
+  position: absolute
+  border: 1px solid $cfnext-light-blue
+  box-shadow: 0 1px 2px rgba(0,0,0,0.5)
+  border-radius: 3px
+  background-color: $cfnext-lightest-blue
+
+  &__arrow
+    position: absolute
+    top: -12px
+    &.left-aligned
+      left: $cfnext-caret-size + 10px
+    &.right-aligned
+      right: $cfnext-caret-size + 10px
+    &.center-aligned
+      left: 50%
+
+  &__list
+    padding: 10px
+    border-top: 1px solid $cfnext-light-blue
+    &:last-child
+      padding-bottom: 0
+
+  &__inner-list
+    padding-top: 5px
+    padding-left: 5px
+
+  &__item
+    $cfnext-dropdown__item()
+
+  &__item--no-highlight
+    $cfnext-dropdown__item()
+    cursor: default
+    &:hover
+      font-weight: normal
+
+  &__item--vcentered
+    $cfnext-dropdown__item()
+    $display-flexbox()
+    align-items: center
+    cf-icon
+      line-height: normal
+      margin-right: 4px
+
+

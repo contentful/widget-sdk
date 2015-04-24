@@ -8,7 +8,7 @@ describe('Entry Actions Controller', function () {
   beforeEach(function () {
     module('contentful/test', function ($provide) {
       stubs = $provide.makeStubs([
-        'entryEditor', 'otUpdateEntity', 'getAt'
+        'otUpdateEntity', 'getAt'
       ]);
     });
     inject(function ($controller, $rootScope, cfStub, $q, $injector) {
@@ -96,10 +96,7 @@ describe('Entry Actions Controller', function () {
     describe('succeeds', function() {
       beforeEach(function() {
         action.resolve(entry);
-        scope.navigator = {
-          entryEditor: stubs.entryEditor
-        };
-        stubs.entryEditor.returns({goTo: sinon.stub()});
+        scope.$state.go = sinon.stub();
         scope.duplicate();
         scope.$apply();
       });
@@ -108,8 +105,11 @@ describe('Entry Actions Controller', function () {
         sinon.assert.calledWith(stubs.action, 'typeid');
       });
 
-      it('calls entryEditor', function() {
-        sinon.assert.calledWith(stubs.entryEditor, entry);
+      it('opens the editor', function() {
+        sinon.assert.calledWith(scope.$state.go, 'spaces.detail.entries.detail', {
+          entryId: entry.getId(),
+          addToContext: true
+        });
       });
     });
   });

@@ -11,14 +11,14 @@
   .tab-header__search.search-area--with-filter
     .btn.btn--tertiary.select-box
       .select-box__wrapper
-        select.u-truncate(ng-model="tab.params.view.contentTypeId"
+        select.u-truncate(ng-model="context.view.contentTypeId"
                 ng-change="selectedContentType()"
                 ng-options="ct.getId() as ct.getName() group by getGroupName() for ct in spaceContext.publishedContentTypes")
           option(value="") All
       i.button-icon-right.fa.fa-caret-down
 
     .l-search-w-autocomplete(
-      cf-tokenized-search="tab.params.view.searchTerm"
+      cf-tokenized-search="context.view.searchTerm"
       search-content-type="getSearchContentType()"
       placeholder="Search for {{typeNameOr('Entries')}}"
       cf-on-blur-component="leftSearch($event)"
@@ -41,7 +41,7 @@
           cf-when-disabled="permissionController.entityActions.createEntry")
         i.fa.fa-plus.button-icon
         | Add New Entry
-      .dropdown-menu(cf-dropdown-menu position="bottomcenter" container=".tab-content")
+      .dropdown-menu(cf-dropdown-menu position="bottomcenter" container=".view-content")
         ul.add-entity__list
           li.dropdown-menu-item.type(ng-repeat="contentType in spaceContext.publishedContentTypes track by contentType.getId()"
                    ng-click="entityCreationController.newEntry(contentType, 'frameButton')"
@@ -51,16 +51,16 @@
 
 .tab-main
   .left-nav
-    div.menu-with-buttons(cf-view-menu="uiConfig.entryListViews" current-view="tab.params.view" ng-show="uiConfig")
+    div.menu-with-buttons(cf-view-menu="uiConfig.entryListViews" current-view="context.view" ng-show="uiConfig")
   .with-left-nav
     table.result-list.main-results.main-header
       thead
         tr
           th.cell-select
             input(type="checkbox" cf-selection ng-show="entries.length > 0" tabindex="-1")
-          th.cell-content-type(ng-show="!tab.params.view.contentTypeId && !tab.params.view.contentTypeHidden") Content Type
-          th.cell-display-name(ng-if="!tab.params.view.contentTypeId || !displayFieldForFilteredContentType()") Name
-          th.cell-display-name(ng-if="tab.params.view.contentTypeId && displayFieldForFilteredContentType()" ng-init="field=displayFieldForFilteredContentType()" cf-field-order-header="displayField")
+          th.cell-content-type(ng-show="!context.view.contentTypeId && !context.view.contentTypeHidden") Content Type
+          th.cell-display-name(ng-if="!context.view.contentTypeId || !displayFieldForFilteredContentType()") Name
+          th.cell-display-name(ng-if="context.view.contentTypeId && displayFieldForFilteredContentType()" ng-init="field=displayFieldForFilteredContentType()" cf-field-order-header="displayField")
           th(ng-repeat="field in displayedFields track by field.id" cf-field-order-header data-field-id="{{field.id}}" ng-class="[getFieldClass(field)]")
           th.cell-status Status
     .view-customizer(cf-view-customizer)
@@ -68,10 +68,10 @@
     .main-results-wrapper.endless-container(cf-endless-container at-bottom="loadMore()" num-elements="paginator.page")
       table.result-list.main-results.animated
         tbody
-          tr(ng-repeat="entry in visibleEntries = (entries | filter:visibleInCurrentList) track by entry.getId()" cf-click-local="navigator.entryEditor(entry).goTo()")
+          tr(ng-repeat="entry in visibleEntries = (entries | filter:visibleInCurrentList) track by entry.getId()" ui-sref="spaces.detail.entries.detail({ entryId: entry.getId() })")
             td.cell-select(ng-click="selection.toggle(entry);$event.stopPropagation()")
               input(type="checkbox" cf-selection="entry" tabindex="-1")
-            td.cell-content-type(ng-show="!tab.params.view.contentTypeId && !tab.params.view.contentTypeHidden")
+            td.cell-content-type(ng-show="!context.view.contentTypeId && !context.view.contentTypeHidden")
               span {{spaceContext.publishedTypeForEntry(entry).getName()}}
             td.cell-display-name
               span {{spaceContext.entryTitle(entry)}}

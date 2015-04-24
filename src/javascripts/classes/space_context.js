@@ -6,12 +6,10 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
   var $rootScope         = $injector.get('$rootScope');
   var PromisedLoader     = $injector.get('PromisedLoader');
   var ReloadNotification = $injector.get('ReloadNotification');
-  var TabList            = $injector.get('TabList');
   var notification       = $injector.get('notification');
   var logger             = $injector.get('logger');
 
   function SpaceContext(space){
-    this.tabList = new TabList();
     this.space = space;
     this._contentTypeLoader = new PromisedLoader();
     this._publishedContentTypeLoader = new PromisedLoader();
@@ -19,7 +17,6 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
   }
 
   SpaceContext.prototype = {
-      tabList: null,
       space: null,
 
       contentTypes: [],
@@ -59,6 +56,14 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
         return _.find(this.privateLocales, {'code': code});
       },
 
+      filterAndSortContentTypes: function (contentTypes) {
+        contentTypes = _.reject(contentTypes, function (ct) { return ct.isDeleted(); });
+        contentTypes.sort(function (a,b) {
+          return a.getName().localeCompare(b.getName());
+        });
+        return contentTypes;
+      },
+
       refreshContentTypes: function() {
         if (this.space) {
           var spaceContext = this;
@@ -66,11 +71,7 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
             return spaceContext.space.getContentTypes({order: 'name', limit: 1000});
           })
           .then(function (contentTypes) {
-            contentTypes = _.reject(contentTypes, function (ct) { return ct.isDeleted(); });
-            contentTypes.sort(function (a,b) {
-              return a.getName().localeCompare(b.getName());
-            });
-            spaceContext.contentTypes = contentTypes;
+            spaceContext.contentTypes = spaceContext.filterAndSortContentTypes(contentTypes);
             return spaceContext.refreshPublishedContentTypes().then(function () {
               return contentTypes;
             });
@@ -139,7 +140,7 @@ angular.module('contentful').factory('SpaceContext', ['$injector', function($inj
         var index = _.indexOf(this.contentTypes, contentType);
         if (index === -1) return;
         this.contentTypes.splice(index, 1);
-        this.refreshPublishedContentTypes();
+        this.refreshContentTypes();
       },
 
       _publishedContentTypeIsMissing: {},

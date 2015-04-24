@@ -95,16 +95,7 @@ describe('ContentTypeFieldList Controller', function () {
   });
 
   describe('display field', function () {
-    var atStub, setStub;
     beforeEach(function () {
-      atStub = sinon.stub();
-      setStub = sinon.stub();
-      scope.otDoc = {
-        at: atStub
-      };
-      atStub.returns({
-        set: setStub
-      });
       scope.contentType = {
         data: {
           fields: [ {id: 'foo'} ]
@@ -113,16 +104,11 @@ describe('ContentTypeFieldList Controller', function () {
     });
 
     describe('pick a new display field', function () {
-      beforeEach(function () {
-        setStub.yields(null);
-      });
-
       it('should not pick a new if current is valid', function () {
         scope.contentType.data.fields[0].type = 'Text';
         scope.contentType.data.displayField = 'foo';
         scope.removeDisplayField = sinon.stub();
         scope.pickNewDisplayField();
-        expect(setStub.called).toBe(false);
         expect(scope.contentType.data.displayField).toBe('foo');
       });
 
@@ -130,7 +116,6 @@ describe('ContentTypeFieldList Controller', function () {
         scope.contentType.data.displayField = 'foo';
         scope.contentType.data.fields.push({id: 'bar', type: 'Text'});
         scope.pickNewDisplayField();
-        expect(setStub.calledWith('bar')).toBe(true);
         expect(scope.contentType.data.displayField).toBe('bar');
       });
 
@@ -138,77 +123,34 @@ describe('ContentTypeFieldList Controller', function () {
         scope.contentType.data.displayField = null;
         scope.contentType.data.fields.push({id: 'bar', type: 'Text'});
         scope.pickNewDisplayField();
-        expect(setStub.calledWith('bar')).toBe(true);
         expect(scope.contentType.data.displayField).toBe('bar');
       });
 
       it('should set to blank if invalid and no alternative available', function () {
         scope.contentType.data.displayField = 'bar';
         scope.pickNewDisplayField();
-        expect(setStub.calledWith(null)).toBe(true);
         expect(scope.contentType.data.displayField).toBe(null);
       });
     });
 
     describe('sets a display field', function () {
       beforeEach(function () {
-        setStub.callsArg(1);
         scope.setDisplayField({id: 'foo'});
       });
 
       it('display field is set on the content type', function () {
         expect(scope.contentType.data.displayField).toBe('foo');
       });
-
-      it('set is called with field id', function () {
-        sinon.assert.calledWith(setStub, 'foo');
-      });
-    });
-
-    describe('fails to set a display field', function () {
-      beforeEach(function () {
-        setStub.callsArgWith(1, {});
-        scope.setDisplayField({id: 'foo'});
-      });
-
-      it('display field is not set on the content type', function () {
-        expect(scope.contentType.data.displayField).toBeUndefined();
-      });
-
-      it('set is called with field id', function () {
-        sinon.assert.calledWith(setStub, 'foo');
-      });
     });
 
     describe('removes a display field', function () {
       beforeEach(function () {
         scope.contentType.data.displayField = 'foo';
-        setStub.callsArg(1);
         scope.removeDisplayField({id: 'foo'});
       });
 
       it('display field is removed from the content type', function () {
         expect(scope.contentType.data.displayField).toBeNull();
-      });
-
-      it('set is called with field id', function () {
-        sinon.assert.calledWith(setStub, null);
-      });
-    });
-
-    describe('fails to remove a display field from the content type', function () {
-      beforeEach(function () {
-        scope.contentType.data.displayField = 'foo';
-        setStub.callsArgWith(1, {});
-        scope.removeDisplayField({id: 'foo'});
-      });
-
-      it('display field is not set on the content type', function () {
-        expect(scope.contentType.data.displayField).toBe('foo');
-      });
-
-      it('set is called with field id', function () {
-        sinon.assert.calledWith(setStub, null);
       });
     });
 

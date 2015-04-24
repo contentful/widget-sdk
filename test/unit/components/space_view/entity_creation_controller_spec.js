@@ -31,6 +31,7 @@ describe('EntityCreationController', function () {
       var space = cfStub.space('test');
       var contentTypeData = cfStub.contentTypeData('testType');
       this.scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
+      this.scope.$state.go = sinon.stub();
 
       this.entityCreationController = $controller('EntityCreationController', {$scope: this.scope});
     });
@@ -80,20 +81,16 @@ describe('EntityCreationController', function () {
     });
 
     describe('creation suceeds', function () {
-      var editorStub;
       beforeEach(function () {
-        editorStub = sinon.stub();
-        editorStub.returns({goTo: sinon.stub()});
-        this.scope.navigator = {
-          entryEditor: editorStub
-        };
-        createStub.returns(this.$q.when({}));
+        createStub.returns(this.$q.when({ getId: sinon.stub().returns('someEntryId') }));
         this.entityCreationController.newEntry(contentType);
         this.scope.$apply();
       });
 
       it('navigates to editor', function () {
-        sinon.assert.called(editorStub);
+        sinon.assert.calledWith(this.scope.$state.go, 'spaces.detail.entries.detail', {
+          entryId: 'someEntryId'
+        });
       });
 
       it('tracks analytics', function () {
@@ -144,20 +141,16 @@ describe('EntityCreationController', function () {
     });
 
     describe('creation suceeds', function () {
-      var editorStub;
       beforeEach(inject(function (cfStub) {
-        editorStub = sinon.stub();
-        editorStub.returns({goTo: sinon.stub()});
-        this.scope.navigator = {
-          assetEditor: editorStub
-        };
-        createStub.returns(this.$q.when(cfStub.asset(this.scope.spaceContext.space, 'image')));
+        createStub.returns(this.$q.when(cfStub.asset(this.scope.spaceContext.space, 'someAssetId')));
         this.entityCreationController.newAsset();
         this.scope.$apply();
       }));
 
       it('navigates to editor', function () {
-        sinon.assert.called(editorStub);
+        sinon.assert.calledWith(this.scope.$state.go, 'spaces.detail.assets.detail', {
+          assetId: 'someAssetId'
+        });
       });
 
       it('tracks analytics', function () {
@@ -208,20 +201,16 @@ describe('EntityCreationController', function () {
     });
 
     describe('creation suceeds', function () {
-      var editorStub;
       beforeEach(function () {
-        editorStub = sinon.stub();
-        editorStub.returns({goTo: sinon.stub()});
-        this.scope.navigator = {
-          contentTypeEditor: editorStub
-        };
-        createStub.returns(this.$q.when({}));
+        createStub.returns(this.$q.when({ getId: sinon.stub().returns('someContentTypeId') }));
         this.entityCreationController.newContentType();
         this.scope.$apply();
       });
 
       it('navigates to editor', function () {
-        sinon.assert.called(editorStub);
+        sinon.assert.calledWith(this.scope.$state.go, 'spaces.detail.content_types.detail.editor', {
+          contentTypeId: 'someContentTypeId'
+        });
       });
 
       it('tracks analytics', function () {
@@ -230,58 +219,24 @@ describe('EntityCreationController', function () {
     });
   });
 
-  describe('creates an api key', function () {
-    var createStub;
+  describe('opens editor for new api key', function () {
     beforeEach(function () {
-      createStub = sinon.stub(this.scope.spaceContext.space, 'newDeliveryApiKey');
+      stubs.computeUsage.returns(null);
+      this.entityCreationController.newApiKey();
     });
 
-    afterEach(function () {
-      createStub.restore();
+    it('computes the api key usage', function () {
+      sinon.assert.calledWith(stubs.computeUsage, 'apiKey');
     });
 
-    describe('creation fails', function () {
-      beforeEach(function () {
-        stubs.computeUsage.returns({});
-        this.entityCreationController.newApiKey();
-      });
-
-      it('computes the api key usage', function () {
-        sinon.assert.calledWith(stubs.computeUsage, 'apiKey');
-      });
-
-      it('notifies of the error', function () {
-        sinon.assert.called(this.notification.error);
+    it('navigates to editor', function () {
+      sinon.assert.calledWith(this.scope.$state.go, 'spaces.detail.api.keys.detail', {
+        apiKeyId: 'new'
       });
     });
 
-    describe('creation suceeds', function () {
-      var editorStub;
-      beforeEach(function () {
-        editorStub = sinon.stub();
-        editorStub.returns({openAndGoTo: sinon.stub()});
-        this.scope.navigator = {
-          apiKeyEditor: editorStub
-        };
-        stubs.computeUsage.returns(null);
-        this.entityCreationController.newApiKey();
-      });
-
-      it('computes the api key usage', function () {
-        sinon.assert.calledWith(stubs.computeUsage, 'apiKey');
-      });
-
-      it('calls the space create method', function () {
-        sinon.assert.called(createStub);
-      });
-
-      it('navigates to editor', function () {
-        sinon.assert.called(editorStub);
-      });
-
-      it('tracks analytics', function () {
-        sinon.assert.called(stubs.track);
-      });
+    it('tracks analytics', function () {
+      sinon.assert.called(stubs.track);
     });
   });
 

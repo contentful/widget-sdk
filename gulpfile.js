@@ -29,6 +29,7 @@ var uglify      = require('gulp-uglify');
 var run         = require('gulp-run');
 var path        = require('path');
 var through     = require('through2').obj;
+var ngAnnotate  = require('gulp-ng-annotate');
 
 var pexec = Promise.denodeify(exec);
 var gitRevision;
@@ -54,6 +55,8 @@ var src = {
     'bower_components/angular-sanitize/angular-sanitize.js',
     'bower_components/angular-route/angular-route.js',
     'bower_components/angular-ui-sortable/sortable.js',
+    'bower_components/angular-ui-router/release/angular-ui-router.js',
+    'bower_components/angular-breadcrumb/dist/angular-breadcrumb.js',
     'bower_components/bootstrap/js/tooltip.js',
     'bower_components/speakingurl/lib/index.js',
 
@@ -87,6 +90,7 @@ var src = {
   },
   static: [
     'vendor/font-awesome/*.+(eot|svg|ttf|woff)',
+    'vendor/fonts.com/*.+(woff|woff2)',
     'node_modules/zeroclipboard/ZeroClipboard.swf'
   ],
   vendorStylesheets: [
@@ -465,6 +469,7 @@ gulp.task('rev-app', function () {
   ], {base: 'build'})
     .pipe(sourceMaps.init({ loadMaps: true }))
     .pipe(concat('app/application.min.js'))
+    .pipe(ngAnnotate())
     .pipe(uglify())
     .pipe(sourceMaps.write('.', { sourceRoot: '/javascript' }))
     .pipe(writeBuild())

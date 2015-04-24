@@ -6,6 +6,7 @@ describe('API Key List Controller', function () {
   beforeEach(function () {
     module('contentful/test');
     inject(function ($rootScope, $controller, cfStub, ReloadNotification, _$q_) {
+      this.$rootScope = $rootScope;
       $q = _$q_;
       scope = $rootScope.$new();
       apiErrorHandler = ReloadNotification.apiErrorHandler;
@@ -15,6 +16,35 @@ describe('API Key List Controller', function () {
       scope.spaceContext = cfStub.spaceContext(space, [contentTypeData]);
 
       controller = $controller('ApiKeyListController', {$scope: scope});
+    });
+  });
+
+  describe('handles entityDeleted event', function() {
+    beforeEach(inject(function(cfStub) {
+      var space = cfStub.space('test');
+      var removedEntity = cfStub.apiKey(space, 'entity2', 'name', {});
+      scope.apiKeys = [
+        cfStub.apiKey(space, 'entity1'),
+        removedEntity,
+        cfStub.apiKey(space, 'entity3')
+      ];
+
+      scope.apiKey = removedEntity;
+
+      this.$rootScope.$broadcast('entityDeleted', removedEntity);
+      scope.$digest();
+    }));
+
+    it('has 2 entities after deletion', function () {
+      expect(scope.apiKeys.length).toEqual(2);
+    });
+
+    it('has entity1', function () {
+      expect(scope.apiKeys[0].getId()).toEqual('entity1');
+    });
+
+    it('has entity3', function () {
+      expect(scope.apiKeys[1].getId()).toEqual('entity3');
     });
   });
 

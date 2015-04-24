@@ -50,19 +50,15 @@
  *   service.
  * - `scope.field`  A ContentType field property.
  * - `scope.index`  The index of the field in all Content Type fields.
- * - `scope.otDoc`  ShareJS document for the Content Type.
  */
 angular.module('contentful')
 .controller('ValidationDialogController',
 ['$scope', '$injector', function($scope, $injector) {
   var getErrorMessage         = $injector.get('validationDialogErrorMessages');
-  var logger                  = $injector.get('logger');
-  var notification            = $injector.get('notification');
   var createSchema            = $injector.get('validation');
   var validationViews         = $injector.get('validationViews');
   var validationName          = createSchema.Validation.getName;
   var validationTypesForField = createSchema.Validation.forField;
-  var $q                      = $injector.get('$q');
 
   var validationSettings = {
     size: {min: null, max: null},
@@ -121,34 +117,21 @@ angular.module('contentful')
 
   $scope.save = function() {
     if (validateValidations()) {
-      saveToFieldAndOtDoc();
+      saveToField();
       $scope.dialog.confirm();
     }
   };
 
   /**
-   * Write the scope validations to the OT Document and the Content
-   * Type's field.
-   *
-   * FIXME consolidate code duplication
+   * Write the scope validations to the Content Type's field.
    */
-  function saveToFieldAndOtDoc() {
+  function saveToField() {
     var fieldValidations = extractEnabledValidations($scope.fieldValidations);
-    // TODO field path should be available on scope
-    var validationsDoc = $scope.otDoc.at(['fields', $scope.index, 'validations']);
-    var updatedFieldValidations =
-    validationsDocSet(validationsDoc, fieldValidations)
-    .then(function() { $scope.field.validations = fieldValidations; });
-
-    if (!$scope.field.items)
-      return updatedFieldValidations;
-
-    var fieldItemValidations = extractEnabledValidations($scope.fieldItemValidations);
-    var itemValidationsDoc = $scope.otDoc.at(['fields', $scope.index, 'items', 'validations']);
-    var updatedFieldItemValidations =
-    validationsDocSet(itemValidationsDoc, fieldItemValidations)
-    .then(function() { $scope.field.items.validations = fieldItemValidations; });
-    return $q.all(updatedFieldValidations, updatedFieldItemValidations);
+    $scope.field.validations = fieldValidations;
+    if ($scope.field.items) {
+      var fieldItemValidations = extractEnabledValidations($scope.fieldItemValidations);
+      $scope.field.items.validations = fieldItemValidations;
+    }
   }
 
   function getDecoratedValidations(field) {
@@ -264,25 +247,4 @@ angular.module('contentful')
     else
       return label[field.type];
   }
-
-  /**
-   * Run `otDoc.set(validations)` and return a promise.
-   *
-   * Also logs errors thrown by the method.
-   */
-  function validationsDocSet(otDoc, validations) {
-    return $q(function(resolve, reject) {
-      otDoc.set(validations, function(error) {
-        if (error) {
-          logger.logServerWarn('Could not save validations', {error: error });
-          notification.error('Could not save validations');
-          reject(error);
-        }
-        else {
-          resolve();
-        }
-      });
-    });
-  }
-
 }]);

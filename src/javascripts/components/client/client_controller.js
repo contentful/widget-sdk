@@ -2,34 +2,28 @@
 
 angular.module('contentful').controller('ClientController', ['$scope', '$injector', function ClientController($scope, $injector) {
   var $rootScope         = $injector.get('$rootScope');
-  var $q                 = $injector.get('$q');
-  var client             = $injector.get('client');
+  var $controller        = $injector.get('$controller');
+  var $window            = $injector.get('$window');
+  var $timeout           = $injector.get('$timeout');
+  var $location          = $injector.get('$location');
   var features           = $injector.get('features');
   var logger             = $injector.get('logger');
   var SpaceContext       = $injector.get('SpaceContext');
   var authentication     = $injector.get('authentication');
+  var tokenStore         = $injector.get('tokenStore');
   var notification       = $injector.get('notification');
   var analytics          = $injector.get('analytics');
-  var routing            = $injector.get('routing');
   var authorization      = $injector.get('authorization');
   var modalDialog        = $injector.get('modalDialog');
   var presence           = $injector.get('presence');
-  var $location          = $injector.get('$location');
   var enforcements       = $injector.get('enforcements');
-  var reasonsDenied      = $injector.get('reasonsDenied');
   var revision           = $injector.get('revision');
   var ReloadNotification = $injector.get('ReloadNotification');
-  var $controller        = $injector.get('$controller');
-  var $window            = $injector.get('$window');
-  var $timeout           = $injector.get('$timeout');
 
   $controller('TrialWatchController', {$scope: $scope});
 
   $scope.permissionController = $controller('PermissionController', {$scope: $scope});
   $scope.featureController    = $controller('FeatureController'   , {$scope: $scope});
-  $scope.spaces = null;
-  $scope.user = null;
-  $scope.organizations = null;
   $scope.spaceContext = new SpaceContext();
   $scope.notification = notification;
 
@@ -37,7 +31,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     showAuxPanel: false,
     toggleAuxPanel: function() {
       $scope.preferences.showAuxPanel = !$scope.preferences.showAuxPanel;
-      analytics.toggleAuxPanel($scope.preferences.showAuxPanel, $scope.spaceContext.tabList.current);
+      analytics.toggleAuxPanel($scope.preferences.showAuxPanel, $scope.$state.current.name);
     },
     showDisabledFields: false
   };
@@ -49,147 +43,59 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     };
   }, spaceAndTokenWatchHandler);
 
-  $scope.$watch('spaces', spaceWatchHandler);
+  $scope.$watch('spaces', spacesWatchHandler);
   $scope.$watch('user', userWatchHandler);
 
   $scope.$on('iframeMessage', iframeMessageWatchHandler);
-  $scope.$on('$routeChangeSuccess', routeChangeSuccessHandler);
+  $scope.$on('$stateChangeSuccess', stateChangeSuccessHandler);
 
   $scope.initClient = initClient;
+  $scope.setTokenDataOnScope = setTokenDataOnScope;
   $scope.clickedSpaceSwitcher = clickedSpaceSwitcher;
-  $scope.hideTabBar = hideTabBar;
   $scope.getCurrentSpaceId = getCurrentSpaceId;
   $scope.selectSpace = selectSpace;
   $scope.selectOrg = selectOrg;
-  $scope.canSelectOrg = canSelectOrg;
   $scope.getOrgName = getOrgName;
   $scope.logout = logout;
   $scope.openSupport = openSupport;
   $scope.clickedProfileButton = clickedProfileButton;
   $scope.goToAccount = goToAccount;
-  $scope.performTokenLookup = performTokenLookup;
-  $scope.canCreateSpace = canCreateSpace;
-  $scope.canCreateSpaceInAnyOrg = canCreateSpaceInAnyOrg;
-  $scope.canCreateSpaceInOrg = canCreateSpaceInOrg;
-  $scope.checkForEnforcements = checkForEnforcements;
   $scope.showCreateSpaceDialog = showCreateSpaceDialog;
 
-  function routeChangeSuccessHandler(event, route) {
-    $scope.locationInAccount = route.viewType === 'account';
+  function initClient() {
+    tokenStore.getUpdatedToken()
+    .then(function(data) {
+      setTokenDataOnScope(data);
+      analytics.setUserData($scope.user);
+      showOnboardingIfNecessary();
+    });
 
-    if ($scope.spaces !== null && route.params.spaceId != $scope.getCurrentSpaceId()) {
-      var space = _.find($scope.spaces, function (space) {
-        return space.getId() == route.params.spaceId;
-      });
-      if (space) setSpace(space);
-    }
-  }
+    setTimeout(newVersionCheck, 5000);
 
-  function iframeMessageWatchHandler(event, data) {
-    var msg = makeMsgResponder(data);
-
-    if (msg('create', 'UserCancellation')) {
-      authentication.goodbye();
-
-    } else if (msg('new', 'space')) {
-      $scope.showCreateSpaceDialog(data.organizationId);
-
-    } else if (msg('delete', 'space')) {
-      $scope.performTokenLookup();
-
-    } else if (data.type === 'flash') {
-      showFlashMessage(data);
-
-    } else if (msg('navigate', 'location')) {
-      $location.path(data.path);
-
-    } else if (msg('update', 'location')) {
-      return;
-
-    } else if (data.token) {
-      updateToken(data.token);
-
-    } else {
-      $scope.performTokenLookup();
-    }
-  }
-
-  function makeMsgResponder(data) {
-    //console.log('iframe message: ', data);
-    return function msg(action, type) {
-      return data &&
-        data.action && data.action.toLowerCase() === action.toLowerCase() &&
-        data.type && data.type.toLowerCase() === type.toLowerCase();
-    };
-  }
-
-  function showFlashMessage(data) {
-    var level = data.resource.type;
-    if (level && level.match(/error/)) level = 'warn';
-    else if (level && !level.match(/info/) || !level) level = 'info';
-    notification[level](data.resource.message);
-  }
-
-  function updateToken(data) {
-    authentication.updateTokenLookup(data);
-    if(authentication.tokenLookup) {
-      $scope.user = authentication.tokenLookup.sys.createdBy;
-      updateSpaces(authentication.tokenLookup.spaces);
-    } else {
-      logger.logError('Token Lookup has not been set properly', {
-        data: {
-          iframeData: data
-        }
-      });
-    }
-  }
-
-  function performTokenLookup() {
-    return authentication.getTokenLookup()
-    .then(function (tokenLookup) {
-      $scope.user = tokenLookup.sys.createdBy;
-      updateSpaces(tokenLookup.spaces);
-    })
-    .catch(function (err) {
-      if (err && err.statusCode === 401) {
-        modalDialog.open({
-          title: 'Your login token is invalid',
-          message: 'You need to login again to refresh your login token.',
-          scope: $scope,
-          cancelLabel: null,
-          confirmLabel: 'Login',
-          noBackgroundClose: true,
-          attachTo: 'body'
-        }).promise.then(function () {
-          authentication.logout();
+    setInterval(function () {
+      if (presence.isActive()) {
+        newVersionCheck();
+        performTokenLookup().
+        catch(function () {
+          ReloadNotification.trigger('Your authentication data needs to be refreshed. Please try logging in again.');
         });
       }
-      return $q.reject(err);
-    });
+    }, 5 * 60 * 1000);
   }
 
-  function updateSpaces(rawSpaces) {
-    var newSpaceList = _.map(rawSpaces, function (rawSpace) {
-      var existing = getExistingSpace(rawSpace.sys.id);
-      if (existing) {
-        existing.update(rawSpace);
-        return existing;
-      } else {
-        var space = client.newSpace(rawSpace);
-        space.save = function () { throw new Error('Saving space not allowed'); };
-        return space;
+  function stateChangeSuccessHandler(event, toState, toStateParams, fromState, fromStateParams) {
+    $scope.locationInAccount = $scope.$state.includes('account');
+
+    analytics.stateActivated(toState, toStateParams, fromState, fromStateParams);
+
+    if ($scope.spaces !== null && $scope.$stateParams.spaceId !== $scope.getCurrentSpaceId()) {
+      var space = getSpaceFromList($scope.$stateParams.spaceId, $scope.spaces);
+      if (space) {
+        setSpaceContext(space);
+      } else if (!$scope.$stateParams.spaceId) {
+        setSpaceContext($scope.spaces[0]);
       }
-    });
-    newSpaceList.sort(function (a,b) {
-      return a.data.name.localeCompare(b.data.name);
-    });
-    $scope.spaces = newSpaceList;
-  }
-
-  function getExistingSpace(id) {
-    return _.find($scope.spaces, function (existingSpace) {
-      return existingSpace.getId() === id;
-    });
+    }
   }
 
   function spaceAndTokenWatchHandler(collection) {
@@ -215,50 +121,115 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     }
   }
 
-  function spaceWatchHandler(spaces, old, scope) {
-    var routeSpaceId = routing.getSpaceId();
-    var newSpace;
-
-    if (spaces === old) return; // $watch init
-
+  function spacesWatchHandler(spaces, old, scope) {
     if(spaces) {
       scope.spacesByOrg = groupSpacesByOrg(spaces);
     }
+  }
 
-    if (routeSpaceId) {
-      newSpace = _.find(spaces, function (space) {
-        return space.getId() == routeSpaceId;
-      });
-      if (!newSpace) {
-        if (old === null) notification.warn('Space does not exist or is unaccessable');
-        newSpace = spaces[0];
-      }
-    } else if (routing.getRoute().root) { // no Space requested, pick first
-      newSpace = spaces[0];
-    } else {
-      return; // we don't want to see a space (but the profile or something else)
-    }
+  function iframeMessageWatchHandler(event, data) {
+    var msg = makeMsgResponder(data);
 
-    if (!newSpace) {
-      $location.path('/');
-      setSpace();
+    if (msg('create', 'UserCancellation')) {
+      authentication.goodbye();
+
+    } else if (msg('new', 'space')) {
+      $scope.showCreateSpaceDialog(data.organizationId);
+
+    } else if (msg('delete', 'space')) {
+      performTokenLookup();
+      $location.url('/');
+
+    } else if (data.type === 'flash') {
+      showFlashMessage(data);
+
+    } else if (msg('navigate', 'location')) {
+      $location.url(data.path);
+
+    } else if (msg('update', 'location')) {
       return;
-    }
 
-    if (newSpace != scope.spaceContext.space) {
-      // we need to change something
-      if (routeSpaceId != newSpace.getId()) { // trigger switch by chaning location
-        routing.goToSpace(newSpace);
-      } else { // location is already correct, just load the space
-        setSpace(newSpace);
-      }
+    } else if (data.token) {
+      updateToken(data.token);
+
+    } else {
+      performTokenLookup();
     }
   }
 
-  function setSpace(space) {
-    analytics.setSpace(space);
+  function makeMsgResponder(data) {
+    //console.log('iframe message: ', data);
+    return function msg(action, type) {
+      return data &&
+        data.action && data.action.toLowerCase() === action.toLowerCase() &&
+        data.type && data.type.toLowerCase() === type.toLowerCase();
+    };
+  }
+
+  function showFlashMessage(data) {
+    var level = data.resource.type;
+    if (level && level.match(/error/)) level = 'warn';
+    else if (level && !level.match(/info/) || !level) level = 'info';
+    notification[level](data.resource.message);
+  }
+
+  function updateToken(data) {
+    authentication.updateTokenLookup(data);
+    if(authentication.tokenLookup) {
+      tokenStore.updateTokenFromTokenLookup(authentication.tokenLookup);
+      setTokenDataOnScope(tokenStore.getToken());
+    } else {
+      logger.logError('Token Lookup has not been set properly', {
+        data: {
+          iframeData: data
+        }
+      });
+    }
+  }
+
+  function performTokenLookup() {
+    return tokenStore.getUpdatedToken().then(setTokenDataOnScope);
+  }
+
+  function setTokenDataOnScope(token) {
+    $scope.user = token.user;
+    $scope.spaces = token.spaces;
+  }
+
+  function setSpaceContext(space) {
     $scope.spaceContext = new SpaceContext(space);
     enforcements.setSpaceContext($scope.spaceContext);
+    analytics.setSpace(space);
+  }
+
+  function getSpaceFromList(id, existingSpaces) {
+    return _.find(existingSpaces, function (existingSpace) {
+      return existingSpace.getId() === id;
+    });
+  }
+
+  function selectSpace(space) {
+    if(!space){
+      return notification.warn('Selected space does not exist');
+    }
+    if (!$scope.locationInAccount && $scope.getCurrentSpaceId() === space.getId()) return true;
+    analytics.track('Switched Space', {
+      spaceId: space.getId(),
+      spaceName: space.data.name
+    });
+    $scope.$state.go('spaces.detail', { spaceId: space.getId() });
+    return true;
+  }
+
+  function selectOrg(orgId) {
+    if(!$scope.permissionController.canSelectOrg(orgId)) return false;
+    var org = getOrgById(orgId);
+    analytics.track('Switched Organization', {
+      organizationId: orgId,
+      organizationName: getOrgName(orgId)
+    });
+    $scope.$state.go('account.pathSuffix', { pathSuffix: 'organizations/' + orgId + '/' + (isOrgOwner(org) ? 'edit' : 'usage') });
+    return true;
   }
 
   function groupSpacesByOrg(spaces) {
@@ -267,41 +238,20 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     });
   }
 
-  function initClient() {
-    $scope.performTokenLookup()
-    .then(function () {
-      analytics.setUserData($scope.user);
-      showOnboardingIfNecessary();
-    }, ReloadNotification.gatekeeperErrorHandler);
-
-    setTimeout(newVersionCheck, 5000);
-
-    setInterval(function () {
-      if (presence.isActive()) {
-        newVersionCheck();
-        $scope.performTokenLookup().
-        catch(function () {
-          ReloadNotification.trigger('Your authentication data needs to be refreshed. Please try logging in again.');
-        });
-      }
-    }, 5 * 60 * 1000);
+  function clickedSpaceSwitcher() {
+    analytics.track('Clicked Space-Switcher');
   }
 
   function newVersionCheck() {
     revision.hasNewVersion().catch(function (err) {
       if(err === 'APP_REVISION_CHANGED'){
         $rootScope.$broadcast('persistentNotification', {
-          message: 'New application version',
-          tooltipMessage: 'Please reload to get a new version of the application',
+          message: 'A new application version is available.Please reload to get a new version of the application',
           action: ReloadNotification.triggerImmediateReload,
           actionMessage: 'Reload'
         });
       }
     });
-  }
-
-  function clickedSpaceSwitcher() {
-    analytics.track('Clicked Space-Switcher');
   }
 
   function showOnboardingIfNecessary() {
@@ -320,43 +270,10 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
     }
   }
 
-  function hideTabBar() {
-    return $scope.spaceContext.tabList.numVisible() === 0 || $scope.locationInAccount;
-  }
-
   function getCurrentSpaceId() {
     return $scope.spaceContext &&
            $scope.spaceContext.space &&
            $scope.spaceContext.space.getId();
-  }
-
-  function selectSpace(space) {
-    if(!space){
-      return notification.warn('Selected space does not exist');
-    }
-    if (!$scope.locationInAccount && $scope.getCurrentSpaceId() === space.getId()) return true;
-    analytics.track('Switched Space', {
-      spaceId: space.getId(),
-      spaceName: space.data.name
-    });
-    routing.goToSpace(space);
-    return true;
-  }
-
-  function selectOrg(orgId) {
-    if(!$scope.canSelectOrg(orgId)) return false;
-    var org = getOrgById(orgId);
-    analytics.track('Switched Organization', {
-      organizationId: orgId,
-      organizationName: $scope.getOrgName(orgId)
-    });
-    routing.goToOrganization(orgId, isOrgOwner(org));
-    return true;
-  }
-
-  function canSelectOrg(orgId) {
-    var query = _.where($scope.user.organizationMemberships, {organization: {sys: {id: orgId}}});
-    return query.length > 0 && (query[0].role == 'admin' || query[0].role == 'owner');
   }
 
   function getOrgName(orgId) {
@@ -393,43 +310,7 @@ angular.module('contentful').controller('ClientController', ['$scope', '$injecto
   }
 
   function goToAccount(pathSuffix) {
-    pathSuffix = pathSuffix || 'profile/user';
-    $location.path('/account' + '/' + pathSuffix);
-  }
-
-  function canCreateSpace() {
-    var response;
-    if(authorization.authContext && $scope.organizations && $scope.organizations.length > 0){
-      if(!$scope.canCreateSpaceInAnyOrg()) return false;
-
-      response = authorization.authContext.can('create', 'Space');
-      if(!response){
-        $scope.checkForEnforcements('create', 'Space');
-      }
-    }
-    return !!response;
-  }
-
-  function canCreateSpaceInAnyOrg() {
-    return _.some($scope.organizations, function (org) {
-      return $scope.canCreateSpaceInOrg(org.sys.id);
-    });
-  }
-
-  function canCreateSpaceInOrg(orgId) {
-    return authorization.authContext && authorization.authContext.organization(orgId).can('create', 'Space');
-  }
-
-  function checkForEnforcements() {
-    var enforcement = enforcements.determineEnforcement(reasonsDenied.apply(null, arguments), arguments[1]);
-    if(enforcement) {
-      $rootScope.$broadcast('persistentNotification', {
-        message: enforcement.message,
-        tooltipMessage: enforcement.description,
-        actionMessage: enforcement.actionMessage,
-        action: enforcement.action
-      });
-    }
+    $scope.$state.go('account.pathSuffix', { pathSuffix: pathSuffix });
   }
 
   function showCreateSpaceDialog(organizationId) {

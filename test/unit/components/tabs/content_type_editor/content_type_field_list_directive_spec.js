@@ -21,11 +21,15 @@ describe('The ContentTypeFieldList directive', function () {
 
 
       compileElement = function () {
-        container = $('<div class="content-type-field-list"></div>');
-        scope.fieldList = [
-          {id: 'foo'},
-          {id: 'bar', disabled: true}
-        ];
+        container = $('<cf-content-type-field-list></cf-content-type-field-list>');
+        scope.contentType = {
+          data: {
+            fields: [
+              {id: 'foo'},
+              {id: 'bar', disabled: true}
+            ]
+          }
+        };
         $compile(container)(scope);
         scope.$digest();
       };

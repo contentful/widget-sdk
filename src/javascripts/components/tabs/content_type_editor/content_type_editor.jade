@@ -27,7 +27,7 @@
     button.btn.btn--tertiary(type="button"
             ng-if="ctEditorController.interfaceEditorEnabled"
             ng-disabled="!publishedContentType"
-            ng-click="openEditingInterfaceEditor()"
+            ng-click="$state.go('spaces.detail.content_types.detail.editing_interface')"
             tooltip="Customize editing view"
             tooltip-placement="bottom")
       | Customize View
@@ -35,37 +35,35 @@
 .aux-panel(ng-show="preferences.showAuxPanel")
   header
     h1 Content Type Information
-  .entity-info-panel(cf-entity-info-panel)
+  .entity-info-panel(cf-entity-info-panel="contentType.getSys()")
 
 .tab-main.tab-workbench
-  .l-form(name="contentTypeForm")
+  .ng-form.l-form(name="contentTypeForm" submit="publish()")
     .l-form-row
       label
         | Name
         sup (required)
-      .l-form-controls(ot-path="['name']" ot-subdoc)
+      .l-form-controls
         .l-field-editor
           input.form-control(type="text"
                  name="contentTypeName"
-                 ng-disabled="!otEditable"
                  placeholder="Content Type Name (e.g. Product)"
                  ng-model="contentType.data.name"
-                 ot-bind-text)
+                 cf-focus-on-render)
         cf-error-list.form-box-error(cf-error-path="['name']")
     .l-form-row
       label Description
-      .l-form-controls(ot-path="['description']" ot-subdoc)
+      .l-form-controls
         .l-field-editor
           textarea.form-control(placeholder="Describe the purpose of Entries using this Content Type"
                     name="contentTypeDescription"
-                    ng-disabled="!otEditable"
-                    ng-model="contentType.data.description"
-                    ot-bind-text)
+                    ng-model="contentType.data.description")
         cf-error-list.form-box-error(cf-error-path="['description']")
     .l-form-row
-      label Fields
+      label(ng-show="hasFields") Fields
       .l-form-controls
-        .content-type-field-list(ng-show="hasFields")
+        cf-content-type-field-list.u-bce.content-type-field-list(ng-show="hasFields")
+        cf-error-list.form-box-error(cf-error-path="['fields']")
         .advice(ng-hide="hasFields")
           .advice__frame
             i.fa.fa-list-alt.advice__medium-icon
@@ -73,34 +71,32 @@
             p.advice__description
               | Add Fields to configure which form inputs are available for your editors to work with.
             .dropdown-btn(cf-dropdown)
-              button.btn.btn--primary(cf-dropdown-toggle ng-disabled="!otEditable || cfCanDisabled")
+              button.btn.btn--primary(cf-dropdown-toggle ng-disabled="cfCanDisabled")
                 | Create Field
-              .dropdown-menu.type-menu(cf-dropdown-menu select-type="addField(type)")
+              cf-select-type.u-bce.dropdown-menu.type-menu(cf-dropdown-menu on-type-selected="addField(type)")
               a.knowledge-base-link(target="_blank" href="https://contentful.zendesk.com/hc/en-us/articles/200513228-What-is-a-Content-Type-")
                 | Visit the Knowledge Base Pages
                 i.fa.fa-question-circle
         .dropdown-btn(cf-dropdown ng-show="hasFields")
-          button.btn.btn--primary.add-field-button(cf-dropdown-toggle ng-disabled="!otEditable")
+          button.btn.btn--primary.add-field-button(cf-dropdown-toggle)
             i.fa.fa-plus.button-icon
             | Add Field
-          .dropdown-menu.type-menu(cf-dropdown-menu select-type="addField(type)")
-        cf-error-list.form-box-error(cf-error-path="['fields']")
+          cf-select-type.u-bce.dropdown-menu.type-menu(cf-dropdown-menu on-type-selected="addField(type)")
+
 .tab-actions(ng-controller="ContentTypeActionsController")
   .button-set(cf-dropdown)
     button.btn.btn--secondary.deactivate(type="button"
-                  ng-show="canUnpublish()"
+                  ng-show="entityActionsController.canUnpublish()"
                   ng-click="unpublish()"
                   tooltip="Deactivate this Content Type")
       | Deactivate
-    button.btn.btn--secondary.delete(type="button" ng-show="canDelete()" cf-dropdown-toggle) Delete
+    button.btn.btn--secondary.delete(type="button" ng-show="entityActionsController.canDelete()" cf-dropdown-toggle) Delete
     .delete-confirm(cf-dropdown-menu position="topcenter")
       p You are about to delete {{contentType.getName()}}
       button.btn.btn--danger(type="button" ng-click="delete()" dropdown-close) Delete 
       button.btn.btn--secondary(type="button" dropdown-close) Don't Delete 
     button.btn.btn--primary.publish(
-                  ng-disabled="!canPublish()"
+                  ng-disabled="!entityActionsController.canPublish() || (entityActionsController.canPublish() && !contentTypeForm.$dirty && contentType.isPublished())"
                   ng-click="publish()"
-                  tooltip="Make this Content Type available to editors")
-      | {{publishButtonLabel()}}
-  .save-status(cf-save-status tooltip="Every change you make is automatically saved as a draft. Hit {{publishButtonLabel()}} to create Entries of this Content Type."
-               tooltip-placement="top")
+                  tooltip="Save changed and make this Content Type available to editors")
+      | Save

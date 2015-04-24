@@ -1,8 +1,16 @@
 'use strict';
 
+/**
+ * Attributes:
+ * `cf-dropdown` - container for the dropdown system. Also the main hook into this directive.
+ * `cf-dropdown-toggle` - Toggles the dropdown state.
+ * `cf-dropdown-menu` - Identifies the element to be shown as a dropdown.
+ * `dropdown-close` - When an element with this attribute is clicked, it will toggle the dropdown off.
+ */
 angular.module('contentful').directive('cfDropdown', ['$parse', function($parse) {
   return {
     restrict: 'A',
+    scope: true,
     link: function(scope, element, attrs) {
       var onClose = attrs.onClose ? $parse(attrs.onClose) : undefined;
 
@@ -42,6 +50,7 @@ angular.module('contentful').directive('cfDropdown', ['$parse', function($parse)
       }, function(isOpen) {
         var button = element;
         var content = element.find('[cf-dropdown-menu'+getDropdownId()+']');
+        var arrow = element.find('[cf-dropdown-menu'+getDropdownId()+'] [cf-dropdown-arrow]');
         if (isOpen) {
           button.addClass('active');
           content.show();
@@ -50,6 +59,11 @@ angular.module('contentful').directive('cfDropdown', ['$parse', function($parse)
         } else {
           button.removeClass('active');
           content.hide();
+          if(arrow){
+            arrow.removeClass('center-aligned');
+            arrow.removeClass('left-aligned');
+            arrow.removeClass('right-aligned');
+          }
           $(document).off('click', closeOtherDropdowns);
         }
       });
@@ -105,6 +119,11 @@ angular.module('contentful').directive('cfDropdown', ['$parse', function($parse)
       function getPositioning() {
         var position = element.find('[cf-dropdown-menu'+getDropdownId()+']').attr('position');
         switch (position) {
+          case 'top15center':
+            return {
+              my: 'center bottom',
+              at: 'center top-15'
+            };
           case 'topcenter':
             return {
               my: 'center bottom',
@@ -155,15 +174,24 @@ angular.module('contentful').directive('cfDropdown', ['$parse', function($parse)
         var $menu = info.element.element;
         //console.log('original position', pos, info);
         var caretDirection = getCaretDirection(pos, info);
+        var arrow = $menu.find('[cf-dropdown-arrow]');
         if (caretDirection == 'horizontal') {
-          $menu.addClass(info.vertical + '-caret ' + info.horizontal + '-aligned');
+          if(arrow.get(0)){
+            arrow.addClass(info.horizontal + '-aligned');
+          } else {
+            $menu.addClass(info.vertical + '-caret ' + info.horizontal + '-aligned');
+          }
           if (info.vertical == 'top') {
             pos.top += 10;
           } else {
             pos.top -= 10;
           }
         } else if (caretDirection == 'vertical') {
-          $menu.addClass(info.horizontal + '-caret ' + info.vertical + '-aligned');
+          if(arrow.get(0)){
+            arrow.addClass(info.vertical+ '-aligned');
+          } else {
+            $menu.addClass(info.horizontal + '-caret ' + info.vertical + '-aligned');
+          }
           if (info.horizontal == 'left') {
             pos.left += 10;
           } else {

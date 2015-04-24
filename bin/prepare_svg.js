@@ -26,9 +26,9 @@ svg2js(iconsSvg, parseContent);
 function parseContent(root){
   var artboardContent;
   var svg = root.content[1];
-  svg.attrs.width.value = '30px';
-  svg.attrs.height.value = '26px';
-  svg.attrs.viewBox.value = '0 0 30 26';
+  svg.attrs.width.value = '50px';
+  svg.attrs.height.value = '50px';
+  svg.attrs.viewBox.value = '0 0 50 50';
   // Look for the icons container
   svg.content.forEach(function (node) {
     if(nodeIsElAndId(node, 'g', 'Page-1'))

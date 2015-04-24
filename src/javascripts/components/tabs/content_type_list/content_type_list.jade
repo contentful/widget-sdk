@@ -24,13 +24,13 @@
   .left-nav
     header.filter-list-header Filter By Status
     ul.status-filters
-      li.filter-list-item(ng-class="{active: tab.params.list == 'all'}" ng-click="switchList('all')")
+      li.filter-list-item(ng-class="{active: context.list == 'all'}" ng-click="switchList('all')")
         span.filter-list-title All
-      li.filter-list-item(ng-class="{active: tab.params.list == 'changed'}" ng-click="switchList('changed')")
+      li.filter-list-item(ng-class="{active: context.list == 'changed'}" ng-click="switchList('changed')")
         span.filter-list-title Changed
-      li.filter-list-item(ng-class="{active: tab.params.list == 'draft'}" ng-click="switchList('draft')")
+      li.filter-list-item(ng-class="{active: context.list == 'draft'}" ng-click="switchList('draft')")
         span.filter-list-title Draft
-      li.filter-list-item(ng-class="{active: tab.params.list == 'active'}" ng-click="switchList('active')")
+      li.filter-list-item(ng-class="{active: context.list == 'active'}" ng-click="switchList('active')")
         span.filter-list-title Active
 
   .with-left-nav
@@ -48,7 +48,7 @@
       table.result-list.main-results.animated
         tbody
           tr(ng-repeat="contentType in visibleContentTypes = (contentTypes | filter:visibleInCurrentList) track by contentType.getId()"
-              cf-click-local="navigator.contentTypeEditor(contentType).goTo()")
+              ui-sref="spaces.detail.content_types.detail.editor({ contentTypeId: contentType.getId() })")
             td.cell-display-name
               span {{contentType.getName()}}
             td.cell-description

@@ -1,21 +1,9 @@
 'use strict';
 
-angular.module('contentful').directive('cfEntryEditor', ['defer', function(defer){
+angular.module('contentful').directive('cfEntryEditor', [function(){
   return {
     template: JST.entry_editor(),
     restrict: 'A',
-    controller: 'EntryEditorController',
-    link: function (scope, elem) {
-      function focus() {
-        if (scope.fields && scope.otEditable) {
-          var input = elem.find('[name=entryForm]').find('input, textarea').eq(0);
-          defer(function () { input.focus(); });
-          unwatchFields();
-          unwatchEditable();
-        }
-      }
-      var unwatchFields = scope.$watch('fields', focus);
-      var unwatchEditable = scope.$watch('otEditable', focus);
-    }
+    controller: 'EntryEditorController'
   };
 }]);

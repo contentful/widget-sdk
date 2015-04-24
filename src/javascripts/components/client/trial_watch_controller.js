@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('contentful').controller('TrialWatchController', ['$scope', '$rootScope', function TrialWatchController($scope, $rootScope) {
+angular.module('contentful').controller('TrialWatchController', ['$scope', '$rootScope', 'analytics', function TrialWatchController($scope, $rootScope, analytics) {
   $scope.$watch('user', trialWatcher);
   $scope.$watch('spaceContext.space', trialWatcher);
 
@@ -9,7 +9,7 @@ angular.module('contentful').controller('TrialWatchController', ['$scope', '$roo
     var space = $scope.spaceContext.space;
     if(!user || !space) return;
     var hours = null;
-    var timePeriod, message, tooltipMessage, action, actionMessage;
+    var timePeriod, message, action, actionMessage;
     var isSpaceOwner = space.isOwner(user);
     var organization = space.data.organization;
 
@@ -20,20 +20,18 @@ angular.module('contentful').controller('TrialWatchController', ['$scope', '$roo
       } else {
         timePeriod = {length: Math.floor(hours/24), unit: 'days'};
       }
-      message = timeTpl('<strong>%length</strong> %unit left in trial', timePeriod);
-      tooltipMessage = timeTpl(
-        'Your current Organization is in trial mode giving you access to all features for '+
-        '%length more %unit. Enter your billing information to activate your subscription.', timePeriod);
+      message = timeTpl('<strong>%length</strong> %unit left in trial', timePeriod) + ' '+
+                timeTpl('Your current Organization is in trial mode giving you access to all features for '+
+                  '%length more %unit. Enter your billing information to activate your subscription.', timePeriod);
 
     } else if(organization.subscriptionState == 'active' &&
               !organization.subscriptionPlan.paid &&
               organization.subscriptionPlan.kind == 'default'){
-      message = 'Limited free version';
-      tooltipMessage = 'You are currently enjoying our limited Starter plan. To get access to all features, please upgrade to a paid subscription plan.';
+      message = '<strong>Limited free version</strong> You are currently enjoying our limited Starter plan. To get access to all features, please upgrade to a paid subscription plan.';
     }
 
 
-    if(message || tooltipMessage || action && actionMessage){
+    if(message || action && actionMessage){
       if(isSpaceOwner){
         actionMessage = 'Upgrade';
         action = upgradeAction;
@@ -41,7 +39,6 @@ angular.module('contentful').controller('TrialWatchController', ['$scope', '$roo
 
       $rootScope.$broadcast('persistentNotification', {
         message: message,
-        tooltipMessage: tooltipMessage,
         action: action,
         actionMessage: actionMessage
       });
@@ -52,6 +49,7 @@ angular.module('contentful').controller('TrialWatchController', ['$scope', '$roo
 
   function upgradeAction(){
     if($scope.spaceContext.space)
+      analytics.trackPersistentNotificationAction('Plan Upgrade');
       $scope.goToAccount(
         'organizations/'+
         $scope.spaceContext.space.getOrganizationId()+

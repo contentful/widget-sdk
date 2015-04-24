@@ -5,10 +5,11 @@ angular.module('contentful', [
   'contentful/user_interface',
   'angularLoad',
   'ngAnimate',
-  'ngRoute',
   'ngSanitize',
   'timeRelative',
   'ui.sortable',
+  'ui.router',
+  'ncy-angular-breadcrumb'
 ])
 .config(['$locationProvider', 'clientAdapterProvider', 'authenticationProvider', 'environment', '$sceDelegateProvider', '$compileProvider', 'timeRelativeConfig',
   function($locationProvider, clientAdapterProvider, authenticationProvider, environment, $sceDelegateProvider, $compileProvider, timeRelativeConfig){
@@ -22,4 +23,5 @@ angular.module('contentful', [
   timeRelativeConfig.calendar.en.sameElse = 'll';
   timeRelativeConfig.calendar.en.lastWeek = 'ddd, LT';
   timeRelativeConfig.calendar.en.nextWeek = 'Next ddd, LT';
+
 }]);

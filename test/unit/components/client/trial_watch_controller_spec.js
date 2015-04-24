@@ -103,14 +103,6 @@ describe('Trial Watch controller', function () {
           expect(broadcastStub.args[0][1].message).toMatch(/20(.*)hours left in trial/);
         });
 
-        it('shows a tooltip message for trial mode', function () {
-          expect(broadcastStub.args[0][1].tooltipMessage).toMatch('trial mode');
-        });
-
-        it('shows a tooltip message for hours', function () {
-          expect(broadcastStub.args[0][1].tooltipMessage).toMatch('20 more hours');
-        });
-
         it('shows an action message', function () {
           expect(broadcastStub.args[0][1].actionMessage).toMatch(/upgrade/i);
         });
@@ -125,14 +117,6 @@ describe('Trial Watch controller', function () {
           diffStub.returns(76);
           scope.user = {sys: {}};
           scope.$digest();
-        });
-
-        it('shows a tooltip message for trial mode', function () {
-          expect(broadcastStub.args[0][1].tooltipMessage).toMatch('trial mode');
-        });
-
-        it('shows a tooltip message for days', function () {
-          expect(broadcastStub.args[0][1].tooltipMessage).toMatch('3 more days');
         });
 
         it('shows an action message', function () {
@@ -184,10 +168,6 @@ describe('Trial Watch controller', function () {
 
         it('shows a message', function () {
           expect(broadcastStub.args[0][1].message).toMatch('free version');
-        });
-
-        it('shows a tooltip message', function () {
-          expect(broadcastStub.args[0][1].tooltipMessage).toMatch('limited Starter plan');
         });
 
         it('shows an action message', function () {

@@ -14,12 +14,20 @@
  * It's recommended the scale is used unless a very explicit measurement is required.
  *
  */
-angular.module('contentful').directive('cfIcon', ['prefixAssetHostFilter', function(prefixAssetHostFilter){
+angular.module('contentful').directive('cfIcon', ['prefixAssetHostFilter', '$window', function(prefixAssetHostFilter, $window){
 
   var DEFAULT_DIMENSIONS = {
-    width: 30,
-    height: 26
+    width: 50,
+    height: 50
   };
+
+  /**
+   * Safari has weird glitching issues using an img tag to include svg sprites.
+   * A way to bypass that, is to append a querystring to the svg file path.
+   * Using the icon name in the query string is enough to make it behave.
+   * http://betravis.github.io/icon-methods/svg-sprite-sheets.html
+   */
+  var isSafari = /Version\/(\d|\.|\s)+Safari/.test($window.navigator.userAgent);
 
   function getDimension(value, defaultValue) {
     var intValue = parseInt(value, 10);
@@ -33,8 +41,12 @@ angular.module('contentful').directive('cfIcon', ['prefixAssetHostFilter', funct
     link: function (scope, el, attrs) {
       var width, height;
       var imagePath = prefixAssetHostFilter('/app/images/contentful_icons.svg');
+      var qs = isSafari ? '?'+attrs.name : '';
 
-      if(attrs.width || attrs.height) {
+      if(attrs.size) {
+        width = getDimension(attrs.size, DEFAULT_DIMENSIONS.width);
+        height = getDimension(attrs.size, DEFAULT_DIMENSIONS.height);
+      } else if(attrs.width || attrs.height) {
         width = getDimension(attrs.width, DEFAULT_DIMENSIONS.width);
         height = getDimension(attrs.height, DEFAULT_DIMENSIONS.height);
       } else if(attrs.scale && !isNaN(parseFloat(attrs.scale, 10))) {
@@ -43,11 +55,13 @@ angular.module('contentful').directive('cfIcon', ['prefixAssetHostFilter', funct
         height = DEFAULT_DIMENSIONS.height * scale;
       }
 
+
       el.html(
-        '<object class="cf-icon" type="image/svg+xml" '+
-        'width="'+ width +'px" height="'+ height +'px" data="'+
-        imagePath +'#'+ attrs.name +'"></object>'
+        '<img class="cf-icon" '+
+        'width="'+ width +'" height="'+ height +'" src="'+
+        imagePath +qs+'#'+ attrs.name +'" />'
       );
+
     }
   };
 }]);

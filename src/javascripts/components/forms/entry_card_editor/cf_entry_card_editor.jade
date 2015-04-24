@@ -12,7 +12,7 @@ ul.entry-cards(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide="
   li.entry-cards__item(
       ng-repeat="(index, entity) in linkedEntities track by index"
       ng-controller="EntryCardItemController"
-      ng-dblclick="entity && !entity.isMissing && navigator.entityEditor(entity).goTo()"
+      ng-dblclick="entity && !entity.isMissing && $state.go('spaces.detail.entries.detail', { entryId: entity.getId(), addToContext: true })"
       ng-mouseover="hoveringItem=true"
       ng-mouseleave="hoveringItem=false"
       ng-class="{'entry-cards__item--narrow': linkMultiple, 'entry-cards__item--wide': !linkMultiple}")
@@ -30,7 +30,7 @@ ul.entry-cards(ui-sortable="linkSortOptions" ng-model="linkedEntities" ng-hide="
     .entry-cards__description(title="{{description}}" ng-if="description=entryLinkController.linkDescription(entity)") {{description | truncate:descriptionLength}}
     .gallery-buttons(ng-show="hoveringItem")
       button.btn(type="button"
-          ng-click="entity && !entity.isMissing && navigator.entityEditor(entity).goTo()"
+          ng-click="entity && !entity.isMissing && $state.go('spaces.detail.entries.detail', { entryId: entity.getId(), addToContext: true })"
           ng-show="!!(!enableUpload && entity && !entity.isMissing)"
           tooltip="Open Entry"
           tooltip-container=".entry-editor")

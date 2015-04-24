@@ -3,10 +3,11 @@
 describe('Content Type List Controller', function () {
   var controller, scope, stubs;
 
-  var makeCT = function (sys) {
+  var makeCT = function () {
     var ct;
-    inject(function (privateContentfulClient) {
-      ct = new privateContentfulClient.Entity({ sys: sys || {} });
+    inject(function (cfStub) {
+      var space = cfStub.space('spaceid');
+      ct = cfStub.contentType(space, 'typeid', 'typename');
     });
     stubs.deleted = sinon.stub(ct, 'isDeleted');
     stubs.published = sinon.stub(ct, 'isPublished');
@@ -32,9 +33,7 @@ describe('Content Type List Controller', function () {
         ])
       ]);
 
-      scope.tab = {
-        params: {}
-      };
+      scope.context = {};
       scope.searchTerm = null;
 
       controller = $controller('ContentTypeListController', {$scope: scope});
@@ -85,7 +84,7 @@ describe('Content Type List Controller', function () {
       });
 
       it('list is not defined', function () {
-        expect(scope.tab.params.list).toBeUndefined();
+        expect(scope.context.list).toBeUndefined();
       });
 
       it('reset content types not called', function () {
@@ -100,7 +99,7 @@ describe('Content Type List Controller', function () {
       });
 
       it('list is defined', function () {
-        expect(scope.tab.params.list).toBe('all');
+        expect(scope.context.list).toBe('all');
       });
 
       it('reset content types is called', function() {
@@ -118,20 +117,20 @@ describe('Content Type List Controller', function () {
     });
 
     it('sets search term to null', function() {
-      scope.tab.params.list = list;
+      scope.context.list = list;
       scope.switchList(list);
       expect(scope.searchTerm).toBeNull();
     });
 
     it('resets current list', function () {
-      scope.tab.params.list = list;
+      scope.context.list = list;
       scope.switchList(list);
       sinon.assert.called(scope.resetContentTypes);
     });
 
     it('switches current list', function () {
       scope.switchList(list);
-      expect(scope.tab.params.list).toBe(list);
+      expect(scope.context.list).toBe(list);
     });
   });
 
@@ -146,34 +145,34 @@ describe('Content Type List Controller', function () {
     it('content type is included in all', function () {
       var contentType = makeCT();
       stubs.deleted.returns(false);
-      scope.tab.params.list = 'all';
+      scope.context.list = 'all';
       expect(scope.visibleInCurrentList(contentType)).toBeTruthy();
     });
 
     it('content type is included in changed', function () {
       var contentType = makeCT();
       stubs.hasUnpublishedChanges.returns(true);
-      scope.tab.params.list = 'changes';
+      scope.context.list = 'changes';
       expect(scope.visibleInCurrentList(contentType)).toBeTruthy();
     });
 
     it('content type is included in active', function () {
       var contentType = makeCT();
       stubs.published.returns(true);
-      scope.tab.params.list = 'active';
+      scope.context.list = 'active';
       expect(scope.visibleInCurrentList(contentType)).toBeTruthy();
     });
 
     it('content type is included in draft', function () {
       var contentType = makeCT();
       stubs.published.returns(false);
-      scope.tab.params.list = 'draft';
+      scope.context.list = 'draft';
       expect(scope.visibleInCurrentList(contentType)).toBeTruthy();
     });
 
     it('content type is not contained in any list', function () {
       var contentType = makeCT();
-      scope.tab.params.list = '';
+      scope.context.list = '';
       expect(scope.visibleInCurrentList(contentType)).toBeTruthy();
     });
   });
@@ -196,13 +195,13 @@ describe('Content Type List Controller', function () {
   });
 
   it('has a query', function() {
-    scope.tab.params.list = 'all';
+    scope.context.list = 'all';
     scope.searchTerm = 'term';
     expect(scope.hasQuery()).toBeTruthy();
   });
 
   it('has no query', function() {
-    scope.tab.params.list = 'all';
+    scope.context.list = 'all';
     scope.searchTerm = null;
     expect(scope.hasQuery()).toBeFalsy();
   });
@@ -250,23 +249,4 @@ describe('Content Type List Controller', function () {
       expect(scope.statusLabel(contentType)).toBe('draft');
     });
   });
-
-  describe('when tab becomes active', function () {
-    beforeEach(function() {
-      scope.resetContentTypes = sinon.stub();
-    });
-
-    it('does nothing if its not the current scope tab', inject(function ($rootScope) {
-      scope.tab = null;
-      $rootScope.$broadcast('tabBecameActive', {});
-      sinon.assert.notCalled(scope.resetContentTypes);
-    }));
-
-    it('resets content types', inject(function($rootScope) {
-      scope.tab = {};
-      $rootScope.$broadcast('tabBecameActive', scope.tab);
-      sinon.assert.called(scope.resetContentTypes);
-    }));
-  });
-
 });

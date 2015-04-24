@@ -64,17 +64,17 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
   };
 
   $scope.isOrderField = function (field) {
-    return $scope.tab.params.view.order.fieldId === field.id;
+    return $scope.context.view.order.fieldId === field.id;
   };
 
   $scope.orderColumnBy = function (field) {
     if(!$scope.isOrderField(field)) setOrderField(field);
-    $scope.tab.params.view.order.direction = switchOrderDirection($scope.tab.params.view.order.direction);
+    $scope.context.view.order.direction = switchOrderDirection($scope.context.view.order.direction);
     $scope.resetEntries(true);
   };
 
-  $scope.$watch('tab.params.view.displayedFieldIds', function (displayedFieldIds) {
-    if(!_.contains(displayedFieldIds, $scope.tab.params.view.order.fieldId)){
+  $scope.$watch('context.view.displayedFieldIds', function (displayedFieldIds) {
+    if(!_.contains(displayedFieldIds, $scope.context.view.order.fieldId)){
       setOrderField(determineFallbackSortField(displayedFieldIds));
       $scope.resetEntries(true);
     }
@@ -95,14 +95,14 @@ angular.module('contentful').controller('EntryListViewsController', ['$scope', '
     getBlankView: getBlankView,
     viewCollectionName: 'entryListViews',
     generateDefaultViews: generateDefaultViews,
-    currentViewLocation: 'tab.params.view',
+    currentViewLocation: 'context.view',
     resetList: function () {
       $scope.resetEntries(true);
     }
   });
 
   function setOrderField(field) {
-    $scope.tab.params.view.order = {
+    $scope.context.view.order = {
       fieldId: field.id,
       direction: DEFAULT_ORDER_DIRECTION
     };
