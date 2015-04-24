@@ -7,10 +7,13 @@ config   = File.read('config/environment.json').gsub(/^\s+|\n/, '')
 env      = ENV['UI_ENV'] || 'development'
 settings = JSON.parse(config)
 
+revision = JSON.parse(File.read('build/revision.json'))['revision']
+
 configScript = <<-EOT
   <script id="cf-config">
     window.CF_CONFIG = #{config};
-    window.CF_ENV = "#{env}"
+    window.CF_ENV = "#{env}";
+    window.CF_UI_VERSION = "#{revision}"
   </script>
   EOT
 
