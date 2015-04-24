@@ -20,7 +20,10 @@ angular.module('contentful').controller('ApiKeyEditorController', ['$scope', '$i
     }
   });
 
-  $scope.context.closingMessage = 'You have unsaved changes.';
+  $scope.context.closingMessage = [
+    'You edited the Api Key but didn\'t save your changes.',
+    'Please either save or discard them'
+  ];
 
   $scope.environment = environment;
 

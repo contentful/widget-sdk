@@ -13,7 +13,11 @@ angular.module('contentful').controller('ContentTypeEditorController',
     entityType: 'contentType'
   });
 
-  $scope.context.closingMessage             = 'You have unpublished changes.';
+  $scope.context.closingMessage = [
+    'You edited the Content Type but didn\'t save your changes.',
+    'Please either save or discard them'
+  ];
+
   $scope.fieldSchema                        = validation(validation.schemas.ContentType.at(['fields']).items);
   $scope.regulateDisplayField               = regulateDisplayField;
   $scope.updatePublishedContentType         = updatePublishedContentType;

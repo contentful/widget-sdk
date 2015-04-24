@@ -475,14 +475,24 @@ angular.module('contentful').config([
   function confirmNavigation(state) {
     if (state.data && state.data.dirty && state.data.closingMessage) {
       return modalDialog.open({
-        title: 'Discard Changes?',
-        confirmLabel: 'Discard',
-        message: state.data.closingMessage,
+        title: 'Unsaved Changes',
+        confirmLabel: 'Discard Changes',
+        cancelLabel: 'Return to Editor',
+        className: 'discard-changes-dialog',
+        html: true,
+        message: prepareClosingMessage(state.data.closingMessage),
         scope: $rootScope
       }).promise;
     } else {
       return $q.when('done');
     }
+  }
+
+  function prepareClosingMessage(message) {
+    if(_.isArray(message)){
+      message = message.join('</p><p>');
+    }
+    return '<p>'+message+'</p>';
   }
 
 
