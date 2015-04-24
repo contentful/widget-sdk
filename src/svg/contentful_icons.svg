@@ -223,8 +223,8 @@
             <g id="drag-handle" sketch:type="MSLayerGroup" transform="translate(151.000000, 401.000000)" fill="#000000">
                 <path d="M0.25,3 L2.75,3 L3,3 L3,0 L2.75,0 L0.25,0 L0,0 L0,3 L0.25,3 Z M0.25,8.8 L2.75,8.8 L3,8.8 L3,5.8 L2.75,5.8 L0.25,5.8 L0,5.8 L0,8.8 L0.25,8.8 Z M0.25,14.6 L2.75,14.6 L3,14.6 L3,11.6 L2.75,11.6 L0.25,11.6 L0,11.6 L0,14.6 L0.25,14.6 Z" id="Handle" sketch:type="MSShapeGroup" transform="translate(1.500000, 7.300000) scale(-1, 1) translate(-1.500000, -7.300000) "></path>
             </g>
-            <g id="arrow-up" sketch:type="MSLayerGroup" transform="translate(56.000000, 452.000000)" stroke="#A7E2FF" stroke-width="2" fill="#E8F7FF">
-                <path d="M0.382852249,44.5369478 L19.4024672,0.874207299 L38.5519287,44.7726564" id="Path-123" sketch:type="MSShapeGroup"></path>
+            <g id="arrow-up" sketch:type="MSLayerGroup" transform="translate(56.000000, 452.000000)" stroke="#A2A9B1" stroke-width="2" fill="#E8F7FF">
+                <path d="M0.382852249,34.5400085 L19.4024672,0.874207299 L38.5519287,34.769989" id="Path-123" sketch:type="MSShapeGroup"></path>
             </g>
             <g id="dd-arrow-down" sketch:type="MSLayerGroup" transform="translate(2.000000, 362.000000)" fill="#000000">
                 <path d="M44.4406222,7.66602476 C45.1381676,6.96847929 45.1381676,5.82450471 44.4406222,5.12695924 L39.8089202,0.523159106 C39.1113747,-0.174386369 37.995302,-0.174386369 37.2977565,0.523159106 L22.4818906,15.339025 L7.66602476,0.523159106 C6.96847929,-0.174386369 5.85240653,-0.174386369 5.15486106,0.523159106 L0.523159106,5.12695924 C-0.174386369,5.82450471 -0.174386369,6.96847929 0.523159106,7.66602476 L21.2263088,28.3412726 C21.9238543,29.0388181 23.039927,29.0388181 23.7374725,28.3412726 L44.4406222,7.66602476 Z" sketch:type="MSShapeGroup"></path>

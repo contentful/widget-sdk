@@ -4,9 +4,9 @@
     span.space-selector__name.u-truncate(ng-bind="spaceContext.space.data.name || 'Spaces'")
   .space-selector__dropdown.cfnext-dropdown(cf-dropdown-menu position="top15center")
     cf-icon.cfnext-dropdown__arrow(cf-dropdown-arrow name="arrow-up" size="15")
-    ul.space-selector__list.cfnext-dropdown__list
+    ul.space-selector__list.cfnext-dropdown__list--first
       li.cfnext-dropdown__item--no-highlight(ng-repeat="(orgId, org) in spacesByOrg" ng-class="{'has-no-action': canSelectOrg(orgId)}")
-        span.u-truncate.space-selector__group-label {{getOrgName(orgId)}}
+        span.space-selector__group-label {{getOrgName(orgId) | truncate:18}}
         ul.cfnext-dropdown__inner-list
           li.space-selector__item.cfnext-dropdown__item(ng-repeat="space in org track by space.getId()"
               cf-click-local="selectSpace(space) && toggleDropdown()"
@@ -17,7 +17,7 @@
             span {{space.data.name | truncate:21}}
             cf-icon.icon-checkmark(name="checkmark" size="12" ng-show="space.getId() === getCurrentSpaceId()")
             i.fa.fa-circle(ng-show="space.isHibernated()")
-    ul.space-selector__add.cfnext-dropdown__list
-      li.cfnext-dropdown__item--vcentered(ng-show="permissionController.canCreateSpace()" ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close)
-        cf-icon(name="plus" size="22")
+    ul.space-selector__add.cfnext-dropdown__list(ng-show="permissionController.canCreateSpace()")
+      li.cfnext-dropdown__item--vcentered(ng-click="showCreateSpaceDialog()" ng-class="{'top-separator': spaces.length > 0}" dropdown-close)
+        cf-icon(name="plus" size="20")
         | Add new Space
