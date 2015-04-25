@@ -117,7 +117,8 @@ angular.module('contentful').provider('analytics', ['environment', function (env
 
       trackPersistentNotificationAction: function (name) {
         this.track('Clicked Top Banner CTA Button', {
-          action: name
+          action: name,
+          currentPlan: this._organizationData.subscriptionPlan.name
         });
       }
     };
