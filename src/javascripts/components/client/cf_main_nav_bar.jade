@@ -8,7 +8,7 @@ nav.nav-bar.app-top-bar--separator(ng-class="{'with-persistent-notification': pe
           ng-hide="permissionController.get('updateContentType', 'shouldHide')"
           data-view-type="content-type-list"
           tabindex="0")
-        cf-icon(name="nav-ct" scale="0.6")
+        cf-icon(name="nav-ct" size="25")
         span.nav-bar__list-label Content Types
     li.app-top-bar__action.nav-bar__list-item
       a.nav-bar__link(
@@ -18,7 +18,7 @@ nav.nav-bar.app-top-bar--separator(ng-class="{'with-persistent-notification': pe
           ui-sref="spaces.detail.entries.list"
           data-view-type="entry-list"
           tabindex="0")
-        cf-icon(name="nav-entries" scale="0.6")
+        cf-icon(name="nav-entries" size="25")
         span.nav-bar__list-label Entries
     li.app-top-bar__action.nav-bar__list-item
       a.nav-bar__link(
@@ -28,7 +28,7 @@ nav.nav-bar.app-top-bar--separator(ng-class="{'with-persistent-notification': pe
           ng-hide="permissionController.get('readAsset', 'shouldHide')"
           data-view-type="asset-list"
           tabindex="0")
-        cf-icon(name="nav-media" scale="0.6")
+        cf-icon(name="nav-media" size="25")
         span.nav-bar__list-label Media Library
     li.app-top-bar__action.nav-bar__list-item
       a.nav-bar__link(
@@ -38,7 +38,7 @@ nav.nav-bar.app-top-bar--separator(ng-class="{'with-persistent-notification': pe
           ng-hide="permissionController.get('readApiKey', 'shouldHide')"
           data-view-type="api-home"
           tabindex="0")
-        cf-icon.icon-nav-api(name="nav-api" scale="0.6")
+        cf-icon.icon-nav-api(name="nav-api" size="25")
         span.nav-bar__list-label APIs
     li.app-top-bar__action.nav-bar__list-item
       a.nav-bar__link(
@@ -48,6 +48,6 @@ nav.nav-bar.app-top-bar--separator(ng-class="{'with-persistent-notification': pe
           ng-hide="permissionController.get('updateSettings', 'shouldHide')"
           data-view-type="space-settings"
           tabindex="0")
-        cf-icon(name="nav-settings" scale="0.6")
+        cf-icon(name="nav-settings" size="25")
         span.nav-bar__list-label Settings
 
