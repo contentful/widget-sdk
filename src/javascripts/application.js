@@ -1,5 +1,9 @@
 'use strict';
 
+/**
+ * @ngdoc module
+ * @name contentful/app
+ */
 angular.module('contentful/app', ['contentful'])
 .config(['analyticsProvider', 'environment', function(analyticsProvider, environment){
   $.cookies.setOptions({

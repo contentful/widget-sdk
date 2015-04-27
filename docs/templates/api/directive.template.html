@@ -1,0 +1,39 @@
+{% include "lib/macros.html" -%}
+{% extends "api/api.template.html" %}
+
+{% block additional %}
+
+{% if doc.scopeProvides.length %}
+  <h2>API</h2>
+  <ul class="directive-scope-provides">
+    {% for prop in doc.scopeProvides %}
+      <li>
+        <h3 class="directive-scope-provides-header">
+          <code class="directive-scope-provides-name">$scope.{$ prop.name $}</code>
+          <code class="directive-scope-provides-separator">:</code>
+          <code class="directive-scope-provides-type">{$ prop.typeExpression $}</code>
+        </h3>
+        <div class="description">{$ prop.description $}</div>
+      </li>
+    {% endfor %}
+  </ul>
+{% endif %}
+
+{% if doc.scopeRequires.length %}
+<h2>Requires</h2>
+<ul class="directive-scope-provides">
+  {% for prop in doc.scopeRequires %}
+    <li>
+      <div class="directive-scope-provides-header">
+        <code class="directive-scope-provides-name">$scope.{$ prop.name $}</code>
+        <code class="directive-scope-provides-separator">:</code>
+        <code class="directive-scope-provides-type">{$ prop.typeExpression $}</code>
+      </div>
+      <div class="description">{$ prop.description $}</div>
+    </li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+
+{% endblock %}

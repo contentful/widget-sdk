@@ -1,0 +1,100 @@
+Writing Documentation
+=====================
+
+This guide explains how to build and write documentation for the app.
+We currently generate documentation from the JavasScript code in the
+`src/javascripts` directory.
+
+
+## Using Documentation
+
+To generate the documentation run `gulp docs` and then start the server
+with `gulp serve`. You will be able to see the documentation under the
+[`/docs`](https://app.joistio.com:8888/docs) folder in your development app.
+To automatically re-generate your documentation when something changes,
+run the `gulp docs/watch` task.
+
+
+## Writing JS Documentation
+
+~~~javascript
+/**
+ * @ngdoc directive
+ * @name cfDirective
+ *
+ * @description
+ * Description of this directive
+ */
+~~~
+
+Each Doc Comment contains a number of tags starting with `@`. A tag’s
+content starts at first white space after the tag name and ends when
+the next tag begins.
+
+API Documentation will only be generated for doc comments that have the
+`@ngdoc type` tag. Here *type* is the type of documentation to
+generate. Currently the following types are supported and will be
+explained below.
+
+* *module*
+* *directive*
+* *type*
+* *method*
+* *property*
+
+### Directives
+
+~~~javascript
+/**
+ * @ngdoc directive
+ * @name cfDirective
+ *
+ * @description
+ * Description of this directive
+ *
+ * @scope.provides {string} name
+ * This is a `name` property that is added to the scope by the directive.
+ *
+ * @scope.requires {string[]} data
+ * The `$scope.data` property is required by the directive and it is
+ * expected to be an array of strings.
+ */
+~~~
+
+### Members
+
+Documentation with the `@ngdoc` type `method` or `property` will be
+attached to their parent document. The parent document is determined
+by the `@name` tag.
+
+~~~js
+/**
+ * @ngdoc method
+ * @name SomeType#methodName
+ *
+ * @param {string} arg
+ */
+this.methodName = function(arg) {
+  // body
+}
+~~~
+
+### Type Expressions
+
+Type expressions are used by the `@param`, `@returns`, and `@scope.*`
+tags, among others, to indicate a type. All type expressions must be
+valid TypeScript type expressions. In the doc comments type expressions
+are usually enclosed in braces.
+
+
+## Hacking the System
+
+*TODO* Explain how the documentation system works
+
+### TODO
+
+* Provide links to Github
+* Link Types in type expressions (paramters, scope). A deep type linker
+  would be nice: For compound type expressions such as `Array<MyType>`
+  it links to `MyType`
+* Examples in code doc

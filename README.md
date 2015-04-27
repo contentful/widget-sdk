@@ -22,6 +22,13 @@ Not watched are the `user_interface` module and all the vendor stuff
 (stylesheets and scripts). If you update one of those, run `gulp all`
 again.
 
+### Documentation
+
+The repo comes with a self hosting API documentation and guides. To
+view them run `gulp docs` and go to the
+[`/docs`](http://app.joistio.com:8888/docs) folder of you development
+server.
+
 ## Styleguide
 
 The styleguide is generated automatically when running `gulp serve` and
@@ -76,7 +83,7 @@ The built package still includes the dev host (i.e. `joistio.com`) in
 its files. The are replaced on the servers by the `bin/process_hosts`
 script.
 
-[package bot](https://github.com/contentful/package-bot)
+[package bot]: https://github.com/contentful/package-bot
 
 
 ## Client library development

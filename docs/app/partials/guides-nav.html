@@ -1,0 +1,10 @@
+<ul class="nav-list nav-guides">
+  <li class="nav-guide" ng-repeat="guide in guides" ui-href-active="{{guide.path}}">
+    <a href="{{guide.path}}">{{guide.title}}</a>
+    <ul class="nav-guide-toc" ng-if="guide.toc.length">
+      <li ng-repeat="sec in guide.toc">
+        <a href="{{guide.path}}#{{sec.id}}" ng-bind-html="sec.title"></a>
+      </li>
+    </ul>
+  </li>
+</ul>

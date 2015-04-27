@@ -5,8 +5,6 @@ var Promise     = require('promise');
 var browserify  = require('browserify');
 var clean       = require('gulp-clean');
 var concat      = require('gulp-concat');
-//var debug       = require('gulp-debug');
-var ecstatic    = require('ecstatic');
 var exec        = require('child_process').exec;
 var express     = require('express');
 var fingerprint = require('gulp-fingerprint');
@@ -14,7 +12,6 @@ var fs          = require('fs');
 var gulp        = require('gulp');
 var gulpif      = require('gulp-if');
 var gutil       = require('gulp-util');
-var http        = require('http');
 var inject      = require('gulp-inject');
 var jade        = require('gulp-jade');
 var jstConcat   = require('gulp-jst-concat');
@@ -30,6 +27,9 @@ var run         = require('gulp-run');
 var path        = require('path');
 var through     = require('through2').obj;
 var ngAnnotate  = require('gulp-ng-annotate');
+
+var loadSubtasks = require('./tasks/subtasks');
+loadSubtasks(gulp, 'docs');
 
 var pexec = Promise.denodeify(exec);
 var gitRevision;
@@ -307,18 +307,23 @@ gulp.task('serve', ['generate-styleguide'], function () {
     });
   }
 
+  var publicDir = path.resolve(__dirname, 'public');
+  var docIndex = sendIndex(path.join(publicDir, 'docs'));
+  var appIndex = sendIndex(publicDir);
+
   var app = express();
-  app.use(ecstatic({ root: __dirname + '/public', handleError: false, showDir: false }));
-  app.all('/styleguide_custom/(.*)', makeServer('public/styleguide_custom'));
-  app.all('/styleguide/(.*)', makeServer('public/styleguide/'));
-  app.all('*', function(req, res) {
-    var index = fs.readFileSync('public/index.html', 'utf8');
+  app.use(express.static(publicDir));
+  app.use('/docs/', docIndex);
+  app.get('*', function(req, res, next) {
     Promise.all(builds).then(function () {
-      res.status(200).send(index);
-      builds = [];
+      appIndex(req, res, function () {
+        builds = [];
+        next();
+      });
     });
   });
-  http.createServer(app).listen(3001);
+  app.use(respond404);
+  app.listen(3001);
 
 
   var flo = require('fb-flo');
@@ -343,17 +348,25 @@ gulp.task('serve', ['generate-styleguide'], function () {
     gutil.log('FB Flo is ready!');
   });
 
-  function makeServer(path) {
-    return function (req, res) {
-      try {
-        var index = fs.readFileSync(path+req.params[0], 'utf8');
-        res.status(200).send(index);
-      } catch(e) {
-        res.status(404).send();
-      }
-    };
-  }
 });
+
+function respond404 (req, res) {
+  res.sendStatus(404);
+}
+
+/**
+ * Create a middleware that serves *all* GET requests that accept HTML
+ * with `dir/index.html`.
+ */
+function sendIndex (dir) {
+  return function (req, res, next) {
+    if (req.method === 'GET' && req.accepts('html')) {
+      res.sendFile(path.join(dir, 'index.html'));
+    } else {
+      next();
+    }
+  };
+}
 
 
 /**
@@ -392,13 +405,15 @@ gulp.task('build', function(done){
 });
 
 gulp.task('serve-production', function () {
+  var publicDir = path.resolve(__dirname, 'public');
+  var buildDir = path.resolve(__dirname, 'public');
+
   var app = express();
-  app.use(ecstatic({ root: __dirname + '/build', handleError: false, showDir: false }));
-  app.all('*', function(req, res) {
-    var index = fs.readFileSync('build/index.html', 'utf8');
-    res.status(200).send(index);
-  });
-  http.createServer(app).listen(3001);
+  app.use(express.static(publicDir));
+  app.use(express.static(buildDir));
+  app.use(sendIndex(buildDir));
+  app.use(respond404);
+  app.listen(3001);
   return pexec('./bin/process_hosts');
 });
 
