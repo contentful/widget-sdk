@@ -9,18 +9,27 @@ branches:
   - /^feature\//
 node_js:
 - '0.10'
+
+# Caching
+# http://docs.travis-ci.com/user/caching/
+cache:
+  directories:
+  - node_modules
+  - bower_components
+env:
+  - SLIMERJS_BIN=bin/slimerjs
+
 before_install:
 - npm config set always-auth true
 - npm config set _auth Y2ZkOjBlOWNhYWYyYjExMTliYjdkZjY=
 - npm config set registry https://contentful.registry.nodejitsu.com/
 install:
-- npm install -g jshint
-- npm install -g slimerjs
+- npm prune
+- bin/install_slimerjs
 - npm install
 - bower install
 before_script:
-- npm install -g travis-notify-geckoboard
-- gulp vendor-js templates user_interface
+- gulp prepare-tests
 script:
 - npm test
 - npm run hint

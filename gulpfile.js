@@ -179,6 +179,12 @@ gulp.task('user_interface', function () {
   return bundleBrowserify(createBrowserify());
 });
 
+/**
+ * Build all files necessary to run the tests
+ */
+gulp.task('prepare-tests', ['vendor-js', 'templates', 'user_interface']);
+
+
 gulp.task('watchify', function(){
   var watchify = require('watchify');
   var ui = watchify(createBrowserify(watchify.args));

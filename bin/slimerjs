@@ -1,0 +1,22 @@
+#!/bin/bash
+#
+# This file exists because of a weird bug in SlimerJS
+#
+# Running the karama launcher with SlimerJS and without redirecting
+# stdout will not allow the process to exit.
+#
+# We also need to provide output for the `bin/install_slimerjs` script.
+#
+
+export SLIMERJSLAUNCHER=$(which firefox)
+SLIMERJS_BIN="slimerjs-0.9.5/slimerjs"
+
+if [[ ! -x "${SLIMERJS_BIN}" ]]; then
+  exit 1
+fi
+
+if [[ "$@" == "--version" ]]; then
+  exec "${SLIMERJS_BIN}" "$@"
+else
+  exec "${SLIMERJS_BIN}" "$@" >/dev/null
+fi
